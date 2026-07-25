@@ -12,7 +12,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
@@ -61,7 +61,7 @@ const STICKY_LABEL_COLUMN =
 const CELL_SUBLABEL = "max-w-[120px] text-center text-[10px] leading-tight";
 
 function formatPrice(amount: number, language: string, currency = "USD"): string {
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
   try {
     return new Intl.NumberFormat(locale, {
       style: "currency",

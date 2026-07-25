@@ -11,6 +11,7 @@ import type { WorkItem } from "../../domain/entities/WorkItem";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // WorkItemStatus (0..4) mapped onto the nx Badge semantic tones.
 const STATUS_VARIANTS: Record<number, "secondary" | "info" | "warning" | "success" | "inactive"> = {
@@ -104,7 +105,7 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
           key: "dueAt",
           label: t("workItem.fields.dueAt"),
           render: (value: string) =>
-            value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+            value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
         },
         {
           key: "isActive",

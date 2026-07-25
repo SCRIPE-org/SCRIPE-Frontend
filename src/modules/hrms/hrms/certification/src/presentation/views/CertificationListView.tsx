@@ -13,13 +13,14 @@ import { useCertificationViewModel } from "../viewmodels/useCertificationViewMod
 import type { Certification } from "../../domain/entities/Certification";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const CertificationListView = React.memo(function CertificationListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
   const { vm } = useCertificationViewModel();
   const { t, language } = useI18n();
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
 
   const config: CrudConfig<Certification> = {
     titleKey: "certification.title",

@@ -11,7 +11,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
@@ -415,7 +415,7 @@ export function TenantPlanComparisonView() {
                         (min, p) => (p.amount < min.amount ? p : min),
                         cyclePrices[0]
                       );
-                      priceAmount = new Intl.NumberFormat(language === "ar" ? "ar-EG" : "en-US", {
+                      priceAmount = new Intl.NumberFormat(resolveIntlLocale(language), {
                         style: "currency",
                         currency: cheapest.currency || "USD",
                         minimumFractionDigits: 0,

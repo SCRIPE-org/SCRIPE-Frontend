@@ -7,6 +7,7 @@ import { StatCard } from "@core/ui/stat-card";
 import { DetailRow } from "@core/ui/detail-row";
 import { Badge } from "@core/ui/badge";
 import { Separator } from "@core/ui/separator";
+import { resolveIntlLocale } from "@core/common/utils";
 import {
   CheckCircle2,
   Clock,
@@ -55,7 +56,7 @@ export function StripeAccountKpis({
 
   const formatCurrency = (amount: number) => {
     const currency = account.defaultCurrency?.toUpperCase() || "USD";
-    return new Intl.NumberFormat(language === "ar" ? "ar-EG" : "en-US", {
+    return new Intl.NumberFormat(resolveIntlLocale(language), {
       style: "currency",
       currency,
       minimumFractionDigits: 2,
@@ -64,7 +65,7 @@ export function StripeAccountKpis({
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return "—";
-    return new Intl.DateTimeFormat(language === "ar" ? "ar-EG" : "en-US", {
+    return new Intl.DateTimeFormat(resolveIntlLocale(language), {
       year: "numeric",
       month: "short",
       day: "numeric",

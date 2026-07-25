@@ -14,6 +14,7 @@ import type { CustomField } from "../../domain/entities/CustomField";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // SELECT value type == 4; Options are only allowed/required for Select fields.
 const SELECT_VALUE_TYPE = "4";
@@ -100,7 +101,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           key: "createdAt",
           label: t("common.createdAt"),
           render: (value: string) =>
-            value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+            value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
         },
       ],
       createFields: [

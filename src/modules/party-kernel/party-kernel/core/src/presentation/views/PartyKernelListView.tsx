@@ -13,6 +13,7 @@ import { usePartyKernelViewModel } from "../viewmodels/usePartyKernelViewModel";
 import type { PartyKernel } from "../../domain/entities/PartyKernel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const PartyKernelListView = React.memo(function PartyKernelListView() {
@@ -34,7 +35,7 @@ export const PartyKernelListView = React.memo(function PartyKernelListView() {
         key: "createdAt",
         label: t("partyKernel.columns.createdAt"),
         render: (value: string) =>
-          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
       },
     ],
     createFields: [

@@ -14,6 +14,7 @@ import type { PartyRelationship } from "../../domain/entities/PartyRelationship"
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // PartyRelationshipType (backend enum, serialized as its string name): Guardian,
 // EmergencyContact.
@@ -80,7 +81,7 @@ export const PartyRelationshipListView = React.memo(function PartyRelationshipLi
         key: "createdAt",
         label: t("partyRelationship.columns.createdAt"),
         render: (value: string) =>
-          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
       },
     ],
     createFields: [

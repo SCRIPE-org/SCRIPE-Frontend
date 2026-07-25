@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
@@ -27,7 +27,7 @@ interface EditionPricingCardProps {
 }
 
 function formatAmount(amount: number, language: string, currency = "USD"): string {
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
   try {
     return new Intl.NumberFormat(locale, {
       style: "currency",

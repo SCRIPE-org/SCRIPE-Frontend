@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { CalendarDays, Clock } from "lucide-react";
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { CustomCalendar } from "./custom-calendar";
@@ -241,7 +241,7 @@ export function DatePicker({
       }
 
       try {
-        const locale = language === "ar" ? "ar-EG" : "en-US";
+        const locale = resolveIntlLocale(language);
         const options: Intl.DateTimeFormatOptions = {
           day: "2-digit",
           month: "2-digit",

@@ -22,6 +22,7 @@
 
 import { Check, X } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveIntlLocale } from "@core/common/utils";
 
 export interface MatrixCellProps {
   /** `null` means the row does not apply to this column, not "zero". */
@@ -64,7 +65,7 @@ export function MatrixCell({ value }: MatrixCellProps) {
   if (typeof value === "number") {
     return (
       <span className="block text-end text-sm font-semibold tabular-nums text-nx-ink">
-        {value.toLocaleString(language === "ar" ? "ar-EG" : "en-US")}
+        {value.toLocaleString(resolveIntlLocale(language))}
       </span>
     );
   }

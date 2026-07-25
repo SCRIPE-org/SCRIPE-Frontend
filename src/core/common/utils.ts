@@ -7,6 +7,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/**
+ * The BCP-47 locale string for native `Intl`/`toLocaleString` calls, derived
+ * from the app's `language` setting ("en" | "ar"). Call sites used to inline
+ * `language === "ar" ? "ar-EG" : "en-US"` at each use — 28 copies of the same
+ * mapping, each a place a future locale change would be missed.
+ */
+export function resolveIntlLocale(language: string): string {
+  return language === "ar" ? "ar-EG" : "en-US";
+}
+
 export function formatDate(date: string | Date | null | undefined, locale: string = "ar-SA") {
   try {
     // Handle null/undefined cases

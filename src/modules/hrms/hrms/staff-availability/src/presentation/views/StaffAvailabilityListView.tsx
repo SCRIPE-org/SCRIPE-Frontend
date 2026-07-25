@@ -14,6 +14,7 @@ import type { StaffAvailability } from "../../domain/entities/StaffAvailability"
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // Formats a "HH:mm" / "HH:mm:ss" wall-clock string as a locale-aware short
 // time (e.g. "9:00 AM" / "٩:٠٠ ص") without pulling in a date-fns dependency
@@ -31,7 +32,7 @@ export const StaffAvailabilityListView = React.memo(function StaffAvailabilityLi
   useModuleLocales(() => import("../../../locales"), "hrms");
   const { vm } = useStaffAvailabilityViewModel();
   const { t, language } = useI18n();
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
 
   const config: CrudConfig<StaffAvailability> = {
     titleKey: "staffAvailability.title",

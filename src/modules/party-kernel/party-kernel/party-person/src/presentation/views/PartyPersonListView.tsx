@@ -14,6 +14,7 @@ import type { PartyPerson } from "../../domain/entities/PartyPerson";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // Party ID is a raw GUID with no denormalized name on this entity (or on the backend
 // DTO) to fall back to — shorten for table legibility, keep the full value in a tooltip.
@@ -67,7 +68,7 @@ export const PartyPersonListView = React.memo(function PartyPersonListView() {
         key: "createdAt",
         label: t("partyPerson.columns.createdAt"),
         render: (value: string) =>
-          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
       },
     ],
     createFields: [

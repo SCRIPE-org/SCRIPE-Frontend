@@ -14,13 +14,14 @@ import type { StaffAssignment } from "../../domain/entities/StaffAssignment";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const StaffAssignmentListView = React.memo(function StaffAssignmentListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
   const { vm } = useStaffAssignmentViewModel();
   const { t, language } = useI18n();
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
 
   const config: CrudConfig<StaffAssignment> = {
     titleKey: "staffAssignment.title",

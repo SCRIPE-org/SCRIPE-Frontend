@@ -14,6 +14,7 @@ import type { ContactPoint } from "../../domain/entities/ContactPoint";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // ContactPointType (backend enum, serialized as its string name): Email, Phone, Fax, Other.
 // Colour is a light categorical read, not a status signal — unrecognized values still
@@ -89,7 +90,7 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
         key: "createdAt",
         label: t("contactPoint.columns.createdAt"),
         render: (value: string) =>
-          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
       },
     ],
     createFields: [

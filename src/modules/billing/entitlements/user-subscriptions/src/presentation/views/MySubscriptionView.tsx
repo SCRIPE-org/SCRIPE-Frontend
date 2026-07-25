@@ -22,7 +22,7 @@ import { DetailRow } from "@core/ui/detail-row";
 import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import {
   Crown,
   Calendar,
@@ -86,7 +86,7 @@ function formatDate(dateStr?: string, language?: string): string {
   if (!dateStr) return "—";
   try {
     const d = new Date(dateStr);
-    return d.toLocaleDateString(language === "ar" ? "ar-EG" : "en-US", {
+    return d.toLocaleDateString(resolveIntlLocale(language ?? "en"), {
       year: "numeric",
       month: "long",
       day: "numeric",

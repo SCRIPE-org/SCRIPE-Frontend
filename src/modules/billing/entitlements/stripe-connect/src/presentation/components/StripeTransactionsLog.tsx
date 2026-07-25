@@ -9,6 +9,7 @@ import { Button } from "@core/ui/button";
 import { SectionState } from "@core/ui/section-state";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
+import { resolveIntlLocale } from "@core/common/utils";
 import {
   ArrowUpRight,
   ArrowDownLeft,
@@ -66,7 +67,7 @@ export function StripeTransactionsLog({
 
   const formatCurrency = (amount: number, cur?: string) => {
     const c = (cur || "USD").toUpperCase();
-    return new Intl.NumberFormat(language === "ar" ? "ar-EG" : "en-US", {
+    return new Intl.NumberFormat(resolveIntlLocale(language), {
       style: "currency",
       currency: c,
       minimumFractionDigits: 2,
@@ -74,7 +75,7 @@ export function StripeTransactionsLog({
   };
 
   const formatDate = (dateStr: string) => {
-    return new Intl.DateTimeFormat(language === "ar" ? "ar-EG" : "en-US", {
+    return new Intl.DateTimeFormat(resolveIntlLocale(language), {
       year: "numeric",
       month: "short",
       day: "numeric",

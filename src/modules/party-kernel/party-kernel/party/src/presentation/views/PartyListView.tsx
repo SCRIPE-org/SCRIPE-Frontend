@@ -14,6 +14,7 @@ import type { Party } from "../../domain/entities/Party";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // PartyType (backend enum, serialized as its string name): Person, Organization.
 const TYPE_BADGE_VARIANT: Record<string, "info" | "success"> = {
@@ -56,7 +57,7 @@ export const PartyListView = React.memo(function PartyListView() {
         key: "createdAt",
         label: t("party.columns.createdAt"),
         render: (value: string) =>
-          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
       },
     ],
     createFields: [

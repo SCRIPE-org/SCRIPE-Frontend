@@ -19,7 +19,7 @@
  */
 "use client";
 
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Check, Infinity as InfinityIcon } from "lucide-react";
 import { RecommendationBadge } from "@modules/entitlements/core";
@@ -62,7 +62,7 @@ export function TenantPlanPricingCard({
   const { t } = useI18n();
   const displayName = (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name;
   const badges = plan.badgeText ? [plan.badgeText] : [];
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
 
   let priceAmount: string;
   let priceSuffix = "";

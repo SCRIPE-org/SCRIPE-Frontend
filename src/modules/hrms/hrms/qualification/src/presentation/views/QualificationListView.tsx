@@ -13,13 +13,14 @@ import { useQualificationViewModel } from "../viewmodels/useQualificationViewMod
 import type { Qualification } from "../../domain/entities/Qualification";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const QualificationListView = React.memo(function QualificationListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
   const { vm } = useQualificationViewModel();
   const { t, language } = useI18n();
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
 
   const config: CrudConfig<Qualification> = {
     titleKey: "qualification.title",

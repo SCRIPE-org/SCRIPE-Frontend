@@ -14,6 +14,7 @@ import type { StaffMember } from "../../domain/entities/StaffMember";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const StaffMemberListView = React.memo(function StaffMemberListView() {
@@ -64,7 +65,7 @@ export const StaffMemberListView = React.memo(function StaffMemberListView() {
         key: "createdAt",
         label: t("common.createdAt"),
         render: (value: string) =>
-          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
       },
     ],
     createFields: [

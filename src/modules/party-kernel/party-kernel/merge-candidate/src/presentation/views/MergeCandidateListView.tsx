@@ -14,6 +14,7 @@ import type { MergeCandidate } from "../../domain/entities/MergeCandidate";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
 
 // MergeCandidateStatus (backend enum, serialized as its string name): Pending, Confirmed,
 // Rejected, Merged — this is a genuine workflow state, so it gets the semantic status ramp.
@@ -105,7 +106,7 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
         key: "createdAt",
         label: t("mergeCandidate.columns.createdAt"),
         render: (value: string) =>
-          value ? new Date(value).toLocaleDateString(language === "ar" ? "ar-EG" : "en-US") : "-",
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
       },
     ],
     createFields: [

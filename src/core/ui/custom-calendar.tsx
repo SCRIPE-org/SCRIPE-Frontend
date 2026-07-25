@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -88,7 +88,7 @@ export function CustomCalendar({
   const { calendarStyle, borderRadius } = useSettings();
   const { t, language, direction } = useI18n();
 
-  const locale = language === "ar" ? "ar-EG" : "en-US";
+  const locale = resolveIntlLocale(language);
   const variant = resolveCalendarVariant(calendarStyle);
 
   // Safe date initialization
