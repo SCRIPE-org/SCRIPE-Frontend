@@ -7,16 +7,14 @@ const PluginCatalogView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Catalog | SCRIPE",
+  title: "Plugin Catalog",
   description: "Browse and install plugins from the SCRIPE marketplace",
 };
 
 export default function PluginCatalogPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Plugin Catalog">
-        <PluginCatalogView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="plugins.catalog">
+      <PluginCatalogView />
+    </ModuleErrorBoundary>
   );
 }

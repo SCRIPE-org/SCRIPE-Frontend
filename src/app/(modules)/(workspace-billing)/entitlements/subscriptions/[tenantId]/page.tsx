@@ -7,7 +7,7 @@ const SubscriptionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Subscriptions | SCRIPE",
+  title: "Subscriptions",
   description: "Manage tenant edition subscriptions",
 };
 
@@ -19,10 +19,8 @@ export default async function SubscriptionsPage({ params }: Props) {
   const { tenantId } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Subscriptions">
-        <SubscriptionsView tenantId={tenantId} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entSubscriptions.title">
+      <SubscriptionsView tenantId={tenantId} />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,7 +7,7 @@ const PluginLogsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Execution Logs | SCRIPE",
+  title: "Plugin Execution Logs",
   description: "View execution logs for an installed plugin",
 };
 
@@ -18,10 +18,8 @@ interface PluginLogsPageProps {
 export default async function PluginLogsPage({ params }: PluginLogsPageProps) {
   const { installationId } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Plugin Logs">
-        <PluginLogsView installationId={installationId} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="plugins.logs">
+      <PluginLogsView installationId={installationId} />
+    </ModuleErrorBoundary>
   );
 }

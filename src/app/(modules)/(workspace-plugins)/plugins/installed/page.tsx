@@ -7,16 +7,14 @@ const InstalledPluginsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Installed Plugins | SCRIPE",
+  title: "Installed Plugins",
   description: "Manage your installed plugins",
 };
 
 export default function InstalledPluginsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Installed Plugins">
-        <InstalledPluginsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="plugins.installed">
+      <InstalledPluginsView />
+    </ModuleErrorBoundary>
   );
 }

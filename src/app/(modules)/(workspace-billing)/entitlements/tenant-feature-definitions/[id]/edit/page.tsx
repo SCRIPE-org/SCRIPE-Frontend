@@ -9,7 +9,7 @@ const FeatureDefinitionFormView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Edit Feature Definition | SCRIPE",
+  title: "Edit Feature Definition",
   description: "Edit feature definition configuration, value types, and limits",
 };
 
@@ -21,10 +21,8 @@ export default async function EditFeatureDefinitionPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Edit Feature Definition">
-        <FeatureDefinitionFormView featureId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.featureDefinitions.edit">
+      <FeatureDefinitionFormView featureId={id} />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,16 +7,14 @@ const DashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "System Dashboard | SCRIPE",
+  title: "System Dashboard",
   description: "System dashboard with KPIs, activity charts, and security monitoring",
 };
 
 export default function DashboardPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Dashboard">
-        <DashboardView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="dashboard.title">
+      <DashboardView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,16 +7,14 @@ const FinancialsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Financials | Marketplace | SCRIPE",
+  title: "Financials | Marketplace",
   description: "Track app purchases and process developer payouts.",
 };
 
 export default function MarketplaceFinancialsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Marketplace">
-        <FinancialsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="marketplace.financialsTitle">
+      <FinancialsView />
+    </ModuleErrorBoundary>
   );
 }

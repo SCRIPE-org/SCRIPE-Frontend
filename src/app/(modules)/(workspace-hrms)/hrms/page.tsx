@@ -10,16 +10,14 @@ const HrmsListView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Hrms | SCRIPE",
-  description: "Manage Hrms",
+  title: "Staff Management",
+  description: "Manage Staff Profiles and HR Records",
 };
 
 export default function HrmsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Hrms">
-        <HrmsListView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="hrms.title">
+      <HrmsListView />
+    </ModuleErrorBoundary>
   );
 }

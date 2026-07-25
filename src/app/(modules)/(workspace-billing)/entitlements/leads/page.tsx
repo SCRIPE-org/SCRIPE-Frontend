@@ -9,16 +9,14 @@ const LeadsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Sales Leads | SCRIPE",
+  title: "Sales Leads",
   description: "Manage platform sales leads and contact-sales inquiries",
 };
 
 export default function LeadsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Sales Leads">
-        <LeadsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="leads.title">
+      <LeadsView />
+    </ModuleErrorBoundary>
   );
 }

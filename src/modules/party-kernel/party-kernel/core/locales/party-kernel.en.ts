@@ -1,13 +1,13 @@
 export const en = {
   partyKernel: {
-    title: "PartyKernels",
-    description: "Manage PartyKernels",
-    addNew: "Add PartyKernel",
-    editTitle: "Edit PartyKernel",
-    deleteTitle: "Delete PartyKernel",
-    deleteConfirm: "Are you sure you want to delete this partyKernel?",
-    noItems: "No partyKernels found",
-    searchPlaceholder: "Search partyKernels...",
+    title: "Party Kernels",
+    description: "Manage Party Kernels",
+    addNew: "Add Party Kernel",
+    editTitle: "Edit Party Kernel",
+    deleteTitle: "Delete Party Kernel",
+    deleteConfirm: "Are you sure you want to delete this party kernel?",
+    noItems: "No party kernels found",
+    searchPlaceholder: "Search party kernels...",
     columns: {
       name: "Name",
       status: "Status",
@@ -16,12 +16,12 @@ export const en = {
     },
     form: {
       name: "Name",
-      namePlaceholder: "Enter partyKernel name",
+      namePlaceholder: "Enter party kernel name",
     },
     toast: {
-      created: "PartyKernel created successfully",
-      updated: "PartyKernel updated successfully",
-      deleted: "PartyKernel deleted successfully",
+      created: "Party Kernel created successfully",
+      updated: "Party Kernel updated successfully",
+      deleted: "Party Kernel deleted successfully",
       error: "An error occurred",
     },
   },

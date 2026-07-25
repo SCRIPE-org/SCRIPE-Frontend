@@ -10,16 +10,14 @@ const PartyKernelListView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "PartyKernel | SCRIPE",
-  description: "Manage PartyKernel",
+  title: "Party Kernels",
+  description: "Manage Party Kernels",
 };
 
 export default function PartyKernelPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="PartyKernel">
-        <PartyKernelListView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="partyKernel.title">
+      <PartyKernelListView />
+    </ModuleErrorBoundary>
   );
 }

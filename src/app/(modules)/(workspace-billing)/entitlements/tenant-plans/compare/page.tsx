@@ -11,16 +11,14 @@ const TenantPlanComparisonView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Compare Tenant Plans | SCRIPE",
+  title: "Compare Tenant Plans",
   description: "Side-by-side comparison of tenant plans and their feature sets",
 };
 
 export default function TenantPlanComparePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Tenant Plan Comparison">
-        <TenantPlanComparisonView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.tenantPlans.comparison.heroTitle">
+      <TenantPlanComparisonView />
+    </ModuleErrorBoundary>
   );
 }

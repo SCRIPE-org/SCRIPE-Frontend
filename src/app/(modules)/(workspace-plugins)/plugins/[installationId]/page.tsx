@@ -15,7 +15,7 @@ const InstalledPluginDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Detail | SCRIPE",
+  title: "Plugin Detail",
   description: "View details and embedded UI for an installed plugin",
 };
 
@@ -26,10 +26,8 @@ interface PluginDetailPageProps {
 export default async function PluginDetailPage({ params }: PluginDetailPageProps) {
   const { installationId } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Plugin Detail">
-        <InstalledPluginDetailView installationId={installationId} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="plugins.pluginDetailTitle">
+      <InstalledPluginDetailView installationId={installationId} />
+    </ModuleErrorBoundary>
   );
 }

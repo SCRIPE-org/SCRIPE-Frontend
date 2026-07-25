@@ -3,6 +3,8 @@
  */
 export const en = {
   plugins: {
+    // Title for the /plugins/[installationId] detail route's error boundary.
+    pluginDetailTitle: "Plugin Detail",
     installedEmpty: "No plugins installed yet.",
     installedError: "Failed to load installed plugins.",
     installedAt: "Installed {{date}}",

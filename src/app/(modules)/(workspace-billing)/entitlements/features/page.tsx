@@ -7,16 +7,14 @@ const FeaturesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Features | SCRIPE",
+  title: "Features",
   description: "Manage the feature catalog for edition-based feature gating",
 };
 
 export default function FeaturesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Feature Management">
-        <FeaturesView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.features.title">
+      <FeaturesView />
+    </ModuleErrorBoundary>
   );
 }

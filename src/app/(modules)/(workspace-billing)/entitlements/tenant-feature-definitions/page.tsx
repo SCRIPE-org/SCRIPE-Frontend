@@ -9,16 +9,14 @@ const TenantFeatureDefinitionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Feature Definitions | SCRIPE",
+  title: "Feature Definitions",
   description: "Manage the catalog of feature definitions available for tenant plans",
 };
 
 export default function TenantFeatureDefinitionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Feature Definitions">
-        <TenantFeatureDefinitionsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.featureDefinitions.title">
+      <TenantFeatureDefinitionsView />
+    </ModuleErrorBoundary>
   );
 }

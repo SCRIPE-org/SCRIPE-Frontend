@@ -3,16 +3,14 @@ import { MySubscriptionView } from "@modules/entitlements/user-subscriptions/src
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
 
 export const metadata: Metadata = {
-  title: "My Subscription | SCRIPE",
+  title: "My Subscription",
   description: "View and manage your current subscription plan, billing details, and usage",
 };
 
 export default function MySubscriptionPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="My Subscription">
-        <MySubscriptionView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.mySubscription.title">
+      <MySubscriptionView />
+    </ModuleErrorBoundary>
   );
 }

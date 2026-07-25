@@ -1,24 +1,21 @@
 /**
-* ContactPoint Page
-*
-* Server component that imports and renders the ContactPoint list view.
-*/
+ * ContactPoint Page
+ *
+ * Server component that imports and renders the ContactPoint list view.
+ */
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { ContactPointListView } from
-"@modules/party-kernel/contact-point/src/presentation/views/ContactPointListView";
+import { ContactPointListView } from "@modules/party-kernel/contact-point/src/presentation/views/ContactPointListView";
 
 export const metadata: Metadata = {
-title: "ContactPoints | SCRIPE",
-description: "Manage contactPoints",
+  title: "Contact Points",
+  description: "Manage Contact Points",
 };
 
 export default function ContactPointsPage() {
-return (
-<main>
-      <ModuleErrorBoundary moduleName="PartyKernel">
-            <ContactPointListView />
-      </ModuleErrorBoundary>
-</main>
-);
+  return (
+    <ModuleErrorBoundary moduleName="contactPoint.title">
+      <ContactPointListView />
+    </ModuleErrorBoundary>
+  );
 }

@@ -7,16 +7,14 @@ const CategoriesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Categories | Marketplace | SCRIPE",
+  title: "Categories | Marketplace",
   description: "Manage app categories for the marketplace storefront.",
 };
 
 export default function MarketplaceCategoriesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Marketplace">
-        <CategoriesView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="marketplace.categoriesTitle">
+      <CategoriesView />
+    </ModuleErrorBoundary>
   );
 }

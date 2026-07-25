@@ -9,16 +9,14 @@ const PaymentGatewaySettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Payment Gateways | SCRIPE",
+  title: "Payment Gateways",
   description: "Configure platform-level payment gateway integrations for all tenants",
 };
 
 export default function PaymentGatewaysPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Payment Gateway Settings">
-        <PaymentGatewaySettingsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="billing.gateways.title">
+      <PaymentGatewaySettingsView />
+    </ModuleErrorBoundary>
   );
 }

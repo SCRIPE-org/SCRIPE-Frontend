@@ -7,17 +7,15 @@ const DefinitionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Definitions | Plugins | SCRIPE",
+  title: "Plugin Definitions | Plugins",
   description:
     "Register and manage plugin definitions — the platform-level registry of all available plugins.",
 };
 
 export default function PluginDefinitionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Plugin Definitions">
-        <DefinitionsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="plugins.definitions">
+      <DefinitionsView />
+    </ModuleErrorBoundary>
   );
 }

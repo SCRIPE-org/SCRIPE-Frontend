@@ -7,16 +7,14 @@ const DevelopersView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Developers | Marketplace | SCRIPE",
+  title: "Developers | Marketplace",
   description: "Manage developer profiles and verify trusted publishers.",
 };
 
 export default function MarketplaceDevelopersPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Marketplace">
-        <DevelopersView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="marketplace.developersTitle">
+      <DevelopersView />
+    </ModuleErrorBoundary>
   );
 }

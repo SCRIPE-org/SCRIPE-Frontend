@@ -9,16 +9,14 @@ const OnboardingQuestionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Onboarding Questions | SCRIPE",
+  title: "Onboarding Questions",
   description: "Manage the signup intelligence engine questions and answer options",
 };
 
 export default function OnboardingQuestionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Onboarding Questions">
-        <OnboardingQuestionsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.onboarding.questions.title">
+      <OnboardingQuestionsView />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,16 +9,14 @@ const SignupContentView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Signup Content | SCRIPE",
+  title: "Signup Content",
   description: "Manage the signup welcome screen content, trust marks, and customer logos",
 };
 
 export default function SignupContentPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Signup Content">
-        <SignupContentView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="signupContent.title">
+      <SignupContentView />
+    </ModuleErrorBoundary>
   );
 }

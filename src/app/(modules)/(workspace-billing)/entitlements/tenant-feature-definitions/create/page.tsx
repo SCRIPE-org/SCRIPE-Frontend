@@ -9,16 +9,14 @@ const FeatureDefinitionFormView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Create Feature Definition | SCRIPE",
+  title: "Create Feature Definition",
   description: "Create a new feature definition for use in tenant edition plans",
 };
 
 export default function CreateFeatureDefinitionPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Create Feature Definition">
-        <FeatureDefinitionFormView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.featureDefinitions.create">
+      <FeatureDefinitionFormView />
+    </ModuleErrorBoundary>
   );
 }

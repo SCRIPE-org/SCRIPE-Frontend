@@ -162,6 +162,7 @@ export const ar = {
       createDesc: "تحديد خطة تسعير جديدة للمستخدمين.",
       edit: "تعديل الخطة",
       editDesc: "تحديث تفاصيل الخطة.",
+      detailTitle: "تفاصيل الخطة",
       deleteConfirmTitle: "حذف الخطة",
       deleteConfirmDesc: "سيتم حذف الخطة بشكل مؤقت. لا يمكنك حذف خطط بها مشتركون نشطون.",
       created: "تم إنشاء الخطة",

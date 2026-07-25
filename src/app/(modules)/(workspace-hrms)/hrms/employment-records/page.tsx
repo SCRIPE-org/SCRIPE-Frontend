@@ -1,24 +1,21 @@
 /**
-* EmploymentRecord Page
-*
-* Server component that imports and renders the EmploymentRecord list view.
-*/
+ * EmploymentRecord Page
+ *
+ * Server component that imports and renders the EmploymentRecord list view.
+ */
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { EmploymentRecordListView } from
-"@modules/hrms/employment-record/src/presentation/views/EmploymentRecordListView";
+import { EmploymentRecordListView } from "@modules/hrms/employment-record/src/presentation/views/EmploymentRecordListView";
 
 export const metadata: Metadata = {
-title: "EmploymentRecords | SCRIPE",
-description: "Manage employmentRecords",
+  title: "Employment Records",
+  description: "Manage Employment Records",
 };
 
 export default function EmploymentRecordsPage() {
-return (
-<main>
-      <ModuleErrorBoundary moduleName="Hrms">
-            <EmploymentRecordListView />
-      </ModuleErrorBoundary>
-</main>
-);
+  return (
+    <ModuleErrorBoundary moduleName="employmentRecord.title">
+      <EmploymentRecordListView />
+    </ModuleErrorBoundary>
+  );
 }

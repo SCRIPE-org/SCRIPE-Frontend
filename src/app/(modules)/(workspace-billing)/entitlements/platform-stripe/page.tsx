@@ -9,16 +9,14 @@ const PlatformStripeDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Platform Stripe | SCRIPE",
+  title: "Platform Stripe",
   description: "View your platform Stripe account details, balances, transactions, and payouts",
 };
 
 export default function PlatformStripePage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Platform Stripe">
-        <PlatformStripeDashboardView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.platformStripe.title">
+      <PlatformStripeDashboardView />
+    </ModuleErrorBoundary>
   );
 }

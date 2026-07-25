@@ -7,16 +7,14 @@ const TenantPlansView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Tenant Plans | SCRIPE",
+  title: "Tenant Plans",
   description: "Create and manage pricing plans for your end-users",
 };
 
 export default function TenantPlansPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Tenant Plan Management">
-        <TenantPlansView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.tenantPlans.title">
+      <TenantPlansView />
+    </ModuleErrorBoundary>
   );
 }

@@ -9,17 +9,15 @@ const TenantStripeConnectView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "My Payment Account | SCRIPE",
+  title: "My Payment Account",
   description:
     "Manage your payment gateway account — set up payouts, view status, and access your dashboard.",
 };
 
 export default function MyStripeAccountPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Payment Account">
-        <TenantStripeConnectView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.tenantConnect.pageTitle">
+      <TenantStripeConnectView />
+    </ModuleErrorBoundary>
   );
 }

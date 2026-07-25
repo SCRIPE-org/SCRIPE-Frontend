@@ -9,16 +9,14 @@ const TenantPaymentGatewaysView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "My Payment Methods | SCRIPE",
+  title: "My Payment Methods",
   description: "Configure and manage your tenant's payment gateway integrations",
 };
 
 export default function MyPaymentMethodsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Payment Methods">
-        <TenantPaymentGatewaysView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.tenantGateways.title">
+      <TenantPaymentGatewaysView />
+    </ModuleErrorBoundary>
   );
 }

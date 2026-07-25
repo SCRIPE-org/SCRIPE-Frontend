@@ -9,16 +9,14 @@ const UserSubscriptionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "User Subscriptions | SCRIPE",
+  title: "User Subscriptions",
   description: "Manage user subscriptions to tenant plans",
 };
 
 export default function UserSubscriptionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="User Subscription Management">
-        <UserSubscriptionsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.userSubscriptions.title">
+      <UserSubscriptionsView />
+    </ModuleErrorBoundary>
   );
 }

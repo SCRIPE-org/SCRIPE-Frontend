@@ -3,6 +3,8 @@
  */
 export const ar = {
   plugins: {
+    // Title for the /plugins/[installationId] detail route's error boundary.
+    pluginDetailTitle: "تفاصيل الإضافة",
     installedEmpty: "لا توجد إضافات مثبتة بعد.",
     installedError: "فشل تحميل الإضافات المثبتة.",
     installedAt: "تم التثبيت {{date}}",

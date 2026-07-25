@@ -7,16 +7,14 @@ const SubmissionsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Submissions | Marketplace | SCRIPE",
+  title: "Submissions | Marketplace",
   description: "Review and approve app submissions from developers.",
 };
 
 export default function MarketplaceSubmissionsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Marketplace">
-        <SubmissionsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="marketplace.submissionsTitle">
+      <SubmissionsView />
+    </ModuleErrorBoundary>
   );
 }

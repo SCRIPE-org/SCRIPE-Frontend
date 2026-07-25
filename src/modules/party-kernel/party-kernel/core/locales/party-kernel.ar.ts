@@ -1,10 +1,10 @@
 export const ar = {
   partyKernel: {
-    title: "PartyKernels",
-    description: "إدارة PartyKernels",
-    addNew: "إضافة PartyKernel",
-    editTitle: "تعديل PartyKernel",
-    deleteTitle: "حذف PartyKernel",
+    title: "أنوية الأطراف",
+    description: "إدارة أنوية الأطراف",
+    addNew: "إضافة نواة طرف",
+    editTitle: "تعديل نواة الطرف",
+    deleteTitle: "حذف نواة الطرف",
     deleteConfirm: "هل أنت متأكد من حذف هذا العنصر؟",
     noItems: "لا توجد عناصر",
     searchPlaceholder: "بحث...",

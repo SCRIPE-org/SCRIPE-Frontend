@@ -18,7 +18,7 @@ const AppDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "App Detail | Marketplace | SCRIPE",
+  title: "App Detail | Marketplace",
   description: "View details, screenshots, pricing, and reviews for a marketplace app listing.",
 };
 
@@ -29,10 +29,8 @@ interface AppDetailPageProps {
 export default async function AppDetailPage({ params }: AppDetailPageProps) {
   const { id } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Marketplace App Detail">
-        <AppDetailView id={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="marketplace.detailTitle">
+      <AppDetailView id={id} />
+    </ModuleErrorBoundary>
   );
 }

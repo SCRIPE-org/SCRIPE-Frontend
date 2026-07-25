@@ -7,7 +7,7 @@ const OverridesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Feature Overrides | SCRIPE",
+  title: "Feature Overrides",
   description: "Manage per-tenant feature value overrides",
 };
 
@@ -19,10 +19,8 @@ export default async function OverridesPage({ params }: Props) {
   const { tenantId } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Feature Overrides">
-        <OverridesView tenantId={tenantId} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entOverrides.overrides.title">
+      <OverridesView tenantId={tenantId} />
+    </ModuleErrorBoundary>
   );
 }

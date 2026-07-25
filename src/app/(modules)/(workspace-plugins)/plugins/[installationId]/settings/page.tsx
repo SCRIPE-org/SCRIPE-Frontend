@@ -7,7 +7,7 @@ const PluginSettingsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plugin Settings | SCRIPE",
+  title: "Plugin Settings",
   description: "Configure settings for an installed plugin",
 };
 
@@ -18,10 +18,8 @@ interface PluginSettingsPageProps {
 export default async function PluginSettingsPage({ params }: PluginSettingsPageProps) {
   const { installationId } = await params;
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Plugin Settings">
-        <PluginSettingsView installationId={installationId} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="plugins.settings">
+      <PluginSettingsView installationId={installationId} />
+    </ModuleErrorBoundary>
   );
 }

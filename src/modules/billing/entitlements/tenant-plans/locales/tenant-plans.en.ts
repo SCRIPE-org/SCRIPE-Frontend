@@ -163,6 +163,7 @@ export const en = {
       createDesc: "Define a new pricing plan for your users.",
       edit: "Edit Plan",
       editDesc: "Update plan details.",
+      detailTitle: "Plan Details",
       deleteConfirmTitle: "Delete Plan",
       deleteConfirmDesc:
         "This will soft-delete the plan. You cannot delete plans with active subscribers.",

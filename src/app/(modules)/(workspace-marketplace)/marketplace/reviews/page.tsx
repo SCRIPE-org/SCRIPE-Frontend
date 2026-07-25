@@ -7,16 +7,14 @@ const ReviewsView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Reviews | Marketplace | SCRIPE",
+  title: "Reviews | Marketplace",
   description: "Moderate app reviews submitted by tenants.",
 };
 
 export default function MarketplaceReviewsPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Marketplace">
-        <ReviewsView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="marketplace.reviewsTitle">
+      <ReviewsView />
+    </ModuleErrorBoundary>
   );
 }

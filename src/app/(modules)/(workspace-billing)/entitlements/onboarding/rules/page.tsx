@@ -9,16 +9,14 @@ const RecommendationRulesView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Recommendation Rules | SCRIPE",
+  title: "Recommendation Rules",
   description: "Configure the scoring rules that drive plan recommendations during signup",
 };
 
 export default function RecommendationRulesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Recommendation Rules">
-        <RecommendationRulesView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.onboarding.rules.title">
+      <RecommendationRulesView />
+    </ModuleErrorBoundary>
   );
 }

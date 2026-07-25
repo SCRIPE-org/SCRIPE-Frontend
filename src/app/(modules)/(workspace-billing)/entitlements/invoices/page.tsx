@@ -7,16 +7,14 @@ const InvoiceListView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Invoices | SCRIPE",
+  title: "Invoices",
   description: "View and manage billing invoices",
 };
 
 export default function InvoicesPage() {
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Billing Invoices">
-        <InvoiceListView />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="billing.invoices">
+      <InvoiceListView />
+    </ModuleErrorBoundary>
   );
 }

@@ -7,7 +7,7 @@ const TenantPlanDetailView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Plan Details | SCRIPE",
+  title: "Plan Details",
   description: "Manage plan features, pricing, versions, and promotions",
 };
 
@@ -21,10 +21,8 @@ export default async function TenantPlanDetailPage({ params }: Props) {
   const { id } = await params;
 
   return (
-    <main>
-      <ModuleErrorBoundary moduleName="Tenant Plan Detail">
-        <TenantPlanDetailView planId={id} />
-      </ModuleErrorBoundary>
-    </main>
+    <ModuleErrorBoundary moduleName="entitlements.tenantPlans.detailTitle">
+      <TenantPlanDetailView planId={id} />
+    </ModuleErrorBoundary>
   );
 }

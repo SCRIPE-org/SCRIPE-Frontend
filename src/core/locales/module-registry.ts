@@ -152,7 +152,6 @@ import {
   ar as compRegulationsAr,
 } from "@modules/compliance/regulations/locales";
 
-/*
 // ─── Marketplace (6 sub-modules, each owning their slice of the "marketplace" key) ──
 import {
   en as mktListingsEn,
@@ -175,7 +174,6 @@ import {
   en as mktFinancialsEn,
   ar as mktFinancialsAr,
 } from "@modules/marketplace/financials/locales";
-*/
 
 import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/core/locales";
 
@@ -254,15 +252,13 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compInventoryEn,
   compReportsEn,
   compRegulationsEn,
-  /*
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsEn,
   mktCategoriesEn,
   mktSubmissionsEn,
   mktDevelopersEn,
   mktReviewsEn,
-  mktFinancialsEn
-  */
+  mktFinancialsEn,
   partyKernelEn,
   hrmsEn,
   customFieldsEn,
@@ -337,15 +333,13 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compInventoryAr,
   compReportsAr,
   compRegulationsAr,
-  /*
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsAr,
   mktCategoriesAr,
   mktSubmissionsAr,
   mktDevelopersAr,
   mktReviewsAr,
-  mktFinancialsAr
-  */
+  mktFinancialsAr,
   partyKernelAr,
   hrmsAr,
   customFieldsAr,

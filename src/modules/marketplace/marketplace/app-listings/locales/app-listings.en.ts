@@ -101,5 +101,28 @@ export const en = {
     detailScreenshotAlt: "Screenshot {{count}}",
     detailFeatureAction: "Feature",
     detailUnfeatureAction: "Unfeature",
+    detailTitle: "App Detail",
+    // ── Vendor self-service (My Earnings / My Profile / My Submissions) ──
+    // These three routes have no backing admin sub-module yet, so their
+    // copy lives here alongside the other shared marketplace-wide keys.
+    vendor: {
+      earningsTitle: "My Earnings",
+      earningsDescription:
+        "View your sales reports, pending payouts, and download tax documents.",
+      earningsFeatureReports: "Sales and revenue reports",
+      earningsFeaturePayouts: "Pending and completed payouts",
+      earningsFeatureTax: "Downloadable tax documents",
+      profileTitle: "My Profile",
+      profileDescription: "Manage your organization details, API keys, and vendor identity.",
+      profileFeatureOrg: "Organization details and branding",
+      profileFeatureApiKeys: "API keys for marketplace integrations",
+      profileFeatureIdentity: "Verified vendor identity",
+      submissionsTitle: "My Submissions",
+      submissionsDescription:
+        "Track your app submission statuses, upload new versions, and view reviewer feedback.",
+      submissionsFeatureStatus: "Submission status tracking",
+      submissionsFeatureVersions: "New version uploads",
+      submissionsFeatureFeedback: "Reviewer feedback and revision requests",
+    },
   },
 };
