@@ -1,10 +1,5 @@
-/**
- * Compliance — Dashboard sub-module locale (English)
- * Keys used by the dashboard overview sub-module only.
- */
 export const en = {
   compliance: {
-    // Navigation / section titles (shared across all sub-modules)
     title: "Compliance Center",
     subtitle: "GDPR, CCPA & Multi-Regulation Management",
     dashboard: "Dashboard",
@@ -13,8 +8,6 @@ export const en = {
     retentionPolicies: "Retention Policies",
     dataInventory: "Data Inventory",
     reports: "Reports",
-
-    // KPIs
     openDsrs: "Open DSRs",
     openDsrsSubtitle: "Active requests",
     pendingDsrs: "Pending Review",
@@ -27,8 +20,6 @@ export const en = {
     consentOptInSubtitle: "Across all purposes",
     reConsentNeeded: "Re-Consent Needed",
     reConsentNeededSubtitle: "Subjects to notify",
-
-    // Sections & actions
     quickActions: "Quick Actions",
     regulationCoverage: "Regulation Coverage",
     manageDsr: "Manage DSRs",
@@ -38,8 +29,6 @@ export const en = {
     viewReports: "View Reports",
     viewAll: "View All",
     tenants: "tenants",
-
-    // Regulation shared
     regulations: "Regulations",
     regulation: "Regulation",
     active: "Active",

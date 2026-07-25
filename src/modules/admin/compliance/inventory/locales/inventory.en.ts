@@ -1,6 +1,3 @@
-/**
- * Compliance — Inventory sub-module locale (English)
- */
 export const en = {
   compliance: {
     dataInventory: "Data Inventory",
@@ -20,7 +17,6 @@ export const en = {
       TechnicalData: "Technical Data",
       OrganisationData: "Organisation Data",
       ContentData: "Content Data",
-      // Database value aliases
       Contact: "Contact Data",
       Profile: "Profile Data",
       Identity: "Identity Data",
@@ -31,7 +27,6 @@ export const en = {
       Behavioral: "Behavioral Data",
       Technical: "Technical Data",
     },
-    // New keys for GenericCrudView and modals
     addInventory: "Add Inventory",
     inventoryAdded: "Inventory added successfully",
     inventoryUpdated: "Inventory updated successfully",
@@ -52,7 +47,6 @@ export const en = {
       VitalInterests: "Vital Interests",
       PublicTask: "Public Task",
       LegitimateInterest: "Legitimate Interest",
-      // Database value aliases (lowercase/snake_case)
       consent: "Consent",
       contract: "Contract",
       legal_obligation: "Legal Obligation",
@@ -60,7 +54,6 @@ export const en = {
       public_task: "Public Task",
       legitimate_interest: "Legitimate Interest",
     },
-    // Empty states
     noInventory: "No data inventory items",
     noInventoryDesc: "No matching fields found. Try adjusting your search.",
   },

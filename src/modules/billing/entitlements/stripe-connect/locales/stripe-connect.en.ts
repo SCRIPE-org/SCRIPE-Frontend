@@ -122,7 +122,8 @@ export const en = {
       actionRequiredDesc:
         "This tenant's Stripe onboarding is incomplete. They need to finish setup to receive payouts.",
       alreadyOnboarded: "Already Onboarded",
-      accountDetailDesc: "Onboarding status, capabilities and commission resolution for this account.",
+      accountDetailDesc:
+        "Onboarding status, capabilities and commission resolution for this account.",
     },
     commissions: {
       title: "Commission Dashboard",

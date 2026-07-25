@@ -1,6 +1,3 @@
-/**
- * Compliance — Inventory sub-module locale (Arabic)
- */
 export const ar = {
   compliance: {
     dataInventory: "جرد البيانات",
@@ -20,7 +17,6 @@ export const ar = {
       TechnicalData: "البيانات الفنية",
       OrganisationData: "البيانات المؤسسية",
       ContentData: "بيانات المحتوى",
-      // Database value aliases
       Contact: "بيانات الاتصال",
       Profile: "بيانات الملف الشخصي",
       Identity: "بيانات الهوية",
@@ -31,7 +27,6 @@ export const ar = {
       Behavioral: "البيانات السلوكية",
       Technical: "البيانات الفنية",
     },
-    // New keys for GenericCrudView and modals
     addInventory: "إضافة جرد",
     inventoryAdded: "تمت إضافة الجرد بنجاح",
     inventoryUpdated: "تم تحديث الجرد بنجاح",
@@ -52,7 +47,6 @@ export const ar = {
       VitalInterests: "مصالح حيوية",
       PublicTask: "مهمة عامة",
       LegitimateInterest: "مصلحة مشروعة",
-      // Database value aliases (lowercase/snake_case)
       consent: "موافقة",
       contract: "عقد",
       legal_obligation: "التزام قانوني",
@@ -60,7 +54,6 @@ export const ar = {
       public_task: "مهمة عامة",
       legitimate_interest: "مصلحة مشروعة",
     },
-    // Empty states
     noInventory: "لا توجد عناصر في جرد البيانات",
     noInventoryDesc: "لم يتم العثور على حقول مطابقة. حاول تعديل بحثك.",
   },

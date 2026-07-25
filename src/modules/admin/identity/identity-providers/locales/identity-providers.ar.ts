@@ -86,14 +86,11 @@ export const ar = {
     samlIdpEntityId: "معرف كيان موفر الهوية (IdP Entity ID)",
     samlSsoUrl: "رابط خدمة تسجيل الدخول الموحد (SSO)",
     samlCertificate: "الشهادة العامة لموفر الهوية (Base64/PEM)",
-    samlCertificatePlaceholder: `-----BEGIN CERTIFICATE-----
-MIIDdDCCAlygAwIBAgIGAX...
------END CERTIFICATE-----`,
+    samlCertificatePlaceholder:
+      "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
     galleryTitle: "معرض موفري الهوية",
     gallerySubtitle: "اختر موفر هوية تم تكوينه مسبقًا لإضافته إلى مساحة العمل الخاصة بك",
     galleryOrCustomize: "أو قم بتخصيص التكامل الخاص بك",
-
-    // New keys added in refactor
     addMapping: "إضافة مطابقة الحقول",
     callbackCopiedDesc: "تم نسخ رابط إعادة التوجيه بنجاح.",
     callbackUrlDesc:
@@ -117,8 +114,6 @@ MIIDdDCCAlygAwIBAgIGAX...
     statsProtocols: "البروتوكولات",
     statsTotal: "إجمالي المزودين",
     visualEditor: "المحرر المرئي",
-
-    // New keys for SSO Overhaul
     badgeAdmin: "مشرف",
     badgeUser: "مستخدم",
     scopeNone: "لا يوجد",
@@ -324,5 +319,6 @@ MIIDdDCCAlygAwIBAgIGAX...
         step4: "أدخل هذه القيم أدناه لتمكين اتحاد SAML.",
       },
     },
+    copiedTitle: "تم النسخ إلى الحافظة",
   },
 };

@@ -1,6 +1,3 @@
-/**
- * Compliance — DSR sub-module locale (Arabic)
- */
 export const ar = {
   compliance: {
     dsrTitle: "طلبات موضوع البيانات",
@@ -116,5 +113,8 @@ export const ar = {
     erasureDescription: "تم إخفاء هوية جميع البيانات الشخصية المرتبطة.",
     dataAnonymized: "تم إخفاء هوية البيانات",
     recordsAffected: "السجلات المتأثرة",
+    subjectEmailPlaceholder: "subject@example.com",
+    dsrNotFoundDesc:
+      "تعذّر العثور على طلب موضوع البيانات هذا. ربما تم إلغاؤه أو أن الرابط غير صحيح.",
   },
 };

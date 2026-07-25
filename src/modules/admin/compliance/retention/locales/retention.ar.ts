@@ -1,6 +1,3 @@
-/**
- * Compliance — Retention sub-module locale (Arabic)
- */
 export const ar = {
   compliance: {
     retentionTitle: "سياسات الاحتفاظ",
@@ -52,16 +49,16 @@ export const ar = {
       Anonymize: "تجهيل",
       Archive: "أرشفة",
     },
-
-    // Edit dialog
     activePolicyDesc: "تفعيل أو تعطيل سياسة الاحتفاظ هذه",
-
-    // Empty states
     noPolicies: "لم يتم تكوين سياسات احتفاظ",
-
-    // Shared
     active: "نشط",
     inactive: "غير نشط",
     total: "الإجمالي",
+    retentionDescription: "مدة الاحتفاظ بكل فئة بيانات قبل حذفها أو تجهيلها.",
+    retentionYears: "الاحتفاظ (بالسنوات)",
+    noPoliciesDesc: "أضف سياسة للتحكم في مدة الاحتفاظ بكل فئة بيانات.",
+    policiesLoadFailed: "تعذّر تحميل سياسات الاحتفاظ.",
+    editPolicyFor: "تعديل {category}",
+    lastExecution: "آخر تنفيذ",
   },
 };

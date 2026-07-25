@@ -87,14 +87,11 @@ export const en = {
     samlIdpEntityId: "IdP Entity ID",
     samlSsoUrl: "Single Sign-On Service URL",
     samlCertificate: "IdP Public Certificate (Base64/PEM)",
-    samlCertificatePlaceholder: `-----BEGIN CERTIFICATE-----
-MIIDdDCCAlygAwIBAgIGAX...
------END CERTIFICATE-----`,
+    samlCertificatePlaceholder:
+      "-----BEGIN CERTIFICATE-----\nMIIDdDCCAlygAwIBAgIGAX...\n-----END CERTIFICATE-----",
     galleryTitle: "Identity Provider Gallery",
     gallerySubtitle: "Select a pre-configured provider to add to your workspace",
     galleryOrCustomize: "Or configure manually below",
-
-    // New keys added in refactor
     addMapping: "Add Claim Mapping",
     callbackCopiedDesc: "Redirect URL copied successfully.",
     callbackUrlDesc:
@@ -118,8 +115,6 @@ MIIDdDCCAlygAwIBAgIGAX...
     statsProtocols: "Protocols",
     statsTotal: "Total Providers",
     visualEditor: "Visual",
-
-    // New keys for SSO Overhaul
     badgeAdmin: "Admin",
     badgeUser: "User",
     scopeNone: "None",
@@ -330,5 +325,6 @@ MIIDdDCCAlygAwIBAgIGAX...
         step4: "Enter these values below to enable SAML federation.",
       },
     },
+    copiedTitle: "Copied to Clipboard",
   },
 };

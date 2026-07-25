@@ -43,6 +43,11 @@ export const ar = {
         draft: "مسودة",
         deprecated: "مهمل",
       },
+      noRegulationsDesc:
+        "أضف لائحة لبدء تتبّع أغراض الموافقة والمواعيد النهائية لطلبات أصحاب البيانات.",
+      noPurposes: "لم يتم تحديد أغراض موافقة بعد.",
+      loadFailed: "تعذّر تحميل اللوائح.",
+      editRegulationFor: "تعديل {code}",
     },
   },
 };

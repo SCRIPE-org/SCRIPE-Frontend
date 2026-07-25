@@ -1,6 +1,3 @@
-/**
- * Compliance — Consent sub-module locale (Arabic)
- */
 export const ar = {
   compliance: {
     consentTitle: "إدارة الموافقة",
@@ -35,5 +32,8 @@ export const ar = {
       recorded: "تم تسجيل الموافقة بنجاح",
       withdrawn: "تم سحب الموافقة بنجاح",
     },
+    consentDescription: "راجع الأغراض التي منحت موافقتك عليها، ويمكنك سحبها في أي وقت.",
+    consentLoadFailed: "تعذّر تحميل سجلات الموافقة.",
+    analyticsLoadFailed: "تعذّر تحميل تحليلات الموافقة.",
   },
 };

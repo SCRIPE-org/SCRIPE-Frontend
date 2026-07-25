@@ -61,11 +61,11 @@ export const ar = {
     otherCategory: "أخرى",
   },
   role: {
-    deleteConfirm: "[مفقود] Delete Confirm",
-    hasAdmins: "[مفقود] Has Admins",
-    selectFallback: "[مفقود] Select Fallback",
-    selectFallbackPlaceholder: "[مفقود] Select Fallback Placeholder",
-    permissionsSaved: "[مفقود] Permissions Saved",
-    permissionsSaveError: "[مفقود] Permissions Save Error",
+    deleteConfirm: "هل أنت متأكد من حذف الدور «{{name}}»؟",
+    hasAdmins: "هذا الدور معيَّن حالياً لـ {{count}} مسؤول.",
+    selectFallback: "اختر دوراً بديلاً لنقل هؤلاء المسؤولين إليه قبل الحذف.",
+    selectFallbackPlaceholder: "اختر دوراً...",
+    permissionsSaved: "تم حفظ الصلاحيات",
+    permissionsSaveError: "تعذّر حفظ الصلاحيات",
   },
 };

@@ -1,9 +1,8 @@
 export const en = {
   apikeys: {
     title: "API Keys",
-    description: "Generate and manage secure API keys for programmatically accessing the SCRIPE APIs.",
-
-    // List Columns
+    description:
+      "Generate and manage secure API keys for programmatically accessing the SCRIPE APIs.",
     name: "Key Name",
     namePlaceholder: "e.g. CI/CD integration key",
     prefix: "Key Prefix",
@@ -22,8 +21,6 @@ export const en = {
     lastUsedAt: "Last used {{time}} (UTC)",
     copyPrefix: "Copy key prefix",
     rotateKey: "Rotate Key",
-
-    // Expiry Options
     expiration: "Expiration",
     expirationPlaceholder: "Select expiration period",
     expirations: {
@@ -35,15 +32,11 @@ export const en = {
     },
     customDays: "Custom Expiry (Days)",
     customDaysPlaceholder: "Number of days",
-
-    // Scopes configuration
     availableScopes: "Available Permissions",
     allScopes: "All Scopes",
     noScopesSelected: "Please select at least one permission scope",
     scopesSearch: "Search scopes...",
     scopesDescription: "Key permissions scopes",
-
-    // Actions & Buttons
     create: "Generate API Key",
     generate: "Generate",
     viewDetails: "View Details",
@@ -52,31 +45,23 @@ export const en = {
     copyKey: "Copy Key",
     copied: "Copied!",
     copiedDesc: "The API key token has been copied to your clipboard.",
-
-    // Success Messages
     created: "API Key Generated Successfully",
-    createdDesc: "API Key has been created. Please copy the plain-text token below and store it securely. For security reasons, you will NOT be able to view this token again.",
+    createdDesc:
+      "API Key has been created. Please copy the plain-text token below and store it securely. For security reasons, you will NOT be able to view this token again.",
     revoked: "API Key Revoked",
     revokedDesc: "The API key was successfully revoked.",
-
-    // Confirmation dialogs
     revokeConfirmTitle: "Revoke API Key?",
-    revokeConfirmDesc: "This will permanently invalidate the API key. Any external scripts or integrations using it will instantly fail with 401 Unauthorized. This action cannot be undone.",
-
-    // Modals
+    revokeConfirmDesc:
+      "This will permanently invalidate the API key. Any external scripts or integrations using it will instantly fail with 401 Unauthorized. This action cannot be undone.",
     plainKeyLabel: "Your New API Key Token",
     plainKeyWarning: "Keep this key secret.",
     plainKeyDesc: "Anyone with access can invoke the APIs with its permissions.",
     close: "Close",
-
-    // Status mapping
     status: {
       active: "Active",
       revoked: "Revoked",
       expired: "Expired",
     },
-
-    // --- Stats ---
     stats: {
       totalHits: "Total Hits",
       thisMinute: "this minute",
@@ -90,8 +75,6 @@ export const en = {
       rateLimit: "Rate limit",
       perMin: "/min",
     },
-
-    // --- Chart ---
     chart: {
       title: "Request Activity",
       viewGroup: "Chart view",
@@ -114,27 +97,23 @@ export const en = {
       },
       noData: "No data for this period",
     },
-
-    // --- Danger Zone ---
     dangerZone: {
       title: "Danger Zone",
       revokeTitle: "Revoke this key",
-      revokeDesc: "Immediately invalidates this key. All requests using it will return 401. This can be undone by contacting support.",
+      revokeDesc:
+        "Immediately invalidates this key. All requests using it will return 401. This can be undone by contacting support.",
       deleteTitle: "Permanently delete this key",
       deleteDesc: "Deletes the key and ALL associated usage logs and stats. This CANNOT be undone.",
       deleteBtn: "Delete",
       deleteConfirmTitle: "Permanently Delete API Key?",
-      deleteConfirmDesc: "This will delete the key and all its logs permanently. Type the key name to confirm.",
+      deleteConfirmDesc:
+        "This will delete the key and all its logs permanently. Type the key name to confirm.",
       typeToConfirm: "Type key name to confirm",
     },
-
-    // --- Rotate Dialog ---
     rotate: {
       successTitle: "API Key Rotated Successfully",
       successDesc: "Please copy your new secret key now. It won't be shown again!",
     },
-
-    // --- Settings Panel ---
     settings: {
       title: "Configuration Settings",
       name: "Key Name",
@@ -146,8 +125,6 @@ export const en = {
       alert: "Alert Threshold (%)",
       whitelist: "IP Whitelist (comma-separated)",
     },
-
-    // --- Scopes Panel ---
     scopesPanel: {
       title: "API Scopes / Permissions",
       selectAll: "Select All",
@@ -155,14 +132,10 @@ export const en = {
       searchPlaceholder: "Search permissions...",
       noPermissions: "No permissions found",
     },
-
-    // --- Quickstart Onboarding ---
     quickstart: {
       title: "Developer Quick Start & API Integration",
       desc: "Get started by making your first API call. Copy the code snippets below to configure your client integrations.",
     },
-
-    // --- Activity Log ---
     activity: {
       title: "Real-time Access Logs",
       searchPlaceholder: "Filter by endpoint...",
@@ -178,13 +151,9 @@ export const en = {
       noLogs: "No requests logged for this key yet",
       showing: "Total records",
     },
-
-    // --- Error Views ---
     error: {
       notFound: "API Key not found or access denied.",
     },
-
-    // --- Toast Alerts ---
     revokeToast: {
       successMsg: "API key successfully revoked.",
       errorMsg: "Failed to revoke API key.",

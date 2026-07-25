@@ -13,6 +13,7 @@ export const en = {
     failedLogins: {
       title: "Failed Login Heatmap",
       description: "Failed login attempts by hour and day",
+      seriesLabel: "Failed Logins",
     },
     blockedIPs: {
       title: "Blocked IP Addresses",
@@ -21,6 +22,8 @@ export const en = {
     timeline: {
       title: "Security Timeline",
       description: "Recent security events in chronological order",
+      success: "Successful",
+      failed: "Failed",
     },
     lockouts: {
       title: "Account Lockouts",
@@ -30,7 +33,6 @@ export const en = {
       reason: "Reason",
     },
     noEvents: "No security events in this period",
-    // ── Enterprise: IP Policies ──
     ipPolicies: {
       title: "IP Policies",
       subtitle: "Manage IP-based access control rules",
@@ -53,7 +55,6 @@ export const en = {
       lastHitAt: "Last Hit",
       noRules: "No IP policies configured.",
     },
-    // ── Enterprise: Device Sessions ──
     devices: {
       title: "Device Sessions",
       subtitle: "Manage trusted devices and active sessions",
@@ -77,7 +78,6 @@ export const en = {
       revokeAllConfirm: "Revoke all active device sessions? You will be logged out everywhere.",
       noDevices: "No device sessions found.",
     },
-    // ── Enterprise: Security Events ──
     events: {
       title: "Security Events",
       subtitle: "View SIEM-exported security events and anomaly alerts",
@@ -98,7 +98,6 @@ export const en = {
       exportedToSiem: "SIEM Exported",
       noEvents: "No security events recorded.",
     },
-    // ── Enterprise: GeoIP ──
     geoip: {
       title: "GeoIP Lookup",
       subtitle: "Resolve IP addresses to geographic locations",
@@ -112,7 +111,6 @@ export const en = {
       coordinates: "Coordinates",
       notFound: "IP address could not be resolved.",
     },
-    // ── Enterprise: SIEM ──
     siem: {
       title: "SIEM Integration",
       subtitle: "Monitor security event export health",
@@ -124,7 +122,6 @@ export const en = {
       healthy: "Healthy",
       unhealthy: "Unhealthy",
     },
-    // ── Enterprise: Anomaly Detection ──
     anomaly: {
       title: "Anomaly Detection",
       subtitle: "View detection configuration and recent alerts",
@@ -139,13 +136,9 @@ export const en = {
       reasons: "Reasons",
     },
   },
-  // ════════════════════════════════════════════
-  //  COMPLIANCE MODULE
-  // ════════════════════════════════════════════
   compliance: {
     title: "Compliance Center",
     subtitle: "Data governance, privacy, and regulatory compliance",
-    // ── Retention Policies ──
     retention: {
       title: "Retention Policies",
       subtitle: "Manage data retention rules and enforcement schedules",
@@ -162,7 +155,6 @@ export const en = {
       lastEnforcedAt: "Last Enforced",
       noPolicies: "No retention policies configured.",
     },
-    // ── Data Subject Requests ──
     dsr: {
       title: "Data Subject Requests",
       subtitle: "GDPR Article 15-20 request management",
@@ -187,7 +179,6 @@ export const en = {
       deadline: "Deadline (30 days)",
       noRequests: "No data subject requests found.",
     },
-    // ── Consent Records ──
     consent: {
       title: "Consent Log",
       subtitle: "View consent grants, withdrawals, and audit trail",
@@ -198,7 +189,6 @@ export const en = {
       source: "Source",
       noRecords: "No consent records found.",
     },
-    // ── Data Processing Agreements ──
     dpa: {
       title: "Data Processing Agreements",
       subtitle: "Manage DPAs with processors and sub-processors",
@@ -215,7 +205,6 @@ export const en = {
       expiryDate: "Expiry Date",
       noDpas: "No DPAs configured.",
     },
-    // ── Evidence Export ──
     evidence: {
       title: "Compliance Evidence",
       subtitle: "Generate evidence packages for auditors",
@@ -233,7 +222,6 @@ export const en = {
       download: "Download ZIP",
       generating: "Generating evidence package...",
     },
-    // ── Field Encryption ──
     encryption: {
       title: "Field-Level Encryption",
       subtitle: "PII encryption status and key rotation",

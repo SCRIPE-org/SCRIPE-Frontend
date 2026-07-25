@@ -62,11 +62,11 @@ export const en = {
     otherCategory: "Other",
   },
   role: {
-    deleteConfirm: "Delete Confirm",
-    hasAdmins: "Has Admins",
-    selectFallback: "Select Fallback",
-    selectFallbackPlaceholder: "Select Fallback Placeholder",
-    permissionsSaved: "Permissions Saved",
-    permissionsSaveError: "Permissions Save Error",
+    deleteConfirm: "Are you sure you want to delete the role “{{name}}”?",
+    hasAdmins: "This role is currently assigned to {{count}} administrator(s).",
+    selectFallback: "Choose a fallback role to move those administrators to before deleting.",
+    selectFallbackPlaceholder: "Select a role...",
+    permissionsSaved: "Permissions saved",
+    permissionsSaveError: "Permissions could not be saved",
   },
 };

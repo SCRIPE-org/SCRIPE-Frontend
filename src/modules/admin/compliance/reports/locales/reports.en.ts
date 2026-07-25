@@ -1,6 +1,3 @@
-/**
- * Compliance — Reports sub-module locale (English)
- */
 export const en = {
   compliance: {
     reportsTitle: "Compliance Reports",
@@ -51,5 +48,12 @@ export const en = {
     reports: {
       generating: "Generating compliance report...",
     },
+    reportsDescription: "Generate and download compliance reports for each regulation.",
+    reportMetadata: "Report metadata",
+    reportId: "Report ID",
+    generatedAt: "Generated",
+    exportFormat: "Export format",
+    reportNotFound: "Report not found",
+    reportNotFoundDesc: "It may have been removed, or the link is no longer valid.",
   },
 };

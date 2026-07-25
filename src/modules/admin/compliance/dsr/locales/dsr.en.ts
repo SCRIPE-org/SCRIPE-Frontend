@@ -1,6 +1,3 @@
-/**
- * Compliance — DSR sub-module locale (English)
- */
 export const en = {
   compliance: {
     dsrTitle: "Data Subject Requests",
@@ -115,5 +112,8 @@ export const en = {
     erasureDescription: "All associated personal data has been anonymized.",
     dataAnonymized: "Data Anonymized",
     recordsAffected: "Records Affected",
+    subjectEmailPlaceholder: "subject@example.com",
+    dsrNotFoundDesc:
+      "This data subject request could not be found. It may have been cancelled, or the link may be incorrect.",
   },
 };

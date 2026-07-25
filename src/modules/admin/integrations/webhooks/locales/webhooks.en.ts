@@ -2,8 +2,6 @@ export const en = {
   webhooks: {
     title: "Webhooks",
     description: "Manage webhook subscriptions and monitor event deliveries",
-
-    // ─── List Columns ────────────────────────────────────────
     url: "Endpoint URL",
     urlPlaceholder: "https://your-server.com/webhook",
     scopePlatformOnly: "Platform Events Only",
@@ -27,8 +25,6 @@ export const en = {
     untitled: "Untitled Webhook",
     eventCount: "{{count}} event",
     eventCountPlural: "{{count}} events",
-
-    // ─── Scope ───────────────────────────────────────────────
     scope: {
       label: "Scope",
       platformOnly: "Platform Only",
@@ -36,11 +32,7 @@ export const en = {
       tenantOnly: "Tenant Only",
       tenantWithChildren: "Tenant + Children",
     },
-
-    // ─── URL Validation ──────────────────────────────────────
     urlHttpsRequired: "URL must use HTTPS (http://localhost allowed for dev)",
-
-    // ─── Status ──────────────────────────────────────────────
     status: {
       active: "Active",
       inactive: "Inactive",
@@ -48,8 +40,6 @@ export const en = {
       success: "Success",
       failed: "Failed",
     },
-
-    // ─── Actions ─────────────────────────────────────────────
     create: "Create Webhook",
     createDesc: "Subscribe to events and receive real-time HTTP notifications.",
     edit: "Edit Webhook",
@@ -59,8 +49,6 @@ export const en = {
     activate: "Activate",
     testPing: "Test Ping",
     testing: "Testing...",
-
-    // ─── Success Messages ────────────────────────────────────
     created: "Webhook Created",
     createdDesc: "Webhook subscription created successfully.",
     updated: "Webhook Updated",
@@ -69,17 +57,11 @@ export const en = {
     deletedDesc: "Webhook subscription deleted.",
     toggled: "Webhook Toggled",
     toggledDesc: "Webhook status updated.",
-
-    // ─── Delete Confirmation ─────────────────────────────────
     deleteConfirmTitle: "Delete Webhook",
     deleteConfirmDesc:
       "This will permanently delete this webhook subscription and all its delivery logs. This action cannot be undone.",
-
-    // ─── Not Found ───────────────────────────────────────────
     notFound: "Webhook Not Found",
     notFoundDesc: "The requested webhook could not be found.",
-
-    // ─── Secret ──────────────────────────────────────────────
     secret: "Signing Secret",
     secretDescription: "Used to sign webhook payloads with HMAC-SHA256. Keep this secret safe.",
     rotateSecret: "Rotate Secret",
@@ -97,20 +79,14 @@ export const en = {
     secretHide: "Hide secret",
     secretCopy: "Copy secret",
     secretCopied: "Copied!",
-
-    // ─── Test ────────────────────────────────────────────────
     testSuccess: "Test Delivered Successfully",
     testFailed: "Test Delivery Failed",
-
-    // ─── Stats ───────────────────────────────────────────────
     stats: {
       total: "Total Deliveries",
       successful: "Successful",
       failed: "Failed",
       successRate: "Success Rate",
     },
-
-    // ─── Configuration ───────────────────────────────────────
     configuration: "Configuration",
     maxRetries: "Max Retries",
     maxRetriesDesc: "Number of retry attempts on failure (0-10)",
@@ -120,21 +96,15 @@ export const en = {
     currentFailures: "Current Failures",
     lastStatus: "Last Status",
     advancedSettings: "Advanced Settings",
-
-    // ─── Auto-Disabled ───────────────────────────────────────
     autoDisabledTitle: "Webhook Auto-Disabled",
     autoDisabledDesc:
       "This webhook was automatically disabled after {{count}} consecutive failures. Click 'Activate' to re-enable.",
     autoDisabledGeneric:
       "This webhook was automatically disabled due to consecutive delivery failures. Click 'Activate' to re-enable.",
-
-    // ─── Tabs ────────────────────────────────────────────────
     overview: "Overview",
     deliveryLog: "Delivery Log",
     subscribedEvents: "Subscribed Events",
     subscribedEventsDesc: "Events that trigger this webhook",
-
-    // ─── Delivery Log ────────────────────────────────────────
     eventType: "Event",
     httpCode: "HTTP",
     attempt: "Attempt",
@@ -150,16 +120,12 @@ export const en = {
     deliveryId: "Delivery ID",
     nextRetry: "Next retry",
     notAvailable: "N/A",
-
-    // ─── Delivery Status (lifecycle) ─────────────────────────
     deliveryStatus: {
       pending: "Pending",
       delivered: "Delivered",
       retrying: "Retrying",
       deadLettered: "Dead Letter",
     },
-
-    // ─── Health Dashboard ────────────────────────────────────
     health: {
       title: "System Health",
       endpoints: "Endpoints",
@@ -177,8 +143,6 @@ export const en = {
       deliveredFailedBreakdown: "{{delivered}} ✓ · {{failed}} ✗",
       avgLatency: "~{{ms}}ms avg",
     },
-
-    // ─── Analytics ───────────────────────────────────────────
     analytics: {
       tab: "Analytics",
       deliveryTrend: "Delivery Trend",
@@ -193,8 +157,6 @@ export const en = {
       noDataDesc: "Analytics will populate once webhook deliveries start occurring.",
       last30days: "Daily delivery breakdown — last 30 days",
     },
-
-    // ─── Dead Letters ────────────────────────────────────────
     deadLetters: {
       tab: "Dead Letters",
       title: "Dead Letter Queue",
@@ -217,8 +179,6 @@ export const en = {
       pageOfTotal: "Page {{page}} of {{totalPages}} · {{totalCount}} total",
       noResponseCaptured: "No response captured",
     },
-
-    // ─── Form Sections ───────────────────────────────────────
     form: {
       endpointSection: "Endpoint",
       endpointSectionDesc: "Where webhook events will be delivered",
@@ -229,12 +189,7 @@ export const en = {
       searchEvents: "Search events...",
       noEventsFound: "No events match your search",
     },
-
-    // ─── Localized Event Names ───────────────────────────────
-    // NOTE: Nested objects — NOT dot-string keys.
-    // t('webhooks.eventNames.admin.created') resolves admin → created correctly.
     eventNames: {
-      // ─── Admin Lifecycle ──────────────────────────────────
       admin: {
         created: "Admin Created",
         updated: "Admin Updated",
@@ -243,13 +198,11 @@ export const en = {
         unblocked: "Admin Unblocked",
         invited: "Admin Invited",
       },
-      // ─── Role Lifecycle ───────────────────────────────────
       role: {
         created: "Role Created",
         updated: "Role Updated",
         deleted: "Role Deleted",
       },
-      // ─── Tenant Lifecycle ─────────────────────────────────
       tenant: {
         created: "Tenant Created",
         updated: "Tenant Updated",
@@ -258,7 +211,6 @@ export const en = {
         reactivated: "Tenant Reactivated",
         permissions_updated: "Tenant Permissions Updated",
       },
-      // ─── User Lifecycle ───────────────────────────────────
       user: {
         created: "User Registered",
         updated: "User Updated",
@@ -267,7 +219,6 @@ export const en = {
         unblocked: "User Unblocked",
         invited: "User Invited",
       },
-      // ─── Security Events ──────────────────────────────────
       security: {
         login_failed: "Login Failed",
         account_locked: "Account Locked",
@@ -275,32 +226,27 @@ export const en = {
         password_changed: "Password Changed",
         password_reset_requested: "Password Reset Requested",
       },
-      // ─── OAuth Application Lifecycle ──────────────────────
       oauth_app: {
         created: "OAuth App Created",
         updated: "OAuth App Updated",
         deleted: "OAuth App Deleted",
         secret_regenerated: "OAuth App Secret Regenerated",
       },
-      // ─── User Group Lifecycle ─────────────────────────────
       user_group: {
         created: "User Group Created",
         updated: "User Group Updated",
         deleted: "User Group Deleted",
       },
-      // ─── Tenant Domain Lifecycle ──────────────────────────
       tenant_domain: {
         added: "Domain Added",
         removed: "Domain Removed",
         verified: "Domain Verified",
       },
-      // ─── Identity Provider Lifecycle ──────────────────────
       identity_provider: {
         created: "Identity Provider Created",
         updated: "Identity Provider Updated",
         deleted: "Identity Provider Deleted",
       },
-      // ─── Subscription Lifecycle ───────────────────────────
       subscription: {
         created: "Subscription Created",
         activated: "Subscription Activated",
@@ -314,14 +260,12 @@ export const en = {
         revoked: "Subscription Revoked",
         currency_changed: "Currency Changed",
       },
-      // ─── Invoice Lifecycle ────────────────────────────────
       invoice: {
         created: "Invoice Generated",
         paid: "Invoice Paid",
         overdue: "Invoice Overdue",
         voided: "Invoice Voided",
       },
-      // ─── Payment & Refund ─────────────────────────────────
       payment: {
         succeeded: "Payment Succeeded",
         failed: "Payment Failed",
@@ -329,7 +273,6 @@ export const en = {
       refund: {
         created: "Refund Initiated",
       },
-      // ─── Stripe Connect ───────────────────────────────────
       stripe_account: {
         connected: "Stripe Account Connected",
         disconnected: "Stripe Account Disconnected",
@@ -342,7 +285,6 @@ export const en = {
         paid: "Payout Paid",
         failed: "Payout Failed",
       },
-      // ─── User Subscriptions (Tier 2) ──────────────────────
       user_subscription: {
         created: "User Subscription Created",
         renewed: "User Subscription Renewed",
@@ -350,7 +292,6 @@ export const en = {
         expired: "User Subscription Expired",
         plan_changed: "User Plan Changed",
       },
-      // ─── Editions & Features ──────────────────────────────
       edition: {
         created: "Edition Created",
         updated: "Edition Updated",
@@ -368,19 +309,16 @@ export const en = {
         updated: "Feature Updated",
         deleted: "Feature Deleted",
       },
-      // ─── Promotions ───────────────────────────────────────
       promotion: {
         created: "Promotion Created",
         updated: "Promotion Updated",
         deleted: "Promotion Deleted",
         applied: "Promotion Applied",
       },
-      // ─── Tenant Features ──────────────────────────────────
       tenant_feature: {
         overridden: "Feature Override Set",
         override_removed: "Feature Override Removed",
       },
-      // ─── Tenant Plans (Tier 2) ────────────────────────────
       tenant_plan: {
         created: "Tenant Plan Created",
         updated: "Tenant Plan Updated",
@@ -388,7 +326,6 @@ export const en = {
         published: "Tenant Plan Published",
         archived: "Tenant Plan Archived",
       },
-      // ─── Compliance & DSR ─────────────────────────────────
       compliance: {
         consent_granted: "Consent Granted",
         consent_withdrawn: "Consent Withdrawn",
@@ -402,7 +339,6 @@ export const en = {
         report_generated: "Compliance Report Generated",
         report_failed: "Compliance Report Failed",
       },
-      // ─── Core Infrastructure ──────────────────────────────
       notification: {
         sent: "Notification Sent",
       },

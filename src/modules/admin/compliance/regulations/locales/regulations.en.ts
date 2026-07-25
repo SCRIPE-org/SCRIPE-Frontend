@@ -43,6 +43,11 @@ export const en = {
         draft: "Draft",
         deprecated: "Deprecated",
       },
+      noRegulationsDesc:
+        "Add a regulation to start tracking its consent purposes and DSR deadlines.",
+      noPurposes: "No consent purposes defined yet.",
+      loadFailed: "Regulations could not be loaded.",
+      editRegulationFor: "Edit {code}",
     },
   },
 };

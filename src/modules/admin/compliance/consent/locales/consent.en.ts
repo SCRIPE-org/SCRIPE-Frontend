@@ -1,6 +1,3 @@
-/**
- * Compliance — Consent sub-module locale (English)
- */
 export const en = {
   compliance: {
     consentTitle: "Consent Management",
@@ -36,5 +33,8 @@ export const en = {
       recorded: "Consent recorded successfully",
       withdrawn: "Consent withdrawn successfully",
     },
+    consentDescription: "Review the purposes you have consented to, and withdraw at any time.",
+    consentLoadFailed: "Consent records could not be loaded.",
+    analyticsLoadFailed: "Consent analytics could not be loaded.",
   },
 };

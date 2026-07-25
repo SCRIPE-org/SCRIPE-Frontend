@@ -1,9 +1,5 @@
-/**
- * Compliance — Dashboard sub-module locale (Arabic)
- */
 export const ar = {
   compliance: {
-    // Navigation / section titles (shared)
     title: "مركز الامتثال",
     subtitle: "إدارة اللوائح — GDPR وCCPA والمزيد",
     dashboard: "لوحة التحكم",
@@ -12,8 +8,6 @@ export const ar = {
     retentionPolicies: "سياسات الاحتفاظ",
     dataInventory: "جرد البيانات",
     reports: "التقارير",
-
-    // KPIs
     openDsrs: "الطلبات المفتوحة",
     openDsrsSubtitle: "الطلبات النشطة",
     pendingDsrs: "في انتظار المراجعة",
@@ -26,8 +20,6 @@ export const ar = {
     consentOptInSubtitle: "عبر جميع الأغراض",
     reConsentNeeded: "تتطلب إعادة موافقة",
     reConsentNeededSubtitle: "الأشخاص المراد إبلاغهم",
-
-    // Sections & actions
     quickActions: "إجراءات سريعة",
     regulationCoverage: "تغطية اللوائح",
     manageDsr: "إدارة الطلبات",
@@ -37,8 +29,6 @@ export const ar = {
     viewReports: "عرض التقارير",
     viewAll: "عرض الكل",
     tenants: "مستأجرين",
-
-    // Regulation shared
     regulations: "اللوائح",
     regulation: "لائحة",
     active: "نشط",

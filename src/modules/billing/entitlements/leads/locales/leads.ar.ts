@@ -6,7 +6,6 @@ export const ar = {
     allStatuses: "جميع الحالات",
     totalCount: "{{count}} إجمالي",
     createButton: "+ إنشاء عميل محتمل",
-
     columns: {
       company: "الشركة",
       contact: "جهة الاتصال",
@@ -17,7 +16,6 @@ export const ar = {
       source: "المصدر",
       created: "تاريخ الإنشاء",
     },
-
     status: {
       New: "جديد",
       Contacted: "تم التواصل",
@@ -25,13 +23,11 @@ export const ar = {
       Converted: "تحول عميل",
       Closed: "مغلق",
     },
-
     source: {
       Website: "🌐 الموقع الإلكتروني",
       Admin: "🔑 المسؤول",
       Import: "📦 استيراد",
     },
-
     discovery: {
       sectionTitle: "معلومات الاكتشاف",
       industry: "القطاع",
@@ -57,7 +53,6 @@ export const ar = {
         network: "شبكة متعددة المواقع",
       },
     },
-
     updateDialog: {
       title: "تحديث حالة العميل المحتمل",
       newStatus: "الحالة الجديدة",
@@ -67,24 +62,20 @@ export const ar = {
       confirm: "تحديث الحالة",
       updating: "جارٍ التحديث…",
     },
-
     pagination: {
       page: "صفحة {{page}} من {{total}}",
       previous: "السابق",
       next: "التالي",
     },
-
     empty: "لا توجد عملاء محتملون.",
     loading: "جارٍ تحميل العملاء المحتملين…",
     loadError: "فشل تحميل العملاء المحتملين. يرجى تحديث الصفحة والمحاولة مرة أخرى.",
-
     drawer: {
       title: "تفاصيل العميل المحتمل",
       description: "تفاصيل العميل المحتمل المحدد",
       loadingDetail: "جارٍ تحميل تفاصيل العميل…",
       notFound: "العميل المحتمل غير موجود.",
       editionLabel: "إصدار {{edition}}",
-
       sections: {
         contact: "بيانات التواصل",
         discovery: "معلومات الاكتشاف",
@@ -93,7 +84,6 @@ export const ar = {
         salesNotes: "ملاحظات المبيعات",
         conversion: "التحويل",
       },
-
       contact: {
         email: "البريد الإلكتروني",
         phone: "الهاتف",
@@ -101,7 +91,6 @@ export const ar = {
         source: "المصدر",
         submitted: "تاريخ التقديم",
       },
-
       status: {
         changeLabel: "تغيير الحالة",
         notePlaceholder: "أضف سبب تغيير هذه الحالة…",
@@ -111,12 +100,10 @@ export const ar = {
         saved: "✓ تم الحفظ",
         noChanges: "لا توجد تغييرات",
       },
-
       conversion: {
         converted: "✓ تحول إلى مستأجر",
       },
     },
-
     panel: {
       editionSuffix: "إصدار",
       tabs: {
@@ -125,7 +112,6 @@ export const ar = {
         communications: "المراسلات",
       },
     },
-
     statsBar: {
       total: "الإجمالي",
       new: "جديد",
@@ -158,7 +144,6 @@ export const ar = {
         phoneInvalid: "يرجى إدخال رقم هاتف صالح.",
       },
     },
-
     convertDialog: {
       title: "تحويل العميل إلى مستأجر",
       subtitle: "إنشاء حساب مستأجر جديد لهذا العميل المحتمل.",
@@ -199,7 +184,6 @@ export const ar = {
         amountInvalid: "يجب أن يكون المبلغ رقماً موجباً.",
       },
     },
-
     convertWizard: {
       step1Title: "اختيار الإصدار",
       step2Title: "إعداد الحساب",
@@ -279,8 +263,8 @@ export const ar = {
       editionDefaultLabel: "افتراضي الإصدار",
       readyToConvert: "جاهز للتحويل",
       featureCustomized: "تم تخصيص {{count}} ميزة",
+      editionFree: "مجاني",
     },
-
     assignDialog: {
       title: "تعيين العميل المحتمل",
       subtitle: "عيِّن هذا العميل المحتمل إلى مدير للمتابعة.",
@@ -300,7 +284,6 @@ export const ar = {
       assigning: "جارٍ التعيين…",
       success: "تم تعيين العميل المحتمل بنجاح.",
     },
-
     note: {
       sectionTitle: "إضافة ملاحظة",
       placeholder: "اكتب ملاحظة CRM…",
@@ -310,7 +293,6 @@ export const ar = {
       added: "تمت إضافة الملاحظة إلى السجل.",
       error: "فشل في إضافة الملاحظة. يرجى المحاولة مجدداً.",
     },
-
     activity: {
       title: "سجل الأنشطة",
       empty: "لم يُسجَّل أي نشاط بعد.",
@@ -326,7 +308,6 @@ export const ar = {
       by: "بواسطة {{actor}}",
       system: "النظام",
     },
-
     actions: {
       delete: "إغلاق العميل المحتمل",
       close: "إغلاق العميل المحتمل",
@@ -344,9 +325,7 @@ export const ar = {
       tableView: "عرض الجدول",
       kanbanView: "عرض كانبان",
     },
-
     bulk: {
-      // شريط الإجراءات العائم
       selectedCount: "{{count}} محدد",
       closeSelected: "إغلاق {{count}}",
       deleteSelected: "حذف {{count}}",
@@ -355,22 +334,15 @@ export const ar = {
       selectRow: "تحديد {{company}}",
       closing: "جارٍ الإغلاق…",
       processing: "جارٍ المعالجة…",
-
-      // مربع تأكيد — الإغلاق
       confirmCloseTitle: "إغلاق {{count}} عميل محتمل؟",
       confirmCloseDesc:
         "سيتم وضع علامة على هؤلاء العملاء بأنهم مغلقون. سيتم تخطي العملاء المحوَّلين تلقائيًا.",
       confirmClose: "إغلاق العملاء",
-
-      // مربع تأكيد — الحذف
       confirmDeleteTitle: "حذف {{count}} عميل محتمل؟",
       confirmDeleteDesc:
         "سيتم حذف العملاء المحتملين المحددين بشكل مبدئي. لا يمكن التراجع عن هذا الإجراء.",
       confirmDelete: "حذف العملاء",
-
       cancel: "إلغاء",
-
-      // رسائل التنبيه
       closeSuccess: "اكتمل الإغلاق الجماعي",
       closeError: "فشل إغلاق العملاء. يرجى المحاولة مرة أخرى.",
       deleteSuccess: "تم حذف {{count}} عميل محتمل.",
@@ -378,12 +350,9 @@ export const ar = {
       toastUpdated: "تم تحديث {{count}}",
       toastSkipped: "تم تخطي {{count}}",
       toastNotFound: "{{count}} غير موجود",
-
-      // ملاحظات داخلية في سجل النشاط
       closedNote: "إغلاق جماعي من قِبل المشرف",
       deletedNote: "حذف جماعي من قِبل المشرف",
     },
-
     email: {
       sendNotificationToggle: "إرسال بريد إلكتروني بإشعار الحالة للعميل",
       sendNotificationToggleDesc:
@@ -410,6 +379,20 @@ export const ar = {
       noEmailsSent: "لم يتم إرسال أي بريد إلكتروني لهذا العميل المحتمل بعد.",
       sentBy: "أرسله",
       failed: "فشل",
+      templates: {
+        initialContact: {
+          subject: "أهلاً بك في SCRIPE — لنتواصل",
+          body: "<p>مرحباً [Contact Name]،</p>\n<p>شكراً لاهتمامك بمنصة SCRIPE. يسعدني التعرف أكثر على <strong>[Company Name]</strong> ومناقشة كيف يمكننا العمل معاً.</p>\n<p>هل تناسبك مكالمة سريعة لمدة 20 دقيقة هذا الأسبوع؟</p>",
+        },
+        followUp: {
+          subject: "متابعة — SCRIPE لـ [Company Name]",
+          body: "<p>مرحباً [Contact Name]،</p>\n<p>أردت المتابعة بخصوص SCRIPE. أعلم أن الأمور قد تكون مشغولة — لم أرغب فقط في فقدان التواصل.</p>\n<p>إن كانت لديك أي أسئلة أو ترغب في عرض توضيحي، أنا هنا لمساعدتك.</p>",
+        },
+        demoInvitation: {
+          subject: "عرض SCRIPE التوضيحي جاهز لك",
+          body: "<p>مرحباً [Contact Name]،</p>\n<p>خصصت وقتاً لعرض توضيحي شخصي لمنصة SCRIPE مصمم خصيصاً لـ <strong>[Company Name]</strong>.</p>\n<p>يمكنك الرد على هذا البريد أو النقر أدناه لاختيار الموعد المناسب.</p>",
+        },
+      },
     },
   },
 };

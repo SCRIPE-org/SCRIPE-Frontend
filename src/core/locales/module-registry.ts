@@ -12,8 +12,7 @@
  * ADDING A NEW MODULE: Just add an import + spread line below.
  *
  * SCOPE: modules only. Keys shared across surfaces (nav, shell, primitives,
- * errors) belong to a locale pack under core/locales/packs/, which is merged
- * into core/locales/{en,ar}.ts — not here.
+ * errors) belong directly in core/locales/{en,ar}.ts — not here.
  */
 
 // ─── Auth ──────────────────────────────────────────────

@@ -2,11 +2,10 @@ export const en = {
   leads: {
     title: "Sales Leads",
     subtitle: "Platform contact-sales inquiries",
-    searchPlaceholder: "Search by company, email, or contact\u2026",
+    searchPlaceholder: "Search by company, email, or contact…",
     allStatuses: "All Statuses",
     totalCount: "{{count}} total",
     createButton: "+ Create Lead",
-
     columns: {
       company: "Company",
       contact: "Contact",
@@ -17,7 +16,6 @@ export const en = {
       source: "Source",
       created: "Created",
     },
-
     status: {
       New: "New",
       Contacted: "Contacted",
@@ -25,13 +23,11 @@ export const en = {
       Converted: "Converted",
       Closed: "Closed",
     },
-
     source: {
-      Website: "\uD83C\uDF10 Website",
-      Admin: "\uD83D\uDD11 Admin",
-      Import: "\uD83D\uDCE6 Import",
+      Website: "🌐 Website",
+      Admin: "🔑 Admin",
+      Import: "📦 Import",
     },
-
     discovery: {
       sectionTitle: "Discovery Intelligence",
       industry: "Industry",
@@ -46,45 +42,40 @@ export const en = {
       },
       teamSizeLabels: {
         solo: "Solo",
-        "2-10": "2\u201310",
-        "11-50": "11\u201350",
-        "51-200": "51\u2013200",
+        "2-10": "2–10",
+        "11-50": "11–50",
+        "51-200": "51–200",
         "200+": "200+",
         clinic: "Single clinic",
         beds_lt_50: "Under 50 beds",
-        beds_50_200: "50\u2013200 beds",
+        beds_50_200: "50–200 beds",
         beds_200_plus: "200+ beds",
         network: "Multi-site network",
       },
     },
-
     updateDialog: {
       title: "Update Lead Status",
       newStatus: "New Status",
       notes: "Internal Notes (optional)",
-      notesPlaceholder: "Add any notes about this lead\u2026",
+      notesPlaceholder: "Add any notes about this lead…",
       cancel: "Cancel",
       confirm: "Update Status",
-      updating: "Updating\u2026",
+      updating: "Updating…",
     },
-
     pagination: {
       page: "Page {{page}} of {{total}}",
       previous: "Previous",
       next: "Next",
     },
-
     empty: "No leads found.",
-    loading: "Loading leads\u2026",
+    loading: "Loading leads…",
     loadError: "Failed to load leads. Please refresh and try again.",
-
     drawer: {
       title: "Lead Details",
       description: "Details of the selected lead",
       loadingDetail: "Loading lead details…",
       notFound: "Lead not found.",
       editionLabel: "{{edition}} Edition",
-
       sections: {
         contact: "Contact",
         discovery: "Discovery Intelligence",
@@ -93,7 +84,6 @@ export const en = {
         salesNotes: "Sales Notes",
         conversion: "Conversion",
       },
-
       contact: {
         email: "Email",
         phone: "Phone",
@@ -101,22 +91,19 @@ export const en = {
         source: "Source",
         submitted: "Submitted",
       },
-
       status: {
         changeLabel: "Change status",
         notePlaceholder: "Note this status change reason…",
         noteLabel: "Add internal note (optional)",
         save: "Save changes",
         saving: "Saving…",
-        saved: "\u2713 Saved",
+        saved: "✓ Saved",
         noChanges: "No changes",
       },
-
       conversion: {
-        converted: "\u2713 Converted to tenant",
+        converted: "✓ Converted to tenant",
       },
     },
-
     panel: {
       editionSuffix: "Edition",
       tabs: {
@@ -125,7 +112,6 @@ export const en = {
         communications: "Communications",
       },
     },
-
     statsBar: {
       total: "Total",
       new: "New",
@@ -142,15 +128,15 @@ export const en = {
       email: "Business Email",
       phone: "Phone (optional)",
       editionInterest: "Edition interest",
-      editionPlaceholder: "Select an edition\u2026",
+      editionPlaceholder: "Select an edition…",
       editionNone: "Not specified",
       message: "Message",
       messagePlaceholder: "What does the prospect want to achieve?",
       notes: "Internal notes",
-      notesPlaceholder: "Private notes for the sales team\u2026",
+      notesPlaceholder: "Private notes for the sales team…",
       cancel: "Cancel",
       create: "Create Lead",
-      creating: "Creating\u2026",
+      creating: "Creating…",
       errors: {
         companyRequired: "Company name is required.",
         contactRequired: "Contact name is required.",
@@ -158,29 +144,28 @@ export const en = {
         phoneInvalid: "Please enter a valid phone number.",
       },
     },
-
     convertDialog: {
       title: "Convert Lead to Tenant",
       subtitle: "Provision a new tenant account for this prospect.",
       editionId: "Edition",
-      editionPlaceholder: "Select an edition (optional override)\u2026",
-      editionHint: "Leave blank to use the edition from the lead\u2019s plan interest.",
+      editionPlaceholder: "Select an edition (optional override)…",
+      editionHint: "Leave blank to use the edition from the lead’s plan interest.",
       tenantCode: "Tenant Slug (optional)",
       tenantCodePlaceholder: "acme-corp",
       tenantCodeHint: "Auto-generated from company name if blank.",
       adminEmail: "Admin Email (optional)",
       adminEmailPlaceholder: "ceo@acme.com",
-      adminEmailHint: "Defaults to the lead\u2019s email.",
+      adminEmailHint: "Defaults to the lead’s email.",
       subscriptionType: "Subscription Type",
       subscriptionMonthly: "Monthly",
       subscriptionYearly: "Yearly",
       subscriptionLifetime: "Lifetime",
       currency: "Currency",
       conversionNote: "Conversion Note (optional)",
-      conversionNotePlaceholder: "Add a note about this conversion\u2026",
+      conversionNotePlaceholder: "Add a note about this conversion…",
       cancel: "Cancel",
       convert: "Convert to Tenant",
-      converting: "Converting\u2026",
+      converting: "Converting…",
       successTitle: "Lead Converted!",
       successMessage: "Tenant provisioned. Setup email sent to {{email}}.",
       errorTitle: "Conversion Failed",
@@ -200,7 +185,6 @@ export const en = {
         amountInvalid: "Amount must be a positive number.",
       },
     },
-
     convertWizard: {
       step1Title: "Choose Edition",
       step2Title: "Account Setup",
@@ -279,8 +263,8 @@ export const en = {
       editionDefaultLabel: "Edition default",
       readyToConvert: "Ready to convert",
       featureCustomized: "{{count}} feature(s) customized",
+      editionFree: "Free",
     },
-
     assignDialog: {
       title: "Assign Lead",
       subtitle: "Assign this lead to an admin for follow-up.",
@@ -300,7 +284,6 @@ export const en = {
       assigning: "Assigning…",
       success: "Lead assigned successfully.",
     },
-
     note: {
       sectionTitle: "Add Note",
       placeholder: "Write a CRM note…",
@@ -310,7 +293,6 @@ export const en = {
       added: "Note added to timeline.",
       error: "Failed to add note. Please try again.",
     },
-
     activity: {
       title: "Activity Timeline",
       empty: "No activity recorded yet.",
@@ -326,7 +308,6 @@ export const en = {
       by: "by {{actor}}",
       system: "System",
     },
-
     actions: {
       delete: "Close Lead",
       close: "Close Lead",
@@ -344,9 +325,7 @@ export const en = {
       tableView: "Table view",
       kanbanView: "Kanban view",
     },
-
     bulk: {
-      // Floating bar
       selectedCount: "{{count}} selected",
       closeSelected: "Close {{count}}",
       deleteSelected: "Delete {{count}}",
@@ -355,22 +334,15 @@ export const en = {
       selectRow: "Select {{company}}",
       closing: "Closing…",
       processing: "Processing…",
-
-      // Confirmation dialog — Close
       confirmCloseTitle: "Close {{count}} leads?",
       confirmCloseDesc:
         "These leads will be marked as Closed. Converted leads will be skipped automatically.",
       confirmClose: "Close leads",
-
-      // Confirmation dialog — Delete
       confirmDeleteTitle: "Delete {{count}} leads?",
       confirmDeleteDesc:
         "This will permanently soft-delete the selected leads. This action cannot be undone.",
       confirmDelete: "Delete leads",
-
       cancel: "Cancel",
-
-      // Toast messages
       closeSuccess: "Bulk close complete",
       closeError: "Failed to close leads. Please try again.",
       deleteSuccess: "{{count}} leads deleted.",
@@ -378,12 +350,9 @@ export const en = {
       toastUpdated: "{{count}} updated",
       toastSkipped: "{{count}} skipped",
       toastNotFound: "{{count}} not found",
-
-      // Internal notes appended to activity log
       closedNote: "Bulk closed by admin",
       deletedNote: "Bulk deleted by admin",
     },
-
     email: {
       sendNotificationToggle: "Send status notification email to lead",
       sendNotificationToggleDesc:
@@ -411,6 +380,20 @@ export const en = {
       noEmailsSent: "No emails sent to this lead yet.",
       sentBy: "Sent by",
       failed: "Failed",
+      templates: {
+        initialContact: {
+          subject: "Welcome to SCRIPE — Let's Connect",
+          body: "<p>Hi [Contact Name],</p>\n<p>Thank you for your interest in SCRIPE. I'd love to learn more about <strong>[Company Name]</strong> and how we can work together.</p>\n<p>Would you be open to a quick 20-minute call this week?</p>",
+        },
+        followUp: {
+          subject: "Following Up — SCRIPE for [Company Name]",
+          body: "<p>Hi [Contact Name],</p>\n<p>I wanted to follow up on SCRIPE. I'm sure things have been busy — just didn't want to lose touch.</p>\n<p>If you have any questions or would like a demo, I'm here.</p>",
+        },
+        demoInvitation: {
+          subject: "Your SCRIPE Demo is Ready",
+          body: "<p>Hi [Contact Name],</p>\n<p>I've set aside time for a personalized SCRIPE demo tailored to <strong>[Company Name]</strong>.</p>\n<p>Reply to this email or click below to pick a time.</p>",
+        },
+      },
     },
   },
 };

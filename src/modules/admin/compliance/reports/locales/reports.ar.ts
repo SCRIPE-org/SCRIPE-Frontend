@@ -1,6 +1,3 @@
-/**
- * Compliance — Reports sub-module locale (Arabic)
- */
 export const ar = {
   compliance: {
     reportsTitle: "تقارير الامتثال",
@@ -50,5 +47,12 @@ export const ar = {
     reports: {
       generating: "جاري إنشاء تقرير الامتثال...",
     },
+    reportsDescription: "أنشئ تقارير الامتثال لكل لائحة ونزّلها.",
+    reportMetadata: "بيانات التقرير",
+    reportId: "معرّف التقرير",
+    generatedAt: "تاريخ الإنشاء",
+    exportFormat: "صيغة التصدير",
+    reportNotFound: "لم يتم العثور على التقرير",
+    reportNotFoundDesc: "ربما تمت إزالته، أو لم يعد الرابط صالحًا.",
   },
 };

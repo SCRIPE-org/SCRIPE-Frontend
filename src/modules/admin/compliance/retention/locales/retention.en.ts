@@ -1,6 +1,3 @@
-/**
- * Compliance — Retention sub-module locale (English)
- */
 export const en = {
   compliance: {
     retentionTitle: "Retention Policies",
@@ -52,16 +49,16 @@ export const en = {
       Anonymize: "Anonymize",
       Archive: "Archive",
     },
-
-    // Edit dialog
     activePolicyDesc: "Enable or disable this retention policy",
-
-    // Empty states
     noPolicies: "No retention policies configured",
-
-    // Shared
     active: "Active",
     inactive: "Inactive",
     total: "total",
+    retentionDescription: "How long each data category is kept before it is deleted or anonymized.",
+    retentionYears: "Retention (Years)",
+    noPoliciesDesc: "Add a policy to control how long each data category is kept.",
+    policiesLoadFailed: "Retention policies could not be loaded.",
+    editPolicyFor: "Edit {category}",
+    lastExecution: "Last Execution",
   },
 };
