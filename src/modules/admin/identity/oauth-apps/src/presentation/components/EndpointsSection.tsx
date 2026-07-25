@@ -37,18 +37,16 @@ export function EndpointsSection({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Link2 className="h-5 w-5 text-success" />
-          {t("oauthApps.endpointsSection") || "Endpoints"}
+          <Link2 className="h-5 w-5 text-success" aria-hidden="true" />
+          {t("oauthApps.endpointsSection")}
         </CardTitle>
-        <CardDescription>
-          {t("oauthApps.endpointsSectionDesc") || "Configure redirect and post-logout URIs"}
-        </CardDescription>
+        <CardDescription>{t("oauthApps.endpointsSectionDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Redirect URIs */}
         <div className="space-y-2">
           <Label>
-            {t("oauthApps.redirectUris") || "Redirect URIs"} <span className="text-destructive">*</span>
+            {t("oauthApps.redirectUris")} <span className="text-destructive">*</span>
           </Label>
           <div className="space-y-2">
             {form.redirectUris.map((uri, index) => (
@@ -65,22 +63,23 @@ export function EndpointsSection({
                     size="icon"
                     className="h-8 w-8 shrink-0 text-destructive hover:text-destructive/90"
                     onClick={() => removeRedirectUri(index)}
+                    aria-label={t("common.remove")}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4" aria-hidden="true" />
                   </Button>
                 )}
               </div>
             ))}
           </div>
           <Button variant="outline" size="sm" onClick={addRedirectUri} className="gap-1.5">
-            <Plus className="h-3.5 w-3.5" />
-            {t("oauthApps.addRedirectUri") || "Add URI"}
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("oauthApps.addRedirectUri")}
           </Button>
         </div>
 
         {/* Post-Logout Redirect URIs */}
         <div className="space-y-2">
-          <Label>{t("oauthApps.postLogoutRedirectUris") || "Post-Logout Redirect URIs"}</Label>
+          <Label>{t("oauthApps.postLogoutRedirectUris")}</Label>
           <div className="space-y-2">
             {form.postLogoutRedirectUris.map((uri, index) => (
               <div key={index} className="flex items-center gap-2">
@@ -95,15 +94,16 @@ export function EndpointsSection({
                   size="icon"
                   className="h-8 w-8 shrink-0 text-destructive hover:text-destructive/90"
                   onClick={() => removePostLogoutUri(index)}
+                  aria-label={t("common.remove")}
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-4 w-4" aria-hidden="true" />
                 </Button>
               </div>
             ))}
           </div>
           <Button variant="outline" size="sm" onClick={addPostLogoutUri} className="gap-1.5">
-            <Plus className="h-3.5 w-3.5" />
-            {t("oauthApps.addPostLogoutUri") || "Add URI"}
+            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("oauthApps.addPostLogoutUri")}
           </Button>
         </div>
       </CardContent>

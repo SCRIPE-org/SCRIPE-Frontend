@@ -44,11 +44,11 @@ export function WebhooksView() {
       columns: [
         {
           key: "url",
-          label: t("webhooks.url") || "Endpoint URL",
+          label: t("webhooks.url"),
           sortable: true,
           render: (_val: unknown, item: WebhookSubscriptionListItem) => (
             <div className="flex max-w-[280px] items-center gap-2">
-              <Globe className="h-4 w-4 shrink-0 text-muted-foreground" />
+              <Globe className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
               <span className="truncate font-mono text-sm" title={item.url}>
                 {item.url}
               </span>
@@ -57,51 +57,32 @@ export function WebhooksView() {
         },
         {
           key: "scope",
-          label: t("webhooks.scope.label") || "Scope",
+          label: t("webhooks.scope.label"),
           render: (_val: unknown, item: WebhookSubscriptionListItem) => {
+            // Scope breadth, not a health signal — variants differentiate by
+            // weight alone (accent for the widest reach, quieter neutrals
+            // beneath), never a re-derived colour.
             const scopeConfig: Record<
               string,
-              {
-                labelKey: string;
-                fallback: string;
-                variant: "default" | "secondary" | "outline";
-                className: string;
-              }
+              { labelKey: string; variant: "default" | "info" | "secondary" | "outline" }
             > = {
-              platform_only: {
-                labelKey: "webhooks.scope.platformOnly",
-                fallback: "Platform Only",
-                variant: "default",
-                className: "bg-info hover:bg-info/90 text-info-foreground",
-              },
-              all_tenants: {
-                labelKey: "webhooks.scope.allTenants",
-                fallback: "All Tenants",
-                variant: "default",
-                className: "bg-primary hover:bg-primary/90 text-primary-foreground",
-              },
+              platform_only: { labelKey: "webhooks.scope.platformOnly", variant: "info" },
+              all_tenants: { labelKey: "webhooks.scope.allTenants", variant: "default" },
               tenant_with_children: {
                 labelKey: "webhooks.scope.tenantWithChildren",
-                fallback: "Tenant + Children",
                 variant: "secondary",
-                className: "bg-info/15 text-info",
               },
-              tenant_only: {
-                labelKey: "webhooks.scope.tenantOnly",
-                fallback: "Tenant Only",
-                variant: "secondary",
-                className: "",
-              },
+              tenant_only: { labelKey: "webhooks.scope.tenantOnly", variant: "outline" },
             };
             const cfg = scopeConfig[item.scope] ?? scopeConfig.tenant_only;
             return (
               <div className="flex flex-col items-start gap-0.5">
-                <Badge variant={cfg.variant} className={`text-xs ${cfg.className}`}>
-                  {t(cfg.labelKey) || cfg.fallback}
+                <Badge variant={cfg.variant} className="text-xs">
+                  {t(cfg.labelKey)}
                 </Badge>
                 {item.tenantName && (
                   <span
-                    className="max-w-[120px] truncate text-[10px] text-muted-foreground"
+                    className="max-w-[120px] truncate text-[10px] text-nx-ink-3"
                     title={item.tenantName}
                   >
                     {item.tenantName}
@@ -113,23 +94,23 @@ export function WebhooksView() {
         },
         {
           key: "description",
-          label: t("webhooks.description_field") || "Description",
+          label: t("webhooks.description_field"),
           render: (_val: unknown, item: WebhookSubscriptionListItem) => (
-            <span className="text-sm text-muted-foreground">{item.description || "—"}</span>
+            <span className="text-sm text-nx-ink-2">{item.description || "—"}</span>
           ),
         },
         {
           key: "events",
-          label: t("webhooks.events") || "Events",
+          label: t("webhooks.events"),
           render: (_val: unknown, item: WebhookSubscriptionListItem) => {
             const count = item.events.length;
             const label =
               count === 1
-                ? t("webhooks.eventCount", { count }) || `${count} event`
-                : t("webhooks.eventCountPlural", { count }) || `${count} events`;
+                ? t("webhooks.eventCount", { count })
+                : t("webhooks.eventCountPlural", { count });
             return (
               <div className="flex items-center gap-1.5">
-                <Zap className="h-3.5 w-3.5 text-warning" />
+                <Zap className="h-3.5 w-3.5 text-warning" aria-hidden="true" />
                 <Badge variant="outline" className="text-xs font-medium">
                   {label}
                 </Badge>
@@ -139,24 +120,24 @@ export function WebhooksView() {
         },
         {
           key: "isActive",
-          label: t("webhooks.statusLabel") || "Status",
+          label: t("webhooks.statusLabel"),
           render: (_val: unknown, item: WebhookSubscriptionListItem) => (
             <WebhookStatusBadge isActive={item.isActive} isAutoDisabled={item.isAutoDisabled} />
           ),
         },
         {
           key: "successRate",
-          label: t("webhooks.stats.successRate") || "Success Rate",
+          label: t("webhooks.stats.successRate"),
           render: (_val: unknown, item: WebhookSubscriptionListItem) => {
             if (item.totalDeliveries === 0) {
-              return <span className="text-sm text-muted-foreground">—</span>;
+              return <span className="text-sm text-nx-ink-3">—</span>;
             }
             const rate = item.successRate;
             const color =
               rate >= 95 ? "text-success" : rate >= 80 ? "text-warning" : "text-destructive";
             return (
               <div className="flex items-center gap-2">
-                <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
+                <div className="h-1.5 w-16 overflow-hidden rounded-full bg-nx-raised-2">
                   <div
                     className={`h-full rounded-full ${
                       rate >= 95 ? "bg-success" : rate >= 80 ? "bg-warning" : "bg-destructive"
@@ -164,16 +145,18 @@ export function WebhooksView() {
                     style={{ width: `${Math.min(rate, 100)}%` }}
                   />
                 </div>
-                <span className={`text-xs font-semibold ${color}`}>{rate.toFixed(1)}%</span>
+                <span className={`text-xs font-semibold tabular-nums ${color}`}>
+                  {rate.toFixed(1)}%
+                </span>
               </div>
             );
           },
         },
         {
           key: "lastDeliveryAt",
-          label: t("webhooks.lastDelivery") || "Last Delivery",
+          label: t("webhooks.lastDelivery"),
           render: (_val: unknown, item: WebhookSubscriptionListItem) => (
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-nx-ink-2">
               {item.lastDeliveryAt ? formatUtc(item.lastDeliveryAt, "MMM d, HH:mm") : "—"}
             </span>
           ),
@@ -193,30 +176,28 @@ export function WebhooksView() {
         handleDeleteFn?: (item: WebhookSubscriptionListItem) => void
       ): CrudAction<WebhookSubscriptionListItem>[] => [
         {
-          label: tFn("common.view") || "View Details",
+          label: tFn("common.view"),
           onClick: (item: WebhookSubscriptionListItem) =>
             router.push(`/integrations/webhooks/${item.id}`),
           variant: "ghost" as const,
-          icon: <Eye className="h-4 w-4" />,
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
         },
         {
-          label: tFn("webhooks.toggleStatus") || "Toggle Status",
+          label: tFn("webhooks.toggleStatus"),
           onClick: (item: WebhookSubscriptionListItem) => handleToggle(item.id),
           variant: "ghost" as const,
-          icon: <ToggleLeft className="h-4 w-4" />,
+          icon: <ToggleLeft className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "webhooks:update",
         },
         {
-          label: tFn("common.delete") || "Delete",
+          label: tFn("common.delete"),
           onClick: (item: WebhookSubscriptionListItem) => handleDeleteFn?.(item),
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/90",
-          icon: <Trash2 className="h-4 w-4" />,
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           requiredPermission: "webhooks:delete",
-          confirmTitle: tFn("webhooks.deleteConfirmTitle") || "Delete Webhook",
-          confirmDescription:
-            tFn("webhooks.deleteConfirmDesc") ||
-            "This will permanently delete this webhook and all delivery logs.",
+          confirmTitle: tFn("webhooks.deleteConfirmTitle"),
+          confirmDescription: tFn("webhooks.deleteConfirmDesc"),
           confirmVariant: "destructive" as const,
         },
       ],

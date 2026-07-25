@@ -144,6 +144,12 @@ export const en = {
       "Most enterprise apps allow configuring SSO by simply pasting this XML metadata URL.",
     samlConfigSection: "SAML Configuration",
     idpMetadataSection: "IdP Metadata",
+
+    // Edit-form tab labels & a11y names
+    redirectsSecurityTab: "Redirects & Security",
+    copyIdpEntityId: "Copy IdP entity ID",
+    copySsoUrl: "Copy SSO URL",
+    copyMetadataUrl: "Copy metadata URL",
   },
   oauth: {
     consentTitle: "Authorize App",

@@ -13,8 +13,28 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import type { ConnectAccountListItem } from "../../domain/entities/ConnectAccount";
-import { ExternalLink, RefreshCw, Pencil, Eye } from "lucide-react";
+import { Badge, type BadgeProps } from "@core/ui/badge";
+import {
+  ExternalLink,
+  RefreshCw,
+  Pencil,
+  Eye,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  type LucideIcon,
+} from "lucide-react";
 import { formatDateUtc } from "@core/common/utils";
+
+// Status → icon + Badge tone. Same triple the account detail card and the
+// tenant-facing stepper use, so a "Complete" account reads identically
+// wherever it appears.
+const STATUS_BADGE: Record<string, { icon: LucideIcon; variant: BadgeProps["variant"] }> = {
+  Complete: { icon: CheckCircle2, variant: "success" },
+  Pending: { icon: Clock, variant: "warning" },
+  Restricted: { icon: AlertTriangle, variant: "destructive" },
+};
 
 const QUERY_KEY = ["entitlements", "stripe-connect", "accounts"];
 
@@ -109,10 +129,8 @@ export function useConnectViewModel() {
       const axiosErr = err as { response?: { status?: number } };
       if (axiosErr?.response?.status === 409) {
         success({
-          title: t("entitlements.stripeConnect.onboardingComplete") || "Onboarding Complete",
-          description:
-            t("entitlements.stripeConnect.alreadyOnboarded") ||
-            "Account is already fully onboarded.",
+          title: t("entitlements.stripeConnect.onboardingComplete"),
+          description: t("entitlements.stripeConnect.alreadyOnboarded"),
         });
         vm.refresh();
         closeCustomViewModal();
@@ -174,58 +192,57 @@ export function useConnectViewModel() {
       columns: [
         {
           key: "tenantName",
-          label: t("entitlements.stripeConnect.columns.tenant") || "Tenant",
+          label: t("entitlements.stripeConnect.columns.tenant"),
           sortable: true,
         },
         {
           key: "onboardingStatus",
-          label: t("entitlements.stripeConnect.statusLabel") || "Status",
+          label: t("entitlements.stripeConnect.statusLabel"),
           render: (val: string) => {
-            const map: Record<string, { label: string; className: string }> = {
-              Complete: {
-                label: val,
-                className: "bg-success/20 text-success border border-success/30",
-              },
-              Pending: {
-                label: val,
-                className: "bg-warning/20 text-warning border border-warning/30",
-              },
-              Restricted: {
-                label: val,
-                className: "bg-destructive/20 text-destructive border border-destructive/30",
-              },
-            };
-            const style = map[val] ?? {
-              label: val,
-              className: "bg-muted text-muted-foreground border border-border",
-            };
+            const status = STATUS_BADGE[val] ?? STATUS_BADGE.Pending;
+            const StatusIcon = status.icon;
             return (
-              <span
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold ${style.className}`}
-              >
-                {val === "Complete" && "✓"}
-                {val === "Pending" && "⏳"}
-                {val === "Restricted" && "⚠️"}
-                {style.label}
-              </span>
+              <Badge variant={status.variant}>
+                <StatusIcon className="h-3 w-3" aria-hidden="true" />
+                {t(`entitlements.stripeConnect.status.${val}`)}
+              </Badge>
             );
           },
         },
         {
           key: "flags",
-          label: t("entitlements.stripeConnect.capabilities") || "Capabilities",
-          render: (_val: unknown, row: ConnectAccountListItem) =>
-            `${row.chargesEnabled ? "💳" : "❌"} / ${row.payoutsEnabled ? "🏦" : "❌"}`,
+          label: t("entitlements.stripeConnect.capabilities"),
+          render: (_val: unknown, row: ConnectAccountListItem) => (
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1">
+                {row.chargesEnabled ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success" aria-hidden="true" />
+                ) : (
+                  <XCircle className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                )}
+                <span className="sr-only">{t("entitlements.stripeConnect.chargesEnabled")}</span>
+              </span>
+              <span className="inline-flex items-center gap-1">
+                {row.payoutsEnabled ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-success" aria-hidden="true" />
+                ) : (
+                  <XCircle className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                )}
+                <span className="sr-only">{t("entitlements.stripeConnect.payoutsEnabled")}</span>
+              </span>
+            </div>
+          ),
         },
         {
           key: "rate",
-          label: t("entitlements.stripeConnect.effectiveRate") || "Rate",
-          render: (_val: unknown, row: ConnectAccountListItem) =>
-            `${(row.effectiveCommissionRate * 100).toFixed(1)}%`,
+          label: t("entitlements.stripeConnect.effectiveRate"),
+          render: (_val: unknown, row: ConnectAccountListItem) => (
+            <span className="tabular-nums">{(row.effectiveCommissionRate * 100).toFixed(1)}%</span>
+          ),
         },
         {
           key: "createdAt",
-          label: t("common.createdAt") || "Created At",
+          label: t("common.createdAt"),
           render: (val: string) => formatDateUtc(val),
         },
       ],
@@ -234,22 +251,22 @@ export function useConnectViewModel() {
         tFn: (key: string) => string
       ): CrudAction<ConnectAccountListItem>[] => [
         {
-          label: tFn("common.view") || "View",
+          label: tFn("common.view"),
           onClick: (item: ConnectAccountListItem) => openCustomViewModal(item),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },
         {
           // Show "Complete Onboarding" for pending, "Refresh Link" for complete
-          label: tFn("entitlements.stripeConnect.completeOnboarding") || "Complete Onboarding",
+          label: tFn("entitlements.stripeConnect.completeOnboarding"),
           onClick: (item: ConnectAccountListItem) => refreshLinkMutation.mutate(item.tenantId),
           variant: "ghost" as const,
           icon: <RefreshCw className="h-4 w-4" />,
           show: (item: ConnectAccountListItem) => item.onboardingStatus !== "Complete",
-          tooltip: "Opens Stripe Express onboarding to complete account setup",
+          tooltip: tFn("entitlements.stripeConnect.completeOnboardingTooltip"),
         },
         {
-          label: tFn("entitlements.stripeConnect.refreshLink") || "Refresh Link",
+          label: tFn("entitlements.stripeConnect.refreshLink"),
           onClick: (item: ConnectAccountListItem) => refreshLinkMutation.mutate(item.tenantId),
           variant: "ghost" as const,
           icon: <RefreshCw className="h-4 w-4" />,
@@ -257,15 +274,15 @@ export function useConnectViewModel() {
         },
         {
           // Only show dashboard link for fully onboarded accounts
-          label: tFn("entitlements.stripeConnect.dashboardLink") || "Open Dashboard",
+          label: tFn("entitlements.stripeConnect.dashboardLink"),
           onClick: (item: ConnectAccountListItem) => dashboardLinkMutation.mutate(item.tenantId),
           variant: "ghost" as const,
           icon: <ExternalLink className="h-4 w-4" />,
           show: (item: ConnectAccountListItem) => item.onboardingStatus === "Complete",
-          tooltip: "Opens Stripe Express dashboard (only available after onboarding is complete)",
+          tooltip: tFn("entitlements.stripeConnect.dashboardLinkTooltip"),
         },
         {
-          label: tFn("entitlements.stripeConnect.commissionRateOverride") || "Override Rate",
+          label: tFn("entitlements.stripeConnect.commissionRateOverride"),
           onClick: (item: ConnectAccountListItem) => {
             setRateTarget(item);
             setIsRateDialogOpen(true);

@@ -21,19 +21,18 @@ export function WebhookFormOptionsSection({ vm }: WebhookFormOptionsSectionProps
   return (
     <section className="space-y-4">
       <Accordion type="single" collapsible className="w-full">
-        <AccordionItem value="options" className="rounded-xl border px-1">
+        <AccordionItem value="options" className="rounded-nx-lg border border-nx-line px-1">
           <AccordionTrigger className="gap-2.5 px-3 py-3 text-sm hover:no-underline">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Settings2 className="h-4 w-4" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-nx-accent-wash text-nx-accent">
+                <Settings2 className="h-4 w-4" aria-hidden="true" />
               </div>
               <div className="text-start">
-                <p className="text-sm font-semibold">
-                  {t("webhooks.form.optionsSection") || "Options"}
+                <p className="text-sm font-semibold text-nx-ink">
+                  {t("webhooks.form.optionsSection")}
                 </p>
-                <p className="text-xs font-normal text-muted-foreground">
-                  {t("webhooks.form.optionsSectionDesc") ||
-                    "Additional delivery and retry settings"}
+                <p className="text-xs font-normal text-nx-ink-2">
+                  {t("webhooks.form.optionsSectionDesc")}
                 </p>
               </div>
             </div>
@@ -43,7 +42,7 @@ export function WebhookFormOptionsSection({ vm }: WebhookFormOptionsSectionProps
               {/* Max Retries */}
               <div className="space-y-2">
                 <Label htmlFor="max-retries" className="text-sm font-medium">
-                  {t("webhooks.maxRetries") || "Max Retries"}
+                  {t("webhooks.maxRetries")}
                 </Label>
                 <Input
                   id="max-retries"
@@ -54,15 +53,15 @@ export function WebhookFormOptionsSection({ vm }: WebhookFormOptionsSectionProps
                   onChange={(e) => vm.setMaxRetries(Number(e.target.value))}
                   className="text-sm"
                 />
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  {t("webhooks.maxRetriesDesc") || "Number of retry attempts on failure (0-10)"}
+                <p className="text-xs leading-relaxed text-nx-ink-2">
+                  {t("webhooks.maxRetriesDesc")}
                 </p>
               </div>
 
               {/* Auto-disable Threshold */}
               <div className="space-y-2">
                 <Label htmlFor="max-failures" className="text-sm font-medium">
-                  {t("webhooks.maxConsecutiveFailures") || "Auto-disable Threshold"}
+                  {t("webhooks.maxConsecutiveFailures")}
                 </Label>
                 <Input
                   id="max-failures"
@@ -73,9 +72,8 @@ export function WebhookFormOptionsSection({ vm }: WebhookFormOptionsSectionProps
                   onChange={(e) => vm.setMaxConsecutiveFailures(Number(e.target.value))}
                   className="text-sm"
                 />
-                <p className="text-xs leading-relaxed text-muted-foreground">
-                  {t("webhooks.maxFailuresDesc") ||
-                    "Auto-disable after this many consecutive failures"}
+                <p className="text-xs leading-relaxed text-nx-ink-2">
+                  {t("webhooks.maxFailuresDesc")}
                 </p>
               </div>
             </div>

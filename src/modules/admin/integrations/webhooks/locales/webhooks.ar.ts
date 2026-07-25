@@ -159,6 +159,9 @@ export const ar = {
       idle: "خامل",
       endpointAutoDisabled: "تم تعطيل نقطة نهاية تلقائياً بسبب فشل متتالي",
       endpointsAutoDisabled: "تم تعطيل نقاط نهاية تلقائياً بسبب فشل متتالي",
+      disabledCount: "{{count}} معطّل",
+      deliveredFailedBreakdown: "{{delivered}} ✓ · {{failed}} ✗",
+      avgLatency: "~{{ms}} مللي ثانية بالمتوسط",
     },
 
     // ─── التحليلات ───────────────────────────────────────────

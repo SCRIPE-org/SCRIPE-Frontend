@@ -34,36 +34,33 @@ export function GeneralSection({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Settings2 className="h-5 w-5 text-info" />
-          {t("oauthApps.generalSection") || "General"}
+          <Settings2 className="h-5 w-5 text-info" aria-hidden="true" />
+          {t("oauthApps.generalSection")}
         </CardTitle>
-        <CardDescription>
-          {t("oauthApps.generalSectionDesc") || "Basic application configuration"}
-        </CardDescription>
+        <CardDescription>{t("oauthApps.generalSectionDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Display Name */}
         <div className="space-y-2">
           <Label htmlFor="oauth-name">
-            {t("oauthApps.displayName") || "Application Name"}{" "}
-            <span className="text-destructive">*</span>
+            {t("oauthApps.displayName")} <span className="text-destructive">*</span>
           </Label>
           <Input
             id="oauth-name"
             value={form.displayName}
             onChange={(e) => updateField("displayName", e.target.value)}
-            placeholder={t("oauthApps.displayNamePlaceholder") || "e.g. Mobile App, Partner Portal"}
+            placeholder={t("oauthApps.displayNamePlaceholder")}
           />
         </div>
 
         {/* Description */}
         <div className="space-y-2">
-          <Label htmlFor="oauth-desc">{t("oauthApps.descriptionLabel") || "Description"}</Label>
+          <Label htmlFor="oauth-desc">{t("oauthApps.descriptionLabel")}</Label>
           <Textarea
             id="oauth-desc"
             value={form.description}
             onChange={(e) => updateField("description", e.target.value)}
-            placeholder={t("oauthApps.descriptionPlaceholder") || "What does this application do?"}
+            placeholder={t("oauthApps.descriptionPlaceholder")}
             className="min-h-[80px] resize-y"
           />
         </div>
@@ -72,20 +69,18 @@ export function GeneralSection({
         {isCreateMode && (
           <div className="space-y-2">
             <Label>
-              {t("oauthApps.clientType") || "Client Type"} <span className="text-destructive">*</span>
+              {t("oauthApps.clientType")} <span className="text-destructive">*</span>
             </Label>
             <GenericSelect
               value={form.clientType}
               onValueChange={(v: string | string[]) => updateField("clientType", v as string)}
               options={clientTypeOptions}
-              placeholder={t("oauthApps.selectClientType") || "Select type..."}
+              placeholder={t("oauthApps.selectClientType")}
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-nx-ink-3">
               {form.clientType === "confidential"
-                ? t("oauthApps.confidentialHelp") ||
-                  "Server-side apps that can securely store client secrets"
-                : t("oauthApps.publicHelp") ||
-                  "SPA or mobile apps that cannot securely store secrets — PKCE required"}
+                ? t("oauthApps.confidentialHelp")
+                : t("oauthApps.publicHelp")}
             </p>
           </div>
         )}
@@ -93,22 +88,28 @@ export function GeneralSection({
         {/* Client Type badge (edit mode — read only) */}
         {!isCreateMode && (
           <div className="flex items-center gap-2">
-            <Label className="text-sm">{t("oauthApps.clientType") || "Client Type"}:</Label>
+            <Label className="text-sm">{t("oauthApps.clientType")}:</Label>
             <Badge variant="outline" className="text-sm">
-              {form.clientType === "confidential" ? "Confidential" : "Public"}
+              {form.clientType === "confidential"
+                ? t("oauthApps.clientTypeConfidential")
+                : t("oauthApps.clientTypePublic")}
             </Badge>
           </div>
         )}
 
         {/* Active Toggle */}
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
           <div>
-            <Label className="text-sm font-medium">{t("common.active") || "Active"}</Label>
-            <p className="text-xs text-muted-foreground">
-              {t("oauthApps.activeHelp") || "Disabled apps cannot authenticate"}
-            </p>
+            <Label htmlFor="oauth-active" className="text-sm font-medium">
+              {t("common.active")}
+            </Label>
+            <p className="text-xs text-nx-ink-3">{t("oauthApps.activeHelp")}</p>
           </div>
-          <Switch checked={form.isActive} onCheckedChange={(v) => updateField("isActive", v)} />
+          <Switch
+            id="oauth-active"
+            checked={form.isActive}
+            onCheckedChange={(v) => updateField("isActive", v)}
+          />
         </div>
       </CardContent>
     </Card>

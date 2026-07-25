@@ -56,25 +56,28 @@ export function SamlEditTabs({ vm }: SamlEditTabsProps) {
 
   return (
     <Tabs defaultValue="saml_config" className="w-full space-y-6">
-      <TabsList className="grid w-full grid-cols-3 border bg-muted/40 p-1 md:inline-flex md:w-auto md:grid-cols-none">
+      <TabsList
+        variant="pill"
+        className="grid w-full grid-cols-3 md:inline-flex md:w-auto md:grid-cols-none"
+      >
         <TabsTrigger value="saml_config" className="gap-1.5 text-xs font-semibold">
-          <KeyRound className="h-3.5 w-3.5" />
-          {t("oauthApps.samlConfigSection") || "SAML Configuration"}
+          <KeyRound className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("oauthApps.samlConfigSection")}
         </TabsTrigger>
         <TabsTrigger value="idp_metadata" className="gap-1.5 text-xs font-semibold">
-          <Info className="h-3.5 w-3.5" />
-          {t("oauthApps.idpMetadataSection") || "IdP Metadata"}
+          <Info className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("oauthApps.idpMetadataSection")}
         </TabsTrigger>
         <TabsTrigger value="branding" className="gap-1.5 text-xs font-semibold">
-          <Palette className="h-3.5 w-3.5" />
-          {t("oauthApps.brandingSection") || "Branding"}
+          <Palette className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("oauthApps.brandingSection")}
         </TabsTrigger>
       </TabsList>
 
       {/* SAML Settings tab */}
       <TabsContent
         value="saml_config"
-        className="space-y-6 outline-none duration-200 animate-in fade-in"
+        className="space-y-6 outline-none duration-nx-standard animate-in fade-in"
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
@@ -97,7 +100,7 @@ export function SamlEditTabs({ vm }: SamlEditTabsProps) {
       {/* SAML metadata tab */}
       <TabsContent
         value="idp_metadata"
-        className="max-w-3xl outline-none duration-200 animate-in fade-in"
+        className="max-w-3xl outline-none duration-nx-standard animate-in fade-in"
       >
         <IdpMetadataSection />
       </TabsContent>
@@ -105,7 +108,7 @@ export function SamlEditTabs({ vm }: SamlEditTabsProps) {
       {/* SAML branding tab */}
       <TabsContent
         value="branding"
-        className="max-w-2xl space-y-6 outline-none duration-200 animate-in fade-in"
+        className="max-w-2xl space-y-6 outline-none duration-nx-standard animate-in fade-in"
       >
         <BrandingSection {...sectionProps} />
       </TabsContent>

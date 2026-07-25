@@ -1,22 +1,24 @@
 /**
  * CommissionChart
  * Line chart showing daily commission amount over a configurable period.
- * Uses recharts (already a SCRIPE dependency).
+ * Recharts via the shared @core/ui/chart foundation — colour comes from the
+ * fixed chart-token slots, never a raw hex/hsl literal.
  */
 "use client";
 
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-} from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
+import { SectionState } from "@core/ui/section-state";
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+  chartColor,
+  type ChartConfig,
+} from "@core/ui/chart";
 import type { CommissionTrendPoint } from "../../domain/entities/ConnectAccount";
 import type { TrendPeriod } from "../viewmodels/useCommissionDashboardViewModel";
 import { formatDateUtc } from "@core/common/utils";
@@ -26,14 +28,10 @@ interface CommissionChartProps {
   isLoading: boolean;
   trendDays: TrendPeriod;
   onChangePeriod: (days: TrendPeriod) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
-const PERIODS: { label: string; key: string; value: TrendPeriod }[] = [
-  { label: "30d", key: "filter30", value: 30 },
-  { label: "90d", key: "filter90", value: 90 },
-  { label: "365d", key: "filter365", value: 365 },
-];
+const PERIODS: readonly TrendPeriod[] = [30, 90, 365];
 
 const fmt = (n: number) =>
   new Intl.NumberFormat("en-US", {
@@ -42,8 +40,6 @@ const fmt = (n: number) =>
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(n);
-
-// Recharts Formatter has a complex overload intersection.
 
 /**
  * Presentation UI component rendering the commission chart.
@@ -56,6 +52,11 @@ export function CommissionChart({
   onChangePeriod,
   t,
 }: CommissionChartProps) {
+  const chartConfig: ChartConfig = {
+    amount: { label: t("entitlements.commissions.trendAmount"), color: chartColor(1) },
+    count: { label: t("entitlements.commissions.trendCount"), color: chartColor(4) },
+  };
+
   const chartData = trends.map((point) => ({
     date: formatDateUtc(point.date),
     amount: point.amount,
@@ -68,13 +69,15 @@ export function CommissionChart({
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <CardTitle className="text-base">{t("entitlements.commissions.trendTitle")}</CardTitle>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {t("entitlements.commissions.trendDesc")}
-            </p>
+            <CardDescription>{t("entitlements.commissions.trendDesc")}</CardDescription>
           </div>
           {/* Period selector */}
-          <div className="flex gap-1">
-            {PERIODS.map(({ label, value }) => (
+          <div
+            className="flex gap-1"
+            role="group"
+            aria-label={t("entitlements.commissions.filterDays")}
+          >
+            {PERIODS.map((value) => (
               <Button
                 key={value}
                 id={`trend-period-${value}`}
@@ -82,8 +85,9 @@ export function CommissionChart({
                 size="sm"
                 className="h-7 px-2 text-xs"
                 onClick={() => onChangePeriod(value)}
+                aria-pressed={trendDays === value}
               >
-                {label}
+                {t("entitlements.commissions.trendPeriodDays", { days: value })}
               </Button>
             ))}
           </div>
@@ -91,60 +95,34 @@ export function CommissionChart({
       </CardHeader>
 
       <CardContent>
-        {isLoading ? (
-          <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-            {t("common.loading") || "Loading..."}
-          </div>
-        ) : chartData.length === 0 ? (
-          <div className="flex h-48 items-center justify-center text-sm text-muted-foreground">
-            {t("entitlements.commissions.noData")}
-          </div>
-        ) : (
-          <ResponsiveContainer width="100%" height={220}>
+        <SectionState
+          isLoading={isLoading}
+          isEmpty={chartData.length === 0}
+          emptyMessage={t("entitlements.commissions.noData")}
+          height={220}
+        >
+          <ChartContainer config={chartConfig} className="h-[220px]">
             <LineChart data={chartData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-border" />
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis
                 dataKey="date"
-                tick={{ fontSize: 11 }}
+                className="text-xs"
                 tickLine={false}
                 axisLine={false}
                 interval="preserveStartEnd"
               />
               <YAxis
                 tickFormatter={fmt}
-                tick={{ fontSize: 11 }}
+                className="text-xs"
                 tickLine={false}
                 axisLine={false}
                 width={70}
               />
-              <Tooltip
-                formatter={(
-                  value: number | string | readonly (number | string)[] | undefined,
-                  name: string | number | undefined
-                ) => [
-                  name === "amount" ? fmt(Number(value) || 0) : Number(value) || 0,
-                  name === "amount"
-                    ? t("entitlements.commissions.trendAmount")
-                    : t("entitlements.commissions.trendCount"),
-                ]}
-                labelStyle={{ fontWeight: 600, marginBottom: 4 }}
-                contentStyle={{
-                  borderRadius: 8,
-                  border: "1px solid hsl(var(--border))",
-                  background: "hsl(var(--card))",
-                }}
-              />
-              <Legend
-                formatter={(value) =>
-                  value === "amount"
-                    ? t("entitlements.commissions.trendAmount")
-                    : t("entitlements.commissions.trendCount")
-                }
-              />
+              <ChartTooltip content={<ChartTooltipContent indicator="line" />} />
               <Line
                 type="monotone"
                 dataKey="amount"
-                stroke="hsl(var(--primary))"
+                stroke="var(--color-amount)"
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4 }}
@@ -152,15 +130,16 @@ export function CommissionChart({
               <Line
                 type="monotone"
                 dataKey="count"
-                stroke="hsl(215, 70%, 55%)"
+                stroke="var(--color-count)"
                 strokeWidth={1.5}
-                dot={false}
                 strokeDasharray="4 2"
+                dot={false}
                 activeDot={{ r: 3 }}
               />
+              <ChartLegend content={<ChartLegendContent />} />
             </LineChart>
-          </ResponsiveContainer>
-        )}
+          </ChartContainer>
+        </SectionState>
       </CardContent>
     </Card>
   );

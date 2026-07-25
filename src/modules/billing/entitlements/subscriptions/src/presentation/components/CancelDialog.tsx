@@ -10,13 +10,13 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@core/ui/alert-dialog";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import type { SubscriptionDialogProps } from "../types";
@@ -30,37 +30,41 @@ export function CancelDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
 
   return (
-    <Dialog open={vm.showCancelDialog} onOpenChange={vm.setShowCancelDialog}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("entSubscriptions.cancel") || "Cancel Subscription"}</DialogTitle>
-          <DialogDescription>
-            {t("entSubscriptions.cancelDesc") || "Permanently cancel this subscription."}
-          </DialogDescription>
-        </DialogHeader>
+    <AlertDialog open={vm.showCancelDialog} onOpenChange={vm.setShowCancelDialog}>
+      <AlertDialogContent
+        // A cancel in flight stops being dismissable: Escape used to be able
+        // to close this over a pending mutation with no UI left to report
+        // whether the cancellation actually completed.
+        onEscapeKeyDown={(event) => {
+          if (vm.isCanceling) event.preventDefault();
+        }}
+      >
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("entSubscriptions.cancel")}</AlertDialogTitle>
+          <AlertDialogDescription>{t("entSubscriptions.cancelDesc")}</AlertDialogDescription>
+        </AlertDialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>{t("entSubscriptions.reason") || "Reason (optional)"}</Label>
+            <Label>{t("entSubscriptions.reason")}</Label>
             <Textarea
               value={vm.cancelReason}
               onChange={(e) => vm.setCancelReason(e.target.value)}
-              placeholder={
-                t("entSubscriptions.cancelReasonPlaceholder") || "Why are you canceling?"
-              }
+              placeholder={t("entSubscriptions.cancelReasonPlaceholder")}
               rows={3}
+              disabled={vm.isCanceling}
             />
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Checkbox
               id="use-fallback-cancel"
               checked={vm.useFallback}
               onCheckedChange={(v) => vm.setUseFallback(!!v)}
+              disabled={vm.isCanceling}
             />
             <Label htmlFor="use-fallback-cancel" className="text-sm font-normal">
-              {t("entSubscriptions.useFallback") ||
-                "Downgrade to fallback edition instead of full cancel"}
+              {t("entSubscriptions.useFallback")}
             </Label>
           </div>
 
@@ -73,15 +77,19 @@ export function CancelDialog({ vm }: SubscriptionDialogProps) {
           />
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => vm.setShowCancelDialog(false)}>
+        <AlertDialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => vm.setShowCancelDialog(false)}
+            disabled={vm.isCanceling}
+          >
             {t("common.cancel")}
           </Button>
           <Button variant="destructive" onClick={vm.submitCancel} loading={vm.isCanceling}>
-            {t("entSubscriptions.cancel") || "Cancel Subscription"}
+            {t("entSubscriptions.cancel")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

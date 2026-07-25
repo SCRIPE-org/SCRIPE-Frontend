@@ -19,23 +19,25 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { Skeleton } from "@core/ui/skeleton";
+import { PageHeader } from "@core/ui/page-header";
+import { DetailRow } from "@core/ui/detail-row";
+import { EmptyState } from "@core/ui/empty-state";
+import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import {
   ArrowLeft,
+  Webhook as WebhookIcon,
   Globe,
   ToggleLeft,
   ToggleRight,
   Pencil,
   Trash2,
   Zap,
-  Clock,
   AlertTriangle,
-  Copy,
-  Check,
   BarChart3,
   Skull,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { formatDateTimeUtc, formatDateUtc } from "@core/common/utils";
 import { DeleteWebhookDialog } from "../components/DeleteWebhookDialog";
 import { TestPingButton } from "../components/TestPingButton";
@@ -46,6 +48,17 @@ import { WebhookForm } from "../components/WebhookForm";
 interface WebhookDetailViewProps {
   webhookId: string;
 }
+
+// Scope is read through our own locale keys rather than the domain entity's
+// `scopeLabel` getter, which returns English text baked into the entity —
+// this view stays bilingual by construction instead of depending on a
+// domain-layer string.
+const SCOPE_LABEL_KEYS: Record<string, string> = {
+  platform_only: "webhooks.scope.platformOnly",
+  all_tenants: "webhooks.scope.allTenants",
+  tenant_only: "webhooks.scope.tenantOnly",
+  tenant_with_children: "webhooks.scope.tenantWithChildren",
+};
 
 /**
  * Presentation UI component rendering the webhook detail view.
@@ -58,33 +71,24 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [copiedUrl, setCopiedUrl] = useState(false);
-
-  const handleCopyUrl = useCallback(() => {
-    if (vm.webhook?.url) {
-      navigator.clipboard.writeText(vm.webhook.url);
-      setCopiedUrl(true);
-      setTimeout(() => setCopiedUrl(false), 2000);
-    }
-  }, [vm.webhook]);
 
   // ─── Loading state ────────────────────────────────────────
   if (vm.isLoading) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Skeleton className="h-10 w-10 rounded-lg" />
+          <Skeleton shape="circle" className="h-12 w-12" />
           <div className="space-y-2">
-            <Skeleton className="h-6 w-64" />
-            <Skeleton className="h-4 w-96" />
+            <Skeleton shape="title" className="w-64" />
+            <Skeleton shape="text" className="w-96" />
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 rounded-xl" />
+            <Skeleton key={i} className="h-28 rounded-nx-lg" />
           ))}
         </div>
-        <Skeleton className="h-96 rounded-xl" />
+        <Skeleton className="h-96 rounded-nx-lg" />
       </div>
     );
   }
@@ -92,296 +96,252 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
   // ─── Error / Not found ────────────────────────────────────
   if (vm.error || !vm.webhook) {
     return (
-      <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
-        <AlertTriangle className="h-16 w-16 text-muted-foreground" />
-        <h2 className="text-xl font-semibold">{t("webhooks.notFound") || "Webhook Not Found"}</h2>
-        <p className="text-muted-foreground">
-          {vm.error?.message ||
-            t("webhooks.notFoundDesc") ||
-            "The requested webhook could not be found."}
-        </p>
-        <Button variant="outline" onClick={() => router.push("/integrations/webhooks")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          {t("common.back") || "Back"}
-        </Button>
+      <div className="flex min-h-[50vh] items-center justify-center">
+        <EmptyState
+          bare
+          size="lg"
+          icon={AlertTriangle}
+          title={t("webhooks.notFound")}
+          description={vm.error?.message || t("webhooks.notFoundDesc")}
+          action={
+            <Button variant="outline" onClick={() => router.push("/integrations/webhooks")}>
+              <ArrowLeft className="me-2 h-4 w-4" aria-hidden="true" />
+              {t("common.back")}
+            </Button>
+          }
+        />
       </div>
     );
   }
 
   const webhook = vm.webhook;
   const isAutoDisabled = webhook.isAutoDisabled;
+  const scopeLabelKey = SCOPE_LABEL_KEYS[webhook.scope];
 
   return (
-    <div className="space-y-6">
+    <Tabs
+      value={vm.activeTab}
+      onValueChange={vm.setActiveTab}
+      className="flex flex-col"
+      style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}
+    >
       {/* ─── Header ──────────────────────────────────────────── */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div className="flex items-start gap-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="mt-1 shrink-0"
-            onClick={() => router.push("/integrations/webhooks")}
-          >
-            <ArrowLeft className="h-4 w-4" />
+      <PageHeader
+        className="mb-0"
+        icon={WebhookIcon}
+        eyebrow={
+          <Button variant="ghost" size="sm" onClick={() => router.push("/integrations/webhooks")}>
+            <ArrowLeft className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+            {t("common.back")}
           </Button>
-
-          <div className="min-w-0 space-y-1.5">
-            <div className="flex flex-wrap items-center gap-3">
-              <h1 className="text-2xl font-bold tracking-tight">
-                {webhook.description || t("webhooks.untitled") || "Untitled Webhook"}
-              </h1>
-              <WebhookStatusBadge isActive={webhook.isActive} isAutoDisabled={isAutoDisabled} />
-            </div>
-
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Globe className="h-3.5 w-3.5" />
-              <code className="max-w-[400px] truncate rounded-md bg-muted px-2 py-0.5 text-xs">
-                {webhook.url}
-              </code>
-              <Button variant="ghost" size="icon" className="h-6 w-6" onClick={handleCopyUrl}>
-                {copiedUrl ? (
-                  <Check className="h-3 w-3 text-success" />
+        }
+        title={webhook.description || t("webhooks.untitled")}
+        badges={<WebhookStatusBadge isActive={webhook.isActive} isAutoDisabled={isAutoDisabled} />}
+        meta={[
+          { label: t("common.created"), value: formatDateTimeUtc(webhook.createdAt) },
+          {
+            label: t("webhooks.lastDelivery"),
+            value: webhook.lastDeliveryAt ? formatDateUtc(webhook.lastDeliveryAt) : "—",
+          },
+        ]}
+        actions={
+          <>
+            <TestPingButton
+              onTest={vm.testPing}
+              isTesting={vm.isTesting}
+              testResult={vm.testResult}
+              onDismiss={vm.clearTestResult}
+            />
+            <Button variant="outline" size="sm" onClick={vm.toggle} loading={vm.isToggling}>
+              {!vm.isToggling &&
+                (webhook.isActive ? (
+                  <ToggleRight className="me-1.5 h-4 w-4 text-success" aria-hidden="true" />
                 ) : (
-                  <Copy className="h-3 w-3" />
-                )}
-              </Button>
-            </div>
-
-            <div className="flex items-center gap-3 text-xs text-muted-foreground">
-              <span>
-                {t("common.created") || "Created"}{" "}
-                {formatDateTimeUtc(webhook.createdAt)}
-              </span>
-              {webhook.lastDeliveryAt && (
-                <>
-                  <span>•</span>
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    {t("webhooks.lastDelivery") || "Last delivery"}{" "}
-                    {formatDateUtc(webhook.lastDeliveryAt)}
-                  </span>
-                </>
+                  <ToggleLeft className="me-1.5 h-4 w-4" aria-hidden="true" />
+                ))}
+              {webhook.isActive ? t("webhooks.deactivate") : t("webhooks.activate")}
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(true)}>
+              <Pencil className="me-1.5 h-4 w-4" aria-hidden="true" />
+              {t("common.edit")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              onClick={() => setDeleteDialogOpen(true)}
+            >
+              <Trash2 className="me-1.5 h-4 w-4" aria-hidden="true" />
+              {t("common.delete")}
+            </Button>
+          </>
+        }
+        tabs={
+          <TabsList>
+            <TabsTrigger value="overview">{t("webhooks.overview")}</TabsTrigger>
+            <TabsTrigger value="deliveries">
+              {t("webhooks.deliveryLog")}
+              {vm.deliveryTotalCount > 0 && (
+                <Badge variant="secondary" className="ms-1.5 h-5 min-w-[20px] px-1.5 text-xs">
+                  {vm.deliveryTotalCount}
+                </Badge>
               )}
-            </div>
-          </div>
-        </div>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-1.5">
+              <BarChart3 className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("webhooks.analytics.tab")}
+            </TabsTrigger>
+            <TabsTrigger value="dead-letters" className="gap-1.5">
+              <Skull className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("webhooks.deadLetters.tab")}
+              {vm.deadLetterTotalCount > 0 && (
+                <Badge variant="destructive" className="ms-1 h-5 min-w-[20px] px-1.5 text-xs">
+                  {vm.deadLetterTotalCount}
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+        }
+      />
 
-        {/* Header Actions */}
-        <div className="flex shrink-0 items-center gap-2">
-          <TestPingButton
-            onTest={vm.testPing}
-            isTesting={vm.isTesting}
-            testResult={vm.testResult}
-            onDismiss={vm.clearTestResult}
-          />
-
-          <Button variant="outline" size="sm" onClick={vm.toggle} disabled={vm.isToggling}>
-            {webhook.isActive ? (
-              <ToggleRight className="mr-1.5 h-4 w-4 text-success" />
-            ) : (
-              <ToggleLeft className="mr-1.5 h-4 w-4" />
-            )}
-            {webhook.isActive
-              ? t("webhooks.deactivate") || "Deactivate"
-              : t("webhooks.activate") || "Activate"}
-          </Button>
-
-          <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(true)}>
-            <Pencil className="mr-1.5 h-4 w-4" />
-            {t("common.edit") || "Edit"}
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-            onClick={() => setDeleteDialogOpen(true)}
-          >
-            <Trash2 className="mr-1.5 h-4 w-4" />
-            {t("common.delete") || "Delete"}
-          </Button>
-        </div>
+      {/* ─── Endpoint identity ───────────────────────────────── */}
+      <div className="rounded-nx-lg border border-nx-line bg-nx-surface p-4">
+        <DetailRow
+          icon={Globe}
+          label={t("webhooks.url")}
+          value={webhook.url}
+          mono
+          copyable={webhook.url}
+        />
       </div>
 
       {/* ─── Auto-disabled Warning ───────────────────────────── */}
       {isAutoDisabled && (
-        <div className="flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/10 p-4">
-          <AlertTriangle className="h-5 w-5 shrink-0 text-warning" />
-          <div className="text-sm">
-            <p className="font-medium text-warning">
-              {t("webhooks.autoDisabledTitle") || "Webhook Auto-Disabled"}
-            </p>
-            <p className="text-warning">
-              {t("webhooks.autoDisabledGeneric") ||
-                "This webhook was automatically disabled due to consecutive delivery failures. Click 'Activate' to re-enable."}
-            </p>
-          </div>
-        </div>
+        <Alert variant="warning">
+          <AlertTriangle aria-hidden="true" />
+          <AlertTitle>{t("webhooks.autoDisabledTitle")}</AlertTitle>
+          <AlertDescription>{t("webhooks.autoDisabledGeneric")}</AlertDescription>
+        </Alert>
       )}
 
       {/* ─── Stats Cards ─────────────────────────────────────── */}
       <WebhookStatsCards webhook={webhook} />
 
-      {/* ─── Tabs ─────────────────────────────────────────────── */}
-      <Tabs value={vm.activeTab} onValueChange={vm.setActiveTab}>
-        <TabsList className="bg-muted/50">
-          <TabsTrigger value="overview">{t("webhooks.overview") || "Overview"}</TabsTrigger>
-          <TabsTrigger value="deliveries">
-            {t("webhooks.deliveryLog") || "Delivery Log"}
-            {vm.deliveryTotalCount > 0 && (
-              <Badge variant="secondary" className="ml-1.5 h-5 min-w-[20px] px-1.5 text-xs">
-                {vm.deliveryTotalCount}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="analytics" className="gap-1.5">
-            <BarChart3 className="h-3.5 w-3.5" />
-            {t("webhooks.analytics.tab") || "Analytics"}
-          </TabsTrigger>
-          <TabsTrigger value="dead-letters" className="gap-1.5">
-            <Skull className="h-3.5 w-3.5" />
-            {t("webhooks.deadLetters.tab") || "Dead Letters"}
-            {vm.deadLetterTotalCount > 0 && (
-              <Badge variant="destructive" className="ml-1 h-5 min-w-[20px] px-1.5 text-xs">
-                {vm.deadLetterTotalCount}
-              </Badge>
-            )}
-          </TabsTrigger>
-        </TabsList>
-
-        {/* ─── Overview Tab ─────────────────────────────────── */}
-        <TabsContent value="overview" className="mt-6 space-y-6">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Events Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                  <Zap className="h-4 w-4 text-warning" />
-                  {t("webhooks.subscribedEvents") || "Subscribed Events"}
-                </CardTitle>
-                <CardDescription>
-                  {t("webhooks.subscribedEventsDesc") || "Events that trigger this webhook"}
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {webhook.events.map((event) => (
-                    <div key={event} className="flex flex-col items-start gap-0.5">
-                      <Badge variant="outline" className="gap-1.5 px-2.5 py-1 text-xs">
-                        <Zap className="h-2.5 w-2.5 text-warning" />
-                        {(t(`webhooks.eventNames.${event}`) || event) as string}
-                      </Badge>
-                      <span className="px-1 font-mono text-[10px] text-muted-foreground">
-                        {event}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Configuration Card */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">
-                  {t("webhooks.configuration") || "Configuration"}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="mb-1 text-xs text-muted-foreground">
-                      {t("webhooks.maxRetries") || "Max Retries"}
-                    </p>
-                    <p className="text-sm font-medium">{webhook.maxRetries}</p>
-                  </div>
-                  <div>
-                    <p className="mb-1 text-xs text-muted-foreground">
-                      {t("webhooks.maxConsecutiveFailures") || "Auto-disable After"}
-                    </p>
-                    <p className="text-sm font-medium">
-                      {webhook.maxConsecutiveFailures}{" "}
-                      {t("webhooks.consecutiveFailuresLabel") || "failures"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mb-1 text-xs text-muted-foreground">
-                      {t("webhooks.currentFailures") || "Current Failures"}
-                    </p>
-                    <p
-                      className={`text-sm font-medium ${
-                        webhook.consecutiveFailures > 0 ? "text-warning" : "text-success"
-                      }`}
-                    >
-                      {webhook.consecutiveFailures}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mb-1 text-xs text-muted-foreground">
-                      {t("webhooks.lastStatus") || "Last Status"}
-                    </p>
-                    <p className="text-sm font-medium">{webhook.lastDeliveryStatus || "—"}</p>
-                  </div>
-                  <div>
-                    <p className="mb-1 text-xs text-muted-foreground">
-                      {t("webhooks.scope.label") || "Scope"}
-                    </p>
-                    <Badge variant="outline" className="text-xs">
-                      {webhook.scopeLabel || webhook.scope}
+      {/* ─── Overview Tab ─────────────────────────────────── */}
+      <TabsContent value="overview" className="space-y-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          {/* Events Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-4 w-4 text-warning" aria-hidden="true" />
+                {t("webhooks.subscribedEvents")}
+              </CardTitle>
+              <CardDescription>{t("webhooks.subscribedEventsDesc")}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-2">
+                {webhook.events.map((event) => (
+                  <div key={event} className="flex flex-col items-start gap-0.5">
+                    <Badge variant="outline" className="gap-1.5 px-2.5 py-1 text-xs">
+                      <Zap className="h-2.5 w-2.5 text-warning" aria-hidden="true" />
+                      {(t(`webhooks.eventNames.${event}`) || event) as string}
                     </Badge>
+                    <span className="px-1 font-mono text-[10px] text-nx-ink-3">{event}</span>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Secret Panel */}
-          <WebhookSecretPanel
-            secret={webhook.secret}
-            hasPreviousSecret={webhook.hasPreviousSecret}
-            previousSecretExpiresAt={webhook.previousSecretExpiresAt}
-            isVisible={vm.isSecretVisible}
-            onToggleVisibility={vm.toggleSecretVisibility}
-            onRotate={vm.rotateSecret}
-            isRotating={vm.isRotating}
-          />
-        </TabsContent>
+          {/* Configuration Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle>{t("webhooks.configuration")}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-4">
+                <DetailRow
+                  layout="stacked"
+                  label={t("webhooks.maxRetries")}
+                  value={webhook.maxRetries}
+                />
+                <DetailRow
+                  layout="stacked"
+                  label={t("webhooks.maxConsecutiveFailures")}
+                  value={`${webhook.maxConsecutiveFailures} ${t("webhooks.consecutiveFailuresLabel")}`}
+                />
+                <DetailRow
+                  layout="stacked"
+                  label={t("webhooks.currentFailures")}
+                  value={webhook.consecutiveFailures}
+                  valueClassName={webhook.consecutiveFailures > 0 ? "text-warning" : "text-success"}
+                />
+                <DetailRow
+                  layout="stacked"
+                  label={t("webhooks.lastStatus")}
+                  value={webhook.lastDeliveryStatus || "—"}
+                />
+                <DetailRow
+                  layout="stacked"
+                  label={t("webhooks.scope.label")}
+                  value={
+                    <Badge variant="outline" className="text-xs">
+                      {scopeLabelKey ? t(scopeLabelKey) : webhook.scope}
+                    </Badge>
+                  }
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* ─── Delivery Log Tab ──────────────────────────────── */}
-        <TabsContent value="deliveries" className="mt-6">
-          <DeliveryLogTable
-            logs={vm.deliveryLogs}
-            page={vm.deliveryPage}
-            pageSize={vm.deliveryPageSize}
-            totalCount={vm.deliveryTotalCount}
-            onPageChange={vm.setDeliveryPage}
-            filter={vm.deliveryFilter}
-            onFilterChange={vm.setDeliveryFilter}
-            isLoading={vm.isLoadingDeliveries}
-          />
-        </TabsContent>
+        {/* Secret Panel */}
+        <WebhookSecretPanel
+          secret={webhook.secret}
+          hasPreviousSecret={webhook.hasPreviousSecret}
+          previousSecretExpiresAt={webhook.previousSecretExpiresAt}
+          isVisible={vm.isSecretVisible}
+          onToggleVisibility={vm.toggleSecretVisibility}
+          onRotate={vm.rotateSecret}
+          isRotating={vm.isRotating}
+        />
+      </TabsContent>
 
-        {/* ─── Analytics Tab (Phase 7) ────────────────────────── */}
-        <TabsContent value="analytics" className="mt-6">
-          <WebhookAnalyticsChart analytics={vm.analytics} isLoading={vm.isLoadingAnalytics} />
-        </TabsContent>
+      {/* ─── Delivery Log Tab ──────────────────────────────── */}
+      <TabsContent value="deliveries">
+        <DeliveryLogTable
+          logs={vm.deliveryLogs}
+          page={vm.deliveryPage}
+          pageSize={vm.deliveryPageSize}
+          totalCount={vm.deliveryTotalCount}
+          onPageChange={vm.setDeliveryPage}
+          filter={vm.deliveryFilter}
+          onFilterChange={vm.setDeliveryFilter}
+          isLoading={vm.isLoadingDeliveries}
+        />
+      </TabsContent>
 
-        {/* ─── Dead Letters Tab (Phase 7) ─────────────────────── */}
-        <TabsContent value="dead-letters" className="mt-6">
-          <DeadLetterQueue
-            logs={vm.deadLetters}
-            page={vm.dlqPage}
-            pageSize={vm.dlqPageSize}
-            totalCount={vm.deadLetterTotalCount}
-            onPageChange={vm.setDlqPage}
-            onReplay={vm.replayDeadLetter}
-            onReplayAll={vm.replayAllDeadLetters}
-            isReplaying={vm.isReplaying}
-            isReplayingAll={vm.isReplayingAll}
-            isLoading={vm.isLoadingDeadLetters}
-          />
-        </TabsContent>
-      </Tabs>
+      {/* ─── Analytics Tab (Phase 7) ────────────────────────── */}
+      <TabsContent value="analytics">
+        <WebhookAnalyticsChart analytics={vm.analytics} isLoading={vm.isLoadingAnalytics} />
+      </TabsContent>
+
+      {/* ─── Dead Letters Tab (Phase 7) ─────────────────────── */}
+      <TabsContent value="dead-letters">
+        <DeadLetterQueue
+          logs={vm.deadLetters}
+          page={vm.dlqPage}
+          pageSize={vm.dlqPageSize}
+          totalCount={vm.deadLetterTotalCount}
+          onPageChange={vm.setDlqPage}
+          onReplay={vm.replayDeadLetter}
+          onReplayAll={vm.replayAllDeadLetters}
+          isReplaying={vm.isReplaying}
+          isReplayingAll={vm.isReplayingAll}
+          isLoading={vm.isLoadingDeadLetters}
+        />
+      </TabsContent>
 
       {/* ─── Edit Dialog ─────────────────────────────────────── */}
       <WebhookForm
@@ -396,11 +356,9 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
       <DeleteWebhookDialog
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        onConfirm={() => {
-          vm.remove();
-          setDeleteDialogOpen(false);
-        }}
+        onConfirm={vm.remove}
+        isLoading={vm.isDeleting}
       />
-    </div>
+    </Tabs>
   );
 }

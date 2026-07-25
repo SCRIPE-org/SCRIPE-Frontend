@@ -3,7 +3,7 @@
  * Platform-wide commission analytics page.
  *
  * Layout:
- *   [Header]
+ *   [PageHeader]
  *   [CommissionKpiCards]    — 6 KPI stat cards
  *   [CommissionChart]       — daily trend line chart
  *   [Top Tenants table]     — highest revenue tenants
@@ -20,8 +20,10 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useCommissionDashboardViewModel } from "../viewmodels/useCommissionDashboardViewModel";
 import { CommissionKpiCards } from "../components/CommissionKpiCards";
 import { CommissionChart } from "../components/CommissionChart";
+import { PageHeader } from "@core/ui/page-header";
+import { SectionState } from "@core/ui/section-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { BarChart3 } from "lucide-react";
 
 /**
@@ -41,91 +43,81 @@ export function CommissionDashboardView() {
     }).format(n);
 
   return (
-    <div className="space-y-6 p-6">
-      {/* Page Header */}
-      <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-          <BarChart3 className="h-6 w-6 text-primary" />
-          {t("entitlements.commissions.title")}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t("entitlements.commissions.description")}
-        </p>
-      </div>
+    <div className="p-6">
+      <PageHeader
+        icon={BarChart3}
+        title={t("entitlements.commissions.title")}
+        description={t("entitlements.commissions.description")}
+      />
 
-      {/* KPI Cards */}
-      <CommissionKpiCards dashboard={vm.dashboard} isLoading={vm.isDashboardLoading} t={t} />
+      <div className="space-y-6">
+        {/* KPI Cards */}
+        <CommissionKpiCards dashboard={vm.dashboard} isLoading={vm.isDashboardLoading} t={t} />
 
-      {/* Trend Chart + Top Tenants — side by side on large screens */}
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
-        {/* Chart takes 2/3 */}
-        <div className="xl:col-span-2">
-          <CommissionChart
-            trends={vm.trends}
-            isLoading={vm.isTrendsLoading}
-            trendDays={vm.trendDays}
-            onChangePeriod={vm.setTrendDays}
-            t={t}
-          />
-        </div>
+        {/* Trend Chart + Top Tenants — side by side on large screens */}
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+          {/* Chart takes 2/3 */}
+          <div className="xl:col-span-2">
+            <CommissionChart
+              trends={vm.trends}
+              isLoading={vm.isTrendsLoading}
+              trendDays={vm.trendDays}
+              onChangePeriod={vm.setTrendDays}
+              t={t}
+            />
+          </div>
 
-        {/* Top Tenants takes 1/3 */}
-        <div className="xl:col-span-1">
-          <Card className="h-full">
-            <CardHeader>
-              <CardTitle className="text-base">
-                {t("entitlements.commissions.topTenantsTitle")}
-              </CardTitle>
-              <p className="text-xs text-muted-foreground">
-                {t("entitlements.commissions.topTenantsDesc")}
-              </p>
-            </CardHeader>
-            <CardContent className="p-0">
-              {vm.isTopTenantsLoading ? (
-                <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-                  {t("common.loading") || "Loading..."}
-                </div>
-              ) : vm.topTenants.length === 0 ? (
-                <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
-                  {t("entitlements.commissions.noData")}
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="text-xs">
-                        {t("entitlements.commissions.topTenantId")}
-                      </TableHead>
-                      <TableHead className="text-right text-xs">
-                        {t("entitlements.commissions.topTenantTotal")}
-                      </TableHead>
-                      <TableHead className="text-right text-xs">
-                        {t("entitlements.commissions.topTenantCount")}
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {vm.topTenants.map((tenant, idx) => (
-                      <TableRow key={tenant.tenantId}>
-                        <TableCell className="max-w-[100px] truncate font-mono text-xs">
-                          <span className="mr-1.5 tabular-nums text-muted-foreground">
-                            {idx + 1}.
-                          </span>
-                          {tenant.tenantId}
-                        </TableCell>
-                        <TableCell className="text-right text-xs font-medium tabular-nums">
-                          {fmt(tenant.totalCommission)}
-                        </TableCell>
-                        <TableCell className="text-right text-xs tabular-nums text-muted-foreground">
-                          {new Intl.NumberFormat("en-US").format(tenant.transactionCount)}
-                        </TableCell>
+          {/* Top Tenants takes 1/3 */}
+          <div className="xl:col-span-1">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="text-base">
+                  {t("entitlements.commissions.topTenantsTitle")}
+                </CardTitle>
+                <CardDescription>{t("entitlements.commissions.topTenantsDesc")}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <SectionState
+                  isLoading={vm.isTopTenantsLoading}
+                  isEmpty={vm.topTenants.length === 0}
+                  emptyMessage={t("entitlements.commissions.noData")}
+                  height={200}
+                  skeletonType="rows"
+                  skeletonRows={5}
+                >
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>{t("entitlements.commissions.topTenantId")}</TableHead>
+                        <TableHead variant="numeric">
+                          {t("entitlements.commissions.topTenantTotal")}
+                        </TableHead>
+                        <TableHead variant="numeric">
+                          {t("entitlements.commissions.topTenantCount")}
+                        </TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+                    </TableHeader>
+                    <TableBody>
+                      {vm.topTenants.map((tenant, idx) => (
+                        <TableRow key={tenant.tenantId}>
+                          <TableCell className="max-w-[100px] truncate font-mono text-xs">
+                            <span className="me-1.5 tabular-nums text-nx-ink-3">{idx + 1}.</span>
+                            {tenant.tenantId}
+                          </TableCell>
+                          <TableCell variant="numeric" className="text-xs font-medium">
+                            {fmt(tenant.totalCommission)}
+                          </TableCell>
+                          <TableCell variant="numeric" className="text-xs text-nx-ink-3">
+                            {new Intl.NumberFormat("en-US").format(tenant.transactionCount)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </SectionState>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </div>

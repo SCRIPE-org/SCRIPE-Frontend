@@ -3,12 +3,13 @@
  *
  * Displays the generated payment link with QR code,
  * copy-to-clipboard, open-in-browser actions,
- * and a session expiry countdown timer (L-12).
+ * and a session expiry countdown timer.
  */
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import { Button } from "@core/ui/button";
 import {
   Dialog,
@@ -66,6 +67,13 @@ function formatPad(n: number) {
  */
 export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
+  // KNOWN GAP: the gateway never hands this dialog a server-issued expiry
+  // timestamp (no `checkoutExpiresAt` exists on SubscriptionsVM, and the
+  // viewmodel/repository/mapper that would need to carry one live outside
+  // this package). The countdown below still measures 24h from the moment
+  // THIS dialog opens rather than from when the gateway actually issued the
+  // session, so a session reopened after being left idle will show more time
+  // remaining than the gateway will actually honor.
   const countdown = useCountdown(vm.showCheckoutDialog);
 
   const handleCopyLink = useCallback(() => {
@@ -79,74 +87,78 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <CreditCard className="h-5 w-5 text-primary" />
-            {t("billing.dialogs.checkoutTitle") || "Payment Link Generated"}
+            <CreditCard className="h-5 w-5 text-nx-accent" aria-hidden="true" />
+            {t("billing.dialogs.checkoutTitle")}
           </DialogTitle>
-          <DialogDescription>
-            {t("billing.dialogs.checkoutDescription") || "Share this payment link with the tenant."}
-          </DialogDescription>
+          <DialogDescription>{t("billing.dialogs.checkoutDescription")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          {/* Session expiry timer (L-12) */}
+          {/* Session expiry timer */}
           <div
-            className={`flex items-center gap-2 rounded-lg border px-3 py-2 ${
+            className={cn(
+              "flex items-center gap-2 rounded-nx-md border px-3 py-2",
               countdown.isExpired
                 ? "border-destructive/30 bg-destructive/10"
                 : countdown.isUrgent
                   ? "border-warning/30 bg-warning/10"
-                  : "border-border bg-muted/50"
-            }`}
+                  : "border-nx-line bg-nx-raised"
+            )}
           >
             <Clock
-              className={`h-4 w-4 shrink-0 ${
+              className={cn(
+                "h-4 w-4 shrink-0",
                 countdown.isExpired
                   ? "text-destructive"
                   : countdown.isUrgent
                     ? "text-warning"
-                    : "text-muted-foreground"
-              }`}
+                    : "text-nx-ink-3"
+              )}
+              aria-hidden="true"
             />
             <span
-              className={`font-mono text-sm tabular-nums ${
+              className={cn(
+                "font-mono text-sm tabular-nums",
                 countdown.isExpired
                   ? "text-destructive"
                   : countdown.isUrgent
                     ? "text-warning"
-                    : "text-muted-foreground"
-              }`}
+                    : "text-nx-ink-3"
+              )}
             >
               {countdown.isExpired
-                ? t("billing.dialogs.sessionExpired") || "Session expired — generate a new link"
-                : `${t("billing.dialogs.expiresIn") || "Expires in"} ${formatPad(countdown.hours)}:${formatPad(countdown.minutes)}:${formatPad(countdown.seconds)}`}
+                ? t("billing.dialogs.sessionExpired")
+                : `${t("billing.dialogs.expiresIn")} ${formatPad(countdown.hours)}:${formatPad(countdown.minutes)}:${formatPad(countdown.seconds)}`}
             </span>
           </div>
 
           {/* Email sent indicator */}
           {vm.checkoutEmailSent && (
-            <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/10 px-3 py-2">
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-              <span className="text-sm text-success">
-                {t("billing.dialogs.emailSent") ||
-                  "Payment link has been emailed to the tenant admin."}
-              </span>
+            <div className="flex items-center gap-2 rounded-nx-md border border-success/30 bg-success/10 px-3 py-2">
+              <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+              <span className="text-sm text-success">{t("billing.dialogs.emailSent")}</span>
             </div>
           )}
 
           {/* QR Code */}
           {vm.checkoutQrCode && (
             <div className="flex flex-col items-center gap-2">
-              <p className="text-xs text-muted-foreground">
-                {t("billing.dialogs.scanQrCode") || "Scan to open payment page"}
-              </p>
-              <div className="rounded-xl border bg-white p-3 shadow-sm">
-                <img src={vm.checkoutQrCode} alt="Payment QR Code" className="h-48 w-48" />
+              <p className="text-xs text-nx-ink-3">{t("billing.dialogs.scanQrCode")}</p>
+              {/* The plate is pinned to the one ink-neutral surface rather
+                  than an nx step — a QR scanner needs guaranteed maximum
+                  contrast against the code regardless of the active theme. */}
+              <div className="rounded-nx-lg border border-nx-line bg-[var(--nx-on-fill)] p-3 shadow-nx-sm">
+                <img
+                  src={vm.checkoutQrCode}
+                  alt={t("billing.dialogs.qrCodeAlt")}
+                  className="h-48 w-48"
+                />
               </div>
             </div>
           )}
 
           {/* Payment URL */}
-          <div className="flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
+          <div className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-3">
             <Input
               readOnly
               value={vm.checkoutUrl}
@@ -162,16 +174,16 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
             className="gap-2"
             disabled={countdown.isExpired}
           >
-            <Copy className="h-4 w-4" />
-            {t("billing.actions.copyLink") || "Copy Link"}
+            <Copy className="h-4 w-4" aria-hidden="true" />
+            {t("billing.actions.copyLink")}
           </Button>
           <Button
             onClick={() => window.open(vm.checkoutUrl, "_blank")}
             className="gap-2"
             disabled={countdown.isExpired}
           >
-            <ExternalLink className="h-4 w-4" />
-            {t("billing.actions.openLink") || "Open Link"}
+            <ExternalLink className="h-4 w-4" aria-hidden="true" />
+            {t("billing.actions.openLink")}
           </Button>
         </DialogFooter>
       </DialogContent>

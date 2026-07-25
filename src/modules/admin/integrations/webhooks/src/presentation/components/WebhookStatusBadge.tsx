@@ -24,35 +24,26 @@ export function WebhookStatusBadge({ isActive, isAutoDisabled = false }: Webhook
 
   if (isAutoDisabled) {
     return (
-      <Badge
-        variant="outline"
-        className="gap-1 border-warning/30 bg-warning/10 text-warning"
-      >
-        <AlertTriangle className="h-3 w-3" />
-        {t("webhooks.status.autoDisabled") || "Auto-disabled"}
+      <Badge variant="warning" className="gap-1">
+        <AlertTriangle className="h-3 w-3" aria-hidden="true" />
+        {t("webhooks.status.autoDisabled")}
       </Badge>
     );
   }
 
   if (isActive) {
     return (
-      <Badge
-        variant="outline"
-        className="gap-1 border-success/30 bg-success/10 text-success"
-      >
-        <CheckCircle2 className="h-3 w-3" />
-        {t("webhooks.status.active") || "Active"}
+      <Badge variant="success" className="gap-1">
+        <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+        {t("webhooks.status.active")}
       </Badge>
     );
   }
 
   return (
-    <Badge
-      variant="outline"
-      className="gap-1 border-border bg-muted text-muted-foreground"
-    >
-      <XCircle className="h-3 w-3" />
-      {t("webhooks.status.inactive") || "Inactive"}
+    <Badge variant="inactive" className="gap-1">
+      <XCircle className="h-3 w-3" aria-hidden="true" />
+      {t("webhooks.status.inactive")}
     </Badge>
   );
 }

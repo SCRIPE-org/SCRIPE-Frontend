@@ -18,7 +18,8 @@ import {
 } from "@core/ui/dialog";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Label } from "@core/ui/label";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { AlertTriangle } from "lucide-react";
 import type { SubscriptionEditionDialogProps } from "../types";
 import { SubscriptionTypeSelect } from "./SubscriptionTypeSelect";
 import { PromotionPicker } from "./PromotionPicker";
@@ -86,35 +87,32 @@ export function ChangeDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
 
           {/* Downgrade Impact Warning */}
           {vm.isLoadingDowngradeImpact && vm.selectedEditionId && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              {t("entSubscriptions.checkingDowngradeImpact") || "Checking downgrade impact..."}
+            <div className="flex items-center gap-2 text-sm text-nx-ink-2">
+              <LoadingSpinner size="inline" />
+              {t("entSubscriptions.checkingDowngradeImpact")}
             </div>
           )}
           {vm.downgradeImpact?.hasOverflow && (
-            <div className="rounded-xl border border-destructive/40 bg-destructive/5 p-4">
+            <div className="rounded-nx-lg border border-destructive/40 bg-destructive/5 p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" aria-hidden="true" />
                 <div className="space-y-2">
                   <p className="text-sm font-semibold text-destructive">
-                    {t("entSubscriptions.downgradeWarning") ||
-                      "Downgrade Warning: Resource Limits Exceeded"}
+                    {t("entSubscriptions.downgradeWarning")}
                   </p>
-                  <p className="text-xs text-muted-foreground">
-                    {t("entSubscriptions.downgradeWarningDesc") ||
-                      "Switching to this edition will exceed the following resource limits:"}
+                  <p className="text-xs text-nx-ink-3">
+                    {t("entSubscriptions.downgradeWarningDesc")}
                   </p>
                   <ul className="space-y-1">
                     {vm.downgradeImpact.overflows.map((ov) => (
                       <li key={ov.featureName} className="flex items-center gap-2 text-xs">
                         <span className="font-medium capitalize">{ov.resourceType}</span>
-                        <span className="text-muted-foreground">
+                        <span className="text-nx-ink-3">
                           {t("entSubscriptions.downgradeOverflowDetail", {
                             current: ov.currentCount,
                             limit: ov.newLimit,
                             excess: ov.overflowCount,
-                          }) ||
-                            `Current: ${ov.currentCount} / New limit: ${ov.newLimit} (${ov.overflowCount} excess)`}
+                          })}
                         </span>
                       </li>
                     ))}

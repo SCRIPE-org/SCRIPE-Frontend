@@ -12,7 +12,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Loader2, Tag } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Tag } from "lucide-react";
 import type { EditionPromotionData } from "@modules/entitlements/core";
 
 interface PromotionPickerProps {
@@ -48,7 +49,7 @@ export function PromotionPicker({
     () => [
       {
         value: NONE_VALUE,
-        label: t("entitlements.promotions.noPromotion") || "No promotion",
+        label: t("entitlements.promotions.noPromotion"),
       },
       ...promotions.map((promo) => ({
         value: promo.id,
@@ -62,19 +63,18 @@ export function PromotionPicker({
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="flex items-center gap-1.5">
-          <Tag className="h-3.5 w-3.5 text-primary" />
-          {t("entitlements.promotions.title") || "Promotion"}
+          <Tag className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
+          {t("entitlements.promotions.title")}
         </Label>
 
         {isLoading ? (
-          <div className="flex items-center gap-2 py-2 text-sm text-muted-foreground">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            {t("common.loading") || "Loading promotions..."}
+          <div className="flex items-center gap-2 py-2 text-sm text-nx-ink-2">
+            <LoadingSpinner size="inline" />
+            {t("common.loading")}
           </div>
         ) : promotions.length === 0 ? (
-          <p className="py-1 text-sm text-muted-foreground">
-            {t("entitlements.promotions.noPromotionsAvailable") ||
-              "No promotions available for this plan"}
+          <p className="py-1 text-sm text-nx-ink-2">
+            {t("entitlements.promotions.noPromotionsAvailable")}
           </p>
         ) : (
           <GenericSelect
@@ -82,7 +82,7 @@ export function PromotionPicker({
             options={options}
             value={selectedPromotionId ?? NONE_VALUE}
             onValueChange={(v: string) => onPromotionChange(v === NONE_VALUE ? null : v)}
-            placeholder={t("entitlements.promotions.selectPromotion") || "No promotion"}
+            placeholder={t("entitlements.promotions.selectPromotion")}
           />
         )}
       </div>
@@ -90,13 +90,11 @@ export function PromotionPicker({
       {/* Conditional promo code input */}
       {requiresPromoCode && selectedPromotion && (
         <div className="space-y-2">
-          <Label className="text-sm">
-            {t("entitlements.promotions.promoCode") || "Promo Code"}
-          </Label>
+          <Label className="text-sm">{t("entitlements.promotions.promoCode")}</Label>
           <Input
             value={promoCode}
             onChange={(e) => onPromoCodeChange(e.target.value.toUpperCase())}
-            placeholder={t("entitlements.promotions.enterCode") || "Enter the promo code"}
+            placeholder={t("entitlements.promotions.enterCode")}
             className="font-mono uppercase"
           />
         </div>
@@ -104,15 +102,17 @@ export function PromotionPicker({
 
       {/* Discount preview */}
       {selectedPromotion && (
-        <div className="flex items-center gap-2 rounded-md border border-success/30 bg-success/10 p-2">
-          <Tag className="h-4 w-4 text-success" />
+        <div className="flex items-center gap-2 rounded-nx-md border border-success/30 bg-success/10 p-2">
+          <Tag className="h-4 w-4 text-success" aria-hidden="true" />
           <span className="text-sm text-success">
             {selectedPromotion.name} —{" "}
             {selectedPromotion.type === "Percentage"
               ? `${selectedPromotion.discountValue}% off`
               : `$${selectedPromotion.discountValue} off`}
             {!selectedPromotion.requiresCode && (
-              <span className="ms-1 text-xs opacity-75">(auto-applied)</span>
+              <span className="ms-1 text-xs text-nx-ink-3">
+                ({t("entitlements.promotions.autoApplied")})
+              </span>
             )}
           </span>
         </div>

@@ -158,6 +158,9 @@ export const en = {
       idle: "Idle",
       endpointAutoDisabled: "endpoint was auto-disabled due to consecutive failures",
       endpointsAutoDisabled: "endpoints were auto-disabled due to consecutive failures",
+      disabledCount: "{{count}} disabled",
+      deliveredFailedBreakdown: "{{delivered}} ✓ · {{failed}} ✗",
+      avgLatency: "~{{ms}}ms avg",
     },
 
     // ─── Analytics ───────────────────────────────────────────

@@ -2,12 +2,35 @@
 "use client";
 // UI-EXCEPTION: compact studio layout — native <button> used for pixel-precise
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
-// where @core/ui/button's padding/sizing would break the layout.
+// where @core/ui/button's padding/sizing would break the layout. The bare
+// <input type="color"> swatch reuses ColorInput's own token recipe (see that
+// file's UI-EXCEPTION note) but drops its paired hex field to fit these dense
+// multi-field grids; the Field label above still names the control via aria-label.
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Switch } from "@core/ui/switch";
-import { Plus, X, Eye, EyeOff } from "lucide-react";
+import { SliderInput } from "./SliderInput";
+import {
+  Plus,
+  X,
+  Eye,
+  EyeOff,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  ArrowLeft,
+  ArrowRight,
+  ArrowDown,
+  ArrowDownRight,
+  Star,
+  Heart,
+  Hash,
+  Info,
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ContentBlock } from "@core/domain/entities/LoginBrandingTypes";
 import { isValidCtaUrl, isValidVideoUrl } from "@core/domain/entities/LoginBrandingTypes";
@@ -18,7 +41,7 @@ type P = { block: CB; onChange: (b: CB) => void };
 // ─── Helpers ──────────────────────────────────────────
 function Lbl({ k }: { k: string }) {
   const { t } = useI18n();
-  return <label className="text-[10px] text-muted-foreground">{t(k)}</label>;
+  return <label className="text-[10px] text-nx-ink-3">{t(k)}</label>;
 }
 function Field({ k, children }: { k: string; children: React.ReactNode }) {
   return (
@@ -35,7 +58,7 @@ function Sel({
 }: {
   value: string;
   onValueChange: (v: string) => void;
-  items: { v: string; l: string }[];
+  items: { v: string; l: React.ReactNode }[];
 }) {
   return (
     <Select value={value} onValueChange={onValueChange}>
@@ -52,6 +75,37 @@ function Sel({
     </Select>
   );
 }
+// Compact colour swatch — same token recipe as ColorInput, no paired hex field
+// (the Field wrapper's label above already names the control visually; this
+// carries the accessible name since a bare colour swatch has no text content).
+function Swatch({
+  ariaLabel,
+  value,
+  onChange,
+}: {
+  ariaLabel: string;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <input
+      type="color"
+      aria-label={ariaLabel}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="h-7 w-full cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
+    />
+  );
+}
+// Icon + localized text combo for select items that used to be a bare direction glyph.
+function OptIcon({ icon: Icon, children }: { icon: typeof AlignLeft; children: React.ReactNode }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <Icon className="h-3 w-3" aria-hidden="true" />
+      {children}
+    </span>
+  );
+}
 
 // ─── Base Props Editor (every block) ──────────────────
 /**
@@ -63,18 +117,21 @@ export function BasePropsEditor({ block, onChange }: P) {
   const p = block.props;
   const upd = (patch: Record<string, unknown>) =>
     onChange({ ...block, props: { ...p, ...patch } } as CB);
+  const isHidden = p.visible === false;
   return (
-    <div className="mt-2 space-y-1.5 border-t border-dashed border-border/50 pt-2">
+    <div className="mt-2 space-y-1.5 border-t border-dashed border-nx-line pt-2">
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-muted-foreground">{t("studio.block.visibility")}</span>
+        <span className="text-[10px] text-nx-ink-3">{t("studio.block.visibility")}</span>
         <button
-          onClick={() => upd({ visible: p.visible === false ? true : false })}
-          className="p-0.5"
+          type="button"
+          onClick={() => upd({ visible: isHidden ? true : false })}
+          aria-label={t(isHidden ? "studio.block.opt.showBlock" : "studio.block.opt.hideBlock")}
+          className="rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          {p.visible === false ? (
-            <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />
+          {isHidden ? (
+            <EyeOff className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
           ) : (
-            <Eye className="h-3.5 w-3.5 text-primary" />
+            <Eye className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
           )}
         </button>
       </div>
@@ -99,10 +156,10 @@ export function BasePropsEditor({ block, onChange }: P) {
             value={p.padding || "none"}
             onValueChange={(v) => upd({ padding: v })}
             items={[
-              { v: "none", l: "—" },
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "none", l: t("studio.block.opt.dash") },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
@@ -111,10 +168,10 @@ export function BasePropsEditor({ block, onChange }: P) {
             value={p.marginBottom || "none"}
             onValueChange={(v) => upd({ marginBottom: v })}
             items={[
-              { v: "none", l: "—" },
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "none", l: t("studio.block.opt.dash") },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
@@ -143,9 +200,7 @@ export function TextEditor({ block, onChange }: P) {
         className="resize-y text-xs"
         placeholder={t("studio.block.textPlaceholder")}
       />
-      <p
-        className={`text-[10px] ${p.content.length > 500 ? "text-destructive" : "text-muted-foreground"}`}
-      >
+      <p className={`text-[10px] ${p.content.length > 500 ? "text-destructive" : "text-nx-ink-3"}`}>
         {p.content.length}/500
       </p>
       <div className="grid grid-cols-3 gap-1">
@@ -154,9 +209,15 @@ export function TextEditor({ block, onChange }: P) {
             value={p.alignment || "left"}
             onValueChange={(v) => upd({ alignment: v })}
             items={[
-              { v: "left", l: "←" },
-              { v: "center", l: "↔" },
-              { v: "right", l: "→" },
+              { v: "left", l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "center",
+                l: <OptIcon icon={AlignCenter}>{t("studio.block.opt.alignCenter")}</OptIcon>,
+              },
+              {
+                v: "right",
+                l: <OptIcon icon={AlignRight}>{t("studio.block.opt.alignRight")}</OptIcon>,
+              },
             ]}
           />
         </Field>
@@ -165,11 +226,11 @@ export function TextEditor({ block, onChange }: P) {
             value={p.fontSize || "base"}
             onValueChange={(v) => upd({ fontSize: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "base", l: "M" },
-              { v: "lg", l: "L" },
-              { v: "xl", l: "XL" },
-              { v: "2xl", l: "2XL" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "base", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
+              { v: "xl", l: t("studio.block.opt.sizeXl") },
+              { v: "2xl", l: t("studio.block.opt.size2xl") },
             ]}
           />
         </Field>
@@ -178,21 +239,20 @@ export function TextEditor({ block, onChange }: P) {
             value={p.fontWeight || "normal"}
             onValueChange={(v) => upd({ fontWeight: v })}
             items={[
-              { v: "normal", l: "Normal" },
-              { v: "medium", l: "Medium" },
-              { v: "semibold", l: "Semi" },
-              { v: "bold", l: "Bold" },
+              { v: "normal", l: t("studio.block.opt.weightNormal") },
+              { v: "medium", l: t("studio.block.opt.weightMedium") },
+              { v: "semibold", l: t("studio.block.opt.weightSemibold") },
+              { v: "bold", l: t("studio.block.opt.weightBold") },
             ]}
           />
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-1">
         <Field k="studio.block.textColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.textColor")}
             value={p.color && !["auto", "primary", "muted"].includes(p.color) ? p.color : "#666666"}
-            onChange={(e) => upd({ color: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ color: v })}
           />
         </Field>
         <Field k="studio.block.textTransform">
@@ -200,16 +260,16 @@ export function TextEditor({ block, onChange }: P) {
             value={p.textTransform || "none"}
             onValueChange={(v) => upd({ textTransform: v })}
             items={[
-              { v: "none", l: "—" },
-              { v: "uppercase", l: "ABC" },
-              { v: "capitalize", l: "Abc" },
+              { v: "none", l: t("studio.block.opt.dash") },
+              { v: "uppercase", l: t("studio.block.opt.transformUppercase") },
+              { v: "capitalize", l: t("studio.block.opt.transformCapitalize") },
             ]}
           />
         </Field>
       </div>
       <div className="flex items-center gap-2">
         <Switch checked={!!p.highlight} onCheckedChange={(v) => upd({ highlight: v })} />
-        <span className="text-[10px] text-muted-foreground">{t("studio.block.highlight")}</span>
+        <span className="text-[10px] text-nx-ink-3">{t("studio.block.highlight")}</span>
       </div>
     </div>
   );
@@ -272,10 +332,10 @@ export function ImageEditor({ block, onChange }: P) {
             value={p.objectFit || "cover"}
             onValueChange={(v) => upd({ objectFit: v })}
             items={[
-              { v: "cover", l: "Cover" },
-              { v: "contain", l: "Contain" },
-              { v: "fill", l: "Fill" },
-              { v: "none", l: "None" },
+              { v: "cover", l: t("studio.background.fitCover") },
+              { v: "contain", l: t("studio.background.fitContain") },
+              { v: "fill", l: t("studio.background.fitFill") },
+              { v: "none", l: t("studio.background.fitNone") },
             ]}
           />
         </Field>
@@ -284,11 +344,11 @@ export function ImageEditor({ block, onChange }: P) {
             value={p.shadow || "none"}
             onValueChange={(v) => upd({ shadow: v })}
             items={[
-              { v: "none", l: "—" },
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
-              { v: "xl", l: "XL" },
+              { v: "none", l: t("studio.block.opt.dash") },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
+              { v: "xl", l: t("studio.block.opt.sizeXl") },
             ]}
           />
         </Field>
@@ -299,10 +359,10 @@ export function ImageEditor({ block, onChange }: P) {
             value={p.hoverEffect || "none"}
             onValueChange={(v) => upd({ hoverEffect: v })}
             items={[
-              { v: "none", l: "—" },
-              { v: "zoom", l: "Zoom" },
-              { v: "brightness", l: "Bright" },
-              { v: "grayscale", l: "Gray" },
+              { v: "none", l: t("studio.block.opt.dash") },
+              { v: "zoom", l: t("studio.block.opt.hoverZoom") },
+              { v: "brightness", l: t("studio.block.opt.hoverBrightness") },
+              { v: "grayscale", l: t("studio.block.opt.hoverGrayscale") },
             ]}
           />
         </Field>
@@ -311,7 +371,7 @@ export function ImageEditor({ block, onChange }: P) {
             value={p.aspectRatio || "auto"}
             onValueChange={(v) => upd({ aspectRatio: v })}
             items={[
-              { v: "auto", l: "Auto" },
+              { v: "auto", l: t("studio.block.opt.aspectAuto") },
               { v: "1:1", l: "1:1" },
               { v: "16:9", l: "16:9" },
               { v: "4:3", l: "4:3" },
@@ -362,7 +422,7 @@ export function FeatureListEditor({ block, onChange }: P) {
               upd({ items: u });
             }}
             className="h-7 w-10 px-0 text-center text-xs"
-            placeholder="🔒"
+            placeholder={t("studio.block.opt.iconPlaceholderSecurity")}
           />
           <div className="flex-1 space-y-0.5">
             <Input
@@ -387,19 +447,29 @@ export function FeatureListEditor({ block, onChange }: P) {
             />
           </div>
           <button
+            type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
-            className="mt-1 p-0.5 text-destructive/60 hover:text-destructive"
+            aria-label={t("studio.blocks.remove")}
+            className="mt-1 rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       ))}
       {items.length < 6 && (
         <button
-          onClick={() => upd({ items: [...items, { icon: "✨", title: "", description: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          type="button"
+          onClick={() =>
+            upd({
+              items: [
+                ...items,
+                { icon: t("studio.block.opt.iconPlaceholderSparkle"), title: "", description: "" },
+              ],
+            })
+          }
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addFeature")}
         </button>
       )}
@@ -420,29 +490,28 @@ export function FeatureListEditor({ block, onChange }: P) {
             value={p.iconSize || "md"}
             onValueChange={(v) => upd({ iconSize: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
         <Field k="studio.block.iconColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.iconColor")}
             value={p.iconColor || "#6366f1"}
-            onChange={(e) => upd({ iconColor: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ iconColor: v })}
           />
         </Field>
       </div>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           <Switch checked={!!p.compactMode} onCheckedChange={(v) => upd({ compactMode: v })} />
-          <span className="text-[10px] text-muted-foreground">{t("studio.block.compact")}</span>
+          <span className="text-[10px] text-nx-ink-3">{t("studio.block.compact")}</span>
         </div>
         <div className="flex items-center gap-1">
           <Switch checked={!!p.numberedMode} onCheckedChange={(v) => upd({ numberedMode: v })} />
-          <span className="text-[10px] text-muted-foreground">{t("studio.block.numbered")}</span>
+          <span className="text-[10px] text-nx-ink-3">{t("studio.block.numbered")}</span>
         </div>
       </div>
     </div>
@@ -460,6 +529,20 @@ export function TestimonialEditor({ block, onChange }: P) {
   const p = block.props;
   const upd = (patch: Record<string, unknown>) =>
     onChange({ type: "testimonial", props: { ...p, ...patch } });
+  const starItems = [0, 1, 2, 3, 4, 5].map((n) => ({
+    v: String(n),
+    l:
+      n === 0 ? (
+        t("studio.block.opt.dash")
+      ) : (
+        <span className="inline-flex items-center gap-1">
+          {Array.from({ length: n }).map((_, idx) => (
+            <Star key={idx} className="h-3 w-3 fill-current" aria-hidden="true" />
+          ))}
+          <span className="sr-only">{t("studio.block.opt.starsAria", { count: n })}</span>
+        </span>
+      ),
+  }));
   return (
     <div className="space-y-1.5">
       <Field k="studio.block.quote">
@@ -500,26 +583,15 @@ export function TestimonialEditor({ block, onChange }: P) {
             value={p.displayStyle || "card"}
             onValueChange={(v) => upd({ displayStyle: v })}
             items={[
-              { v: "card", l: "Card" },
-              { v: "bubble", l: "Bubble" },
-              { v: "minimal", l: "Minimal" },
-              { v: "large-quote", l: "Large" },
+              { v: "card", l: t("studio.block.opt.styleCard") },
+              { v: "bubble", l: t("studio.block.opt.styleBubble") },
+              { v: "minimal", l: t("studio.block.opt.styleMinimal") },
+              { v: "large-quote", l: t("studio.block.opt.styleLarge") },
             ]}
           />
         </Field>
         <Field k="studio.block.ratingStars">
-          <Sel
-            value={String(p.rating ?? 0)}
-            onValueChange={(v) => upd({ rating: +v })}
-            items={[
-              { v: "0", l: "—" },
-              { v: "1", l: "★" },
-              { v: "2", l: "★★" },
-              { v: "3", l: "★★★" },
-              { v: "4", l: "★★★★" },
-              { v: "5", l: "★★★★★" },
-            ]}
-          />
+          <Sel value={String(p.rating ?? 0)} onValueChange={(v) => upd({ rating: +v })} items={starItems} />
         </Field>
       </div>
       <div className="grid grid-cols-2 gap-1">
@@ -531,11 +603,10 @@ export function TestimonialEditor({ block, onChange }: P) {
           />
         </Field>
         <Field k="studio.block.borderColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.borderColor")}
             value={p.borderColor || "#e5e7eb"}
-            onChange={(e) => upd({ borderColor: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ borderColor: v })}
           />
         </Field>
       </div>
@@ -570,7 +641,7 @@ export function CtaEditor({ block, onChange }: P) {
             value={p.icon || ""}
             onChange={(e) => upd({ icon: e.target.value })}
             className="h-7 text-xs"
-            placeholder="🚀"
+            placeholder={t("studio.block.opt.iconPlaceholderRocket")}
           />
         </Field>
       </div>
@@ -602,30 +673,29 @@ export function CtaEditor({ block, onChange }: P) {
             value={p.size || "md"}
             onValueChange={(v) => upd({ size: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
-              { v: "xl", l: "XL" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
+              { v: "xl", l: t("studio.block.opt.sizeXl") },
             ]}
           />
         </Field>
         <Field k="studio.block.btnColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.btnColor")}
             value={p.color || "#6366f1"}
-            onChange={(e) => upd({ color: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ color: v })}
           />
         </Field>
       </div>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           <Switch checked={!!p.fullWidth} onCheckedChange={(v) => upd({ fullWidth: v })} />
-          <span className="text-[10px] text-muted-foreground">{t("studio.block.fullWidth")}</span>
+          <span className="text-[10px] text-nx-ink-3">{t("studio.block.fullWidth")}</span>
         </div>
         <div className="flex items-center gap-1">
           <Switch checked={!!p.shadow} onCheckedChange={(v) => upd({ shadow: v })} />
-          <span className="text-[10px] text-muted-foreground">{t("studio.block.shadow")}</span>
+          <span className="text-[10px] text-nx-ink-3">{t("studio.block.shadow")}</span>
         </div>
       </div>
       <Field k="studio.block.secondaryText">
@@ -669,10 +739,10 @@ export function DividerEditor({ block, onChange }: P) {
             value={p.lineStyle || "solid"}
             onValueChange={(v) => upd({ lineStyle: v })}
             items={[
-              { v: "solid", l: "Solid" },
-              { v: "dashed", l: "Dashed" },
-              { v: "dotted", l: "Dotted" },
-              { v: "double", l: "Double" },
+              { v: "solid", l: t("studio.block.opt.dividerSolid") },
+              { v: "dashed", l: t("studio.block.opt.dividerDashed") },
+              { v: "dotted", l: t("studio.block.opt.dividerDotted") },
+              { v: "double", l: t("studio.block.opt.dividerDouble") },
             ]}
           />
         </Field>
@@ -699,11 +769,10 @@ export function DividerEditor({ block, onChange }: P) {
           />
         </Field>
         <Field k="studio.block.divColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.divColor")}
             value={p.color || "#e5e7eb"}
-            onChange={(e) => upd({ color: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ color: v })}
           />
         </Field>
       </div>
@@ -745,9 +814,9 @@ export function HeadingEditor({ block, onChange }: P) {
             value={p.level}
             onValueChange={(v) => upd({ level: v })}
             items={[
-              { v: "h2", l: "H2" },
-              { v: "h3", l: "H3" },
-              { v: "h4", l: "H4" },
+              { v: "h2", l: t("studio.block.opt.levelH2") },
+              { v: "h3", l: t("studio.block.opt.levelH3") },
+              { v: "h4", l: t("studio.block.opt.levelH4") },
             ]}
           />
         </Field>
@@ -756,18 +825,23 @@ export function HeadingEditor({ block, onChange }: P) {
             value={p.alignment || "left"}
             onValueChange={(v) => upd({ alignment: v })}
             items={[
-              { v: "left", l: "←" },
-              { v: "center", l: "↔" },
-              { v: "right", l: "→" },
+              { v: "left", l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "center",
+                l: <OptIcon icon={AlignCenter}>{t("studio.block.opt.alignCenter")}</OptIcon>,
+              },
+              {
+                v: "right",
+                l: <OptIcon icon={AlignRight}>{t("studio.block.opt.alignRight")}</OptIcon>,
+              },
             ]}
           />
         </Field>
         <Field k="studio.block.textColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.textColor")}
             value={p.color || "#111111"}
-            onChange={(e) => upd({ color: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ color: v })}
           />
         </Field>
       </div>
@@ -776,9 +850,9 @@ export function HeadingEditor({ block, onChange }: P) {
           value={p.underlineAccent || "none"}
           onValueChange={(v) => upd({ underlineAccent: v })}
           items={[
-            { v: "none", l: "—" },
-            { v: "primary", l: "Primary" },
-            { v: "gradient", l: "Gradient" },
+            { v: "none", l: t("studio.block.opt.dash") },
+            { v: "primary", l: t("studio.block.opt.underlinePrimary") },
+            { v: "gradient", l: t("studio.block.opt.underlineGradient") },
           ]}
         />
       </Field>
@@ -812,7 +886,7 @@ export function BadgeEditor({ block, onChange }: P) {
             value={p.icon || ""}
             onChange={(e) => upd({ icon: e.target.value })}
             className="h-7 text-xs"
-            placeholder="🏆"
+            placeholder={t("studio.block.opt.iconPlaceholderTrophy")}
           />
         </Field>
       </div>
@@ -822,11 +896,11 @@ export function BadgeEditor({ block, onChange }: P) {
             value={p.variant}
             onValueChange={(v) => upd({ variant: v })}
             items={[
-              { v: "success", l: "Success" },
-              { v: "warning", l: "Warning" },
-              { v: "info", l: "Info" },
-              { v: "neutral", l: "Neutral" },
-              { v: "premium", l: "Premium" },
+              { v: "success", l: t("studio.block.opt.variantSuccess") },
+              { v: "warning", l: t("studio.block.opt.variantWarning") },
+              { v: "info", l: t("studio.block.opt.variantInfo") },
+              { v: "neutral", l: t("studio.block.opt.variantNeutral") },
+              { v: "premium", l: t("studio.block.opt.variantPremium") },
             ]}
           />
         </Field>
@@ -835,15 +909,15 @@ export function BadgeEditor({ block, onChange }: P) {
             value={p.size || "md"}
             onValueChange={(v) => upd({ size: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
             ]}
           />
         </Field>
       </div>
       <div className="flex items-center gap-1">
         <Switch checked={p.pill !== false} onCheckedChange={(v) => upd({ pill: v })} />
-        <span className="text-[10px] text-muted-foreground">{t("studio.block.pill")}</span>
+        <span className="text-[10px] text-nx-ink-3">{t("studio.block.pill")}</span>
       </div>
     </div>
   );
@@ -862,31 +936,32 @@ export function SpacerEditor({ block, onChange }: P) {
     onChange({ type: "spacer", props: { ...p, ...patch } });
   return (
     <div className="space-y-1.5">
-      <Field k="studio.block.height">
-        <Input
-          type="range"
-          min={8}
-          max={80}
-          value={p.height}
-          onChange={(e) => upd({ height: +e.target.value })}
-          className="h-7 w-full"
-        />
-        <span className="text-[10px] text-muted-foreground">{p.height}px</span>
-      </Field>
+      <SliderInput
+        label={t("studio.block.height")}
+        value={p.height}
+        min={8}
+        max={80}
+        onChange={(v) => upd({ height: v })}
+      />
       <div className="flex items-center gap-1">
         <Switch
           checked={!!p.responsiveHalve}
           onCheckedChange={(v) => upd({ responsiveHalve: v })}
         />
-        <span className="text-[10px] text-muted-foreground">
-          {t("studio.block.responsiveHalve")}
-        </span>
+        <span className="text-[10px] text-nx-ink-3">{t("studio.block.responsiveHalve")}</span>
       </div>
     </div>
   );
 }
 
 // ─── Alert Editor ─────────────────────────────────────
+const ALERT_ICONS: Record<string, typeof Info> = {
+  info: Info,
+  warning: AlertTriangle,
+  success: CheckCircle2,
+  error: XCircle,
+};
+
 /**
  * Presentation UI component rendering the alert editor.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
@@ -919,21 +994,37 @@ export function AlertEditor({ block, onChange }: P) {
           value={p.variant}
           onValueChange={(v) => upd({ variant: v })}
           items={[
-            { v: "info", l: "ℹ️ Info" },
-            { v: "warning", l: "⚠️ Warning" },
-            { v: "success", l: "✅ Success" },
-            { v: "error", l: "❌ Error" },
+            {
+              v: "info",
+              l: <OptIcon icon={ALERT_ICONS.info}>{t("studio.block.opt.variantInfo")}</OptIcon>,
+            },
+            {
+              v: "warning",
+              l: (
+                <OptIcon icon={ALERT_ICONS.warning}>{t("studio.block.opt.variantWarning")}</OptIcon>
+              ),
+            },
+            {
+              v: "success",
+              l: (
+                <OptIcon icon={ALERT_ICONS.success}>{t("studio.block.opt.variantSuccess")}</OptIcon>
+              ),
+            },
+            {
+              v: "error",
+              l: <OptIcon icon={ALERT_ICONS.error}>{t("studio.block.opt.alertError")}</OptIcon>,
+            },
           ]}
         />
       </Field>
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           <Switch checked={p.showIcon !== false} onCheckedChange={(v) => upd({ showIcon: v })} />
-          <span className="text-[10px] text-muted-foreground">{t("studio.block.showIcon")}</span>
+          <span className="text-[10px] text-nx-ink-3">{t("studio.block.showIcon")}</span>
         </div>
         <div className="flex items-center gap-1">
           <Switch checked={!!p.compact} onCheckedChange={(v) => upd({ compact: v })} />
-          <span className="text-[10px] text-muted-foreground">{t("studio.block.compact")}</span>
+          <span className="text-[10px] text-nx-ink-3">{t("studio.block.compact")}</span>
         </div>
       </div>
     </div>
@@ -964,7 +1055,7 @@ export function StatsRowEditor({ block, onChange }: P) {
               upd({ items: u });
             }}
             className="h-7 w-10 px-0 text-center text-xs"
-            placeholder="📊"
+            placeholder={t("studio.block.opt.iconPlaceholderChart")}
           />
           <Input
             value={item.value}
@@ -987,19 +1078,29 @@ export function StatsRowEditor({ block, onChange }: P) {
             placeholder={t("studio.block.statLabel")}
           />
           <button
+            type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
-            className="p-0.5 text-destructive/60 hover:text-destructive"
+            aria-label={t("studio.blocks.remove")}
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       ))}
       {items.length < 4 && (
         <button
-          onClick={() => upd({ items: [...items, { value: "0", label: "", icon: "📊" }] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          type="button"
+          onClick={() =>
+            upd({
+              items: [
+                ...items,
+                { value: "0", label: "", icon: t("studio.block.opt.iconPlaceholderChart") },
+              ],
+            })
+          }
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addStat")}
         </button>
       )}
@@ -1009,8 +1110,8 @@ export function StatsRowEditor({ block, onChange }: P) {
             value={p.layout || "row"}
             onValueChange={(v) => upd({ layout: v })}
             items={[
-              { v: "row", l: "Row" },
-              { v: "grid", l: "Grid" },
+              { v: "row", l: t("studio.block.opt.layoutRow") },
+              { v: "grid", l: t("studio.block.opt.layoutGrid") },
             ]}
           />
         </Field>
@@ -1019,9 +1120,9 @@ export function StatsRowEditor({ block, onChange }: P) {
             value={p.size || "md"}
             onValueChange={(v) => upd({ size: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
@@ -1063,7 +1164,7 @@ export function SocialLinksEditor({ block, onChange }: P) {
               u[i] = { ...u[i], platform: v };
               upd({ items: u });
             }}
-            items={platforms.map((p) => ({ v: p, l: p }))}
+            items={platforms.map((p2) => ({ v: p2, l: p2 }))}
           />
           <Input
             value={item.url}
@@ -1076,19 +1177,22 @@ export function SocialLinksEditor({ block, onChange }: P) {
             placeholder="https://..."
           />
           <button
+            type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
-            className="p-0.5 text-destructive/60 hover:text-destructive"
+            aria-label={t("studio.blocks.remove")}
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       ))}
       {items.length < 8 && (
         <button
+          type="button"
           onClick={() => upd({ items: [...items, { platform: "Twitter", url: "https://" }] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addSocial")}
         </button>
       )}
@@ -1098,9 +1202,9 @@ export function SocialLinksEditor({ block, onChange }: P) {
             value={p.style || "icons-only"}
             onValueChange={(v) => upd({ style: v })}
             items={[
-              { v: "icons-only", l: "Icons" },
-              { v: "with-labels", l: "Labels" },
-              { v: "colored-bg", l: "Colored" },
+              { v: "icons-only", l: t("studio.block.opt.socialIconsOnly") },
+              { v: "with-labels", l: t("studio.block.opt.socialWithLabels") },
+              { v: "colored-bg", l: t("studio.block.opt.socialColoredBg") },
             ]}
           />
         </Field>
@@ -1109,9 +1213,9 @@ export function SocialLinksEditor({ block, onChange }: P) {
             value={p.size || "md"}
             onValueChange={(v) => upd({ size: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
@@ -1144,7 +1248,7 @@ export function LogoCloudEditor({ block, onChange }: P) {
               upd({ items: u });
             }}
             className="h-7 flex-1 text-xs"
-            placeholder="Logo URL"
+            placeholder={t("studio.block.imageUrl")}
           />
           <Input
             value={item.alt}
@@ -1154,38 +1258,41 @@ export function LogoCloudEditor({ block, onChange }: P) {
               upd({ items: u });
             }}
             className="h-7 w-20 text-xs"
-            placeholder="Alt"
+            placeholder={t("studio.block.imageAlt")}
           />
           <button
+            type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
-            className="p-0.5 text-destructive/60 hover:text-destructive"
+            aria-label={t("studio.blocks.remove")}
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       ))}
       {items.length < 8 && (
         <button
+          type="button"
           onClick={() => upd({ items: [...items, { src: "", alt: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addLogo")}
         </button>
       )}
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-1">
           <Switch checked={!!p.grayscale} onCheckedChange={(v) => upd({ grayscale: v })} />
-          <span className="text-[10px] text-muted-foreground">{t("studio.block.grayscale")}</span>
+          <span className="text-[10px] text-nx-ink-3">{t("studio.block.grayscale")}</span>
         </div>
         <Field k="studio.block.size">
           <Sel
             value={p.size || "md"}
             onValueChange={(v) => upd({ size: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
@@ -1231,9 +1338,18 @@ export function RatingEditor({ block, onChange }: P) {
             value={p.style || "stars"}
             onValueChange={(v) => upd({ style: v })}
             items={[
-              { v: "stars", l: "★" },
-              { v: "hearts", l: "♥" },
-              { v: "number-badge", l: "#" },
+              {
+                v: "stars",
+                l: <OptIcon icon={Star}>{t("studio.block.opt.styleStars")}</OptIcon>,
+              },
+              {
+                v: "hearts",
+                l: <OptIcon icon={Heart}>{t("studio.block.opt.styleHearts")}</OptIcon>,
+              },
+              {
+                v: "number-badge",
+                l: <OptIcon icon={Hash}>{t("studio.block.opt.styleNumber")}</OptIcon>,
+              },
             ]}
           />
         </Field>
@@ -1242,18 +1358,17 @@ export function RatingEditor({ block, onChange }: P) {
             value={p.size || "md"}
             onValueChange={(v) => upd({ size: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
         <Field k="studio.block.ratingColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.ratingColor")}
             value={p.color || "#eab308"}
-            onChange={(e) => upd({ color: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ color: v })}
           />
         </Field>
       </div>
@@ -1285,7 +1400,7 @@ export function IconRowEditor({ block, onChange }: P) {
               upd({ items: u });
             }}
             className="h-7 w-10 px-0 text-center text-xs"
-            placeholder="🔗"
+            placeholder={t("studio.block.opt.iconPlaceholderLink")}
           />
           <Input
             value={item.label || ""}
@@ -1295,28 +1410,38 @@ export function IconRowEditor({ block, onChange }: P) {
               upd({ items: u });
             }}
             className="h-7 flex-1 text-xs"
-            placeholder="Label"
+            placeholder={t("studio.block.statLabel")}
           />
           <button
+            type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
-            className="p-0.5 text-destructive/60 hover:text-destructive"
+            aria-label={t("studio.blocks.remove")}
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       ))}
       {items.length < 6 && (
         <button
-          onClick={() => upd({ items: [...items, { icon: "🔗", label: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          type="button"
+          onClick={() =>
+            upd({
+              items: [
+                ...items,
+                { icon: t("studio.block.opt.iconPlaceholderLink"), label: "" },
+              ],
+            })
+          }
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addIcon")}
         </button>
       )}
       <div className="flex items-center gap-1">
         <Switch checked={p.showLabels !== false} onCheckedChange={(v) => upd({ showLabels: v })} />
-        <span className="text-[10px] text-muted-foreground">{t("studio.block.showLabels")}</span>
+        <span className="text-[10px] text-nx-ink-3">{t("studio.block.showLabels")}</span>
       </div>
     </div>
   );
@@ -1350,7 +1475,7 @@ export function VideoEditor({ block, onChange }: P) {
           value={p.thumbnailUrl || ""}
           onChange={(e) => upd({ thumbnailUrl: e.target.value })}
           className="h-7 text-xs"
-          placeholder="Auto-detected"
+          placeholder={t("studio.block.opt.aspectAuto")}
         />
       </Field>
       <div className="grid grid-cols-2 gap-1">
@@ -1369,8 +1494,8 @@ export function VideoEditor({ block, onChange }: P) {
             value={p.playButtonStyle || "centered"}
             onValueChange={(v) => upd({ playButtonStyle: v })}
             items={[
-              { v: "centered", l: "Center" },
-              { v: "corner", l: "Corner" },
+              { v: "centered", l: t("studio.block.opt.playCentered") },
+              { v: "corner", l: t("studio.block.opt.playCorner") },
             ]}
           />
         </Field>
@@ -1427,16 +1552,16 @@ export function CountdownEditor({ block, onChange }: P) {
             value={p.style || "simple"}
             onValueChange={(v) => upd({ style: v })}
             items={[
-              { v: "simple", l: "Simple" },
-              { v: "flip", l: "Flip" },
-              { v: "minimal", l: "Minimal" },
+              { v: "simple", l: t("studio.block.opt.countdownSimple") },
+              { v: "flip", l: t("studio.block.opt.countdownFlip") },
+              { v: "minimal", l: t("studio.block.opt.styleMinimal") },
             ]}
           />
         </Field>
       </div>
       <div className="flex items-center gap-1">
         <Switch checked={p.showLabels !== false} onCheckedChange={(v) => upd({ showLabels: v })} />
-        <span className="text-[10px] text-muted-foreground">{t("studio.block.showLabels")}</span>
+        <span className="text-[10px] text-nx-ink-3">{t("studio.block.showLabels")}</span>
       </div>
     </div>
   );
@@ -1457,7 +1582,7 @@ export function AccordionEditor({ block, onChange }: P) {
   return (
     <div className="space-y-1.5">
       {items.map((item, i) => (
-        <div key={i} className="space-y-0.5 rounded border border-border/50 p-1.5">
+        <div key={i} className="space-y-0.5 rounded-nx-sm border border-nx-line p-1.5">
           <div className="flex items-center gap-1">
             <Input
               value={item.title}
@@ -1470,10 +1595,12 @@ export function AccordionEditor({ block, onChange }: P) {
               placeholder={t("studio.block.accordionTitle")}
             />
             <button
+              type="button"
               onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
-              className="p-0.5 text-destructive/60 hover:text-destructive"
+              aria-label={t("studio.blocks.remove")}
+              className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
             >
-              <X className="h-3 w-3" />
+              <X className="h-3 w-3" aria-hidden="true" />
             </button>
           </div>
           <Textarea
@@ -1491,10 +1618,11 @@ export function AccordionEditor({ block, onChange }: P) {
       ))}
       {items.length < 5 && (
         <button
+          type="button"
           onClick={() => upd({ items: [...items, { title: "", content: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addItem")}
         </button>
       )}
@@ -1504,9 +1632,9 @@ export function AccordionEditor({ block, onChange }: P) {
             value={p.style || "bordered"}
             onValueChange={(v) => upd({ style: v })}
             items={[
-              { v: "bordered", l: "Bordered" },
-              { v: "ghost", l: "Ghost" },
-              { v: "card", l: "Card" },
+              { v: "bordered", l: t("studio.block.opt.accordionBordered") },
+              { v: "ghost", l: t("studio.block.opt.accordionGhost") },
+              { v: "card", l: t("studio.block.opt.styleCard") },
             ]}
           />
         </Field>
@@ -1515,15 +1643,18 @@ export function AccordionEditor({ block, onChange }: P) {
             value={p.iconPosition || "right"}
             onValueChange={(v) => upd({ iconPosition: v })}
             items={[
-              { v: "left", l: "←" },
-              { v: "right", l: "→" },
+              { v: "left", l: <OptIcon icon={ArrowLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "right",
+                l: <OptIcon icon={ArrowRight}>{t("studio.block.opt.alignRight")}</OptIcon>,
+              },
             ]}
           />
         </Field>
       </div>
       <div className="flex items-center gap-1">
         <Switch checked={!!p.allowMultiple} onCheckedChange={(v) => upd({ allowMultiple: v })} />
-        <span className="text-[10px] text-muted-foreground">{t("studio.block.allowMultiple")}</span>
+        <span className="text-[10px] text-nx-ink-3">{t("studio.block.allowMultiple")}</span>
       </div>
     </div>
   );
@@ -1545,7 +1676,7 @@ export function ProgressStepsEditor({ block, onChange }: P) {
     <div className="space-y-1.5">
       {items.map((item, i) => (
         <div key={i} className="flex items-center gap-1">
-          <span className="w-4 text-[10px] text-muted-foreground">{i + 1}</span>
+          <span className="w-4 text-[10px] text-nx-ink-3">{i + 1}</span>
           <Input
             value={item.label}
             onChange={(e) => {
@@ -1554,22 +1685,25 @@ export function ProgressStepsEditor({ block, onChange }: P) {
               upd({ items: u });
             }}
             className="h-7 flex-1 text-xs"
-            placeholder="Step label"
+            placeholder={t("studio.block.seed.stepSignUp")}
           />
           <button
+            type="button"
             onClick={() => upd({ items: items.filter((_, j) => j !== i) })}
-            className="p-0.5 text-destructive/60 hover:text-destructive"
+            aria-label={t("studio.blocks.remove")}
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       ))}
       {items.length < 5 && (
         <button
+          type="button"
           onClick={() => upd({ items: [...items, { label: "" }] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addStep")}
         </button>
       )}
@@ -1589,8 +1723,8 @@ export function ProgressStepsEditor({ block, onChange }: P) {
             value={p.style || "horizontal"}
             onValueChange={(v) => upd({ style: v })}
             items={[
-              { v: "horizontal", l: "Horizontal" },
-              { v: "vertical", l: "Vertical" },
+              { v: "horizontal", l: t("studio.block.opt.progressHorizontal") },
+              { v: "vertical", l: t("studio.block.opt.progressVertical") },
             ]}
           />
         </Field>
@@ -1623,22 +1757,25 @@ export function AvatarStackEditor({ block, onChange }: P) {
               upd({ avatarUrls: u });
             }}
             className="h-7 flex-1 text-xs"
-            placeholder="Avatar URL"
+            placeholder={t("studio.block.avatarUrl")}
           />
           <button
+            type="button"
             onClick={() => upd({ avatarUrls: urls.filter((_, j) => j !== i) })}
-            className="p-0.5 text-destructive/60 hover:text-destructive"
+            aria-label={t("studio.blocks.remove")}
+            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
       ))}
       {urls.length < 5 && (
         <button
+          type="button"
           onClick={() => upd({ avatarUrls: [...urls, ""] })}
-          className="flex items-center gap-1 text-[10px] text-primary hover:underline"
+          className="flex items-center gap-1 text-[10px] text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:underline focus-visible:outline-none focus-visible:shadow-nx-focus"
         >
-          <Plus className="h-3 w-3" />
+          <Plus className="h-3 w-3" aria-hidden="true" />
           {t("studio.block.addAvatar")}
         </button>
       )}
@@ -1656,9 +1793,9 @@ export function AvatarStackEditor({ block, onChange }: P) {
             value={p.size || "md"}
             onValueChange={(v) => upd({ size: v })}
             items={[
-              { v: "sm", l: "S" },
-              { v: "md", l: "M" },
-              { v: "lg", l: "L" },
+              { v: "sm", l: t("studio.block.opt.sizeS") },
+              { v: "md", l: t("studio.block.opt.sizeM") },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
             ]}
           />
         </Field>
@@ -1668,7 +1805,6 @@ export function AvatarStackEditor({ block, onChange }: P) {
           value={p.label || ""}
           onChange={(e) => upd({ label: e.target.value })}
           className="h-7 text-xs"
-          placeholder="Trusted by developers"
         />
       </Field>
     </div>
@@ -1697,19 +1833,17 @@ export function GradientTextEditor({ block, onChange }: P) {
       </Field>
       <div className="grid grid-cols-2 gap-1">
         <Field k="studio.block.fromColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.fromColor")}
             value={p.fromColor || "#6366f1"}
-            onChange={(e) => upd({ fromColor: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ fromColor: v })}
           />
         </Field>
         <Field k="studio.block.toColor">
-          <Input
-            type="color"
+          <Swatch
+            ariaLabel={t("studio.block.toColor")}
             value={p.toColor || "#ec4899"}
-            onChange={(e) => upd({ toColor: e.target.value })}
-            className="h-7 w-full px-1"
+            onChange={(v) => upd({ toColor: v })}
           />
         </Field>
       </div>
@@ -1719,9 +1853,18 @@ export function GradientTextEditor({ block, onChange }: P) {
             value={p.direction || "left-right"}
             onValueChange={(v) => upd({ direction: v })}
             items={[
-              { v: "left-right", l: "→" },
-              { v: "top-bottom", l: "↓" },
-              { v: "diagonal", l: "↘" },
+              {
+                v: "left-right",
+                l: <OptIcon icon={ArrowRight}>{t("studio.direction.leftToRight")}</OptIcon>,
+              },
+              {
+                v: "top-bottom",
+                l: <OptIcon icon={ArrowDown}>{t("studio.direction.topToBottom")}</OptIcon>,
+              },
+              {
+                v: "diagonal",
+                l: <OptIcon icon={ArrowDownRight}>{t("studio.direction.diagonal")}</OptIcon>,
+              },
             ]}
           />
         </Field>
@@ -1730,11 +1873,11 @@ export function GradientTextEditor({ block, onChange }: P) {
             value={p.fontSize || "2xl"}
             onValueChange={(v) => upd({ fontSize: v })}
             items={[
-              { v: "lg", l: "L" },
-              { v: "xl", l: "XL" },
-              { v: "2xl", l: "2XL" },
-              { v: "3xl", l: "3XL" },
-              { v: "4xl", l: "4XL" },
+              { v: "lg", l: t("studio.block.opt.sizeL") },
+              { v: "xl", l: t("studio.block.opt.sizeXl") },
+              { v: "2xl", l: t("studio.block.opt.size2xl") },
+              { v: "3xl", l: t("studio.block.opt.size3xl") },
+              { v: "4xl", l: t("studio.block.opt.size4xl") },
             ]}
           />
         </Field>
@@ -1743,9 +1886,15 @@ export function GradientTextEditor({ block, onChange }: P) {
             value={p.alignment || "center"}
             onValueChange={(v) => upd({ alignment: v })}
             items={[
-              { v: "left", l: "←" },
-              { v: "center", l: "↔" },
-              { v: "right", l: "→" },
+              { v: "left", l: <OptIcon icon={AlignLeft}>{t("studio.block.opt.alignLeft")}</OptIcon> },
+              {
+                v: "center",
+                l: <OptIcon icon={AlignCenter}>{t("studio.block.opt.alignCenter")}</OptIcon>,
+              },
+              {
+                v: "right",
+                l: <OptIcon icon={AlignRight}>{t("studio.block.opt.alignRight")}</OptIcon>,
+              },
             ]}
           />
         </Field>

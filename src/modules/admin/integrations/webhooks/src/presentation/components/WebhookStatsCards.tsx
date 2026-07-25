@@ -28,25 +28,25 @@ export function WebhookStatsCards({ webhook }: WebhookStatsCardsProps) {
 
   const stats: { label: string; value: string; icon: typeof Send; tone: StatTone }[] = [
     {
-      label: t("webhooks.stats.total") || "Total Deliveries",
+      label: t("webhooks.stats.total"),
       value: webhook.totalDeliveries.toLocaleString(),
       icon: Send,
       tone: "info",
     },
     {
-      label: t("webhooks.stats.successful") || "Successful",
+      label: t("webhooks.stats.successful"),
       value: webhook.successfulDeliveries.toLocaleString(),
       icon: CheckCircle2,
       tone: "success",
     },
     {
-      label: t("webhooks.stats.failed") || "Failed",
+      label: t("webhooks.stats.failed"),
       value: webhook.failedDeliveries.toLocaleString(),
       icon: XCircle,
       tone: "danger",
     },
     {
-      label: t("webhooks.stats.successRate") || "Success Rate",
+      label: t("webhooks.stats.successRate"),
       value: webhook.totalDeliveries > 0 ? `${webhook.successRate.toFixed(1)}%` : "—",
       icon: TrendingUp,
       tone: rateTone,

@@ -1,8 +1,10 @@
-// UI-EXCEPTION: compact studio layout
+// UI-EXCEPTION: compact studio layout — the bare <input type="color"> swatch
+// reuses ColorInput's own token recipe (see that file's UI-EXCEPTION note) but
+// stays inline with the row's own label + raw-value text field.
 /**
  * TokenPanel — Design token editor (colors, typography, spacing)
  *
- * Per analysis §10: Semantic tokens → Component tokens → CSS Variables
+ * Per analysis §10: Semantic tokens to Component tokens to CSS Variables
  * Token categories: Color, Typography, Spacing, Radius, Elevation
  */
 "use client";
@@ -17,36 +19,91 @@ interface TokenPanelProps {
 }
 
 interface TokenGroup {
-  label: string;
-  tokens: { key: string; label: string; type: "color" | "text"; placeholder: string }[];
+  labelKey: string;
+  tokens: { key: string; labelKey: string; type: "color" | "text"; placeholder: string }[];
 }
 
 const TOKEN_GROUPS: TokenGroup[] = [
   {
-    label: "Colors",
+    labelKey: "studio.tokenPanel.groupColors",
     tokens: [
-      { key: "color.primary", label: "Primary", type: "color", placeholder: "#6366f1" },
-      { key: "color.surface", label: "Surface", type: "color", placeholder: "#ffffff" },
-      { key: "color.accent", label: "Accent", type: "color", placeholder: "#8b5cf6" },
-      { key: "bg.color", label: "Background", type: "color", placeholder: "#0f172a" },
-      { key: "overlay.opacity", label: "Overlay Opacity", type: "text", placeholder: "0.5" },
+      {
+        key: "color.primary",
+        labelKey: "studio.tokenPanel.colorPrimary",
+        type: "color",
+        placeholder: "#6366f1",
+      },
+      {
+        key: "color.surface",
+        labelKey: "studio.tokenPanel.colorSurface",
+        type: "color",
+        placeholder: "#ffffff",
+      },
+      {
+        key: "color.accent",
+        labelKey: "studio.tokenPanel.colorAccent",
+        type: "color",
+        placeholder: "#8b5cf6",
+      },
+      {
+        key: "bg.color",
+        labelKey: "studio.tokenPanel.colorBackground",
+        type: "color",
+        placeholder: "#0f172a",
+      },
+      {
+        key: "overlay.opacity",
+        labelKey: "studio.tokenPanel.overlayOpacity",
+        type: "text",
+        placeholder: "0.5",
+      },
     ],
   },
   {
-    label: "Typography",
+    labelKey: "studio.tokenPanel.groupTypography",
     tokens: [
-      { key: "font.body", label: "Body Font", type: "text", placeholder: "Inter" },
-      { key: "font.heading", label: "Heading Font", type: "text", placeholder: "Inter" },
-      { key: "text.color", label: "Text Color", type: "color", placeholder: "#f8fafc" },
-      { key: "text.muted", label: "Muted Text", type: "color", placeholder: "#94a3b8" },
+      { key: "font.body", labelKey: "studio.tokenPanel.fontBody", type: "text", placeholder: "Inter" },
+      {
+        key: "font.heading",
+        labelKey: "studio.tokenPanel.fontHeading",
+        type: "text",
+        placeholder: "Inter",
+      },
+      {
+        key: "text.color",
+        labelKey: "studio.tokenPanel.textColor",
+        type: "color",
+        placeholder: "#f8fafc",
+      },
+      {
+        key: "text.muted",
+        labelKey: "studio.tokenPanel.mutedText",
+        type: "color",
+        placeholder: "#94a3b8",
+      },
     ],
   },
   {
-    label: "Shape & Spacing",
+    labelKey: "studio.tokenPanel.groupShape",
     tokens: [
-      { key: "radius.card", label: "Card Radius", type: "text", placeholder: "16px" },
-      { key: "radius.button", label: "Button Radius", type: "text", placeholder: "8px" },
-      { key: "radius.input", label: "Input Radius", type: "text", placeholder: "8px" },
+      {
+        key: "radius.card",
+        labelKey: "studio.tokenPanel.radiusCard",
+        type: "text",
+        placeholder: "16px",
+      },
+      {
+        key: "radius.button",
+        labelKey: "studio.tokenPanel.radiusButton",
+        type: "text",
+        placeholder: "8px",
+      },
+      {
+        key: "radius.input",
+        labelKey: "studio.tokenPanel.radiusInput",
+        type: "text",
+        placeholder: "8px",
+      },
     ],
   },
 ];
@@ -60,18 +117,18 @@ export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
   return (
     <div className="space-y-6 p-4">
       <div>
-        <h3 className="text-sm font-semibold text-foreground">
+        <h3 className="text-sm font-semibold text-nx-ink">
           {t("tenantSettings.customization.designTokens")}
         </h3>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 text-xs text-nx-ink-3">
           {t("tenantSettings.customization.tokensDescription")}
         </p>
       </div>
 
       {TOKEN_GROUPS.map((group) => (
-        <div key={group.label} className="space-y-3">
-          <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {group.label}
+        <div key={group.labelKey} className="space-y-3">
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+            {t(group.labelKey)}
           </h4>
           <div className="space-y-2">
             {group.tokens.map((token) => (
@@ -79,12 +136,13 @@ export function TokenPanel({ tokens, updateToken }: TokenPanelProps) {
                 {token.type === "color" && (
                   <input
                     type="color"
+                    aria-label={t(token.labelKey)}
                     value={tokens[token.key] || token.placeholder}
                     onChange={(e) => updateToken(token.key, e.target.value)}
-                    className="h-7 w-7 shrink-0 cursor-pointer rounded border border-border"
+                    className="h-7 w-7 shrink-0 cursor-pointer rounded-nx-control border border-nx-line bg-transparent p-0.5 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus [&::-webkit-color-swatch-wrapper]:p-0 [&::-webkit-color-swatch]:rounded-nx-sm [&::-webkit-color-swatch]:border-0"
                   />
                 )}
-                <Label className="w-24 shrink-0 text-xs text-muted-foreground">{token.label}</Label>
+                <Label className="w-24 shrink-0 text-xs text-nx-ink-3">{t(token.labelKey)}</Label>
                 <Input
                   value={tokens[token.key] || ""}
                   onChange={(e) => updateToken(token.key, e.target.value)}

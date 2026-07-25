@@ -56,8 +56,8 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
 
       {/* Company Name (all layouts) */}
       <div className="space-y-1">
-        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          <Building2 className="h-3 w-3" />
+        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+          <Building2 className="h-3 w-3" aria-hidden="true" />
           {t("studio.branding.companyName")}
         </Label>
         <Input
@@ -73,8 +73,8 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
         <>
           {/* Headline (branding panel only) */}
           <div className="space-y-1">
-            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              <Heading className="h-3 w-3" />
+            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              <Heading className="h-3 w-3" aria-hidden="true" />
               {t("studio.branding.headline")}
             </Label>
             <Input
@@ -83,15 +83,15 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
               placeholder={t("studio.branding.headlinePlaceholder")}
               className="h-8 text-xs"
             />
-            <p className="text-end text-[10px] tabular-nums text-muted-foreground/60">
+            <p className="text-end text-[10px] tabular-nums text-nx-ink-3">
               {draft.headline.length}/100
             </p>
           </div>
 
           {/* Subtitle (branding panel only) */}
           <div className="space-y-1">
-            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-              <FileText className="h-3 w-3" />
+            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              <FileText className="h-3 w-3" aria-hidden="true" />
               {t("studio.branding.subtitle")}
             </Label>
             <Textarea
@@ -105,9 +105,9 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
         </>
       ) : (
         /* Info note for non-split layouts */
-        <div className="flex items-start gap-2 rounded-lg border border-border/50 bg-muted/30 p-3">
-          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
-          <p className="text-[10px] leading-relaxed text-muted-foreground">
+        <div className="flex items-start gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-3">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" aria-hidden="true" />
+          <p className="text-[10px] leading-relaxed text-nx-ink-3">
             {t("studio.branding.noPanelNote")}
           </p>
         </div>
@@ -115,8 +115,8 @@ export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
 
       {/* Copyright — ALL layouts */}
       <div className="space-y-1">
-        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-          <Copyright className="h-3 w-3" />
+        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+          <Copyright className="h-3 w-3" aria-hidden="true" />
           {t("studio.branding.copyright")}
         </Label>
         <Input

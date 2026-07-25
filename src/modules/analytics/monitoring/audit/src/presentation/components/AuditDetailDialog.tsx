@@ -18,6 +18,7 @@ import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Separator } from "@core/ui/separator";
 import { ScrollArea } from "@core/ui/scroll-area";
+import { DetailRow } from "@core/ui/detail-row";
 import type { AuditLogDetail } from "../../domain/entities/AuditEntities";
 import {
   Clock,
@@ -38,27 +39,6 @@ interface Props {
   isLoading: boolean;
 }
 
-function DetailRow({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Clock;
-  label: string;
-  value: React.ReactNode;
-}) {
-  if (!value) return null;
-  return (
-    <div className="flex items-start gap-3 py-2">
-      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
-      <div className="min-w-0">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <div className="break-all text-sm font-medium">{value}</div>
-      </div>
-    </div>
-  );
-}
-
 function JsonDiff({ label, value }: { label: string; value: string | null }) {
   if (!value) return null;
 
@@ -68,8 +48,8 @@ function JsonDiff({ label, value }: { label: string; value: string | null }) {
   } catch {
     return (
       <div>
-        <p className="mb-1 text-xs font-medium text-muted-foreground">{label}</p>
-        <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted/50 p-3 text-xs">
+        <p className="mb-1 text-xs font-medium text-nx-ink-3">{label}</p>
+        <pre className="overflow-x-auto whitespace-pre-wrap rounded-nx-md bg-nx-raised p-3 text-xs text-nx-ink-2">
           {value}
         </pre>
       </div>
@@ -78,8 +58,8 @@ function JsonDiff({ label, value }: { label: string; value: string | null }) {
 
   return (
     <div>
-      <p className="mb-1 text-xs font-medium text-muted-foreground">{label}</p>
-      <pre className="overflow-x-auto whitespace-pre-wrap rounded-md bg-muted/50 p-3 text-xs">
+      <p className="mb-1 text-xs font-medium text-nx-ink-3">{label}</p>
+      <pre className="overflow-x-auto whitespace-pre-wrap rounded-nx-md bg-nx-raised p-3 text-xs text-nx-ink-2">
         {JSON.stringify(parsed, null, 2)}
       </pre>
     </div>
@@ -100,7 +80,7 @@ export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
           <DialogTitle className="flex items-center gap-2">
             {data?.eventType ?? t("audit.detail.title")}
             {data && (
-              <Badge variant={data.isSuccess ? "default" : "destructive"}>
+              <Badge variant={data.isSuccess ? "success" : "destructive"}>
                 {data.isSuccess ? t("audit.filters.success") : t("audit.filters.failed")}
               </Badge>
             )}
@@ -116,7 +96,7 @@ export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
           </div>
         ) : data ? (
           <ScrollArea className="max-h-[60vh]" dir={direction}>
-            <div className="space-y-1 pr-4">
+            <div className="space-y-1 pe-4">
               {/* Core Details */}
               <DetailRow
                 icon={Clock}
@@ -131,40 +111,61 @@ export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
                     {data.username ?? t("common.unknown")}
                     {data.isAdmin && (
                       <Badge variant="secondary" className="py-0 text-[10px]">
-                        Admin
+                        {t("audit.badges.admin")}
                       </Badge>
                     )}
                   </span>
                 }
               />
-              <DetailRow icon={Globe} label={t("audit.detail.ipAddress")} value={data.ipAddress} />
-              <DetailRow
-                icon={Monitor}
-                label={t("audit.detail.userAgent")}
-                value={data.userAgent}
-              />
-              <DetailRow
-                icon={ArrowRightLeft}
-                label={t("audit.detail.endpoint")}
-                value={data.endpoint ? `${data.httpMethod} ${data.endpoint}` : null}
-              />
-              <DetailRow
-                icon={Hash}
-                label={t("audit.detail.entity")}
-                value={
-                  data.entityType ? `${data.entityType} #${data.entityId?.slice(0, 8) ?? ""}` : null
-                }
-              />
-              <DetailRow
-                icon={Hash}
-                label={t("audit.detail.correlationId")}
-                value={data.correlationId}
-              />
-              <DetailRow
-                icon={Timer}
-                label={t("audit.detail.duration")}
-                value={data.durationMs !== null ? `${data.durationMs}ms` : null}
-              />
+              {data.ipAddress && (
+                <DetailRow
+                  icon={Globe}
+                  label={t("audit.detail.ipAddress")}
+                  value={data.ipAddress}
+                  mono
+                />
+              )}
+              {data.userAgent && (
+                <DetailRow
+                  icon={Monitor}
+                  label={t("audit.detail.userAgent")}
+                  value={data.userAgent}
+                  wrap
+                />
+              )}
+              {data.endpoint && (
+                <DetailRow
+                  icon={ArrowRightLeft}
+                  label={t("audit.detail.endpoint")}
+                  value={`${data.httpMethod} ${data.endpoint}`}
+                  mono
+                  wrap
+                />
+              )}
+              {data.entityType && (
+                <DetailRow
+                  icon={Hash}
+                  label={t("audit.detail.entity")}
+                  value={`${data.entityType} #${data.entityId?.slice(0, 8) ?? ""}`}
+                  mono
+                />
+              )}
+              {data.correlationId && (
+                <DetailRow
+                  icon={Hash}
+                  label={t("audit.detail.correlationId")}
+                  value={data.correlationId}
+                  mono
+                  copyable={data.correlationId}
+                />
+              )}
+              {data.durationMs !== null && (
+                <DetailRow
+                  icon={Timer}
+                  label={t("audit.detail.duration")}
+                  value={`${data.durationMs}ms`}
+                />
+              )}
               {data.statusCode !== null && (
                 <DetailRow
                   icon={data.isSuccess ? CheckCircle2 : XCircle}
@@ -176,7 +177,9 @@ export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
                 <DetailRow
                   icon={XCircle}
                   label={t("audit.detail.errorMessage")}
-                  value={<span className="text-destructive">{data.errorMessage}</span>}
+                  value={data.errorMessage}
+                  valueClassName="text-destructive"
+                  wrap
                 />
               )}
 
@@ -186,7 +189,7 @@ export function AuditDetailDialog({ open, onClose, data, isLoading }: Props) {
                   <Separator className="my-3" />
                   <h4 className="mb-2 text-sm font-semibold">{t("audit.detail.changes")}</h4>
                   {data.changedProperties && (
-                    <p className="mb-2 text-xs text-muted-foreground">
+                    <p className="mb-2 text-xs text-nx-ink-3">
                       {t("audit.detail.changedFields")}: {data.changedProperties}
                     </p>
                   )}

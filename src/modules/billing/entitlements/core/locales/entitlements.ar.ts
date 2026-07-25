@@ -218,7 +218,7 @@ export const ar = {
       accountStatus: "حالة الحساب",
       actionRequired: "إجراء مطلوب",
       actionRequiredDesc: "تتطلب سترايب معلومات إضافية للتحقق من حسابك.",
-      alreadyOnboarded: "[مفقود] Already Onboarded",
+      alreadyOnboarded: "تم الإعداد بالفعل",
     },
     commissionLedger: {
       title: "دفتر العمولات",

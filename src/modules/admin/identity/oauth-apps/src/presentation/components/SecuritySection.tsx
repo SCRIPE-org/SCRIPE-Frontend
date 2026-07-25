@@ -23,41 +23,35 @@ export function SecuritySection({ form, updateField }: SecuritySectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <ShieldCheck className="h-5 w-5 text-warning" />
-          {t("oauthApps.securitySection") || "Security"}
+          <ShieldCheck className="h-5 w-5 text-warning" aria-hidden="true" />
+          {t("oauthApps.securitySection")}
         </CardTitle>
-        <CardDescription>
-          {t("oauthApps.securitySectionDesc") || "PKCE and consent screen requirements"}
-        </CardDescription>
+        <CardDescription>{t("oauthApps.securitySectionDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
           <div>
-            <Label className="text-sm font-medium">
-              {t("oauthApps.requirePkce") || "Require PKCE"}
+            <Label htmlFor="oauth-pkce" className="text-sm font-medium">
+              {t("oauthApps.requirePkce")}
             </Label>
-            <p className="text-xs text-muted-foreground">
-              {t("oauthApps.requirePkceHelp") ||
-                "Proof Key for Code Exchange — recommended for all clients, mandatory for public clients"}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("oauthApps.requirePkceHelp")}</p>
           </div>
           <Switch
+            id="oauth-pkce"
             checked={form.requirePkce}
             onCheckedChange={(v) => updateField("requirePkce", v)}
           />
         </div>
 
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
           <div>
-            <Label className="text-sm font-medium">
-              {t("oauthApps.requireConsent") || "Require Consent Screen"}
+            <Label htmlFor="oauth-consent" className="text-sm font-medium">
+              {t("oauthApps.requireConsent")}
             </Label>
-            <p className="text-xs text-muted-foreground">
-              {t("oauthApps.requireConsentHelp") ||
-                "Show a consent dialog to users before granting access to this app"}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("oauthApps.requireConsentHelp")}</p>
           </div>
           <Switch
+            id="oauth-consent"
             checked={form.requireConsent}
             onCheckedChange={(v) => updateField("requireConsent", v)}
           />

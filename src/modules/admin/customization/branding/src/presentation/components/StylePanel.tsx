@@ -9,6 +9,25 @@
 // compact controls (toggle switches, gradient pickers, layout thumbnails, etc.)
 // where @core/ui/button's padding/sizing would break the layout.
 
+import {
+  Ruler,
+  Sun,
+  Moon,
+  Palette,
+  Square,
+  Globe,
+  Image as ImageIcon,
+  ArrowUp,
+  ArrowUpRight,
+  ArrowRight,
+  ArrowDownRight,
+  ArrowDown,
+  ArrowDownLeft,
+  ArrowLeft,
+  ArrowUpLeft,
+  Circle,
+} from "lucide-react";
+import { cn } from "@/core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
 import { ColorInput } from "./ColorInput";
@@ -29,15 +48,39 @@ interface StylePanelProps {
   batchUpdateDraft: (updates: Partial<StudioDraft>) => void;
 }
 
+// NOTE: `COLOR_THEME_SWATCHES` (@core/settings/defaults) is a hue/chroma accent-swatch
+// list for the workspace's OWN accent picker and currently has zero consumers anywhere
+// in src/. It is not a drop-in replacement for `COLOR_PRESETS` below, which carries full
+// light+dark, multi-role login-page palettes (bg/surface/text/border/etc per preset) from
+// a domain file outside this package's ownership. Substituting one for the other would
+// both lose real preset data and require inventing new oklch-to-hex colour math with no
+// existing helper — see escalations.
+
+const DIRECTION_ICONS: Partial<Record<string, typeof ArrowUp>> = {
+  top: ArrowUp,
+  topRight: ArrowUpRight,
+  right: ArrowRight,
+  bottomRight: ArrowDownRight,
+  bottom: ArrowDown,
+  bottomLeft: ArrowDownLeft,
+  left: ArrowLeft,
+  topLeft: ArrowUpLeft,
+  center: Circle,
+  topCenter: ArrowUp,
+  bottomCenter: ArrowDown,
+  centerLeft: ArrowLeft,
+  centerRight: ArrowRight,
+};
+
 const GRADIENT_DIRECTIONS = [
-  { value: "to top", label: "↑" },
-  { value: "to top right", label: "↗" },
-  { value: "to right", label: "→" },
-  { value: "to bottom right", label: "↘" },
-  { value: "to bottom", label: "↓" },
-  { value: "to bottom left", label: "↙" },
-  { value: "to left", label: "←" },
-  { value: "to top left", label: "↖" },
+  { value: "to top", key: "top" },
+  { value: "to top right", key: "topRight" },
+  { value: "to right", key: "right" },
+  { value: "to bottom right", key: "bottomRight" },
+  { value: "to bottom", key: "bottom" },
+  { value: "to bottom left", key: "bottomLeft" },
+  { value: "to left", key: "left" },
+  { value: "to top left", key: "topLeft" },
 ];
 
 // ── Layout Section Map: how many visual bg sections each layout has ──
@@ -71,27 +114,27 @@ const LAYOUT_SECTION_MAP: Record<string, { sections: 1 | 2; labels?: [string, st
 // ═══════════════════════════════════════════════════
 // BgControls — extracted as a stable module-level component
 // (defining it inside the render function created a new component identity
-//  on every re-render, causing React to unmount/remount all inputs → focus loss)
+//  on every re-render, causing React to unmount/remount all inputs, losing focus)
 // ═══════════════════════════════════════════════════
 
 const IMAGE_FIT_OPTIONS = [
-  { value: "cover" as const, label: "Cover" },
-  { value: "contain" as const, label: "Contain" },
-  { value: "fill" as const, label: "Fill" },
-  { value: "none" as const, label: "None" },
-  { value: "scale-down" as const, label: "Scale" },
+  { value: "cover" as const, labelKey: "studio.background.fitCover" },
+  { value: "contain" as const, labelKey: "studio.background.fitContain" },
+  { value: "fill" as const, labelKey: "studio.background.fitFill" },
+  { value: "none" as const, labelKey: "studio.background.fitNone" },
+  { value: "scale-down" as const, labelKey: "studio.background.fitScaleDown" },
 ];
 
 const IMAGE_POSITION_OPTIONS = [
-  { value: "top left", label: "↖" },
-  { value: "top center", label: "↑" },
-  { value: "top right", label: "↗" },
-  { value: "center left", label: "←" },
-  { value: "center", label: "●" },
-  { value: "center right", label: "→" },
-  { value: "bottom left", label: "↙" },
-  { value: "bottom center", label: "↓" },
-  { value: "bottom right", label: "↘" },
+  { value: "top left", key: "topLeft" },
+  { value: "top center", key: "topCenter" },
+  { value: "top right", key: "topRight" },
+  { value: "center left", key: "centerLeft" },
+  { value: "center", key: "center" },
+  { value: "center right", key: "centerRight" },
+  { value: "bottom left", key: "bottomLeft" },
+  { value: "bottom center", key: "bottomCenter" },
+  { value: "bottom right", key: "bottomRight" },
 ];
 
 interface BgControlsProps {
@@ -147,12 +190,14 @@ function BgControls({
         ).map((type) => (
           <button
             key={type}
+            type="button"
             onClick={() => updateDraft(f("bgType"), type as any)}
-            className={`h-7 rounded-md border text-[10px] font-medium transition-all ${
+            className={cn(
+              "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
               bgType === type
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border text-muted-foreground hover:border-primary/30"
-            }`}
+                ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
+            )}
           >
             {t(`studio.background.${type}`)}
           </button>
@@ -170,19 +215,26 @@ function BgControls({
       {bgType === "gradient" && (
         <div className="space-y-2">
           <div className="grid grid-cols-4 gap-1">
-            {GRADIENT_DIRECTIONS.map((dir) => (
-              <button
-                key={dir.value}
-                onClick={() => updateDraft(f("bgGradientDirection"), dir.value as any)}
-                className={`h-6 rounded-md border text-[10px] transition-all ${
-                  bgGradientDirection === dir.value
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-primary/30"
-                }`}
-              >
-                {dir.label}
-              </button>
-            ))}
+            {GRADIENT_DIRECTIONS.map((dir) => {
+              const Icon = DIRECTION_ICONS[dir.key] ?? ArrowUp;
+              const label = t(`studio.direction.${dir.key}`);
+              return (
+                <button
+                  key={dir.value}
+                  type="button"
+                  onClick={() => updateDraft(f("bgGradientDirection"), dir.value as any)}
+                  aria-label={label}
+                  className={cn(
+                    "flex h-6 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                    bgGradientDirection === dir.value
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
+                  )}
+                >
+                  <Icon className="h-3 w-3" aria-hidden="true" />
+                </button>
+              );
+            })}
           </div>
           <ColorInput
             label={t("studio.background.from")}
@@ -195,7 +247,7 @@ function BgControls({
             onChange={(v) => updateDraft(f("bgGradientTo"), v as any)}
           />
           <div
-            className="h-8 w-full rounded-lg border border-border"
+            className="h-8 w-full rounded-nx-control border border-nx-line"
             style={{
               background: `linear-gradient(${bgGradientDirection}, ${bgGradientFrom}, ${bgGradientTo})`,
             }}
@@ -207,64 +259,75 @@ function BgControls({
         <>
           {copyFromLightUrl && (
             <button
+              type="button"
               onClick={() => updateDraft(f("bgImageUrl"), copyFromLightUrl as any)}
-              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-md border border-warning/40 bg-warning/10 text-[10px] font-medium text-warning transition-all hover:bg-warning/20"
+              className="flex h-7 w-full items-center justify-center gap-1.5 rounded-nx-control border border-warning/40 bg-warning/10 text-[10px] font-medium text-warning transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-warning/20 focus-visible:outline-none focus-visible:shadow-nx-focus"
             >
-              ☀️ {t("studio.background.useLight") || "Use light image"}
+              <Sun className="h-3 w-3" aria-hidden="true" />
+              {t("studio.background.useLight")}
             </button>
           )}
           <ImageUploadField
             value={bgImageUrl}
             onChange={(v) => updateDraft(f("bgImageUrl"), v as any)}
-            label={t("studio.background.imageUrl") || "Background Image"}
+            label={t("studio.background.imageUrl")}
             maxSizeBytes={5 * 1024 * 1024}
             accept="image/png,image/jpeg,image/webp,image/gif"
           />
           <div className="space-y-1.5">
-            <span className="text-[10px] font-medium text-muted-foreground">
-              {t("studio.background.imageFit") || "Image Fit"}
+            <span className="text-[10px] font-medium text-nx-ink-3">
+              {t("studio.background.imageFit")}
             </span>
             <div className="grid grid-cols-5 gap-1">
               {IMAGE_FIT_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
+                  type="button"
                   onClick={() => updateDraft(f("bgImageFit"), opt.value as any)}
-                  className={`h-6 rounded-md border text-[9px] font-medium transition-all ${
+                  className={cn(
+                    "h-6 rounded-nx-control border text-[9px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
                     bgImageFit === opt.value
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/30"
-                  }`}
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
+                  )}
                 >
-                  {opt.label}
+                  {t(opt.labelKey)}
                 </button>
               ))}
             </div>
           </div>
           <div className="space-y-1.5">
-            <span className="text-[10px] font-medium text-muted-foreground">
-              {t("studio.background.imagePosition") || "Image Position"}
+            <span className="text-[10px] font-medium text-nx-ink-3">
+              {t("studio.background.imagePosition")}
             </span>
             <div className="grid w-24 grid-cols-3 gap-1">
-              {IMAGE_POSITION_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => updateDraft(f("bgImagePosition"), opt.value as any)}
-                  className={`h-6 w-8 rounded-md border text-[9px] transition-all ${
-                    bgImagePosition === opt.value
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/30"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+              {IMAGE_POSITION_OPTIONS.map((opt) => {
+                const Icon = DIRECTION_ICONS[opt.key] ?? Circle;
+                const label = t(`studio.direction.${opt.key}`);
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => updateDraft(f("bgImagePosition"), opt.value as any)}
+                    aria-label={label}
+                    className={cn(
+                      "flex h-6 w-8 items-center justify-center rounded-nx-control border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                      bgImagePosition === opt.value
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
+                    )}
+                  >
+                    <Icon className="h-3 w-3" aria-hidden="true" />
+                  </button>
+                );
+              })}
             </div>
           </div>
         </>
       )}
 
       <div className="flex items-center justify-between">
-        <span className="text-[10px] font-medium text-muted-foreground">
+        <span className="text-[10px] font-medium text-nx-ink-3">
           {t("studio.background.overlay")}
         </span>
         <Switch
@@ -324,19 +387,20 @@ function PresetDots({
         return (
           <button
             key={i}
+            type="button"
             onClick={() => onApply(preset.colors)}
-            className="flex flex-col items-center gap-1 rounded-lg border border-border p-1.5 transition-all hover:border-primary/30 hover:bg-muted/30"
+            className="flex flex-col items-center gap-1 rounded-nx-md border border-nx-line p-1.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
           >
             <div className="flex gap-0.5">
               {dots.map((c, ci) => (
                 <div
                   key={ci}
-                  className="h-3 w-3 rounded-full border border-border"
+                  className="h-3 w-3 rounded-full border border-nx-line"
                   style={{ backgroundColor: c }}
                 />
               ))}
             </div>
-            <span className="text-[9px] text-muted-foreground">{t(preset.labelKey)}</span>
+            <span className="text-[9px] text-nx-ink-3">{t(preset.labelKey)}</span>
           </button>
         );
       })}
@@ -399,19 +463,20 @@ export function StylePanel({
     // ── Section label helper ──
     const sectionLabel = (idx: 0 | 1) => {
       const key = sectionLabels[idx];
-      return t(`studio.background.${key}`) || key;
+      return t(`studio.background.${key}`);
     };
 
     return (
       <div className="space-y-5">
         {/* ─── SECTION MODE (multi-section layouts only) ─── */}
         {isMultiSection && (
-          <div className="space-y-2 rounded-lg border border-border/60 bg-muted/20 p-3">
+          <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-3">
             <div className="flex items-center justify-between">
-              <h4 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                📐 {t("studio.background.panelBg")}
+              <h4 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+                <Ruler className="h-3.5 w-3.5" aria-hidden="true" />
+                {t("studio.background.panelBg")}
               </h4>
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[9px] font-bold text-primary">
+              <span className="rounded-full bg-nx-accent-wash px-2 py-0.5 text-[9px] font-bold text-nx-accent">
                 {sectionCount} {t("studio.background.sectionCount")}
               </span>
             </div>
@@ -419,12 +484,14 @@ export function StylePanel({
               {(["unified", "independent"] as const).map((mode) => (
                 <button
                   key={mode}
+                  type="button"
                   onClick={() => updateDraft("splitBgMode", mode)}
-                  className={`h-7 rounded-md border text-[10px] font-medium transition-all ${
+                  className={cn(
+                    "h-7 rounded-nx-control border text-[10px] font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
                     draft.splitBgMode === mode
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/30"
-                  }`}
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
+                  )}
                 >
                   {mode === "unified"
                     ? t("studio.background.panelSame")
@@ -432,7 +499,7 @@ export function StylePanel({
                 </button>
               ))}
             </div>
-            <p className="text-[10px] text-muted-foreground">
+            <p className="text-[10px] text-nx-ink-3">
               {draft.splitBgMode === "unified"
                 ? t("studio.background.panelSameDesc")
                 : `${sectionLabel(0)} + ${sectionLabel(1)} — ${t("studio.background.panelIndependentDesc")}`}
@@ -440,26 +507,35 @@ export function StylePanel({
           </div>
         )}
 
-        {/* ═══════════════ ☀️ LIGHT THEME ═══════════════ */}
-        <div className="space-y-3 rounded-lg border border-border/60 bg-gradient-to-b from-warning/10 to-transparent p-3">
-          <h4 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            <span>☀️</span> {t("studio.appearance.lightTheme")}
+        {/* ═══════════════ LIGHT THEME ═══════════════ */}
+        <div className="space-y-3 rounded-nx-md border border-nx-line bg-gradient-to-b from-warning/10 to-transparent p-3">
+          <h4 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+            <Sun className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("studio.appearance.lightTheme")}
           </h4>
 
           {/* Light Presets */}
           <div className="space-y-1.5">
-            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("studio.colors.presets")}
             </h5>
             <PresetDots mode="light" onApply={(c) => applyPreset(c, lightPresetKeys)} />
           </div>
 
           {/* Light Page Background — shows as "Full Page" if unified/1-section, as section label if separated */}
-          <div className="space-y-2 border-t border-border/40 pt-3">
-            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {isMultiSection && draft.splitBgMode === "independent"
-                ? `🔲 ${sectionLabel(0)}`
-                : `🌐 ${t("studio.background.fullPage")}`}
+          <div className="space-y-2 border-t border-nx-line pt-3">
+            <h5 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              {isMultiSection && draft.splitBgMode === "independent" ? (
+                <>
+                  <Square className="h-3 w-3" aria-hidden="true" />
+                  {sectionLabel(0)}
+                </>
+              ) : (
+                <>
+                  <Globe className="h-3 w-3" aria-hidden="true" />
+                  {t("studio.background.fullPage")}
+                </>
+              )}
             </h5>
             <BgControls
               prefix=""
@@ -480,9 +556,10 @@ export function StylePanel({
           </div>
 
           {/* Light Color Palette */}
-          <div className="space-y-2 border-t border-border/40 pt-3">
-            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              🎨 {t("studio.colors.lightPalette")}
+          <div className="space-y-2 border-t border-nx-line pt-3">
+            <h5 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              <Palette className="h-3 w-3" aria-hidden="true" />
+              {t("studio.colors.lightPalette")}
             </h5>
             <ColorInput
               label={t("studio.colors.primary")}
@@ -528,9 +605,10 @@ export function StylePanel({
 
           {/* Light Section 2 Bg (multi-section + independent only) */}
           {isMultiSection && draft.splitBgMode === "independent" && (
-            <div className="space-y-2 border-t border-border/40 pt-3">
-              <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                🖼️ {sectionLabel(1)}
+            <div className="space-y-2 border-t border-nx-line pt-3">
+              <h5 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
+                <ImageIcon className="h-3 w-3" aria-hidden="true" />
+                {sectionLabel(1)}
               </h5>
               <BgControls
                 prefix="panelBg"
@@ -552,26 +630,35 @@ export function StylePanel({
           )}
         </div>
 
-        {/* ═══════════════ 🌙 DARK THEME ═══════════════ */}
-        <div className="space-y-3 rounded-lg border border-border/60 bg-gradient-to-b from-info/10 to-transparent p-3">
-          <h4 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            <span>🌙</span> {t("studio.appearance.darkTheme")}
+        {/* ═══════════════ DARK THEME ═══════════════ */}
+        <div className="space-y-3 rounded-nx-md border border-nx-line bg-gradient-to-b from-info/10 to-transparent p-3">
+          <h4 className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+            <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("studio.appearance.darkTheme")}
           </h4>
 
           {/* Dark Presets */}
           <div className="space-y-1.5">
-            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("studio.colors.presets")}
             </h5>
             <PresetDots mode="dark" onApply={(c) => applyPreset(c, darkPresetKeys)} />
           </div>
 
           {/* Dark Page Background */}
-          <div className="space-y-2 border-t border-border/40 pt-3">
-            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              {isMultiSection && draft.splitBgMode === "independent"
-                ? `🔲 ${sectionLabel(0)}`
-                : `🌐 ${t("studio.background.fullPage")}`}
+          <div className="space-y-2 border-t border-nx-line pt-3">
+            <h5 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              {isMultiSection && draft.splitBgMode === "independent" ? (
+                <>
+                  <Square className="h-3 w-3" aria-hidden="true" />
+                  {sectionLabel(0)}
+                </>
+              ) : (
+                <>
+                  <Globe className="h-3 w-3" aria-hidden="true" />
+                  {t("studio.background.fullPage")}
+                </>
+              )}
             </h5>
             <BgControls
               prefix="darkBg"
@@ -593,9 +680,10 @@ export function StylePanel({
           </div>
 
           {/* Dark Color Palette */}
-          <div className="space-y-2 border-t border-border/40 pt-3">
-            <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-              🎨 {t("studio.colors.darkPalette")}
+          <div className="space-y-2 border-t border-nx-line pt-3">
+            <h5 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              <Palette className="h-3 w-3" aria-hidden="true" />
+              {t("studio.colors.darkPalette")}
             </h5>
             <ColorInput
               label={t("studio.colors.primary")}
@@ -641,9 +729,10 @@ export function StylePanel({
 
           {/* Dark Section 2 Bg (multi-section + independent only) */}
           {isMultiSection && draft.splitBgMode === "independent" && (
-            <div className="space-y-2 border-t border-border/40 pt-3">
-              <h5 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                🖼️ {sectionLabel(1)}
+            <div className="space-y-2 border-t border-nx-line pt-3">
+              <h5 className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
+                <ImageIcon className="h-3 w-3" aria-hidden="true" />
+                {sectionLabel(1)}
               </h5>
               <BgControls
                 prefix="darkPanelBg"
@@ -677,7 +766,7 @@ export function StylePanel({
       <div className="space-y-5">
         {/* Body Font (English) */}
         <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("studio.typography.fontFamily")}
           </label>
           <Select value={draft.fontFamily} onValueChange={(v) => updateDraft("fontFamily", v)}>
@@ -701,7 +790,7 @@ export function StylePanel({
 
         {/* Body Font (Arabic) */}
         <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("studio.typography.fontFamilyAr")}
           </label>
           <Select value={draft.fontFamilyAr} onValueChange={(v) => updateDraft("fontFamilyAr", v)}>
@@ -725,7 +814,7 @@ export function StylePanel({
 
         {/* Heading Font */}
         <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("studio.typography.headingFont")}
           </label>
           <Select
@@ -866,19 +955,21 @@ export function StylePanel({
           onChange={(v) => updateDraft("btnRadius", v)}
         />
         <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("studio.spacing.btnSize")}
           </label>
           <div className="grid grid-cols-3 gap-1.5">
             {(["sm", "md", "lg"] as const).map((size) => (
               <button
                 key={size}
+                type="button"
                 onClick={() => updateDraft("btnSize", size)}
-                className={`h-8 rounded-md border text-xs font-medium transition-all ${
+                className={cn(
+                  "h-8 rounded-nx-control border text-xs font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
                   draft.btnSize === size
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-primary/30"
-                }`}
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    : "border-nx-line text-nx-ink-2 hover:border-nx-line-hi"
+                )}
               >
                 {size.toUpperCase()}
               </button>

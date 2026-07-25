@@ -24,20 +24,15 @@ export function SamlSection({ form, updateField }: SamlSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <ShieldCheck className="h-5 w-5 text-info" />
-          {t("oauthApps.samlSection") || "SAML Configuration"}
+          <ShieldCheck className="h-5 w-5 text-info" aria-hidden="true" />
+          {t("oauthApps.samlSection")}
         </CardTitle>
-        <CardDescription>
-          {t("oauthApps.samlSectionDesc") ||
-            "Optional: Configure SAML 2.0 properties if this is a SAML Service Provider."}
-        </CardDescription>
+        <CardDescription>{t("oauthApps.samlSectionDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* ACS URL */}
         <div className="space-y-2">
-          <Label htmlFor="saml-acs-url">
-            {t("oauthApps.samlAcsUrl") || "Assertion Consumer Service (ACS) URL"}
-          </Label>
+          <Label htmlFor="saml-acs-url">{t("oauthApps.samlAcsUrl")}</Label>
           <Input
             id="saml-acs-url"
             value={form.samlAcsUrl ?? ""}
@@ -49,9 +44,7 @@ export function SamlSection({ form, updateField }: SamlSectionProps) {
 
         {/* SP Entity ID */}
         <div className="space-y-2">
-          <Label htmlFor="saml-sp-entity-id">
-            {t("oauthApps.samlSpEntityId") || "SP Entity ID"}
-          </Label>
+          <Label htmlFor="saml-sp-entity-id">{t("oauthApps.samlSpEntityId")}</Label>
           <Input
             id="saml-sp-entity-id"
             value={form.samlSpEntityId ?? ""}
@@ -63,9 +56,7 @@ export function SamlSection({ form, updateField }: SamlSectionProps) {
 
         {/* SP Certificate */}
         <div className="space-y-2">
-          <Label htmlFor="saml-sp-cert">
-            {t("oauthApps.samlSpCertificate") || "SP Certificate (X.509 PEM)"}
-          </Label>
+          <Label htmlFor="saml-sp-cert">{t("oauthApps.samlSpCertificate")}</Label>
           <Textarea
             id="saml-sp-cert"
             value={form.samlSpCertificate ?? ""}
@@ -73,10 +64,7 @@ export function SamlSection({ form, updateField }: SamlSectionProps) {
             placeholder={"-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"}
             className="min-h-[100px] resize-y font-mono text-xs"
           />
-          <p className="text-xs text-muted-foreground">
-            {t("oauthApps.samlSpCertificateHelp") ||
-              "Optional: Public X.509 certificate for validating signed SAML requests from this SP."}
-          </p>
+          <p className="text-xs text-nx-ink-3">{t("oauthApps.samlSpCertificateHelp")}</p>
         </div>
       </CardContent>
     </Card>

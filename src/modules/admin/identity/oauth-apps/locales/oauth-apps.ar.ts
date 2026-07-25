@@ -138,6 +138,12 @@ export const ar = {
       "تسمح معظم تطبيقات المؤسسات بتكوين تسجيل الدخول الموحد بمجرد لصق رابط البيانات الوصفية XML هذا.",
     samlConfigSection: "تكوين SAML",
     idpMetadataSection: "البيانات الوصفية لـ IdP",
+
+    // تسميات تبويبات نموذج التعديل وأسماء إتاحة الوصول
+    redirectsSecurityTab: "إعادة التوجيه والأمان",
+    copyIdpEntityId: "نسخ معرّف كيان موفر الهوية",
+    copySsoUrl: "نسخ رابط تسجيل الدخول الموحد",
+    copyMetadataUrl: "نسخ رابط البيانات الوصفية",
   },
   oauth: {
     consentTitle: "تفويض التطبيق",

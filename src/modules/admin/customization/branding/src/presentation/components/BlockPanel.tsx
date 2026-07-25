@@ -150,43 +150,67 @@ const BLOCK_TYPES: { type: BlockType; icon: typeof Type; labelKey: string }[] = 
   { type: "gradientText", icon: Sparkles, labelKey: "studio.block.gradientText" },
 ];
 
-function createDefaultBlock(type: BlockType): ContentBlock {
+// Seed values for a freshly added block. Text content is localized so a new block
+// starts in the admin's own language; icon fields hold a language-neutral emoji
+// (sourced from the locale dictionary, not this file, to keep an editable default).
+function createDefaultBlock(type: BlockType, t: (key: string) => string): ContentBlock {
   switch (type) {
     case "text":
-      return { type: "text", props: { content: "Welcome to our platform" } };
+      return { type: "text", props: { content: t("studio.block.seed.textContent") } };
     case "image":
-      return { type: "image", props: { src: "", alt: "Image" } };
+      return { type: "image", props: { src: "", alt: t("studio.block.seed.imageAlt") } };
     case "featureList":
       return {
         type: "featureList",
         props: {
-          items: [{ icon: "🔒", title: "Secure", description: "Enterprise-grade security" }],
+          items: [
+            {
+              icon: t("studio.block.opt.iconPlaceholderSecurity"),
+              title: t("studio.block.seed.featureTitle"),
+              description: t("studio.block.seed.featureDescription"),
+            },
+          ],
         },
       };
     case "testimonial":
       return {
         type: "testimonial",
-        props: { quote: "Great platform!", author: "John Doe", role: "CEO" },
+        props: {
+          quote: t("studio.block.seed.testimonialQuote"),
+          author: t("studio.block.seed.testimonialAuthor"),
+          role: t("studio.block.seed.testimonialRole"),
+        },
       };
     case "ctaButton":
       return {
         type: "ctaButton",
-        props: { label: "Learn More", url: "https://", variant: "default" },
+        props: { label: t("studio.block.seed.ctaLabel"), url: "https://", variant: "default" },
       };
     case "divider":
       return { type: "divider", props: { style: "line" } };
     case "heading":
-      return { type: "heading", props: { text: "Welcome", level: "h3" } };
+      return { type: "heading", props: { text: t("studio.block.seed.headingText"), level: "h3" } };
     case "badge":
-      return { type: "badge", props: { label: "New", variant: "info" } };
+      return { type: "badge", props: { label: t("studio.block.seed.badgeLabel"), variant: "info" } };
     case "spacer":
       return { type: "spacer", props: { height: 24 } };
     case "alert":
-      return { type: "alert", props: { message: "Important information", variant: "info" } };
+      return {
+        type: "alert",
+        props: { message: t("studio.block.seed.alertMessage"), variant: "info" },
+      };
     case "statsRow":
       return {
         type: "statsRow",
-        props: { items: [{ value: "10K+", label: "Users", icon: "👥" }] },
+        props: {
+          items: [
+            {
+              value: "10K+",
+              label: t("studio.block.seed.statLabel"),
+              icon: t("studio.block.opt.iconPlaceholderPeople"),
+            },
+          ],
+        },
       };
     case "socialLinks":
       return {
@@ -194,11 +218,24 @@ function createDefaultBlock(type: BlockType): ContentBlock {
         props: { items: [{ platform: "Twitter", url: "https://twitter.com" }] },
       };
     case "logoCloud":
-      return { type: "logoCloud", props: { items: [{ src: "", alt: "Partner" }] } };
+      return {
+        type: "logoCloud",
+        props: { items: [{ src: "", alt: t("studio.block.seed.logoAlt") }] },
+      };
     case "rating":
       return { type: "rating", props: { value: 4.5, style: "stars" } };
     case "iconRow":
-      return { type: "iconRow", props: { items: [{ icon: "🔗", label: "Link" }] } };
+      return {
+        type: "iconRow",
+        props: {
+          items: [
+            {
+              icon: t("studio.block.opt.iconPlaceholderLink"),
+              label: t("studio.block.seed.linkLabel"),
+            },
+          ],
+        },
+      };
     case "video":
       return { type: "video", props: { url: "" } };
     case "countdown":
@@ -209,13 +246,24 @@ function createDefaultBlock(type: BlockType): ContentBlock {
     case "accordion":
       return {
         type: "accordion",
-        props: { items: [{ title: "Question?", content: "Answer here." }] },
+        props: {
+          items: [
+            {
+              title: t("studio.block.seed.accordionTitle"),
+              content: t("studio.block.seed.accordionContent"),
+            },
+          ],
+        },
       };
     case "progressSteps":
       return {
         type: "progressSteps",
         props: {
-          items: [{ label: "Sign Up" }, { label: "Verify" }, { label: "Done" }],
+          items: [
+            { label: t("studio.block.seed.stepSignUp") },
+            { label: t("studio.block.seed.stepVerify") },
+            { label: t("studio.block.seed.stepDone") },
+          ],
           activeStep: 0,
         },
       };
@@ -224,7 +272,11 @@ function createDefaultBlock(type: BlockType): ContentBlock {
     case "gradientText":
       return {
         type: "gradientText",
-        props: { text: "Amazing Platform", fromColor: "#6366f1", toColor: "#ec4899" },
+        props: {
+          text: t("studio.block.seed.gradientTextContent"),
+          fromColor: "#6366f1",
+          toColor: "#ec4899",
+        },
       };
   }
 }
@@ -286,10 +338,10 @@ export function BlockPanel({
 
   return (
     <div className="space-y-3">
-      <p className="text-xs text-muted-foreground">{t("studio.blocks.description")}</p>
+      <p className="text-xs text-nx-ink-2">{t("studio.blocks.description")}</p>
       {!hasSidebar && (
-        <div className="flex items-center gap-1.5 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-[10px] text-warning">
-          <AlertTriangle className="h-3 w-3 shrink-0" />
+        <div className="flex items-center gap-1.5 rounded-nx-md border border-warning/30 bg-warning/10 px-3 py-2 text-[10px] text-warning">
+          <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden="true" />
           {t("studio.blocks.noSidebarWarning")}
         </div>
       )}
@@ -300,18 +352,21 @@ export function BlockPanel({
         const isAdding = addingToSlot === slot.id;
         const isFull = blocks.length >= slot.maxItems;
         return (
-          <div key={slot.id} className="overflow-hidden rounded-xl border border-border">
+          <div key={slot.id} className="overflow-hidden rounded-nx-md border border-nx-line">
             <button
+              type="button"
               onClick={() => setExpandedSlot(isExpanded ? null : slot.id)}
-              className="flex w-full items-center justify-between px-3 py-2.5 transition-colors hover:bg-muted/30"
+              aria-expanded={isExpanded}
+              className="flex w-full items-center justify-between px-3 py-2.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
             >
               <div className="flex items-center gap-2">
                 <ChevronRight
-                  className={`h-3 w-3 text-muted-foreground transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                  className={`h-3 w-3 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none ${isExpanded ? "rotate-90" : ""}`}
+                  aria-hidden="true"
                 />
-                <span className="text-xs font-semibold text-foreground">{t(slot.labelKey)}</span>
+                <span className="text-xs font-semibold text-nx-ink">{t(slot.labelKey)}</span>
                 {blocks.length > 0 && (
-                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary/15 px-1 text-[9px] font-bold text-primary">
+                  <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-nx-accent-wash px-1 text-[9px] font-bold text-nx-accent">
                     {blocks.length}/{slot.maxItems}
                   </span>
                 )}
@@ -323,8 +378,8 @@ export function BlockPanel({
               )}
             </button>
             {isExpanded && (
-              <div className="space-y-1.5 border-t border-border px-3 py-2">
-                <p className="text-[10px] text-muted-foreground">{t(slot.descKey)}</p>
+              <div className="space-y-1.5 border-t border-nx-line px-3 py-2">
+                <p className="text-[10px] text-nx-ink-3">{t(slot.descKey)}</p>
                 {blocks.map((block, i) => {
                   const isEditing = editingBlock?.slotId === slot.id && editingBlock.index === i;
                   const isDragOver = dragOverIndex === i && dragState?.slotId === slot.id;
@@ -332,7 +387,7 @@ export function BlockPanel({
                   return (
                     <div key={i}>
                       {isDragOver && dragState?.fromIndex !== i && (
-                        <div className="mb-1 h-0.5 w-full rounded-full bg-primary" />
+                        <div className="mb-1 h-0.5 w-full rounded-full bg-nx-accent-fill" />
                       )}
                       <div
                         draggable
@@ -340,34 +395,43 @@ export function BlockPanel({
                         onDragOver={(e) => handleDragOver(e, i)}
                         onDrop={() => handleDrop(slot.id, i)}
                         onDragEnd={handleDragEnd}
-                        className={`rounded-lg border ${isEditing ? "border-primary/40 bg-primary/5" : "border-border bg-muted/20"} transition-all`}
+                        className={`rounded-nx-md border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${isEditing ? "border-nx-accent bg-nx-accent-wash" : "border-nx-line bg-nx-raised"}`}
                       >
                         <div className="flex items-center gap-1 px-2 py-1.5">
-                          <GripVertical className="h-3 w-3 shrink-0 cursor-grab text-muted-foreground/50" />
-                          <BlockIcon className="h-3 w-3 shrink-0 text-muted-foreground" />
+                          <GripVertical
+                            className="h-3 w-3 shrink-0 cursor-grab text-nx-ink-3"
+                            aria-hidden="true"
+                          />
+                          <BlockIcon className="h-3 w-3 shrink-0 text-nx-ink-3" aria-hidden="true" />
                           <button
+                            type="button"
                             onClick={() =>
                               setEditingBlock(isEditing ? null : { slotId: slot.id, index: i })
                             }
-                            className="flex-1 text-start text-[11px] font-medium capitalize text-foreground transition-colors hover:text-primary"
+                            className="flex-1 text-start text-[11px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-accent focus-visible:outline-none focus-visible:shadow-nx-focus"
                           >
                             {t(`studio.block.${block.type}`)}
                           </button>
                           <button
+                            type="button"
                             onClick={() => moveBlock(slot.id, i, "up")}
                             disabled={i === 0}
-                            className="p-0.5 text-muted-foreground hover:text-foreground disabled:opacity-20"
+                            aria-label={t("studio.blocks.moveUp")}
+                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:opacity-20"
                           >
-                            <ChevronUp className="h-3 w-3" />
+                            <ChevronUp className="h-3 w-3" aria-hidden="true" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => moveBlock(slot.id, i, "down")}
                             disabled={i === blocks.length - 1}
-                            className="p-0.5 text-muted-foreground hover:text-foreground disabled:opacity-20"
+                            aria-label={t("studio.blocks.moveDown")}
+                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:opacity-20"
                           >
-                            <ChevronDown className="h-3 w-3" />
+                            <ChevronDown className="h-3 w-3" aria-hidden="true" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => {
                               addBlock(slot.id, {
                                 ...block,
@@ -375,23 +439,25 @@ export function BlockPanel({
                               } as ContentBlock);
                             }}
                             disabled={isFull}
-                            className="p-0.5 text-muted-foreground hover:text-foreground disabled:opacity-20"
-                            title={t("studio.blocks.duplicate")}
+                            aria-label={t("studio.blocks.duplicate")}
+                            className="rounded-nx-sm p-0.5 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:opacity-20"
                           >
-                            <Copy className="h-3 w-3" />
+                            <Copy className="h-3 w-3" aria-hidden="true" />
                           </button>
                           <button
+                            type="button"
                             onClick={() => {
                               removeBlock(slot.id, i);
                               if (isEditing) setEditingBlock(null);
                             }}
-                            className="p-0.5 text-destructive/70 hover:text-destructive"
+                            aria-label={t("studio.blocks.remove")}
+                            className="rounded-nx-sm p-0.5 text-destructive/70 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-destructive focus-visible:outline-none focus-visible:shadow-nx-focus"
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-3 w-3" aria-hidden="true" />
                           </button>
                         </div>
                         {isEditing && (
-                          <div className="space-y-2 border-t border-border/50 px-2 py-2">
+                          <div className="space-y-2 border-t border-nx-line px-2 py-2">
                             <InlineEditor
                               block={block}
                               onChange={(updated) => updateBlock(slot.id, i, updated)}
@@ -409,31 +475,34 @@ export function BlockPanel({
                       return (
                         <button
                           key={bt.type}
+                          type="button"
                           onClick={() => {
-                            addBlock(slot.id, createDefaultBlock(bt.type));
+                            addBlock(slot.id, createDefaultBlock(bt.type, t));
                             setAddingToSlot(null);
                           }}
-                          className="flex items-center gap-1.5 rounded-md border border-border px-2 py-1.5 text-[11px] text-muted-foreground transition-all hover:border-primary/30 hover:bg-muted/30 hover:text-foreground"
+                          className="flex items-center gap-1.5 rounded-nx-control border border-nx-line px-2 py-1.5 text-[11px] text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
                         >
-                          <Icon className="h-3 w-3" />
+                          <Icon className="h-3 w-3" aria-hidden="true" />
                           {t(bt.labelKey)}
                         </button>
                       );
                     })}
                     <button
+                      type="button"
                       onClick={() => setAddingToSlot(null)}
-                      className="col-span-2 rounded-md border border-dashed border-border px-2 py-1 text-[10px] text-muted-foreground hover:text-foreground"
+                      className="col-span-2 rounded-nx-control border border-dashed border-nx-line px-2 py-1 text-[10px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus"
                     >
                       {t("common.cancel")}
                     </button>
                   </div>
                 ) : (
                   <button
+                    type="button"
                     onClick={() => setAddingToSlot(slot.id)}
                     disabled={isFull}
-                    className="flex w-full items-center justify-center gap-1 rounded-lg border border-dashed border-border py-1.5 text-[11px] text-muted-foreground transition-all hover:border-primary/30 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                    className="flex w-full items-center justify-center gap-1 rounded-nx-md border border-dashed border-nx-line py-1.5 text-[11px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:text-nx-ink focus-visible:outline-none focus-visible:shadow-nx-focus disabled:cursor-not-allowed disabled:opacity-40"
                   >
-                    <Plus className="h-3 w-3" />
+                    <Plus className="h-3 w-3" aria-hidden="true" />
                     {isFull ? t("studio.blocks.slotFull") : t("studio.blocks.addBlock")}
                   </button>
                 )}

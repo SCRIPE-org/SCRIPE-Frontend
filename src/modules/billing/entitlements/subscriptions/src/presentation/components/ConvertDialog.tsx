@@ -40,10 +40,8 @@ export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps
     <Dialog open={vm.showConvertDialog} onOpenChange={vm.setShowConvertDialog}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t("entSubscriptions.convertTrial") || "Convert Trial"}</DialogTitle>
-          <DialogDescription>
-            {t("entSubscriptions.convertDesc") || "Convert this trial into a paid subscription."}
-          </DialogDescription>
+          <DialogTitle>{t("entSubscriptions.convertTrial")}</DialogTitle>
+          <DialogDescription>{t("entSubscriptions.convertDesc")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -63,7 +61,7 @@ export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps
             {t("common.cancel")}
           </Button>
           <Button onClick={vm.submitConvert} loading={vm.isConverting}>
-            {t("entSubscriptions.convertTrial") || "Convert"}
+            {t("entSubscriptions.convertTrial")}
           </Button>
         </DialogFooter>
       </DialogContent>

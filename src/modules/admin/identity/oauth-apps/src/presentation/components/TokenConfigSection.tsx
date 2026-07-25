@@ -23,20 +23,16 @@ export function TokenConfigSection({ form, updateField }: TokenConfigSectionProp
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Timer className="h-5 w-5 text-info" />
-          {t("oauthApps.tokenSection") || "Token Configuration"}
+          <Timer className="h-5 w-5 text-info" aria-hidden="true" />
+          {t("oauthApps.tokenSection")}
         </CardTitle>
-        <CardDescription>
-          {t("oauthApps.tokenSectionDesc") || "Configure access and refresh token lifetimes"}
-        </CardDescription>
+        <CardDescription>{t("oauthApps.tokenSectionDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Access Token Lifetime */}
           <div className="space-y-2">
-            <Label htmlFor="oauth-access-ttl">
-              {t("oauthApps.accessTokenLifetime") || "Access Token Lifetime"}
-            </Label>
+            <Label htmlFor="oauth-access-ttl">{t("oauthApps.accessTokenLifetime")}</Label>
             <div className="flex items-center gap-2">
               <Input
                 id="oauth-access-ttl"
@@ -49,20 +45,14 @@ export function TokenConfigSection({ form, updateField }: TokenConfigSectionProp
                 }
                 className="w-24"
               />
-              <span className="text-sm text-muted-foreground">
-                {t("common.minutes") || "minutes"}
-              </span>
+              <span className="text-sm text-nx-ink-2">{t("common.minutes")}</span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t("oauthApps.accessTokenHelp") || "Typical: 15–60 min. Shorter = more secure."}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("oauthApps.accessTokenHelp")}</p>
           </div>
 
           {/* Refresh Token Lifetime */}
           <div className="space-y-2">
-            <Label htmlFor="oauth-refresh-ttl">
-              {t("oauthApps.refreshTokenLifetime") || "Refresh Token Lifetime"}
-            </Label>
+            <Label htmlFor="oauth-refresh-ttl">{t("oauthApps.refreshTokenLifetime")}</Label>
             <div className="flex items-center gap-2">
               <Input
                 id="oauth-refresh-ttl"
@@ -75,12 +65,9 @@ export function TokenConfigSection({ form, updateField }: TokenConfigSectionProp
                 }
                 className="w-24"
               />
-              <span className="text-sm text-muted-foreground">{t("common.days") || "days"}</span>
+              <span className="text-sm text-nx-ink-2">{t("common.days")}</span>
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t("oauthApps.refreshTokenHelp") ||
-                "Typical: 7–30 days. Set based on session requirements."}
-            </p>
+            <p className="text-xs text-nx-ink-3">{t("oauthApps.refreshTokenHelp")}</p>
           </div>
         </div>
       </CardContent>

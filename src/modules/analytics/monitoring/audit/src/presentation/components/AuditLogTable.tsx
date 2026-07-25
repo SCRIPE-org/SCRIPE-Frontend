@@ -61,7 +61,7 @@ export const AuditLogTable = memo(function AuditLogTable({
     return (
       <div className="space-y-3" role="status" aria-label={t("common.loading")}>
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-12 w-full rounded-md" />
+          <Skeleton key={i} shape="block" className="h-12 w-full" />
         ))}
       </div>
     );
@@ -100,14 +100,19 @@ export const AuditLogTable = memo(function AuditLogTable({
           {data.items.map((log) => (
             <TableRow
               key={log.id}
-              className="cursor-pointer transition-colors hover:bg-muted/50"
+              clickable
+              // The row itself stays keyboard-activatable (Enter/Space open the
+              // same detail the Eye button does), so role="button" carries the
+              // semantics TableRow's `clickable` prop doesn't add on its own.
+              // The Eye button below is independently focusable/operable — it
+              // used to be pulled out of tab order entirely, unreachable by
+              // keyboard, while the row wore the role with nothing behind it.
+              role="button"
               onClick={() => onRowClick(log.id)}
               onKeyDown={(e) => handleKeyDown(e, log.id)}
-              tabIndex={0}
-              role="button"
               aria-label={log.eventType + " - " + (log.username ?? "")}
             >
-              <TableCell className="text-xs tabular-nums text-muted-foreground">
+              <TableCell className="text-xs tabular-nums text-nx-ink-3">
                 {formatDateTimeUtc(log.timestamp)}
               </TableCell>
               <TableCell>
@@ -120,23 +125,25 @@ export const AuditLogTable = memo(function AuditLogTable({
                   {log.username ?? "—"}
                   {log.isAdmin && (
                     <Badge variant="secondary" className="px-1 py-0 text-[9px]">
-                      Admin
+                      {t("audit.badges.admin")}
                     </Badge>
                   )}
                 </div>
               </TableCell>
-              <TableCell className="text-sm text-muted-foreground">
+              <TableCell className="text-sm text-nx-ink-2">
                 {log.entityType ? log.entityType + " #" + (log.entityId?.slice(0, 8) ?? "") : "—"}
               </TableCell>
               <TableCell className="text-center">
                 {log.isSuccess ? (
                   <CheckCircle2
                     className="mx-auto h-4 w-4 text-success"
+                    role="img"
                     aria-label={t("audit.filters.success")}
                   />
                 ) : (
                   <XCircle
                     className="mx-auto h-4 w-4 text-destructive"
+                    role="img"
                     aria-label={t("audit.filters.failed")}
                   />
                 )}
@@ -147,9 +154,15 @@ export const AuditLogTable = memo(function AuditLogTable({
                   size="icon"
                   className="h-7 w-7"
                   aria-label={t("common.view")}
-                  tabIndex={-1}
+                  onClick={(e) => {
+                    // Stop the click from also bubbling to the row's own
+                    // onClick — both open the same detail, so a double fire
+                    // is harmless, but there is no reason to invoke it twice.
+                    e.stopPropagation();
+                    onRowClick(log.id);
+                  }}
                 >
-                  <Eye className="h-3.5 w-3.5" />
+                  <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                 </Button>
               </TableCell>
             </TableRow>
@@ -160,8 +173,8 @@ export const AuditLogTable = memo(function AuditLogTable({
       {/* Pagination — composed from the core pagination primitives, which
           already flip their chevrons for RTL */}
       {data.totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between border-t pt-4">
-          <span className="text-sm tabular-nums text-muted-foreground">
+        <div className="mt-4 flex items-center justify-between border-t border-nx-line pt-4">
+          <span className="text-sm tabular-nums text-nx-ink-2">
             {t("common.page")} {data.pageNumber} {t("common.of")} {data.totalPages}
           </span>
           <Pagination className="mx-0 w-auto justify-end">

@@ -4,16 +4,20 @@
  */
 "use client";
 
+import { cn } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { Badge } from "@core/ui/badge";
+import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import {
   CheckCircle2,
+  XCircle,
   Clock,
   AlertTriangle,
   ExternalLink,
   RefreshCw,
   LayoutDashboard,
+  type LucideIcon,
 } from "lucide-react";
 import type { ConnectAccountListItem } from "../../domain/entities/ConnectAccount";
 
@@ -27,23 +31,11 @@ interface OnboardingStatusCardProps {
   isOpeningDashboard: boolean;
 }
 
-const STATUS_CONFIG = {
-  Complete: {
-    icon: CheckCircle2,
-    color: "text-success",
-    badge: "bg-success/10 text-success",
-  },
-  Pending: {
-    icon: Clock,
-    color: "text-warning",
-    badge: "bg-warning/10 text-warning",
-  },
-  Restricted: {
-    icon: AlertTriangle,
-    color: "text-destructive",
-    badge: "bg-destructive/10 text-destructive",
-  },
-} as const;
+const STATUS_CONFIG: Record<string, { icon: LucideIcon; badgeVariant: BadgeProps["variant"] }> = {
+  Complete: { icon: CheckCircle2, badgeVariant: "success" },
+  Pending: { icon: Clock, badgeVariant: "warning" },
+  Restricted: { icon: AlertTriangle, badgeVariant: "destructive" },
+};
 
 type StatusKey = keyof typeof STATUS_CONFIG;
 
@@ -62,61 +54,76 @@ export function OnboardingStatusCard({
 }: OnboardingStatusCardProps) {
   const statusKey = (account.onboardingStatus as StatusKey) ?? "Pending";
   const config = STATUS_CONFIG[statusKey] ?? STATUS_CONFIG.Pending;
-  const Icon = config.icon;
+  const StatusIcon = config.icon;
+
+  // A capability reading: real icon + real word, never an emoji standing in
+  // for both. Colour alone never carries the meaning.
+  const capability = (enabled: boolean) => (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 text-sm font-medium",
+        enabled ? "text-success" : "text-nx-ink-3"
+      )}
+    >
+      {enabled ? (
+        <CheckCircle2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+      ) : (
+        <XCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+      )}
+      {enabled ? t("common.yes") : t("common.no")}
+    </span>
+  );
 
   return (
     <Card>
       <CardHeader>
         <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Icon className={`h-5 w-5 ${config.color}`} />
+            <StatusIcon className="h-5 w-5 text-nx-ink-2" aria-hidden="true" />
             {t("entitlements.stripeConnect.onboardingStatus")}
           </CardTitle>
-          <Badge className={config.badge}>
-            {t(`entitlements.stripeConnect.status.${statusKey}`) || statusKey}
+          <Badge variant={config.badgeVariant}>
+            {t(`entitlements.stripeConnect.status.${statusKey}`)}
           </Badge>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Status description */}
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm leading-relaxed text-nx-ink-2">
           {t(`entitlements.stripeConnect.onboarding${statusKey}`)}
         </p>
 
         {/* Disabled reason */}
         {account.onboardingStatus === "Restricted" && account.disabledReason && (
-          <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            <strong>{t("entitlements.stripeConnect.disabledReason")}:</strong>{" "}
-            {account.disabledReason}
-          </div>
+          <Alert variant="destructive">
+            <AlertTriangle aria-hidden="true" />
+            <AlertTitle>{t("entitlements.stripeConnect.disabledReason")}</AlertTitle>
+            <AlertDescription>{account.disabledReason}</AlertDescription>
+          </Alert>
         )}
 
         {/* Key details */}
-        <div className="grid grid-cols-2 gap-3 text-sm">
+        <div className="grid grid-cols-2 gap-3">
           <div>
-            <p className="mb-0.5 text-xs text-muted-foreground">
+            <p className="mb-0.5 text-xs text-nx-ink-3">
               {t("entitlements.stripeConnect.chargesEnabled")}
             </p>
-            <p className="font-medium">{account.chargesEnabled ? "✅ Yes" : "❌ No"}</p>
+            {capability(account.chargesEnabled)}
           </div>
           <div>
-            <p className="mb-0.5 text-xs text-muted-foreground">
+            <p className="mb-0.5 text-xs text-nx-ink-3">
               {t("entitlements.stripeConnect.payoutsEnabled")}
             </p>
-            <p className="font-medium">{account.payoutsEnabled ? "✅ Yes" : "❌ No"}</p>
+            {capability(account.payoutsEnabled)}
           </div>
           <div>
-            <p className="mb-0.5 text-xs text-muted-foreground">
-              {t("entitlements.stripeConnect.currency")}
-            </p>
-            <p className="font-medium uppercase">{account.currency || "—"}</p>
+            <p className="mb-0.5 text-xs text-nx-ink-3">{t("entitlements.stripeConnect.currency")}</p>
+            <p className="text-sm font-medium uppercase text-nx-ink">{account.currency || "—"}</p>
           </div>
           <div>
-            <p className="mb-0.5 text-xs text-muted-foreground">
-              {t("entitlements.stripeConnect.country")}
-            </p>
-            <p className="font-medium uppercase">{account.country || "—"}</p>
+            <p className="mb-0.5 text-xs text-nx-ink-3">{t("entitlements.stripeConnect.country")}</p>
+            <p className="text-sm font-medium uppercase text-nx-ink">{account.country || "—"}</p>
           </div>
         </div>
 
@@ -126,32 +133,27 @@ export function OnboardingStatusCard({
             <Button
               variant="outline"
               size="sm"
-              className="gap-2"
               onClick={() => onOpenDashboard(account.tenantId)}
-              disabled={isOpeningDashboard}
+              loading={isOpeningDashboard}
             >
-              <LayoutDashboard className="h-4 w-4" />
+              {!isOpeningDashboard && (
+                <LayoutDashboard className="me-2 h-4 w-4" aria-hidden="true" />
+              )}
               {t("entitlements.stripeConnect.viewDashboard")}
             </Button>
           ) : (
             <>
-              <Button
-                variant="default"
-                size="sm"
-                className="gap-2"
-                onClick={() => onOpenOnboarding(account.tenantId)}
-              >
-                <ExternalLink className="h-4 w-4" />
+              <Button variant="default" size="sm" onClick={() => onOpenOnboarding(account.tenantId)}>
+                <ExternalLink className="me-2 h-4 w-4" aria-hidden="true" />
                 {t("entitlements.stripeConnect.openOnboarding")}
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-2"
                 onClick={() => onRefreshLink(account.tenantId)}
-                disabled={isRefreshing}
+                loading={isRefreshing}
               >
-                <RefreshCw className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`} />
+                {!isRefreshing && <RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />}
                 {t("entitlements.stripeConnect.refreshLink")}
               </Button>
             </>

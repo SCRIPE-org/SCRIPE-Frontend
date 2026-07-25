@@ -41,20 +41,14 @@ export function WebhookForm({ mode, webhook, open, onOpenChange, onSuccess }: We
   const { t } = useI18n();
   const vm = useWebhookFormViewModel({ mode, webhook, onSuccess });
 
-  const title =
-    mode === "create"
-      ? t("webhooks.create") || "Create Webhook"
-      : t("webhooks.edit") || "Edit Webhook";
+  const title = mode === "create" ? t("webhooks.create") : t("webhooks.edit");
 
-  const description =
-    mode === "create"
-      ? t("webhooks.createDesc") || "Subscribe to events and receive real-time HTTP notifications."
-      : t("webhooks.editDesc") || "Update the webhook subscription settings.";
+  const description = mode === "create" ? t("webhooks.createDesc") : t("webhooks.editDesc");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[85vh] max-w-2xl flex-col p-0">
-        <DialogHeader className="shrink-0 border-b px-6 pb-4 pt-6">
+        <DialogHeader className="shrink-0 border-b border-nx-line px-6 pb-4 pt-6">
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
@@ -70,9 +64,9 @@ export function WebhookForm({ mode, webhook, open, onOpenChange, onSuccess }: We
         </ScrollArea>
 
         {/* ─── Sticky Footer ─────────────────────────────────── */}
-        <DialogFooter className="shrink-0 border-t px-6 py-4">
+        <DialogFooter className="shrink-0 border-t border-nx-line px-6 py-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} className="min-w-[100px]">
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={vm.handleSubmit}
@@ -80,9 +74,7 @@ export function WebhookForm({ mode, webhook, open, onOpenChange, onSuccess }: We
             loading={vm.isSubmitting}
             className="min-w-[140px]"
           >
-            {mode === "create"
-              ? t("webhooks.create") || "Create Webhook"
-              : t("common.save") || "Save Changes"}
+            {mode === "create" ? t("webhooks.create") : t("common.save")}
           </Button>
         </DialogFooter>
       </DialogContent>

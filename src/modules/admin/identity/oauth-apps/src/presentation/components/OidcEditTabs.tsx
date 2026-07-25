@@ -64,29 +64,32 @@ export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsP
 
   return (
     <Tabs defaultValue="credentials" className="w-full space-y-6">
-      <TabsList className="grid w-full grid-cols-4 border bg-muted/40 p-1 md:inline-flex md:w-auto md:grid-cols-none">
+      <TabsList
+        variant="pill"
+        className="grid w-full grid-cols-4 md:inline-flex md:w-auto md:grid-cols-none"
+      >
         <TabsTrigger value="credentials" className="gap-1.5 text-xs font-semibold">
-          <KeyRound className="h-3.5 w-3.5" />
-          {t("oauthApps.credentialsSection") || "Credentials"}
+          <KeyRound className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("oauthApps.credentialsSection")}
         </TabsTrigger>
         <TabsTrigger value="redirects" className="gap-1.5 text-xs font-semibold">
-          <Link2 className="h-3.5 w-3.5" />
-          {t("oauthApps.endpointsSection") || "Redirects & Security"}
+          <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("oauthApps.redirectsSecurityTab")}
         </TabsTrigger>
         <TabsTrigger value="scopes" className="gap-1.5 text-xs font-semibold">
-          <Tag className="h-3.5 w-3.5" />
-          {t("oauthApps.scopesGrantsSection") || "Scopes & Grants"}
+          <Tag className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("oauthApps.scopesGrantsSection")}
         </TabsTrigger>
         <TabsTrigger value="branding" className="gap-1.5 text-xs font-semibold">
-          <Palette className="h-3.5 w-3.5" />
-          {t("oauthApps.brandingSection") || "Branding"}
+          <Palette className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("oauthApps.brandingSection")}
         </TabsTrigger>
       </TabsList>
 
       {/* Tab 1: Connection & Credentials */}
       <TabsContent
         value="credentials"
-        className="space-y-6 outline-none duration-200 animate-in fade-in"
+        className="space-y-6 outline-none duration-nx-standard animate-in fade-in"
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
@@ -120,7 +123,7 @@ export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsP
       {/* Tab 2: Redirects & Security */}
       <TabsContent
         value="redirects"
-        className="space-y-6 outline-none duration-200 animate-in fade-in"
+        className="space-y-6 outline-none duration-nx-standard animate-in fade-in"
       >
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-6 lg:col-span-2">
@@ -136,7 +139,7 @@ export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsP
       {/* Tab 3: Scopes & Grant Types */}
       <TabsContent
         value="scopes"
-        className="max-w-3xl outline-none duration-200 animate-in fade-in"
+        className="max-w-3xl outline-none duration-nx-standard animate-in fade-in"
       >
         <ScopesGrantsSection {...sectionProps} />
       </TabsContent>
@@ -144,7 +147,7 @@ export function OidcEditTabs({ vm, copiedField, copyToClipboard }: OidcEditTabsP
       {/* Tab 4: Branding */}
       <TabsContent
         value="branding"
-        className="max-w-2xl space-y-6 outline-none duration-200 animate-in fade-in"
+        className="max-w-2xl space-y-6 outline-none duration-nx-standard animate-in fade-in"
       >
         <BrandingSection {...sectionProps} />
       </TabsContent>

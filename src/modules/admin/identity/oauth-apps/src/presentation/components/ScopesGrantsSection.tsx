@@ -48,33 +48,30 @@ export function ScopesGrantsSection({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <Tag className="h-5 w-5 text-primary" />
-          {t("oauthApps.scopesGrantsSection") || "Scopes & Grant Types"}
+          <Tag className="h-5 w-5 text-nx-accent" aria-hidden="true" />
+          {t("oauthApps.scopesGrantsSection")}
         </CardTitle>
-        <CardDescription>
-          {t("oauthApps.scopesGrantsSectionDesc") ||
-            "Configure allowed OIDC scopes and OAuth grant types"}
-        </CardDescription>
+        <CardDescription>{t("oauthApps.scopesGrantsSectionDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* Scopes */}
         <div className="space-y-2">
-          <Label>{t("oauthApps.allowedScopes") || "Allowed Scopes"}</Label>
+          <Label>{t("oauthApps.allowedScopes")}</Label>
           <div className="flex flex-wrap gap-2">
-            {standardScopes.map((scope) => (
-              <Badge
-                key={scope}
-                variant={currentScopes.includes(scope) ? "default" : "outline"}
-                className={`cursor-pointer text-xs transition-all ${
-                  currentScopes.includes(scope)
-                    ? "bg-info text-info-foreground hover:bg-info/90"
-                    : "hover:bg-info/10"
-                }`}
-                onClick={() => toggleScope(scope)}
-              >
-                {scope}
-              </Badge>
-            ))}
+            {standardScopes.map((scope) => {
+              const selected = currentScopes.includes(scope);
+              return (
+                <button
+                  key={scope}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => toggleScope(scope)}
+                  className="cursor-pointer rounded-full focus-visible:outline-none focus-visible:shadow-nx-focus"
+                >
+                  <Badge variant={selected ? "info" : "outline"}>{scope}</Badge>
+                </button>
+              );
+            })}
           </div>
           <Input
             value={form.allowedScopes}
@@ -82,30 +79,27 @@ export function ScopesGrantsSection({
             placeholder="openid profile email"
             className="mt-2 font-mono text-sm"
           />
-          <p className="text-xs text-muted-foreground">
-            {t("oauthApps.scopesHelp") ||
-              "Click badges to toggle, or type custom scopes separated by spaces"}
-          </p>
+          <p className="text-xs text-nx-ink-3">{t("oauthApps.scopesHelp")}</p>
         </div>
 
         {/* Grant Types */}
         <div className="space-y-2">
-          <Label>{t("oauthApps.allowedGrantTypes") || "Allowed Grant Types"}</Label>
+          <Label>{t("oauthApps.allowedGrantTypes")}</Label>
           <div className="flex flex-wrap gap-2">
-            {standardGrantTypes.map((grant) => (
-              <Badge
-                key={grant}
-                variant={currentGrants.includes(grant) ? "default" : "outline"}
-                className={`cursor-pointer text-xs transition-all ${
-                  currentGrants.includes(grant)
-                    ? "bg-success text-success-foreground hover:bg-success/90"
-                    : "hover:bg-success/10"
-                }`}
-                onClick={() => toggleGrant(grant)}
-              >
-                {grant}
-              </Badge>
-            ))}
+            {standardGrantTypes.map((grant) => {
+              const selected = currentGrants.includes(grant);
+              return (
+                <button
+                  key={grant}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => toggleGrant(grant)}
+                  className="cursor-pointer rounded-full focus-visible:outline-none focus-visible:shadow-nx-focus"
+                >
+                  <Badge variant={selected ? "success" : "outline"}>{grant}</Badge>
+                </button>
+              );
+            })}
           </div>
           <Input
             value={form.allowedGrantTypes}

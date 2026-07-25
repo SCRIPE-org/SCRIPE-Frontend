@@ -10,13 +10,13 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@core/ui/alert-dialog";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import type { SubscriptionDialogProps } from "../types";
@@ -30,38 +30,41 @@ export function SuspendDialog({ vm }: SubscriptionDialogProps) {
   const { t } = useI18n();
 
   return (
-    <Dialog open={vm.showSuspendDialog} onOpenChange={vm.setShowSuspendDialog}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{t("entSubscriptions.suspend") || "Suspend Subscription"}</DialogTitle>
-          <DialogDescription>
-            {t("entSubscriptions.suspendDesc") || "Temporarily suspend this tenant's subscription."}
-          </DialogDescription>
-        </DialogHeader>
+    <AlertDialog open={vm.showSuspendDialog} onOpenChange={vm.setShowSuspendDialog}>
+      <AlertDialogContent
+        // A suspend in flight stops being dismissable: Escape used to be able
+        // to close this over a pending mutation with no UI left to report
+        // whether the suspension actually completed.
+        onEscapeKeyDown={(event) => {
+          if (vm.isSuspending) event.preventDefault();
+        }}
+      >
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("entSubscriptions.suspend")}</AlertDialogTitle>
+          <AlertDialogDescription>{t("entSubscriptions.suspendDesc")}</AlertDialogDescription>
+        </AlertDialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>{t("entSubscriptions.reason") || "Reason"}</Label>
+            <Label>{t("entSubscriptions.reason")}</Label>
             <Textarea
               value={vm.suspendReason}
               onChange={(e) => vm.setSuspendReason(e.target.value)}
-              placeholder={
-                t("entSubscriptions.reasonPlaceholder") ||
-                "e.g., Payment overdue, Terms violation..."
-              }
+              placeholder={t("entSubscriptions.reasonPlaceholder")}
               rows={3}
+              disabled={vm.isSuspending}
             />
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Checkbox
               id="use-fallback-suspend"
               checked={vm.useFallback}
               onCheckedChange={(v) => vm.setUseFallback(!!v)}
+              disabled={vm.isSuspending}
             />
             <Label htmlFor="use-fallback-suspend" className="text-sm font-normal">
-              {t("entSubscriptions.useFallback") ||
-                "Downgrade to fallback edition instead of full suspend"}
+              {t("entSubscriptions.useFallback")}
             </Label>
           </div>
 
@@ -74,8 +77,12 @@ export function SuspendDialog({ vm }: SubscriptionDialogProps) {
           />
         </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => vm.setShowSuspendDialog(false)}>
+        <AlertDialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => vm.setShowSuspendDialog(false)}
+            disabled={vm.isSuspending}
+          >
             {t("common.cancel")}
           </Button>
           <Button
@@ -84,10 +91,10 @@ export function SuspendDialog({ vm }: SubscriptionDialogProps) {
             loading={vm.isSuspending}
             disabled={!vm.suspendReason.trim()}
           >
-            {t("entSubscriptions.suspend") || "Suspend"}
+            {t("entSubscriptions.suspend")}
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

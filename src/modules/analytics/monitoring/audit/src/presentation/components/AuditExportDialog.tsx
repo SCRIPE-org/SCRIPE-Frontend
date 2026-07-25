@@ -11,6 +11,7 @@
  */
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import { useExportAudit, type ExportFormat } from "../viewmodels/useExportAudit";
 import type { AuditFilterState } from "../viewmodels/useAuditViewModel";
 import { ExportIntervalSelect, type IntervalDates } from "@core/ui/export-interval-select";
@@ -42,19 +43,19 @@ interface FormatOption {
 const FORMAT_OPTIONS: FormatOption[] = [
   {
     value: "csv",
-    icon: <FileText className="h-8 w-8" />,
+    icon: <FileText className="h-8 w-8" aria-hidden="true" />,
     color: "text-success",
     borderActive: "border-success bg-success/10",
   },
   {
     value: "excel",
-    icon: <FileSpreadsheet className="h-8 w-8" />,
+    icon: <FileSpreadsheet className="h-8 w-8" aria-hidden="true" />,
     color: "text-info",
     borderActive: "border-info bg-info/10",
   },
   {
     value: "pdf",
-    icon: <FileDown className="h-8 w-8" />,
+    icon: <FileDown className="h-8 w-8" aria-hidden="true" />,
     color: "text-destructive",
     borderActive: "border-destructive bg-destructive/10",
   },
@@ -98,13 +99,20 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
     }
   };
 
-  // Active filter summary (non-date filters)
+  // Active filter summary (non-date filters) — event/entity type values are
+  // API enum members, so they render through the same audit.eventTypes /
+  // audit.entityTypes dictionaries the filter panel uses rather than as the
+  // raw payload string.
   const activeFilters: string[] = [];
   if (filters.eventType)
-    activeFilters.push(`${t("audit.filters.eventType")}: ${filters.eventType}`);
+    activeFilters.push(
+      `${t("audit.filters.eventType")}: ${t(`audit.eventTypes.${filters.eventType}`)}`
+    );
   if (filters.username) activeFilters.push(`${t("audit.filters.username")}: ${filters.username}`);
   if (filters.entityType)
-    activeFilters.push(`${t("audit.filters.entityType")}: ${filters.entityType}`);
+    activeFilters.push(
+      `${t("audit.filters.entityType")}: ${t(`audit.entityTypes.${filters.entityType}`)}`
+    );
   if (filters.isSuccess !== undefined)
     activeFilters.push(
       `${t("audit.filters.status")}: ${filters.isSuccess ? t("audit.filters.success") : t("audit.filters.failed")}`
@@ -115,7 +123,7 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <FileDown className="h-5 w-5" />
+            <FileDown className="h-5 w-5" aria-hidden="true" />
             {t("audit.export.title")}
           </DialogTitle>
           <DialogDescription>{t("audit.export.description")}</DialogDescription>
@@ -128,19 +136,32 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
         </div>
 
         {/* Format Cards */}
-        <div className="grid grid-cols-3 gap-3 py-2">
+        <div
+          className="grid grid-cols-3 gap-3 py-2"
+          role="group"
+          aria-label={t("audit.export.formatLabel")}
+        >
           {FORMAT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
+              type="button"
               onClick={() => setSelectedFormat(opt.value)}
               disabled={isExporting}
-              className={`flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-all hover:shadow-md ${selectedFormat === opt.value ? opt.borderActive : "border-border hover:border-muted-foreground/30"} ${isExporting ? "cursor-not-allowed opacity-50" : "cursor-pointer"} `}
+              aria-pressed={selectedFormat === opt.value}
+              className={cn(
+                "flex flex-col items-center gap-2 rounded-nx-md border p-4 text-center",
+                "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "disabled:cursor-not-allowed disabled:opacity-50",
+                selectedFormat === opt.value
+                  ? opt.borderActive
+                  : "border-nx-line hover:border-nx-line-hi"
+              )}
             >
               <span className={opt.color}>{opt.icon}</span>
               <span className="text-sm font-semibold uppercase">
                 {opt.value === "excel" ? "XLSX" : opt.value.toUpperCase()}
               </span>
-              <span className="text-center text-[10px] leading-tight text-muted-foreground">
+              <span className="text-center text-[10px] leading-tight text-nx-ink-3">
                 {t(`audit.export.formats.${opt.value}`)}
               </span>
             </button>
@@ -149,10 +170,8 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
 
         {/* Active Filters Summary */}
         {activeFilters.length > 0 && (
-          <div className="space-y-1.5 rounded-md bg-muted/50 p-3">
-            <p className="text-xs font-medium text-muted-foreground">
-              {t("audit.export.appliedFilters")}
-            </p>
+          <div className="space-y-1.5 rounded-nx-md bg-nx-raised p-3">
+            <p className="text-xs font-medium text-nx-ink-3">{t("audit.export.appliedFilters")}</p>
             <div className="flex flex-wrap gap-1.5">
               {activeFilters.map((f, i) => (
                 <Badge key={i} variant="secondary" className="text-[10px]">
@@ -165,16 +184,16 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
 
         {/* Error */}
         {error && (
-          <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-            <AlertCircle className="h-4 w-4 shrink-0" />
+          <div className="flex items-center gap-2 rounded-nx-md bg-destructive/10 p-3 text-sm text-destructive">
+            <AlertCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
             {error}
           </div>
         )}
 
         {/* Success */}
         {success && (
-          <div className="flex items-center gap-2 rounded-md bg-success/10 p-3 text-sm text-success">
-            <CheckCircle className="h-4 w-4 shrink-0" />
+          <div className="flex items-center gap-2 rounded-nx-md bg-success/10 p-3 text-sm text-success">
+            <CheckCircle className="h-4 w-4 shrink-0" aria-hidden="true" />
             {t("audit.export.success")}
           </div>
         )}
@@ -184,7 +203,7 @@ export function AuditExportDialog({ open, onClose, filters }: AuditExportDialogP
             {t("common.cancel")}
           </Button>
           <Button onClick={handleExport} loading={isExporting}>
-            {!isExporting && <FileDown className="mr-2 h-4 w-4" />}
+            {!isExporting && <FileDown className="me-2 h-4 w-4" aria-hidden="true" />}
             {isExporting ? t("audit.export.generating") : t("audit.export.download")}
           </Button>
         </DialogFooter>

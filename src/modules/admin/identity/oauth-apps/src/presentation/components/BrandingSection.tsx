@@ -22,19 +22,15 @@ export function BrandingSection({ form, updateField }: BrandingSectionProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
-          <ImageIcon className="h-5 w-5 text-primary" />
-          {t("oauthApps.brandingSection") || "Branding"}
+          <ImageIcon className="h-5 w-5 text-nx-accent" aria-hidden="true" />
+          {t("oauthApps.brandingSection")}
         </CardTitle>
-        <CardDescription>
-          {t("oauthApps.brandingSectionDesc") || "Application logo shown on consent screen"}
-        </CardDescription>
+        <CardDescription>{t("oauthApps.brandingSectionDesc")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         <ImageUploadField
-          label={t("oauthApps.logoUri") || "Application Logo"}
-          description={
-            t("oauthApps.brandingSectionDesc") || "Application logo shown on consent screen"
-          }
+          label={t("oauthApps.logoUri")}
+          description={t("oauthApps.brandingSectionDesc")}
           value={form.logoUri}
           onChange={(url) => updateField("logoUri", url)}
         />

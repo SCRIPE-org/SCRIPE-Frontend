@@ -36,9 +36,14 @@ import {
   ChevronDown,
   ChevronRight,
   Wand2,
+  Accessibility,
+  Brain,
+  BookOpen,
+  RotateCcw,
 } from "lucide-react";
 import { cn } from "@/core/common/utils";
 import { Switch } from "@core/ui/switch";
+import { Input } from "@core/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { ColorInput } from "./ColorInput";
 import { SliderInput } from "./SliderInput";
@@ -73,25 +78,25 @@ function Section({
   defaultOpen?: boolean;
   children: React.ReactNode;
 }) {
-  const { t } = useI18n();
   const [open, setOpen] = useState(defaultOpen);
   const Arrow = open ? ChevronDown : ChevronRight;
 
   return (
-    <div className="rounded-xl border border-border bg-card/50">
+    <div className="rounded-nx-md border border-nx-line bg-nx-raised">
       <button
         type="button"
-        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left transition-colors hover:bg-muted/50"
+        aria-expanded={open}
+        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
         onClick={() => setOpen(!open)}
       >
-        <Icon className={cn("h-4 w-4 shrink-0", color)} />
+        <Icon className={cn("h-4 w-4 shrink-0", color)} aria-hidden="true" />
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-semibold text-foreground">{title}</p>
-          {subtitle && <p className="text-[10px] text-muted-foreground">{subtitle}</p>}
+          <p className="text-xs font-semibold text-nx-ink">{title}</p>
+          {subtitle && <p className="text-[10px] text-nx-ink-3">{subtitle}</p>}
         </div>
-        <Arrow className="h-3.5 w-3.5 text-muted-foreground" />
+        <Arrow className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
       </button>
-      {open && <div className="space-y-3 border-t border-border px-3.5 py-3">{children}</div>}
+      {open && <div className="space-y-3 border-t border-nx-line px-3.5 py-3">{children}</div>}
     </div>
   );
 }
@@ -107,14 +112,11 @@ function SettingRow({
   description?: string;
   children: React.ReactNode;
 }) {
-  const { t } = useI18n();
   return (
     <div className="flex items-center justify-between gap-3">
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-medium text-foreground">{label}</p>
-        {description && (
-          <p className="text-[10px] leading-tight text-muted-foreground">{description}</p>
-        )}
+        <p className="text-xs font-medium text-nx-ink">{label}</p>
+        {description && <p className="text-[10px] leading-tight text-nx-ink-3">{description}</p>}
       </div>
       <div className="shrink-0">{children}</div>
     </div>
@@ -137,7 +139,7 @@ const CATEGORY_CONFIG: Record<
   CheckCategory,
   { icon: typeof Eye; labelKey: string; color: string }
 > = {
-  contrast: { icon: Eye, labelKey: "studio.a11y.category.contrast", color: "text-primary" },
+  contrast: { icon: Eye, labelKey: "studio.a11y.category.contrast", color: "text-nx-accent" },
   target: { icon: Target, labelKey: "studio.a11y.category.target", color: "text-info" },
   overlay: { icon: Layers, labelKey: "studio.a11y.category.overlay", color: "text-warning" },
   motion: { icon: Zap, labelKey: "studio.a11y.category.motion", color: "text-info" },
@@ -146,12 +148,11 @@ const CATEGORY_CONFIG: Record<
 // ── Color Swatch ──────────────────────────────────────
 
 function ColorSwatch({ color }: { color: string }) {
-  const { t } = useI18n();
   return (
     <span
-      className="inline-block h-4 w-4 shrink-0 rounded border border-border shadow-sm"
+      className="inline-block h-4 w-4 shrink-0 rounded-nx-sm border border-nx-line shadow-nx-sm"
       style={{ backgroundColor: color }}
-      title={color}
+      aria-hidden="true"
     />
   );
 }
@@ -166,22 +167,22 @@ function CheckItem({ check, onFix }: { check: AccessibilityCheck; onFix?: () => 
   return (
     <div
       className={cn(
-        "flex items-start gap-3 rounded-lg border border-border/50 px-3 py-2.5 transition-colors",
+        "flex items-start gap-3 rounded-nx-md border border-nx-line px-3 py-2.5",
         severity.bgClass
       )}
     >
-      <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", severity.className)} />
+      <Icon className={cn("mt-0.5 h-4 w-4 shrink-0", severity.className)} aria-hidden="true" />
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-xs font-medium text-foreground">{t(check.labelKey)}</span>
+          <span className="text-xs font-medium text-nx-ink">{t(check.labelKey)}</span>
         </div>
         {check.details && (
-          <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">{check.details}</p>
+          <p className="mt-0.5 font-mono text-[10px] text-nx-ink-3">{check.details}</p>
         )}
         {check.colorA && check.colorB && (
           <div className="mt-1.5 flex items-center gap-1.5">
             <ColorSwatch color={check.colorA} />
-            <span className="text-[10px] text-muted-foreground">on</span>
+            <span className="text-[10px] text-nx-ink-3">{t("studio.a11y.onColor")}</span>
             <ColorSwatch color={check.colorB} />
           </div>
         )}
@@ -189,11 +190,11 @@ function CheckItem({ check, onFix }: { check: AccessibilityCheck; onFix?: () => 
       {check.autoFix && onFix && (
         <button
           type="button"
-          className="mt-0.5 flex shrink-0 items-center gap-1 rounded-md border border-border bg-background px-2 py-1 text-[10px] font-medium text-foreground transition-colors hover:bg-muted"
+          className="mt-0.5 flex shrink-0 items-center gap-1 rounded-nx-control border border-nx-line bg-nx-surface px-2 py-1 text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus"
           onClick={onFix}
-          title={t("studio.a11y.autoFix")}
+          aria-label={t("studio.a11y.autoFix")}
         >
-          <Wand2 className="h-3 w-3" />
+          <Wand2 className="h-3 w-3" aria-hidden="true" />
           {t("studio.a11y.fix")}
         </button>
       )}
@@ -221,8 +222,8 @@ function CategorySection({
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <CatIcon className={cn("h-4 w-4", config.color)} />
-        <h3 className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <CatIcon className={cn("h-4 w-4", config.color)} aria-hidden="true" />
+        <h3 className="text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
           {t(config.labelKey)}
         </h3>
       </div>
@@ -250,20 +251,98 @@ function SummaryBadge({
   severity: CheckSeverity;
   label: string;
 }) {
-  const { t } = useI18n();
   const config = SEVERITY_CONFIG[severity];
   const Icon = config.icon;
   if (count === 0) return null;
 
   return (
     <div className={cn("flex items-center gap-1.5 rounded-full px-3 py-1", config.bgClass)}>
-      <Icon className={cn("h-3.5 w-3.5", config.className)} />
+      <Icon className={cn("h-3.5 w-3.5", config.className)} aria-hidden="true" />
       <span className={cn("text-xs font-semibold", config.className)}>
         {count} {label}
       </span>
     </div>
   );
 }
+
+// ── Accessibility Profiles (quick presets) ────────────
+
+const PROFILES: {
+  key: string;
+  icon: typeof Accessibility;
+  labelKey: string;
+  updates: Partial<StudioDraft>;
+}[] = [
+  {
+    key: "motor",
+    icon: Accessibility,
+    labelKey: "studio.a11y.profiles.motor",
+    updates: {
+      a11yLargeTargets: true,
+      a11yCursorSize: "large",
+      a11yFocusRingEnabled: true,
+      a11yFocusRingWidth: 4,
+      a11ySkipLinkEnabled: true,
+    },
+  },
+  {
+    key: "vision",
+    icon: Eye,
+    labelKey: "studio.a11y.profiles.vision",
+    updates: {
+      a11yHighContrastMode: true,
+      a11yMinFontSize: 20,
+      a11yContentScaling: 150,
+      a11yHighlightLinks: true,
+    },
+  },
+  {
+    key: "cognitive",
+    icon: Brain,
+    labelKey: "studio.a11y.profiles.cognitive",
+    updates: {
+      a11yReadingGuide: true,
+      a11yPauseAnimations: true,
+      a11yMinFontSize: 18,
+      a11yLineHeight: 2,
+      a11yReducedMotion: "always",
+    },
+  },
+  {
+    key: "dyslexia",
+    icon: BookOpen,
+    labelKey: "studio.a11y.profiles.dyslexia",
+    updates: {
+      a11yDyslexicFont: true,
+      a11yLineHeight: 2,
+      a11yLetterSpacing: 2,
+      a11yWordSpacing: 4,
+      a11yReadingGuide: true,
+    },
+  },
+  {
+    key: "seizure",
+    icon: Zap,
+    labelKey: "studio.a11y.profiles.seizure",
+    updates: {
+      a11yPauseAnimations: true,
+      a11ySaturation: 0,
+      a11yAutoplayDisabled: true,
+      a11yReducedMotion: "always",
+    },
+  },
+  {
+    key: "screenReader",
+    icon: MonitorSpeaker,
+    labelKey: "studio.a11y.profiles.screenReader",
+    updates: {
+      a11yAriaLandmarks: true,
+      a11yFormLabelsVisible: true,
+      a11yErrorAnnounce: true,
+      a11ySkipLinkEnabled: true,
+    },
+  },
+];
 
 // ── Main Panel ────────────────────────────────────────
 
@@ -292,7 +371,7 @@ export function AccessibilityPanel({
   return (
     <div className="space-y-4">
       {/* ── Score Header ── */}
-      <div className="flex flex-col items-center gap-3 rounded-xl border border-border bg-muted/30 p-4">
+      <div className="flex flex-col items-center gap-3 rounded-nx-md border border-nx-line bg-nx-raised p-4">
         <div className="relative flex h-20 w-20 items-center justify-center">
           <svg className="h-20 w-20 -rotate-90" viewBox="0 0 80 80">
             <circle
@@ -302,7 +381,7 @@ export function AccessibilityPanel({
               fill="none"
               stroke="currentColor"
               strokeWidth="6"
-              className="text-border"
+              className="text-nx-line"
             />
             <circle
               cx="40"
@@ -317,7 +396,9 @@ export function AccessibilityPanel({
               className={scoreColor}
             />
           </svg>
-          <span className={cn("absolute text-lg font-bold", scoreColor)}>{scorePercent}%</span>
+          <span className={cn("absolute text-lg font-bold tabular-nums", scoreColor)}>
+            {scorePercent}%
+          </span>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <SummaryBadge
@@ -341,106 +422,38 @@ export function AccessibilityPanel({
             label={t("studio.a11y.severity.info")}
           />
         </div>
-        <p className="text-center text-[10px] text-muted-foreground">
+        <p className="text-center text-[10px] text-nx-ink-3">
           {t("studio.a11y.summary.description")}
         </p>
       </div>
 
       {/* ── Accessibility Profiles (One-Click Presets) ── */}
       <div className="space-y-2">
-        <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+        <p className="text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
           {t("studio.a11y.profiles.title")}
         </p>
         <div className="grid grid-cols-2 gap-1.5">
-          {[
-            {
-              key: "motor",
-              emoji: "♿",
-              labelKey: "studio.a11y.profiles.motor",
-              updates: {
-                a11yLargeTargets: true,
-                a11yCursorSize: "large" as const,
-                a11yFocusRingEnabled: true,
-                a11yFocusRingWidth: 4,
-                a11ySkipLinkEnabled: true,
-              },
-            },
-            {
-              key: "vision",
-              emoji: "👁",
-              labelKey: "studio.a11y.profiles.vision",
-              updates: {
-                a11yHighContrastMode: true,
-                a11yMinFontSize: 20,
-                a11yContentScaling: 150,
-                a11yHighlightLinks: true,
-              },
-            },
-            {
-              key: "cognitive",
-              emoji: "🧠",
-              labelKey: "studio.a11y.profiles.cognitive",
-              updates: {
-                a11yReadingGuide: true,
-                a11yPauseAnimations: true,
-                a11yMinFontSize: 18,
-                a11yLineHeight: 2,
-                a11yReducedMotion: "always" as const,
-              },
-            },
-            {
-              key: "dyslexia",
-              emoji: "📖",
-              labelKey: "studio.a11y.profiles.dyslexia",
-              updates: {
-                a11yDyslexicFont: true,
-                a11yLineHeight: 2,
-                a11yLetterSpacing: 2,
-                a11yWordSpacing: 4,
-                a11yReadingGuide: true,
-              },
-            },
-            {
-              key: "seizure",
-              emoji: "⚡",
-              labelKey: "studio.a11y.profiles.seizure",
-              updates: {
-                a11yPauseAnimations: true,
-                a11ySaturation: 0,
-                a11yAutoplayDisabled: true,
-                a11yReducedMotion: "always" as const,
-              },
-            },
-            {
-              key: "screenReader",
-              emoji: "🔊",
-              labelKey: "studio.a11y.profiles.screenReader",
-              updates: {
-                a11yAriaLandmarks: true,
-                a11yFormLabelsVisible: true,
-                a11yErrorAnnounce: true,
-                a11ySkipLinkEnabled: true,
-                a11yPageTitle: draft.companyName || "Login",
-              },
-            },
-          ].map((profile) => (
-            <button
-              key={profile.key}
-              type="button"
-              className="flex items-center gap-1.5 rounded-lg border border-border bg-background px-2.5 py-2 text-left transition-all hover:border-primary/40 hover:bg-muted active:scale-[0.97]"
-              onClick={() => batchUpdateDraft(profile.updates)}
-            >
-              <span className="text-sm">{profile.emoji}</span>
-              <span className="text-[10px] font-medium leading-tight text-foreground">
-                {t(profile.labelKey)}
-              </span>
-            </button>
-          ))}
+          {PROFILES.map((profile) => {
+            const Icon = profile.icon;
+            return (
+              <button
+                key={profile.key}
+                type="button"
+                className="flex items-center gap-1.5 rounded-nx-md border border-nx-line bg-nx-surface px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus active:shadow-[inset_0_0_0_1px_var(--nx-accent)]"
+                onClick={() => batchUpdateDraft(profile.updates)}
+              >
+                <Icon className="h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
+                <span className="text-[10px] font-medium leading-tight text-nx-ink">
+                  {t(profile.labelKey)}
+                </span>
+              </button>
+            );
+          })}
           {/* Reset All */}
           <button
             key="reset"
             type="button"
-            className="col-span-2 flex items-center gap-1.5 rounded-lg border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-left transition-all hover:border-destructive/50 hover:bg-destructive/10 active:scale-[0.97]"
+            className="col-span-2 flex items-center gap-1.5 rounded-nx-md border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-destructive/50 hover:bg-destructive/10 focus-visible:outline-none focus-visible:shadow-nx-focus active:shadow-[inset_0_0_0_1px_hsl(var(--destructive))]"
             onClick={() =>
               batchUpdateDraft({
                 a11yFocusRingEnabled: true,
@@ -478,7 +491,7 @@ export function AccessibilityPanel({
               })
             }
           >
-            <span className="text-sm">↩</span>
+            <RotateCcw className="h-4 w-4 shrink-0 text-destructive" aria-hidden="true" />
             <span className="text-[10px] font-medium leading-tight text-destructive">
               {t("studio.a11y.profiles.resetAll")}
             </span>
@@ -567,7 +580,7 @@ export function AccessibilityPanel({
         icon={MonitorSpeaker}
         title={t("studio.a11y.settings.screenReader")}
         subtitle={t("studio.a11y.settings.screenReaderDesc")}
-        color="text-primary"
+        color="text-nx-accent"
       >
         <SettingRow
           label={t("studio.a11y.settings.ariaLandmarks")}
@@ -597,19 +610,17 @@ export function AccessibilityPanel({
           />
         </SettingRow>
         <div className="space-y-1.5">
-          <label className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
             {t("studio.a11y.settings.pageTitle")}
           </label>
-          <input
+          <Input
             type="text"
             value={draft.a11yPageTitle}
             onChange={(e) => updateDraft("a11yPageTitle", e.target.value)}
-            className="h-8 w-full rounded-md border border-border bg-background px-2.5 text-xs text-foreground outline-none transition-colors focus:border-primary"
+            className="h-8 text-xs"
             placeholder={t("studio.a11y.settings.pageTitlePlaceholder")}
           />
-          <p className="text-[10px] text-muted-foreground">
-            {t("studio.a11y.settings.pageTitleDesc")}
-          </p>
+          <p className="text-[10px] text-nx-ink-3">{t("studio.a11y.settings.pageTitleDesc")}</p>
         </div>
       </Section>
 
@@ -676,7 +687,7 @@ export function AccessibilityPanel({
         icon={Type}
         title={t("studio.a11y.settings.typography")}
         subtitle={t("studio.a11y.settings.typographyDesc")}
-        color="text-primary"
+        color="text-nx-accent"
       >
         <SliderInput
           label={t("studio.a11y.settings.minFontSize")}

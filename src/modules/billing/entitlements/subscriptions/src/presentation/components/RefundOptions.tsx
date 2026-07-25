@@ -38,26 +38,26 @@ export function RefundOptions({
     <>
       <div className="space-y-2">
         <Label className="flex items-center gap-1.5">
-          <DollarSign className="h-3.5 w-3.5 text-primary" />
-          {t("entSubscriptions.refundType") || "Refund"}
+          <DollarSign className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
+          {t("entSubscriptions.refundType")}
         </Label>
         <RadioGroup value={refundType} onValueChange={onRefundTypeChange}>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <RadioGroupItem value="None" id={`${idPrefix}-refund-none`} />
             <Label htmlFor={`${idPrefix}-refund-none`} className="text-sm font-normal">
-              {t("entSubscriptions.noRefund") || "No Refund"}
+              {t("entSubscriptions.noRefund")}
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <RadioGroupItem value="Full" id={`${idPrefix}-refund-full`} />
             <Label htmlFor={`${idPrefix}-refund-full`} className="text-sm font-normal">
-              {t("entSubscriptions.fullRefund") || "Full Refund"}
+              {t("entSubscriptions.fullRefund")}
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <RadioGroupItem value="ProRata" id={`${idPrefix}-refund-prorata`} />
             <Label htmlFor={`${idPrefix}-refund-prorata`} className="text-sm font-normal">
-              {t("entSubscriptions.proRataRefund") || "Pro-rata Refund (remaining time)"}
+              {t("entSubscriptions.proRataRefund")}
             </Label>
           </div>
         </RadioGroup>
@@ -66,23 +66,17 @@ export function RefundOptions({
       {/* Custom amount — only visible for ProRata */}
       {refundType === "ProRata" && (
         <div className="space-y-2">
-          <Label className="text-sm">
-            {t("entSubscriptions.customRefundAmount") ||
-              "Custom Amount (optional — leave empty for auto-calculate)"}
-          </Label>
+          <Label className="text-sm">{t("entSubscriptions.customRefundAmount")}</Label>
           <Input
             type="number"
             min="0"
             step="0.01"
             value={customRefundAmount}
             onChange={(e) => onCustomRefundAmountChange(e.target.value)}
-            placeholder={t("entSubscriptions.customAmountPlaceholder") || "e.g., 50.00"}
+            placeholder={t("entSubscriptions.customAmountPlaceholder")}
             className="font-mono"
           />
-          <p className="text-xs text-muted-foreground">
-            {t("entSubscriptions.customAmountHint") ||
-              "If empty, the system auto-calculates based on remaining subscription time."}
-          </p>
+          <p className="text-xs text-nx-ink-3">{t("entSubscriptions.customAmountHint")}</p>
         </div>
       )}
     </>

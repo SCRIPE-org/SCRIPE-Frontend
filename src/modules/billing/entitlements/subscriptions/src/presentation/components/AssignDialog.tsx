@@ -72,11 +72,11 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           {/* End Date */}
           {vm.subscriptionType !== "Lifetime" && (
             <div className="space-y-2">
-              <Label>{t("entSubscriptions.endDate") || "End Date"}</Label>
+              <Label>{t("entSubscriptions.endDate")}</Label>
               <DatePicker
                 value={vm.endDate}
                 onChange={(v) => vm.setEndDate(v)}
-                placeholder={t("entSubscriptions.endDate") || "End Date"}
+                placeholder={t("entSubscriptions.endDate")}
               />
             </div>
           )}
@@ -84,17 +84,17 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
           {/* Expiry Behavior */}
           {vm.subscriptionType !== "Lifetime" && (
             <div className="space-y-2">
-              <Label>{t("entSubscriptions.expiryBehavior") || "On Expiry"}</Label>
+              <Label>{t("entSubscriptions.expiryBehavior")}</Label>
               <GenericSelect
                 type="single"
                 options={[
                   {
                     value: "Fallback",
-                    label: `↓ ${t("entSubscriptions.fallback") || "Fallback to lower edition"}`,
+                    label: `↓ ${t("entSubscriptions.fallback")}`,
                   },
                   {
                     value: "Suspend",
-                    label: `⏸ ${t("entSubscriptions.suspendOnExpiry") || "Suspend tenant"}`,
+                    label: `⏸ ${t("entSubscriptions.suspendOnExpiry")}`,
                   },
                 ]}
                 value={vm.expiryBehavior}
@@ -126,19 +126,15 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
                 onCheckedChange={(checked) => vm.setSkipPayment(!!checked)}
               />
               <Label htmlFor="assign-skip-payment" className="cursor-pointer text-sm font-medium">
-                {t("entSubscriptions.skipPayment") || "Skip Payment"}
+                {t("entSubscriptions.skipPayment")}
               </Label>
             </div>
-            <p className="ms-6 text-xs text-muted-foreground">
-              {t("entSubscriptions.skipPaymentDesc") ||
-                "Activates the subscription without payment processing. Use for demos or manual billing."}
-            </p>
+            <p className="ms-6 text-xs text-nx-ink-3">{t("entSubscriptions.skipPaymentDesc")}</p>
             {vm.skipPayment && (
-              <div className="ms-6 flex items-start gap-2 rounded-md border border-warning/30 bg-warning/10 p-2">
-                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-warning" />
+              <div className="ms-6 flex items-start gap-2 rounded-nx-md border border-warning/30 bg-warning/10 p-2">
+                <Shield className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
                 <span className="text-xs text-warning">
-                  {t("entSubscriptions.skipPaymentWarning") ||
-                    "This subscription will not auto-renew. No Stripe customer is created. Use manual invoicing for future billing."}
+                  {t("entSubscriptions.skipPaymentWarning")}
                 </span>
               </div>
             )}

@@ -14,6 +14,7 @@ export const en = {
       createFailed: "Failed to create account",
       refreshLink: "Refresh Onboarding Link",
       completeOnboarding: "Complete Onboarding",
+      completeOnboardingTooltip: "Opens Stripe Express onboarding to complete account setup.",
       openStripeDashboard: "Open Stripe Dashboard",
       completeOnboardingDesc: "Complete onboarding for this tenant.",
       refreshLinkDesc: "Generate a new onboarding link for this tenant.",
@@ -21,6 +22,8 @@ export const en = {
       refreshedDesc: "A new onboarding link has been generated.",
       refreshFailed: "Failed to refresh link",
       dashboardLink: "Open Stripe Dashboard",
+      dashboardLinkTooltip:
+        "Opens the Stripe Express dashboard (only available after onboarding is complete).",
       dashboardLinkFailed: "Failed to get dashboard link",
       viewDashboard: "View Stripe Dashboard",
       onboarding: "Onboarding",
@@ -47,6 +50,10 @@ export const en = {
       commissionRateOverride: "Override Rate",
       commissionRateDesc:
         "Set a per-tenant commission override. Leave empty to use the edition or global rate.",
+      commissionRateFieldHint: "Values from 0 to 50. Leave blank to remove the override.",
+      commissionRatePlaceholder: "e.g. 10.00",
+      commissionRateInvalid: "Rate must be between 0% and 50%.",
+      commissionRateClearAction: "Clear Override",
       commissionRateUpdated: "Commission Rate Updated",
       commissionRateUpdatedDesc: "The commission rate override has been saved.",
       commissionRateCleared: "Commission Rate Cleared",
@@ -115,6 +122,7 @@ export const en = {
       actionRequiredDesc:
         "This tenant's Stripe onboarding is incomplete. They need to finish setup to receive payouts.",
       alreadyOnboarded: "Already Onboarded",
+      accountDetailDesc: "Onboarding status, capabilities and commission resolution for this account.",
     },
     commissions: {
       title: "Commission Dashboard",
@@ -135,6 +143,7 @@ export const en = {
       trendTitle: "Commission Trend",
       trendDesc: "Daily commission revenue over the selected period",
       trendDays: "Days",
+      trendPeriodDays: "{{days}}D",
       trendAmount: "Amount",
       trendCount: "Transactions",
       topTenantsTitle: "Top Revenue Tenants",

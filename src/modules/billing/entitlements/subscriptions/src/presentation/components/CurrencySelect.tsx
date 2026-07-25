@@ -26,7 +26,7 @@ export function CurrencySelect({ value, onValueChange }: CurrencySelectProps) {
 
   return (
     <div className="space-y-2">
-      <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
+      <Label>{t("entitlements.promotions.currency")}</Label>
       <GenericSelect
         type="single"
         options={options}

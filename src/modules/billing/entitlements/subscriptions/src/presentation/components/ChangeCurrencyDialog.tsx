@@ -33,16 +33,13 @@ export function ChangeCurrencyDialog({ vm }: SubscriptionDialogProps) {
       <DialogContent>
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-              <DollarSign className="h-5 w-5 text-primary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+              <DollarSign className="h-5 w-5 text-nx-accent" aria-hidden="true" />
             </div>
             <div>
-              <DialogTitle>
-                {t("entSubscriptions.changeCurrency") || "Change Billing Currency"}
-              </DialogTitle>
+              <DialogTitle>{t("entSubscriptions.changeCurrency")}</DialogTitle>
               <DialogDescription className="mt-0.5">
-                {t("entSubscriptions.changeCurrencyDesc") ||
-                  "Switch the billing currency for this tenant's subscription. All pricing will be recalculated."}
+                {t("entSubscriptions.changeCurrencyDesc")}
               </DialogDescription>
             </div>
           </div>
@@ -50,7 +47,7 @@ export function ChangeCurrencyDialog({ vm }: SubscriptionDialogProps) {
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label>{t("tenant.currency") || "New Currency"}</Label>
+            <Label>{t("tenant.currency")}</Label>
             <CurrencySelect value={vm.newCurrency} onValueChange={vm.setNewCurrency} />
           </div>
         </div>
@@ -64,7 +61,7 @@ export function ChangeCurrencyDialog({ vm }: SubscriptionDialogProps) {
             disabled={!vm.newCurrency}
             loading={vm.isChangingCurrency}
           >
-            {t("entSubscriptions.changeCurrency") || "Change Currency"}
+            {t("entSubscriptions.changeCurrency")}
           </Button>
         </DialogFooter>
       </DialogContent>
