@@ -102,24 +102,24 @@ export function TenantSettingsEditDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl" dir={direction}>
         <DialogHeader>
-          <DialogTitle>{t("tenant.editSettings") || "Edit Tenant Settings"}</DialogTitle>
+          <DialogTitle>{t("tenant.editSettings")}</DialogTitle>
           <DialogDescription>
-            {t("tenant.editSettingsDesc") || "Update configuration for this tenant."}
+            {t("tenant.editSettingsDesc")}
           </DialogDescription>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="security">{t("tenant.security") || "Security"}</TabsTrigger>
-            <TabsTrigger value="audit">{t("tenant.audit") || "Audit"}</TabsTrigger>
-            <TabsTrigger value="branding">{t("tenant.branding") || "Branding"}</TabsTrigger>
+            <TabsTrigger value="security">{t("tenant.security")}</TabsTrigger>
+            <TabsTrigger value="audit">{t("tenant.audit")}</TabsTrigger>
+            <TabsTrigger value="branding">{t("tenant.branding")}</TabsTrigger>
           </TabsList>
 
           {/* SECURITY TAB */}
           <TabsContent value="security" className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("tenant.passwordMinLength") || "Min Password Length"}</Label>
+                <Label>{t("tenant.passwordMinLength")}</Label>
                 <Input
                   type="number"
                   value={formData.passwordMinLength}
@@ -127,7 +127,7 @@ export function TenantSettingsEditDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label>{t("tenant.lockoutThreshold") || "Lockout Threshold"}</Label>
+                <Label>{t("tenant.lockoutThreshold")}</Label>
                 <Input
                   type="number"
                   value={formData.loginLockoutThreshold}
@@ -135,7 +135,7 @@ export function TenantSettingsEditDialog({
                 />
               </div>
               <div className="space-y-2">
-                <Label>{t("tenant.passwordExpiryDays") || "Password Expiry (days)"}</Label>
+                <Label>{t("tenant.passwordExpiryDays")}</Label>
                 <Input
                   type="number"
                   value={formData.passwordExpiryDays ?? ""}
@@ -145,14 +145,14 @@ export function TenantSettingsEditDialog({
                       e.target.value ? parseInt(e.target.value) : undefined
                     )
                   }
-                  placeholder={t("tenant.neverExpires") || "Leave empty for never"}
+                  placeholder={t("tenant.neverExpires")}
                 />
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.passwordExpiryHelp") || "Empty = never expires"}
+                <p className="text-xs text-nx-ink-2">
+                  {t("tenant.passwordExpiryHelp")}
                 </p>
               </div>
               <div className="space-y-2">
-                <Label>{t("tenant.lockoutDuration") || "Lockout Duration (min)"}</Label>
+                <Label>{t("tenant.lockoutDuration")}</Label>
                 <Input
                   type="number"
                   value={formData.loginLockoutMinutes}
@@ -162,48 +162,48 @@ export function TenantSettingsEditDialog({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <Switch
                   checked={formData.passwordRequireUppercase}
                   onCheckedChange={(c) => handleChange("passwordRequireUppercase", c)}
                 />
-                <Label>{t("tenant.requireUppercase") || "Require Uppercase"}</Label>
+                <Label>{t("tenant.requireUppercase")}</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <Switch
                   checked={formData.passwordRequireNumber}
                   onCheckedChange={(c) => handleChange("passwordRequireNumber", c)}
                 />
-                <Label>{t("tenant.requireNumber") || "Require Number"}</Label>
+                <Label>{t("tenant.requireNumber")}</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <Switch
                   checked={formData.passwordRequireSpecial}
                   onCheckedChange={(c) => handleChange("passwordRequireSpecial", c)}
                 />
-                <Label>{t("tenant.requireSpecial") || "Require Special Char"}</Label>
+                <Label>{t("tenant.requireSpecial")}</Label>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center gap-2">
                 <Switch
                   checked={formData.require2FA}
                   onCheckedChange={(c) => handleChange("require2FA", c)}
                 />
-                <Label>{t("tenant.require2FA") || "Require 2FA"}</Label>
+                <Label>{t("tenant.require2FA")}</Label>
               </div>
             </div>
           </TabsContent>
 
           {/* AUDIT TAB */}
           <TabsContent value="audit" className="space-y-4 py-4">
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-2">
               <Switch
                 checked={formData.auditEnabled}
                 onCheckedChange={(c) => handleChange("auditEnabled", c)}
               />
-              <Label>{t("tenant.auditEnabled") || "Enable Audit Logging"}</Label>
+              <Label>{t("tenant.auditEnabled")}</Label>
             </div>
             <div className="space-y-2">
-              <Label>{t("tenant.auditRetention") || "Retention (Days)"}</Label>
+              <Label>{t("tenant.auditRetention")}</Label>
               <Input
                 type="number"
                 value={formData.auditRetentionDays}
@@ -215,16 +215,16 @@ export function TenantSettingsEditDialog({
           {/* BRANDING TAB */}
           <TabsContent value="branding" className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>{t("tenant.companyName") || "Company Name"}</Label>
+              <Label>{t("tenant.companyName")}</Label>
               <Input
                 value={formData.companyName || ""}
                 onChange={(e) => handleChange("companyName", e.target.value)}
-                placeholder={t("tenant.companyNamePlaceholder") || "My Company"}
+                placeholder={t("tenant.companyNamePlaceholder")}
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("tenant.primaryColor") || "Primary Color"}</Label>
+                <Label>{t("tenant.primaryColor")}</Label>
                 <div className="flex gap-2">
                   <Input
                     type="color"
@@ -240,7 +240,7 @@ export function TenantSettingsEditDialog({
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>{t("tenant.secondaryColor") || "Secondary Color"}</Label>
+                <Label>{t("tenant.secondaryColor")}</Label>
                 <div className="flex gap-2">
                   <Input
                     type="color"
@@ -260,35 +260,35 @@ export function TenantSettingsEditDialog({
               <ImageUploadField
                 value={formData.logoUrl || ""}
                 onChange={(url) => handleChange("logoUrl", url)}
-                label={t("tenant.logoUrl") || "Logo"}
+                label={t("tenant.logoUrl")}
                 maxSizeBytes={2 * 1024 * 1024}
                 accept="image/png,image/jpeg,image/webp,image/svg+xml"
               />
               <ImageUploadField
                 value={formData.faviconUrl || ""}
                 onChange={(url) => handleChange("faviconUrl", url)}
-                label={t("tenant.faviconUrl") || "Favicon"}
-                description={t("tenant.faviconUrlHelp") || "Browser tab icon"}
+                label={t("tenant.faviconUrl")}
+                description={t("tenant.faviconUrlHelp")}
                 maxSizeBytes={512 * 1024}
                 accept="image/x-icon,image/png,image/svg+xml,image/webp"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>{t("tenant.loginHeadline") || "Login Headline"}</Label>
+                <Label>{t("tenant.loginHeadline")}</Label>
                 <Input
                   value={formData.loginHeadline || ""}
                   onChange={(e) => handleChange("loginHeadline", e.target.value)}
-                  placeholder={t("tenant.loginHeadlinePlaceholder") || "Welcome to Our Platform"}
+                  placeholder={t("tenant.loginHeadlinePlaceholder")}
                 />
               </div>
               <div className="space-y-2">
-                <Label>{t("tenant.loginSubtitle") || "Login Subtitle"}</Label>
+                <Label>{t("tenant.loginSubtitle")}</Label>
                 <Input
                   value={formData.loginSubtitle || ""}
                   onChange={(e) => handleChange("loginSubtitle", e.target.value)}
                   placeholder={
-                    t("tenant.loginSubtitlePlaceholder") || "Manage your business efficiently"
+                    t("tenant.loginSubtitlePlaceholder")
                   }
                 />
               </div>

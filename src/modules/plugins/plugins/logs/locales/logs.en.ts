@@ -9,5 +9,9 @@ export const en = {
     logsPage: "Page {{page}} of {{total}}",
     logsStatusOk: "OK",
     logsStatusFail: "FAIL",
+    logsColStatus: "Status",
+    logsColEndpoint: "Endpoint",
+    logsColDuration: "Duration",
+    logsColExecutedAt: "Executed At",
   },
 };

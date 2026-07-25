@@ -25,45 +25,33 @@ export function GeneralTab({ plan, t }: GeneralTabProps) {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Settings className="h-4 w-4 text-muted-foreground" />
-            {t("entitlements.tenantPlans.tabGeneral") || "General Information"}
+            <Settings className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
+            {t("entitlements.tenantPlans.tabGeneral")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <InfoRow label={t("entitlements.tenantPlans.planName") || "Name"} value={plan.name} />
+          <InfoRow label={t("entitlements.tenantPlans.planName")} value={plan.name} />
           <InfoRow
-            label={t("entitlements.tenantPlans.displayNameEn") || "Display (EN)"}
+            label={t("entitlements.tenantPlans.displayNameEn")}
             value={plan.displayNameEn || "—"}
           />
           <InfoRow
-            label={t("entitlements.tenantPlans.displayNameAr") || "Display (AR)"}
+            label={t("entitlements.tenantPlans.displayNameAr")}
             value={plan.displayNameAr || "—"}
           />
+          <InfoRow label={t("common.description")} value={plan.description || "—"} />
+          <InfoRow label={t("entitlements.tenantPlans.tagline")} value={plan.tagline || "—"} />
+          <InfoRow label={t("entitlements.tenantPlans.tier")} value={String(plan.tierLevel)} />
           <InfoRow
-            label={t("common.description") || "Description"}
-            value={plan.description || "—"}
-          />
-          <InfoRow
-            label={t("entitlements.tenantPlans.tagline") || "Tagline"}
-            value={plan.tagline || "—"}
-          />
-          <InfoRow
-            label={t("entitlements.tenantPlans.tier") || "Tier"}
-            value={String(plan.tierLevel)}
-          />
-          <InfoRow
-            label={t("entitlements.tenantPlans.sortOrder") || "Sort Order"}
+            label={t("entitlements.tenantPlans.sortOrder")}
             value={String(plan.sortOrder)}
           />
           <InfoRow
-            label={t("common.createdAt") || "Created"}
+            label={t("common.createdAt")}
             value={plan.createdAt ? formatUtc(plan.createdAt, "PPp") : "—"}
           />
           {plan.updatedAt && (
-            <InfoRow
-              label={t("common.updatedAt") || "Updated"}
-              value={formatUtc(plan.updatedAt, "PPp")}
-            />
+            <InfoRow label={t("common.updatedAt")} value={formatUtc(plan.updatedAt, "PPp")} />
           )}
         </CardContent>
       </Card>
@@ -72,71 +60,68 @@ export function GeneralTab({ plan, t }: GeneralTabProps) {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Shield className="h-4 w-4 text-muted-foreground" />
-            {t("entitlements.tenantPlans.tabSettings") || "Settings"}
+            <Shield className="h-4 w-4 text-nx-ink-2" aria-hidden="true" />
+            {t("entitlements.tenantPlans.tabSettings")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <FlagRow
-            icon={<Eye />}
-            label={t("entitlements.tenantPlans.isPublic") || "Publicly Visible"}
+            icon={<Eye aria-hidden="true" />}
+            label={t("entitlements.tenantPlans.isPublic")}
             value={plan.isPublic}
           />
           <FlagRow
-            icon={<CheckCircle2 />}
-            label={t("common.active") || "Active"}
+            icon={<CheckCircle2 aria-hidden="true" />}
+            label={t("common.active")}
             value={plan.isActive}
           />
           <FlagRow
-            icon={<Sparkles />}
-            label={t("entitlements.tenantPlans.selfServiceEnabled") || "Self-Service Enabled"}
+            icon={<Sparkles aria-hidden="true" />}
+            label={t("entitlements.tenantPlans.selfServiceEnabled")}
             value={plan.isSelfServiceEnabled}
           />
           <FlagRow
-            icon={<EyeOff />}
-            label={t("entitlements.tenantPlans.contactSalesOnly") || "Contact Sales Only"}
+            icon={<EyeOff aria-hidden="true" />}
+            label={t("entitlements.tenantPlans.contactSalesOnly")}
             value={plan.isContactSalesOnly}
           />
-          <div className="mt-3 border-t pt-3" />
+          <div className="mt-3 border-t border-nx-line pt-3" />
           <FlagRow
-            icon={<Calendar />}
-            label={t("entitlements.tenantPlans.allowMonthly") || "Monthly"}
+            icon={<Calendar aria-hidden="true" />}
+            label={t("entitlements.tenantPlans.allowMonthly")}
             value={plan.allowMonthly}
           />
           <FlagRow
-            icon={<Calendar />}
-            label={t("entitlements.tenantPlans.allowYearly") || "Yearly"}
+            icon={<Calendar aria-hidden="true" />}
+            label={t("entitlements.tenantPlans.allowYearly")}
             value={plan.allowYearly}
           />
           <FlagRow
-            icon={<Calendar />}
-            label={t("entitlements.tenantPlans.allowLifetime") || "Lifetime"}
+            icon={<Calendar aria-hidden="true" />}
+            label={t("entitlements.tenantPlans.allowLifetime")}
             value={plan.allowLifetime}
           />
           <FlagRow
-            icon={<Calendar />}
-            label={t("entitlements.tenantPlans.allowTrial") || "Trial"}
+            icon={<Calendar aria-hidden="true" />}
+            label={t("entitlements.tenantPlans.allowTrial")}
             value={plan.allowTrial}
           />
-          <div className="mt-3 border-t pt-3" />
+          <div className="mt-3 border-t border-nx-line pt-3" />
           <InfoRow
-            label={t("entitlements.tenantPlans.trialDays") || "Trial Days"}
+            label={t("entitlements.tenantPlans.trialDays")}
             value={String(plan.trialDays)}
           />
           <InfoRow
-            label={t("entitlements.tenantPlans.gracePeriodDays") || "Grace Period Days"}
+            label={t("entitlements.tenantPlans.gracePeriodDays")}
             value={String(plan.gracePeriodDays)}
           />
+          <InfoRow label={t("entitlements.tenantPlans.maxUsers")} value={plan.maxUsersDisplay} />
           <InfoRow
-            label={t("entitlements.tenantPlans.maxUsers") || "Max Users"}
-            value={plan.maxUsersDisplay}
-          />
-          <InfoRow
-            label={t("entitlements.tenantPlans.maxSubscribers") || "Max Subscribers"}
+            label={t("entitlements.tenantPlans.maxSubscribers")}
             value={
               plan.maxSubscribers != null
                 ? String(plan.maxSubscribers)
-                : t("entitlements.tenantPlans.unlimited") || "∞"
+                : t("entitlements.tenantPlans.unlimited")
             }
           />
         </CardContent>

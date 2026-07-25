@@ -109,9 +109,7 @@ export function useRecycleBinViewModel() {
       queryClient.invalidateQueries({ queryKey: [...RECYCLE_BIN_QUERY_KEY] });
       success({
         title: t("recycleBin.restored"),
-        description: (
-          t("recycleBin.bulkRestoredDesc") || "{count} items restored successfully"
-        ).replace("{count}", String(count)),
+        description: t("recycleBin.bulkRestoredDesc", { count }),
       });
     },
     onError: (err: Error) => {

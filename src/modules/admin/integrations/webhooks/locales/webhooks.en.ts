@@ -93,6 +93,10 @@ export const en = {
     gracePeriod: "Grace Period",
     secretMaskedNote:
       "For security, the full secret is only shown when first created or after rotation. Use 'Rotate Secret' to generate and reveal a new secret.",
+    secretReveal: "Reveal secret",
+    secretHide: "Hide secret",
+    secretCopy: "Copy secret",
+    secretCopied: "Copied!",
 
     // ─── Test ────────────────────────────────────────────────
     testSuccess: "Test Delivered Successfully",
@@ -143,6 +147,17 @@ export const en = {
     payload: "Payload",
     responseBody: "Response Body",
     responseOrError: "Response / Error",
+    deliveryId: "Delivery ID",
+    nextRetry: "Next retry",
+    notAvailable: "N/A",
+
+    // ─── Delivery Status (lifecycle) ─────────────────────────
+    deliveryStatus: {
+      pending: "Pending",
+      delivered: "Delivered",
+      retrying: "Retrying",
+      deadLettered: "Dead Letter",
+    },
 
     // ─── Health Dashboard ────────────────────────────────────
     health: {
@@ -199,6 +214,8 @@ export const en = {
       replayedDesc: "Delivery has been re-queued for retry.",
       allReplayed: "All Replayed",
       allReplayedDesc: "All dead letters have been re-queued for retry.",
+      pageOfTotal: "Page {{page}} of {{totalPages}} · {{totalCount}} total",
+      noResponseCaptured: "No response captured",
     },
 
     // ─── Form Sections ───────────────────────────────────────

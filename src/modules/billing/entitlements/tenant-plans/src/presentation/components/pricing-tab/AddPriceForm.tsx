@@ -46,21 +46,21 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
   if (plan.allowMonthly)
     cycleOptions.push({
       value: "Monthly",
-      label: t("entitlements.tenantPlans.monthly") || "Monthly",
+      label: t("entitlements.tenantPlans.monthly"),
     });
   if (plan.allowYearly)
-    cycleOptions.push({ value: "Yearly", label: t("entitlements.tenantPlans.yearly") || "Yearly" });
+    cycleOptions.push({ value: "Yearly", label: t("entitlements.tenantPlans.yearly") });
   if (plan.allowLifetime)
     cycleOptions.push({
       value: "Lifetime",
-      label: t("entitlements.tenantPlans.lifetime") || "Lifetime",
+      label: t("entitlements.tenantPlans.lifetime"),
     });
 
   // Fallback if no cycles configured
   if (cycleOptions.length === 0) {
     cycleOptions.push(
-      { value: "Monthly", label: t("entitlements.tenantPlans.monthly") || "Monthly" },
-      { value: "Yearly", label: t("entitlements.tenantPlans.yearly") || "Yearly" }
+      { value: "Monthly", label: t("entitlements.tenantPlans.monthly") },
+      { value: "Yearly", label: t("entitlements.tenantPlans.yearly") }
     );
   }
 
@@ -75,17 +75,17 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
   };
 
   return (
-    <Card className="border-dashed border-primary/30">
+    <Card className="border-dashed border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm">
-          <DollarSign className="h-4 w-4 text-primary" />
-          {t("entitlements.tenantPlans.addPrice") || "Add Price Entry"}
+          <DollarSign className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+          {t("entitlements.tenantPlans.addPrice")}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <div className="space-y-1.5">
-            <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
+            <Label>{t("entitlements.tenantPlans.currency")}</Label>
             <GenericSelect
               type="single"
               options={CURRENCY_OPTIONS}
@@ -93,12 +93,12 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
               onValueChange={(v: string | string[]) =>
                 setCurrency(typeof v === "string" ? v : v[0])
               }
-              placeholder="Select currency..."
+              placeholder={t("entitlements.tenantPlans.selectCurrency")}
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label>{t("entitlements.tenantPlans.billingCycles") || "Billing Cycle"}</Label>
+            <Label>{t("entitlements.tenantPlans.billingCycles")}</Label>
             <GenericSelect
               type="single"
               options={cycleOptions}
@@ -106,13 +106,14 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
               onValueChange={(v: string | string[]) =>
                 setBillingCycle(typeof v === "string" ? v : v[0])
               }
-              placeholder="Select cycle..."
+              placeholder={t("entitlements.tenantPlans.selectBillingCycle")}
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label>{t("entitlements.tenantPlans.amount") || "Amount"}</Label>
+            <Label htmlFor="add-price-amount">{t("entitlements.tenantPlans.amount")}</Label>
             <Input
+              id="add-price-amount"
               type="number"
               value={amount || ""}
               onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
@@ -124,12 +125,12 @@ export function AddPriceForm({ plan, onAdd, onCancel, t }: AddPriceFormProps) {
 
           <div className="flex items-end gap-2">
             <Button size="sm" onClick={handleAdd} disabled={amount <= 0}>
-              <Check className="me-1 h-4 w-4" />
-              {t("common.add") || "Add"}
+              <Check className="me-1 h-4 w-4" aria-hidden="true" />
+              {t("common.add")}
             </Button>
             <Button size="sm" variant="ghost" onClick={onCancel}>
-              <X className="me-1 h-4 w-4" />
-              {t("common.cancel") || "Cancel"}
+              <X className="me-1 h-4 w-4" aria-hidden="true" />
+              {t("common.cancel")}
             </Button>
           </div>
         </div>

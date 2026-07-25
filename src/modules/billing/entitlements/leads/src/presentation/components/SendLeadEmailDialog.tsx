@@ -14,27 +14,22 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Loader2, Send, Mail } from "lucide-react";
+import { Send, Mail } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PlatformLead } from "../../domain/entities/PlatformLead";
 
 // ── Built-in templates ────────────────────────────────────────────────────────
+// Subject/body copy is bilingual content, so it lives in the locale shard
+// (leads.email.templates.<key>) and is resolved through t() — only the
+// [Contact Name] / [Company Name] fill tokens stay literal across languages.
 
-const TEMPLATES: Record<string, { subject: string; body: string }> = {
-  "initial-contact": {
-    subject: "Welcome to SCRIPE — Let's Connect",
-    body: `<p>Hi [Contact Name],</p>\n<p>Thank you for your interest in SCRIPE. I'd love to learn more about <strong>[Company Name]</strong> and how we can work together.</p>\n<p>Would you be open to a quick 20-minute call this week?</p>`,
-  },
-  "follow-up": {
-    subject: "Following Up — SCRIPE for [Company Name]",
-    body: `<p>Hi [Contact Name],</p>\n<p>I wanted to follow up on SCRIPE. I'm sure things have been busy — just didn't want to lose touch.</p>\n<p>If you have any questions or would like a demo, I'm here.</p>`,
-  },
-  "demo-invitation": {
-    subject: "Your SCRIPE Demo is Ready",
-    body: `<p>Hi [Contact Name],</p>\n<p>I've set aside time for a personalized SCRIPE demo tailored to <strong>[Company Name]</strong>.</p>\n<p>Reply to this email or click below to pick a time.</p>`,
-  },
-  custom: { subject: "", body: "" },
-};
+const TEMPLATE_LOCALE_KEYS = {
+  "initial-contact": "initialContact",
+  "follow-up": "followUp",
+  "demo-invitation": "demoInvitation",
+} as const;
+
+type TemplateKey = keyof typeof TEMPLATE_LOCALE_KEYS | "custom";
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -66,20 +61,26 @@ export function SendLeadEmailDialog({
 }: SendLeadEmailDialogProps) {
   const { t } = useI18n();
 
-  const [templateKey, setTemplateKey] = useState("custom");
+  const [templateKey, setTemplateKey] = useState<TemplateKey>("custom");
   const [subject, setSubject] = useState("");
   const [bodyHtml, setBodyHtml] = useState("");
 
   const applyTemplate = (key: string) => {
-    setTemplateKey(key);
-    const tpl = TEMPLATES[key];
-    if (!tpl) return;
+    setTemplateKey(key as TemplateKey);
+
+    const localeKey = TEMPLATE_LOCALE_KEYS[key as keyof typeof TEMPLATE_LOCALE_KEYS];
+    if (!localeKey) {
+      setSubject("");
+      setBodyHtml("");
+      return;
+    }
+
     const fill = (s: string) =>
       s
         .replace(/\[Contact Name\]/g, lead?.contactName ?? "")
         .replace(/\[Company Name\]/g, lead?.companyName ?? "");
-    setSubject(fill(tpl.subject));
-    setBodyHtml(fill(tpl.body));
+    setSubject(fill(t(`leads.email.templates.${localeKey}.subject`)));
+    setBodyHtml(fill(t(`leads.email.templates.${localeKey}.body`)));
   };
 
   const reset = () => {
@@ -120,20 +121,20 @@ export function SendLeadEmailDialog({
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-info/10">
-              <Mail className="h-5 w-5 text-info" />
+              <Mail className="h-5 w-5 text-info" aria-hidden="true" />
             </div>
             <div>
               <DialogTitle>{t("leads.email.dialogTitle")}</DialogTitle>
               <DialogDescription>
-                {t("leads.email.dialogSubtitle").replace("{email}", lead?.email ?? "")}
+                {t("leads.email.dialogSubtitle", { email: lead?.email ?? "" })}
               </DialogDescription>
             </div>
           </div>
 
           {lead && (
-            <div className="mt-2 rounded-lg border border-border bg-muted/50 px-4 py-3">
-              <p className="text-sm font-medium">{lead.companyName}</p>
-              <p className="text-xs text-muted-foreground">
+            <div className="mt-2 rounded-nx-md border border-nx-line bg-nx-raised px-4 py-3">
+              <p className="text-sm font-medium text-nx-ink">{lead.companyName}</p>
+              <p className="text-xs text-nx-ink-2">
                 {lead.contactName} — {lead.email}
               </p>
             </div>
@@ -186,7 +187,7 @@ export function SendLeadEmailDialog({
               rows={9}
               className="resize-none font-mono text-xs"
             />
-            <p className="text-xs text-muted-foreground">{t("leads.email.bodyHint")}</p>
+            <p className="text-xs leading-relaxed text-nx-ink-3">{t("leads.email.bodyHint")}</p>
           </div>
 
           <DialogFooter className="gap-2">
@@ -196,16 +197,14 @@ export function SendLeadEmailDialog({
             <Button
               type="submit"
               disabled={isSending || !isValid}
+              loading={isSending}
               className="gap-2 bg-info text-info-foreground hover:bg-info/90"
             >
               {isSending ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t("leads.email.sending")}
-                </>
+                t("leads.email.sending")
               ) : (
                 <>
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4" aria-hidden="true" />
                   {t("leads.email.send")}
                 </>
               )}

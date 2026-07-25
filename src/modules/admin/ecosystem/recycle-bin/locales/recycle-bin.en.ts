@@ -19,6 +19,7 @@ export const en = {
     restore: "Restore",
     restoreConfirm: "Are you sure you want to restore this item?",
     restoreConfirmTitle: "Restore Item",
+    restoreGroupTitle: "Restore User Group",
     restoreSuccess: "Item restored successfully",
     restoreError: "Failed to restore item",
     restored: "Item Restored",
@@ -33,6 +34,8 @@ export const en = {
     daysLeft: "{{days}} days left",
     permanent: "Permanent soon",
     loading: "Loading deleted items...",
-    restoreConfirmDesc: "Restore Confirm Desc",
+    restoreConfirmDesc: "Are you sure you want to restore {name}?",
+    selectedGroup: "the selected group",
+    groupsCount: "{{count}} groups",
   },
 };

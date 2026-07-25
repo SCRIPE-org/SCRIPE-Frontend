@@ -17,11 +17,11 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction, BulkAction } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
+import { Tabs, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { RotateCcw } from "lucide-react";
-import { format } from "date-fns";
+import { formatUtc } from "@core/common/utils";
 import type { DeletedItem } from "../../domain/entities/DeletedItem";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
-import { cn } from "@core/common/utils";
 import { CascadeRestoreDialog } from "../components/CascadeRestoreDialog";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -40,11 +40,7 @@ export function RecycleBinView() {
     { key: "admins", label: t("recycleBin.tabs.admins"), count: vm.tabCounts.admins },
     { key: "users", label: t("recycleBin.tabs.users"), count: vm.tabCounts.users },
     { key: "roles", label: t("recycleBin.tabs.roles"), count: vm.tabCounts.roles },
-    {
-      key: "userGroups",
-      label: t("recycleBin.tabs.userGroups") || "User Groups",
-      count: vm.tabCounts.userGroups,
-    },
+    { key: "userGroups", label: t("recycleBin.tabs.userGroups"), count: vm.tabCounts.userGroups },
   ];
 
   // ============ Columns ============
@@ -75,7 +71,7 @@ export function RecycleBinView() {
           key: "deletedAt",
           label: t("recycleBin.columns.deletedAt"),
           render: (_val: unknown, item: DeletedItem) =>
-            item.deletedAt ? format(item.deletedAt, "MMM d, yyyy HH:mm") : "—",
+            item.deletedAt ? formatUtc(item.deletedAt, "MMM d, yyyy HH:mm") : "—",
         },
         {
           key: "daysUntilPermanent",
@@ -90,11 +86,12 @@ export function RecycleBinView() {
               );
             }
             if (days <= 7) {
+              // "pending" is the badge primitive's own warning-strong tier —
+              // the fourth ramp step (ok → warn → high → critical), not a
+              // second amber. A badge is a reading, so it never gets a
+              // hand-invented hover.
               return (
-                <Badge
-                  variant="destructive"
-                  className="border-warning-strong/20 bg-warning-strong/15 text-xs text-warning-strong hover:bg-warning-strong/20"
-                >
+                <Badge variant="pending" className="text-xs">
                   {t("recycleBin.daysLeft", { days })}
                 </Badge>
               );
@@ -119,28 +116,25 @@ export function RecycleBinView() {
             onClick: (item: DeletedItem) =>
               vm.handleRestore(item.entityType.toLowerCase(), item.id),
             variant: "ghost" as const,
-            icon: <RotateCcw className="h-4 w-4" />,
+            icon: <RotateCcw className="h-4 w-4" aria-hidden="true" />,
             loading: vm.isRestoring,
-            confirmTitle: t("recycleBin.confirmRestore") || "Confirm Restore",
-            confirmDescription:
-              t("recycleBin.confirmRestoreDesc") || "Are you sure you want to restore {name}?",
+            confirmTitle: t("recycleBin.confirmRestore"),
+            confirmDescription: t("recycleBin.confirmRestoreDesc"),
             confirmVariant: "default" as const,
-            confirmButtonText: t("recycleBin.restore") || "Restore",
+            confirmButtonText: t("recycleBin.restore"),
           },
         ];
       },
       bulkActions: vm.canRestore
         ? [
             {
-              label: t("recycleBin.bulkRestore") || "Restore Selected",
+              label: t("recycleBin.bulkRestore"),
               onClick: async (selectedIds: string[]) => vm.handleBulkRestore(selectedIds),
               variant: "default" as const,
-              icon: <RotateCcw className="h-4 w-4" />,
+              icon: <RotateCcw className="h-4 w-4" aria-hidden="true" />,
               requiresConfirmation: true,
-              confirmTitle: t("recycleBin.confirmBulkRestore") || "Bulk Restore",
-              confirmDescription:
-                t("recycleBin.confirmBulkRestoreDesc") ||
-                "Are you sure you want to restore {count} items?",
+              confirmTitle: t("recycleBin.confirmBulkRestore"),
+              confirmDescription: t("recycleBin.confirmBulkRestoreDesc"),
               minItems: 1,
             } satisfies BulkAction,
           ]
@@ -218,39 +212,34 @@ export function RecycleBinView() {
 
   return (
     <div className="space-y-6" dir={direction}>
-      {/* Tab Switcher — NOT inside GenericCrudView, just plain buttons */}
-      <div className="grid w-full grid-cols-5 gap-1 rounded-lg bg-muted p-1">
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => {
-              setSelectedItems([]); // Clear selection on tab change
-              vm.setActiveTab(tab.key);
-            }}
-            className={cn(
-              "relative flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-sm font-medium transition-all",
-              vm.activeTab === tab.key
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {tab.label}
-            {tab.count > 0 && (
-              <span
-                className={cn(
-                  "inline-flex h-5 min-w-[20px] items-center justify-center rounded-full px-1.5 text-[11px] font-semibold leading-none",
-                  vm.activeTab === tab.key
-                    ? "bg-primary/15 text-primary"
-                    : "bg-muted-foreground/15 text-muted-foreground"
-                )}
-              >
-                {tab.count}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+      {/* Tab Switcher — NOT inside GenericCrudView, and GenericCrudView is
+          never rendered inside a TabsContent, so switching the active tab
+          swaps the data, not the mounted component (no unmount/remount
+          freeze). The Tabs primitive gives the trigger row real tablist
+          semantics and keyboard nav for free instead of hand-rolled buttons. */}
+      <Tabs
+        value={vm.activeTab}
+        onValueChange={(value) => {
+          setSelectedItems([]); // Clear selection on tab change
+          vm.setActiveTab(value as TabType);
+        }}
+      >
+        <TabsList variant="pill" className="grid w-full grid-cols-5">
+          {tabs.map((tab) => (
+            <TabsTrigger key={tab.key} value={tab.key} className="gap-1.5">
+              {tab.label}
+              {tab.count > 0 && (
+                <Badge
+                  variant={vm.activeTab === tab.key ? "default" : "secondary"}
+                  className="h-5 min-w-[20px] px-1.5 text-[11px] leading-none"
+                >
+                  {tab.count}
+                </Badge>
+              )}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {/* Single GenericCrudView — data swaps, component stays mounted */}
       <GenericCrudView viewModel={crudVm} config={config} />
@@ -262,8 +251,8 @@ export function RecycleBinView() {
         isPending={vm.restoreDialog.isPending}
         itemName={
           vm.restoreDialog.ids.length > 1
-            ? `${vm.restoreDialog.ids.length} groups`
-            : "the selected group"
+            ? t("recycleBin.groupsCount", { count: vm.restoreDialog.ids.length })
+            : t("recycleBin.selectedGroup")
         }
       />
     </div>

@@ -16,6 +16,7 @@ import { useState, useCallback } from "react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   Zap,
   ChevronDown,
@@ -25,6 +26,7 @@ import {
   Save,
   CheckCircle2,
 } from "lucide-react";
+import { cn } from "@core/common/utils";
 import type {
   TenantPlan,
   TenantFeatureDefinition,
@@ -123,18 +125,20 @@ export function FeaturesTab({
   if (totalActiveFeatureCount === 0) {
     return (
       <Card>
-        <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <Zap className="mb-3 h-10 w-10 text-muted-foreground/40" />
-          <p className="text-sm text-muted-foreground">
-            {t("entitlements.featureDefinitions.emptyCatalog") ||
-              "No features defined yet. Create features in the Feature Catalog first."}
-          </p>
-          <Button variant="outline" size="sm" className="mt-3" asChild>
-            <Link href="/entitlements/tenant-feature-definitions">
-              <Plus className="me-1 h-4 w-4" />
-              {t("entitlements.featureDefinitions.goToCatalog") || "Go to Feature Catalog"}
-            </Link>
-          </Button>
+        <CardContent>
+          <EmptyState
+            bare
+            icon={Zap}
+            title={t("entitlements.featureDefinitions.emptyCatalog")}
+            action={
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/entitlements/tenant-feature-definitions">
+                  <Plus className="me-1 h-4 w-4" aria-hidden="true" />
+                  {t("entitlements.featureDefinitions.goToCatalog")}
+                </Link>
+              </Button>
+            }
+          />
         </CardContent>
       </Card>
     );
@@ -145,19 +149,14 @@ export function FeaturesTab({
       {/* ─────── TOOLBAR ─────── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Zap className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">
-            {t("entitlements.tenantPlans.tabFeatures") || "Features"}
-          </h2>
+          <Zap className="h-5 w-5 text-nx-accent" aria-hidden="true" />
+          <h2 className="text-lg font-semibold">{t("entitlements.tenantPlans.tabFeatures")}</h2>
           <Badge variant="secondary" className="text-xs">
             {assignedCount}/{totalActiveFeatureCount}
           </Badge>
           {hasChanges && (
-            <Badge
-              variant="outline"
-              className="border-warning/30 bg-warning/5 text-xs text-warning"
-            >
-              {t("common.unsavedChanges") || "Unsaved Changes"}
+            <Badge variant="warning" className="text-xs">
+              {t("common.unsavedChanges")}
             </Badge>
           )}
         </div>
@@ -165,15 +164,13 @@ export function FeaturesTab({
         <div className="flex items-center gap-2">
           {groupedByCategory.length > 1 && (
             <Button variant="ghost" size="sm" onClick={toggleAll}>
-              <ChevronsUpDown className="me-1 h-4 w-4" />
-              {allCollapsed
-                ? t("common.expandAll") || "Expand All"
-                : t("common.collapseAll") || "Collapse All"}
+              <ChevronsUpDown className="me-1 h-4 w-4" aria-hidden="true" />
+              {allCollapsed ? t("common.expandAll") : t("common.collapseAll")}
             </Button>
           )}
           <Button variant="ghost" size="sm" asChild>
             <Link href="/entitlements/tenant-feature-definitions">
-              {t("entitlements.featureDefinitions.manageCatalog") || "Manage Catalog"}
+              {t("entitlements.featureDefinitions.manageCatalog")}
             </Link>
           </Button>
           <Button
@@ -182,12 +179,12 @@ export function FeaturesTab({
             onClick={() => setShowPicker(true)}
             disabled={!hasAvailable}
           >
-            <Plus className="me-1 h-4 w-4" />
-            {t("entitlements.featureDefinitions.addFeature") || "Add Feature"}
+            <Plus className="me-1 h-4 w-4" aria-hidden="true" />
+            {t("entitlements.featureDefinitions.addFeature")}
           </Button>
           <Button size="sm" onClick={onSave} disabled={!hasChanges} loading={isSaving}>
-            {!isSaving && <Save className="me-1 h-4 w-4" />}
-            {t("common.save") || "Save"}
+            {!isSaving && <Save className="me-1 h-4 w-4" aria-hidden="true" />}
+            {t("common.save")}
           </Button>
         </div>
       </div>
@@ -206,15 +203,13 @@ export function FeaturesTab({
       {/* ─────── FEATURE GROUPS ─────── */}
       {groupedByCategory.length === 0 ? (
         <Card>
-          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-            <CheckCircle2 className="mb-3 h-10 w-10 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">
-              {t("entitlements.tenantPlans.noFeatures") || "No features assigned to this plan yet."}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t("entitlements.tenantPlans.noFeaturesHint") ||
-                "Click 'Add Feature' to assign features from your catalog."}
-            </p>
+          <CardContent>
+            <EmptyState
+              bare
+              icon={CheckCircle2}
+              title={t("entitlements.tenantPlans.noFeatures")}
+              description={t("entitlements.tenantPlans.noFeaturesHint")}
+            />
           </CardContent>
         </Card>
       ) : (
@@ -223,26 +218,35 @@ export function FeaturesTab({
 
           return (
             <Card key={category} className="overflow-hidden">
-              <CardHeader
-                className="cursor-pointer select-none py-3 transition-colors hover:bg-accent/50"
-                onClick={() => toggleCategory(category)}
-              >
-                <div className="flex items-center justify-between">
+              <CardHeader className="py-3">
+                <button
+                  type="button"
+                  onClick={() => toggleCategory(category)}
+                  aria-expanded={!isCollapsed}
+                  className={cn(
+                    "flex w-full items-center justify-between gap-2 rounded-nx-sm text-start",
+                    "transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
+                    "focus-visible:outline-none focus-visible:shadow-nx-focus"
+                  )}
+                >
                   <div className="flex items-center gap-2">
                     {isCollapsed ? (
-                      <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
+                      <ChevronRight
+                        className="h-4 w-4 shrink-0 text-nx-ink-3 rtl:rotate-180"
+                        aria-hidden="true"
+                      />
                     ) : (
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      <ChevronDown className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
                     )}
                     <CardTitle className="text-base">{category}</CardTitle>
                   </div>
                   <Badge variant="outline">{items.length}</Badge>
-                </div>
+                </button>
               </CardHeader>
 
               {!isCollapsed && (
                 <CardContent className="pt-0">
-                  <div className="divide-y">
+                  <div className="divide-y divide-nx-line">
                     {items.map((item) => (
                       <FeatureRow
                         key={item.definition.id}

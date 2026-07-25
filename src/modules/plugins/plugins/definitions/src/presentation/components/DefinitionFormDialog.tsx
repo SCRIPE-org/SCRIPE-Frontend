@@ -105,19 +105,18 @@ export function DefinitionFormDialog({
   // ── Validation ──────────────────────────────────────────────────────────────
   const validate = (): boolean => {
     const errs: Record<string, string> = {};
-    if (!form.key.trim()) errs.key = t("common.required") || "Required";
-    if (!form.name.trim()) errs.name = t("common.required") || "Required";
+    if (!form.key.trim()) errs.key = t("common.required");
+    if (!form.name.trim()) errs.name = t("common.required");
     // Validate key format: lowercase letters, numbers, hyphens, dots
     if (form.key.trim() && !/^[a-z0-9][a-z0-9\-\.]*$/.test(form.key.trim())) {
-      errs.key =
-        t("plugins.defErrKeyFormat") || "Key must be lowercase alphanumeric (a-z, 0-9, -, .)";
+      errs.key = t("plugins.defErrKeyFormat");
     }
     // Validate manifestJson is valid JSON
     if (form.manifestJson.trim()) {
       try {
         JSON.parse(form.manifestJson);
       } catch {
-        errs.manifestJson = t("plugins.defErrInvalidJson") || "Invalid JSON";
+        errs.manifestJson = t("plugins.defErrInvalidJson");
       }
     }
     setErrors(errs);
@@ -134,15 +133,9 @@ export function DefinitionFormDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>
-            {isEditMode
-              ? t("plugins.defEdit") || "Edit Definition"
-              : t("plugins.defCreate") || "New Definition"}
-          </DialogTitle>
+          <DialogTitle>{isEditMode ? t("plugins.defEdit") : t("plugins.defCreate")}</DialogTitle>
           <DialogDescription>
-            {isEditMode
-              ? t("plugins.defEditDesc") || "Update the plugin definition details."
-              : t("plugins.defCreateDesc") || "Register a new plugin definition on the platform."}
+            {isEditMode ? t("plugins.defEditDesc") : t("plugins.defCreateDesc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -150,38 +143,50 @@ export function DefinitionFormDialog({
           {/* Row: Key + Name */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="def-key">{t("plugins.defColKey") || "Plugin Key"} *</Label>
+              <Label htmlFor="def-key">
+                {t("plugins.defColKey")} <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="def-key"
                 dir="ltr"
-                placeholder="com.acme.my-plugin"
+                placeholder={t("plugins.defPlaceholderKey")}
                 value={form.key}
                 onChange={(e) => updateField("key", e.target.value)}
                 disabled={isEditMode}
-                className={errors.key ? "border-destructive" : ""}
+                aria-invalid={!!errors.key}
               />
-              {errors.key && <p className="text-xs text-destructive">{errors.key}</p>}
+              {errors.key && (
+                <p className="text-xs font-medium leading-relaxed text-destructive">
+                  {errors.key}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="def-name">{t("plugins.defColName") || "Name"} *</Label>
+              <Label htmlFor="def-name">
+                {t("plugins.defColName")} <span className="text-destructive">*</span>
+              </Label>
               <Input
                 id="def-name"
-                placeholder={t("plugins.defPlaceholderName") || "My Plugin"}
+                placeholder={t("plugins.defPlaceholderName")}
                 value={form.name}
                 onChange={(e) => updateField("name", e.target.value)}
-                className={errors.name ? "border-destructive" : ""}
+                aria-invalid={!!errors.name}
               />
-              {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-xs font-medium leading-relaxed text-destructive">
+                  {errors.name}
+                </p>
+              )}
             </div>
           </div>
 
           {/* Name AR */}
           <div className="space-y-2">
-            <Label htmlFor="def-name-ar">{t("common.nameAr") || "Name (Arabic)"}</Label>
+            <Label htmlFor="def-name-ar">{t("common.nameAr")}</Label>
             <Input
               id="def-name-ar"
               dir="rtl"
-              placeholder="إضافتي"
+              placeholder={t("plugins.defPlaceholderNameAr")}
               value={form.nameAr}
               onChange={(e) => updateField("nameAr", e.target.value)}
             />
@@ -189,13 +194,11 @@ export function DefinitionFormDialog({
 
           {/* Description EN */}
           <div className="space-y-2">
-            <Label htmlFor="def-desc">{t("common.description") || "Description"}</Label>
+            <Label htmlFor="def-desc">{t("common.description")}</Label>
             <Textarea
               id="def-desc"
               rows={2}
-              placeholder={
-                t("plugins.defPlaceholderDesc") || "A brief description of the plugin..."
-              }
+              placeholder={t("plugins.defPlaceholderDesc")}
               value={form.description}
               onChange={(e) => updateField("description", e.target.value)}
             />
@@ -203,14 +206,12 @@ export function DefinitionFormDialog({
 
           {/* Description AR */}
           <div className="space-y-2">
-            <Label htmlFor="def-desc-ar">
-              {t("common.descriptionAr") || "Description (Arabic)"}
-            </Label>
+            <Label htmlFor="def-desc-ar">{t("common.descriptionAr")}</Label>
             <Textarea
               id="def-desc-ar"
               dir="rtl"
               rows={2}
-              placeholder={t("plugins.defPlaceholderDescAr") || "وصف موجز..."}
+              placeholder={t("plugins.defPlaceholderDescAr")}
               value={form.descriptionAr}
               onChange={(e) => updateField("descriptionAr", e.target.value)}
             />
@@ -219,7 +220,7 @@ export function DefinitionFormDialog({
           {/* Row: Tier + Scope */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{t("plugins.defColTier") || "Tier"}</Label>
+              <Label>{t("plugins.defColTier")}</Label>
               <Select
                 value={form.tier}
                 onValueChange={(v) => updateField("tier", v as PluginTierValue)}
@@ -228,17 +229,13 @@ export function DefinitionFormDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Tier1">
-                    {t("plugins.tier1") || "Tier 1 (Certified)"}
-                  </SelectItem>
-                  <SelectItem value="Tier2">
-                    {t("plugins.tier2") || "Tier 2 (Sandboxed)"}
-                  </SelectItem>
+                  <SelectItem value="Tier1">{t("plugins.tier1Label")}</SelectItem>
+                  <SelectItem value="Tier2">{t("plugins.tier2Label")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>{t("plugins.defColScope") || "Scope"}</Label>
+              <Label>{t("plugins.defColScope")}</Label>
               <Select
                 value={form.scope}
                 onValueChange={(v) => updateField("scope", v as PluginScopeValue)}
@@ -247,8 +244,8 @@ export function DefinitionFormDialog({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Tenant">{t("plugins.defScopeTenant") || "Tenant"}</SelectItem>
-                  <SelectItem value="Global">{t("plugins.defScopeGlobal") || "Global"}</SelectItem>
+                  <SelectItem value="Tenant">{t("plugins.defScopeTenant")}</SelectItem>
+                  <SelectItem value="Global">{t("plugins.defScopeGlobal")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -257,25 +254,23 @@ export function DefinitionFormDialog({
           {/* URLs */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="def-base-url">{t("plugins.defColBaseUrl") || "Base URL"}</Label>
+              <Label htmlFor="def-base-url">{t("plugins.defColBaseUrl")}</Label>
               <Input
                 id="def-base-url"
                 dir="ltr"
                 type="url"
-                placeholder="https://plugin.example.com/api"
+                placeholder={t("plugins.defPlaceholderBaseUrl")}
                 value={form.baseUrl ?? ""}
                 onChange={(e) => updateField("baseUrl", e.target.value)}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="def-frontend-url">
-                {t("plugins.defColFrontendUrl") || "Frontend URL"}
-              </Label>
+              <Label htmlFor="def-frontend-url">{t("plugins.defColFrontendUrl")}</Label>
               <Input
                 id="def-frontend-url"
                 dir="ltr"
                 type="url"
-                placeholder="https://plugin.example.com/ui"
+                placeholder={t("plugins.defPlaceholderFrontendUrl")}
                 value={form.frontendUrl ?? ""}
                 onChange={(e) => updateField("frontendUrl", e.target.value)}
               />
@@ -284,12 +279,12 @@ export function DefinitionFormDialog({
 
           {/* Icon URL */}
           <div className="space-y-2">
-            <Label htmlFor="def-icon-url">{t("plugins.defColIconUrl") || "Icon URL"}</Label>
+            <Label htmlFor="def-icon-url">{t("plugins.defColIconUrl")}</Label>
             <Input
               id="def-icon-url"
               dir="ltr"
               type="url"
-              placeholder="https://cdn.example.com/icon.png"
+              placeholder={t("plugins.defPlaceholderIconUrl")}
               value={form.iconUrl ?? ""}
               onChange={(e) => updateField("iconUrl", e.target.value)}
             />
@@ -297,32 +292,31 @@ export function DefinitionFormDialog({
 
           {/* Manifest JSON */}
           <div className="space-y-2">
-            <Label htmlFor="def-manifest">{t("plugins.defColManifest") || "Manifest JSON"}</Label>
+            <Label htmlFor="def-manifest">{t("plugins.defColManifest")}</Label>
             <Textarea
               id="def-manifest"
               dir="ltr"
               rows={4}
-              className={`text-left font-mono text-xs ${errors.manifestJson ? "border-destructive" : ""}`}
-              placeholder='{"entryPoints": [], "permissions": []}'
+              className="text-start font-mono text-xs"
+              placeholder={t("plugins.defPlaceholderManifest")}
               value={form.manifestJson}
               onChange={(e) => updateField("manifestJson", e.target.value)}
+              aria-invalid={!!errors.manifestJson}
             />
             {errors.manifestJson && (
-              <p className="text-xs text-destructive">{errors.manifestJson}</p>
+              <p className="text-xs font-medium leading-relaxed text-destructive">
+                {errors.manifestJson}
+              </p>
             )}
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button id="def-form-submit" onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting
-              ? t("common.saving") || "Saving..."
-              : isEditMode
-                ? t("common.save") || "Save"
-                : t("common.create") || "Create"}
+            {isSubmitting ? t("common.saving") : isEditMode ? t("common.save") : t("common.create")}
           </Button>
         </DialogFooter>
       </DialogContent>

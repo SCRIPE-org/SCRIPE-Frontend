@@ -10,6 +10,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
+import { EmptyState } from "@core/ui/empty-state";
 import {
   ChartContainer,
   ChartTooltip,
@@ -26,17 +27,6 @@ interface WebhookAnalyticsChartProps {
   isLoading: boolean;
 }
 
-const chartConfig: ChartConfig = {
-  delivered: {
-    label: "Delivered",
-    color: "hsl(152, 69%, 41%)", // emerald-500
-  },
-  failed: {
-    label: "Failed",
-    color: "hsl(0, 72%, 51%)", // red-500
-  },
-};
-
 /**
  * Presentation UI component rendering the webhook analytics chart.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
@@ -44,15 +34,29 @@ const chartConfig: ChartConfig = {
 export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalyticsChartProps) {
   const { t } = useI18n();
 
+  // Colour follows what the series actually represents: delivered is the
+  // measured success token, failed is the measured destructive token — not a
+  // categorical chart-N slot, since these two series ARE a status pair.
+  const chartConfig: ChartConfig = {
+    delivered: {
+      label: t("webhooks.analytics.successfulDeliveries"),
+      color: "hsl(var(--success))",
+    },
+    failed: {
+      label: t("webhooks.analytics.failedDeliveries"),
+      color: "hsl(var(--destructive))",
+    },
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4">
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+            <Skeleton key={i} className="h-20 rounded-nx-lg" />
           ))}
         </div>
-        <Skeleton className="h-[300px] rounded-xl" />
+        <Skeleton className="h-[300px] rounded-nx-lg" />
       </div>
     );
   }
@@ -69,7 +73,7 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
 
   const summaryCards = [
     {
-      label: t("webhooks.analytics.successRate") || "Success Rate",
+      label: t("webhooks.analytics.successRate"),
       value: analytics.totalEvents > 0 ? `${analytics.successRate.toFixed(1)}%` : "—",
       icon: TrendingUp,
       color:
@@ -86,26 +90,26 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
             : "bg-destructive/10",
     },
     {
-      label: t("webhooks.analytics.avgLatency") || "Avg Latency",
+      label: t("webhooks.analytics.avgLatency"),
       value: analytics.avgLatencyMs > 0 ? `${analytics.avgLatencyMs.toFixed(0)}ms` : "—",
       icon: Clock,
       color: "text-info",
       bg: "bg-info/10",
     },
     {
-      label: t("webhooks.analytics.p95Latency") || "P95 Latency",
+      label: t("webhooks.analytics.p95Latency"),
       value: analytics.p95LatencyMs > 0 ? `${analytics.p95LatencyMs.toFixed(0)}ms` : "—",
       icon: BarChart3,
-      color: "text-primary",
-      bg: "bg-primary/10",
+      color: "text-nx-accent",
+      bg: "bg-nx-accent-wash",
     },
     {
-      label: t("webhooks.analytics.deadLettered") || "Dead Lettered",
+      label: t("webhooks.analytics.deadLettered"),
       value: analytics.deadLetteredCount.toLocaleString(),
       sub: analytics.retryingCount > 0 ? `${analytics.retryingCount} retrying` : undefined,
       icon: analytics.deadLetteredCount > 0 ? Skull : RefreshCw,
-      color: analytics.deadLetteredCount > 0 ? "text-destructive" : "text-muted-foreground",
-      bg: analytics.deadLetteredCount > 0 ? "bg-destructive/10" : "bg-muted",
+      color: analytics.deadLetteredCount > 0 ? "text-destructive" : "text-nx-ink-3",
+      bg: analytics.deadLetteredCount > 0 ? "bg-destructive/10" : "bg-nx-raised",
     },
   ];
 
@@ -114,15 +118,17 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {summaryCards.map((card) => (
-          <Card key={card.label} className="border-border/50">
+          <Card key={card.label}>
             <CardContent className="p-3.5">
               <div className="flex items-center gap-3">
-                <div className={`rounded-lg p-2 ${card.bg} shrink-0`}>
-                  <card.icon className={`h-4 w-4 ${card.color}`} />
+                <div className={`rounded-nx-md p-2 ${card.bg} shrink-0`}>
+                  <card.icon className={`h-4 w-4 ${card.color}`} aria-hidden="true" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-lg font-bold leading-none tracking-tight">{card.value}</p>
-                  <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{card.label}</p>
+                  <p className="text-lg font-bold leading-none tracking-tight tabular-nums">
+                    {card.value}
+                  </p>
+                  <p className="mt-0.5 truncate text-[11px] text-nx-ink-3">{card.label}</p>
                 </div>
               </div>
             </CardContent>
@@ -131,19 +137,21 @@ export function WebhookAnalyticsChart({ analytics, isLoading }: WebhookAnalytics
       </div>
 
       {/* Chart */}
-      <Card className="border-border/50">
+      <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">
-            {t("webhooks.analytics.deliveryTrend") || "Delivery Trend"}
-          </CardTitle>
-          <CardDescription>
-            {t("webhooks.analytics.last30days") || "Daily delivery breakdown — last 30 days"}
-          </CardDescription>
+          <CardTitle className="text-base">{t("webhooks.analytics.deliveryTrend")}</CardTitle>
+          <CardDescription>{t("webhooks.analytics.last30days")}</CardDescription>
         </CardHeader>
         <CardContent>
           {chartData.length === 0 ? (
-            <div className="flex h-[250px] items-center justify-center text-sm text-muted-foreground">
-              {t("webhooks.analytics.noData") || "No delivery data available"}
+            <div className="flex h-[250px] items-center justify-center">
+              <EmptyState
+                bare
+                size="sm"
+                icon={BarChart3}
+                title={t("webhooks.analytics.noData")}
+                description={t("webhooks.analytics.noDataDesc")}
+              />
             </div>
           ) : (
             <ChartContainer config={chartConfig} className="h-[250px] w-full">

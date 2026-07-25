@@ -14,18 +14,21 @@ interface FeatureControlProps {
   valueType: string;
   value: string;
   onChange: (value: string) => void;
+  /** Links the control to its row's visible name for assistive tech. */
+  labelledBy?: string;
 }
 
 /**
  * Presentation UI component rendering the feature control.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
-export function FeatureControl({ valueType, value, onChange }: FeatureControlProps) {
+export function FeatureControl({ valueType, value, onChange, labelledBy }: FeatureControlProps) {
   if (valueType === "Boolean") {
     return (
       <Switch
         checked={value === "true"}
         onCheckedChange={(checked) => onChange(checked ? "true" : "false")}
+        aria-labelledby={labelledBy}
       />
     );
   }
@@ -36,9 +39,10 @@ export function FeatureControl({ valueType, value, onChange }: FeatureControlPro
         type="number"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-8 w-24 text-right"
+        className="h-8 w-24 text-end"
         min={-1}
         placeholder="0"
+        aria-labelledby={labelledBy}
       />
     );
   }
@@ -51,6 +55,7 @@ export function FeatureControl({ valueType, value, onChange }: FeatureControlPro
       onChange={(e) => onChange(e.target.value)}
       className="h-8 w-40"
       placeholder="..."
+      aria-labelledby={labelledBy}
     />
   );
 }

@@ -7,6 +7,7 @@ import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
 import { Separator } from "@core/ui/separator";
+import { DetailRow } from "@core/ui/detail-row";
 import { ArrowLeft, Settings, Activity, Puzzle, CheckCircle2, XCircle } from "lucide-react";
 import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
@@ -45,9 +46,9 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
   if (isLoading) {
     return (
       <div className="mx-auto flex max-w-5xl flex-col gap-6 p-6">
-        <Skeleton className="h-8 w-48 rounded-md" />
-        <Skeleton className="h-24 rounded-xl" />
-        <Skeleton className="h-[500px] rounded-xl" />
+        <Skeleton className="h-8 w-48 rounded-nx-sm" />
+        <Skeleton className="h-24 rounded-nx-lg" />
+        <Skeleton className="h-[500px] rounded-nx-lg" />
       </div>
     );
   }
@@ -77,9 +78,9 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
       {/* ── Back navigation ── */}
       <Link
         href="/plugins/installed"
-        className="flex w-fit items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
+        className="flex w-fit items-center gap-2 text-sm text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-ink"
       >
-        <ArrowLeft className="h-4 w-4" />
+        <ArrowLeft className="h-4 w-4 rtl:rotate-180" aria-hidden="true" />
         {t("plugins.backToInstalled")}
       </Link>
 
@@ -87,22 +88,25 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
       <Card>
         <CardHeader className="flex flex-row items-center gap-4 pb-4">
           {/* Plugin icon / initials */}
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-muted">
+          <div
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-nx-md border border-nx-line bg-nx-raised"
+            aria-hidden="true"
+          >
             {installation.iconUrl ? (
               <img
                 src={installation.iconUrl}
-                alt={displayName}
-                className="h-full w-full rounded-xl object-cover"
+                alt=""
+                className="h-full w-full rounded-nx-md object-cover"
               />
             ) : (
-              <Puzzle className="h-7 w-7 text-muted-foreground" />
+              <Puzzle className="h-7 w-7 text-nx-ink-3" />
             )}
           </div>
 
           {/* Name + metadata */}
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-xl font-semibold">{displayName}</h1>
-            <p className="mt-0.5 text-sm text-muted-foreground">{installation.pluginKey}</p>
+            <h1 className="truncate text-xl font-semibold text-nx-ink">{displayName}</h1>
+            <p className="mt-0.5 truncate text-sm text-nx-ink-2">{installation.pluginKey}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <PluginStatusBadge installation={installation} />
               <PluginHealthBadge
@@ -114,18 +118,18 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
 
           {/* Quick actions */}
           <div className="flex shrink-0 items-center gap-2">
-            <Link href={`/plugins/${installationId}/settings`}>
-              <Button variant="outline" size="sm" className="gap-1.5">
-                <Settings className="h-4 w-4" />
+            <Button variant="outline" size="sm" className="gap-1.5" asChild>
+              <Link href={`/plugins/${installationId}/settings`}>
+                <Settings className="h-4 w-4" aria-hidden="true" />
                 {t("plugins.settings")}
-              </Button>
-            </Link>
-            <Link href={`/plugins/${installationId}/logs`}>
-              <Button variant="ghost" size="sm" className="gap-1.5">
-                <Activity className="h-4 w-4" />
+              </Link>
+            </Button>
+            <Button variant="ghost" size="sm" className="gap-1.5" asChild>
+              <Link href={`/plugins/${installationId}/logs`}>
+                <Activity className="h-4 w-4" aria-hidden="true" />
                 {t("plugins.logs")}
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </CardHeader>
 
@@ -133,41 +137,43 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
 
         {/* Plugin metadata */}
         <CardContent className="pt-4">
-          <dl className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
-            <div>
-              <dt className="mb-1 text-xs text-muted-foreground">
-                {t("plugins.installedAtLabel")}
-              </dt>
-              <dd className="font-medium">{formatUtc(installation.installedAt, "MMM d, yyyy")}</dd>
-            </div>
-            <div>
-              <dt className="mb-1 text-xs text-muted-foreground">{t("plugins.healthCheck")}</dt>
-              <dd className="flex items-center gap-1 font-medium">
-                {installation.healthCheckPassing ? (
-                  <CheckCircle2 className="h-4 w-4 text-success" />
-                ) : (
-                  <XCircle className="h-4 w-4 text-destructive" />
-                )}
-                {installation.healthCheckPassing ? t("plugins.healthy") : t("plugins.unhealthy")}
-              </dd>
-            </div>
-            <div>
-              <dt className="mb-1 text-xs text-muted-foreground">{t("plugins.status")}</dt>
-              <dd>
+          <div className="grid grid-cols-2 gap-4 rounded-nx-md border border-nx-line bg-nx-raised p-3 sm:grid-cols-4">
+            <DetailRow
+              layout="stacked"
+              label={t("plugins.installedAtLabel")}
+              value={formatUtc(installation.installedAt, "MMM d, yyyy")}
+            />
+            <DetailRow
+              layout="stacked"
+              label={t("plugins.healthCheck")}
+              value={
+                <span className="inline-flex items-center gap-1.5">
+                  {installation.healthCheckPassing ? (
+                    <CheckCircle2 className="h-4 w-4 text-success" aria-hidden="true" />
+                  ) : (
+                    <XCircle className="h-4 w-4 text-destructive" aria-hidden="true" />
+                  )}
+                  {installation.healthCheckPassing ? t("plugins.healthy") : t("plugins.unhealthy")}
+                </span>
+              }
+            />
+            <DetailRow
+              layout="stacked"
+              label={t("plugins.status")}
+              value={
                 <Badge variant={installation.isActive ? "default" : "outline"}>
                   {installation.isActive ? t("plugins.active") : t("plugins.inactive")}
                 </Badge>
-              </dd>
-            </div>
+              }
+            />
             {installation.lastHealthCheckAt && (
-              <div>
-                <dt className="mb-1 text-xs text-muted-foreground">{t("plugins.lastChecked")}</dt>
-                <dd className="text-xs font-medium">
-                  {formatDateTimeUtc(installation.lastHealthCheckAt)}
-                </dd>
-              </div>
+              <DetailRow
+                layout="stacked"
+                label={t("plugins.lastChecked")}
+                value={formatDateTimeUtc(installation.lastHealthCheckAt)}
+              />
             )}
-          </dl>
+          </div>
         </CardContent>
       </Card>
 
@@ -177,7 +183,7 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
           pluginKey={installation.pluginKey}
           frontendUrl={installation.frontendUrl as string}
           installationId={installationId}
-          className="min-h-[500px] rounded-xl border"
+          className="min-h-[500px] rounded-nx-lg border border-nx-line"
         />
       ) : (
         <EmptyState

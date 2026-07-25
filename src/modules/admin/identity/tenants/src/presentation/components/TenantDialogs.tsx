@@ -191,25 +191,25 @@ export function CreateTenantDialog({
       // ── Step 2: Admin Info ──
       {
         name: "adminEmail",
-        label: t("tenant.adminEmail") || "Admin Email",
+        label: t("tenant.adminEmail"),
         type: "text",
         required: true,
-        placeholder: t("tenant.adminEmailPlaceholder") || "admin@example.com",
+        placeholder: t("tenant.adminEmailPlaceholder"),
       },
       {
         name: "adminUsername",
-        label: t("tenant.adminUsername") || "Admin Username (optional)",
+        label: t("tenant.adminUsername"),
         type: "text",
-        placeholder: t("tenant.adminUsernamePlaceholder") || "Auto-generated if empty",
+        placeholder: t("tenant.adminUsernamePlaceholder"),
       },
       // ── Step 3: Edition & Billing ──
       {
         name: "editionId",
-        label: t("tenant.editionLabel") || "Subscription Plan",
+        label: t("tenant.editionLabel"),
         type: "server-select",
         required: true,
-        placeholder: t("tenant.editionPlaceholder") || "Select a plan...",
-        searchPlaceholder: t("common.search") || "Search...",
+        placeholder: t("tenant.editionPlaceholder"),
+        searchPlaceholder: t("common.search"),
         searchType: "server",
         onServerSearch: onSearchEditions,
         onChange: (value: string, formData: Record<string, any>) => {
@@ -236,7 +236,7 @@ export function CreateTenantDialog({
       },
       {
         name: "subscriptionType",
-        label: t("tenant.subscriptionType") || "Subscription Duration",
+        label: t("tenant.subscriptionType"),
         type: "select",
         required: true,
         isVisible: (formData: Record<string, any>) => {
@@ -255,19 +255,19 @@ export function CreateTenantDialog({
           if (selectedEd?.allowLifetime !== false)
             opts.push({
               value: "Lifetime",
-              label: t("tenant.subscriptionTypes.lifetime") || "Lifetime",
+              label: t("tenant.subscriptionTypes.lifetime"),
             });
           if (selectedEd?.allowMonthly !== false)
             opts.push({
               value: "Monthly",
-              label: t("tenant.subscriptionTypes.monthly") || "Monthly",
+              label: t("tenant.subscriptionTypes.monthly"),
             });
           if (selectedEd?.allowYearly !== false)
-            opts.push({ value: "Yearly", label: t("tenant.subscriptionTypes.yearly") || "Yearly" });
+            opts.push({ value: "Yearly", label: t("tenant.subscriptionTypes.yearly") });
           if (selectedEd?.allowTrial !== false)
             opts.push({
               value: "Trial",
-              label: t("tenant.subscriptionTypes.trial") || "Trial (14 days)",
+              label: t("tenant.subscriptionTypes.trial"),
             });
           return opts;
         })(),
@@ -294,7 +294,7 @@ export function CreateTenantDialog({
       },
       {
         name: "currency",
-        label: t("tenant.billingCurrency") || "Billing Currency",
+        label: t("tenant.billingCurrency"),
         type: "select",
         required: true,
         isVisible: (formData: Record<string, any>) =>
@@ -307,7 +307,7 @@ export function CreateTenantDialog({
       // ── Promotion Picker (select dropdown — data from View) ──
       {
         name: "promotionId",
-        label: t("tenant.entitlementLabels.promotionsTitle") || "Promotion",
+        label: t("tenant.entitlementLabels.promotionsTitle"),
         type: "select",
         loading: isLoadingPromotions,
         isVisible: (formData: Record<string, any>) =>
@@ -315,7 +315,7 @@ export function CreateTenantDialog({
         options: [
           {
             value: "__none__",
-            label: t("tenant.entitlementLabels.promotionsNoPromotion") || "No promotion",
+            label: t("tenant.entitlementLabels.promotionsNoPromotion"),
           },
           ...availablePromotions.map((p) => ({
             value: p.id,
@@ -346,10 +346,10 @@ export function CreateTenantDialog({
       // ── Conditional Promo Code input ──
       {
         name: "promoCode",
-        label: t("tenant.promoCode") || "Promo Code",
+        label: t("tenant.promoCode"),
         type: "text",
         isVisible: () => requiresPromoCode,
-        placeholder: t("tenant.promoCodePlaceholder") || "Enter promo code",
+        placeholder: t("tenant.promoCodePlaceholder"),
         onChange: (val: string, formData: Record<string, any>) => ({
           ...formData,
           promoCode: val.toUpperCase(),

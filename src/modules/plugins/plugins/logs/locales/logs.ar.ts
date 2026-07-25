@@ -9,5 +9,9 @@ export const ar = {
     logsPage: "صفحة {{page}} من {{total}}",
     logsStatusOk: "نجح",
     logsStatusFail: "فشل",
+    logsColStatus: "الحالة",
+    logsColEndpoint: "نقطة النهاية",
+    logsColDuration: "المدة",
+    logsColExecutedAt: "وقت التنفيذ",
   },
 };

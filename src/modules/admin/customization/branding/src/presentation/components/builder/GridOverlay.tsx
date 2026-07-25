@@ -29,14 +29,15 @@ export function GridOverlay({ gridRows, show }: GridOverlayProps) {
       {Array.from({ length: CANVAS_GRID_COLUMNS }).map((_, i) => (
         <div
           key={`col-${i}`}
-          className="border-x border-primary/[0.06]"
+          aria-hidden="true"
+          className="border-x border-nx-line"
           style={{
             gridColumn: `${i + 1} / ${i + 2}`,
             gridRow: `1 / -1`,
           }}
         >
           {/* Column number label */}
-          <span className="block pt-0.5 text-center font-mono text-[8px] text-primary/20">
+          <span className="block pt-0.5 text-center font-mono text-[8px] tabular-nums text-nx-ink-3">
             {i + 1}
           </span>
         </div>
@@ -45,7 +46,8 @@ export function GridOverlay({ gridRows, show }: GridOverlayProps) {
       {Array.from({ length: gridRows }).map((_, i) => (
         <div
           key={`row-${i}`}
-          className="border-y border-primary/[0.04]"
+          aria-hidden="true"
+          className="border-y border-nx-line"
           style={{
             gridColumn: `1 / -1`,
             gridRow: `${i + 1} / ${i + 2}`,

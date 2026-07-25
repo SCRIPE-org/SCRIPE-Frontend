@@ -11,7 +11,6 @@ import { ScrollArea } from "@core/ui/scroll-area";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import {
-  Loader2,
   ArrowRight,
   ArrowLeft,
   Building2,
@@ -21,6 +20,7 @@ import {
   Check,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import type { ConvertLeadParams } from "../../domain/interfaces/ILeadsRepository";
 import type { PlatformLead } from "../../domain/entities/PlatformLead";
 import { useConvertWizardViewModel } from "../viewmodels/useConvertWizardViewModel";
@@ -61,7 +61,8 @@ export function ConvertToTenantWizard({
   onClose,
   onConvert,
 }: ConvertToTenantWizardProps) {
-  const { t } = useI18n();
+  const { t, direction } = useI18n();
+  const isRtl = direction === "rtl";
   const vm = useConvertWizardViewModel(open, lead, onConvert, onClose, isConverting);
 
   return (
@@ -73,16 +74,16 @@ export function ConvertToTenantWizard({
     >
       <DialogContent className="flex max-h-[90vh] w-full max-w-2xl flex-col gap-0 overflow-hidden p-0">
         {/* ── Header ── */}
-        <DialogHeader className="shrink-0 border-b border-border px-6 pb-4 pt-6">
+        <DialogHeader className="shrink-0 border-b border-nx-line px-6 pb-4 pt-6">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-success/10">
-              <Building2 className="h-5 w-5 text-success" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-success/10">
+              <Building2 className="h-5 w-5 text-success" aria-hidden="true" />
             </div>
             <div>
               <DialogTitle className="text-base font-semibold">
                 {t("leads.convertDialog.title")}
               </DialogTitle>
-              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
+              <DialogDescription className="mt-0.5 text-xs text-nx-ink-2">
                 {lead
                   ? `${lead.companyName} · ${lead.contactName}`
                   : t("leads.drawer.loadingDetail")}
@@ -100,29 +101,38 @@ export function ConvertToTenantWizard({
                 <div key={s.id} className="flex items-center">
                   <div className="flex flex-col items-center gap-1">
                     <div
-                      className={[
-                        "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-200",
+                      className={cn(
+                        "flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold",
+                        "transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none",
                         isDone
                           ? "border-success bg-success text-success-foreground"
                           : isActive
-                            ? "border-primary bg-primary text-primary-foreground"
-                            : "border-border bg-background text-muted-foreground",
-                      ].join(" ")}
+                            ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill"
+                            : "border-nx-line bg-nx-surface text-nx-ink-3"
+                      )}
                     >
-                      {isDone ? <Check className="h-4 w-4" /> : <Icon className="h-3.5 w-3.5" />}
+                      {isDone ? (
+                        <Check className="h-4 w-4" aria-hidden="true" />
+                      ) : (
+                        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                      )}
                     </div>
                     <span
-                      className={`text-[10px] font-medium ${isActive ? "text-foreground" : "text-muted-foreground"}`}
+                      className={cn(
+                        "text-[10px] font-medium",
+                        isActive ? "text-nx-ink" : "text-nx-ink-3"
+                      )}
                     >
                       {t(`leads.convertWizard.steps.${s.label.toLowerCase()}`)}
                     </span>
                   </div>
                   {idx < STEPS.length - 1 && (
                     <div
-                      className={[
-                        "mx-1 mb-4 h-0.5 w-12 flex-1 transition-all duration-300",
-                        vm.step > s.id ? "bg-success" : "bg-border",
-                      ].join(" ")}
+                      className={cn(
+                        "mx-1 mb-4 h-0.5 w-12 flex-1",
+                        "transition-colors duration-nx-panel ease-nx-enter motion-reduce:transition-none",
+                        vm.step > s.id ? "bg-success" : "bg-nx-line"
+                      )}
                     />
                   )}
                 </div>
@@ -132,7 +142,7 @@ export function ConvertToTenantWizard({
 
           {/* Override count badge (Step 3) */}
           {vm.step === 3 && vm.overrideCount > 0 && (
-            <Badge variant="secondary" className="mt-2 w-fit text-warning">
+            <Badge variant="warning" className="mt-2 w-fit">
               {t("leads.convertWizard.overrideCount", { count: vm.overrideCount })}
             </Badge>
           )}
@@ -183,7 +193,7 @@ export function ConvertToTenantWizard({
         </ScrollArea>
 
         {/* ── Footer ── */}
-        <div className="flex shrink-0 items-center justify-between border-t border-border px-6 py-4">
+        <div className="flex shrink-0 items-center justify-between border-t border-nx-line px-6 py-4">
           <Button
             type="button"
             variant="ghost"
@@ -193,9 +203,14 @@ export function ConvertToTenantWizard({
           >
             {vm.step === 1 ? (
               t("leads.convertDialog.cancel")
+            ) : isRtl ? (
+              <>
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                {t("leads.convertWizard.back")}
+              </>
             ) : (
               <>
-                <ArrowLeft className="h-4 w-4" />
+                <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                 {t("leads.convertWizard.back")}
               </>
             )}
@@ -209,7 +224,17 @@ export function ConvertToTenantWizard({
                 disabled={vm.step === 1 && !vm.selectedEdition}
                 className="gap-2"
               >
-                {t("leads.convertWizard.next")} <ArrowRight className="h-4 w-4" />
+                {isRtl ? (
+                  <>
+                    <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                    {t("leads.convertWizard.next")}
+                  </>
+                ) : (
+                  <>
+                    {t("leads.convertWizard.next")}
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </>
+                )}
               </Button>
             )}
             {vm.step === 4 && (
@@ -217,16 +242,14 @@ export function ConvertToTenantWizard({
                 type="button"
                 onClick={vm.handleSubmit}
                 disabled={isConverting}
+                loading={isConverting}
                 className="gap-2 bg-success text-success-foreground hover:bg-success/90"
               >
                 {isConverting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {t("leads.convertWizard.converting")}
-                  </>
+                  t("leads.convertWizard.converting")
                 ) : (
                   <>
-                    <Check className="h-4 w-4" />
+                    <Check className="h-4 w-4" aria-hidden="true" />
                     {t("leads.convertWizard.convertNow")}
                   </>
                 )}

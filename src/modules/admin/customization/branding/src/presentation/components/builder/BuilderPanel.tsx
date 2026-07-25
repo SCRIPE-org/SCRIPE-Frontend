@@ -55,9 +55,14 @@ function parseGridRange(span: string): [number, number] {
   return [parts[0] || 1, parts[1] || (parts[0] || 1) + 1];
 }
 
-function detectOverlaps(components: CanvasComponent[]): string[] {
+interface OverlapWarning {
+  a: string;
+  b: string;
+}
+
+function detectOverlaps(components: CanvasComponent[]): OverlapWarning[] {
   const visible = components.filter((c) => c.visible);
-  const warnings: string[] = [];
+  const warnings: OverlapWarning[] = [];
   for (let i = 0; i < visible.length; i++) {
     for (let j = i + 1; j < visible.length; j++) {
       const a = visible[i],
@@ -67,7 +72,7 @@ function detectOverlaps(components: CanvasComponent[]): string[] {
       const [bc1, bc2] = parseGridRange(b.gridColumn);
       const [br1, br2] = parseGridRange(b.gridRow);
       if (ac1 < bc2 && bc1 < ac2 && ar1 < br2 && br1 < ar2) {
-        warnings.push(`"${a.type}" and "${b.type}" overlap at grid area`);
+        warnings.push({ a: a.type, b: b.type });
       }
     }
   }
@@ -161,16 +166,17 @@ export function BuilderPanel({
   const sidebarContent = (
     <div className="space-y-4">
       {/* Toolbar: Undo/Redo + Canvas Settings */}
-      <div className="flex items-center gap-2 border-b border-border pb-3">
+      <div className="flex items-center gap-2 border-b border-nx-line pb-3">
         <Button
           variant="outline"
           size="sm"
           className="h-7 w-7 p-0"
           disabled={!store.canUndo}
           onClick={store.undo}
-          title={`${t("studio.builder.undo") || "Undo"} (Ctrl+Z)`}
+          title={`${t("studio.builder.undo")} (Ctrl+Z)`}
+          aria-label={t("studio.builder.undo")}
         >
-          <Undo2 className="h-3.5 w-3.5" />
+          <Undo2 className="h-3.5 w-3.5" aria-hidden="true" />
         </Button>
         <Button
           variant="outline"
@@ -178,9 +184,10 @@ export function BuilderPanel({
           className="h-7 w-7 p-0"
           disabled={!store.canRedo}
           onClick={store.redo}
-          title={`${t("studio.builder.redo") || "Redo"} (Ctrl+Shift+Z)`}
+          title={`${t("studio.builder.redo")} (Ctrl+Shift+Z)`}
+          aria-label={t("studio.builder.redo")}
         >
-          <Redo2 className="h-3.5 w-3.5" />
+          <Redo2 className="h-3.5 w-3.5" aria-hidden="true" />
         </Button>
 
         <div className="flex-1" />
@@ -191,28 +198,30 @@ export function BuilderPanel({
           size="sm"
           className="h-7 gap-1 px-2 text-xs"
           onClick={() => store.setSnapToGrid(!store.snapToGrid)}
-          title={t("studio.builder.canvas.snap") || "Snap to Grid"}
+          title={t("studio.builder.canvas.snap")}
+          aria-label={t("studio.builder.canvas.snap")}
         >
-          <Grid3X3 className="h-3 w-3" />
+          <Grid3X3 className="h-3 w-3" aria-hidden="true" />
         </Button>
 
         {/* Reset */}
         <Button
           variant="outline"
           size="sm"
-          className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
+          className="h-7 w-7 p-0 text-nx-ink-3 hover:text-nx-danger"
           onClick={store.reset}
-          title={t("studio.builder.reset") || "Reset"}
+          title={t("studio.builder.reset")}
+          aria-label={t("studio.builder.reset")}
         >
-          <RotateCcw className="h-3.5 w-3.5" />
+          <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />
         </Button>
       </div>
 
       {/* Canvas Grid Rows */}
       <div className="flex items-center gap-2">
-        <Rows3 className="h-3.5 w-3.5 text-muted-foreground" />
-        <Label className="flex-1 text-[10px] text-muted-foreground">
-          {t("studio.builder.canvas.rows") || "Grid Rows"}
+        <Rows3 className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
+        <Label className="flex-1 text-[10px] text-nx-ink-3">
+          {t("studio.builder.canvas.rows")}
         </Label>
         <Input
           type="number"
@@ -280,28 +289,31 @@ export function BuilderPanel({
           size="sm"
           className="h-8 w-full gap-1.5 text-xs"
           onClick={() => setShowTemplates((p) => !p)}
+          aria-expanded={showTemplates}
         >
-          <LayoutTemplate className="h-3.5 w-3.5" />
-          {t("studio.builder.fromTemplate") || "Start from Template"}
+          <LayoutTemplate className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("studio.builder.fromTemplate")}
           <ChevronDown
-            className={cn("ml-auto h-3 w-3 transition-transform", showTemplates && "rotate-180")}
+            className={cn(
+              "ms-auto h-3 w-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              showTemplates && "rotate-180"
+            )}
+            aria-hidden="true"
           />
         </Button>
         {showTemplates && (
-          <div className="grid max-h-48 grid-cols-2 gap-1.5 overflow-y-auto rounded-lg border border-border bg-muted/20 p-2">
+          <div className="grid max-h-48 grid-cols-2 gap-1.5 overflow-y-auto rounded-nx-lg border border-nx-line bg-nx-raised p-2">
             {getAllLayoutTemplates().map(({ layout, label }) => (
               <button
                 key={layout}
-                className="truncate rounded-md border border-border bg-background px-2 py-1.5 text-left text-[10px] font-medium text-foreground transition-colors hover:border-primary/30 hover:bg-primary/5"
+                className="truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:outline-none focus-visible:shadow-nx-focus"
                 onClick={() => {
                   const tmpl = layoutToTemplate(layout);
                   store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
                   setShowTemplates(false);
                 }}
               >
-                {t(
-                  `studio.layout.${label.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}`
-                ) || label}
+                {t(`studio.layout.${label.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase())}`)}
               </button>
             ))}
           </div>
@@ -320,8 +332,8 @@ export function BuilderPanel({
           }}
           disabled={store.components.length === 0}
         >
-          <Save className="h-3.5 w-3.5" />
-          {t("studio.builder.saveTemplate") || "Save as Template"}
+          <Save className="h-3.5 w-3.5" aria-hidden="true" />
+          {t("studio.builder.saveTemplate")}
         </Button>
         {savedTemplates.length > 0 && (
           <Button
@@ -329,10 +341,16 @@ export function BuilderPanel({
             size="sm"
             className="h-8 px-2 text-xs"
             onClick={() => setShowSaved((p) => !p)}
+            aria-expanded={showSaved}
+            aria-label={t("studio.builder.loadTemplate")}
           >
-            {savedTemplates.length}
+            <span className="tabular-nums">{savedTemplates.length}</span>
             <ChevronDown
-              className={cn("ml-0.5 h-3 w-3 transition-transform", showSaved && "rotate-180")}
+              className={cn(
+                "ms-0.5 h-3 w-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                showSaved && "rotate-180"
+              )}
+              aria-hidden="true"
             />
           </Button>
         )}
@@ -340,11 +358,11 @@ export function BuilderPanel({
 
       {/* Saved Templates List */}
       {showSaved && savedTemplates.length > 0 && (
-        <div className="max-h-36 space-y-1 overflow-y-auto rounded-lg border border-border bg-muted/20 p-2">
+        <div className="max-h-36 space-y-1 overflow-y-auto rounded-nx-lg border border-nx-line bg-nx-raised p-2">
           {savedTemplates.map((tmpl) => (
             <div key={tmpl.id} className="flex items-center gap-2">
               <button
-                className="flex-1 truncate rounded-md border border-border bg-background px-2 py-1.5 text-left text-[10px] font-medium text-foreground transition-colors hover:border-primary/30 hover:bg-primary/5"
+                className="flex-1 truncate rounded-nx-sm border border-nx-line bg-nx-ground px-2 py-1.5 text-start text-[10px] font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-accent hover:bg-nx-accent-wash focus-visible:outline-none focus-visible:shadow-nx-focus"
                 onClick={() => {
                   store.loadTemplate(tmpl.components, tmpl.gridRows, tmpl.background);
                   setShowSaved(false);
@@ -353,13 +371,14 @@ export function BuilderPanel({
                 {tmpl.name}
               </button>
               <button
-                className="rounded p-1 text-muted-foreground transition-colors hover:text-destructive"
+                className="rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-danger focus-visible:outline-none focus-visible:shadow-nx-focus"
                 onClick={() => {
                   store.deleteTemplate(tmpl.id);
                 }}
-                title="Delete template"
+                title={t("studio.builder.deleteTemplate")}
+                aria-label={t("studio.builder.deleteTemplate")}
               >
-                <Trash2 className="h-3 w-3" />
+                <Trash2 className="h-3 w-3" aria-hidden="true" />
               </button>
             </div>
           ))}
@@ -370,28 +389,25 @@ export function BuilderPanel({
       <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>{t("studio.builder.saveTemplate") || "Save as Template"}</DialogTitle>
-            <DialogDescription>
-              {t("studio.builder.saveTemplateDesc") ||
-                "Save the current canvas layout as a reusable template."}
-            </DialogDescription>
+            <DialogTitle>{t("studio.builder.saveTemplate")}</DialogTitle>
+            <DialogDescription>{t("studio.builder.saveTemplateDesc")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-2 py-2">
             <Label htmlFor="template-name" className="text-xs">
-              {t("studio.builder.templateName") || "Template Name"}
+              {t("studio.builder.templateName")}
             </Label>
             <Input
               id="template-name"
               value={templateName}
               onChange={(e) => setTemplateName(e.target.value)}
-              placeholder={t("studio.builder.templateNamePlaceholder") || "My Custom Template"}
+              placeholder={t("studio.builder.templateNamePlaceholder")}
               className="h-8 text-sm"
               autoFocus
             />
           </div>
           <DialogFooter>
             <Button variant="outline" size="sm" onClick={() => setSaveDialogOpen(false)}>
-              {t("common.cancel") || "Cancel"}
+              {t("common.cancel")}
             </Button>
             <Button
               size="sm"
@@ -401,8 +417,8 @@ export function BuilderPanel({
                 setSaveDialogOpen(false);
               }}
             >
-              <Save className="mr-1 h-3.5 w-3.5" />
-              {t("common.save") || "Save"}
+              <Save className="me-1 h-3.5 w-3.5" aria-hidden="true" />
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -410,19 +426,19 @@ export function BuilderPanel({
 
       {/* Responsive Validation Warnings */}
       {overlapWarnings.length > 0 && (
-        <div className="space-y-1.5 rounded-lg border border-warning/30 bg-warning/5 p-2.5">
+        <div className="space-y-1.5 rounded-nx-lg border border-warning/30 bg-warning/5 p-2.5">
           <div className="flex items-center gap-1.5 text-warning">
-            <AlertTriangle className="h-3.5 w-3.5" />
+            <AlertTriangle className="h-3.5 w-3.5" aria-hidden="true" />
             <span className="text-xs font-semibold">
-              {t("studio.builder.validationWarnings") || "Layout Warnings"}
+              {t("studio.builder.validationWarnings")}
             </span>
-            <Badge variant="outline" className="ml-auto h-4 border-warning/30 px-1 text-[10px]">
+            <Badge variant="outline" className="ms-auto h-4 border-warning/30 px-1 text-[10px] tabular-nums">
               {overlapWarnings.length}
             </Badge>
           </div>
           {overlapWarnings.map((w, i) => (
-            <p key={i} className="pl-5 text-[10px] text-warning/80">
-              {w}
+            <p key={i} className="ps-5 text-[10px] text-warning/80">
+              {t("studio.builder.overlapPair", { a: w.a, b: w.b })}
             </p>
           ))}
         </div>

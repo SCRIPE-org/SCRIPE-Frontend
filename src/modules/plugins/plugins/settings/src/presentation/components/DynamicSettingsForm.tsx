@@ -9,6 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@core/ui/textarea";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
+import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import { AlertTriangle, Save } from "lucide-react";
 
 // ── JSON Schema Types ────────────────────────────────────────────────────────
@@ -78,6 +80,8 @@ export function DynamicSettingsForm({
   onSave,
   isSaving = false,
 }: DynamicSettingsFormProps) {
+  const { t } = useI18n();
+
   // Initialize local form state from provided values + defaults
   const defaultValues = useMemo(() => {
     const defaults: SettingsValues = {};
@@ -105,14 +109,20 @@ export function DynamicSettingsForm({
     for (const field of schema.fields) {
       const value = values[field.key];
       if (field.required && (value === "" || value === undefined || value === null)) {
-        newErrors[field.key] = `${field.label} is required.`;
+        newErrors[field.key] = t("plugins.settingsFieldRequired", { label: field.label });
       }
       if (field.type === "number" && typeof value === "number") {
         if (field.min !== undefined && value < field.min) {
-          newErrors[field.key] = `${field.label} must be at least ${field.min}.`;
+          newErrors[field.key] = t("plugins.settingsFieldMin", {
+            label: field.label,
+            min: field.min,
+          });
         }
         if (field.max !== undefined && value > field.max) {
-          newErrors[field.key] = `${field.label} must be at most ${field.max}.`;
+          newErrors[field.key] = t("plugins.settingsFieldMax", {
+            label: field.label,
+            max: field.max,
+          });
         }
       }
     }
@@ -133,9 +143,11 @@ export function DynamicSettingsForm({
       {/* Schema section header */}
       {(schema.title || schema.description) && (
         <div>
-          {schema.title && <h3 className="text-base font-semibold">{schema.title}</h3>}
+          {schema.title && (
+            <h3 className="text-base font-semibold text-nx-ink">{schema.title}</h3>
+          )}
           {schema.description && (
-            <p className="mt-0.5 text-sm text-muted-foreground">{schema.description}</p>
+            <p className="mt-0.5 text-sm text-nx-ink-2">{schema.description}</p>
           )}
         </div>
       )}
@@ -150,6 +162,9 @@ export function DynamicSettingsForm({
               value={values[field.key]}
               error={errors[field.key]}
               onChange={handleChange}
+              selectPlaceholder={t("plugins.settingsFieldSelectPlaceholder", {
+                label: field.label,
+              })}
             />
           ))}
         </CardContent>
@@ -158,15 +173,15 @@ export function DynamicSettingsForm({
       {/* Form footer */}
       <div className="flex items-center justify-between">
         {isDirty ? (
-          <Badge variant="outline" className="border-warning text-xs text-warning">
-            Unsaved changes
+          <Badge variant="warning" className="text-xs">
+            {t("common.unsavedChanges")}
           </Badge>
         ) : (
           <span />
         )}
         <Button type="submit" size="sm" className="gap-1.5" disabled={isSaving || !isDirty}>
-          <Save className="size-3.5" />
-          {isSaving ? "Saving…" : "Save Settings"}
+          <Save className="size-3.5" aria-hidden="true" />
+          {isSaving ? t("common.saving") : t("common.saveChanges")}
         </Button>
       </div>
     </form>
@@ -180,22 +195,29 @@ interface SettingsFieldProps {
   value: string | number | boolean;
   error?: string;
   onChange: (key: string, value: string | number | boolean) => void;
+  /** Pre-localised "Select {label}" placeholder — the label itself is plugin
+      schema data, not app copy, so the interpolation happens at the caller. */
+  selectPlaceholder: string;
 }
 
 /**
  * SettingsField
  *
- * Renders the correct control for a JSON Schema field type.
+ * Renders the correct control for a JSON Schema field type. Mirrors the shared
+ * Form anatomy's visual language (label/control/hint/error, danger-ink label
+ * and message on error) directly rather than composing FormField/FormControl —
+ * this form is schema-driven from local state, not react-hook-form, so there is
+ * no field context for those primitives to read.
  * Pure presentational — all state is managed by DynamicSettingsForm.
  */
-function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
+function SettingsField({ field, value, error, onChange, selectPlaceholder }: SettingsFieldProps) {
   const id = `settings-field-${field.key}`;
 
   return (
     <div className="flex flex-col gap-1.5">
       {/* Label (not shown for boolean — the switch has its own inline label) */}
       {field.type !== "boolean" && (
-        <Label htmlFor={id} className="text-sm font-medium">
+        <Label htmlFor={id} className={cn("text-sm font-medium", error && "text-destructive")}>
           {field.label}
           {field.required && <span className="ms-0.5 text-destructive">*</span>}
         </Label>
@@ -237,13 +259,13 @@ function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
       )}
 
       {field.type === "boolean" && (
-        <div className="flex items-center justify-between rounded-lg border p-3">
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
           <div>
             <Label htmlFor={id} className="cursor-pointer text-sm font-medium">
               {field.label}
             </Label>
             {field.description && (
-              <p className="text-xs text-muted-foreground">{field.description}</p>
+              <p className="text-xs text-nx-ink-3">{field.description}</p>
             )}
           </div>
           <Switch
@@ -257,7 +279,7 @@ function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
       {field.type === "select" && (
         <Select value={String(value)} onValueChange={(v) => onChange(field.key, v)}>
           <SelectTrigger id={id} aria-invalid={!!error}>
-            <SelectValue placeholder={`Select ${field.label}`} />
+            <SelectValue placeholder={selectPlaceholder} />
           </SelectTrigger>
           <SelectContent>
             {(field.options ?? []).map((opt) => (
@@ -271,13 +293,13 @@ function SettingsField({ field, value, error, onChange }: SettingsFieldProps) {
 
       {/* Description */}
       {field.type !== "boolean" && field.description && (
-        <p className="text-xs text-muted-foreground">{field.description}</p>
+        <p className="text-xs leading-relaxed text-nx-ink-3">{field.description}</p>
       )}
 
       {/* Validation error */}
       {error && (
-        <p className="flex items-center gap-1 text-xs text-destructive">
-          <AlertTriangle className="size-3 shrink-0" />
+        <p className="flex items-center gap-1 text-xs font-medium leading-relaxed text-destructive">
+          <AlertTriangle className="size-3 shrink-0" aria-hidden="true" />
           {error}
         </p>
       )}

@@ -106,33 +106,33 @@ export function BuilderCanvas({
       {/* ── Toolbar ── */}
       <div className="flex items-center justify-between gap-2 px-1">
         {/* Position mode toggle */}
-        <div className="flex items-center gap-1 rounded-lg bg-muted/40 p-0.5">
+        <div className="flex items-center gap-1 rounded-nx-control bg-nx-raised p-0.5">
           {/* UI-EXCEPTION: compact studio layout */}
           <button
             onClick={() => onSetPositionMode("absolute")}
             className={cn(
-              "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-all",
+              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
               isAbsolute
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-nx-surface text-nx-ink shadow-nx-sm"
+                : "text-nx-ink-3 hover:text-nx-ink-2"
             )}
-            title={t("studio.builder.freeForm") || "Free-form"}
+            title={t("studio.builder.freeForm")}
           >
-            <Move className="h-3 w-3" />
-            <span>{t("studio.builder.freeForm") || "Free-form"}</span>
+            <Move className="h-3 w-3" aria-hidden="true" />
+            <span>{t("studio.builder.freeForm")}</span>
           </button>
           <button
             onClick={() => onSetPositionMode("grid")}
             className={cn(
-              "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[11px] font-medium transition-all",
+              "flex items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-[11px] font-medium transition-[color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
               !isAbsolute
-                ? "bg-background text-foreground shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-nx-surface text-nx-ink shadow-nx-sm"
+                : "text-nx-ink-3 hover:text-nx-ink-2"
             )}
-            title={t("studio.builder.grid") || "Grid"}
+            title={t("studio.builder.grid")}
           >
-            <Grid3X3 className="h-3 w-3" />
-            <span>{t("studio.builder.grid") || "Grid"}</span>
+            <Grid3X3 className="h-3 w-3" aria-hidden="true" />
+            <span>{t("studio.builder.grid")}</span>
           </button>
         </div>
 
@@ -142,35 +142,37 @@ export function BuilderCanvas({
           <button
             onClick={() => onSetSnapToGrid(!snapToGrid)}
             className={cn(
-              "flex items-center gap-1 rounded-md px-2 py-1 text-[11px] transition-colors",
+              "flex items-center gap-1 rounded-nx-sm px-2 py-1 text-[11px] transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
               snapToGrid
-                ? "bg-primary/10 text-primary"
-                : "text-muted-foreground hover:text-foreground"
+                ? "bg-nx-accent-wash text-nx-accent"
+                : "text-nx-ink-3 hover:text-nx-ink-2"
             )}
-            title={t("studio.builder.snapToGrid") || "Snap to grid"}
+            title={t("studio.builder.snapToGrid")}
           >
-            <Magnet className="h-3 w-3" />
-            <span className="hidden sm:inline">{SNAP_GRID_SIZE}px</span>
+            <Magnet className="h-3 w-3" aria-hidden="true" />
+            <span className="hidden tabular-nums sm:inline">{SNAP_GRID_SIZE}px</span>
           </button>
 
           {/* Zoom controls */}
-          <div className="flex items-center gap-0.5 rounded-md bg-muted/30">
+          <div className="flex items-center gap-0.5 rounded-nx-sm bg-nx-raised">
             <button
               onClick={prevZoom}
               disabled={zoom <= ZOOM_STEPS[0]}
-              className="flex h-6 w-6 items-center justify-center rounded-l-md transition-colors hover:bg-muted disabled:opacity-30"
+              className="flex h-6 w-6 items-center justify-center rounded-s-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover disabled:pointer-events-none disabled:text-nx-ink-3 focus-visible:outline-none focus-visible:shadow-nx-focus"
+              aria-label={t("studio.builder.zoomOut")}
             >
-              <ZoomOut className="h-3 w-3" />
+              <ZoomOut className="h-3 w-3" aria-hidden="true" />
             </button>
-            <span className="w-8 text-center font-mono text-[10px] text-muted-foreground">
+            <span className="w-8 text-center font-mono text-[10px] tabular-nums text-nx-ink-3">
               {zoom}%
             </span>
             <button
               onClick={nextZoom}
               disabled={zoom >= ZOOM_STEPS[ZOOM_STEPS.length - 1]}
-              className="flex h-6 w-6 items-center justify-center rounded-r-md transition-colors hover:bg-muted disabled:opacity-30"
+              className="flex h-6 w-6 items-center justify-center rounded-e-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover disabled:pointer-events-none disabled:text-nx-ink-3 focus-visible:outline-none focus-visible:shadow-nx-focus"
+              aria-label={t("studio.builder.zoomIn")}
             >
-              <ZoomIn className="h-3 w-3" />
+              <ZoomIn className="h-3 w-3" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -178,16 +180,16 @@ export function BuilderCanvas({
 
       {/* Overlap warning */}
       {overlappingIds.size > 0 && (
-        <div className="flex items-center gap-1.5 rounded-md bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
-          <AlertTriangle className="h-3 w-3 flex-shrink-0" />
+        <div className="flex items-center gap-1.5 rounded-nx-sm bg-destructive/10 px-2 py-1 text-[11px] text-destructive">
+          <AlertTriangle className="h-3 w-3 flex-shrink-0" aria-hidden="true" />
           <span>
-            {overlappingIds.size / 2} overlapping component{overlappingIds.size > 2 ? "s" : ""}
+            {t("studio.builder.overlapCount", { count: overlappingIds.size / 2 })}
           </span>
         </div>
       )}
 
       {/* ── Canvas container (scrollable + zoomable) ── */}
-      <div className="overflow-auto rounded-xl border border-border/30 bg-muted/5">
+      <div className="overflow-auto rounded-nx-lg border border-nx-line bg-nx-ground">
         <div
           style={{
             transform: `scale(${scale})`,
@@ -199,10 +201,8 @@ export function BuilderCanvas({
           <div
             ref={setNodeRef}
             className={cn(
-              "relative overflow-hidden rounded-xl border-2 border-dashed transition-all",
-              isOver
-                ? "border-primary/50 bg-primary/[0.02] shadow-[inset_0_0_40px_hsl(var(--primary)/0.05)]"
-                : "border-border/40 bg-muted/10"
+              "relative overflow-hidden rounded-nx-lg border-2 border-dashed transition-[border-color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              isOver ? "border-nx-accent bg-nx-accent-wash" : "border-nx-line bg-nx-raised"
             )}
             onClick={(e) => {
               if (e.target === e.currentTarget || (e.target as HTMLElement).dataset.canvasArea) {
@@ -220,6 +220,7 @@ export function BuilderCanvas({
             {/* Snap grid for free-form mode */}
             {snapToGrid && isAbsolute && (
               <div
+                aria-hidden="true"
                 className="pointer-events-none absolute inset-0 z-0 opacity-[0.04]"
                 style={{
                   backgroundImage: `
@@ -234,7 +235,8 @@ export function BuilderCanvas({
             {/* Column number labels (top) — grid mode only */}
             {snapToGrid && !isAbsolute && (
               <div
-                className="pointer-events-none absolute left-0 right-0 top-0 z-10"
+                aria-hidden="true"
+                className="pointer-events-none absolute start-0 end-0 top-0 z-10"
                 style={{
                   display: "grid",
                   gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,
@@ -244,7 +246,7 @@ export function BuilderCanvas({
                 {Array.from({ length: CANVAS_GRID_COLUMNS }, (_, i) => (
                   <div
                     key={`col-label-${i}`}
-                    className="flex h-5 items-center justify-center font-mono text-[8px] text-muted-foreground/30"
+                    className="flex h-5 items-center justify-center font-mono text-[8px] tabular-nums text-nx-ink-3"
                   >
                     {i + 1}
                   </div>
@@ -320,25 +322,26 @@ export function BuilderCanvas({
             {/* Empty state */}
             {components.length === 0 && (
               <div className="absolute inset-0 z-30 flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-muted/40">
+                <div className="text-center text-nx-ink-3">
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-nx-lg bg-nx-raised">
                     <svg
-                      className="h-6 w-6 text-muted-foreground/50"
+                      className="h-6 w-6 text-nx-ink-3"
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth="1.5"
+                      aria-hidden="true"
                     >
                       <rect x="3" y="3" width="18" height="18" rx="2" />
                       <line x1="3" y1="9" x2="21" y2="9" />
                       <line x1="9" y1="3" x2="9" y2="21" />
                     </svg>
                   </div>
-                  <p className="text-sm font-medium">
-                    {t("studio.builder.canvas.empty") || "Drop components here"}
+                  <p className="text-sm font-medium text-nx-ink-2">
+                    {t("studio.builder.canvas.empty")}
                   </p>
-                  <p className="mt-1 text-xs text-muted-foreground/60">
-                    {t("studio.builder.canvas.emptyHint") || "Drag from the palette or click +"}
+                  <p className="mt-1 text-xs text-nx-ink-3">
+                    {t("studio.builder.canvas.emptyHint")}
                   </p>
                 </div>
               </div>
@@ -349,8 +352,8 @@ export function BuilderCanvas({
                 but per motion doctrine only genuine loading states may loop, so this
                 renders as a single steady highlight instead of an infinite pulse. */}
             {isOver && (
-              <div className="pointer-events-none absolute inset-0 z-40 rounded-xl">
-                <div className="absolute inset-0 rounded-xl border-2 border-primary/40 bg-primary/[0.03]" />
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-40 rounded-nx-lg">
+                <div className="absolute inset-0 rounded-nx-lg border-2 border-nx-accent bg-nx-accent-wash" />
               </div>
             )}
           </div>

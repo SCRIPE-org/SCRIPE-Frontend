@@ -25,8 +25,10 @@ import { Separator } from "@core/ui/separator";
 import { StatCard } from "@core/ui/stat-card";
 import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
+import { PageHeader } from "@core/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
+import { cn } from "@core/common/utils";
 import type { PluginDefinition } from "@modules/plugins/core";
 
 // ── Status Badge ──────────────────────────────────────────────────────────────
@@ -36,11 +38,10 @@ function StatusBadge({ def }: { def: PluginDefinition }) {
   if (def.isPublished) return <Badge variant="default">{t("plugins.defStatusPublished")}</Badge>;
   if (def.isInReview) return <Badge variant="outline">{t("plugins.defStatusPending")}</Badge>;
   if (def.isSuspended)
-    return <Badge variant="destructive">{t("plugins.defStatusSuspended") ?? "Suspended"}</Badge>;
+    return <Badge variant="destructive">{t("plugins.defStatusSuspended")}</Badge>;
   if (def.isDeprecated)
     return <Badge variant="destructive">{t("plugins.defStatusDeprecated")}</Badge>;
-  if (def.isApproved)
-    return <Badge variant="default">{t("plugins.defStatusApproved") ?? "Approved"}</Badge>;
+  if (def.isApproved) return <Badge variant="default">{t("plugins.defStatusApproved")}</Badge>;
   return <Badge variant="secondary">{t("plugins.defStatusDraft")}</Badge>;
 }
 
@@ -51,10 +52,10 @@ function DefinitionsSkeleton() {
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-24 rounded-xl" />
+          <Skeleton key={i} className="h-24 rounded-nx-lg" />
         ))}
       </div>
-      <Skeleton className="h-[400px] rounded-xl" />
+      <Skeleton className="h-[400px] rounded-nx-lg" />
     </div>
   );
 }
@@ -105,28 +106,23 @@ export function DefinitionsView() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="rounded-xl border border-primary/20 bg-primary/10 p-2.5">
-            <Code2 className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">{t("plugins.defTitle")}</h2>
-            <p className="text-sm text-muted-foreground">{t("plugins.defSubtitle")}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button id="definitions-refresh" variant="outline" size="sm" onClick={() => refetch()}>
-            <RefreshCw className="me-2 h-4 w-4" />
-            {t("common.refresh")}
-          </Button>
-          <Button id="definitions-new" size="sm" onClick={openCreateForm}>
-            <Plus className="me-2 h-4 w-4" />
-            {t("plugins.defNew")}
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        icon={Code2}
+        title={t("plugins.defTitle")}
+        description={t("plugins.defSubtitle")}
+        actions={
+          <>
+            <Button id="definitions-refresh" variant="outline" size="sm" onClick={() => refetch()}>
+              <RefreshCw className="me-2 h-4 w-4" aria-hidden="true" />
+              {t("common.refresh")}
+            </Button>
+            <Button id="definitions-new" size="sm" onClick={openCreateForm}>
+              <Plus className="me-2 h-4 w-4" aria-hidden="true" />
+              {t("plugins.defNew")}
+            </Button>
+          </>
+        }
+      />
 
       {/* Stats — the shared StatCard anatomy */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -173,7 +169,7 @@ export function DefinitionsView() {
               description={t("plugins.defEmptyHint")}
               action={
                 <Button size="sm" onClick={openCreateForm}>
-                  <Plus className="me-2 h-4 w-4" />
+                  <Plus className="me-2 h-4 w-4" aria-hidden="true" />
                   {t("plugins.defNew")}
                 </Button>
               }
@@ -193,24 +189,27 @@ export function DefinitionsView() {
               <TableBody>
                 {definitions.map((def) => {
                   const displayName = language === "ar" ? def.nameAr || def.name : def.name;
+                  const hasBrandColor = def.colorHue != null;
                   return (
                     <TableRow key={def.id}>
-                      <TableCell className="font-mono text-xs text-muted-foreground">
-                        {def.key}
-                      </TableCell>
+                      <TableCell className="font-mono text-xs text-nx-ink-2">{def.key}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <div
-                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-muted"
+                            className={cn(
+                              "flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-sm border border-nx-line",
+                              hasBrandColor ? "text-nx-on-fill" : "bg-nx-raised text-nx-ink-3"
+                            )}
                             style={
-                              def.colorHue != null
+                              hasBrandColor
                                 ? {
                                     background: `oklch(0.7 ${def.colorChroma ?? 0.2} ${def.colorHue})`,
                                   }
                                 : undefined
                             }
+                            aria-hidden="true"
                           >
-                            <Code2 className="h-4 w-4 text-white" />
+                            <Code2 className="h-4 w-4" />
                           </div>
                           <span className="text-sm font-medium">{displayName}</span>
                         </div>
@@ -223,7 +222,7 @@ export function DefinitionsView() {
                       <TableCell>
                         <StatusBadge def={def} />
                       </TableCell>
-                      <TableCell className="text-xs text-muted-foreground">
+                      <TableCell className="text-xs text-nx-ink-2">
                         {def.createdAtDisplay}
                       </TableCell>
                       <TableCell>
@@ -235,9 +234,10 @@ export function DefinitionsView() {
                             size="icon"
                             className="h-7 w-7"
                             onClick={() => openEditForm(def)}
-                            title={t("plugins.defEdit") || "Edit"}
+                            aria-label={t("plugins.defEdit")}
+                            title={t("plugins.defEdit")}
                           >
-                            <Pencil className="h-4 w-4" />
+                            <Pencil className="h-4 w-4" aria-hidden="true" />
                           </Button>
                           {/* Publish */}
                           {!def.isPublished && !def.isDeprecated && (
@@ -248,9 +248,10 @@ export function DefinitionsView() {
                               className="h-7 w-7 text-success hover:text-success/80"
                               disabled={isPublishing}
                               onClick={() => publish(def.id)}
+                              aria-label={t("plugins.defPublish")}
                               title={t("plugins.defPublish")}
                             >
-                              <ShieldCheck className="h-4 w-4" />
+                              <ShieldCheck className="h-4 w-4" aria-hidden="true" />
                             </Button>
                           )}
                           {/* Deprecate */}
@@ -262,9 +263,10 @@ export function DefinitionsView() {
                               className="h-7 w-7 text-warning hover:text-warning/80"
                               disabled={isDeprecating}
                               onClick={() => deprecate(def.id)}
+                              aria-label={t("plugins.defDeprecate")}
                               title={t("plugins.defDeprecate")}
                             >
-                              <ArrowDownFromLine className="h-4 w-4" />
+                              <ArrowDownFromLine className="h-4 w-4" aria-hidden="true" />
                             </Button>
                           )}
                           {/* Delete */}
@@ -275,9 +277,10 @@ export function DefinitionsView() {
                             className="h-7 w-7 text-destructive hover:text-destructive/80"
                             disabled={isDeleting}
                             onClick={() => deleteDefinition(def.id)}
+                            aria-label={t("common.delete")}
                             title={t("common.delete")}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" aria-hidden="true" />
                           </Button>
                         </div>
                       </TableCell>

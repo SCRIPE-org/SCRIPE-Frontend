@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@core/ui/badge";
+import { TableCell, TableRow } from "@core/ui/table";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatDateTimeUtc } from "@core/common/utils";
 import type { PluginExecutionLog } from "../../domain/entities/PluginExecutionLog";
@@ -16,22 +17,26 @@ interface LogRowProps {
 export function LogRow({ log }: LogRowProps) {
   const { t } = useI18n();
   return (
-    <div className="flex items-center justify-between border-b px-4 py-3 transition-colors last:border-0 hover:bg-muted/40">
-      <div className="flex min-w-0 items-center gap-3">
-        <Badge variant={log.isSuccess ? "default" : "destructive"} className="shrink-0 text-xs">
+    <TableRow>
+      <TableCell>
+        <Badge variant={log.isSuccess ? "default" : "destructive"} className="text-xs">
           {log.isSuccess ? t("plugins.logsStatusOk") : t("plugins.logsStatusFail")}
         </Badge>
-        {log.statusCode != null && (
-          <span className="shrink-0 text-xs text-muted-foreground">{log.statusCode}</span>
-        )}
-        <span className="truncate font-mono text-xs text-muted-foreground">{log.endpoint}</span>
-      </div>
-      <div className="ms-4 flex shrink-0 items-center gap-4">
-        <span className="text-xs text-muted-foreground">{log.durationMs}ms</span>
-        <span className="hidden text-xs text-muted-foreground sm:block">
-          {formatDateTimeUtc(log.executedAt)}
-        </span>
-      </div>
-    </div>
+      </TableCell>
+      <TableCell>
+        <div className="flex min-w-0 items-center gap-2">
+          {log.statusCode != null && (
+            <span className="shrink-0 text-xs text-nx-ink-3">{log.statusCode}</span>
+          )}
+          <span className="truncate font-mono text-xs text-nx-ink-2">{log.endpoint}</span>
+        </div>
+      </TableCell>
+      <TableCell variant="numeric" className="text-nx-ink-2">
+        {log.durationMs}ms
+      </TableCell>
+      <TableCell className="hidden text-xs text-nx-ink-3 sm:table-cell">
+        {formatDateTimeUtc(log.executedAt)}
+      </TableCell>
+    </TableRow>
   );
 }

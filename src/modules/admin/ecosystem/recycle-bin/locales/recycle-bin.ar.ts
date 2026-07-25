@@ -20,6 +20,7 @@ export const ar = {
     restore: "استعادة",
     restoreConfirm: "هل أنت متأكد من استعادة هذا العنصر؟",
     restoreConfirmTitle: "استعادة العنصر",
+    restoreGroupTitle: "استعادة مجموعة المستخدمين",
     restoreSuccess: "تم استعادة العنصر بنجاح",
     restoreError: "فشل في استعادة العنصر",
     restored: "تمت الاستعادة",
@@ -34,5 +35,7 @@ export const ar = {
     daysLeft: "{{days}} يوم متبقي",
     permanent: "سيحذف قريباً",
     loading: "جاري تحميل العناصر المحذوفة...",
+    selectedGroup: "المجموعة المحددة",
+    groupsCount: "{{count}} مجموعات",
   },
 };

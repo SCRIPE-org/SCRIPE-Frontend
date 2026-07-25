@@ -80,16 +80,13 @@ export function WebhookSecretPanel({
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-info/10 text-info">
-                <Shield className="h-4 w-4" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-info/10 text-info">
+                <Shield className="h-4 w-4" aria-hidden="true" />
               </div>
               <div>
-                <CardTitle className="text-base">
-                  {t("webhooks.secret") || "Signing Secret"}
-                </CardTitle>
+                <CardTitle className="text-base">{t("webhooks.secret")}</CardTitle>
                 <CardDescription className="mt-0.5 text-xs">
-                  {t("webhooks.secretDescription") ||
-                    "Used to sign webhook payloads with HMAC-SHA256."}
+                  {t("webhooks.secretDescription")}
                 </CardDescription>
               </div>
             </div>
@@ -98,10 +95,11 @@ export function WebhookSecretPanel({
               size="sm"
               onClick={() => setRotateDialogOpen(true)}
               disabled={isRotating}
+              loading={isRotating}
               className="gap-1.5"
             >
-              <RefreshCw className={`h-3.5 w-3.5 ${isRotating ? "animate-spin" : ""}`} />
-              {t("webhooks.rotateSecret") || "Rotate Secret"}
+              {!isRotating && <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
+              {t("webhooks.rotateSecret")}
             </Button>
           </div>
         </CardHeader>
@@ -112,10 +110,14 @@ export function WebhookSecretPanel({
               <Input
                 readOnly
                 value={displayValue}
-                className="cursor-default select-all border-muted bg-muted/30 pe-24 font-mono text-sm"
+                aria-label={t("webhooks.secret")}
+                className="cursor-default select-all pe-24 font-mono text-sm"
               />
               <div className="absolute inset-y-0 end-0 flex items-center gap-0.5 pe-1.5">
-                {/* Show/Hide toggle */}
+                {/* Show/Hide toggle — same masking logic, only the accessible
+                    name and glyph annotation changed (R3: a hardcoded English
+                    TooltipContent is not an accessible name for an icon-only
+                    control, and this one guards a live HMAC signing secret). */}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -124,31 +126,43 @@ export function WebhookSecretPanel({
                         size="icon"
                         className="h-7 w-7"
                         onClick={onToggleVisibility}
+                        aria-label={isVisible ? t("webhooks.secretHide") : t("webhooks.secretReveal")}
                       >
                         {isVisible ? (
-                          <EyeOff className="h-3.5 w-3.5 text-muted-foreground" />
+                          <EyeOff className="h-3.5 w-3.5" aria-hidden="true" />
                         ) : (
-                          <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Eye className="h-3.5 w-3.5" aria-hidden="true" />
                         )}
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="top">{isVisible ? "Hide" : "Reveal"}</TooltipContent>
+                    <TooltipContent side="top">
+                      {isVisible ? t("webhooks.secretHide") : t("webhooks.secretReveal")}
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
 
-                {/* Copy button */}
+                {/* Copy button — copies the actual secret value only, never
+                    the masking dots; unchanged from before. */}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleCopy}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={handleCopy}
+                        aria-label={copied ? t("webhooks.secretCopied") : t("webhooks.secretCopy")}
+                      >
                         {copied ? (
-                          <Check className="h-3.5 w-3.5 text-success" />
+                          <Check className="h-3.5 w-3.5 text-success" aria-hidden="true" />
                         ) : (
-                          <Copy className="h-3.5 w-3.5 text-muted-foreground" />
+                          <Copy className="h-3.5 w-3.5" aria-hidden="true" />
                         )}
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="top">{copied ? "Copied!" : "Copy"}</TooltipContent>
+                    <TooltipContent side="top">
+                      {copied ? t("webhooks.secretCopied") : t("webhooks.secretCopy")}
+                    </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
@@ -157,30 +171,22 @@ export function WebhookSecretPanel({
 
           {/* Info note when secret is masked */}
           {isMasked && (
-            <div className="flex items-start gap-2 text-xs text-muted-foreground">
-              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
-              <p>
-                {t("webhooks.secretMaskedNote") ||
-                  'For security, the full secret is only shown when first created or after rotation. Use "Rotate Secret" to generate and reveal a new secret.'}
-              </p>
+            <div className="flex items-start gap-2 text-xs text-nx-ink-3">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              <p>{t("webhooks.secretMaskedNote")}</p>
             </div>
           )}
 
           {/* Previous secret grace period */}
           {hasPreviousSecret && previousSecretExpiresAt && (
-            <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/10 px-3 py-2.5">
-              <Clock className="h-4 w-4 shrink-0 text-info" />
+            <div className="flex items-center gap-2 rounded-nx-md border border-info/30 bg-info/10 px-3 py-2.5">
+              <Clock className="h-4 w-4 shrink-0 text-info" aria-hidden="true" />
               <p className="flex-1 text-xs text-info">
-                {t("webhooks.previousSecretActive") || "Previous secret is still valid until"}{" "}
-                <strong>
-                  {formatUtc(previousSecretExpiresAt, "MMM d, yyyy 'at' HH:mm")}
-                </strong>
+                {t("webhooks.previousSecretActive")}{" "}
+                <strong>{formatUtc(previousSecretExpiresAt, "MMM d, yyyy 'at' HH:mm")}</strong>
               </p>
-              <Badge
-                variant="outline"
-                className="shrink-0 border-info/40 bg-info/15 text-xs"
-              >
-                {t("webhooks.gracePeriod") || "Grace Period"}
+              <Badge variant="info" className="shrink-0 text-xs">
+                {t("webhooks.gracePeriod")}
               </Badge>
             </div>
           )}
@@ -191,23 +197,18 @@ export function WebhookSecretPanel({
       <AlertDialog open={rotateDialogOpen} onOpenChange={setRotateDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>
-              {t("webhooks.rotateSecretTitle") || "Rotate Signing Secret"}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("webhooks.rotateSecretDesc") ||
-                "A new secret will be generated. The old secret will remain valid for 24 hours to allow time for updating your integration."}
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t("webhooks.rotateSecretTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("webhooks.rotateSecretDesc")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 onRotate();
                 setRotateDialogOpen(false);
               }}
             >
-              {t("webhooks.rotateSecretConfirm") || "Rotate Secret"}
+              {t("webhooks.rotateSecretConfirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

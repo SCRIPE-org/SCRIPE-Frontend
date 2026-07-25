@@ -1,6 +1,7 @@
 "use client";
 
 import { Separator } from "@core/ui/separator";
+import { DetailRow } from "@core/ui/detail-row";
 import { CheckCircle2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { EditionForConversion } from "../../../domain/interfaces/ILeadsRepository";
@@ -77,38 +78,35 @@ export function WizardStep4Confirm({ lead, edition, setup, overrideCount }: Wiza
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border border-success/30 bg-success/10 px-5 py-4">
+      <div className="rounded-nx-md border border-success/30 bg-success/10 px-5 py-4">
         <div className="flex items-center gap-3">
-          <CheckCircle2 className="h-5 w-5 shrink-0 text-success" />
+          <CheckCircle2 className="h-5 w-5 shrink-0 text-success" aria-hidden="true" />
           <div>
             <p className="text-sm font-semibold text-success">
               {t("leads.convertWizard.readyToConvert", { defaultValue: "Ready to convert" })}
             </p>
-            <p className="mt-0.5 text-xs text-success">
-              {t("leads.convertWizard.step4Desc")}
-            </p>
+            <p className="mt-0.5 text-xs text-success">{t("leads.convertWizard.step4Desc")}</p>
           </div>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-border">
+      <div className="overflow-hidden rounded-nx-lg border border-nx-line">
         {rows.map((row, i) => (
           <div key={row.label}>
             {i > 0 && <Separator />}
-            <div className="flex items-center justify-between px-4 py-2.5">
-              <span className="text-xs text-muted-foreground">{row.label}</span>
-              <span className="text-sm font-medium text-foreground">{row.value}</span>
+            <div className="px-4 py-2.5">
+              <DetailRow label={row.label} value={row.value} />
             </div>
           </div>
         ))}
       </div>
 
       {setup.conversionNote && (
-        <div className="rounded-xl border border-border px-4 py-3">
-          <p className="mb-1 text-xs font-medium text-muted-foreground">
+        <div className="rounded-nx-md border border-nx-line px-4 py-3">
+          <p className="mb-1 text-xs font-medium text-nx-ink-3">
             {t("leads.convertWizard.internalNote")}
           </p>
-          <p className="text-sm text-foreground">{setup.conversionNote}</p>
+          <p className="text-sm text-nx-ink">{setup.conversionNote}</p>
         </div>
       )}
     </div>

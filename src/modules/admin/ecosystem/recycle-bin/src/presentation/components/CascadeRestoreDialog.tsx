@@ -49,24 +49,17 @@ export function CascadeRestoreDialog({
     <GenericModal
       open={open}
       onOpenChange={onOpenChange}
-      title={t("recycleBin.restoreConfirmTitle") || "Restore User Group"}
-      description={(
-        t("recycleBin.restoreConfirmDesc") || "Are you sure you want to restore {name}?"
-      ).replace("{name}", itemName)}
+      title={t("recycleBin.restoreGroupTitle")}
+      description={t("recycleBin.restoreConfirmDesc").replace("{name}", itemName)}
     >
       <div className="space-y-4 py-2">
-        <Alert>
-          <Info className="h-4 w-4 text-info" />
-          <AlertTitle className="text-info">
-            {t("userGroups.restoreAdminsTitle") || "Restore Associated Admins"}
-          </AlertTitle>
-          <AlertDescription className="text-info/90">
-            {t("userGroups.restoreAdminsDesc") ||
-              "This user group may have administrators associated with it that were deleted when the group was deleted. You can choose to restore them along with the group."}
-          </AlertDescription>
+        <Alert variant="info">
+          <Info className="h-4 w-4" aria-hidden="true" />
+          <AlertTitle>{t("userGroups.restoreAdminsTitle")}</AlertTitle>
+          <AlertDescription>{t("userGroups.restoreAdminsDesc")}</AlertDescription>
         </Alert>
 
-        <div className="flex items-start space-x-2 pt-2">
+        <div className="flex items-start gap-2 pt-2">
           <Checkbox
             id="cascadeAdmins"
             checked={cascadeAdmins}
@@ -77,16 +70,16 @@ export function CascadeRestoreDialog({
             htmlFor="cascadeAdmins"
             className="cursor-pointer text-sm font-normal leading-snug"
           >
-            {t("userGroups.alsoRestoreAdmins") || "Also restore assigned admins"}
+            {t("userGroups.alsoRestoreAdmins")}
           </Label>
         </div>
 
-        <div className="mt-4 flex justify-end gap-2 border-t pt-4">
+        <div className="mt-4 flex justify-end gap-2 border-t border-nx-line pt-4">
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button variant="default" onClick={handleConfirm} loading={isPending}>
-            {t("recycleBin.restore") || "Restore"}
+            {t("recycleBin.restore")}
           </Button>
         </div>
       </div>

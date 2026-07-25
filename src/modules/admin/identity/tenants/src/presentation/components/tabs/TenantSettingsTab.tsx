@@ -13,9 +13,11 @@
  */
 "use client";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import { ErrorMessage } from "@core/ui/error-message";
 import {
   Shield,
   Palette,
@@ -50,12 +52,13 @@ export function TenantSettingsTab({
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";
   const vm = useTenantSettingsViewModel(tenantId);
+  const queryClient = useQueryClient();
 
   if (vm.isLoading) {
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-48 w-full rounded-xl" />
+          <Skeleton key={i} className="h-48 w-full rounded-nx-lg" />
         ))}
       </div>
     );
@@ -63,9 +66,10 @@ export function TenantSettingsTab({
 
   if (vm.error) {
     return (
-      <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-destructive">
-        Error loading settings: {vm.error.message}
-      </div>
+      <ErrorMessage
+        message={t("tenant.settingsLoadError")}
+        onRetry={() => queryClient.invalidateQueries({ queryKey: ["tenant-settings", tenantId] })}
+      />
     );
   }
 
@@ -76,71 +80,76 @@ export function TenantSettingsTab({
     <div className="space-y-4" dir={direction}>
       {/* Section header */}
       <div>
-        <h3 className="text-lg font-semibold">{t("tenant.settings") || "Settings"}</h3>
-        <p className="text-sm text-muted-foreground">
-          {t("tenant.settingsDescription") || `Configuration for ${tenantName}`}
+        <h3 className="text-lg font-semibold">{t("tenant.settings")}</h3>
+        <p className="text-sm text-nx-ink-2">
+          {t("tenant.settingsDescription")}
         </p>
       </div>
 
       {/* ── Security Card ── */}
-      <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
+      <div className="overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface">
         <div className="h-1 bg-gradient-to-r from-warning via-warning/80 to-warning" />
         <div className="p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning/10">
-                <Shield className="h-4 w-4 text-warning" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-warning/10">
+                <Shield className="h-4 w-4 text-warning" aria-hidden="true" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">
-                  {t("tenant.settingsSecurity") || "Security Settings"}
+                  {t("tenant.settingsSecurity")}
                 </h4>
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.settingsSecurityDesc") || "Password policies and login security"}
+                <p className="text-xs text-nx-ink-2">
+                  {t("tenant.settingsSecurityDesc")}
                 </p>
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => vm.setEditSection("security")}>
-              <Pencil className="h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => vm.setEditSection("security")}
+              aria-label={t("common.edit")}
+            >
+              <Pencil className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
 
           {/* Security grid */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Lock className="h-3 w-3" />
-                {t("tenant.passwordMinLength") || "Min Length"}
+            <div className="rounded-nx-md border border-nx-line bg-nx-raised p-3">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-nx-ink-2">
+                <Lock className="h-3 w-3" aria-hidden="true" />
+                {t("tenant.passwordMinLength")}
               </div>
-              <p className="text-lg font-bold">{settings.passwordMinLength}</p>
-              <p className="text-xs text-muted-foreground">{t("tenant.characters") || "chars"}</p>
+              <p className="text-lg font-bold tabular-nums">{settings.passwordMinLength}</p>
+              <p className="text-xs text-nx-ink-2">{t("tenant.characters")}</p>
             </div>
-            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <KeyRound className="h-3 w-3" />
-                {t("tenant.lockoutThreshold") || "Lockout"}
+            <div className="rounded-nx-md border border-nx-line bg-nx-raised p-3">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-nx-ink-2">
+                <KeyRound className="h-3 w-3" aria-hidden="true" />
+                {t("tenant.lockoutThreshold")}
               </div>
-              <p className="text-lg font-bold">{settings.loginLockoutThreshold}</p>
-              <p className="text-xs text-muted-foreground">{t("tenant.attempts") || "attempts"}</p>
+              <p className="text-lg font-bold tabular-nums">{settings.loginLockoutThreshold}</p>
+              <p className="text-xs text-nx-ink-2">{t("tenant.attempts")}</p>
             </div>
-            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Timer className="h-3 w-3" />
-                {t("tenant.lockoutDuration") || "Duration"}
+            <div className="rounded-nx-md border border-nx-line bg-nx-raised p-3">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-nx-ink-2">
+                <Timer className="h-3 w-3" aria-hidden="true" />
+                {t("tenant.lockoutDuration")}
               </div>
-              <p className="text-lg font-bold">{settings.loginLockoutMinutes}</p>
-              <p className="text-xs text-muted-foreground">{t("tenant.minutes") || "min"}</p>
+              <p className="text-lg font-bold tabular-nums">{settings.loginLockoutMinutes}</p>
+              <p className="text-xs text-nx-ink-2">{t("tenant.minutes")}</p>
             </div>
-            <div className="rounded-lg border border-border/50 bg-muted/20 p-3">
-              <div className="mb-1 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <Timer className="h-3 w-3" />
-                {t("tenant.passwordExpiryDays") || "Expiry"}
+            <div className="rounded-nx-md border border-nx-line bg-nx-raised p-3">
+              <div className="mb-1 flex items-center gap-1.5 text-xs text-nx-ink-2">
+                <Timer className="h-3 w-3" aria-hidden="true" />
+                {t("tenant.passwordExpiryDays")}
               </div>
-              <p className="text-lg font-bold">{settings.passwordExpiryDays || "∞"}</p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-lg font-bold tabular-nums">{settings.passwordExpiryDays || "∞"}</p>
+              <p className="text-xs text-nx-ink-2">
                 {settings.passwordExpiryDays
-                  ? t("tenant.days") || "days"
-                  : t("tenant.never") || "never"}
+                  ? t("tenant.days")
+                  : t("tenant.never")}
               </p>
             </div>
           </div>
@@ -149,44 +158,49 @@ export function TenantSettingsTab({
           <div className="mt-3 flex flex-wrap gap-2">
             <RequirementBadge
               satisfied={settings.passwordRequireUppercase}
-              label={t("tenant.requireUppercase") || "Uppercase"}
+              label={t("tenant.requireUppercase")}
             />
             <RequirementBadge
               satisfied={settings.passwordRequireNumber}
-              label={t("tenant.requireNumber") || "Number"}
+              label={t("tenant.requireNumber")}
             />
             <RequirementBadge
               satisfied={settings.passwordRequireSpecial}
-              label={t("tenant.requireSpecial") || "Special Char"}
+              label={t("tenant.requireSpecial")}
             />
             <RequirementBadge
               satisfied={settings.require2FA}
-              label={t("tenant.require2FA") || "2FA Required"}
+              label={t("tenant.require2FA")}
             />
           </div>
         </div>
       </div>
 
       {/* ── Branding Card ── */}
-      <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
-        <div className="h-1 bg-gradient-to-r from-primary via-primary/80 to-primary" />
+      <div className="overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface">
+        <div className="h-1 bg-nx-accent" />
         <div className="p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                <Palette className="h-4 w-4 text-primary" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+                <Palette className="h-4 w-4 text-nx-accent" aria-hidden="true" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">
-                  {t("tenant.settingsBranding") || "Branding"}
+                  {t("tenant.settingsBranding")}
                 </h4>
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.settingsBrandingDesc") || "Customize appearance and branding"}
+                <p className="text-xs text-nx-ink-2">
+                  {t("tenant.settingsBrandingDesc")}
                 </p>
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => vm.setEditSection("branding")}>
-              <Pencil className="h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => vm.setEditSection("branding")}
+              aria-label={t("common.edit")}
+            >
+              <Pencil className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
 
@@ -196,38 +210,38 @@ export function TenantSettingsTab({
               <img
                 src={resolveFileUrl(settings.logoUrl)}
                 alt={t("tenant.logoPreview")}
-                className="h-16 w-16 rounded-xl border border-border/50 bg-muted/20 object-contain p-1.5"
+                className="h-16 w-16 rounded-nx-lg border border-nx-line bg-nx-raised object-contain p-1.5"
               />
             ) : (
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl border border-dashed border-border/50 bg-muted/30 text-xs text-muted-foreground">
-                {t("tenant.noLogo") || "No Logo"}
+              <div className="flex h-16 w-16 items-center justify-center rounded-nx-lg border border-dashed border-nx-line bg-nx-raised text-xs text-nx-ink-2">
+                {t("tenant.noLogo")}
               </div>
             )}
             <div className="space-y-1.5">
               <p className="font-semibold">
                 {settings.companyName || (
-                  <span className="italic text-muted-foreground">
-                    {t("tenant.noCompanyName") || "No Company Name"}
+                  <span className="italic text-nx-ink-2">
+                    {t("tenant.noCompanyName")}
                   </span>
                 )}
               </p>
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
                   <div
-                    className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
+                    className="h-5 w-5 rounded-full border border-nx-line"
                     style={{ backgroundColor: settings.primaryColor || "#000000" }}
                   />
-                  <span className="font-mono text-xs text-muted-foreground">
+                  <span className="font-mono text-xs text-nx-ink-2">
                     {settings.primaryColor || "#000000"}
                   </span>
                 </div>
                 {settings.secondaryColor && (
                   <div className="flex items-center gap-1.5">
                     <div
-                      className="h-5 w-5 rounded-full border border-border/50 shadow-sm"
+                      className="h-5 w-5 rounded-full border border-nx-line"
                       style={{ backgroundColor: settings.secondaryColor }}
                     />
-                    <span className="font-mono text-xs text-muted-foreground">
+                    <span className="font-mono text-xs text-nx-ink-2">
                       {settings.secondaryColor}
                     </span>
                   </div>
@@ -239,8 +253,8 @@ export function TenantSettingsTab({
           {/* Additional branding details */}
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
             {settings.faviconUrl && (
-              <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
-                <p className="text-xs text-muted-foreground">{t("tenant.favicon") || "Favicon"}</p>
+              <div className="rounded-nx-md border border-nx-line bg-nx-raised p-2">
+                <p className="text-xs text-nx-ink-2">{t("tenant.favicon")}</p>
                 <div className="mt-1">
                   <img
                     src={resolveFileUrl(settings.faviconUrl)}
@@ -254,17 +268,17 @@ export function TenantSettingsTab({
               </div>
             )}
             {settings.loginHeadline && (
-              <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.loginHeadline") || "Login Headline"}
+              <div className="rounded-nx-md border border-nx-line bg-nx-raised p-2">
+                <p className="text-xs text-nx-ink-2">
+                  {t("tenant.loginHeadline")}
                 </p>
                 <p className="truncate text-sm font-medium">{settings.loginHeadline}</p>
               </div>
             )}
             {settings.loginSubtitle && (
-              <div className="rounded-lg border border-border/50 bg-muted/20 p-2">
-                <p className="text-xs text-muted-foreground">
-                  {t("tenant.loginSubtitle") || "Login Subtitle"}
+              <div className="rounded-nx-md border border-nx-line bg-nx-raised p-2">
+                <p className="text-xs text-nx-ink-2">
+                  {t("tenant.loginSubtitle")}
                 </p>
                 <p className="truncate text-sm font-medium">{settings.loginSubtitle}</p>
               </div>
@@ -274,31 +288,35 @@ export function TenantSettingsTab({
       </div>
 
       {/* ── Audit Card ── */}
-      <div className="overflow-hidden rounded-xl border border-border/50 bg-card">
+      <div className="overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface">
         <div className="h-1 bg-gradient-to-r from-success via-success/80 to-success" />
         <div className="p-5">
           <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-success/10">
-                <ClipboardList className="h-4 w-4 text-success" />
+              <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-success/10">
+                <ClipboardList className="h-4 w-4 text-success" aria-hidden="true" />
               </div>
               <div>
                 <h4 className="text-sm font-semibold">
-                  {t("tenant.settingsAudit") || "Audit & Logs"}
+                  {t("tenant.settingsAudit")}
                 </h4>
               </div>
             </div>
-            <Button variant="ghost" size="sm" onClick={() => vm.setEditSection("audit")}>
-              <Pencil className="h-4 w-4" />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => vm.setEditSection("audit")}
+              aria-label={t("common.edit")}
+            >
+              <Pencil className="h-4 w-4" aria-hidden="true" />
             </Button>
           </div>
 
-          <div className="flex items-center justify-between rounded-lg border border-border/50 bg-muted/20 p-3">
+          <div className="flex items-center justify-between rounded-nx-md border border-nx-line bg-nx-raised p-3">
             <div>
-              <p className="text-sm font-medium">{t("tenant.auditEnabled") || "Audit Logging"}</p>
-              <p className="text-xs text-muted-foreground">
-                {t("tenant.retentionLabel", { days: settings.auditRetentionDays }) ||
-                  `Retention: ${settings.auditRetentionDays} days`}
+              <p className="text-sm font-medium">{t("tenant.auditEnabled")}</p>
+              <p className="text-xs text-nx-ink-2">
+                {t("tenant.retentionLabel", { days: settings.auditRetentionDays })}
               </p>
             </div>
             <Badge
@@ -312,13 +330,13 @@ export function TenantSettingsTab({
             >
               {settings.auditEnabled ? (
                 <>
-                  <Check className="h-3 w-3" />
-                  {t("tenant.enabled") || "Enabled"}
+                  <Check className="h-3 w-3" aria-hidden="true" />
+                  {t("tenant.enabled")}
                 </>
               ) : (
                 <>
-                  <X className="h-3 w-3" />
-                  {t("tenant.disabled") || "Disabled"}
+                  <X className="h-3 w-3" aria-hidden="true" />
+                  {t("tenant.disabled")}
                 </>
               )}
             </Badge>
@@ -350,9 +368,9 @@ function RequirementBadge({ satisfied, label }: { satisfied: boolean; label: str
       )}
     >
       {satisfied ? (
-        <Check className="h-3 w-3 text-success" />
+        <Check className="h-3 w-3 text-success" aria-hidden="true" />
       ) : (
-        <X className="h-3 w-3 text-muted-foreground" />
+        <X className="h-3 w-3 text-nx-ink-2" aria-hidden="true" />
       )}
       {label}
     </Badge>

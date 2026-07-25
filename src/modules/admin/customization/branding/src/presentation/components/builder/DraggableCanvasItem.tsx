@@ -300,43 +300,55 @@ export function DraggableCanvasItem({
     [isAbsolute, setSortableRef]
   );
 
+  const componentLabel = t(catalog?.labelKey || "") || component.type;
+
   return (
     <div
       ref={nodeRef}
       style={{ ...absoluteStyle, ...gridStyle }}
+      role="button"
+      tabIndex={0}
+      aria-pressed={isSelected}
+      aria-label={componentLabel}
       onClick={(e) => {
         e.stopPropagation();
         onSelect();
       }}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
       onMouseDown={isAbsolute ? handleMouseDown : undefined}
       className={cn(
-        "group relative transition-all",
+        "group relative transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
         // Absolute mode: direct component rendering
         isAbsolute
           ? cn(
-              "rounded-lg border-2",
-              isDragging && "opacity-60 shadow-2xl ring-2 ring-primary/30",
+              "rounded-nx-lg border-2",
+              isDragging && "opacity-60 ring-2 ring-nx-accent-wash",
               isSelected
-                ? "border-primary/60 shadow-lg ring-2 ring-primary/20"
-                : "border-transparent hover:border-primary/30",
+                ? "border-nx-accent ring-2 ring-nx-accent-wash"
+                : "border-transparent hover:border-nx-line-hi",
               isOverlapping && !isSelected && "border-destructive/50 ring-1 ring-destructive/20",
               component.locked && "cursor-not-allowed opacity-80",
               !component.locked && "cursor-move"
             )
           : // Grid mode: card-like appearance
             cn(
-              "flex min-h-[52px] cursor-pointer items-center gap-2.5 rounded-lg border-2 px-3 py-2.5",
-              isDragging && "z-50 scale-[0.98] opacity-40 shadow-2xl ring-2 ring-primary/30",
+              "flex min-h-[52px] cursor-pointer items-center gap-2.5 rounded-nx-lg border-2 px-3 py-2.5",
+              isDragging && "z-50 scale-[0.98] opacity-40 ring-2 ring-nx-accent-wash",
               isSelected
-                ? "border-primary bg-primary/5 shadow-lg ring-2 ring-primary/20"
-                : "border-border/60 bg-card/90 hover:border-primary/40 hover:bg-accent/20 hover:shadow-sm"
+                ? "border-nx-accent bg-nx-accent-wash ring-2 ring-nx-accent-wash"
+                : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-hover"
             ),
         !component.visible && "opacity-40"
       )}
     >
       {/* ── Absolute mode: WYSIWYG component preview ── */}
       {isAbsolute ? (
-        <div className="pointer-events-none h-full w-full overflow-hidden rounded-md">
+        <div className="pointer-events-none h-full w-full overflow-hidden rounded-nx-md">
           <ComponentRenderer type={component.type} props={component.props} />
         </div>
       ) : (
@@ -346,45 +358,48 @@ export function DraggableCanvasItem({
           <div
             {...attributes}
             {...listeners}
+            aria-label={t("studio.builder.dragHandle")}
             className={cn(
-              "flex cursor-grab items-center justify-center rounded-md p-0.5 transition-colors active:cursor-grabbing",
+              "flex cursor-grab items-center justify-center rounded-nx-sm p-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none active:cursor-grabbing focus-visible:outline-none focus-visible:shadow-nx-focus",
               isDragging
-                ? "text-primary"
-                : "text-muted-foreground/40 hover:bg-muted/60 hover:text-muted-foreground"
+                ? "text-nx-accent"
+                : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink-2"
             )}
           >
-            <GripVertical className="h-4 w-4" />
+            <GripVertical className="h-4 w-4" aria-hidden="true" />
           </div>
 
           {/* Icon */}
           <div
             className={cn(
-              "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg",
-              isSelected ? "bg-primary/15 text-primary" : "bg-muted/60 text-muted-foreground"
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-lg",
+              isSelected ? "bg-nx-accent-wash text-nx-accent" : "bg-nx-raised text-nx-ink-2"
             )}
           >
-            <Icon className="h-4 w-4" />
+            <Icon className="h-4 w-4" aria-hidden="true" />
           </div>
 
           {/* Label */}
           <div className="min-w-0 flex-1">
-            <span className="block truncate text-xs font-medium text-foreground">
-              {t(catalog?.labelKey || "") || component.type}
+            <span className="block truncate text-xs font-medium text-nx-ink">
+              {componentLabel}
             </span>
-            <span className="font-mono text-[9px] text-muted-foreground/60">
+            <span className="font-mono text-[9px] tabular-nums text-nx-ink-3">
               {component.gridColumn} / {component.gridRow}
             </span>
           </div>
 
           {/* Visibility indicator */}
-          {!component.visible && <EyeOff className="h-3 w-3 shrink-0 text-muted-foreground/50" />}
+          {!component.visible && (
+            <EyeOff className="h-3 w-3 shrink-0 text-nx-ink-3" aria-hidden="true" />
+          )}
         </>
       )}
 
       {/* Lock indicator (both modes) */}
       {component.locked && (
-        <div className="absolute end-1 top-1 rounded bg-muted/80 p-0.5">
-          <Lock className="h-3 w-3 text-muted-foreground" />
+        <div className="absolute end-1 top-1 rounded-nx-sm bg-nx-raised-2 p-0.5">
+          <Lock className="h-3 w-3 text-nx-ink-2" aria-hidden="true" />
         </div>
       )}
 
@@ -397,8 +412,9 @@ export function DraggableCanvasItem({
               <div
                 key={position}
                 onMouseDown={(e) => handleResizeStart(e, position)}
+                aria-hidden="true"
                 className={cn(
-                  "absolute z-50 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary",
+                  "absolute z-50 h-2.5 w-2.5 rounded-full border-2 border-nx-ground bg-nx-accent",
                   handleClass
                 )}
                 style={{ cursor }}
@@ -407,10 +423,22 @@ export function DraggableCanvasItem({
           ) : (
             /* Static corners (grid mode) */
             <>
-              <div className="absolute -start-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary" />
-              <div className="absolute -end-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary" />
-              <div className="absolute -bottom-1 -start-1 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary" />
-              <div className="absolute -bottom-1 -end-1 h-2.5 w-2.5 rounded-full border-2 border-background bg-primary" />
+              <div
+                aria-hidden="true"
+                className="absolute -start-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-nx-ground bg-nx-accent"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute -end-1 -top-1 h-2.5 w-2.5 rounded-full border-2 border-nx-ground bg-nx-accent"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute -bottom-1 -start-1 h-2.5 w-2.5 rounded-full border-2 border-nx-ground bg-nx-accent"
+              />
+              <div
+                aria-hidden="true"
+                className="absolute -bottom-1 -end-1 h-2.5 w-2.5 rounded-full border-2 border-nx-ground bg-nx-accent"
+              />
             </>
           )}
         </>
@@ -418,8 +446,11 @@ export function DraggableCanvasItem({
 
       {/* Type badge on selected */}
       {isSelected && (
-        <div className="absolute -top-3 start-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-2 py-0.5 text-[9px] font-semibold text-primary-foreground shadow-sm">
-          {t(catalog?.labelKey || "") || component.type}
+        <div
+          aria-hidden="true"
+          className="absolute -top-3 start-1/2 z-50 -translate-x-1/2 whitespace-nowrap rounded-full bg-nx-accent-fill px-2 py-0.5 text-[9px] font-semibold text-nx-on-fill shadow-nx-sm"
+        >
+          {componentLabel}
           {isAbsolute && component.width
             ? ` · ${component.width}×${component.height || "auto"}`
             : ""}
@@ -428,7 +459,10 @@ export function DraggableCanvasItem({
 
       {/* Overlap warning badge */}
       {isOverlapping && !isSelected && (
-        <div className="absolute -end-2 -top-2 z-50 flex h-4 w-4 items-center justify-center rounded-full bg-destructive">
+        <div
+          aria-hidden="true"
+          className="absolute -end-2 -top-2 z-50 flex h-4 w-4 items-center justify-center rounded-full bg-destructive"
+        >
           <span className="text-[8px] font-bold text-destructive-foreground">!</span>
         </div>
       )}
@@ -446,12 +480,12 @@ export function DragOverlayItem({ component }: { component: CanvasComponent }) {
   const Icon = ICON_MAP[catalog?.icon || "Image"] || Image;
 
   return (
-    <div className="flex min-h-[52px] min-w-[200px] cursor-grabbing items-center gap-2.5 rounded-lg border-2 border-primary bg-primary/10 px-3 py-2.5 shadow-2xl backdrop-blur-sm">
-      <GripVertical className="h-4 w-4 text-primary" />
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/20 text-primary">
-        <Icon className="h-4 w-4" />
+    <div className="flex min-h-[52px] min-w-[200px] cursor-grabbing items-center gap-2.5 rounded-nx-lg border-2 border-nx-accent bg-nx-accent-wash px-3 py-2.5 shadow-nx-popover">
+      <GripVertical className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-lg bg-nx-accent-wash text-nx-accent">
+        <Icon className="h-4 w-4" aria-hidden="true" />
       </div>
-      <span className="truncate text-xs font-semibold text-primary">
+      <span className="truncate text-xs font-semibold text-nx-accent">
         {t(catalog?.labelKey || "") || component.type}
       </span>
     </div>

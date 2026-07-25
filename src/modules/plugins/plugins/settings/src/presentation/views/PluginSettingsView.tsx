@@ -25,7 +25,7 @@ export function PluginSettingsView({ installationId }: PluginSettingsViewProps) 
   const { installation, isLoading, isError } = useSettingsViewModel(installationId, tenantId);
 
   if (isLoading) {
-    return <Skeleton className="h-64 w-full rounded-xl" />;
+    return <Skeleton className="h-64 w-full rounded-nx-lg" />;
   }
 
   if (isError || !installation) {

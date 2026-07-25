@@ -14,11 +14,13 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useTenantEntitlementsViewModel } from "../../viewmodels/useTenantEntitlementsViewModel";
-import { Loader2, CheckCircle2, Crown, Shield, Settings2, Search } from "lucide-react";
+import { CheckCircle2, Crown, Shield, Settings2, Search } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import {
   Pagination,
   PaginationContent,
@@ -49,34 +51,23 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
       {/* Section header */}
       <div>
         <h3 className="text-lg font-semibold">{t("tenant.entitlementsTitle")}</h3>
-        <p className="text-sm text-muted-foreground">{t("tenant.entitlementsDescription")}</p>
+        <p className="text-sm text-nx-ink-2">{t("tenant.entitlementsDescription")}</p>
       </div>
 
       {/* Sub-tabs navigation */}
       <Tabs value={activeSubTab} onValueChange={setActiveSubTab}>
-        <TabsList className="grid w-full grid-cols-3 rounded-lg bg-muted/30 p-1">
-          <TabsTrigger
-            value="subscriptions"
-            className="flex items-center gap-2 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            <Shield className="h-4 w-4" />
-            <span className="hidden sm:inline">
-              {t("tenant.tabSubscriptionHistory") || "Subscriptions"}
-            </span>
+        <TabsList variant="pill" className="grid w-full grid-cols-3">
+          <TabsTrigger value="subscriptions" className="flex items-center gap-2">
+            <Shield className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">{t("tenant.tabSubscriptionHistory")}</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="features"
-            className="flex items-center gap-2 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            <Crown className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("tenant.tabFeatures") || "Features"}</span>
+          <TabsTrigger value="features" className="flex items-center gap-2">
+            <Crown className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">{t("tenant.tabFeatures")}</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="overrides"
-            className="flex items-center gap-2 rounded-md data-[state=active]:bg-background data-[state=active]:shadow-sm"
-          >
-            <Settings2 className="h-4 w-4" />
-            <span className="hidden sm:inline">{t("tenant.tabOverrides") || "Overrides"}</span>
+          <TabsTrigger value="overrides" className="flex items-center gap-2">
+            <Settings2 className="h-4 w-4" aria-hidden="true" />
+            <span className="hidden sm:inline">{t("tenant.tabOverrides")}</span>
           </TabsTrigger>
         </TabsList>
 
@@ -89,8 +80,8 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
                 className="gap-1.5"
                 onClick={() => router.push(`/entitlements/subscriptions/${tenantId}`)}
               >
-                <Settings2 className="h-3.5 w-3.5" />
-                {t("entSubscriptions.manage") || "Manage Subscriptions"}
+                <Settings2 className="h-3.5 w-3.5" aria-hidden="true" />
+                {t("entSubscriptions.manage")}
               </Button>
             </div>
             <TenantSubscriptionCard tenantId={tenantId} />
@@ -114,10 +105,9 @@ export function TenantEntitlementsTab({ tenantId }: TenantEntitlementsTabProps) 
 // ─────────────────────────────────────────────────────────────────
 
 function FeaturesGrid({ tenantId }: { tenantId: string }) {
-  const { t, language, direction, features, isLoading, error } = useTenantEntitlementsViewModel({
+  const { t, language, features, isLoading, error } = useTenantEntitlementsViewModel({
     tenantId,
   });
-  const isRtl = direction === "rtl";
   const ITEMS_PER_PAGE = 12;
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -148,17 +138,13 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
   if (isLoading) {
     return (
       <div className="flex h-32 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <LoadingSpinner size="sm" showText={false} />
       </div>
     );
   }
 
   if (error || !features) {
-    return (
-      <div className="flex h-32 items-center justify-center text-muted-foreground">
-        {t("common.errorLoading")}
-      </div>
-    );
+    return <ErrorMessage size="sm" message={t("common.errorLoading")} />;
   }
 
   return (
@@ -167,20 +153,18 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
       <div className="flex items-center gap-3">
         <div className="relative max-w-sm flex-1">
           <Search
-            className={cn(
-              "absolute top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground",
-              isRtl ? "right-3" : "left-3"
-            )}
+            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-2"
+            aria-hidden="true"
           />
           <Input
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            placeholder={t("common.search") || "Search features..."}
-            className={cn("h-9", isRtl ? "pr-9" : "pl-9")}
+            placeholder={t("common.search")}
+            className="h-9 ps-9"
           />
         </div>
-        <Badge variant="outline" className="shrink-0 text-xs">
-          {filtered.length} {t("table.results") || "results"}
+        <Badge variant="outline" className="shrink-0 text-xs tabular-nums">
+          {filtered.length} {t("table.results")}
         </Badge>
       </div>
 
@@ -197,18 +181,18 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
             <div
               key={feature.featureId || feature.key}
               className={cn(
-                "flex items-start gap-3 rounded-xl border border-border/50 bg-card p-4",
-                "transition-all duration-200 hover:border-border hover:shadow-sm"
+                "flex items-start gap-3 rounded-nx-lg border border-nx-line bg-nx-surface p-4",
+                "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-nx-line-hi"
               )}
             >
-              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
+              <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+                <CheckCircle2 className="h-4 w-4 text-nx-accent" aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
                 <h4 className="truncate text-sm font-medium" title={feature.key}>
                   {displayName}
                 </h4>
-                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                <p className="mt-0.5 text-[10px] uppercase tracking-wider text-nx-ink-2">
                   {moduleName}
                 </p>
               </div>
@@ -218,12 +202,10 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
                     variant={feature.effectiveValue === "true" ? "success" : "secondary"}
                     className="text-xs"
                   >
-                    {feature.effectiveValue === "true"
-                      ? t("tenant.enabled") || "Enabled"
-                      : t("tenant.disabled") || "Disabled"}
+                    {feature.effectiveValue === "true" ? t("tenant.enabled") : t("tenant.disabled")}
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="bg-muted/50 font-mono text-xs">
+                  <Badge variant="outline" className="bg-nx-raised font-mono text-xs tabular-nums">
                     {feature.effectiveValue === "-1" ? "∞" : feature.effectiveValue}
                   </Badge>
                 )}
@@ -244,9 +226,9 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
       {/* Pagination — composed from the core pagination primitives, which
           already flip their chevrons for RTL */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between border-t border-border/50 pt-4">
-          <p className="text-sm tabular-nums text-muted-foreground">
-            {t("common.page") || "Page"} {safeCurrentPage} / {totalPages}
+        <div className="flex items-center justify-between border-t border-nx-line pt-4">
+          <p className="text-sm tabular-nums text-nx-ink-2">
+            {t("common.page")} {safeCurrentPage} / {totalPages}
           </p>
           <Pagination className="mx-0 w-auto justify-end">
             <PaginationContent>
@@ -298,7 +280,7 @@ const OverridesViewLazy = dynamic(
     ssr: false,
     loading: () => (
       <div className="flex h-32 items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <LoadingSpinner size="sm" showText={false} />
       </div>
     ),
   }

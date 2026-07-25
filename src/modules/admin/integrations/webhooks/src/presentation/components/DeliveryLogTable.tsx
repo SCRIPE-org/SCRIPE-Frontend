@@ -7,12 +7,13 @@
  */
 "use client";
 
-import { useState, Fragment } from "react";
+import { useCallback, useState, Fragment } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
+import { EmptyState } from "@core/ui/empty-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import type { WebhookDeliveryLog } from "../../domain/entities/Webhook";
 import { CheckCircle2, XCircle, ChevronDown, ChevronUp, Clock, Zap, Filter } from "lucide-react";
@@ -57,19 +58,32 @@ export function DeliveryLogTable({
 
   const toggleExpand = (id: string) => setExpandedId((prev) => (prev === id ? null : id));
 
+  // The row itself stays keyboard-activatable (Enter/Space expand the same
+  // detail a pointer click does) — TableRow's `clickable` prop wires the
+  // pointer cursor and focus ring but never invents key handling on its own.
+  const handleRowKeyDown = useCallback(
+    (e: React.KeyboardEvent, id: string) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        toggleExpand(id);
+      }
+    },
+    []
+  );
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-base">
-          {t("webhooks.deliveryLog") || "Delivery Log"}
+          {t("webhooks.deliveryLog")}
           {totalCount > 0 && (
-            <span className="ml-2 text-sm font-normal text-muted-foreground">({totalCount})</span>
+            <span className="ms-2 text-sm font-normal text-nx-ink-2">({totalCount})</span>
           )}
         </CardTitle>
 
         {/* Filter pills */}
         <div className="flex items-center gap-1.5">
-          <Filter className="mr-1 h-3.5 w-3.5 text-muted-foreground" />
+          <Filter className="me-1 h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
           {(["all", "success", "failed"] as const).map((f) => (
             <Button
               key={f}
@@ -82,10 +96,10 @@ export function DeliveryLogTable({
               }}
             >
               {f === "all"
-                ? t("common.all") || "All"
+                ? t("common.all")
                 : f === "success"
-                  ? t("webhooks.status.success") || "Success"
-                  : t("webhooks.status.failed") || "Failed"}
+                  ? t("webhooks.status.success")
+                  : t("webhooks.status.failed")}
             </Button>
           ))}
         </div>
@@ -96,89 +110,78 @@ export function DeliveryLogTable({
         {isLoading && (
           <div className="space-y-3 p-6">
             {Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-14 w-full rounded-lg" />
+              <Skeleton key={i} className="h-14 w-full rounded-nx-md" />
             ))}
           </div>
         )}
 
         {/* Empty state */}
         {!isLoading && logs.length === 0 && (
-          <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <div className="mb-3 rounded-full bg-muted/50 p-4">
-              <Clock className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <p className="text-sm font-medium text-muted-foreground">
-              {t("webhooks.noDeliveries") || "No deliveries yet"}
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {t("webhooks.noDeliveriesDesc") ||
-                "Delivery attempts will appear here when events are triggered."}
-            </p>
-          </div>
+          <EmptyState
+            bare
+            icon={Clock}
+            title={t("webhooks.noDeliveries")}
+            description={t("webhooks.noDeliveriesDesc")}
+          />
         )}
 
         {/* Table */}
         {!isLoading && logs.length > 0 && (
-          <div className="rounded-md border">
+          <div className="rounded-nx-lg border border-nx-line">
             <Table>
               <TableHeader>
-                <TableRow className="bg-muted/50 hover:bg-muted/50">
+                <TableRow className="bg-nx-raised hover:bg-nx-raised">
                   <TableHead className="w-8" />
-                  <TableHead>{t("webhooks.eventType") || "Event"}</TableHead>
-                  <TableHead>{t("webhooks.statusLabel") || "Status"}</TableHead>
-                  <TableHead>{t("webhooks.httpCode") || "HTTP"}</TableHead>
-                  <TableHead>{t("webhooks.attempt") || "Attempt"}</TableHead>
-                  <TableHead>{t("webhooks.latency") || "Latency"}</TableHead>
-                  <TableHead>{t("webhooks.timestamp") || "Timestamp"}</TableHead>
+                  <TableHead>{t("webhooks.eventType")}</TableHead>
+                  <TableHead>{t("webhooks.statusLabel")}</TableHead>
+                  <TableHead variant="numeric">{t("webhooks.httpCode")}</TableHead>
+                  <TableHead variant="numeric">{t("webhooks.attempt")}</TableHead>
+                  <TableHead variant="numeric">{t("webhooks.latency")}</TableHead>
+                  <TableHead>{t("webhooks.timestamp")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {logs.map((log) => (
                   <Fragment key={log.id}>
                     <TableRow
-                      className="cursor-pointer hover:bg-muted/50"
+                      clickable
+                      role="button"
+                      aria-expanded={expandedId === log.id}
                       onClick={() => toggleExpand(log.id)}
+                      onKeyDown={(e) => handleRowKeyDown(e, log.id)}
                     >
                       <TableCell>
                         {expandedId === log.id ? (
-                          <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                          <ChevronUp className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
                         ) : (
-                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                          <ChevronDown className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
                         )}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">
-                          <Zap className="h-3 w-3 shrink-0 text-warning" />
+                          <Zap className="h-3 w-3 shrink-0 text-warning" aria-hidden="true" />
                           <span className="text-sm font-medium">
                             {(t(`webhooks.eventNames.${log.eventType}`) || log.eventType) as string}
                           </span>
                         </div>
-                        <span className="font-mono text-xs text-muted-foreground">
-                          {log.eventType}
-                        </span>
+                        <span className="font-mono text-xs text-nx-ink-3">{log.eventType}</span>
                       </TableCell>
                       <TableCell>
                         {log.status ? (
                           <DeliveryStatusBadge status={log.status} />
                         ) : log.isSuccess ? (
-                          <Badge
-                            variant="outline"
-                            className="gap-1 border-success/30 bg-success/10 text-xs text-success"
-                          >
-                            <CheckCircle2 className="h-3 w-3" />
-                            {t("webhooks.status.success") || "Success"}
+                          <Badge variant="success" className="gap-1 text-xs">
+                            <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
+                            {t("webhooks.status.success")}
                           </Badge>
                         ) : (
-                          <Badge
-                            variant="outline"
-                            className="gap-1 border-destructive/30 bg-destructive/10 text-xs text-destructive"
-                          >
-                            <XCircle className="h-3 w-3" />
-                            {t("webhooks.status.failed") || "Failed"}
+                          <Badge variant="destructive" className="gap-1 text-xs">
+                            <XCircle className="h-3 w-3" aria-hidden="true" />
+                            {t("webhooks.status.failed")}
                           </Badge>
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell variant="numeric">
                         <Badge
                           variant="outline"
                           className={`font-mono text-xs ${
@@ -192,13 +195,11 @@ export function DeliveryLogTable({
                           {log.httpStatusCode}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        <span className="text-sm">
-                          {log.attemptNumber}
-                          {log.maxAttempts ? `/${log.maxAttempts}` : ""}
-                        </span>
+                      <TableCell variant="numeric" className="text-nx-ink-2">
+                        {log.attemptNumber}
+                        {log.maxAttempts ? `/${log.maxAttempts}` : ""}
                       </TableCell>
-                      <TableCell>
+                      <TableCell variant="numeric">
                         <span
                           className={`font-medium ${
                             log.latencyMs < 500
@@ -211,31 +212,31 @@ export function DeliveryLogTable({
                           {log.latencyMs.toFixed(0)}ms
                         </span>
                       </TableCell>
-                      <TableCell className="whitespace-nowrap text-muted-foreground">
+                      <TableCell className="whitespace-nowrap text-nx-ink-2">
                         {formatUtc(log.createdAt, "MMM d, HH:mm:ss")}
                       </TableCell>
                     </TableRow>
 
                     {/* Expanded details */}
                     {expandedId === log.id && (
-                      <TableRow className="bg-muted/10 hover:bg-muted/10">
+                      <TableRow className="bg-nx-hover hover:bg-nx-hover">
                         <TableCell colSpan={7} className="p-0">
-                          <div className="space-y-3 border-t p-6">
+                          <div className="space-y-3 border-t border-nx-line p-6">
                             {/* Delivery metadata */}
-                            <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                            <div className="flex flex-wrap items-center gap-4 text-xs text-nx-ink-3">
                               {log.eventDeliveryId && (
                                 <div className="flex items-center gap-1">
-                                  <span className="font-medium">Delivery ID:</span>
-                                  <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+                                  <span className="font-medium">{t("webhooks.deliveryId")}:</span>
+                                  <code className="rounded-nx-sm bg-nx-raised px-1.5 py-0.5 font-mono text-[10px]">
                                     {log.eventDeliveryId}
                                   </code>
                                 </div>
                               )}
                               {log.nextRetryAt && (
                                 <div className="flex items-center gap-1">
-                                  <Clock className="h-3 w-3" />
+                                  <Clock className="h-3 w-3" aria-hidden="true" />
                                   <span>
-                                    Next retry:{" "}
+                                    {t("webhooks.nextRetry")}:{" "}
                                     {formatUtc(log.nextRetryAt, "MMM d, HH:mm:ss")}
                                   </span>
                                 </div>
@@ -246,9 +247,9 @@ export function DeliveryLogTable({
                             {log.errorMessage && (
                               <div>
                                 <p className="mb-1 text-xs font-medium text-destructive">
-                                  {t("webhooks.errorMessage") || "Error"}
+                                  {t("webhooks.errorMessage")}
                                 </p>
-                                <pre className="max-h-40 overflow-y-auto whitespace-pre-wrap break-all rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-xs">
+                                <pre className="max-h-40 overflow-y-auto whitespace-pre-wrap break-all rounded-nx-md border border-destructive/30 bg-destructive/10 p-3 text-xs">
                                   {log.errorMessage}
                                 </pre>
                               </div>
@@ -256,10 +257,10 @@ export function DeliveryLogTable({
 
                             {/* Request URL */}
                             <div>
-                              <p className="mb-1 text-xs font-medium text-muted-foreground">
-                                {t("webhooks.requestUrl") || "Request URL"}
+                              <p className="mb-1 text-xs font-medium text-nx-ink-3">
+                                {t("webhooks.requestUrl")}
                               </p>
-                              <code className="rounded bg-muted px-2 py-1 text-xs">
+                              <code className="rounded-nx-sm bg-nx-raised px-2 py-1 text-xs">
                                 {log.requestUrl}
                               </code>
                             </div>
@@ -267,10 +268,10 @@ export function DeliveryLogTable({
                             {/* Payload */}
                             {log.payloadJson && (
                               <div>
-                                <p className="mb-1 text-xs font-medium text-muted-foreground">
-                                  {t("webhooks.payload") || "Payload"}
+                                <p className="mb-1 text-xs font-medium text-nx-ink-3">
+                                  {t("webhooks.payload")}
                                 </p>
-                                <pre className="max-h-60 overflow-y-auto whitespace-pre-wrap break-all rounded-lg border bg-muted/50 p-3 text-xs">
+                                <pre className="max-h-60 overflow-y-auto whitespace-pre-wrap break-all rounded-nx-md border border-nx-line bg-nx-raised p-3 text-xs">
                                   {(() => {
                                     try {
                                       return JSON.stringify(JSON.parse(log.payloadJson), null, 2);
@@ -285,10 +286,10 @@ export function DeliveryLogTable({
                             {/* Response body */}
                             {log.responseBody && (
                               <div>
-                                <p className="mb-1 text-xs font-medium text-muted-foreground">
-                                  {t("webhooks.responseBody") || "Response Body"}
+                                <p className="mb-1 text-xs font-medium text-nx-ink-3">
+                                  {t("webhooks.responseBody")}
                                 </p>
-                                <pre className="max-h-60 overflow-y-auto whitespace-pre-wrap break-all rounded-lg border bg-muted/50 p-3 text-xs">
+                                <pre className="max-h-60 overflow-y-auto whitespace-pre-wrap break-all rounded-nx-md border border-nx-line bg-nx-raised p-3 text-xs">
                                   {log.responseBody}
                                 </pre>
                               </div>
@@ -307,9 +308,9 @@ export function DeliveryLogTable({
         {/* Pagination — composed from the core pagination primitives, which
             already flip their chevrons for RTL */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between border-t px-4 py-3">
-            <p className="text-xs tabular-nums text-muted-foreground">
-              {t("common.page") || "Page"} {page} / {totalPages}
+          <div className="flex items-center justify-between border-t border-nx-line px-4 py-3">
+            <p className="text-xs tabular-nums text-nx-ink-3">
+              {t("common.page")} {page} / {totalPages}
             </p>
             <Pagination className="mx-0 w-auto justify-end">
               <PaginationContent>

@@ -38,43 +38,49 @@ export function FeatureRow({
   t,
 }: FeatureRowProps) {
   const displayName = language === "ar" ? definition.displayNameAr : definition.displayNameEn;
+  const labelId = `feature-row-${definition.id}`;
 
   return (
     <div className="flex items-center justify-between gap-4 py-3">
       <div className="min-w-0 flex-1 space-y-0.5">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">{displayName}</span>
+          <span id={labelId} className="text-sm font-medium">
+            {displayName}
+          </span>
           <Badge variant="outline" className="text-[10px]">
             {definition.valueType}
           </Badge>
           {isNew && (
-            <Badge
-              variant="default"
-              className="h-4 border-success/30 bg-success/10 text-[10px] text-success"
-            >
-              {t("common.new") || "New"}
+            <Badge variant="success" className="h-4 text-[10px]">
+              {t("common.new")}
             </Badge>
           )}
           {isModified && !isNew && (
             <span
-              className="inline-block h-1.5 w-1.5 rounded-full bg-warning"
-              title={t("common.modified") || "Modified"}
+              role="img"
+              aria-label={t("common.modified")}
+              className="inline-block h-1.5 w-1.5 rounded-full bg-nx-warning"
             />
           )}
         </div>
-        <p className="font-mono text-xs text-muted-foreground">{definition.key}</p>
+        <p className="font-mono text-xs text-nx-ink-3">{definition.key}</p>
       </div>
 
       <div className="flex shrink-0 items-center gap-2">
-        <FeatureControl valueType={definition.valueType} value={value} onChange={onValueChange} />
+        <FeatureControl
+          valueType={definition.valueType}
+          value={value}
+          onChange={onValueChange}
+          labelledBy={labelId}
+        />
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 text-muted-foreground hover:text-destructive"
+          className="h-8 w-8 text-nx-ink-2 hover:text-nx-danger"
           onClick={onRemove}
-          title={t("common.remove") || "Remove"}
+          aria-label={t("common.remove")}
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
     </div>

@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Dialog,
   DialogContent,
@@ -12,11 +15,11 @@ import {
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
-import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Loader2, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for create lead form data.
@@ -39,15 +42,50 @@ interface CreateLeadDialogProps {
   availableEditions: Array<{ key: string; displayName: string }>;
 }
 
-const emptyForm: CreateLeadFormData = {
+// react-hook-form owns every field as a plain string (optional fields default
+// to ""), so the trim()/undefined mapping into CreateLeadFormData happens
+// once, at submit — the same place the hand-rolled version did it.
+interface CreateLeadFormValues {
+  companyName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  editionKey: string;
+  message: string;
+  notes: string;
+}
+
+const EMPTY_VALUES: CreateLeadFormValues = {
   companyName: "",
   contactName: "",
   email: "",
   phone: "",
-  editionKey: undefined,
+  editionKey: "",
   message: "",
   notes: "",
 };
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Built once per render with the live t() so every message re-localizes on a
+// language switch, same shape as the CommissionRateConfig / signup-content
+// dialogs already do.
+function buildSchema(t: (key: string) => string) {
+  return z.object({
+    companyName: z.string().trim().min(1, t("leads.createDialog.errors.companyRequired")),
+    contactName: z.string().trim().min(1, t("leads.createDialog.errors.contactRequired")),
+    email: z.string().trim().regex(EMAIL_PATTERN, t("leads.createDialog.errors.emailInvalid")),
+    // Phone stays optional: empty passes, and only a non-empty value is
+    // checked against the phone library — identical to the manual
+    // `form.phone?.trim() && !isValidPhoneNumber(form.phone)` guard.
+    phone: z.string().refine((value) => !value.trim() || isValidPhoneNumber(value), {
+      message: t("leads.createDialog.errors.phoneInvalid"),
+    }),
+    editionKey: z.string(),
+    message: z.string(),
+    notes: z.string(),
+  });
+}
 
 /**
  * Presentation UI component rendering the create lead dialog.
@@ -61,55 +99,30 @@ export function CreateLeadDialog({
   availableEditions,
 }: CreateLeadDialogProps) {
   const { t } = useI18n();
+  const schema = useMemo(() => buildSchema(t), [t]);
 
-  const [form, setForm] = useState<CreateLeadFormData>(emptyForm);
-  const [errors, setErrors] = useState<Partial<Record<keyof CreateLeadFormData, string>>>({});
-
-  const set = (field: keyof CreateLeadFormData, value: string) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }));
-  };
-
-  const reset = () => {
-    setForm(emptyForm);
-    setErrors({});
-  };
-
-  const validate = (): boolean => {
-    const next: typeof errors = {};
-    if (!form.companyName.trim()) next.companyName = t("leads.createDialog.errors.companyRequired");
-    if (!form.contactName.trim()) next.contactName = t("leads.createDialog.errors.contactRequired");
-    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      next.email = t("leads.createDialog.errors.emailInvalid");
-    }
-    if (form.phone?.trim() && !isValidPhoneNumber(form.phone)) {
-      next.phone = t("leads.createDialog.errors.phoneInvalid");
-    }
-
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  };
-
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!validate()) return;
-
-    await onSubmit({
-      companyName: form.companyName.trim(),
-      contactName: form.contactName.trim(),
-      email: form.email.trim(),
-      phone: form.phone?.trim() || undefined,
-      editionKey: form.editionKey || undefined,
-      message: form.message?.trim() || undefined,
-      notes: form.notes?.trim() || undefined,
-    });
-    reset();
-  };
+  const form = useForm<CreateLeadFormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: EMPTY_VALUES,
+  });
 
   const handleClose = () => {
     if (isSubmitting) return;
-    reset();
+    form.reset(EMPTY_VALUES);
     onClose();
+  };
+
+  const handleValid = async (values: CreateLeadFormValues) => {
+    await onSubmit({
+      companyName: values.companyName,
+      contactName: values.contactName,
+      email: values.email,
+      phone: values.phone.trim() || undefined,
+      editionKey: values.editionKey || undefined,
+      message: values.message.trim() || undefined,
+      notes: values.notes.trim() || undefined,
+    });
+    form.reset(EMPTY_VALUES);
   };
 
   return (
@@ -123,7 +136,7 @@ export function CreateLeadDialog({
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-info/10">
-              <PlusCircle className="h-5 w-5 text-info" />
+              <PlusCircle className="h-5 w-5 text-info" aria-hidden="true" />
             </div>
             <div>
               <DialogTitle>{t("leads.createDialog.title")}</DialogTitle>
@@ -134,138 +147,184 @@ export function CreateLeadDialog({
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5 py-2">
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="cl-company">
-                {t("leads.createDialog.company")} <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="cl-company"
-                value={form.companyName}
-                onChange={(e) => set("companyName", e.target.value)}
-                placeholder={t("leads.createDialog.companyPlaceholder")}
-                className={errors.companyName ? "border-destructive" : undefined}
-                disabled={isSubmitting}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleValid)} className="space-y-5 py-2">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="companyName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("leads.createDialog.company")}{" "}
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("leads.createDialog.companyPlaceholder")}
+                        disabled={isSubmitting}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-              {errors.companyName && (
-                <p className="text-xs text-destructive">{errors.companyName}</p>
+
+              <FormField
+                control={form.control}
+                name="contactName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("leads.createDialog.contact")}{" "}
+                      <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("leads.createDialog.contactPlaceholder")}
+                        disabled={isSubmitting}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("leads.createDialog.email")} <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="name@company.com"
+                        disabled={isSubmitting}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* PhoneInput drives its own error skin from the `error` string
+                  prop, not from aria-invalid, so this field intentionally
+                  stays outside FormControl and hands fieldState's message to
+                  it directly — that prop wiring must not change. */}
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="cl-phone">{t("leads.createDialog.phone")}</FormLabel>
+                    <PhoneInput
+                      id="cl-phone"
+                      value={field.value}
+                      onChange={field.onChange}
+                      onBlur={field.onBlur}
+                      disabled={isSubmitting}
+                      error={fieldState.error?.message}
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            {availableEditions.length > 0 && (
+              <FormField
+                control={form.control}
+                name="editionKey"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="cl-edition">
+                      {t("leads.createDialog.editionInterest")}
+                    </FormLabel>
+                    <Select
+                      value={field.value || "none"}
+                      onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
+                      disabled={isSubmitting}
+                    >
+                      <FormControl>
+                        <SelectTrigger id="cl-edition">
+                          <SelectValue placeholder={t("leads.createDialog.editionPlaceholder")} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">{t("leads.createDialog.editionNone")}</SelectItem>
+                        {availableEditions.map((edition) => (
+                          <SelectItem key={edition.key} value={edition.key}>
+                            {edition.displayName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+            )}
+
+            <FormField
+              control={form.control}
+              name="message"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("leads.createDialog.message")}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={t("leads.createDialog.messagePlaceholder")}
+                      rows={3}
+                      className="resize-none"
+                      disabled={isSubmitting}
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
               )}
-            </div>
+            />
 
-            <div className="space-y-1.5">
-              <Label htmlFor="cl-contact">
-                {t("leads.createDialog.contact")} <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="cl-contact"
-                value={form.contactName}
-                onChange={(e) => set("contactName", e.target.value)}
-                placeholder={t("leads.createDialog.contactPlaceholder")}
-                className={errors.contactName ? "border-destructive" : undefined}
-                disabled={isSubmitting}
-              />
-              {errors.contactName && (
-                <p className="text-xs text-destructive">{errors.contactName}</p>
+            <FormField
+              control={form.control}
+              name="notes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("leads.createDialog.notes")}</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder={t("leads.createDialog.notesPlaceholder")}
+                      rows={2}
+                      className="resize-none"
+                      disabled={isSubmitting}
+                      {...field}
+                    />
+                  </FormControl>
+                </FormItem>
               )}
-            </div>
-          </div>
+            />
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="cl-email">
-                {t("leads.createDialog.email")} <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="cl-email"
-                type="email"
-                value={form.email}
-                onChange={(e) => set("email", e.target.value)}
-                placeholder="name@company.com"
-                className={errors.email ? "border-destructive" : undefined}
+            <DialogFooter className="gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
+                {t("leads.createDialog.cancel")}
+              </Button>
+              <Button
+                type="submit"
                 disabled={isSubmitting}
-              />
-              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="cl-phone">{t("leads.createDialog.phone")}</Label>
-              <PhoneInput
-                id="cl-phone"
-                value={form.phone}
-                onChange={(val) => set("phone", val)}
-                disabled={isSubmitting}
-                error={errors.phone}
-              />
-              {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
-            </div>
-          </div>
-
-          {availableEditions.length > 0 && (
-            <div className="space-y-1.5">
-              <Label htmlFor="cl-edition">{t("leads.createDialog.editionInterest")}</Label>
-              <Select
-                value={form.editionKey ?? "none"}
-                onValueChange={(value) => set("editionKey", value === "none" ? "" : value)}
-                disabled={isSubmitting}
+                loading={isSubmitting}
+                className="gap-2"
               >
-                <SelectTrigger id="cl-edition">
-                  <SelectValue placeholder={t("leads.createDialog.editionPlaceholder")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">{t("leads.createDialog.editionNone")}</SelectItem>
-                  {availableEditions.map((edition) => (
-                    <SelectItem key={edition.key} value={edition.key}>
-                      {edition.displayName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          <div className="space-y-1.5">
-            <Label htmlFor="cl-message">{t("leads.createDialog.message")}</Label>
-            <Textarea
-              id="cl-message"
-              value={form.message}
-              onChange={(e) => set("message", e.target.value)}
-              placeholder={t("leads.createDialog.messagePlaceholder")}
-              rows={3}
-              className="resize-none"
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="cl-notes">{t("leads.createDialog.notes")}</Label>
-            <Textarea
-              id="cl-notes"
-              value={form.notes}
-              onChange={(e) => set("notes", e.target.value)}
-              placeholder={t("leads.createDialog.notesPlaceholder")}
-              rows={2}
-              className="resize-none"
-              disabled={isSubmitting}
-            />
-          </div>
-
-          <DialogFooter className="gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
-              {t("leads.createDialog.cancel")}
-            </Button>
-            <Button type="submit" disabled={isSubmitting} className="gap-2">
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t("leads.createDialog.creating")}
-                </>
-              ) : (
-                t("leads.createDialog.create")
-              )}
-            </Button>
-          </DialogFooter>
-        </form>
+                {isSubmitting ? t("leads.createDialog.creating") : t("leads.createDialog.create")}
+              </Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

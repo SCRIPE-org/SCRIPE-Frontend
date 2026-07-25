@@ -170,37 +170,49 @@ function DraggablePaletteItem({
       ref={setNodeRef}
       {...listeners}
       {...attributes}
+      role="button"
+      tabIndex={0}
+      aria-label={t(labelKey)}
       className={cn(
-        "group flex cursor-grab items-center gap-2.5 rounded-lg border px-2.5 py-2 transition-all active:cursor-grabbing",
-        isDragging && "scale-95 border-primary opacity-50 shadow-lg ring-1 ring-primary/30",
+        "group flex cursor-grab items-center gap-2.5 rounded-nx-control border px-2.5 py-2 transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none active:cursor-grabbing focus-visible:outline-none focus-visible:shadow-nx-focus",
+        isDragging && "scale-95 border-nx-accent opacity-50 ring-1 ring-nx-accent-wash",
         isDisabled
-          ? "cursor-not-allowed border-border/30 bg-muted/10 opacity-50"
-          : "border-border/50 bg-card/80 hover:border-primary/40 hover:bg-accent/20 hover:shadow-sm"
+          ? "cursor-not-allowed border-nx-line bg-nx-raised opacity-50"
+          : "border-nx-line bg-nx-surface hover:border-nx-line-hi hover:bg-nx-hover"
       )}
       title={t(descriptionKey)}
     >
-      <GripVertical className="h-3 w-3 shrink-0 text-muted-foreground/30" />
-      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
-        <Icon className="h-3.5 w-3.5" />
+      <GripVertical className="h-3 w-3 shrink-0 text-nx-ink-3" aria-hidden="true" />
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-nx-sm bg-nx-accent-wash text-nx-accent">
+        <Icon className="h-3.5 w-3.5" aria-hidden="true" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[11px] font-medium text-foreground">{t(labelKey)}</p>
+        <p className="truncate text-[11px] font-medium text-nx-ink">{t(labelKey)}</p>
       </div>
       {/* Badges */}
       {!isSuperAdmin && requiredEdition != null && (
-        <Lock className="h-3 w-3 shrink-0 text-warning" />
+        <Lock
+          role="img"
+          className="h-3 w-3 shrink-0 text-warning"
+          aria-label={t("studio.builder.enterpriseOnly")}
+        />
       )}
-      {singleton && isUsed && <Check className="h-3 w-3 shrink-0 text-success" />}
+      {singleton && isUsed && (
+        <Check className="h-3 w-3 shrink-0 text-success" aria-hidden="true" />
+      )}
       {!isDisabled && (
         <button
           onClick={(e) => {
             e.stopPropagation();
             onQuickAdd(type);
           }}
-          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded bg-primary/10 text-primary transition-colors hover:bg-primary/20 group-hover:flex"
-          title={t("studio.builder.palette.quickAdd") || "Quick add"}
+          className="hidden h-5 w-5 shrink-0 items-center justify-center rounded-nx-sm bg-nx-accent-wash text-nx-accent transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-accent-wash group-hover:flex focus-visible:outline-none focus-visible:shadow-nx-focus"
+          title={t("studio.builder.palette.quickAdd")}
+          aria-label={t("studio.builder.palette.quickAdd")}
         >
-          <span className="text-[10px] font-bold">+</span>
+          <span className="text-[10px] font-bold" aria-hidden="true">
+            +
+          </span>
         </button>
       )}
     </div>
@@ -222,12 +234,10 @@ export function BuilderPalette({ components, onQuickAdd, activeAuthPage }: Build
 
   return (
     <div className="space-y-1">
-      <p className="mb-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-        {t("studio.builder.palette.title") || "Components"}
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+        {t("studio.builder.palette.title")}
       </p>
-      <p className="mb-3 text-[10px] text-muted-foreground/70">
-        {t("studio.builder.palette.dragHint") || "Drag to add or click +"}
-      </p>
+      <p className="mb-3 text-[10px] text-nx-ink-3">{t("studio.builder.palette.dragHint")}</p>
 
       <div className="space-y-1.5">
         {getFilteredGroups(activeAuthPage).map((group) => {
@@ -241,32 +251,34 @@ export function BuilderPalette({ components, onQuickAdd, activeAuthPage }: Build
           ).length;
 
           return (
-            <div key={group.id} className="overflow-hidden rounded-lg border border-border/40">
+            <div key={group.id} className="overflow-hidden rounded-nx-lg border border-nx-line">
               {/* Group Header */}
               <button
                 onClick={() => toggleGroup(group.id)}
+                aria-expanded={isExpanded}
                 className={cn(
-                  "flex w-full items-center gap-2 px-2.5 py-2 text-left transition-colors",
-                  isExpanded ? "bg-muted/30" : "bg-transparent hover:bg-muted/20"
+                  "flex w-full items-center gap-2 px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus",
+                  isExpanded ? "bg-nx-raised" : "bg-transparent hover:bg-nx-hover"
                 )}
               >
-                <GroupIcon className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="flex-1 text-[11px] font-semibold text-foreground">
+                <GroupIcon className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
+                <span className="flex-1 text-[11px] font-semibold text-nx-ink">
                   {t(group.labelKey) || group.id}
                 </span>
                 {usedCount > 0 && (
-                  <span className="rounded-full bg-success/10 px-1.5 py-0.5 text-[9px] font-medium text-success">
-                    {usedCount} used
+                  <span className="rounded-full bg-success/10 px-1.5 py-0.5 text-[9px] font-medium tabular-nums text-success">
+                    {t("studio.builder.palette.usedCount", { count: usedCount })}
                   </span>
                 )}
-                <span className="text-[9px] text-muted-foreground/50">
+                <span className="text-[9px] tabular-nums text-nx-ink-3">
                   {groupCatalogItems.length}
                 </span>
                 <ChevronDown
                   className={cn(
-                    "h-3 w-3 text-muted-foreground/50 transition-transform",
+                    "h-3 w-3 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     isExpanded && "rotate-180"
                   )}
+                  aria-hidden="true"
                 />
               </button>
 

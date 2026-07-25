@@ -33,7 +33,7 @@ export function InstalledPluginsView() {
     return (
       <div className="flex flex-col gap-3 p-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-20 rounded-xl" />
+          <Skeleton key={i} className="h-20 rounded-nx-lg" />
         ))}
       </div>
     );

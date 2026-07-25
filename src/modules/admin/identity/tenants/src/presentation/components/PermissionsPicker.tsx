@@ -203,28 +203,28 @@ export function PermissionsPicker({
   if (!permissions || permissions.length === 0) {
     return (
       <Card className={className}>
-        <CardContent className="py-8 text-center text-muted-foreground">
-          <Shield className="mx-auto mb-2 h-8 w-8 opacity-50" />
-          <p>{t("tenant.noPermissionsAvailable") || "No permissions available"}</p>
+        <CardContent className="py-8 text-center text-nx-ink-2">
+          <Shield className="mx-auto mb-2 h-8 w-8 opacity-50" aria-hidden="true" />
+          <p>{t("tenant.noPermissionsAvailable")}</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className={cn("border-border/50", className)}>
+    <Card className={cn("border-nx-line", className)}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Shield className="h-4 w-4" />
-            {t("tenant.selectPermissions") || "Select Permissions"}
+            <Shield className="h-4 w-4" aria-hidden="true" />
+            {t("tenant.selectPermissions")}
           </CardTitle>
           <Badge variant="secondary" className="font-normal">
-            {value.length} / {permissions.length}
+            <span className="tabular-nums">{value.length} / {permissions.length}</span>
           </Badge>
         </div>
-        <p className="text-sm text-muted-foreground">
-          {t("tenant.selectPermissionsDesc") || "Choose which permissions this tenant can use"}
+        <p className="text-sm text-nx-ink-2">
+          {t("tenant.selectPermissionsDesc")}
         </p>
       </CardHeader>
 
@@ -232,33 +232,36 @@ export function PermissionsPicker({
         {/* Search and Actions */}
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-2"
+              aria-hidden="true"
+            />
             <Input
-              placeholder={t("permission.searchPlaceholder") || "Search permissions..."}
+              placeholder={t("permission.searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
+              className="ps-9"
             />
           </div>
           <button
             type="button"
             onClick={selectAll}
-            className="px-2 text-xs text-primary hover:underline"
+            className="px-2 text-xs text-nx-accent hover:underline"
           >
-            {t("common.selectAll") || "Select All"}
+            {t("common.selectAll")}
           </button>
           <button
             type="button"
             onClick={deselectAll}
-            className="px-2 text-xs text-muted-foreground hover:underline"
+            className="px-2 text-xs text-nx-ink-2 hover:underline"
           >
-            {t("common.deselectAll") || "Clear"}
+            {t("common.deselectAll")}
           </button>
         </div>
 
         {/* Categories List */}
         <ScrollArea className={compact ? "h-48" : "h-64"}>
-          <div className="space-y-1 pr-4">
+          <div className="space-y-1 pe-4">
             {categories.map((category) => {
               const isExpanded = expandedCategories.has(category);
               const categoryPermissions = groupedPermissions[category];
@@ -271,7 +274,7 @@ export function PermissionsPicker({
                   open={isExpanded}
                   onOpenChange={() => toggleCategory(category)}
                 >
-                  <div className="flex items-center gap-2 rounded-md px-2 py-1.5 transition-colors hover:bg-muted/50">
+                  <div className="flex items-center gap-2 rounded-nx-md px-2 py-1.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover">
                     <Checkbox
                       checked={isSelected}
                       // @ts-expect-error - indeterminate is valid but not typed
@@ -281,12 +284,12 @@ export function PermissionsPicker({
                     />
                     <CollapsibleTrigger className="flex flex-1 items-center gap-2 text-sm font-medium capitalize">
                       {isExpanded ? (
-                        <ChevronDown className="h-4 w-4" />
+                        <ChevronDown className="h-4 w-4" aria-hidden="true" />
                       ) : (
-                        <ChevronRight className="h-4 w-4" />
+                        <ChevronRight className="h-4 w-4" aria-hidden="true" />
                       )}
                       {category}
-                      <Badge variant="outline" className="ml-auto text-xs">
+                      <Badge variant="outline" className="ms-auto text-xs tabular-nums">
                         {categoryPermissions.filter((p) => value.includes(p.id)).length}/
                         {categoryPermissions.length}
                       </Badge>
@@ -294,16 +297,16 @@ export function PermissionsPicker({
                   </div>
 
                   <CollapsibleContent>
-                    <div className="space-y-0.5 py-1 pl-8">
+                    <div className="space-y-0.5 py-1 ps-8">
                       {categoryPermissions
                         .sort((a, b) => a.displayOrder - b.displayOrder)
                         .map((permission) => (
                           <label
                             key={permission.id}
                             className={cn(
-                              "flex cursor-pointer items-center gap-2 rounded px-2 py-1.5",
-                              "transition-colors hover:bg-muted/30",
-                              value.includes(permission.id) && "bg-primary/5"
+                              "flex cursor-pointer items-center gap-2 rounded-nx-sm px-2 py-1.5",
+                              "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover",
+                              value.includes(permission.id) && "bg-nx-accent-wash"
                             )}
                           >
                             <Checkbox
@@ -317,19 +320,19 @@ export function PermissionsPicker({
                                 {isAutoGranted(permission) && (
                                   <Badge
                                     variant="outline"
-                                    className="border-primary/50 px-1.5 py-0 text-xs text-primary"
+                                    className="border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)] px-1.5 py-0 text-xs text-nx-accent"
                                   >
-                                    {t("permission.autoGranted") || "Auto"}
+                                    {t("permission.autoGranted")}
                                   </Badge>
                                 )}
                               </div>
                               {permission.getLocalizedDescription(language) && (
-                                <div className="truncate text-xs text-muted-foreground">
+                                <div className="truncate text-xs text-nx-ink-2">
                                   {permission.getLocalizedDescription(language)}
                                 </div>
                               )}
                             </div>
-                            <code className="shrink-0 rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+                            <code className="shrink-0 rounded-nx-sm bg-nx-raised px-1.5 py-0.5 text-xs text-nx-ink-2">
                               {permission.code}
                             </code>
                           </label>
@@ -344,11 +347,10 @@ export function PermissionsPicker({
 
         {/* Selected summary */}
         {value.length > 0 && (
-          <div className="flex items-center gap-2 border-t pt-2 text-sm">
-            <Check className="h-4 w-4 text-success" />
-            <span className="text-muted-foreground">
-              {t("tenant.permissionsSelected", { count: value.length }) ||
-                `${value.length} permissions selected`}
+          <div className="flex items-center gap-2 border-t border-nx-line pt-2 text-sm">
+            <Check className="h-4 w-4 text-success" aria-hidden="true" />
+            <span className="tabular-nums text-nx-ink-2">
+              {t("tenant.permissionsSelected", { count: value.length })}
             </span>
           </div>
         )}

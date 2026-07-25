@@ -14,9 +14,10 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import type { AssignableAdmin, AssignLeadParams } from "../../domain/interfaces/ILeadsRepository";
 import type { PlatformLead } from "../../domain/entities/PlatformLead";
-import { AlertCircle, Loader2, UserMinus, UserPlus } from "lucide-react";
+import { AlertCircle, UserMinus, UserPlus } from "lucide-react";
 
 interface AssignLeadDialogProps {
   open: boolean;
@@ -95,7 +96,7 @@ export function AssignLeadDialog({
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-info/10">
-              <UserPlus className="h-5 w-5 text-info" />
+              <UserPlus className="h-5 w-5 text-info" aria-hidden="true" />
             </div>
             <div>
               <DialogTitle>{t("leads.assignDialog.title")}</DialogTitle>
@@ -106,9 +107,9 @@ export function AssignLeadDialog({
           </div>
 
           {lead && (
-            <div className="mt-2 rounded-lg border border-border bg-muted/50 px-4 py-3">
-              <p className="text-sm font-medium">{lead.companyName}</p>
-              <p className="text-xs text-muted-foreground">
+            <div className="mt-2 rounded-nx-md border border-nx-line bg-nx-raised px-4 py-3">
+              <p className="text-sm font-medium text-nx-ink">{lead.companyName}</p>
+              <p className="text-xs text-nx-ink-2">
                 {lead.contactName} - {lead.email}
               </p>
               {isCurrentlyAssigned && (
@@ -122,20 +123,21 @@ export function AssignLeadDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {isCurrentlyAssigned && (
-            <div
-              role="button"
-              tabIndex={0}
+            <button
+              type="button"
               onClick={() => setUnassign((value) => !value)}
-              onKeyDown={(e) => e.key === "Enter" && setUnassign((value) => !value)}
-              className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
+              className={cn(
+                "flex w-full items-center gap-3 rounded-nx-md border px-4 py-3 text-start",
+                "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "focus-visible:outline-none focus-visible:shadow-nx-focus",
                 unassign
                   ? "border-warning/60 bg-warning/10 text-warning"
-                  : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/60"
-              }`}
+                  : "border-nx-line bg-nx-raised text-nx-ink-2 hover:bg-nx-hover"
+              )}
             >
-              <UserMinus className="h-4 w-4 shrink-0" />
+              <UserMinus className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="text-sm font-medium">{t("leads.assignDialog.unassign")}</span>
-            </div>
+            </button>
           )}
 
           {!unassign && (
@@ -158,8 +160,8 @@ export function AssignLeadDialog({
                 disabled={isAssigning}
                 allowClear
               />
-              <div className="flex items-start gap-1.5 text-xs text-muted-foreground">
-                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <div className="flex items-start gap-1.5 text-xs leading-relaxed text-nx-ink-3">
+                <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                 <p>{t("leads.assignDialog.adminIdHint")}</p>
               </div>
             </div>
@@ -185,25 +187,24 @@ export function AssignLeadDialog({
             <Button
               type="submit"
               disabled={isAssigning || (!unassign && !adminId.trim())}
-              className={`gap-2 ${
+              loading={isAssigning}
+              className={cn(
+                "gap-2",
                 unassign
                   ? "bg-warning text-warning-foreground hover:bg-warning/90"
                   : "bg-info text-info-foreground hover:bg-info/90"
-              }`}
+              )}
             >
               {isAssigning ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  {t("leads.assignDialog.assigning")}
-                </>
+                t("leads.assignDialog.assigning")
               ) : unassign ? (
                 <>
-                  <UserMinus className="h-4 w-4" />
+                  <UserMinus className="h-4 w-4" aria-hidden="true" />
                   {t("leads.assignDialog.unassign")}
                 </>
               ) : (
                 <>
-                  <UserPlus className="h-4 w-4" />
+                  <UserPlus className="h-4 w-4" aria-hidden="true" />
                   {t("leads.assignDialog.assign")}
                 </>
               )}

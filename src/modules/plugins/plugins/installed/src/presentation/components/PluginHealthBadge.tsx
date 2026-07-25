@@ -3,7 +3,7 @@
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
-import { formatDateTimeUtc } from "@core/common/utils";
+import { cn, formatDateTimeUtc } from "@core/common/utils";
 
 interface PluginHealthBadgeProps {
   passing: boolean;
@@ -29,10 +29,10 @@ export function PluginHealthBadge({ passing, lastCheckedAt, className }: PluginH
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div className={`flex items-center gap-1.5 ${className ?? ""}`}>
-            <Icon className={`h-4 w-4 ${color}`} />
-            <span className={`text-xs font-medium ${color}`}>{label}</span>
-            {lastCheckedAt && <Clock className="h-3 w-3 text-muted-foreground" />}
+          <div className={cn("flex items-center gap-1.5", className)}>
+            <Icon className={cn("h-4 w-4", color)} aria-hidden="true" />
+            <span className={cn("text-xs font-medium", color)}>{label}</span>
+            {lastCheckedAt && <Clock className="h-3 w-3 text-nx-ink-3" aria-hidden="true" />}
           </div>
         </TooltipTrigger>
         <TooltipContent>
