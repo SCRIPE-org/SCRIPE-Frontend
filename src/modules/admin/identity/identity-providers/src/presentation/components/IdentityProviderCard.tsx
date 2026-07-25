@@ -246,7 +246,7 @@ export function IdentityProviderCard({
             <Switch
               checked={item.isActive}
               onCheckedChange={handleToggle}
-              disabled={isToggling}
+              busy={isToggling}
               className="scale-90"
             />
           </div>

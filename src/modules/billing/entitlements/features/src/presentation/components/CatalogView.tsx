@@ -503,7 +503,8 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
                       <Switch
                         checked={feature.isMarketingOnly}
                         onCheckedChange={(checked) => handleMarketingToggle(feature, checked)}
-                        disabled={!canUpdate || vm.isUpdating}
+                        disabled={!canUpdate}
+                        busy={vm.isUpdating}
                         aria-label={`${t("entitlements.features.marketingOnly")}: ${feature.getDisplayName(language)}`}
                       />
                     </div>

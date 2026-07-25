@@ -500,11 +500,12 @@ function SwitchSurface({ t }: { t: T }) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-3">
-        <Switch checked switchStyle={settings.switchStyle} />
+        {/* readOnly — the stage is a live style preview, not a control. */}
+        <Switch checked switchStyle={settings.switchStyle} readOnly />
         <span className="text-sm text-nx-ink-2">{t("settings.switchStyle.labels.on")}</span>
       </div>
       <div className="flex items-center gap-3">
-        <Switch checked={false} switchStyle={settings.switchStyle} />
+        <Switch checked={false} switchStyle={settings.switchStyle} readOnly />
         <span className="text-sm text-nx-ink-2">{t("settings.switchStyle.labels.off")}</span>
       </div>
     </div>

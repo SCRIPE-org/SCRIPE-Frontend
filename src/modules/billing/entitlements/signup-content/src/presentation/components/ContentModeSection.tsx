@@ -44,7 +44,7 @@ export function ContentModeSection({ vm }: ContentModeSectionProps) {
 
           <Switch
             checked={isLive}
-            disabled={vm.isSettingMode}
+            busy={vm.isSettingMode}
             onCheckedChange={(checked) => vm.handleSetMode(checked ? "Live" : "Seeded")}
             showLabels
             onLabel={t("signupContent.mode.live")}

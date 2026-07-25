@@ -418,7 +418,7 @@ export function FeatureDefinitionFormView({
             id="fd-active"
             checked={form.isActive}
             onCheckedChange={(checked) => updateField("isActive", checked)}
-            disabled={isViewMode}
+            readOnly={isViewMode}
           />
         </CardContent>
       </Card>

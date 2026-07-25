@@ -533,7 +533,7 @@ function PromotionCard({
 
           {/* Right: Actions */}
           <div className="flex shrink-0 items-center gap-1.5">
-            <Switch checked={promo.isActive} onCheckedChange={onToggle} disabled={isToggling} />
+            <Switch checked={promo.isActive} onCheckedChange={onToggle} busy={isToggling} />
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onEdit}>
               <Pencil className="h-3.5 w-3.5" />
             </Button>

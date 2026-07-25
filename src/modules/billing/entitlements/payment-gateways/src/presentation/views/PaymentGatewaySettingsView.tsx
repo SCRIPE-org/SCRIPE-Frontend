@@ -224,14 +224,18 @@ function GatewayCard({
             <span className="text-xs font-medium text-muted-foreground">{t("common.status")}</span>
             {isDefault ? (
               <Tooltip>
+                {/* The trigger is the Switch itself, and the Switch is
+                    readOnly rather than disabled. It used to be a disabled
+                    control inside a plain <div>: neither element is focusable,
+                    so the explanation for WHY the toggle refuses to move was
+                    unreachable by keyboard and by screen reader. readOnly keeps
+                    it focusable and keeps its live on/off colours. */}
                 <TooltipTrigger asChild>
-                  <div>
-                    <Switch
-                      checked={gw.enabled}
-                      onCheckedChange={(checked) => onToggleStatus(gw.gateway, checked)}
-                      disabled={true}
-                    />
-                  </div>
+                  <Switch
+                    checked={gw.enabled}
+                    onCheckedChange={(checked) => onToggleStatus(gw.gateway, checked)}
+                    readOnly
+                  />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>
@@ -244,7 +248,7 @@ function GatewayCard({
               <Switch
                 checked={gw.enabled}
                 onCheckedChange={(checked) => onToggleStatus(gw.gateway, checked)}
-                disabled={isToggling}
+                busy={isToggling}
               />
             )}
           </div>

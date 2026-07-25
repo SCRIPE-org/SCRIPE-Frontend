@@ -399,8 +399,11 @@ export function ComponentsGroup() {
         description: t(`settings.switchStyle.options.${value}.description`),
         sample: (
           <Preview patch={{ switchStyle: value }} className="flex items-center gap-2">
-            <Switch checked switchStyle={value} />
-            <Switch checked={false} switchStyle={value} />
+            {/* readOnly: these are style previews for the setting picker, not
+                live controls. They were controlled switches with no handler,
+                so clicking one did nothing while still looking interactive. */}
+            <Switch checked switchStyle={value} readOnly />
+            <Switch checked={false} switchStyle={value} readOnly />
           </Preview>
         ),
       })),
