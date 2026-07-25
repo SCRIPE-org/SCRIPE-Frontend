@@ -172,8 +172,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
         const mcp = useAppStore.getState().mustChangePassword;
-        const defaultPath = useAppStore.getState().defaultRedirectPath || "/";
-        router.replace(mcp ? "/change-password" : defaultPath);
+        const defaultPath = useAppStore.getState().defaultRedirectPath;
+        const targetPath = !defaultPath || defaultPath === "/" ? "/overview" : defaultPath;
+        router.replace(mcp ? "/change-password" : targetPath);
         return;
       }
 

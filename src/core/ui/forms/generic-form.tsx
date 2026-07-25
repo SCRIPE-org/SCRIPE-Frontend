@@ -46,6 +46,7 @@ import { Textarea } from "@core/ui/textarea";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Switch } from "@core/ui/switch";
 import { Separator } from "@core/ui/separator";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Slider } from "@core/ui/slider";
 import { Checkbox } from "@core/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
@@ -246,6 +247,8 @@ export function GenericForm({
   );
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  /** Rejection from onSubmit. The form used to swallow these entirely. */
+  const [serverError, setServerError] = useState<string | null>(null);
 
   // Re-initialize form data when fields change (for dynamic forms)
   // IMPORTANT: Only populate values for NEW fields that don't exist in the current
@@ -296,6 +299,10 @@ export function GenericForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Re-entrancy guard: the fields stay editable while a submit is in flight,
+    // and Enter in any of them re-fires this handler.
+    if (loading) return;
+    setServerError(null);
 
     // Validate required fields for custom components (select, searchable-select, etc.)
     // Native HTML inputs handle required validation via browser, but custom components need manual checks
@@ -334,7 +341,10 @@ export function GenericForm({
         val === undefined || val === null || val === "" || (Array.isArray(val) && val.length === 0);
 
       if (isEmpty) {
-        newErrors[field.name] = t("validation.required") || "This field is required";
+        // No `|| "English literal"` fallback: t() returns the bare key on a
+        // miss, never a falsy value, so the fallback was dead code that could
+        // only ever ship untranslated English.
+        newErrors[field.name] = t("validation.required");
       }
     });
 
@@ -357,9 +367,16 @@ export function GenericForm({
           field.type === "month" ||
           field.type === "week"
         ) {
-          // Only convert if value exists and is not empty
-          if (submitData[field.name] && submitData[field.name].trim() !== "") {
-            const converted = fromDateInputValue(submitData[field.name]);
+          // The value is only a string when it came through the date-input
+          // conversion. `initialValues` and `defaultValue` bypass that on the
+          // re-init path, so a Date object or a number can land here — and
+          // calling .trim() on it threw inside an async handler, which React
+          // does not surface: the form just sat there while the rejection
+          // escaped as an unhandled promise.
+          const raw = submitData[field.name];
+          const asString = typeof raw === "string" ? raw : "";
+          if (asString.trim() !== "") {
+            const converted = fromDateInputValue(asString);
             // Only set if conversion was successful (not empty string)
             if (converted && converted.trim() !== "") {
               submitData[field.name] = converted;
@@ -372,8 +389,24 @@ export function GenericForm({
             delete submitData[field.name];
           }
         }
+
+        // A number field submitted its raw input string, so consumers received
+        // "12" where the API expects 12 — and every caller had to remember to
+        // coerce. Empty stays empty rather than becoming 0.
+        if (field.type === "number") {
+          const raw = submitData[field.name];
+          if (raw !== "" && raw !== null && raw !== undefined) {
+            const asNumber = Number(raw);
+            if (!Number.isNaN(asNumber)) submitData[field.name] = asNumber;
+          }
+        }
       });
       await onSubmit(submitData);
+    } catch (error) {
+      // There was no catch at all. The CRUD viewmodels re-throw, so a failed
+      // save escaped as an unhandled rejection and the form rendered nothing —
+      // the user pressed Save, the spinner stopped, and no reason appeared.
+      setServerError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -522,7 +555,7 @@ export function GenericForm({
 
   return (
     <div className={cn(getFormContainerClasses(), "text-start")} dir={direction}>
-      <form onSubmit={handleSubmit} className={getFormSpacing()}>
+      <form onSubmit={handleSubmit} className={getFormSpacing()} aria-busy={loading || undefined}>
         {fieldGroups.map((group, groupIndex) => {
           // The two-column grid engages only when a grouped field opts in via colSpan
           const gridded = group.fields.some((f) => f.colSpan !== undefined && f.type !== "hidden");
@@ -553,7 +586,7 @@ export function GenericForm({
                 key={field.name}
                 type="hidden"
                 name={field.name}
-                value={formData[field.name] || ""}
+                value={formData[field.name] ?? ""}
               />
             ) : (
               <div
@@ -567,6 +600,14 @@ export function GenericForm({
                 )}
                 {field.type === "select" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
+                    // `loading` reached only the searchable branch, so a plain
+                    // select waiting on its options rendered as an empty list
+                    // rather than as loading.
+                    loading={field.loading}
                     type="single"
                     options={
                       field.options?.map((opt) => ({
@@ -574,7 +615,7 @@ export function GenericForm({
                         label: opt.label,
                       })) || []
                     }
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value: string | string[]) =>
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
@@ -584,6 +625,10 @@ export function GenericForm({
                   />
                 ) : field.type === "searchable-select" || field.type === "server-select" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
                     type="searchable"
                     options={
                       field.options?.map((opt) => ({
@@ -591,7 +636,7 @@ export function GenericForm({
                         label: opt.label,
                       })) || []
                     }
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value: string | string[]) =>
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
@@ -621,6 +666,11 @@ export function GenericForm({
                   />
                 ) : field.type === "multi-select" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
+                    loading={field.loading}
                     type="multi"
                     options={
                       field.options?.map((opt) => ({
@@ -659,9 +709,14 @@ export function GenericForm({
                   />
                 ) : field.type === "tree" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
+                    loading={field.loading}
                     type="tree"
                     treeData={field.treeData || []}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value: string | string[]) =>
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
@@ -673,7 +728,7 @@ export function GenericForm({
                 ) : field.type === "textarea" ? (
                   <Textarea
                     id={field.name}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(e) => handleChange(field.name, e.target.value)}
                     required={field.required}
                     className={cn(getInputClasses("min-h-20"), "text-start")}
@@ -689,7 +744,7 @@ export function GenericForm({
                   />
                 ) : field.type === "richtext" ? (
                   <RichTextEditor
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
                     placeholder={field.placeholder}
                     // TipTap editor exposes readOnly (not disabled); honour both the
@@ -731,7 +786,7 @@ export function GenericForm({
                   </div>
                 ) : field.type === "radio" ? (
                   <RadioGroup
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value) => handleChange(field.name, value)}
                     disabled={inert}
                     design={settings.radioStyle}
@@ -757,7 +812,7 @@ export function GenericForm({
                 ) : field.type === "slider" || field.type === "range" ? (
                   <div className="space-y-2">
                     <Slider
-                      value={[formData[field.name] || field.min || 0]}
+                      value={[formData[field.name] ?? field.min ?? 0]}
                       onValueChange={(value) => handleChange(field.name, value[0])}
                       min={Number(field.min) || 0}
                       max={Number(field.max) || 100}
@@ -771,7 +826,7 @@ export function GenericForm({
                     <div className="flex items-baseline justify-between text-xs text-nx-ink-3">
                       <span>{t("common.value")}</span>
                       <span className="font-medium tabular-nums text-nx-ink-2">
-                        {formData[field.name] || field.min || 0}
+                        {formData[field.name] ?? field.min ?? 0}
                       </span>
                     </div>
                   </div>
@@ -784,7 +839,7 @@ export function GenericForm({
                   <DatePicker
                     id={field.name}
                     type={field.type === "datetime" ? "datetime-local" : (field.type as any)}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
                     required={field.required}
                     className={getInputClasses(getInputHeight())}
@@ -794,7 +849,7 @@ export function GenericForm({
                 ) : field.type === "image" ? (
                   <ImageUploader
                     id={field.name}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(base64) => handleChange(field.name, base64)}
                     onRemove={() => handleChange(field.name, "")}
                     placeholder={field.placeholder}
@@ -830,7 +885,7 @@ export function GenericForm({
                 ) : field.type === "password" ? (
                   <PasswordInput
                     id={field.name}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(e) => handleChange(field.name, e.target.value)}
                     required={field.required}
                     className={cn(getInputClasses(getInputHeight()), "text-start")}
@@ -845,7 +900,7 @@ export function GenericForm({
                   <Input
                     id={field.name}
                     type={field.type}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(e) => handleChange(field.name, e.target.value)}
                     required={field.required}
                     className={cn(getInputClasses(getInputHeight()), "text-start")}
@@ -883,7 +938,7 @@ export function GenericForm({
                     </div>
                     {counted && (
                       <span className="shrink-0 text-xs tabular-nums text-nx-ink-3">
-                        {(formData[field.name] || "").length}/{field.maxLength}
+                        {(formData[field.name] ?? "").length}/{field.maxLength}
                       </span>
                     )}
                   </div>
@@ -920,6 +975,12 @@ export function GenericForm({
             </section>
           );
         })}
+
+        {serverError && (
+          <div role="alert" className="pt-2">
+            <ErrorMessage message={serverError} size="sm" />
+          </div>
+        )}
 
         <Separator />
 

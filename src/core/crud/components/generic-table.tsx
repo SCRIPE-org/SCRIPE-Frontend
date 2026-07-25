@@ -81,8 +81,12 @@ export interface Column<T> {
   label: string;
   /** Whether the column is sortable */
   sortable?: boolean;
-  /** Custom width for the column */
+  /** Custom width for the column, as a CSS length (e.g. "12rem", "120px"). */
   width?: string;
+  /** Extra classes for both the header cell and every body cell in this column. */
+  className?: string;
+  /** Omit this column from the mobile card layout. */
+  hideOnMobile?: boolean;
   /** Custom render function for the column content */
 
   render?: (value: any, row: T) => React.ReactNode;
@@ -179,6 +183,19 @@ interface GenericTableProps<T> {
  * @param props.stickyActions - Enable sticky actions column (default: true)
  * @returns JSX element representing the table
  */
+
+/**
+ * Renders a raw cell value for a column that declares no `render`.
+ *
+ * `String(value)` printed the literal words "undefined" and "null", and
+ * "[object Object]" for anything structured — visible product text, in the
+ * table, for any column whose data is missing on a row.
+ */
+function formatCellValue(value: unknown): React.ReactNode {
+  if (value === null || value === undefined || value === "") return "—";
+  if (typeof value === "object") return "—";
+  return String(value);
+}
 
 function GenericTableInner<T extends Record<string, any>>({
   data,
@@ -403,16 +420,23 @@ function GenericTableInner<T extends Record<string, any>>({
                     <span className="text-sm text-nx-ink-3">{t("table.select")}</span>
                   </div>
                 )}
-                {columns.map((column) => (
-                  <div key={String(column.key)} className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-medium text-nx-ink-2">{column.label}:</span>
-                    <span className="text-sm text-nx-ink">
-                      {column.render
-                        ? column.render(row[column.key], row)
-                        : String(row[column.key])}
-                    </span>
-                  </div>
-                ))}
+                {columns
+                  // `hideOnMobile` is declared on CrudColumn and had zero
+                  // effect — the card loop rendered every column regardless.
+                  .filter((column) => !column.hideOnMobile)
+                  .map((column) => (
+                    <div
+                      key={String(column.key)}
+                      className="flex items-center justify-between gap-2"
+                    >
+                      <span className="text-sm font-medium text-nx-ink-2">{column.label}:</span>
+                      <span className="text-sm text-nx-ink">
+                        {column.render
+                          ? column.render(row[column.key], row)
+                          : formatCellValue(row[column.key])}
+                      </span>
+                    </div>
+                  ))}
                 {((actions && actions.length > 0) || renderActions) && (
                   <div className="flex justify-end border-t border-nx-line pt-2">
                     {renderActions ? (
@@ -544,9 +568,13 @@ function GenericTableInner<T extends Record<string, any>>({
                           : undefined
                       }
                       tabIndex={column.sortable ? 0 : undefined}
+                      // Width moved to a real style. `w-${column.width}` was
+                      // interpolated at runtime, so Tailwind's JIT never saw
+                      // the class and no width was ever emitted.
+                      style={column.width ? { width: column.width } : undefined}
                       className={cn(
                         "whitespace-nowrap",
-                        column.width && `w-${column.width}`,
+                        column.className,
                         // Same lit-edge focus treatment TableRow uses — the th
                         // itself is the sort control, so it must take focus.
                         column.sortable &&
@@ -601,10 +629,18 @@ function GenericTableInner<T extends Record<string, any>>({
                           </TableCell>
                         )}
                         {columns.map((column) => (
-                          <TableCell key={String(column.key)}>
+                          // `column.className` is now applied. Nineteen call
+                          // sites declare one — "text-end tabular-nums" on
+                          // numeric columns, for instance — and every one of
+                          // them was silently discarded, so numbers rendered
+                          // start-aligned with proportional figures.
+                          <TableCell key={String(column.key)} className={column.className}>
                             {column.render
                               ? column.render(row[column.key], row)
-                              : String(row[column.key])}
+                              : // Bare String() printed the literal text
+                                // "undefined", "null" or "[object Object]" into
+                                // the cell for any column without a render.
+                                formatCellValue(row[column.key])}
                           </TableCell>
                         ))}
                         {((actions && actions.length > 0) || renderActions) && (

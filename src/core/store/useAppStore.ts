@@ -114,7 +114,7 @@ export const useAppStore = create<AppState>()(
           gracePhase: null,
           editionName: null,
           mustChangePassword: false,
-          defaultRedirectPath: "/",
+          defaultRedirectPath: "/overview",
         });
       },
 
@@ -130,7 +130,7 @@ export const useAppStore = create<AppState>()(
       setMustChangePassword: (must) => set({ mustChangePassword: must }),
 
       // Post-login redirect path
-      defaultRedirectPath: "/",
+      defaultRedirectPath: "/overview",
       setDefaultRedirectPath: (path) => set({ defaultRedirectPath: path }),
 
       // Tenant context

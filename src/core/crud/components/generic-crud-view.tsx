@@ -513,32 +513,20 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // === Layer 1: Explicit restricted fields from /me response ===
   const restrictedFields = useRestrictedFields(config?.resource);
 
-  // === Layer 2: Detect columns with ALL null values in current data ===
-  // This catches FLS-nullified fields even if /me doesn't yet return restrictedFields
-  const nullColumns = useMemo(() => {
-    const items = viewModel?.items;
-    if (!items || items.length === 0) return new Set<string>();
-    const nullKeys = new Set<string>();
-    for (const col of allColumns) {
-      if (col.key === "_index" || col.key === "_actions") continue; // skip meta columns
-      const allNull = items.every((item: any) => {
-        const val = item?.[col.key];
-        return val === null || val === undefined;
-      });
-      if (allNull) nullKeys.add(col.key);
-    }
-    return nullKeys;
-  }, [allColumns, viewModel?.items]);
-
-  // Merge both layers to determine visible columns
+  // Only real field-level security hides a column now.
+  //
+  // There used to be a second layer here that dropped any column whose value
+  // was null on every row of the CURRENT PAGE. It was a heuristic standing in
+  // for FLS, and it was wrong in three ways: it read `item[col.key]` directly,
+  // so a column whose `render` derives its content from other fields was
+  // dropped even though it displays fine (that is why the Roles list had no
+  // Description column — `Role` exposes descriptionEn/descriptionAr and no
+  // `description` getter); it made columns appear and disappear as the user
+  // paginated; and it had already forced a compatibility shim into the domain
+  // model to work around itself.
   const columns = useMemo(
-    () =>
-      allColumns.filter((col) => {
-        if (restrictedFields.includes(col.key)) return false;
-        if (nullColumns.has(col.key)) return false;
-        return true;
-      }),
-    [allColumns, restrictedFields, nullColumns]
+    () => allColumns.filter((col) => !restrictedFields.includes(col.key)),
+    [allColumns, restrictedFields]
   );
 
   // Wrap actions to use the generic individual action handler
@@ -552,13 +540,29 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     (editingItem: any): FieldConfig[] => {
       const raw = config?.editFields || propEditFields || propCreateFields;
       if (typeof raw === "function") {
-        return raw(editingItem);
+        // Only invoke with a real item. This runs on every render, including
+        // the ones after the edit modal closes and `editingItem` is back to
+        // null — and the call sites that use the function form type the
+        // parameter as non-nullable, so any property access inside threw the
+        // moment the dialog was dismissed.
+        return editingItem ? raw(editingItem) : [];
       }
       return (raw || createFields || []) as FieldConfig[];
     },
     [config, propEditFields, propCreateFields, createFields]
   );
   const editFields = resolveEditFields(viewModel.editingItem);
+
+  // NOTE (not fixed here): this key embeds `editingItem?.id`, and
+  // `closeEditModal` nulls `editingItem` in the same batch that closes the
+  // modal — so during the exit animation the key flips and the form remounts
+  // empty for a couple of frames. Freezing it needs the last item id to survive
+  // the close, which belongs in the viewmodel; doing it in the view requires
+  // reading a ref during render, which this codebase's lint rules correctly
+  // forbid. Tracked separately rather than papered over.
+  const editFormKey = `edit-form-${
+    viewModel.editingItem?.id || "new"
+  }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`;
 
   // Auto-generate pagination and search for config-based usage
   const pagination =
@@ -693,57 +697,26 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // danger for analytics…) gave each list page an accent found nowhere else in
   // the product, which is the incoherence the shared header exists to end.
   const getPageIcon = (): LucideIcon => {
+    // Keyed off `resource` ONLY. This used to also match English substrings
+    // against `title`, which is the TRANSLATED page title — so in Arabic none
+    // of them matched and the page icon changed when the user switched
+    // language.
     const res = config?.resource?.toLowerCase() || "";
-    const lowerTitle = title.toLowerCase();
 
-    if (
-      res.includes("staff") ||
-      res.includes("hrms") ||
-      lowerTitle.includes("staff") ||
-      lowerTitle.includes("hrms")
-    ) {
-      return Users;
-    }
-    if (res.includes("party") || lowerTitle.includes("party") || lowerTitle.includes("parties")) {
-      return Users;
-    }
-    if (
-      res.includes("work") ||
-      res.includes("task") ||
-      lowerTitle.includes("work") ||
-      lowerTitle.includes("task") ||
-      lowerTitle.includes("todo")
-    ) {
-      return ListTodo;
-    }
-    if (res.includes("custom") || lowerTitle.includes("custom") || lowerTitle.includes("field")) {
-      return Sliders;
-    }
-    if (
-      res.includes("analytics") ||
-      lowerTitle.includes("analytics") ||
-      lowerTitle.includes("metric") ||
-      lowerTitle.includes("event")
-    ) {
+    if (res.includes("staff") || res.includes("hrms") || res.includes("party")) return Users;
+    if (res.includes("work") || res.includes("task")) return ListTodo;
+    if (res.includes("custom") || res.includes("field")) return Sliders;
+    if (res.includes("analytics") || res.includes("metric") || res.includes("event"))
       return Activity;
-    }
-    if (
-      res.includes("compliance") ||
-      lowerTitle.includes("compliance") ||
-      lowerTitle.includes("consent") ||
-      lowerTitle.includes("gdpr")
-    ) {
+    if (res.includes("compliance") || res.includes("consent") || res.includes("gdpr"))
       return ShieldCheck;
-    }
     if (
       res.includes("entitlement") ||
-      lowerTitle.includes("entitlement") ||
-      lowerTitle.includes("quota") ||
-      lowerTitle.includes("plan") ||
-      lowerTitle.includes("billing")
-    ) {
+      res.includes("quota") ||
+      res.includes("plan") ||
+      res.includes("billing")
+    )
       return Key;
-    }
     return FileText;
   };
 
@@ -828,11 +801,25 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     );
   }
 
-  if (viewModel.loading && viewModel.items.length === 0) {
+  // These two early returns replace the ENTIRE view — including any open
+  // modal, which is then unmounted mid-edit. That is reachable: a tenant whose
+  // list is empty (exactly the person clicking "Add") hits `items.length === 0`
+  // the moment a refetch starts with no cached previous data, and the create
+  // form vanishes while they are typing in it. Suppressing them while a dialog
+  // is open keeps the dialog mounted; the list underneath is not what the user
+  // is looking at anyway.
+  //
+  // Still outstanding: both branches discard the page header, search and
+  // pagination rather than rendering a skeleton in place. That is a layout
+  // change too large to make safely here and is tracked separately.
+  const anyModalOpen =
+    viewModel.isCreateModalOpen || viewModel.isEditModalOpen || viewModel.viewModalOpen;
+
+  if (viewModel.loading && viewModel.items.length === 0 && !anyModalOpen) {
     return <LoadingSpinner showText={false} />;
   }
 
-  if (viewModel.error && viewModel.items.length === 0) {
+  if (viewModel.error && viewModel.items.length === 0 && !anyModalOpen) {
     return <ErrorMessage message={viewModel.error} onRetry={viewModel.refresh} />;
   }
 
@@ -1007,9 +994,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         }}
         title={t("crud.modal.editTitle", { entity: title })}
         description={t("crud.modal.editDescription", { entity })}
-        formKey={`edit-form-${
-          viewModel.editingItem?.id || "new"
-        }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`}
+        // Frozen while the modal is closing. `closeEditModal` nulls
+        // `editingItem` and flips `isEditModalOpen` in the same batch, so the
+        // key used to flip to "…-new-…" during the exit animation and remount
+        // the form to an empty state — the user watched their data blank out on
+        // the way out.
+        formKey={editFormKey}
       >
         <GenericForm
           fields={editFields || createFields || []}

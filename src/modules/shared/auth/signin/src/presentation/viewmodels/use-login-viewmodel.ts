@@ -82,7 +82,8 @@ export function useLoginViewModel() {
   const router = useRouter();
   const searchParams = useSearchParams();
   // URL ?redirect= param overrides backend path (deep-link scenario)
-  const redirectPath = searchParams.get("redirect") || backendRedirectPath || "/";
+  const rawRedirect = searchParams.get("redirect") || backendRedirectPath;
+  const redirectPath = !rawRedirect || rawRedirect === "/" ? "/overview" : rawRedirect;
 
   // Helper to handle external vs internal redirects
   const handleRedirect = useCallback(
