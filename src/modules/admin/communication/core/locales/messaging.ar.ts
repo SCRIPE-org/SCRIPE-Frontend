@@ -20,7 +20,7 @@ export const ar = {
       placeholders: "المتغيرات",
       editTemplate: "تعديل القالب",
       editDescription: "تعديل قوالب البريد الإلكتروني والرسائل القصيرة والإشعارات بصيغة Scriban.",
-      subjectDescription: "العنوان",
+      subjectDescription: "سطر موضوع البريد الإلكتروني (اختياري لـ SMS/Push)",
       bodyDescription: "المحتوى",
       settings: "الإعدادات",
       addNew: "إضافة قالب جديد",

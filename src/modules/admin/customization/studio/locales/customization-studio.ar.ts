@@ -903,7 +903,7 @@ export const ar = {
         hexagon: "سداسي",
         sidebar: "شريط جانبي",
         none: "بدون",
-        sharp2: "Sharp",
+        sharp2: "حاد",
       },
       preset: {
         professional: "احترافي",
