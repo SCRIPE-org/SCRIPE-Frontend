@@ -515,11 +515,7 @@ export function VariableValuesPanel({
                                   >
                                     <SelectValue />
                                   </SelectTrigger>
-                                  {/* Radix portals this to the body, so it has
-                                      to outrank a dialog this panel may be
-                                      rendered inside; the select surface itself
-                                      sits at z-dropdown for the ordinary case. */}
-                                  <SelectContent align="end" className="z-toast">
+                                  <SelectContent align="end">
                                     {FIELD_TYPE_OPTIONS.map((opt) => (
                                       <SelectItem
                                         key={opt.value}

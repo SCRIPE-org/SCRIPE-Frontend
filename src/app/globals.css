@@ -2257,48 +2257,16 @@ html[data-bg-mode="gradient"] body > div > div > div.min-h-screen {
   background-color: transparent !important;
 }
 
-@layer utilities {
-  /* Modal blur utilities - applied to ENTIRE layout (sidebars, headers, content) when modal is open */
-  .modal-blurred-content {
-    filter: blur(8px) brightness(0.7) !important;
-    pointer-events: none !important;
-    user-select: none !important;
-    transition: filter 0.2s ease-in-out;
-    position: relative;
-    /* Ensure it's in stacking context */
-  }
-
-  /* Ensure modal portal is always above blurred content */
-  html.modal-blur-open [data-radix-portal],
-  body.modal-blur-open [data-radix-portal] {
-    z-index: 1000 !important;
-    isolation: isolate;
-    filter: none !important;
-    /* Portal itself should not be blurred */
-  }
-
-  html.modal-blur-open [data-radix-dialog-overlay],
-  body.modal-blur-open [data-radix-dialog-overlay] {
-    z-index: 999 !important;
-    filter: none !important;
-  }
-
-  html.modal-blur-open [data-radix-dialog-content],
-  body.modal-blur-open [data-radix-dialog-content] {
-    z-index: 1000 !important;
-    isolation: isolate;
-    filter: none !important;
-    /* Ensure modal content is never blurred */
-    position: relative;
-    /* Ensure proper stacking */
-  }
-
-  /* Prevent any child of modal from being blurred */
-  [data-radix-portal] *,
-  [data-radix-dialog-content] * {
-    filter: none !important;
-  }
-}
+/* The modal-blur utility layer that used to live here is gone. Every rule in
+   it was dead: `.modal-blurred-content` was never applied to anything, the
+   `modal-blur-open` class that gated the rest was never set on html or body,
+   and the three attributes it targeted — [data-radix-portal],
+   [data-radix-dialog-overlay], [data-radix-dialog-content] — are emitted by
+   nobody (Radix stamps role + data-state instead). It also hard-coded the
+   z-ladder as !important literals, which would have silently fought the
+   zIndex scale in tailwind.config.js, and blurring the whole layout behind a
+   modal is the glassmorphism-by-default the design bar bans — DialogOverlay
+   dims with a scrim instead. */
 
 /* ========================================
    UTILITY CLASSES - FONTS

@@ -399,19 +399,18 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
       });
     }, [displayOptions?.length, showLoading, isSearchable, isTreeSelect]);
 
-    // Initialize tree data and set portal root smartly:
-    // - If inside a Dialog, portal to the Dialog content element itself
-    //   so focus stays within modal but dropdown overlays the content.
-    // - Otherwise, portal to document.body.
+    // Portal root is always document.body, and tree data is initialised here.
+    //
+    // The old code tried to portal INTO the surrounding dialog by querying
+    // `[data-radix-dialog-content]`. Nothing in the app emits that attribute —
+    // Radix stamps `role="dialog"` plus `data-state` — so the branch was dead
+    // and this always resolved to document.body anyway. Portalling into the
+    // dialog would not have worked either: DialogContent carries a translate,
+    // which makes it a containing block and would have re-anchored every
+    // `fixed` panel to the wrong origin. Escaping the dialog is the z-ladder's
+    // job (see tailwind.config.js zIndex.dropdown), not the portal target's.
     React.useEffect(() => {
-      if (typeof document !== "undefined") {
-        const dialogContent = containerRef.current?.closest(
-          "[data-radix-dialog-content]"
-        ) as HTMLElement | null;
-        setPortalRoot(dialogContent || document.body);
-      } else {
-        setPortalRoot(null);
-      }
+      setPortalRoot(typeof document !== "undefined" ? document.body : null);
 
       if (isTreeSelect) {
         const dataToUse = treeData || options;

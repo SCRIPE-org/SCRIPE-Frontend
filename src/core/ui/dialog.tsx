@@ -113,7 +113,7 @@ interface DialogContentProps extends React.ComponentPropsWithoutRef<
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   DialogContentProps
->(({ className, children, dir, variant = "default", ...props }, ref) => {
+>(({ className, children, dir, variant = "default", onFocusOutside, ...props }, ref) => {
   const { t, direction } = useI18n();
   const isRtl = (dir || direction) === "rtl";
 
@@ -196,21 +196,32 @@ const DialogContent = React.forwardRef<
             e.preventDefault();
           }
         }}
-        onFocusOutside={(e) => {
-          // Allow focus to move into dropdown portals so search input can receive focus
-          const target = e.target as Element;
-          if (
-            target.closest("[data-dropdown-portal]") ||
-            target.closest("[data-searchable-select]") ||
-            target.closest("[data-date-picker]") ||
-            target.closest("[data-radix-popper-content-wrapper]") ||
-            target.closest("[role='listbox']") ||
-            target.closest("[role='option']")
-          ) {
-            e.preventDefault();
-          }
-        }}
         {...props}
+        // A dialog is NEVER dismissed by focus movement — only by pointer-down
+        // on the scrim, Escape, or an explicit Close.
+        //
+        // This is exactly what Radix's own DialogContentModal does. GenericModal
+        // opts out of it with modal={false} (deliberately: the focus trap breaks
+        // the body-portalled select and date-picker search inputs), and because
+        // onOpenAutoFocus is prevented above, the panel never owns focus — so
+        // react-dismissable-layer's undeferred `focusin` listener fired on the
+        // FIRST focus event anywhere outside and dismissed the dialog instantly.
+        //
+        // The concrete symptom: opening Edit / Assign-to-groups from a table row
+        // menu closed the form the moment the menu's exit animation finished and
+        // it restored focus to the row's trigger button. The allow-list this
+        // replaces only covered six dropdown-portal selectors, and a <Button>
+        // inside a <td> matched none of them.
+        //
+        // Deliberately placed AFTER {...props}: a consumer's own handler still
+        // runs (composed below) but cannot re-open this dismissal channel. The
+        // other four handlers stay before {...props} so consumers keep overriding
+        // them — PaymentWallDialog relies on that to stay non-dismissible, and
+        // DocsSearch relies on it to restore auto-focus.
+        onFocusOutside={(e) => {
+          onFocusOutside?.(e);
+          e.preventDefault();
+        }}
       >
         {children}
         {/* type="button" so a dialog wrapping a <form> cannot submit it by

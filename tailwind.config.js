@@ -243,13 +243,21 @@ module.exports = {
         raised: "10",
         header: "100",
         sticky: "200",
-        dropdown: "900",
-        // Popovers open from inside dropdowns occasionally (filter builders),
-        // never the other way round — so popover sits one step above.
-        popover: "950",
         blur: "998",
         overlay: "999",
         modal: "1000",
+        // Transient surfaces sit ABOVE the modal on purpose. Radix portals them
+        // to document.body, so a dropdown opened from inside a dialog is the
+        // dialog's SIBLING, not its descendant — at 900 it painted underneath
+        // the z-1000 panel and its opaque fill, and the reported symptom was
+        // "the dropdown is transparent": what you actually saw through it was
+        // the dialog's own form content. A dropdown is always opened FROM the
+        // surface beneath it, so it must outrank that surface. Toast (1100) and
+        // tooltip (1200) still win over both.
+        dropdown: "1050",
+        // Popovers open from inside dropdowns occasionally (filter builders),
+        // never the other way round — so popover sits one step above.
+        popover: "1060",
         toast: "1100",
         tooltip: "1200",
       },

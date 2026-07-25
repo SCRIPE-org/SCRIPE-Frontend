@@ -42,9 +42,9 @@ import {
   Key,
   FileText,
   Inbox,
+  Lock,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { appLogger } from "@core/common/logger";
 import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { useRestrictedFields } from "@core/hooks/use-restricted-fields";
@@ -106,6 +106,18 @@ export interface CrudAction<TItem = any> {
   tooltip?: string;
   /** Loading state for async actions */
   loading?: boolean;
+  /**
+   * Marks this as the row's EDIT action so `permissions.canUpdate` gates it.
+   * Optional and additive — an action without it is never auto-hidden, so no
+   * existing config changes behaviour by upgrading.
+   */
+  isEdit?: boolean;
+  /**
+   * Marks this as the row's DELETE action so `permissions.canDelete` gates it.
+   * An action whose `onClick` is the `handleDelete` passed into `getActions`
+   * is detected automatically and does not need this flag.
+   */
+  isDelete?: boolean;
 }
 
 /**
@@ -534,24 +546,6 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     ? config.getActions(viewModel, t, handleDelete)
     : propActions;
 
-  // Hide actions column if specified
-  const actions = config?.hideActionsColumn
-    ? undefined
-    : rawActions
-        ?.filter((action) => {
-          if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
-            return false;
-          }
-          return true;
-        })
-        .map((action) => ({
-          ...action,
-          onClick:
-            action.onClick === handleDelete
-              ? handleDelete
-              : (item: any) => handleIndividualAction(action, item),
-        }));
-
   const createFields = config?.createFields || propCreateFields!;
   // Support dynamic editFields: if it's a function, resolve it with the current editing item
   const resolveEditFields = useCallback(
@@ -606,11 +600,16 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       if (typeof value === "boolean") {
         return value;
       }
-      // For string permission codes, we can't call hooks here
-      // The caller should use the resource-based permissions instead
-      return fallbackPermission;
+      // A string IS a permission code — the documented form of this API.
+      // It used to fall through to `fallbackPermission`, and for a config
+      // that declares codes but no `resource` that fallback is
+      // usePermission("") === true (use-permission.ts:35). So every module
+      // using the documented string form failed OPEN: the control rendered
+      // for every user regardless of their permissions. `hasPermission` is
+      // the provider's memoised checker, so this fails CLOSED instead.
+      return hasPermission(value);
     },
-    []
+    [hasPermission]
   );
 
   // Compute effective permissions
@@ -656,6 +655,38 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
   // Determine if Add button should be shown
   const showAddButton = !config?.hideAddButton && effectivePermissions.canCreate;
+
+  // Hide actions column if specified.
+  // Declared AFTER the permission block on purpose: `canUpdate`/`canDelete`
+  // are documented as gating the row's Edit/Delete actions (see CrudPermissions)
+  // but were computed and never read. There is no built-in Edit/Delete — every
+  // module supplies its own through `getActions` — so gating keys off the two
+  // things that ARE identifiable: an action whose `onClick` is the injected
+  // `handleDelete`, and the opt-in `isEdit`/`isDelete` flags. An action that
+  // declares neither is never auto-hidden, so no existing config changes.
+  const actions = config?.hideActionsColumn
+    ? undefined
+    : rawActions
+        ?.filter((action) => {
+          if (action.requiredPermission && !hasPermission(action.requiredPermission)) {
+            return false;
+          }
+          const isDeleteAction = action.isDelete || action.onClick === handleDelete;
+          if (isDeleteAction && !effectivePermissions.canDelete) {
+            return false;
+          }
+          if (action.isEdit && !effectivePermissions.canUpdate) {
+            return false;
+          }
+          return true;
+        })
+        .map((action) => ({
+          ...action,
+          onClick:
+            action.onClick === handleDelete
+              ? handleDelete
+              : (item: any) => handleIndividualAction(action, item),
+        }));
 
   // The glyph only — PageHeader owns the tile, its size and its single accent
   // hue. The per-resource colours this used to hand out (success for parties,
@@ -716,21 +747,53 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     return FileText;
   };
 
-  // Keyboard shortcut listener for power users (Alex)
+  // Keyboard shortcut listener for power users.
+  //
+  // This listener is global (window) and used to be unguarded, which made it a
+  // dialog killer: Ctrl/Cmd+K pulled focus to the page-level search input while
+  // a create/edit modal was open, and because GenericModal is `modal={false}`
+  // (deliberately — see generic-modal.tsx) that focus move outside the panel
+  // dismissed it mid-edit. Alt+N and Alt+R fired from inside open forms too.
+  // Two guards now: never while the user is typing, never while any dialog is
+  // open.
   useEffect(() => {
+    const isTypingTarget = (target: EventTarget | null): boolean => {
+      const el = target as HTMLElement | null;
+      if (!el) return false;
+      if (el.isContentEditable) return true;
+      const tag = el.tagName;
+      return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+    };
+
+    const anyDialogOpen = (): boolean =>
+      viewModel.isCreateModalOpen ||
+      viewModel.isEditModalOpen ||
+      viewModel.viewModalOpen ||
+      // Covers dialogs this view does not own (module-specific modals,
+      // confirmation dialogs, command palette) — Radix stamps both attributes.
+      document.querySelector('[role="dialog"][data-state="open"]') !== null;
+
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Focus search input: Cmd/Ctrl + K or Alt + S
+      if (isTypingTarget(e.target) || anyDialogOpen()) return;
+
+      // Focus search input: Cmd/Ctrl + K
       if ((e.ctrlKey || e.metaKey) && e.key === "k") {
         e.preventDefault();
         search?.inputRef?.current?.focus();
+        return;
       }
+      // AltGr reports altKey AND ctrlKey; on Arabic and most European layouts
+      // that combination is how real characters are typed, so it must not be
+      // read as a shortcut.
+      if (!e.altKey || e.ctrlKey) return;
+
       // Open add modal: Alt + N (only if allowed)
-      if (e.altKey && e.key.toLowerCase() === "n" && showAddButton) {
+      if (e.key.toLowerCase() === "n" && showAddButton) {
         e.preventDefault();
         handleCreateClick();
       }
       // Refresh list: Alt + R
-      if (e.altKey && e.key.toLowerCase() === "r") {
+      if (e.key.toLowerCase() === "r") {
         e.preventDefault();
         viewModel.refresh();
       }
@@ -750,6 +813,20 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         return "default";
     }
   };
+
+  // `canView` is documented as "if false, entire view is hidden" but was
+  // computed and never read, so a module that declared it got no enforcement
+  // at all. It is enforced here, above every other branch — a user without
+  // read permission must not see the list, its count, or its empty state.
+  if (!effectivePermissions.canView) {
+    return (
+      <EmptyState
+        icon={Lock}
+        title={t("notAuthorized.title")}
+        description={t("notAuthorized.description")}
+      />
+    );
+  }
 
   if (viewModel.loading && viewModel.items.length === 0) {
     return <LoadingSpinner showText={false} />;
@@ -924,7 +1001,6 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       <GenericModal
         open={viewModel.isEditModalOpen}
         onOpenChange={(open) => {
-          appLogger.debug("Edit modal onOpenChange:", open, "editingItem:", viewModel.editingItem);
           if (!open) {
             viewModel.closeEditModal();
           }

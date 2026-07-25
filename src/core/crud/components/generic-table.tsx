@@ -424,7 +424,12 @@ function GenericTableInner<T extends Record<string, any>>({
                             <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="min-w-[160px]">
+                        <DropdownMenuContent
+                          align="end"
+                          className="min-w-[160px]"
+                          // Same focus-restore guard as the desktop row menu below.
+                          onCloseAutoFocus={(e) => e.preventDefault()}
+                        >
                           {actions &&
                             actions
                               .filter((action) => !action.show || action.show(row))
@@ -624,6 +629,16 @@ function GenericTableInner<T extends Record<string, any>>({
                                   <DropdownMenuContent
                                     align={direction === "rtl" ? "start" : "end"}
                                     className="min-w-[160px]"
+                                    // Radix restores focus to this menu's trigger when it
+                                    // closes — and because the menu keeps an exit animation,
+                                    // that restore lands ~140ms AFTER a chosen action has
+                                    // already opened a dialog. The focus then sits outside
+                                    // the new panel, which is the emitter behind rows whose
+                                    // Edit / Assign form closed the instant it appeared.
+                                    // dialog.tsx now refuses to dismiss on focus movement;
+                                    // this stops the stray focus jump at the source so the
+                                    // caret stays where the dialog wants it.
+                                    onCloseAutoFocus={(e) => e.preventDefault()}
                                   >
                                     {actions &&
                                       actions
