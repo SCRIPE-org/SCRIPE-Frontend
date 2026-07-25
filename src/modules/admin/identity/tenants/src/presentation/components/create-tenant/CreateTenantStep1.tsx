@@ -9,7 +9,6 @@
 "use client";
 
 import React from "react";
-import { cn } from "@core/common/utils";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
@@ -34,107 +33,110 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
   return (
     <div className="space-y-6">
       <div className="mb-2 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
-          <Building2 className="h-5 w-5 text-primary" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+          <Building2 className="h-5 w-5 text-nx-accent" />
         </div>
         <div>
           <h2 className="text-lg font-semibold">
-            {t("tenant.stepOrganization") || "Organization"}
+            {t("tenant.stepOrganization")}
           </h2>
-          <p className="text-sm text-muted-foreground">
-            {t("tenant.stepOrganizationDesc") || "Basic information about the new tenant."}
+          <p className="text-sm text-nx-ink-2">
+            {t("tenant.stepOrganizationDesc")}
           </p>
         </div>
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="tenant-name" className="text-sm font-medium">
-            {t("tenant.name") || "Tenant Name"} <span className="text-destructive">*</span>
+          <Label htmlFor="tenant-name">
+            {t("tenant.name")} <span className="text-destructive">*</span>
           </Label>
           <Input
             id="tenant-name"
             value={vm.form.name}
             onChange={(e) => vm.updateField("name", e.target.value)}
-            placeholder={t("tenant.namePlaceholder") || "e.g. Acme Corporation"}
-            className={cn("h-11", nameError && "border-destructive")}
+            placeholder={t("tenant.namePlaceholder")}
+            aria-invalid={nameError || undefined}
+            aria-describedby={nameError ? "tenant-name-error" : undefined}
             maxLength={100}
             autoFocus
           />
-          <div className="mt-1 flex min-h-[20px] items-center justify-between">
+          <div className="mt-1 flex min-h-5 items-center justify-between">
             {nameError ? (
-              <p className="text-xs text-destructive">
-                {t("validation.invalidName") || "Tenant name is required."}
+              <p id="tenant-name-error" className="text-xs text-destructive">
+                {t("validation.invalidName")}
               </p>
             ) : (
               <div />
             )}
-            <span className="text-xs text-muted-foreground">{vm.form.name.length}/100</span>
+            <span className="text-xs text-nx-ink-2">{vm.form.name.length}/100</span>
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="tenant-code" className="text-sm font-medium">
-            {t("tenant.code") || "Tenant Code"} <span className="text-destructive">*</span>
+          <Label htmlFor="tenant-code">
+            {t("tenant.code")} <span className="text-destructive">*</span>
           </Label>
           <Input
             id="tenant-code"
             value={vm.form.code}
             onChange={(e) => vm.updateField("code", e.target.value.toUpperCase())}
-            placeholder={t("tenant.codePlaceholder") || "Auto-generated from name"}
-            className={cn("h-11 font-mono uppercase", codeError && "border-destructive")}
+            placeholder={t("tenant.codePlaceholder")}
+            className="font-mono uppercase"
+            aria-invalid={codeError || undefined}
+            aria-describedby={codeError ? "tenant-code-error" : undefined}
             maxLength={100}
           />
           {codeError ? (
-            <p className="text-xs text-destructive">
-              {t("validation.invalidCode") || "Tenant code is required."}
+            <p id="tenant-code-error" className="text-xs text-destructive">
+              {t("validation.invalidCode")}
             </p>
           ) : (
-            <p className="text-xs text-muted-foreground">
-              {t("tenant.codeHint") || "Unique identifier. Auto-generated from name."}
+            <p className="text-xs text-nx-ink-2">
+              {t("tenant.codeHint")}
             </p>
           )}
         </div>
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="tenant-description" className="text-sm font-medium">
-          {t("tenant.description") || "Description"}
+        <Label htmlFor="tenant-description">
+          {t("tenant.description")}
         </Label>
         <Textarea
           id="tenant-description"
           value={vm.form.description}
           onChange={(e) => vm.updateField("description", e.target.value)}
           placeholder={
-            t("tenant.descriptionPlaceholder") || "Brief description of the organization..."
+            t("tenant.descriptionPlaceholder")
           }
-          className="min-h-[80px] resize-none"
+          className="min-h-20 resize-none"
           maxLength={500}
         />
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="tenant-address" className="text-sm font-medium">
-          {t("tenant.address") || "Address"}
+        <Label htmlFor="tenant-address">
+          {t("tenant.address")}
         </Label>
         <Textarea
           id="tenant-address"
           value={vm.form.address}
           onChange={(e) => vm.updateField("address", e.target.value)}
-          placeholder={t("tenant.addressPlaceholder") || "Street address, city, country..."}
-          className="min-h-[70px] resize-none"
+          placeholder={t("tenant.addressPlaceholder")}
+          className="min-h-20 resize-none"
           maxLength={500}
         />
       </div>
 
       {vm.form.parentId && (
-        <div className="flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2">
+        <div className="flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-3 py-2">
           <GitBranch className="h-4 w-4 shrink-0 text-warning" />
           <div className="min-w-0 flex-1">
             <p className="text-xs font-medium text-warning">
-              {t("tenant.creatingAsChild") || "Creating as child tenant"}
+              {t("tenant.creatingAsChild")}
             </p>
-            <p className="truncate font-mono text-xs text-muted-foreground">{vm.form.parentId}</p>
+            <p className="truncate font-mono text-xs text-nx-ink-2">{vm.form.parentId}</p>
           </div>
         </div>
       )}

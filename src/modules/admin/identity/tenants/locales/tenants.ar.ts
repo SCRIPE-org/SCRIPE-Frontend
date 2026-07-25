@@ -419,6 +419,7 @@ export const ar = {
     adminUsernamePlaceholder: "سيتم إنشاؤه تلقائياً إذا تُرك فارغاً",
     setupEmailSent: "تم إرسال بريد إعداد الحساب إلى المسؤول. سيقوم بتعيين كلمة المرور الخاصة به.",
     setupUrlLabel: "رابط إعداد الحساب (صالح لـ 24 ساعة):",
+    createSteps: "خطوات إنشاء المستأجر",
     createTitle: "إنشاء مستأجر جديد",
     createSubtitle: "إعداد منظمة جديدة مع مسؤول وخطة اشتراك.",
     stepOrganization: "المنظمة",

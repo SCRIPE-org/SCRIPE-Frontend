@@ -67,10 +67,10 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
   // Subscription type options — dynamically filtered by edition's Allow* flags
   const subscriptionTypeOptions: GenericSelectOption[] = useMemo(() => {
     const labelMap: Record<string, string> = {
-      Monthly: t("tenant.subscriptionTypes.monthly") || "Monthly",
-      Yearly: t("tenant.subscriptionTypes.yearly") || "Yearly",
-      Lifetime: t("tenant.subscriptionTypes.lifetime") || "Lifetime",
-      Trial: t("tenant.subscriptionTypes.trial") || "Trial (14 days)",
+      Monthly: t("tenant.subscriptionTypes.monthly"),
+      Yearly: t("tenant.subscriptionTypes.yearly"),
+      Lifetime: t("tenant.subscriptionTypes.lifetime"),
+      Trial: t("tenant.subscriptionTypes.trial"),
     };
     return vm.enabledSubscriptionTypes.map((st) => ({
       value: st.value,
@@ -82,21 +82,20 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
     <div className="space-y-6">
       {/* Header */}
       <div className="mb-2 flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning/10">
+        <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-warning/10">
           <CreditCard className="h-5 w-5 text-warning" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold">{t("tenant.stepPlan") || "Plan & Billing"}</h2>
-          <p className="text-sm text-muted-foreground">
-            {t("tenant.stepPlanDesc") ||
-              "Choose an edition and configure billing. This step is optional."}
+          <h2 className="text-lg font-semibold">{t("tenant.stepPlan")}</h2>
+          <p className="text-sm text-nx-ink-2">
+            {t("tenant.stepPlanDesc")}
           </p>
         </div>
       </div>
 
       {/* Edition — searchable GenericSelect with server search */}
       <div className="space-y-2">
-        <Label className="text-sm font-medium">{t("tenant.edition") || "Edition"}</Label>
+        <Label>{t("tenant.edition")}</Label>
         <GenericSelect
           type="searchable"
           searchType="server"
@@ -104,25 +103,24 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
           value={vm.form.editionId}
           onValueChange={(v: string | string[]) => vm.updateField("editionId", v as string)}
           onServerSearch={handleEditionSearch}
-          placeholder={t("tenant.searchEditions") || "Search editions..."}
-          searchPlaceholder={t("tenant.searchEditions") || "Search editions..."}
-          noResultsText={t("common.noResults") || "No editions found"}
+          placeholder={t("tenant.searchEditions")}
+          searchPlaceholder={t("tenant.searchEditions")}
+          noResultsText={t("common.noResults")}
         />
       </div>
 
       {/* Free Edition Banner — shown when selected edition has no billing cycles */}
       {vm.form.editionId && isFreeEdition && (
-        <div className="flex items-start gap-3 rounded-xl border border-success/30 bg-success/5 p-4 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-success/10">
+        <div className="flex items-start gap-3 rounded-nx-md border border-success/30 bg-success/5 p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-success/10">
             <ShieldCheck className="h-5 w-5 text-success" />
           </div>
           <div>
             <p className="text-sm font-medium text-success">
-              {t("tenant.freeEditionSelected") || "Free Edition — No Billing Required"}
+              {t("tenant.freeEditionSelected")}
             </p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {t("tenant.freeEditionDesc") ||
-                "This edition is permanently free. A lifetime subscription will be created automatically at no cost. No payment configuration is needed."}
+            <p className="mt-0.5 text-xs text-nx-ink-2">
+              {t("tenant.freeEditionDesc")}
             </p>
           </div>
         </div>
@@ -130,11 +128,11 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Subscription Type & Currency — only shown after edition is selected and has enabled subscription types */}
       {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
-        <div className="grid gap-5 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2 sm:grid-cols-2">
+        <div className="grid gap-5 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2 sm:grid-cols-2">
           {/* Subscription Type */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">
-              {t("tenant.subscriptionType") || "Subscription Type"}
+            <Label>
+              {t("tenant.subscriptionType")}
             </Label>
             <GenericSelect
               options={subscriptionTypeOptions}
@@ -142,26 +140,25 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
               onValueChange={(v: string | string[]) =>
                 vm.updateField("subscriptionType", v as string)
               }
-              placeholder={t("tenant.selectSubscriptionType") || "Select type..."}
+              placeholder={t("tenant.selectSubscriptionType")}
             />
             {subscriptionTypeOptions.length === 0 && (
               <p className="text-xs text-destructive">
-                {t("tenant.noSubscriptionTypesAvailable") ||
-                  "No subscription types are enabled for this edition."}
+                {t("tenant.noSubscriptionTypesAvailable")}
               </p>
             )}
           </div>
 
           {/* Currency */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium">{t("tenant.currency") || "Currency"}</Label>
+            <Label>{t("tenant.currency")}</Label>
             <GenericSelect
               type="searchable"
               options={CURRENCY_OPTIONS}
               value={vm.form.currency}
               onValueChange={(v: string | string[]) => vm.updateField("currency", v as string)}
-              placeholder={t("tenant.selectCurrency") || "Select currency..."}
-              searchPlaceholder={t("tenant.searchCurrencies") || "Search currencies..."}
+              placeholder={t("tenant.selectCurrency")}
+              searchPlaceholder={t("tenant.searchCurrencies")}
             />
           </div>
         </div>
@@ -169,13 +166,13 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Promo Code — only shown if there are subscription types enabled */}
       {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
-        <div className="space-y-2 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
-          <Label className="text-sm font-medium">{t("tenant.promoCode") || "Promo Code"}</Label>
+        <div className="space-y-2 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+          <Label>{t("tenant.promoCode")}</Label>
           <Input
             value={vm.form.promoCode}
             onChange={(e) => vm.updateField("promoCode", e.target.value)}
-            placeholder={t("tenant.promoCodePlaceholder") || "Enter promotional code (optional)"}
-            className="h-11 font-mono uppercase"
+            placeholder={t("tenant.promoCodePlaceholder")}
+            className="font-mono uppercase"
           />
           {vm.availablePromotions.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
@@ -186,7 +183,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                   <Badge
                     key={promo.id}
                     variant={isSelected ? "default" : "secondary"}
-                    className="cursor-pointer text-xs transition-colors hover:bg-primary/20"
+                    className="cursor-pointer text-xs transition-colors hover:bg-nx-accent-wash"
                     onClick={() => {
                       if (isSelected) {
                         // Deselect — clear both fields atomically
@@ -220,15 +217,14 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Skip Payment Toggle — only shown for paid plans with enabled subscription types */}
       {vm.form.editionId && !isFreeEdition && subscriptionTypeOptions.length > 0 && (
-        <div className="duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
-          <div className="flex items-center justify-between rounded-xl border border-warning/30 bg-warning/5 p-4">
+        <div className="duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+          <div className="flex items-center justify-between rounded-nx-md border border-warning/30 bg-warning/5 p-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
               <div>
-                <p className="text-sm font-medium">{t("tenant.skipPayment") || "Skip Payment"}</p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
-                  {t("tenant.skipPaymentDesc") ||
-                    "Activates the subscription without payment processing. Use for demos or manual billing."}
+                <p>{t("tenant.skipPayment")}</p>
+                <p className="mt-0.5 text-xs text-nx-ink-2">
+                  {t("tenant.skipPaymentDesc")}
                 </p>
               </div>
             </div>
@@ -241,21 +237,20 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       )}
 
       {/* Advanced: Restrict Permissions */}
-      <div className="rounded-xl border border-border/50 duration-nx-standard ease-nx-enter animate-in fade-in-0">
+      <div className="rounded-nx-md border border-nx-line duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0">
         <button
           type="button"
           className="flex w-full items-center justify-between p-4 text-start"
           onClick={() => setIsPermissionsOpen((v) => !v)}
         >
           <div className="flex items-center gap-3">
-            <ShieldCheck className="h-4 w-4 text-muted-foreground" />
+            <ShieldCheck className="h-4 w-4 text-nx-ink-2" />
             <div>
-              <p className="text-sm font-medium">
-                {t("tenant.restrictPermissions") || "Restrict Admin Permissions"}
+              <p>
+                {t("tenant.restrictPermissions")}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {t("tenant.restrictPermissionsDesc") ||
-                  "Limit which permissions this tenant's admins can be assigned. Leave empty to allow all."}
+              <p className="text-xs text-nx-ink-2">
+                {t("tenant.restrictPermissionsDesc")}
               </p>
             </div>
           </div>
@@ -265,19 +260,19 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                 {vm.form.availablePermissionIds.length}
               </Badge>
             )}
-            <span className="text-xs text-muted-foreground">{isPermissionsOpen ? "▲" : "▼"}</span>
+            <span className="text-xs text-nx-ink-2">{isPermissionsOpen ? "▲" : "▼"}</span>
           </div>
         </button>
 
         {isPermissionsOpen && (
-          <div className="border-t border-border/50 p-4">
+          <div className="border-t border-nx-line p-4">
             {vm.isLoadingPermissions ? (
-              <p className="text-sm text-muted-foreground">
-                {t("common.loading") || "Loading permissions..."}
+              <p className="text-sm text-nx-ink-2">
+                {t("common.loading")}
               </p>
             ) : vm.creationPermissions.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                {t("tenant.noPermissionsAvailable") || "No permissions available."}
+              <p className="text-sm text-nx-ink-2">
+                {t("tenant.noPermissionsAvailable")}
               </p>
             ) : (
               <PermissionPicker vm={vm} t={t} />
@@ -331,32 +326,32 @@ function PermissionPicker({ vm, t }: { vm: CreateTenantVM; t: (key: string) => s
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-nx-ink-2">
           {selected.size > 0
-            ? `${selected.size} / ${vm.creationPermissions.length} ${t("tenant.permissionsSelected") || "selected"}`
-            : t("tenant.allPermissionsAllowed") || "All permissions allowed (no restriction)"}
+            ? `${selected.size} / ${vm.creationPermissions.length} ${t("tenant.permissionsSelected")}`
+            : t("tenant.allPermissionsAllowed")}
         </p>
         <button
           type="button"
-          className="text-xs text-primary underline-offset-2 hover:underline"
+          className="text-xs text-nx-accent underline-offset-2 hover:underline"
           onClick={toggleAll}
         >
           {selected.size === vm.creationPermissions.length
-            ? t("common.deselectAll") || "Deselect all"
-            : t("common.selectAll") || "Select all"}
+            ? t("common.deselectAll")
+            : t("common.selectAll")}
         </button>
       </div>
-      <div className="max-h-64 overflow-y-auto rounded-lg border border-border/40 bg-muted/20 p-2">
+      <div className="max-h-64 overflow-y-auto rounded-nx-md border border-nx-line bg-nx-raised p-2">
         {grouped.map(([group, perms]) => (
           <div key={group} className="mb-3 last:mb-0">
-            <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="mb-1.5 px-1 text-xs font-semibold uppercase tracking-wide text-nx-ink-2">
               {group}
             </p>
             <div className="space-y-1">
               {perms.map((p) => (
                 <label
                   key={p.id}
-                  className="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted/50"
+                  className="flex cursor-pointer items-center gap-2 rounded-nx-sm px-2 py-1.5 text-sm hover:bg-nx-raised"
                 >
                   <Checkbox
                     checked={selected.has(p.id)}
@@ -364,7 +359,7 @@ function PermissionPicker({ vm, t }: { vm: CreateTenantVM; t: (key: string) => s
                     id={`perm-${p.id}`}
                   />
                   <span className="flex-1">{p.getLocalizedName()}</span>
-                  <span className="font-mono text-[10px] text-muted-foreground">{p.code}</span>
+                  <span className="font-mono text-[11px] text-nx-ink-2">{p.code}</span>
                 </label>
               ))}
             </div>
@@ -381,12 +376,12 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
   const isFree = vm.selectedEdition?.isFree === true;
 
   const subscriptionLabel = useMemo(() => {
-    if (isFree) return t("tenant.freeEditionLifetime") || "Free (Lifetime)";
+    if (isFree) return t("tenant.freeEditionLifetime");
     const map: Record<string, string> = {
-      Monthly: t("tenant.subscriptionTypes.monthly") || "Monthly",
-      Yearly: t("tenant.subscriptionTypes.yearly") || "Yearly",
-      Lifetime: t("tenant.subscriptionTypes.lifetime") || "Lifetime",
-      Trial: t("tenant.subscriptionTypes.trial") || "Trial",
+      Monthly: t("tenant.subscriptionTypes.monthly"),
+      Yearly: t("tenant.subscriptionTypes.yearly"),
+      Lifetime: t("tenant.subscriptionTypes.lifetime"),
+      Trial: t("tenant.subscriptionTypes.trial"),
     };
     return map[vm.form.subscriptionType] || vm.form.subscriptionType || "-";
   }, [vm.form.subscriptionType, isFree, t]);
@@ -397,17 +392,17 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
     : vm.form.currency;
 
   return (
-    <div className="space-y-2 rounded-xl border border-border/50 bg-muted/30 p-4 duration-nx-standard ease-nx-enter animate-in fade-in-0">
-      <h4 className="mb-3 text-sm font-semibold">{t("tenant.summary") || "Summary"}</h4>
+    <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0">
+      <h4 className="mb-3 text-sm font-semibold">{t("tenant.summary")}</h4>
       <SummaryRow
-        label={t("tenant.edition") || "Edition"}
+        label={t("tenant.edition")}
         value={vm.selectedEdition?.name || "-"}
       />
-      <SummaryRow label={t("tenant.subscriptionType") || "Billing"} value={subscriptionLabel} />
-      {!isFree && <SummaryRow label={t("tenant.currency") || "Currency"} value={currencyLabel} />}
+      <SummaryRow label={t("tenant.subscriptionType")} value={subscriptionLabel} />
+      {!isFree && <SummaryRow label={t("tenant.currency")} value={currencyLabel} />}
       {vm.form.promotionId && (
         <SummaryRow
-          label={t("tenant.promotion") || "Promotion"}
+          label={t("tenant.promotion")}
           value={
             vm.availablePromotions.find((p) => p.id === vm.form.promotionId)?.name ||
             vm.form.promoCode ||
@@ -418,15 +413,15 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
       )}
       {!vm.form.promotionId && vm.form.promoCode && (
         <SummaryRow
-          label={t("tenant.promotion") || "Promotion"}
+          label={t("tenant.promotion")}
           value={vm.form.promoCode}
           highlight
         />
       )}
       {vm.form.skipPayment && (
         <SummaryRow
-          label={t("tenant.payment") || "Payment"}
-          value={t("tenant.skipped") || "Skipped (Admin Override)"}
+          label={t("tenant.payment")}
+          value={t("tenant.skipped")}
           highlight
         />
       )}
@@ -445,7 +440,7 @@ function SummaryRow({
 }) {
   return (
     <div className="flex items-center justify-between text-sm">
-      <span className="text-muted-foreground">{label}</span>
+      <span className="text-nx-ink-2">{label}</span>
       <span className={highlight ? "font-medium text-warning" : "font-medium"}>{value}</span>
     </div>
   );

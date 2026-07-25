@@ -30,41 +30,41 @@ export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessPro
   return (
     <div className="mx-auto max-w-lg px-4 py-12" dir={direction}>
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-success/10 duration-nx-standard ease-nx-enter motion-safe:animate-in motion-safe:zoom-in-95">
-          <CheckCircle2 className="h-8 w-8 text-success" />
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-nx-lg bg-success/10 duration-nx-standard ease-nx-enter motion-safe:animate-in motion-safe:zoom-in-95">
+          <CheckCircle2 className="h-8 w-8 text-success" aria-hidden="true" />
         </div>
-        <h1 className="text-2xl font-bold duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
-          {t("tenant.created") || "Tenant Created Successfully!"}
+        <h1 className="text-xl font-bold duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+          {t("tenant.created")}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
-          {t("tenant.setupEmailSent") || "An account setup email has been sent to the admin."}
+        <p className="mt-2 text-sm text-nx-ink-2 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+          {t("tenant.setupEmailSent")}
         </p>
       </div>
 
-      <div className="space-y-4 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+      <div className="space-y-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
         {/* Admin details card */}
-        <div className="space-y-3 rounded-xl border border-border/60 bg-card p-5 shadow-sm">
+        <div className="space-y-3 rounded-nx-md border border-nx-line bg-nx-surface p-5">
           <div className="flex items-center gap-2.5 text-sm">
-            <Mail className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <span className="text-muted-foreground">{t("tenant.adminEmail") || "Email"}:</span>
+            <Mail className="h-4 w-4 shrink-0 text-nx-ink-2" aria-hidden="true" />
+            <span className="text-nx-ink-2">{t("tenant.adminEmail")}:</span>
             <span className="font-medium">{result.adminEmail}</span>
           </div>
           <div className="flex items-center gap-2.5 text-sm">
-            <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" />
-            <span className="text-muted-foreground">
-              {t("tenant.adminUsername") || "Username"}:
+            <Building2 className="h-4 w-4 shrink-0 text-nx-ink-2" aria-hidden="true" />
+            <span className="text-nx-ink-2">
+              {t("tenant.adminUsername")}:
             </span>
             <span className="font-mono font-medium">{result.adminUsername}</span>
           </div>
         </div>
 
         {/* Setup URL card */}
-        <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
-          <p className="mb-2.5 text-xs text-muted-foreground">
-            {t("tenant.setupUrlLabel") || "Account Setup Link (valid 24 hours):"}
+        <div className="rounded-nx-md border border-nx-accent bg-nx-accent-wash p-5">
+          <p className="mb-2.5 text-xs text-nx-ink-2">
+            {t("tenant.setupUrlLabel")}
           </p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 truncate rounded-lg border border-border/50 bg-muted/50 px-3 py-2 font-mono text-xs">
+            <code className="flex-1 truncate rounded-nx-md border border-nx-line bg-nx-raised px-3 py-2 font-mono text-xs">
               {result.accountSetupUrl}
             </code>
             <TooltipProvider>
@@ -76,24 +76,24 @@ export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessPro
                     className="h-9 w-9 shrink-0"
                     onClick={() => navigator.clipboard.writeText(result.accountSetupUrl)}
                   >
-                    <Copy className="h-3.5 w-3.5" />
+                    <Copy className="h-3.5 w-3.5" aria-hidden="true" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>{t("common.copy") || "Copy"}</TooltipContent>
+                <TooltipContent>{t("common.copy")}</TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <Button variant="outline" size="icon" className="h-9 w-9 shrink-0" asChild>
               <a href={result.accountSetupUrl} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-3.5 w-3.5" />
+                <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
             </Button>
           </div>
         </div>
 
         {/* Navigate to detail button */}
-        <Button className="h-12 w-full gap-2 text-base" onClick={vm.navigateToDetail}>
-          {t("tenant.viewTenantDetails") || "View Tenant Details"}
-          <ArrowRight className="h-4 w-4" />
+        <Button size="lg" className="w-full gap-2" onClick={vm.navigateToDetail}>
+          {t("tenant.viewTenantDetails")}
+          <ArrowRight className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
     </div>

@@ -261,6 +261,7 @@ export const en = {
     gettingReady: "We are getting everything ready for you...",
     free: "Free",
     step: "Step",
+    stepOfTotal: "Step {current} of {total}",
     descriptionAr: "Description (Ar)",
     descriptionEn: "Description (En)",
     noResultsFound: "No results found",
@@ -652,13 +653,25 @@ export const en = {
       emptyState: "No country found.",
     },
     searchableSelect: {
-      placeholder: "Select......",
+      placeholder: "Search...",
     },
     select: {
-      placeholder: "Select......",
+      placeholder: "Select...",
+      /** Live-region readout so search results are announced, not just drawn. */
+      optionsAvailable: "{count} options available",
     },
     multiSelect: {
       title: "Multi Select",
+      /**
+       * The generic multi-select default. It used to fall through to
+       * placeholders.selectTechnologies, so any multi-select whose caller
+       * omitted a placeholder said "Select technologies" — on tenants, roles,
+       * permissions and everything else.
+       */
+      placeholder: "Select...",
+      searchPlaceholder: "Search...",
+      /** The "+N" chip that opens the remaining selections. */
+      moreSelected: "{count} more selected",
       searchStates: {
         noResults: "No Results",
         searching: "Searching ......",

@@ -425,6 +425,7 @@ export const en = {
     setupEmailSent:
       "An account setup email has been sent to the admin. They will set their own password.",
     setupUrlLabel: "Account Setup Link (valid 24 hours):",
+    createSteps: "Create tenant steps",
     createTitle: "Create New Tenant",
     createSubtitle: "Set up a new organization with an administrator and subscription plan.",
     stepOrganization: "Organization",

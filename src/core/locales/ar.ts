@@ -1237,6 +1237,7 @@ export const ar = {
     updatedAt: "تم التحديث في",
     logout: "تسجيل الخروج",
     step: "الخطوة",
+    stepOfTotal: "الخطوة {current} من {total}",
     from: "من",
     continue: "تواصل",
     total: "المجموع",
@@ -1487,12 +1488,16 @@ export const ar = {
       emptyState: "لم يتم العثور على أي بلد.",
     },
     select: {
-      placeholder: "اختر......",
+      placeholder: "اختر...",
+      optionsAvailable: "{count} خيارات متاحة",
     },
     searchableSelect: {
-      placeholder: "ابحث......",
+      placeholder: "ابحث...",
     },
     multiSelect: {
+      placeholder: "اختر...",
+      searchPlaceholder: "ابحث...",
+      moreSelected: "{count} محدد إضافي",
       searchStates: {
         selected: "المحدد",
         searching: "جاري البحث .....",
