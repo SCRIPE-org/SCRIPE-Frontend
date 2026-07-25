@@ -1,11 +1,11 @@
 // FILE-EXCEPTION: file length
 /**
- * Pricing Tab â€” Redesigned with Hybrid Pricing Model
+ * Pricing Tab — Redesigned with Hybrid Pricing Model
  *
  * 3-Section Layout:
- * 1. Base Pricing (USD) â€” Always visible, anchor currency
- * 2. Currency Overrides â€” Optional, with auto-suggest from exchange rates
- * 3. Live Preview â€” Shows what tenants would actually pay
+ * 1. Base Pricing (USD) — Always visible, anchor currency
+ * 2. Currency Overrides — Optional, with auto-suggest from exchange rates
+ * 3. Live Preview — Shows what tenants would actually pay
  */
 "use client";
 
@@ -85,7 +85,7 @@ export const PricingTab = memo(function PricingTab({
     }
   };
 
-  // â”€â”€ Loading â”€â”€
+  // ── Loading ──
   if (vm.isLoading) {
     return (
       <div className="space-y-4">
@@ -109,7 +109,7 @@ export const PricingTab = memo(function PricingTab({
     );
   }
 
-  // â”€â”€ Error â”€â”€
+  // ── Error ──
   if (vm.error) {
     return (
       <Card className="border-destructive/50">
@@ -126,9 +126,9 @@ export const PricingTab = memo(function PricingTab({
   return (
     <>
       <div className="space-y-4">
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ═══════════════════════════════════════════════════ */}
         {/* SECTION 1: BASE PRICING (USD)                     */}
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ═══════════════════════════════════════════════════ */}
         <Card className="overflow-hidden">
           <CardHeader className="py-3">
             <div className="flex items-center gap-2">
@@ -310,9 +310,9 @@ export const PricingTab = memo(function PricingTab({
           </CardContent>
         </Card>
 
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ═══════════════════════════════════════════════════ */}
         {/* SECTION 2: CURRENCY OVERRIDES                     */}
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ═══════════════════════════════════════════════════ */}
         <Card className="overflow-hidden">
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
@@ -462,9 +462,9 @@ export const PricingTab = memo(function PricingTab({
           </CardContent>
         </Card>
 
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ═══════════════════════════════════════════════════ */}
         {/* SECTION 3: LIVE PREVIEW (Collapsible)              */}
-        {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
+        {/* ═══════════════════════════════════════════════════ */}
         {vm.usdMonthly > 0 && (
           <Card className="overflow-hidden">
             <CardHeader
@@ -545,7 +545,7 @@ export const PricingTab = memo(function PricingTab({
         )}
       </div>
 
-      {/* â•â•â•â•â•â•â• STICKY SAVE BAR â•â•â•â•â•â•â• */}
+      {/* ═══════ STICKY SAVE BAR ═══════ */}
       {vm.isDirty && (
         <div className="fixed inset-x-0 bottom-0 z-50">
           <div className="border-t bg-background/95 shadow-nx-bar-top backdrop-blur-md">
@@ -599,7 +599,7 @@ export const PricingTab = memo(function PricingTab({
         </div>
       )}
 
-      {/* â•â•â•â•â•â•â• ADD CURRENCY OVERRIDE DIALOG â•â•â•â•â•â•â• */}
+      {/* ═══════ ADD CURRENCY OVERRIDE DIALOG ═══════ */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -615,7 +615,7 @@ export const PricingTab = memo(function PricingTab({
               type="searchable"
               options={vm.availableCurrencies.map((c) => ({
                 value: c.code,
-                label: `${c.flag} ${c.code} â€” ${c.name}`,
+                label: `${c.flag} ${c.code} — ${c.name}`,
               }))}
               value={selectedCurrency}
               onValueChange={(value: string | string[]) =>
@@ -642,7 +642,7 @@ export const PricingTab = memo(function PricingTab({
         </DialogContent>
       </Dialog>
 
-      {/* â•â•â•â•â•â•â• SAVE AS VERSION DIALOG â•â•â•â•â•â•â• */}
+      {/* ═══════ SAVE AS VERSION DIALOG ═══════ */}
       <Dialog open={showVersionDialog} onOpenChange={setShowVersionDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -690,7 +690,7 @@ export const PricingTab = memo(function PricingTab({
         </DialogContent>
       </Dialog>
 
-      {/* â•â•â•â•â•â•â• APPLY NOW CONFIRMATION DIALOG â•â•â•â•â•â•â• */}
+      {/* ═══════ APPLY NOW CONFIRMATION DIALOG ═══════ */}
       <Dialog open={showApplyDialog} onOpenChange={setShowApplyDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
