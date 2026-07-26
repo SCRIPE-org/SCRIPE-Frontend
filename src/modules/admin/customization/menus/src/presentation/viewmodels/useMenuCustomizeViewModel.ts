@@ -317,7 +317,7 @@ export function useMenuCustomizeViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
       refreshNavigation();
-      success({ title: t("menus.overrideRemoved") || "Override removed" });
+      success({ title: t("menus.overrideRemoved") });
     },
     onError: (err: any) => {
       toastError({ title: err?.message ?? t("common.error") });
@@ -381,7 +381,7 @@ export function useMenuCustomizeViewModel() {
       }
       queryClient.invalidateQueries({ queryKey: ["menus", "tree"] });
       refreshNavigation();
-      success({ title: t("menus.allOverridesReset") || "All customizations removed" });
+      success({ title: t("menus.allOverridesReset") });
     } catch (err: any) {
       toastError({ title: err?.message ?? t("common.error") });
     } finally {

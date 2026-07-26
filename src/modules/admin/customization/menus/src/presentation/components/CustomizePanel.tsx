@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Separator } from "@core/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { EmptyState } from "@core/ui/empty-state";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { MenuTreeNode, MenuItemOverrideInfo } from "../../domain/entities/MenuItem";
 import type { OverrideFormData, FlatMenuItem } from "../viewmodels/useMenuCustomizeViewModel";
 import {
@@ -130,7 +131,7 @@ export function CustomizePanel({
     );
   }
 
-  const displayName = language === "ar" ? selectedNode.nameAr : selectedNode.nameEn;
+  const displayName = resolveBilingualLabel(selectedNode.nameEn, selectedNode.nameAr, language);
   const hasChildren = selectedNode.children.length > 0;
 
   return (
@@ -237,7 +238,7 @@ export function CustomizePanel({
               {parentOptions.map((item) => (
                 <SelectItem key={item.id} value={item.id}>
                   <span style={{ paddingInlineStart: `${item.depth * 12}px` }}>
-                    {language === "ar" ? item.nameAr : item.nameEn}
+                    {resolveBilingualLabel(item.nameEn, item.nameAr, language)}
                   </span>
                 </SelectItem>
               ))}

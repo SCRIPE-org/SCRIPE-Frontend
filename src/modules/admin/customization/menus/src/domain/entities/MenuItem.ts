@@ -5,6 +5,7 @@
  * Supports bilingual names (English/Arabic) matching backend.
  */
 import type { BaseEntity } from "@core/interfaces/common.interface";
+import { resolveBilingualLabel } from "@core/common/utils";
 
 /**
  * Menu item data from API (matches backend MenuItemResponse)
@@ -50,7 +51,7 @@ export class MenuItem {
    * Get localized name based on current language
    */
   getLocalizedName(language: string): string {
-    return language === "ar" ? this.data.nameAr : this.data.nameEn;
+    return resolveBilingualLabel(this.data.nameEn, this.data.nameAr, language);
   }
 
   get href(): string | undefined {

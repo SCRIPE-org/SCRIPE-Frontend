@@ -287,7 +287,7 @@ export function LoginPreviewShell() {
       >
         <div className="mb-2 text-center">
           <p className="login-subtitle text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-            {t("auth.forgotPasswordDesc") || "Enter your email and we'll send you a reset link."}
+            {t("auth.forgotPasswordDesc")}
           </p>
         </div>
         <div className="space-y-2">
@@ -295,13 +295,13 @@ export function LoginPreviewShell() {
             htmlFor="preview-email"
             className="login-label text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]"
           >
-            {t("auth.email") || "Email"}
+            {t("auth.email")}
           </Label>
           <div className="relative">
             <Mail className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
             <Input
               id="preview-email"
-              placeholder={t("auth.emailPlaceholder") || "name@example.com"}
+              placeholder={t("auth.emailPlaceholder")}
               className="login-input ps-9"
               readOnly
               style={inputStyle}
@@ -313,14 +313,14 @@ export function LoginPreviewShell() {
           className="login-button w-full text-sm font-semibold"
           style={buttonStyle}
         >
-          {t("auth.sendResetLink") || "Send Reset Link"}
+          {t("auth.sendResetLink")}
         </Button>
         <button
           type="button"
           className="flex items-center justify-center gap-1.5 text-sm text-[var(--login-primary,hsl(var(--primary)))] hover:underline"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          {t("auth.backToLogin") || "Back to Login"}
+          {t("auth.backToLogin")}
         </button>
       </form>
       <SlotRenderer slotId="login.form.below" slotConfig={slotConfig} className="mt-6" />
@@ -342,7 +342,7 @@ export function LoginPreviewShell() {
       >
         <div className="mb-2 text-center">
           <p className="login-subtitle text-sm text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
-            {t("auth.resetPasswordDesc") || "Enter your new password below."}
+            {t("auth.resetPasswordDesc")}
           </p>
         </div>
         <div className="space-y-2">
@@ -350,7 +350,7 @@ export function LoginPreviewShell() {
             htmlFor="preview-new-pw"
             className="login-label text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]"
           >
-            {t("auth.newPassword") || "New Password"}
+            {t("auth.newPassword")}
           </Label>
           <div className="relative">
             <KeyRound className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
@@ -369,7 +369,7 @@ export function LoginPreviewShell() {
             htmlFor="preview-confirm-pw"
             className="login-label text-sm font-medium text-[var(--login-text,hsl(var(--foreground)))]"
           >
-            {t("auth.confirmPassword") || "Confirm Password"}
+            {t("auth.confirmPassword")}
           </Label>
           <div className="relative">
             <Lock className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--login-text-muted,hsl(var(--muted-foreground)))]" />
@@ -388,7 +388,7 @@ export function LoginPreviewShell() {
           className="login-button w-full text-sm font-semibold"
           style={buttonStyle}
         >
-          {t("auth.resetPassword") || "Reset Password"}
+          {t("auth.resetPassword")}
         </Button>
       </form>
       <SlotRenderer slotId="login.form.below" slotConfig={slotConfig} className="mt-6" />
@@ -529,7 +529,7 @@ export function LoginPreviewShell() {
 
   // ”--€ Top Actions (visual only) ”--€
   const topActions = (
-    <div className="absolute left-8 right-8 top-8 z-20 flex items-center justify-end gap-5">
+    <div className="absolute start-8 end-8 top-8 z-20 flex items-center justify-end gap-5">
       <div className="flex gap-1">
         <LanguageSwitcher />
         <ThemeSwitcher />
@@ -1368,7 +1368,7 @@ export function LoginPreviewShell() {
                 {subtitle}
               </p>
               <svg
-                className="absolute -bottom-1 left-0 w-full"
+                className="absolute -bottom-1 start-0 w-full"
                 viewBox="0 0 1440 100"
                 preserveAspectRatio="none"
                 style={{ height: "60px" }}
@@ -1593,7 +1593,7 @@ export function LoginPreviewShell() {
                   {subtitle}
                 </p>
               </div>
-              <div className="absolute -bottom-px left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
+              <div className="absolute -bottom-px start-0 end-0 h-1 bg-gradient-to-r from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
             </div>
             <div
               className="flex flex-1 flex-col items-center justify-center px-6 py-12"

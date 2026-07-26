@@ -428,7 +428,7 @@ export function BuilderImage({
   if (!src) {
     return (
       <div
-        className="bg-nx-raised-2/40 flex h-32 w-full items-center justify-center rounded-nx-md border border-dashed border-nx-line"
+        className="flex h-32 w-full items-center justify-center rounded-nx-md border border-dashed border-nx-line bg-[color:color-mix(in_srgb,var(--nx-raised-2)_40%,transparent)]"
         style={{
           borderRadius: `${borderRadius}px`,
           maxWidth: typeof maxWidth === "number" ? `${maxWidth}px` : maxWidth,
@@ -646,8 +646,8 @@ export function BuilderVideoBg({
   const { t } = useI18n();
   if (!src) {
     return (
-      <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-nx-md border border-dashed border-primary/30 bg-gradient-to-br from-primary/10 to-info/10">
-        <p className="text-xs text-primary">{t("studio.builder.preview.videoBgPlaceholder")}</p>
+      <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-nx-md border border-dashed border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-gradient-to-br from-[color:color-mix(in_srgb,var(--nx-accent)_10%,transparent)] to-info/10">
+        <p className="text-xs text-nx-accent">{t("studio.builder.preview.videoBgPlaceholder")}</p>
       </div>
     );
   }

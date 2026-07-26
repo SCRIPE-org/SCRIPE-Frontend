@@ -176,7 +176,7 @@ export function useThemeGalleryViewModel() {
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -189,13 +189,13 @@ export function useThemeGalleryViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: galleryKeys.all });
       success({
-        title: t("studio.marketplace.apply") || "Theme Applied",
-        description: t("studio.marketplace.applied") || "Theme applied to your draft.",
+        title: t("studio.marketplace.apply"),
+        description: t("studio.marketplace.applied"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },

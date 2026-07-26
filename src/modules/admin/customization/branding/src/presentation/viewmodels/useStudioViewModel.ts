@@ -758,7 +758,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       }
     },
     onSuccess: () => {
-      toastSuccess({ title: t("studio.publishSuccess") || "Published successfully" });
+      toastSuccess({ title: t("studio.publishSuccess") });
       setIsDirty(false);
       setLastSavedAt(new Date());
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
@@ -770,7 +770,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       toastError({
         title: isConflict
           ? t("studio.versionConflict")
-          : t("studio.publishFailed") || "Publish failed",
+          : t("studio.publishFailed"),
         description: error.message,
       });
     },
@@ -794,12 +794,12 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       }
     },
     onSuccess: () => {
-      toastSuccess({ title: t("studio.draftSaved") || "Draft saved" });
+      toastSuccess({ title: t("studio.draftSaved") });
       setLastSavedAt(new Date());
     },
     onError: (error: Error) => {
       toastError({
-        title: t("studio.draftSaveFailed") || "Failed to save draft",
+        title: t("studio.draftSaveFailed"),
         description: error.message,
       });
     },
@@ -836,16 +836,14 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     },
     onSuccess: () => {
       toastSuccess({
-        title: t("studio.saveTheme.success") || "Theme saved!",
-        description:
-          t("studio.saveTheme.successDesc") ||
-          "Your custom theme is now available in the marketplace.",
+        title: t("studio.saveTheme.success"),
+        description: t("studio.saveTheme.successDesc"),
       });
     },
     onError: (err: any) => {
       const msg = err?.message || err?.response?.data?.error || "Failed to save theme";
       toastError({
-        title: t("studio.saveTheme.failed") || "Save theme failed",
+        title: t("studio.saveTheme.failed"),
         description: msg,
       });
     },
@@ -855,7 +853,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   const discardMutation = useMutation({
     mutationFn: () => repository.discardDraft(),
     onSuccess: () => {
-      toastSuccess({ title: t("studio.discardSuccess") || "Draft discarded" });
+      toastSuccess({ title: t("studio.discardSuccess") });
       setIsDirty(false);
       setShowDiscardConfirm(false);
       // Restore to currently published design (all fields, not just a few)
@@ -876,7 +874,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     onError: (error: Error) => {
       setShowDiscardConfirm(false);
       toastError({
-        title: t("studio.discardFailed") || "Discard failed",
+        title: t("studio.discardFailed"),
         description: error.message,
       });
     },
@@ -1050,7 +1048,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       await repository.resetBranding(resetType);
     },
     onSuccess: () => {
-      toastSuccess({ title: t("studio.resetSuccess") || "Branding reset successfully" });
+      toastSuccess({ title: t("studio.resetSuccess") });
       setIsDirty(false);
       setIsPreviewingTheme(false);
       savedDraftRef.current = null;
@@ -1058,7 +1056,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       queryClient.invalidateQueries({ queryKey: ["customization"] });
     },
     onError: (error: Error) => {
-      toastError({ title: t("studio.resetFailed") || "Reset failed", description: error.message });
+      toastError({ title: t("studio.resetFailed"), description: error.message });
     },
   });
 

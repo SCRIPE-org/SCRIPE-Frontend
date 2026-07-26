@@ -14,7 +14,7 @@ import { Badge } from "@core/ui/badge";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import { MenuOverrideScope } from "../../domain/entities/MenuItemRequests";
 import { ChevronRight, ChevronDown, FolderOpen, FileText, EyeOff, Pencil } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -100,7 +100,7 @@ function OriginalTreeNode({
   const isHidden = override?.isHidden ?? false;
 
   // BASE name — always show original (not overridden)
-  const displayName = language === "ar" ? node.nameAr : node.nameEn;
+  const displayName = resolveBilingualLabel(node.nameEn, node.nameAr, language);
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {

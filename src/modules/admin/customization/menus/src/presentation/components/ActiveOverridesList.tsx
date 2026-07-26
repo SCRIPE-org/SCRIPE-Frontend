@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
 import type { ActiveOverrideEntry } from "../viewmodels/useMenuCustomizeViewModel";
 import { Trash2, Pencil, EyeOff, ArrowUpDown, FolderInput, Sparkles } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -74,7 +74,7 @@ export function ActiveOverridesList({
       <CardContent>
         <div className="space-y-1">
           {overrides.map((entry) => {
-            const itemName = language === "ar" ? entry.itemNameAr : entry.itemNameEn;
+            const itemName = resolveBilingualLabel(entry.itemNameEn, entry.itemNameAr, language);
             const isSelected = selectedItemId === entry.menuItemId;
 
             return (

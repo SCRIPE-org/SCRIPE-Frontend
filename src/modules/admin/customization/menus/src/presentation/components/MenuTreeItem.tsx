@@ -39,7 +39,7 @@ import {
   FolderOpen,
   FileText,
 } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -136,7 +136,7 @@ export function MenuTreeItem({
 
   const hasChildren = node.children.length > 0;
   const isExpanded = expandedNodes.has(node.id);
-  const displayName = language === "ar" ? node.nameAr : node.nameEn;
+  const displayName = resolveBilingualLabel(node.nameEn, node.nameAr, language);
   const isDragging = draggedNode?.id === node.id;
   const isDropTarget = dropTarget?.nodeId === node.id;
   const levelColor = LEVEL_COLORS[depth % LEVEL_COLORS.length];

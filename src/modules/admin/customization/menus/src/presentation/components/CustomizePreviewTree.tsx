@@ -27,7 +27,7 @@ import {
   GripVertical,
   Sparkles,
 } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 
 /* -------------------------------------------------------------------------- */
 /*  Props                                                                      */
@@ -143,11 +143,12 @@ function PreviewTreeNode({
   const dropPosition = isDropTarget ? dropTarget?.position : null;
 
   // Effective display name — already overridden by computeEffectiveTree
-  const displayName = language === "ar" ? node.nameAr : node.nameEn;
+  const displayName = resolveBilingualLabel(node.nameEn, node.nameAr, language);
 
   // Show change info if the name differs from original
   const nameChanged =
-    language === "ar" ? node.nameAr !== node.originalNameAr : node.nameEn !== node.originalNameEn;
+    resolveBilingualLabel(node.nameEn, node.nameAr, language) !==
+    resolveBilingualLabel(node.originalNameEn, node.originalNameAr, language);
   const orderChanged = node.order !== node.originalOrder;
 
   /* ── DnD Handlers ────────────────────────────────────────────────── */

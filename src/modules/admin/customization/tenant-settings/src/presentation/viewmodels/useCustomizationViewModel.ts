@@ -132,14 +132,14 @@ export function useCustomizationViewModel() {
       customizationService.publishBranding({ expectedVersion }),
     onSuccess: () => {
       toastSuccess({
-        title: t("tenantSettings.customization.publishSuccess") || "Published successfully",
+        title: t("tenantSettings.customization.publishSuccess"),
       });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
       toastError({
-        title: t("tenantSettings.customization.publishFailed") || "Publish failed",
+        title: t("tenantSettings.customization.publishFailed"),
         description: error.message,
       });
     },
@@ -150,14 +150,14 @@ export function useCustomizationViewModel() {
     mutationFn: () => customizationService.discardDraft(),
     onSuccess: () => {
       toastSuccess({
-        title: t("tenantSettings.customization.discardSuccess") || "Draft discarded",
+        title: t("tenantSettings.customization.discardSuccess"),
       });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
       toastError({
-        title: t("tenantSettings.customization.discardFailed") || "Discard failed",
+        title: t("tenantSettings.customization.discardFailed"),
         description: error.message,
       });
     },
@@ -168,14 +168,14 @@ export function useCustomizationViewModel() {
     mutationFn: (targetVersion: number) => customizationService.rollback(targetVersion),
     onSuccess: () => {
       toastSuccess({
-        title: t("tenantSettings.customization.rollbackSuccess") || "Rollback successful",
+        title: t("tenantSettings.customization.rollbackSuccess"),
       });
       queryClient.invalidateQueries({ queryKey: ["tenantSettings"] });
       queryClient.invalidateQueries({ queryKey: customizationKeys.all });
     },
     onError: (error: Error) => {
       toastError({
-        title: t("tenantSettings.customization.rollbackFailed") || "Rollback failed",
+        title: t("tenantSettings.customization.rollbackFailed"),
         description: error.message,
       });
     },
@@ -189,7 +189,7 @@ export function useCustomizationViewModel() {
       return;
     },
     onSuccess: () => {
-      toastSuccess({ title: t("tenantSettings.customization.prefsSaved") || "Preferences saved" });
+      toastSuccess({ title: t("tenantSettings.customization.prefsSaved") });
 
       // 1. Write scr_pref_* keys (tenant fallback defaults)
       localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefsForm.theme);
@@ -213,7 +213,7 @@ export function useCustomizationViewModel() {
     },
     onError: (error: Error) => {
       toastError({
-        title: t("tenantSettings.customization.prefsFailed") || "Failed to save preferences",
+        title: t("tenantSettings.customization.prefsFailed"),
         description: error.message,
       });
     },

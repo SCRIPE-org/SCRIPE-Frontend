@@ -36,7 +36,6 @@ import {
   Wand2,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { BRAND } from "@core/config/branding";
 import type { DashboardThemeSettings } from "../../domain/entities/StudioDraft";
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -794,14 +793,14 @@ function ColorSwatch({
     <button
       onClick={() => onSelect(value)}
       className={cn(
-        "flex h-7 w-7 items-center justify-center rounded-full border-2 transition-all hover:scale-110",
+        "flex h-7 w-7 items-center justify-center rounded-full border-2 transition-[border-color,transform] duration-nx-micro ease-nx-enter hover:scale-110 motion-reduce:transition-none",
         selected
-          ? "border-primary shadow-md"
-          : "border-transparent hover:border-muted-foreground/30"
+          ? "border-nx-accent shadow-nx-sm"
+          : "border-transparent hover:border-[color:color-mix(in_srgb,var(--nx-ink-3)_30%,transparent)]"
       )}
       title={value}
     >
-      <div className="h-5 w-5 rounded-full shadow-sm" style={{ background: color }}>
+      <div className="h-5 w-5 rounded-full shadow-nx-sm" style={{ background: color }}>
         {selected && <Check className="h-5 w-5 p-0.5 text-white" />}
       </div>
     </button>
@@ -839,10 +838,10 @@ function OptionGrid<T extends string>({
           key={opt}
           onClick={() => onSelect(opt)}
           className={cn(
-            "truncate rounded-md border px-2 py-1.5 text-[10px] font-medium transition-all",
+            "truncate rounded-nx-sm border px-2 py-1.5 text-[10px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
             selected === opt
-              ? "border-primary bg-primary/10 text-primary"
-              : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
+              ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+              : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
           )}
         >
           {labelFn ? labelFn(opt) : opt}
@@ -863,7 +862,7 @@ function ToggleRow({
 }) {
   return (
     <div className="flex items-center justify-between py-1">
-      <span className="text-[11px] text-foreground">{label}</span>
+      <span className="text-[11px] text-nx-ink">{label}</span>
       <Switch checked={checked} onCheckedChange={onChange} />
     </div>
   );
@@ -881,7 +880,7 @@ function HexInput({
   return (
     <div className="flex items-center gap-2">
       <div
-        className="h-6 w-6 shrink-0 rounded border border-border/50 shadow-sm"
+        className="h-6 w-6 shrink-0 rounded-nx-sm border border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] shadow-nx-sm"
         style={{ background: value }}
       />
       <Input
@@ -891,7 +890,7 @@ function HexInput({
         maxLength={7}
         placeholder="#000000"
       />
-      <span className="shrink-0 text-[9px] text-muted-foreground">{label}</span>
+      <span className="shrink-0 text-[9px] text-nx-ink-3">{label}</span>
     </div>
   );
 }
@@ -932,49 +931,49 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
   };
 
   // ── Localized label functions for OptionGrid ──
-  const shadowLabel = useCallback((v: string) => t(`studio.dashboard.shadow.${v}`) || v, [t]);
-  const bgModeLabel = useCallback((v: string) => t(`studio.dashboard.bgMode.${v}`) || v, [t]);
-  const fontSizeLabel = useCallback((v: string) => t(`studio.dashboard.fontSizes.${v}`) || v, [t]);
-  const radiusLabel = useCallback((v: string) => t(`studio.dashboard.radii.${v}`) || v, [t]);
-  const spacingLabel = useCallback((v: string) => t(`studio.dashboard.spacing.${v}`) || v, [t]);
-  const cardLabel = useCallback((v: string) => t(`studio.dashboard.card.${v}`) || v, [t]);
-  const animationLabel = useCallback((v: string) => t(`studio.dashboard.animation.${v}`) || v, [t]);
-  const hoverLabel = useCallback((v: string) => t(`studio.dashboard.hover.${v}`) || v, [t]);
-  const intensityLabel = useCallback((v: string) => t(`studio.dashboard.intensity.${v}`) || v, [t]);
-  const logoTypeLabel = useCallback((v: string) => t(`studio.dashboard.logoTypes.${v}`) || v, [t]);
+  const shadowLabel = useCallback((v: string) => t(`studio.dashboard.shadow.${v}`), [t]);
+  const bgModeLabel = useCallback((v: string) => t(`studio.dashboard.bgMode.${v}`), [t]);
+  const fontSizeLabel = useCallback((v: string) => t(`studio.dashboard.fontSizes.${v}`), [t]);
+  const radiusLabel = useCallback((v: string) => t(`studio.dashboard.radii.${v}`), [t]);
+  const spacingLabel = useCallback((v: string) => t(`studio.dashboard.spacing.${v}`), [t]);
+  const cardLabel = useCallback((v: string) => t(`studio.dashboard.card.${v}`), [t]);
+  const animationLabel = useCallback((v: string) => t(`studio.dashboard.animation.${v}`), [t]);
+  const hoverLabel = useCallback((v: string) => t(`studio.dashboard.hover.${v}`), [t]);
+  const intensityLabel = useCallback((v: string) => t(`studio.dashboard.intensity.${v}`), [t]);
+  const logoTypeLabel = useCallback((v: string) => t(`studio.dashboard.logoTypes.${v}`), [t]);
   const logoAnimLabel = useCallback(
-    (v: string) => t(`studio.dashboard.logoAnimations.${v}`) || v,
+    (v: string) => t(`studio.dashboard.logoAnimations.${v}`),
     [t]
   );
-  const logoSizeLabel = useCallback((v: string) => t(`studio.dashboard.logoSizes.${v}`) || v, [t]);
-  const navStyleLabel = useCallback((v: string) => t(`studio.dashboard.navStyles.${v}`) || v, [t]);
+  const logoSizeLabel = useCallback((v: string) => t(`studio.dashboard.logoSizes.${v}`), [t]);
+  const navStyleLabel = useCallback((v: string) => t(`studio.dashboard.navStyles.${v}`), [t]);
   const iconStyleLabel = useCallback(
-    (v: string) => t(`studio.dashboard.iconStyles.${v}`) || v,
+    (v: string) => t(`studio.dashboard.iconStyles.${v}`),
     [t]
   );
   const toastStyleLabel = useCallback(
-    (v: string) => t(`studio.dashboard.toastStyles.${v}`) || v,
+    (v: string) => t(`studio.dashboard.toastStyles.${v}`),
     [t]
   );
-  const sidebarStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`) || v, [t]);
-  const headerStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`) || v, [t]);
+  const sidebarStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`), [t]);
+  const headerStyleLabel = useCallback((v: string) => t(`studio.dashboard.styles.${v}`), [t]);
   const sidebarPosLabel = useCallback(
     (v: string) => {
       return v === "left"
-        ? t("studio.dashboard.sidebarPositionLeft") || "Left"
-        : t("studio.dashboard.sidebarPositionRight") || "Right";
+        ? t("studio.dashboard.sidebarPositionLeft")
+        : t("studio.dashboard.sidebarPositionRight");
     },
     [t]
   );
   // Labels for new background/gradient settings
-  const bgThemeLabel = useCallback((v: string) => t(`studio.dashboard.bgTheme.${v}`) || v, [t]);
+  const bgThemeLabel = useCallback((v: string) => t(`studio.dashboard.bgTheme.${v}`), [t]);
   const gradientThemeLabel = useCallback(
-    (v: string) => t(`studio.dashboard.gradientTheme.${v}`) || v,
+    (v: string) => t(`studio.dashboard.gradientTheme.${v}`),
     [t]
   );
   // Generic component style label
   const componentStyleLabel = useCallback(
-    (v: string) => t(`studio.dashboard.styles.${v}`) || v,
+    (v: string) => t(`studio.dashboard.styles.${v}`),
     [t]
   );
 
@@ -983,7 +982,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
     () =>
       COMPONENT_STYLES.map((cs) => ({
         ...cs,
-        label: t(`studio.dashboard.component.${cs.localeKey}`) || cs.localeKey,
+        label: t(`studio.dashboard.component.${cs.localeKey}`),
       })),
     [t]
   );
@@ -1008,7 +1007,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
   return (
     <div className="space-y-0">
       {/* Info banner */}
-      <div className="mb-3 flex items-start gap-2 rounded-lg border border-info/20 bg-info/5 p-3">
+      <div className="mb-3 flex items-start gap-2 rounded-nx-md border border-info/20 bg-info/5 p-3">
         <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
         <p className="text-[10px] leading-relaxed text-info">{t("studio.dashboard.info")}</p>
       </div>
@@ -1027,13 +1026,13 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
               key={preset.id}
               onClick={() => applyPreset(preset)}
               className={cn(
-                "group relative flex flex-col items-start gap-1 rounded-lg border p-2.5 text-left transition-all",
-                "border-border/50 hover:border-primary/40 hover:shadow-sm"
+                "group relative flex flex-col items-start gap-1 rounded-nx-md border p-2.5 text-start transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:shadow-nx-sm"
               )}
             >
               {/* Accent bar */}
               <div
-                className="absolute inset-x-0 top-0 h-1 rounded-t-lg transition-opacity group-hover:opacity-100"
+                className="absolute inset-x-0 top-0 h-1 rounded-t-nx-md transition-opacity duration-nx-micro ease-nx-enter group-hover:opacity-100 motion-reduce:transition-none"
                 style={{
                   background: preset.accentEnd
                     ? `linear-gradient(to right, ${preset.accent}, ${preset.accentEnd})`
@@ -1043,11 +1042,11 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
               />
               <div className="flex items-center gap-1.5 pt-0.5">
                 <span className="text-sm">{preset.icon}</span>
-                <span className="text-[10px] font-semibold text-foreground">
+                <span className="text-[10px] font-semibold text-nx-ink">
                   {t(`studio.dashboard.preset.${preset.localeKey}`)}
                 </span>
               </div>
-              <span className="text-[9px] leading-tight text-muted-foreground/70">
+              <span className="text-[9px] leading-tight text-[color:color-mix(in_srgb,var(--nx-ink-3)_70%,transparent)]">
                 {t(`studio.dashboard.presetDesc.${preset.localeKey}`)}
               </span>
             </button>
@@ -1065,19 +1064,19 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       >
         {/* Layout Template Grid */}
         <div className="space-y-1.5">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.layoutTemplate")}
           </Label>
-          <div className="scrollbar-thin grid max-h-[180px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+          <div className="scrollbar-thin grid max-h-[180px] grid-cols-3 gap-1 overflow-y-auto pe-1">
             {LAYOUT_TEMPLATES.map((tmpl) => (
               <button
                 key={tmpl}
                 onClick={() => set("layoutTemplate", tmpl)}
                 className={cn(
-                  "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                  "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   settings.layoutTemplate === tmpl
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/50 text-muted-foreground hover:border-primary/30"
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                 )}
               >
                 {tmpl}
@@ -1088,7 +1087,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Sidebar Position */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.sidebarPosition")}
           </Label>
           <OptionGrid
@@ -1102,7 +1101,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Sidebar & Header Style */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.sidebarStyle")}
           </Label>
           <OptionGrid
@@ -1114,7 +1113,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.headerStyle")}
           </Label>
           <OptionGrid
@@ -1149,7 +1148,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
       >
         {/* Primary Color Theme */}
         <div className="space-y-1.5">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.colorTheme")}
           </Label>
           <div className="flex flex-wrap gap-1.5">
@@ -1167,7 +1166,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Secondary Color Theme */}
         <div className="space-y-1.5">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.secondaryColor")}
           </Label>
           <div className="flex flex-wrap gap-1.5">
@@ -1185,7 +1184,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Shadow Intensity */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.shadowIntensity")}
           </Label>
           <OptionGrid
@@ -1199,7 +1198,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Background Mode */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.backgroundMode")}
           </Label>
           <OptionGrid
@@ -1213,8 +1212,8 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Gradient controls (shown when gradient mode) */}
         {settings.backgroundMode === "gradient" && (
-          <div className="space-y-2 rounded-lg border border-border/30 bg-muted/20 p-2">
-            <Label className="text-[9px] font-medium uppercase text-muted-foreground">
+          <div className="space-y-2 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] p-2">
+            <Label className="text-[9px] font-medium uppercase text-nx-ink-3">
               {t("studio.dashboard.gradientDirection")}
             </Label>
             <div className="grid grid-cols-4 gap-1">
@@ -1223,10 +1222,10 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
                   key={dir}
                   onClick={() => set("gradientDirection", dir)}
                   className={cn(
-                    "rounded border px-1.5 py-1 text-[9px] transition-all",
+                    "rounded-nx-sm border px-1.5 py-1 text-[9px] transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     settings.gradientDirection === dir
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border/30 text-muted-foreground hover:border-primary/30"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      : "border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                   )}
                 >
                   {dir}
@@ -1246,19 +1245,19 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
             {/* Light Gradient Theme */}
             <div className="space-y-1 pt-1">
-              <Label className="text-[9px] font-medium uppercase text-muted-foreground">
-                {t("studio.dashboard.lightGradientTheme") || "Light Gradient"}
+              <Label className="text-[9px] font-medium uppercase text-nx-ink-3">
+                {t("studio.dashboard.lightGradientTheme")}
               </Label>
-              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {LIGHT_GRADIENT_THEMES.map((gt) => (
                   <button
                     key={gt}
                     onClick={() => set("lightGradientTheme", gt)}
                     className={cn(
-                      "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.lightGradientTheme === gt
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border/50 text-muted-foreground hover:border-primary/30"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {gradientThemeLabel(gt)}
@@ -1269,19 +1268,19 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
             {/* Dark Gradient Theme */}
             <div className="space-y-1">
-              <Label className="text-[9px] font-medium uppercase text-muted-foreground">
-                {t("studio.dashboard.darkGradientTheme") || "Dark Gradient"}
+              <Label className="text-[9px] font-medium uppercase text-nx-ink-3">
+                {t("studio.dashboard.darkGradientTheme")}
               </Label>
-              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {DARK_GRADIENT_THEMES.map((gt) => (
                   <button
                     key={gt}
                     onClick={() => set("darkGradientTheme", gt)}
                     className={cn(
-                      "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.darkGradientTheme === gt
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border/50 text-muted-foreground hover:border-primary/30"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {gradientThemeLabel(gt)}
@@ -1294,22 +1293,22 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Preset background themes (shown when preset mode) */}
         {settings.backgroundMode === "preset" && (
-          <div className="space-y-2 rounded-lg border border-border/30 bg-muted/20 p-2">
+          <div className="space-y-2 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] p-2">
             {/* Light Background Theme */}
             <div className="space-y-1">
-              <Label className="text-[9px] font-medium uppercase text-muted-foreground">
-                {t("studio.dashboard.lightBgTheme") || "Light Background"}
+              <Label className="text-[9px] font-medium uppercase text-nx-ink-3">
+                {t("studio.dashboard.lightBgTheme")}
               </Label>
-              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {LIGHT_BG_THEMES.map((bg) => (
                   <button
                     key={bg}
                     onClick={() => set("lightBackgroundTheme", bg)}
                     className={cn(
-                      "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.lightBackgroundTheme === bg
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border/50 text-muted-foreground hover:border-primary/30"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {bgThemeLabel(bg)}
@@ -1320,19 +1319,19 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
             {/* Dark Background Theme */}
             <div className="space-y-1">
-              <Label className="text-[9px] font-medium uppercase text-muted-foreground">
-                {t("studio.dashboard.darkBgTheme") || "Dark Background"}
+              <Label className="text-[9px] font-medium uppercase text-nx-ink-3">
+                {t("studio.dashboard.darkBgTheme")}
               </Label>
-              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+              <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
                 {DARK_BG_THEMES.map((bg) => (
                   <button
                     key={bg}
                     onClick={() => set("darkBackgroundTheme", bg)}
                     className={cn(
-                      "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                      "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                       settings.darkBackgroundTheme === bg
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "border-border/50 text-muted-foreground hover:border-primary/30"
+                        ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                        : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                     )}
                   >
                     {bgThemeLabel(bg)}
@@ -1345,7 +1344,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Custom color controls (shown when custom mode) */}
         {settings.backgroundMode === "custom" && (
-          <div className="space-y-2 rounded-lg border border-border/30 bg-muted/20 p-2">
+          <div className="space-y-2 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] p-2">
             <HexInput
               label={t("studio.dashboard.customPrimary")}
               value={settings.customPrimaryColor}
@@ -1371,14 +1370,14 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
 
         {/* Active Palette (open-ended palette ID) */}
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-            {t("studio.dashboard.activePalette") || "Active Palette"}
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
+            {t("studio.dashboard.activePalette")}
           </Label>
           <Input
             value={settings.activePalette}
             onChange={(e) => set("activePalette", e.target.value)}
             className="h-7 text-[10px]"
-            placeholder={t("studio.dashboard.activePalettePlaceholder") || "e.g. ocean-breeze"}
+            placeholder={t("studio.dashboard.activePalettePlaceholder")}
           />
         </div>
       </Section>
@@ -1392,7 +1391,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         onToggle={() => toggleSection(2)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.fontSize")}
           </Label>
           <OptionGrid
@@ -1404,7 +1403,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.borderRadius")}
           </Label>
           <OptionGrid
@@ -1416,7 +1415,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.spacingSize")}
           </Label>
           <OptionGrid
@@ -1445,21 +1444,21 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         {componentStyles.map((cs) => (
           <div key={cs.key} className="space-y-1">
             <div className="flex items-center justify-between">
-              <Label className="text-[10px] font-medium text-foreground">{cs.label}</Label>
-              <span className="text-[8px] text-muted-foreground/50">
+              <Label className="text-[10px] font-medium text-nx-ink">{cs.label}</Label>
+              <span className="text-[8px] text-[color:color-mix(in_srgb,var(--nx-ink-3)_50%,transparent)]">
                 {nStylesLabel(cs.options.length)}
               </span>
             </div>
-            <div className="scrollbar-thin grid max-h-[100px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+            <div className="scrollbar-thin grid max-h-[100px] grid-cols-3 gap-1 overflow-y-auto pe-1">
               {cs.options.map((opt) => (
                 <button
                   key={opt}
                   onClick={() => set(cs.key, opt)}
                   className={cn(
-                    "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                    "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     settings[cs.key] === opt
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
+                      ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                      : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
                   )}
                 >
                   {componentStyleLabel(opt)}
@@ -1479,19 +1478,19 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         onToggle={() => toggleSection(4)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-foreground">
+          <Label className="text-[10px] font-medium text-nx-ink">
             {t("studio.dashboard.checkboxStyle")}
           </Label>
-          <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+          <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
             {CHECKBOX_STYLES.map((opt) => (
               <button
                 key={opt}
                 onClick={() => set("checkboxStyle", opt)}
                 className={cn(
-                  "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                  "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   settings.checkboxStyle === opt
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
                 )}
               >
                 {componentStyleLabel(opt)}
@@ -1500,19 +1499,19 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           </div>
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-foreground">
+          <Label className="text-[10px] font-medium text-nx-ink">
             {t("studio.dashboard.radioStyle")}
           </Label>
-          <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pr-1">
+          <div className="scrollbar-thin grid max-h-[120px] grid-cols-3 gap-1 overflow-y-auto pe-1">
             {RADIO_STYLES.map((opt) => (
               <button
                 key={opt}
                 onClick={() => set("radioStyle", opt)}
                 className={cn(
-                  "truncate rounded-md border px-1.5 py-1 text-[9px] font-medium transition-all",
+                  "truncate rounded-nx-sm border px-1.5 py-1 text-[9px] font-medium transition-[color,background-color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   settings.radioStyle === opt
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border/50 text-muted-foreground hover:border-primary/30 hover:bg-accent/20"
+                    ? "border-nx-accent bg-nx-accent-wash text-nx-accent"
+                    : "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] text-nx-ink-3 hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] hover:bg-nx-hover"
                 )}
               >
                 {componentStyleLabel(opt)}
@@ -1531,7 +1530,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         onToggle={() => toggleSection(5)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.cardStyle")}
           </Label>
           <OptionGrid
@@ -1543,7 +1542,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.animationLevel")}
           </Label>
           <OptionGrid
@@ -1555,7 +1554,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.hoverEffect")}
           </Label>
           <OptionGrid
@@ -1567,7 +1566,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.hoverIntensity")}
           </Label>
           <OptionGrid
@@ -1594,7 +1593,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         onToggle={() => toggleSection(6)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.logoType")}
           </Label>
           <OptionGrid
@@ -1606,7 +1605,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.logoAnimation")}
           </Label>
           <OptionGrid
@@ -1618,7 +1617,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.logoSize")}
           </Label>
           <OptionGrid
@@ -1630,14 +1629,14 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium text-foreground">
+          <Label className="text-[10px] font-medium text-nx-ink">
             {t("studio.dashboard.logoText")}
           </Label>
           <Input
             value={settings.logoText}
             onChange={(e) => set("logoText", e.target.value)}
             className="h-7 text-[10px]"
-            placeholder={t("studio.dashboard.logoTextPlaceholder") || BRAND.name}
+            placeholder={t("studio.dashboard.logoTextPlaceholder")}
             maxLength={50}
           />
         </div>
@@ -1657,7 +1656,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         onToggle={() => toggleSection(7)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.navigationStyle")}
           </Label>
           <OptionGrid
@@ -1669,7 +1668,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
           />
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.iconStyle")}
           </Label>
           <OptionGrid
@@ -1726,7 +1725,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         onToggle={() => toggleSection(8)}
       >
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.toastStyle")}
           </Label>
           <OptionGrid
@@ -1744,10 +1743,10 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         />
         <div className="space-y-1">
           <div className="flex items-center justify-between">
-            <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+            <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
               {t("studio.dashboard.toastDuration")}
             </Label>
-            <span className="text-[9px] tabular-nums text-muted-foreground">
+            <span className="text-[9px] tabular-nums text-nx-ink-3">
               {settings.toastDuration}ms
             </span>
           </div>
@@ -1770,25 +1769,25 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
         isOpen={openSections.has(9)}
         onToggle={() => toggleSection(9)}
       >
-        <div className="flex items-start gap-2 rounded-lg border border-warning/20 bg-warning/5 p-2.5">
+        <div className="flex items-start gap-2 rounded-nx-md border border-warning/20 bg-warning/5 p-2.5">
           <Lock className="mt-0.5 h-3.5 w-3.5 shrink-0 text-warning" />
           <p className="text-[10px] leading-relaxed text-warning">
             {t("studio.dashboard.overrideInfo")}
           </p>
         </div>
         <div className="space-y-1 pt-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.allowOverride")}
           </Label>
-          <p className="text-[9px] leading-relaxed text-muted-foreground">
+          <p className="text-[9px] leading-relaxed text-nx-ink-3">
             {t("studio.dashboard.allowOverrideDesc")}
           </p>
         </div>
         <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
             {t("studio.dashboard.overridePaths")}
           </Label>
-          <p className="text-[9px] leading-relaxed text-muted-foreground">
+          <p className="text-[9px] leading-relaxed text-nx-ink-3">
             {t("studio.dashboard.overridePathsDesc")}
           </p>
         </div>

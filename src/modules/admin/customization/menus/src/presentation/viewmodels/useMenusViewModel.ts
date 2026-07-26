@@ -15,6 +15,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { MenuTreeNode } from "../../domain/entities/MenuItem";
 import {
   type CreateMenuItemRequest,
@@ -136,7 +137,7 @@ export function useMenusViewModel() {
 
   const deleteNodeName = useMemo(() => {
     if (!selectedNode) return "";
-    return language === "ar" ? selectedNode.nameAr : selectedNode.nameEn;
+    return resolveBilingualLabel(selectedNode.nameEn, selectedNode.nameAr, language);
   }, [selectedNode, language]);
 
   // ── Mutations ──────────────────────────────────────────────────────

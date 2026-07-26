@@ -66,10 +66,8 @@ export function useThemeManagementViewModel() {
       if (theme) {
         await themeMarketplaceRepository.delete(theme.slug);
         success({
-          title: t("studio.themeManagement.toast.deleted") || "Theme Deleted",
-          description:
-            t("studio.themeManagement.toast.deletedDesc") ||
-            "The theme has been removed from the marketplace.",
+          title: t("studio.themeManagement.toast.deleted"),
+          description: t("studio.themeManagement.toast.deletedDesc"),
         });
       }
     },
@@ -82,16 +80,15 @@ export function useThemeManagementViewModel() {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: themeKeys.all });
       success({
-        title: t("studio.themeManagement.toast.duplicated") || "Theme Duplicated",
-        description:
-          (t("studio.themeManagement.toast.duplicatedDesc", {
-            name: variables.newName,
-          }) as string) || `Created "${variables.newName}" as a copy.`,
+        title: t("studio.themeManagement.toast.duplicated"),
+        description: t("studio.themeManagement.toast.duplicatedDesc", {
+          name: variables.newName,
+        }) as string,
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("studio.themeManagement.toast.duplicateFailed") || "Duplication Failed",
+        title: t("studio.themeManagement.toast.duplicateFailed"),
         description: err.message,
       });
     },
@@ -104,15 +101,13 @@ export function useThemeManagementViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: themeKeys.all });
       success({
-        title: t("studio.themeManagement.toast.deprecated") || "Theme Deprecated",
-        description:
-          t("studio.themeManagement.toast.deprecatedDesc") ||
-          "Theme has been marked as deprecated.",
+        title: t("studio.themeManagement.toast.deprecated"),
+        description: t("studio.themeManagement.toast.deprecatedDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("studio.themeManagement.toast.deprecateFailed") || "Deprecation Failed",
+        title: t("studio.themeManagement.toast.deprecateFailed"),
         description: err.message,
       });
     },
@@ -126,7 +121,7 @@ export function useThemeManagementViewModel() {
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -136,7 +131,7 @@ export function useThemeManagementViewModel() {
   const handleDuplicate = useCallback(
     (theme: ThemeCard) => {
       const newSlug = `${theme.slug}-copy-${Date.now().toString(36)}`;
-      const copySuffix = t("studio.themeManagement.copySuffix") || "(Copy)";
+      const copySuffix = t("studio.themeManagement.copySuffix");
       const newName = `${theme.name} ${copySuffix}`;
       duplicateMutation.mutate({ slug: theme.slug, newSlug, newName });
     },
@@ -145,9 +140,7 @@ export function useThemeManagementViewModel() {
 
   const handleDeprecate = useCallback(
     (theme: ThemeCard) => {
-      const notice =
-        t("studio.themeManagement.defaultDeprecationNotice") ||
-        "This theme has been deprecated. Please choose an alternative.";
+      const notice = t("studio.themeManagement.defaultDeprecationNotice");
       deprecateMutation.mutate({
         slug: theme.slug,
         notice,
