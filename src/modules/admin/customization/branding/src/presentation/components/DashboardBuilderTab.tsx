@@ -132,8 +132,12 @@ const LOGO_SIZES = ["xs", "sm", "md", "lg", "xl"] as const;
 
 // ── Fixed: match SettingsProvider types exactly ──
 const ANIMATION_LEVELS = ["none", "minimal", "moderate", "high"] as const;
-const HOVER_EFFECTS = ["none", "elevate", "scale", "glow", "shimmer", "rotate", "slide"] as const;
-const HOVER_INTENSITIES = ["none", "small", "medium", "strong"] as const;
+// Only two real looks exist per the design bar (§5.3: hover = colour + hairline,
+// nothing lifts) — "elevate" is the stored on-value so existing tenant settings
+// (any of the old seven values) keep resolving without a migration; this picker
+// only ever writes "none" or "elevate" going forward. Intensity is gone outright:
+// both hover-class helpers in core/common/utils.ts ignore it now.
+const HOVER_EFFECTS = ["none", "elevate"] as const;
 const NAV_STYLES = ["default", "pills", "underline", "sidebar"] as const;
 const ICON_STYLES = ["outline", "filled", "duotone", "minimal"] as const;
 const CARD_STYLES = ["default", "glass", "solid", "bordered", "elevated"] as const;
@@ -939,7 +943,6 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
   const cardLabel = useCallback((v: string) => t(`studio.dashboard.card.${v}`), [t]);
   const animationLabel = useCallback((v: string) => t(`studio.dashboard.animation.${v}`), [t]);
   const hoverLabel = useCallback((v: string) => t(`studio.dashboard.hover.${v}`), [t]);
-  const intensityLabel = useCallback((v: string) => t(`studio.dashboard.intensity.${v}`), [t]);
   const logoTypeLabel = useCallback((v: string) => t(`studio.dashboard.logoTypes.${v}`), [t]);
   const logoAnimLabel = useCallback(
     (v: string) => t(`studio.dashboard.logoAnimations.${v}`),
@@ -1561,20 +1564,8 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
             options={HOVER_EFFECTS}
             selected={settings.hoverEffectType as any}
             onSelect={(v) => set("hoverEffectType", v)}
-            cols={4}
-            labelFn={hoverLabel}
-          />
-        </div>
-        <div className="space-y-1">
-          <Label className="text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
-            {t("studio.dashboard.hoverIntensity")}
-          </Label>
-          <OptionGrid
-            options={HOVER_INTENSITIES}
-            selected={settings.hoverEffectIntensity as any}
-            onSelect={(v) => set("hoverEffectIntensity", v)}
             cols={2}
-            labelFn={intensityLabel}
+            labelFn={hoverLabel}
           />
         </div>
         <ToggleRow

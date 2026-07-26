@@ -277,23 +277,17 @@ export const SETTING_ROWS: SettingRowMeta[] = [
     subject: "surface",
     terms: ["animationLevel", "motion"],
   },
-  // No platform key ships for the hover pair; the literals below are the same
-  // ones the previous hover section rendered, so no locale key moves.
+  // No platform key ships for this row; the literals below are the same ones
+  // the previous hover section rendered, so no locale key moves. Only one
+  // real look exists per the design bar (§5.3: hover = colour + hairline,
+  // nothing lifts), so this is an on/off control now, not a style picker.
   {
     id: "hover-type",
     group: "layout",
-    title: "Hover Effect Type",
-    description: "Select the type of hover effect to apply",
+    title: "Hover Effect",
+    description: "Turn the hover border-highlight on or off",
     subject: "card",
     terms: ["hoverEffectType", "hover"],
-  },
-  {
-    id: "hover-intensity",
-    group: "layout",
-    title: "Hover Effect Intensity",
-    description: "Control the strength of the hover effect",
-    subject: "card",
-    terms: ["hoverEffectIntensity", "hover"],
   },
 
   // ── Components: one row per part of the interface ──────────────────────

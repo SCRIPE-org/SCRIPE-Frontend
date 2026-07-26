@@ -10,7 +10,7 @@
  */
 
 import { useMemo } from "react";
-import { Move, MoveUp, RotateCw, Sparkles, ZoomIn, Zap } from "lucide-react";
+import { Move, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -19,7 +19,6 @@ import type {
   BorderRadius,
   CardStyle,
   FontSize,
-  HoverEffectIntensity,
   HoverEffectType,
   ShadowIntensity,
   SpacingSize,
@@ -96,6 +95,14 @@ const ANIMATION_LEVELS: { value: AnimationLevel; bars: number }[] = [
 
 // The hover pair ships no platform strings; these literals are the same ones
 // the previous hover section rendered, so no locale key moves.
+//
+// Only two real looks exist per the design bar (§5.3: hover = colour + hairline,
+// nothing lifts) — "elevate" is kept as the on-value's stored name so existing
+// tenant settings (any of the old seven values) keep resolving without a
+// migration; the picker itself only ever writes "none" or "elevate" going
+// forward. The old intensity control is gone outright: both hover-class
+// helpers in utils.ts ignore intensity now, so a dial with no effect is not
+// offered as one.
 const HOVER_TYPES: {
   value: HoverEffectType;
   name: string;
@@ -103,24 +110,7 @@ const HOVER_TYPES: {
   icon: typeof Move;
 }[] = [
   { value: "none", name: "None", description: "No hover effect", icon: Move },
-  { value: "elevate", name: "Elevate", description: "Lift and shadow", icon: MoveUp },
-  { value: "scale", name: "Scale", description: "Grow on hover", icon: ZoomIn },
-  { value: "glow", name: "Glow", description: "Glowing border", icon: Sparkles },
-  { value: "shimmer", name: "Shimmer", description: "Shimmer animation", icon: Zap },
-  { value: "rotate", name: "Rotate", description: "Slight rotation", icon: RotateCw },
-  { value: "slide", name: "Slide", description: "Slide movement", icon: Move },
-];
-
-const HOVER_INTENSITIES: {
-  value: HoverEffectIntensity;
-  name: string;
-  description: string;
-  level: number;
-}[] = [
-  { value: "none", name: "None", description: "No effect", level: 0 },
-  { value: "small", name: "Small", description: "Subtle effect", level: 1 },
-  { value: "medium", name: "Medium", description: "Balanced effect", level: 2 },
-  { value: "strong", name: "Strong", description: "Bold effect", level: 3 },
+  { value: "elevate", name: "Default", description: "Border brightens on hover", icon: Sparkles },
 ];
 
 // ── Samples ───────────────────────────────────────────────────────────────
@@ -250,17 +240,6 @@ export function LayoutGroup() {
     []
   );
 
-  const hoverIntensityOptions = useMemo<ChoiceOption<HoverEffectIntensity>[]>(
-    () =>
-      HOVER_INTENSITIES.map((intensity) => ({
-        value: intensity.value,
-        label: intensity.name,
-        description: intensity.description,
-        sample: <LevelBars filled={intensity.level} total={3} />,
-      })),
-    []
-  );
-
   return (
     <GroupPanel title={t("settings.tabs.layout")}>
       <Row row={ROW["font-size"]}>
@@ -336,18 +315,7 @@ export function LayoutGroup() {
           onSelect={(value) => settings.setHoverEffectType(value)}
           options={hoverTypeOptions}
           settingKey="hoverEffectType"
-          gridClassName="sm:grid-cols-4 lg:grid-cols-7"
-        />
-      </Row>
-
-      <Row row={ROW["hover-intensity"]}>
-        <Choice
-          row={ROW["hover-intensity"]}
-          value={settings.hoverEffectIntensity}
-          onSelect={(value) => settings.setHoverEffectIntensity(value)}
-          options={hoverIntensityOptions}
-          settingKey="hoverEffectIntensity"
-          gridClassName="sm:grid-cols-4 lg:grid-cols-4"
+          gridClassName="sm:grid-cols-2"
         />
       </Row>
     </GroupPanel>
