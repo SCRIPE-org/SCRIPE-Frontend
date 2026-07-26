@@ -29,7 +29,7 @@ import {
   PaginationNext,
 } from "@core/ui/pagination";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { TenantSubscriptionCard } from "../cards/TenantSubscriptionCard";
 
 interface TenantEntitlementsTabProps {
@@ -118,7 +118,9 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
     const q = search.toLowerCase();
     return features.filter((f: any) => {
       const displayName =
-        (language === "ar" ? f.nameAr : f.nameEn) || f.key?.split(".").pop() || f.key;
+        resolveBilingualLabel(f.nameEn ?? "", f.nameAr ?? "", language) ||
+        f.key?.split(".").pop() ||
+        f.key;
       return f.key?.toLowerCase().includes(q) || displayName?.toLowerCase().includes(q);
     });
   }, [features, search, language]);
@@ -172,7 +174,7 @@ function FeaturesGrid({ tenantId }: { tenantId: string }) {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {paginated.map((feature: any) => {
           const displayName =
-            (language === "ar" ? feature.nameAr : feature.nameEn) ||
+            resolveBilingualLabel(feature.nameEn ?? "", feature.nameAr ?? "", language) ||
             feature.key?.split(".").pop() ||
             feature.key;
           const moduleName = feature.key?.split(".")[0] || "";

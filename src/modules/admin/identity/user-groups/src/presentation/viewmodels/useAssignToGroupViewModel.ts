@@ -6,6 +6,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { userGroupKeys } from "./useUserGroupsViewModel";
 import { appLogger } from "@/core/common/logger";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 
 interface UseAssignToGroupViewModelProps {
@@ -54,7 +55,7 @@ export function useAssignToGroupViewModel({
 
       return result.items.map((g) => ({
         value: g.id,
-        label: language === "ar" ? g.nameAr : g.nameEn,
+        label: resolveBilingualLabel(g.nameEn, g.nameAr, language),
         description: g.code,
       }));
     } catch (err) {

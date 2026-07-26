@@ -38,14 +38,14 @@ export function ApiKeysView() {
       columns: [
         {
           key: "name",
-          label: t("apikeys.name") || "Key Name",
+          label: t("apikeys.name"),
           sortable: true,
           render: (_val: unknown, item: ApiKey) => (
             <div className="flex items-center gap-2">
-              <Key className="h-4 w-4 shrink-0 text-primary" />
+              <Key className="h-4 w-4 shrink-0 text-nx-accent" />
               <span
                 onClick={() => router.push(`/integrations/apikeys/${item.id}`)}
-                className="cursor-pointer text-sm font-semibold hover:text-primary hover:underline"
+                className="cursor-pointer text-sm font-semibold hover:text-nx-accent hover:underline"
               >
                 {item.name || t("apikeys.untitled")}
               </span>
@@ -54,16 +54,16 @@ export function ApiKeysView() {
         },
         {
           key: "prefix",
-          label: t("apikeys.prefix") || "Prefix",
+          label: t("apikeys.prefix"),
           render: (_val: unknown, item: ApiKey) => (
-            <span className="rounded border bg-muted px-2 py-0.5 font-mono text-xs">
+            <span className="rounded-nx-sm border border-nx-line bg-nx-raised px-2 py-0.5 font-mono text-xs">
               {item.prefix}...
             </span>
           ),
         },
         {
           key: "status",
-          label: t("apikeys.statusLabel") || "Status",
+          label: t("apikeys.statusLabel"),
           render: (_val: unknown, item: ApiKey) => {
             const status = item.status;
             let variant: "default" | "secondary" | "outline" | "destructive" = "default";
@@ -82,17 +82,17 @@ export function ApiKeysView() {
 
             return (
               <Badge variant={variant} className={`text-xs ${className}`}>
-                {t(`apikeys.status.${status}`) || status}
+                {t(`apikeys.status.${status}`)}
               </Badge>
             );
           },
         },
         {
           key: "scopes",
-          label: t("apikeys.scopes") || "Scopes",
+          label: t("apikeys.scopes"),
           render: (_val: unknown, item: ApiKey) => {
             const list = item.scopesList;
-            if (list.length === 0) return <span className="text-xs text-muted-foreground">—</span>;
+            if (list.length === 0) return <span className="text-xs text-nx-ink-3">—</span>;
 
             const limit = 2;
             const visible = list.slice(0, limit);
@@ -104,7 +104,7 @@ export function ApiKeysView() {
                   <Badge
                     key={scope}
                     variant="secondary"
-                    className="shrink-0 border border-primary/25 bg-primary/10 px-2 py-0.5 font-mono text-[10px] text-primary"
+                    className="shrink-0 border border-[color:color-mix(in_srgb,var(--nx-accent)_25%,transparent)] bg-nx-accent-wash px-2 py-0.5 font-mono text-[10px] text-nx-accent"
                   >
                     {scope}
                   </Badge>
@@ -114,24 +114,19 @@ export function ApiKeysView() {
                     <PopoverTrigger asChild>
                       <Badge
                         variant="outline"
-                        className="shrink-0 cursor-pointer border border-primary/30 bg-primary/15 px-2 py-0.5 font-mono text-[10px] text-primary hover:bg-primary/25"
+                        className="shrink-0 cursor-pointer border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-accent)_15%,transparent)] px-2 py-0.5 font-mono text-[10px] text-nx-accent hover:bg-[color:color-mix(in_srgb,var(--nx-accent)_25%,transparent)]"
                       >
-                        +{extraCount} {t("apikeys.more") || "more"}
+                        +{extraCount} {t("apikeys.more")}
                       </Badge>
                     </PopoverTrigger>
-                    <PopoverContent
-                      className="w-[320px] border bg-popover p-3 text-xs shadow-xl"
-                      align="start"
-                    >
-                      <p className="mb-2 font-semibold text-foreground">
-                        {t("apikeys.allScopes") || "All Permission Scopes"}:
-                      </p>
-                      <div className="flex max-h-[160px] flex-wrap gap-1 overflow-y-auto pr-1">
+                    <PopoverContent className="w-[320px] p-3 text-xs" align="start">
+                      <p className="mb-2 font-semibold text-nx-ink">{t("apikeys.allScopes")}:</p>
+                      <div className="flex max-h-[160px] flex-wrap gap-1 overflow-y-auto pe-1">
                         {list.map((scope) => (
                           <Badge
                             key={scope}
                             variant="secondary"
-                            className="border border-primary/25 bg-primary/10 px-2 py-0.5 font-mono text-[10px] text-primary"
+                            className="border border-[color:color-mix(in_srgb,var(--nx-accent)_25%,transparent)] bg-nx-accent-wash px-2 py-0.5 font-mono text-[10px] text-nx-accent"
                           >
                             {scope}
                           </Badge>
@@ -146,23 +141,23 @@ export function ApiKeysView() {
         },
         {
           key: "createdAt",
-          label: t("apikeys.createdAt") || "Created At",
+          label: t("apikeys.createdAt"),
           render: (_val: unknown, item: ApiKey) => (
-            <span className="font-mono text-xs text-muted-foreground">
+            <span className="font-mono text-xs text-nx-ink-3">
               {item.createdAt ? formatUtc(item.createdAt, "MMM d, yyyy") : "—"}
             </span>
           ),
         },
         {
           key: "expiresAt",
-          label: t("apikeys.expiresAt") || "Expires At",
+          label: t("apikeys.expiresAt"),
           render: (_val: unknown, item: ApiKey) => (
-            <span className="font-mono text-xs text-muted-foreground">
+            <span className="font-mono text-xs text-nx-ink-3">
               {item.expiresAt ? (
                 formatUtc(item.expiresAt, "MMM d, yyyy")
               ) : (
                 <span className="font-sans font-normal text-success">
-                  {t("apikeys.neverExpires") || "Never Expires"}
+                  {t("apikeys.neverExpires")}
                 </span>
               )}
             </span>
@@ -180,23 +175,21 @@ export function ApiKeysView() {
         handleDeleteFn?: (item: ApiKey) => void
       ): CrudAction<ApiKey>[] => [
         {
-          label: tFn("apikeys.viewDetails") || "View Details",
+          label: tFn("apikeys.viewDetails"),
           onClick: (item: ApiKey) => router.push(`/integrations/apikeys/${item.id}`),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
           requiredPermission: "apikeys.view",
         },
         {
-          label: tFn("apikeys.revoke") || "Revoke Key",
+          label: tFn("apikeys.revoke"),
           onClick: (item: ApiKey) => handleDeleteFn?.(item),
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/90",
           icon: <Trash2 className="h-4 w-4" />,
           requiredPermission: "apikeys.delete",
-          confirmTitle: tFn("apikeys.revokeConfirmTitle") || "Revoke API Key",
-          confirmDescription:
-            tFn("apikeys.revokeConfirmDesc") ||
-            "This will permanently invalidate the API key. Any external scripts or integrations using it will instantly fail. This action is irreversible.",
+          confirmTitle: tFn("apikeys.revokeConfirmTitle"),
+          confirmDescription: tFn("apikeys.revokeConfirmDesc"),
           confirmVariant: "destructive" as const,
         },
       ],

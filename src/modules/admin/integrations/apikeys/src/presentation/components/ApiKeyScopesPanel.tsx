@@ -13,6 +13,8 @@ import { useTenantContext } from "@core/providers/tenant-context-provider";
 import type { ApiKeyDetail } from "../../domain/entities/ApiKeyDetail";
 import { Search } from "lucide-react";
 import { Input } from "@core/ui/input";
+import { Skeleton } from "@core/ui/skeleton";
+import { resolveBilingualLabel } from "@core/common/utils";
 
 interface ApiKeyScopesPanelProps {
   detail: ApiKeyDetail;
@@ -22,7 +24,6 @@ interface ApiKeyScopesPanelProps {
 
 export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKeyScopesPanelProps) {
   const { t, language } = useI18n();
-  const isAr = language === "ar";
   const { permissionRepository } = identityContainer;
 
   const userTenantId = useAppStore((s) => s.user?.tenantId);
@@ -71,9 +72,11 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
 
   // Group permissions by category/module for premium grouped display
   const filteredPermissions = permissions.filter((p) => {
-    const label = isAr
-      ? `${p.nameAr || p.nameEn || p.code} (${p.code})`
-      : `${p.nameEn || p.code} (${p.code})`;
+    const label = `${resolveBilingualLabel(
+      p.nameEn || p.code,
+      p.nameAr || p.nameEn || p.code,
+      language
+    )} (${p.code})`;
     return (
       label.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.code.toLowerCase().includes(searchQuery.toLowerCase())
@@ -93,7 +96,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
         <CardHeader className="border-b pb-3">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <CardTitle className="text-sm font-semibold">
-              {t("apikeys.scopesPanel.title") || "API Scopes / Permissions"}
+              {t("apikeys.scopesPanel.title")}
             </CardTitle>
             <div className="flex items-center gap-2">
               <Button
@@ -103,7 +106,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                 onClick={handleSelectAll}
                 disabled={!detail.isActive}
               >
-                {t("apikeys.scopesPanel.selectAll") || "Select All"}
+                {t("apikeys.scopesPanel.selectAll")}
               </Button>
               <Button
                 type="button"
@@ -112,16 +115,16 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                 onClick={handleDeselectAll}
                 disabled={!detail.isActive}
               >
-                {t("apikeys.scopesPanel.deselectAll") || "Clear All"}
+                {t("apikeys.scopesPanel.deselectAll")}
               </Button>
             </div>
           </div>
           <div className="relative mt-2">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute start-2.5 top-2.5 h-4 w-4 text-nx-ink-3" />
             <Input
               type="search"
-              placeholder={t("apikeys.scopesPanel.searchPlaceholder") || "Search permissions..."}
-              className="h-9 pl-9"
+              placeholder={t("apikeys.scopesPanel.searchPlaceholder")}
+              className="h-9 ps-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               disabled={!detail.isActive}
@@ -130,37 +133,39 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
         </CardHeader>
         <CardContent className="max-h-[540px] flex-1 space-y-6 overflow-y-auto p-6">
           {isLoading ? (
-            <div className="space-y-4 py-4 motion-safe:animate-pulse">
-              <div className="h-4 w-1/4 rounded bg-muted" />
+            <div className="space-y-4 py-4">
+              <Skeleton shape="block" className="h-4 w-1/4" />
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                 {[...Array(6)].map((_, i) => (
-                  <div key={i} className="h-8 rounded bg-muted" />
+                  <Skeleton key={i} shape="block" className="h-8" />
                 ))}
               </div>
             </div>
           ) : Object.keys(groups).length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">
-              {t("apikeys.scopesPanel.noPermissions") || "No permissions found"}
+            <div className="py-8 text-center text-sm text-nx-ink-2">
+              {t("apikeys.scopesPanel.noPermissions")}
             </div>
           ) : (
             Object.entries(groups).map(([groupName, items]) => (
               <div key={groupName} className="space-y-2.5">
-                <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <h3 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
                   {groupName}
                 </h3>
-                <div className="grid grid-cols-1 gap-2 rounded-lg border bg-muted/10 p-3">
+                <div className="grid grid-cols-1 gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-3">
                   {items.map((p) => {
                     const isChecked = selectedScopes.includes(p.code);
-                    const label = isAr
-                      ? `${p.nameAr || p.nameEn || p.code} (${p.code})`
-                      : `${p.nameEn || p.code} (${p.code})`;
+                    const label = `${resolveBilingualLabel(
+                      p.nameEn || p.code,
+                      p.nameAr || p.nameEn || p.code,
+                      language
+                    )} (${p.code})`;
 
                     return (
                       <div
                         key={p.code}
-                        className={`flex items-start gap-x-3.5 rounded-md border p-2 transition-colors hover:bg-muted/40 ${
+                        className={`flex items-start gap-x-3.5 rounded-nx-sm border p-2 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none ${
                           isChecked
-                            ? "border-primary/20 bg-primary/5 dark:bg-primary/10"
+                            ? "border-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] bg-nx-accent-wash"
                             : "border-transparent"
                         }`}
                       >
@@ -182,8 +187,12 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                             {label}
                           </Label>
                           {p.descriptionEn && (
-                            <p className="text-[10px] leading-normal text-muted-foreground">
-                              {isAr ? p.descriptionAr || p.descriptionEn : p.descriptionEn}
+                            <p className="text-[10px] leading-normal text-nx-ink-3">
+                              {resolveBilingualLabel(
+                                p.descriptionEn,
+                                p.descriptionAr || p.descriptionEn,
+                                language
+                              )}
                             </p>
                           )}
                         </div>
@@ -195,11 +204,9 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
             ))
           )}
         </CardContent>
-        <CardFooter className="justify-end border-t bg-muted/20 px-6 py-3">
+        <CardFooter className="justify-end border-t border-nx-line bg-nx-raised px-6 py-3">
           <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !detail.isActive}>
-            {isUpdating
-              ? t("common.saving") || "Saving..."
-              : t("common.saveChanges") || "Save Changes"}
+            {isUpdating ? t("common.saving") : t("common.saveChanges")}
           </Button>
         </CardFooter>
       </Card>

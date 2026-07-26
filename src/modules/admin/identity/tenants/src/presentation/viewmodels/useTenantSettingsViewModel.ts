@@ -71,15 +71,15 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
     },
     onSuccess: () => {
       toast({
-        title: t("common.success") || "Success",
-        description: t("tenant.settingsSaved") || "Settings updated successfully",
+        title: t("common.success"),
+        description: t("tenant.settingsSaved"),
       });
       queryClient.invalidateQueries({ queryKey: ["tenant-settings", tenantId] });
       setEditSection(null);
     },
     onError: (err: Error) => {
       toast({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
         variant: "destructive",
       });
@@ -104,14 +104,14 @@ export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsV
       try {
         const result = await identityContainer.tenantService.uploadLogo(tenantId, file);
         toast({
-          title: t("common.success") || "Success",
-          description: t("tenant.settingsSaved") || "Settings updated successfully",
+          title: t("common.success"),
+          description: t("tenant.settingsSaved"),
         });
         queryClient.invalidateQueries({ queryKey: ["tenant-settings", tenantId] });
         return result.url;
       } catch (err: any) {
         toast({
-          title: t("common.error") || "Error",
+          title: t("common.error"),
           description: err.message,
           variant: "destructive",
         });

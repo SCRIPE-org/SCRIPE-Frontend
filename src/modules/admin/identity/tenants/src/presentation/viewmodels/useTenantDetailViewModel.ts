@@ -36,7 +36,7 @@ export function useTenantDetailViewModel({ tenantId }: UseTenantDetailViewModelP
   const error = queryError
     ? (queryError as Error).message
     : !loading && !tenant
-      ? t("tenant.notFound") || "Tenant not found"
+      ? t("tenant.notFound")
       : null;
 
   const handleBack = () => {
@@ -58,7 +58,7 @@ export function useTenantDetailViewModel({ tenantId }: UseTenantDetailViewModelP
   };
 
   const breadcrumbSegments = [
-    { label: t("nav.tenants") || "Tenants", href: "/tenants" },
+    { label: t("nav.tenants"), href: "/tenants" },
     ...(tenant ? [{ label: tenant.name }] : []),
   ];
 

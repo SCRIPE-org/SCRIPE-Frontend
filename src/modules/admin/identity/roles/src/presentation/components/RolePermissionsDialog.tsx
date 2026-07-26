@@ -26,6 +26,7 @@ import { Progress } from "@core/ui/progress";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { EmptyState } from "@core/ui/empty-state";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { Search, SearchX, Shield, ShieldCheck, KeyRound } from "lucide-react";
 import type { Role } from "../../domain/entities/Role";
 import { useRolePermissionsDialog } from "../viewmodels/useRolePermissionsDialog";
@@ -93,7 +94,9 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
                 id="role-permissions-subject"
                 className="mt-1 flex min-w-0 items-center gap-2 text-sm text-nx-ink-2"
               >
-                <span className="truncate">{language === "ar" ? role?.nameAr : role?.nameEn}</span>
+                <span className="truncate">
+                  {resolveBilingualLabel(role?.nameEn ?? "", role?.nameAr ?? "", language)}
+                </span>
                 <Badge variant="secondary" className="shrink-0 font-mono text-[11px]">
                   {role?.code}
                 </Badge>

@@ -11,6 +11,7 @@ import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useUserGroupsViewModel } from "../viewmodels/useUserGroupsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import {
   Eye,
@@ -81,7 +82,9 @@ export function UserGroupsView() {
           sortable: true,
           render: (_val: unknown, item: UserGroupListItem) => (
             <div className="flex flex-col">
-              <span className="font-medium">{language === "ar" ? item.nameAr : item.nameEn}</span>
+              <span className="font-medium">
+                {resolveBilingualLabel(item.nameEn, item.nameAr, language)}
+              </span>
               <span className="font-mono text-xs text-nx-ink-2">{item.code}</span>
             </div>
           ),

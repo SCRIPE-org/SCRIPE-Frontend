@@ -5,6 +5,7 @@ import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@/core/common/logger";
 import { SYSTEM_TENANT_ID } from "@modules/identity/core";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
+import { resolveBilingualLabel } from "@core/common/utils";
 
 const SYSTEM_TENANT_VALUE = SYSTEM_TENANT_ID;
 
@@ -54,7 +55,7 @@ export function useAdminTransferViewModel() {
 
       return result.items.map((role) => ({
         value: role.id,
-        label: language === "ar" ? role.nameAr : role.nameEn,
+        label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
       }));
     } catch (e) {
       appLogger.error("[AdminTransferDialog] Role search failed:", e);

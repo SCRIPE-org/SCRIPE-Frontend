@@ -104,13 +104,13 @@ export function useWebhookDetailViewModel(webhookId: string) {
       });
       queryClient.invalidateQueries({ queryKey: webhookKeys.all });
       success({
-        title: t("webhooks.toggled") || "Webhook Toggled",
-        description: t("webhooks.toggledDesc") || "Webhook status updated.",
+        title: t("webhooks.toggled"),
+        description: t("webhooks.toggledDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -125,14 +125,13 @@ export function useWebhookDetailViewModel(webhookId: string) {
       });
       setIsSecretVisible(true); // Show the new secret
       success({
-        title: t("webhooks.secretRotated") || "Secret Rotated",
-        description:
-          t("webhooks.secretRotatedDesc") || "Secret rotated. Old secret valid for 24 hours.",
+        title: t("webhooks.secretRotated"),
+        description: t("webhooks.secretRotatedDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -148,19 +147,19 @@ export function useWebhookDetailViewModel(webhookId: string) {
       });
       if (result.isSuccess) {
         success({
-          title: t("webhooks.testSuccess") || "Test Delivered",
+          title: t("webhooks.testSuccess"),
           description: `Status: ${result.statusCode} — ${result.latencyMs.toFixed(0)}ms`,
         });
       } else {
         toastError({
-          title: t("webhooks.testFailed") || "Test Failed",
+          title: t("webhooks.testFailed"),
           description: result.errorMessage || `HTTP ${result.statusCode}`,
         });
       }
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -175,13 +174,13 @@ export function useWebhookDetailViewModel(webhookId: string) {
       });
       queryClient.invalidateQueries({ queryKey: webhookKeys.all });
       success({
-        title: t("webhooks.updated") || "Webhook Updated",
-        description: t("webhooks.updatedDesc") || "Webhook subscription updated successfully.",
+        title: t("webhooks.updated"),
+        description: t("webhooks.updatedDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -193,14 +192,14 @@ export function useWebhookDetailViewModel(webhookId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: webhookKeys.all });
       success({
-        title: t("webhooks.deleted") || "Webhook Deleted",
-        description: t("webhooks.deletedDesc") || "Webhook removed.",
+        title: t("webhooks.deleted"),
+        description: t("webhooks.deletedDesc"),
       });
       router.push("/integrations/webhooks");
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -218,14 +217,13 @@ export function useWebhookDetailViewModel(webhookId: string) {
         queryKey: webhookKeys.deliveries(webhookId),
       });
       success({
-        title: t("webhooks.deadLetters.replayed") || "Replayed",
-        description:
-          t("webhooks.deadLetters.replayedDesc") || "Delivery has been re-queued for retry.",
+        title: t("webhooks.deadLetters.replayed"),
+        description: t("webhooks.deadLetters.replayedDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -241,15 +239,13 @@ export function useWebhookDetailViewModel(webhookId: string) {
         queryKey: webhookKeys.deliveries(webhookId),
       });
       success({
-        title: t("webhooks.deadLetters.allReplayed") || "All Replayed",
-        description:
-          t("webhooks.deadLetters.allReplayedDesc") ||
-          "All dead letters have been re-queued for retry.",
+        title: t("webhooks.deadLetters.allReplayed"),
+        description: t("webhooks.deadLetters.allReplayedDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },

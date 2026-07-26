@@ -41,20 +41,15 @@ export function ApiKeyDangerZone({
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-sm font-semibold text-destructive">
           <ShieldAlert className="h-4 w-4" />
-          {t("apikeys.dangerZone.title") || "Danger Zone"}
+          {t("apikeys.dangerZone.title")}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Revoke */}
-        <div className="flex items-start justify-between gap-4 rounded-lg border border-warning/30 bg-warning/10 p-4">
+        <div className="flex items-start justify-between gap-4 rounded-nx-md border border-warning/30 bg-warning/10 p-4">
           <div>
-            <p className="text-sm font-medium">
-              {t("apikeys.dangerZone.revokeTitle") || "Revoke this key"}
-            </p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {t("apikeys.dangerZone.revokeDesc") ||
-                "Immediately invalidates this key. All requests using it will return 401. This can be undone by contacting support."}
-            </p>
+            <p className="text-sm font-medium">{t("apikeys.dangerZone.revokeTitle")}</p>
+            <p className="mt-0.5 text-xs text-nx-ink-2">{t("apikeys.dangerZone.revokeDesc")}</p>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -64,27 +59,22 @@ export function ApiKeyDangerZone({
                 className="shrink-0 border-warning/40 text-warning hover:bg-warning/15"
                 disabled={!detail.isActive || isRevoking}
               >
-                <Ban className="mr-1.5 h-3.5 w-3.5" />
-                {t("apikeys.revoke") || "Revoke"}
+                <Ban className="me-1.5 h-3.5 w-3.5" />
+                {t("apikeys.revoke")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>
-                  {t("apikeys.revokeConfirmTitle") || "Revoke API Key?"}
-                </AlertDialogTitle>
-                <AlertDialogDescription>
-                  {t("apikeys.revokeConfirmDesc") ||
-                    "Are you sure you want to revoke this API key? This action is immediate."}
-                </AlertDialogDescription>
+                <AlertDialogTitle>{t("apikeys.revokeConfirmTitle")}</AlertDialogTitle>
+                <AlertDialogDescription>{t("apikeys.revokeConfirmDesc")}</AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>{t("common.cancel") || "Cancel"}</AlertDialogCancel>
+                <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={onRevoke}
                   className="bg-warning text-warning-foreground hover:bg-warning/90"
                 >
-                  {t("apikeys.revoke") || "Revoke Key"}
+                  {t("apikeys.revoke")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -92,37 +82,31 @@ export function ApiKeyDangerZone({
         </div>
 
         {/* Permanent Delete */}
-        <div className="flex items-start justify-between gap-4 rounded-lg border border-destructive/30 bg-destructive/10 p-4">
+        <div className="flex items-start justify-between gap-4 rounded-nx-md border border-destructive/30 bg-destructive/10 p-4">
           <div>
             <p className="text-sm font-medium text-destructive">
-              {t("apikeys.dangerZone.deleteTitle") || "Permanently delete this key"}
+              {t("apikeys.dangerZone.deleteTitle")}
             </p>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              {t("apikeys.dangerZone.deleteDesc") ||
-                "Deletes the key and ALL associated usage logs and stats. This CANNOT be undone."}
-            </p>
+            <p className="mt-0.5 text-xs text-nx-ink-2">{t("apikeys.dangerZone.deleteDesc")}</p>
           </div>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" size="sm" className="shrink-0">
-                <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                {t("apikeys.dangerZone.deleteBtn") || "Delete"}
+                <Trash2 className="me-1.5 h-3.5 w-3.5" />
+                {t("apikeys.dangerZone.deleteBtn")}
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-destructive">
-                  {t("apikeys.dangerZone.deleteConfirmTitle") || "Permanently Delete API Key?"}
+                  {t("apikeys.dangerZone.deleteConfirmTitle")}
                 </AlertDialogTitle>
                 <AlertDialogDescription>
-                  {t("apikeys.dangerZone.deleteConfirmDesc") ||
-                    "This will delete the key and all its logs permanently. Type the key name to confirm."}
+                  {t("apikeys.dangerZone.deleteConfirmDesc")}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <div className="space-y-2 px-1">
-                <Label htmlFor="confirm-delete">
-                  {t("apikeys.dangerZone.typeToConfirm") || `Type "${detail.name}" to confirm`}
-                </Label>
+                <Label htmlFor="confirm-delete">{t("apikeys.dangerZone.typeToConfirm")}</Label>
                 <Input
                   id="confirm-delete"
                   value={confirmName}
@@ -132,7 +116,7 @@ export function ApiKeyDangerZone({
               </div>
               <AlertDialogFooter>
                 <AlertDialogCancel onClick={() => setConfirmName("")}>
-                  {t("common.cancel") || "Cancel"}
+                  {t("common.cancel")}
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={() => {
@@ -142,8 +126,8 @@ export function ApiKeyDangerZone({
                   disabled={confirmName !== detail.name}
                   className="bg-destructive hover:bg-destructive/90"
                 >
-                  <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                  {t("apikeys.dangerZone.deleteBtn") || "Delete Permanently"}
+                  <Trash2 className="me-1.5 h-3.5 w-3.5" />
+                  {t("apikeys.dangerZone.deleteBtn")}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

@@ -15,6 +15,7 @@ import { ApiKeyActivityLog } from "../components/ApiKeyActivityLog";
 import { ApiKeyDangerZone } from "../components/ApiKeyDangerZone";
 import { RotateKeyDialog } from "../components/RotateKeyDialog";
 import { ApiKeyQuickStart } from "../components/ApiKeyQuickStart";
+import { Skeleton } from "@core/ui/skeleton";
 
 export default function ApiKeyDetailView() {
   const params = useParams();
@@ -32,14 +33,14 @@ export default function ApiKeyDetailView() {
     mutationFn: () => integrationsContainer.apiKeyRepository.revoke(id),
     onSuccess: () => {
       toast.success({
-        title: t("apikeys.revokeToast.successMsg") || "API key successfully revoked.",
+        title: t("apikeys.revokeToast.successMsg"),
       });
       qc.invalidateQueries({ queryKey: ["apikey-detail", id] });
       qc.invalidateQueries({ queryKey: ["apikeys"] });
     },
     onError: (err: any) => {
       toast.error({
-        title: err.message || t("apikeys.revokeToast.errorMsg") || "Failed to revoke API key.",
+        title: err.message || t("apikeys.revokeToast.errorMsg"),
       });
     },
   });
@@ -49,17 +50,14 @@ export default function ApiKeyDetailView() {
     mutationFn: () => integrationsContainer.apiKeyDetailRepository.deletePermanently(id),
     onSuccess: () => {
       toast.success({
-        title: t("apikeys.deleteToast.successMsg") || "API key permanently deleted.",
+        title: t("apikeys.deleteToast.successMsg"),
       });
       qc.invalidateQueries({ queryKey: ["apikeys"] });
       router.push("/integrations/apikeys");
     },
     onError: (err: any) => {
       toast.error({
-        title:
-          err.message ||
-          t("apikeys.deleteToast.errorMsg") ||
-          "Failed to permanently delete API key.",
+        title: err.message || t("apikeys.deleteToast.errorMsg"),
       });
     },
   });
@@ -67,11 +65,11 @@ export default function ApiKeyDetailView() {
   if (vm.isDetailLoading) {
     return (
       <div className="flex-1 space-y-6 p-6">
-        <div className="h-10 w-1/3 rounded-lg bg-muted motion-safe:animate-pulse" />
-        <div className="h-24 rounded-lg bg-muted motion-safe:animate-pulse" />
+        <Skeleton className="h-10 w-1/3" />
+        <Skeleton className="h-24" />
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="h-64 rounded-lg bg-muted motion-safe:animate-pulse md:col-span-2" />
-          <div className="h-64 rounded-lg bg-muted motion-safe:animate-pulse" />
+          <Skeleton className="h-64 md:col-span-2" />
+          <Skeleton className="h-64" />
         </div>
       </div>
     );
@@ -80,11 +78,9 @@ export default function ApiKeyDetailView() {
   if (vm.detailError || !vm.detail) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center space-y-4 p-8 text-center">
-        <div className="font-semibold text-destructive">
-          {t("apikeys.error.notFound") || "API Key not found or access denied."}
-        </div>
+        <div className="font-semibold text-destructive">{t("apikeys.error.notFound")}</div>
         <button onClick={() => router.push("/integrations/apikeys")} className="text-sm underline">
-          {t("apikeys.backToList") || "Back to API Keys"}
+          {t("apikeys.backToList")}
         </button>
       </div>
     );
@@ -93,19 +89,19 @@ export default function ApiKeyDetailView() {
   const handleUpdateScopes = (scopes: string) => {
     vm.update({ scopes });
     toast.success({
-      title: t("apikeys.updateToast.successScopes") || "API key scopes updated successfully.",
+      title: t("apikeys.updateToast.successScopes"),
     });
   };
 
   const handleUpdateSettings = (req: any) => {
     vm.update(req);
     toast.success({
-      title: t("apikeys.updateToast.successSettings") || "API key settings updated successfully.",
+      title: t("apikeys.updateToast.successSettings"),
     });
   };
 
   return (
-    <div className="flex flex-1 flex-col bg-background pb-12">
+    <div className="flex flex-1 flex-col bg-nx-ground pb-12">
       <ApiKeyHeroBand
         detail={vm.detail}
         isRotating={vm.isRotating}

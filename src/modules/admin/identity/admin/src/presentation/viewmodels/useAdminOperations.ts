@@ -17,6 +17,7 @@ import { useCoreImpersonation } from "@core/hooks/use-auth-bridge";
 import type { FieldOption } from "@core/ui/forms/generic-form";
 import type { AssignRoleRequest, TransferAdminRequest } from "../../domain/entities/AdminRequests";
 import type { Admin } from "../../domain/entities/Admin";
+import { resolveBilingualLabel } from "@core/common/utils";
 
 /**
  * Parameters for the useAdminOperations hook.
@@ -280,7 +281,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
 
         return (result.items || []).map((role) => ({
           value: role.id,
-          label: language === "ar" ? role.nameAr : role.nameEn,
+          label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
         }));
       } catch {
         return [];
@@ -310,7 +311,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
 
         return (result.items || []).map((g) => ({
           value: g.id,
-          label: language === "ar" ? g.nameAr : g.nameEn,
+          label: resolveBilingualLabel(g.nameEn, g.nameAr, language),
         }));
       } catch {
         return [];

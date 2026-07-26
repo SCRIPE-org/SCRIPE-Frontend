@@ -24,7 +24,7 @@ import {
 // Generic CRUD imports
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
-import { formatUtc } from "@core/common/utils";
+import { formatUtc, resolveBilingualLabel } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -66,13 +66,17 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
           : col.key === "name"
             ? (_: unknown, group: UserGroupListItem) => (
                 <span className="font-medium">
-                  {language === "ar" ? group.nameAr : group.nameEn}
+                  {resolveBilingualLabel(group.nameEn, group.nameAr, language)}
                 </span>
               )
             : col.key === "description"
               ? (_: unknown, group: UserGroupListItem) => (
                   <span className="block max-w-[200px] truncate text-sm text-nx-ink-2">
-                    {language === "ar" ? group.descriptionAr : group.descriptionEn}
+                    {resolveBilingualLabel(
+                      group.descriptionEn ?? "",
+                      group.descriptionAr ?? "",
+                      language
+                    )}
                   </span>
                 )
               : col.key === "memberCount"
@@ -98,7 +102,7 @@ export function TenantUserGroupsTab({ tenantId, tenantName }: TenantUserGroupsTa
     createInitialValues: vm.createInitialValues,
     editInitialValues: vm.getEditInitialValues,
     getItemDisplayName: (item: UserGroupListItem) =>
-      language === "ar" ? item.nameAr : item.nameEn,
+      resolveBilingualLabel(item.nameEn, item.nameAr, language),
     deleteService: vm.deleteService,
     permissions: {
       canView: "user_groups.view",

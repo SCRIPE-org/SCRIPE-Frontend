@@ -103,14 +103,14 @@ export function useWebhookFormViewModel({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: webhookKeys.all });
       success({
-        title: t("webhooks.created") || "Webhook Created",
-        description: t("webhooks.createdDesc") || "Webhook subscription created successfully.",
+        title: t("webhooks.created"),
+        description: t("webhooks.createdDesc"),
       });
       onSuccess?.();
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -127,14 +127,14 @@ export function useWebhookFormViewModel({
         });
       }
       success({
-        title: t("webhooks.updated") || "Webhook Updated",
-        description: t("webhooks.updatedDesc") || "Webhook subscription updated successfully.",
+        title: t("webhooks.updated"),
+        description: t("webhooks.updatedDesc"),
       });
       onSuccess?.();
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -171,13 +171,10 @@ export function useWebhookFormViewModel({
 
   const urlError =
     url.length > 0 && !url.startsWith("https://") && !url.startsWith("http://localhost")
-      ? t("webhooks.urlHttpsRequired") || "URL must use HTTPS"
+      ? t("webhooks.urlHttpsRequired")
       : undefined;
 
-  const eventsError =
-    selectedEvents.length === 0
-      ? t("webhooks.eventsRequired") || "Select at least one event"
-      : undefined;
+  const eventsError = selectedEvents.length === 0 ? t("webhooks.eventsRequired") : undefined;
 
   return {
     // Form fields

@@ -69,24 +69,24 @@ export function useWebhooksViewModel() {
     create: async (data: CreateWebhookRequest) => {
       const result = await webhookRepository.create(data);
       success({
-        title: t("webhooks.created") || "Webhook Created",
-        description: t("webhooks.createdDesc") || "Webhook subscription created successfully.",
+        title: t("webhooks.created"),
+        description: t("webhooks.createdDesc"),
       });
       return result as unknown as WebhookSubscriptionListItem;
     },
     update: async (id: string, data: UpdateWebhookRequest) => {
       await webhookRepository.update(id, data);
       success({
-        title: t("webhooks.updated") || "Webhook Updated",
-        description: t("webhooks.updatedDesc") || "Webhook subscription updated successfully.",
+        title: t("webhooks.updated"),
+        description: t("webhooks.updatedDesc"),
       });
       return {} as WebhookSubscriptionListItem;
     },
     delete: async (id: string) => {
       await webhookRepository.remove(id);
       success({
-        title: t("webhooks.deleted") || "Webhook Deleted",
-        description: t("webhooks.deletedDesc") || "Webhook subscription deleted.",
+        title: t("webhooks.deleted"),
+        description: t("webhooks.deletedDesc"),
       });
     },
   });
@@ -116,12 +116,12 @@ export function useWebhooksViewModel() {
       context?.previousData?.forEach(([key, data]) => {
         queryClient.setQueryData(key, data);
       });
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
     onSuccess: () => {
       success({
-        title: t("webhooks.toggled") || "Webhook Toggled",
-        description: t("webhooks.toggledDesc") || "Webhook status updated.",
+        title: t("webhooks.toggled"),
+        description: t("webhooks.toggledDesc"),
       });
     },
     onSettled: () => {
@@ -143,22 +143,22 @@ export function useWebhooksViewModel() {
       createFields: [
         {
           name: "url",
-          label: t("webhooks.url") || "Endpoint URL",
+          label: t("webhooks.url"),
           type: "text" as const,
-          placeholder: t("webhooks.urlPlaceholder") || "https://your-server.com/webhook",
+          placeholder: t("webhooks.urlPlaceholder"),
           required: true,
         },
         {
           name: "description",
-          label: t("webhooks.description_field") || "Description",
+          label: t("webhooks.description_field"),
           type: "text" as const,
-          placeholder: t("webhooks.descriptionPlaceholder") || "What is this webhook for?",
+          placeholder: t("webhooks.descriptionPlaceholder"),
         },
         {
           name: "events",
-          label: t("webhooks.events") || "Events",
+          label: t("webhooks.events"),
           type: "multi-select" as const,
-          placeholder: t("webhooks.selectEvents") || "Select events to subscribe to",
+          placeholder: t("webhooks.selectEvents"),
           required: true,
           options: [], // Will be populated by EventTypePicker component
         },
@@ -166,15 +166,15 @@ export function useWebhooksViewModel() {
       editFields: [
         {
           name: "url",
-          label: t("webhooks.url") || "Endpoint URL",
+          label: t("webhooks.url"),
           type: "text" as const,
-          placeholder: t("webhooks.urlPlaceholder") || "https://your-server.com/webhook",
+          placeholder: t("webhooks.urlPlaceholder"),
         },
         {
           name: "description",
-          label: t("webhooks.description_field") || "Description",
+          label: t("webhooks.description_field"),
           type: "text" as const,
-          placeholder: t("webhooks.descriptionPlaceholder") || "What is this webhook for?",
+          placeholder: t("webhooks.descriptionPlaceholder"),
         },
       ],
       createInitialValues: {

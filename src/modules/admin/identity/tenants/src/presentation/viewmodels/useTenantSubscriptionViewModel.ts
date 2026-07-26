@@ -216,12 +216,12 @@ export function useTenantSubscriptionViewModel(
   };
 
   const successToast = (desc: string) => {
-    success({ title: t("common.success") || "Success", description: desc });
+    success({ title: t("common.success"), description: desc });
   };
 
   const errorToast = (err: Error) => {
     enhancedErrorToast({
-      title: t("common.error") || "Error",
+      title: t("common.error"),
       description: err.message || "Operation failed",
     });
   };
@@ -254,7 +254,7 @@ export function useTenantSubscriptionViewModel(
       );
     },
     onSuccess: () => {
-      successToast(t("tenant.subscriptionAssigned") || "Plan assigned successfully");
+      successToast(t("tenant.subscriptionAssigned"));
       invalidateAll();
     },
     onError: errorToast,
@@ -284,7 +284,7 @@ export function useTenantSubscriptionViewModel(
       );
     },
     onSuccess: () => {
-      successToast(t("tenant.subscriptionUpdated") || "Plan changed successfully");
+      successToast(t("tenant.subscriptionUpdated"));
       invalidateAll();
     },
     onError: errorToast,
@@ -296,7 +296,7 @@ export function useTenantSubscriptionViewModel(
     },
     onSuccess: (msg) => {
       appLogger.debug("renewMutation.onSuccess fired! msg:", msg);
-      successToast(msg || t("tenant.subscriptionRenewed") || "Subscription renewed successfully");
+      successToast(msg || t("tenant.subscriptionRenewed"));
       invalidateAll();
     },
     onError: errorToast,
@@ -307,7 +307,7 @@ export function useTenantSubscriptionViewModel(
       return await identityContainer.tenantRepository.convertTrial(tenantId, type);
     },
     onSuccess: (msg) => {
-      successToast(msg || t("tenant.trialConverted") || "Trial converted to paid plan");
+      successToast(msg || t("tenant.trialConverted"));
       invalidateAll();
     },
     onError: errorToast,
@@ -334,7 +334,7 @@ export function useTenantSubscriptionViewModel(
       );
     },
     onSuccess: (msg) => {
-      successToast(msg || t("tenant.subscriptionSuspended") || "Subscription suspended");
+      successToast(msg || t("tenant.subscriptionSuspended"));
       invalidateAll();
     },
     onError: errorToast,
@@ -345,7 +345,7 @@ export function useTenantSubscriptionViewModel(
       return await identityContainer.tenantRepository.resumeSubscription(tenantId, type);
     },
     onSuccess: (msg) => {
-      successToast(msg || t("tenant.subscriptionResumed") || "Subscription resumed");
+      successToast(msg || t("tenant.subscriptionResumed"));
       invalidateAll();
     },
     onError: errorToast,
@@ -372,7 +372,7 @@ export function useTenantSubscriptionViewModel(
       );
     },
     onSuccess: (msg) => {
-      successToast(msg || t("tenant.subscriptionCanceled") || "Subscription canceled");
+      successToast(msg || t("tenant.subscriptionCanceled"));
       invalidateAll();
     },
     onError: errorToast,
@@ -383,7 +383,7 @@ export function useTenantSubscriptionViewModel(
       await identityContainer.tenantRepository.resyncPermissions(tenantId);
     },
     onSuccess: () => {
-      successToast(t("tenant.permissionsResynced") || "Permissions re-synced from edition");
+      successToast(t("tenant.permissionsResynced"));
       invalidateAll();
     },
     onError: errorToast,
@@ -394,7 +394,7 @@ export function useTenantSubscriptionViewModel(
       return await identityContainer.tenantRepository.changeCurrency(tenantId, currency);
     },
     onSuccess: (msg) => {
-      successToast(msg || t("tenant.currencyChanged") || "Billing currency changed");
+      successToast(msg || t("tenant.currencyChanged"));
       invalidateAll();
     },
     onError: errorToast,
@@ -416,7 +416,7 @@ export function useTenantSubscriptionViewModel(
       URL.revokeObjectURL(url);
     },
     onSuccess: () => {
-      successToast(t("tenant.receiptDownloaded") || "Receipt downloaded successfully");
+      successToast(t("tenant.receiptDownloaded"));
     },
     onError: errorToast,
   });

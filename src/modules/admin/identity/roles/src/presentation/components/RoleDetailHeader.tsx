@@ -15,6 +15,7 @@ import { Skeleton } from "@core/ui/skeleton";
 import { PageHeader } from "@core/ui/page-header";
 import { PageBreadcrumbs } from "@core/ui/page-breadcrumbs";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { Role } from "../../domain/entities/Role";
 
 /**
@@ -33,7 +34,7 @@ export interface RoleDetailHeaderProps {
  */
 export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDetailHeaderProps) {
   const { t, language } = useI18n();
-  const roleName = language === "ar" ? role?.nameAr : role?.nameEn;
+  const roleName = resolveBilingualLabel(role?.nameEn ?? "", role?.nameAr ?? "", language);
   const breadcrumbSegments = [
     { label: t("roles.title"), href: "/roles" },
     { label: isLoading ? t("common.loading") : roleName || t("roles.roleDetails") },

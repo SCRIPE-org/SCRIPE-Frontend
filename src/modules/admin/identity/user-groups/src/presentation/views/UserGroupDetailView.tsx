@@ -20,7 +20,7 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
 import { Users, Shield, Lock, ArrowLeft, Trash2, Plus, Settings, Inbox } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { formatUtc } from "@core/common/utils";
+import { formatUtc, resolveBilingualLabel } from "@core/common/utils";
 import { AddMembersDialog } from "../components/AddMembersDialog";
 import { SetRolesDialog } from "../components/SetRolesDialog";
 import { SetRestrictionsDialog } from "../components/SetRestrictionsDialog";
@@ -79,11 +79,12 @@ export function UserGroupDetailView({ groupId }: Props) {
     );
   }
 
-  const name = language === "ar" ? group.nameAr : group.nameEn;
-  const description =
-    language === "ar"
-      ? group.descriptionAr || group.descriptionEn
-      : group.descriptionEn || group.descriptionAr;
+  const name = resolveBilingualLabel(group.nameEn, group.nameAr, language);
+  const description = resolveBilingualLabel(
+    group.descriptionEn || group.descriptionAr || "",
+    group.descriptionAr || group.descriptionEn || "",
+    language
+  );
 
   return (
     <div className="space-y-6">
@@ -240,7 +241,7 @@ export function UserGroupDetailView({ groupId }: Props) {
                         <Shield className="h-5 w-5 text-nx-accent" aria-hidden="true" />
                         <div>
                           <p className="text-sm font-medium">
-                            {language === "ar" ? role.nameAr : role.nameEn}
+                            {resolveBilingualLabel(role.nameEn, role.nameAr, language)}
                           </p>
                           <p className="font-mono text-xs text-nx-ink-2">{role.code}</p>
                         </div>

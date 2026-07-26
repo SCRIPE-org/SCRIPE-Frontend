@@ -58,13 +58,13 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-semibold">
-            {t("apikeys.settings.title") || "Configuration Settings"}
+            {t("apikeys.settings.title")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-1.5">
-              <Label htmlFor="key-name">{t("apikeys.settings.name") || "Key Name"}</Label>
+              <Label htmlFor="key-name">{t("apikeys.settings.name")}</Label>
               <Input
                 id="key-name"
                 value={name}
@@ -75,7 +75,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="rate-limit">
-                {t("apikeys.settings.rateLimit") || "Rate Limit (hits/min)"}
+                {t("apikeys.settings.rateLimit")}
               </Label>
               <Input
                 id="rate-limit"
@@ -89,16 +89,13 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="key-desc">{t("apikeys.settings.desc") || "Description"}</Label>
+            <Label htmlFor="key-desc">{t("apikeys.settings.desc")}</Label>
             <Textarea
               id="key-desc"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              placeholder={
-                t("apikeys.settings.descPlaceholder") ||
-                "Explain what this integration key is used for..."
-              }
+              placeholder={t("apikeys.settings.descPlaceholder")}
               disabled={!detail.isActive}
             />
           </div>
@@ -106,7 +103,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-1.5">
               <Label htmlFor="monthly-quota">
-                {t("apikeys.settings.quota") || "Monthly Quota (total hits)"}
+                {t("apikeys.settings.quota")}
               </Label>
               <Input
                 id="monthly-quota"
@@ -119,7 +116,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="reset-day">
-                {t("apikeys.settings.resetDay") || "Quota Reset Day (1-28)"}
+                {t("apikeys.settings.resetDay")}
               </Label>
               <Input
                 id="reset-day"
@@ -134,7 +131,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="alert-threshold">
-                {t("apikeys.settings.alert") || "Alert Threshold (%)"}
+                {t("apikeys.settings.alert")}
               </Label>
               <Input
                 id="alert-threshold"
@@ -151,7 +148,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
 
           <div className="space-y-1.5">
             <Label htmlFor="ip-whitelist">
-              {t("apikeys.settings.whitelist") || "IP Whitelist (comma-separated)"}
+              {t("apikeys.settings.whitelist")}
             </Label>
             <Input
               id="ip-whitelist"
@@ -162,11 +159,9 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
             />
           </div>
         </CardContent>
-        <CardFooter className="justify-end border-t bg-muted/20 px-6 py-3">
+        <CardFooter className="justify-end border-t border-nx-line bg-nx-raised px-6 py-3">
           <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !detail.isActive}>
-            {isUpdating
-              ? t("common.saving") || "Saving..."
-              : t("common.saveChanges") || "Save Changes"}
+            {isUpdating ? t("common.saving") : t("common.saveChanges")}
           </Button>
         </CardFooter>
       </Card>

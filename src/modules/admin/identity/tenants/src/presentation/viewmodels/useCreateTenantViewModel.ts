@@ -330,11 +330,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         if (!validation.isValid) {
           const errorCode = validation.errorCode || "UNKNOWN";
           toastError({
-            title: t("tenant.invalidPromoCode") || "Invalid Promo Code",
-            description:
-              t(`tenant.promoCodeError.${errorCode}`) ||
-              validation.errorMessage ||
-              t("tenant.promoCodeError.UNKNOWN"),
+            title: t("tenant.invalidPromoCode"),
+            description: t(`tenant.promoCodeError.${errorCode}`),
           });
           setCurrentStep(3);
           setIsSubmitting(false);
@@ -364,13 +361,13 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
       setResult(createResult);
 
       toastSuccess({
-        title: t("tenant.created") || "Tenant Created",
-        description: t("tenant.createdDescription") || "The tenant has been created successfully.",
+        title: t("tenant.created"),
+        description: t("tenant.createdDescription"),
       });
     } catch (err) {
       appLogger.error("Failed to create tenant:", err);
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err instanceof Error ? err.message : "Failed to create tenant.",
       });
     } finally {

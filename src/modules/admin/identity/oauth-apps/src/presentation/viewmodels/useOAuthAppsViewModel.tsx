@@ -18,7 +18,8 @@ import type { OAuthAppListItem } from "../../domain/entities/OAuthApp";
 import { useRouter } from "next/navigation";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { AppWindow, Loader2, KeyRound, Pencil, Trash2, Check, Copy } from "lucide-react";
+import { AppWindow, KeyRound, Pencil, Trash2, Check, Copy } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { formatUtc } from "@core/common/utils";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
 
@@ -265,7 +266,7 @@ export function useOAuthAppsViewModel() {
               <img
                 src={item.logoUri}
                 alt={item.displayName}
-                className="h-5 w-5 rounded object-contain"
+                className="h-5 w-5 rounded-nx-sm object-contain"
               />
             ) : (
               <AppWindow className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
@@ -364,7 +365,7 @@ export function useOAuthAppsViewModel() {
         onClick: (item: OAuthAppListItem) => handleRegenerateSecret(item.id),
         variant: "ghost" as const,
         icon: regenerateSecretMutation.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+          <LoadingSpinner size="inline" showText={false} />
         ) : (
           <KeyRound className="h-4 w-4" aria-hidden="true" />
         ),

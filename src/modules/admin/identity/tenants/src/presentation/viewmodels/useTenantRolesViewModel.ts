@@ -16,6 +16,7 @@ import { useState, useMemo, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 
 // Role module imports (cross-module boundary via public API)
@@ -113,7 +114,7 @@ export function useTenantRolesViewModel({
           if (query) {
             const lowerQuery = query.toLowerCase();
             filtered = permissions.filter((p) => {
-              const name = language === "ar" ? p.nameAr || p.nameEn : p.nameEn;
+              const name = resolveBilingualLabel(p.nameEn ?? "", p.nameAr || p.nameEn || "", language);
               return (
                 name?.toLowerCase().includes(lowerQuery) ||
                 p.permissionCode?.toLowerCase().includes(lowerQuery)
@@ -122,7 +123,7 @@ export function useTenantRolesViewModel({
           }
 
           return filtered.map((p) => {
-            const name = language === "ar" ? p.nameAr || p.nameEn : p.nameEn;
+            const name = resolveBilingualLabel(p.nameEn ?? "", p.nameAr || p.nameEn || "", language);
             const code = p.permissionCode || `${p.resource}.${p.action}`;
             return {
               value: p.id,
@@ -144,58 +145,58 @@ export function useTenantRolesViewModel({
     () => [
       {
         name: "nameEn",
-        label: t("roles.nameEn") || "Name (English)",
+        label: t("roles.nameEn"),
         type: "text",
-        placeholder: t("role.namePlaceholder") || "Enter role name",
+        placeholder: t("role.namePlaceholder"),
         required: true,
       },
       {
         name: "nameAr",
-        label: t("roles.nameAr") || "Name (Arabic)",
+        label: t("roles.nameAr"),
         type: "text",
-        placeholder: t("roles.nameArPlaceholder") || "Enter role name in Arabic",
+        placeholder: t("roles.nameArPlaceholder"),
         required: true,
       },
       {
         name: "code",
-        label: t("role.code") || "Code",
+        label: t("role.code"),
         type: "text",
-        placeholder: t("role.codePlaceholder") || "ROLE_CODE",
+        placeholder: t("role.codePlaceholder"),
         required: true,
       },
       {
         name: "descriptionEn",
-        label: t("roles.descriptionEn") || "Description (English)",
+        label: t("roles.descriptionEn"),
         type: "textarea",
-        placeholder: t("role.descriptionPlaceholder") || "Optional description...",
+        placeholder: t("role.descriptionPlaceholder"),
         required: false,
       },
       {
         name: "descriptionAr",
-        label: t("roles.descriptionAr") || "Description (Arabic)",
+        label: t("roles.descriptionAr"),
         type: "textarea",
-        placeholder: t("roles.descriptionArPlaceholder") || "Optional description in Arabic...",
+        placeholder: t("roles.descriptionArPlaceholder"),
         required: false,
       },
       {
         name: "priority",
-        label: t("role.priority") || "Priority",
+        label: t("role.priority"),
         type: "number",
         placeholder: "100",
         required: false,
       },
       {
         name: "permissionIds",
-        label: t("role.selectPermissions") || "Permissions",
+        label: t("role.selectPermissions"),
         type: "multi-select",
-        placeholder: t("role.selectPermissionsPlaceholder") || "Select permissions...",
-        searchPlaceholder: t("permission.searchPlaceholder") || "Search permissions...",
+        placeholder: t("role.selectPermissionsPlaceholder"),
+        searchPlaceholder: t("permission.searchPlaceholder"),
         required: false,
         searchType: "server",
         onServerSearch: createPermissionSearch(),
         debounceMs: 300,
         allowClear: true,
-        noResultsText: t("permission.noPermissionsFound") || "No permissions found",
+        noResultsText: t("permission.noPermissionsFound"),
       },
     ],
     [t, createPermissionSearch]
@@ -208,35 +209,35 @@ export function useTenantRolesViewModel({
     () => [
       {
         name: "nameEn",
-        label: t("roles.nameEn") || "Name (English)",
+        label: t("roles.nameEn"),
         type: "text",
-        placeholder: t("role.namePlaceholder") || "Enter role name",
+        placeholder: t("role.namePlaceholder"),
         required: true,
       },
       {
         name: "nameAr",
-        label: t("roles.nameAr") || "Name (Arabic)",
+        label: t("roles.nameAr"),
         type: "text",
-        placeholder: t("roles.nameArPlaceholder") || "Enter role name in Arabic",
+        placeholder: t("roles.nameArPlaceholder"),
         required: true,
       },
       {
         name: "descriptionEn",
-        label: t("roles.descriptionEn") || "Description (English)",
+        label: t("roles.descriptionEn"),
         type: "textarea",
-        placeholder: t("role.descriptionPlaceholder") || "Optional description...",
+        placeholder: t("role.descriptionPlaceholder"),
         required: false,
       },
       {
         name: "descriptionAr",
-        label: t("roles.descriptionAr") || "Description (Arabic)",
+        label: t("roles.descriptionAr"),
         type: "textarea",
-        placeholder: t("roles.descriptionArPlaceholder") || "Optional description in Arabic...",
+        placeholder: t("roles.descriptionArPlaceholder"),
         required: false,
       },
       {
         name: "priority",
-        label: t("role.priority") || "Priority",
+        label: t("role.priority"),
         type: "number",
         placeholder: "100",
         required: false,
@@ -252,29 +253,29 @@ export function useTenantRolesViewModel({
     () => [
       {
         key: "name",
-        label: t("role.name") || "Name",
+        label: t("role.name"),
         sortable: true,
       },
       {
         key: "code",
-        label: t("role.code") || "Code",
+        label: t("role.code"),
       },
       {
         key: "description",
-        label: t("role.description") || "Description",
+        label: t("role.description"),
       },
       {
         key: "priority",
-        label: t("role.priority") || "Priority",
+        label: t("role.priority"),
         sortable: true,
       },
       {
         key: "groups",
-        label: t("roles.groups") || "Groups",
+        label: t("roles.groups"),
       },
       {
         key: "createdAt",
-        label: t("role.createdAt") || "Created",
+        label: t("role.createdAt"),
       },
     ],
     [t]
@@ -296,8 +297,8 @@ export function useTenantRolesViewModel({
 
   const getEditInitialValues = useCallback(
     (item: Role) => ({
-      name: language === "ar" ? item.nameAr : item.nameEn,
-      description: language === "ar" ? item.descriptionAr : item.descriptionEn,
+      name: resolveBilingualLabel(item.nameEn, item.nameAr, language),
+      description: resolveBilingualLabel(item.descriptionEn ?? "", item.descriptionAr ?? "", language),
       priority: item.priority,
     }),
     [language]
@@ -306,10 +307,8 @@ export function useTenantRolesViewModel({
   // ─────────────────────────────────────────────────────────────────
   // Labels
   // ─────────────────────────────────────────────────────────────────
-  const title = t("tenant.manageRoles") || "Manage Roles";
-  const subtitle =
-    t("tenant.rolesDescription")?.replace("{tenant}", tenantName) ||
-    `Manage roles for ${tenantName}`;
+  const title = t("tenant.manageRoles");
+  const subtitle = t("tenant.rolesDescription").replace("{tenant}", tenantName);
 
   // ─────────────────────────────────────────────────────────────────
   // Resync permissions mutation
@@ -322,7 +321,7 @@ export function useTenantRolesViewModel({
       queryClient.invalidateQueries({ queryKey: ["tenant-permissions-raw", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
       toastSuccess({
-        title: t("tenant.permissionsResynced") || "Permissions resynced from edition",
+        title: t("tenant.permissionsResynced"),
       });
     },
     onError: (err: Error) => {

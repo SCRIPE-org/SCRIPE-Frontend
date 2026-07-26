@@ -224,7 +224,7 @@ export function useTenantPermissionsDialog({
       await identityContainer.tenantRepository.updateTenantPermissions(tenantId, selectedIds);
     },
     onSuccess: () => {
-      toastSuccess({ title: t("tenant.permissionsSaved") || "Permissions saved successfully" });
+      toastSuccess({ title: t("tenant.permissionsSaved") });
       queryClient.invalidateQueries({ queryKey: ["tenant-current-permissions-service", tenantId] });
       queryClient.invalidateQueries({ queryKey: ["parent-permissions-grouped"] });
       queryClient.invalidateQueries({ queryKey: ["tenant-stats", tenantId] });
@@ -233,7 +233,7 @@ export function useTenantPermissionsDialog({
     },
     onError: (error: Error) => {
       toastError({
-        title: t("tenant.permissionsSaveError") || "Failed to save",
+        title: t("tenant.permissionsSaveError"),
         description: error.message,
       });
     },

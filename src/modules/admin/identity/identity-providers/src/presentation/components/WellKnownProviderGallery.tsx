@@ -510,13 +510,11 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
               key={tpl.id}
               type="button"
               onClick={() => {
-                const localizedButtonLabel =
-                  t(`identityProviders.gallery.${tpl.id}.buttonLabel`) || tpl.preset.buttonLabel;
                 onSelect({
                   ...tpl.preset,
                   name: tpl.name,
                   slug: tpl.id,
-                  buttonLabel: localizedButtonLabel,
+                  buttonLabel: t(`identityProviders.gallery.${tpl.id}.buttonLabel`),
                   buttonColor: tpl.color,
                 });
               }}
@@ -527,7 +525,7 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                 boxShadow: isSelected ? `0 0 15px ${tpl.color}20` : undefined,
               }}
               aria-pressed={isSelected}
-              title={t(`identityProviders.gallery.${tpl.id}.description`) || tpl.description}
+              title={t(`identityProviders.gallery.${tpl.id}.description`)}
             >
               {/* Logo */}
               <div
@@ -585,25 +583,23 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
 
       {/* Inline Setup Guide for selected template */}
       {activeTemplate && activeTemplate.setupSteps && (
-        <Card className="border-nx-accent/30 border bg-nx-accent-wash duration-nx-standard ease-nx-enter animate-in fade-in slide-in-from-top-1 motion-reduce:transition-none">
+        <Card className="border border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash duration-nx-standard ease-nx-enter animate-in fade-in slide-in-from-top-1 motion-reduce:transition-none">
           <CardContent className="space-y-3 p-4">
             <h4 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-nx-accent">
               <HelpCircle className="h-4 w-4" aria-hidden="true" />
               {t("identityProviders.setupGuide", { name: activeTemplate.name })}
             </h4>
             <ul className="space-y-2 text-xs">
-              {activeTemplate.setupSteps.map((step, idx) => {
-                const localizedStep =
-                  t(`identityProviders.gallery.${activeTemplate.id}.step${idx + 1}`) || step;
-                return (
-                  <li key={idx} className="flex items-start gap-2.5 leading-relaxed text-nx-ink-2">
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash text-[10px] font-bold text-nx-accent">
-                      {idx + 1}
-                    </span>
-                    <p className="mt-0.5">{localizedStep}</p>
-                  </li>
-                );
-              })}
+              {activeTemplate.setupSteps.map((_step, idx) => (
+                <li key={idx} className="flex items-start gap-2.5 leading-relaxed text-nx-ink-2">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent-wash text-[10px] font-bold text-nx-accent">
+                    {idx + 1}
+                  </span>
+                  <p className="mt-0.5">
+                    {t(`identityProviders.gallery.${activeTemplate.id}.step${idx + 1}`)}
+                  </p>
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>

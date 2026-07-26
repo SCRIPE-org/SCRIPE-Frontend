@@ -43,20 +43,19 @@ export function RotateKeyDialog({ rotatedKey, onClose }: RotateKeyDialogProps) {
             <ShieldAlert className="h-5 w-5" />
           </div>
           <DialogTitle className="text-center">
-            {t("apikeys.rotate.successTitle") || "API Key Rotated Successfully"}
+            {t("apikeys.rotate.successTitle")}
           </DialogTitle>
           <DialogDescription className="text-center">
-            {t("apikeys.rotate.successDesc") ||
-              "Please copy your new secret key now. It won't be shown again!"}
+            {t("apikeys.rotate.successDesc")}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex select-all items-center space-x-2 overflow-x-auto rounded-lg border bg-muted/30 p-3 font-mono text-xs">
+        <div className="flex select-all items-center gap-2 overflow-x-auto rounded-nx-md border border-nx-line bg-nx-raised p-3 font-mono text-xs">
           <code className="flex-1 select-all break-all">{rotatedKey?.plainTextKey}</code>
           <Button
             size="icon"
             variant="ghost"
-            className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground"
+            className="h-8 w-8 shrink-0 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
             onClick={handleCopy}
           >
             {copied ? <Check className="h-4 w-4 text-success" /> : <Copy className="h-4 w-4" />}
@@ -65,7 +64,7 @@ export function RotateKeyDialog({ rotatedKey, onClose }: RotateKeyDialogProps) {
 
         <DialogFooter className="sm:justify-center">
           <Button onClick={onClose} className="w-full sm:w-auto">
-            {t("common.done") || "Done"}
+            {t("common.done")}
           </Button>
         </DialogFooter>
       </DialogContent>

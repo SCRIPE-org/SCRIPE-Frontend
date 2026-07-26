@@ -6,6 +6,7 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { identityContainer } from "@modules/identity/di";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { Role } from "@modules/identity/roles/src/domain/entities/Role";
 
 interface UseRoleSelectorOptions {
@@ -64,8 +65,8 @@ export function useRoleSelectorWithSearch(options: UseRoleSelectorOptions = {}) 
   const getRoleOptions = (language: string = "en") => {
     return roles.map((role) => ({
       value: role.id,
-      label: language === "ar" ? role.nameAr : role.nameEn,
-      description: language === "ar" ? role.descriptionAr : role.descriptionEn,
+      label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
+      description: resolveBilingualLabel(role.descriptionEn ?? "", role.descriptionAr ?? "", language),
       priority: role.priority,
       isSystem: role.isSystem,
     }));

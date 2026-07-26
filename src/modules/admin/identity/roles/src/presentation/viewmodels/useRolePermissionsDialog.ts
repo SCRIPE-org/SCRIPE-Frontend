@@ -243,14 +243,14 @@ export function useRolePermissionsDialog({
       });
     },
     onSuccess: () => {
-      toast({ title: t("role.permissionsSaved") || "Permissions saved successfully" });
+      toast({ title: t("role.permissionsSaved") });
       queryClient.invalidateQueries({ queryKey: ["role-permissions", role?.id] });
       queryClient.invalidateQueries({ queryKey: ["roles"] });
       onOpenChange(false);
     },
     onError: (error: Error) => {
       toast({
-        title: t("role.permissionsSaveError") || "Failed to save",
+        title: t("role.permissionsSaveError"),
         description: error.message,
         variant: "destructive",
       });

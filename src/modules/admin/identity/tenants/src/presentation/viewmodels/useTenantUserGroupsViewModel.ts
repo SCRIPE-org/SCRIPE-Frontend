@@ -133,28 +133,28 @@ export function useTenantUserGroupsViewModel({
     () => [
       {
         key: "name",
-        label: t("userGroups.name") || "Name",
+        label: t("userGroups.name"),
         sortable: true,
       },
       {
         key: "code",
-        label: t("userGroups.code") || "Code",
+        label: t("userGroups.code"),
       },
       {
         key: "description",
-        label: t("userGroups.descriptionCol") || t("userGroups.description") || "Description",
+        label: t("userGroups.descriptionCol"),
       },
       {
         key: "memberCount",
-        label: t("userGroups.members") || "Members",
+        label: t("userGroups.members"),
       },
       {
         key: "roleCount",
-        label: t("userGroups.roles") || "Roles",
+        label: t("userGroups.roles"),
       },
       {
         key: "createdAt",
-        label: t("common.createdAt") || "Created At",
+        label: t("common.createdAt"),
       },
     ],
     [t]
@@ -163,10 +163,8 @@ export function useTenantUserGroupsViewModel({
   // ─────────────────────────────────────────────────────────────────
   // Labels
   // ─────────────────────────────────────────────────────────────────
-  const title = t("tenant.manageGroups") || "Manage User Groups";
-  const subtitle =
-    t("tenant.groupsDescription")?.replace("{tenant}", tenantName) ||
-    `Manage user groups for ${tenantName}`;
+  const title = t("tenant.manageGroups");
+  const subtitle = t("tenant.groupsDescription").replace("{tenant}", tenantName);
 
   return {
     groupsVm,

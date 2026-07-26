@@ -17,6 +17,7 @@ import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Users } from "lucide-react";
 import GenericSelect, { type GenericSelectOption } from "@core/crud/components/generic-select";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { Role } from "../../domain/entities/Role";
 import { useRoleDeleteViewModel } from "../viewmodels/useRoleDeleteViewModel";
 
@@ -61,12 +62,12 @@ export function RoleDeleteDialog({
   const roleOptions: GenericSelectOption[] = useMemo(() => {
     return availableRoles.map((r) => ({
       value: r.id,
-      label: language === "ar" ? r.nameAr : r.nameEn,
+      label: resolveBilingualLabel(r.nameEn, r.nameAr, language),
     }));
   }, [availableRoles, language]);
 
   const hasAdmins = adminCount > 0;
-  const roleName = (language === "ar" ? role?.nameAr : role?.nameEn) ?? "";
+  const roleName = resolveBilingualLabel(role?.nameEn ?? "", role?.nameAr ?? "", language);
 
   const handleConfirm = async () => {
     await onConfirm(hasAdmins ? fallbackRoleId : undefined);

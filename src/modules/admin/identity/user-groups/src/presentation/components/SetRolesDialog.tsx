@@ -13,6 +13,7 @@ import { Label } from "@core/ui/label";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { Shield } from "lucide-react";
 import { useSetRolesViewModel } from "../viewmodels/useSetRolesViewModel";
 
@@ -45,7 +46,7 @@ export function SetRolesDialog({
     () =>
       (rolesData?.items ?? []).map((role) => ({
         value: role.id,
-        label: language === "ar" ? role.nameAr : role.nameEn,
+        label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
         description: role.code,
       })),
     [rolesData, language]

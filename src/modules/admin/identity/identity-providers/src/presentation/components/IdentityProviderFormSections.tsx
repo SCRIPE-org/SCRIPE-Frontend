@@ -267,10 +267,7 @@ export function Oauth2ConfigSection({ form, updateField }: FormSectionProps) {
             placeholder="https://accounts.google.com"
             className="font-mono text-sm"
           />
-          <p className="text-xs text-nx-ink-3">
-            {t("identityProviders.authorityHelp") ||
-              "The OAuth 2.0 issuer or authorization endpoint base URL"}
-          </p>
+          <p className="text-xs text-nx-ink-3">{t("identityProviders.authorityHelp")}</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

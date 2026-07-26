@@ -201,16 +201,14 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
       setIsDirty(false);
       if (isCreateMode && result) {
         success({
-          title: t("identityProviders.created") || "Provider Created",
-          description:
-            t("identityProviders.createdDesc") || "Identity provider created successfully.",
+          title: t("identityProviders.created"),
+          description: t("identityProviders.createdDesc"),
         });
         router.push(`/settings/identity-providers/${result.id}`);
       } else {
         success({
-          title: t("identityProviders.updated") || "Provider Updated",
-          description:
-            t("identityProviders.updatedDesc") || "Identity provider updated successfully.",
+          title: t("identityProviders.updated"),
+          description: t("identityProviders.updatedDesc"),
         });
         // Refetch detail
         queryClient.invalidateQueries({ queryKey: identityProviderKeys.detail(providerId!) });
@@ -218,7 +216,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -230,19 +228,19 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     onSuccess: (result) => {
       if (result.isSuccess) {
         success({
-          title: t("identityProviders.testSuccess") || "Connection Successful",
+          title: t("identityProviders.testSuccess"),
           description: result.message || "Provider is reachable.",
         });
       } else {
         toastError({
-          title: t("identityProviders.testFailed") || "Connection Failed",
+          title: t("identityProviders.testFailed"),
           description: result.message || "Could not reach the provider.",
         });
       }
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -254,14 +252,14 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: identityProviderKeys.all });
       success({
-        title: t("identityProviders.deleted") || "Provider Deleted",
-        description: t("identityProviders.deletedDesc") || "Identity provider deleted.",
+        title: t("identityProviders.deleted"),
+        description: t("identityProviders.deletedDesc"),
       });
       router.push("/settings/identity-providers");
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },

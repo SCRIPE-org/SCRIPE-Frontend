@@ -98,12 +98,10 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
             size="sm"
             onClick={onRotate}
             disabled={isRotating || !detail.isActive}
+            loading={isRotating}
             className="gap-1.5"
           >
-            <RotateCcw
-              className={cn("h-3.5 w-3.5", isRotating && "motion-safe:animate-spin")}
-              aria-hidden="true"
-            />
+            {!isRotating && <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />}
             {t("apikeys.rotateKey")}
           </Button>
           <Button

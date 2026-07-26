@@ -243,8 +243,8 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       setIsDirty(false);
       if (isCreateMode && result) {
         success({
-          title: t("oauthApps.created") || "Application Created",
-          description: t("oauthApps.createdDesc") || "OAuth application created successfully.",
+          title: t("oauthApps.created"),
+          description: t("oauthApps.createdDesc"),
         });
 
         // If a secret was generated (confidential client), show the dialog instead of navigating away immediately
@@ -260,15 +260,15 @@ export function useOAuthAppDetailViewModel(appId?: string) {
         }
       } else {
         success({
-          title: t("oauthApps.updated") || "Application Updated",
-          description: t("oauthApps.updatedDesc") || "OAuth application updated successfully.",
+          title: t("oauthApps.updated"),
+          description: t("oauthApps.updatedDesc"),
         });
         queryClient.invalidateQueries({ queryKey: oauthAppKeys.detail(appId!) });
       }
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -284,15 +284,13 @@ export function useOAuthAppDetailViewModel(appId?: string) {
       });
       queryClient.invalidateQueries({ queryKey: oauthAppKeys.all });
       success({
-        title: t("oauthApps.secretRegenerated") || "Secret Regenerated",
-        description:
-          t("oauthApps.secretRegeneratedDesc") ||
-          "Copy the new secret now — it won't be shown again.",
+        title: t("oauthApps.secretRegenerated"),
+        description: t("oauthApps.secretRegeneratedDesc"),
       });
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -304,14 +302,14 @@ export function useOAuthAppDetailViewModel(appId?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: oauthAppKeys.all });
       success({
-        title: t("oauthApps.deleted") || "Application Deleted",
-        description: t("oauthApps.deletedDesc") || "OAuth application deleted.",
+        title: t("oauthApps.deleted"),
+        description: t("oauthApps.deletedDesc"),
       });
       router.push("/settings/oauth-apps");
     },
     onError: (err: Error) => {
       toastError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -320,8 +318,8 @@ export function useOAuthAppDetailViewModel(appId?: string) {
   // ─── Client Type options ──────────────────────
   const clientTypeOptions = useMemo(
     () => [
-      { value: "confidential", label: t("oauthApps.confidential") || "Confidential (Server-Side)" },
-      { value: "public", label: t("oauthApps.public") || "Public (SPA / Mobile)" },
+      { value: "confidential", label: t("oauthApps.confidential") },
+      { value: "public", label: t("oauthApps.public") },
     ],
     [t]
   );

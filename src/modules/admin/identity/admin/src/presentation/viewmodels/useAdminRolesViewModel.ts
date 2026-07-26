@@ -13,6 +13,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { Admin, AdminRoleData } from "../../domain/entities/Admin";
 import type { AssignRoleRequest } from "../../domain/entities/AdminRequests";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
+import { resolveBilingualLabel } from "@core/common/utils";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for admin roles view model.
@@ -66,8 +67,12 @@ export function useAdminRolesViewModel(
     () =>
       (rolesData?.items ?? []).map((role) => ({
         value: role.id,
-        label: language === "ar" ? role.nameAr : role.nameEn,
-        description: language === "ar" ? role.descriptionAr : role.descriptionEn,
+        label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
+        description: resolveBilingualLabel(
+          role.descriptionEn ?? "",
+          role.descriptionAr ?? "",
+          language
+        ),
         uniqueKey: role.code, // Use code for stable selection if IDs rotate
       })),
     [rolesData, language]

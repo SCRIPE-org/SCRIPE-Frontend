@@ -42,22 +42,17 @@ Console.WriteLine(overview.Status);`;
   };
 
   return (
-    <Card className="border border-primary/20 bg-gradient-to-br from-primary/5 via-transparent to-transparent">
-      <CardHeader className="border-b pb-3">
+    <Card className="border border-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] bg-gradient-to-br from-[color:color-mix(in_srgb,var(--nx-accent)_5%,transparent)] via-transparent to-transparent">
+      <CardHeader className="border-b border-nx-line pb-3">
         <div className="flex items-center gap-2">
-          <Terminal className="h-5 w-5 text-primary" />
-          <CardTitle className="text-sm font-semibold">
-            {t("apikeys.quickstart.title") || "Developer Quick Start & API Integration"}
-          </CardTitle>
+          <Terminal className="h-5 w-5 text-nx-accent" />
+          <CardTitle className="text-sm font-semibold">{t("apikeys.quickstart.title")}</CardTitle>
         </div>
-        <p className="mt-1 text-xs text-muted-foreground">
-          {t("apikeys.quickstart.desc") ||
-            "Get started by making your first API call. Copy the code snippets below to configure your client integrations."}
-        </p>
+        <p className="mt-1 text-xs text-nx-ink-2">{t("apikeys.quickstart.desc")}</p>
       </CardHeader>
       <CardContent className="p-6">
         <Tabs defaultValue="curl" className="w-full">
-          <TabsList className="mb-4 grid max-w-[400px] grid-cols-3 bg-muted/30">
+          <TabsList className="mb-4 grid max-w-[400px] grid-cols-3 bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)]">
             <TabsTrigger value="curl" className="text-xs font-medium">
               cURL
             </TabsTrigger>
@@ -72,13 +67,13 @@ Console.WriteLine(overview.Status);`;
           {/* cURL Content */}
           <TabsContent value="curl" className="space-y-3 outline-none">
             <div className="relative">
-              <pre className="select-all overflow-x-auto rounded-lg border border-border bg-muted p-4 font-mono text-xs leading-relaxed text-foreground">
+              <pre className="select-all overflow-x-auto rounded-nx-md border border-nx-line bg-nx-raised p-4 font-mono text-xs leading-relaxed text-nx-ink">
                 <code>{curlCode}</code>
               </pre>
               <Button
                 size="icon"
                 variant="ghost"
-                className="absolute right-2.5 top-2.5 h-7 w-7 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                className="absolute end-2.5 top-2.5 h-7 w-7 text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
                 onClick={() => handleCopy(curlCode, "curl")}
               >
                 {copiedTab === "curl" ? (
@@ -88,7 +83,7 @@ Console.WriteLine(overview.Status);`;
                 )}
               </Button>
             </div>
-            <p className="mt-2 flex items-center gap-1.5 font-sans text-[10px] text-muted-foreground">
+            <p className="mt-2 flex items-center gap-1.5 font-sans text-[10px] text-nx-ink-3">
               <Code2 className="h-3.5 w-3.5 shrink-0" />
               <span>
                 Replace the placeholder with the plaintext token generated during creation.
@@ -99,13 +94,13 @@ Console.WriteLine(overview.Status);`;
           {/* Node.js Content */}
           <TabsContent value="node" className="space-y-3 outline-none">
             <div className="relative">
-              <pre className="select-all overflow-x-auto rounded-lg border border-border bg-muted p-4 font-mono text-xs leading-relaxed text-foreground">
+              <pre className="select-all overflow-x-auto rounded-nx-md border border-nx-line bg-nx-raised p-4 font-mono text-xs leading-relaxed text-nx-ink">
                 <code>{nodeCode}</code>
               </pre>
               <Button
                 size="icon"
                 variant="ghost"
-                className="absolute right-2.5 top-2.5 h-7 w-7 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                className="absolute end-2.5 top-2.5 h-7 w-7 text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
                 onClick={() => handleCopy(nodeCode, "node")}
               >
                 {copiedTab === "node" ? (
@@ -120,13 +115,13 @@ Console.WriteLine(overview.Status);`;
           {/* .NET Content */}
           <TabsContent value="dotnet" className="space-y-3 outline-none">
             <div className="relative">
-              <pre className="select-all overflow-x-auto rounded-lg border border-border bg-muted p-4 font-mono text-xs leading-relaxed text-foreground">
+              <pre className="select-all overflow-x-auto rounded-nx-md border border-nx-line bg-nx-raised p-4 font-mono text-xs leading-relaxed text-nx-ink">
                 <code>{dotnetCode}</code>
               </pre>
               <Button
                 size="icon"
                 variant="ghost"
-                className="absolute right-2.5 top-2.5 h-7 w-7 text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                className="absolute end-2.5 top-2.5 h-7 w-7 text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
                 onClick={() => handleCopy(dotnetCode, "dotnet")}
               >
                 {copiedTab === "dotnet" ? (

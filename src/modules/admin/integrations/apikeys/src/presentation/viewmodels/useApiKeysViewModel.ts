@@ -16,6 +16,7 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQuery } from "@tanstack/react-query";
 import { useAppStore } from "@core/store/useAppStore";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { ApiKey, CreateApiKeyRequest } from "../../domain/entities/ApiKey";
 
 // Query keys for caching
@@ -28,7 +29,6 @@ export function useApiKeysViewModel() {
   const { apiKeyRepository } = integrationsContainer;
   const { permissionRepository } = identityContainer;
   const { t, language } = useI18n();
-  const isAr = language === "ar";
   const { success, error: toastError } = useEnhancedToast();
 
   // ── Tenant Context Resolution for permission scopes picker ────────────────
@@ -86,8 +86,8 @@ export function useApiKeysViewModel() {
         const result = await apiKeyRepository.create(requestBody);
         setGeneratedKey(result.plainTextKey);
         success({
-          title: t("apikeys.created") || "API Key Generated",
-          description: t("apikeys.createdDesc") || "API key created successfully.",
+          title: t("apikeys.created"),
+          description: t("apikeys.createdDesc"),
         });
         return new ApiKey({
           id: result.id,
@@ -101,7 +101,7 @@ export function useApiKeysViewModel() {
         });
       } catch (err: any) {
         toastError({
-          title: t("common.error") || "Error",
+          title: t("common.error"),
           description: err.message || "Failed to generate API Key",
         });
         throw err;
@@ -114,12 +114,12 @@ export function useApiKeysViewModel() {
       try {
         await apiKeyRepository.revoke(id);
         success({
-          title: t("apikeys.revoked") || "API Key Revoked",
-          description: t("apikeys.revokedDesc") || "API key revoked successfully.",
+          title: t("apikeys.revoked"),
+          description: t("apikeys.revokedDesc"),
         });
       } catch (err: any) {
         toastError({
-          title: t("common.error") || "Error",
+          title: t("common.error"),
           description: err.message || "Failed to revoke API Key",
         });
         throw err;
@@ -133,66 +133,62 @@ export function useApiKeysViewModel() {
       createFields: [
         {
           name: "name",
-          label: t("apikeys.name") || "Key Name",
+          label: t("apikeys.name"),
           type: "text" as const,
-          placeholder: t("apikeys.namePlaceholder") || "e.g. CI/CD integration key",
+          placeholder: t("apikeys.namePlaceholder"),
           required: true,
         },
         {
           name: "scopes",
-          label: t("apikeys.scopes") || "Permissions / Scopes",
+          label: t("apikeys.scopes"),
           type: "multi-select" as const,
           required: true,
-          placeholder: t("apikeys.scopesPlaceholder") || "Select permissions…",
-          searchPlaceholder: t("apikeys.scopesSearch") || "Search permissions…",
+          placeholder: t("apikeys.scopesPlaceholder"),
+          searchPlaceholder: t("apikeys.scopesSearch"),
           searchType: "client" as const,
-          description:
-            t("apikeys.scopesDescription") ||
-            "Each permission is shown as 'Name (code)'. Select what this key can access.",
+          description: t("apikeys.scopesDescription"),
           options: permissions.map((p) => ({
-            label: `${(isAr ? p.nameAr : p.nameEn) || p.code} (${p.code})`,
+            label: `${resolveBilingualLabel(p.nameEn ?? "", p.nameAr ?? "", language) || p.code} (${p.code})`,
             value: p.code,
           })),
         },
         {
           name: "expiryDays",
-          label: t("apikeys.expiration") || "Expiration",
+          label: t("apikeys.expiration"),
           type: "select" as const,
-          placeholder: t("apikeys.expirationPlaceholder") || "Select expiration",
+          placeholder: t("apikeys.expirationPlaceholder"),
           required: false,
           options: [
-            { label: t("apikeys.expirations.never") || "Never (No Expiration)", value: "" },
-            { label: t("apikeys.expirations.days30") || "30 Days", value: "30" },
-            { label: t("apikeys.expirations.days90") || "90 Days", value: "90" },
-            { label: t("apikeys.expirations.days365") || "1 Year", value: "365" },
+            { label: t("apikeys.expirations.never"), value: "" },
+            { label: t("apikeys.expirations.days30"), value: "30" },
+            { label: t("apikeys.expirations.days90"), value: "90" },
+            { label: t("apikeys.expirations.days365"), value: "365" },
           ],
         },
         {
           name: "description",
-          label: t("apikeys.settings.desc") || "Description",
+          label: t("apikeys.settings.desc"),
           type: "textarea" as const,
-          placeholder:
-            t("apikeys.settings.descPlaceholder") ||
-            "Explain what this integration key is used for...",
+          placeholder: t("apikeys.settings.descPlaceholder"),
           required: false,
         },
         {
           name: "rateLimitPerMinute",
-          label: t("apikeys.settings.rateLimit") || "Rate Limit (hits/min)",
+          label: t("apikeys.settings.rateLimit"),
           type: "number" as const,
           placeholder: "e.g. 100",
           required: false,
         },
         {
           name: "monthlyQuota",
-          label: t("apikeys.settings.quota") || "Monthly Quota (total hits)",
+          label: t("apikeys.settings.quota"),
           type: "number" as const,
           placeholder: "e.g. 50000 (leave blank for unlimited)",
           required: false,
         },
         {
           name: "ipWhitelist",
-          label: t("apikeys.settings.whitelist") || "IP Whitelist (comma-separated)",
+          label: t("apikeys.settings.whitelist"),
           type: "text" as const,
           placeholder: "e.g. 192.168.1.1, 10.0.0.0/24",
           required: false,
@@ -216,7 +212,7 @@ export function useApiKeysViewModel() {
         canDelete: "apikeys.delete",
       },
     }),
-    [t, isAr, apiKeyRepository, permissions]
+    [t, language, apiKeyRepository, permissions]
   );
 
   return {

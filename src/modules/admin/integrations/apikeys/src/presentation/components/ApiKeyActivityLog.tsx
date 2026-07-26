@@ -21,7 +21,6 @@ import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
 import { getStatusCodeGroup } from "../../domain/entities/ApiKeyActivity";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatDateTimeUtc } from "@core/common/utils";
-import { cn } from "@core/common/utils";
 
 interface ApiKeyActivityLogProps {
   activity: { items: ApiKeyActivityEntry[]; totalCount: number } | undefined;
@@ -128,12 +127,10 @@ export function ApiKeyActivityLog({
           className="h-8 w-8"
           onClick={onRefresh}
           disabled={isLoading}
+          loading={isLoading}
           aria-label={t("common.refresh")}
         >
-          <RefreshCw
-            className={cn("h-3.5 w-3.5", isLoading && "motion-safe:animate-spin")}
-            aria-hidden="true"
-          />
+          {!isLoading && <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
         </Button>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col overflow-hidden p-0">

@@ -15,6 +15,7 @@ import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Shield } from "lucide-react";
+import { resolveBilingualLabel } from "@core/common/utils";
 import type { Admin } from "../../domain/entities/Admin";
 import { useManageRolesViewModel } from "../viewmodels/useManageRolesViewModel";
 
@@ -47,8 +48,12 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
         .filter((role) => (role.tenantId || "") === scopeTenantId) // Double check strict scope
         .map((role) => ({
           value: role.id,
-          label: language === "ar" ? role.nameAr : role.nameEn,
-          description: language === "ar" ? role.descriptionAr : role.descriptionEn,
+          label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
+          description: resolveBilingualLabel(
+            role.descriptionEn ?? "",
+            role.descriptionAr ?? "",
+            language
+          ),
         })),
     [rolesData, language, scopeTenantId]
   );

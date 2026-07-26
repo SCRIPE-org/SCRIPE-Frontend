@@ -54,16 +54,16 @@ export function useUsersViewModel() {
     update: async (id, data) => {
       await usersRepository.update(id, data);
       success({
-        title: t("users.updated") || "User Updated",
-        description: t("users.updatedDesc") || "User profile updated successfully.",
+        title: t("users.updated"),
+        description: t("users.updatedDesc"),
       });
       return {} as UsersEntity;
     },
     delete: async (id) => {
       await usersRepository.delete(id);
       success({
-        title: t("users.deleted") || "User Deleted",
-        description: t("users.deletedDesc") || "User has been deleted successfully.",
+        title: t("users.deleted"),
+        description: t("users.deletedDesc"),
       });
     },
   });
@@ -85,16 +85,12 @@ export function useUsersViewModel() {
     },
     onError: (err: Error, __, context?: { previous: unknown }) => {
       if (context?.previous !== undefined) queryClient.setQueryData(queryKey, context.previous);
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
     onSuccess: (_, { isActive }) => {
       success({
-        title: isActive
-          ? t("users.activated") || "User Activated"
-          : t("users.deactivated") || "User Deactivated",
-        description: isActive
-          ? t("users.activatedDesc") || "User has been activated."
-          : t("users.deactivatedDesc") || "User has been deactivated.",
+        title: isActive ? t("users.activated") : t("users.deactivated"),
+        description: isActive ? t("users.activatedDesc") : t("users.deactivatedDesc"),
       });
     },
     onSettled: () => {
@@ -108,12 +104,12 @@ export function useUsersViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
-        title: t("users.unlocked") || "Account Unlocked",
-        description: t("users.unlockedDesc") || "User account has been unlocked.",
+        title: t("users.unlocked"),
+        description: t("users.unlockedDesc"),
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -123,12 +119,12 @@ export function useUsersViewModel() {
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
-        title: t("users.bulkActivated") || "Bulk Activated",
-        description: `${count} ${t("users.usersActivated") || "users activated"}.`,
+        title: t("users.bulkActivated"),
+        description: `${count} ${t("users.usersActivated")}.`,
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -137,12 +133,12 @@ export function useUsersViewModel() {
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
-        title: t("users.bulkDeactivated") || "Bulk Deactivated",
-        description: `${count} ${t("users.usersDeactivated") || "users deactivated"}.`,
+        title: t("users.bulkDeactivated"),
+        description: `${count} ${t("users.usersDeactivated")}.`,
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -151,12 +147,12 @@ export function useUsersViewModel() {
     onSuccess: (count) => {
       queryClient.invalidateQueries({ queryKey: qk.users.all });
       success({
-        title: t("users.bulkDeleted") || "Bulk Deleted",
-        description: `${count} ${t("users.usersDeleted") || "users deleted"}.`,
+        title: t("users.bulkDeleted"),
+        description: `${count} ${t("users.usersDeleted")}.`,
       });
     },
     onError: (err: Error) => {
-      toastError({ title: t("common.error") || "Error", description: err.message });
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -193,45 +189,45 @@ export function useUsersViewModel() {
       editFields: [
         {
           name: "firstName",
-          label: t("users.columns.firstName") || "First Name",
+          label: t("users.columns.firstName"),
           type: "text" as const,
-          placeholder: t("users.placeholders.firstName") || "Enter first name",
+          placeholder: t("users.placeholders.firstName"),
         },
         {
           name: "lastName",
-          label: t("users.columns.lastName") || "Last Name",
+          label: t("users.columns.lastName"),
           type: "text" as const,
-          placeholder: t("users.placeholders.lastName") || "Enter last name",
+          placeholder: t("users.placeholders.lastName"),
         },
         {
           name: "middleName",
-          label: t("users.columns.middleName") || "Middle Name",
+          label: t("users.columns.middleName"),
           type: "text" as const,
-          placeholder: t("users.placeholders.middleName") || "Enter middle name",
+          placeholder: t("users.placeholders.middleName"),
         },
         {
           name: "country",
-          label: t("users.columns.country") || "Country",
+          label: t("users.columns.country"),
           type: "text" as const,
-          placeholder: t("users.placeholders.country") || "Enter country",
+          placeholder: t("users.placeholders.country"),
         },
         {
           name: "government",
-          label: t("users.columns.government") || "Governorate",
+          label: t("users.columns.government"),
           type: "text" as const,
-          placeholder: t("users.placeholders.government") || "Enter governorate",
+          placeholder: t("users.placeholders.government"),
         },
         {
           name: "city",
-          label: t("users.columns.city") || "City",
+          label: t("users.columns.city"),
           type: "text" as const,
-          placeholder: t("users.placeholders.city") || "Enter city",
+          placeholder: t("users.placeholders.city"),
         },
         {
           name: "notes",
-          label: t("users.columns.notes") || "Notes",
+          label: t("users.columns.notes"),
           type: "textarea" as const,
-          placeholder: t("users.placeholders.notes") || "Optional notes...",
+          placeholder: t("users.placeholders.notes"),
         },
         { name: "id", type: "hidden" as const, required: true },
       ],
