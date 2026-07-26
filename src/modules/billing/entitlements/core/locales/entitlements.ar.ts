@@ -231,6 +231,8 @@ export const ar = {
       tenantId: "رقم المستأجر",
       gateway: "بوابة الدفع",
       collectionMethod: "النوع",
+      collectionMethodInstant: "فوري",
+      collectionMethodPostBilling: "فوترة لاحقة",
       grossAmount: "المبلغ الإجمالي",
       commission: "العمولة",
       netAmount: "صافي المستأجر",

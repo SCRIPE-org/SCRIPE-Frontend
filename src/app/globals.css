@@ -1578,6 +1578,27 @@ html {
   transition-duration: 0.5s !important;
 }
 
+/* The four rules above use a descendant combinator (`:root[data-animation=...] *`),
+   which excludes :root itself — so the Animation Level setting had no effect on the
+   --workspace-hue/--workspace-chroma crossfade transition declared on :root above.
+   These companion rules target :root directly (no !important needed: same specificity,
+   later in source order, so they win over the base :root transition declaration). */
+:root[data-animation="none"] {
+  transition: none;
+}
+
+:root[data-animation="minimal"] {
+  transition-duration: 0.1s;
+}
+
+:root[data-animation="moderate"] {
+  transition-duration: 0.3s;
+}
+
+:root[data-animation="high"] {
+  transition-duration: 0.5s;
+}
+
 /* ========================================
    SCRIPE ENTRANCE ANIMATION KEYFRAMES
    Used by moderate + high animation levels
@@ -4137,11 +4158,15 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --nx-line-hi: rgba(240, 240, 246, 0.16);
 
   /* accent — text and fill have opposite contrast duties: two tokens.
-     Alpha via the slash channel, never string concatenation. */
-  --nx-accent: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --nx-accent-fill: oklch(0.5 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
+     Alpha via the slash channel, never string concatenation.
+     Fallback matches the :root default (0.14) below and the @property
+     initial-value above. 0.18 was the old worst-case tenant chroma value;
+     that ceiling is now enforced at runtime by the clamp in
+     workspace-provider.tsx, so the CSS fallback no longer needs to assume it. */
+  --nx-accent: oklch(0.68 var(--workspace-chroma, 0.14) var(--workspace-hue, 262));
+  --nx-accent-fill: oklch(0.5 var(--workspace-chroma, 0.14) var(--workspace-hue, 262));
   --nx-on-fill: #ffffff;
-  --nx-accent-wash: oklch(0.68 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.13);
+  --nx-accent-wash: oklch(0.68 var(--workspace-chroma, 0.14) var(--workspace-hue, 262) / 0.13);
 
   /* secondary — the logo's cyan; "live/now" only, never decoration */
   --nx-secondary: oklch(0.68 0.13 192);
@@ -4212,8 +4237,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   /* L0.46, not a naive inversion: accent-as-text must clear its floor on
      every nx surface across all workspace hues (5.33:1 worst hue). Fill and
      --nx-on-fill are theme-invariant and inherit from the dark block. */
-  --nx-accent: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262));
-  --nx-accent-wash: oklch(0.46 var(--workspace-chroma, 0.18) var(--workspace-hue, 262) / 0.1);
+  --nx-accent: oklch(0.46 var(--workspace-chroma, 0.14) var(--workspace-hue, 262));
+  --nx-accent-wash: oklch(0.46 var(--workspace-chroma, 0.14) var(--workspace-hue, 262) / 0.1);
 
   --nx-secondary: oklch(0.46 0.13 192);
 

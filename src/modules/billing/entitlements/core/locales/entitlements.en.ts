@@ -233,6 +233,8 @@ export const en = {
       tenantId: "Tenant ID",
       gateway: "Gateway",
       collectionMethod: "Type",
+      collectionMethodInstant: "Instant",
+      collectionMethodPostBilling: "Post-Billing",
       grossAmount: "Gross Amount",
       commission: "Commission",
       netAmount: "Net to Tenant",

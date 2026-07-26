@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Zap, ClipboardList } from "lucide-react";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
@@ -86,9 +87,17 @@ export function useCommissionLedgerViewModel() {
       key: "collectionMethod",
       label: t("entitlements.commissionLedger.collectionMethod"),
       render: (_value, item) =>
-        item.isInstant
-          ? "⚡ Instant" // Stripe Connect — already collected
-          : "📋 Post-Billing", // PayPal/Paymob — will be invoiced
+        item.isInstant ? (
+          <span className="inline-flex items-center gap-1.5">
+            <Zap aria-hidden="true" className="h-3.5 w-3.5" />
+            {t("entitlements.commissionLedger.collectionMethodInstant")}
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1.5">
+            <ClipboardList aria-hidden="true" className="h-3.5 w-3.5" />
+            {t("entitlements.commissionLedger.collectionMethodPostBilling")}
+          </span>
+        ),
     },
     {
       key: "grossAmount",

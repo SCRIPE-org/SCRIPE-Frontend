@@ -40,6 +40,7 @@ export interface DashboardThemeSettings {
 
   // ── Section 2: Colors & Theme ──
   colorTheme: string;
+  colorThemeCustomized: boolean;
   secondaryColorTheme: string;
   lightBackgroundTheme: string;
   darkBackgroundTheme: string;
@@ -130,6 +131,7 @@ export const DEFAULT_DASHBOARD_SETTINGS: DashboardThemeSettings = {
 
   // Colors & Theme
   colorTheme: "purple",
+  colorThemeCustomized: false,
   secondaryColorTheme: "purple",
   lightBackgroundTheme: "default",
   darkBackgroundTheme: "default",

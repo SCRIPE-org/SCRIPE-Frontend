@@ -69,7 +69,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
           return (
             <Card
               key={edition.editionId}
-              className="group overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm transition-[transform,box-shadow] duration-nx-micro ease-nx-enter hover:-translate-y-0.5 hover:shadow-lg motion-reduce:transition-none"
+              className="group overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] hover:border-nx-line-hi"
             >
               {/* Top gradient accent */}
               <div

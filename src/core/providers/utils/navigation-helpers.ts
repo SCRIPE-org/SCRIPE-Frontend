@@ -32,6 +32,7 @@ export function firstPageOf(ws: WithMenuItems): string | null {
  */
 export function getAccentColor(ws: WorkspaceGroup | null): string | null {
   if (!ws || ws.colorHue === null || ws.colorHue === undefined) return null;
-  const chroma = ws.colorChroma ?? 0.18;
-  return `oklch(0.6 ${chroma} ${ws.colorHue})`;
+  // Delegates to WorkspaceGroup.accentColor — single source for the
+  // dark(L0.68)/light(L0.46) lightness split matching the --nx-accent ladder.
+  return ws.accentColor;
 }

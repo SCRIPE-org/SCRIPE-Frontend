@@ -33,7 +33,7 @@ import { useIsFetching } from "@tanstack/react-query";
 // loader the system already owns.
 function LayoutLoadingFallback() {
   return (
-    <div className="flex h-screen items-center justify-center bg-nx-ground">
+    <div className="flex h-[100dvh] items-center justify-center bg-nx-ground">
       <LoadingSpinner />
     </div>
   );
@@ -64,7 +64,7 @@ function LoginWelcomeLoader() {
   const nameForWelcome = user?.firstName || user?.username || t("common.user");
 
   return (
-    <div className="fixed inset-0 z-modal flex h-screen w-screen select-none flex-col items-center justify-center overflow-hidden bg-nx-ground">
+    <div className="fixed inset-0 z-modal flex select-none flex-col items-center justify-center overflow-hidden bg-nx-ground">
       {/* Welcome card. The ambient accent wash and the injected keyframe bar
           that used to live here were a second design system: a stylesheet
           smuggled into a component, an indeterminate bar the user could not

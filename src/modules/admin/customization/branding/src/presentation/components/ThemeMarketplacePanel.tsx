@@ -38,8 +38,9 @@ import {
   Blocks,
   Crown,
   ShoppingCart,
+  Star,
 } from "lucide-react";
-import { cn } from "@/core/common/utils";
+import { cn, formatCurrency } from "@/core/common/utils";
 import { THEME_CATEGORIES, THEME_SORT_OPTIONS } from "../../domain/types/ThemeTypes";
 import type { ThemeCardDto } from "../../domain/types/ThemeServiceTypes";
 import { getThemeBadge } from "../../domain/types/ThemeServiceTypes";
@@ -409,7 +410,7 @@ function ThemeCard({
           </div>
           <div className="mt-0.5 flex items-center gap-2">
             <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-medium", badge.color)}>
-              {badge.label}
+              {t(badge.labelKey, badge.labelParams)}
             </span>
             <span className="text-[9px] text-nx-ink-3">
               {theme.usageCount} {t("studio.marketplace.uses")}
@@ -465,7 +466,7 @@ function ThemeCard({
               className="flex h-6 cursor-not-allowed items-center gap-0.5 rounded-nx-control border border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] px-2 text-[10px] text-nx-accent opacity-80"
             >
               <ShoppingCart className="h-2.5 w-2.5" />
-              {theme.price ? `$${theme.price.toFixed(0)}` : t("studio.marketplace.buy")}
+              {theme.price ? formatCurrency(theme.price, theme.priceCurrency || "USD") : t("studio.marketplace.buy")}
             </button>
           ) : (
             <Lock className="h-3 w-3 text-nx-ink-3" />
@@ -500,12 +501,12 @@ function ThemeCard({
         <div className="absolute start-1.5 top-1.5 flex gap-1">
           {theme.isNew && (
             <span className="flex items-center gap-0.5 rounded-full bg-warning px-1.5 py-0.5 text-[9px] font-bold text-warning-foreground">
-              <Sparkles className="h-2.5 w-2.5" /> NEW
+              <Sparkles className="h-2.5 w-2.5" /> {t("studio.marketplace.new")}
             </span>
           )}
           {theme.isFeatured && !theme.isNew && (
             <span className="flex items-center gap-0.5 rounded-full bg-[color:color-mix(in_srgb,var(--nx-ground)_90%,transparent)] px-1.5 py-0.5 text-[9px] font-bold text-nx-ink">
-              <Crown className="h-2.5 w-2.5" /> ★
+              <Crown className="h-2.5 w-2.5" /> <Star className="h-2.5 w-2.5 fill-current" aria-hidden="true" />
             </span>
           )}
           {isPreviewing && (
@@ -527,7 +528,7 @@ function ThemeCard({
             onToggleFavorite();
           }}
           disabled={isTogglingFavorite}
-          className="absolute bottom-1.5 end-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/30 backdrop-blur-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-black/50"
+          className="absolute bottom-1.5 end-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-[color:color-mix(in_srgb,var(--nx-ink)_30%,transparent)] transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-[color:color-mix(in_srgb,var(--nx-ink)_50%,transparent)]"
         >
           <Heart
             className={cn(
@@ -553,7 +554,7 @@ function ThemeCard({
         </div>
         <div className="flex items-center gap-1.5">
           <span className={cn("rounded-full px-1.5 py-0.5 text-[9px] font-medium", badge.color)}>
-            {badge.label}
+            {t(badge.labelKey, badge.labelParams)}
           </span>
           <span className="flex items-center gap-0.5 text-[9px] text-nx-ink-3">
             <Download className="h-2.5 w-2.5" /> {theme.usageCount}
@@ -639,7 +640,7 @@ function ThemeCard({
                 title="Contact your system administrator to purchase this theme"
               >
                 <ShoppingCart className="h-3 w-3" />
-                {theme.price ? `$${theme.price.toFixed(0)}` : t("studio.marketplace.buy")}
+                {theme.price ? formatCurrency(theme.price, theme.priceCurrency || "USD") : t("studio.marketplace.buy")}
               </button>
             ) : (
               <div className="flex h-6 flex-1 items-center justify-center gap-1 rounded-nx-control border border-warning/50 bg-warning/5 text-[9px] text-warning">

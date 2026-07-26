@@ -163,7 +163,7 @@ export const SETTING_ROWS: SettingRowMeta[] = [
     titleKey: "settings.appearanceSettings.primaryColor",
     descKey: "settings.appearanceSettings.primaryColorDesc",
     subject: "theme",
-    terms: ["colorTheme", "accent"],
+    terms: ["colorTheme", "colorThemeCustomized", "accent"],
   },
   {
     id: "secondary-color",

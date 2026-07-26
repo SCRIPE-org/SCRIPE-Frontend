@@ -40,6 +40,7 @@ import { cn } from "@core/common/utils";
 const VALID_SETTINGS_KEYS = new Set([
   "layoutTemplate",
   "colorTheme",
+  "colorThemeCustomized",
   "secondaryColorTheme",
   "lightBackgroundTheme",
   "darkBackgroundTheme",
@@ -150,7 +151,11 @@ export function DashboardPreviewShell() {
     if (typeof document === "undefined") return;
     const root = document.documentElement;
     requestAnimationFrame(() => {
-      root.setAttribute("data-theme", mergedSettings.colorTheme);
+      if (mergedSettings.colorThemeCustomized) {
+        root.setAttribute("data-theme", mergedSettings.colorTheme);
+      } else {
+        root.removeAttribute("data-theme");
+      }
       root.setAttribute("data-light-bg-theme", mergedSettings.lightBackgroundTheme);
       root.setAttribute("data-dark-bg-theme", mergedSettings.darkBackgroundTheme);
       root.setAttribute("data-shadow", mergedSettings.shadowIntensity);

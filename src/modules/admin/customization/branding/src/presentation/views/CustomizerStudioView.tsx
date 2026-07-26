@@ -223,7 +223,7 @@ export function CustomizerStudioView() {
   // Loading state -- waiting for branding query to resolve
   if (vm.isLoading) {
     return (
-      <div className="flex h-screen w-full items-center justify-center bg-nx-ground">
+      <div className="flex h-[100dvh] w-full items-center justify-center bg-nx-ground">
         <LoadingSpinner size="md" />
       </div>
     );
@@ -291,7 +291,7 @@ export function CustomizerStudioView() {
   );
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-nx-ground">
+    <div className="flex h-[100dvh] flex-col overflow-hidden bg-nx-ground">
       {/* System Defaults Banner */}
       {vm.mode === "system" && (
         <div className="flex items-center gap-2 bg-nx-accent-fill px-4 py-2 text-sm font-medium text-nx-on-fill">

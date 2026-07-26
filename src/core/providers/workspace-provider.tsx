@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useCallback, useEffect, useMemo } from "react";
+import { createContext, useContext, useCallback, useEffect, useMemo, useRef } from "react";
 import type React from "react";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import type { WorkspaceGroup, MenuItem } from "@core/navigation";
@@ -94,6 +94,15 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   // ── Accent color ──
   const accentColor = useMemo(() => getAccentColor(activeWorkspace), [activeWorkspace]);
 
+  // Tracks whether we've written --workspace-hue/--workspace-chroma at least
+  // once since this provider mounted. The very first write on a cold reload
+  // has no prior accent to crossfade FROM — the browser's initial paint used
+  // the :root default (or SSR'd value), so animating "from default to real
+  // value" is just an unwanted ~300ms sweep, not a legitimate transition.
+  // Every write after the first is a genuine workspace switch and should
+  // still crossfade via the @property transition on :root.
+  const hasAppliedWorkspaceAccentRef = useRef(false);
+
   // ── Publish the workspace accent as CSS custom properties ──
   // Workspace.ColorHue / ColorChroma are OKLCH components already; writing them
   // to <html> lets stylesheets derive every accent shade in CSS instead of each
@@ -102,17 +111,43 @@ export function WorkspaceProvider({ children }: { children: React.ReactNode }) {
   // Additive: only rules that opt in (the scripe shell) read these.
   useEffect(() => {
     const root = document.documentElement;
+    const isFirstApplication = !hasAppliedWorkspaceAccentRef.current;
+    if (isFirstApplication) {
+      // Suppress the :root transition for this one write so the cold-load
+      // paint jumps straight to the real workspace colour instead of
+      // sweeping from the default hue/chroma. Restored immediately below
+      // once the values are in and a reflow has been forced, so any later
+      // (non-cold-load) workspace switch still crossfades normally.
+      root.style.transition = "none";
+    }
     const hue = activeWorkspace?.colorHue;
     const chroma = activeWorkspace?.colorChroma;
     if (typeof hue === "number" && Number.isFinite(hue)) {
-      root.style.setProperty("--workspace-hue", String(hue));
+      // Normalize into [0, 360) so any backend-supplied hue (negative or >360)
+      // maps onto a valid OKLCH hue angle.
+      const normalizedHue = ((hue % 360) + 360) % 360;
+      root.style.setProperty("--workspace-hue", String(normalizedHue));
     } else {
       root.style.removeProperty("--workspace-hue");
     }
     if (typeof chroma === "number" && Number.isFinite(chroma)) {
-      root.style.setProperty("--workspace-chroma", String(chroma));
+      // Clamp to the 0–0.18 contrast-ladder ceiling documented in globals.css
+      // (the chroma table there assumes no shade exceeds 0.18). This ceiling
+      // applies to every tenant workspace regardless of its stored seed
+      // chroma value, so no separate seed-data migration is needed.
+      const clampedChroma = Math.min(Math.max(chroma, 0), 0.18);
+      root.style.setProperty("--workspace-chroma", String(clampedChroma));
     } else {
       root.style.removeProperty("--workspace-chroma");
+    }
+    if (isFirstApplication) {
+      // Force a reflow so the browser commits the values above under
+      // transition: none before we hand the transition back — otherwise the
+      // restore below could be batched with the writes and the crossfade
+      // would still fire on this first paint.
+      void root.offsetHeight;
+      root.style.removeProperty("transition");
+      hasAppliedWorkspaceAccentRef.current = true;
     }
   }, [activeWorkspace]);
 

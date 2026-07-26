@@ -233,6 +233,14 @@ export function migrateStoredSettings(raw: Record<string, unknown>): Partial<Set
     migrated[key] = value;
   }
 
+  // Backfill: a raw blob with a stored `colorTheme` but no `colorThemeCustomized`
+  // predates the flag's introduction. Without this, a returning user's picked
+  // swatch loads but `colorThemeCustomized` defaults to false, so anything that
+  // gates on "has the user customized their theme" silently stops applying it.
+  if ("colorTheme" in raw && migrated.colorThemeCustomized === undefined) {
+    migrated.colorThemeCustomized = true;
+  }
+
   return migrated as Partial<Settings>;
 }
 
@@ -274,6 +282,14 @@ export function mergeSettings(input: MergeInput): MergeResult {
       for (const path of allowedPaths) {
         if (path in adminMigrated) {
           (adminOverrides as Record<string, unknown>)[path] = adminMigrated[path];
+        }
+        // colorTheme's satellite flag isn't a path an admin whitelist would ever
+        // name explicitly, but dropping it here silently un-customizes the
+        // color theme on every re-merge. Carry it along whenever colorTheme
+        // itself is allowed and present.
+        if (path === "colorTheme" && "colorThemeCustomized" in adminMigrated) {
+          (adminOverrides as Record<string, unknown>).colorThemeCustomized =
+            adminMigrated.colorThemeCustomized;
         }
       }
     } else {

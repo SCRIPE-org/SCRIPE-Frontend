@@ -136,11 +136,24 @@ export class WorkspaceGroup {
       : this.workspaceNameEn || this.workspaceNameAr || "Workspace";
   }
 
-  /** CSS oklch() accent string, or null when no custom color is set. */
+  /**
+   * CSS oklch() accent string for this workspace's own hue, or null when no
+   * custom color is set.
+   *
+   * Lightness matches the --nx-accent token ladder in globals.css exactly
+   * (dark L0.68 / light L0.46 — light is not a naive inversion, it clears
+   * the accent-as-text contrast floor across every hue). This can't just
+   * read var(--nx-accent) because that token carries the *active* workspace's
+   * hue; this getter renders *other* workspaces' own colors (launcher tiles,
+   * rail entries) independently of which one is currently active.
+   */
   get accentColor(): string | null {
     if (this.colorHue === null) return null;
     const chroma = this.colorChroma ?? 0.18;
-    return `oklch(0.6 ${chroma} ${this.colorHue})`;
+    const isDark =
+      typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+    const lightness = isDark ? 0.68 : 0.46;
+    return `oklch(${lightness} ${chroma} ${this.colorHue})`;
   }
 
   /** True when this is a module workspace (CRM, HRMS, Finance, …) */

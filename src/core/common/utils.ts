@@ -193,113 +193,28 @@ export function getHoverEffectClasses(
   }
 
   const baseTransition =
-    "transition-[transform,box-shadow,border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
+    "transition-[border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
 
   switch (effectType) {
     case "elevate":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:-translate-y-0.5", "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:-translate-y-2", "hover:shadow-xl");
-        case "strong":
-          return cn(baseTransition, "hover:-translate-y-4", "hover:shadow-2xl");
-        default:
-          return "";
-      }
     case "scale":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:scale-[1.005]");
-        case "medium":
-          return cn(baseTransition, "hover:scale-[1.02]");
-        case "strong":
-          return cn(baseTransition, "hover:scale-[1.05]");
-        default:
-          return "";
-      }
     case "glow":
-      switch (intensity) {
-        case "small":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_8px_color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
-            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
-          );
-        case "medium":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_15px_color-mix(in_srgb,var(--nx-accent)_50%,transparent)]",
-            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
-          );
-        case "strong":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_25px_color-mix(in_srgb,var(--nx-accent)_70%,transparent)]",
-            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
-          );
-        default:
-          return "";
-      }
     case "shimmer":
-      // Shimmer effect with intensity-based opacity and animation speed
-      let shimmerOpacity: string;
-      let shimmerSpeed: string;
-      switch (intensity) {
-        case "small":
-          shimmerOpacity = "after:opacity-20";
-          shimmerSpeed = "after:duration-1000";
-          break;
-        case "medium":
-          shimmerOpacity = "after:opacity-40";
-          shimmerSpeed = "after:duration-700";
-          break;
-        case "strong":
-          shimmerOpacity = "after:opacity-60";
-          shimmerSpeed = "after:duration-500";
-          break;
-        default:
-          shimmerOpacity = "after:opacity-40";
-          shimmerSpeed = "after:duration-700";
-      }
-      return cn(
-        baseTransition,
-        "relative overflow-hidden",
-        "after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent",
-        "after:translate-x-[-100%] hover:after:translate-x-[100%]",
-        "after:transition-transform after:ease-nx-enter motion-reduce:after:transition-none",
-        shimmerSpeed,
-        shimmerOpacity
-      );
     case "rotate":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:rotate-1");
-        case "medium":
-          return cn(baseTransition, "hover:rotate-[5deg]");
-        case "strong":
-          return cn(baseTransition, "hover:rotate-[10deg]");
-        default:
-          return "";
-      }
     case "slide":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:-translate-y-0.5", "hover:translate-x-1");
-        case "medium":
-          return cn(baseTransition, "hover:-translate-y-2", "hover:translate-x-1");
-        case "strong":
-          return cn(baseTransition, "hover:-translate-y-4", "hover:translate-x-1");
-        default:
-          return "";
-      }
+      // All variants converge on the same border-brighten treatment — no raw
+      // box-shadow depth, no transform lifts/scale/rotate, no shimmer sweep.
+      // `intensity` no longer changes the output; it is kept as a parameter
+      // only so call sites (card.tsx, generic-table.tsx) don't need updating.
+      return cn(baseTransition, "hover:border-nx-line-hi");
     default:
       return "";
   }
 }
 
 /**
- * Generate hover effect classes for tables (shadows only, no transforms)
+ * Generate hover effect classes for tables (border brighten only, no
+ * transforms, no raw box-shadow — see §5.3)
  */
 export function getTableHoverEffectClasses(
   effectType: HoverEffectType,
@@ -310,94 +225,14 @@ export function getTableHoverEffectClasses(
   }
 
   const baseTransition =
-    "transition-[box-shadow,border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
+    "transition-[border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
 
-  switch (effectType) {
-    case "elevate":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-xl");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-2xl");
-        default:
-          return "";
-      }
-    case "scale":
-      // For scale effect, add shadow instead of scaling
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    case "glow":
-      switch (intensity) {
-        case "small":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_8px_color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
-            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
-          );
-        case "medium":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_15px_color-mix(in_srgb,var(--nx-accent)_50%,transparent)]",
-            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
-          );
-        case "strong":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_25px_color-mix(in_srgb,var(--nx-accent)_70%,transparent)]",
-            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
-          );
-        default:
-          return "";
-      }
-    case "shimmer":
-      // For shimmer, just add a subtle shadow
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    case "rotate":
-      // For rotate, add shadow instead of rotating
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    case "slide":
-      // For slide, add shadow instead of sliding
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    default:
-      return "";
-  }
+  // generic-table.tsx already applies `hover:bg-nx-hover` on rows via its own
+  // row classes, so the table variant of the hover helper only needs to
+  // brighten the border — no raw box-shadow depth per §5.3, and no
+  // intensity-based shadow ladder to preserve. `intensity` is accepted but
+  // unused so call sites don't need updating.
+  return cn(baseTransition, "hover:border-nx-line-hi");
 }
 
 /**

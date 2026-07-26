@@ -28,6 +28,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@core/ui/pagination";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@core/ui/table";
 import { cn } from "@core/common/utils";
 import { BarChart3, Activity } from "lucide-react";
 
@@ -100,112 +101,42 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
       {/* Event table */}
       {!loading && !error && events.length > 0 && (
         <>
-          <div style={{ overflowX: "auto" }}>
-            <table
-              style={{
-                width: "100%",
-                borderCollapse: "collapse",
-                fontSize: "0.875rem",
-                textAlign: "start",
-              }}
-            >
-              <thead>
-                <tr style={{ backgroundColor: "var(--nx-raised)" }}>
-                  <th
-                    style={{
-                      padding: "0.75rem 1rem",
-                      fontWeight: 600,
-                      color: "var(--nx-ink)",
-                      borderBottom: "1px solid var(--nx-line)",
-                    }}
-                  >
-                    {t("analyticsEvents.columns.name")}
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.75rem 1rem",
-                      fontWeight: 600,
-                      color: "var(--nx-ink)",
-                      borderBottom: "1px solid var(--nx-line)",
-                    }}
-                  >
-                    {t("analyticsEvents.columns.module")}
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.75rem 1rem",
-                      fontWeight: 600,
-                      color: "var(--nx-ink)",
-                      borderBottom: "1px solid var(--nx-line)",
-                    }}
-                  >
-                    {t("analyticsEvents.columns.occurredAt")}
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.75rem 1rem",
-                      fontWeight: 600,
-                      color: "var(--nx-ink)",
-                      borderBottom: "1px solid var(--nx-line)",
-                    }}
-                  >
-                    {t("analyticsEvents.columns.subjectType")}
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.75rem 1rem",
-                      fontWeight: 600,
-                      color: "var(--nx-ink)",
-                      borderBottom: "1px solid var(--nx-line)",
-                    }}
-                  >
-                    {t("analyticsEvents.columns.subjectId")}
-                  </th>
-                  <th
-                    style={{
-                      padding: "0.75rem 1rem",
-                      fontWeight: 600,
-                      color: "var(--nx-ink)",
-                      borderBottom: "1px solid var(--nx-line)",
-                    }}
-                  >
-                    {t("analyticsEvents.columns.numericValue")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {events.map((ev) => (
-                  <tr key={ev.id} style={{ borderBottom: "1px solid var(--nx-line)" }}>
-                    <td style={{ padding: "0.75rem 1rem", fontWeight: 500 }}>{ev.eventName}</td>
-                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
-                      {ev.sourceModule}
-                    </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
-                      {new Date(ev.occurredAt).toLocaleString()}
-                    </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
-                      {ev.subjectEntityTypeKey ?? "—"}
-                    </td>
-                    <td
-                      style={{
-                        padding: "0.75rem 1rem",
-                        color: "var(--nx-ink-3)",
-                        fontFamily: "monospace",
-                        fontSize: "0.75rem",
-                      }}
-                    >
-                      {ev.subjectEntityId ? ev.subjectEntityId.slice(0, 8) + "…" : "—"}
-                    </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
-                      {ev.associatedNumericValue !== undefined && ev.associatedNumericValue !== null
-                        ? ev.associatedNumericValue
-                        : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("analyticsEvents.columns.name")}</TableHead>
+                <TableHead>{t("analyticsEvents.columns.module")}</TableHead>
+                <TableHead>{t("analyticsEvents.columns.occurredAt")}</TableHead>
+                <TableHead>{t("analyticsEvents.columns.subjectType")}</TableHead>
+                <TableHead>{t("analyticsEvents.columns.subjectId")}</TableHead>
+                <TableHead variant="numeric">
+                  {t("analyticsEvents.columns.numericValue")}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {events.map((ev) => (
+                <TableRow key={ev.id}>
+                  <TableCell className="font-medium">{ev.eventName}</TableCell>
+                  <TableCell className="text-nx-ink-3">{ev.sourceModule}</TableCell>
+                  <TableCell className="text-nx-ink-3">
+                    {new Date(ev.occurredAt).toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-nx-ink-3">
+                    {ev.subjectEntityTypeKey ?? "—"}
+                  </TableCell>
+                  <TableCell className="font-mono text-xs text-nx-ink-3">
+                    {ev.subjectEntityId ? ev.subjectEntityId.slice(0, 8) + "…" : "—"}
+                  </TableCell>
+                  <TableCell variant="numeric" className="text-nx-ink-3">
+                    {ev.associatedNumericValue !== undefined && ev.associatedNumericValue !== null
+                      ? ev.associatedNumericValue
+                      : "—"}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
 
           {/* Pagination — composed from the core pagination primitives */}
           <div className="mt-4 flex items-center justify-between text-sm text-nx-ink-3">

@@ -29,6 +29,7 @@ import {
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
+import { Button } from "@core/ui/button";
 import type {
   BackgroundMode,
   ColorTheme,
@@ -672,6 +673,7 @@ export function AppearanceGroup() {
             const palette = PALETTES.find((entry) => entry.id === id);
             if (!palette) return;
             settings.setColorTheme(palette.primary);
+            settings.setColorThemeCustomized(true);
             settings.setSecondaryColorTheme(palette.secondary);
             settings.setLightBackgroundTheme(palette.lightBg);
             settings.setDarkBackgroundTheme(palette.darkBg);
@@ -700,17 +702,15 @@ export function AppearanceGroup() {
           density="swatch"
         />
         {settings.colorThemeCustomized && (
-          <button
+          <Button
             type="button"
+            variant="link"
+            size="sm"
+            className="mt-3 h-auto p-0"
             onClick={() => settings.setColorThemeCustomized(false)}
-            className={cn(
-              "mt-3 rounded-nx-sm text-sm font-medium text-nx-accent outline-none",
-              "transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-              "hover:opacity-80 focus-visible:shadow-nx-focus"
-            )}
           >
             {t("settings.colorTheme.resetToBrand")}
-          </button>
+          </Button>
         )}
       </Row>
 

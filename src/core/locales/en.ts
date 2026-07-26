@@ -2008,6 +2008,7 @@ export const en = {
     topbar: {
       workspacesMenu: "Workspaces",
       sectionsMenu: "Sections",
+      workspaceLocked: "Locked",
     },
   },
   shell: {

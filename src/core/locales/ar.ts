@@ -1998,6 +1998,7 @@ export const ar = {
     topbar: {
       workspacesMenu: "مساحات العمل",
       sectionsMenu: "الأقسام",
+      workspaceLocked: "مقفل",
     },
   },
   shell: {

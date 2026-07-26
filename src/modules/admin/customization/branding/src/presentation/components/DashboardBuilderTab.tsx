@@ -1041,7 +1041,7 @@ export function DashboardBuilderTab({ settings, onUpdate }: DashboardBuilderTabP
                 }}
               />
               <div className="flex items-center gap-1.5 pt-0.5">
-                <span className="text-sm">{preset.icon}</span>
+                <span className="text-sm" aria-hidden="true">{preset.icon}</span>
                 <span className="text-[10px] font-semibold text-nx-ink">
                   {t(`studio.dashboard.preset.${preset.localeKey}`)}
                 </span>

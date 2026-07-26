@@ -368,7 +368,7 @@ export type HoverEffectIntensity = "none" | "small" | "medium" | "strong";
 export interface Settings {
   // Color and theme
   colorTheme: ColorTheme;
-  // True once the user has actively picked colorTheme/secondaryColorTheme —
+  // True once the user has actively picked colorTheme —
   // gates whether dom-applicator writes data-theme (and so flips --primary).
   // Until then the workspace's own --workspace-hue/--workspace-chroma (the
   // tenant/product brand colour) is the sole accent source, unopposed. See

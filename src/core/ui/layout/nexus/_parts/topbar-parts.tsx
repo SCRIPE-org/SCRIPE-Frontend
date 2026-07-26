@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Home, ChevronDown } from "lucide-react";
+import { Search, Home, ChevronDown, Lock } from "lucide-react";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
@@ -228,7 +228,12 @@ export function TopbarBreadcrumbs({
                     {ws.abbreviation ?? ws.workspaceKey.slice(0, 2).toUpperCase()}
                   </div>
                   <span className="flex-1 truncate">{wsLabel}</span>
-                  {ws.isLocked && <span className="text-[10px] text-warning">🔒</span>}
+                  {ws.isLocked && (
+                    <>
+                      <Lock className="h-2.5 w-2.5 text-warning" aria-hidden="true" />
+                      <span className="sr-only">{t("navigation.topbar.workspaceLocked")}</span>
+                    </>
+                  )}
                 </DropdownMenuItem>
               );
             })}

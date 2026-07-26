@@ -10,6 +10,7 @@
 
 /** Import from domain entity — single source of truth */
 import type { ThemePricingType } from "../../domain/entities/ThemeCard";
+import { formatCurrency } from "@core/common/utils";
 export type { ThemePricingType };
 
 /** Gallery card — lightweight for grid rendering */
@@ -80,48 +81,56 @@ export { THEME_CATEGORIES, THEME_SORT_OPTIONS };
 /** Pricing badge configuration */
 export const PRICING_BADGES: Record<
   ThemePricingType,
-  { label: string; color: string; icon: string }
+  { labelKey: string; color: string; icon: string }
 > = {
   Free: {
-    label: "Free",
+    labelKey: "studio.marketplace.free",
     color: "bg-success/10 text-success",
     icon: "sparkles",
   },
   EditionGated: {
-    label: "Included",
+    labelKey: "studio.marketplace.included",
     color: "bg-info/10 text-info",
     icon: "crown",
   },
   StandaloneOnly: {
-    label: "Premium",
-    color: "bg-primary/10 text-primary",
+    labelKey: "studio.marketplace.premium",
+    color: "bg-nx-accent-wash text-nx-accent",
     icon: "shopping-cart",
   },
 };
 
 /** Get the display badge for a theme based on its access status */
 export function getThemeBadge(theme: ThemeCardDto): {
-  label: string;
+  labelKey: string;
+  labelParams?: Record<string, string | number>;
   color: string;
   variant: "free" | "included" | "locked" | "purchased" | "buyable";
 } {
   if (theme.pricingType === "Free") {
-    return { label: "✨ Free", color: "bg-success/10 text-success", variant: "free" };
+    return { labelKey: "studio.marketplace.free", color: "bg-success/10 text-success", variant: "free" };
   }
 
   if (theme.isPurchased) {
-    return { label: "✅ Purchased", color: "bg-success/10 text-success", variant: "purchased" };
+    return { labelKey: "studio.marketplace.purchased", color: "bg-success/10 text-success", variant: "purchased" };
   }
 
   if (theme.isIncluded) {
-    return { label: "✅ Included", color: "bg-info/10 text-info", variant: "included" };
+    return { labelKey: "studio.marketplace.included", color: "bg-info/10 text-info", variant: "included" };
   }
 
   if (theme.pricingType === "StandaloneOnly") {
-    const priceLabel = theme.price ? `$${theme.price.toFixed(2)}` : "Premium";
+    if (theme.price) {
+      return {
+        labelKey: "studio.marketplace.priceValue",
+        labelParams: { price: formatCurrency(theme.price, theme.priceCurrency || "USD") },
+        color: "bg-nx-accent-wash text-nx-accent",
+        variant: "buyable",
+      };
+    }
     return {
-      label: `💰 ${priceLabel}`,
-      color: "bg-primary/10 text-primary",
+      labelKey: "studio.marketplace.premium",
+      color: "bg-nx-accent-wash text-nx-accent",
       variant: "buyable",
     };
   }
@@ -129,14 +138,15 @@ export function getThemeBadge(theme: ThemeCardDto): {
   // EditionGated but not included — locked
   if (theme.isBuyable && theme.price) {
     return {
-      label: `🔒 Upgrade or $${theme.price.toFixed(2)}`,
+      labelKey: "studio.marketplace.upgradeOrPrice",
+      labelParams: { price: formatCurrency(theme.price, theme.priceCurrency || "USD") },
       color: "bg-warning/10 text-warning",
       variant: "locked",
     };
   }
 
   return {
-    label: "🔒 Upgrade to unlock",
+    labelKey: "studio.marketplace.upgradeToUnlock",
     color: "bg-warning/10 text-warning",
     variant: "locked",
   };

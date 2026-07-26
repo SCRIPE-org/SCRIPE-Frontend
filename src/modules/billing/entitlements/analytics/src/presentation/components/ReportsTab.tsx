@@ -132,7 +132,7 @@ export function ReportsTab({
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* Left: Scheduled Report Settings */}
-      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)]">
         <div className="h-0.5 bg-gradient-to-r from-success to-success/70" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
@@ -251,7 +251,7 @@ export function ReportsTab({
           <Button
             onClick={handleSave}
             loading={isSaving}
-            className="mt-4 w-full gap-2 bg-gradient-to-r from-success to-success/70 text-success-foreground shadow-lg shadow-success/20 hover:from-success/90 hover:to-success"
+            className="mt-4 w-full gap-2"
           >
             <Save className="h-4 w-4" />
             {t("entitlements.analytics.reports.savePreferences")}
@@ -260,7 +260,7 @@ export function ReportsTab({
       </Card>
 
       {/* Right: On-Demand Report Generation */}
-      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)]">
         <div className="h-0.5 bg-gradient-to-r from-info to-info/70" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
