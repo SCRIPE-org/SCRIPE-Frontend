@@ -18,6 +18,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Slider } from "@core/ui/slider";
 import { Textarea } from "@core/ui/textarea";
 import {
@@ -33,7 +34,6 @@ import {
   DollarSign,
   Plus,
   Trash2,
-  Loader2,
   Undo2,
   GitBranch,
   Bolt,
@@ -92,7 +92,7 @@ export const PricingTab = memo(function PricingTab({
         <Card>
           <CardHeader className="pb-3">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-5 w-5 rounded" />
+              <Skeleton shape="circle" className="h-5 w-5" />
               <Skeleton className="h-5 w-32" />
             </div>
           </CardHeader>
@@ -132,7 +132,7 @@ export const PricingTab = memo(function PricingTab({
         <Card className="overflow-hidden">
           <CardHeader className="py-3">
             <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-success/10 p-1.5">
+              <div className="rounded-nx-md bg-success/10 p-1.5">
                 <DollarSign className="h-4 w-4 text-success" />
               </div>
               <CardTitle className="text-sm font-medium">
@@ -148,29 +148,29 @@ export const PricingTab = memo(function PricingTab({
             <div
               className={`flex items-center gap-3 ${!allowMonthly ? "pointer-events-none opacity-40" : ""}`}
             >
-              <span className="w-20 shrink-0 text-sm text-muted-foreground">
+              <span className="w-20 shrink-0 text-sm text-nx-ink-3">
                 {t("entitlements.pricing.monthly")}
               </span>
               <div className="relative max-w-xs flex-1">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                <span className="absolute start-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-nx-ink-3">
                   $
                 </span>
                 <Input
                   type="number"
                   value={vm.usdMonthly || ""}
                   onChange={(e) => vm.setUsdMonthly(parseLocalizedNumber(e.target.value) ?? 0)}
-                  className="h-9 pl-7 text-right text-sm tabular-nums"
+                  className="h-9 ps-7 text-end text-sm tabular-nums"
                   min={0}
                   step="0.01"
                   placeholder="0.00"
                   disabled={!allowMonthly}
                 />
               </div>
-              <span className="text-xs text-muted-foreground">/mo</span>
+              <span className="text-xs text-nx-ink-3">/mo</span>
               {!allowMonthly && (
                 <Badge
                   variant="outline"
-                  className="h-5 border-muted px-1.5 py-0 text-[10px] text-muted-foreground"
+                  className="h-5 border-nx-line px-1.5 py-0 text-[10px] text-nx-ink-3"
                 >
                   {t("common.disabled")}
                 </Badge>
@@ -181,18 +181,18 @@ export const PricingTab = memo(function PricingTab({
             <div
               className={`flex items-center gap-3 ${!allowYearly ? "pointer-events-none opacity-40" : ""}`}
             >
-              <span className="w-20 shrink-0 text-sm text-muted-foreground">
+              <span className="w-20 shrink-0 text-sm text-nx-ink-3">
                 {t("entitlements.pricing.yearly")}
               </span>
               <div className="relative max-w-xs flex-1">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                <span className="absolute start-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-nx-ink-3">
                   $
                 </span>
                 <Input
                   type="number"
                   value={vm.usdYearly || ""}
                   onChange={(e) => vm.setUsdYearly(parseLocalizedNumber(e.target.value) ?? 0)}
-                  className="h-9 pl-7 text-right text-sm tabular-nums"
+                  className="h-9 ps-7 text-end text-sm tabular-nums"
                   min={0}
                   step="0.01"
                   placeholder="0.00"
@@ -200,11 +200,11 @@ export const PricingTab = memo(function PricingTab({
                 />
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">/yr</span>
+                <span className="text-xs text-nx-ink-3">/yr</span>
                 {!allowYearly ? (
                   <Badge
                     variant="outline"
-                    className="h-5 border-muted px-1.5 py-0 text-[10px] text-muted-foreground"
+                    className="h-5 border-nx-line px-1.5 py-0 text-[10px] text-nx-ink-3"
                   >
                     {t("common.disabled")}
                   </Badge>
@@ -224,9 +224,9 @@ export const PricingTab = memo(function PricingTab({
 
             {/* Dynamic Yearly Discount */}
             {allowYearly && vm.usdMonthly > 0 && (
-              <div className="mt-1 space-y-2 rounded-lg border bg-muted/30 p-3">
+              <div className="mt-1 space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">
+                  <span className="text-xs font-medium text-nx-ink-3">
                     {t("entitlements.pricing.yearlyDiscount")}
                   </span>
                   <Badge variant="outline" className="h-5 px-1.5 py-0 text-[10px] tabular-nums">
@@ -243,7 +243,7 @@ export const PricingTab = memo(function PricingTab({
                     className="flex-1"
                   />
                   <div className="flex items-center gap-1.5">
-                    <span className="whitespace-nowrap text-xs tabular-nums text-muted-foreground">
+                    <span className="whitespace-nowrap text-xs tabular-nums text-nx-ink-3">
                       {t("entitlements.pricing.suggested")}: ${vm.suggestedYearly.toLocaleString()}
                       /yr
                     </span>
@@ -262,7 +262,7 @@ export const PricingTab = memo(function PricingTab({
             )}
 
             {/* Info banner */}
-            <div className="mt-2 flex items-start gap-2 rounded-lg border border-info/10 bg-info/5 p-2.5">
+            <div className="mt-2 flex items-start gap-2 rounded-nx-md border border-info/10 bg-info/5 p-2.5">
               <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" />
               <p className="text-[11px] leading-relaxed text-info">
                 {t("entitlements.pricing.autoConvertInfo")}
@@ -271,20 +271,20 @@ export const PricingTab = memo(function PricingTab({
 
             {/* Lifetime (one-time) */}
             <div
-              className={`mt-3 flex items-center gap-3 border-t border-dashed border-border/50 pt-3 ${!allowLifetime ? "pointer-events-none opacity-40" : ""}`}
+              className={`mt-3 flex items-center gap-3 border-t border-dashed border-nx-line pt-3 ${!allowLifetime ? "pointer-events-none opacity-40" : ""}`}
             >
-              <span className="w-20 shrink-0 text-sm text-muted-foreground">
+              <span className="w-20 shrink-0 text-sm text-nx-ink-3">
                 {t("entitlements.pricing.lifetime")}
               </span>
               <div className="relative max-w-xs flex-1">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                <span className="absolute start-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-nx-ink-3">
                   $
                 </span>
                 <Input
                   type="number"
                   value={vm.usdLifetime || ""}
                   onChange={(e) => vm.setUsdLifetime(parseLocalizedNumber(e.target.value) ?? 0)}
-                  className="h-9 pl-7 text-right text-sm tabular-nums"
+                  className="h-9 ps-7 text-end text-sm tabular-nums"
                   min={0}
                   step="0.01"
                   placeholder="0.00"
@@ -294,14 +294,14 @@ export const PricingTab = memo(function PricingTab({
               {!allowLifetime ? (
                 <Badge
                   variant="outline"
-                  className="h-5 border-muted px-1.5 py-0 text-[10px] text-muted-foreground"
+                  className="h-5 border-nx-line px-1.5 py-0 text-[10px] text-nx-ink-3"
                 >
                   {t("common.disabled")}
                 </Badge>
               ) : (
                 <Badge
                   variant="outline"
-                  className="h-5 border-primary/30 bg-primary/5 px-1.5 py-0 text-[10px] text-primary"
+                  className="h-5 border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash px-1.5 py-0 text-[10px] text-nx-accent"
                 >
                   {t("entitlements.pricing.oneTime")}
                 </Badge>
@@ -317,8 +317,8 @@ export const PricingTab = memo(function PricingTab({
           <CardHeader className="py-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="rounded-lg bg-primary/10 p-1.5">
-                  <Globe className="h-4 w-4 text-primary" />
+                <div className="rounded-nx-md bg-nx-accent-wash p-1.5">
+                  <Globe className="h-4 w-4 text-nx-accent" />
                 </div>
                 <CardTitle className="text-sm font-medium">
                   {t("entitlements.pricing.currencyOverrides")}
@@ -348,17 +348,17 @@ export const PricingTab = memo(function PricingTab({
           <CardContent className="pt-0">
             {vm.overrides.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="mb-3 rounded-full bg-muted/50 p-3">
-                  <Globe className="h-6 w-6 text-muted-foreground/50" />
+                <div className="mb-3 rounded-full bg-nx-raised p-3">
+                  <Globe className="h-6 w-6 text-nx-ink-3 opacity-50" />
                 </div>
-                <p className="max-w-xs text-xs text-muted-foreground">
+                <p className="max-w-xs text-xs text-nx-ink-2">
                   {t("entitlements.pricing.noOverridesDesc")}
                 </p>
               </div>
             ) : (
-              <div className="overflow-hidden rounded-lg border">
+              <div className="overflow-hidden rounded-nx-md border border-nx-line">
                 {/* Table Header */}
-                <div className="grid grid-cols-[140px_1fr_1fr_60px] gap-3 border-b bg-muted/30 px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <div className="grid grid-cols-[140px_1fr_1fr_60px] gap-3 border-b border-nx-line bg-nx-raised px-4 py-2.5 text-xs font-medium uppercase tracking-wider text-nx-ink-3">
                   <span>{t("entitlements.pricing.currency")}</span>
                   <span>{t("entitlements.pricing.monthly")}</span>
                   <span>{t("entitlements.pricing.yearly")}</span>
@@ -366,7 +366,7 @@ export const PricingTab = memo(function PricingTab({
                 </div>
 
                 {/* Override Rows */}
-                <div className="divide-y">
+                <div className="divide-y divide-nx-line">
                   {vm.overrides.map((row) => {
                     const info = getCurrencyInfo(row.currency);
                     const savings = vm.yearlySavingsPercent(row.currency);
@@ -374,14 +374,14 @@ export const PricingTab = memo(function PricingTab({
                     return (
                       <div
                         key={row.currency}
-                        className="group grid grid-cols-[140px_1fr_1fr_60px] items-center gap-3 px-4 py-3 transition-colors hover:bg-accent/30"
+                        className="group grid grid-cols-[140px_1fr_1fr_60px] items-center gap-3 px-4 py-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
                       >
                         {/* Currency Label */}
                         <div className="flex items-center gap-2">
                           <span className="text-lg leading-none">{info?.flag || "FX"}</span>
                           <div>
                             <span className="text-sm font-semibold">{row.currency}</span>
-                            <p className="text-[10px] leading-tight text-muted-foreground">
+                            <p className="text-[10px] leading-tight text-nx-ink-3">
                               {info?.name}
                             </p>
                           </div>
@@ -389,7 +389,7 @@ export const PricingTab = memo(function PricingTab({
 
                         {/* Monthly Price */}
                         <div className="relative">
-                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                          <span className="absolute start-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-nx-ink-3">
                             {info?.symbol || "$"}
                           </span>
                           <Input
@@ -402,7 +402,7 @@ export const PricingTab = memo(function PricingTab({
                                 parseLocalizedNumber(e.target.value) ?? 0
                               )
                             }
-                            className="h-8 pl-8 text-right text-sm tabular-nums"
+                            className="h-8 ps-8 text-end text-sm tabular-nums"
                             min={0}
                             step="0.01"
                             placeholder="0.00"
@@ -412,7 +412,7 @@ export const PricingTab = memo(function PricingTab({
                         {/* Yearly Price + Savings */}
                         <div className="flex items-center gap-2">
                           <div className="relative flex-1">
-                            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground">
+                            <span className="absolute start-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-nx-ink-3">
                               {info?.symbol || "$"}
                             </span>
                             <Input
@@ -425,7 +425,7 @@ export const PricingTab = memo(function PricingTab({
                                   parseLocalizedNumber(e.target.value) ?? 0
                                 )
                               }
-                              className="h-8 pl-8 text-right text-sm tabular-nums"
+                              className="h-8 ps-8 text-end text-sm tabular-nums"
                               min={0}
                               step="0.01"
                               placeholder="0.00"
@@ -447,7 +447,7 @@ export const PricingTab = memo(function PricingTab({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+                            className="h-7 w-7 text-nx-ink-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter hover:text-destructive group-hover:opacity-100 motion-reduce:transition-none"
                             onClick={() => vm.removeOverride(row.currency)}
                           >
                             <Trash2 className="h-3.5 w-3.5" />
@@ -473,7 +473,7 @@ export const PricingTab = memo(function PricingTab({
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="rounded-lg bg-warning/10 p-1.5">
+                  <div className="rounded-nx-md bg-warning/10 p-1.5">
                     <Coins className="h-4 w-4 text-warning" />
                   </div>
                   <CardTitle className="text-sm font-medium">
@@ -483,28 +483,28 @@ export const PricingTab = memo(function PricingTab({
                     {vm.preview.length} {t("entitlements.pricing.currencies")}
                   </Badge>
                   {vm.ratesLoading && (
-                    <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                    <LoadingSpinner size="inline" showText={false} className="text-nx-ink-3" />
                   )}
                 </div>
                 <ChevronDown
-                  className={`h-4 w-4 text-muted-foreground transition-transform ${showPreview ? "rotate-180" : ""}`}
+                  className={`h-4 w-4 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none ${showPreview ? "rotate-180" : ""}`}
                 />
               </div>
             </CardHeader>
 
             {showPreview && (
               <CardContent className="pt-0">
-                <p className="mb-3 text-[11px] text-muted-foreground">
+                <p className="mb-3 text-[11px] text-nx-ink-3">
                   {t("entitlements.pricing.previewDesc")}
                 </p>
-                <div className="overflow-hidden rounded-lg border">
-                  <div className="grid grid-cols-[110px_1fr_1fr_80px] gap-3 border-b bg-muted/30 px-4 py-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <div className="overflow-hidden rounded-nx-md border border-nx-line">
+                  <div className="grid grid-cols-[110px_1fr_1fr_80px] gap-3 border-b border-nx-line bg-nx-raised px-4 py-2 text-xs font-medium uppercase tracking-wider text-nx-ink-3">
                     <span>{t("entitlements.pricing.currency")}</span>
                     <span>{t("entitlements.pricing.monthly")}</span>
                     <span>{t("entitlements.pricing.yearly")}</span>
                     <span>{t("entitlements.pricing.source")}</span>
                   </div>
-                  <div className="max-h-[300px] divide-y overflow-y-auto">
+                  <div className="max-h-[300px] divide-y divide-nx-line overflow-y-auto">
                     {vm.preview.map((row) => {
                       const info = getCurrencyInfo(row.currency);
                       return (
@@ -546,7 +546,7 @@ export const PricingTab = memo(function PricingTab({
       {/* ═══════ STICKY SAVE BAR ═══════ */}
       {vm.isDirty && (
         <div className="fixed inset-x-0 bottom-0 z-sticky">
-          <div className="border-t bg-background/95 shadow-nx-bar-top backdrop-blur-md">
+          <div className="border-t bg-[color:color-mix(in_srgb,var(--nx-ground)_95%,transparent)] shadow-nx-bar-top backdrop-blur-md">
             <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">
@@ -555,7 +555,7 @@ export const PricingTab = memo(function PricingTab({
                     <p className="text-sm font-medium">
                       {t("entitlements.pricing.unsavedChanges")}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs text-nx-ink-3">
                       {t("entitlements.pricing.versionHint")}
                     </p>
                   </div>
@@ -601,7 +601,7 @@ export const PricingTab = memo(function PricingTab({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Plus className="h-5 w-5 text-primary" />
+              <Plus className="h-5 w-5 text-nx-accent" />
               {t("entitlements.pricing.addOverride")}
             </DialogTitle>
             <DialogDescription>{t("entitlements.pricing.addOverrideDesc")}</DialogDescription>
@@ -640,7 +640,7 @@ export const PricingTab = memo(function PricingTab({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-primary" />
+              <GitBranch className="h-5 w-5 text-nx-accent" />
               {t("entitlements.editions.saveAsVersion")}
             </DialogTitle>
             <DialogDescription>{t("entitlements.pricing.saveAsVersionDesc")}</DialogDescription>
@@ -657,7 +657,7 @@ export const PricingTab = memo(function PricingTab({
                 className="min-h-[80px] resize-none"
               />
             </div>
-            <div className="flex items-center gap-2 rounded-md bg-muted/50 p-2.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-nx-sm bg-[color:color-mix(in_srgb,var(--nx-raised)_50%,transparent)] p-2.5 text-xs text-nx-ink-3">
               <DollarSign className="h-3.5 w-3.5 shrink-0" />
               <span>{t("entitlements.pricing.versionChangesIncluded")}</span>
             </div>
@@ -692,7 +692,7 @@ export const PricingTab = memo(function PricingTab({
             </DialogTitle>
             <DialogDescription>{t("entitlements.pricing.applyNowDesc")}</DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/5 p-2.5 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 rounded-nx-sm border border-warning/20 bg-warning/5 p-2.5 text-xs text-nx-ink-3">
             <Bolt className="h-3.5 w-3.5 shrink-0 text-warning" />
             <span>{t("entitlements.pricing.applyWarning")}</span>
           </div>

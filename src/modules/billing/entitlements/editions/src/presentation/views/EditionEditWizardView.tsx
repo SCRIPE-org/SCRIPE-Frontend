@@ -6,12 +6,12 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import {
   ChevronRight,
   ChevronLeft,
   Check,
-  Loader2,
   ArrowLeft,
   Tag,
   CreditCard,
@@ -39,20 +39,19 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
   const vm = useEditionEditViewModel(editionId);
 
   const STEPS = [
-    { id: "basics", label: t("entitlements.editions.wizard.stepBasics") || "Basics", icon: Tag },
+    { id: "basics", label: t("entitlements.editions.wizard.stepBasics"), icon: Tag },
     {
       id: "billing",
-      label: t("entitlements.editions.wizard.stepBilling") || "Billing",
+      label: t("entitlements.editions.wizard.stepBilling"),
       icon: CreditCard,
     },
-    { id: "review", label: t("entitlements.editions.wizard.stepReview") || "Review", icon: Eye },
+    { id: "review", label: t("entitlements.editions.wizard.stepReview"), icon: Eye },
   ] as const;
 
   if (vm.isLoading) {
     return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-3">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">{t("common.loading") || "Loading…"}</p>
+      <div className="flex min-h-[400px] items-center justify-center">
+        <LoadingSpinner />
       </div>
     );
   }
@@ -70,9 +69,9 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
         </Link>
         <div>
           <h1 className="text-xl font-bold tracking-tight">
-            {t("entitlements.editions.wizard.editEdition") || "Edit Edition"}
+            {t("entitlements.editions.wizard.editEdition")}
           </h1>
-          <p className="text-sm text-muted-foreground">{displayName}</p>
+          <p className="text-sm text-nx-ink-3">{displayName}</p>
         </div>
       </div>
 
@@ -82,7 +81,7 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
       </div>
 
       {/* ── Step content ── */}
-      <div className="min-h-[380px] border border-border bg-card p-6 md:p-8">
+      <div className="min-h-[380px] border border-nx-line bg-nx-surface p-6 md:p-8">
         {vm.step === 0 && (
           <WizardStepBasics form={vm.form} onChange={vm.onChange} isEditMode={true} />
         )}
@@ -107,25 +106,22 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
           className="gap-2"
         >
           <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
-          {vm.step === 0 ? t("common.cancel") || "Cancel" : t("common.back") || "Back"}
+          {vm.step === 0 ? t("common.cancel") : t("common.back")}
         </Button>
 
         {vm.step < STEPS.length - 1 ? (
           <Button onClick={vm.nextStep} className="gap-2">
-            {t("common.next") || "Next"}
+            {t("common.next")}
             <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </Button>
         ) : (
-          <Button onClick={vm.handleSubmit} disabled={vm.isSubmitting} className="gap-2">
-            {vm.isSubmitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> {t("common.saving") || "Saving…"}
-              </>
-            ) : (
-              <>
-                <Check className="h-4 w-4" /> {t("common.saveChanges") || "Save Changes"}
-              </>
-            )}
+          <Button
+            onClick={vm.handleSubmit}
+            loading={vm.isSubmitting}
+            className="gap-2"
+          >
+            {!vm.isSubmitting && <Check className="h-4 w-4" />}
+            {vm.isSubmitting ? t("common.saving") : t("common.saveChanges")}
           </Button>
         )}
       </div>

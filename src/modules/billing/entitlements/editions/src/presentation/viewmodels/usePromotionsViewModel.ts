@@ -191,17 +191,16 @@ export function usePromotionsViewModel(editionId: string): PromotionsViewModelRe
       closeDialog();
       success({
         title: editingId
-          ? t("entitlements.promotions.updated") || "Promotion Updated"
-          : t("entitlements.promotions.created") || "Promotion Created",
+          ? t("entitlements.promotions.updated")
+          : t("entitlements.promotions.created"),
         description: editingId
-          ? t("entitlements.promotions.updatedDesc") || "The promotion has been updated."
-          : t("entitlements.promotions.createdDesc") ||
-            "The promotion has been created successfully.",
+          ? t("entitlements.promotions.updatedDesc")
+          : t("entitlements.promotions.createdDesc"),
       });
     },
     onError: (err: Error) => {
       showError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err.message,
       });
     },
@@ -213,12 +212,12 @@ export function usePromotionsViewModel(editionId: string): PromotionsViewModelRe
     onSuccess: () => {
       invalidate();
       success({
-        title: t("entitlements.promotions.deleted") || "Promotion Deleted",
-        description: t("entitlements.promotions.deletedDesc") || "The promotion has been removed.",
+        title: t("entitlements.promotions.deleted"),
+        description: t("entitlements.promotions.deletedDesc"),
       });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -239,7 +238,7 @@ export function usePromotionsViewModel(editionId: string): PromotionsViewModelRe
     },
     onError: (err: Error, __, context?: { previous: unknown }) => {
       if (context?.previous !== undefined) queryClient.setQueryData(queryKey, context.previous);
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey });

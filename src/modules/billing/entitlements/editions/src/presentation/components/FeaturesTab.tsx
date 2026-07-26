@@ -109,7 +109,7 @@ export function FeaturesTab({
         <CardHeader className="py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Shield className="h-4 w-4 text-muted-foreground" />
+              <Shield className="h-4 w-4 text-nx-ink-3" />
               <CardTitle className="text-sm font-medium">
                 {t("entitlements.editions.overflowPolicy")}
               </CardTitle>
@@ -118,7 +118,7 @@ export function FeaturesTab({
                   variant="outline"
                   className="h-4 border-warning/30 bg-warning/5 text-[10px] text-warning"
                 >
-                  {t("common.modified") || "Modified"}
+                  {t("common.modified")}
                 </Badge>
               )}
             </div>
@@ -137,7 +137,7 @@ export function FeaturesTab({
               ))}
             </SelectContent>
           </Select>
-          <p className="mt-2 text-xs text-muted-foreground">
+          <p className="mt-2 text-xs text-nx-ink-3">
             {t(`entitlements.editions.overflowPolicyHints.${overflowPolicy}`)}
           </p>
         </CardContent>
@@ -146,7 +146,7 @@ export function FeaturesTab({
       {/* ─────── FEATURES HEADER ─────── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Zap className="h-5 w-5 text-primary" />
+          <Zap className="h-5 w-5 text-nx-accent" />
           <h2 className="text-lg font-semibold">{t("entitlements.features.title")}</h2>
           <Badge variant="secondary" className="text-xs">
             {enabledTotal}/{allFeatures.length}
@@ -166,8 +166,8 @@ export function FeaturesTab({
         >
           <ChevronsUpDown className="me-1 h-4 w-4" />
           {Object.values(collapsedModules).every((v) => v)
-            ? t("common.expandAll") || "Expand All"
-            : t("common.collapseAll") || "Collapse All"}
+            ? t("common.expandAll")
+            : t("common.collapseAll")}
         </Button>
       </div>
 
@@ -183,15 +183,15 @@ export function FeaturesTab({
         return (
           <Card key={moduleName} className="overflow-hidden">
             <CardHeader
-              className="cursor-pointer select-none py-3 transition-colors hover:bg-accent/50"
+              className="cursor-pointer select-none py-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none"
               onClick={() => toggleModule(moduleName)}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {isCollapsed ? (
-                    <ChevronRight className="h-4 w-4 text-muted-foreground rtl:rotate-180" />
+                    <ChevronRight className="h-4 w-4 text-nx-ink-3 rtl:rotate-180" />
                   ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    <ChevronDown className="h-4 w-4 text-nx-ink-3" />
                   )}
                   <CardTitle className="text-base">{moduleName}</CardTitle>
                 </div>
@@ -206,8 +206,8 @@ export function FeaturesTab({
                 {categories.map(({ category: categoryName, features: categoryFeatures }) => (
                   <div key={categoryName}>
                     {categories.length > 1 && (
-                      <div className="mt-2 flex items-center gap-2 border-b border-dashed py-2">
-                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      <div className="mt-2 flex items-center gap-2 border-b border-dashed border-nx-line py-2">
+                        <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
                           {categoryName}
                         </span>
                         <Badge variant="secondary" className="h-4 text-[10px]">
@@ -215,7 +215,7 @@ export function FeaturesTab({
                         </Badge>
                       </div>
                     )}
-                    <div className="divide-y">
+                    <div className="divide-y divide-nx-line">
                       {categoryFeatures.map((feature) => {
                         const value = getEffectiveValue(feature);
                         const serverFeature = edition.features.find(
@@ -238,7 +238,7 @@ export function FeaturesTab({
                           (feature.valueType === "String" && value.trim() !== "");
 
                         return (
-                          <div key={feature.id} className="border-b last:border-0">
+                          <div key={feature.id} className="border-b border-nx-line last:border-0">
                             {/* Feature row */}
                             <div className="flex items-center justify-between gap-4 py-3">
                               <div className="min-w-0 flex-1 space-y-0.5">
@@ -249,7 +249,7 @@ export function FeaturesTab({
                                   {isModified && (
                                     <span
                                       className="inline-block h-1.5 w-1.5 rounded-full bg-warning"
-                                      title={t("common.modified") || "Modified"}
+                                      title={t("common.modified")}
                                     />
                                   )}
                                   {isLabelModified && (
@@ -259,7 +259,7 @@ export function FeaturesTab({
                                     />
                                   )}
                                 </div>
-                                <p className="font-mono text-xs text-muted-foreground">
+                                <p className="font-mono text-xs text-nx-ink-3">
                                   {feature.name}
                                 </p>
                               </div>
@@ -272,8 +272,8 @@ export function FeaturesTab({
                                     size="sm"
                                     className={`h-7 gap-1 px-2 text-xs ${
                                       isLabelExpanded
-                                        ? "text-primary"
-                                        : "text-muted-foreground hover:text-foreground"
+                                        ? "text-nx-accent"
+                                        : "text-nx-ink-3 hover:text-nx-ink"
                                     }`}
                                     onClick={() => toggleLabelExpanded(feature.name)}
                                     title="Edit marketing display label"
@@ -290,10 +290,7 @@ export function FeaturesTab({
                                     className="h-7 px-2 text-destructive/60 hover:bg-destructive/10 hover:text-destructive"
                                     onClick={() => removeFeature(serverFeature.featureId)}
                                     disabled={isRemovingFeature}
-                                    title={
-                                      t("entitlements.editions.removeFeature") ||
-                                      "Remove feature from this edition"
-                                    }
+                                    title={t("entitlements.editions.removeFeature")}
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
                                   </Button>
@@ -323,20 +320,20 @@ export function FeaturesTab({
                                   highlight.highlightOrder !==
                                     (serverHighlight?.highlightOrder ?? 0);
                                 return (
-                                  <div className="mb-3 rounded-lg border border-info/30 bg-info/10 px-4 py-3">
+                                  <div className="mb-3 rounded-nx-md border border-info/30 bg-info/10 px-4 py-3">
                                     {/* ── Marketing Label ── */}
                                     <div className="mb-2 flex items-center gap-1.5">
                                       <Tag className="h-3.5 w-3.5 text-info" />
                                       <span className="text-xs font-semibold uppercase tracking-wider text-info">
                                         Marketing Display Label
                                       </span>
-                                      <span className="text-xs text-muted-foreground">
+                                      <span className="text-xs text-nx-ink-3">
                                         — overrides how this feature appears on plan cards
                                       </span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
                                       <div className="space-y-1">
-                                        <Label className="text-xs text-muted-foreground">
+                                        <Label className="text-xs text-nx-ink-3">
                                           🇺🇸 English label
                                         </Label>
                                         <Input
@@ -350,7 +347,7 @@ export function FeaturesTab({
                                         />
                                       </div>
                                       <div className="space-y-1">
-                                        <Label className="text-xs text-muted-foreground">
+                                        <Label className="text-xs text-nx-ink-3">
                                           🇸🇦 Arabic label
                                         </Label>
                                         <Input
@@ -367,7 +364,7 @@ export function FeaturesTab({
                                     </div>
                                     {(effectiveLabel.en || effectiveLabel.ar) && (
                                       <div className="mt-2 flex items-center gap-1">
-                                        <span className="text-[10px] text-muted-foreground">
+                                        <span className="text-[10px] text-nx-ink-3">
                                           Preview:
                                         </span>
                                         {effectiveLabel.en && (
@@ -387,7 +384,7 @@ export function FeaturesTab({
                                         <Button
                                           variant="ghost"
                                           size="sm"
-                                          className="ms-auto h-5 px-1 text-[10px] text-muted-foreground hover:text-destructive"
+                                          className="ms-auto h-5 px-1 text-[10px] text-nx-ink-3 hover:text-destructive"
                                           onClick={() => {
                                             setLocalLabel(feature.name, "en", "");
                                             setLocalLabel(feature.name, "ar", "");
@@ -431,7 +428,7 @@ export function FeaturesTab({
                                         </div>
                                         {highlight.isHighlight && (
                                           <div className="flex items-center gap-2">
-                                            <Label className="text-xs text-muted-foreground">
+                                            <Label className="text-xs text-nx-ink-3">
                                               Order
                                             </Label>
                                             <Input
@@ -447,7 +444,7 @@ export function FeaturesTab({
                                               }
                                               className="h-7 w-16 text-center text-xs"
                                             />
-                                            <span className="text-[10px] text-muted-foreground">
+                                            <span className="text-[10px] text-nx-ink-3">
                                               lower = higher priority
                                             </span>
                                           </div>
@@ -491,14 +488,14 @@ export function getFeatureDisabledDefault(valueType: string): string {
 function getEnumFeatureOptions(t: TFn): Record<string, { value: string; label: string }[]> {
   return {
     "Identity.AdminPoolMode": [
-      { value: "shared", label: t("entitlements.features.sharedPool") || "Shared Pool" },
+      { value: "shared", label: t("entitlements.features.sharedPool") },
       {
         value: "separate",
-        label: t("entitlements.features.separatePool") || "Separate (Parent Independent)",
+        label: t("entitlements.features.separatePool"),
       },
       {
         value: "per_child",
-        label: t("entitlements.features.perChildPool") || "Per Child (No Pool)",
+        label: t("entitlements.features.perChildPool"),
       },
     ],
   };
@@ -555,7 +552,7 @@ function FeatureControl({
         type="number"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-8 w-24 text-right"
+        className="h-8 w-24 text-end"
         min={-1}
       />
     );

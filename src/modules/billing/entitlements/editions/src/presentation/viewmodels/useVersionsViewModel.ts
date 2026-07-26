@@ -70,10 +70,8 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
     mutationFn: () => editionRepository.createVersion(editionId, changeNotes || undefined),
     onSuccess: () => {
       success({
-        title: t("entitlements.editions.versions.created") || "Version Created",
-        description:
-          t("entitlements.editions.versions.createdDesc") ||
-          "Feature snapshot saved as a new draft version.",
+        title: t("entitlements.editions.versions.created"),
+        description: t("entitlements.editions.versions.createdDesc"),
       });
       queryClient.invalidateQueries({
         queryKey: ["entitlements", "editions", editionId, "versions"],
@@ -107,8 +105,8 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
     },
     onSuccess: () => {
       success({
-        title: t("entitlements.editions.versions.published") || "Version Published",
-        description: t("entitlements.editions.versions.publishedDesc") || "Rollout started.",
+        title: t("entitlements.editions.versions.published"),
+        description: t("entitlements.editions.versions.publishedDesc"),
       });
       queryClient.invalidateQueries({
         queryKey: ["entitlements", "editions", editionId, "versions"],
@@ -130,7 +128,7 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
   const cancelMutation = useMutation({
     mutationFn: (versionId: string) => editionRepository.cancelVersion(editionId, versionId),
     onSuccess: () => {
-      success({ title: t("entitlements.editions.versions.canceled") || "Version Canceled" });
+      success({ title: t("entitlements.editions.versions.canceled") });
       queryClient.invalidateQueries({
         queryKey: ["entitlements", "editions", editionId, "versions"],
       });

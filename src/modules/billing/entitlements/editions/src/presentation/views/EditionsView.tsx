@@ -34,7 +34,7 @@ export function EditionsView() {
       resource: "editions",
       customActions: [
         {
-          label: t("entitlements.editions.comparison.heroTitle") || "Compare Editions",
+          label: t("entitlements.editions.comparison.heroTitle"),
           onClick: async () => {
             router.push("/entitlements/editions/compare");
           },
@@ -46,38 +46,38 @@ export function EditionsView() {
       columns: [
         {
           key: "name",
-          label: t("entitlements.editions.editionName") || "Name",
+          label: t("entitlements.editions.editionName"),
           sortable: true,
         },
         {
           key: "displayName",
-          label: t("entitlements.editions.displayName") || "Display Name",
+          label: t("entitlements.editions.displayName"),
           render: (_val: unknown, edition: Edition) => edition.getDisplayName(language),
         },
         {
           key: "features",
-          label: t("entitlements.editions.featureCount") || "Features",
+          label: t("entitlements.editions.featureCount"),
           render: (_val: unknown, edition: Edition) => (
             <Badge variant="secondary">{edition.featureCount}</Badge>
           ),
         },
         {
           key: "category",
-          label: t("entitlements.features.category") || "Category",
+          label: t("entitlements.features.category"),
           render: (_val: unknown, edition: Edition) =>
             edition.category ? (
               <Badge variant="secondary">{edition.category}</Badge>
             ) : (
-              <span className="text-muted-foreground">—</span>
+              <span className="text-nx-ink-3">—</span>
             ),
         },
         {
           key: "baseMonthlyPriceUsd",
-          label: t("entitlements.pricing.price") || "Price",
+          label: t("entitlements.pricing.price"),
           render: (_val: unknown, edition: Edition) => {
             const price = edition.baseMonthlyPriceUsd;
             if (price == null || price === 0) {
-              return <span className="text-muted-foreground">—</span>;
+              return <span className="text-nx-ink-3">—</span>;
             }
             const formatted = new Intl.NumberFormat("en-US", {
               style: "currency",
@@ -87,25 +87,23 @@ export function EditionsView() {
             return (
               <span className="text-sm font-medium tabular-nums text-success">
                 {formatted}
-                <span className="text-xs text-muted-foreground">/mo</span>
+                <span className="text-xs text-nx-ink-3">/mo</span>
               </span>
             );
           },
         },
         {
           key: "isRetired",
-          label: t("entitlements.editions.status") || "Status",
+          label: t("entitlements.editions.status"),
           render: (_val: unknown, edition: Edition) => (
             <Badge variant={edition.isRetired ? "destructive" : "success"}>
-              {edition.isRetired
-                ? t("entitlements.editions.retired") || "Retired"
-                : t("common.active") || "Active"}
+              {edition.isRetired ? t("entitlements.editions.retired") : t("common.active")}
             </Badge>
           ),
         },
         {
           key: "createdAt",
-          label: t("common.createdAt") || "Created",
+          label: t("common.createdAt"),
           render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
@@ -117,25 +115,25 @@ export function EditionsView() {
         handleDeleteFn: ((item: Edition) => void) | undefined
       ): CrudAction<Edition>[] => [
         {
-          label: tFn("common.view") || "View",
+          label: tFn("common.view"),
           onClick: (item: Edition) => router.push(`/entitlements/editions/${item.id}/overview`),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },
         {
-          label: tFn("common.edit") || "Edit",
+          label: tFn("common.edit"),
           onClick: (item: Edition) => router.push(`/entitlements/editions/${item.id}/edit`),
           variant: "ghost" as const,
           icon: <Pencil className="h-4 w-4" />,
         },
         {
-          label: tFn("entitlements.editions.manageFeatures") || "Manage Features",
+          label: tFn("entitlements.editions.manageFeatures"),
           onClick: (item: Edition) => vmInstance.navigateToFeatures(item.id),
           variant: "ghost" as const,
           icon: <Settings2 className="h-4 w-4" />,
         },
         {
-          label: tFn("common.delete") || "Delete",
+          label: tFn("common.delete"),
           onClick: (item: Edition) => handleDeleteFn?.(item),
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",

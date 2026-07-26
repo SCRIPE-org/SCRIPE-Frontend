@@ -14,20 +14,20 @@ export function formatComparisonMessage(
 
 export function getLocalizedCycleName(cycle: BillingCycle, t: ComparisonTranslator): string {
   if (cycle === "Monthly") {
-    return t("entitlements.editions.comparison.monthly") || "Monthly";
+    return t("entitlements.editions.comparison.monthly");
   }
   if (cycle === "Yearly") {
-    return t("entitlements.editions.comparison.yearly") || "Yearly";
+    return t("entitlements.editions.comparison.yearly");
   }
-  return t("entitlements.editions.comparison.lifetime") || "Lifetime";
+  return t("entitlements.editions.comparison.lifetime");
 }
 
 export function getLocalizedCyclePeriod(cycle: BillingCycle, t: ComparisonTranslator): string {
   if (cycle === "Monthly") {
-    return t("entitlements.editions.comparison.monthShort") || "mo";
+    return t("entitlements.editions.comparison.monthShort");
   }
   if (cycle === "Yearly") {
-    return t("entitlements.editions.comparison.yearShort") || "yr";
+    return t("entitlements.editions.comparison.yearShort");
   }
-  return t("entitlements.editions.comparison.once") || "once";
+  return t("entitlements.editions.comparison.once");
 }

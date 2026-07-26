@@ -427,10 +427,8 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     },
     onSuccess: () => {
       success({
-        title: t("entitlements.editions.versions.created") || "Version Created",
-        description:
-          t("entitlements.editions.versions.createdDesc") ||
-          "Feature and pricing changes captured in a new draft version.",
+        title: t("entitlements.editions.versions.created"),
+        description: t("entitlements.editions.versions.createdDesc"),
       });
       queryClient.invalidateQueries({
         queryKey: ["entitlements", "editions", editionId, "versions"],
@@ -523,10 +521,8 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     },
     onSuccess: () => {
       success({
-        title: t("entitlements.editions.changesApplied") || "Changes Applied",
-        description:
-          t("entitlements.editions.changesAppliedDesc") ||
-          "Features updated and all affected tenants synced.",
+        title: t("entitlements.editions.changesApplied"),
+        description: t("entitlements.editions.changesAppliedDesc"),
       });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
       queryClient.invalidateQueries({
@@ -552,10 +548,8 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     },
     onSuccess: () => {
       success({
-        title: t("entitlements.editions.featureRemoved") || "Feature Removed",
-        description:
-          t("entitlements.editions.featureRemovedDesc") ||
-          "The feature has been detached from this edition.",
+        title: t("entitlements.editions.featureRemoved"),
+        description: t("entitlements.editions.featureRemovedDesc"),
       });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
     },

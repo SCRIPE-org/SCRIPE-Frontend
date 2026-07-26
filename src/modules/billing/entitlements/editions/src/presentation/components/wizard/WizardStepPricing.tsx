@@ -22,13 +22,13 @@ function SectionHeader({
   desc: string;
 }) {
   return (
-    <div className="mb-5 flex items-start gap-3 border-b border-border pb-4">
-      <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
-        <Icon className="h-4.5 w-4.5 text-primary" />
+    <div className="mb-5 flex items-start gap-3 border-b border-nx-line pb-4">
+      <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+        <Icon className="h-4.5 w-4.5 text-nx-accent" />
       </div>
       <div>
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
+        <h3 className="text-sm font-semibold text-nx-ink">{title}</h3>
+        <p className="mt-0.5 text-xs text-nx-ink-3">{desc}</p>
       </div>
     </div>
   );
@@ -46,17 +46,17 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
   const cycles = [
     {
       key: "Monthly",
-      label: t("entitlements.editions.wizard.monthly") || "Monthly",
+      label: t("entitlements.editions.wizard.monthly"),
       enabled: form.allowMonthly ?? false,
     },
     {
       key: "Yearly",
-      label: t("entitlements.editions.wizard.annual") || "Annual",
+      label: t("entitlements.editions.wizard.annual"),
       enabled: form.allowYearly ?? false,
     },
     {
       key: "Lifetime",
-      label: t("entitlements.editions.wizard.lifetime") || "Lifetime",
+      label: t("entitlements.editions.wizard.lifetime"),
       enabled: form.allowLifetime ?? false,
     },
   ].filter((c) => c.enabled);
@@ -68,15 +68,14 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
   if (isFreeEdition) {
     return (
       <div className="flex flex-col items-center justify-center space-y-4 py-16">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-success/10">
+        <div className="flex h-16 w-16 items-center justify-center rounded-nx-lg bg-success/10">
           <Gift className="h-8 w-8 text-success" />
         </div>
-        <h3 className="text-lg font-bold text-foreground">
-          {t("entitlements.editions.wizard.freeTierTitle") || "Free Tier — No Pricing Needed"}
+        <h3 className="text-lg font-bold text-nx-ink">
+          {t("entitlements.editions.wizard.freeTierTitle")}
         </h3>
-        <p className="max-w-md text-center text-sm text-muted-foreground">
-          {t("entitlements.editions.wizard.freeTierDesc") ||
-            "Tier Level 0 editions are free by design. No pricing records will be created."}
+        <p className="max-w-md text-center text-sm text-nx-ink-3">
+          {t("entitlements.editions.wizard.freeTierDesc")}
         </p>
       </div>
     );
@@ -86,8 +85,7 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
     return (
       <div className="space-y-2 border border-dashed border-warning/30 bg-warning/5 p-8 text-center">
         <p className="text-sm font-medium text-warning">
-          {t("entitlements.editions.wizard.noBillingCycles") ||
-            "No billing cycles enabled. Go back and enable at least one."}
+          {t("entitlements.editions.wizard.noBillingCycles")}
         </p>
       </div>
     );
@@ -99,18 +97,15 @@ export function WizardStepPricing({ form, prices, onPriceChange }: WizardStepPri
     <div className="space-y-6">
       <SectionHeader
         icon={DollarSign}
-        title={t("entitlements.editions.wizard.pricingSection") || "Multi-Currency Pricing"}
-        desc={
-          t("entitlements.editions.wizard.pricingDesc") ||
-          "Set prices for each currency and billing cycle."
-        }
+        title={t("entitlements.editions.wizard.pricingSection")}
+        desc={t("entitlements.editions.wizard.pricingDesc")}
       />
 
       <div className="overflow-hidden rounded-nx-md border border-nx-line">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{t("entitlements.editions.wizard.currency") || "Currency"}</TableHead>
+              <TableHead>{t("entitlements.editions.wizard.currency")}</TableHead>
               {cycles.map((c) => (
                 <TableHead key={c.key}>{c.label}</TableHead>
               ))}

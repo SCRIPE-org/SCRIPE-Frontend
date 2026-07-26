@@ -15,10 +15,11 @@ import { useMemo, useState } from "react";
 import { useEditionDetailViewModel } from "../viewmodels/useEditionDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
-import { ArrowLeft, Loader2, Zap, GitBranch, DollarSign, Tag, Settings2 } from "lucide-react";
+import { ArrowLeft, Zap, GitBranch, DollarSign, Tag, Settings2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 // ── Extracted Tab Components ──
 import { FeaturesTab, getFeatureDisabledDefault } from "../components/FeaturesTab";
@@ -64,18 +65,14 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
 
   // ── Loading ──
   if (vm.isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <LoadingSpinner size="lg" fullHeight />;
   }
 
   if (vm.error || !vm.edition) {
     return (
       <div className="p-8 text-center">
         <p className="text-destructive">
-          {vm.error?.message || t("entitlements.editions.notFound") || "Edition not found"}
+          {vm.error?.message || t("entitlements.editions.notFound")}
         </p>
         <Link href="/entitlements/editions">
           <Button variant="ghost" className="mt-4">
@@ -92,26 +89,26 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   const tabs = [
     {
       id: "features" as const,
-      label: t("entitlements.features.title") || "Features",
+      label: t("entitlements.features.title"),
       icon: <Zap className="h-3.5 w-3.5" />,
     },
     ...(!edition.isFree
       ? [
           {
             id: "pricing" as const,
-            label: t("entitlements.pricing.title") || "Pricing",
+            label: t("entitlements.pricing.title"),
             icon: <DollarSign className="h-3.5 w-3.5" />,
           },
           {
             id: "promotions" as const,
-            label: t("entitlements.promotions.title") || "Promotions",
+            label: t("entitlements.promotions.title"),
             icon: <Tag className="h-3.5 w-3.5" />,
           },
         ]
       : []),
     {
       id: "versions" as const,
-      label: t("entitlements.editions.versions.title") || "Versions",
+      label: t("entitlements.editions.versions.title"),
       icon: <GitBranch className="h-3.5 w-3.5" />,
     },
   ];
@@ -127,7 +124,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
         </Link>
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold tracking-tight">{edition.getDisplayName(language)}</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
+          <p className="mt-0.5 text-sm text-nx-ink-2">
             {edition.description || t("entitlements.editions.manageFeaturesDescription")}
           </p>
         </div>
@@ -149,10 +146,10 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
+            className={`-mb-px flex items-center gap-1.5 border-b-2 px-4 py-2.5 text-sm font-medium transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
               activeTab === tab.id
-                ? "border-primary text-primary"
-                : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"
+                ? "border-nx-accent text-nx-accent"
+                : "border-transparent text-nx-ink-2 hover:border-nx-line hover:text-nx-ink"
             }`}
           >
             {tab.icon}

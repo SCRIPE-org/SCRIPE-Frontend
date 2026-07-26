@@ -23,8 +23,8 @@ function ReviewRow({
   mono?: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-border px-4 py-3 transition-colors last:border-b-0 hover:bg-muted/20">
-      <span className="shrink-0 text-sm text-muted-foreground">{label}</span>
+    <div className="flex items-start justify-between gap-4 border-b border-nx-line px-4 py-3 transition-colors duration-nx-micro ease-nx-enter last:border-b-0 hover:bg-nx-hover motion-reduce:transition-none">
+      <span className="shrink-0 text-sm text-nx-ink-3">{label}</span>
       <span className={`text-end text-sm font-medium ${mono ? "font-mono" : ""}`}>{value}</span>
     </div>
   );
@@ -58,82 +58,78 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
     ? Object.entries(prices).filter(([, v]) => v && parseFloat(v) > 0)
     : [];
 
-  const yesLabel = t("entitlements.editions.wizard.yes") || "Yes";
-  const noLabel = t("entitlements.editions.wizard.no") || "No";
+  const yesLabel = t("entitlements.editions.wizard.yes");
+  const noLabel = t("entitlements.editions.wizard.no");
 
   const getTrialString = () => {
-    if (!form.allowTrial) return t("entitlements.editions.wizard.none") || "None";
+    if (!form.allowTrial) return t("entitlements.editions.wizard.none");
     const days = form.trialDurationDays ?? 14;
     const isFree = form.trialIsFree;
     const discount = form.trialDiscountPercent;
-    if (isFree) return `${days}d (${t("entitlements.editions.wizard.free") || "free"})`;
-    return `${days}d (${discount}% ${t("entitlements.editions.wizard.off") || "off"})`;
+    if (isFree) return `${days}d (${t("entitlements.editions.wizard.free")})`;
+    return `${days}d (${discount}% ${t("entitlements.editions.wizard.off")})`;
   };
 
   const cyclesDisplay = [
-    form.allowMonthly && (t("entitlements.editions.wizard.monthly") || "Monthly"),
-    form.allowYearly && (t("entitlements.editions.wizard.annual") || "Annual"),
-    form.allowLifetime && (t("entitlements.editions.wizard.lifetime") || "Lifetime"),
+    form.allowMonthly && t("entitlements.editions.wizard.monthly"),
+    form.allowYearly && t("entitlements.editions.wizard.annual"),
+    form.allowLifetime && t("entitlements.editions.wizard.lifetime"),
   ].filter(Boolean);
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-start gap-3 border-b border-border pb-4">
-        <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
-          <ClipboardCheck className="h-4.5 w-4.5 text-primary" />
+      <div className="flex items-start gap-3 border-b border-nx-line pb-4">
+        <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+          <ClipboardCheck className="h-4.5 w-4.5 text-nx-accent" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-foreground">
-            {t("entitlements.editions.wizard.reviewSection") || "Review & Confirm"}
+          <h3 className="text-sm font-semibold text-nx-ink">
+            {t("entitlements.editions.wizard.reviewSection")}
           </h3>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            {t("entitlements.editions.wizard.reviewSectionDesc") ||
-              "Verify all settings before creating."}
+          <p className="mt-0.5 text-xs text-nx-ink-3">
+            {t("entitlements.editions.wizard.reviewSectionDesc")}
           </p>
         </div>
       </div>
 
       {/* General */}
-      <div className="border border-border">
-        <div className="border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {t("entitlements.editions.wizard.sectionGeneral") || "General"}
+      <div className="border border-nx-line">
+        <div className="border-b border-nx-line bg-nx-raised px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+          {t("entitlements.editions.wizard.sectionGeneral")}
         </div>
         <ReviewRow
-          label={t("entitlements.editions.wizard.internalName") || "Internal Name"}
+          label={t("entitlements.editions.wizard.internalName")}
           value={form.name || "—"}
           mono
         />
         <ReviewRow
-          label={t("entitlements.editions.wizard.displayEnAr") || "Display Name"}
+          label={t("entitlements.editions.wizard.displayEnAr")}
           value={`${form.displayNameEn || "—"} / ${form.displayNameAr || "—"}`}
         />
         <ReviewRow
-          label={t("entitlements.editions.wizard.tierLevel") || "Tier Level"}
+          label={t("entitlements.editions.wizard.tierLevel")}
           value={String(form.tierLevel ?? 0)}
           mono
         />
         {form.tagline && (
-          <ReviewRow
-            label={t("entitlements.editions.wizard.tagline") || "Tagline"}
-            value={form.tagline}
-          />
+          <ReviewRow label={t("entitlements.editions.wizard.tagline")} value={form.tagline} />
         )}
         {(form as UpdateEditionRequest).overflowPolicy && (
           <ReviewRow
-            label={t("entitlements.editions.wizard.overflowPolicy") || "Overflow Policy"}
+            label={t("entitlements.editions.wizard.overflowPolicy")}
             value={<Badge variant="outline">{(form as UpdateEditionRequest).overflowPolicy}</Badge>}
           />
         )}
       </div>
 
       {/* Billing */}
-      <div className="border border-border">
-        <div className="border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {t("entitlements.editions.wizard.sectionBilling") || "Billing"}
+      <div className="border border-nx-line">
+        <div className="border-b border-nx-line bg-nx-raised px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+          {t("entitlements.editions.wizard.sectionBilling")}
         </div>
         <ReviewRow
-          label={t("entitlements.editions.wizard.billingCycles") || "Billing Cycles"}
+          label={t("entitlements.editions.wizard.billingCycles")}
           value={
             cyclesDisplay.length > 0 ? (
               <div className="flex flex-wrap justify-end gap-1.5">
@@ -144,18 +140,15 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
                 ))}
               </div>
             ) : (
-              <span className="italic text-muted-foreground">
-                {t("entitlements.editions.wizard.noneFree") || "None (Free Tier)"}
+              <span className="italic text-nx-ink-3">
+                {t("entitlements.editions.wizard.noneFree")}
               </span>
             )
           }
         />
+        <ReviewRow label={t("entitlements.editions.wizard.trial")} value={getTrialString()} />
         <ReviewRow
-          label={t("entitlements.editions.wizard.trial") || "Trial Period"}
-          value={getTrialString()}
-        />
-        <ReviewRow
-          label={t("entitlements.editions.wizard.selfService") || "Self-Service"}
+          label={t("entitlements.editions.wizard.selfService")}
           value={
             <BoolBadge
               value={form.isSelfServiceEnabled ?? true}
@@ -165,7 +158,7 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
           }
         />
         <ReviewRow
-          label={t("entitlements.editions.wizard.contactSalesOnly") || "Contact Sales Only"}
+          label={t("entitlements.editions.wizard.contactSalesOnly")}
           value={
             <BoolBadge
               value={form.isContactSalesOnly ?? false}
@@ -178,9 +171,9 @@ export function WizardStepReview({ form, prices }: WizardStepReviewProps) {
 
       {/* Pricing */}
       {priceEntries.length > 0 && (
-        <div className="border border-border">
-          <div className="border-b border-border bg-muted/40 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            {t("entitlements.editions.wizard.pricing") || "Pricing Matrix"}
+        <div className="border border-nx-line">
+          <div className="border-b border-nx-line bg-nx-raised px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+            {t("entitlements.editions.wizard.pricing")}
           </div>
           {priceEntries.map(([key, val]) => {
             const [currency, cycle] = key.split("_");

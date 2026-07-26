@@ -27,10 +27,10 @@ import {
   DialogTitle,
 } from "@core/ui/dialog";
 import GenericSelect from "@core/crud/components/generic-select";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import {
   Tag,
   Plus,
-  Loader2,
   Pencil,
   Trash2,
   Clock,
@@ -69,7 +69,7 @@ export function PromotionsTab({
   if (vm.isLoading) {
     return (
       <div className="flex min-h-[200px] items-center justify-center">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        <LoadingSpinner size="sm" showText={false} />
       </div>
     );
   }
@@ -79,17 +79,15 @@ export function PromotionsTab({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Tag className="h-5 w-5 text-primary" />
-          <h2 className="text-lg font-semibold">
-            {t("entitlements.promotions.title") || "Promotions"}
-          </h2>
+          <Tag className="h-5 w-5 text-nx-accent" />
+          <h2 className="text-lg font-semibold">{t("entitlements.promotions.title")}</h2>
           <Badge variant="secondary" className="text-xs">
             {vm.promotions.length}
           </Badge>
         </div>
         <Button size="sm" onClick={vm.openCreate}>
           <Plus className="me-1 h-4 w-4" />
-          {t("entitlements.promotions.create") || "Create Promotion"}
+          {t("entitlements.promotions.create")}
         </Button>
       </div>
 
@@ -97,11 +95,8 @@ export function PromotionsTab({
       {vm.promotions.length === 0 && (
         <Card>
           <CardContent className="py-12 text-center">
-            <Tag className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">
-              {t("entitlements.promotions.empty") ||
-                "No promotions yet. Create your first one to attract customers."}
-            </p>
+            <Tag className="mx-auto mb-3 h-10 w-10 text-nx-ink-3" />
+            <p className="text-sm text-nx-ink-2">{t("entitlements.promotions.empty")}</p>
           </CardContent>
         </Card>
       )}
@@ -126,23 +121,22 @@ export function PromotionsTab({
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Tag className="h-5 w-5 text-primary" />
+              <Tag className="h-5 w-5 text-nx-accent" />
               {vm.isEditing
-                ? t("entitlements.promotions.edit") || "Edit Promotion"
-                : t("entitlements.promotions.create") || "Create Promotion"}
+                ? t("entitlements.promotions.edit")
+                : t("entitlements.promotions.create")}
             </DialogTitle>
             <DialogDescription>
               {vm.isEditing
-                ? t("entitlements.promotions.editDesc") || "Update the promotion details."
-                : t("entitlements.promotions.createDesc") ||
-                  "Create a discount promotion for this edition."}
+                ? t("entitlements.promotions.editDesc")
+                : t("entitlements.promotions.createDesc")}
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-2">
             {/* Name */}
             <div className="space-y-1.5">
-              <Label>{t("common.name") || "Name"}</Label>
+              <Label>{t("common.name")}</Label>
               <Input
                 value={vm.form.name}
                 onChange={(e) => vm.setField("name", e.target.value)}
@@ -152,7 +146,7 @@ export function PromotionsTab({
 
             {/* Description */}
             <div className="space-y-1.5">
-              <Label>{t("common.description") || "Description"}</Label>
+              <Label>{t("common.description")}</Label>
               <Input
                 value={vm.form.description}
                 onChange={(e) => vm.setField("description", e.target.value)}
@@ -165,17 +159,17 @@ export function PromotionsTab({
                 {/* Type + Value */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>{t("entitlements.promotions.discountType") || "Discount Type"}</Label>
+                    <Label>{t("entitlements.promotions.discountType")}</Label>
                     <GenericSelect
                       type="single"
                       options={[
                         {
                           value: "Percentage",
-                          label: t("entitlements.promotions.percentage") || "Percentage",
+                          label: t("entitlements.promotions.percentage"),
                         },
                         {
                           value: "FixedAmount",
-                          label: t("entitlements.promotions.fixedAmount") || "Fixed Amount",
+                          label: t("entitlements.promotions.fixedAmount"),
                         },
                       ]}
                       value={vm.form.type}
@@ -190,8 +184,8 @@ export function PromotionsTab({
                   <div className="space-y-1.5">
                     <Label>
                       {vm.form.type === "Percentage"
-                        ? t("entitlements.promotions.percentOff") || "% Off"
-                        : t("entitlements.promotions.amountOff") || "Amount Off"}
+                        ? t("entitlements.promotions.percentOff")
+                        : t("entitlements.promotions.amountOff")}
                     </Label>
                     <Input
                       type="number"
@@ -208,7 +202,7 @@ export function PromotionsTab({
                 {/* Currency (only for FixedAmount) */}
                 {vm.form.type === "FixedAmount" && (
                   <div className="space-y-1.5">
-                    <Label>{t("entitlements.promotions.currency") || "Currency"}</Label>
+                    <Label>{t("entitlements.promotions.currency")}</Label>
                     <GenericSelect
                       type="single"
                       options={SUPPORTED_CURRENCIES.map((c) => ({
@@ -225,18 +219,16 @@ export function PromotionsTab({
 
                 {/* Applicable Cycle */}
                 <div className="space-y-1.5">
-                  <Label>
-                    {t("entitlements.promotions.applicableCycle") || "Applicable Billing Cycle"}
-                  </Label>
+                  <Label>{t("entitlements.promotions.applicableCycle")}</Label>
                   <GenericSelect
                     type="single"
                     options={[
-                      { value: "any", label: t("common.any") || "Any Cycle" },
+                      { value: "any", label: t("common.any") },
                       ...(allowMonthly
                         ? [
                             {
                               value: "Monthly",
-                              label: t("entitlements.promotions.monthly") || "Monthly",
+                              label: t("entitlements.promotions.monthly"),
                             },
                           ]
                         : []),
@@ -244,7 +236,7 @@ export function PromotionsTab({
                         ? [
                             {
                               value: "Yearly",
-                              label: t("entitlements.promotions.yearly") || "Yearly",
+                              label: t("entitlements.promotions.yearly"),
                             },
                           ]
                         : []),
@@ -252,7 +244,7 @@ export function PromotionsTab({
                         ? [
                             {
                               value: "Lifetime",
-                              label: t("entitlements.promotions.lifetime") || "Lifetime",
+                              label: t("entitlements.promotions.lifetime"),
                             },
                           ]
                         : []),
@@ -272,9 +264,7 @@ export function PromotionsTab({
                       checked={vm.form.requiresCode}
                       onCheckedChange={(v) => vm.setField("requiresCode", v)}
                     />
-                    <Label>
-                      {t("entitlements.promotions.requiresCode") || "Requires Promo Code"}
-                    </Label>
+                    <Label>{t("entitlements.promotions.requiresCode")}</Label>
                   </div>
                   {vm.form.requiresCode && (
                     <Input
@@ -289,28 +279,28 @@ export function PromotionsTab({
                 {/* Duration + First Time Only */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label>{t("entitlements.promotions.duration") || "Discount Duration"}</Label>
+                    <Label>{t("entitlements.promotions.duration")}</Label>
                     <GenericSelect
                       type="single"
                       options={[
                         {
                           value: "forever",
-                          label: t("entitlements.promotions.forever") || "Forever",
+                          label: t("entitlements.promotions.forever"),
                         },
-                        { value: "30", label: t("entitlements.promotions.oneMonth") || "1 Month" },
+                        { value: "30", label: t("entitlements.promotions.oneMonth") },
                         {
                           value: "90",
-                          label: t("entitlements.promotions.threeMonths") || "3 Months",
+                          label: t("entitlements.promotions.threeMonths"),
                         },
                         {
                           value: "180",
-                          label: t("entitlements.promotions.sixMonths") || "6 Months",
+                          label: t("entitlements.promotions.sixMonths"),
                         },
-                        { value: "365", label: t("entitlements.promotions.oneYear") || "1 Year" },
-                        { value: "730", label: t("entitlements.promotions.twoYears") || "2 Years" },
+                        { value: "365", label: t("entitlements.promotions.oneYear") },
+                        { value: "730", label: t("entitlements.promotions.twoYears") },
                         {
                           value: "custom",
-                          label: t("entitlements.promotions.custom") || "Custom...",
+                          label: t("entitlements.promotions.custom"),
                         },
                       ]}
                       value={
@@ -343,7 +333,7 @@ export function PromotionsTab({
                         min={1}
                         value={vm.form.durationDays || ""}
                         onChange={(e) => vm.setField("durationDays", parseInt(e.target.value) || 0)}
-                        placeholder={t("entitlements.promotions.customDays") || "Enter days..."}
+                        placeholder={t("entitlements.promotions.customDays")}
                         className="mt-1.5"
                       />
                     )}
@@ -355,7 +345,7 @@ export function PromotionsTab({
                         onCheckedChange={(v) => vm.setField("firstTimeOnly", v)}
                       />
                       <Label className="text-sm">
-                        {t("entitlements.promotions.firstTimeOnly") || "First-Time Only"}
+                        {t("entitlements.promotions.firstTimeOnly")}
                       </Label>
                     </div>
                   </div>
@@ -366,42 +356,42 @@ export function PromotionsTab({
             {/* Validity Dates */}
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label>{t("entitlements.promotions.validFrom") || "Valid From"}</Label>
+                <Label>{t("entitlements.promotions.validFrom")}</Label>
                 <DatePicker
                   value={vm.form.validFrom}
                   onChange={(v) => vm.setField("validFrom", v)}
-                  placeholder={t("entitlements.promotions.validFrom") || "Valid From"}
+                  placeholder={t("entitlements.promotions.validFrom")}
                 />
               </div>
               <div className="space-y-1.5">
-                <Label>{t("entitlements.promotions.validUntil") || "Valid Until"}</Label>
+                <Label>{t("entitlements.promotions.validUntil")}</Label>
                 <DatePicker
                   value={vm.form.validUntil}
                   onChange={(v) => vm.setField("validUntil", v)}
-                  placeholder={t("entitlements.promotions.validUntil") || "Valid Until"}
+                  placeholder={t("entitlements.promotions.validUntil")}
                 />
               </div>
             </div>
 
             {/* Max Redemptions */}
             <div className="space-y-1.5">
-              <Label>{t("entitlements.promotions.maxRedemptions") || "Max Redemptions"}</Label>
+              <Label>{t("entitlements.promotions.maxRedemptions")}</Label>
               <Input
                 type="number"
                 min={0}
                 value={vm.form.maxRedemptions}
                 onChange={(e) => vm.setField("maxRedemptions", e.target.value)}
-                placeholder={t("entitlements.promotions.unlimited") || "Leave empty for unlimited"}
+                placeholder={t("entitlements.promotions.unlimited")}
               />
             </div>
           </div>
 
           <DialogFooter>
             <Button variant="ghost" onClick={vm.closeDialog}>
-              {t("common.cancel") || "Cancel"}
+              {t("common.cancel")}
             </Button>
             <Button onClick={() => vm.submit()} disabled={!vm.form.name} loading={vm.isSubmitting}>
-              {vm.isEditing ? t("common.save") || "Save" : t("common.create") || "Create"}
+              {vm.isEditing ? t("common.save") : t("common.create")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -429,7 +419,9 @@ function PromotionCard({
 }) {
   const { t } = useI18n();
   return (
-    <Card className={`transition-all ${!promo.isActive ? "opacity-60" : ""}`}>
+    <Card
+      className={`transition-opacity duration-nx-standard motion-reduce:transition-none ${!promo.isActive ? "opacity-60" : ""}`}
+    >
       <CardContent className="py-4">
         <div className="flex items-start justify-between gap-4">
           {/* Left: Info */}
@@ -437,53 +429,48 @@ function PromotionCard({
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-semibold">{promo.name}</span>
               <Badge variant={promo.isActive ? "default" : "secondary"} className="text-[10px]">
-                {promo.isActive
-                  ? t("common.active") || "Active"
-                  : t("common.inactive") || "Inactive"}
+                {promo.isActive ? t("common.active") : t("common.inactive")}
               </Badge>
               {promo.isExpired && (
                 <Badge variant="destructive" className="text-[10px]">
-                  {t("entitlements.promotions.expired") || "Expired"}
+                  {t("entitlements.promotions.expired")}
                 </Badge>
               )}
               {promo.hasReachedLimit && (
                 <Badge variant="outline" className="border-warning/30 text-[10px] text-warning">
-                  {t("entitlements.promotions.limitReached") || "Limit Reached"}
+                  {t("entitlements.promotions.limitReached")}
                 </Badge>
               )}
               {promo.data.firstTimeOnly && (
                 <Badge variant="outline" className="border-info/30 text-[10px] text-info">
                   <ShieldCheck className="me-0.5 h-3 w-3" />
-                  {t("entitlements.promotions.firstTimeOnly") || "First-Time Only"}
+                  {t("entitlements.promotions.firstTimeOnly")}
                 </Badge>
               )}
             </div>
 
             {/* Discount info */}
-            <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-4 text-xs text-nx-ink-3">
               <span className="flex items-center gap-1">
                 {promo.type === "Percentage" ? (
                   <Percent className="h-3 w-3" />
                 ) : (
                   <DollarSign className="h-3 w-3" />
                 )}
-                <span className="font-medium text-foreground">{promo.discountLabel}</span>
+                <span className="font-medium text-nx-ink">{promo.discountLabel}</span>
               </span>
 
               {promo.promoCode ? (
                 <span className="flex items-center gap-1">
                   <Hash className="h-3 w-3" />
-                  <code className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">
+                  <code className="rounded-nx-sm border border-nx-line bg-nx-raised px-1.5 py-0.5 font-mono text-[10px]">
                     {promo.promoCode}
                   </code>
                 </span>
               ) : (
                 <span className="flex items-center gap-1">
-                  <Badge
-                    variant="outline"
-                    className="border-dashed text-[10px] text-muted-foreground"
-                  >
-                    {t("entitlements.promotions.autoApplied") || "Available Option"}
+                  <Badge variant="outline" className="border-dashed text-[10px] text-nx-ink-3">
+                    {t("entitlements.promotions.autoApplied")}
                   </Badge>
                 </span>
               )}
@@ -491,17 +478,17 @@ function PromotionCard({
               <span className="flex items-center gap-1">
                 <Clock className="h-3 w-3" />
                 {promo.durationDays === 0
-                  ? t("entitlements.promotions.forever") || "Forever"
+                  ? t("entitlements.promotions.forever")
                   : promo.durationDays === 30
-                    ? t("entitlements.promotions.oneMonth") || "1 Month"
+                    ? t("entitlements.promotions.oneMonth")
                     : promo.durationDays === 90
-                      ? t("entitlements.promotions.threeMonths") || "3 Months"
+                      ? t("entitlements.promotions.threeMonths")
                       : promo.durationDays === 180
-                        ? t("entitlements.promotions.sixMonths") || "6 Months"
+                        ? t("entitlements.promotions.sixMonths")
                         : promo.durationDays === 365
-                          ? t("entitlements.promotions.oneYear") || "1 Year"
+                          ? t("entitlements.promotions.oneYear")
                           : promo.durationDays === 730
-                            ? t("entitlements.promotions.twoYears") || "2 Years"
+                            ? t("entitlements.promotions.twoYears")
                             : `${promo.durationDays}d`}
               </span>
 
@@ -521,12 +508,10 @@ function PromotionCard({
 
             {/* Date range */}
             {(promo.validFrom || promo.validUntil) && (
-              <p className="text-[11px] text-muted-foreground">
-                {promo.validFrom &&
-                  `${t("common.from") || "From"}: ${formatDateUtc(promo.validFrom)}`}
+              <p className="text-[11px] text-nx-ink-3">
+                {promo.validFrom && `${t("common.from")}: ${formatDateUtc(promo.validFrom)}`}
                 {promo.validFrom && promo.validUntil && " — "}
-                {promo.validUntil &&
-                  `${t("common.to") || "To"}: ${formatDateUtc(promo.validUntil)}`}
+                {promo.validUntil && `${t("common.to")}: ${formatDateUtc(promo.validUntil)}`}
               </p>
             )}
           </div>

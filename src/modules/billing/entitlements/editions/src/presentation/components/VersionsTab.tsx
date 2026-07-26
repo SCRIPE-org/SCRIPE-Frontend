@@ -14,7 +14,6 @@ import { DatePicker } from "@core/ui/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { formatDateUtc } from "@core/common/utils";
 import {
-  Loader2,
   Rocket,
   XCircle,
   Clock,
@@ -27,6 +26,7 @@ import {
 } from "lucide-react";
 import { useVersionsViewModel } from "../viewmodels/useVersionsViewModel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 interface VersionsTabProps {
   editionId: string;
@@ -34,7 +34,7 @@ interface VersionsTabProps {
 
 // Status badge color mapping
 const STATUS_COLORS: Record<string, string> = {
-  Draft: "bg-muted-foreground/10 text-muted-foreground border-border/30",
+  Draft: "bg-nx-raised text-nx-ink-2 border-nx-line",
   Pending: "bg-warning/10 text-warning border-warning/30",
   Rolling: "bg-info/10 text-info border-info/30",
   Completed: "bg-success/10 text-success border-success/30",
@@ -61,18 +61,14 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
   const vm = useVersionsViewModel(editionId);
 
   if (vm.isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <LoadingSpinner size="sm" showText={false} />;
   }
 
   return (
     <div className="space-y-4">
       {/* ── Header ── */}
       <div className="flex items-center gap-2">
-        <GitBranch className="h-5 w-5 text-primary" />
+        <GitBranch className="h-5 w-5 text-nx-accent" />
         <h2 className="text-lg font-semibold">{t("entitlements.editions.versions.title")}</h2>
         <Badge variant="secondary" className="text-xs">
           {vm.versions.length}
@@ -82,12 +78,9 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
       {/* ── Version List ── */}
       {vm.versions.length === 0 ? (
         <Card>
-          <CardContent className="py-8 text-center text-muted-foreground">
+          <CardContent className="py-8 text-center text-nx-ink-2">
             <GitBranch className="mx-auto mb-2 h-8 w-8 opacity-30" />
-            <p>
-              {t("entitlements.editions.versions.empty") ||
-                "No versions yet. Create one to start tracking edition changes."}
-            </p>
+            <p>{t("entitlements.editions.versions.empty")}</p>
           </CardContent>
         </Card>
       ) : (
@@ -104,23 +97,20 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                     <Badge variant="outline" className={STATUS_COLORS[v.status] || ""}>
                       <span className="flex items-center gap-1">
                         {STATUS_ICONS[v.status]}
-                        {t(`entitlements.editions.versions.statuses.${v.status}`) || v.status}
+                        {t(`entitlements.editions.versions.statuses.${v.status}`)}
                       </span>
                     </Badge>
                     <Badge variant="secondary" className="text-xs">
-                      {t(`entitlements.editions.versions.strategies.${v.rolloutStrategy}`) ||
-                        v.rolloutStrategy}
+                      {t(`entitlements.editions.versions.strategies.${v.rolloutStrategy}`)}
                     </Badge>
                     {v.changeNotes && (
-                      <span className="max-w-[200px] truncate text-sm text-muted-foreground">
+                      <span className="max-w-[200px] truncate text-sm text-nx-ink-2">
                         {v.changeNotes}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-muted-foreground">
-                      {formatDateUtc(v.createdAt)}
-                    </span>
+                    <span className="text-xs text-nx-ink-2">{formatDateUtc(v.createdAt)}</span>
 
                     {/* Publish button (Draft only) */}
                     {v.status === "Draft" && vm.publishVersionId !== v.id && (
@@ -131,7 +121,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                         onClick={() => vm.setPublishVersionId(v.id)}
                       >
                         <Rocket className="h-3 w-3" />
-                        {t("entitlements.editions.versions.publish") || "Publish"}
+                        {t("entitlements.editions.versions.publish")}
                       </Button>
                     )}
 
@@ -145,7 +135,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                         loading={vm.cancelMutation.isPending}
                       >
                         {!vm.cancelMutation.isPending && <XCircle className="h-3 w-3" />}
-                        {t("common.cancel") || "Cancel"}
+                        {t("common.cancel")}
                       </Button>
                     )}
                   </div>
@@ -153,11 +143,11 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
 
                 {/* ── Publish Form (expanded for Draft versions) ── */}
                 {v.status === "Draft" && vm.publishVersionId === v.id && (
-                  <div className="mt-1 space-y-3 border-t pt-3">
+                  <div className="mt-1 space-y-3 border-t border-nx-line pt-3">
                     {/* Strategy Selector */}
                     <div className="flex items-center gap-3">
                       <Label className="min-w-[80px] text-xs font-medium">
-                        {t("entitlements.editions.versions.strategy") || "Strategy"}
+                        {t("entitlements.editions.versions.strategy")}
                       </Label>
                       <Select value={vm.rolloutStrategy} onValueChange={vm.setRolloutStrategy}>
                         <SelectTrigger className="h-8 w-[200px] text-xs">
@@ -166,7 +156,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                         <SelectContent>
                           {["Immediate", "AtRenewal", "Scheduled", "Staged"].map((s) => (
                             <SelectItem key={s} value={s}>
-                              {t(`entitlements.editions.versions.strategies.${s}`) || s}
+                              {t(`entitlements.editions.versions.strategies.${s}`)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -178,16 +168,14 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                       <div className="flex items-center gap-3">
                         <Label className="flex min-w-[80px] items-center gap-1 text-xs font-medium">
                           <Calendar className="h-3.5 w-3.5" />
-                          {t("entitlements.editions.versions.scheduledAt") || "Schedule At"}
+                          {t("entitlements.editions.versions.scheduledAt")}
                         </Label>
                         <DatePicker
                           id="version-scheduled-at"
                           type="datetime-local"
                           value={vm.scheduledAt}
                           onChange={(val) => vm.setScheduledAt(val)}
-                          placeholder={
-                            t("entitlements.editions.versions.scheduledAt") || "Select Date & Time"
-                          }
+                          placeholder={t("entitlements.editions.versions.scheduledAt")}
                           className="w-[280px]"
                         />
                       </div>
@@ -198,7 +186,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                       <div className="flex items-center gap-3">
                         <Label className="flex min-w-[80px] items-center gap-1 text-xs font-medium">
                           <Percent className="h-3.5 w-3.5" />
-                          {t("entitlements.editions.versions.canaryPercent") || "Canary %"}
+                          {t("entitlements.editions.versions.canaryPercent")}
                         </Label>
                         <Input
                           type="number"
@@ -208,26 +196,22 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                           min={1}
                           max={99}
                         />
-                        <span className="text-xs text-muted-foreground">
-                          {t("entitlements.editions.versions.canaryHint") || "(1-99% of tenants)"}
+                        <span className="text-xs text-nx-ink-3">
+                          {t("entitlements.editions.versions.canaryHint")}
                         </span>
                       </div>
                     )}
 
                     {/* Strategy description */}
-                    <p className="text-xs italic text-muted-foreground">
+                    <p className="text-xs italic text-nx-ink-3">
                       {vm.rolloutStrategy === "Immediate" &&
-                        (t("entitlements.editions.versions.strategyHints.Immediate") ||
-                          "Apply feature changes to all tenants immediately.")}
+                        t("entitlements.editions.versions.strategyHints.Immediate")}
                       {vm.rolloutStrategy === "AtRenewal" &&
-                        (t("entitlements.editions.versions.strategyHints.AtRenewal") ||
-                          "Apply when each tenant's subscription renews.")}
+                        t("entitlements.editions.versions.strategyHints.AtRenewal")}
                       {vm.rolloutStrategy === "Scheduled" &&
-                        (t("entitlements.editions.versions.strategyHints.Scheduled") ||
-                          "Apply at the scheduled date and time.")}
+                        t("entitlements.editions.versions.strategyHints.Scheduled")}
                       {vm.rolloutStrategy === "Staged" &&
-                        (t("entitlements.editions.versions.strategyHints.Staged") ||
-                          "Gradually roll out to a percentage of tenants first.")}
+                        t("entitlements.editions.versions.strategyHints.Staged")}
                     </p>
 
                     {/* Action buttons */}
@@ -240,7 +224,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                         loading={vm.publishMutation.isPending}
                       >
                         {!vm.publishMutation.isPending && <Rocket className="h-3 w-3" />}
-                        {t("entitlements.editions.versions.publishNow") || "Publish Version"}
+                        {t("entitlements.editions.versions.publishNow")}
                       </Button>
                       <Button
                         size="sm"
@@ -253,7 +237,7 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                           vm.setCanaryPercentage(10);
                         }}
                       >
-                        {t("common.cancel") || "Cancel"}
+                        {t("common.cancel")}
                       </Button>
                     </div>
                   </div>

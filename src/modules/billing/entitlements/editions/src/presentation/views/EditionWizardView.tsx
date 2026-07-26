@@ -11,7 +11,6 @@ import {
   ChevronRight,
   ChevronLeft,
   Check,
-  Loader2,
   ArrowLeft,
   Tag,
   CreditCard,
@@ -43,18 +42,18 @@ export function EditionWizardView() {
   const vm = useEditionCreateViewModel();
 
   const STEPS = [
-    { id: "basics", label: t("entitlements.editions.wizard.stepBasics") || "Basics", icon: Tag },
+    { id: "basics", label: t("entitlements.editions.wizard.stepBasics"), icon: Tag },
     {
       id: "billing",
-      label: t("entitlements.editions.wizard.stepBilling") || "Billing",
+      label: t("entitlements.editions.wizard.stepBilling"),
       icon: CreditCard,
     },
     {
       id: "pricing",
-      label: t("entitlements.editions.wizard.stepPricing") || "Pricing",
+      label: t("entitlements.editions.wizard.stepPricing"),
       icon: DollarSign,
     },
-    { id: "review", label: t("entitlements.editions.wizard.stepReview") || "Review", icon: Eye },
+    { id: "review", label: t("entitlements.editions.wizard.stepReview"), icon: Eye },
   ] as const;
 
   return (
@@ -68,11 +67,10 @@ export function EditionWizardView() {
         </Link>
         <div>
           <h1 className="text-xl font-bold tracking-tight">
-            {t("entitlements.editions.wizard.createEdition") || "Create Edition"}
+            {t("entitlements.editions.wizard.createEdition")}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {t("entitlements.editions.wizard.reviewSectionDesc") ||
-              "Configure a new subscription edition for your platform."}
+          <p className="text-sm text-nx-ink-3">
+            {t("entitlements.editions.wizard.reviewSectionDesc")}
           </p>
         </div>
       </div>
@@ -83,7 +81,7 @@ export function EditionWizardView() {
       </div>
 
       {/* ── Step content ── */}
-      <div className="min-h-[400px] border border-border bg-card p-6 md:p-8">
+      <div className="min-h-[400px] border border-nx-line bg-nx-surface p-6 md:p-8">
         {vm.step === 0 && (
           <WizardStepBasics
             form={vm.form}
@@ -116,30 +114,23 @@ export function EditionWizardView() {
           className="gap-2"
         >
           <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
-          {vm.step === 0 ? t("common.cancel") || "Cancel" : t("common.back") || "Back"}
+          {vm.step === 0 ? t("common.cancel") : t("common.back")}
         </Button>
 
         {vm.step < STEPS.length - 1 ? (
           <Button onClick={vm.nextStep} disabled={!vm.canProceed()} className="gap-2">
-            {t("common.next") || "Next"}
+            {t("common.next")}
             <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </Button>
         ) : (
           <Button
             onClick={vm.handleSubmit}
-            disabled={vm.isSubmitting || !vm.form.name?.trim()}
+            disabled={!vm.form.name?.trim()}
+            loading={vm.isSubmitting}
             className="gap-2"
           >
-            {vm.isSubmitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" /> {t("common.creating") || "Creating…"}
-              </>
-            ) : (
-              <>
-                <Check className="h-4 w-4" />{" "}
-                {t("entitlements.editions.wizard.createEdition") || "Create Edition"}
-              </>
-            )}
+            {!vm.isSubmitting && <Check className="h-4 w-4" />}
+            {vm.isSubmitting ? t("common.creating") : t("entitlements.editions.wizard.createEdition")}
           </Button>
         )}
       </div>

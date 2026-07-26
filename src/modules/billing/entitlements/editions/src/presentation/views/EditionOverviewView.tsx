@@ -13,12 +13,12 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { StatCard } from "@core/ui/stat-card";
 import { EmptyState } from "@core/ui/empty-state";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
 import {
   ArrowLeft,
   Settings2,
   Zap,
-  Loader2,
   Tag,
   DollarSign,
   ShieldCheck,
@@ -52,8 +52,8 @@ function InfoRow({
   mono?: boolean;
 }) {
   return (
-    <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-3.5 last:border-b-0">
-      <span className="shrink-0 text-sm text-muted-foreground">{label}</span>
+    <div className="flex items-start justify-between gap-4 border-b border-nx-line px-5 py-3.5 last:border-b-0">
+      <span className="shrink-0 text-sm text-nx-ink-2">{label}</span>
       <span className={`text-end text-sm font-medium ${mono ? "font-mono" : ""}`}>{value}</span>
     </div>
   );
@@ -94,12 +94,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
   const disabledLabel = t("entitlements.editions.wizard.no");
 
   if (vm.isLoading) {
-    return (
-      <div className="flex min-h-[400px] flex-col items-center justify-center gap-3">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        <p className="text-sm text-muted-foreground">{t("common.loading")}</p>
-      </div>
-    );
+    return <LoadingSpinner size="lg" fullHeight />;
   }
 
   if (vm.error || !vm.edition) {
@@ -150,7 +145,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
                 </Badge>
               )}
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-1 text-sm text-nx-ink-2">
               {edition.description ||
                 edition.tagline ||
                 t("entitlements.editions.wizard.overviewDesc")}
@@ -219,16 +214,20 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* ── General Information ── */}
         <Card className="border shadow-none">
-          <CardHeader className="border-b bg-muted/30 pb-3">
+          <CardHeader className="border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <Tag className="h-4 w-4 text-primary" />
+              <Tag className="h-4 w-4 text-nx-accent" />
               {t("entitlements.editions.wizard.sectionGeneral")}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             <InfoRow
               label={t("entitlements.editions.wizard.internalName")}
-              value={<code className="rounded bg-muted px-2 py-0.5 text-xs">{edition.name}</code>}
+              value={
+                <code className="rounded-nx-sm bg-nx-raised px-2 py-0.5 text-xs">
+                  {edition.name}
+                </code>
+              }
             />
             <InfoRow
               label={t("entitlements.editions.wizard.displayNameEn")}
@@ -248,7 +247,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
                 edition.category ? (
                   <Badge variant="secondary">{edition.category}</Badge>
                 ) : (
-                  <span className="italic text-muted-foreground">
+                  <span className="italic text-nx-ink-2">
                     {t("entitlements.editions.wizard.uncategorized")}
                   </span>
                 )
@@ -267,9 +266,9 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
 
         {/* ── Billing Configuration ── */}
         <Card className="border shadow-none">
-          <CardHeader className="border-b bg-muted/30 pb-3">
+          <CardHeader className="border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <CalendarRange className="h-4 w-4 text-primary" />
+              <CalendarRange className="h-4 w-4 text-nx-accent" />
               {t("entitlements.editions.wizard.sectionBilling")}
             </CardTitle>
           </CardHeader>
@@ -316,7 +315,7 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
                     ))}
                   </div>
                 ) : (
-                  <span className="italic text-muted-foreground">
+                  <span className="italic text-nx-ink-2">
                     {t("entitlements.editions.wizard.noneFree")}
                   </span>
                 )
@@ -327,9 +326,9 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
 
         {/* ── Trial & Grace Period ── */}
         <Card className="border shadow-none">
-          <CardHeader className="border-b bg-muted/30 pb-3">
+          <CardHeader className="border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <ShieldCheck className="h-4 w-4 text-primary" />
+              <ShieldCheck className="h-4 w-4 text-nx-accent" />
               {t("entitlements.editions.wizard.sectionTrial")}
             </CardTitle>
           </CardHeader>
@@ -378,9 +377,9 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
 
         {/* ── Access & Checkout ── */}
         <Card className="border shadow-none">
-          <CardHeader className="border-b bg-muted/30 pb-3">
+          <CardHeader className="border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <ShoppingCart className="h-4 w-4 text-primary" />
+              <ShoppingCart className="h-4 w-4 text-nx-accent" />
               {t("entitlements.editions.wizard.sectionAccess")}
             </CardTitle>
           </CardHeader>
@@ -425,9 +424,9 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       {/* ── Pricing Matrix (full width) ── */}
       {edition.prices.length > 0 && (
         <Card className="border shadow-none">
-          <CardHeader className="border-b bg-muted/30 pb-3">
+          <CardHeader className="border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <DollarSign className="h-4 w-4 text-primary" />
+              <DollarSign className="h-4 w-4 text-nx-accent" />
               {t("entitlements.editions.wizard.sectionPricing")}
             </CardTitle>
           </CardHeader>
@@ -485,9 +484,9 @@ export function EditionOverviewView({ editionId }: EditionOverviewViewProps) {
       {/* ── Badges ── */}
       {badges.length > 0 && (
         <Card className="border shadow-none">
-          <CardHeader className="border-b bg-muted/30 pb-3">
+          <CardHeader className="border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] pb-3">
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
-              <Award className="h-4 w-4 text-primary" />
+              <Award className="h-4 w-4 text-nx-accent" />
               {t("entitlements.editions.wizard.sectionBadges")}
             </CardTitle>
           </CardHeader>

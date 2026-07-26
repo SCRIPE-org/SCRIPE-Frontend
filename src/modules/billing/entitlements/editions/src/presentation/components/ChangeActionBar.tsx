@@ -63,7 +63,7 @@ export function ChangeActionBar({
     <>
       {/* ═══════ STICKY BOTTOM ACTION BAR ═══════ */}
       <div className="fixed inset-x-0 bottom-0 z-sticky">
-        <div className="border-t bg-background/95 shadow-nx-bar-top backdrop-blur-md">
+        <div className="border-t bg-[color:color-mix(in_srgb,var(--nx-ground)_95%,transparent)] shadow-nx-bar-top backdrop-blur-md">
           <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
             <div className="flex items-center justify-between gap-4">
               {/* Left: change indicator */}
@@ -71,7 +71,7 @@ export function ChangeActionBar({
                 <div className="h-2 w-2 shrink-0 rounded-full bg-warning" />
                 <div className="min-w-0">
                   <p className="text-sm font-medium">{t("entitlements.editions.pendingChanges")}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-nx-ink-3">
                     {t("entitlements.editions.pendingChangesCount", { count: modifiedCount })}
                   </p>
                 </div>
@@ -115,7 +115,7 @@ export function ChangeActionBar({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <GitBranch className="h-5 w-5 text-primary" />
+              <GitBranch className="h-5 w-5 text-nx-accent" />
               {t("entitlements.editions.saveAsVersion")}
             </DialogTitle>
             <DialogDescription>{t("entitlements.editions.saveAsVersionDesc")}</DialogDescription>
@@ -132,7 +132,7 @@ export function ChangeActionBar({
                 className="min-h-[80px] resize-none"
               />
             </div>
-            <div className="flex items-center gap-2 rounded-md bg-muted/50 p-2.5 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 rounded-nx-sm bg-[color:color-mix(in_srgb,var(--nx-raised)_50%,transparent)] p-2.5 text-xs text-nx-ink-3">
               <Zap className="h-3.5 w-3.5 shrink-0" />
               <span>
                 {t("entitlements.editions.pendingChangesCount", { count: modifiedCount })}
@@ -163,7 +163,7 @@ export function ChangeActionBar({
               {t("entitlements.editions.directApplyConfirmDesc")}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 rounded-md border border-warning/20 bg-warning/5 p-2.5 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 rounded-nx-sm border border-warning/20 bg-warning/5 p-2.5 text-xs text-nx-ink-3">
             <Bolt className="h-3.5 w-3.5 shrink-0 text-warning" />
             <span>{t("entitlements.editions.pendingChangesCount", { count: modifiedCount })}</span>
           </div>

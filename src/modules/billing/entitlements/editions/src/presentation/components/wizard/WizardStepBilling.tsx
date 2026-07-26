@@ -25,13 +25,13 @@ function SectionHeader({
   desc: string;
 }) {
   return (
-    <div className="mb-5 flex items-start gap-3 border-b border-border pb-4">
-      <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
-        <Icon className="h-4.5 w-4.5 text-primary" />
+    <div className="mb-5 flex items-start gap-3 border-b border-nx-line pb-4">
+      <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+        <Icon className="h-4.5 w-4.5 text-nx-accent" />
       </div>
       <div>
-        <h3 className="text-sm font-semibold text-foreground">{title}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{desc}</p>
+        <h3 className="text-sm font-semibold text-nx-ink">{title}</h3>
+        <p className="mt-0.5 text-xs text-nx-ink-3">{desc}</p>
       </div>
     </div>
   );
@@ -53,14 +53,14 @@ function CycleToggle({
   return (
     <label
       htmlFor={id}
-      className={`flex cursor-pointer items-center gap-4 border px-4 py-3.5 transition-all ${
-        checked ? "border-primary/40 bg-primary/5 shadow-sm" : "border-border hover:bg-muted/30"
+      className={`flex cursor-pointer items-center gap-4 border px-4 py-3.5 transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
+        checked ? "border-nx-accent bg-nx-accent-wash shadow-nx-sm" : "border-nx-line hover:bg-nx-hover"
       }`}
     >
       <Checkbox id={id} checked={checked} onCheckedChange={(v) => onChange(!!v)} />
       <div className="min-w-0 flex-1">
-        <div className="text-sm font-medium text-foreground">{label}</div>
-        <div className="mt-0.5 text-xs text-muted-foreground">{desc}</div>
+        <div className="text-sm font-medium text-nx-ink">{label}</div>
+        <div className="mt-0.5 text-xs text-nx-ink-3">{desc}</div>
       </div>
     </label>
   );
@@ -79,40 +79,28 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
       <section>
         <SectionHeader
           icon={CalendarRange}
-          title={t("entitlements.editions.wizard.billingCyclesSection") || "Allowed Billing Cycles"}
-          desc={
-            t("entitlements.editions.wizard.billingCyclesSectionDesc") ||
-            "Select which billing cycles tenants can use."
-          }
+          title={t("entitlements.editions.wizard.billingCyclesSection")}
+          desc={t("entitlements.editions.wizard.billingCyclesSectionDesc")}
         />
         <div className="space-y-2">
           <CycleToggle
             id="allowMonthly"
-            label={t("entitlements.editions.wizard.monthly") || "Monthly"}
-            desc={
-              t("entitlements.editions.wizard.monthlyDesc") ||
-              "Billed every month. Best for flexibility."
-            }
+            label={t("entitlements.editions.wizard.monthly")}
+            desc={t("entitlements.editions.wizard.monthlyDesc")}
             checked={form.allowMonthly ?? false}
             onChange={(v) => onChange({ allowMonthly: v })}
           />
           <CycleToggle
             id="allowYearly"
-            label={t("entitlements.editions.wizard.annual") || "Annual"}
-            desc={
-              t("entitlements.editions.wizard.annualDesc") ||
-              "Billed once per year. Best value for tenants."
-            }
+            label={t("entitlements.editions.wizard.annual")}
+            desc={t("entitlements.editions.wizard.annualDesc")}
             checked={form.allowYearly ?? false}
             onChange={(v) => onChange({ allowYearly: v })}
           />
           <CycleToggle
             id="allowLifetime"
-            label={t("entitlements.editions.wizard.lifetime") || "Lifetime"}
-            desc={
-              t("entitlements.editions.wizard.lifetimeDesc") ||
-              "One-time payment for permanent access."
-            }
+            label={t("entitlements.editions.wizard.lifetime")}
+            desc={t("entitlements.editions.wizard.lifetimeDesc")}
             checked={form.allowLifetime ?? false}
             onChange={(v) => onChange({ allowLifetime: v })}
           />
@@ -123,30 +111,24 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
       <section>
         <SectionHeader
           icon={Beaker}
-          title={t("entitlements.editions.wizard.trialSection") || "Free Trial"}
-          desc={
-            t("entitlements.editions.wizard.trialSectionDesc") ||
-            "Let tenants try this edition before committing."
-          }
+          title={t("entitlements.editions.wizard.trialSection")}
+          desc={t("entitlements.editions.wizard.trialSectionDesc")}
         />
         <div className="space-y-4">
           <CycleToggle
             id="allowTrial"
-            label={t("entitlements.editions.wizard.freeTrial") || "Enable Free Trial"}
-            desc={
-              t("entitlements.editions.wizard.freeTrialDesc") ||
-              "Allow tenants to trial this edition."
-            }
+            label={t("entitlements.editions.wizard.freeTrial")}
+            desc={t("entitlements.editions.wizard.freeTrialDesc")}
             checked={form.allowTrial ?? false}
             onChange={(v) => onChange({ allowTrial: v })}
           />
 
           {form.allowTrial && (
-            <div className="ms-6 space-y-4 border border-dashed border-primary/30 bg-primary/5 p-5">
+            <div className="ms-6 space-y-4 border border-dashed border-nx-accent bg-nx-accent-wash p-5">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="trialDays">
-                    {t("entitlements.editions.wizard.trialDuration") || "Trial Duration (days)"}
+                    {t("entitlements.editions.wizard.trialDuration")}
                   </Label>
                   <Input
                     id="trialDays"
@@ -170,14 +152,14 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
                       onCheckedChange={(v) => onChange({ trialIsFree: !!v })}
                     />
                     <span className="text-sm font-medium">
-                      {t("entitlements.editions.wizard.completelyFree") || "Completely free"}
+                      {t("entitlements.editions.wizard.completelyFree")}
                     </span>
                   </label>
                 </div>
                 {!form.trialIsFree && (
                   <div className="space-y-2">
                     <Label htmlFor="trialDiscount">
-                      {t("entitlements.editions.wizard.trialDiscount") || "Trial Discount %"}
+                      {t("entitlements.editions.wizard.trialDiscount")}
                     </Label>
                     <Input
                       id="trialDiscount"
@@ -201,30 +183,21 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
       <section>
         <SectionHeader
           icon={ShoppingCart}
-          title={t("entitlements.editions.wizard.checkoutSection") || "Checkout Mode"}
-          desc={
-            t("entitlements.editions.wizard.checkoutSectionDesc") ||
-            "Control how tenants subscribe."
-          }
+          title={t("entitlements.editions.wizard.checkoutSection")}
+          desc={t("entitlements.editions.wizard.checkoutSectionDesc")}
         />
         <div className="space-y-2">
           <CycleToggle
             id="isSelfService"
-            label={t("entitlements.editions.wizard.selfService") || "Self-Service Checkout"}
-            desc={
-              t("entitlements.editions.wizard.selfServiceDesc") ||
-              "Tenants can subscribe instantly."
-            }
+            label={t("entitlements.editions.wizard.selfService")}
+            desc={t("entitlements.editions.wizard.selfServiceDesc")}
             checked={form.isSelfServiceEnabled ?? true}
             onChange={(v) => onChange({ isSelfServiceEnabled: v })}
           />
           <CycleToggle
             id="isContactSalesOnly"
-            label={t("entitlements.editions.wizard.contactSalesOnly") || "Contact Sales Only"}
-            desc={
-              t("entitlements.editions.wizard.contactSalesOnlyDesc") ||
-              "Disable self-service checkout."
-            }
+            label={t("entitlements.editions.wizard.contactSalesOnly")}
+            desc={t("entitlements.editions.wizard.contactSalesOnlyDesc")}
             checked={form.isContactSalesOnly ?? false}
             onChange={(v) => onChange({ isContactSalesOnly: v })}
           />
@@ -235,16 +208,13 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
       <section>
         <SectionHeader
           icon={Settings2}
-          title={t("entitlements.editions.wizard.advancedSection") || "Advanced Controls"}
-          desc={
-            t("entitlements.editions.wizard.advancedSectionDesc") ||
-            "Quota limits and grace period for this edition."
-          }
+          title={t("entitlements.editions.wizard.advancedSection")}
+          desc={t("entitlements.editions.wizard.advancedSectionDesc")}
         />
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="gracePeriodDays">
-              {t("entitlements.editions.wizard.gracePeriodDays") || "Grace Period (days)"}
+              {t("entitlements.editions.wizard.gracePeriodDays")}
             </Label>
             <Input
               id="gracePeriodDays"
@@ -254,15 +224,13 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
               value={form.gracePeriodDays ?? 0}
               onChange={(e) => onChange({ gracePeriodDays: parseInt(e.target.value) || 0 })}
             />
-            <p className="text-xs text-muted-foreground">
-              {t("entitlements.editions.wizard.gracePeriodDaysDesc") ||
-                "Days of access after subscription expires before suspension. 0 = immediate."}
+            <p className="text-xs text-nx-ink-3">
+              {t("entitlements.editions.wizard.gracePeriodDaysDesc")}
             </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="maxActiveSubscriptions">
-              {t("entitlements.editions.wizard.maxActiveSubscriptions") ||
-                "Max Active Subscriptions"}
+              {t("entitlements.editions.wizard.maxActiveSubscriptions")}
             </Label>
             <Input
               id="maxActiveSubscriptions"
@@ -271,9 +239,8 @@ export function WizardStepBilling({ form, onChange }: WizardStepBillingProps) {
               value={form.maxActiveSubscriptions ?? -1}
               onChange={(e) => onChange({ maxActiveSubscriptions: parseInt(e.target.value) || -1 })}
             />
-            <p className="text-xs text-muted-foreground">
-              {t("entitlements.editions.wizard.maxActiveSubscriptionsDesc") ||
-                "Maximum tenants that can hold this edition simultaneously. -1 = unlimited."}
+            <p className="text-xs text-nx-ink-3">
+              {t("entitlements.editions.wizard.maxActiveSubscriptionsDesc")}
             </p>
           </div>
         </div>
