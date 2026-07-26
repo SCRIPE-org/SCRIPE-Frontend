@@ -686,11 +686,32 @@ export function AppearanceGroup() {
         <Choice
           row={ROW["primary-color"]}
           value={settings.colorTheme}
-          onSelect={(value) => settings.setColorTheme(value)}
+          onSelect={(value) => {
+            // Picking a swatch is the one action that actually opts a user out
+            // of the tenant's brand accent (--workspace-hue/--workspace-chroma).
+            // Until this flag flips, dom-applicator leaves --primary/data-theme
+            // unwritten so nothing here fights the workspace colour nobody
+            // asked to replace yet.
+            settings.setColorTheme(value);
+            settings.setColorThemeCustomized(true);
+          }}
           options={colorOptions}
           settingKey="colorTheme"
           density="swatch"
         />
+        {settings.colorThemeCustomized && (
+          <button
+            type="button"
+            onClick={() => settings.setColorThemeCustomized(false)}
+            className={cn(
+              "mt-3 rounded-nx-sm text-sm font-medium text-nx-accent outline-none",
+              "transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "hover:opacity-80 focus-visible:shadow-nx-focus"
+            )}
+          >
+            {t("settings.colorTheme.resetToBrand")}
+          </button>
+        )}
       </Row>
 
       <Row row={ROW["secondary-color"]}>

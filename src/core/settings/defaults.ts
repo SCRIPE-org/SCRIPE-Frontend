@@ -15,6 +15,10 @@ export const defaultSettings: Settings = {
   // themes still exist as selectable options; they are just no longer the
   // platform default.
   colorTheme: "blue",
+  // Not customized out of the box — dom-applicator leaves --workspace-hue/
+  // --workspace-chroma (the tenant's own brand accent) untouched until the
+  // user actively picks a swatch in Appearance settings.
+  colorThemeCustomized: false,
   secondaryColorTheme: "indigo",
   lightBackgroundTheme: "default",
   darkBackgroundTheme: "slate",

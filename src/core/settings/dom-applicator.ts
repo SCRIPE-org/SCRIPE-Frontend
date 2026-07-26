@@ -18,7 +18,6 @@ import type { Settings } from "./types";
 // ── Setting key → data-attribute mapping ──────────────────
 
 const DATA_ATTR_MAP: Partial<Record<keyof Settings, string>> = {
-  colorTheme: "data-theme",
   lightBackgroundTheme: "data-light-bg-theme",
   darkBackgroundTheme: "data-dark-bg-theme",
   shadowIntensity: "data-shadow",
@@ -116,6 +115,24 @@ export function applySettingsToDOM(settings: Settings): void {
     //     bypassed the merge-engine migration lands on the one real shell. The
     //     --nx- tokens are global, so this is defence in depth.
     root.setAttribute("data-layout", "nexus");
+
+    // 1c. Personal colour theme — opt-in only. --nx-accent (every button,
+    //     active state, focus ring app-wide) derives from --workspace-hue/
+    //     --workspace-chroma, which WorkspaceProvider sets from the ACTIVE
+    //     WORKSPACE's own brand colour. data-theme flips the legacy --primary
+    //     var, which now has exactly one live reader (nav-icons.tsx's topbar
+    //     toggle glyphs). Stamping data-theme unconditionally would silently
+    //     fight the tenant/workspace brand for every user who has never
+    //     opened Appearance settings — colorTheme defaults to "blue" out of
+    //     the box, not "unset". So: only write data-theme once the user has
+    //     actively picked a swatch (colorThemeCustomized), and otherwise strip
+    //     the attribute so no :root[data-theme] rule from a previous session
+    //     lingers and no --primary override survives to unrelated readers.
+    if (settings.colorThemeCustomized) {
+      root.setAttribute("data-theme", settings.colorTheme);
+    } else {
+      root.removeAttribute("data-theme");
+    }
 
     // 2. Background mode ("custom" was culled — preset and gradient remain)
     const bgMode = settings.backgroundMode || "preset";

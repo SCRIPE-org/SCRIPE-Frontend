@@ -294,6 +294,7 @@ export const en = {
     colorTheme: {
       title: "Color Theme",
       description: "Choose your preferred color theme",
+      resetToBrand: "Reset to workspace brand color",
     },
     switchStyle: {
       title: "Switch Styles",

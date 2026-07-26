@@ -14,6 +14,7 @@ export const ar = {
     colorTheme: {
       title: "سمة الألوان",
       description: "اختر سمة الألوان المفضلة لديك",
+      resetToBrand: "إعادة الضبط إلى لون العلامة التجارية",
     },
     switchStyle: {
       title: "أنماط المفاتيح",
