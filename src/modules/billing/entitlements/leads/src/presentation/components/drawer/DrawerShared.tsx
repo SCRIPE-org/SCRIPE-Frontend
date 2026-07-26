@@ -34,9 +34,10 @@ export const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string; rin
     ring: "ring-warning/30",
   },
   Qualified: {
-    badge: "bg-primary/15 text-primary border-primary/30",
-    dot: "bg-primary",
-    ring: "ring-primary/30",
+    badge:
+      "bg-[color:color-mix(in_srgb,var(--nx-accent)_15%,transparent)] text-nx-accent border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
+    dot: "bg-nx-accent",
+    ring: "ring-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
   },
   Converted: {
     badge: "bg-success/15 text-success border-success/30",
@@ -44,9 +45,10 @@ export const STATUS_STYLES: Record<LeadStatus, { badge: string; dot: string; rin
     ring: "ring-success/30",
   },
   Closed: {
-    badge: "bg-muted-foreground/15 text-muted-foreground border-border/30",
-    dot: "bg-muted-foreground",
-    ring: "ring-border/30",
+    badge:
+      "bg-[color:color-mix(in_srgb,var(--nx-ink-3)_15%,transparent)] text-nx-ink-3 border-nx-line",
+    dot: "bg-nx-ink-3",
+    ring: "ring-nx-line",
   },
 };
 
@@ -68,7 +70,7 @@ export function CopyButton({ value }: { value: string }) {
       }}
       variant="ghost"
       size="icon"
-      className="h-5 w-5 shrink-0 text-muted-foreground hover:text-foreground"
+      className="h-5 w-5 shrink-0 text-nx-ink-2 hover:text-nx-ink"
     >
       {copied ? <CheckCheck className="h-3 w-3 text-success" /> : <Copy className="h-3 w-3" />}
     </Button>
@@ -96,13 +98,13 @@ export function InfoRow({
 }) {
   return (
     <div className="flex items-start gap-3 py-1">
-      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+      <Icon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
       <div className="min-w-0 flex-1">
-        <p className="mb-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        <p className="mb-0.5 text-[10px] font-medium uppercase tracking-wider text-nx-ink-3">
           {label}
         </p>
         <div className="flex items-center gap-1.5">
-          <span className={`truncate text-sm text-foreground ${mono ? "font-mono" : ""}`}>
+          <span className={`truncate text-sm text-nx-ink ${mono ? "font-mono" : ""}`}>
             {value}
           </span>
           {copyable && <CopyButton value={copyable} />}
@@ -130,10 +132,12 @@ export function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className={`rounded-xl border p-4 ${accent ?? "border-border/50 bg-card/40"}`}>
+    <div
+      className={`rounded-nx-md border p-4 ${accent ?? "border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_40%,transparent)]"}`}
+    >
       <div className="mb-3 flex items-center gap-2">
-        <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-        <span className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+        <Icon className="h-3.5 w-3.5 text-nx-ink-3" />
+        <span className="text-[10px] font-semibold uppercase tracking-widest text-nx-ink-3">
           {title}
         </span>
       </div>
@@ -152,7 +156,10 @@ export function SkeletonPanel() {
   return (
     <div className="space-y-4 p-6">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="space-y-2 rounded-xl border border-border/50 bg-card/40 p-4">
+        <div
+          key={i}
+          className="space-y-2 rounded-nx-md border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_40%,transparent)] p-4"
+        >
           <Skeleton shape="text" className="h-2.5 w-24 rounded-full" />
           <Skeleton shape="text" className="h-4 w-40 rounded-full" />
           <Skeleton shape="text" className="h-4 w-32 rounded-full" />

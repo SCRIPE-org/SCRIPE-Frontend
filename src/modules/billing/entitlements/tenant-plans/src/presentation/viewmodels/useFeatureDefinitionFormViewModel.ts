@@ -90,8 +90,8 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
   // ── Validation ──
   const errors = useMemo(() => {
     const e: Partial<Record<string, string>> = {};
-    if (!form.key.trim()) e.key = t("validation.required") || "Required";
-    if (!form.valueType) e.valueType = t("validation.required") || "Required";
+    if (!form.key.trim()) e.key = t("validation.required");
+    if (!form.valueType) e.valueType = t("validation.required");
     return e;
   }, [form.key, form.valueType, t]);
 
@@ -105,18 +105,15 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-feature-definitions"] });
       success({
-        title: t("entitlements.featureDefinitions.created") || "Feature Created",
-        description:
-          t("entitlements.featureDefinitions.createdDesc") ||
-          "Feature definition created successfully.",
+        title: t("entitlements.featureDefinitions.created"),
+        description: t("entitlements.featureDefinitions.createdDesc"),
       });
       router.push("/entitlements/tenant-feature-definitions");
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description:
-          t("entitlements.featureDefinitions.createFailed") || "Failed to create feature.",
+        title: t("common.error"),
+        description: t("entitlements.featureDefinitions.createFailed"),
       });
     },
   });
@@ -129,17 +126,15 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-feature-definitions"] });
       success({
-        title: t("entitlements.featureDefinitions.updated") || "Feature Updated",
-        description:
-          t("entitlements.featureDefinitions.updatedDesc") || "Feature definition updated.",
+        title: t("entitlements.featureDefinitions.updated"),
+        description: t("entitlements.featureDefinitions.updatedDesc"),
       });
       router.push("/entitlements/tenant-feature-definitions");
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description:
-          t("entitlements.featureDefinitions.updateFailed") || "Failed to update feature.",
+        title: t("common.error"),
+        description: t("entitlements.featureDefinitions.updateFailed"),
       });
     },
   });

@@ -69,7 +69,7 @@ export function LeadsKanbanView({
         return (
           <div
             key={status}
-            className={`flex min-h-[400px] flex-col gap-2 rounded-md transition-colors ${dropStatus === status ? "bg-card/50" : ""}`}
+            className={`flex min-h-[400px] flex-col gap-2 rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${dropStatus === status ? "bg-[color:color-mix(in_srgb,var(--nx-surface)_50%,transparent)]" : ""}`}
             onDragOver={(event) => {
               if (!draggedLead || draggedLead.status === status || isMoving) return;
               event.preventDefault();
@@ -81,13 +81,13 @@ export function LeadsKanbanView({
           >
             {/* Column header */}
             <div
-              className={`flex items-center justify-between rounded-md border px-2.5 py-2 ${border} bg-card/60`}
+              className={`flex items-center justify-between rounded-nx-sm border px-2.5 py-2 ${border} bg-[color:color-mix(in_srgb,var(--nx-surface)_60%,transparent)]`}
             >
               <div className="flex items-center gap-2">
                 <span className={`h-2 w-2 rounded-full ${dot}`} />
                 <span className={`text-xs font-medium ${text}`}>{t(`leads.status.${status}`)}</span>
               </div>
-              <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+              <span className="rounded-full bg-nx-raised px-2 py-0.5 text-[10px] text-nx-ink-3">
                 {isLoading ? "—" : col.length}
               </span>
             </div>
@@ -96,11 +96,11 @@ export function LeadsKanbanView({
             <div className="flex flex-1 flex-col gap-2">
               {isLoading ? (
                 SKELETON_HEIGHTS.map((h, i) => (
-                  <Skeleton key={i} shape="block" className="rounded-lg" style={{ height: h }} />
+                  <Skeleton key={i} shape="block" className="rounded-nx-md" style={{ height: h }} />
                 ))
               ) : col.length === 0 ? (
-                <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed border-border px-3 py-6">
-                  <p className="text-center text-[11px] text-muted-foreground">
+                <div className="flex flex-1 items-center justify-center rounded-nx-md border border-dashed border-nx-line px-3 py-6">
+                  <p className="text-center text-[11px] text-nx-ink-3">
                     {t("leads.empty")}
                   </p>
                 </div>

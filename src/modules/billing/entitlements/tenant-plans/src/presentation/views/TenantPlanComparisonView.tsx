@@ -11,7 +11,7 @@
 "use client";
 
 import { useMemo, useRef, useState } from "react";
-import {  cn , resolveIntlLocale } from "@core/common/utils";
+import { cn, resolveBilingualLabel, resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
@@ -157,15 +157,15 @@ function FeatureCategoryBlock({
   return (
     <>
       <CategorySectionHeader
-        label={t(`entitlements.tenantPlans.comparison.category${category}`) || category}
+        label={t(`entitlements.tenantPlans.comparison.category${category}`)}
         category={category}
         colSpan={colSpan}
       />
       {rows.map((row: FeatureRow) => {
         const featureLabel =
-          language === "ar" && row.displayNameAr
-            ? row.displayNameAr
-            : row.displayNameEn || row.featureKey;
+          resolveBilingualLabel(row.displayNameEn, row.displayNameAr, language) ||
+          row.displayNameEn ||
+          row.featureKey;
         return (
           <TableRow key={row.featureKey} className={MATRIX_ROW}>
             <TableHead
@@ -332,9 +332,11 @@ export function TenantPlanComparisonView() {
           {plans.map((plan: TenantPlan, idx: number) => {
             const prevName =
               idx > 0
-                ? (language === "ar"
-                    ? plans[idx - 1].displayNameAr
-                    : plans[idx - 1].displayNameEn) || plans[idx - 1].name
+                ? resolveBilingualLabel(
+                    plans[idx - 1].displayNameEn ?? "",
+                    plans[idx - 1].displayNameAr ?? "",
+                    language
+                  ) || plans[idx - 1].name
                 : undefined;
 
             return (
@@ -377,7 +379,11 @@ export function TenantPlanComparisonView() {
                   <ComparisonColumnHeader
                     key={plan.id}
                     displayName={
-                      (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name
+                      resolveBilingualLabel(
+                        plan.displayNameEn ?? "",
+                        plan.displayNameAr ?? "",
+                        language
+                      ) || plan.name
                     }
                     tierLevel={plan.tierLevel}
                     badges={plan.badgeText ? [plan.badgeText] : []}

@@ -29,11 +29,11 @@ export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCard
       }}
       onDragEnd={onDragEnd}
       variant="ghost"
-      className="group h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-lg border border-border bg-card/80 p-3 text-start transition-all duration-150 hover:border-border/90 hover:bg-muted hover:shadow-md active:scale-[0.98]"
+      className="group h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-nx-md border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_80%,transparent)] p-3 text-start transition-[border-color,background-color,box-shadow,transform] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-line)_90%,transparent)] hover:bg-nx-hover hover:shadow-nx-sm active:scale-[0.98]"
     >
       {/* Company + edition */}
       <div className="flex items-start justify-between gap-2">
-        <p className="truncate text-sm font-medium text-foreground group-hover:text-info">
+        <p className="truncate text-sm font-medium text-nx-ink group-hover:text-info">
           {lead.companyName}
         </p>
         {lead.editionKey && (
@@ -44,8 +44,8 @@ export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCard
       </div>
 
       {/* Contact */}
-      <p className="mt-1 truncate text-xs text-muted-foreground">{lead.contactName}</p>
-      <p className="truncate text-[11px] text-muted-foreground">{lead.email}</p>
+      <p className="mt-1 truncate text-xs text-nx-ink-3">{lead.contactName}</p>
+      <p className="truncate text-[11px] text-nx-ink-3">{lead.email}</p>
 
       {/* Discovery tags */}
       {lead.discoveryTagKeys.length > 0 && (
@@ -53,7 +53,7 @@ export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCard
           {lead.discoveryTagKeys.map(({ key, raw }) => (
             <span
               key={key}
-              className="inline-flex items-center rounded border border-primary/20 bg-primary/10 px-1.5 py-0.5 text-[10px] text-primary"
+              className="inline-flex items-center rounded border border-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] bg-nx-accent-wash px-1.5 py-0.5 text-[10px] text-nx-accent"
             >
               {raw ? key : t(key)}
             </span>
@@ -63,8 +63,8 @@ export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCard
 
       {/* Footer: relative time + source */}
       <div className="mt-2.5 flex items-center justify-between">
-        <span className="text-[10px] text-muted-foreground">{lead.relativeCreatedAt}</span>
-        <span className="text-[10px] text-muted-foreground">{t(lead.sourceKey)}</span>
+        <span className="text-[10px] text-nx-ink-3">{lead.relativeCreatedAt}</span>
+        <span className="text-[10px] text-nx-ink-3">{t(lead.sourceKey)}</span>
       </div>
     </Button>
   );

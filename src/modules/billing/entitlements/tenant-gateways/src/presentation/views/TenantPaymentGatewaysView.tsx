@@ -12,7 +12,6 @@ import {
   Settings2,
   CheckCircle2,
   XCircle,
-  Loader2,
   Eye,
   EyeOff,
   AlertCircle,
@@ -44,6 +43,7 @@ import {
 } from "@core/ui/alert-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { Separator } from "@core/ui/separator";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   useTenantGatewaysViewModel,
@@ -73,11 +73,7 @@ export function TenantPaymentGatewaysView() {
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
 
   if (vm.isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   return (
@@ -89,7 +85,7 @@ export function TenantPaymentGatewaysView() {
             <h1 className="text-2xl font-bold tracking-tight">
               {t("entitlements.tenantGateways.title")}
             </h1>
-            <p className="mt-1 text-muted-foreground">
+            <p className="mt-1 text-nx-ink-2">
               {t("entitlements.tenantGateways.subtitle")}
             </p>
           </div>
@@ -123,15 +119,15 @@ export function TenantPaymentGatewaysView() {
                 {vm.availableToAdd.map((def) => (
                   <Card
                     key={def.type}
-                    className="group cursor-pointer border-dashed transition-all duration-200 hover:border-primary/50 hover:shadow-md"
+                    className="group cursor-pointer border-dashed transition-[border-color,box-shadow] duration-nx-standard ease-nx-enter hover:shadow-md motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
                     onClick={() => vm.openConfigureForm(def.type)}
                   >
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted transition-colors group-hover:bg-primary/10">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-raised transition-[background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:bg-nx-accent-wash">
                           <GatewayIcon
                             name={def.icon}
-                            className="h-5 w-5 text-muted-foreground transition-colors group-hover:text-primary"
+                            className="h-5 w-5 text-nx-ink-3 transition-[color] duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:text-nx-accent"
                           />
                         </div>
                         <div>
@@ -144,7 +140,7 @@ export function TenantPaymentGatewaysView() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="w-full gap-2 transition-colors group-hover:border-primary/50 group-hover:text-primary"
+                        className="w-full gap-2 transition-[color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:text-nx-accent group-hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
                       >
                         <Plus className="h-4 w-4" />
                         {t("entitlements.tenantGateways.configure")}
@@ -161,9 +157,9 @@ export function TenantPaymentGatewaysView() {
         {vm.gateways.length === 0 && vm.availableToAdd.length === 0 && (
           <Card className="border-dashed">
             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-              <CreditCard className="mb-4 h-12 w-12 text-muted-foreground/50" />
+              <CreditCard className="mb-4 h-12 w-12 text-[color:color-mix(in_srgb,var(--nx-ink-3)_50%,transparent)]" />
               <h3 className="text-lg font-medium">{t("entitlements.tenantGateways.noGateways")}</h3>
-              <p className="mt-1 max-w-sm text-muted-foreground">
+              <p className="mt-1 max-w-sm text-nx-ink-2">
                 {t("entitlements.tenantGateways.noGatewaysDesc")}
               </p>
             </CardContent>
@@ -205,9 +201,9 @@ export function TenantPaymentGatewaysView() {
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 {vm.isRemoving ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <LoadingSpinner size="inline" className="me-2" />
                 ) : (
-                  <Trash2 className="mr-2 h-4 w-4" />
+                  <Trash2 className="me-2 h-4 w-4" />
                 )}
                 {t("common.remove")}
               </AlertDialogAction>
@@ -243,7 +239,7 @@ function GatewayCard({
           gateway.isVerified && gateway.isEnabled
             ? "bg-success"
             : !gateway.isEnabled
-              ? "bg-muted-foreground/30"
+              ? "bg-[color:color-mix(in_srgb,var(--nx-ink-3)_30%,transparent)]"
               : "bg-warning"
         }`}
       />
@@ -251,7 +247,7 @@ function GatewayCard({
       <CardHeader className="pt-5">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+            <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-raised">
               <GatewayIcon name={gateway.iconName} className="h-5 w-5" />
             </div>
             <div>
@@ -300,7 +296,7 @@ function GatewayCard({
       <CardContent className="space-y-4">
         {/* Info row */}
         {gateway.lastVerifiedAt && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-nx-ink-3">
             {t("entitlements.tenantGateways.lastVerified")}:{" "}
             {formatDateTimeUtc(gateway.lastVerifiedAt)}
           </p>
@@ -328,7 +324,7 @@ function GatewayCard({
                 className="gap-1.5"
               >
                 {isVerifying ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  <LoadingSpinner size="inline" />
                 ) : (
                   <ShieldCheck className="h-3.5 w-3.5" />
                 )}
@@ -443,7 +439,7 @@ function ConfigureDialog({
             {[1, 2, 3].map((s) => (
               <div key={s} className="flex flex-col items-center gap-1">
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${step === s ? "bg-primary text-primary-foreground" : step > s ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${step === s ? "bg-nx-accent-fill text-nx-on-fill" : step > s ? "bg-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] text-nx-accent" : "bg-nx-raised text-nx-ink-3"}`}
                 >
                   {step > s ? <CheckCircle2 className="h-4 w-4" /> : s}
                 </div>
@@ -454,9 +450,9 @@ function ConfigureDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {step === 1 && !formState.isEditing && (
-            <div className="space-y-4 rounded-lg bg-muted/30 p-4 text-sm text-muted-foreground">
+            <div className="space-y-4 rounded-nx-md bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] p-4 text-sm text-nx-ink-2">
               <p>{t("entitlements.tenantGateways.wizard.intro", { gateway: gatewayDef.label })}</p>
-              <ol className="list-decimal space-y-2 pl-5">
+              <ol className="list-decimal space-y-2 ps-5">
                 <li>
                   {t("entitlements.tenantGateways.wizard.step1", { gateway: gatewayDef.label })}
                 </li>
@@ -516,9 +512,9 @@ function ConfigureDialog({
                         }
                       >
                         {showSecrets[field.key] ? (
-                          <EyeOff className="h-4 w-4 text-muted-foreground" />
+                          <EyeOff className="h-4 w-4 text-nx-ink-3" />
                         ) : (
-                          <Eye className="h-4 w-4 text-muted-foreground" />
+                          <Eye className="h-4 w-4 text-nx-ink-3" />
                         )}
                       </Button>
                     )}
@@ -527,12 +523,12 @@ function ConfigureDialog({
               ))}
 
               {/* Test Mode Toggle */}
-              <div className="flex items-center justify-between rounded-lg border p-3">
+              <div className="flex items-center justify-between rounded-nx-md border p-3">
                 <div className="space-y-0.5">
                   <Label className="text-sm font-medium">
                     {t("entitlements.tenantGateways.testMode")}
                   </Label>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-nx-ink-3">
                     {t("entitlements.tenantGateways.testModeDesc")}
                   </p>
                 </div>
@@ -543,14 +539,14 @@ function ConfigureDialog({
 
           {step === 3 && !formState.isEditing && (
             <div className="flex flex-col items-center justify-center space-y-4 py-6 text-center">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <ShieldCheck className="h-6 w-6 text-primary" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-nx-accent-wash">
+                <ShieldCheck className="h-6 w-6 text-nx-accent" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold">
                   {t("entitlements.tenantGateways.wizard.readyTitle")}
                 </h3>
-                <p className="mt-1 max-w-[280px] text-sm text-muted-foreground">
+                <p className="mt-1 max-w-[280px] text-sm text-nx-ink-2">
                   {t("entitlements.tenantGateways.wizard.readyDesc", { gateway: gatewayDef.label })}
                 </p>
               </div>
@@ -559,7 +555,7 @@ function ConfigureDialog({
 
           {/* Error Display */}
           {error && (
-            <div className="mt-4 flex items-start gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+            <div className="mt-4 flex items-start gap-2 rounded-nx-sm bg-destructive/10 p-3 text-sm text-destructive">
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <p>{error.message}</p>
             </div>
@@ -589,7 +585,7 @@ function ConfigureDialog({
               </Button>
             ) : (
               <Button type="submit" disabled={isSubmitting} className="gap-2">
-                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+                {isSubmitting && <LoadingSpinner size="inline" />}
                 {formState.isEditing
                   ? t("entitlements.tenantGateways.update")
                   : t("entitlements.tenantGateways.saveAndConnect")}
@@ -604,7 +600,7 @@ function ConfigureDialog({
             href={`https://docs.${formState.gatewayType.toLowerCase()}.com`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-primary"
+            className="flex items-center gap-1.5 text-xs text-nx-ink-3 transition-[color] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-accent"
           >
             <ExternalLink className="h-3 w-3" />
             {t("entitlements.tenantGateways.docsLink", { gateway: gatewayDef.label })}

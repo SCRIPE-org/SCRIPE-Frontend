@@ -44,8 +44,8 @@ export function useTenantPlanCreateViewModel() {
     if (currentStep === 1) {
       if (!form.name || form.name.trim() === "") {
         showError({
-          title: t("common.error") || "Validation Error",
-          description: t("entitlements.tenantPlans.missingRequired") || "Plan name is required.",
+          title: t("common.error"),
+          description: t("entitlements.tenantPlans.missingRequired"),
         });
         return false;
       }
@@ -71,15 +71,14 @@ export function useTenantPlanCreateViewModel() {
     onSuccess: (newPlanId) => {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });
       success({
-        title: t("entitlements.tenantPlans.created") || "Plan Created",
-        description:
-          t("entitlements.tenantPlans.createdDesc") || "The plan has been created successfully.",
+        title: t("entitlements.tenantPlans.created"),
+        description: t("entitlements.tenantPlans.createdDesc"),
       });
       router.push(`/entitlements/tenant-plans/${newPlanId}`);
     },
     onError: (err: Error) => {
       showError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err?.message || "Failed to create plan.",
       });
     },

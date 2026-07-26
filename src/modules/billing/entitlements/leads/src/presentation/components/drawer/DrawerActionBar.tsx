@@ -2,7 +2,8 @@
 
 import { Button } from "@core/ui/button";
 import { DetailSheetFooter } from "@core/ui/detail-sheet";
-import { ArrowRightCircle, UserPlus, Send, XCircle, Loader2 } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { ArrowRightCircle, UserPlus, Send, XCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PlatformLead, LeadStatus } from "../../../domain/entities/PlatformLead";
 
@@ -46,10 +47,10 @@ export function DrawerActionBar({
           variant="outline"
           onClick={onCloseConfirm}
           disabled={isDeletingLead}
-          className="me-auto h-8 gap-1.5 border-border text-xs text-muted-foreground hover:border-destructive hover:bg-destructive/10 hover:text-destructive"
+          className="me-auto h-8 gap-1.5 border-nx-line text-xs text-nx-ink-2 hover:border-destructive hover:bg-destructive/10 hover:text-destructive"
         >
           {isDeletingLead ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+            <LoadingSpinner size="inline" showText={false} />
           ) : (
             <XCircle className="h-3.5 w-3.5" aria-hidden="true" />
           )}
@@ -74,7 +75,7 @@ export function DrawerActionBar({
           size="sm"
           variant="outline"
           onClick={onSendEmail}
-          className="h-8 gap-1.5 border-primary text-xs text-primary hover:bg-primary/20"
+          className="h-8 gap-1.5 border-nx-accent text-xs text-nx-accent hover:bg-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
         >
           <Send className="h-3.5 w-3.5" aria-hidden="true" />
           {t("leads.email.send")}

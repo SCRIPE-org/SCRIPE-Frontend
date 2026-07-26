@@ -53,15 +53,14 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
       });
       setIsCreateOpen(false);
       success({
-        title: t("common.created") || "Promotion Created",
-        description:
-          t("entitlements.promotions.createSuccess") || "Promotion code has been created.",
+        title: t("common.created"),
+        description: t("entitlements.promotions.createSuccess"),
       });
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description: t("entitlements.promotions.createFailed") || "Failed to create promotion.",
+        title: t("common.error"),
+        description: t("entitlements.promotions.createFailed"),
       });
     },
   });
@@ -77,14 +76,14 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
       setIsEditOpen(false);
       setSelectedPromotion(null);
       success({
-        title: t("common.updated") || "Promotion Updated",
-        description: t("entitlements.promotions.updateSuccess") || "Promotion has been updated.",
+        title: t("common.updated"),
+        description: t("entitlements.promotions.updateSuccess"),
       });
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description: t("entitlements.promotions.updateFailed") || "Failed to update promotion.",
+        title: t("common.error"),
+        description: t("entitlements.promotions.updateFailed"),
       });
     },
   });
@@ -97,14 +96,14 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
         queryKey: ["entitlements", "tenant-plan-promotions", planId],
       });
       success({
-        title: t("common.deleted") || "Promotion Deleted",
-        description: t("entitlements.promotions.deleteSuccess") || "Promotion has been removed.",
+        title: t("common.deleted"),
+        description: t("entitlements.promotions.deleteSuccess"),
       });
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description: t("entitlements.promotions.deleteFailed") || "Failed to delete promotion.",
+        title: t("common.error"),
+        description: t("entitlements.promotions.deleteFailed"),
       });
     },
   });

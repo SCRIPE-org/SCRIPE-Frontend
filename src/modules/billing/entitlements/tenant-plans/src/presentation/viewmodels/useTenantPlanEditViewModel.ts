@@ -66,8 +66,8 @@ export function useTenantPlanEditViewModel(planId: string) {
     if (currentStep === 1) {
       if (!form.name || form.name.trim() === "") {
         showError({
-          title: t("common.error") || "Validation Error",
-          description: t("entitlements.tenantPlans.missingRequired") || "Plan name is required.",
+          title: t("common.error"),
+          description: t("entitlements.tenantPlans.missingRequired"),
         });
         return false;
       }
@@ -94,15 +94,14 @@ export function useTenantPlanEditViewModel(planId: string) {
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans", planId] });
       success({
-        title: t("entitlements.tenantPlans.updated") || "Plan Updated",
-        description:
-          t("entitlements.tenantPlans.updatedDesc") || "The plan has been updated successfully.",
+        title: t("entitlements.tenantPlans.updated"),
+        description: t("entitlements.tenantPlans.updatedDesc"),
       });
       router.push(`/entitlements/tenant-plans/${planId}`);
     },
     onError: (err: Error) => {
       showError({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: err?.message || "Failed to update plan.",
       });
     },

@@ -63,7 +63,7 @@ function GatewayIcon({ gateway, size = 24 }: { gateway: string; size?: number })
     case "paymob":
       return <Wallet className={iconClass} style={{ color: "#00B2FF" }} />;
     default:
-      return <CreditCard className={`${iconClass} text-muted-foreground`} />;
+      return <CreditCard className={`${iconClass} text-nx-ink-3`} />;
   }
 }
 
@@ -101,25 +101,25 @@ function GatewayCard({
 }) {
   return (
     <Card
-      className={`relative overflow-hidden transition-all duration-300 ${
+      className={`relative overflow-hidden transition-[box-shadow] duration-nx-panel ease-nx-enter motion-reduce:transition-none ${
         gw.enabled
-          ? "border-border/60 bg-card hover:shadow-lg hover:shadow-primary/5"
-          : "border-muted/40 bg-muted/20 opacity-75"
+          ? "border-[color:color-mix(in_srgb,var(--nx-line)_60%,transparent)] bg-nx-surface hover:shadow-nx-glow"
+          : "border-[color:color-mix(in_srgb,var(--nx-line)_40%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] opacity-75"
       }`}
     >
       {/* Gradient top bar */}
       <div
         className="absolute inset-x-0 top-0 h-1"
-        style={{ background: gw.enabled ? gw.color : "hsl(var(--muted-foreground))" }}
+        style={{ background: gw.enabled ? gw.color : "var(--nx-ink-3)" }}
       />
 
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-xl"
+              className="flex h-12 w-12 items-center justify-center rounded-nx-md"
               style={{
-                background: gw.enabled ? `${gw.color}15` : "hsl(var(--muted))",
+                background: gw.enabled ? `${gw.color}15` : "var(--nx-raised)",
               }}
             >
               <GatewayIcon gateway={gw.icon} size={24} />
@@ -138,7 +138,7 @@ function GatewayCard({
                 )}
               </CardTitle>
               <CardDescription className="mt-0.5 text-xs">
-                {t(`billing.gateways.${gw.description}`) || gw.description}
+                {t(`billing.gateways.${gw.description}`)}
               </CardDescription>
             </div>
           </div>
@@ -147,7 +147,7 @@ function GatewayCard({
             className={`text-xs ${
               gw.enabled
                 ? "border-success/30 bg-success/15 text-success"
-                : "bg-muted text-muted-foreground"
+                : "bg-nx-raised text-nx-ink-3"
             }`}
           >
             {gw.enabled ? (
@@ -169,7 +169,7 @@ function GatewayCard({
         {/* Feature Capabilities */}
         {gw.features.length > 0 && (
           <div>
-            <p className="mb-2 text-xs font-medium text-muted-foreground">
+            <p className="mb-2 text-xs font-medium text-nx-ink-3">
               {t("billing.gateways.features")}
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -180,7 +180,7 @@ function GatewayCard({
                   className="gap-1 px-2 py-0.5 text-[10px] font-normal"
                 >
                   {FEATURE_ICONS[f] || null}
-                  {t(`billing.gateways.${f}`) || f}
+                  {t(`billing.gateways.${f}`)}
                 </Badge>
               ))}
             </div>
@@ -188,12 +188,12 @@ function GatewayCard({
         )}
 
         {/* Capabilities Row */}
-        <div className="flex gap-4 text-xs text-muted-foreground">
+        <div className="flex gap-4 text-xs text-nx-ink-3">
           <div className="flex items-center gap-1">
             {gw.supportsRecurring ? (
               <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             ) : (
-              <XCircle className="h-3.5 w-3.5 text-muted-foreground/50" />
+              <XCircle className="h-3.5 w-3.5 text-[color:color-mix(in_srgb,var(--nx-ink-3)_50%,transparent)]" />
             )}
             {t("billing.gateways.supportsRecurring")}
           </div>
@@ -201,14 +201,14 @@ function GatewayCard({
             {gw.supportsBillingPortal ? (
               <CheckCircle2 className="h-3.5 w-3.5 text-success" />
             ) : (
-              <XCircle className="h-3.5 w-3.5 text-muted-foreground/50" />
+              <XCircle className="h-3.5 w-3.5 text-[color:color-mix(in_srgb,var(--nx-ink-3)_50%,transparent)]" />
             )}
             {t("billing.gateways.supportsBillingPortal")}
           </div>
         </div>
 
         {/* Actions Row */}
-        <div className="mt-2 flex items-center justify-between border-t border-border/50 pt-4">
+        <div className="mt-2 flex items-center justify-between border-t border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] pt-4">
           <Button
             variant="outline"
             size="sm"
@@ -221,7 +221,7 @@ function GatewayCard({
           </Button>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground">{t("common.status")}</span>
+            <span className="text-xs font-medium text-nx-ink-3">{t("common.status")}</span>
             {isDefault ? (
               <Tooltip>
                 {/* The trigger is the Switch itself, and the Switch is
@@ -238,10 +238,7 @@ function GatewayCard({
                   />
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>
-                    {t("billing.gateways.defaultGatewayCannotBeDisabled") ||
-                      "Default gateways cannot be disabled."}
-                  </p>
+                  <p>{t("billing.gateways.defaultGatewayCannotBeDisabled")}</p>
                 </TooltipContent>
               </Tooltip>
             ) : (
@@ -262,11 +259,11 @@ function GatewayCard({
 function GatewayCardSkeleton() {
   return (
     <Card className="relative overflow-hidden">
-      <div className="absolute inset-x-0 top-0 h-1 bg-muted" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-nx-raised" />
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-12 w-12 rounded-xl" />
+            <Skeleton className="h-12 w-12 rounded-nx-md" />
             <div className="space-y-2">
               <Skeleton className="h-5 w-24" />
               <Skeleton className="h-3 w-48" />
@@ -300,10 +297,10 @@ export function PaymentGatewaySettingsView() {
       {/* Page Header */}
       <div className="flex flex-col gap-1">
         <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-          <CreditCard className="h-6 w-6 text-primary" />
+          <CreditCard className="h-6 w-6 text-nx-accent" />
           {t("billing.gateways.title")}
         </h1>
-        <p className="text-sm text-muted-foreground">{t("billing.gateways.description")}</p>
+        <p className="text-sm text-nx-ink-2">{t("billing.gateways.description")}</p>
       </div>
 
       {/* Stats Bar */}
@@ -349,7 +346,7 @@ export function PaymentGatewaySettingsView() {
         <Card className="border-info/20 bg-info/5">
           <CardContent className="flex items-start gap-3 p-4">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-info" />
-            <p className="text-sm leading-relaxed text-muted-foreground">
+            <p className="text-sm leading-relaxed text-nx-ink-2">
               {t("billing.gateways.configNote")}
             </p>
           </CardContent>

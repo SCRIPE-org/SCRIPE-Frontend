@@ -32,7 +32,7 @@ export function CommissionLedgerView() {
                 onClick={() => vm.actions.retry(invoice.id)}
                 disabled={vm.actions.isRetrying}
               >
-                <RefreshCw className="mr-1 h-4 w-4" />
+                <RefreshCw className="me-1 h-4 w-4" />
                 {t("entitlements.commissionLedger.retryCharge")}
               </Button>
               <Button
@@ -44,7 +44,7 @@ export function CommissionLedgerView() {
                 disabled={vm.actions.isWaiving}
                 className="text-destructive"
               >
-                <XCircle className="mr-1 h-4 w-4" />
+                <XCircle className="me-1 h-4 w-4" />
                 {t("entitlements.commissionLedger.waive")}
               </Button>
             </div>
@@ -61,7 +61,7 @@ export function CommissionLedgerView() {
         <h1 className="text-2xl font-bold tracking-tight">
           {t("entitlements.commissionLedger.title")}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-nx-ink-2">
           {t("entitlements.commissionLedger.subtitle")}
         </p>
       </div>

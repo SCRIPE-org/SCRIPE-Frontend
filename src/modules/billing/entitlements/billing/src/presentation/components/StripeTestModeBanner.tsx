@@ -30,11 +30,8 @@ export function StripeTestModeBanner() {
   return (
     <Alert className="relative border-warning/30 bg-warning/10 text-warning [&>svg]:text-warning">
       <AlertTriangle className="h-4 w-4" aria-hidden="true" />
-      <AlertTitle>{t("billing.testMode.label") || "Stripe Test Mode"}</AlertTitle>
-      <AlertDescription>
-        {t("billing.testMode.description") ||
-          "Payments are simulated. No real charges will be made. Switch to live keys for production."}
-      </AlertDescription>
+      <AlertTitle>{t("billing.testMode.label")}</AlertTitle>
+      <AlertDescription>{t("billing.testMode.description")}</AlertDescription>
       <Button
         variant="ghost"
         size="icon"

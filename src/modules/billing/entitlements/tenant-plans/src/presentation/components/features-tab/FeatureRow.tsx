@@ -6,6 +6,7 @@
  */
 "use client";
 
+import { resolveBilingualLabel } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Trash2 } from "lucide-react";
@@ -37,7 +38,7 @@ export function FeatureRow({
   language,
   t,
 }: FeatureRowProps) {
-  const displayName = language === "ar" ? definition.displayNameAr : definition.displayNameEn;
+  const displayName = resolveBilingualLabel(definition.displayNameEn, definition.displayNameAr, language);
   const labelId = `feature-row-${definition.id}`;
 
   return (

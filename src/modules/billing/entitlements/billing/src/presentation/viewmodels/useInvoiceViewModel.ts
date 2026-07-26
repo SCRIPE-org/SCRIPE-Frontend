@@ -48,7 +48,7 @@ export function useInvoiceViewModel() {
       setLoadingAction((prev) => ({ ...prev, [key]: true }));
 
       const processingToast = toast({
-        title: t("billing.actions.downloadingPdf") || "Downloading PDF...",
+        title: t("billing.actions.downloadingPdf"),
         description: item.invoiceNumber,
         variant: "info",
         duration: 30000,
@@ -67,8 +67,8 @@ export function useInvoiceViewModel() {
 
         processingToast.dismiss();
         success({
-          title: t("billing.actions.downloadSuccess") || "PDF Downloaded",
-          description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc") || "Invoice saved to your downloads."}`,
+          title: t("billing.actions.downloadSuccess"),
+          description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc")}`,
         });
       } catch (err: unknown) {
         processingToast.dismiss();
@@ -77,15 +77,13 @@ export function useInvoiceViewModel() {
         // when IDM/FDM/any download manager intercepts the download.
         if (err instanceof DownloadInterceptedError) {
           success({
-            title: t("billing.actions.downloadSuccess") || "PDF Downloaded",
-            description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc") || "Captured by your download manager."}`,
+            title: t("billing.actions.downloadSuccess"),
+            description: `${item.invoiceNumber} — ${t("billing.actions.downloadSuccessDesc")}`,
           });
         } else {
           toastError({
-            title: t("billing.actions.downloadError") || "Download Failed",
-            description:
-              t("billing.actions.downloadErrorDesc") ||
-              "Failed to download invoice PDF. Please try again.",
+            title: t("billing.actions.downloadError"),
+            description: t("billing.actions.downloadErrorDesc"),
           });
         }
       } finally {
@@ -102,7 +100,7 @@ export function useInvoiceViewModel() {
       setLoadingAction((prev) => ({ ...prev, [key]: true }));
 
       const processingToast = toast({
-        title: t("billing.actions.sendingEmail") || "Sending Invoice Email...",
+        title: t("billing.actions.sendingEmail"),
         description: item.invoiceNumber,
         variant: "info",
         duration: 30000,
@@ -113,18 +111,14 @@ export function useInvoiceViewModel() {
 
         processingToast.dismiss();
         success({
-          title: t("billing.actions.emailSent") || "✓ Invoice Email Sent",
-          description:
-            t("billing.actions.emailSentDesc") ||
-            `Invoice ${item.invoiceNumber} has been sent to the tenant admin successfully.`,
+          title: t("billing.actions.emailSent"),
+          description: t("billing.actions.emailSentDesc"),
         });
       } catch {
         processingToast.dismiss();
         toastError({
-          title: t("billing.actions.emailError") || "Email Failed",
-          description:
-            t("billing.actions.emailErrorDesc") ||
-            "Failed to send invoice email. Please check your SMTP settings and try again.",
+          title: t("billing.actions.emailError"),
+          description: t("billing.actions.emailErrorDesc"),
         });
       } finally {
         setLoadingAction((prev) => ({ ...prev, [key]: false }));
@@ -142,7 +136,7 @@ export function useInvoiceViewModel() {
     setLoadingAction((prev) => ({ ...prev, [bulkKey]: true }));
 
     toast({
-      title: t("billing.actions.bulkDownloading") || "Downloading All Invoices...",
+      title: t("billing.actions.bulkDownloading"),
       description: `${items.length} invoices`,
       variant: "info",
       duration: 3000,
@@ -173,13 +167,13 @@ export function useInvoiceViewModel() {
 
     if (failed === 0) {
       success({
-        title: t("billing.actions.bulkDownloadSuccess") || "All Invoices Downloaded",
-        description: `${downloaded} ${t("billing.actions.invoicesDownloaded") || "invoices saved to downloads."}`,
+        title: t("billing.actions.bulkDownloadSuccess"),
+        description: `${downloaded} ${t("billing.actions.invoicesDownloaded")}`,
       });
     } else {
       toastError({
-        title: t("billing.actions.bulkDownloadPartial") || "Partial Download",
-        description: `${downloaded} ${t("common.success") || "success"}, ${failed} ${t("common.failed") || "failed"}`,
+        title: t("billing.actions.bulkDownloadPartial"),
+        description: `${downloaded} ${t("common.success")}, ${failed} ${t("common.failed")}`,
       });
     }
 

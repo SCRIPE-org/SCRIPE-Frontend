@@ -27,13 +27,13 @@ export function PaymentHubView() {
 
   const superAdminCards = [
     {
-      title: t("paymentHub.gatewayConfig") || "Gateway Configuration",
+      title: t("paymentHub.gatewayConfig"),
       description: "Configure platform-level payment gateway integrations for all tenants.",
       icon: <Settings className="h-6 w-6" />,
       href: "/payment-gateways",
     },
     {
-      title: t("paymentHub.stripeConnect") || "Marketplace Accounts",
+      title: t("paymentHub.stripeConnect"),
       description: "Manage connected Stripe accounts for all tenants.",
       icon: <LinkIcon className="h-6 w-6" />,
       href: "/entitlements/stripe-connect",
@@ -45,13 +45,13 @@ export function PaymentHubView() {
       href: "/entitlements/platform-stripe",
     },
     {
-      title: t("commission.title") || "Commission Ledger",
+      title: t("commission.title"),
       description: "View raw commission ledger entries across all tenants.",
       icon: <Coins className="h-6 w-6" />,
       href: "/entitlements/commission-ledger",
     },
     {
-      title: t("commission.invoices") || "Commission Invoices",
+      title: t("commission.invoices"),
       description: "Manage and waive commission invoices.",
       icon: <FileText className="h-6 w-6" />,
       href: "/entitlements/commission-invoices",
@@ -60,25 +60,25 @@ export function PaymentHubView() {
 
   const tenantAdminCards = [
     {
-      title: t("paymentHub.myCredentials") || "My Gateway Credentials",
+      title: t("paymentHub.myCredentials"),
       description: "Configure your PayPal or Paymob API credentials.",
       icon: <Key className="h-6 w-6" />,
       href: "/entitlements/tenant-gateways",
     },
     {
-      title: t("paymentHub.stripeConnect") || "Payment Account",
+      title: t("paymentHub.stripeConnect"),
       description: "Manage your Stripe Connect account.",
       icon: <LinkIcon className="h-6 w-6" />,
       href: "/entitlements/stripe-connect",
     },
     {
-      title: t("paymentHub.billing") || "Billing & Invoices",
+      title: t("paymentHub.billing"),
       description: "View your subscription invoices and billing history.",
       icon: <Receipt className="h-6 w-6" />,
       href: "/entitlements/invoices",
     },
     {
-      title: t("commission.invoices") || "Commission Invoices",
+      title: t("commission.invoices"),
       description: "View your commission invoices charged by the platform.",
       icon: <FileText className="h-6 w-6" />,
       href: "/entitlements/commission-invoices",
@@ -93,7 +93,7 @@ export function PaymentHubView() {
     <div className="flex flex-col space-y-6">
       <PageHeader
         icon={Wallet}
-        title={t("paymentHub.title") || "Payment Hub"}
+        title={t("paymentHub.title")}
         description="Centralized hub for all payment and billing configuration."
       />
 

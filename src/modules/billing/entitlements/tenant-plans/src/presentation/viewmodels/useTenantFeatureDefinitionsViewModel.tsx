@@ -18,6 +18,7 @@ import type {
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CrudColumn } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
+import { resolveBilingualLabel } from "@core/common/utils";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for tenant feature definitions view model.
@@ -85,7 +86,7 @@ export function useTenantFeatureDefinitionsViewModel() {
         key: "displayName",
         label: t("entitlements.featureDefinitions.displayName"),
         render: (_v: unknown, item: TenantFeatureDefinition) =>
-          language === "ar" ? item.displayNameAr : item.displayNameEn,
+          resolveBilingualLabel(item.displayNameEn, item.displayNameAr, language),
       },
       {
         key: "valueType",

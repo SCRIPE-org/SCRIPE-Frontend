@@ -75,7 +75,7 @@ export function DrawerTabInfo({
     <div className="space-y-3 p-4">
       {/* Contact */}
       <SectionCard title={t("leads.drawer.sections.contact")} icon={Mail}>
-        <div className="space-y-1 divide-y divide-border/40">
+        <div className="space-y-1 divide-y divide-nx-line">
           <InfoRow
             icon={Mail}
             label={t("leads.drawer.contact.email")}
@@ -94,7 +94,7 @@ export function DrawerTabInfo({
               icon={Phone}
               label={t("leads.drawer.contact.phone")}
               value={
-                <span className="text-xs italic text-muted-foreground">
+                <span className="text-xs italic text-nx-ink-3">
                   {t("leads.drawer.contact.phoneMissing")}
                 </span>
               }
@@ -118,28 +118,24 @@ export function DrawerTabInfo({
         <SectionCard
           title={t("leads.drawer.sections.discovery")}
           icon={Zap}
-          accent="border-primary/20 bg-primary/5"
+          accent="border-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] bg-nx-accent-wash"
         >
           <div className="space-y-3">
             {di?.businessTypeKey && (
               <div className="flex items-center gap-3">
-                <Building2 className="h-3.5 w-3.5 shrink-0 text-primary/70" />
+                <Building2 className="h-3.5 w-3.5 shrink-0 text-[color:color-mix(in_srgb,var(--nx-accent)_70%,transparent)]" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground">
-                    {t("leads.discovery.industry")}
-                  </p>
-                  <p className="text-sm font-medium text-primary">{t(di.businessTypeKey)}</p>
+                  <p className="text-[10px] text-nx-ink-3">{t("leads.discovery.industry")}</p>
+                  <p className="text-sm font-medium text-nx-accent">{t(di.businessTypeKey)}</p>
                 </div>
               </div>
             )}
             {di?.teamSizeKey && (
               <div className="flex items-center gap-3">
-                <Users className="h-3.5 w-3.5 shrink-0 text-primary/70" />
+                <Users className="h-3.5 w-3.5 shrink-0 text-[color:color-mix(in_srgb,var(--nx-accent)_70%,transparent)]" />
                 <div>
-                  <p className="text-[10px] text-muted-foreground">
-                    {t("leads.discovery.teamSize")}
-                  </p>
-                  <p className="text-sm font-medium text-primary">
+                  <p className="text-[10px] text-nx-ink-3">{t("leads.discovery.teamSize")}</p>
+                  <p className="text-sm font-medium text-nx-accent">
                     {t(di.teamSizeKey)} {t("leads.discovery.teamSizeSuffix")}
                   </p>
                 </div>
@@ -147,11 +143,9 @@ export function DrawerTabInfo({
             )}
             {di?.priority && (
               <div className="flex items-start gap-3">
-                <Tag className="mt-1 h-3.5 w-3.5 shrink-0 text-primary/70" />
+                <Tag className="mt-1 h-3.5 w-3.5 shrink-0 text-[color:color-mix(in_srgb,var(--nx-accent)_70%,transparent)]" />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[10px] text-muted-foreground">
-                    {t("leads.discovery.priority")}
-                  </p>
+                  <p className="text-[10px] text-nx-ink-3">{t("leads.discovery.priority")}</p>
                   <div className="mt-1 flex flex-wrap gap-1.5">
                     {di.priority.split(",").map((p) => {
                       const clean = p
@@ -161,7 +155,7 @@ export function DrawerTabInfo({
                       return (
                         <span
                           key={p}
-                          className="inline-flex items-center rounded bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary ring-1 ring-inset ring-primary/20"
+                          className="inline-flex items-center rounded-nx-sm bg-nx-accent-wash px-2 py-0.5 text-[11px] font-medium text-nx-accent ring-1 ring-inset ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
                         >
                           {clean}
                         </span>
@@ -178,9 +172,7 @@ export function DrawerTabInfo({
       {/* Message */}
       {lead.message && (
         <SectionCard title={t("leads.drawer.sections.message")} icon={MessageSquare}>
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-            {lead.message}
-          </p>
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-nx-ink">{lead.message}</p>
         </SectionCard>
       )}
 
@@ -207,9 +199,7 @@ export function DrawerTabInfo({
           <p className="text-sm font-semibold text-success">
             {t("leads.drawer.conversion.converted")}
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground">
-            {formatDateTimeUtc(lead.convertedAt)}
-          </p>
+          <p className="mt-0.5 text-xs text-nx-ink-3">{formatDateTimeUtc(lead.convertedAt)}</p>
         </SectionCard>
       )}
 

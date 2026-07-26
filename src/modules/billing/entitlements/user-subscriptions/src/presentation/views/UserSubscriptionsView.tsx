@@ -55,13 +55,13 @@ export function UserSubscriptionsView() {
 
   const config: CrudConfig<UserSubscription> = useMemo(() => {
     const statusMap: Record<string, string> = {
-      Free: t("entitlements.userSubscriptions.statusFree") || "Free",
-      Trial: t("entitlements.userSubscriptions.statusTrialing") || "Trial",
-      Active: t("entitlements.userSubscriptions.statusActive") || "Active",
-      PastDue: t("entitlements.userSubscriptions.statusPastDue") || "Past Due",
-      Cancelled: t("entitlements.userSubscriptions.statusCancelled") || "Cancelled",
-      Expired: t("entitlements.userSubscriptions.statusExpired") || "Expired",
-      PendingPayment: t("entitlements.userSubscriptions.statusPendingPayment") || "Pending Payment",
+      Free: t("entitlements.userSubscriptions.statusFree"),
+      Trial: t("entitlements.userSubscriptions.statusTrialing"),
+      Active: t("entitlements.userSubscriptions.statusActive"),
+      PastDue: t("entitlements.userSubscriptions.statusPastDue"),
+      Cancelled: t("entitlements.userSubscriptions.statusCancelled"),
+      Expired: t("entitlements.userSubscriptions.statusExpired"),
+      PendingPayment: t("entitlements.userSubscriptions.statusPendingPayment"),
     };
     return {
       titleKey: "entitlements.userSubscriptions.title",
@@ -70,20 +70,20 @@ export function UserSubscriptionsView() {
       columns: [
         {
           key: "userName",
-          label: t("entitlements.userSubscriptions.user") || "User",
+          label: t("entitlements.userSubscriptions.user"),
           sortable: true,
           render: (_val: unknown, sub: UserSubscription) => (
             <div className="flex min-w-[120px] flex-col gap-0.5">
               <div className="flex items-center gap-1.5">
-                <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+                <User className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
                 <span className="max-w-[180px] truncate text-sm font-medium">
                   {sub.userName || t("entitlements.userSubscriptions.detailUnknownUser")}
                 </span>
               </div>
               {sub.userEmail && (
                 <div className="flex items-center gap-1.5">
-                  <Mail className="h-3 w-3 shrink-0 text-muted-foreground" />
-                  <span className="max-w-[180px] truncate text-xs text-muted-foreground">
+                  <Mail className="h-3 w-3 shrink-0 text-nx-ink-3" />
+                  <span className="max-w-[180px] truncate text-xs text-nx-ink-3">
                     {sub.userEmail}
                   </span>
                 </div>
@@ -93,32 +93,32 @@ export function UserSubscriptionsView() {
         },
         {
           key: "planName",
-          label: t("entitlements.userSubscriptions.plan") || "Plan",
+          label: t("entitlements.userSubscriptions.plan"),
           sortable: true,
           render: (value: string) => <span className="font-medium">{value}</span>,
         },
         {
           key: "status",
-          label: t("common.status") || "Status",
+          label: t("common.status"),
           render: (_val: unknown, sub: UserSubscription) => (
             <Badge variant={sub.statusColor}>{statusMap[sub.status] || sub.status}</Badge>
           ),
         },
         {
           key: "startedAt",
-          label: t("entitlements.userSubscriptions.startedAt") || "Started",
+          label: t("entitlements.userSubscriptions.startedAt"),
           render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
         {
           key: "expiresAt",
-          label: t("entitlements.userSubscriptions.expiresAt") || "Expires",
+          label: t("entitlements.userSubscriptions.expiresAt"),
           render: (value: string | undefined) => (value ? formatUtc(value, "MMM d, yyyy") : "∞"),
         },
         {
           key: "daysRemaining",
-          label: t("entitlements.userSubscriptions.daysRemaining") || "Days Left",
+          label: t("entitlements.userSubscriptions.daysRemaining"),
           render: (_val: unknown, sub: UserSubscription) => {
-            if (sub.daysRemaining == null) return <span className="text-muted-foreground">∞</span>;
+            if (sub.daysRemaining == null) return <span className="text-nx-ink-3">∞</span>;
             return (
               <Badge variant={sub.isExpiringSoon ? "warning" : "outline"}>
                 {sub.daysRemaining}d
@@ -128,119 +128,108 @@ export function UserSubscriptionsView() {
         },
         {
           key: "createdAt",
-          label: t("common.createdAt") || "Assigned",
+          label: t("common.createdAt"),
           render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
       createFields: [
         {
           name: "userId",
-          label: t("entitlements.userSubscriptions.user") || "User",
+          label: t("entitlements.userSubscriptions.user"),
           type: "server-select" as const,
           required: true,
-          placeholder:
-            t("entitlements.userSubscriptions.userSearchPlaceholder") || "Search by name or email…",
-          searchPlaceholder:
-            t("entitlements.userSubscriptions.userSearchPlaceholder") || "Search by name or email…",
+          placeholder: t("entitlements.userSubscriptions.userSearchPlaceholder"),
+          searchPlaceholder: t("entitlements.userSubscriptions.userSearchPlaceholder"),
           searchType: "server" as const,
           onServerSearch: vm.searchUsers,
           debounceMs: 300,
-          noResultsText: t("common.noResults") || "No users found",
-          searchingText: t("common.searching") || "Searching…",
-          description:
-            t("entitlements.userSubscriptions.userSearchHint") ||
-            "Type at least 2 characters to search",
+          noResultsText: t("common.noResults"),
+          searchingText: t("common.searching"),
+          description: t("entitlements.userSubscriptions.userSearchHint"),
         },
         {
           name: "tenantPlanId",
-          label: t("entitlements.userSubscriptions.plan") || "Plan",
+          label: t("entitlements.userSubscriptions.plan"),
           type: "select" as const,
           required: true,
-          placeholder: t("entitlements.userSubscriptions.planPlaceholder") || "Select a plan…",
+          placeholder: t("entitlements.userSubscriptions.planPlaceholder"),
           options: vm.availablePlans,
         },
         {
           name: "billingCycle",
-          label: t("entitlements.userSubscriptions.billingCycle") || "Billing Cycle",
+          label: t("entitlements.userSubscriptions.billingCycle"),
           type: "select" as const,
-          placeholder:
-            t("entitlements.userSubscriptions.billingCyclePlaceholder") ||
-            "Select a billing cycle…",
+          placeholder: t("entitlements.userSubscriptions.billingCyclePlaceholder"),
           options: [
             {
               value: "Monthly",
-              label: t("entitlements.userSubscriptions.billingCycleMonthly") || "Monthly",
+              label: t("entitlements.userSubscriptions.billingCycleMonthly"),
             },
             {
               value: "Yearly",
-              label: t("entitlements.userSubscriptions.billingCycleYearly") || "Yearly",
+              label: t("entitlements.userSubscriptions.billingCycleYearly"),
             },
             {
               value: "Lifetime",
-              label: t("entitlements.userSubscriptions.billingCycleLifetime") || "Lifetime",
+              label: t("entitlements.userSubscriptions.billingCycleLifetime"),
             },
           ],
         },
         {
           name: "isAutoRenew",
-          label: t("entitlements.userSubscriptions.autoRenew") || "Auto Renew",
+          label: t("entitlements.userSubscriptions.autoRenew"),
           type: "switch" as const,
           defaultValue: true,
         },
         {
           name: "promotionCode",
-          label: t("entitlements.userSubscriptions.promotionCode") || "Promotion Code",
+          label: t("entitlements.userSubscriptions.promotionCode"),
           type: "text" as const,
-          placeholder:
-            t("entitlements.userSubscriptions.promotionCodePlaceholder") ||
-            "Enter a promotion code…",
+          placeholder: t("entitlements.userSubscriptions.promotionCodePlaceholder"),
         },
         {
           name: "notes",
-          label: t("entitlements.userSubscriptions.notes") || "Notes",
+          label: t("entitlements.userSubscriptions.notes"),
           type: "textarea" as const,
-          placeholder:
-            t("entitlements.userSubscriptions.notesPlaceholder") || "Optional admin notes…",
+          placeholder: t("entitlements.userSubscriptions.notesPlaceholder"),
         },
       ],
       editFields: (sub: UserSubscription) => [
         {
           name: "newTenantPlanId",
-          label: t("entitlements.userSubscriptions.plan") || "New Plan",
+          label: t("entitlements.userSubscriptions.plan"),
           type: "select" as const,
           required: true,
           defaultValue: sub?.tenantPlanId,
-          placeholder: t("entitlements.userSubscriptions.planPlaceholder") || "Select a plan…",
+          placeholder: t("entitlements.userSubscriptions.planPlaceholder"),
           options: vm.availablePlans,
         },
         {
           name: "billingCycle",
-          label: t("entitlements.userSubscriptions.billingCycle") || "Billing Cycle",
+          label: t("entitlements.userSubscriptions.billingCycle"),
           type: "select" as const,
           required: true,
           defaultValue: sub?.billingCycle ?? "Monthly",
           options: [
             {
               value: "Monthly",
-              label: t("entitlements.userSubscriptions.billingCycleMonthly") || "Monthly",
+              label: t("entitlements.userSubscriptions.billingCycleMonthly"),
             },
             {
               value: "Yearly",
-              label: t("entitlements.userSubscriptions.billingCycleYearly") || "Yearly",
+              label: t("entitlements.userSubscriptions.billingCycleYearly"),
             },
             {
               value: "Lifetime",
-              label: t("entitlements.userSubscriptions.billingCycleLifetime") || "Lifetime",
+              label: t("entitlements.userSubscriptions.billingCycleLifetime"),
             },
           ],
         },
         {
           name: "reason",
-          label: t("entitlements.userSubscriptions.changePlanReason") || "Reason for Change",
+          label: t("entitlements.userSubscriptions.changePlanReason"),
           type: "textarea" as const,
-          placeholder:
-            t("entitlements.userSubscriptions.changePlanReasonPlaceholder") ||
-            "Optional: reason for changing this user's plan…",
+          placeholder: t("entitlements.userSubscriptions.changePlanReasonPlaceholder"),
         },
       ],
       getItemDisplayName: (sub: UserSubscription) =>
@@ -250,13 +239,13 @@ export function UserSubscriptionsView() {
         tFn: (key: string) => string
       ): CrudAction<UserSubscription>[] => [
         {
-          label: tFn("common.view") || "View",
+          label: tFn("common.view"),
           onClick: (item: UserSubscription) => openDetail(item),
           variant: "ghost" as const,
           icon: <Eye className="h-4 w-4" />,
         },
         {
-          label: tFn("entitlements.userSubscriptions.changePlan") || "Change Plan",
+          label: tFn("entitlements.userSubscriptions.changePlan"),
           onClick: (item: UserSubscription) => vm.openEditModal?.(item),
           variant: "ghost" as const,
           className: "text-info hover:text-info/80",
@@ -264,7 +253,7 @@ export function UserSubscriptionsView() {
           show: (item: UserSubscription) => item.isActive || item.isTrialing,
         },
         {
-          label: tFn("entitlements.userSubscriptions.cancel") || "Cancel",
+          label: tFn("entitlements.userSubscriptions.cancel"),
           onClick: (item: UserSubscription) => vm.cancelSubscription(item.id),
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",
@@ -273,7 +262,7 @@ export function UserSubscriptionsView() {
             (item.isActive || item.isPastDue) && !item.isCancelled && !item.isExpired,
         },
         {
-          label: tFn("entitlements.userSubscriptions.renew") || "Renew",
+          label: tFn("entitlements.userSubscriptions.renew"),
           onClick: (item: UserSubscription) => vm.renewSubscription(item.id),
           variant: "ghost" as const,
           className: "text-success hover:text-success/80",

@@ -578,8 +578,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
         if (!targetEmail) {
           showError({
             title: t("common.error"),
-            description:
-              t("billing.errors.noAdminEmail") || "No admin email found for this tenant.",
+            description: t("billing.errors.noAdminEmail"),
           });
           return;
         }
@@ -593,7 +592,7 @@ export function useSubscriptionsViewModel(tenantId: string) {
       if (!targetEmail) {
         showError({
           title: t("common.error"),
-          description: t("billing.errors.noAdminEmail") || "No admin email found for this tenant.",
+          description: t("billing.errors.noAdminEmail"),
         });
         return;
       }

@@ -40,14 +40,14 @@ export function useCommissionLedgerViewModel() {
       commissionLedgerRepository.waiveInvoice(id, notes),
     onSuccess: () => {
       toast({
-        title: t("common.success") || "Success",
-        description: t("entitlements.commissionLedger.waived") || "Invoice waived successfully",
+        title: t("common.success"),
+        description: t("entitlements.commissionLedger.waived"),
       });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
     onError: (error: Error) => {
       toast({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -58,14 +58,14 @@ export function useCommissionLedgerViewModel() {
     mutationFn: (id: string) => commissionLedgerRepository.retryCharge(id),
     onSuccess: () => {
       toast({
-        title: t("common.success") || "Success",
-        description: t("entitlements.commissionLedger.retryScheduled") || "Charge retry scheduled",
+        title: t("common.success"),
+        description: t("entitlements.commissionLedger.retryScheduled"),
       });
       queryClient.invalidateQueries({ queryKey: ["commission-invoices"] });
     },
     onError: (error: Error) => {
       toast({
-        title: t("common.error") || "Error",
+        title: t("common.error"),
         description: error.message,
         variant: "destructive",
       });
@@ -75,16 +75,16 @@ export function useCommissionLedgerViewModel() {
   const ledgerColumns: CrudColumn<CommissionLedgerEntry>[] = [
     {
       key: "tenantId",
-      label: t("entitlements.commissionLedger.tenantId") || "Tenant ID",
+      label: t("entitlements.commissionLedger.tenantId"),
     },
     {
       key: "gateway",
-      label: t("entitlements.commissionLedger.gateway") || "Gateway",
+      label: t("entitlements.commissionLedger.gateway"),
       render: (_value, item) => item.displayGateway,
     },
     {
       key: "collectionMethod",
-      label: t("entitlements.commissionLedger.collectionMethod") || "Type",
+      label: t("entitlements.commissionLedger.collectionMethod"),
       render: (_value, item) =>
         item.isInstant
           ? "⚡ Instant" // Stripe Connect — already collected
@@ -92,27 +92,27 @@ export function useCommissionLedgerViewModel() {
     },
     {
       key: "grossAmount",
-      label: t("entitlements.commissionLedger.grossAmount") || "Gross Amount",
+      label: t("entitlements.commissionLedger.grossAmount"),
       render: (value, item) => `${(value as number).toFixed(2)} ${item.currency}`,
     },
     {
       key: "commissionAmount",
-      label: t("entitlements.commissionLedger.commission") || "Commission",
+      label: t("entitlements.commissionLedger.commission"),
       render: (value, item) =>
         `${(value as number).toFixed(2)} ${item.currency} (${item.commissionRateDisplay})`,
     },
     {
       key: "netAmount",
-      label: t("entitlements.commissionLedger.netAmount") || "Net to Tenant",
+      label: t("entitlements.commissionLedger.netAmount"),
       render: (value, item) => `${(value as number).toFixed(2)} ${item.currency}`,
     },
     {
       key: "status",
-      label: t("entitlements.commissionLedger.status") || "Status",
+      label: t("entitlements.commissionLedger.status"),
     },
     {
       key: "createdAt",
-      label: t("entitlements.commissionLedger.date") || "Date",
+      label: t("entitlements.commissionLedger.date"),
       render: (value) => formatDateTimeUtc(value as string),
     },
   ];
@@ -120,25 +120,25 @@ export function useCommissionLedgerViewModel() {
   const invoiceColumns: CrudColumn<CommissionInvoice>[] = [
     {
       key: "invoiceNumber",
-      label: t("entitlements.commissionLedger.invoiceNumber") || "Invoice #",
+      label: t("entitlements.commissionLedger.invoiceNumber"),
     },
     {
       key: "periodStart",
-      label: t("entitlements.commissionLedger.period") || "Period",
+      label: t("entitlements.commissionLedger.period"),
       render: (value, item) => `${formatDateUtc(value)} - ${formatDateUtc(item.periodEnd)}`,
     },
     {
       key: "totalCommission",
-      label: t("entitlements.commissionLedger.total") || "Total",
+      label: t("entitlements.commissionLedger.total"),
       render: (value, item) => `${value} ${item.currency}`,
     },
     {
       key: "status",
-      label: t("entitlements.commissionLedger.status") || "Status",
+      label: t("entitlements.commissionLedger.status"),
     },
     {
       key: "actions",
-      label: t("entitlements.commissionLedger.actions") || "Actions",
+      label: t("entitlements.commissionLedger.actions"),
       render: (value, item) => item.id, // Handled by view actions normally
     },
   ];

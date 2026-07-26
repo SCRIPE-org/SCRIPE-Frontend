@@ -64,10 +64,8 @@ export function useUserSubscriptionsViewModel() {
           reason: data.reason,
         });
         success({
-          title: t("entitlements.userSubscriptions.planChanged") || "Plan Changed",
-          description:
-            t("entitlements.userSubscriptions.planChangedDesc") ||
-            "User subscription plan updated successfully.",
+          title: t("entitlements.userSubscriptions.planChanged"),
+          description: t("entitlements.userSubscriptions.planChangedDesc"),
         });
         return userSubscriptionRepository.getById(id);
       },

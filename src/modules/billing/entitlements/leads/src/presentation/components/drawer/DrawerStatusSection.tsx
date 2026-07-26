@@ -8,7 +8,8 @@ import { Input } from "@core/ui/input";
 import { Switch } from "@core/ui/switch";
 import { Label } from "@core/ui/label";
 import { Skeleton } from "@core/ui/skeleton";
-import { Mail, CheckCheck, ArrowRightCircle, Loader2, Info } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Mail, CheckCheck, ArrowRightCircle, Info } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { PlatformLead, LeadStatus } from "../../../domain/entities/PlatformLead";
 import { ALL_STATUSES, STATUS_STYLES } from "./DrawerShared";
@@ -61,8 +62,8 @@ export function DrawerStatusSection({
     (pendingStatus !== null && pendingStatus !== lead.status) || statusNote.trim().length > 0;
 
   return (
-    <div className="space-y-3 rounded-xl border border-border/50 bg-card/40 p-4">
-      <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+    <div className="space-y-3 rounded-nx-md border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_40%,transparent)] p-4">
+      <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-nx-ink-3">
         <ArrowRightCircle className="h-3.5 w-3.5" />
         {t("leads.drawer.sections.crmStatus")}
       </p>
@@ -74,10 +75,10 @@ export function DrawerStatusSection({
             key={s}
             type="button"
             onClick={() => onStatusClick(s)}
-            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all ${
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-[background-color,color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none ${
               currentStatus === s
                 ? `${STATUS_STYLES[s].badge} ring-1 ${STATUS_STYLES[s].ring}`
-                : "border-border bg-card text-muted-foreground hover:border-border/90 hover:text-foreground"
+                : "border-nx-line bg-nx-surface text-nx-ink-2 hover:border-nx-line-hi hover:text-nx-ink"
             }`}
           >
             <span className={`h-1.5 w-1.5 rounded-full ${STATUS_STYLES[s].dot}`} />
@@ -94,21 +95,21 @@ export function DrawerStatusSection({
             onChange={(e) => onStatusNoteChange(e.target.value)}
             placeholder={t("leads.drawer.status.notePlaceholder")}
             rows={2}
-            className="resize-none border-border bg-background text-sm text-foreground placeholder:text-muted-foreground"
+            className="resize-none border-nx-line bg-nx-ground text-sm text-nx-ink placeholder:text-nx-ink-3"
           />
 
           {/* Email Notification Toggle */}
           {pendingStatus && pendingStatus !== lead.status && pendingStatus !== "New" && (
-            <div className="mt-2 space-y-4 rounded-xl border border-border/80 bg-background/40 p-4 transition-all duration-300">
+            <div className="mt-2 space-y-4 rounded-nx-md border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-ground)_40%,transparent)] p-4 transition-[background-color,border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none">
               <div className="flex items-center justify-between gap-4">
                 <div className="space-y-0.5">
                   <Label
                     htmlFor="send-email-status-change"
-                    className="cursor-pointer select-none text-xs font-semibold text-foreground"
+                    className="cursor-pointer select-none text-xs font-semibold text-nx-ink"
                   >
                     {t("leads.email.sendNotificationToggle")}
                   </Label>
-                  <p className="text-[10px] leading-relaxed text-muted-foreground">
+                  <p className="text-[10px] leading-relaxed text-nx-ink-3">
                     {t("leads.email.sendNotificationToggleDesc")}
                   </p>
                 </div>
@@ -120,7 +121,7 @@ export function DrawerStatusSection({
               </div>
 
               {sendEmailToggle && (
-                <div className="space-y-4 border-t border-border/80 pt-4 duration-200 animate-in fade-in slide-in-from-top-1">
+                <div className="space-y-4 border-t border-nx-line pt-4 duration-nx-standard animate-in fade-in ease-nx-enter motion-reduce:animate-none slide-in-from-top-1">
                   {isFetchingPreview ? (
                     <div className="space-y-3 py-2">
                       <Skeleton shape="text" className="h-4 w-1/4" />
@@ -129,28 +130,28 @@ export function DrawerStatusSection({
                       <Skeleton shape="block" className="h-28 w-full rounded-nx-md" />
                     </div>
                   ) : (
-                    <div className="space-y-4 rounded-lg border border-info/25 bg-background/60 p-3.5">
-                      <div className="flex items-center gap-2 border-b border-border/60 pb-1.5">
+                    <div className="space-y-4 rounded-nx-md border border-info/25 bg-[color:color-mix(in_srgb,var(--nx-ground)_60%,transparent)] p-3.5">
+                      <div className="flex items-center gap-2 border-b border-nx-line pb-1.5">
                         <Mail className="h-4 w-4 text-info" aria-hidden="true" />
-                        <span className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-nx-ink-3">
                           {t("leads.email.draftPreviewHeader")}
                         </span>
                       </div>
 
                       <div className="space-y-1">
-                        <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        <Label className="text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
                           {t("leads.email.subject")}
                         </Label>
                         <Input
                           value={emailSubject}
                           onChange={(e) => onEmailSubjectChange(e.target.value)}
                           placeholder={t("leads.email.subjectPlaceholder")}
-                          className="h-9 border-border bg-card/60 text-xs text-foreground placeholder:text-muted-foreground focus:border-border/90"
+                          className="h-9 border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_60%,transparent)] text-xs text-nx-ink placeholder:text-nx-ink-3 focus:border-nx-line-hi"
                         />
                       </div>
 
                       <div className="space-y-1">
-                        <Label className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        <Label className="text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
                           {t("leads.email.body")}
                         </Label>
                         <Textarea
@@ -158,9 +159,9 @@ export function DrawerStatusSection({
                           onChange={(e) => onEmailBodyChange(e.target.value)}
                           placeholder={t("leads.email.bodyPlaceholder")}
                           rows={6}
-                          className="custom-scrollbar resize-none border-border bg-card/60 font-sans text-xs leading-relaxed text-foreground placeholder:text-muted-foreground focus:border-border/90"
+                          className="custom-scrollbar resize-none border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_60%,transparent)] font-sans text-xs leading-relaxed text-nx-ink placeholder:text-nx-ink-3 focus:border-nx-line-hi"
                         />
-                        <div className="mt-1.5 flex items-center gap-1.5 text-[9px] italic text-muted-foreground">
+                        <div className="mt-1.5 flex items-center gap-1.5 text-[9px] italic text-nx-ink-3">
                           <Info className="h-3 w-3 shrink-0 text-info/80" aria-hidden="true" />
                           <span>{t("leads.email.bodyHint")}</span>
                         </div>
@@ -179,12 +180,12 @@ export function DrawerStatusSection({
           >
             {isUpdatingStatus ? (
               <>
-                <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+                <LoadingSpinner size="inline" showText={false} className="me-1.5" />
                 {t("leads.drawer.status.saving")}
               </>
             ) : statusNoteSaved ? (
               <>
-                <CheckCheck className="mr-1.5 h-3.5 w-3.5 text-success" />
+                <CheckCheck className="me-1.5 h-3.5 w-3.5 text-success" />
                 {t("leads.drawer.status.saved")}
               </>
             ) : (

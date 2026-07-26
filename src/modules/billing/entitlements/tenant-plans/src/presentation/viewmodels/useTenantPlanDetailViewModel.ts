@@ -501,14 +501,14 @@ export function useTenantPlanDetailViewModel(planId: string) {
       discardPricing();
       queryClient.invalidateQueries({ queryKey });
       success({
-        title: t("entitlements.tenantPlans.updated") || "Plan Updated",
-        description: t("entitlements.tenantPlans.updatedDesc") || "Plan details updated.",
+        title: t("entitlements.tenantPlans.updated"),
+        description: t("entitlements.tenantPlans.updatedDesc"),
       });
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description: t("common.updateFailed") || "Failed to update.",
+        title: t("common.error"),
+        description: t("common.updateFailed"),
       });
     },
   });
@@ -541,14 +541,14 @@ export function useTenantPlanDetailViewModel(planId: string) {
       queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });
       success({
-        title: t("entitlements.tenantPlans.published") || "Plan Published",
-        description: t("entitlements.tenantPlans.publishedDesc") || "Plan is now live.",
+        title: t("entitlements.tenantPlans.published"),
+        description: t("entitlements.tenantPlans.publishedDesc"),
       });
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description: t("entitlements.tenantPlans.publishFailed") || "Failed to publish plan.",
+        title: t("common.error"),
+        description: t("entitlements.tenantPlans.publishFailed"),
       });
     },
   });
@@ -561,14 +561,14 @@ export function useTenantPlanDetailViewModel(planId: string) {
       queryClient.invalidateQueries({ queryKey });
       queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });
       success({
-        title: t("entitlements.tenantPlans.archived") || "Plan Archived",
-        description: t("entitlements.tenantPlans.archivedDesc") || "Plan has been archived.",
+        title: t("entitlements.tenantPlans.archived"),
+        description: t("entitlements.tenantPlans.archivedDesc"),
       });
     },
     onError: () => {
       showError({
-        title: t("common.error") || "Error",
-        description: t("entitlements.tenantPlans.archiveFailed") || "Failed to archive plan.",
+        title: t("common.error"),
+        description: t("entitlements.tenantPlans.archiveFailed"),
       });
     },
   });

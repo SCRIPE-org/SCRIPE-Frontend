@@ -59,7 +59,7 @@ export function InvoiceListView() {
       searchable: false,
       customActions: [
         {
-          label: t("billing.actions.exportAllPdf") || "Export All PDFs",
+          label: t("billing.actions.exportAllPdf"),
           onClick: vm.handleBulkDownloadPdf,
           variant: "outline" as const,
           icon: <FileDown className="h-4 w-4" aria-hidden="true" />,
@@ -81,7 +81,7 @@ export function InvoiceListView() {
         },
         {
           key: "tenantName",
-          label: t("billing.columns.tenantName") || "Tenant",
+          label: t("billing.columns.tenantName"),
           render: (value: string) => <span className="font-medium">{value || "—"}</span>,
         },
         {
@@ -107,7 +107,7 @@ export function InvoiceListView() {
           label: t("billing.columns.status"),
           render: (value: string) => (
             <Badge variant={STATUS_VARIANTS[value] ?? "secondary"}>
-              {t(`billing.status.${value}`) ?? value}
+              {t(`billing.status.${value}`)}
             </Badge>
           ),
         },
@@ -165,8 +165,8 @@ export function InvoiceListView() {
                   <Download className="h-4 w-4" aria-hidden="true" />
                 )}
                 {pdfLoading
-                  ? t("billing.actions.downloading") || "Downloading..."
-                  : t("billing.actions.downloadPdf") || "Download PDF"}
+                  ? t("billing.actions.downloading")
+                  : t("billing.actions.downloadPdf")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -180,8 +180,8 @@ export function InvoiceListView() {
                   <Mail className="h-4 w-4" aria-hidden="true" />
                 )}
                 {emailLoading
-                  ? t("billing.actions.sending") || "Sending..."
-                  : t("billing.actions.sendEmail") || "Send to Tenant Email"}
+                  ? t("billing.actions.sending")
+                  : t("billing.actions.sendEmail")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

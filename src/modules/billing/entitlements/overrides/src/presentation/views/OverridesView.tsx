@@ -32,7 +32,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Trash2, Pencil, Shield, Layers, DollarSign } from "lucide-react";
 import { Textarea } from "@core/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { formatUtc } from "@core/common/utils";
+import { formatUtc, resolveBilingualLabel } from "@core/common/utils";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
@@ -76,7 +76,7 @@ export function OverridesView({ tenantId }: OverridesViewProps) {
     <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold tracking-tight">{t("entitlements.overrides.title")}</h2>
-        <p className="text-muted-foreground">{t("entitlements.overrides.description")}</p>
+        <p className="text-nx-ink-2">{t("entitlements.overrides.description")}</p>
       </div>
 
       <Tabs defaultValue="resolved" className="space-y-4">
@@ -89,7 +89,7 @@ export function OverridesView({ tenantId }: OverridesViewProps) {
             <Shield className="h-4 w-4" />
             {t("entitlements.overrides.title")}
             {vm.overrides.length > 0 && (
-              <Badge variant="secondary" className="ml-1">
+              <Badge variant="secondary" className="ms-1">
                 {vm.overrides.length}
               </Badge>
             )}
@@ -129,7 +129,7 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
           <CardDescription>{t("entitlements.overrides.resolvedDesc")}</CardDescription>
         </div>
         <Input
-          placeholder={t("common.search") || "Search features..."}
+          placeholder={t("common.search")}
           className="max-w-xs"
           value={vm.resolvedSearch}
           onChange={(e) => vm.setResolvedSearch(e.target.value)}
@@ -137,10 +137,10 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
       </CardHeader>
       <CardContent>
         {vm.paginatedResolved.length === 0 ? (
-          <p className="py-8 text-center text-muted-foreground">
+          <p className="py-8 text-center text-nx-ink-3">
             {vm.resolvedFeatures.length === 0
               ? t("common.noResults")
-              : t("common.noResultsForSearch") || "No features match your search."}
+              : t("common.noResultsForSearch")}
           </p>
         ) : (
           <>
@@ -148,18 +148,18 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
               <TableHeader>
                 <TableRow>
                   <TableHead>{t("entitlements.features.featureName")}</TableHead>
-                  <TableHead>{t("entitlements.features.featureKey") || "Key"}</TableHead>
+                  <TableHead>{t("entitlements.features.featureKey")}</TableHead>
                   <TableHead>{t("entitlements.features.valueType")}</TableHead>
                   <TableHead>{t("entitlements.features.defaultValue")}</TableHead>
                   <TableHead>{t("entitlements.overrides.source")}</TableHead>
-                  <TableHead className="text-right">{t("common.actions")}</TableHead>
+                  <TableHead className="text-end">{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {vm.paginatedResolved.map((f) => (
                   <TableRow key={f.featureId}>
                     <TableCell className="font-medium">
-                      {language === "ar" ? f.nameAr : f.nameEn}
+                      {resolveBilingualLabel(f.nameEn, f.nameAr, language)}
                     </TableCell>
                     <TableCell>
                       <span className="font-mono text-xs">{f.key}</span>
@@ -181,7 +181,7 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
                         {t(`entitlements.overrides.source${f.source}`)}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       <Button
                         variant="ghost"
                         size="sm"
@@ -189,7 +189,7 @@ function ResolvedFeaturesCard({ vm, t }: { vm: VM; t: TFn }) {
                           vm.openSetOverride(f.featureId, f.key, f.valueType, f.effectiveValue)
                         }
                       >
-                        <Pencil className="mr-1 h-4 w-4" />
+                        <Pencil className="me-1 h-4 w-4" />
                         {t("entitlements.overrides.set")}
                       </Button>
                     </TableCell>
@@ -225,11 +225,11 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
           <CardDescription>{t("entitlements.overrides.description")}</CardDescription>
         </div>
         {totalCostUsd > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success/5 px-3 py-2">
+          <div className="flex items-center gap-2 rounded-nx-md border border-success/30 bg-success/5 px-3 py-2">
             <DollarSign className="h-4 w-4 text-success" />
             <div className="text-sm">
-              <span className="text-muted-foreground">
-                {t("entitlements.overrides.totalCost") || "Total Override Cost"}:
+              <span className="text-nx-ink-3">
+                {t("entitlements.overrides.totalCost")}:
               </span>{" "}
               <span className="font-bold text-success">${totalCostUsd.toFixed(2)} USD</span>
             </div>
@@ -238,7 +238,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
       </CardHeader>
       <CardContent>
         {vm.overrides.length === 0 ? (
-          <p className="py-8 text-center text-muted-foreground">
+          <p className="py-8 text-center text-nx-ink-3">
             {t("entitlements.overrides.noOverrides")}
           </p>
         ) : (
@@ -251,8 +251,8 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                   <TableHead>{t("entitlements.features.defaultValue")}</TableHead>
                   <TableHead>{t("entitlements.overrides.reason")}</TableHead>
                   <TableHead>{t("common.createdAt")}</TableHead>
-                  <TableHead>{t("entitlements.overrides.costAmount") || "Cost (USD)"}</TableHead>
-                  <TableHead className="text-right">{t("common.actions")}</TableHead>
+                  <TableHead>{t("entitlements.overrides.costAmount")}</TableHead>
+                  <TableHead className="text-end">{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -273,7 +273,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                         <span className="font-semibold">{o.value}</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
+                    <TableCell className="text-sm text-nx-ink-3">
                       {o.reason || "—"}
                     </TableCell>
                     <TableCell className="text-sm">
@@ -287,7 +287,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                           </span>
                           {o.costReason && (
                             <p
-                              className="mt-0.5 max-w-[120px] truncate text-xs text-muted-foreground"
+                              className="mt-0.5 max-w-[120px] truncate text-xs text-nx-ink-3"
                               title={o.costReason}
                             >
                               {o.costReason}
@@ -295,10 +295,10 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
+                        <span className="text-xs text-nx-ink-3">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-end">
                       <div className="flex justify-end gap-1">
                         <Button
                           variant="ghost"
@@ -312,7 +312,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                         <Button
                           variant="ghost"
                           size="sm"
-                          title={t("entitlements.overrides.setCost") || "Set Cost"}
+                          title={t("entitlements.overrides.setCost")}
                           onClick={() => vm.openCostDialog(o.id)}
                         >
                           <DollarSign className="h-4 w-4" />
@@ -360,7 +360,7 @@ function SetOverrideDialog({ vm, t }: { vm: VM; t: TFn }) {
 
         <div className="space-y-4 py-4">
           <div>
-            <Label className="text-xs text-muted-foreground">
+            <Label className="text-xs text-nx-ink-3">
               {t("entitlements.features.featureName")}
             </Label>
             <p className="mt-1 font-mono text-sm">{vm.editingFeature?.featureName}</p>
@@ -424,15 +424,14 @@ function CostDialog({ vm, t }: { vm: VM; t: TFn }) {
     >
       <DialogContent className="max-w-sm">
         <DialogHeader>
-          <DialogTitle>{t("entitlements.overrides.setCost") || "Set Cost Adjustment"}</DialogTitle>
+          <DialogTitle>{t("entitlements.overrides.setCost")}</DialogTitle>
           <DialogDescription>
-            {t("entitlements.overrides.setCostDesc") ||
-              "Assign a monthly USD cost for this override."}
+            {t("entitlements.overrides.setCostDesc")}
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="space-y-2">
-            <Label>{t("entitlements.overrides.costAmount") || "Amount (USD)"}</Label>
+            <Label>{t("entitlements.overrides.costAmount")}</Label>
             <Input
               type="number"
               min="0"
@@ -443,28 +442,25 @@ function CostDialog({ vm, t }: { vm: VM; t: TFn }) {
             />
           </div>
           <div className="space-y-2">
-            <Label>{t("entitlements.overrides.costReason") || "Reason (optional)"}</Label>
+            <Label>{t("entitlements.overrides.costReason")}</Label>
             <Textarea
               value={vm.costReason}
               onChange={(e) => vm.setCostReason(e.target.value)}
-              placeholder={
-                t("entitlements.overrides.costReasonPlaceholder") ||
-                "e.g. Extra admin seats surcharge"
-              }
+              placeholder={t("entitlements.overrides.costReasonPlaceholder")}
               rows={2}
             />
           </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => vm.closeCostDialog()} disabled={vm.isSavingCost}>
-            {t("common.cancel") || "Cancel"}
+            {t("common.cancel")}
           </Button>
           <Button
             onClick={() => vm.submitCost()}
             disabled={!vm.costAmount}
             loading={vm.isSavingCost}
           >
-            {vm.isSavingCost ? t("common.saving") || "Saving..." : t("common.save") || "Save"}
+            {vm.isSavingCost ? t("common.saving") : t("common.save")}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -490,12 +486,12 @@ function PaginationBar({
   if (totalPages <= 1) return null;
   return (
     <div className="mt-3 flex items-center justify-between border-t pt-3">
-      <p className="text-sm text-muted-foreground">
-        {t("common.page") || "Page"} {page} / {totalPages}
+      <p className="text-sm text-nx-ink-3">
+        {t("common.page")} {page} / {totalPages}
       </p>
       <div className="flex items-center gap-1">
         <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>
-          {t("common.previous") || "Previous"}
+          {t("common.previous")}
         </Button>
         <Button
           variant="outline"
@@ -503,7 +499,7 @@ function PaginationBar({
           disabled={page >= totalPages}
           onClick={() => setPage(page + 1)}
         >
-          {t("common.next") || "Next"}
+          {t("common.next")}
         </Button>
       </div>
     </div>

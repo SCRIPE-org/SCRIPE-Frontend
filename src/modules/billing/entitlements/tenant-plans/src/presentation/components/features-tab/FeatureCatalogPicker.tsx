@@ -9,6 +9,7 @@
 "use client";
 
 import { useState } from "react";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
 import {
@@ -115,7 +116,7 @@ export function FeatureCatalogPicker({
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">
-                            {language === "ar" ? feature.displayNameAr : feature.displayNameEn}
+                            {resolveBilingualLabel(feature.displayNameEn, feature.displayNameAr, language)}
                           </span>
                           <Badge variant="outline" className="text-[10px]">
                             {feature.valueType}

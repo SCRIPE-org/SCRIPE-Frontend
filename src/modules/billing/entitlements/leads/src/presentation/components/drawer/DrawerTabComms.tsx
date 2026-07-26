@@ -35,15 +35,15 @@ export function DrawerTabComms({
       {canSendEmail && (
         <Button
           onClick={onOpenEmailDialog}
-          className="h-9 w-full gap-2 bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+          className="h-9 w-full gap-2 bg-nx-accent-fill text-sm font-semibold text-nx-on-fill hover:bg-[color:color-mix(in_srgb,var(--nx-accent-fill)_90%,transparent)]"
         >
           <Send className="h-4 w-4" />
           {t("leads.email.send")}
         </Button>
       )}
 
-      <div className="rounded-xl border border-border/50 bg-card/40 p-4">
-        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+      <div className="rounded-nx-md border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_40%,transparent)] p-4">
+        <p className="mb-3 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-widest text-nx-ink-3">
           <Mail className="h-3.5 w-3.5" />
           {t("leads.email.communicationsTitle")}
         </p>
@@ -57,14 +57,14 @@ export function DrawerTabComms({
             ))}
           </div>
         ) : !communicationLogs || communicationLogs.length === 0 ? (
-          <p className="text-xs text-muted-foreground">{t("leads.email.noEmailsSent")}</p>
+          <p className="text-xs text-nx-ink-3">{t("leads.email.noEmailsSent")}</p>
         ) : (
-          <ol className="relative space-y-4 border-s border-primary/40 ps-4">
+          <ol className="relative space-y-4 border-s border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] ps-4">
             {communicationLogs.map((log) => (
               <li key={log.id}>
-                <div className="absolute -start-[5px] mt-1 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" />
-                <p className="truncate text-xs font-semibold text-foreground">{log.subject}</p>
-                <p className="mt-0.5 text-[10px] text-muted-foreground">
+                <div className="absolute -start-[5px] mt-1 h-2.5 w-2.5 rounded-full bg-nx-accent ring-2 ring-nx-ground" />
+                <p className="truncate text-xs font-semibold text-nx-ink">{log.subject}</p>
+                <p className="mt-0.5 text-[10px] text-nx-ink-3">
                   {t("leads.email.sentBy")} {log.sentByAdminName} · {formatDateTimeUtc(log.sentAt)}
                 </p>
                 {log.isFailed && (

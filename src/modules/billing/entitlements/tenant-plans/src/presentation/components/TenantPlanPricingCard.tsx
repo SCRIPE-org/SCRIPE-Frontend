@@ -19,7 +19,7 @@
  */
 "use client";
 
-import {  cn , resolveIntlLocale } from "@core/common/utils";
+import { cn, resolveBilingualLabel, resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Check, Infinity as InfinityIcon } from "lucide-react";
 import { RecommendationBadge } from "@modules/entitlements/core";
@@ -60,7 +60,9 @@ export function TenantPlanPricingCard({
   previewLabel,
 }: TenantPlanPricingCardProps) {
   const { t } = useI18n();
-  const displayName = (language === "ar" ? plan.displayNameAr : plan.displayNameEn) || plan.name;
+  const displayName =
+    resolveBilingualLabel(plan.displayNameEn ?? "", plan.displayNameAr ?? "", language) ||
+    plan.name;
   const badges = plan.badgeText ? [plan.badgeText] : [];
   const locale = resolveIntlLocale(language);
 

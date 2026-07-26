@@ -37,7 +37,7 @@ export function BulkActionBar({
         // Logical centering (mx-auto + w-fit against a full-bleed inset-x-0)
         // replaces a physical left-1/2 + -translate-x-1/2 pair; z-sticky is the
         // semantic ladder's slot for a floating bottom action bar.
-        "fixed inset-x-0 bottom-6 z-sticky mx-auto flex w-fit items-center gap-3 rounded-nx-lg border border-primary/20 bg-background/95 px-5 py-3 shadow-nx-modal transition-[opacity,transform] duration-nx-panel ease-nx-enter motion-reduce:!transform-none motion-reduce:transition-none",
+        "fixed inset-x-0 bottom-6 z-sticky mx-auto flex w-fit items-center gap-3 rounded-nx-lg border border-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-ground)_95%,transparent)] px-5 py-3 shadow-nx-modal transition-[opacity,transform] duration-nx-panel ease-nx-enter motion-reduce:!transform-none motion-reduce:transition-none",
         count > 0
           ? "pointer-events-auto translate-y-0 opacity-100"
           : "pointer-events-none translate-y-4 opacity-0"
@@ -45,11 +45,11 @@ export function BulkActionBar({
       aria-live="polite"
     >
       {/* Selection count */}
-      <span className="text-sm font-medium tabular-nums text-foreground">
+      <span className="text-sm font-medium tabular-nums text-nx-ink">
         {t("leads.bulk.selectedCount", { count: String(count) })}
       </span>
 
-      <div className="h-4 w-px bg-border" />
+      <div className="h-4 w-px bg-nx-line" />
 
       {canClose && (
         <Button
@@ -78,13 +78,13 @@ export function BulkActionBar({
         </Button>
       )}
 
-      <div className="h-4 w-px bg-border" />
+      <div className="h-4 w-px bg-nx-line" />
 
       {/* Clear */}
       <button
         id="leads-bulk-clear-btn"
         onClick={onClear}
-        className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+        className="text-xs text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
         aria-label={t("leads.bulk.clearSelection")}
       >
         ✕

@@ -122,7 +122,7 @@ export function usePaymentGatewaysViewModel() {
     onSuccess: (res: { actionRequired?: string; message: string }) => {
       if (res.actionRequired === "config_change") {
         showError({
-          title: t("billing.gateways.configRequired") || "Configuration Required",
+          title: t("billing.gateways.configRequired"),
           description: res.message,
         });
       } else {

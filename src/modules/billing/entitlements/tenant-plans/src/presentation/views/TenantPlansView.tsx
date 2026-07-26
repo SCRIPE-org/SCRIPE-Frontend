@@ -62,7 +62,7 @@ export function TenantPlansView() {
       resource: "tenant_plans",
       customActions: [
         {
-          label: t("entitlements.tenantPlans.comparison.heroTitle") || "Compare Plans",
+          label: t("entitlements.tenantPlans.comparison.heroTitle"),
           onClick: async () => {
             router.push("/entitlements/tenant-plans/compare");
           },
@@ -74,20 +74,20 @@ export function TenantPlansView() {
       columns: [
         {
           key: "name",
-          label: t("entitlements.tenantPlans.planName") || "Plan Name",
+          label: t("entitlements.tenantPlans.planName"),
           sortable: true,
           render: (_val: unknown, plan: TenantPlan) => (
             <div className="flex items-center gap-2">
               {plan.color && (
                 <div
-                  className="h-3 w-3 rounded-full ring-1 ring-inset ring-black/10"
+                  className="h-3 w-3 rounded-full ring-1 ring-nx-line"
                   style={{ backgroundColor: plan.color }}
                 />
               )}
               <div>
                 <span className="font-medium">{plan.name}</span>
                 {plan.badgeText && (
-                  <Badge variant="outline" className="ml-2 text-xs">
+                  <Badge variant="outline" className="ms-2 text-xs">
                     {plan.badgeText}
                   </Badge>
                 )}
@@ -97,14 +97,14 @@ export function TenantPlansView() {
         },
         {
           key: "status",
-          label: t("common.status") || "Status",
+          label: t("common.status"),
           render: (_val: unknown, plan: TenantPlan) => (
             <Badge variant={plan.statusColor}>{plan.status}</Badge>
           ),
         },
         {
           key: "pricing",
-          label: t("entitlements.tenantPlans.pricing") || "Starting Price",
+          label: t("entitlements.tenantPlans.pricing"),
           render: (_val: unknown, plan: TenantPlan) => (
             <span className="text-sm font-medium tabular-nums text-success">
               {plan.formattedStartingPrice}
@@ -113,7 +113,7 @@ export function TenantPlansView() {
         },
         {
           key: "cycles",
-          label: t("entitlements.tenantPlans.billingCycles") || "Billing Cycles",
+          label: t("entitlements.tenantPlans.billingCycles"),
           render: (_val: unknown, plan: TenantPlan) => (
             <div className="flex flex-wrap gap-1">
               {plan.supportedCycles.map((cycle) => (
@@ -122,21 +122,21 @@ export function TenantPlansView() {
                 </Badge>
               ))}
               {plan.supportedCycles.length === 0 && (
-                <span className="text-xs text-muted-foreground">—</span>
+                <span className="text-xs text-nx-ink-3">—</span>
               )}
             </div>
           ),
         },
         {
           key: "maxUsers",
-          label: t("entitlements.tenantPlans.maxUsers") || "Max Users",
+          label: t("entitlements.tenantPlans.maxUsers"),
           render: (_val: unknown, plan: TenantPlan) => (
             <span className="tabular-nums">{plan.maxUsersDisplay}</span>
           ),
         },
         {
           key: "activeSubscriberCount",
-          label: t("entitlements.tenantPlans.subscribers") || "Subscribers",
+          label: t("entitlements.tenantPlans.subscribers"),
           render: (_val: unknown, plan: TenantPlan) => (
             <Badge variant={plan.hasActiveSubscribers ? "default" : "secondary"}>
               {plan.activeSubscriberCount}
@@ -145,24 +145,24 @@ export function TenantPlansView() {
         },
         {
           key: "tierLevel",
-          label: t("entitlements.tenantPlans.tier") || "Tier",
+          label: t("entitlements.tenantPlans.tier"),
           render: (_val: unknown, plan: TenantPlan) => (
             <span className="text-sm tabular-nums">{plan.tierLevel}</span>
           ),
         },
         {
           key: "trialDays",
-          label: t("entitlements.tenantPlans.trialDays") || "Trial",
+          label: t("entitlements.tenantPlans.trialDays"),
           render: (_val: unknown, plan: TenantPlan) =>
             plan.hasTrial ? (
               <Badge variant="outline">{plan.trialDays}d</Badge>
             ) : (
-              <span className="text-muted-foreground">—</span>
+              <span className="text-nx-ink-3">—</span>
             ),
         },
         {
           key: "createdAt",
-          label: t("common.createdAt") || "Created",
+          label: t("common.createdAt"),
           render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
@@ -174,7 +174,7 @@ export function TenantPlansView() {
         handleDeleteFn: ((item: TenantPlan) => void) | undefined
       ): CrudAction<TenantPlan>[] => [
         {
-          label: tFn("common.view") || "View",
+          label: tFn("common.view"),
           onClick: (item: TenantPlan) => {
             router.push(`/entitlements/tenant-plans/${item.id}`);
           },
@@ -182,13 +182,13 @@ export function TenantPlansView() {
           icon: <Eye className="h-4 w-4" />,
         },
         {
-          label: tFn("entitlements.tenantPlans.managePlan") || "Manage Plan",
+          label: tFn("entitlements.tenantPlans.managePlan"),
           onClick: (item: TenantPlan) => vmInstance.navigateToDetail(item.id),
           variant: "ghost" as const,
           icon: <Settings2 className="h-4 w-4" />,
         },
         {
-          label: tFn("common.edit") || "Edit",
+          label: tFn("common.edit"),
           onClick: (item: TenantPlan) => {
             router.push(`/entitlements/tenant-plans/${item.id}/edit`);
           },
@@ -197,7 +197,7 @@ export function TenantPlansView() {
           show: (item: TenantPlan) => !item.isArchived,
         },
         {
-          label: tFn("entitlements.tenantPlans.publish") || "Publish",
+          label: tFn("entitlements.tenantPlans.publish"),
           onClick: (item: TenantPlan) => setConfirmAction({ type: "publish", plan: item }),
           variant: "ghost" as const,
           className: "text-success hover:text-success/80",
@@ -205,7 +205,7 @@ export function TenantPlansView() {
           show: (item: TenantPlan) => item.isDraft,
         },
         {
-          label: tFn("entitlements.tenantPlans.archive") || "Archive",
+          label: tFn("entitlements.tenantPlans.archive"),
           onClick: (item: TenantPlan) => setConfirmAction({ type: "archive", plan: item }),
           variant: "ghost" as const,
           className: "text-warning hover:text-warning/80",
@@ -213,7 +213,7 @@ export function TenantPlansView() {
           show: (item: TenantPlan) => item.isPublished,
         },
         {
-          label: tFn("common.delete") || "Delete",
+          label: tFn("common.delete"),
           onClick: (item: TenantPlan) => handleDeleteFn?.(item),
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",
@@ -238,22 +238,20 @@ export function TenantPlansView() {
               {confirmAction?.type === "publish" ? (
                 <>
                   <Rocket className="h-4 w-4 text-success" />{" "}
-                  {t("entitlements.tenantPlans.publish") || "Publish"}
+                  {t("entitlements.tenantPlans.publish")}
                 </>
               ) : (
                 <>
                   <Archive className="h-4 w-4 text-warning" />{" "}
-                  {t("entitlements.tenantPlans.archive") || "Archive"}
+                  {t("entitlements.tenantPlans.archive")}
                 </>
               )}
             </DialogTitle>
             <DialogDescription>
               {confirmAction?.type === "publish"
-                ? t("entitlements.tenantPlans.publishDesc") ||
-                  "Make this plan live for subscriptions."
-                : t("entitlements.tenantPlans.archiveDesc") ||
-                  "Archive this plan. Existing subscriptions are maintained."}
-              <span className="mt-1 block font-medium text-foreground">
+                ? t("entitlements.tenantPlans.publishDesc")
+                : t("entitlements.tenantPlans.archiveDesc")}
+              <span className="mt-1 block font-medium text-nx-ink">
                 {confirmAction?.plan.name}
               </span>
             </DialogDescription>
@@ -272,8 +270,8 @@ export function TenantPlansView() {
               }
             >
               {confirmAction?.type === "publish"
-                ? t("entitlements.tenantPlans.publish") || "Publish"
-                : t("entitlements.tenantPlans.archive") || "Archive"}
+                ? t("entitlements.tenantPlans.publish")
+                : t("entitlements.tenantPlans.archive")}
             </Button>
           </DialogFooter>
         </DialogContent>
