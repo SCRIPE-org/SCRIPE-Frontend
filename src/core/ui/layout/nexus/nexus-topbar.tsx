@@ -27,7 +27,7 @@ import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { BRAND } from "@core/config/branding";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import {
   TopbarBreadcrumbs,
   TopbarContextPill,
@@ -72,9 +72,11 @@ export function NexusTopbar({
 
   const workspaceName = activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? "Platform";
   const activeRootName = activeRootItem
-    ? language === "ar"
-      ? activeRootItem.nameAr || activeRootItem.nameEn
-      : activeRootItem.nameEn || activeRootItem.nameAr
+    ? resolveBilingualLabel(
+        activeRootItem.nameEn || activeRootItem.nameAr,
+        activeRootItem.nameAr || activeRootItem.nameEn,
+        language
+      )
     : null;
 
   const isIdString = (str: string): boolean => {
@@ -116,10 +118,11 @@ export function NexusTopbar({
     };
     search(activeRootItem.children);
     if (bestMatch) {
-      displayPageName =
-        language === "ar"
-          ? bestMatch.nameAr || bestMatch.nameEn || formattedPage
-          : bestMatch.nameEn || bestMatch.nameAr || formattedPage;
+      displayPageName = resolveBilingualLabel(
+        bestMatch.nameEn || bestMatch.nameAr || formattedPage,
+        bestMatch.nameAr || bestMatch.nameEn || formattedPage,
+        language
+      );
     }
   }
 
@@ -226,7 +229,7 @@ export function NexusTopbar({
 
         {!isOnHome && (
           <TopbarHomeButton
-            ariaLabel={language === "ar" ? "الصفحة الرئيسية" : "Go to Home"}
+            ariaLabel={t("chrome.goToHome")}
             onClick={() => {
               startRoutingProgress();
               router.push(workspaceHomeRoute);

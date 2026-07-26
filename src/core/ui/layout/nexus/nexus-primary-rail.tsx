@@ -39,7 +39,7 @@ import { useSettings } from "@core/providers/settings-provider";
 import type { MenuItem } from "@core/navigation";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { LayoutGrid } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { DynamicIcon, NX_FOCUS_RING } from "./_parts/primary-rail-parts";
@@ -118,7 +118,7 @@ export function NexusPrimaryRail({
     isModuleMode,
     workspaceGroups,
   } = useWorkspace();
-  const { language, direction } = useI18n();
+  const { language, direction, t } = useI18n();
   const { showNotifications } = useSettings();
   const { switchWorkspace, goBackWorkspace } = useWorkspaceTransitionContext();
 
@@ -151,16 +151,14 @@ export function NexusPrimaryRail({
       if (isLocked) {
         // Show contextual toast — the workspace is locked
         const ws = workspaceGroups.find((g) => g.workspaceKey === wsKey);
-        const name =
-          language === "ar"
-            ? ws?.workspaceNameAr || ws?.workspaceNameEn || wsKey
-            : ws?.workspaceNameEn || wsKey;
+        const name = resolveBilingualLabel(
+          ws?.workspaceNameEn || wsKey,
+          ws?.workspaceNameAr || ws?.workspaceNameEn || wsKey,
+          language
+        );
         toast({
-          title: language === "ar" ? `${name} مقفول` : `${name} is locked`,
-          description:
-            language === "ar"
-              ? "افتح تطبيق المشغّل لمعرفة كيفية إلغاء القفل."
-              : "Open the App Launcher to learn how to unlock this workspace.",
+          title: t("chrome.workspaceLockedToast.title", { name }),
+          description: t("chrome.workspaceLockedToast.description"),
           variant: "default",
           duration: 3000,
         });
@@ -170,7 +168,7 @@ export function NexusPrimaryRail({
       if (activeWorkspace?.workspaceKey === wsKey) return;
       switchWorkspace(wsKey);
     },
-    [switchWorkspace, workspaceGroups, activeWorkspace, language]
+    [switchWorkspace, workspaceGroups, activeWorkspace, language, t, toast]
   );
 
   // Filter out "modules-group" from root items (it's legacy; workspaces are in the rail now)
@@ -291,7 +289,7 @@ export function NexusPrimaryRail({
           <>
             <BackButton
               isRTL={isRTL}
-              label={language === "ar" ? "العودة للإدارة" : "Back to Admin"}
+              label={t("chrome.backToAdmin")}
               onClick={goBackWorkspace}
             />
             <Divider />
@@ -340,10 +338,11 @@ export function NexusPrimaryRail({
                 const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
                 // Pins keep their own workspace colour; the token is the fallback
                 const wsAccent = ws.accentColor || "var(--nx-accent)";
-                const wsLabel =
-                  language === "ar"
-                    ? ws.workspaceNameAr || ws.workspaceNameEn
-                    : ws.workspaceNameEn || ws.workspaceNameAr;
+                const wsLabel = resolveBilingualLabel(
+                  ws.workspaceNameEn || ws.workspaceNameAr,
+                  ws.workspaceNameAr || ws.workspaceNameEn,
+                  language
+                );
 
                 return (
                   <ModuleWorkspaceButton
@@ -369,7 +368,7 @@ export function NexusPrimaryRail({
             <TogglePanelButton
               isRTL={isRTL}
               isCollapsed={isPanelCollapsed}
-              label={language === "ar" ? "تبديل اللوحة" : "Toggle Panel"}
+              label={t("navigation.togglePanel")}
               onClick={onTogglePanel}
             />
           )} */}
@@ -380,7 +379,7 @@ export function NexusPrimaryRail({
               <TooltipTrigger asChild>
                 <button
                   type="button"
-                  aria-label={language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
+                  aria-label={t("shell.launcher.title")}
                   onClick={onOpenAppLauncher}
                   className={cn(
                     "flex items-center justify-center rounded-nx-md border border-transparent text-nx-ink-2 transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none",
@@ -392,7 +391,7 @@ export function NexusPrimaryRail({
                 </button>
               </TooltipTrigger>
               <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
-                {language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
+                {t("shell.launcher.title")}
               </TooltipContent>
             </Tooltip>
           )}
@@ -420,7 +419,7 @@ export function NexusPrimaryRail({
                   </div>
                 </TooltipTrigger>
                 <TooltipContent side={isRTL ? "left" : "right"} sideOffset={16}>
-                  {language === "ar" ? "الإشعارات" : "Notifications"}
+                  {t("nav.notifications")}
                 </TooltipContent>
               </Tooltip>
             )}
@@ -467,8 +466,8 @@ function ModuleWorkspaceButton({
   onClick,
 }: ModuleWorkspaceButtonProps) {
   const [hovered, setHovered] = React.useState(false);
-  const { language } = useI18n();
-  const lockedLabel = language === "ar" ? `${label} (مقفل)` : `${label} (Locked)`;
+  const { language, t } = useI18n();
+  const lockedLabel = `${label} (${t("chrome.section.locked")})`;
 
   // Identity colour stays per-workspace (accentColor is data, not styling);
   // every neutral state reads an --nx-* token so no theme branch is needed.

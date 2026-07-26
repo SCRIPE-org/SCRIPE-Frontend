@@ -45,8 +45,8 @@ export function ThemeSwitcher({
   const isDark = theme === "dark";
 
   const themeLabel = isDark
-    ? t("signup.shell.themeToLight") || "Switch to Light Mode"
-    : t("signup.shell.themeToDark") || "Switch to Dark Mode";
+    ? t("signup.shell.themeToLight")
+    : t("signup.shell.themeToDark");
 
   const isGhost = transparent !== undefined ? transparent : variant === "ghost";
 
@@ -62,9 +62,9 @@ export function ThemeSwitcher({
         className={cn("rounded-full", buttonClassName)}
       >
         {isDark ? (
-          <Sun className="h-5 w-5 transition-all" aria-hidden="true" />
+          <Sun className="h-5 w-5" aria-hidden="true" />
         ) : (
-          <Moon className="h-5 w-5 transition-all" aria-hidden="true" />
+          <Moon className="h-5 w-5" aria-hidden="true" />
         )}
       </Button>
     );
@@ -77,7 +77,7 @@ export function ThemeSwitcher({
       aria-label={themeLabel}
       title={themeLabel}
       className={cn(
-        "rounded-full p-2 transition-all duration-200 hover:opacity-80",
+        "rounded-full p-2 transition-opacity duration-nx-standard ease-nx-enter hover:opacity-80 motion-reduce:transition-none",
         buttonClassName
       )}
       style={{

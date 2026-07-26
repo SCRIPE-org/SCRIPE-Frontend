@@ -44,7 +44,7 @@ import type { CSSProperties } from "react";
 import { Bell, CheckCheck, ExternalLink } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { cn } from "@core/common/utils";
+import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useNotificationViewModel } from "./useNotificationViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { NotificationItem } from "@core/notification/entities/NotificationItem";
@@ -67,16 +67,12 @@ const VIEWPORT_GUTTER = 8;
 // speaks "today"/"yesterday" in every locale — so grouping costs zero new
 // locale keys and can never leak an untranslated placeholder.
 
-function intlLocale(language: string): string {
-  return language === "ar" ? "ar" : "en";
-}
-
 function startOfDay(d: Date): number {
   return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
 }
 
 function formatDayHeading(date: Date, language: string): string {
-  const locale = intlLocale(language);
+  const locale = resolveIntlLocale(language);
   const dayDiff = Math.round((startOfDay(date) - startOfDay(new Date())) / 86_400_000);
 
   if (dayDiff === 0 || dayDiff === -1) {
@@ -111,7 +107,7 @@ function formatTimeAgo(
   const days = Math.floor(hours / 24);
   if (days < 7) return t("common.timeAgo.daysAgo", { count: days });
 
-  return new Intl.DateTimeFormat(intlLocale(language), {
+  return new Intl.DateTimeFormat(resolveIntlLocale(language), {
     day: "numeric",
     month: "short",
   }).format(date);

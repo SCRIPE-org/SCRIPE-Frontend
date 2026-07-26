@@ -306,7 +306,7 @@ function CodeEditorModal({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={t("studio.builder.codeEditor") || "Code Editor"}
+        aria-label={t("studio.builder.codeEditor")}
         className="flex h-[85vh] max-h-[750px] w-full max-w-[1100px] flex-col overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface shadow-nx-modal"
         onClick={(e) => e.stopPropagation()}
       >
@@ -315,7 +315,7 @@ function CodeEditorModal({
           <div className="flex items-center gap-3">
             <FileCode2 className="h-4 w-4 text-nx-accent" aria-hidden="true" />
             <span className="text-sm font-medium text-nx-ink">
-              {t("studio.builder.codeEditor") || "Code Editor"}
+              {t("studio.builder.codeEditor")}
             </span>
             {/* Tabs — the active one carries the surface step and the lit
                 bottom edge, the same language as the app's Tabs primitive */}
@@ -354,7 +354,7 @@ function CodeEditorModal({
               )}
             >
               <Zap className="h-3.5 w-3.5" aria-hidden="true" />
-              {t("studio.builder.snippets") || "Snippets"}
+              {t("studio.builder.snippets")}
             </button>
             {showPreview && renderPreview && (
               <button
@@ -370,12 +370,12 @@ function CodeEditorModal({
                 {showPreviewPane ? (
                   <>
                     <Code className="h-3.5 w-3.5" aria-hidden="true" />{" "}
-                    {t("studio.builder.codeOnly") || "Code"}
+                    {t("studio.builder.codeOnly")}
                   </>
                 ) : (
                   <>
                     <Eye className="h-3.5 w-3.5" aria-hidden="true" />{" "}
-                    {t("studio.builder.preview") || "Preview"}
+                    {t("studio.builder.preview")}
                   </>
                 )}
               </button>
@@ -383,7 +383,7 @@ function CodeEditorModal({
             <button
               onClick={onClose}
               className={cn(chromeButton, "px-2 text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink")}
-              aria-label={t("studio.builder.escToClose") || "Press Esc to close"}
+              aria-label={t("studio.builder.escToClose")}
             >
               <X className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -398,7 +398,7 @@ function CodeEditorModal({
               <div className="border-b border-nx-line p-3">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-nx-ink-3">
                   {activeTab?.language === "css" ? "CSS" : "HTML"}{" "}
-                  {t("studio.builder.templates") || "Templates"}
+                  {t("studio.builder.templates")}
                 </h3>
               </div>
               <div className="space-y-1.5 p-2">
@@ -451,11 +451,11 @@ function CodeEditorModal({
         <div className="flex items-center justify-between gap-4 border-t border-nx-line bg-nx-raised px-4 py-2 text-xs text-nx-ink-3">
           <span className="tabular-nums">
             {activeTab?.language.toUpperCase()} • {activeTab?.value?.split("\n").length || 0}{" "}
-            {t("studio.builder.lines") || "lines"}
+            {t("studio.builder.lines")}
           </span>
           <span className="truncate">
-            {t("studio.builder.escToClose") || "Press Esc to close"} •{" "}
-            {t("studio.builder.autoSave") || "Changes save automatically"}
+            {t("studio.builder.escToClose")} •{" "}
+            {t("studio.builder.autoSave")}
           </span>
         </div>
       </div>
@@ -535,7 +535,7 @@ export function CodeEditorField({
         className="flex min-h-9 w-full items-center justify-center gap-2 rounded-nx-control border border-dashed border-nx-line px-3 py-2 text-xs font-medium text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
         <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
-        {t("studio.builder.openEditor") || "Open Full Editor"}
+        {t("studio.builder.openEditor")}
       </button>
 
       {/* CodeMirror Modal */}

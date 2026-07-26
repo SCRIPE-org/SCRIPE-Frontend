@@ -18,7 +18,8 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { Upload, Link2, Trash2, ImageIcon, Loader2, Check, X } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Upload, Link2, Trash2, ImageIcon, Check, X } from "lucide-react";
 import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints";
 import { getCoreContainer } from "@core/di";
 
@@ -79,16 +80,11 @@ export function ImageUploadField({
       if (
         !allowedExts.some((ext) => file.type === ext || file.type.startsWith(ext.replace("*", "")))
       ) {
-        setError(t("imageUpload.invalidType") || "Invalid file type");
+        setError(t("imageUpload.invalidType"));
         return false;
       }
       if (file.size > maxSizeBytes) {
-        setError(
-          (t("imageUpload.tooLarge") || "File exceeds {{max}} MB limit").replace(
-            "{{max}}",
-            String(maxSizeMB)
-          )
-        );
+        setError(t("imageUpload.tooLarge", { max: maxSizeMB }));
         return false;
       }
       return true;
@@ -125,7 +121,7 @@ export function ImageUploadField({
       onChange(cacheBusted);
       setPreviewUrl(null); // Clear preview, use the resolved value
     } catch (err: any) {
-      setError(err?.message || t("imageUpload.uploadFailed") || "Upload failed");
+      setError(err?.message || t("imageUpload.uploadFailed"));
       setPreviewUrl(null);
     } finally {
       setIsUploading(false);
@@ -156,9 +152,7 @@ export function ImageUploadField({
   const handleUrlConfirm = () => {
     if (!urlInput.trim()) return;
     if (!isExternalUrl(urlInput.trim())) {
-      setError(
-        t("imageUpload.invalidUrl") || "Please enter a valid URL starting with http:// or https://"
-      );
+      setError(t("imageUpload.invalidUrl"));
       return;
     }
     setError(null);
@@ -201,8 +195,8 @@ export function ImageUploadField({
             <p className="truncate font-mono text-xs text-nx-ink-2">{value}</p>
             {isUploading && (
               <div className="mt-1 flex items-center gap-1.5 text-xs text-nx-ink-3">
-                <Loader2 className="h-3 w-3 motion-safe:animate-spin" aria-hidden="true" />
-                <span>{t("imageUpload.uploading") || "Uploading..."}</span>
+                <LoadingSpinner size="inline" showText={false} />
+                <span>{t("imageUpload.uploading")}</span>
               </div>
             )}
           </div>
@@ -224,11 +218,11 @@ export function ImageUploadField({
         <TabsList className="grid h-9 w-full grid-cols-2">
           <TabsTrigger value="upload" className="gap-1.5 text-xs">
             <Upload className="h-3.5 w-3.5" />
-            {t("imageUpload.uploadTab") || "Upload"}
+            {t("imageUpload.uploadTab")}
           </TabsTrigger>
           <TabsTrigger value="url" className="gap-1.5 text-xs">
             <Link2 className="h-3.5 w-3.5" />
-            {t("imageUpload.urlTab") || "URL"}
+            {t("imageUpload.urlTab")}
           </TabsTrigger>
         </TabsList>
 
@@ -241,7 +235,7 @@ export function ImageUploadField({
             role="button"
             tabIndex={disabled || isUploading ? -1 : 0}
             aria-disabled={disabled || isUploading || undefined}
-            aria-label={t("imageUpload.dragDrop") || "Drop an image here or click to browse"}
+            aria-label={t("imageUpload.dragDrop")}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -265,10 +259,7 @@ export function ImageUploadField({
             )}
           >
             {isUploading ? (
-              <Loader2
-                className="h-8 w-8 text-nx-accent motion-safe:animate-spin"
-                aria-hidden="true"
-              />
+              <LoadingSpinner size="sm" showText={false} className="py-0" />
             ) : (
               <ImageIcon
                 className={cn("h-8 w-8", isDragging ? "text-nx-accent" : "text-nx-ink-3")}
@@ -277,14 +268,12 @@ export function ImageUploadField({
             )}
             <div>
               <p className="text-sm font-medium text-nx-ink">
-                {isUploading
-                  ? t("imageUpload.uploading") || "Uploading..."
-                  : t("imageUpload.dragDrop") || "Drop an image here or click to browse"}
+                {isUploading ? t("imageUpload.uploading") : t("imageUpload.dragDrop")}
               </p>
               <p className="mt-1 text-xs text-nx-ink-3">
                 PNG, JPG, SVG, WebP ·{" "}
                 <span className="tabular-nums">
-                  {t("imageUpload.maxSize") || "Max"} {maxSizeMB}MB
+                  {t("imageUpload.maxSize")} {maxSizeMB}MB
                 </span>
               </p>
             </div>
@@ -314,7 +303,7 @@ export function ImageUploadField({
                 setUrlInput(e.target.value);
                 setError(null);
               }}
-              placeholder={t("imageUpload.urlPlaceholder") || "https://example.com/logo.png"}
+              placeholder={t("imageUpload.urlPlaceholder")}
               className="flex-1 font-mono text-sm"
               aria-invalid={Boolean(error) || undefined}
               disabled={disabled}
@@ -332,13 +321,10 @@ export function ImageUploadField({
               className="shrink-0 gap-1.5"
             >
               <Check className="h-3.5 w-3.5" />
-              {t("imageUpload.apply") || "Apply"}
+              {t("imageUpload.apply")}
             </Button>
           </div>
-          <p className="mt-1.5 text-xs leading-relaxed text-nx-ink-3">
-            {t("imageUpload.urlHelp") ||
-              "Paste a direct link to an image. Best for well-known provider logos."}
-          </p>
+          <p className="mt-1.5 text-xs leading-relaxed text-nx-ink-3">{t("imageUpload.urlHelp")}</p>
         </TabsContent>
       </Tabs>
 

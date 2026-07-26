@@ -278,7 +278,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                     // Routing dim — opacity only. A blur() here repaints the whole
                     // scroll field on every navigation; the crossfade is the effect.
                     opacity: isNavigating ? 0.35 : 1,
-                    transition: "opacity var(--nx-t-micro, 140ms) ease-out",
+                    transition:
+                      "opacity var(--nx-t-micro, 140ms) var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))",
                   }}
                 >
                   <div className="duration-nx-standard animate-in fade-in">{children}</div>

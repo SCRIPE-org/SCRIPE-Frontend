@@ -96,7 +96,7 @@ const PaginationPrevious = ({
   const { t, direction } = useI18n();
   return (
     <PaginationLink
-      aria-label={t("table.previousPage") || "Go to previous page"}
+      aria-label={t("table.previousPage")}
       size="default"
       className={cn("gap-1 px-2.5", className)}
       {...props}
@@ -106,7 +106,7 @@ const PaginationPrevious = ({
       ) : (
         <ChevronLeft aria-hidden="true" className="h-4 w-4 shrink-0" />
       )}
-      <span>{t("common.previous") || "Previous"}</span>
+      <span>{t("common.previous")}</span>
     </PaginationLink>
   );
 };
@@ -116,12 +116,12 @@ const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof Pag
   const { t, direction } = useI18n();
   return (
     <PaginationLink
-      aria-label={t("table.nextPage") || "Go to next page"}
+      aria-label={t("table.nextPage")}
       size="default"
       className={cn("gap-1 px-2.5", className)}
       {...props}
     >
-      <span>{t("common.next") || "Next"}</span>
+      <span>{t("common.next")}</span>
       {direction === "rtl" ? (
         <ChevronLeft aria-hidden="true" className="h-4 w-4 shrink-0" />
       ) : (

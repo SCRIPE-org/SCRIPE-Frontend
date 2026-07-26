@@ -17,7 +17,8 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { Upload, Link2, Video, Loader2, Check, X } from "lucide-react";
+import { Upload, Link2, Video, Check, X } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints";
 import { getCoreContainer } from "@core/di";
 
@@ -71,14 +72,14 @@ export function VideoUploadField({
 
       // Validate size
       if (file.size > maxSizeBytes) {
-        setError(t("videoUpload.tooLarge", { max: maxMB }) || `File exceeds ${maxMB} MB limit`);
+        setError(t("videoUpload.tooLarge", { max: maxMB }));
         return;
       }
 
       // Validate type
       const ext = file.name.split(".").pop()?.toLowerCase();
       if (!["mp4", "webm", "ogg", "mov"].includes(ext || "")) {
-        setError(t("videoUpload.invalidType") || "Invalid file type. Allowed: MP4, WebM, OGG, MOV");
+        setError(t("videoUpload.invalidType"));
         return;
       }
 
@@ -99,7 +100,7 @@ export function VideoUploadField({
         onChange(cacheBusted);
         setActiveTab("url");
       } catch {
-        setError(t("videoUpload.uploadFailed") || "Upload failed. Please try again.");
+        setError(t("videoUpload.uploadFailed"));
       } finally {
         setIsUploading(false);
       }
@@ -136,9 +137,7 @@ export function VideoUploadField({
       !trimmed.startsWith("https://") &&
       !trimmed.startsWith("/")
     ) {
-      setError(
-        t("videoUpload.invalidUrl") || "Please enter a valid URL starting with http:// or https://"
-      );
+      setError(t("videoUpload.invalidUrl"));
       return;
     }
     setError(null);
@@ -193,11 +192,11 @@ export function VideoUploadField({
         <TabsList className="h-9 w-full">
           <TabsTrigger value="upload" className="h-full flex-1 gap-1.5 text-xs">
             <Upload className="h-3.5 w-3.5" aria-hidden="true" />
-            {t("imageUpload.uploadTab") || "Upload"}
+            {t("imageUpload.uploadTab")}
           </TabsTrigger>
           <TabsTrigger value="url" className="h-full flex-1 gap-1.5 text-xs">
             <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
-            {t("imageUpload.urlTab") || "URL"}
+            {t("imageUpload.urlTab")}
           </TabsTrigger>
         </TabsList>
 
@@ -209,7 +208,7 @@ export function VideoUploadField({
             role="button"
             tabIndex={disabled || isUploading ? -1 : 0}
             aria-disabled={disabled || isUploading || undefined}
-            aria-label={t("videoUpload.dragDrop") || "Drop a video here or click to browse"}
+            aria-label={t("videoUpload.dragDrop")}
             onDrop={handleDrop}
             onDragOver={(e) => {
               e.preventDefault();
@@ -237,13 +236,8 @@ export function VideoUploadField({
           >
             {isUploading ? (
               <>
-                <Loader2
-                  className="h-5 w-5 text-nx-accent motion-safe:animate-spin"
-                  aria-hidden="true"
-                />
-                <span className="text-xs text-nx-ink-2">
-                  {t("imageUpload.uploading") || "Uploading..."}
-                </span>
+                <LoadingSpinner size="sm" showText={false} className="py-0" />
+                <span className="text-xs text-nx-ink-2">{t("imageUpload.uploading")}</span>
               </>
             ) : (
               <>
@@ -252,11 +246,11 @@ export function VideoUploadField({
                   aria-hidden="true"
                 />
                 <span className="text-xs font-medium text-nx-ink">
-                  {t("videoUpload.dragDrop") || "Drop a video here or click to browse"}
+                  {t("videoUpload.dragDrop")}
                 </span>
                 <span className="text-xs text-nx-ink-3">
                   <span className="tabular-nums">
-                    {t("imageUpload.maxSize") || "Max"} {maxMB} MB
+                    {t("imageUpload.maxSize")} {maxMB} MB
                   </span>{" "}
                   · MP4, WebM, OGG, MOV
                 </span>
@@ -278,7 +272,7 @@ export function VideoUploadField({
             <Input
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
-              placeholder={t("videoUpload.urlPlaceholder") || "https://example.com/video.mp4"}
+              placeholder={t("videoUpload.urlPlaceholder")}
               className="h-9 flex-1 font-mono text-xs"
               disabled={disabled}
               aria-invalid={Boolean(error) || undefined}
@@ -294,10 +288,7 @@ export function VideoUploadField({
               <Check className="h-3.5 w-3.5" aria-hidden="true" />
             </Button>
           </div>
-          <p className="text-xs leading-relaxed text-nx-ink-3">
-            {t("videoUpload.urlHelp") ||
-              "Paste a direct .mp4/.webm/.ogg URL. YouTube and Google Drive links are not direct video URLs."}
-          </p>
+          <p className="text-xs leading-relaxed text-nx-ink-3">{t("videoUpload.urlHelp")}</p>
         </TabsContent>
       </Tabs>
 

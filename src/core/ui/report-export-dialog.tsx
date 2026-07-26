@@ -33,12 +33,12 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn } from "@core/common/utils";
 import {
   FileSpreadsheet,
   FileText,
   FileDown,
-  Loader2,
   Check,
   CheckCircle,
   AlertCircle,
@@ -275,7 +275,7 @@ export function ReportExportDialog({
               <>
                 {/* The one animation allowed to loop: it turns only while a
                     request is genuinely in flight. */}
-                <Loader2 className="me-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                <LoadingSpinner size="inline" className="me-2" />
                 {t("export.generating")}
               </>
             ) : (

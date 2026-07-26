@@ -237,7 +237,7 @@ export function DatePicker({
       if (!dateValue) return "";
       const date = parseDateSafe(dateValue);
       if (!date) {
-        return t("common.invalidDate") || "Invalid date";
+        return t("common.invalidDate");
       }
 
       try {
@@ -255,7 +255,7 @@ export function DatePicker({
 
         return new Intl.DateTimeFormat(locale, options).format(date);
       } catch {
-        return t("common.invalidDate") || "Invalid date";
+        return t("common.invalidDate");
       }
     },
     [language, type, t]
@@ -418,17 +418,15 @@ export function DatePicker({
   }, [variant, borderRadiusClass, showCalendar]);
 
   const displayValue = useMemo(() => {
-    if (!value) return placeholder || t("common.selectDate") || "Select date";
+    if (!value) return placeholder || t("common.selectDate");
     return formatDisplayValue(value);
   }, [value, placeholder, formatDisplayValue, t]);
 
   const ariaLabel = useMemo(() => {
     if (value) {
-      return `${
-        placeholder || t("common.selectDate") || "Select date"
-      }: ${formatDisplayValue(value)}`;
+      return `${placeholder || t("common.selectDate")}: ${formatDisplayValue(value)}`;
     }
-    return placeholder || t("common.selectDate") || "Select date";
+    return placeholder || t("common.selectDate");
   }, [value, placeholder, formatDisplayValue, t]);
 
   return (
@@ -464,7 +462,7 @@ export function DatePicker({
         aria-disabled={disabled}
       >
         <span id={descriptionId} className="sr-only">
-          {t("common.datePickerInstructions") || "Press Enter or Space to open calendar"}
+          {t("common.datePickerInstructions")}
         </span>
         {/* A formatted date is a run of digits — tabular figures stop the
             field twitching as the value changes. Empty reads as placeholder
@@ -512,7 +510,7 @@ export function DatePicker({
             data-date-picker="true"
             role="dialog"
             aria-modal="true"
-            aria-label={t("common.calendarDialog") || "Calendar"}
+            aria-label={t("common.calendarDialog")}
             className={cn(
               // z-dropdown, not the 32-bit integer ceiling. A popover that outranks every
               // possible layer wins against dialogs and toasts too, which is never right.

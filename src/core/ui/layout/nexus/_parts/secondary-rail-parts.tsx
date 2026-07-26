@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { ChevronRight, ArrowRightLeft } from "lucide-react";
 import type { MenuItem } from "@core/navigation";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
 
 // All colour reads the --nx- token layer — theme resolves in CSS, so these
@@ -49,7 +49,9 @@ export function NavItem({
   switchWorkspace,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
-  const label = language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
+  const label =
+    resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+    resolveBilingualLabel(item.nameAr, item.nameEn, language);
 
   // Detect workspace-switch hrefs (#workspace:<key>)
   const workspaceKey = item.href?.startsWith("#workspace:")
@@ -160,17 +162,12 @@ export function NavItem({
           <ChevronRight
             size={14}
             aria-hidden="true"
-            className="transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+            className={cn(
+              "transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+              isExpanded || hasActiveChild ? "rotate-90 rtl:-rotate-90" : "rtl:rotate-180"
+            )}
             style={{
               color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
-              transform:
-                isExpanded || hasActiveChild
-                  ? language === "ar"
-                    ? "rotate(-90deg)"
-                    : "rotate(90deg)"
-                  : language === "ar"
-                    ? "rotate(180deg)"
-                    : "none",
             }}
           />
         </div>
@@ -377,7 +374,10 @@ export function RailContent({
           return (
             <div key={item.id} className="mb-2">
               <GroupLabel
-                label={language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr}
+                label={
+                  resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+                  resolveBilingualLabel(item.nameAr, item.nameEn, language)
+                }
               />
               {item.children.map((child) => (
                 <NavItem
@@ -441,6 +441,7 @@ export function RailHeader({ contextLabel, title }: { contextLabel: string; titl
       />
 
       <div
+        className="transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none"
         style={{
           fontSize: 10,
           color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
@@ -448,7 +449,6 @@ export function RailHeader({ contextLabel, title }: { contextLabel: string; titl
           letterSpacing: "1px",
           fontWeight: 700,
           marginBottom: 8,
-          transition: "color var(--nx-t-standard, 200ms)",
           position: "relative",
         }}
       >

@@ -2062,6 +2062,12 @@ export const ar = {
       tenantContext: "سياق المستأجر",
       exitTenantContext: "خروج من سياق المستأجر",
     },
+    backToAdmin: "العودة للإدارة",
+    goToHome: "الصفحة الرئيسية",
+    workspaceLockedToast: {
+      title: "{name} مقفول",
+      description: "افتح تطبيق المشغّل لمعرفة كيفية إلغاء القفل.",
+    },
   },
   select: {
     chip: {

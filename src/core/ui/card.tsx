@@ -65,8 +65,8 @@ const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
           return cn(
             CARD_BASE,
             CARD_MOTION,
-            "border border-nx-line-hi bg-nx-raised/60 backdrop-blur-md",
-            "hover:bg-nx-raised/80",
+            "border border-nx-line-hi bg-[color:color-mix(in_srgb,var(--nx-raised)_60%,transparent)] backdrop-blur-md",
+            "hover:bg-[color:color-mix(in_srgb,var(--nx-raised)_80%,transparent)]",
             hoverClasses
           );
         case "solid":

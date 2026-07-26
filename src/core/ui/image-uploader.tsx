@@ -264,7 +264,7 @@ export function ImageUploader({
           }
         }}
         role="button"
-        aria-label={placeholder || t("imageUploader.placeholder") || "Upload image"}
+        aria-label={placeholder || t("imageUploader.placeholder")}
         aria-disabled={disabled || undefined}
         aria-busy={isUploading || undefined}
         tabIndex={disabled ? -1 : 0}
@@ -274,7 +274,7 @@ export function ImageUploader({
           // clip-path ring pretending to be a loader.
           <div className="flex w-full max-w-xs flex-col items-center gap-3 p-8">
             <p className="text-sm font-medium text-nx-ink">
-              {t("imageUploader.uploading") || "Uploading..."}
+              {t("imageUploader.uploading")}
             </p>
             <Progress value={uploadProgress} className="h-1 w-full bg-nx-raised" />
             <p className="text-xs tabular-nums text-nx-ink-3">{uploadProgress}%</p>
@@ -286,7 +286,7 @@ export function ImageUploader({
           <div className="relative h-full w-full">
             <img
               src={preview}
-              alt={t("imageUploader.preview") || "Preview"}
+              alt={t("imageUploader.preview")}
               className="h-full w-full object-cover"
               style={aspectRatio ? { aspectRatio } : undefined}
             />
@@ -297,7 +297,7 @@ export function ImageUploader({
                 size="icon"
                 className="absolute end-3 top-3 z-raised h-8 w-8 bg-nx-surface text-nx-ink-3 hover:text-nx-danger"
                 onClick={handleRemove}
-                aria-label={t("imageUploader.remove") || "Remove image"}
+                aria-label={t("imageUploader.remove")}
               >
                 <X className="h-4 w-4" aria-hidden="true" />
               </Button>
@@ -323,13 +323,11 @@ export function ImageUploader({
             <div className="max-w-sm space-y-1">
               <p className="text-sm font-medium text-nx-ink">
                 {isDragging
-                  ? t("imageUploader.dropHere") || "Drop image here"
-                  : placeholder ||
-                    t("imageUploader.placeholder") ||
-                    "Click to upload or drag and drop"}
+                  ? t("imageUploader.dropHere")
+                  : placeholder || t("imageUploader.placeholder")}
               </p>
               <p className="text-xs text-nx-ink-3">
-                {t("imageUploader.supportedFormats") || "PNG, JPG, GIF, WEBP"} up to{" "}
+                {t("imageUploader.supportedFormats")} up to{" "}
                 <span className="font-medium tabular-nums text-nx-ink-2">
                   {(maxSize / (1024 * 1024)).toFixed(0)}MB
                 </span>
@@ -346,7 +344,7 @@ export function ImageUploader({
               }}
             >
               <Upload className="me-2 h-4 w-4" aria-hidden="true" />
-              {t("imageUploader.selectFile") || "Select File"}
+              {t("imageUploader.selectFile")}
             </Button>
           </div>
         )}
@@ -370,7 +368,7 @@ export function ImageUploader({
           <span aria-hidden="true" className="text-nx-danger">
             *
           </span>
-          {t("common.required") || "Required"}
+          {t("common.required")}
         </p>
       )}
 

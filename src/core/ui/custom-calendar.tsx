@@ -628,7 +628,7 @@ export function CustomCalendar({
           onDoubleClick={() => handleDateDoubleClick(day, true)}
           onKeyDown={handleKeyDown}
           className={getButtonStyles(false, false, true, cellDisabled)}
-          aria-label={`${day} ${t("common.ofPreviousMonth") || "of previous month"}, ${months[prevMonth.getMonth()]} ${prevMonth.getFullYear()}`}
+          aria-label={`${day} ${t("common.ofPreviousMonth")}, ${months[prevMonth.getMonth()]} ${prevMonth.getFullYear()}`}
           aria-disabled={cellDisabled || undefined}
           disabled={cellDisabled}
           role="gridcell"
@@ -666,7 +666,7 @@ export function CustomCalendar({
           onDoubleClick={() => handleDateDoubleClick(day)}
           onKeyDown={handleKeyDown}
           className={getButtonStyles(isSelected, isToday, false, cellDisabled)}
-          aria-label={`${day} ${months[currentDate.getMonth()]} ${currentDate.getFullYear()}${isToday ? `, ${t("common.today") || "today"}` : ""}`}
+          aria-label={`${day} ${months[currentDate.getMonth()]} ${currentDate.getFullYear()}${isToday ? `, ${t("common.today")}` : ""}`}
           aria-current={isSelected ? "date" : undefined}
           aria-disabled={cellDisabled || undefined}
           disabled={cellDisabled}
@@ -694,7 +694,7 @@ export function CustomCalendar({
           onDoubleClick={() => handleDateDoubleClick(day, true)}
           onKeyDown={handleKeyDown}
           className={getButtonStyles(false, false, true, cellDisabled)}
-          aria-label={`${day} ${t("common.ofNextMonth") || "of next month"}, ${months[(currentDate.getMonth() + 1) % 12]} ${currentDate.getMonth() === 11 ? currentDate.getFullYear() + 1 : currentDate.getFullYear()}`}
+          aria-label={`${day} ${t("common.ofNextMonth")}, ${months[(currentDate.getMonth() + 1) % 12]} ${currentDate.getMonth() === 11 ? currentDate.getFullYear() + 1 : currentDate.getFullYear()}`}
           aria-disabled={cellDisabled || undefined}
           disabled={cellDisabled}
           role="gridcell"
@@ -738,7 +738,7 @@ export function CustomCalendar({
       className={cn(calendarStyles, "h-full min-w-[320px]", className)}
       tabIndex={-1}
       role="application"
-      aria-label={t("common.calendar") || "Calendar"}
+      aria-label={t("common.calendar")}
     >
       {/* Header */}
       <div className={headerStyles}>
@@ -753,9 +753,7 @@ export function CustomCalendar({
             }}
             className={cn(controlButtonStyles, "p-1 text-nx-ink-2 hover:text-nx-ink")}
             aria-label={
-              viewMode === "year"
-                ? t("common.previousYearRange") || "Previous year range"
-                : t("common.previousMonth") || "Previous month"
+              viewMode === "year" ? t("common.previousYearRange") : t("common.previousMonth")
             }
           >
             <PrevIcon className="h-4 w-4" aria-hidden="true" />
@@ -767,7 +765,7 @@ export function CustomCalendar({
               <button
                 onClick={handleMonthClick}
                 className={cn(controlButtonStyles, "px-2 py-1 text-sm font-semibold text-nx-ink")}
-                aria-label={t("common.selectMonth") || "Select month"}
+                aria-label={t("common.selectMonth")}
                 aria-expanded={viewMode === "month"}
               >
                 {months[currentDate.getMonth()]}
@@ -775,7 +773,7 @@ export function CustomCalendar({
               <button
                 onClick={handleYearClick}
                 className={cn(controlButtonStyles, "px-2 py-1 text-sm font-semibold text-nx-ink")}
-                aria-label={t("common.selectYear") || "Select year"}
+                aria-label={t("common.selectYear")}
                 aria-expanded={viewMode === "year"}
               >
                 {currentDate.getFullYear()}
@@ -793,9 +791,7 @@ export function CustomCalendar({
             }}
             className={cn(controlButtonStyles, "p-1 text-nx-ink-2 hover:text-nx-ink")}
             aria-label={
-              viewMode === "year"
-                ? t("common.nextYearRange") || "Next year range"
-                : t("common.nextMonth") || "Next month"
+              viewMode === "year" ? t("common.nextYearRange") : t("common.nextMonth")
             }
           >
             <NextIcon className="h-4 w-4" aria-hidden="true" />
@@ -837,7 +833,7 @@ export function CustomCalendar({
           <div
             className="grid grid-cols-3 gap-2"
             role="listbox"
-            aria-label={t("common.selectMonth") || "Select month"}
+            aria-label={t("common.selectMonth")}
           >
             {months.map((month, index) => {
               const isSelected = currentDate.getMonth() === index;
@@ -870,7 +866,7 @@ export function CustomCalendar({
             <div
               className="mb-2 grid grid-cols-4 gap-2"
               role="listbox"
-              aria-label={t("common.selectYear") || "Select year"}
+              aria-label={t("common.selectYear")}
             >
               {Array.from({ length: 12 }, (_, i) => {
                 const year = yearRangeStart + i;
@@ -945,7 +941,7 @@ export function CustomCalendar({
           <div className="mb-2 flex items-center gap-2">
             <Clock className="h-4 w-4 text-nx-accent" aria-hidden="true" />
             <label htmlFor="time-input" className="text-sm font-medium text-nx-ink">
-              {t("common.time") || "Time"}
+              {t("common.time")}
             </label>
           </div>
           <input
@@ -954,7 +950,7 @@ export function CustomCalendar({
             value={selectedTime}
             onChange={(e) => handleTimeChange(e.target.value)}
             className={timeInputStyles}
-            aria-label={t("common.selectTime") || "Select time"}
+            aria-label={t("common.selectTime")}
           />
         </div>
       )}
@@ -965,7 +961,7 @@ export function CustomCalendar({
           onClick={onClose}
           onKeyDown={handleKeyDown}
           className={cn(controlButtonStyles, "px-3 py-1.5 text-sm text-nx-ink-2 hover:text-nx-ink")}
-          aria-label={t("common.cancel") || "Cancel"}
+          aria-label={t("common.cancel")}
         >
           {t("common.cancel")}
         </button>
@@ -987,9 +983,9 @@ export function CustomCalendar({
               "hover:shadow-[inset_0_1px_0_0_color-mix(in_srgb,var(--nx-on-fill)_35%,transparent)]",
               "focus-visible:shadow-nx-focus focus-visible:outline-none"
             )}
-            aria-label={t("common.ok") || "OK"}
+            aria-label={t("common.ok")}
           >
-            {t("common.ok") || "OK"}
+            {t("common.ok")}
           </button>
         )}
       </div>

@@ -111,7 +111,7 @@ const TableRow = React.forwardRef<HTMLTableRowElement, TableRowProps>(
     // ltr/rtl so it stays on the leading edge) because collapsed table borders
     // swallow a box-shadow set on the <tr> itself.
     const baseClasses = className
-      ? "border-b data-[state=selected]:bg-muted" // Minimal base classes when custom className provided
+      ? "border-b data-[state=selected]:bg-nx-accent-wash" // Minimal base classes when custom className provided
       : "border-b border-nx-line transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover data-[state=selected]:bg-nx-accent-wash ltr:[&[data-state=selected]>td:first-child]:shadow-[inset_2px_0_0_var(--nx-accent)] rtl:[&[data-state=selected]>td:first-child]:shadow-[inset_-2px_0_0_var(--nx-accent)]";
 
     return (

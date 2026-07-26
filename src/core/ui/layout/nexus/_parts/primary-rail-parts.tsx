@@ -12,7 +12,7 @@ import {
   PanelLeftOpen,
   PanelRightOpen,
 } from "lucide-react";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 
 // ── Focus law ─────────────────────────────────────────────────────────────────
 // Every interactive element in the nexus shell wears this instead of a bare
@@ -49,9 +49,9 @@ export function RootItemButton({ item, isActive, isRTL, language, onClick }: Roo
   const [hovered, setHovered] = useState(false);
   const btnRef = React.useRef<HTMLButtonElement>(null);
   const label =
-    language === "ar"
-      ? item.nameAr || item.nameEn || item.name
-      : item.nameEn || item.nameAr || item.name;
+    resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+    resolveBilingualLabel(item.nameAr, item.nameEn, language) ||
+    item.name;
 
   // ── Token colours — theme resolves in CSS, no isDark branch ──────────────
   // Active = the lit thing: accent icon + wash; the glowing inline-start edge
@@ -280,7 +280,7 @@ export function PrimaryRailLogo({
           onClick();
         }
       }}
-      aria-label={language === "ar" ? "الصفحة الرئيسية" : "Go to Home"}
+      aria-label={resolveBilingualLabel("Go to Home", "الصفحة الرئيسية", language)}
     >
       {tenantLogoUrl ? (
         <img

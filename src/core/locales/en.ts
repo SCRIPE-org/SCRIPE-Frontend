@@ -2074,6 +2074,12 @@ export const en = {
       tenantContext: "Tenant context",
       exitTenantContext: "Exit tenant context",
     },
+    backToAdmin: "Back to Admin",
+    goToHome: "Go to Home",
+    workspaceLockedToast: {
+      title: "{name} is locked",
+      description: "Open the App Launcher to learn how to unlock this workspace.",
+    },
   },
   select: {
     chip: {

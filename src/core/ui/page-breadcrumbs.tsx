@@ -92,7 +92,7 @@ export function PageBreadcrumbs({
     }
   };
 
-  const displayHomeLabel = homeLabel || t("nav.home") || "Home";
+  const displayHomeLabel = homeLabel || t("nav.home");
 
   return (
     // gap-2, not gap-4: the icon button already carries ~12px of internal air
@@ -106,7 +106,7 @@ export function PageBreadcrumbs({
           size="icon"
           onClick={handleBack}
           // An icon-only button with no accessible name announces as "button".
-          aria-label={t("common.back") || "Back"}
+          aria-label={t("common.back")}
           className="shrink-0"
         >
           {/* Inline rather than `const Icon = getBackArrowIcon(direction)` —

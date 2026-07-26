@@ -89,10 +89,9 @@ export function EGFlag({ className }: { className?: string }) {
 const FLAG_RING = "shrink-0 rounded-full border border-nx-line";
 
 export function LanguageSwitcher({ buttonClassName, contentClassName }: LanguageSwitcherProps) {
-  const { t, language, setLanguage, direction } = useI18n();
+  const { t, language, setLanguage } = useI18n();
 
   const ActiveFlag = language === "ar" ? EGFlag : USFlag;
-  const isRtl = direction === "rtl";
 
   return (
     <DropdownMenu>
@@ -126,7 +125,12 @@ export function LanguageSwitcher({ buttonClassName, contentClassName }: Language
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        align={isRtl ? "start" : "end"}
+        // Constant, not a manual isRtl flip: DropdownMenuContent already wraps
+        // itself in a `dir={direction}` div (dropdown-menu.tsx), so Radix's own
+        // Popper positioning is already direction-aware — "end" resolves to the
+        // reading-direction end on its own. A manual `isRtl ? "start" : "end"`
+        // here would have double-flipped it back to a fixed physical side.
+        align="end"
         // Surface, radius, depth, padding and motion all come from the
         // primitive — a panel that redecorates itself here is how the app ended
         // up with four different dropdown skins.

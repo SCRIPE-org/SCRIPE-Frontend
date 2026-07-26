@@ -17,7 +17,7 @@ import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import type { MenuItem } from "@core/navigation";
 import { usePermissions } from "@core/providers/permission-provider";
 import {
@@ -190,9 +190,8 @@ export function TopbarBreadcrumbs({
             {sortedWorkspaces.map((ws) => {
               const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
               const wsLabel =
-                language === "ar"
-                  ? ws.workspaceNameAr || ws.workspaceNameEn
-                  : ws.workspaceNameEn || ws.workspaceNameAr;
+                resolveBilingualLabel(ws.workspaceNameEn, ws.workspaceNameAr, language) ||
+                resolveBilingualLabel(ws.workspaceNameAr, ws.workspaceNameEn, language);
               // Each row carries its OWN workspace colour — the active-workspace
               // token would paint every chip the same. Alpha via color-mix only.
               const wsAccent = ws.accentColor || "var(--nx-accent, hsl(var(--primary)))";
@@ -281,7 +280,8 @@ export function TopbarBreadcrumbs({
                 {activeGroupSiblings.map((item) => {
                   const isActive = activeRootItem?.id === item.id;
                   const label =
-                    language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
+                    resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+                    resolveBilingualLabel(item.nameAr, item.nameEn, language);
 
                   return (
                     <DropdownMenuItem
@@ -404,7 +404,7 @@ export interface TopbarContextPillProps {
 export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPillProps) {
   return (
     <div
-      className="hidden items-center rounded-full sm:flex"
+      className={cn("hidden items-center rounded-full duration-nx-standard sm:flex", CONTROL_MOTION)}
       style={{
         gap: 6,
         padding: "4px 12px",
@@ -423,8 +423,6 @@ export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPil
           : "var(--nx-ink-2, hsl(var(--muted-foreground)))",
         cursor: "default",
         flexShrink: 0,
-        transition:
-          "background var(--nx-t-standard, 200ms) ease, border-color var(--nx-t-standard, 200ms) ease, color var(--nx-t-standard, 200ms) ease",
         letterSpacing: "0.4px",
         whiteSpace: "nowrap",
       }}
