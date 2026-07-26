@@ -101,14 +101,14 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
   return (
     <div className="space-y-3">
       {/* Device toggles */}
-      <div className="flex items-center justify-center gap-1 rounded-lg bg-muted/50 p-1">
+      <div className="flex items-center justify-center gap-1 rounded-nx-md bg-[color:color-mix(in_srgb,var(--nx-raised)_50%,transparent)] p-1">
         {DEVICES.map((d) => (
           <Button
             key={d.id}
             type="button"
             variant={device === d.id ? "default" : "ghost"}
             size="sm"
-            className={cn("h-7 gap-1.5 px-2.5 text-xs", device === d.id && "shadow-sm")}
+            className={cn("h-7 gap-1.5 px-2.5 text-xs", device === d.id && "shadow-nx-sm")}
             onClick={() => setDevice(d.id)}
             title={d.label}
           >
@@ -120,8 +120,8 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
 
       {/* Subject preview */}
       {subject && (
-        <div className="rounded-md border border-border/50 bg-muted/30 px-3 py-2">
-          <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+        <div className="rounded-nx-sm border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] px-3 py-2">
+          <p className="mb-0.5 text-[10px] uppercase tracking-wider text-nx-ink-3">
             Subject
           </p>
           <p className="truncate text-sm font-medium">{subject}</p>
@@ -131,7 +131,7 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
       {/* Preview container */}
       <div className="flex justify-center">
         <div
-          className="overflow-hidden rounded-lg border bg-card transition-all duration-300"
+          className="overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
           style={{ width: selectedDevice.width, maxWidth: "100%" }}
         >
           {debouncedBody ? (
@@ -145,7 +145,7 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
               onLoad={handleIframeLoad}
             />
           ) : (
-            <div className="flex h-32 items-center justify-center text-sm text-muted-foreground">
+            <div className="flex h-32 items-center justify-center text-sm text-nx-ink-3">
               Start typing to see preview...
             </div>
           )}

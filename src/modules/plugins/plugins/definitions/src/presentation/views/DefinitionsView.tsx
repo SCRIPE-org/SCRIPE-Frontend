@@ -28,7 +28,7 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { PageHeader } from "@core/ui/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import type { PluginDefinition } from "@modules/plugins/core";
 
 // ── Status Badge ──────────────────────────────────────────────────────────────
@@ -188,7 +188,7 @@ export function DefinitionsView() {
               </TableHeader>
               <TableBody>
                 {definitions.map((def) => {
-                  const displayName = language === "ar" ? def.nameAr || def.name : def.name;
+                  const displayName = resolveBilingualLabel(def.name, def.nameAr, language);
                   const hasBrandColor = def.colorHue != null;
                   return (
                     <TableRow key={def.id}>

@@ -69,10 +69,10 @@ export function useMessageTemplatesViewModel() {
     mutationFn: (id: string) => repo.clone(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("messaging.templates.cloneSuccess") || "Template cloned" });
+      success({ title: t("messaging.templates.cloneSuccess") });
     },
     onError: () => {
-      toastError({ title: t("messaging.templates.cloneError") || "Clone failed" });
+      toastError({ title: t("messaging.templates.cloneError") });
     },
   });
 
@@ -89,7 +89,7 @@ export function useMessageTemplatesViewModel() {
       setPreviewOpen(true);
     },
     onError: () => {
-      toastError({ title: t("messaging.templates.previewError") || "Preview failed" });
+      toastError({ title: t("messaging.templates.previewError") });
     },
   });
 
@@ -119,14 +119,14 @@ export function useMessageTemplatesViewModel() {
       createFields: [
         {
           name: "key",
-          label: t("messaging.templates.key") || "Template Key",
+          label: t("messaging.templates.key"),
           type: "text" as const,
           placeholder: "e.g., welcome-email",
           required: true,
         },
         {
           name: "channel",
-          label: t("messaging.templates.channel") || "Channel",
+          label: t("messaging.templates.channel"),
           type: "select" as const,
           required: true,
           options: [
@@ -137,7 +137,7 @@ export function useMessageTemplatesViewModel() {
         },
         {
           name: "language",
-          label: t("messaging.templates.language") || "Language",
+          label: t("messaging.templates.language"),
           type: "select" as const,
           required: true,
           options: [
@@ -147,54 +147,54 @@ export function useMessageTemplatesViewModel() {
         },
         {
           name: "subject",
-          label: t("messaging.templates.subject") || "Subject",
+          label: t("messaging.templates.subject"),
           type: "text" as const,
-          placeholder: t("messaging.templates.subjectPlaceholder") || "Email subject line...",
+          placeholder: t("messaging.templates.subjectPlaceholder"),
         },
         {
           name: "body",
-          label: t("messaging.templates.body") || "Body",
+          label: t("messaging.templates.body"),
           type: "richtext" as const,
-          placeholder: t("messaging.templates.bodyPlaceholder") || "Template body...",
+          placeholder: t("messaging.templates.bodyPlaceholder"),
           required: true,
           rows: 15,
         },
         {
           name: "description",
-          label: t("messaging.templates.descriptionLabel") || "Description",
+          label: t("messaging.templates.descriptionLabel"),
           type: "textarea" as const,
-          placeholder: t("messaging.templates.descriptionPlaceholder") || "Brief description...",
+          placeholder: t("messaging.templates.descriptionPlaceholder"),
         },
         {
           name: "isActive",
-          label: t("common.active") || "Active",
+          label: t("common.active"),
           type: "switch" as const,
         },
       ],
       editFields: [
         {
           name: "subject",
-          label: t("messaging.templates.subject") || "Subject",
+          label: t("messaging.templates.subject"),
           type: "text" as const,
-          placeholder: t("messaging.templates.subjectPlaceholder") || "Email subject line...",
+          placeholder: t("messaging.templates.subjectPlaceholder"),
         },
         {
           name: "body",
-          label: t("messaging.templates.body") || "Body",
+          label: t("messaging.templates.body"),
           type: "richtext" as const,
-          placeholder: t("messaging.templates.bodyPlaceholder") || "Template body...",
+          placeholder: t("messaging.templates.bodyPlaceholder"),
           required: true,
           rows: 15,
         },
         {
           name: "description",
-          label: t("messaging.templates.descriptionLabel") || "Description",
+          label: t("messaging.templates.descriptionLabel"),
           type: "textarea" as const,
-          placeholder: t("messaging.templates.descriptionPlaceholder") || "Brief description...",
+          placeholder: t("messaging.templates.descriptionPlaceholder"),
         },
         {
           name: "isActive",
-          label: t("common.active") || "Active",
+          label: t("common.active"),
           type: "switch" as const,
         },
         { name: "id", type: "hidden" as const, required: true },

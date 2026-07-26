@@ -183,29 +183,28 @@ export function PlaceholderSchemaBuilder({
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
             <Braces className="h-4 w-4" />
-            {t("messaging.templates.placeholderSchema") || "Placeholder Schema"}
+            {t("messaging.templates.placeholderSchema")}
           </CardTitle>
           <Badge variant="secondary" className="text-xs">
             {fields.length}{" "}
-            {t("messaging.templates.fields") || `field${fields.length !== 1 ? "s" : ""}`}
+            {t("messaging.templates.fields")}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-3">
         {fields.length === 0 ? (
-          <div className="rounded-lg border-2 border-dashed py-6 text-center text-sm text-muted-foreground">
+          <div className="rounded-nx-lg border-2 border-dashed border-nx-line py-6 text-center text-sm text-nx-ink-2">
             <Braces className="mx-auto mb-2 h-6 w-6 opacity-40" />
-            <p>{t("messaging.templates.noPlaceholders") || "No custom placeholders defined"}</p>
+            <p>{t("messaging.templates.noPlaceholders")}</p>
             <p className="mt-1 text-xs">
-              {t("messaging.templates.addFieldsHint") ||
-                "Add fields to define your template\u0027s schema"}
+              {t("messaging.templates.addFieldsHint")}
             </p>
             {bodyVarKeys.size > 0 && (
               <div className="mt-3 flex items-center justify-center gap-1.5 text-warning">
                 <Sparkles className="h-3.5 w-3.5" />
                 <span className="text-xs">
                   {bodyVarKeys.size}{" "}
-                  {t("messaging.templates.varsDetected") || "variable(s) detected in body"}
+                  {t("messaging.templates.varsDetected")}
                 </span>
               </div>
             )}
@@ -219,9 +218,11 @@ export function PlaceholderSchemaBuilder({
               <div
                 key={field.id}
                 className={cn(
-                  "rounded-lg border transition-all",
+                  "rounded-nx-md border border-nx-line transition-[border-color,background-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
                   isOrphaned && "border-warning/50 bg-warning/5",
-                  expandedId === field.id ? "border-accent bg-accent/20" : "hover:border-primary/30"
+                  expandedId === field.id
+                    ? "border-nx-line-hi bg-nx-hover"
+                    : "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)]"
                 )}
               >
                 {/* Summary Row */}
@@ -231,15 +232,14 @@ export function PlaceholderSchemaBuilder({
                   className="flex h-auto w-full items-center justify-start gap-2 p-2.5 font-normal"
                   onClick={() => setExpandedId(expandedId === field.id ? null : field.id)}
                 >
-                  <GripVertical className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                  <span className="w-5 text-xs text-muted-foreground">{idx + 1}</span>
+                  <GripVertical className="h-3.5 w-3.5 shrink-0 text-nx-ink-3" />
+                  <span className="w-5 text-xs text-nx-ink-3">{idx + 1}</span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="truncate text-sm font-medium">
                         {field.label ||
                           field.key ||
-                          t("messaging.templates.untitled") ||
-                          "Untitled"}
+                          t("messaging.templates.untitled")}
                       </span>
                       {field.key && (
                         <Badge
@@ -265,13 +265,12 @@ export function PlaceholderSchemaBuilder({
 
                 {/* Expanded Editor */}
                 {expandedId === field.id && (
-                  <div className="space-y-3 border-t px-3 pb-3 pt-3">
+                  <div className="space-y-3 border-t border-nx-line px-3 pb-3 pt-3">
                     {isOrphaned && (
                       <div className="flex items-center gap-2 rounded bg-warning/10 p-2 text-xs text-warning">
                         <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
                         <span>
-                          {t("messaging.templates.orphanedVar") ||
-                            "This variable is not used in the template body"}
+                          {t("messaging.templates.orphanedVar")}
                         </span>
                       </div>
                     )}
@@ -279,7 +278,7 @@ export function PlaceholderSchemaBuilder({
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <Label className="text-xs">
-                          {t("messaging.templates.varKey") || "Key"}
+                          {t("messaging.templates.varKey")}
                         </Label>
                         <div className="flex gap-1">
                           <Input
@@ -299,7 +298,7 @@ export function PlaceholderSchemaBuilder({
                               size="sm"
                               className="h-7 w-7 shrink-0 p-0"
                               onClick={() => copyKey(field.key)}
-                              title={t("messaging.templates.copyPlaceholder") || "Copy placeholder"}
+                              title={t("messaging.templates.copyPlaceholder")}
                             >
                               <Copy className="h-3 w-3" />
                             </Button>
@@ -308,7 +307,7 @@ export function PlaceholderSchemaBuilder({
                       </div>
                       <div className="space-y-1">
                         <Label className="text-xs">
-                          {t("messaging.templates.varLabel") || "Label"}
+                          {t("messaging.templates.varLabel")}
                         </Label>
                         <Input
                           value={field.label}
@@ -322,7 +321,7 @@ export function PlaceholderSchemaBuilder({
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
                         <Label className="text-xs">
-                          {t("messaging.templates.varType") || "Type"}
+                          {t("messaging.templates.varType")}
                         </Label>
                         <Select
                           value={field.type}
@@ -339,7 +338,7 @@ export function PlaceholderSchemaBuilder({
                               return (
                                 <SelectItem key={v} value={v}>
                                   <div className="flex items-center gap-2">
-                                    <Icon className="h-3 w-3 text-muted-foreground" />
+                                    <Icon className="h-3 w-3 text-nx-ink-3" />
                                     <span>{cfg.label}</span>
                                   </div>
                                 </SelectItem>
@@ -350,13 +349,13 @@ export function PlaceholderSchemaBuilder({
                       </div>
                       <div className="space-y-1">
                         <Label className="text-xs">
-                          {t("messaging.templates.defaultValue") || "Default Value"}
+                          {t("messaging.templates.defaultValue")}
                         </Label>
                         <Input
                           value={field.defaultValue}
                           onChange={(e) => updateField(field.id, { defaultValue: e.target.value })}
                           placeholder={
-                            t("messaging.templates.optionalDefault") || "Optional default"
+                            t("messaging.templates.optionalDefault")
                           }
                           className="h-7 text-xs"
                         />
@@ -366,7 +365,7 @@ export function PlaceholderSchemaBuilder({
                     {field.type === "select" && (
                       <div className="space-y-1">
                         <Label className="text-xs">
-                          {t("messaging.templates.selectOptions") || "Options (comma-separated)"}
+                          {t("messaging.templates.selectOptions")}
                         </Label>
                         <Input
                           value={(field.options || []).join(", ")}
@@ -386,14 +385,13 @@ export function PlaceholderSchemaBuilder({
 
                     <div className="space-y-1">
                       <Label className="text-xs">
-                        {t("messaging.templates.varDescription") || "Description"}
+                        {t("messaging.templates.varDescription")}
                       </Label>
                       <Input
                         value={field.description || ""}
                         onChange={(e) => updateField(field.id, { description: e.target.value })}
                         placeholder={
-                          t("messaging.templates.descriptionHint") ||
-                          "What this field is used for..."
+                          t("messaging.templates.descriptionHint")
                         }
                         className="h-7 text-xs"
                       />
@@ -406,7 +404,7 @@ export function PlaceholderSchemaBuilder({
                           onCheckedChange={(v) => updateField(field.id, { required: v })}
                         />
                         <Label className="text-xs">
-                          {t("messaging.templates.required") || "Required"}
+                          {t("messaging.templates.required")}
                         </Label>
                       </div>
                       <Button
@@ -417,7 +415,7 @@ export function PlaceholderSchemaBuilder({
                         onClick={() => removeField(field.id)}
                       >
                         <Trash2 className="h-3 w-3" />
-                        {t("common.remove") || "Remove"}
+                        {t("common.remove")}
                       </Button>
                     </div>
                   </div>
@@ -431,11 +429,11 @@ export function PlaceholderSchemaBuilder({
         <Button
           type="button"
           variant="outline"
-          className="h-9 w-full gap-1.5 border-dashed text-sm"
+          className="h-9 w-full gap-1.5 border-dashed border-nx-line text-sm"
           onClick={addField}
         >
           <Plus className="h-3.5 w-3.5" />
-          {t("messaging.templates.addPlaceholderField") || "Add Placeholder Field"}
+          {t("messaging.templates.addPlaceholderField")}
         </Button>
       </CardContent>
     </Card>

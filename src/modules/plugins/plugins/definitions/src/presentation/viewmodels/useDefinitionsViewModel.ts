@@ -59,10 +59,10 @@ export function useDefinitionsViewModel() {
     mutationFn: (data: CreateDefinitionRequest) => definitionsRepository.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("plugins.defCreate") || "Definition created" });
+      success({ title: t("plugins.defCreate") });
       closeForm();
     },
-    onError: () => error({ title: t("plugins.definitionsError") || "Failed to create definition" }),
+    onError: () => error({ title: t("plugins.definitionsError") }),
   });
 
   // ── Update Mutation ─────────────────────────────────────────────────────────
@@ -70,10 +70,10 @@ export function useDefinitionsViewModel() {
     mutationFn: (data: UpdateDefinitionRequest) => definitionsRepository.update(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("plugins.defEdit") || "Definition updated" });
+      success({ title: t("plugins.defEdit") });
       closeForm();
     },
-    onError: () => error({ title: t("plugins.definitionsError") || "Failed to update definition" }),
+    onError: () => error({ title: t("plugins.definitionsError") }),
   });
 
   // ── Publish Mutation ────────────────────────────────────────────────────────
@@ -81,7 +81,7 @@ export function useDefinitionsViewModel() {
     mutationFn: (id: string) => definitionsRepository.publish(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("plugins.defPublish") || "Plugin published" });
+      success({ title: t("plugins.defPublish") });
     },
     onError: () => error({ title: t("plugins.definitionsError") }),
   });
@@ -91,7 +91,7 @@ export function useDefinitionsViewModel() {
     mutationFn: (id: string) => definitionsRepository.deprecate(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("plugins.defDeprecate") || "Plugin deprecated" });
+      success({ title: t("plugins.defDeprecate") });
     },
     onError: () => error({ title: t("plugins.definitionsError") }),
   });
@@ -101,7 +101,7 @@ export function useDefinitionsViewModel() {
     mutationFn: (id: string) => definitionsRepository.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("plugins.defDelete") || "Definition deleted" });
+      success({ title: t("plugins.defDelete") });
     },
     onError: () => error({ title: t("plugins.definitionsError") }),
   });

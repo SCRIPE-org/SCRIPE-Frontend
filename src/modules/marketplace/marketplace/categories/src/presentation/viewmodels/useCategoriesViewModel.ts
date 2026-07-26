@@ -53,11 +53,11 @@ export function useCategoriesViewModel() {
     mutationFn: (data: CategoryFormData) => categoriesRepository.create(data),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.categoryCreated") || "Category created" });
+      success({ title: t("marketplace.categoryCreated") });
       closeForm();
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -67,11 +67,11 @@ export function useCategoriesViewModel() {
       categoriesRepository.update(id, data),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.categoryUpdated") || "Category updated" });
+      success({ title: t("marketplace.categoryUpdated") });
       closeForm();
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -80,10 +80,10 @@ export function useCategoriesViewModel() {
     mutationFn: (id: string) => categoriesRepository.delete(id),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.categoryDeleted") || "Category deleted" });
+      success({ title: t("marketplace.categoryDeleted") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

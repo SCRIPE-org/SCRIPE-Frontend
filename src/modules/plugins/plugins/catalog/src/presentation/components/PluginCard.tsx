@@ -5,7 +5,7 @@ import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
 import { Puzzle, CheckCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import type { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem";
 
 interface PluginCardProps {
@@ -20,9 +20,8 @@ interface PluginCardProps {
  */
 export function PluginCard({ plugin, onInstall, isInstalling }: PluginCardProps) {
   const { t, language } = useI18n();
-  const displayName = language === "ar" ? plugin.nameAr || plugin.name : plugin.name;
-  const displayDesc =
-    language === "ar" ? plugin.descriptionAr || plugin.description : plugin.description;
+  const displayName = resolveBilingualLabel(plugin.name, plugin.nameAr, language);
+  const displayDesc = resolveBilingualLabel(plugin.description, plugin.descriptionAr, language);
   // A plugin's own brand hue is data, not the workspace accent — it renders as
   // a solid fill, so the glyph needs the on-fill ink token, not the accent one.
   const hasBrandColor = plugin.colorHue != null;

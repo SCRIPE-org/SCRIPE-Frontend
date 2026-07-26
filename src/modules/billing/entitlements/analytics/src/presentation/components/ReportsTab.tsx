@@ -93,17 +93,13 @@ export function ReportsTab({
         currency,
       });
       toast({
-        title: t("entitlements.analytics.reports.saveSuccess") || "Preferences Saved",
-        description:
-          t("entitlements.analytics.reports.saveSuccessDesc") ||
-          "Your report preferences have been updated.",
+        title: t("entitlements.analytics.reports.saveSuccess"),
+        description: t("entitlements.analytics.reports.saveSuccessDesc"),
       });
     } catch {
       toast({
-        title: t("entitlements.analytics.reports.saveError") || "Save Failed",
-        description:
-          t("entitlements.analytics.reports.saveErrorDesc") ||
-          "Could not save preferences. Please try again.",
+        title: t("entitlements.analytics.reports.saveError"),
+        description: t("entitlements.analytics.reports.saveErrorDesc"),
         variant: "destructive",
       });
     }
@@ -113,17 +109,13 @@ export function ReportsTab({
     try {
       await onGenerateReport();
       toast({
-        title: t("entitlements.analytics.reports.generateSuccess") || "Report Generated",
-        description:
-          t("entitlements.analytics.reports.generateSuccessDesc") ||
-          "Your PDF report has been downloaded.",
+        title: t("entitlements.analytics.reports.generateSuccess"),
+        description: t("entitlements.analytics.reports.generateSuccessDesc"),
       });
     } catch {
       toast({
-        title: t("entitlements.analytics.reports.generateError") || "Report Failed",
-        description:
-          t("entitlements.analytics.reports.generateErrorDesc") ||
-          "Could not generate the report. Please try again.",
+        title: t("entitlements.analytics.reports.generateError"),
+        description: t("entitlements.analytics.reports.generateErrorDesc"),
         variant: "destructive",
       });
     }
@@ -140,11 +132,11 @@ export function ReportsTab({
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {/* Left: Scheduled Report Settings */}
-      <Card className="overflow-hidden border border-border/30 shadow-sm">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
         <div className="h-0.5 bg-gradient-to-r from-success to-success/70" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-success/20 to-success/20">
+            <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-gradient-to-br from-success/20 to-success/20">
               <Settings2 className="h-4 w-4 text-success" />
             </div>
             {t("entitlements.analytics.reports.scheduleTitle")}
@@ -156,7 +148,7 @@ export function ReportsTab({
         <CardContent className="space-y-5">
           {/* Cadence */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               <Clock className="h-3.5 w-3.5" />
               {t("entitlements.analytics.reports.cadence")}
             </Label>
@@ -183,7 +175,7 @@ export function ReportsTab({
 
           {/* Email */}
           <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               <Mail className="h-3.5 w-3.5" />
               {t("entitlements.analytics.reports.email")}
             </Label>
@@ -197,7 +189,7 @@ export function ReportsTab({
 
           {/* Currency */}
           <div className="space-y-2">
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("entitlements.analytics.reports.currency")}
             </Label>
             <Select value={currency} onValueChange={setCurrency}>
@@ -215,10 +207,10 @@ export function ReportsTab({
 
           {/* Section Toggles */}
           <div className="space-y-3 pt-2">
-            <Label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <Label className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
               {t("entitlements.analytics.reports.includedSections")}
             </Label>
-            <div className="space-y-3 rounded-lg border border-border/20 bg-muted/20 p-3">
+            <div className="space-y-3 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_20%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] p-3">
               {[
                 {
                   id: "tenant-breakdown",
@@ -268,11 +260,11 @@ export function ReportsTab({
       </Card>
 
       {/* Right: On-Demand Report Generation */}
-      <Card className="overflow-hidden border border-border/30 shadow-sm">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
         <div className="h-0.5 bg-gradient-to-r from-info to-info/70" />
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-lg">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-info/20 to-info/20">
+            <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-gradient-to-br from-info/20 to-info/20">
               <FileText className="h-4 w-4 text-info" />
             </div>
             {t("entitlements.analytics.reports.generateTitle")}
@@ -287,14 +279,14 @@ export function ReportsTab({
               <div
                 className={cn(
                   "absolute inset-0 rounded-full bg-info/20 blur-xl",
-                  isGenerating && "animate-pulse motion-reduce:animate-none"
+                  isGenerating && "bg-info/30"
                 )}
               />
               <div className="relative rounded-full border border-info/20 bg-gradient-to-br from-info/10 to-info/10 p-6">
                 <Download className="h-12 w-12 text-info" />
               </div>
             </div>
-            <p className="max-w-xs text-center text-sm text-muted-foreground">
+            <p className="max-w-xs text-center text-sm text-nx-ink-2">
               {t("entitlements.analytics.reports.generateInfo")}
             </p>
             <Button
@@ -311,8 +303,8 @@ export function ReportsTab({
 
           {/* Last sent info */}
           {preference?.lastSentAt && (
-            <div className="border-t border-border/20 pt-4 text-center">
-              <p className="text-xs text-muted-foreground">
+            <div className="border-t border-[color:color-mix(in_srgb,var(--nx-line)_20%,transparent)] pt-4 text-center">
+              <p className="text-xs text-nx-ink-3">
                 {t("entitlements.analytics.reports.lastSent")}:{" "}
                 <span className="font-semibold">{formatDateUtc(preference.lastSentAt)}</span>
               </p>

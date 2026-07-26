@@ -33,10 +33,10 @@ export function useReportViewModel() {
     onSuccess: () => {
       // Immediately refetch so the new Pending report appears and polling kicks in
       queryClient.invalidateQueries({ queryKey: ["compliance", "reports"] });
-      success({ title: t("compliance.reports.generating") || "Report generation started" });
+      success({ title: t("compliance.reports.generating") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

@@ -248,14 +248,12 @@ export function useCrudViewModel<T extends { id: string }, CreateReq, UpdateReq>
     showConfirmation({
       variant: "destructive",
       title: t("common.confirmDelete"),
-      description: `${(
-        t("common.deleteConfirmation") || "Are you sure you want to delete this {itemType}?"
-      ).replace(
+      description: `${t("common.deleteConfirmation").replace(
         "{itemType}",
         itemTypeName.toLowerCase()
-      )} "${name}". ${t("common.deleteWarning") || "This action cannot be undone."}`,
-      confirmText: t("common.delete") || "Delete",
-      cancelText: t("common.cancel") || "Cancel",
+      )} "${name}". ${t("common.deleteWarning")}`,
+      confirmText: t("common.delete"),
+      cancelText: t("common.cancel"),
       onConfirm: async () => {
         try {
           await service.delete(id);
@@ -277,14 +275,12 @@ export function useCrudViewModel<T extends { id: string }, CreateReq, UpdateReq>
     showConfirmation({
       variant: "destructive",
       title: t("common.confirmDelete"),
-      description: `${(
-        t("common.deleteConfirmation") || "Are you sure you want to delete this {itemType}?"
-      ).replace(
+      description: `${t("common.deleteConfirmation").replace(
         "{itemType}",
         `${count} ${itemsText.toLowerCase()}`
-      )}. ${t("common.deleteWarning") || "This action cannot be undone."}`,
-      confirmText: `${t("common.delete") || "Delete"} ${count} ${itemsText}`,
-      cancelText: t("common.cancel") || "Cancel",
+      )}. ${t("common.deleteWarning")}`,
+      confirmText: `${t("common.delete")} ${count} ${itemsText}`,
+      cancelText: t("common.cancel"),
       onConfirm: async () => {
         try {
           await Promise.all(selectedItems.map((id) => service.delete(id)));

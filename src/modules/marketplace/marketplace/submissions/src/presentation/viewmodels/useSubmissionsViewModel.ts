@@ -30,10 +30,10 @@ export function useSubmissionsViewModel() {
     mutationFn: (id: string) => submissionsRepository.approve(id),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.submissions.approved") || "Submission approved" });
+      success({ title: t("marketplace.submissions.approved") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -42,10 +42,10 @@ export function useSubmissionsViewModel() {
       submissionsRepository.reject(id, notes),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.submissions.rejected") || "Submission rejected" });
+      success({ title: t("marketplace.submissions.rejected") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -54,10 +54,10 @@ export function useSubmissionsViewModel() {
       submissionsRepository.requestRevisions(id, notes),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.submissions.revisionsRequested") || "Revisions requested" });
+      success({ title: t("marketplace.submissions.revisionsRequested") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

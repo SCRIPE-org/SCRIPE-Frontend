@@ -35,10 +35,10 @@ export function useSessionsViewModel() {
     mutationFn: (tokenId: string) => repo.revokeSession(tokenId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: profileKeys.sessions() });
-      success({ title: t("profile.sessions.revoked") || "Session revoked" });
+      success({ title: t("profile.sessions.revoked") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -46,10 +46,10 @@ export function useSessionsViewModel() {
     mutationFn: () => repo.revokeAllSessions(),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: profileKeys.sessions() });
-      success({ title: t("profile.sessions.allRevoked") || "All other sessions revoked" });
+      success({ title: t("profile.sessions.allRevoked") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

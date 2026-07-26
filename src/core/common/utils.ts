@@ -192,7 +192,8 @@ export function getHoverEffectClasses(
     return "";
   }
 
-  const baseTransition = "transition-all duration-300 ease-in-out";
+  const baseTransition =
+    "transition-[transform,box-shadow,border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
 
   switch (effectType) {
     case "elevate":
@@ -222,20 +223,20 @@ export function getHoverEffectClasses(
         case "small":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_8px_hsl(var(--primary)/0.3)]",
-            "hover:border-primary/50"
+            "hover:shadow-[0_0_8px_color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
+            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
           );
         case "medium":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_15px_hsl(var(--primary)/0.5)]",
-            "hover:border-primary/50"
+            "hover:shadow-[0_0_15px_color-mix(in_srgb,var(--nx-accent)_50%,transparent)]",
+            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
           );
         case "strong":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_25px_hsl(var(--primary)/0.7)]",
-            "hover:border-primary/50"
+            "hover:shadow-[0_0_25px_color-mix(in_srgb,var(--nx-accent)_70%,transparent)]",
+            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
           );
         default:
           return "";
@@ -266,7 +267,7 @@ export function getHoverEffectClasses(
         "relative overflow-hidden",
         "after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent",
         "after:translate-x-[-100%] hover:after:translate-x-[100%]",
-        "after:transition-transform",
+        "after:transition-transform after:ease-nx-enter motion-reduce:after:transition-none",
         shimmerSpeed,
         shimmerOpacity
       );
@@ -308,7 +309,8 @@ export function getTableHoverEffectClasses(
     return "";
   }
 
-  const baseTransition = "transition-all duration-300 ease-in-out";
+  const baseTransition =
+    "transition-[box-shadow,border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
 
   switch (effectType) {
     case "elevate":
@@ -339,20 +341,20 @@ export function getTableHoverEffectClasses(
         case "small":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_8px_hsl(var(--primary)/0.3)]",
-            "hover:border-primary/50"
+            "hover:shadow-[0_0_8px_color-mix(in_srgb,var(--nx-accent)_30%,transparent)]",
+            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
           );
         case "medium":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_15px_hsl(var(--primary)/0.5)]",
-            "hover:border-primary/50"
+            "hover:shadow-[0_0_15px_color-mix(in_srgb,var(--nx-accent)_50%,transparent)]",
+            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
           );
         case "strong":
           return cn(
             baseTransition,
-            "hover:shadow-[0_0_25px_hsl(var(--primary)/0.7)]",
-            "hover:border-primary/50"
+            "hover:shadow-[0_0_25px_color-mix(in_srgb,var(--nx-accent)_70%,transparent)]",
+            "hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
           );
         default:
           return "";

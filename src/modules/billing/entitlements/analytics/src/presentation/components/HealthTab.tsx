@@ -79,21 +79,21 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-xl border border-success/20 bg-success/[0.04] p-3 text-center">
+        <div className="rounded-nx-md border border-success/20 bg-success/[0.04] p-3 text-center">
           <ShieldCheck className="mx-auto mb-1 h-5 w-5 text-success" />
           <p className="text-xl font-bold text-success">{healthyCount}</p>
           <p className="text-[10px] font-semibold uppercase text-success/70">
             {t("entitlements.analytics.health.riskHealthy")}
           </p>
         </div>
-        <div className="rounded-xl border border-warning/20 bg-warning/[0.04] p-3 text-center">
+        <div className="rounded-nx-md border border-warning/20 bg-warning/[0.04] p-3 text-center">
           <AlertTriangle className="mx-auto mb-1 h-5 w-5 text-warning" />
           <p className="text-xl font-bold text-warning">{moderateCount}</p>
           <p className="text-[10px] font-semibold uppercase text-warning/70">
             {t("entitlements.analytics.health.riskModerate")}
           </p>
         </div>
-        <div className="rounded-xl border border-destructive/20 bg-destructive/[0.04] p-3 text-center">
+        <div className="rounded-nx-md border border-destructive/20 bg-destructive/[0.04] p-3 text-center">
           <Heart className="mx-auto mb-1 h-5 w-5 text-destructive" />
           <p className="text-xl font-bold text-destructive">{atRiskCount}</p>
           <p className="text-[10px] font-semibold uppercase text-destructive/70">
@@ -103,9 +103,9 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
       </div>
 
       {/* Health Table */}
-      <Card className="overflow-hidden border border-border/30 shadow-sm">
-        <CardHeader className="bg-muted/20 pb-2">
-          <CardTitle className="flex items-center justify-between text-sm font-medium text-muted-foreground">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+        <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
+          <CardTitle className="flex items-center justify-between text-sm font-medium text-nx-ink-3">
             <span>{t("entitlements.analytics.health.tenantHealth")}</span>
             <span className="text-xs font-normal">
               {t("entitlements.analytics.periods.tenantCount", {
@@ -117,26 +117,26 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow className="border-b bg-muted/30">
-                <TableHead className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              <TableRow className="border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)]">
+                <TableHead className="px-4 py-3 text-start text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t("entitlements.analytics.health.tenant")}
                 </TableHead>
-                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t("entitlements.analytics.health.score")}
                 </TableHead>
-                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t("entitlements.analytics.health.change")}
                 </TableHead>
-                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t("entitlements.analytics.health.risk")}
                 </TableHead>
                 <TableHead
                   variant="numeric"
-                  className="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground"
+                  className="px-4 py-3 text-[10px] font-bold uppercase tracking-wider text-nx-ink-3"
                 >
                   {t("entitlements.analytics.health.mrr")}
                 </TableHead>
-                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="px-4 py-3 text-center text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
                   {t("entitlements.analytics.health.engagement")}
                 </TableHead>
               </TableRow>
@@ -145,16 +145,16 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
               {healthData.items.map((tenant) => (
                 <TableRow
                   key={tenant.tenantId}
-                  className="border-b transition-colors last:border-0 hover:bg-muted/5"
+                  className="border-b transition-colors duration-nx-micro ease-nx-enter last:border-0 hover:bg-nx-hover motion-reduce:transition-none"
                 >
                   <TableCell className="px-4 py-3 text-sm font-semibold">
                     {tenant.tenantName}
                   </TableCell>
                   <TableCell className="px-4 py-3 text-center">
                     <div className="flex items-center justify-center gap-2">
-                      <div className="h-2.5 w-16 overflow-hidden rounded-full bg-muted/30">
+                      <div className="h-2.5 w-16 overflow-hidden rounded-full bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)]">
                         <div
-                          className={`h-full rounded-full transition-all duration-500 ${getScoreBarColor(tenant.healthScore)}`}
+                          className={`h-full rounded-full transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none ${getScoreBarColor(tenant.healthScore)}`}
                           style={{ width: `${tenant.healthScore}%` }}
                         />
                       </div>
@@ -170,7 +170,7 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
                           ? "bg-success/10 text-success"
                           : tenant.scoreChange < 0
                             ? "bg-destructive/10 text-destructive"
-                            : "text-muted-foreground"
+                            : "text-nx-ink-3"
                       }`}
                     >
                       {tenant.scoreChange > 0 ? "+" : ""}
@@ -187,7 +187,7 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
                   <TableCell className="px-4 py-3 text-center">
                     <span className="text-xs">
                       {tenant.activeUserCount}/{tenant.totalUserCount}
-                      <span className="ms-1 text-muted-foreground">({tenant.engagementRate}%)</span>
+                      <span className="ms-1 text-nx-ink-3">({tenant.engagementRate}%)</span>
                     </span>
                   </TableCell>
                 </TableRow>
@@ -196,15 +196,15 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
           </Table>
 
           {healthData.items.length === 0 && (
-            <div className="py-16 text-center text-sm text-muted-foreground">
+            <div className="py-16 text-center text-sm text-nx-ink-3">
               {t("entitlements.analytics.health.noData")}
             </div>
           )}
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between border-t bg-muted/10 px-4 py-3">
-              <span className="text-xs text-muted-foreground">
+            <div className="flex items-center justify-between border-t bg-[color:color-mix(in_srgb,var(--nx-raised)_10%,transparent)] px-4 py-3">
+              <span className="text-xs text-nx-ink-3">
                 {t("entitlements.analytics.periods.pageOf", {
                   page: String(page),
                   total: String(totalPages),
@@ -217,7 +217,7 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
                   onClick={() => onPageChange(page - 1)}
                   disabled={page <= 1}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
                 </Button>
                 <Button
                   variant="outline"
@@ -225,7 +225,7 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
                   onClick={() => onPageChange(page + 1)}
                   disabled={page >= totalPages}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 rtl:rotate-180" />
                 </Button>
               </div>
             </div>

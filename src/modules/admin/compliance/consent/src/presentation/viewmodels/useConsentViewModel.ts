@@ -26,10 +26,10 @@ export function useConsentViewModel() {
     mutationFn: (data: RecordConsentRequest) => consentRepository.recordConsent(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["compliance", "consent"] });
-      success({ title: t("compliance.consent.recorded") || "Consent recorded" });
+      success({ title: t("compliance.consent.recorded") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -37,10 +37,10 @@ export function useConsentViewModel() {
     mutationFn: (purposeId: string) => consentRepository.withdrawConsent(purposeId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["compliance", "consent"] });
-      success({ title: t("compliance.consent.withdrawn") || "Consent withdrawn" });
+      success({ title: t("compliance.consent.withdrawn") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

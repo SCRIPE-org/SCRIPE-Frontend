@@ -110,7 +110,7 @@ export function InvestorLandingView() {
                 : undefined
             }
           >
-            <span className="mr-1 ltr:mr-1 rtl:ml-1">{PERSONA_DATA[p].emoji}</span>
+            <span className="me-1">{PERSONA_DATA[p].emoji}</span>
             <span>{t(PERSONA_DATA[p].tabKey)}</span>
           </button>
         ))}
@@ -148,7 +148,7 @@ export function InvestorLandingView() {
 
           <Link href={data.ctaHref} className="inv-cta-btn">
             <span>{t(data.ctaLabel)}</span>
-            <span className="ml-1 ltr:ml-1 rtl:mr-1" aria-hidden="true">
+            <span className="ms-1" aria-hidden="true">
               →
             </span>
           </Link>

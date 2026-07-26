@@ -21,12 +21,6 @@ interface ExportButtonProps {
   disabled?: boolean;
 }
 
-const FORMAT_LABELS: Record<string, string> = {
-  csv: "CSV",
-  xlsx: "Excel",
-  pdf: "PDF",
-};
-
 /**
  * Presentation UI component rendering the export button.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
@@ -41,17 +35,13 @@ export function ExportButton({ onExport, disabled }: ExportButtonProps) {
     try {
       await onExport(format);
       toast({
-        title: t("entitlements.analytics.export.success") || "Export Complete",
-        description:
-          t("entitlements.analytics.export.successDesc") ||
-          `Your ${FORMAT_LABELS[format] ?? format} file has been downloaded.`,
+        title: t("entitlements.analytics.export.success"),
+        description: t("entitlements.analytics.export.successDesc"),
       });
     } catch {
       toast({
-        title: t("entitlements.analytics.export.error") || "Export Failed",
-        description:
-          t("entitlements.analytics.export.errorDesc") ||
-          "Something went wrong while exporting. Please try again.",
+        title: t("entitlements.analytics.export.error"),
+        description: t("entitlements.analytics.export.errorDesc"),
         variant: "destructive",
       });
     } finally {

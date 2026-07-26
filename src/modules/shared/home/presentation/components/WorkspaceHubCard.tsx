@@ -10,7 +10,7 @@
  * its own coloured shadow, so there is no glow and no hover lift here.
  */
 
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { Lock, ChevronRight } from "lucide-react";
 import { DynamicIcon } from "@core/ui/layout/nexus/_parts/primary-rail-parts";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -44,7 +44,9 @@ export function WorkspaceHubCard({
   lockReason,
 }: WorkspaceHubCardProps) {
   const { t } = useI18n();
-  const name = language === "ar" ? nameAr || nameEn : nameEn || nameAr;
+  const name =
+    resolveBilingualLabel(nameEn, nameAr, language) ||
+    resolveBilingualLabel(nameAr, nameEn, language);
   const chroma = colorChroma ?? 0.18;
   const hue = colorHue ?? 270;
   const accentColor = `oklch(0.65 ${chroma} ${hue})`;

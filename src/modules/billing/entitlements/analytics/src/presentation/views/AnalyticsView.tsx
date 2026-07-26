@@ -13,6 +13,7 @@ import { BarChart3, TrendingUp, Users, DollarSign, Activity, Heart, FileText } f
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { EmptyState as CoreEmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
+import { Skeleton } from "@core/ui/skeleton";
 import { OverviewTab } from "../components/OverviewTab";
 import { RevenueTab } from "../components/RevenueTab";
 import { RetentionTab } from "../components/RetentionTab";
@@ -44,17 +45,17 @@ export function AnalyticsView() {
   return (
     <div className="space-y-5">
       {/* ── Page Header ── */}
-      <div className="relative overflow-hidden rounded-xl border border-border/40 bg-gradient-to-br from-card via-card to-success/[0.03] p-5 shadow-sm">
+      <div className="relative overflow-hidden rounded-nx-lg border border-[color:color-mix(in_srgb,var(--nx-line)_40%,transparent)] bg-gradient-to-br from-nx-surface via-nx-surface to-success/[0.03] p-5 shadow-sm">
         <div className="relative flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-success to-success/70 text-success-foreground">
+            <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-gradient-to-br from-success to-success/70 text-success-foreground">
               <BarChart3 className="h-5 w-5" />
             </div>
             <div>
               <h1 className="text-xl font-bold tracking-tight">
                 {t("entitlements.analytics.title")}
               </h1>
-              <p className="mt-0.5 text-xs text-muted-foreground">
+              <p className="mt-0.5 text-xs text-nx-ink-3">
                 {t("entitlements.analytics.description")}
               </p>
             </div>
@@ -69,14 +70,14 @@ export function AnalyticsView() {
         onValueChange={(v) => vm.handleTabChange(v as AnalyticsTab)}
         className="w-full"
       >
-        <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-xl border border-border/30 bg-muted/40 p-1.5 shadow-sm backdrop-blur-sm">
+        <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_40%,transparent)] p-1.5 shadow-sm backdrop-blur-sm">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             return (
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className="gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-xs font-medium transition-all duration-200 data-[state=active]:border-border/50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-md"
+                className="gap-1.5 whitespace-nowrap rounded-nx-md px-3 py-2 text-xs font-medium transition-[color,background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none data-[state=active]:border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] data-[state=active]:bg-nx-ground data-[state=active]:text-nx-ink data-[state=active]:shadow-md"
               >
                 <Icon className="h-3.5 w-3.5" />
                 {t(tab.labelKey)}
@@ -193,13 +194,10 @@ function TabSkeleton() {
     <div className="space-y-3">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-24 animate-pulse rounded-xl border border-border/20 bg-muted/40 motion-reduce:animate-none"
-          />
+          <Skeleton key={i} className="h-24 rounded-nx-md border border-nx-line" />
         ))}
       </div>
-      <div className="h-48 animate-pulse rounded-xl border border-border/20 bg-muted/40 motion-reduce:animate-none" />
+      <Skeleton className="h-48 rounded-nx-md border border-nx-line" />
     </div>
   );
 }

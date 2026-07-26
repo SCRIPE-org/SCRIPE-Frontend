@@ -36,8 +36,6 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
   const { events, totalCount, page, setPage, loading, error, pageSize } =
     useAnalyticsEventViewModel();
 
-  const isRtl = direction === "rtl";
-
   return (
     <div style={{ padding: "1.5rem", direction: direction }}>
       {/* Header */}
@@ -45,7 +43,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
         <h1 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "0.5rem" }}>
           {t("analyticsEvents.title")}
         </h1>
-        <p style={{ color: "hsl(var(--muted-foreground))", fontSize: "0.875rem" }}>
+        <p style={{ color: "var(--nx-ink-2)", fontSize: "0.875rem" }}>
           {t("analyticsEvents.description")}
         </p>
       </div>
@@ -76,7 +74,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
       {/* Loading */}
       {loading && (
         <div
-          style={{ textAlign: "center", padding: "2rem", color: "hsl(var(--muted-foreground))" }}
+          style={{ textAlign: "center", padding: "2rem", color: "var(--nx-ink-3)" }}
         >
           {t("analyticsEvents.loading")}
         </div>
@@ -90,9 +88,9 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
           title={t("analyticsEvents.emptyTitle")}
           description={t("analyticsEvents.emptyDescription")}
           action={
-            <p className="max-w-[60ch] text-xs text-muted-foreground">
+            <p className="max-w-[60ch] text-xs text-nx-ink-3">
               Verification: run{" "}
-              <code className="rounded bg-muted px-1 py-0.5">scripe test backend</code> →
+              <code className="rounded-nx-sm bg-nx-raised px-1 py-0.5">scripe test backend</code> →
               Analytics.Application.Tests 9/9 confirm store + projection + idempotency are working.
             </p>
           }
@@ -108,17 +106,17 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                 width: "100%",
                 borderCollapse: "collapse",
                 fontSize: "0.875rem",
-                textAlign: isRtl ? "right" : "left",
+                textAlign: "start",
               }}
             >
               <thead>
-                <tr style={{ backgroundColor: "hsl(var(--muted))" }}>
+                <tr style={{ backgroundColor: "var(--nx-raised)" }}>
                   <th
                     style={{
                       padding: "0.75rem 1rem",
                       fontWeight: 600,
-                      color: "hsl(var(--foreground))",
-                      borderBottom: "1px solid hsl(var(--border))",
+                      color: "var(--nx-ink)",
+                      borderBottom: "1px solid var(--nx-line)",
                     }}
                   >
                     {t("analyticsEvents.columns.name")}
@@ -127,8 +125,8 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                     style={{
                       padding: "0.75rem 1rem",
                       fontWeight: 600,
-                      color: "hsl(var(--foreground))",
-                      borderBottom: "1px solid hsl(var(--border))",
+                      color: "var(--nx-ink)",
+                      borderBottom: "1px solid var(--nx-line)",
                     }}
                   >
                     {t("analyticsEvents.columns.module")}
@@ -137,8 +135,8 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                     style={{
                       padding: "0.75rem 1rem",
                       fontWeight: 600,
-                      color: "hsl(var(--foreground))",
-                      borderBottom: "1px solid hsl(var(--border))",
+                      color: "var(--nx-ink)",
+                      borderBottom: "1px solid var(--nx-line)",
                     }}
                   >
                     {t("analyticsEvents.columns.occurredAt")}
@@ -147,8 +145,8 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                     style={{
                       padding: "0.75rem 1rem",
                       fontWeight: 600,
-                      color: "hsl(var(--foreground))",
-                      borderBottom: "1px solid hsl(var(--border))",
+                      color: "var(--nx-ink)",
+                      borderBottom: "1px solid var(--nx-line)",
                     }}
                   >
                     {t("analyticsEvents.columns.subjectType")}
@@ -157,8 +155,8 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                     style={{
                       padding: "0.75rem 1rem",
                       fontWeight: 600,
-                      color: "hsl(var(--foreground))",
-                      borderBottom: "1px solid hsl(var(--border))",
+                      color: "var(--nx-ink)",
+                      borderBottom: "1px solid var(--nx-line)",
                     }}
                   >
                     {t("analyticsEvents.columns.subjectId")}
@@ -167,8 +165,8 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                     style={{
                       padding: "0.75rem 1rem",
                       fontWeight: 600,
-                      color: "hsl(var(--foreground))",
-                      borderBottom: "1px solid hsl(var(--border))",
+                      color: "var(--nx-ink)",
+                      borderBottom: "1px solid var(--nx-line)",
                     }}
                   >
                     {t("analyticsEvents.columns.numericValue")}
@@ -177,28 +175,28 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
               </thead>
               <tbody>
                 {events.map((ev) => (
-                  <tr key={ev.id} style={{ borderBottom: "1px solid hsl(var(--border))" }}>
+                  <tr key={ev.id} style={{ borderBottom: "1px solid var(--nx-line)" }}>
                     <td style={{ padding: "0.75rem 1rem", fontWeight: 500 }}>{ev.eventName}</td>
-                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
+                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
                       {ev.sourceModule}
                     </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
+                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
                       {new Date(ev.occurredAt).toLocaleString()}
                     </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
+                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
                       {ev.subjectEntityTypeKey ?? "—"}
                     </td>
                     <td
                       style={{
                         padding: "0.75rem 1rem",
-                        color: "hsl(var(--muted-foreground))",
+                        color: "var(--nx-ink-3)",
                         fontFamily: "monospace",
                         fontSize: "0.75rem",
                       }}
                     >
                       {ev.subjectEntityId ? ev.subjectEntityId.slice(0, 8) + "…" : "—"}
                     </td>
-                    <td style={{ padding: "0.75rem 1rem", color: "hsl(var(--muted-foreground))" }}>
+                    <td style={{ padding: "0.75rem 1rem", color: "var(--nx-ink-3)" }}>
                       {ev.associatedNumericValue !== undefined && ev.associatedNumericValue !== null
                         ? ev.associatedNumericValue
                         : "—"}
@@ -210,7 +208,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
           </div>
 
           {/* Pagination — composed from the core pagination primitives */}
-          <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
+          <div className="mt-4 flex items-center justify-between text-sm text-nx-ink-3">
             <span className="tabular-nums">
               Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, totalCount)} of{" "}
               {totalCount} events

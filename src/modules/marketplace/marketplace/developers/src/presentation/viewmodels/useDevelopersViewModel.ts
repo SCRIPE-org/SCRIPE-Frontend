@@ -30,10 +30,10 @@ export function useDevelopersViewModel() {
     mutationFn: (id: string) => developersRepository.verify(id),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.developers.verified") || "Developer verified" });
+      success({ title: t("marketplace.developers.verified") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

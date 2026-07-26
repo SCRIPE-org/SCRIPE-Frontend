@@ -83,15 +83,15 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
       </div>
 
       {/* Waterfall Chart */}
-      <Card className="overflow-hidden border border-border/30 shadow-sm">
-        <CardHeader className="bg-muted/20 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+        <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
+          <CardTitle className="text-sm font-medium text-nx-ink-3">
             {t("entitlements.analytics.revenue.mrrWaterfall")}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4">
           {mrrData.movements.length === 0 ? (
-            <div className="py-12 text-center text-sm text-muted-foreground">
+            <div className="py-12 text-center text-sm text-nx-ink-3">
               {t("entitlements.analytics.revenue.noData")}
             </div>
           ) : (
@@ -106,12 +106,12 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                     style={{ animationDelay: `${idx * 50}ms` }}
                   >
                     <div className="flex items-center gap-3 py-1.5">
-                      <span className="w-16 shrink-0 font-mono text-xs text-muted-foreground">
+                      <span className="w-16 shrink-0 font-mono text-xs text-nx-ink-3">
                         {formatMonth(movement.month)}
                       </span>
-                      <div className="relative h-9 flex-1 overflow-hidden rounded-lg bg-muted/20">
+                      <div className="relative h-9 flex-1 overflow-hidden rounded-nx-md bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)]">
                         <div
-                          className={`h-full rounded-lg transition-all duration-700 ease-out ${
+                          className={`h-full rounded-nx-md transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none ${
                             isGrowth
                               ? "bg-gradient-to-r from-success/70 to-success/50"
                               : "bg-gradient-to-r from-destructive/70 to-destructive/50"
@@ -137,7 +137,7 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                     </div>
 
                     {/* Breakdown on hover */}
-                    <div className="ml-[76px] hidden flex-wrap gap-1.5 pb-2 duration-200 animate-in fade-in-0 group-hover:flex">
+                    <div className="ms-[76px] hidden flex-wrap gap-1.5 pb-2 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-reduce:transition-none group-hover:flex">
                       {movement.mrrNew > 0 && (
                         <span className="rounded-full border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
                           +{formatCurrency(movement.mrrNew)}{" "}
@@ -163,7 +163,7 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                         </span>
                       )}
                       {movement.mrrReactivation > 0 && (
-                        <span className="rounded-full border border-primary/20 bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                        <span className="rounded-full border border-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)] bg-nx-accent-wash px-2 py-0.5 text-[10px] font-medium text-nx-accent">
                           +{formatCurrency(movement.mrrReactivation)}{" "}
                           {t("entitlements.analytics.revenue.reactivation")}
                         </span>
@@ -193,13 +193,13 @@ function SummaryCard({
 }) {
   return (
     <div
-      className={`rounded-xl border p-3 text-center transition-all ${
+      className={`rounded-nx-md border p-3 text-center transition-[background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none ${
         highlight
-          ? "border-border/50 bg-gradient-to-br from-card to-muted/20 shadow-sm"
-          : "border-border/20 bg-card/50"
+          ? "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] bg-gradient-to-br from-nx-surface to-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] shadow-sm"
+          : "border-[color:color-mix(in_srgb,var(--nx-line)_20%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-surface)_50%,transparent)]"
       }`}
     >
-      <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
         {label}
       </p>
       <div className="flex items-center justify-center gap-1">

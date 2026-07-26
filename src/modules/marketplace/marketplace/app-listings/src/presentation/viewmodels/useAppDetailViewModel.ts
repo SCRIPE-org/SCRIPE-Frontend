@@ -47,10 +47,10 @@ export function useAppDetailViewModel(id: string) {
     mutationFn: () => appListingsRepository.publish(id),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.listings.published") || "App published" });
+      success({ title: t("marketplace.listings.published") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -58,10 +58,10 @@ export function useAppDetailViewModel(id: string) {
     mutationFn: () => appListingsRepository.unpublish(id),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.listings.unpublished") || "App unpublished" });
+      success({ title: t("marketplace.listings.unpublished") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -69,10 +69,10 @@ export function useAppDetailViewModel(id: string) {
     mutationFn: () => appListingsRepository.toggleFeatured(id),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.listings.featuredToggled") || "Featured status updated" });
+      success({ title: t("marketplace.listings.featuredToggled") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -80,10 +80,10 @@ export function useAppDetailViewModel(id: string) {
     mutationFn: (reviewId: string) => reviewsRepository.delete(reviewId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["marketplace", "reviews", id] });
-      success({ title: t("marketplace.reviews.deleted") || "Review removed" });
+      success({ title: t("marketplace.reviews.deleted") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

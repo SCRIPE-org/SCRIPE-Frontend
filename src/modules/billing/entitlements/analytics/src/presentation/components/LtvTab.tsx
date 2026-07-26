@@ -32,7 +32,7 @@ function formatCurrency(value: number, currency = "USD"): string {
 const RANK_ICONS = [Crown, Medal, Award];
 const RANK_COLORS = [
   "from-warning to-warning/70 text-warning-foreground",
-  "from-muted-foreground/60 to-muted-foreground/80 text-background",
+  "from-[color:color-mix(in_srgb,var(--nx-ink-2)_60%,transparent)] to-[color:color-mix(in_srgb,var(--nx-ink-2)_80%,transparent)] text-nx-ground",
   "from-warning-strong to-warning-strong/70 text-warning-strong-foreground",
 ];
 
@@ -49,7 +49,10 @@ export function LtvTab({ ltvData }: LtvTabProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">{t("entitlements.analytics.ltv.title")}</h2>
-        <Badge variant="outline" className="gap-1 border-border/50 px-3 py-1 text-xs">
+        <Badge
+          variant="outline"
+          className="gap-1 border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] px-3 py-1 text-xs"
+        >
           {t("entitlements.analytics.ltv.platformAvg")}:{" "}
           <span className="font-bold">
             {formatCurrency(ltvData.platformAverageLtv, ltvData.currency)}
@@ -66,7 +69,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
           return (
             <Card
               key={edition.editionId}
-              className="group overflow-hidden border border-border/30 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg"
+              className="group overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm transition-[transform,box-shadow] duration-nx-micro ease-nx-enter hover:-translate-y-0.5 hover:shadow-lg motion-reduce:transition-none"
             >
               {/* Top gradient accent */}
               <div
@@ -74,7 +77,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
                   idx === 0
                     ? "from-warning to-warning/70"
                     : idx === 1
-                      ? "from-muted-foreground/60 to-muted-foreground/80"
+                      ? "from-[color:color-mix(in_srgb,var(--nx-ink-2)_60%,transparent)] to-[color:color-mix(in_srgb,var(--nx-ink-2)_80%,transparent)]"
                       : "from-success to-success/70"
                 }`}
               />
@@ -83,7 +86,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
                   <div className="flex items-center gap-2">
                     {RankIcon && (
                       <div
-                        className={`flex h-6 w-6 items-center justify-center rounded-lg bg-gradient-to-br ${rankColor}`}
+                        className={`flex h-6 w-6 items-center justify-center rounded-nx-md bg-gradient-to-br ${rankColor}`}
                       >
                         <RankIcon className="h-3.5 w-3.5" />
                       </div>
@@ -101,33 +104,33 @@ export function LtvTab({ ltvData }: LtvTabProps) {
                 {/* LTV Bar */}
                 <div>
                   <div className="mb-1.5 flex justify-between text-xs">
-                    <span className="font-medium text-muted-foreground">
+                    <span className="font-medium text-nx-ink-3">
                       {t("entitlements.analytics.ltv.avgLtv")}
                     </span>
-                    <span className="font-bold text-foreground">
+                    <span className="font-bold text-nx-ink">
                       {formatCurrency(edition.averageLtv, edition.currency)}
                     </span>
                   </div>
-                  <div className="h-3 overflow-hidden rounded-full bg-muted/30">
+                  <div className="h-3 overflow-hidden rounded-full bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)]">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-success to-success/70 transition-all duration-1000 ease-out"
+                      className="h-full rounded-full bg-gradient-to-r from-success to-success/70 transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
                       style={{ width: `${barWidth}%` }}
                     />
                   </div>
                 </div>
 
                 {/* Metrics grid */}
-                <div className="grid grid-cols-3 gap-3 border-t border-border/20 pt-1">
+                <div className="grid grid-cols-3 gap-3 border-t border-[color:color-mix(in_srgb,var(--nx-line)_20%,transparent)] pt-1">
                   <div className="py-1.5 text-center">
-                    <p className="text-[10px] font-medium text-muted-foreground">
+                    <p className="text-[10px] font-medium text-nx-ink-3">
                       {t("entitlements.analytics.ltv.median")}
                     </p>
                     <p className="mt-0.5 text-xs font-bold">
                       {formatCurrency(edition.medianLtv, edition.currency)}
                     </p>
                   </div>
-                  <div className="border-x border-border/20 py-1.5 text-center">
-                    <p className="text-[10px] font-medium text-muted-foreground">
+                  <div className="border-x border-[color:color-mix(in_srgb,var(--nx-line)_20%,transparent)] py-1.5 text-center">
+                    <p className="text-[10px] font-medium text-nx-ink-3">
                       {t("entitlements.analytics.ltv.avgLifespan")}
                     </p>
                     <p className="mt-0.5 text-xs font-bold">
@@ -135,7 +138,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
                     </p>
                   </div>
                   <div className="py-1.5 text-center">
-                    <p className="text-[10px] font-medium text-muted-foreground">
+                    <p className="text-[10px] font-medium text-nx-ink-3">
                       {t("entitlements.analytics.ltv.arpuMonth")}
                     </p>
                     <p className="mt-0.5 text-xs font-bold">
@@ -150,7 +153,7 @@ export function LtvTab({ ltvData }: LtvTabProps) {
       </div>
 
       {ltvData.editions.length === 0 && (
-        <div className="py-16 text-center text-sm text-muted-foreground">
+        <div className="py-16 text-center text-sm text-nx-ink-3">
           {t("entitlements.analytics.ltv.noData")}
         </div>
       )}

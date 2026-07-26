@@ -38,10 +38,10 @@ export function useAvatarViewModel() {
           .getState()
           .setUser(currentUser.update({ profileImageUrl: data.profileImageUrl }));
       }
-      success({ title: t("profile.avatar.uploaded") || "Avatar updated" });
+      success({ title: t("profile.avatar.uploaded") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -56,10 +56,10 @@ export function useAvatarViewModel() {
       if (currentUser) {
         useAppStore.getState().setUser(currentUser.update({ profileImageUrl: null }));
       }
-      success({ title: t("profile.avatar.removed") || "Avatar removed" });
+      success({ title: t("profile.avatar.removed") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

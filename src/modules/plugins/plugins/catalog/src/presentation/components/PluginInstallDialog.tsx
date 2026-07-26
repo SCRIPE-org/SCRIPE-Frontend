@@ -17,7 +17,7 @@ import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Puzzle, ShieldCheck, AlertTriangle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import type { PluginCatalogItem } from "../../domain/entities/PluginCatalogItem";
 
 interface PluginInstallDialogProps {
@@ -44,9 +44,8 @@ export function PluginInstallDialog({
 
   if (!plugin) return null;
 
-  const displayName = language === "ar" ? plugin.nameAr || plugin.name : plugin.name;
-  const displayDesc =
-    language === "ar" ? plugin.descriptionAr || plugin.description : plugin.description;
+  const displayName = resolveBilingualLabel(plugin.name, plugin.nameAr, language);
+  const displayDesc = resolveBilingualLabel(plugin.description, plugin.descriptionAr, language);
   const hasBrandColor = plugin.colorHue != null;
 
   const tier2Permissions = [

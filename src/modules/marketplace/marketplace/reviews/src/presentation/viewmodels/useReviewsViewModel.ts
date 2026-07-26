@@ -28,10 +28,10 @@ export function useReviewsViewModel() {
     mutationFn: (id: string) => reviewsRepository.delete(id),
     onSuccess: () => {
       invalidate();
-      success({ title: t("marketplace.reviews.moderated") || "Review removed" });
+      success({ title: t("marketplace.reviews.moderated") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

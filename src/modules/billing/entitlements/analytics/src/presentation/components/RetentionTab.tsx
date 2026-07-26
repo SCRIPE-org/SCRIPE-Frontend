@@ -19,11 +19,11 @@ function formatMonth(iso: string): string {
 function getHeatmapStyle(rate: number): { bg: string; text: string } {
   if (rate >= 90) return { bg: "bg-success", text: "text-success-foreground" };
   if (rate >= 75) return { bg: "bg-success/80", text: "text-success-foreground" };
-  if (rate >= 60) return { bg: "bg-success/60", text: "text-foreground" };
-  if (rate >= 45) return { bg: "bg-success/35", text: "text-foreground" };
-  if (rate >= 30) return { bg: "bg-warning/40", text: "text-foreground" };
-  if (rate >= 15) return { bg: "bg-warning-strong/45", text: "text-foreground" };
-  if (rate > 0) return { bg: "bg-destructive/40", text: "text-foreground" };
+  if (rate >= 60) return { bg: "bg-success/60", text: "text-nx-ink" };
+  if (rate >= 45) return { bg: "bg-success/35", text: "text-nx-ink" };
+  if (rate >= 30) return { bg: "bg-warning/40", text: "text-nx-ink" };
+  if (rate >= 15) return { bg: "bg-warning-strong/45", text: "text-nx-ink" };
+  if (rate > 0) return { bg: "bg-destructive/40", text: "text-nx-ink" };
   return { bg: "bg-destructive/60", text: "text-destructive-foreground" };
 }
 
@@ -39,26 +39,26 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">{t("entitlements.analytics.retention.title")}</h2>
 
-      <Card className="overflow-hidden border border-border/30 shadow-sm">
-        <CardHeader className="bg-muted/20 pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+        <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
+          <CardTitle className="text-sm font-medium text-nx-ink-3">
             {t("entitlements.analytics.retention.heatmap")}
           </CardTitle>
         </CardHeader>
         <CardContent className="overflow-x-auto p-0">
           <div className="min-w-[600px]">
             {/* Header row */}
-            <div className="flex border-b bg-muted/30">
-              <div className="w-24 shrink-0 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <div className="flex border-b bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)]">
+              <div className="w-24 shrink-0 px-3 py-2.5 text-xs font-bold uppercase tracking-wider text-nx-ink-3">
                 {t("entitlements.analytics.retention.cohort")}
               </div>
-              <div className="w-16 shrink-0 px-2 py-2.5 text-center text-xs font-bold text-muted-foreground">
+              <div className="w-16 shrink-0 px-2 py-2.5 text-center text-xs font-bold text-nx-ink-3">
                 #
               </div>
               {Array.from({ length: maxColumns }, (_, i) => (
                 <div
                   key={i}
-                  className="w-14 shrink-0 px-1 py-2.5 text-center text-xs font-bold text-muted-foreground"
+                  className="w-14 shrink-0 px-1 py-2.5 text-center text-xs font-bold text-nx-ink-3"
                 >
                   M{i}
                 </div>
@@ -69,13 +69,13 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
             {cohortData.cohorts.map((row, rowIdx) => (
               <div
                 key={row.cohortMonth}
-                className="flex border-b transition-colors last:border-0 hover:bg-muted/10"
+                className="flex border-b transition-colors duration-nx-micro ease-nx-enter last:border-0 hover:bg-nx-hover motion-reduce:transition-none"
                 style={{ animationDelay: `${rowIdx * 30}ms` }}
               >
-                <div className="w-24 shrink-0 px-3 py-2.5 font-mono text-xs font-medium text-foreground/80">
+                <div className="w-24 shrink-0 px-3 py-2.5 font-mono text-xs font-medium text-[color:color-mix(in_srgb,var(--nx-ink)_80%,transparent)]">
                   {formatMonth(row.cohortMonth)}
                 </div>
-                <div className="w-16 shrink-0 px-2 py-2.5 text-center text-xs font-semibold text-muted-foreground">
+                <div className="w-16 shrink-0 px-2 py-2.5 text-center text-xs font-semibold text-nx-ink-3">
                   {row.initialCount}
                 </div>
                 {row.buckets.map((bucket, colIdx) => {
@@ -83,7 +83,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
                   return (
                     <div
                       key={bucket.monthOffset}
-                      className={`m-0.5 flex w-14 shrink-0 cursor-default items-center justify-center rounded py-2 text-center text-[10px] font-bold transition-all duration-200 ${style.bg} ${style.text}`}
+                      className={`m-0.5 flex w-14 shrink-0 cursor-default items-center justify-center rounded py-2 text-center text-[10px] font-bold transition-[background-color,color] duration-nx-standard ease-nx-enter motion-reduce:transition-none ${style.bg} ${style.text}`}
                       title={`${bucket.retainedCount} retained (${bucket.retentionRate.toFixed(1)}%)`}
                       style={{ animationDelay: `${(rowIdx * maxColumns + colIdx) * 15}ms` }}
                     >
@@ -99,7 +99,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
             ))}
 
             {cohortData.cohorts.length === 0 && (
-              <div className="py-16 text-center text-sm text-muted-foreground">
+              <div className="py-16 text-center text-sm text-nx-ink-3">
                 {t("entitlements.analytics.retention.noData")}
               </div>
             )}
@@ -108,7 +108,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
       </Card>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-3 text-xs text-nx-ink-3">
         <span className="font-semibold">{t("entitlements.analytics.retention.legend")}:</span>
         <div className="flex items-center gap-2">
           {[

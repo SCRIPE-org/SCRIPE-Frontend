@@ -86,10 +86,10 @@ export function useAppListingsViewModel() {
     mutationFn: (id: string) => appListingsRepository.publish(id),
     onSuccess: () => {
       invalidateListings();
-      success({ title: t("marketplace.listings.published") || "App published" });
+      success({ title: t("marketplace.listings.published") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -97,10 +97,10 @@ export function useAppListingsViewModel() {
     mutationFn: (id: string) => appListingsRepository.unpublish(id),
     onSuccess: () => {
       invalidateListings();
-      success({ title: t("marketplace.listings.unpublished") || "App unpublished" });
+      success({ title: t("marketplace.listings.unpublished") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -108,10 +108,10 @@ export function useAppListingsViewModel() {
     mutationFn: (id: string) => appListingsRepository.toggleFeatured(id),
     onSuccess: () => {
       invalidateListings();
-      success({ title: t("marketplace.listings.featuredToggled") || "Featured status updated" });
+      success({ title: t("marketplace.listings.featuredToggled") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 
@@ -119,10 +119,10 @@ export function useAppListingsViewModel() {
     mutationFn: (id: string) => appListingsRepository.delete(id),
     onSuccess: () => {
       invalidateListings();
-      success({ title: t("marketplace.listings.deleted") || "App listing deleted" });
+      success({ title: t("marketplace.listings.deleted") });
     },
     onError: (err: Error) => {
-      showError({ title: t("common.error") || "Error", description: err.message });
+      showError({ title: t("common.error"), description: err.message });
     },
   });
 

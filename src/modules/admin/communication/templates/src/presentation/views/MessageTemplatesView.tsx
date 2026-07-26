@@ -21,12 +21,12 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 // ─── Category Colors ────────────────────────────────────────
 const CATEGORY_COLORS: Record<TemplateCategory, { bg: string; text: string }> = {
   transactional: { bg: "bg-info/15", text: "text-info" },
-  marketing: { bg: "bg-primary/15", text: "text-primary" },
-  notification: { bg: "bg-primary/15", text: "text-primary" },
+  marketing: { bg: "bg-nx-accent-wash", text: "text-nx-accent" },
+  notification: { bg: "bg-nx-accent-wash", text: "text-nx-accent" },
   onboarding: { bg: "bg-success/15", text: "text-success" },
   security: { bg: "bg-destructive/15", text: "text-destructive" },
   billing: { bg: "bg-warning/15", text: "text-warning" },
-  custom: { bg: "bg-muted", text: "text-muted-foreground" },
+  custom: { bg: "bg-nx-raised", text: "text-nx-ink-3" },
 };
 
 /**
@@ -135,12 +135,12 @@ export function MessageTemplatesView() {
       columns: [
         {
           key: "key",
-          label: t("messaging.templates.key") || "Template Key",
+          label: t("messaging.templates.key"),
           sortable: true,
         },
         {
           key: "category",
-          label: t("messaging.templates.category") || "Category",
+          label: t("messaging.templates.category"),
           render: (value: TemplateCategory | undefined) => {
             if (!value)
               return (
@@ -161,30 +161,30 @@ export function MessageTemplatesView() {
         },
         {
           key: "channel",
-          label: t("messaging.templates.channel") || "Channel",
+          label: t("messaging.templates.channel"),
         },
         {
           key: "language",
-          label: t("messaging.templates.language") || "Language",
+          label: t("messaging.templates.language"),
         },
         {
           key: "isActive",
-          label: t("common.status") || "Status",
+          label: t("common.status"),
           render: (value: boolean) => (
             <Badge variant={value ? "success" : "secondary"}>
-              {value ? t("common.active") || "Active" : t("common.inactive") || "Inactive"}
+              {value ? t("common.active") : t("common.inactive")}
             </Badge>
           ),
         },
         {
           key: "usageCount",
-          label: t("messaging.templates.usage") || "Usage",
+          label: t("messaging.templates.usage"),
           render: (value: number | undefined, item: MessageTemplate) => (
             <div className="flex items-center gap-1.5">
-              <BarChart3 className="h-3.5 w-3.5 text-muted-foreground" />
+              <BarChart3 className="h-3.5 w-3.5 text-nx-ink-3" />
               <span className="font-medium">{value ?? 0}</span>
               {item.lastUsedAt && (
-                <span className="text-xs text-muted-foreground">
+                <span className="text-xs text-nx-ink-3">
                   · {formatUtc(item.lastUsedAt, "MMM d")}
                 </span>
               )}
@@ -193,7 +193,7 @@ export function MessageTemplatesView() {
         },
         {
           key: "version",
-          label: t("messaging.templates.version") || "Version",
+          label: t("messaging.templates.version"),
           render: (value: number) => (
             <Badge variant="outline" className="font-mono text-xs">
               v{value}
@@ -202,34 +202,34 @@ export function MessageTemplatesView() {
         },
         {
           key: "createdAt",
-          label: t("common.createdAt") || "Created",
+          label: t("common.createdAt"),
           render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
         },
       ],
       getActions: (_vm: any, _t: any, handleDelete?: any): CrudAction<MessageTemplate>[] => [
         {
-          label: t("common.edit") || "Edit",
+          label: t("common.edit"),
           icon: <Pencil className="h-4 w-4" />,
           onClick: (item: MessageTemplate) => handleEdit(item),
         },
         {
-          label: t("messaging.templates.preview") || "Preview",
+          label: t("messaging.templates.preview"),
           icon: <Eye className="h-4 w-4" />,
           onClick: (item: MessageTemplate) => handlePreview(item),
         },
         {
-          label: t("messaging.templates.clone") || "Clone",
+          label: t("messaging.templates.clone"),
           icon: <Copy className="h-4 w-4" />,
           onClick: (item: MessageTemplate) => handleClone(item.id),
           disabled: () => isCloning,
         },
         {
-          label: t("messaging.templates.export") || "Export",
+          label: t("messaging.templates.export"),
           icon: <Download className="h-4 w-4" />,
           onClick: (item: MessageTemplate) => handleExport(item),
         },
         {
-          label: t("common.delete") || "Delete",
+          label: t("common.delete"),
           icon: <Trash2 className="h-4 w-4" />,
           onClick: handleDelete,
           confirmTitle: t("messaging.templates.deleteTitle"),

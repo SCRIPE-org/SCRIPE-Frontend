@@ -11,6 +11,7 @@ import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { Trash2, Tag, Plus, Pencil } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { resolveBilingualLabel } from "@core/common/utils";
 import { useState } from "react";
 import type { AppCategory } from "../../domain/entities/AppCategory";
 
@@ -69,7 +70,7 @@ export function CategoriesView() {
       ) : (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {vm.categories.map((cat) => {
-            const displayName = language === "ar" ? cat.nameAr || cat.name : cat.name;
+            const displayName = resolveBilingualLabel(cat.name, cat.nameAr, language);
             return (
               <Card key={cat.id} className="flex flex-col gap-0">
                 <CardHeader className="flex flex-row items-center gap-3 pb-2">

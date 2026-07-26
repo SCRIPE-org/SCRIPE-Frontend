@@ -72,7 +72,7 @@ export function DocContent({ sections }: DocContentProps) {
                 <a
                   href={`#${id}`}
                   onClick={handleAnchorClick}
-                  className="docs-heading-anchor-link ml-2 opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
+                  className="docs-heading-anchor-link ms-2 opacity-0 transition-opacity duration-nx-micro ease-nx-enter focus:opacity-100 group-hover:opacity-100 motion-reduce:transition-none"
                   aria-label={`Link to ${t(section.titleKey)}`}
                 >
                   <svg
@@ -85,7 +85,7 @@ export function DocContent({ sections }: DocContentProps) {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="inline-block text-muted-foreground transition-colors hover:text-primary"
+                    className="inline-block text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-accent motion-reduce:transition-none"
                   >
                     <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                     <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
@@ -192,13 +192,13 @@ export function DocContent({ sections }: DocContentProps) {
                 <img
                   src={section.src}
                   alt={section.alt}
-                  style={{ maxWidth: "100%", borderRadius: "var(--radius)" }}
+                  style={{ maxWidth: "100%", borderRadius: "var(--nx-radius-lg)" }}
                 />
                 {section.caption && (
                   <figcaption
                     style={{
                       fontSize: "0.8125rem",
-                      color: "hsl(var(--muted-foreground))",
+                      color: "var(--nx-ink-3)",
                       marginTop: "0.5rem",
                       textAlign: "center",
                     }}

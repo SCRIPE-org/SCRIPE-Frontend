@@ -60,13 +60,13 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
 
       {/* Forecast Chart */}
       {allPoints.length === 0 ? (
-        <div className="py-16 text-center text-sm text-muted-foreground">
+        <div className="py-16 text-center text-sm text-nx-ink-3">
           {t("entitlements.analytics.forecast.noData")}
         </div>
       ) : (
-        <Card className="overflow-hidden border border-border/30 shadow-sm">
-          <CardHeader className="bg-muted/20 pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+        <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+          <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
+            <CardTitle className="text-sm font-medium text-nx-ink-3">
               {t("entitlements.analytics.forecast.projectedMrr")}
             </CardTitle>
           </CardHeader>
@@ -85,14 +85,14 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                     style={{ animationDelay: `${idx * 40}ms` }}
                   >
                     <div className="flex items-center gap-3">
-                      <span className="w-16 shrink-0 font-mono text-xs text-muted-foreground">
+                      <span className="w-16 shrink-0 font-mono text-xs text-nx-ink-3">
                         {formatMonth(point.month)}
                       </span>
-                      <div className="relative h-10 flex-1 overflow-hidden rounded-lg bg-muted/15">
+                      <div className="relative h-10 flex-1 overflow-hidden rounded-nx-md bg-[color:color-mix(in_srgb,var(--nx-raised)_15%,transparent)]">
                         {/* Confidence interval background */}
                         {isProjected && (
                           <div
-                            className="absolute h-full rounded-lg border-l border-r border-info/20 bg-info/10"
+                            className="absolute h-full rounded-nx-md border-s border-e border-info/20 bg-info/10"
                             style={{
                               left: `${lowerWidth}%`,
                               width: `${Math.max(upperWidth - lowerWidth, 1)}%`,
@@ -101,7 +101,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                         )}
                         {/* MRR bar */}
                         <div
-                          className={`absolute h-full rounded-lg transition-all duration-700 ease-out ${
+                          className={`absolute h-full rounded-nx-md transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none ${
                             isProjected
                               ? "bg-gradient-to-r from-info/60 to-info/40"
                               : "bg-gradient-to-r from-success/60 to-success/40"
@@ -114,7 +114,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                             {formatCurrency(point.projectedMrr)}
                           </span>
                           {isProjected && (
-                            <span className="font-mono text-[10px] text-muted-foreground">
+                            <span className="font-mono text-[10px] text-nx-ink-3">
                               {formatCurrency(point.lowerBound)} –{" "}
                               {formatCurrency(point.upperBound)}
                             </span>
@@ -124,7 +124,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                       {/* Confidence or type badge */}
                       {isProjected ? (
                         <span
-                          className={`w-10 text-right text-[10px] font-semibold ${
+                          className={`w-10 text-end text-[10px] font-semibold ${
                             point.confidence >= 80
                               ? "text-success"
                               : point.confidence >= 50
@@ -135,7 +135,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                           {point.confidence.toFixed(0)}%
                         </span>
                       ) : (
-                        <span className="w-10 text-right text-[10px] text-muted-foreground">●</span>
+                        <span className="w-10 text-end text-[10px] text-nx-ink-3">●</span>
                       )}
                     </div>
                   </div>
@@ -147,7 +147,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
       )}
 
       {/* Legend */}
-      <div className="flex items-center gap-5 text-xs text-muted-foreground">
+      <div className="flex items-center gap-5 text-xs text-nx-ink-3">
         <div className="flex items-center gap-1.5">
           <div className="h-3 w-4 rounded bg-gradient-to-r from-success/60 to-success/40" />
           <span className="font-medium">{t("entitlements.analytics.forecast.historical")}</span>

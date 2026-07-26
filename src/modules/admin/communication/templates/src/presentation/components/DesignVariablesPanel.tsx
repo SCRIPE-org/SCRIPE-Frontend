@@ -65,7 +65,7 @@ const FONT_OPTIONS = [
 // ─── Section Header ─────────────────────────────────────────
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+    <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
       {children}
     </h4>
   );
@@ -89,7 +89,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
             <Paintbrush className="h-4 w-4" />
-            {t("messaging.templates.design.title") || "Design Variables"}
+            {t("messaging.templates.design.title")}
           </CardTitle>
           <Button
             type="button"
@@ -99,32 +99,32 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             onClick={() => onChange(DEFAULT_DESIGN)}
           >
             <RotateCcw className="h-3 w-3" />
-            {t("messaging.templates.design.reset") || "Reset"}
+            {t("messaging.templates.design.reset")}
           </Button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* ── Colors ────────────────────────────────────── */}
         <div className="space-y-3">
-          <SectionHeading>{t("messaging.templates.design.colors") || "Colors"}</SectionHeading>
+          <SectionHeading>{t("messaging.templates.design.colors")}</SectionHeading>
           <div className="grid grid-cols-2 gap-2">
             <ColorPickerField
-              label={t("messaging.templates.design.primaryColor") || "Primary"}
+              label={t("messaging.templates.design.primaryColor")}
               value={value.primaryColor}
               onChange={(c: string) => update("primaryColor", c)}
             />
             <ColorPickerField
-              label={t("messaging.templates.design.secondaryColor") || "Secondary"}
+              label={t("messaging.templates.design.secondaryColor")}
               value={value.secondaryColor}
               onChange={(c: string) => update("secondaryColor", c)}
             />
             <ColorPickerField
-              label={t("messaging.templates.design.backgroundColor") || "Background"}
+              label={t("messaging.templates.design.backgroundColor")}
               value={value.backgroundColor}
               onChange={(c: string) => update("backgroundColor", c)}
             />
             <ColorPickerField
-              label={t("messaging.templates.design.textColor") || "Text"}
+              label={t("messaging.templates.design.textColor")}
               value={value.textColor}
               onChange={(c: string) => update("textColor", c)}
             />
@@ -136,11 +136,11 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
         {/* ── Typography ─────────────────────────────────── */}
         <div className="space-y-3">
           <SectionHeading>
-            {t("messaging.templates.design.typography") || "Typography"}
+            {t("messaging.templates.design.typography")}
           </SectionHeading>
           <div className="space-y-2">
             <Label className="text-xs">
-              {t("messaging.templates.design.fontFamily") || "Font Family"}
+              {t("messaging.templates.design.fontFamily")}
             </Label>
             <Select value={value.fontFamily} onValueChange={(v) => update("fontFamily", v)}>
               <SelectTrigger className="text-sm">
@@ -158,7 +158,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
           <div className="grid grid-cols-2 gap-2">
             <div className="space-y-1">
               <Label className="text-xs">
-                {t("messaging.templates.design.headerSize") || "Header Size (px)"}
+                {t("messaging.templates.design.headerSize")}
               </Label>
               <Input
                 type="number"
@@ -171,7 +171,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             </div>
             <div className="space-y-1">
               <Label className="text-xs">
-                {t("messaging.templates.design.bodySize") || "Body Size (px)"}
+                {t("messaging.templates.design.bodySize")}
               </Label>
               <Input
                 type="number"
@@ -189,10 +189,10 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
 
         {/* ── Layout ─────────────────────────────────────── */}
         <div className="space-y-3">
-          <SectionHeading>{t("messaging.templates.design.layout") || "Layout"}</SectionHeading>
+          <SectionHeading>{t("messaging.templates.design.layout")}</SectionHeading>
           <div className="space-y-2">
             <Label className="text-xs">
-              {t("messaging.templates.design.borderRadius") || "Border Radius (px)"}
+              {t("messaging.templates.design.borderRadius")}
             </Label>
             <Input
               type="number"
@@ -209,10 +209,10 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
 
         {/* ── Branding ───────────────────────────────────── */}
         <div className="space-y-3">
-          <SectionHeading>{t("messaging.templates.design.branding") || "Branding"}</SectionHeading>
+          <SectionHeading>{t("messaging.templates.design.branding")}</SectionHeading>
           <div className="space-y-2">
             <Label className="text-xs">
-              {t("messaging.templates.design.logoUrl") || "Logo URL"}
+              {t("messaging.templates.design.logoUrl")}
             </Label>
             <Input
               value={value.logoUrl}
@@ -223,7 +223,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
           </div>
           <div className="space-y-2">
             <Label className="text-xs">
-              {t("messaging.templates.design.footerText") || "Footer Text"}
+              {t("messaging.templates.design.footerText")}
             </Label>
             <Input
               value={value.footerText}
@@ -237,9 +237,9 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
         {/* ── Live Preview Swatch ───────────────────────── */}
         <Separator />
         <div className="space-y-2">
-          <SectionHeading>{t("messaging.templates.design.preview") || "Preview"}</SectionHeading>
+          <SectionHeading>{t("messaging.templates.design.preview")}</SectionHeading>
           <div
-            className="overflow-hidden rounded-lg border"
+            className="overflow-hidden rounded-nx-lg border border-nx-line"
             style={{
               backgroundColor: value.backgroundColor,
               fontFamily: value.fontFamily,
@@ -254,7 +254,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                   fontWeight: 700,
                 }}
               >
-                {t("messaging.templates.design.previewHeader") || "Header"}
+                {t("messaging.templates.design.previewHeader")}
               </span>
             </div>
             <div className="px-4 py-3">
@@ -264,7 +264,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                   fontSize: `${value.bodyFontSize}px`,
                 }}
               >
-                {t("messaging.templates.design.previewBody") || "Body text preview"}
+                {t("messaging.templates.design.previewBody")}
               </p>
               <Button
                 type="button"
@@ -275,7 +275,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
                   borderRadius: `${value.borderRadius}px`,
                 }}
               >
-                {t("messaging.templates.design.previewButton") || "Button"}
+                {t("messaging.templates.design.previewButton")}
               </Button>
             </div>
           </div>
