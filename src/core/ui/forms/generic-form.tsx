@@ -557,7 +557,17 @@ export function GenericForm({
 
   return (
     <div className={cn(getFormContainerClasses(), "text-start")} dir={direction}>
-      <form onSubmit={handleSubmit} className={getFormSpacing()} aria-busy={loading || undefined}>
+      <form
+        onSubmit={handleSubmit}
+        className={getFormSpacing()}
+        aria-busy={loading || undefined}
+        autoComplete="off"
+        data-1p-ignore="true"
+        data-bwignore="true"
+        data-lpignore="true"
+        data-protonpass-ignore="true"
+        data-dashlane-ignore="true"
+      >
         {fieldGroups.map((group, groupIndex) => {
           // The two-column grid engages only when a grouped field opts in via colSpan
           const gridded = group.fields.some((f) => f.colSpan !== undefined && f.type !== "hidden");
@@ -885,52 +895,56 @@ export function GenericForm({
                     dir={direction}
                   />
                 ) : field.type === "password" ? (
-                  <PasswordInput
-                    id={field.name}
-                    value={formData[field.name] ?? ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    required={field.required}
-                    className={cn(getInputClasses(getInputHeight()), "text-start")}
-                    placeholder={field.placeholder}
-                    disabled={field.disabled}
-                    readOnly={readOnly}
-                    autoComplete={field.autoComplete ?? "new-password"}
-                    data-1p-ignore="true"
-                    data-bwignore="true"
-                    data-lpignore="true"
-                    data-protonpass-ignore="true"
-                    data-dashlane-ignore="true"
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid || undefined}
-                    showStrengthIndicator={true} // Enable for admin forms
-                  />
+                  <div className="relative w-full overflow-hidden rounded-nx-control">
+                    <PasswordInput
+                      id={field.name}
+                      value={formData[field.name] ?? ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      required={field.required}
+                      className={cn(getInputClasses(getInputHeight()), "text-start")}
+                      placeholder={field.placeholder}
+                      disabled={field.disabled}
+                      readOnly={readOnly}
+                      autoComplete={field.autoComplete ?? "new-password"}
+                      data-1p-ignore="true"
+                      data-bwignore="true"
+                      data-lpignore="true"
+                      data-protonpass-ignore="true"
+                      data-dashlane-ignore="true"
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid || undefined}
+                      showStrengthIndicator={true} // Enable for admin forms
+                    />
+                  </div>
                 ) : (
-                  <Input
-                    id={field.name}
-                    type={field.type}
-                    value={formData[field.name] ?? ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    required={field.required}
-                    className={cn(getInputClasses(getInputHeight()), "text-start")}
-                    placeholder={field.placeholder}
-                    min={field.min}
-                    max={field.max}
-                    step={field.step}
-                    pattern={field.pattern}
-                    minLength={field.minLength}
-                    maxLength={field.maxLength}
-                    disabled={field.disabled}
-                    readOnly={readOnly}
-                    autoComplete={field.autoComplete ?? "off"}
-                    data-1p-ignore="true"
-                    data-bwignore="true"
-                    data-lpignore="true"
-                    data-protonpass-ignore="true"
-                    data-dashlane-ignore="true"
-                    aria-describedby={describedBy}
-                    aria-invalid={invalid || undefined}
-                    dir={direction}
-                  />
+                  <div className="relative w-full overflow-hidden rounded-nx-control">
+                    <Input
+                      id={field.name}
+                      type={field.type}
+                      value={formData[field.name] ?? ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      required={field.required}
+                      className={cn(getInputClasses(getInputHeight()), "text-start")}
+                      placeholder={field.placeholder}
+                      min={field.min}
+                      max={field.max}
+                      step={field.step}
+                      pattern={field.pattern}
+                      minLength={field.minLength}
+                      maxLength={field.maxLength}
+                      disabled={field.disabled}
+                      readOnly={readOnly}
+                      autoComplete={field.autoComplete ?? "off"}
+                      data-1p-ignore="true"
+                      data-bwignore="true"
+                      data-lpignore="true"
+                      data-protonpass-ignore="true"
+                      data-dashlane-ignore="true"
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid || undefined}
+                      dir={direction}
+                    />
+                  </div>
                 )}
 
                 {/* Hint and error share one row with the character counter, so
