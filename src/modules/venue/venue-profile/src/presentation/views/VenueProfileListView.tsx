@@ -1,0 +1,117 @@
+"use client";
+
+import React from "react";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import { useVenueProfileViewModel } from "../viewmodels/useVenueProfileViewModel";
+import type { VenueProfile } from "../../domain/entities/VenueProfile";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Badge } from "@core/ui/badge";
+import { resolveIntlLocale } from "@core/common/utils";
+
+export const VenueProfileListView = React.memo(function VenueProfileListView() {
+  useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
+  const { vm } = useVenueProfileViewModel();
+  const { t, language } = useI18n();
+
+  const config: CrudConfig<VenueProfile> = {
+    titleKey: "venueProfile.title",
+    subtitleKey: "venueProfile.description",
+    resource: "venue-profiles",
+    columns: [
+      { key: "code", label: t("venueProfile.fields.code"), sortable: true },
+      { key: "name", label: t("venueProfile.fields.name"), sortable: true },
+      { key: "siteId", label: t("venueProfile.fields.siteId") },
+      {
+        key: "isActive",
+        label: t("venueProfile.fields.isActive"),
+        render: (value: boolean) => (
+          <Badge variant={value ? "active" : "inactive"}>
+            {value ? t("common.active") : t("common.inactive")}
+          </Badge>
+        ),
+      },
+      {
+        key: "createdAt",
+        label: t("common.createdAt"),
+        render: (value: string) =>
+          value ? new Date(value).toLocaleDateString(resolveIntlLocale(language)) : "-",
+      },
+    ],
+    createFields: [
+      {
+        name: "siteId",
+        label: t("venueProfile.fields.siteId"),
+        type: "text" as const,
+        placeholder: t("venueProfile.placeholders.siteId"),
+        description: t("venueProfile.descriptions.siteId"),
+        required: true,
+      },
+      {
+        name: "code",
+        label: t("venueProfile.fields.code"),
+        type: "text" as const,
+        placeholder: t("venueProfile.placeholders.code"),
+        required: true,
+      },
+      {
+        name: "name",
+        label: t("venueProfile.fields.name"),
+        type: "text" as const,
+        placeholder: t("venueProfile.placeholders.name"),
+        required: true,
+      },
+      {
+        name: "description",
+        label: t("venueProfile.fields.description"),
+        type: "textarea" as const,
+        placeholder: t("venueProfile.placeholders.description"),
+      },
+    ],
+    editFields: [
+      { name: "id", type: "hidden" as const, required: true },
+      {
+        name: "code",
+        label: t("venueProfile.fields.code"),
+        type: "text" as const,
+        placeholder: t("venueProfile.placeholders.code"),
+        required: true,
+      },
+      {
+        name: "name",
+        label: t("venueProfile.fields.name"),
+        type: "text" as const,
+        placeholder: t("venueProfile.placeholders.name"),
+        required: true,
+      },
+      {
+        name: "description",
+        label: t("venueProfile.fields.description"),
+        type: "textarea" as const,
+        placeholder: t("venueProfile.placeholders.description"),
+      },
+      {
+        name: "isActive",
+        label: t("venueProfile.fields.isActive"),
+        type: "switch" as const,
+      },
+    ],
+    createInitialValues: {
+      siteId: "",
+      code: "",
+      name: "",
+      description: "",
+    },
+    editInitialValues: (item: VenueProfile) => ({
+      id: item.id,
+      code: item.code,
+      name: item.name,
+      description: item.description ?? "",
+      isActive: item.isActive,
+    }),
+    getItemDisplayName: (item: VenueProfile) => item.name,
+  };
+
+  return <GenericCrudView viewModel={vm} config={config} />;
+});

@@ -30,6 +30,8 @@ import type { IApiService } from "../interfaces/api.interface";
 const ENV_MAP: Record<string, string | undefined> = {
   IDENTITY: process.env.NEXT_PUBLIC_IDENTITY_API_URL,
   // ── Add new modules below this line ──
+  RESOURCESCHEDULINGBOOKING: process.env.NEXT_PUBLIC_RESOURCESCHEDULINGBOOKING_API_URL,
+  FACILITYOPERATIONS: process.env.NEXT_PUBLIC_FACILITYOPERATIONS_API_URL,
   ANALYTICS: process.env.NEXT_PUBLIC_ANALYTICS_API_URL,
   WORKMANAGEMENT: process.env.NEXT_PUBLIC_WORKMANAGEMENT_API_URL,
   CUSTOMFIELDS: process.env.NEXT_PUBLIC_CUSTOMFIELDS_API_URL,
