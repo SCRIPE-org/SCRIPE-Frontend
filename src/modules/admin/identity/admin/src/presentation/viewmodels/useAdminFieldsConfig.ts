@@ -52,6 +52,7 @@ export function useAdminFieldsConfig(
       type: "text" as const,
       placeholder: t("admin.usernamePlaceholder"),
       required: true,
+      autoComplete: "off",
     },
     {
       name: "sendSetupEmail",
@@ -65,6 +66,7 @@ export function useAdminFieldsConfig(
       type: "password" as const,
       placeholder: t("admin.passwordPlaceholder"),
       required: true,
+      autoComplete: "new-password",
       isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
     },
     {

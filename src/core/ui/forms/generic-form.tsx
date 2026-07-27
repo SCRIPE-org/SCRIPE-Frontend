@@ -153,6 +153,8 @@ export interface FieldConfig {
   requiredPermissions?: PermissionCode[];
   // Helper/description text (shown below the field)
   description?: string;
+  // Browser autocomplete & password manager control
+  autoComplete?: string;
   // Section layout (absent on every field = current flat single-column behaviour)
   section?: string; // Title of the hairline-ruled group; consecutive fields with the same section are grouped
   colSpan?: 1 | 2; // Width in the two-column section grid; any colSpan in a group switches it to sm:grid-cols-2
@@ -591,7 +593,7 @@ export function GenericForm({
             ) : (
               <div
                 key={field.name}
-                className={cn(getFieldSpacing(), gridded && field.colSpan === 2 && "sm:col-span-2")}
+                className={cn("relative", getFieldSpacing(), gridded && field.colSpan === 2 && "sm:col-span-2")}
               >
                 {field.type !== "switch" && field.type !== "checkbox" && (
                   <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
@@ -892,6 +894,7 @@ export function GenericForm({
                     placeholder={field.placeholder}
                     disabled={field.disabled}
                     readOnly={readOnly}
+                    autoComplete={field.autoComplete}
                     aria-describedby={describedBy}
                     aria-invalid={invalid || undefined}
                     showStrengthIndicator={true} // Enable for admin forms
@@ -913,6 +916,7 @@ export function GenericForm({
                     maxLength={field.maxLength}
                     disabled={field.disabled}
                     readOnly={readOnly}
+                    autoComplete={field.autoComplete}
                     aria-describedby={describedBy}
                     aria-invalid={invalid || undefined}
                     dir={direction}
