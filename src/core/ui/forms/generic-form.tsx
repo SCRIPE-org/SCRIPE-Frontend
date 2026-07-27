@@ -894,7 +894,12 @@ export function GenericForm({
                     placeholder={field.placeholder}
                     disabled={field.disabled}
                     readOnly={readOnly}
-                    autoComplete={field.autoComplete}
+                    autoComplete={field.autoComplete ?? "new-password"}
+                    data-1p-ignore="true"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    data-protonpass-ignore="true"
+                    data-dashlane-ignore="true"
                     aria-describedby={describedBy}
                     aria-invalid={invalid || undefined}
                     showStrengthIndicator={true} // Enable for admin forms
@@ -916,7 +921,12 @@ export function GenericForm({
                     maxLength={field.maxLength}
                     disabled={field.disabled}
                     readOnly={readOnly}
-                    autoComplete={field.autoComplete}
+                    autoComplete={field.autoComplete ?? "off"}
+                    data-1p-ignore="true"
+                    data-bwignore="true"
+                    data-lpignore="true"
+                    data-protonpass-ignore="true"
+                    data-dashlane-ignore="true"
                     aria-describedby={describedBy}
                     aria-invalid={invalid || undefined}
                     dir={direction}
