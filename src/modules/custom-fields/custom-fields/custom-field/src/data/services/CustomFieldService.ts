@@ -10,6 +10,7 @@ import {
   CustomFieldModel,
   type CustomFieldJson,
   type CustomFieldListResponseJson,
+  type EntityTypeItemJson,
 } from "../models/CustomFieldModel";
 import type {
   ICustomFieldService,
@@ -49,6 +50,10 @@ export class CustomFieldService implements ICustomFieldService {
   async getById(id: string): Promise<CustomFieldModel> {
     const json = await this.api.get<CustomFieldJson>(CUSTOM_FIELD_ENDPOINTS.BY_ID(id));
     return CustomFieldModel.fromJson(json);
+  }
+
+  async getEntityTypes(): Promise<EntityTypeItemJson[]> {
+    return this.api.get<EntityTypeItemJson[]>(CUSTOM_FIELD_ENDPOINTS.ENTITY_TYPES);
   }
 
   async create(data: Record<string, unknown>): Promise<{ id: string }> {

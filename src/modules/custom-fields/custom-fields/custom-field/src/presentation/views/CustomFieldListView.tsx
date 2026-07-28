@@ -36,7 +36,15 @@ const VALUE_TYPE_VARIANTS: Record<
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../locales"), "customFields");
   const { t, language } = useI18n();
-  const { vm } = useCustomFieldViewModel();
+  const { vm, entityTypes } = useCustomFieldViewModel();
+
+  const entityTypeOptions = useMemo(() => {
+    if (!entityTypes || entityTypes.length === 0) return [];
+    return entityTypes.map((item) => ({
+      value: item.key,
+      label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})`,
+    }));
+  }, [entityTypes, language]);
 
   const valueTypeOptions = useMemo(
     () => [
@@ -108,7 +116,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         {
           name: "entityTypeKey",
           label: t("customField.fields.entityTypeKey"),
-          type: "text" as const,
+          type: "select" as const,
+          options: entityTypeOptions,
           placeholder: t("customField.placeholders.entityTypeKey"),
           required: true,
         },
@@ -224,7 +233,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // fallback for the (rare) record missing a label.
       getItemDisplayName: (item: CustomField) => item.labelEn || item.key,
     }),
-    [t, language, valueTypeOptions, valueTypeLabels]
+    [t, language, entityTypeOptions, valueTypeOptions, valueTypeLabels]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

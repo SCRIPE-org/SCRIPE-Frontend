@@ -5,6 +5,16 @@
  */
 
 /**
+ * EntityType domain interface
+ */
+export interface EntityTypeInfo {
+  key: string;
+  owningModule: string;
+  displayNameEn: string;
+  displayNameAr: string;
+}
+
+/**
  * CustomField data from API
  */
 export interface CustomFieldData {

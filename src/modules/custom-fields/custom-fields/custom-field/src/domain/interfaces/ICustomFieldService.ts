@@ -4,7 +4,7 @@
  * Defines the contract for CustomField API operations.
  * Implemented by CustomFieldService in the data layer.
  */
-import type { CustomFieldModel } from "../../data/models/CustomFieldModel";
+import type { CustomFieldModel, EntityTypeItemJson } from "../../data/models/CustomFieldModel";
 
 export interface CustomFieldListResult {
   items: CustomFieldModel[];
@@ -24,6 +24,7 @@ export interface ICustomFieldService {
     entityTypeKey?: string;
   }): Promise<CustomFieldListResult>;
   getById(id: string): Promise<CustomFieldModel>;
+  getEntityTypes(): Promise<EntityTypeItemJson[]>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;

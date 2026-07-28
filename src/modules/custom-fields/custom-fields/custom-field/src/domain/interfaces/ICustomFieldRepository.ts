@@ -4,7 +4,7 @@
  * Defines the contract for CustomField data access.
  * Works with domain entities, not DTOs.
  */
-import type { CustomField } from "../entities/CustomField";
+import type { CustomField, EntityTypeInfo } from "../entities/CustomField";
 
 export interface CustomFieldListParams {
   page: number;
@@ -26,6 +26,7 @@ export interface ICustomFieldRepository {
     hasPreviousPage: boolean;
   }>;
   getById(id: string): Promise<CustomField>;
+  getEntityTypes(): Promise<EntityTypeInfo[]>;
   create(data: Record<string, unknown>): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;

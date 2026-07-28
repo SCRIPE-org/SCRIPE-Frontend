@@ -39,6 +39,10 @@ export class CustomFieldRepository implements ICustomFieldRepository {
     return CustomFieldMapper.toEntity(model);
   }
 
+  async getEntityTypes() {
+    return this.service.getEntityTypes();
+  }
+
   async create(data: Record<string, unknown>): Promise<string> {
     const response = await this.service.create(data);
     return response.id;

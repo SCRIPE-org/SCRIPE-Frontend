@@ -7,6 +7,16 @@
  */
 
 /**
+ * EntityType item JSON shape from API.
+ */
+export interface EntityTypeItemJson {
+  key: string;
+  owningModule: string;
+  displayNameEn: string;
+  displayNameAr: string;
+}
+
+/**
  * CustomField JSON shape from API (detail / GET-by-id).
  */
 export interface CustomFieldJson {

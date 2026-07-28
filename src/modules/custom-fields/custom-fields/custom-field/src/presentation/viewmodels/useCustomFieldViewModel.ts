@@ -1,17 +1,24 @@
 /**
  * CustomField ViewModel
  *
- * Handles all state management for the CustomField list view.
- * Uses useCrudViewModel for standard CRUD operations.
+ * Handles state management for the CustomField list view and entity-types discovery query.
+ * Uses useCrudViewModel for standard CRUD operations and TanStack Query for caching entity types.
  */
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getCustomFieldsContainer } from "../../../../di";
 import type { CustomField } from "../../domain/entities/CustomField";
 
 export function useCustomFieldViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
+
+  const { data: entityTypes = [], isLoading: isEntityTypesLoading } = useQuery({
+    queryKey: ["customFields", "entityTypes"],
+    queryFn: () => customFieldRepository.getEntityTypes(),
+    staleTime: 1000 * 60 * 60, // Cache entity types for 1 hour
+  });
 
   const vm = useCrudViewModel(["customField"], {
     getAll: async (params) => {
@@ -43,5 +50,5 @@ export function useCustomFieldViewModel() {
     },
   });
 
-  return { vm };
+  return { vm, entityTypes, isEntityTypesLoading };
 }
