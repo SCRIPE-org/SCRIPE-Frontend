@@ -8,13 +8,14 @@
 
 import React, { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useCustomFieldViewModel } from "../viewmodels/useCustomFieldViewModel";
 import type { CustomField } from "../../domain/entities/CustomField";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
+import { Pencil, Trash2 } from "lucide-react";
 
 // SELECT value type == 4; Options are only allowed/required for Select fields.
 const SELECT_VALUE_TYPE = "4";
@@ -232,8 +233,24 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // labelEn is the genuinely human-readable field; key is the technical
       // fallback for the (rare) record missing a label.
       getItemDisplayName: (item: CustomField) => item.labelEn || item.key,
+      deleteService: (id: string) => vm.deleteItem(id),
+      getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<CustomField>[] => [
+        {
+          label: tFn("common.edit"),
+          onClick: (item: CustomField) => vm.openEditModal(item),
+          variant: "ghost" as const,
+          icon: <Pencil className="h-4 w-4" />,
+        },
+        {
+          label: tFn("common.delete"),
+          onClick: (item: CustomField) => handleDeleteFn?.(item),
+          variant: "ghost" as const,
+          className: "text-destructive hover:text-destructive/80",
+          icon: <Trash2 className="h-4 w-4" />,
+        },
+      ],
     }),
-    [t, language, entityTypeOptions, valueTypeOptions, valueTypeLabels]
+    [t, language, entityTypeOptions, valueTypeOptions, valueTypeLabels, vm]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;
