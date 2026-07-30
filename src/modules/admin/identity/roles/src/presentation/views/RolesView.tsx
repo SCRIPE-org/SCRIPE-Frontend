@@ -266,6 +266,7 @@ export function RolesView() {
         },
         variant: "destructive" as const,
         requiresConfirmation: true,
+        requiredPermission: SYSTEM_PERMISSIONS.ROLES_DELETE,
       },
     ],
   };
