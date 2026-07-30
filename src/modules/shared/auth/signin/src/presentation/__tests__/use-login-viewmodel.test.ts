@@ -191,9 +191,15 @@ describe("useLoginViewModel", () => {
       expect(result.current.isRedirecting).toBe(true);
     });
 
-    // Router replace is called inside setTimeout
+    // Router replace is called inside setTimeout.
+    // The mocked store supplies defaultRedirectPath: "/" (line 25). "/" has no
+    // page in the App Router — there is no src/app/page.tsx — so
+    // use-login-viewmodel.ts normalizes a "/" (or empty) redirect target to
+    // "/overview", which is the real authenticated landing route
+    // (src/app/(modules)/(workspace-admin)/overview/page.tsx). Asserting "/"
+    // here encoded a landing route that never existed.
     await new Promise((r) => setTimeout(r, 150));
-    expect(mockRouterReplace).toHaveBeenCalledWith("/");
+    expect(mockRouterReplace).toHaveBeenCalledWith("/overview");
   });
 
   it("should handle login failure", async () => {
