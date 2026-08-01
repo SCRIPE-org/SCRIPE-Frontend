@@ -132,7 +132,12 @@ export class ApiService implements IApiService {
   private logoutHandler: (() => void) | null = null;
 
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "/api") {
-    const normalizedBaseUrl = baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`;
+    // A leading "/" means same-origin relative (the documented dev/monolith default,
+    // e.g. "/api") — it must stay relative. Coercing it into `https://${baseUrl}`
+    // produces an authority-less "https:///api" URL that resolves to a bogus host
+    // (F-03). Only a bare host with no scheme (e.g. "api.scripe.org") needs coercion.
+    const normalizedBaseUrl =
+      baseUrl.startsWith("http") || baseUrl.startsWith("/") ? baseUrl : `https://${baseUrl}`;
 
     // Authenticated instance
     this.axiosInstance = axios.create({
