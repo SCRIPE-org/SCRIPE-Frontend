@@ -64,7 +64,14 @@ describe("useCustomFieldViewModel", () => {
 
   it("does not report an error when the entity-types query succeeds", () => {
     mockUseQuery.mockReturnValue({
-      data: [{ key: "party.person", owningModule: "party", displayNameEn: "Person", displayNameAr: "شخص" }],
+      data: [
+        {
+          key: "party.person",
+          owningModule: "party",
+          displayNameEn: "Person",
+          displayNameAr: "شخص",
+        },
+      ],
       isLoading: false,
       isError: false,
       error: null,
