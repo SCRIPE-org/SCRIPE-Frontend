@@ -37,33 +37,6 @@ export interface PermissionModuleGroupJson {
 }
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for create permission json.
- */
-export interface CreatePermissionJson {
-  resource: string;
-  action: string;
-  permissionCode: string;
-  descriptionEn?: string;
-  descriptionAr?: string;
-  nameEn?: string;
-  nameAr?: string;
-  category: string;
-  displayOrder?: number;
-}
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for update permission json.
- */
-export interface UpdatePermissionJson {
-  descriptionEn?: string;
-  descriptionAr?: string;
-  nameEn?: string;
-  nameAr?: string;
-  category?: string;
-  displayOrder?: number;
-}
-
-/**
  * Permission Model class with serialization methods
  */
 export class PermissionModel {
@@ -117,68 +90,6 @@ export class PermissionModel {
       descriptionAr: this.descriptionAr,
       nameEn: this.nameEn,
       nameAr: this.nameAr,
-    };
-  }
-}
-
-/**
- * Create Permission Request Model
- */
-export class CreatePermissionModel {
-  constructor(
-    public readonly resource: string,
-    public readonly action: string,
-    public readonly permissionCode: string,
-    public readonly category: string,
-    public readonly displayOrder: number = 0,
-    public readonly descriptionEn?: string,
-    public readonly descriptionAr?: string,
-    public readonly nameEn?: string,
-    public readonly nameAr?: string
-  ) {}
-
-  /**
-   * Convert to JSON for API request
-   */
-  toJson(): CreatePermissionJson {
-    return {
-      resource: this.resource,
-      action: this.action,
-      permissionCode: this.permissionCode,
-      category: this.category,
-      displayOrder: this.displayOrder,
-      descriptionEn: this.descriptionEn,
-      descriptionAr: this.descriptionAr,
-      nameEn: this.nameEn,
-      nameAr: this.nameAr,
-    };
-  }
-}
-
-/**
- * Update Permission Request Model
- */
-export class UpdatePermissionModel {
-  constructor(
-    public readonly descriptionEn?: string,
-    public readonly descriptionAr?: string,
-    public readonly nameEn?: string,
-    public readonly nameAr?: string,
-    public readonly category?: string,
-    public readonly displayOrder?: number
-  ) {}
-
-  /**
-   * Convert to JSON for API request
-   */
-  toJson(): UpdatePermissionJson {
-    return {
-      descriptionEn: this.descriptionEn,
-      descriptionAr: this.descriptionAr,
-      nameEn: this.nameEn,
-      nameAr: this.nameAr,
-      category: this.category,
-      displayOrder: this.displayOrder,
     };
   }
 }

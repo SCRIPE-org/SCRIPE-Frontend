@@ -7,7 +7,6 @@
  * @module permissions/domain
  */
 import type { PermissionModel } from "../types/PermissionModelTypes";
-import type { CreatePermissionJson, UpdatePermissionJson } from "../types/PermissionModelTypes";
 import type { PermissionListParams } from "./IPermissionRepository";
 import type { PermissionModuleGroupJson } from "../../data/models/PermissionModel";
 
@@ -25,7 +24,4 @@ export interface IPermissionService {
   getGrouped(search?: string): Promise<PermissionModuleGroupJson[]>;
   /** Get tenant's permissions grouped by Module → Category from backend */
   getGroupedForTenant(tenantId: string, search?: string): Promise<PermissionModuleGroupJson[]>;
-  create(json: CreatePermissionJson): Promise<{ id: string }>;
-  update(id: string, json: UpdatePermissionJson): Promise<void>;
-  delete(id: string): Promise<void>;
 }

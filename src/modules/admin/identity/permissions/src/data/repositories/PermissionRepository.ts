@@ -17,10 +17,6 @@ import type {
 } from "../../domain/interfaces/IPermissionRepository";
 import { Permission } from "../../domain/entities/Permission";
 import type { PermissionModuleGroup } from "../../domain/entities/Permission";
-import type {
-  CreatePermissionRequest,
-  UpdatePermissionRequest,
-} from "../../domain/entities/PermissionRequests";
 import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
 import { PermissionMapper } from "../mappers/PermissionMapper";
 
@@ -63,20 +59,5 @@ export class PermissionRepository implements IPermissionRepository {
   async getGroupedForTenant(tenantId: string, search?: string): Promise<PermissionModuleGroup[]> {
     const json = await this.service.getGroupedForTenant(tenantId, search);
     return PermissionMapper.toEntityGrouped(json);
-  }
-
-  async create(request: CreatePermissionRequest): Promise<string> {
-    const model = PermissionMapper.toCreateModel(request);
-    const response = await this.service.create(model.toJson());
-    return response.id;
-  }
-
-  async update(id: string, request: UpdatePermissionRequest): Promise<void> {
-    const model = PermissionMapper.toUpdateModel(request);
-    await this.service.update(id, model.toJson());
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.service.delete(id);
   }
 }

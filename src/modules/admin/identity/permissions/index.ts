@@ -15,10 +15,6 @@ export type {
   PermissionCategoryGroup,
   PermissionModuleGroup,
 } from "./src/domain/entities/Permission";
-export type {
-  CreatePermissionRequest,
-  UpdatePermissionRequest,
-} from "./src/domain/entities/PermissionRequests";
 
 // Interfaces
 export type {

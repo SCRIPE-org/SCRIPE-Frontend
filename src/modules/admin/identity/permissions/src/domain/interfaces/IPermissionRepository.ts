@@ -4,10 +4,6 @@
  * Defines the contract for permission data operations.
  */
 import type { Permission, PermissionModuleGroup } from "../entities/Permission";
-import type {
-  CreatePermissionRequest,
-  UpdatePermissionRequest,
-} from "../entities/PermissionRequests";
 
 /**
  * Permission list query parameters
@@ -57,19 +53,4 @@ export interface IPermissionRepository {
    * Used in tenant drill-down / tenant admin mode.
    */
   getGroupedForTenant(tenantId: string, search?: string): Promise<PermissionModuleGroup[]>;
-
-  /**
-   * Create a new permission
-   */
-  create(request: CreatePermissionRequest): Promise<string>;
-
-  /**
-   * Update an existing permission
-   */
-  update(id: string, request: UpdatePermissionRequest): Promise<void>;
-
-  /**
-   * Delete a permission
-   */
-  delete(id: string): Promise<void>;
 }

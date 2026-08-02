@@ -8,26 +8,19 @@
  */
 "use client";
 
-import { useState, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { identityContainer } from "@modules/identity/di";
 import { useDebounce } from "@core/hooks/use-validation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import type { PermissionModuleGroup } from "../../domain/entities/Permission";
-import type {
-  CreatePermissionRequest,
-  UpdatePermissionRequest,
-} from "../../domain/entities/PermissionRequests";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for permissions view model.
  * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
  */
 export function usePermissionsViewModel() {
-  const queryClient = useQueryClient();
-  const { success, error: toastError } = useEnhancedToast();
   const { permissionRepository } = identityContainer;
 
   // ── Context detection (same pattern as features/editions) ──
@@ -106,77 +99,6 @@ export function usePermissionsViewModel() {
   const groupedError = isSystemCatalogMode ? groupedQuery.error : tenantGroupedQuery.error;
   const refetchGrouped = isSystemCatalogMode ? groupedQuery.refetch : tenantGroupedQuery.refetch;
 
-  // Create permission mutation
-  const createMutation = useMutation({
-    mutationFn: (request: CreatePermissionRequest) => permissionRepository.create(request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["permissions"] });
-      success({
-        title: "Permission Created",
-        description: "The permission has been created successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({
-        title: "Create Failed",
-        description: err.message || "Failed to create permission.",
-      });
-    },
-  });
-
-  // Update permission mutation
-  const updateMutation = useMutation({
-    mutationFn: ({ id, request }: { id: string; request: UpdatePermissionRequest }) =>
-      permissionRepository.update(id, request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["permissions"] });
-      success({
-        title: "Permission Updated",
-        description: "The permission has been updated successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({
-        title: "Update Failed",
-        description: err.message || "Failed to update permission.",
-      });
-    },
-  });
-
-  // Delete permission mutation
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => permissionRepository.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["permissions"] });
-      success({
-        title: "Permission Deleted",
-        description: "The permission has been deleted successfully.",
-      });
-    },
-    onError: (err: Error) => {
-      toastError({
-        title: "Delete Failed",
-        description: err.message || "Failed to delete permission.",
-      });
-    },
-  });
-
-  // Handlers
-  const handleCreate = useCallback(
-    (request: CreatePermissionRequest) => createMutation.mutateAsync(request),
-    [createMutation]
-  );
-
-  const handleUpdate = useCallback(
-    (id: string, request: UpdatePermissionRequest) => updateMutation.mutateAsync({ id, request }),
-    [updateMutation]
-  );
-
-  const handleDelete = useCallback(
-    (id: string) => deleteMutation.mutateAsync(id),
-    [deleteMutation]
-  );
-
   return {
     // Data
     permissions: permissions ?? [],
@@ -201,18 +123,9 @@ export function usePermissionsViewModel() {
     isError,
     error,
 
-    // Handlers
-    handleCreate,
-    handleUpdate,
-    handleDelete,
     refetch: () => refetch(),
     // Retries the grouped tree specifically — the query the view renders —
     // in addition to the flat list query the refresh button already covers.
     refetchGrouped: () => refetchGrouped(),
-
-    // Mutation states
-    isCreating: createMutation.isPending,
-    isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
   };
 }

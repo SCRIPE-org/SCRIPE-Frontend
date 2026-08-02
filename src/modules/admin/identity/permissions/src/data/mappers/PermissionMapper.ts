@@ -12,16 +12,8 @@ import {
   type PermissionCategoryGroup,
   type PermissionModuleGroup,
 } from "../../domain/entities/Permission";
-import {
-  PermissionModel,
-  CreatePermissionModel,
-  UpdatePermissionModel,
-} from "../models/PermissionModel";
+import { PermissionModel } from "../models/PermissionModel";
 import type { PermissionModuleGroupJson } from "../models/PermissionModel";
-import type {
-  CreatePermissionRequest,
-  UpdatePermissionRequest,
-} from "../../domain/entities/PermissionRequests";
 import { z } from "zod";
 import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zod-utils";
 
@@ -124,38 +116,5 @@ export class PermissionMapper {
         }),
       })) as PermissionCategoryGroup[],
     }));
-  }
-
-  /**
-   * Map CreatePermissionRequest to CreatePermissionModel
-   */
-  static toCreateModel(request: CreatePermissionRequest): CreatePermissionModel {
-    // Generate permissionCode from resource.action
-    const permissionCode = `${request.resource}.${request.action}`;
-    return new CreatePermissionModel(
-      request.resource,
-      request.action,
-      permissionCode,
-      request.category || "system",
-      request.displayOrder ?? 0,
-      request.descriptionEn,
-      request.descriptionAr,
-      undefined, // nameEn not in request
-      undefined // nameAr not in request
-    );
-  }
-
-  /**
-   * Map UpdatePermissionRequest to UpdatePermissionModel
-   */
-  static toUpdateModel(request: UpdatePermissionRequest): UpdatePermissionModel {
-    return new UpdatePermissionModel(
-      request.descriptionEn,
-      request.descriptionAr,
-      undefined, // nameEn not in request
-      undefined, // nameAr not in request
-      request.category,
-      request.displayOrder
-    );
   }
 }

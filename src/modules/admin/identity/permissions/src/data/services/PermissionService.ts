@@ -16,8 +16,6 @@ import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import {
   PermissionModel,
   type PermissionJson,
-  type CreatePermissionJson,
-  type UpdatePermissionJson,
   type PermissionModuleGroupJson,
 } from "../models/PermissionModel";
 import type { IPermissionService } from "../../domain/interfaces/IPermissionService";
@@ -77,17 +75,5 @@ export class PermissionService implements IPermissionService {
   ): Promise<PermissionModuleGroupJson[]> {
     const url = buildUrl(PERMISSIONS_ENDPOINTS.TENANTS.PERMISSIONS_GROUPED(tenantId), { search });
     return this.api.get<PermissionModuleGroupJson[]>(url);
-  }
-
-  async create(json: CreatePermissionJson): Promise<{ id: string }> {
-    return this.api.post<{ id: string }>(PERMISSIONS_ENDPOINTS.CREATE, json);
-  }
-
-  async update(id: string, json: UpdatePermissionJson): Promise<void> {
-    await this.api.put(PERMISSIONS_ENDPOINTS.UPDATE(id), json);
-  }
-
-  async delete(id: string): Promise<void> {
-    await this.api.delete(PERMISSIONS_ENDPOINTS.DELETE(id));
   }
 }
