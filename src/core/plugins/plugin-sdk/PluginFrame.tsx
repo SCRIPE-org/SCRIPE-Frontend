@@ -6,7 +6,11 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { PluginBridge } from "./PluginBridge";
 import type { PluginToHostMessage } from "./types";
 import { Skeleton } from "@core/ui/skeleton";
-import { AlertTriangle } from "lucide-react";
+import { EmptyState } from "@core/ui/empty-state";
+import { ErrorMessage } from "@core/ui/error-message";
+import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
+import { Unplug } from "lucide-react";
 
 interface PluginFrameProps {
   pluginKey: string;
@@ -26,6 +30,7 @@ export function PluginFrame({
   const [hasError, setHasError] = useState(false);
   const [height, setHeight] = useState(600);
   const router = useRouter();
+  const { t } = useI18n();
   const { success, error, info } = useEnhancedToast();
 
   const handleMessage = useCallback(
@@ -63,27 +68,28 @@ export function PluginFrame({
   }, [frontendUrl, handleMessage]);
 
   if (!frontendUrl) {
+    // A configuration gap, not a crash — nothing the viewer can retry.
     return (
-      <div className="flex h-48 items-center justify-center gap-2 text-muted-foreground">
-        <AlertTriangle className="h-5 w-5" />
-        <span className="text-sm">Plugin has no frontend URL configured.</span>
-      </div>
+      <EmptyState
+        icon={Unplug}
+        title={t("errors.plugin.missingUrl")}
+        description={t("errors.plugin.missingUrlHint")}
+      />
     );
   }
 
   return (
-    <div className={`relative w-full ${className ?? ""}`} style={{ minHeight: height }}>
+    <div className={cn("relative w-full", className)} style={{ minHeight: height }}>
       {!isReady && !hasError && (
-        <div className="absolute inset-0 z-10">
-          <Skeleton className="h-full w-full rounded-xl" />
+        <div className="absolute inset-0 z-raised">
+          <Skeleton
+            className="h-full w-full rounded-nx-lg"
+            role="status"
+            aria-label={t("common.loading")}
+          />
         </div>
       )}
-      {hasError && (
-        <div className="flex h-48 items-center justify-center gap-2 text-destructive">
-          <AlertTriangle className="h-5 w-5" />
-          <span className="text-sm">Plugin failed to load.</span>
-        </div>
-      )}
+      {hasError && <ErrorMessage size="sm" message={t("errors.plugin.frameFailed")} />}
       {/*
         G7 — CSP Sandbox Strategy:
         - allow-scripts: Required for plugin JS to execute
@@ -100,9 +106,9 @@ export function PluginFrame({
       <iframe
         ref={iframeRef}
         src={`${frontendUrl}?installationId=${installationId}`}
-        title={`Plugin: ${pluginKey}`}
+        title={t("errors.plugin.frameTitle", { plugin: pluginKey })}
         sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-storage-access-by-user-activation"
-        className="w-full rounded-xl border-0"
+        className="w-full rounded-nx-lg border-0"
         style={{ height, display: hasError ? "none" : "block" }}
         onError={() => setHasError(true)}
         allow="clipboard-read; clipboard-write"

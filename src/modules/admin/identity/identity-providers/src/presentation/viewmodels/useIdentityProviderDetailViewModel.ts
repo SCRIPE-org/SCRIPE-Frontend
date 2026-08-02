@@ -1,0 +1,320 @@
+// FILE-EXCEPTION: file length
+/**
+ * Identity Provider Detail ViewModel
+ *
+ * Manages form state for creating/editing a single Identity Provider.
+ * Handles fetch-by-ID, save (create/update), test connection, and delete.
+ */
+"use client";
+
+import { useState, useCallback, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { identityContainer } from "@modules/identity/di";
+import { useI18n } from "@core/providers/i18n-provider";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { identityProviderKeys } from "./useIdentityProvidersViewModel";
+
+// ─── Form State ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for identity provider form state.
+ */
+export interface IdentityProviderFormState {
+  // General
+  name: string;
+  slug: string;
+  protocol: string;
+  displayOrder: number;
+  isActive: boolean;
+
+  // OIDC Configuration
+  authority: string;
+  clientId: string;
+  clientSecret: string;
+  scopes: string;
+  redirectUri: string;
+
+  // Appearance
+  iconUrl: string;
+  buttonColor: string;
+  buttonLabel: string;
+
+  // Access Control
+  enabledForAdmins: boolean;
+  enabledForUsers: boolean;
+
+  // Claim Mappings
+  claimMappingJson: string;
+
+  // Explicit Endpoints (Optional)
+  authorizationEndpoint?: string;
+  tokenEndpoint?: string;
+  userInformationEndpoint?: string;
+
+  // SAML Configuration (Optional)
+  samlIdpEntityId?: string;
+  samlSsoUrl?: string;
+  samlCertificate?: string;
+}
+
+const DEFAULT_STATE: IdentityProviderFormState = {
+  name: "",
+  slug: "",
+  protocol: "oidc",
+  displayOrder: 0,
+  isActive: true,
+  authority: "",
+  clientId: "",
+  clientSecret: "",
+  scopes: "openid profile email",
+  redirectUri: "",
+  iconUrl: "",
+  buttonColor: "#4285F4",
+  buttonLabel: "",
+  enabledForAdmins: false,
+  enabledForUsers: true,
+  claimMappingJson: "{}",
+  authorizationEndpoint: "",
+  tokenEndpoint: "",
+  userInformationEndpoint: "",
+  samlIdpEntityId: "",
+  samlSsoUrl: "",
+  samlCertificate: "",
+};
+
+// ─── Hook ─────────────────────────────────────────────────────────
+/**
+ * React hook/ViewModel orchestrating state and data flows for identity provider detail view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
+export function useIdentityProviderDetailViewModel(providerId?: string) {
+  const { identityProviderRepository } = identityContainer;
+  const { t } = useI18n();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { success, error: toastError } = useEnhancedToast();
+
+  const isCreateMode = !providerId;
+
+  const [form, setForm] = useState<IdentityProviderFormState>(DEFAULT_STATE);
+  const [isDirty, setIsDirty] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | undefined>(undefined);
+
+  // ─── Fetch existing provider ──────────────────
+  const {
+    data: provider,
+    isLoading,
+    error: fetchError,
+  } = useQuery({
+    queryKey: identityProviderKeys.detail(providerId ?? ""),
+    queryFn: () => identityProviderRepository.getById(providerId!),
+    enabled: !!providerId,
+  });
+
+  // Populate form when provider data arrives (render-time state-sync)
+  const [prevProvider, setPrevProvider] = useState(provider);
+  if (provider && provider !== prevProvider) {
+    setPrevProvider(provider);
+    setForm({
+      name: provider.name,
+      slug: provider.slug,
+      protocol: provider.protocol,
+      displayOrder: provider.displayOrder,
+      isActive: provider.isActive,
+      authority: provider.authority ?? "",
+      clientId: provider.clientId ?? "",
+      clientSecret: "", // never pre-fill secret
+      scopes: provider.scopes ?? "openid profile email",
+      redirectUri: provider.redirectUri ?? "",
+      iconUrl: provider.iconUrl ?? "",
+      buttonColor: provider.buttonColor ?? "#4285F4",
+      buttonLabel: provider.buttonLabel ?? "",
+      enabledForAdmins: provider.enabledForAdmins,
+      enabledForUsers: provider.enabledForUsers,
+      claimMappingJson: provider.claimMappingJson ?? "{}",
+      authorizationEndpoint: provider.authorizationEndpoint ?? "",
+      tokenEndpoint: provider.tokenEndpoint ?? "",
+      userInformationEndpoint: provider.userInformationEndpoint ?? "",
+      samlIdpEntityId: provider.samlIdpEntityId ?? "",
+      samlSsoUrl: provider.samlSsoUrl ?? "",
+      samlCertificate: provider.samlCertificate ?? "",
+    });
+    setIsDirty(false);
+  }
+
+  // ─── Field updater ────────────────────────────
+  const updateField = useCallback(
+    <K extends keyof IdentityProviderFormState>(field: K, value: IdentityProviderFormState[K]) => {
+      setForm((prev) => ({ ...prev, [field]: value }));
+      setIsDirty(true);
+    },
+    []
+  );
+
+  // ─── Apply template (gallery preset) ──────────
+  const applyTemplate = useCallback(
+    (templateId: string, preset: Partial<IdentityProviderFormState>) => {
+      setSelectedTemplateId((prev) => (prev === templateId ? undefined : templateId));
+      setForm((prev) => ({ ...prev, ...preset }));
+      setIsDirty(true);
+    },
+    []
+  );
+
+  // ─── Save (Create / Update) ──────────────────
+  const saveMutation = useMutation({
+    mutationFn: async () => {
+      const payload: Record<string, unknown> = {
+        name: form.name,
+        slug: form.slug,
+        protocol: form.protocol,
+        authority: form.authority || undefined,
+        clientId: form.clientId || undefined,
+        clientSecret: form.clientSecret || undefined,
+        scopes: form.scopes || undefined,
+        redirectUri: form.redirectUri || undefined,
+        claimMappingJson: form.claimMappingJson || undefined,
+        enabledForAdmins: form.enabledForAdmins,
+        enabledForUsers: form.enabledForUsers,
+        iconUrl: form.iconUrl || undefined,
+        buttonColor: form.buttonColor || undefined,
+        buttonLabel: form.buttonLabel || undefined,
+        displayOrder: form.displayOrder,
+        authorizationEndpoint: form.authorizationEndpoint || undefined,
+        tokenEndpoint: form.tokenEndpoint || undefined,
+        userInformationEndpoint: form.userInformationEndpoint || undefined,
+        samlIdpEntityId: form.samlIdpEntityId || undefined,
+        samlSsoUrl: form.samlSsoUrl || undefined,
+        samlCertificate: form.samlCertificate || undefined,
+      };
+
+      if (isCreateMode) {
+        const result = await identityProviderRepository.create(payload as any);
+        return result;
+      } else {
+        await identityProviderRepository.update(providerId!, payload as any);
+        return null;
+      }
+    },
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: identityProviderKeys.all });
+      setIsDirty(false);
+      if (isCreateMode && result) {
+        success({
+          title: t("identityProviders.created"),
+          description: t("identityProviders.createdDesc"),
+        });
+        router.push(`/settings/identity-providers/${result.id}`);
+      } else {
+        success({
+          title: t("identityProviders.updated"),
+          description: t("identityProviders.updatedDesc"),
+        });
+        // Refetch detail
+        queryClient.invalidateQueries({ queryKey: identityProviderKeys.detail(providerId!) });
+      }
+    },
+    onError: (err: Error) => {
+      toastError({
+        title: t("common.error"),
+        description: err.message,
+      });
+    },
+  });
+
+  // ─── Test Connection ──────────────────────────
+  const testMutation = useMutation({
+    mutationFn: () => identityProviderRepository.testConnection(providerId!),
+    onSuccess: (result) => {
+      if (result.isSuccess) {
+        success({
+          title: t("identityProviders.testSuccess"),
+          description: result.message || "Provider is reachable.",
+        });
+      } else {
+        toastError({
+          title: t("identityProviders.testFailed"),
+          description: result.message || "Could not reach the provider.",
+        });
+      }
+    },
+    onError: (err: Error) => {
+      toastError({
+        title: t("common.error"),
+        description: err.message,
+      });
+    },
+  });
+
+  // ─── Delete ───────────────────────────────────
+  const deleteMutation = useMutation({
+    mutationFn: () => identityProviderRepository.remove(providerId!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: identityProviderKeys.all });
+      success({
+        title: t("identityProviders.deleted"),
+        description: t("identityProviders.deletedDesc"),
+      });
+      router.push("/settings/identity-providers");
+    },
+    onError: (err: Error) => {
+      toastError({
+        title: t("common.error"),
+        description: err.message,
+      });
+    },
+  });
+
+  // ─── Auto-generate slug from name ─────────────
+  const autoGenerateSlug = useCallback(() => {
+    if (isCreateMode && form.name && !isDirty) {
+      const slug = form.name
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .trim();
+      setForm((prev) => ({ ...prev, slug }));
+    }
+  }, [form.name, isCreateMode, isDirty]);
+
+  // ─── Protocol options ─────────────────────────
+  const protocolOptions = useMemo(
+    () => [
+      { value: "oidc", label: "OpenID Connect (OIDC)" },
+      { value: "oauth2", label: "OAuth 2.0" },
+      { value: "saml", label: "SAML" },
+    ],
+    []
+  );
+
+  return {
+    // Mode
+    isCreateMode,
+    isLoading,
+    fetchError,
+    provider,
+
+    // Form
+    form,
+    updateField,
+    applyTemplate,
+    selectedTemplateId,
+    isDirty,
+    protocolOptions,
+    autoGenerateSlug,
+
+    // Actions
+    save: () => saveMutation.mutate(),
+    isSaving: saveMutation.isPending,
+    testConnection: () => testMutation.mutate(),
+    isTesting: testMutation.isPending,
+    deleteProvider: () => deleteMutation.mutate(),
+    isDeleting: deleteMutation.isPending,
+
+    // Navigation
+    goBack: () => router.push("/settings/identity-providers"),
+
+    t,
+  };
+}

@@ -1,0 +1,122 @@
+/**
+ * Tenant Settings ViewModel
+ *
+ * Manages state for fetching and updating tenant settings.
+ * Handles granular updates (security, quotas, branding) via single endpoint.
+ *
+ * @module tenants/presentation/viewmodels
+ */
+"use client";
+
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
+import { identityContainer } from "@modules/identity/di";
+import type {
+  TenantSettingsModel,
+  UpdateTenantSettingsRequest,
+} from "@modules/customization/tenant-settings/src/domain/types/SettingsTypes";
+import { useState } from "react";
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for use tenant settings view model result.
+ */
+export interface UseTenantSettingsViewModelResult {
+  settings: TenantSettingsModel | undefined;
+  isLoading: boolean;
+  error: Error | null;
+
+  // Edit Dialog State
+  editSection: "security" | "audit" | "branding" | null;
+  setEditSection: (section: "security" | "audit" | "branding" | null) => void;
+
+  // Update Actions
+  updateSettings: (data: UpdateTenantSettingsRequest) => void;
+  isUpdating: boolean;
+
+  permissionsOpen: boolean;
+  setPermissionsOpen: (open: boolean) => void;
+
+  uploadLogo: (file: File) => Promise<string>;
+}
+
+/**
+ * React hook/ViewModel orchestrating state and data flows for tenant settings view model.
+ * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
+ */
+export function useTenantSettingsViewModel(tenantId: string): UseTenantSettingsViewModelResult {
+  const { t } = useI18n();
+  const { toast } = useEnhancedToast();
+  const queryClient = useQueryClient();
+  const [editSection, setEditSection] = useState<"security" | "audit" | "branding" | null>(null);
+  const [permissionsOpen, setPermissionsOpen] = useState(false);
+
+  // Fetch Settings
+  const {
+    data: settings,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["tenant-settings", tenantId],
+    queryFn: async () => {
+      return identityContainer.tenantService.getSettings(tenantId);
+    },
+    enabled: !!tenantId,
+  });
+
+  // Update Settings
+  const updateMutation = useMutation({
+    mutationFn: async (data: UpdateTenantSettingsRequest) => {
+      await identityContainer.tenantService.updateSettings(tenantId, data);
+    },
+    onSuccess: () => {
+      toast({
+        title: t("common.success"),
+        description: t("tenant.settingsSaved"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["tenant-settings", tenantId] });
+      setEditSection(null);
+    },
+    onError: (err: Error) => {
+      toast({
+        title: t("common.error"),
+        description: err.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return {
+    settings,
+    isLoading,
+    error: error as Error | null,
+    editSection,
+    setEditSection,
+    updateSettings: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+
+    // Permissions Dialog State
+    permissionsOpen,
+    setPermissionsOpen,
+
+    // Logo Upload
+    uploadLogo: async (file: File) => {
+      try {
+        const result = await identityContainer.tenantService.uploadLogo(tenantId, file);
+        toast({
+          title: t("common.success"),
+          description: t("tenant.settingsSaved"),
+        });
+        queryClient.invalidateQueries({ queryKey: ["tenant-settings", tenantId] });
+        return result.url;
+      } catch (err: any) {
+        toast({
+          title: t("common.error"),
+          description: err.message,
+          variant: "destructive",
+        });
+        throw err;
+      }
+    },
+  };
+}

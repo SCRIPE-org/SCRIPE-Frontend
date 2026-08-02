@@ -8,8 +8,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogPortal,
 } from "@core/ui/dialog";
 import { ScrollArea } from "@core/ui/scroll-area";
+import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 
@@ -28,303 +30,161 @@ interface GenericModalProps {
   contentClassName?: string; // Custom content classes
 }
 
+// Header and body padding ride the Wave-C --spacing-unit var (0.5rem compact
+// → 2rem spacious), so the density setting lands here without the former
+// four-way JS switches. The title needs no ladder at all: text-* classes are
+// rem-based, so they already scale with the --font-size-base root token.
+const sectionPaddingClasses = "px-[calc(var(--spacing-unit)*1.5)] py-[var(--spacing-unit)]";
+
+// The scrim is DialogOverlay's exact recipe (see @core/ui/dialog). Radix only
+// mounts its own overlay in modal mode, and modal mode is off here (see the
+// render), so the same treatment renders explicitly: the token scrim at the
+// overlay step of the z ladder, fading on the token pair — 200ms enter, ~2/3
+// exit. A fade is the one movement reduced motion keeps, so no motion-safe
+// split is needed.
+const scrimClasses =
+  "fixed inset-0 z-overlay bg-scrim duration-nx-standard ease-nx-enter data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0";
+
 function GenericModalInner({
   open,
   onOpenChange,
   title,
   description,
   children,
-  size = "md",
+  size,
   formKey,
   showHeader = true,
   showDescription = true,
   headerClassName,
   contentClassName,
 }: GenericModalProps) {
+  const { t } = useI18n();
   const settings = useSettings();
 
-  // Apply blur to ENTIRE layout (sidebars, headers, main content) when modal is open
-  // This ensures the whole app is blurred except the modal itself
-  React.useEffect(() => {
-    if (open) {
-      // Find the root layout wrapper - try multiple selectors to catch all layout types
-      const selectors = [
-        "body > div.min-h-screen", // Most common layout wrapper
-        'body > div[class*="min-h-screen"]', // Any div with min-h-screen
-        "body > div:not([data-radix-portal]):first-child", // First non-portal child
-        "#__next > div:not([data-radix-portal])", // Next.js root div
-      ];
+  // The scrim swallows pointer interaction by existing, but wheel and touch
+  // moves over it would still scroll-chain into the page. The old code cut
+  // that chain by setting overflow:hidden on <html> — exactly the global-DOM
+  // reach this remaster bans — so the lock lives on the scrim node instead:
+  // React's root-delegated wheel/touch handlers are passive and cannot cancel,
+  // so a non-passive pair attaches directly, and it dies with the node when
+  // the portal unmounts.
+  const lockScrimScroll = React.useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const cancelScroll = (event: Event) => event.preventDefault();
+    node.addEventListener("wheel", cancelScroll, { passive: false });
+    node.addEventListener("touchmove", cancelScroll, { passive: false });
+  }, []);
 
-      let layoutWrapper: HTMLElement | null = null;
-      for (const selector of selectors) {
-        const found = document.querySelector(selector);
-        if (found && !found.hasAttribute("data-radix-portal")) {
-          layoutWrapper = found as HTMLElement;
-          break;
-        }
-      }
-
-      // If no single wrapper found, blur all direct children of body except portals and scripts
-      if (!layoutWrapper) {
-        const bodyChildren = Array.from(document.body.children) as HTMLElement[];
-        bodyChildren.forEach((child) => {
-          if (
-            !child.hasAttribute("data-radix-portal") &&
-            child.tagName !== "SCRIPT" &&
-            child.tagName !== "STYLE" &&
-            child.tagName !== "NOSCRIPT"
-          ) {
-            child.classList.add("modal-blurred-content");
-          }
-        });
-      } else {
-        // Blur the entire layout wrapper (includes sidebars, headers, main content)
-        layoutWrapper.classList.add("modal-blurred-content");
-      }
-
-      // Also blur html to catch anything else
-      document.documentElement.classList.add("modal-blur-open");
-      document.body.classList.add("modal-blur-open");
-    } else {
-      // Remove from all elements
-      document.querySelectorAll(".modal-blurred-content").forEach((el) => {
-        el.classList.remove("modal-blurred-content");
-      });
-      document.documentElement.classList.remove("modal-blur-open");
-      document.body.classList.remove("modal-blur-open");
-    }
-
-    return () => {
-      document.querySelectorAll(".modal-blurred-content").forEach((el) => {
-        el.classList.remove("modal-blurred-content");
-      });
-      document.documentElement.classList.remove("modal-blur-open");
-      document.body.classList.remove("modal-blur-open");
-    };
-  }, [open]);
-
-  // Prevent interacting with the background - always active
-  React.useEffect(() => {
-    if (!open) return;
-
-    const prevOverflow = document.documentElement.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-
-    // Find the active dialog content (our modal)
-    const dialogContent = document.querySelector(
-      "[data-radix-dialog-content]"
-    ) as HTMLElement | null;
-    const portalRoot = dialogContent?.parentElement || null;
-
-    // Collect all top-level elements that should be disabled (siblings of the portal root)
-    const disabledElements: Array<
-      HTMLElement & { __prevInert?: any; __prevAriaHidden?: string | null }
-    > = [];
-    const roots = Array.from(document.body.children) as HTMLElement[];
-    roots.forEach((el) => {
-      if (portalRoot && (el === portalRoot || portalRoot.contains(el))) return; // keep portal interactive
-      // Skip the overlay/content themselves since they're within portalRoot
-      if (dialogContent && (el === dialogContent || dialogContent.contains(el))) return;
-      // Disable everything else
-      (el as any).__prevInert = (el as any).inert;
-      (el as any).__prevAriaHidden = el.getAttribute("aria-hidden");
-      try {
-        (el as any).inert = true;
-      } catch {}
-      el.setAttribute("aria-hidden", "true");
-      disabledElements.push(el as any);
-    });
-
-    return () => {
-      // Restore overflow
-      document.documentElement.style.overflow = prevOverflow;
-      // Restore disabled siblings
-      disabledElements.forEach((el) => {
-        const prevHidden = (el as any).__prevAriaHidden;
-        if (prevHidden == null) el.removeAttribute("aria-hidden");
-        else el.setAttribute("aria-hidden", prevHidden);
-        try {
-          (el as any).inert = (el as any).__prevInert;
-        } catch {}
-        delete (el as any).__prevAriaHidden;
-        delete (el as any).__prevInert;
-      });
-    };
-  }, [open]);
-
+  // The explicit width ladder behind the `size` prop. The prop was dead —
+  // nothing called this function, so the 19 call sites asking for sm/lg/xl
+  // silently received the settings.modalStyle width instead. An explicit
+  // size now wins over the settings-derived footprint; omitting it keeps
+  // the modalStyle footprint exactly as before (the old `= "md"` default is
+  // gone so absence stays distinguishable from a caller asking for md).
   const getSizeClasses = () => {
-    const baseSizes = {
+    if (!size) return undefined;
+    const widths = {
       sm: "sm:max-w-sm",
       md: "sm:max-w-md",
       lg: "sm:max-w-lg",
       xl: "sm:max-w-xl",
       full: "sm:max-w-4xl",
-    };
-
-    // Adjust sizes based on spacing settings
-    if (settings.spacingSize === "compact") {
-      return {
-        sm: "sm:max-w-xs",
-        md: "sm:max-w-sm",
-        lg: "sm:max-w-md",
-        xl: "sm:max-w-lg",
-        full: "sm:max-w-3xl",
-      }[size];
-    } else if (settings.spacingSize === "spacious") {
-      return {
-        sm: "sm:max-w-md",
-        md: "sm:max-w-lg",
-        lg: "sm:max-w-xl",
-        xl: "sm:max-w-2xl",
-        full: "sm:max-w-6xl",
-      }[size];
-    }
-
-    return baseSizes[size];
+    } as const;
+    // A sized drawer keeps its edge-pinned height and takes only the width;
+    // every other style collapses to the standard centered footprint.
+    return cn(
+      settings.modalStyle === "drawer" ? "h-[95vh] max-h-none" : "w-[95vw] max-h-[90vh]",
+      widths[size]
+    );
   };
 
+  // Footprint only. The surface itself — popover fill behind a hairline, the
+  // modal step of the shadow ladder, the large radius token — is
+  // DialogContent's nx recipe, and the old per-style skins (glass
+  // backdrop-blur, border-4 success frames, warning glow, rotate-1) fought it
+  // with literal colours and shadows. They are gone: every modalStyle keeps
+  // its geometry and inherits the one surface.
   const getModalClasses = () => {
     const baseClasses = "p-0 overflow-visible flex flex-col";
-    let sizeClasses = "";
-    let styleClasses = "";
+
+    // Explicit size supplies the footprint — see getSizeClasses at the
+    // render site — so the settings-derived footprint stands down entirely.
+    if (size) return baseClasses;
 
     switch (settings.modalStyle) {
       case "centered":
         // Keep default centering behavior
-        sizeClasses = "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh]";
-        break;
+        return cn(
+          baseClasses,
+          "w-[95vw] max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl max-h-[90vh]"
+        );
       case "fullscreen":
         // Responsive fullscreen - full on mobile, large on desktop
-        sizeClasses =
-          "w-[98vw] h-[95vh] max-w-none max-h-none sm:w-[95vw] sm:h-[90vh] md:w-[90vw] md:h-[85vh]";
-        styleClasses = "sm:rounded-lg";
-        break;
+        return cn(
+          baseClasses,
+          "w-[98vw] h-[95vh] max-w-none max-h-none sm:w-[95vw] sm:h-[90vh] md:w-[90vw] md:h-[85vh]"
+        );
       case "drawer":
-        // Drawer from right side - responsive width
-        sizeClasses = "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none";
-        styleClasses =
-          "!translate-x-0 !translate-y-0 !left-auto !top-0 right-0 rounded-l-lg rounded-r-none";
-        break;
+        // Drawer from the inline-end edge - responsive width. Position, slide
+        // and radius come from DialogContent's explicit variant="drawer" (see
+        // below); the old !important overrides existed only to fight the
+        // centered layout from outside.
+        return cn(baseClasses, "w-full h-[95vh] max-w-md sm:max-w-lg md:max-w-xl max-h-none");
       case "glass":
-        sizeClasses = "w-[85vw] max-w-2xl max-h-[80vh]";
-        styleClasses =
-          "bg-background/20 backdrop-blur-2xl border-2 border-blue-500/30 shadow-[0_0_50px_rgba(59,130,246,0.2)] rounded-3xl";
-        break;
+        return cn(baseClasses, "w-[85vw] max-w-2xl max-h-[80vh]");
       case "floating":
-        // Compact floating with theme-aware colors
-        sizeClasses = "w-[70vw] max-w-sm max-h-[60vh]";
-        styleClasses =
-          "bg-background border border-purple-500/30 shadow-[0_30px_60px_-12px_rgba(168,85,247,0.3)] rounded-2xl transform rotate-1";
-        break;
+        return cn(baseClasses, "w-[70vw] max-w-sm max-h-[60vh]");
       case "card":
-        // Wide card with proper contrast
-        sizeClasses = "w-[95vw] max-w-4xl max-h-[85vh]";
-        styleClasses = "bg-background border-4 border-emerald-500/40 shadow-2xl rounded-xl";
-        break;
+        return cn(baseClasses, "w-[95vw] max-w-4xl max-h-[85vh]");
       case "overlay":
-        // Full screen with inverted theme colors
-        sizeClasses = "w-[98vw] h-[95vh] max-w-none max-h-none";
-        styleClasses =
-          "bg-muted/95 border-2 border-orange-500/50 shadow-[0_0_100px_rgba(251,146,60,0.3)] rounded-none";
-        break;
+        return cn(baseClasses, "w-[98vw] h-[95vh] max-w-none max-h-none");
       default:
         // Default modal with responsive sizing
-        sizeClasses = "w-[95vw] max-h-[90vh]";
-    }
-
-    // Apply border radius based on settings (except for drawer which has custom radius)
-    let radiusClasses = "";
-    if (settings.modalStyle !== "drawer") {
-      switch (settings.borderRadius) {
-        case "none":
-          radiusClasses = "rounded-none";
-          break;
-        case "small":
-          radiusClasses = "rounded-sm";
-          break;
-        case "large":
-          radiusClasses = "rounded-xl";
-          break;
-        case "full":
-          radiusClasses = "rounded-2xl";
-          break;
-        default:
-          radiusClasses = "rounded-lg";
-      }
-    }
-
-    // Apply shadow based on settings
-    let shadowClasses = "";
-    switch (settings.shadowIntensity) {
-      case "none":
-        shadowClasses = "shadow-none";
-        break;
-      case "subtle":
-        shadowClasses = "shadow-sm";
-        break;
-      case "strong":
-        shadowClasses = "shadow-2xl";
-        break;
-      default:
-        shadowClasses = "shadow-lg";
-    }
-
-    return cn(baseClasses, sizeClasses, styleClasses, radiusClasses, shadowClasses);
-  };
-
-  const getHeaderPadding = () => {
-    switch (settings.spacingSize) {
-      case "compact":
-        return "px-4 py-3";
-      case "comfortable":
-        return "px-8 py-6";
-      case "spacious":
-        return "px-10 py-8";
-      default:
-        return "px-6 py-4";
-    }
-  };
-
-  const getContentPadding = () => {
-    switch (settings.spacingSize) {
-      case "compact":
-        return "px-4 py-3";
-      case "comfortable":
-        return "px-8 py-6";
-      case "spacious":
-        return "px-10 py-8";
-      default:
-        return "px-6 py-4";
-    }
-  };
-
-  const getTitleSize = () => {
-    switch (settings.fontSize) {
-      case "small":
-        return "text-base";
-      case "large":
-        return "text-2xl";
-      default:
-        return "text-lg";
+        return cn(baseClasses, "w-[95vw] max-h-[90vh]");
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
-      <DialogContent className={cn(getModalClasses())}>
+      {/* modal={false} is deliberate: Radix's modal mode traps focus inside
+          the panel, which breaks the body-portaled searchable-select and
+          date-picker dropdowns (their search inputs live outside the trap).
+          The cost of non-modal mode is that Radix skips its own overlay, so
+          the scrim renders here instead — it swallows background clicks at
+          the overlay z step and lets DismissableLayer close on outside
+          pointerdown, replacing the old effect pair that blurred and
+          disabled every body child on each open. */}
+      <DialogPortal>
+        <div
+          ref={lockScrimScroll}
+          aria-hidden="true"
+          data-state={open ? "open" : "closed"}
+          className={scrimClasses}
+        />
+      </DialogPortal>
+      <DialogContent
+        variant={settings.modalStyle === "drawer" ? "drawer" : "default"}
+        className={cn(getModalClasses(), getSizeClasses())}
+      >
         {showHeader && (
-          <DialogHeader className={cn(getHeaderPadding(), "shrink-0 border-b", headerClassName)}>
-            <DialogTitle className={cn("font-semibold", getTitleSize())}>{title}</DialogTitle>
+          <DialogHeader
+            className={cn(
+              sectionPaddingClasses,
+              "shrink-0 border-b border-nx-line",
+              headerClassName
+            )}
+          >
+            <DialogTitle>{title}</DialogTitle>
             {showDescription && (
-              <DialogDescription className="mt-1 text-sm text-muted-foreground">
-                {description || "Please fill out the form below."}
+              <DialogDescription className="mt-1">
+                {description || t("crud.modal.formDescription")}
               </DialogDescription>
             )}
           </DialogHeader>
         )}
 
         <ScrollArea className="flex-1">
-          <div className={cn(getContentPadding(), "pr-4", contentClassName)}>
+          <div className={cn(sectionPaddingClasses, "pe-4", contentClassName)}>
             {formKey ? <div key={formKey}>{children}</div> : children}
           </div>
         </ScrollArea>

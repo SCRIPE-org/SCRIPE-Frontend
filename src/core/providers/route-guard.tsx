@@ -20,7 +20,6 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
-import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
@@ -130,7 +129,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const [isChecking, setIsChecking] = useState(true);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const [checkTrigger, setCheckTrigger] = useState(0);
-  const { t } = useI18n();
+  // No useI18n() here on purpose: the only string this guard rendered was the
+  // "Loading" caption, and LoadingSpinner already owns it (and its
+  // role="status" name). A permission boundary should subscribe to as little
+  // as possible.
   const [isMounted] = useState(() => typeof window !== "undefined");
 
   const hasRedirected = useRef(false);
@@ -170,8 +172,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
         const mcp = useAppStore.getState().mustChangePassword;
-        const defaultPath = useAppStore.getState().defaultRedirectPath || "/";
-        router.replace(mcp ? "/change-password" : defaultPath);
+        const defaultPath = useAppStore.getState().defaultRedirectPath;
+        const targetPath = !defaultPath || defaultPath === "/" ? "/overview" : defaultPath;
+        router.replace(mcp ? "/change-password" : targetPath);
         return;
       }
 
@@ -399,13 +402,16 @@ export function RouteGuard({ children }: RouteGuardProps) {
 
   if (!isMounted) return <>{children}</>;
 
+  // ── Rendered fallback ───────────────────────────────────────────────────
+  // Presentation only. Both branches show the SAME thing — the shared loader,
+  // which already carries role="status", aria-busy and the translated
+  // "Loading" caption. The caption used to be a second hand-written <p> next
+  // to a text-suppressed spinner, so the same wait announced itself twice and
+  // wore ink the token ladder does not own.
   if (authLoading || (isChecking && !isPublicPage(pathname) && !isRestoringSession)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <LoadingSpinner showText={false} />
-          <p className="text-muted-foreground">{t("common.loading")}</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-nx-ground">
+        <LoadingSpinner />
       </div>
     );
   }
@@ -415,10 +421,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
   if (isAuthenticated && secureTokenService.hasToken()) return <>{children}</>;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <LoadingSpinner />
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-nx-ground">
+      <LoadingSpinner />
     </div>
   );
 }

@@ -1,17 +1,29 @@
 // Shared Layout Infrastructure — Barrel Export
-// All shared components used across the 12 layout variants
+//
+// The twelve-variant layout system was retired when nexus became the only
+// shell, and its chrome (sidebar, header, footer, nav renderer, command
+// palette, user card, style hook) went with it. What survives is the part
+// nexus and the navigation config still consume: direction-aware panel
+// glyphs, active-route resolution, and the impersonation banner.
+//
+// Switchers live in `../common` and are imported from there directly; this
+// barrel does not alias them, so there is exactly one path to each of them.
 
-export { LayoutWrapper } from "./layout-wrapper";
-export { NavRenderer } from "./nav-renderer";
-export type { NavRendererProps, NavVariant } from "./nav-renderer";
-export { UserCard } from "./user-card";
-export { CommandPalette } from "./command-palette";
-export { LogoutButton } from "./logout-button";
-export { Footer } from "./footer";
-export { useLayoutStyles } from "./use-layout-styles";
-export type { LayoutStyleHelpers } from "./use-layout-styles";
+export {
+  PanelMenuIcon,
+  PanelMenuIconRTL,
+  PanelCollapseIcon,
+  PanelCollapseIconRTL,
+} from "./nav-icons";
 
-// Re-export common components that were previously in layout/common/
-export { LanguageSwitcher } from "../common/language-switcher";
-export { ThemeSwitcher } from "../common/theme-switcher";
-export { HeaderSearch } from "../common/search-input";
+export {
+  isExactMatch,
+  isMatchWithFallback,
+  hasActiveChild,
+  hasActiveChildWithFallback,
+  isItemOrDescendantActive,
+  findActiveAncestry,
+  computeExpandedItems,
+} from "./nav-utils";
+
+export { TenantContextBanner } from "./tenant-context-banner";

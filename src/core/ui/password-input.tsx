@@ -4,9 +4,9 @@ import * as React from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Input } from "@/core/ui/input";
 import { Button } from "@/core/ui/button";
+import { Progress } from "@/core/ui/progress";
 import { cn } from "@/core/common/utils";
-import { useI18n } from "@/core/providers/i18n-provider"; // Correct import path for i18n
-// Assuming we have a Progress component, if not removed
+import { useI18n } from "@/core/providers/i18n-provider";
 
 interface PasswordInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   showStrengthIndicator?: boolean;
@@ -16,7 +16,7 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
   ({ className, showStrengthIndicator = false, onChange, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [strength, setStrength] = React.useState(0);
-    const { direction } = useI18n(); // Global direction preference
+    const { t } = useI18n();
 
     // Simple strength calculator
     const calculateStrength = (val: string) => {
@@ -33,52 +33,59 @@ export const PasswordInput = React.forwardRef<HTMLInputElement, PasswordInputPro
       onChange?.(e);
     };
 
-    // Determine icon position based on global direction OR input content (optional advanced feature)
-    // For now, we stick to the global direction for consistency with the form
-    const isRtl = direction === "rtl";
-
     return (
       <div className="relative">
         <Input
           type={showPassword ? "text" : "password"}
-          className={cn(
-            // Add padding for the icon
-            isRtl ? "pl-10" : "pr-10",
-            className
-          )}
+          // Logical end padding clears the toggle in both directions.
+          className={cn("pe-10", className)}
           ref={ref}
           onChange={handleChange}
           {...props}
         />
+        {/* The reveal toggle is a real tab stop with a pressed state — the
+            old negative tabindex locked keyboard users out entirely. Focus
+            rides Button's own --nx-focus lit-edge treatment; the icon answers
+            hover on the INK (a filled hover chip inside a field reads as a
+            second control). It goes inert with the field it sits in. */}
         <Button
           type="button"
           variant="ghost"
           size="sm"
-          className={cn(
-            "absolute top-0 h-full px-3 py-2 hover:bg-transparent",
-            isRtl ? "left-0" : "right-0"
-          )}
+          className="absolute end-0 top-0 h-full rounded-s-none px-3 py-2 text-nx-ink-3 hover:bg-transparent hover:text-nx-ink focus-visible:z-raised disabled:text-nx-ink-3"
           onClick={() => setShowPassword((prev) => !prev)}
-          tabIndex={-1} // Skip tab focus
+          aria-pressed={showPassword}
+          disabled={props.disabled}
+          tabIndex={props.readOnly ? -1 : undefined}
         >
           {showPassword ? (
-            <EyeOff className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <EyeOff className="h-4 w-4" aria-hidden="true" />
           ) : (
-            <Eye className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+            <Eye className="h-4 w-4" aria-hidden="true" />
           )}
-          <span className="sr-only">{showPassword ? "Hide password" : "Show password"}</span>
+          <span className="sr-only">
+            {showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+          </span>
         </Button>
 
         {showStrengthIndicator && props.value && (
-          <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-secondary">
-            <div
-              className={cn(
-                "h-full transition-all duration-300 ease-in-out",
-                strength < 50 ? "bg-red-500" : strength < 75 ? "bg-yellow-500" : "bg-green-500"
-              )}
-              style={{ width: `${strength}%` }}
-            />
-          </div>
+          // Rides the shared Progress primitive; the child selector re-hues
+          // its indicator through the measured status tokens per tier. The
+          // meter is decoration for a screen reader (the tiers carry no text),
+          // so it is hidden from the a11y tree rather than announced as an
+          // unlabelled progressbar.
+          <Progress
+            value={strength}
+            aria-hidden="true"
+            className={cn(
+              "mt-2 h-1 bg-nx-raised",
+              strength < 50
+                ? "[&>div]:bg-nx-danger"
+                : strength < 75
+                  ? "[&>div]:bg-nx-warning"
+                  : "[&>div]:bg-nx-success"
+            )}
+          />
         )}
       </div>
     );

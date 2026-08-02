@@ -1,0 +1,22 @@
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
+import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
+
+const MessageTemplatesView = dynamic(() =>
+  import("@modules/communication/templates").then((m) => ({
+    default: m.MessageTemplatesView,
+  }))
+);
+
+export const metadata: Metadata = {
+  title: "Message Templates",
+  description: "Manage email, SMS, and push notification templates",
+};
+
+export default function MessageTemplatesPage() {
+  return (
+    <ModuleErrorBoundary moduleName="messaging.templates.title">
+      <MessageTemplatesView />
+    </ModuleErrorBoundary>
+  );
+}

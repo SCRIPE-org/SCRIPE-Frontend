@@ -101,3 +101,162 @@ Light: `ink #1A1133`, `inkMuted #4B4566`, `inkFaint #8B82A8`, `inkGhost #C8C2DC`
 - **Desktop (> 1024px):** full **asymmetric split** layout; plan cards in up to **4 columns**.
 
 Every layout must hold in **RTL** (Arabic): mirrored alignment, mirrored motion direction, no clipped or overflowing text.
+
+---
+
+# EDGE — the application design system
+
+> **Scope:** the authenticated application (the `scripe` layout). The Aurora
+> Refined section above continues to govern signup/onboarding.
+> **Source of truth for tokens:** the `SCRIPE / EDGE DESIGN SYSTEM` block at the
+> foot of `src/app/globals.css`. Never invent a colour; read a token.
+
+## Where it comes from
+
+The mark is a matte extruded solid. Its faces are dark, all of its light
+collects on the bevels, and it discharges cyan at exactly one place — the
+terminal edge. That is a complete interface specification, and these are its
+four laws:
+
+1. **Surfaces are matte.** No gradient fills, no glass, no glow on a resting
+   element. A card at rest is a flat slab with a hairline edge.
+2. **Edges carry the light.** Focus, selection and active navigation are all
+   expressed by an edge lighting up — the same physical event, everywhere.
+3. **Cyan discharges once.** One emitting element per screen: the thing that is
+   live right now. If two things glow, neither reads.
+4. **Depth is extrusion.** A lit top edge plus a hard offset drop — never a soft
+   blur halo pretending to be elevation.
+
+## Accent: the workspace owns it
+
+`Workspace.ColorHue` (OKLCH hue, 0–360) and `ColorChroma` (0–0.4) already exist
+on the backend. `WorkspaceProvider` publishes them to `<html>` as
+`--workspace-hue` / `--workspace-chroma`, and every accent shade derives from
+them in CSS:
+
+```css
+--edge-accent: oklch(0.68 var(--workspace-chroma) var(--workspace-hue));
+--edge-accent-fill: oklch(0.52 var(--workspace-chroma) var(--workspace-hue));
+--edge-emit: oklch(0.82 0.13 calc(var(--workspace-hue) + 78));
+```
+
+Switching workspace therefore re-tints the entire interface with no
+per-component colour logic anywhere.
+
+**Every EDGE custom property is prefixed `--edge-`, and nothing else in the
+codebase may use that prefix.** The signup/auth system owns `--sx-*`, and EDGE
+originally shared it — which meant `:root[data-layout="scripe"] { --sx-accent }`
+(specificity 0,2,0) silently overrode the Vault `:root { --sx-accent }` (0,1,0)
+and re-coloured the sign-in page for anyone on the scripe layout. Two design
+systems, one namespace, one winner. The CSS _class_ prefix stays `.sx-` because
+classes never cascade across systems this way; only the custom properties moved.
+
+**`--edge-accent` and `--edge-accent-fill` are deliberately two tokens.**
+Accent-as-text must beat the dark ground; accent-as-fill must beat the white
+label sitting on top of it. Those are opposite requirements and cannot be one
+value.
+
+**Never build alpha by string concatenation.** `` `${accent}22` `` is invalid CSS
+for an `oklch()` value and browsers drop the whole declaration silently. Use
+`oklch(... / 0.14)` or `color-mix()`.
+
+## Semantic status tokens
+
+`--success`, `--warning`, `--info` (with `-foreground` pairs) sit alongside
+`--destructive` in `globals.css` and are exposed through Tailwind as
+`bg-success`, `text-warning`, `border-info`, etc.
+
+They exist because their absence was the root cause of roughly 340 raw palette
+colours across 60 view files: `destructive` was the only tokenised status, so
+every view invented its own green.
+
+**A semantic token already resolves per theme.** When replacing a
+`text-emerald-600 dark:text-emerald-400` pair, delete the `dark:` variant — do
+not carry it over.
+
+`--warning-strong` is the fourth step of the severity ramp
+(`success → warning → warning-strong → destructive`). It exists because some
+scales genuinely need four steps — an SLA gauge, a quota meter — and without it
+amber and orange both collapse into `warning`, silently turning a four-step
+ramp into three. Reach for it only when a scale really has four levels; do not
+use it as "a slightly different amber".
+
+## Contrast
+
+Every token pair is measured, not asserted. Body text ≥ 4.5:1, large text and
+non-text UI ≥ 3:1, in both themes. Notable values:
+
+Accent rows are the **worst case across all 24 hues** at chroma 0.18, not a
+sample of the default violet — the workspace picks the hue, so the guarantee has
+to hold for every hue it can pick. Cyan (~190°) is the binding constraint on
+fill, and it is what forced `--edge-accent-fill` to 0.50 and the light
+`--edge-accent` to 0.46.
+
+| Pair                              | Dark    | Light   |
+| --------------------------------- | ------- | ------- |
+| ink / void                        | 17.82:1 | 17.28:1 |
+| ink-3 / slab (muted)              | 5.63:1  | 6.36:1  |
+| ink-3 / sub (panel)               | 5.84:1  | 5.43:1  |
+| accent-as-text / panel, worst hue | 6.18:1  | 4.89:1  |
+| white / accent-fill, worst hue    | 4.84:1  | 4.84:1  |
+| success / card                    | 10.39:1 | 5.35:1  |
+| warning / card                    | 11.78:1 | 5.96:1  |
+| warning-strong / card             | 8.79:1  | 6.81:1  |
+| destructive / card                | 6.04:1  | 6.47:1  |
+| destructive-fg / destructive      | 6.03:1  | 6.19:1  |
+| success-fg / success              | 10.38:1 | 5.35:1  |
+
+**`--destructive` and `--success-foreground` are retuned from stock shadcn.**
+The stock dark `--destructive` (`0 62.8% 30.6%`) is a fill colour, but this
+codebase uses `text-destructive` in 606 places, where it rendered at **1.99:1**
+— error text you could not read. Both themes now carry a value that satisfies
+the text duty _and_ the fill duty at once, verified against all 33 card surfaces
+the theme system can produce. Likewise `--success-foreground` was white on a
+bright mint at 1.91:1; in dark it is near-black.
+
+## Shell
+
+Geometry is inherited from nexus on purpose — 64px rail, 240px panel, 56px
+topbar — so a tenant switching layouts keeps their spatial muscle memory. What
+changes is the skin.
+
+- **Identity appears once.** Avatar, notifications, theme and language all live
+  in one cluster at the foot of the rail; the topbar carries only context
+  (breadcrumbs, search, page actions). Theme and language are preferences about
+  the user, not about the page — putting them with the user is what lets the
+  topbar stay context-only without losing the controls entirely.
+- **The panel takes a column only when there is room for one.** Below
+  `SCRIPE_PANEL_BREAKPOINT` (900px) it lifts out of the grid and overlays the
+  content with a scrim, dismissed by the scrim or Escape. A 240px column on a
+  360px phone leaves the content field ~56px wide, so "collapse it and let the
+  user re-open it" is not a mobile answer — re-opening is what breaks.
+- **The rail scrolls its own nav list.** A workspace with many root items must
+  never push the pin zone or the identity cluster past the fold.
+- **The skip link is the first tab stop.** Always in the DOM, visible on focus.
+- **The pin zone.** Inside a module workspace the admin workspace auto-pins at
+  the top of the pin zone as the way back, shown only when the user can reach
+  it and not user-removable. User pins follow in the backend's `pinSortOrder` —
+  the pin endpoint is authoritative and the client never computes order.
+- **One focus law.** `2px solid var(--sx-emit)` at `2px` offset, everywhere.
+
+## Components
+
+`stat-card`, `page-header` and `empty-state` are in `@core/ui`. Reach for them
+before writing a KPI, a page heading or a "nothing here" state — each of those
+had been re-implemented up to ten times with incompatible props.
+
+**Status: available, adoption pending.** They currently have no callers. The
+props are a union of the ten local variants they replace, so adoption is a
+per-view swap, but it is a real migration and has not been done — do not read
+this section as a description of the codebase today.
+
+`EmptyState` takes an action slot because an empty state that only says "no
+data" wastes the moment the user is most willing to act.
+
+## Bans
+
+- Building colour alpha through string concatenation (see above).
+- `dark:` variants on a semantic token.
+- Animating `width`/`height` for progress or reveal — use `transform`.
+- A second place for user identity in the shell.
+- Any new `isDark ? "#hex" : "#hex"` ternary. The token layer already knows.

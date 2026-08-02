@@ -27,8 +27,12 @@ export class WorkspaceGroupMapper {
     const nameAr = String(raw.workspaceNameAr ?? raw.nameAr ?? nameEn);
     const icon = String(raw.workspaceIcon ?? raw.icon ?? "LayoutDashboard");
     const sortOrder = Number(raw.workspaceSortOrder ?? raw.sortOrder ?? 0);
-    const colorHue = (raw.colorHue as number | null) ?? null;
-    const colorChroma = (raw.colorChroma as number | null) ?? null;
+    const colorHue =
+      raw.colorHue != null && Number.isFinite(Number(raw.colorHue)) ? Number(raw.colorHue) : null;
+    const colorChroma =
+      raw.colorChroma != null && Number.isFinite(Number(raw.colorChroma))
+        ? Number(raw.colorChroma)
+        : null;
     const wsType = (raw.workspaceType as "Admin" | "Module") ?? "Admin";
     const isLocked = Boolean(raw.isLocked ?? false);
     const homeRoute = (raw.homeRoute as string | null | undefined) ?? null;
@@ -38,6 +42,7 @@ export class WorkspaceGroupMapper {
     const contextScope =
       (raw.contextScope as "Both" | "PlatformOnly" | "TenantOnly" | undefined) ?? "Both";
     const accessibleItemCount = Number(raw.accessibleItemCount ?? 0);
+    const lockReason = String(raw.lockReason ?? "None");
 
     const rawItems = Array.isArray(raw.menuItems) ? raw.menuItems : [];
     const menuItems = rawItems.map((item) =>
@@ -62,6 +67,7 @@ export class WorkspaceGroupMapper {
       pinSortOrder,
       contextScope,
       accessibleItemCount,
+      lockReason,
     };
   }
 }

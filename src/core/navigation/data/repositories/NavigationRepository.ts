@@ -14,7 +14,7 @@
  */
 
 import type { IApiService } from "@core/interfaces/api.interface";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { NAVIGATION_ENDPOINTS } from "@core/config/api-endpoints";
 import { appLogger } from "@core/common/logger";
 
 import type { INavigationRepository } from "../../domain/interfaces/INavigationRepository";
@@ -46,7 +46,7 @@ export class NavigationRepository implements INavigationRepository {
   }> {
     appLogger.debug("[NavigationRepository] Fetching all routes (eager)…");
 
-    const raw = await this.apiService.get<RoutesApiResponse>(API_ENDPOINTS.MENUS.MY_ROUTES);
+    const raw = await this.apiService.get<RoutesApiResponse>(NAVIGATION_ENDPOINTS.MENUS.MY_ROUTES);
     const payload = (raw as RoutesApiResponse)?.data ?? raw ?? {};
 
     const routes = Array.isArray((payload as RoutesApiResponse).routes)
@@ -84,8 +84,8 @@ export class NavigationRepository implements INavigationRepository {
 
     const endpoint =
       workspaceKey && workspaceKey !== "admin"
-        ? API_ENDPOINTS.MENUS.MY_WORKSPACE(workspaceKey)
-        : API_ENDPOINTS.MENUS.MY;
+        ? NAVIGATION_ENDPOINTS.MENUS.MY_WORKSPACE(workspaceKey)
+        : NAVIGATION_ENDPOINTS.MENUS.MY;
 
     const raw = await this.apiService.get<unknown>(endpoint);
 
@@ -126,7 +126,7 @@ export class NavigationRepository implements INavigationRepository {
    */
   async fetchWorkspaceStubs(): Promise<WorkspaceGroupData[]> {
     appLogger.debug("[NavigationRepository] Fetching workspace stubs...");
-    const raw = await this.apiService.get<unknown>(API_ENDPOINTS.MENUS.MY_WORKSPACES);
+    const raw = await this.apiService.get<unknown>(NAVIGATION_ENDPOINTS.MENUS.MY_WORKSPACES);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const payload = ((raw as any)?.data ?? raw ?? []) as Record<string, unknown>[];
@@ -145,7 +145,7 @@ export class NavigationRepository implements INavigationRepository {
     appLogger.debug(`[NavigationRepository] Toggling pin for workspace "${workspaceKey}"…`);
 
     const raw = await this.apiService.post<unknown>(
-      API_ENDPOINTS.MENUS.TOGGLE_PIN(workspaceKey),
+      NAVIGATION_ENDPOINTS.MENUS.TOGGLE_PIN(workspaceKey),
       {}
     );
 

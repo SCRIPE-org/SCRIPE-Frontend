@@ -1,0 +1,2426 @@
+/* ========================================================================
+   DOCUMENTATION PORTAL — Premium Styles
+   Isolated CSS for the docs module.
+
+   Colour, radius, depth and motion come from the nx token ladder declared in
+   src/app/globals.css. The portal used to mix three incompatible systems —
+   shadcn aliases, raw oklch/hex literals, and six custom properties in the
+   --bg- and --text- families that were never declared anywhere and therefore
+   resolved to nothing, leaving parts of the surface with no background and no
+   ink colour.
+   One ladder now: --nx-ground/-surface/-raised/-raised-2 for surfaces,
+   --nx-ink/-2/-3 for ink, --nx-line/-line-hi for hairlines, --nx-accent for
+   the accent, the measured --nx-danger/-warning/-info/-success aliases for
+   status, and the global --chart-* slots for the categorical syntax palette.
+   ======================================================================== */
+
+/* ─── Assistive-text utility ──────────────────────────────────────────────
+   The portal renders outside the app shell, so Tailwind's sr-only is not
+   guaranteed to be in scope here. */
+.docs-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ─── Layout ──────────────────────────────────────────────────────────── */
+.docs-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--nx-ground);
+  color: var(--nx-ink);
+}
+
+.docs-wrapper {
+  display: flex;
+  flex: 1;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ─── Header ──────────────────────────────────────────────────────────── */
+.docs-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  /* Opaque, not translucent+blurred: a sticky bar that lets the page bleed
+     through drops the ink below its measured contrast floor. */
+  background: var(--nx-surface);
+  border-bottom: 1px solid var(--nx-line);
+  transition: background-color var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+.docs-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: var(--nx-ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.docs-header-logo-img {
+  height: 46px;
+  width: auto;
+  border-radius: var(--nx-radius-sm);
+  object-fit: contain;
+}
+
+.docs-search-trigger {
+  flex: 1;
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  background: var(--nx-ground);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
+  color: var(--nx-ink-3);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition:
+    border-color var(--nx-t-micro) var(--nx-ease-enter),
+    box-shadow var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-search-trigger:hover {
+  border-color: var(--nx-line-hi);
+}
+
+.docs-search-trigger:focus-visible {
+  outline: none;
+  border-color: var(--nx-accent);
+  box-shadow: var(--nx-focus);
+}
+
+.docs-search-shortcut {
+  margin-inline-start: auto;
+  font-size: 0.75rem;
+  padding: 0.125rem 0.375rem;
+  background: var(--nx-raised-2);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-sm);
+  color: var(--nx-ink-3);
+  font-family: monospace;
+}
+
+.docs-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-inline-start: auto;
+}
+
+/* ─── Commercial Docs Link ───────────────────────────────────────────── */
+.docs-commercial-link {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--nx-line);
+  background: transparent;
+  color: var(--nx-ink-2);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-commercial-link:hover {
+  border-color: color-mix(in srgb, var(--nx-accent) 40%, transparent);
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+}
+
+.docs-commercial-link:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-commercial-link svg {
+  flex-shrink: 0;
+}
+
+/* ─── Reading Progress ────────────────────────────────────────────────── */
+.docs-reading-progress {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 3px;
+  z-index: 50;
+  background: transparent;
+}
+
+.docs-reading-progress-bar {
+  height: 100%;
+  background: var(--nx-accent);
+  border-start-end-radius: var(--nx-radius-sm);
+  border-end-end-radius: var(--nx-radius-sm);
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────────────────── */
+.docs-sidebar {
+  position: sticky;
+  top: 53px;
+  width: 280px;
+  min-width: 280px;
+  height: calc(100vh - 53px);
+  overflow-y: auto;
+  padding: 1rem 0;
+  border-inline-end: 1px solid var(--nx-line);
+  background: var(--nx-surface);
+  scrollbar-width: thin;
+  scrollbar-color: var(--nx-line-hi) transparent;
+}
+
+.docs-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.docs-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.docs-sidebar::-webkit-scrollbar-thumb {
+  background: var(--nx-line-hi);
+  border-radius: var(--nx-radius-sm);
+}
+
+.docs-sidebar-category {
+  margin-bottom: 0.25rem;
+}
+
+.docs-sidebar-category-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--nx-ink);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--nx-t-micro) var(--nx-ease-enter);
+  text-align: start;
+}
+
+.docs-sidebar-category-btn:hover {
+  color: var(--nx-accent);
+}
+
+.docs-sidebar-category-btn:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
+}
+
+.docs-sidebar-category-btn svg {
+  transition: transform var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-sidebar-category-btn[data-expanded="true"] svg {
+  transform: rotate(90deg);
+}
+
+[dir="rtl"] .docs-sidebar-category-btn[data-expanded="true"] svg {
+  transform: rotate(-90deg);
+}
+
+.docs-sidebar-items {
+  overflow: hidden;
+  /* Disclosure height — the one layout property the motion policy allows to
+     animate, and only on an accordion. */
+  transition: max-height var(--nx-t-panel) var(--nx-ease-enter);
+}
+
+.docs-sidebar-item {
+  display: block;
+  padding-block: 0.375rem;
+  padding-inline: 2.5rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--nx-ink-2);
+  text-decoration: none;
+  border-inline-start: 2px solid transparent;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+  line-height: 1.5;
+}
+
+.docs-sidebar-item:hover {
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+
+.docs-sidebar-item:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-sidebar-item[data-active="true"] {
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+  border-inline-start-color: var(--nx-accent);
+  font-weight: 500;
+}
+
+/* ─── Sidebar Sub-Groups (nested categories) ─────────────────────────── */
+.docs-sidebar-subgroup {
+  margin-bottom: 0.125rem;
+}
+
+.docs-sidebar-subgroup-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding-block: 0.375rem;
+  padding-inline: 2rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--nx-ink-2);
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: color var(--nx-t-micro) var(--nx-ease-enter);
+  text-align: start;
+  letter-spacing: 0.01em;
+}
+
+.docs-sidebar-subgroup-btn:hover {
+  color: var(--nx-accent);
+}
+
+.docs-sidebar-subgroup-btn:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
+}
+
+.docs-sidebar-subgroup-btn svg {
+  flex-shrink: 0;
+  transition: transform var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-sidebar-subgroup-btn svg:last-child {
+  margin-inline-start: auto;
+}
+
+.docs-sidebar-subgroup-btn[data-expanded="true"] svg:last-child {
+  transform: rotate(90deg);
+}
+
+[dir="rtl"] .docs-sidebar-subgroup-btn[data-expanded="true"] svg:last-child {
+  transform: rotate(-90deg);
+}
+
+.docs-sidebar-subgroup-items {
+  overflow: hidden;
+  transition: max-height var(--nx-t-panel) var(--nx-ease-enter);
+}
+
+.docs-sidebar-item--nested {
+  padding-inline-start: 3.25rem;
+}
+
+[dir="rtl"] .docs-sidebar-item--nested {
+  padding-inline-start: 1rem;
+  padding-inline-end: 3.25rem;
+}
+
+/* ─── Content Area ────────────────────────────────────────────────────── */
+.docs-content-wrapper {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.docs-content {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem;
+  /* max-width controlled by the reader toolbar inline style via TechnicalDocsView.tsx.
+     Not transitioned: the reader-width control re-flows the whole article, and
+     animating a layout property reflows it on every frame for no visual gain. */
+  max-width: 800px; /* default when no style override — this is the "compact" starting value */
+}
+
+/* ─── Breadcrumb ──────────────────────────────────────────────────────── */
+.docs-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+  color: var(--nx-ink-2);
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.docs-breadcrumb a {
+  color: var(--nx-ink-2);
+  text-decoration: none;
+  transition: color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-breadcrumb a:hover {
+  color: var(--nx-accent);
+}
+
+.docs-breadcrumb a:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
+}
+
+.docs-breadcrumb-separator {
+  color: var(--nx-ink-3);
+  font-size: 0.75rem;
+}
+
+.docs-breadcrumb-current {
+  color: var(--nx-ink);
+  font-weight: 500;
+}
+
+/* ─── Page Title ──────────────────────────────────────────────────────── */
+.docs-page-title {
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
+  font-size: 2.25em;
+  font-weight: 800;
+  color: var(--nx-ink);
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.docs-page-description {
+  font-size: 1.125em;
+  color: var(--nx-ink-2);
+  line-height: 1.625;
+  margin-bottom: 2.5rem;
+  text-wrap: pretty;
+}
+
+/* ─── Section Headings ────────────────────────────────────────────────── */
+.docs-h2 {
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
+  font-size: 1.625em;
+  font-weight: 700;
+  color: var(--nx-ink);
+  margin-top: 3rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--nx-line);
+  scroll-margin-top: 80px;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+.docs-h3 {
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
+  font-size: 1.375em;
+  font-weight: 600;
+  color: var(--nx-ink);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  scroll-margin-top: 80px;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.docs-h4 {
+  font-family: var(--font-display, "Plus Jakarta Sans", "Inter", system-ui, sans-serif);
+  font-size: 1.125em;
+  font-weight: 600;
+  color: var(--nx-ink);
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  scroll-margin-top: 80px;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.docs-heading-anchor {
+  color: inherit;
+  text-decoration: none;
+}
+
+.docs-heading-anchor:hover .docs-heading-hash,
+.docs-heading-anchor:focus-visible .docs-heading-hash {
+  opacity: 1;
+}
+
+.docs-heading-anchor:focus-visible {
+  outline: none;
+  border-radius: var(--nx-radius-sm);
+  box-shadow: var(--nx-focus);
+}
+
+.docs-heading-hash {
+  opacity: 0;
+  color: var(--nx-accent);
+  margin-inline-start: 0.375rem;
+  font-weight: 400;
+  transition: opacity var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+/* ─── Paragraph ───────────────────────────────────────────────────────── */
+.docs-paragraph {
+  font-size: 0.9375em;
+  line-height: 1.75;
+  /* Body ink is a ladder step, never the heading ink dimmed by an alpha —
+     an un-measured opacity is exactly how a contrast floor gets lost. */
+  color: var(--nx-ink);
+  margin-bottom: 1.25rem;
+  text-wrap: pretty;
+}
+
+/* ── Code Blocks ────────────────────────────────────────────────────────
+   The block used to be pinned to a hand-mixed dark oklch surface with a
+   One Dark hex palette on top, so it stayed dark while the rest of the
+   portal followed the theme. It now sits on the surface ladder and reads
+   its syntax hues from the global --chart-* slots, which are measured in
+   both themes. */
+.docs-code-block {
+  margin: 2rem 0;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  overflow: hidden;
+  background: var(--nx-surface);
+  transition: border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-code-block:hover {
+  border-color: var(--nx-line-hi);
+}
+
+.docs-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
+}
+
+.docs-code-filename {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.775rem;
+  color: var(--nx-ink-2);
+  font-weight: 500;
+}
+
+.docs-code-lang {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--nx-ink-3);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.docs-code-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--nx-ink-2);
+  background: var(--nx-raised-2);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
+  cursor: pointer;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+  font-family: inherit;
+  line-height: 1;
+}
+
+.docs-code-copy:hover {
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-code-copy:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-code-copy[data-copied="true"] {
+  color: var(--nx-success);
+  border-color: hsl(var(--success) / 0.3);
+  background: hsl(var(--success) / 0.1);
+}
+
+.docs-code-pre {
+  margin: 0;
+  padding: 1.5rem 1.25rem;
+  overflow-x: auto;
+  font-size: 0.875em;
+  line-height: 1.7;
+  background: none;
+  tab-size: 2;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--nx-line-hi) transparent;
+}
+
+/* The pre is a focusable scroll region: a keyboard user must be able to reach
+   and pan a code sample that overflows its column. */
+.docs-code-pre:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-code-pre::-webkit-scrollbar {
+  height: 6px;
+}
+.docs-code-pre::-webkit-scrollbar-track {
+  background: transparent;
+}
+.docs-code-pre::-webkit-scrollbar-thumb {
+  background: var(--nx-line-hi);
+  border-radius: var(--nx-radius-sm);
+}
+
+.docs-code-pre code {
+  font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  font-size: inherit;
+  line-height: inherit;
+  color: var(--nx-ink);
+  white-space: pre;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Code is left-to-right in every locale — an RTL document must not reorder
+   its tokens. */
+.docs-code-pre,
+.docs-code-pre code {
+  direction: ltr;
+  text-align: start;
+}
+
+/* Syntax highlighting — the global categorical slots. Colour follows the
+   token KIND, so a keyword is the same hue in every snippet and in both
+   themes. Operators and punctuation are structure, not meaning: they stay on
+   quiet ink so the named tokens carry the reading. */
+.docs-code-pre .token-keyword {
+  color: hsl(var(--chart-4));
+}
+.docs-code-pre .token-string {
+  color: hsl(var(--chart-2));
+}
+.docs-code-pre .token-number {
+  color: hsl(var(--chart-3));
+}
+.docs-code-pre .token-comment {
+  color: var(--nx-ink-3);
+  font-style: italic;
+}
+.docs-code-pre .token-type {
+  color: hsl(var(--chart-8));
+}
+.docs-code-pre .token-function {
+  color: hsl(var(--chart-1));
+}
+.docs-code-pre .token-operator {
+  color: var(--nx-ink-2);
+}
+.docs-code-pre .token-punctuation {
+  color: var(--nx-ink-3);
+}
+.docs-code-pre .token-decorator {
+  color: hsl(var(--chart-5));
+}
+.docs-code-pre .token-property {
+  color: hsl(var(--chart-7));
+}
+
+.docs-code-line-highlight {
+  background: var(--nx-accent-wash);
+  display: block;
+  margin-inline: -1.25rem;
+  padding-inline: 1.25rem;
+  border-inline-start: 2px solid var(--nx-accent);
+}
+
+/* ─── Tab Group ───────────────────────────────────────────────────────── */
+.docs-tabs {
+  margin-bottom: 1.5rem;
+  border-radius: var(--nx-radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--nx-line);
+}
+
+.docs-tabs-header {
+  display: flex;
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
+  overflow-x: auto;
+}
+
+.docs-tab-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--nx-ink-2);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+}
+
+.docs-tab-btn:hover {
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+
+.docs-tab-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-tab-btn[aria-selected="true"] {
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+  border-bottom-color: var(--nx-accent);
+}
+
+/* The tab group already supplies the frame; the code block inside it must not
+   draw a second one. */
+.docs-tabs [role="tabpanel"] .docs-code-block {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+}
+
+/* ─── Info Block ──────────────────────────────────────────────────────────
+   Severity speaks through the glyph, the hairline and the wash. The body ink
+   stays neutral in every variant — coloured copy on a coloured wash is the
+   least readable thing a callout can do.
+
+   The seven variants map onto the measured status ladder rather than seven
+   hand-mixed hues: note is neutral (it carries no severity), tip wears the
+   workspace accent, and caution → warning → danger walk the amber-to-red ramp
+   in that order, which is what --warning-strong exists for. */
+.docs-info {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: var(--nx-radius-md);
+  border: 1px solid var(--nx-line);
+  background: var(--nx-raised);
+  color: var(--nx-ink);
+  font-size: 0.875em;
+  line-height: 1.6;
+}
+
+.docs-info-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  color: var(--nx-ink-2);
+}
+
+.docs-info-title {
+  margin: 0 0 0.25rem;
+  font-weight: 600;
+  color: var(--nx-ink);
+}
+
+.docs-info-body {
+  margin: 0;
+  color: var(--nx-ink);
+  text-wrap: pretty;
+}
+
+.docs-info[data-variant="tip"] {
+  background: var(--nx-accent-wash);
+  border-color: color-mix(in srgb, var(--nx-accent) 30%, transparent);
+}
+
+.docs-info[data-variant="tip"] .docs-info-icon {
+  color: var(--nx-accent);
+}
+
+.docs-info[data-variant="info"] {
+  background: hsl(var(--info) / 0.1);
+  border-color: hsl(var(--info) / 0.3);
+}
+
+.docs-info[data-variant="info"] .docs-info-icon {
+  color: var(--nx-info);
+}
+
+.docs-info[data-variant="success"] {
+  background: hsl(var(--success) / 0.1);
+  border-color: hsl(var(--success) / 0.3);
+}
+
+.docs-info[data-variant="success"] .docs-info-icon {
+  color: var(--nx-success);
+}
+
+.docs-info[data-variant="caution"] {
+  background: hsl(var(--warning) / 0.1);
+  border-color: hsl(var(--warning) / 0.3);
+}
+
+.docs-info[data-variant="caution"] .docs-info-icon {
+  color: var(--nx-warning);
+}
+
+.docs-info[data-variant="warning"] {
+  background: hsl(var(--warning-strong) / 0.1);
+  border-color: hsl(var(--warning-strong) / 0.3);
+}
+
+.docs-info[data-variant="warning"] .docs-info-icon {
+  color: hsl(var(--warning-strong));
+}
+
+.docs-info[data-variant="danger"] {
+  background: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive) / 0.3);
+}
+
+.docs-info[data-variant="danger"] .docs-info-icon {
+  color: var(--nx-danger);
+}
+
+/* ─── Flowchart ───────────────────────────────────────────────────────── */
+/* A <figure>, so the UA's inline margin has to be cleared explicitly. */
+.docs-flowchart {
+  margin-block: 0 1.5rem;
+  margin-inline: 0;
+  padding: 1.5rem;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  overflow-x: auto;
+}
+
+.docs-flowchart-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--nx-ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+}
+
+.docs-flow-vertical {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.docs-flow-horizontal {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.docs-flow-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--nx-radius-md);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: center;
+  border: 1px solid var(--nx-line);
+  background: var(--nx-raised);
+  color: var(--nx-ink);
+  min-width: 120px;
+  position: relative;
+}
+
+.docs-flow-node[data-type="primary"] {
+  background: var(--nx-accent-wash);
+  border-color: color-mix(in srgb, var(--nx-accent) 30%, transparent);
+  color: var(--nx-accent);
+}
+
+.docs-flow-node[data-type="success"] {
+  background: hsl(var(--success) / 0.1);
+  border-color: hsl(var(--success) / 0.3);
+  color: var(--nx-success);
+}
+
+.docs-flow-node[data-type="warning"] {
+  background: hsl(var(--warning) / 0.1);
+  border-color: hsl(var(--warning) / 0.3);
+  color: var(--nx-warning);
+}
+
+.docs-flow-node[data-type="danger"] {
+  background: hsl(var(--destructive) / 0.1);
+  border-color: hsl(var(--destructive) / 0.3);
+  color: var(--nx-danger);
+}
+
+.docs-flow-node[data-type="info"] {
+  background: hsl(var(--info) / 0.1);
+  border-color: hsl(var(--info) / 0.3);
+  color: var(--nx-info);
+}
+
+.docs-flow-connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--nx-ink-3);
+  position: relative;
+}
+
+.docs-flow-connector-vertical {
+  flex-direction: column;
+  padding: 0.25rem 0;
+}
+
+.docs-flow-connector-horizontal {
+  padding: 0 0.5rem;
+}
+
+.docs-flow-connector-line {
+  width: 2px;
+  height: 24px;
+  background: var(--nx-line-hi);
+}
+
+.docs-flow-connector-arrow {
+  width: 0;
+  height: 0;
+  border-inline: 5px solid transparent;
+  border-top: 6px solid var(--nx-line-hi);
+}
+
+.docs-flow-connector-label {
+  font-size: 0.6875rem;
+  color: var(--nx-ink-3);
+  padding-inline: 0.375rem;
+  white-space: nowrap;
+}
+
+.docs-flow-connector-h-line {
+  width: 24px;
+  height: 2px;
+  background: var(--nx-line-hi);
+}
+
+.docs-flow-connector-h-arrow {
+  width: 0;
+  height: 0;
+  border-block: 5px solid transparent;
+  border-inline-start: 6px solid var(--nx-line-hi);
+}
+
+/* ─── API Table ───────────────────────────────────────────────────────── */
+/* The table structure itself is the shared Table primitive (@core/ui/table)
+   now — ApiTable.tsx composes it directly. What remains here are the
+   categorical readings that live inside its cells: the HTTP-verb chip, the
+   auth chip and the monospace path, none of which are table markup. */
+.docs-method-badge {
+  display: inline-flex;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--nx-radius-sm);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* HTTP verbs are categorical, not severities — they come off the global chart
+   slots so the same verb reads the same everywhere, and the destructive token
+   stays reserved for things that are actually destructive. */
+.docs-method-badge[data-method="GET"] {
+  background: hsl(var(--chart-1) / 0.15);
+  color: hsl(var(--chart-1));
+}
+
+.docs-method-badge[data-method="POST"] {
+  background: hsl(var(--chart-2) / 0.15);
+  color: hsl(var(--chart-2));
+}
+
+.docs-method-badge[data-method="PUT"] {
+  background: hsl(var(--chart-3) / 0.15);
+  color: hsl(var(--chart-3));
+}
+
+.docs-method-badge[data-method="DELETE"] {
+  background: hsl(var(--chart-5) / 0.15);
+  color: hsl(var(--chart-5));
+}
+
+.docs-method-badge[data-method="PATCH"] {
+  background: hsl(var(--chart-4) / 0.15);
+  color: hsl(var(--chart-4));
+}
+
+.docs-api-path {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.8125rem;
+  color: var(--nx-ink);
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.docs-auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: var(--nx-radius-sm);
+  font-size: 0.6875rem;
+  font-weight: 500;
+}
+
+.docs-auth-badge[data-auth="true"] {
+  background: hsl(var(--warning) / 0.1);
+  color: var(--nx-warning);
+}
+
+.docs-auth-badge[data-auth="false"] {
+  background: hsl(var(--success) / 0.1);
+  color: var(--nx-success);
+}
+
+/* ─── Step Guide ──────────────────────────────────────────────────────── */
+.docs-steps {
+  position: relative;
+  margin-block: 0 1.5rem;
+  padding-inline-start: 2rem;
+  /* An ordered list carries the sequence for assistive tech; the numbered
+     discs are the visual restatement of the same order. */
+  list-style: none;
+}
+
+.docs-steps::before {
+  content: "";
+  position: absolute;
+  inset-inline-start: 0.6875rem;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 2px;
+  background: var(--nx-line);
+}
+
+.docs-step {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+
+.docs-step:last-child {
+  padding-bottom: 0;
+}
+
+.docs-step-number {
+  position: absolute;
+  inset-inline-start: -2rem;
+  top: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  background: var(--nx-accent-fill);
+  color: var(--nx-on-fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  z-index: 1;
+}
+
+.docs-step-title {
+  font-size: 1em;
+  font-weight: 600;
+  color: var(--nx-ink);
+  margin-bottom: 0.5rem;
+  text-wrap: balance;
+}
+
+.docs-step-content {
+  font-size: 0.875em;
+  color: var(--nx-ink-2);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+/* ─── Table ───────────────────────────────────────────────────────────── */
+/* The generic "table" content section now composes the shared Table
+   primitive (@core/ui/table) directly in DocContent.tsx — density, hover,
+   header and cell skin all come from that primitive's own token classes. */
+
+/* ─── List ────────────────────────────────────────────────────────────── */
+.docs-list {
+  margin-bottom: 1.25rem;
+  padding-inline-start: 1.5rem;
+}
+
+.docs-list li {
+  font-size: 0.9375em;
+  line-height: 1.75;
+  color: var(--nx-ink);
+  margin-bottom: 0.375rem;
+  text-wrap: pretty;
+}
+
+/* ─── Right TOC ───────────────────────────────────────────────────────── */
+.docs-toc {
+  position: sticky;
+  top: 53px;
+  width: 220px;
+  min-width: 220px;
+  height: calc(100vh - 53px);
+  overflow-y: auto;
+  padding-block: 1.5rem;
+  padding-inline: 0 1rem;
+  scrollbar-width: none;
+}
+
+.docs-toc::-webkit-scrollbar {
+  display: none;
+}
+
+.docs-toc-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--nx-ink-3);
+  margin-bottom: 0.75rem;
+}
+
+.docs-toc-item {
+  display: block;
+  padding-block: 0.25rem;
+  padding-inline: 0.75rem 0;
+  font-size: 0.8125rem;
+  color: var(--nx-ink-2);
+  text-decoration: none;
+  border-inline-start: 2px solid transparent;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+  line-height: 1.4;
+}
+
+.docs-toc-item:hover {
+  color: var(--nx-ink);
+}
+
+.docs-toc-item:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-toc-item[data-active="true"] {
+  color: var(--nx-accent);
+  border-inline-start-color: var(--nx-accent);
+  font-weight: 500;
+}
+
+.docs-toc-item[data-level="3"] {
+  padding-inline-start: 1.5rem;
+  font-size: 0.75rem;
+}
+
+/* ─── Prev/Next Navigation ────────────────────────────────────────────── */
+.docs-prev-next {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--nx-line);
+}
+
+.docs-prev-next-link {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  background: var(--nx-surface);
+  text-decoration: none;
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+/* Hover brightens the hairline. Nothing lifts. */
+.docs-prev-next-link:hover {
+  border-color: var(--nx-line-hi);
+  background: var(--nx-raised);
+}
+
+.docs-prev-next-link:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-prev-next-label {
+  font-size: 0.75rem;
+  color: var(--nx-ink-3);
+  margin-bottom: 0.25rem;
+}
+
+.docs-prev-next-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--nx-accent);
+}
+
+.docs-prev-next-link[data-type="next"] {
+  text-align: end;
+  grid-column: 2;
+}
+
+.docs-prev-next-link[data-type="prev"] {
+  grid-column: 1;
+}
+
+/* ─── Search Modal ────────────────────────────────────────────────────── */
+.docs-search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  /* One scrim system: the overlay pushes the page back by taking light away,
+     not by blurring it. */
+  background: var(--nx-scrim);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  animation: docs-fade-in var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+.docs-search-modal {
+  width: 100%;
+  max-width: 560px;
+  background: var(--nx-popover);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  box-shadow: var(--nx-shadow-modal);
+  overflow: hidden;
+  animation: docs-scale-in var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+.docs-search-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--nx-line);
+}
+
+.docs-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: var(--nx-ink);
+  outline: none;
+}
+
+.docs-search-input::placeholder {
+  color: var(--nx-ink-3);
+}
+
+.docs-search-results {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 0.5rem;
+}
+
+.docs-search-result {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  border-radius: var(--nx-radius-md);
+  cursor: pointer;
+  transition: background-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-search-result:hover,
+.docs-search-result[data-selected="true"] {
+  background: var(--nx-accent-wash);
+}
+
+.docs-search-result:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-search-result-title {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--nx-ink);
+}
+
+.docs-search-result-category {
+  font-size: 0.75rem;
+  color: var(--nx-ink-3);
+}
+
+.docs-search-snippet {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--nx-ink-2);
+  line-height: 1.5;
+  margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.docs-search-highlight {
+  background: var(--nx-accent-wash);
+  color: var(--nx-accent);
+  font-weight: 600;
+  border-radius: var(--nx-radius-sm);
+  padding-inline: 0.125rem;
+}
+
+.docs-search-footer {
+  padding: 0.625rem 1rem;
+  border-top: 1px solid var(--nx-line);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--nx-ink-3);
+}
+
+.docs-search-footer kbd {
+  padding: 0.125rem 0.375rem;
+  background: var(--nx-raised-2);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-sm);
+  font-size: 0.6875rem;
+  font-family: monospace;
+}
+
+/* ─── Comparison Block ───────────────────────────────────────────── */
+.docs-comparison {
+  display: grid;
+  gap: 1rem;
+  margin-block: 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-comparison-column {
+  border-radius: var(--nx-radius-lg);
+  border: 1px solid var(--nx-line);
+  background: var(--nx-surface);
+  overflow: hidden;
+}
+
+.docs-comparison-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--nx-ink);
+  background: var(--nx-raised);
+  border-bottom: 1px solid var(--nx-line);
+}
+
+.docs-comparison-title {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  text-wrap: balance;
+}
+
+.docs-comparison-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.docs-comparison-list {
+  list-style: none;
+  padding: 0.75rem 1rem;
+  margin: 0;
+}
+
+.docs-comparison-list li {
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  padding-block: 0.25rem;
+  color: var(--nx-ink);
+  text-wrap: pretty;
+}
+
+/* The marker is decorative — the column's own heading already states the
+   verdict, so it is hidden from assistive tech rather than read out as a
+   stray glyph before every item. */
+.docs-comparison-list li::before {
+  margin-inline-end: 0.5rem;
+  color: var(--nx-ink-3);
+  content: "•";
+}
+
+.docs-comparison-positive {
+  border-color: hsl(var(--success) / 0.3);
+}
+
+.docs-comparison-positive .docs-comparison-header {
+  background: hsl(var(--success) / 0.1);
+  border-bottom-color: hsl(var(--success) / 0.3);
+}
+
+.docs-comparison-positive .docs-comparison-list li::before {
+  content: "✓";
+  color: var(--nx-success);
+}
+
+.docs-comparison-negative {
+  border-color: hsl(var(--destructive) / 0.3);
+}
+
+.docs-comparison-negative .docs-comparison-header {
+  background: hsl(var(--destructive) / 0.1);
+  border-bottom-color: hsl(var(--destructive) / 0.3);
+}
+
+.docs-comparison-negative .docs-comparison-list li::before {
+  content: "✗";
+  color: var(--nx-danger);
+}
+
+.docs-comparison-neutral .docs-comparison-list li::before {
+  content: "•";
+  color: var(--nx-ink-3);
+}
+
+/* ─── Comparison: warning variant (caution column) ───────────── */
+.docs-comparison-warning {
+  border-color: hsl(var(--warning) / 0.3);
+}
+
+.docs-comparison-warning .docs-comparison-header {
+  background: hsl(var(--warning) / 0.1);
+  border-bottom-color: hsl(var(--warning) / 0.3);
+}
+
+.docs-comparison-warning .docs-comparison-list li::before {
+  content: "!";
+  color: var(--nx-warning);
+}
+
+/* ─── Comparison: info variant (informational column) ────────── */
+.docs-comparison-info {
+  border-color: hsl(var(--info) / 0.3);
+}
+
+.docs-comparison-info .docs-comparison-header {
+  background: hsl(var(--info) / 0.1);
+  border-bottom-color: hsl(var(--info) / 0.3);
+}
+
+.docs-comparison-info .docs-comparison-list li::before {
+  content: "i";
+  color: var(--nx-info);
+}
+
+/* ─── Feature Grid ───────────────────────────────────────────────── */
+.docs-feature-grid {
+  display: grid;
+  gap: 1rem;
+  margin-block: 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-feature-card {
+  padding: 1.25rem;
+  border-radius: var(--nx-radius-lg);
+  border: 1px solid var(--nx-line);
+  background: var(--nx-surface);
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+/* A card is structure, not furniture: hover brightens the hairline, it does
+   not lift the slab. */
+.docs-feature-card:hover {
+  border-color: var(--nx-line-hi);
+  background: var(--nx-raised);
+}
+
+.docs-feature-icon {
+  font-size: 1.5rem;
+  margin-bottom: 0.625rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--nx-radius-md);
+  background: var(--nx-accent-wash);
+}
+
+.docs-feature-title {
+  font-size: 0.9375em;
+  font-weight: 600;
+  color: var(--nx-ink);
+  margin-block: 0 0.375rem;
+  margin-inline: 0;
+  text-wrap: balance;
+}
+
+.docs-feature-description {
+  font-size: 0.8125em;
+  color: var(--nx-ink-2);
+  line-height: 1.5;
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ─── Docs Mode Toggle ──────────────────────────────────────────── */
+.docs-mode-toggle {
+  display: flex;
+  align-items: center;
+  padding: 0.1875rem;
+  background: var(--nx-raised);
+  border-radius: var(--nx-radius-control);
+  border: 1px solid var(--nx-line);
+  gap: 0;
+}
+
+.docs-mode-btn {
+  padding: 0.3125rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  border-radius: var(--nx-radius-sm);
+  cursor: pointer;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
+  background: transparent;
+  color: var(--nx-ink-2);
+  white-space: nowrap;
+}
+
+.docs-mode-btn:hover {
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+
+.docs-mode-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-mode-btn[data-active="true"] {
+  background: var(--nx-surface);
+  color: var(--nx-accent);
+  box-shadow: var(--nx-shadow-sm);
+  font-weight: 600;
+}
+
+/* ─── Animations ──────────────────────────────────────────────────────── */
+@keyframes docs-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes docs-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* The slide is a physical keyframe, so it is written once and resolved against
+   the live writing direction below — an edge-attached panel must enter from
+   the edge it is pinned to in both scripts. */
+@keyframes docs-slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes docs-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+[dir="rtl"] .docs-slide-in-left {
+  animation-name: docs-slide-in-right;
+}
+
+/* ─── Mobile Nav ──────────────────────────────────────────────────────── */
+.docs-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: var(--nx-scrim);
+  animation: docs-fade-in var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+.docs-mobile-nav {
+  position: fixed;
+  inset-block: 0;
+  inset-inline-start: 0;
+  z-index: 51;
+  width: 300px;
+  max-width: 85vw;
+  background: var(--nx-popover);
+  border-inline-end: 1px solid var(--nx-line);
+  box-shadow: var(--nx-shadow-modal);
+  overflow-y: auto;
+  animation: docs-slide-in-left var(--nx-t-panel) var(--nx-ease-enter);
+  padding-block: 1rem;
+}
+
+[dir="rtl"] .docs-mobile-nav {
+  animation-name: docs-slide-in-right;
+}
+
+.docs-mobile-close {
+  position: absolute;
+  top: 0.75rem;
+  inset-inline-end: 0.75rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--nx-radius-control);
+  background: var(--nx-raised);
+  border: 1px solid var(--nx-line);
+  cursor: pointer;
+  color: var(--nx-ink-2);
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-mobile-close:hover {
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-mobile-close:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+/* ─── Language Switcher ───────────────────────────────────────────────── */
+.docs-lang-dropdown {
+  position: relative;
+}
+
+.docs-lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--nx-ink-2);
+  background: transparent;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
+  cursor: pointer;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-lang-btn:hover {
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-lang-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-lang-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  inset-inline-end: 0;
+  min-width: 160px;
+  background: var(--nx-popover);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-md);
+  box-shadow: var(--nx-shadow-popover);
+  z-index: 60;
+  padding: 0.25rem;
+  animation: docs-scale-in var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+.docs-lang-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--nx-ink);
+  background: transparent;
+  border: none;
+  border-radius: var(--nx-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--nx-t-micro) var(--nx-ease-enter);
+  text-align: start;
+}
+
+.docs-lang-option:hover {
+  background: var(--nx-hover);
+}
+
+.docs-lang-option:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.docs-lang-option[aria-checked="true"],
+.docs-lang-option[data-active="true"] {
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+  font-weight: 500;
+}
+
+/* ─── Theme Toggle ────────────────────────────────────────────────────── */
+.docs-theme-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--nx-radius-control);
+  background: transparent;
+  border: 1px solid var(--nx-line);
+  cursor: pointer;
+  color: var(--nx-ink-2);
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-theme-btn:hover {
+  color: var(--nx-ink);
+  border-color: var(--nx-line-hi);
+}
+
+.docs-theme-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+/* ─── Hamburger Button ────────────────────────────────────────────────── */
+.docs-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--nx-radius-control);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--nx-ink);
+}
+
+.docs-hamburger:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────── */
+
+/* Desktop: Hide hamburger */
+@media (min-width: 1024px) {
+  .docs-hamburger {
+    display: none;
+  }
+}
+
+/* Tablet: 2-column, hide TOC */
+@media (max-width: 1279px) {
+  .docs-toc {
+    display: none;
+  }
+
+  .docs-content {
+    max-width: none;
+  }
+}
+
+/* Tablet: Hide sidebar, show hamburger */
+@media (max-width: 1023px) {
+  .docs-sidebar {
+    display: none;
+  }
+
+  .docs-hamburger {
+    display: flex;
+  }
+
+  .docs-content {
+    padding: clamp(1.25rem, 3vw, 2rem) clamp(1rem, 2vw, 1.5rem);
+  }
+
+  .docs-feature-grid,
+  .docs-comparison {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .docs-header {
+    padding: 0.625rem 1rem;
+  }
+
+  .docs-search-trigger {
+    max-width: none;
+    padding: 0.375rem;
+  }
+
+  .docs-search-shortcut {
+    display: none;
+  }
+
+  .docs-hide-mobile {
+    display: none;
+  }
+
+  .docs-commercial-link {
+    padding: 0.375rem;
+  }
+
+  .docs-header-actions {
+    gap: 0.125rem;
+  }
+
+  .docs-content {
+    padding: 1rem;
+  }
+
+  .docs-code-pre code {
+    font-size: 0.75rem;
+  }
+
+  .docs-page-title {
+    font-size: clamp(1.375rem, 5vw, 1.75rem);
+    letter-spacing: -0.025em;
+  }
+
+  .docs-h2 {
+    font-size: clamp(1.125rem, 4vw, 1.375rem);
+  }
+
+  .docs-feature-grid,
+  .docs-comparison {
+    grid-template-columns: 1fr !important;
+  }
+
+  .docs-prev-next {
+    grid-template-columns: 1fr;
+  }
+
+  .docs-prev-next-link[data-type="next"] {
+    grid-column: 1;
+  }
+
+  .docs-search-modal {
+    margin: 0 1rem;
+  }
+
+  .docs-flow-horizontal {
+    flex-direction: column;
+  }
+
+  .docs-flow-connector-horizontal {
+    transform: rotate(90deg);
+  }
+
+  .docs-header-logo span {
+    display: none;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 374px) {
+  .docs-header-actions {
+    gap: 0.125rem;
+  }
+
+  .docs-lang-btn span {
+    display: none;
+  }
+}
+
+/* --- Interactive Components Styling ------------------------------------
+   --docs-purple-* keeps its name because components outside this stylesheet
+   read it, but the value is no longer a fixed violet: the accent is
+   workspace-owned and follows the tenant hue and the theme. The old
+   prefers-color-scheme override is gone — theme here is class-driven
+   (next-themes writes .dark), so an OS-media override fought the toggle. */
+:root {
+  --docs-purple-primary: var(--nx-accent);
+  --docs-purple-muted: var(--nx-accent-wash);
+  --docs-purple-border: color-mix(in srgb, var(--nx-accent) 30%, transparent);
+}
+
+/* Terminal Simulator */
+.docs-terminal-container {
+  margin-bottom: 2rem;
+}
+.docs-terminal-window {
+  background: var(--nx-ground);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  overflow: hidden;
+}
+.docs-terminal-header {
+  background: var(--nx-raised);
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--nx-line);
+}
+.docs-terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+.docs-terminal-dots .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+}
+
+/* The three window dots are chrome, not status — they carry no meaning and
+   must not borrow the destructive/warning/success tokens to say nothing. */
+.dot-red,
+.dot-yellow,
+.dot-green {
+  background: var(--nx-line-hi);
+}
+
+.docs-terminal-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-inline-start: 1.5rem;
+}
+.docs-terminal-tab {
+  background: transparent;
+  border: none;
+  color: var(--nx-ink-2);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--nx-radius-sm);
+  cursor: pointer;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+.docs-terminal-tab:hover {
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+.docs-terminal-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+.docs-terminal-tab.active {
+  color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+}
+.docs-terminal-body {
+  padding: 1.25rem;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: var(--nx-ink);
+  min-height: 160px;
+  /* A shell transcript is LTR in every locale. */
+  direction: ltr;
+  text-align: start;
+}
+.docs-terminal-line .prompt {
+  color: var(--nx-accent);
+  margin-inline-end: 0.5rem;
+}
+.docs-terminal-line .cmd {
+  color: hsl(var(--chart-1));
+}
+.docs-terminal-output {
+  color: var(--nx-ink-2);
+  margin-top: 0.5rem;
+}
+
+/* File Explorer */
+.docs-explorer-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 1rem;
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  background: var(--nx-surface);
+  overflow: hidden;
+  height: 320px;
+  margin-bottom: 2rem;
+}
+.docs-explorer-sidebar {
+  border-inline-end: 1px solid var(--nx-line);
+  background: var(--nx-ground);
+  padding: 1rem;
+  overflow-y: auto;
+}
+.docs-explorer-panel {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+.docs-tree-node {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.4rem 0.5rem;
+  border: none;
+  border-radius: var(--nx-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  color: var(--nx-ink-2);
+  text-align: start;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+.docs-tree-node:hover {
+  color: var(--nx-ink);
+  background: var(--nx-hover);
+}
+.docs-tree-node:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+.docs-tree-node.active {
+  background: var(--nx-accent-wash);
+  color: var(--nx-accent);
+}
+
+/* Glossary Grid */
+.docs-glossary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-block: 0 2rem;
+  padding: 0;
+  list-style: none;
+}
+.docs-glossary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-lg);
+  padding: 1.25rem;
+  cursor: pointer;
+  text-align: start;
+  font: inherit;
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+  position: relative;
+  overflow: hidden;
+}
+.docs-glossary-card:hover {
+  background: var(--nx-raised);
+  border-color: var(--nx-line-hi);
+}
+.docs-glossary-card:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+.docs-glossary-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+/* The flip is visual only — DOM order stays EN then AR so the reading order
+   is stable, and flex order moves the chosen term to the leading edge. */
+.docs-glossary-header[data-primary="ar"] .docs-term-en {
+  order: 1;
+}
+.docs-term-en {
+  font-weight: 700;
+  color: var(--nx-ink);
+}
+.docs-term-ar {
+  font-weight: 700;
+  color: var(--nx-accent);
+}
+.docs-glossary-header[data-primary="ar"] .docs-term-ar {
+  color: var(--nx-ink);
+}
+.docs-glossary-header[data-primary="ar"] .docs-term-en {
+  color: var(--nx-accent);
+}
+.docs-glossary-desc {
+  font-size: 0.8rem;
+  color: var(--nx-ink-2);
+  margin: 0;
+  text-wrap: pretty;
+}
+.docs-glossary-indicator {
+  font-size: 0.65rem;
+  color: var(--nx-ink-3);
+  display: block;
+  text-align: end;
+}
+
+/* Diagram styling */
+.docs-diagram-node-item {
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
+  padding: 0.6rem 1.2rem;
+  background: var(--nx-raised);
+  color: var(--nx-ink);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.8rem;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+  text-align: center;
+}
+.docs-diagram-node-item:hover {
+  border-color: var(--nx-line-hi);
+  background: var(--nx-raised-2);
+}
+.docs-diagram-node-item:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+.docs-diagram-node-item.active {
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+  color: var(--nx-accent);
+}
+.docs-diagram-node-item.docs-node-primary {
+  border-color: color-mix(in srgb, var(--nx-accent) 30%, transparent);
+  color: var(--nx-accent);
+}
+.docs-diagram-node-item.docs-node-success {
+  border-color: hsl(var(--success) / 0.3);
+  color: var(--nx-success);
+}
+.docs-diagram-node-item.docs-node-warning {
+  border-color: hsl(var(--warning) / 0.3);
+  color: var(--nx-warning);
+}
+
+.docs-diagram-arrow-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 0.5rem;
+}
+.docs-diagram-arrow-container .arrow {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--nx-ink-3);
+}
+
+/* Matrix Table — the table structure is the shared Table primitive
+   (@core/ui/table) now, composed directly by CompatibilityMatrix.tsx and
+   SchemaVisualizer.tsx. docs-matrix-badge stays: it is a status chip used
+   inside a cell (and by LifecycleTracer), not table markup. */
+.docs-matrix-badge {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  background: var(--nx-raised-2);
+  color: var(--nx-ink-2);
+  border: 1px solid var(--nx-line);
+}
+
+/* Pipeline Simulator */
+.docs-pipeline-node {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  background: var(--nx-surface);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
+  padding: 0.75rem 1rem;
+  width: 100%;
+  cursor: pointer;
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+  text-align: start;
+}
+.docs-pipeline-node:hover {
+  background: var(--nx-raised);
+  border-color: var(--nx-line-hi);
+}
+.docs-pipeline-node:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+.docs-pipeline-node-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--nx-line-hi);
+  position: relative;
+  flex-shrink: 0;
+}
+.docs-pipeline-node.active {
+  border-color: var(--nx-accent);
+  background: var(--nx-accent-wash);
+}
+/* The active stage is marked by the accent edge and fill, not by a dot that
+   breathes: nothing on this page is allowed to animate at rest. */
+.docs-pipeline-node.active .docs-pipeline-node-indicator,
+.docs-pipeline-node.active .docs-pipeline-node-indicator .light {
+  background: var(--nx-accent);
+}
+.docs-pipeline-node.completed {
+  border-color: hsl(var(--success) / 0.3);
+}
+.docs-pipeline-node.completed .docs-pipeline-node-indicator,
+.docs-pipeline-node.completed .docs-pipeline-node-indicator .light {
+  background: var(--nx-success);
+}
+.docs-pipeline-node-indicator .light {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 9999px;
+}
+.docs-pipeline-node-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--nx-ink);
+}
+.docs-pipeline-node-desc {
+  font-size: 0.75rem;
+  color: var(--nx-ink-2);
+  margin-top: 0.15rem;
+}
+.docs-pipeline-node-duration {
+  font-size: 0.75rem;
+  color: var(--nx-ink-3);
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+  margin-inline-start: auto;
+}
+
+/* Schema cell colour/weight now lives inline on the shared TableCell in
+   SchemaColumnRow.tsx (font-mono, text-nx-accent, text-nx-ink-2 …) since the
+   row itself is that primitive; TableRow's own hover already reads
+   --nx-hover, so no bespoke hover rule is needed here either. */
+
+/* CLI Autocomplete Suggestions */
+.docs-terminal-window ul {
+  box-shadow: var(--nx-shadow-popover);
+}
+
+/* Lifecycle Stepper Cards */
+.docs-lifecycle-step-card {
+  border: 1px solid var(--nx-line);
+  transition:
+    background-color var(--nx-t-micro) var(--nx-ease-enter),
+    border-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+.docs-lifecycle-step-card:hover {
+  border-color: var(--nx-line-hi);
+}
+.docs-lifecycle-step-card:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+.docs-lifecycle-step-card.active {
+  border-color: var(--nx-accent);
+  /* The step item writes its resting background as an inline style, which
+     out-specifies this rule; the guard is scoped to the selected state only. */
+  background: var(--nx-accent-wash) !important;
+}
+
+/* Sidebar Collapse Transition — only the non-layout properties are animated.
+   Transitioning width/padding re-flowed the whole article on every frame. */
+.docs-sidebar {
+  transition:
+    opacity var(--nx-t-standard) var(--nx-ease-enter),
+    border-color var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+.docs-wrapper.sidebar-collapsed .docs-sidebar {
+  width: 0 !important;
+  min-width: 0 !important;
+  opacity: 0 !important;
+  padding-inline: 0 !important;
+  border-inline-end: 0 solid transparent !important;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Reader Toolbar Styles */
+.reader-toolbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--nx-raised);
+  border: 1px solid var(--nx-line);
+  border-radius: var(--nx-radius-control);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.reader-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  color: var(--nx-ink-2);
+  border-radius: var(--nx-radius-sm);
+  cursor: pointer;
+  transition:
+    color var(--nx-t-micro) var(--nx-ease-enter),
+    background-color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.reader-toolbar-btn:hover {
+  color: var(--nx-ink);
+  background-color: var(--nx-hover);
+}
+
+.reader-toolbar-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--nx-focus);
+}
+
+.reader-toolbar-btn.font-size-btn {
+  padding: 0.125rem 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.reader-toolbar-divider {
+  width: 1px;
+  height: 1rem;
+  background-color: var(--nx-line);
+  margin-inline: 0.25rem;
+}
+
+/* Font Size Utility and Heading Anchor hover styles */
+.docs-heading-anchor-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.docs-heading-anchor-link svg {
+  display: block;
+}
+
+/* ─── Reduced motion ──────────────────────────────────────────────────────
+   The portal renders outside the settings provider, so the app's
+   data-animation guard never reaches it. Movement is stripped and state
+   changes are kept: the transition still happens, it just lands instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .docs-root *,
+  .docs-root *::before,
+  .docs-root *::after,
+  .docs-search-overlay,
+  .docs-search-overlay *,
+  .docs-mobile-overlay,
+  .docs-mobile-nav,
+  .docs-mobile-nav * {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

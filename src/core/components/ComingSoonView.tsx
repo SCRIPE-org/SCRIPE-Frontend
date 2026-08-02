@@ -1,17 +1,33 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Card, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
+import { EmptyState } from "@core/ui/empty-state";
+import { PageHeader } from "@core/ui/page-header";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Clock, Sparkles, Check } from "lucide-react";
+import { Check, Clock, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+/**
+ * ComingSoonView — the placeholder a route shows before its module exists.
+ *
+ * It used to hand-roll its own page header (a text-2xl h1, louder than the
+ * system's), its own glyph tile and its own empty block. All three now come
+ * from the primitives, so a not-yet-built route opens like every built one.
+ *
+ * The old `accentColor` prop is gone: it built classes by interpolation
+ * (`bg-${accentColor}/10`), which Tailwind cannot see and therefore never
+ * emitted — the tint it promised was never on screen. The page's single
+ * chromatic anchor is PageHeader's accent icon tile.
+ */
 interface ComingSoonViewProps {
   icon: LucideIcon;
   titleKey: string;
   descriptionKey: string;
   featuresKeys: Record<string, string>;
-  accentColor?: string;
+  /** The next step, when there is one — a waitlist, a docs link, a related page. */
+  action?: ReactNode;
 }
 
 export function ComingSoonView({
@@ -19,62 +35,53 @@ export function ComingSoonView({
   titleKey,
   descriptionKey,
   featuresKeys,
-  accentColor = "primary",
+  action,
 }: ComingSoonViewProps) {
   const { t } = useI18n();
+  const features = Object.entries(featuresKeys);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div
-            className={`flex h-10 w-10 items-center justify-center rounded-lg bg-${accentColor}/10`}
-          >
-            <Icon className={`h-5 w-5 text-${accentColor}`} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t(titleKey)}</h1>
-          </div>
-        </div>
-        <Badge
-          variant="outline"
-          className="gap-1.5 border-amber-500/30 bg-amber-500/5 text-amber-600 dark:text-amber-400"
-        >
-          <Clock className="h-3 w-3" />
-          {t("common.comingSoon") || "Coming Soon"}
-        </Badge>
-      </div>
+    <>
+      <PageHeader
+        icon={Icon}
+        title={t(titleKey)}
+        description={t(descriptionKey)}
+        badges={
+          <Badge variant="warning">
+            <Clock className="h-3 w-3" aria-hidden="true" />
+            {t("common.comingSoon")}
+          </Badge>
+        }
+      />
 
-      {/* Main Card */}
-      <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="relative mb-6">
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/10 to-primary/5 ring-1 ring-primary/10">
-              <Icon className="h-10 w-10 text-primary/60" />
-            </div>
-            <div className="absolute -right-1 -top-1 flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg">
-              <Sparkles className="h-4 w-4" />
-            </div>
-          </div>
+      <Card>
+        <CardContent>
+          {/* No description: the page header already carries that sentence, and
+              md rather than lg keeps this block grouped with the feature list
+              below, which is what actually explains what is coming. */}
+          <EmptyState
+            bare
+            size="md"
+            icon={Sparkles}
+            title={t("common.comingSoon")}
+            action={action}
+          />
 
-          <h2 className="mb-2 text-xl font-semibold">{t(titleKey)}</h2>
-          <p className="mb-8 max-w-md text-muted-foreground">{t(descriptionKey)}</p>
-
-          {/* Feature Preview */}
-          <div className="grid w-full max-w-lg gap-3 text-start">
-            {Object.entries(featuresKeys).map(([key, localeKey]) => (
-              <div
-                key={key}
-                className="flex items-start gap-3 rounded-lg border border-border/50 bg-muted/30 px-4 py-3"
-              >
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
-                <span className="text-sm text-foreground/80">{t(localeKey)}</span>
-              </div>
-            ))}
-          </div>
+          {features.length > 0 && (
+            <ul className="mx-auto grid w-full max-w-lg gap-3 text-start">
+              {features.map(([key, localeKey]) => (
+                <li
+                  key={key}
+                  className="flex items-start gap-3 rounded-nx-md border border-nx-line bg-nx-raised px-4 py-3"
+                >
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+                  <span className="text-sm leading-relaxed text-nx-ink-2">{t(localeKey)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

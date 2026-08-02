@@ -1,0 +1,199 @@
+/**
+ * Stripe Connect Service — API calls only, no business logic.
+ */
+import type { IApiService } from "@core/interfaces/api.interface";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import type { IConnectService } from "../../domain/interfaces/IConnectService";
+import type {
+  ConnectAccountResponseModel,
+  ConnectAccountListResponseModel,
+  ConnectAccountResultModel,
+  CommissionResponseModel,
+  CommissionDashboardResponseModel,
+  CommissionTrendPointModel,
+  TopTenantResponseModel,
+  EligibleTenantItemModel,
+  PagedResultModel,
+  TenantTransactionsResponseModel,
+} from "../models/ConnectModels";
+import { STRIPE_CONNECT_ENDPOINTS } from "./stripe-connect.endpoints";
+
+/**
+ * Http API network service for connect.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
+export class ConnectService implements IConnectService {
+  constructor(private readonly api: IApiService) {}
+
+  // ── Account Lifecycle ──
+
+  async getAccount(tenantId: string): Promise<ConnectAccountResponseModel> {
+    return this.api.get<ConnectAccountResponseModel>(
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.BY_ID(tenantId)
+    );
+  }
+
+  async getAccounts(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    status?: string;
+  }): Promise<PagedResultModel<ConnectAccountListResponseModel>> {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.LIST, {
+      page: params.page,
+      pageSize: params.pageSize,
+      search: params.search,
+      status: params.status,
+    });
+    return this.api.get<PagedResultModel<ConnectAccountListResponseModel>>(url);
+  }
+
+  async createAccount(tenantId: string): Promise<ConnectAccountResultModel> {
+    return this.api.post<ConnectAccountResultModel>(STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.CREATE, {
+      tenantId,
+    });
+  }
+
+  async searchEligibleTenants(search?: string): Promise<EligibleTenantItemModel[]> {
+    const url = buildUrl(
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.ELIGIBLE_TENANTS,
+      search ? { search } : {}
+    );
+    return this.api.get<EligibleTenantItemModel[]>(url);
+  }
+
+  async refreshOnboardingLink(tenantId: string): Promise<{ onboardingUrl: string }> {
+    return this.api.post<{ onboardingUrl: string }>(
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.REFRESH_LINK(tenantId),
+      {}
+    );
+  }
+
+  async getDashboardLink(tenantId: string): Promise<{ dashboardUrl: string }> {
+    return this.api.get<{ dashboardUrl: string }>(
+      STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.DASHBOARD_LINK(tenantId)
+    );
+  }
+
+  async updateCommissionRate(tenantId: string, rate: number | null): Promise<void> {
+    await this.api.put(STRIPE_CONNECT_ENDPOINTS.ACCOUNTS.COMMISSION_RATE(tenantId), { rate });
+  }
+
+  // ── Tenant-Facing Lifecycle ──
+
+  async getTenantStatus(): Promise<ConnectAccountResponseModel> {
+    return this.api.get<ConnectAccountResponseModel>(
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.STATUS
+    );
+  }
+
+  async tenantOnboard(): Promise<ConnectAccountResultModel> {
+    return this.api.post<ConnectAccountResultModel>(
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.ONBOARD,
+      {}
+    );
+  }
+
+  async tenantRefreshLink(): Promise<{ onboardingUrl: string }> {
+    return this.api.post<{ onboardingUrl: string }>(
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.REFRESH_LINK,
+      {}
+    );
+  }
+
+  async tenantDashboard(): Promise<{ dashboardUrl: string }> {
+    return this.api.post<{ dashboardUrl: string }>(
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.DASHBOARD_LINK,
+      {}
+    );
+  }
+
+  // ── Commissions ──
+
+  async getCommissions(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<PagedResultModel<CommissionResponseModel>> {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.LIST, {
+      page: params.page,
+      pageSize: params.pageSize,
+      status: params.status,
+      fromDate: params.fromDate,
+      toDate: params.toDate,
+    });
+    return this.api.get<PagedResultModel<CommissionResponseModel>>(url);
+  }
+
+  async getTenantCommissions(
+    tenantId: string,
+    params: {
+      page: number;
+      pageSize: number;
+      status?: string;
+      fromDate?: string;
+      toDate?: string;
+    }
+  ): Promise<PagedResultModel<CommissionResponseModel>> {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.BY_TENANT(tenantId), {
+      page: params.page,
+      pageSize: params.pageSize,
+      status: params.status,
+      fromDate: params.fromDate,
+      toDate: params.toDate,
+    });
+    return this.api.get<PagedResultModel<CommissionResponseModel>>(url);
+  }
+
+  async getDashboard(): Promise<CommissionDashboardResponseModel> {
+    return this.api.get<CommissionDashboardResponseModel>(
+      STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.DASHBOARD
+    );
+  }
+
+  async getTrends(days: number, tenantId?: string): Promise<CommissionTrendPointModel[]> {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.TRENDS, {
+      days,
+      tenantId,
+    });
+    return this.api.get<CommissionTrendPointModel[]>(url);
+  }
+
+  async getTopTenants(top: number, fromDate?: string): Promise<TopTenantResponseModel[]> {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.COMMISSIONS.TOP_TENANTS, {
+      top,
+      fromDate,
+    });
+    return this.api.get<TopTenantResponseModel[]>(url);
+  }
+
+  // ── Tenant Self-Service ──
+
+  async getMyTransactions(params: {
+    page: number;
+    pageSize: number;
+    status?: string;
+    type?: string;
+    fromDate?: string;
+    toDate?: string;
+  }): Promise<TenantTransactionsResponseModel> {
+    const url = buildUrl(STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.TRANSACTIONS, {
+      page: params.page,
+      pageSize: params.pageSize,
+      status: params.status,
+      type: params.type,
+      fromDate: params.fromDate,
+      toDate: params.toDate,
+    });
+    return this.api.get<TenantTransactionsResponseModel>(url);
+  }
+
+  async syncMyAccount(): Promise<ConnectAccountResponseModel> {
+    return this.api.post<ConnectAccountResponseModel>(
+      STRIPE_CONNECT_ENDPOINTS.TENANT_STRIPE_CONNECT.SYNC,
+      {}
+    );
+  }
+}

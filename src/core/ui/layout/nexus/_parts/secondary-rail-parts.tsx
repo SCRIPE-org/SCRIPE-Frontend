@@ -4,8 +4,16 @@ import React, { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { ChevronRight, ArrowRightLeft } from "lucide-react";
 import type { MenuItem } from "@core/navigation";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
-import { useNexusPalette } from "./nexus-theme-utils";
+
+// All colour reads the --nx- token layer — theme resolves in CSS, so these
+// parts never see isDark or a JS palette object.
+// Active leaf = accent text + inline-start edge light. NO glow here: the
+// primary rail's active root item owns the one glow per screen.
+// One ring token for the whole product — --nx-focus already carries the inset
+// accent edge these rows want, so the rail no longer draws its own.
+const FOCUS_RING = "focus-visible:outline-none focus-visible:shadow-nx-focus";
 
 export function cleanPath(p: string | undefined | null): string {
   if (!p) return "";
@@ -24,7 +32,6 @@ export interface NavItemProps {
   expandedIds: string[];
   onToggle: (id: string) => void;
   onNavigate: () => void;
-  palette: ReturnType<typeof useNexusPalette>;
   language: string;
   activeHref: string;
   switchWorkspace: (key: string) => void;
@@ -37,13 +44,14 @@ export function NavItem({
   expandedIds,
   onToggle,
   onNavigate,
-  palette,
   language,
   activeHref,
   switchWorkspace,
 }: NavItemProps) {
   const [hovered, setHovered] = useState(false);
-  const label = language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
+  const label =
+    resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+    resolveBilingualLabel(item.nameAr, item.nameEn, language);
 
   // Detect workspace-switch hrefs (#workspace:<key>)
   const workspaceKey = item.href?.startsWith("#workspace:")
@@ -84,71 +92,89 @@ export function NavItem({
     paddingBlock: 8,
     paddingInlineStart: 12 + indent,
     paddingInlineEnd: 10,
-    borderRadius: 8,
+    borderRadius: "var(--nx-radius-control)",
     cursor: "pointer",
     textDecoration: "none",
-    transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1)",
-    background: isActive ? palette.itemBgActive : hovered ? palette.itemBgHover : "transparent",
+    background: isActive
+      ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))"
+      : hovered
+        ? "var(--nx-raised, hsl(var(--muted)))"
+        : "transparent",
     userSelect: "none",
     position: "relative",
     overflow: "hidden",
   };
 
-  const textOffset = hovered && !isActive ? "translateX(4px)" : "none";
-  const rtlTextOffset = hovered && !isActive ? "translateX(-4px)" : "none";
+  // Row colour transitions live in classes so motion-reduce can strip them.
+  const rowClassName = cn("transition-colors duration-nx-micro motion-reduce:transition-none");
 
   const dotStyle: React.CSSProperties = {
     width: 5,
     height: 5,
     borderRadius: "50%",
     flexShrink: 0,
-    background: isActive ? palette.dotActive : palette.dotDefault,
-    transition: "all 300ms cubic-bezier(0.4, 0, 0.2, 1)",
+    background: isActive
+      ? "var(--nx-accent, hsl(var(--primary)))"
+      : "var(--nx-line-hi, hsl(var(--border)))",
     transform: isActive ? "scale(1.4)" : "scale(1)",
-    boxShadow: isActive ? `0 0 8px ${palette.dotActive}` : "none",
   };
 
   const labelStyle: React.CSSProperties = {
     fontSize: 13,
-    color: isActive || hovered ? palette.textActive : palette.textMuted,
+    color: isActive
+      ? "var(--nx-accent, hsl(var(--primary)))"
+      : hovered
+        ? "var(--nx-ink, hsl(var(--foreground)))"
+        : "var(--nx-ink-2, hsl(var(--muted-foreground)))",
     flex: 1,
-    transition: "all 200ms cubic-bezier(0.4, 0, 0.2, 1)",
     fontWeight: isActive ? 600 : 500,
-    transform: language === "ar" ? rtlTextOffset : textOffset,
   };
 
   if (hasChildren) {
     return (
       <div className="mb-1">
         <div
+          role="button"
+          tabIndex={0}
+          aria-expanded={isExpanded || hasActiveChild}
           style={itemStyle}
+          className={cn(rowClassName, FOCUS_RING)}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => onToggle(item.id)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              onToggle(item.id);
+            }
+          }}
         >
-          <div style={dotStyle} />
-          <span style={labelStyle}>{label}</span>
+          <div
+            style={dotStyle}
+            className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+          />
+          <span
+            style={labelStyle}
+            className="transition-colors duration-nx-micro motion-reduce:transition-none"
+          >
+            {label}
+          </span>
           <ChevronRight
             size={14}
+            aria-hidden="true"
+            className={cn(
+              "transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+              isExpanded || hasActiveChild ? "rotate-90 rtl:-rotate-90" : "rtl:rotate-180"
+            )}
             style={{
-              color: palette.chevronColor,
-              transition: "transform 250ms cubic-bezier(0.4, 0, 0.2, 1)",
-              transform:
-                isExpanded || hasActiveChild
-                  ? language === "ar"
-                    ? "rotate(-90deg)"
-                    : "rotate(90deg)"
-                  : language === "ar"
-                    ? "rotate(180deg)"
-                    : "none",
+              color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
             }}
           />
         </div>
         <div
+          className="grid transition-[grid-template-rows] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
           style={{
-            display: "grid",
             gridTemplateRows: isExpanded || hasActiveChild ? "1fr" : "0fr",
-            transition: "grid-template-rows 250ms cubic-bezier(0.4, 0, 0.2, 1)",
           }}
         >
           <div style={{ overflow: "hidden" }}>
@@ -162,7 +188,6 @@ export function NavItem({
                   expandedIds={expandedIds}
                   onToggle={onToggle}
                   onNavigate={onNavigate}
-                  palette={palette}
                   language={language}
                   activeHref={activeHref}
                   switchWorkspace={switchWorkspace}
@@ -186,6 +211,7 @@ export function NavItem({
             ...itemStyle,
             cursor: "pointer",
           }}
+          className={cn(rowClassName, FOCUS_RING)}
           onMouseEnter={() => setHovered(true)}
           onMouseLeave={() => setHovered(false)}
           onClick={() => {
@@ -199,9 +225,21 @@ export function NavItem({
             }
           }}
         >
-          <div style={dotStyle} />
-          <span style={labelStyle}>{label}</span>
-          <ArrowRightLeft size={12} style={{ color: palette.chevronColor, flexShrink: 0 }} />
+          <div
+            style={dotStyle}
+            className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+          />
+          <span
+            style={labelStyle}
+            className="transition-colors duration-nx-micro motion-reduce:transition-none"
+          >
+            {label}
+          </span>
+          <ArrowRightLeft
+            size={12}
+            aria-hidden="true"
+            style={{ color: "var(--nx-ink-3, hsl(var(--muted-foreground)))", flexShrink: 0 }}
+          />
         </div>
       </div>
     );
@@ -213,14 +251,23 @@ export function NavItem({
         href={item.href ?? "#"}
         onClick={onNavigate}
         style={itemStyle}
+        className={cn(rowClassName, FOCUS_RING)}
         aria-current={isActive ? "page" : undefined}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
-        <div style={dotStyle} />
-        <span style={labelStyle}>{label}</span>
+        <div
+          style={dotStyle}
+          className="transition-[background-color,transform] duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+        />
+        <span
+          style={labelStyle}
+          className="transition-colors duration-nx-micro motion-reduce:transition-none"
+        >
+          {label}
+        </span>
 
-        {/* Active Item Accent Line */}
+        {/* Active leaf edge light — accent bar at the inline start, no glow */}
         {isActive && (
           <div
             style={{
@@ -231,10 +278,9 @@ export function NavItem({
               width: 3,
               borderStartStartRadius: 0,
               borderEndStartRadius: 0,
-              borderStartEndRadius: 4,
-              borderEndEndRadius: 4,
-              background: palette.dotActive,
-              boxShadow: `0 0 10px ${palette.dotActive}`,
+              borderStartEndRadius: "var(--nx-radius-sm)",
+              borderEndEndRadius: "var(--nx-radius-sm)",
+              background: "var(--nx-accent, hsl(var(--primary)))",
             }}
           />
         )}
@@ -243,19 +289,13 @@ export function NavItem({
   );
 }
 
-export function GroupLabel({
-  label,
-  palette,
-}: {
-  label: string;
-  palette: ReturnType<typeof useNexusPalette>;
-}) {
+export function GroupLabel({ label }: { label: string }) {
   return (
     <div
       style={{
         fontSize: 11,
         fontWeight: 600,
-        color: palette.groupLabelColor,
+        color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
         textTransform: "uppercase",
         letterSpacing: "1px",
         padding: "16px 12px 8px",
@@ -270,13 +310,11 @@ export function GroupLabel({
 export function RailContent({
   menuItems,
   pathname,
-  palette,
   language,
   onNavigate,
 }: {
   menuItems: MenuItem[];
   pathname: string;
-  palette: ReturnType<typeof useNexusPalette>;
   language: string;
   onNavigate: () => void;
 }) {
@@ -325,7 +363,7 @@ export function RailContent({
         overflowY: "auto",
         padding: "12px",
         scrollbarWidth: "thin",
-        scrollbarColor: `${palette.scrollbarTrack} transparent`,
+        scrollbarColor: "var(--nx-line, hsl(var(--border))) transparent",
       }}
       className="nexus-custom-scrollbar"
     >
@@ -336,8 +374,10 @@ export function RailContent({
           return (
             <div key={item.id} className="mb-2">
               <GroupLabel
-                label={language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr}
-                palette={palette}
+                label={
+                  resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+                  resolveBilingualLabel(item.nameAr, item.nameEn, language)
+                }
               />
               {item.children.map((child) => (
                 <NavItem
@@ -348,7 +388,6 @@ export function RailContent({
                   expandedIds={expandedIds}
                   onToggle={handleToggle}
                   onNavigate={onNavigate}
-                  palette={palette}
                   language={language}
                   activeHref={activeHref}
                   switchWorkspace={switchWorkspace}
@@ -366,7 +405,6 @@ export function RailContent({
             expandedIds={expandedIds}
             onToggle={handleToggle}
             onNavigate={onNavigate}
-            palette={palette}
             language={language}
             activeHref={activeHref}
             switchWorkspace={switchWorkspace}
@@ -377,25 +415,17 @@ export function RailContent({
   );
 }
 
-export function RailHeader({
-  contextLabel,
-  title,
-  palette,
-}: {
-  contextLabel: string;
-  title: string;
-  palette: ReturnType<typeof useNexusPalette>;
-}) {
+export function RailHeader({ contextLabel, title }: { contextLabel: string; title: string }) {
   return (
     <div
       style={{
         padding: "24px 20px 20px",
-        borderBottom: palette.railBorder,
+        borderBottom: "1px solid var(--nx-line, hsl(var(--border)))",
         flexShrink: 0,
         position: "relative",
       }}
     >
-      {/* Subtle top gradient glow effect */}
+      {/* Subtle accent wash bleeding from the top edge — a wash, not a glow */}
       <div
         style={{
           position: "absolute",
@@ -403,21 +433,22 @@ export function RailHeader({
           insetInlineStart: 0,
           insetInlineEnd: 0,
           height: "60px",
-          background: `linear-gradient(180deg, ${palette.itemBgActive} 0%, transparent 100%)`,
+          background:
+            "linear-gradient(180deg, var(--nx-accent-wash, hsl(var(--primary) / 0.1)) 0%, transparent 100%)",
           opacity: 0.5,
           pointerEvents: "none",
         }}
       />
 
       <div
+        className="transition-colors duration-nx-standard ease-nx-enter motion-reduce:transition-none"
         style={{
           fontSize: 10,
-          color: palette.headerLabel,
+          color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
           textTransform: "uppercase",
           letterSpacing: "1px",
           fontWeight: 700,
           marginBottom: 8,
-          transition: "color 300ms",
           position: "relative",
         }}
       >
@@ -427,11 +458,10 @@ export function RailHeader({
         style={{
           fontSize: 16,
           fontWeight: 700,
-          color: palette.headerTitle,
+          color: "var(--nx-ink, hsl(var(--foreground)))",
           whiteSpace: "nowrap",
           letterSpacing: "-0.3px",
           position: "relative",
-          textShadow: "0 2px 10px rgba(0,0,0,0.1)",
         }}
       >
         {title}

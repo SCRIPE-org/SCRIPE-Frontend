@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Search, Home, ChevronDown } from "lucide-react";
+import { Search, Home, ChevronDown, Lock } from "lucide-react";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
 import { NotificationBell } from "@core/ui/notification";
 import { UserProfileDropdown } from "@core/ui/user-profile-dropdown";
@@ -11,13 +11,13 @@ import {
   PanelMenuIconRTL,
   PanelCollapseIcon,
   PanelCollapseIconRTL,
-} from "@core/ui/layout/navigation/nav-icons";
+} from "@core/ui/layout/shared/nav-icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useWorkspaceTransitionContext } from "../nexus-layout";
-import { cn } from "@core/common/utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import type { MenuItem } from "@core/navigation";
 import { usePermissions } from "@core/providers/permission-provider";
 import {
@@ -29,10 +29,23 @@ import {
   DropdownMenuSeparator,
 } from "@core/ui/dropdown-menu";
 
+// Every colour below reads the --nx- token layer (theme resolves in CSS).
+// Shared focus treatment — keyboard focus gets the accent ring, mouse focus
+// stays quiet. --nx-focus is the product's single focus ring; a hand-built
+// `ring-2 ring-nx-accent` pair drew a different ring from every other control.
+const FOCUS_RING = "focus-visible:outline-none focus-visible:shadow-nx-focus";
+
+// Shared motion for the bar's controls. Scoped on purpose: animating every
+// property on a 56px bar interpolated height and padding too, so a settings or
+// breadcrumb change reflowed the whole header over 140ms.
+const CONTROL_MOTION =
+  "transition-[color,background-color,border-color,box-shadow] ease-nx-enter motion-reduce:transition-none";
+
 // ── Breadcrumbs ──────────────────────────────────────────────────────────────
-export function BreadcrumbSep({ isRTL, isDark }: { isRTL: boolean; isDark: boolean }) {
+export function BreadcrumbSep({ isRTL }: { isRTL: boolean }) {
   return (
     <svg
+      aria-hidden="true"
       width="12"
       height="12"
       viewBox="0 0 24 24"
@@ -40,7 +53,9 @@ export function BreadcrumbSep({ isRTL, isDark }: { isRTL: boolean; isDark: boole
       style={{
         flexShrink: 0,
         transform: isRTL ? "scaleX(-1)" : undefined,
-        color: isDark ? "#334155" : "#CBD5E1",
+        // ink-3 is the quietest measured step; the old 55% color-mix invented a
+        // fourth one below it and fell under the contrast floor.
+        color: "var(--nx-ink-3, hsl(var(--muted-foreground)))",
       }}
     >
       <path
@@ -56,7 +71,6 @@ export function BreadcrumbSep({ isRTL, isDark }: { isRTL: boolean; isDark: boole
 
 export interface TopbarBreadcrumbsProps {
   isRTL: boolean;
-  isDark: boolean;
   workspaceName: string;
   activeRootName?: string | null;
   displayPageName: string;
@@ -100,7 +114,6 @@ function findFirstLeafRoute(
 
 export function TopbarBreadcrumbs({
   isRTL,
-  isDark,
   workspaceName,
   activeRootName,
   displayPageName,
@@ -108,7 +121,7 @@ export function TopbarBreadcrumbs({
   const { workspaceGroups, rootMenuItems, setActiveRootItemId, activeWorkspace, activeRootItem } =
     useWorkspace();
   const { switchWorkspace } = useWorkspaceTransitionContext();
-  const { language } = useI18n();
+  const { language, t } = useI18n();
   const { canAccessPage } = usePermissions();
   const router = useRouter();
   const tenantCode = useAppStore((s) => s.tenantCode);
@@ -147,11 +160,11 @@ export function TopbarBreadcrumbs({
             startRoutingProgress();
             router.push(homeRoute);
           }}
-          className="cursor-pointer rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-          style={{
-            color: isDark ? "#A0AEC0" : "#718096",
-            whiteSpace: "nowrap",
-          }}
+          className={cn(
+            "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 font-medium text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+            CONTROL_MOTION,
+            FOCUS_RING
+          )}
         >
           {workspaceName}
         </button>
@@ -159,29 +172,29 @@ export function TopbarBreadcrumbs({
           <DropdownMenuTrigger asChild>
             <button
               type="button"
-              className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-              style={{
-                color: isDark ? "#A0AEC0" : "#718096",
-              }}
+              aria-label={t("navigation.topbar.workspacesMenu")}
+              className={cn(
+                "flex h-5 w-5 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-3 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                CONTROL_MOTION,
+                FOCUS_RING
+              )}
             >
-              <ChevronDown size={12} className="opacity-60" />
+              <ChevronDown size={12} aria-hidden="true" />
             </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="start"
-            className="w-56 border-border/40 bg-popover/95 backdrop-blur-md"
-          >
-            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-              {language === "ar" ? "مساحات العمل" : "Workspaces"}
+          <DropdownMenuContent align="start" className="w-56 border-nx-line bg-nx-surface">
+            <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
+              {t("navigation.topbar.workspacesMenu")}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {sortedWorkspaces.map((ws) => {
               const isActive = activeWorkspace?.workspaceKey === ws.workspaceKey;
               const wsLabel =
-                language === "ar"
-                  ? ws.workspaceNameAr || ws.workspaceNameEn
-                  : ws.workspaceNameEn || ws.workspaceNameAr;
-              const wsAccent = ws.accentColor || (isDark ? "#9B8FE0" : "#6258c4");
+                resolveBilingualLabel(ws.workspaceNameEn, ws.workspaceNameAr, language) ||
+                resolveBilingualLabel(ws.workspaceNameAr, ws.workspaceNameEn, language);
+              // Each row carries its OWN workspace colour — the active-workspace
+              // token would paint every chip the same. Alpha via color-mix only.
+              const wsAccent = ws.accentColor || "var(--nx-accent, hsl(var(--primary)))";
 
               return (
                 <DropdownMenuItem
@@ -193,17 +206,17 @@ export function TopbarBreadcrumbs({
                   }}
                   disabled={ws.isLocked}
                   className={cn(
-                    "flex cursor-pointer items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors",
-                    isActive && "bg-accent/40 font-semibold text-accent-foreground"
+                    "flex cursor-pointer items-center gap-2.5 rounded-nx-sm px-3 py-2 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
+                    isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
                   )}
                 >
                   <div
                     style={{
                       width: 20,
                       height: 20,
-                      borderRadius: 6,
-                      background: `${wsAccent}22`,
-                      border: `1px solid ${wsAccent}40`,
+                      borderRadius: "var(--nx-radius-sm)",
+                      background: `color-mix(in oklch, ${wsAccent} 13%, transparent)`,
+                      border: `1px solid color-mix(in oklch, ${wsAccent} 30%, transparent)`,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
@@ -215,7 +228,12 @@ export function TopbarBreadcrumbs({
                     {ws.abbreviation ?? ws.workspaceKey.slice(0, 2).toUpperCase()}
                   </div>
                   <span className="flex-1 truncate">{wsLabel}</span>
-                  {ws.isLocked && <span className="text-[10px] text-yellow-600">🔒</span>}
+                  {ws.isLocked && (
+                    <>
+                      <Lock className="h-2.5 w-2.5 text-warning" aria-hidden="true" />
+                      <span className="sr-only">{t("navigation.topbar.workspaceLocked")}</span>
+                    </>
+                  )}
                 </DropdownMenuItem>
               );
             })}
@@ -226,7 +244,7 @@ export function TopbarBreadcrumbs({
       {/* ── Level 2: Root Active Group ── */}
       {activeRootName && activeRootItem && (
         <>
-          <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
+          <BreadcrumbSep isRTL={isRTL} />
           <div className="flex shrink-0 items-center gap-0.5">
             <button
               type="button"
@@ -237,11 +255,11 @@ export function TopbarBreadcrumbs({
                   router.push(route);
                 }
               }}
-              className="cursor-pointer rounded-md px-1.5 py-0.5 font-medium transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-              style={{
-                color: isDark ? "#CBD5E1" : "#475569",
-                whiteSpace: "nowrap",
-              }}
+              className={cn(
+                "cursor-pointer whitespace-nowrap rounded-nx-sm px-1.5 py-0.5 font-medium text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                CONTROL_MOTION,
+                FOCUS_RING
+              )}
             >
               {activeRootName}
             </button>
@@ -249,26 +267,26 @@ export function TopbarBreadcrumbs({
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="flex h-5 w-5 cursor-pointer items-center justify-center rounded-md transition-all hover:bg-muted/80 hover:text-foreground focus:outline-none"
-                  style={{
-                    color: isDark ? "#CBD5E1" : "#475569",
-                  }}
+                  aria-label={t("navigation.topbar.sectionsMenu")}
+                  className={cn(
+                    "flex h-5 w-5 cursor-pointer items-center justify-center rounded-nx-sm text-nx-ink-2 duration-nx-micro hover:bg-nx-raised hover:text-nx-ink",
+                    CONTROL_MOTION,
+                    FOCUS_RING
+                  )}
                 >
-                  <ChevronDown size={12} className="opacity-60" />
+                  <ChevronDown size={12} aria-hidden="true" />
                 </button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="start"
-                className="w-52 border-border/40 bg-popover/95 backdrop-blur-md"
-              >
-                <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                  {language === "ar" ? "الأقسام" : "Sections"}
+              <DropdownMenuContent align="start" className="w-52 border-nx-line bg-nx-surface">
+                <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-nx-ink-3">
+                  {t("navigation.topbar.sectionsMenu")}
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {activeGroupSiblings.map((item) => {
                   const isActive = activeRootItem?.id === item.id;
                   const label =
-                    language === "ar" ? item.nameAr || item.nameEn : item.nameEn || item.nameAr;
+                    resolveBilingualLabel(item.nameEn, item.nameAr, language) ||
+                    resolveBilingualLabel(item.nameAr, item.nameEn, language);
 
                   return (
                     <DropdownMenuItem
@@ -284,8 +302,8 @@ export function TopbarBreadcrumbs({
                         }
                       }}
                       className={cn(
-                        "flex cursor-pointer items-center gap-2 rounded-md px-3 py-1.5 text-sm transition-colors",
-                        isActive && "bg-accent/40 font-semibold text-accent-foreground"
+                        "flex cursor-pointer items-center gap-2 rounded-nx-sm px-3 py-1.5 text-sm transition-colors duration-nx-micro motion-reduce:transition-none",
+                        isActive && "bg-nx-accent-wash font-semibold text-nx-accent"
                       )}
                     >
                       <span className="flex-1 truncate">{label}</span>
@@ -301,11 +319,10 @@ export function TopbarBreadcrumbs({
       {/* ── Level 3: Active Page / Entity Name ── */}
       {displayPageName && (
         <>
-          <BreadcrumbSep isRTL={isRTL} isDark={isDark} />
+          <BreadcrumbSep isRTL={isRTL} />
           <span
-            className="px-1.5 py-0.5 font-semibold duration-200 animate-in fade-in slide-in-from-bottom-1"
+            className="px-1.5 py-0.5 font-semibold text-nx-ink duration-nx-standard animate-in fade-in"
             style={{
-              color: isDark ? "#F8FAFC" : "#0F172A",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -323,16 +340,18 @@ export function TopbarBreadcrumbs({
 // ── Panel Toggle Button ───────────────────────────────────────────────────────
 export interface TopbarPanelToggleProps {
   isRTL: boolean;
-  isDark: boolean;
   isPanelCollapsed?: boolean;
+  /** collapsibleSidebar setting — false hides the desktop toggle (the panel is
+   *  pinned open) while the same button keeps working as the mobile hamburger. */
+  collapsible?: boolean;
   onToggle: () => void;
   ariaLabel: string;
 }
 
 export function TopbarPanelToggle({
   isRTL,
-  isDark,
   isPanelCollapsed,
+  collapsible = true,
   onToggle,
   ariaLabel,
 }: TopbarPanelToggleProps) {
@@ -359,21 +378,16 @@ export function TopbarPanelToggle({
             type="button"
             onClick={onToggle}
             aria-label={ariaLabel}
-            style={{
-              width: 34,
-              height: 34,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 9,
-              cursor: "pointer",
-              color: isDark ? "#AFA9EC" : "#6258c4",
-              border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
-              background: isDark ? "rgba(255,255,255,0.03)" : "rgba(98,88,196,0.04)",
-              flexShrink: 0,
-              transition: "all 200ms ease",
-            }}
-            className="hover:scale-105 hover:bg-accent/60 hover:text-accent-foreground active:scale-95"
+            className={cn(
+              "flex h-[34px] w-[34px] shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
+              "border border-nx-line bg-transparent text-nx-accent",
+              CONTROL_MOTION,
+              "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised",
+              // Non-collapsible panel: desktop toggle would be a dead button, so
+              // it hides at lg while the mobile hamburger (<1024px) stays live.
+              !collapsible && "lg:hidden",
+              FOCUS_RING
+            )}
           >
             {renderPanelIcon()}
           </button>
@@ -388,57 +402,45 @@ export function TopbarPanelToggle({
 
 // ── Context Pill ──────────────────────────────────────────────────────────────
 export interface TopbarContextPillProps {
-  isDark: boolean;
   isModuleMode: boolean;
-  resolvedAccent: string;
   tenantName: string;
 }
 
-export function TopbarContextPill({
-  isDark,
-  isModuleMode,
-  resolvedAccent,
-  tenantName,
-}: TopbarContextPillProps) {
+export function TopbarContextPill({ isModuleMode, tenantName }: TopbarContextPillProps) {
   return (
     <div
+      className={cn("hidden items-center rounded-full duration-nx-standard sm:flex", CONTROL_MOTION)}
       style={{
-        display: "flex",
-        alignItems: "center",
         gap: 6,
         padding: "4px 12px",
-        borderRadius: 20,
         background: isModuleMode
-          ? `${resolvedAccent}15`
-          : isDark
-            ? "rgba(255,255,255,0.03)"
-            : "rgba(0,0,0,0.03)",
+          ? "var(--nx-accent-wash, hsl(var(--primary) / 0.1))"
+          : "transparent",
         border: `1px solid ${
           isModuleMode
-            ? `${resolvedAccent}40`
-            : isDark
-              ? "rgba(255,255,255,0.08)"
-              : "rgba(0,0,0,0.05)"
+            ? "color-mix(in oklch, var(--nx-accent, hsl(var(--primary))) 30%, transparent)"
+            : "var(--nx-line, hsl(var(--border)))"
         }`,
         fontSize: 11,
         fontWeight: 600,
-        color: isModuleMode ? resolvedAccent : isDark ? "#E2E8F0" : "#334155",
+        color: isModuleMode
+          ? "var(--nx-accent, hsl(var(--primary)))"
+          : "var(--nx-ink-2, hsl(var(--muted-foreground)))",
         cursor: "default",
         flexShrink: 0,
-        transition: "all 300ms ease",
         letterSpacing: "0.4px",
         whiteSpace: "nowrap",
       }}
-      className="hidden sm:flex"
     >
+      {/* Live-context dot — the logo's cyan ("now"), no glow: the primary
+          rail's active root item owns the one glow on this screen */}
       <div
         style={{
           width: 6,
           height: 6,
           borderRadius: "50%",
-          background: resolvedAccent,
+          background: "var(--nx-secondary, hsl(var(--info)))",
           flexShrink: 0,
-          boxShadow: `0 0 8px ${resolvedAccent}`,
         }}
       />
       <span>{tenantName}</span>
@@ -448,34 +450,27 @@ export function TopbarContextPill({
 
 // ── Search Button ─────────────────────────────────────────────────────────────
 export interface TopbarSearchButtonProps {
-  isRTL: boolean;
-  isDark: boolean;
   onOpenSearch?: () => void;
   placeholder: string;
 }
 
-export function TopbarSearchButton({
-  isRTL,
-  isDark,
-  onOpenSearch,
-  placeholder,
-}: TopbarSearchButtonProps) {
+export function TopbarSearchButton({ onOpenSearch, placeholder }: TopbarSearchButtonProps) {
   return (
     <button
       onClick={onOpenSearch}
-      className="group hidden transition-all duration-200 hover:scale-[1.02] active:scale-95 md:flex"
+      type="button"
+      className={cn(
+        // Border and surface live in classes, not inline: an inline `border`
+        // shorthand silently beat the hover rule, so the field never lit up.
+        "group hidden items-center rounded-nx-control border border-nx-line bg-nx-surface duration-nx-micro md:flex",
+        CONTROL_MOTION,
+        "text-nx-ink-3 hover:border-nx-line-hi",
+        FOCUS_RING
+      )}
       style={{
-        alignItems: "center",
         gap: 8,
-        background: isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
-        border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
-        boxShadow: isDark
-          ? "inset 0 1px 0 rgba(255,255,255,0.04)"
-          : "inset 0 1px 0 rgba(255,255,255,0.5)",
-        borderRadius: 9,
         padding: "0 12px",
         height: 33,
-        color: isDark ? "#94A3B8" : "#64748B",
         fontSize: "12px",
         fontWeight: 500,
         minWidth: 160,
@@ -484,24 +479,22 @@ export function TopbarSearchButton({
     >
       <Search
         size={13}
-        className="transition-colors group-hover:text-foreground"
+        aria-hidden="true"
+        className="transition-colors duration-nx-micro group-hover:text-nx-ink motion-reduce:transition-none"
         style={{ flexShrink: 0 }}
       />
       <span
-        style={{ flex: 1, userSelect: "none", textAlign: "start" }}
-        className="transition-colors group-hover:text-foreground"
+        style={{ flex: 1, userSelect: "none" }}
+        className="text-start transition-colors duration-nx-micro group-hover:text-nx-ink motion-reduce:transition-none"
       >
         {placeholder}
       </span>
       <span
+        className="rounded-nx-sm border border-nx-line bg-nx-raised text-nx-ink-2"
         style={{
           fontSize: "10px",
           fontWeight: 600,
-          background: isDark ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.04)",
-          border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.06)",
-          borderRadius: 4,
           padding: "2px 6px",
-          color: isDark ? "#CBD5E1" : "#475569",
           letterSpacing: "0.3px",
         }}
       >
@@ -513,12 +506,11 @@ export function TopbarSearchButton({
 
 // ── Home Button ───────────────────────────────────────────────────────────────
 export interface TopbarHomeButtonProps {
-  isDark: boolean;
   ariaLabel: string;
   onClick: () => void;
 }
 
-export function TopbarHomeButton({ isDark, ariaLabel, onClick }: TopbarHomeButtonProps) {
+export function TopbarHomeButton({ ariaLabel, onClick }: TopbarHomeButtonProps) {
   return (
     <TooltipProvider delayDuration={50}>
       <Tooltip>
@@ -527,23 +519,15 @@ export function TopbarHomeButton({ isDark, ariaLabel, onClick }: TopbarHomeButto
             type="button"
             onClick={onClick}
             aria-label={ariaLabel}
-            style={{
-              width: 33,
-              height: 33,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 9,
-              cursor: "pointer",
-              color: isDark ? "#94A3B8" : "#64748B",
-              border: isDark ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(0,0,0,0.07)",
-              background: "transparent",
-              flexShrink: 0,
-              transition: "all 200ms ease",
-            }}
-            className="hover:scale-105 hover:bg-secondary hover:text-foreground active:scale-95"
+            className={cn(
+              "flex h-[33px] w-[33px] shrink-0 cursor-pointer items-center justify-center rounded-nx-control",
+              "border border-nx-line bg-transparent text-nx-ink-2",
+              CONTROL_MOTION,
+              "duration-nx-micro hover:border-nx-line-hi hover:bg-nx-raised hover:text-nx-ink",
+              FOCUS_RING
+            )}
           >
-            <Home size={15} strokeWidth={2} />
+            <Home size={15} strokeWidth={2} aria-hidden="true" />
           </button>
         </TooltipTrigger>
         <TooltipContent side="bottom" sideOffset={8}>
@@ -555,13 +539,20 @@ export function TopbarHomeButton({ isDark, ariaLabel, onClick }: TopbarHomeButto
 }
 
 // ── Mobile Controls ───────────────────────────────────────────────────────────
-export function TopbarMobileControls() {
+export interface TopbarMobileControlsProps {
+  /** showNotifications setting — gates the bell, the profile stays put. */
+  showNotifications?: boolean;
+}
+
+export function TopbarMobileControls({ showNotifications = true }: TopbarMobileControlsProps) {
   return (
     <div className="flex items-center gap-3 lg:hidden">
-      <NotificationBell
-        iconClassName="h-[16px] w-[16px]"
-        className="h-[33px] w-[33px] rounded-[9px] text-muted-foreground transition-all hover:bg-secondary hover:text-foreground"
-      />
+      {showNotifications && (
+        <NotificationBell
+          iconClassName="h-[16px] w-[16px]"
+          className="h-[33px] w-[33px] rounded-nx-control text-nx-ink-3 transition-[color,background-color,border-color,box-shadow] duration-nx-micro hover:bg-nx-raised hover:text-nx-ink motion-reduce:transition-none"
+        />
+      )}
       <UserProfileDropdown variant="compact" showName={false} />
     </div>
   );

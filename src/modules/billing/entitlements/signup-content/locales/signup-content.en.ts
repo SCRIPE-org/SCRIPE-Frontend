@@ -1,0 +1,86 @@
+export const en = {
+  signupContent: {
+    title: "Signup Welcome Screen",
+    subtitle: "Manage the content displayed on the signup welcome panel",
+    loading: "Loading signup content...",
+
+    mode: {
+      title: "Content Mode",
+      seeded: "Seeded",
+      live: "Live",
+      seededDesc: "Showing sample/placeholder data on the signup screen.",
+      liveDesc: "Showing real data only — trust marks and logos must have isRealData enabled.",
+      liveWarning:
+        "Live mode hides any items with isRealData = false. Ensure all content is production-ready before switching.",
+      saved: "Content mode updated.",
+    },
+
+    welcome: {
+      title: "Welcome Copy",
+      save: "Save Welcome",
+      saving: "Saving...",
+      saved: "Welcome content saved.",
+      headlineEn: "Headline",
+      headlineAr: "Headline (AR)",
+      subcopyEn: "Subcopy",
+      subcopyAr: "Subcopy (AR)",
+      ctaEn: "CTA Label",
+      ctaAr: "CTA Label (AR)",
+      trustedByCount: "Trusted By",
+      trustedByLabelEn: "Trusted By Label",
+      trustedByLabelAr: "Trusted By Label (AR)",
+      placeholderEn: "English",
+      placeholderAr: "Arabic",
+      countPlaceholder: "Count",
+      trustedByLabelEnPlaceholder: "Label EN",
+      trustedByLabelArPlaceholder: "Label AR",
+    },
+
+    trustMarks: {
+      title: "Trust Marks",
+      empty: "No trust marks configured.",
+      add: "Add Trust Mark",
+      edit: "Edit Trust Mark",
+      delete: "Trust mark removed.",
+      reorder: "Reorder",
+      save: "Save",
+      saving: "Saving...",
+      cancel: "Cancel",
+      key: "Key",
+      kind: "Kind",
+      labelEn: "Label (EN)",
+      labelAr: "Label (AR)",
+      iconKey: "Icon Key",
+      assetUrl: "Asset URL",
+      isRealData: "Real Data",
+      sortOrder: "Sort Order",
+    },
+
+    customerLogos: {
+      title: "Customer Logos",
+      empty: "No customer logos configured.",
+      add: "Add Logo",
+      edit: "Edit Logo",
+      delete: "Logo removed.",
+      reorder: "Reorder",
+      save: "Save",
+      saving: "Saving...",
+      cancel: "Cancel",
+      key: "Key",
+      name: "Name",
+      assetUrl: "Asset URL",
+      isRealData: "Real Data",
+    },
+
+    error: {
+      load: "Failed to load signup content. Please refresh.",
+      save: "Failed to save. Please try again.",
+    },
+
+    validation: {
+      required: "{{field}} is required.",
+      invalidUrl: "{{field}} must be a valid URL.",
+      nonNegative: "{{field}} must be a non-negative number.",
+    },
+  },
+};

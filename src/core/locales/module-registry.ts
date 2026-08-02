@@ -10,6 +10,9 @@
  * so translations are available on the VERY FIRST render — zero flash.
  *
  * ADDING A NEW MODULE: Just add an import + spread line below.
+ *
+ * SCOPE: modules only. Keys shared across surfaces (nav, shell, primitives,
+ * errors) belong directly in core/locales/{en,ar}.ts — not here.
  */
 
 // ─── Auth ──────────────────────────────────────────────
@@ -93,9 +96,10 @@ import {
   ar as activateWorkspaceAr,
 } from "@modules/entitlements/activate-workspace/locales";
 
-// ─── Messaging ─────────────────────────────────────────
-import { en as messagingEn, ar as messagingAr } from "@modules/messaging/core/locales";
-import { en as webhooksEn, ar as webhooksAr } from "@modules/messaging/webhooks/locales";
+// ─── Communication & Integrations ───────────────────────
+import { en as communicationEn, ar as communicationAr } from "@modules/communication/core/locales";
+import { en as webhooksEn, ar as webhooksAr } from "@modules/integrations/webhooks/locales";
+import { en as apikeysEn, ar as apikeysAr } from "@modules/integrations/apikeys/locales";
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";
@@ -148,7 +152,6 @@ import {
   ar as compRegulationsAr,
 } from "@modules/compliance/regulations/locales";
 
-/*
 // ─── Marketplace (6 sub-modules, each owning their slice of the "marketplace" key) ──
 import {
   en as mktListingsEn,
@@ -171,7 +174,24 @@ import {
   en as mktFinancialsEn,
   ar as mktFinancialsAr,
 } from "@modules/marketplace/financials/locales";
-*/
+
+import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/core/locales";
+
+import { en as hrmsEn, ar as hrmsAr } from "@modules/hrms/core/locales";
+
+import {
+  en as customFieldsEn,
+  ar as customFieldsAr,
+} from "@modules/custom-fields/custom-field/locales";
+
+import {
+  en as workManagementEn,
+  ar as workManagementAr,
+} from "@modules/work-management/work-item/locales";
+import {
+  en as analyticsEventsEn,
+  ar as analyticsEventsAr,
+} from "@modules/analytics/events/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -215,9 +235,10 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   leadsEn,
   signupContentEn,
   activateWorkspaceEn,
-  // Messaging
-  messagingEn,
+  // Communication & Integrations
+  communicationEn,
   webhooksEn,
+  apikeysEn,
   // Ecosystem
   recycleBinEn,
   // Profile
@@ -239,16 +260,19 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compRetentionEn,
   compInventoryEn,
   compReportsEn,
-  compRegulationsEn
-  /*
+  compRegulationsEn,
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsEn,
   mktCategoriesEn,
   mktSubmissionsEn,
   mktDevelopersEn,
   mktReviewsEn,
-  mktFinancialsEn
-  */
+  mktFinancialsEn,
+  partyKernelEn,
+  hrmsEn,
+  customFieldsEn,
+  workManagementEn,
+  analyticsEventsEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -292,9 +316,10 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   leadsAr,
   signupContentAr,
   activateWorkspaceAr,
-  // Messaging
-  messagingAr,
+  // Communication & Integrations
+  communicationAr,
   webhooksAr,
+  apikeysAr,
   // Ecosystem
   recycleBinAr,
   // Profile
@@ -316,14 +341,17 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compRetentionAr,
   compInventoryAr,
   compReportsAr,
-  compRegulationsAr
-  /*
+  compRegulationsAr,
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsAr,
   mktCategoriesAr,
   mktSubmissionsAr,
   mktDevelopersAr,
   mktReviewsAr,
-  mktFinancialsAr
-  */
+  mktFinancialsAr,
+  partyKernelAr,
+  hrmsAr,
+  customFieldsAr,
+  workManagementAr,
+  analyticsEventsAr
 );

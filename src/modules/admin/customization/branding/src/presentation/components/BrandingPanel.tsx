@@ -1,0 +1,141 @@
+/**
+ * BrandingPanel — Logo (ImageUploadField), company name, headline, subtitle, favicon, copyright
+ * LAYOUT-AWARE: Shows only relevant fields for the current layout.
+ * - Split layouts: headline, subtitle (rendered in LoginBranding panel)
+ * - Non-split layouts: only logo, company name, favicon (no branding panel)
+ * - Copyright: ALWAYS shown (all layouts)
+ */
+"use client";
+
+import { Building2, Heading, FileText, Copyright, Info } from "lucide-react";
+import { ImageUploadField } from "@core/ui/image-upload-field";
+import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
+import { Textarea } from "@core/ui/textarea";
+import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
+import { useI18n } from "@core/providers/i18n-provider";
+
+interface BrandingPanelProps {
+  draft: StudioDraft;
+  updateDraft: <K extends keyof StudioDraft>(field: K, value: StudioDraft[K]) => void;
+}
+
+const SPLIT_LAYOUTS = [
+  "vault",
+  "split-right",
+  "split-left",
+  "asymmetric",
+  "sidebar-compact",
+  "magazine",
+  "stacked",
+  "dual-panel",
+  "vertical-split",
+  "split-diagonal",
+  "carousel",
+];
+
+/**
+ * Presentation UI component rendering the branding panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
+export function BrandingPanel({ draft, updateDraft }: BrandingPanelProps) {
+  const { t } = useI18n();
+  const hasBrandingPanel = SPLIT_LAYOUTS.includes(draft.layout);
+
+  return (
+    <div className="space-y-4">
+      {/* Logo — Upload + URL (all layouts) */}
+      <ImageUploadField
+        value={draft.logoUrl}
+        onChange={(url) => updateDraft("logoUrl", url)}
+        label={t("studio.branding.logo")}
+        description={t("studio.branding.logoDesc")}
+        maxSizeBytes={2 * 1024 * 1024}
+        accept="image/png,image/jpeg,image/webp,image/svg+xml"
+      />
+
+      {/* Company Name (all layouts) */}
+      <div className="space-y-1">
+        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+          <Building2 className="h-3 w-3" aria-hidden="true" />
+          {t("studio.branding.companyName")}
+        </Label>
+        <Input
+          value={draft.companyName}
+          onChange={(e) => updateDraft("companyName", e.target.value)}
+          placeholder={t("studio.branding.companyNamePlaceholder")}
+          className="h-8 text-xs"
+        />
+      </div>
+
+      {/* ─── Split-layout-only fields ─── */}
+      {hasBrandingPanel ? (
+        <>
+          {/* Headline (branding panel only) */}
+          <div className="space-y-1">
+            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              <Heading className="h-3 w-3" aria-hidden="true" />
+              {t("studio.branding.headline")}
+            </Label>
+            <Input
+              value={draft.headline}
+              onChange={(e) => updateDraft("headline", e.target.value)}
+              placeholder={t("studio.branding.headlinePlaceholder")}
+              className="h-8 text-xs"
+            />
+            <p className="text-end text-[10px] tabular-nums text-nx-ink-3">
+              {draft.headline.length}/100
+            </p>
+          </div>
+
+          {/* Subtitle (branding panel only) */}
+          <div className="space-y-1">
+            <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+              <FileText className="h-3 w-3" aria-hidden="true" />
+              {t("studio.branding.subtitle")}
+            </Label>
+            <Textarea
+              value={draft.subtitle}
+              onChange={(e) => updateDraft("subtitle", e.target.value)}
+              placeholder={t("studio.branding.subtitlePlaceholder")}
+              rows={2}
+              className="resize-none text-xs"
+            />
+          </div>
+        </>
+      ) : (
+        /* Info note for non-split layouts */
+        <div className="flex items-start gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-3">
+          <Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-info" aria-hidden="true" />
+          <p className="text-[10px] leading-relaxed text-nx-ink-3">
+            {t("studio.branding.noPanelNote")}
+          </p>
+        </div>
+      )}
+
+      {/* Copyright — ALL layouts */}
+      <div className="space-y-1">
+        <Label className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
+          <Copyright className="h-3 w-3" aria-hidden="true" />
+          {t("studio.branding.copyright")}
+        </Label>
+        <Input
+          value={draft.copyrightText}
+          onChange={(e) => updateDraft("copyrightText", e.target.value)}
+          placeholder={t("studio.branding.copyrightPlaceholder")}
+          className="h-8 text-xs"
+        />
+      </div>
+
+      {/* Favicon — Upload + URL (all layouts) */}
+      <ImageUploadField
+        value={draft.faviconUrl}
+        onChange={(url) => updateDraft("faviconUrl", url)}
+        label={t("studio.branding.favicon")}
+        description={t("studio.branding.faviconDesc")}
+        maxSizeBytes={512 * 1024}
+        accept="image/x-icon,image/png,image/svg+xml,image/webp"
+      />
+    </div>
+  );
+}

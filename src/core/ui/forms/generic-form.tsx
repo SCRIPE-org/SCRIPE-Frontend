@@ -46,6 +46,7 @@ import { Textarea } from "@core/ui/textarea";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Switch } from "@core/ui/switch";
 import { Separator } from "@core/ui/separator";
+import { ErrorMessage } from "@core/ui/error-message";
 import { Slider } from "@core/ui/slider";
 import { Checkbox } from "@core/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@core/ui/radio-group";
@@ -152,7 +153,28 @@ export interface FieldConfig {
   requiredPermissions?: PermissionCode[];
   // Helper/description text (shown below the field)
   description?: string;
+  // Browser autocomplete & password manager control
+  autoComplete?: string;
+  // Section layout (absent on every field = current flat single-column behaviour)
+  section?: string; // Title of the hairline-ruled group; consecutive fields with the same section are grouped
+  colSpan?: 1 | 2; // Width in the two-column section grid; any colSpan in a group switches it to sm:grid-cols-2
 }
+
+/**
+ * Wave K collapse: formStyle used to re-skin the FIELDS — cyan-on-black
+ * "neon", slate "elegant", green "organic", orange "retro", a glass wash and a
+ * gradient card, all in raw colour literals with dark: forks. Field skin has
+ * exactly one owner now (Settings inputStyle, applied inside Input / Textarea
+ * / Select), so formStyle keeps only what it can honestly control: the
+ * CONTAINER and the DENSITY. Retired decorative values resolve onto the
+ * nearest survivor; the stored-value migration itself is Wave C's job.
+ */
+const FORM_CONTAINER: Record<string, "flat" | "card" | "minimal"> = {
+  card: "card",
+  modern: "card",
+  glass: "card",
+  minimal: "minimal",
+};
 
 /**
  * Props for the GenericForm component
@@ -227,6 +249,8 @@ export function GenericForm({
   );
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  /** Rejection from onSubmit. The form used to swallow these entirely. */
+  const [serverError, setServerError] = useState<string | null>(null);
 
   // Re-initialize form data when fields change (for dynamic forms)
   // IMPORTANT: Only populate values for NEW fields that don't exist in the current
@@ -277,6 +301,10 @@ export function GenericForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Re-entrancy guard: the fields stay editable while a submit is in flight,
+    // and Enter in any of them re-fires this handler.
+    if (loading) return;
+    setServerError(null);
 
     // Validate required fields for custom components (select, searchable-select, etc.)
     // Native HTML inputs handle required validation via browser, but custom components need manual checks
@@ -315,7 +343,10 @@ export function GenericForm({
         val === undefined || val === null || val === "" || (Array.isArray(val) && val.length === 0);
 
       if (isEmpty) {
-        newErrors[field.name] = t("validation.required") || "This field is required";
+        // No `|| "English literal"` fallback: t() returns the bare key on a
+        // miss, never a falsy value, so the fallback was dead code that could
+        // only ever ship untranslated English.
+        newErrors[field.name] = t("validation.required");
       }
     });
 
@@ -338,9 +369,16 @@ export function GenericForm({
           field.type === "month" ||
           field.type === "week"
         ) {
-          // Only convert if value exists and is not empty
-          if (submitData[field.name] && submitData[field.name].trim() !== "") {
-            const converted = fromDateInputValue(submitData[field.name]);
+          // The value is only a string when it came through the date-input
+          // conversion. `initialValues` and `defaultValue` bypass that on the
+          // re-init path, so a Date object or a number can land here — and
+          // calling .trim() on it threw inside an async handler, which React
+          // does not surface: the form just sat there while the rejection
+          // escaped as an unhandled promise.
+          const raw = submitData[field.name];
+          const asString = typeof raw === "string" ? raw : "";
+          if (asString.trim() !== "") {
+            const converted = fromDateInputValue(asString);
             // Only set if conversion was successful (not empty string)
             if (converted && converted.trim() !== "") {
               submitData[field.name] = converted;
@@ -353,8 +391,24 @@ export function GenericForm({
             delete submitData[field.name];
           }
         }
+
+        // A number field submitted its raw input string, so consumers received
+        // "12" where the API expects 12 — and every caller had to remember to
+        // coerce. Empty stays empty rather than becoming 0.
+        if (field.type === "number") {
+          const raw = submitData[field.name];
+          if (raw !== "" && raw !== null && raw !== undefined) {
+            const asNumber = Number(raw);
+            if (!Number.isNaN(asNumber)) submitData[field.name] = asNumber;
+          }
+        }
       });
       await onSubmit(submitData);
+    } catch (error) {
+      // There was no catch at all. The CRUD viewmodels re-throw, so a failed
+      // save escaped as an unhandled rejection and the form rendered nothing —
+      // the user pressed Save, the spinner stopped, and no reason appeared.
+      setServerError(error instanceof Error ? error.message : String(error));
     } finally {
       setLoading(false);
     }
@@ -452,130 +506,120 @@ export function GenericForm({
   };
 
   const getFormContainerClasses = () => {
-    const style = settings.formStyle;
-    const baseClasses = "w-full max-h-[70vh] overflow-y-auto p-6";
+    const baseClasses = "w-full max-h-[70vh] overflow-y-auto";
 
-    switch (style) {
-      case "modern":
-        return cn(
-          baseClasses,
-          "bg-gradient-to-br from-background to-muted/20 rounded-2xl border shadow-lg"
-        );
-      case "glass":
-        return cn(baseClasses, "bg-white/10 backdrop-blur-md rounded-2xl border border-white/20");
-      case "minimal":
-        return cn(baseClasses, "bg-transparent border-none shadow-none p-4");
+    switch (FORM_CONTAINER[settings.formStyle] ?? "flat") {
       case "card":
-        return cn(baseClasses, "bg-card rounded-xl border shadow-md");
+        // a real slab: hairline frame, surface fill, one radius step off the
+        // ladder — no gradient, no blur, no coloured shadow
+        return cn(baseClasses, "rounded-nx-lg border border-nx-line bg-nx-surface p-6");
+      case "minimal":
+        return cn(baseClasses, "p-4");
       default:
-        return cn(baseClasses);
+        return cn(baseClasses, "p-6");
     }
   };
 
-  const getLabelClasses = () => {
-    const style = settings.formStyle;
-    const baseClasses = "font-medium";
+  // Label styling belongs to the Label primitive (ink step, size ladder,
+  // disabled ink). The form only decides whether a run of fields is a section.
+  const getLabelClasses = () => "";
 
-    switch (style) {
-      case "modern":
-        return cn(baseClasses, "text-foreground/90 font-semibold");
-      case "glass":
-        return cn(baseClasses, "text-foreground/80");
-      case "minimal":
-        return cn(baseClasses, "text-sm text-muted-foreground uppercase tracking-wide");
-      case "card":
-        return cn(baseClasses, "text-card-foreground");
-      default:
-        return cn(baseClasses);
+  // The field surface is Input/Textarea/Select's own business; the form only
+  // hands down the height its density asks for.
+  const getInputClasses = (baseInputClasses: string) => baseInputClasses;
+
+  // Visibility and permission rules are unchanged; they run before section grouping
+  const visibleFields = fields.filter((field) => {
+    // Check visibility function
+    if (field.isVisible && !field.isVisible(formData)) return false;
+    // Check permissions
+    if (field.requiredPermission && !hasPermission(field.requiredPermission)) return false;
+    if (
+      field.requiredPermissions &&
+      field.requiredPermissions.length > 0 &&
+      !hasAnyPermission(field.requiredPermissions)
+    )
+      return false;
+    return true;
+  });
+
+  // Consecutive fields sharing a `section` render as one titled, hairline-ruled group.
+  // Runs with neither section nor colSpan keep the flat single-column flow untouched.
+  const fieldGroups: { section?: string; fields: FieldConfig[] }[] = [];
+  visibleFields.forEach((field) => {
+    const last = fieldGroups[fieldGroups.length - 1];
+    if (last && last.section === field.section) {
+      last.fields.push(field);
+    } else {
+      fieldGroups.push({ section: field.section, fields: [field] });
     }
-  };
-
-  const getInputClasses = (baseInputClasses: string) => {
-    const style = settings.formStyle;
-
-    switch (style) {
-      case "modern":
-        return cn(
-          baseInputClasses,
-          "rounded-xl border-2 bg-background/50 focus:bg-background transition-colors"
-        );
-      case "glass":
-        return cn(baseInputClasses, "rounded-xl bg-white/10 border-white/30 backdrop-blur-sm");
-      case "minimal":
-        return cn(
-          baseInputClasses,
-          "border-0 border-b-2 rounded-none bg-transparent focus:border-primary"
-        );
-      case "card":
-        return cn(baseInputClasses, "rounded-lg bg-muted/30 border-muted");
-      case "neon":
-        return cn(
-          baseInputClasses,
-          "rounded-xl border-2 border-cyan-400/50 bg-black/50 text-cyan-100 placeholder:text-cyan-400/60 focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-400/20"
-        );
-      case "elegant":
-        return cn(
-          baseInputClasses,
-          "rounded-2xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 shadow-inner focus:ring-2 focus:ring-slate-400/20"
-        );
-      case "organic":
-        return cn(
-          baseInputClasses,
-          "rounded-full border-2 border-green-300 dark:border-green-600 bg-green-50 dark:bg-green-900/20 focus:border-green-500 focus:bg-green-100 dark:focus:bg-green-900/30"
-        );
-      case "retro":
-        return cn(
-          baseInputClasses,
-          "rounded border-2 border-orange-400 dark:border-orange-500 bg-orange-50 dark:bg-orange-900/20 focus:border-orange-600 shadow-sm"
-        );
-      default:
-        return cn(baseInputClasses);
-    }
-  };
+  });
 
   return (
-    <div
-      className={cn(getFormContainerClasses(), direction === "rtl" ? "text-right" : "text-left")}
-      dir={direction}
-    >
-      <form onSubmit={handleSubmit} className={getFormSpacing()}>
-        {fields
-          .filter((field) => {
-            // Check visibility function
-            if (field.isVisible && !field.isVisible(formData)) return false;
-            // Check permissions
-            if (field.requiredPermission && !hasPermission(field.requiredPermission)) return false;
-            if (
-              field.requiredPermissions &&
-              field.requiredPermissions.length > 0 &&
-              !hasAnyPermission(field.requiredPermissions)
-            )
-              return false;
-            return true;
-          })
-          .map((field) =>
-            field.type === "hidden" ? (
+    <div className={cn(getFormContainerClasses(), "text-start")} dir={direction}>
+      <form
+        onSubmit={handleSubmit}
+        className={getFormSpacing()}
+        aria-busy={loading || undefined}
+        autoComplete="off"
+        data-1p-ignore="true"
+        data-bwignore="true"
+        data-lpignore="true"
+        data-protonpass-ignore="true"
+        data-dashlane-ignore="true"
+      >
+        {fieldGroups.map((group, groupIndex) => {
+          // The two-column grid engages only when a grouped field opts in via colSpan
+          const gridded = group.fields.some((f) => f.colSpan !== undefined && f.type !== "hidden");
+          const renderedFields = group.fields.map((field) => {
+            // Field anatomy, one shape for every type: label → control →
+            // hint/error. The ids wire the control to whichever of the two it
+            // actually has, so a screen reader reads the hint and the error in
+            // that order and never announces an empty node.
+            const hintId = field.description ? `${field.name}-hint` : undefined;
+            const errorId = errors[field.name] ? `${field.name}-error` : undefined;
+            // The error REPLACES the hint in the row below, so the description
+            // points at whichever one is actually on screen — a dangling
+            // aria-describedby is worse than none.
+            const describedBy = errorId ?? hintId;
+            const invalid = Boolean(errors[field.name]);
+            // Read-only is NOT disabled: text fields stay focusable and
+            // selectable so a value can be copied out of a view dialog, while
+            // pickers and toggles (which have nothing to copy) go inert.
+            const inert = field.disabled || readOnly;
+            // Boolean, not the number itself — a bare `maxLength &&` would
+            // render a literal 0 into the form when a caller passes 0.
+            const counted = Boolean(
+              field.maxLength && (!field.type || field.type === "text" || field.type === "textarea")
+            );
+
+            return field.type === "hidden" ? (
               <input
                 key={field.name}
                 type="hidden"
                 name={field.name}
-                value={formData[field.name] || ""}
+                value={formData[field.name] ?? ""}
               />
             ) : (
-              <div key={field.name} className={getFieldSpacing()}>
-                {field.type !== "switch" && (
-                  <Label
-                    htmlFor={field.name}
-                    className={cn(
-                      getLabelClasses(),
-                      direction === "rtl" ? "text-right" : "text-left"
-                    )}
-                  >
+              <div
+                key={field.name}
+                className={cn("relative", getFieldSpacing(), gridded && field.colSpan === 2 && "sm:col-span-2")}
+              >
+                {field.type !== "switch" && field.type !== "checkbox" && (
+                  <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
                     {field.label}
                   </Label>
                 )}
                 {field.type === "select" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
+                    // `loading` reached only the searchable branch, so a plain
+                    // select waiting on its options rendered as an empty list
+                    // rather than as loading.
+                    loading={field.loading}
                     type="single"
                     options={
                       field.options?.map((opt) => ({
@@ -583,16 +627,20 @@ export function GenericForm({
                         label: opt.label,
                       })) || []
                     }
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value: string | string[]) =>
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
                     placeholder={field.placeholder}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
                     className={getInputClasses(getInputHeight())}
                   />
                 ) : field.type === "searchable-select" || field.type === "server-select" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
                     type="searchable"
                     options={
                       field.options?.map((opt) => ({
@@ -600,7 +648,7 @@ export function GenericForm({
                         label: opt.label,
                       })) || []
                     }
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value: string | string[]) =>
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
@@ -623,13 +671,18 @@ export function GenericForm({
                     loading={field.loading}
                     noResultsText={field.noResultsText}
                     searchingText={field.searchingText}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
                     className={getInputClasses(getInputHeight())}
                     // Stable key to avoid remounting (which closes dropdown) on each selection
                     key={`searchable-select-${field.name}`}
                   />
                 ) : field.type === "multi-select" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
+                    loading={field.loading}
                     type="multi"
                     options={
                       field.options?.map((opt) => ({
@@ -661,109 +714,99 @@ export function GenericForm({
                     noResultsText={field.noResultsText}
                     searchingText={field.searchingText}
                     maxSelectedDisplay={3}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
                     className={getInputClasses(getInputHeight())}
                     // Stable key to avoid remounting (which closes dropdown) on each selection
                     key={`multi-select-${field.name}`}
                   />
                 ) : field.type === "tree" ? (
                   <GenericSelect
+                    id={field.name}
+                    invalid={invalid}
+                    required={field.required}
+                    describedBy={describedBy}
+                    loading={field.loading}
                     type="tree"
                     treeData={field.treeData || []}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value: string | string[]) =>
                       handleChange(field.name, typeof value === "string" ? value : value[0])
                     }
                     placeholder={field.placeholder}
                     searchPlaceholder={field.searchPlaceholder}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
                     className={getInputClasses(getInputHeight())}
                   />
                 ) : field.type === "textarea" ? (
                   <Textarea
                     id={field.name}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(e) => handleChange(field.name, e.target.value)}
                     required={field.required}
-                    className={cn(
-                      getInputClasses("min-h-[80px]"),
-                      direction === "rtl" ? "text-right" : "text-left"
-                    )}
+                    className={cn(getInputClasses("min-h-20"), "text-start")}
                     placeholder={field.placeholder}
                     rows={field.rows || 4}
-                    disabled={field.disabled || readOnly}
+                    disabled={field.disabled}
+                    readOnly={readOnly}
                     minLength={field.minLength}
                     maxLength={field.maxLength}
+                    aria-describedby={describedBy}
+                    aria-invalid={invalid || undefined}
                     dir={direction}
                   />
                 ) : field.type === "richtext" ? (
                   <RichTextEditor
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
                     placeholder={field.placeholder}
-                    disabled={field.disabled}
-                    minHeight={field.rows ? field.rows * 20 : 200}
-                    className={cn(direction === "rtl" ? "text-right" : "text-left")}
+                    // TipTap editor exposes readOnly (not disabled); honour both the
+                    // per-field flag and the form-level read-only mode
+                    readOnly={field.disabled || readOnly}
+                    // px string — the editor feeds this into a CSS custom property
+                    minHeight={field.rows ? `${field.rows * 20}px` : "200px"}
+                    className="text-start"
                   />
                 ) : field.type === "switch" ? (
-                  <div>
-                    <div className={cn("flex items-center justify-between")}>
-                      <Label
-                        htmlFor={field.name}
-                        className={cn(
-                          "font-medium",
-                          direction === "rtl" ? "text-right" : "text-left"
-                        )}
-                      >
-                        {field.label}
-                      </Label>
-                      <Switch
-                        id={field.name}
-                        checked={formData[field.name] || false}
-                        onCheckedChange={(checked) => handleChange(field.name, checked)}
-                        disabled={field.disabled || readOnly}
-                      />
-                    </div>
-                    {field.description && (
-                      <p className="mt-1 text-xs text-muted-foreground">{field.description}</p>
-                    )}
+                  // A switch labels itself on the row; the hint lands in the
+                  // shared row below, like every other field type.
+                  <div className="flex items-center justify-between gap-3">
+                    <Label htmlFor={field.name} className="text-start">
+                      {field.label}
+                    </Label>
+                    <Switch
+                      id={field.name}
+                      checked={formData[field.name] || false}
+                      onCheckedChange={(checked) => handleChange(field.name, checked)}
+                      disabled={inert}
+                      aria-describedby={describedBy}
+                    />
                   </div>
                 ) : field.type === "checkbox" ? (
-                  <div
-                    className={cn(
-                      "flex items-center",
-                      direction === "rtl" ? "space-x-2 space-x-reverse" : "space-x-2"
-                    )}
-                  >
+                  <div className="flex items-center gap-2">
                     <Checkbox
                       id={field.name}
                       checked={formData[field.name] || false}
                       onCheckedChange={(checked) => handleChange(field.name, checked)}
-                      disabled={field.disabled || readOnly}
+                      disabled={inert}
                       design={settings.checkboxStyle}
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid || undefined}
                     />
-                    <Label
-                      htmlFor={field.name}
-                      className={cn("text-sm", direction === "rtl" ? "text-right" : "text-left")}
-                    >
+                    <Label htmlFor={field.name} className="cursor-pointer text-start">
                       {field.label}
                     </Label>
                   </div>
                 ) : field.type === "radio" ? (
                   <RadioGroup
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onValueChange={(value) => handleChange(field.name, value)}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
                     design={settings.radioStyle}
+                    aria-describedby={describedBy}
+                    aria-invalid={invalid || undefined}
                   >
                     {field.options?.map((option) => (
-                      <div
-                        key={option.value}
-                        className={cn(
-                          "flex items-center gap-2",
-                          direction === "rtl" ? "flex-row-reverse" : "flex-row"
-                        )}
-                      >
+                      <div key={option.value} className="flex items-center gap-2">
                         <RadioGroupItem
                           value={option.value}
                           id={`${field.name}-${option.value}`}
@@ -771,10 +814,7 @@ export function GenericForm({
                         />
                         <Label
                           htmlFor={`${field.name}-${option.value}`}
-                          className={cn(
-                            "cursor-pointer text-sm",
-                            direction === "rtl" ? "text-right" : "text-left"
-                          )}
+                          className="cursor-pointer text-start"
                         >
                           {option.label}
                         </Label>
@@ -784,21 +824,22 @@ export function GenericForm({
                 ) : field.type === "slider" || field.type === "range" ? (
                   <div className="space-y-2">
                     <Slider
-                      value={[formData[field.name] || field.min || 0]}
+                      value={[formData[field.name] ?? field.min ?? 0]}
                       onValueChange={(value) => handleChange(field.name, value[0])}
                       min={Number(field.min) || 0}
                       max={Number(field.max) || 100}
                       step={Number(field.step) || 1}
-                      disabled={field.disabled || readOnly}
+                      disabled={inert}
                       className="w-full"
+                      aria-describedby={describedBy}
                     />
-                    <div
-                      className={cn(
-                        "text-sm text-muted-foreground",
-                        direction === "rtl" ? "text-right" : "text-left"
-                      )}
-                    >
-                      {t("common.value")}: {formData[field.name] || field.min || 0}
+                    {/* the read-out is data: tertiary ink, tabular figures so
+                        the number stops jittering as it counts */}
+                    <div className="flex items-baseline justify-between text-xs text-nx-ink-3">
+                      <span>{t("common.value")}</span>
+                      <span className="font-medium tabular-nums text-nx-ink-2">
+                        {formData[field.name] ?? field.min ?? 0}
+                      </span>
                     </div>
                   </div>
                 ) : field.type === "date" ||
@@ -810,22 +851,22 @@ export function GenericForm({
                   <DatePicker
                     id={field.name}
                     type={field.type === "datetime" ? "datetime-local" : (field.type as any)}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
                     required={field.required}
                     className={getInputClasses(getInputHeight())}
                     placeholder={field.placeholder}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
                   />
                 ) : field.type === "image" ? (
                   <ImageUploader
                     id={field.name}
-                    value={formData[field.name] || ""}
+                    value={formData[field.name] ?? ""}
                     onChange={(base64) => handleChange(field.name, base64)}
                     onRemove={() => handleChange(field.name, "")}
                     placeholder={field.placeholder}
                     required={field.required}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
                     className={getInputClasses(getInputHeight())}
                     accept={field.accept || "image/*"}
                     maxSize={field.maxSize}
@@ -845,79 +886,140 @@ export function GenericForm({
                       }
                     }}
                     required={field.required}
-                    className={cn(
-                      getInputClasses(getInputHeight()),
-                      direction === "rtl" ? "text-right" : "text-left"
-                    )}
+                    className={cn(getInputClasses(getInputHeight()), "text-start")}
                     accept={field.accept}
                     multiple={field.multiple}
-                    disabled={field.disabled || readOnly}
+                    disabled={inert}
+                    aria-describedby={describedBy}
+                    aria-invalid={invalid || undefined}
                     dir={direction}
                   />
                 ) : field.type === "password" ? (
-                  <PasswordInput
-                    id={field.name}
-                    value={formData[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    required={field.required}
-                    className={cn(
-                      getInputClasses(getInputHeight()),
-                      direction === "rtl" ? "text-right" : "text-left"
-                    )}
-                    placeholder={field.placeholder}
-                    disabled={field.disabled || readOnly}
-                    showStrengthIndicator={true} // Enable for admin forms
-                  />
+                  <div className="relative w-full overflow-hidden rounded-nx-control">
+                    <PasswordInput
+                      id={field.name}
+                      value={formData[field.name] ?? ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      required={field.required}
+                      className={cn(getInputClasses(getInputHeight()), "text-start")}
+                      placeholder={field.placeholder}
+                      disabled={field.disabled}
+                      readOnly={readOnly}
+                      autoComplete={field.autoComplete ?? "new-password"}
+                      data-1p-ignore="true"
+                      data-bwignore="true"
+                      data-lpignore="true"
+                      data-protonpass-ignore="true"
+                      data-dashlane-ignore="true"
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid || undefined}
+                      showStrengthIndicator={true} // Enable for admin forms
+                    />
+                  </div>
                 ) : (
-                  <Input
-                    id={field.name}
-                    type={field.type}
-                    value={formData[field.name] || ""}
-                    onChange={(e) => handleChange(field.name, e.target.value)}
-                    required={field.required}
-                    className={cn(
-                      getInputClasses(getInputHeight()),
-                      direction === "rtl" ? "text-right" : "text-left"
-                    )}
-                    placeholder={field.placeholder}
-                    min={field.min}
-                    max={field.max}
-                    step={field.step}
-                    pattern={field.pattern}
-                    minLength={field.minLength}
-                    maxLength={field.maxLength}
-                    disabled={field.disabled || readOnly}
-                    dir={direction}
-                  />
+                  <div className="relative w-full overflow-hidden rounded-nx-control">
+                    <Input
+                      id={field.name}
+                      type={field.type}
+                      value={formData[field.name] ?? ""}
+                      onChange={(e) => handleChange(field.name, e.target.value)}
+                      required={field.required}
+                      className={cn(getInputClasses(getInputHeight()), "text-start")}
+                      placeholder={field.placeholder}
+                      min={field.min}
+                      max={field.max}
+                      step={field.step}
+                      pattern={field.pattern}
+                      minLength={field.minLength}
+                      maxLength={field.maxLength}
+                      disabled={field.disabled}
+                      readOnly={readOnly}
+                      autoComplete={field.autoComplete ?? "off"}
+                      data-1p-ignore="true"
+                      data-bwignore="true"
+                      data-lpignore="true"
+                      data-protonpass-ignore="true"
+                      data-dashlane-ignore="true"
+                      aria-describedby={describedBy}
+                      aria-invalid={invalid || undefined}
+                      dir={direction}
+                    />
+                  </div>
                 )}
-                {(errors[field.name] ||
-                  (field.maxLength &&
-                    (!field.type || field.type === "text" || field.type === "textarea"))) && (
-                  <div className="mt-1 flex min-h-[20px] items-center justify-between">
-                    {errors[field.name] ? (
-                      <p className="text-xs text-destructive">{errors[field.name]}</p>
-                    ) : (
-                      <div />
+
+                {/* Hint and error share one row with the character counter, so
+                    the block never jumps as messages come and go. The hint is
+                    always available (it used to render for switches only); the
+                    error replaces it when the field goes invalid. */}
+                {(field.description || errors[field.name] || counted) && (
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      {errors[field.name] ? (
+                        <p id={errorId} className="text-xs font-medium text-nx-danger">
+                          {errors[field.name]}
+                        </p>
+                      ) : field.description ? (
+                        <p id={hintId} className="text-xs leading-relaxed text-nx-ink-3">
+                          {field.description}
+                        </p>
+                      ) : null}
+                    </div>
+                    {counted && (
+                      <span className="shrink-0 text-xs tabular-nums text-nx-ink-3">
+                        {(formData[field.name] ?? "").length}/{field.maxLength}
+                      </span>
                     )}
-                    {field.maxLength &&
-                      (!field.type || field.type === "text" || field.type === "textarea") && (
-                        <span className="text-xs text-muted-foreground">
-                          {(formData[field.name] || "").length}/{field.maxLength}
-                        </span>
-                      )}
                   </div>
                 )}
               </div>
-            )
-          )}
+            );
+          });
+
+          // Position-based key: a legacy flat form is always one group ("flat:0"),
+          // so reconciliation stays identical to the pre-section render
+          const groupKey = `${group.section ?? "flat"}:${groupIndex}`;
+
+          // Absent section and colSpan = exactly the legacy flat single-column flow
+          if (!group.section && !gridded) {
+            return <React.Fragment key={groupKey}>{renderedFields}</React.Fragment>;
+          }
+
+          return (
+            <section key={groupKey} className="space-y-3">
+              {group.section && (
+                <h3 className="border-b border-nx-line pb-2 text-sm font-medium text-nx-ink">
+                  {group.section}
+                </h3>
+              )}
+              <div
+                className={
+                  gridded
+                    ? cn("grid grid-cols-1 items-start sm:grid-cols-2", getGridGap())
+                    : getFormSpacing()
+                }
+              >
+                {renderedFields}
+              </div>
+            </section>
+          );
+        })}
+
+        {serverError && (
+          <div role="alert" className="pt-2">
+            <ErrorMessage message={serverError} size="sm" />
+          </div>
+        )}
 
         <Separator />
 
+        {/* Actions read in DOM order (cancel, then save) and the row is
+            reversed once so the primary always lands on the inline END — no
+            per-direction order forks, and no gradient on the submit: Button
+            owns its own paint. */}
         {!readOnly && (
           <div
             className={cn(
-              "flex flex-col sm:flex-row",
-              direction === "rtl" ? "justify-start" : "justify-end",
+              "flex flex-col-reverse sm:flex-row sm:justify-end",
               getGridGap(),
               getSeparatorSpacing()
             )}
@@ -926,10 +1028,7 @@ export function GenericForm({
               type="button"
               variant="outline"
               onClick={onCancel}
-              className={cn(
-                getInputHeight(),
-                direction === "rtl" ? "order-1 sm:order-2" : "order-2 sm:order-1"
-              )}
+              className={getInputHeight()}
               disabled={loading}
               size={getButtonSize()}
             >
@@ -938,11 +1037,7 @@ export function GenericForm({
             <Button
               type="submit"
               loading={loading}
-              className={cn(
-                getInputHeight(),
-                "gradient-primary",
-                direction === "rtl" ? "order-2 sm:order-1" : "order-1 sm:order-2"
-              )}
+              className={getInputHeight()}
               size={getButtonSize()}
             >
               {t("common.save")}

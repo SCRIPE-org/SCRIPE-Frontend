@@ -63,37 +63,33 @@ export function PaymentWallDialog() {
         onEscapeKeyDown={(e) => e.preventDefault()}
       >
         <DialogHeader className="items-center text-center">
-          <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 dark:bg-amber-900/30">
-            <ShieldAlert className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+          <div
+            className="mx-auto mb-2 grid h-16 w-16 place-items-center rounded-nx-md border border-warning/30 bg-warning/10 text-warning"
+            aria-hidden="true"
+          >
+            <ShieldAlert className="h-8 w-8" />
           </div>
-          <DialogTitle className="text-xl">
-            {t("subscription.paymentWall.title") || "Payment Required"}
-          </DialogTitle>
-          <DialogDescription className="mt-2 text-center leading-relaxed">
-            {(
-              t("subscription.paymentWall.description") ||
-              "Your subscription to {edition} is pending payment. Please contact your system administrator to complete the payment and activate your account."
-            ).replace(
-              "{edition}",
-              editionName || t("subscription.paymentWall.yourPlan") || "your plan"
-            )}
+          <DialogTitle>{t("subscription.paymentWall.title")}</DialogTitle>
+          <DialogDescription className="mt-2 text-center">
+            {/* The provider interpolates {edition} — the old manual .replace()
+                skipped the Arabic string's own placeholder handling. */}
+            {t("subscription.paymentWall.description", {
+              edition: editionName || t("subscription.paymentWall.yourPlan"),
+            })}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-3 rounded-lg border bg-muted/50 p-4 text-sm text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <CreditCard className="h-4 w-4 text-amber-600" />
-            <span>
-              {t("subscription.paymentWall.contactAdmin") ||
-                "Contact your system administrator to generate a payment link."}
-            </span>
+        <div className="flex flex-col gap-3 rounded-nx-md border border-nx-line bg-nx-raised p-4 text-sm text-nx-ink-2">
+          <div className="flex items-start gap-2">
+            <CreditCard className="mt-0.5 h-4 w-4 shrink-0 text-warning" aria-hidden="true" />
+            <span>{t("subscription.paymentWall.contactAdmin")}</span>
           </div>
         </div>
 
-        <DialogFooter className="mt-2 gap-2 sm:justify-center">
-          <Button variant="outline" onClick={handleLogout} className="gap-2">
-            <LogOut className="h-4 w-4" />
-            {t("nav.logout") || "Log Out"}
+        <DialogFooter className="mt-2 sm:justify-center">
+          <Button variant="outline" onClick={handleLogout}>
+            <LogOut className="me-2 h-4 w-4" aria-hidden="true" />
+            {t("nav.logout")}
           </Button>
         </DialogFooter>
       </DialogContent>

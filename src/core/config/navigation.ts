@@ -298,7 +298,7 @@ export const isNavigationItemActive = (
     const {
       isMatchWithFallback,
       hasActiveChildWithFallback,
-    } = require("@core/ui/layout/navigation/nav-utils");
+    } = require("@core/ui/layout/shared/nav-utils");
     if (item.href && isMatchWithFallback(item.href, pathname, allItems)) return true;
     if (item.children) {
       return item.children.some(

@@ -1,56 +1,45 @@
 "use client";
 
-import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Card, CardContent } from "@core/ui/card";
+import { SectionState } from "@core/ui/section-state";
+import { Skeleton } from "@core/ui/skeleton";
 
+// Route-level Suspense fallback for every (modules) segment. The real page
+// varies (a list, a dashboard, a record) so this can only guess at the shared
+// anatomy — a header, a card grid, a list — never the specific content.
+// Composed entirely from the shared placeholder primitives (Skeleton /
+// SectionState) so it carries the same static, non-pulsing fill steps as
+// every other loading state in the product, and never drifts from what the
+// loaded page will actually look like once the data lands.
 export default function ModulesLoading() {
   return (
-    <div className="relative min-h-[400px] w-full">
-      {/* Centered Branded Spinner Overlay */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center">
-        <LoadingSpinner size="md" showText={true} className="min-h-0" />
-      </div>
-
-      {/* Skeleton Background with reduced opacity */}
-      <div className="pointer-events-none w-full select-none space-y-6 opacity-35">
-        {/* Page Header Skeleton */}
-        <div className="flex items-center justify-between border-b border-border/40 pb-4">
+    <div className="flex flex-col" style={{ gap: "calc(var(--spacing-unit) * 1.5)" }}>
+      {/* Page header skeleton */}
+      <div className="flex items-center justify-between gap-4 border-b border-nx-line pb-4">
+        <div className="flex items-center gap-3">
+          <Skeleton shape="circle" className="h-12 w-12" />
           <div className="space-y-2">
-            <div className="h-8 w-48 rounded bg-muted/60" />
-            <div className="h-4 w-72 rounded bg-muted/40" />
-          </div>
-          <div className="h-10 w-28 rounded bg-muted/60" />
-        </div>
-
-        {/* Grid of Cards Skeleton */}
-        <div className="grid gap-6 md:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="space-y-4 rounded-xl border border-border/40 bg-card p-6">
-              <div className="flex items-center justify-between">
-                <div className="h-4 w-24 rounded bg-muted/60" />
-                <div className="h-8 w-8 rounded-full bg-muted/40" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-7 w-20 rounded bg-muted/80" />
-                <div className="h-3.5 w-full rounded bg-muted/40" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Table/List Detail Skeleton */}
-        <div className="space-y-4 rounded-xl border border-border/40 bg-card p-6">
-          <div className="h-5 w-36 rounded bg-muted/60" style={{ marginBottom: "16px" }} />
-          <div className="space-y-3">
-            {[0, 1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center space-x-4">
-                <div className="h-4 w-full rounded bg-muted/30" />
-                <div className="h-4 w-24 rounded bg-muted/40" />
-                <div className="h-4 w-12 rounded bg-muted/50" />
-              </div>
-            ))}
+            <Skeleton shape="title" />
+            <Skeleton shape="text" className="w-72" />
           </div>
         </div>
+        <Skeleton shape="control" className="w-28" />
       </div>
+
+      {/* KPI / card grid skeleton */}
+      <SectionState isLoading skeletonType="cards">
+        {null}
+      </SectionState>
+
+      {/* Table / list skeleton */}
+      <Card>
+        <CardContent className="space-y-4">
+          <Skeleton shape="title" className="w-36" />
+          <SectionState isLoading skeletonType="rows" skeletonRows={5}>
+            {null}
+          </SectionState>
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import React, { useState, useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
+import { EmptyState } from "@core/ui/empty-state";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import {
   Braces,
@@ -12,9 +13,10 @@ import {
   Building2,
   Settings,
   FileText,
-  Clock,
+  ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 
 // ─── Types ──────────────────────────────────────────────────
@@ -25,6 +27,12 @@ export interface VariableDefinition {
   key: string;
   /** Display label, e.g. "User Name" */
   label: string;
+  /**
+   * Locale key for the display label. The built-in variables carry one;
+   * variables assembled from tenant data do not and fall back to `label`,
+   * which is why this is optional rather than a replacement for it.
+   */
+  labelKey?: string;
   /** Category for grouping */
   category: VariableCategory;
   /** Sample value shown in preview */
@@ -56,30 +64,46 @@ export interface VariablePickerProps {
   onInsert: (variableText: string) => void;
 }
 
+/**
+ * The one place a variable's display name is resolved. Both this picker and
+ * the values panel render it, and they must agree — a variable named one way
+ * in the list and another way in the form is two variables to the reader.
+ */
+export function resolveVariableLabel(
+  t: (key: string, params?: Record<string, string | number>) => string,
+  variable: VariableDefinition
+): string {
+  return variable.labelKey ? t(variable.labelKey) : variable.label;
+}
+
 // ─── Category Config ────────────────────────────────────────
+// Tone comes from the measured semantic tokens rather than the nx status
+// aliases: the aliases hold a COMPLETE colour value, so Tailwind's slash-alpha
+// is silently dropped on them and a `/10` wash would have painted the header
+// solid. The semantic tokens are HSL triplets, so the tint works.
 const CATEGORY_CONFIG: Record<
   VariableCategory,
-  { label: string; icon: React.ReactNode; color: string }
+  { labelKey: string; icon: React.ReactNode; color: string }
 > = {
   recipient: {
-    label: "Recipient",
-    icon: <User className="h-3.5 w-3.5" />,
-    color: "text-blue-500",
+    labelKey: "editorBlocks.variables.category.recipient",
+    icon: <User className="h-3.5 w-3.5" aria-hidden="true" />,
+    color: "text-info",
   },
   company: {
-    label: "Company",
-    icon: <Building2 className="h-3.5 w-3.5" />,
-    color: "text-emerald-500",
+    labelKey: "editorBlocks.variables.category.company",
+    icon: <Building2 className="h-3.5 w-3.5" aria-hidden="true" />,
+    color: "text-success",
   },
   system: {
-    label: "System",
-    icon: <Settings className="h-3.5 w-3.5" />,
-    color: "text-purple-500",
+    labelKey: "editorBlocks.variables.category.system",
+    icon: <Settings className="h-3.5 w-3.5" aria-hidden="true" />,
+    color: "text-nx-accent",
   },
   template: {
-    label: "Template",
-    icon: <FileText className="h-3.5 w-3.5" />,
-    color: "text-amber-500",
+    labelKey: "editorBlocks.variables.category.template",
+    icon: <FileText className="h-3.5 w-3.5" aria-hidden="true" />,
+    color: "text-warning",
   },
 };
 
@@ -89,6 +113,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "userName",
     label: "User Name",
+    labelKey: "editorBlocks.variables.names.userName",
     category: "recipient",
     sample: "Ahmed Hassan",
     supportsFallback: true,
@@ -97,6 +122,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "userEmail",
     label: "Email Address",
+    labelKey: "editorBlocks.variables.names.userEmail",
     category: "recipient",
     sample: "ahmed@example.com",
     supportsFallback: true,
@@ -105,6 +131,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "firstName",
     label: "First Name",
+    labelKey: "editorBlocks.variables.names.firstName",
     category: "recipient",
     sample: "Ahmed",
     supportsFallback: true,
@@ -113,6 +140,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "lastName",
     label: "Last Name",
+    labelKey: "editorBlocks.variables.names.lastName",
     category: "recipient",
     sample: "Hassan",
     supportsFallback: true,
@@ -121,6 +149,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "jobTitle",
     label: "Job Title",
+    labelKey: "editorBlocks.variables.names.jobTitle",
     category: "recipient",
     sample: "Software Engineer",
     supportsFallback: true,
@@ -130,6 +159,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "companyName",
     label: "Company Name",
+    labelKey: "editorBlocks.variables.names.companyName",
     category: "company",
     sample: "SCRIPE",
     fieldType: "text",
@@ -137,6 +167,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "companyLogo",
     label: "Company Logo URL",
+    labelKey: "editorBlocks.variables.names.companyLogo",
     category: "company",
     sample: "/branding/scripe-logo.png",
     fieldType: "url",
@@ -144,6 +175,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "companyAddress",
     label: "Company Address",
+    labelKey: "editorBlocks.variables.names.companyAddress",
     category: "company",
     sample: "123 Business Ave",
     fieldType: "text",
@@ -151,6 +183,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "companyPhone",
     label: "Phone Number",
+    labelKey: "editorBlocks.variables.names.companyPhone",
     category: "company",
     sample: "+1 (555) 123-4567",
     fieldType: "text",
@@ -158,6 +191,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "companyWebsite",
     label: "Website URL",
+    labelKey: "editorBlocks.variables.names.companyWebsite",
     category: "company",
     sample: "https://scripe.org",
     fieldType: "url",
@@ -166,6 +200,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "currentDate",
     label: "Current Date",
+    labelKey: "editorBlocks.variables.names.currentDate",
     category: "system",
     sample: "February 16, 2026",
     fieldType: "date",
@@ -173,6 +208,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "currentYear",
     label: "Current Year",
+    labelKey: "editorBlocks.variables.names.currentYear",
     category: "system",
     sample: "2026",
     fieldType: "number",
@@ -180,6 +216,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "supportEmail",
     label: "Support Email",
+    labelKey: "editorBlocks.variables.names.supportEmail",
     category: "system",
     sample: "support@scripe.org",
     fieldType: "email",
@@ -187,6 +224,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "loginUrl",
     label: "Login URL",
+    labelKey: "editorBlocks.variables.names.loginUrl",
     category: "system",
     sample: "https://admin.scripe.org/login",
     fieldType: "url",
@@ -194,6 +232,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "dashboardUrl",
     label: "Dashboard URL",
+    labelKey: "editorBlocks.variables.names.dashboardUrl",
     category: "system",
     sample: "https://admin.scripe.org/dashboard",
     fieldType: "url",
@@ -201,6 +240,7 @@ export const DEFAULT_VARIABLES: VariableDefinition[] = [
   {
     key: "unsubscribeUrl",
     label: "Unsubscribe URL",
+    labelKey: "editorBlocks.variables.names.unsubscribeUrl",
     category: "system",
     sample: "https://admin.scripe.org/unsubscribe",
     fieldType: "url",
@@ -215,6 +255,7 @@ function VariableItem({
   variable: VariableDefinition;
   onInsert: (text: string) => void;
 }) {
+  const { t, direction } = useI18n();
   const [showFallback, setShowFallback] = useState(false);
   const [fallback, setFallback] = useState("");
 
@@ -227,23 +268,28 @@ function VariableItem({
   };
 
   const cat = CATEGORY_CONFIG[variable.category];
+  const name = resolveVariableLabel(t, variable);
+  // "Reveal the next thing inline" is a forward affordance, so it mirrors.
+  const DisclosureChevron = direction === "rtl" ? ChevronLeft : ChevronRight;
 
   return (
-    <div className="group">
+    <div>
       <button
         type="button"
-        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors hover:bg-accent"
+        className="flex w-full items-center gap-2 rounded-nx-sm px-3 py-2 text-start text-sm transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
         onClick={handleInsert}
       >
         <span className={cn("shrink-0", cat.color)}>{cat.icon}</span>
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-2">
-            <span className="truncate font-medium">{variable.label}</span>
+            <span className="truncate font-medium text-nx-ink">{name}</span>
             <Badge variant="outline" className="shrink-0 px-1.5 py-0 font-mono text-[10px]">
               {`{{${variable.key}}}`}
             </Badge>
           </div>
-          <p className="mt-0.5 truncate text-xs text-muted-foreground">Sample: {variable.sample}</p>
+          <p className="mt-0.5 truncate text-xs text-nx-ink-3">
+            {t("editorBlocks.variables.sample", { value: variable.sample })}
+          </p>
         </div>
       </button>
       {variable.supportsFallback && (
@@ -251,21 +297,22 @@ function VariableItem({
           {!showFallback ? (
             <button
               type="button"
-              className="flex items-center gap-0.5 text-[10px] text-muted-foreground transition-colors hover:text-primary"
+              className="flex items-center gap-0.5 rounded-nx-sm text-[10px] text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
               onClick={(e) => {
                 e.stopPropagation();
                 setShowFallback(true);
               }}
             >
-              <ChevronRight className="h-3 w-3" />
-              Add fallback value
+              <DisclosureChevron className="h-3 w-3" aria-hidden="true" />
+              {t("editorBlocks.variables.addFallback")}
             </button>
           ) : (
             <div className="mt-0.5 flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
               <Input
                 value={fallback}
                 onChange={(e) => setFallback(e.target.value)}
-                placeholder="e.g. Valued Customer"
+                aria-label={t("editorBlocks.variables.fallbackLabel", { name })}
+                placeholder={t("editorBlocks.variables.fallbackPlaceholder")}
                 className="h-6 text-xs"
                 autoFocus
                 onKeyDown={(e) => {
@@ -281,7 +328,7 @@ function VariableItem({
                 className="h-6 px-2 text-[10px]"
                 onClick={handleInsert}
               >
-                Insert
+                {t("editorBlocks.variables.insertFallback")}
               </Button>
             </div>
           )}
@@ -293,6 +340,7 @@ function VariableItem({
 
 // ─── Main Component ─────────────────────────────────────────
 export function VariablePicker({ variables, onInsert }: VariablePickerProps) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -303,9 +351,12 @@ export function VariablePicker({ variables, onInsert }: VariablePickerProps) {
       (v) =>
         v.key.toLowerCase().includes(q) ||
         v.label.toLowerCase().includes(q) ||
+        // The rendered name too, or the Arabic build would show names nobody
+        // could search for.
+        resolveVariableLabel(t, v).toLowerCase().includes(q) ||
         v.sample.toLowerCase().includes(q)
     );
-  }, [variables, search]);
+  }, [variables, search, t]);
 
   const grouped = useMemo(() => {
     const groups: Partial<Record<VariableCategory, VariableDefinition[]>> = {};
@@ -332,34 +383,42 @@ export function VariablePicker({ variables, onInsert }: VariablePickerProps) {
           variant="ghost"
           size="sm"
           className="h-8 gap-1.5 px-2 text-xs font-medium"
-          title="Insert Variable"
+          aria-label={t("editorBlocks.variables.triggerLabel")}
         >
-          <Braces className="h-4 w-4" />
-          <span className="hidden sm:inline">Variables</span>
+          <Braces className="h-4 w-4" aria-hidden="true" />
+          <span className="hidden sm:inline">{t("editorBlocks.variables.trigger")}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="start">
-        {/* Search */}
-        <div className="border-b p-2">
+        {/* Search — outside the scroller on purpose, so the filter stays put
+            while the list under it moves. */}
+        <div className="border-b border-nx-line p-2">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+            <Search
+              className="absolute start-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search variables..."
-              className="h-8 pl-8 text-sm"
+              aria-label={t("editorBlocks.variables.search")}
+              placeholder={t("editorBlocks.variables.searchPlaceholder")}
+              className="h-8 ps-8 text-sm"
               autoFocus
             />
           </div>
         </div>
 
         {/* Variable List — native scroll with overscroll-contain to prevent page scroll */}
-        <div className="max-h-[320px] overflow-y-auto overscroll-contain p-1.5">
+        <div className="max-h-80 overflow-y-auto overscroll-contain p-1.5">
           {filtered.length === 0 ? (
-            <div className="py-6 text-center text-sm text-muted-foreground">
-              <Clock className="mx-auto mb-1 h-5 w-5 opacity-40" />
-              No variables found
-            </div>
+            <EmptyState
+              bare
+              size="sm"
+              icon={Search}
+              title={t("editorBlocks.variables.emptyTitle")}
+              description={t("editorBlocks.variables.emptyDescription")}
+            />
           ) : (
             categoryOrder.map((cat) => {
               const items = grouped[cat];
@@ -369,10 +428,13 @@ export function VariablePicker({ variables, onInsert }: VariablePickerProps) {
                 <div key={cat} className="mb-2">
                   <div className="flex items-center gap-1.5 px-2 py-1.5">
                     <span className={config.color}>{config.icon}</span>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                      {config.label}
+                    <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+                      {t(config.labelKey)}
                     </span>
-                    <Badge variant="secondary" className="ml-auto h-4 px-1 py-0 text-[10px]">
+                    <Badge
+                      variant="secondary"
+                      className="ms-auto h-4 px-1 py-0 text-[10px] tabular-nums"
+                    >
                       {items.length}
                     </Badge>
                   </div>

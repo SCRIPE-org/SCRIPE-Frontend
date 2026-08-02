@@ -1,0 +1,281 @@
+/**
+ * TenantPlans View — Elevated Tier 2
+ *
+ * CRUD view for managing tenant-specific pricing plans with lifecycle status,
+ * pricing matrix, feature catalog, and promotions.
+ *
+ * Architecture compliance:
+ * - Zero hardcoded user-visible strings — all via t() locale keys
+ * - Typed viewmodel — no `any` types
+ */
+"use client";
+
+import { useMemo, useState } from "react";
+import { GenericCrudView } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { useTenantPlansViewModel } from "../viewmodels/useTenantPlansViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
+import type { TenantPlan } from "../../domain/entities/TenantPlan";
+import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@core/ui/dialog";
+import { Pencil, Trash2, Eye, Rocket, Archive, Settings2, Columns } from "lucide-react";
+import { formatUtc } from "@core/common/utils";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { useRouter } from "next/navigation";
+
+/**
+ * Presentation UI component rendering the tenant plans view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
+export function TenantPlansView() {
+  const router = useRouter();
+  useModuleLocales(() => import("../../../locales"), "tenant-plans");
+  const { t } = useI18n();
+  const vm = useTenantPlansViewModel();
+  const [confirmAction, setConfirmAction] = useState<{
+    type: "publish" | "archive";
+    plan: TenantPlan;
+  } | null>(null);
+
+  const handleConfirmAction = () => {
+    if (!confirmAction) return;
+    if (confirmAction.type === "publish") {
+      vm.publishPlan(confirmAction.plan.id);
+    } else {
+      vm.archivePlan(confirmAction.plan.id);
+    }
+    setConfirmAction(null);
+  };
+
+  const config: CrudConfig<TenantPlan> = useMemo(
+    () => ({
+      titleKey: "entitlements.tenantPlans.title",
+      subtitleKey: "entitlements.tenantPlans.description",
+      resource: "tenant_plans",
+      customActions: [
+        {
+          label: t("entitlements.tenantPlans.comparison.heroTitle"),
+          onClick: async () => {
+            router.push("/entitlements/tenant-plans/compare");
+          },
+          variant: "outline" as const,
+          icon: <Columns className="h-4 w-4" />,
+        },
+      ],
+      onCreateClick: () => router.push("/entitlements/tenant-plans/create"),
+      columns: [
+        {
+          key: "name",
+          label: t("entitlements.tenantPlans.planName"),
+          sortable: true,
+          render: (_val: unknown, plan: TenantPlan) => (
+            <div className="flex items-center gap-2">
+              {plan.color && (
+                <div
+                  className="h-3 w-3 rounded-full ring-1 ring-nx-line"
+                  style={{ backgroundColor: plan.color }}
+                />
+              )}
+              <div>
+                <span className="font-medium">{plan.name}</span>
+                {plan.badgeText && (
+                  <Badge variant="outline" className="ms-2 text-xs">
+                    {plan.badgeText}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          ),
+        },
+        {
+          key: "status",
+          label: t("common.status"),
+          render: (_val: unknown, plan: TenantPlan) => (
+            <Badge variant={plan.statusColor}>{plan.status}</Badge>
+          ),
+        },
+        {
+          key: "pricing",
+          label: t("entitlements.tenantPlans.pricing"),
+          render: (_val: unknown, plan: TenantPlan) => (
+            <span className="text-sm font-medium tabular-nums text-success">
+              {plan.formattedStartingPrice}
+            </span>
+          ),
+        },
+        {
+          key: "cycles",
+          label: t("entitlements.tenantPlans.billingCycles"),
+          render: (_val: unknown, plan: TenantPlan) => (
+            <div className="flex flex-wrap gap-1">
+              {plan.supportedCycles.map((cycle) => (
+                <Badge key={cycle} variant="outline" className="text-xs">
+                  {cycle}
+                </Badge>
+              ))}
+              {plan.supportedCycles.length === 0 && (
+                <span className="text-xs text-nx-ink-3">—</span>
+              )}
+            </div>
+          ),
+        },
+        {
+          key: "maxUsers",
+          label: t("entitlements.tenantPlans.maxUsers"),
+          render: (_val: unknown, plan: TenantPlan) => (
+            <span className="tabular-nums">{plan.maxUsersDisplay}</span>
+          ),
+        },
+        {
+          key: "activeSubscriberCount",
+          label: t("entitlements.tenantPlans.subscribers"),
+          render: (_val: unknown, plan: TenantPlan) => (
+            <Badge variant={plan.hasActiveSubscribers ? "default" : "secondary"}>
+              {plan.activeSubscriberCount}
+            </Badge>
+          ),
+        },
+        {
+          key: "tierLevel",
+          label: t("entitlements.tenantPlans.tier"),
+          render: (_val: unknown, plan: TenantPlan) => (
+            <span className="text-sm tabular-nums">{plan.tierLevel}</span>
+          ),
+        },
+        {
+          key: "trialDays",
+          label: t("entitlements.tenantPlans.trialDays"),
+          render: (_val: unknown, plan: TenantPlan) =>
+            plan.hasTrial ? (
+              <Badge variant="outline">{plan.trialDays}d</Badge>
+            ) : (
+              <span className="text-nx-ink-3">—</span>
+            ),
+        },
+        {
+          key: "createdAt",
+          label: t("common.createdAt"),
+          render: (value: string) => (value ? formatUtc(value, "MMM d, yyyy") : "-"),
+        },
+      ],
+      getItemDisplayName: (plan: TenantPlan) => plan.name,
+      deleteService: (id: string) => vm.deleteItem(id),
+      getActions: (
+        vmInstance: ReturnType<typeof useTenantPlansViewModel>,
+        tFn: (key: string) => string,
+        handleDeleteFn: ((item: TenantPlan) => void) | undefined
+      ): CrudAction<TenantPlan>[] => [
+        {
+          label: tFn("common.view"),
+          onClick: (item: TenantPlan) => {
+            router.push(`/entitlements/tenant-plans/${item.id}`);
+          },
+          variant: "ghost" as const,
+          icon: <Eye className="h-4 w-4" />,
+        },
+        {
+          label: tFn("entitlements.tenantPlans.managePlan"),
+          onClick: (item: TenantPlan) => vmInstance.navigateToDetail(item.id),
+          variant: "ghost" as const,
+          icon: <Settings2 className="h-4 w-4" />,
+        },
+        {
+          label: tFn("common.edit"),
+          onClick: (item: TenantPlan) => {
+            router.push(`/entitlements/tenant-plans/${item.id}/edit`);
+          },
+          variant: "ghost" as const,
+          icon: <Pencil className="h-4 w-4" />,
+          show: (item: TenantPlan) => !item.isArchived,
+        },
+        {
+          label: tFn("entitlements.tenantPlans.publish"),
+          onClick: (item: TenantPlan) => setConfirmAction({ type: "publish", plan: item }),
+          variant: "ghost" as const,
+          className: "text-success hover:text-success/80",
+          icon: <Rocket className="h-4 w-4" />,
+          show: (item: TenantPlan) => item.isDraft,
+        },
+        {
+          label: tFn("entitlements.tenantPlans.archive"),
+          onClick: (item: TenantPlan) => setConfirmAction({ type: "archive", plan: item }),
+          variant: "ghost" as const,
+          className: "text-warning hover:text-warning/80",
+          icon: <Archive className="h-4 w-4" />,
+          show: (item: TenantPlan) => item.isPublished,
+        },
+        {
+          label: tFn("common.delete"),
+          onClick: (item: TenantPlan) => handleDeleteFn?.(item),
+          variant: "ghost" as const,
+          className: "text-destructive hover:text-destructive/80",
+          icon: <Trash2 className="h-4 w-4" />,
+          show: (item: TenantPlan) => item.isDraft && !item.hasActiveSubscribers,
+        },
+      ],
+    }),
+
+    [t]
+  );
+
+  return (
+    <>
+      <GenericCrudView viewModel={vm} config={config} />
+
+      {/* Publish / Archive Confirmation Dialog */}
+      <Dialog open={!!confirmAction} onOpenChange={(open) => !open && setConfirmAction(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {confirmAction?.type === "publish" ? (
+                <>
+                  <Rocket className="h-4 w-4 text-success" />{" "}
+                  {t("entitlements.tenantPlans.publish")}
+                </>
+              ) : (
+                <>
+                  <Archive className="h-4 w-4 text-warning" />{" "}
+                  {t("entitlements.tenantPlans.archive")}
+                </>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              {confirmAction?.type === "publish"
+                ? t("entitlements.tenantPlans.publishDesc")
+                : t("entitlements.tenantPlans.archiveDesc")}
+              <span className="mt-1 block font-medium text-nx-ink">
+                {confirmAction?.plan.name}
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setConfirmAction(null)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmAction}
+              loading={vm.isPublishing || vm.isArchiving}
+              className={
+                confirmAction?.type === "publish"
+                  ? "bg-success text-success-foreground hover:bg-success/90"
+                  : "bg-warning text-warning-foreground hover:bg-warning/90"
+              }
+            >
+              {confirmAction?.type === "publish"
+                ? t("entitlements.tenantPlans.publish")
+                : t("entitlements.tenantPlans.archive")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}

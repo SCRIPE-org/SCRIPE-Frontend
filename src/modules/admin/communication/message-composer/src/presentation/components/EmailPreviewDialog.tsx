@@ -1,0 +1,361 @@
+// FILE-EXCEPTION: file length
+"use client";
+
+import React, { useMemo, useState, useCallback } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@core/ui/dialog";
+import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
+import { cn } from "@core/common/utils";
+import {
+  Monitor,
+  Tablet,
+  Smartphone,
+  PanelRightOpen,
+  PanelRightClose,
+  Paperclip,
+  FileText,
+  FileImage,
+  FileArchive,
+  File as FileIcon,
+} from "lucide-react";
+import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
+import type { VariableDefinition } from "@core/ui/rich-text-editor/VariablePicker";
+import { VariableValuesPanel } from "@core/ui/rich-text-editor/VariableValuesPanel";
+import type { VariableValuesMap } from "@core/ui/rich-text-editor/VariableValuesPanel";
+import type { AttachmentFile } from "./AttachmentUploader";
+
+// ─── Device Presets ─────────────────────────────────────────
+const DEVICES = [
+  { id: "desktop", labelKey: "desktop", icon: Monitor, width: 600 },
+  { id: "tablet", labelKey: "tablet", icon: Tablet, width: 480 },
+  { id: "mobile", labelKey: "mobile", icon: Smartphone, width: 320 },
+] as const;
+
+type DeviceId = (typeof DEVICES)[number]["id"];
+
+// ─── Variable Resolution ────────────────────────────────────
+/**
+ * Resolve `{{ variableKey }}` and `{{ variableKey | "fallback" }}` patterns
+ * using the provided values map. If a variable has no value AND no fallback,
+ * the placeholder is left unchanged so the user can see what's missing.
+ */
+function resolveVariables(
+  text: string,
+  values: VariableValuesMap,
+  variables: VariableDefinition[]
+): string {
+  if (!text) return text;
+
+  // Match {{ key }} or {{ key | "fallback" }} patterns
+  return text.replace(
+    /\{\{\s*(\w+)(?:\s*\|\s*"([^"]*)")?\s*\}\}/g,
+    (_match, key: string, fallback?: string) => {
+      // Check if we have a user-provided value
+      if (values[key]?.trim()) return values[key];
+      // Check if we have a fallback in the template
+      if (fallback) return fallback;
+      // Check sample from variable definitions
+      const def = variables.find((v) => v.key === key);
+      if (def?.sample) return def.sample;
+      // Leave unresolved
+      return `{{${key}}}`;
+    }
+  );
+}
+
+// ─── Props ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for email preview dialog props.
+ */
+export interface EmailPreviewDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  subject: string;
+  body: string;
+  recipients: string[];
+  /** Additional variables beyond defaults */
+  customVariables?: VariableDefinition[];
+  /** Controlled variable values from parent (e.g. ViewModel) */
+  variableValues?: VariableValuesMap;
+  /** Called when variable values change (persists values in parent) */
+  onVariableValuesChange?: (values: VariableValuesMap) => void;
+  /** Controlled type overrides from parent (sync with compose panel) */
+  typeOverrides?: Record<string, string>;
+  /** Called when type overrides change */
+  onTypeOverridesChange?: (overrides: Record<string, string>) => void;
+  /** Attachments to display in preview */
+  attachments?: AttachmentFile[];
+}
+
+/**
+ * Presentation UI component rendering the email preview dialog.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
+export function EmailPreviewDialog({
+  open,
+  onOpenChange,
+  subject,
+  body,
+  recipients,
+  customVariables,
+  variableValues: controlledValues,
+  onVariableValuesChange,
+  typeOverrides: controlledTypeOverrides,
+  onTypeOverridesChange,
+  attachments = [],
+}: EmailPreviewDialogProps) {
+  const { t } = useI18n();
+  const [device, setDevice] = useState<DeviceId>("desktop");
+  const [showVariables, setShowVariables] = useState(false);
+  // Use controlled values from parent if provided, otherwise local state
+  const [localValues, setLocalValues] = useState<VariableValuesMap>({});
+  const variableValues = controlledValues ?? localValues;
+  const setVariableValues = useCallback(
+    (v: VariableValuesMap) => {
+      if (onVariableValuesChange) onVariableValuesChange(v);
+      else setLocalValues(v);
+    },
+    [onVariableValuesChange]
+  );
+
+  // Merge default + custom variables, deduplicating by key
+  // Custom variables win over defaults with the same key
+  const allVariables = useMemo(() => {
+    if (!customVariables?.length) return DEFAULT_VARIABLES;
+    const customKeys = new Set(customVariables.map((v) => v.key));
+    const uniqueDefaults = DEFAULT_VARIABLES.filter((v) => !customKeys.has(v.key));
+    return [...uniqueDefaults, ...customVariables];
+  }, [customVariables]);
+
+  // Resolve variables in subject and body
+  const resolvedSubject = useMemo(
+    () => resolveVariables(subject, variableValues, allVariables),
+    [subject, variableValues, allVariables]
+  );
+
+  const resolvedBody = useMemo(
+    () => resolveVariables(body, variableValues, allVariables),
+    [body, variableValues, allVariables]
+  );
+
+  const sanitizedBody = useMemo(() => {
+    return resolvedBody
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+      .replace(/on\w+="[^"]*"/gi, "")
+      .replace(/on\w+='[^']*'/gi, "");
+  }, [resolvedBody]);
+
+  const currentDevice = DEVICES.find((d) => d.id === device)!;
+
+  // Count how many variables are in the template
+  const templateVarCount = useMemo(() => {
+    const combined = (subject || "") + (body || "");
+    const matches = combined.match(/\{\{\s*\w+/g);
+    return matches ? new Set(matches.map((m) => m.replace(/\{\{\s*/, ""))).size : 0;
+  }, [subject, body]);
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        className={cn("max-h-[90vh] overflow-y-auto", showVariables ? "max-w-6xl" : "max-w-4xl")}
+      >
+        <DialogHeader>
+          <DialogTitle>{t("messaging.email.previewTitle")}</DialogTitle>
+          <DialogDescription>{t("messaging.email.previewDescription")}</DialogDescription>
+        </DialogHeader>
+
+        <div className={cn("pt-2", showVariables ? "grid grid-cols-[1fr_300px] gap-4" : "")}>
+          {/* Main Preview */}
+          <div className="space-y-4">
+            {/* Recipients */}
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-nx-ink-2">{t("messaging.email.to")}</p>
+              <div className="flex flex-wrap gap-1">
+                {recipients.map((email) => (
+                  <Badge key={email} variant="secondary" className="text-xs">
+                    {email}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+
+            {/* Subject */}
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-nx-ink-2">{t("messaging.email.subject")}</p>
+              <p className="text-base font-semibold text-nx-ink">{resolvedSubject || "—"}</p>
+            </div>
+
+            {/* Controls: Device Switcher + Variable Toggle */}
+            <div className="flex items-center justify-center gap-3">
+              <div className="flex items-center gap-1 rounded-nx-md border border-nx-line bg-nx-raised p-1">
+                {DEVICES.map((d) => {
+                  const Icon = d.icon;
+                  return (
+                    <Button
+                      key={d.id}
+                      type="button"
+                      variant={device === d.id ? "default" : "ghost"}
+                      size="sm"
+                      className="h-8 gap-1.5 text-xs"
+                      onClick={() => setDevice(d.id)}
+                    >
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                      {t(`messaging.email.${d.labelKey}`)}
+                    </Button>
+                  );
+                })}
+              </div>
+              {templateVarCount > 0 && (
+                <Button
+                  type="button"
+                  variant={showVariables ? "secondary" : "outline"}
+                  size="sm"
+                  className="h-8 gap-1.5 text-xs"
+                  onClick={() => setShowVariables(!showVariables)}
+                >
+                  {showVariables ? (
+                    <PanelRightClose className="h-3.5 w-3.5" aria-hidden="true" />
+                  ) : (
+                    <PanelRightOpen className="h-3.5 w-3.5" aria-hidden="true" />
+                  )}
+                  {t("messaging.email.variablesPanel")}
+                  <Badge variant="secondary" className="h-4 px-1 py-0 text-[10px]">
+                    {templateVarCount}
+                  </Badge>
+                </Button>
+              )}
+            </div>
+
+            {/* Body Preview */}
+            <div className="flex justify-center">
+              <div
+                className={cn(
+                  "overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface",
+                  device === "mobile" && "border-2"
+                )}
+                style={{
+                  width: `${currentDevice.width}px`,
+                  maxWidth: "100%",
+                }}
+              >
+                {/* Simulated browser/device bar — our own chrome, so it follows
+                    the nx surface ladder like every other toolbar. */}
+                <div className="flex items-center gap-1.5 border-b border-nx-line bg-nx-raised px-3 py-2">
+                  <div className="flex gap-1" aria-hidden="true">
+                    <span className="h-2.5 w-2.5 rounded-full bg-destructive" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-warning" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-success" />
+                  </div>
+                  <div className="flex-1 text-center">
+                    <span className="font-mono text-[10px] tabular-nums text-nx-ink-3">
+                      {currentDevice.width}px
+                    </span>
+                  </div>
+                </div>
+
+                {/* Email Content — this is the recipient's paper, not our chrome:
+                    HTML email always renders on a light canvas regardless of the
+                    reader's client theme, so this pane stays white on purpose. */}
+                <div className="bg-white p-0">
+                  {resolvedBody.includes("<") ? (
+                    <iframe
+                      srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:#000;padding:16px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${sanitizedBody}</body></html>`}
+                      sandbox="allow-same-origin"
+                      className="w-full border-0"
+                      style={{ minHeight: "200px", height: "400px" }}
+                      title={t("messaging.email.previewTitle")}
+                      onLoad={(e) => {
+                        const iframe = e.currentTarget;
+                        try {
+                          const body = iframe.contentDocument?.body;
+                          if (body) {
+                            iframe.style.height = `${Math.min(body.scrollHeight + 32, 600)}px`;
+                          }
+                        } catch {
+                          /* sandbox restriction */
+                        }
+                      }}
+                    />
+                  ) : (
+                    <pre className="whitespace-pre-wrap p-4 font-sans text-sm text-black">
+                      {resolvedBody}
+                    </pre>
+                  )}
+                </div>
+
+                {/* Attachments */}
+                {attachments.length > 0 && (
+                  <div className="border-t border-nx-line bg-nx-raised p-4">
+                    <div className="mb-2 flex items-center gap-1.5">
+                      <Paperclip className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
+                      <span className="text-xs font-medium text-nx-ink-2">
+                        {t("messaging.email.attachmentsCount", { count: attachments.length })}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {attachments.map((a) => {
+                        const isImage = a.type.startsWith("image/");
+                        const isPdf = a.type === "application/pdf";
+                        const isArchive =
+                          a.type.includes("zip") ||
+                          a.type.includes("rar") ||
+                          a.type.includes("tar");
+                        const Icon = isImage
+                          ? FileImage
+                          : isPdf
+                            ? FileText
+                            : isArchive
+                              ? FileArchive
+                              : FileIcon;
+                        const sizeStr =
+                          a.size < 1024
+                            ? `${a.size} B`
+                            : a.size < 1048576
+                              ? `${(a.size / 1024).toFixed(1)} KB`
+                              : `${(a.size / 1048576).toFixed(1)} MB`;
+                        return (
+                          <div
+                            key={a.id}
+                            className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs"
+                          >
+                            <Icon className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                            <div className="min-w-0">
+                              <p className="max-w-[150px] truncate font-medium text-nx-ink">
+                                {a.name}
+                              </p>
+                              <p className="text-nx-ink-3">{sizeStr}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Variable Values Sidebar */}
+          {showVariables && (
+            <VariableValuesPanel
+              variables={allVariables}
+              values={variableValues}
+              onChange={setVariableValues}
+              templateBody={body + " " + subject}
+              typeOverrides={controlledTypeOverrides}
+              onTypeOverridesChange={onTypeOverridesChange}
+              className="sticky top-0 max-h-[70vh]"
+            />
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -3,10 +3,11 @@
 /**
  * NexusLayout
  *
- * Dual-rail layout with premium glassmorphism and animations.
+ * Dual-rail layout on the --nx- token layer: violet-cast near-black ground,
+ * hairline edges, light collected on the active thing.
  *
  * ┌─────────────────────────────────────────────────────────────┐
- * │  TenantContextBanner (fixed, full-width, z-[70])            │
+ * │  TenantContextBanner (full-width, owned by dashboard-layout) │
  * ├──────┬─────────┬──────────────────────────────────────────  │
  * │ 64px │  240px  │  Topbar (56px)                             │
  * │  PRI │  PANEL  │  ──────────────────────────────────────── │
@@ -27,6 +28,7 @@ import { NexusSearchPalette } from "./nexus-search-palette";
 import { NexusAppLauncher } from "./nexus-app-launcher";
 import { useWorkspaceTransition } from "./use-workspace-transition";
 import { useI18n } from "@core/providers/i18n-provider";
+import { useSettings } from "@core/providers/settings-provider";
 import { cn } from "@core/common/utils";
 import { usePathname } from "next/navigation";
 import {
@@ -34,6 +36,7 @@ import {
   NEXUS_PRIMARY_RAIL_W,
   NEXUS_TOPBAR_H,
 } from "./_parts/nexus-layout-constants";
+import { NexusFooter } from "./_parts/nexus-footer";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { HubTopBar } from "@modules/home";
 
@@ -60,6 +63,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [appLauncherOpen, setAppLauncherOpen] = useState(false);
   const { direction } = useI18n();
+  const { showFooter, collapsibleSidebar } = useSettings();
   const pathname = usePathname();
   const activeWorkspaceKey = useNavigationStore((s) => s.activeWorkspaceKey);
   const workspaceGroups = useNavigationStore((s) => s.workspaceGroups);
@@ -82,7 +86,14 @@ export function NexusLayout({ children }: NexusLayoutProps) {
 
   const openMobile = useCallback(() => setMobileMenuOpen(true), []);
   const closeMobile = useCallback(() => setMobileMenuOpen(false), []);
-  const togglePanel = useCallback(() => setIsPanelCollapsed((prev) => !prev), []);
+  // collapsibleSidebar=false pins the panel open: the toggle goes inert and any
+  // previously collapsed state is ignored (the raw flag is kept so re-enabling
+  // the setting restores the user's last choice).
+  const togglePanel = useCallback(() => {
+    if (!collapsibleSidebar) return;
+    setIsPanelCollapsed((prev) => !prev);
+  }, [collapsibleSidebar]);
+  const effectivePanelCollapsed = collapsibleSidebar && isPanelCollapsed;
 
   // Workspace transition (loader + navigation)
   const { loaderState, switchWorkspace, goBackWorkspace } = useWorkspaceTransition();
@@ -104,7 +115,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
 
   return (
     <WorkspaceTransitionContext.Provider value={{ switchWorkspace, goBackWorkspace }}>
-      {/* ── Hub Mode: Full-screen dark app launcher ──────────────────────── */}
+      {/* ── Hub Mode: Full-screen app launcher on the nexus ground ────────── */}
       {isHubPage ? (
         <div
           className={cn(direction === "rtl" ? "rtl" : "ltr")}
@@ -116,9 +127,8 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             width: "100%",
             overflow: "hidden",
             position: "relative",
-            background: "#0A0E1A",
-            color: "#e6e9f5",
-            fontFamily: "'Inter', system-ui, sans-serif",
+            background: "var(--nx-ground, hsl(var(--background)))",
+            color: "var(--nx-ink, hsl(var(--foreground)))",
           }}
         >
           {/* Workspace transition overlay still works in hub mode */}
@@ -130,17 +140,18 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             accentColor={loaderState.accentColor}
           />
 
-          {/* Ambient page-level glow */}
+          {/* Ambient page-level washes — accent + the logo's cyan, sub-glow
+              strength so the launcher's active card keeps the one real glow */}
           <div
             aria-hidden
             style={{
               position: "absolute",
               top: -200,
-              left: "20%",
+              insetInlineStart: "20%",
               width: 700,
               height: 600,
               background:
-                "radial-gradient(closest-side, rgba(94,145,255,0.10), rgba(94,145,255,0) 70%)",
+                "radial-gradient(closest-side, color-mix(in oklch, var(--nx-accent, hsl(var(--primary))) 10%, transparent), transparent 70%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
@@ -150,11 +161,11 @@ export function NexusLayout({ children }: NexusLayoutProps) {
             style={{
               position: "absolute",
               top: -100,
-              right: -100,
+              insetInlineEnd: -100,
               width: 480,
               height: 480,
               background:
-                "radial-gradient(closest-side, rgba(154,77,219,0.08), rgba(154,77,219,0) 70%)",
+                "radial-gradient(closest-side, color-mix(in oklch, var(--nx-secondary, hsl(var(--info))) 8%, transparent), transparent 70%)",
               filter: "blur(20px)",
               pointerEvents: "none",
             }}
@@ -171,7 +182,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               overflowY: "auto",
               overflowX: "hidden",
               scrollbarWidth: "thin",
-              scrollbarColor: "rgba(255,255,255,0.1) transparent",
+              scrollbarColor: "var(--nx-line, hsl(var(--border))) transparent",
             }}
           >
             {children}
@@ -183,7 +194,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
       ) : (
         /* ── Normal Nexus Layout: Dual-rail with sidebar ──────────────── */
         <div
-          className={cn("bg-background text-foreground", direction === "rtl" ? "rtl" : "ltr")}
+          className={cn("bg-nx-ground text-nx-ink", direction === "rtl" ? "rtl" : "ltr")}
           style={
             {
               display: "flex",
@@ -194,7 +205,7 @@ export function NexusLayout({ children }: NexusLayoutProps) {
               overflow: "hidden",
               position: "relative",
               "--nexus-primary-w": `${NEXUS_PRIMARY_RAIL_W}px`,
-              "--nexus-panel-w": isPanelCollapsed ? "0px" : `${NEXUS_PANEL_W}px`,
+              "--nexus-panel-w": effectivePanelCollapsed ? "0px" : `${NEXUS_PANEL_W}px`,
               "--nexus-topbar-h": `${NEXUS_TOPBAR_H}px`,
             } as React.CSSProperties
           }
@@ -218,13 +229,13 @@ export function NexusLayout({ children }: NexusLayoutProps) {
           >
             <NexusPrimaryRail
               onTogglePanel={togglePanel}
-              isPanelCollapsed={isPanelCollapsed}
+              isPanelCollapsed={effectivePanelCollapsed}
               onOpenAppLauncher={() => setAppLauncherOpen(true)}
             />
             <NexusSecondaryRail
               mobileOpen={mobileMenuOpen}
               onMobileClose={closeMobile}
-              isCollapsed={isPanelCollapsed}
+              isCollapsed={effectivePanelCollapsed}
             />
             <div
               style={{
@@ -232,32 +243,49 @@ export function NexusLayout({ children }: NexusLayoutProps) {
                 flex: 1,
                 flexDirection: "column",
                 overflow: "hidden",
-                background: "hsl(var(--background))",
+                background: "var(--nx-ground, hsl(var(--background)))",
               }}
             >
-              <NexusTopbar
-                onMobileMenuOpen={openMobile}
-                onTogglePanel={togglePanel}
-                onOpenSearch={() => setSearchOpen(true)}
-                isPanelCollapsed={isPanelCollapsed}
-              />
-              <main
-                id="nexus-content"
+              {/* Scroll region — the topbar rides INSIDE it so the stickyHeader
+                  setting is real behaviour: sticky pins it to the top edge,
+                  non-sticky lets it scroll away with the page. */}
+              <div
                 style={{
+                  display: "flex",
                   flex: 1,
+                  minHeight: 0,
+                  flexDirection: "column",
                   overflowY: "auto",
                   overflowX: "hidden",
-                  padding: "16px 20px",
-                  background: "hsl(var(--background))",
                   scrollbarWidth: "thin",
-                  scrollbarColor: "hsl(var(--border)) transparent",
-                  opacity: isNavigating ? 0.35 : 1,
-                  filter: isNavigating ? "blur(1px)" : "none",
-                  transition: "opacity 150ms ease-out, filter 150ms ease-out",
+                  scrollbarColor: "var(--nx-line, hsl(var(--border))) transparent",
                 }}
               >
-                <div className="duration-500 animate-in fade-in">{children}</div>
-              </main>
+                <NexusTopbar
+                  onMobileMenuOpen={openMobile}
+                  onTogglePanel={togglePanel}
+                  onOpenSearch={() => setSearchOpen(true)}
+                  isPanelCollapsed={effectivePanelCollapsed}
+                />
+                <main
+                  id="nexus-content"
+                  style={{
+                    // Grow to fill short pages so the footer sits on the bottom
+                    // edge; never shrink, so long pages scroll past it.
+                    flex: "1 0 auto",
+                    padding: "16px 20px",
+                    background: "var(--nx-ground, hsl(var(--background)))",
+                    // Routing dim — opacity only. A blur() here repaints the whole
+                    // scroll field on every navigation; the crossfade is the effect.
+                    opacity: isNavigating ? 0.35 : 1,
+                    transition:
+                      "opacity var(--nx-t-micro, 140ms) var(--nx-ease-enter, cubic-bezier(0.23, 1, 0.32, 1))",
+                  }}
+                >
+                  <div className="duration-nx-standard animate-in fade-in">{children}</div>
+                </main>
+                {showFooter && <NexusFooter />}
+              </div>
             </div>
           </div>
 

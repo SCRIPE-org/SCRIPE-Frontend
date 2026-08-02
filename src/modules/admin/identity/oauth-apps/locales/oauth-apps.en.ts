@@ -1,0 +1,177 @@
+export const en = {
+  oauthApps: {
+    samlSpCertificateHelp:
+      "The SP certificate is used to sign SAML requests to SCRIPE. It is required for SAML authentication.",
+    samlSpCertificate: "SP Certificate",
+    title: "OAuth Applications",
+    description: "Manage third-party applications that authenticate via SCRIPE (OIDC Server)",
+    emptyTitle: "No OAuth applications found",
+    emptyDesc:
+      "Get started by registering a new application to enable secure third-party login via SCRIPE identity services.",
+    // Detail page titles
+    createTitle: "New OAuth Application",
+    editTitle: "Edit Application",
+    detailTitle: "OAuth Application Details",
+    createButton: "Create Application",
+    // Fields
+    displayName: "Application Name",
+    displayNamePlaceholder: "e.g. Mobile App",
+    clientId: "Client ID",
+    clientType: "Client Type",
+    confidential: "Confidential (Server-Side)",
+    confidentialHelp: "Server-side apps that can securely store a client secret",
+    public: "Public (SPA / Mobile)",
+    redirectUris: "Redirect URIs",
+    postLogoutRedirectUris: "Post-Logout Redirect URIs",
+    addUri: "Add URI",
+    uriPlaceholder: "https://app.example.com/callback",
+    allowedScopes: "Allowed Scopes",
+    scopes: "Scopes",
+    scopesRaw: "Raw scopes (space-separated)",
+    allowedGrantTypes: "Grant Types",
+    grantTypesRaw: "Raw grant types (space-separated)",
+    requirePkce: "Require PKCE",
+    requirePkceHelp: "Proof Key for Code Exchange - recommended for all clients",
+    requireConsent: "Require Consent Screen",
+    requireConsentHelp: "Show consent screen before redirecting back to the application",
+    descriptionLabel: "Description",
+    descriptionPlaceholder: "What does this app do?",
+    activeToggle: "Active",
+    activeToggleHelp: "Inactive applications cannot authenticate",
+    activeHelp: "Disabled apps cannot authenticate",
+    selectClientType: "Select type...",
+    publicHelp: "SPA or mobile apps that cannot securely store secrets - PKCE required",
+    addRedirectUri: "Add URI",
+    addPostLogoutUri: "Add URI",
+    preview: "Preview",
+    logoUri: "Logo URI",
+    logoUriPlaceholder: "https://example.com/logo.png",
+    // Token Configuration
+    accessTokenLifetime: "Access Token Lifetime",
+    refreshTokenLifetime: "Refresh Token Lifetime",
+    accessTokenHelp: "How long access tokens are valid",
+    refreshTokenHelp: "How long refresh tokens are valid before requiring re-authentication",
+    // Section titles
+    generalSection: "General",
+    generalSectionDesc: "Basic application information and identifiers",
+    endpointsSection: "Endpoints",
+    endpointsSectionDesc: "OAuth 2.0 redirect and post-logout URIs",
+    scopesSection: "Scopes & Grant Types",
+    scopesSectionDesc: "Configure allowed OAuth scopes and grant types",
+    scopesGrantsSection: "Scopes & Grant Types",
+    scopesGrantsSectionDesc: "Configure allowed OIDC scopes and OAuth grant types",
+    scopesHelp: "Click badges to toggle, or type custom scopes separated by spaces",
+    securitySection: "Security",
+    securitySectionDesc: "PKCE, consent, and security settings",
+    tokenSection: "Token Configuration",
+    tokenSectionDesc: "Access and refresh token lifetimes",
+    brandingSection: "Branding",
+    brandingSectionDesc: "Application logo and visual identity",
+    // Credentials
+    credentialsSection: "Client Credentials",
+    clientIdLabel: "Client ID",
+    clientSecret: "Client Secret",
+    clientSecretHidden: "The secret is never displayed for security. Regenerate to get a new one.",
+    regenerate: "Regenerate",
+    newSecretGenerated: "New Secret Generated",
+    secretCopyWarning: "Copy this secret now - it will not be shown again!",
+    copyClientId: "Copy client ID",
+    copySecret: "Copy client secret",
+    // Compact chip labels
+    clientTypeConfidential: "Confidential",
+    clientTypePublic: "Public",
+    noDescription: "No description provided.",
+    oidcServerBadge: "OIDC Server",
+    pkceLabel: "PKCE",
+    pkceOptional: "Optional",
+    viewDetails: "View application details",
+    // Metadata
+    metadata: "Information",
+    tenantScoped: "Tenant",
+    // Toast messages
+    created: "Application Created",
+    createdDesc: "OAuth application created successfully.",
+    updated: "Application Updated",
+    updatedDesc: "OAuth application updated successfully.",
+    deleted: "Application Deleted",
+    deletedDesc: "OAuth application deleted.",
+    secretRegenerated: "Secret Regenerated",
+    secretRegeneratedDesc: "Copy the new secret now - it won't be shown again.",
+    // Actions
+    regenerateSecret: "Regenerate Secret",
+    // Secret dialog
+    newSecret: "New Client Secret",
+    secretWarning: "Copy this secret now. It will NOT be shown again.",
+    // Confirmations
+    regenerateConfirmTitle: "Regenerate Client Secret",
+    regenerateConfirmDesc:
+      "The current secret will be invalidated. All applications using the old secret will stop working.",
+    // Danger zone
+    deleteWarning:
+      "Deleting this application will revoke all tokens and break existing integrations. This cannot be undone.",
+    deleteButton: "Delete Application",
+    deleteConfirmTitle: "Delete OAuth Application",
+    deleteConfirmDesc:
+      "This will permanently remove this application. All authenticated sessions will be invalidated.",
+
+    samlSection: "SAML Configuration",
+    samlSectionDesc: "Optional: Configure SAML 2.0 properties if this is a SAML Service Provider.",
+    samlAcsUrl: "Assertion Consumer Service (ACS) URL",
+    samlSpEntityId: "SP Entity ID",
+
+    // Protocol & Wizard steps
+    stepProtocol: "Protocol",
+    stepBasicInfo: "Basic Info",
+    stepEndpoints: "Endpoints & Scopes",
+    stepSecurity: "Security & Tokens",
+    stepBranding: "Branding",
+    stepSamlConfig: "SAML Config",
+    selectProtocolTitle: "Select Authentication Protocol",
+    selectProtocolDesc:
+      "Choose the standard that fits your integration. This cannot be changed once created.",
+    oidcChoiceDesc:
+      "Modern identity standard using JWT tokens. Recommended for web applications, Single Page Apps (SPA), and mobile apps.",
+    samlChoiceDesc:
+      "Enterprise federation protocol using XML. Best for corporate SSO integrations with Salesforce, Zendesk, or Okta.",
+
+    // IdP Metadata
+    idpMetadataTitle: "Identity Provider (IdP) Metadata",
+    idpMetadataDesc:
+      "Use these details to configure trust on your Service Provider (SP) application.",
+    idpEntityId: "IdP Entity ID (Issuer)",
+    idpSsoUrl: "Single Sign-On (SSO) URL",
+    idpXmlMetadataUrl: "IdP Metadata XML URL",
+    idpXmlHelp:
+      "Most enterprise apps allow configuring SSO by simply pasting this XML metadata URL.",
+    samlConfigSection: "SAML Configuration",
+    idpMetadataSection: "IdP Metadata",
+
+    // Edit-form tab labels & a11y names
+    redirectsSecurityTab: "Redirects & Security",
+    copyIdpEntityId: "Copy IdP entity ID",
+    copySsoUrl: "Copy SSO URL",
+    copyMetadataUrl: "Copy metadata URL",
+  },
+  oauth: {
+    consentTitle: "Authorize App",
+    isRequestingAccess: "is requesting access to your SCRIPE account.",
+    willBeAbleTo: "This application will be able to:",
+    scopes: {
+      openid: "Verify your identity",
+      profile: "View your basic profile data",
+      email: "View your email address",
+      offline_access: "Maintain access when you are not present",
+    },
+    defaultScope: "Access your {{scope}} data",
+    signedInAs: "Signed in as",
+    notYou: "Not you?",
+    switchAccount: "Switch account",
+    allowAccess: "Allow Access",
+    cancelAndReturn: "Cancel & Return",
+    invalidRequestTitle: "Invalid Authorization Request",
+    invalidRequestDesc:
+      "The application request is missing required core parameters (client_id or redirect_uri).",
+    backToDashboard: "Back to Dashboard",
+    sessionExpired: "Your session has expired. Please log in again.",
+  },
+};

@@ -1,0 +1,41 @@
+"use client";
+
+import * as React from "react";
+
+interface StrengthBarProps {
+  strength: number;
+  labels: string[];
+}
+
+/**
+ * Presentation UI component rendering the strength bar.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ */
+export function StrengthBar({ strength, labels }: StrengthBarProps) {
+  const colors = [
+    "hsl(var(--destructive))",
+    "hsl(var(--warning-strong))",
+    "hsl(var(--warning))",
+    "hsl(var(--success))",
+  ];
+  return (
+    <div className="space-y-1">
+      <div className="flex gap-1">
+        {[1, 2, 3, 4].map((lvl) => (
+          <div
+            key={lvl}
+            className="h-1 flex-1 rounded-full transition-all duration-300"
+            style={{
+              background: lvl <= strength ? colors[strength - 1] : "var(--sx-chip-bg)",
+            }}
+          />
+        ))}
+      </div>
+      {strength > 0 && (
+        <p className="text-[11px]" style={{ color: colors[strength - 1] }}>
+          {labels[strength - 1]}
+        </p>
+      )}
+    </div>
+  );
+}

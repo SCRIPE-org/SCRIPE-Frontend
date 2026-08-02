@@ -1,0 +1,29 @@
+export const en = {
+  marketplace: {
+    financialsTitle: "Financial Overview",
+    financialsEmpty: "No financial records found.",
+    financialsError: "Failed to load financial data.",
+    totalRevenue: "Total Revenue",
+    pendingPayouts: "Pending Payouts",
+    completedPayouts: "Completed Payouts",
+    purchaseHistory: "Purchase History",
+    payoutHistory: "Payout History",
+    appName: "App",
+    amount: "Amount",
+    payoutStatus: "Payout Status",
+    // ── FinancialsView ──
+    financialsPageSubtitle: "Purchases and developer payouts",
+    financialsPurchasesTab: "Purchases ({{count}})",
+    financialsPayoutsTab: "Payouts",
+    financialsProcessPayout: "Process",
+    financialsPayoutStatusPending: "Pending",
+    financialsPayoutStatusProcessing: "Processing",
+    financialsPayoutStatusPaid: "Paid",
+    financialsPayoutStatusFailed: "Failed",
+    // ── RevenueChart ──
+    financialsRevenueChartTitle: "Revenue Over Time",
+    financialsNoRevenueData: "No revenue data available.",
+    financialsRevenueLabel: "Revenue",
+    financialsVsStart: "vs start",
+  },
+};

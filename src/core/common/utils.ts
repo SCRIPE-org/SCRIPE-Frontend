@@ -1,9 +1,33 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { format } from "date-fns";
 import type { HoverEffectType, HoverEffectIntensity } from "@core/providers/settings-provider";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * The BCP-47 locale string for native `Intl`/`toLocaleString` calls, derived
+ * from the app's `language` setting ("en" | "ar"). Call sites used to inline
+ * `language === "ar" ? "ar-EG" : "en-US"` at each use — 28 copies of the same
+ * mapping, each a place a future locale change would be missed.
+ */
+export function resolveIntlLocale(language: string): string {
+  return language === "ar" ? "ar-EG" : "en-US";
+}
+
+/**
+ * Picks the display string from a stored EN/AR pair. For genuinely bilingual
+ * DATA (a static page catalog, a user-entered name field) rather than
+ * translatable UI copy — that case goes through `t()` and a locale shard
+ * instead. Centralizing this one comparison is still worth it: it is the same
+ * `language === "ar" ? ar : en` shape the section-5 gate bans when inlined ad
+ * hoc, and a single call site means a future third locale only needs updating
+ * here.
+ */
+export function resolveBilingualLabel(en: string, ar: string, language: string): string {
+  return language === "ar" ? ar : en;
 }
 
 export function formatDate(date: string | Date | null | undefined, locale: string = "ar-SA") {
@@ -13,15 +37,15 @@ export function formatDate(date: string | Date | null | undefined, locale: strin
       return "-";
     }
 
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    if (isNaN(dateObj.getTime())) {
+    const dateObj = parseUtcDate(date);
+    if (!dateObj) {
       return "-";
     }
 
-    // Always use dd/mm/yyyy format for both Arabic and English
-    const day = dateObj.getDate().toString().padStart(2, "0");
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-    const year = dateObj.getFullYear();
+    // Always use dd/mm/yyyy format — UTC values to match server time
+    const day = dateObj.getUTCDate().toString().padStart(2, "0");
+    const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, "0");
+    const year = dateObj.getUTCFullYear();
 
     return `${day}/${month}/${year}`;
   } catch (error) {
@@ -36,17 +60,17 @@ export function formatDateTime(date: string | Date | null | undefined, locale: s
       return "-";
     }
 
-    const dateObj = typeof date === "string" ? new Date(date) : date;
-    if (isNaN(dateObj.getTime())) {
+    const dateObj = parseUtcDate(date);
+    if (!dateObj) {
       return "-";
     }
 
-    // Always use dd/mm/yyyy HH:MM format for both Arabic and English
-    const day = dateObj.getDate().toString().padStart(2, "0");
-    const month = (dateObj.getMonth() + 1).toString().padStart(2, "0");
-    const year = dateObj.getFullYear();
-    const hours = dateObj.getHours().toString().padStart(2, "0");
-    const minutes = dateObj.getMinutes().toString().padStart(2, "0");
+    // Always use dd/mm/yyyy HH:MM format — UTC values to match server time
+    const day = dateObj.getUTCDate().toString().padStart(2, "0");
+    const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, "0");
+    const year = dateObj.getUTCFullYear();
+    const hours = dateObj.getUTCHours().toString().padStart(2, "0");
+    const minutes = dateObj.getUTCMinutes().toString().padStart(2, "0");
 
     return `${day}/${month}/${year} ${hours}:${minutes}`;
   } catch (error) {
@@ -168,113 +192,29 @@ export function getHoverEffectClasses(
     return "";
   }
 
-  const baseTransition = "transition-all duration-300 ease-in-out";
+  const baseTransition =
+    "transition-[border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
 
   switch (effectType) {
     case "elevate":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:-translate-y-0.5", "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:-translate-y-2", "hover:shadow-xl");
-        case "strong":
-          return cn(baseTransition, "hover:-translate-y-4", "hover:shadow-2xl");
-        default:
-          return "";
-      }
     case "scale":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:scale-[1.005]");
-        case "medium":
-          return cn(baseTransition, "hover:scale-[1.02]");
-        case "strong":
-          return cn(baseTransition, "hover:scale-[1.05]");
-        default:
-          return "";
-      }
     case "glow":
-      switch (intensity) {
-        case "small":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_8px_rgba(var(--primary),0.3)]",
-            "hover:border-primary/50"
-          );
-        case "medium":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_15px_rgba(var(--primary),0.5)]",
-            "hover:border-primary/50"
-          );
-        case "strong":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_25px_rgba(var(--primary),0.7)]",
-            "hover:border-primary/50"
-          );
-        default:
-          return "";
-      }
     case "shimmer":
-      // Shimmer effect with intensity-based opacity and animation speed
-      let shimmerOpacity: string;
-      let shimmerSpeed: string;
-      switch (intensity) {
-        case "small":
-          shimmerOpacity = "after:opacity-20";
-          shimmerSpeed = "after:duration-1000";
-          break;
-        case "medium":
-          shimmerOpacity = "after:opacity-40";
-          shimmerSpeed = "after:duration-700";
-          break;
-        case "strong":
-          shimmerOpacity = "after:opacity-60";
-          shimmerSpeed = "after:duration-500";
-          break;
-        default:
-          shimmerOpacity = "after:opacity-40";
-          shimmerSpeed = "after:duration-700";
-      }
-      return cn(
-        baseTransition,
-        "relative overflow-hidden",
-        "after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent",
-        "after:translate-x-[-100%] hover:after:translate-x-[100%]",
-        "after:transition-transform",
-        shimmerSpeed,
-        shimmerOpacity
-      );
     case "rotate":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:rotate-1");
-        case "medium":
-          return cn(baseTransition, "hover:rotate-[5deg]");
-        case "strong":
-          return cn(baseTransition, "hover:rotate-[10deg]");
-        default:
-          return "";
-      }
     case "slide":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:-translate-y-0.5", "hover:translate-x-1");
-        case "medium":
-          return cn(baseTransition, "hover:-translate-y-2", "hover:translate-x-1");
-        case "strong":
-          return cn(baseTransition, "hover:-translate-y-4", "hover:translate-x-1");
-        default:
-          return "";
-      }
+      // All variants converge on the same border-brighten treatment — no raw
+      // box-shadow depth, no transform lifts/scale/rotate, no shimmer sweep.
+      // `intensity` no longer changes the output; it is kept as a parameter
+      // only so call sites (card.tsx, generic-table.tsx) don't need updating.
+      return cn(baseTransition, "hover:border-nx-line-hi");
     default:
       return "";
   }
 }
 
 /**
- * Generate hover effect classes for tables (shadows only, no transforms)
+ * Generate hover effect classes for tables (border brighten only, no
+ * transforms, no raw box-shadow — see §5.3)
  */
 export function getTableHoverEffectClasses(
   effectType: HoverEffectType,
@@ -284,92 +224,107 @@ export function getTableHoverEffectClasses(
     return "";
   }
 
-  const baseTransition = "transition-all duration-300 ease-in-out";
+  const baseTransition =
+    "transition-[border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none";
 
-  switch (effectType) {
-    case "elevate":
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-xl");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-2xl");
-        default:
-          return "";
-      }
-    case "scale":
-      // For scale effect, add shadow instead of scaling
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    case "glow":
-      switch (intensity) {
-        case "small":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_8px_rgba(var(--primary),0.3)]",
-            "hover:border-primary/50"
-          );
-        case "medium":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_15px_rgba(var(--primary),0.5)]",
-            "hover:border-primary/50"
-          );
-        case "strong":
-          return cn(
-            baseTransition,
-            "hover:shadow-[0_0_25px_rgba(var(--primary),0.7)]",
-            "hover:border-primary/50"
-          );
-        default:
-          return "";
-      }
-    case "shimmer":
-      // For shimmer, just add a subtle shadow
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    case "rotate":
-      // For rotate, add shadow instead of rotating
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    case "slide":
-      // For slide, add shadow instead of sliding
-      switch (intensity) {
-        case "small":
-          return cn(baseTransition, "hover:shadow-md");
-        case "medium":
-          return cn(baseTransition, "hover:shadow-lg");
-        case "strong":
-          return cn(baseTransition, "hover:shadow-xl");
-        default:
-          return "";
-      }
-    default:
-      return "";
+  // generic-table.tsx already applies `hover:bg-nx-hover` on rows via its own
+  // row classes, so the table variant of the hover helper only needs to
+  // brighten the border — no raw box-shadow depth per §5.3, and no
+  // intensity-based shadow ladder to preserve. `intensity` is accepted but
+  // unused so call sites don't need updating.
+  return cn(baseTransition, "hover:border-nx-line-hi");
+}
+
+/**
+ * Safely parses a date string, guaranteeing it is treated as UTC if no timezone is specified.
+ */
+export function parseUtcDate(date: string | Date | null | undefined): Date | null {
+  if (date === null || date === undefined || date === "") return null;
+  if (date instanceof Date) return isNaN(date.getTime()) ? null : date;
+
+  let s = date.trim();
+  // If it's a date-time string without timezone offset, append 'Z' to treat as UTC
+  if (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(s) &&
+    !s.endsWith("Z") &&
+    !s.includes("+") &&
+    !s.includes("-", 10)
+  ) {
+    s += "Z";
   }
+
+  const dateObj = new Date(s);
+  return isNaN(dateObj.getTime()) ? null : dateObj;
+}
+
+/**
+ * Formats a date in UTC as "YYYY-MM-DD HH:mm:ss"
+ */
+export function formatDateTimeUtc(date: string | Date | null | undefined): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "-";
+
+  const year = parsed.getUTCFullYear();
+  const month = String(parsed.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getUTCDate()).padStart(2, "0");
+  const hours = String(parsed.getUTCHours()).padStart(2, "0");
+  const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
+  const seconds = String(parsed.getUTCSeconds()).padStart(2, "0");
+
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+/**
+ * Formats a date in UTC as "HH:mm"
+ */
+export function formatTimeUtc(date: string | Date | null | undefined): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "";
+
+  const hours = String(parsed.getUTCHours()).padStart(2, "0");
+  const minutes = String(parsed.getUTCMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
+/**
+ * Formats a date in UTC as "MMM d" (e.g., "Jul 9")
+ */
+export function formatDateUtc(date: string | Date | null | undefined): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "";
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const month = months[parsed.getUTCMonth()];
+  const day = parsed.getUTCDate();
+  return `${month} ${day}`;
+}
+
+/**
+ * Formats a date in UTC using any date-fns format pattern.
+ *
+ * date-fns `format(new Date(x), pattern)` renders in the browser's local
+ * timezone, which shifts server (UTC) timestamps by the client's offset.
+ * This helper renders the UTC wall-clock instead, so the displayed value
+ * always matches the backend/server (UTC) clock, while preserving the exact
+ * date-fns pattern (e.g. "MMM d, yyyy", "PPp", "MMM d, HH:mm:ss").
+ */
+export function formatUtc(date: string | Date | null | undefined, pattern: string): string {
+  const parsed = parseUtcDate(date);
+  if (!parsed) return "";
+  // Shift the epoch so date-fns' local getters read the UTC wall-clock values.
+  const utcAsLocal = new Date(parsed.getTime() + parsed.getTimezoneOffset() * 60000);
+  return format(utcAsLocal, pattern);
 }

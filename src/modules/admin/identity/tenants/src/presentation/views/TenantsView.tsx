@@ -1,0 +1,125 @@
+/**
+ * TenantsView — Expandable Accordion Design
+ *
+ * Premium tenant management page with:
+ * - PageHeader with stats meta strip + search (TenantListHeader)
+ * - Expandable accordion cards with color-coded status borders
+ * - Recursive nested children hierarchy
+ * - On-demand stats fetching when expanded
+ * - Full RTL/LTR support
+ * - Create navigates to dedicated stepper page
+ * - Edit/Delete dialogs remain inline
+ *
+ * Clean Architecture: View → ViewModel → Repository
+ *
+ * @module tenants
+ */
+"use client";
+
+import React from "react";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Skeleton } from "@core/ui/skeleton";
+import { EmptyState } from "@core/ui/empty-state";
+import { Inbox } from "lucide-react";
+
+// Module imports
+import { TenantNodeCard } from "../components/TenantNodeCard";
+import { TenantListHeader } from "../components/TenantListHeader";
+import { TenantDeleteDialog } from "../components/TenantDeleteDialog";
+import { EditTenantDialog } from "../components/TenantDialogs";
+import { useTenantsViewModel } from "../viewmodels/useTenantsViewModel";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+
+// ============================================
+// Component
+// ============================================
+
+/**
+ * Presentation UI component rendering the tenants view.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
+export function TenantsView() {
+  useModuleLocales(() => import("../../../locales"), "tenants");
+
+  const { t, direction } = useI18n();
+  const vm = useTenantsViewModel();
+
+  // ── Loading ──
+  if (vm.isLoading) {
+    return (
+      <div className="space-y-4" dir={direction}>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <Skeleton shape="title" className="h-8 w-48" />
+            <Skeleton shape="text" className="mt-2 h-4 w-72" />
+          </div>
+          <Skeleton shape="control" className="w-32" />
+        </div>
+        <div className="flex gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} shape="chip" className="h-8 w-24" />
+          ))}
+        </div>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 w-full rounded-nx-lg" />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4" dir={direction}>
+      {/* Header with stats + search */}
+      <TenantListHeader
+        tree={vm.tree}
+        search={vm.search}
+        onSearchChange={vm.setSearch}
+        onAdd={() => vm.handleOpenCreate()}
+        canCreate={vm.canCreate}
+      />
+
+      {/* Tenant cards */}
+      {vm.filteredTree.length === 0 ? (
+        <EmptyState
+          icon={Inbox}
+          title={t("tenant.noTenantsFound")}
+          description={vm.search ? t("tenant.searchPlaceholder") : t("tenant.noTenantsDescription")}
+          size="lg"
+        />
+      ) : (
+        <div className="space-y-0">
+          {vm.filteredTree.map((node) => (
+            <TenantNodeCard
+              key={node.id}
+              node={node}
+              level={0}
+              onEdit={vm.handleOpenEdit}
+              onDelete={vm.handleOpenDelete}
+              onCreateChild={vm.handleOpenCreate}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Edit Dialog */}
+      <EditTenantDialog
+        open={vm.editDialogOpen}
+        onOpenChange={vm.setEditDialogOpen}
+        tenantName={vm.editingNode?.name || ""}
+        form={vm.editForm}
+        setForm={vm.setEditForm}
+        onSubmit={vm.handleEditSubmit}
+        isLoading={vm.isSaving}
+      />
+
+      {/* Delete Dialog */}
+      <TenantDeleteDialog
+        open={vm.deleteDialogOpen}
+        onOpenChange={vm.setDeleteDialogOpen}
+        tenant={vm.tenantToDelete}
+        onConfirm={vm.handleDeleteConfirm}
+        isDeleting={vm.isDeleting}
+      />
+    </div>
+  );
+}

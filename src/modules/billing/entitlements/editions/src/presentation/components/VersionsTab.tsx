@@ -1,0 +1,252 @@
+/**
+ * Edition Versions Tab — Version history with create/publish/cancel actions
+ * Pure UI matching SOLID ViewModel architecture rules
+ */
+"use client";
+
+import { useI18n } from "@core/providers/i18n-provider";
+import { Card, CardContent } from "@core/ui/card";
+import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
+import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
+import { DatePicker } from "@core/ui/date-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { formatDateUtc } from "@core/common/utils";
+import {
+  Rocket,
+  XCircle,
+  Clock,
+  CheckCircle2,
+  AlertCircle,
+  GitBranch,
+  Calendar,
+  Percent,
+  RefreshCw,
+} from "lucide-react";
+import { useVersionsViewModel } from "../viewmodels/useVersionsViewModel";
+import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+
+interface VersionsTabProps {
+  editionId: string;
+}
+
+// Status badge color mapping
+const STATUS_COLORS: Record<string, string> = {
+  Draft: "bg-nx-raised text-nx-ink-2 border-nx-line",
+  Pending: "bg-warning/10 text-warning border-warning/30",
+  Rolling: "bg-info/10 text-info border-info/30",
+  Completed: "bg-success/10 text-success border-success/30",
+  Canceled: "bg-destructive/10 text-destructive border-destructive/30",
+};
+
+// A status badge renders its state — it does not animate forever. "Rolling"
+// reads as a held, static glyph, same as every other status in this map.
+const STATUS_ICONS: Record<string, React.ReactNode> = {
+  Draft: <AlertCircle className="h-3.5 w-3.5" />,
+  Pending: <Clock className="h-3.5 w-3.5" />,
+  Rolling: <RefreshCw className="h-3.5 w-3.5" />,
+  Completed: <CheckCircle2 className="h-3.5 w-3.5" />,
+  Canceled: <XCircle className="h-3.5 w-3.5" />,
+};
+
+/**
+ * Presentation UI component rendering the versions tab.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
+export function VersionsTab({ editionId }: VersionsTabProps) {
+  useModuleLocales(() => import("../../../locales"), "editions");
+  const { t } = useI18n();
+  const vm = useVersionsViewModel(editionId);
+
+  if (vm.isLoading) {
+    return <LoadingSpinner size="sm" showText={false} />;
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* ── Header ── */}
+      <div className="flex items-center gap-2">
+        <GitBranch className="h-5 w-5 text-nx-accent" />
+        <h2 className="text-lg font-semibold">{t("entitlements.editions.versions.title")}</h2>
+        <Badge variant="secondary" className="text-xs">
+          {vm.versions.length}
+        </Badge>
+      </div>
+
+      {/* ── Version List ── */}
+      {vm.versions.length === 0 ? (
+        <Card>
+          <CardContent className="py-8 text-center text-nx-ink-2">
+            <GitBranch className="mx-auto mb-2 h-8 w-8 opacity-30" />
+            <p>{t("entitlements.editions.versions.empty")}</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="space-y-2">
+          {vm.versions.map((v) => (
+            <Card key={v.id} className="overflow-hidden">
+              <CardContent className="space-y-2 px-4 py-3">
+                {/* ── Version Row ── */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Badge variant="outline" className="font-mono text-xs">
+                      v{v.versionNumber}
+                    </Badge>
+                    <Badge variant="outline" className={STATUS_COLORS[v.status] || ""}>
+                      <span className="flex items-center gap-1">
+                        {STATUS_ICONS[v.status]}
+                        {t(`entitlements.editions.versions.statuses.${v.status}`)}
+                      </span>
+                    </Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      {t(`entitlements.editions.versions.strategies.${v.rolloutStrategy}`)}
+                    </Badge>
+                    {v.changeNotes && (
+                      <span className="max-w-[200px] truncate text-sm text-nx-ink-2">
+                        {v.changeNotes}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-nx-ink-2">{formatDateUtc(v.createdAt)}</span>
+
+                    {/* Publish button (Draft only) */}
+                    {v.status === "Draft" && vm.publishVersionId !== v.id && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 gap-1 text-xs"
+                        onClick={() => vm.setPublishVersionId(v.id)}
+                      >
+                        <Rocket className="h-3 w-3" />
+                        {t("entitlements.editions.versions.publish")}
+                      </Button>
+                    )}
+
+                    {/* Cancel button (Pending/Rolling only) */}
+                    {(v.status === "Pending" || v.status === "Rolling") && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="h-8 gap-1 text-xs"
+                        onClick={() => vm.cancelMutation.mutate(v.id)}
+                        loading={vm.cancelMutation.isPending}
+                      >
+                        {!vm.cancelMutation.isPending && <XCircle className="h-3 w-3" />}
+                        {t("common.cancel")}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+
+                {/* ── Publish Form (expanded for Draft versions) ── */}
+                {v.status === "Draft" && vm.publishVersionId === v.id && (
+                  <div className="mt-1 space-y-3 border-t border-nx-line pt-3">
+                    {/* Strategy Selector */}
+                    <div className="flex items-center gap-3">
+                      <Label className="min-w-[80px] text-xs font-medium">
+                        {t("entitlements.editions.versions.strategy")}
+                      </Label>
+                      <Select value={vm.rolloutStrategy} onValueChange={vm.setRolloutStrategy}>
+                        <SelectTrigger className="h-8 w-[200px] text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {["Immediate", "AtRenewal", "Scheduled", "Staged"].map((s) => (
+                            <SelectItem key={s} value={s}>
+                              {t(`entitlements.editions.versions.strategies.${s}`)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Scheduled: DatePicker (Custom UI Component) */}
+                    {vm.rolloutStrategy === "Scheduled" && (
+                      <div className="flex items-center gap-3">
+                        <Label className="flex min-w-[80px] items-center gap-1 text-xs font-medium">
+                          <Calendar className="h-3.5 w-3.5" />
+                          {t("entitlements.editions.versions.scheduledAt")}
+                        </Label>
+                        <DatePicker
+                          id="version-scheduled-at"
+                          type="datetime-local"
+                          value={vm.scheduledAt}
+                          onChange={(val) => vm.setScheduledAt(val)}
+                          placeholder={t("entitlements.editions.versions.scheduledAt")}
+                          className="w-[280px]"
+                        />
+                      </div>
+                    )}
+
+                    {/* Staged: Canary percentage */}
+                    {vm.rolloutStrategy === "Staged" && (
+                      <div className="flex items-center gap-3">
+                        <Label className="flex min-w-[80px] items-center gap-1 text-xs font-medium">
+                          <Percent className="h-3.5 w-3.5" />
+                          {t("entitlements.editions.versions.canaryPercent")}
+                        </Label>
+                        <Input
+                          type="number"
+                          className="h-8 w-[100px] text-xs"
+                          value={vm.canaryPercentage}
+                          onChange={(e) => vm.setCanaryPercentage(Number(e.target.value))}
+                          min={1}
+                          max={99}
+                        />
+                        <span className="text-xs text-nx-ink-3">
+                          {t("entitlements.editions.versions.canaryHint")}
+                        </span>
+                      </div>
+                    )}
+
+                    {/* Strategy description */}
+                    <p className="text-xs italic text-nx-ink-3">
+                      {vm.rolloutStrategy === "Immediate" &&
+                        t("entitlements.editions.versions.strategyHints.Immediate")}
+                      {vm.rolloutStrategy === "AtRenewal" &&
+                        t("entitlements.editions.versions.strategyHints.AtRenewal")}
+                      {vm.rolloutStrategy === "Scheduled" &&
+                        t("entitlements.editions.versions.strategyHints.Scheduled")}
+                      {vm.rolloutStrategy === "Staged" &&
+                        t("entitlements.editions.versions.strategyHints.Staged")}
+                    </p>
+
+                    {/* Action buttons */}
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        className="h-8 gap-1 bg-success text-xs text-success-foreground opacity-90 hover:bg-success/90 hover:opacity-100"
+                        onClick={() => vm.publishMutation.mutate(v.id)}
+                        disabled={!vm.canPublish}
+                        loading={vm.publishMutation.isPending}
+                      >
+                        {!vm.publishMutation.isPending && <Rocket className="h-3 w-3" />}
+                        {t("entitlements.editions.versions.publishNow")}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 text-xs"
+                        onClick={() => {
+                          vm.setPublishVersionId(null);
+                          vm.setRolloutStrategy("Immediate");
+                          vm.setScheduledAt("");
+                          vm.setCanaryPercentage(10);
+                        }}
+                      >
+                        {t("common.cancel")}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

@@ -1,11 +1,5 @@
-import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-
-export const metadata: Metadata = {
-  title: "Workspace Hub | SCRIPE",
-  description: "Select your workspace to get started",
-};
 
 const HubTopBar = dynamic(() => import("@modules/home").then((m) => ({ default: m.HubTopBar })));
 
@@ -21,20 +15,16 @@ const WorkspaceHubView = dynamic(() =>
  *
  * Super admins and tenant admins with admin workspace access go directly
  * to the main dashboard "/" after login (backend-driven via AdminLoginCommandHandler).
+ *
+ * Metadata lives in this route group's layout.tsx — a single source, since this
+ * page is the only real destination in the group besides activate-workspace.
  */
 export default function HubPage() {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #0A0E1A 0%, #0D1225 60%, #0A0E1A 100%)",
-      }}
-    >
+    <div className="flex min-h-screen flex-col bg-nx-ground">
       <HubTopBar />
-      <div style={{ flex: 1, overflowY: "auto" }}>
-        <ModuleErrorBoundary moduleName="Workspace Hub">
+      <div className="flex-1 overflow-y-auto">
+        <ModuleErrorBoundary moduleName="workspaceHub.hubTitle">
           <WorkspaceHubView />
         </ModuleErrorBoundary>
       </div>

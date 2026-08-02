@@ -3,24 +3,60 @@
 /**
  * NexusAppLauncher — Waffle-menu overlay (⊞ button)
  *
- * Licensing fixes applied:
- *  1. Safe accentColor opacity via withOpacity() — no string.replace() fragility
- *  2. Admin cards correctly show "active" badge when that workspace is current
- *  3. useTheme() for dark-mode consistency with the rest of the nav system
- *  4. aria-modal="true" on the main launcher panel
- *  5. Focus trap inside launcher and upgrade dialog (keyboard accessibility)
- *  6. Backend-authoritative licensing: ws.isLocked from API, no hardcoded mocks
- *  7. router.push() instead of window.location.href (no full-page reload)
+ * Behaviour that must not regress:
+ *  1. Token-safe accent alpha via color-mix(in oklch, …) — works for hex,
+ *     hsl(), oklch() AND var() accents; no string concatenation anywhere. The
+ *     per-card colour is the workspace's OWN backend-supplied accent: in the
+ *     launcher you are looking at workspaces you are not in, so their identity
+ *     colour is information, not decoration. It falls back to --nx-accent.
+ *  2. Backend-authoritative licensing: ws.isLocked from API, no hardcoded mocks
+ *  3. router.push() instead of window.location.href (no full-page reload)
+ *  4. Locked cards are keyboard-focusable — the upgrade dialog is the upsell
+ *     and tabIndex={-1} made it unreachable without a mouse
+ *  5. Focus trap inside the launcher panel (the upgrade dialog now gets Radix's)
+ *  6. Enter/exit: backdrop crossfades; the panel scales 0.95→1 with opacity
+ *     from its bottom inline-start corner (the ⊞ trigger's side) — no keyframe
+ *     slide from an edge. Exit runs at ~2/3 duration on the exit easing;
+ *     reduced motion keeps the crossfade and drops the scale.
+ *  7. Semantic z ladder (blur < overlay < modal) — the old raw 80/90/100/110
+ *     stack collided with the tenant banner's z-70 neighbourhood
+ *
+ * Design corrections in this pass:
+ *  - Every string moved to the shell locale pack. The file used to carry its
+ *    copy as inline `language === "ar" ? … : …` ternaries, which is two
+ *    languages inside a JSX expression: `aria-label="Close"` and the pin
+ *    toggle's name had already fallen out of that pattern in English only.
+ *  - The upgrade prompt was a hand-built role="alertdialog" with its own
+ *    scrim, its own focus trap and two hsl() fills of its own. It is now an
+ *    AlertDialog, so it inherits the family's scrim, motion, footer order and
+ *    focus behaviour, and the CTA is simply the primary button.
+ *  - The search field is the Input primitive; it was a raw <input> wearing a
+ *    hand-rolled focus-within ring.
+ *  - Cards no longer lift on hover and their icon no longer scales: hover is
+ *    colour and hairline, nothing floats. The 6px backdrop blur is gone — the
+ *    scrim pushes the page back by taking light away.
  */
 
 import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useTheme } from "next-themes";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
-import { toast } from "@core/ui/use-toast";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { startRoutingProgress } from "@core/ui/routing-progress-bar";
+import { Button } from "@core/ui/button";
+import { Input } from "@core/ui/input";
+import { EmptyState } from "@core/ui/empty-state";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@core/ui/alert-dialog";
 
 import {
   Search,
@@ -34,7 +70,7 @@ import {
   PinOff,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { DynamicIcon } from "./_parts/primary-rail-parts";
+import { DynamicIcon, NX_FOCUS_RING } from "./_parts/primary-rail-parts";
 import { useWorkspaceTransitionContext } from "./nexus-layout";
 
 // Active workspace is filtered out of the grid entirely — you are already there.
@@ -46,20 +82,6 @@ interface NexusAppLauncherProps {
   onOpenChange: (open: boolean) => void;
 }
 
-// ── Issue 1 Fix: Safe opacity helper ────────────────────────────────────────
-// Avoids string.replace(")",...) which breaks for hsl(var(--primary)) etc.
-function withOpacity(color: string, alpha: number): string {
-  const pct = Math.round(alpha * 100);
-  // oklch(L C H) → oklch(L C H / XX%)
-  if (color.startsWith("oklch(")) return color.slice(0, -1) + ` / ${pct}%)`;
-  // hsl(X Y Z) → hsl(X Y Z / XX%)
-  if (color.startsWith("hsl(")) return color.slice(0, -1) + ` / ${pct}%)`;
-  // hex fallback: append two-digit alpha
-  return `${color}${Math.round(alpha * 255)
-    .toString(16)
-    .padStart(2, "0")}`;
-}
-
 // ── Status derivation ─ backend-authoritative ───────────────────────────────
 // Active workspace is filtered before reaching this function, so we only
 // need to distinguish locked vs available (coming-soon is future extension).
@@ -68,7 +90,7 @@ function deriveWorkspaceStatus(ws: { workspaceKey: string; isLocked: boolean }):
   return "available";
 }
 
-// ── Issue 5 Fix: Focus trap utility ─────────────────────────────────────────
+// ── Focus trap utility ──────────────────────────────────────────────────────
 function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active: boolean) {
   useEffect(() => {
     if (!active || !containerRef.current) return;
@@ -106,22 +128,54 @@ function useFocusTrap(containerRef: React.RefObject<HTMLElement | null>, active:
   }, [active, containerRef]);
 }
 
+// ── Enter/exit lifecycle ────────────────────────────────────────────────────
+// "closed" → unmounted. "pre" → mounted one frame in the hidden pose so the
+// transition has a starting point. "open" → resting pose. "closing" → hidden
+// pose again while the exit transition plays, then unmount.
+type LauncherPhase = "closed" | "pre" | "open" | "closing";
+// Exit visual duration is --nx-t-micro (140ms ≈ 2/3 of standard); unmount a
+// beat later so the transition is never clipped.
+const EXIT_UNMOUNT_MS = 170;
+
+// Card geometry is shared by every workspace tile so a locked card and an
+// available one are the same object in two states, never two components.
+const CARD_GRID = "grid gap-2.5 grid-cols-[repeat(auto-fill,minmax(120px,1fr))]";
+
 // ── Main Component ───────────────────────────────────────────────────────────
 export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) {
   const { workspaceGroups, activeWorkspace, togglePin } = useWorkspace();
   const { language, direction, t } = useI18n();
-  const { resolvedTheme } = useTheme();
   const { switchWorkspace } = useWorkspaceTransitionContext();
   const router = useRouter();
 
   const [search, setSearch] = useState("");
   const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
   const [pinningKey, setPinningKey] = useState<string | null>(null); // loading state for pin toggle
+  const [phase, setPhase] = useState<LauncherPhase>("closed");
   const searchRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLDivElement>(null);
+  const titleId = React.useId();
 
   const isRTL = direction === "rtl";
-  const isDark = resolvedTheme === "dark";
+
+  // Drive the phase machine from the `open` prop
+  useEffect(() => {
+    if (open) {
+      setPhase("pre");
+      // Double rAF: guarantee the hidden pose paints before the transition runs
+      let raf2 = 0;
+      const raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => setPhase("open"));
+      });
+      return () => {
+        cancelAnimationFrame(raf1);
+        cancelAnimationFrame(raf2);
+      };
+    }
+    setPhase((p) => (p === "closed" ? "closed" : "closing"));
+    const timer = window.setTimeout(() => setPhase("closed"), EXIT_UNMOUNT_MS);
+    return () => window.clearTimeout(timer);
+  }, [open]);
 
   // Focus search on open, clear state
   useEffect(() => {
@@ -237,141 +291,120 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     [togglePin, pinningKey]
   );
 
-  // Issue 5: Focus trap — active when launcher is open and no upgrade dialog shown
+  // Focus trap — active when launcher is open and no upgrade dialog shown
+  // (the AlertDialog brings Radix's own trap when it is).
   useFocusTrap(launcherRef, open && !upgradeTarget);
 
-  if (!open) return null;
+  // Stay mounted through the exit transition, then release the DOM
+  if (!open && phase === "closed") return null;
+
+  const visible = open && phase === "open";
 
   return (
     <>
-      {/* ── Backdrop ─────────────────────────────────────────────────────── */}
+      {/* ── Backdrop — crossfade only, 140ms. No backdrop-filter: the scrim
+          pushes the page back by taking light away, not by blurring it. ── */}
       <div
-        className="fixed inset-0 z-[80]"
+        className={cn(
+          "fixed inset-0 z-blur bg-scrim transition-opacity duration-nx-micro motion-reduce:transition-none",
+          visible ? "opacity-100 ease-nx-enter" : "opacity-0 ease-nx-exit",
+          !open && "pointer-events-none"
+        )}
         onClick={() => onOpenChange(false)}
-        style={{
-          background: isDark ? "rgba(0,0,0,0.6)" : "rgba(0,0,0,0.4)",
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-        }}
       />
 
       {/* ── Launcher Panel ───────────────────────────────────────────────── */}
+      {/* Scales 0.95→1 from its bottom inline-start corner — the ⊞ trigger
+          lives at the bottom of the primary rail, so growth reads as coming
+          from it. Centering is class-composed (-translate-*) so it shares one
+          transform with the scale instead of fighting an inline style. */}
       <div
         ref={launcherRef}
         role="dialog"
         aria-modal="true"
-        aria-label={language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
+        aria-labelledby={titleId}
         className={cn(
-          "fixed z-[90] flex flex-col duration-200 animate-in fade-in zoom-in-95",
-          isRTL ? "rtl" : "ltr"
+          "fixed left-1/2 top-1/2 z-overlay flex -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden",
+          "rounded-nx-lg border border-nx-line-hi bg-nx-popover shadow-nx-modal",
+          "transition-[transform,opacity] motion-reduce:transition-none",
+          isRTL ? "rtl origin-bottom-right" : "ltr origin-bottom-left",
+          visible
+            ? "scale-100 opacity-100 duration-nx-standard ease-nx-enter"
+            : "scale-95 opacity-0 duration-nx-micro ease-nx-exit motion-reduce:scale-100",
+          !open && "pointer-events-none"
         )}
         style={{
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
           width: "min(700px, 92vw)",
           maxHeight: "min(640px, 86vh)",
-          borderRadius: 20,
-          background: "hsl(var(--background))",
-          border: "1px solid hsl(var(--border))",
-          boxShadow: isDark
-            ? "0 30px 70px rgba(0,0,0,0.5), 0 0 0 1px hsl(var(--border))"
-            : "0 20px 60px rgba(0,0,0,0.18), 0 0 0 1px hsl(var(--border))",
-          overflow: "hidden",
         }}
       >
         {/* Header */}
-        <div
-          style={{
-            padding: "20px 24px 16px",
-            borderBottom: "1px solid hsl(var(--border))",
-            flexShrink: 0,
-          }}
-        >
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div
-                className="flex items-center justify-center rounded-[10px]"
-                style={{
-                  width: 36,
-                  height: 36,
-                  background: "hsl(var(--primary) / 0.1)",
-                }}
-              >
-                <LayoutGrid size={18} className="text-primary" />
-              </div>
-              <div>
-                <h2 className="font-semibold text-foreground" style={{ fontSize: 15, margin: 0 }}>
-                  {language === "ar" ? "مشغّل التطبيقات" : "App Launcher"}
-                </h2>
-                <p className="text-muted-foreground" style={{ fontSize: 12, margin: 0 }}>
-                  {language === "ar"
-                    ? "تنقل بين مساحات العمل والوحدات"
-                    : "Switch between workspaces and modules"}
-                </p>
-              </div>
+        <div className="flex-shrink-0 border-b border-nx-line px-6 pb-4 pt-5">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+              <LayoutGrid className="h-5 w-5 text-nx-accent" aria-hidden="true" />
             </div>
-            <button
+            <div className="min-w-0">
+              <h2
+                id={titleId}
+                className="text-lg font-semibold leading-tight tracking-tight text-nx-ink"
+              >
+                {t("shell.launcher.title")}
+              </h2>
+              <p className="text-sm leading-relaxed text-nx-ink-2">
+                {t("shell.launcher.description")}
+              </p>
+            </div>
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => onOpenChange(false)}
-              className="flex items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground"
-              style={{
-                width: 32,
-                height: 32,
-                border: "none",
-                cursor: "pointer",
-                background: "transparent",
-              }}
-              aria-label="Close"
+              className="ms-auto h-8 w-8 shrink-0"
+              aria-label={t("common.close")}
             >
-              <X size={16} />
-            </button>
+              <X className="h-4 w-4" aria-hidden="true" />
+            </Button>
           </div>
 
-          {/* Search input */}
-          <div
-            className="flex items-center gap-2 rounded-[10px] border border-border bg-muted/50 px-3"
-            style={{ height: 40 }}
-          >
-            <Search size={15} className="shrink-0 text-muted-foreground" />
-            <input
+          {/* Search — the Input primitive owns rest/hover/focus/invalid; the
+              glyph and the clear control ride in its inline padding. */}
+          <div className="relative">
+            <Search
+              className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+              aria-hidden="true"
+            />
+            <Input
               ref={searchRef}
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={language === "ar" ? "ابحث عن وحدة..." : "Search workspaces..."}
-              className="flex-1 border-none bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-              style={{ direction: isRTL ? "rtl" : "ltr" }}
+              placeholder={t("shell.launcher.searchPlaceholder")}
+              aria-label={t("shell.launcher.searchPlaceholder")}
+              className="pe-11 ps-9"
             />
             {search && (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setSearch("")}
-                className="cursor-pointer text-muted-foreground hover:text-foreground"
-                style={{ background: "none", border: "none", padding: 0, display: "flex" }}
+                className="absolute end-1 top-1 h-8 w-8"
+                aria-label={t("shell.launcher.clearSearch")}
               >
-                <X size={13} />
-              </button>
+                <X className="h-3.5 w-3.5" aria-hidden="true" />
+              </Button>
             )}
           </div>
         </div>
 
         {/* ── Content grid ─────────────────────────────────────────────── */}
-        <div
-          className="nexus-custom-scrollbar"
-          style={{ flex: 1, overflowY: "auto", padding: "16px 24px 20px" }}
-        >
+        <div className="nexus-custom-scrollbar flex-1 overflow-y-auto px-6 pb-5 pt-4">
           {/* Admin workspaces */}
           {adminItems.length > 0 && (
             <section className="mb-6">
-              <SectionLabel label={language === "ar" ? "الإدارة" : "Administration"} />
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-                  gap: 10,
-                }}
-              >
+              <SectionLabel label={t("shell.launcher.sections.administration")} />
+              <div className={CARD_GRID}>
                 {adminItems.map((ws) => {
                   const status = deriveWorkspaceStatus(ws);
                   return (
@@ -398,14 +431,8 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
           {/* Module workspaces — always rendered; backend controls isLocked per workspace */}
           {moduleItems.length > 0 && (
             <section>
-              <SectionLabel label={language === "ar" ? "الوحدات" : "Modules"} />
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))",
-                  gap: 10,
-                }}
-              >
+              <SectionLabel label={t("shell.launcher.sections.modules")} />
+              <div className={CARD_GRID}>
                 {moduleItems.map((ws) => {
                   const status = deriveWorkspaceStatus(ws);
                   return (
@@ -429,48 +456,42 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
             </section>
           )}
 
-          {/* Empty state */}
+          {/* Empty state — no action slot: the only move left is editing the
+              search, and its clear control is already one tab away. */}
           {filteredWorkspaces.length === 0 && (
-            <div
-              className="flex flex-col items-center justify-center py-14 text-muted-foreground"
-              aria-live="polite"
-            >
-              <Search size={32} className="mb-3 opacity-40" />
-              <p className="text-sm">
-                {language === "ar" ? "لا توجد نتائج" : "No workspaces found"}
-              </p>
+            <div aria-live="polite">
+              <EmptyState
+                bare
+                icon={Search}
+                size="md"
+                title={t("shell.launcher.empty.title")}
+                description={t("shell.launcher.empty.description")}
+              />
             </div>
           )}
         </div>
 
         {/* ── Legend footer ─────────────────────────────────────────────── */}
-        <div
-          className="flex flex-wrap items-center gap-4"
-          style={{
-            padding: "10px 24px 14px",
-            borderTop: "1px solid hsl(var(--border))",
-            flexShrink: 0,
-          }}
-        >
+        <div className="flex flex-shrink-0 flex-wrap items-center gap-4 border-t border-nx-line px-6 pb-3.5 pt-2.5">
           <LegendItem
-            icon={<Check size={9} />}
-            colorClass="text-emerald-500"
-            label={language === "ar" ? "نشط" : "Active"}
+            icon={<Check className="h-2.5 w-2.5" aria-hidden="true" />}
+            colorClass="text-success"
+            label={t("shell.launcher.legend.active")}
           />
           <LegendItem
-            icon={<Pin size={9} />}
-            colorClass="text-primary"
-            label={language === "ar" ? "مثبّت" : "Pinned"}
+            icon={<Pin className="h-2.5 w-2.5" aria-hidden="true" />}
+            colorClass="text-nx-accent"
+            label={t("shell.launcher.legend.pinned")}
           />
           <LegendItem
-            icon={<Lock size={9} />}
-            colorClass="text-amber-500"
-            label={language === "ar" ? "مقفل" : "Locked"}
+            icon={<Lock className="h-2.5 w-2.5" aria-hidden="true" />}
+            colorClass="text-warning"
+            label={t("shell.launcher.legend.locked")}
           />
           <LegendItem
-            icon={<Clock size={9} />}
-            colorClass="text-muted-foreground"
-            label={language === "ar" ? "قريباً" : "Coming Soon"}
+            icon={<Clock className="h-2.5 w-2.5" aria-hidden="true" />}
+            colorClass="text-nx-ink-3"
+            label={t("shell.launcher.legend.comingSoon")}
           />
         </div>
       </div>
@@ -483,10 +504,8 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
               .find((ws) => ws.workspaceKey === upgradeTarget)
               ?.getLocalizedName(language) ?? upgradeTarget
           }
-          language={language}
-          isDark={isDark}
-          // Bug 7 fix: platform admins (no tenant context) see a locked module
-          // because modules require a tenant to be active — show "Select a Tenant"
+          // Platform admins (no tenant context) see a locked module because
+          // modules require a tenant to be active — show "Select a Tenant"
           // rather than the misleading "Upgrade your plan" copy.
           isNeedsTenant={!hasTenantContext}
           onClose={() => setUpgradeTarget(null)}
@@ -507,10 +526,7 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 // ── Section Label ─────────────────────────────────────────────────────────────
 function SectionLabel({ label }: { label: string }) {
   return (
-    <p
-      className="font-semibold uppercase tracking-widest text-muted-foreground"
-      style={{ fontSize: 10, letterSpacing: "0.1em", margin: "0 0 10px" }}
-    >
+    <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
       {label}
     </p>
   );
@@ -527,7 +543,7 @@ function LegendItem({
   label: string;
 }) {
   return (
-    <div className="flex items-center gap-1.5 text-muted-foreground" style={{ fontSize: 11 }}>
+    <div className="flex items-center gap-1.5 text-xs text-nx-ink-3">
       <span className={cn("flex", colorClass)}>{icon}</span>
       {label}
     </div>
@@ -556,8 +572,8 @@ function WorkspaceCard({
   onClick: () => void;
   onTogglePin?: (e: React.MouseEvent) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
-  const color = accentColor || "hsl(var(--primary))";
+  const { t } = useI18n();
+  const color = accentColor || "var(--nx-accent)";
   const isLocked = status === "locked";
   const isComingSoon = status === "coming-soon";
   const isDisabled = isLocked || isComingSoon;
@@ -565,121 +581,110 @@ function WorkspaceCard({
   return (
     <div
       role="button"
-      tabIndex={isDisabled ? -1 : 0}
+      // Locked cards stay in the tab order — clicking OR keying one opens the
+      // upgrade dialog, and that upsell must be keyboard-reachable. Only
+      // coming-soon (a true no-op) leaves the tab order.
+      tabIndex={isComingSoon ? -1 : 0}
       onClick={onClick}
       onKeyDown={(e) => {
-        if (isDisabled) return;
+        if (isComingSoon) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onClick();
         }
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       aria-pressed={isActive}
-      aria-disabled={isDisabled}
+      aria-disabled={isComingSoon}
       className={cn(
-        "group relative flex flex-col items-center gap-2 rounded-[14px] outline-none transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-        isComingSoon ? "cursor-default" : "cursor-pointer"
+        "group relative flex flex-col items-center gap-2 rounded-nx-md border px-2.5 pb-3.5 pt-4",
+        "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        NX_FOCUS_RING,
+        isComingSoon ? "cursor-default" : "cursor-pointer",
+        // Hover brightens the hairline and steps the fill. Nothing lifts.
+        isActive
+          ? "border-nx-accent bg-nx-accent-wash"
+          : isDisabled
+            ? "border-nx-line bg-nx-raised"
+            : "border-nx-line bg-transparent hover:border-nx-line-hi hover:bg-nx-raised"
       )}
-      style={{
-        padding: "16px 10px 14px",
-        // Issue 1: use withOpacity() — safe for oklch(), hsl(), hsl(var()), hex
-        border: isActive
-          ? `1.5px solid ${withOpacity(color, 0.4)}`
-          : "1.5px solid hsl(var(--border))",
-        background: isActive
-          ? withOpacity(color, 0.08)
-          : hovered && !isDisabled
-            ? "hsl(var(--accent))"
-            : "transparent",
-        opacity: isComingSoon ? 0.55 : 1,
-        transform: hovered && !isDisabled ? "translateY(-2px)" : "none",
-        boxShadow: hovered && !isDisabled ? "0 8px 24px rgba(0,0,0,0.1)" : "none",
-      }}
     >
-      {/* Pin toggle button — appears on hover (top-left corner) */}
+      {/* Pin toggle — reveals on hover AND keyboard focus-within; always
+          visible on coarse pointers, where there is no hover to reveal it */}
       {onTogglePin && !isLocked && !isComingSoon && (
         <button
           type="button"
           onClick={onTogglePin}
           onKeyDown={(e) => e.stopPropagation()}
           disabled={isPinLoading}
-          aria-label={isPinned ? "Unpin workspace" : "Pin workspace"}
+          aria-label={isPinned ? t("shell.launcher.unpin") : t("shell.launcher.pin")}
           className={cn(
-            "absolute flex items-center justify-center rounded-md transition-all duration-150",
-            "opacity-0 group-hover:opacity-100",
-            isPinned ? "opacity-100" : ""
+            "absolute top-1 flex h-5 w-5 items-center justify-center rounded-nx-sm border",
+            "transition-opacity duration-nx-micro motion-reduce:transition-none",
+            "start-1 disabled:cursor-wait",
+            "opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 [@media(pointer:coarse)]:opacity-100",
+            isPinned
+              ? "border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-nx-accent opacity-100"
+              : "border-transparent bg-nx-raised-2 text-nx-ink-2",
+            NX_FOCUS_RING
           )}
-          style={{
-            top: 5,
-            insetInlineStart: 5,
-            width: 20,
-            height: 20,
-            background: isPinned ? "hsl(var(--primary) / 0.15)" : "hsl(var(--muted))",
-            border: isPinned ? "1px solid hsl(var(--primary) / 0.3)" : "1px solid transparent",
-            color: isPinned ? "hsl(var(--primary))" : "hsl(var(--muted-foreground))",
-            cursor: isPinLoading ? "wait" : "pointer",
-          }}
         >
-          {isPinned ? <PinOff size={10} /> : <Pin size={10} />}
+          {isPinned ? (
+            <PinOff className="h-2.5 w-2.5" aria-hidden="true" />
+          ) : (
+            <Pin className="h-2.5 w-2.5" aria-hidden="true" />
+          )}
         </button>
       )}
 
-      {/* Status badge — only for active, locked, coming-soon */}
+      {/* Status badge — only for active, locked, coming-soon. The glyph is
+          decorative: the accessible name is the legend plus the card label. */}
       {(isActive || isLocked || isComingSoon) && (
         <div
-          className="absolute flex items-center gap-0.5"
-          style={{
-            top: 5,
-            insetInlineEnd: 5,
-            padding: "2px 5px",
-            borderRadius: 5,
-            fontSize: 9,
-            fontWeight: 700,
-            background: isLocked
-              ? "hsl(38 92% 50% / 0.12)"
+          className={cn(
+            "absolute end-1 top-1 flex items-center rounded-nx-sm px-1 py-0.5",
+            // Measured global status tokens — read, never redefined here
+            isLocked
+              ? "bg-warning/10 text-warning"
               : isComingSoon
-                ? "hsl(var(--muted))"
-                : "hsl(142 76% 36% / 0.12)",
-            color: isLocked
-              ? "hsl(38 92% 40%)"
-              : isComingSoon
-                ? "hsl(var(--muted-foreground))"
-                : "hsl(142 76% 36%)",
-          }}
+                ? "bg-nx-raised-2 text-nx-ink-3"
+                : "bg-success/10 text-success"
+          )}
         >
-          {isLocked ? <Lock size={8} /> : isComingSoon ? <Clock size={8} /> : <Check size={8} />}
+          {isLocked ? (
+            <Lock className="h-2 w-2" aria-hidden="true" />
+          ) : isComingSoon ? (
+            <Clock className="h-2 w-2" aria-hidden="true" />
+          ) : (
+            <Check className="h-2 w-2" aria-hidden="true" />
+          )}
         </div>
       )}
 
-      {/* Icon container */}
+      {/* Icon container — the workspace's own accent, mixed token-safely so a
+          hex, an hsl(), an oklch() or a var() all tint identically. */}
       <div
-        className="flex items-center justify-center rounded-xl transition-transform duration-200"
-        style={{
-          width: 42,
-          height: 42,
-          // Issue 1: withOpacity() safe for all color formats
-          background: isDisabled ? "hsl(var(--muted))" : withOpacity(color, 0.12),
-          color: isDisabled ? "hsl(var(--muted-foreground))" : color,
-          transform: hovered && !isDisabled ? "scale(1.08)" : "scale(1)",
-        }}
+        className={cn(
+          "flex h-10 w-10 items-center justify-center rounded-nx-md",
+          isDisabled && "bg-nx-raised text-nx-ink-3"
+        )}
+        style={
+          isDisabled
+            ? undefined
+            : {
+                background: `color-mix(in oklch, ${color} 12%, transparent)`,
+                color,
+              }
+        }
       >
         <DynamicIcon name={icon} size={20} />
       </div>
 
       {/* Name */}
       <span
-        className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center leading-tight"
-        style={{
-          fontSize: 11,
-          fontWeight: 500,
-          color: isActive
-            ? color
-            : isDisabled
-              ? "hsl(var(--muted-foreground))"
-              : "hsl(var(--foreground) / 0.8)",
-        }}
+        className={cn(
+          "max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-center text-xs font-medium leading-tight",
+          isActive ? "text-nx-accent" : isDisabled ? "text-nx-ink-3" : "text-nx-ink-2"
+        )}
       >
         {name}
       </span>
@@ -690,120 +695,62 @@ function WorkspaceCard({
 // ── Upgrade Dialog ────────────────────────────────────────────────────────────
 function UpgradeDialog({
   workspaceName,
-  language,
-  isDark,
   isNeedsTenant,
   onClose,
   onUpgrade,
 }: {
   workspaceName: string;
-  language: string;
-  isDark: boolean; // Issue 3: consistent theme
   /** True when the module is locked only because no tenant context is active.
    *  Changes the dialog copy to "Select a Tenant" instead of "Upgrade Plan". */
   isNeedsTenant: boolean;
   onClose: () => void;
   onUpgrade: () => void;
 }) {
-  // Issue 5: Focus trap inside upgrade dialog
-  const dialogRef = useRef<HTMLDivElement>(null);
-  useFocusTrap(dialogRef, true);
+  const { t } = useI18n();
+
+  // Keys are spelled out rather than composed from a namespace variable so a
+  // locale audit can grep them.
+  const copy = isNeedsTenant
+    ? {
+        title: t("shell.launcher.selectTenant.title"),
+        description: t("shell.launcher.selectTenant.description", { name: workspaceName }),
+        cta: t("shell.launcher.selectTenant.cta"),
+      }
+    : {
+        title: t("shell.launcher.upgrade.title"),
+        description: t("shell.launcher.upgrade.description", { name: workspaceName }),
+        cta: t("shell.launcher.upgrade.cta"),
+      };
+
   return (
-    <>
-      {/* Scrim on top of launcher */}
-      <div
-        className="fixed inset-0 z-[100]"
-        style={{ background: "rgba(0,0,0,0.4)" }}
-        onClick={onClose}
-      />
-      <div
-        ref={dialogRef}
-        role="alertdialog"
-        aria-modal="true"
-        aria-label={language === "ar" ? "ترقية مطلوبة" : "Upgrade Required"}
-        className="fixed z-[110] duration-150 animate-in fade-in zoom-in-95"
-        style={{
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          width: "min(400px, 90vw)",
-          borderRadius: 18,
-          background: "hsl(var(--background))",
-          border: "1px solid hsl(var(--border))",
-          boxShadow: isDark ? "0 30px 60px rgba(0,0,0,0.5)" : "0 20px 50px rgba(0,0,0,0.2)",
-          padding: "28px 28px 24px",
-          textAlign: "center",
-        }}
-      >
-        {/* Icon */}
-        <div
-          className="mx-auto mb-4 flex items-center justify-center rounded-2xl"
-          style={{
-            width: 56,
-            height: 56,
-            background: "hsl(38 92% 50% / 0.1)",
-          }}
-        >
-          <ArrowUpCircle size={28} className="text-amber-500" />
-        </div>
-
-        <h3 className="mb-2 font-bold text-foreground" style={{ fontSize: 17, margin: "0 0 8px" }}>
-          {isNeedsTenant
-            ? language === "ar"
-              ? "اختر مستأجراً"
-              : "Select a Tenant"
-            : language === "ar"
-              ? "ترقية مطلوبة"
-              : "Upgrade Required"}
-        </h3>
-
-        <p
-          className="text-muted-foreground"
-          style={{ fontSize: 13, lineHeight: 1.55, margin: "0 0 24px" }}
-        >
-          {isNeedsTenant
-            ? language === "ar"
-              ? `وحدة "${workspaceName}" تتطلب سياق مستأجر. انتقل إلى قائمة المستأجرين وادخل إلى مستأجر أولاً.`
-              : `"${workspaceName}" requires a tenant context. Go to the Tenants list and drill into a tenant first.`
-            : language === "ar"
-              ? `وحدة "${workspaceName}" غير مضمّنة في خطتك الحالية. قم بالترقية لفتح هذه الوحدة.`
-              : `"${workspaceName}" is not included in your current plan. Upgrade your plan to unlock this module.`}
-        </p>
-
-        <div className="flex gap-3">
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 rounded-[10px] border border-border bg-transparent text-sm font-medium text-muted-foreground transition-colors duration-150 hover:bg-accent"
-            style={{ padding: "10px 0", cursor: "pointer" }}
+    <AlertDialog
+      open
+      onOpenChange={(next) => {
+        if (!next) onClose();
+      }}
+    >
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          {/* Severity speaks through glyph + hairline + wash; the copy below
+              keeps neutral ink. */}
+          <div
+            className={cn(
+              "flex h-12 w-12 items-center justify-center rounded-nx-md border",
+              isNeedsTenant
+                ? "border-info/30 bg-info/10 text-info"
+                : "border-warning/30 bg-warning/10 text-warning"
+            )}
           >
-            {language === "ar" ? "إلغاء" : "Cancel"}
-          </button>
-          <button
-            type="button"
-            onClick={onUpgrade}
-            className="flex-1 rounded-[10px] border-none text-sm font-semibold text-white"
-            style={{
-              padding: "10px 0",
-              cursor: "pointer",
-              background: isNeedsTenant
-                ? "linear-gradient(135deg, hsl(210 90% 50%), hsl(220 88% 46%))"
-                : "linear-gradient(135deg, hsl(38 92% 50%), hsl(28 90% 48%))",
-              boxShadow: isNeedsTenant
-                ? "0 4px 14px hsl(210 90% 50% / 0.35)"
-                : "0 4px 14px hsl(38 92% 50% / 0.35)",
-            }}
-          >
-            {isNeedsTenant
-              ? language === "ar"
-                ? "انتقل إلى المستأجرين"
-                : "Go to Tenants"
-              : language === "ar"
-                ? "ترقية الآن"
-                : "Upgrade Plan"}
-          </button>
-        </div>
-      </div>
-    </>
+            <ArrowUpCircle className="h-6 w-6" aria-hidden="true" />
+          </div>
+          <AlertDialogTitle>{copy.title}</AlertDialogTitle>
+          <AlertDialogDescription>{copy.description}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+          <AlertDialogAction onClick={onUpgrade}>{copy.cta}</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
