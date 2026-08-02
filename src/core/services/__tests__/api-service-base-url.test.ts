@@ -21,9 +21,8 @@ import { describe, it, expect } from "vitest";
 import { ApiService } from "../api.service";
 
 function resolvedBaseUrl(service: ApiService): string {
-  return (
-    service as unknown as { axiosInstance: { defaults: { baseURL?: string } } }
-  ).axiosInstance.defaults.baseURL as string;
+  return (service as unknown as { axiosInstance: { defaults: { baseURL?: string } } }).axiosInstance
+    .defaults.baseURL as string;
 }
 
 describe("ApiService base URL resolution (F-03 regression)", () => {
