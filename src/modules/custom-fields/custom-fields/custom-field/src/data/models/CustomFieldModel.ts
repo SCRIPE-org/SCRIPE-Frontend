@@ -57,7 +57,12 @@ export interface CustomFieldListItemJson {
 export interface CustomFieldListResponseJson {
   items: CustomFieldListItemJson[];
   totalCount: number;
-  page: number;
+  /**
+   * Backend `PagedResult<T>.PageNumber` (Core.Application.Common.PagedResult),
+   * serialized as `pageNumber` under the API's camelCase JSON naming policy.
+   * NOT `page` — see CustomFieldService.test.ts for the pinned wire shape.
+   */
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

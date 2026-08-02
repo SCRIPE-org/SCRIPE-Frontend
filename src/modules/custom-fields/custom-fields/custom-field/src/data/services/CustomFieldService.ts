@@ -39,7 +39,7 @@ export class CustomFieldService implements ICustomFieldService {
     return {
       items: response.items.map((json) => CustomFieldModel.fromListJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
