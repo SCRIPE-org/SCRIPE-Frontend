@@ -21,37 +21,48 @@ export class ProfileService implements IProfileService {
   constructor(private readonly api: IApiService) {}
 
   async getProfile(): Promise<AdminProfile> {
-    return this.api.get<AdminProfile>(PROFILE_ENDPOINTS.LEGACY.ME);
+    return this.api.get<AdminProfile>(PROFILE_ENDPOINTS.ME);
   }
 
   async updateProfile(data: UpdateProfileRequest): Promise<AdminProfile> {
-    return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.LEGACY.ME, data);
+    return this.api.put<AdminProfile>(PROFILE_ENDPOINTS.UPDATE_ME, data);
   }
 
   async uploadAvatar(file: File): Promise<{ profileImageUrl: string }> {
     const formData = new FormData();
     formData.append("file", file);
-    return this.api.post<{ profileImageUrl: string }>(PROFILE_ENDPOINTS.LEGACY.AVATAR, formData);
+    return this.api.post<{ profileImageUrl: string }>(PROFILE_ENDPOINTS.AVATAR, formData);
   }
 
   async removeAvatar(): Promise<void> {
-    return this.api.delete<void>(PROFILE_ENDPOINTS.LEGACY.AVATAR);
+    return this.api.delete<void>(PROFILE_ENDPOINTS.AVATAR);
   }
 
+  /**
+   * AdminsController.ChangePassword is `POST /v1/admins/{id}/change-password` — it needs
+   * the current admin's own id, which this service doesn't otherwise hold. Resolve it via
+   * GET /v1/admins/me (AdminProfileDto always carries `id`) before posting.
+   */
   async changePassword(data: ChangePasswordRequest): Promise<void> {
-    return this.api.post<void>(PROFILE_ENDPOINTS.LEGACY.CHANGE_PASSWORD, data);
+    const me = await this.api.get<{ id: string }>(PROFILE_ENDPOINTS.ME);
+    return this.api.post<void>(PROFILE_ENDPOINTS.CHANGE_PASSWORD(me.id), data);
   }
 
   async getSessions(): Promise<ActiveSession[]> {
-    return this.api.get<ActiveSession[]>(PROFILE_ENDPOINTS.LEGACY.SESSIONS);
+    return this.api.get<ActiveSession[]>(PROFILE_ENDPOINTS.SESSIONS);
   }
 
   async revokeSession(tokenId: string): Promise<void> {
-    return this.api.delete<void>(PROFILE_ENDPOINTS.LEGACY.REVOKE_SESSION(tokenId));
+    return this.api.delete<void>(PROFILE_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
+  /**
+   * AdminAuthController.RevokeAllSessions binds RefreshTokenRequest.RefreshToken from the
+   * httpOnly refresh-token cookie via CookieAuthMiddleware — same pattern as
+   * AuthService.logout()/refreshToken(), which also POST an empty body.
+   */
   async revokeAllSessions(): Promise<{ revokedCount: number }> {
-    return this.api.delete<{ revokedCount: number }>(PROFILE_ENDPOINTS.LEGACY.SESSIONS);
+    return this.api.post<{ revokedCount: number }>(PROFILE_ENDPOINTS.REVOKE_ALL_SESSIONS, {});
   }
 
   async enable2FA(): Promise<Enable2FAResult> {
@@ -67,23 +78,23 @@ export class ProfileService implements IProfileService {
   }
 
   async regenerateBackupCodes(twoFactorCode: string): Promise<string[]> {
-    return this.api.post<string[]>(PROFILE_ENDPOINTS.LEGACY.BACKUP_CODES, { twoFactorCode });
+    return this.api.post<string[]>(PROFILE_ENDPOINTS.BACKUP_CODES_REGENERATE, { twoFactorCode });
   }
 
   async getSecurityLog(page: number = 1, pageSize: number = 10): Promise<SecurityLogEntry[]> {
-    const url = buildUrl(PROFILE_ENDPOINTS.LEGACY.SECURITY_LOG, { page, pageSize });
+    const url = buildUrl(PROFILE_ENDPOINTS.SECURITY_LOG, { page, pageSize });
     return this.api.get<SecurityLogEntry[]>(url);
   }
 
   async getExternalLogins(): Promise<ExternalLogin[]> {
-    return this.api.get<ExternalLogin[]>(PROFILE_ENDPOINTS.LEGACY.EXTERNAL_LOGINS);
+    return this.api.get<ExternalLogin[]>(PROFILE_ENDPOINTS.EXTERNAL_LOGINS);
   }
 
   async linkExternalLogin(data: LinkExternalLoginDto): Promise<ExternalLogin> {
-    return this.api.post<ExternalLogin>(PROFILE_ENDPOINTS.LEGACY.EXTERNAL_LOGINS, data);
+    return this.api.post<ExternalLogin>(PROFILE_ENDPOINTS.LINK_EXTERNAL_LOGIN, data);
   }
 
   async unlinkExternalLogin(externalLoginId: string): Promise<void> {
-    return this.api.delete<void>(PROFILE_ENDPOINTS.LEGACY.UNLINK_EXTERNAL_LOGIN(externalLoginId));
+    return this.api.delete<void>(PROFILE_ENDPOINTS.UNLINK_EXTERNAL_LOGIN(externalLoginId));
   }
 }
