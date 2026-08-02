@@ -10,16 +10,6 @@
  */
 import { getModuleApiService } from "@/core/services/api-factory";
 
-// Service
-import { HrmsService } from "./core/src/data/services/HrmsService";
-
-// Repository
-import { HrmsRepository } from "./core/src/data/repositories/HrmsRepository";
-
-// Interfaces
-import type { IHrmsRepository } from "./core/src/domain/interfaces/IHrmsRepository";
-import type { IHrmsService } from "./core/src/domain/interfaces/IHrmsService";
-
 // StaffMember
 import { StaffMemberService } from "./staff-member/src/data/services/StaffMemberService";
 import { StaffMemberRepository } from "./staff-member/src/data/repositories/StaffMemberRepository";
@@ -63,8 +53,6 @@ import type { IStaffAvailabilityService } from "./staff-availability/src/domain/
 import type { IStaffAvailabilityRepository } from "./staff-availability/src/domain/interfaces/IStaffAvailabilityRepository";
 
 export interface HrmsContainer {
-  hrmsService: IHrmsService;
-  hrmsRepository: IHrmsRepository;
   // StaffMember
   staffMemberService: IStaffMemberService;
   staffMemberRepository: IStaffMemberRepository;
@@ -97,9 +85,6 @@ export function getHrmsContainer(): HrmsContainer {
   if (!_container) {
     const apiService = getModuleApiService("HRMS");
 
-    // Create Service (wraps IApiService)
-    const hrmsService = new HrmsService(apiService);
-
     // Create Repository (uses Service)
     const staffMemberService = new StaffMemberService(apiService);
     const employmentRecordService = new EmploymentRecordService(apiService);
@@ -109,8 +94,6 @@ export function getHrmsContainer(): HrmsContainer {
     const certificationService = new CertificationService(apiService);
     const staffAvailabilityService = new StaffAvailabilityService(apiService);
     _container = {
-      hrmsService,
-      hrmsRepository: new HrmsRepository(hrmsService),
       // StaffMember
       staffMemberService,
       staffMemberRepository: new StaffMemberRepository(staffMemberService),
@@ -142,9 +125,6 @@ export function getHrmsContainer(): HrmsContainer {
  * Hrms container accessor (for use in components)
  */
 export const hrmsContainer = {
-  get hrmsRepository() {
-    return getHrmsContainer().hrmsRepository;
-  },
   // StaffMember
   get staffMemberRepository() {
     return getHrmsContainer().staffMemberRepository;

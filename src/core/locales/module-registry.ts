@@ -177,8 +177,6 @@ import {
 
 import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/core/locales";
 
-import { en as hrmsEn, ar as hrmsAr } from "@modules/hrms/core/locales";
-
 import {
   en as customFieldsEn,
   ar as customFieldsAr,
@@ -269,7 +267,6 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktReviewsEn,
   mktFinancialsEn,
   partyKernelEn,
-  hrmsEn,
   customFieldsEn,
   workManagementEn,
   analyticsEventsEn
@@ -350,7 +347,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktReviewsAr,
   mktFinancialsAr,
   partyKernelAr,
-  hrmsAr,
   customFieldsAr,
   workManagementAr,
   analyticsEventsAr
