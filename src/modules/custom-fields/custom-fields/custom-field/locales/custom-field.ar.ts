@@ -8,6 +8,7 @@ export const ar = {
     deleteConfirm: "هل أنت متأكد من حذف هذا الحقل المخصص؟",
     noItems: "لا توجد حقول مخصصة",
     searchPlaceholder: "ابحث في الحقول المخصصة...",
+    entityTypesLoadFailed: "تعذّر تحميل أنواع الكيانات. قد يكون حقل نوع الكيان غير متاح.",
 
     // Field labels — shared between the table columns and the create/edit forms
     fields: {

@@ -14,7 +14,12 @@ import type { CustomField } from "../../domain/entities/CustomField";
 export function useCustomFieldViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
 
-  const { data: entityTypes = [], isLoading: isEntityTypesLoading } = useQuery({
+  const {
+    data: entityTypes = [],
+    isLoading: isEntityTypesLoading,
+    isError: isEntityTypesError,
+    refetch: refetchEntityTypes,
+  } = useQuery({
     queryKey: ["customFields", "entityTypes"],
     queryFn: () => customFieldRepository.getEntityTypes(),
     staleTime: 1000 * 60 * 60, // Cache entity types for 1 hour
@@ -50,5 +55,5 @@ export function useCustomFieldViewModel() {
     },
   });
 
-  return { vm, entityTypes, isEntityTypesLoading };
+  return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes };
 }

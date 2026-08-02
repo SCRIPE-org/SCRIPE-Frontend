@@ -14,6 +14,7 @@ import type { CustomField } from "../../domain/entities/CustomField";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
+import { ErrorMessage } from "@core/ui/error-message";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2 } from "lucide-react";
 
@@ -37,7 +38,7 @@ const VALUE_TYPE_VARIANTS: Record<
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../locales"), "customFields");
   const { t, language } = useI18n();
-  const { vm, entityTypes } = useCustomFieldViewModel();
+  const { vm, entityTypes, isEntityTypesError, refetchEntityTypes } = useCustomFieldViewModel();
 
   const entityTypeOptions = useMemo(() => {
     if (!entityTypes || entityTypes.length === 0) return [];
@@ -74,6 +75,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       titleKey: "customField.title",
       subtitleKey: "customField.description",
       resource: "custom-fields",
+      // Entity types feed the create form's dropdown; a failed fetch previously left it
+      // silently empty with no indication anything was wrong.
+      customHeaderContent: isEntityTypesError ? (
+        <ErrorMessage
+          size="sm"
+          message={t("customField.entityTypesLoadFailed")}
+          onRetry={() => refetchEntityTypes()}
+        />
+      ) : undefined,
       columns: [
         { key: "entityTypeKey", label: t("customField.fields.entityTypeKey"), sortable: true },
         { key: "key", label: t("customField.fields.key"), sortable: true },
@@ -250,7 +260,16 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         },
       ],
     }),
-    [t, language, entityTypeOptions, valueTypeOptions, valueTypeLabels, vm]
+    [
+      t,
+      language,
+      entityTypeOptions,
+      valueTypeOptions,
+      valueTypeLabels,
+      vm,
+      isEntityTypesError,
+      refetchEntityTypes,
+    ]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;
