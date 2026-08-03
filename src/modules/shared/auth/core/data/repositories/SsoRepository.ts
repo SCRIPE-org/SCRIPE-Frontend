@@ -77,4 +77,14 @@ export class SsoRepository implements ISsoRepository {
     const result = await this.service.completeWorkspaceSelection({ token, tenantId });
     return SsoMapper.callbackResultToDomain(result);
   }
+
+  /**
+   * Exchanges the short-lived, single-use code minted by the SAML ACS redirect for the
+   * actual JWT access/refresh tokens. The tokens are returned in this response body only —
+   * the ACS redirect URL itself never carries them — mirroring completeCallback() above.
+   */
+  async completeSamlCallback(code: string, state: string): Promise<SsoCallbackResult> {
+    const result = await this.service.completeSamlCallback({ code, state });
+    return SsoMapper.callbackResultToDomain(result);
+  }
 }

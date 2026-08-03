@@ -54,4 +54,8 @@ export class SsoService implements ISsoService {
     });
     return `${backendUrl}${url}`;
   }
+
+  completeSamlCallback(params: { code: string; state: string }): Promise<SsoCallbackResultDto> {
+    return this.api.post<SsoCallbackResultDto>(AUTH_CORE_ENDPOINTS.SAML.CALLBACK, params);
+  }
 }

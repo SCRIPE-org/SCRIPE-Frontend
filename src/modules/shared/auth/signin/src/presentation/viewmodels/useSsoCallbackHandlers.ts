@@ -244,6 +244,11 @@ export async function handleOidcCallback(
 
 /**
  * Exported function defining parameters and fields for handle saml callback configurations.
+ *
+ * SECURITY (F-55): the SAML ACS redirect never carries access/refresh tokens in the URL —
+ * only a short-lived, single-use opaque `code` (+ bound `state`). This handler exchanges
+ * that code via a backend POST call to receive the actual JWTs in the response body,
+ * mirroring handleOidcCallback()'s code+state exchange above.
  */
 export async function handleSamlCallback(
   searchParams: SsoSearchParams,
@@ -251,8 +256,6 @@ export async function handleSamlCallback(
   setters: SsoCallbackSetters
 ) {
   const errorParam = searchParams.get("error");
-  const accessToken = searchParams.get("access_token");
-  const type = searchParams.get("type");
 
   if (errorParam) {
     const errorMessage = decodeURIComponent(errorParam);
@@ -289,7 +292,10 @@ export async function handleSamlCallback(
     return;
   }
 
-  if (!accessToken) {
+  const code = searchParams.get("code");
+  const state = searchParams.get("state");
+
+  if (!code || !state) {
     setters.setState("error");
     setters.setErrorInfo({
       title: deps.t("auth.sso.callbackError"),
@@ -298,30 +304,33 @@ export async function handleSamlCallback(
     return;
   }
 
-  if (type !== "admin" && type !== "user") {
+  try {
+    const result = await deps.ssoRepository.completeSamlCallback(code, state);
+
+    if (result.type === "admin" && result.accessToken) {
+      await completeAdminLogin(
+        result.accessToken,
+        {
+          status: result.subscriptionStatus,
+          gracePhase: result.gracePhase,
+          editionName: result.editionName,
+        },
+        deps,
+        setters
+      );
+      return;
+    }
+
+    if (result.type === "user" && result.accessToken) {
+      await completeUserLogin(result.accessToken, deps, setters);
+      return;
+    }
+
     setters.setState("error");
     setters.setErrorInfo({
       title: deps.t("auth.sso.callbackError"),
       message: deps.t("auth.sso.unsupportedAccountType"),
     });
-    return;
-  }
-
-  try {
-    if (type === "admin") {
-      await completeAdminLogin(
-        accessToken,
-        {
-          status: searchParams.get("subscription_status"),
-          gracePhase: searchParams.get("grace_phase"),
-          editionName: searchParams.get("edition_name"),
-        },
-        deps,
-        setters
-      );
-    } else {
-      await completeUserLogin(accessToken, deps, setters);
-    }
   } catch (error) {
     setters.setState("error");
     setters.setErrorInfo({
