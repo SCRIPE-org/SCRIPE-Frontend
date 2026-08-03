@@ -21,7 +21,7 @@ export interface NotificationItem {
 export interface NotificationListResponse {
   items: NotificationItem[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }
 

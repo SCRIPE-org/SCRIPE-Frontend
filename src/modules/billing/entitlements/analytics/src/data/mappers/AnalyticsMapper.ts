@@ -219,7 +219,7 @@ export class AnalyticsMapper {
     return {
       items: (dto.items ?? []).map(AnalyticsMapper.toTenantHealthScore),
       totalCount: dto.totalCount ?? 0,
-      page: dto.page ?? 1,
+      page: dto.pageNumber ?? 1,
       pageSize: dto.pageSize ?? 20,
     };
   }

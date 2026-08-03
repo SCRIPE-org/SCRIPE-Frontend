@@ -51,6 +51,6 @@ export interface ThemeBundleDto {
 export interface ThemeBundlePagedResult {
   items: ThemeBundleDto[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }

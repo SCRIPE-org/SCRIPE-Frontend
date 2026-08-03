@@ -51,7 +51,7 @@ export interface PlatformLeadResponseModel {
 export interface PagedLeadsModel {
   items: PlatformLeadListResponseModel[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;
@@ -79,7 +79,7 @@ export interface AssignableAdminResponseModel {
 export interface PagedAssignableAdminsModel {
   items: AssignableAdminResponseModel[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

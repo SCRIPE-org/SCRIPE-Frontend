@@ -167,7 +167,7 @@ export interface TenantHealthScoreModel {
 export interface TenantHealthScoresResponseModel {
   items: TenantHealthScoreModel[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   atRiskCount: number;
   moderateCount: number;

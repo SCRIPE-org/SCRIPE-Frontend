@@ -27,11 +27,11 @@ export class OnboardingQuestionRepository implements IOnboardingQuestionReposito
     return {
       items: result.items.map((m) => OnboardingQuestionMapper.toEntity(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      page: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
-      hasNextPage: result.page < result.totalPages,
-      hasPreviousPage: result.page > 1,
+      hasNextPage: result.pageNumber < result.totalPages,
+      hasPreviousPage: result.pageNumber > 1,
     };
   }
 

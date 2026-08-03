@@ -98,7 +98,7 @@ export interface SubscriptionModel {
 export interface PagedEditionResult {
   items: EditionThinModel[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

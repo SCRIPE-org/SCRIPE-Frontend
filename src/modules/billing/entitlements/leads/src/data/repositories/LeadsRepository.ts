@@ -36,7 +36,7 @@ export class LeadsRepository implements ILeadsRepository {
     return {
       items: model.items.map(LeadsMapper.toListItem),
       totalCount: model.totalCount,
-      page: model.page,
+      page: model.pageNumber,
       pageSize: model.pageSize,
       totalPages: model.totalPages,
       hasNextPage: model.hasNextPage,

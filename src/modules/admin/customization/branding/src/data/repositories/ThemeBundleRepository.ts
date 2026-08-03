@@ -29,7 +29,7 @@ export class ThemeBundleRepository implements IThemeBundleRepository {
     return {
       items: result.items.map(ThemeBundleMapper.toEntity),
       totalCount: result.totalCount,
-      page: result.page,
+      page: result.pageNumber,
       pageSize: result.pageSize,
     };
   }

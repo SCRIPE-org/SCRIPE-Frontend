@@ -69,7 +69,7 @@ export interface ThemeDetailDto extends ThemeCardDto {
 export interface ThemePagedResult {
   items: ThemeCardDto[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }
 

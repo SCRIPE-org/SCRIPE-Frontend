@@ -52,7 +52,7 @@ export interface OnboardingQuestionDetailModel extends OnboardingQuestionListMod
 export interface PagedOnboardingQuestionsModel {
   items: OnboardingQuestionListModel[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
 }
