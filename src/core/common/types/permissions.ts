@@ -28,6 +28,7 @@ import { PARTY_KERNEL_PERMISSIONS } from "@modules/party-kernel/permission-const
 import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission-constants";
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
+import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
 
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
@@ -46,6 +47,7 @@ export {
   HRMS_PERMISSIONS,
   WORK_MANAGEMENT_PERMISSIONS,
   CUSTOM_FIELDS_PERMISSIONS,
+  ANALYTICS_EVENTS_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -187,6 +189,7 @@ export const SYSTEM_PERMISSIONS = {
   ...HRMS_PERMISSIONS,
   ...WORK_MANAGEMENT_PERMISSIONS,
   ...CUSTOM_FIELDS_PERMISSIONS,
+  ...ANALYTICS_EVENTS_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────

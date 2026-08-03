@@ -28,6 +28,7 @@ export const ENTITLEMENTS_PERMISSIONS = {
   // ── Billing ─────────────────────────────────────────────
   INVOICES_VIEW: "invoices.view",
   INVOICES_EXPORT: "invoices.export",
+  INVOICES_MANAGE: "invoices.manage",
   TRANSACTIONS_VIEW: "transactions.view",
   BILLING_MANAGE: "billing.manage",
   BILLING_DASHBOARD_VIEW: "billing.manage",
