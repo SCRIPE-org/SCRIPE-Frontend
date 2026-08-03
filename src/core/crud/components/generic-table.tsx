@@ -157,6 +157,23 @@ interface GenericTableProps<T> {
   stickyActions?: boolean;
   /** Custom render function for actions column - completely overrides default actions */
   renderActions?: (row: T) => React.ReactNode;
+  /**
+   * Server-driven sort (F-85). When `onSortChange` is provided, the table stops
+   * reordering `data` locally — it trusts `data` is already in the order the
+   * caller requested from the server — and reports header clicks upward
+   * instead. `sortColumn`/`sortDirection` then drive the header's sort-arrow
+   * indicator. Omit all three (the default) to keep the original client-side,
+   * current-page-only sort behavior unchanged.
+   *
+   * `sortColumn`/the callback's column argument are plain `string` (the
+   * column key stringified) rather than `keyof T` — this is the boundary the
+   * caller's viewmodel and the backend query string both speak, and pinning it
+   * to `keyof T` here forces TS to solve for `T` at every untyped call site
+   * (e.g. GenericCrudView, which invokes this generically).
+   */
+  sortColumn?: string;
+  sortDirection?: "asc" | "desc";
+  onSortChange?: (column: string, direction: "asc" | "desc") => void;
 }
 
 /**
@@ -214,12 +231,27 @@ function GenericTableInner<T extends Record<string, any>>({
   overrideTableStyle,
   stickyActions = true,
   renderActions,
+  sortColumn: controlledSortColumn,
+  sortDirection: controlledSortDirection,
+  onSortChange,
 }: GenericTableProps<T>) {
   const { t, direction } = useI18n();
   const settings = useSettings();
-  const [sortColumn, setSortColumn] = useState<keyof T | null>(null);
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+  const [internalSortColumn, setInternalSortColumn] = useState<keyof T | null>(null);
+  const [internalSortDirection, setInternalSortDirection] = useState<"asc" | "desc">("asc");
   const [searchTerm, setSearchTerm] = useState(searchValue ?? "");
+
+  // Server-driven sort mode is opt-in: only a caller that passes onSortChange
+  // (via customTableProps on the CRUD config) leaves the original client-side
+  // sort path. Every other consumer of this shared table keeps behaving
+  // exactly as before.
+  const isServerSort = Boolean(onSortChange);
+  const activeSortDirection = isServerSort
+    ? (controlledSortDirection ?? "asc")
+    : internalSortDirection;
+  /** Is this column the one currently driving the sort, in either mode? */
+  const isActiveSortColumn = (columnKey: keyof T): boolean =>
+    isServerSort ? String(columnKey) === controlledSortColumn : columnKey === internalSortColumn;
 
   // Sticky actions state
   const tableRef = useRef<HTMLDivElement>(null);
@@ -301,11 +333,18 @@ function GenericTableInner<T extends Record<string, any>>({
   }, [stickyActions, actions, direction]);
 
   const handleSort = (column: keyof T) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    if (onSortChange) {
+      const columnKey = String(column);
+      const nextDirection: "asc" | "desc" =
+        controlledSortColumn === columnKey && controlledSortDirection === "asc" ? "desc" : "asc";
+      onSortChange(columnKey, nextDirection);
+      return;
+    }
+    if (internalSortColumn === column) {
+      setInternalSortDirection(internalSortDirection === "asc" ? "desc" : "asc");
     } else {
-      setSortColumn(column);
-      setSortDirection("asc");
+      setInternalSortColumn(column);
+      setInternalSortDirection("asc");
     }
   };
 
@@ -317,16 +356,22 @@ function GenericTableInner<T extends Record<string, any>>({
         )
       );
 
-  const sortedData = [...filteredData].sort((a, b) => {
-    if (!sortColumn) return 0;
+  // Server-sort mode trusts `data` is already in the requested order — the
+  // rows are one server-fetched page, not the full result set, so re-sorting
+  // them locally would only ever reorder within that page again (the exact
+  // bug this mode exists to fix).
+  const sortedData = isServerSort
+    ? filteredData
+    : [...filteredData].sort((a, b) => {
+        if (!internalSortColumn) return 0;
 
-    const aValue = a[sortColumn];
-    const bValue = b[sortColumn];
+        const aValue = a[internalSortColumn];
+        const bValue = b[internalSortColumn];
 
-    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
-    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
-    return 0;
-  });
+        if (aValue < bValue) return internalSortDirection === "asc" ? -1 : 1;
+        if (aValue > bValue) return internalSortDirection === "asc" ? 1 : -1;
+        return 0;
+      });
 
   // Rows deliberately pass a className so TableRow's preserved
   // className-override contract hands hover control back to this component —
@@ -554,7 +599,9 @@ function GenericTableInner<T extends Record<string, any>>({
                       key={String(column.key)}
                       sortable={column.sortable}
                       sortDirection={
-                        column.sortable && sortColumn === column.key ? sortDirection : null
+                        column.sortable && isActiveSortColumn(column.key)
+                          ? activeSortDirection
+                          : null
                       }
                       onClick={column.sortable ? () => handleSort(column.key) : undefined}
                       onKeyDown={

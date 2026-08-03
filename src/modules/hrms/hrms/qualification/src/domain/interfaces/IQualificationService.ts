@@ -21,6 +21,8 @@ export interface IQualificationService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<QualificationListResult>;
   getById(id: string): Promise<QualificationModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

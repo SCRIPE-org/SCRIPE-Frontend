@@ -150,6 +150,13 @@ export const EmploymentRecordListView = React.memo(function EmploymentRecordList
         icon: <Trash2 className="h-4 w-4" />,
       },
     ],
+    // F-85: opts this list into real server-side sort (see StaffMemberListView
+    // for the full rationale). Unset, a column click stays client-side-only.
+    customTableProps: {
+      sortColumn: vm.sortBy,
+      sortDirection: vm.sortDirection,
+      onSortChange: vm.handleSortChange,
+    },
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

@@ -17,7 +17,7 @@ export const ar = {
       isActive: "نشط",
     },
     placeholders: {
-      identityUserId: "أدخل معرف حساب المستخدم المرتبط",
+      identityUserId: "ابحث بالاسم أو البريد الإلكتروني...",
       firstName: "سارة",
       lastName: "أحمد",
       email: "sara.ahmed@company.com",
@@ -25,6 +25,11 @@ export const ar = {
     },
     descriptions: {
       isActive: "هل ملف هذا الموظف نشط حاليًا أم لا.",
+      identityUserId: "ابحث عن حساب المسؤول أو المستخدم الذي يجب ربط ملف الموظف به.",
+    },
+    status: {
+      linked: "مرتبط",
+      notLinked: "غير مرتبط",
     },
   },
 };

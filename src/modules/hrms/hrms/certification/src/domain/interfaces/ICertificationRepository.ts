@@ -9,6 +9,9 @@ export interface CertificationListParams {
   page: number;
   pageSize: number;
   search?: string;
+  /** Server-side sort column key (e.g. "name") — optional, additive (F-85). */
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 }
 
 export interface ICertificationRepository {

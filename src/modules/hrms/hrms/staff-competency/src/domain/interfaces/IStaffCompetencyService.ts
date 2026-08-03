@@ -21,6 +21,8 @@ export interface IStaffCompetencyService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffCompetencyListResult>;
   getById(id: string): Promise<StaffCompetencyModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

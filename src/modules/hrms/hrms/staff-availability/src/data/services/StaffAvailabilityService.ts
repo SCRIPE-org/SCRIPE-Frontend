@@ -24,11 +24,15 @@ export class StaffAvailabilityService implements IStaffAvailabilityService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffAvailabilityListResult> {
     const url = buildUrl(STAFF_AVAILABILITY_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      sortBy: params.sortBy,
+      sortDirection: params.sortDirection,
     });
 
     const response = await this.api.get<StaffAvailabilityListResponseJson>(url);

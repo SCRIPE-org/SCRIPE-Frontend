@@ -21,6 +21,8 @@ export interface IEmploymentRecordService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<EmploymentRecordListResult>;
   getById(id: string): Promise<EmploymentRecordModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

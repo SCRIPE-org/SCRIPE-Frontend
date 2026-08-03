@@ -20,7 +20,7 @@ import { resolveIntlLocale } from "@core/common/utils";
 // P5.4: React.memo prevents unnecessary re-renders
 export const StaffMemberListView = React.memo(function StaffMemberListView() {
   useModuleLocales(() => import("../../../locales"), "hrms");
-  const { vm } = useStaffMemberViewModel();
+  const { vm, searchIdentityUsers } = useStaffMemberViewModel();
   const { t, language } = useI18n();
 
   const config: CrudConfig<StaffMember> = {
@@ -58,9 +58,19 @@ export const StaffMemberListView = React.memo(function StaffMemberListView() {
         ),
       },
       {
+        // F-86: the backend returns this pre-encrypted (SecureIdMapper) and
+        // the list DTO carries no resolved display name alongside it, so the
+        // raw ciphertext is never rendered — it has no meaningful sort order
+        // either. The column now only signals whether a link exists; the
+        // encrypted id itself stays available on the row for the edit form's
+        // picker (editInitialValues below).
         key: "identityUserId",
         label: t("staffMember.fields.identityUserId"),
-        sortable: true,
+        render: (value: string | null) => (
+          <Badge variant={value ? "active" : "inactive"}>
+            {value ? t("staffMember.status.linked") : t("staffMember.status.notLinked")}
+          </Badge>
+        ),
       },
       {
         key: "createdAt",
@@ -71,10 +81,22 @@ export const StaffMemberListView = React.memo(function StaffMemberListView() {
     ],
     createFields: [
       {
+        // F-86: was a bare free-text input asking the admin to hand-type an
+        // encrypted id they have no way to obtain correctly. Now a real
+        // picker searching Identity Admins + Users (identityUserId may name
+        // either — see backend CreateStaffMemberCommandHandler), matching the
+        // shared form system's existing server-select pattern.
         name: "identityUserId",
         label: t("staffMember.fields.identityUserId"),
-        type: "text" as const,
+        type: "server-select" as const,
         placeholder: t("staffMember.placeholders.identityUserId"),
+        searchPlaceholder: t("staffMember.placeholders.identityUserId"),
+        searchType: "server" as const,
+        onServerSearch: searchIdentityUsers,
+        debounceMs: 300,
+        noResultsText: t("common.noResults"),
+        searchingText: t("common.searching"),
+        description: t("staffMember.descriptions.identityUserId"),
       },
       {
         name: "firstName",
@@ -114,8 +136,15 @@ export const StaffMemberListView = React.memo(function StaffMemberListView() {
       {
         name: "identityUserId",
         label: t("staffMember.fields.identityUserId"),
-        type: "text" as const,
+        type: "server-select" as const,
         placeholder: t("staffMember.placeholders.identityUserId"),
+        searchPlaceholder: t("staffMember.placeholders.identityUserId"),
+        searchType: "server" as const,
+        onServerSearch: searchIdentityUsers,
+        debounceMs: 300,
+        noResultsText: t("common.noResults"),
+        searchingText: t("common.searching"),
+        description: t("staffMember.descriptions.identityUserId"),
       },
       {
         name: "firstName",
@@ -184,6 +213,15 @@ export const StaffMemberListView = React.memo(function StaffMemberListView() {
         icon: <Trash2 className="h-4 w-4" />,
       },
     ],
+    // F-85: opts this list into real server-side sort. Unset (the default for
+    // every other CRUD view on this shared table), a column click still only
+    // reorders the current page client-side — this wiring is what turns a
+    // "sortable" column header into a real server refetch.
+    customTableProps: {
+      sortColumn: vm.sortBy,
+      sortDirection: vm.sortDirection,
+      onSortChange: vm.handleSortChange,
+    },
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

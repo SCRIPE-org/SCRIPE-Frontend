@@ -9,6 +9,7 @@
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getHrmsContainer } from "../../../../di";
 import type { StaffMember } from "../../domain/entities/StaffMember";
+import type { FieldOption } from "@core/ui/forms/generic-form";
 
 export function useStaffMemberViewModel() {
   const { staffMemberRepository } = getHrmsContainer();
@@ -19,6 +20,8 @@ export function useStaffMemberViewModel() {
         page: params.page,
         pageSize: params.pageSize,
         search: params.search,
+        sortBy: params.sortBy,
+        sortDirection: params.sortDirection,
       });
       return {
         items: res.items || [],
@@ -43,5 +46,17 @@ export function useStaffMemberViewModel() {
     },
   });
 
-  return { vm };
+  // Linked User Account picker (F-86): identityUserId is now a server-select
+  // resolving to an Identity Admin or User, not a free-text field the caller
+  // has no way to fill in correctly (the backend requires it to decrypt to a
+  // real, tenant-scoped Admin/User and fails closed otherwise).
+  const searchIdentityUsers = async (query: string): Promise<FieldOption[]> => {
+    const results = await staffMemberRepository.searchIdentityUsers(query);
+    return results.map((r) => ({
+      value: r.id,
+      label: r.email ? `${r.name} (${r.email})` : r.name,
+    }));
+  };
+
+  return { vm, searchIdentityUsers };
 }

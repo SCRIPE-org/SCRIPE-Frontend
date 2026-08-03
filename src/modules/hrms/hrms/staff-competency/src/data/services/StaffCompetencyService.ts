@@ -24,11 +24,15 @@ export class StaffCompetencyService implements IStaffCompetencyService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffCompetencyListResult> {
     const url = buildUrl(STAFF_COMPETENCY_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      sortBy: params.sortBy,
+      sortDirection: params.sortDirection,
     });
 
     const response = await this.api.get<StaffCompetencyListResponseJson>(url);

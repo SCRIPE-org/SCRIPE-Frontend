@@ -26,11 +26,15 @@ export class EmploymentRecordService implements IEmploymentRecordService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<EmploymentRecordListResult> {
     const url = buildUrl(BASE_URL, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      sortBy: params.sortBy,
+      sortDirection: params.sortDirection,
     });
 
     const response = await this.api.get<EmploymentRecordListResponseJson>(url);

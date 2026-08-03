@@ -13,7 +13,10 @@ import type {
   IStaffMemberRepository,
   StaffMemberListParams,
 } from "../../domain/interfaces/IStaffMemberRepository";
-import type { IStaffMemberService } from "../../domain/interfaces/IStaffMemberService";
+import type {
+  IStaffMemberService,
+  IdentityUserSearchResult,
+} from "../../domain/interfaces/IStaffMemberService";
 import type { StaffMember } from "../../domain/entities/StaffMember";
 import { StaffMemberMapper } from "../mappers/StaffMemberMapper";
 
@@ -50,5 +53,9 @@ export class StaffMemberRepository implements IStaffMemberRepository {
 
   async delete(id: string): Promise<void> {
     await this.service.delete(id);
+  }
+
+  async searchIdentityUsers(query: string): Promise<IdentityUserSearchResult[]> {
+    return this.service.searchIdentityUsers(query);
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { useGenericQuery } from "./useGenericQuery";
 import { useGenericMutations } from "./useGenericMutations";
 import { BaseEntity, PaginatedResult } from "../types";
@@ -7,6 +7,8 @@ export interface CrudViewModelOptions {
   initialPageSize?: number;
   enabled?: boolean;
 }
+
+export type SortDirection = "asc" | "desc";
 
 export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = any>(
   key: any[],
@@ -24,6 +26,15 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   const [searchValue, setSearchValue] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Server-side sort — optional and additive (F-85). `sortBy` stays undefined
+  // until a caller explicitly wires a column-header click to `handleSortChange`
+  // (see GenericTable's `onSortChange` prop). Until then, `queryParams` below
+  // never contains a sortBy/sortDirection key at all, so the object handed to
+  // `getAll` is byte-identical to before this existed — no behavior change for
+  // the ~10+ other modules built on this same shared hook.
+  const [sortBy, setSortBy] = useState<string | undefined>(undefined);
+  const [sortDirection, setSortDirection] = useState<SortDirection | undefined>(undefined);
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [viewModalOpen, setViewModalOpen] = useState(false);
@@ -32,13 +43,19 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   const [viewItem, setViewItem] = useState<T | null>(null);
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
 
-  // 1. Data Fetching
-  const query = useGenericQuery<T>(
-    key,
-    services.getAll,
-    { page, pageSize, search: searchValue },
-    options.enabled !== false
+  // Conditionally-shaped params: only grows to include sortBy/sortDirection
+  // once a consumer has actually requested a sort. Modules that never call
+  // handleSortChange keep sending exactly { page, pageSize, search }.
+  const queryParams = useMemo(
+    () =>
+      sortBy
+        ? { page, pageSize, search: searchValue, sortBy, sortDirection }
+        : { page, pageSize, search: searchValue },
+    [page, pageSize, searchValue, sortBy, sortDirection]
   );
+
+  // 1. Data Fetching
+  const query = useGenericQuery<T>(key, services.getAll, queryParams, options.enabled !== false);
 
   // 2. Mutations
   const mutations = useGenericMutations<T, TCreate, TUpdate>(key, services, {
@@ -62,6 +79,16 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   const changePageSize = useCallback((newSize: number) => {
     setPageSize(newSize);
     setPage(1);
+  }, []);
+
+  // Server-side sort handler. Wire this to GenericTable's `onSortChange` (via
+  // `customTableProps` on the CRUD config) to opt a specific list into real
+  // server-side sorting; leaving it unwired keeps the existing client-side,
+  // current-page-only sort behavior for that list.
+  const handleSortChange = useCallback((column: string, direction: SortDirection) => {
+    setSortBy(column);
+    setSortDirection(direction);
+    setPage(1); // Reset to page 1 — a new sort order invalidates the current page position
   }, []);
 
   const openEditModal = useCallback((item: T) => {
@@ -102,6 +129,8 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
     searchInputRef,
     selectedItems,
     setSelectedItems,
+    sortBy,
+    sortDirection,
 
     // Modals
     isCreateModalOpen,
@@ -117,6 +146,7 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
     handleSearchChange,
     changePage,
     changePageSize,
+    handleSortChange,
     openEditModal,
     closeEditModal,
     openViewModal,
