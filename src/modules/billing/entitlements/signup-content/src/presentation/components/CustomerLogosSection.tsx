@@ -8,6 +8,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Building2, Plus, ChevronUp, ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { CustomerLogoDialog } from "./CustomerLogoDialog";
 import type { useSignupContentViewModel } from "../viewmodels/useSignupContentViewModel";
+import Image from "next/image";
 
 type SignupContentViewModel = ReturnType<typeof useSignupContentViewModel>;
 
@@ -88,8 +89,7 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
                 </div>
                 {logo.assetUrl && (
                   <div className="h-8 w-12 shrink-0 overflow-hidden rounded-nx-sm border border-nx-line bg-nx-ground">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary tenant-supplied asset URL, not an optimizable local/remote-listed image */}
-                    <img
+                    <Image
                       src={logo.assetUrl}
                       alt={logo.name}
                       className="h-full w-full object-contain p-0.5"

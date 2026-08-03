@@ -28,6 +28,7 @@ import {
   SetupErrorView,
   PasswordCheck,
 } from "../components/SetupAccountStateViews";
+import Image from "next/image";
 
 /**
  * SetupAccountView is the main public page component for the workspace administrator setup flow.
@@ -278,7 +279,7 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
       </div>
       <div className="mb-8 flex flex-col items-center gap-3">
         <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-          <img
+          <Image
             src="/app-logo.png"
             alt={`${BRAND.name} Logo`}
             className="h-full w-full object-cover"

@@ -21,6 +21,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Pencil, Trash2, Zap, Shield, Users, Fingerprint } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
+import Image from "next/image";
 
 /**
  * Exported constant defining parameters and fields for identity provider keys configurations.
@@ -287,7 +288,7 @@ export function useIdentityProvidersViewModel() {
         render: (_val: unknown, item: IdentityProviderListItem) => (
           <div className="flex items-center gap-2">
             {item.iconUrl ? (
-              <img src={item.iconUrl} alt={item.name} className="h-5 w-5 rounded object-contain" />
+              <Image src={item.iconUrl} alt={item.name} className="h-5 w-5 rounded object-contain" />
             ) : (
               <Fingerprint className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             )}

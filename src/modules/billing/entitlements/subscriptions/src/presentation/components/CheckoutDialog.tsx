@@ -22,6 +22,7 @@ import {
 import { Input } from "@core/ui/input";
 import { CreditCard, ExternalLink, Copy, CheckCircle2, Clock } from "lucide-react";
 import type { SubscriptionDialogProps } from "../types";
+import Image from "next/image";
 
 /** Stripe checkout sessions expire after 24 hours by default */
 const SESSION_EXPIRY_MS = 24 * 60 * 60 * 1000;
@@ -148,7 +149,7 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
                   than an nx step — a QR scanner needs guaranteed maximum
                   contrast against the code regardless of the active theme. */}
               <div className="rounded-nx-lg border border-nx-line bg-[var(--nx-on-fill)] p-3 shadow-nx-sm">
-                <img
+                <Image
                   src={vm.checkoutQrCode}
                   alt={t("billing.dialogs.qrCodeAlt")}
                   className="h-48 w-48"

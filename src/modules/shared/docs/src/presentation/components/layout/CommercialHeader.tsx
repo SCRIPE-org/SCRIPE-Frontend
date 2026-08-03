@@ -12,6 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { BRAND } from "@core/config/branding";
+import Image from "next/image";
 
 // ── Navigation structure — copy lives in commercialMegaMenu.<id>.* (pages/
 // common locale). Section `id` doubles as the locale segment name, so
@@ -347,7 +348,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
             aria-label={t("commercialHeader.logoAria", { brand: BRAND.namePascal })}
           >
             <span className="com-header-logo-mark">
-              <img src="/app-logo.png" alt="" className="com-header-logo-img" aria-hidden="true" />
+              <Image src="/app-logo.png" alt="" className="com-header-logo-img" aria-hidden="true" />
             </span>
             <span className="com-header-brand-copy">
               <span className="com-header-logo-name">{BRAND.nameUpper}</span>

@@ -31,6 +31,7 @@ export function DynamicIcon({ name, size = 18 }: { name: string; size?: number }
 }
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
+import Image from "next/image";
 
 // NOTE: no TooltipProvider here — the rail mounts ONE provider at its nav
 // root (~150ms delay). One provider per button meant N providers per render
@@ -283,7 +284,7 @@ export function PrimaryRailLogo({
       aria-label={resolveBilingualLabel("Go to Home", "الصفحة الرئيسية", language)}
     >
       {tenantLogoUrl ? (
-        <img
+        <Image
           src={tenantLogoUrl}
           alt="Logo"
           style={{

@@ -1,6 +1,7 @@
 "use client";
 
 import type { AvatarStackBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import Image from "next/image";
 
 const SIZE_CLASS = { sm: "h-7 w-7", md: "h-9 w-9", lg: "h-12 w-12" };
 
@@ -14,7 +15,7 @@ export function AvatarStackBlockView({ block }: { block: AvatarStackBlock }) {
     <div className="flex items-center justify-center gap-3">
       <div className="flex -space-x-2">
         {props.avatarUrls.slice(0, 5).map((url, index) => (
-          <img
+          <Image
             key={`${url}-${index}`}
             src={url}
             alt=""

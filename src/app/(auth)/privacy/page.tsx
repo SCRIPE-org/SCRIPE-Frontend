@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { BRAND } from "@core/config/branding";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: `Privacy Policy — ${BRAND.name}`,
@@ -41,7 +42,7 @@ export default function PrivacyPage() {
 
       {/* Logo */}
       <div className="mb-6 flex flex-col items-center">
-        <img src="/app-logo.png" alt={BRAND.name} className="mb-2 h-10 w-auto" />
+        <Image src="/app-logo.png" alt={BRAND.name} className="mb-2 h-10 w-auto" />
         <span className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-300/60">
           Legal Agreement
         </span>

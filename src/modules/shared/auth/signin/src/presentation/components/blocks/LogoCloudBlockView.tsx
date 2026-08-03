@@ -6,6 +6,7 @@ import {
   isValidCtaUrl,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { safeItems } from "./block-style-utils";
+import Image from "next/image";
 
 const SIZE_CLASS = { sm: "h-8", md: "h-10", lg: "h-14" };
 
@@ -26,7 +27,7 @@ export function LogoCloudBlockView({ block }: { block: LogoCloudBlock }) {
     <div className={`grid items-center gap-4 ${columns}`}>
       {safeItems(props.items, 8).map((item, index) => {
         const img = (
-          <img
+          <Image
             src={item.src}
             alt={item.alt}
             className={`${SIZE_CLASS[props.size || "md"]} w-full object-contain ${props.grayscale ? "grayscale" : ""}`}

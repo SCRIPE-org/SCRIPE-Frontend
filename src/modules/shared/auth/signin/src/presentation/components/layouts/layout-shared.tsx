@@ -1,6 +1,7 @@
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";
+import Image from "next/image";
 
 /** Reusable logo image with error-hiding fallback */
 export function LogoImg({
@@ -13,7 +14,7 @@ export function LogoImg({
   className?: string;
 }) {
   return (
-    <img
+    <Image
       src={logoSrc}
       alt={`${logoAlt} Logo`}
       className={className}

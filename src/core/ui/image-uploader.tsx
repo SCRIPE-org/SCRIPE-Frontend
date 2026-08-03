@@ -13,6 +13,7 @@ import {
   formatFileSize,
   getImageDimensions,
 } from "@core/common/image-utils";
+import Image from "next/image";
 
 export interface ImageUploaderProps {
   id?: string;
@@ -284,7 +285,7 @@ export function ImageUploader({
           // gradient scrim, no zoom on hover, and the remove control is
           // ALWAYS visible instead of hiding until the pointer arrives.
           <div className="relative h-full w-full">
-            <img
+            <Image
               src={preview}
               alt={t("imageUploader.preview")}
               className="h-full w-full object-cover"

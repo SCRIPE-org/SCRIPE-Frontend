@@ -2,6 +2,7 @@
 
 import type { TestimonialBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { clamp } from "./block-style-utils";
+import Image from "next/image";
 
 /**
  * Presentation UI component rendering the testimonial block view.
@@ -27,7 +28,7 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
       </blockquote>
       <figcaption className="mt-4 flex items-center gap-3 text-sm">
         {props.avatar && (
-          <img
+          <Image
             src={props.avatar}
             alt={props.author}
             className="h-10 w-10 rounded-full object-cover"

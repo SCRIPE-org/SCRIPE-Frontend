@@ -2,6 +2,7 @@
 
 import { useSignupTheme } from "@core/providers/signup-theme";
 import type { WelcomeCustomerLogo } from "../../../domain/entities/OnboardingEntities";
+import Image from "next/image";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // LogoMarquee — a restrained customer-logo row.
@@ -52,8 +53,7 @@ export function LogoMarquee({ logos, caption }: LogoMarqueeProps) {
       <ul className="flex flex-wrap items-center gap-x-8 gap-y-5" role="list">
         {logos.map((logo) => (
           <li key={logo.key} className="flex items-center">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={logo.assetUrl}
               alt={logo.name}
               className="h-5 w-auto select-none sm:h-6"

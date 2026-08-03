@@ -23,6 +23,7 @@ import { BrandIcon } from "@core/ui/brand-icons";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Settings2, Globe, Palette, Shield, FileJson, Link2 } from "lucide-react";
 import type * as React from "react";
+import Image from "next/image";
 
 // The live preview always simulates the dark login card regardless of the
 // workspace's own theme, so it pins the frozen `--sx-*` vault tokens to their
@@ -567,7 +568,7 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
               }}
             >
               {form.iconUrl ? (
-                <img
+                <Image
                   src={form.iconUrl}
                   alt=""
                   className="h-[18px] w-[18px] shrink-0 rounded object-contain"

@@ -22,6 +22,7 @@ import type { LoginLayoutProps } from "./layout-types";
  * Visual source of truth: Scripe_claude_design/Scripe/scripe-vault.jsx.
  */
 import { VaultBackground } from "./VaultBackground";
+import Image from "next/image";
 
 /** Giant 3D Scripe mark with rings, aurora glow, and (light-theme) glass orb. */
 function VaultLogoBlock() {
@@ -70,7 +71,7 @@ function VaultLogoBlock() {
         }}
       />
       {/* The 3D S — brand hero asset */}
-      <img
+      <Image
         src="/scripe-icon-3d.png"
         alt="Scripe"
         className="relative z-[1] object-contain"

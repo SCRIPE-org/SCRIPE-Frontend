@@ -6,6 +6,7 @@ import { Sparkles, Shield } from "lucide-react";
 import { useSettings } from "@core/providers/settings-provider";
 import { useTenantBranding } from "@core/providers/tenant-branding-provider";
 import { cn } from "@core/common/utils";
+import Image from "next/image";
 
 interface LogoProps {
   className?: string;
@@ -101,7 +102,7 @@ export function Logo({
                 domains, which next/image cannot be configured for ahead of time.
                 src is a real runtime URL from the tenant branding provider, and
                 a failed load falls through to the sparkles mark above. */}
-            <img
+            <Image
               src={tenantLogoUrl}
               alt={settings.logoText || "Logo"}
               className="h-full w-full object-contain"

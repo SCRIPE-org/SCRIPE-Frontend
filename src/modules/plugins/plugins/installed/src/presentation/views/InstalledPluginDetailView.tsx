@@ -16,6 +16,7 @@ import { PluginHealthBadge } from "../components/PluginHealthBadge";
 import { PluginStatusBadge } from "../components/PluginStatusBadge";
 import { useInstalledPluginDetailViewModel } from "../viewmodels/useInstalledPluginDetailViewModel";
 import { formatUtc, formatDateTimeUtc } from "@core/common/utils";
+import Image from "next/image";
 
 interface InstalledPluginDetailViewProps {
   /** The PluginInstallation ID from the route segment [installationId]. */
@@ -93,7 +94,7 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
             aria-hidden="true"
           >
             {installation.iconUrl ? (
-              <img
+              <Image
                 src={installation.iconUrl}
                 alt=""
                 className="h-full w-full rounded-nx-md object-cover"

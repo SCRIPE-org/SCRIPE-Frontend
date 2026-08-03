@@ -47,6 +47,7 @@ import { CanvasRenderer } from "./builder/CanvasRenderer";
 // tokens no matter what the studio published.
 
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 /**
  * Presentation UI component rendering the login preview shell.
@@ -1722,7 +1723,7 @@ export function LoginPreviewShell() {
               {/* Wordmark */}
               <div className="relative z-[1] flex items-center gap-2.5">
                 <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
-                  <img src={logoUrl} alt={companyName} className="h-full w-full object-contain" />
+                  <Image src={logoUrl} alt={companyName} className="h-full w-full object-contain" />
                 </div>
                 <span className="text-base font-semibold" style={{ color: "var(--sx-text)" }}>
                   {companyName}
@@ -1737,7 +1738,7 @@ export function LoginPreviewShell() {
                     boxShadow: "0 0 80px rgba(168,85,247,.2)",
                   }}
                 >
-                  <img
+                  <Image
                     src="/scripe-icon-3d.png"
                     alt="Scripe"
                     className="h-36 w-36 object-contain"
@@ -1932,7 +1933,7 @@ function LogoBox({
       className={`login-logo flex items-center justify-center overflow-hidden border border-border bg-background shadow-sm ${sizeClasses}`}
       style={{ borderRadius: "var(--login-radius-card, 0.75rem)" }}
     >
-      <img
+      <Image
         src={logoSrc}
         alt={`${logoAlt} Logo`}
         className="h-full w-full object-cover"

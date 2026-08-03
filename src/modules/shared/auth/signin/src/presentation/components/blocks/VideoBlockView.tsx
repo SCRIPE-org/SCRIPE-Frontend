@@ -4,6 +4,7 @@ import {
   type VideoBlock,
   isValidVideoUrl,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import Image from "next/image";
 
 /**
  * Presentation UI component rendering the video block view.
@@ -20,7 +21,7 @@ export function VideoBlockView({ block }: { block: VideoBlock }) {
       className={`group relative block overflow-hidden rounded-lg border bg-muted ${props.aspectRatio === "4:3" ? "aspect-[4/3]" : "aspect-video"}`}
     >
       {props.thumbnailUrl ? (
-        <img
+        <Image
           src={props.thumbnailUrl}
           alt={props.overlayText || "Video"}
           className="h-full w-full object-cover"
