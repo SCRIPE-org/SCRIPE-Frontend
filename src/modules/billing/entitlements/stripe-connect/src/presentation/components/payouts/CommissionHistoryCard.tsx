@@ -25,8 +25,9 @@ export interface PayoutsFilter {
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
-const fmt = (cents: number, currency = "USD") =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency }).format(cents / 100);
+// Backend already returns dollar-denominated decimals (converted from Stripe cents server-side).
+const fmt = (amount: number, currency = "USD") =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency }).format(amount);
 
 const fmtDate = (s: string) => formatDateUtc(s);
 

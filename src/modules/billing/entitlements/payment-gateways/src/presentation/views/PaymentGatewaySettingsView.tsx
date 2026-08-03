@@ -334,8 +334,8 @@ export function PaymentGatewaySettingsView() {
               t={t}
               onTestConnection={vm.testConnection}
               onToggleStatus={vm.toggleStatus}
-              isTesting={vm.isTestingConnection}
-              isToggling={vm.isTogglingStatus}
+              isTesting={vm.isTestingConnection(gw.gateway)}
+              isToggling={vm.isTogglingStatus(gw.gateway)}
             />
           ))
         )}

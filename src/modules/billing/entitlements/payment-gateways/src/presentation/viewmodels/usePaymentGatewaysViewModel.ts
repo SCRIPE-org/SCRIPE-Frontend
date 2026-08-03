@@ -6,6 +6,7 @@
  */
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
@@ -79,6 +80,11 @@ export function usePaymentGatewaysViewModel() {
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
 
+  // Per-row pending state — keyed by gateway id so mutating one card never
+  // busies/disables the others in the list.
+  const [pendingTestGateways, setPendingTestGateways] = useState<Set<string>>(new Set());
+  const [pendingToggleGateways, setPendingToggleGateways] = useState<Set<string>>(new Set());
+
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["payment-gateways"],
     queryFn: async () => {
@@ -107,6 +113,9 @@ export function usePaymentGatewaysViewModel() {
 
   const testConnectionMutation = useMutation({
     mutationFn: (gateway: string) => billingRepository.testGatewayConnection(gateway),
+    onMutate: (gateway) => {
+      setPendingTestGateways((prev) => new Set(prev).add(gateway));
+    },
     onSuccess: (res) => {
       success({ title: t("billing.gateways.testSuccess"), description: res.message });
     },
@@ -114,11 +123,21 @@ export function usePaymentGatewaysViewModel() {
       const errorMessage = err.response?.data?.error || err.message;
       showError({ title: t("billing.gateways.testFailed"), description: errorMessage });
     },
+    onSettled: (_data, _err, gateway) => {
+      setPendingTestGateways((prev) => {
+        const next = new Set(prev);
+        next.delete(gateway);
+        return next;
+      });
+    },
   });
 
   const toggleStatusMutation = useMutation({
     mutationFn: ({ gateway, enabled }: { gateway: string; enabled: boolean }) =>
       billingRepository.toggleGatewayStatus(gateway, enabled),
+    onMutate: ({ gateway }) => {
+      setPendingToggleGateways((prev) => new Set(prev).add(gateway));
+    },
     onSuccess: (res: { actionRequired?: string; message: string }) => {
       if (res.actionRequired === "config_change") {
         showError({
@@ -134,6 +153,13 @@ export function usePaymentGatewaysViewModel() {
       const errorMessage = err.response?.data?.error || err.message;
       showError({ title: t("billing.gateways.toggleFailed"), description: errorMessage });
     },
+    onSettled: (_data, _err, { gateway }) => {
+      setPendingToggleGateways((prev) => {
+        const next = new Set(prev);
+        next.delete(gateway);
+        return next;
+      });
+    },
   });
 
   return {
@@ -145,9 +171,9 @@ export function usePaymentGatewaysViewModel() {
     error: error?.message,
     refetch,
     testConnection: (gateway: string) => testConnectionMutation.mutate(gateway),
-    isTestingConnection: testConnectionMutation.isPending,
+    isTestingConnection: (gateway: string) => pendingTestGateways.has(gateway),
     toggleStatus: (gateway: string, enabled: boolean) =>
       toggleStatusMutation.mutate({ gateway, enabled }),
-    isTogglingStatus: toggleStatusMutation.isPending,
+    isTogglingStatus: (gateway: string) => pendingToggleGateways.has(gateway),
   };
 }

@@ -26,6 +26,11 @@ export function useCommissionLedgerViewModel() {
   const [invoicePage, setInvoicePage] = useState(1);
   const pageSize = 10;
 
+  // Per-row pending state — keyed by invoice id so retrying/waiving one
+  // invoice never busies/disables the Retry/Waive buttons on other rows.
+  const [pendingWaiveIds, setPendingWaiveIds] = useState<Set<string>>(new Set());
+  const [pendingRetryIds, setPendingRetryIds] = useState<Set<string>>(new Set());
+
   const { data: ledgerData, isLoading: isLoadingLedgers } = useQuery({
     queryKey: ["commission-ledgers", ledgerPage, pageSize],
     queryFn: () => commissionLedgerRepository.getLedgers({ page: ledgerPage, pageSize }),
@@ -39,6 +44,9 @@ export function useCommissionLedgerViewModel() {
   const waiveMutation = useMutation({
     mutationFn: ({ id, notes }: { id: string; notes: string }) =>
       commissionLedgerRepository.waiveInvoice(id, notes),
+    onMutate: ({ id }) => {
+      setPendingWaiveIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       toast({
         title: t("common.success"),
@@ -53,10 +61,20 @@ export function useCommissionLedgerViewModel() {
         variant: "destructive",
       });
     },
+    onSettled: (_data, _err, { id }) => {
+      setPendingWaiveIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    },
   });
 
   const retryMutation = useMutation({
     mutationFn: (id: string) => commissionLedgerRepository.retryCharge(id),
+    onMutate: (id) => {
+      setPendingRetryIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       toast({
         title: t("common.success"),
@@ -69,6 +87,13 @@ export function useCommissionLedgerViewModel() {
         title: t("common.error"),
         description: error.message,
         variant: "destructive",
+      });
+    },
+    onSettled: (_data, _err, id) => {
+      setPendingRetryIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
       });
     },
   });
@@ -179,9 +204,9 @@ export function useCommissionLedgerViewModel() {
     },
     actions: {
       waive: (id: string, notes: string) => waiveMutation.mutateAsync({ id, notes }),
-      isWaiving: waiveMutation.isPending,
+      isWaiving: (id: string) => pendingWaiveIds.has(id),
       retry: (id: string) => retryMutation.mutateAsync(id),
-      isRetrying: retryMutation.isPending,
+      isRetrying: (id: string) => pendingRetryIds.has(id),
     },
   };
 }

@@ -101,7 +101,7 @@ export function TenantPaymentGatewaysView() {
                 onEdit={() => vm.openConfigureForm(gw.gateway, true)}
                 onVerify={() => vm.verifyGateway(gw.gateway)}
                 onDelete={() => setDeleteTarget(gw.gateway)}
-                isVerifying={vm.isVerifying}
+                isVerifying={vm.isVerifying(gw.gateway)}
               />
             ))}
           </div>
