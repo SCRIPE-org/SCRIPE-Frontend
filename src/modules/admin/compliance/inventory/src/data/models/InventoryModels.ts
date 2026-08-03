@@ -13,6 +13,7 @@ export interface InventoryItemModel {
   isAnonymizedOnErasure: boolean;
   isIncludedInExport: boolean;
   isActive: boolean;
+  isGlobal: boolean;
   notes?: string;
 }
 

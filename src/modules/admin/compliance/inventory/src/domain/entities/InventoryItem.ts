@@ -12,6 +12,7 @@ export interface InventoryItemData {
   isAnonymizedOnErasure: boolean;
   isIncludedInExport: boolean;
   isActive: boolean;
+  isGlobal: boolean;
   notes?: string;
 }
 
@@ -48,6 +49,9 @@ export class InventoryItem {
   }
   get isActive() {
     return this.data.isActive ?? false;
+  }
+  get isGlobal() {
+    return this.data.isGlobal ?? false;
   }
   get notes() {
     return this.data.notes ?? null;

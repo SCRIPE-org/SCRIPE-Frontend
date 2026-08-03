@@ -74,6 +74,15 @@ export function InventoryView() {
             <span>{item.isIncludedInExport ? t("common.yes") : t("common.no")}</span>
           ),
         },
+        {
+          key: "isGlobal",
+          label: t("compliance.scope"),
+          render: (_val: unknown, item: InventoryItem) => (
+            <Badge variant={item.isGlobal ? "info" : "secondary"}>
+              {item.isGlobal ? t("compliance.global") : t("common.tenant")}
+            </Badge>
+          ),
+        },
       ],
       ...configBase,
     }),
