@@ -159,6 +159,9 @@ export function useInventoryViewModel() {
       }),
       getItemDisplayName: (item: InventoryItem) => item.displayName,
       enableBulkActions: true,
+      deleteService: async (id: string) => {
+        await inventoryRepository.delete(id);
+      },
       getActions: (vm, t, handleDelete) => [
         {
           label: t("common.edit"),
@@ -183,7 +186,7 @@ export function useInventoryViewModel() {
           !!tenantCode && hasPermission(SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_MANAGE),
       },
     };
-  }, [t, tenantCode, hasPermission]);
+  }, [t, tenantCode, hasPermission, inventoryRepository]);
 
   return {
     vm,
