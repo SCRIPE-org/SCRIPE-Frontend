@@ -5,6 +5,7 @@ import { PageHeader } from "@core/ui/page-header";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { EmptyState } from "@core/ui/empty-state";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import {
   Dialog,
   DialogContent,
@@ -13,8 +14,17 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@core/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+} from "@core/ui/alert-dialog";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
-import { useConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { Boxes, Plus, Pencil, Trash2, CheckCircle2, ListChecks, Building2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -22,14 +32,42 @@ import { useResourceBuilderViewModel } from "../viewmodels/useResourceBuilderVie
 import type { SchedulableResourceTreeNode } from "../viewmodels/resourceTree";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
 
+/** Every node id at or below `rootId` (rootId included), or an empty set if not found. */
+function collectSubtreeIds(nodes: SchedulableResourceTreeNode[], rootId: string): Set<string> {
+  const ids = new Set<string>();
+  const collectAll = (list: SchedulableResourceTreeNode[]) => {
+    for (const node of list) {
+      ids.add(node.id);
+      if (node.children?.length) collectAll(node.children);
+    }
+  };
+  const findAndCollect = (list: SchedulableResourceTreeNode[]): boolean => {
+    for (const node of list) {
+      if (node.id === rootId) {
+        collectAll([node]);
+        return true;
+      }
+      if (node.children?.length && findAndCollect(node.children)) return true;
+    }
+    return false;
+  };
+  findAndCollect(nodes);
+  return ids;
+}
+
 function flattenComposites(
   nodes: SchedulableResourceTreeNode[],
   excludeId?: string
 ): { value: string; label: string }[] {
+  // Excluding only the node itself (not its descendants) let a user pick one
+  // of the node's own children as its new parent. The backend's
+  // CompositionCycleGuard always rejects the resulting cycle, so that was a
+  // wasted, confusing round trip — exclude the whole excludeId subtree instead.
+  const excludeIds = excludeId ? collectSubtreeIds(nodes, excludeId) : new Set<string>();
   const out: { value: string; label: string }[] = [];
   const walk = (list: SchedulableResourceTreeNode[]) => {
     for (const node of list) {
-      if (node.resource.isComposite && node.id !== excludeId) {
+      if (node.resource.isComposite && !excludeIds.has(node.id)) {
         out.push({ value: node.id, label: node.resource.name });
       }
       if (node.children?.length) walk(node.children);
@@ -106,15 +144,26 @@ function ResourceNode({ node, depth, t, onEdit, onDelete, onChecklist }: Resourc
 export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
   useModuleLocales(() => import("../../../locales"), "venue.schedulableResource");
   const { t } = useI18n();
-  const { tree, loading, create, update, remove, getPublicationChecklist, publish } =
-    useResourceBuilderViewModel();
+  const {
+    tree,
+    loading,
+    create,
+    update,
+    remove,
+    getPublicationChecklist,
+    publish,
+    searchFacilityResourceProfiles,
+  } = useResourceBuilderViewModel();
+  const { error: toastError } = useEnhancedToast();
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<SchedulableResourceTreeNode | null>(null);
   const [checklistTarget, setChecklistTarget] = useState<SchedulableResourceTreeNode | null>(null);
   const [checklist, setChecklist] = useState<PublicationChecklistReport | null>(null);
   const [checklistLoading, setChecklistLoading] = useState(false);
-  const deleteDialog = useConfirmationDialog();
+  const [publishing, setPublishing] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<SchedulableResourceTreeNode | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const compositeOptions = flattenComposites(tree, editing?.id);
 
@@ -122,9 +171,12 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
     {
       name: "facilityResourceProfileId",
       label: t("schedulableResource.fields.facilityResourceProfileId"),
-      type: "text",
+      type: "server-select",
+      searchType: "server",
+      onServerSearch: searchFacilityResourceProfiles,
       required: true,
       placeholder: t("schedulableResource.placeholders.facilityResourceProfileId"),
+      searchPlaceholder: t("schedulableResource.placeholders.facilityResourceProfileId"),
       description: t("schedulableResource.descriptions.facilityResourceProfileId"),
     },
     { name: "name", label: t("schedulableResource.fields.name"), type: "text", required: true },
@@ -215,6 +267,39 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
     }
   };
 
+  const handleDeleteConfirm = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await remove(deleteTarget.id);
+      setDeleteTarget(null);
+    } catch (err) {
+      // 409 (dependents still attached), permission errors, etc. — surfaced
+      // to the user instead of only landing in the console.
+      toastError({ title: err instanceof Error ? err.message : t("common.error") });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handlePublishConfirm = async () => {
+    if (!checklistTarget) return;
+    setPublishing(true);
+    try {
+      await publish(checklistTarget.id);
+      setChecklistTarget(null);
+      setChecklist(null);
+    } catch (err) {
+      toastError({ title: err instanceof Error ? err.message : t("common.error") });
+    } finally {
+      setPublishing(false);
+    }
+  };
+
+  if (loading && tree.length === 0) {
+    return <LoadingSpinner showText={false} />;
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
@@ -253,16 +338,7 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
               setEditing(n);
               setFormOpen(true);
             }}
-            onDelete={(n) => {
-              deleteDialog.showConfirmation({
-                variant: "destructive",
-                title: t("schedulableResource.deleteTitle"),
-                description: t("schedulableResource.deleteConfirm"),
-                onConfirm: async () => {
-                  await remove(n.id);
-                },
-              });
-            }}
+            onDelete={(n) => setDeleteTarget(n)}
             onChecklist={openChecklist}
           />
         ))}
@@ -323,13 +399,9 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
               {t("common.close")}
             </Button>
             <Button
-              disabled={!checklist?.canPublish || checklistTarget?.resource.isPublished}
-              onClick={async () => {
-                if (!checklistTarget) return;
-                await publish(checklistTarget.id);
-                setChecklistTarget(null);
-                setChecklist(null);
-              }}
+              disabled={!checklist?.canPublish || checklistTarget?.resource.isPublished || publishing}
+              loading={publishing}
+              onClick={handlePublishConfirm}
             >
               {t("schedulableResource.actions.publish")}
             </Button>
@@ -337,7 +409,38 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
         </DialogContent>
       </Dialog>
 
-      <deleteDialog.ConfirmationDialog />
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          // Radix would otherwise dismiss synchronously on the confirm click,
+          // before the delete resolves — block that path here instead, and
+          // only clear the target from handleDeleteConfirm's own success path.
+          if (deleting) return;
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("schedulableResource.deleteTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("schedulableResource.deleteConfirm")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel asChild>
+              <Button variant="outline" disabled={deleting}>
+                {t("common.cancel")}
+              </Button>
+            </AlertDialogCancel>
+            {/* A plain Button, not AlertDialogAction: AlertDialogAction closes
+                the dialog synchronously on click (Radix's Dialog.Close under
+                the hood), which raced the async delete and let the dialog
+                vanish before it resolved. Closing now happens only from
+                handleDeleteConfirm, after remove() settles. */}
+            <Button variant="destructive" loading={deleting} disabled={deleting} onClick={handleDeleteConfirm}>
+              {t("common.delete")}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 });

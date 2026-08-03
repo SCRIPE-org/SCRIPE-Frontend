@@ -29,7 +29,7 @@ export const en = {
       maxConcurrentUsage: "Max Concurrent Usage",
     },
     placeholders: {
-      facilityResourceProfileId: "Enter the resource profile ID",
+      facilityResourceProfileId: "Search for a resource profile...",
       namedUnitLabel: "e.g. Court, Lane, Bay",
     },
     descriptions: {

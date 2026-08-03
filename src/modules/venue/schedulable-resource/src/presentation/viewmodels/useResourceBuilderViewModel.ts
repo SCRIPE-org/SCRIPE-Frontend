@@ -8,7 +8,7 @@ import { buildResourceTree, type SchedulableResourceTreeNode } from "./resourceT
 const LARGE_PAGE_SIZE = 500;
 
 export function useResourceBuilderViewModel() {
-  const { schedulableResourceRepository } = getVenueContainer();
+  const { schedulableResourceRepository, facilityResourceProfilePickerService } = getVenueContainer();
   const [tree, setTree] = useState<SchedulableResourceTreeNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,5 +67,26 @@ export function useResourceBuilderViewModel() {
     [schedulableResourceRepository, refresh]
   );
 
-  return { tree, loading, error, refresh, create, update, remove, getPublicationChecklist, publish };
+  // Powers the "Facility Resource Profile" `server-select` field on the
+  // create form — there is no dedicated CRUD page for this entity yet.
+  const searchFacilityResourceProfiles = useCallback(
+    async (query: string) => {
+      const results = await facilityResourceProfilePickerService.search(query);
+      return results.map((profile) => ({ value: profile.id, label: profile.name }));
+    },
+    [facilityResourceProfilePickerService]
+  );
+
+  return {
+    tree,
+    loading,
+    error,
+    refresh,
+    create,
+    update,
+    remove,
+    getPublicationChecklist,
+    publish,
+    searchFacilityResourceProfiles,
+  };
 }
