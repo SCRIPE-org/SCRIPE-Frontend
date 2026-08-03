@@ -61,7 +61,7 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
-      operationError(error.message || t("common.messages.createFailed"));
+      operationError("Create", undefined, error.message || t("common.messages.createFailed"));
       options?.onError?.(error);
     },
   });
@@ -78,7 +78,7 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
-      operationError(error.message || t("common.messages.updateFailed"));
+      operationError("Update", undefined, error.message || t("common.messages.updateFailed"));
       options?.onError?.(error);
     },
   });
@@ -115,11 +115,11 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
           if (context?.previous !== undefined) {
             queryClient.setQueryData(baseKey as readonly unknown[], context.previous);
           }
-          operationError(options?.successMessages?.delete ?? t("common.messages.deleteFailed"));
+          operationError("Delete", undefined, options?.successMessages?.delete ?? t("common.messages.deleteFailed"));
           options?.onError?.(_ as Error);
         }
       : (error: Error) => {
-          operationError(error.message || t("common.messages.deleteFailed"));
+          operationError("Delete", undefined, error.message || t("common.messages.deleteFailed"));
           options?.onError?.(error);
         },
     onSuccess: () => {
