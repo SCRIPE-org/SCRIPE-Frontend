@@ -16,7 +16,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 
 // Nexus is the only shell — statically imported (always needed, no lazy-load
 // delay). The multi-layout system was retired in favour of this single
@@ -43,7 +43,10 @@ function LoginWelcomeLoader() {
   const user = useAppStore((state) => state.user);
   const { t } = useI18n();
 
-  const avatarUrl = user ? resolveFileUrl(user.profileImageUrl) || undefined : undefined;
+  // Hook runs unconditionally regardless of `user` — it already handles
+  // null/undefined input gracefully.
+  const resolvedAvatarUrl = useResolvedFileUrl(user?.profileImageUrl);
+  const avatarUrl = user ? resolvedAvatarUrl || undefined : undefined;
 
   const getInitials = () => {
     if (!user) return "U";

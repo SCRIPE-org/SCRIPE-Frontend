@@ -12,7 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Badge } from "@core/ui/badge";
 import { Skeleton } from "@core/ui/skeleton";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn, resolveFileUrl } from "@core/common/utils";
+import { cn } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import type { AdminProfile } from "../../../src/domain/entities/AdminProfile";
 
 interface ProfileHeaderProps {
@@ -31,6 +32,9 @@ interface ProfileHeaderProps {
  */
 export function ProfileHeader({ profile, isLoading, meta, className }: ProfileHeaderProps) {
   const { t } = useI18n();
+  // Hooks must run unconditionally — called here, before the loading early
+  // return below, rather than after it.
+  const resolvedAvatarSrc = useResolvedFileUrl(profile?.profileImageUrl);
 
   if (isLoading || !profile) {
     return (
@@ -46,7 +50,7 @@ export function ProfileHeader({ profile, isLoading, meta, className }: ProfileHe
     `${(profile.firstName?.[0] ?? "").toUpperCase()}${(profile.lastName?.[0] ?? "").toUpperCase()}` ||
     "U";
   const fullName = `${profile.firstName} ${profile.lastName}`.trim() || profile.username;
-  const avatarSrc = resolveFileUrl(profile.profileImageUrl) || null;
+  const avatarSrc = resolvedAvatarSrc || null;
 
   return (
     <div className={cn("flex flex-col items-center gap-3 p-4 text-center", className)}>

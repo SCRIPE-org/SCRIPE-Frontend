@@ -49,7 +49,8 @@ import type { LucideIcon } from "lucide-react";
 import { useAppStore } from "@core/store/useAppStore";
 import { useAuthLogout } from "@modules/auth/core/src/presentation/viewmodels/useAuthLogout";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn, resolveFileUrl } from "@core/common/utils";
+import { cn } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useSettings } from "@core/providers/settings-provider";
 import { appLogger } from "@core/common/logger";
 
@@ -101,10 +102,12 @@ export function UserProfileDropdown({
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const settings = useSettings();
+  // Hooks must run unconditionally — called before the early return below.
+  const resolvedAvatarUrl = useResolvedFileUrl(user?.profileImageUrl);
 
   if (!user || !settings.showUserAvatar) return null;
 
-  const avatarUrl = resolveFileUrl(user.profileImageUrl) || undefined;
+  const avatarUrl = resolvedAvatarUrl || undefined;
 
   const getInitials = () => {
     const firstName = user.firstName || "";

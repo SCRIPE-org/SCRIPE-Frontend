@@ -9,10 +9,11 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { BRAND } from "@core/config/branding";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { AlertTriangle, XCircle, SearchX } from "lucide-react";
 import Link from "next/link";
 import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBranding";
+import Image from "next/image";
 
 // ─── Suspended / Canceled View ────────────────────────────
 
@@ -29,7 +30,8 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
   const { t, direction } = useI18n();
   const isCanceled = branding.status === "canceled";
   const companyName = branding.companyName ?? branding.name ?? BRAND.name;
-  const logoSrc = branding.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
+  const resolvedLogoSrc = useResolvedFileUrl(branding.logoUrl);
+  const logoSrc = branding.logoUrl ? resolvedLogoSrc || "/app-logo.png" : "/app-logo.png";
 
   return (
     <div
@@ -39,9 +41,12 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
       <div className="mx-auto w-full max-w-md text-center">
         {/* Tenant Logo */}
         <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <img
+          <Image
             src={logoSrc}
             alt={companyName}
+            width={80}
+            height={80}
+            unoptimized
             className="h-full w-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = "none";
@@ -112,9 +117,11 @@ export function TenantNotFoundView() {
       <div className="mx-auto w-full max-w-md text-center">
         {/* Platform Logo */}
         <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
-          <img
+          <Image
             src="/app-logo.png"
             alt={BRAND.name}
+            width={80}
+            height={80}
             className="h-full w-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = "none";

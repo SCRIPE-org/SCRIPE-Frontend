@@ -13,6 +13,7 @@
 import { useRef, useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn, resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -59,12 +60,10 @@ export function VideoUploadField({
 
   const maxMB = Math.round(maxSizeBytes / (1024 * 1024));
 
-  // Resolve display URL
-  const displayUrl = value
-    ? value.startsWith("http://") || value.startsWith("https://")
-      ? value
-      : resolveFileUrl(value)
-    : "";
+  // Resolve display URL. The hook runs unconditionally so hook order stays
+  // stable regardless of `value`; it already passes absolute URLs through.
+  const resolvedValueUrl = useResolvedFileUrl(value);
+  const displayUrl = value ? resolvedValueUrl : "";
 
   const handleUpload = useCallback(
     async (file: File) => {

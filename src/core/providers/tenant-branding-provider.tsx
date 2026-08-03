@@ -11,7 +11,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { BRAND } from "@core/config/branding";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
@@ -143,10 +143,14 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
     };
   }, [isAuthenticated, user?.tenantId, hasToken]);
 
-  // Build the context value with fallbacks
+  // Build the context value with fallbacks.
+  // Hooks run unconditionally regardless of `branding` — each already
+  // handles empty/undefined input and resolves once branding arrives.
+  const resolvedLogoUrl = useResolvedFileUrl(branding?.logoUrl);
+  const resolvedFaviconUrl = useResolvedFileUrl(branding?.faviconUrl);
   const appName = branding?.companyName ?? branding?.name ?? BRAND.name;
-  const logoUrl = branding?.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
-  const faviconUrl = branding?.faviconUrl ? resolveFileUrl(branding.faviconUrl) : null;
+  const logoUrl = branding?.logoUrl ? resolvedLogoUrl || "/app-logo.png" : "/app-logo.png";
+  const faviconUrl = branding?.faviconUrl ? resolvedFaviconUrl || null : null;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
   const primaryColor = branding?.primaryColor ?? null;
   const isTenantContext = branding !== null;

@@ -2,10 +2,11 @@
 
 import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBranding";
 import { BRAND } from "@core/config/branding";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SlotRenderer } from "./SlotRenderer";
 import type { SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import Image from "next/image";
 
 interface BrandingCopyright {
   copyrightText?: string | null;
@@ -54,7 +55,8 @@ export function LoginBranding({
   ];
 
   // Resolve branding values with fallbacks
-  const logoSrc = branding?.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
+  const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
+  const logoSrc = branding?.logoUrl ? resolvedLogoSrc || "/app-logo.png" : "/app-logo.png";
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const headline = branding?.loginHeadline || t("auth.branding.headline");
   const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
@@ -135,9 +137,12 @@ export function LoginBranding({
       <div className="relative z-10 space-y-6">
         <div className="flex items-center gap-4">
           <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] shadow-sm">
-            <img
+            <Image
               src={logoSrc}
               alt={`${logoAlt} Logo`}
+              width={80}
+              height={80}
+              unoptimized
               className="h-full w-full object-cover"
               onError={(e) => {
                 e.currentTarget.style.display = "none";

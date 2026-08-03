@@ -18,11 +18,13 @@ import {
   AlertCircle,
   Timer,
 } from "lucide-react";
-import { resolveFileUrl, formatTimeUtc } from "@core/common/utils";
+import { formatTimeUtc } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
+import Image from "next/image";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -91,6 +93,7 @@ export function WorkspaceCard({
 }: WorkspaceCardProps) {
   const { t } = useI18n();
   const state = getCardState(ws);
+  const resolvedLogoUrl = useResolvedFileUrl(ws.logoUrl);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [password, setPassword] = useState("");
@@ -123,10 +126,13 @@ export function WorkspaceCard({
       ].join(" ")}
       aria-hidden
     >
-      {ws.logoUrl ? (
-        <img
-          src={resolveFileUrl(ws.logoUrl)}
+      {ws.logoUrl && resolvedLogoUrl ? (
+        <Image
+          src={resolvedLogoUrl}
           alt=""
+          width={44}
+          height={44}
+          unoptimized
           className="h-full w-full object-cover"
           onError={(e) => {
             e.currentTarget.style.display = "none";

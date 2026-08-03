@@ -3,9 +3,10 @@
 
 import * as React from "react";
 import { Building2, Check } from "lucide-react";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { WorkspaceOption } from "../viewmodels/useForgotPasswordViewModel";
+import Image from "next/image";
 
 interface WorkspaceCheckCardProps {
   workspace: WorkspaceOption;
@@ -19,6 +20,7 @@ interface WorkspaceCheckCardProps {
  */
 export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: WorkspaceCheckCardProps) {
   const { t } = useI18n();
+  const resolvedLogoUrl = useResolvedFileUrl(workspace.logoUrl);
   return (
     <button
       type="button"
@@ -43,17 +45,18 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
 
       {/* Logo / Icon */}
       <div
-        className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl"
+        className="relative flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-xl"
         style={{
           background: "var(--sx-accent-soft)",
           border: "1px solid var(--sx-accent-soft-border)",
         }}
       >
-        {workspace.logoUrl ? (
-          <img
-            src={resolveFileUrl(workspace.logoUrl)}
+        {workspace.logoUrl && resolvedLogoUrl ? (
+          <Image
+            src={resolvedLogoUrl}
             alt={workspace.tenantName}
-            className="h-full w-full object-cover"
+            fill
+            className="object-cover"
           />
         ) : (
           <Building2 className="h-4 w-4" style={{ color: "var(--sx-accent-text)" }} />

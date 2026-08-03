@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import type { SsoProvider } from "@modules/auth/core/domain/entities/SsoProvider";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import Image from "next/image";
 import { BrandIcon } from "@core/ui/brand-icons";
 
@@ -31,6 +31,7 @@ const SsoButton = ({
   onProviderClick: (providerId: string, protocol?: string) => void;
 }) => {
   const [hover, setHover] = useState(false);
+  const resolvedIconUrl = useResolvedFileUrl(provider.iconUrl);
 
   const label =
     provider.buttonLabel ||
@@ -85,9 +86,9 @@ const SsoButton = ({
       onMouseLeave={() => setHover(false)}
       onClick={() => onProviderClick(provider.id, provider.protocol)}
     >
-      {provider.iconUrl ? (
+      {provider.iconUrl && resolvedIconUrl ? (
         <Image
-          src={resolveFileUrl(provider.iconUrl)}
+          src={resolvedIconUrl}
           alt=""
           width={18}
           height={18}
