@@ -25,7 +25,7 @@ export interface AnalyticsDailyMetricJson {
 export interface AnalyticsEventListResponseJson {
   items: AnalyticsEventJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }
 

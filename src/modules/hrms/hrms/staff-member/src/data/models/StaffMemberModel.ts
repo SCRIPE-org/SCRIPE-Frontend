@@ -27,7 +27,7 @@ export interface StaffMemberJson {
 export interface StaffMemberListResponseJson {
   items: StaffMemberJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

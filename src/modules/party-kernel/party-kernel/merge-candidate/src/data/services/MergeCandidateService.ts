@@ -38,7 +38,7 @@ export class MergeCandidateService implements IMergeCandidateService {
     return {
       items: response.items.map((json) => MergeCandidateModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

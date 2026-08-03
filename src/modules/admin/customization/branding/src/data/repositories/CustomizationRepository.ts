@@ -85,11 +85,11 @@ export class CustomizationRepository implements ICustomizationRepository {
     return {
       items: entities,
       totalCount: json.totalCount,
-      page: json.page,
+      page: json.pageNumber,
       pageSize: json.pageSize,
       totalPages: Math.ceil(json.totalCount / json.pageSize),
-      hasNextPage: json.page * json.pageSize < json.totalCount,
-      hasPreviousPage: json.page > 1,
+      hasNextPage: json.pageNumber * json.pageSize < json.totalCount,
+      hasPreviousPage: json.pageNumber > 1,
     };
   }
 }

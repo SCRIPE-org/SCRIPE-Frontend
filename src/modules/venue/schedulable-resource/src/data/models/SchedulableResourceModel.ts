@@ -29,7 +29,7 @@ export interface SchedulableResourceJson {
 export interface SchedulableResourceListResponseJson {
   items: SchedulableResourceJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

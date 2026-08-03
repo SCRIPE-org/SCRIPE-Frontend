@@ -35,7 +35,7 @@ export interface WorkItemListItemJson {
 export interface WorkItemListResponseJson {
   items: WorkItemListItemJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

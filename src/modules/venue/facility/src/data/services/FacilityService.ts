@@ -21,7 +21,7 @@ export class FacilityService implements IFacilityService {
     return {
       items: response.items.map((json) => FacilityModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

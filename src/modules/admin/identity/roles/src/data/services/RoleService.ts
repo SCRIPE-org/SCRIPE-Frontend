@@ -47,7 +47,7 @@ export class RoleService implements IRoleService {
     return {
       items: response.items.map((json) => RoleModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -67,7 +67,7 @@ export class RoleService implements IRoleService {
     return {
       items: response.items.map((json) => RoleModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

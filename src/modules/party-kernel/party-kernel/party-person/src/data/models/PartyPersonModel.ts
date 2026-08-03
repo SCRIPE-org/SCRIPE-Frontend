@@ -25,7 +25,7 @@ export interface PartyPersonJson {
 export interface PartyPersonListResponseJson {
   items: PartyPersonJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

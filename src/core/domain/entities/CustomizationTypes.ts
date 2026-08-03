@@ -30,7 +30,7 @@ export interface AuditLogPagedResultJson {
   /** Total matching count in repository */
   totalCount: number;
   /** Current page index (1-based) */
-  page: number;
+  pageNumber: number;
   /** Number of items requested per page */
   pageSize: number;
 }

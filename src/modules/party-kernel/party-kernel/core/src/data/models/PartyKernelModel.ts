@@ -22,7 +22,7 @@ export interface PartyKernelJson {
 export interface PartyKernelListResponseJson {
   items: PartyKernelJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

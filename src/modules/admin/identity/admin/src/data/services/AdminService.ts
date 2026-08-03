@@ -45,7 +45,7 @@ export class AdminService implements IAdminService {
     return {
       items: response.items.map((json) => AdminModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -66,7 +66,7 @@ export class AdminService implements IAdminService {
     return {
       items: response.items.map((json) => AdminModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -87,7 +87,7 @@ export class AdminService implements IAdminService {
     return {
       items: response.items.map((json) => AdminModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

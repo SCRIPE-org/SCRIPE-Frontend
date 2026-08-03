@@ -38,7 +38,7 @@ export class PartyRelationshipService implements IPartyRelationshipService {
     return {
       items: response.items.map((json) => PartyRelationshipModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

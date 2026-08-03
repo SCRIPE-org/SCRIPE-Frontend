@@ -38,7 +38,7 @@ export class PartyOrganizationService implements IPartyOrganizationService {
     return {
       items: response.items.map((json) => PartyOrganizationModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

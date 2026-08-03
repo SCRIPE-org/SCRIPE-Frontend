@@ -38,7 +38,7 @@ export class QualificationService implements IQualificationService {
     return {
       items: response.items.map((json) => QualificationModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

@@ -38,7 +38,7 @@ export class CertificationService implements ICertificationService {
     return {
       items: response.items.map((json) => CertificationModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

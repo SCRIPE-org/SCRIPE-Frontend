@@ -31,7 +31,7 @@ export interface MessageTemplateJson {
 export interface MessageTemplateListResponse {
   items: MessageTemplateJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }
 

@@ -26,7 +26,7 @@ export interface MergeCandidateJson {
 export interface MergeCandidateListResponseJson {
   items: MergeCandidateJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

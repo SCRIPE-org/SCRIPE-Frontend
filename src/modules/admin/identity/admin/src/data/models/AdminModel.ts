@@ -68,7 +68,7 @@ export interface AdminJson {
 export interface AdminListResponseJson {
   items: AdminJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

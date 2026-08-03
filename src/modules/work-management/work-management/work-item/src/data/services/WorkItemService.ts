@@ -35,7 +35,7 @@ export class WorkItemService implements IWorkItemService {
     return {
       items: response.items.map((json) => WorkItemModel.fromListJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
