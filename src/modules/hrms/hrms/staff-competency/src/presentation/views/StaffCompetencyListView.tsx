@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useStaffCompetencyViewModel } from "../viewmodels/useStaffCompetencyViewModel";
 import type { StaffCompetency } from "../../domain/entities/StaffCompetency";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -109,6 +110,22 @@ export const StaffCompetencyListView = React.memo(function StaffCompetencyListVi
       level: item.level,
     }),
     getItemDisplayName: (item: StaffCompetency) => item.competencyName,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<StaffCompetency>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: StaffCompetency) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: StaffCompetency) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useStaffMemberViewModel } from "../viewmodels/useStaffMemberViewModel";
 import type { StaffMember } from "../../domain/entities/StaffMember";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -167,6 +168,22 @@ export const StaffMemberListView = React.memo(function StaffMemberListView() {
       isActive: item.isActive,
     }),
     getItemDisplayName: (item: StaffMember) => `${item.firstName} ${item.lastName}`.trim(),
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<StaffMember>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: StaffMember) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: StaffMember) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

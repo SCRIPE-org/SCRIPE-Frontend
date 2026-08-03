@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useStaffAvailabilityViewModel } from "../viewmodels/useStaffAvailabilityViewModel";
 import type { StaffAvailability } from "../../domain/entities/StaffAvailability";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -176,6 +177,22 @@ export const StaffAvailabilityListView = React.memo(function StaffAvailabilityLi
     // has no name-shaped field of its own, so the FK remains the most
     // identifying value available.
     getItemDisplayName: (item: StaffAvailability) => item.staffMemberId,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<StaffAvailability>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: StaffAvailability) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: StaffAvailability) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

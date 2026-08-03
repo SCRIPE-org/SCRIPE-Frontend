@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { usePartyKernelViewModel } from "../viewmodels/usePartyKernelViewModel";
 import type { PartyKernel } from "../../domain/entities/PartyKernel";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -65,6 +66,22 @@ export const PartyKernelListView = React.memo(function PartyKernelListView() {
       name: item.name,
     }),
     getItemDisplayName: (item: PartyKernel) => item.name,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<PartyKernel>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: PartyKernel) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: PartyKernel) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

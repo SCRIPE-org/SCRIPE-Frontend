@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { usePartyRoleViewModel } from "../viewmodels/usePartyRoleViewModel";
 import type { PartyRole } from "../../domain/entities/PartyRole";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -128,6 +129,22 @@ export const PartyRoleListView = React.memo(function PartyRoleListView() {
     }),
     getItemDisplayName: (item: PartyRole) =>
       `${t(`partyRole.types.${item.roleType}`) || item.roleType} — ${shortId(item.partyId)}`,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<PartyRole>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: PartyRole) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: PartyRole) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

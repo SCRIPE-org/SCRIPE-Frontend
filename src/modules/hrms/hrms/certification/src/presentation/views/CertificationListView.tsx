@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useCertificationViewModel } from "../viewmodels/useCertificationViewModel";
 import type { Certification } from "../../domain/entities/Certification";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -147,6 +148,22 @@ export const CertificationListView = React.memo(function CertificationListView()
       expiresOn: item.expiresOn,
     }),
     getItemDisplayName: (item: Certification) => item.name,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<Certification>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: Certification) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: Certification) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

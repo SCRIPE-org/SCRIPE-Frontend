@@ -2,13 +2,14 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useVenueProfileViewModel } from "../viewmodels/useVenueProfileViewModel";
 import type { VenueProfile } from "../../domain/entities/VenueProfile";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
+import { Pencil, Trash2 } from "lucide-react";
 
 export const VenueProfileListView = React.memo(function VenueProfileListView() {
   useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
@@ -111,6 +112,22 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       isActive: item.isActive,
     }),
     getItemDisplayName: (item: VenueProfile) => item.name,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<VenueProfile>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: VenueProfile) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: VenueProfile) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

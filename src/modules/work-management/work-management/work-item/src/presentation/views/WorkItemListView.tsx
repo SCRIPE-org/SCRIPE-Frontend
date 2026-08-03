@@ -5,13 +5,14 @@
 
 import React, { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useWorkItemViewModel } from "../viewmodels/useWorkItemViewModel";
 import type { WorkItem } from "../../domain/entities/WorkItem";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
+import { Pencil, Trash2 } from "lucide-react";
 
 // WorkItemStatus (0..4) mapped onto the nx Badge semantic tones.
 const STATUS_VARIANTS: Record<number, "secondary" | "info" | "warning" | "success" | "inactive"> = {
@@ -192,8 +193,24 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         isActive: item.isActive,
       }),
       getItemDisplayName: (item: WorkItem) => item.title,
+      deleteService: (id: string) => vm.deleteItem(id),
+      getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<WorkItem>[] => [
+        {
+          label: tFn("common.edit"),
+          onClick: (item: WorkItem) => vm.openEditModal(item),
+          variant: "ghost" as const,
+          icon: <Pencil className="h-4 w-4" />,
+        },
+        {
+          label: tFn("common.delete"),
+          onClick: (item: WorkItem) => handleDeleteFn?.(item),
+          variant: "ghost" as const,
+          className: "text-destructive hover:text-destructive/80",
+          icon: <Trash2 className="h-4 w-4" />,
+        },
+      ],
     }),
-    [t, language, statusOptions, statusLabels, priorityOptions, priorityLabels]
+    [t, language, statusOptions, statusLabels, priorityOptions, priorityLabels, vm]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

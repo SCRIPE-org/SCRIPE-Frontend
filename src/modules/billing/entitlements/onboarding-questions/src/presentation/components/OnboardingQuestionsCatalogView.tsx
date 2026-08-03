@@ -9,10 +9,9 @@
 
 import { useMemo, useState } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { Badge } from "@core/ui/badge";
-import { Button } from "@core/ui/button";
-import { SlidersHorizontal } from "lucide-react";
+import { Pencil, SlidersHorizontal, Trash2 } from "lucide-react";
 import { OptionsEditorDialog } from "./OptionsEditorDialog";
 import type { OnboardingQuestion } from "../../domain/entities/OnboardingQuestion";
 
@@ -150,21 +149,33 @@ export function OnboardingQuestionsCatalogView({
 
       getItemDisplayName: (item: OnboardingQuestion) => item.getLabel(language),
 
-      renderActions: (item: OnboardingQuestion) => (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setOptionsTarget({ id: item.id, label: item.getLabel(language) })}
-          aria-label={`${t("entitlements.onboarding.questions.manageOptions")}: ${item.getLabel(language)}`}
-          className="h-7 w-7 text-nx-accent hover:bg-nx-accent-wash"
-        >
-          <SlidersHorizontal className="h-3.5 w-3.5" aria-hidden="true" />
-        </Button>
-      ),
+      deleteService: (id: string) => vm.deleteItem(id),
+      getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<OnboardingQuestion>[] => [
+        {
+          label: tFn("entitlements.onboarding.questions.manageOptions"),
+          onClick: (item) => setOptionsTarget({ id: item.id, label: item.getLabel(language) }),
+          variant: "ghost" as const,
+          className: "text-nx-accent hover:bg-nx-accent-wash",
+          icon: <SlidersHorizontal className="h-4 w-4" />,
+        },
+        {
+          label: tFn("common.edit"),
+          onClick: (item) => vm.openEditModal(item),
+          variant: "ghost" as const,
+          icon: <Pencil className="h-4 w-4" />,
+        },
+        {
+          label: tFn("common.delete"),
+          onClick: (item) => handleDeleteFn?.(item),
+          variant: "ghost" as const,
+          className: "text-destructive hover:text-destructive/80",
+          icon: <Trash2 className="h-4 w-4" />,
+        },
+      ],
     }),
     // setOptionsTarget is stable — intentionally omitted from deps
 
-    [t, language]
+    [t, language, vm]
   );
 
   return (
