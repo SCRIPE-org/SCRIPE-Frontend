@@ -86,17 +86,31 @@ export function AttachmentUploader({
   const { t } = useI18n();
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFiles = useCallback(
     (fileList: FileList) => {
       const files = Array.from(fileList);
       const remaining = maxFiles - attachments.length;
-      const valid = files
-        .filter((f) => f.size <= maxSizeMb * 1024 * 1024)
-        .slice(0, Math.max(0, remaining));
+
+      const withinSize = files.filter((f) => f.size <= maxSizeMb * 1024 * 1024);
+      const hasOversized = withinSize.length < files.length;
+
+      const valid = withinSize.slice(0, Math.max(0, remaining));
+      const hasExcess = withinSize.length > valid.length;
+
+      const messages: string[] = [];
+      if (hasOversized) {
+        messages.push(t("messaging.email.fileTooLarge", { size: maxSizeMb }));
+      }
+      if (hasExcess) {
+        messages.push(t("messaging.email.tooManyFiles", { count: maxFiles }));
+      }
+      setError(messages.length > 0 ? messages.join(" ") : null);
+
       if (valid.length > 0) onAdd(valid);
     },
-    [attachments.length, maxFiles, maxSizeMb, onAdd]
+    [attachments.length, maxFiles, maxSizeMb, onAdd, t]
   );
 
   const handleDrop = useCallback(
@@ -116,13 +130,25 @@ export function AttachmentUploader({
     <div className="space-y-3">
       {/* Drop Zone */}
       <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled || undefined}
+        aria-label={t("messaging.email.dropFiles")}
         className={cn(
           "cursor-pointer rounded-nx-lg border-2 border-dashed p-4 text-center transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+          "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
           dragOver && "border-nx-accent bg-nx-accent-wash",
           !dragOver && "border-nx-line hover:border-nx-accent",
           disabled && "cursor-not-allowed opacity-50"
         )}
         onClick={() => !disabled && inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (disabled) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         onDragOver={(e) => {
           e.preventDefault();
           if (!disabled) setDragOver(true);
@@ -150,6 +176,16 @@ export function AttachmentUploader({
           disabled={disabled}
         />
       </div>
+
+      {/* Rejection feedback — oversized files and excess-count slices are
+          silent otherwise, so surface them the same way ImageUploadField/
+          VideoUploadField do. */}
+      {error && (
+        <p role="status" className="flex items-start gap-1.5 text-xs font-medium text-nx-danger">
+          <X className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          {error}
+        </p>
+      )}
 
       {/* Attachment List */}
       {attachments.length > 0 && (

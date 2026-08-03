@@ -185,6 +185,8 @@ export const en = {
       maxFiles: "{{count}} files total",
       fileUploaded: "Uploaded",
       fileError: "Upload failed",
+      fileTooLarge: "Some files exceed the {{size}}MB limit and were not added",
+      tooManyFiles: "Only {{count}} files are allowed; extra files were not added",
       schedule: "Schedule",
       sendNow: "Send Now",
       sendNowDesc: "Deliver immediately",

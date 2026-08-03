@@ -9,8 +9,20 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Image as ImageIcon } from "lucide-react";
+import { Image as ImageIcon, X } from "lucide-react";
 import type { Editor } from "@tiptap/react";
+
+// ─── Constants ────────────────────────────────────────────────
+// Mirrors the accept list on the file input below and the default cap used
+// by ImageUploadField, so rejection rules are consistent across the app.
+const ALLOWED_IMAGE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/svg+xml",
+  "image/webp",
+];
+const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
 
 // ─── Component ──────────────────────────────────────────────
 export function ImageInsert({
@@ -24,6 +36,7 @@ export function ImageInsert({
   const [url, setUrl] = useState("");
   const [open, setOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const fileRef = React.useRef<HTMLInputElement>(null);
   const urlId = useId();
   const uploadId = useId();
@@ -39,6 +52,23 @@ export function ImageInsert({
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !onUpload) return;
+
+    setValidationError(null);
+
+    // Client-side gate before handing off to onUpload — the `accept=` on the
+    // input is not enforced by browsers/OS pickers, so it is not a real guard.
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setValidationError(t("imageUpload.invalidType"));
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setValidationError(
+        t("imageUpload.tooLarge", { max: Math.round(MAX_IMAGE_SIZE_BYTES / (1024 * 1024)) })
+      );
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
 
     try {
       setUploading(true);
@@ -134,6 +164,15 @@ export function ImageInsert({
                     <LoadingSpinner size="inline" showText={false} />
                     {t("editor.toolbar.image.uploading")}
                   </div>
+                )}
+                {validationError && (
+                  <p
+                    role="status"
+                    className="flex items-start gap-1.5 text-xs font-medium text-nx-danger"
+                  >
+                    <X className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    {validationError}
+                  </p>
                 )}
               </div>
             </>

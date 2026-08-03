@@ -145,6 +145,8 @@ export const ar = {
       maxFiles: "{{count}} ملفات إجمالاً",
       fileUploaded: "تم الرفع",
       fileError: "فشل الرفع",
+      fileTooLarge: "بعض الملفات تتجاوز الحد الأقصى {{size}} ميجابايت ولم تتم إضافتها",
+      tooManyFiles: "يُسمح بـ {{count}} ملفات فقط؛ لم تتم إضافة الملفات الزائدة",
       schedule: "الجدولة",
       sendNow: "إرسال الآن",
       sendNowDesc: "التسليم فوراً",
