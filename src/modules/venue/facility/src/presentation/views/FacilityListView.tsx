@@ -12,7 +12,7 @@ import { Pencil, Trash2 } from "lucide-react";
 
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
-  const { vm } = useFacilityViewModel();
+  const { vm, searchVenueProfiles, venueProfileNameById } = useFacilityViewModel();
   const { t, language } = useI18n();
 
   const config: CrudConfig<Facility> = {
@@ -22,7 +22,11 @@ export const FacilityListView = React.memo(function FacilityListView() {
     columns: [
       { key: "code", label: t("facility.fields.code"), sortable: true },
       { key: "name", label: t("facility.fields.name"), sortable: true },
-      { key: "venueProfileId", label: t("facility.fields.venueProfileId") },
+      {
+        key: "venueProfileId",
+        label: t("facility.fields.venueProfileId"),
+        render: (value: string) => venueProfileNameById[value] ?? value,
+      },
       {
         key: "createdAt",
         label: t("common.createdAt"),
@@ -34,8 +38,11 @@ export const FacilityListView = React.memo(function FacilityListView() {
       {
         name: "venueProfileId",
         label: t("facility.fields.venueProfileId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: searchVenueProfiles,
         placeholder: t("facility.placeholders.venueProfileId"),
+        searchPlaceholder: t("facility.placeholders.venueProfileId"),
         required: true,
       },
       {

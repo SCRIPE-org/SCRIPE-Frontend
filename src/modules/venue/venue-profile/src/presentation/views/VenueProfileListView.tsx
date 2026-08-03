@@ -13,7 +13,7 @@ import { Pencil, Trash2 } from "lucide-react";
 
 export const VenueProfileListView = React.memo(function VenueProfileListView() {
   useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
-  const { vm } = useVenueProfileViewModel();
+  const { vm, searchSites } = useVenueProfileViewModel();
   const { t, language } = useI18n();
 
   const config: CrudConfig<VenueProfile> = {
@@ -44,8 +44,11 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       {
         name: "siteId",
         label: t("venueProfile.fields.siteId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: searchSites,
         placeholder: t("venueProfile.placeholders.siteId"),
+        searchPlaceholder: t("venueProfile.placeholders.siteId"),
         description: t("venueProfile.descriptions.siteId"),
         required: true,
       },

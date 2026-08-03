@@ -15,7 +15,7 @@ export const ar = {
       description: "الوصف",
     },
     placeholders: {
-      venueProfileId: "أدخل معرّف المنشأة",
+      venueProfileId: "ابحث عن منشأة...",
       code: "مثال: BLD-A",
       name: "مثال: المبنى أ",
       description: "وصف اختياري",

@@ -1,11 +1,12 @@
 "use client";
 
+import { useCallback } from "react";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getVenueContainer } from "../../../../di";
 import type { VenueProfile } from "../../domain/entities/VenueProfile";
 
 export function useVenueProfileViewModel() {
-  const { venueProfileRepository } = getVenueContainer();
+  const { venueProfileRepository, sitePickerService } = getVenueContainer();
 
   const vm = useCrudViewModel(["venueProfile"], {
     getAll: async (params) => {
@@ -37,5 +38,16 @@ export function useVenueProfileViewModel() {
     },
   });
 
-  return { vm };
+  // Powers the Site `server-select` field — Sites live in OrganizationCore,
+  // a different backend module, so this goes through the dedicated picker
+  // service rather than the venueProfileRepository.
+  const searchSites = useCallback(
+    async (query: string) => {
+      const results = await sitePickerService.search(query);
+      return results.map((site) => ({ value: site.id, label: site.name }));
+    },
+    [sitePickerService]
+  );
+
+  return { vm, searchSites };
 }
