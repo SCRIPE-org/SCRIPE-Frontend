@@ -92,7 +92,7 @@ export function useForceChangePasswordViewModel() {
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Password change failed";
         setSubmitError(msg);
-        operationError(msg);
+        operationError("Change password", undefined, msg);
       } finally {
         setIsSubmitting(false);
       }
