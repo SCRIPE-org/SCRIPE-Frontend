@@ -22,6 +22,7 @@ import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
 import { AssignToGroupDialog } from "@modules/identity/core";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
+import { RoleDeleteDialog } from "../components/RoleDeleteDialog";
 
 /**
  * Presentation UI component rendering the roles view.
@@ -36,7 +37,7 @@ export function RolesView() {
 
   // Logic: Super Admins see System/Context (Auto-Scoped), Tenant Admins see My Tenant
   const viewModel = useRolesViewModel({ useMyTenant: !isSuperAdmin });
-  const { handleBulkDelete } = viewModel;
+  const { handleBulkDelete, deleteRole, isDeletingRole } = viewModel;
 
   // Assign to Group dialog state
   const [selectedRoleForGroup, setSelectedRoleForGroup] = useState<Role | null>(null);
@@ -46,9 +47,20 @@ export function RolesView() {
   const [selectedBulkRoleIds, setSelectedBulkRoleIds] = useState<string[]>([]);
   const [bulkAssignToGroupOpen, setBulkAssignToGroupOpen] = useState(false);
 
+  // Delete dialog state — replaces GenericCrudView's generic "are you sure"
+  // confirm with RoleDeleteDialog, which blocks the delete until a fallback
+  // role is chosen when admins are still assigned to this role.
+  const [roleToDelete, setRoleToDelete] = useState<Role | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
   const handleOpenAssignToGroup = useCallback((role: Role) => {
     setSelectedRoleForGroup(role);
     setAssignToGroupOpen(true);
+  }, []);
+
+  const handleOpenDelete = useCallback((role: Role) => {
+    setRoleToDelete(role);
+    setDeleteDialogOpen(true);
   }, []);
 
   const columns: CrudColumn<Role>[] = [
@@ -149,6 +161,7 @@ export function RolesView() {
         type: "text",
         required: true,
         placeholder: t("roles.codePlaceholder"),
+        description: t("roles.codeHint"),
       },
       {
         name: "descriptionEn",
@@ -167,6 +180,7 @@ export function RolesView() {
         label: t("roles.priority"),
         type: "number",
         defaultValue: 100,
+        description: t("roles.priorityHint"),
       },
     ],
     editFields: [
@@ -196,9 +210,10 @@ export function RolesView() {
         name: "priority",
         label: t("roles.priority"),
         type: "number",
+        description: t("roles.priorityHint"),
       },
     ],
-    getActions: (vm, t, handleDelete) => [
+    getActions: (vm, t, _handleDelete) => [
       // Manage Permissions (Custom Action)
       {
         label: t("roles.managePermissions"),
@@ -237,11 +252,12 @@ export function RolesView() {
         icon: <Pencil className="h-4 w-4" />,
         onClick: (role) => vm.openEditModal(role),
       },
-      // Delete (Standard)
+      // Delete (Standard) — opens RoleDeleteDialog instead of the generic
+      // bare confirm; that dialog owns its own confirmation step.
       {
         label: t("common.delete"),
         icon: <Trash className="h-4 w-4" />,
-        onClick: handleDelete,
+        onClick: (role) => handleOpenDelete(role),
         variant: "destructive",
       },
     ],
@@ -299,6 +315,23 @@ export function RolesView() {
         roleId={selectedRoleForGroup?.id}
         roleName={selectedRoleForGroup?.getLocalizedName(language)}
         useMyTenant={true}
+      />
+
+      {/* Delete Dialog — admin-count-aware, forces a fallback role pick before deleting */}
+      <RoleDeleteDialog
+        open={deleteDialogOpen}
+        onOpenChange={(open) => {
+          setDeleteDialogOpen(open);
+          if (!open) setRoleToDelete(null);
+        }}
+        role={roleToDelete}
+        tenantId={roleToDelete?.tenantId}
+        onConfirm={async (fallbackRoleId) => {
+          if (!roleToDelete) return;
+          await deleteRole(roleToDelete.id, fallbackRoleId);
+          setRoleToDelete(null);
+        }}
+        isDeleting={isDeletingRole}
       />
     </>
   );

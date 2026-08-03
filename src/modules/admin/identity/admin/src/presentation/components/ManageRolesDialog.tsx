@@ -13,9 +13,9 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Shield } from "lucide-react";
-import { resolveBilingualLabel } from "@core/common/utils";
 import type { Admin } from "../../domain/entities/Admin";
 import { useManageRolesViewModel } from "../viewmodels/useManageRolesViewModel";
 
@@ -35,28 +35,30 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   const scopeTenantId = tenantId || admin?.tenantId || "";
 
   const vm = useManageRolesViewModel({ adminId: admin?.id, scopeTenantId, open });
-  const { t, language, rolesData, currentRoles, isLoading, isSubmitting } = vm;
+  const { t, rolesData, currentRoles, resolvedExtraRoles, isLoading, isSubmitting } = vm;
 
   // Form state
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>([]);
   const [inheritToChildren, setInheritToChildren] = useState(false);
+  // Assigning/removing roles takes effect immediately on Save (nuke & pave) —
+  // gate it behind the same confirmation step as "Transfer Protection" and
+  // "Resend setup email" elsewhere in this view (F-69).
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
-  // Transform available roles to options
-  const roleOptions: GenericSelectOption[] = useMemo(
-    () =>
-      (rolesData?.items ?? [])
-        .filter((role) => (role.tenantId || "") === scopeTenantId) // Double check strict scope
-        .map((role) => ({
-          value: role.id,
-          label: resolveBilingualLabel(role.nameEn, role.nameAr, language),
-          description: resolveBilingualLabel(
-            role.descriptionEn ?? "",
-            role.descriptionAr ?? "",
-            language
-          ),
-        })),
-    [rolesData, language, scopeTenantId]
-  );
+  // Transform available roles to options. Merges in roles resolved by code
+  // (see useManageRolesViewModel) that fell outside the first fetched page —
+  // otherwise a role the admin already has beyond page 1 would render as a
+  // raw, unlabelled id, or be missing entirely (F-68).
+  const roleOptions: GenericSelectOption[] = useMemo(() => {
+    const byId = new Map<string, GenericSelectOption>();
+    (rolesData?.items ?? [])
+      .filter((role) => (role.tenantId || "") === scopeTenantId) // Double check strict scope
+      .forEach((role) => byId.set(role.id, vm.mapRoleOption(role)));
+    resolvedExtraRoles.forEach((role) => {
+      if (!byId.has(role.id)) byId.set(role.id, vm.mapRoleOption(role));
+    });
+    return Array.from(byId.values());
+  }, [rolesData, resolvedExtraRoles, scopeTenantId, vm]);
 
   // Logic: Map Current Roles to Available Options using ROLE CODE
   const rolesLen = rolesData?.items?.length ?? 0;
@@ -65,17 +67,20 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   const [prevOpen, setPrevOpen] = useState(open);
   const [prevCurrentRoles, setPrevCurrentRoles] = useState(currentRoles);
   const [prevRolesData, setPrevRolesData] = useState(rolesData);
+  const [prevResolvedExtraRoles, setPrevResolvedExtraRoles] = useState(resolvedExtraRoles);
   const [prevScopeTenantId, setPrevScopeTenantId] = useState(scopeTenantId);
 
   if (
     open !== prevOpen ||
     currentRoles !== prevCurrentRoles ||
     rolesData !== prevRolesData ||
+    resolvedExtraRoles !== prevResolvedExtraRoles ||
     scopeTenantId !== prevScopeTenantId
   ) {
     setPrevOpen(open);
     setPrevCurrentRoles(currentRoles);
     setPrevRolesData(rolesData);
+    setPrevResolvedExtraRoles(resolvedExtraRoles);
     setPrevScopeTenantId(scopeTenantId);
 
     if (open && currentRoles && rolesData?.items) {
@@ -85,6 +90,10 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
         const match = rolesData.items.find((ar) => ar.code === cr.roleCode);
         if (match) matchedIds.push(match.id);
       });
+      // Fold in roles resolved by code because the first fetched page didn't
+      // contain them — without this, Save (nuke & pave) would silently drop
+      // any role the admin has beyond page 1.
+      resolvedExtraRoles.forEach((role) => matchedIds.push(role.id));
       setSelectedRoleIds(matchedIds);
       setInheritToChildren(scopedCurrentRoles.some((r) => r.inheritToChildren));
     } else if (open && !currentRoles && !rolesData) {
@@ -94,7 +103,12 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
   }
 
   const handleSave = () => {
-    vm.syncRoles(selectedRoleIds, inheritToChildren, onOpenChange);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmSave = async () => {
+    await vm.syncRoles(selectedRoleIds, inheritToChildren, onOpenChange);
+    setConfirmOpen(false);
   };
 
   return (
@@ -132,8 +146,14 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
                 }
                 placeholder={t("admin.role.selectRolePlaceholder")}
                 type="multi"
+                // Server-side search so a role beyond the first fetched page
+                // can actually be found (and kept or removed) instead of
+                // being invisible in the picker (F-68).
+                searchType="server"
+                onServerSearch={vm.searchRoles}
               />
               <p className="text-xs text-nx-ink-3">{t("admin.role.selectRolesHelp")}</p>
+              <p className="text-xs text-nx-ink-3">{t("roles.priorityHint")}</p>
             </div>
 
             {/* Inherit Toggle (only if tenant context) */}
@@ -164,6 +184,18 @@ export function ManageRolesDialog({ open, onOpenChange, admin, tenantId }: Manag
           </Button>
         </div>
       </div>
+
+      <ConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        variant="warning"
+        title={t("admin.role.saveRoles")}
+        description={`${t("admin.role.manageDescription")} ${admin?.displayName || ""}`}
+        confirmText={t("admin.role.saveRoles")}
+        cancelText={t("common.cancel")}
+        onConfirm={handleConfirmSave}
+        isLoading={isSubmitting}
+      />
     </GenericModal>
   );
 }

@@ -42,6 +42,8 @@ export interface RoleDetailHeaderProps {
   isLoading: boolean;
   isSaving: boolean;
   onSave: () => void;
+  /** Whether the permission matrix has unsaved edits since the last load/save. */
+  isDirty: boolean;
 }
 
 /**
@@ -97,6 +99,10 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
+  // Tracks unsaved edits so the header's Save button and "unsaved changes"
+  // banner reflect real state instead of just the in-flight save request —
+  // mirrors useOAuthAppDetailViewModel's isDirty flag.
+  const [isDirty, setIsDirty] = useState(false);
 
   // === QUERIES ===
   const { data: role, isLoading: roleLoading } = useQuery<Role>({
@@ -163,6 +169,10 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
 
       appLogger.debug("Initialized assignments map size:", newAssignments.size);
       setAssignments(newAssignments);
+      // Fresh-from-server data is by definition not dirty — this also covers
+      // the post-save refetch (rolePermissions gets a new array reference
+      // once the invalidated query resolves).
+      setIsDirty(false);
     }
   }
 
@@ -203,6 +213,9 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
       queryClient.invalidateQueries({ queryKey: ["role", roleId] });
+      // Reset immediately rather than waiting on the invalidated refetch, so
+      // the Save button/banner clear the instant the save resolves.
+      setIsDirty(false);
       success({
         title: t("common.success"),
         description: t("roleDetail.permissionsSaved"),
@@ -227,6 +240,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
 
   const togglePermission = useCallback(
     (permissionCode: string) => {
+      setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
         if (next.has(permissionCode)) {
@@ -250,6 +264,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   );
 
   const updateAssignment = useCallback((code: string, assignment: PermissionAssignmentJson) => {
+    setIsDirty(true);
     setAssignments((prev) => {
       const next = new Map(prev);
       next.set(code, assignment);
@@ -262,6 +277,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       const categoryCodes = permissions.map((p) => p.code);
       const allSelected = categoryCodes.every((code) => assignments.has(code));
 
+      setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
         categoryCodes.forEach((code) => {
@@ -307,6 +323,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const bulkUpdateScope = useCallback((scope: string) => {
     const scopeValue = scope === "own_tenant" ? undefined : scope;
 
+    setIsDirty(true);
     setAssignments((prev) => {
       const next = new Map(prev);
       Array.from(next.keys()).forEach((key) => {
@@ -332,6 +349,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       isLoading: roleLoading,
       isSaving: saveMutation.isPending,
       onSave: handleSave,
+      isDirty,
     } as RoleDetailHeaderProps,
 
     info: {

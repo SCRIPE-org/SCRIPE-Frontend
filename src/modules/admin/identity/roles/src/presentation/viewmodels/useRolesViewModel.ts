@@ -187,6 +187,27 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     [cloneMutation]
   );
 
+  // Single-role delete with optional fallback role (admins currently on this
+  // role get moved there first). Powers RoleDeleteDialog, which replaces the
+  // generic "are you sure" confirm with an admin-count-aware picker.
+  const deleteRoleMutation = useMutation({
+    mutationFn: ({ id, fallbackRoleId }: { id: string; fallbackRoleId?: string }) =>
+      roleRepository.delete(id, fallbackRoleId ? { fallbackRoleId } : undefined),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey });
+      success({
+        title: "Role Deleted",
+        description: "The role has been deleted successfully.",
+      });
+    },
+    onError: (err: Error) => {
+      toastError({
+        title: "Delete Failed",
+        description: err.message || "Failed to delete role.",
+      });
+    },
+  });
+
   // Bulk Delete
   const bulkDeleteMutation = useMutation({
     mutationFn: (ids: string[]) => roleRepository.bulkDelete(ids),
@@ -214,6 +235,9 @@ export function useRolesViewModel(params: UseRolesViewModelParams = {}) {
     isAssigningPermissions: assignPermissionsMutation.isPending,
     clone,
     isCloning: cloneMutation.isPending,
+    deleteRole: (id: string, fallbackRoleId?: string) =>
+      deleteRoleMutation.mutateAsync({ id, fallbackRoleId }),
+    isDeletingRole: deleteRoleMutation.isPending,
     handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutateAsync(ids),
     isBulkDeleting: bulkDeleteMutation.isPending,
   };

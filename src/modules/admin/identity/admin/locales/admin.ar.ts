@@ -97,6 +97,9 @@ export const ar = {
       assignedDesc: "تم تعيين الدور للمشرف بنجاح.",
       removed: "تم إلغاء الدور",
       removedDesc: "تم إلغاء الدور من المشرف بنجاح.",
+      removeConfirmTitle: "إلغاء الدور",
+      removeConfirmDescription:
+        'هل تريد إلغاء دور "{{role}}" من {{admin}}؟ سيفقد فوراً أي صلاحيات ممنوحة فقط عبر هذا الدور.',
     },
     created: "تم الإنشاء",
     createdDesc: "تم إنشاء المشرف بنجاح.",

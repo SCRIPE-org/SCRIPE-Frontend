@@ -16,6 +16,7 @@ import { Badge } from "@core/ui/badge";
 import { PasswordInput } from "@core/ui/password-input";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { EmptyState } from "@core/ui/empty-state";
 import { Shield, Trash2, Building2 } from "lucide-react";
@@ -57,8 +58,15 @@ export function AssignRoleDialog({
     }
   }, [open, vm]);
 
-  const handleSave = async () => {
+  // Assigning a role takes effect immediately — same as ManageRolesDialog and
+  // ViewRolesDialog's removal, this now goes through a confirmation step
+  // rather than committing on the first click (matches "Transfer Protection"
+  // and "Resend setup email" elsewhere in the admin view).
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleConfirmAssign = async () => {
     await vm.handleAssignSubmit();
+    setConfirmOpen(false);
     onOpenChange(false);
   };
 
@@ -101,6 +109,7 @@ export function AssignRoleDialog({
             type="multi"
             loading={vm.isLoadingRoles}
           />
+          <p className="text-xs text-nx-ink-3">{vm.t("roles.priorityHint")}</p>
         </div>
 
         {/* Inherit Toggle - Show if tenant selected */}
@@ -123,11 +132,27 @@ export function AssignRoleDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {vm.t("common.cancel")}
           </Button>
-          <Button onClick={handleSave} loading={isLoading} disabled={vm.assignRoleIds.length === 0}>
+          <Button
+            onClick={() => setConfirmOpen(true)}
+            loading={isLoading}
+            disabled={vm.assignRoleIds.length === 0}
+          >
             {vm.t("admin.role.assign")}
           </Button>
         </div>
       </div>
+
+      <ConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        variant="warning"
+        title={vm.t("admin.role.assignTitle")}
+        description={`${vm.t("admin.role.assignDescription")} ${admin?.displayName || ""}`}
+        confirmText={vm.t("admin.role.assign")}
+        cancelText={vm.t("common.cancel")}
+        onConfirm={handleConfirmAssign}
+        isLoading={isLoading}
+      />
     </GenericModal>
   );
 }
@@ -156,12 +181,23 @@ export function ViewRolesDialog({
   // ViewModel handles fetching roles
   const vm = useAdminRolesViewModel(admin, async () => {}, onRemoveRole);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  // Removal used to fire on the first Trash2 click — the same missing
+  // confirmation step as AssignRoleDialog/ManageRolesDialog, now closed with
+  // the same ConfirmationDialog pattern.
+  const [roleToRemove, setRoleToRemove] = useState<AdminRoleData | null>(null);
 
   const handleRemove = async (role: AdminRoleData) => {
     setRemovingId(role.roleId);
     await onRemoveRole(role.roleId, role.tenantId);
     await vm.refetchRoles();
     setRemovingId(null);
+  };
+
+  const handleConfirmRemove = async () => {
+    if (!roleToRemove) return;
+    const role = roleToRemove;
+    setRoleToRemove(null);
+    await handleRemove(role);
   };
 
   return (
@@ -216,7 +252,7 @@ export function ViewRolesDialog({
                   variant="ghost"
                   size="icon"
                   className="text-nx-ink-3 hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => handleRemove(role)}
+                  onClick={() => setRoleToRemove(role)}
                   loading={removingId === role.roleId}
                   disabled={isRemoving && removingId !== role.roleId}
                   aria-label={vm.t("common.delete")}
@@ -234,6 +270,23 @@ export function ViewRolesDialog({
           </Button>
         </div>
       </div>
+
+      <ConfirmationDialog
+        open={!!roleToRemove}
+        onOpenChange={(open) => {
+          if (!open) setRoleToRemove(null);
+        }}
+        variant="destructive"
+        title={vm.t("admin.role.removeConfirmTitle")}
+        description={vm.t("admin.role.removeConfirmDescription", {
+          role: roleToRemove?.roleNameEn ?? "",
+          admin: admin?.displayName ?? "",
+        })}
+        confirmText={vm.t("common.delete")}
+        cancelText={vm.t("common.cancel")}
+        onConfirm={handleConfirmRemove}
+        isLoading={isRemoving}
+      />
     </GenericModal>
   );
 }

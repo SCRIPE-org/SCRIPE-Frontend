@@ -80,6 +80,9 @@ export const en = {
       assignedDesc: "Assigned Desc",
       removed: "Removed",
       removedDesc: "Removed Desc",
+      removeConfirmTitle: "Remove Role",
+      removeConfirmDescription:
+        'Remove the "{{role}}" role from {{admin}}? They will immediately lose any permissions granted only by this role.',
     },
     protectionTransfered: "Protection Transfered",
     impersonating: "Impersonating",
