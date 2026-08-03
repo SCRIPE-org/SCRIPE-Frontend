@@ -19,12 +19,25 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
       className="flex items-center justify-between text-[12px]"
       style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
     >
-      <label className="flex cursor-pointer select-none items-center gap-2">
+      <label
+        className="flex cursor-pointer select-none items-center gap-2"
+        onClick={() => {
+          // The checkbox is a `div[role="checkbox"]`, not a native input, so
+          // it isn't natively associated with this <label> — without this
+          // handler, clicks on the label text wouldn't toggle it. The
+          // checkbox div's own onClick calls stopPropagation, so this only
+          // fires for clicks that land on the label/text, never double-firing.
+          if (!disabled) onStaySignedInChange(!staySignedIn);
+        }}
+      >
         <div
           role="checkbox"
           aria-checked={staySignedIn}
           tabIndex={0}
-          onClick={() => !disabled && onStaySignedInChange(!staySignedIn)}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!disabled) onStaySignedInChange(!staySignedIn);
+          }}
           onKeyDown={(e) => {
             if (e.key === " " || e.key === "Enter") {
               e.preventDefault();

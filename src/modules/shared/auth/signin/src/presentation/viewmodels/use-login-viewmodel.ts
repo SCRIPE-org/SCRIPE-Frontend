@@ -16,6 +16,7 @@ import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { getAuthContainer } from "@modules/auth/di";
+import { getSafeRedirectPath } from "./redirect-safety";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for login form data.
@@ -85,13 +86,17 @@ export function useLoginViewModel() {
   const rawRedirect = searchParams.get("redirect") || backendRedirectPath;
   const redirectPath = !rawRedirect || rawRedirect === "/" ? "/overview" : rawRedirect;
 
-  // Helper to handle external vs internal redirects
+  // Helper to handle external vs internal redirects.
+  // `path` may originate from the attacker-controlled `?redirect=` query
+  // param — validate it's same-origin (or relative) before navigating,
+  // falling back to a safe default otherwise (open-redirect protection).
   const handleRedirect = useCallback(
     (path: string) => {
-      if (path.startsWith("http://") || path.startsWith("https://")) {
-        window.location.href = path;
+      const safePath = getSafeRedirectPath(path);
+      if (safePath.startsWith("http://") || safePath.startsWith("https://")) {
+        window.location.href = safePath;
       } else {
-        router.replace(path);
+        router.replace(safePath);
       }
     },
     [router]

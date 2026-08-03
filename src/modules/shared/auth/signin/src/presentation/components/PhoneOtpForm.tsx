@@ -10,7 +10,11 @@ import { usePhoneOtpViewModel } from "../viewmodels/usePhoneOtpViewModel";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface PhoneOtpFormProps {
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void;
+  onSuccess: (result: {
+    accessToken: string;
+    refreshToken: string;
+    mustChangePassword?: boolean;
+  }) => void;
   onBack: () => void;
   isRTL: boolean;
 }
