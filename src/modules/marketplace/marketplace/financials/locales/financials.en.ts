@@ -20,6 +20,9 @@ export const en = {
     financialsPayoutStatusProcessing: "Processing",
     financialsPayoutStatusPaid: "Paid",
     financialsPayoutStatusFailed: "Failed",
+    financialsSelectDeveloperLabel: "Developer",
+    financialsSelectDeveloperPlaceholder: "Select a developer…",
+    financialsSelectDeveloperPrompt: "Select a developer above to view their payouts.",
     // ── RevenueChart ──
     financialsRevenueChartTitle: "Revenue Over Time",
     financialsNoRevenueData: "No revenue data available.",

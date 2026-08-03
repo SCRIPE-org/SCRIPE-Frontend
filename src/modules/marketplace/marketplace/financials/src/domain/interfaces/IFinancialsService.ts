@@ -5,17 +5,29 @@
  * Returns raw API DTOs — conversion to domain entities happens in the Repository.
  */
 
-/** API response shape for a purchase record. */
+/**
+ * API response shape for a purchase record.
+ * Maps to backend AppPurchaseResponse:
+ *   - purchaseDate (not purchasedAt)
+ *   - amountPaid (not amount)
+ *   - status (payment status string)
+ *
+ * Note: pricingModel and tenantName are NOT in the backend response;
+ * they must be resolved client-side or added to the backend DTO later.
+ */
 export interface PurchaseDto {
   id: string;
   appListingId: string;
   appName?: string;
   tenantId: string;
-  tenantName?: string;
-  amount?: number;
+  /** Backend field name: PurchaseDate */
+  purchaseDate?: string;
+  /** Backend field name: AmountPaid */
+  amountPaid?: number;
   currency?: string;
-  pricingModel?: string;
-  purchasedAt?: string;
+  /** Backend field name: Status (payment status) */
+  status?: string;
+  createdAt?: string;
 }
 
 /** API response shape for a developer payout record. */

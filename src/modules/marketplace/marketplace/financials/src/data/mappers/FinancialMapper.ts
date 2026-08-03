@@ -1,44 +1,11 @@
 import { AppPurchase, DeveloperPayout } from "../../domain/entities/FinancialEntities";
 import type { PayoutStatus } from "../../domain/entities/FinancialEntities";
+import type { PurchaseDto, PayoutDto } from "../../domain/interfaces/IFinancialsService";
 
-/**
- * API response shape for a purchase record.
- * Maps to backend AppPurchaseResponse:
- *   - purchaseDate (not purchasedAt)
- *   - amountPaid (not amount)
- *   - status (payment status string)
- *
- * Note: pricingModel and tenantName are NOT in the backend response;
- * they must be resolved client-side or added to the backend DTO later.
- */
-export interface PurchaseDto {
-  id: string;
-  appListingId: string;
-  appName?: string;
-  tenantId: string;
-  /** Backend field name: PurchaseDate */
-  purchaseDate?: string;
-  /** Backend field name: AmountPaid */
-  amountPaid?: number;
-  currency?: string;
-  /** Backend field name: Status (payment status) */
-  status?: string;
-  createdAt?: string;
-}
-
-/** API response shape for a developer payout record. */
-export interface PayoutDto {
-  id: string;
-  developerProfileId: string;
-  developerName?: string;
-  amount?: number;
-  currency?: string;
-  periodStart?: string;
-  periodEnd?: string;
-  status?: string;
-  stripeTransferId?: string | null;
-  createdAt?: string;
-}
+// Re-export so existing consumers importing the DTOs from this module keep working.
+// Canonical definitions live in IFinancialsService.ts (single source of truth —
+// avoids two divergent PurchaseDto/PayoutDto shapes across the data layer).
+export type { PurchaseDto, PayoutDto };
 
 /**
  * Standalone mappers for financial entities (AppPurchase, DeveloperPayout).
