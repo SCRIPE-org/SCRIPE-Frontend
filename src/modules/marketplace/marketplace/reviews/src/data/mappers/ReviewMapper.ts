@@ -4,16 +4,22 @@ import { safeParseApiResponse, uuidField, optionalString } from "@core/common/zo
 
 // ─── Zod Schemas ─────────────────────────────────────────────────────────────
 
-/** API response shape for an app review. */
+/**
+ * API response shape for an app review.
+ *
+ * Matches Marketplace.Application.DTOs.AppReviewListResponse: Id,
+ * AppListingId, AppName, Rating, Title, Content, HasReply, CreatedAt.
+ * There is no tenantId, tenant/reviewer name, or `body` field on the wire —
+ * the review text is sent as `content`.
+ */
 export interface ReviewDto {
   id: string;
   appListingId: string;
   appName?: string;
-  tenantId: string;
-  tenantName?: string;
+  tenantId?: string;
   rating?: number;
   title?: string;
-  body?: string;
+  content?: string;
   createdAt?: string;
   isModerated?: boolean;
 }
@@ -22,11 +28,10 @@ const ReviewDtoSchema = z.object({
   id: uuidField(),
   appListingId: uuidField(),
   appName: optionalString(),
-  tenantId: uuidField(),
-  tenantName: optionalString(),
+  tenantId: z.string().optional(),
   rating: z.number().min(0).max(5).optional().default(0),
   title: optionalString(),
-  body: optionalString(),
+  content: optionalString(),
   createdAt: z.string().optional().nullable(),
   isModerated: z.boolean().optional().default(false),
 });
@@ -45,10 +50,9 @@ export class ReviewMapper {
       appListingId: validated.appListingId,
       appName: validated.appName ?? "",
       tenantId: validated.tenantId,
-      tenantName: validated.tenantName ?? "",
       rating: validated.rating ?? 0,
       title: validated.title ?? "",
-      body: validated.body ?? "",
+      body: validated.content ?? "",
       createdAt: validated.createdAt ?? new Date().toISOString(),
       isModerated: validated.isModerated ?? false,
     });

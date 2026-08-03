@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useReviewsViewModel } from "../viewmodels/useReviewsViewModel";
-import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardHeader } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
@@ -60,9 +59,6 @@ export function ReviewsView() {
                         />
                       ))}
                     </div>
-                    <Badge variant="outline" className="text-xs">
-                      {review.tenantName}
-                    </Badge>
                   </div>
                   <p className="mt-1 text-sm font-medium text-nx-ink">{review.title}</p>
                   <p className="line-clamp-2 text-xs text-nx-ink-2">{review.body}</p>

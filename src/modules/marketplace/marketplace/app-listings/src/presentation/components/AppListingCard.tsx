@@ -17,6 +17,7 @@ interface AppListingCardProps {
   onToggleFeatured: () => void;
   onDelete: () => void;
   isPublishing: boolean;
+  isTogglingFeatured: boolean;
   isDeleting: boolean;
 }
 
@@ -33,6 +34,7 @@ export function AppListingCard({
   onToggleFeatured,
   onDelete,
   isPublishing,
+  isTogglingFeatured,
   isDeleting,
 }: AppListingCardProps) {
   const { t } = useI18n();
@@ -139,6 +141,7 @@ export function AppListingCard({
             size="sm"
             variant={listing.isFeatured ? "secondary" : "ghost"}
             onClick={onToggleFeatured}
+            disabled={isTogglingFeatured}
             aria-label={
               listing.isFeatured
                 ? t("marketplace.listingsRemoveFeatured")

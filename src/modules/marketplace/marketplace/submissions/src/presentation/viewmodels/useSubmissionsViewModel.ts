@@ -79,5 +79,6 @@ export function useSubmissionsViewModel() {
     requestRevisions: revisionsMutation.mutate,
     isApproving: approveMutation.isPending,
     isRejecting: rejectMutation.isPending,
+    isRequestingRevisions: revisionsMutation.isPending,
   };
 }

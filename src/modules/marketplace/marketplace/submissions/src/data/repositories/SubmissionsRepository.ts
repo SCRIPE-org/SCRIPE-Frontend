@@ -11,9 +11,8 @@
  */
 import type { ISubmissionsService } from "../../domain/interfaces/ISubmissionsService";
 import { AppSubmission } from "../../domain/entities/AppSubmission";
-import type { AppSubmissionData } from "../../domain/entities/AppSubmission";
 import type { ISubmissionsRepository } from "../../domain/interfaces/ISubmissionsRepository";
-import type { SubmissionDto } from "../../domain/interfaces/ISubmissionsService";
+import { SubmissionMapper } from "../mappers/SubmissionMapper";
 
 /**
  * Repository layer implementing client request queries for submissions.
@@ -24,11 +23,11 @@ export class SubmissionsRepository implements ISubmissionsRepository {
 
   async getAll(params: { page: number; pageSize: number; status?: string }) {
     const data = await this.service.getAll(params);
-    return { ...data, items: (data.items ?? []).map(this.map) };
+    return { ...data, items: (data.items ?? []).map(SubmissionMapper.toEntity) };
   }
 
   async getById(id: string): Promise<AppSubmission> {
-    return this.map(await this.service.getById(id));
+    return SubmissionMapper.toEntity(await this.service.getById(id));
   }
 
   async create(payload: Parameters<ISubmissionsRepository["create"]>[0]): Promise<string> {
@@ -48,19 +47,5 @@ export class SubmissionsRepository implements ISubmissionsRepository {
 
   async requestRevisions(id: string, feedback: string): Promise<void> {
     await this.service.requestRevisions(id, feedback);
-  }
-
-  private map(d: SubmissionDto): AppSubmission {
-    return new AppSubmission({
-      id: d.id,
-      appListingId: d.appListingId,
-      appName: d.appName ?? "",
-      developerName: d.developerName ?? "",
-      submittedVersion: d.submittedVersion ?? "",
-      status: (d.status ?? "Pending") as AppSubmissionData["status"],
-      reviewerNotes: d.reviewerNotes ?? null,
-      submittedAt: d.submittedAt ?? new Date().toISOString(),
-      reviewedAt: d.reviewedAt ?? null,
-    });
   }
 }

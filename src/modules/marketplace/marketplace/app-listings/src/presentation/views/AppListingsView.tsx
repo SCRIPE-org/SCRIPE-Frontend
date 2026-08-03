@@ -83,6 +83,7 @@ export function AppListingsView() {
               onToggleFeatured={() => vm.toggleFeatured(listing.id)}
               onDelete={() => vm.delete(listing.id)}
               isPublishing={vm.isPublishing}
+              isTogglingFeatured={vm.isTogglingFeatured}
               isDeleting={vm.isDeleting}
             />
           ))}

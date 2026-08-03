@@ -436,9 +436,8 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
       <div className="min-w-0 flex-1">
         {review.title && <p className="text-sm font-medium text-nx-ink">{review.title}</p>}
         {review.body && <p className="mt-0.5 line-clamp-3 text-xs text-nx-ink-2">{review.body}</p>}
-        <p className="mt-1 text-xs text-nx-ink-3">
-          {review.tenantName} · {formatUtc(review.createdAt, "MMM d, yyyy")}
-        </p>
+        {/* No tenant/reviewer name field exists on the backend review DTO — show the date alone. */}
+        <p className="mt-1 text-xs text-nx-ink-3">{formatUtc(review.createdAt, "MMM d, yyyy")}</p>
       </div>
 
       <Button
