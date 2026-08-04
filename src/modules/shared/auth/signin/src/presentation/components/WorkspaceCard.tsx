@@ -234,13 +234,13 @@ export function WorkspaceCard({
           autoFocus
           autoComplete="current-password"
           disabled={isUnlocking}
-          className="h-9 pr-10 text-sm"
+          className="h-9 pe-10 text-sm"
           aria-label={`Password for ${ws.tenantName}`}
         />
         <button
           type="button"
           onClick={() => setShowPwd((v) => !v)}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          className="absolute end-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           // Reachable by keyboard: a sighted keyboard user and a screen-reader
           // user both need to verify what they typed before submitting, and
           // this is the only control that lets them (WCAG 2.1.1, Level A).

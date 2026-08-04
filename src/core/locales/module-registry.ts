@@ -42,7 +42,7 @@ import {
   ar as custSettingsAr,
 } from "@modules/customization/settings/locales";
 import { en as custStudioEn, ar as custStudioAr } from "@modules/customization/studio/locales";
-// import { en as menusEn, ar as menusAr } from "@modules/customization/menus/locales";
+import { en as menusEn, ar as menusAr } from "@modules/customization/menus/locales";
 import {
   en as tenantSettingsEn,
   ar as tenantSettingsAr,
@@ -113,8 +113,7 @@ import { en as homeEn, ar as homeAr } from "@modules/home/core/locales";
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";
 
-/*
-// ─── Plugins (4 sub-modules, each owning their slice of the "plugins" key) ──
+// ─── Plugins (5 sub-modules, each owning their slice of the "plugins" key) ──
 import { en as pluginsCatalogEn, ar as pluginsCatalogAr } from "@modules/plugins/catalog/locales";
 import {
   en as pluginsInstalledEn,
@@ -129,7 +128,6 @@ import {
   en as pluginsDefinitionsEn,
   ar as pluginsDefinitionsAr,
 } from "@modules/plugins/definitions/locales";
-*/
 
 // ─── Compliance (7 sub-modules) ─────────────────────────────────────────────
 import {
@@ -214,7 +212,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   // Customization
   custSettingsEn,
   custStudioEn,
-  // menusEn,
+  menusEn,
   tenantSettingsEn,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsEn,
@@ -243,14 +241,12 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   profileEn,
   // Home
   homeEn,
-  /*
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogEn,
   pluginsInstalledEn,
   pluginsLogsEn,
   pluginsSettingsEn,
   pluginsDefinitionsEn,
-  */
   // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardEn,
   compDsrEn,
@@ -294,7 +290,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   // Customization
   custSettingsAr,
   custStudioAr,
-  // menusAr,
+  menusAr,
   tenantSettingsAr,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsAr,
@@ -323,14 +319,12 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   profileAr,
   // Home
   homeAr,
-  /*
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogAr,
   pluginsInstalledAr,
   pluginsLogsAr,
   pluginsSettingsAr,
   pluginsDefinitionsAr,
-  */
   // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardAr,
   compDsrAr,

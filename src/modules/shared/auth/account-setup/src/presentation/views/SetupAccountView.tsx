@@ -271,9 +271,16 @@ function PasswordField({
 }
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
+  // Same "top right actions" block as ResetPasswordView/ForgotPasswordView —
+  // right-6 is a physical offset, so it has to be flipped by hand for RTL
+  // (Tailwind's `dir` attribute alone doesn't affect physical right-/left-).
+  const { direction } = useI18n();
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-12">
-      <div className="absolute right-6 top-6 z-20 flex items-center gap-1">
+      <div
+        className="absolute right-6 top-6 z-20 flex items-center gap-1"
+        style={direction === "rtl" ? { right: "auto", left: "1.5rem" } : {}}
+      >
         <LanguageSwitcher />
         <ThemeSwitcher />
       </div>

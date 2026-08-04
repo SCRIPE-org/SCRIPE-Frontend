@@ -20,12 +20,15 @@ export function IdpMetadataSection() {
   const apiOrigin =
     typeof window !== "undefined"
       ? process.env.NEXT_PUBLIC_API_URL ||
-        `${window.location.protocol}//${window.location.hostname}:5001`
+        `${window.location.protocol}//${window.location.hostname}:5035`
       : "https://api.example.com";
 
-  const ssoUrl = `${apiOrigin}/api/v1/auth/saml/sso`;
-  const metadataUrl = `${apiOrigin}/api/v1/auth/saml/metadata`;
-  const idpEntityId = `${apiOrigin}/api/v1/auth/saml/metadata`;
+  // apiOrigin (from NEXT_PUBLIC_API_URL) already ends in "/api" — see
+  // CallbackUrlCard.tsx's samlCallback for the same convention. Appending
+  // another "/api/..." segment here doubled the path to "/api/api/v1/...".
+  const ssoUrl = `${apiOrigin}/v1/auth/saml/sso`;
+  const metadataUrl = `${apiOrigin}/v1/auth/saml/metadata`;
+  const idpEntityId = `${apiOrigin}/v1/auth/saml/metadata`;
 
   const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
