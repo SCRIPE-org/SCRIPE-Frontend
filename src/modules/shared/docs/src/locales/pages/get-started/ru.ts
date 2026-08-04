@@ -90,9 +90,9 @@ export const ru = {
       backendStep2Content:
         "Выполните миграции Entity Framework для создания или обновления схемы базы данных.",
       backendStep3Title: "Запуск API-сервера",
-      backendStep3Content: "Запустите API-сервер бэкенда на https://localhost:5001.",
+      backendStep3Content: "Запустите API-сервер бэкенда на https://localhost:5035.",
       backendRunningTip:
-        "API-сервер запустится на https://localhost:5001 по умолчанию. Интерфейс Swagger доступен по адресу /swagger в режиме разработки.",
+        "API-сервер запустится на https://localhost:5035 по умолчанию. Интерфейс Swagger доступен по адресу /swagger в режиме разработки.",
       frontendTitle: "Запуск фронтенда",
       frontendStep1Title: "Установка зависимостей",
       frontendStep1Content:

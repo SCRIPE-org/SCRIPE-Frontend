@@ -62,7 +62,7 @@ const sections: DocSection[] = [
         titleKey: "getStarted.quickStart.frontendStep2Title",
         contentKey: "getStarted.quickStart.frontendStep2Content",
         code: `# .env.local
-NEXT_PUBLIC_API_URL=https://localhost:5001
+NEXT_PUBLIC_API_URL=https://localhost:5035
 NEXT_PUBLIC_APP_NAME=SCRIPE`,
         codeLanguage: "bash",
         codeFilename: ".env.local",
@@ -111,21 +111,21 @@ NEXT_PUBLIC_APP_NAME=SCRIPE`,
       {
         label: "Health Check",
         language: "bash",
-        code: `curl https://localhost:5001/health
+        code: `curl https://localhost:5035/health
 # Expected: {"status":"Healthy","results":{...}}`,
       },
       {
         label: "Swagger",
         language: "bash",
         code: `# Open in browser:
-# https://localhost:5001/swagger
+# https://localhost:5035/swagger
 
 # All 18 controllers should appear with documented endpoints`,
       },
       {
         label: "Login Test",
         language: "bash",
-        code: `curl -X POST https://localhost:5001/api/v1/auth/login \\
+        code: `curl -X POST https://localhost:5035/api/v1/auth/login \\
   -H "Content-Type: application/json" \\
   -d '{"email":"admin@scripe.com","password":"Admin@123"}'
 
@@ -160,7 +160,7 @@ scripe db add-migration Initial -m Inventory
 scripe db update -m Inventory
 
 # Auto-generate TypeScript models and API clients from Swagger
-scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m inventory
+scripe sync-api https://localhost:5035/swagger/v1/swagger.json -m inventory
 
 # Build the entire platform
 scripe build all`,

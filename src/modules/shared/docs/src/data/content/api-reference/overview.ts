@@ -14,12 +14,12 @@ const sections: DocSection[] = [
     type: "table",
     headers: ["Property", "Value"],
     rows: [
-      ["Base URL", "https://localhost:5001/api/v1"],
+      ["Base URL", "https://localhost:5035/api/v1"],
       ["API Versioning", "URL path versioning (/api/v1/)"],
       ["Content Type", "application/json"],
       ["Authentication", "Bearer JWT token in Authorization header"],
       ["Rate Limiting", "100 requests/minute per IP"],
-      ["Swagger UI", "https://localhost:5001/swagger"],
+      ["Swagger UI", "https://localhost:5035/swagger"],
     ],
   },
   {
