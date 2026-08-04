@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import type { ToastActionElement, ToastProps } from "@core/ui/enhanced-toast";
+import { translateCore } from "@core/common/i18n-outside-react";
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 2000; // 2 seconds as requested
@@ -218,23 +219,39 @@ function info(input: ToastInput) {
   return baseToast({ ...asToastProps(input), variant: "info" });
 }
 
-// Operation-specific toast methods
+// Operation-specific toast methods.
+//
+// `operation`/`itemName` are still expected to already be caller-localized nouns/verbs
+// (this module is a plain singleton usable outside React render, so it cannot call
+// useI18n() itself — see i18n-outside-react.ts) — but the surrounding sentence
+// structure ("{operation} Successful", "Failed to {operation} {item}.", the
+// no-itemName fallbacks, etc.) used to be hardcoded English regardless of the user's
+// language. It now goes through the same core locale dictionaries as the rest of the
+// app (common.operationToast.*).
 function operationSuccess(operation: string, itemName?: string) {
   return success({
-    title: `${operation} Successful`,
+    title: translateCore("common.operationToast.successTitle", { operation }),
     description: itemName
-      ? `${itemName} has been ${operation.toLowerCase()} successfully.`
-      : `Operation completed successfully.`,
+      ? translateCore("common.operationToast.successWithItem", {
+          item: itemName,
+          operationLower: operation.toLowerCase(),
+        })
+      : translateCore("common.operationToast.successGeneric"),
   });
 }
 
 function operationError(operation: string, itemName?: string, error?: string) {
   return baseToast({
     variant: "destructive",
-    title: `${operation} Failed`,
+    title: translateCore("common.operationToast.errorTitle", { operation }),
     description:
       error ||
-      (itemName ? `Failed to ${operation.toLowerCase()} ${itemName}.` : `Operation failed.`),
+      (itemName
+        ? translateCore("common.operationToast.errorWithItem", {
+            item: itemName,
+            operationLower: operation.toLowerCase(),
+          })
+        : translateCore("common.operationToast.errorGeneric")),
   });
 }
 

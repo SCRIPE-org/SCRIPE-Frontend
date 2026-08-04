@@ -1223,6 +1223,14 @@ export const ar = {
     english: "الإنجليزية",
   },
   common: {
+    operationToast: {
+      successTitle: "تم {operation} بنجاح",
+      successWithItem: "تم {operationLower} {item} بنجاح.",
+      successGeneric: "اكتملت العملية بنجاح.",
+      errorTitle: "فشل {operation}",
+      errorWithItem: "فشل {operationLower} {item}.",
+      errorGeneric: "فشلت العملية.",
+    },
     included: "مُضمَّن",
     notIncluded: "غير مُضمَّن",
     welcomeBack: "مرحباً بعودتك، {{name}}",
@@ -1671,11 +1679,14 @@ export const ar = {
       offline: "أنت غير متصل بالإنترنت حالياً. يرجى التحقق من اتصالك بالإنترنت.",
       timeout: "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
       serverError: "حدث خطأ في الخادم. يرجى المحاولة لاحقاً.",
+      unknown: "حدث خطأ غير معروف.",
     },
     auth: {
       unauthorized: "ليس لديك صلاحية للوصول إلى هذا المورد.",
       sessionExpired: "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
       loginRequired: "يرجى تسجيل الدخول للمتابعة.",
+      forbidden: "ليس لديك صلاحية للقيام بهذا الإجراء.",
+      tenantContextForbidden: "ليس لديك صلاحية لتبديل سياق المستأجر.",
     },
     module: {
       description: "تعذّر تحميل {module}. لم يتأثر باقي التطبيق.",

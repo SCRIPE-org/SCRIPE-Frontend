@@ -49,7 +49,14 @@ export function useSsoCallbackHandler(kind: SsoCallbackKind) {
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const { refreshNavigation } = useNavigation();
   const queryClient = useQueryClient();
-  const { operationSuccess } = useEnhancedToast();
+  // useSsoCallbackHandlers' SsoDeps.operationSuccess is typed (msg: string) => void — a
+  // bare, already-localized message (see the deps.operationSuccess(deps.t(...)) call
+  // sites below) — not useEnhancedToast's templated operationSuccess(operation,
+  // itemName?), which wraps its first argument as "{operation} Successful" and would
+  // tack the literal English word "Successful" onto an already-translated Arabic
+  // string. `success` is the plain "show this message" toast method that actually
+  // matches the contract this hook's dependents expect.
+  const { success: operationSuccess } = useEnhancedToast();
   const hasProcessed = useRef(false);
 
   const [state, setState] = useState<SsoCallbackState>("processing");
