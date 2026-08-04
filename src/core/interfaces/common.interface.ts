@@ -12,7 +12,7 @@ export interface PaginationParams {
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

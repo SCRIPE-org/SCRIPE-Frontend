@@ -30,7 +30,7 @@ export class EditionRepository implements IEditionRepository {
     return {
       items: result.items.map((m) => EditionMapper.toEntity(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,

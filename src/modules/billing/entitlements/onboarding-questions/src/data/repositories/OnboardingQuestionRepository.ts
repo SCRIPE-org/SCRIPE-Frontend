@@ -27,7 +27,7 @@ export class OnboardingQuestionRepository implements IOnboardingQuestionReposito
     return {
       items: result.items.map((m) => OnboardingQuestionMapper.toEntity(m)),
       totalCount: result.totalCount,
-      page: result.pageNumber,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.pageNumber < result.totalPages,

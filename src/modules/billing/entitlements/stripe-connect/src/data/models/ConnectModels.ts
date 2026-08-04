@@ -6,7 +6,7 @@
 export interface PagedResultModel<T> {
   items: T[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }
 

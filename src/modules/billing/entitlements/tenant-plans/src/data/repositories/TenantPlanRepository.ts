@@ -37,7 +37,7 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     return {
       items: result.items.map((m) => TenantPlanMapper.toEntityFromList(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,
@@ -79,7 +79,7 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     return {
       items: result.items.map((m) => TenantPlanMapper.toFeatureDefinitionEntity(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,
@@ -129,7 +129,7 @@ export class TenantPlanRepository implements ITenantPlanRepository {
     return {
       items: result.items.map((m) => TenantPlanMapper.toPromotionEntity(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,

@@ -30,7 +30,7 @@ export class UserSubscriptionRepository implements IUserSubscriptionRepository {
     return {
       items: result.items.map((m) => UserSubscriptionMapper.toEntityFromList(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,

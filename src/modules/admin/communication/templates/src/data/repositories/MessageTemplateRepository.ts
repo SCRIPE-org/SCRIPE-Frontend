@@ -36,7 +36,7 @@ export class MessageTemplateRepository implements IMessageTemplateRepository {
     return {
       items: response.items.map(MessageTemplateMapper.toEntity),
       totalCount: response.totalCount,
-      page: response.pageNumber,
+      pageNumber: response.pageNumber,
       pageSize: response.pageSize,
       totalPages,
       hasNextPage: response.pageNumber < totalPages,

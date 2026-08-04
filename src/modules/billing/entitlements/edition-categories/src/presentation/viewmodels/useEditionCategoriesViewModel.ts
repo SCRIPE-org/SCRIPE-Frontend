@@ -27,7 +27,7 @@ export function useEditionCategoriesViewModel() {
         pagination: {
           itemsCount: result.totalCount,
           pageSize: result.pageSize,
-          page: result.page,
+          page: result.pageNumber,
           pagesCount: result.totalPages,
         },
       };
