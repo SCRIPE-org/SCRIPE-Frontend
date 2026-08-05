@@ -1,8 +1,10 @@
 "use client";
 
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { integrationsContainer } from "@modules/integrations/di";
+import { INTEGRATIONS_PERMISSIONS } from "@modules/integrations/permission-constants";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useApiKeyDetailViewModel } from "../viewmodels/useApiKeyDetailViewModel";
@@ -27,6 +29,16 @@ export default function ApiKeyDetailView() {
   const id = Array.isArray(params?.id) ? params.id[0] : (params?.id ?? "");
 
   const vm = useApiKeyDetailViewModel(id);
+
+  // Backend enforcement was always intact (every mutating endpoint carries the matching
+  // [PermissionRequired(...)]); this page's Update/Rotate/Revoke/Delete controls previously
+  // rendered and were enabled purely off local UI state, with zero permission gating of their
+  // own — a low-privilege viewer (holds apikeys.view only) would see fully-interactive
+  // controls that only failed with a 403 when actually clicked. Computed once here and passed
+  // down, matching the requiredPermission/usePermission convention used elsewhere (e.g. the
+  // Hrms list views' row actions, compliance's PolicyCard).
+  const canUpdate = usePermission(INTEGRATIONS_PERMISSIONS.API_KEYS_UPDATE);
+  const canDelete = usePermission(INTEGRATIONS_PERMISSIONS.API_KEYS_DELETE);
 
   // --- Revoke Mutation ---
   const revokeMutation = useMutation({
@@ -107,6 +119,8 @@ export default function ApiKeyDetailView() {
         isRotating={vm.isRotating}
         onRotate={vm.rotate}
         onRevoke={revokeMutation.mutate}
+        canRotate={canUpdate}
+        canRevoke={canDelete}
       />
 
       <div className="space-y-6 p-6">
@@ -145,12 +159,14 @@ export default function ApiKeyDetailView() {
               detail={vm.detail}
               isUpdating={vm.isUpdating}
               onUpdate={handleUpdateSettings}
+              canUpdate={canUpdate}
             />
 
             <ApiKeyScopesPanel
               detail={vm.detail}
               isUpdating={vm.isUpdating}
               onUpdateScopes={handleUpdateScopes}
+              canUpdate={canUpdate}
             />
 
             <ApiKeyDangerZone
@@ -158,6 +174,8 @@ export default function ApiKeyDetailView() {
               onRevoke={revokeMutation.mutate}
               onDeletePermanently={deleteMutation.mutate}
               isRevoking={revokeMutation.isPending}
+              canRevoke={canDelete}
+              canDeletePermanently={canDelete}
             />
           </div>
         </div>

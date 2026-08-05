@@ -34,7 +34,7 @@ export const ar = {
       tenantOnly: "المستأجر فقط",
       tenantWithChildren: "المستأجر والفروع",
     },
-    urlHttpsRequired: "يجب أن يستخدم الرابط HTTPS (http://localhost مسموح به للتطوير)",
+    urlHttpsRequired: "يجب أن يستخدم الرابط HTTPS، ولا يُسمح بعناوين localhost أو العناوين المحلية.",
     status: {
       active: "نشط",
       inactive: "غير نشط",
@@ -61,7 +61,7 @@ export const ar = {
     toggledDesc: "تم تحديث حالة الويب هوك.",
     deleteConfirmTitle: "حذف الويب هوك",
     deleteConfirmDesc:
-      "سيؤدي هذا إلى حذف اشتراك الويب هوك وجميع سجلات التسليم نهائياً. لا يمكن التراجع عن هذا الإجراء.",
+      "سيعطّل هذا اشتراك الويب هوك وسجلات التسليم الخاصة به فوراً، وتُحذف نهائياً بعد 30 يوماً.",
     notFound: "الويب هوك غير موجود",
     notFoundDesc: "لم يتم العثور على الويب هوك المطلوب.",
     secret: "مفتاح التوقيع",

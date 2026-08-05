@@ -24,6 +24,28 @@ interface UseWebhookFormViewModelOptions {
   onSuccess?: () => void;
 }
 
+// Mirrors the backend's WebhookUrlPolicy.IsStructurallyValid (Core.Application.Features.
+// Webhooks) — https-only, always-blocked hosts. Previously this form allowed "https://*" OR
+// "http://localhost*" with locale copy promising "http://localhost allowed for dev," while
+// the backend creation validator allowed any http/https with no host restriction, and the
+// delivery engine always required https and always rejected localhost regardless of scheme
+// — so a webhook that passed both frontend and creation checks could still fail every
+// Test-ping/real delivery. Aligning all three to the delivery engine's (strictest, and the
+// only one that reflects "does this actually work") rule.
+const ALWAYS_BLOCKED_WEBHOOK_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "0.0.0.0"]);
+
+function isValidWebhookUrl(value: string): boolean {
+  if (!value.startsWith("https://")) return false;
+  try {
+    // URL.hostname returns IPv6 literals bracketed (e.g. "[::1]"), so strip brackets before
+    // comparing — same normalization the backend policy applies to Uri.Host.
+    const host = new URL(value).hostname.replace(/^\[|\]$/g, "").toLowerCase();
+    return !ALWAYS_BLOCKED_WEBHOOK_HOSTS.has(host);
+  } catch {
+    return false;
+  }
+}
+
 /**
  * React hook/ViewModel orchestrating state and data flows for webhook form view model.
  * Coordinates query synchronization (TanStack Query) with application client store indicators (Zustand) and returns validation fields.
@@ -165,14 +187,10 @@ export function useWebhookFormViewModel({
 
   // ─── Validation ──────────────────────────────────────────
   const isValid =
-    url.trim().length > 0 &&
-    selectedEvents.length > 0 &&
-    (url.startsWith("https://") || url.startsWith("http://localhost"));
+    url.trim().length > 0 && selectedEvents.length > 0 && isValidWebhookUrl(url);
 
   const urlError =
-    url.length > 0 && !url.startsWith("https://") && !url.startsWith("http://localhost")
-      ? t("webhooks.urlHttpsRequired")
-      : undefined;
+    url.length > 0 && !isValidWebhookUrl(url) ? t("webhooks.urlHttpsRequired") : undefined;
 
   const eventsError = selectedEvents.length === 0 ? t("webhooks.eventsRequired") : undefined;
 

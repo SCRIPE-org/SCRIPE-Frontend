@@ -33,7 +33,7 @@ export const en = {
       tenantOnly: "Tenant Only",
       tenantWithChildren: "Tenant + Children",
     },
-    urlHttpsRequired: "URL must use HTTPS (http://localhost allowed for dev)",
+    urlHttpsRequired: "URL must use HTTPS. Localhost and loopback addresses are not allowed.",
     status: {
       active: "Active",
       inactive: "Inactive",
@@ -60,7 +60,7 @@ export const en = {
     toggledDesc: "Webhook status updated.",
     deleteConfirmTitle: "Delete Webhook",
     deleteConfirmDesc:
-      "This will permanently delete this webhook subscription and all its delivery logs. This action cannot be undone.",
+      "This disables the webhook subscription and its delivery logs immediately. They are permanently removed after 30 days.",
     notFound: "Webhook Not Found",
     notFoundDesc: "The requested webhook could not be found.",
     secret: "Signing Secret",

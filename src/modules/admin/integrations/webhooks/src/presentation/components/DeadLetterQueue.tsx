@@ -47,6 +47,8 @@ interface DeadLetterQueueProps {
   isReplaying: boolean;
   isReplayingAll: boolean;
   isLoading: boolean;
+  /** Gates Replay/Replay All — mirrors the backend's webhooks.update requirement. */
+  canReplay: boolean;
 }
 
 /**
@@ -64,6 +66,7 @@ export function DeadLetterQueue({
   isReplaying,
   isReplayingAll,
   isLoading,
+  canReplay,
 }: DeadLetterQueueProps) {
   const { t } = useI18n();
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -100,7 +103,7 @@ export function DeadLetterQueue({
         </div>
 
         {/* Replay All Button */}
-        {totalCount > 0 && (
+        {totalCount > 0 && canReplay && (
           <Button
             variant="outline"
             size="sm"
@@ -204,19 +207,21 @@ export function DeadLetterQueue({
                           </span>
                         </TableCell>
                         <TableCell className="text-center">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 gap-1 text-xs text-warning hover:bg-warning/10 hover:text-warning"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              onReplay(log.id);
-                            }}
-                            disabled={isReplaying}
-                          >
-                            <RotateCcw className="h-3 w-3" aria-hidden="true" />
-                            {t("webhooks.deadLetters.replay")}
-                          </Button>
+                          {canReplay && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 gap-1 text-xs text-warning hover:bg-warning/10 hover:text-warning"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onReplay(log.id);
+                              }}
+                              disabled={isReplaying}
+                            >
+                              <RotateCcw className="h-3 w-3" aria-hidden="true" />
+                              {t("webhooks.deadLetters.replay")}
+                            </Button>
+                          )}
                         </TableCell>
                       </TableRow>
 

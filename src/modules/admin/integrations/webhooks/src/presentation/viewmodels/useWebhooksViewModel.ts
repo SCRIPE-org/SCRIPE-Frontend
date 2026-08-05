@@ -192,9 +192,9 @@ export function useWebhooksViewModel() {
         await webhookRepository.remove(id);
       },
       permissions: {
-        canCreate: "webhooks:create",
-        canUpdate: "webhooks:update",
-        canDelete: "webhooks:delete",
+        canCreate: "webhooks.create",
+        canUpdate: "webhooks.update",
+        canDelete: "webhooks.delete",
       },
     }),
     [t, webhookRepository]

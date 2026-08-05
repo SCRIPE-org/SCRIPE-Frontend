@@ -41,6 +41,8 @@ interface WebhookSecretPanelProps {
   onToggleVisibility: () => void;
   onRotate: () => void;
   isRotating: boolean;
+  /** Gates the Rotate Secret button — mirrors the backend's webhooks.update requirement. */
+  canRotate: boolean;
 }
 
 /**
@@ -55,6 +57,7 @@ export function WebhookSecretPanel({
   onToggleVisibility,
   onRotate,
   isRotating,
+  canRotate,
 }: WebhookSecretPanelProps) {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
@@ -90,17 +93,19 @@ export function WebhookSecretPanel({
                 </CardDescription>
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setRotateDialogOpen(true)}
-              disabled={isRotating}
-              loading={isRotating}
-              className="gap-1.5"
-            >
-              {!isRotating && <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
-              {t("webhooks.rotateSecret")}
-            </Button>
+            {canRotate && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setRotateDialogOpen(true)}
+                disabled={isRotating}
+                loading={isRotating}
+                className="gap-1.5"
+              >
+                {!isRotating && <RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />}
+                {t("webhooks.rotateSecret")}
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
