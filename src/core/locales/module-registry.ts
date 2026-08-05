@@ -149,6 +149,36 @@ import {
   ar as compRegulationsAr,
 } from "@modules/compliance/regulations/locales";
 
+// ─── Hrms (7 sub-modules, each owning their slice of the "hrms" key) ───────
+import {
+  en as hrmsStaffMemberEn,
+  ar as hrmsStaffMemberAr,
+} from "@modules/hrms/staff-member/locales";
+import {
+  en as hrmsCertificationEn,
+  ar as hrmsCertificationAr,
+} from "@modules/hrms/certification/locales";
+import {
+  en as hrmsEmploymentRecordEn,
+  ar as hrmsEmploymentRecordAr,
+} from "@modules/hrms/employment-record/locales";
+import {
+  en as hrmsQualificationEn,
+  ar as hrmsQualificationAr,
+} from "@modules/hrms/qualification/locales";
+import {
+  en as hrmsStaffAssignmentEn,
+  ar as hrmsStaffAssignmentAr,
+} from "@modules/hrms/staff-assignment/locales";
+import {
+  en as hrmsStaffAvailabilityEn,
+  ar as hrmsStaffAvailabilityAr,
+} from "@modules/hrms/staff-availability/locales";
+import {
+  en as hrmsStaffCompetencyEn,
+  ar as hrmsStaffCompetencyAr,
+} from "@modules/hrms/staff-competency/locales";
+
 // ─── Marketplace (6 sub-modules, each owning their slice of the "marketplace" key) ──
 import {
   en as mktListingsEn,
@@ -171,8 +201,6 @@ import {
   en as mktFinancialsEn,
   ar as mktFinancialsAr,
 } from "@modules/marketplace/financials/locales";
-
-import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/core/locales";
 
 import {
   en as customFieldsEn,
@@ -253,6 +281,14 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compInventoryEn,
   compReportsEn,
   compRegulationsEn,
+  // Hrms (7 sub-modules, each owns their slice of the "hrms" key)
+  hrmsStaffMemberEn,
+  hrmsCertificationEn,
+  hrmsEmploymentRecordEn,
+  hrmsQualificationEn,
+  hrmsStaffAssignmentEn,
+  hrmsStaffAvailabilityEn,
+  hrmsStaffCompetencyEn,
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsEn,
   mktCategoriesEn,
@@ -260,7 +296,6 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktDevelopersEn,
   mktReviewsEn,
   mktFinancialsEn,
-  partyKernelEn,
   customFieldsEn,
   workManagementEn,
   analyticsEventsEn
@@ -330,6 +365,14 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compInventoryAr,
   compReportsAr,
   compRegulationsAr,
+  // Hrms (7 sub-modules, each owns their slice of the "hrms" key)
+  hrmsStaffMemberAr,
+  hrmsCertificationAr,
+  hrmsEmploymentRecordAr,
+  hrmsQualificationAr,
+  hrmsStaffAssignmentAr,
+  hrmsStaffAvailabilityAr,
+  hrmsStaffCompetencyAr,
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsAr,
   mktCategoriesAr,
@@ -337,7 +380,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktDevelopersAr,
   mktReviewsAr,
   mktFinancialsAr,
-  partyKernelAr,
   customFieldsAr,
   workManagementAr,
   analyticsEventsAr
