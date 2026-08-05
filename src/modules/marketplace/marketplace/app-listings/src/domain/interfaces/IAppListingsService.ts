@@ -48,12 +48,25 @@ export interface UpdateAppListingPayload {
   version: string;
 }
 
-/** Payload for setting pricing on an app listing. */
+/**
+ * Payload for setting pricing on an app listing.
+ *
+ * Matches the real backend `SetAppPricingRequest` exactly (Marketplace.Application.DTOs.
+ * MarketplaceDTOs.cs): `appListingId` (backend requires it to equal the route id) and
+ * `trialDays` were missing entirely; `price`/`currency` are backend-required (the record has no
+ * defaults) so are no longer optional; the pricing-model field is called `model` on the wire
+ * (the record's positional parameter is `Model`, not `PricingModel`) — sending it as
+ * `pricingModel` means the JSON serializer silently drops it and the backend defaults to
+ * `PricingModel.Free`. `model` now also covers all 6 real enum members (the backend has no
+ * `OneTime`, it's `PaidOnce`) and the fabricated `billingInterval` field (no such backend
+ * property) has been dropped.
+ */
 export interface SetPricingPayload {
-  pricingModel: "Free" | "OneTime" | "Subscription";
-  price?: number;
-  currency?: string;
-  billingInterval?: "Monthly" | "Annual";
+  appListingId: string;
+  model: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
+  price: number;
+  currency: string;
+  trialDays: number;
 }
 
 /** Query parameters for listing app listings. */

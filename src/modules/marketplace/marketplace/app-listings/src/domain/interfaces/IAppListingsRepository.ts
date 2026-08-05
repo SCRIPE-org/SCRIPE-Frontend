@@ -85,14 +85,23 @@ export interface IAppListingsRepository {
   /** Toggle featured status */
   toggleFeatured(id: string): Promise<void>;
 
-  /** Set or update pricing */
+  /**
+   * Set or update pricing.
+   *
+   * Matches the real backend `SetAppPricingRequest` exactly (see `SetPricingPayload` in
+   * `IAppListingsService` for the full rationale): `appListingId`/`trialDays` were missing;
+   * `price`/`currency` are backend-required, not optional; the pricing-model field is `model`
+   * on the wire (backend record parameter is `Model`, not `PricingModel`); `billingInterval`
+   * does not exist on the backend contract.
+   */
   setPricing(
     id: string,
     data: {
-      pricingModel: "Free" | "OneTime" | "Subscription";
-      price?: number;
-      currency?: string;
-      billingInterval?: "Monthly" | "Annual";
+      appListingId: string;
+      model: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
+      price: number;
+      currency: string;
+      trialDays: number;
     }
   ): Promise<void>;
 }
