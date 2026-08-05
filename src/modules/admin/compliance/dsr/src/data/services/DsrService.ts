@@ -5,7 +5,7 @@
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
 import type { IDsrService } from "../../domain/interfaces/IDsrService";
-import type { DsrModel } from "../models/DsrModels";
+import type { DsrModel, DsrDetailModel } from "../models/DsrModels";
 import type { PagedResult } from "@core/interfaces/common.interface";
 import type {
   DsrListParams,
@@ -32,8 +32,8 @@ export class DsrService implements IDsrService {
     return this.api.get<PagedResult<DsrModel>>(url);
   }
 
-  getById(id: string): Promise<DsrModel> {
-    return this.api.get<DsrModel>(DSR_ENDPOINTS.DSR_BY_ID(id));
+  getById(id: string): Promise<DsrDetailModel> {
+    return this.api.get<DsrDetailModel>(DSR_ENDPOINTS.DSR_BY_ID(id));
   }
 
   submit(data: SubmitDsrRequest): Promise<{ id: string }> {

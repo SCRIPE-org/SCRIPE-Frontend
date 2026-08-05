@@ -30,7 +30,7 @@ export class DsrRepository implements IDsrRepository {
 
   async getById(id: string): Promise<DataSubjectRequest> {
     const model = await this.service.getById(id);
-    return DsrMapper.toEntity(model);
+    return DsrMapper.toDetailEntity(model);
   }
 
   async submit(data: SubmitDsrRequest): Promise<string> {

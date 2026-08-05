@@ -33,11 +33,13 @@ export function RegulationView() {
   const router = useRouter();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
-  // Super Admin has no tenantCode — regulations are tenant-scoped so only tenant admins can write
+  // RegulationProfile carries no TenantId — it's platform-global, seeded-once
+  // reference data shared by every tenant, so only platform admins (no
+  // tenantCode) may manage it; a tenant-scoped admin only views it.
   const { tenantCode } = useAppStore();
   const hasRegulationManage = usePermission(SYSTEM_PERMISSIONS.COMPLIANCE_REGULATIONS_MANAGE);
-  const canCreate = hasRegulationManage && !!tenantCode;
-  const canUpdate = hasRegulationManage && !!tenantCode;
+  const canCreate = hasRegulationManage && !tenantCode;
+  const canUpdate = hasRegulationManage && !tenantCode;
 
   const [modalMode, setModalMode] = useState<"create" | "edit" | null>(null);
   const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);
