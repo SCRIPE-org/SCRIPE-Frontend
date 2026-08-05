@@ -2,7 +2,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type {
   LeadActivity,
@@ -80,6 +80,17 @@ export function useLeadsViewModel() {
     staleTime: 2 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
+
+  // Delete / bulk-delete shrink the result set without ever touching `page`, which
+  // can strand the view on a page past the new end (e.g. "page 3 of 2" — an empty
+  // list even though earlier pages still have rows). Snap back once the server
+  // confirms the new total.
+  const listTotalCount = listQuery.data?.totalCount;
+  useEffect(() => {
+    if (listTotalCount === undefined) return;
+    const lastPage = Math.max(1, Math.ceil(listTotalCount / pageSize));
+    if (page > lastPage) setPage(lastPage);
+  }, [listTotalCount, pageSize, page]);
 
   // ── Detail Query (fires only when a row is selected) ─────────────────────
   const detailQuery = useQuery({

@@ -155,9 +155,12 @@ export function useGenericCrudViewModel<
       if (prev.itemsCount === qp.itemsCount && prev.pagesCount === qp.pagesCount) {
         return prev;
       }
+      // Clamp to the new last page when a delete or filter change shrank the
+      // result set below the page we were sitting on (stale "page 5 of 3").
+      const clampedPage = qp.pagesCount > 0 ? Math.min(prev.page, qp.pagesCount) : 1;
       return {
         ...qp,
-        page: prev.page,
+        page: clampedPage,
         pageSize: prev.pageSize,
       };
     });

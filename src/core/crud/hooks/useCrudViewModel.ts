@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from "react";
+import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useGenericQuery } from "./useGenericQuery";
 import { useGenericMutations } from "./useGenericMutations";
 import { BaseEntity, PaginatedResult } from "../types";
@@ -56,6 +56,17 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
 
   // 1. Data Fetching
   const query = useGenericQuery<T>(key, services.getAll, queryParams, options.enabled !== false);
+
+  // A delete (or a filter/search change) can shrink the result set below the page
+  // we're currently sitting on, leaving a stale "page 5 of 3" state that renders an
+  // empty list. Once the server confirms the real page count, snap back to the new
+  // last valid page instead of leaving the user stranded past the end.
+  const pagesCount = query.data?.pagination?.pagesCount;
+  useEffect(() => {
+    if (pagesCount !== undefined && page > pagesCount) {
+      setPage(Math.max(1, pagesCount));
+    }
+  }, [pagesCount, page]);
 
   // 2. Mutations
   const mutations = useGenericMutations<T, TCreate, TUpdate>(key, services, {
