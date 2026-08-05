@@ -42,6 +42,12 @@ export function useDefinitionsViewModel() {
     setEditingDefinition(null);
   };
 
+  // ── Delete Confirmation State ────────────────────────────────────────────────
+  const [deletingDefinition, setDeletingDefinition] = useState<PluginDefinition | null>(null);
+
+  const openDeleteConfirm = (def: PluginDefinition) => setDeletingDefinition(def);
+  const closeDeleteConfirm = () => setDeletingDefinition(null);
+
   // ── Data Fetching ──────────────────────────────────────────────────────────
   const {
     data: definitions = [],
@@ -102,6 +108,7 @@ export function useDefinitionsViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       success({ title: t("plugins.defDelete") });
+      closeDeleteConfirm();
     },
     onError: () => error({ title: t("plugins.definitionsError") }),
   });
@@ -142,6 +149,11 @@ export function useDefinitionsViewModel() {
     closeForm,
     handleFormSubmit,
     isSubmitting: createMutation.isPending || updateMutation.isPending,
+
+    // Delete confirmation
+    deletingDefinition,
+    openDeleteConfirm,
+    closeDeleteConfirm,
 
     // Actions
     publish: (id: string) => publishMutation.mutate(id),

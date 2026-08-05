@@ -56,6 +56,8 @@ export const en = {
     defEdit: "Edit Definition",
     defEditDesc: "Update the plugin definition details.",
     defDelete: "Delete Definition",
+    defDeleteConfirmDesc:
+      'Are you sure you want to delete the plugin definition "{{name}}"? Tenants with it installed will lose access.',
     defPublish: "Publish",
     defDeprecate: "Deprecate",
     defViewManifest: "View Manifest",

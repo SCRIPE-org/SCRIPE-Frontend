@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useDefinitionsViewModel } from "../viewmodels/useDefinitionsViewModel";
 import { DefinitionFormDialog } from "../components/DefinitionFormDialog";
+import { DeleteDefinitionDialog } from "../components/DeleteDefinitionDialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Button } from "@core/ui/button";
@@ -83,6 +84,10 @@ export function DefinitionsView() {
     closeForm,
     handleFormSubmit,
     isSubmitting,
+    // Delete confirmation
+    deletingDefinition,
+    openDeleteConfirm,
+    closeDeleteConfirm,
     // Actions
     publish,
     deprecate,
@@ -276,7 +281,7 @@ export function DefinitionsView() {
                             size="icon"
                             className="h-7 w-7 text-destructive hover:text-destructive/80"
                             disabled={isDeleting}
-                            onClick={() => deleteDefinition(def.id)}
+                            onClick={() => openDeleteConfirm(def)}
                             aria-label={t("common.delete")}
                             title={t("common.delete")}
                           >
@@ -302,6 +307,17 @@ export function DefinitionsView() {
         onSubmit={handleFormSubmit}
         isSubmitting={isSubmitting}
         editingDefinition={editingDefinition}
+      />
+
+      {/* Delete Confirmation */}
+      <DeleteDefinitionDialog
+        open={!!deletingDefinition}
+        onOpenChange={(open) => {
+          if (!open) closeDeleteConfirm();
+        }}
+        definition={deletingDefinition}
+        onConfirm={() => deletingDefinition && deleteDefinition(deletingDefinition.id)}
+        isDeleting={isDeleting}
       />
     </div>
   );

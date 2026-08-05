@@ -52,6 +52,7 @@ export const ar = {
     defEdit: "تعديل التعريف",
     defEditDesc: "تحديث تفاصيل تعريف الإضافة.",
     defDelete: "حذف التعريف",
+    defDeleteConfirmDesc: "هل أنت متأكد من حذف تعريف الإضافة «{{name}}»؟ سيفقد المستأجرون الذين ثبّتوها الوصول إليها.",
     defPublish: "نشر",
     defDeprecate: "إهمال",
     defViewManifest: "عرض الملف التعريفي",
