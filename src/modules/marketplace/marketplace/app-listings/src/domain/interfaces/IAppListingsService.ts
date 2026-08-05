@@ -10,31 +10,42 @@
 
 import type { AppListingDto, AppListingListDto } from "../../data/models/AppListingModel";
 
-/** Payload for creating a new app listing. */
+/**
+ * Payload for creating a new app listing.
+ *
+ * Shaped to match the real backend `CreateAppListingRequest` (Marketplace.Application.DTOs.
+ * MarketplaceDTOs.cs) exactly: `pluginId` and `tagline` are backend-required fields that were
+ * previously missing here, while `nameAr`/`descriptionAr`/a singular `categoryId`/`tags` were
+ * fabricated fields the backend has never had (same family as the read-side AppListingMapper
+ * fix) — the backend only has `name`/`description` (no Arabic variants) and a plural
+ * `categoryIds` list. Pricing is NOT part of listing creation — it is a separate upsert via
+ * `SetAppPricingCommand`/`setPricing()` below, called after the listing exists.
+ */
 export interface CreateAppListingPayload {
+  pluginId: string;
   developerProfileId: string;
   name: string;
-  nameAr: string;
+  tagline: string;
   description: string;
-  descriptionAr: string;
-  categoryId: string;
+  iconUrl: string;
   version: string;
-  pricingModel: "Free" | "OneTime" | "Subscription";
-  price?: number;
-  currency?: string;
-  billingInterval?: "Monthly" | "Annual";
-  tags?: string[];
+  categoryIds?: string[];
 }
 
-/** Payload for updating an existing app listing. */
+/**
+ * Payload for updating an existing app listing.
+ *
+ * Matches the real backend `UpdateAppListingRequest` exactly: `tagline` is backend-required
+ * (missing before); `nameAr`/`descriptionAr`/`categoryId`/`tags` do not exist on the backend
+ * contract and have been dropped. Category assignments and pricing are managed through their
+ * own dedicated endpoints, not this one.
+ */
 export interface UpdateAppListingPayload {
-  name?: string;
-  nameAr?: string;
-  description?: string;
-  descriptionAr?: string;
-  categoryId?: string;
-  version?: string;
-  tags?: string[];
+  name: string;
+  tagline: string;
+  description: string;
+  iconUrl: string;
+  version: string;
 }
 
 /** Payload for setting pricing on an app listing. */

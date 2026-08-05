@@ -36,38 +36,41 @@ export interface IAppListingsRepository {
   /** List featured listings for the storefront hero */
   getFeatured(): Promise<AppListing[]>;
 
-  /** Create a new listing */
+  /**
+   * Create a new listing.
+   *
+   * Shaped to match the real backend `CreateAppListingRequest` exactly (see
+   * `CreateAppListingPayload` in `IAppListingsService` for the full rationale): `pluginId` and
+   * `tagline` are backend-required and were previously missing; `nameAr`/`descriptionAr`/a
+   * singular `categoryId`/`tags`/`screenshotUrls` do not exist on the backend contract.
+   */
   create(data: {
+    pluginId: string;
     developerProfileId: string;
     name: string;
-    nameAr: string;
+    tagline: string;
     description: string;
-    descriptionAr: string;
-    categoryId: string;
+    iconUrl: string;
     version: string;
-    pricingModel: "Free" | "OneTime" | "Subscription";
-    price?: number;
-    currency?: string;
-    billingInterval?: "Monthly" | "Annual";
-    tags?: string[];
-    iconUrl?: string;
-    screenshotUrls?: string[];
+    categoryIds?: string[];
   }): Promise<string>;
 
-  /** Update an existing listing */
+  /**
+   * Update an existing listing.
+   *
+   * Matches the real backend `UpdateAppListingRequest` exactly: `tagline` is backend-required
+   * (missing before); `nameAr`/`descriptionAr`/`categoryId`/`tags`/`screenshotUrls` do not exist
+   * on the backend contract.
+   */
   update(
     id: string,
-    data: Partial<{
+    data: {
       name: string;
-      nameAr: string;
+      tagline: string;
       description: string;
-      descriptionAr: string;
-      categoryId: string;
-      version: string;
       iconUrl: string;
-      screenshotUrls: string[];
-      tags: string[];
-    }>
+      version: string;
+    }
   ): Promise<void>;
 
   /** Delete a listing */
