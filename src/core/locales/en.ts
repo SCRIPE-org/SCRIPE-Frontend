@@ -917,6 +917,7 @@ export const en = {
     description: "Display notification bell in header",
     empty: "No notifications",
     emptyDesc: "No notifications currently",
+    loadError: "Couldn't load notifications",
   },
   imageUpload: {
     uploadTab: "Upload",

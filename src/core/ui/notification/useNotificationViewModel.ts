@@ -25,6 +25,8 @@ export interface NotificationViewModel {
   notifications: NotificationItem[];
   unreadCount: number;
   isLoading: boolean;
+  /** True when the last list fetch failed — lets the UI distinguish "no notifications yet" from "couldn't load". */
+  isError: boolean;
   isOpen: boolean;
   toggleOpen: () => void;
   close: () => void;
@@ -38,6 +40,7 @@ export interface NotificationViewModel {
 export function useNotificationViewModel(): NotificationViewModel {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   // Pure WebSocket — all data comes from the provider
@@ -80,9 +83,14 @@ export function useNotificationViewModel(): NotificationViewModel {
     setIsLoading(true);
     try {
       const data = await repo.getNotifications({ pageSize: 10 });
-      if (mountedRef.current) setNotifications(data.items);
+      if (mountedRef.current) {
+        setNotifications(data.items);
+        setIsError(false);
+      }
     } catch {
-      /* silently fail */
+      // Distinguish "failed to load" from "genuinely no notifications" — the panel
+      // must not silently render an empty state when the fetch itself failed.
+      if (mountedRef.current) setIsError(true);
     } finally {
       if (mountedRef.current) setIsLoading(false);
     }
@@ -136,6 +144,7 @@ export function useNotificationViewModel(): NotificationViewModel {
     notifications,
     unreadCount,
     isLoading,
+    isError,
     isOpen,
     toggleOpen,
     close,

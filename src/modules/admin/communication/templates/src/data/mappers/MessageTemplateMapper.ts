@@ -122,7 +122,6 @@ export class MessageTemplateMapper {
       body: request.body,
       language: request.language,
       isActive: request.isActive,
-      tenantId: request.tenantId,
       description: request.description,
       placeholderSchema: request.placeholderSchema,
       designVariables: request.designVariables,

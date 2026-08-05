@@ -47,7 +47,6 @@ export interface CreateMessageTemplateJson {
   body: string;
   language: string;
   isActive: boolean;
-  tenantId?: string;
   description?: string;
   placeholderSchema?: string;
   designVariables?: string;
