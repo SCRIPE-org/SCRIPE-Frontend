@@ -33,10 +33,10 @@ const PICKER_PAGE_SIZE = 20;
 export class SitePickerService implements ISitePickerService {
   constructor(private readonly api: IApiService) {}
 
-  async search(query: string): Promise<SitePickerOption[]> {
+  async search(query: string, pageSize: number = PICKER_PAGE_SIZE): Promise<SitePickerOption[]> {
     const url = buildUrl(SITE_PICKER_ENDPOINTS.LIST, {
       page: 1,
-      pageSize: PICKER_PAGE_SIZE,
+      pageSize,
       search: query || undefined,
     });
     const response = await this.api.get<SiteListResponseJson>(url);

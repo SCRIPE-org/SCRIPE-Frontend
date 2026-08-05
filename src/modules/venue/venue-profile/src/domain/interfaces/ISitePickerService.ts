@@ -19,5 +19,10 @@ export interface SitePickerOption {
  * IVenueProfileService-style CRUD surface.
  */
 export interface ISitePickerService {
-  search(query: string): Promise<SitePickerOption[]>;
+  /**
+   * @param pageSize Defaults to the picker's own small page size (typeahead use). Callers
+   * building a full id-to-name lookup map (e.g. the Venue & Site Setup list table's Site
+   * column) pass a larger value with an empty query to fetch the tenant-scoped set in one call.
+   */
+  search(query: string, pageSize?: number): Promise<SitePickerOption[]>;
 }

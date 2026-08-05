@@ -13,7 +13,7 @@ import { Pencil, Trash2 } from "lucide-react";
 
 export const VenueProfileListView = React.memo(function VenueProfileListView() {
   useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
-  const { vm, searchSites } = useVenueProfileViewModel();
+  const { vm, searchSites, siteNameById } = useVenueProfileViewModel();
   const { t, language } = useI18n();
 
   const config: CrudConfig<VenueProfile> = {
@@ -23,7 +23,11 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
     columns: [
       { key: "code", label: t("venueProfile.fields.code"), sortable: true },
       { key: "name", label: t("venueProfile.fields.name"), sortable: true },
-      { key: "siteId", label: t("venueProfile.fields.siteId") },
+      {
+        key: "siteId",
+        label: t("venueProfile.fields.siteId"),
+        render: (value: string) => siteNameById[value] ?? value,
+      },
       {
         key: "isActive",
         label: t("venueProfile.fields.isActive"),
