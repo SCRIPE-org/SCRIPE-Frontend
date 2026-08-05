@@ -36,7 +36,7 @@ export interface VersionsViewModelResult {
   // Mutations
   createMutation: { mutate: () => void; isPending: boolean };
   publishMutation: { mutate: (id: string) => void; isPending: boolean };
-  cancelMutation: { mutate: (id: string) => void; isPending: boolean };
+  cancelMutation: { mutate: (id: string) => void; isPending: (id: string) => boolean };
 }
 
 /**
@@ -57,6 +57,10 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
   const [rolloutStrategy, setRolloutStrategy] = useState("Immediate");
   const [scheduledAt, setScheduledAt] = useState("");
   const [canaryPercentage, setCanaryPercentage] = useState(10);
+
+  // Per-row pending state — keyed by version id so canceling one version
+  // never busies/disables the Cancel button on other rows.
+  const [pendingCancelIds, setPendingCancelIds] = useState<Set<string>>(new Set());
 
   // ── Fetch versions (Repository → Mapper → Entity) ──
   const { data: versions, isLoading } = useQuery({
@@ -127,6 +131,9 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
   // ── Cancel version mutation ──
   const cancelMutation = useMutation({
     mutationFn: (versionId: string) => editionRepository.cancelVersion(editionId, versionId),
+    onMutate: (versionId) => {
+      setPendingCancelIds((prev) => new Set(prev).add(versionId));
+    },
     onSuccess: () => {
       success({ title: t("entitlements.editions.versions.canceled") });
       queryClient.invalidateQueries({
@@ -138,6 +145,13 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
         title: t("common.error"),
         description: err instanceof Error ? err.message : t("common.error"),
       }),
+    onSettled: (_data, _err, versionId) => {
+      setPendingCancelIds((prev) => {
+        const next = new Set(prev);
+        next.delete(versionId);
+        return next;
+      });
+    },
   });
 
   const canPublish = (() => {
@@ -165,6 +179,9 @@ export function useVersionsViewModel(editionId: string): VersionsViewModelResult
     canPublish,
     createMutation: { mutate: createMutation.mutate, isPending: createMutation.isPending },
     publishMutation: { mutate: publishMutation.mutate, isPending: publishMutation.isPending },
-    cancelMutation: { mutate: cancelMutation.mutate, isPending: cancelMutation.isPending },
+    cancelMutation: {
+      mutate: cancelMutation.mutate,
+      isPending: (id: string) => pendingCancelIds.has(id),
+    },
   };
 }

@@ -132,9 +132,9 @@ export function VersionsTab({ editionId }: VersionsTabProps) {
                         variant="destructive"
                         className="h-8 gap-1 text-xs"
                         onClick={() => vm.cancelMutation.mutate(v.id)}
-                        loading={vm.cancelMutation.isPending}
+                        loading={vm.cancelMutation.isPending(v.id)}
                       >
-                        {!vm.cancelMutation.isPending && <XCircle className="h-3 w-3" />}
+                        {!vm.cancelMutation.isPending(v.id) && <XCircle className="h-3 w-3" />}
                         {t("common.cancel")}
                       </Button>
                     )}

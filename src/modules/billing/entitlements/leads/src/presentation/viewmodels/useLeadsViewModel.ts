@@ -153,6 +153,10 @@ export function useLeadsViewModel() {
     converted: allLeads.filter((l) => l.status === "Converted").length,
   };
 
+  // Per-row pending state — keyed by lead id so updating one card's status
+  // never busies/disables the others in the list/board.
+  const [pendingStatusLeadIds, setPendingStatusLeadIds] = useState<Set<string>>(new Set());
+
   // ── Update Status Mutation ────────────────────────────────────────────────
   const updateStatusMutation = useMutation({
     mutationFn: ({
@@ -179,6 +183,8 @@ export function useLeadsViewModel() {
         emailBodyOverride,
       }),
     onMutate: async ({ id, status }) => {
+      setPendingStatusLeadIds((prev) => new Set(prev).add(id));
+
       await queryClient.cancelQueries({ queryKey: ["leads", "list"] });
       await queryClient.cancelQueries({ queryKey: QUERY_KEYS.detail(id) });
 
@@ -215,6 +221,13 @@ export function useLeadsViewModel() {
         queryClient.setQueryData(QUERY_KEYS.detail(context.id), context.previousDetail);
       }
       toast({ title: t("leads.actions.statusUpdateError"), variant: "destructive" });
+    },
+    onSettled: (_data, _error, { id }) => {
+      setPendingStatusLeadIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     },
   });
 
@@ -577,7 +590,7 @@ export function useLeadsViewModel() {
     isLoadingComms,
 
     // Mutation state
-    isUpdatingStatus: updateStatusMutation.isPending,
+    isUpdatingStatus: (id: string) => pendingStatusLeadIds.has(id),
     isCreatingLead: createLeadMutation.isPending,
     isConvertingLead: convertToTenantMutation.isPending,
     isAssigningLead: assignLeadMutation.isPending,

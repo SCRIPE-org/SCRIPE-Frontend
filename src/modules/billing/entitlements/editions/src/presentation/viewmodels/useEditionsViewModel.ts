@@ -27,12 +27,13 @@ export function useEditionsViewModel() {
 
   // M-10: Fetch ALL editions for dropdown selects (fallback, assign, etc.)
   // This ensures the dropdown is not limited to the current paginated page.
-  const { data: allEditionsData } = useQuery({
+  const { data: allEditionsData, error: allEditionsQueryError } = useQuery({
     queryKey: ["entitlements", "editions", "all-for-select"],
     queryFn: () => editionRepository.getAll({ page: 1, pageSize: 100 }),
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
   const allEditionsForSelect = allEditionsData?.items ?? [];
+  const allEditionsError = allEditionsQueryError ? (allEditionsQueryError as Error).message : null;
 
   const vm = useCrudViewModel<Edition, CreateEditionRequest, UpdateEditionRequest>(
     ["entitlements", "editions"],
@@ -82,6 +83,7 @@ export function useEditionsViewModel() {
   return {
     ...vm,
     allEditionsForSelect,
+    allEditionsError,
     navigateToFeatures: (editionId: string) => {
       router.push(`/entitlements/editions/${editionId}`);
     },

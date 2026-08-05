@@ -401,7 +401,7 @@ export function PromotionsTab({ planId, t }: PromotionsTabProps) {
                   promo={promo}
                   onEdit={vm.openEdit}
                   onDelete={vm.deletePromotion}
-                  isDeleting={vm.isDeleting}
+                  isDeleting={vm.isDeleting(promo.id)}
                   t={t}
                 />
               ))}

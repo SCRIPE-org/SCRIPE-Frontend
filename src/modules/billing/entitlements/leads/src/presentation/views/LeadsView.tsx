@@ -302,7 +302,7 @@ export function LeadsView() {
             isLoading={vm.isLoading}
             onOpenDrawer={vm.handleOpenDrawer}
             onMoveLead={vm.handleUpdateStatus}
-            isMoving={vm.isUpdatingStatus || !canUpdateLead}
+            isMoving={(id: string) => vm.isUpdatingStatus(id) || !canUpdateLead}
           />
           {vm.totalPages > 1 && (
             <div className="flex flex-wrap items-center justify-end gap-3">
@@ -377,7 +377,7 @@ export function LeadsView() {
         lead={vm.selectedLead}
         isLoading={vm.isLoadingDetail}
         onUpdateStatus={vm.handleUpdateStatus}
-        isUpdatingStatus={vm.isUpdatingStatus}
+        isUpdatingStatus={vm.selectedLeadId ? vm.isUpdatingStatus(vm.selectedLeadId) : false}
         onGetEmailPreview={vm.handleGetEmailPreview}
         onConvert={canConvertLead ? vm.handleOpenConvertDialog : undefined}
         onAssign={canAssignLead ? vm.handleOpenAssignDialog : undefined}

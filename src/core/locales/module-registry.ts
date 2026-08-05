@@ -60,7 +60,6 @@ import {
 } from "@modules/entitlements/recommendation-rules/locales";
 import { en as editionsEn, ar as editionsAr } from "@modules/entitlements/editions/locales";
 import { en as featuresEn, ar as featuresAr } from "@modules/entitlements/features/locales";
-import { en as overridesEn, ar as overridesAr } from "@modules/entitlements/overrides/locales";
 import {
   en as subscriptionsEn,
   ar as subscriptionsAr,
@@ -220,7 +219,6 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   recommendationRulesEn,
   editionsEn,
   featuresEn,
-  overridesEn,
   subscriptionsEn,
   billingEn,
   tenantPlansEn,
@@ -298,7 +296,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   recommendationRulesAr,
   editionsAr,
   featuresAr,
-  overridesAr,
   subscriptionsAr,
   billingAr,
   tenantPlansAr,

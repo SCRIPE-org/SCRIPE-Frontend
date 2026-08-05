@@ -34,6 +34,10 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
+  // Per-row pending state — keyed by promotion id so deleting one promotion
+  // never busies/disables the delete button on other rows.
+  const [pendingDeleteIds, setPendingDeleteIds] = useState<Set<string>>(new Set());
+
   const queryKey = ["entitlements", "tenant-plan-promotions", planId, page, pageSize, search];
 
   // ── List ──
@@ -91,6 +95,9 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
   // ── Delete ──
   const deleteMutation = useMutation({
     mutationFn: (id: string) => tenantPlanRepository.deletePromotion(id),
+    onMutate: (id) => {
+      setPendingDeleteIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["entitlements", "tenant-plan-promotions", planId],
@@ -104,6 +111,13 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
       showError({
         title: t("common.error"),
         description: t("entitlements.promotions.deleteFailed"),
+      });
+    },
+    onSettled: (_data, _err, id) => {
+      setPendingDeleteIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
       });
     },
   });
@@ -145,6 +159,6 @@ export function useTenantPlanPromotionsViewModel(planId: string) {
     // Loading states
     isCreating: createMutation.isPending,
     isUpdating: updateMutation.isPending,
-    isDeleting: deleteMutation.isPending,
+    isDeleting: (id: string) => pendingDeleteIds.has(id),
   };
 }

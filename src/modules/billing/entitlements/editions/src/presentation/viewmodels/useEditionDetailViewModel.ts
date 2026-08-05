@@ -67,7 +67,7 @@ export interface EditionDetailViewModelResult {
 
   // ── Remove Feature ──
   removeFeature: (featureId: string) => void;
-  isRemovingFeature: boolean;
+  isRemovingFeature: (featureId: string) => boolean;
 
   // ── Module/Category collapse state ──
   collapsedModules: Record<string, boolean>;
@@ -542,9 +542,15 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   }, [directApplyMutation]);
 
   // ── Remove Feature Mutation ──
+  // Keyed by featureId so removing one feature never busies/disables the
+  // remove button on every other feature row.
+  const [pendingRemoveFeatureIds, setPendingRemoveFeatureIds] = useState<Set<string>>(new Set());
   const removeFeatureMutation = useMutation({
     mutationFn: async (featureId: string) => {
       await editionRepository.removeFeature(editionId, featureId);
+    },
+    onMutate: (featureId) => {
+      setPendingRemoveFeatureIds((prev) => new Set(prev).add(featureId));
     },
     onSuccess: () => {
       success({
@@ -557,6 +563,13 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
       toastError({
         title: t("common.error"),
         description: err instanceof Error ? err.message : t("common.error"),
+      });
+    },
+    onSettled: (_data, _err, featureId) => {
+      setPendingRemoveFeatureIds((prev) => {
+        const next = new Set(prev);
+        next.delete(featureId);
+        return next;
       });
     },
   });
@@ -652,7 +665,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     discardChanges,
 
     removeFeature,
-    isRemovingFeature: removeFeatureMutation.isPending,
+    isRemovingFeature: (featureId: string) => pendingRemoveFeatureIds.has(featureId),
 
     collapsedModules,
     toggleModule,

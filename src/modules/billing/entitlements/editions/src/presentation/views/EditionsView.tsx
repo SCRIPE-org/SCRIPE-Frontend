@@ -13,7 +13,7 @@ import { useEditionsViewModel } from "../viewmodels/useEditionsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { Edition } from "../../domain/entities/Edition";
 import { Badge } from "@core/ui/badge";
-import { Pencil, Trash2, Eye, Settings2, Columns } from "lucide-react";
+import { Pencil, Trash2, Eye, Settings2, Columns, AlertCircle } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
@@ -145,5 +145,15 @@ export function EditionsView() {
     [t, vm, language]
   );
 
-  return <GenericCrudView viewModel={vm} config={config} />;
+  return (
+    <>
+      {vm.allEditionsError && (
+        <div className="mb-4 flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          <span>{t("entitlements.editions.allEditionsLoadError")}</span>
+        </div>
+      )}
+      <GenericCrudView viewModel={vm} config={config} />
+    </>
+  );
 }

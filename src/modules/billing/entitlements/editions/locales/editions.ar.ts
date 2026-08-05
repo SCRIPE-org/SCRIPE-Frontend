@@ -161,6 +161,8 @@ export const ar = {
       manageFeatures: "إدارة الميزات",
       manageFeaturesDescription: "إدارة الميزات والحدود لهذا الإصدار من الاشتراك.",
       noEditions: "لم يتم العثور على إصدارات",
+      allEditionsLoadError:
+        "تعذّر تحميل القائمة الكاملة للإصدارات. قد تعرض بعض القوائم المنسدلة نتائج غير مكتملة.",
       systemBadge: "نظام",
       retiredBadge: "متقاعد",
       fallbackEdition: "الإصدار الاحتياطي",

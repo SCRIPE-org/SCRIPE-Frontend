@@ -56,7 +56,7 @@ interface FeaturesTabProps {
     value: boolean | number
   ) => void;
   removeFeature: (featureId: string) => void;
-  isRemovingFeature: boolean;
+  isRemovingFeature: (featureId: string) => boolean;
   overflowPolicy: string;
   setOverflowPolicy: (policy: string) => void;
   overflowPolicyChanged: boolean;
@@ -289,7 +289,7 @@ export function FeaturesTab({
                                     size="sm"
                                     className="h-7 px-2 text-destructive/60 hover:bg-destructive/10 hover:text-destructive"
                                     onClick={() => removeFeature(serverFeature.featureId)}
-                                    disabled={isRemovingFeature}
+                                    disabled={isRemovingFeature(serverFeature.featureId)}
                                     title={t("entitlements.editions.removeFeature")}
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />

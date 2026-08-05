@@ -170,6 +170,8 @@ export const en = {
       manageFeatures: "Manage Features",
       manageFeaturesDescription: "Manage features and limits for this subscription edition.",
       noEditions: "No editions found",
+      allEditionsLoadError:
+        "Couldn't load the full list of editions. Some dropdowns may show incomplete results.",
       systemBadge: "System",
       retiredBadge: "Retired",
       editionName: "Edition Name",

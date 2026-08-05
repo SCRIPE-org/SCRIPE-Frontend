@@ -47,6 +47,10 @@ export function useOverridesViewModel(tenantId: string) {
   const [costAmount, setCostAmount] = useState("");
   const [costReason, setCostReason] = useState("");
 
+  // Per-row pending state — keyed by feature id so removing one override
+  // never busies/disables the Remove button on the other rows.
+  const [pendingRemoveFeatureIds, setPendingRemoveFeatureIds] = useState<Set<string>>(new Set());
+
   // ─── Query keys ────────────────────────────────────
   const overridesKey = ["entitlements", "overrides", tenantId];
   const resolvedKey = ["entitlements", "resolved", tenantId];
@@ -131,6 +135,9 @@ export function useOverridesViewModel(tenantId: string) {
   // ─── Remove override mutation ──────────────────────
   const removeOverrideMutation = useMutation({
     mutationFn: (featureId: string) => overrideRepository.removeOverride(tenantId, featureId),
+    onMutate: (featureId) => {
+      setPendingRemoveFeatureIds((prev) => new Set(prev).add(featureId));
+    },
     onSuccess: () => {
       invalidate();
       success({
@@ -139,6 +146,13 @@ export function useOverridesViewModel(tenantId: string) {
       });
     },
     onError: (err: Error) => showError({ title: t("common.error"), description: err.message }),
+    onSettled: (_data, _err, featureId) => {
+      setPendingRemoveFeatureIds((prev) => {
+        const next = new Set(prev);
+        next.delete(featureId);
+        return next;
+      });
+    },
   });
 
   // ─── Set override cost mutation ──────────────────────
@@ -225,7 +239,7 @@ export function useOverridesViewModel(tenantId: string) {
 
     // Remove override
     removeOverride: removeOverrideMutation.mutate,
-    isRemoving: removeOverrideMutation.isPending,
+    isRemoving: (featureId: string) => pendingRemoveFeatureIds.has(featureId),
 
     // Cost adjustment
     costOverrideId,

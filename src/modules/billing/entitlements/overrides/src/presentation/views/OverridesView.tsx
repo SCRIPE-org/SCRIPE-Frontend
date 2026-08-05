@@ -322,7 +322,7 @@ function CurrentOverridesCard({ vm, t }: { vm: VM; t: TFn }) {
                           size="sm"
                           className="text-destructive"
                           onClick={() => vm.removeOverride(o.featureId)}
-                          loading={vm.isRemoving}
+                          loading={vm.isRemoving(o.featureId)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>

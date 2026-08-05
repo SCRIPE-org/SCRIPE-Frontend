@@ -35,6 +35,8 @@ export type SubscriptionsVM = Omit<RawSubscriptionsVM, "error"> & {
  */
 export interface EditionsVM {
   items?: EditionItem[];
+  /** Full (up to 100) unpaginated edition list — dropdowns must read this, not `items` (page-capped at 10). */
+  allEditionsForSelect?: EditionItem[];
   [key: string]: any;
 }
 
