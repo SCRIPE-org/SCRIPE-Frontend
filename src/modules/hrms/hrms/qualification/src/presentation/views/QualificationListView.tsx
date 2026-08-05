@@ -15,10 +15,11 @@ import type { Qualification } from "../../domain/entities/Qualification";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
+import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const QualificationListView = React.memo(function QualificationListView() {
-  useModuleLocales(() => import("../../../locales"), "hrms");
+  useModuleLocales(() => import("../../../locales"), "hrms-qualification");
   const { vm } = useQualificationViewModel();
   const { t, language } = useI18n();
   const locale = resolveIntlLocale(language);
@@ -133,6 +134,7 @@ export const QualificationListView = React.memo(function QualificationListView()
         onClick: (item: Qualification) => vm.openEditModal(item),
         variant: "ghost" as const,
         icon: <Pencil className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.QUALIFICATION_UPDATE,
       },
       {
         label: tFn("common.delete"),
@@ -140,6 +142,7 @@ export const QualificationListView = React.memo(function QualificationListView()
         variant: "ghost" as const,
         className: "text-destructive hover:text-destructive/80",
         icon: <Trash2 className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.QUALIFICATION_DELETE,
       },
     ],
     // F-85: opts this list into real server-side sort (see StaffMemberListView

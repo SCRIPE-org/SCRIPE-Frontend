@@ -15,10 +15,11 @@ import type { Certification } from "../../domain/entities/Certification";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
+import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const CertificationListView = React.memo(function CertificationListView() {
-  useModuleLocales(() => import("../../../locales"), "hrms");
+  useModuleLocales(() => import("../../../locales"), "hrms-certification");
   const { vm } = useCertificationViewModel();
   const { t, language } = useI18n();
   const locale = resolveIntlLocale(language);
@@ -155,6 +156,7 @@ export const CertificationListView = React.memo(function CertificationListView()
         onClick: (item: Certification) => vm.openEditModal(item),
         variant: "ghost" as const,
         icon: <Pencil className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.CERTIFICATION_UPDATE,
       },
       {
         label: tFn("common.delete"),
@@ -162,6 +164,7 @@ export const CertificationListView = React.memo(function CertificationListView()
         variant: "ghost" as const,
         className: "text-destructive hover:text-destructive/80",
         icon: <Trash2 className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.CERTIFICATION_DELETE,
       },
     ],
     // F-85: opts this list into real server-side sort (see StaffMemberListView
