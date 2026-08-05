@@ -2,7 +2,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type {
   LeadActivity,
@@ -85,12 +85,18 @@ export function useLeadsViewModel() {
   // can strand the view on a page past the new end (e.g. "page 3 of 2" — an empty
   // list even though earlier pages still have rows). Snap back once the server
   // confirms the new total.
+  //
+  // Adjusted during render rather than in a useEffect so the correction lands in
+  // the same commit instead of an extra post-paint render pass.
   const listTotalCount = listQuery.data?.totalCount;
-  useEffect(() => {
-    if (listTotalCount === undefined) return;
-    const lastPage = Math.max(1, Math.ceil(listTotalCount / pageSize));
-    if (page > lastPage) setPage(lastPage);
-  }, [listTotalCount, pageSize, page]);
+  const [lastSeenTotalCount, setLastSeenTotalCount] = useState(listTotalCount);
+  if (listTotalCount !== lastSeenTotalCount) {
+    setLastSeenTotalCount(listTotalCount);
+    if (listTotalCount !== undefined) {
+      const lastPage = Math.max(1, Math.ceil(listTotalCount / pageSize));
+      if (page > lastPage) setPage(lastPage);
+    }
+  }
 
   // ── Detail Query (fires only when a row is selected) ─────────────────────
   const detailQuery = useQuery({

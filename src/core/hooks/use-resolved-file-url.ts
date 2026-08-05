@@ -25,28 +25,23 @@ function isAbsoluteUrl(value: string): boolean {
 }
 
 export function useResolvedFileUrl(value: string | null | undefined): string {
-  const [resolved, setResolved] = useState<string>(() =>
-    value && isAbsoluteUrl(value) ? value : ""
-  );
+  // Which relative `value` `resolvedUrl` belongs to, so a stale URL from the
+  // previous value can be detected and hidden without an effect-driven "clear"
+  // setState (the `!value`/absolute-URL cases are synchronously derivable below,
+  // so only the genuine async lookup needs an effect at all).
+  const [resolvedFor, setResolvedFor] = useState<string | null | undefined>(undefined);
+  const [resolvedUrl, setResolvedUrl] = useState<string>("");
 
   useEffect(() => {
+    if (!value || isAbsoluteUrl(value)) return;
+
     let cancelled = false;
 
-    if (!value) {
-      setResolved("");
-      return;
-    }
-
-    if (isAbsoluteUrl(value)) {
-      setResolved(value);
-      return;
-    }
-
-    // Clear any stale (previous file's) URL while the new one resolves.
-    setResolved("");
-
     getSessionDownloadUrl(value).then((url) => {
-      if (!cancelled) setResolved(url ?? "");
+      if (!cancelled) {
+        setResolvedFor(value);
+        setResolvedUrl(url ?? "");
+      }
     });
 
     return () => {
@@ -54,5 +49,7 @@ export function useResolvedFileUrl(value: string | null | undefined): string {
     };
   }, [value]);
 
-  return resolved;
+  if (!value) return "";
+  if (isAbsoluteUrl(value)) return value;
+  return resolvedFor === value ? resolvedUrl : "";
 }

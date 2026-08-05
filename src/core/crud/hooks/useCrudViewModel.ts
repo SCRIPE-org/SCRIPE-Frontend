@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import { useGenericQuery } from "./useGenericQuery";
 import { useGenericMutations } from "./useGenericMutations";
 import { BaseEntity, PaginatedResult } from "../types";
@@ -61,12 +61,18 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   // we're currently sitting on, leaving a stale "page 5 of 3" state that renders an
   // empty list. Once the server confirms the real page count, snap back to the new
   // last valid page instead of leaving the user stranded past the end.
+  //
+  // Adjusted during render (React's documented pattern for "state derived from a
+  // prop/query result") rather than in a useEffect, so the correction lands in the
+  // same commit instead of an extra post-paint render pass.
   const pagesCount = query.data?.pagination?.pagesCount;
-  useEffect(() => {
+  const [lastSeenPagesCount, setLastSeenPagesCount] = useState(pagesCount);
+  if (pagesCount !== lastSeenPagesCount) {
+    setLastSeenPagesCount(pagesCount);
     if (pagesCount !== undefined && page > pagesCount) {
       setPage(Math.max(1, pagesCount));
     }
-  }, [pagesCount, page]);
+  }
 
   // 2. Mutations
   const mutations = useGenericMutations<T, TCreate, TUpdate>(key, services, {
