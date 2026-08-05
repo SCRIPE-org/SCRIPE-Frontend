@@ -11,15 +11,24 @@ export interface AnalyticsEventJson {
   occurredAt: string;
   subjectEntityTypeKey?: string | null;
   subjectEntityId?: string | null;
-  associatedNumericValue?: number | null;
+  // Matches the backend's AnalyticsEventResponse.Value (Analytics.Application/DTOs/
+  // AnalyticsEventResponse.cs) exactly -- the wire key is "value" under the API's
+  // camelCase JSON policy, not "associatedNumericValue".
+  value?: number | null;
   tenantId?: string | null;
 }
 
+// Matches the backend's AnalyticsDailyMetricResponse (Analytics.Application/DTOs/
+// AnalyticsDailyMetricResponse.cs) field-for-field: eventName, bucketDateUtc, count,
+// valueSum, valueMin, valueMax, lastEventAt. The backend never sends "date"/"sum".
 export interface AnalyticsDailyMetricJson {
-  date: string;
   eventName: string;
+  bucketDateUtc: string;
   count: number;
-  sum?: number;
+  valueSum: number;
+  valueMin?: number | null;
+  valueMax?: number | null;
+  lastEventAt: string;
 }
 
 export interface AnalyticsEventListResponseJson {
@@ -37,7 +46,7 @@ export class AnalyticsEventModel {
     public readonly occurredAt: string,
     public readonly subjectEntityTypeKey?: string | null,
     public readonly subjectEntityId?: string | null,
-    public readonly associatedNumericValue?: number | null,
+    public readonly value?: number | null,
     public readonly tenantId?: string | null
   ) {}
 
@@ -49,7 +58,7 @@ export class AnalyticsEventModel {
       json.occurredAt,
       json.subjectEntityTypeKey,
       json.subjectEntityId,
-      json.associatedNumericValue,
+      json.value,
       json.tenantId
     );
   }
@@ -57,13 +66,24 @@ export class AnalyticsEventModel {
 
 export class AnalyticsDailyMetricModel {
   constructor(
-    public readonly date: string,
     public readonly eventName: string,
+    public readonly bucketDateUtc: string,
     public readonly count: number,
-    public readonly sum?: number
+    public readonly valueSum: number,
+    public readonly lastEventAt: string,
+    public readonly valueMin?: number | null,
+    public readonly valueMax?: number | null
   ) {}
 
   static fromJson(json: AnalyticsDailyMetricJson): AnalyticsDailyMetricModel {
-    return new AnalyticsDailyMetricModel(json.date, json.eventName, json.count, json.sum);
+    return new AnalyticsDailyMetricModel(
+      json.eventName,
+      json.bucketDateUtc,
+      json.count,
+      json.valueSum,
+      json.lastEventAt,
+      json.valueMin,
+      json.valueMax
+    );
   }
 }

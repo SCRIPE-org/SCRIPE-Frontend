@@ -13,7 +13,7 @@ export class AnalyticsEventMapper {
       occurredAt: model.occurredAt,
       subjectEntityTypeKey: model.subjectEntityTypeKey,
       subjectEntityId: model.subjectEntityId,
-      associatedNumericValue: model.associatedNumericValue,
+      value: model.value,
       tenantId: model.tenantId,
     };
     return new AnalyticsEvent(data);
