@@ -31,6 +31,13 @@ const PRIORITY_VARIANTS: Record<number, "secondary" | "info" | "warning" | "dest
   3: "destructive", // Critical
 };
 
+// Soft client-side format hint for the raw-GUID ownerEntityId/assignedToId fields
+// (native HTML5 pattern validation only fires on a non-empty value, so this never
+// blocks leaving either optional field empty). The backend is the real gate:
+// AssignedToId is existence/tenant-validated server-side (F-29); OwnerEntityId's
+// type key is validated against the cross-module registry server-side.
+const GUID_PATTERN = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+
 export const WorkItemListView = React.memo(function WorkItemListView() {
   useModuleLocales(() => import("../../../locales"), "workManagement");
   const { t, language } = useI18n();
@@ -103,6 +110,11 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         },
         { key: "ownerEntityTypeKey", label: t("workItem.fields.ownerEntityTypeKey") },
         {
+          key: "assignedToId",
+          label: t("workItem.fields.assignedToId"),
+          render: (value: string | null | undefined) => value ?? "-",
+        },
+        {
           key: "dueAt",
           label: t("workItem.fields.dueAt"),
           render: (value: string) =>
@@ -147,8 +159,24 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
           type: "text" as const,
           placeholder: t("workItem.placeholders.ownerEntityTypeKey"),
         },
+        {
+          name: "ownerEntityId",
+          label: t("workItem.fields.ownerEntityId"),
+          type: "text" as const,
+          placeholder: t("workItem.placeholders.ownerEntityId"),
+          pattern: GUID_PATTERN,
+        },
+        {
+          name: "assignedToId",
+          label: t("workItem.fields.assignedToId"),
+          type: "text" as const,
+          placeholder: t("workItem.placeholders.assignedToId"),
+          pattern: GUID_PATTERN,
+        },
       ],
-      // ownerEntityTypeKey/ownerEntityId are set-once at create (immutable owner binding).
+      // ownerEntityTypeKey/ownerEntityId are set-once at create (immutable owner
+      // binding, matching backend UpdateWorkItemCommand not accepting either) —
+      // assignedToId, unlike the owner binding, IS mutable post-create.
       editFields: [
         { name: "id", type: "hidden" as const, required: true },
         { name: "title", label: t("workItem.fields.title"), type: "text" as const, required: true },
@@ -173,6 +201,13 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
           required: true,
         },
         { name: "dueAt", label: t("workItem.fields.dueAt"), type: "datetime-local" as const },
+        {
+          name: "assignedToId",
+          label: t("workItem.fields.assignedToId"),
+          type: "text" as const,
+          placeholder: t("workItem.placeholders.assignedToId"),
+          pattern: GUID_PATTERN,
+        },
         { name: "isActive", label: t("workItem.fields.isActive"), type: "switch" as const },
       ],
       createInitialValues: {
@@ -182,6 +217,8 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         priority: "1",
         dueAt: "",
         ownerEntityTypeKey: "",
+        ownerEntityId: "",
+        assignedToId: "",
       },
       editInitialValues: (item: WorkItem) => ({
         id: item.id,
@@ -190,6 +227,7 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         status: String(item.status),
         priority: String(item.priority),
         dueAt: item.dueAt ?? "",
+        assignedToId: item.assignedToId ?? "",
         isActive: item.isActive,
       }),
       getItemDisplayName: (item: WorkItem) => item.title,

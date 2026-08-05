@@ -3,9 +3,6 @@ export const en = {
     title: "Work Items",
     description: "Manage tasks, follow-ups and assignments across records",
     addNew: "Add Work Item",
-    editTitle: "Edit Work Item",
-    deleteTitle: "Delete Work Item",
-    deleteConfirm: "Are you sure you want to delete this work item?",
     noItems: "No work items found",
     searchPlaceholder: "Search work items...",
 
@@ -16,6 +13,8 @@ export const en = {
       status: "Status",
       priority: "Priority",
       ownerEntityTypeKey: "Owner Type",
+      ownerEntityId: "Owner Record ID",
+      assignedToId: "Assigned To (User/Admin ID)",
       dueAt: "Due Date",
       isActive: "Active",
     },
@@ -23,6 +22,8 @@ export const en = {
     // Form placeholders
     placeholders: {
       ownerEntityTypeKey: "e.g. party.person",
+      ownerEntityId: "ID of the record this task is about (optional)",
+      assignedToId: "ID of the user or admin this task is assigned to (optional)",
     },
 
     // WorkItemStatus enum (0..4)

@@ -3,9 +3,6 @@ export const ar = {
     title: "عناصر العمل",
     description: "إدارة المهام والمتابعات والتكليفات عبر السجلات",
     addNew: "إضافة عنصر عمل",
-    editTitle: "تعديل عنصر عمل",
-    deleteTitle: "حذف عنصر عمل",
-    deleteConfirm: "هل أنت متأكد من حذف عنصر العمل هذا؟",
     noItems: "لا توجد عناصر عمل",
     searchPlaceholder: "ابحث في عناصر العمل...",
 
@@ -16,6 +13,8 @@ export const ar = {
       status: "الحالة",
       priority: "الأولوية",
       ownerEntityTypeKey: "نوع المالك",
+      ownerEntityId: "معرّف سجل المالك",
+      assignedToId: "مُسند إلى (معرّف مستخدم/مشرف)",
       dueAt: "تاريخ الاستحقاق",
       isActive: "نشط",
     },
@@ -23,6 +22,8 @@ export const ar = {
     // Form placeholders
     placeholders: {
       ownerEntityTypeKey: "مثال: party.person",
+      ownerEntityId: "معرّف السجل المرتبط بهذه المهمة (اختياري)",
+      assignedToId: "معرّف المستخدم أو المشرف المُسندة إليه هذه المهمة (اختياري)",
     },
 
     // WorkItemStatus enum (0..4)
