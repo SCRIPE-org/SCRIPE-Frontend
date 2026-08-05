@@ -13,12 +13,16 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Monitor, Tablet, Smartphone } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { cn } from "@core/common/utils";
+import { useI18n } from "@core/providers/i18n-provider";
 
 // ─── Device presets ─────────────────────────────────────────
+// Labels are keyed against the composer's shared device-name copy (see
+// PreviewDialog in this same directory) so the three names aren't
+// translated twice within the same module.
 const DEVICES = [
-  { id: "desktop" as const, icon: Monitor, width: "100%", label: "Desktop" },
-  { id: "tablet" as const, icon: Tablet, width: "768px", label: "Tablet" },
-  { id: "mobile" as const, icon: Smartphone, width: "375px", label: "Mobile" },
+  { id: "desktop" as const, icon: Monitor, width: "100%", labelKey: "messaging.email.desktop" },
+  { id: "tablet" as const, icon: Tablet, width: "768px", labelKey: "messaging.email.tablet" },
+  { id: "mobile" as const, icon: Smartphone, width: "375px", labelKey: "messaging.email.mobile" },
 ] as const;
 
 type DeviceId = (typeof DEVICES)[number]["id"];
@@ -40,6 +44,7 @@ export interface TemplateLivePreviewProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps) {
+  const { t } = useI18n();
   const [device, setDevice] = useState<DeviceId>("desktop");
   const [debouncedBody, setDebouncedBody] = useState(body);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -110,10 +115,10 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
             size="sm"
             className={cn("h-7 gap-1.5 px-2.5 text-xs", device === d.id && "shadow-nx-sm")}
             onClick={() => setDevice(d.id)}
-            title={d.label}
+            title={t(d.labelKey)}
           >
             <d.icon className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">{d.label}</span>
+            <span className="hidden sm:inline">{t(d.labelKey)}</span>
           </Button>
         ))}
       </div>
@@ -122,7 +127,7 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
       {subject && (
         <div className="rounded-nx-sm border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-raised)_30%,transparent)] px-3 py-2">
           <p className="mb-0.5 text-[10px] uppercase tracking-wider text-nx-ink-3">
-            Subject
+            {t("messaging.templates.subject")}
           </p>
           <p className="truncate text-sm font-medium">{subject}</p>
         </div>
@@ -141,12 +146,12 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
               sandbox="allow-same-origin"
               className="w-full border-0"
               style={{ minHeight: "120px", height: "300px", maxHeight: "500px" }}
-              title="Template Preview"
+              title={t("messaging.templates.preview")}
               onLoad={handleIframeLoad}
             />
           ) : (
             <div className="flex h-32 items-center justify-center text-sm text-nx-ink-3">
-              Start typing to see preview...
+              {t("messaging.templates.livePreviewEmpty")}
             </div>
           )}
         </div>

@@ -255,7 +255,7 @@ export function FeaturesTab({
                                   {isLabelModified && (
                                     <span
                                       className="inline-block h-1.5 w-1.5 rounded-full bg-info"
-                                      title="Marketing label modified"
+                                      title={t("entitlements.editions.marketingLabelModified")}
                                     />
                                   )}
                                 </div>
@@ -276,7 +276,7 @@ export function FeaturesTab({
                                         : "text-nx-ink-3 hover:text-nx-ink"
                                     }`}
                                     onClick={() => toggleLabelExpanded(feature.name)}
-                                    title="Edit marketing display label"
+                                    title={t("entitlements.editions.editMarketingLabel")}
                                   >
                                     <Tag className="h-3 w-3" />
                                     <Languages className="h-3 w-3" />
@@ -522,7 +522,7 @@ function FeatureControl({
           className="h-8 w-44"
           aria-label={featureName ?? t("entitlements.features.valueType")}
         >
-          <SelectValue placeholder="Select..." />
+          <SelectValue placeholder={t("components.select.placeholder")} />
         </SelectTrigger>
         <SelectContent>
           {enumOptions.map((opt) => (

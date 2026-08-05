@@ -250,7 +250,7 @@ export function TenantSettingsTab({
                 <div className="mt-1">
                   <Image
                     src={resolvedFaviconUrl}
-                    alt="Favicon"
+                    alt={t("tenant.favicon")}
                     width={32}
                     height={32}
                     unoptimized

@@ -150,7 +150,7 @@ export function PromotionsTab({
               <Input
                 value={vm.form.description}
                 onChange={(e) => vm.setField("description", e.target.value)}
-                placeholder="Optional description..."
+                placeholder={t("entitlements.promotions.optionalDescription")}
               />
             </div>
 

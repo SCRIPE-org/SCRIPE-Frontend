@@ -82,7 +82,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
                 type="number"
                 value={rateLimit}
                 onChange={(e) => setRateLimit(e.target.value)}
-                placeholder="100 (Default)"
+                placeholder={t("apikeys.settings.rateLimitPlaceholder")}
                 disabled={!detail.isActive}
               />
             </div>
@@ -110,7 +110,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
                 type="number"
                 value={monthlyQuota}
                 onChange={(e) => setMonthlyQuota(e.target.value)}
-                placeholder="Unlimited"
+                placeholder={t("apikeys.settings.quotaPlaceholder")}
                 disabled={!detail.isActive}
               />
             </div>

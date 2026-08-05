@@ -153,6 +153,8 @@ export const ar = {
       noFeatureValues: "لم يتم تهيئة ميزات بعد.",
       setFeatureValue: "تعيين القيمة",
       featureUpdated: "تم تحديث قيمة الميزة",
+      marketingLabelModified: "تم تعديل تسمية التسويق",
+      editMarketingLabel: "تعديل تسمية العرض التسويقي",
       removeFeature: "إزالة الميزة",
       featureRemoved: "تمت إزالة الميزة",
       featureRemovedDesc: "تمت إزالة قيمة الميزة من هذا الإصدار.",

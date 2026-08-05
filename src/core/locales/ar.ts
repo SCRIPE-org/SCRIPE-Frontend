@@ -2006,6 +2006,7 @@ export const ar = {
   navigation: {
     searchPlaceholder: "ابحث عن صفحة",
     togglePanel: "تبديل اللوحة",
+    primaryNav: "التنقل الرئيسي",
     topbar: {
       workspacesMenu: "مساحات العمل",
       sectionsMenu: "الأقسام",

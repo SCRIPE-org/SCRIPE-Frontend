@@ -2016,6 +2016,7 @@ export const en = {
   navigation: {
     searchPlaceholder: "Search a page",
     togglePanel: "Toggle panel",
+    primaryNav: "Primary navigation",
     topbar: {
       workspacesMenu: "Workspaces",
       sectionsMenu: "Sections",

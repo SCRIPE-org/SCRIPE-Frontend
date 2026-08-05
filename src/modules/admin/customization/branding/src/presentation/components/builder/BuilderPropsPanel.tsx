@@ -1738,7 +1738,7 @@ function ComponentSpecificProps({
                   dangerouslySetInnerHTML={{
                     __html:
                       sanitizeRichHtml(props.content as string) ||
-                      '<p class="text-nx-ink-3">No content yet</p>',
+                      `<p class="text-nx-ink-3">${t("studio.builder.props.noContentPreview")}</p>`,
                   }}
                 />
               </div>

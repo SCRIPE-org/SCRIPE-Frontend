@@ -42,6 +42,7 @@ export const ar = {
       cloneSuccess: "تم استنساخ القالب بنجاح",
       cloneError: "فشل في استنساخ القالب",
       previewError: "فشل في معاينة القالب",
+      livePreviewEmpty: "ابدأ الكتابة لرؤية المعاينة...",
       placeholderSchema: "مخطط العناصر النائبة",
       designVariables: "متغيرات التصميم",
       createNew: "إنشاء قالب",

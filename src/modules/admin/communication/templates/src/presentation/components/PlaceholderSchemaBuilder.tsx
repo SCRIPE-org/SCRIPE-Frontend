@@ -252,7 +252,7 @@ export function PlaceholderSchemaBuilder({
                     </div>
                   </div>
                   {isOrphaned && (
-                    <span title="Not used in template body">
+                    <span title={t("messaging.templates.orphanedVar")}>
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-warning" />
                     </span>
                   )}

@@ -29,6 +29,7 @@ export const en = {
       cloneSuccess: "Template cloned successfully",
       cloneError: "Failed to clone template",
       previewError: "Failed to preview template",
+      livePreviewEmpty: "Start typing to see preview...",
       placeholderSchema: "Placeholder Schema",
       designVariables: "Design Variables",
       createNew: "Create Template",

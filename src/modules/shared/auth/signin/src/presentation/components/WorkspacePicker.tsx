@@ -85,7 +85,7 @@ export function WorkspacePicker({
             autoComplete="email"
             disabled={isLoading}
             className="h-9 flex-1 text-sm"
-            aria-label="Email for workspace discovery"
+            aria-label={t("auth.workspacePicker.emailAriaLabel") || "Email for workspace discovery"}
           />
           <Button
             type="button"
@@ -112,7 +112,11 @@ export function WorkspacePicker({
 
       {/* Results */}
       {hasSearched && (
-        <div role="region" aria-label="Workspace results" aria-live="polite">
+        <div
+          role="region"
+          aria-label={t("auth.workspacePicker.resultsAriaLabel") || "Workspace results"}
+          aria-live="polite"
+        >
           {hasWorkspaces ? (
             <div className="flex flex-col gap-1.5">
               <p className="text-xs text-muted-foreground">
@@ -128,7 +132,7 @@ export function WorkspacePicker({
                       onClick={() => ws.isActivated && handleSelect(ws)}
                       disabled={!ws.isActivated}
                       aria-disabled={!ws.isActivated}
-                      aria-label={`${ws.tenantName}${!ws.isActivated ? " — setup pending" : ""}`}
+                      aria-label={`${ws.tenantName}${!ws.isActivated ? ` — ${t("auth.workspacePicker.setupPending") || "Setup pending"}` : ""}`}
                     >
                       {/* Workspace icon */}
                       <span

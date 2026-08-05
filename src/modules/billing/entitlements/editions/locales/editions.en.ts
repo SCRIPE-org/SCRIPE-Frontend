@@ -162,6 +162,8 @@ export const en = {
       noFeatureValues: "No features configured yet.",
       setFeatureValue: "Set Value",
       featureUpdated: "Feature value updated",
+      marketingLabelModified: "Marketing label modified",
+      editMarketingLabel: "Edit marketing display label",
       removeFeature: "Remove Feature",
       featureRemoved: "Feature Removed",
       featureRemovedDesc: "The feature value was removed from this edition.",
