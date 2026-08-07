@@ -75,10 +75,18 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   }
 
   // 2. Mutations
+  // Each mutation type closes ONLY the modal it belongs to. These used to
+  // share one `onSuccess` that closed both the create AND edit modal on
+  // either mutation's success — harmless while exactly one of the two could
+  // ever be open, but a latent trap for any future path (or a modal={false}
+  // interaction quirk) that left both flags true at once: a create landing
+  // would silently discard whatever was mid-edit in the other dialog.
   const mutations = useGenericMutations<T, TCreate, TUpdate>(key, services, {
     optimisticDelete: true,
-    onSuccess: () => {
+    onCreateSuccess: () => {
       setIsCreateModalOpen(false);
+    },
+    onUpdateSuccess: () => {
       closeEditModal();
     },
   });

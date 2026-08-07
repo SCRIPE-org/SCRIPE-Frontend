@@ -15,15 +15,17 @@
 "use client";
 
 import React, { useMemo, useCallback, useState } from "react";
+import { cn } from "@core/common/utils";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Switch } from "@core/ui/switch";
 import { Checkbox } from "@core/ui/checkbox";
+import { DetailRow } from "@core/ui/detail-row";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
-import { CreditCard, AlertTriangle, ShieldCheck } from "lucide-react";
+import { CreditCard, AlertTriangle, ShieldCheck, ChevronDown } from "lucide-react";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 
 // ── Static options ──────────────────────────────────────────
@@ -180,10 +182,14 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                 const isSelected = vm.form.promotionId === promo.id;
 
                 return (
-                  <Badge
+                  // A real button, not an onClick span: Badge is documented as a
+                  // non-interactive reading (badge.tsx) and renders a bare <span>,
+                  // which is invisible to keyboard/screen-reader users as a control.
+                  <button
                     key={promo.id}
-                    variant={isSelected ? "default" : "secondary"}
-                    className="cursor-pointer text-xs transition-colors hover:bg-nx-accent-wash"
+                    type="button"
+                    className="rounded-full transition-colors duration-nx-micro ease-nx-enter focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+                    aria-pressed={isSelected}
                     onClick={() => {
                       if (isSelected) {
                         // Deselect — clear both fields atomically
@@ -202,12 +208,17 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                       }
                     }}
                   >
-                    {promo.name} (
-                    {promo.type === "Percentage"
-                      ? `${promo.discountValue}%`
-                      : `$${promo.discountValue}`}
-                    )
-                  </Badge>
+                    <Badge
+                      variant={isSelected ? "default" : "secondary"}
+                      className="cursor-pointer text-xs transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-accent-wash motion-reduce:transition-none"
+                    >
+                      {promo.name} (
+                      {promo.type === "Percentage"
+                        ? `${promo.discountValue}%`
+                        : `$${promo.discountValue}`}
+                      )
+                    </Badge>
+                  </button>
                 );
               })}
             </div>
@@ -240,7 +251,8 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       <div className="rounded-nx-md border border-nx-line duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0">
         <button
           type="button"
-          className="flex w-full items-center justify-between p-4 text-start"
+          aria-expanded={isPermissionsOpen}
+          className="flex w-full items-center justify-between rounded-nx-md p-4 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
           onClick={() => setIsPermissionsOpen((v) => !v)}
         >
           <div className="flex items-center gap-3">
@@ -260,7 +272,13 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                 {vm.form.availablePermissionIds.length}
               </Badge>
             )}
-            <span className="text-xs text-nx-ink-2">{isPermissionsOpen ? "▲" : "▼"}</span>
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 shrink-0 text-nx-ink-3 transition-transform duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                isPermissionsOpen && "rotate-180"
+              )}
+              aria-hidden="true"
+            />
           </div>
         </button>
 
@@ -295,12 +313,12 @@ function PermissionPicker({ vm, t }: { vm: CreateTenantVM; t: (key: string) => s
   const grouped = useMemo(() => {
     const map = new Map<string, typeof vm.creationPermissions>();
     for (const p of vm.creationPermissions) {
-      const key = p.module || p.category || "Other";
+      const key = p.module || p.category || t("tenant.other");
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(p);
     }
     return Array.from(map.entries());
-  }, [vm.creationPermissions]);
+  }, [vm.creationPermissions, t]);
 
   const toggle = useCallback(
     (permId: string) => {
@@ -394,54 +412,26 @@ function CreateTenantSummary({ vm, t }: { vm: CreateTenantVM; t: (key: string) =
   return (
     <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0">
       <h4 className="mb-3 text-sm font-semibold">{t("tenant.summary")}</h4>
-      <SummaryRow
-        label={t("tenant.edition")}
-        value={vm.selectedEdition?.name || "-"}
-      />
-      <SummaryRow label={t("tenant.subscriptionType")} value={subscriptionLabel} />
-      {!isFree && <SummaryRow label={t("tenant.currency")} value={currencyLabel} />}
+      <DetailRow label={t("tenant.edition")} value={vm.selectedEdition?.name || "-"} />
+      <DetailRow label={t("tenant.subscriptionType")} value={subscriptionLabel} />
+      {!isFree && <DetailRow label={t("tenant.currency")} value={currencyLabel} />}
       {vm.form.promotionId && (
-        <SummaryRow
+        <DetailRow
           label={t("tenant.promotion")}
           value={
             vm.availablePromotions.find((p) => p.id === vm.form.promotionId)?.name ||
             vm.form.promoCode ||
-            "Applied"
+            t("tenant.promoApplied")
           }
-          highlight
+          valueClassName="text-warning"
         />
       )}
       {!vm.form.promotionId && vm.form.promoCode && (
-        <SummaryRow
-          label={t("tenant.promotion")}
-          value={vm.form.promoCode}
-          highlight
-        />
+        <DetailRow label={t("tenant.promotion")} value={vm.form.promoCode} valueClassName="text-warning" />
       )}
       {vm.form.skipPayment && (
-        <SummaryRow
-          label={t("tenant.payment")}
-          value={t("tenant.skipped")}
-          highlight
-        />
+        <DetailRow label={t("tenant.payment")} value={t("tenant.skipped")} valueClassName="text-warning" />
       )}
-    </div>
-  );
-}
-
-function SummaryRow({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
-  return (
-    <div className="flex items-center justify-between text-sm">
-      <span className="text-nx-ink-2">{label}</span>
-      <span className={highlight ? "font-medium text-warning" : "font-medium"}>{value}</span>
     </div>
   );
 }

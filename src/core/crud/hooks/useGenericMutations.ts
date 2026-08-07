@@ -8,8 +8,21 @@ import type { QueryKey } from "@core/common/query-keys";
 interface MutationOptions<T> {
   /** Additional query keys to invalidate on any success */
   invalidateKeys?: QueryKey[];
-  /** Called after successful create/update */
+  /**
+   * Called after EITHER a successful create OR a successful update — kept for
+   * backward compatibility with existing callers that don't care which one
+   * fired. New code that reacts differently to create vs. update (e.g.
+   * closing only the dialog that owns the mutation that actually resolved)
+   * should use `onCreateSuccess` / `onUpdateSuccess` instead: a single shared
+   * handler here previously let a create's success close an unrelated open
+   * edit dialog (and vice versa) any time both callbacks pointed at the same
+   * function, since this fires for both mutation types indiscriminately.
+   */
   onSuccess?: (data: T) => void;
+  /** Called after a successful CREATE only. */
+  onCreateSuccess?: (data: T) => void;
+  /** Called after a successful UPDATE only. */
+  onUpdateSuccess?: (data: T) => void;
   /** Called on any mutation error */
   onError?: (error: Error) => void;
   /**
@@ -58,6 +71,7 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     onSuccess: (data) => {
       invalidate();
       operationSuccess(options?.successMessages?.create ?? t("common.messages.created"));
+      options?.onCreateSuccess?.(data);
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
@@ -75,6 +89,7 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     onSuccess: (data) => {
       invalidate();
       operationSuccess(options?.successMessages?.update ?? t("common.messages.updated"));
+      options?.onUpdateSuccess?.(data);
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {

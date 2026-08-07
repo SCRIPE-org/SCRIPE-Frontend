@@ -457,6 +457,8 @@ export const en = {
     autoRedirect: "You will be automatically redirected in a few seconds...",
     fullRefundApplied: "Full Refund Applied",
     noPromotion: "No Promotion",
+    promoApplied: "Applied",
+    other: "Other",
     selectSubscriptionType: "Select Subscription Type",
     noSubscriptionTypesAvailable: "No Subscription Types Available",
     searchCurrencies: "Search Currencies",
