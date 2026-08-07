@@ -119,60 +119,60 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
               icon={Palette}
               title={t("studio.advanced.cssVarGroupColors")}
               vars={[
-                ["--login-primary", "Primary color"],
-                ["--login-secondary", "Secondary color"],
-                ["--login-bg", "Page background"],
-                ["--login-surface", "Card/surface background"],
-                ["--login-text", "Main text color"],
-                ["--login-text-muted", "Muted text color"],
-                ["--login-border", "Border color"],
-                ["--login-error", "Error color"],
-                ["--login-success", "Success color"],
+                ["--login-primary", t("studio.advanced.cssVars.loginPrimary")],
+                ["--login-secondary", t("studio.advanced.cssVars.loginSecondary")],
+                ["--login-bg", t("studio.advanced.cssVars.loginBg")],
+                ["--login-surface", t("studio.advanced.cssVars.loginSurface")],
+                ["--login-text", t("studio.advanced.cssVars.loginText")],
+                ["--login-text-muted", t("studio.advanced.cssVars.loginTextMuted")],
+                ["--login-border", t("studio.advanced.cssVars.loginBorder")],
+                ["--login-error", t("studio.advanced.cssVars.loginError")],
+                ["--login-success", t("studio.advanced.cssVars.loginSuccess")],
               ]}
             />
             <CssVarGroup
               icon={ImageIcon}
               title={t("studio.advanced.cssVarGroupBackground")}
               vars={[
-                ["--login-bg-image", "Background image"],
-                ["--login-bg-gradient", "Background gradient"],
-                ["--login-overlay-opacity", "Overlay opacity (0-1)"],
-                ["--login-overlay-color", "Overlay color"],
-                ["--login-overlay-blur", "Overlay blur (px)"],
+                ["--login-bg-image", t("studio.advanced.cssVars.loginBgImage")],
+                ["--login-bg-gradient", t("studio.advanced.cssVars.loginBgGradient")],
+                ["--login-overlay-opacity", t("studio.advanced.cssVars.loginOverlayOpacity")],
+                ["--login-overlay-color", t("studio.advanced.cssVars.loginOverlayColor")],
+                ["--login-overlay-blur", t("studio.advanced.cssVars.loginOverlayBlur")],
               ]}
             />
             <CssVarGroup
               icon={Ruler}
               title={t("studio.advanced.cssVarGroupLayout")}
               vars={[
-                ["--login-panel-bg", "Branding panel bg (split layouts)"],
-                ["--login-panel-bg-image", "Panel bg image"],
-                ["--login-form-width", "Form max width (px)"],
-                ["--login-card-padding", "Card padding (px)"],
-                ["--login-element-gap", "Element spacing (px)"],
-                ["--login-input-height", "Input height (px)"],
+                ["--login-panel-bg", t("studio.advanced.cssVars.loginPanelBg")],
+                ["--login-panel-bg-image", t("studio.advanced.cssVars.loginPanelBgImage")],
+                ["--login-form-width", t("studio.advanced.cssVars.loginFormWidth")],
+                ["--login-card-padding", t("studio.advanced.cssVars.loginCardPadding")],
+                ["--login-element-gap", t("studio.advanced.cssVars.loginElementGap")],
+                ["--login-input-height", t("studio.advanced.cssVars.loginInputHeight")],
               ]}
             />
             <CssVarGroup
               icon={Type}
               title={t("studio.advanced.cssVarGroupTypography")}
               vars={[
-                ["--login-font-heading", "Heading font family"],
-                ["--login-font-body", "Body font family"],
-                ["--login-font-body-ar", "Arabic body font"],
-                ["--login-size-headline", "Headline size (px)"],
-                ["--login-size-subtitle", "Subtitle size (px)"],
-                ["--login-weight-heading", "Heading weight"],
-                ["--login-weight-body", "Body weight"],
+                ["--login-font-heading", t("studio.advanced.cssVars.loginFontHeading")],
+                ["--login-font-body", t("studio.advanced.cssVars.loginFontBody")],
+                ["--login-font-body-ar", t("studio.advanced.cssVars.loginFontBodyAr")],
+                ["--login-size-headline", t("studio.advanced.cssVars.loginSizeHeadline")],
+                ["--login-size-subtitle", t("studio.advanced.cssVars.loginSizeSubtitle")],
+                ["--login-weight-heading", t("studio.advanced.cssVars.loginWeightHeading")],
+                ["--login-weight-body", t("studio.advanced.cssVars.loginWeightBody")],
               ]}
             />
             <CssVarGroup
               icon={Square}
               title={t("studio.advanced.cssVarGroupShape")}
               vars={[
-                ["--login-radius-card", "Card border radius"],
-                ["--login-radius-button", "Button border radius"],
-                ["--login-shadow-card", "Card box shadow"],
+                ["--login-radius-card", t("studio.advanced.cssVars.loginRadiusCard")],
+                ["--login-radius-button", t("studio.advanced.cssVars.loginRadiusButton")],
+                ["--login-shadow-card", t("studio.advanced.cssVars.loginShadowCard")],
               ]}
             />
             <div className="space-y-1 pt-1">
@@ -182,21 +182,21 @@ export function AdvancedPanel({ draft, updateDraft }: AdvancedPanelProps) {
               </p>
               <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[9px]">
                 {[
-                  [".login-page", "Page wrapper"],
-                  [".login-form-wrapper", "Form container"],
-                  [".login-form", "<form> tag"],
-                  [".login-input", "Input fields"],
-                  [".login-button", "Submit button"],
-                  [".login-card", "Card/surface"],
-                  [".login-heading", "Headings (h1/h2)"],
-                  [".login-subtitle", "Subtitle text"],
-                  [".login-logo", "Logo box"],
-                  [".login-footer", "Copyright area"],
-                  [".login-sso", "SSO buttons"],
-                  [".login-overlay", "Overlay layer"],
-                  [".login-divider", "Divider line"],
-                  [".login-label", "Form labels"],
-                  [".dark", "Dark theme"],
+                  [".login-page", t("studio.advanced.cssClasses.loginPage")],
+                  [".login-form-wrapper", t("studio.advanced.cssClasses.loginFormWrapper")],
+                  [".login-form", t("studio.advanced.cssClasses.loginForm")],
+                  [".login-input", t("studio.advanced.cssClasses.loginInput")],
+                  [".login-button", t("studio.advanced.cssClasses.loginButton")],
+                  [".login-card", t("studio.advanced.cssClasses.loginCard")],
+                  [".login-heading", t("studio.advanced.cssClasses.loginHeading")],
+                  [".login-subtitle", t("studio.advanced.cssClasses.loginSubtitle")],
+                  [".login-logo", t("studio.advanced.cssClasses.loginLogo")],
+                  [".login-footer", t("studio.advanced.cssClasses.loginFooter")],
+                  [".login-sso", t("studio.advanced.cssClasses.loginSso")],
+                  [".login-overlay", t("studio.advanced.cssClasses.loginOverlay")],
+                  [".login-divider", t("studio.advanced.cssClasses.loginDivider")],
+                  [".login-label", t("studio.advanced.cssClasses.loginLabel")],
+                  [".dark", t("studio.advanced.cssClasses.darkTheme")],
                 ].map(([cls, desc]) => (
                   <div key={cls} className="flex items-baseline gap-1">
                     <code className="shrink-0 rounded-nx-sm bg-nx-raised-2 px-0.5 font-mono text-[8px] text-nx-accent">

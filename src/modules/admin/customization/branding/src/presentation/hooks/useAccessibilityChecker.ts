@@ -18,6 +18,7 @@
 
 import { useMemo } from "react";
 import type { StudioDraftProps as StudioDraft } from "../../domain/entities/StudioDraft";
+import { useI18n } from "@core/providers/i18n-provider";
 
 // ── Types ─────────────────────────────────────────────
 /**
@@ -170,7 +171,8 @@ function contrastCheck(
   colorB: string,
   requiredRatio: number,
   /** Draft key for the foreground color (used by autoFix) */
-  fgDraftKey?: keyof StudioDraft
+  fgDraftKey: keyof StudioDraft | undefined,
+  t: (key: string) => string
 ): AccessibilityCheck {
   const ratio = contrastRatio(colorA, colorB);
 
@@ -181,7 +183,7 @@ function contrastCheck(
       severity: "warn",
       labelKey,
       descriptionKey: "studio.a11y.desc.invalidColor",
-      details: "Invalid color value",
+      details: t("studio.a11y.details.invalidColor"),
       colorA,
       colorB,
     };
@@ -228,6 +230,8 @@ function contrastCheck(
  * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult {
+  const { t } = useI18n();
+
   return useMemo(() => {
     const checks: AccessibilityCheck[] = [];
 
@@ -240,7 +244,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
         draft.textColor,
         draft.bgColor,
         4.5,
-        "textColor"
+        "textColor",
+        t
       )
     );
     checks.push(
@@ -250,7 +255,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
         draft.textColor,
         draft.surfaceColor,
         4.5,
-        "textColor"
+        "textColor",
+        t
       )
     );
     checks.push(
@@ -260,7 +266,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
         draft.primaryColor,
         draft.bgColor,
         3.0,
-        "primaryColor"
+        "primaryColor",
+        t
       )
     );
     checks.push(
@@ -270,7 +277,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
         draft.primaryColor,
         draft.surfaceColor,
         3.0,
-        "primaryColor"
+        "primaryColor",
+        t
       )
     );
     checks.push(
@@ -280,7 +288,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
         draft.errorColor,
         draft.surfaceColor,
         4.5,
-        "errorColor"
+        "errorColor",
+        t
       )
     );
 
@@ -294,7 +303,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
           draft.darkTextColor,
           draft.darkBgColor,
           4.5,
-          "darkTextColor"
+          "darkTextColor",
+          t
         )
       );
       checks.push(
@@ -304,7 +314,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
           draft.darkTextColor,
           draft.darkSurfaceColor,
           4.5,
-          "darkTextColor"
+          "darkTextColor",
+          t
         )
       );
       checks.push(
@@ -314,7 +325,8 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
           draft.darkPrimaryColor,
           draft.darkSurfaceColor,
           3.0,
-          "darkPrimaryColor"
+          "darkPrimaryColor",
+          t
         )
       );
     }
@@ -344,7 +356,7 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
         descriptionKey: overlayOk ? "studio.a11y.desc.overlayPass" : "studio.a11y.desc.overlayWarn",
         details: draft.bgOverlayEnabled
           ? `Opacity: ${draft.bgOverlayOpacity.toFixed(1)} (min 0.4)`
-          : "No overlay enabled",
+          : t("studio.a11y.details.noOverlayEnabled"),
         autoFix: overlayOk ? undefined : { bgOverlayEnabled: true, bgOverlayOpacity: 0.5 },
       });
     }
@@ -361,7 +373,7 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
           : "studio.a11y.desc.overlayWarn",
         details: draft.darkBgOverlayEnabled
           ? `Opacity: ${draft.darkBgOverlayOpacity.toFixed(1)} (min 0.4)`
-          : "No overlay enabled",
+          : t("studio.a11y.details.noOverlayEnabled"),
         autoFix: darkOverlayOk
           ? undefined
           : { darkBgOverlayEnabled: true, darkBgOverlayOpacity: 0.5 },
@@ -385,10 +397,10 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
       descriptionKey: "studio.a11y.desc.reducedMotion",
       details:
         draft.a11yReducedMotion === "always"
-          ? "Animations disabled"
+          ? t("studio.a11y.details.animationsDisabled")
           : draft.a11yReducedMotion === "auto"
-            ? "Respects user preference"
-            : "Animations always active",
+            ? t("studio.a11y.details.respectsUserPreference")
+            : t("studio.a11y.details.animationsAlwaysActive"),
       autoFix: motionSeverity !== "pass" ? { a11yReducedMotion: "auto" as const } : undefined,
     });
 
@@ -433,5 +445,6 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
     draft.darkBgOverlayEnabled,
     draft.darkBgOverlayOpacity,
     draft.a11yReducedMotion,
+    t,
   ]);
 }
