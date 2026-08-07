@@ -12,6 +12,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
+import { chartColor } from "@core/ui/chart";
 import { homeContainer } from "../../di";
 import type { HubRecentItem } from "../../hub/src/domain/entities/HubActivity";
 
@@ -42,36 +43,22 @@ function getEventIcon(eventType: string): string {
   }
 }
 
-/** Map event types to gradient colors for the icon chip. */
-function getEventGradient(eventType: string): { grad: string; glow: string } {
-  switch (eventType) {
-    case "Create":
-      return {
-        grad: "linear-gradient(135deg, #4DE2D0, #1AB7B0 55%, #0E6F7E)",
-        glow: "26, 183, 176",
-      };
-    case "Update":
-      return {
-        grad: "linear-gradient(135deg, #5E91FF, #3461E8 55%, #1E3CAE)",
-        glow: "52, 97, 232",
-      };
-    case "Delete":
-      return {
-        grad: "linear-gradient(135deg, #FF7A6B, #F04E5A 55%, #B43048)",
-        glow: "240, 78, 90",
-      };
-    case "Login":
-    case "Logout":
-      return {
-        grad: "linear-gradient(135deg, #FFC25E, #F18A1A 55%, #B95F0C)",
-        glow: "241, 138, 26",
-      };
-    default:
-      return {
-        grad: "linear-gradient(135deg, #9DA9FF, #7C8BFF 55%, #5A60E0)",
-        glow: "124, 139, 255",
-      };
-  }
+// Colour follows the event category, never its rank — a fixed categorical
+// chart slot per event type (same idiom as LifecycleStepItem's ACTOR_SLOT).
+// Slots echo the original hue families: create=green, update=blue,
+// delete=red, login/logout=orange, anything else=violet.
+const EVENT_TYPE_CHART_SLOT: Record<string, number> = {
+  Create: 2,
+  Update: 1,
+  Delete: 5,
+  Login: 3,
+  Logout: 3,
+};
+const DEFAULT_EVENT_CHART_SLOT = 4;
+
+/** Token-backed accent colour for the event's icon chip. */
+function getEventAccent(eventType: string): string {
+  return chartColor(EVENT_TYPE_CHART_SLOT[eventType] ?? DEFAULT_EVENT_CHART_SLOT);
 }
 
 /** Human-readable relative time. */
@@ -117,8 +104,7 @@ export interface HubActivityData {
     icon: string;
     label: string;
     meta: string;
-    grad: string;
-    glow: string;
+    accent: string;
   }>;
   isLoading: boolean;
 }
@@ -150,7 +136,7 @@ export function useHubActivity(): HubActivityData {
     icon: getEventIcon(item.eventType),
     label: getEventLabel(item),
     meta: getRelativeTime(item.timestamp),
-    ...getEventGradient(item.eventType),
+    accent: getEventAccent(item.eventType),
   }));
 
   return {

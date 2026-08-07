@@ -9,7 +9,7 @@
  * without seeing several components react at once tells you nothing.
  */
 
-import { useMemo } from "react";
+import { useMemo, type CSSProperties } from "react";
 import { Move, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -37,12 +37,16 @@ const FONT_SIZES: { value: FontSize; sampleClass: string }[] = [
   { value: "xl", sampleClass: "text-2xl" },
 ];
 
-const RADII: { value: BorderRadius; sampleClass: string; px: string }[] = [
-  { value: "none", sampleClass: "rounded-none", px: "0px" },
-  { value: "small", sampleClass: "rounded-sm", px: "2px" },
-  { value: "default", sampleClass: "rounded", px: "4px" },
-  { value: "large", sampleClass: "rounded-lg", px: "8px" },
-  { value: "full", sampleClass: "rounded-full", px: "9999px" },
+// Real values mirror globals.css's `:root[data-radius]` rules — the ones
+// dom-applicator.ts actually drives via the `data-radius` attribute — and
+// stage.tsx's RADIUS_PEEK. rounded-lg reads var(--radius) directly, so
+// scoping it per swatch previews the exact value each option applies.
+const RADII: { value: BorderRadius; radiusVar: string; px: string }[] = [
+  { value: "none", radiusVar: "0", px: "0px" },
+  { value: "small", radiusVar: "0.3rem", px: "4.8px" },
+  { value: "default", radiusVar: "0.75rem", px: "12px" },
+  { value: "large", radiusVar: "1rem", px: "16px" },
+  { value: "full", radiusVar: "9999px", px: "9999px" },
 ];
 
 const SPACINGS: { value: SpacingSize; gapClass: string }[] = [
@@ -99,9 +103,6 @@ const ANIMATION_LEVELS: { value: AnimationLevel; bars: number }[] = [
   { value: "high", bars: 3 },
 ];
 
-// The hover pair ships no platform strings; these literals are the same ones
-// the previous hover section rendered, so no locale key moves.
-//
 // Only two real looks exist per the design bar (§5.3: hover = colour + hairline,
 // nothing lifts) — "elevate" is kept as the on-value's stored name so existing
 // tenant settings (any of the old seven values) keep resolving without a
@@ -109,14 +110,9 @@ const ANIMATION_LEVELS: { value: AnimationLevel; bars: number }[] = [
 // forward. The old intensity control is gone outright: both hover-class
 // helpers in utils.ts ignore intensity now, so a dial with no effect is not
 // offered as one.
-const HOVER_TYPES: {
-  value: HoverEffectType;
-  name: string;
-  description: string;
-  icon: typeof Move;
-}[] = [
-  { value: "none", name: "None", description: "No hover effect", icon: Move },
-  { value: "elevate", name: "Default", description: "Border brightens on hover", icon: Sparkles },
+const HOVER_TYPES: { value: HoverEffectType; icon: typeof Move }[] = [
+  { value: "none", icon: Move },
+  { value: "elevate", icon: Sparkles },
 ];
 
 // ── Samples ───────────────────────────────────────────────────────────────
@@ -166,7 +162,11 @@ export function LayoutGroup() {
         label: t(`radius.${radius.value}`),
         description: radius.px,
         sample: (
-          <span aria-hidden className={cn("block h-9 w-full bg-nx-raised-2", radius.sampleClass)} />
+          <span
+            aria-hidden
+            className="block h-9 w-full rounded-lg bg-nx-raised-2"
+            style={{ "--radius": radius.radiusVar } as CSSProperties}
+          />
         ),
       })),
     [t]
@@ -239,11 +239,11 @@ export function LayoutGroup() {
     () =>
       HOVER_TYPES.map((effect) => ({
         value: effect.value,
-        label: effect.name,
-        description: effect.description,
+        label: t(`settings.hoverType.${effect.value}`),
+        description: t(`settings.hoverType.${effect.value}Desc`),
         sample: <effect.icon aria-hidden className="h-5 w-5 text-nx-ink-2" />,
       })),
-    []
+    [t]
   );
 
   return (

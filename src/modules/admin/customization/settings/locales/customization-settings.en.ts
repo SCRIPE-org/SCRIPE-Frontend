@@ -1045,6 +1045,14 @@ export const en = {
       high: "High",
       highDesc: "Rich animations",
     },
+    hoverType: {
+      title: "Hover Effect",
+      description: "Turn the hover border-highlight on or off",
+      none: "None",
+      noneDesc: "No hover effect",
+      elevate: "Default",
+      elevateDesc: "Border brightens on hover",
+    },
     bgMode: {
       title: "Background Mode",
       description: "Choose which background system is active",

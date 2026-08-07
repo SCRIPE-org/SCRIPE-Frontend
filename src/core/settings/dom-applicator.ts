@@ -67,14 +67,6 @@ const SPACING_MAP: Record<string, string> = {
   spacious: "2rem",
 };
 
-const BORDER_RADIUS_MAP: Record<string, string> = {
-  none: "0",
-  small: "0.25rem",
-  default: "0.5rem",
-  large: "0.75rem",
-  full: "9999px",
-};
-
 const SHADOW_MAP: Record<string, string> = {
   none: "none",
   subtle: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
@@ -150,7 +142,6 @@ export function applySettingsToDOM(settings: Settings): void {
     //    platform-default value of each map)
     root.style.setProperty("--font-size-base", FONT_SIZE_MAP[settings.fontSize] || "16px");
     root.style.setProperty("--spacing-unit", SPACING_MAP[settings.spacingSize] || "1rem");
-    root.style.setProperty("--border-radius", BORDER_RADIUS_MAP[settings.borderRadius] || "0.5rem");
     root.style.setProperty(
       "--shadow-intensity",
       SHADOW_MAP[settings.shadowIntensity] || "0 4px 6px -1px rgb(0 0 0 / 0.1)"

@@ -32,7 +32,7 @@ export class AppListingsRepository implements IAppListingsRepository {
     isPublished?: boolean;
     isFeatured?: boolean;
     sortBy?: "popular" | "rating" | "newest" | "price";
-    pricingModel?: "Free" | "OneTime" | "Subscription";
+    pricingModel?: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
   }): Promise<PagedResult<AppListing>> {
     const data = await this.service.getAll(params);
     return {

@@ -74,6 +74,8 @@ function VaultLogoBlock() {
       <Image
         src="/scripe-icon-3d.png"
         alt="Scripe"
+        width={280}
+        height={280}
         className="relative z-[1] object-contain"
         style={{
           width: 280,

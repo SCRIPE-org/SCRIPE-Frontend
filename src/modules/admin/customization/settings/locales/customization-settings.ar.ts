@@ -674,6 +674,14 @@ export const ar = {
       high: "عالٍ",
       highDesc: "حركات غنية",
     },
+    hoverType: {
+      title: "تأثير التحويم",
+      description: "تفعيل أو إيقاف إبراز الحدود عند التحويم",
+      none: "بدون",
+      noneDesc: "بدون تأثير تحويم",
+      elevate: "افتراضي",
+      elevateDesc: "تصبح الحدود أكثر سطوعاً عند التحويم",
+    },
     bgMode: {
       title: "وضع الخلفية",
       description: "اختر نظام الخلفية النشط",

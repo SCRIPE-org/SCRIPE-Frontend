@@ -78,7 +78,8 @@ export interface GetAppListingsParams {
   isPublished?: boolean;
   isFeatured?: boolean;
   sortBy?: "popular" | "rating" | "newest" | "price";
-  pricingModel?: "Free" | "OneTime" | "Subscription";
+  /** Matches the real backend `PricingModel` enum (6 values, not the old 3). */
+  pricingModel?: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
 }
 
 /**

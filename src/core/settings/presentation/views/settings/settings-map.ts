@@ -277,15 +277,11 @@ export const SETTING_ROWS: SettingRowMeta[] = [
     subject: "surface",
     terms: ["animationLevel", "motion"],
   },
-  // No platform key ships for this row; the literals below are the same ones
-  // the previous hover section rendered, so no locale key moves. Only one
-  // real look exists per the design bar (§5.3: hover = colour + hairline,
-  // nothing lifts), so this is an on/off control now, not a style picker.
   {
     id: "hover-type",
     group: "layout",
-    title: "Hover Effect",
-    description: "Turn the hover border-highlight on or off",
+    titleKey: "settings.hoverType.title",
+    descKey: "settings.hoverType.description",
     subject: "card",
     terms: ["hoverEffectType", "hover"],
   },

@@ -17,6 +17,9 @@ export function LogoImg({
     <Image
       src={logoSrc}
       alt={`${logoAlt} Logo`}
+      width={96}
+      height={96}
+      unoptimized
       className={className}
       onError={(e) => {
         e.currentTarget.style.display = "none";
