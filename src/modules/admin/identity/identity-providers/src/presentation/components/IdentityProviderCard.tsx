@@ -207,7 +207,7 @@ export function IdentityProviderCard({
           {item.enabledForAdmins && (
             <Badge
               variant="outline"
-              className="border-nx-accent/30 h-5 gap-1 bg-nx-accent-wash text-[10px] font-medium text-nx-accent"
+              className="h-5 gap-1 border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-[10px] font-medium text-nx-accent"
             >
               <Shield className="h-3 w-3" aria-hidden="true" />
               {t("identityProviders.badgeAdmin")}

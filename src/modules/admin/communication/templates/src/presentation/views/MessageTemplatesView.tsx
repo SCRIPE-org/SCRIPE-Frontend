@@ -74,9 +74,9 @@ export function MessageTemplatesView() {
       a.download = `template-${item.key}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      success({ title: "Template exported successfully" });
+      success({ title: t("messaging.templates.exportSuccess") });
     },
-    [success]
+    [success, t]
   );
 
   const handleImportClick = useCallback(() => {
@@ -103,14 +103,14 @@ export function MessageTemplatesView() {
           });
           router.push(`/communication/templates/new?${params.toString()}`);
         } catch {
-          success({ title: "Invalid template file" });
+          success({ title: t("messaging.templates.importError") });
         }
       };
       reader.readAsText(file);
       // Reset so same file can be re-imported
       e.target.value = "";
     },
-    [router, success]
+    [router, success, t]
   );
 
   // Navigate to full-page form instead of opening modal
@@ -181,7 +181,7 @@ export function MessageTemplatesView() {
           label: t("messaging.templates.usage"),
           render: (value: number | undefined, item: MessageTemplate) => (
             <div className="flex items-center gap-1.5">
-              <BarChart3 className="h-3.5 w-3.5 text-nx-ink-3" />
+              <BarChart3 className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
               <span className="font-medium">{value ?? 0}</span>
               {item.lastUsedAt && (
                 <span className="text-xs text-nx-ink-3">
@@ -209,28 +209,28 @@ export function MessageTemplatesView() {
       getActions: (_vm: any, _t: any, handleDelete?: any): CrudAction<MessageTemplate>[] => [
         {
           label: t("common.edit"),
-          icon: <Pencil className="h-4 w-4" />,
+          icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handleEdit(item),
         },
         {
           label: t("messaging.templates.preview"),
-          icon: <Eye className="h-4 w-4" />,
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handlePreview(item),
         },
         {
           label: t("messaging.templates.clone"),
-          icon: <Copy className="h-4 w-4" />,
+          icon: <Copy className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handleClone(item.id),
           disabled: () => isCloning,
         },
         {
           label: t("messaging.templates.export"),
-          icon: <Download className="h-4 w-4" />,
+          icon: <Download className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handleExport(item),
         },
         {
           label: t("common.delete"),
-          icon: <Trash2 className="h-4 w-4" />,
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           onClick: handleDelete,
           confirmTitle: t("messaging.templates.deleteTitle"),
           confirmDescription: t("messaging.templates.deleteDescription"),
@@ -261,8 +261,8 @@ export function MessageTemplatesView() {
             className="h-8 gap-1.5 text-xs"
             onClick={handleImportClick}
           >
-            <Upload className="h-3.5 w-3.5" />
-            Import
+            <Upload className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("messaging.templates.import")}
           </Button>
           <input
             ref={fileInputRef}

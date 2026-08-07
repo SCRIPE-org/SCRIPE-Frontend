@@ -13,6 +13,7 @@
 
 import type { IdentityProviderFormState } from "../viewmodels/useIdentityProviderDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent } from "@core/ui/card";
 import { HelpCircle } from "lucide-react";
@@ -518,16 +519,21 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                   buttonColor: tpl.color,
                 });
               }}
-              className="group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-nx-md border border-nx-line p-4 text-center transition-[border-color,background-color,box-shadow] duration-nx-micro hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:bg-nx-accent-wash motion-reduce:transition-none"
-              style={{
-                borderColor: isSelected ? `${tpl.color}75` : undefined,
-                background: isSelected ? `${tpl.color}12` : undefined,
-                boxShadow: isSelected ? `0 0 15px ${tpl.color}20` : undefined,
-              }}
+              className={cn(
+                "group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-nx-md border p-4 text-center transition-[border-color,background-color,box-shadow] duration-nx-micro motion-reduce:transition-none",
+                isSelected
+                  ? "border-nx-accent bg-nx-accent-wash"
+                  : "border-nx-line hover:border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] hover:bg-nx-accent-wash"
+              )}
               aria-pressed={isSelected}
               title={t(`identityProviders.gallery.${tpl.id}.description`)}
             >
-              {/* Logo */}
+              {/* Logo — tinted to the vendor's own brand colour so the tile
+                  reads at a glance in a 16-item picker grid, same rationale as
+                  brand-icons.tsx and the button-colour swatches in
+                  IdentityProviderFormSections.tsx. Selection state below is
+                  workspace accent, not brand colour — this is our own control
+                  chrome, not a representation of the vendor. */}
               <div
                 className="flex h-11 w-11 items-center justify-center rounded-nx-md p-2"
                 style={{
@@ -556,21 +562,22 @@ export function WellKnownProviderGallery({ onSelect, selectedId }: WellKnownProv
                 {tpl.protocol}
               </Badge>
 
-              {/* Selected checkmark with brand background */}
+              {/* Selected checkmark — workspace accent, matching every other
+                  selection affordance in the app (Table row, Card, etc.),
+                  not the per-vendor brand colour. */}
               {isSelected && (
-                <div
-                  className="absolute end-2 top-2 flex h-5 w-5 items-center justify-center rounded-full shadow-nx-sm"
-                  style={{ background: tpl.color }}
-                >
+                <div className="absolute end-2 top-2 flex h-5 w-5 items-center justify-center rounded-full bg-nx-accent shadow-nx-sm">
                   <svg
                     width="8"
                     height="8"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="white"
+                    stroke="currentColor"
                     strokeWidth="3.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    className="text-nx-on-fill"
+                    aria-hidden="true"
                   >
                     <path d="M20 6L9 17l-5-5" />
                   </svg>

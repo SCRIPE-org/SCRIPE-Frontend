@@ -88,7 +88,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Paintbrush className="h-4 w-4" />
+            <Paintbrush className="h-4 w-4" aria-hidden="true" />
             {t("messaging.templates.design.title")}
           </CardTitle>
           <Button
@@ -98,7 +98,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             className="h-7 gap-1 text-xs"
             onClick={() => onChange(DEFAULT_DESIGN)}
           >
-            <RotateCcw className="h-3 w-3" />
+            <RotateCcw className="h-3 w-3" aria-hidden="true" />
             {t("messaging.templates.design.reset")}
           </Button>
         </div>

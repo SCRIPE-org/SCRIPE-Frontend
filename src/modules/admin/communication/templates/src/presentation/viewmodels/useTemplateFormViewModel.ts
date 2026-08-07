@@ -82,60 +82,64 @@ export function useTemplateFormViewModel() {
     enabled: mode === "edit" && !!templateId,
   });
 
-  // Populate form when template loads
-  const [prevTemplate, setPrevTemplate] = useState(template);
-  if (template !== prevTemplate) {
-    setPrevTemplate(template);
-    if (template) {
-      // Parse placeholderSchema — may be a JSON string or an array
-      let parsedSchema: PlaceholderField[] = [];
-      if (template.placeholderSchema) {
-        try {
-          if (typeof template.placeholderSchema === "string") {
-            parsedSchema = JSON.parse(template.placeholderSchema);
-          } else if (Array.isArray(template.placeholderSchema)) {
-            parsedSchema = template.placeholderSchema as unknown as PlaceholderField[];
-          }
-        } catch {
-          parsedSchema = [];
-        }
-      }
-      // Ensure every field has a unique id (API data may omit it)
-      parsedSchema = parsedSchema.map((f, i) => ({
-        ...f,
-        id: f.id || `ph-${i}`,
-      }));
+  // Populate form when the template first loads for this id (render-time
+  // state-sync). Guarded by id, not object identity: react-query can return
+  // a new `template` reference for the SAME record (refetchOnReconnect, a
+  // stale invalidation fired elsewhere, …) and that must never silently
+  // clobber edits the admin has in progress. Once the form has been
+  // initialized for this id, later refetches of the same id are ignored.
+  const [initializedForId, setInitializedForId] = useState<string | undefined>(undefined);
+  if (template && initializedForId !== templateId) {
+    setInitializedForId(templateId);
 
-      // Parse designVariables — may be a JSON string or an object
-      let parsedDesign: DesignVariables = { ...DEFAULT_DESIGN };
-      if (template.designVariables) {
-        try {
-          if (typeof template.designVariables === "string") {
-            parsedDesign = { ...DEFAULT_DESIGN, ...JSON.parse(template.designVariables) };
-          } else if (typeof template.designVariables === "object") {
-            parsedDesign = {
-              ...DEFAULT_DESIGN,
-              ...(template.designVariables as unknown as DesignVariables),
-            };
-          }
-        } catch {
-          parsedDesign = { ...DEFAULT_DESIGN };
+    // Parse placeholderSchema — may be a JSON string or an array
+    let parsedSchema: PlaceholderField[] = [];
+    if (template.placeholderSchema) {
+      try {
+        if (typeof template.placeholderSchema === "string") {
+          parsedSchema = JSON.parse(template.placeholderSchema);
+        } else if (Array.isArray(template.placeholderSchema)) {
+          parsedSchema = template.placeholderSchema as unknown as PlaceholderField[];
         }
+      } catch {
+        parsedSchema = [];
       }
-
-      setForm({
-        key: template.key,
-        channel: template.channel,
-        language: template.language,
-        subject: template.subject || "",
-        body: template.body || "",
-        description: template.description || "",
-        isActive: template.isActive,
-        category: (template.category as TemplateCategory) || "",
-        placeholderSchema: parsedSchema,
-        designVariables: parsedDesign,
-      });
     }
+    // Ensure every field has a unique id (API data may omit it)
+    parsedSchema = parsedSchema.map((f, i) => ({
+      ...f,
+      id: f.id || `ph-${i}`,
+    }));
+
+    // Parse designVariables — may be a JSON string or an object
+    let parsedDesign: DesignVariables = { ...DEFAULT_DESIGN };
+    if (template.designVariables) {
+      try {
+        if (typeof template.designVariables === "string") {
+          parsedDesign = { ...DEFAULT_DESIGN, ...JSON.parse(template.designVariables) };
+        } else if (typeof template.designVariables === "object") {
+          parsedDesign = {
+            ...DEFAULT_DESIGN,
+            ...(template.designVariables as unknown as DesignVariables),
+          };
+        }
+      } catch {
+        parsedDesign = { ...DEFAULT_DESIGN };
+      }
+    }
+
+    setForm({
+      key: template.key,
+      channel: template.channel,
+      language: template.language,
+      subject: template.subject || "",
+      body: template.body || "",
+      description: template.description || "",
+      isActive: template.isActive,
+      category: (template.category as TemplateCategory) || "",
+      placeholderSchema: parsedSchema,
+      designVariables: parsedDesign,
+    });
   }
 
   // ─── Field updaters ──────────────────────────────────────

@@ -116,8 +116,9 @@ export function TemplateLivePreview({ body, subject }: TemplateLivePreviewProps)
             className={cn("h-7 gap-1.5 px-2.5 text-xs", device === d.id && "shadow-nx-sm")}
             onClick={() => setDevice(d.id)}
             title={t(d.labelKey)}
+            aria-label={t(d.labelKey)}
           >
-            <d.icon className="h-3.5 w-3.5" />
+            <d.icon className="h-3.5 w-3.5" aria-hidden="true" />
             <span className="hidden sm:inline">{t(d.labelKey)}</span>
           </Button>
         ))}

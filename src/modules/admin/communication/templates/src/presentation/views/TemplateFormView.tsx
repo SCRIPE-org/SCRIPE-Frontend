@@ -145,25 +145,41 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
             <Tabs defaultValue="settings">
               <CardHeader className="pb-3">
                 <TabsList className="h-auto w-full flex-wrap gap-1 p-1">
-                  <TabsTrigger value="settings" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="settings"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.settings")}
+                  >
                     <Settings className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
                       {vm.t("messaging.templates.settings")}
                     </span>
                   </TabsTrigger>
-                  <TabsTrigger value="placeholders" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="placeholders"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.placeholders")}
+                  >
                     <Braces className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
                       {vm.t("messaging.templates.placeholders")}
                     </span>
                   </TabsTrigger>
-                  <TabsTrigger value="design" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="design"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.design.title")}
+                  >
                     <Palette className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
                       {vm.t("messaging.templates.design.title")}
                     </span>
                   </TabsTrigger>
-                  <TabsTrigger value="preview" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="preview"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("common.preview")}
+                  >
                     <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">{vm.t("common.preview")}</span>
                   </TabsTrigger>
