@@ -37,7 +37,7 @@ export function NexusSecondaryRail({
   isCollapsed,
 }: NexusSecondaryRailProps) {
   const { activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
-  const { language } = useI18n();
+  const { language, t } = useI18n();
   const pathname = usePathname();
   const reducedMotion = useNexusReducedMotion();
 
@@ -45,15 +45,15 @@ export function NexusSecondaryRail({
   const contextLabel = activeWorkspace
     ? (activeWorkspace.getLocalizedName(language) ?? activeWorkspace.workspaceKey.toUpperCase())
     : isModuleMode
-      ? "MODULE"
-      : "PLATFORM";
+      ? t("chrome.section.module")
+      : t("chrome.section.platform");
 
   // ── Title: selected root item name ────────────────────────────────────────
   const title = activeRootItem
     ? language === "ar"
       ? activeRootItem.nameAr || activeRootItem.nameEn
       : activeRootItem.nameEn || activeRootItem.nameAr
-    : (activeWorkspace?.getLocalizedName(language) ?? "Workspace");
+    : (activeWorkspace?.getLocalizedName(language) ?? t("chrome.section.workspace"));
 
   // ── Menu items to display: children of the selected root item ─────────────
   const menuItems: MenuItem[] = activeRootItem?.children ?? [];

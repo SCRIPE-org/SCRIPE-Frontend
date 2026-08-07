@@ -2008,6 +2008,7 @@ export const ar = {
     searchPlaceholder: "ابحث عن صفحة",
     togglePanel: "تبديل اللوحة",
     primaryNav: "التنقل الرئيسي",
+    entityDetailsTitle: "تفاصيل {entity}",
     topbar: {
       workspacesMenu: "مساحات العمل",
       sectionsMenu: "الأقسام",
@@ -2069,6 +2070,9 @@ export const ar = {
     section: {
       locked: "مقفل",
       itemCount: "{count} عنصر",
+      module: "وحدة",
+      platform: "المنصة",
+      workspace: "مساحة العمل",
     },
     tenantBanner: {
       impersonating: "انتحال شخصية مستخدم",

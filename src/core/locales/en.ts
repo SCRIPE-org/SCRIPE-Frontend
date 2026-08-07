@@ -2018,6 +2018,7 @@ export const en = {
     searchPlaceholder: "Search a page",
     togglePanel: "Toggle panel",
     primaryNav: "Primary navigation",
+    entityDetailsTitle: "{entity} Details",
     topbar: {
       workspacesMenu: "Workspaces",
       sectionsMenu: "Sections",
@@ -2081,6 +2082,9 @@ export const en = {
     section: {
       locked: "Locked",
       itemCount: "{count} items",
+      module: "Module",
+      platform: "Platform",
+      workspace: "Workspace",
     },
     tenantBanner: {
       impersonating: "Impersonating user",

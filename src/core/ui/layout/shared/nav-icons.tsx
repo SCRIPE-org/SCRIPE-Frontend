@@ -24,7 +24,12 @@ interface NavIconProps {
  */
 export function PanelMenuIcon({ className }: NavIconProps) {
   return (
-    <svg className={cn("h-8 w-8", className)} viewBox="0 0 24 24" fill="none">
+    <svg
+      className={cn("h-8 w-8", className)}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <rect x="3" y="6" width="18" height="2" rx="1" fill="var(--nx-accent, hsl(var(--primary)))" />
       <rect x="3" y="11" width="12" height="2" rx="1" fill="var(--nx-accent, hsl(var(--primary)))" />
       <rect x="3" y="16" width="15" height="2" rx="1" fill="var(--nx-accent, hsl(var(--primary)))" />
@@ -41,6 +46,7 @@ export function PanelMenuIconRTL({ className }: NavIconProps) {
       className={cn("h-8 w-8", className)}
       viewBox="0 0 24 24"
       fill="none"
+      aria-hidden="true"
       style={{ transform: "scaleX(-1)" }}
     >
       <rect x="3" y="6" width="18" height="2" rx="1" fill="var(--nx-accent, hsl(var(--primary)))" />
@@ -55,7 +61,12 @@ export function PanelMenuIconRTL({ className }: NavIconProps) {
  */
 export function PanelCollapseIcon({ className }: NavIconProps) {
   return (
-    <svg className={cn("h-8 w-8", className)} viewBox="0 0 24 24" fill="none">
+    <svg
+      className={cn("h-8 w-8", className)}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M15 18L9 12L15 6"
         stroke="var(--nx-accent, hsl(var(--primary)))"
@@ -72,7 +83,12 @@ export function PanelCollapseIcon({ className }: NavIconProps) {
  */
 export function PanelCollapseIconRTL({ className }: NavIconProps) {
   return (
-    <svg className={cn("h-8 w-8", className)} viewBox="0 0 24 24" fill="none">
+    <svg
+      className={cn("h-8 w-8", className)}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
       <path
         d="M9 18L15 12L9 6"
         stroke="var(--nx-accent, hsl(var(--primary)))"
