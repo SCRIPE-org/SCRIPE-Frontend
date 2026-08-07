@@ -91,22 +91,22 @@ function ResourceNode({ node, depth, t, onEdit, onDelete, onChecklist }: Resourc
   return (
     <div className="space-y-2">
       <div
-        className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-card px-4 py-3"
+        className="flex flex-wrap items-center justify-between gap-3 rounded-nx-md border border-nx-line bg-nx-surface px-4 py-3"
         style={{ marginInlineStart: depth * 24 }}
       >
         <div className="flex min-w-0 flex-col gap-1">
           <div className="flex items-center gap-2">
             {r.isComposite ? (
-              <Boxes className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <Boxes className="size-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
             ) : (
-              <Building2 className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+              <Building2 className="size-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
             )}
             <span className="font-medium">{r.name}</span>
             <Badge variant={r.isPublished ? "active" : "pending"}>
               {r.isPublished ? t("schedulableResource.status.published") : t("schedulableResource.status.draft")}
             </Badge>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-nx-ink-3">
             {r.isComposite
               ? t("schedulableResource.compositeHint")
               : `${r.namedUnitLabel ?? t("schedulableResource.fields.unitCount")}: ${r.unitCount} · ${t(
@@ -375,7 +375,7 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
               {checklistTarget?.resource.name} — {checklistTarget?.resource.commercialReadinessNote}
             </DialogDescription>
           </DialogHeader>
-          {checklistLoading && <p className="text-sm text-muted-foreground">{t("common.loading")}</p>}
+          {checklistLoading && <p className="text-sm text-nx-ink-3">{t("common.loading")}</p>}
           {!checklistLoading && checklist && (
             <div className="space-y-3">
               {checklist.canPublish ? (
@@ -386,7 +386,7 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
               ) : (
                 <ul className="space-y-2">
                   {checklist.blockers.map((b) => (
-                    <li key={b.code} className="rounded-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm">
+                    <li key={b.code} className="rounded-nx-md border border-destructive/40 bg-destructive/5 px-3 py-2 text-sm">
                       {b.message}
                     </li>
                   ))}
