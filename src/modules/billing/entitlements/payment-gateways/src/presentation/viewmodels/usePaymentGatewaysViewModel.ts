@@ -11,6 +11,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import { chartColor } from "@core/ui/chart";
 /**
  * Interface defining property specifications, keys types, and structural contract rules for gateway info.
  */
@@ -35,7 +36,7 @@ const GATEWAY_META: Record<
   Stripe: {
     displayName: "Stripe",
     description: "stripeDesc",
-    color: "#635bff",
+    color: chartColor(4),
     icon: "stripe",
     features: [
       "recurring",
@@ -50,21 +51,21 @@ const GATEWAY_META: Record<
   PayPal: {
     displayName: "PayPal",
     description: "paypalDesc",
-    color: "#003087",
+    color: chartColor(1),
     icon: "paypal",
     features: ["recurring", "multiCurrency", "webhooks", "refunds", "paymentLinks"],
   },
   Paymob: {
     displayName: "Paymob",
     description: "paymobDesc",
-    color: "#00B2FF",
+    color: chartColor(3),
     icon: "paymob",
     features: ["checkout", "mobileWallet", "menaCurrencies", "tokenizedRecurring", "webhooks"],
   },
   Manual: {
     displayName: "Manual",
     description: "Manual payment processing — no online gateway",
-    color: "#6b7280",
+    color: "var(--nx-ink-3)",
     icon: "manual",
     features: [],
   },
@@ -97,7 +98,7 @@ export function usePaymentGatewaysViewModel() {
     const meta = GATEWAY_META[gw.gateway] ?? {
       displayName: gw.gateway,
       description: "",
-      color: "#6b7280",
+      color: "var(--nx-ink-3)",
       icon: "manual" as const,
       features: [],
     };

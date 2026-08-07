@@ -39,7 +39,7 @@ export function RetentionTab({ cohortData }: RetentionTabProps) {
     <div className="space-y-6">
       <h2 className="text-lg font-semibold">{t("entitlements.analytics.retention.title")}</h2>
 
-      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)]">
         <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
           <CardTitle className="text-sm font-medium text-nx-ink-3">
             {t("entitlements.analytics.retention.heatmap")}

@@ -119,7 +119,7 @@ export function TenantPaymentGatewaysView() {
                 {vm.availableToAdd.map((def) => (
                   <Card
                     key={def.type}
-                    className="group cursor-pointer border-dashed transition-[border-color,box-shadow] duration-nx-standard ease-nx-enter hover:shadow-md motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
+                    className="group cursor-pointer border-dashed transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
                     onClick={() => vm.openConfigureForm(def.type)}
                   >
                     <CardHeader className="pb-3">

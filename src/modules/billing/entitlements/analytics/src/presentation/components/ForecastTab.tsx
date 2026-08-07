@@ -64,7 +64,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
           {t("entitlements.analytics.forecast.noData")}
         </div>
       ) : (
-        <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+        <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)]">
           <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
             <CardTitle className="text-sm font-medium text-nx-ink-3">
               {t("entitlements.analytics.forecast.projectedMrr")}
