@@ -103,6 +103,12 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   // banner reflect real state instead of just the in-flight save request —
   // mirrors useOAuthAppDetailViewModel's isDirty flag.
   const [isDirty, setIsDirty] = useState(false);
+  // Tracks which role we've already initialized `assignments` for — mirrors
+  // useRolePermissionsDialog's initializedRoleId guard. Without it, the
+  // staleTime: 0 query below refetches on every refocus/reconnect and hands
+  // back a new array reference for the SAME role, which would silently
+  // overwrite any in-progress unsaved permission edits.
+  const [initializedRoleId, setInitializedRoleId] = useState<string | null>(null);
 
   // === QUERIES ===
   const { data: role, isLoading: roleLoading } = useQuery<Role>({
@@ -146,35 +152,40 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     }
   }, [moduleGroups]);
 
-  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS ===
-  const [prevRolePerms, setPrevRolePerms] = useState(rolePermissions);
-  if (rolePermissions && rolePermissions !== prevRolePerms) {
-    setPrevRolePerms(rolePermissions);
-    if (rolePermissions.length > 0) {
-      appLogger.debug("rolePermissions raw:", rolePermissions);
+  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS (once per role) ===
+  // Guarded on roleId, not on rolePermissions' array reference: staleTime: 0
+  // means a window refocus can refetch and hand back a new (content-identical
+  // or server-normalized) array for the SAME role at any time, including
+  // mid-edit. Only a genuine role switch — or the first load — should reset
+  // the editor; a background refetch of the role you're already editing must
+  // not. The post-save refetch doesn't need to re-sync either: local
+  // `assignments` already holds exactly what was just saved, and
+  // saveMutation's onSuccess already clears isDirty directly.
+  useEffect(() => {
+    if (!roleId || rolePermissionsLoading || initializedRoleId === roleId) return;
+    if (!rolePermissions || rolePermissions.length === 0) return;
 
-      const newAssignments = new Map<string, PermissionAssignmentJson>();
+    appLogger.debug("rolePermissions raw:", rolePermissions);
 
-      rolePermissions.forEach((rp: any) => {
-        const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
+    const newAssignments = new Map<string, PermissionAssignmentJson>();
 
-        if (code) {
-          newAssignments.set(code, {
-            permissionId: rp.permissionId || rp.PermissionId || rp.id || rp.Id,
-            scopeOverride: rp.scope || rp.ScopeOverride,
-            restrictedFields: Array.isArray(rp.restrictedFields) ? rp.restrictedFields : undefined,
-          });
-        }
-      });
+    rolePermissions.forEach((rp: any) => {
+      const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
 
-      appLogger.debug("Initialized assignments map size:", newAssignments.size);
-      setAssignments(newAssignments);
-      // Fresh-from-server data is by definition not dirty — this also covers
-      // the post-save refetch (rolePermissions gets a new array reference
-      // once the invalidated query resolves).
-      setIsDirty(false);
-    }
-  }
+      if (code) {
+        newAssignments.set(code, {
+          permissionId: rp.permissionId || rp.PermissionId || rp.id || rp.Id,
+          scopeOverride: rp.scope || rp.ScopeOverride,
+          restrictedFields: Array.isArray(rp.restrictedFields) ? rp.restrictedFields : undefined,
+        });
+      }
+    });
+
+    appLogger.debug("Initialized assignments map size:", newAssignments.size);
+    setAssignments(newAssignments);
+    setIsDirty(false);
+    setInitializedRoleId(roleId);
+  }, [roleId, rolePermissions, rolePermissionsLoading, initializedRoleId]);
 
   // Helper: flatten all permissions from module groups (for save payload)
   const getAllPermissionsFlat = (): Permission[] => {
