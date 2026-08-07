@@ -9,6 +9,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2 } from "lucide-react";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
@@ -109,6 +110,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
         onClick: (item: Facility) => vm.openEditModal(item),
         variant: "ghost" as const,
         icon: <Pencil className="h-4 w-4" />,
+        requiredPermission: VENUE_PERMISSIONS.FACILITY_UPDATE,
       },
       {
         label: tFn("common.delete"),
@@ -116,6 +118,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
         variant: "ghost" as const,
         className: "text-destructive hover:text-destructive/80",
         icon: <Trash2 className="h-4 w-4" />,
+        requiredPermission: VENUE_PERMISSIONS.FACILITY_DELETE,
       },
     ],
   };

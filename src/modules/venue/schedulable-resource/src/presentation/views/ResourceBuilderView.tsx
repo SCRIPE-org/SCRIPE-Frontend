@@ -25,9 +25,11 @@ import {
 } from "@core/ui/alert-dialog";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { Boxes, Plus, Pencil, Trash2, CheckCircle2, ListChecks, Building2 } from "lucide-react";
+import { Boxes, Plus, Pencil, Trash2, CheckCircle2, ListChecks, Building2, Lock } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { useResourceBuilderViewModel } from "../viewmodels/useResourceBuilderViewModel";
 import type { SchedulableResourceTreeNode } from "../viewmodels/resourceTree";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
@@ -84,9 +86,20 @@ interface ResourceNodeProps {
   onEdit: (node: SchedulableResourceTreeNode) => void;
   onDelete: (node: SchedulableResourceTreeNode) => void;
   onChecklist: (node: SchedulableResourceTreeNode) => void;
+  canEdit: boolean;
+  canDelete: boolean;
 }
 
-function ResourceNode({ node, depth, t, onEdit, onDelete, onChecklist }: ResourceNodeProps) {
+function ResourceNode({
+  node,
+  depth,
+  t,
+  onEdit,
+  onDelete,
+  onChecklist,
+  canEdit,
+  canDelete,
+}: ResourceNodeProps) {
   const r = node.resource;
   return (
     <div className="space-y-2">
@@ -118,12 +131,16 @@ function ResourceNode({ node, depth, t, onEdit, onDelete, onChecklist }: Resourc
           <Button variant="ghost" size="icon" aria-label={t("schedulableResource.actions.checklist")} onClick={() => onChecklist(node)}>
             <ListChecks className="size-4" />
           </Button>
-          <Button variant="ghost" size="icon" aria-label={t("common.edit")} onClick={() => onEdit(node)}>
-            <Pencil className="size-4" />
-          </Button>
-          <Button variant="ghost" size="icon" aria-label={t("common.delete")} onClick={() => onDelete(node)}>
-            <Trash2 className="size-4" />
-          </Button>
+          {canEdit && (
+            <Button variant="ghost" size="icon" aria-label={t("common.edit")} onClick={() => onEdit(node)}>
+              <Pencil className="size-4" />
+            </Button>
+          )}
+          {canDelete && (
+            <Button variant="ghost" size="icon" aria-label={t("common.delete")} onClick={() => onDelete(node)}>
+              <Trash2 className="size-4" />
+            </Button>
+          )}
         </div>
       </div>
       {node.children?.map((child) => (
@@ -135,6 +152,8 @@ function ResourceNode({ node, depth, t, onEdit, onDelete, onChecklist }: Resourc
           onEdit={onEdit}
           onDelete={onDelete}
           onChecklist={onChecklist}
+          canEdit={canEdit}
+          canDelete={canDelete}
         />
       ))}
     </div>
@@ -155,6 +174,16 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
     searchFacilityResourceProfiles,
   } = useResourceBuilderViewModel();
   const { error: toastError } = useEnhancedToast();
+
+  // ── Permission gating (F-08) ────────────────────────────────────────────
+  // This view is bespoke (not GenericCrudView), so unlike FacilityListView /
+  // VenueProfileListView it gets no automatic `resource`-derived gating —
+  // every check here is explicit, mirroring GenericCrudView/GenericTreeView's
+  // resource-permission pattern (generic-crud-view.tsx:592-596).
+  const canView = usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW);
+  const canCreate = usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_CREATE);
+  const canUpdate = usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_UPDATE);
+  const canDelete = usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_DELETE);
 
   const [formOpen, setFormOpen] = useState(false);
   const [editing, setEditing] = useState<SchedulableResourceTreeNode | null>(null);
@@ -296,6 +325,20 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
     }
   };
 
+  // `canView` gates the entire view — same "hide the whole list, not just
+  // its controls" rule GenericCrudView enforces for a resource-scoped view
+  // (generic-crud-view.tsx:794-802), reusing the same shared copy so a
+  // denied user sees the identical established message everywhere.
+  if (!canView) {
+    return (
+      <EmptyState
+        icon={Lock}
+        title={t("notAuthorized.title")}
+        description={t("notAuthorized.description")}
+      />
+    );
+  }
+
   if (loading && tree.length === 0) {
     return <LoadingSpinner showText={false} />;
   }
@@ -307,15 +350,17 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
         title={t("schedulableResource.title")}
         description={t("schedulableResource.description")}
         actions={
-          <Button
-            onClick={() => {
-              setEditing(null);
-              setFormOpen(true);
-            }}
-          >
-            <Plus className="size-4" />
-            {t("schedulableResource.addNew")}
-          </Button>
+          canCreate ? (
+            <Button
+              onClick={() => {
+                setEditing(null);
+                setFormOpen(true);
+              }}
+            >
+              <Plus className="size-4" />
+              {t("schedulableResource.addNew")}
+            </Button>
+          ) : undefined
         }
       />
 
@@ -340,6 +385,8 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
             }}
             onDelete={(n) => setDeleteTarget(n)}
             onChecklist={openChecklist}
+            canEdit={canUpdate}
+            canDelete={canDelete}
           />
         ))}
       </div>
@@ -398,13 +445,17 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
             <Button variant="ghost" onClick={() => setChecklistTarget(null)}>
               {t("common.close")}
             </Button>
-            <Button
-              disabled={!checklist?.canPublish || checklistTarget?.resource.isPublished || publishing}
-              loading={publishing}
-              onClick={handlePublishConfirm}
-            >
-              {t("schedulableResource.actions.publish")}
-            </Button>
+            {/* Publish mutates the resource (backend: schedulable-resources.update
+                on POST .../publish), so it is gated the same as Edit. */}
+            {canUpdate && (
+              <Button
+                disabled={!checklist?.canPublish || checklistTarget?.resource.isPublished || publishing}
+                loading={publishing}
+                onClick={handlePublishConfirm}
+              >
+                {t("schedulableResource.actions.publish")}
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
