@@ -64,7 +64,13 @@ const CARD_STYLES: { value: CardStyle; labelKey: string; sampleClass: string }[]
   {
     value: "glass",
     labelKey: "cardStyle.glass",
-    sampleClass: "border border-nx-line-hi bg-nx-raised/60 backdrop-blur",
+    // Matches the real cardStyle="glass" treatment (card.tsx L68) exactly: an
+    // nx token needs color-mix for its tint because Tailwind slash-alpha on a
+    // complete --nx-* colour value (bg-nx-raised/60) is silently dropped, and
+    // backdrop-blur is legal here because this previews the ONE sanctioned
+    // glass surface — an opt-in user setting, not ambient chrome.
+    sampleClass:
+      "border border-nx-line-hi bg-[color:color-mix(in_srgb,var(--nx-raised)_60%,transparent)] backdrop-blur-md",
   },
   { value: "solid", labelKey: "cardStyle.solid", sampleClass: "border-0 bg-nx-accent-wash" },
   {

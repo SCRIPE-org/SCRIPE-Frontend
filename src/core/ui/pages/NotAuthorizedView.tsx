@@ -28,7 +28,7 @@ export default function NotAuthorizedView() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-nx-ground via-[color:color-mix(in_srgb,var(--nx-ground)_95%,transparent)] to-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] p-4">
       <div className="w-full max-w-2xl space-y-6">
         {/* Main Error Card */}
-        <Card className="relative overflow-hidden border-nx-line bg-[color:color-mix(in_srgb,var(--nx-ground)_80%,transparent)] text-center backdrop-blur-md duration-nx-panel ease-nx-enter animate-in fade-in zoom-in-95 motion-reduce:animate-none">
+        <Card className="relative overflow-hidden border-nx-line bg-[color:color-mix(in_srgb,var(--nx-ground)_80%,transparent)] text-center duration-nx-panel ease-nx-enter animate-in fade-in zoom-in-95 motion-reduce:animate-none">
           {/* Background Pattern */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-destructive/5 via-transparent to-destructive/10" />
           <div className="pointer-events-none absolute end-0 top-0 h-32 w-32 rounded-full bg-destructive/5 blur-3xl" />
@@ -42,7 +42,7 @@ export default function NotAuthorizedView() {
                     static icon, decoration with no functional purpose. A
                     still blurred wash reads just as intentional. */}
                 <div className="pointer-events-none absolute inset-0 rounded-full bg-destructive/20" />
-                <Shield className="relative z-raised h-12 w-12 text-destructive" />
+                <Shield aria-hidden="true" className="relative z-raised h-12 w-12 text-destructive" />
               </div>
             </div>
 
@@ -59,7 +59,7 @@ export default function NotAuthorizedView() {
             {/* Status Alert */}
             <div className="relative w-full rounded-nx-control border border-destructive/20 bg-destructive/5 p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="mt-0.5 flex-shrink-0 text-destructive" />
+                <AlertTriangle aria-hidden="true" className="mt-0.5 flex-shrink-0 text-destructive" />
                 <div className="text-start">
                   <strong className="text-destructive">
                     {t("notAuthorized.accessDeniedAlert")}
@@ -78,10 +78,10 @@ export default function NotAuthorizedView() {
                 }}
                 variant="default"
                 size="lg"
-                className="group relative z-raised w-full cursor-pointer transition-[box-shadow] duration-nx-panel ease-nx-enter hover:shadow-nx-focus motion-reduce:transition-none"
+                className="relative z-raised w-full cursor-pointer"
                 type="button"
               >
-                <ArrowLeft className="me-2 h-4 w-4 transition-transform duration-nx-micro ease-nx-enter rtl:rotate-180 group-hover:-translate-x-1 motion-reduce:transition-none" />
+                <ArrowLeft aria-hidden="true" className="me-2 h-4 w-4 rtl:rotate-180" />
                 {t("notAuthorized.goBack")}
               </Button>
 
@@ -92,10 +92,10 @@ export default function NotAuthorizedView() {
                 }}
                 variant="outline"
                 size="lg"
-                className="group relative z-raised w-full cursor-pointer"
+                className="relative z-raised w-full cursor-pointer"
                 type="button"
               >
-                <Home className="mx-2 h-4 w-4 transition-transform duration-nx-micro ease-nx-enter group-hover:scale-110 motion-reduce:transition-none" />
+                <Home aria-hidden="true" className="me-2 h-4 w-4" />
                 {t("notAuthorized.goHome")}
               </Button>
 
@@ -114,10 +114,10 @@ export default function NotAuthorizedView() {
                 }}
                 variant="secondary"
                 size="lg"
-                className="group relative z-raised w-full cursor-pointer"
+                className="relative z-raised w-full cursor-pointer"
                 type="button"
               >
-                <LogOut className="me-2 h-4 w-4 transition-transform duration-nx-micro ease-nx-enter group-hover:scale-110 motion-reduce:transition-none" />
+                <LogOut aria-hidden="true" className="me-2 h-4 w-4" />
                 {t("nav.logout")}
               </Button>
             </div>
@@ -127,7 +127,7 @@ export default function NotAuthorizedView() {
             <div className="h-px w-full bg-gradient-to-r from-transparent via-nx-line to-transparent" />
 
             <div className="flex items-center justify-center gap-2 text-sm text-nx-ink-3">
-              <HelpCircle className="h-4 w-4" />
+              <HelpCircle aria-hidden="true" className="h-4 w-4" />
               <span>{t("notAuthorized.contactAdmin")}</span>
             </div>
           </CardFooter>
@@ -138,7 +138,7 @@ export default function NotAuthorizedView() {
           <CardContent className="pt-6">
             <div className="flex items-start gap-4">
               <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-nx-control bg-nx-accent-wash">
-                <Lock className="h-5 w-5 text-nx-accent" />
+                <Lock aria-hidden="true" className="h-5 w-5 text-nx-accent" />
               </div>
               <div className="space-y-2">
                 <h3 className="font-semibold text-nx-ink">
