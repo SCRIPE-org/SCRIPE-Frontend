@@ -1741,6 +1741,8 @@ export function LoginPreviewShell() {
                   <Image
                     src="/scripe-icon-3d.png"
                     alt="Scripe"
+                    width={144}
+                    height={144}
                     className="h-36 w-36 object-contain"
                     style={{ filter: "drop-shadow(0 0 30px rgba(168,85,247,.5))" }}
                   />

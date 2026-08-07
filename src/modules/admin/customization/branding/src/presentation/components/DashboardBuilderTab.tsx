@@ -795,17 +795,20 @@ function ColorSwatch({
 }) {
   return (
     <button
+      type="button"
       onClick={() => onSelect(value)}
       className={cn(
-        "flex h-7 w-7 items-center justify-center rounded-full border-2 transition-[border-color,transform] duration-nx-micro ease-nx-enter hover:scale-110 motion-reduce:transition-none",
+        "flex h-7 w-7 items-center justify-center rounded-full border-2 transition-[border-color] duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
         selected
           ? "border-nx-accent shadow-nx-sm"
           : "border-transparent hover:border-[color:color-mix(in_srgb,var(--nx-ink-3)_30%,transparent)]"
       )}
       title={value}
+      aria-label={value}
+      aria-pressed={selected}
     >
       <div className="h-5 w-5 rounded-full shadow-nx-sm" style={{ background: color }}>
-        {selected && <Check className="h-5 w-5 p-0.5 text-white" />}
+        {selected && <Check className="h-5 w-5 p-0.5 text-white" aria-hidden="true" />}
       </div>
     </button>
   );

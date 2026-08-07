@@ -317,7 +317,7 @@ const LAYOUT_THUMBNAILS: Record<LoginLayout, React.ReactNode> = {
       <div className="absolute inset-0 grid grid-cols-3 grid-rows-2 gap-px p-0.5">
         {["opacity-30", "opacity-50", "opacity-40", "opacity-60", "opacity-30", "opacity-50"].map(
           (o, i) => (
-            <div key={i} className={cn("rounded-[1px] bg-nx-accent-fill", o)} />
+            <div key={i} className={cn("rounded-none bg-nx-accent-fill", o)} />
           )
         )}
       </div>

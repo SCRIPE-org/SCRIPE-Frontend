@@ -20,6 +20,7 @@ import type {
 } from "../../domain/entities/CanvasComponent";
 import type { SavedTemplate } from "../../domain/entities/SavedTemplate";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
+import { appLogger } from "@core/common/logger";
 import {
   DEFAULT_CANVAS_COMPONENTS,
   DEFAULT_CANVAS_GRID_ROWS,
@@ -714,7 +715,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       try {
         localStorage.setItem(STORAGE_KEYS.BUILDER_TEMPLATES, JSON.stringify(updated));
       } catch (e) {
-        console.error(e);
+        appLogger.error("Builder template save failed", e);
       }
     }
     set({ savedTemplates: updated });
@@ -727,7 +728,7 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
       try {
         localStorage.setItem(STORAGE_KEYS.BUILDER_TEMPLATES, JSON.stringify(updated));
       } catch (e) {
-        console.error(e);
+        appLogger.error("Builder template delete failed", e);
       }
     }
     set({ savedTemplates: updated });

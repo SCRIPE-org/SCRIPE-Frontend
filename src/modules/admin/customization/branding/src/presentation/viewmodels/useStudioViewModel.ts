@@ -841,7 +841,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       });
     },
     onError: (err: any) => {
-      const msg = err?.message || err?.response?.data?.error || "Failed to save theme";
+      const msg = err?.message || err?.response?.data?.error || t("common.error");
       toastError({
         title: t("studio.saveTheme.failed"),
         description: msg,
