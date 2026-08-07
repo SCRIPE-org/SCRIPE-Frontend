@@ -249,7 +249,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             <div className="px-4 py-3" style={{ backgroundColor: value.primaryColor }}>
               <span
                 style={{
-                  color: "#ffffff",
+                  color: "var(--nx-on-fill)",
                   fontSize: `${Math.min(16, parseInt(value.headerFontSize) || 24)}px`,
                   fontWeight: 700,
                 }}
