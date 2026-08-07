@@ -102,9 +102,9 @@ function GatewayCard({
 }) {
   return (
     <Card
-      className={`relative overflow-hidden transition-[box-shadow] duration-nx-panel ease-nx-enter motion-reduce:transition-none ${
+      className={`relative overflow-hidden transition-[border-color] duration-nx-panel ease-nx-enter motion-reduce:transition-none ${
         gw.enabled
-          ? "border-[color:color-mix(in_srgb,var(--nx-line)_60%,transparent)] bg-nx-surface hover:shadow-nx-glow"
+          ? "border-[color:color-mix(in_srgb,var(--nx-line)_60%,transparent)] bg-nx-surface hover:border-[color:color-mix(in_srgb,var(--nx-line)_90%,transparent)]"
           : "border-[color:color-mix(in_srgb,var(--nx-line)_40%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] opacity-75"
       }`}
     >

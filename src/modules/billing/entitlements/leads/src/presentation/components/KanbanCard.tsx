@@ -29,7 +29,7 @@ export function KanbanCard({ lead, onClick, onDragStart, onDragEnd }: KanbanCard
       }}
       onDragEnd={onDragEnd}
       variant="ghost"
-      className="group h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-nx-md border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_80%,transparent)] p-3 text-start transition-[border-color,background-color,box-shadow,transform] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-line)_90%,transparent)] hover:bg-nx-hover hover:shadow-nx-sm active:scale-[0.98]"
+      className="group h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-nx-md border border-nx-line bg-[color:color-mix(in_srgb,var(--nx-surface)_80%,transparent)] p-3 text-start transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-line)_90%,transparent)] hover:bg-nx-hover"
     >
       {/* Company + edition */}
       <div className="flex items-start justify-between gap-2">

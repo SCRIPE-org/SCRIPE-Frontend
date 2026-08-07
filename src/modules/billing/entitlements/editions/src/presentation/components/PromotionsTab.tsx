@@ -140,7 +140,7 @@ export function PromotionsTab({
               <Input
                 value={vm.form.name}
                 onChange={(e) => vm.setField("name", e.target.value)}
-                placeholder="e.g. Summer Sale 20% Off"
+                placeholder={t("entitlements.editions.promotions.namePlaceholder")}
               />
             </div>
 
@@ -270,7 +270,7 @@ export function PromotionsTab({
                     <Input
                       value={vm.form.promoCode}
                       onChange={(e) => vm.setField("promoCode", e.target.value.toUpperCase())}
-                      placeholder="e.g. SUMMER2026"
+                      placeholder={t("entitlements.editions.promotions.promoCodePlaceholder")}
                       className="font-mono uppercase"
                     />
                   )}

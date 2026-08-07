@@ -155,6 +155,13 @@ export const ar = {
       featureUpdated: "تم تحديث قيمة الميزة",
       marketingLabelModified: "تم تعديل تسمية التسويق",
       editMarketingLabel: "تعديل تسمية العرض التسويقي",
+      marketingLabelSectionTitle: "تسمية العرض التسويقي",
+      marketingLabelSectionHint: "— يتجاوز طريقة ظهور هذه الميزة في بطاقات الخطط",
+      englishLabelField: "التسمية بالإنجليزية",
+      arabicLabelField: "التسمية بالعربية",
+      // نفس القيمة الحرفية في كلا الملفين عمداً — انظر التعليق في editions.en.ts.
+      englishLabelPlaceholder: "e.g. Up to 25 Admins",
+      arabicLabelPlaceholder: "مثال: حتى 25 مشرف",
       removeFeature: "إزالة الميزة",
       featureRemoved: "تمت إزالة الميزة",
       featureRemovedDesc: "تمت إزالة قيمة الميزة من هذا الإصدار.",
