@@ -22,6 +22,8 @@ export const ar = {
     manualSetupSuccessDesc: "تم إعداد الحساب بنجاح.",
     confirmPassword: "تأكيد كلمة المرور",
     passwordsDoNotMatch: "كلمتا المرور غير متطابقتين",
+    passwordTooShort: "يجب أن تتكون كلمة المرور من 6 أحرف على الأقل",
+    setPasswordLabel: "كلمة المرور الجديدة",
     transferConfirm: "تأكيد نقل المستخدم",
     selectTenant: "اختر مستأجر",
     newPassword: "إعادة تعيين كلمة المرور",

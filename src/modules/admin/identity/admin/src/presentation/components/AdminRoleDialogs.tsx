@@ -365,6 +365,7 @@ export function ResetPasswordDialog({
             <Label htmlFor="password">{t("admin.writePassword")} *</Label>
             <PasswordInput
               id="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
@@ -423,6 +424,10 @@ export function ManualSetupDialog({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [mustChangePassword, setMustChangePassword] = useState(true);
+  // Submit-time error — the button used to be silently `disabled` while invalid, which
+  // gave zero feedback when browser autofill left one field empty. Validating on click
+  // and surfacing the reason here means a click is never a silent no-op.
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Reset form when opening
   const [prevOpen, setPrevOpen] = useState(open);
@@ -432,16 +437,30 @@ export function ManualSetupDialog({
       setPassword("");
       setConfirmPassword("");
       setMustChangePassword(true);
+      setSubmitError(null);
     }
   }
 
   const passwordsMatch = password.length > 0 && password === confirmPassword;
-  const isValid = password.length >= 6 && passwordsMatch;
 
   const handleSubmit = async () => {
-    if (!isValid) return;
-    await onManualSetup(password, confirmPassword, mustChangePassword);
-    onOpenChange(false);
+    if (password.length < 6) {
+      setSubmitError(t("admin.passwordTooShort"));
+      return;
+    }
+    if (password !== confirmPassword) {
+      setSubmitError(t("admin.passwordsDoNotMatch"));
+      return;
+    }
+    setSubmitError(null);
+    try {
+      await onManualSetup(password, confirmPassword, mustChangePassword);
+      onOpenChange(false);
+    } catch {
+      // Mutation's onError already toasts the server-side reason (e.g. weak
+      // password rejected by tenant policy) — keep the dialog open so the
+      // admin can fix and retry instead of silently losing their input.
+    }
   };
 
   return (
@@ -453,12 +472,22 @@ export function ManualSetupDialog({
       size="sm"
     >
       <div className="space-y-4 py-2">
+        {submitError && (
+          <div className="rounded-nx-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            {submitError}
+          </div>
+        )}
+
         <div className="space-y-2">
-          <Label htmlFor="manualSetupPassword">{t("admin.newPassword")} *</Label>
+          <Label htmlFor="manualSetupPassword">{t("admin.setPasswordLabel")} *</Label>
           <PasswordInput
             id="manualSetupPassword"
+            autoComplete="new-password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setSubmitError(null);
+            }}
             minLength={6}
             placeholder={t("admin.writePassword")}
             showStrengthIndicator={true}
@@ -469,8 +498,12 @@ export function ManualSetupDialog({
           <Label htmlFor="manualSetupConfirmPassword">{t("admin.confirmPassword")} *</Label>
           <PasswordInput
             id="manualSetupConfirmPassword"
+            autoComplete="new-password"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              setSubmitError(null);
+            }}
             minLength={6}
             placeholder={t("admin.confirmPassword")}
           />
@@ -497,7 +530,7 @@ export function ManualSetupDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {t("common.cancel")}
           </Button>
-          <Button onClick={handleSubmit} loading={isLoading} disabled={!isValid}>
+          <Button onClick={handleSubmit} loading={isLoading}>
             {t("admin.manualSetup")}
           </Button>
         </div>

@@ -20,6 +20,8 @@ export const en = {
     manualSetupSuccessDesc: "The account has been set up successfully.",
     confirmPassword: "Confirm Password",
     passwordsDoNotMatch: "Passwords do not match",
+    passwordTooShort: "Password must be at least 6 characters",
+    setPasswordLabel: "New Password",
     transferConfirm: "Transfer User",
     selectTenant: "Selet Tenant",
     newPassword: "Reset Password",
