@@ -124,6 +124,16 @@ export interface IAdminService {
   resetPassword(id: string, newPassword: string): Promise<void>;
 
   /**
+   * Manually complete account setup for an email-invited admin who hasn't activated yet
+   */
+  manualSetup(
+    id: string,
+    newPassword: string,
+    confirmPassword: string,
+    mustChangePassword: boolean
+  ): Promise<void>;
+
+  /**
    * Change admin's own password
    */
   changePassword(id: string, currentPassword: string, newPassword: string): Promise<void>;

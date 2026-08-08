@@ -13,6 +13,7 @@ export const ADMIN_ENDPOINTS = {
   ROLES: (id: string) => `${V1}/Admins/${id}/roles`,
   REMOVE_ROLE: (adminId: string, roleId: string) => `${V1}/Admins/${adminId}/roles/${roleId}`,
   RESET_PASSWORD: (id: string) => `${V1}/Admins/${id}/reset-password`,
+  MANUAL_SETUP: (id: string) => `${V1}/Admins/${id}/manual-setup`,
   CHANGE_PASSWORD: (id: string) => `${V1}/Admins/${id}/change-password`,
   BULK: {
     ACTIVATE: `${V1}/Admins/bulk/activate`,

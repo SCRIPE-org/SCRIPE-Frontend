@@ -391,3 +391,117 @@ export function ResetPasswordDialog({
     </GenericModal>
   );
 }
+
+// ========== Manual Setup Dialog ==========
+
+interface ManualSetupDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  admin: Admin | null;
+  onManualSetup: (
+    newPassword: string,
+    confirmPassword: string,
+    mustChangePassword: boolean
+  ) => Promise<void>;
+  isLoading: boolean;
+}
+
+/**
+ * Presentation UI component rendering the manual account setup dialog.
+ * Lets an admin set a password directly for an email-invited admin who hasn't activated
+ * yet, as an alternative to resending the setup email, with an explicit choice of whether
+ * the target must change that password on next login.
+ */
+export function ManualSetupDialog({
+  open,
+  onOpenChange,
+  admin,
+  onManualSetup,
+  isLoading,
+}: ManualSetupDialogProps) {
+  const { t } = useI18n();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [mustChangePassword, setMustChangePassword] = useState(true);
+
+  // Reset form when opening
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setPassword("");
+      setConfirmPassword("");
+      setMustChangePassword(true);
+    }
+  }
+
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
+  const isValid = password.length >= 6 && passwordsMatch;
+
+  const handleSubmit = async () => {
+    if (!isValid) return;
+    await onManualSetup(password, confirmPassword, mustChangePassword);
+    onOpenChange(false);
+  };
+
+  return (
+    <GenericModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t("admin.manualSetup")}
+      description={`${t("admin.manualSetupDesc")} ${admin?.displayName || ""}`}
+      size="sm"
+    >
+      <div className="space-y-4 py-2">
+        <div className="space-y-2">
+          <Label htmlFor="manualSetupPassword">{t("admin.newPassword")} *</Label>
+          <PasswordInput
+            id="manualSetupPassword"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            minLength={6}
+            placeholder={t("admin.writePassword")}
+            showStrengthIndicator={true}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="manualSetupConfirmPassword">{t("admin.confirmPassword")} *</Label>
+          <PasswordInput
+            id="manualSetupConfirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            minLength={6}
+            placeholder={t("admin.confirmPassword")}
+          />
+          {confirmPassword.length > 0 && !passwordsMatch && (
+            <p className="text-xs text-destructive">{t("admin.passwordsDoNotMatch")}</p>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between rounded-nx-lg border border-nx-line bg-nx-raised p-3">
+          <div className="space-y-0.5">
+            <Label htmlFor="mustChangePassword" className="cursor-pointer text-sm font-medium">
+              {t("admin.mustChangePassword")}
+            </Label>
+            <p className="text-xs text-nx-ink-3">{t("admin.mustChangePasswordDescription")}</p>
+          </div>
+          <Switch
+            id="mustChangePassword"
+            checked={mustChangePassword}
+            onCheckedChange={setMustChangePassword}
+          />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={handleSubmit} loading={isLoading} disabled={!isValid}>
+            {t("admin.manualSetup")}
+          </Button>
+        </div>
+      </div>
+    </GenericModal>
+  );
+}

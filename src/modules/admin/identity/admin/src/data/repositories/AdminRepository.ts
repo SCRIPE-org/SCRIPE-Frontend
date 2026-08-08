@@ -131,6 +131,15 @@ export class AdminRepository implements IAdminRepository {
     await this.service.resetPassword(id, newPassword);
   }
 
+  async manualSetup(
+    id: string,
+    newPassword: string,
+    confirmPassword: string,
+    mustChangePassword: boolean
+  ): Promise<void> {
+    await this.service.manualSetup(id, newPassword, confirmPassword, mustChangePassword);
+  }
+
   async changePassword(id: string, currentPassword: string, newPassword: string): Promise<void> {
     await this.service.changePassword(id, currentPassword, newPassword);
   }
