@@ -193,6 +193,9 @@ export function DocContent({ sections }: DocContentProps) {
                 <Image
                   src={section.src}
                   alt={section.alt}
+                  width={800}
+                  height={450}
+                  unoptimized
                   style={{ maxWidth: "100%", borderRadius: "var(--nx-radius-lg)" }}
                 />
                 {section.caption && (

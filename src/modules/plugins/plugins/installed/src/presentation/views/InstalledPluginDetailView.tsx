@@ -97,6 +97,9 @@ export function InstalledPluginDetailView({ installationId }: InstalledPluginDet
               <Image
                 src={installation.iconUrl}
                 alt=""
+                width={56}
+                height={56}
+                unoptimized
                 className="h-full w-full rounded-nx-md object-cover"
               />
             ) : (

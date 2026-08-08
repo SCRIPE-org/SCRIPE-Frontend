@@ -92,6 +92,9 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
                     <Image
                       src={logo.assetUrl}
                       alt={logo.name}
+                      width={48}
+                      height={32}
+                      unoptimized
                       className="h-full w-full object-contain p-0.5"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = "none";

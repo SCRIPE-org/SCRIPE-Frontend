@@ -94,6 +94,9 @@ export function TrustRow({ trustMarks, trustedByCount, trustedByLabel }: TrustRo
                   <Image
                     src={mark.assetUrl}
                     alt=""
+                    width={16}
+                    height={16}
+                    unoptimized
                     aria-hidden="true"
                     className="h-4 w-auto"
                     style={{ opacity: 0.8 }}

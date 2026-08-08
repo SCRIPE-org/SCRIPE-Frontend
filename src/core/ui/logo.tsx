@@ -105,6 +105,9 @@ export function Logo({
             <Image
               src={tenantLogoUrl}
               alt={settings.logoText || "Logo"}
+              width={40}
+              height={40}
+              unoptimized
               className="h-full w-full object-contain"
               onError={() => setImageFailed(true)}
             />

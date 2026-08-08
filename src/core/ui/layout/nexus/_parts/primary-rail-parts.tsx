@@ -287,6 +287,9 @@ export function PrimaryRailLogo({
         <Image
           src={tenantLogoUrl}
           alt={resolveBilingualLabel("Logo", "شعار", language)}
+          width={48}
+          height={48}
+          unoptimized
           style={{
             width: 48,
             height: 48,

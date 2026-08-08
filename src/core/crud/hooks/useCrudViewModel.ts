@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useMemo } from "react";
 import { useGenericQuery } from "./useGenericQuery";
 import { useGenericMutations } from "./useGenericMutations";
 import { BaseEntity, PaginatedResult } from "../types";
+import { useAppStore } from "@core/store/useAppStore";
 
 export interface CrudViewModelOptions {
   initialPageSize?: number;
@@ -20,6 +21,10 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   },
   options: CrudViewModelOptions = {}
 ) {
+  // Store Hydration Guard: ensure queries don't fire before auth/permission state is rehydrated
+  const hasHydrated = useAppStore((state) => state._hasHydrated);
+  const isQueryEnabled = (options.enabled !== false) && hasHydrated;
+
   // UI State
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(options.initialPageSize || 10);
@@ -55,7 +60,7 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   );
 
   // 1. Data Fetching
-  const query = useGenericQuery<T>(key, services.getAll, queryParams, options.enabled !== false);
+  const query = useGenericQuery<T>(key, services.getAll, queryParams, isQueryEnabled);
 
   // A delete (or a filter/search change) can shrink the result set below the page
   // we're currently sitting on, leaving a stale "page 5 of 3" state that renders an

@@ -267,6 +267,9 @@ export function useOAuthAppsViewModel() {
               <Image
                 src={item.logoUri}
                 alt={item.displayName}
+                width={20}
+                height={20}
+                unoptimized
                 className="h-5 w-5 rounded-nx-sm object-contain"
               />
             ) : (

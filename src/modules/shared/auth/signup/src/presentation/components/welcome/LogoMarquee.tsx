@@ -56,6 +56,9 @@ export function LogoMarquee({ logos, caption }: LogoMarqueeProps) {
             <Image
               src={logo.assetUrl}
               alt={logo.name}
+              width={120}
+              height={24}
+              unoptimized
               className="h-5 w-auto select-none sm:h-6"
               style={{ filter: logoFilter }}
               loading="lazy"

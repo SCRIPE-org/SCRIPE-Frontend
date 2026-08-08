@@ -152,6 +152,9 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
                 <Image
                   src={vm.checkoutQrCode}
                   alt={t("billing.dialogs.qrCodeAlt")}
+                  width={192}
+                  height={192}
+                  unoptimized
                   className="h-48 w-48"
                 />
               </div>

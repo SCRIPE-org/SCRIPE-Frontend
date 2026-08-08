@@ -116,6 +116,8 @@ function CommercialFooter() {
               <Image
                 src="/app-logo.png"
                 alt={BRAND.namePascal}
+                width={24}
+                height={24}
                 style={{ width: 24, height: 24, objectFit: "contain" }}
               />
               <span>{BRAND.nameUpper}</span>

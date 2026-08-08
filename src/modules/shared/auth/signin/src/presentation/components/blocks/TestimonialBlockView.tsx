@@ -31,6 +31,9 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
           <Image
             src={props.avatar}
             alt={props.author}
+            width={40}
+            height={40}
+            unoptimized
             className="h-10 w-10 rounded-full object-cover"
           />
         )}

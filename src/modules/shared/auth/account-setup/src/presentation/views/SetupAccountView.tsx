@@ -287,6 +287,8 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
           <Image
             src="/app-logo.png"
             alt={`${BRAND.name} Logo`}
+            width={56}
+            height={56}
             className="h-full w-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = "none";

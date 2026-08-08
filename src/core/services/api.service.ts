@@ -241,6 +241,20 @@ export class ApiService implements IApiService {
 
         // Handle 401 - attempt token refresh
         if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          // If a fresh token was already stored while this request was in-flight (e.g. via RouteGuard or broadcast),
+          // retry immediately with the fresh token without triggering another refresh cycle.
+          const activeToken = secureTokenService.getAccessToken();
+          const sentToken = originalRequest.headers?.Authorization?.toString().replace(/^Bearer\s+/i, "") ?? "";
+          if (activeToken && activeToken !== sentToken) {
+            appLogger.auth("Newer token already present in secureTokenService — retrying request immediately");
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${activeToken}`;
+            }
+            return this.axiosInstance(originalRequest);
+          }
+
           // Issue #8: DI timing race — if no refresh handler is wired yet,
           // just reject the promise instead of calling handleUnauthorized.
           // The route-guard will handle session restore.
@@ -261,7 +275,6 @@ export class ApiService implements IApiService {
             });
           }
 
-          originalRequest._retry = true;
           this.isRefreshing = true;
 
           try {

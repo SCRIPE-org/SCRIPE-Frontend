@@ -24,6 +24,9 @@ export function VideoBlockView({ block }: { block: VideoBlock }) {
         <Image
           src={props.thumbnailUrl}
           alt={props.overlayText || "Video"}
+          width={800}
+          height={450}
+          unoptimized
           className="h-full w-full object-cover"
         />
       ) : (

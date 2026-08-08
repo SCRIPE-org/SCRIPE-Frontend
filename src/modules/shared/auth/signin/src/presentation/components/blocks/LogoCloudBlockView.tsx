@@ -30,6 +30,9 @@ export function LogoCloudBlockView({ block }: { block: LogoCloudBlock }) {
           <Image
             src={item.src}
             alt={item.alt}
+            width={120}
+            height={40}
+            unoptimized
             className={`${SIZE_CLASS[props.size || "md"]} w-full object-contain ${props.grayscale ? "grayscale" : ""}`}
           />
         );

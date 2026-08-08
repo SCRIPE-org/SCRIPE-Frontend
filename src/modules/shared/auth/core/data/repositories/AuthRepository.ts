@@ -184,26 +184,46 @@ export class AuthRepository implements IAuthRepository {
     return secureTokenService.hasToken();
   }
 
+  private refreshPromise: Promise<Result<LoginResponse, Error>> | null = null;
+
   /**
    * Refresh the access token via the backend.
    * The refresh token is sent automatically as an httpOnly cookie
    * (via withCredentials) — the backend CookieAuthMiddleware reads it.
+   *
+   * Single-flight deduplication: if a refresh is already in progress
+   * (e.g. RouteGuard and ApiService 401 interceptor racing on page reload),
+   * return the active promise so we never send concurrent refresh requests
+   * that invalidate the backend's single-use rotating refresh cookie.
    */
   async refreshToken(): Promise<Result<LoginResponse, Error>> {
-    try {
-      const responseModel = await this.service.refreshToken();
-
-      if (responseModel.isSuccessful) {
-        secureTokenService.setAccessToken(responseModel.accessToken);
-        authBroadcast.broadcastTokenRefreshed(responseModel.accessToken);
-        const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
-        return Result.ok(loginResponse);
-      }
-      return Result.err(new Error("Refresh failed"));
-    } catch (error) {
-      clearAllLocalStorage();
-      return Result.err(error instanceof Error ? error : new Error("Unknown error"));
+    if (this.refreshPromise) {
+      appLogger.auth("[AuthRepository] Joining existing in-flight refreshToken request");
+      return this.refreshPromise;
     }
+
+    this.refreshPromise = (async () => {
+      try {
+        const responseModel = await this.service.refreshToken();
+
+        if (responseModel.isSuccessful) {
+          secureTokenService.setAccessToken(responseModel.accessToken);
+          authBroadcast.broadcastTokenRefreshed(responseModel.accessToken);
+          const loginResponse = AuthMapper.loginResponseFromModel(responseModel);
+          return Result.ok(loginResponse);
+        }
+        return Result.err(new Error("Refresh failed"));
+      } catch (error) {
+        if (!secureTokenService.hasToken()) {
+          clearAllLocalStorage();
+        }
+        return Result.err(error instanceof Error ? error : new Error("Unknown error"));
+      } finally {
+        this.refreshPromise = null;
+      }
+    })();
+
+    return this.refreshPromise;
   }
 
   isAuthenticated(): boolean {

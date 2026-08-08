@@ -571,6 +571,9 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
                 <Image
                   src={form.iconUrl}
                   alt=""
+                  width={18}
+                  height={18}
+                  unoptimized
                   className="h-[18px] w-[18px] shrink-0 rounded object-contain"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = "none";

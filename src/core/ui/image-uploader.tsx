@@ -288,6 +288,8 @@ export function ImageUploader({
             <Image
               src={preview}
               alt={t("imageUploader.preview")}
+              fill
+              unoptimized
               className="h-full w-full object-cover"
               style={aspectRatio ? { aspectRatio } : undefined}
             />

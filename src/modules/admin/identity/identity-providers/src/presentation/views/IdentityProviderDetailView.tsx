@@ -308,6 +308,9 @@ export function IdentityProviderDetailView({ providerId }: Props) {
                 <Image
                   src={vm.form.iconUrl}
                   alt={vm.form.name}
+                  width={24}
+                  height={24}
+                  unoptimized
                   className="h-6 w-6 rounded object-contain"
                 />
               ) : (

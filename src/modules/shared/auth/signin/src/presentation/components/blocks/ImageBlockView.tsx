@@ -18,6 +18,9 @@ export function ImageBlockView({ block }: { block: ImageBlock }) {
     <Image
       src={props.src}
       alt={props.alt}
+      width={800}
+      height={450}
+      unoptimized
       className={`w-full ${ASPECT_MAP[props.aspectRatio || "auto"]} ${HOVER_MAP[props.hoverEffect || "none"]} ${SHADOW_MAP[props.shadow || "none"]}`}
       style={{
         maxWidth: props.maxWidth,

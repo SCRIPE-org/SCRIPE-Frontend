@@ -19,6 +19,9 @@ export function AvatarStackBlockView({ block }: { block: AvatarStackBlock }) {
             key={`${url}-${index}`}
             src={url}
             alt=""
+            width={40}
+            height={40}
+            unoptimized
             className={`${SIZE_CLASS[props.size || "md"]} rounded-full border-2 border-background object-cover`}
           />
         ))}

@@ -1723,7 +1723,7 @@ export function LoginPreviewShell() {
               {/* Wordmark */}
               <div className="relative z-[1] flex items-center gap-2.5">
                 <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
-                  <Image src={logoUrl} alt={companyName} className="h-full w-full object-contain" />
+                  <Image src={logoUrl} alt={companyName} width={32} height={32} unoptimized className="h-full w-full object-contain" />
                 </div>
                 <span className="text-base font-semibold" style={{ color: "var(--sx-text)" }}>
                   {companyName}
@@ -1938,6 +1938,9 @@ function LogoBox({
       <Image
         src={logoSrc}
         alt={`${logoAlt} Logo`}
+        width={96}
+        height={96}
+        unoptimized
         className="h-full w-full object-cover"
         onError={(e) => {
           e.currentTarget.style.display = "none";
