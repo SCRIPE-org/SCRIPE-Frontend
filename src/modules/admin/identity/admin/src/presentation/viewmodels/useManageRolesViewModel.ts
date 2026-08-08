@@ -15,6 +15,16 @@ interface UseManageRolesViewModelProps {
   open: boolean;
 }
 
+// Stable empty-array reference. `useQuery`'s `data` is `undefined` whenever the
+// query is disabled (the common case — most admins have no roles outside the
+// first fetched page, so `missingRoleCodes` stays empty and this query never
+// runs). A `= []` default in the destructuring below would mint a NEW array
+// every render, and ManageRolesDialog's render-phase state sync compares this
+// value by reference (`resolvedExtraRoles !== prevResolvedExtraRoles`) — a
+// fresh reference every render makes that comparison never settle, which is
+// an infinite render loop ("Too many re-renders").
+const EMPTY_RESOLVED_ROLES: never[] = [];
+
 /**
  * React hook/ViewModel orchestrating state and data flows for manage roles view model.
  * Manages TanStack Query hooks, query cache keys, and repository fetch requests.
@@ -95,7 +105,7 @@ export function useManageRolesViewModel({
     );
   }, [scopedCurrentRoles, rolesData]);
 
-  const { data: resolvedExtraRoles = [], isLoading: isResolvingExtraRoles } = useQuery({
+  const { data: resolvedExtraRoles = EMPTY_RESOLVED_ROLES, isLoading: isResolvingExtraRoles } = useQuery({
     queryKey: ["roles-for-manage-resolve", scopeTenantId, missingRoleCodes],
     queryFn: async () => {
       const found = await Promise.all(
