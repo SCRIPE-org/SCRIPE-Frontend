@@ -1,6 +1,6 @@
 // FILE-EXCEPTION: file length
 /**
- * Docs page locale â€” DE
+ * Docs page locale — DE
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const de = {
@@ -24,7 +24,7 @@ export const de = {
         "Wenn das System einen Funktionswert fÃ¼r einen Mandanten ermitteln muss, folgt es einer strikten PrioritÃ¤tskette. Die Quelle mit der hÃ¶chsten PrioritÃ¤t, die einen Wert liefert, gewinnt.",
       pipelineTitle: "Pipeline-Integration",
       pipelineIntro:
-        "SCRIPE integriert Berechtigungen Ã¼ber das FeatureCheckBehavior direkt in die SCRIPE mediator-CQRS-Pipeline. Befehle und Abfragen, die IRequireFeature implementieren, werden automatisch Ã¼berwacht â€” ist der ermittelte Funktionswert des Mandanten deaktiviert, wird die Anfrage abgelehnt, bevor sie den Handler erreicht.",
+        "SCRIPE integriert Berechtigungen Ã¼ber das FeatureCheckBehavior direkt in die SCRIPE mediator-CQRS-Pipeline. Befehle und Abfragen, die IRequireFeature implementieren, werden automatisch Ã¼berwacht — ist der ermittelte Funktionswert des Mandanten deaktiviert, wird die Anfrage abgelehnt, bevor sie den Handler erreicht.",
       pipelineTip:
         "Um einen Befehl hinter einer Funktion zu verbergen, implementieren Sie einfach IRequireFeature und setzen Sie RequiredFeatureName auf den stabilen SystemschlÃ¼ssel der Funktion (z. B. 'Chat.Enabled'). Es ist kein zusÃ¤tzlicher Code erforderlich.",
       backendTitle: "Backend-Struktur",
@@ -38,14 +38,14 @@ export const de = {
         "Das Berechtigungsmodul stellt 31 API-Endpunkte Ã¼ber 4 Controller bereit, die alle mit JWT authentifiziert und durch berechtigungsbasierte Autorisierung geschÃ¼tzt sind.",
       noOpTitle: "NoOp-Fallback",
       noOpIntro:
-        "Wenn das Berechtigungsmodul nicht geladen ist (z. B. in einem Microservice, der keine Entitlements enthÃ¤lt), registriert SCRIPE einen NoOpFeatureCache. Dadurch kÃ¶nnen IRequireFeature-Befehle fehlerfrei passieren â€” alle Funktionen werden standardmÃ¤ÃŸig als aktiviert behandelt.",
+        "Wenn das Berechtigungsmodul nicht geladen ist (z. B. in einem Microservice, der keine Entitlements enthÃ¤lt), registriert SCRIPE einen NoOpFeatureCache. Dadurch kÃ¶nnen IRequireFeature-Befehle fehlerfrei passieren — alle Funktionen werden standardmÃ¤ÃŸig als aktiviert behandelt.",
       noOpNote:
         "Das NoOp-Fallback stellt sicher, dass Module IRequireFeature ohne eine feste AbhÃ¤ngigkeit vom Berechtigungsmodul verwenden kÃ¶nnen. Im produktiven Monolith-Modus ist der echte FeatureCache immer verfÃ¼gbar.",
       contextAwareTitle: "Kontextbezogene Bereichseinstellung",
       contextAwareIntro:
         "Alle Berechtigungsseiten (Funktionen, Editionen, Berechtigungen) sind kontextbezogen. Das Frontend erkennt, ob der Benutzer ein Systemadministrator (tenantId ist null), ein Mandanten-Administrator oder im Drill-Down-Modus ist, und ruft entsprechend verschiedene Backend-Endpunkte auf. Systemadministratoren sehen den vollstÃ¤ndigen Katalog mit CRUD; Mandanten-Administratoren sehen nur ihre effektiven Daten im Nur-Lese-Modus.",
       resolutionTip:
-        "Die AuflÃ¶sungskette wird Lazy evaluiert â€” Werte werden nach der ersten AuflÃ¶sung zwischengespeichert und invalidiert, wenn sich Abonnements, Editionen oder Ãœberschreibungen Ã¤ndern.",
+        "Die AuflÃ¶sungskette wird Lazy evaluiert — Werte werden nach der ersten AuflÃ¶sung zwischengespeichert und invalidiert, wenn sich Abonnements, Editionen oder Ãœberschreibungen Ã¤ndern.",
       cqrsMapTitle: "CQRS Command & Query Map",
       cqrsMapIntro:
         "Das Berechtigungsmodul registriert 31 SCRIPE mediator-Handler, die sich Ã¼ber die vier DomÃ¤nen erstrecken. Jeder Befehl hat einen entsprechenden FluentValidation-Validator zur EingabeÃ¼berprÃ¼fung.",
@@ -124,7 +124,7 @@ export const de = {
       description:
         "Mandanten-zu-Editions-Bindung mit vollstÃ¤ndiger Lebenszyklusverwaltung, MehrwÃ¤hrungs-Preisgestaltung, Werbeaktionen, Testversionen, Herabstufungen, Ablaufverhalten und erweiterten Analyse-Exporten.",
       intro:
-        "Abonnements verknÃ¼pfen Mandanten mit Editionen (PlÃ¤nen). Jeder Mandant hat ein Basisabonnement, das seine Edition bestimmt, und optional Zusatzabonnements fÃ¼r zusÃ¤tzliche FÃ¤higkeiten. Das Abonnementsystem verwaltet den gesamten Lebenszyklus von der Zuweisung Ã¼ber VerlÃ¤ngerung, Herabstufung, Sperrung bis hin zur KÃ¼ndigung â€” mit integrierter MehrwÃ¤hrungs-Preisgestaltung und Verfolgung von Werberabatten.",
+        "Abonnements verknÃ¼pfen Mandanten mit Editionen (PlÃ¤nen). Jeder Mandant hat ein Basisabonnement, das seine Edition bestimmt, und optional Zusatzabonnements fÃ¼r zusÃ¤tzliche FÃ¤higkeiten. Das Abonnementsystem verwaltet den gesamten Lebenszyklus von der Zuweisung Ã¼ber VerlÃ¤ngerung, Herabstufung, Sperrung bis hin zur KÃ¼ndigung — mit integrierter MehrwÃ¤hrungs-Preisgestaltung und Verfolgung von Werberabatten.",
       entityTitle: "Abonnement-EntitÃ¤t",
       entityIntro:
         "Eine TenantSubscription bindet einen Mandanten an eine Edition mit Lebenszyklusverfolgung. Sie unterstÃ¼tzt mehrere Abonnementtypen und -status fÃ¼r ein umfassendes Lebenszyklusmanagement.",
@@ -146,7 +146,7 @@ export const de = {
         "Jedes Abonnement trÃ¤gt vollstÃ¤ndige Preis-Metadaten: WÃ¤hrung (ISO-Code), Basisbetrag, Anpassungsbetrag, Gesamtbetrag, WechselkursZuUsd und GesamtbetragUsd. Dies ermÃ¶glicht eine prÃ¤zise Umsatzverfolgung Ã¼ber 9+ unterstÃ¼tzte WÃ¤hrungen (USD, EUR, GBP, SAR, AED, EGP, TRY, INR und mehr).",
       exchangeRateTitle: "USD-Normalisierung",
       exchangeRateIntro:
-        "Alle BetrÃ¤ge werden Ã¼ber ExchangeRateToUsd fÃ¼r konsistente MRR/ARR-Berichte auf USD normalisiert. Das Feld TotalAmountUsd wird zum Abonnementzeitpunkt berechnet und fÃ¼r historische Genauigkeit gespeichert â€” Wechselkursschwankungen Ã¤ndern vergangene Aufzeichnungen nicht rÃ¼ckwirkend.",
+        "Alle BetrÃ¤ge werden Ã¼ber ExchangeRateToUsd fÃ¼r konsistente MRR/ARR-Berichte auf USD normalisiert. Das Feld TotalAmountUsd wird zum Abonnementzeitpunkt berechnet und fÃ¼r historische Genauigkeit gespeichert — Wechselkursschwankungen Ã¤ndern vergangene Aufzeichnungen nicht rÃ¼ckwirkend.",
       promotionsTitle: "Werberabatte",
       promotionsIntro:
         "Abonnements unterstÃ¼tzen Promo-Codes Ã¼ber das Feld AppliedPromoCode. Bei Anwendung einer gÃ¼ltigen Werbeaktion wird ein PromotionDiscount-Prozentsatz aufgezeichnet und der Anpassungsbetrag spiegelt den auf den Basisbetrag angewandten Rabatt wider. Promotionen werden pro Abonnement fÃ¼r Audits und Analysen verfolgt.",
@@ -156,23 +156,23 @@ export const de = {
       exportFiltersTitle: "Export-Filter",
       exportFiltersIntro: "Berichte unterstÃ¼tzen erweiterte Filterung fÃ¼r gezielte Analysen:",
       exportFilterDate:
-        "Datumsbereich â€” Filterung nach Abonnement-Erstellungsdatum (letzte 7/30/90 Tage, letztes Jahr oder benutzerdefinierter Bereich)",
+        "Datumsbereich — Filterung nach Abonnement-Erstellungsdatum (letzte 7/30/90 Tage, letztes Jahr oder benutzerdefinierter Bereich)",
       exportFilterExpiring:
-        "Bald ablaufend â€” Abonnements finden, die innerhalb von 5/7/14/30/60/90 Tagen ablaufen",
-      exportFilterStatus: "Status â€” Aktiv, Gesperrt, GekÃ¼ndigt, Abgelaufen",
-      exportFilterEdition: "Edition â€” Filterung nach spezifischem Plan/Edition",
-      exportFilterCurrency: "WÃ¤hrung â€” BetrÃ¤ge in ausgewÃ¤hlter WÃ¤hrung anzeigen",
+        "Bald ablaufend — Abonnements finden, die innerhalb von 5/7/14/30/60/90 Tagen ablaufen",
+      exportFilterStatus: "Status — Aktiv, Gesperrt, GekÃ¼ndigt, Abgelaufen",
+      exportFilterEdition: "Edition — Filterung nach spezifischem Plan/Edition",
+      exportFilterCurrency: "WÃ¤hrung — BetrÃ¤ge in ausgewÃ¤hlter WÃ¤hrung anzeigen",
       exportDaysLeftTitle: "Tage bis zum Ablauf",
       exportDaysLeftIntro:
         "Berichte enthalten eine berechnete 'Verbleibende Tage'-Spalte mit bedingter Farbcodierung: Rot (â‰¤7 Tage), Gelb (â‰¤30 Tage), GrÃ¼n (>30 Tage). Dies ermÃ¶glicht die sofortige Identifizierung von Abonnements, die eine VerlÃ¤ngerung benÃ¶tigen.",
       exportFormatsTitle: "Exportformat-Details",
       exportFormatCsv:
-        "CSV â€” leichtgewichtig, in jedes Tabellenkalkulationsprogramm oder BI-Tool importierbar",
+        "CSV — leichtgewichtig, in jedes Tabellenkalkulationsprogramm oder BI-Tool importierbar",
       exportFormatExcel:
-        "XLSX â€” professionelle Excel-Arbeitsmappe mit gestalteten Kopfzeilen, Filter-Metadatenblatt, bedingter Formatierung und automatisch dimensionierten Spalten (ClosedXML)",
+        "XLSX — professionelle Excel-Arbeitsmappe mit gestalteten Kopfzeilen, Filter-Metadatenblatt, bedingter Formatierung und automatisch dimensionierten Spalten (ClosedXML)",
       exportFormatPdf:
-        "PDF â€” druckfertiges Dokument mit markengebundenem Deckblatt, statistischer Zusammenfassung und paginierten Datentabellen (QuestPDF)",
-      renewalTitle: "VerlÃ¤ngerung â€” Neuer-Zeilen-Muster (B2)",
+        "PDF — druckfertiges Dokument mit markengebundenem Deckblatt, statistischer Zusammenfassung und paginierten Datentabellen (QuestPDF)",
+      renewalTitle: "VerlÃ¤ngerung — Neuer-Zeilen-Muster (B2)",
       renewalIntro:
         "VerlÃ¤ngerungen erstellen eine NEUE TenantSubscription-Zeile anstatt den bestehenden Datensatz zu Ã¼berschreiben (Stripe-Muster). Das alte Abonnement wird als abgelaufen markiert (IsActive=false), wÃ¤hrend eine neue Zeile mit frischer Id, StartDate=UtcNow, neu berechneter Preisgestaltung und Ã¼bertragenen Aktionsdetails erstellt wird.",
       renewalAuditTitle: "Umsatz-PrÃ¼fpfad",
@@ -180,10 +180,10 @@ export const de = {
         "Jeder Abrechnungszeitraum erzeugt eine unverÃ¤nderliche Datenbankzeile mit zum VerlÃ¤ngerungszeitpunkt festgeschriebenem Preis. Dies ermÃ¶glicht prÃ¤zise Finanzberichte: MRR-Trends, Abwanderungsanalyse pro Zeitraum und RÃ¼ckerstattungsverfolgung pro Zyklus.",
       promoExpiryTitle: "Aktionsablauf-Verfolgung (A1)",
       promoExpiryIntro:
-        "Wenn eine Aktion mit DurationDays > 0 angewendet wird, berechnet das System einen PromotionExpiresAt-Zeitstempel. Bei jeder VerlÃ¤ngerung prÃ¼ft der Handler, ob UtcNow > PromotionExpiresAt â€” wenn die Aktion abgelaufen ist, wird der Rabatt entfernt und NICHT in die neue Abonnementzeile Ã¼bernommen.",
+        "Wenn eine Aktion mit DurationDays > 0 angewendet wird, berechnet das System einen PromotionExpiresAt-Zeitstempel. Bei jeder VerlÃ¤ngerung prÃ¼ft der Handler, ob UtcNow > PromotionExpiresAt — wenn die Aktion abgelaufen ist, wird der Rabatt entfernt und NICHT in die neue Abonnementzeile Ã¼bernommen.",
       concurrencyTitle: "Optimistische NebenlÃ¤ufigkeit (E1)",
       concurrencyIntro:
-        "Jede TenantSubscription hat einen ConcurrencyStamp (Guid) mit [ConcurrencyCheck]. Der Stempel wird bei jedem Schreibvorgang erneuert. Dies verhindert Race Conditions â€” z.B. gleichzeitige KÃ¼ndigung + Abgleichjob â€” durch AuslÃ¶sen einer DbUpdateConcurrencyException bei Kollisionen.",
+        "Jede TenantSubscription hat einen ConcurrencyStamp (Guid) mit [ConcurrencyCheck]. Der Stempel wird bei jedem Schreibvorgang erneuert. Dies verhindert Race Conditions — z.B. gleichzeitige KÃ¼ndigung + Abgleichjob — durch AuslÃ¶sen einer DbUpdateConcurrencyException bei Kollisionen.",
       validationTitle: "Eingabevalidierung (G1)",
       validationIntro:
         "Alle 8 Abonnement-Befehle haben dedizierte FluentValidation-Validatoren. Validatoren verwenden ILocalizer fÃ¼r lokalisierte Fehlermeldungen (EN + AR). GeschÃ¤ftsregeln: keine VerlÃ¤ngerung als Testversion, positive RÃ¼ckerstattungsbetrÃ¤ge, ZeichenlÃ¤ngenbegrenzungen.",
@@ -231,7 +231,7 @@ export const de = {
       description:
         "Steuerbare PlattformfÃ¤higkeiten mit Booleschen, Numerischen und String-Wertetypen.",
       intro:
-        "Funktionen sind die atomaren Bausteine des Berechtigungssystems. Jede Funktion reprÃ¤sentiert eine steuerbare FÃ¤higkeit â€” einen booleschen Schalter, ein numerisches Kontingent (Quota) oder eine String-Konfiguration. Funktionen haben einen stabilen SystemschlÃ¼ssel (Name), der sich nie Ã¤ndert, sodass sie sicher im Code referenziert werden kÃ¶nnen.",
+        "Funktionen sind die atomaren Bausteine des Berechtigungssystems. Jede Funktion reprÃ¤sentiert eine steuerbare FÃ¤higkeit — einen booleschen Schalter, ein numerisches Kontingent (Quota) oder eine String-Konfiguration. Funktionen haben einen stabilen SystemschlÃ¼ssel (Name), der sich nie Ã¤ndert, sodass sie sicher im Code referenziert werden kÃ¶nnen.",
       entityTitle: "Funktions-EntitÃ¤t",
       entityIntro:
         "Eine Funktion (Feature) definiert eine steuerbare PlattformfÃ¤higkeit. Das Feld Name ist ein stabiler SystemschlÃ¼ssel, der im Code verwendet wird; DisplayNameEn/DisplayNameAr sind benutzerorientierte Bezeichnungen.",
@@ -259,7 +259,7 @@ export const de = {
         "Der Features-Controller stellt 5 CRUD-Endpunkte bereit. Systemfunktionen kÃ¶nnen nicht gelÃ¶scht werden:",
       seedingTitle: "Feature-Seeding",
       seedingIntro:
-        "Systemfunktionen werden beim Anwendungsstart automatisch vom EntitlementsStartupSeeder geseeded. Der Seeder prÃ¼ft, ob jede Systemfunktion bereits existiert (nach Name) und erstellt nur fehlende â€” vorhandene Funktionen werden niemals Ã¼berschrieben.",
+        "Systemfunktionen werden beim Anwendungsstart automatisch vom EntitlementsStartupSeeder geseeded. Der Seeder prÃ¼ft, ob jede Systemfunktion bereits existiert (nach Name) und erstellt nur fehlende — vorhandene Funktionen werden niemals Ã¼berschrieben.",
       quotaTitle: "Kontingentverfolgung (QuotaCounter)",
       quotaIntro:
         "Numerische Funktionen unterstÃ¼tzen die automatische Kontingentdurchsetzung Ã¼ber die QuotaCounter-EntitÃ¤t. Das FeatureCheckBehavior vergleicht die aktuelle Nutzung mit dem ermittelten Limit fÃ¼r jeden IRequireFeature-Befehl, der auf eine numerische Funktion abzielt.",
@@ -294,11 +294,11 @@ export const de = {
       whenIntro:
         "Ãœberschreibungen sind fÃ¼r AusnahmefÃ¤lle gedacht, in denen ein Mandant einen anderen Wert benÃ¶tigt, als seine Edition vorgibt:",
       useCase1:
-        "MaÃŸgeschneiderte Enterprise-Deals â€” 'Acme Corp 500 Administratoren statt der standardmÃ¤ÃŸigen 50 geben'",
-      useCase2: "Werbeangebote â€” 'Premium-Chat fÃ¼r diesen Mandanten fÃ¼r 30 Tage aktivieren'",
-      useCase3: "Beta-Tests â€” 'Das neue Rechnungsmodul fÃ¼r Early Adopters aktivieren'",
+        "MaÃŸgeschneiderte Enterprise-Deals — 'Acme Corp 500 Administratoren statt der standardmÃ¤ÃŸigen 50 geben'",
+      useCase2: "Werbeangebote — 'Premium-Chat fÃ¼r diesen Mandanten fÃ¼r 30 Tage aktivieren'",
+      useCase3: "Beta-Tests — 'Das neue Rechnungsmodul fÃ¼r Early Adopters aktivieren'",
       useCase4:
-        "VorÃ¼bergehende ErhÃ¶hung â€” 'Datei-Upload-Limit wÃ¤hrend ihrer Migration erhÃ¶hen'",
+        "VorÃ¼bergehende ErhÃ¶hung — 'Datei-Upload-Limit wÃ¤hrend ihrer Migration erhÃ¶hen'",
       overuseWarning:
         "Ãœberschreibungen sollten sparsam eingesetzt werden. Wenn viele Mandanten dieselbe Ãœberschreibung benÃ¶tigen, ziehen Sie in Betracht, eine neue Edition zu erstellen. ÃœbermÃ¤ÃŸige Ãœberschreibungen machen das System schwerer zu verwalten und zu prÃ¼fen.",
       resolvedTitle: "Endpunkt fÃ¼r aufgelÃ¶ste Funktionen",
@@ -314,7 +314,7 @@ export const de = {
       settingIntro:
         "Um eine Ãœberschreibung festzulegen, senden Sie einen POST an den Endpunkt fÃ¼r Mandantenfunktionen mit der Funktions-ID, dem benutzerdefinierten Wert und einem optionalen Grund fÃ¼r PrÃ¼fzwecke.",
       settingTip:
-        "Geben Sie beim Festlegen von Ãœberschreibungen immer einen Grund an â€” dies macht Audit-Trails aussagekrÃ¤ftig und hilft zukÃ¼nftigen Administratoren zu verstehen, warum die Ãœberschreibung angewendet wurde.",
+        "Geben Sie beim Festlegen von Ãœberschreibungen immer einen Grund an — dies macht Audit-Trails aussagekrÃ¤ftig und hilft zukÃ¼nftigen Administratoren zu verstehen, warum die Ãœberschreibung angewendet wurde.",
       expiryTitle: "Ablaufende Ãœberschreibungen",
       expiryIntro:
         "Ãœberschreibungen kÃ¶nnen ein optionales ExpiresAt-Datum (Ablaufdatum) haben. Wenn das Ablaufdatum Ã¼berschritten ist, wird die Ãœberschreibung automatisch deaktiviert und die Funktion fÃ¤llt auf den Editionswert (oder den globalen Standard) zurÃ¼ck.",
@@ -792,15 +792,15 @@ export const de = {
           "Aufbewahrungsrichtlinien definieren, wie lange Daten aufbewahrt werden mÃ¼ssen. SCRIPE setzt diese automatisch durch.",
         policiesTitle: "Richtlinienkonfiguration",
         policiesIntro: "Jede Richtlinie legt Folgendes fest:",
-        field1: "DataCategory â€” Datentyp (z. B. 'Benutzerprofile').",
-        field2: "RetentionDays â€” Wie viele Tage die Daten aufbewahrt werden mÃ¼ssen.",
+        field1: "DataCategory — Datentyp (z. B. 'Benutzerprofile').",
+        field2: "RetentionDays — Wie viele Tage die Daten aufbewahrt werden mÃ¼ssen.",
         field3:
-          "ExpiryAction â€” Was bei Ablauf geschieht: Delete (LÃ¶schen) oder Anonymize (Anonymisieren).",
-        field4: "RegulationCode â€” Welche Verordnung dies erfordert (GDPR, CCPA usw.).",
+          "ExpiryAction — Was bei Ablauf geschieht: Delete (LÃ¶schen) oder Anonymize (Anonymisieren).",
+        field4: "RegulationCode — Welche Verordnung dies erfordert (GDPR, CCPA usw.).",
         actionsTitle: "Ablaufaktionen",
         actionsIntro: "Bei Ablauf wendet SCRIPE eine von zwei Aktionen an:",
-        action1: "Delete â€” LÃ¶scht dauerhaft alle passenden DatensÃ¤tze.",
-        action2: "Anonymize â€” Ersetzt personenbezogene Daten durch pseudonyme Token.",
+        action1: "Delete — LÃ¶scht dauerhaft alle passenden DatensÃ¤tze.",
+        action2: "Anonymize — Ersetzt personenbezogene Daten durch pseudonyme Token.",
         automationTitle: "Automatisierte Durchsetzung",
         automationIntro:
           "Der RetentionEnforcementJob lÃ¤uft tÃ¤glich um 3:00 Uhr UTC und verarbeitet Richtlinien. Ein Audit-Eintrag RetentionExecution wird erstellt.",
@@ -825,19 +825,19 @@ export const de = {
       inventory: {
         title: "Dateninventar",
         description:
-          "Ein Register aller verarbeiteten personenbezogenen Datenkategorien â€” erforderlich fÃ¼r GDPR Artikel 30 (RoPA).",
+          "Ein Register aller verarbeiteten personenbezogenen Datenkategorien — erforderlich fÃ¼r GDPR Artikel 30 (RoPA).",
         intro:
           "Das Dateninventar ist ein strukturiertes Register. GemÃ¤ÃŸ Artikel 30 DSGVO mÃ¼ssen Verantwortliche ein Verzeichnis von VerarbeitungstÃ¤tigkeiten (RoPA) fÃ¼hren.",
         fieldsTitle: "Inventarfelder",
         fieldsIntro: "Jedes Element dokumentiert:",
-        field1: "DataCategory â€” Lesbarer Name der Kategorie (z. B. 'E-Mail-Adressen').",
+        field1: "DataCategory — Lesbarer Name der Kategorie (z. B. 'E-Mail-Adressen').",
         field2:
-          "LegalBasis â€” DSGVO-Rechtsgrundlage fÃ¼r die Verarbeitung (Einwilligung, Vertrag usw.).",
-        field3: "DataSubjects â€” Wem die Daten gehÃ¶ren (z. B. 'Endbenutzer').",
-        field4: "ProcessingPurpose â€” Warum die Daten verarbeitet werden (z. B. 'Marketing').",
-        field5: "StorageLocation â€” Wo die Daten gespeichert sind (Land/Region).",
-        field6: "RetentionPeriod â€” Wie lange die Daten aufbewahrt werden.",
-        field7: "ThirdPartySharing â€” Ob Daten mit Dritten geteilt werden.",
+          "LegalBasis — DSGVO-Rechtsgrundlage fÃ¼r die Verarbeitung (Einwilligung, Vertrag usw.).",
+        field3: "DataSubjects — Wem die Daten gehÃ¶ren (z. B. 'Endbenutzer').",
+        field4: "ProcessingPurpose — Warum die Daten verarbeitet werden (z. B. 'Marketing').",
+        field5: "StorageLocation — Wo die Daten gespeichert sind (Land/Region).",
+        field6: "RetentionPeriod — Wie lange die Daten aufbewahrt werden.",
+        field7: "ThirdPartySharing — Ob Daten mit Dritten geteilt werden.",
         ropaTitle: "Artikel 30 Compliance",
         ropaIntro:
           "Organisationen mit 250+ Mitarbeitern mÃ¼ssen ein RoPA fÃ¼hren. Das Inventar von SCRIPE dient als abfragbares RoPA fÃ¼r Inspektionen.",
@@ -858,13 +858,13 @@ export const de = {
           "Compliance-Berichte sind asynchron generierte Dokumente, die revisionssichere Zusammenfassungen Ihrer Compliance-Lage bieten. Berichte werden im Hintergrund erstellt und zum Download bereitgestellt.",
         reportTypesTitle: "Berichtstypen",
         reportTypesIntro: "FÃ¼nf Berichtstypen sind verfÃ¼gbar:",
-        type1: "GDPR-Ãœbersicht â€” Zusammenfassung des DSGVO-Compliance-Status.",
+        type1: "GDPR-Ãœbersicht — Zusammenfassung des DSGVO-Compliance-Status.",
         type2:
-          "DSR-AktivitÃ¤tszusammenfassung â€” Statistiken zu DSR-Volumen, Typen und SLA-Einhaltung.",
-        type3: "Einwilligungs-Audit â€” VollstÃ¤ndiges Protokoll der Einwilligungen und Widerrufe.",
-        type4: "Aufbewahrungsanalyse â€” Aktueller Durchsetzungsstatus aller aktiven Richtlinien.",
+          "DSR-AktivitÃ¤tszusammenfassung — Statistiken zu DSR-Volumen, Typen und SLA-Einhaltung.",
+        type3: "Einwilligungs-Audit — VollstÃ¤ndiges Protokoll der Einwilligungen und Widerrufe.",
+        type4: "Aufbewahrungsanalyse — Aktueller Durchsetzungsstatus aller aktiven Richtlinien.",
         type5:
-          "Dateninventar-Export â€” VollstÃ¤ndiger Export des Dateninventars (Artikel 30 RoPA).",
+          "Dateninventar-Export — VollstÃ¤ndiger Export des Dateninventars (Artikel 30 RoPA).",
         asyncTitle: "Asynchrone Generierung",
         asyncIntro:
           "Berichte werden asynchron erstellt, um HTTP-Anfragen nicht zu blockieren. Das System erstellt einen ComplianceReport (IsReady=false) und reiht den Job ein.",
