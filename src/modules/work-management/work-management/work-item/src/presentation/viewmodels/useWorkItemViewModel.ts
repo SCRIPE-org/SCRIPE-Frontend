@@ -3,9 +3,11 @@
  */
 "use client";
 
+import { useCallback } from "react";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getWorkManagementContainer } from "../../../../di";
 import type { WorkItem } from "../../domain/entities/WorkItem";
+import type { FieldOption } from "@core/ui/forms/generic-form";
 
 // ownerEntityId/assignedToId are raw Guid? on the wire (CreateWorkItemRequest /
 // UpdateWorkItemRequest) -- an empty string is not a valid Guid and would fail
@@ -57,5 +59,22 @@ export function useWorkItemViewModel() {
     },
   });
 
-  return { vm };
+  // Server search backing the "Assigned To" picker (createFields/editFields
+  // server-select). Reuses the same GET /api/v1/Admins search the Leads
+  // module's assignable-admins picker calls -- see WorkItemService
+  // .searchAssignableAdmins. Folds display name + email into the option
+  // label because the generic form's server-select bridge only forwards
+  // {value, label} from onServerSearch results, not a separate description.
+  const searchAssignableAdmins = useCallback(
+    async (query: string): Promise<FieldOption[]> => {
+      const admins = await workItemRepository.searchAssignableAdmins(query);
+      return admins.map((admin) => ({
+        value: admin.id,
+        label: admin.email ? `${admin.displayName} (${admin.email})` : admin.displayName,
+      }));
+    },
+    [workItemRepository]
+  );
+
+  return { vm, searchAssignableAdmins };
 }

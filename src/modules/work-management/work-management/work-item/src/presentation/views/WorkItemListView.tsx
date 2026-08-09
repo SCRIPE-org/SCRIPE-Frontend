@@ -31,17 +31,20 @@ const PRIORITY_VARIANTS: Record<number, "secondary" | "info" | "warning" | "dest
   3: "destructive", // Critical
 };
 
-// Soft client-side format hint for the raw-GUID ownerEntityId/assignedToId fields
-// (native HTML5 pattern validation only fires on a non-empty value, so this never
-// blocks leaving either optional field empty). The backend is the real gate:
-// AssignedToId is existence/tenant-validated server-side (F-29); OwnerEntityId's
-// type key is validated against the cross-module registry server-side.
+// Soft client-side format hint for the raw-GUID ownerEntityId field (native
+// HTML5 pattern validation only fires on a non-empty value, so this never
+// blocks leaving the optional field empty). The backend is the real gate:
+// OwnerEntityId's type key is validated against the cross-module registry
+// server-side. assignedToId used to be a raw-GUID text field too, but is now
+// a server-searched admin picker (below) -- AssignedToId is still
+// existence/tenant-validated server-side (F-29), the picker just removes the
+// need to already know and type the GUID by hand.
 const GUID_PATTERN = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 
 export const WorkItemListView = React.memo(function WorkItemListView() {
   useModuleLocales(() => import("../../../locales"), "workManagement");
   const { t, language } = useI18n();
-  const { vm } = useWorkItemViewModel();
+  const { vm, searchAssignableAdmins } = useWorkItemViewModel();
 
   const statusOptions = useMemo(
     () => [
@@ -158,6 +161,9 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
           label: t("workItem.fields.ownerEntityTypeKey"),
           type: "text" as const,
           placeholder: t("workItem.placeholders.ownerEntityTypeKey"),
+          // Disambiguates Owner (what the task is about) from Assigned To
+          // (who does it) — see the matching caption on assignedToId below.
+          description: t("workItem.help.owner"),
         },
         {
           name: "ownerEntityId",
@@ -169,9 +175,18 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         {
           name: "assignedToId",
           label: t("workItem.fields.assignedToId"),
-          type: "text" as const,
+          // Server-searched admin picker instead of a raw-GUID text field —
+          // reuses the same GET /api/v1/Admins search the Leads module's
+          // assignable-admins picker calls (see useWorkItemViewModel
+          // .searchAssignableAdmins / WorkItemService.searchAssignableAdmins).
+          type: "server-select" as const,
+          searchType: "server" as const,
+          onServerSearch: searchAssignableAdmins,
           placeholder: t("workItem.placeholders.assignedToId"),
-          pattern: GUID_PATTERN,
+          searchPlaceholder: t("workItem.placeholders.assignedToSearch"),
+          noResultsText: t("workItem.search.noAdminsFound"),
+          searchingText: t("workItem.search.searchingAdmins"),
+          description: t("workItem.help.assignedTo"),
         },
       ],
       // ownerEntityTypeKey/ownerEntityId are set-once at create (immutable owner
@@ -204,9 +219,14 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         {
           name: "assignedToId",
           label: t("workItem.fields.assignedToId"),
-          type: "text" as const,
+          type: "server-select" as const,
+          searchType: "server" as const,
+          onServerSearch: searchAssignableAdmins,
           placeholder: t("workItem.placeholders.assignedToId"),
-          pattern: GUID_PATTERN,
+          searchPlaceholder: t("workItem.placeholders.assignedToSearch"),
+          noResultsText: t("workItem.search.noAdminsFound"),
+          searchingText: t("workItem.search.searchingAdmins"),
+          description: t("workItem.help.assignedTo"),
         },
         { name: "isActive", label: t("workItem.fields.isActive"), type: "switch" as const },
       ],
@@ -248,7 +268,7 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         },
       ],
     }),
-    [t, language, statusOptions, statusLabels, priorityOptions, priorityLabels, vm]
+    [t, language, statusOptions, statusLabels, priorityOptions, priorityLabels, vm, searchAssignableAdmins]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

@@ -7,6 +7,7 @@ import {
   WorkItemModel,
   type WorkItemJson,
   type WorkItemListResponseJson,
+  type PagedAssignableAdminsModel,
 } from "../models/WorkItemModel";
 import type {
   IWorkItemService,
@@ -58,5 +59,17 @@ export class WorkItemService implements IWorkItemService {
 
   async delete(id: string): Promise<void> {
     await this.api.delete(WORK_ITEM_ENDPOINTS.DELETE(id));
+  }
+
+  async searchAssignableAdmins(search: string): Promise<PagedAssignableAdminsModel> {
+    // Mirrors LeadsService.searchAssignableAdmins -- same endpoint, same
+    // query shape (small page, active admins only).
+    const url = buildUrl(WORK_ITEM_ENDPOINTS.ADMINS_LIST, {
+      page: 1,
+      pageSize: 10,
+      search: search.trim() || undefined,
+      isActive: true,
+    });
+    return this.api.get<PagedAssignableAdminsModel>(url);
   }
 }

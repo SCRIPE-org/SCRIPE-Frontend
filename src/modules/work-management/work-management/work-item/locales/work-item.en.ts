@@ -14,7 +14,7 @@ export const en = {
       priority: "Priority",
       ownerEntityTypeKey: "Owner Type",
       ownerEntityId: "Owner Record ID",
-      assignedToId: "Assigned To (User/Admin ID)",
+      assignedToId: "Assigned To",
       dueAt: "Due Date",
       isActive: "Active",
     },
@@ -23,7 +23,23 @@ export const en = {
     placeholders: {
       ownerEntityTypeKey: "e.g. party.person",
       ownerEntityId: "ID of the record this task is about (optional)",
-      assignedToId: "ID of the user or admin this task is assigned to (optional)",
+      assignedToId: "Select an assignee (optional)",
+      assignedToSearch: "Search admins by name, username or email...",
+    },
+
+    // Short captions shown under the Owner and Assigned To fields so the two
+    // don't read as duplicates of each other -- Owner is WHAT the task is
+    // about, Assigned To is WHO does it.
+    help: {
+      owner:
+        "What this task is about — an existing record such as a person or booking. Leave blank for a standalone task.",
+      assignedTo: "Who is responsible for doing this task. Search by name to find a tenant admin.",
+    },
+
+    // Assigned To search-select states
+    search: {
+      noAdminsFound: "No matching admins found",
+      searchingAdmins: "Searching admins...",
     },
 
     // WorkItemStatus enum (0..4)
