@@ -69,6 +69,11 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
   const [connection, setConnection] = useState<HubConnection | null>(null);
   const [connectionState, setConnectionState] = useState<SignalRConnectionState>("disconnected");
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  // MustChangePasswordMiddleware 403s every backend route except a tiny whitelist that
+  // does not include /hubs/* — connecting here while mcp=true is a guaranteed failed
+  // negotiation on every mount (confirmed live: noisy console errors, zero chance of
+  // success) until the admin changes their password and gets a fresh, non-mcp token.
+  const mustChangePassword = useAppStore((s) => s.mustChangePassword);
   const pathname = usePathname();
   const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
 
@@ -141,10 +146,10 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
     if (isDocsRoute) return; // Skip SignalR on docs routes
 
     const checkAndConnect = () => {
-      if (isAuthenticated && secureTokenService.hasToken()) {
+      if (isAuthenticated && secureTokenService.hasToken() && !mustChangePassword) {
         setTimeout(() => connect(), 0);
-      } else if (!isAuthenticated) {
-        // User logged out — tear down connection
+      } else if (!isAuthenticated || mustChangePassword) {
+        // User logged out, or must change password — tear down connection
         connectionRef.current?.stop();
         connectionRef.current = null;
         setTimeout(() => {
@@ -167,7 +172,7 @@ export function SignalRProvider({ hubPath = HUB_PATHS.AUDIT, children }: SignalR
       connectionRef.current?.stop();
       connectionRef.current = null;
     };
-  }, [isAuthenticated, isDocsRoute, connect]);
+  }, [isAuthenticated, mustChangePassword, isDocsRoute, connect]);
 
   // Memoize context value to prevent unnecessary child re-renders
   const contextValue = useMemo(
