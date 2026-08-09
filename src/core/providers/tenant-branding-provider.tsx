@@ -141,7 +141,15 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, user?.tenantId, hasToken]);
+    // Depend on username, not tenantId: MY_BRANDING is resolved server-side from
+    // the auth token (no tenantId param sent), so this array only needs to detect
+    // "different session, please refetch" -- and user.tenantId is
+    // IIdEncryptionService.Encrypt(guid), a fresh ciphertext on every /Admins/me
+    // response for the SAME tenant, which retriggers this effect on every user
+    // refresh instead of settling (same bug as navigation-provider.tsx's
+    // contextKey). Drill-down tenant switches are unaffected: enterTenantWorld
+    // already forces a full page reload, which remounts this provider anyway.
+  }, [isAuthenticated, user?.username, hasToken]);
 
   // Build the context value with fallbacks.
   // Hooks run unconditionally regardless of `branding` — each already

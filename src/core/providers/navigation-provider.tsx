@@ -100,7 +100,17 @@ export function NavigationProvider({ children }: { children: React.ReactNode }) 
   const persistedContextKey = useNavigationStore((s) => s.contextKey);
 
   // ── Context key — identifies this user+tenant combination ─────────────────
-  const userId = useAppStore((s) => s.user?.id ?? "");
+  // MUST be username, not user.id: id is IIdEncryptionService.Encrypt(guid),
+  // which is randomized-IV AEAD ciphertext — a fresh, different string on
+  // every /Admins/me response for the SAME underlying admin. Keying the nav
+  // queries (and the store's own persisted contextKey guard above) off a
+  // value that never repeats for "the same user" means the eager routes/
+  // default-workspace queries restart under a brand new cache key on every
+  // user-object refresh instead of ever settling — DashboardLayout's
+  // isNavReady gate then waits forever and the welcome loader never clears.
+  // username is stable and unique per admin; tenantId is the raw JWT claim,
+  // not encrypted, so it doesn't have this problem.
+  const userId = useAppStore((s) => s.user?.username ?? "");
   const contextKey = `${tenantId ?? "platform"}:${userId}`;
 
   // Track token availability to coordinate with silent refresh

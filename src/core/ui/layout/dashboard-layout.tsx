@@ -201,10 +201,21 @@ function DashboardLayoutContent({
       // Branding just finished loading — wait one animation frame for
       // SettingsProvider to process the "tenant-branding-loaded" event
       // and re-merge settings (including dashboardThemeJson overrides).
-      const raf = requestAnimationFrame(() => {
-        setIsSettingsMergeSettled(true);
-      });
-      return () => cancelAnimationFrame(raf);
+      //
+      // Belt-and-suspenders: a 500ms fallback timer backs up the rAF. In
+      // practice the rAF can miss its window under real render timing (the
+      // effect re-running mid-transition, or a parent re-render landing
+      // between schedule and paint) and this gate — whose entire job is to
+      // wait AT MOST one frame — was observed hanging indefinitely instead,
+      // permanently blocking DashboardLayout for every fresh login. Whichever
+      // fires first wins; the other is a no-op via the isSettingsMergeSettled
+      // guard on the state setter's own condition below.
+      const raf = requestAnimationFrame(() => setIsSettingsMergeSettled(true));
+      const fallback = setTimeout(() => setIsSettingsMergeSettled(true), 500);
+      return () => {
+        cancelAnimationFrame(raf);
+        clearTimeout(fallback);
+      };
     }
   }, [isBrandingLoading, isSettingsMergeSettled]);
 
