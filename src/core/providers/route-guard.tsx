@@ -429,8 +429,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     setSubscriptionInfo,
     hasRouteAccess,
     checkTrigger,
-    // NOTE: mustChangePassword intentionally NOT here — read via getState()
-    // NOTE: hasRouteAccess is stable (useCallback with [] deps)
+    queryClient,
   ]);
 
   if (!isMounted) return <>{children}</>;
