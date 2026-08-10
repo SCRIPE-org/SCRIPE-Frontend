@@ -8,6 +8,8 @@
  * (see the CustomFields module's bootstrap.ts, Task 3) — the single
  * composition root, not core and not a peer module.
  */
+"use client";
+
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useCallback, useEffect, useState } from "react";
 
