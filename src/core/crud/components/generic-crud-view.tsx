@@ -49,6 +49,11 @@ import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { useRestrictedFields } from "@core/hooks/use-restricted-fields";
 import type { PermissionCode } from "@core/common/types/permissions";
+import {
+  useCustomFieldsFormFields,
+  decodeCustomFieldName,
+  getCustomFieldsExtension,
+} from "@core/crud/customFieldsExtension";
 
 /* ========================================
  * TYPE DEFINITIONS & INTERFACES
@@ -319,6 +324,15 @@ export interface CrudConfig<TItem = any> {
    * resource: "admins" // Auto-checks admins.create, admins.update, admins.delete
    */
   resource?: string;
+
+  /**
+   * When set, GenericCrudView fetches this entity type's active custom-field
+   * definitions and appends them to the create/edit form under a "Custom
+   * Fields" section, then saves their values after a successful create or
+   * update. See CustomFieldsExtensionApi (@core/crud/customFieldsExtension)
+   * for how this is wired without core depending on the CustomFields module.
+   */
+  entityTypeKey?: string;
 }
 
 interface GenericCrudViewProps<T> {
@@ -535,6 +549,38 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     : propActions;
 
   const createFields = config?.createFields || propCreateFields!;
+  const customFieldsForCreate = useCustomFieldsFormFields(config?.entityTypeKey, undefined);
+  const customFieldsForEdit = useCustomFieldsFormFields(
+    config?.entityTypeKey,
+    viewModel.editingItem?.id
+  );
+
+  const createFieldsWithCustom = useMemo(
+    () => [...createFields, ...customFieldsForCreate.fieldConfigs],
+    [createFields, customFieldsForCreate.fieldConfigs]
+  );
+
+  /**
+   * Splits a submitted form's data into the entity's own fields and the
+   * custom-field values contributed by customFieldsForCreate/Edit — the
+   * latter are namespaced (encodeCustomFieldName) precisely so this split is
+   * unambiguous. Pure function of the form data; doesn't need to know which
+   * FieldConfig[] produced which entries.
+   */
+  const splitCustomFieldValues = useCallback((data: Record<string, any>) => {
+    const entityData: Record<string, any> = {};
+    const customFieldValues: Record<string, unknown> = {};
+    for (const [name, value] of Object.entries(data)) {
+      const decoded = decodeCustomFieldName(name);
+      if (decoded !== null) {
+        customFieldValues[decoded] = value;
+      } else {
+        entityData[name] = value;
+      }
+    }
+    return { entityData, customFieldValues };
+  }, []);
+
   // Support dynamic editFields: if it's a function, resolve it with the current editing item
   const resolveEditFields = useCallback(
     (editingItem: any): FieldConfig[] => {
@@ -551,7 +597,10 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     },
     [config, propEditFields, propCreateFields, createFields]
   );
-  const editFields = resolveEditFields(viewModel.editingItem);
+  const editFieldsWithCustom = useMemo(
+    () => [...resolveEditFields(viewModel.editingItem), ...customFieldsForEdit.fieldConfigs],
+    [resolveEditFields, viewModel.editingItem, customFieldsForEdit.fieldConfigs]
+  );
 
   // NOTE (not fixed here): this key embeds `editingItem?.id`, and
   // `closeEditModal` nulls `editingItem` in the same batch that closes the
@@ -562,7 +611,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // forbid. Tracked separately rather than papered over.
   const editFormKey = `edit-form-${
     viewModel.editingItem?.id || "new"
-  }-${JSON.stringify(editFields?.map((f) => f.name).sort())}-${config?.formKey || 0}`;
+  }-${JSON.stringify(editFieldsWithCustom?.map((f) => f.name).sort())}-${config?.formKey || 0}`;
 
   // Auto-generate pagination and search for config-based usage
   const pagination =
@@ -973,13 +1022,25 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         title={t("crud.modal.createTitle", { entity: title })}
         description={t("crud.modal.createDescription", { entity })}
         formKey={`create-form-${JSON.stringify(
-          createFields?.map((f) => f.name).sort()
+          createFieldsWithCustom?.map((f) => f.name).sort()
         )}-${config?.formKey || 0}`}
       >
         <GenericForm
-          fields={createFields || []}
+          fields={createFieldsWithCustom || []}
           initialValues={config?.createInitialValues || {}}
-          onSubmit={viewModel.createItem}
+          onSubmit={async (data) => {
+            const { entityData, customFieldValues } = splitCustomFieldValues(data);
+            const created = await viewModel.createItem(entityData);
+            const newId = (created as { id?: string } | undefined)?.id;
+            if (config?.entityTypeKey && newId && Object.keys(customFieldValues).length > 0) {
+              await getCustomFieldsExtensionOrThrow().saveValues(
+                config.entityTypeKey,
+                newId,
+                customFieldValues
+              );
+              void customFieldsForCreate.refetch();
+            }
+          }}
           onCancel={() => viewModel.setIsCreateModalOpen(false)}
         />
       </GenericModal>
@@ -1002,12 +1063,19 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         formKey={editFormKey}
       >
         <GenericForm
-          fields={editFields || createFields || []}
-          onSubmit={(data) => {
-            if (viewModel.editingItem) {
-              return viewModel.updateItem(viewModel.editingItem.id, data);
+          fields={editFieldsWithCustom || createFieldsWithCustom || []}
+          onSubmit={async (data) => {
+            if (!viewModel.editingItem) return;
+            const { entityData, customFieldValues } = splitCustomFieldValues(data);
+            await viewModel.updateItem(viewModel.editingItem.id, entityData);
+            if (config?.entityTypeKey && Object.keys(customFieldValues).length > 0) {
+              await getCustomFieldsExtensionOrThrow().saveValues(
+                config.entityTypeKey,
+                viewModel.editingItem.id,
+                customFieldValues
+              );
+              void customFieldsForEdit.refetch();
             }
-            return Promise.resolve();
           }}
           initialValues={
             config?.editInitialValues && viewModel.editingItem
@@ -1032,7 +1100,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             <DialogTitle>{t("crud.modal.viewTitle", { entity: title })}</DialogTitle>
           </DialogHeader>
           <GenericForm
-            fields={editFields || createFields || []}
+            fields={editFieldsWithCustom || createFieldsWithCustom || []}
             initialValues={
               config?.editInitialValues && viewModel.viewItem
                 ? config.editInitialValues(viewModel.viewItem)
@@ -1070,3 +1138,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
 
 // P1.4: Memoize to prevent re-renders when parent state changes
 export const GenericCrudView = memo(GenericCrudViewInner) as typeof GenericCrudViewInner;
+
+function getCustomFieldsExtensionOrThrow() {
+  const api = getCustomFieldsExtension();
+  if (!api) {
+    throw new Error(
+      "entityTypeKey was set on a CrudConfig but the CustomFields extension is not registered — check that src/app/layout.tsx imports the CustomFields bootstrap module."
+    );
+  }
+  return api;
+}
