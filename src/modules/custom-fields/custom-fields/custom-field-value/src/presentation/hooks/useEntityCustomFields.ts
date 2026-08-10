@@ -26,6 +26,12 @@ export function useEntityCustomFields(
   const [error, setError] = useState<Error | null>(null);
 
   const fetchFields = useCallback(async () => {
+    if (!entityTypeKey) {
+      setFields([]);
+      setIsLoading(false);
+      setError(null);
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
@@ -46,6 +52,9 @@ export function useEntityCustomFields(
 
   const saveValues = useCallback(
     async (values: Record<string, unknown>) => {
+      if (!entityTypeKey) {
+        throw new Error("saveValues requires a non-empty entityTypeKey.");
+      }
       if (!ownerId) {
         throw new Error("saveValues requires an ownerId; the record must exist first.");
       }
