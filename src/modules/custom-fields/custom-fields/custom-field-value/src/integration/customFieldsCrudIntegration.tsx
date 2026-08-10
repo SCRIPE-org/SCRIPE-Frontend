@@ -1,5 +1,3 @@
-"use client";
-
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import {
   encodeCustomFieldName,
