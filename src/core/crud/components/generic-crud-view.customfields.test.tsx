@@ -155,4 +155,106 @@ describe("GenericCrudView + entityTypeKey", () => {
       "party.person", "existing-record-id", { nationality: "Egyptian" }
     ));
   });
+
+  it("sends null (not \"\") when the user clears a custom field, so the backend clears it instead of 422-ing", async () => {
+    const extension = registerFakeCustomFieldsExtension();
+    const vm = makeViewModel({
+      isCreateModalOpen: false,
+      isEditModalOpen: true,
+      editingItem: { id: "existing-record-id", firstName: "Jane" },
+    });
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+
+    await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
+
+    // Type something, then clear it — exactly what "remove this value" looks
+    // like from the UI. The control submits "".
+    fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
+    fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "" } });
+    fireEvent.click(screen.getByText("common.save"));
+
+    await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
+      "party.person", "existing-record-id", { nationality: null }
+    ));
+  });
+
+  it("surfaces an error instead of silently dropping custom values when createItem returns no id", async () => {
+    const extension = registerFakeCustomFieldsExtension();
+    // A screen whose createItem resolves without { id } — the shape that used
+    // to make the typed custom values vanish with no toast and no error.
+    const vm = makeViewModel({ createItem: vi.fn().mockResolvedValue(undefined) });
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+
+    await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
+
+    fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
+    fireEvent.click(screen.getByText("common.save"));
+
+    // ErrorMessage renders its own role="alert" inside GenericForm's wrapper,
+    // so the outermost one is the server-error banner.
+    await waitFor(() => expect(screen.getAllByRole("alert")[0]).toHaveTextContent(
+      /create response did not return an id/i
+    ));
+    expect(extension.saveValues).not.toHaveBeenCalled();
+  });
+
+  it("keeps what the user already typed when the inline add-custom-field trigger adds a field mid-form", async () => {
+    const nationality = {
+      name: "__cf__nationality", label: "Nationality", type: "text", section: "Custom Fields",
+    };
+    const shirtSize = {
+      name: "__cf__shirtSize", label: "Shirt Size", type: "text", section: "Custom Fields",
+    };
+    // First load returns one custom field; the refetch triggered by the inline
+    // dialog's onCreated returns two.
+    const getFormFields = vi
+      .fn()
+      .mockResolvedValueOnce([nationality])
+      .mockResolvedValue([nationality, shirtSize]);
+    const fake: CustomFieldsExtensionApi = {
+      getFormFields,
+      saveValues: vi.fn().mockResolvedValue(undefined),
+      InlineAddTrigger: ({ onCreated }) => (
+        <button type="button" onClick={onCreated}>inline-add</button>
+      ),
+    };
+    registerCustomFieldsExtension(fake);
+
+    const vm = makeViewModel();
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+
+    await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
+
+    fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Jane" } });
+    fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
+
+    fireEvent.click(screen.getByText("inline-add"));
+
+    // The new field shows up...
+    await waitFor(() => expect(screen.getByLabelText("Shirt Size")).toBeInTheDocument());
+    // ...and the form was NOT remounted, so nothing the user typed was lost.
+    expect(screen.getByLabelText("First Name")).toHaveValue("Jane");
+    expect(screen.getByLabelText("Nationality")).toHaveValue("Egyptian");
+  });
 });

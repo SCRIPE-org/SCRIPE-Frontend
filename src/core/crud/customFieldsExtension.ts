@@ -1,12 +1,16 @@
 /**
- * Core-owned extension point for the CustomFields module. `src/core` never
- * imports from `src/modules/*` (no exceptions exist elsewhere in this
- * codebase) and feature modules never import each other, so GenericCrudView
- * cannot reach the CustomFields module's data layer directly. Instead, core
- * defines this contract; the CustomFields module implements it and
- * self-registers via one side-effect import wired into src/app/layout.tsx
- * (see the CustomFields module's bootstrap.ts, Task 3) — the single
- * composition root, not core and not a peer module.
+ * Core-owned extension point for the CustomFields module. `src/core` does
+ * import from `src/modules/*` in places today — permission constants in
+ * common/types/permissions.ts, locale registration in
+ * locales/module-registry.ts, component re-exports in auth/index.ts — but none
+ * of those is a hook reaching into a feature module's data layer from a
+ * universally-shared UI component the way GenericCrudView would need to.
+ * This typed extension point keeps that specific, higher-risk boundary clean
+ * rather than adding another ad-hoc case: core defines the contract; the
+ * CustomFields module implements it and self-registers via one side-effect
+ * import wired into src/app/layout.tsx (see the CustomFields module's
+ * bootstrap.ts, Task 3) — the single composition root, not core and not a
+ * peer module.
  */
 "use client";
 
@@ -63,20 +67,37 @@ export function decodeCustomFieldName(name: string): string | null {
 export function useCustomFieldsFormFields(
   entityTypeKey: string | undefined,
   ownerId: string | undefined
-): { fieldConfigs: FieldConfig[]; isLoading: boolean; refetch: () => Promise<void> } {
+): {
+  fieldConfigs: FieldConfig[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+} {
   const [fieldConfigs, setFieldConfigs] = useState<FieldConfig[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  // getFormFields rejects for real reasons a user can hit — a 403 from a
+  // screen the caller lacks the custom-fields view permission on, a network
+  // drop mid-modal. Without this the rejection escaped `fetchFields` as an
+  // unhandled promise (both call sites are fire-and-forget) and the section
+  // just stayed empty with nothing to explain why. Captured here the same way
+  // useEntityCustomFields already does it; surfacing it in the UI is a
+  // follow-up, but it is no longer swallowed.
+  const [error, setError] = useState<Error | null>(null);
 
   const fetchFields = useCallback(async () => {
     const api = getCustomFieldsExtension();
     if (!entityTypeKey || !api) {
       setFieldConfigs([]);
       setIsLoading(false);
+      setError(null);
       return;
     }
     setIsLoading(true);
+    setError(null);
     try {
       setFieldConfigs(await api.getFormFields(entityTypeKey, ownerId));
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error(String(err)));
     } finally {
       setIsLoading(false);
     }
@@ -86,5 +107,5 @@ export function useCustomFieldsFormFields(
     void fetchFields();
   }, [fetchFields]);
 
-  return { fieldConfigs, isLoading, refetch: fetchFields };
+  return { fieldConfigs, isLoading, error, refetch: fetchFields };
 }

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest";
-import { getCustomFieldsExtension, registerCustomFieldsExtension, encodeCustomFieldName } from "@core/crud/customFieldsExtension";
+import { describe, it, expect } from "vitest";
+import { getCustomFieldsExtension, encodeCustomFieldName } from "@core/crud/customFieldsExtension";
 import { mapValueToFieldConfig } from "./customFieldsCrudIntegration";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 

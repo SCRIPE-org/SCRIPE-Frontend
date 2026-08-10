@@ -331,6 +331,11 @@ export interface CrudConfig<TItem = any> {
    * Fields" section, then saves their values after a successful create or
    * update. See CustomFieldsExtensionApi (@core/crud/customFieldsExtension)
    * for how this is wired without core depending on the CustomFields module.
+   *
+   * REQUIREMENT: this screen's `createItem` must resolve to an object carrying
+   * the new record's `id` — custom-field values are saved against that id
+   * immediately after create. A create response without one throws a visible
+   * error rather than silently dropping the values the user just typed.
    */
   entityTypeKey?: string;
 }
@@ -581,7 +586,14 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     for (const [name, value] of Object.entries(data)) {
       const decoded = decodeCustomFieldName(name);
       if (decoded !== null) {
-        customFieldValues[decoded] = value;
+        // A cleared input submits "". The API reads null as "clear this value
+        // in place", but rejects "" for a Number field (it fails decimal
+        // parsing → 422) and would store "" verbatim for a Text field with no
+        // way back to unset. Boolean/Select/Date controls don't produce "" the
+        // same way, so mapping it unconditionally here is safe and needs no
+        // per-type branch. Deliberately NOT applied to entityData below: the
+        // screen's own fields keep whatever they submit today.
+        customFieldValues[decoded] = value === "" ? null : value;
       } else {
         entityData[name] = value;
       }
@@ -605,9 +617,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     },
     [config, propEditFields, propCreateFields, createFields]
   );
+  const editFieldsOwn = useMemo(
+    () => resolveEditFields(viewModel.editingItem),
+    [resolveEditFields, viewModel.editingItem]
+  );
   const editFieldsWithCustom = useMemo(
-    () => [...resolveEditFields(viewModel.editingItem), ...customFieldsForEdit.fieldConfigs],
-    [resolveEditFields, viewModel.editingItem, customFieldsForEdit.fieldConfigs]
+    () => [...editFieldsOwn, ...customFieldsForEdit.fieldConfigs],
+    [editFieldsOwn, customFieldsForEdit.fieldConfigs]
   );
 
   // NOTE (not fixed here): this key embeds `editingItem?.id`, and
@@ -617,9 +633,20 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // the close, which belongs in the viewmodel; doing it in the view requires
   // reading a ref during render, which this codebase's lint rules correctly
   // forbid. Tracked separately rather than papered over.
+  //
+  // Hashes the SCREEN'S OWN field names only — never the custom-field configs.
+  // GenericModal uses this string as a React `key` on the wrapper around
+  // GenericForm, so anything in it that changes while the modal is open
+  // unmounts the form and throws away everything the user typed. Custom fields
+  // arrive asynchronously and grow by one every time the inline "+ Add custom
+  // field" dialog succeeds; keying on them wiped the open form on each add.
+  // GenericForm already absorbs a growing `fields` array without a remount (it
+  // seeds only fields that have no value yet, preserving typed input), so no
+  // remount is needed for custom fields to appear or to pick up their stored
+  // values on edit.
   const editFormKey = `edit-form-${
     viewModel.editingItem?.id || "new"
-  }-${JSON.stringify(editFieldsWithCustom?.map((f) => f.name).sort())}-${config?.formKey || 0}`;
+  }-${JSON.stringify(editFieldsOwn?.map((f) => f.name).sort())}-${config?.formKey || 0}`;
 
   // Auto-generate pagination and search for config-based usage
   const pagination =
@@ -1029,9 +1056,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         onOpenChange={viewModel.setIsCreateModalOpen}
         title={t("crud.modal.createTitle", { entity: title })}
         description={t("crud.modal.createDescription", { entity })}
-        formKey={`create-form-${JSON.stringify(
-          createFieldsWithCustom?.map((f) => f.name).sort()
-        )}-${config?.formKey || 0}`}
+        // Screen's own fields only — see the editFormKey note above: keying on
+        // the custom-field configs remounted the form (wiping it) every time
+        // the inline "+ Add custom field" dialog added one.
+        formKey={`create-form-${JSON.stringify(createFields?.map((f) => f.name).sort())}-${
+          config?.formKey || 0
+        }`}
       >
         <GenericForm
           fields={createFieldsWithCustom || []}
@@ -1040,7 +1070,16 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
             const created = await viewModel.createItem(entityData);
             const newId = (created as { id?: string } | undefined)?.id;
-            if (config?.entityTypeKey && newId && Object.keys(customFieldValues).length > 0) {
+            if (config?.entityTypeKey && Object.keys(customFieldValues).length > 0) {
+              if (!newId) {
+                // The values were typed, the record was created, and there is
+                // no id to hang them on — dropping them silently is the one
+                // outcome the user can't detect. Throwing routes this into
+                // GenericForm's catch → setServerError, which renders it.
+                throw new Error(
+                  "Custom field values could not be saved: this screen's create response did not return an id. entityTypeKey requires createItem to resolve to { id }."
+                );
+              }
               await getCustomFieldsExtensionOrThrow().saveValues(
                 config.entityTypeKey,
                 newId,
@@ -1054,7 +1093,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         {config?.entityTypeKey && (
           <CustomFieldsExtensionTrigger
             entityTypeKey={config.entityTypeKey}
-            onCreated={customFieldsForCreate.refetch}
+            // InlineAddTrigger's onCreated is `() => void`, so handing it
+            // `refetch` directly floated the returned promise. refetch never
+            // rejects (useCustomFieldsFormFields captures failures into its own
+            // `error` state), and the explicit `void` keeps that intentional.
+            onCreated={() => {
+              void customFieldsForCreate.refetch();
+            }}
           />
         )}
       </GenericModal>
@@ -1101,7 +1146,10 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         {config?.entityTypeKey && (
           <CustomFieldsExtensionTrigger
             entityTypeKey={config.entityTypeKey}
-            onCreated={customFieldsForEdit.refetch}
+            // Same fire-and-forget contract as the create modal's trigger.
+            onCreated={() => {
+              void customFieldsForEdit.refetch();
+            }}
           />
         )}
       </GenericModal>

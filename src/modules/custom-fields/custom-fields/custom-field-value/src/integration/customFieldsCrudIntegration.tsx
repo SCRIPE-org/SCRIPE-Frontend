@@ -1,12 +1,10 @@
 import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import {
   encodeCustomFieldName,
-  decodeCustomFieldName,
   registerCustomFieldsExtension,
   type CustomFieldsExtensionApi,
 } from "@core/crud/customFieldsExtension";
-import { usePermission } from "@core/hooks/use-permission";
-import { customFieldsContainer, getCustomFieldsContainer } from "../../../di";
+import { customFieldsContainer } from "../../../di";
 import type {
   EntityCustomFieldValueData,
   CustomFieldValueTypeName,

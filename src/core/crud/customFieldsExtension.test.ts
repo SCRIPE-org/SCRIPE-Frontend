@@ -19,6 +19,15 @@ function makeApi(overrides: Partial<CustomFieldsExtensionApi> = {}): CustomField
   };
 }
 
+describe("customFieldsExtension registry", () => {
+  it("hands back the exact api that was registered", () => {
+    const api = makeApi();
+    registerCustomFieldsExtension(api);
+
+    expect(getCustomFieldsExtension()).toBe(api);
+  });
+});
+
 describe("customFieldsExtension naming contract", () => {
   it("round-trips a key through encode/decode", () => {
     const encoded = encodeCustomFieldName("nationality");
@@ -56,6 +65,23 @@ describe("useCustomFieldsFormFields", () => {
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.fieldConfigs).toEqual(fields);
+    expect(result.current.error).toBeNull();
     expect(api.getFormFields).toHaveBeenCalledWith("party.person", undefined);
+  });
+
+  it("captures a getFormFields rejection into `error` instead of letting it escape unhandled", async () => {
+    const failure = new Error("403 Forbidden");
+    const api = makeApi({ getFormFields: vi.fn().mockRejectedValue(failure) });
+    registerCustomFieldsExtension(api);
+
+    const { result } = renderHook(() => useCustomFieldsFormFields("party.person", undefined));
+
+    await waitFor(() => expect(result.current.error).toBe(failure));
+    expect(result.current.isLoading).toBe(false);
+    expect(result.current.fieldConfigs).toEqual([]);
+    // refetch must resolve, never reject — both production call sites are
+    // fire-and-forget (`void refetch()`), so a rejecting refetch would be an
+    // unhandled rejection.
+    await expect(result.current.refetch()).resolves.toBeUndefined();
   });
 });
