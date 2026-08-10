@@ -1,5 +1,14 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+// `vitest.setup.ts` (which registers jest-dom's matchers at runtime for every
+// suite) is itself excluded from tsc's project (see tsconfig.json "exclude"),
+// and even so, it imports the plain "@testing-library/jest-dom" entry, which
+// only augments Jest's global `expect` types, not Vitest's `Assertion<T>`.
+// This is the first *.test.tsx in the repo living outside a `__tests__`
+// folder (those are excluded from tsc entirely) that calls a jest-dom
+// matcher, so it's the first to need this import for `tsc --noEmit` to see
+// `toBeInTheDocument` on Vitest's own `expect()` return type.
+import "@testing-library/jest-dom/vitest";
 import { GenericCrudView, type CrudConfig } from "./generic-crud-view";
 import { registerCustomFieldsExtension, type CustomFieldsExtensionApi } from "@core/crud/customFieldsExtension";
 
@@ -90,6 +99,60 @@ describe("GenericCrudView + entityTypeKey", () => {
     );
     await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
       "party.person", "new-record-id", { nationality: "Egyptian" }
+    ));
+  });
+
+  it("renders without crashing when a screen sets neither createFields nor entityTypeKey (the real-screen shape: UsersView, DsrView, InvoiceListView, EditionsView, TenantPlansView, TenantFeatureDefinitionsView, ThemeManagementView, ConnectOnboardingView)", async () => {
+    const extension = registerFakeCustomFieldsExtension();
+    const vm = makeViewModel();
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      // Deliberately no createFields, no entityTypeKey — createFields is
+      // `undefined` at runtime here, which used to crash createFieldsWithCustom's
+      // unguarded spread.
+    };
+
+    expect(() => render(<GenericCrudView viewModel={vm} config={config} />)).not.toThrow();
+
+    // No entityTypeKey means the extension must never be consulted.
+    expect(extension.getFormFields).not.toHaveBeenCalled();
+  });
+
+  it("appends the custom field to the edit form and saves its value keyed by the editing item's id", async () => {
+    const extension = registerFakeCustomFieldsExtension();
+    const editingItem = { id: "existing-record-id", firstName: "Jane" };
+    const vm = makeViewModel({
+      isCreateModalOpen: false,
+      isEditModalOpen: true,
+      editingItem,
+    });
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+
+    await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
+
+    fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Janet" } });
+    fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
+    fireEvent.click(screen.getByText("common.save"));
+
+    await waitFor(() => expect(vm.updateItem).toHaveBeenCalledWith(
+      "existing-record-id",
+      expect.objectContaining({ firstName: "Janet" })
+    ));
+    // The namespaced custom-field key must NOT leak into the entity's own update payload.
+    expect(vm.updateItem).not.toHaveBeenCalledWith(
+      "existing-record-id",
+      expect.objectContaining({ "__cf__nationality": expect.anything() })
+    );
+    await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
+      "party.person", "existing-record-id", { nationality: "Egyptian" }
     ));
   });
 });

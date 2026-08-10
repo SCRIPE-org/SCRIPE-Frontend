@@ -548,7 +548,15 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     ? config.getActions(viewModel, t, handleDelete)
     : propActions;
 
-  const createFields = config?.createFields || propCreateFields!;
+  // Real screens (UsersView, DsrView, InvoiceListView, EditionsView,
+  // TenantPlansView, TenantFeatureDefinitionsView, ThemeManagementView,
+  // ConnectOnboardingView, …) render read-only lists and set neither
+  // `config.createFields` nor the `createFields` prop, so this is genuinely
+  // `undefined` at runtime — the `!` this used to carry was a lie the
+  // compiler had no way to check. Every existing read of this variable
+  // already guarded with `|| []`; keep it typed honestly so a future spread
+  // (like createFieldsWithCustom below) can't skip that guard again.
+  const createFields = config?.createFields || propCreateFields;
   const customFieldsForCreate = useCustomFieldsFormFields(config?.entityTypeKey, undefined);
   const customFieldsForEdit = useCustomFieldsFormFields(
     config?.entityTypeKey,
@@ -556,7 +564,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   );
 
   const createFieldsWithCustom = useMemo(
-    () => [...createFields, ...customFieldsForCreate.fieldConfigs],
+    () => [...(createFields ?? []), ...customFieldsForCreate.fieldConfigs],
     [createFields, customFieldsForCreate.fieldConfigs]
   );
 
