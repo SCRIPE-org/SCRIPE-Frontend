@@ -26,7 +26,7 @@ describe("CustomFieldValueService", () => {
         customFieldId: "encrypted-id",
         key: "shirt_size",
         labelEn: "Shirt Size",
-        valueType: 0,
+        valueType: "Text",
         isRequired: false,
         sortOrder: 0,
         value: "M",
