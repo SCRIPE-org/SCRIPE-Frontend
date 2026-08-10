@@ -100,6 +100,10 @@ describe("GenericCrudView + entityTypeKey", () => {
     await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
       "party.person", "new-record-id", { nationality: "Egyptian" }
     ));
+    // The wrapper must drive the close itself, sequenced AFTER saveValues
+    // settles — not rely solely on the viewmodel's own onCreateSuccess, which
+    // (for the real useCrudViewModel hook) fires before saveValues even runs.
+    await waitFor(() => expect(vm.setIsCreateModalOpen).toHaveBeenCalledWith(false));
   });
 
   it("renders without crashing when a screen sets neither createFields nor entityTypeKey (the real-screen shape: UsersView, DsrView, InvoiceListView, EditionsView, TenantPlansView, TenantFeatureDefinitionsView, ThemeManagementView, ConnectOnboardingView)", async () => {
@@ -210,6 +214,29 @@ describe("GenericCrudView + entityTypeKey", () => {
       /create response did not return an id/i
     ));
     expect(extension.saveValues).not.toHaveBeenCalled();
+  });
+
+  it("keeps the create modal open and does not swallow the error when saveValues fails after createItem succeeds", async () => {
+    const extension = registerFakeCustomFieldsExtension();
+    vi.mocked(extension.saveValues).mockRejectedValueOnce(new Error("Custom field values could not be saved"));
+    const vm = makeViewModel();
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+    await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
+    fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Jane" } });
+    fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
+    fireEvent.click(screen.getByText("common.save"));
+
+    await waitFor(() => expect(vm.createItem).toHaveBeenCalled());
+    // The modal-close call driven by this wrapper must NOT fire when saveValues rejects.
+    await waitFor(() => expect(screen.getByText(/could not be saved/i)).toBeInTheDocument());
+    expect(vm.setIsCreateModalOpen).not.toHaveBeenCalledWith(false);
   });
 
   it("keeps what the user already typed when the inline add-custom-field trigger adds a field mid-form", async () => {

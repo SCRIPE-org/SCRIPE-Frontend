@@ -1070,22 +1070,50 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
             const created = await viewModel.createItem(entityData);
             const newId = (created as { id?: string } | undefined)?.id;
-            if (config?.entityTypeKey && Object.keys(customFieldValues).length > 0) {
-              if (!newId) {
-                // The values were typed, the record was created, and there is
-                // no id to hang them on — dropping them silently is the one
-                // outcome the user can't detect. Throwing routes this into
-                // GenericForm's catch → setServerError, which renders it.
-                throw new Error(
-                  "Custom field values could not be saved: this screen's create response did not return an id. entityTypeKey requires createItem to resolve to { id }."
+            if (config?.entityTypeKey) {
+              if (Object.keys(customFieldValues).length > 0) {
+                if (!newId) {
+                  // The values were typed, the record was created, and there is
+                  // no id to hang them on — dropping them silently is the one
+                  // outcome the user can't detect. Throwing routes this into
+                  // GenericForm's catch → setServerError, which renders it.
+                  // Deliberately NOT calling setIsCreateModalOpen(false) below
+                  // this point: the dialog must stay mounted for that error to
+                  // be visible.
+                  throw new Error(
+                    "Custom field values could not be saved: this screen's create response did not return an id. entityTypeKey requires createItem to resolve to { id }."
+                  );
+                }
+                // Let a save failure here propagate too — same reasoning as
+                // above, same catch → setServerError path, same "don't close"
+                // requirement.
+                await getCustomFieldsExtensionOrThrow().saveValues(
+                  config.entityTypeKey,
+                  newId,
+                  customFieldValues
                 );
+                void customFieldsForCreate.refetch();
               }
-              await getCustomFieldsExtensionOrThrow().saveValues(
-                config.entityTypeKey,
-                newId,
-                customFieldValues
-              );
-              void customFieldsForCreate.refetch();
+              // Reaching this line means the custom-field save (if there was
+              // one to do) has actually settled successfully. Close the modal
+              // ourselves here, sequenced AFTER that save rather than before
+              // it — do not lean on useCrudViewModel's onCreateSuccess for an
+              // entityTypeKey screen, because that fires as soon as
+              // viewModel.createItem's own promise resolves, i.e. before this
+              // function has even reached the saveValues call above, let alone
+              // after it settles.
+              //
+              // NOTE: for a screen wired through the standard useCrudViewModel,
+              // onCreateSuccess still runs automatically on createItem's
+              // resolution (its own toast + close), and this call is a no-op
+              // on top of that. That is unavoidable without editing
+              // useCrudViewModel/useGenericMutations, which is out of scope
+              // for this fix (tracked separately). What this containment DOES
+              // guarantee, for any viewmodel including ones that don't
+              // auto-close: the modal is only ever explicitly closed by this
+              // wrapper after a custom-field save has actually succeeded, and
+              // is never explicitly closed by this wrapper when it fails.
+              viewModel.setIsCreateModalOpen(false);
             }
           }}
           onCancel={() => viewModel.setIsCreateModalOpen(false)}
