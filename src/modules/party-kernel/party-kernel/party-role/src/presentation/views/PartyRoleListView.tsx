@@ -55,6 +55,7 @@ export const PartyRoleListView = React.memo(function PartyRoleListView() {
     titleKey: "partyRole.title",
     subtitleKey: "partyRole.description",
     resource: "party-roles",
+    entityTypeKey: "party.role",
     columns: [
       {
         key: "partyId",

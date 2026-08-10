@@ -40,6 +40,7 @@ export const StaffAvailabilityListView = React.memo(function StaffAvailabilityLi
     titleKey: "staffAvailability.title",
     subtitleKey: "staffAvailability.description",
     resource: "staff-availabilities",
+    entityTypeKey: "hrms.staff-availability",
     columns: [
       {
         key: "staffMemberId",

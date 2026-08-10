@@ -28,6 +28,7 @@ export const CertificationListView = React.memo(function CertificationListView()
     titleKey: "certification.title",
     subtitleKey: "certification.description",
     resource: "certifications",
+    entityTypeKey: "hrms.certification",
     columns: [
       {
         key: "name",

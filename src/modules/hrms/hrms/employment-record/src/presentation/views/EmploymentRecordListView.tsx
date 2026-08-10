@@ -29,6 +29,7 @@ export const EmploymentRecordListView = React.memo(function EmploymentRecordList
     titleKey: "employmentRecord.title",
     subtitleKey: "employmentRecord.description",
     resource: "employment-records",
+    entityTypeKey: "hrms.employment-record",
     columns: [
       {
         key: "staffMemberId",

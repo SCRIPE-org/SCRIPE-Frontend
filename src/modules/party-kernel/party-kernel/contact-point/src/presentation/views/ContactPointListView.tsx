@@ -51,6 +51,7 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
     titleKey: "contactPoint.title",
     subtitleKey: "contactPoint.description",
     resource: "contact-points",
+    entityTypeKey: "party.contact-point",
     columns: [
       {
         key: "partyId",

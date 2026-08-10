@@ -33,6 +33,7 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
     titleKey: "partyOrganization.title",
     subtitleKey: "partyOrganization.description",
     resource: "party-organizations",
+    entityTypeKey: "party.organization",
     columns: [
       {
         key: "partyId",

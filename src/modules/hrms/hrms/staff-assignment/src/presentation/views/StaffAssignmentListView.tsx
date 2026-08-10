@@ -29,6 +29,7 @@ export const StaffAssignmentListView = React.memo(function StaffAssignmentListVi
     titleKey: "staffAssignment.title",
     subtitleKey: "staffAssignment.description",
     resource: "staff-assignments",
+    entityTypeKey: "hrms.staff-assignment",
     columns: [
       {
         key: "staffMemberId",

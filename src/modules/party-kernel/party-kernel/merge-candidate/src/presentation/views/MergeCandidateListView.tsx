@@ -53,6 +53,7 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
     titleKey: "mergeCandidate.title",
     subtitleKey: "mergeCandidate.description",
     resource: "merge-candidates",
+    entityTypeKey: "party.merge-candidate",
     columns: [
       {
         key: "primaryPartyId",

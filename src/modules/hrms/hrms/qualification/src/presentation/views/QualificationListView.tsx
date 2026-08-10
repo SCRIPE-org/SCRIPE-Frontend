@@ -28,6 +28,7 @@ export const QualificationListView = React.memo(function QualificationListView()
     titleKey: "qualification.title",
     subtitleKey: "qualification.description",
     resource: "qualifications",
+    entityTypeKey: "hrms.qualification",
     columns: [
       {
         key: "title",

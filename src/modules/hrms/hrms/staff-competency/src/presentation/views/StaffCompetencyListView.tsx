@@ -29,6 +29,7 @@ export const StaffCompetencyListView = React.memo(function StaffCompetencyListVi
     titleKey: "staffCompetency.title",
     subtitleKey: "staffCompetency.description",
     resource: "staff-competencies",
+    entityTypeKey: "hrms.staff-competency",
     columns: [
       {
         key: "competencyName",

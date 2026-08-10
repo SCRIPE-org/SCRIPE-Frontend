@@ -28,6 +28,7 @@ export const StaffMemberListView = React.memo(function StaffMemberListView() {
     titleKey: "staffMember.title",
     subtitleKey: "staffMember.description",
     resource: "staff-members",
+    entityTypeKey: "hrms.staff-member",
     columns: [
       {
         key: "firstName",

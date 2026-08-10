@@ -47,6 +47,7 @@ export const PartyRelationshipListView = React.memo(function PartyRelationshipLi
     titleKey: "partyRelationship.title",
     subtitleKey: "partyRelationship.description",
     resource: "party-relationships",
+    entityTypeKey: "party.relationship",
     columns: [
       {
         key: "sourcePartyId",
