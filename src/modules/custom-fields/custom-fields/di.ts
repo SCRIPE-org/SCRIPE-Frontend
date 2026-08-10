@@ -16,9 +16,17 @@ import { CustomFieldRepository } from "./custom-field/src/data/repositories/Cust
 import type { ICustomFieldService } from "./custom-field/src/domain/interfaces/ICustomFieldService";
 import type { ICustomFieldRepository } from "./custom-field/src/domain/interfaces/ICustomFieldRepository";
 
+// CustomFieldValue
+import { CustomFieldValueService } from "./custom-field-value/src/data/services/CustomFieldValueService";
+import { CustomFieldValueRepository } from "./custom-field-value/src/data/repositories/CustomFieldValueRepository";
+import type { ICustomFieldValueService } from "./custom-field-value/src/domain/interfaces/ICustomFieldValueService";
+import type { ICustomFieldValueRepository } from "./custom-field-value/src/domain/interfaces/ICustomFieldValueRepository";
+
 export interface CustomFieldsContainer {
   customFieldService: ICustomFieldService;
   customFieldRepository: ICustomFieldRepository;
+  customFieldValueService: ICustomFieldValueService;
+  customFieldValueRepository: ICustomFieldValueRepository;
 }
 
 let _container: CustomFieldsContainer | null = null;
@@ -31,10 +39,13 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
     const apiService = getModuleApiService("CUSTOMFIELDS");
 
     const customFieldService = new CustomFieldService(apiService);
+    const customFieldValueService = new CustomFieldValueService(apiService);
 
     _container = {
       customFieldService,
       customFieldRepository: new CustomFieldRepository(customFieldService),
+      customFieldValueService,
+      customFieldValueRepository: new CustomFieldValueRepository(customFieldValueService),
     };
   }
 
@@ -47,5 +58,8 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
 export const customFieldsContainer = {
   get customFieldRepository() {
     return getCustomFieldsContainer().customFieldRepository;
+  },
+  get customFieldValueRepository() {
+    return getCustomFieldsContainer().customFieldValueRepository;
   },
 };
