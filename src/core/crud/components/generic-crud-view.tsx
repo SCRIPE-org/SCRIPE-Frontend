@@ -1051,6 +1051,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           }}
           onCancel={() => viewModel.setIsCreateModalOpen(false)}
         />
+        {config?.entityTypeKey && (
+          <CustomFieldsExtensionTrigger
+            entityTypeKey={config.entityTypeKey}
+            onCreated={customFieldsForCreate.refetch}
+          />
+        )}
       </GenericModal>
 
       {/* Unified Modal for Edit */}
@@ -1092,6 +1098,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           }
           onCancel={() => viewModel.closeEditModal()}
         />
+        {config?.entityTypeKey && (
+          <CustomFieldsExtensionTrigger
+            entityTypeKey={config.entityTypeKey}
+            onCreated={customFieldsForEdit.refetch}
+          />
+        )}
       </GenericModal>
 
       {/* View Modal */}
@@ -1155,4 +1167,11 @@ function getCustomFieldsExtensionOrThrow() {
     );
   }
   return api;
+}
+
+function CustomFieldsExtensionTrigger(props: { entityTypeKey: string; onCreated: () => void }) {
+  const api = getCustomFieldsExtension();
+  if (!api) return null;
+  const Trigger = api.InlineAddTrigger;
+  return <Trigger {...props} />;
 }
