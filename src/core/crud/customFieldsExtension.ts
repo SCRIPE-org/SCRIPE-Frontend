@@ -26,8 +26,18 @@ export interface CustomFieldsExtensionApi {
     ownerId: string,
     valuesByCustomFieldKey: Record<string, unknown>
   ) => Promise<void>;
-  /** Self-contained trigger + dialog; internally gates on the custom-fields.create permission via its own usePermission call. */
-  InlineAddTrigger: React.ComponentType<{ entityTypeKey: string; onCreated: () => void }>;
+  /**
+   * Self-contained trigger + dialog; internally gates on the custom-fields.create
+   * permission via its own usePermission call. `entityDisplayName` is the host
+   * screen's already-translated title (e.g. "Party People") shown in the dialog
+   * in place of the raw entityTypeKey ("party.person") — optional so a caller
+   * with no ready display name (or a test) still gets a working dialog.
+   */
+  InlineAddTrigger: React.ComponentType<{
+    entityTypeKey: string;
+    entityDisplayName?: string;
+    onCreated: () => void;
+  }>;
 }
 
 let registeredApi: CustomFieldsExtensionApi | null = null;

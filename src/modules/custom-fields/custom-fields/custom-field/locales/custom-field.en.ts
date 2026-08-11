@@ -44,5 +44,12 @@ export const en = {
     // Required / Optional flag
     required: "Required",
     optional: "Optional",
+
+    // Inline "+ Add custom field" trigger, opened from inside another
+    // screen's create/edit form (not the /custom-fields definitions screen).
+    inlineAdd: {
+      trigger: "+ Add custom field",
+      dialogTitle: "Add custom field — {entity}",
+    },
   },
 };

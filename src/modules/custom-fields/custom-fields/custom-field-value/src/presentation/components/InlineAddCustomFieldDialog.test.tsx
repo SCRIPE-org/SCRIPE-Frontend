@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { InlineAddCustomFieldDialog } from "./InlineAddCustomFieldDialog";
 import { getCustomFieldsContainer } from "../../../../di";
@@ -52,17 +52,25 @@ describe("InlineAddCustomFieldDialog", () => {
 
     render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
 
-    expect(screen.queryByText(/add custom field/i)).not.toBeInTheDocument();
+    // Outside a loaded I18nProvider, t() returns the raw key (same convention
+    // used throughout this codebase's component tests, e.g. "common.save"
+    // below) — this dialog's trigger renders "customField.inlineAdd.trigger"
+    // verbatim, not real English text.
+    expect(screen.queryByText("customField.inlineAdd.trigger")).not.toBeInTheDocument();
   });
 
   it("opens a dialog, submits with entityTypeKey pre-set, and calls onCreated on success", async () => {
     const onCreated = vi.fn();
     render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={onCreated} />);
 
-    fireEvent.click(screen.getByText(/add custom field/i));
+    fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-    fireEvent.change(screen.getByLabelText(/key/i), { target: { value: "nationality" } });
-    fireEvent.change(screen.getByLabelText(/label \(en\)/i), { target: { value: "Nationality" } });
+    fireEvent.change(screen.getByLabelText("customField.fields.key"), {
+      target: { value: "nationality" },
+    });
+    fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), {
+      target: { value: "Nationality" },
+    });
     fireEvent.click(screen.getByText("common.save"));
 
     await waitFor(() =>
@@ -71,5 +79,60 @@ describe("InlineAddCustomFieldDialog", () => {
       )
     );
     await waitFor(() => expect(onCreated).toHaveBeenCalled());
+  });
+
+  describe("dialog title's {entity} interpolation source", () => {
+    // The rest of this file's assertions rely on t() falling back to the
+    // bare key outside a real I18nProvider — which proves the KEY is right,
+    // but t() ignores its params object on that fallback path (see
+    // i18n-provider.tsx's reportMissingKey), so it can't also prove
+    // entityDisplayName is the value actually reaching the {entity}
+    // interpolation slot. This block mocks useI18n directly and asserts on
+    // t's call arguments instead, which is what a fallback-key assertion
+    // structurally cannot show — needed because useModuleLocales (called
+    // internally by the component) also calls useI18n(), so the mock must
+    // supply its full shape, not just t.
+    afterEach(() => {
+      vi.doUnmock("@core/providers/i18n-provider");
+    });
+
+    it("passes entityDisplayName as {entity} when given, and the raw entityTypeKey as {entity} when not", async () => {
+      const tSpy = vi.fn((key: string) => key);
+      vi.doMock("@core/providers/i18n-provider", () => ({
+        useI18n: () => ({
+          t: tSpy,
+          language: "en",
+          direction: "ltr",
+          setLanguage: vi.fn(),
+          registerBothLanguages: vi.fn(),
+          markModuleLoaded: vi.fn(),
+          isModuleLoaded: () => true,
+        }),
+      }));
+      vi.resetModules();
+      const { InlineAddCustomFieldDialog: FreshDialog } = await import(
+        "./InlineAddCustomFieldDialog"
+      );
+
+      const { unmount } = render(
+        <FreshDialog
+          entityTypeKey="party.person"
+          entityDisplayName="Party People"
+          onCreated={vi.fn()}
+        />
+      );
+      fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
+      expect(tSpy).toHaveBeenCalledWith("customField.inlineAdd.dialogTitle", {
+        entity: "Party People",
+      });
+      unmount();
+
+      tSpy.mockClear();
+      render(<FreshDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
+      fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
+      expect(tSpy).toHaveBeenCalledWith("customField.inlineAdd.dialogTitle", {
+        entity: "party.person",
+      });
+    });
   });
 });

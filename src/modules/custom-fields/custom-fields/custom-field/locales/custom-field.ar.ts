@@ -44,5 +44,12 @@ export const ar = {
     // Required / Optional flag
     required: "إلزامي",
     optional: "اختياري",
+
+    // Inline "+ Add custom field" trigger, opened from inside another
+    // screen's create/edit form (not the /custom-fields definitions screen).
+    inlineAdd: {
+      trigger: "+ إضافة حقل مخصص",
+      dialogTitle: "إضافة حقل مخصص — {entity}",
+    },
   },
 };
