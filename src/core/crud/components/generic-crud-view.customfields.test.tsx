@@ -284,4 +284,37 @@ describe("GenericCrudView + entityTypeKey", () => {
     expect(screen.getByLabelText("First Name")).toHaveValue("Jane");
     expect(screen.getByLabelText("Nationality")).toHaveValue("Egyptian");
   });
+
+  it("fetches the read-only View dialog's custom-field values keyed by the viewed item's id, not editingItem's (which may be null or a different record entirely)", async () => {
+    const extension = registerFakeCustomFieldsExtension();
+    const vm = makeViewModel({
+      isCreateModalOpen: false,
+      viewModalOpen: true,
+      viewItem: { id: "viewed-record-id", firstName: "Jane" },
+      closeViewModal: vi.fn(),
+      // editingItem deliberately null: View opened on its own, not mid-edit.
+      // Before the fix, the View dialog's custom fields were sourced from a
+      // hook keyed on editingItem.id, so this scenario fetched with an
+      // undefined ownerId and always rendered the section empty.
+      editingItem: null,
+    });
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+
+    // customFieldsForCreate/Edit are unconditional hooks too (Rules of Hooks)
+    // and legitimately also call getFormFields with an undefined ownerId
+    // here — create always does, and edit does because editingItem is null.
+    // That's expected, not the regression under test. What the fix actually
+    // guarantees is that a THIRD call exists, keyed on the view item's own
+    // id — before the fix, no call anywhere used "viewed-record-id".
+    await waitFor(() => expect(extension.getFormFields).toHaveBeenCalledWith(
+      "party.person", "viewed-record-id"
+    ));
+  });
 });

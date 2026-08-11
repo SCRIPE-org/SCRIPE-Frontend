@@ -567,6 +567,14 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     config?.entityTypeKey,
     viewModel.editingItem?.id
   );
+  // The read-only View dialog is a separate open/item pair from Edit
+  // (viewModel.viewItem, not viewModel.editingItem) — fetching custom-field
+  // values off editingItem here left View always empty unless a record
+  // happened to also be the current edit target.
+  const customFieldsForView = useCustomFieldsFormFields(
+    config?.entityTypeKey,
+    viewModel.viewItem?.id
+  );
 
   const createFieldsWithCustom = useMemo(
     () => [...(createFields ?? []), ...customFieldsForCreate.fieldConfigs],
@@ -624,6 +632,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const editFieldsWithCustom = useMemo(
     () => [...editFieldsOwn, ...customFieldsForEdit.fieldConfigs],
     [editFieldsOwn, customFieldsForEdit.fieldConfigs]
+  );
+  // Same entity-owned field set as Edit (editFieldsOwn) — View has never had
+  // its own field-shape resolution, only the custom-field portion needs the
+  // view-item-keyed source.
+  const viewFieldsWithCustom = useMemo(
+    () => [...editFieldsOwn, ...customFieldsForView.fieldConfigs],
+    [editFieldsOwn, customFieldsForView.fieldConfigs]
   );
 
   // NOTE (not fixed here): this key embeds `editingItem?.id`, and
@@ -1196,7 +1211,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             <DialogTitle>{t("crud.modal.viewTitle", { entity: title })}</DialogTitle>
           </DialogHeader>
           <GenericForm
-            fields={editFieldsWithCustom || createFieldsWithCustom || []}
+            fields={viewFieldsWithCustom || createFieldsWithCustom || []}
             initialValues={
               config?.editInitialValues && viewModel.viewItem
                 ? config.editInitialValues(viewModel.viewItem)
