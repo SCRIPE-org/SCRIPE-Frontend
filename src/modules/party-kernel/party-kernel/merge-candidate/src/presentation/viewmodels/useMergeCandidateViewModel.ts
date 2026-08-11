@@ -41,7 +41,7 @@ export function useMergeCandidateViewModel() {
     delete: async (id) => {
       await mergeCandidateRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

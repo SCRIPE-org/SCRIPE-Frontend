@@ -55,6 +55,15 @@ function makeViewModel(overrides: Record<string, unknown> = {}) {
     createItem: vi.fn().mockResolvedValue({ id: "new-record-id" }),
     updateItem: vi.fn().mockResolvedValue({}),
     closeEditModal: vi.fn(),
+    // Real useCrudViewModel only does anything on these when the screen's
+    // hook opted into { deferSuccessEffects: true } (see useCrudViewModel.ts)
+    // — this mock always defines them so GenericCrudView's `?.()` call sites
+    // exercise real assertions here instead of silently no-op-ing, but real
+    // callers built from a plain useCrudViewModel() with no options would
+    // not need them called for correct behavior (the hook's own
+    // onCreateSuccess/onUpdateSuccess already closed the modal by then).
+    confirmCreateSuccess: vi.fn(),
+    confirmUpdateSuccess: vi.fn(),
     ...overrides,
   };
 }
@@ -100,10 +109,13 @@ describe("GenericCrudView + entityTypeKey", () => {
     await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
       "party.person", "new-record-id", { nationality: "Egyptian" }
     ));
-    // The wrapper must drive the close itself, sequenced AFTER saveValues
+    // The wrapper must confirm success itself, sequenced AFTER saveValues
     // settles — not rely solely on the viewmodel's own onCreateSuccess, which
-    // (for the real useCrudViewModel hook) fires before saveValues even runs.
-    await waitFor(() => expect(vm.setIsCreateModalOpen).toHaveBeenCalledWith(false));
+    // (for a screen NOT opted into deferSuccessEffects) fires before
+    // saveValues even runs. confirmCreateSuccess is what fires the toast AND
+    // closes the modal for a deferSuccessEffects screen; GenericCrudView
+    // itself never calls setIsCreateModalOpen directly on this path.
+    await waitFor(() => expect(vm.confirmCreateSuccess).toHaveBeenCalled());
   });
 
   it("renders without crashing when a screen sets neither createFields nor entityTypeKey (the real-screen shape: UsersView, DsrView, InvoiceListView, EditionsView, TenantPlansView, TenantFeatureDefinitionsView, ThemeManagementView, ConnectOnboardingView)", async () => {
@@ -158,6 +170,36 @@ describe("GenericCrudView + entityTypeKey", () => {
     await waitFor(() => expect(extension.saveValues).toHaveBeenCalledWith(
       "party.person", "existing-record-id", { nationality: "Egyptian" }
     ));
+    // Same sequencing requirement as create: confirm (toast + close) only
+    // after saveValues has actually settled, not driven by the viewmodel's
+    // own auto-close.
+    await waitFor(() => expect(vm.confirmUpdateSuccess).toHaveBeenCalled());
+  });
+
+  it("does not confirm success (no toast, edit modal stays open) when saveValues fails after updateItem succeeds", async () => {
+    const extension = registerFakeCustomFieldsExtension();
+    vi.mocked(extension.saveValues).mockRejectedValueOnce(new Error("Custom field values could not be saved"));
+    const vm = makeViewModel({
+      isCreateModalOpen: false,
+      isEditModalOpen: true,
+      editingItem: { id: "existing-record-id", firstName: "Jane" },
+    });
+    const config: CrudConfig<{ id: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [{ key: "id", label: "Id" }],
+      createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+    await waitFor(() => expect(screen.getByLabelText("Nationality")).toBeInTheDocument());
+    fireEvent.change(screen.getByLabelText("Nationality"), { target: { value: "Egyptian" } });
+    fireEvent.click(screen.getByText("common.save"));
+
+    await waitFor(() => expect(vm.updateItem).toHaveBeenCalled());
+    await waitFor(() => expect(screen.getByText(/could not be saved/i)).toBeInTheDocument());
+    expect(vm.confirmUpdateSuccess).not.toHaveBeenCalled();
+    expect(vm.closeEditModal).not.toHaveBeenCalled();
   });
 
   it("sends null (not \"\") when the user clears a custom field, so the backend clears it instead of 422-ing", async () => {
@@ -234,8 +276,10 @@ describe("GenericCrudView + entityTypeKey", () => {
     fireEvent.click(screen.getByText("common.save"));
 
     await waitFor(() => expect(vm.createItem).toHaveBeenCalled());
-    // The modal-close call driven by this wrapper must NOT fire when saveValues rejects.
+    // The confirm call driven by this wrapper (toast + close, for a
+    // deferSuccessEffects screen) must NOT fire when saveValues rejects.
     await waitFor(() => expect(screen.getByText(/could not be saved/i)).toBeInTheDocument());
+    expect(vm.confirmCreateSuccess).not.toHaveBeenCalled();
     expect(vm.setIsCreateModalOpen).not.toHaveBeenCalledWith(false);
   });
 

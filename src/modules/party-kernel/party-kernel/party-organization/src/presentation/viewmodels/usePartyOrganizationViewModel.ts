@@ -41,7 +41,7 @@ export function usePartyOrganizationViewModel() {
     delete: async (id) => {
       await partyOrganizationRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

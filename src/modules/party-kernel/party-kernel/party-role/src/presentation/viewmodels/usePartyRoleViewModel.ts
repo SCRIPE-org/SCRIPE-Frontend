@@ -41,7 +41,7 @@ export function usePartyRoleViewModel() {
     delete: async (id) => {
       await partyRoleRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

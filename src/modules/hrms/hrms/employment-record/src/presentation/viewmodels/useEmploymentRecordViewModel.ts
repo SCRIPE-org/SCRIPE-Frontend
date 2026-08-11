@@ -43,7 +43,7 @@ export function useEmploymentRecordViewModel() {
     delete: async (id) => {
       await employmentRecordRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

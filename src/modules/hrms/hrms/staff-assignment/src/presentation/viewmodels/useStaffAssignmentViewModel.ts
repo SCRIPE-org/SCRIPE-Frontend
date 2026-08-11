@@ -43,7 +43,7 @@ export function useStaffAssignmentViewModel() {
     delete: async (id) => {
       await staffAssignmentRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

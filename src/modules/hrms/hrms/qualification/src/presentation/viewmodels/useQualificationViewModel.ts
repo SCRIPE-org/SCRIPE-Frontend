@@ -43,7 +43,7 @@ export function useQualificationViewModel() {
     delete: async (id) => {
       await qualificationRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

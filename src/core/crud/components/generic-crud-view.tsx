@@ -1110,25 +1110,22 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 void customFieldsForCreate.refetch();
               }
               // Reaching this line means the custom-field save (if there was
-              // one to do) has actually settled successfully. Close the modal
-              // ourselves here, sequenced AFTER that save rather than before
-              // it — do not lean on useCrudViewModel's onCreateSuccess for an
-              // entityTypeKey screen, because that fires as soon as
-              // viewModel.createItem's own promise resolves, i.e. before this
-              // function has even reached the saveValues call above, let alone
-              // after it settles.
+              // one to do) has actually settled successfully — fire the
+              // success toast and close the modal ourselves, here, sequenced
+              // AFTER that save rather than before it.
               //
-              // NOTE: for a screen wired through the standard useCrudViewModel,
-              // onCreateSuccess still runs automatically on createItem's
-              // resolution (its own toast + close), and this call is a no-op
-              // on top of that. That is unavoidable without editing
-              // useCrudViewModel/useGenericMutations, which is out of scope
-              // for this fix (tracked separately). What this containment DOES
-              // guarantee, for any viewmodel including ones that don't
-              // auto-close: the modal is only ever explicitly closed by this
-              // wrapper after a custom-field save has actually succeeded, and
-              // is never explicitly closed by this wrapper when it fails.
-              viewModel.setIsCreateModalOpen(false);
+              // Requires the screen's own useXViewModel to have opted into
+              // useCrudViewModel's { deferSuccessEffects: true } (all 14
+              // entityTypeKey screens do) — that option is what stops
+              // useGenericMutations' onCreateSuccess from firing the toast
+              // and closing the modal itself the instant createItem's own
+              // promise resolves, before this function has even reached the
+              // saveValues call above. Without that option, confirmCreateSuccess
+              // here is a harmless no-op on top of the auto-close: still
+              // present, since it's called unconditionally whenever
+              // entityTypeKey is set, but the auto behavior already won by
+              // the time this runs.
+              viewModel.confirmCreateSuccess?.();
             }
           }}
           onCancel={() => viewModel.setIsCreateModalOpen(false)}
@@ -1136,6 +1133,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         {config?.entityTypeKey && (
           <CustomFieldsExtensionTrigger
             entityTypeKey={config.entityTypeKey}
+            entityDisplayName={title}
             // InlineAddTrigger's onCreated is `() => void`, so handing it
             // `refetch` directly floated the returned promise. refetch never
             // rejects (useCustomFieldsFormFields captures failures into its own
@@ -1170,13 +1168,23 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
             if (!viewModel.editingItem) return;
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
             await viewModel.updateItem(viewModel.editingItem.id, entityData);
-            if (config?.entityTypeKey && Object.keys(customFieldValues).length > 0) {
-              await getCustomFieldsExtensionOrThrow().saveValues(
-                config.entityTypeKey,
-                viewModel.editingItem.id,
-                customFieldValues
-              );
-              void customFieldsForEdit.refetch();
+            if (config?.entityTypeKey) {
+              if (Object.keys(customFieldValues).length > 0) {
+                // Let a save failure here propagate — GenericForm's catch →
+                // setServerError renders it, and (with the screen's
+                // useXViewModel opted into deferSuccessEffects) the dialog
+                // stays open and un-auto-closed to show it, same reasoning
+                // as the create path above.
+                await getCustomFieldsExtensionOrThrow().saveValues(
+                  config.entityTypeKey,
+                  viewModel.editingItem.id,
+                  customFieldValues
+                );
+                void customFieldsForEdit.refetch();
+              }
+              // Same sequencing as the create path: fire the toast and close
+              // only after the custom-field save (if any) actually settled.
+              viewModel.confirmUpdateSuccess?.();
             }
           }}
           initialValues={
@@ -1189,6 +1197,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
         {config?.entityTypeKey && (
           <CustomFieldsExtensionTrigger
             entityTypeKey={config.entityTypeKey}
+            entityDisplayName={title}
             // Same fire-and-forget contract as the create modal's trigger.
             onCreated={() => {
               void customFieldsForEdit.refetch();
@@ -1260,7 +1269,11 @@ function getCustomFieldsExtensionOrThrow() {
   return api;
 }
 
-function CustomFieldsExtensionTrigger(props: { entityTypeKey: string; onCreated: () => void }) {
+function CustomFieldsExtensionTrigger(props: {
+  entityTypeKey: string;
+  entityDisplayName?: string;
+  onCreated: () => void;
+}) {
   const api = getCustomFieldsExtension();
   if (!api) return null;
   const Trigger = api.InlineAddTrigger;

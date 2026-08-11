@@ -40,6 +40,18 @@ interface MutationOptions<T> {
    * list query key containing `{ items: T[] }` shaped data.
    */
   optimisticDelete?: boolean;
+  /**
+   * Skip the automatic create/update success toast. For a caller doing
+   * additional async work after the entity itself saves (custom-field
+   * values, a follow-up request) and wanting one toast for the whole
+   * operation instead of "saved" immediately followed by an error — use
+   * the returned `showCreateSuccessToast`/`showUpdateSuccessToast` once
+   * that work actually finishes. Does not affect `onCreateSuccess`/
+   * `onUpdateSuccess`/`onSuccess`, `invalidate`, or error handling —
+   * only the toast call itself. Defaults to false: every existing caller
+   * keeps getting its toast at the same moment as today.
+   */
+  deferSuccessToast?: boolean;
 }
 
 export function useGenericMutations<T extends { id: string }, TCreate = unknown, TUpdate = unknown>(
@@ -70,7 +82,9 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     },
     onSuccess: (data) => {
       invalidate();
-      operationSuccess(options?.successMessages?.create ?? t("common.messages.created"));
+      if (!options?.deferSuccessToast) {
+        operationSuccess(options?.successMessages?.create ?? t("common.messages.created"));
+      }
       options?.onCreateSuccess?.(data);
       options?.onSuccess?.(data);
     },
@@ -88,7 +102,9 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     },
     onSuccess: (data) => {
       invalidate();
-      operationSuccess(options?.successMessages?.update ?? t("common.messages.updated"));
+      if (!options?.deferSuccessToast) {
+        operationSuccess(options?.successMessages?.update ?? t("common.messages.updated"));
+      }
       options?.onUpdateSuccess?.(data);
       options?.onSuccess?.(data);
     },
@@ -156,5 +172,11 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     createError: createMutation.error,
     updateError: updateMutation.error,
     deleteError: deleteMutation.error,
+    /** Fires the create success toast `deferSuccessToast` held back. No-op call otherwise unnecessary — only meaningful paired with `deferSuccessToast: true`. */
+    showCreateSuccessToast: () =>
+      operationSuccess(options?.successMessages?.create ?? t("common.messages.created")),
+    /** Fires the update success toast `deferSuccessToast` held back. */
+    showUpdateSuccessToast: () =>
+      operationSuccess(options?.successMessages?.update ?? t("common.messages.updated")),
   };
 }

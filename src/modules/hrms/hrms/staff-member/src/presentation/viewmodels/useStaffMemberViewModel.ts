@@ -44,7 +44,7 @@ export function useStaffMemberViewModel() {
     delete: async (id) => {
       await staffMemberRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   // Linked User Account picker (F-86): identityUserId is now a server-select
   // resolving to an Identity Admin or User, not a free-text field the caller

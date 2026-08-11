@@ -43,7 +43,7 @@ export function useStaffCompetencyViewModel() {
     delete: async (id) => {
       await staffCompetencyRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

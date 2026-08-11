@@ -41,7 +41,7 @@ export function usePartyPersonViewModel() {
     delete: async (id) => {
       await partyPersonRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

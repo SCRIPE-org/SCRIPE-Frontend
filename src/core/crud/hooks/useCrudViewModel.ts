@@ -7,6 +7,18 @@ import { useAppStore } from "@core/store/useAppStore";
 export interface CrudViewModelOptions {
   initialPageSize?: number;
   enabled?: boolean;
+  /**
+   * Hold back the create/update success toast AND the automatic modal-close
+   * on a successful save. For a caller doing additional async work after the
+   * entity itself saves (e.g. GenericCrudView's entityTypeKey path saving
+   * custom-field values) and needing the whole operation — not just the
+   * entity's own save — to succeed before telling the user it's done. Call
+   * `confirmCreateSuccess()` / `confirmUpdateSuccess()` once that follow-up
+   * work actually finishes; call neither on failure, so the dialog stays
+   * open with whatever error the caller surfaces. Defaults to false: every
+   * existing caller keeps today's immediate toast + auto-close.
+   */
+  deferSuccessEffects?: boolean;
 }
 
 export type SortDirection = "asc" | "desc";
@@ -86,13 +98,15 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
   // ever be open, but a latent trap for any future path (or a modal={false}
   // interaction quirk) that left both flags true at once: a create landing
   // would silently discard whatever was mid-edit in the other dialog.
+  const deferSuccessEffects = options.deferSuccessEffects === true;
   const mutations = useGenericMutations<T, TCreate, TUpdate>(key, services, {
     optimisticDelete: true,
+    deferSuccessToast: deferSuccessEffects,
     onCreateSuccess: () => {
-      setIsCreateModalOpen(false);
+      if (!deferSuccessEffects) setIsCreateModalOpen(false);
     },
     onUpdateSuccess: () => {
-      closeEditModal();
+      if (!deferSuccessEffects) closeEditModal();
     },
   });
 
@@ -145,6 +159,22 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
     await query.refetch();
   }, [query]);
 
+  // Only meaningful when deferSuccessEffects is on — the caller invokes
+  // these once ITS OWN follow-up work (beyond the entity's own save) has
+  // actually succeeded. When deferSuccessEffects is off, onCreateSuccess/
+  // onUpdateSuccess above already did this automatically, so calling these
+  // too would double-toast and no-op the already-closed modal; callers gate
+  // on the same option, not on these functions being merely present.
+  const confirmCreateSuccess = useCallback(() => {
+    mutations.showCreateSuccessToast();
+    setIsCreateModalOpen(false);
+  }, [mutations]);
+
+  const confirmUpdateSuccess = useCallback(() => {
+    mutations.showUpdateSuccessToast();
+    closeEditModal();
+  }, [mutations, closeEditModal]);
+
   return {
     // Data
     items: query.data?.items || [],
@@ -183,6 +213,11 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
     closeViewModal,
     refreshItems,
     refresh: refreshItems, // Alias
+    // Only meaningful with deferSuccessEffects: true — see the option's doc
+    // comment. Present unconditionally so a caller can call it without an
+    // extra existence check; it is simply never needed when the option is off.
+    confirmCreateSuccess,
+    confirmUpdateSuccess,
 
     // Mutation Wrappers
     createItem: mutations.create,

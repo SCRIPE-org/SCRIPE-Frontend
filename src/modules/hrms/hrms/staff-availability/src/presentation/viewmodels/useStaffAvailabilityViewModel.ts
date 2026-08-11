@@ -43,7 +43,7 @@ export function useStaffAvailabilityViewModel() {
     delete: async (id) => {
       await staffAvailabilityRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

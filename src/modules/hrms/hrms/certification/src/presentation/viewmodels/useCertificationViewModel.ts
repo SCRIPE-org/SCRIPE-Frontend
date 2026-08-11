@@ -43,7 +43,7 @@ export function useCertificationViewModel() {
     delete: async (id) => {
       await certificationRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }
