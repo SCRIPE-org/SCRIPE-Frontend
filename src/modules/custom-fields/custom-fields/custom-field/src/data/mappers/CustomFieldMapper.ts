@@ -25,6 +25,7 @@ export class CustomFieldMapper {
       isActive: model.isActive,
       createdAt: model.createdAt,
       modifiedAt: model.modifiedAt,
+      isGlobal: model.isGlobal,
     };
     return new CustomField(data);
   }
@@ -45,7 +46,8 @@ export class CustomFieldMapper {
       entity.createdAt,
       entity.labelAr,
       entity.options,
-      entity.modifiedAt
+      entity.modifiedAt,
+      entity.isGlobal
     );
   }
 

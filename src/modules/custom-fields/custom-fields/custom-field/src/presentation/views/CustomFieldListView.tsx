@@ -89,6 +89,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         { key: "key", label: t("customField.fields.key"), sortable: true },
         { key: "labelEn", label: t("customField.fields.labelEn"), sortable: true },
         {
+          key: "isGlobal",
+          label: t("customField.fields.scope"),
+          render: (value: boolean) =>
+            value ? <Badge variant="outline">{t("customField.global")}</Badge> : null,
+        },
+        {
           key: "valueType",
           label: t("customField.fields.valueType"),
           render: (value: number) => (

@@ -21,6 +21,7 @@ export const en = {
       isRequired: "Required",
       sortOrder: "Sort Order",
       isActive: "Active",
+      scope: "Scope",
     },
 
     // Form placeholders
@@ -44,6 +45,9 @@ export const en = {
     // Required / Optional flag
     required: "Required",
     optional: "Optional",
+
+    // Platform-owned (TenantId == null) definition, inherited by every tenant
+    global: "Global",
 
     // Inline "+ Add custom field" trigger, opened from inside another
     // screen's create/edit form (not the /custom-fields definitions screen).

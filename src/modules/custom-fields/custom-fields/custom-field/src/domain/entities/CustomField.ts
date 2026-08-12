@@ -30,6 +30,8 @@ export interface CustomFieldData {
   isActive: boolean;
   createdAt: string;
   modifiedAt?: string | null;
+  /** True for a platform-owned (TenantId == null) definition inherited by every tenant. Absent on detail fetches (list-only). */
+  isGlobal?: boolean;
 }
 
 /**
@@ -84,5 +86,9 @@ export class CustomField {
 
   get modifiedAt(): string | null | undefined {
     return this.data.modifiedAt;
+  }
+
+  get isGlobal(): boolean {
+    return this.data.isGlobal ?? false;
   }
 }

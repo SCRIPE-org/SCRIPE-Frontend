@@ -21,6 +21,7 @@ export const ar = {
       isRequired: "إلزامي",
       sortOrder: "ترتيب العرض",
       isActive: "نشط",
+      scope: "النطاق",
     },
 
     // Form placeholders
@@ -44,6 +45,9 @@ export const ar = {
     // Required / Optional flag
     required: "إلزامي",
     optional: "اختياري",
+
+    // Platform-owned (TenantId == null) definition, inherited by every tenant
+    global: "عام",
 
     // Inline "+ Add custom field" trigger, opened from inside another
     // screen's create/edit form (not the /custom-fields definitions screen).

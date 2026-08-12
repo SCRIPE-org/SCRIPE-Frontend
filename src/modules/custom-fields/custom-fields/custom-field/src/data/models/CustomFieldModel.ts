@@ -49,6 +49,8 @@ export interface CustomFieldListItemJson {
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
+  /** True for a platform-owned (TenantId == null) definition inherited by every tenant. */
+  isGlobal: boolean;
 }
 
 /**
@@ -87,7 +89,8 @@ export class CustomFieldModel {
     public readonly createdAt: string,
     public readonly labelAr?: string | null,
     public readonly options?: string | null,
-    public readonly modifiedAt?: string | null
+    public readonly modifiedAt?: string | null,
+    public readonly isGlobal?: boolean
   ) {}
 
   /**
@@ -126,7 +129,8 @@ export class CustomFieldModel {
       json.createdAt,
       json.labelAr,
       null,
-      null
+      null,
+      json.isGlobal
     );
   }
 
