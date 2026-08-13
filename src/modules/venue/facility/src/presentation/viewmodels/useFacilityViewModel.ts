@@ -38,7 +38,7 @@ export function useFacilityViewModel() {
     delete: async (id) => {
       await facilityRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   // Powers the Venue `server-select` field on the create form.
   const searchVenueProfiles = useCallback(

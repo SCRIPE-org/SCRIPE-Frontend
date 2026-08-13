@@ -69,7 +69,8 @@ export function useUserSubscriptionsViewModel() {
         });
         return userSubscriptionRepository.getById(id);
       },
-    }
+    },
+    { deferSuccessEffects: true }
   );
 
   // ── Available Plans (static list for the Create form plan selector) ──────────

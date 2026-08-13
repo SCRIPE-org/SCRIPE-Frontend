@@ -38,7 +38,7 @@ export function useVenueProfileViewModel() {
     delete: async (id) => {
       await venueProfileRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   // Powers the Site `server-select` field — Sites live in OrganizationCore,
   // a different backend module, so this goes through the dedicated picker

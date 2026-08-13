@@ -57,7 +57,7 @@ export function useWorkItemViewModel() {
     delete: async (id) => {
       await workItemRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   // Server search backing the "Assigned To" picker (createFields/editFields
   // server-select). Reuses the same GET /api/v1/Admins search the Leads

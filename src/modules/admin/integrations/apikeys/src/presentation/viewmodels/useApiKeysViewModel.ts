@@ -125,7 +125,7 @@ export function useApiKeysViewModel() {
         throw err;
       }
     },
-  });
+  }, { deferSuccessEffects: true });
 
   // Configuration for GenericCrudView
   const getConfigBase = useCallback(
