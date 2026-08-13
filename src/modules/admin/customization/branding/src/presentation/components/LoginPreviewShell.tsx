@@ -1709,19 +1709,12 @@ export function LoginPreviewShell() {
               fontFamily: "inherit",
             }}
           >
-            {/* Hero column (left, hidden on mobile) */}
-            <div className="relative hidden flex-col justify-center gap-6 px-10 py-12 lg:flex lg:w-[55%]">
-              {/* Static Signal Lime glow behind the mark — the one cinematic signal */}
-              <div
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background:
-                    "radial-gradient(60% 60% at 30% 50%, rgba(198,255,0,.1) 0%, transparent 70%)",
-                }}
-                aria-hidden="true"
-              />
-              {/* Wordmark */}
-              <div className="relative z-[1] flex items-center gap-2.5">
+            {/* Hero column (left, hidden on mobile) — mirrors VaultLayout's
+                "Program Cover": masthead, quiet crest, editorial headline,
+                product-family footer. No glow, no badge, no decoration. */}
+            <div className="relative hidden flex-col justify-between px-10 py-10 lg:flex lg:w-[55%]">
+              {/* Masthead */}
+              <div className="flex items-center gap-2.5">
                 <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
                   <Image src={logoUrl} alt={companyName} width={32} height={32} unoptimized className="h-full w-full object-contain" />
                 </div>
@@ -1729,54 +1722,41 @@ export function LoginPreviewShell() {
                   {companyName}
                 </span>
               </div>
-              {/* Giant mark (simplified for preview) */}
-              <div className="relative z-[1] self-center">
-                <div
-                  className="relative flex h-40 w-40 items-center justify-center rounded-full"
-                  style={{
-                    background: "radial-gradient(circle, rgba(198,255,0,.12) 0%, transparent 70%)",
-                  }}
-                >
+              {/* Cover — crest, headline, standfirst */}
+              <div className="flex flex-col gap-5 py-6">
+                <div className="flex w-fit flex-col items-center">
                   {/* Canonical 3D mark — no colour filter (V3 fidelity policy: never
                       alter the approved material colours with CSS filters). */}
                   <Image
                     src="/brand/auth/login-relay-grid-3d.png"
                     alt="Scripe"
-                    width={144}
-                    height={144}
-                    className="h-36 w-36 object-contain"
+                    width={112}
+                    height={112}
+                    className="h-28 w-28 object-contain"
                   />
-                </div>
-              </div>
-              {/* Secure badge */}
-              <div className="relative z-[1] space-y-3">
-                <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                  style={{
-                    background: "var(--sx-accent-soft, rgba(198,255,0,.1))",
-                    border: "1px solid var(--sx-accent-soft-border, rgba(198,255,0,.3))",
-                    color: "var(--sx-accent-text)",
-                  }}
-                >
-                  <span
-                    className="h-1.5 w-1.5 rounded-full"
+                  <div
+                    aria-hidden="true"
                     style={{
-                      background: "var(--sx-accent)",
-                      boxShadow: "0 0 6px var(--sx-accent)",
+                      width: 64,
+                      height: 9,
+                      marginTop: -4,
+                      background:
+                        "radial-gradient(ellipse, rgba(0, 0, 0, 0.42) 0%, transparent 70%)",
+                      filter: "blur(4px)",
                     }}
                   />
-                  Secure sign-in
-                </span>
+                </div>
                 <h1
-                  className="font-semibold leading-none"
+                  className="font-bold"
                   style={{
-                    fontSize: "clamp(32px, 3.5vw, 44px)",
-                    letterSpacing: "-0.025em",
+                    fontSize: "clamp(28px, 3.2vw, 40px)",
+                    letterSpacing: "-0.03em",
+                    lineHeight: 1.06,
                     // Solid ink — DESIGN.md bans gradient heading text.
                     color: "var(--sx-text-heading, #f7f8f5)",
                   }}
                 >
-                  {brandingForPanel?.loginHeadline || companyName}
+                  {brandingForPanel?.loginHeadline || t("auth.branding.headline")}
                 </h1>
                 <p
                   className="text-sm"
@@ -1785,17 +1765,33 @@ export function LoginPreviewShell() {
                   {brandingForPanel?.loginSubtitle || t("auth.branding.subtitle")}
                 </p>
               </div>
-              {/* Compliance footer */}
+              {/* Cover footer — product family above compliance, one hairline */}
               <div
-                className="relative z-[1] flex gap-3 text-[10px] uppercase tracking-widest"
-                style={{ color: "var(--sx-text-faint, rgba(247,248,245,.4))" }}
+                className="flex flex-col gap-2 pt-4"
+                style={{ borderTop: "1px solid var(--sx-divider, rgba(255,255,255,.08))" }}
               >
-                {["SOC 2 II", "HIPAA", "ISO 27001", "GDPR"].map((c, i) => (
-                  <span key={c} className="flex items-center gap-3">
-                    {i > 0 && <span style={{ opacity: 0.4 }}>·</span>}
-                    {c}
-                  </span>
-                ))}
+                <div
+                  className="flex gap-2.5 text-[10px] font-medium uppercase tracking-[0.16em]"
+                  style={{ color: "var(--sx-text-mute, rgba(247,248,245,.62))" }}
+                >
+                  {["Venue", "Academy", "Football Intelligence"].map((c, i) => (
+                    <span key={c} className="flex items-center gap-2.5">
+                      {i > 0 && <span style={{ color: "var(--sx-accent-text)" }}>·</span>}
+                      {c}
+                    </span>
+                  ))}
+                </div>
+                <div
+                  className="flex gap-2.5 text-[9px] uppercase tracking-widest"
+                  style={{ color: "var(--sx-text-faint, rgba(247,248,245,.4))" }}
+                >
+                  {["SOC 2 II", "HIPAA", "ISO 27001", "GDPR"].map((c, i) => (
+                    <span key={c} className="flex items-center gap-2.5">
+                      {i > 0 && <span style={{ opacity: 0.4 }}>·</span>}
+                      {c}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
 

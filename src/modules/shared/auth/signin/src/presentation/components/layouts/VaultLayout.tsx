@@ -1,132 +1,66 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { ShieldCheck, Building2, Zap } from "lucide-react";
 import { SlotRenderer } from "../SlotRenderer";
 import { LogoImg, MobileLogo } from "./layout-shared";
 import { BG_STYLE } from "./layout-types";
 import type { LoginLayoutProps } from "./layout-types";
 
 /**
- * VaultLayout — SCRIPE Relay vNext cinematic split auth layout.
+ * VaultLayout — the "Program Cover" split auth layout.
  *
- * Left: cinematic brand stage (wordmark, protected 3D Relay Grid, secure
- * badge, headline, feature chips, compliance footer). Right: calm
- * high-contrast form card. Every color/surface is read from the `--sx-*`
- * token layer (globals.css, themed dark/light, re-based to Relay vNext) — no
- * hardcoded hex. Ambient stage motion is in <VaultBackground/>; the logo
- * block plays a single 650ms intro reveal (never looping) and an optional
- * fine-pointer parallax, both honoring `prefers-reduced-motion`.
+ * Left: an editorial brand stage composed like a matchday program cover —
+ * masthead lockup at the top, a quiet crest, a large two-line headline with
+ * exactly one word in Signal Lime, a muted standfirst, and a footer block
+ * carrying the product family and compliance marks above a hairline. The
+ * typography is the hero; there is no ambient decoration of any kind.
+ *
+ * Right: calm high-contrast form card, untouched product logic.
+ *
+ * Motion: ONE authored moment — the headline lines rise out of clipping
+ * masks (550ms, second line a beat behind); crest and supporting text fade
+ * to present. Nothing loops. Reduced motion renders everything in place.
+ *
+ * Every color reads from the `--sx-*` token layer (globals.css, themed
+ * dark/light) — no hardcoded hex.
  */
 import { VaultBackground } from "./VaultBackground";
 import Image from "next/image";
 
+/** The three product family names are brand nouns — they do not localize. */
+const PRODUCT_FAMILY = ["Venue", "Academy", "Football Intelligence"];
+
 /**
- * The canonical 3D Relay Grid mark, presented as a single protected asset.
- * Container-level motion only — the intro reveal and parallax transform the
- * wrapper; the image itself is never cropped, filtered, or upscaled beyond
- * its native 1254x1254 source (V3 fidelity policy).
+ * The canonical 3D Relay Grid mark as a quiet crest — small, seated with a
+ * real contact shadow, no filters, no blend tricks, no motion beyond a fade.
+ * The image is never cropped, recolored, or upscaled beyond its native
+ * 1254x1254 source (V3 fidelity policy).
  */
-function VaultLogoBlock() {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const finePointer = window.matchMedia("(pointer: fine)").matches;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!finePointer || reducedMotion) return;
-
-    const el = wrapRef.current;
-    if (!el) return;
-
-    const onMove = (e: PointerEvent) => {
-      const rect = el.getBoundingClientRect();
-      const px = (e.clientX - rect.left) / rect.width - 0.5;
-      const py = (e.clientY - rect.top) / rect.height - 0.5;
-      // Max ±2deg, per DESIGN.md's cinematic parallax ceiling.
-      setTilt({ x: py * -4, y: px * 4 });
-    };
-    const onLeave = () => setTilt({ x: 0, y: 0 });
-
-    el.addEventListener("pointermove", onMove);
-    el.addEventListener("pointerleave", onLeave);
-    return () => {
-      el.removeEventListener("pointermove", onMove);
-      el.removeEventListener("pointerleave", onLeave);
-    };
-  }, []);
-
-  const size = 340;
-
+function Crest() {
+  const size = 168;
   return (
-    <div
-      ref={wrapRef}
-      data-stagger="2"
-      className="scripe-auth-reveal relative flex items-center justify-center"
-      style={{
-        width: size,
-        height: size,
-        perspective: 800,
-      }}
-    >
-      {/* Lime environmental glow — drifts slowly via the ambient class, not a
-          continuous pulse/breathe loop */}
+    <div className="scripe-crest scripe-fade-in flex w-fit flex-col items-center">
+      <Image
+        src="/brand/auth/login-relay-grid-3d.png"
+        alt=""
+        width={size}
+        height={size}
+        sizes={`${size}px`}
+        priority
+        className="object-contain"
+        style={{ width: size, height: size }}
+        aria-hidden="true"
+      />
+      {/* Contact shadow — attached to the crest, not floating in the scene */}
       <div
-        className="scripe-ambient-drift absolute"
+        aria-hidden="true"
         style={{
-          inset: "-20%",
-          background: "radial-gradient(circle, var(--sx-aurora-a) 0%, transparent 65%)",
-          filter: "blur(40px)",
+          width: size * 0.56,
+          height: 12,
+          marginTop: -6,
+          background: "radial-gradient(ellipse, rgba(0, 0, 0, 0.42) 0%, transparent 70%)",
+          filter: "blur(5px)",
         }}
       />
-      {/* Light-theme dark glass orb (opacity token: 0 on dark, 1 on light) */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: size - 20,
-          height: size - 20,
-          opacity: "var(--sx-logo-orb-opacity, 0)",
-          background: "radial-gradient(circle at 30% 25%, #151719 0%, #050506 80%)",
-          boxShadow:
-            "0 30px 80px rgba(13,13,14,.35), inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 1px rgba(198,255,0,.18)",
-        }}
-      />
-      {/* The canonical 3D Relay Grid — protected asset, container tilts, never the geometry */}
-      <div
-        className="relative overflow-hidden"
-        style={{
-          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-          transition: "transform 200ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))",
-          transformStyle: "preserve-3d",
-        }}
-      >
-        <Image
-          src="/brand/auth/login-relay-grid-3d.png"
-          alt="SCRIPE"
-          width={size}
-          height={size}
-          sizes={`${size}px`}
-          priority
-          className="relative z-[1] object-contain"
-          style={{
-            width: size,
-            height: size,
-            mixBlendMode: "var(--sx-logo-blend)" as CSSProperties["mixBlendMode"],
-            filter: "var(--sx-logo-filter)",
-          }}
-        />
-        {/* Restrained one-time highlight sweep — DESIGN.md's explicit Login
-            allowance. Plays once, never loops, container-level only. */}
-        <div
-          className="scripe-highlight-sweep pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%)",
-            mixBlendMode: "screen",
-          }}
-          aria-hidden="true"
-        />
-      </div>
     </div>
   );
 }
@@ -149,20 +83,23 @@ export function VaultLayout({
   loginStep,
   t,
 }: LoginLayoutProps) {
-  const headline = branding?.loginHeadline || companyName;
+  // Tenant override renders as one plain line; the platform default is a
+  // composed two-line headline with a single Signal Lime word — DESIGN.md's
+  // "one deliberate visual signal in a cinematic auth scene". Never the bare
+  // company name: a giant "SCRIPE" is a label, not a pitch.
+  const tenantHeadline = branding?.loginHeadline;
   const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
 
-  const features = [
-    { icon: ShieldCheck, label: t("auth.branding.featureSecurity") },
-    { icon: Building2, label: t("auth.branding.featureMultiTenant") },
-    { icon: Zap, label: t("auth.branding.featureRealtime") },
-  ];
   const compliance = [
     t("auth.branding.vault.soc2"),
     t("auth.branding.vault.hipaa"),
     t("auth.branding.vault.iso"),
     t("auth.branding.vault.gdpr"),
   ];
+
+  const monoStyle = {
+    fontFamily: "var(--font-mono, ui-monospace, monospace)",
+  } as const;
 
   return (
     <div
@@ -173,13 +110,10 @@ export function VaultLayout({
       <VaultBackground />
 
       <div className="relative z-[1] grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(500px,48%)]">
-        {/* ── Hero (desktop) ───────────────────────────────────────── */}
-        <div className="relative hidden flex-col justify-center gap-8 px-12 py-14 lg:flex xl:px-16">
-          {/* Top lockup */}
-          <div
-            data-stagger="1"
-            className="scripe-auth-reveal flex items-center gap-3"
-          >
+        {/* ── Program cover (desktop) ─────────────────────────────── */}
+        <div className="relative hidden flex-col justify-between px-12 py-12 lg:flex xl:px-16">
+          {/* Masthead — instantly present, no entrance */}
+          <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg">
               <LogoImg
                 logoSrc={logoSrc}
@@ -195,81 +129,79 @@ export function VaultLayout({
             </span>
           </div>
 
-          {/* Canonical 3D mark */}
-          <div className="self-center">
-            <VaultLogoBlock />
-          </div>
+          {/* Cover — crest, headline, standfirst */}
+          <div className="flex max-w-2xl flex-col gap-8 py-10">
+            <Crest />
 
-          {/* Headline block — solid ink, no gradient text (DESIGN.md ban) */}
-          <div data-stagger="3" className="scripe-auth-reveal flex max-w-xl flex-col gap-3.5">
-            <span
-              className="sx-mono inline-flex w-fit items-center gap-2 rounded-full px-2.5 py-1.5 text-[11px] uppercase tracking-[0.15em]"
-              style={{
-                background: "var(--sx-accent-soft)",
-                border: "1px solid var(--sx-accent-soft-border)",
-                color: "var(--sx-accent-text)",
-                fontFamily: "var(--font-mono, ui-monospace, monospace)",
-              }}
-            >
-              <span
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ background: "var(--sx-accent)", boxShadow: "0 0 8px var(--sx-accent)" }}
-              />
-              {t("auth.branding.vault.secureBadge")}
-            </span>
             <h1
-              className="m-0 font-semibold leading-[1.05]"
+              className="m-0 font-bold"
               style={{
-                fontSize: "clamp(40px, 4.6vw, 56px)",
-                letterSpacing: "-0.025em",
+                fontSize: "clamp(44px, 4.8vw, 72px)",
+                letterSpacing: "-0.03em",
+                lineHeight: 1.04,
                 color: "var(--sx-text-heading)",
               }}
             >
-              {headline}
+              {tenantHeadline ? (
+                <span className="scripe-line-mask">
+                  <span className="scripe-line-rise">{tenantHeadline}</span>
+                </span>
+              ) : (
+                <>
+                  <span className="scripe-line-mask">
+                    <span className="scripe-line-rise" data-line="1">
+                      {t("auth.branding.headlineL1")}
+                    </span>
+                  </span>
+                  <span className="scripe-line-mask">
+                    <span className="scripe-line-rise" data-line="2">
+                      {t("auth.branding.headlineL2Pre")}
+                      <span style={{ color: "var(--sx-accent-text)" }}>
+                        {t("auth.branding.headlineL2Accent")}
+                      </span>
+                    </span>
+                  </span>
+                </>
+              )}
             </h1>
+
             <p
-              className="m-0 max-w-md text-[15px] leading-relaxed"
+              className="scripe-fade-in m-0 max-w-[44ch] text-[16px] leading-relaxed"
               style={{ color: "var(--sx-text-mute)" }}
             >
               {subtitle}
             </p>
+
+            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} />
           </div>
 
-          {/* Feature chips */}
-          <div data-stagger="4" className="scripe-auth-reveal flex flex-wrap gap-3">
-            {features.map(({ icon: Icon, label }) => (
-              <span
-                key={label}
-                className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs"
-                style={{
-                  background: "var(--sx-chip-bg)",
-                  border: "1px solid var(--sx-chip-border)",
-                  color: "var(--sx-text-mute)",
-                }}
-              >
-                <Icon className="h-3.5 w-3.5" style={{ color: "var(--sx-accent-text)" }} />
-                {label}
-              </span>
-            ))}
-          </div>
-
-          <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} />
-
-          {/* Compliance footer */}
+          {/* Cover footer — product family above compliance, one hairline */}
           <div
-            data-stagger="5"
-            className="scripe-auth-reveal sx-mono flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.1em]"
-            style={{
-              color: "var(--sx-text-faint)",
-              fontFamily: "var(--font-mono, ui-monospace, monospace)",
-            }}
+            className="scripe-fade-in flex flex-col gap-3 pt-5"
+            style={{ borderTop: "1px solid var(--sx-divider)" }}
           >
-            {compliance.map((c, i) => (
-              <span key={c} className="flex items-center gap-4">
-                {i > 0 && <span style={{ opacity: 0.4 }}>·</span>}
-                {c}
-              </span>
-            ))}
+            <div
+              className="flex flex-wrap items-center gap-3 text-[11px] font-medium uppercase tracking-[0.16em]"
+              style={{ ...monoStyle, color: "var(--sx-text-mute)" }}
+            >
+              {PRODUCT_FAMILY.map((name, i) => (
+                <span key={name} className="flex items-center gap-3">
+                  {i > 0 && <span style={{ color: "var(--sx-accent-text)" }}>·</span>}
+                  {name}
+                </span>
+              ))}
+            </div>
+            <div
+              className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-[0.1em]"
+              style={{ ...monoStyle, color: "var(--sx-text-faint)" }}
+            >
+              {compliance.map((c, i) => (
+                <span key={c} className="flex items-center gap-3">
+                  {i > 0 && <span style={{ opacity: 0.4 }}>·</span>}
+                  {c}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -286,12 +218,12 @@ export function VaultLayout({
             key={loginStep}
             className="sx-screen vault-cta relative flex w-full max-w-[430px] flex-col rounded-[20px]"
             style={{
+              // Solid surface — DESIGN.md bans default glassmorphism; the
+              // card gradient is already near-opaque, the blur was costume.
               padding: "var(--login-card-padding, 34px)",
               background: "var(--sx-card-bg)",
               border: "1px solid var(--sx-card-border)",
               boxShadow: "var(--sx-card-shadow)",
-              backdropFilter: "blur(24px)",
-              WebkitBackdropFilter: "blur(24px)",
             }}
           >
             {/* Top accent line — Signal Lime, one hairline signal */}

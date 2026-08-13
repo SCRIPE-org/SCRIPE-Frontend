@@ -35,17 +35,29 @@ export const en = {
       autoSubmitHint: "Submits automatically when complete",
     },
     branding: {
-      headline: "Manage. Secure. Scale.",
+      // Customer-value copy: the people signing in run academies, clubs and
+      // venues. Speak to their operation — sessions, squads, pitches,
+      // players — never to platform infrastructure (multi-tenancy, uptime,
+      // encryption grades). Infrastructure is table stakes, not a pitch.
+      headline: "Run the club like the pros.",
+      // Composed two-line form of the same headline for the login cover; the
+      // accent word is the page's single Signal Lime moment.
+      headlineL1: "Run the club",
+      headlineL2Pre: "like the ",
+      headlineL2Accent: "pros.",
       subtitle:
-        "The enterprise platform trusted by industry leaders to manage operations, secure data, and scale organizations effortlessly.",
+        "Sessions, squads, pitches and player development — one operating system for the people who run the game.",
       featureSecurity: "Enterprise Security",
-      featureSecurityDesc: "Military-grade end-to-end encryption",
-      featureMultiTenant: "Multi-Tenant",
-      featureMultiTenantDesc: "Complete architectural data isolation",
-      featureRealtime: "Real-Time Analytics",
-      featureRealtimeDesc: "Instant bi-directional state sync",
+      featureSecurityDesc: "Your athletes' data, protected end to end",
+      featureMultiTenant: "Every Branch",
+      featureMultiTenantDesc: "All your locations under one roof",
+      featureRealtime: "Live Operations",
+      featureRealtimeDesc: "Today's sessions, attendance and bookings as they happen",
       featureRBAC: "Advanced RBAC",
-      trust: "Enterprise-grade security - Multi-tenant isolation - 99.9% Uptime",
+      featureSessions: "Sessions & attendance",
+      featureDevelopment: "Player development",
+      featureFacilities: "Pitches & facilities",
+      trust: "Built for academies, clubs and venues.",
       copyright: "All rights reserved.",
       docs: "Documentation",
       safeModeActive: "Safe mode is active. Default branding is being displayed.",

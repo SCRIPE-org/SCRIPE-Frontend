@@ -164,99 +164,55 @@ html[data-reduced-motion="true"] {
     linear-gradient(180deg, #0d0d0e 0%, #050506 100%);
 }
 
-/* Login cinematic intro reveal — container-level, ONE-TIME (not looping).
-   Animates the asset container only, never the logo geometry itself. */
-@keyframes scripeAuthReveal {
+/* Login "Program Cover" motion — ONE authored moment, nothing ambient.
+   The two headline lines rise out of clipping masks (550ms, exponential
+   decelerate, second line one beat behind); the crest and supporting text
+   simply fade to present. No loops, no drift, no sweep, no per-section
+   stagger cascade. Reduced motion: everything is simply there. */
+@keyframes scripeLineRise {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.scripe-line-mask {
+  display: block;
+  overflow: hidden;
+}
+.scripe-line-rise {
+  display: block;
+  transform: translateY(110%);
+  animation: scripeLineRise 550ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+.scripe-line-rise[data-line="2"] {
+  animation-delay: 70ms;
+}
+@keyframes scripeFadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px) scale(0.985);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }
-.scripe-auth-reveal {
-  animation: scripeAuthReveal 650ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
-}
-/* Staggered variants — one authored entrance across the hero column (badge,
-   mark, headline, chips, footer arrive as one coordinated beat, not each
-   popping in independently while only the mark animates). */
-.scripe-auth-reveal[data-stagger="1"] {
-  animation-delay: 80ms;
-}
-.scripe-auth-reveal[data-stagger="2"] {
-  animation-delay: 180ms;
-}
-.scripe-auth-reveal[data-stagger="3"] {
-  animation-delay: 340ms;
-}
-.scripe-auth-reveal[data-stagger="4"] {
-  animation-delay: 460ms;
-}
-.scripe-auth-reveal[data-stagger="5"] {
-  animation-delay: 560ms;
+.scripe-fade-in {
+  animation: scripeFadeIn 300ms ease-out 150ms both;
 }
 @media (prefers-reduced-motion: reduce) {
-  .scripe-auth-reveal {
+  .scripe-line-rise,
+  .scripe-fade-in {
     animation: none;
-  }
-}
-html[data-reduced-motion="true"] .scripe-auth-reveal {
-  animation: none;
-}
-
-/* Ambient light drift — DESIGN.md's "tiny ambient light movement applied to
-   the container/background, not geometry." ONE element, slow (16s), a small
-   translate range. This is not the retired multi-orb/scan/particle ambience:
-   one restrained, continuous signal, not a storm. */
-@keyframes scripeAmbientDrift {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) scale(1);
-  }
-  50% {
-    transform: translate(calc(-50% + 18px), calc(-50% - 14px)) scale(1.04);
-  }
-}
-.scripe-ambient-drift {
-  animation: scripeAmbientDrift 16s ease-in-out infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .scripe-ambient-drift {
-    animation: none;
-  }
-}
-html[data-reduced-motion="true"] .scripe-ambient-drift {
-  animation: none;
-}
-
-/* Restrained one-time highlight sweep — DESIGN.md's explicit allowance for
-   Login. A single diagonal light band crosses the mark once, after the intro
-   reveal settles, and never repeats. */
-@keyframes scripeHighlightSweep {
-  0% {
-    transform: translateX(-140%) rotate(18deg);
-    opacity: 0;
-  }
-  15% {
+    transform: none;
     opacity: 1;
   }
-  100% {
-    transform: translateX(140%) rotate(18deg);
-    opacity: 0;
-  }
 }
-.scripe-highlight-sweep {
-  animation: scripeHighlightSweep 1300ms ease-out 900ms both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .scripe-highlight-sweep {
-    display: none;
-  }
-}
-html[data-reduced-motion="true"] .scripe-highlight-sweep {
-  display: none;
+html[data-reduced-motion="true"] .scripe-line-rise,
+html[data-reduced-motion="true"] .scripe-fade-in {
+  animation: none;
+  transform: none;
+  opacity: 1;
 }
 
 /* ========================================
@@ -3836,7 +3792,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     line-height: 1.35 !important;
   }
   /* Vault layout logo-block height adjustments for short/landscape viewports */
-  .login-page .scripe-auth-reveal {
+  .login-page .scripe-crest {
     transform: scale(0.7) !important;
     margin-top: -20px !important;
     margin-bottom: -20px !important;
@@ -3918,7 +3874,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   /* Hide branding, logos, and illustrative float elements to optimize vertical space */
   .login-page .login-logo,
   .login-page [class*="MobileLogo"],
-  .login-page .scripe-auth-reveal,
+  .login-page .scripe-crest,
   .login-page .flex.h-20.w-20,
   .login-page .flex.h-16.w-16,
   .login-page .mb-10.flex.flex-col.items-center {
