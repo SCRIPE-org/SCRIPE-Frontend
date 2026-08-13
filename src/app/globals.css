@@ -308,7 +308,13 @@ html[data-reduced-motion="true"] .scripe-highlight-sweep {
   --destructive-foreground: 0 0% 98%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
-  --ring: 74 100% 50%;
+  /* Ring is a NON-TEXT indicator and must clear 3:1 against the surface it
+     is drawn on. Signal Lime on a white canvas measures 1.19:1 — effectively
+     invisible — so the light theme uses Accent Text Light (#4C6200, the same
+     value --scripe-accent-text / --nx-accent resolve to here). Dark keeps
+     Lime, where it is high-contrast. Lime is a FILL colour on light
+     surfaces, never a line or a letter (DESIGN.md §2.1). */
+  --ring: 74 100% 19%;
   --radius: 0.75rem;
 
   /* Light sidebar colors */
@@ -319,7 +325,7 @@ html[data-reduced-motion="true"] .scripe-highlight-sweep {
   --sidebar-accent: 240 4.8% 95.9%;
   --sidebar-accent-foreground: 240 5.9% 10%;
   --sidebar-border: 240 5.9% 90%;
-  --sidebar-ring: 74 100% 50%;
+  --sidebar-ring: 74 100% 19%;
 
   /* Chart colors (used by Recharts via shadcn ChartContainer).
      Categorical, FIXED slot order — colour follows the entity, never its
@@ -341,8 +347,14 @@ html[data-reduced-motion="true"] .scripe-highlight-sweep {
   --chart-7: 337 70% 70%; /* magenta #e87ba4 */
   --chart-8: 41 100% 46%; /* yellow  #eda100 */
 
-  /* Shadow colors */
-  --shadow-primary: 74 100% 50%;
+  /* Shadow colors — Elevation is NEUTRAL (DESIGN.md §9). This var tints the
+     whole generic --shadow-sm…--shadow-2xl ladder below, so a brand hue here
+     puts a coloured halo under every raised element in the app: exactly the
+     "Lime halo around every CTA/card" the design system bans. It was violet
+     before the migration and is Ink now — neutral, not a different tint.
+     (The per-hue theme presets still tint their own shadows; that is a
+     tenant's explicit colour choice, not SCRIPE's default identity.) */
+  --shadow-primary: 240 4% 5%;
   --shadow-secondary: 240 5% 64.9%;
 }
 
@@ -487,7 +499,7 @@ html {
   --sidebar-primary: 74 100% 50%;
   --sidebar-primary-foreground: 240 4% 5%;
   --sidebar-ring: 74 100% 50%;
-  --shadow-primary: 74 100% 50%;
+  --shadow-primary: 240 4% 5%;
 }
 
 :root[data-theme="blue"] {
@@ -627,18 +639,28 @@ html {
   --shadow-primary: 215 20% 50%;
 }
 
+/* The two mid-grey light presets are the only ones whose fill is too dark for
+   the Ink foreground the base block now carries for Signal Lime (zinc measures
+   4.24:1 with Ink vs 4.58:1 with near-white; stone 4.17 vs 4.67). Every other
+   preset is a saturated or light hue that reads BETTER on Ink, so only these
+   two re-declare the near-white pair. Their .dark variants are lighter (56%/55%)
+   and correctly keep Ink. */
 :root[data-theme="zinc"] {
   --primary: 240 4% 46%;
+  --primary-foreground: 210 40% 98%;
   --ring: 240 4% 46%;
   --sidebar-primary: 240 4% 46%;
+  --sidebar-primary-foreground: 210 40% 98%;
   --sidebar-ring: 240 4% 46%;
   --shadow-primary: 240 4% 46%;
 }
 
 :root[data-theme="stone"] {
   --primary: 25 5% 45%;
+  --primary-foreground: 210 40% 98%;
   --ring: 25 5% 45%;
   --sidebar-primary: 25 5% 45%;
+  --sidebar-primary-foreground: 210 40% 98%;
   --sidebar-ring: 25 5% 45%;
   --shadow-primary: 25 5% 45%;
 }
@@ -951,7 +973,7 @@ html {
   --sidebar-primary: 74 100% 50%;
   --sidebar-primary-foreground: 240 4% 5%;
   --sidebar-ring: 74 100% 50%;
-  --shadow-primary: 74 100% 50%;
+  --shadow-primary: 240 4% 5%;
 }
 
 .dark[data-theme="blue"] {

@@ -14,7 +14,7 @@ export function RatingBlockView({ block }: { block: RatingBlock }) {
   const value = clamp(props.value, 1, 5, 5);
   if (props.style === "number-badge") {
     return (
-      <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-primary">
+      <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-nx-accent">
         <span className="font-bold">{value.toFixed(1)}</span>
         {props.label && <span className="text-sm">{props.label}</span>}
       </div>

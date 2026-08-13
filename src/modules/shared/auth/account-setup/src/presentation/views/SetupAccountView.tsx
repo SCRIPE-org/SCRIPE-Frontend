@@ -90,7 +90,7 @@ export function SetupAccountView() {
       <Card className="w-full max-w-md border-border/50 shadow-xl">
         <CardHeader className="pb-2 text-center">
           <div className="mx-auto mb-3 rounded-full bg-primary/10 p-3">
-            <KeyRound className="h-7 w-7 text-primary" />
+            <KeyRound className="h-7 w-7 text-nx-accent" />
           </div>
           <CardTitle className="text-xl">{t("auth.accountSetup.setPasswordTitle")}</CardTitle>
           <CardDescription>

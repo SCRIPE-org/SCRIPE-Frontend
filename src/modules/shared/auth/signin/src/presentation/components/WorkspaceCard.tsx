@@ -119,7 +119,7 @@ export function WorkspaceCard({
       className={[
         "flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border",
         ws.isPlatformAdmin
-          ? "border-primary/20 bg-primary/10 text-primary"
+          ? "border-primary/20 bg-primary/10 text-nx-accent"
           : state === "unlocked"
             ? "border-border bg-muted text-muted-foreground"
             : "border-border/50 bg-muted/50 text-muted-foreground/60",
@@ -185,7 +185,7 @@ export function WorkspaceCard({
 
   // ── Platform badge ────────────────────────────────────────────────────────
   const platformBadge = ws.isPlatformAdmin && (
-    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-nx-accent">
       <ShieldCheck className="h-2.5 w-2.5" aria-hidden />
       {t("auth.workspaceSelection.platform") || "Platform"}
     </span>

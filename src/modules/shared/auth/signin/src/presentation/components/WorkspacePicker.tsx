@@ -138,7 +138,7 @@ export function WorkspacePicker({
                       <span
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
                           ws.isPlatformAdmin
-                            ? "bg-primary/10 text-primary"
+                            ? "bg-primary/10 text-nx-accent"
                             : "bg-muted text-muted-foreground"
                         }`}
                         aria-hidden
@@ -153,7 +153,7 @@ export function WorkspacePicker({
                         </span>
                         <div className="flex items-center gap-1.5">
                           {ws.isPlatformAdmin && (
-                            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-nx-accent">
                               {t("auth.workspacePicker.platformAdmin") || "Platform"}
                             </span>
                           )}

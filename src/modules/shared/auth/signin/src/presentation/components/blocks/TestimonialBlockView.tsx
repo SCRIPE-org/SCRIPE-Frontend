@@ -19,7 +19,7 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
       style={{ borderColor: props.borderColor }}
     >
       {rating > 0 && (
-        <div className="mb-2 text-sm text-primary">{"*".repeat(Math.round(rating))}</div>
+        <div className="mb-2 text-sm text-nx-accent">{"*".repeat(Math.round(rating))}</div>
       )}
       <blockquote
         className={props.displayStyle === "large-quote" ? "text-xl font-semibold" : "text-sm"}
