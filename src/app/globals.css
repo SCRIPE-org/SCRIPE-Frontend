@@ -200,6 +200,55 @@ html[data-reduced-motion="true"] {
 .scripe-fade-in {
   animation: scripeFadeIn 300ms ease-out 150ms both;
 }
+
+/* The monument settles onto the horizon — one-time, exponential decelerate,
+   container-level only (the mark's geometry never deforms). */
+@keyframes scripeMonumentSettle {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.scripe-monument-settle {
+  animation: scripeMonumentSettle 650ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))
+    both;
+}
+
+/* Stage light breath — DESIGN.md's "tiny ambient light movement applied to
+   the container/background": a grounded pool of light on the floor plane
+   breathing very slowly. Not a wandering blob; it never moves, only breathes. */
+@keyframes scripeLightBreath {
+  0%,
+  100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.scripe-light-breath {
+  animation:
+    scripeFadeIn 700ms ease-out 200ms both,
+    scripeLightBreath 9s ease-in-out 1s infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scripe-monument-settle,
+  .scripe-light-breath {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+html[data-reduced-motion="true"] .scripe-monument-settle,
+html[data-reduced-motion="true"] .scripe-light-breath {
+  animation: none;
+  transform: none;
+  opacity: 1;
+}
 @media (prefers-reduced-motion: reduce) {
   .scripe-line-rise,
   .scripe-fade-in {
@@ -363,6 +412,11 @@ html[data-reduced-motion="true"] .scripe-fade-in {
   --sx-field-border-focus: rgba(198, 255, 0, 0.55);
   --sx-field-ring: 0 0 0 4px rgba(198, 255, 0, 0.18);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  /* showroom stage — a horizon the monument stands on, the floor sheen it
+     lights, and the grounded pool of Lime stage light beneath it */
+  --sx-horizon: rgba(255, 255, 255, 0.12);
+  --sx-floor-sheen: rgba(255, 255, 255, 0.03);
+  --sx-floor-light: rgba(198, 255, 0, 0.16);
   /* ambient background — restrained Lime, not Aurora violet/blue */
   --sx-grid-stroke: rgba(198, 255, 0, 0.05);
   --sx-aurora-a: rgba(198, 255, 0, 0.14);
@@ -423,6 +477,9 @@ html[data-reduced-motion="true"] .scripe-fade-in {
   --sx-field-border-focus: #4c6200;
   --sx-field-ring: 0 0 0 4px rgba(76, 98, 0, 0.14);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  --sx-horizon: rgba(13, 13, 14, 0.16);
+  --sx-floor-sheen: rgba(13, 13, 14, 0.04);
+  --sx-floor-light: rgba(76, 98, 0, 0.1);
   --sx-grid-stroke: rgba(76, 98, 0, 0.06);
   --sx-aurora-a: rgba(76, 98, 0, 0.1);
   --sx-aurora-b: rgba(13, 13, 14, 0.06);
@@ -3792,7 +3849,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     line-height: 1.35 !important;
   }
   /* Vault layout logo-block height adjustments for short/landscape viewports */
-  .login-page .scripe-crest {
+  .login-page .scripe-monument {
     transform: scale(0.7) !important;
     margin-top: -20px !important;
     margin-bottom: -20px !important;
@@ -3874,7 +3931,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   /* Hide branding, logos, and illustrative float elements to optimize vertical space */
   .login-page .login-logo,
   .login-page [class*="MobileLogo"],
-  .login-page .scripe-crest,
+  .login-page .scripe-monument,
   .login-page .flex.h-20.w-20,
   .login-page .flex.h-16.w-16,
   .login-page .mb-10.flex.flex-col.items-center {

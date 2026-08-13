@@ -1,24 +1,31 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { SlotRenderer } from "../SlotRenderer";
 import { LogoImg, MobileLogo } from "./layout-shared";
 import { BG_STYLE } from "./layout-types";
 import type { LoginLayoutProps } from "./layout-types";
 
 /**
- * VaultLayout — the "Program Cover" split auth layout.
+ * VaultLayout — the "Showroom" split auth layout.
  *
- * Left: an editorial brand stage composed like a matchday program cover —
- * masthead lockup at the top, a quiet crest, a large two-line headline with
- * exactly one word in Signal Lime, a muted standfirst, and a footer block
- * carrying the product family and compliance marks above a hairline. The
- * typography is the hero; there is no ambient decoration of any kind.
+ * Left: a cinematic stage built like a product showroom. The canonical 3D
+ * Relay Grid stands as a monument on a full-width horizon line, reflected
+ * in the floor beneath it (DESIGN.md's cinematic clause explicitly allows
+ * environmental Lime reflection for login), lit by one grounded pool of
+ * Signal Lime stage light that breathes slowly. Below the monument: a
+ * centered editorial headline with exactly one word in Lime, a muted
+ * standfirst, and a footer carrying the product family + compliance marks
+ * above a hairline. Structured light on a floor — never floating blobs,
+ * grids, or particles.
  *
  * Right: calm high-contrast form card, untouched product logic.
  *
- * Motion: ONE authored moment — the headline lines rise out of clipping
- * masks (550ms, second line a beat behind); crest and supporting text fade
- * to present. Nothing loops. Reduced motion renders everything in place.
+ * Motion: the monument settles onto the horizon (650ms), the stage light
+ * fades up then breathes (9s, opacity only), the headline lines rise out of
+ * clipping masks, supporting text fades to present. Fine-pointer parallax
+ * tilts the monument container ±2° — never the mark's geometry. Reduced
+ * motion renders everything in place, static.
  *
  * Every color reads from the `--sx-*` token layer (globals.css, themed
  * dark/light) — no hardcoded hex.
@@ -30,37 +37,118 @@ import Image from "next/image";
 const PRODUCT_FAMILY = ["Venue", "Academy", "Football Intelligence"];
 
 /**
- * The canonical 3D Relay Grid mark as a quiet crest — small, seated with a
- * real contact shadow, no filters, no blend tricks, no motion beyond a fade.
- * The image is never cropped, recolored, or upscaled beyond its native
- * 1254x1254 source (V3 fidelity policy).
+ * The canonical 3D Relay Grid as a monument on the stage horizon: the mark,
+ * its floor reflection, and the grounded pool of stage light. Container-level
+ * presentation only — the image is never cropped, recolored, or upscaled
+ * beyond its native 1254x1254 source (V3 fidelity policy).
  */
-function Crest() {
-  const size = 168;
+function Monument() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!finePointer || reducedMotion) return;
+
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const onMove = (e: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      // Max ±2deg, per DESIGN.md's cinematic parallax ceiling.
+      setTilt({ x: py * -4, y: px * 4 });
+    };
+    const onLeave = () => setTilt({ x: 0, y: 0 });
+
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", onLeave);
+    return () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+    };
+  }, []);
+
+  const markStyle = { width: "clamp(300px, 26vw, 400px)", height: "auto" } as const;
+
   return (
-    <div className="scripe-crest scripe-fade-in flex w-fit flex-col items-center">
-      <Image
-        src="/brand/auth/login-relay-grid-3d.png"
-        alt=""
-        width={size}
-        height={size}
-        sizes={`${size}px`}
-        priority
-        className="object-contain"
-        style={{ width: size, height: size }}
-        aria-hidden="true"
-      />
-      {/* Contact shadow — attached to the crest, not floating in the scene */}
+    <div ref={wrapRef} className="scripe-monument relative w-full" style={{ perspective: 900 }}>
+      {/* Horizon — the full-width line the monument stands on */}
       <div
         aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-px"
         style={{
-          width: size * 0.56,
-          height: 12,
-          marginTop: -6,
-          background: "radial-gradient(ellipse, rgba(0, 0, 0, 0.42) 0%, transparent 70%)",
-          filter: "blur(5px)",
+          background:
+            "linear-gradient(90deg, transparent, var(--sx-horizon) 22%, var(--sx-horizon) 78%, transparent)",
         }}
       />
+      {/* Floor sheen — the floor plane catching the stage light */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-full h-44"
+        style={{
+          background: "linear-gradient(180deg, var(--sx-floor-sheen), transparent)",
+        }}
+      />
+      {/* Grounded pool of Signal Lime stage light — breathes, never moves */}
+      <div
+        aria-hidden="true"
+        className="scripe-light-breath absolute bottom-0"
+        style={{
+          // Physical `left`, not inset-inline-start: paired with translateX(-50%)
+          // this centers correctly in BOTH directions; the logical property
+          // would push the pool off-center in RTL.
+          left: "50%",
+          transform: "translate(-50%, 55%)",
+          width: "min(56%, 480px)",
+          height: 120,
+          background: "radial-gradient(ellipse, var(--sx-floor-light) 0%, transparent 70%)",
+          filter: "blur(22px)",
+        }}
+      />
+      {/* The monument + its reflection — one parallax group */}
+      <div
+        className="scripe-monument-settle relative z-10 flex justify-center"
+        style={{
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: "transform 200ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))",
+          transformStyle: "preserve-3d",
+        }}
+      >
+        <div className="relative">
+          <Image
+            src="/brand/auth/login-relay-grid-3d.png"
+            alt=""
+            width={400}
+            height={400}
+            sizes="400px"
+            priority
+            className="relative object-contain"
+            style={markStyle}
+            aria-hidden="true"
+          />
+          {/* Floor reflection — environmental, fades within the floor plane */}
+          <Image
+            src="/brand/auth/login-relay-grid-3d.png"
+            alt=""
+            width={400}
+            height={400}
+            sizes="400px"
+            className="pointer-events-none absolute top-full object-contain"
+            style={{
+              ...markStyle,
+              transform: "scaleY(-1)",
+              opacity: 0.26,
+              filter: "blur(2px)",
+              maskImage: "linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 58%)",
+              WebkitMaskImage: "linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 58%)",
+            }}
+            aria-hidden="true"
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -110,8 +198,8 @@ export function VaultLayout({
       <VaultBackground />
 
       <div className="relative z-[1] grid min-h-screen grid-cols-1 lg:grid-cols-[minmax(0,1fr)_min(500px,48%)]">
-        {/* ── Program cover (desktop) ─────────────────────────────── */}
-        <div className="relative hidden flex-col justify-between px-12 py-12 lg:flex xl:px-16">
+        {/* ── Showroom stage (desktop) ─────────────────────────────── */}
+        <div className="relative hidden flex-col justify-between px-12 py-10 lg:flex xl:px-16">
           {/* Masthead — instantly present, no entrance */}
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg">
@@ -129,16 +217,16 @@ export function VaultLayout({
             </span>
           </div>
 
-          {/* Cover — crest, headline, standfirst */}
-          <div className="flex max-w-2xl flex-col gap-8 py-10">
-            <Crest />
+          {/* Scene — monument on its horizon, then the words */}
+          <div className="flex flex-col items-center">
+            <Monument />
 
             <h1
-              className="m-0 font-bold"
+              className="m-0 mt-24 text-center font-bold"
               style={{
-                fontSize: "clamp(44px, 4.8vw, 72px)",
+                fontSize: "clamp(40px, 4.2vw, 64px)",
                 letterSpacing: "-0.03em",
-                lineHeight: 1.04,
+                lineHeight: 1.05,
                 color: "var(--sx-text-heading)",
               }}
             >
@@ -166,7 +254,7 @@ export function VaultLayout({
             </h1>
 
             <p
-              className="scripe-fade-in m-0 max-w-[44ch] text-[16px] leading-relaxed"
+              className="scripe-fade-in m-0 mt-5 max-w-[46ch] text-center text-[16px] leading-relaxed"
               style={{ color: "var(--sx-text-mute)" }}
             >
               {subtitle}
@@ -175,7 +263,7 @@ export function VaultLayout({
             <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} />
           </div>
 
-          {/* Cover footer — product family above compliance, one hairline */}
+          {/* Stage footer — product family above compliance, one hairline */}
           <div
             className="scripe-fade-in flex flex-col gap-3 pt-5"
             style={{ borderTop: "1px solid var(--sx-divider)" }}
