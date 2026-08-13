@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 // `vitest.setup.ts` (which registers jest-dom's matchers at runtime for every
 // suite) is itself excluded from tsc's project (see tsconfig.json "exclude"),
 // and even so, it imports the plain "@testing-library/jest-dom" entry, which
@@ -74,6 +74,10 @@ function registerFakeCustomFieldsExtension(): CustomFieldsExtensionApi {
       { name: "__cf__nationality", label: "Nationality", type: "text", section: "Custom Fields" },
     ]),
     saveValues: vi.fn().mockResolvedValue(undefined),
+    // Empty by default -- these form-focused tests never populate table rows,
+    // so useCustomFieldColumns' own ownerIds.length === 0 gate means this is
+    // never actually called here; it only needs to exist to satisfy the type.
+    getBulkColumnValues: vi.fn().mockResolvedValue({ columns: [], valuesByOwnerId: {} }),
     InlineAddTrigger: () => null,
   };
   registerCustomFieldsExtension(fake);
@@ -299,6 +303,7 @@ describe("GenericCrudView + entityTypeKey", () => {
     const fake: CustomFieldsExtensionApi = {
       getFormFields,
       saveValues: vi.fn().mockResolvedValue(undefined),
+      getBulkColumnValues: vi.fn().mockResolvedValue({ columns: [], valuesByOwnerId: {} }),
       InlineAddTrigger: ({ onCreated }) => (
         <button type="button" onClick={onCreated}>inline-add</button>
       ),
@@ -360,5 +365,116 @@ describe("GenericCrudView + entityTypeKey", () => {
     await waitFor(() => expect(extension.getFormFields).toHaveBeenCalledWith(
       "party.person", "viewed-record-id"
     ));
+  });
+});
+
+describe("GenericCrudView + dynamic custom-field table columns", () => {
+  function registerFakeColumnsExtension(response: {
+    columns: Array<{
+      key: string;
+      labelEn: string;
+      labelAr: string | null;
+      valueType: string;
+      options: string[] | null;
+      sortOrder: number;
+    }>;
+    valuesByOwnerId: Record<string, Record<string, unknown>>;
+  }): CustomFieldsExtensionApi {
+    const fake: CustomFieldsExtensionApi = {
+      getFormFields: vi.fn().mockResolvedValue([]),
+      saveValues: vi.fn().mockResolvedValue(undefined),
+      getBulkColumnValues: vi.fn().mockResolvedValue(response),
+      InlineAddTrigger: () => null,
+    };
+    registerCustomFieldsExtension(fake);
+    return fake;
+  }
+
+  it("appends dynamic custom-field columns after the screen's own columns, with correct per-row values, and the empty-state marker for a row missing from valuesByOwnerId", async () => {
+    const extension = registerFakeColumnsExtension({
+      columns: [
+        {
+          key: "shirt_size",
+          labelEn: "Shirt Size",
+          labelAr: null,
+          valueType: "Text",
+          options: null,
+          sortOrder: 0,
+        },
+      ],
+      valuesByOwnerId: {
+        "row-1": { shirt_size: "M" },
+        // "row-2" deliberately absent — the server couldn't verify it (wrong
+        // tenant, deleted between the list query and this call, malformed).
+      },
+    });
+    const vm = makeViewModel({
+      isCreateModalOpen: false,
+      items: [
+        { id: "row-1", firstName: "Jane" },
+        { id: "row-2", firstName: "John" },
+      ],
+    });
+    const config: CrudConfig<{ id: string; firstName: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [
+        { key: "id", label: "Id" },
+        { key: "firstName", label: "First Name" },
+      ],
+      entityTypeKey: "party.person",
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+
+    // Dependent bulk fetch: keyed on the current page's row ids.
+    await waitFor(() =>
+      expect(extension.getBulkColumnValues).toHaveBeenCalledWith("party.person", ["row-1", "row-2"])
+    );
+
+    // GenericTable renders both a desktop <table> and a mobile card list at
+    // the same time (CSS breakpoints hide one, not conditional rendering),
+    // and jsdom in this suite has no stylesheet loaded to resolve that CSS —
+    // so every assertion below is scoped to the one semantic <table> to avoid
+    // matching the mobile card view's duplicate copy of the same text.
+    const table = await screen.findByRole("table");
+    await waitFor(() => {
+      const headerLabels = within(table)
+        .getAllByRole("columnheader")
+        .map((cell) => cell.textContent);
+      // Appended AFTER the screen's own static columns, not before.
+      expect(headerLabels).toEqual(["Id", "First Name", "Shirt Size"]);
+    });
+
+    const rows = within(table).getAllByRole("row");
+    // rows[0] is the header row; data rows follow in viewModel.items order.
+    expect(within(rows[1]).getByText("M")).toBeInTheDocument();
+    expect(within(rows[2]).getByText("—")).toBeInTheDocument();
+  });
+
+  it("does not fetch or render any dynamic columns when entityTypeKey is unset, even with rows present (existing screens stay unaffected)", async () => {
+    const extension = registerFakeColumnsExtension({ columns: [], valuesByOwnerId: {} });
+    const vm = makeViewModel({
+      isCreateModalOpen: false,
+      items: [{ id: "row-1", firstName: "Jane" }],
+    });
+    const config: CrudConfig<{ id: string; firstName: string }> = {
+      titleKey: "t", subtitleKey: "s",
+      columns: [
+        { key: "id", label: "Id" },
+        { key: "firstName", label: "First Name" },
+      ],
+      // Deliberately no entityTypeKey — the vast majority of existing screens.
+    };
+
+    render(<GenericCrudView viewModel={vm} config={config} />);
+
+    const table = await screen.findByRole("table");
+    await waitFor(() => expect(within(table).getByText("Jane")).toBeInTheDocument());
+
+    expect(extension.getBulkColumnValues).not.toHaveBeenCalled();
+    expect(within(table).getAllByRole("columnheader").map((cell) => cell.textContent)).toEqual([
+      "Id",
+      "First Name",
+    ]);
   });
 });

@@ -15,4 +15,8 @@ export class CustomFieldValueRepository implements ICustomFieldValueRepository {
   saveValues(entityTypeKey: string, ownerId: string, values: Record<string, unknown>) {
     return this.service.saveValues(entityTypeKey, ownerId, values);
   }
+
+  getBulkValues(entityTypeKey: string, ownerIds: string[]) {
+    return this.service.getBulkValues(entityTypeKey, ownerIds);
+  }
 }

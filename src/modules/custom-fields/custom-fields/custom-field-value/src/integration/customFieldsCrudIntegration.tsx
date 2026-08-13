@@ -2,6 +2,7 @@ import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import {
   encodeCustomFieldName,
   registerCustomFieldsExtension,
+  type BulkColumnValuesResult,
   type CustomFieldsExtensionApi,
 } from "@core/crud/customFieldsExtension";
 import { customFieldsContainer } from "../../../di";
@@ -65,9 +66,17 @@ async function saveValues(
   );
 }
 
+async function getBulkColumnValues(
+  entityTypeKey: string,
+  ownerIds: string[]
+): Promise<BulkColumnValuesResult> {
+  return customFieldsContainer.customFieldValueRepository.getBulkValues(entityTypeKey, ownerIds);
+}
+
 const customFieldsCrudIntegration: CustomFieldsExtensionApi = {
   getFormFields,
   saveValues,
+  getBulkColumnValues,
   InlineAddTrigger: InlineAddCustomFieldDialog,
 };
 

@@ -51,6 +51,7 @@ import { useRestrictedFields } from "@core/hooks/use-restricted-fields";
 import type { PermissionCode } from "@core/common/types/permissions";
 import {
   useCustomFieldsFormFields,
+  useCustomFieldColumns,
   decodeCustomFieldName,
   getCustomFieldsExtension,
 } from "@core/crud/customFieldsExtension";
@@ -529,6 +530,17 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const entity = config?.itemTypeKey ? t(config.itemTypeKey) : title;
   const allColumns = config?.columns || propColumns || [];
 
+  // Dynamic custom-field table columns. Row ids re-derive every render
+  // from the current page's items — useCustomFieldColumns internally guards
+  // against refetching unless the SET of ids actually changed (pagination,
+  // sort, filter, search), so this plain re-derivation needs no outer
+  // memoization. The hook itself no-ops (and returns no columns) when
+  // entityTypeKey is unset, so every screen without it is unaffected.
+  const customFieldColumnOwnerIds = (viewModel.items || [])
+    .map((item: any) => item?.id)
+    .filter((id: unknown): id is string => typeof id === "string" && id.length > 0);
+  const customFieldColumns = useCustomFieldColumns(config?.entityTypeKey, customFieldColumnOwnerIds);
+
   // === Layer 1: Explicit restricted fields from /me response ===
   const restrictedFields = useRestrictedFields(config?.resource);
 
@@ -543,9 +555,18 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // `description` getter); it made columns appear and disappear as the user
   // paginated; and it had already forced a compatibility shim into the domain
   // model to work around itself.
+  //
+  // Custom-field columns are appended AFTER the screen's own (already
+  // FLS-filtered) columns — additive extra data, never primary — and are
+  // never themselves subject to the FLS filter above, which is keyed on the
+  // screen's own static field names and has no relationship to a dynamic
+  // custom field's synthetic key.
   const columns = useMemo(
-    () => allColumns.filter((col) => !restrictedFields.includes(col.key)),
-    [allColumns, restrictedFields]
+    () => [
+      ...allColumns.filter((col) => !restrictedFields.includes(col.key)),
+      ...customFieldColumns.columns,
+    ],
+    [allColumns, restrictedFields, customFieldColumns.columns]
   );
 
   // Wrap actions to use the generic individual action handler
