@@ -56,19 +56,23 @@ function VaultLogoBlock() {
     };
   }, []);
 
+  const size = 340;
+
   return (
     <div
       ref={wrapRef}
+      data-stagger="2"
       className="scripe-auth-reveal relative flex items-center justify-center"
       style={{
-        width: 280,
-        height: 280,
+        width: size,
+        height: size,
         perspective: 800,
       }}
     >
-      {/* Static Lime environmental glow — no continuous pulse */}
+      {/* Lime environmental glow — drifts slowly via the ambient class, not a
+          continuous pulse/breathe loop */}
       <div
-        className="absolute"
+        className="scripe-ambient-drift absolute"
         style={{
           inset: "-20%",
           background: "radial-gradient(circle, var(--sx-aurora-a) 0%, transparent 65%)",
@@ -79,8 +83,8 @@ function VaultLogoBlock() {
       <div
         className="absolute rounded-full"
         style={{
-          width: 260,
-          height: 260,
+          width: size - 20,
+          height: size - 20,
           opacity: "var(--sx-logo-orb-opacity, 0)",
           background: "radial-gradient(circle at 30% 25%, #151719 0%, #050506 80%)",
           boxShadow:
@@ -89,6 +93,7 @@ function VaultLogoBlock() {
       />
       {/* The canonical 3D Relay Grid — protected asset, container tilts, never the geometry */}
       <div
+        className="relative overflow-hidden"
         style={{
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
           transition: "transform 200ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))",
@@ -98,16 +103,28 @@ function VaultLogoBlock() {
         <Image
           src="/brand/auth/login-relay-grid-3d.png"
           alt="SCRIPE"
-          width={280}
-          height={280}
+          width={size}
+          height={size}
+          sizes={`${size}px`}
           priority
           className="relative z-[1] object-contain"
           style={{
-            width: 280,
-            height: 280,
+            width: size,
+            height: size,
             mixBlendMode: "var(--sx-logo-blend)" as CSSProperties["mixBlendMode"],
             filter: "var(--sx-logo-filter)",
           }}
+        />
+        {/* Restrained one-time highlight sweep — DESIGN.md's explicit Login
+            allowance. Plays once, never loops, container-level only. */}
+        <div
+          className="scripe-highlight-sweep pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(100deg, transparent 40%, rgba(255,255,255,0.35) 50%, transparent 60%)",
+            mixBlendMode: "screen",
+          }}
+          aria-hidden="true"
         />
       </div>
     </div>
@@ -159,7 +176,10 @@ export function VaultLayout({
         {/* ── Hero (desktop) ───────────────────────────────────────── */}
         <div className="relative hidden flex-col justify-center gap-8 px-12 py-14 lg:flex xl:px-16">
           {/* Top lockup */}
-          <div className="flex items-center gap-3">
+          <div
+            data-stagger="1"
+            className="scripe-auth-reveal flex items-center gap-3"
+          >
             <div className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-lg">
               <LogoImg
                 logoSrc={logoSrc}
@@ -181,7 +201,7 @@ export function VaultLayout({
           </div>
 
           {/* Headline block — solid ink, no gradient text (DESIGN.md ban) */}
-          <div className="flex max-w-xl flex-col gap-3.5">
+          <div data-stagger="3" className="scripe-auth-reveal flex max-w-xl flex-col gap-3.5">
             <span
               className="sx-mono inline-flex w-fit items-center gap-2 rounded-full px-2.5 py-1.5 text-[11px] uppercase tracking-[0.15em]"
               style={{
@@ -216,7 +236,7 @@ export function VaultLayout({
           </div>
 
           {/* Feature chips */}
-          <div className="flex flex-wrap gap-3">
+          <div data-stagger="4" className="scripe-auth-reveal flex flex-wrap gap-3">
             {features.map(({ icon: Icon, label }) => (
               <span
                 key={label}
@@ -237,7 +257,8 @@ export function VaultLayout({
 
           {/* Compliance footer */}
           <div
-            className="sx-mono flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.1em]"
+            data-stagger="5"
+            className="scripe-auth-reveal sx-mono flex flex-wrap items-center gap-4 text-[11px] uppercase tracking-[0.1em]"
             style={{
               color: "var(--sx-text-faint)",
               fontFamily: "var(--font-mono, ui-monospace, monospace)",

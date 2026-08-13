@@ -45,8 +45,11 @@ const prefersReducedMotion =
     ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
     : false;
 
-/** Phases that show the stepper progress band. */
+/** Phases that show the stepper progress band — matches SignupProgressBar's
+ * own 5-node STEPPER_PHASES array; "plan" was missing here, so the band
+ * never appeared on the plan-selection screen even though its node existed. */
 const STEPPER_PHASES: ReadonlySet<SignupPhase> = new Set<SignupPhase>([
+  "plan",
   "account",
   "verification",
   "workspace",

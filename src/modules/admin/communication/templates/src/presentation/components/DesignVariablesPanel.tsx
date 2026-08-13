@@ -41,7 +41,7 @@ export interface DesignVariablesPanelProps {
  */
 export const DEFAULT_DESIGN: DesignVariables = {
   primaryColor: "#3b82f6",
-  secondaryColor: "#6366f1",
+  secondaryColor: "#3F4347",
   backgroundColor: "#ffffff",
   textColor: "#1f2937",
   fontFamily: "Inter, sans-serif",

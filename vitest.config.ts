@@ -30,7 +30,7 @@ export default defineConfig({
       exclude: [
         "node_modules/",
         ".next/",
-        "src/core/ui/components/**", // Shadcn components
+        "src/core/ui/*.tsx", // Shadcn-pattern primitives live directly here, not in a components/ subdir
         "**/*.d.ts",
         "**/*.config.*",
       ],

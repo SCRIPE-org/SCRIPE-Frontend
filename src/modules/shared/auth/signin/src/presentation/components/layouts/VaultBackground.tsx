@@ -4,13 +4,13 @@
  * VaultBackground — ambient sublayer for the Vault auth layout.
  *
  * Relay vNext cinematic stage: a restrained systems-intelligence grid plus one
- * static Signal Lime environmental glow. Replaces the retired Aurora ambience
- * (drifting violet/cyan orbs, a scan beam, a 28-particle field) — DESIGN.md
- * bans "excessive particle effects" and treats Login's cinematic exception as
- * one deliberate signal, not ambient decoration. What remains is genuinely
- * static (no `sxDrift`/`sxScan`/`sxFloat` loops); the container-level intro
- * reveal lives on the logo block itself, gated by `prefers-reduced-motion`
- * there. Every color comes from the `--sx-*` token layer (globals.css, themed
+ * Signal Lime environmental glow that drifts slowly and continuously — per
+ * DESIGN.md's explicit "tiny ambient light movement applied to the
+ * container/background" allowance for Login. Replaces the retired Aurora
+ * ambience (two competing-hue orbs, a scan beam, a 28-particle field) —
+ * DESIGN.md bans "excessive particle effects" and "heavy particle storms,"
+ * not motion itself: the difference is ONE element, slow, low-alpha, never a
+ * storm. Every color comes from the `--sx-*` token layer (globals.css, themed
  * dark/light) — no hardcoded hex.
  */
 export function VaultBackground() {
@@ -27,15 +27,15 @@ export function VaultBackground() {
           WebkitMaskImage: "radial-gradient(ellipse at 50% 50%, black 30%, transparent 80%)",
         }}
       />
-      {/* One static Signal Lime environmental glow — the single committed signal */}
+      {/* One Signal Lime environmental glow — the single committed signal,
+          drifting slowly (16s) rather than sitting dead-still or storming. */}
       <div
-        className="absolute"
+        className="scripe-ambient-drift absolute"
         style={{
           insetInlineStart: "50%",
           top: "35%",
           width: 900,
           height: 900,
-          transform: "translate(-50%, -50%)",
           background: "radial-gradient(circle, var(--sx-aurora-a) 0%, transparent 62%)",
           filter: "blur(60px)",
         }}

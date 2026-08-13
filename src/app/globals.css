@@ -179,6 +179,24 @@ html[data-reduced-motion="true"] {
 .scripe-auth-reveal {
   animation: scripeAuthReveal 650ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
 }
+/* Staggered variants — one authored entrance across the hero column (badge,
+   mark, headline, chips, footer arrive as one coordinated beat, not each
+   popping in independently while only the mark animates). */
+.scripe-auth-reveal[data-stagger="1"] {
+  animation-delay: 80ms;
+}
+.scripe-auth-reveal[data-stagger="2"] {
+  animation-delay: 180ms;
+}
+.scripe-auth-reveal[data-stagger="3"] {
+  animation-delay: 340ms;
+}
+.scripe-auth-reveal[data-stagger="4"] {
+  animation-delay: 460ms;
+}
+.scripe-auth-reveal[data-stagger="5"] {
+  animation-delay: 560ms;
+}
 @media (prefers-reduced-motion: reduce) {
   .scripe-auth-reveal {
     animation: none;
@@ -186,6 +204,59 @@ html[data-reduced-motion="true"] {
 }
 html[data-reduced-motion="true"] .scripe-auth-reveal {
   animation: none;
+}
+
+/* Ambient light drift — DESIGN.md's "tiny ambient light movement applied to
+   the container/background, not geometry." ONE element, slow (16s), a small
+   translate range. This is not the retired multi-orb/scan/particle ambience:
+   one restrained, continuous signal, not a storm. */
+@keyframes scripeAmbientDrift {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(calc(-50% + 18px), calc(-50% - 14px)) scale(1.04);
+  }
+}
+.scripe-ambient-drift {
+  animation: scripeAmbientDrift 16s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scripe-ambient-drift {
+    animation: none;
+  }
+}
+html[data-reduced-motion="true"] .scripe-ambient-drift {
+  animation: none;
+}
+
+/* Restrained one-time highlight sweep — DESIGN.md's explicit allowance for
+   Login. A single diagonal light band crosses the mark once, after the intro
+   reveal settles, and never repeats. */
+@keyframes scripeHighlightSweep {
+  0% {
+    transform: translateX(-140%) rotate(18deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(140%) rotate(18deg);
+    opacity: 0;
+  }
+}
+.scripe-highlight-sweep {
+  animation: scripeHighlightSweep 1300ms ease-out 900ms both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scripe-highlight-sweep {
+    display: none;
+  }
+}
+html[data-reduced-motion="true"] .scripe-highlight-sweep {
+  display: none;
 }
 
 /* ========================================
@@ -211,15 +282,19 @@ html[data-reduced-motion="true"] .scripe-auth-reveal {
   --workspace-hue: 262;
   --workspace-chroma: 0.14;
 
-  /* Light theme colors - Default Purple */
+  /* Light theme colors — RELAY vNEXT: Signal Lime, not the old default Purple.
+     This is the base/fallback layer every unthemed shadcn-pattern component
+     reads (bg-primary, ring-ring, text-primary, the sidebar family) when no
+     --nx- or --sx- token applies — e.g. WorkspaceCard's focus-visible:ring-ring.
+     Ink foreground always pairs with the Lime fill, never a near-white. */
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
-  --primary: 262 83% 58%;
-  --primary-foreground: 210 40% 98%;
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
@@ -233,18 +308,18 @@ html[data-reduced-motion="true"] .scripe-auth-reveal {
   --destructive-foreground: 0 0% 98%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
-  --ring: 262 83% 58%;
+  --ring: 74 100% 50%;
   --radius: 0.75rem;
 
   /* Light sidebar colors */
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 5.9% 10%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
   --sidebar-accent: 240 4.8% 95.9%;
   --sidebar-accent-foreground: 240 5.9% 10%;
   --sidebar-border: 240 5.9% 90%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-ring: 74 100% 50%;
 
   /* Chart colors (used by Recharts via shadcn ChartContainer).
      Categorical, FIXED slot order — colour follows the entity, never its
@@ -267,7 +342,7 @@ html[data-reduced-motion="true"] .scripe-auth-reveal {
   --chart-8: 41 100% 46%; /* yellow  #eda100 */
 
   /* Shadow colors */
-  --shadow-primary: 262 83% 58%;
+  --shadow-primary: 74 100% 50%;
   --shadow-secondary: 240 5% 64.9%;
 }
 
@@ -820,8 +895,10 @@ html {
   --card-foreground: 0 0% 98%;
   --popover: 240 10% 3.9%;
   --popover-foreground: 0 0% 98%;
-  --primary: 262 83% 58%;
-  --primary-foreground: 210 40% 98%;
+  /* RELAY vNEXT: same Lime/Ink pairing as the light block above — Signal
+     Lime is invariant across themes, never a per-theme hue swap. */
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
   --secondary: 240 3.7% 15.9%;
   --secondary-foreground: 0 0% 98%;
   --muted: 240 3.7% 15.9%;
@@ -837,16 +914,16 @@ html {
   --destructive-foreground: 240 10% 4%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
-  --ring: 262 83% 58%;
+  --ring: 74 100% 50%;
 
   --sidebar: 240 5.9% 10%;
   --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
   --sidebar-accent: 240 3.7% 15.9%;
   --sidebar-accent-foreground: 0 0% 98%;
   --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-ring: 74 100% 50%;
 
   /* Chart colors (dark — the SAME eight hues re-stepped for the dark
      surface, not an automatic flip; slot order matches the light block).
@@ -860,14 +937,6 @@ html {
   --chart-6: 120 100% 26%; /* deep green #008300 */
   --chart-7: 338 61% 58%; /* magenta #d55181 */
   --chart-8: 40 100% 39%; /* yellow  #c98500 */
-
-  /* Nexus workspace OKLCH — dark mode overrides */
-  --ws-accent: oklch(0.72 var(--workspace-chroma) var(--workspace-hue));
-  --ws-accent-light: oklch(0.22 calc(var(--workspace-chroma) * 0.25) var(--workspace-hue));
-  --ws-accent-muted: oklch(0.55 calc(var(--workspace-chroma) * 0.4) var(--workspace-hue));
-  --ws-accent-fg: oklch(0.98 0.005 var(--workspace-hue));
-  --ws-rail-bg: oklch(0.12 0.015 var(--workspace-hue));
-  --ws-rail-hover: oklch(0.18 0.025 var(--workspace-hue));
 }
 
 /* ========================================
@@ -2549,18 +2618,6 @@ html[lang="ar"],
     background-color 0.3s ease,
     border-color 0.3s ease,
     color 0.3s ease;
-}
-
-/* ========================================
-   UTILITY CLASSES - BACKGROUND PATTERNS
-   ======================================== */
-.bg-grid-pattern {
-  background-image: radial-gradient(
-    circle,
-    hsl(var(--muted-foreground) / 0.1) 1px,
-    transparent 1px
-  );
-  background-size: 20px 20px;
 }
 
 /* ========================================

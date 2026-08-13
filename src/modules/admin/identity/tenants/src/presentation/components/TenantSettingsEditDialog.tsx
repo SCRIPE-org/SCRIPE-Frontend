@@ -240,14 +240,14 @@ export function TenantSettingsEditDialog({
                 <div className="flex gap-2">
                   <Input
                     type="color"
-                    value={formData.secondaryColor || "#6366f1"}
+                    value={formData.secondaryColor || "#3F4347"}
                     onChange={(e) => handleChange("secondaryColor", e.target.value)}
                     className="h-10 w-12 p-1"
                   />
                   <Input
                     value={formData.secondaryColor || ""}
                     onChange={(e) => handleChange("secondaryColor", e.target.value)}
-                    placeholder="#6366f1"
+                    placeholder="#3F4347"
                   />
                 </div>
               </div>

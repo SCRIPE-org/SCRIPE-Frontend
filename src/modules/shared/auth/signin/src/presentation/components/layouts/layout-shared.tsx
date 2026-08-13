@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import Image from "next/image";
 
-/** Reusable logo image with error-hiding fallback */
+/** Reusable logo image — falls back to the canonical SCRIPE mark if a
+ * tenant-configured logo URL 404s, rather than leaving a layout gap. */
 export function LogoImg({
   logoSrc,
   logoAlt,
@@ -13,17 +15,16 @@ export function LogoImg({
   logoAlt: string;
   className?: string;
 }) {
+  const [errored, setErrored] = useState(false);
   return (
     <Image
-      src={logoSrc}
+      src={errored ? "/brand/app-logo.svg" : logoSrc}
       alt={`${logoAlt} Logo`}
       width={96}
       height={96}
       unoptimized
       className={className}
-      onError={(e) => {
-        e.currentTarget.style.display = "none";
-      }}
+      onError={() => setErrored(true)}
     />
   );
 }
