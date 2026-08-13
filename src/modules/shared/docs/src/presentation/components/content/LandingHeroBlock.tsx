@@ -16,14 +16,20 @@ const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
  * subset (not the full internal module list). Values are never invented —
  * "Active" states a real, safe fact about the deployment; the Tenants tile's
  * value comes from the real platform-stats endpoint (see PlatformModuleTile).
+ *
+ * Colors: Identity is the flagship tile and gets the one committed Lime
+ * signal; Tenants/Entitlements are neutral (light/dark mineral-graphite)
+ * rather than a second saturated brand hue — the retired violet+cyan duo
+ * both these used to read as no longer exists as two distinct colors.
+ * Billing/Marketplace/Docs keep their existing semantic-adjacent hues.
  */
 const PLATFORM_MODULES = [
-  { id: "identity", icon: "ID", name: "Identity", color: "oklch(0.72 0.22 296)" },
-  { id: "tenants", icon: "TN", name: "Tenants", color: "oklch(0.84 0.155 213)" },
+  { id: "identity", icon: "ID", name: "Identity", color: "oklch(0.91 0.24 128)" },
+  { id: "tenants", icon: "TN", name: "Tenants", color: "oklch(0.75 0.02 128)" },
   { id: "billing", icon: "BI", name: "Billing", color: "oklch(0.79 0.17 160)" },
   { id: "marketplace", icon: "MK", name: "Marketplace", color: "oklch(0.82 0.155 80)" },
   { id: "docs", icon: "DC", name: "Docs", color: "oklch(0.65 0.22 20)" },
-  { id: "entitlement", icon: "EN", name: "Entitlements", color: "oklch(0.72 0.22 296)" },
+  { id: "entitlement", icon: "EN", name: "Entitlements", color: "oklch(0.55 0.02 128)" },
 ] as const;
 
 const MARQUEE_ITEMS = [
@@ -266,7 +272,7 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
             <FloatBadge
               value={stats ? `${stats.activeModules} active` : "Live"}
               label="Modules"
-              color="oklch(0.72 0.22 296)"
+              color="oklch(0.91 0.24 128)"
               delay={1.1}
               style={{ position: "absolute", bottom: "40px", left: "-20px", zIndex: 3 }}
             />

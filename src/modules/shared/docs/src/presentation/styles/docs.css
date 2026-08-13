@@ -250,11 +250,24 @@
   transform: rotate(-90deg);
 }
 
+/* Disclosure height via the grid-template-rows 0fr/1fr trick: transform/
+   opacity-only motion policy without needing to pre-compute pixel heights
+   (the previous version multiplied item count by a hardcoded row height,
+   which drifted whenever a label wrapped to two lines or the font-size
+   setting changed). The single *-inner child is the one grid item that
+   fills the animated row; overflow:hidden on the outer clips it at 0fr. */
 .docs-sidebar-items {
+  display: grid;
+  grid-template-rows: 0fr;
   overflow: hidden;
-  /* Disclosure height — the one layout property the motion policy allows to
-     animate, and only on an accordion. */
-  transition: max-height var(--nx-t-panel) var(--nx-ease-enter);
+  transition: grid-template-rows var(--nx-t-panel) var(--nx-ease-enter);
+}
+.docs-sidebar-items[data-expanded="true"] {
+  grid-template-rows: 1fr;
+}
+.docs-sidebar-items-inner {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .docs-sidebar-item {
@@ -340,8 +353,17 @@
 }
 
 .docs-sidebar-subgroup-items {
+  display: grid;
+  grid-template-rows: 0fr;
   overflow: hidden;
-  transition: max-height var(--nx-t-panel) var(--nx-ease-enter);
+  transition: grid-template-rows var(--nx-t-panel) var(--nx-ease-enter);
+}
+.docs-sidebar-subgroup-items[data-expanded="true"] {
+  grid-template-rows: 1fr;
+}
+.docs-sidebar-subgroup-items-inner {
+  min-height: 0;
+  overflow: hidden;
 }
 
 .docs-sidebar-item--nested {
@@ -1930,11 +1952,13 @@
 }
 
 /* --- Interactive Components Styling ------------------------------------
-   --docs-purple-* keeps its name because components outside this stylesheet
-   read it, but the value is no longer a fixed violet: the accent is
-   workspace-owned and follows the tenant hue and the theme. The old
-   prefers-color-scheme override is gone — theme here is class-driven
-   (next-themes writes .dark), so an OS-media override fought the toggle. */
+   --docs-purple-* keeps its name for backward compatibility (nothing in
+   src/ currently reads it), but the value is Signal Lime, not violet — it
+   aliases --nx-accent, which is invariant per theme and no longer follows
+   the workspace/tenant hue (Relay vNext: one committed brand signal, not a
+   per-workspace recolor). The old prefers-color-scheme override is gone —
+   theme here is class-driven (next-themes writes .dark), so an OS-media
+   override fought the toggle. */
 :root {
   --docs-purple-primary: var(--nx-accent);
   --docs-purple-muted: var(--nx-accent-wash);
