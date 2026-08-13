@@ -32,7 +32,13 @@ export default function PrivacyPage() {
 
       {/* Logo */}
       <div className="mb-6 flex flex-col items-center">
-        <Image src="/brand/app-logo-1024.png" alt={BRAND.name} className="mb-2 h-10 w-auto" />
+        <Image
+          src="/brand/app-logo-1024.png"
+          alt={BRAND.name}
+          width={40}
+          height={40}
+          className="mb-2 h-10 w-auto"
+        />
         <span
           className="text-xs font-semibold uppercase tracking-[0.2em]"
           style={{ color: "rgba(247,248,245,0.5)" }}
