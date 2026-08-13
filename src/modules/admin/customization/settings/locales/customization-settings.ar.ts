@@ -1561,7 +1561,7 @@ export const ar = {
       textLabel: "نص الشعار",
       textPlaceholder: "أدخل نص الشعار...",
       textHelp: "النص المعروض كشعار",
-      imageInfo: "يستخدم الشعار الصوري الملف ‎/app-logo.png‎",
+      imageInfo: "يستخدم الشعار الصوري الملف ‎/brand/app-logo-1024.png‎",
       previewLabel: "معاينة الشعار",
       previewHelp: "معاينة حية للشعار مع الإعدادات الحالية",
       sizeOptions: {

@@ -173,7 +173,7 @@ export function LoginPreviewShell() {
     }
   })();
 
-  const logoUrl = (rawParsed.logoUrl as string) || "/app-logo.png";
+  const logoUrl = (rawParsed.logoUrl as string) || "/brand/app-logo-1024.png";
   const companyName = (rawParsed.companyName as string) || BRAND.name;
   const copyrightText = (rawParsed.copyrightText as string) || "";
 
@@ -1701,7 +1701,7 @@ export function LoginPreviewShell() {
             dir={direction}
             style={{
               background:
-                "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #1a1140 0%, #0a0820 40%, #06060e 80%, #04040a 100%))",
+                "var(--sx-bg-grad, radial-gradient(140% 90% at 25% 25%, #151719 0%, #0d0d0e 40%, #050506 80%, #030304 100%))",
               // --sx-* is the frozen vault palette (globals.css) — this route always
               // loads the shared global stylesheet, so the token is guaranteed present;
               // an inline hex fallback here would just be a second hardcoded copy of it.
@@ -1711,12 +1711,12 @@ export function LoginPreviewShell() {
           >
             {/* Hero column (left, hidden on mobile) */}
             <div className="relative hidden flex-col justify-center gap-6 px-10 py-12 lg:flex lg:w-[55%]">
-              {/* Aurora glow behind the mark */}
+              {/* Static Signal Lime glow behind the mark — the one cinematic signal */}
               <div
                 className="pointer-events-none absolute inset-0"
                 style={{
                   background:
-                    "radial-gradient(60% 60% at 30% 50%, rgba(168,85,247,.15) 0%, transparent 70%)",
+                    "radial-gradient(60% 60% at 30% 50%, rgba(198,255,0,.1) 0%, transparent 70%)",
                 }}
                 aria-hidden="true"
               />
@@ -1734,17 +1734,17 @@ export function LoginPreviewShell() {
                 <div
                   className="relative flex h-40 w-40 items-center justify-center rounded-full"
                   style={{
-                    background: "radial-gradient(circle, rgba(168,85,247,.2) 0%, transparent 70%)",
-                    boxShadow: "0 0 80px rgba(168,85,247,.2)",
+                    background: "radial-gradient(circle, rgba(198,255,0,.12) 0%, transparent 70%)",
                   }}
                 >
+                  {/* Canonical 3D mark — no colour filter (V3 fidelity policy: never
+                      alter the approved material colours with CSS filters). */}
                   <Image
-                    src="/scripe-icon-3d.png"
+                    src="/brand/auth/login-relay-grid-3d.png"
                     alt="Scripe"
                     width={144}
                     height={144}
                     className="h-36 w-36 object-contain"
-                    style={{ filter: "drop-shadow(0 0 30px rgba(168,85,247,.5))" }}
                   />
                 </div>
               </div>
@@ -1753,8 +1753,8 @@ export function LoginPreviewShell() {
                 <span
                   className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider"
                   style={{
-                    background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
-                    border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
+                    background: "var(--sx-accent-soft, rgba(198,255,0,.1))",
+                    border: "1px solid var(--sx-accent-soft-border, rgba(198,255,0,.3))",
                     color: "var(--sx-accent-text)",
                   }}
                 >
@@ -1772,18 +1772,15 @@ export function LoginPreviewShell() {
                   style={{
                     fontSize: "clamp(32px, 3.5vw, 44px)",
                     letterSpacing: "-0.025em",
-                    background:
-                      "var(--sx-text-heading, linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%))",
-                    WebkitBackgroundClip: "text",
-                    backgroundClip: "text",
-                    color: "transparent",
+                    // Solid ink — DESIGN.md bans gradient heading text.
+                    color: "var(--sx-text-heading, #f7f8f5)",
                   }}
                 >
                   {brandingForPanel?.loginHeadline || companyName}
                 </h1>
                 <p
                   className="text-sm"
-                  style={{ color: "var(--sx-text-mute, rgba(245,242,255,.62))" }}
+                  style={{ color: "var(--sx-text-mute, rgba(247,248,245,.62))" }}
                 >
                   {brandingForPanel?.loginSubtitle || t("auth.branding.subtitle")}
                 </p>
@@ -1791,7 +1788,7 @@ export function LoginPreviewShell() {
               {/* Compliance footer */}
               <div
                 className="relative z-[1] flex gap-3 text-[10px] uppercase tracking-widest"
-                style={{ color: "var(--sx-text-faint, rgba(245,242,255,.4))" }}
+                style={{ color: "var(--sx-text-faint, rgba(247,248,245,.4))" }}
               >
                 {["SOC 2 II", "HIPAA", "ISO 27001", "GDPR"].map((c, i) => (
                   <span key={c} className="flex items-center gap-3">
@@ -1808,8 +1805,8 @@ export function LoginPreviewShell() {
                 className="w-full max-w-[420px] rounded-[20px] p-8"
                 style={{
                   background:
-                    "var(--sx-card-bg, linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85)))",
-                  border: "1px solid var(--sx-card-border, rgba(168,85,247,.22))",
+                    "var(--sx-card-bg, linear-gradient(180deg, rgba(21,23,25,.86), rgba(13,13,14,.92)))",
+                  border: "1px solid var(--sx-card-border, rgba(198,255,0,.16))",
                   boxShadow: "var(--sx-card-shadow, 0 30px 80px rgba(0,0,0,.6))",
                   backdropFilter: "blur(24px)",
                 }}

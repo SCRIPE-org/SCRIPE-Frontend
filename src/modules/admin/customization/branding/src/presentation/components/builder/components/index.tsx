@@ -49,7 +49,7 @@ export function BuilderLogo({
   return (
     <div className="flex w-full items-center justify-center">
       <Image
-        src={resolvedSrc || "/app-logo.png"}
+        src={resolvedSrc || "/brand/app-logo-1024.png"}
         alt={t("studio.builder.preview.logoAlt")}
         width={200}
         height={80}

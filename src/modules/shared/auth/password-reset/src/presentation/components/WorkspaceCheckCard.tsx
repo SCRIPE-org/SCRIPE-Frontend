@@ -29,7 +29,7 @@ export function WorkspaceCheckCard({ workspace, isSelected, onToggle }: Workspac
       style={{
         background: isSelected ? "var(--sx-accent-soft)" : "var(--sx-chip-bg)",
         borderColor: isSelected ? "var(--sx-accent-text)" : "var(--sx-chip-border)",
-        boxShadow: isSelected ? "0 0 0 2px var(--sx-accent-ring, rgba(139,92,246,.15))" : "none",
+        boxShadow: isSelected ? "0 0 0 2px var(--sx-accent-ring, rgba(198,255,0,.18))" : "none",
       }}
     >
       {/* Checkbox */}

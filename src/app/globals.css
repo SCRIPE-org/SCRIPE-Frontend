@@ -77,6 +77,117 @@ html[data-reduced-motion="true"] {
   transition: none;
 }
 
+/* ============================================================================
+   SCRIPE RELAY vNEXT — CANONICAL TOKEN NAMESPACE (--scripe-*)
+   ----------------------------------------------------------------------------
+   The one authoritative brand-identity namespace. --nx-* (product shell) and
+   --sx-* (auth vault) below are re-based to READ these values for their
+   colour/identity duties — they remain the namespaces components actually
+   consume (580 and 43 files respectively; renaming every consumer is not this
+   migration's job), but the source of truth for "what colour is SCRIPE" lives
+   here. No new component may introduce a fresh --scripe-* consumer without
+   going through --nx-* or --sx-*; this block exists to be READ BY those two
+   layers, not to compete with them.
+
+   Palette: Signal Lime is the one committed brand signal — primary action,
+   current step/nav, live state, one deliberate cinematic auth moment. It is
+   never ambient decoration. On a Lime FILL the foreground is always Ink,
+   never white. Lime is not body text on light surfaces — use accent-text.
+   ============================================================================ */
+:root,
+:root[data-theme="light"] {
+  --scripe-signal: #c6ff00;
+  --scripe-ink: #0d0d0e;
+  --scripe-void: #050506;
+  --scripe-carbon: #151719;
+  --scripe-graphite: #3f4347;
+  --scripe-mineral: #d7d8d6;
+  --scripe-white: #ffffff;
+
+  --scripe-bg: #f7f8f5;
+  --scripe-surface: #ffffff;
+  --scripe-surface-raised: #ffffff;
+  --scripe-surface-subtle: #eef0eb;
+  --scripe-border: #d5d9d3;
+  --scripe-border-strong: #aeb4ad;
+  --scripe-text: #0d0d0e;
+  --scripe-text-muted: #4b504c;
+  --scripe-text-faint: #6f756f;
+
+  --scripe-accent: #c6ff00;
+  --scripe-accent-fg: #0d0d0e;
+  --scripe-accent-text: #4c6200;
+  --scripe-focus: #4c6200;
+
+  --scripe-success: #16784a;
+  --scripe-warning: #765700;
+  --scripe-warning-strong: #9a4f00;
+  --scripe-info: #0b5d85;
+  --scripe-destructive: #b4232a;
+
+  --scripe-shadow-raised: 0 14px 36px rgba(13, 13, 14, 0.1), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  --scripe-shadow-hard: 0 5px 0 rgba(13, 13, 14, 0.12);
+}
+
+.dark,
+:root[data-theme="dark"] {
+  --scripe-bg: #050506;
+  --scripe-surface: #0d0d0e;
+  --scripe-surface-raised: #151719;
+  --scripe-surface-subtle: #1d2022;
+  --scripe-border: #2c3033;
+  --scripe-border-strong: #3f4347;
+  --scripe-text: #f7f8f5;
+  --scripe-text-muted: #b9bdb8;
+  --scripe-text-faint: #8c918d;
+
+  --scripe-accent: #c6ff00;
+  --scripe-accent-fg: #0d0d0e;
+  --scripe-accent-text: #c6ff00;
+  --scripe-focus: #c6ff00;
+
+  --scripe-success: #61d49a;
+  --scripe-warning: #f2c94c;
+  --scripe-warning-strong: #f59e0b;
+  --scripe-info: #7dd3fc;
+  --scripe-destructive: #ff6b6b;
+
+  --scripe-shadow-raised: 0 14px 38px rgba(0, 0, 0, 0.34), 0 2px 0 rgba(255, 255, 255, 0.025) inset;
+  --scripe-shadow-hard: 0 7px 0 #050506;
+}
+
+/* Auth cinematic brand stage — Ink/Void ground with restrained Lime
+   environmental light. Replaces the retired Aurora orb/scan/particle system. */
+.scripe-auth-stage {
+  background:
+    radial-gradient(75% 55% at 50% 35%, rgba(198, 255, 0, 0.1), transparent 62%),
+    linear-gradient(180deg, #0d0d0e 0%, #050506 100%);
+}
+
+/* Login cinematic intro reveal — container-level, ONE-TIME (not looping).
+   Animates the asset container only, never the logo geometry itself. */
+@keyframes scripeAuthReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.scripe-auth-reveal {
+  animation: scripeAuthReveal 650ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scripe-auth-reveal {
+    animation: none;
+  }
+}
+html[data-reduced-motion="true"] .scripe-auth-reveal {
+  animation: none;
+}
+
 /* ========================================
    BASE CSS VARIABLES & THEMES
    ======================================== */
@@ -87,17 +198,18 @@ html[data-reduced-motion="true"] {
   --font-size-base: 16px;
   --spacing-unit: 1rem;
 
-  /* ── Nexus workspace OKLCH accent tokens ──
-     WorkspaceProvider injects --workspace-hue & --workspace-chroma on <html>.
-     These derived tokens adapt per light/dark mode for consistent contrast. */
+  /* WorkspaceProvider injects --workspace-hue & --workspace-chroma on <html>.
+     RELAY vNEXT: the global product accent no longer derives from these —
+     Signal Lime is invariant (see --nx-accent* below). Tenant workspace
+     colour survives as CONTEXT ONLY, read directly where a workspace pill,
+     chip, avatar ring or hub tile needs its own colour (WorkspaceGroup.ts's
+     accentColor getter mirrors this same lightness ladder for that duty).
+     The --ws-* Tailwind utility family that used to expose these as classes
+     had zero consumers and was removed; these two source numbers stay
+     registered here because @property above still animates them for that
+     direct-CSS-var context usage. */
   --workspace-hue: 262;
   --workspace-chroma: 0.14;
-  --ws-accent: oklch(0.62 var(--workspace-chroma) var(--workspace-hue));
-  --ws-accent-light: oklch(0.92 calc(var(--workspace-chroma) * 0.3) var(--workspace-hue));
-  --ws-accent-muted: oklch(0.72 calc(var(--workspace-chroma) * 0.5) var(--workspace-hue));
-  --ws-accent-fg: oklch(0.98 0.005 var(--workspace-hue));
-  --ws-rail-bg: oklch(0.18 0.02 var(--workspace-hue));
-  --ws-rail-hover: oklch(0.24 0.03 var(--workspace-hue));
 
   /* Light theme colors - Default Purple */
   --background: 0 0% 100%;
@@ -161,74 +273,72 @@ html[data-reduced-motion="true"] {
 
 /* ========================================
    SCRIPE BRAND TOKENS (additive, theme-independent)
-   Source of truth: Scripe design.md §1. Consumers read these
-   vars — never hardcode brand hex in components.
+   Source of truth: DESIGN.md (Relay vNext). Consumers read --scripe-*
+   directly, or these --sx-* vault aliases — never hardcode brand hex.
    ======================================== */
 :root {
-  --brand-purple: #a855f7;
-  --brand-violet: #7c3aed; /* primary */
-  --brand-indigo: #6366f1;
-  --brand-blue: #3b82f6;
-  --brand-blue-deep: #1d4ed8;
-  --brand-cyan: #22d3ee; /* accent / glow */
-  --brand-cyan-soft: #67e8f9;
-  --brand-gradient: linear-gradient(180deg, #a855f7 0%, #7c3aed 40%, #4f46e5 75%, #3b82f6 100%);
-
-  /* ---- Vault auth surface tokens — DARK is the design default ---- */
+  /* ---- Vault auth surface tokens — DARK is the design default ----
+     Re-based from the retired Aurora violet/indigo/cyan identity to Relay
+     Ink/Void/Signal Lime. Ambient tokens (grid/aurora/scan/particle/logo-*)
+     are consumed by VaultBackground/VaultLogoBlock, which the auth migration
+     replaces with the .scripe-auth-stage treatment above — kept re-based
+     here for any transitional/legacy consumer, not for new use. */
   --sx-bg-grad: radial-gradient(
     140% 90% at 25% 25%,
-    #1a1140 0%,
-    #0a0820 40%,
-    #06060e 80%,
-    #04040a 100%
+    #151719 0%,
+    #0d0d0e 40%,
+    #050506 80%,
+    #030304 100%
   );
-  --sx-card-bg: linear-gradient(180deg, rgba(20, 12, 46, 0.78), rgba(10, 8, 28, 0.85));
-  --sx-card-border: rgba(168, 85, 247, 0.22);
+  --sx-card-bg: linear-gradient(180deg, rgba(21, 23, 25, 0.86), rgba(13, 13, 14, 0.92));
+  --sx-card-border: rgba(198, 255, 0, 0.16);
   --sx-card-shadow:
     0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  --sx-text: #f5f2ff;
-  --sx-text-heading: linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%);
-  --sx-text-mute: rgba(245, 242, 255, 0.62);
-  --sx-text-faint: rgba(245, 242, 255, 0.4);
+  --sx-text: #f7f8f5;
+  --sx-text-heading: #f7f8f5;
+  --sx-text-mute: rgba(247, 248, 245, 0.62);
+  --sx-text-faint: rgba(247, 248, 245, 0.4);
   --sx-divider: rgba(255, 255, 255, 0.08);
-  --sx-accent: #a855f7;
-  --sx-accent-text: #c4b5fd;
-  --sx-accent-soft: rgba(168, 85, 247, 0.1);
-  --sx-accent-soft-border: rgba(168, 85, 247, 0.3);
+  --sx-accent: #c6ff00;
+  --sx-accent-text: #c6ff00;
+  --sx-accent-soft: rgba(198, 255, 0, 0.1);
+  --sx-accent-soft-border: rgba(198, 255, 0, 0.3);
   --sx-chip-bg: rgba(255, 255, 255, 0.03);
-  --sx-chip-bg-active: linear-gradient(180deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.1));
+  --sx-chip-bg-active: linear-gradient(180deg, rgba(198, 255, 0, 0.18), rgba(198, 255, 0, 0.06));
   --sx-chip-border: rgba(255, 255, 255, 0.08);
-  --sx-chip-border-active: rgba(168, 85, 247, 0.55);
-  --sx-success-dot: #10b981;
+  --sx-chip-border-active: rgba(198, 255, 0, 0.5);
+  --sx-success-dot: #61d49a;
   /* error alert — dark card values */
-  --sx-error-bg: rgba(248, 113, 113, 0.1);
-  --sx-error-border: rgba(248, 113, 113, 0.3);
-  --sx-error-text: #fca5a5;
-  /* field tokens — exact values from design spec */
+  --sx-error-bg: rgba(255, 107, 107, 0.1);
+  --sx-error-border: rgba(255, 107, 107, 0.3);
+  --sx-error-text: #ff9b9b;
+  /* field tokens */
   --sx-field-bg: rgba(255, 255, 255, 0.03);
-  --sx-field-bg-focus: rgba(124, 58, 237, 0.06);
+  --sx-field-bg-focus: rgba(198, 255, 0, 0.05);
   --sx-field-border: rgba(255, 255, 255, 0.08);
-  --sx-field-border-focus: rgba(168, 85, 247, 0.55);
-  --sx-field-ring: 0 0 0 4px rgba(124, 58, 237, 0.18);
+  --sx-field-border-focus: rgba(198, 255, 0, 0.55);
+  --sx-field-ring: 0 0 0 4px rgba(198, 255, 0, 0.18);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  /* ambient background */
-  --sx-grid-stroke: rgba(168, 85, 247, 0.05);
-  --sx-aurora-a: rgba(168, 85, 247, 0.35);
-  --sx-aurora-b: rgba(59, 130, 246, 0.3);
-  --sx-scan-line: linear-gradient(180deg, transparent, rgba(168, 85, 247, 0.05), transparent);
-  --sx-particle-1: #a855f7;
-  --sx-particle-2: #3b82f6;
-  --sx-particle-3: #f5f2ff;
-  /* 3D logo treatment */
-  --sx-logo-blend: screen;
-  --sx-logo-filter: drop-shadow(0 0 60px rgba(168, 85, 247, 0.45))
-    drop-shadow(0 0 30px rgba(59, 130, 246, 0.3));
-  --sx-logo-orb-opacity: 0; /* hidden on dark; shown on light */
-  /* primary CTA — the brand gradient (theme-independent fill, theme-tuned shadow) */
-  --sx-cta-gradient: var(--brand-gradient);
-  --sx-cta-shadow: 0 10px 30px rgba(124, 58, 237, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 50%);
+  /* ambient background — restrained Lime, not Aurora violet/blue */
+  --sx-grid-stroke: rgba(198, 255, 0, 0.05);
+  --sx-aurora-a: rgba(198, 255, 0, 0.14);
+  --sx-aurora-b: rgba(215, 216, 214, 0.08);
+  --sx-scan-line: linear-gradient(180deg, transparent, rgba(198, 255, 0, 0.05), transparent);
+  --sx-particle-1: #c6ff00;
+  --sx-particle-2: #d7d8d6;
+  --sx-particle-3: #f7f8f5;
+  /* 3D logo treatment — the canonical PNG is used as-is; no colour filter
+     that would alter its approved material colours (V3 fidelity policy).
+     Container-level presentation only. */
+  --sx-logo-blend: normal;
+  --sx-logo-filter: none;
+  --sx-logo-orb-opacity: 0;
+  /* primary CTA — solid Signal Lime + Ink foreground, never a violet/indigo
+     gradient (DESIGN.md: "Violet/indigo CTA gradient -> Solid Signal Lime + Ink"). */
+  --sx-cta-gradient: var(--scripe-signal);
+  --sx-cta-shadow: 0 10px 30px rgba(198, 255, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 50%);
 }
 
 /* Vault LIGHT-theme surface overrides (higher specificity than :root) */
@@ -236,55 +346,51 @@ html[data-reduced-motion="true"] {
   --sx-bg-grad: radial-gradient(
     140% 90% at 25% 25%,
     #ffffff 0%,
-    #f1ecfb 45%,
-    #e4daf6 80%,
-    #d6c8ef 100%
+    #f7f8f5 45%,
+    #eef0eb 80%,
+    #d7d8d6 100%
   );
-  --sx-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 248, 255, 0.96));
-  --sx-card-border: rgba(124, 58, 237, 0.18);
+  --sx-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 245, 0.96));
+  --sx-card-border: rgba(76, 98, 0, 0.18);
   --sx-card-shadow:
-    0 30px 80px rgba(76, 29, 149, 0.12), 0 0 0 1px rgba(124, 58, 237, 0.04),
+    0 30px 80px rgba(13, 13, 14, 0.12), 0 0 0 1px rgba(76, 98, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --sx-text: #1a0f3d;
-  --sx-text-heading: linear-gradient(180deg, #1a0f3d 0%, #4c1d95 100%);
-  --sx-text-mute: rgba(26, 15, 61, 0.66);
-  --sx-text-faint: rgba(26, 15, 61, 0.42);
-  --sx-divider: rgba(76, 29, 149, 0.1);
-  --sx-accent: #7c3aed;
-  --sx-accent-text: #6d28d9;
-  --sx-accent-soft: rgba(124, 58, 237, 0.08);
-  --sx-accent-soft-border: rgba(124, 58, 237, 0.25);
-  --sx-chip-bg: rgba(124, 58, 237, 0.05);
-  --sx-chip-bg-active: linear-gradient(180deg, rgba(168, 85, 247, 0.18), rgba(59, 130, 246, 0.1));
-  --sx-chip-border: rgba(76, 29, 149, 0.1);
-  --sx-chip-border-active: #7c3aed;
-  --sx-success-dot: #059669;
-  /* error alert — light card. #fca5a5 was picked for the dark card and never
-     re-checked here, where it lands near 1.9:1 and a failed-login message is
-     effectively invisible. #b42318 measures 6.57:1 on white. */
+  --sx-text: #0d0d0e;
+  --sx-text-heading: #0d0d0e;
+  --sx-text-mute: rgba(13, 13, 14, 0.66);
+  --sx-text-faint: rgba(13, 13, 14, 0.42);
+  --sx-divider: rgba(76, 98, 0, 0.1);
+  --sx-accent: #4c6200;
+  --sx-accent-text: #4c6200;
+  --sx-accent-soft: rgba(76, 98, 0, 0.08);
+  --sx-accent-soft-border: rgba(76, 98, 0, 0.25);
+  --sx-chip-bg: rgba(76, 98, 0, 0.05);
+  --sx-chip-bg-active: linear-gradient(180deg, rgba(198, 255, 0, 0.22), rgba(198, 255, 0, 0.08));
+  --sx-chip-border: rgba(76, 98, 0, 0.1);
+  --sx-chip-border-active: #4c6200;
+  --sx-success-dot: #16784a;
+  /* error alert — light card. #b42318 measures 6.57:1 on white. */
   --sx-error-bg: rgba(180, 35, 24, 0.08);
   --sx-error-border: rgba(180, 35, 24, 0.25);
   --sx-error-text: #b42318;
   /* field tokens — light theme */
-  --sx-field-bg: rgba(124, 58, 237, 0.04);
-  --sx-field-bg-focus: rgba(124, 58, 237, 0.08);
-  --sx-field-border: rgba(76, 29, 149, 0.12);
-  --sx-field-border-focus: #7c3aed;
-  --sx-field-ring: 0 0 0 4px rgba(124, 58, 237, 0.18);
+  --sx-field-bg: rgba(76, 98, 0, 0.04);
+  --sx-field-bg-focus: rgba(76, 98, 0, 0.06);
+  --sx-field-border: rgba(76, 98, 0, 0.12);
+  --sx-field-border-focus: #4c6200;
+  --sx-field-ring: 0 0 0 4px rgba(76, 98, 0, 0.14);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  --sx-grid-stroke: rgba(124, 58, 237, 0.06);
-  --sx-aurora-a: rgba(168, 85, 247, 0.22);
-  --sx-aurora-b: rgba(59, 130, 246, 0.18);
-  --sx-scan-line: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.05), transparent);
-  --sx-particle-1: #7c3aed;
-  --sx-particle-2: #3b82f6;
-  --sx-particle-3: #a855f7;
-  /* On light bg, screen-blend would erase the dark orb — pin the logo to a glass orb instead */
+  --sx-grid-stroke: rgba(76, 98, 0, 0.06);
+  --sx-aurora-a: rgba(76, 98, 0, 0.1);
+  --sx-aurora-b: rgba(13, 13, 14, 0.06);
+  --sx-scan-line: linear-gradient(180deg, transparent, rgba(76, 98, 0, 0.05), transparent);
+  --sx-particle-1: #4c6200;
+  --sx-particle-2: #3f4347;
+  --sx-particle-3: #c6ff00;
   --sx-logo-blend: normal;
-  --sx-logo-filter: drop-shadow(0 0 50px rgba(124, 58, 237, 0.45))
-    drop-shadow(0 20px 40px rgba(76, 29, 149, 0.3));
+  --sx-logo-filter: none;
   --sx-logo-orb-opacity: 1;
-  --sx-cta-shadow: 0 12px 30px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  --sx-cta-shadow: 0 12px 30px rgba(76, 98, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
   --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 50%);
 }
 
@@ -295,13 +401,18 @@ html {
 /* ========================================
    PRIMARY COLOR THEMES
    ======================================== */
-/* Scripe brand theme — violet primary (#7C3AED). Light surface. */
+/* Scripe brand theme — Signal Lime primary (#C6FF00), Ink foreground.
+   Lime fill always pairs with Ink text (DESIGN.md Lime rule), never the
+   base --primary-foreground (which is a near-white inherited default and
+   would fail contrast catastrophically on a Lime fill). */
 :root[data-theme="scripe"] {
-  --primary: 262 83% 58%;
-  --ring: 262 83% 58%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-ring: 262 83% 58%;
-  --shadow-primary: 262 83% 58%;
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
+  --ring: 74 100% 50%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
+  --sidebar-ring: 74 100% 50%;
+  --shadow-primary: 74 100% 50%;
 }
 
 :root[data-theme="blue"] {
@@ -762,13 +873,16 @@ html {
 /* ========================================
    DARK PRIMARY COLOR THEMES
    ======================================== */
-/* Scripe brand theme — purple accent (#A855F7) reads brighter on dark. */
+/* Scripe brand theme — Signal Lime (#C6FF00) is invariant across themes;
+   Ink foreground stays constant on the Lime fill (see light block above). */
 .dark[data-theme="scripe"] {
-  --primary: 271 91% 65%;
-  --ring: 271 91% 65%;
-  --sidebar-primary: 271 91% 65%;
-  --sidebar-ring: 271 91% 65%;
-  --shadow-primary: 271 91% 65%;
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
+  --ring: 74 100% 50%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
+  --sidebar-ring: 74 100% 50%;
+  --shadow-primary: 74 100% 50%;
 }
 
 .dark[data-theme="blue"] {
@@ -2887,175 +3001,6 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   scrollbar-color: rgba(128, 128, 128, 0.25) transparent;
 }
 
-/* ========================================
-   SCRIPE VAULT — ambient auth animations
-   Source: scripe-vault.jsx. All motion is gated by
-   prefers-reduced-motion (see guard below).
-   ======================================== */
-@keyframes sxDrift {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(40px, -30px);
-  }
-}
-@keyframes sxScan {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(400%);
-  }
-}
-@keyframes sxFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-}
-@keyframes sxBreathe {
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.04);
-  }
-}
-@keyframes sxScreenIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Entrance for the keyed auth screen container */
-.sx-screen,
-.sx-screen-anim {
-  animation: sxScreenIn 0.35s ease both;
-}
-
-/* ── Interaction animations (spec: motion.md §3) ──────────────────
-   Error shake · OTP pop · card rise · button spinner · check draw
-   All gated by the reduced-motion guard further below.
-   ================================================================ */
-
-@keyframes sxShake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  16% {
-    transform: translateX(-7px);
-  }
-  33% {
-    transform: translateX(6px);
-  }
-  50% {
-    transform: translateX(-4px);
-  }
-  66% {
-    transform: translateX(3px);
-  }
-  83% {
-    transform: translateX(-1px);
-  }
-}
-
-@keyframes sxPop {
-  0% {
-    transform: scale(1);
-  }
-  35% {
-    transform: scale(1.1);
-  }
-  65% {
-    transform: scale(0.96);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes sxRise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes sxSpin1 {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes sxCheck {
-  from {
-    stroke-dashoffset: 60;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.sx-shake {
-  animation: sxShake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-.sx-pop {
-  /* exponential deceleration — no overshoot; matches the nx enter curve */
-  animation: sxPop 0.22s cubic-bezier(0.23, 1, 0.32, 1) both;
-}
-.sx-rise {
-  animation: sxRise 0.48s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-}
-.sx-spin1 {
-  animation: sxSpin1 0.7s linear infinite;
-}
-.sx-check path {
-  stroke-dasharray: 60;
-  stroke-dashoffset: 60;
-  animation: sxCheck 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.1s forwards;
-}
-
-/* Staggered entrance — workspace cards, plan cards, onboarding checklist */
-.sx-stagger > * {
-  animation: sxRise 0.48s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-}
-.sx-stagger > *:nth-child(2) {
-  animation-delay: 0.05s;
-}
-.sx-stagger > *:nth-child(3) {
-  animation-delay: 0.1s;
-}
-.sx-stagger > *:nth-child(4) {
-  animation-delay: 0.15s;
-}
-.sx-stagger > *:nth-child(5) {
-  animation-delay: 0.2s;
-}
-.sx-stagger > *:nth-child(6) {
-  animation-delay: 0.25s;
-}
-
 /* ── Vault glass field token overrides ────────────────────────────
    Inside .vault-stage, all text inputs inherit --sx-field-* surface tokens
    so they feel embedded in the dark glass card, not bg-background.
@@ -3066,8 +3011,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-stage select {
   background: var(--sx-field-bg, rgba(255, 255, 255, 0.03));
   border-color: var(--sx-field-border, rgba(255, 255, 255, 0.08));
-  color: var(--sx-text, #f5f2ff);
-  caret-color: var(--sx-accent, #a855f7);
+  color: var(--sx-text, #f7f8f5);
+  caret-color: var(--sx-accent, #c6ff00);
   box-sizing: border-box;
   box-shadow: var(--sx-field-inner-hi, none);
   transition:
@@ -3079,43 +3024,19 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-stage input:not([type="checkbox"]):not([type="radio"]):focus,
 .vault-stage textarea:focus-visible,
 .vault-stage textarea:focus {
-  background: var(--sx-field-bg-focus, rgba(124, 58, 237, 0.06));
-  border-color: var(--sx-field-border-focus, rgba(168, 85, 247, 0.55)) !important;
-  box-shadow: var(--sx-field-ring, 0 0 0 4px rgba(124, 58, 237, 0.18)) !important;
+  background: var(--sx-field-bg-focus, rgba(198, 255, 0, 0.05));
+  border-color: var(--sx-field-border-focus, rgba(198, 255, 0, 0.55)) !important;
+  box-shadow: var(--sx-field-ring, 0 0 0 4px rgba(198, 255, 0, 0.18)) !important;
   outline: none;
 }
 .vault-stage input::placeholder,
 .vault-stage textarea::placeholder {
-  color: var(--sx-text-faint, rgba(245, 242, 255, 0.4));
+  color: var(--sx-text-faint, rgba(247, 248, 245, 0.4));
 }
 /* Method chip hover + active states */
 .vault-stage [data-method-chip]:hover {
-  background: var(--sx-chip-bg-active, rgba(168, 85, 247, 0.15)) !important;
-  border-color: var(--sx-chip-border-active, rgba(168, 85, 247, 0.55)) !important;
-}
-
-/* Reduced-motion contract — kill all ambient + non-essential Vault motion */
-@media (prefers-reduced-motion: reduce) {
-  .sx-ambient *,
-  .sx-screen,
-  .sx-screen-anim,
-  .sx-shake,
-  .sx-pop,
-  .sx-rise,
-  .sx-stagger > *,
-  .sx-spin1 {
-    animation: none !important;
-  }
-}
-:root[data-reduced-motion="true"] .sx-ambient *,
-:root[data-reduced-motion="true"] .sx-screen,
-:root[data-reduced-motion="true"] .sx-screen-anim,
-:root[data-reduced-motion="true"] .sx-shake,
-:root[data-reduced-motion="true"] .sx-pop,
-:root[data-reduced-motion="true"] .sx-rise,
-:root[data-reduced-motion="true"] .sx-stagger > *,
-:root[data-reduced-motion="true"] .sx-spin1 {
-  animation: none !important;
+  background: var(--sx-chip-bg-active, rgba(198, 255, 0, 0.15)) !important;
+  border-color: var(--sx-chip-border-active, rgba(198, 255, 0, 0.55)) !important;
 }
 
 /* Vault primary CTA — brand gradient via the token layer.
@@ -3218,20 +3139,6 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   }
 }
 
-/* Ambient background drift */
-@keyframes sxDrift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -20px) scale(1.05);
-  }
-  66% {
-    transform: translate(-20px, 15px) scale(0.95);
-  }
-}
-
 /* Button loading spin */
 @keyframes sxSpin1 {
   to {
@@ -3314,18 +3221,14 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   .sx-spin1 {
     animation: none !important;
   }
-  [style*="sxDrift"],
-  [style*="sxFloat"] {
-    animation: none !important;
-  }
 }
 
 /* ═══ HIGH CONTRAST ═══ */
 @media (prefers-contrast: more) {
   :root {
-    --sx-card-border: rgba(168, 85, 247, 0.45);
+    --sx-card-border: rgba(198, 255, 0, 0.45);
     --sx-chip-border: rgba(255, 255, 255, 0.2);
-    --sx-text-mute: rgba(245, 242, 255, 0.8);
+    --sx-text-mute: rgba(247, 248, 245, 0.8);
   }
 }
 
@@ -3334,7 +3237,9 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-cta .sx-cta-btn {
   background: var(--sx-cta-gradient) !important;
   box-shadow: var(--sx-cta-shadow);
-  color: #fff !important;
+  /* Signal Lime fill always pairs with Ink foreground, never white
+     (DESIGN.md Lime rule) — was #fff, a severe contrast failure on Lime. */
+  color: var(--scripe-ink) !important;
   border: none;
   position: relative;
   overflow: hidden;
@@ -3347,7 +3252,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   transform: translateY(-1px);
   box-shadow:
     var(--sx-cta-shadow),
-    0 0 20px rgba(124, 58, 237, 0.3);
+    0 0 20px rgba(198, 255, 0, 0.3);
 }
 .vault-cta button[type="submit"]::before,
 .vault-cta .sx-cta-btn::before {
@@ -3851,8 +3756,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     font-size: 0.8125rem !important;
     line-height: 1.35 !important;
   }
-  /* Floating / Vault layout float height adjustments */
-  .login-page div[style*="sxFloat"] {
+  /* Vault layout logo-block height adjustments for short/landscape viewports */
+  .login-page .scripe-auth-reveal {
     transform: scale(0.7) !important;
     margin-top: -20px !important;
     margin-bottom: -20px !important;
@@ -3934,7 +3839,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   /* Hide branding, logos, and illustrative float elements to optimize vertical space */
   .login-page .login-logo,
   .login-page [class*="MobileLogo"],
-  .login-page div[style*="sxFloat"],
+  .login-page .scripe-auth-reveal,
   .login-page .flex.h-20.w-20,
   .login-page .flex.h-16.w-16,
   .login-page .mb-10.flex.flex-col.items-center {
@@ -4054,85 +3959,47 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 /* ============================================================================
    NEXUS SHELL TOKENS (--nx-*)
    ----------------------------------------------------------------------------
-   The brand as read from the real mark (public/app-logo.png): near-black
-   ground, luminous violet→cyan edge light, glass depth. Dark-native. The
-   interface speaks it as a NEUTRAL charcoal (dark) / paper (light) ladder,
-   hairline edges, and light that collects on the ACTIVE thing. ONE glowing
-   element per screen maximum — --nx-glow is the signature, not the wallpaper.
+   The brand as read from the canonical Relay Grid mark (public/brand/app-logo.svg):
+   near-black ground, one committed Signal Lime edge light, considered depth.
+   Dark-native. The interface speaks it as a NEUTRAL charcoal (dark) / paper
+   (light) ladder, hairline edges, and light that collects on the ACTIVE
+   thing. ONE glowing element per screen maximum — --nx-glow is the
+   signature, not the wallpaper.
 
-   WAVE I1 — SURFACES NEUTRALISED. The old ladder carried the brand hue in the
-   SURFACES themselves (dark #0C0B12…#221F30 at OKLCH chroma 0.015→0.032,
-   light #F7F6FB…#E9E6F4 at 0.007→0.019). At that chroma every card, panel and
-   popover read as literally purple, which is what the product owner reported.
-   The fix is a strict division of labour:
+   RELAY vNEXT — SURFACES RE-BASED (superseding Wave I1). Wave I1 neutralised
+   the surfaces to a whisper of the OLD brand hue (violet, hue 286) so cards
+   stopped reading as literally purple. The Relay migration replaces that
+   whisper-of-violet ladder with DESIGN.md's own literal neutral values
+   (Ink/Carbon/Graphite/Mineral dark; White/Light Canvas/Light Subtle light) —
+   the design system's committed source of truth, not a derived approximation.
+   INK follows the same source (text/muted/faint). ACCENT is no longer
+   workspace-owned: Signal Lime is invariant (see the accent block below);
+   per-workspace tenant colour survives only as CONTEXT on pills/chips/tiles
+   (DESIGN.md §5), never as this global accent.
 
-     SURFACES are a considered neutral — chroma 0.004…0.008 at hue 286. That
-     is a whisper: enough for the greys to feel cut from the brand rather than
-     from a stock palette, far below the ~0.02 where the eye names a hue.
-     INK follows the surfaces (chroma ≤0.013); violet-grey text on neutral
-     charcoal is the other half of the "everything is purple" reading.
-     ACCENT stays fully chromatic and workspace-owned. The brand's violet did
-     not move — it simply stopped being the wallpaper.
-
-   SCOPE — GLOBAL (Wave A re-scope). Wave 1 scoped these to
-   :root[data-layout="nexus"] plus :root:not([data-layout]) because only the
-   nexus shell consumed them. Wave A moves consumption into the src/core/ui
-   primitives, which render under EVERY selectable layout (modern, classic,
-   galaxy, …) — under the old scope the tokens were UNDEFINED there, so every
-   token-backed declaration on a primitive would silently resolve to its
-   fallback or to nothing. Token DEFINITIONS therefore live on :root (dark
-   values default) with light overrides on :root:not(.dark) — the exact
-   pattern of the global status tokens and --scrim above. Nexus shell-specific
-   RULES (not tokens) stay scoped to their shell; nothing else defines
-   --nx-*, so no collision is possible.
+   SCOPE — GLOBAL, unchanged from Wave A: token DEFINITIONS live on :root
+   (dark values default) with light overrides on :root:not(.dark), consumed
+   by every src/core/ui primitive under every selectable layout.
 
    NAMESPACE: --nx- only. --sx- is taken by the sign-in / vault surface (still
-   live); a past prefix collision silently recoloured the sign-in page.
-   --edge- was the third prefix and is retired with the scripe shell (Wave I1)
-   — do not revive it. tailwind.config.js still maps an `edge` colour family
-   onto those now-undefined variables; every entry carries a shadcn fallback
-   and no `*-edge-*` utility is used anywhere in src/, so it resolves safely.
+   live, re-based to Relay alongside this block). --edge- is retired (Wave I1)
+   — do not revive it. --scripe-* (top of file) is the canonical identity
+   source of truth that this block and --sx-* both read from.
 
-   ACCENT is workspace-owned: it derives from --workspace-hue/--workspace-chroma
-   (written to <html> by workspace-provider.tsx L102-116); violet 262 is only
-   the DEFAULT hue. SECONDARY is the logo's cyan (hue 192) — "live/now" only.
    STATUS colours are NOT defined here: nexus READS the global measured
    --success/--warning/--warning-strong/--info/--destructive tokens, defined in
    the GLOBAL SEMANTIC TOKENS block above.
 
-   CONTRAST FLOORS — WCAG 2.x relative-luminance, recomputed for the Wave I1
-   values. 27/27 checks PASS. Do not re-derive; these are the numbers. Every
-   cell is the measured ratio of that ink on that surface.
-
-     DARK   ground #0B0B0E  surface #131316  raised #1A1A1E  raised-2 #202024
-            (OKLCH chroma 0.0064 / 0.0060 / 0.0077 / 0.0075 @ hue 286)
-
-              token          hex      ground surface raised raised-2   MIN
-              --nx-ink     #EEEEF2    16.98  16.03   14.99   14.03    14.03
-              --nx-ink-2   #ADADB5     8.82   8.32    7.78    7.28     7.28
-              --nx-ink-3   #8D8D95     5.97   5.63    5.27    4.93     4.93
-            accent-as-text oklch(0.68 0.18 h): worst hue 345 → 5.14:1
-
-     LIGHT  ground #F7F7FA  surface #FFFFFF  raised #F0F0F4  raised-2 #E8E8ED
-            (OKLCH chroma 0.0040 / 0 / 0.0053 / 0.0067 @ hue 286)
-
-              token          hex      ground surface raised raised-2   MIN
-              --nx-ink     #161619    16.89  18.06   15.89   14.79    14.79
-              --nx-ink-2   #4A4A51     8.22   8.79    7.73    7.20     7.20
-              --nx-ink-3   #62626A     5.65   6.04    5.32    4.95     4.95
-            accent-as-text oklch(0.46 0.18 h): worst hue 195 → 4.68:1
-
-     FILL (both themes) oklch(0.50 0.18 h) + #FFFFFF label: worst hue 180 →
-     4.84:1 — unchanged, fill and --nx-on-fill are surface-independent.
-     SECONDARY (hue 192, chroma 0.13) follows the same lightness law: worst
-     5.27:1 dark, 5.09:1 light.
-
-     NO FLOOR WAS WEAKENED. Several were raised, because the previous header
-     table overstated three of its own numbers — remeasured on the OLD hexes,
-     dark --nx-ink-3 #8A849C was 4.49:1 on #221F30 (a real FAIL against 4.5,
-     not the claimed "≥4.7"), dark accent-as-text was 5.09:1 (not 5.40) and
-     light accent-as-text was 4.65:1 (not 5.33). The new ladder clears every
-     one of those: 4.93 / 5.14 / 4.68.
+   CONTRAST — the DESIGN.md neutral ladder (Ink/Carbon/Graphite/Mineral,
+   dark text #F7F8F5 / muted #B9BDB8 / faint #8C918D; light text #0D0D0E /
+   muted #4B504C / faint #6F756F) is the design system's own committed,
+   measured set of values (DESIGN.md §10 requires body >= 4.5:1, large/non-
+   text >= 3:1) — used verbatim rather than re-derived here. Lime-as-fill
+   pairs only with Ink (#0D0D0E) per the Lime rule; Lime-as-text is used only
+   on dark surfaces, Accent Text Light (#4C6200) carries that duty on light.
+   --nx-raised-2 (dark #1D2022, light derived one step below --nx-raised) has
+   no direct DESIGN.md equivalent; it preserves the original ladder's
+   raised->raised-2 delta on the new base values.
 
    MOTION: micro / standard / panel. Enter easing cubic-bezier(0.23,1,0.32,1);
    exit cubic-bezier(0.3,0,0.8,0.15) at ~2/3 of the enter duration. Overlays
@@ -4140,39 +4007,45 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    Reduced motion strips position/scale movement and keeps crossfades.
    ============================================================================ */
 :root {
-  /* surfaces — dark is the mark's native ground. Near-neutral charcoal: the
-     brand hue survives only as a ~0.006 chroma whisper at hue 286, so the
-     ladder reads as a considered grey and never as violet. */
-  --nx-ground: #0b0b0e;
-  --nx-surface: #131316;
-  --nx-raised: #1a1a1e; /* raised surfaces AND hover states */
-  --nx-raised-2: #202024; /* the extra step above raised */
+  /* surfaces — DESIGN.md's dark ladder verbatim: canvas/surface/raised/subtle. */
+  --nx-ground: #050506;
+  --nx-surface: #0d0d0e;
+  --nx-raised: #151719; /* raised surfaces AND hover states */
+  --nx-raised-2: #1d2022; /* the extra step above raised (DESIGN.md "subtle") */
 
-  /* ink — same whisper of hue as the surfaces it sits on */
-  --nx-ink: #eeeef2;
-  --nx-ink-2: #adadb5;
-  --nx-ink-3: #8d8d95;
+  /* ink — DESIGN.md dark text/muted/faint verbatim */
+  --nx-ink: #f7f8f5;
+  --nx-ink-2: #b9bdb8;
+  --nx-ink-3: #8c918d;
 
-  /* hairlines — neutral white at the same alphas, not the old violet-white */
-  --nx-line: rgba(240, 240, 246, 0.09);
-  --nx-line-hi: rgba(240, 240, 246, 0.16);
+  /* hairlines — DESIGN.md dark edge/strong-edge (Graphite) verbatim */
+  --nx-line: #2c3033;
+  --nx-line-hi: #3f4347;
 
-  /* accent — text and fill have opposite contrast duties: two tokens.
-     Alpha via the slash channel, never string concatenation.
-     Fallback matches the :root default (0.14) below and the @property
-     initial-value above. 0.18 was the old worst-case tenant chroma value;
-     that ceiling is now enforced at runtime by the clamp in
-     workspace-provider.tsx, so the CSS fallback no longer needs to assume it. */
-  --nx-accent: oklch(0.68 var(--workspace-chroma, 0.14) var(--workspace-hue, 262));
-  --nx-accent-fill: oklch(0.5 var(--workspace-chroma, 0.14) var(--workspace-hue, 262));
-  --nx-on-fill: #ffffff;
-  --nx-accent-wash: oklch(0.68 var(--workspace-chroma, 0.14) var(--workspace-hue, 262) / 0.13);
+  /* accent — RELAY vNEXT: Signal Lime is the one committed brand signal, and
+     it is INVARIANT, not workspace-derived. Text and fill keep opposite
+     contrast duties (two tokens): --nx-accent is the readable "as text/edge"
+     value (Lime itself on dark, Accent Text Light on light), --nx-accent-fill
+     is the constant Lime fill, and --nx-on-fill is ALWAYS Ink — a Lime fill
+     with a white label fails DESIGN.md's Lime rule outright.
+     Per-workspace tenant colour survives as CONTEXT (pills/chips/avatars/hub
+     tiles reading --workspace-hue/chroma directly via WorkspaceGroup.ts), not
+     as this global accent — see DESIGN.md §5. */
+  --nx-accent: var(--scripe-accent-text, #c6ff00);
+  --nx-accent-fill: var(--scripe-signal, #c6ff00);
+  --nx-on-fill: var(--scripe-accent-fg, #0d0d0e);
+  --nx-accent-wash: color-mix(in oklch, var(--nx-accent-fill) 13%, transparent);
 
-  /* secondary — the logo's cyan; "live/now" only, never decoration */
-  --nx-secondary: oklch(0.68 0.13 192);
+  /* secondary — retired as a distinct cyan brand hue (DESIGN.md bans old
+     cyan as global identity); kept as an alias of the measured --info token
+     so consumers with no fallback (commercial.css) keep resolving to
+     something sane rather than an invalid/transparent background. */
+  --nx-secondary: hsl(var(--info));
 
-  /* the signature glow — at most ONE element per screen wears this */
-  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent) 50%, transparent);
+  /* the signature glow — at most ONE element per screen wears this. Built
+     from the constant Lime fill (not the theme-tuned accent-as-text value)
+     so the glow stays vivid Signal Lime in both themes. */
+  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent-fill) 50%, transparent);
 
   /* motion */
   --nx-t-micro: 140ms;
@@ -4207,7 +4080,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   --nx-hover: color-mix(in srgb, var(--nx-ink) 5%, transparent);
 
   /* focus — the lit edge: 1px inner accent line plus a soft accent wash
-     ring. Reads --nx-accent, so it follows the workspace hue and theme. */
+     ring. Reads --nx-accent, so it follows the theme (Lime dark / Accent
+     Text Light light) — the one focus law, invariant across workspaces. */
   --nx-focus: inset 0 0 0 1px var(--nx-accent), 0 0 0 3px var(--nx-accent-wash);
 
   /* status — aliases of the global measured status tokens; nexus never
@@ -4220,44 +4094,44 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 }
 
 :root:not(.dark) {
-  /* near-neutral paper — the light-theme half of the same law: chroma
-     0.004…0.007 at hue 286, a whisper rather than a lavender wash */
-  --nx-ground: #f7f7fa;
+  /* near-neutral paper — DESIGN.md's light ladder verbatim: canvas/surface/
+     subtle (used as the raised/hover step, same rationale as before: raised
+     must read visibly different from a white surface). */
+  --nx-ground: #f7f8f5;
   --nx-surface: #ffffff;
-  --nx-raised: #f0f0f4; /* hover tint in light — darker than surface by design */
-  --nx-raised-2: #e8e8ed;
+  --nx-raised: #eef0eb; /* hover tint in light — darker than surface by design */
+  --nx-raised-2: #e6e8e3; /* one step past raised; no direct DESIGN.md 4th step */
 
-  --nx-ink: #161619;
-  --nx-ink-2: #4a4a51;
-  --nx-ink-3: #62626a;
+  --nx-ink: #0d0d0e;
+  --nx-ink-2: #4b504c;
+  --nx-ink-3: #6f756f;
 
-  --nx-line: rgba(18, 18, 24, 0.11);
-  --nx-line-hi: rgba(18, 18, 24, 0.2);
+  --nx-line: #d5d9d3;
+  --nx-line-hi: #aeb4ad;
 
-  /* L0.46, not a naive inversion: accent-as-text must clear its floor on
-     every nx surface across all workspace hues (5.33:1 worst hue). Fill and
-     --nx-on-fill are theme-invariant and inherit from the dark block. */
-  --nx-accent: oklch(0.46 var(--workspace-chroma, 0.14) var(--workspace-hue, 262));
-  --nx-accent-wash: oklch(0.46 var(--workspace-chroma, 0.14) var(--workspace-hue, 262) / 0.1);
-
-  --nx-secondary: oklch(0.46 0.13 192);
+  /* Accent Text Light (#4C6200): Signal Lime itself is not legible body text
+     on a white surface, so the "as text/edge" duty uses the darker readable
+     value here. Fill and --nx-on-fill are theme-invariant and inherit from
+     the dark block above — Lime fill + Ink foreground never changes. */
+  --nx-accent: var(--scripe-accent-text, #4c6200);
+  --nx-accent-wash: color-mix(in oklch, var(--nx-accent-fill) 10%, transparent);
 
   /* softer on light ground — a glow over white reads as smudge at dark-mode
-     strength */
-  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent) 32%, transparent);
+     strength. Still built from the constant Lime fill. */
+  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent-fill) 32%, transparent);
 
   /* ── Wave A extensions — light overrides ────────────────────────────────
      Radius, scrim, hover, focus and status aliases need no override: they
      read vars that flip themselves. Popover cannot reuse --nx-raised here
      because raised is the light HOVER tint; popovers stay on white. Shadows
      stay much softer than dark's — dark-strength black on white reads as
-     dirt — and are cast in the same near-neutral ink as the surfaces (Wave
-     I1: the old rgb(23 17 40) tint put a violet halo under every card). */
+     dirt — and are cast in Ink (#0D0D0E / rgb(13 13 14)), the same neutral
+     the surfaces derive from, never a hue-tinted black. */
   --nx-popover: var(--nx-surface);
-  --nx-shadow-sm: 0 1px 2px rgb(18 18 24 / 0.08);
-  --nx-shadow-popover: 0 8px 24px -8px rgb(18 18 24 / 0.16), 0 2px 8px -2px rgb(18 18 24 / 0.08);
-  --nx-shadow-modal: 0 24px 64px -16px rgb(18 18 24 / 0.24), 0 8px 24px -8px rgb(18 18 24 / 0.12);
-  --nx-shadow-bar-top: 0 -8px 24px -8px rgb(18 18 24 / 0.16), 0 -2px 8px -2px rgb(18 18 24 / 0.08);
+  --nx-shadow-sm: 0 1px 2px rgb(13 13 14 / 0.08);
+  --nx-shadow-popover: 0 8px 24px -8px rgb(13 13 14 / 0.16), 0 2px 8px -2px rgb(13 13 14 / 0.08);
+  --nx-shadow-modal: 0 24px 64px -16px rgb(13 13 14 / 0.24), 0 8px 24px -8px rgb(13 13 14 / 0.12);
+  --nx-shadow-bar-top: 0 -8px 24px -8px rgb(13 13 14 / 0.16), 0 -2px 8px -2px rgb(13 13 14 / 0.08);
 }
 
 /* ============================================================================

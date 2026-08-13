@@ -285,7 +285,7 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
       <div className="mb-8 flex flex-col items-center gap-3">
         <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
           <Image
-            src="/app-logo.png"
+            src="/brand/app-logo-1024.png"
             alt={`${BRAND.name} Logo`}
             width={56}
             height={56}

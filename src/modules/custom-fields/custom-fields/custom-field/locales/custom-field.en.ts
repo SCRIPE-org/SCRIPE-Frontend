@@ -49,6 +49,15 @@ export const en = {
     // Platform-owned (TenantId == null) definition, inherited by every tenant
     global: "Global",
 
+    // Shown on the definitions screen when a Super Admin has no tenant
+    // context — the exact same form creates a GLOBAL definition here,
+    // with no other visual difference from a tenant-scoped one.
+    platformContext: {
+      title: "Platform context — no tenant selected",
+      description:
+        "Any definition you create here is global: it's inherited by every tenant, not scoped to one. Drill into a tenant first if you meant to create a tenant-specific field.",
+    },
+
     // Inline "+ Add custom field" trigger, opened from inside another
     // screen's create/edit form (not the /custom-fields definitions screen).
     inlineAdd: {

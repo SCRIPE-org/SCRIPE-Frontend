@@ -31,7 +31,7 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
   const isCanceled = branding.status === "canceled";
   const companyName = branding.companyName ?? branding.name ?? BRAND.name;
   const resolvedLogoSrc = useResolvedFileUrl(branding.logoUrl);
-  const logoSrc = branding.logoUrl ? resolvedLogoSrc || "/app-logo.png" : "/app-logo.png";
+  const logoSrc = branding.logoUrl ? resolvedLogoSrc || "/brand/app-logo-1024.png" : "/brand/app-logo-1024.png";
 
   return (
     <div
@@ -118,7 +118,7 @@ export function TenantNotFoundView() {
         {/* Platform Logo */}
         <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <Image
-            src="/app-logo.png"
+            src="/brand/app-logo-1024.png"
             alt={BRAND.name}
             width={80}
             height={80}

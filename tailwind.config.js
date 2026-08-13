@@ -59,37 +59,6 @@ module.exports = {
           DEFAULT: "hsl(var(--info))",
           foreground: "hsl(var(--info-foreground))",
         },
-        // ── EDGE surface tokens ────────────────────────────────────────────
-        // These are defined in globals.css under :root[data-layout="scripe"]
-        // and resolve per theme there. They were CSS-only, which meant no
-        // component could reach them from a class — that, more than anything
-        // else, is why the shadcn primitive layer never moved onto the design
-        // system: there was no token to migrate *to*.
-        //
-        // No hsl() wrapper: unlike the shadcn tokens above, these hold complete
-        // colour values (oklch(...) or #hex), not bare HSL triplets. Wrapping
-        // them would produce hsl(oklch(...)) and the declaration would be
-        // dropped silently.
-        //
-        // Outside the scripe shell these variables are undefined, so the
-        // fallbacks keep any stray usage rendering something sane rather than
-        // transparent.
-        edge: {
-          void: "var(--edge-void, hsl(var(--background)))",
-          sub: "var(--edge-sub, hsl(var(--muted)))",
-          slab: "var(--edge-slab, hsl(var(--card)))",
-          "slab-hi": "var(--edge-slab-hi, hsl(var(--accent)))",
-          line: "var(--edge-line, hsl(var(--border)))",
-          "line-hi": "var(--edge-line-hi, hsl(var(--border)))",
-          ink: "var(--edge-ink, hsl(var(--foreground)))",
-          "ink-2": "var(--edge-ink-2, hsl(var(--muted-foreground)))",
-          "ink-3": "var(--edge-ink-3, hsl(var(--muted-foreground)))",
-          accent: "var(--edge-accent, hsl(var(--primary)))",
-          "accent-fill": "var(--edge-accent-fill, hsl(var(--primary)))",
-          "accent-wash": "var(--edge-accent-wash, hsl(var(--primary) / 0.1))",
-          emit: "var(--edge-emit, hsl(var(--ring)))",
-          "on-fill": "var(--edge-on-fill, hsl(var(--primary-foreground)))",
-        },
         // The modal scrim. Previously every overlay hardcoded bg-black/70 and
         // then layered a backdrop-blur on top, which EDGE law 1 bans outright.
         scrim: "var(--scrim)",
@@ -153,14 +122,6 @@ module.exports = {
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
-        },
-        ws: {
-          accent: "var(--ws-accent)",
-          "accent-light": "var(--ws-accent-light)",
-          "accent-muted": "var(--ws-accent-muted)",
-          "accent-fg": "var(--ws-accent-fg)",
-          "rail-bg": "var(--ws-rail-bg)",
-          "rail-hover": "var(--ws-rail-hover)",
         },
       },
       transitionDuration: {

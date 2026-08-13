@@ -1639,7 +1639,7 @@ export const en = {
       textLabel: "Logo Text",
       textPlaceholder: "Enter logo text...",
       textHelp: "Text displayed as the logo",
-      imageInfo: "The image logo uses the file at /app-logo.png",
+      imageInfo: "The image logo uses the file at /brand/app-logo-1024.png",
       previewLabel: "Logo Preview",
       previewHelp: "Live preview of your logo with current settings",
       sizeOptions: {

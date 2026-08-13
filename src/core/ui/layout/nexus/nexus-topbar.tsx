@@ -23,7 +23,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
-import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
+import { LanguageSwitcher, NxThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { BRAND } from "@core/config/branding";
@@ -240,7 +240,7 @@ export function NexusTopbar({
         )}
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+          <NxThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
           <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>
 

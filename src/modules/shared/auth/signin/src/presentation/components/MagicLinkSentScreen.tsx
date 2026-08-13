@@ -78,8 +78,8 @@ export function MagicLinkSentScreen({ email, onBack, onResend, isRTL }: MagicLin
         <div
           className="flex h-16 w-16 items-center justify-center rounded-2xl"
           style={{
-            background: "var(--sx-accent-soft, rgba(168,85,247,.1))",
-            border: "1px solid var(--sx-accent-soft-border, rgba(168,85,247,.3))",
+            background: "var(--sx-accent-soft, rgba(198,255,0,.1))",
+            border: "1px solid var(--sx-accent-soft-border, rgba(198,255,0,.3))",
           }}
         >
           <Mail

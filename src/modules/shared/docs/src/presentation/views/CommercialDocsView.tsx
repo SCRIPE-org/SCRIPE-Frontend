@@ -114,7 +114,7 @@ function CommercialFooter() {
               aria-label={t("commercialHeader.logoAria", { brand: BRAND.namePascal })}
             >
               <Image
-                src="/app-logo.png"
+                src="/brand/app-logo-1024.png"
                 alt={BRAND.namePascal}
                 width={24}
                 height={24}

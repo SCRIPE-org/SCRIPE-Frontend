@@ -56,7 +56,7 @@ export function LoginBranding({
 
   // Resolve branding values with fallbacks
   const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
-  const logoSrc = branding?.logoUrl ? resolvedLogoSrc || "/app-logo.png" : "/app-logo.png";
+  const logoSrc = branding?.logoUrl ? resolvedLogoSrc || "/brand/app-logo-1024.png" : "/brand/app-logo-1024.png";
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const headline = branding?.loginHeadline || t("auth.branding.headline");
   const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");

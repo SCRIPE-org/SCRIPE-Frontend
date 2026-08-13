@@ -76,8 +76,8 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
 
   const isDark = theme === "dark";
 
-  const headerSurface = isDark ? "rgba(10, 8, 22, 0.72)" : "rgba(248, 247, 255, 0.82)";
-  const bandSurface = isDark ? "rgba(10, 8, 22, 0.6)" : "rgba(248, 247, 255, 0.75)";
+  const headerSurface = isDark ? "rgba(13, 13, 14, 0.72)" : "rgba(255, 255, 255, 0.82)";
+  const bandSurface = isDark ? "rgba(13, 13, 14, 0.6)" : "rgba(247, 248, 245, 0.75)";
 
   const themeLabel = useMemo(
     () => (isDark ? t("signup.shell.themeToLight") : t("signup.shell.themeToDark")),
@@ -123,7 +123,7 @@ export function SignupShell({ children, progressSlot, phaseLabel }: SignupShellP
           className="flex select-none items-center gap-2.5 transition-opacity hover:opacity-75"
         >
           <Image
-            src="/app-logo.png"
+            src="/brand/app-logo-1024.png"
             alt={BRAND.name}
             className="h-7 w-auto"
             width={28}

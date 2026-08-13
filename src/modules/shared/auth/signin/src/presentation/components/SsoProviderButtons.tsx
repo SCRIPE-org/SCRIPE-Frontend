@@ -73,10 +73,10 @@ const SsoButton = ({
         height: 44,
         padding: "11px 12px",
         background: hover
-          ? "var(--sx-field-bg-focus, rgba(124,58,237,0.06))"
+          ? "var(--sx-field-bg-focus, rgba(198,255,0,0.05))"
           : "var(--sx-chip-bg, rgba(255,255,255,.03))",
         borderColor: hover
-          ? "var(--sx-field-border-focus, rgba(168,85,247,0.55))"
+          ? "var(--sx-field-border-focus, rgba(198,255,0,0.55))"
           : "var(--sx-chip-border, rgba(255,255,255,.08))",
         color: "var(--sx-text, hsl(var(--foreground)))",
         cursor: "pointer",

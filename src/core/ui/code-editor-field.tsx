@@ -187,7 +187,7 @@ const HTML_SNIPPETS = [
   },
   {
     name: "Image + Text",
-    code: `<div class="hero-block">\n  <img src="/app-logo.png" alt="Logo" class="hero-img" />\n  <div class="hero-text">\n    <h2>Your Brand Here</h2>\n    <p>Customize everything to match your identity.</p>\n  </div>\n</div>`,
+    code: `<div class="hero-block">\n  <img src="/brand/app-logo-1024.png" alt="Logo" class="hero-img" />\n  <div class="hero-text">\n    <h2>Your Brand Here</h2>\n    <p>Customize everything to match your identity.</p>\n  </div>\n</div>`,
   },
   {
     name: "CTA Section",

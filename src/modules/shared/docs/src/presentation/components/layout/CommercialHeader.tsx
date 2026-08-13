@@ -348,7 +348,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
             aria-label={t("commercialHeader.logoAria", { brand: BRAND.namePascal })}
           >
             <span className="com-header-logo-mark">
-              <Image src="/app-logo.png" alt="" width={32} height={32} className="com-header-logo-img" aria-hidden="true" />
+              <Image src="/brand/app-logo-1024.png" alt="" width={32} height={32} className="com-header-logo-img" aria-hidden="true" />
             </span>
             <span className="com-header-brand-copy">
               <span className="com-header-logo-name">{BRAND.nameUpper}</span>

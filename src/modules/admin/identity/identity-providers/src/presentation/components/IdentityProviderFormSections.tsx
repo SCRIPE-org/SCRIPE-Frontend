@@ -31,9 +31,9 @@ import Image from "next/image";
 // verbatim from globals.css `:root` (see SSOButtonPreview for the full
 // light+dark pair; this inline preview only ever shows the dark frame).
 const PREVIEW_DARK_SX_VARS = {
-  "--sx-card-bg": "linear-gradient(180deg, rgba(20, 12, 46, 0.78), rgba(10, 8, 28, 0.85))",
-  "--sx-card-border": "rgba(168, 85, 247, 0.22)",
-  "--sx-text": "#f5f2ff",
+  "--sx-card-bg": "linear-gradient(180deg, rgba(21, 23, 25, 0.86), rgba(13, 13, 14, 0.92))",
+  "--sx-card-border": "rgba(198, 255, 0, 0.16)",
+  "--sx-text": "#f7f8f5",
   "--sx-field-bg": "rgba(255, 255, 255, 0.03)",
   "--sx-field-border": "rgba(255, 255, 255, 0.08)",
 } as React.CSSProperties;

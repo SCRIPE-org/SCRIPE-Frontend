@@ -95,7 +95,7 @@ export function SignupFinalizeScreen() {
           className="flex select-none items-center gap-2.5"
         >
           <Image
-            src="/app-logo.png"
+            src="/brand/app-logo-1024.png"
             alt={BRAND.name}
             className="h-7 w-auto"
             width={28}

@@ -101,17 +101,20 @@ export function SignupProgressBar({ phase }: SignupProgressBarProps) {
                   aria-hidden
                   className="flex h-[1.125rem] w-[1.125rem] items-center justify-center rounded-full transition-transform duration-200 ease-out motion-reduce:transition-none"
                   style={{
-                    background: done || active ? tokens.accent : tokens.surfaceRaised,
-                    border: done || active ? `1px solid ${tokens.accent}` : tokens.borderCard,
+                    // Current step is the one committed Lime signal; completed
+                    // steps get a structural (ink) confirmation, not the same
+                    // glow — DESIGN.md: "do not make every completed step glow".
+                    background: active ? tokens.accent : done ? tokens.ink : tokens.surfaceRaised,
+                    border: active
+                      ? `1px solid ${tokens.accent}`
+                      : done
+                        ? `1px solid ${tokens.ink}`
+                        : tokens.borderCard,
                     transform: active ? "scale(1.12)" : "scale(1)",
                   }}
                 >
                   {done ? (
-                    <Check
-                      className="h-2.5 w-2.5"
-                      strokeWidth={3}
-                      style={{ color: tokens.accentContrast }}
-                    />
+                    <Check className="h-2.5 w-2.5" strokeWidth={3} style={{ color: tokens.surface }} />
                   ) : (
                     <span
                       className="h-1.5 w-1.5 rounded-full"

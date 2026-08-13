@@ -13,10 +13,13 @@ import { useCustomFieldViewModel } from "../viewmodels/useCustomFieldViewModel";
 import type { CustomField } from "../../domain/entities/CustomField";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermissions } from "@core/providers/permission-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { Badge } from "@core/ui/badge";
 import { ErrorMessage } from "@core/ui/error-message";
+import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Globe2 } from "lucide-react";
 
 // SELECT value type == 4; Options are only allowed/required for Select fields.
 const SELECT_VALUE_TYPE = "4";
@@ -39,6 +42,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../locales"), "customFields");
   const { t, language } = useI18n();
   const { vm, entityTypes, isEntityTypesError, refetchEntityTypes } = useCustomFieldViewModel();
+  const { isSuperAdmin } = usePermissions();
+  const { isInTenantWorld } = useTenantContext();
+  // A Super Admin who hasn't drilled into a tenant is in genuine platform
+  // context: every definition created from here is GLOBAL (TenantId = null,
+  // inherited by every tenant), not scoped to "their own" tenant the way the
+  // exact same form behaves for anyone else. The form gives no other hint of
+  // this, so it's surfaced here, before "Add" is even clicked.
+  const isPlatformContext = isSuperAdmin && !isInTenantWorld;
 
   const entityTypeOptions = useMemo(() => {
     if (!entityTypes || entityTypes.length === 0) return [];
@@ -83,6 +94,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           message={t("customField.entityTypesLoadFailed")}
           onRetry={() => refetchEntityTypes()}
         />
+      ) : isPlatformContext ? (
+        <Alert variant="info">
+          <Globe2 />
+          <AlertTitle>{t("customField.platformContext.title")}</AlertTitle>
+          <AlertDescription>{t("customField.platformContext.description")}</AlertDescription>
+        </Alert>
       ) : undefined,
       columns: [
         { key: "entityTypeKey", label: t("customField.fields.entityTypeKey"), sortable: true },

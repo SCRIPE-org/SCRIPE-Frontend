@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ShieldCheck, Building2, Zap } from "lucide-react";
 import { SlotRenderer } from "../SlotRenderer";
 import { LogoImg, MobileLogo } from "./layout-shared";
@@ -8,48 +8,65 @@ import { BG_STYLE } from "./layout-types";
 import type { LoginLayoutProps } from "./layout-types";
 
 /**
- * VaultLayout — Scripe's cinematic split auth layout.
+ * VaultLayout — SCRIPE Relay vNext cinematic split auth layout.
  *
- * Left: ambient hero (wordmark, giant 3D mark, secure badge, gradient headline,
- * feature chips, compliance footer). Right: glass card holding the form.
- *
- * Every color/surface is read from the `--sx-*` token layer (globals.css, themed
- * dark/light) — no hardcoded hex. The hero text resolves from the Branding
- * Resolver output (`branding`, `companyName`) so platform vs. tenant surfaces and
- * tenant customizations both work. Ambient motion is in <VaultBackground/> under
- * `.sx-ambient` and honors prefers-reduced-motion.
- *
- * Visual source of truth: Scripe_claude_design/Scripe/scripe-vault.jsx.
+ * Left: cinematic brand stage (wordmark, protected 3D Relay Grid, secure
+ * badge, headline, feature chips, compliance footer). Right: calm
+ * high-contrast form card. Every color/surface is read from the `--sx-*`
+ * token layer (globals.css, themed dark/light, re-based to Relay vNext) — no
+ * hardcoded hex. Ambient stage motion is in <VaultBackground/>; the logo
+ * block plays a single 650ms intro reveal (never looping) and an optional
+ * fine-pointer parallax, both honoring `prefers-reduced-motion`.
  */
 import { VaultBackground } from "./VaultBackground";
 import Image from "next/image";
 
-/** Giant 3D Scripe mark with rings, aurora glow, and (light-theme) glass orb. */
+/**
+ * The canonical 3D Relay Grid mark, presented as a single protected asset.
+ * Container-level motion only — the intro reveal and parallax transform the
+ * wrapper; the image itself is never cropped, filtered, or upscaled beyond
+ * its native 1254x1254 source (V3 fidelity policy).
+ */
 function VaultLogoBlock() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const finePointer = window.matchMedia("(pointer: fine)").matches;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!finePointer || reducedMotion) return;
+
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const onMove = (e: PointerEvent) => {
+      const rect = el.getBoundingClientRect();
+      const px = (e.clientX - rect.left) / rect.width - 0.5;
+      const py = (e.clientY - rect.top) / rect.height - 0.5;
+      // Max ±2deg, per DESIGN.md's cinematic parallax ceiling.
+      setTilt({ x: py * -4, y: px * 4 });
+    };
+    const onLeave = () => setTilt({ x: 0, y: 0 });
+
+    el.addEventListener("pointermove", onMove);
+    el.addEventListener("pointerleave", onLeave);
+    return () => {
+      el.removeEventListener("pointermove", onMove);
+      el.removeEventListener("pointerleave", onLeave);
+    };
+  }, []);
+
   return (
     <div
-      className="relative flex items-center justify-center"
-      style={{ width: 280, height: 280, animation: "sxFloat 7s ease-in-out infinite" }}
+      ref={wrapRef}
+      className="scripe-auth-reveal relative flex items-center justify-center"
+      style={{
+        width: 280,
+        height: 280,
+        perspective: 800,
+      }}
     >
-      {/* Breathing rings */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          inset: "-10%",
-          border: "1px solid var(--sx-accent-soft-border)",
-          animation: "sxBreathe 4s ease-in-out infinite",
-        }}
-      />
-      <div
-        className="absolute rounded-full"
-        style={{
-          inset: "-25%",
-          border: "1px solid var(--sx-card-border)",
-          animation: "sxBreathe 5s ease-in-out infinite",
-          animationDelay: "1s",
-        }}
-      />
-      {/* Aurora glow under the mark */}
+      {/* Static Lime environmental glow — no continuous pulse */}
       <div
         className="absolute"
         style={{
@@ -65,27 +82,34 @@ function VaultLogoBlock() {
           width: 260,
           height: 260,
           opacity: "var(--sx-logo-orb-opacity, 0)",
-          background: "radial-gradient(circle at 30% 25%, #1a0f3d 0%, #06060e 80%)",
+          background: "radial-gradient(circle at 30% 25%, #151719 0%, #050506 80%)",
           boxShadow:
-            "0 30px 80px rgba(76,29,149,.35), inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 1px rgba(124,58,237,.30)",
+            "0 30px 80px rgba(13,13,14,.35), inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 1px rgba(198,255,0,.18)",
         }}
       />
-      {/* The 3D S — brand hero asset */}
-      <Image
-        src="/scripe-icon-3d.png"
-        alt="Scripe"
-        width={280}
-        height={280}
-        className="relative z-[1] object-contain"
+      {/* The canonical 3D Relay Grid — protected asset, container tilts, never the geometry */}
+      <div
         style={{
-          width: 280,
-          height: 280,
-          mixBlendMode: "var(--sx-logo-blend)" as CSSProperties["mixBlendMode"],
-          filter: "var(--sx-logo-filter)",
-          WebkitMaskImage: "radial-gradient(circle at 50% 50%, #000 38%, transparent 62%)",
-          maskImage: "radial-gradient(circle at 50% 50%, #000 38%, transparent 62%)",
+          transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
+          transition: "transform 200ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))",
+          transformStyle: "preserve-3d",
         }}
-      />
+      >
+        <Image
+          src="/brand/auth/login-relay-grid-3d.png"
+          alt="SCRIPE"
+          width={280}
+          height={280}
+          priority
+          className="relative z-[1] object-contain"
+          style={{
+            width: 280,
+            height: 280,
+            mixBlendMode: "var(--sx-logo-blend)" as CSSProperties["mixBlendMode"],
+            filter: "var(--sx-logo-filter)",
+          }}
+        />
+      </div>
     </div>
   );
 }
@@ -151,12 +175,12 @@ export function VaultLayout({
             </span>
           </div>
 
-          {/* Giant mark */}
+          {/* Canonical 3D mark */}
           <div className="self-center">
             <VaultLogoBlock />
           </div>
 
-          {/* Headline block */}
+          {/* Headline block — solid ink, no gradient text (DESIGN.md ban) */}
           <div className="flex max-w-xl flex-col gap-3.5">
             <span
               className="sx-mono inline-flex w-fit items-center gap-2 rounded-full px-2.5 py-1.5 text-[11px] uppercase tracking-[0.15em]"
@@ -178,10 +202,7 @@ export function VaultLayout({
               style={{
                 fontSize: "clamp(40px, 4.6vw, 56px)",
                 letterSpacing: "-0.025em",
-                background: "var(--sx-text-heading)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
+                color: "var(--sx-text-heading)",
               }}
             >
               {headline}
@@ -252,11 +273,11 @@ export function VaultLayout({
               WebkitBackdropFilter: "blur(24px)",
             }}
           >
-            {/* Top accent line — purple gradient glow */}
+            {/* Top accent line — Signal Lime, one hairline signal */}
             <div
               className="pointer-events-none absolute left-[20%] right-[20%] top-0 h-px"
               style={{
-                background: `linear-gradient(90deg, transparent, var(--sx-accent, #A855F7), transparent)`,
+                background: `linear-gradient(90deg, transparent, var(--sx-accent, #C6FF00), transparent)`,
                 opacity: 0.7,
               }}
               aria-hidden="true"

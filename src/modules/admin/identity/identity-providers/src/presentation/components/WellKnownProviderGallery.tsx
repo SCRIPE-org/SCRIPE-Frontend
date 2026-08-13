@@ -428,7 +428,7 @@ const PROVIDER_TEMPLATES: ProviderTemplate[] = [
     name: "Generic OIDC",
     description: "Any OpenID Connect 1.0 compliant identity provider",
     protocol: "oidc",
-    color: "#6366F1",
+    color: "#3F4347",
     preset: {
       protocol: "oidc",
       authority: "",

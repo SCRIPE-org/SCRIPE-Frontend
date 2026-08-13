@@ -49,6 +49,15 @@ export const ar = {
     // Platform-owned (TenantId == null) definition, inherited by every tenant
     global: "عام",
 
+    // Shown on the definitions screen when a Super Admin has no tenant
+    // context — the exact same form creates a GLOBAL definition here,
+    // with no other visual difference from a tenant-scoped one.
+    platformContext: {
+      title: "سياق المنصة — لم يتم تحديد مستأجر",
+      description:
+        "أي حقل تنشئه هنا يكون عامًا: يُطبَّق تلقائيًا على كل مستأجر، وليس مقتصرًا على واحد. إذا كنت تقصد إنشاء حقل خاص بمستأجر معيّن، ادخل إلى سياق ذلك المستأجر أولاً.",
+    },
+
     // Inline "+ Add custom field" trigger, opened from inside another
     // screen's create/edit form (not the /custom-fields definitions screen).
     inlineAdd: {

@@ -301,18 +301,14 @@ export function PrimaryRailLogo({
           }}
         />
       ) : (
-        <span
-          style={{
-            fontSize: 22,
-            fontWeight: 900,
-            color: "var(--nx-on-fill)",
-            lineHeight: 1,
-            userSelect: "none",
-            letterSpacing: "-0.5px",
-          }}
-        >
-          N
-        </span>
+        <Image
+          src="/brand/app-logo.svg"
+          alt=""
+          width={28}
+          height={28}
+          style={{ width: 28, height: 28, objectFit: "contain" }}
+          aria-hidden="true"
+        />
       )}
     </div>
   );
