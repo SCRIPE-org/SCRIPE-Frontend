@@ -53,10 +53,9 @@ export function useUsersViewModel() {
     },
     update: async (id, data) => {
       await usersRepository.update(id, data);
-      success({
-        title: t("users.updated"),
-        description: t("users.updatedDesc"),
-      });
+      // No manual success() here on purpose -- deferSuccessEffects (below) holds
+      // the toast until GenericCrudView confirms the custom-field save (if any)
+      // also succeeded; firing it here unconditionally would defeat that.
       return {} as UsersEntity;
     },
     delete: async (id) => {
@@ -66,7 +65,7 @@ export function useUsersViewModel() {
         description: t("users.deletedDesc"),
       });
     },
-  });
+  }, { deferSuccessEffects: true });
 
   // ============ Toggle Active Status ============
   const toggleActiveMutation = useMutation({

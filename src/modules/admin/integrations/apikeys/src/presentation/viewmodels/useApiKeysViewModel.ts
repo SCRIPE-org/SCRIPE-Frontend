@@ -84,11 +84,14 @@ export function useApiKeysViewModel() {
           ipWhitelist: data.ipWhitelist || null,
         };
         const result = await apiKeyRepository.create(requestBody);
+        // The plaintext secret is shown exactly once and can never be retrieved
+        // again, so this fires unconditionally regardless of what happens next.
         setGeneratedKey(result.plainTextKey);
-        success({
-          title: t("apikeys.created"),
-          description: t("apikeys.createdDesc"),
-        });
+        // No manual success() toast here on purpose -- deferSuccessEffects (below)
+        // holds it until GenericCrudView confirms the custom-field save (if any)
+        // also succeeded; firing it here unconditionally would defeat that. The
+        // GeneratedKeyDialog above already gives the user clear, immediate
+        // confirmation that the key itself was created.
         return new ApiKey({
           id: result.id,
           name: data.name,
