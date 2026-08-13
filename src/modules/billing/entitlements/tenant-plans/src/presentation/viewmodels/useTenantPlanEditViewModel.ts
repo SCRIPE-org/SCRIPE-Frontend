@@ -8,6 +8,12 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
+import {
+  useCustomFieldsFormFields,
+  getCustomFieldsExtension,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
+import { TENANT_PLAN_ENTITY_TYPE_KEY } from "./useTenantPlanCreateViewModel";
 import type { UpdateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
 
 /**
@@ -20,6 +26,29 @@ export function useTenantPlanEditViewModel(planId: string) {
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
   const queryClient = useQueryClient();
+
+  // ─── Custom Fields ───────────────────────────────────────
+  // planId is always known here (it's a required param), so this always
+  // fetches definitions merged with this plan's stored values.
+  const customFieldsQuery = useCustomFieldsFormFields(TENANT_PLAN_ENTITY_TYPE_KEY, planId);
+
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
+
+  const updateCustomFieldValue = (name: string, value: unknown) => {
+    setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const saveCustomFieldValues = async (ownerId: string) => {
+    const decoded: Record<string, unknown> = {};
+    for (const fc of customFieldsQuery.fieldConfigs) {
+      const key = decodeCustomFieldName(fc.name);
+      if (key === null) continue;
+      const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+      decoded[key] = raw === "" ? null : raw;
+    }
+    if (Object.keys(decoded).length === 0) return;
+    await getCustomFieldsExtension()?.saveValues(TENANT_PLAN_ENTITY_TYPE_KEY, ownerId, decoded);
+  };
 
   const [step, setStep] = useState(1);
   const [form, setForm] = useState<Partial<UpdateTenantPlanRequest>>({});
@@ -77,7 +106,7 @@ export function useTenantPlanEditViewModel(planId: string) {
 
   const nextStep = () => {
     if (validateStep(step)) {
-      setStep((s) => Math.min(s + 1, 3));
+      setStep((s) => Math.min(s + 1, 4));
     }
   };
 
@@ -85,19 +114,14 @@ export function useTenantPlanEditViewModel(planId: string) {
     setStep((s) => Math.max(s - 1, 1));
   };
 
+  // No onSuccess here -- success side effects (invalidate, toast, navigate)
+  // only fire from submit() once saveCustomFieldValues has also settled, so
+  // a custom-field save failure can never be masked by an immediate redirect
+  // away from the wizard.
   const updateMutation = useMutation({
     mutationFn: async () => {
       if (!form.name) throw new Error("Name is required");
       return tenantPlanRepository.update(planId, form as UpdateTenantPlanRequest);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans", planId] });
-      success({
-        title: t("entitlements.tenantPlans.updated"),
-        description: t("entitlements.tenantPlans.updatedDesc"),
-      });
-      router.push(`/entitlements/tenant-plans/${planId}`);
     },
     onError: (err: Error) => {
       showError({
@@ -107,6 +131,40 @@ export function useTenantPlanEditViewModel(planId: string) {
     },
   });
 
+  // isPending alone would flip back to false the instant the entity mutation
+  // settles, re-enabling Save while saveCustomFieldValues is still in flight
+  // right after it -- this stays true for the whole orchestrated submit.
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const submit = async () => {
+    setIsSubmitting(true);
+    try {
+      try {
+        await updateMutation.mutateAsync();
+      } catch {
+        return; // updateMutation's onError already toasted
+      }
+      try {
+        await saveCustomFieldValues(planId);
+      } catch {
+        showError({
+          title: t("common.error"),
+          description: t("entitlements.tenantPlans.customFieldsSaveError"),
+        });
+        return; // the plan itself was updated -- don't pretend the whole save succeeded
+      }
+      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans"] });
+      queryClient.invalidateQueries({ queryKey: ["entitlements", "tenant-plans", planId] });
+      success({
+        title: t("entitlements.tenantPlans.updated"),
+        description: t("entitlements.tenantPlans.updatedDesc"),
+      });
+      router.push(`/entitlements/tenant-plans/${planId}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return {
     step,
     setStep,
@@ -114,10 +172,15 @@ export function useTenantPlanEditViewModel(planId: string) {
     prevStep,
     form,
     updateForm,
-    submit: updateMutation.mutate,
-    isSubmitting: updateMutation.isPending,
+    submit,
+    isSubmitting,
     isFetching,
     error: updateMutation.error,
     originalPlan: plan,
+    customFieldConfigs: customFieldsQuery.fieldConfigs,
+    customFieldsLoading: customFieldsQuery.isLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields: customFieldsQuery.refetch,
   };
 }

@@ -120,5 +120,9 @@ export const ar = {
     subjectEmailPlaceholder: "subject@example.com",
     dsrNotFoundDesc:
       "تعذّر العثور على طلب موضوع البيانات هذا. ربما تم إلغاؤه أو أن الرابط غير صحيح.",
+    customFieldsSection: "الحقول المخصصة",
+    noCustomFields: "لا توجد حقول مخصصة معرّفة لطلبات موضوع البيانات بعد.",
+    customFieldsSaveError:
+      "تم تقديم الطلب، لكن فشل حفظ قيم الحقول المخصصة. يرجى المحاولة مرة أخرى.",
   },
 };

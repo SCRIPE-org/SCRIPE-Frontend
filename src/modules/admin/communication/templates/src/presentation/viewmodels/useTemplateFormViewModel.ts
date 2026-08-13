@@ -6,6 +6,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { communicationContainer } from "@modules/communication/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import {
+  useCustomFieldsFormFields,
+  getCustomFieldsExtension,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
 import type { MessageChannel, TemplateCategory } from "../../domain/entities/MessageTemplate";
 import type {
   CreateMessageTemplateRequest,
@@ -16,6 +21,14 @@ import type { DesignVariables } from "../components/DesignVariablesPanel";
 import { DEFAULT_DESIGN } from "../components/DesignVariablesPanel";
 
 const QUERY_KEY = ["message-templates"];
+
+/**
+ * Registered in the backend's CommunicationEntityTypeCatalog -- must match
+ * exactly, and matches useMessageTemplatesViewModel's configBase.entityTypeKey
+ * (that screen's own modal never actually mounts Custom Fields, since Create/
+ * Edit both navigate here instead; this is the real integration point).
+ */
+export const MESSAGE_TEMPLATE_ENTITY_TYPE_KEY = "communication.message-template";
 
 /**
  * Exported type defining parameters and fields for template form mode configurations.
@@ -52,6 +65,50 @@ export function useTemplateFormViewModel() {
 
   const templateId = params?.id as string | undefined;
   const mode: TemplateFormMode = templateId ? "edit" : "create";
+
+  // ─── Custom Fields ───────────────────────────────────────
+  // No ownerId in create mode (definitions only); keyed by templateId once
+  // editing an existing record (definitions merged with their stored values).
+  const customFieldsQuery = useCustomFieldsFormFields(
+    MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
+    mode === "edit" ? templateId : undefined
+  );
+
+  // Keyed by the field's namespaced name (e.g. "__cf__nationality"), holding
+  // only values the user has actively edited this session -- an untouched
+  // field falls back to its fetched defaultValue at save time (see
+  // saveCustomFieldValues below) rather than being seeded into this state,
+  // so a mid-session refetch (the inline-add trigger) can never clobber an
+  // in-progress edit the way syncing form state from `template` could.
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
+
+  const updateCustomFieldValue = useCallback((name: string, value: unknown) => {
+    setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  // Full-resubmit, matching GenericCrudView's own contract: every currently
+  // known custom field's effective value (edited-this-session or the fetched
+  // default) is sent, not just the ones the user touched -- saveValues is a
+  // full-replace of the owner's value set, so omitting an untouched field
+  // here would silently clear it.
+  const saveCustomFieldValues = useCallback(
+    async (ownerId: string) => {
+      const decoded: Record<string, unknown> = {};
+      for (const fc of customFieldsQuery.fieldConfigs) {
+        const key = decodeCustomFieldName(fc.name);
+        if (key === null) continue;
+        const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+        decoded[key] = raw === "" ? null : raw;
+      }
+      if (Object.keys(decoded).length === 0) return;
+      await getCustomFieldsExtension()?.saveValues(
+        MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
+        ownerId,
+        decoded
+      );
+    },
+    [customFieldsQuery.fieldConfigs, customFieldValues]
+  );
 
   // ─── Form State ──────────────────────────────────────────
   const [form, setForm] = useState<TemplateFormValues>({
@@ -160,13 +217,12 @@ export function useTemplateFormViewModel() {
   }, []);
 
   // ─── Create Mutation ─────────────────────────────────────
+  // No onSuccess here -- success side effects (invalidate, toast, navigate)
+  // only fire from handleSubmit once saveCustomFieldValues has also
+  // settled, so a custom-field save failure can never be masked by an
+  // immediate redirect away from the form.
   const createMutation = useMutation({
     mutationFn: (data: CreateMessageTemplateRequest) => repo.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("messaging.templates.createSuccess") });
-      router.push("/communication/templates");
-    },
     onError: () => {
       toastError({ title: t("messaging.templates.createError") });
     },
@@ -175,50 +231,94 @@ export function useTemplateFormViewModel() {
   // ─── Update Mutation ─────────────────────────────────────
   const updateMutation = useMutation({
     mutationFn: (data: UpdateMessageTemplateRequest) => repo.update(templateId!, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("messaging.templates.updateSuccess") });
-      router.push("/communication/templates");
-    },
     onError: () => {
       toastError({ title: t("messaging.templates.updateError") });
     },
   });
 
+  // isPending alone would flip back to false the instant the entity mutation
+  // settles, re-enabling Save while saveCustomFieldValues is still in flight
+  // right after it -- this stays true for the whole orchestrated submit.
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // ─── Submit ──────────────────────────────────────────────
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
     // Serialize complex fields to JSON strings for the API
     const serializedSchema =
       form.placeholderSchema.length > 0 ? JSON.stringify(form.placeholderSchema) : undefined;
     const serializedDesign = JSON.stringify(form.designVariables);
 
-    if (mode === "create") {
-      const payload: CreateMessageTemplateRequest = {
-        key: form.key,
-        channel: form.channel,
-        language: form.language,
-        subject: form.subject || undefined,
-        body: form.body,
-        description: form.description || undefined,
-        isActive: form.isActive,
-        category: form.category || undefined,
-        placeholderSchema: serializedSchema,
-        designVariables: serializedDesign,
-      };
-      createMutation.mutate(payload);
-    } else {
-      const payload: UpdateMessageTemplateRequest = {
-        subject: form.subject || undefined,
-        body: form.body,
-        description: form.description || undefined,
-        isActive: form.isActive,
-        category: form.category || undefined,
-        placeholderSchema: serializedSchema,
-        designVariables: serializedDesign,
-      };
-      updateMutation.mutate(payload);
+    setIsSubmitting(true);
+    try {
+      if (mode === "create") {
+        const payload: CreateMessageTemplateRequest = {
+          key: form.key,
+          channel: form.channel,
+          language: form.language,
+          subject: form.subject || undefined,
+          body: form.body,
+          description: form.description || undefined,
+          isActive: form.isActive,
+          category: form.category || undefined,
+          placeholderSchema: serializedSchema,
+          designVariables: serializedDesign,
+        };
+        let newId: string;
+        try {
+          newId = await createMutation.mutateAsync(payload);
+        } catch {
+          return; // createMutation's onError already toasted
+        }
+        try {
+          await saveCustomFieldValues(newId);
+        } catch {
+          toastError({ title: t("messaging.templates.customFieldsSaveError") });
+          return; // template was created -- don't pretend the whole save succeeded
+        }
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+        success({ title: t("messaging.templates.createSuccess") });
+        router.push("/communication/templates");
+      } else {
+        const payload: UpdateMessageTemplateRequest = {
+          subject: form.subject || undefined,
+          body: form.body,
+          description: form.description || undefined,
+          isActive: form.isActive,
+          category: form.category || undefined,
+          placeholderSchema: serializedSchema,
+          designVariables: serializedDesign,
+        };
+        try {
+          await updateMutation.mutateAsync(payload);
+        } catch {
+          return; // updateMutation's onError already toasted
+        }
+        try {
+          await saveCustomFieldValues(templateId!);
+        } catch {
+          toastError({ title: t("messaging.templates.customFieldsSaveError") });
+          return;
+        }
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+        success({ title: t("messaging.templates.updateSuccess") });
+        router.push("/communication/templates");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-  }, [mode, form, createMutation, updateMutation, templateId]);
+  }, [
+    mode,
+    form,
+    createMutation,
+    updateMutation,
+    templateId,
+    saveCustomFieldValues,
+    queryClient,
+    success,
+    t,
+    toastError,
+    router,
+  ]);
 
   // ─── Navigation ──────────────────────────────────────────
   const handleCancel = useCallback(() => {
@@ -275,10 +375,15 @@ export function useTemplateFormViewModel() {
     fetchError,
     refetch,
     loadedTemplate: template,
-    isSaving: createMutation.isPending || updateMutation.isPending,
+    isSaving: isSubmitting,
     channelOptions,
     languageOptions,
     categoryOptions,
+    customFieldConfigs: customFieldsQuery.fieldConfigs,
+    customFieldsLoading: customFieldsQuery.isLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields: customFieldsQuery.refetch,
     t,
     title:
       mode === "create" ? t("messaging.templates.createTitle") : t("messaging.templates.editTitle"),

@@ -119,5 +119,9 @@ export const en = {
     subjectEmailPlaceholder: "subject@example.com",
     dsrNotFoundDesc:
       "This data subject request could not be found. It may have been cancelled, or the link may be incorrect.",
+    customFieldsSection: "Custom Fields",
+    noCustomFields: "No custom fields defined for data subject requests yet.",
+    customFieldsSaveError:
+      "The request was submitted, but saving its custom field values failed. Please try again.",
   },
 };

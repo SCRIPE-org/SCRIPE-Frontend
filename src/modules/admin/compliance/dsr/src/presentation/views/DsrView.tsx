@@ -24,6 +24,11 @@ export function DsrView() {
     setSubmitOpen,
     handleSubmit,
     isSubmitting,
+    customFieldConfigs,
+    customFieldsLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields,
     reviewDsr,
     setReviewDsr,
     handleReview,
@@ -55,6 +60,11 @@ export function DsrView() {
         onOpenChange={setSubmitOpen}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
+        customFieldConfigs={customFieldConfigs}
+        customFieldsLoading={customFieldsLoading}
+        customFieldValues={customFieldValues}
+        onCustomFieldChange={updateCustomFieldValue}
+        onCustomFieldsCreated={() => void refetchCustomFields()}
       />
 
       <ReviewDsrModal

@@ -24,6 +24,7 @@ import type { WebhookSubscription } from "../../domain/entities/Webhook";
 import { WebhookFormEndpointSection } from "./WebhookFormEndpointSection";
 import { WebhookFormEventsSection } from "./WebhookFormEventsSection";
 import { WebhookFormOptionsSection } from "./WebhookFormOptionsSection";
+import { WebhookFormCustomFieldsSection } from "./WebhookFormCustomFieldsSection";
 
 interface WebhookFormProps {
   mode: "create" | "edit";
@@ -60,6 +61,8 @@ export function WebhookForm({ mode, webhook, open, onOpenChange, onSuccess }: We
             <WebhookFormEventsSection vm={vm} />
             <Separator />
             <WebhookFormOptionsSection vm={vm} />
+            <Separator />
+            <WebhookFormCustomFieldsSection vm={vm} />
           </div>
         </ScrollArea>
 

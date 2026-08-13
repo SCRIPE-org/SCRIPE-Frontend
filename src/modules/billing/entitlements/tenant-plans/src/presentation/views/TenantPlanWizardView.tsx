@@ -17,12 +17,14 @@ import {
   Pencil,
   Settings,
   CheckSquare,
+  Tags,
 } from "lucide-react";
 import Link from "next/link";
 import { WizardStepIndicator } from "@modules/entitlements/core";
 import { TenantPlanStepBasics } from "../components/wizard/TenantPlanStepBasics";
 import { TenantPlanStepBilling } from "../components/wizard/TenantPlanStepBilling";
 import { TenantPlanStepReview } from "../components/wizard/TenantPlanStepReview";
+import { TenantPlanStepCustomFields } from "../components/wizard/TenantPlanStepCustomFields";
 
 const STEP_TRANSITION =
   "duration-nx-standard animate-in fade-in ease-nx-enter motion-reduce:animate-none";
@@ -40,7 +42,8 @@ export function TenantPlanWizardView() {
   const STEPS = [
     { id: "1", label: t("entitlements.tenantPlans.stepBasics"), icon: Pencil },
     { id: "2", label: t("entitlements.tenantPlans.stepBilling"), icon: Settings },
-    { id: "3", label: t("common.review"), icon: CheckSquare },
+    { id: "3", label: t("entitlements.tenantPlans.stepCustomFields"), icon: Tags },
+    { id: "4", label: t("common.review"), icon: CheckSquare },
   ];
 
   return (
@@ -86,6 +89,19 @@ export function TenantPlanWizardView() {
             </div>
           )}
           {vm.step === 3 && (
+            <div className={STEP_TRANSITION}>
+              <TenantPlanStepCustomFields
+                fieldConfigs={vm.customFieldConfigs}
+                loading={vm.customFieldsLoading}
+                values={vm.customFieldValues}
+                onChange={vm.updateCustomFieldValue}
+                onFieldCreated={() => void vm.refetchCustomFields()}
+                entityDisplayName={t("entitlements.tenantPlans.title")}
+                t={t}
+              />
+            </div>
+          )}
+          {vm.step === 4 && (
             <div className={STEP_TRANSITION}>
               <TenantPlanStepReview form={vm.form} t={t} />
             </div>

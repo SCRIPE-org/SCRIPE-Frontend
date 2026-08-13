@@ -1,19 +1,25 @@
 // FILE-EXCEPTION: file length
 "use client";
 
-import { useTemplateFormViewModel } from "../viewmodels/useTemplateFormViewModel";
+import {
+  useTemplateFormViewModel,
+  MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
+} from "../viewmodels/useTemplateFormViewModel";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
+import { DatePicker } from "@core/ui/date-picker";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { ArrowLeft, Save, Settings, Palette, Braces, Eye } from "lucide-react";
+import { ArrowLeft, Save, Settings, Palette, Braces, Eye, Tag } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
+import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
 import dynamic from "next/dynamic";
 
 // Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)
@@ -39,6 +45,30 @@ const TemplateLivePreview = dynamic(
     import("../components/TemplateLivePreview").then((m) => ({ default: m.TemplateLivePreview })),
   { ssr: false }
 );
+
+function toFieldInputValue(value: unknown): string {
+  return value === undefined || value === null ? "" : String(value);
+}
+
+/** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
+function CustomFieldsAddTrigger({
+  entityDisplayName,
+  onCreated,
+}: {
+  entityDisplayName: string;
+  onCreated: () => void;
+}) {
+  const api = getCustomFieldsExtension();
+  if (!api) return null;
+  const Trigger = api.InlineAddTrigger;
+  return (
+    <Trigger
+      entityTypeKey={MESSAGE_TEMPLATE_ENTITY_TYPE_KEY}
+      entityDisplayName={entityDisplayName}
+      onCreated={onCreated}
+    />
+  );
+}
 
 /**
  * Presentation UI component rendering the template form view.
@@ -183,6 +213,16 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                     <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">{vm.t("common.preview")}</span>
                   </TabsTrigger>
+                  <TabsTrigger
+                    value="customFields"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.customFieldsTitle")}
+                  >
+                    <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    <span className="hidden truncate sm:inline">
+                      {vm.t("messaging.templates.customFieldsTitle")}
+                    </span>
+                  </TabsTrigger>
                 </TabsList>
               </CardHeader>
 
@@ -301,6 +341,90 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
               <TabsContent value="preview">
                 <CardContent className="pt-0">
                   <TemplateLivePreview body={vm.form.body} subject={vm.form.subject} />
+                </CardContent>
+              </TabsContent>
+
+              {/* Custom Fields Tab */}
+              <TabsContent value="customFields">
+                <CardContent className="space-y-5 pt-0">
+                  {vm.customFieldConfigs.map((fc: FieldConfig) => {
+                    const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+
+                    if (fc.type === "switch") {
+                      return (
+                        <div key={fc.name} className="flex items-center justify-between">
+                          <Label htmlFor={fc.name}>{fc.label}</Label>
+                          <Switch
+                            id={fc.name}
+                            checked={Boolean(value)}
+                            onCheckedChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
+                          />
+                        </div>
+                      );
+                    }
+
+                    if (fc.type === "select") {
+                      return (
+                        <div key={fc.name} className="space-y-2">
+                          <Label htmlFor={fc.name}>{fc.label}</Label>
+                          <Select
+                            value={toFieldInputValue(value)}
+                            onValueChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
+                          >
+                            <SelectTrigger id={fc.name}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {fc.options?.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      );
+                    }
+
+                    if (fc.type === "date") {
+                      return (
+                        <div key={fc.name} className="space-y-2">
+                          <Label htmlFor={fc.name}>{fc.label}</Label>
+                          <DatePicker
+                            id={fc.name}
+                            type="date"
+                            value={toFieldInputValue(value)}
+                            onChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
+                            required={fc.required}
+                          />
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={fc.name} className="space-y-2">
+                        <Label htmlFor={fc.name}>{fc.label}</Label>
+                        <Input
+                          id={fc.name}
+                          type={fc.type === "number" ? "number" : "text"}
+                          value={toFieldInputValue(value)}
+                          onChange={(e) => vm.updateCustomFieldValue(fc.name, e.target.value)}
+                          required={fc.required}
+                        />
+                      </div>
+                    );
+                  })}
+
+                  {vm.customFieldConfigs.length === 0 && !vm.customFieldsLoading && (
+                    <p className="text-sm text-nx-ink-2">
+                      {vm.t("messaging.templates.noCustomFields")}
+                    </p>
+                  )}
+
+                  <CustomFieldsAddTrigger
+                    entityDisplayName={vm.t("messaging.templates.title")}
+                    onCreated={() => void vm.refetchCustomFields()}
+                  />
                 </CardContent>
               </TabsContent>
             </Tabs>

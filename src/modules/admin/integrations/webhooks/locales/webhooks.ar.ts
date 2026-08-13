@@ -55,6 +55,9 @@ export const ar = {
     createdDesc: "تم إنشاء اشتراك الويب هوك بنجاح.",
     updated: "تم تحديث الويب هوك",
     updatedDesc: "تم تحديث اشتراك الويب هوك بنجاح.",
+    noCustomFields: "لا توجد حقول مخصصة معرّفة للويب هوك بعد.",
+    customFieldsSaveError:
+      "تم حفظ الويب هوك، لكن فشل حفظ قيم الحقول المخصصة. يرجى المحاولة مرة أخرى.",
     deleted: "تم حذف الويب هوك",
     deletedDesc: "تم حذف اشتراك الويب هوك.",
     toggled: "تم تبديل الويب هوك",
@@ -189,6 +192,8 @@ export const ar = {
       eventsSectionDesc: "اختر الأحداث التي تريد تلقي إشعارات بشأنها",
       optionsSection: "الخيارات",
       optionsSectionDesc: "إعدادات التسليم وإعادة المحاولة الإضافية",
+      customFieldsSection: "الحقول المخصصة",
+      customFieldsSectionDesc: "حقول إضافية معرّفة من قبل مسؤول مساحة العمل",
       searchEvents: "البحث في الأحداث...",
       noEventsFound: "لا توجد أحداث تطابق بحثك",
     },

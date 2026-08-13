@@ -14,7 +14,10 @@
 
 import Link from "next/link";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { useFeatureDefinitionFormViewModel } from "../viewmodels/useFeatureDefinitionFormViewModel";
+import {
+  useFeatureDefinitionFormViewModel,
+  TENANT_FEATURE_DEFINITION_ENTITY_TYPE_KEY,
+} from "../viewmodels/useFeatureDefinitionFormViewModel";
 
 import { cn } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -26,6 +29,10 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
 import { PageHeader } from "@core/ui/page-header";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { DatePicker } from "@core/ui/date-picker";
+import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
 import {
   ArrowLeft,
   Save,
@@ -40,7 +47,32 @@ import {
   AlertCircle,
   Sparkles,
   KeyRound,
+  Layers,
 } from "lucide-react";
+
+function toFieldInputValue(value: unknown): string {
+  return value === undefined || value === null ? "" : String(value);
+}
+
+/** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
+function CustomFieldsAddTrigger({
+  entityDisplayName,
+  onCreated,
+}: {
+  entityDisplayName: string;
+  onCreated: () => void;
+}) {
+  const api = getCustomFieldsExtension();
+  if (!api) return null;
+  const Trigger = api.InlineAddTrigger;
+  return (
+    <Trigger
+      entityTypeKey={TENANT_FEATURE_DEFINITION_ENTITY_TYPE_KEY}
+      entityDisplayName={entityDisplayName}
+      onCreated={onCreated}
+    />
+  );
+}
 
 interface FeatureDefinitionFormViewProps {
   /** If provided, we're in edit mode; otherwise create mode. */
@@ -68,6 +100,11 @@ export function FeatureDefinitionFormView({
     updateField,
     handleSubmit,
     t,
+    customFieldConfigs,
+    customFieldsLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields,
   } = useFeatureDefinitionFormViewModel(featureId);
 
   // ── Loading state for edit ──
@@ -420,6 +457,110 @@ export function FeatureDefinitionFormView({
             onCheckedChange={(checked) => updateField("isActive", checked)}
             readOnly={isViewMode}
           />
+        </CardContent>
+      </Card>
+
+      {/* ═══════ SECTION 5: CUSTOM FIELDS ═══════ */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <div
+              className="flex h-8 w-8 items-center justify-center rounded-nx-control bg-nx-accent-wash"
+              aria-hidden="true"
+            >
+              <Layers className="h-4 w-4 text-nx-accent" />
+            </div>
+            {t("entitlements.featureDefinitions.sectionCustomFields")}
+          </CardTitle>
+          <CardDescription>
+            {t("entitlements.featureDefinitions.sectionCustomFieldsDesc")}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {customFieldConfigs.map((fc: FieldConfig) => {
+            const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+
+            if (fc.type === "switch") {
+              return (
+                <div key={fc.name} className="flex items-center justify-between">
+                  <Label htmlFor={fc.name}>{fc.label}</Label>
+                  <Switch
+                    id={fc.name}
+                    checked={Boolean(value)}
+                    onCheckedChange={(v) => updateCustomFieldValue(fc.name, v)}
+                    readOnly={isViewMode}
+                  />
+                </div>
+              );
+            }
+
+            if (fc.type === "select") {
+              return (
+                <div key={fc.name} className="space-y-2">
+                  <Label htmlFor={fc.name}>{fc.label}</Label>
+                  <Select
+                    value={toFieldInputValue(value)}
+                    onValueChange={(v) => updateCustomFieldValue(fc.name, v)}
+                    disabled={isViewMode}
+                  >
+                    <SelectTrigger id={fc.name}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {fc.options?.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              );
+            }
+
+            if (fc.type === "date") {
+              return (
+                <div key={fc.name} className="space-y-2">
+                  <Label htmlFor={fc.name}>{fc.label}</Label>
+                  <DatePicker
+                    id={fc.name}
+                    type="date"
+                    value={toFieldInputValue(value)}
+                    onChange={(v) => updateCustomFieldValue(fc.name, v)}
+                    required={fc.required}
+                    disabled={isViewMode}
+                  />
+                </div>
+              );
+            }
+
+            return (
+              <div key={fc.name} className="space-y-2">
+                <Label htmlFor={fc.name}>{fc.label}</Label>
+                <Input
+                  id={fc.name}
+                  type={fc.type === "number" ? "number" : "text"}
+                  value={toFieldInputValue(value)}
+                  onChange={(e) => updateCustomFieldValue(fc.name, e.target.value)}
+                  required={fc.required}
+                  disabled={isViewMode}
+                />
+              </div>
+            );
+          })}
+
+          {customFieldConfigs.length === 0 && !customFieldsLoading && (
+            <p className="text-sm text-nx-ink-3">
+              {t("entitlements.featureDefinitions.noCustomFields")}
+            </p>
+          )}
+
+          {!isViewMode && (
+            <CustomFieldsAddTrigger
+              entityDisplayName={t("entitlements.featureDefinitions.title")}
+              onCreated={() => void refetchCustomFields()}
+            />
+          )}
         </CardContent>
       </Card>
 

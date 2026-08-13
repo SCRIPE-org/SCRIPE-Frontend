@@ -54,6 +54,9 @@ export const en = {
     createdDesc: "Webhook subscription created successfully.",
     updated: "Webhook Updated",
     updatedDesc: "Webhook subscription updated successfully.",
+    noCustomFields: "No custom fields defined for webhooks yet.",
+    customFieldsSaveError:
+      "The webhook was saved, but saving its custom field values failed. Please try again.",
     deleted: "Webhook Deleted",
     deletedDesc: "Webhook subscription deleted.",
     toggled: "Webhook Toggled",
@@ -187,6 +190,8 @@ export const en = {
       eventsSectionDesc: "Choose which events you want to be notified about",
       optionsSection: "Options",
       optionsSectionDesc: "Additional delivery and retry settings",
+      customFieldsSection: "Custom Fields",
+      customFieldsSectionDesc: "Extra fields defined by your workspace admin",
       searchEvents: "Search events...",
       noEventsFound: "No events match your search",
     },
