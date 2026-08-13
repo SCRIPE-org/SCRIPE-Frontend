@@ -218,33 +218,14 @@ html[data-reduced-motion="true"] {
     both;
 }
 
-/* Stage light breath — DESIGN.md's "tiny ambient light movement applied to
-   the container/background": a grounded pool of light on the floor plane
-   breathing very slowly. Not a wandering blob; it never moves, only breathes. */
-@keyframes scripeLightBreath {
-  0%,
-  100% {
-    opacity: 0.75;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-.scripe-light-breath {
-  animation:
-    scripeFadeIn 700ms ease-out 200ms both,
-    scripeLightBreath 9s ease-in-out 1s infinite;
-}
 @media (prefers-reduced-motion: reduce) {
-  .scripe-monument-settle,
-  .scripe-light-breath {
+  .scripe-monument-settle {
     animation: none;
     transform: none;
     opacity: 1;
   }
 }
-html[data-reduced-motion="true"] .scripe-monument-settle,
-html[data-reduced-motion="true"] .scripe-light-breath {
+html[data-reduced-motion="true"] .scripe-monument-settle {
   animation: none;
   transform: none;
   opacity: 1;
@@ -412,11 +393,6 @@ html[data-reduced-motion="true"] .scripe-fade-in {
   --sx-field-border-focus: rgba(198, 255, 0, 0.55);
   --sx-field-ring: 0 0 0 4px rgba(198, 255, 0, 0.18);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  /* showroom stage — a horizon the monument stands on, the floor sheen it
-     lights, and the grounded pool of Lime stage light beneath it */
-  --sx-horizon: rgba(255, 255, 255, 0.12);
-  --sx-floor-sheen: rgba(255, 255, 255, 0.03);
-  --sx-floor-light: rgba(198, 255, 0, 0.16);
   /* ambient background — restrained Lime, not Aurora violet/blue */
   --sx-grid-stroke: rgba(198, 255, 0, 0.05);
   --sx-aurora-a: rgba(198, 255, 0, 0.14);
@@ -435,7 +411,7 @@ html[data-reduced-motion="true"] .scripe-fade-in {
      gradient (DESIGN.md: "Violet/indigo CTA gradient -> Solid Signal Lime + Ink"). */
   --sx-cta-gradient: var(--scripe-signal);
   --sx-cta-shadow: 0 10px 30px rgba(198, 255, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.2), transparent 50%);
+  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 38%);
 }
 
 /* Vault LIGHT-theme surface overrides (higher specificity than :root) */
@@ -477,9 +453,6 @@ html[data-reduced-motion="true"] .scripe-fade-in {
   --sx-field-border-focus: #4c6200;
   --sx-field-ring: 0 0 0 4px rgba(76, 98, 0, 0.14);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  --sx-horizon: rgba(13, 13, 14, 0.16);
-  --sx-floor-sheen: rgba(13, 13, 14, 0.04);
-  --sx-floor-light: rgba(76, 98, 0, 0.1);
   --sx-grid-stroke: rgba(76, 98, 0, 0.06);
   --sx-aurora-a: rgba(76, 98, 0, 0.1);
   --sx-aurora-b: rgba(13, 13, 14, 0.06);
@@ -491,7 +464,7 @@ html[data-reduced-motion="true"] .scripe-fade-in {
   --sx-logo-filter: none;
   --sx-logo-orb-opacity: 1;
   --sx-cta-shadow: 0 12px 30px rgba(76, 98, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 50%);
+  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 38%);
 }
 
 html {

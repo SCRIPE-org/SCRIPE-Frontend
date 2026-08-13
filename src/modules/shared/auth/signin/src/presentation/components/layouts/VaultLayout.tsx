@@ -71,83 +71,55 @@ function Monument() {
     };
   }, []);
 
-  const markStyle = { width: "clamp(300px, 26vw, 400px)", height: "auto" } as const;
+  // The glyph sits off-center inside its 1254px canvas (alpha bbox: x 60-1252,
+  // y 124-1068). translateX(-2.3%) optically centers it; the ground shadow at
+  // bottom 12% lands at the glyph's true feet instead of the canvas edge.
+  const markStyle = {
+    width: "clamp(300px, 26vw, 400px)",
+    height: "auto",
+    transform: "translateX(-2.3%)",
+  } as const;
 
   return (
-    <div ref={wrapRef} className="scripe-monument relative w-full" style={{ perspective: 900 }}>
-      {/* Horizon — the full-width line the monument stands on */}
+    <div
+      ref={wrapRef}
+      className="scripe-monument scripe-monument-settle relative flex justify-center"
+      style={{ perspective: 900 }}
+    >
       <div
-        aria-hidden="true"
-        className="absolute inset-x-0 bottom-0 h-px"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, var(--sx-horizon) 22%, var(--sx-horizon) 78%, transparent)",
-        }}
-      />
-      {/* Floor sheen — the floor plane catching the stage light */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 top-full h-44"
-        style={{
-          background: "linear-gradient(180deg, var(--sx-floor-sheen), transparent)",
-        }}
-      />
-      {/* Grounded pool of Signal Lime stage light — breathes, never moves */}
-      <div
-        aria-hidden="true"
-        className="scripe-light-breath absolute bottom-0"
-        style={{
-          // Physical `left`, not inset-inline-start: paired with translateX(-50%)
-          // this centers correctly in BOTH directions; the logical property
-          // would push the pool off-center in RTL.
-          left: "50%",
-          transform: "translate(-50%, 55%)",
-          width: "min(56%, 480px)",
-          height: 120,
-          background: "radial-gradient(ellipse, var(--sx-floor-light) 0%, transparent 70%)",
-          filter: "blur(22px)",
-        }}
-      />
-      {/* The monument + its reflection — one parallax group */}
-      <div
-        className="scripe-monument-settle relative z-10 flex justify-center"
+        className="relative"
         style={{
           transform: `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
           transition: "transform 200ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))",
           transformStyle: "preserve-3d",
         }}
       >
-        <div className="relative">
-          <Image
-            src="/brand/auth/login-relay-grid-3d.png"
-            alt=""
-            width={400}
-            height={400}
-            sizes="400px"
-            priority
-            className="relative object-contain"
-            style={markStyle}
-            aria-hidden="true"
-          />
-          {/* Floor reflection — environmental, fades within the floor plane */}
-          <Image
-            src="/brand/auth/login-relay-grid-3d.png"
-            alt=""
-            width={400}
-            height={400}
-            sizes="400px"
-            className="pointer-events-none absolute top-full object-contain"
-            style={{
-              ...markStyle,
-              transform: "scaleY(-1)",
-              opacity: 0.26,
-              filter: "blur(2px)",
-              maskImage: "linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 58%)",
-              WebkitMaskImage: "linear-gradient(180deg, rgba(0, 0, 0, 0.5), transparent 58%)",
-            }}
-            aria-hidden="true"
-          />
-        </div>
+        {/* Ground shadow — product-photography contact shadow at the glyph's
+            true feet, the only staging the object needs */}
+        <div
+          aria-hidden="true"
+          className="absolute"
+          style={{
+            left: "50%",
+            bottom: "10.5%",
+            transform: "translateX(-50%)",
+            width: "58%",
+            height: 30,
+            background: "radial-gradient(ellipse, rgba(0, 0, 0, 0.32) 0%, transparent 68%)",
+            filter: "blur(10px)",
+          }}
+        />
+        <Image
+          src="/brand/auth/login-relay-grid-3d.png"
+          alt=""
+          width={400}
+          height={400}
+          sizes="400px"
+          priority
+          className="relative object-contain"
+          style={markStyle}
+          aria-hidden="true"
+        />
       </div>
     </div>
   );
@@ -217,12 +189,16 @@ export function VaultLayout({
             </span>
           </div>
 
-          {/* Scene — monument on its horizon, then the words */}
+          {/* Scene — the product shot, then the words. The negative margin
+              swallows the PNG canvas's ~15% transparent bottom padding so the
+              headline relates to the glyph's feet, not the file's edge. */}
           <div className="flex flex-col items-center">
-            <Monument />
+            <div style={{ marginBottom: "max(-3vw, -44px)" }}>
+              <Monument />
+            </div>
 
             <h1
-              className="m-0 mt-24 text-center font-bold"
+              className="m-0 mt-6 text-center font-bold"
               style={{
                 fontSize: "clamp(40px, 4.2vw, 64px)",
                 letterSpacing: "-0.03em",
