@@ -41,6 +41,7 @@ export function WebhooksView() {
       titleKey: "webhooks.title",
       subtitleKey: "webhooks.description",
       resource: "webhooks",
+      entityTypeKey: "integrations.webhook-subscription",
       columns: [
         {
           key: "url",

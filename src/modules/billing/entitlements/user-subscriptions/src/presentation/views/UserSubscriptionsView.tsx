@@ -67,6 +67,7 @@ export function UserSubscriptionsView() {
       titleKey: "entitlements.userSubscriptions.title",
       subtitleKey: "entitlements.userSubscriptions.description",
       resource: "user_subscriptions",
+      entityTypeKey: "entitlements.user-subscription",
       columns: [
         {
           key: "userName",

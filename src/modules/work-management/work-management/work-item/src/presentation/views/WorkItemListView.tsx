@@ -91,6 +91,7 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
       titleKey: "workItem.title",
       subtitleKey: "workItem.description",
       resource: "work-items",
+      entityTypeKey: "workmanagement.work-item",
       columns: [
         { key: "title", label: t("workItem.fields.title"), sortable: true },
         {

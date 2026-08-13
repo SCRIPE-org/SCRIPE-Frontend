@@ -20,6 +20,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
     titleKey: "facility.title",
     subtitleKey: "facility.description",
     resource: "facilities",
+    entityTypeKey: "facilityoperations.facility",
     columns: [
       { key: "code", label: t("facility.fields.code"), sortable: true },
       { key: "name", label: t("facility.fields.name"), sortable: true },

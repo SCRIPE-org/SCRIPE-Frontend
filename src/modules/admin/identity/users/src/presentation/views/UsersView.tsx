@@ -81,6 +81,7 @@ export function UsersView() {
       titleKey: "users.title",
       subtitleKey: "users.description",
       resource: "users",
+      entityTypeKey: "identity.user",
       columns: [
         {
           key: "username",

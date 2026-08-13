@@ -21,6 +21,7 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
     titleKey: "venueProfile.title",
     subtitleKey: "venueProfile.description",
     resource: "venue-profiles",
+    entityTypeKey: "facilityoperations.venue-profile",
     columns: [
       { key: "code", label: t("venueProfile.fields.code"), sortable: true },
       { key: "name", label: t("venueProfile.fields.name"), sortable: true },

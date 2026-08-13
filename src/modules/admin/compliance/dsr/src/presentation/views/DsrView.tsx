@@ -37,6 +37,7 @@ export function DsrView() {
         titleKey: "compliance.dsrTitle",
         subtitleKey: "compliance.noDsrsDesc",
         resource: "compliance",
+        entityTypeKey: "compliance.dsr",
         columns: base.columns ?? [],
         ...base,
       };
