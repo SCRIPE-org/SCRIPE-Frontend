@@ -8,11 +8,6 @@ import "./globals.css";
 import { AppProvider } from "@core/providers/app-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { BRAND } from "@core/config/branding";
-import "@modules/auth"; // Eagerly run component registrations
-import "@modules/identity"; // Eagerly run identity registrations
-import "@modules/customization"; // Eagerly run customization registrations
-import "@modules/entitlements"; // Eagerly run entitlements registrations
-import "@/modules/custom-fields/custom-fields/bootstrap"; // Registers the CustomFields GenericCrudView extension
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
