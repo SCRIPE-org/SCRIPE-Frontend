@@ -11,9 +11,11 @@ vi.mock("@core/hooks/use-permission", () => ({
 }));
 // GenericForm calls usePermissions() (the plural, RBAC-context hook) directly
 // and unconditionally — it throws outside a PermissionProvider, same reason
-// generic-crud-view.customfields.test.tsx mocks this module.
+// generic-crud-view.customfields.test.tsx mocks this module. Wrapped in
+// vi.fn() (not a bare arrow) so isSuperAdmin can be overridden per-test via
+// mockReturnValueOnce, same pattern as usePermission (singular) above.
 vi.mock("@core/providers/permission-provider", () => ({
-  usePermissions: () => ({
+  usePermissions: vi.fn(() => ({
     permissions: [],
     hasPermission: () => true,
     hasAnyPermission: () => true,
@@ -21,8 +23,23 @@ vi.mock("@core/providers/permission-provider", () => ({
     canAccessPage: () => true,
     roleNames: [],
     isSuperAdmin: true,
-  }),
+  })),
   PermissionGate: ({ children }: { children: unknown }) => children,
+}));
+// The component computes isPlatformContext from useTenantContext() too —
+// same throws-outside-a-provider reason as usePermissions above. Default
+// isInTenantWorld: false pairs with isSuperAdmin: true above to give every
+// existing test below true platform context unless overridden.
+vi.mock("@core/providers/tenant-context-provider", () => ({
+  useTenantContext: vi.fn(() => ({
+    currentTenant: null,
+    isInTenantWorld: false,
+    breadcrumbs: [],
+    enterTenantWorld: vi.fn(),
+    exitTenantWorld: vi.fn(),
+    navigateToBreadcrumb: vi.fn(),
+    canEnterTenantWorld: false,
+  })),
 }));
 
 // jsdom has no ResizeObserver — FIELDS includes a "select" field (Type), and
@@ -79,6 +96,103 @@ describe("InlineAddCustomFieldDialog", () => {
       )
     );
     await waitFor(() => expect(onCreated).toHaveBeenCalled());
+  });
+
+  it("submits placeholder text for a Text-type field", async () => {
+    render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
+    fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
+
+    fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "nickname" } });
+    fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "Nickname" } });
+    fireEvent.change(screen.getByLabelText("customField.fields.placeholderEn"), {
+      target: { value: "e.g. Junior" },
+    });
+    fireEvent.click(screen.getByText("common.save"));
+
+    await waitFor(() =>
+      expect(createMock).toHaveBeenCalledWith(expect.objectContaining({ placeholderEn: "e.g. Junior" }))
+    );
+  });
+
+  describe("the Global switch", () => {
+    // The component re-renders (and re-calls usePermissions()/useTenantContext())
+    // on every state change — at least once more after the trigger click opens
+    // the dialog, on top of GenericForm's own internal usePermissions() call in
+    // the same pass. mockReturnValueOnce only patches a single call, so it gets
+    // consumed before the assertion's render settles; mockReturnValue persists
+    // across all of them instead, restored in afterEach so it can't leak into
+    // sibling tests (including the two above, which rely on the module's
+    // isSuperAdmin:true/isInTenantWorld:false defaults).
+    const defaultPermissions = {
+      permissions: [],
+      hasPermission: () => true,
+      hasAnyPermission: () => true,
+      hasAllPermissions: () => true,
+      canAccessPage: () => true,
+      roleNames: [],
+      isSuperAdmin: true,
+    };
+    const defaultTenantContext = {
+      currentTenant: null,
+      isInTenantWorld: false,
+      breadcrumbs: [],
+      enterTenantWorld: vi.fn(),
+      exitTenantWorld: vi.fn(),
+      navigateToBreadcrumb: vi.fn(),
+      canEnterTenantWorld: false,
+    };
+
+    afterEach(async () => {
+      const { usePermissions } = await import("@core/providers/permission-provider");
+      const { useTenantContext } = await import("@core/providers/tenant-context-provider");
+      vi.mocked(usePermissions).mockReturnValue(defaultPermissions as any);
+      vi.mocked(useTenantContext).mockReturnValue(defaultTenantContext as any);
+    });
+
+    it("is not rendered for a non-Super-Admin", async () => {
+      const { usePermissions } = await import("@core/providers/permission-provider");
+      vi.mocked(usePermissions).mockReturnValue({ ...defaultPermissions, isSuperAdmin: false } as any);
+
+      render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
+      fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
+
+      expect(screen.queryByLabelText("customField.fields.isGlobal")).not.toBeInTheDocument();
+    });
+
+    it("is disabled and on by default in pure platform context (Super Admin, no tenant selected)", async () => {
+      // Default module-level mocks: isSuperAdmin true, isInTenantWorld false.
+      render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
+      fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
+
+      const globalSwitch = screen.getByLabelText("customField.fields.isGlobal");
+      expect(globalSwitch).toBeDisabled();
+      expect(globalSwitch).toHaveAttribute("data-state", "checked");
+    });
+
+    it("is enabled and off by default for a Super Admin drilled into a tenant, and submits isGlobal:true when turned on", async () => {
+      const { useTenantContext } = await import("@core/providers/tenant-context-provider");
+      vi.mocked(useTenantContext).mockReturnValue({
+        ...defaultTenantContext,
+        currentTenant: { id: "tenant-1", name: "Acme" },
+        isInTenantWorld: true,
+      } as any);
+
+      render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
+      fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
+
+      const globalSwitch = screen.getByLabelText("customField.fields.isGlobal");
+      expect(globalSwitch).toBeEnabled();
+      expect(globalSwitch).toHaveAttribute("data-state", "unchecked");
+
+      fireEvent.click(globalSwitch);
+      fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
+      fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });
+      fireEvent.click(screen.getByText("common.save"));
+
+      await waitFor(() =>
+        expect(createMock).toHaveBeenCalledWith(expect.objectContaining({ isGlobal: true }))
+      );
+    });
   });
 
   describe("dialog title's {entity} interpolation source", () => {

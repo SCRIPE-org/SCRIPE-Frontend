@@ -5,15 +5,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialo
 import { Button } from "@core/ui/button";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import { usePermission } from "@core/hooks/use-permission";
+import { usePermissions } from "@core/providers/permission-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { getCustomFieldsContainer } from "../../../../di";
 
-// Matches CustomFieldListView.tsx's own constant — same enum, same rule
-// (Options only applies to Select fields), kept in sync deliberately rather
-// than imported: these are two independent forms for the same backend
-// command, not a shared component.
+// Matches CustomFieldListView.tsx's own constants — same enums, same rules
+// (Options only applies to Select fields; Boolean/Date have no placeholder
+// concept), kept in sync deliberately rather than imported: these are two
+// independent forms for the same backend command, not a shared component.
 const SELECT_VALUE_TYPE = "4";
+const NO_PLACEHOLDER_VALUE_TYPES = new Set(["2", "3"]);
 
 export function InlineAddCustomFieldDialog({
   entityTypeKey,
@@ -26,6 +29,12 @@ export function InlineAddCustomFieldDialog({
 }) {
   const [open, setOpen] = useState(false);
   const canCreate = usePermission("custom-fields.create");
+  const { isSuperAdmin } = usePermissions();
+  const { isInTenantWorld } = useTenantContext();
+  // Same reasoning as CustomFieldListView.tsx's own isPlatformContext: with
+  // no tenant drilled into, there's no tenant to scope a new definition to,
+  // so it's always global regardless of the switch below.
+  const isPlatformContext = isSuperAdmin && !isInTenantWorld;
   // The "customField" translation namespace is owned by the definitions
   // screen (CustomFieldListView), not this one — this dialog can mount
   // inside any other module's form, which never loads it on its own.
@@ -70,6 +79,20 @@ export function InlineAddCustomFieldDialog({
         ],
       },
       {
+        name: "placeholderEn",
+        label: t("customField.fields.placeholderEn"),
+        type: "text",
+        placeholder: t("customField.placeholders.placeholderEn"),
+        isVisible: (form) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+      },
+      {
+        name: "placeholderAr",
+        label: t("customField.fields.placeholderAr"),
+        type: "text",
+        placeholder: t("customField.placeholders.placeholderAr"),
+        isVisible: (form) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+      },
+      {
         name: "options",
         label: t("customField.fields.options"),
         type: "textarea",
@@ -79,8 +102,20 @@ export function InlineAddCustomFieldDialog({
       },
       { name: "isRequired", label: t("customField.fields.isRequired"), type: "switch" },
       { name: "sortOrder", label: t("customField.fields.sortOrder"), type: "number", min: 0 },
+      {
+        name: "isGlobal",
+        label: t("customField.fields.isGlobal"),
+        type: "switch",
+        // See CustomFieldListView.tsx's identical field for the full
+        // reasoning — kept in sync deliberately, not shared/imported.
+        isVisible: () => isSuperAdmin,
+        disabled: isPlatformContext,
+        description: isPlatformContext
+          ? t("customField.isGlobalDescription.platformContext")
+          : t("customField.isGlobalDescription.tenantContext"),
+      },
     ],
-    [t]
+    [t, isSuperAdmin, isPlatformContext]
   );
 
   if (!canCreate) return null;
@@ -99,7 +134,14 @@ export function InlineAddCustomFieldDialog({
           </DialogHeader>
           <GenericForm
             fields={fields}
-            initialValues={{ valueType: "0", isRequired: false, sortOrder: 0 }}
+            initialValues={{
+              valueType: "0",
+              placeholderEn: "",
+              placeholderAr: "",
+              isRequired: false,
+              sortOrder: 0,
+              isGlobal: isPlatformContext,
+            }}
             onSubmit={async (data) => {
               const { customFieldRepository } = getCustomFieldsContainer();
               await customFieldRepository.create({ ...data, entityTypeKey });

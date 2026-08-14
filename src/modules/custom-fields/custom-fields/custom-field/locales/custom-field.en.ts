@@ -24,6 +24,7 @@ export const en = {
       sortOrder: "Sort Order",
       isActive: "Active",
       scope: "Scope",
+      isGlobal: "Global (all tenants)",
     },
 
     // Form placeholders
@@ -72,6 +73,14 @@ export const en = {
       title: "Platform context — no tenant selected",
       description:
         "Any definition you create here is global: it's inherited by every tenant, not scoped to one. Drill into a tenant first if you meant to create a tenant-specific field.",
+    },
+
+    // Shown next to the create-time Global switch — only ever rendered for a
+    // Super Admin (see isVisible on the field in both forms that offer it).
+    isGlobalDescription: {
+      platformContext: "No tenant is selected, so this definition is always global.",
+      tenantContext:
+        "Off scopes this field to the tenant you're currently viewing. On makes it available to every tenant.",
     },
 
     // Inline "+ Add custom field" trigger, opened from inside another

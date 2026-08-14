@@ -259,7 +259,31 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           type: "number" as const,
           min: 0,
         },
+        {
+          name: "isGlobal",
+          label: t("customField.fields.isGlobal"),
+          type: "switch" as const,
+          // Only a Super Admin can ever create a global definition (backend
+          // independently re-checks this -- see globalRequiresSuperAdmin).
+          // In pure platform context there's no tenant to scope to, so every
+          // definition is global regardless of this switch's value; shown
+          // disabled+on there rather than hidden, so the dialog itself says
+          // so instead of relying on the page-level banner behind it, which
+          // this modal covers. Only genuinely a *choice* -- and so only
+          // interactive -- when a Super Admin has drilled into a specific
+          // tenant and could otherwise create a merely-tenant-scoped field.
+          isVisible: () => isSuperAdmin,
+          disabled: isPlatformContext,
+          description: isPlatformContext
+            ? t("customField.isGlobalDescription.platformContext")
+            : t("customField.isGlobalDescription.tenantContext"),
+        },
       ],
+      // Not offered on edit: scope is a create-time decision only, same as
+      // entityTypeKey/key below -- changing which tenants a live definition
+      // applies to after values may already exist against it is a materially
+      // different, unrequested feature, not a form-field oversight.
+      //
       // entityTypeKey and key are IMMUTABLE after creation (backend rejects changes),
       // so they are omitted from the edit form.
       editFields: [
@@ -332,6 +356,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         options: "",
         isRequired: false,
         sortOrder: 0,
+        // True in pure platform context: honest default (see the field's own
+        // disabled/description logic above -- it's not a real choice there).
+        // False when drilled into a tenant: don't default to leaking a field
+        // into every other tenant, require an explicit opt-in.
+        isGlobal: isPlatformContext,
       },
       editInitialValues: (item: CustomField) => ({
         id: item.id,
@@ -386,6 +415,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       vm,
       isEntityTypesError,
       refetchEntityTypes,
+      isSuperAdmin,
+      isPlatformContext,
     ]
   );
 
