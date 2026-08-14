@@ -355,6 +355,17 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           onClick: (item: CustomField) => vm.openEditModal(item),
           variant: "ghost" as const,
           icon: <Pencil className="h-4 w-4" />,
+          // A global definition (TenantId == null) is visible to every tenant
+          // -- the tenant filter admits it -- but only a platform principal
+          // (no tenant context) can ever mutate it; UpdateCustomFieldCommandHandler's
+          // ownership guard rejects any tenant-scoped caller with the same
+          // "not found" it uses for a genuinely missing row, since the two
+          // cases must not be distinguishable from the response (no leaking
+          // existence across tenants). Offering Edit/Delete on a row the
+          // backend will unconditionally reject isn't a softer failure mode,
+          // it's a confusing one -- hide both instead of letting the click
+          // round-trip into an error.
+          show: (item: CustomField) => isPlatformContext || !item.isGlobal,
         },
         {
           label: tFn("common.delete"),
@@ -362,6 +373,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
+          show: (item: CustomField) => isPlatformContext || !item.isGlobal,
         },
       ],
     }),
