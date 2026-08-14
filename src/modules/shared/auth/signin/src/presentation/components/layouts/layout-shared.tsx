@@ -22,6 +22,7 @@ export function LogoImg({
       alt={`${logoAlt} Logo`}
       width={96}
       height={96}
+      priority
       unoptimized
       className={className}
       onError={() => setErrored(true)}

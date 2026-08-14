@@ -176,6 +176,7 @@ function Monument() {
             width={400}
             height={400}
             sizes="(min-width: 1024px) 520px, 400px"
+            priority
             className="relative object-contain"
             style={markStyle}
             aria-hidden="true"

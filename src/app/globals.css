@@ -7,6 +7,30 @@
 @tailwind utilities;
 
 /* ============================================================================
+   RADIX SWITCH'S HIDDEN BUBBLE INPUT — SUPPRESS CHROME'S NATIVE ICON
+   ----------------------------------------------------------------------------
+   @radix-ui/react-switch renders a real <input type="checkbox"> beside every
+   Switch (for native form submission) and only hides it with
+   opacity:0 + pointer-events:none + transform:translateX(-100%) — sized to
+   match the track (e.g. 44x24). Opacity doesn't remove it from Chrome's
+   autofill/"fillable field" layer, which paints anchored on layout geometry,
+   not on paint output: Chrome draws a small icon over that invisible input's
+   real bounding box, which lands just to the left of every switch (the
+   translateX shift) since the box itself is fully visible-sized.
+   Collapsing the box to the classic 1x1 visually-hidden size removes the
+   geometry Chrome anchors the icon to, without touching Radix's own
+   hide-attributes (still aria-hidden, still non-interactive).
+   ============================================================================ */
+button[role="switch"] + input[type="checkbox"][aria-hidden="true"] {
+  width: 1px !important;
+  height: 1px !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================================
    WORKSPACE ACCENT — REGISTERED SO THE COLOUR CAN INTERPOLATE
    ----------------------------------------------------------------------------
    Every accent in the product derives from --workspace-hue / --workspace-chroma,
