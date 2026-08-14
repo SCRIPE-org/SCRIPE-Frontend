@@ -78,5 +78,11 @@ export const en = {
     defPlaceholderFrontendUrl: "https://plugin.example.com/ui",
     defPlaceholderIconUrl: "https://cdn.example.com/icon.png",
     defPlaceholderManifest: '{"entryPoints": [], "permissions": []}',
+
+    // ── Custom fields section (in the create/edit form) ───────────────
+    defCustomFieldsSection: "Custom Fields",
+    defCustomFieldsSectionDesc: "Additional platform-configured fields for this plugin definition.",
+    defNoCustomFields: "No custom fields yet.",
+    defCustomFieldsSaveError: "The definition was saved, but its custom field values failed to save.",
   },
 };

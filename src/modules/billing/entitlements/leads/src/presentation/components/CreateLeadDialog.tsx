@@ -20,6 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
 import { PlusCircle } from "lucide-react";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { CreateLeadCustomFieldsSection } from "./CreateLeadCustomFieldsSection";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for create lead form data.
@@ -40,6 +42,11 @@ interface CreateLeadDialogProps {
   onSubmit: (data: CreateLeadFormData) => Promise<void>;
   isSubmitting: boolean;
   availableEditions: Array<{ key: string; displayName: string }>;
+  customFieldConfigs: FieldConfig[];
+  customFieldsLoading: boolean;
+  customFieldValues: Record<string, unknown>;
+  onCustomFieldChange: (name: string, value: unknown) => void;
+  onCustomFieldsCreated: () => void;
 }
 
 // react-hook-form owns every field as a plain string (optional fields default
@@ -97,6 +104,11 @@ export function CreateLeadDialog({
   onSubmit,
   isSubmitting,
   availableEditions,
+  customFieldConfigs,
+  customFieldsLoading,
+  customFieldValues,
+  onCustomFieldChange,
+  onCustomFieldsCreated,
 }: CreateLeadDialogProps) {
   const { t } = useI18n();
   const schema = useMemo(() => buildSchema(t), [t]);
@@ -306,6 +318,14 @@ export function CreateLeadDialog({
                   </FormControl>
                 </FormItem>
               )}
+            />
+
+            <CreateLeadCustomFieldsSection
+              customFieldConfigs={customFieldConfigs}
+              customFieldsLoading={customFieldsLoading}
+              customFieldValues={customFieldValues}
+              onCustomFieldChange={onCustomFieldChange}
+              onCustomFieldsCreated={onCustomFieldsCreated}
             />
 
             <DialogFooter className="gap-2 pt-2">

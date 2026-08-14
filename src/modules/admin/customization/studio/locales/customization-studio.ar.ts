@@ -419,6 +419,11 @@ export const ar = {
       saveFailed: "فشل حفظ القالب",
       success: "تم حفظ القالب!",
       successDesc: "قالبك المخصص متاح الآن في معرض القوالب.",
+      customFieldsSection: "الحقول المخصصة",
+      customFieldsSectionDesc: "حقول إضافية معرّفة من قبل مسؤول مساحة العمل",
+      noCustomFields: "لا توجد حقول مخصصة معرّفة للقوالب بعد.",
+      customFieldsSaveError:
+        "تم حفظ القالب، لكن فشل حفظ قيم الحقول المخصصة. يرجى المحاولة مرة أخرى.",
     },
     a11y: {
       onColor: "على",

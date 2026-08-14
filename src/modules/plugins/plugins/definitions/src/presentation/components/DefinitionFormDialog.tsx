@@ -17,9 +17,12 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { Separator } from "@core/ui/separator";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CreateDefinitionRequest } from "../../domain/interfaces/IDefinitionsRepository";
 import type { PluginDefinition, PluginTierValue, PluginScopeValue } from "@modules/plugins/core";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { DefinitionFormCustomFieldsSection } from "./DefinitionFormCustomFieldsSection";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -30,6 +33,13 @@ interface DefinitionFormDialogProps {
   isSubmitting: boolean;
   /** When set, the dialog is in edit mode. */
   editingDefinition?: PluginDefinition | null;
+  // ── Custom Fields (owned by useDefinitionsViewModel, mirrors
+  // useWebhookFormViewModel's identical fields) ─────────────────────────────
+  customFieldConfigs: FieldConfig[];
+  customFieldsLoading: boolean;
+  customFieldValues: Record<string, unknown>;
+  updateCustomFieldValue: (name: string, value: unknown) => void;
+  refetchCustomFields: () => Promise<void>;
 }
 
 // ── Defaults ─────────────────────────────────────────────────────────────────
@@ -60,6 +70,11 @@ export function DefinitionFormDialog({
   onSubmit,
   isSubmitting,
   editingDefinition,
+  customFieldConfigs,
+  customFieldsLoading,
+  customFieldValues,
+  updateCustomFieldValue,
+  refetchCustomFields,
 }: DefinitionFormDialogProps) {
   const { t } = useI18n();
   const isEditMode = !!editingDefinition;
@@ -307,6 +322,17 @@ export function DefinitionFormDialog({
               </p>
             )}
           </div>
+
+          <Separator />
+
+          {/* Custom Fields */}
+          <DefinitionFormCustomFieldsSection
+            customFieldConfigs={customFieldConfigs}
+            customFieldsLoading={customFieldsLoading}
+            customFieldValues={customFieldValues}
+            updateCustomFieldValue={updateCustomFieldValue}
+            refetchCustomFields={refetchCustomFields}
+          />
         </div>
 
         <DialogFooter>

@@ -16,8 +16,13 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Palette, Sparkles } from "lucide-react";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { Switch } from "@core/ui/switch";
+import { DatePicker } from "@core/ui/date-picker";
+import { GenericSelect } from "@core/crud/components/generic-select";
+import { Palette, Sparkles, Sliders } from "lucide-react";
+import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { THEME_ENTITY_TYPE_KEY } from "../viewmodels/useStudioViewModel";
 
 interface SaveAsThemeModalProps {
   isOpen: boolean;
@@ -33,6 +38,35 @@ interface SaveAsThemeModalProps {
     accentColor: string;
     themeDataJson: string;
   }) => Promise<void>;
+  customFieldConfigs: FieldConfig[];
+  customFieldsLoading: boolean;
+  customFieldValues: Record<string, unknown>;
+  onCustomFieldChange: (name: string, value: unknown) => void;
+  onCustomFieldsCreated: () => void;
+}
+
+function toFieldInputValue(value: unknown): string {
+  return value === undefined || value === null ? "" : String(value);
+}
+
+/** Mirrors TemplateFormView.tsx's own private CustomFieldsAddTrigger wrapper. */
+function ThemeCustomFieldsAddTrigger({
+  entityDisplayName,
+  onCreated,
+}: {
+  entityDisplayName: string;
+  onCreated: () => void;
+}) {
+  const api = getCustomFieldsExtension();
+  if (!api) return null;
+  const Trigger = api.InlineAddTrigger;
+  return (
+    <Trigger
+      entityTypeKey={THEME_ENTITY_TYPE_KEY}
+      entityDisplayName={entityDisplayName}
+      onCreated={onCreated}
+    />
+  );
 }
 
 const CATEGORIES = [
@@ -67,9 +101,13 @@ export function SaveAsThemeModal({
   onClose,
   getDraftJson,
   onSaveTheme,
+  customFieldConfigs,
+  customFieldsLoading,
+  customFieldValues,
+  onCustomFieldChange,
+  onCustomFieldsCreated,
 }: SaveAsThemeModalProps) {
   const { t } = useI18n();
-  const { toast } = useEnhancedToast();
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -113,9 +151,12 @@ export function SaveAsThemeModal({
       setCategory("corporate");
       setAuthorName("");
       onClose();
-    } catch (err: any) {
-      const msg = err?.message || err?.response?.data?.error || t("studio.saveTheme.saveFailed");
-      toast({ title: msg, variant: "destructive" });
+    } catch {
+      // useStudioViewModel's saveTheme already toasted the specific reason
+      // (entity-create failure via the mutation's own onError, or a
+      // custom-field save failure via its own explicit toast) -- stay open
+      // with whatever the user typed rather than pretend it saved.
+      return;
     } finally {
       setIsSaving(false);
     }
@@ -130,9 +171,7 @@ export function SaveAsThemeModal({
     category,
     accentColor,
     onSaveTheme,
-    toast,
     onClose,
-    t,
   ]);
 
   return (
@@ -234,6 +273,101 @@ export function SaveAsThemeModal({
                 {t("studio.saveTheme.previewDesc")}
               </p>
             </div>
+          </div>
+
+          {/* Custom Fields */}
+          <div className="space-y-3 border-t border-nx-line pt-4">
+            <div className="flex items-center gap-2.5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-nx-accent-wash text-nx-accent">
+                <Sliders className="h-4 w-4" aria-hidden="true" />
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-nx-ink">
+                  {t("studio.saveTheme.customFieldsSection")}
+                </h3>
+                <p className="text-xs text-nx-ink-2">
+                  {t("studio.saveTheme.customFieldsSectionDesc")}
+                </p>
+              </div>
+            </div>
+
+            {customFieldConfigs.map((fc) => {
+              const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+
+              if (fc.type === "switch") {
+                return (
+                  <div key={fc.name} className="flex items-center justify-between">
+                    <Label htmlFor={fc.name} className="text-sm font-medium">
+                      {fc.label}
+                    </Label>
+                    <Switch
+                      id={fc.name}
+                      checked={Boolean(value)}
+                      onCheckedChange={(v) => onCustomFieldChange(fc.name, v)}
+                    />
+                  </div>
+                );
+              }
+
+              if (fc.type === "select") {
+                return (
+                  <div key={fc.name} className="space-y-2">
+                    <Label htmlFor={fc.name} className="text-sm font-medium">
+                      {fc.label}
+                    </Label>
+                    <GenericSelect
+                      options={fc.options?.map((opt) => ({ value: opt.value, label: opt.label })) ?? []}
+                      value={toFieldInputValue(value)}
+                      onValueChange={(v: string | string[]) => onCustomFieldChange(fc.name, v as string)}
+                      placeholder={fc.label}
+                      type="single"
+                    />
+                  </div>
+                );
+              }
+
+              if (fc.type === "date") {
+                return (
+                  <div key={fc.name} className="space-y-2">
+                    <Label htmlFor={fc.name} className="text-sm font-medium">
+                      {fc.label}
+                    </Label>
+                    <DatePicker
+                      id={fc.name}
+                      type="date"
+                      value={toFieldInputValue(value)}
+                      onChange={(v) => onCustomFieldChange(fc.name, v)}
+                      required={fc.required}
+                    />
+                  </div>
+                );
+              }
+
+              return (
+                <div key={fc.name} className="space-y-2">
+                  <Label htmlFor={fc.name} className="text-sm font-medium">
+                    {fc.label}
+                  </Label>
+                  <Input
+                    id={fc.name}
+                    type={fc.type === "number" ? "number" : "text"}
+                    value={toFieldInputValue(value)}
+                    onChange={(e) => onCustomFieldChange(fc.name, e.target.value)}
+                    required={fc.required}
+                    className="text-sm"
+                  />
+                </div>
+              );
+            })}
+
+            {customFieldConfigs.length === 0 && !customFieldsLoading && (
+              <p className="text-sm text-nx-ink-2">{t("studio.saveTheme.noCustomFields")}</p>
+            )}
+
+            <ThemeCustomFieldsAddTrigger
+              entityDisplayName={t("studio.saveTheme.title")}
+              onCreated={onCustomFieldsCreated}
+            />
           </div>
         </div>
 

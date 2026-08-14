@@ -425,6 +425,11 @@ export function LeadsView() {
         onSubmit={vm.handleCreateLead}
         isSubmitting={vm.isCreatingLead}
         availableEditions={vm.availableEditions}
+        customFieldConfigs={vm.customFieldConfigs}
+        customFieldsLoading={vm.customFieldsLoading}
+        customFieldValues={vm.customFieldValues}
+        onCustomFieldChange={vm.updateCustomFieldValue}
+        onCustomFieldsCreated={() => void vm.refetchCustomFields()}
       />
 
       {/* ── Convert to Tenant Wizard ── */}

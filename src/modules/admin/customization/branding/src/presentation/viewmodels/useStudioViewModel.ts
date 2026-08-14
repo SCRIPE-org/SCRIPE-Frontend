@@ -21,6 +21,11 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { type TenantBrandingData } from "@core/providers/tenant-branding-provider";
 import { customizationContainer } from "@modules/customization/di";
+import {
+  useCustomFieldsFormFields,
+  getCustomFieldsExtension,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
 import type {
   LoginSlotId,
   ContentBlock,
@@ -52,6 +57,16 @@ export interface StudioViewModelOptions {
   /** Tenant name for drilldown banner */
   targetTenantName?: string;
 }
+
+/**
+ * Registered in the backend's IdentityEntityTypeCatalog -- must match
+ * exactly. SaveAsThemeModal is create-only (saves the current draft
+ * customization state AS a new named theme, never edits an existing one),
+ * so this is always the create-form (definitions-only) shape -- no ownerId,
+ * ever -- mirroring DSR_ENTITY_TYPE_KEY's identical reasoning in
+ * useDsrViewModel.tsx.
+ */
+export const THEME_ENTITY_TYPE_KEY = "identity.theme";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for studio view model.
@@ -805,7 +820,42 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     },
   });
 
+  // ── Save Theme: Custom Fields ──
+  const themeCustomFieldsQuery = useCustomFieldsFormFields(THEME_ENTITY_TYPE_KEY, undefined);
+
+  const [themeCustomFieldValues, setThemeCustomFieldValues] = useState<Record<string, unknown>>(
+    {}
+  );
+
+  const updateThemeCustomFieldValue = useCallback((name: string, value: unknown) => {
+    setThemeCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  // Full-resubmit, matching GenericCrudView's own contract: every currently
+  // known custom field's effective value (edited-this-session or the fetched
+  // default) is sent, not just the ones the user touched. Mirrors
+  // useWebhookFormViewModel's / useDsrViewModel's identical helper.
+  const saveThemeCustomFieldValues = useCallback(
+    async (ownerId: string) => {
+      const decoded: Record<string, unknown> = {};
+      for (const fc of themeCustomFieldsQuery.fieldConfigs) {
+        const key = decodeCustomFieldName(fc.name);
+        if (key === null) continue;
+        const raw = themeCustomFieldValues[fc.name] ?? fc.defaultValue ?? "";
+        decoded[key] = raw === "" ? null : raw;
+      }
+      if (Object.keys(decoded).length === 0) return;
+      await getCustomFieldsExtension()?.saveValues(THEME_ENTITY_TYPE_KEY, ownerId, decoded);
+    },
+    [themeCustomFieldsQuery.fieldConfigs, themeCustomFieldValues]
+  );
+
   // ── Save Theme ──
+  // No onSuccess here -- success side effects (toast) only fire from
+  // saveTheme below once saveThemeCustomFieldValues has also settled, so a
+  // custom-field save failure can never be masked by an immediate "saved"
+  // toast that closes the dialog out from under it. Mirrors
+  // useWebhookFormViewModel's createMutation.
   const saveThemeMutation = useMutation({
     mutationFn: async (themeInput: {
       name: string;
@@ -817,7 +867,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       themeDataJson: string;
     }) => {
       const { themeMarketplaceRepository } = customizationContainer;
-      await themeMarketplaceRepository.create({
+      return await themeMarketplaceRepository.create({
         ...themeInput,
         version: "1.0.0",
         themeSchemaVersion: 1,
@@ -834,12 +884,6 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
         isSystem: false,
       });
     },
-    onSuccess: () => {
-      toastSuccess({
-        title: t("studio.saveTheme.success"),
-        description: t("studio.saveTheme.successDesc"),
-      });
-    },
     onError: (err: any) => {
       const msg = err?.message || err?.response?.data?.error || t("common.error");
       toastError({
@@ -848,6 +892,43 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       });
     },
   });
+
+  // Entity saves first, then custom fields -- a custom-field save failure
+  // shows its own error and does NOT show the entity's own success toast,
+  // then re-throws so SaveAsThemeModal knows to stay open with what the
+  // user typed rather than pretend it saved. Mirrors useDsrViewModel's
+  // handleSubmit / useWebhookFormViewModel's handleSubmit sequencing.
+  const saveTheme = useCallback(
+    async (themeInput: {
+      name: string;
+      slug: string;
+      description?: string;
+      authorName?: string;
+      category: string;
+      accentColor: string;
+      themeDataJson: string;
+    }) => {
+      // Rejects (and skips the rest) if the create itself fails --
+      // saveThemeMutation's own onError has already toasted; let it
+      // propagate so SaveAsThemeModal's own catch knows not to reset/close.
+      const created = await saveThemeMutation.mutateAsync(themeInput);
+      try {
+        await saveThemeCustomFieldValues(created.id);
+      } catch (err) {
+        toastError({ title: t("studio.saveTheme.customFieldsSaveError") });
+        // The theme itself WAS created -- re-throw only so the modal knows
+        // to stay open with what the user typed, not to pretend nothing
+        // happened.
+        throw err;
+      }
+      toastSuccess({
+        title: t("studio.saveTheme.success"),
+        description: t("studio.saveTheme.successDesc"),
+      });
+      setThemeCustomFieldValues({});
+    },
+    [saveThemeMutation, saveThemeCustomFieldValues, toastError, toastSuccess, t]
+  );
 
   // ── Discard (with confirmation) ──
   const discardMutation = useMutation({
@@ -1098,16 +1179,14 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     isPublishing: publishMutation.isPending,
     saveDraft: () => saveDraftMutation.mutate(),
     isSavingDraft: saveDraftMutation.isPending,
-    saveTheme: (themeInput: {
-      name: string;
-      slug: string;
-      description?: string;
-      authorName?: string;
-      category: string;
-      accentColor: string;
-      themeDataJson: string;
-    }) => saveThemeMutation.mutateAsync(themeInput),
+    saveTheme,
     isSavingTheme: saveThemeMutation.isPending,
+    // Save Theme: Custom Fields
+    themeCustomFieldConfigs: themeCustomFieldsQuery.fieldConfigs,
+    themeCustomFieldsLoading: themeCustomFieldsQuery.isLoading,
+    themeCustomFieldValues,
+    updateThemeCustomFieldValue,
+    refetchThemeCustomFields: themeCustomFieldsQuery.refetch,
     discard: requestDiscard,
     confirmDiscard,
     cancelDiscard,

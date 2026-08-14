@@ -73,5 +73,11 @@ export const ar = {
     defPlaceholderFrontendUrl: "https://plugin.example.com/ui",
     defPlaceholderIconUrl: "https://cdn.example.com/icon.png",
     defPlaceholderManifest: '{"entryPoints": [], "permissions": []}',
+
+    // ── Custom fields section (in the create/edit form) ───────────────
+    defCustomFieldsSection: "الحقول المخصصة",
+    defCustomFieldsSectionDesc: "حقول إضافية مُهيأة على مستوى المنصة لتعريف الإضافة هذا.",
+    defNoCustomFields: "لا توجد حقول مخصصة بعد.",
+    defCustomFieldsSaveError: "تم حفظ التعريف، لكن فشل حفظ قيم الحقول المخصصة.",
   },
 };

@@ -420,6 +420,11 @@ export const en = {
       saveFailed: "Failed to save theme",
       success: "Theme saved!",
       successDesc: "Your custom theme is now available in the marketplace.",
+      customFieldsSection: "Custom Fields",
+      customFieldsSectionDesc: "Extra fields defined by your workspace admin",
+      noCustomFields: "No custom fields defined for themes yet.",
+      customFieldsSaveError:
+        "The theme was saved, but saving its custom field values failed. Please try again.",
     },
     a11y: {
       onColor: "on",

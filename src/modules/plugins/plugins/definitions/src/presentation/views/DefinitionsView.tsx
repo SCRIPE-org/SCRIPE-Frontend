@@ -84,6 +84,12 @@ export function DefinitionsView() {
     closeForm,
     handleFormSubmit,
     isSubmitting,
+    // Custom fields
+    customFieldConfigs,
+    customFieldsLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields,
     // Delete confirmation
     deletingDefinition,
     openDeleteConfirm,
@@ -307,6 +313,11 @@ export function DefinitionsView() {
         onSubmit={handleFormSubmit}
         isSubmitting={isSubmitting}
         editingDefinition={editingDefinition}
+        customFieldConfigs={customFieldConfigs}
+        customFieldsLoading={customFieldsLoading}
+        customFieldValues={customFieldValues}
+        updateCustomFieldValue={updateCustomFieldValue}
+        refetchCustomFields={refetchCustomFields}
       />
 
       {/* Delete Confirmation */}
