@@ -142,6 +142,7 @@ export function LoginBranding({
               alt={`${logoAlt} Logo`}
               width={80}
               height={80}
+              priority
               unoptimized
               className="h-full w-full object-cover"
               onError={(e) => {

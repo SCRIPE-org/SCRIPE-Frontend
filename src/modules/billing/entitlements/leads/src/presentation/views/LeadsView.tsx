@@ -266,7 +266,7 @@ export function LeadsView() {
               id="leads-create-btn"
               onClick={vm.handleOpenCreateDialog}
               size="sm"
-              className="ms-2 h-8 bg-info px-3 text-xs text-info-foreground hover:bg-info/90"
+              className="ms-2 h-8 px-3 text-xs"
             >
               {t("leads.createButton")}
             </Button>
