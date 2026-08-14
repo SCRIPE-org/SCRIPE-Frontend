@@ -15,7 +15,9 @@ interface CredentialsFormFooterProps {
 export function CredentialsFormFooter({ isPlatformMode, arrow, t }: CredentialsFormFooterProps) {
   return (
     <div
-      className="flex items-center justify-between gap-2 border-t pt-[18px]"
+      // Stacks below sm — one row at 390px wraps the signup link against the
+      // status chip and reads as a layout accident.
+      className="flex flex-col gap-2 border-t pt-[18px] sm:flex-row sm:items-center sm:justify-between"
       style={{
         marginTop: "var(--login-footer-margin, 22px)",
         borderColor: "var(--sx-divider, hsl(var(--border)))",
@@ -29,9 +31,10 @@ export function CredentialsFormFooter({ isPlatformMode, arrow, t }: CredentialsF
             {t("auth.newHere") || "New here?"}{" "}
             <Link
               href="/signup"
-              className="font-medium transition-colors hover:opacity-80"
+              className="font-semibold transition-colors hover:opacity-80"
               style={{
-                color: "var(--sx-text, hsl(var(--foreground)))",
+                // The one conversion link on the form earns the accent duty.
+                color: "var(--sx-accent-text, hsl(var(--foreground)))",
                 textDecoration: "none",
               }}
             >

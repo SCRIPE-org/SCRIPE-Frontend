@@ -165,7 +165,7 @@ export const en = {
     resetSuccessSubtitle:
       "Your password has been reset. You can now sign in with your new credentials.",
     signInHeading: "Sign In",
-    signInSubheading: "Welcome Back! Please sign in to continue",
+    signInSubheading: "Welcome back. Sign in to continue.",
     signingIn: "Signing in…",
     staySignedIn: "Stay signed in",
     show: "show",

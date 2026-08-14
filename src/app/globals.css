@@ -3098,6 +3098,25 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-stage textarea::placeholder {
   color: var(--sx-text-faint, rgba(247, 248, 245, 0.4));
 }
+/* Chrome/WebKit autofill paints its own pale-blue fill (rgba(70,90,126,.4)
+   over the dark card — the "blue inputs" in every screenshot). Autofill
+   backgrounds can't be overridden directly; the inset box-shadow trick
+   repaints the field in the vault surface, and -webkit-text-fill-color
+   keeps the value in theme ink. */
+.vault-stage input:-webkit-autofill,
+.vault-stage input:-webkit-autofill:hover,
+.vault-stage input:-webkit-autofill:focus {
+  -webkit-box-shadow: inset 0 0 0 1000px #17181a;
+  -webkit-text-fill-color: var(--sx-text, #f7f8f5);
+  caret-color: var(--sx-accent, #c6ff00);
+  transition: background-color 9999s ease-out;
+}
+:root:not(.dark) .vault-stage input:-webkit-autofill,
+:root:not(.dark) .vault-stage input:-webkit-autofill:hover,
+:root:not(.dark) .vault-stage input:-webkit-autofill:focus {
+  -webkit-box-shadow: inset 0 0 0 1000px #fbfcf9;
+  -webkit-text-fill-color: var(--sx-text, #0d0d0e);
+}
 /* Method chip hover + active states */
 .vault-stage [data-method-chip]:hover {
   background: var(--sx-chip-bg-active, rgba(198, 255, 0, 0.15)) !important;

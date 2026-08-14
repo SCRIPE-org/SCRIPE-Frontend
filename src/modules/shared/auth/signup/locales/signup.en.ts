@@ -35,13 +35,13 @@ export const en = {
     welcome: {
       // Fallbacks only — live copy comes from getWelcomeContent(); these render
       // if the content endpoint is unreachable so the screen never blanks out.
-      headlineFallback: "Build your workspace",
+      headlineFallback: "Bring your club onto SCRIPE",
       subcopyFallback:
-        "One platform for your whole operation — set up in minutes, scale without limits.",
+        "Sessions, squads, pitches and player development — set up your academy, club or venue in minutes.",
       ctaFallback: "Get started",
-      trustedByFallback: "teams run on SCRIPE",
+      trustedByFallback: "clubs and academies run on SCRIPE",
       // Section labels
-      proofTitle: "Trusted by teams that take operations seriously",
+      proofTitle: "Trusted by people who take the game seriously",
       complianceTitle: "Audited and compliant",
       logosTitle: "Powering teams across industries",
       // States

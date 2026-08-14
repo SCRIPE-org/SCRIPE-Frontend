@@ -163,7 +163,7 @@ export const ar = {
     resetSuccessTitle: "تم تحديث كلمة المرور!",
     resetSuccessSubtitle: "تم إعادة تعيين كلمة مرورك. يمكنك الآن تسجيل الدخول ببياناتك الجديدة.",
     signInHeading: "تسجيل الدخول",
-    signInSubheading: "يرجى تسجيل الدخول للمتابعة",
+    signInSubheading: "أهلاً بعودتك. سجّل دخولك للمتابعة.",
     signingIn: "جارٍ تسجيل الدخول…",
     staySignedIn: "ابقَ مسجلًا",
     show: "إظهار",
