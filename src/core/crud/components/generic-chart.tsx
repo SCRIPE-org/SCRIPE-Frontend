@@ -82,7 +82,7 @@ export function GenericChart({ data, type, dataKey, height = 300, multiple }: Ch
   const activeDot = { r: 4, strokeWidth: 2, stroke: SURFACE };
 
   return (
-    <ResponsiveContainer width="100%" height={height}>
+    <ResponsiveContainer width="100%" height={height} minWidth={0} minHeight={0}>
       <ChartComponent data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
         {/* Horizontal rules only: vertical grid lines add a second grid the
             reader never asked for and compete with bar edges. */}

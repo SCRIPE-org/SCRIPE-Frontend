@@ -95,10 +95,11 @@ import {
   ar as activateWorkspaceAr,
 } from "@modules/entitlements/activate-workspace/locales";
 
-// ─── Communication & Integrations ───────────────────────
+// ─── Communication, Integrations & Media ─────────────────
 import { en as communicationEn, ar as communicationAr } from "@modules/communication/core/locales";
 import { en as webhooksEn, ar as webhooksAr } from "@modules/integrations/webhooks/locales";
 import { en as apikeysEn, ar as apikeysAr } from "@modules/integrations/apikeys/locales";
+import { en as mediaEn, ar as mediaAr } from "@modules/media/locales";
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";
@@ -257,10 +258,11 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   leadsEn,
   signupContentEn,
   activateWorkspaceEn,
-  // Communication & Integrations
+  // Communication, Integrations & Media
   communicationEn,
   webhooksEn,
   apikeysEn,
+  mediaEn,
   // Ecosystem
   recycleBinEn,
   // Profile
@@ -341,10 +343,11 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   leadsAr,
   signupContentAr,
   activateWorkspaceAr,
-  // Communication & Integrations
+  // Communication, Integrations & Media
   communicationAr,
   webhooksAr,
   apikeysAr,
+  mediaAr,
   // Ecosystem
   recycleBinAr,
   // Profile
