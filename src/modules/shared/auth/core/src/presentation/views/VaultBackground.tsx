@@ -4,10 +4,12 @@
  * VaultBackground — the silent stage behind the Vault auth layout.
  *
  * Program-cover discipline: the typography and the mark carry the page, the
- * background stays out of the way. One static, near-imperceptible top light
- * gives the Ink ground physical depth — no grids, no pitch diagrams, no
- * drifting glows, no particles, no motion of any kind. The page's radial
- * ground itself comes from `--sx-bg-grad` on the layout root.
+ * background stays out of the way. DESIGN.md §15 calls for this component to
+ * carry "a restrained, static Signal Lime environmental glow" — the same
+ * recipe `.scripe-auth-stage` already uses for the auth error/loading
+ * states — so the whole vault stage reads as lit, not flat black. No grids,
+ * no pitch diagrams, no drifting glows, no particles: the glow is static,
+ * never animated.
  *
  * Mirror of signin's copy (both consumers need the same treatment; this one
  * backs password-reset).
@@ -20,6 +22,12 @@ export function VaultBackground() {
         style={{
           height: "38%",
           background: "linear-gradient(180deg, rgba(255, 255, 255, 0.02), transparent)",
+        }}
+      />
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "radial-gradient(75% 55% at 50% 35%, rgba(198, 255, 0, 0.1), transparent 62%)",
         }}
       />
     </div>

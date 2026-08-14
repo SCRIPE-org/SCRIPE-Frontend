@@ -13,19 +13,21 @@ import type { LoginLayoutProps } from "./layout-types";
  * Relay Grid stands as a monument on a full-width horizon line, reflected
  * in the floor beneath it (DESIGN.md's cinematic clause explicitly allows
  * environmental Lime reflection for login), lit by one grounded pool of
- * Signal Lime stage light that breathes slowly. Below the monument: a
- * centered editorial headline with exactly one word in Lime, a muted
- * standfirst, and a footer carrying the product family + compliance marks
- * above a hairline. Structured light on a floor — never floating blobs,
- * grids, or particles.
+ * Signal Lime stage light. Below the monument: a centered editorial headline
+ * with exactly one word in Lime, a muted standfirst, and a footer carrying
+ * the product family + compliance marks above a hairline. Structured light
+ * on a floor — never floating blobs, grids, or particles.
  *
  * Right: calm high-contrast form card, untouched product logic.
  *
  * Motion: the monument settles onto the horizon (650ms), the stage light
- * fades up then breathes (9s, opacity only), the headline lines rise out of
- * clipping masks, supporting text fades to present. Fine-pointer parallax
- * tilts the monument container ±2° — never the mark's geometry. Reduced
- * motion renders everything in place, static.
+ * fades up once then holds — DESIGN.md §12 requires this glow to be
+ * "static… not a drifting/looping ambience", so it never breathes or loops —
+ * a single restrained highlight sweep crosses the mark once, the headline
+ * lines rise out of clipping masks, supporting text fades to present.
+ * Fine-pointer parallax tilts the monument container ±2° — never the mark's
+ * geometry. Reduced motion removes the intro translation, the parallax and
+ * the sweep; everything simply renders in place.
  *
  * Every color reads from the `--sx-*` token layer (globals.css, themed
  * dark/light) — no hardcoded hex.
@@ -74,8 +76,12 @@ function Monument() {
   // The glyph sits off-center inside its 1254px canvas (alpha bbox: x 60-1252,
   // y 124-1068). translateX(-2.3%) optically centers it; the ground shadow at
   // bottom 12% lands at the glyph's true feet instead of the canvas edge.
+  // Sized up from the original 300-400px cap: at wide viewports the monument
+  // was reading as a small icon adrift in the stage rather than the hero
+  // object DESIGN.md §15 casts it as. This is a placement/size choice under
+  // the Auth exception (§14.5), not a change to the mark's geometry.
   const markStyle = {
-    width: "clamp(300px, 26vw, 400px)",
+    width: "clamp(340px, 32vw, 520px)",
     height: "auto",
     transform: "translateX(-2.3%)",
   } as const;
@@ -86,6 +92,22 @@ function Monument() {
       className="scripe-monument scripe-monument-settle relative flex justify-center"
       style={{ perspective: 900 }}
     >
+      {/* Grounded stage light — DESIGN.md §12's "single static Signal Lime
+          glow", scoped to this container so it always sits under the mark
+          regardless of viewport height. Fades in once, then holds. */}
+      <div
+        aria-hidden="true"
+        className="scripe-stage-light pointer-events-none absolute"
+        style={{
+          left: "50%",
+          bottom: "4%",
+          transform: "translateX(-50%)",
+          width: "85%",
+          height: "60%",
+          background: "radial-gradient(ellipse, rgba(198, 255, 0, 0.16) 0%, transparent 70%)",
+          filter: "blur(24px)",
+        }}
+      />
       <div
         className="relative"
         style={{
@@ -109,17 +131,56 @@ function Monument() {
             filter: "blur(10px)",
           }}
         />
-        <Image
-          src="/brand/auth/login-relay-grid-3d.png"
-          alt=""
-          width={400}
-          height={400}
-          sizes="400px"
-          priority
-          className="relative object-contain"
-          style={markStyle}
+        <div className="relative overflow-hidden">
+          <Image
+            src="/brand/auth/login-relay-grid-3d.png"
+            alt=""
+            width={400}
+            height={400}
+            sizes="(min-width: 1024px) 520px, 400px"
+            priority
+            className="relative object-contain"
+            style={markStyle}
+            aria-hidden="true"
+          />
+          {/* One-time highlight sweep — DESIGN.md §12 explicitly allows this
+              exact effect and explicitly requires reduced-motion to remove
+              it (handled by .scripe-highlight-sweep's own media query). */}
+          <div
+            aria-hidden="true"
+            className="scripe-highlight-sweep pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(75deg, transparent 40%, rgba(255, 255, 255, 0.22) 50%, transparent 60%)",
+            }}
+          />
+        </div>
+        {/* Floor reflection — the exact same canonical asset, mirrored and
+            faded, never redrawn or recolored (§26). This is the "environmental
+            Lime reflection" §6 names as an explicitly allowed cinematic
+            treatment for login. */}
+        <div
           aria-hidden="true"
-        />
+          className="pointer-events-none absolute left-0 top-full w-full"
+          style={{
+            transform: "scaleY(-1)",
+            marginTop: "-4%",
+            opacity: 0.16,
+            maskImage: "linear-gradient(to bottom, rgba(0,0,0,0.7), transparent 65%)",
+            WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,0.7), transparent 65%)",
+          }}
+        >
+          <Image
+            src="/brand/auth/login-relay-grid-3d.png"
+            alt=""
+            width={400}
+            height={400}
+            sizes="(min-width: 1024px) 520px, 400px"
+            className="relative object-contain"
+            style={markStyle}
+            aria-hidden="true"
+          />
+        </div>
       </div>
     </div>
   );
@@ -255,7 +316,7 @@ export function VaultLayout({
                 </span>
               ))}
             </div>
-            <div
+            {/* <div
               className="flex flex-wrap items-center gap-3 text-[10px] uppercase tracking-[0.1em]"
               style={{ ...monoStyle, color: "var(--sx-text-faint)" }}
             >
@@ -265,7 +326,7 @@ export function VaultLayout({
                   {c}
                 </span>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
 

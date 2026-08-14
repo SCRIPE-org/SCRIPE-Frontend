@@ -230,6 +230,55 @@ html[data-reduced-motion="true"] .scripe-monument-settle {
   transform: none;
   opacity: 1;
 }
+
+/* Grounded stage light — DESIGN.md §12's "single static Signal Lime glow,
+   not a drifting/looping ambience". Fades in once with the settle, then
+   holds at fixed opacity forever. No loop, no position change. */
+@keyframes scripeStageLightIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.scripe-stage-light {
+  animation: scripeStageLightIn 900ms ease-out 200ms both;
+}
+
+/* Restrained one-time highlight sweep — DESIGN.md §12 explicitly allows this
+   and explicitly requires reduced-motion to remove it. A single diagonal
+   light band crosses the monument once, 900ms after the settle finishes,
+   then never repeats (default animation-iteration-count: 1). */
+@keyframes scripeHighlightSweep {
+  from {
+    transform: translateX(-140%) skewX(-12deg);
+  }
+  to {
+    transform: translateX(140%) skewX(-12deg);
+  }
+}
+.scripe-highlight-sweep {
+  animation: scripeHighlightSweep 1100ms var(--scripe-ease-in-out, cubic-bezier(0.77, 0, 0.175, 1))
+    1450ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scripe-stage-light {
+    animation: none;
+    opacity: 1;
+  }
+  .scripe-highlight-sweep {
+    display: none;
+  }
+}
+html[data-reduced-motion="true"] .scripe-stage-light {
+  animation: none;
+  opacity: 1;
+}
+html[data-reduced-motion="true"] .scripe-highlight-sweep {
+  display: none;
+}
 @media (prefers-reduced-motion: reduce) {
   .scripe-line-rise,
   .scripe-fade-in {
