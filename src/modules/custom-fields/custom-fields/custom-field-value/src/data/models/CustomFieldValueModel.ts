@@ -17,6 +17,8 @@ export interface EntityCustomFieldValueData {
   key: string;
   labelEn: string;
   labelAr?: string | null;
+  placeholderEn?: string | null;
+  placeholderAr?: string | null;
   valueType: CustomFieldValueTypeName;
   isRequired: boolean;
   options?: string[] | null;

@@ -372,7 +372,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                             onValueChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
                           >
                             <SelectTrigger id={fc.name}>
-                              <SelectValue />
+                              <SelectValue placeholder={fc.placeholder || fc.label} />
                             </SelectTrigger>
                             <SelectContent>
                               {fc.options?.map((opt) => (
@@ -409,6 +409,7 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                           type={fc.type === "number" ? "number" : "text"}
                           value={toFieldInputValue(value)}
                           onChange={(e) => vm.updateCustomFieldValue(fc.name, e.target.value)}
+                          placeholder={fc.placeholder}
                           required={fc.required}
                         />
                       </div>

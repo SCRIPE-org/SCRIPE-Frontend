@@ -319,7 +319,7 @@ export function SaveAsThemeModal({
                       options={fc.options?.map((opt) => ({ value: opt.value, label: opt.label })) ?? []}
                       value={toFieldInputValue(value)}
                       onValueChange={(v: string | string[]) => onCustomFieldChange(fc.name, v as string)}
-                      placeholder={fc.label}
+                      placeholder={fc.placeholder || fc.label}
                       type="single"
                     />
                   </div>
@@ -353,6 +353,7 @@ export function SaveAsThemeModal({
                     type={fc.type === "number" ? "number" : "text"}
                     value={toFieldInputValue(value)}
                     onChange={(e) => onCustomFieldChange(fc.name, e.target.value)}
+                    placeholder={fc.placeholder}
                     required={fc.required}
                     className="text-sm"
                   />

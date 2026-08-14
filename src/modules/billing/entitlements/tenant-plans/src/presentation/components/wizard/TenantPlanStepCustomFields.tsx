@@ -121,6 +121,7 @@ export function TenantPlanStepCustomFields({
                 type={fc.type === "number" ? "number" : "text"}
                 value={toFieldInputValue(value)}
                 onChange={(e) => onChange(fc.name, e.target.value)}
+                placeholder={fc.placeholder}
                 required={fc.required}
               />
             </div>

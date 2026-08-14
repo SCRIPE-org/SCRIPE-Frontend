@@ -504,7 +504,7 @@ export function FeatureDefinitionFormView({
                     disabled={isViewMode}
                   >
                     <SelectTrigger id={fc.name}>
-                      <SelectValue />
+                      <SelectValue placeholder={fc.placeholder || fc.label} />
                     </SelectTrigger>
                     <SelectContent>
                       {fc.options?.map((opt) => (
@@ -542,6 +542,7 @@ export function FeatureDefinitionFormView({
                   type={fc.type === "number" ? "number" : "text"}
                   value={toFieldInputValue(value)}
                   onChange={(e) => updateCustomFieldValue(fc.name, e.target.value)}
+                  placeholder={fc.placeholder}
                   required={fc.required}
                   disabled={isViewMode}
                 />

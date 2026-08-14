@@ -24,6 +24,11 @@ import { Pencil, Trash2, Globe2 } from "lucide-react";
 // SELECT value type == 4; Options are only allowed/required for Select fields.
 const SELECT_VALUE_TYPE = "4";
 
+// BOOLEAN == 2, DATE == 3 -- the two value types with no placeholder concept
+// (a Switch and a DatePicker, neither renders a text input a placeholder
+// would sit inside). Text(0)/Number(1)/Select(4) all keep the field.
+const NO_PLACEHOLDER_VALUE_TYPES = new Set(["2", "3"]);
+
 // CustomFieldValueType (0..4) mapped onto the nx Badge semantic tones — a
 // value type is read-only metadata, so the tones are neutral/informational
 // rather than success/error.
@@ -53,11 +58,45 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
 
   const entityTypeOptions = useMemo(() => {
     if (!entityTypes || entityTypes.length === 0) return [];
-    return entityTypes.map((item) => ({
+    // Screen-backed entities first, API-only ones after -- native <select>/
+    // GenericSelect has no optgroup primitive here, so the grouping is done
+    // by sort order plus a label suffix rather than a visual divider. `?? true`
+    // matches an older backend response that omits the field (treat as
+    // screen-backed, the pre-this-feature default) rather than mislabeling
+    // every entity type as API-only.
+    const onScreen = entityTypes.filter((item) => item.hasFrontendScreen ?? true);
+    const apiOnly = entityTypes.filter((item) => !(item.hasFrontendScreen ?? true));
+    const toOption = (item: (typeof entityTypes)[number], suffix?: string) => ({
       value: item.key,
-      label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})`,
-    }));
-  }, [entityTypes, language]);
+      label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})${suffix ?? ""}`,
+    });
+    return [
+      ...onScreen.map((item) => toOption(item)),
+      ...apiOnly.map((item) => toOption(item, ` — ${t("customField.entityTypeGroups.apiOnly")}`)),
+    ];
+  }, [entityTypes, language, t]);
+
+  // Keyed for an O(1) lookup from the form's live entityTypeKey selection --
+  // backs the "no screen yet" warning below.
+  const entityTypesByKey = useMemo(() => {
+    const map = new Map<string, (typeof entityTypes)[number]>();
+    for (const item of entityTypes ?? []) map.set(item.key, item);
+    return map;
+  }, [entityTypes]);
+
+  const noFrontendScreenDescription = useMemo(() => {
+    const apiOnlyEntities = (entityTypes ?? []).filter((item) => !(item.hasFrontendScreen ?? true));
+    if (apiOnlyEntities.length === 0) return undefined;
+    // Static, always-visible note rather than a live per-selection popup --
+    // GenericForm has no "computed text tied to another field's current
+    // value" primitive today. Combined with the label suffix above (which
+    // IS per-option), this still tells an admin, before they pick anything,
+    // that some entries in the list won't render on any screen yet.
+    const names = apiOnlyEntities
+      .map((item) => (language === "ar" ? item.displayNameAr : item.displayNameEn))
+      .join(", ");
+    return t("customField.noFrontendScreenWarning", { entity: names });
+  }, [entityTypes, language, t]);
 
   const valueTypeOptions = useMemo(
     () => [
@@ -154,6 +193,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           options: entityTypeOptions,
           placeholder: t("customField.placeholders.entityTypeKey"),
           required: true,
+          description: noFrontendScreenDescription,
         },
         {
           name: "key",
@@ -183,6 +223,23 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           required: true,
         },
         {
+          name: "placeholderEn",
+          label: t("customField.fields.placeholderEn"),
+          type: "text" as const,
+          placeholder: t("customField.placeholders.placeholderEn"),
+          // No placeholder concept for a Switch (Boolean) or DatePicker (Date)
+          // input -- restrict to the value types that actually render a text
+          // input the user types into (Text/Number/Select).
+          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+        },
+        {
+          name: "placeholderAr",
+          label: t("customField.fields.placeholderAr"),
+          type: "text" as const,
+          placeholder: t("customField.placeholders.placeholderAr"),
+          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+        },
+        {
           name: "options",
           label: t("customField.fields.options"),
           type: "textarea" as const,
@@ -207,6 +264,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // so they are omitted from the edit form.
       editFields: [
         { name: "id", type: "hidden" as const, required: true },
+        // ValueType itself is immutable post-creation (not submitted here --
+        // UpdateCustomFieldCommand has no ValueType field), but the
+        // placeholder fields' isVisible below needs to know what it currently
+        // is, same reason "id" is carried as hidden state rather than looked
+        // up separately.
+        { name: "valueType", type: "hidden" as const },
         {
           name: "labelEn",
           label: t("customField.fields.labelEn"),
@@ -219,6 +282,20 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           label: t("customField.fields.labelAr"),
           type: "text" as const,
           placeholder: t("customField.placeholders.labelAr"),
+        },
+        {
+          name: "placeholderEn",
+          label: t("customField.fields.placeholderEn"),
+          type: "text" as const,
+          placeholder: t("customField.placeholders.placeholderEn"),
+          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+        },
+        {
+          name: "placeholderAr",
+          label: t("customField.fields.placeholderAr"),
+          type: "text" as const,
+          placeholder: t("customField.placeholders.placeholderAr"),
+          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
         },
         {
           name: "options",
@@ -249,6 +326,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         key: "",
         labelEn: "",
         labelAr: "",
+        placeholderEn: "",
+        placeholderAr: "",
         valueType: "0",
         options: "",
         isRequired: false,
@@ -256,8 +335,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       },
       editInitialValues: (item: CustomField) => ({
         id: item.id,
+        valueType: String(item.valueType),
         labelEn: item.labelEn,
         labelAr: item.labelAr ?? "",
+        placeholderEn: item.placeholderEn ?? "",
+        placeholderAr: item.placeholderAr ?? "",
         options: item.options ?? "",
         isRequired: item.isRequired,
         sortOrder: item.sortOrder,

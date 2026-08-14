@@ -23,11 +23,19 @@ const VALUE_TYPE_TO_FIELD_TYPE: Record<CustomFieldValueTypeName, FieldConfig["ty
 /** Exported for the unit test above; not part of CustomFieldsExtensionApi itself. */
 export function mapValueToFieldConfig(data: EntityCustomFieldValueData, language: string): FieldConfig {
   const label = language === "ar" && data.labelAr ? data.labelAr : data.labelEn;
+  // Same fallback shape as label: the Arabic placeholder wins only when both
+  // the language is "ar" AND one was actually set, otherwise fall back to
+  // English, then to no placeholder at all (undefined, not an empty string --
+  // Input/GenericSelect/DatePicker all treat "" as "explicitly blank", which
+  // would render as a visible empty placeholder instead of none).
+  const placeholder =
+    (language === "ar" && data.placeholderAr ? data.placeholderAr : data.placeholderEn) || undefined;
   const options: FieldOption[] | undefined = data.options?.map((o) => ({ value: o, label: o }));
 
   return {
     name: encodeCustomFieldName(data.key),
     label,
+    placeholder,
     type: VALUE_TYPE_TO_FIELD_TYPE[data.valueType],
     required: data.isRequired,
     options,

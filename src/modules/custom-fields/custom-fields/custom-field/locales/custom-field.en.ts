@@ -16,6 +16,8 @@ export const en = {
       key: "Key",
       labelEn: "Label (English)",
       labelAr: "Label (Arabic)",
+      placeholderEn: "Placeholder (English)",
+      placeholderAr: "Placeholder (Arabic)",
       valueType: "Value Type",
       options: "Options",
       isRequired: "Required",
@@ -30,8 +32,22 @@ export const en = {
       key: "e.g. shirt_size",
       labelEn: "Enter English label",
       labelAr: "Enter Arabic label",
+      placeholderEn: "e.g. Enter your shirt size",
+      placeholderAr: "e.g. أدخل مقاس القميص",
       options: "One option per line — Select fields only",
     },
+
+    // Entity-type picker: grouped by whether a screen actually renders this
+    // field yet. Screen-backed entries come first; the API-only group is
+    // still selectable (the values API works for either), just labeled so
+    // nobody defines a field expecting it to show up somewhere and it
+    // silently doesn't.
+    entityTypeGroups: {
+      onScreen: "Available on a screen",
+      apiOnly: "API only — no screen yet",
+    },
+    noFrontendScreenWarning:
+      "No screen renders {entity} yet. This definition will save correctly and the values API will work for it, but it won't appear on any form until a screen is built for it.",
 
     // CustomFieldValueType enum (0..4)
     valueTypes: {

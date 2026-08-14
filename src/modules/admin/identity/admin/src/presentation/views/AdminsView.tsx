@@ -162,6 +162,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       titleKey: "admin.title",
       subtitleKey: "admin.description",
       resource: "admins", // Checks permissions (admins.view, admins.create, etc.)
+      // Registered in the backend's IdentityEntityTypeCatalog -- must match
+      // exactly. Create/edit both route through GenericCrudView's own modal
+      // here, so this one line is all the wiring this screen needs.
+      entityTypeKey: "identity.admin",
       columns: [
         {
           key: "username",

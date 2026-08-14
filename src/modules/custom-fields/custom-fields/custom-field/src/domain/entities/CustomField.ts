@@ -12,6 +12,8 @@ export interface EntityTypeInfo {
   owningModule: string;
   displayNameEn: string;
   displayNameAr: string;
+  /** See EntityTypeItemJson's identical field for the full contract. */
+  hasFrontendScreen?: boolean;
 }
 
 /**
@@ -23,6 +25,8 @@ export interface CustomFieldData {
   key: string;
   labelEn: string;
   labelAr?: string | null;
+  placeholderEn?: string | null;
+  placeholderAr?: string | null;
   valueType: number;
   isRequired: boolean;
   options?: string | null;
@@ -58,6 +62,14 @@ export class CustomField {
 
   get labelAr(): string | null | undefined {
     return this.data.labelAr;
+  }
+
+  get placeholderEn(): string | null | undefined {
+    return this.data.placeholderEn;
+  }
+
+  get placeholderAr(): string | null | undefined {
+    return this.data.placeholderAr;
   }
 
   get valueType(): number {

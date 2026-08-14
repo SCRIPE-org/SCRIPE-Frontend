@@ -18,6 +18,8 @@ export class CustomFieldMapper {
       key: model.key,
       labelEn: model.labelEn,
       labelAr: model.labelAr,
+      placeholderEn: model.placeholderEn,
+      placeholderAr: model.placeholderAr,
       valueType: model.valueType,
       isRequired: model.isRequired,
       options: model.options,
@@ -47,7 +49,9 @@ export class CustomFieldMapper {
       entity.labelAr,
       entity.options,
       entity.modifiedAt,
-      entity.isGlobal
+      entity.isGlobal,
+      entity.placeholderEn,
+      entity.placeholderAr
     );
   }
 
