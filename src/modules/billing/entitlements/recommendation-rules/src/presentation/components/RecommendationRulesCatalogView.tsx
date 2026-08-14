@@ -45,6 +45,10 @@ export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCat
       titleKey: "entitlements.onboarding.rules.title",
       subtitleKey: "entitlements.onboarding.rules.description",
       resource: "onboarding_rules",
+      // Registered in the backend's EntitlementsEntityTypeCatalog -- must match
+      // exactly. Create/edit both route through GenericCrudView's own modal
+      // here, so this one line is all the wiring this screen needs.
+      entityTypeKey: "entitlements.onboarding-rule",
 
       columns: [
         {

@@ -37,6 +37,10 @@ export function OnboardingQuestionsCatalogView({
       titleKey: "entitlements.onboarding.questions.title",
       subtitleKey: "entitlements.onboarding.questions.description",
       resource: "onboarding_questions",
+      // Registered in the backend's EntitlementsEntityTypeCatalog -- must match
+      // exactly. Create/edit both route through GenericCrudView's own modal
+      // here, so this one line is all the wiring this screen needs.
+      entityTypeKey: "entitlements.onboarding-question",
 
       columns: [
         {

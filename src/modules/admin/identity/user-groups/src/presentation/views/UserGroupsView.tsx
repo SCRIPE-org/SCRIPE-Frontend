@@ -75,6 +75,10 @@ export function UserGroupsView() {
       titleKey: "userGroups.title",
       subtitleKey: "userGroups.description",
       resource: "user_groups",
+      // Registered in the backend's IdentityEntityTypeCatalog -- must match
+      // exactly. Create/edit both route through GenericCrudView's own modal
+      // here, so this one line is all the wiring this screen needs.
+      entityTypeKey: "identity.user-group",
       columns: [
         {
           key: "nameEn",
