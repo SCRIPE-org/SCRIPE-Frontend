@@ -169,6 +169,7 @@ export interface EditionFeatureItemDto {
 export interface StatusEmailPreviewDto {
   subject: string;
   bodyHtml: string;
+  bodyFragmentHtml: string;
   bodyText: string;
   templateKey: string;
   recipientEmail: string;

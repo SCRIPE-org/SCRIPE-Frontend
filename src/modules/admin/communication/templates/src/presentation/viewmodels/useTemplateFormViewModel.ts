@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -49,6 +49,29 @@ export interface TemplateFormValues {
   category: TemplateCategory | "";
   placeholderSchema: PlaceholderField[];
   designVariables: DesignVariables;
+}
+
+/**
+ * Only writes back the design keys the stored record already had plus the
+ * ones the admin actually touched this session (current[key] differs from
+ * what was loaded) -- editing an unrelated field (subject, category, ...)
+ * and saving must never stamp DEFAULT_DESIGN's fill-ins for keys the record
+ * never had into DesignJson. `originalRaw` null means create mode / nothing
+ * stored yet, so the full object is written as-is.
+ */
+function mergeDesignForSave(
+  current: DesignVariables,
+  originalRaw: Partial<DesignVariables> | null,
+  initial: DesignVariables | null
+): DesignVariables | Partial<DesignVariables> {
+  if (originalRaw === null) return current;
+  const merged: Partial<DesignVariables> = { ...originalRaw };
+  (Object.keys(current) as (keyof DesignVariables)[]).forEach((key) => {
+    if (!initial || current[key] !== initial[key]) {
+      merged[key] = current[key];
+    }
+  });
+  return merged;
 }
 
 /**
@@ -146,6 +169,15 @@ export function useTemplateFormViewModel() {
   // clobber edits the admin has in progress. Once the form has been
   // initialized for this id, later refetches of the same id are ignored.
   const [initializedForId, setInitializedForId] = useState<string | undefined>(undefined);
+
+  // The design payload exactly as fetched (before DEFAULT_DESIGN back-fills
+  // any missing key) and the fully-defaulted object seeded into the form,
+  // captured once per record load -- handleSubmit diffs against these so a
+  // save never re-persists a default the stored record never actually had.
+  // Stay null in create mode (nothing stored yet, see mergeDesignForSave).
+  const originalDesignRawRef = useRef<Partial<DesignVariables> | null>(null);
+  const initialParsedDesignRef = useRef<DesignVariables | null>(null);
+
   if (template && initializedForId !== templateId) {
     setInitializedForId(templateId);
 
@@ -168,22 +200,26 @@ export function useTemplateFormViewModel() {
       id: f.id || `ph-${i}`,
     }));
 
-    // Parse designVariables — may be a JSON string or an object
+    // Parse designVariables — may be a JSON string or an object. `rawDesign`
+    // keeps exactly what the record had (possibly partial/absent); DEFAULT_DESIGN
+    // only fills the FORM's working copy, never the record's own stored shape.
     let parsedDesign: DesignVariables = { ...DEFAULT_DESIGN };
+    let rawDesign: Partial<DesignVariables> = {};
     if (template.designVariables) {
       try {
         if (typeof template.designVariables === "string") {
-          parsedDesign = { ...DEFAULT_DESIGN, ...JSON.parse(template.designVariables) };
+          rawDesign = JSON.parse(template.designVariables);
         } else if (typeof template.designVariables === "object") {
-          parsedDesign = {
-            ...DEFAULT_DESIGN,
-            ...(template.designVariables as unknown as DesignVariables),
-          };
+          rawDesign = template.designVariables as unknown as Partial<DesignVariables>;
         }
+        parsedDesign = { ...DEFAULT_DESIGN, ...rawDesign };
       } catch {
         parsedDesign = { ...DEFAULT_DESIGN };
+        rawDesign = {};
       }
     }
+    originalDesignRawRef.current = rawDesign;
+    initialParsedDesignRef.current = parsedDesign;
 
     setForm({
       key: template.key,
@@ -246,7 +282,13 @@ export function useTemplateFormViewModel() {
     // Serialize complex fields to JSON strings for the API
     const serializedSchema =
       form.placeholderSchema.length > 0 ? JSON.stringify(form.placeholderSchema) : undefined;
-    const serializedDesign = JSON.stringify(form.designVariables);
+    const serializedDesign = JSON.stringify(
+      mergeDesignForSave(
+        form.designVariables,
+        originalDesignRawRef.current,
+        initialParsedDesignRef.current
+      )
+    );
 
     setIsSubmitting(true);
     try {

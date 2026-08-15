@@ -1,6 +1,7 @@
 // FILE-EXCEPTION: file length
 "use client";
 
+import { useId } from "react";
 import {
   useTemplateFormViewModel,
   MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
@@ -76,6 +77,7 @@ function CustomFieldsAddTrigger({
  */
 export function TemplateFormView({ templateId: _templateId }: { templateId?: string } = {}) {
   const vm = useTemplateFormViewModel();
+  const fieldIdBase = useId();
 
   // Edit mode has three real states: the initial fetch, a settled failure
   // (bad id, deleted template, network error), and a settled success. A
@@ -232,8 +234,9 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Template Key (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.key")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-key`}>{vm.t("messaging.templates.key")}</Label>
                       <Input
+                        id={`${fieldIdBase}-key`}
                         value={vm.form.key}
                         onChange={(e) => vm.updateField("key", e.target.value)}
                         placeholder={vm.t("messaging.templates.keyPlaceholder")}
@@ -244,12 +247,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Channel (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.channel")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-channel`}>
+                        {vm.t("messaging.templates.channel")}
+                      </Label>
                       <Select
                         value={vm.form.channel}
                         onValueChange={(v) => vm.updateField("channel", v as any)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id={`${fieldIdBase}-channel`}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -266,12 +271,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Language (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.language")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-language`}>
+                        {vm.t("messaging.templates.language")}
+                      </Label>
                       <Select
                         value={vm.form.language}
                         onValueChange={(v) => vm.updateField("language", v)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id={`${fieldIdBase}-language`}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -287,8 +294,9 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
                   {/* Active toggle */}
                   <div className="flex items-center justify-between">
-                    <Label>{vm.t("common.active")}</Label>
+                    <Label htmlFor={`${fieldIdBase}-active`}>{vm.t("common.active")}</Label>
                     <Switch
+                      id={`${fieldIdBase}-active`}
                       checked={vm.form.isActive}
                       onCheckedChange={(v) => vm.updateField("isActive", v)}
                     />
@@ -296,12 +304,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
                   {/* Category */}
                   <div className="space-y-2">
-                    <Label>{vm.t("messaging.templates.category")}</Label>
+                    <Label htmlFor={`${fieldIdBase}-category`}>
+                      {vm.t("messaging.templates.category")}
+                    </Label>
                     <Select
                       value={vm.form.category}
                       onValueChange={(v) => vm.updateField("category", v as any)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id={`${fieldIdBase}-category`}>
                         <SelectValue placeholder={vm.t("messaging.templates.selectCategory")} />
                       </SelectTrigger>
                       <SelectContent>
@@ -340,7 +350,11 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
               {/* Live Preview Tab */}
               <TabsContent value="preview">
                 <CardContent className="pt-0">
-                  <TemplateLivePreview body={vm.form.body} subject={vm.form.subject} />
+                  <TemplateLivePreview
+                    body={vm.form.body}
+                    subject={vm.form.subject}
+                    designVariables={vm.form.designVariables}
+                  />
                 </CardContent>
               </TabsContent>
 

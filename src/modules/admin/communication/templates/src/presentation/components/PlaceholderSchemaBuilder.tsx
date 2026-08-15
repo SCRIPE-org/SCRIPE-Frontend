@@ -277,11 +277,12 @@ export function PlaceholderSchemaBuilder({
 
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
-                        <Label className="text-xs">
+                        <Label htmlFor={`${field.id}-key`} className="text-xs">
                           {t("messaging.templates.varKey")}
                         </Label>
                         <div className="flex gap-1">
                           <Input
+                            id={`${field.id}-key`}
                             value={field.key}
                             onChange={(e) =>
                               updateField(field.id, {
@@ -307,10 +308,11 @@ export function PlaceholderSchemaBuilder({
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs">
+                        <Label htmlFor={`${field.id}-label`} className="text-xs">
                           {t("messaging.templates.varLabel")}
                         </Label>
                         <Input
+                          id={`${field.id}-label`}
                           value={field.label}
                           onChange={(e) => updateField(field.id, { label: e.target.value })}
                           placeholder="e.g. Order Number"
@@ -321,7 +323,7 @@ export function PlaceholderSchemaBuilder({
 
                     <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
-                        <Label className="text-xs">
+                        <Label htmlFor={`${field.id}-type`} className="text-xs">
                           {t("messaging.templates.varType")}
                         </Label>
                         <Select
@@ -330,7 +332,7 @@ export function PlaceholderSchemaBuilder({
                             updateField(field.id, { type: v as PlaceholderType })
                           }
                         >
-                          <SelectTrigger className="h-7 text-xs">
+                          <SelectTrigger id={`${field.id}-type`} className="h-7 text-xs">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -349,10 +351,11 @@ export function PlaceholderSchemaBuilder({
                         </Select>
                       </div>
                       <div className="space-y-1">
-                        <Label className="text-xs">
+                        <Label htmlFor={`${field.id}-default`} className="text-xs">
                           {t("messaging.templates.defaultValue")}
                         </Label>
                         <Input
+                          id={`${field.id}-default`}
                           value={field.defaultValue}
                           onChange={(e) => updateField(field.id, { defaultValue: e.target.value })}
                           placeholder={
@@ -365,10 +368,11 @@ export function PlaceholderSchemaBuilder({
 
                     {field.type === "select" && (
                       <div className="space-y-1">
-                        <Label className="text-xs">
+                        <Label htmlFor={`${field.id}-options`} className="text-xs">
                           {t("messaging.templates.selectOptions")}
                         </Label>
                         <Input
+                          id={`${field.id}-options`}
                           value={(field.options || []).join(", ")}
                           onChange={(e) =>
                             updateField(field.id, {
@@ -385,10 +389,11 @@ export function PlaceholderSchemaBuilder({
                     )}
 
                     <div className="space-y-1">
-                      <Label className="text-xs">
+                      <Label htmlFor={`${field.id}-description`} className="text-xs">
                         {t("messaging.templates.varDescription")}
                       </Label>
                       <Input
+                        id={`${field.id}-description`}
                         value={field.description || ""}
                         onChange={(e) => updateField(field.id, { description: e.target.value })}
                         placeholder={
@@ -401,10 +406,11 @@ export function PlaceholderSchemaBuilder({
                     <div className="flex items-center justify-between pt-1">
                       <div className="flex items-center gap-2">
                         <Switch
+                          id={`${field.id}-required`}
                           checked={field.required}
                           onCheckedChange={(v) => updateField(field.id, { required: v })}
                         />
-                        <Label className="text-xs">
+                        <Label htmlFor={`${field.id}-required`} className="text-xs">
                           {t("messaging.templates.required")}
                         </Label>
                       </div>

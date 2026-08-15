@@ -49,18 +49,19 @@ export interface AttachmentUploaderProps {
 }
 
 // ─── Helpers ────────────────────────────────────────────────
+// File type is a taxonomy, not a status — the glyph carries the distinction,
+// so every icon shares one neutral ink tone instead of borrowing severity
+// hues (a PDF is not "destructive", an archive is not "warning").
 function getFileIcon(type: string) {
-  if (type.startsWith("image/"))
-    return <ImageIcon className="h-4 w-4 text-info" aria-hidden="true" />;
-  if (type.startsWith("video/"))
-    return <Video className="h-4 w-4 text-nx-accent" aria-hidden="true" />;
-  if (type.includes("pdf"))
-    return <FileText className="h-4 w-4 text-destructive" aria-hidden="true" />;
+  const cls = "h-4 w-4 text-nx-ink-3";
+  if (type.startsWith("image/")) return <ImageIcon className={cls} aria-hidden="true" />;
+  if (type.startsWith("video/")) return <Video className={cls} aria-hidden="true" />;
+  if (type.includes("pdf")) return <FileText className={cls} aria-hidden="true" />;
   if (type.includes("zip") || type.includes("rar") || type.includes("tar"))
-    return <FileArchive className="h-4 w-4 text-warning" aria-hidden="true" />;
+    return <FileArchive className={cls} aria-hidden="true" />;
   if (type.includes("sheet") || type.includes("csv") || type.includes("excel"))
-    return <FileSpreadsheet className="h-4 w-4 text-success" aria-hidden="true" />;
-  return <File className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />;
+    return <FileSpreadsheet className={cls} aria-hidden="true" />;
+  return <File className={cls} aria-hidden="true" />;
 }
 
 function formatFileSize(bytes: number): string {

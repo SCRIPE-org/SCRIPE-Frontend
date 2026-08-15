@@ -28,6 +28,12 @@ const MESSAGE_MAX = 2000;
 export function NotificationSenderView() {
   const vm = useNotificationSenderViewModel();
   const { t } = useI18n();
+  const targetsId = React.useId();
+  const titleId = React.useId();
+  const messageId = React.useId();
+  const categoryId = React.useId();
+  const typeId = React.useId();
+  const actionUrlId = React.useId();
 
   // Ctrl+Enter shortcut
   useEffect(() => {
@@ -91,7 +97,7 @@ export function NotificationSenderView() {
           <CardContent className="space-y-4">
             {/* Targets */}
             <div className="space-y-2">
-              <Label className={cn(vm.fieldErrors.targets && "text-destructive")}>
+              <Label htmlFor={targetsId} className={cn(vm.fieldErrors.targets && "text-destructive")}>
                 {t("messaging.notifications.targets")} *
               </Label>
               {vm.selectedTargets.length > 0 && (
@@ -121,6 +127,7 @@ export function NotificationSenderView() {
                     aria-hidden="true"
                   />
                   <Input
+                    id={targetsId}
                     placeholder={t("messaging.notifications.searchTargets")}
                     value={vm.targetSearch}
                     onChange={(e) => {
@@ -179,7 +186,7 @@ export function NotificationSenderView() {
             {/* Title */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className={cn(vm.fieldErrors.title && "text-destructive")}>
+                <Label htmlFor={titleId} className={cn(vm.fieldErrors.title && "text-destructive")}>
                   {t("messaging.notifications.notifTitle")} *
                 </Label>
                 <span
@@ -192,6 +199,7 @@ export function NotificationSenderView() {
                 </span>
               </div>
               <Input
+                id={titleId}
                 placeholder={t("messaging.notifications.titlePlaceholder")}
                 value={vm.title}
                 onChange={(e) => vm.setTitle(e.target.value)}
@@ -205,7 +213,7 @@ export function NotificationSenderView() {
             {/* Message */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label className={cn(vm.fieldErrors.message && "text-destructive")}>
+                <Label htmlFor={messageId} className={cn(vm.fieldErrors.message && "text-destructive")}>
                   {t("messaging.notifications.message")} *
                 </Label>
                 <span
@@ -218,6 +226,7 @@ export function NotificationSenderView() {
                 </span>
               </div>
               <Textarea
+                id={messageId}
                 placeholder={t("messaging.notifications.messagePlaceholder")}
                 value={vm.message}
                 onChange={(e) => vm.setMessage(e.target.value)}
@@ -231,8 +240,9 @@ export function NotificationSenderView() {
             {/* Category & Priority */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label>{t("messaging.notifications.category")}</Label>
+                <Label htmlFor={categoryId}>{t("messaging.notifications.category")}</Label>
                 <GenericSelect
+                  id={categoryId}
                   options={vm.categoryOptions}
                   value={vm.category}
                   onValueChange={(v: string | string[]) =>
@@ -243,8 +253,9 @@ export function NotificationSenderView() {
               </div>
 
               <div className="space-y-2">
-                <Label>{t("messaging.notifications.type")}</Label>
+                <Label htmlFor={typeId}>{t("messaging.notifications.type")}</Label>
                 <GenericSelect
+                  id={typeId}
                   options={vm.typeOptions}
                   value={vm.type}
                   onValueChange={(v: string | string[]) => vm.setType(v as NotificationType)}
@@ -255,8 +266,9 @@ export function NotificationSenderView() {
 
             {/* Action URL */}
             <div className="space-y-2">
-              <Label>{t("messaging.notifications.actionUrl")}</Label>
+              <Label htmlFor={actionUrlId}>{t("messaging.notifications.actionUrl")}</Label>
               <Input
+                id={actionUrlId}
                 placeholder={t("messaging.notifications.actionUrlPlaceholder")}
                 value={vm.actionUrl}
                 onChange={(e) => vm.setActionUrl(e.target.value)}

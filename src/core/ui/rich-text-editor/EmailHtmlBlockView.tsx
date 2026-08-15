@@ -80,9 +80,10 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
   return (
     <NodeViewWrapper
       className={cn(
+        // "group" backs the delete button's focus-within reveal below.
         // Selection lights the EDGE rather than growing the border: a 2px→1px
         // swap moved every following line in the document by a pixel.
-        "email-html-block relative my-2 rounded-nx-md border transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        "group email-html-block relative my-2 rounded-nx-md border transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         selected
           ? "border-nx-accent shadow-[inset_0_0_0_1px_var(--nx-accent)]"
           : hovered
@@ -105,19 +106,26 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
         <span className="truncate">{label}</span>
         <div className="flex-1" />
 
-        {/* Delete button */}
-        {(hovered || selected) && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-5 w-5 p-0 hover:bg-destructive/10 hover:text-destructive"
-            onClick={handleDelete}
-            aria-label={t("editorBlocks.block.remove")}
-          >
-            <Trash2 className="h-3 w-3" aria-hidden="true" />
-          </Button>
-        )}
+        {/* Delete button — always mounted so keyboard focus can reach it; a
+            hover-only mount (the previous `{(hovered || selected) && ...}`
+            guard) never receives Tab focus at all. Visibility is opacity-
+            driven with a focus-within arm, matching AttachmentUploader's
+            pattern. */}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "h-5 w-5 p-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+            "hover:bg-destructive/10 hover:text-destructive",
+            "focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100",
+            selected && "opacity-100"
+          )}
+          onClick={handleDelete}
+          aria-label={t("editorBlocks.block.remove")}
+        >
+          <Trash2 className="h-3 w-3" aria-hidden="true" />
+        </Button>
       </div>
 
       {/* Preview iframe */}

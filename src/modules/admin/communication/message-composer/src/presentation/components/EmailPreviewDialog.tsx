@@ -2,6 +2,7 @@
 "use client";
 
 import React, { useMemo, useState, useCallback } from "react";
+import DOMPurify from "dompurify";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -24,6 +25,8 @@ import {
   FileImage,
   FileArchive,
   File as FileIcon,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import type { VariableDefinition } from "@core/ui/rich-text-editor/VariablePicker";
@@ -39,6 +42,38 @@ const DEVICES = [
 ] as const;
 
 type DeviceId = (typeof DEVICES)[number]["id"];
+
+// ─── Preview Canvas Skins ───────────────────────────────────
+// Mirrors the Dark/Light skins in Core.Application/Emails/ScripeEmailTheme.cs so
+// admins previewing here see the same canvas the backend actually ships — a dark
+// canvas by default (`EmailCanvas.Dark`), with Light reserved for print-intended
+// mail. Kept as literal values (not design tokens) because this is a simulation
+// of a fixed, backend-owned email canvas, not the admin app's own theme.
+const EMAIL_CANVAS_SKIN = {
+  dark: { surface: "#0D0D0E", text: "#F7F8F5", link: "#C6FF00" },
+  light: { surface: "#F7F8F5", text: "#0D0D0E", link: "#4C6200" },
+} as const;
+type CanvasTheme = keyof typeof EMAIL_CANVAS_SKIN;
+
+// ─── Language / Direction ───────────────────────────────────
+const RTL_LANGS = new Set(["ar", "he", "fa", "ur"]);
+const ARABIC_SCRIPT_RE = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+
+/**
+ * A manually-composed email isn't tied to a template, so `language` is only
+ * ever passed when the caller has it wired through. Absent that, direction is
+ * inferred from the actual resolved text — the same signal a mail client uses.
+ */
+function resolveLangDir(
+  explicitLanguage: string | undefined,
+  text: string
+): { lang: string; dir: "rtl" | "ltr" } {
+  if (explicitLanguage) {
+    return { lang: explicitLanguage, dir: RTL_LANGS.has(explicitLanguage) ? "rtl" : "ltr" };
+  }
+  const dir = ARABIC_SCRIPT_RE.test(text) ? "rtl" : "ltr";
+  return { lang: dir === "rtl" ? "ar" : "en", dir };
+}
 
 // ─── Variable Resolution ────────────────────────────────────
 /**
@@ -92,6 +127,13 @@ export interface EmailPreviewDialogProps {
   onTypeOverridesChange?: (overrides: Record<string, string>) => void;
   /** Attachments to display in preview */
   attachments?: AttachmentFile[];
+  /**
+   * BCP-47 language of the content being sent (e.g. "en", "ar"). Drives the
+   * preview iframe's `dir`/`lang`. A manually-composed email has no template
+   * language of its own to thread through, so when this is omitted the
+   * preview falls back to detecting the script of the resolved text.
+   */
+  language?: string;
 }
 
 /**
@@ -110,10 +152,15 @@ export function EmailPreviewDialog({
   typeOverrides: controlledTypeOverrides,
   onTypeOverridesChange,
   attachments = [],
+  language,
 }: EmailPreviewDialogProps) {
   const { t } = useI18n();
   const [device, setDevice] = useState<DeviceId>("desktop");
   const [showVariables, setShowVariables] = useState(false);
+  // Defaults to dark: that's what EmailCanvas.Dark ships to recipients by
+  // default (see ScripeEmailTheme.cs) — the toggle lets admins also check the
+  // Light variant reserved for print-intended mail.
+  const [canvasTheme, setCanvasTheme] = useState<CanvasTheme>("dark");
   // Use controlled values from parent if provided, otherwise local state
   const [localValues, setLocalValues] = useState<VariableValuesMap>({});
   const variableValues = controlledValues ?? localValues;
@@ -145,12 +192,75 @@ export function EmailPreviewDialog({
     [body, variableValues, allVariables]
   );
 
-  const sanitizedBody = useMemo(() => {
-    return resolvedBody
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-      .replace(/on\w+="[^"]*"/gi, "")
-      .replace(/on\w+='[^']*'/gi, "");
-  }, [resolvedBody]);
+  // Same DOMPurify allow-list as templates/PreviewDialog.tsx — one sanitization
+  // policy for every surface that renders admin- or lead-controlled HTML into a
+  // srcDoc iframe, instead of each preview inventing its own regex denylist.
+  const sanitizedBody = useMemo(
+    () =>
+      resolvedBody
+        ? DOMPurify.sanitize(resolvedBody, {
+            ALLOWED_TAGS: [
+              "h1",
+              "h2",
+              "h3",
+              "h4",
+              "h5",
+              "h6",
+              "p",
+              "br",
+              "hr",
+              "span",
+              "div",
+              "strong",
+              "b",
+              "em",
+              "i",
+              "u",
+              "s",
+              "ul",
+              "ol",
+              "li",
+              "table",
+              "thead",
+              "tbody",
+              "tr",
+              "th",
+              "td",
+              "a",
+              "img",
+              "blockquote",
+              "pre",
+              "code",
+            ],
+            ALLOWED_ATTR: [
+              "href",
+              "src",
+              "alt",
+              "class",
+              "style",
+              "target",
+              "rel",
+              "width",
+              "height",
+            ],
+            ALLOW_DATA_ATTR: false,
+          })
+        : "",
+    [resolvedBody]
+  );
+
+  const { lang: previewLang, dir: previewDir } = useMemo(
+    () => resolveLangDir(language, `${resolvedSubject} ${resolvedBody}`),
+    [language, resolvedSubject, resolvedBody]
+  );
+
+  const skin = EMAIL_CANVAS_SKIN[canvasTheme];
+
+  const previewSrcDoc = useMemo(
+    () =>
+      `<!DOCTYPE html><html dir="${previewDir}" lang="${previewLang}"><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:${skin.text};padding:16px;background:${skin.surface}}img{max-width:100%;height:auto}a{color:${skin.link}}</style></head><body>${sanitizedBody}</body></html>`,
+    [previewDir, previewLang, skin, sanitizedBody]
+  );
 
   const currentDevice = DEVICES.find((d) => d.id === device)!;
 
@@ -171,7 +281,9 @@ export function EmailPreviewDialog({
           <DialogDescription>{t("messaging.email.previewDescription")}</DialogDescription>
         </DialogHeader>
 
-        <div className={cn("pt-2", showVariables ? "grid grid-cols-[1fr_300px] gap-4" : "")}>
+        <div
+          className={cn("pt-2", showVariables ? "grid grid-cols-1 gap-4 lg:grid-cols-[1fr_300px]" : "")}
+        >
           {/* Main Preview */}
           <div className="space-y-4">
             {/* Recipients */}
@@ -231,6 +343,20 @@ export function EmailPreviewDialog({
                   </Badge>
                 </Button>
               )}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                onClick={() => setCanvasTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+              >
+                {canvasTheme === "dark" ? (
+                  <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Sun className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+                {canvasTheme === "dark" ? t("theme.dark") : t("theme.light")}
+              </Button>
             </div>
 
             {/* Body Preview */}
@@ -260,13 +386,15 @@ export function EmailPreviewDialog({
                   </div>
                 </div>
 
-                {/* Email Content — this is the recipient's paper, not our chrome:
-                    HTML email always renders on a light canvas regardless of the
-                    reader's client theme, so this pane stays white on purpose. */}
-                <div className="bg-white p-0">
+                {/* Email Content — this is the recipient's paper, not our chrome.
+                    The backend ships a fixed dark canvas by default (EmailCanvas.Dark
+                    in ScripeEmailTheme.cs) with no light-mode media query, so this
+                    pane follows the canvasTheme toggle above rather than staying
+                    hardcoded white — the toggle defaults to dark to match. */}
+                <div style={{ background: skin.surface }}>
                   {resolvedBody.includes("<") ? (
                     <iframe
-                      srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:#000;padding:16px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${sanitizedBody}</body></html>`}
+                      srcDoc={previewSrcDoc}
                       sandbox="allow-same-origin"
                       className="w-full border-0"
                       style={{ minHeight: "200px", height: "400px" }}
@@ -284,7 +412,12 @@ export function EmailPreviewDialog({
                       }}
                     />
                   ) : (
-                    <pre className="whitespace-pre-wrap p-4 font-sans text-sm text-black">
+                    <pre
+                      dir={previewDir}
+                      lang={previewLang}
+                      className="whitespace-pre-wrap p-4 font-sans text-sm"
+                      style={{ color: skin.text }}
+                    >
                       {resolvedBody}
                     </pre>
                   )}
