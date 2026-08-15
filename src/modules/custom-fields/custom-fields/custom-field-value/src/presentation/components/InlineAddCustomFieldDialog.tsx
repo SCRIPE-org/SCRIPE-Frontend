@@ -15,8 +15,8 @@ import { getCustomFieldsContainer } from "../../../../di";
 // (Options only applies to Select fields; Boolean/Date have no placeholder
 // concept), kept in sync deliberately rather than imported: these are two
 // independent forms for the same backend command, not a shared component.
-const SELECT_VALUE_TYPE = "4";
-const NO_PLACEHOLDER_VALUE_TYPES = new Set(["2", "3"]);
+const SELECT_VALUE_TYPE = "Select";
+const NO_PLACEHOLDER_VALUE_TYPES = new Set(["Boolean", "Date"]);
 
 export function InlineAddCustomFieldDialog({
   entityTypeKey,
@@ -71,11 +71,11 @@ export function InlineAddCustomFieldDialog({
         type: "select",
         required: true,
         options: [
-          { value: "0", label: t("customField.valueTypes.text") },
-          { value: "1", label: t("customField.valueTypes.number") },
-          { value: "2", label: t("customField.valueTypes.boolean") },
-          { value: "3", label: t("customField.valueTypes.date") },
-          { value: "4", label: t("customField.valueTypes.select") },
+          { value: "Text", label: t("customField.valueTypes.text") },
+          { value: "Number", label: t("customField.valueTypes.number") },
+          { value: "Boolean", label: t("customField.valueTypes.boolean") },
+          { value: "Date", label: t("customField.valueTypes.date") },
+          { value: "Select", label: t("customField.valueTypes.select") },
         ],
       },
       {
@@ -135,7 +135,7 @@ export function InlineAddCustomFieldDialog({
           <GenericForm
             fields={fields}
             initialValues={{
-              valueType: "0",
+              valueType: "Text",
               placeholderEn: "",
               placeholderAr: "",
               isRequired: false,
