@@ -28,48 +28,57 @@ export function useInventoryViewModel() {
 
   const queryKey = ["compliance", "inventory", tenantCode];
 
+  // deferSuccessEffects: true -- this screen sets entityTypeKey (see
+  // getConfigBase below), so GenericCrudView also saves custom-field values
+  // after the inventory item itself is created/updated. Without this option,
+  // useCrudViewModel's onCreateSuccess/onUpdateSuccess fired the toast and
+  // closed the modal the instant createItem's own promise resolved -- before
+  // the custom-field save even started. Same pattern as
+  // useAdminsViewModel/useUsersViewModel/useWorkItemViewModel (W0-1).
   const vm = useCrudViewModel<
     InventoryItem,
     CreateDataInventoryRequest,
     UpdateDataInventoryRequest
-  >(queryKey, {
-    getAll: async (params) => {
-      const res = await inventoryRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  >(
+    queryKey,
+    {
+      getAll: async (params) => {
+        const res = await inventoryRepository.getAll({
           page: params.page,
-          pagesCount: Math.ceil((res.totalCount || 0) / params.pageSize),
-        },
-      };
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: Math.ceil((res.totalCount || 0) / params.pageSize),
+          },
+        };
+      },
+      create: async (data) => {
+        const id = await inventoryRepository.create(data);
+        // No manual success() here on purpose -- deferSuccessEffects (above)
+        // holds the toast until GenericCrudView confirms the custom-field
+        // save (if any) also succeeded; firing it here unconditionally would
+        // defeat that (same reasoning as useUsersViewModel's update).
+        return { id } as unknown as InventoryItem;
+      },
+      update: async (id, data) => {
+        await inventoryRepository.update(id, data);
+        return { id } as unknown as InventoryItem;
+      },
+      delete: async (id) => {
+        await inventoryRepository.delete(id);
+        success({
+          title: t("compliance.inventoryDeleted"),
+        });
+      },
     },
-    create: async (data) => {
-      await inventoryRepository.create(data);
-      success({
-        title: t("compliance.inventoryAdded"),
-      });
-      return {} as InventoryItem;
-    },
-    update: async (id, data) => {
-      await inventoryRepository.update(id, data);
-      success({
-        title: t("compliance.inventoryUpdated"),
-      });
-      return {} as InventoryItem;
-    },
-    delete: async (id) => {
-      await inventoryRepository.delete(id);
-      success({
-        title: t("compliance.inventoryDeleted"),
-      });
-    },
-  });
+    { deferSuccessEffects: true }
+  );
 
   const getConfigBase = useCallback((): Partial<CrudConfig<InventoryItem>> => {
     const baseFields = [
