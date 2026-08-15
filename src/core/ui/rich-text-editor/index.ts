@@ -24,3 +24,6 @@ export { SocialBlock, type SocialBlockProps } from "./SocialBlock";
 // ─── Email HTML Block Extension ─────────────────────────────
 export { EmailHtmlBlock, type EmailHtmlBlockOptions } from "./extensions/EmailHtmlBlock";
 export { EmailHtmlBlockView } from "./EmailHtmlBlockView";
+
+// ─── Sanitization utilities ─────────────────────────────────
+export { sanitizeHTML, isValidURL } from "./sanitize";

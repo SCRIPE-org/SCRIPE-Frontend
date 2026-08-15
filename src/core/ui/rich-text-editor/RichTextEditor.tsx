@@ -15,6 +15,8 @@ import CharacterCount from "@tiptap/extension-character-count";
 import Subscript from "@tiptap/extension-subscript";
 import Superscript from "@tiptap/extension-superscript";
 import { cn } from "@core/common/utils";
+import { Textarea } from "@core/ui/textarea";
+import { useI18n } from "@core/providers/i18n-provider";
 import type { VariableDefinition } from "./VariablePicker";
 import { EditorToolbar } from "./EditorToolbar";
 import { EmailHtmlBlock } from "./extensions/EmailHtmlBlock";
@@ -73,7 +75,7 @@ function getEmailSafeHTML(editor: ReturnType<typeof useEditor>): string {
 export function RichTextEditor({
   value,
   onChange,
-  placeholder = "Start typing...",
+  placeholder,
   maxLength,
   minHeight = "200px",
   className,
@@ -83,13 +85,21 @@ export function RichTextEditor({
   error,
   readOnly = false,
 }: RichTextEditorProps) {
+  const { t } = useI18n();
   const [sourceMode, setSourceMode] = useState(false);
   const [sourceHtml, setSourceHtml] = useState("");
+
+  // The default used to be a hardcoded "Start typing..." baked into the
+  // signature, which the Arabic build rendered in English. TipTap reads the
+  // option once at construction, so this resolves before the editor is built.
+  const resolvedPlaceholder = placeholder ?? t("editor.placeholder");
 
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         heading: { levels: [1, 2, 3] },
+        link: false,
+        underline: false,
       }),
       Underline,
       TextStyle,
@@ -100,18 +110,18 @@ export function RichTextEditor({
       }),
       ImageExtension.configure({
         HTMLAttributes: {
-          class: "max-w-full h-auto rounded",
+          class: "max-w-full h-auto rounded-nx-sm",
         },
       }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: "text-primary underline cursor-pointer",
+          class: "text-nx-accent underline cursor-pointer",
           target: "_blank",
           rel: "noopener noreferrer",
         },
       }),
-      Placeholder.configure({ placeholder }),
+      Placeholder.configure({ placeholder: resolvedPlaceholder }),
       Subscript,
       Superscript,
       EmailHtmlBlock,
@@ -154,9 +164,13 @@ export function RichTextEditor({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-lg border bg-background transition-colors",
-        error && "border-destructive",
-        !error && "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-1",
+        "overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface",
+        "transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+        error && "border-nx-danger",
+        // The lit edge, not an offset halo: the same --nx-focus ring every
+        // other field in the system wears, raised to focus-within because the
+        // thing that actually takes focus is the contenteditable inside.
+        !error && "focus-within:border-nx-accent focus-within:shadow-nx-focus",
         className
       )}
     >
@@ -174,12 +188,16 @@ export function RichTextEditor({
 
       {/* Editor / Source */}
       {sourceMode ? (
-        <textarea
+        // The shared field primitive rather than a bare textarea. Its own focus
+        // ring is suppressed on purpose: the container above already lights the
+        // whole editor edge, and two concentric rings read as an error.
+        <Textarea
           value={sourceHtml}
           onChange={(e) => setSourceHtml(e.target.value)}
-          className="w-full resize-y border-0 bg-muted/20 p-4 font-mono text-sm outline-none"
+          className="rounded-none border-0 bg-nx-ground p-4 font-mono text-sm focus-visible:shadow-none"
           style={{ minHeight }}
           spellCheck={false}
+          aria-label={t("editor.sourceLabel")}
         />
       ) : (
         <EditorContent
@@ -188,8 +206,11 @@ export function RichTextEditor({
             "prose prose-sm dark:prose-invert max-w-none px-4 py-3",
             "[&_.tiptap]:min-h-[var(--editor-min-h)] [&_.tiptap]:outline-none",
             "[&_.tiptap_p.is-editor-empty:first-child::before]:content-[attr(data-placeholder)]",
-            "[&_.tiptap_p.is-editor-empty:first-child::before]:text-muted-foreground",
-            "[&_.tiptap_p.is-editor-empty:first-child::before]:float-left",
+            "[&_.tiptap_p.is-editor-empty:first-child::before]:text-nx-ink-3",
+            // The logical float, not the physical one: in the Arabic build the
+            // placeholder floated away from the caret and sat under the first
+            // typed word.
+            "[&_.tiptap_p.is-editor-empty:first-child::before]:float-start",
             "[&_.tiptap_p.is-editor-empty:first-child::before]:h-0",
             "[&_.tiptap_p.is-editor-empty:first-child::before]:pointer-events-none"
           )}
@@ -199,14 +220,21 @@ export function RichTextEditor({
 
       {/* Footer: Character Count */}
       {maxLength && (
-        <div className="flex items-center justify-end border-t bg-muted/20 px-3 py-1.5">
+        <div className="flex items-center justify-end border-t border-nx-line bg-nx-raised px-3 py-1.5">
           <span
             className={cn(
-              "text-xs",
-              charCount > maxLength ? "font-medium text-destructive" : "text-muted-foreground"
+              "text-xs tabular-nums",
+              charCount > maxLength ? "font-medium text-nx-danger" : "text-nx-ink-3"
             )}
           >
-            {charCount.toLocaleString()}/{maxLength.toLocaleString()}
+            {/* The ratio is a glance-read for the eye; a screen reader gets the
+                sentence instead of "one two three four slash five thousand". */}
+            <span aria-hidden="true">
+              {charCount.toLocaleString()}/{maxLength.toLocaleString()}
+            </span>
+            <span className="sr-only">
+              {t("editor.characterCount", { count: charCount, max: maxLength })}
+            </span>
           </span>
         </div>
       )}

@@ -1,4 +1,4 @@
-import SamlAcsCallbackView from "@/modules/auth/signin/src/presentation/views/SamlAcsCallbackView";
+import SamlAcsCallbackView from "@modules/auth/signin/src/presentation/views/SamlAcsCallbackView";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {

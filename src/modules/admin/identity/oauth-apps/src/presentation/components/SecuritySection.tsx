@@ -1,0 +1,62 @@
+"use client";
+
+import { useI18n } from "@core/providers/i18n-provider";
+import { Label } from "@core/ui/label";
+import { Switch } from "@core/ui/switch";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
+import { ShieldCheck } from "lucide-react";
+import type { OAuthAppFormState } from "../viewmodels/useOAuthAppDetailViewModel";
+
+interface SecuritySectionProps {
+  form: OAuthAppFormState;
+  updateField: <K extends keyof OAuthAppFormState>(field: K, value: OAuthAppFormState[K]) => void;
+}
+
+/**
+ * Presentation UI component rendering the security section.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
+export function SecuritySection({ form, updateField }: SecuritySectionProps) {
+  const { t } = useI18n();
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <ShieldCheck className="h-5 w-5 text-warning" aria-hidden="true" />
+          {t("oauthApps.securitySection")}
+        </CardTitle>
+        <CardDescription>{t("oauthApps.securitySectionDesc")}</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
+          <div>
+            <Label htmlFor="oauth-pkce" className="text-sm font-medium">
+              {t("oauthApps.requirePkce")}
+            </Label>
+            <p className="text-xs text-nx-ink-3">{t("oauthApps.requirePkceHelp")}</p>
+          </div>
+          <Switch
+            id="oauth-pkce"
+            checked={form.requirePkce}
+            onCheckedChange={(v) => updateField("requirePkce", v)}
+          />
+        </div>
+
+        <div className="flex items-center justify-between rounded-nx-md border border-nx-line p-3">
+          <div>
+            <Label htmlFor="oauth-consent" className="text-sm font-medium">
+              {t("oauthApps.requireConsent")}
+            </Label>
+            <p className="text-xs text-nx-ink-3">{t("oauthApps.requireConsentHelp")}</p>
+          </div>
+          <Switch
+            id="oauth-consent"
+            checked={form.requireConsent}
+            onCheckedChange={(v) => updateField("requireConsent", v)}
+          />
+        </div>
+      </CardContent>
+    </Card>
+  );
+}

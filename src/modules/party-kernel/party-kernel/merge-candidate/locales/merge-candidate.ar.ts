@@ -1,0 +1,36 @@
+export const ar = {
+  mergeCandidate: {
+    title: "مرشحو الدمج",
+    description: "إدارة مرشحو الدمج",
+    addNew: "إضافة",
+    editTitle: "تعديل",
+    deleteTitle: "حذف",
+    deleteConfirm: "هل أنت متأكد من حذف هذا السجل؟",
+    noItems: "لا توجد سجلات",
+    searchPlaceholder: "بحث...",
+    columns: {
+      primaryPartyId: "معرف الطرف الأساسي",
+      duplicatePartyId: "معرف الطرف المكرر",
+      matchScore: "نسبة التطابق",
+      status: "الحالة",
+      reason: "السبب",
+      createdAt: "تاريخ الإنشاء",
+    },
+    form: {
+      primaryPartyId: "معرف الطرف الأساسي",
+      primaryPartyIdPlaceholder: "أدخل معرف الطرف الأساسي (الذي سيبقى)",
+      duplicatePartyId: "معرف الطرف المكرر",
+      duplicatePartyIdPlaceholder: "أدخل معرف الطرف المشتبه بأنه مكرر",
+      status: "الحالة",
+      statusPlaceholder: "اختر حالة المراجعة",
+      reason: "السبب",
+      reasonPlaceholder: "لماذا يُشتبه في أن هذين الطرفين مكرران؟",
+    },
+    statuses: {
+      Pending: "قيد الانتظار",
+      Confirmed: "مؤكد",
+      Rejected: "مرفوض",
+      Merged: "تم الدمج",
+    },
+  },
+};

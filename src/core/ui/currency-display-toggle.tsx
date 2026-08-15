@@ -4,22 +4,29 @@
  * Dropdown to switch the global display currency.
  * Three modes: Native (original), Session (just this time), Always (persisted).
  *
- * Fetches live exchange rates from backend GET /v1/currency/rates.
- * Rates are cached in Zustand store after first fetch.
+ * Live exchange rates are managed via useCurrencyRates hook.
  */
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCurrencyPreference } from "@core/store/useCurrencyPreference";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
-import { getCoreContainer } from "@core/di";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { useCurrencyRates } from "@core/hooks/useCurrencyRates";
 import { Button } from "@core/ui/button";
+import { Checkbox } from "@core/ui/checkbox";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { Separator } from "@core/ui/separator";
-import { Check, Globe, RotateCcw, Loader2, RefreshCcw } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { Check, Globe, RotateCcw, RefreshCcw } from "lucide-react";
 import { cn } from "@core/common/utils";
+
+// One row shape for every choice in the panel: a 32px target, hover on the
+// ink-derived tint, and the lit-edge focus ring the rest of the product uses.
+// These rows had no focus treatment at all before — the whole list was
+// unusable from the keyboard in the dark.
+const ROW =
+  "flex min-h-8 w-full items-center gap-2 px-3 py-1.5 text-sm text-nx-ink transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:bg-nx-hover focus-visible:outline-none focus-visible:shadow-nx-focus";
 
 /** Display currencies — the most commonly used for display */
 const DISPLAY_CURRENCIES = [
@@ -33,87 +40,19 @@ const DISPLAY_CURRENCIES = [
   { code: "INR", flag: "🇮🇳", name: "Indian Rupee" },
 ] as const;
 
-/**
- * Fallback rates used ONLY if the backend API is unreachable.
- * These are never shown as the primary source — backend is always tried first.
- */
-const FALLBACK_RATES: Record<string, number> = {
-  USD: 1,
-  EUR: 0.92,
-  GBP: 0.79,
-  SAR: 3.75,
-  AED: 3.67,
-  EGP: 50.5,
-  TRY: 32.5,
-  INR: 83.5,
-};
-
 interface CurrencyDisplayToggleProps {
   className?: string;
 }
 
 export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps) {
   const { t } = useI18n();
-  const {
-    displayCurrency,
-    displayMode,
-    exchangeRates,
-    setDisplayCurrency,
-    resetToNative,
-    setRates,
-    setLoadingRates,
-    isLoadingRates,
-  } = useCurrencyPreference();
+  const { displayCurrency, displayMode, setDisplayCurrency, resetToNative, isLoadingRates } =
+    useCurrencyPreference();
 
   const { isConverting } = useConvertedAmount();
+  const { fetchRates, fetchError } = useCurrencyRates();
   const [alwaysChecked, setAlwaysChecked] = useState(displayMode === "always");
   const [open, setOpen] = useState(false);
-  const [fetchError, setFetchError] = useState(false);
-
-  // ── Fetch rates from backend API ──────────────────────────────
-  const fetchRatesFromBackend = useCallback(
-    async (force = false) => {
-      // Skip if already loaded and not forcing refresh
-      if (exchangeRates && !force) return;
-
-      setLoadingRates(true);
-      setFetchError(false);
-
-      try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
-        const url = API_ENDPOINTS.ENTITLEMENTS.CURRENCY.RATES("USD");
-        const token = getCoreContainer().apiService.getAuthToken();
-        const response = await fetch(`${apiUrl}${url}`, {
-          method: "GET",
-          credentials: "include",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch rates: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        // Backend returns { USD: 1, EUR: 0.92, ... } as decimals
-        const rates: Record<string, number> = {};
-        for (const [key, value] of Object.entries(data)) {
-          rates[key] = Number(value);
-        }
-
-        setRates(rates, "USD");
-      } catch {
-        // Fallback to static rates if backend is unreachable
-        setFetchError(true);
-        if (!exchangeRates) {
-          setRates(FALLBACK_RATES, "USD");
-        }
-      }
-    },
-    [exchangeRates, setLoadingRates, setRates]
-  );
 
   function handleSelectCurrency(code: string) {
     const mode: "session" | "always" = alwaysChecked ? "always" : "session";
@@ -134,109 +73,120 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
       open={open}
       onOpenChange={(o) => {
         setOpen(o);
-        if (o) fetchRatesFromBackend();
+        if (o) fetchRates();
       }}
     >
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className={cn("gap-1.5", className)}>
-          <Globe className="h-3.5 w-3.5" />
-          <span className="text-xs">
-            {isConverting
-              ? `${currentFlag} ${displayCurrency}`
-              : t("currency.displayToggle") || "Currency"}
+        <Button
+          variant="outline"
+          size="sm"
+          className={cn("gap-1.5", className)}
+          aria-label={t("currency.displayToggle")}
+        >
+          <Globe className="h-3.5 w-3.5" aria-hidden="true" />
+          <span className="text-xs tabular-nums">
+            {isConverting ? `${currentFlag} ${displayCurrency}` : t("currency.displayToggle")}
           </span>
         </Button>
       </PopoverTrigger>
       <PopoverContent align="end" className="w-64 p-0">
-        <div className="border-b px-3 py-2">
-          <p className="text-sm font-medium">{t("currency.displayToggle") || "Display Currency"}</p>
-          <p className="text-xs text-muted-foreground">
-            {t("currency.toggleDesc") || "Preview amounts in another currency"}
-          </p>
+        {/* Panel head: title, then the one-line explanation a step down */}
+        <div className="border-b border-nx-line px-3 py-2">
+          <p className="text-sm font-medium text-nx-ink">{t("currency.displayToggle")}</p>
+          <p className="text-xs text-nx-ink-3">{t("currency.toggleDesc")}</p>
         </div>
 
-        {/* Native option */}
+        {/* Native option — same row shape as the list below it, so the choice
+            reads as one set: 32px rows, tick reserved on the start edge. */}
         <button
           type="button"
-          className="flex w-full items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-accent"
+          className={cn(ROW, "py-2")}
           onClick={handleReset}
+          aria-pressed={displayMode === "native"}
         >
-          <span className="flex h-4 w-4 items-center justify-center">
-            {displayMode === "native" && <Check className="h-3.5 w-3.5 text-primary" />}
+          <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+            <Check
+              className={cn(
+                "h-3.5 w-3.5 text-nx-accent",
+                displayMode === "native" ? "visible" : "invisible"
+              )}
+              aria-hidden="true"
+            />
           </span>
-          <span>🌐</span>
-          <span className="flex-1 text-left">{t("currency.native") || "Native (original)"}</span>
+          <span aria-hidden="true">🌐</span>
+          <span className="flex-1 text-start">{t("currency.native")}</span>
         </button>
 
         <Separator />
 
         {/* Loading state */}
         {isLoadingRates && (
-          <div className="flex items-center justify-center gap-2 py-3 text-xs text-muted-foreground">
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            {t("common.loading") || "Loading..."}
+          <div className="flex items-center justify-center gap-2 py-3 text-xs text-nx-ink-3">
+            <LoadingSpinner size="inline" />
+            {t("common.loading")}
           </div>
         )}
 
         {/* Currency list */}
         {!isLoadingRates && (
           <div className="max-h-48 overflow-y-auto">
-            {DISPLAY_CURRENCIES.map((c) => (
-              <button
-                key={c.code}
-                type="button"
-                className="flex w-full items-center gap-2 px-3 py-1.5 text-sm transition-colors hover:bg-accent"
-                onClick={() => handleSelectCurrency(c.code)}
-              >
-                <span className="flex h-4 w-4 items-center justify-center">
-                  {displayMode !== "native" && displayCurrency === c.code && (
-                    <Check className="h-3.5 w-3.5 text-primary" />
-                  )}
-                </span>
-                <span>{c.flag}</span>
-                <span className="flex-1 text-left">{c.code}</span>
-                <span className="text-xs text-muted-foreground">{c.name}</span>
-              </button>
-            ))}
+            {DISPLAY_CURRENCIES.map((c) => {
+              const active = displayMode !== "native" && displayCurrency === c.code;
+              return (
+                <button
+                  key={c.code}
+                  type="button"
+                  className={ROW}
+                  onClick={() => handleSelectCurrency(c.code)}
+                  aria-pressed={active}
+                >
+                  <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                    <Check
+                      className={cn("h-3.5 w-3.5 text-nx-accent", active ? "visible" : "invisible")}
+                      aria-hidden="true"
+                    />
+                  </span>
+                  <span aria-hidden="true">{c.flag}</span>
+                  <span className={cn("flex-1 text-start", active && "font-medium")}>{c.code}</span>
+                  <span className="truncate text-xs text-nx-ink-3">{c.name}</span>
+                </button>
+              );
+            })}
           </div>
         )}
 
         <Separator />
 
-        {/* Always toggle */}
+        {/* Always toggle — the product's own Checkbox, not a bare browser one */}
         <div className="px-3 py-2">
           <label className="flex cursor-pointer items-center gap-2 text-xs">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={alwaysChecked}
-              onChange={(e) => {
-                setAlwaysChecked(e.target.checked);
+              onCheckedChange={(checked) => {
+                const next = checked === true;
+                setAlwaysChecked(next);
                 if (isConverting) {
-                  setDisplayCurrency(displayCurrency, e.target.checked ? "always" : "session");
+                  setDisplayCurrency(displayCurrency, next ? "always" : "session");
                 }
               }}
-              className="rounded border-muted-foreground"
             />
-            <span className="text-muted-foreground">
-              {t("currency.alwaysUse") || "Always use selected currency"}
-            </span>
+            <span className="text-nx-ink-2">{t("currency.alwaysUse")}</span>
           </label>
         </div>
 
         {/* Rates source info */}
-        <div className="flex items-center justify-between px-3 pb-2">
-          <p className="text-[10px] italic text-muted-foreground/60">
-            {fetchError
-              ? t("currency.fallbackRates") || "⚠ Using cached rates (offline)"
-              : t("currency.liveRates") || "✓ Live rates from server"}
+        <div className="flex items-center justify-between gap-2 px-3 pb-2">
+          <p className="text-xs text-nx-ink-3">
+            {fetchError ? t("currency.fallbackRates") : t("currency.liveRates")}
           </p>
           <button
             type="button"
-            onClick={() => fetchRatesFromBackend(true)}
-            className="text-muted-foreground/50 transition-colors hover:text-muted-foreground"
-            title={t("currency.refreshRates") || "Refresh rates"}
+            onClick={() => fetchRates(true)}
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-sm text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+            title={t("currency.refreshRates")}
+            aria-label={t("currency.refreshRates")}
           >
-            <RefreshCcw className="h-3 w-3" />
+            <RefreshCcw className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
         </div>
 
@@ -246,11 +196,11 @@ export function CurrencyDisplayToggle({ className }: CurrencyDisplayToggleProps)
             <Separator />
             <button
               type="button"
-              className="flex w-full items-center gap-2 px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent"
+              className={cn(ROW, "text-xs text-nx-ink-2")}
               onClick={handleReset}
             >
-              <RotateCcw className="h-3 w-3" />
-              {t("currency.resetToNative") || "Reset to native"}
+              <RotateCcw className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+              {t("currency.resetToNative")}
             </button>
           </>
         )}

@@ -6,6 +6,318 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================================
+   RADIX SWITCH'S HIDDEN BUBBLE INPUT — SUPPRESS CHROME'S NATIVE ICON
+   ----------------------------------------------------------------------------
+   @radix-ui/react-switch renders a real <input type="checkbox"> beside every
+   Switch (for native form submission) and only hides it with
+   opacity:0 + pointer-events:none + transform:translateX(-100%) — sized to
+   match the track (e.g. 44x24). Opacity doesn't remove it from Chrome's
+   autofill/"fillable field" layer, which paints anchored on layout geometry,
+   not on paint output: Chrome draws a small icon over that invisible input's
+   real bounding box, which lands just to the left of every switch (the
+   translateX shift) since the box itself is fully visible-sized.
+   Collapsing the box to the classic 1x1 visually-hidden size removes the
+   geometry Chrome anchors the icon to, without touching Radix's own
+   hide-attributes (still aria-hidden, still non-interactive).
+   ============================================================================ */
+button[role="switch"] + input[type="checkbox"][aria-hidden="true"] {
+  width: 1px !important;
+  height: 1px !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================================
+   WORKSPACE ACCENT — REGISTERED SO THE COLOUR CAN INTERPOLATE
+   ----------------------------------------------------------------------------
+   Every accent in the product derives from --workspace-hue / --workspace-chroma,
+   which WorkspaceProvider writes to <html> as raw numbers the instant the
+   active workspace changes (workspace-provider.tsx L102-116). An UNREGISTERED
+   custom property has no type, so the cascade can only SWAP it: the entire
+   UI's accent jumped from one hue to the next in a single frame. That snap is
+   the "make the transmission of coloring smooth" defect.
+
+   @property gives the two numbers the "<number>" type, which is what makes a
+   custom property animatable at all. The transition below then interpolates
+   the NUMBERS on <html>; both inherit, so every downstream oklch() —
+   --nx-accent, --nx-accent-fill, --nx-accent-wash, --nx-glow, --nx-focus, the
+   --ws-* family, every border, fill and color-mix() built on them — recomputes
+   each frame and the whole shell sweeps to the new workspace colour together.
+
+   WHY THIS RATHER THAN TRANSITIONING THE CONSUMING PROPERTIES: CSS cannot
+   transition an unregistered custom property, so the alternative was a
+   shell-wide rule transitioning color/background-color/border-color. That
+   needs a selector broad enough to catch every accented element, and such a
+   selector also catches every hover, press, selection and theme flip — hover
+   would turn syrupy and component-level transitions would fight it. It also
+   cannot reach an accent that lives inside a box-shadow colour, an SVG fill,
+   or a color-mix() input, which is where half of this accent actually lives.
+   Registering the two source numbers is ONE rule that animates the accent and
+   nothing else. This is the approach that actually works.
+
+   initial-value mirrors the :root declarations below, so a removed/unset
+   property resolves exactly as it does today — no behaviour change when a
+   workspace carries no hue.
+   ============================================================================ */
+@property --workspace-hue {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 262;
+}
+
+@property --workspace-chroma {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0.14;
+}
+
+/* The crossfade itself, on the element the provider actually writes to.
+   Only the two accent numbers are listed, so nothing else on <html> gains a
+   transition. Custom-property substitution is not source-order dependent, so
+   the nexus motion tokens declared further down resolve here correctly. */
+:root {
+  transition:
+    --workspace-hue var(--nx-t-panel) var(--nx-ease-enter),
+    --workspace-chroma var(--nx-t-panel) var(--nx-ease-enter);
+}
+
+/* Reduced motion — the accent still changes, it just arrives instantly.
+   Both gates are honoured: the OS preference, and the in-app setting that
+   dom-applicator stamps on <html>. The global
+   `html[data-reduced-motion="true"] *` reset further down cannot do this job:
+   its descendant combinator excludes the root element itself, and the
+   interpolated value is INHERITED by descendants, so the only place that can
+   stop the sweep is :root. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    transition: none;
+  }
+}
+
+html[data-reduced-motion="true"] {
+  transition: none;
+}
+
+/* ============================================================================
+   SCRIPE RELAY vNEXT — CANONICAL TOKEN NAMESPACE (--scripe-*)
+   ----------------------------------------------------------------------------
+   The one authoritative brand-identity namespace. --nx-* (product shell) and
+   --sx-* (auth vault) below are re-based to READ these values for their
+   colour/identity duties — they remain the namespaces components actually
+   consume (580 and 43 files respectively; renaming every consumer is not this
+   migration's job), but the source of truth for "what colour is SCRIPE" lives
+   here. No new component may introduce a fresh --scripe-* consumer without
+   going through --nx-* or --sx-*; this block exists to be READ BY those two
+   layers, not to compete with them.
+
+   Palette: Signal Lime is the one committed brand signal — primary action,
+   current step/nav, live state, one deliberate cinematic auth moment. It is
+   never ambient decoration. On a Lime FILL the foreground is always Ink,
+   never white. Lime is not body text on light surfaces — use accent-text.
+   ============================================================================ */
+:root,
+:root[data-theme="light"] {
+  --scripe-signal: #c6ff00;
+  --scripe-ink: #0d0d0e;
+  --scripe-void: #050506;
+  --scripe-carbon: #151719;
+  --scripe-graphite: #3f4347;
+  --scripe-mineral: #d7d8d6;
+  --scripe-white: #ffffff;
+
+  --scripe-bg: #f7f8f5;
+  --scripe-surface: #ffffff;
+  --scripe-surface-raised: #ffffff;
+  --scripe-surface-subtle: #eef0eb;
+  --scripe-border: #d5d9d3;
+  --scripe-border-strong: #aeb4ad;
+  --scripe-text: #0d0d0e;
+  --scripe-text-muted: #4b504c;
+  --scripe-text-faint: #6f756f;
+
+  --scripe-accent: #c6ff00;
+  --scripe-accent-fg: #0d0d0e;
+  --scripe-accent-text: #4c6200;
+  --scripe-focus: #4c6200;
+
+  --scripe-success: #16784a;
+  --scripe-warning: #765700;
+  --scripe-warning-strong: #9a4f00;
+  --scripe-info: #0b5d85;
+  --scripe-destructive: #b4232a;
+
+  --scripe-shadow-raised: 0 14px 36px rgba(13, 13, 14, 0.1), 0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  --scripe-shadow-hard: 0 5px 0 rgba(13, 13, 14, 0.12);
+}
+
+.dark,
+:root[data-theme="dark"] {
+  --scripe-bg: #050506;
+  --scripe-surface: #0d0d0e;
+  --scripe-surface-raised: #151719;
+  --scripe-surface-subtle: #1d2022;
+  --scripe-border: #2c3033;
+  --scripe-border-strong: #3f4347;
+  --scripe-text: #f7f8f5;
+  --scripe-text-muted: #b9bdb8;
+  --scripe-text-faint: #8c918d;
+
+  --scripe-accent: #c6ff00;
+  --scripe-accent-fg: #0d0d0e;
+  --scripe-accent-text: #c6ff00;
+  --scripe-focus: #c6ff00;
+
+  --scripe-success: #61d49a;
+  --scripe-warning: #f2c94c;
+  --scripe-warning-strong: #f59e0b;
+  --scripe-info: #7dd3fc;
+  --scripe-destructive: #ff6b6b;
+
+  --scripe-shadow-raised: 0 14px 38px rgba(0, 0, 0, 0.34), 0 2px 0 rgba(255, 255, 255, 0.025) inset;
+  --scripe-shadow-hard: 0 7px 0 #050506;
+}
+
+/* Auth cinematic brand stage — Ink/Void ground with restrained Lime
+   environmental light. Replaces the retired Aurora orb/scan/particle system. */
+.scripe-auth-stage {
+  background:
+    radial-gradient(75% 55% at 50% 35%, rgba(198, 255, 0, 0.1), transparent 62%),
+    linear-gradient(180deg, #0d0d0e 0%, #050506 100%);
+}
+
+/* Login "Program Cover" motion — ONE authored moment, nothing ambient.
+   The two headline lines rise out of clipping masks (550ms, exponential
+   decelerate, second line one beat behind); the crest and supporting text
+   simply fade to present. No loops, no drift, no sweep, no per-section
+   stagger cascade. Reduced motion: everything is simply there. */
+@keyframes scripeLineRise {
+  from {
+    transform: translateY(110%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.scripe-line-mask {
+  display: block;
+  overflow: hidden;
+}
+.scripe-line-rise {
+  display: block;
+  transform: translateY(110%);
+  animation: scripeLineRise 550ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+.scripe-line-rise[data-line="2"] {
+  animation-delay: 70ms;
+}
+@keyframes scripeFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.scripe-fade-in {
+  animation: scripeFadeIn 300ms ease-out 150ms both;
+}
+
+/* The monument settles onto the horizon — one-time, exponential decelerate,
+   container-level only (the mark's geometry never deforms). */
+@keyframes scripeMonumentSettle {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.scripe-monument-settle {
+  animation: scripeMonumentSettle 650ms var(--scripe-ease-out, cubic-bezier(0.16, 1, 0.3, 1))
+    both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scripe-monument-settle {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+html[data-reduced-motion="true"] .scripe-monument-settle {
+  animation: none;
+  transform: none;
+  opacity: 1;
+}
+
+/* Grounded stage light — DESIGN.md §12's "single static Signal Lime glow,
+   not a drifting/looping ambience". Fades in once with the settle, then
+   holds at fixed opacity forever. No loop, no position change. */
+@keyframes scripeStageLightIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.scripe-stage-light {
+  animation: scripeStageLightIn 900ms ease-out 200ms both;
+}
+
+/* Restrained one-time highlight sweep — DESIGN.md §12 explicitly allows this
+   and explicitly requires reduced-motion to remove it. A single diagonal
+   light band crosses the monument once, 900ms after the settle finishes,
+   then never repeats (default animation-iteration-count: 1). */
+@keyframes scripeHighlightSweep {
+  from {
+    transform: translateX(-140%) skewX(-12deg);
+  }
+  to {
+    transform: translateX(140%) skewX(-12deg);
+  }
+}
+.scripe-highlight-sweep {
+  animation: scripeHighlightSweep 1100ms var(--scripe-ease-in-out, cubic-bezier(0.77, 0, 0.175, 1))
+    1450ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scripe-stage-light {
+    animation: none;
+    opacity: 1;
+  }
+  .scripe-highlight-sweep {
+    display: none;
+  }
+}
+html[data-reduced-motion="true"] .scripe-stage-light {
+  animation: none;
+  opacity: 1;
+}
+html[data-reduced-motion="true"] .scripe-highlight-sweep {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .scripe-line-rise,
+  .scripe-fade-in {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+}
+html[data-reduced-motion="true"] .scripe-line-rise,
+html[data-reduced-motion="true"] .scripe-fade-in {
+  animation: none;
+  transform: none;
+  opacity: 1;
+}
+
 /* ========================================
    BASE CSS VARIABLES & THEMES
    ======================================== */
@@ -16,128 +328,163 @@
   --font-size-base: 16px;
   --spacing-unit: 1rem;
 
-  /* ── Nexus workspace OKLCH accent tokens ──
-     WorkspaceProvider injects --workspace-hue & --workspace-chroma on <html>.
-     These derived tokens adapt per light/dark mode for consistent contrast. */
+  /* WorkspaceProvider injects --workspace-hue & --workspace-chroma on <html>.
+     RELAY vNEXT: the global product accent no longer derives from these —
+     Signal Lime is invariant (see --nx-accent* below). Tenant workspace
+     colour survives as CONTEXT ONLY, read directly where a workspace pill,
+     chip, avatar ring or hub tile needs its own colour (WorkspaceGroup.ts's
+     accentColor getter mirrors this same lightness ladder for that duty).
+     The --ws-* Tailwind utility family that used to expose these as classes
+     had zero consumers and was removed; these two source numbers stay
+     registered here because @property above still animates them for that
+     direct-CSS-var context usage. */
   --workspace-hue: 262;
   --workspace-chroma: 0.14;
-  --ws-accent: oklch(0.62 var(--workspace-chroma) var(--workspace-hue));
-  --ws-accent-light: oklch(0.92 calc(var(--workspace-chroma) * 0.3) var(--workspace-hue));
-  --ws-accent-muted: oklch(0.72 calc(var(--workspace-chroma) * 0.5) var(--workspace-hue));
-  --ws-accent-fg: oklch(0.98 0.005 var(--workspace-hue));
-  --ws-rail-bg: oklch(0.18 0.02 var(--workspace-hue));
-  --ws-rail-hover: oklch(0.24 0.03 var(--workspace-hue));
 
-  /* Light theme colors - Default Purple */
+  /* Light theme colors — RELAY vNEXT: Signal Lime, not the old default Purple.
+     This is the base/fallback layer every unthemed shadcn-pattern component
+     reads (bg-primary, ring-ring, text-primary, the sidebar family) when no
+     --nx- or --sx- token applies — e.g. WorkspaceCard's focus-visible:ring-ring.
+     Ink foreground always pairs with the Lime fill, never a near-white. */
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
   --card-foreground: 240 10% 3.9%;
   --popover: 0 0% 100%;
   --popover-foreground: 240 10% 3.9%;
-  --primary: 262 83% 58%;
-  --primary-foreground: 210 40% 98%;
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
   --secondary: 240 4.8% 95.9%;
   --secondary-foreground: 240 5.9% 10%;
   --muted: 240 4.8% 95.9%;
   --muted-foreground: 240 3.8% 46.1%;
   --accent: 240 4.8% 95.9%;
   --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
+  /* Serves BOTH duties: readable as text on white (6.47:1) and dark enough that
+     the near-white foreground on top of it also passes (6.4:1). The stock
+     shadcn 0 84.2% 60.2% failed both at 3.76:1. */
+  --destructive: 0 72% 42%;
   --destructive-foreground: 0 0% 98%;
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
-  --ring: 262 83% 58%;
+  /* Ring is a NON-TEXT indicator and must clear 3:1 against the surface it
+     is drawn on. Signal Lime on a white canvas measures 1.19:1 — effectively
+     invisible — so the light theme uses Accent Text Light (#4C6200, the same
+     value --scripe-accent-text / --nx-accent resolve to here). Dark keeps
+     Lime, where it is high-contrast. Lime is a FILL colour on light
+     surfaces, never a line or a letter (DESIGN.md §2.1). */
+  --ring: 74 100% 19%;
   --radius: 0.75rem;
 
   /* Light sidebar colors */
   --sidebar: 0 0% 98%;
   --sidebar-foreground: 240 5.9% 10%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
   --sidebar-accent: 240 4.8% 95.9%;
   --sidebar-accent-foreground: 240 5.9% 10%;
   --sidebar-border: 240 5.9% 90%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-ring: 74 100% 19%;
 
-  /* Chart colors (used by Recharts via shadcn ChartContainer) */
-  --chart-1: 221 83% 53%;
-  --chart-2: 142 71% 45%;
-  --chart-3: 38 92% 50%;
-  --chart-4: 280 65% 60%;
-  --chart-5: 0 84% 60%;
+  /* Chart colors (used by Recharts via shadcn ChartContainer).
+     Categorical, FIXED slot order — colour follows the entity, never its
+     rank, so a filtered-down series keeps its slot. The order is the
+     CVD-safety mechanism: candidate orderings were run through the dataviz
+     six-checks validator against this theme's white card surface and only a
+     passing order kept (adjacent-pair CVD ΔE >= 7.2, normal-vision >= 19.6,
+     lightness-separated so adjacent series survive colour-vision deficiency).
+     Slots 1/2/5 keep their historic hue families (blue / green / red) because
+     module charts read chart-2 as "success" and chart-5 as "failed".
+     Slots 2, 7 and 8 sit below 3:1 on white — charts using them must carry
+     visible direct labels or a table view. */
+  --chart-1: 213 68% 50%; /* blue    #2a78d6 */
+  --chart-2: 159 73% 40%; /* green   #1baf7a */
+  --chart-3: 17 82% 56%; /* orange  #eb6834 */
+  --chart-4: 249 48% 44%; /* violet  #4a3aa7 */
+  --chart-5: 0 73% 59%; /* red     #e34948 */
+  --chart-6: 120 100% 26%; /* deep green #008300 */
+  --chart-7: 337 70% 70%; /* magenta #e87ba4 */
+  --chart-8: 41 100% 46%; /* yellow  #eda100 */
 
-  /* Shadow colors */
-  --shadow-primary: 262 83% 58%;
+  /* Shadow colors — Elevation is NEUTRAL (DESIGN.md §9). This var tints the
+     whole generic --shadow-sm…--shadow-2xl ladder below, so a brand hue here
+     puts a coloured halo under every raised element in the app: exactly the
+     "Lime halo around every CTA/card" the design system bans. It was violet
+     before the migration and is Ink now — neutral, not a different tint.
+     (The per-hue theme presets still tint their own shadows; that is a
+     tenant's explicit colour choice, not SCRIPE's default identity.) */
+  --shadow-primary: 240 4% 5%;
   --shadow-secondary: 240 5% 64.9%;
 }
 
 /* ========================================
    SCRIPE BRAND TOKENS (additive, theme-independent)
-   Source of truth: Scripe design.md §1. Consumers read these
-   vars — never hardcode brand hex in components.
+   Source of truth: DESIGN.md (Relay vNext). Consumers read --scripe-*
+   directly, or these --sx-* vault aliases — never hardcode brand hex.
    ======================================== */
 :root {
-  --brand-purple: #a855f7;
-  --brand-violet: #7c3aed; /* primary */
-  --brand-indigo: #6366f1;
-  --brand-blue: #3b82f6;
-  --brand-blue-deep: #1d4ed8;
-  --brand-cyan: #22d3ee; /* accent / glow */
-  --brand-cyan-soft: #67e8f9;
-  --brand-gradient: linear-gradient(180deg, #a855f7 0%, #7c3aed 40%, #4f46e5 75%, #3b82f6 100%);
-
-  /* ---- Vault auth surface tokens — DARK is the design default ---- */
+  /* ---- Vault auth surface tokens — DARK is the design default ----
+     Re-based from the retired Aurora violet/indigo/cyan identity to Relay
+     Ink/Void/Signal Lime. Ambient tokens (grid/aurora/scan/particle/logo-*)
+     are consumed by VaultBackground/VaultLogoBlock, which the auth migration
+     replaces with the .scripe-auth-stage treatment above — kept re-based
+     here for any transitional/legacy consumer, not for new use. */
   --sx-bg-grad: radial-gradient(
     140% 90% at 25% 25%,
-    #1a1140 0%,
-    #0a0820 40%,
-    #06060e 80%,
-    #04040a 100%
+    #151719 0%,
+    #0d0d0e 40%,
+    #050506 80%,
+    #030304 100%
   );
-  --sx-card-bg: linear-gradient(180deg, rgba(20, 12, 46, 0.78), rgba(10, 8, 28, 0.85));
-  --sx-card-border: rgba(168, 85, 247, 0.22);
+  --sx-card-bg: linear-gradient(180deg, rgba(21, 23, 25, 0.86), rgba(13, 13, 14, 0.92));
+  --sx-card-border: rgba(198, 255, 0, 0.16);
   --sx-card-shadow:
     0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02),
     inset 0 1px 0 rgba(255, 255, 255, 0.07);
-  --sx-text: #f5f2ff;
-  --sx-text-heading: linear-gradient(180deg, #f5f2ff 0%, #c7b8f0 100%);
-  --sx-text-mute: rgba(245, 242, 255, 0.62);
-  --sx-text-faint: rgba(245, 242, 255, 0.4);
+  --sx-text: #f7f8f5;
+  --sx-text-heading: #f7f8f5;
+  --sx-text-mute: rgba(247, 248, 245, 0.62);
+  --sx-text-faint: rgba(247, 248, 245, 0.4);
   --sx-divider: rgba(255, 255, 255, 0.08);
-  --sx-accent: #a855f7;
-  --sx-accent-text: #c4b5fd;
-  --sx-accent-soft: rgba(168, 85, 247, 0.1);
-  --sx-accent-soft-border: rgba(168, 85, 247, 0.3);
+  --sx-accent: #c6ff00;
+  --sx-accent-text: #c6ff00;
+  --sx-accent-soft: rgba(198, 255, 0, 0.1);
+  --sx-accent-soft-border: rgba(198, 255, 0, 0.3);
   --sx-chip-bg: rgba(255, 255, 255, 0.03);
-  --sx-chip-bg-active: linear-gradient(180deg, rgba(168, 85, 247, 0.2), rgba(59, 130, 246, 0.1));
+  --sx-chip-bg-active: linear-gradient(180deg, rgba(198, 255, 0, 0.18), rgba(198, 255, 0, 0.06));
   --sx-chip-border: rgba(255, 255, 255, 0.08);
-  --sx-chip-border-active: rgba(168, 85, 247, 0.55);
-  --sx-success-dot: #10b981;
-  /* field tokens — exact values from design spec */
+  --sx-chip-border-active: rgba(198, 255, 0, 0.5);
+  --sx-success-dot: #61d49a;
+  /* error alert — dark card values */
+  --sx-error-bg: rgba(255, 107, 107, 0.1);
+  --sx-error-border: rgba(255, 107, 107, 0.3);
+  --sx-error-text: #ff9b9b;
+  /* field tokens */
   --sx-field-bg: rgba(255, 255, 255, 0.03);
-  --sx-field-bg-focus: rgba(124, 58, 237, 0.06);
+  --sx-field-bg-focus: rgba(198, 255, 0, 0.05);
   --sx-field-border: rgba(255, 255, 255, 0.08);
-  --sx-field-border-focus: rgba(168, 85, 247, 0.55);
-  --sx-field-ring: 0 0 0 4px rgba(124, 58, 237, 0.18);
+  --sx-field-border-focus: rgba(198, 255, 0, 0.55);
+  --sx-field-ring: 0 0 0 4px rgba(198, 255, 0, 0.18);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.04);
-  /* ambient background */
-  --sx-grid-stroke: rgba(168, 85, 247, 0.05);
-  --sx-aurora-a: rgba(168, 85, 247, 0.35);
-  --sx-aurora-b: rgba(59, 130, 246, 0.3);
-  --sx-scan-line: linear-gradient(180deg, transparent, rgba(168, 85, 247, 0.05), transparent);
-  --sx-particle-1: #a855f7;
-  --sx-particle-2: #3b82f6;
-  --sx-particle-3: #f5f2ff;
-  /* 3D logo treatment */
-  --sx-logo-blend: screen;
-  --sx-logo-filter: drop-shadow(0 0 60px rgba(168, 85, 247, 0.45))
-    drop-shadow(0 0 30px rgba(59, 130, 246, 0.3));
-  --sx-logo-orb-opacity: 0; /* hidden on dark; shown on light */
-  /* primary CTA — the brand gradient (theme-independent fill, theme-tuned shadow) */
-  --sx-cta-gradient: var(--brand-gradient);
-  --sx-cta-shadow: 0 10px 30px rgba(124, 58, 237, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.28);
-  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 50%);
+  /* ambient background — restrained Lime, not Aurora violet/blue */
+  --sx-grid-stroke: rgba(198, 255, 0, 0.05);
+  --sx-aurora-a: rgba(198, 255, 0, 0.14);
+  --sx-aurora-b: rgba(215, 216, 214, 0.08);
+  --sx-scan-line: linear-gradient(180deg, transparent, rgba(198, 255, 0, 0.05), transparent);
+  --sx-particle-1: #c6ff00;
+  --sx-particle-2: #d7d8d6;
+  --sx-particle-3: #f7f8f5;
+  /* 3D logo treatment — the canonical PNG is used as-is; no colour filter
+     that would alter its approved material colours (V3 fidelity policy).
+     Container-level presentation only. */
+  --sx-logo-blend: normal;
+  --sx-logo-filter: none;
+  --sx-logo-orb-opacity: 0;
+  /* primary CTA — solid Signal Lime + Ink foreground, never a violet/indigo
+     gradient (DESIGN.md: "Violet/indigo CTA gradient -> Solid Signal Lime + Ink"). */
+  --sx-cta-gradient: var(--scripe-signal);
+  --sx-cta-shadow: 0 10px 30px rgba(198, 255, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 38%);
 }
 
 /* Vault LIGHT-theme surface overrides (higher specificity than :root) */
@@ -145,50 +492,52 @@
   --sx-bg-grad: radial-gradient(
     140% 90% at 25% 25%,
     #ffffff 0%,
-    #f1ecfb 45%,
-    #e4daf6 80%,
-    #d6c8ef 100%
+    #f7f8f5 45%,
+    #eef0eb 80%,
+    #d7d8d6 100%
   );
-  --sx-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 248, 255, 0.96));
-  --sx-card-border: rgba(124, 58, 237, 0.18);
+  --sx-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 245, 0.96));
+  --sx-card-border: rgba(76, 98, 0, 0.18);
   --sx-card-shadow:
-    0 30px 80px rgba(76, 29, 149, 0.12), 0 0 0 1px rgba(124, 58, 237, 0.04),
+    0 30px 80px rgba(13, 13, 14, 0.12), 0 0 0 1px rgba(76, 98, 0, 0.04),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --sx-text: #1a0f3d;
-  --sx-text-heading: linear-gradient(180deg, #1a0f3d 0%, #4c1d95 100%);
-  --sx-text-mute: rgba(26, 15, 61, 0.66);
-  --sx-text-faint: rgba(26, 15, 61, 0.42);
-  --sx-divider: rgba(76, 29, 149, 0.1);
-  --sx-accent: #7c3aed;
-  --sx-accent-text: #6d28d9;
-  --sx-accent-soft: rgba(124, 58, 237, 0.08);
-  --sx-accent-soft-border: rgba(124, 58, 237, 0.25);
-  --sx-chip-bg: rgba(124, 58, 237, 0.05);
-  --sx-chip-bg-active: linear-gradient(180deg, rgba(168, 85, 247, 0.18), rgba(59, 130, 246, 0.1));
-  --sx-chip-border: rgba(76, 29, 149, 0.1);
-  --sx-chip-border-active: #7c3aed;
-  --sx-success-dot: #059669;
+  --sx-text: #0d0d0e;
+  --sx-text-heading: #0d0d0e;
+  --sx-text-mute: rgba(13, 13, 14, 0.66);
+  --sx-text-faint: rgba(13, 13, 14, 0.42);
+  --sx-divider: rgba(76, 98, 0, 0.1);
+  --sx-accent: #4c6200;
+  --sx-accent-text: #4c6200;
+  --sx-accent-soft: rgba(76, 98, 0, 0.08);
+  --sx-accent-soft-border: rgba(76, 98, 0, 0.25);
+  --sx-chip-bg: rgba(76, 98, 0, 0.05);
+  --sx-chip-bg-active: linear-gradient(180deg, rgba(198, 255, 0, 0.22), rgba(198, 255, 0, 0.08));
+  --sx-chip-border: rgba(76, 98, 0, 0.1);
+  --sx-chip-border-active: #4c6200;
+  --sx-success-dot: #16784a;
+  /* error alert — light card. #b42318 measures 6.57:1 on white. */
+  --sx-error-bg: rgba(180, 35, 24, 0.08);
+  --sx-error-border: rgba(180, 35, 24, 0.25);
+  --sx-error-text: #b42318;
   /* field tokens — light theme */
-  --sx-field-bg: rgba(124, 58, 237, 0.04);
-  --sx-field-bg-focus: rgba(124, 58, 237, 0.08);
-  --sx-field-border: rgba(76, 29, 149, 0.12);
-  --sx-field-border-focus: #7c3aed;
-  --sx-field-ring: 0 0 0 4px rgba(124, 58, 237, 0.18);
+  --sx-field-bg: rgba(76, 98, 0, 0.04);
+  --sx-field-bg-focus: rgba(76, 98, 0, 0.06);
+  --sx-field-border: rgba(76, 98, 0, 0.12);
+  --sx-field-border-focus: #4c6200;
+  --sx-field-ring: 0 0 0 4px rgba(76, 98, 0, 0.14);
   --sx-field-inner-hi: inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  --sx-grid-stroke: rgba(124, 58, 237, 0.06);
-  --sx-aurora-a: rgba(168, 85, 247, 0.22);
-  --sx-aurora-b: rgba(59, 130, 246, 0.18);
-  --sx-scan-line: linear-gradient(180deg, transparent, rgba(124, 58, 237, 0.05), transparent);
-  --sx-particle-1: #7c3aed;
-  --sx-particle-2: #3b82f6;
-  --sx-particle-3: #a855f7;
-  /* On light bg, screen-blend would erase the dark orb — pin the logo to a glass orb instead */
+  --sx-grid-stroke: rgba(76, 98, 0, 0.06);
+  --sx-aurora-a: rgba(76, 98, 0, 0.1);
+  --sx-aurora-b: rgba(13, 13, 14, 0.06);
+  --sx-scan-line: linear-gradient(180deg, transparent, rgba(76, 98, 0, 0.05), transparent);
+  --sx-particle-1: #4c6200;
+  --sx-particle-2: #3f4347;
+  --sx-particle-3: #c6ff00;
   --sx-logo-blend: normal;
-  --sx-logo-filter: drop-shadow(0 0 50px rgba(124, 58, 237, 0.45))
-    drop-shadow(0 20px 40px rgba(76, 29, 149, 0.3));
+  --sx-logo-filter: none;
   --sx-logo-orb-opacity: 1;
-  --sx-cta-shadow: 0 12px 30px rgba(124, 58, 237, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.45);
-  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 50%);
+  --sx-cta-shadow: 0 12px 30px rgba(76, 98, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  --sx-cta-shine: linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 38%);
 }
 
 html {
@@ -198,13 +547,18 @@ html {
 /* ========================================
    PRIMARY COLOR THEMES
    ======================================== */
-/* Scripe brand theme — violet primary (#7C3AED). Light surface. */
+/* Scripe brand theme — Signal Lime primary (#C6FF00), Ink foreground.
+   Lime fill always pairs with Ink text (DESIGN.md Lime rule), never the
+   base --primary-foreground (which is a near-white inherited default and
+   would fail contrast catastrophically on a Lime fill). */
 :root[data-theme="scripe"] {
-  --primary: 262 83% 58%;
-  --ring: 262 83% 58%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-ring: 262 83% 58%;
-  --shadow-primary: 262 83% 58%;
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
+  --ring: 74 100% 50%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
+  --sidebar-ring: 74 100% 50%;
+  --shadow-primary: 240 4% 5%;
 }
 
 :root[data-theme="blue"] {
@@ -344,18 +698,28 @@ html {
   --shadow-primary: 215 20% 50%;
 }
 
+/* The two mid-grey light presets are the only ones whose fill is too dark for
+   the Ink foreground the base block now carries for Signal Lime (zinc measures
+   4.24:1 with Ink vs 4.58:1 with near-white; stone 4.17 vs 4.67). Every other
+   preset is a saturated or light hue that reads BETTER on Ink, so only these
+   two re-declare the near-white pair. Their .dark variants are lighter (56%/55%)
+   and correctly keep Ink. */
 :root[data-theme="zinc"] {
   --primary: 240 4% 46%;
+  --primary-foreground: 210 40% 98%;
   --ring: 240 4% 46%;
   --sidebar-primary: 240 4% 46%;
+  --sidebar-primary-foreground: 210 40% 98%;
   --sidebar-ring: 240 4% 46%;
   --shadow-primary: 240 4% 46%;
 }
 
 :root[data-theme="stone"] {
   --primary: 25 5% 45%;
+  --primary-foreground: 210 40% 98%;
   --ring: 25 5% 45%;
   --sidebar-primary: 25 5% 45%;
+  --sidebar-primary-foreground: 210 40% 98%;
   --sidebar-ring: 25 5% 45%;
   --shadow-primary: 25 5% 45%;
 }
@@ -612,55 +976,63 @@ html {
   --card-foreground: 0 0% 98%;
   --popover: 240 10% 3.9%;
   --popover-foreground: 0 0% 98%;
-  --primary: 262 83% 58%;
-  --primary-foreground: 210 40% 98%;
+  /* RELAY vNEXT: same Lime/Ink pairing as the light block above — Signal
+     Lime is invariant across themes, never a per-theme hue swap. */
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
   --secondary: 240 3.7% 15.9%;
   --secondary-foreground: 0 0% 98%;
   --muted: 240 3.7% 15.9%;
   --muted-foreground: 240 5% 64.9%;
   --accent: 240 3.7% 15.9%;
   --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
+  /* The stock shadcn dark destructive (0 62.8% 30.6%) is a FILL colour, but the
+     codebase uses `text-destructive` in 606 places — at 1.99:1 on the dark card
+     that error text was effectively invisible. Inverting the duty pair fixes
+     both: bright enough to read as text (6.04:1), with a near-black foreground
+     when used as a fill (6.03:1). */
+  --destructive: 0 84% 65%;
+  --destructive-foreground: 240 10% 4%;
   --border: 240 3.7% 15.9%;
   --input: 240 3.7% 15.9%;
-  --ring: 262 83% 58%;
+  --ring: 74 100% 50%;
 
   --sidebar: 240 5.9% 10%;
   --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 262 83% 58%;
-  --sidebar-primary-foreground: 210 40% 98%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
   --sidebar-accent: 240 3.7% 15.9%;
   --sidebar-accent-foreground: 0 0% 98%;
   --sidebar-border: 240 3.7% 15.9%;
-  --sidebar-ring: 262 83% 58%;
+  --sidebar-ring: 74 100% 50%;
 
-  /* Chart colors (dark mode — brighter/more saturated for visibility) */
-  --chart-1: 217 91% 60%;
-  --chart-2: 160 60% 45%;
-  --chart-3: 43 96% 56%;
-  --chart-4: 270 70% 65%;
-  --chart-5: 0 72% 51%;
-
-  /* Nexus workspace OKLCH — dark mode overrides */
-  --ws-accent: oklch(0.72 var(--workspace-chroma) var(--workspace-hue));
-  --ws-accent-light: oklch(0.22 calc(var(--workspace-chroma) * 0.25) var(--workspace-hue));
-  --ws-accent-muted: oklch(0.55 calc(var(--workspace-chroma) * 0.4) var(--workspace-hue));
-  --ws-accent-fg: oklch(0.98 0.005 var(--workspace-hue));
-  --ws-rail-bg: oklch(0.12 0.015 var(--workspace-hue));
-  --ws-rail-hover: oklch(0.18 0.025 var(--workspace-hue));
+  /* Chart colors (dark — the SAME eight hues re-stepped for the dark
+     surface, not an automatic flip; slot order matches the light block).
+     Validated (dataviz six-checks) against the dark nx surface #15131D:
+     all 8 clear 3:1, adjacent-pair CVD ΔE >= 8.6, normal-vision >= 19.3. */
+  --chart-1: 213 77% 56%; /* blue    #3987e5 */
+  --chart-2: 159 73% 36%; /* green   #199e70 */
+  --chart-3: 17 70% 50%; /* orange  #d95926 */
+  --chart-4: 247 69% 72%; /* violet  #9085e9 */
+  --chart-5: 0 72% 65%; /* red     #e66767 */
+  --chart-6: 120 100% 26%; /* deep green #008300 */
+  --chart-7: 338 61% 58%; /* magenta #d55181 */
+  --chart-8: 40 100% 39%; /* yellow  #c98500 */
 }
 
 /* ========================================
    DARK PRIMARY COLOR THEMES
    ======================================== */
-/* Scripe brand theme — purple accent (#A855F7) reads brighter on dark. */
+/* Scripe brand theme — Signal Lime (#C6FF00) is invariant across themes;
+   Ink foreground stays constant on the Lime fill (see light block above). */
 .dark[data-theme="scripe"] {
-  --primary: 271 91% 65%;
-  --ring: 271 91% 65%;
-  --sidebar-primary: 271 91% 65%;
-  --sidebar-ring: 271 91% 65%;
-  --shadow-primary: 271 91% 65%;
+  --primary: 74 100% 50%;
+  --primary-foreground: 240 4% 5%;
+  --ring: 74 100% 50%;
+  --sidebar-primary: 74 100% 50%;
+  --sidebar-primary-foreground: 240 4% 5%;
+  --sidebar-ring: 74 100% 50%;
+  --shadow-primary: 240 4% 5%;
 }
 
 .dark[data-theme="blue"] {
@@ -1470,6 +1842,27 @@ html {
   transition-duration: 0.5s !important;
 }
 
+/* The four rules above use a descendant combinator (`:root[data-animation=...] *`),
+   which excludes :root itself — so the Animation Level setting had no effect on the
+   --workspace-hue/--workspace-chroma crossfade transition declared on :root above.
+   These companion rules target :root directly (no !important needed: same specificity,
+   later in source order, so they win over the base :root transition declaration). */
+:root[data-animation="none"] {
+  transition: none;
+}
+
+:root[data-animation="minimal"] {
+  transition-duration: 0.1s;
+}
+
+:root[data-animation="moderate"] {
+  transition-duration: 0.3s;
+}
+
+:root[data-animation="high"] {
+  transition-duration: 0.5s;
+}
+
 /* ========================================
    SCRIPE ENTRANCE ANIMATION KEYFRAMES
    Used by moderate + high animation levels
@@ -1801,10 +2194,12 @@ html {
 
 /* ========================================
    MODERATE — Progress Bar Fill
-   Progress indicators animate their width
+   The shadcn Progress indicator moves via transform: translateX, so that is
+   the property to ease — transitioning width would thrash layout and never
+   match the actual movement.
    ======================================== */
 :root[data-animation="moderate"] [role="progressbar"] > div {
-  transition: width 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
 }
 
 /* ========================================
@@ -2069,18 +2464,11 @@ html {
 
 /* ========================================
    FONT SIZES
+   One mechanism only: the settings applicator writes --font-size-base
+   (all six values) and `html { font-size: var(--font-size-base) }` above
+   applies it. The old attribute-keyed px rules that overrode the var for
+   three of the six values are gone (Wave C).
    ======================================== */
-:root[data-font-size="small"] {
-  font-size: 14px;
-}
-
-:root[data-font-size="default"] {
-  font-size: 16px;
-}
-
-:root[data-font-size="large"] {
-  font-size: 18px;
-}
 
 /* ========================================
    BORDER RADIUS
@@ -2132,72 +2520,38 @@ html {
 
 /* ========================================
    BACKGROUND MODE OVERRIDE
-   When data-bg-mode is "gradient" or "custom" and --bg-override is set,
-   override body background and make layout wrapper divs transparent.
+   When data-bg-mode is "gradient" and --bg-override is set, override body
+   background and make layout wrapper divs transparent. The "custom" mode
+   died in Wave C (its colour fields had no consumers).
    ======================================== */
 
 /* Override body background when bg-override is active */
-html[data-bg-mode="gradient"] body,
-html[data-bg-mode="custom"] body {
+html[data-bg-mode="gradient"] body {
   background: var(--bg-override, inherit) !important;
   background-attachment: fixed !important;
   min-height: 100vh !important;
 }
 
 /* Make top-level layout wrapper divs transparent so body bg shows through */
-html[data-bg-mode="gradient"] body > div > div,
-html[data-bg-mode="custom"] body > div > div {
+html[data-bg-mode="gradient"] body > div > div {
   background-color: transparent !important;
 }
 
 /* Also handle deeper layout wrapper divs (some layouts nest an extra level) */
-html[data-bg-mode="gradient"] body > div > div > div.min-h-screen,
-html[data-bg-mode="custom"] body > div > div > div.min-h-screen {
+html[data-bg-mode="gradient"] body > div > div > div.min-h-screen {
   background-color: transparent !important;
 }
 
-@layer utilities {
-  /* Modal blur utilities - applied to ENTIRE layout (sidebars, headers, content) when modal is open */
-  .modal-blurred-content {
-    filter: blur(8px) brightness(0.7) !important;
-    pointer-events: none !important;
-    user-select: none !important;
-    transition: filter 0.2s ease-in-out;
-    position: relative;
-    /* Ensure it's in stacking context */
-  }
-
-  /* Ensure modal portal is always above blurred content */
-  html.modal-blur-open [data-radix-portal],
-  body.modal-blur-open [data-radix-portal] {
-    z-index: 1000 !important;
-    isolation: isolate;
-    filter: none !important;
-    /* Portal itself should not be blurred */
-  }
-
-  html.modal-blur-open [data-radix-dialog-overlay],
-  body.modal-blur-open [data-radix-dialog-overlay] {
-    z-index: 999 !important;
-    filter: none !important;
-  }
-
-  html.modal-blur-open [data-radix-dialog-content],
-  body.modal-blur-open [data-radix-dialog-content] {
-    z-index: 1000 !important;
-    isolation: isolate;
-    filter: none !important;
-    /* Ensure modal content is never blurred */
-    position: relative;
-    /* Ensure proper stacking */
-  }
-
-  /* Prevent any child of modal from being blurred */
-  [data-radix-portal] *,
-  [data-radix-dialog-content] * {
-    filter: none !important;
-  }
-}
+/* The modal-blur utility layer that used to live here is gone. Every rule in
+   it was dead: `.modal-blurred-content` was never applied to anything, the
+   `modal-blur-open` class that gated the rest was never set on html or body,
+   and the three attributes it targeted — [data-radix-portal],
+   [data-radix-dialog-overlay], [data-radix-dialog-content] — are emitted by
+   nobody (Radix stamps role + data-state instead). It also hard-coded the
+   z-ladder as !important literals, which would have silently fought the
+   zIndex scale in tailwind.config.js, and blurring the whole layout behind a
+   modal is the glassmorphism-by-default the design bar bans — DialogOverlay
+   dims with a scrim instead. */
 
 /* ========================================
    UTILITY CLASSES - FONTS
@@ -2275,16 +2629,16 @@ html[lang="ar"],
   }
 }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
+/* WAVE I1 GATE — `@keyframes float` and its only consumer `.animate-float`
+   were removed here. It was a 3s `infinite` translateY loop with a
+   `will-change: transform` compositing layer permanently promoted behind it,
+   and it is the last idle unbounded animation that was left in this file.
+   Verified unreachable before deleting: `animate-float` appears nowhere in
+   src/ (tsx/ts/js/json/md), tailwind.config.js declares no `float` entry under
+   theme.extend.animation or .keyframes — so no utility regenerates it — and
+   the only other repo hits were compiled copies of THIS rule inside .next/.
+   The remaining `infinite` animations in this file are both `.sx-spin1`, which
+   are busy indicators on the sign-in/vault surface, not idle shell chrome. */
 
 .animate-slide-in-right {
   animation: slideInRight 0.3s ease-out;
@@ -2296,14 +2650,6 @@ html[lang="ar"],
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out;
-}
-
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-  will-change: transform;
-  /* P4.6: GPU compositing hint */
-  contain: layout style;
-  /* P4.6: Limit layout recalc scope */
 }
 
 /* ========================================
@@ -2353,18 +2699,6 @@ html[lang="ar"],
     background-color 0.3s ease,
     border-color 0.3s ease,
     color 0.3s ease;
-}
-
-/* ========================================
-   UTILITY CLASSES - BACKGROUND PATTERNS
-   ======================================== */
-.bg-grid-pattern {
-  background-image: radial-gradient(
-    circle,
-    hsl(var(--muted-foreground) / 0.1) 1px,
-    transparent 1px
-  );
-  background-size: 20px 20px;
 }
 
 /* ========================================
@@ -2501,12 +2835,119 @@ html[data-reduced-motion="true"] *::after {
   transition: none !important;
 }
 
+/* High contrast — token-level overrides, not a whole-page filter (the old
+   contrast()/saturate() filter distorted every colour including the measured
+   status and nx tokens). Secondary inks step up to the primary ink and
+   hairlines step up to their strong weight, so contrast rises everywhere
+   without re-deriving a single colour. */
 html[data-high-contrast="true"] {
-  filter: contrast(1.25) saturate(1.2);
+  --border: var(--foreground);
+  --input: var(--foreground);
+  --muted-foreground: var(--foreground);
+  --nx-line: var(--nx-line-hi);
+  --nx-ink-2: var(--nx-ink);
+  --nx-ink-3: var(--nx-ink);
 }
 
-html[data-compact-mode="true"] {
-  --spacing-unit: 0.5rem;
+/* The compact-mode attribute rule that also wrote --spacing-unit is gone
+   (Wave C): the flag was culled — spacingSize="compact" sets the same
+   0.5rem via the settings applicator, which was always the winning writer
+   anyway (inline style beats a stylesheet rule). */
+
+/* ========================================
+   HOVER EFFECTS (settings-driven)
+   [data-hover-effect-type] × [data-hover-effect-intensity] on <html>.
+   Intensity sets the magnitudes; type picks the treatment. With intensity
+   "none" the magnitude vars are unset, every var() below turns invalid at
+   computed-value time, and the declarations fall back to their initial
+   values — that IS the off switch. The per-component getHoverEffectClasses
+   JS maps retire in Wave D once card/table read these instead.
+   ======================================== */
+html[data-hover-effect-intensity="small"] {
+  --hover-lift: -2px;
+  --hover-scale: 1.005;
+  --hover-tilt: 0.5deg;
+  --hover-slide: 2px;
+  --hover-shadow: var(--nx-shadow-sm);
+  --hover-glow: 0 0 10px -2px color-mix(in oklch, var(--nx-accent) 35%, transparent);
+}
+
+html[data-hover-effect-intensity="medium"] {
+  --hover-lift: -4px;
+  --hover-scale: 1.015;
+  --hover-tilt: 1deg;
+  --hover-slide: 4px;
+  --hover-shadow: var(--nx-shadow-popover);
+  --hover-glow: 0 0 14px -2px color-mix(in oklch, var(--nx-accent) 45%, transparent);
+}
+
+html[data-hover-effect-intensity="strong"] {
+  --hover-lift: -6px;
+  --hover-scale: 1.03;
+  --hover-tilt: 2deg;
+  --hover-slide: 6px;
+  --hover-shadow: var(--nx-shadow-popover);
+  --hover-glow: var(--nx-glow);
+}
+
+/* Cards — transform + shadow, at the standard motion step */
+html[data-hover-effect-type]:not([data-hover-effect-type="none"]) .card {
+  transition:
+    transform var(--nx-t-standard) var(--nx-ease-enter),
+    box-shadow var(--nx-t-standard) var(--nx-ease-enter),
+    border-color var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+html[data-hover-effect-type="elevate"] .card:hover {
+  transform: translateY(var(--hover-lift));
+  box-shadow: var(--hover-shadow);
+}
+
+html[data-hover-effect-type="scale"] .card:hover {
+  transform: scale(var(--hover-scale));
+}
+
+html[data-hover-effect-type="glow"] .card:hover,
+html[data-hover-effect-type="shimmer"] .card:hover {
+  box-shadow: var(--hover-glow);
+  border-color: var(--nx-accent);
+}
+
+html[data-hover-effect-type="rotate"] .card:hover {
+  transform: rotate(var(--hover-tilt));
+}
+
+html[data-hover-effect-type="slide"] .card:hover {
+  transform: translate(var(--hover-slide), var(--hover-lift));
+}
+
+html[dir="rtl"][data-hover-effect-type="slide"] .card:hover {
+  transform: translate(calc(var(--hover-slide) * -1), var(--hover-lift));
+}
+
+/* Tables — depth only; transforms would break row layout and sticky columns */
+html[data-hover-effect-type]:not([data-hover-effect-type="none"]) table tbody tr {
+  transition: box-shadow var(--nx-t-standard) var(--nx-ease-enter);
+}
+
+html[data-hover-effect-type="elevate"] table tbody tr:hover,
+html[data-hover-effect-type="scale"] table tbody tr:hover,
+html[data-hover-effect-type="slide"] table tbody tr:hover,
+html[data-hover-effect-type="rotate"] table tbody tr:hover {
+  box-shadow: var(--hover-shadow);
+}
+
+html[data-hover-effect-type="glow"] table tbody tr:hover,
+html[data-hover-effect-type="shimmer"] table tbody tr:hover {
+  box-shadow: var(--hover-glow);
+}
+
+/* Reduced motion: keep the depth/edge feedback, strip the movement.
+   (html[data-reduced-motion="true"] above already kills the transitions.) */
+@media (prefers-reduced-motion: reduce) {
+  html[data-hover-effect-type] .card:hover {
+    transform: none;
+  }
 }
 
 /* ========================================
@@ -2652,8 +3093,10 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
    Hidden by default, 3px translucent on hover
    ======================================== */
 .nexus-rail-scroll::-webkit-scrollbar {
+  /* No width transition: browsers do not animate scrollbar pseudo-elements,
+     and animating width is banned anyway — the 0→3px hover reveal is a
+     discrete swap by design. */
   width: 0px;
-  transition: width 0.3s ease;
 }
 .nexus-rail-scroll:hover::-webkit-scrollbar {
   width: 3px;
@@ -2696,174 +3139,6 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   scrollbar-color: rgba(128, 128, 128, 0.25) transparent;
 }
 
-/* ========================================
-   SCRIPE VAULT — ambient auth animations
-   Source: scripe-vault.jsx. All motion is gated by
-   prefers-reduced-motion (see guard below).
-   ======================================== */
-@keyframes sxDrift {
-  0%,
-  100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(40px, -30px);
-  }
-}
-@keyframes sxScan {
-  0% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(400%);
-  }
-}
-@keyframes sxFloat {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-12px);
-  }
-}
-@keyframes sxBreathe {
-  0%,
-  100% {
-    opacity: 0.5;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.9;
-    transform: scale(1.04);
-  }
-}
-@keyframes sxScreenIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Entrance for the keyed auth screen container */
-.sx-screen,
-.sx-screen-anim {
-  animation: sxScreenIn 0.35s ease both;
-}
-
-/* ── Interaction animations (spec: motion.md §3) ──────────────────
-   Error shake · OTP pop · card rise · button spinner · check draw
-   All gated by the reduced-motion guard further below.
-   ================================================================ */
-
-@keyframes sxShake {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  16% {
-    transform: translateX(-7px);
-  }
-  33% {
-    transform: translateX(6px);
-  }
-  50% {
-    transform: translateX(-4px);
-  }
-  66% {
-    transform: translateX(3px);
-  }
-  83% {
-    transform: translateX(-1px);
-  }
-}
-
-@keyframes sxPop {
-  0% {
-    transform: scale(1);
-  }
-  35% {
-    transform: scale(1.1);
-  }
-  65% {
-    transform: scale(0.96);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes sxRise {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes sxSpin1 {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes sxCheck {
-  from {
-    stroke-dashoffset: 60;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-.sx-shake {
-  animation: sxShake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-}
-.sx-pop {
-  animation: sxPop 0.22s cubic-bezier(0.22, 1.2, 0.36, 1) both;
-}
-.sx-rise {
-  animation: sxRise 0.48s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-}
-.sx-spin1 {
-  animation: sxSpin1 0.7s linear infinite;
-}
-.sx-check path {
-  stroke-dasharray: 60;
-  stroke-dashoffset: 60;
-  animation: sxCheck 0.4s cubic-bezier(0.22, 0.61, 0.36, 1) 0.1s forwards;
-}
-
-/* Staggered entrance — workspace cards, plan cards, onboarding checklist */
-.sx-stagger > * {
-  animation: sxRise 0.48s cubic-bezier(0.22, 0.61, 0.36, 1) both;
-}
-.sx-stagger > *:nth-child(2) {
-  animation-delay: 0.05s;
-}
-.sx-stagger > *:nth-child(3) {
-  animation-delay: 0.1s;
-}
-.sx-stagger > *:nth-child(4) {
-  animation-delay: 0.15s;
-}
-.sx-stagger > *:nth-child(5) {
-  animation-delay: 0.2s;
-}
-.sx-stagger > *:nth-child(6) {
-  animation-delay: 0.25s;
-}
-
 /* ── Vault glass field token overrides ────────────────────────────
    Inside .vault-stage, all text inputs inherit --sx-field-* surface tokens
    so they feel embedded in the dark glass card, not bg-background.
@@ -2874,8 +3149,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-stage select {
   background: var(--sx-field-bg, rgba(255, 255, 255, 0.03));
   border-color: var(--sx-field-border, rgba(255, 255, 255, 0.08));
-  color: var(--sx-text, #f5f2ff);
-  caret-color: var(--sx-accent, #a855f7);
+  color: var(--sx-text, #f7f8f5);
+  caret-color: var(--sx-accent, #c6ff00);
   box-sizing: border-box;
   box-shadow: var(--sx-field-inner-hi, none);
   transition:
@@ -2887,43 +3162,38 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-stage input:not([type="checkbox"]):not([type="radio"]):focus,
 .vault-stage textarea:focus-visible,
 .vault-stage textarea:focus {
-  background: var(--sx-field-bg-focus, rgba(124, 58, 237, 0.06));
-  border-color: var(--sx-field-border-focus, rgba(168, 85, 247, 0.55)) !important;
-  box-shadow: var(--sx-field-ring, 0 0 0 4px rgba(124, 58, 237, 0.18)) !important;
+  background: var(--sx-field-bg-focus, rgba(198, 255, 0, 0.05));
+  border-color: var(--sx-field-border-focus, rgba(198, 255, 0, 0.55)) !important;
+  box-shadow: var(--sx-field-ring, 0 0 0 4px rgba(198, 255, 0, 0.18)) !important;
   outline: none;
 }
 .vault-stage input::placeholder,
 .vault-stage textarea::placeholder {
-  color: var(--sx-text-faint, rgba(245, 242, 255, 0.4));
+  color: var(--sx-text-faint, rgba(247, 248, 245, 0.4));
+}
+/* Chrome/WebKit autofill paints its own pale-blue fill (rgba(70,90,126,.4)
+   over the dark card — the "blue inputs" in every screenshot). Autofill
+   backgrounds can't be overridden directly; the inset box-shadow trick
+   repaints the field in the vault surface, and -webkit-text-fill-color
+   keeps the value in theme ink. */
+.vault-stage input:-webkit-autofill,
+.vault-stage input:-webkit-autofill:hover,
+.vault-stage input:-webkit-autofill:focus {
+  -webkit-box-shadow: inset 0 0 0 1000px #17181a;
+  -webkit-text-fill-color: var(--sx-text, #f7f8f5);
+  caret-color: var(--sx-accent, #c6ff00);
+  transition: background-color 9999s ease-out;
+}
+:root:not(.dark) .vault-stage input:-webkit-autofill,
+:root:not(.dark) .vault-stage input:-webkit-autofill:hover,
+:root:not(.dark) .vault-stage input:-webkit-autofill:focus {
+  -webkit-box-shadow: inset 0 0 0 1000px #fbfcf9;
+  -webkit-text-fill-color: var(--sx-text, #0d0d0e);
 }
 /* Method chip hover + active states */
 .vault-stage [data-method-chip]:hover {
-  background: var(--sx-chip-bg-active, rgba(168, 85, 247, 0.15)) !important;
-  border-color: var(--sx-chip-border-active, rgba(168, 85, 247, 0.55)) !important;
-}
-
-/* Reduced-motion contract — kill all ambient + non-essential Vault motion */
-@media (prefers-reduced-motion: reduce) {
-  .sx-ambient *,
-  .sx-screen,
-  .sx-screen-anim,
-  .sx-shake,
-  .sx-pop,
-  .sx-rise,
-  .sx-stagger > *,
-  .sx-spin1 {
-    animation: none !important;
-  }
-}
-:root[data-reduced-motion="true"] .sx-ambient *,
-:root[data-reduced-motion="true"] .sx-screen,
-:root[data-reduced-motion="true"] .sx-screen-anim,
-:root[data-reduced-motion="true"] .sx-shake,
-:root[data-reduced-motion="true"] .sx-pop,
-:root[data-reduced-motion="true"] .sx-rise,
-:root[data-reduced-motion="true"] .sx-stagger > *,
-:root[data-reduced-motion="true"] .sx-spin1 {
-  animation: none !important;
+  background: var(--sx-chip-bg-active, rgba(198, 255, 0, 0.15)) !important;
+  border-color: var(--sx-chip-border-active, rgba(198, 255, 0, 0.55)) !important;
 }
 
 /* Vault primary CTA — brand gradient via the token layer.
@@ -3026,20 +3296,6 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   }
 }
 
-/* Ambient background drift */
-@keyframes sxDrift {
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -20px) scale(1.05);
-  }
-  66% {
-    transform: translate(-20px, 15px) scale(0.95);
-  }
-}
-
 /* Button loading spin */
 @keyframes sxSpin1 {
   to {
@@ -3056,7 +3312,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   animation: sxRise 500ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
 }
 .sx-pop {
-  animation: sxPop 350ms cubic-bezier(0.22, 1.2, 0.36, 1) both;
+  /* exponential deceleration — no overshoot; matches the nx enter curve */
+  animation: sxPop 350ms cubic-bezier(0.23, 1, 0.32, 1) both;
 }
 .sx-check {
   stroke-dasharray: 24;
@@ -3121,18 +3378,14 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   .sx-spin1 {
     animation: none !important;
   }
-  [style*="sxDrift"],
-  [style*="sxFloat"] {
-    animation: none !important;
-  }
 }
 
 /* ═══ HIGH CONTRAST ═══ */
 @media (prefers-contrast: more) {
   :root {
-    --sx-card-border: rgba(168, 85, 247, 0.45);
+    --sx-card-border: rgba(198, 255, 0, 0.45);
     --sx-chip-border: rgba(255, 255, 255, 0.2);
-    --sx-text-mute: rgba(245, 242, 255, 0.8);
+    --sx-text-mute: rgba(247, 248, 245, 0.8);
   }
 }
 
@@ -3141,7 +3394,9 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
 .vault-cta .sx-cta-btn {
   background: var(--sx-cta-gradient) !important;
   box-shadow: var(--sx-cta-shadow);
-  color: #fff !important;
+  /* Signal Lime fill always pairs with Ink foreground, never white
+     (DESIGN.md Lime rule) — was #fff, a severe contrast failure on Lime. */
+  color: var(--scripe-ink) !important;
   border: none;
   position: relative;
   overflow: hidden;
@@ -3154,7 +3409,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   transform: translateY(-1px);
   box-shadow:
     var(--sx-cta-shadow),
-    0 0 20px rgba(124, 58, 237, 0.3);
+    0 0 20px rgba(198, 255, 0, 0.3);
 }
 .vault-cta button[type="submit"]::before,
 .vault-cta .sx-cta-btn::before {
@@ -3658,8 +3913,8 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
     font-size: 0.8125rem !important;
     line-height: 1.35 !important;
   }
-  /* Floating / Vault layout float height adjustments */
-  .login-page div[style*="sxFloat"] {
+  /* Vault layout logo-block height adjustments for short/landscape viewports */
+  .login-page .scripe-monument {
     transform: scale(0.7) !important;
     margin-top: -20px !important;
     margin-bottom: -20px !important;
@@ -3741,7 +3996,7 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   /* Hide branding, logos, and illustrative float elements to optimize vertical space */
   .login-page .login-logo,
   .login-page [class*="MobileLogo"],
-  .login-page div[style*="sxFloat"],
+  .login-page .scripe-monument,
   .login-page .flex.h-20.w-20,
   .login-page .flex.h-16.w-16,
   .login-page .mb-10.flex.flex-col.items-center {
@@ -3775,4 +4030,336 @@ html[data-tenant-banner] aside.navigation-main-sidebar {
   .signup-shell label {
     font-size: 0.6875rem !important;
   }
+}
+
+/* ============================================================================
+   GLOBAL SEMANTIC TOKENS
+   ----------------------------------------------------------------------------
+   Layout-agnostic tokens every shell reads: measured status colours, the
+   reading-direction origin for the routing progress bar, and the one modal
+   scrim.
+
+   WAVE I1 — DEAD CSS REMOVED. The EDGE/scripe design system used to live here:
+   the two --edge-* token blocks, ~40 .sx-shell component rules (.sx-content,
+   .sx-rail-btn, .sx-rail-indicator, .sx-pin*, .sx-nav-*, .sx-icon-btn,
+   .sx-search-btn, .sx-kbd, .sx-skip, .sx-scrim, .sx-panel-overlay,
+   .sx-rail-scroll and the shell scrollbars), the .sx-shell focus/::selection
+   law, its reduced-motion block, and the @keyframes sxRowIn / sxPinPulse /
+   sxPanelIn / sxPanelInRtl. 382 lines, none of which could match anything:
+
+     - the scripe layout component tree was deleted in Wave G;
+     - `LayoutTemplate` is now the single member "nexus"
+       (src/core/settings/types.ts:130), the merge-engine normalises any
+       stored value to it, and dom-applicator writes data-layout="nexus"
+       unconditionally — so `:root[data-layout="scripe"]` cannot match;
+     - grep over src/ for every .sx-shell-family class name and for the
+       tailwind `edge-*` colour utilities returned 0 hits.
+
+   NOT removed, because they are still live: the --sx-* tokens and the
+   .sx-screen / .sx-ambient / .sx-shake / .sx-pop / .sx-rise / .sx-spin1 /
+   .sx-stagger / .vault-* rules further up — those belong to sign-in, sign-up
+   and password-reset (20 files use them), not to the scripe shell.
+   ============================================================================ */
+
+/* ── Semantic status tokens (GLOBAL, additive) ──────────────────────────────
+   Root cause of ~340 hardcoded palette colours across 60 view files was that
+   only `destructive` was ever tokenised, so every view invented its own green.
+   HSL triplets to match the existing shadcn token convention.
+   All values measured >= 4.5:1 against their own theme's card surface. */
+:root {
+  --success: 160 64% 52%;
+  /* Near-black, not white: this mint is bright, and white on it is 1.91:1.
+     The light theme below re-declares white, which is correct on its darker
+     green (5.32:1). Same token, opposite answer per theme. */
+  --success-foreground: 240 10% 4%;
+  --warning: 43 96% 56%;
+  --warning-foreground: 240 10% 4%;
+  /* Fourth step of the severity ramp. Some scales genuinely need
+     ok -> warn -> high -> critical; without this, amber and orange both
+     collapse into `warning` and a four-step ramp silently becomes three. */
+  --warning-strong: 27 96% 61%;
+  --warning-strong-foreground: 240 10% 4%;
+  --info: 213 94% 68%;
+  --info-foreground: 240 10% 4%;
+}
+:root:not(.dark) {
+  --success: 152 78% 27%; /* #0f7a45 — 5.40:1 on white */
+  --success-foreground: 0 0% 100%;
+  --warning: 39 100% 27%; /* #8a5a00 — 5.93:1 on white */
+  --warning-foreground: 0 0% 100%;
+  --warning-strong: 17 88% 34%; /* #a3320f — 6.6:1 on white */
+  --warning-strong-foreground: 0 0% 100%;
+  --info: 226 75% 48%; /* #1d4ed8 */
+  --info-foreground: 0 0% 100%;
+}
+
+/* Routing progress bar fills from the side the user starts reading on. */
+:root {
+  --rpb-origin: left;
+}
+[dir="rtl"] {
+  --rpb-origin: right;
+}
+
+/* ── Modal scrim ─────────────────────────────────────────────────────────────
+   A dialog needs the page behind it pushed back, and we do that by taking
+   light away rather than by blurring: a backdrop-filter is the single most
+   expensive thing you can put under a modal on a low-end device. Defined
+   globally, aliased by --nx-scrim, so there is exactly ONE scrim system. */
+:root {
+  --scrim: oklch(0.13 0.01 285 / 0.62);
+}
+:root:not(.dark) {
+  --scrim: oklch(0.21 0.02 285 / 0.42);
+}
+
+/* ============================================================================
+   NEXUS SHELL TOKENS (--nx-*)
+   ----------------------------------------------------------------------------
+   The brand as read from the canonical Relay Grid mark (public/brand/app-logo.svg):
+   near-black ground, one committed Signal Lime edge light, considered depth.
+   Dark-native. The interface speaks it as a NEUTRAL charcoal (dark) / paper
+   (light) ladder, hairline edges, and light that collects on the ACTIVE
+   thing. ONE glowing element per screen maximum — --nx-glow is the
+   signature, not the wallpaper.
+
+   RELAY vNEXT — SURFACES RE-BASED (superseding Wave I1). Wave I1 neutralised
+   the surfaces to a whisper of the OLD brand hue (violet, hue 286) so cards
+   stopped reading as literally purple. The Relay migration replaces that
+   whisper-of-violet ladder with DESIGN.md's own literal neutral values
+   (Ink/Carbon/Graphite/Mineral dark; White/Light Canvas/Light Subtle light) —
+   the design system's committed source of truth, not a derived approximation.
+   INK follows the same source (text/muted/faint). ACCENT is no longer
+   workspace-owned: Signal Lime is invariant (see the accent block below);
+   per-workspace tenant colour survives only as CONTEXT on pills/chips/tiles
+   (DESIGN.md §5), never as this global accent.
+
+   SCOPE — GLOBAL, unchanged from Wave A: token DEFINITIONS live on :root
+   (dark values default) with light overrides on :root:not(.dark), consumed
+   by every src/core/ui primitive under every selectable layout.
+
+   NAMESPACE: --nx- only. --sx- is taken by the sign-in / vault surface (still
+   live, re-based to Relay alongside this block). --edge- is retired (Wave I1)
+   — do not revive it. --scripe-* (top of file) is the canonical identity
+   source of truth that this block and --sx-* both read from.
+
+   STATUS colours are NOT defined here: nexus READS the global measured
+   --success/--warning/--warning-strong/--info/--destructive tokens, defined in
+   the GLOBAL SEMANTIC TOKENS block above.
+
+   CONTRAST — the DESIGN.md neutral ladder (Ink/Carbon/Graphite/Mineral,
+   dark text #F7F8F5 / muted #B9BDB8 / faint #8C918D; light text #0D0D0E /
+   muted #4B504C / faint #6F756F) is the design system's own committed,
+   measured set of values (DESIGN.md §10 requires body >= 4.5:1, large/non-
+   text >= 3:1) — used verbatim rather than re-derived here. Lime-as-fill
+   pairs only with Ink (#0D0D0E) per the Lime rule; Lime-as-text is used only
+   on dark surfaces, Accent Text Light (#4C6200) carries that duty on light.
+   --nx-raised-2 (dark #1D2022, light derived one step below --nx-raised) has
+   no direct DESIGN.md equivalent; it preserves the original ladder's
+   raised->raised-2 delta on the new base values.
+
+   MOTION: micro / standard / panel. Enter easing cubic-bezier(0.23,1,0.32,1);
+   exit cubic-bezier(0.3,0,0.8,0.15) at ~2/3 of the enter duration. Overlays
+   scale 0.95→1 from their trigger origin — nothing slides in from an edge.
+   Reduced motion strips position/scale movement and keeps crossfades.
+   ============================================================================ */
+:root {
+  /* surfaces — DESIGN.md's dark ladder verbatim: canvas/surface/raised/subtle. */
+  --nx-ground: #050506;
+  --nx-surface: #0d0d0e;
+  --nx-raised: #151719; /* raised surfaces AND hover states */
+  --nx-raised-2: #1d2022; /* the extra step above raised (DESIGN.md "subtle") */
+
+  /* ink — DESIGN.md dark text/muted/faint verbatim */
+  --nx-ink: #f7f8f5;
+  --nx-ink-2: #b9bdb8;
+  --nx-ink-3: #8c918d;
+
+  /* hairlines — DESIGN.md dark edge/strong-edge (Graphite) verbatim */
+  --nx-line: #2c3033;
+  --nx-line-hi: #3f4347;
+
+  /* accent — RELAY vNEXT: Signal Lime is the one committed brand signal, and
+     it is INVARIANT, not workspace-derived. Text and fill keep opposite
+     contrast duties (two tokens): --nx-accent is the readable "as text/edge"
+     value (Lime itself on dark, Accent Text Light on light), --nx-accent-fill
+     is the constant Lime fill, and --nx-on-fill is ALWAYS Ink — a Lime fill
+     with a white label fails DESIGN.md's Lime rule outright.
+     Per-workspace tenant colour survives as CONTEXT (pills/chips/avatars/hub
+     tiles reading --workspace-hue/chroma directly via WorkspaceGroup.ts), not
+     as this global accent — see DESIGN.md §5. */
+  --nx-accent: var(--scripe-accent-text, #c6ff00);
+  --nx-accent-fill: var(--scripe-signal, #c6ff00);
+  --nx-on-fill: var(--scripe-accent-fg, #0d0d0e);
+  --nx-accent-wash: color-mix(in oklch, var(--nx-accent-fill) 13%, transparent);
+
+  /* secondary — retired as a distinct cyan brand hue (DESIGN.md bans old
+     cyan as global identity); kept as an alias of the measured --info token
+     so consumers with no fallback (commercial.css) keep resolving to
+     something sane rather than an invalid/transparent background. */
+  --nx-secondary: hsl(var(--info));
+
+  /* the signature glow — at most ONE element per screen wears this. Built
+     from the constant Lime fill (not the theme-tuned accent-as-text value)
+     so the glow stays vivid Signal Lime in both themes. */
+  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent-fill) 50%, transparent);
+
+  /* motion */
+  --nx-t-micro: 140ms;
+  --nx-t-standard: 200ms;
+  --nx-t-panel: 300ms;
+  --nx-ease-enter: cubic-bezier(0.23, 1, 0.32, 1);
+  --nx-ease-exit: cubic-bezier(0.3, 0, 0.8, 0.15);
+
+  /* ── Wave A extensions ──────────────────────────────────────────────────
+     Consumed by the core/ui primitives; same scope and theming rules as the
+     Wave-1 tokens above. */
+
+  /* geometry — one radius ladder for every primitive */
+  --nx-radius-sm: 6px; /* chips, badges, inner elements */
+  --nx-radius-control: 8px; /* inputs, buttons, selects */
+  --nx-radius-md: 10px; /* popovers, dropdown panels */
+  --nx-radius-lg: 14px; /* cards, dialogs */
+
+  /* overlay surface + depth ladder */
+  --nx-popover: var(--nx-raised);
+  --nx-shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --nx-shadow-popover: 0 8px 24px -8px rgb(0 0 0 / 0.6), 0 2px 8px -2px rgb(0 0 0 / 0.4);
+  --nx-shadow-modal: 0 24px 64px -16px rgb(0 0 0 / 0.7), 0 8px 24px -8px rgb(0 0 0 / 0.5);
+  /* upward-facing: sticky bottom bars (action bars, comparison trays) */
+  --nx-shadow-bar-top: 0 -8px 24px -8px rgb(0 0 0 / 0.6), 0 -2px 8px -2px rgb(0 0 0 / 0.4);
+
+  /* the modal scrim — alias of the global --scrim; ONE scrim system */
+  --nx-scrim: var(--scrim);
+
+  /* hover tint — layers over any nx surface; reads the ink so it flips with
+     the theme by itself */
+  --nx-hover: color-mix(in srgb, var(--nx-ink) 5%, transparent);
+
+  /* focus — the lit edge: 1px inner accent line plus a soft accent wash
+     ring. Reads --nx-accent, so it follows the theme (Lime dark / Accent
+     Text Light light) — the one focus law, invariant across workspaces. */
+  --nx-focus: inset 0 0 0 1px var(--nx-accent), 0 0 0 3px var(--nx-accent-wash);
+
+  /* status — aliases of the global measured status tokens; nexus never
+     re-derives status colours. COMPLETE colours (hsl-wrapped), like every
+     other --nx- token. They flip with the theme through the vars they read. */
+  --nx-danger: hsl(var(--destructive));
+  --nx-warning: hsl(var(--warning));
+  --nx-info: hsl(var(--info));
+  --nx-success: hsl(var(--success));
+}
+
+:root:not(.dark) {
+  /* near-neutral paper — DESIGN.md's light ladder verbatim: canvas/surface/
+     subtle (used as the raised/hover step, same rationale as before: raised
+     must read visibly different from a white surface). */
+  --nx-ground: #f7f8f5;
+  --nx-surface: #ffffff;
+  --nx-raised: #eef0eb; /* hover tint in light — darker than surface by design */
+  --nx-raised-2: #e6e8e3; /* one step past raised; no direct DESIGN.md 4th step */
+
+  --nx-ink: #0d0d0e;
+  --nx-ink-2: #4b504c;
+  --nx-ink-3: #6f756f;
+
+  --nx-line: #d5d9d3;
+  --nx-line-hi: #aeb4ad;
+
+  /* Accent Text Light (#4C6200): Signal Lime itself is not legible body text
+     on a white surface, so the "as text/edge" duty uses the darker readable
+     value here. Fill and --nx-on-fill are theme-invariant and inherit from
+     the dark block above — Lime fill + Ink foreground never changes. */
+  --nx-accent: var(--scripe-accent-text, #4c6200);
+  --nx-accent-wash: color-mix(in oklch, var(--nx-accent-fill) 10%, transparent);
+
+  /* softer on light ground — a glow over white reads as smudge at dark-mode
+     strength. Still built from the constant Lime fill. */
+  --nx-glow: 0 0 18px -2px color-mix(in oklch, var(--nx-accent-fill) 32%, transparent);
+
+  /* ── Wave A extensions — light overrides ────────────────────────────────
+     Radius, scrim, hover, focus and status aliases need no override: they
+     read vars that flip themselves. Popover cannot reuse --nx-raised here
+     because raised is the light HOVER tint; popovers stay on white. Shadows
+     stay much softer than dark's — dark-strength black on white reads as
+     dirt — and are cast in Ink (#0D0D0E / rgb(13 13 14)), the same neutral
+     the surfaces derive from, never a hue-tinted black. */
+  --nx-popover: var(--nx-surface);
+  --nx-shadow-sm: 0 1px 2px rgb(13 13 14 / 0.08);
+  --nx-shadow-popover: 0 8px 24px -8px rgb(13 13 14 / 0.16), 0 2px 8px -2px rgb(13 13 14 / 0.08);
+  --nx-shadow-modal: 0 24px 64px -16px rgb(13 13 14 / 0.24), 0 8px 24px -8px rgb(13 13 14 / 0.12);
+  --nx-shadow-bar-top: 0 -8px 24px -8px rgb(13 13 14 / 0.16), 0 -2px 8px -2px rgb(13 13 14 / 0.08);
+}
+
+/* ============================================================================
+   TABLE STYLES — [data-table-style] (settings-driven)
+   ----------------------------------------------------------------------------
+   generic-table emits data-table-style on its root; this section is the
+   consumer. Four survivors, one best default — a calm hairline table out of
+   the box, with the louder skins as explicit opt-ins for a specific data need:
+
+     default  — flush hairline frame, hairline rows, sticky header on
+                --nx-surface, calm background hover. No rules here by design:
+                the quietest correct table is the component's own skin, and it
+                ships as the app-wide default.
+     zebra    — default + an even-row ink wash, for dense numeric / financial
+                tables only. Hovered and selected rows stay excluded.
+     bordered — default + interior column hairlines at --nx-line, for true
+                grid / matrix data only; the frame keeps its default weight.
+     minimal  — frame and header chrome go transparent; only the row hairlines
+                remain, for embedding inside an already-bordered card.
+
+   "compact" is NO LONGER a skin — density is one deliberate axis driven by the
+   spacing setting (table.tsx getHeadDensity / getCellDensity), never conflated
+   with the visual style. The retired decorative skins (gradient, luxury,
+   matrix, neon, cyberpunk, glass, neumorphism, diamond) are dropped here; the
+   merge engine migrates their persisted values (glass → minimal, the rest →
+   default). The legacy "striped" value is honoured alongside "zebra" only
+   while that rename lands, so no shipped table loses its skin mid-migration.
+
+   SCOPE — every selector's first hop is `> div` off the attribute holder.
+   <html> also carries data-table-style (dom-applicator), but html's only
+   element children are head/body, so these rules can only fire from a
+   component root that re-declares the attribute — generic-table always does,
+   and the settings preview mirrors the same structure. That keeps raw
+   <table> primitives elsewhere unstyled and lets overrideTableStyle win by
+   construction. Colours are nx tokens only; edges are logical
+   (border-inline-*); the skins are static — no motion is added, so no
+   reduced-motion branch is owed here. */
+
+/* zebra — even rows carry a 4% ink wash so dense numeric columns keep their
+   place; it sits below the 5% --nx-hover step so row hover still reads.
+   Hovered and selected rows are excluded: the component's own hover crossfade
+   and the --nx-accent-wash selection stay the louder statements. The legacy
+   "striped" value renders here too until the settings rename lands. */
+:is([data-table-style="zebra"], [data-table-style="striped"])
+  > div
+  table
+  tbody
+  tr:nth-child(even):not(:hover):not([data-state="selected"]) {
+  background-color: color-mix(in srgb, var(--nx-ink) 4%, transparent);
+}
+
+/* bordered — interior column hairlines only, always --nx-line (never
+   --nx-line-hi, so the grid stays quiet); the frame keeps its default weight.
+   Collapsed table borders merge each cell's inline-end line with the sticky
+   actions column's own border-s instead of doubling it. */
+[data-table-style="bordered"] > div table :is(th, td):not(:last-child) {
+  border-inline-end: 1px solid var(--nx-line);
+}
+
+/* minimal — the frame, header band and pagination band drop their chrome; the
+   row hairlines carry the structure on transparent ground, for embedding
+   inside an already-bordered card. The `> div` hop also lands on the search
+   and mobile-card wrappers, which have no border/fill to clear; the mobile
+   card slabs are nested deeper and keep their --nx-surface, as do the sticky
+   actions cells (their own bg-nx-surface), so a scrolled column can't read
+   through them and the surface seam vanishes against the host card. */
+[data-table-style="minimal"] > div {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+[data-table-style="minimal"] > div table thead tr {
+  background-color: transparent;
 }

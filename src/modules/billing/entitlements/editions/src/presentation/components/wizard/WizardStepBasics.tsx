@@ -1,0 +1,282 @@
+// FILE-EXCEPTION: file length
+"use client";
+
+import { Label } from "@core/ui/label";
+import { Input } from "@core/ui/input";
+import { Textarea } from "@core/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Tag, Globe, Award, ShieldAlert } from "lucide-react";
+import type {
+  CreateEditionRequest,
+  UpdateEditionRequest,
+} from "../../../domain/entities/EditionRequests";
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for edition option.
+ */
+export interface EditionOption {
+  id: string;
+  name: string;
+  displayNameEn?: string;
+}
+
+interface WizardStepBasicsProps {
+  form: CreateEditionRequest | UpdateEditionRequest;
+  onChange: (updates: Partial<UpdateEditionRequest | CreateEditionRequest>) => void;
+  isEditMode?: boolean;
+  availableEditions?: EditionOption[];
+}
+
+function SectionHeader({
+  icon: Icon,
+  title,
+  desc,
+}: {
+  icon: React.ElementType;
+  title: string;
+  desc: string;
+}) {
+  return (
+    <div className="mb-5 flex items-start gap-3 border-b border-nx-line pb-4">
+      <div className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-nx-md bg-nx-accent-wash">
+        <Icon className="h-4.5 w-4.5 text-nx-accent" />
+      </div>
+      <div>
+        <h3 className="text-sm font-semibold text-nx-ink">{title}</h3>
+        <p className="mt-0.5 text-xs text-nx-ink-3">{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Presentation UI component rendering the wizard step basics.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
+export function WizardStepBasics({
+  form,
+  onChange,
+  isEditMode = false,
+  availableEditions = [],
+}: WizardStepBasicsProps) {
+  const { t } = useI18n();
+
+  return (
+    <div className="space-y-10">
+      {/* ── Section 1: Identity ── */}
+      <section>
+        <SectionHeader
+          icon={Tag}
+          title={t("entitlements.editions.wizard.identitySection")}
+          desc={t("entitlements.editions.wizard.identitySectionDesc")}
+        />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="name">
+              {t("entitlements.editions.wizard.internalName")}{" "}
+              <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="name"
+              value={form.name ?? ""}
+              onChange={(e) => onChange({ name: e.target.value })}
+              placeholder={t("entitlements.editions.wizard.internalNamePlaceholder")}
+              className="font-mono text-sm"
+              disabled={isEditMode}
+            />
+            <p className="text-xs text-nx-ink-3">
+              {t("entitlements.editions.wizard.internalNameDesc")}
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="tierLevel">
+              {t("entitlements.editions.wizard.tierLevel")}{" "}
+              <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="tierLevel"
+              type="number"
+              min={0}
+              max={100}
+              value={form.tierLevel ?? 0}
+              onChange={(e) => onChange({ tierLevel: parseInt(e.target.value) || 0 })}
+              placeholder={t("entitlements.editions.wizard.tierLevelPlaceholder")}
+            />
+            <p className="text-xs text-nx-ink-3">
+              {t("entitlements.editions.wizard.tierLevelDesc")}
+            </p>
+          </div>
+        </div>
+        <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="category">
+              {t("entitlements.editions.wizard.category")}
+            </Label>
+            <Input
+              id="category"
+              value={form.category ?? ""}
+              onChange={(e) => onChange({ category: e.target.value })}
+              placeholder={t("entitlements.editions.wizard.categoryPlaceholder")}
+            />
+            <p className="text-xs text-nx-ink-3">
+              {t("entitlements.editions.wizard.categoryDesc")}
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 2: Display ── */}
+      <section>
+        <SectionHeader
+          icon={Globe}
+          title={t("entitlements.editions.wizard.displaySection")}
+          desc={t("entitlements.editions.wizard.displaySectionDesc")}
+        />
+        <div className="space-y-5">
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="displayNameEn">
+                {t("entitlements.editions.wizard.displayNameEn")}{" "}
+                <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="displayNameEn"
+                value={form.displayNameEn ?? ""}
+                onChange={(e) => onChange({ displayNameEn: e.target.value })}
+                placeholder={t("entitlements.editions.wizard.displayNameEnPlaceholder")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="displayNameAr">
+                {t("entitlements.editions.wizard.displayNameAr")}
+              </Label>
+              <Input
+                id="displayNameAr"
+                value={form.displayNameAr ?? ""}
+                onChange={(e) => onChange({ displayNameAr: e.target.value })}
+                placeholder={t("entitlements.editions.wizard.displayNameArPlaceholder")}
+                dir="rtl"
+              />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="tagline">
+              {t("entitlements.editions.wizard.tagline")}
+            </Label>
+            <Input
+              id="tagline"
+              value={form.tagline ?? ""}
+              onChange={(e) => onChange({ tagline: e.target.value })}
+              placeholder={t("entitlements.editions.wizard.taglinePlaceholder")}
+              maxLength={200}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="description">
+              {t("entitlements.editions.wizard.description")}
+            </Label>
+            <Textarea
+              id="description"
+              value={form.description ?? ""}
+              onChange={(e) => onChange({ description: e.target.value })}
+              placeholder={t("entitlements.editions.wizard.descriptionPlaceholder")}
+              rows={3}
+              className="resize-none"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Section 3: Badges ── */}
+      <section>
+        <SectionHeader
+          icon={Award}
+          title={t("entitlements.editions.wizard.badgeSection")}
+          desc={t("entitlements.editions.wizard.badgeSectionDesc")}
+        />
+        <div className="space-y-2">
+          <Label htmlFor="recommendationLabels">
+            {t("entitlements.editions.wizard.badgeLabels")}
+          </Label>
+          <Input
+            id="recommendationLabels"
+            value={form.recommendationLabels ?? ""}
+            onChange={(e) => onChange({ recommendationLabels: e.target.value })}
+            placeholder={t("entitlements.editions.wizard.badgeLabelsPlaceholder")}
+            className="font-mono text-sm"
+          />
+          <p className="text-xs text-nx-ink-3">
+            {t("entitlements.editions.wizard.badgeLabelsDesc")}
+          </p>
+        </div>
+      </section>
+
+      {/* ── Section 4: Downgrade / Fallback Policy ── */}
+      <section>
+        <SectionHeader
+          icon={ShieldAlert}
+          title={t("entitlements.editions.wizard.overflowSection")}
+          desc={t("entitlements.editions.wizard.overflowSectionDesc")}
+        />
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className="space-y-2">
+            <Label htmlFor="overflowPolicy">
+              {t("entitlements.editions.wizard.overflowPolicy")}
+            </Label>
+            <Select
+              value={form.overflowPolicy ?? "Block"}
+              onValueChange={(v) => onChange({ overflowPolicy: v })}
+            >
+              <SelectTrigger id="overflowPolicy">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Block">
+                  {t("entitlements.editions.wizard.overflowBlock")}
+                </SelectItem>
+                <SelectItem value="Archive">
+                  {t("entitlements.editions.wizard.overflowArchive")}
+                </SelectItem>
+                <SelectItem value="Delete">
+                  {t("entitlements.editions.wizard.overflowDelete")}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-nx-ink-3">
+              {t("entitlements.editions.wizard.overflowPolicyDesc")}
+            </p>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="fallbackEditionId">
+              {t("entitlements.editions.wizard.fallbackEdition")}
+            </Label>
+            <Select
+              value={form.fallbackEditionId ?? "__none__"}
+              onValueChange={(v) =>
+                onChange({ fallbackEditionId: v === "__none__" ? undefined : v })
+              }
+            >
+              <SelectTrigger id="fallbackEditionId">
+                <SelectValue placeholder={t("entitlements.editions.wizard.noFallback")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">
+                  {t("entitlements.editions.wizard.noFallback")}
+                </SelectItem>
+                {availableEditions.map((ed) => (
+                  <SelectItem key={ed.id} value={ed.id}>
+                    {ed.displayNameEn || ed.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-nx-ink-3">
+              {t("entitlements.editions.wizard.fallbackEditionDesc")}
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}

@@ -1,0 +1,186 @@
+/**
+ * UserGroup Service
+ *
+ * Handles all API calls for the User Groups module.
+ * Returns Models (DTOs) - Repository uses Mapper to convert to Entities.
+ *
+ * @module user-groups/data
+ */
+import type { IApiService } from "@core/interfaces/api.interface";
+import { buildUrl } from "@/core/config/api-endpoints/_shared";
+import {
+  UserGroupModel,
+  type UserGroupJson,
+  type UserGroupListResponseJson,
+} from "../models/UserGroupModel";
+import type {
+  CreateUserGroupRequest,
+  UpdateUserGroupRequest,
+  AddMembersRequest,
+  SetGroupRolesRequest,
+  SetGroupRestrictionsRequest,
+} from "../../domain/entities/UserGroupRequests";
+import { USER_GROUPS_ENDPOINTS } from "./user-groups.endpoints";
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group service list params.
+ */
+export interface UserGroupServiceListParams {
+  page: number;
+  pageSize: number;
+  search?: string;
+  tenantId?: string;
+  isActive?: boolean;
+}
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for user group list result.
+ */
+export interface UserGroupListResult {
+  items: UserGroupModel[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+/**
+ * Http API network service for user group.
+ * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
+ */
+export class UserGroupService {
+  constructor(private readonly api: IApiService) {}
+
+  async getAll(params: UserGroupServiceListParams): Promise<UserGroupListResult> {
+    const url = buildUrl(USER_GROUPS_ENDPOINTS.LIST, {
+      page: params.page,
+      pageSize: params.pageSize,
+      search: params.search,
+      tenantId: params.tenantId,
+      isActive: params.isActive,
+    });
+
+    const response = await this.api.get<UserGroupListResponseJson>(url);
+
+    return {
+      items: response.items.map((json) => UserGroupModel.fromJson(json)),
+      totalCount: response.totalCount,
+      page: response.pageNumber,
+      pageSize: response.pageSize,
+      totalPages: response.totalPages,
+      hasNextPage: response.hasNextPage,
+      hasPreviousPage: response.hasPreviousPage,
+    };
+  }
+
+  async getMyTenantGroups(
+    params: Omit<UserGroupServiceListParams, "tenantId">
+  ): Promise<UserGroupListResult> {
+    const url = buildUrl(USER_GROUPS_ENDPOINTS.MY_TENANT_GROUPS, {
+      page: params.page,
+      pageSize: params.pageSize,
+      search: params.search,
+      isActive: params.isActive,
+    });
+
+    const response = await this.api.get<UserGroupListResponseJson>(url);
+
+    return {
+      items: response.items.map((json) => UserGroupModel.fromJson(json)),
+      totalCount: response.totalCount,
+      page: response.pageNumber,
+      pageSize: response.pageSize,
+      totalPages: response.totalPages,
+      hasNextPage: response.hasNextPage,
+      hasPreviousPage: response.hasPreviousPage,
+    };
+  }
+
+  async getById(id: string): Promise<UserGroupModel> {
+    const json = await this.api.get<UserGroupJson>(USER_GROUPS_ENDPOINTS.BY_ID(id));
+    return UserGroupModel.fromJson(json);
+  }
+
+  async getByTenantId(tenantId: string): Promise<UserGroupModel[]> {
+    const json = await this.api.get<UserGroupJson[]>(USER_GROUPS_ENDPOINTS.BY_TENANT(tenantId));
+    return json.map((j) => UserGroupModel.fromJson(j));
+  }
+
+  async create(request: CreateUserGroupRequest): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(USER_GROUPS_ENDPOINTS.CREATE, request);
+  }
+
+  async createForMyTenant(
+    request: Omit<CreateUserGroupRequest, "tenantId">
+  ): Promise<{ id: string }> {
+    return this.api.post<{ id: string }>(USER_GROUPS_ENDPOINTS.CREATE_FOR_MY_TENANT, request);
+  }
+
+  async update(id: string, request: UpdateUserGroupRequest): Promise<void> {
+    await this.api.put(USER_GROUPS_ENDPOINTS.UPDATE(id), request);
+  }
+
+  async delete(id: string, cascadeAdmins?: boolean): Promise<void> {
+    const url = cascadeAdmins
+      ? `${USER_GROUPS_ENDPOINTS.DELETE(id)}?cascadeAdmins=true`
+      : USER_GROUPS_ENDPOINTS.DELETE(id);
+    await this.api.delete(url);
+  }
+
+  async toggleStatus(id: string, isActive: boolean, cascadeAdmins?: boolean): Promise<void> {
+    // Note: Single toggle is handled via Update endpoint in the backend for now,
+    // but we can pass it as a special small payload or we might need to rely on the bulk endpoints
+    // Wait, looking at the UserGroupsController from earlier, there isn't a single toggle endpoint.
+    // The single toggle status was previously done via an implicit Bulk Update.
+    // So we'll hit the bulk endpoint passing this single ID
+    const url = isActive
+      ? USER_GROUPS_ENDPOINTS.BULK.ACTIVATE
+      : USER_GROUPS_ENDPOINTS.BULK.DEACTIVATE;
+    await this.api.post(url, { ids: [id], cascadeAdmins });
+  }
+
+  async addMembers(groupId: string, request: AddMembersRequest): Promise<void> {
+    await this.api.post(USER_GROUPS_ENDPOINTS.ADD_MEMBERS(groupId), request);
+  }
+
+  async removeMember(groupId: string, adminId: string): Promise<void> {
+    await this.api.delete(USER_GROUPS_ENDPOINTS.REMOVE_MEMBER(groupId, adminId));
+  }
+
+  async setRoles(groupId: string, request: SetGroupRolesRequest): Promise<void> {
+    await this.api.put(USER_GROUPS_ENDPOINTS.SET_ROLES(groupId), request);
+  }
+
+  async setRestrictions(groupId: string, request: SetGroupRestrictionsRequest): Promise<void> {
+    await this.api.put(USER_GROUPS_ENDPOINTS.SET_RESTRICTIONS(groupId), request);
+  }
+
+  async bulkActivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+    const response = await this.api.post<{ affectedRows?: number } | number>(
+      USER_GROUPS_ENDPOINTS.BULK.ACTIVATE,
+      { ids, cascadeAdmins }
+    );
+    if (typeof response === "number") return response;
+    return response.affectedRows ?? ids.length;
+  }
+
+  async bulkDeactivate(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+    const response = await this.api.post<{ affectedRows?: number } | number>(
+      USER_GROUPS_ENDPOINTS.BULK.DEACTIVATE,
+      { ids, cascadeAdmins }
+    );
+    if (typeof response === "number") return response;
+    return response.affectedRows ?? ids.length;
+  }
+
+  async bulkDelete(ids: string[], cascadeAdmins?: boolean): Promise<number> {
+    const response = await this.api.post<{ affectedRows?: number } | number>(
+      USER_GROUPS_ENDPOINTS.BULK.DELETE,
+      { ids, cascadeAdmins }
+    );
+    if (typeof response === "number") return response;
+    return response.affectedRows ?? ids.length;
+  }
+}

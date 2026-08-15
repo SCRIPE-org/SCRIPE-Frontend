@@ -75,7 +75,9 @@ export type DarkBackgroundTheme =
   | "volcanic";
 
 export type ShadowIntensity = "none" | "subtle" | "moderate" | "strong";
-export type BackgroundMode = "preset" | "gradient" | "custom";
+// "custom" retired in Wave C: nothing consumed the custom colour vars. Stored
+// "custom" values resolve to "preset" via the merge-engine migration.
+export type BackgroundMode = "preset" | "gradient";
 
 // ── Gradient Themes ───────────────────────────────────────
 
@@ -121,62 +123,11 @@ export type DarkGradientTheme =
 
 // ── Layout ────────────────────────────────────────────────
 
-export type LayoutTemplate =
-  | "modern"
-  | "minimal"
-  | "classic"
-  | "compact"
-  | "floating"
-  | "elegant"
-  | "navigation"
-  | "tabbed"
-  | "dual"
-  | "command"
-  | "stacked"
-  | "hud"
-  | "dock"
-  | "executive"
-  | "magazine"
-  | "spotlight"
-  | "glassmorphism"
-  | "galaxy"
-  | "neon"
-  | "retro"
-  | "aurora"
-  | "rail"
-  | "newspaper"
-  | "cinema"
-  | "vault"
-  // Batch 1 — Navigation Innovations
-  | "bottombar"
-  | "megamenu"
-  | "breadcrumb"
-  | "ribbon"
-  | "treeview"
-  | "overlay"
-  // Batch 2 — Multi-Zone / Pro
-  | "hub"
-  | "wizard"
-  | "shelf"
-  | "collapseheader"
-  | "splitpane"
-  | "inbox"
-  // Batch 3 — More Pro Patterns
-  | "dualheader"
-  | "topside"
-  | "focus"
-  | "multipanel"
-  | "kanban"
-  | "bento"
-  // Batch 4 — Industry-Specific
-  | "chat"
-  | "map"
-  | "feed"
-  | "calendar"
-  | "crm"
-  | "terminal"
-  // Nexus — Dual-rail workspace layout (system default)
-  | "nexus";
+// The multi-layout system was retired in favour of a single shell (nexus)
+// governed entirely by the settings provider tokens/attributes. Stored values
+// naming any of the old layouts are normalised to "nexus" by the merge-engine
+// migration, so this union stays a single member with no runtime breakage.
+export type LayoutTemplate = "nexus";
 
 // ── Component Styles ──────────────────────────────────────
 
@@ -186,10 +137,7 @@ export type AnimationSpeed = "slow" | "normal" | "fast";
 export type Theme = "light" | "dark" | "system";
 export type FontSize = "xs" | "small" | "medium" | "default" | "large" | "xl";
 export type BorderRadius = "none" | "small" | "default" | "large" | "full";
-export type SidebarPosition = "left" | "right";
 
-export type HeaderStyle = "default" | "compact" | "elevated" | "transparent";
-export type SidebarStyle = "default" | "compact" | "floating" | "minimal";
 export type ButtonStyle =
   | "default"
   | "small-round"
@@ -310,34 +258,12 @@ export type DatePickerStyle =
   | "elegant";
 export type CalendarStyle = "default" | "modern" | "glass" | "elegant" | "minimal" | "dark";
 
-export type SelectStyle =
-  | "default"
-  | "modern"
-  | "glass"
-  | "outlined"
-  | "filled"
-  | "minimal"
-  | "elegant"
-  | "professional"
-  | "neon"
-  | "gradient"
-  | "neumorphism"
-  | "cyberpunk"
-  | "luxury"
-  | "aurora"
-  | "matrix"
-  | "diamond"
-  | "holographic"
-  | "cosmic"
-  | "liquid"
-  | "crystal"
-  | "plasma"
-  | "quantum"
-  | "nebula"
-  | "prism"
-  | "stellar"
-  | "vortex"
-  | "phoenix";
+// Twenty-six invented skins collapsed to one token surface — the select now
+// renders the same field language as Input, which is the whole point of a
+// design system. This union is checked against PERSISTED values, so every
+// retired name is normalised to "default" by the merge-engine migration
+// (RETIRED_SELECT_STYLES) before it can reach a merge.
+export type SelectStyle = "default";
 
 export type SwitchStyle =
   | "default"
@@ -431,10 +357,23 @@ export type HoverEffectType =
 export type HoverEffectIntensity = "none" | "small" | "medium" | "strong";
 
 // ── Settings Interface ────────────────────────────────────
+//
+// Wave C cull: the header/sidebar style + position fields, the four custom
+// colour fields, the toast icon/duration pair, and the compact-mode flag were
+// removed — each had zero behavioural readers (no CSS selector, no live
+// component). Stored copies of culled fields are dropped by the merge-engine
+// migration (see its cull list), so stale persisted JSON still deserialises
+// cleanly.
 
 export interface Settings {
   // Color and theme
   colorTheme: ColorTheme;
+  // True once the user has actively picked colorTheme —
+  // gates whether dom-applicator writes data-theme (and so flips --primary).
+  // Until then the workspace's own --workspace-hue/--workspace-chroma (the
+  // tenant/product brand colour) is the sole accent source, unopposed. See
+  // dom-applicator.ts and appearance-group.tsx for the read/write sides.
+  colorThemeCustomized: boolean;
   lightBackgroundTheme: LightBackgroundTheme;
   darkBackgroundTheme: DarkBackgroundTheme;
   shadowIntensity: ShadowIntensity;
@@ -442,10 +381,6 @@ export interface Settings {
   gradientDirection: GradientDirection;
   lightGradientTheme: LightGradientTheme;
   darkGradientTheme: DarkGradientTheme;
-  customPrimaryColor: string;
-  customSecondaryColor: string;
-  customLightBgColor: string;
-  customDarkBgColor: string;
   activePalette: string;
   backgroundMode: BackgroundMode;
   gradientStartColor: string;
@@ -456,11 +391,8 @@ export interface Settings {
   fontSize: FontSize;
   showDetailPanel: boolean;
   borderRadius: BorderRadius;
-  sidebarPosition: SidebarPosition;
 
   // Component styles
-  headerStyle: HeaderStyle;
-  sidebarStyle: SidebarStyle;
   buttonStyle: ButtonStyle;
   navigationStyle: NavigationStyle;
   spacingSize: SpacingSize;
@@ -480,7 +412,6 @@ export interface Settings {
   showBreadcrumbs: boolean;
   showUserAvatar: boolean;
   showNotifications: boolean;
-  compactMode: boolean;
   highContrast: boolean;
   reducedMotion: boolean;
   stickyHeader: boolean;
@@ -504,8 +435,6 @@ export interface Settings {
 
   // Toast
   toastStyle: ToastStyle;
-  showToastIcons: boolean;
-  toastDuration: number;
 
   // Hover effects
   hoverEffectType: HoverEffectType;

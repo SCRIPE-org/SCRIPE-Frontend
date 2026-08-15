@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef, Suspense } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
+import { cn } from "@core/common/utils";
 
 /**
  * Programmatically start the global routing progress bar.
@@ -69,7 +70,7 @@ function RoutingProgressBarInner() {
       fadeTimer.current = setTimeout(() => {
         setVisible(false);
         setProgress(0);
-      }, 300); // Duration matches the CSS opacity transition
+      }, 300); // Outlasts the fade (duration-nx-standard) before unmounting
     }, 180);
   }, []);
 
@@ -110,7 +111,7 @@ function RoutingProgressBarInner() {
         }
 
         startRoutingProgress();
-      } catch (err) {
+      } catch {
         // Safe fallback in case of parsing errors
       }
     };
@@ -144,30 +145,33 @@ function RoutingProgressBarInner() {
   if (!visible) return null;
 
   return (
+    // z-toast, not a raw 99999: the bar has to clear a dialog it was fired
+    // from, and hand-picked numbers are exactly how the old stack put a toast
+    // behind the modal that raised it.
+    // aria-hidden because the bar is feedback for a navigation the router is
+    // already announcing — a second live region for the same event is noise.
     <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        height: "3px",
-        zIndex: 99999,
-        pointerEvents: "none",
-        opacity: opacity,
-        transition: "opacity 300ms ease-in-out",
-      }}
+      aria-hidden="true"
+      className={cn(
+        "pointer-events-none fixed inset-x-0 top-0 z-toast h-1",
+        "transition-opacity duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+        opacity ? "opacity-100" : "opacity-0"
+      )}
     >
+      {/* Scaled rather than resized: this bar animates on every navigation,
+          and width changes force layout on each frame while a transform is
+          composited. The origin follows the reading direction so the bar fills
+          from the side the user starts reading on.
+          Colour is --nx-accent, which already interpolates to the live
+          workspace hue — the hand-mixed three-stop oklch() gradient and its
+          coloured drop shadow were a second, unmeasured accent living on the
+          one piece of chrome that sits above every page. */}
       <div
-        style={{
-          height: "100%",
-          width: `${progress}%`,
-          // Vibrant violet-purple-indigo gradient that fits perfectly with B2B SaaS aesthetics
-          background:
-            "linear-gradient(90deg, oklch(0.6 0.18 290) 0%, oklch(0.55 0.18 275) 50%, oklch(0.65 0.18 310) 100%)",
-          // Premium glowing dropshadow effect
-          boxShadow: "0 1px 10px oklch(0.6 0.18 290 / 0.6), 0 0 4px oklch(0.6 0.18 290 / 0.4)",
-          transition: "width 200ms ease-out",
-        }}
+        className={cn(
+          "h-full w-full origin-left bg-nx-accent rtl:origin-right",
+          "transition-transform duration-nx-standard ease-nx-enter motion-reduce:transition-none"
+        )}
+        style={{ transform: `scaleX(${progress / 100})`, willChange: "transform" }}
       />
     </div>
   );

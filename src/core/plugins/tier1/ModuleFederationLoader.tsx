@@ -2,7 +2,8 @@
 
 import { Suspense, useState, useEffect, ComponentType } from "react";
 import { Skeleton } from "@core/ui/skeleton";
-import { AlertTriangle } from "lucide-react";
+import { ErrorMessage } from "@core/ui/error-message";
+import { useI18n } from "@core/providers/i18n-provider";
 import { buildRemoteEntryUrl } from "./federation-config";
 import { appLogger } from "@/core/common/logger";
 
@@ -28,10 +29,14 @@ export function ModuleFederationLoader({
   scope,
   module: exposedModule = "./Plugin",
 }: ModuleFederationLoaderProps) {
+  const { t } = useI18n();
   const [PluginComponent, setPluginComponent] = useState<ComponentType<{
     installationId: string;
   }> | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // A flag, not a message: the sentence the user reads is built at render time
+  // so it follows the active language, while the technical cause stays in the
+  // log where it belongs.
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     const remoteEntryUrl = buildRemoteEntryUrl(baseUrl, pluginKey);
@@ -41,25 +46,30 @@ export function ModuleFederationLoader({
       .then((Component) => setPluginComponent(() => Component))
       .catch((err) => {
         appLogger.error(`[PluginLoader] Failed to load Tier 1 plugin "${pluginKey}"`, err);
-        setError(`Failed to load plugin "${pluginKey}"`);
+        setHasError(true);
       });
   }, [pluginKey, baseUrl, scope, exposedModule]);
 
-  if (error) {
+  if (hasError) {
     return (
-      <div className="flex items-center gap-2 p-6 text-destructive">
-        <AlertTriangle className="h-5 w-5" />
-        <span className="text-sm">{error}</span>
-      </div>
+      <ErrorMessage size="sm" message={t("errors.plugin.loadFailed", { plugin: pluginKey })} />
     );
   }
 
+  const placeholder = (
+    <Skeleton
+      className="h-64 w-full rounded-nx-lg"
+      role="status"
+      aria-label={t("common.loading")}
+    />
+  );
+
   if (!PluginComponent) {
-    return <Skeleton className="h-64 w-full rounded-xl" />;
+    return placeholder;
   }
 
   return (
-    <Suspense fallback={<Skeleton className="h-64 w-full rounded-xl" />}>
+    <Suspense fallback={placeholder}>
       <PluginComponent installationId={installationId} />
     </Suspense>
   );

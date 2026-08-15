@@ -1,0 +1,36 @@
+export const en = {
+  mergeCandidate: {
+    title: "Merge Candidates",
+    description: "Manage Merge Candidates",
+    addNew: "Add",
+    editTitle: "Edit",
+    deleteTitle: "Delete",
+    deleteConfirm: "Are you sure you want to delete this record?",
+    noItems: "No records found",
+    searchPlaceholder: "Search...",
+    columns: {
+      primaryPartyId: "Primary Party ID",
+      duplicatePartyId: "Duplicate Party ID",
+      matchScore: "Match Confidence",
+      status: "Status",
+      reason: "Reason",
+      createdAt: "Created",
+    },
+    form: {
+      primaryPartyId: "Primary Party ID",
+      primaryPartyIdPlaceholder: "Enter the primary (surviving) party's ID",
+      duplicatePartyId: "Duplicate Party ID",
+      duplicatePartyIdPlaceholder: "Enter the suspected duplicate party's ID",
+      status: "Status",
+      statusPlaceholder: "Select a review status",
+      reason: "Reason",
+      reasonPlaceholder: "Why are these parties suspected duplicates?",
+    },
+    statuses: {
+      Pending: "Pending",
+      Confirmed: "Confirmed",
+      Rejected: "Rejected",
+      Merged: "Merged",
+    },
+  },
+};

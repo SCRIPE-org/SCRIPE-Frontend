@@ -16,6 +16,19 @@ import { EnhancedToaster } from "@core/ui/enhanced-toaster";
 import { QueryAwareErrorBoundary } from "@core/ui/error-boundary";
 import { TooltipProvider } from "@core/ui/tooltip";
 import { RoutingProgressBar } from "@core/ui/routing-progress-bar";
+// Side-effect-only registration imports. These must run inside the client
+// module graph, not from the (server) root layout: a bare `import "./x"`
+// with no used binding, reached only from an async Server Component, was
+// silently dropped from the client bundle entirely -- registerXExtension()
+// never ran in the browser, so every consumer read back an empty registry
+// with no error (see customFieldsExtension.tsx's registeredApi). AppProvider
+// is itself rendered as JSX from layout.tsx, so its own import graph is
+// unconditionally part of the client bundle -- these are guaranteed to run.
+import "@modules/auth"; // Eagerly run component registrations
+import "@modules/identity"; // Eagerly run identity registrations
+import "@modules/customization"; // Eagerly run customization registrations
+import "@modules/entitlements"; // Eagerly run entitlements registrations
+import "@/modules/custom-fields/custom-fields/bootstrap"; // Registers the CustomFields GenericCrudView extension
 
 // Lazy-load React Query DevTools — dev only, zero production bundle cost
 const ReactQueryDevtools =

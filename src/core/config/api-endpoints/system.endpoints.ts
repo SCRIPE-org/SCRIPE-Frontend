@@ -33,4 +33,15 @@ export const SYSTEM_ENDPOINTS = {
     IMAGE: `${V1}/uploads/image`,
     VIDEO: `${V1}/uploads/video`,
   },
+
+  // ── Session-based downloads (DownloadsController) ──────────────────────
+  // CREATE_SESSION mints a short-lived, single-file session token (auth +
+  // medias.view required — see DownloadsController.CreateSession). BY_SESSION
+  // redeems it with no Authorization header ([AllowAnonymous]), which is the
+  // whole point: native <img>/<video> tags can never carry a Bearer header,
+  // so this is how they render files now that /api/files itself requires one.
+  DOWNLOADS: {
+    CREATE_SESSION: `${V1}/downloads/session`,
+    BY_SESSION: (sessionId: string) => `${V1}/downloads/session/${sessionId}`,
+  },
 };

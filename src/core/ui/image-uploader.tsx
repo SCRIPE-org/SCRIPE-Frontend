@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useRef, useState, useCallback } from "react";
-import { Upload, X, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
+import { Upload, X, Image as ImageIcon, AlertCircle } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { Progress } from "@core/ui/progress";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useSettings } from "@core/providers/settings-provider";
 import {
   convertFileToBase64,
   validateImageFile,
@@ -13,6 +13,7 @@ import {
   formatFileSize,
   getImageDimensions,
 } from "@core/common/image-utils";
+import Image from "next/image";
 
 export interface ImageUploaderProps {
   id?: string;
@@ -66,8 +67,7 @@ export function ImageUploader({
   aspectRatio,
   conversionOptions = {},
 }: ImageUploaderProps) {
-  const { t, direction } = useI18n();
-  const settings = useSettings();
+  const { t } = useI18n();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(
     value && (value.startsWith("data:image") || value.startsWith("http")) ? value : null
@@ -213,17 +213,27 @@ export function ImageUploader({
     }
   }, [disabled, isUploading]);
 
+  // The drop zone. Rest is a dashed hairline over the sunken field ground;
+  // hover lifts the hairline; DRAGGING is the one moment light collects — the
+  // accent edge and the accent wash, at 140ms, with no scale, no coloured
+  // shadow and no bounce. Inert is the raised slab.
+  //
+  // The old `aspect-[${aspectRatio}]` never compiled (Tailwind cannot see a
+  // runtime string), so a caller-supplied ratio silently did nothing; it is an
+  // inline style now and actually works.
   const containerClasses = cn(
-    "relative border-2 border-dashed rounded-xl transition-all duration-300",
-    "flex flex-col items-center justify-center overflow-hidden",
-    "group cursor-pointer",
-    disabled ? "opacity-50 cursor-not-allowed" : "",
+    "group relative flex cursor-pointer flex-col items-center justify-center overflow-hidden rounded-nx-control border border-dashed",
+    "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+    "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
     isDragging
-      ? "border-primary bg-primary/10 scale-[1.02] shadow-lg shadow-primary/20"
-      : preview
-        ? "border-border hover:border-primary/50 bg-muted/30"
-        : "border-border hover:border-primary/50 hover:bg-muted/30 hover:shadow-md",
-    aspectRatio ? `aspect-[${aspectRatio}]` : "min-h-[240px]",
+      ? "border-nx-accent bg-nx-accent-wash"
+      : "border-nx-line bg-nx-ground hover:border-nx-line-hi hover:bg-nx-hover",
+    // dashed = an invitation to drop; once there IS an image the frame goes
+    // solid, because the zone is now a container, not an empty slot
+    preview && showPreview && !isDragging && "border-solid",
+    disabled &&
+      "cursor-not-allowed border-nx-line bg-nx-raised hover:border-nx-line hover:bg-nx-raised",
+    !aspectRatio && "min-h-60",
     className
   );
 
@@ -242,169 +252,139 @@ export function ImageUploader({
 
       <div
         className={containerClasses}
+        style={aspectRatio ? { aspectRatio } : undefined}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onClick={handleClick}
+        onKeyDown={(e) => {
+          if (disabled || isUploading) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleClick();
+          }
+        }}
         role="button"
-        aria-label={placeholder || t("imageUploader.placeholder") || "Upload image"}
+        aria-label={placeholder || t("imageUploader.placeholder")}
+        aria-disabled={disabled || undefined}
+        aria-busy={isUploading || undefined}
         tabIndex={disabled ? -1 : 0}
       >
         {isUploading ? (
-          <div className="flex flex-col items-center justify-center space-y-4 p-8">
-            <div className="relative h-16 w-16">
-              <div className="absolute inset-0 rounded-full border-4 border-primary/20"></div>
-              <div
-                className="absolute inset-0 animate-spin rounded-full border-4 border-transparent border-t-primary"
-                style={{
-                  clipPath: `polygon(0 0, 100% 0, 100% ${uploadProgress}%, 0 ${uploadProgress}%)`,
-                }}
-              ></div>
-            </div>
-            <div className="space-y-1 text-center">
-              <p className="text-sm font-medium text-foreground">
-                {t("imageUploader.uploading") || "Uploading..."}
-              </p>
-              <p className="text-xs text-muted-foreground">{uploadProgress}%</p>
-            </div>
+          // Honest progress: a determinate bar and a tabular percentage, not a
+          // clip-path ring pretending to be a loader.
+          <div className="flex w-full max-w-xs flex-col items-center gap-3 p-8">
+            <p className="text-sm font-medium text-nx-ink">
+              {t("imageUploader.uploading")}
+            </p>
+            <Progress value={uploadProgress} className="h-1 w-full bg-nx-raised" />
+            <p className="text-xs tabular-nums text-nx-ink-3">{uploadProgress}%</p>
           </div>
         ) : preview && showPreview ? (
-          <div className="group relative h-full w-full">
-            <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-            <img
+          // Filled: the image is the content, so nothing hovers over it — no
+          // gradient scrim, no zoom on hover, and the remove control is
+          // ALWAYS visible instead of hiding until the pointer arrives.
+          <div className="relative h-full w-full">
+            <Image
               src={preview}
-              alt={t("imageUploader.preview") || "Preview"}
-              className={cn(
-                "h-full w-full rounded-xl object-cover transition-transform duration-300 group-hover:scale-105",
-                aspectRatio && `aspect-[${aspectRatio}]`
-              )}
+              alt={t("imageUploader.preview")}
+              fill
+              unoptimized
+              className="h-full w-full object-cover"
+              style={aspectRatio ? { aspectRatio } : undefined}
             />
-            {imageDimensions && (
-              <div className="absolute bottom-2 left-2 right-2 z-20 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <div className="rounded-lg bg-black/70 px-3 py-1.5 text-xs text-white backdrop-blur-sm">
-                  {imageDimensions.width} × {imageDimensions.height}px
-                </div>
-              </div>
-            )}
             {!disabled && (
               <Button
                 type="button"
-                variant="destructive"
+                variant="outline"
                 size="icon"
-                className="absolute right-3 top-3 z-20 opacity-0 shadow-lg transition-all duration-300 hover:scale-110 group-hover:opacity-100"
+                className="absolute end-3 top-3 z-raised h-8 w-8 bg-nx-surface text-nx-ink-3 hover:text-nx-danger"
                 onClick={handleRemove}
-                aria-label={t("imageUploader.remove") || "Remove image"}
+                aria-label={t("imageUploader.remove")}
               >
-                <X className="h-4 w-4" />
+                <X className="h-4 w-4" aria-hidden="true" />
               </Button>
             )}
-            <div className="absolute left-3 top-3 z-20 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-              <div className="rounded-full bg-green-500/90 p-1.5 shadow-lg backdrop-blur-sm">
-                <CheckCircle2 className="h-4 w-4 text-white" />
-              </div>
-            </div>
           </div>
         ) : (
-          <div className="flex w-full flex-col items-center justify-center space-y-5 p-8 text-center">
-            {/* Icon Container */}
+          // Empty: one neutral tile, one instruction, one action. The tile is a
+          // raised step, not a gradient; the accent appears only while a file
+          // is actually over the zone.
+          <div className="flex w-full flex-col items-center justify-center gap-4 p-8 text-center">
             <div
               className={cn(
-                "rounded-2xl p-6 transition-all duration-300",
-                isDragging
-                  ? "scale-110 bg-primary/20"
-                  : "bg-gradient-to-br from-muted via-muted/50 to-background group-hover:from-primary/10 group-hover:via-primary/5 group-hover:to-muted"
+                "rounded-nx-md p-5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                isDragging ? "bg-nx-accent-wash" : "bg-nx-raised"
               )}
             >
               <ImageIcon
-                className={cn(
-                  "h-10 w-10 transition-colors duration-300",
-                  isDragging ? "text-primary" : "text-muted-foreground group-hover:text-primary"
-                )}
+                className={cn("h-8 w-8", isDragging ? "text-nx-accent" : "text-nx-ink-3")}
+                aria-hidden="true"
               />
             </div>
 
-            {/* Text Content */}
-            <div className="max-w-sm space-y-2">
-              <p
-                className={cn(
-                  "text-base font-semibold transition-colors duration-300",
-                  isDragging ? "text-primary" : "text-foreground"
-                )}
-              >
+            <div className="max-w-sm space-y-1">
+              <p className="text-sm font-medium text-nx-ink">
                 {isDragging
-                  ? t("imageUploader.dropHere") || "Drop image here"
-                  : placeholder ||
-                    t("imageUploader.placeholder") ||
-                    "Click to upload or drag and drop"}
+                  ? t("imageUploader.dropHere")
+                  : placeholder || t("imageUploader.placeholder")}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {t("imageUploader.supportedFormats") || "PNG, JPG, GIF, WEBP"} up to{" "}
-                <span className="font-medium text-foreground">
+              <p className="text-xs text-nx-ink-3">
+                {t("imageUploader.supportedFormats")} up to{" "}
+                <span className="font-medium tabular-nums text-nx-ink-2">
                   {(maxSize / (1024 * 1024)).toFixed(0)}MB
                 </span>
               </p>
             </div>
 
-            {/* Upload Button */}
             <Button
               type="button"
-              variant={isDragging ? "default" : "outline"}
-              size="lg"
+              variant="outline"
               disabled={disabled}
               onClick={(e) => {
                 e.stopPropagation();
                 handleClick();
               }}
-              className={cn(
-                "transition-all duration-300",
-                isDragging && "scale-105 shadow-lg shadow-primary/20"
-              )}
             >
-              <Upload
-                className={cn(
-                  "h-4 w-4 transition-transform duration-300",
-                  direction === "rtl" ? "ml-2" : "mr-2",
-                  isDragging && "scale-110"
-                )}
-              />
-              {t("imageUploader.selectFile") || "Select File"}
+              <Upload className="me-2 h-4 w-4" aria-hidden="true" />
+              {t("imageUploader.selectFile")}
             </Button>
-          </div>
-        )}
-
-        {/* Drag Overlay */}
-        {isDragging && (
-          <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl border-4 border-dashed border-primary bg-primary/5">
-            <div className="rounded-2xl border-2 border-primary/30 bg-primary/10 p-6 backdrop-blur-sm">
-              <Upload className="h-12 w-12 animate-bounce text-primary" />
-            </div>
           </div>
         )}
       </div>
 
-      {/* Error Message */}
+      {/* Error — a hairline block in danger ink; the tint is a color-mix of the
+          measured token, so it holds in both themes. */}
       {error && (
-        <div className="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive/10 p-3 text-destructive">
-          <AlertCircle className="h-4 w-4 flex-shrink-0" />
-          <p className="text-sm font-medium">{error}</p>
+        <div
+          role="status"
+          className="flex items-start gap-2 rounded-nx-control border border-nx-danger bg-[color-mix(in_srgb,var(--nx-danger)_10%,transparent)] p-3 text-nx-danger"
+        >
+          <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" aria-hidden="true" />
+          <p className="text-xs font-medium leading-relaxed">{error}</p>
         </div>
       )}
 
       {/* Helper Text */}
       {!error && !preview && required && (
-        <p className="flex items-center gap-1 text-xs text-muted-foreground">
-          <span className="text-destructive">*</span>
-          {t("common.required") || "Required"}
+        <p className="flex items-center gap-1 text-xs text-nx-ink-3">
+          <span aria-hidden="true" className="text-nx-danger">
+            *
+          </span>
+          {t("common.required")}
         </p>
       )}
 
-      {/* Image Info */}
+      {/* Image Info — the metadata the hover chip used to hide: always on, on a
+          hairline strip, digits tabular. */}
       {preview && imageDimensions && (
-        <div className="flex items-center justify-between rounded-lg bg-muted/50 p-2 text-xs text-muted-foreground">
-          <span>
+        <div className="flex items-center justify-between gap-3 rounded-nx-control border border-nx-line bg-nx-surface px-3 py-2 text-xs text-nx-ink-3">
+          <span className="tabular-nums">
             {imageDimensions.width} × {imageDimensions.height}px
           </span>
-          {value && value.length > 0 && <span>{formatFileSize(value.length)}</span>}
+          {value && value.length > 0 && (
+            <span className="tabular-nums">{formatFileSize(value.length)}</span>
+          )}
         </div>
       )}
     </div>

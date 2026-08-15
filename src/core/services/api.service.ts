@@ -12,6 +12,7 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { authBroadcast } from "@core/common/broadcast-auth";
 import { STORAGE_KEYS } from "../config/storage-keys";
 import { DownloadInterceptedError, isExternalAbort } from "../errors/download-intercepted";
+import { translateCore } from "@core/common/i18n-outside-react";
 
 /**
  * Generate a UUID v4 string.
@@ -66,17 +67,24 @@ function setCsrfToken(token: string | null): void {
 }
 
 // P1.5: Cache language in module-level variable — avoids localStorage.getItem() on every request
+//
+// Reads STORAGE_KEYS.LANGUAGE ("scr_lang" — see i18n-provider.tsx, the only writer of this
+// key). This used to read a bare "language" key that nothing in the app ever wrote, so
+// cachedLanguage was permanently stuck on its "en" default and every request's
+// Accept-Language header silently ignored the user's actual selected UI language — an
+// Arabic-speaking user's server-localized error messages (e.g. via ILocalizer) would
+// always come back in English regardless of their language preference.
 let cachedLanguage: string =
-  typeof window !== "undefined" ? localStorage.getItem("language") || "en" : "en";
+  typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEYS.LANGUAGE) || "en" : "en";
 if (typeof window !== "undefined") {
   window.addEventListener("storage", (e) => {
-    if (e.key === "language" && e.newValue) cachedLanguage = e.newValue;
+    if (e.key === STORAGE_KEYS.LANGUAGE && e.newValue) cachedLanguage = e.newValue;
   });
   // Also intercept direct writes from same tab
   const originalSetItem = localStorage.setItem;
   localStorage.setItem = function (key: string, value: string) {
     originalSetItem.call(this, key, value);
-    if (key === "language") cachedLanguage = value;
+    if (key === STORAGE_KEYS.LANGUAGE) cachedLanguage = value;
   };
 }
 
@@ -132,7 +140,12 @@ export class ApiService implements IApiService {
   private logoutHandler: (() => void) | null = null;
 
   constructor(baseUrl: string = process.env.NEXT_PUBLIC_API_URL || "/api") {
-    const normalizedBaseUrl = baseUrl.startsWith("http") ? baseUrl : `https://${baseUrl}`;
+    // A leading "/" means same-origin relative (the documented dev/monolith default,
+    // e.g. "/api") — it must stay relative. Coercing it into `https://${baseUrl}`
+    // produces an authority-less "https:///api" URL that resolves to a bogus host
+    // (F-03). Only a bare host with no scheme (e.g. "api.scripe.org") needs coercion.
+    const normalizedBaseUrl =
+      baseUrl.startsWith("http") || baseUrl.startsWith("/") ? baseUrl : `https://${baseUrl}`;
 
     // Authenticated instance
     this.axiosInstance = axios.create({
@@ -228,6 +241,20 @@ export class ApiService implements IApiService {
 
         // Handle 401 - attempt token refresh
         if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          // If a fresh token was already stored while this request was in-flight (e.g. via RouteGuard or broadcast),
+          // retry immediately with the fresh token without triggering another refresh cycle.
+          const activeToken = secureTokenService.getAccessToken();
+          const sentToken = originalRequest.headers?.Authorization?.toString().replace(/^Bearer\s+/i, "") ?? "";
+          if (activeToken && activeToken !== sentToken) {
+            appLogger.auth("Newer token already present in secureTokenService — retrying request immediately");
+            if (originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${activeToken}`;
+            }
+            return this.axiosInstance(originalRequest);
+          }
+
           // Issue #8: DI timing race — if no refresh handler is wired yet,
           // just reject the promise instead of calling handleUnauthorized.
           // The route-guard will handle session restore.
@@ -248,7 +275,6 @@ export class ApiService implements IApiService {
             });
           }
 
-          originalRequest._retry = true;
           this.isRefreshing = true;
 
           try {
@@ -290,23 +316,52 @@ export class ApiService implements IApiService {
           return Promise.reject(new DownloadInterceptedError());
         }
 
-        // Handle 403 — two cases:
+        // Handle 403 — three cases, checked in order:
         if (error.response?.status === 403) {
-          const data = error.response.data as { error?: string; message?: string };
+          const data = (error.response.data ?? {}) as {
+            error?: string;
+            errorCode?: string;
+            message?: string;
+          };
 
-          // Case 1: Drill-down tenant context forbidden — clear context silently
-          if (data.error === "TENANT_CONTEXT_FORBIDDEN") {
-            appLogger.warn("Tenant context forbidden - clearing context");
+          // Case 1: Drill-down tenant-context checks (TenantContextMiddleware on the
+          // backend) — always resolved by silently clearing the bad context, never a
+          // hard redirect. TENANT_CONTEXT_FORBIDDEN/INVALID/OUT_OF_SCOPE are the three
+          // codes that middleware can emit (see TenantContextMiddleware.cs).
+          const tenantContextCodes = new Set([
+            "TENANT_CONTEXT_FORBIDDEN",
+            "TENANT_CONTEXT_INVALID",
+            "TENANT_CONTEXT_OUT_OF_SCOPE",
+          ]);
+          if (data.error && tenantContextCodes.has(data.error)) {
+            appLogger.warn(`Tenant context rejected (${data.error}) - clearing context`);
             this.setTenantContext(null);
             if (typeof window !== "undefined") {
               sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
             }
             return Promise.reject(
-              new Error(data.message || "You do not have permission to switch tenant context")
+              new Error(data.message || translateCore("errors.auth.tenantContextForbidden"))
             );
           }
 
-          // Case 2: Regular permission denied — navigate to /not-authorized
+          // Case 2: A scoped, business-rule rejection from our own Result/Error
+          // pipeline (see Core.Application.Common.ErrorResponse.FromError on the
+          // backend). A response shaped this way carries `errorCode` because it
+          // reached us through a controller action that ran and made a business
+          // decision about THIS specific request/record — e.g. "you can't edit this
+          // particular record because X" — not "you may not be on this page at all".
+          // Show it inline; do not navigate the user away from what they were doing.
+          if (data.errorCode) {
+            appLogger.warn(`Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`);
+            return Promise.reject(new Error(data.message || translateCore("errors.auth.forbidden")));
+          }
+
+          // Case 3: No structured error body — a real authorization/permission failure
+          // from the ASP.NET Core authorization middleware itself (a policy failure
+          // before the request ever reached a controller action returns an empty
+          // body), or a controller not yet migrated to ErrorResponse. Treated
+          // conservatively as "you have no business being on this page" and hard
+          // redirected, same as before.
           appLogger.warn("Permission denied (403) — redirecting to /not-authorized");
           if (
             typeof window !== "undefined" &&
@@ -315,9 +370,7 @@ export class ApiService implements IApiService {
           ) {
             window.location.href = "/not-authorized";
           }
-          return Promise.reject(
-            new Error(data.message || "You do not have permission to perform this action")
-          );
+          return Promise.reject(new Error(data.message || translateCore("errors.auth.forbidden")));
         }
 
         // Log other errors
@@ -372,12 +425,12 @@ export class ApiService implements IApiService {
       return data.message || data.error || `HTTP ${error.response.status}`;
     }
     if (error.code === "ECONNABORTED") {
-      return "Request timeout";
+      return translateCore("errors.network.timeout");
     }
     if (error.code === "ERR_NETWORK") {
-      return "Network error - please check your connection";
+      return translateCore("errors.network.offline");
     }
-    return error.message || "Unknown error";
+    return error.message || translateCore("errors.network.unknown");
   }
 
   /**

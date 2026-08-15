@@ -52,8 +52,19 @@ export function useEnhancedDelete() {
       // Call success callback
       deleteOptions.onSuccess?.();
     } catch (error) {
-      // Show error toast
+      // F2: surface the real backend/caught error instead of discarding it.
+      // Same bug class and same fix shape as F-78/F-98/F-99 in
+      // useGenericMutations.ts — read the real message off the caught error
+      // first, and only fall back to a caller override / generic string when
+      // the error carries nothing usable.
+      const err = error as {
+        message?: string;
+        response?: { data?: { message?: string; error?: string } };
+      };
       const errorMsg =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        err?.message ||
         deleteOptions.errorMessage ||
         `Failed to delete ${deleteOptions.itemType?.toLowerCase() || "item"}`;
 

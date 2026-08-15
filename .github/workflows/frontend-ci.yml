@@ -40,3 +40,12 @@ jobs:
           directory: coverage
           flags: frontend
         if: always()
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium firefox
+
+      # Non-blocking for now — only 2 specs exist today; promote to a required
+      # step once e2e coverage is broader.
+      - name: Run e2e tests
+        run: pnpm run test:e2e
+        continue-on-error: true

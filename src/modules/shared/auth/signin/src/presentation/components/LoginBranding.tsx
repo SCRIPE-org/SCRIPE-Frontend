@@ -1,0 +1,208 @@
+"use client";
+
+import type { TenantBranding } from "@modules/auth/core/domain/entities/TenantBranding";
+import { BRAND } from "@core/config/branding";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
+import { useI18n } from "@core/providers/i18n-provider";
+import { SlotRenderer } from "./SlotRenderer";
+import type { SlotConfig } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
+import Image from "next/image";
+
+interface BrandingCopyright {
+  copyrightText?: string | null;
+}
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for login branding props.
+ */
+export interface LoginBrandingProps {
+  branding?: TenantBranding | null;
+  slotConfig?: SlotConfig;
+  position?: "left" | "right";
+  transparent?: boolean;
+}
+
+/**
+ * LoginBranding — Tenant-branded side panel with slot-based content blocks.
+ *
+ * When custom blocks are provided via SlotConfig, renders them.
+ * Otherwise falls back to default feature cards (platform branding).
+ * Supports left/right positioning for split-left / split-right layouts.
+ */
+export function LoginBranding({
+  branding,
+  slotConfig,
+  position = "left",
+  transparent = false,
+}: LoginBrandingProps) {
+  const { t } = useI18n();
+  const features = [
+    {
+      icon: "🛡️",
+      label: t("auth.branding.featureSecurity"),
+      desc: t("auth.branding.featureSecurityDesc"),
+    },
+    {
+      icon: "🏢",
+      label: t("auth.branding.featureMultiTenant"),
+      desc: t("auth.branding.featureMultiTenantDesc"),
+    },
+    {
+      icon: "⚡",
+      label: t("auth.branding.featureRealtime"),
+      desc: t("auth.branding.featureRealtimeDesc"),
+    },
+  ];
+
+  // Resolve branding values with fallbacks
+  const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
+  const logoSrc = branding?.logoUrl ? resolvedLogoSrc || "/brand/app-logo-1024.png" : "/brand/app-logo-1024.png";
+  const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
+  const headline = branding?.loginHeadline || t("auth.branding.headline");
+  const subtitle = branding?.loginSubtitle || t("auth.branding.subtitle");
+  const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
+  const copyrightText =
+    branding && "copyrightText" in branding
+      ? (branding as TenantBranding & BrandingCopyright).copyrightText
+      : null;
+
+  // Check if we have custom slot content
+  const hasCustomSidebarContent = slotConfig?.slots?.["login.sidebar.content"]?.length;
+  const hasCustomSidebarTop = slotConfig?.slots?.["login.sidebar.top"]?.length;
+  const hasCustomSidebarBottom = slotConfig?.slots?.["login.sidebar.bottom"]?.length;
+  const hasAnySlotContent =
+    hasCustomSidebarContent || hasCustomSidebarTop || hasCustomSidebarBottom;
+
+  // Border direction based on panel position
+  const borderClass = position === "right" ? "border-l border-border" : "border-r border-border";
+
+  return (
+    <div
+      className={`relative hidden w-full flex-col justify-between overflow-hidden p-12 lg:flex lg:w-1/2 lg:p-16 xl:w-[55%] xl:p-24 ${borderClass}`}
+      style={
+        transparent
+          ? {
+              backgroundColor: "transparent",
+              backgroundImage: "none",
+            }
+          : {
+              backgroundColor:
+                "var(--login-panel-bg, var(--login-surface, hsl(var(--muted) / 0.4)))",
+              backgroundImage: "var(--login-panel-bg-image, var(--login-bg-image, none))",
+              backgroundSize: "var(--login-panel-bg-image-fit, var(--login-bg-image-fit, cover))",
+              backgroundPosition:
+                "var(--login-panel-bg-image-position, var(--login-bg-image-position, center))",
+              backgroundRepeat: "no-repeat",
+            }
+      }
+    >
+      {/* ── Panel Overlay (blur + color tint) ── */}
+      {!transparent && (
+        <div
+          className="login-panel-overlay"
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1,
+            pointerEvents: "none",
+            backgroundColor: "var(--login-panel-overlay-color, rgba(0,0,0,0.5))",
+            opacity: "var(--login-panel-overlay-opacity, 0)",
+            backdropFilter: "blur(var(--login-panel-overlay-blur, 0px))",
+          }}
+        />
+      )}
+
+      {/* ── Theme-Adaptive Background Patterns ── */}
+      <div
+        className="pointer-events-none absolute -left-1/4 -top-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
+        style={{
+          backgroundColor: branding?.primaryColor ? `${branding.primaryColor}0D` : undefined,
+        }}
+      >
+        {!branding?.primaryColor && <div className="h-full w-full rounded-full bg-primary/5" />}
+      </div>
+      <div
+        className="pointer-events-none absolute -bottom-1/4 -right-1/4 h-[800px] w-[800px] rounded-full blur-[120px]"
+        style={{
+          backgroundColor: branding?.secondaryColor ? `${branding.secondaryColor}0D` : undefined,
+        }}
+      >
+        {!branding?.secondaryColor && <div className="h-full w-full rounded-full bg-info/5" />}
+      </div>
+
+      {/* Subtle Grid overlay */}
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30 [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+
+      {/* ── Top: Logo + Sidebar Top Slot ── */}
+      <div className="relative z-10 space-y-6">
+        <div className="flex items-center gap-4">
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] shadow-sm">
+            <Image
+              src={logoSrc}
+              alt={`${logoAlt} Logo`}
+              width={80}
+              height={80}
+              priority
+              unoptimized
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          </div>
+        </div>
+        {slotConfig && <SlotRenderer slotId="login.sidebar.top" slotConfig={slotConfig} />}
+      </div>
+
+      {/* ── Main Content: Headline + Slot Content or Features ── */}
+      <div className="relative z-10 my-auto max-w-xl py-12">
+        <h1
+          className="login-heading leading-[1.12] tracking-tight text-[var(--login-text,hsl(var(--foreground)))]"
+          style={{ fontSize: "var(--login-size-headline, 3rem)" }}
+        >
+          {headline}
+        </h1>
+        <p className="login-subtitle mt-6 max-w-lg leading-relaxed text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+          {subtitle}
+        </p>
+
+        {/* Custom slot content OR default feature cards */}
+        {hasAnySlotContent && slotConfig ? (
+          <div className="mt-12">
+            <SlotRenderer slotId="login.sidebar.content" slotConfig={slotConfig} />
+          </div>
+        ) : !branding ? (
+          <div className="mt-16 grid gap-10">
+            {features.map((f, i) => (
+              <div key={i} className="group flex items-start gap-5">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-[var(--login-accent,hsl(var(--border)))] bg-[var(--login-surface,hsl(var(--background)))] shadow-sm transition-colors group-hover:bg-muted/50">
+                  <span className="text-xl">{f.icon}</span>
+                </div>
+                <div className="pt-1">
+                  <h3 className="text-base font-medium text-[var(--login-text,hsl(var(--foreground)))]">
+                    {f.label}
+                  </h3>
+                  <p className="mt-1.5 text-sm font-light text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+                    {f.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+      </div>
+
+      {/* ── Footer + Sidebar Bottom Slot ── */}
+      <div className="relative z-10 space-y-4">
+        {slotConfig && <SlotRenderer slotId="login.sidebar.bottom" slotConfig={slotConfig} />}
+        <div className="flex items-center gap-4 text-sm font-medium text-[var(--login-text-muted,hsl(var(--muted-foreground)))]">
+          <span>{copyrightText || `© ${new Date().getFullYear()} ${companyName}`}</span>
+          <span className="h-1 w-1 rounded-full bg-[var(--login-accent,hsl(var(--border)))]" />
+          <span className="text-xs uppercase tracking-widest opacity-80">
+            {t("auth.branding.trust")}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}

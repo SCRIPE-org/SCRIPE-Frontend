@@ -17,6 +17,7 @@ import {
   CommandList,
 } from "@core/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
+import { resolveFieldStyle } from "@core/ui/input";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useSettings } from "@core/providers/settings-provider";
@@ -181,42 +182,53 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       }
     }, [value]);
 
+    // The Settings inputStyle values, mapped onto the same token-backed
+    // treatments as the Wave-A Input recipe (legacy stored values fall back
+    // to default through resolveFieldStyle).
     const getContainerRoundedClass = React.useCallback(() => {
-      const style = settings.inputStyle || "default";
+      const style = resolveFieldStyle(settings.inputStyle);
       if (style === "underlined") {
-        return "rounded-none border-0 border-b-2 border-input px-0";
+        return "rounded-none border-0 border-b border-nx-line px-0";
       }
       if (style === "rounded") {
         return "rounded-full px-1";
       }
       if (style === "filled") {
-        return "rounded-lg bg-muted border-0";
+        return "rounded-nx-control border-transparent bg-nx-raised";
       }
-      return "rounded-md";
+      return "rounded-nx-control";
     }, [settings.inputStyle]);
 
+    // Focus lights the edge — the composite field carries the Input recipe on
+    // focus-within: border to accent plus the --nx-focus inset line/wash ring.
     const getFocusClasses = React.useCallback(() => {
-      const style = settings.inputStyle || "default";
+      const style = resolveFieldStyle(settings.inputStyle);
       if (style === "underlined") {
-        return "focus-within:border-primary focus-within:ring-0 focus-within:ring-offset-0";
+        return "focus-within:border-nx-accent";
       }
-      return "focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2";
+      return "focus-within:border-nx-accent focus-within:shadow-nx-focus";
     }, [settings.inputStyle]);
 
+    // The select's outer corners are always the field's start side; logical
+    // classes resolve them per direction, so no isRTL fork is needed here.
     const getSelectRoundedClass = React.useCallback(() => {
-      const style = settings.inputStyle || "default";
+      const style = resolveFieldStyle(settings.inputStyle);
       if (style === "underlined") {
         return "rounded-none";
       }
       if (style === "rounded") {
-        return isRTL ? "rounded-e-full" : "rounded-s-full";
+        return "rounded-s-full";
       }
       if (style === "filled") {
-        return isRTL ? "rounded-e-lg" : "rounded-s-lg";
+        return "rounded-s-nx-control";
       }
-      return isRTL ? "rounded-e-md" : "rounded-s-md";
-    }, [settings.inputStyle, isRTL]);
+      return "rounded-s-nx-control";
+    }, [settings.inputStyle]);
 
+    // The number input is remount-sensitive (a new component identity drops
+    // focus mid-typing), so it is memoised with EMPTY deps. aria-invalid
+    // therefore rides down as a prop on RPNInput below — the library forwards
+    // unknown props to this component — instead of being closed over here.
     const PhoneInputComponent = React.useMemo(() => {
       return React.forwardRef<HTMLInputElement, any>(
         function PhoneInputComponent(inputProps, inputRef) {
@@ -225,7 +237,10 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
               {...inputProps}
               ref={inputRef}
               className={cn(
-                "h-full w-full flex-1 bg-transparent px-3 py-2 text-sm placeholder:text-muted-foreground/60 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50",
+                // the composite frame owns the surface; the input contributes
+                // only type and ink — inert ink comes from the token, never
+                // from a half-transparent value
+                "h-full w-full flex-1 bg-transparent px-3 py-2 text-base tabular-nums placeholder:text-nx-ink-3 focus:outline-none disabled:cursor-not-allowed disabled:text-nx-ink-3 md:text-sm",
                 inputProps.className
               )}
             />
@@ -277,11 +292,19 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
         <RPNInput.default
           ref={ref as any}
           className={cn(
-            "flex items-center border border-input bg-background text-sm ring-offset-background transition-all",
+            // The shared field surface: sunken ground behind a hairline, the
+            // same hover lift and inert slab Input wears — a composite field
+            // must not read as a different control from a plain one.
+            "flex items-center border border-nx-line bg-nx-ground text-sm text-nx-ink transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+            "hover:border-nx-line-hi",
+            "has-[input:disabled]:cursor-not-allowed has-[input:disabled]:border-nx-line has-[input:disabled]:bg-nx-raised has-[input:disabled]:shadow-none",
             getContainerRoundedClass(),
             getFocusClasses(),
+            // Error re-hues the lit edge to the measured danger token — same
+            // geometry as --nx-focus, different hue, so the field reads wrong
+            // without shouting.
             error &&
-              "border-destructive focus-within:border-destructive focus-within:ring-destructive",
+              "border-nx-danger focus-within:border-nx-danger focus-within:shadow-[inset_0_0_0_1px_var(--nx-danger),0_0_0_3px_color-mix(in_srgb,var(--nx-danger)_18%,transparent)] hover:border-nx-danger",
             className
           )}
           dir={direction}
@@ -298,18 +321,24 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
           defaultCountry={detectedDefaultCountry}
           labels={labels}
           placeholder={placeholder}
+          // forwarded to the inner input by the library, so the number field
+          // announces itself as invalid the moment the frame turns danger
+          aria-invalid={error ? true : undefined}
           {...props}
         />
+        {/* Hint row: instruction on the start edge, live digit count on the
+            end. Tabular figures so the counter does not shuffle as it fills,
+            and it goes success-ink only at the exact expected length. */}
         {activeCountry && (
           <div
-            className="mt-1.5 flex items-center justify-between px-1 text-[11px] text-muted-foreground/70"
+            className="mt-1.5 flex items-center justify-between gap-3 px-1 text-xs text-nx-ink-3"
             dir={direction}
           >
             <span>{t("components.phoneInput.enterNational")}</span>
             <span
               className={cn(
-                "font-mono transition-colors duration-150",
-                enteredLength === expectedLength && "font-semibold text-emerald-500"
+                "shrink-0 font-mono tabular-nums transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                enteredLength === expectedLength && "font-semibold text-nx-success"
               )}
             >
               {enteredLength}/{expectedLength} {t("components.phoneInput.digits")}
@@ -364,19 +393,25 @@ const CountrySelect = ({
           type="button"
           variant="ghost"
           className={cn(
-            "flex h-full shrink-0 items-center gap-2 rounded-none border-0 bg-transparent px-3 text-foreground hover:bg-accent/15 focus:z-10 focus:ring-0 focus-visible:ring-0",
+            // Rides Button's own focus treatment (the --nx-focus lit edge);
+            // z-raised keeps the lit trigger above the field's hairline.
+            "flex h-full shrink-0 items-center gap-2 rounded-none border-0 bg-transparent px-3 text-nx-ink hover:bg-nx-hover focus-visible:z-raised disabled:text-nx-ink-3",
             roundedClass,
-            isRTL ? "border-e border-input" : "border-r border-input"
+            "border-e border-nx-line"
           )}
           disabled={disabled}
+          aria-label={countryName || t("components.phoneInput.searchPlaceholder")}
         >
           <FlagComponent country={value} countryName={countryName} />
           {value && (
-            <span className="text-sm font-medium text-foreground">
+            <span className="text-sm font-medium tabular-nums">
               +{RPNInput.getCountryCallingCode(value)}
             </span>
           )}
-          <ChevronsUpDown className={cn("h-4 w-4 shrink-0 opacity-50", disabled && "hidden")} />
+          <ChevronsUpDown
+            className={cn("h-4 w-4 shrink-0 text-nx-ink-3", disabled && "hidden")}
+            aria-hidden="true"
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[300px] p-0" align={isRTL ? "end" : "start"}>
@@ -397,14 +432,17 @@ const CountrySelect = ({
                     >
                       <FlagComponent country={option.value} countryName={name} />
                       <span className="flex-1 truncate text-sm">{name}</span>
-                      <span className="shrink-0 font-mono text-sm text-muted-foreground">
+                      {/* dial codes are a column of digits — tabular figures
+                          keep them aligned down the list */}
+                      <span className="shrink-0 font-mono text-sm tabular-nums text-nx-ink-3">
                         +{RPNInput.getCountryCallingCode(option.value)}
                       </span>
                       <Check
                         className={cn(
-                          "h-4 w-4 shrink-0",
-                          option.value === value ? "opacity-100" : "opacity-0"
+                          "h-4 w-4 shrink-0 text-nx-accent",
+                          option.value === value ? "visible" : "invisible"
                         )}
+                        aria-hidden="true"
                       />
                     </CommandItem>
                   );
@@ -420,9 +458,11 @@ const CountrySelect = ({
 const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
   const Flag = flags[country];
 
+  // No flag art for a country renders the neutral raised swatch alone —
+  // never an emoji placeholder, which rendered as tofu on several platforms.
   return (
-    <span className="flex h-4 w-6 shrink-0 items-center justify-center overflow-hidden rounded-sm bg-foreground/20">
-      {Flag ? <Flag title={countryName} /> : <span className="text-[10px]">🏳</span>}
+    <span className="flex h-4 w-6 shrink-0 items-center justify-center overflow-hidden rounded-nx-sm border border-nx-line bg-nx-raised-2">
+      {Flag ? <Flag title={countryName} /> : null}
     </span>
   );
 };

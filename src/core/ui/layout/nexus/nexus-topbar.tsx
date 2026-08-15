@@ -1,28 +1,33 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 /**
  * NexusTopbar
  *
- * Premium 56px header for the Nexus Dual-Rail Layout.
+ * 56px header for the Nexus Dual-Rail Layout, on the --nx- token layer.
  * - Panel toggle uses the same custom SVG icons as navigation-header.tsx (PanelMenuIcon / PanelCollapseIcon)
  * - Breadcrumbs are RTL-aware (flex-row-reverse + mirrored chevron)
- * - Background tinted from active workspace accent + settings card style
+ * - Background derived from --nx-surface + settings card style (glass/solid/default)
  * - Home button shown whenever pathname !== "/"
  * - Search palette trigger
+ *
+ * Settings behaviour (the topbar rides inside the layout's scroll region):
+ * - stickyHeader: sticky pins it to the top edge; off lets it scroll away
+ * - showBreadcrumbs: swaps the breadcrumb trail for a plain spacer
+ * - showNotifications: gates the mobile-controls notification bell
+ * - collapsibleSidebar: off hides the desktop panel toggle (mobile keeps its hamburger)
+ *
+ * Colour resolves in CSS per theme — no resolvedTheme reads, no hydration
+ * placeholder needed.
  */
 
-import { useState, useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
-import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
+import { LanguageSwitcher, NxThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
-import { useTheme } from "next-themes";
 import { BRAND } from "@core/config/branding";
-import { useNexusPalette } from "./_parts/nexus-theme-utils";
+import { cn, resolveBilingualLabel } from "@core/common/utils";
 import {
   TopbarBreadcrumbs,
   TopbarContextPill,
@@ -48,22 +53,15 @@ export function NexusTopbar({
   isPanelCollapsed,
 }: NexusTopbarProps) {
   const { direction, language, t } = useI18n();
-  const { accentColor, activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
-  const { cardStyle } = useSettings();
+  const { activeWorkspace, activeRootItem, isModuleMode } = useWorkspace();
+  const { cardStyle, showBreadcrumbs, showNotifications, stickyHeader, collapsibleSidebar } =
+    useSettings();
   const pathname = usePathname();
   const router = useRouter();
   const user = useAppStore((s) => s.user);
   const tenantCode = useAppStore((s) => s.tenantCode);
-  const { resolvedTheme } = useTheme();
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
   const isRTL = direction === "rtl";
-  const { isDark, accent: resolvedAccent } = useNexusPalette(
-    resolvedTheme === "dark",
-    accentColor || "#6258c4"
-  );
 
   // ── Breadcrumb segments ───────────────────────────────────────────────────
   const breadcrumbOverride = useNavigationStore((s) => s.breadcrumbOverride);
@@ -72,11 +70,14 @@ export function NexusTopbar({
   const parentName = segments[segments.length - 2] ?? "";
   const formattedPage = pageName.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-  const workspaceName = activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? "Platform";
+  const workspaceName =
+    activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? t("chrome.section.platform");
   const activeRootName = activeRootItem
-    ? language === "ar"
-      ? activeRootItem.nameAr || activeRootItem.nameEn
-      : activeRootItem.nameEn || activeRootItem.nameAr
+    ? resolveBilingualLabel(
+        activeRootItem.nameEn || activeRootItem.nameAr,
+        activeRootItem.nameAr || activeRootItem.nameEn,
+        language
+      )
     : null;
 
   const isIdString = (str: string): boolean => {
@@ -89,12 +90,13 @@ export function NexusTopbar({
   };
 
   const formatParentSegmentAsTitle = (parentSegment: string): string => {
-    if (!parentSegment) return "Details";
+    if (!parentSegment) return t("common.details");
     let word = parentSegment.replace(/[-_]/g, " ");
     if (word.toLowerCase().endsWith("s") && word.length > 1) {
       word = word.slice(0, -1);
     }
-    return word.replace(/\b\w/g, (c) => c.toUpperCase()) + " Details";
+    const capitalized = word.replace(/\b\w/g, (c) => c.toUpperCase());
+    return t("navigation.entityDetailsTitle", { entity: capitalized });
   };
 
   let displayPageName = formattedPage;
@@ -118,10 +120,11 @@ export function NexusTopbar({
     };
     search(activeRootItem.children);
     if (bestMatch) {
-      displayPageName =
-        language === "ar"
-          ? bestMatch.nameAr || bestMatch.nameEn || formattedPage
-          : bestMatch.nameEn || bestMatch.nameAr || formattedPage;
+      displayPageName = resolveBilingualLabel(
+        bestMatch.nameEn || bestMatch.nameAr || formattedPage,
+        bestMatch.nameAr || bestMatch.nameEn || formattedPage,
+        language
+      );
     }
   }
 
@@ -130,28 +133,24 @@ export function NexusTopbar({
     (user as any)?.tenantName ??
     (user?.firstName
       ? `${user.firstName} ${user?.lastName ?? ""}`.trim()
-      : (BRAND?.name ?? "Platform"));
+      : (BRAND?.name ?? t("chrome.section.platform")));
 
-  // ── Background — derived from cardStyle setting ───────────────────────────
+  // ── Background — derived from cardStyle setting, surface token only ───────
+  // Glass is the ONE opt-in frosted surface in this system, so it keeps its
+  // blur. The default branch used to be "subtle glass" — a frost nobody asked
+  // for, applied to the bar every page scrolls under. Default and solid are the
+  // same thing now: an opaque surface step behind a hairline.
   const bgStyle = (() => {
     if (cardStyle === "glass") {
       return {
-        background: isDark ? "rgba(10, 15, 28, 0.55)" : "rgba(255, 255, 255, 0.72)",
+        background: "color-mix(in oklch, var(--nx-surface, hsl(var(--card))) 62%, transparent)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
       };
     }
-    if (cardStyle === "solid") {
-      return {
-        background: isDark ? "hsl(var(--card))" : "hsl(var(--card))",
-        backdropFilter: "none",
-      };
-    }
-    // Default — subtle glass
     return {
-      background: isDark ? "rgba(10, 15, 28, 0.4)" : "rgba(255, 255, 255, 0.6)",
-      backdropFilter: "blur(12px)",
-      WebkitBackdropFilter: "blur(12px)",
+      background: "var(--nx-surface, hsl(var(--card)))",
+      backdropFilter: "none",
     };
   })();
 
@@ -165,23 +164,23 @@ export function NexusTopbar({
   const isOnHome =
     pathname === workspaceHomeRoute || (workspaceHomeRoute === "/" && pathname === "/");
 
-  if (!mounted) return <header data-nexus-topbar="" style={{ height: 56, flexShrink: 0 }} />;
-
   return (
     <header
       data-nexus-topbar=""
+      // Sticky pins the bar to the scroll region's top edge; z-sticky keeps
+      // passing content (z-raised and below) under the glass. Non-sticky just
+      // flows — it scrolls away with the page.
+      className={cn(stickyHeader ? "sticky top-0 z-sticky" : "relative z-raised")}
       style={{
         height: 56,
         minHeight: 56,
         flexShrink: 0,
-        borderBottom: isDark ? "1px solid rgba(255,255,255,0.05)" : "1px solid rgba(0,0,0,0.05)",
+        borderBottom: "1px solid var(--nx-line, hsl(var(--border)))",
         display: "flex",
         alignItems: "center",
         paddingInlineStart: 20,
         paddingInlineEnd: 12,
         gap: 12,
-        zIndex: 30,
-        position: "relative",
         direction: isRTL ? "rtl" : "ltr",
         ...bgStyle,
       }}
@@ -189,9 +188,9 @@ export function NexusTopbar({
       {/* Mobile hamburger / Desktop Panel Toggle */}
       <TopbarPanelToggle
         isRTL={isRTL}
-        isDark={isDark}
         isPanelCollapsed={isPanelCollapsed}
-        ariaLabel={t("navigation.togglePanel") || "Toggle navigation"}
+        collapsible={collapsibleSidebar}
+        ariaLabel={t("navigation.togglePanel")}
         onToggle={() => {
           if (typeof window !== "undefined" && window.innerWidth < 1024) {
             onMobileMenuOpen();
@@ -201,14 +200,18 @@ export function NexusTopbar({
         }}
       />
 
-      {/* Breadcrumbs */}
-      <TopbarBreadcrumbs
-        isRTL={isRTL}
-        isDark={isDark}
-        workspaceName={workspaceName}
-        activeRootName={activeRootName}
-        displayPageName={displayPageName}
-      />
+      {/* Breadcrumbs — the spacer keeps the right-side controls parked at the
+          inline end when the trail is switched off */}
+      {showBreadcrumbs ? (
+        <TopbarBreadcrumbs
+          isRTL={isRTL}
+          workspaceName={workspaceName}
+          activeRootName={activeRootName}
+          displayPageName={displayPageName}
+        />
+      ) : (
+        <div aria-hidden style={{ flex: 1, minWidth: 0 }} />
+      )}
 
       {/* Right-side controls */}
       <div
@@ -219,24 +222,16 @@ export function NexusTopbar({
           flexShrink: 0,
         }}
       >
-        <TopbarContextPill
-          isDark={isDark}
-          isModuleMode={isModuleMode}
-          resolvedAccent={resolvedAccent}
-          tenantName={tenantName}
-        />
+        <TopbarContextPill isModuleMode={isModuleMode} tenantName={tenantName} />
 
         <TopbarSearchButton
-          isRTL={isRTL}
-          isDark={isDark}
           onOpenSearch={onOpenSearch}
-          placeholder={t("navigation.searchPlaceholder") || "Search anything…"}
+          placeholder={t("navigation.searchPlaceholder")}
         />
 
         {!isOnHome && (
           <TopbarHomeButton
-            isDark={isDark}
-            ariaLabel={language === "ar" ? "الصفحة الرئيسية" : "Go to Home"}
+            ariaLabel={t("chrome.goToHome")}
             onClick={() => {
               startRoutingProgress();
               router.push(workspaceHomeRoute);
@@ -245,11 +240,11 @@ export function NexusTopbar({
         )}
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all" />
-          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-muted-foreground hover:text-foreground hover:bg-secondary rounded-[9px] transition-all" />
+          <NxThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+          <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>
 
-        <TopbarMobileControls />
+        <TopbarMobileControls showNotifications={showNotifications} />
       </div>
     </header>
   );

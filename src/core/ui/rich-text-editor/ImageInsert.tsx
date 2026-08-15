@@ -1,13 +1,28 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useId, useState } from "react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Separator } from "@core/ui/separator";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
-import { Image as ImageIcon } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
+import { useI18n } from "@core/providers/i18n-provider";
+import { Image as ImageIcon, X } from "lucide-react";
 import type { Editor } from "@tiptap/react";
+
+// ─── Constants ────────────────────────────────────────────────
+// Mirrors the accept list on the file input below and the default cap used
+// by ImageUploadField, so rejection rules are consistent across the app.
+const ALLOWED_IMAGE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/gif",
+  "image/svg+xml",
+  "image/webp",
+];
+const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
 
 // ─── Component ──────────────────────────────────────────────
 export function ImageInsert({
@@ -17,10 +32,14 @@ export function ImageInsert({
   editor: Editor;
   onUpload?: (file: File) => Promise<string>;
 }) {
+  const { t } = useI18n();
   const [url, setUrl] = useState("");
   const [open, setOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const fileRef = React.useRef<HTMLInputElement>(null);
+  const urlId = useId();
+  const uploadId = useId();
 
   const insertFromUrl = () => {
     if (url) {
@@ -33,6 +52,23 @@ export function ImageInsert({
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !onUpload) return;
+
+    setValidationError(null);
+
+    // Client-side gate before handing off to onUpload — the `accept=` on the
+    // input is not enforced by browsers/OS pickers, so it is not a real guard.
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+      setValidationError(t("imageUpload.invalidType"));
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setValidationError(
+        t("imageUpload.tooLarge", { max: Math.round(MAX_IMAGE_SIZE_BYTES / (1024 * 1024)) })
+      );
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
 
     try {
       setUploading(true);
@@ -49,26 +85,38 @@ export function ImageInsert({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="h-8 w-8 p-0"
-          title="Insert Image"
-        >
-          <ImageIcon className="h-4 w-4" />
-        </Button>
-      </PopoverTrigger>
+      <TooltipProvider delayDuration={300}>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <PopoverTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                aria-label={t("editor.toolbar.image.trigger")}
+              >
+                <ImageIcon className="h-4 w-4" aria-hidden="true" />
+              </Button>
+            </PopoverTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">{t("editor.toolbar.image.trigger")}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
       <PopoverContent className="w-72 p-3" align="start">
         <div className="space-y-3">
           <div className="space-y-1.5">
-            <Label className="text-xs">Image URL</Label>
+            <Label htmlFor={urlId} className="text-xs">
+              {t("editor.toolbar.image.url")}
+            </Label>
             <div className="flex gap-1.5">
               <Input
+                id={urlId}
+                type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://example.com/image.png"
+                placeholder={t("editor.toolbar.image.urlPlaceholder")}
                 className="h-8 text-sm"
               />
               <Button
@@ -78,7 +126,7 @@ export function ImageInsert({
                 onClick={insertFromUrl}
                 disabled={!url}
               >
-                Insert
+                {t("editor.toolbar.image.insert")}
               </Button>
             </div>
           </div>
@@ -86,17 +134,45 @@ export function ImageInsert({
             <>
               <Separator />
               <div className="space-y-1.5">
-                <Label className="text-xs">Upload Image</Label>
-                <input
+                <Label htmlFor={uploadId} className="text-xs">
+                  {t("editor.toolbar.image.upload")}
+                </Label>
+                {/* The shared field primitive, not a raw input: it already skins
+                    the ::file-selector-button off the token ladder, including
+                    the disabled arm this control needs while an upload is in
+                    flight. The hand-rolled file-button chrome it replaces
+                    carried the last shadcn colour pair left in the editor. */}
+                <Input
                   ref={fileRef}
+                  id={uploadId}
                   type="file"
                   accept="image/png,image/jpeg,image/gif,image/svg+xml,image/webp"
                   onChange={handleFileUpload}
-                  className="w-full text-xs file:mr-2 file:rounded-md file:border-0 file:bg-primary file:px-2 file:py-1 file:text-xs file:text-primary-foreground hover:file:bg-primary/90"
                   disabled={uploading}
                 />
                 {uploading && (
-                  <p className="animate-pulse text-xs text-muted-foreground">Uploading...</p>
+                  // A real in-flight loader, so this is the one place in the
+                  // file allowed to move. The banned pattern was the opposite:
+                  // a perpetual pulse on the TEXT, which breathes whether or
+                  // not anything is happening.
+                  //
+                  // A div, not a p: the inline spinner is itself a block-level
+                  // element, and the parser closes an open paragraph the moment
+                  // it meets one — which shows up as a hydration mismatch, not
+                  // as anything visible.
+                  <div role="status" className="flex items-center gap-2 text-xs text-nx-ink-3">
+                    <LoadingSpinner size="inline" showText={false} />
+                    {t("editor.toolbar.image.uploading")}
+                  </div>
+                )}
+                {validationError && (
+                  <p
+                    role="status"
+                    className="flex items-start gap-1.5 text-xs font-medium text-nx-danger"
+                  >
+                    <X className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    {validationError}
+                  </p>
                 )}
               </div>
             </>

@@ -1,0 +1,20 @@
+import { Metadata } from "next";
+import dynamic from "next/dynamic";
+import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
+
+const FeaturesView = dynamic(() =>
+  import("@modules/entitlements/features").then((m) => ({ default: m.FeaturesView }))
+);
+
+export const metadata: Metadata = {
+  title: "Features",
+  description: "Manage the feature catalog for edition-based feature gating",
+};
+
+export default function FeaturesPage() {
+  return (
+    <ModuleErrorBoundary moduleName="entitlements.features.title">
+      <FeaturesView />
+    </ModuleErrorBoundary>
+  );
+}

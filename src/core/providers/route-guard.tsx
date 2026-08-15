@@ -20,12 +20,12 @@ import { useAppStore } from "@core/store/useAppStore";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/hooks/use-permissions";
 import { USE_DYNAMIC_NAVIGATION } from "@core/config/navigation";
-import { useI18n } from "@core/providers/i18n-provider";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { authBroadcast } from "@core/common/broadcast-auth";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -130,7 +130,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
   const [isChecking, setIsChecking] = useState(true);
   const [isRestoringSession, setIsRestoringSession] = useState(false);
   const [checkTrigger, setCheckTrigger] = useState(0);
-  const { t } = useI18n();
+  // No useI18n() here on purpose: the only string this guard rendered was the
+  // "Loading" caption, and LoadingSpinner already owns it (and its
+  // role="status" name). A permission boundary should subscribe to as little
+  // as possible.
   const [isMounted] = useState(() => typeof window !== "undefined");
 
   const hasRedirected = useRef(false);
@@ -140,6 +143,23 @@ export function RouteGuard({ children }: RouteGuardProps) {
   useEffect(() => {
     hasRedirected.current = false;
   }, [pathname]);
+
+  // ── Cross-tab refresh coordination (F-67) ───────────────────────────────
+  // RouteGuard's own silent-refresh-on-reload (Case 2 below) and ApiService's
+  // 401-interceptor refresh each call authRepository.refreshToken() through
+  // an independent lock, with no coordination between tabs. Since the
+  // backend's refresh cookie is single-use/rotating, two tabs refreshing at
+  // once means one call always fails. `onTokenRefreshed` already fires
+  // whenever ANY tab completes a refresh (broadcast-auth.ts persists the new
+  // access token into this tab's secureTokenService before the callback
+  // runs) — subscribe to it so a refresh that just landed elsewhere is
+  // trusted instead of racing a second /auth/refresh call.
+  useEffect(() => {
+    authBroadcast.onTokenRefreshed(() => {
+      appLogger.debug("[RouteGuard] Observed cross-tab token refresh — re-checking access");
+      setCheckTrigger((prev) => prev + 1);
+    });
+  }, []);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -170,8 +190,9 @@ export function RouteGuard({ children }: RouteGuardProps) {
         appLogger.debug("[RouteGuard] Authenticated user on auth page → dashboard");
         hasRedirected.current = true;
         const mcp = useAppStore.getState().mustChangePassword;
-        const defaultPath = useAppStore.getState().defaultRedirectPath || "/";
-        router.replace(mcp ? "/change-password" : defaultPath);
+        const defaultPath = useAppStore.getState().defaultRedirectPath;
+        const targetPath = !defaultPath || defaultPath === "/" ? "/overview" : defaultPath;
+        router.replace(mcp ? "/change-password" : targetPath);
         return;
       }
 
@@ -211,6 +232,29 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         if (!canAccessPage(pathname)) {
+          appLogger.debug(
+            "[RouteGuard] Access denied by permission system — checking for alternative workspace pages"
+          );
+          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
+          let currentWorkspaceKey: string | null = null;
+          for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
+            if (routes.includes(pathname) || routes.some((r) => pathname.startsWith(r + "/"))) {
+              currentWorkspaceKey = wsKey;
+              break;
+            }
+          }
+          if (currentWorkspaceKey) {
+            const workspaceRoutes = workspaceRouteMap[currentWorkspaceKey] || [];
+            const accessibleRoute = workspaceRoutes.find((r) => canAccessPage(r));
+            if (accessibleRoute) {
+              appLogger.debug(
+                `[RouteGuard] Redirecting to alternative accessible workspace route: ${accessibleRoute}`
+              );
+              hasRedirected.current = true;
+              router.replace(accessibleRoute);
+              return;
+            }
+          }
           appLogger.debug("[RouteGuard] Access denied by permission system");
           hasRedirected.current = true;
           router.push("/not-authorized");
@@ -236,6 +280,29 @@ export function RouteGuard({ children }: RouteGuardProps) {
         }
 
         if (!hasRouteAccess(pathname)) {
+          appLogger.debug(
+            "[RouteGuard] Access denied by navigation store — checking for alternative workspace pages"
+          );
+          const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
+          let currentWorkspaceKey: string | null = null;
+          for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
+            if (routes.includes(pathname) || routes.some((r) => pathname.startsWith(r + "/"))) {
+              currentWorkspaceKey = wsKey;
+              break;
+            }
+          }
+          if (currentWorkspaceKey) {
+            const workspaceRoutes = workspaceRouteMap[currentWorkspaceKey] || [];
+            const accessibleRoute = workspaceRoutes.find((r) => canAccessPage(r));
+            if (accessibleRoute) {
+              appLogger.debug(
+                `[RouteGuard] Redirecting to alternative accessible workspace route: ${accessibleRoute}`
+              );
+              hasRedirected.current = true;
+              router.replace(accessibleRoute);
+              return;
+            }
+          }
           appLogger.debug("[RouteGuard] Access denied by navigation store");
           hasRedirected.current = true;
           router.push("/not-authorized");
@@ -278,6 +345,21 @@ export function RouteGuard({ children }: RouteGuardProps) {
           }
         } catch (error) {
           appLogger.error("[RouteGuard] Silent refresh failed:", error);
+        }
+
+        // Our own /auth/refresh call may have failed simply because another
+        // tab (or ApiService's 401 interceptor) already rotated the
+        // single-use refresh cookie first — the onTokenRefreshed broadcast
+        // subscription above already persisted that tab's fresh token into
+        // secureTokenService. Trust it instead of forcing logout.
+        if (secureTokenService.hasToken()) {
+          appLogger.debug(
+            "[RouteGuard] Own refresh failed but a cross-tab refresh already succeeded — recovering"
+          );
+          isRefreshing.current = false;
+          setIsRestoringSession(false);
+          setCheckTrigger((prev) => prev + 1);
+          return;
         }
 
         isRefreshing.current = false;
@@ -347,19 +429,21 @@ export function RouteGuard({ children }: RouteGuardProps) {
     setSubscriptionInfo,
     hasRouteAccess,
     checkTrigger,
-    // NOTE: mustChangePassword intentionally NOT here — read via getState()
-    // NOTE: hasRouteAccess is stable (useCallback with [] deps)
+    queryClient,
   ]);
 
   if (!isMounted) return <>{children}</>;
 
+  // ── Rendered fallback ───────────────────────────────────────────────────
+  // Presentation only. Both branches show the SAME thing — the shared loader,
+  // which already carries role="status", aria-busy and the translated
+  // "Loading" caption. The caption used to be a second hand-written <p> next
+  // to a text-suppressed spinner, so the same wait announced itself twice and
+  // wore ink the token ladder does not own.
   if (authLoading || (isChecking && !isPublicPage(pathname) && !isRestoringSession)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <LoadingSpinner showText={false} />
-          <p className="text-muted-foreground">{t("common.loading")}</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-nx-ground">
+        <LoadingSpinner />
       </div>
     );
   }
@@ -369,10 +453,8 @@ export function RouteGuard({ children }: RouteGuardProps) {
   if (isAuthenticated && secureTokenService.hasToken()) return <>{children}</>;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <LoadingSpinner />
-      </div>
+    <div className="flex min-h-screen items-center justify-center bg-nx-ground">
+      <LoadingSpinner />
     </div>
   );
 }

@@ -18,8 +18,21 @@ export function firstPageOf(ws: WithMenuItems): string | null {
   return findHref(ws.menuItems ?? []);
 }
 
+/**
+ * The workspace accent as a complete CSS colour.
+ *
+ * NOTE FOR CONSUMERS: this returns an `oklch(...)` **function string**, not a
+ * hex value. Appending two hex digits to it for alpha — `` `${accent}80` `` —
+ * produces `oklch(0.6 0.18 262)80`, which is invalid CSS, and the browser drops
+ * the entire declaration without warning. That silently blanked the workspace
+ * loader and the transition overlay for as long as they existed.
+ *
+ * To vary opacity use `color-mix(in oklch, ${accent} 50%, transparent)`, which
+ * is agnostic to the colour's notation.
+ */
 export function getAccentColor(ws: WorkspaceGroup | null): string | null {
   if (!ws || ws.colorHue === null || ws.colorHue === undefined) return null;
-  const chroma = ws.colorChroma ?? 0.18;
-  return `oklch(0.6 ${chroma} ${ws.colorHue})`;
+  // Delegates to WorkspaceGroup.accentColor — single source for the
+  // dark(L0.68)/light(L0.46) lightness split matching the --nx-accent ladder.
+  return ws.accentColor;
 }

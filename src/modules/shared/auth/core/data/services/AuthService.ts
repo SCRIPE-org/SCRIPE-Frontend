@@ -1,0 +1,294 @@
+/**
+ * Auth Service (API Layer)
+ *
+ * Handles HTTP communication for authentication endpoints.
+ * Uses IApiService for network calls.
+ *
+ * Refresh tokens are managed exclusively by httpOnly cookies —
+ * they are never passed as parameters or included in request bodies.
+ * The browser sends them automatically via withCredentials: true.
+ *
+ * @module auth/data
+ */
+
+import { LoginRequestModel, LoginResponseModel, type LoginResponseJson } from "../models/AuthModel";
+import {
+  Verify2FARequestModel,
+  Verify2FAResponseModel,
+  type Verify2FAResponseJson,
+} from "../models/TwoFactorModels";
+import type { IApiService } from "@core/interfaces/api.interface";
+import { ALLOWED_OIDC_PARAMS } from "@core/config/oidc-keys";
+import type { IAuthService } from "../../domain/interfaces/IAuthService";
+import type { DiscoverWorkspacesResponseDto } from "../models/WorkspaceModels";
+import { AUTH_CORE_ENDPOINTS } from "./auth-core.endpoints";
+
+const allowedOidcParams = new Set<string>(ALLOWED_OIDC_PARAMS);
+
+export class AuthService implements IAuthService {
+  constructor(private readonly api: IApiService) {}
+
+  async login(request: LoginRequestModel): Promise<LoginResponseModel> {
+    const json = await this.api.postPublic<LoginResponseJson>(
+      AUTH_CORE_ENDPOINTS.LOGIN,
+      request.toJson()
+    );
+    return LoginResponseModel.fromJson(json);
+  }
+
+  async verify2FA(request: Verify2FARequestModel): Promise<Verify2FAResponseModel> {
+    const json = await this.api.postPublic<Verify2FAResponseJson>(
+      AUTH_CORE_ENDPOINTS.TWO_FA.VERIFY,
+      request.toJson()
+    );
+    return Verify2FAResponseModel.fromJson(json);
+  }
+
+  /**
+   * Logout — the httpOnly cookie is sent automatically via withCredentials.
+   * Backend CookieAuthMiddleware reads the refresh token from the cookie.
+   */
+  async logout(): Promise<void> {
+    await this.api.post(AUTH_CORE_ENDPOINTS.LOGOUT, {});
+  }
+
+  /**
+   * Refresh — the httpOnly cookie is sent automatically via withCredentials.
+   * Backend CookieAuthMiddleware injects the refresh token into the request body.
+   */
+  async refreshToken(): Promise<LoginResponseModel> {
+    const json = await this.api.postPublic<LoginResponseJson>(AUTH_CORE_ENDPOINTS.REFRESH, {});
+    return LoginResponseModel.fromJson(json);
+  }
+
+  async getMe<T>(): Promise<T> {
+    return this.api.get<T>(AUTH_CORE_ENDPOINTS.ME);
+  }
+
+  async discoverWorkspaces(email: string): Promise<DiscoverWorkspacesResponseDto> {
+    return this.api.postPublic<DiscoverWorkspacesResponseDto>(
+      AUTH_CORE_ENDPOINTS.DISCOVER_WORKSPACES,
+      { email: email.trim() }
+    );
+  }
+
+  /**
+   * Impersonate an admin — httpOnly cookie set by CookieAuthMiddleware.
+   * Returns access token (same shape as login response).
+   */
+  async impersonate(adminId: string): Promise<LoginResponseModel> {
+    const json = await this.api.post<LoginResponseJson>(
+      AUTH_CORE_ENDPOINTS.IMPERSONATE(adminId),
+      {}
+    );
+    return LoginResponseModel.fromJson(json);
+  }
+
+  /**
+   * Stop impersonation — httpOnly cookie carries the refresh token.
+   * Returns original admin's access token.
+   */
+  async stopImpersonation(): Promise<LoginResponseModel> {
+    const json = await this.api.post<LoginResponseJson>(AUTH_CORE_ENDPOINTS.STOP_IMPERSONATION, {});
+    return LoginResponseModel.fromJson(json);
+  }
+
+  /**
+   * Constructs the HTML Form action URL and whitelist of hidden input parameters
+   * required to securely POST the OIDC consent back to the backend.
+   */
+  buildOidcConsentForm(
+    searchParams: URLSearchParams,
+    accessToken: string
+  ): { action: string; params: Record<string, string> } {
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+    const baseHost = backendUrl.replace(/\/api$/, "");
+    const action = `${baseHost}${AUTH_CORE_ENDPOINTS.OIDC.AUTHORIZE}`;
+
+    const params: Record<string, string> = {};
+    searchParams.forEach((value, key) => {
+      if (allowedOidcParams.has(key)) {
+        params[key] = value;
+      }
+    });
+
+    params["access_token"] = accessToken;
+
+    return { action, params };
+  }
+
+  /**
+   * Link an external SSO account to the currently authenticated admin profile.
+   */
+  async linkExternalLogin(data: {
+    identityProviderId: string;
+    providerName: string;
+    providerKey: string;
+    email: string;
+    displayName?: string;
+  }): Promise<void> {
+    await this.api.post(AUTH_CORE_ENDPOINTS.PROFILE.LINK_EXTERNAL_LOGIN, data);
+  }
+
+  /**
+   * Request a passwordless magic-link sign-in email.
+   * Always resolves (enumeration-safe) — never reveals account existence.
+   */
+  async requestMagicLink(email: string, tenantId?: string): Promise<{ sent: boolean }> {
+    return this.api.postPublic<{ sent: boolean }>(AUTH_CORE_ENDPOINTS.MAGIC_LINK.REQUEST, {
+      email: email.trim(),
+      tenantId: tenantId ?? null,
+    });
+  }
+
+  /**
+   * Verify a magic-link token from the email URL and issue a full JWT session.
+   * Throws on invalid/expired token.
+   */
+  async verifyMagicLink(
+    token: string,
+    tenantId?: string,
+    deviceInfo?: string
+  ): Promise<LoginResponseModel> {
+    const json = await this.api.postPublic<LoginResponseJson>(
+      AUTH_CORE_ENDPOINTS.MAGIC_LINK.VERIFY,
+      { token, tenantId: tenantId ?? null, deviceInfo: deviceInfo ?? null }
+    );
+    return LoginResponseModel.fromJson(json);
+  }
+
+  /**
+   * Begin WebAuthn/Passkey authentication — get challenge from backend.
+   * Returns the challengeId and PublicKeyCredentialRequestOptions.
+   */
+  async beginPasskeyAuth(): Promise<{
+    challengeId: string;
+    options: PublicKeyCredentialRequestOptions;
+  }> {
+    return this.api.postPublic<{
+      challengeId: string;
+      options: PublicKeyCredentialRequestOptions;
+    }>(AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_BEGIN, {});
+  }
+
+  /**
+   * Verify WebAuthn/Passkey assertion — sends client assertion payload to backend to exchange for tokens.
+   *
+   * @param data Assertion payload containing raw/credential IDs, clientDataJSON, authenticatorData, signature, userHandle, and optional tenantId.
+   * @returns A promise resolving to the issued access and refresh tokens.
+   * @security
+   * - Enforces Double-Submit CSRF cookie validation matched against session identifier.
+   * - Restricts replay attacks via backend request timestamp drift and nonce checks.
+   * - Access tokens are short-lived, while refresh tokens are securely stored in httpOnly cookies.
+   * - CORS allowed origins are strictly whitelisted on the API gateway layer.
+   */
+  async verifyPasskeyAuth(data: {
+    challengeId: string;
+    credentialId: string;
+    rawId: string;
+    clientDataJSON: string;
+    authenticatorData: string;
+    signature: string;
+    userHandle: string | null;
+    tenantId?: string | null;
+  }): Promise<{ accessToken: string; refreshToken: string }> {
+    const toBase64 = (base64url: string) => {
+      const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+      const pad = (4 - (base64.length % 4)) % 4;
+      return base64 + "=".repeat(pad);
+    };
+
+    const backendRequest = {
+      credentialIdBase64: toBase64(data.rawId),
+      authenticatorDataBase64: toBase64(data.authenticatorData),
+      clientDataJsonBase64: toBase64(data.clientDataJSON),
+      signatureBase64: toBase64(data.signature),
+      userHandleBase64: data.userHandle ? toBase64(data.userHandle) : null,
+      tenantId: data.tenantId ?? null,
+      deviceInfo: typeof window !== "undefined" ? window.navigator.userAgent : null,
+    };
+
+    return this.api.postPublic<{ accessToken: string; refreshToken: string }>(
+      AUTH_CORE_ENDPOINTS.PASSKEY.AUTH_VERIFY,
+      backendRequest
+    );
+  }
+
+  // ── Phone OTP ───────────────────────────────────────────────────────────────
+
+  async requestPhoneOtp(
+    phoneNumber: string
+  ): Promise<{ sent: boolean; retryAfterSeconds: number }> {
+    return this.api.postPublic<{ sent: boolean; retryAfterSeconds: number }>(
+      AUTH_CORE_ENDPOINTS.PHONE_OTP.REQUEST,
+      { phoneNumber }
+    );
+  }
+
+  async verifyPhoneOtp(
+    phoneNumber: string,
+    code: string
+  ): Promise<{
+    accessToken: string;
+    refreshToken?: string;
+    expiresAt?: string;
+    requiresWorkspaceSelection?: boolean;
+    availableWorkspaces?: Array<{
+      tenantId: string;
+      tenantCode: string;
+      tenantName: string;
+      logoUrl: string | null;
+      isPlatformAdmin: boolean;
+      isActivated: boolean;
+      isDisabled?: boolean;
+      disabledReason?: string | null;
+      isPasswordVerified?: boolean;
+      isLocked?: boolean;
+      lockedUntil?: string | null;
+    }> | null;
+    mustChangePassword?: boolean;
+    defaultRedirectPath?: string;
+  }> {
+    return this.api.postPublic(AUTH_CORE_ENDPOINTS.PHONE_OTP.VERIFY, { phoneNumber, code });
+  }
+
+  // ── QR Cross-Device Sign-In ─────────────────────────────────────────────────
+
+  async beginQrSignIn(): Promise<{
+    sessionId: string;
+    qrData: string;
+    expiresAt: string;
+  }> {
+    const res = await this.api.postPublic<{
+      sessionId: string;
+      qrUrl: string;
+      expiresAt: string;
+    }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.CREATE_SESSION, {});
+
+    return {
+      sessionId: res.sessionId,
+      qrData: res.qrUrl,
+      expiresAt: res.expiresAt,
+    };
+  }
+
+  async checkQrSignIn(sessionId: string): Promise<{
+    status: "pending" | "scanned" | "approved" | "expired";
+    accessToken?: string;
+    refreshToken?: string;
+  }> {
+    return this.api.getPublic<{
+      status: "pending" | "scanned" | "approved" | "expired";
+      accessToken?: string;
+      refreshToken?: string;
+    }>(AUTH_CORE_ENDPOINTS.QR_LOGIN.SESSION_STATUS(sessionId));
+  }
+
+  async approveQrSignIn(sessionId: string): Promise<void> {
+    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.APPROVE, { sessionId });
+  }
+
+  async rejectQrSignIn(sessionId: string): Promise<void> {
+    await this.api.post(AUTH_CORE_ENDPOINTS.QR_LOGIN.REJECT, { sessionId });
+  }
+}

@@ -126,9 +126,9 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
 
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
-      <CommandInput placeholder={t("common.search") || "Search pages..."} />
+      <CommandInput placeholder={t("common.search")} />
       <CommandList>
-        <CommandEmpty>{t("common.noResultsFound") || "No results found."}</CommandEmpty>
+        <CommandEmpty>{t("common.noResultsFound")}</CommandEmpty>
 
         {Object.entries(groupedItems).map(([groupName, items]) => (
           <CommandGroup key={groupName} heading={groupName}>
@@ -144,7 +144,7 @@ export function NexusSearchPalette({ open, onOpenChange }: NexusSearchPalettePro
                   onSelect={() => handleSelect(item)}
                   className="flex cursor-pointer items-center gap-2"
                 >
-                  <IconComponent className="h-4 w-4 text-muted-foreground" />
+                  <IconComponent className="h-4 w-4 text-nx-ink-3" />
                   <span>{item.title}</span>
                 </CommandItem>
               );

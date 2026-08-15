@@ -73,6 +73,8 @@ export interface WorkspaceGroupData {
    * Used by the Workspace Hub to show item counts on workspace cards.
    */
   accessibleItemCount: number;
+  /** Reason why this workspace is locked. */
+  lockReason?: string;
 }
 
 // ── Rich domain class ─────────────────────────────────────────────────────────
@@ -102,6 +104,8 @@ export class WorkspaceGroup {
   public readonly contextScope: "Both" | "PlatformOnly" | "TenantOnly";
   /** Number of accessible menu items for this workspace (for Hub card stats). */
   public readonly accessibleItemCount: number;
+  /** Reason why this workspace is locked (e.g. "None", "SubscriptionRequired", "TenantContextRequired"). */
+  public readonly lockReason: string;
 
   constructor(data: WorkspaceGroupData) {
     this.workspaceId = data.workspaceId;
@@ -121,6 +125,7 @@ export class WorkspaceGroup {
     this.pinSortOrder = data.pinSortOrder ?? null;
     this.contextScope = data.contextScope ?? "Both";
     this.accessibleItemCount = data.accessibleItemCount ?? 0;
+    this.lockReason = data.lockReason ?? "None";
   }
 
   // ── Computed helpers ────────────────────────────────────────────────────────
@@ -131,11 +136,24 @@ export class WorkspaceGroup {
       : this.workspaceNameEn || this.workspaceNameAr || "Workspace";
   }
 
-  /** CSS oklch() accent string, or null when no custom color is set. */
+  /**
+   * CSS oklch() accent string for this workspace's own hue, or null when no
+   * custom color is set.
+   *
+   * Lightness matches the --nx-accent token ladder in globals.css exactly
+   * (dark L0.68 / light L0.46 — light is not a naive inversion, it clears
+   * the accent-as-text contrast floor across every hue). This can't just
+   * read var(--nx-accent) because that token carries the *active* workspace's
+   * hue; this getter renders *other* workspaces' own colors (launcher tiles,
+   * rail entries) independently of which one is currently active.
+   */
   get accentColor(): string | null {
     if (this.colorHue === null) return null;
     const chroma = this.colorChroma ?? 0.18;
-    return `oklch(0.6 ${chroma} ${this.colorHue})`;
+    const isDark =
+      typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+    const lightness = isDark ? 0.68 : 0.46;
+    return `oklch(${lightness} ${chroma} ${this.colorHue})`;
   }
 
   /** True when this is a module workspace (CRM, HRMS, Finance, …) */
@@ -192,6 +210,7 @@ export class WorkspaceGroup {
       pinSortOrder: this.pinSortOrder,
       contextScope: this.contextScope,
       accessibleItemCount: this.accessibleItemCount,
+      lockReason: this.lockReason,
     };
   }
 }

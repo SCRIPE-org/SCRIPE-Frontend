@@ -6,10 +6,12 @@ import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useAppStore } from "@core/store/useAppStore";
 import { firstPageOf } from "../utils/navigation-helpers";
 import { appLogger } from "@core/common/logger";
+import { usePermissions } from "@core/providers/permission-provider";
 
 export function useWorkspaceActions() {
   const router = useRouter();
   const { fetchWorkspaceMenu } = useNavigation();
+  const { canAccessPage } = usePermissions();
   const tenantCode = useAppStore((s) => s.tenantCode);
 
   /** True when no tenant is drilled-into — i.e. the admin is in platform context. */
@@ -43,16 +45,24 @@ export function useWorkspaceActions() {
         //    - homeRoute when a tenant is selected (tenant admin context)
         //    These cover workspaces like Billing (platform→revenue, tenant→invoices)
         //    and Plugins (platform→definitions, tenant→catalog)
-        // 2. First leaf page from the JIT-loaded menu tree
+        //    We verify the user has permission to access it; if not, we fall back.
+        // 2. First leaf page from the JIT-loaded menu tree (pre-filtered by backend)
         // 3. First leaf page from the workspace group menu items (last resort)
         // ─────────────────────────────────────────────────────────────────────
         const wsGroup =
           freshState.workspaceGroups.find((g) => g.workspaceKey === workspaceKey) ?? null;
 
         // Pick the best home route for the current context
-        const contextRoute = isPlatformContext
+        let contextRoute = isPlatformContext
           ? (wsGroup?.platformHomeRoute ?? wsGroup?.homeRoute)
           : wsGroup?.homeRoute;
+
+        if (contextRoute && !canAccessPage(contextRoute)) {
+          appLogger.debug(
+            `[WorkspaceActions] User cannot access configured homeRoute: ${contextRoute}. Finding alternative...`
+          );
+          contextRoute = undefined;
+        }
 
         const wsData = freshState.workspaces.get(workspaceKey) ?? null;
         const firstHref = wsData ? firstPageOf(wsData) : null;
@@ -67,7 +77,7 @@ export function useWorkspaceActions() {
         }
       }
     },
-    [fetchWorkspaceMenu, router, isPlatformContext]
+    [fetchWorkspaceMenu, router, isPlatformContext, canAccessPage]
   );
 
   return { setActiveWorkspace };

@@ -1,0 +1,325 @@
+"use client";
+
+import { useI18n } from "@core/providers/i18n-provider";
+import { Label } from "@core/ui/label";
+import { Input } from "@core/ui/input";
+import { Button } from "@core/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Separator } from "@core/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { Paintbrush, RotateCcw } from "lucide-react";
+import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
+
+// ─── Types ──────────────────────────────────────────────────
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for design variables.
+ */
+export interface DesignVariables {
+  primaryColor: string;
+  primaryForeground: string;
+  secondaryColor: string;
+  backgroundColor: string;
+  textColor: string;
+  fontFamily: string;
+  headerFontSize: string;
+  bodyFontSize: string;
+  borderRadius: string;
+  logoUrl: string;
+  footerText: string;
+}
+
+/**
+ * Interface defining property specifications, keys types, and structural contract rules for design variables panel props.
+ */
+export interface DesignVariablesPanelProps {
+  value: DesignVariables;
+  onChange: (v: DesignVariables) => void;
+}
+
+// ─── Defaults ───────────────────────────────────────────────
+/**
+ * Exported constant defining parameters and fields for d e f a u l t_ d e s i g n configurations.
+ */
+export const DEFAULT_DESIGN: DesignVariables = {
+  primaryColor: "#C6FF00",
+  primaryForeground: "#0D0D0E",
+  secondaryColor: "#3F4347",
+  backgroundColor: "#ffffff",
+  textColor: "#1f2937",
+  fontFamily: "Inter, sans-serif",
+  headerFontSize: "24",
+  bodyFontSize: "14",
+  borderRadius: "8",
+  logoUrl: "",
+  footerText: "© {{currentYear}} {{companyName}}. All rights reserved.",
+};
+
+// ─── Contrast Helper ────────────────────────────────────────
+/**
+ * Simple WCAG relative-luminance check against black/white, used to pick a
+ * swatch's foreground for an ARBITRARY admin-chosen fill color. The app's own
+ * --nx-on-fill token is calibrated for this app's Lime accent specifically;
+ * reusing it against a color the admin can set to anything is the same
+ * contract violation this helper replaces.
+ */
+function getReadableForeground(hex: string): string {
+  const normalized = hex.trim().replace(/^#/, "");
+  const full =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : normalized;
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) return "#0D0D0E";
+  const r = parseInt(full.slice(0, 2), 16) / 255;
+  const g = parseInt(full.slice(2, 4), 16) / 255;
+  const b = parseInt(full.slice(4, 6), 16) / 255;
+  const toLinear = (c: number) => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  const luminance = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+  return luminance > 0.5 ? "#0D0D0E" : "#ffffff";
+}
+
+const FONT_OPTIONS = [
+  { value: "Inter, sans-serif", label: "Inter" },
+  { value: "Roboto, sans-serif", label: "Roboto" },
+  { value: "'Segoe UI', sans-serif", label: "Segoe UI" },
+  { value: "Arial, sans-serif", label: "Arial" },
+  { value: "Georgia, serif", label: "Georgia" },
+  { value: "'Courier New', monospace", label: "Courier New" },
+  { value: "Cairo, sans-serif", label: "Cairo (Arabic)" },
+];
+
+// ─── Section Header ─────────────────────────────────────────
+function SectionHeading({ children }: { children: React.ReactNode }) {
+  return (
+    <h4 className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+      {children}
+    </h4>
+  );
+}
+
+// ─── Main ───────────────────────────────────────────────────
+/**
+ * Presentation UI component rendering the design variables panel.
+ * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ */
+export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelProps) {
+  const { t } = useI18n();
+
+  const update = (key: keyof DesignVariables, val: string) => {
+    onChange({ ...value, [key]: val });
+  };
+
+  return (
+    <Card>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Paintbrush className="h-4 w-4" aria-hidden="true" />
+            {t("messaging.templates.design.title")}
+          </CardTitle>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-7 gap-1 text-xs"
+            onClick={() => onChange({ ...DEFAULT_DESIGN })}
+          >
+            <RotateCcw className="h-3 w-3" aria-hidden="true" />
+            {t("messaging.templates.design.reset")}
+          </Button>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {/* ── Colors ────────────────────────────────────── */}
+        <div className="space-y-3">
+          <SectionHeading>{t("messaging.templates.design.colors")}</SectionHeading>
+          <div className="grid grid-cols-2 gap-2">
+            <ColorPickerField
+              label={t("messaging.templates.design.primaryColor")}
+              value={value.primaryColor}
+              onChange={(c: string) => update("primaryColor", c)}
+            />
+            <ColorPickerField
+              label={t("messaging.templates.design.secondaryColor")}
+              value={value.secondaryColor}
+              onChange={(c: string) => update("secondaryColor", c)}
+            />
+            <ColorPickerField
+              label={t("messaging.templates.design.backgroundColor")}
+              value={value.backgroundColor}
+              onChange={(c: string) => update("backgroundColor", c)}
+            />
+            <ColorPickerField
+              label={t("messaging.templates.design.textColor")}
+              value={value.textColor}
+              onChange={(c: string) => update("textColor", c)}
+            />
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* ── Typography ─────────────────────────────────── */}
+        <div className="space-y-3">
+          <SectionHeading>
+            {t("messaging.templates.design.typography")}
+          </SectionHeading>
+          <div className="space-y-2">
+            <Label className="text-xs">
+              {t("messaging.templates.design.fontFamily")}
+            </Label>
+            <Select value={value.fontFamily} onValueChange={(v) => update("fontFamily", v)}>
+              <SelectTrigger className="text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {FONT_OPTIONS.map((f) => (
+                  <SelectItem key={f.value} value={f.value}>
+                    <span style={{ fontFamily: f.value }}>{f.label}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="space-y-1">
+              <Label className="text-xs">
+                {t("messaging.templates.design.headerSize")}
+              </Label>
+              <Input
+                type="number"
+                min={16}
+                max={48}
+                value={value.headerFontSize}
+                onChange={(e) => update("headerFontSize", e.target.value)}
+                className="text-sm"
+              />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs">
+                {t("messaging.templates.design.bodySize")}
+              </Label>
+              <Input
+                type="number"
+                min={10}
+                max={24}
+                value={value.bodyFontSize}
+                onChange={(e) => update("bodyFontSize", e.target.value)}
+                className="text-sm"
+              />
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* ── Layout ─────────────────────────────────────── */}
+        <div className="space-y-3">
+          <SectionHeading>{t("messaging.templates.design.layout")}</SectionHeading>
+          <div className="space-y-2">
+            <Label className="text-xs">
+              {t("messaging.templates.design.borderRadius")}
+            </Label>
+            <Input
+              type="number"
+              min={0}
+              max={32}
+              value={value.borderRadius}
+              onChange={(e) => update("borderRadius", e.target.value)}
+              className="text-sm"
+            />
+          </div>
+        </div>
+
+        <Separator />
+
+        {/* ── Branding ───────────────────────────────────── */}
+        <div className="space-y-3">
+          <SectionHeading>{t("messaging.templates.design.branding")}</SectionHeading>
+          <div className="space-y-2">
+            <Label className="text-xs">
+              {t("messaging.templates.design.logoUrl")}
+            </Label>
+            <Input
+              value={value.logoUrl}
+              onChange={(e) => update("logoUrl", e.target.value)}
+              placeholder="https://example.com/logo.png"
+              className="text-sm"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label className="text-xs">
+              {t("messaging.templates.design.footerText")}
+            </Label>
+            <Input
+              value={value.footerText}
+              onChange={(e) => update("footerText", e.target.value)}
+              placeholder="© {{currentYear}} Company"
+              className="text-sm"
+            />
+          </div>
+        </div>
+
+        {/* ── Live Preview Swatch ───────────────────────── */}
+        <Separator />
+        <div className="space-y-2">
+          <SectionHeading>{t("messaging.templates.design.preview")}</SectionHeading>
+          <div
+            className="overflow-hidden rounded-nx-lg border border-nx-line"
+            style={{
+              backgroundColor: value.backgroundColor,
+              fontFamily: value.fontFamily,
+              borderRadius: `${value.borderRadius}px`,
+            }}
+          >
+            <div className="px-4 py-3" style={{ backgroundColor: value.primaryColor }}>
+              <span
+                style={{
+                  color: getReadableForeground(value.primaryColor),
+                  fontSize: `${Math.min(16, parseInt(value.headerFontSize) || 24)}px`,
+                  fontWeight: 700,
+                }}
+              >
+                {t("messaging.templates.design.previewHeader")}
+              </span>
+            </div>
+            <div className="px-4 py-3">
+              <p
+                style={{
+                  color: value.textColor,
+                  fontSize: `${value.bodyFontSize}px`,
+                }}
+              >
+                {t("messaging.templates.design.previewBody")}
+              </p>
+              {/* Preview chip, not a submit action -- role="group" + an inner
+                  <span> (mirrors ButtonDesigner's live-preview swatch) keeps
+                  it out of tab order instead of a focusable, hoverable
+                  <Button> that goes nowhere. */}
+              <div
+                role="group"
+                aria-label={t("messaging.templates.design.previewButton")}
+                className="mt-2 inline-flex"
+              >
+                <span
+                  className="inline-flex h-9 items-center justify-center px-3 text-xs font-medium"
+                  style={{
+                    backgroundColor: value.secondaryColor,
+                    borderRadius: `${value.borderRadius}px`,
+                    color: getReadableForeground(value.secondaryColor),
+                  }}
+                >
+                  {t("messaging.templates.design.previewButton")}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default DesignVariablesPanel;

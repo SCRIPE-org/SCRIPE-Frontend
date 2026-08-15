@@ -16,7 +16,10 @@ const ToastViewport = React.forwardRef<
   <ToastPrimitives.Viewport
     ref={ref}
     className={cn(
-      "fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]",
+      // z-toast (1100) sits ABOVE z-modal (1000): a toast fired while a dialog
+      // is open — saving inside a modal, the most common case there is — must
+      // render in front of it. `sm:end-0` keeps it on the correct side in RTL.
+      "fixed top-0 z-toast flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:end-0 sm:top-auto sm:flex-col md:max-w-[420px]",
       className
     )}
     {...props}
@@ -24,6 +27,9 @@ const ToastViewport = React.forwardRef<
 ));
 ToastViewport.displayName = ToastPrimitives.Viewport.displayName;
 
+// The persisted toastStyle setting historically offered ten designs; the type
+// keeps every stored value so old settings still typecheck, and
+// normalizeToastDesign collapses retired names onto the surviving three.
 export type ToastStyle =
   | "classic"
   | "neon"
@@ -36,8 +42,43 @@ export type ToastStyle =
   | "gradient"
   | "outlined";
 
+const SURVIVING_DESIGNS = ["classic", "minimal", "modern"] as const;
+type ToastDesignSurvivor = (typeof SURVIVING_DESIGNS)[number];
+
+// Nearest-survivor mapping for retired designs. Gradient-wallpaper styles
+// (neon/glassmorphism/aurora/cosmic/gradient) collapse onto modern's raised
+// surface; neumorphism's soft card reads closest to classic; outlined's quiet
+// hairline reads closest to minimal. Unknown values fall back to classic.
+const LEGACY_DESIGN_FALLBACK: Partial<Record<string, ToastDesignSurvivor>> = {
+  neon: "modern",
+  glassmorphism: "modern",
+  aurora: "modern",
+  cosmic: "modern",
+  gradient: "modern",
+  neumorphism: "classic",
+  outlined: "minimal",
+};
+
+export function normalizeToastDesign(value: string | null | undefined): ToastDesignSurvivor {
+  if (value && (SURVIVING_DESIGNS as readonly string[]).includes(value)) {
+    return value as ToastDesignSurvivor;
+  }
+  return (value && LEGACY_DESIGN_FALLBACK[value]) || "classic";
+}
+
 const toastVariants = cva(
-  "group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden transition-all duration-300 data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full",
+  // transform+opacity only; enter at the 200ms standard beat, exit at the micro
+  // beat on the exit curve — an exit that takes as long as its entrance reads
+  // as lag. Reduced motion keeps the crossfade and drops the edge slide — the
+  // motion-safe: gate covers every slide class. The closed-state slide is
+  // direction-aware: toasts live at the inline END, so they leave to the right
+  // in LTR and to the left in RTL (the old hardcoded right was the wrong side
+  // there, and Radix swipe hands off to the same exit).
+  //
+  // `pe-12` reserves the close button's column: the button is absolutely
+  // positioned at the inline end, and p-4 alone let a long title run straight
+  // underneath it.
+  "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden p-4 pe-12 transition-[transform,opacity] duration-nx-standard ease-nx-enter motion-reduce:transition-none data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-safe:data-[state=open]:slide-in-from-top-full motion-safe:data-[state=open]:sm:slide-in-from-bottom-full data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:duration-nx-micro data-[state=closed]:ease-nx-exit data-[state=closed]:fade-out-0 motion-safe:ltr:data-[state=closed]:slide-out-to-right-full motion-safe:rtl:data-[state=closed]:slide-out-to-left-full",
   {
     variants: {
       variant: {
@@ -48,346 +89,105 @@ const toastVariants = cva(
         info: "",
       },
       design: {
-        // Classic Design - Traditional with subtle borders
+        // Classic — the card: surface ground, hairline edge, popover depth
         classic: "",
 
-        // Neon Design - Glowing cyberpunk style
-        neon: "border-0 shadow-2xl backdrop-blur-sm",
-
-        // Glassmorphism Design - Transparent glass effect
-        glassmorphism: "backdrop-blur-xl border border-white/20 shadow-2xl",
-
-        // Neumorphism Design - Soft 3D effect
-        neumorphism: "border-0 shadow-inner",
-
-        // Aurora Design - Magical gradient animations
-        aurora: "border-0 shadow-2xl relative overflow-hidden",
-
-        // Cosmic Design - Space theme with particles
-        cosmic: "border-0 shadow-2xl relative overflow-hidden",
-
-        // Minimal Design - Clean and simple
+        // Minimal — flat and quiet: hairline only, no shadow
         minimal: "",
 
-        // Modern Design - Contemporary with blur effects
-        modern: "backdrop-blur-sm bg-opacity-90",
-
-        // Gradient Design - Colorful gradients
-        gradient: "bg-gradient-to-r border-0",
-
-        // Outlined Design - Border focused
-        outlined: "border-2 bg-transparent backdrop-blur-sm",
+        // Modern — the raised step: light collects on it via the deeper shadow
+        modern: "",
       },
     },
     compoundVariants: [
-      // Classic Design Variants
+      // Status used to paint the whole toast: `text-success` / `text-warning`
+      // on the ROOT meant the title AND the body copy rendered in the status
+      // hue, which is the least readable thing a two-line message can do —
+      // amber body text on a neutral surface fails contrast outright. The ink
+      // is neutral now on every variant; severity is carried by the hairline
+      // and by ToastContent's glyph, so it survives greyscale too.
+
+      // Classic — the card: surface ground, hairline edge, popover depth.
       {
         variant: "default",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-gray-200 bg-white p-4 shadow-md dark:border-gray-700 dark:bg-gray-800 text-gray-900 dark:text-gray-100",
+        class: "rounded-nx-lg border border-nx-line-hi bg-nx-surface text-nx-ink shadow-nx-popover",
       },
       {
         variant: "success",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-emerald-200 bg-emerald-50 p-4 shadow-md dark:border-emerald-700 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-200",
+        class: "rounded-nx-lg border border-success/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
       {
         variant: "destructive",
         design: "classic",
         class:
-          "rounded-lg border-2 border-red-200 bg-red-50 p-4 shadow-md dark:border-red-700 dark:bg-red-900/20 text-red-800 dark:text-red-200",
+          "rounded-nx-lg border border-destructive/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
       {
         variant: "warning",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-amber-200 bg-amber-50 p-4 shadow-md dark:border-amber-700 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200",
+        class: "rounded-nx-lg border border-warning/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
       {
         variant: "info",
         design: "classic",
-        class:
-          "rounded-lg border-2 border-blue-200 bg-blue-50 p-4 shadow-md dark:border-blue-700 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200",
+        class: "rounded-nx-lg border border-info/40 bg-nx-surface text-nx-ink shadow-nx-popover",
       },
 
-      // Neon Design Variants
-      {
-        variant: "default",
-        design: "neon",
-        class:
-          "rounded-xl bg-gray-900/90 p-4 text-gray-100 shadow-[0_0_20px_rgba(156,163,175,0.5)] ring-1 ring-gray-400/50",
-      },
-      {
-        variant: "success",
-        design: "neon",
-        class:
-          "rounded-xl bg-black/90 p-4 text-green-400 shadow-[0_0_30px_rgba(34,197,94,0.8)] ring-2 ring-green-400/50",
-      },
-      {
-        variant: "destructive",
-        design: "neon",
-        class:
-          "rounded-xl bg-black/90 p-4 text-red-400 shadow-[0_0_30px_rgba(239,68,68,0.8)] ring-2 ring-red-400/50",
-      },
-      {
-        variant: "warning",
-        design: "neon",
-        class:
-          "rounded-xl bg-black/90 p-4 text-yellow-400 shadow-[0_0_30px_rgba(234,179,8,0.8)] ring-2 ring-yellow-400/50",
-      },
-      {
-        variant: "info",
-        design: "neon",
-        class:
-          "rounded-xl bg-black/90 p-4 text-cyan-400 shadow-[0_0_30px_rgba(6,182,212,0.8)] ring-2 ring-cyan-400/50",
-      },
-
-      // Glassmorphism Design Variants
-      {
-        variant: "default",
-        design: "glassmorphism",
-        class: "rounded-2xl bg-white/10 p-4 text-gray-800 dark:text-gray-200",
-      },
-      {
-        variant: "success",
-        design: "glassmorphism",
-        class:
-          "rounded-2xl bg-emerald-500/20 p-4 text-emerald-900 dark:text-emerald-100 border-emerald-300/30",
-      },
-      {
-        variant: "destructive",
-        design: "glassmorphism",
-        class: "rounded-2xl bg-red-500/20 p-4 text-red-900 dark:text-red-100 border-red-300/30",
-      },
-      {
-        variant: "warning",
-        design: "glassmorphism",
-        class:
-          "rounded-2xl bg-amber-500/20 p-4 text-amber-900 dark:text-amber-100 border-amber-300/30",
-      },
-      {
-        variant: "info",
-        design: "glassmorphism",
-        class: "rounded-2xl bg-blue-500/20 p-4 text-blue-900 dark:text-blue-100 border-blue-300/30",
-      },
-
-      // Neumorphism Design Variants
-      {
-        variant: "default",
-        design: "neumorphism",
-        class:
-          "rounded-2xl bg-gray-100 p-4 text-gray-800 shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.7),inset_2px_2px_6px_rgba(0,0,0,0.1)] dark:bg-gray-800 dark:text-gray-200 dark:shadow-[inset_-2px_-2px_6px_rgba(255,255,255,0.1),inset_2px_2px_6px_rgba(0,0,0,0.3)]",
-      },
-      {
-        variant: "success",
-        design: "neumorphism",
-        class:
-          "rounded-2xl bg-emerald-100 p-4 text-emerald-800 shadow-[inset_-2px_-2px_6px_rgba(16,185,129,0.2),inset_2px_2px_6px_rgba(5,150,105,0.3)] dark:bg-emerald-900/30 dark:text-emerald-200",
-      },
-      {
-        variant: "destructive",
-        design: "neumorphism",
-        class:
-          "rounded-2xl bg-red-100 p-4 text-red-800 shadow-[inset_-2px_-2px_6px_rgba(239,68,68,0.2),inset_2px_2px_6px_rgba(220,38,38,0.3)] dark:bg-red-900/30 dark:text-red-200",
-      },
-      {
-        variant: "warning",
-        design: "neumorphism",
-        class:
-          "rounded-2xl bg-amber-100 p-4 text-amber-800 shadow-[inset_-2px_-2px_6px_rgba(245,158,11,0.2),inset_2px_2px_6px_rgba(217,119,6,0.3)] dark:bg-amber-900/30 dark:text-amber-200",
-      },
-      {
-        variant: "info",
-        design: "neumorphism",
-        class:
-          "rounded-2xl bg-blue-100 p-4 text-blue-800 shadow-[inset_-2px_-2px_6px_rgba(59,130,246,0.2),inset_2px_2px_6px_rgba(37,99,235,0.3)] dark:bg-blue-900/30 dark:text-blue-200",
-      },
-
-      // Aurora Design Variants
-      {
-        variant: "default",
-        design: "aurora",
-        class:
-          "rounded-2xl bg-gradient-to-br from-gray-600 via-gray-700 to-gray-800 p-4 text-white",
-      },
-      {
-        variant: "success",
-        design: "aurora",
-        class:
-          "rounded-2xl bg-gradient-to-br from-emerald-400 via-teal-500 to-green-600 p-4 text-white animate-gradient-x",
-      },
-      {
-        variant: "destructive",
-        design: "aurora",
-        class:
-          "rounded-2xl bg-gradient-to-br from-red-400 via-pink-500 to-rose-600 p-4 text-white animate-gradient-x",
-      },
-      {
-        variant: "warning",
-        design: "aurora",
-        class:
-          "rounded-2xl bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500 p-4 text-white animate-gradient-x",
-      },
-      {
-        variant: "info",
-        design: "aurora",
-        class:
-          "rounded-2xl bg-gradient-to-br from-blue-400 via-purple-500 to-indigo-600 p-4 text-white animate-gradient-x",
-      },
-
-      // Cosmic Design Variants
-      {
-        variant: "default",
-        design: "cosmic",
-        class:
-          "rounded-2xl bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 text-white",
-      },
-      {
-        variant: "success",
-        design: "cosmic",
-        class:
-          "rounded-2xl bg-gradient-to-br from-emerald-900 via-green-800 to-teal-900 p-4 text-emerald-100",
-      },
-      {
-        variant: "destructive",
-        design: "cosmic",
-        class:
-          "rounded-2xl bg-gradient-to-br from-red-900 via-rose-800 to-pink-900 p-4 text-red-100",
-      },
-      {
-        variant: "warning",
-        design: "cosmic",
-        class:
-          "rounded-2xl bg-gradient-to-br from-amber-900 via-orange-800 to-yellow-900 p-4 text-amber-100",
-      },
-      {
-        variant: "info",
-        design: "cosmic",
-        class:
-          "rounded-2xl bg-gradient-to-br from-blue-900 via-indigo-800 to-purple-900 p-4 text-blue-100",
-      },
-
-      // Minimal Design Variants
+      // Minimal — flat and quiet: hairline only, no shadow.
       {
         variant: "default",
         design: "minimal",
-        class: "rounded border bg-background text-foreground p-4",
+        class: "rounded-nx-sm border border-nx-line bg-nx-surface text-nx-ink",
       },
       {
         variant: "success",
         design: "minimal",
-        class:
-          "rounded border-green-200 bg-green-50 text-green-900 dark:border-green-800 dark:bg-green-900/20 dark:text-green-100 p-4",
+        class: "rounded-nx-sm border border-success/30 bg-nx-surface text-nx-ink",
       },
       {
         variant: "destructive",
         design: "minimal",
-        class:
-          "rounded border-red-200 bg-red-50 text-red-900 dark:border-red-800 dark:bg-red-900/20 dark:text-red-100 p-4",
+        class: "rounded-nx-sm border border-destructive/30 bg-nx-surface text-nx-ink",
       },
       {
         variant: "warning",
         design: "minimal",
-        class:
-          "rounded border-yellow-200 bg-yellow-50 text-yellow-900 dark:border-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-100 p-4",
+        class: "rounded-nx-sm border border-warning/30 bg-nx-surface text-nx-ink",
       },
       {
         variant: "info",
         design: "minimal",
-        class:
-          "rounded border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-800 dark:bg-blue-900/20 dark:text-blue-100 p-4",
+        class: "rounded-nx-sm border border-info/30 bg-nx-surface text-nx-ink",
       },
 
-      // Modern Design Variants
+      // Modern — the raised step: light collects on it via the deeper shadow.
       {
         variant: "default",
         design: "modern",
-        class: "rounded-lg border bg-background/90 backdrop-blur-sm text-foreground p-4 shadow-lg",
+        class: "rounded-nx-md border border-nx-line-hi bg-nx-raised text-nx-ink shadow-nx-modal",
       },
       {
         variant: "success",
         design: "modern",
-        class:
-          "rounded-lg border-green-300/50 bg-green-100/90 backdrop-blur-sm text-green-800 dark:bg-green-900/30 dark:text-green-200 p-4 shadow-lg",
+        class: "rounded-nx-md border border-success/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
       {
         variant: "destructive",
         design: "modern",
         class:
-          "rounded-lg border-red-300/50 bg-red-100/90 backdrop-blur-sm text-red-800 dark:bg-red-900/30 dark:text-red-200 p-4 shadow-lg",
+          "rounded-nx-md border border-destructive/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
       {
         variant: "warning",
         design: "modern",
-        class:
-          "rounded-lg border-yellow-300/50 bg-yellow-100/90 backdrop-blur-sm text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-200 p-4 shadow-lg",
+        class: "rounded-nx-md border border-warning/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
       {
         variant: "info",
         design: "modern",
-        class:
-          "rounded-lg border-blue-300/50 bg-blue-100/90 backdrop-blur-sm text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 p-4 shadow-lg",
-      },
-
-      // Gradient Design Variants
-      {
-        variant: "default",
-        design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-gray-500 to-gray-600 text-white p-4 shadow-xl",
-      },
-      {
-        variant: "success",
-        design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-green-500 to-emerald-500 text-white p-4 shadow-xl",
-      },
-      {
-        variant: "destructive",
-        design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-red-500 to-rose-500 text-white p-4 shadow-xl",
-      },
-      {
-        variant: "warning",
-        design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-yellow-500 to-orange-500 text-white p-4 shadow-xl",
-      },
-      {
-        variant: "info",
-        design: "gradient",
-        class: "rounded-lg bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-4 shadow-xl",
-      },
-
-      // Outlined Design Variants
-      {
-        variant: "default",
-        design: "outlined",
-        class:
-          "rounded-lg border-2 border-gray-300 bg-transparent backdrop-blur-sm text-gray-700 dark:border-gray-600 dark:text-gray-300 p-4",
-      },
-      {
-        variant: "success",
-        design: "outlined",
-        class:
-          "rounded-lg border-2 border-green-500 bg-transparent backdrop-blur-sm text-green-700 dark:text-green-300 p-4",
-      },
-      {
-        variant: "destructive",
-        design: "outlined",
-        class:
-          "rounded-lg border-2 border-red-500 bg-transparent backdrop-blur-sm text-red-700 dark:text-red-300 p-4",
-      },
-      {
-        variant: "warning",
-        design: "outlined",
-        class:
-          "rounded-lg border-2 border-yellow-500 bg-transparent backdrop-blur-sm text-yellow-700 dark:text-yellow-300 p-4",
-      },
-      {
-        variant: "info",
-        design: "outlined",
-        class:
-          "rounded-lg border-2 border-blue-500 bg-transparent backdrop-blur-sm text-blue-700 dark:text-blue-300 p-4",
+        class: "rounded-nx-md border border-info/50 bg-nx-raised text-nx-ink shadow-nx-modal",
       },
     ],
     defaultVariants: {
@@ -400,7 +200,9 @@ const toastVariants = cva(
 interface ToastProps
   extends
     React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root>,
-    VariantProps<typeof toastVariants> {
+    // The cva only knows the surviving designs; the public prop keeps the full
+    // historical ToastStyle union and is normalized before it reaches the cva.
+    Omit<VariantProps<typeof toastVariants>, "design"> {
   design?: ToastStyle;
 }
 
@@ -408,8 +210,9 @@ const Toast = React.forwardRef<React.ElementRef<typeof ToastPrimitives.Root>, To
   ({ className, variant, design: overrideDesign, ...props }, ref) => {
     const { toastStyle } = useSettings();
 
-    // Use override design if provided, otherwise use settings
-    const design = overrideDesign || toastStyle;
+    // Per-toast design wins; otherwise the workspace setting. Either source may
+    // still carry a retired style name — normalize onto the surviving designs.
+    const design = normalizeToastDesign(overrideDesign ?? toastStyle);
 
     return (
       <ToastPrimitives.Root
@@ -429,7 +232,13 @@ const ToastAction = React.forwardRef<
   <ToastPrimitives.Action
     ref={ref}
     className={cn(
-      "inline-flex h-8 shrink-0 items-center justify-center rounded-md border bg-transparent px-3 text-sm font-medium ring-offset-background transition-colors hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 group-[.destructive]:border-muted/40 group-[.destructive]:hover:border-destructive/30 group-[.destructive]:hover:bg-destructive group-[.destructive]:hover:text-destructive-foreground group-[.destructive]:focus:ring-destructive",
+      "inline-flex h-8 shrink-0 items-center justify-center rounded-nx-control border border-nx-line-hi bg-transparent px-3 text-sm font-medium text-nx-ink",
+      "transition-[color,background-color,border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "hover:bg-nx-hover focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
+      // Disabled reads through its own ink and hairline tokens. `opacity-50`
+      // over a translucent toast surface produced a different grey on every
+      // design variant and landed under the contrast floor on `modern`.
+      "disabled:pointer-events-none disabled:border-nx-line disabled:text-nx-ink-3",
       className
     )}
     {...props}
@@ -437,6 +246,9 @@ const ToastAction = React.forwardRef<
 ));
 ToastAction.displayName = ToastPrimitives.Action.displayName;
 
+// Dismiss was `opacity-0` until `group-hover` — invisible and unreachable on
+// every touch device, which is where a toast is hardest to swipe away. It is
+// always present now at quiet ink, brightening on hover, on a 32px target.
 const ToastClose = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Close>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Close>
@@ -444,13 +256,15 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600",
+      "absolute end-1.5 top-1.5 grid h-8 w-8 place-items-center rounded-nx-sm text-nx-ink-3",
+      "transition-[color,background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "hover:bg-nx-hover hover:text-nx-ink focus-visible:shadow-nx-focus focus-visible:outline-none",
       className
     )}
     toast-close=""
     {...props}
   >
-    <X className="h-4 w-4" />
+    <X aria-hidden="true" className="h-4 w-4" />
   </ToastPrimitives.Close>
 ));
 ToastClose.displayName = ToastPrimitives.Close.displayName;
@@ -459,7 +273,11 @@ const ToastTitle = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Title>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Title>
 >(({ className, ...props }, ref) => (
-  <ToastPrimitives.Title ref={ref} className={cn("text-sm font-semibold", className)} {...props} />
+  <ToastPrimitives.Title
+    ref={ref}
+    className={cn("text-balance text-sm font-semibold leading-tight tracking-tight", className)}
+    {...props}
+  />
 ));
 ToastTitle.displayName = ToastPrimitives.Title.displayName;
 
@@ -469,7 +287,10 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("text-sm opacity-90", className)}
+    // `opacity-90` was doing the job a second ink token should do — a
+    // translucent white over a translucent surface never lands on a measured
+    // contrast step.
+    className={cn("text-pretty text-sm leading-snug text-nx-ink-2", className)}
     {...props}
   />
 ));
@@ -483,28 +304,26 @@ interface ToastContentProps {
   showIcon?: boolean;
 }
 
+// Severity now lives in the glyph — shape first, colour second — because the
+// toast body no longer tints itself. Four distinct silhouettes, one per level.
+const TOAST_ICON = {
+  default: { Glyph: Info, tint: "text-nx-ink-3" },
+  destructive: { Glyph: AlertCircle, tint: "text-destructive" },
+  success: { Glyph: CheckCircle, tint: "text-success" },
+  warning: { Glyph: AlertTriangle, tint: "text-warning" },
+  info: { Glyph: Info, tint: "text-info" },
+} as const;
+
 const ToastContent = React.forwardRef<
   HTMLDivElement,
   ToastContentProps & React.HTMLAttributes<HTMLDivElement>
 >(({ variant = "default", title, description, showIcon = true, className, ...props }, ref) => {
-  const icons = {
-    default: Info,
-    destructive: AlertCircle,
-    success: CheckCircle,
-    warning: AlertTriangle,
-    info: Info,
-  };
-
-  const IconComponent = icons[variant];
+  const { Glyph, tint } = TOAST_ICON[variant];
 
   return (
-    <div ref={ref} className={cn("flex items-start gap-3", className)} {...props}>
-      {showIcon && (
-        <div className="mt-0.5 flex-shrink-0">
-          <IconComponent className="h-4 w-4" />
-        </div>
-      )}
-      <div className="flex-1 space-y-1">
+    <div ref={ref} className={cn("flex min-w-0 items-start gap-3", className)} {...props}>
+      {showIcon && <Glyph aria-hidden="true" className={cn("mt-0.5 h-4 w-4 shrink-0", tint)} />}
+      <div className="min-w-0 flex-1 space-y-1">
         {title && <ToastTitle>{title}</ToastTitle>}
         {description && <ToastDescription>{description}</ToastDescription>}
       </div>

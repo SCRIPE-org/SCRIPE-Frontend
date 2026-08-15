@@ -86,6 +86,10 @@ function useCodeMirrorEditor({
       }
     });
 
+    // Only metrics here. The old block hard-coded VS Code's greys and its blue
+    // caret over the top of the syntax theme, which every other surface in
+    // this file then had to match by hand; the theme owns its own surface now
+    // and the caret rides the workspace accent token.
     const theme = EditorView.theme({
       "&": {
         fontSize: "13px",
@@ -95,16 +99,8 @@ function useCodeMirrorEditor({
         fontFamily: "'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace",
         padding: "8px 0",
       },
-      ".cm-gutters": {
-        backgroundColor: "#1e1e1e",
-        borderRight: "1px solid #333",
-        color: "#666",
-      },
-      ".cm-activeLineGutter": {
-        backgroundColor: "#252526",
-      },
       "&.cm-focused .cm-cursor": {
-        borderLeftColor: "#007acc",
+        borderLeftColor: "var(--nx-accent)",
       },
       ".cm-scroller": {
         overflow: "auto",
@@ -191,7 +187,7 @@ const HTML_SNIPPETS = [
   },
   {
     name: "Image + Text",
-    code: `<div class="hero-block">\n  <img src="/app-logo.png" alt="Logo" class="hero-img" />\n  <div class="hero-text">\n    <h2>Your Brand Here</h2>\n    <p>Customize everything to match your identity.</p>\n  </div>\n</div>`,
+    code: `<div class="hero-block">\n  <img src="/brand/app-logo-1024.png" alt="Logo" class="hero-img" />\n  <div class="hero-text">\n    <h2>Your Brand Here</h2>\n    <p>Customize everything to match your identity.</p>\n  </div>\n</div>`,
   },
   {
     name: "CTA Section",
@@ -295,24 +291,35 @@ function CodeEditorModal({
     minHeight: "100%",
   });
 
+  // Chrome on tokens, code on the syntax theme. The shell used to hard-code
+  // VS Code's palette top to bottom — including a solid blue status bar — so
+  // the editor was the one dialog in the product that ignored both the theme
+  // and the workspace accent.
+  const chromeButton =
+    "inline-flex min-h-8 items-center gap-1.5 rounded-nx-sm px-2.5 py-1 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none focus-visible:outline-none focus-visible:shadow-nx-focus";
+
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-modal flex items-center justify-center bg-scrim p-4"
       onClick={onClose}
     >
       <div
-        className="flex h-[85vh] max-h-[750px] w-[92vw] max-w-[1100px] flex-col overflow-hidden rounded-xl border border-[#3c3c3c] bg-[#1e1e1e] shadow-2xl"
+        role="dialog"
+        aria-modal="true"
+        aria-label={t("studio.builder.codeEditor")}
+        className="flex h-[85vh] max-h-[750px] w-full max-w-[1100px] flex-col overflow-hidden rounded-nx-lg border border-nx-line bg-nx-surface shadow-nx-modal"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-[#3c3c3c] bg-[#252526] px-4 py-2.5">
+        <div className="flex items-center justify-between gap-3 border-b border-nx-line bg-nx-raised px-4 py-2.5">
           <div className="flex items-center gap-3">
-            <FileCode2 className="h-4 w-4 text-[#007acc]" />
-            <span className="text-sm font-medium text-[#cccccc]">
-              {t("studio.builder.codeEditor") || "Code Editor"}
+            <FileCode2 className="h-4 w-4 text-nx-accent" aria-hidden="true" />
+            <span className="text-sm font-medium text-nx-ink">
+              {t("studio.builder.codeEditor")}
             </span>
-            {/* Tabs */}
-            <div className="ml-4 flex items-center gap-0.5">
+            {/* Tabs — the active one carries the surface step and the lit
+                bottom edge, the same language as the app's Tabs primitive */}
+            <div className="ms-4 flex items-center gap-0.5">
               {tabs.map((tab) => (
                 // UI-EXCEPTION: compact studio layout
                 <button
@@ -321,11 +328,12 @@ function CodeEditorModal({
                     onActiveTabChange(tab.id);
                     setShowPreviewPane(false);
                   }}
+                  aria-pressed={activeTabId === tab.id}
                   className={cn(
-                    "rounded-md px-3 py-1 text-xs font-medium transition-all",
+                    chromeButton,
                     activeTabId === tab.id
-                      ? "bg-[#1e1e1e] text-[#cccccc] shadow-sm"
-                      : "text-[#969696] hover:bg-[#2d2d2d] hover:text-[#cccccc]"
+                      ? "bg-nx-surface text-nx-ink shadow-[inset_0_-2px_0_0_var(--nx-accent)]"
+                      : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
                   )}
                 >
                   {tab.label}
@@ -337,43 +345,47 @@ function CodeEditorModal({
             {/* Snippets toggle */}
             <button
               onClick={() => setShowSnippets(!showSnippets)}
+              aria-pressed={showSnippets}
               className={cn(
-                "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+                chromeButton,
                 showSnippets
-                  ? "bg-amber-500/20 text-amber-400"
-                  : "text-[#969696] hover:bg-[#2d2d2d] hover:text-[#cccccc]"
+                  ? "bg-nx-accent-wash text-nx-accent"
+                  : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
               )}
             >
-              <Zap className="h-3.5 w-3.5" />
-              {t("studio.builder.snippets") || "Snippets"}
+              <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("studio.builder.snippets")}
             </button>
             {showPreview && renderPreview && (
               <button
                 onClick={() => setShowPreviewPane(!showPreviewPane)}
+                aria-pressed={showPreviewPane}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-colors",
+                  chromeButton,
                   showPreviewPane
-                    ? "bg-[#007acc]/20 text-[#3794ff]"
-                    : "text-[#969696] hover:bg-[#2d2d2d] hover:text-[#cccccc]"
+                    ? "bg-nx-accent-wash text-nx-accent"
+                    : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"
                 )}
               >
                 {showPreviewPane ? (
                   <>
-                    <Code className="h-3.5 w-3.5" /> {t("studio.builder.codeOnly") || "Code"}
+                    <Code className="h-3.5 w-3.5" aria-hidden="true" />{" "}
+                    {t("studio.builder.codeOnly")}
                   </>
                 ) : (
                   <>
-                    <Eye className="h-3.5 w-3.5" /> {t("studio.builder.preview") || "Preview"}
+                    <Eye className="h-3.5 w-3.5" aria-hidden="true" />{" "}
+                    {t("studio.builder.preview")}
                   </>
                 )}
               </button>
             )}
             <button
               onClick={onClose}
-              className="rounded-md p-1.5 text-[#969696] transition-colors hover:bg-[#3c3c3c] hover:text-[#cccccc]"
-              title="Close (Esc)"
+              className={cn(chromeButton, "px-2 text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink")}
+              aria-label={t("studio.builder.escToClose")}
             >
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -382,11 +394,11 @@ function CodeEditorModal({
         <div className="flex flex-1 overflow-hidden">
           {/* Snippets Panel */}
           {showSnippets && (
-            <div className="w-64 flex-shrink-0 overflow-y-auto border-r border-[#3c3c3c] bg-[#252526]">
-              <div className="border-b border-[#3c3c3c] p-3">
-                <h3 className="text-xs font-semibold uppercase tracking-wide text-[#cccccc]">
+            <div className="w-64 flex-shrink-0 overflow-y-auto border-e border-nx-line bg-nx-raised">
+              <div className="border-b border-nx-line p-3">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-nx-ink-3">
                   {activeTab?.language === "css" ? "CSS" : "HTML"}{" "}
-                  {t("studio.builder.templates") || "Templates"}
+                  {t("studio.builder.templates")}
                 </h3>
               </div>
               <div className="space-y-1.5 p-2">
@@ -394,17 +406,20 @@ function CodeEditorModal({
                   <button
                     key={s.name}
                     onClick={() => handleInsertSnippet(s.code)}
-                    className="group w-full rounded-md px-3 py-2.5 text-left transition-colors hover:bg-[#2d2d2d]"
+                    className="group w-full rounded-nx-sm px-3 py-2.5 text-start transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-[#cccccc]">{s.name}</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-medium text-nx-ink">{s.name}</span>
                       {copiedSnippet === s.code ? (
-                        <Check className="h-3 w-3 text-emerald-400" />
+                        <Check className="h-3 w-3 text-nx-success" aria-hidden="true" />
                       ) : (
-                        <Copy className="h-3 w-3 text-[#666] transition-colors group-hover:text-[#999]" />
+                        <Copy
+                          className="h-3 w-3 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter group-hover:text-nx-ink-2 motion-reduce:transition-none"
+                          aria-hidden="true"
+                        />
                       )}
                     </div>
-                    <pre className="mt-1.5 line-clamp-3 whitespace-pre-wrap font-mono text-[9px] text-[#666]">
+                    <pre className="mt-1.5 line-clamp-3 whitespace-pre-wrap font-mono text-[11px] leading-relaxed text-nx-ink-3">
                       {s.code.slice(0, 100)}...
                     </pre>
                   </button>
@@ -419,9 +434,9 @@ function CodeEditorModal({
               <div className="flex h-full">
                 <div
                   ref={editorRef}
-                  className="h-full w-1/2 overflow-auto border-r border-[#3c3c3c]"
+                  className="h-full w-1/2 overflow-auto border-e border-nx-line"
                 />
-                <div className="h-full w-1/2 overflow-auto bg-background/95 p-6 text-foreground">
+                <div className="h-full w-1/2 overflow-auto bg-nx-ground p-6 text-nx-ink">
                   {renderPreview()}
                 </div>
               </div>
@@ -431,15 +446,16 @@ function CodeEditorModal({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between bg-[#007acc] px-4 py-2 text-[11px] text-white">
-          <span>
+        {/* Footer — a status strip, not a blue banner: hairline top edge,
+            tertiary ink, tabular line count. */}
+        <div className="flex items-center justify-between gap-4 border-t border-nx-line bg-nx-raised px-4 py-2 text-xs text-nx-ink-3">
+          <span className="tabular-nums">
             {activeTab?.language.toUpperCase()} • {activeTab?.value?.split("\n").length || 0}{" "}
-            {t("studio.builder.lines") || "lines"}
+            {t("studio.builder.lines")}
           </span>
-          <span className="opacity-70">
-            {t("studio.builder.escToClose") || "Press Esc to close"} •{" "}
-            {t("studio.builder.autoSave") || "Changes save automatically"}
+          <span className="truncate">
+            {t("studio.builder.escToClose")} •{" "}
+            {t("studio.builder.autoSave")}
           </span>
         </div>
       </div>
@@ -477,24 +493,26 @@ export function CodeEditorField({
   });
 
   return (
-    <div className={cn("space-y-1.5", className)}>
-      {/* Label */}
-      {label && <span className="text-[10px] font-medium text-muted-foreground">{label}</span>}
-      {description && <p className="text-[9px] text-amber-500/80">{description}</p>}
+    <div className={cn("space-y-2", className)}>
+      {/* Label → hint → control, on the same type ladder as every other field
+          (it used to run 10px label / 9px warning-coloured hint) */}
+      {label && <span className="text-xs font-medium text-nx-ink-2">{label}</span>}
+      {description && <p className="text-xs leading-relaxed text-nx-ink-3">{description}</p>}
 
       {/* Tab Selector (inline) */}
       {tabs.length > 1 && (
-        <div className="flex items-center gap-1 rounded-md border border-border/50 bg-muted/30 p-0.5">
+        <div className="flex items-center gap-1 rounded-nx-control border border-nx-line bg-nx-raised p-0.5">
           {tabs.map((tab) => (
             // UI-EXCEPTION: compact studio layout
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
+              aria-pressed={activeTab === tab.id}
               className={cn(
-                "flex-1 rounded px-2 py-1 text-[10px] font-medium transition-all",
+                "min-h-8 flex-1 rounded-nx-sm px-2 py-1 text-xs font-medium transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none",
                 activeTab === tab.id
-                  ? "bg-background text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-nx-surface text-nx-ink shadow-nx-sm"
+                  : "text-nx-ink-3 hover:text-nx-ink"
               )}
             >
               {tab.label}
@@ -503,20 +521,21 @@ export function CodeEditorField({
         </div>
       )}
 
-      {/* Inline CodeMirror Editor */}
+      {/* Inline CodeMirror Editor — hairline frame on the field ground; the
+          syntax theme paints its own surface inside it */}
       <div
         ref={editorRef}
-        className="w-full overflow-hidden rounded-md border border-border bg-[#1e1e1e]"
+        className="w-full overflow-hidden rounded-nx-control border border-nx-line bg-nx-ground"
         style={{ maxHeight: height * 1.5 }}
       />
 
-      {/* Open Full Editor Button */}
+      {/* Open Full Editor — a secondary action, not an accent-washed banner */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="group flex w-full items-center justify-center gap-2 rounded-md border border-dashed border-primary/30 bg-primary/5 px-3 py-2 text-xs font-medium text-primary transition-all hover:border-primary/50 hover:bg-primary/10"
+        className="flex min-h-9 w-full items-center justify-center gap-2 rounded-nx-control border border-dashed border-nx-line px-3 py-2 text-xs font-medium text-nx-ink-2 transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line-hi hover:bg-nx-hover hover:text-nx-ink focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
       >
-        <Maximize2 className="h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-        {t("studio.builder.openEditor") || "Open Full Editor"}
+        <Maximize2 className="h-3.5 w-3.5" aria-hidden="true" />
+        {t("studio.builder.openEditor")}
       </button>
 
       {/* CodeMirror Modal */}

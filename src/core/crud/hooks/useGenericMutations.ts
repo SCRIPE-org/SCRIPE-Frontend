@@ -8,8 +8,21 @@ import type { QueryKey } from "@core/common/query-keys";
 interface MutationOptions<T> {
   /** Additional query keys to invalidate on any success */
   invalidateKeys?: QueryKey[];
-  /** Called after successful create/update */
+  /**
+   * Called after EITHER a successful create OR a successful update — kept for
+   * backward compatibility with existing callers that don't care which one
+   * fired. New code that reacts differently to create vs. update (e.g.
+   * closing only the dialog that owns the mutation that actually resolved)
+   * should use `onCreateSuccess` / `onUpdateSuccess` instead: a single shared
+   * handler here previously let a create's success close an unrelated open
+   * edit dialog (and vice versa) any time both callbacks pointed at the same
+   * function, since this fires for both mutation types indiscriminately.
+   */
   onSuccess?: (data: T) => void;
+  /** Called after a successful CREATE only. */
+  onCreateSuccess?: (data: T) => void;
+  /** Called after a successful UPDATE only. */
+  onUpdateSuccess?: (data: T) => void;
   /** Called on any mutation error */
   onError?: (error: Error) => void;
   /**
@@ -27,6 +40,18 @@ interface MutationOptions<T> {
    * list query key containing `{ items: T[] }` shaped data.
    */
   optimisticDelete?: boolean;
+  /**
+   * Skip the automatic create/update success toast. For a caller doing
+   * additional async work after the entity itself saves (custom-field
+   * values, a follow-up request) and wanting one toast for the whole
+   * operation instead of "saved" immediately followed by an error — use
+   * the returned `showCreateSuccessToast`/`showUpdateSuccessToast` once
+   * that work actually finishes. Does not affect `onCreateSuccess`/
+   * `onUpdateSuccess`/`onSuccess`, `invalidate`, or error handling —
+   * only the toast call itself. Defaults to false: every existing caller
+   * keeps getting its toast at the same moment as today.
+   */
+  deferSuccessToast?: boolean;
 }
 
 export function useGenericMutations<T extends { id: string }, TCreate = unknown, TUpdate = unknown>(
@@ -57,11 +82,14 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     },
     onSuccess: (data) => {
       invalidate();
-      operationSuccess(options?.successMessages?.create ?? t("common.messages.created"));
+      if (!options?.deferSuccessToast) {
+        operationSuccess(options?.successMessages?.create ?? t("common.messages.created"));
+      }
+      options?.onCreateSuccess?.(data);
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
-      operationError(error.message || t("common.messages.createFailed"));
+      operationError("Create", undefined, error.message || t("common.messages.createFailed"));
       options?.onError?.(error);
     },
   });
@@ -74,11 +102,14 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     },
     onSuccess: (data) => {
       invalidate();
-      operationSuccess(options?.successMessages?.update ?? t("common.messages.updated"));
+      if (!options?.deferSuccessToast) {
+        operationSuccess(options?.successMessages?.update ?? t("common.messages.updated"));
+      }
+      options?.onUpdateSuccess?.(data);
       options?.onSuccess?.(data);
     },
     onError: (error: Error) => {
-      operationError(error.message || t("common.messages.updateFailed"));
+      operationError("Update", undefined, error.message || t("common.messages.updateFailed"));
       options?.onError?.(error);
     },
   });
@@ -115,11 +146,11 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
           if (context?.previous !== undefined) {
             queryClient.setQueryData(baseKey as readonly unknown[], context.previous);
           }
-          operationError(options?.successMessages?.delete ?? t("common.messages.deleteFailed"));
+          operationError("Delete", undefined, (_ as Error)?.message || t("common.messages.deleteFailed"));
           options?.onError?.(_ as Error);
         }
       : (error: Error) => {
-          operationError(error.message || t("common.messages.deleteFailed"));
+          operationError("Delete", undefined, error.message || t("common.messages.deleteFailed"));
           options?.onError?.(error);
         },
     onSuccess: () => {
@@ -141,5 +172,11 @@ export function useGenericMutations<T extends { id: string }, TCreate = unknown,
     createError: createMutation.error,
     updateError: updateMutation.error,
     deleteError: deleteMutation.error,
+    /** Fires the create success toast `deferSuccessToast` held back. No-op call otherwise unnecessary — only meaningful paired with `deferSuccessToast: true`. */
+    showCreateSuccessToast: () =>
+      operationSuccess(options?.successMessages?.create ?? t("common.messages.created")),
+    /** Fires the update success toast `deferSuccessToast` held back. */
+    showUpdateSuccessToast: () =>
+      operationSuccess(options?.successMessages?.update ?? t("common.messages.updated")),
   };
 }

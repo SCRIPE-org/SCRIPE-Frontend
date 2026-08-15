@@ -36,6 +36,15 @@ const eslintConfig = defineConfig([
           argsIgnorePattern: "^_",
         },
       ],
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector:
+            "JSXAttribute[name.name='className'] Literal[value.value=/(^|\\s)(text|bg|border)-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\\d{2,3}(\\s|$)|(^|\\s)shadow-(sm|md|lg|xl|2xl)(\\s|$)|(^|\\s)rounded-\\[|(^|\\s)z-\\[|(^|\\s)duration-(300|500|700|1000)(\\s|$)|(^|\\s)transition-all(\\s|$)|(^|\\s)(ml|mr|pl|pr|left|right)-\\S|(^|\\s)text-(left|right)(\\s|$)/]",
+          message:
+            "Use nx-* design tokens and logical/RTL-aware classes instead of raw Tailwind palette colors, shadow-*, rounded-[], z-[], duration-(300|500|700|1000), transition-all, or physical-direction (ml-/mr-/pl-/pr-/left-/right-/text-left/text-right) utilities.",
+        },
+      ],
     },
   },
   ...storybook.configs["flat/recommended"],

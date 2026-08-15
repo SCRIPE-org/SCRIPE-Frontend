@@ -1,5 +1,15 @@
 "use client";
 
+// COLOUR EXCEPTION — email HTML output, not product chrome.
+//
+// The document fragment this view builds for the preview iframe is the same
+// markup that will be sent to a mail client, and mail clients do not evaluate
+// CSS custom properties: a var(--nx-*) reference is dropped or, worse, silently
+// resolved against the client's own stylesheet. So anything INSIDE the
+// generated markup below stays inline and literal on purpose. Everything
+// outside it — the card, the header strip, the hairlines, the delete control —
+// is product chrome and reads the --nx- tokens like every other surface.
+
 /**
  * EmailHtmlBlockView — React NodeView for the EmailHtmlBlock TipTap extension.
  *
@@ -12,17 +22,19 @@ import React, { useCallback, useMemo, useState } from "react";
 import { NodeViewWrapper, type NodeViewProps } from "@tiptap/react";
 import { Trash2, MousePointerClick, Share2, Code2, GripVertical } from "lucide-react";
 import { Button } from "@core/ui/button";
+import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 
 // ─── Icon Map ───────────────────────────────────────────────
 const BLOCK_ICONS: Record<string, React.ReactNode> = {
-  button: <MousePointerClick className="h-3.5 w-3.5" />,
-  social: <Share2 className="h-3.5 w-3.5" />,
-  generic: <Code2 className="h-3.5 w-3.5" />,
+  button: <MousePointerClick className="h-3.5 w-3.5" aria-hidden="true" />,
+  social: <Share2 className="h-3.5 w-3.5" aria-hidden="true" />,
+  generic: <Code2 className="h-3.5 w-3.5" aria-hidden="true" />,
 };
 
 // ─── Component ──────────────────────────────────────────────
 export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps) {
+  const { t } = useI18n();
   const { html, label, blockType } = node.attrs as {
     html: string;
     label: string;
@@ -32,7 +44,8 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
 
   const icon = BLOCK_ICONS[blockType] || BLOCK_ICONS.generic;
 
-  // Build a self-contained HTML document for the iframe preview
+  // Build a self-contained HTML document for the iframe preview. Everything in
+  // here is mail-client markup — see the COLOUR EXCEPTION note at the top.
   const iframeSrcDoc = useMemo(() => {
     return `<!DOCTYPE html>
 <html>
@@ -40,10 +53,10 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
 <meta charset="utf-8"/>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     min-height: 40px;
     padding: 4px;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -67,12 +80,15 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
   return (
     <NodeViewWrapper
       className={cn(
-        "email-html-block relative my-2 rounded-lg border-2 transition-all",
+        // "group" backs the delete button's focus-within reveal below.
+        // Selection lights the EDGE rather than growing the border: a 2px→1px
+        // swap moved every following line in the document by a pixel.
+        "group email-html-block relative my-2 rounded-nx-md border transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
         selected
-          ? "border-primary/50 ring-2 ring-primary/20"
+          ? "border-nx-accent shadow-[inset_0_0_0_1px_var(--nx-accent)]"
           : hovered
-            ? "border-primary/30"
-            : "border-border/50"
+            ? "border-nx-line-hi"
+            : "border-nx-line"
       )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -81,32 +97,39 @@ export function EmailHtmlBlockView({ node, deleteNode, selected }: NodeViewProps
       {/* Header bar */}
       <div
         className={cn(
-          "flex items-center gap-1.5 rounded-t-md px-2 py-1 text-xs font-medium",
-          "border-b border-border/30 bg-muted/40 text-muted-foreground"
+          "flex items-center gap-1.5 rounded-t-nx-md px-2 py-1 text-xs font-medium",
+          "border-b border-nx-line bg-nx-raised text-nx-ink-2"
         )}
       >
-        <GripVertical className="h-3 w-3 cursor-grab opacity-40" />
+        <GripVertical className="h-3 w-3 cursor-grab text-nx-ink-3" aria-hidden="true" />
         {icon}
         <span className="truncate">{label}</span>
         <div className="flex-1" />
 
-        {/* Delete button */}
-        {(hovered || selected) && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-5 w-5 p-0 hover:bg-destructive/10 hover:text-destructive"
-            onClick={handleDelete}
-            title="Remove block"
-          >
-            <Trash2 className="h-3 w-3" />
-          </Button>
-        )}
+        {/* Delete button — always mounted so keyboard focus can reach it; a
+            hover-only mount (the previous `{(hovered || selected) && ...}`
+            guard) never receives Tab focus at all. Visibility is opacity-
+            driven with a focus-within arm, matching AttachmentUploader's
+            pattern. */}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className={cn(
+            "h-5 w-5 p-0 opacity-0 transition-opacity duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+            "hover:bg-destructive/10 hover:text-destructive",
+            "focus-visible:opacity-100 group-focus-within:opacity-100 group-hover:opacity-100",
+            selected && "opacity-100"
+          )}
+          onClick={handleDelete}
+          aria-label={t("editorBlocks.block.remove")}
+        >
+          <Trash2 className="h-3 w-3" aria-hidden="true" />
+        </Button>
       </div>
 
       {/* Preview iframe */}
-      <div className="rounded-b-md bg-white p-2 dark:bg-zinc-900">
+      <div className="rounded-b-nx-md bg-nx-surface p-2">
         <iframe
           srcDoc={iframeSrcDoc}
           sandbox="allow-same-origin"

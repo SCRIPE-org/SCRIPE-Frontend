@@ -3,11 +3,32 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { CalendarDays, Clock } from "lucide-react";
-import { cn } from "@core/common/utils";
+import {  cn , resolveIntlLocale } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { CustomCalendar } from "./custom-calendar";
 import { scrollIntoViewIfNeeded, type DropdownPosition } from "@core/common/dropdown-positioning";
+
+// Wave C collapse: 7 date-picker skins reduce to "default" (the nexus token
+// treatment) and "elegant" (the accent take — accent underline + wash). The
+// retired skins were the same field with different wallpaper, so they all
+// read nearest to "default".
+export type DatePickerVariant = "default" | "elegant";
+
+const LEGACY_DATE_PICKER_VARIANT: Partial<Record<string, DatePickerVariant>> = {
+  modern: "default",
+  glass: "default",
+  outlined: "default",
+  filled: "default",
+  minimal: "default",
+};
+
+// Stored settings can hold values the map no longer knows; unknowns fall back
+// to "default" so first paint is always a styled field.
+export const resolveDatePickerVariant = (value: string | null | undefined): DatePickerVariant => {
+  if (value === "default" || value === "elegant") return value;
+  return (value && LEGACY_DATE_PICKER_VARIANT[value]) || "default";
+};
 
 interface DatePickerProps {
   id?: string;
@@ -18,6 +39,12 @@ interface DatePickerProps {
   disabled?: boolean;
   className?: string;
   type?: "date" | "datetime-local";
+  /** Earliest selectable day (any parseable date string). Additive — undefined keeps every day selectable. */
+  minDate?: string;
+  /** Latest selectable day (any parseable date string). Additive — undefined keeps every day selectable. */
+  maxDate?: string;
+  /** Per-day veto for booking-style rules the min/max window cannot express. */
+  isDateDisabled?: (date: Date) => boolean;
 }
 
 interface PositionCalcParams {
@@ -113,10 +140,12 @@ export function DatePicker({
   disabled = false,
   className,
   type = "date",
+  minDate,
+  maxDate,
+  isDateDisabled,
 }: DatePickerProps) {
   const { datePickerStyle, borderRadius } = useSettings();
-  const { t, language, direction } = useI18n();
-  const [isFocused, setIsFocused] = useState(false);
+  const { t, language } = useI18n();
   const [showCalendar, setShowCalendar] = useState(false);
   const [animateOpen, setAnimateOpen] = useState(false);
   const [calendarPosition, setCalendarPosition] = useState<DropdownPosition>({
@@ -130,6 +159,8 @@ export function DatePicker({
   const calendarRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
   const shouldShowAboveRef = useRef(false);
+
+  const variant = resolveDatePickerVariant(datePickerStyle);
 
   // Validate and handle input change
   const handleChange = useCallback(
@@ -206,11 +237,11 @@ export function DatePicker({
       if (!dateValue) return "";
       const date = parseDateSafe(dateValue);
       if (!date) {
-        return t("common.invalidDate") || "Invalid date";
+        return t("common.invalidDate");
       }
 
       try {
-        const locale = language === "ar" ? "ar-EG" : "en-US";
+        const locale = resolveIntlLocale(language);
         const options: Intl.DateTimeFormatOptions = {
           day: "2-digit",
           month: "2-digit",
@@ -224,7 +255,7 @@ export function DatePicker({
 
         return new Intl.DateTimeFormat(locale, options).format(date);
       } catch {
-        return t("common.invalidDate") || "Invalid date";
+        return t("common.invalidDate");
       }
     },
     [language, type, t]
@@ -339,286 +370,67 @@ export function DatePicker({
 
   const IconComponent = type === "datetime-local" ? Clock : CalendarDays;
 
-  // Memoize style functions
+  // The Settings borderRadius, mapped onto the nx radius ladder — the same
+  // ladder Input and Button ride, so a date field and a text field in the same
+  // row have identical corners.
   const borderRadiusClass = useMemo(() => {
     switch (borderRadius) {
       case "none":
         return "rounded-none";
       case "small":
-        return "rounded-sm";
+        return "rounded-nx-sm";
       case "large":
-        return "rounded-lg";
+        return "rounded-nx-lg";
       case "full":
         return "rounded-full";
       default:
-        return "rounded-md";
+        return "rounded-nx-control";
     }
   }, [borderRadius]);
 
-  const datePickerStyles = useMemo(() => {
-    const baseStyles = "relative w-full transition-all duration-200 ease-in-out";
-    switch (datePickerStyle) {
-      case "modern":
-        return cn(
-          baseStyles,
-          "group bg-gradient-to-r from-background to-muted/20",
-          "border border-border/50 hover:border-border",
-          "focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20",
-          "shadow-sm hover:shadow-md focus-within:shadow-lg",
-          borderRadiusClass
-        );
-      case "glass":
-        return cn(
-          baseStyles,
-          "group bg-background/60 backdrop-blur-sm",
-          "border border-white/20 hover:border-white/30",
-          "focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10",
-          "shadow-lg hover:shadow-xl focus-within:shadow-2xl",
-          borderRadiusClass
-        );
-      case "outlined":
-        return cn(
-          baseStyles,
-          "group bg-transparent",
-          "border-2 border-border hover:border-primary/50",
-          "focus-within:border-primary focus-within:ring-0",
-          "hover:shadow-sm focus-within:shadow-md",
-          borderRadiusClass
-        );
-      case "filled":
-        return cn(
-          baseStyles,
-          "group bg-muted/50 hover:bg-muted/70",
-          "border border-transparent hover:border-border/30",
-          "focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20",
-          "focus-within:bg-background",
-          borderRadiusClass
-        );
-      case "minimal":
-        return cn(
-          baseStyles,
-          "group bg-transparent",
-          "border-b-2 border-border hover:border-primary/50",
-          "focus-within:border-primary focus-within:ring-0",
-          "rounded-none hover:shadow-sm"
-        );
-      case "elegant":
-        return cn(
-          baseStyles,
-          "group bg-gradient-to-br from-background via-background to-muted/10",
-          "border border-border/30 hover:border-primary/30",
-          "focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/30",
-          "shadow-sm hover:shadow-lg focus-within:shadow-xl",
-          "before:absolute before:inset-0 before:bg-gradient-to-r before:from-primary/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity",
-          borderRadiusClass
-        );
-      default:
-        return cn(
-          baseStyles,
-          "group bg-background",
-          "border border-border hover:border-primary/50",
-          "focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20",
-          borderRadiusClass
-        );
+  // The trigger IS the field, so it wears the field surface: 40px tall on the
+  // sunken --nx-ground behind a hairline, hover lifts the hairline, focus and
+  // the open state light the edge. "elegant" is the accent take — the same
+  // skeleton plus an accent underline and an accent-wash tint while the
+  // calendar is up. Inert is the raised slab with ink-3, never a 50% wash.
+  const triggerStyles = useMemo(() => {
+    const base = cn(
+      "relative flex h-10 w-full items-center justify-between gap-2 px-3 py-2 text-sm",
+      "border border-nx-line bg-nx-ground",
+      "transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+      "focus-visible:outline-none focus-visible:border-nx-accent focus-visible:shadow-nx-focus",
+      borderRadiusClass
+    );
+
+    if (variant === "elegant") {
+      return cn(
+        base,
+        "hover:border-nx-accent",
+        showCalendar ? "border-nx-accent bg-nx-accent-wash" : ""
+      );
     }
-  }, [datePickerStyle, borderRadiusClass]);
 
-  const inputStyles = useMemo(() => {
-    const baseInputStyles =
-      "relative w-full h-12 px-4 py-3 text-sm bg-background border transition-all duration-300 focus:outline-none focus:ring-0 disabled:cursor-not-allowed disabled:opacity-50";
-    switch (datePickerStyle) {
-      case "modern":
-        return cn(
-          baseInputStyles,
-          borderRadiusClass,
-          "bg-gradient-to-r from-background via-background to-muted/10 border-border/40 shadow-lg",
-          "hover:shadow-xl hover:border-primary/40 hover:from-background hover:to-primary/5",
-          "focus:shadow-2xl focus:border-primary focus:from-background focus:to-primary/10",
-          "focus:ring-4 focus:ring-primary/10"
-        );
-      case "glass":
-        return cn(
-          baseInputStyles,
-          borderRadiusClass,
-          "bg-background/60 backdrop-blur-xl border-border/20 shadow-2xl",
-          "hover:bg-background/70 hover:border-border/40 hover:shadow-2xl",
-          "focus:bg-background/80 focus:border-primary/60 focus:shadow-2xl",
-          "focus:ring-4 focus:ring-primary/20 backdrop-saturate-150"
-        );
-      case "outlined":
-        return cn(
-          baseInputStyles,
-          borderRadiusClass,
-          "bg-transparent border-2 border-border/60 shadow-sm",
-          "hover:border-primary/60 hover:shadow-lg hover:bg-muted/5",
-          "focus:border-primary focus:shadow-xl focus:bg-background/50",
-          "focus:ring-4 focus:ring-primary/15"
-        );
-      case "filled":
-        return cn(
-          baseInputStyles,
-          borderRadiusClass,
-          "bg-muted/80 border-transparent shadow-inner",
-          "hover:bg-muted hover:shadow-lg",
-          "focus:bg-background focus:border-primary focus:shadow-xl",
-          "focus:ring-4 focus:ring-primary/10"
-        );
-      case "minimal":
-        return cn(
-          "relative w-full h-12 px-4 py-3 text-sm bg-transparent border-0 border-b-2 border-border/60 transition-all duration-300 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 rounded-none",
-          "hover:border-primary/60 hover:bg-muted/5",
-          "focus:border-primary focus:bg-background/30",
-          "focus:shadow-lg focus:shadow-primary/10"
-        );
-      case "elegant":
-        return cn(
-          baseInputStyles,
-          borderRadiusClass,
-          "bg-gradient-to-br from-background via-muted/5 to-primary/5 border-border/50 shadow-lg",
-          "hover:shadow-xl hover:border-primary/50 hover:from-background hover:via-muted/10 hover:to-primary/10",
-          "focus:shadow-2xl focus:border-primary focus:from-background focus:via-primary/5 focus:to-primary/15",
-          "focus:ring-4 focus:ring-primary/15"
-        );
-      default:
-        return cn(
-          baseInputStyles,
-          borderRadiusClass,
-          "border-border/60 shadow-sm hover:border-primary/50 hover:shadow-lg focus:border-primary focus:shadow-xl",
-          "focus:ring-4 focus:ring-primary/10"
-        );
-    }
-  }, [datePickerStyle, borderRadiusClass]);
-
-  const iconStyles = useMemo(() => {
-    const baseIconStyles =
-      "absolute top-1/2 -translate-y-1/2 transition-all duration-200 pointer-events-none";
-    const iconPosition = direction === "rtl" ? "right-3" : "left-3";
-    const baseHoverFocus = "group-hover:text-primary group-focus-within:text-primary";
-
-    switch (datePickerStyle) {
-      case "modern":
-        return cn(
-          baseIconStyles,
-          iconPosition,
-          "text-muted-foreground",
-          baseHoverFocus,
-          "group-focus-within:scale-105"
-        );
-      case "glass":
-        return cn(
-          baseIconStyles,
-          iconPosition,
-          "text-foreground/60",
-          "group-hover:text-primary/80 group-focus-within:text-primary",
-          "group-focus-within:scale-110 group-focus-within:drop-shadow-md drop-shadow-sm"
-        );
-      case "outlined":
-        return cn(
-          baseIconStyles,
-          iconPosition,
-          "text-muted-foreground",
-          baseHoverFocus,
-          "group-focus-within:scale-105"
-        );
-      case "filled":
-        return cn(
-          baseIconStyles,
-          iconPosition,
-          "text-muted-foreground group-hover:text-foreground group-focus-within:text-primary"
-        );
-      case "minimal":
-        return cn(
-          baseIconStyles,
-          iconPosition,
-          "text-muted-foreground",
-          baseHoverFocus,
-          "group-focus-within:scale-110"
-        );
-      case "elegant":
-        return cn(
-          baseIconStyles,
-          iconPosition,
-          "text-muted-foreground/70 group-hover:text-primary/80 group-focus-within:text-primary",
-          "group-focus-within:scale-105 drop-shadow-sm"
-        );
-      default:
-        return cn(baseIconStyles, iconPosition, "text-muted-foreground", baseHoverFocus);
-    }
-  }, [datePickerStyle, direction]);
-
-  const labelStyles = useMemo(() => {
-    if (!placeholder || value) return "hidden";
-    const baseLabelStyles =
-      "absolute transition-all duration-300 pointer-events-none select-none z-10";
-    const labelPosition = language === "ar" ? "right-4" : "left-4";
-    const focusedLabel =
-      (isFocused || showCalendar) &&
-      "top-0 text-xs text-primary font-medium scale-90 -translate-y-1/2";
-
-    switch (datePickerStyle) {
-      case "modern":
-      case "filled":
-        return cn(
-          baseLabelStyles,
-          labelPosition,
-          "top-1/2 -translate-y-1/2 text-muted-foreground text-sm bg-background px-2 rounded",
-          focusedLabel
-        );
-      case "glass":
-        return cn(
-          baseLabelStyles,
-          labelPosition,
-          "top-1/2 -translate-y-1/2 text-foreground/60 text-sm bg-background/80 backdrop-blur-sm px-2 rounded",
-          focusedLabel
-        );
-      case "outlined":
-        return cn(
-          baseLabelStyles,
-          labelPosition,
-          "top-1/2 -translate-y-1/2 text-muted-foreground text-sm bg-background px-2",
-          focusedLabel
-        );
-      case "elegant":
-        return cn(
-          baseLabelStyles,
-          labelPosition,
-          "top-1/2 -translate-y-1/2 text-muted-foreground/70 text-sm font-medium bg-gradient-to-r from-background to-background px-2 rounded",
-          (isFocused || showCalendar) &&
-            "top-0 text-xs text-primary font-semibold scale-90 -translate-y-1/2"
-        );
-      case "minimal":
-        return cn(
-          baseLabelStyles,
-          labelPosition,
-          "top-1/2 -translate-y-1/2 text-muted-foreground text-sm",
-          (isFocused || showCalendar) && "top-2 text-xs text-primary font-medium"
-        );
-      default:
-        return cn(
-          baseLabelStyles,
-          labelPosition,
-          "top-1/2 -translate-y-1/2 text-muted-foreground text-sm bg-background px-2 rounded",
-          focusedLabel
-        );
-    }
-  }, [placeholder, value, datePickerStyle, language, isFocused, showCalendar]);
+    return cn(
+      base,
+      "hover:border-nx-line-hi",
+      showCalendar ? "border-nx-accent shadow-nx-focus" : ""
+    );
+  }, [variant, borderRadiusClass, showCalendar]);
 
   const displayValue = useMemo(() => {
-    if (!value) return placeholder || t("common.selectDate") || "Select date";
+    if (!value) return placeholder || t("common.selectDate");
     return formatDisplayValue(value);
   }, [value, placeholder, formatDisplayValue, t]);
 
   const ariaLabel = useMemo(() => {
     if (value) {
-      return `${
-        placeholder || t("common.selectDate") || "Select date"
-      }: ${formatDisplayValue(value)}`;
+      return `${placeholder || t("common.selectDate")}: ${formatDisplayValue(value)}`;
     }
-    return placeholder || t("common.selectDate") || "Select date";
+    return placeholder || t("common.selectDate");
   }, [value, placeholder, formatDisplayValue, t]);
 
   return (
-    <div ref={containerRef} className={cn(datePickerStyles, className)}>
+    <div ref={containerRef} className={cn("group relative w-full", className)}>
       <input
         id={id}
         type={type}
@@ -633,14 +445,13 @@ export function DatePicker({
       <div
         ref={triggerRef}
         className={cn(
-          inputStyles,
-          "flex items-center justify-between",
-          disabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+          triggerStyles,
+          disabled
+            ? "cursor-not-allowed border-nx-line bg-nx-raised text-nx-ink-3 shadow-none hover:border-nx-line"
+            : "cursor-pointer"
         )}
         onClick={handleIconClick}
         onKeyDown={handleTriggerKeyDown}
-        onFocus={() => !disabled && setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
         tabIndex={disabled ? -1 : 0}
         role="combobox"
         aria-expanded={showCalendar}
@@ -651,33 +462,41 @@ export function DatePicker({
         aria-disabled={disabled}
       >
         <span id={descriptionId} className="sr-only">
-          {t("common.datePickerInstructions") || "Press Enter or Space to open calendar"}
+          {t("common.datePickerInstructions")}
         </span>
+        {/* A formatted date is a run of digits — tabular figures stop the
+            field twitching as the value changes. Empty reads as placeholder
+            ink, never as a value. */}
         <span
           className={cn(
-            "flex-1 select-none",
-            direction === "rtl" ? "text-right" : "text-left",
-            value ? "text-foreground" : "text-muted-foreground"
+            "flex-1 select-none truncate text-start",
+            value ? "tabular-nums text-nx-ink" : "text-nx-ink-3",
+            disabled && "text-nx-ink-3"
           )}
         >
           {displayValue}
         </span>
         <IconComponent
           className={cn(
-            "h-4 w-4 flex-shrink-0 transition-all duration-200",
-            direction === "rtl" ? "mr-2" : "ml-2",
-            showCalendar ? "scale-110 text-primary" : "text-muted-foreground",
-            "hover:scale-105 hover:text-primary"
+            "h-4 w-4 flex-shrink-0",
+            "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+            showCalendar ? "text-nx-accent" : "text-nx-ink-3"
           )}
           aria-hidden="true"
         />
       </div>
 
-      {datePickerStyle === "glass" && isFocused && (
-        <div className="rounded-inherit pointer-events-none absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent" />
-      )}
-      {datePickerStyle === "elegant" && (
-        <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 transition-opacity duration-300 group-focus-within:opacity-100" />
+      {/* The accent underline — elegant's signature detail. Block-axis anchored,
+          so it needs no direction handling. */}
+      {variant === "elegant" && !disabled && (
+        <div
+          aria-hidden="true"
+          className={cn(
+            "pointer-events-none absolute inset-x-0 bottom-0 h-0.5 bg-nx-accent",
+            "transition-opacity duration-nx-standard ease-nx-enter motion-reduce:transition-none",
+            showCalendar ? "opacity-100" : "opacity-0 group-focus-within:opacity-60"
+          )}
+        />
       )}
 
       {showCalendar &&
@@ -691,25 +510,33 @@ export function DatePicker({
             data-date-picker="true"
             role="dialog"
             aria-modal="true"
-            aria-label={t("common.calendarDialog") || "Calendar"}
+            aria-label={t("common.calendarDialog")}
             className={cn(
-              "pointer-events-auto fixed z-[2147483647] rounded-lg border bg-background shadow-lg",
+              // z-dropdown, not the 32-bit integer ceiling. A popover that outranks every
+              // possible layer wins against dialogs and toasts too, which is never right.
+              // It floats, so it earns the popover shadow — the only shadow in
+              // this file.
+              "pointer-events-auto fixed z-dropdown rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover",
               calendarPosition.placement === "top-start"
                 ? "rounded-b-none border-b-0"
-                : "rounded-t-none border-t-0"
+                : "rounded-t-none border-t-0",
+              // transform+opacity entrance at micro speed; reduced motion keeps
+              // the crossfade and drops the slide
+              "transition-[transform,opacity] duration-nx-micro ease-nx-enter motion-reduce:translate-y-0 motion-reduce:transition-none",
+              animateOpen
+                ? "translate-y-0 opacity-100"
+                : cn(
+                    "opacity-0",
+                    calendarPosition.placement === "top-start"
+                      ? "translate-y-1.5"
+                      : "-translate-y-1.5"
+                  )
             )}
             style={{
               top: `${calendarPosition.top}px`,
               left: `${calendarPosition.left}px`,
               width: `${calendarPosition.width}px`,
               pointerEvents: "auto",
-              transform: `translateZ(0) translateY(${
-                animateOpen ? 0 : calendarPosition.placement === "top-start" ? 6 : -6
-              }px)`,
-              willChange: "transform, opacity",
-              opacity: animateOpen ? 1 : 0,
-              transition:
-                "transform 120ms cubic-bezier(.2,.8,.2,1), opacity 120ms cubic-bezier(.2,.8,.2,1)",
             }}
             onMouseDownCapture={(e) => e.stopPropagation()}
             onClick={(e) => e.stopPropagation()}
@@ -723,6 +550,9 @@ export function DatePicker({
                 triggerRef.current?.focus();
               }}
               type={type}
+              minDate={minDate}
+              maxDate={maxDate}
+              isDateDisabled={isDateDisabled}
             />
           </div>,
           document.body

@@ -1,12 +1,12 @@
 /// SCRIPE Service Worker — P5.1
 /// Cache Strategy: App shell (cache-first), API (network-first), Assets (stale-while-revalidate)
 
-const CACHE_VERSION = "scripe-v1";
+const CACHE_VERSION = "scripe-v2-relay";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 
 // App shell — cached on install
-const APP_SHELL = ["/", "/manifest.json", "/app-logo.png", "/offline.html"];
+const APP_SHELL = ["/", "/manifest.json", "/brand/app-logo-1024.png", "/offline.html"];
 
 // Install: Pre-cache app shell
 self.addEventListener("install", (event) => {

@@ -28,15 +28,16 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { TENANTS_ENDPOINTS } from "@core/config/api-endpoints";
 import { getModuleApiService } from "@core/services/api-factory";
 import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
+import { defaultSettings } from "@core/settings/defaults";
 
 // ── Constants ──
 const DEBOUNCE_MS = 2000;
 const MAX_PAYLOAD_BYTES = 8000; // 8KB soft limit (column is 10KB)
-const SAVE_ENDPOINT = API_ENDPOINTS.TENANTS.ADMIN_PREFERENCES;
+const SAVE_ENDPOINT = TENANTS_ENDPOINTS.TENANTS.ADMIN_PREFERENCES;
 
 // ── Types ──
 interface AdminSettingsPayload {
@@ -50,6 +51,10 @@ interface AdminSettingsPayload {
  */
 export function useAdminSettingsSync() {
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  // MustChangePasswordMiddleware 403s every backend route except a tiny whitelist —
+  // syncing preferences while mcp=true is a guaranteed rejection (confirmed live).
+  // The admin is about to be logged out and redirected anyway once they change it.
+  const mustChangePassword = useAppStore((s) => s.mustChangePassword);
 
   const [hasToken, setHasToken] = useState(() => secureTokenService.hasToken());
 
@@ -85,7 +90,7 @@ export function useAdminSettingsSync() {
 
   // ── Load admin settings from server (with deferred flush check) ──
   const loadAdminSettings = useCallback(async () => {
-    if (!isAuthenticated || !hasToken) return;
+    if (!isAuthenticated || !hasToken || mustChangePassword) return;
 
     // Pre-flight: if there are NO cached settings (first login or post-logout),
     // show the transition shimmer BEFORE the API call starts. This prevents the
@@ -119,6 +124,7 @@ export function useAdminSettingsSync() {
 
       if (response?.adminSettingsJson) {
         const serverSettings = response.adminSettingsJson;
+
         const cachedSettings = localStorage.getItem(STORAGE_KEYS.DASHBOARD_SETTINGS);
 
         // Silent reconcile: only update if server differs from cache
@@ -134,9 +140,14 @@ export function useAdminSettingsSync() {
               layoutChanged = cached.layoutTemplate !== server.layoutTemplate;
             } else {
               // First login / fresh device: compare default layout vs server layout.
-              // Without this, the UI would render with the default ("nexus") layout
-              // and then visibly flash to the server's layout (e.g. "classic").
-              layoutChanged = server.layoutTemplate != null && server.layoutTemplate !== "nexus";
+              // Without this, the UI would render with the default layout and then
+              // visibly flash to the server's layout (e.g. "classic").
+              // Read the default rather than naming it: this used to hardcode
+              // "nexus", so moving the platform default would silently make every
+              // fresh device claim the layout had changed when it had not.
+              layoutChanged =
+                server.layoutTemplate != null &&
+                server.layoutTemplate !== defaultSettings.layoutTemplate;
             }
           } catch {
             // Non-fatal: if parse fails, treat as no layout change
@@ -178,12 +189,12 @@ export function useAdminSettingsSync() {
         setTimeout(() => setIsTransitioning(false), 800);
       }
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, mustChangePassword]);
 
   // ── Save settings to server (debounced) ──
   const saveToServer = useCallback(
     async (payload: string) => {
-      if (!isAuthenticated) return;
+      if (!isAuthenticated || mustChangePassword) return;
 
       // Edge Case 4: Payload size guard
       const payloadSize = new Blob([payload]).size;
@@ -275,7 +286,7 @@ export function useAdminSettingsSync() {
         }
       }
     },
-    [isAuthenticated]
+    [isAuthenticated, mustChangePassword]
   );
 
   // ── Listen for SettingsProvider changes ──

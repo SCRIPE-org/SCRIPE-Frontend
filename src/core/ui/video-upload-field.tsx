@@ -13,12 +13,14 @@
 import { useRef, useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn, resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { Upload, Link2, Video, Loader2, Check, X } from "lucide-react";
-import { API_ENDPOINTS } from "@core/config/api-endpoints";
+import { Upload, Link2, Video, Check, X } from "lucide-react";
+import { LoadingSpinner } from "@core/ui/loading-spinner";
+import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints";
 import { getCoreContainer } from "@core/di";
 
 // ─── Props ──────────────────────────────────────────────────────
@@ -58,12 +60,10 @@ export function VideoUploadField({
 
   const maxMB = Math.round(maxSizeBytes / (1024 * 1024));
 
-  // Resolve display URL
-  const displayUrl = value
-    ? value.startsWith("http://") || value.startsWith("https://")
-      ? value
-      : resolveFileUrl(value)
-    : "";
+  // Resolve display URL. The hook runs unconditionally so hook order stays
+  // stable regardless of `value`; it already passes absolute URLs through.
+  const resolvedValueUrl = useResolvedFileUrl(value);
+  const displayUrl = value ? resolvedValueUrl : "";
 
   const handleUpload = useCallback(
     async (file: File) => {
@@ -71,14 +71,14 @@ export function VideoUploadField({
 
       // Validate size
       if (file.size > maxSizeBytes) {
-        setError(t("videoUpload.tooLarge", { max: maxMB }) || `File exceeds ${maxMB} MB limit`);
+        setError(t("videoUpload.tooLarge", { max: maxMB }));
         return;
       }
 
       // Validate type
       const ext = file.name.split(".").pop()?.toLowerCase();
       if (!["mp4", "webm", "ogg", "mov"].includes(ext || "")) {
-        setError(t("videoUpload.invalidType") || "Invalid file type. Allowed: MP4, WebM, OGG, MOV");
+        setError(t("videoUpload.invalidType"));
         return;
       }
 
@@ -88,7 +88,7 @@ export function VideoUploadField({
         const formData = new FormData();
         formData.append("file", file);
         const response = await apiService.post<{ url: string }>(
-          API_ENDPOINTS.UPLOADS.VIDEO,
+          SYSTEM_ENDPOINTS.UPLOADS.VIDEO,
           formData
         );
         // Resolve relative path to full backend URL + cache-buster (same as ImageUploadField)
@@ -99,7 +99,7 @@ export function VideoUploadField({
         onChange(cacheBusted);
         setActiveTab("url");
       } catch {
-        setError(t("videoUpload.uploadFailed") || "Upload failed. Please try again.");
+        setError(t("videoUpload.uploadFailed"));
       } finally {
         setIsUploading(false);
       }
@@ -136,9 +136,7 @@ export function VideoUploadField({
       !trimmed.startsWith("https://") &&
       !trimmed.startsWith("/")
     ) {
-      setError(
-        t("videoUpload.invalidUrl") || "Please enter a valid URL starting with http:// or https://"
-      );
+      setError(t("videoUpload.invalidUrl"));
       return;
     }
     setError(null);
@@ -153,50 +151,63 @@ export function VideoUploadField({
   }, [onChange]);
 
   return (
-    <div className="space-y-1.5">
-      {label && <Label className="text-[10px] text-muted-foreground">{label}</Label>}
-      {description && <p className="text-[9px] text-muted-foreground/70">{description}</p>}
+    <div className="space-y-2">
+      {/* The old ladder here was 8/9/10px — three sizes of unreadable. One
+          type scale now: label, then a hint one step down. */}
+      {label && <Label fontSize="xs">{label}</Label>}
+      {description && <p className="text-xs leading-relaxed text-nx-ink-3">{description}</p>}
 
-      {/* Preview */}
+      {/* Filled state — the frame is a hairline card, the filename rides a
+          hairline strip UNDER the frame rather than a black chip floating over
+          the footage, and the remove control is a real 28px target. */}
       {value && displayUrl && (
-        <div className="relative overflow-hidden rounded-md border border-border bg-muted/20">
-          <video
-            src={displayUrl}
-            className="max-h-[120px] w-full object-cover"
-            muted
-            playsInline
-            preload="metadata"
-          />
-          <button
-            type="button"
-            onClick={handleRemove}
-            disabled={disabled}
-            className="absolute end-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive/90 text-destructive-foreground transition-colors hover:bg-destructive"
-          >
-            <X className="h-3 w-3" />
-          </button>
-          <div className="absolute bottom-1 start-1 rounded bg-black/60 px-1.5 py-0.5 text-[8px] text-white">
-            {value.split("/").pop()?.substring(0, 30) || "video"}
+        <div className="overflow-hidden rounded-nx-control border border-nx-line bg-nx-surface">
+          <div className="relative">
+            <video
+              src={displayUrl}
+              className="max-h-[120px] w-full bg-nx-ground object-cover"
+              muted
+              playsInline
+              preload="metadata"
+            />
+            <button
+              type="button"
+              onClick={handleRemove}
+              disabled={disabled}
+              aria-label={t("common.remove")}
+              className="absolute end-1.5 top-1.5 flex h-7 w-7 items-center justify-center rounded-full border border-nx-line bg-nx-surface text-nx-ink-3 shadow-nx-sm transition-colors duration-nx-micro ease-nx-enter hover:text-nx-danger focus-visible:shadow-nx-focus focus-visible:outline-none disabled:cursor-not-allowed disabled:text-nx-ink-3 motion-reduce:transition-none"
+            >
+              <X className="h-3.5 w-3.5" aria-hidden="true" />
+            </button>
           </div>
+          <p className="truncate border-t border-nx-line px-2 py-1 font-mono text-xs text-nx-ink-2">
+            {value.split("/").pop()?.substring(0, 40) || "video"}
+          </p>
         </div>
       )}
 
       {/* Upload / URL Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="h-7 w-full">
-          <TabsTrigger value="upload" className="h-5 flex-1 gap-1 text-[10px]">
-            <Upload className="h-3 w-3" />
-            {t("imageUpload.uploadTab") || "Upload"}
+        <TabsList className="h-9 w-full">
+          <TabsTrigger value="upload" className="h-full flex-1 gap-1.5 text-xs">
+            <Upload className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("imageUpload.uploadTab")}
           </TabsTrigger>
-          <TabsTrigger value="url" className="h-5 flex-1 gap-1 text-[10px]">
-            <Link2 className="h-3 w-3" />
-            {t("imageUpload.urlTab") || "URL"}
+          <TabsTrigger value="url" className="h-full flex-1 gap-1.5 text-xs">
+            <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("imageUpload.urlTab")}
           </TabsTrigger>
         </TabsList>
 
-        {/* Upload Tab */}
-        <TabsContent value="upload" className="mt-1.5">
+        {/* Upload Tab — same drop-zone law as the image field: keyboard
+            reachable, dashed hairline at rest, accent edge + wash while
+            dragging, raised slab while inert. */}
+        <TabsContent value="upload" className="mt-2">
           <div
+            role="button"
+            tabIndex={disabled || isUploading ? -1 : 0}
+            aria-disabled={disabled || isUploading || undefined}
+            aria-label={t("videoUpload.dragDrop")}
             onDrop={handleDrop}
             onDragOver={(e) => {
               e.preventDefault();
@@ -204,29 +215,43 @@ export function VideoUploadField({
             }}
             onDragLeave={() => setIsDragOver(false)}
             onClick={() => !disabled && !isUploading && fileInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (disabled || isUploading) return;
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                fileInputRef.current?.click();
+              }
+            }}
             className={cn(
-              "flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed p-4 transition-colors",
+              "flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-nx-control border border-dashed p-4 text-center",
+              "transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+              "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
               isDragOver
-                ? "border-primary bg-primary/5"
-                : "border-border hover:border-primary/40 hover:bg-accent/10",
-              disabled && "cursor-not-allowed opacity-50"
+                ? "border-nx-accent bg-nx-accent-wash"
+                : "border-nx-line bg-nx-ground hover:border-nx-line-hi hover:bg-nx-hover",
+              (disabled || isUploading) &&
+                "cursor-not-allowed border-nx-line bg-nx-raised hover:border-nx-line hover:bg-nx-raised"
             )}
           >
             {isUploading ? (
               <>
-                <Loader2 className="h-5 w-5 animate-spin text-primary" />
-                <span className="text-[10px] text-muted-foreground">
-                  {t("imageUpload.uploading") || "Uploading..."}
-                </span>
+                <LoadingSpinner size="sm" showText={false} className="py-0" />
+                <span className="text-xs text-nx-ink-2">{t("imageUpload.uploading")}</span>
               </>
             ) : (
               <>
-                <Video className="h-5 w-5 text-muted-foreground" />
-                <span className="text-center text-[10px] text-muted-foreground">
-                  {t("videoUpload.dragDrop") || "Drop a video here or click to browse"}
+                <Video
+                  className={cn("h-5 w-5", isDragOver ? "text-nx-accent" : "text-nx-ink-3")}
+                  aria-hidden="true"
+                />
+                <span className="text-xs font-medium text-nx-ink">
+                  {t("videoUpload.dragDrop")}
                 </span>
-                <span className="text-[9px] text-muted-foreground/50">
-                  {t("imageUpload.maxSize") || "Max"} {maxMB} MB · MP4, WebM, OGG, MOV
+                <span className="text-xs text-nx-ink-3">
+                  <span className="tabular-nums">
+                    {t("imageUpload.maxSize")} {maxMB} MB
+                  </span>{" "}
+                  · MP4, WebM, OGG, MOV
                 </span>
               </>
             )}
@@ -241,36 +266,35 @@ export function VideoUploadField({
         </TabsContent>
 
         {/* URL Tab */}
-        <TabsContent value="url" className="mt-1.5 space-y-1.5">
-          <div className="flex gap-1.5">
+        <TabsContent value="url" className="mt-2 space-y-1.5">
+          <div className="flex gap-2">
             <Input
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
-              placeholder={t("videoUpload.urlPlaceholder") || "https://example.com/video.mp4"}
-              className="h-7 flex-1 text-[10px]"
+              placeholder={t("videoUpload.urlPlaceholder")}
+              className="h-9 flex-1 font-mono text-xs"
               disabled={disabled}
+              aria-invalid={Boolean(error) || undefined}
               onKeyDown={(e) => e.key === "Enter" && handleUrlApply()}
             />
             <Button
               size="sm"
               onClick={handleUrlApply}
               disabled={disabled || !urlInput.trim()}
-              className="h-7 px-2 text-[10px]"
+              className="h-9 shrink-0 px-3"
+              aria-label={t("common.save")}
             >
-              <Check className="h-3 w-3" />
+              <Check className="h-3.5 w-3.5" aria-hidden="true" />
             </Button>
           </div>
-          <p className="text-[9px] text-muted-foreground/70">
-            {t("videoUpload.urlHelp") ||
-              "Paste a direct .mp4/.webm/.ogg URL. YouTube and Google Drive links are not direct video URLs."}
-          </p>
+          <p className="text-xs leading-relaxed text-nx-ink-3">{t("videoUpload.urlHelp")}</p>
         </TabsContent>
       </Tabs>
 
       {/* Error */}
       {error && (
-        <p className="flex items-center gap-1 text-[10px] text-destructive">
-          <X className="h-3 w-3" />
+        <p role="status" className="flex items-start gap-1.5 text-xs font-medium text-nx-danger">
+          <X className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           {error}
         </p>
       )}

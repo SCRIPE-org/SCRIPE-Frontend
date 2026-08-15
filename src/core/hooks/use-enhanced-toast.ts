@@ -1,13 +1,15 @@
 "use client";
 
 import * as React from "react";
-import { useSettings } from "@core/providers/settings-provider";
-import { useI18n } from "@core/providers/i18n-provider";
 import type { ToastActionElement, ToastProps } from "@core/ui/enhanced-toast";
+import { translateCore } from "@core/common/i18n-outside-react";
 
 const TOAST_LIMIT = 5;
 const TOAST_REMOVE_DELAY = 2000; // 2 seconds as requested
 
+// The full historical value set stays in the type: toastStyle is a persisted
+// setting, so retired names still arrive from storage. enhanced-toast.tsx
+// collapses them onto the surviving designs (classic/minimal/modern).
 export type ToastDesign =
   | "classic"
   | "neon"
@@ -151,29 +153,14 @@ function dispatch(action: Action) {
 
 type Toast = Omit<ToasterToast, "id">;
 
-// Default settings that can be overridden by user preferences
-let defaultToastSettings = {
-  design: "classic" as ToastDesign,
-  showIcon: true,
-  duration: TOAST_REMOVE_DELAY,
-};
-
-export function setDefaultToastSettings(settings: Partial<typeof defaultToastSettings>) {
-  defaultToastSettings = { ...defaultToastSettings, ...settings };
-}
-
-export function getDefaultToastSettings() {
-  return defaultToastSettings;
-}
-
-function toast({ ...props }: Toast) {
+function baseToast({ ...props }: Toast) {
   const id = genId();
 
-  // Apply default settings
+  // showIcon/duration defaults; `design` intentionally stays unset so the
+  // workspace toastStyle setting governs unless a caller overrides per-toast.
   const toastProps = {
-    design: defaultToastSettings.design,
-    showIcon: defaultToastSettings.showIcon,
-    duration: defaultToastSettings.duration,
+    showIcon: true,
+    duration: TOAST_REMOVE_DELAY,
     ...props,
   };
 
@@ -208,47 +195,73 @@ function toast({ ...props }: Toast) {
   };
 }
 
-// Convenience methods for different toast types
-function success(props: Omit<Toast, "variant">) {
-  return toast({ ...props, variant: "success" });
+// Convenience methods for different toast types. They accept either a props
+// object or a bare message string (the shape sonner call sites used), so both
+// `success({ title })` and `success(msg)` work.
+type ToastInput = string | Omit<Toast, "variant">;
+
+const asToastProps = (input: ToastInput): Omit<Toast, "variant"> =>
+  typeof input === "string" ? { title: input } : input;
+
+function success(input: ToastInput) {
+  return baseToast({ ...asToastProps(input), variant: "success" });
 }
 
-function error(props: Omit<Toast, "variant">) {
-  return toast({ ...props, variant: "destructive" });
+function error(input: ToastInput) {
+  return baseToast({ ...asToastProps(input), variant: "destructive" });
 }
 
-function warning(props: Omit<Toast, "variant">) {
-  return toast({ ...props, variant: "warning" });
+function warning(input: ToastInput) {
+  return baseToast({ ...asToastProps(input), variant: "warning" });
 }
 
-function info(props: Omit<Toast, "variant">) {
-  return toast({ ...props, variant: "info" });
+function info(input: ToastInput) {
+  return baseToast({ ...asToastProps(input), variant: "info" });
 }
 
-// Operation-specific toast methods
+// Operation-specific toast methods.
+//
+// `operation`/`itemName` are still expected to already be caller-localized nouns/verbs
+// (this module is a plain singleton usable outside React render, so it cannot call
+// useI18n() itself — see i18n-outside-react.ts) — but the surrounding sentence
+// structure ("{operation} Successful", "Failed to {operation} {item}.", the
+// no-itemName fallbacks, etc.) used to be hardcoded English regardless of the user's
+// language. It now goes through the same core locale dictionaries as the rest of the
+// app (common.operationToast.*).
 function operationSuccess(operation: string, itemName?: string) {
   return success({
-    title: `${operation} Successful`,
+    title: translateCore("common.operationToast.successTitle", { operation }),
     description: itemName
-      ? `${itemName} has been ${operation.toLowerCase()} successfully.`
-      : `Operation completed successfully.`,
+      ? translateCore("common.operationToast.successWithItem", {
+          item: itemName,
+          operationLower: operation.toLowerCase(),
+        })
+      : translateCore("common.operationToast.successGeneric"),
   });
 }
 
 function operationError(operation: string, itemName?: string, error?: string) {
-  return toast({
+  return baseToast({
     variant: "destructive",
-    title: `${operation} Failed`,
+    title: translateCore("common.operationToast.errorTitle", { operation }),
     description:
       error ||
-      (itemName ? `Failed to ${operation.toLowerCase()} ${itemName}.` : `Operation failed.`),
+      (itemName
+        ? translateCore("common.operationToast.errorWithItem", {
+            item: itemName,
+            operationLower: operation.toLowerCase(),
+          })
+        : translateCore("common.operationToast.errorGeneric")),
   });
 }
 
+// The module-level `toast` carries the convenience methods so call sites can
+// fire `toast({ ... })`, `toast.success(msg)`, or `toast.error(msg)` without a
+// hook — outside components, in view-model callbacks, wherever.
+const toast = Object.assign(baseToast, { success, error, warning, info });
+
 function useEnhancedToast() {
   const [state, setState] = React.useState<State>(memoryState);
-  const { t } = useI18n();
-  const { toastStyle } = useSettings();
 
   React.useEffect(() => {
     listeners.push(setState);

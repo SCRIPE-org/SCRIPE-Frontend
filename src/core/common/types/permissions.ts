@@ -14,7 +14,9 @@
 // ── Module permission imports ─────────────────────────────────────────────────
 import { IDENTITY_PERMISSIONS } from "@modules/identity/permission-constants";
 import { ENTITLEMENTS_PERMISSIONS } from "@modules/entitlements/permission-constants";
-import { MESSAGING_PERMISSIONS } from "@modules/messaging/permission-constants";
+import { COMMUNICATION_PERMISSIONS } from "@modules/communication/permission-constants";
+import { INTEGRATIONS_PERMISSIONS } from "@modules/integrations/permission-constants";
+import { MEDIA_PERMISSIONS } from "@modules/media/permission-constants";
 import { CUSTOMIZATION_PERMISSIONS } from "@modules/customization/permission-constants";
 import { MONITORING_PERMISSIONS } from "@modules/monitoring/permission-constants";
 import { ECOSYSTEM_PERMISSIONS } from "@modules/ecosystem/permission-constants";
@@ -22,17 +24,32 @@ import { COMPLIANCE_PERMISSIONS } from "@modules/compliance/permission-constants
 import { PLUGINS_PERMISSIONS } from "@modules/plugins/permission-constants";
 import { MARKETPLACE_PERMISSIONS } from "@modules/marketplace/permission-constants";
 
+import { PARTY_KERNEL_PERMISSIONS } from "@modules/party-kernel/permission-constants";
+import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
+import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission-constants";
+import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
+import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
   IDENTITY_PERMISSIONS,
   ENTITLEMENTS_PERMISSIONS,
-  MESSAGING_PERMISSIONS,
+  COMMUNICATION_PERMISSIONS,
+  INTEGRATIONS_PERMISSIONS,
+  MEDIA_PERMISSIONS,
   CUSTOMIZATION_PERMISSIONS,
   MONITORING_PERMISSIONS,
   ECOSYSTEM_PERMISSIONS,
   COMPLIANCE_PERMISSIONS,
   PLUGINS_PERMISSIONS,
   MARKETPLACE_PERMISSIONS,
+  PARTY_KERNEL_PERMISSIONS,
+  HRMS_PERMISSIONS,
+  WORK_MANAGEMENT_PERMISSIONS,
+  CUSTOM_FIELDS_PERMISSIONS,
+  ANALYTICS_EVENTS_PERMISSIONS,
+  VENUE_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -161,13 +178,21 @@ export function hasAllPermissions(
 export const SYSTEM_PERMISSIONS = {
   ...IDENTITY_PERMISSIONS,
   ...ENTITLEMENTS_PERMISSIONS,
-  ...MESSAGING_PERMISSIONS,
+  ...COMMUNICATION_PERMISSIONS,
+  ...INTEGRATIONS_PERMISSIONS,
+  ...MEDIA_PERMISSIONS,
   ...CUSTOMIZATION_PERMISSIONS,
   ...MONITORING_PERMISSIONS,
   ...ECOSYSTEM_PERMISSIONS,
   ...COMPLIANCE_PERMISSIONS,
   ...PLUGINS_PERMISSIONS,
   ...MARKETPLACE_PERMISSIONS,
+  ...PARTY_KERNEL_PERMISSIONS,
+  ...HRMS_PERMISSIONS,
+  ...WORK_MANAGEMENT_PERMISSIONS,
+  ...CUSTOM_FIELDS_PERMISSIONS,
+  ...ANALYTICS_EVENTS_PERMISSIONS,
+  ...VENUE_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -251,14 +276,16 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/my-stripe-account": [SYSTEM_PERMISSIONS.TENANT_STRIPE_CONNECT_VIEW],
   "/entitlements/transactions": [SYSTEM_PERMISSIONS.TRANSACTIONS_VIEW],
 
-  // Messaging & Webhooks
-  "/messaging/email-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
-  "/messaging/notifications": [SYSTEM_PERMISSIONS.NOTIFICATIONS_VIEW],
-  "/messaging/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
-  "/messaging/templates/new": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_CREATE],
-  "/messaging/templates/[id]/edit": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_UPDATE],
-  "/messaging/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
-  "/messaging/webhooks/[id]": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+  // Communication & Integrations
+  "/communication/message-composer": [SYSTEM_PERMISSIONS.EMAILS_VIEW],
+  "/communication/notifications": [SYSTEM_PERMISSIONS.NOTIFICATIONS_VIEW],
+  "/communication/templates": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_VIEW],
+  "/communication/templates/new": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_CREATE],
+  "/communication/templates/[id]/edit": [SYSTEM_PERMISSIONS.MESSAGE_TEMPLATES_UPDATE],
+  "/integrations/webhooks": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+  "/integrations/webhooks/[id]": [SYSTEM_PERMISSIONS.WEBHOOKS_VIEW],
+  "/integrations/apikeys": [SYSTEM_PERMISSIONS.API_KEYS_VIEW],
+  "/media": [SYSTEM_PERMISSIONS.MEDIA_VIEW],
 
   // Ecosystem
   "/recycle-bin": [SYSTEM_PERMISSIONS.RECYCLE_BIN_VIEW],
@@ -290,11 +317,10 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/compliance/dsr/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_DSR_VIEW],
   "/compliance/consent": [SYSTEM_PERMISSIONS.COMPLIANCE_CONSENT_VIEW],
   "/compliance/retention": [SYSTEM_PERMISSIONS.COMPLIANCE_RETENTION_VIEW],
-  "/compliance/inventory": [SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW],
+  "/compliance/data-inventory": [SYSTEM_PERMISSIONS.COMPLIANCE_DATA_INVENTORY_VIEW],
   "/compliance/reports": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
   "/compliance/reports/[id]": [SYSTEM_PERMISSIONS.COMPLIANCE_REPORTS_VIEW],
 
-  /*
   // Plugins Module
   "/plugins": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
   "/plugins/catalog": [SYSTEM_PERMISSIONS.PLUGINS_CATALOG_VIEW],
@@ -308,6 +334,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Marketplace Module
   "/marketplace": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
+  "/marketplace/[id]": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/catalog": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/catalog/[id]": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
   "/marketplace/categories": [SYSTEM_PERMISSIONS.APP_LISTINGS_VIEW],
@@ -322,5 +349,108 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/marketplace/my-profile": [SYSTEM_PERMISSIONS.DEVELOPER_PROFILES_VIEW],
   "/marketplace/my-submissions": [SYSTEM_PERMISSIONS.APP_SUBMISSIONS_VIEW],
   "/marketplace/my-earnings": [SYSTEM_PERMISSIONS.APP_PURCHASES_VIEW],
-  */
+
+  // PartyKernel Module
+  "/party-kernel": [SYSTEM_PERMISSIONS.PARTY_VIEW],
+
+  // Party Feature
+  "/party-kernel/parties": [SYSTEM_PERMISSIONS.PARTY_VIEW],
+
+  // PartyPerson Feature
+  "/party-kernel/party-people": [SYSTEM_PERMISSIONS.PARTY_PERSON_VIEW],
+
+  // PartyOrganization Feature
+  "/party-kernel/party-organizations": [SYSTEM_PERMISSIONS.PARTY_ORGANIZATION_VIEW],
+
+  // PartyRole Feature
+  "/party-kernel/party-roles": [SYSTEM_PERMISSIONS.PARTY_ROLE_VIEW],
+
+  // PartyRelationship Feature
+  "/party-kernel/party-relationships": [SYSTEM_PERMISSIONS.PARTY_RELATIONSHIP_VIEW],
+
+  // ContactPoint Feature
+  "/party-kernel/contact-points": [SYSTEM_PERMISSIONS.CONTACT_POINT_VIEW],
+
+  // MergeCandidate Feature
+  "/party-kernel/merge-candidates": [SYSTEM_PERMISSIONS.MERGE_CANDIDATE_VIEW],
+
+  // Hrms Module
+  "/hrms": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
+
+  // StaffMember Feature
+  "/hrms/staff-members": [SYSTEM_PERMISSIONS.STAFF_MEMBER_VIEW],
+
+  // EmploymentRecord Feature
+  "/hrms/employment-records": [SYSTEM_PERMISSIONS.EMPLOYMENT_RECORD_VIEW],
+
+  // StaffAssignment Feature
+  "/hrms/staff-assignments": [SYSTEM_PERMISSIONS.STAFF_ASSIGNMENT_VIEW],
+
+  // StaffCompetency Feature
+  "/hrms/staff-competencies": [SYSTEM_PERMISSIONS.STAFF_COMPETENCY_VIEW],
+
+  // Qualification Feature
+  "/hrms/qualifications": [SYSTEM_PERMISSIONS.QUALIFICATION_VIEW],
+
+  // Certification Feature
+  "/hrms/certifications": [SYSTEM_PERMISSIONS.CERTIFICATION_VIEW],
+
+  // StaffAvailability Feature
+  "/hrms/staff-availabilities": [SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW],
+
+  // Venue Module (workspace home redirects to venue-setup — see venue/page.tsx)
+  "/venue": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+
+  // VenueProfile Feature
+  "/venue/venue-setup": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+
+  // Facility Feature
+  "/venue/facilities": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
+
+  // SchedulableResource Feature
+  "/venue/resource-builder": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
+
+  // Work Items Module
+  "/work-items": [SYSTEM_PERMISSIONS.WORK_ITEM_VIEW],
+
+  // Custom Fields Module
+  "/custom-fields": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+
+  // Analytics & Dashboard Events
+  "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],
+  "/dashboard-preview": [SYSTEM_PERMISSIONS.DASHBOARD_VIEW],
+
+  // Dynamic Integrations details
+  "/integrations/apikeys/[id]": [SYSTEM_PERMISSIONS.API_KEYS_VIEW],
+
+  // Billing & Entitlements Details
+  "/entitlements/tenant-plans/[id]/edit": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/tenant-plans/create": [SYSTEM_PERMISSIONS.TENANT_PLANS_VIEW],
+  "/entitlements/editions/create": [SYSTEM_PERMISSIONS.EDITIONS_CREATE],
+  "/entitlements/editions/[id]/edit": [SYSTEM_PERMISSIONS.EDITIONS_UPDATE],
+  "/entitlements/editions/[id]/overview": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
+  "/entitlements/edition-categories": [SYSTEM_PERMISSIONS.EDITIONS_VIEW],
+  "/entitlements/onboarding/rules": [SYSTEM_PERMISSIONS.ONBOARDING_QUESTIONS_VIEW],
+
+  // Studio Customization Preview
+  "/studio-preview": [SYSTEM_PERMISSIONS.TENANT_SETTINGS_VIEW],
+
+  // Public / Hub / Auth endpoints (No permission required, but mapped so RouteGuard bypasses successfully)
+  "/activate-workspace": [],
+  "/hub": [],
+  "/docs": [],
+  "/docs/[...slug]": [],
+  "/commercial": [],
+  "/commercial/[...slug]": [],
+  "/forgot-password": [],
+  "/magic-link": [],
+  "/reset-password": [],
+  "/setup-account": [],
+  "/signup": [],
+  "/signup/complete": [],
+  "/signup/finalize": [],
+  "/sso/callback": [],
+  "/sso/saml/callback": [],
+  "/not-authorized": [],
+  "/qr-approve": [],
 };

@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
 } from "@core/ui/alert-dialog";
 import { Button } from "@core/ui/button";
-import { Trash2, AlertTriangle, Info, CheckCircle } from "lucide-react";
+import { Trash2, AlertTriangle, Info, HelpCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { appLogger } from "@core/common/logger";
 
@@ -34,31 +34,39 @@ export interface ConfirmationDialogProps {
   disableConfirm?: boolean;
 }
 
+// The chip tint pairs the nx status alias for the glyph with a slash-alpha
+// wash of the same measured status token underneath — nothing re-derived,
+// and both flip with the theme through the vars they read.
+//
+// The `default` variant used to open with a GREEN CHECKMARK: the affirmative
+// signal for an outcome, shown before the user has agreed to anything. It now
+// reads as the question it is — a neutral glyph on the raised surface step,
+// leaving green to mean "this succeeded" everywhere in the product.
 const variantConfig = {
   destructive: {
     icon: Trash2,
-    iconColor: "text-red-500",
+    chipClass: "bg-destructive/10 text-nx-danger",
     confirmVariant: "destructive" as const,
     title: "Delete Item",
     description: "Are you sure you want to delete this item? This action cannot be undone.",
   },
   warning: {
     icon: AlertTriangle,
-    iconColor: "text-yellow-500",
+    chipClass: "bg-warning/10 text-nx-warning",
     confirmVariant: "default" as const,
     title: "Warning",
     description: "Please confirm this action.",
   },
   info: {
     icon: Info,
-    iconColor: "text-blue-500",
+    chipClass: "bg-info/10 text-nx-info",
     confirmVariant: "default" as const,
     title: "Information",
     description: "Please confirm this action.",
   },
   default: {
-    icon: CheckCircle,
-    iconColor: "text-green-500",
+    icon: HelpCircle,
+    chipClass: "border border-nx-line bg-nx-raised-2 text-nx-ink-2",
     confirmVariant: "default" as const,
     title: "Confirm Action",
     description: "Are you sure you want to proceed?",
@@ -98,25 +106,49 @@ export function ConfirmationDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent className="sm:max-w-[425px]">
+      <AlertDialogContent
+        className="sm:max-w-md"
+        aria-busy={isLoading || undefined}
+        // The loading state is a real state, not a spinner bolted onto the
+        // happy path: while the confirmed action is in flight the panel stops
+        // being dismissable, so Escape can no longer orphan a half-finished
+        // delete with no UI left to report its outcome.
+        onEscapeKeyDown={(event) => {
+          if (isLoading) event.preventDefault();
+        }}
+      >
         <AlertDialogHeader>
-          <div className="flex items-center gap-3">
+          {/* The description used to hang off the header's own column, which
+              started at the panel edge — so the title sat 48px in (past the
+              icon chip) and the sentence explaining it sat at zero, reading as
+              two unrelated blocks. Title and description now share one text
+              column beside the chip. */}
+          <div className="flex items-start gap-3">
             {icon || (
-              <div className={cn("flex-shrink-0", config.iconColor)}>
-                <IconComponent className="h-6 w-6" />
+              <div
+                className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-control",
+                  config.chipClass
+                )}
+              >
+                <IconComponent className="h-5 w-5" aria-hidden="true" />
               </div>
             )}
-            <AlertDialogTitle className="text-left">{title || config.title}</AlertDialogTitle>
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <AlertDialogTitle>{title || config.title}</AlertDialogTitle>
+              <AlertDialogDescription>{description || config.description}</AlertDialogDescription>
+            </div>
           </div>
-          <AlertDialogDescription className="mt-2 text-left">
-            {description || config.description}
-          </AlertDialogDescription>
         </AlertDialogHeader>
 
-        {/* Custom children content */}
-        {children && <div className="py-2">{children}</div>}
+        {/* Custom children content — spacing comes from the content grid's own
+            gap, not a second layer of vertical padding on top of it. */}
+        {children && <div>{children}</div>}
 
-        <AlertDialogFooter className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end sm:gap-2">
+        {/* Layout, gap and action order all come from AlertDialogFooter: cancel
+            first in the DOM, primary last, which puts the primary on the
+            inline-end edge at >= sm and on top of the stack below it. */}
+        <AlertDialogFooter>
           <AlertDialogCancel asChild>
             <Button variant="outline" onClick={handleCancel} disabled={isLoading}>
               {cancelText}
@@ -128,7 +160,9 @@ export function ConfirmationDialog({
               onClick={handleConfirm}
               loading={isLoading}
               disabled={disableConfirm}
-              className="min-w-[80px]"
+              // Holds the button's width steady when the label swaps for a
+              // spinner, so the footer does not reflow mid-request.
+              className="min-w-20"
             >
               {confirmText}
             </Button>
