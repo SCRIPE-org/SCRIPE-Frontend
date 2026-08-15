@@ -1,19 +1,27 @@
 // FILE-EXCEPTION: file length
 "use client";
 
-import { useTemplateFormViewModel } from "../viewmodels/useTemplateFormViewModel";
+import { useId, useState } from "react";
+import {
+  useTemplateFormViewModel,
+  MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
+} from "../viewmodels/useTemplateFormViewModel";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
+import { DatePicker } from "@core/ui/date-picker";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { ArrowLeft, Save, Settings, Palette, Braces, Eye } from "lucide-react";
+import { ArrowLeft, Save, Settings, Palette, Braces, Eye, Tag, RotateCcw } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
+import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import dynamic from "next/dynamic";
 
 // Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)
@@ -40,12 +48,38 @@ const TemplateLivePreview = dynamic(
   { ssr: false }
 );
 
+function toFieldInputValue(value: unknown): string {
+  return value === undefined || value === null ? "" : String(value);
+}
+
+/** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
+function CustomFieldsAddTrigger({
+  entityDisplayName,
+  onCreated,
+}: {
+  entityDisplayName: string;
+  onCreated: () => void;
+}) {
+  const api = getCustomFieldsExtension();
+  if (!api) return null;
+  const Trigger = api.InlineAddTrigger;
+  return (
+    <Trigger
+      entityTypeKey={MESSAGE_TEMPLATE_ENTITY_TYPE_KEY}
+      entityDisplayName={entityDisplayName}
+      onCreated={onCreated}
+    />
+  );
+}
+
 /**
  * Presentation UI component rendering the template form view.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
  */
 export function TemplateFormView({ templateId: _templateId }: { templateId?: string } = {}) {
   const vm = useTemplateFormViewModel();
+  const fieldIdBase = useId();
+  const [resetDesignDialogOpen, setResetDesignDialogOpen] = useState(false);
 
   // Edit mode has three real states: the initial fetch, a settled failure
   // (bad id, deleted template, network error), and a settled success. A
@@ -145,27 +179,53 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
             <Tabs defaultValue="settings">
               <CardHeader className="pb-3">
                 <TabsList className="h-auto w-full flex-wrap gap-1 p-1">
-                  <TabsTrigger value="settings" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="settings"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.settings")}
+                  >
                     <Settings className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
                       {vm.t("messaging.templates.settings")}
                     </span>
                   </TabsTrigger>
-                  <TabsTrigger value="placeholders" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="placeholders"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.placeholders")}
+                  >
                     <Braces className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
                       {vm.t("messaging.templates.placeholders")}
                     </span>
                   </TabsTrigger>
-                  <TabsTrigger value="design" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="design"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.design.title")}
+                  >
                     <Palette className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">
                       {vm.t("messaging.templates.design.title")}
                     </span>
                   </TabsTrigger>
-                  <TabsTrigger value="preview" className="min-w-0 flex-1 gap-1 px-2 text-xs">
+                  <TabsTrigger
+                    value="preview"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("common.preview")}
+                  >
                     <Eye className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
                     <span className="hidden truncate sm:inline">{vm.t("common.preview")}</span>
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="customFields"
+                    className="min-w-0 flex-1 gap-1 px-2 text-xs"
+                    aria-label={vm.t("messaging.templates.customFieldsTitle")}
+                  >
+                    <Tag className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    <span className="hidden truncate sm:inline">
+                      {vm.t("messaging.templates.customFieldsTitle")}
+                    </span>
                   </TabsTrigger>
                 </TabsList>
               </CardHeader>
@@ -176,8 +236,9 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Template Key (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.key")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-key`}>{vm.t("messaging.templates.key")}</Label>
                       <Input
+                        id={`${fieldIdBase}-key`}
                         value={vm.form.key}
                         onChange={(e) => vm.updateField("key", e.target.value)}
                         placeholder={vm.t("messaging.templates.keyPlaceholder")}
@@ -188,12 +249,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Channel (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.channel")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-channel`}>
+                        {vm.t("messaging.templates.channel")}
+                      </Label>
                       <Select
                         value={vm.form.channel}
                         onValueChange={(v) => vm.updateField("channel", v as any)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id={`${fieldIdBase}-channel`}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -210,12 +273,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Language (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label>{vm.t("messaging.templates.language")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-language`}>
+                        {vm.t("messaging.templates.language")}
+                      </Label>
                       <Select
                         value={vm.form.language}
                         onValueChange={(v) => vm.updateField("language", v)}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger id={`${fieldIdBase}-language`}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -231,8 +296,9 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
                   {/* Active toggle */}
                   <div className="flex items-center justify-between">
-                    <Label>{vm.t("common.active")}</Label>
+                    <Label htmlFor={`${fieldIdBase}-active`}>{vm.t("common.active")}</Label>
                     <Switch
+                      id={`${fieldIdBase}-active`}
                       checked={vm.form.isActive}
                       onCheckedChange={(v) => vm.updateField("isActive", v)}
                     />
@@ -240,12 +306,14 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
                   {/* Category */}
                   <div className="space-y-2">
-                    <Label>{vm.t("messaging.templates.category")}</Label>
+                    <Label htmlFor={`${fieldIdBase}-category`}>
+                      {vm.t("messaging.templates.category")}
+                    </Label>
                     <Select
                       value={vm.form.category}
                       onValueChange={(v) => vm.updateField("category", v as any)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id={`${fieldIdBase}-category`}>
                         <SelectValue placeholder={vm.t("messaging.templates.selectCategory")} />
                       </SelectTrigger>
                       <SelectContent>
@@ -273,7 +341,21 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
               {/* Design Variables Tab */}
               <TabsContent value="design">
-                <CardContent className="pt-0">
+                <CardContent className="space-y-4 pt-0">
+                  {vm.canResetDesign && (
+                    <div className="flex justify-end">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setResetDesignDialogOpen(true)}
+                        disabled={vm.isResettingDesign}
+                      >
+                        <RotateCcw className="me-1.5 h-3.5 w-3.5" />
+                        {vm.t("messaging.templates.resetDesignAction")}
+                      </Button>
+                    </div>
+                  )}
                   <DesignVariablesPanel
                     value={vm.form.designVariables}
                     onChange={vm.updateDesignVariables}
@@ -281,10 +363,109 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                 </CardContent>
               </TabsContent>
 
+              <ConfirmationDialog
+                open={resetDesignDialogOpen}
+                onOpenChange={setResetDesignDialogOpen}
+                variant="warning"
+                title={vm.t("messaging.templates.resetDesignAction")}
+                description={vm.t("messaging.templates.resetDesignConfirm")}
+                isLoading={vm.isResettingDesign}
+                onConfirm={vm.handleResetDesign}
+              />
+
               {/* Live Preview Tab */}
               <TabsContent value="preview">
                 <CardContent className="pt-0">
-                  <TemplateLivePreview body={vm.form.body} subject={vm.form.subject} />
+                  <TemplateLivePreview
+                    body={vm.form.body}
+                    subject={vm.form.subject}
+                    designVariables={vm.form.designVariables}
+                  />
+                </CardContent>
+              </TabsContent>
+
+              {/* Custom Fields Tab */}
+              <TabsContent value="customFields">
+                <CardContent className="space-y-5 pt-0">
+                  {vm.customFieldConfigs.map((fc: FieldConfig) => {
+                    const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+
+                    if (fc.type === "switch") {
+                      return (
+                        <div key={fc.name} className="flex items-center justify-between">
+                          <Label htmlFor={fc.name}>{fc.label}</Label>
+                          <Switch
+                            id={fc.name}
+                            checked={Boolean(value)}
+                            onCheckedChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
+                          />
+                        </div>
+                      );
+                    }
+
+                    if (fc.type === "select") {
+                      return (
+                        <div key={fc.name} className="space-y-2">
+                          <Label htmlFor={fc.name}>{fc.label}</Label>
+                          <Select
+                            value={toFieldInputValue(value)}
+                            onValueChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
+                          >
+                            <SelectTrigger id={fc.name}>
+                              <SelectValue placeholder={fc.placeholder || fc.label} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {fc.options?.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                  {opt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      );
+                    }
+
+                    if (fc.type === "date") {
+                      return (
+                        <div key={fc.name} className="space-y-2">
+                          <Label htmlFor={fc.name}>{fc.label}</Label>
+                          <DatePicker
+                            id={fc.name}
+                            type="date"
+                            value={toFieldInputValue(value)}
+                            onChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
+                            required={fc.required}
+                          />
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <div key={fc.name} className="space-y-2">
+                        <Label htmlFor={fc.name}>{fc.label}</Label>
+                        <Input
+                          id={fc.name}
+                          type={fc.type === "number" ? "number" : "text"}
+                          value={toFieldInputValue(value)}
+                          onChange={(e) => vm.updateCustomFieldValue(fc.name, e.target.value)}
+                          placeholder={fc.placeholder}
+                          required={fc.required}
+                        />
+                      </div>
+                    );
+                  })}
+
+                  {vm.customFieldConfigs.length === 0 && !vm.customFieldsLoading && (
+                    <p className="text-sm text-nx-ink-2">
+                      {vm.t("messaging.templates.noCustomFields")}
+                    </p>
+                  )}
+
+                  <CustomFieldsAddTrigger
+                    entityDisplayName={vm.t("messaging.templates.title")}
+                    onCreated={() => void vm.refetchCustomFields()}
+                  />
                 </CardContent>
               </TabsContent>
             </Tabs>

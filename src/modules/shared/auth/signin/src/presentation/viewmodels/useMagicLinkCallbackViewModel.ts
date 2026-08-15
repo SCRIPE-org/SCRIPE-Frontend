@@ -9,21 +9,33 @@
  *
  * Multi-workspace flow:
  *   - If the magic link email belongs to ONE workspace → direct login
- *   - If it belongs to MULTIPLE workspaces → redirect to /hub?token=<token> workspace picker
+ *   - If it belongs to MULTIPLE workspaces → show an IN-PAGE workspace
+ *     picker (same pattern as useSsoCallbackHandler's "workspace_selection"
+ *     state) and complete the login for the chosen workspace by re-calling
+ *     verifyMagicLink with that workspace's tenantId — the same magic-link
+ *     token is reusable for this second call because the backend didn't
+ *     issue a session yet (requiresWorkspaceSelection means no token was
+ *     consumed).
+ *
+ *     NOTE: this deliberately does NOT redirect to /hub — /hub is a
+ *     protected SYSTEM_PAGE and the user has no auth token at this point,
+ *     so RouteGuard would bounce them to /login before /hub ever reads the
+ *     query params.
  *
  * States:
  *   - verifying: spinner while POST /auth/magic-link/verify runs
  *   - success: brief success flash → redirect to dashboard
- *   - workspace-selection: redirect to workspace hub picker
+ *   - workspace-selection: in-page workspace picker (see above)
  *   - expired/invalid: error with "request a new link" CTA
  */
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { authContainer } from "@modules/auth/di";
+import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -38,6 +50,11 @@ export type MagicLinkVerifyState = "verifying" | "success" | "workspace-selectio
 export interface UseMagicLinkCallbackViewModelReturn {
   state: MagicLinkVerifyState;
   direction: string;
+  availableWorkspaces: WorkspaceChoice[];
+  isSelectingWorkspace: boolean;
+  workspaceSelectionError?: string;
+  selectWorkspace: (workspace: WorkspaceChoice) => Promise<void>;
+  goBackToLogin: () => void;
 }
 
 // ─── ViewModel ────────────────────────────────────────────────────────────────
@@ -47,7 +64,7 @@ export interface UseMagicLinkCallbackViewModelReturn {
  * Handles active states updates, form fields validations, and browser navigation controllers.
  */
 export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelReturn {
-  const { direction } = useI18n();
+  const { direction, t } = useI18n();
   const searchParams = useSearchParams();
   const router = useRouter();
   const setAuth = useAppStore((state) => state.setAuth);
@@ -57,6 +74,11 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
   const tenantId = searchParams?.get("tenantId") ?? undefined;
 
   const [state, setState] = useState<MagicLinkVerifyState>(token ? "verifying" : "error");
+  const [availableWorkspaces, setAvailableWorkspaces] = useState<WorkspaceChoice[]>([]);
+  const [isSelectingWorkspace, setIsSelectingWorkspace] = useState(false);
+  const [workspaceSelectionError, setWorkspaceSelectionError] = useState<string | undefined>(
+    undefined
+  );
 
   // Guard: track which token has already been sent to the backend.
   // React StrictMode (Next.js dev) double-invokes effects (mount → cleanup → remount).
@@ -79,19 +101,13 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
 
         if (cancelled) return;
 
-        // ── Multi-workspace: redirect to hub for picker ──────────────────
+        // ── Multi-workspace: show the picker in-page ─────────────────────
+        // No session/token has been issued yet, so we cannot redirect to any
+        // authenticated route — RouteGuard would bounce it straight back to
+        // /login. Render the picker here and complete login on selection.
         if (response.requiresWorkspaceSelection && response.availableWorkspaces?.length) {
-          // Encode workspace data as query param for the hub page
-          // The /hub page reads this and shows the workspace picker
+          setAvailableWorkspaces(response.availableWorkspaces as WorkspaceChoice[]);
           setState("workspace-selection");
-          const workspacesParam = encodeURIComponent(JSON.stringify(response.availableWorkspaces));
-          // Store the access token temporarily so the hub can use it to select a workspace
-          // In practice, if the backend returned `requiresWorkspaceSelection` it means
-          // it didn't issue a full token yet — the hub will call the workspace-specific login
-          const tokenParam = encodeURIComponent(token);
-          router.replace(
-            `/hub?workspaces=${workspacesParam}&token=${tokenParam}&method=magic-link`
-          );
           return;
         }
 
@@ -127,8 +143,62 @@ export function useMagicLinkCallbackViewModel(): UseMagicLinkCallbackViewModelRe
     };
   }, [token, tenantId, router, setAuth, setSubscriptionInfo]);
 
+  // ── Workspace selection: re-verify the SAME magic-link token, now scoped
+  // to the chosen tenant. The first verifyMagicLink call above never issued
+  // a session (requiresWorkspaceSelection means the token wasn't consumed),
+  // so this is safe and mirrors how the credentials-login workspace picker
+  // re-submits with a tenantId.
+  const selectWorkspace = useCallback(
+    async (workspace: WorkspaceChoice) => {
+      if (!token) return;
+      setWorkspaceSelectionError(undefined);
+      setIsSelectingWorkspace(true);
+
+      try {
+        const { authRepository } = authContainer;
+        const response = await authRepository.verifyMagicLink(token, workspace.tenantId);
+
+        if (!response.user) {
+          setWorkspaceSelectionError(t("auth.loginFailed") || "Login failed");
+          return;
+        }
+
+        setAuth(response.user, response.user.permissions ?? [], [], true);
+        setSubscriptionInfo(
+          response.subscriptionStatus ?? null,
+          response.gracePhase ?? null,
+          response.editionName ?? null
+        );
+        useAppStore.getState().setMustChangePassword(response.mustChangePassword ?? false);
+
+        setState("success");
+        setTimeout(() => {
+          router.replace(
+            response.mustChangePassword ? "/change-password" : response.defaultRedirectPath || "/"
+          );
+        }, 600);
+      } catch (err) {
+        setWorkspaceSelectionError(
+          err instanceof Error ? err.message : t("auth.loginFailed") || "Login failed"
+        );
+      } finally {
+        setIsSelectingWorkspace(false);
+      }
+    },
+    [token, setAuth, setSubscriptionInfo, router, t]
+  );
+
+  const goBackToLogin = useCallback(() => {
+    router.replace("/login");
+  }, [router]);
+
   return {
     state,
     direction,
+    availableWorkspaces,
+    isSelectingWorkspace,
+    workspaceSelectionError,
+    selectWorkspace,
+    goBackToLogin,
   };
 }

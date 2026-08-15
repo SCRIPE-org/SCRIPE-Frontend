@@ -24,11 +24,15 @@ export class StaffAssignmentService implements IStaffAssignmentService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffAssignmentListResult> {
     const url = buildUrl(STAFF_ASSIGNMENT_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      sortBy: params.sortBy,
+      sortDirection: params.sortDirection,
     });
 
     const response = await this.api.get<StaffAssignmentListResponseJson>(url);
@@ -36,7 +40,7 @@ export class StaffAssignmentService implements IStaffAssignmentService {
     return {
       items: response.items.map((json) => StaffAssignmentModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

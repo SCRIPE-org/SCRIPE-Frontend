@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useMergeCandidateViewModel } from "../viewmodels/useMergeCandidateViewModel";
 import type { MergeCandidate } from "../../domain/entities/MergeCandidate";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -52,6 +53,7 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
     titleKey: "mergeCandidate.title",
     subtitleKey: "mergeCandidate.description",
     resource: "merge-candidates",
+    entityTypeKey: "party.merge-candidate",
     columns: [
       {
         key: "primaryPartyId",
@@ -187,6 +189,22 @@ export const MergeCandidateListView = React.memo(function MergeCandidateListView
     // frontend entity or the backend DTO. `reason` (e.g. "Same email address") is the most
     // human-identifying text available; falls back to the primary party's id if empty.
     getItemDisplayName: (item: MergeCandidate) => item.reason || item.primaryPartyId,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<MergeCandidate>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: MergeCandidate) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: MergeCandidate) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

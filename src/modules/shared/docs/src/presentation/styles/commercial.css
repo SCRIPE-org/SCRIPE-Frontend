@@ -18,18 +18,26 @@
   --com-ink-2: var(--nx-ink-2);
   --com-ink-3: var(--nx-ink-3);
   --com-ink-4: var(--nx-ink-3);
-  /* Brand duo below are marketing-surface constants (DESIGN_BAR §1.12); their
-     light-theme lightness override lives in the :root:not(.dark) block below. */
-  --com-violet: oklch(0.72 0.22 296);
-  --com-violet-hi: oklch(0.8 0.18 290);
-  --com-cyan: oklch(0.84 0.155 213);
-  --com-cyan-hi: oklch(0.9 0.12 210);
+  /* RELAY vNEXT: the old violet+cyan "brand duo" is retired. DESIGN.md
+     permits exactly ONE committed brand signal (Signal Lime), never two
+     competing hues, so both halves of the duo collapse onto Lime — the
+     four token names stay (dozens of call sites reference them by name)
+     but --com-violet* and --com-cyan* now resolve to the same value.
+     Light-theme override (readable accent-as-text duty) lives in the
+     :root:not(.dark) block below, same ratio globals.css uses for
+     --nx-accent / --scripe-accent-text. */
+  --com-violet: oklch(0.91 0.24 128);
+  --com-violet-hi: oklch(0.94 0.27 128);
+  --com-cyan: oklch(0.91 0.24 128);
+  --com-cyan-hi: oklch(0.94 0.27 128);
   --com-emerald: oklch(0.79 0.17 160);
   --com-amber: oklch(0.82 0.155 80);
   --com-red: oklch(0.65 0.22 20);
 
   /* Gradients */
-  --com-grad-brand: linear-gradient(135deg, var(--com-cyan), var(--com-violet));
+  /* Solid Lime, not a gradient — DESIGN.md: "Violet/indigo CTA gradient ->
+     Solid Signal Lime + Ink". Token name kept for its ~9 call sites. */
+  --com-grad-brand: var(--com-violet);
   --com-grad-surface: linear-gradient(160deg, var(--com-surface-hi), var(--com-surface));
   --com-grad-text: linear-gradient(
     135deg,
@@ -42,7 +50,9 @@
   --com-shadow-sm: 0 1px 3px oklch(0 0 0 / 0.35), 0 1px 2px oklch(0 0 0 / 0.22);
   --com-shadow-md: 0 4px 16px oklch(0 0 0 / 0.45), 0 2px 4px oklch(0 0 0 / 0.22);
   --com-shadow-lg: 0 8px 48px oklch(0 0 0 / 0.55), 0 4px 12px oklch(0 0 0 / 0.3);
-  --com-shadow-glow: 0 0 40px oklch(0.72 0.22 296 / 0.25), 0 0 80px oklch(0.72 0.22 296 / 0.12);
+  /* Restrained — a single glow layer, not the old double 40px+80px halo
+     (DESIGN.md forbids "giant diffuse shadows that make every panel float"). */
+  --com-shadow-glow: 0 0 32px oklch(0.91 0.24 128 / 0.2);
 
   /* Radius */
   --com-r-xs: 6px;
@@ -70,10 +80,10 @@
    marketing-owned), so each keeps its hue/chroma and only drops lightness,
    the same ratio globals.css itself uses for --nx-accent / --nx-secondary. */
 :root:not(.dark) {
-  --com-violet: oklch(0.49 0.22 296);
-  --com-violet-hi: oklch(0.54 0.18 290);
-  --com-cyan: oklch(0.57 0.155 213);
-  --com-cyan-hi: oklch(0.61 0.12 210);
+  --com-violet: oklch(0.42 0.13 128);
+  --com-violet-hi: oklch(0.46 0.15 128);
+  --com-cyan: oklch(0.42 0.13 128);
+  --com-cyan-hi: oklch(0.46 0.15 128);
   --com-emerald: oklch(0.53 0.17 160);
   --com-amber: oklch(0.55 0.155 80);
   --com-red: oklch(0.44 0.22 20);
@@ -114,45 +124,13 @@
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 3. PURE CSS READING PROGRESS Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
-.docs-reading-progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  z-index: 9999;
-  pointer-events: none;
-  background: transparent;
-}
-
-.docs-reading-progress-bar {
-  height: 100%;
-  width: 100%;
-  transform: scaleX(0);
-  transform-origin: 0 50%;
-  background: linear-gradient(
-    90deg,
-    var(--com-cyan) 0%,
-    var(--com-violet) 55%,
-    var(--com-emerald) 100%
-  );
-  box-shadow:
-    0 0 16px oklch(0.84 0.155 213 / 0.8),
-    0 0 32px oklch(0.72 0.22 296 / 0.5);
-  border-radius: 0 3px 3px 0;
-  animation: com-reading-progress linear;
-  animation-timeline: scroll(root block);
-  animation-fill-mode: both;
-}
-
-@keyframes com-reading-progress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
+/* .docs-reading-progress / .docs-reading-progress-bar intentionally NOT
+   redefined here. This selector collides with docs.css's definition of the
+   same shared <ReadingProgress> component (used on both /docs and
+   /commercial), and this file loaded after docs.css in DocsLayout — its old
+   violet/cyan gradient was winning by source order EVERYWHERE, including
+   on technical docs pages that never intended to render it. docs.css's
+   Signal Lime version is now the one and only definition. */
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 4. CSS SCROLL-DRIVEN SECTION REVEALS Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
 @media (prefers-reduced-motion: no-preference) {
@@ -236,16 +214,16 @@
     linear-gradient(oklch(0.07 0.024 272 / 0.92), oklch(0.07 0.024 272 / 0.92)) padding-box,
     linear-gradient(
         90deg,
-        oklch(0.72 0.22 296 / 0.4) 0%,
-        oklch(0.84 0.155 213 / 0.3) 50%,
-        oklch(0.72 0.22 296 / 0.4) 100%
+        oklch(0.91 0.24 128 / 0.4) 0%,
+        oklch(0.91 0.24 128 / 0.3) 50%,
+        oklch(0.91 0.24 128 / 0.4) 100%
       )
       border-box;
   backdrop-filter: blur(28px) saturate(200%);
   -webkit-backdrop-filter: blur(28px) saturate(200%);
   /* Subtle glow cast downward */
   box-shadow:
-    0 1px 0 oklch(0.84 0.155 213 / 0.15),
+    0 1px 0 oklch(0.91 0.24 128 / 0.15),
     0 4px 24px oklch(0 0 0 / 0.4);
 }
 
@@ -281,11 +259,11 @@
   width: 32px;
   height: 32px;
   border-radius: 9px;
-  background: linear-gradient(140deg, oklch(0.72 0.22 296) 0%, oklch(0.84 0.155 213) 100%);
+  background: linear-gradient(140deg, oklch(0.91 0.24 128) 0%, oklch(0.91 0.24 128) 100%);
   flex-shrink: 0;
   box-shadow:
-    0 0 0 1px oklch(0.84 0.155 213 / 0.3),
-    0 0 18px oklch(0.72 0.22 296 / 0.55),
+    0 0 0 1px oklch(0.91 0.24 128 / 0.3),
+    0 0 18px oklch(0.91 0.24 128 / 0.55),
     inset 0 1px 0 oklch(1 0 0 / 0.25);
 }
 
@@ -318,10 +296,10 @@
   border-radius: 5px;
   background: linear-gradient(
     90deg,
-    oklch(0.72 0.22 296 / 0.2) 0%,
-    oklch(0.84 0.155 213 / 0.2) 100%
+    oklch(0.91 0.24 128 / 0.2) 0%,
+    oklch(0.91 0.24 128 / 0.2) 100%
   );
-  border: 1px solid oklch(0.72 0.22 296 / 0.45);
+  border: 1px solid oklch(0.91 0.24 128 / 0.45);
   color: var(--com-cyan);
   font-size: 0.58rem;
   font-weight: 900;
@@ -473,7 +451,7 @@
 }
 
 .com-header-search-btn:hover {
-  border-color: oklch(0.72 0.22 296 / 0.3);
+  border-color: oklch(0.91 0.24 128 / 0.3);
   color: var(--com-ink-3);
   background: oklch(1 0 0 / 0.06);
 }
@@ -532,7 +510,7 @@
   height: 36px;
   padding: 0 1.1rem;
   border-radius: 9px;
-  background: linear-gradient(135deg, oklch(0.72 0.22 296) 0%, oklch(0.84 0.155 213) 100%);
+  background: linear-gradient(135deg, oklch(0.91 0.24 128) 0%, oklch(0.91 0.24 128) 100%);
   color: oklch(0.06 0.02 270);
   font-size: 0.84rem;
   font-weight: 820;
@@ -542,8 +520,8 @@
     transform 160ms,
     box-shadow 160ms;
   box-shadow:
-    0 0 0 1px oklch(0.84 0.155 213 / 0.3),
-    0 2px 16px oklch(0.72 0.22 296 / 0.45);
+    0 0 0 1px oklch(0.91 0.24 128 / 0.3),
+    0 2px 16px oklch(0.91 0.24 128 / 0.45);
   white-space: nowrap;
   letter-spacing: -0.01em;
 }
@@ -552,8 +530,8 @@
   filter: brightness(1.1);
   transform: translateY(-1px);
   box-shadow:
-    0 0 0 1px oklch(0.84 0.155 213 / 0.4),
-    0 4px 24px oklch(0.72 0.22 296 / 0.6);
+    0 0 0 1px oklch(0.91 0.24 128 / 0.4),
+    0 4px 24px oklch(0.91 0.24 128 / 0.6);
 }
 
 .com-header-hamburger {
@@ -614,7 +592,7 @@
   max-width: calc(var(--com-max) + var(--com-gutter) * 2);
   margin: 0 auto;
   padding: 1.25rem var(--com-gutter) 1.75rem;
-  border-bottom: 1px solid oklch(0.72 0.22 296 / 0.15);
+  border-bottom: 1px solid oklch(0.91 0.24 128 / 0.15);
   background: oklch(0.08 0.024 272 / 0.96);
   backdrop-filter: blur(48px) saturate(200%);
   -webkit-backdrop-filter: blur(48px) saturate(200%);
@@ -680,13 +658,13 @@
 
 .com-mega-link:hover {
   background: oklch(1 0 0 / 0.055);
-  border-color: oklch(0.72 0.22 296 / 0.2);
+  border-color: oklch(0.91 0.24 128 / 0.2);
   transform: translateY(-1px);
 }
 
 .com-mega-link[data-active="true"] {
-  background: oklch(0.72 0.22 296 / 0.1);
-  border-color: oklch(0.72 0.22 296 / 0.25);
+  background: oklch(0.91 0.24 128 / 0.1);
+  border-color: oklch(0.91 0.24 128 / 0.25);
 }
 
 .com-mega-link-icon {
@@ -696,8 +674,8 @@
   width: 30px;
   height: 30px;
   border-radius: 8px;
-  background: oklch(0.72 0.22 296 / 0.12);
-  border: 1px solid oklch(0.72 0.22 296 / 0.2);
+  background: oklch(0.91 0.24 128 / 0.12);
+  border: 1px solid oklch(0.91 0.24 128 / 0.2);
   color: var(--com-violet);
   flex-shrink: 0;
   margin-top: 0.1rem;
@@ -751,10 +729,10 @@
   width: 120%;
   height: 120%;
   background:
-    radial-gradient(ellipse 75% 65% at 18% 48%, oklch(0.72 0.22 296 / 0.24) 0%, transparent 65%),
-    radial-gradient(ellipse 60% 55% at 88% 22%, oklch(0.84 0.155 213 / 0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 75% 65% at 18% 48%, oklch(0.91 0.24 128 / 0.24) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 55% at 88% 22%, oklch(0.91 0.24 128 / 0.22) 0%, transparent 60%),
     radial-gradient(ellipse 55% 50% at 62% 78%, oklch(0.79 0.17 160 / 0.14) 0%, transparent 55%),
-    radial-gradient(ellipse 38% 32% at 8% 88%, oklch(0.72 0.22 296 / 0.09) 0%, transparent 50%);
+    radial-gradient(ellipse 38% 32% at 8% 88%, oklch(0.91 0.24 128 / 0.09) 0%, transparent 50%);
   pointer-events: none;
 }
 
@@ -764,14 +742,11 @@
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Dot grid (perspective fading) */
+/* Dot grid: REMOVED — decorative texture with no tie to the page's own
+   content (no canvas/map/measuring surface under it), the same generated-UI
+   signature this file already trimmed film-grain and orbital rings for. */
 .com-hero-grid {
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(circle, oklch(1 0 0 / 0.09) 1px, transparent 1px);
-  background-size: 34px 34px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black, transparent);
-  pointer-events: none;
-  z-index: 1;
+  display: none;
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ Orbital rings: REMOVED for performance Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -810,8 +785,8 @@
   width: fit-content;
   padding: 0.38rem 1rem 0.38rem 0.6rem;
   border-radius: 999px;
-  border: 1px solid oklch(0.84 0.155 213 / 0.28);
-  background: oklch(0.84 0.155 213 / 0.07);
+  border: 1px solid oklch(0.91 0.24 128 / 0.28);
+  background: oklch(0.91 0.24 128 / 0.07);
   color: var(--com-cyan);
   font-size: 0.76rem;
   font-weight: 740;
@@ -890,15 +865,15 @@
   font-weight: 740 !important;
   border-radius: var(--com-r-md) !important;
   box-shadow:
-    0 0 0 1px oklch(0.84 0.155 213 / 0.25),
-    0 4px 28px oklch(0.72 0.22 296 / 0.45),
+    0 0 0 1px oklch(0.91 0.24 128 / 0.25),
+    0 4px 28px oklch(0.91 0.24 128 / 0.45),
     0 2px 10px oklch(0 0 0 / 0.35) !important;
 }
 
 .com-btn--hero:hover {
   box-shadow:
-    0 0 0 1px oklch(0.84 0.155 213 / 0.35),
-    0 8px 40px oklch(0.72 0.22 296 / 0.6),
+    0 0 0 1px oklch(0.91 0.24 128 / 0.35),
+    0 8px 40px oklch(0.91 0.24 128 / 0.6),
     0 4px 14px oklch(0 0 0 / 0.45) !important;
 }
 
@@ -945,7 +920,7 @@
 }
 
 .com-btn--play:hover .com-btn-play-ring {
-  background: oklch(0.72 0.22 296 / 0.12);
+  background: oklch(0.91 0.24 128 / 0.12);
   border-color: var(--com-violet);
   color: var(--com-violet);
 }
@@ -1102,8 +1077,8 @@
   background: var(--com-grad-brand);
   color: oklch(0.08 0.03 270);
   box-shadow:
-    0 0 0 1px oklch(0.84 0.155 213 / 0.2),
-    0 4px 24px oklch(0.72 0.22 296 / 0.4),
+    0 0 0 1px oklch(0.91 0.24 128 / 0.2),
+    0 4px 24px oklch(0.91 0.24 128 / 0.4),
     0 2px 8px oklch(0 0 0 / 0.3);
 }
 
@@ -1111,8 +1086,8 @@
   transform: translateY(-2px);
   filter: brightness(1.08);
   box-shadow:
-    0 0 0 1px oklch(0.84 0.155 213 / 0.3),
-    0 8px 32px oklch(0.72 0.22 296 / 0.55),
+    0 0 0 1px oklch(0.91 0.24 128 / 0.3),
+    0 8px 32px oklch(0.91 0.24 128 / 0.55),
     0 4px 12px oklch(0 0 0 / 0.4);
 }
 
@@ -1260,11 +1235,11 @@
 
 /* Module colors */
 .com-product-module:nth-child(1) .com-product-module-icon {
-  background: oklch(0.72 0.22 296 / 0.15);
+  background: oklch(0.91 0.24 128 / 0.15);
   color: var(--com-violet);
 }
 .com-product-module:nth-child(2) .com-product-module-icon {
-  background: oklch(0.84 0.155 213 / 0.12);
+  background: oklch(0.91 0.24 128 / 0.12);
   color: var(--com-cyan);
 }
 .com-product-module:nth-child(3) .com-product-module-icon {
@@ -1280,7 +1255,7 @@
   color: var(--com-red);
 }
 .com-product-module:nth-child(6) .com-product-module-icon {
-  background: oklch(0.72 0.22 296 / 0.1);
+  background: oklch(0.91 0.24 128 / 0.1);
   color: var(--com-violet);
 }
 
@@ -1574,7 +1549,7 @@
   transform: perspective(800px) rotateX(var(--rx, -1deg)) rotateY(var(--ry, 1deg)) translateY(-3px);
   box-shadow:
     var(--com-shadow-md),
-    0 0 40px oklch(0.72 0.22 296 / 0.08);
+    0 0 40px oklch(0.91 0.24 128 / 0.08);
 }
 
 /* Shimmer sweep */
@@ -1733,8 +1708,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 30% 50%, oklch(0.72 0.22 296 / 0.2), transparent 65%),
-    radial-gradient(ellipse 60% 50% at 80% 60%, oklch(0.84 0.155 213 / 0.15), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 30% 50%, oklch(0.91 0.24 128 / 0.2), transparent 65%),
+    radial-gradient(ellipse 60% 50% at 80% 60%, oklch(0.91 0.24 128 / 0.15), transparent 60%),
     radial-gradient(ellipse 40% 40% at 50% 0%, oklch(0.79 0.17 160 / 0.1), transparent 55%);
   z-index: -1;
 }
@@ -1854,7 +1829,7 @@
   width: 520px;
   height: 520px;
   border-radius: 50%;
-  background: radial-gradient(circle, oklch(0.72 0.22 296 / 0.12), transparent 70%);
+  background: radial-gradient(circle, oklch(0.91 0.24 128 / 0.12), transparent 70%);
   pointer-events: none;
 }
 
@@ -1899,8 +1874,8 @@
 }
 
 .com-page-hero-tag--accent {
-  border-color: oklch(0.72 0.22 296 / 0.35);
-  background: oklch(0.72 0.22 296 / 0.1);
+  border-color: oklch(0.91 0.24 128 / 0.35);
+  background: oklch(0.91 0.24 128 / 0.1);
   color: var(--com-violet);
 }
 
@@ -2026,7 +2001,7 @@
   min-height: 12px;
   border-radius: 4px 4px 3px 3px;
   background: var(--com-grad-brand);
-  box-shadow: 0 0 16px oklch(0.72 0.22 296 / 0.25);
+  box-shadow: 0 0 16px oklch(0.91 0.24 128 / 0.25);
   animation: com-bar-rise 0.9s var(--com-ease) both;
   animation-delay: var(--delay, 0ms);
 }
@@ -2069,7 +2044,7 @@
 .com-signal-flow span:last-child {
   border-right: none;
   color: var(--com-cyan);
-  background: oklch(0.84 0.155 213 / 0.08);
+  background: oklch(0.91 0.24 128 / 0.08);
 }
 
 /* Ã¢â€â‚¬Ã¢â€â‚¬ 17. CONTENT AREA (inner pages) Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬Ã¢â€â‚¬ */
@@ -2206,7 +2181,7 @@
 .com-content-body a {
   color: var(--com-cyan);
   text-decoration: underline;
-  text-decoration-color: oklch(0.84 0.155 213 / 0.3);
+  text-decoration-color: oklch(0.91 0.24 128 / 0.3);
   text-underline-offset: 3px;
   transition:
     color 150ms,
@@ -2278,8 +2253,8 @@
   margin: 1.5rem 0;
   padding: 1rem 1.25rem;
   border-radius: var(--com-r-md);
-  border: 1px solid oklch(0.72 0.22 296 / 0.25);
-  background: oklch(0.72 0.22 296 / 0.06);
+  border: 1px solid oklch(0.91 0.24 128 / 0.25);
+  background: oklch(0.91 0.24 128 / 0.06);
 }
 
 .com-content-body blockquote p {
@@ -2322,8 +2297,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 70% 60% at 50% 0%, oklch(0.72 0.22 296 / 0.06), transparent),
-    radial-gradient(ellipse 50% 40% at 80% 100%, oklch(0.84 0.155 213 / 0.05), transparent);
+    radial-gradient(ellipse 70% 60% at 50% 0%, oklch(0.91 0.24 128 / 0.06), transparent),
+    radial-gradient(ellipse 50% 40% at 80% 100%, oklch(0.91 0.24 128 / 0.05), transparent);
   pointer-events: none;
 }
 
@@ -2401,7 +2376,7 @@
 }
 
 .com-persona-tab[data-active="true"] {
-  background: oklch(0.72 0.22 296 / 0.08) !important;
+  background: oklch(0.91 0.24 128 / 0.08) !important;
   color: var(--com-violet) !important;
 }
 
@@ -2423,8 +2398,8 @@
   height: 22px;
   padding: 0 0.65rem;
   border-radius: 999px;
-  border: 1px solid oklch(0.72 0.22 296 / 0.28);
-  background: oklch(0.72 0.22 296 / 0.1);
+  border: 1px solid oklch(0.91 0.24 128 / 0.28);
+  background: oklch(0.91 0.24 128 / 0.1);
   color: var(--com-violet);
   font-size: 0.67rem;
   font-weight: 840;
@@ -2503,7 +2478,7 @@
   color: oklch(0.08 0.03 270) !important;
   font-weight: 760 !important;
   border: none !important;
-  box-shadow: 0 4px 20px oklch(0.72 0.22 296 / 0.3) !important;
+  box-shadow: 0 4px 20px oklch(0.91 0.24 128 / 0.3) !important;
   transition:
     transform 200ms var(--com-ease),
     filter 200ms var(--com-ease) !important;
@@ -3113,13 +3088,13 @@
 .com-btn--primary {
   background: var(--com-grad-brand);
   color: oklch(0.08 0.03 270);
-  box-shadow: 0 4px 20px oklch(0.72 0.22 296 / 0.3);
+  box-shadow: 0 4px 20px oklch(0.91 0.24 128 / 0.3);
 }
 
 .com-btn--primary:hover {
   transform: translateY(-2px);
   filter: brightness(1.08);
-  box-shadow: 0 8px 32px oklch(0.72 0.22 296 / 0.45);
+  box-shadow: 0 8px 32px oklch(0.91 0.24 128 / 0.45);
 }
 
 .com-btn--ghost {

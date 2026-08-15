@@ -1,4 +1,4 @@
-import type { DsrModel } from "../../data/models/DsrModels";
+import type { DsrModel, DsrDetailModel } from "../../data/models/DsrModels";
 import type { PagedResult } from "@core/interfaces/common.interface";
 import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../entities/DsrRequests";
 
@@ -8,7 +8,7 @@ import type { DsrListParams, SubmitDsrRequest, ReviewDsrRequest } from "../entit
  */
 export interface IDsrService {
   getAll(params: DsrListParams): Promise<PagedResult<DsrModel>>;
-  getById(id: string): Promise<DsrModel>;
+  getById(id: string): Promise<DsrDetailModel>;
   submit(data: SubmitDsrRequest): Promise<{ id: string }>;
   review(id: string, data: ReviewDsrRequest): Promise<void>;
   cancel(id: string): Promise<void>;

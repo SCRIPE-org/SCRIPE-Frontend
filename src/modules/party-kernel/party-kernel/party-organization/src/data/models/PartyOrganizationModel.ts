@@ -24,7 +24,7 @@ export interface PartyOrganizationJson {
 export interface PartyOrganizationListResponseJson {
   items: PartyOrganizationJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

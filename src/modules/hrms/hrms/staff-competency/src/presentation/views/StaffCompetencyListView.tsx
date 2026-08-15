@@ -8,17 +8,19 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useStaffCompetencyViewModel } from "../viewmodels/useStaffCompetencyViewModel";
 import type { StaffCompetency } from "../../domain/entities/StaffCompetency";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
+import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const StaffCompetencyListView = React.memo(function StaffCompetencyListView() {
-  useModuleLocales(() => import("../../../locales"), "hrms");
+  useModuleLocales(() => import("../../../locales"), "hrms-staff-competency");
   const { vm } = useStaffCompetencyViewModel();
   const { t, language } = useI18n();
   const locale = resolveIntlLocale(language);
@@ -27,6 +29,7 @@ export const StaffCompetencyListView = React.memo(function StaffCompetencyListVi
     titleKey: "staffCompetency.title",
     subtitleKey: "staffCompetency.description",
     resource: "staff-competencies",
+    entityTypeKey: "hrms.staff-competency",
     columns: [
       {
         key: "competencyName",
@@ -109,6 +112,31 @@ export const StaffCompetencyListView = React.memo(function StaffCompetencyListVi
       level: item.level,
     }),
     getItemDisplayName: (item: StaffCompetency) => item.competencyName,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<StaffCompetency>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: StaffCompetency) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.STAFF_COMPETENCY_UPDATE,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: StaffCompetency) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.STAFF_COMPETENCY_DELETE,
+      },
+    ],
+    // F-85: opts this list into real server-side sort (see StaffMemberListView
+    // for the full rationale). Unset, a column click stays client-side-only.
+    customTableProps: {
+      sortColumn: vm.sortBy,
+      sortDirection: vm.sortDirection,
+      onSortChange: vm.handleSortChange,
+    },
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

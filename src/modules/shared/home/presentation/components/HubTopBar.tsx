@@ -16,6 +16,7 @@
  */
 
 import React from "react";
+import Image from "next/image";
 import { Search, Grid3x3, Bell, ChevronDown } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -56,18 +57,9 @@ export function HubTopBar({ onSearchClick, onAppLauncherClick }: HubTopBarProps)
 
   return (
     <header className="relative z-raised flex h-[60px] items-center gap-6 border-b border-nx-line bg-nx-surface px-8">
-      {/* SCRIPE wordmark */}
+      {/* SCRIPE wordmark — canonical flat Relay Grid mark, never a redrawn stand-in */}
       <div className="inline-flex items-center gap-2">
-        <svg width={22} height={22} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M4 5 L12 12 L4 19 L4 12 L20 5 L20 12 L12 12 L20 19"
-            stroke="var(--nx-accent)"
-            strokeWidth="2.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-          />
-        </svg>
+        <Image src="/brand/app-logo.svg" alt="" width={22} height={22} aria-hidden="true" />
         <span className="text-sm font-bold tracking-[0.12em] text-nx-ink">
           {BRAND?.name ?? "SCRIPE"}
         </span>

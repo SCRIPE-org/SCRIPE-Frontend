@@ -12,6 +12,11 @@ import { usePermissions } from "@core/hooks/use-permissions";
 import { useAppStore } from "@core/store/useAppStore";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import {
+  useCustomFieldsFormFields,
+  getCustomFieldsExtension,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
 import type {
   DataSubjectRequest,
   DsrStatus,
@@ -41,6 +46,15 @@ const STATUS_VARIANT: Record<string, BadgeProps["variant"]> = {
   Rejected: "error",
   Cancelled: "secondary",
 };
+
+/**
+ * Registered in the backend's ComplianceEntityTypeCatalog -- must match
+ * exactly. DSR has no generic edit form (see `editFields: undefined` below),
+ * so this is only ever fetched/saved in create mode -- SubmitDsrModal is the
+ * real integration point, the same way MESSAGE_TEMPLATE_ENTITY_TYPE_KEY's
+ * real integration point is a full-page form, not GenericCrudView's modal.
+ */
+export const DSR_ENTITY_TYPE_KEY = "compliance.dsr";
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
@@ -99,18 +113,49 @@ export function useDsrViewModel() {
     }
   );
 
+  // ── Custom Fields ─────────────────────────────────────────────────────────────
+  // No ownerId — DSR has no edit form, so this is always the create-form
+  // (definitions-only) shape. See DSR_ENTITY_TYPE_KEY's own comment above.
+  const customFieldsQuery = useCustomFieldsFormFields(DSR_ENTITY_TYPE_KEY, undefined);
+
+  // Keyed by the field's namespaced name (e.g. "__cf__nationality"), holding
+  // only values the user has actively edited this session — mirrors
+  // useTemplateFormViewModel's identical pattern (the other bespoke-form
+  // integration point for this same extension).
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
+
+  const updateCustomFieldValue = useCallback((name: string, value: unknown) => {
+    setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const saveCustomFieldValues = useCallback(
+    async (ownerId: string) => {
+      const decoded: Record<string, unknown> = {};
+      for (const fc of customFieldsQuery.fieldConfigs) {
+        const key = decodeCustomFieldName(fc.name);
+        if (key === null) continue;
+        const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+        decoded[key] = raw === "" ? null : raw;
+      }
+      if (Object.keys(decoded).length === 0) return;
+      await getCustomFieldsExtension()?.saveValues(DSR_ENTITY_TYPE_KEY, ownerId, decoded);
+    },
+    [customFieldsQuery.fieldConfigs, customFieldValues]
+  );
+
   // ── Mutations ─────────────────────────────────────────────────────────────────
   const invalidate = useCallback(
     () => queryClient.invalidateQueries({ queryKey: ["compliance", "dsr"] }),
     [queryClient]
   );
 
+  // No onSuccess here — success side effects (invalidate, toast) only fire
+  // from handleSubmit once saveCustomFieldValues has also settled, so a
+  // custom-field save failure can never be masked by an immediate "submitted"
+  // toast the user has no reason to doubt. Same reasoning as
+  // useTemplateFormViewModel's createMutation.
   const submitMutation = useMutation({
     mutationFn: (data: SubmitDsrRequest) => dsrRepository.submit(data),
-    onSuccess: () => {
-      invalidate();
-      success({ title: t("compliance.dsrSubmitted") });
-    },
     onError: () => toastError({ title: t("common.error") }),
   });
 
@@ -143,14 +188,28 @@ export function useDsrViewModel() {
       subjectEmail: string;
       requesterNotes?: string;
     }) => {
-      await submitMutation.mutateAsync({
+      // Rejects (and skips the rest) if the create itself fails — submitMutation's
+      // own onError has already toasted, so SubmitDsrModal's catch just needs to
+      // know not to close/reset the form.
+      const newId = await submitMutation.mutateAsync({
         requestType: data.requestType,
         regulationCode: data.regulationCode,
         subjectEmail: data.subjectEmail,
         requesterNotes: data.requesterNotes,
       });
+      try {
+        await saveCustomFieldValues(newId);
+      } catch (err) {
+        toastError({ title: t("compliance.customFieldsSaveError") });
+        // The DSR itself WAS created — re-throw only so the modal knows to
+        // stay open with what the user typed, not to pretend nothing happened.
+        throw err;
+      }
+      invalidate();
+      success({ title: t("compliance.dsrSubmitted") });
+      setCustomFieldValues({});
     },
-    [submitMutation]
+    [submitMutation, saveCustomFieldValues, invalidate, success, t, toastError]
   );
 
   const handleReview = useCallback(
@@ -320,6 +379,12 @@ export function useDsrViewModel() {
     canCreate,
     handleSubmit,
     isSubmitting: submitMutation.isPending,
+    // Custom fields (Submit modal only — DSR has no edit form)
+    customFieldConfigs: customFieldsQuery.fieldConfigs,
+    customFieldsLoading: customFieldsQuery.isLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields: customFieldsQuery.refetch,
     // Review modal
     reviewDsr,
     setReviewDsr,

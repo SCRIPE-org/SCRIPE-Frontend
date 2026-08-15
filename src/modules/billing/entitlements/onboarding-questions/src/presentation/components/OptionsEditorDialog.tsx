@@ -66,7 +66,7 @@ export function OptionsEditorDialog({
   };
 
   const startEdit = (option: AnswerOptionData) => {
-    if (isBusy) return;
+    if (vm.isOptionBusy(option.id)) return;
     setForm({
       value: option.value,
       labelEn: option.labelEn,
@@ -102,23 +102,27 @@ export function OptionsEditorDialog({
   };
 
   const handleDelete = async (id: string) => {
-    if (isBusy) return;
+    if (vm.isOptionBusy(id)) return;
     await vm.deleteOption(id);
     setPendingDelete(null);
   };
 
   const handleMoveUp = async (idx: number) => {
-    if (idx === 0 || isBusy) return;
+    if (idx === 0) return;
+    const movedId = vm.options[idx].id;
+    if (vm.isOptionBusy(movedId)) return;
     const ids = vm.options.map((o) => o.id);
     [ids[idx - 1], ids[idx]] = [ids[idx], ids[idx - 1]];
-    await vm.reorderOptions(ids);
+    await vm.reorderOptions(ids, movedId);
   };
 
   const handleMoveDown = async (idx: number) => {
-    if (idx === vm.options.length - 1 || isBusy) return;
+    if (idx === vm.options.length - 1) return;
+    const movedId = vm.options[idx].id;
+    if (vm.isOptionBusy(movedId)) return;
     const ids = vm.options.map((o) => o.id);
     [ids[idx], ids[idx + 1]] = [ids[idx + 1], ids[idx]];
-    await vm.reorderOptions(ids);
+    await vm.reorderOptions(ids, movedId);
   };
 
   const fieldIdBase = useId();
@@ -203,7 +207,7 @@ export function OptionsEditorDialog({
                       {/* Reorder */}
                       <Button
                         onClick={() => handleMoveUp(idx)}
-                        disabled={idx === 0 || isBusy}
+                        disabled={idx === 0 || vm.isOptionBusy(opt.id)}
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7"
@@ -213,7 +217,7 @@ export function OptionsEditorDialog({
                       </Button>
                       <Button
                         onClick={() => handleMoveDown(idx)}
-                        disabled={idx === vm.options.length - 1 || isBusy}
+                        disabled={idx === vm.options.length - 1 || vm.isOptionBusy(opt.id)}
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7"
@@ -225,7 +229,7 @@ export function OptionsEditorDialog({
                       {/* Edit */}
                       <Button
                         onClick={() => (isEditing ? cancelForm() : startEdit(opt))}
-                        disabled={isBusy}
+                        disabled={vm.isOptionBusy(opt.id)}
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7"
@@ -243,7 +247,7 @@ export function OptionsEditorDialog({
                         <div className="flex items-center gap-1">
                           <Button
                             onClick={() => handleDelete(opt.id)}
-                            disabled={isBusy}
+                            disabled={vm.isOptionBusy(opt.id)}
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7 text-destructive hover:bg-destructive/10"
@@ -255,7 +259,7 @@ export function OptionsEditorDialog({
                           </Button>
                           <Button
                             onClick={() => setPendingDelete(null)}
-                            disabled={isBusy}
+                            disabled={vm.isOptionBusy(opt.id)}
                             variant="ghost"
                             size="icon"
                             className="h-7 w-7"
@@ -267,7 +271,7 @@ export function OptionsEditorDialog({
                       ) : (
                         <Button
                           onClick={() => setPendingDelete(opt.id)}
-                          disabled={isBusy}
+                          disabled={vm.isOptionBusy(opt.id)}
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 text-destructive/50 hover:bg-destructive/10 hover:text-destructive"

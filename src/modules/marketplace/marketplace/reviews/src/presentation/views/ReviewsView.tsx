@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useReviewsViewModel } from "../viewmodels/useReviewsViewModel";
-import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardHeader } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
 import { Skeleton } from "@core/ui/skeleton";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Star, Trash2 } from "lucide-react";
 import type { AppReview } from "../../domain/entities/AppReview";
@@ -30,7 +30,36 @@ export function ReviewsView() {
         </p>
       </div>
 
-      {vm.isLoading ? (
+      {/* Reviews are scoped to a single app listing at a time (the backend
+          query requires an appListingId -- there is no "all listings" mode),
+          so an explicit picker drives which app's reviews are fetched. */}
+      <div className="max-w-xs">
+        <Select
+          value={vm.appListingId}
+          onValueChange={vm.setAppListingId}
+          disabled={vm.isLoadingAppListingOptions || vm.appListingOptions.length === 0}
+        >
+          <SelectTrigger aria-label={t("marketplace.reviewsSelectAppListingLabel")}>
+            <SelectValue placeholder={t("marketplace.reviewsSelectAppListingPlaceholder")} />
+          </SelectTrigger>
+          <SelectContent>
+            {vm.appListingOptions.map((listing) => (
+              <SelectItem key={listing.id} value={listing.id}>
+                {listing.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {!vm.appListingId ? (
+        <EmptyState
+          size="sm"
+          bare
+          icon={Star}
+          title={t("marketplace.reviewsSelectAppListingPrompt")}
+        />
+      ) : vm.isLoading ? (
         <div
           className="flex flex-col gap-3"
           role="status"
@@ -60,9 +89,6 @@ export function ReviewsView() {
                         />
                       ))}
                     </div>
-                    <Badge variant="outline" className="text-xs">
-                      {review.tenantName}
-                    </Badge>
                   </div>
                   <p className="mt-1 text-sm font-medium text-nx-ink">{review.title}</p>
                   <p className="line-clamp-2 text-xs text-nx-ink-2">{review.body}</p>

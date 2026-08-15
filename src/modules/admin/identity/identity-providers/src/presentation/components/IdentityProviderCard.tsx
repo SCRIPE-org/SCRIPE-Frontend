@@ -8,7 +8,8 @@
 
 import { useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn } from "@core/common/utils";
+import { cn, unresolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import type { IdentityProviderListItem } from "../../domain/entities/IdentityProvider";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
@@ -32,6 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@core/ui/alert-dialog";
+import Image from "next/image";
 
 interface Props {
   item: IdentityProviderListItem;
@@ -57,6 +59,10 @@ export function IdentityProviderCard({
   const { t } = useI18n();
   const [isToggling, setIsToggling] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  // `item.iconUrl` was already run through the old (now-broken) resolveFileUrl
+  // by IdentityProviderMapper; unresolve it back to a relative path first so
+  // the session hook can tell it apart from a genuinely-public absolute URL.
+  const resolvedIconUrl = useResolvedFileUrl(unresolveFileUrl(item.iconUrl));
 
   // A provider without its own colour renders on the workspace accent instead
   // of a fixed hex — the accent is workspace-owned, never a fallback brand.
@@ -125,10 +131,13 @@ export function IdentityProviderCard({
                   : undefined
               }
             >
-              {item.iconUrl ? (
-                <img
-                  src={item.iconUrl}
+              {item.iconUrl && resolvedIconUrl ? (
+                <Image
+                  src={resolvedIconUrl}
                   alt={item.name}
+                  width={24}
+                  height={24}
+                  unoptimized
                   className="h-6 w-6 rounded object-contain"
                 />
               ) : (
@@ -198,7 +207,7 @@ export function IdentityProviderCard({
           {item.enabledForAdmins && (
             <Badge
               variant="outline"
-              className="border-nx-accent/30 h-5 gap-1 bg-nx-accent-wash text-[10px] font-medium text-nx-accent"
+              className="h-5 gap-1 border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-nx-accent-wash text-[10px] font-medium text-nx-accent"
             >
               <Shield className="h-3 w-3" aria-hidden="true" />
               {t("identityProviders.badgeAdmin")}

@@ -35,7 +35,35 @@ export interface WorkItemListItemJson {
 export interface WorkItemListResponseJson {
   items: WorkItemListItemJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+/**
+ * Raw shape of one row from GET /api/v1/Admins (Identity module) -- the same
+ * endpoint/shape the Leads module's assignable-admins picker consumes
+ * (AssignableAdminResponseModel in leads.models.ts). Kept as a local copy
+ * rather than a cross-module import: each module owns its own DTOs.
+ */
+export interface AssignableAdminResponseModel {
+  id: string;
+  username: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  isActive: boolean;
+  tenantId?: string;
+  tenantName?: string;
+  isSuperAdmin?: boolean;
+}
+
+export interface PagedAssignableAdminsModel {
+  items: AssignableAdminResponseModel[];
+  totalCount: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

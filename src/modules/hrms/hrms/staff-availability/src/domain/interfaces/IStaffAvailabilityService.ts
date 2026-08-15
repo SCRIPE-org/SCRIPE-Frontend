@@ -21,6 +21,8 @@ export interface IStaffAvailabilityService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffAvailabilityListResult>;
   getById(id: string): Promise<StaffAvailabilityModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

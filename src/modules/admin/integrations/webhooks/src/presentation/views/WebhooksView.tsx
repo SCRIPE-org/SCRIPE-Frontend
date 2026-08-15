@@ -41,6 +41,7 @@ export function WebhooksView() {
       titleKey: "webhooks.title",
       subtitleKey: "webhooks.description",
       resource: "webhooks",
+      entityTypeKey: "integrations.webhook-subscription",
       columns: [
         {
           key: "url",
@@ -187,7 +188,7 @@ export function WebhooksView() {
           onClick: (item: WebhookSubscriptionListItem) => handleToggle(item.id),
           variant: "ghost" as const,
           icon: <ToggleLeft className="h-4 w-4" aria-hidden="true" />,
-          requiredPermission: "webhooks:update",
+          requiredPermission: "webhooks.update",
         },
         {
           label: tFn("common.delete"),
@@ -195,7 +196,7 @@ export function WebhooksView() {
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/90",
           icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
-          requiredPermission: "webhooks:delete",
+          requiredPermission: "webhooks.delete",
           confirmTitle: tFn("webhooks.deleteConfirmTitle"),
           confirmDescription: tFn("webhooks.deleteConfirmDesc"),
           confirmVariant: "destructive" as const,

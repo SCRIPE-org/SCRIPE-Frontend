@@ -53,18 +53,18 @@ export function OtpInputField({
 
           const getSlotConfig = () => {
             if (variant === "glass") {
-              // Auth-shell opt-in — fixed signup purple, literals by design.
+              // Auth-shell opt-in — fixed Signal Lime, literals by design.
               return {
                 className:
                   "w-[46px] h-[56px] rounded-xl text-center text-[22px] font-semibold font-mono outline-none transition-all duration-200 border-none ring-0 ring-offset-0 ring-transparent focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 shadow-none",
                 style: {
-                  background: ch ? "rgba(168,85,247,0.08)" : "rgba(255,255,255,0.03)",
-                  border: `1.5px solid ${ch ? "rgba(168,85,247,0.4)" : "rgba(255,255,255,0.08)"}`,
-                  color: "#F5F2FF",
-                  boxShadow: ch ? "0 0 8px rgba(168,85,247,0.12)" : "none",
+                  background: ch ? "rgba(198,255,0,0.1)" : "rgba(255,255,255,0.03)",
+                  border: `1.5px solid ${ch ? "rgba(198,255,0,0.5)" : "rgba(255,255,255,0.08)"}`,
+                  color: "#F7F8F5",
+                  boxShadow: ch ? "0 0 8px rgba(198,255,0,0.18)" : "none",
                 },
                 activeClass:
-                  "data-[active=true]:border-[rgba(168,85,247,0.6)] data-[active=true]:ring-4 data-[active=true]:ring-[rgba(168,85,247,0.15)]",
+                  "data-[active=true]:border-[rgba(198,255,0,0.6)] data-[active=true]:ring-4 data-[active=true]:ring-[rgba(198,255,0,0.15)]",
               };
             }
 
@@ -79,7 +79,7 @@ export function OtpInputField({
                   color: "var(--sx-text)",
                 },
                 activeClass:
-                  "data-[active=true]:border-[var(--sx-accent-text)] data-[active=true]:ring-3 data-[active=true]:ring-[var(--sx-accent-ring,rgba(139,92,246,0.18))]",
+                  "data-[active=true]:border-[var(--sx-accent-text)] data-[active=true]:ring-3 data-[active=true]:ring-[var(--sx-accent-ring,rgba(198,255,0,0.18))]",
               };
             }
 

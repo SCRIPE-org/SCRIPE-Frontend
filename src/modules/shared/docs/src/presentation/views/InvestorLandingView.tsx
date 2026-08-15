@@ -37,7 +37,7 @@ const PERSONA_DATA: Record<
     ],
     ctaLabel: "commercial.investorOverview.personaSelectorLearnMore",
     ctaHref: "mailto:investors@scripe.dev",
-    color: "var(--com-cyan)",
+    color: "var(--com-violet)",
   },
   cofounder: {
     emoji: "🚀",
@@ -56,7 +56,7 @@ const PERSONA_DATA: Record<
     ],
     ctaLabel: "commercial.investorOverview.personaSelectorLearnMore",
     ctaHref: "mailto:founders@scripe.dev",
-    color: "var(--com-violet)",
+    color: "var(--com-amber)",
   },
   partner: {
     emoji: "🤝",

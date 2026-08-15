@@ -9,8 +9,15 @@ import { Search, Filter, SortAsc } from "lucide-react";
 /** Sort options supported by the backend catalog query. */
 export type SortByOption = "popular" | "rating" | "newest" | "price";
 
-/** Pricing model filter options. */
-export type PricingModelFilter = "Free" | "OneTime" | "Subscription" | undefined;
+/** Pricing model filter options — matches the real backend `PricingModel` enum. */
+export type PricingModelFilter =
+  | "Free"
+  | "PaidOnce"
+  | "Subscription"
+  | "Freemium"
+  | "PerSeat"
+  | "UsageBased"
+  | undefined;
 
 interface AppListingsToolbarProps {
   /** Current search query (controlled from viewmodel). */
@@ -132,9 +139,14 @@ export function AppListingsToolbar({
           <SelectContent>
             <SelectItem value="all">{t("marketplace.toolbarPricingAll")}</SelectItem>
             <SelectItem value="Free">{t("common.free")}</SelectItem>
-            <SelectItem value="OneTime">{t("marketplace.toolbarPricingOneTime")}</SelectItem>
+            <SelectItem value="PaidOnce">{t("marketplace.toolbarPricingOneTime")}</SelectItem>
             <SelectItem value="Subscription">
               {t("marketplace.toolbarPricingSubscription")}
+            </SelectItem>
+            <SelectItem value="Freemium">{t("marketplace.toolbarPricingFreemium")}</SelectItem>
+            <SelectItem value="PerSeat">{t("marketplace.toolbarPricingPerSeat")}</SelectItem>
+            <SelectItem value="UsageBased">
+              {t("marketplace.toolbarPricingUsageBased")}
             </SelectItem>
           </SelectContent>
         </Select>

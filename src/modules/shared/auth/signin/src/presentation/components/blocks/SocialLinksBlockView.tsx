@@ -27,7 +27,7 @@ export function SocialLinksBlockView({ block }: { block: SocialLinksBlock }) {
             className={[
               "inline-flex items-center justify-center gap-2 rounded-md border px-3 font-medium transition-colors hover:bg-muted",
               SIZE_CLASS[props.size || "md"],
-              props.style === "colored-bg" ? "border-primary/20 bg-primary/10 text-primary" : "",
+              props.style === "colored-bg" ? "border-primary/20 bg-primary/10 text-nx-accent" : "",
             ].join(" ")}
             aria-label={item.platform}
           >

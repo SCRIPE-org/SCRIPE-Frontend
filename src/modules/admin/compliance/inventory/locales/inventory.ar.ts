@@ -9,6 +9,8 @@ export const ar = {
     legalBasis: "الأساس القانوني",
     isAnonymized: "يُجهَّل عند الحذف",
     isExported: "مدرج في التصدير",
+    scope: "النطاق",
+    global: "عام",
     total: "الإجمالي",
     categories: {
       ContactData: "بيانات الاتصال",

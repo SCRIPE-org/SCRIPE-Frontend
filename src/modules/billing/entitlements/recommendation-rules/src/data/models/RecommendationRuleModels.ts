@@ -29,7 +29,7 @@ export interface RecommendationRuleDetailModel extends RecommendationRuleListMod
 export interface PagedRecommendationRulesModel {
   items: RecommendationRuleListModel[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

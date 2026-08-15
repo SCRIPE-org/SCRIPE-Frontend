@@ -8,6 +8,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Building2, Plus, ChevronUp, ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { CustomerLogoDialog } from "./CustomerLogoDialog";
 import type { useSignupContentViewModel } from "../viewmodels/useSignupContentViewModel";
+import Image from "next/image";
 
 type SignupContentViewModel = ReturnType<typeof useSignupContentViewModel>;
 
@@ -67,7 +68,7 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
                 <div className="flex flex-col gap-0.5">
                   <Button
                     onClick={() => vm.handleMoveLogo(logo.id, "up")}
-                    disabled={idx === 0 || isLogoBusy}
+                    disabled={idx === 0 || vm.isLogoRowBusy(logo.id)}
                     variant="ghost"
                     size="icon"
                     className="h-5 w-5"
@@ -77,7 +78,7 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
                   </Button>
                   <Button
                     onClick={() => vm.handleMoveLogo(logo.id, "down")}
-                    disabled={idx === logos.length - 1 || isLogoBusy}
+                    disabled={idx === logos.length - 1 || vm.isLogoRowBusy(logo.id)}
                     variant="ghost"
                     size="icon"
                     className="h-5 w-5"
@@ -88,10 +89,12 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
                 </div>
                 {logo.assetUrl && (
                   <div className="h-8 w-12 shrink-0 overflow-hidden rounded-nx-sm border border-nx-line bg-nx-ground">
-                    {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary tenant-supplied asset URL, not an optimizable local/remote-listed image */}
-                    <img
+                    <Image
                       src={logo.assetUrl}
                       alt={logo.name}
+                      width={48}
+                      height={32}
+                      unoptimized
                       className="h-full w-full object-contain p-0.5"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = "none";
@@ -111,7 +114,7 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
                 <div className="flex shrink-0 items-center gap-1">
                   <Button
                     onClick={() => vm.handleOpenEditLogo(logo)}
-                    disabled={isLogoBusy}
+                    disabled={vm.isLogoRowBusy(logo.id)}
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
@@ -121,7 +124,7 @@ export function CustomerLogosSection({ vm }: CustomerLogosSectionProps) {
                   </Button>
                   <Button
                     onClick={() => vm.handleDeleteLogo(logo.id)}
-                    disabled={isLogoBusy}
+                    disabled={vm.isLogoRowBusy(logo.id)}
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"

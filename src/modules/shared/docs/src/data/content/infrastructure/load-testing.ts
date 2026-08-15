@@ -104,7 +104,7 @@ const loginFailRate = new Rate('scripe_login_fail_rate');
 const tokenRefreshDuration = new Trend('scripe_token_refresh_duration', true);
 
 // ── Environment Configuration ──
-const BASE_URL = __ENV.BASE_URL || 'http://localhost:5001';
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:5035';
 const ADMIN_EMAIL = __ENV.ADMIN_EMAIL || 'superadmin@scripe.com';
 const ADMIN_PASSWORD = __ENV.ADMIN_PASSWORD || 'Admin@123';
 
@@ -167,7 +167,7 @@ k6 run tests/load/crud-operations.js
 # DOCKER COMPOSE (containerized backend)
 # ═══════════════════════════════════════════════════════════
 k6 run tests/load/auth-flow.js \\
-  --env BASE_URL=http://host.docker.internal:5001
+  --env BASE_URL=http://host.docker.internal:5035
 
 # ═══════════════════════════════════════════════════════════
 # STAGING / PRODUCTION (remote server)
@@ -219,7 +219,7 @@ jobs:
     services:
       api:
         image: scripe-api:latest
-        ports: ['5001:5001']
+        ports: ['5035:5035']
         env:
           ASPNETCORE_ENVIRONMENT: Staging
           Database__Provider: SqlServer
@@ -230,7 +230,7 @@ jobs:
       - name: Wait for API readiness
         run: |
           for i in {1..30}; do
-            curl -sf http://localhost:5001/health/ready && break
+            curl -sf http://localhost:5035/health/ready && break
             sleep 5
           done
 
@@ -239,7 +239,7 @@ jobs:
         with:
           filename: tests/load/auth-flow.js
           flags: >-
-            --env BASE_URL=http://localhost:5001
+            --env BASE_URL=http://localhost:5035
             --env ADMIN_EMAIL=\${{ secrets.TEST_ADMIN_EMAIL }}
             --env ADMIN_PASSWORD=\${{ secrets.TEST_ADMIN_PASSWORD }}
             --out json=auth-results.json
@@ -249,7 +249,7 @@ jobs:
         with:
           filename: tests/load/crud-operations.js
           flags: >-
-            --env BASE_URL=http://localhost:5001
+            --env BASE_URL=http://localhost:5035
             --env ADMIN_EMAIL=\${{ secrets.TEST_ADMIN_EMAIL }}
             --env ADMIN_PASSWORD=\${{ secrets.TEST_ADMIN_PASSWORD }}
 

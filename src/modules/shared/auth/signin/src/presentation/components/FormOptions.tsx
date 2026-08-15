@@ -19,12 +19,25 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
       className="flex items-center justify-between text-[12px]"
       style={{ color: "var(--sx-text-mute, hsl(var(--muted-foreground)))" }}
     >
-      <label className="flex cursor-pointer select-none items-center gap-2">
+      <label
+        className="flex cursor-pointer select-none items-center gap-2"
+        onClick={() => {
+          // The checkbox is a `div[role="checkbox"]`, not a native input, so
+          // it isn't natively associated with this <label> — without this
+          // handler, clicks on the label text wouldn't toggle it. The
+          // checkbox div's own onClick calls stopPropagation, so this only
+          // fires for clicks that land on the label/text, never double-firing.
+          if (!disabled) onStaySignedInChange(!staySignedIn);
+        }}
+      >
         <div
           role="checkbox"
           aria-checked={staySignedIn}
           tabIndex={0}
-          onClick={() => !disabled && onStaySignedInChange(!staySignedIn)}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (!disabled) onStaySignedInChange(!staySignedIn);
+          }}
           onKeyDown={(e) => {
             if (e.key === " " || e.key === "Enter") {
               e.preventDefault();
@@ -33,7 +46,7 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
           }}
           className="flex h-5 w-5 shrink-0 items-center justify-center rounded transition-all"
           style={{
-            background: staySignedIn ? "linear-gradient(135deg, #A855F7, #3B82F6)" : "transparent",
+            background: staySignedIn ? "var(--scripe-signal, #C6FF00)" : "transparent",
             border: staySignedIn
               ? "1px solid transparent"
               : "1px solid var(--sx-field-border, hsl(var(--border)))",
@@ -43,7 +56,12 @@ export function FormOptions({ staySignedIn, onStaySignedInChange, disabled, t }:
         >
           {staySignedIn && (
             <svg width="13" height="14" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-              <path d="M2 5l2 2 5-4" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" />
+              <path
+                d="M2 5l2 2 5-4"
+                stroke="var(--scripe-ink, #0D0D0E)"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+              />
             </svg>
           )}
         </div>

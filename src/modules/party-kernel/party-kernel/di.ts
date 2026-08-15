@@ -10,16 +10,6 @@
  */
 import { getModuleApiService } from "@/core/services/api-factory";
 
-// Service
-import { PartyKernelService } from "./core/src/data/services/PartyKernelService";
-
-// Repository
-import { PartyKernelRepository } from "./core/src/data/repositories/PartyKernelRepository";
-
-// Interfaces
-import type { IPartyKernelRepository } from "./core/src/domain/interfaces/IPartyKernelRepository";
-import type { IPartyKernelService } from "./core/src/domain/interfaces/IPartyKernelService";
-
 // Party
 import { PartyService } from "./party/src/data/services/PartyService";
 import { PartyRepository } from "./party/src/data/repositories/PartyRepository";
@@ -63,8 +53,6 @@ import type { IMergeCandidateService } from "./merge-candidate/src/domain/interf
 import type { IMergeCandidateRepository } from "./merge-candidate/src/domain/interfaces/IMergeCandidateRepository";
 
 export interface PartyKernelContainer {
-  partyKernelService: IPartyKernelService;
-  partyKernelRepository: IPartyKernelRepository;
   // Party
   partyService: IPartyService;
   partyRepository: IPartyRepository;
@@ -98,9 +86,6 @@ export function getPartyKernelContainer(): PartyKernelContainer {
     const apiService = getModuleApiService("PARTYKERNEL");
 
     // Create Service (wraps IApiService)
-    const partyKernelService = new PartyKernelService(apiService);
-
-    // Create Repository (uses Service)
     const partyService = new PartyService(apiService);
     const partyPersonService = new PartyPersonService(apiService);
     const partyOrganizationService = new PartyOrganizationService(apiService);
@@ -109,8 +94,6 @@ export function getPartyKernelContainer(): PartyKernelContainer {
     const contactPointService = new ContactPointService(apiService);
     const mergeCandidateService = new MergeCandidateService(apiService);
     _container = {
-      partyKernelService,
-      partyKernelRepository: new PartyKernelRepository(partyKernelService),
       // Party
       partyService,
       partyRepository: new PartyRepository(partyService),
@@ -142,9 +125,6 @@ export function getPartyKernelContainer(): PartyKernelContainer {
  * PartyKernel container accessor (for use in components)
  */
 export const partyKernelContainer = {
-  get partyKernelRepository() {
-    return getPartyKernelContainer().partyKernelRepository;
-  },
   // Party
   get partyRepository() {
     return getPartyKernelContainer().partyRepository;

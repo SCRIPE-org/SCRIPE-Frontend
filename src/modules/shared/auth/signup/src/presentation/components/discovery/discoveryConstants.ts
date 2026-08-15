@@ -44,6 +44,7 @@ import {
   CheckCircle,
   Star,
   Package,
+  Trophy,
 } from "lucide-react";
 import type { Variants } from "framer-motion";
 
@@ -85,6 +86,7 @@ export const LUCIDE_MAP: Record<string, React.ElementType> = {
   "check-circle": CheckCircle,
   star: Star,
   package: Package,
+  trophy: Trophy,
 };
 
 // ─── Framer Motion variants ───────────────────────────────────────────────────

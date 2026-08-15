@@ -41,7 +41,7 @@
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { CSSProperties } from "react";
-import { Bell, CheckCheck, ExternalLink } from "lucide-react";
+import { Bell, CheckCheck, ExternalLink, RotateCcw } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { cn, resolveIntlLocale } from "@core/common/utils";
@@ -281,6 +281,30 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
       <div className="nexus-custom-scrollbar min-h-0 flex-1 overflow-y-auto">
         {vm.isLoading ? (
           <LoadingSpinner size="sm" showText={false} className="py-10" />
+        ) : vm.isError ? (
+          // Distinct from the genuine-empty state below: a failed fetch must never be
+          // presented as "no notifications" — the user needs to know it didn't load.
+          <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
+            <span
+              aria-hidden="true"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-nx-line bg-nx-ground text-destructive"
+            >
+              <Bell className="h-5 w-5" />
+            </span>
+            <p className="text-sm font-medium text-nx-ink">{t("notifications.loadError")}</p>
+            <button
+              type="button"
+              onClick={vm.refresh}
+              className={cn(
+                "flex h-8 items-center gap-1.5 rounded-nx-sm px-2.5 text-xs font-medium text-nx-accent",
+                "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
+                "hover:bg-nx-accent-wash focus-visible:shadow-nx-focus focus-visible:outline-none"
+              )}
+            >
+              <RotateCcw aria-hidden="true" className="h-3.5 w-3.5" />
+              {t("common.retry")}
+            </button>
+          </div>
         ) : vm.notifications.length === 0 ? (
           <div className="flex flex-col items-center gap-3 px-6 py-12 text-center">
             <span

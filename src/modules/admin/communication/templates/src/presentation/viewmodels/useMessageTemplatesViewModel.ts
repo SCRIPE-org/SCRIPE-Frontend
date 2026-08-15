@@ -116,6 +116,12 @@ export function useMessageTemplatesViewModel() {
       titleKey: "messaging.templates.title",
       subtitleKey: "messaging.templates.description",
       resource: "message-templates",
+      // Registry-consistency only: Create/Edit both navigate to a full-page
+      // route (see MessageTemplatesView's handleCreateClick/handleEdit), so
+      // GenericCrudView's modal-based Custom Fields section never mounts for
+      // this screen's actual create/edit flow -- integrating it into those
+      // full-page forms is separate, scoped work, not done here.
+      entityTypeKey: "communication.message-template",
       createFields: [
         {
           name: "key",

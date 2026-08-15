@@ -36,11 +36,11 @@ export class MessageTemplateRepository implements IMessageTemplateRepository {
     return {
       items: response.items.map(MessageTemplateMapper.toEntity),
       totalCount: response.totalCount,
-      page: response.page,
+      pageNumber: response.pageNumber,
       pageSize: response.pageSize,
       totalPages,
-      hasNextPage: response.page < totalPages,
-      hasPreviousPage: response.page > 1,
+      hasNextPage: response.pageNumber < totalPages,
+      hasPreviousPage: response.pageNumber > 1,
     };
   }
 
@@ -72,5 +72,9 @@ export class MessageTemplateRepository implements IMessageTemplateRepository {
   async preview(data: PreviewTemplateRequest): Promise<PreviewTemplateResponse> {
     const json = MessageTemplateMapper.toPreviewJson(data);
     return this.service.preview(json);
+  }
+
+  async resetDesign(id: string): Promise<void> {
+    await this.service.resetDesign(id);
   }
 }

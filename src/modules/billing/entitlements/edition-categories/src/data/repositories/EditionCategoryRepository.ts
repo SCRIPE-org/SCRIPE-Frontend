@@ -20,7 +20,7 @@ export class EditionCategoryRepository implements IEditionCategoryRepository {
     return {
       items: result.items.map((m) => EditionCategoryMapper.toEntity(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,

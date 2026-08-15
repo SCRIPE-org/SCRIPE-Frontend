@@ -2,27 +2,34 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useVenueProfileViewModel } from "../viewmodels/useVenueProfileViewModel";
 import type { VenueProfile } from "../../domain/entities/VenueProfile";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
+import { Pencil, Trash2 } from "lucide-react";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 
 export const VenueProfileListView = React.memo(function VenueProfileListView() {
   useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
-  const { vm } = useVenueProfileViewModel();
+  const { vm, searchSites, siteNameById } = useVenueProfileViewModel();
   const { t, language } = useI18n();
 
   const config: CrudConfig<VenueProfile> = {
     titleKey: "venueProfile.title",
     subtitleKey: "venueProfile.description",
     resource: "venue-profiles",
+    entityTypeKey: "facilityoperations.venue-profile",
     columns: [
       { key: "code", label: t("venueProfile.fields.code"), sortable: true },
       { key: "name", label: t("venueProfile.fields.name"), sortable: true },
-      { key: "siteId", label: t("venueProfile.fields.siteId") },
+      {
+        key: "siteId",
+        label: t("venueProfile.fields.siteId"),
+        render: (value: string) => siteNameById[value] ?? value,
+      },
       {
         key: "isActive",
         label: t("venueProfile.fields.isActive"),
@@ -43,8 +50,11 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       {
         name: "siteId",
         label: t("venueProfile.fields.siteId"),
-        type: "text" as const,
+        type: "server-select" as const,
+        searchType: "server" as const,
+        onServerSearch: searchSites,
         placeholder: t("venueProfile.placeholders.siteId"),
+        searchPlaceholder: t("venueProfile.placeholders.siteId"),
         description: t("venueProfile.descriptions.siteId"),
         required: true,
       },
@@ -111,6 +121,24 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       isActive: item.isActive,
     }),
     getItemDisplayName: (item: VenueProfile) => item.name,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<VenueProfile>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: VenueProfile) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+        requiredPermission: VENUE_PERMISSIONS.VENUE_PROFILE_UPDATE,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: VenueProfile) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+        requiredPermission: VENUE_PERMISSIONS.VENUE_PROFILE_DELETE,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

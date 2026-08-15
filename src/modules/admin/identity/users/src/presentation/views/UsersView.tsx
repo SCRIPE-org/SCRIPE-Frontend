@@ -16,7 +16,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { formatDateUtc } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
-import { Unlock, UserCheck, UserX } from "lucide-react";
+import { Pencil, Unlock, UserCheck, UserX } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
@@ -81,6 +81,7 @@ export function UsersView() {
       titleKey: "users.title",
       subtitleKey: "users.description",
       resource: "users",
+      entityTypeKey: "identity.user",
       columns: [
         {
           key: "username",
@@ -126,9 +127,17 @@ export function UsersView() {
           ),
         },
       ],
-      // Custom row actions (beyond GenericCrudView's built-in edit/delete)
+      // GenericCrudView has no built-in edit/delete -- every screen supplies its own
+      // via getActions, so Edit is listed explicitly below, not implicit.
       getActions: (_vm, _t, handleDelete) => {
         const rowActions: CrudAction<UsersEntity>[] = [
+          // Edit
+          {
+            label: t("common.edit"),
+            icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
+            onClick: (user: UsersEntity) => vm.openEditModal(user),
+            requiredPermission: SYSTEM_PERMISSIONS.USERS_UPDATE,
+          },
           // Activate (shown when inactive)
           {
             label: t("users.actions.activate"),

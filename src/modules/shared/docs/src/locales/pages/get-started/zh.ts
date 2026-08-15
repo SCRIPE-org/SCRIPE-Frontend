@@ -82,9 +82,9 @@ export const zh = {
       backendStep2Title: "应用数据库迁移",
       backendStep2Content: "运行 Entity Framework 迁移以创建或更新数据库架构。",
       backendStep3Title: "运行 API 服务器",
-      backendStep3Content: "在 https://localhost:5001 启动后端 API 服务器。",
+      backendStep3Content: "在 https://localhost:5035 启动后端 API 服务器。",
       backendRunningTip:
-        "API 服务器默认在 https://localhost:5001 启动。在开发模式下，可通过 /swagger 访问 Swagger UI。",
+        "API 服务器默认在 https://localhost:5035 启动。在开发模式下，可通过 /swagger 访问 Swagger UI。",
       frontendTitle: "启动前端",
       frontendStep1Title: "安装依赖项",
       frontendStep1Content: "使用 pnpm 安装所有 npm 依赖项，以获得更快、更省磁盘的安装体验。",

@@ -51,10 +51,9 @@ export function useUserSubscriptionsViewModel() {
       },
       create: async (data) => {
         const id = await userSubscriptionRepository.create(data);
-        success({
-          title: t("entitlements.userSubscriptions.assigned"),
-          description: t("entitlements.userSubscriptions.assignedDesc"),
-        });
+        // No manual success() here on purpose -- deferSuccessEffects (below) holds
+        // the toast until GenericCrudView confirms the custom-field save (if any)
+        // also succeeded; firing it here unconditionally would defeat that.
         return { id } as unknown as UserSubscription;
       },
       update: async (id, data) => {
@@ -63,13 +62,10 @@ export function useUserSubscriptionsViewModel() {
           billingCycle: data.billingCycle,
           reason: data.reason,
         });
-        success({
-          title: t("entitlements.userSubscriptions.planChanged"),
-          description: t("entitlements.userSubscriptions.planChangedDesc"),
-        });
         return userSubscriptionRepository.getById(id);
       },
-    }
+    },
+    { deferSuccessEffects: true }
   );
 
   // ── Available Plans (static list for the Create form plan selector) ──────────

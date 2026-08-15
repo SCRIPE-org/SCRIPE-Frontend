@@ -19,7 +19,7 @@ import { STORAGE_KEYS } from "./core/config/storage-keys";
  */
 
 // Routes that don't require authentication
-const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/verify-email", "/authorize"];
+const PUBLIC_PATHS = ["/login", "/forgot-password", "/authorize"];
 
 // Routes that explicitly require authentication
 // Everything under (modules) is protected by the layout, but this adds server-level guard

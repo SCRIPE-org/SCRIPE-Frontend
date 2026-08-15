@@ -47,7 +47,7 @@ export function useAuthLogout() {
       logoutStore();
       queryClient.clear();
       router.push(redirectUrl);
-      operationError(error.message || "Logout failed");
+      operationError("Logout", undefined, error.message);
     },
   });
 

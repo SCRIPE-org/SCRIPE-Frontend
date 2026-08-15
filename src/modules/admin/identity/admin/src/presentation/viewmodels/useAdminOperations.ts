@@ -137,6 +137,33 @@ export function useAdminOperations(params: AdminOperationsParams) {
     },
   });
 
+  // Manual account setup mutation — sets a password directly for an email-invited admin
+  // who hasn't activated yet, as an alternative to resending the setup email.
+  const manualSetupMutation = useMutation({
+    mutationFn: ({
+      adminId,
+      newPassword,
+      confirmPassword,
+      mustChangePassword,
+    }: {
+      adminId: string;
+      newPassword: string;
+      confirmPassword: string;
+      mustChangePassword: boolean;
+    }) =>
+      adminRepository.manualSetup(adminId, newPassword, confirmPassword, mustChangePassword),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: qk.admins.all });
+      success({
+        title: t("admin.manualSetupSuccess"),
+        description: t("admin.manualSetupSuccessDesc"),
+      });
+    },
+    onError: (err: Error) => {
+      toastError({ title: t("common.error"), description: err.message });
+    },
+  });
+
   // Impersonation — resolved through the core auth bridge. The previous registry lookup fell back
   // to `startImpersonation: () => {}` whenever the `@modules/auth` barrel had not been imported,
   // which silently turned the "impersonate" action into a no-op button.
@@ -332,6 +359,18 @@ export function useAdminOperations(params: AdminOperationsParams) {
     handleTransferProtection: (targetAdminId: string) =>
       transferProtectionMutation.mutate({ targetAdminId }),
     handleResendSetupEmail: (adminId: string) => resendSetupEmailMutation.mutate({ adminId }),
+    handleManualSetup: (
+      adminId: string,
+      newPassword: string,
+      confirmPassword: string,
+      mustChangePassword: boolean
+    ) =>
+      manualSetupMutation.mutateAsync({
+        adminId,
+        newPassword,
+        confirmPassword,
+        mustChangePassword,
+      }),
     handleBulkActivate: (ids: string[]) => bulkActivateMutation.mutate(ids),
     handleBulkDeactivate: (ids: string[]) => bulkDeactivateMutation.mutate(ids),
     handleBulkDelete: (ids: string[]) => bulkDeleteMutation.mutate(ids),
@@ -344,6 +383,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
     isTransferring: transferMutation.isPending,
     isTransferringProtection: transferProtectionMutation.isPending,
     isResendingSetupEmail: resendSetupEmailMutation.isPending,
+    isManualSettingUp: manualSetupMutation.isPending,
     handleRoleSearch,
     handleGroupSearch,
     t,

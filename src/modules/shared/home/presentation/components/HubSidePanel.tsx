@@ -27,8 +27,7 @@ export interface HubSidePanelProps {
     icon: string;
     label: string;
     meta: string;
-    grad: string;
-    glow: string;
+    accent: string;
   }>;
   isLoading?: boolean;
 }
@@ -88,24 +87,27 @@ function RecentRow({
   icon,
   label,
   meta,
-  grad,
+  accent,
 }: {
   icon: string;
   label: string;
   meta: string;
-  grad: string;
-  glow: string;
+  accent: string;
 }) {
   return (
     <button
       type="button"
       className="flex items-center gap-2.5 rounded-nx-md border border-transparent px-2.5 py-2 text-start transition-colors duration-nx-micro ease-nx-enter hover:border-nx-line hover:bg-nx-hover focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
     >
-      {/* Event chip keeps its data-driven gradient; the icon inherits the
-          fill-contrast ink so tenant palettes stay readable. */}
+      {/* Event chip keeps its data-driven tint — colour follows the audit
+          event category via the shared chart-slot palette (@core/ui/chart),
+          same wash+ink idiom as StatCard's tone tile. */}
       <span
-        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-nx-sm text-nx-on-fill"
-        style={{ background: grad }}
+        className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-nx-sm"
+        style={{
+          backgroundColor: `color-mix(in srgb, ${accent} 12%, transparent)`,
+          color: accent,
+        }}
       >
         <DynamicIcon name={icon} size={14} />
       </span>

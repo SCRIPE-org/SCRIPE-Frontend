@@ -86,9 +86,7 @@ export function BuilderPropsPanel({
   const [colStart, colEnd] = parseGridSpan(component.gridColumn);
   const [rowStart, rowEnd] = parseGridSpan(component.gridRow);
   const isAbsolute = positionMode === "absolute";
-  const visibilityLabel = component.visible
-    ? t("studio.builder.visibility")
-    : t("studio.builder.visibility");
+  const visibilityLabel = t("studio.builder.visibility");
 
   return (
     <div className="mt-4 space-y-4 border-t border-nx-line pt-4">
@@ -1738,7 +1736,7 @@ function ComponentSpecificProps({
                   dangerouslySetInnerHTML={{
                     __html:
                       sanitizeRichHtml(props.content as string) ||
-                      '<p class="text-nx-ink-3">No content yet</p>',
+                      `<p class="text-nx-ink-3">${t("studio.builder.props.noContentPreview")}</p>`,
                   }}
                 />
               </div>

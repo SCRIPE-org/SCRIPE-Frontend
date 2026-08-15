@@ -84,6 +84,11 @@ export function NotificationSignalRProvider({ children }: { children: React.Reac
   );
 
   const isAuthenticated = useAppStore((s) => s.isAuthenticated);
+  // MustChangePasswordMiddleware 403s every backend route except a tiny whitelist that
+  // does not include /hubs/* — connecting here while mcp=true is a guaranteed failed
+  // negotiation on every mount (confirmed live: noisy console errors, zero chance of
+  // success) until the admin changes their password and gets a fresh, non-mcp token.
+  const mustChangePassword = useAppStore((s) => s.mustChangePassword);
   const pathname = usePathname();
   const isDocsRoute = pathname?.startsWith("/docs") || pathname?.startsWith("/commercial");
 
@@ -179,11 +184,11 @@ export function NotificationSignalRProvider({ children }: { children: React.Reac
     if (isDocsRoute) return;
 
     const checkAndConnect = () => {
-      if (isAuthenticated && secureTokenService.hasToken()) {
+      if (isAuthenticated && secureTokenService.hasToken() && !mustChangePassword) {
         appLogger.debug("[NotifHub] isAuthenticated=true, calling connect()");
         setTimeout(() => connect(), 0);
-      } else if (!isAuthenticated) {
-        appLogger.debug("[NotifHub] isAuthenticated=false, tearing down");
+      } else if (!isAuthenticated || mustChangePassword) {
+        appLogger.debug("[NotifHub] isAuthenticated=false or mustChangePassword=true, tearing down");
         connectionRef.current?.stop();
         connectionRef.current = null;
         setTimeout(() => {
@@ -206,7 +211,7 @@ export function NotificationSignalRProvider({ children }: { children: React.Reac
       connectionRef.current?.stop();
       connectionRef.current = null;
     };
-  }, [isAuthenticated, isDocsRoute, connect]);
+  }, [isAuthenticated, mustChangePassword, isDocsRoute, connect]);
 
   const contextValue = useMemo(
     () => ({

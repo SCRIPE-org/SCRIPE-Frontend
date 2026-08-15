@@ -16,6 +16,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ArrowLeft } from "lucide-react";
 import { BRAND } from "@core/config/branding";
@@ -81,6 +82,14 @@ export function ForgotPasswordView() {
     >
       <VaultBackground />
 
+      {/* Masthead — the brand stays present on every auth surface */}
+      <div className="absolute start-6 top-6 z-20 flex items-center gap-2.5">
+        <Image src="/brand/app-logo.svg" alt="" width={28} height={28} aria-hidden="true" />
+        <span className="text-base font-semibold tracking-tight" style={{ color: "var(--sx-text)" }}>
+          {companyName}
+        </span>
+      </div>
+
       {/* Top right actions */}
       <div
         className="absolute right-6 top-6 z-20 flex items-center gap-1"
@@ -124,15 +133,13 @@ export function ForgotPasswordView() {
           )}
         </div>
 
-        {/* Glass card */}
+        {/* Card — solid surface (DESIGN.md bans default glassmorphism) */}
         <div
           className="sx-screen w-full rounded-[20px] p-8 sm:p-9"
           style={{
             background: "var(--sx-card-bg)",
             border: "1px solid var(--sx-card-border)",
             boxShadow: "var(--sx-card-shadow)",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
           }}
         >
           {vm.step === "request" && <RequestStep vm={vm} totalSteps={totalSteps} />}

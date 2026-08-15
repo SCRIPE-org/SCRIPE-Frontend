@@ -19,6 +19,10 @@ export const en = {
     notes: "Notes",
     resolution: "Resolution",
     requesterNotes: "Requester Notes",
+    assignedAdmin: "Assigned Admin",
+    exportFile: "Export File",
+    exportFileReady: "Ready for download",
+    exportFilePending: "Not yet generated",
     overdue: "Overdue",
     completed: "Completed",
     allTypes: "All Types",
@@ -115,5 +119,9 @@ export const en = {
     subjectEmailPlaceholder: "subject@example.com",
     dsrNotFoundDesc:
       "This data subject request could not be found. It may have been cancelled, or the link may be incorrect.",
+    customFieldsSection: "Custom Fields",
+    noCustomFields: "No custom fields defined for data subject requests yet.",
+    customFieldsSaveError:
+      "The request was submitted, but saving its custom field values failed. Please try again.",
   },
 };

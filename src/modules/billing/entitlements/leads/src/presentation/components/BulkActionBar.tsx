@@ -55,9 +55,10 @@ export function BulkActionBar({
         <Button
           id="leads-bulk-close-btn"
           size="sm"
+          variant="outline"
           disabled={isLoading}
           onClick={onClose}
-          className="h-8 bg-warning px-3 text-xs font-medium text-warning-foreground hover:bg-warning/90"
+          className="h-8 px-3 text-xs font-medium"
         >
           {isLoading
             ? t("leads.bulk.closing")
@@ -72,7 +73,7 @@ export function BulkActionBar({
           variant="destructive"
           disabled={isLoading}
           onClick={onDelete}
-          className="h-8 bg-destructive px-3 text-xs font-medium text-destructive-foreground hover:bg-destructive/90"
+          className="h-8 px-3 text-xs font-medium"
         >
           {t("leads.bulk.deleteSelected", { count: String(count) })}
         </Button>

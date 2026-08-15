@@ -26,7 +26,7 @@ export interface StaffAssignmentJson {
 export interface StaffAssignmentListResponseJson {
   items: StaffAssignmentJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

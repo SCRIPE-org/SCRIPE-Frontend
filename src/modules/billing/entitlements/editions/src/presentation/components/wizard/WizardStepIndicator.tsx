@@ -37,7 +37,7 @@ export function WizardStepIndicator({ steps, currentStep }: WizardStepIndicatorP
               <div
                 className={`z-raised flex h-10 w-10 items-center justify-center rounded-full border-2 transition-[transform,border-color,background-color,color,box-shadow] duration-nx-panel ease-nx-enter motion-reduce:transition-none ${
                   active
-                    ? "scale-110 border-nx-accent bg-nx-ground text-nx-accent shadow-[0_0_0_4px_color-mix(in_srgb,var(--nx-accent)_15%,transparent)] ring-2 ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
+                    ? "scale-110 border-nx-accent bg-nx-ground text-nx-accent ring-2 ring-[color:color-mix(in_srgb,var(--nx-accent)_20%,transparent)]"
                     : done
                       ? "border-nx-accent-fill bg-nx-accent-fill text-nx-on-fill shadow-nx-sm"
                       : "border-nx-line bg-nx-ground text-nx-ink-3"

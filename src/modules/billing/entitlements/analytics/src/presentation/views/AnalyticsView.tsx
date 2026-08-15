@@ -45,7 +45,7 @@ export function AnalyticsView() {
   return (
     <div className="space-y-5">
       {/* ── Page Header ── */}
-      <div className="relative overflow-hidden rounded-nx-lg border border-[color:color-mix(in_srgb,var(--nx-line)_40%,transparent)] bg-gradient-to-br from-nx-surface via-nx-surface to-success/[0.03] p-5 shadow-sm">
+      <div className="relative overflow-hidden rounded-nx-lg border border-[color:color-mix(in_srgb,var(--nx-line)_40%,transparent)] bg-gradient-to-br from-nx-surface via-nx-surface to-success/[0.03] p-5">
         <div className="relative flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-gradient-to-br from-success to-success/70 text-success-foreground">
@@ -70,7 +70,7 @@ export function AnalyticsView() {
         onValueChange={(v) => vm.handleTabChange(v as AnalyticsTab)}
         className="w-full"
       >
-        <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_40%,transparent)] p-1.5 shadow-sm backdrop-blur-sm">
+        <TabsList className="flex h-auto w-full flex-wrap gap-1 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_40%,transparent)] p-1.5">
           {TABS.map((tab) => {
             const Icon = tab.icon;
             return (

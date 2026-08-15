@@ -8,8 +8,10 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent } from "@core/ui/card";
 import { Skeleton } from "@core/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
+import { EmptyState } from "@core/ui/empty-state";
 import { useI18n } from "@core/providers/i18n-provider";
-import { DollarSign, Play } from "lucide-react";
+import { DollarSign, Play, Users } from "lucide-react";
 import { formatDateUtc } from "@core/common/utils";
 import type { PayoutStatus } from "../../domain/entities/FinancialEntities";
 
@@ -28,9 +30,10 @@ export function FinancialsView() {
   const vm = useFinancialsViewModel();
   const { t } = useI18n();
 
-  // Build chart data from purchases grouped by month (Phase 5.4)
-  const chartData = buildMonthlyRevenueData(vm.purchases);
-  const totalRevenue = vm.purchases.reduce((sum, p) => sum + p.amount, 0);
+  // Purchases can carry different currencies (per-app pricing currency), so
+  // revenue is grouped and summed per currency rather than added together —
+  // summing mixed currencies as one number would silently misreport totals.
+  const purchasesByCurrency = groupPurchasesByCurrency(vm.purchases);
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -39,9 +42,24 @@ export function FinancialsView() {
         <p className="text-sm text-nx-ink-2">{t("marketplace.financialsPageSubtitle")}</p>
       </div>
 
-      {/* Revenue chart (Phase 5.4) */}
-      {!vm.isLoadingPurchases && chartData.length > 0 && (
-        <RevenueChart data={chartData} totalRevenue={totalRevenue} />
+      {/* Revenue chart(s) — one per currency present in the purchase data (Phase 5.4) */}
+      {!vm.isLoadingPurchases && purchasesByCurrency.size > 0 && (
+        <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap">
+          {Array.from(purchasesByCurrency.entries()).map(([currency, currencyPurchases]) => (
+            <RevenueChart
+              key={currency}
+              className="lg:min-w-[320px] lg:flex-1"
+              data={buildMonthlyRevenueData(currencyPurchases)}
+              totalRevenue={currencyPurchases.reduce((sum, p) => sum + p.amount, 0)}
+              currencySymbol={currencyPrefix(currency)}
+              title={
+                purchasesByCurrency.size > 1
+                  ? `${t("marketplace.financialsRevenueChartTitle")} — ${currency}`
+                  : undefined
+              }
+            />
+          ))}
+        </div>
       )}
 
       <Tabs defaultValue="purchases">
@@ -91,8 +109,38 @@ export function FinancialsView() {
         </TabsContent>
 
         {/* Payouts tab */}
-        <TabsContent value="payouts" className="mt-4">
-          {vm.isLoadingPayouts ? (
+        <TabsContent value="payouts" className="mt-4 flex flex-col gap-4">
+          {/* Payouts are scoped to one developer at a time (the backend query
+              requires a developerProfileId — there is no "all developers"
+              mode), so an explicit picker drives which developer's payouts
+              are fetched. */}
+          <div className="max-w-xs">
+            <Select
+              value={vm.developerProfileId}
+              onValueChange={vm.setDeveloperProfileId}
+              disabled={vm.isLoadingDeveloperOptions || vm.developerOptions.length === 0}
+            >
+              <SelectTrigger aria-label={t("marketplace.financialsSelectDeveloperLabel")}>
+                <SelectValue placeholder={t("marketplace.financialsSelectDeveloperPlaceholder")} />
+              </SelectTrigger>
+              <SelectContent>
+                {vm.developerOptions.map((developer) => (
+                  <SelectItem key={developer.id} value={developer.id}>
+                    {developer.displayName}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {!vm.developerProfileId ? (
+            <EmptyState
+              size="sm"
+              bare
+              icon={Users}
+              title={t("marketplace.financialsSelectDeveloperPrompt")}
+            />
+          ) : vm.isLoadingPayouts ? (
             <div
               className="flex flex-col gap-2"
               role="status"
@@ -147,6 +195,47 @@ export function FinancialsView() {
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
+
+/**
+ * Groups purchases by their currency code (F-93).
+ * Each app can be priced in a different currency, and there is no FX-rate
+ * source available, so purchases are never summed across currencies —
+ * every group gets its own chart and its own labeled total instead.
+ */
+function groupPurchasesByCurrency(purchases: AppPurchase[]): Map<string, AppPurchase[]> {
+  const groups = new Map<string, AppPurchase[]>();
+  for (const p of purchases) {
+    const currency = p.currency || "USD";
+    const list = groups.get(currency);
+    if (list) {
+      list.push(p);
+    } else {
+      groups.set(currency, [p]);
+    }
+  }
+  return groups;
+}
+
+/**
+ * Resolves the real, locale-correct currency symbol (e.g. "$", "€", "£") for
+ * an ISO 4217 currency code via Intl, instead of guessing/hardcoding a
+ * symbol table. Falls back to the currency code itself if Intl can't resolve
+ * a symbol (e.g. an unrecognized code).
+ */
+function currencyPrefix(currency: string): string {
+  try {
+    const part = new Intl.NumberFormat("en", {
+      style: "currency",
+      currency,
+      currencyDisplay: "narrowSymbol",
+    })
+      .formatToParts(0)
+      .find((p) => p.type === "currency");
+    return part?.value ?? `${currency} `;
+  } catch {
+    return `${currency} `;
+  }
+}
 
 /**
  * Groups a list of purchases into monthly buckets for the RevenueChart.

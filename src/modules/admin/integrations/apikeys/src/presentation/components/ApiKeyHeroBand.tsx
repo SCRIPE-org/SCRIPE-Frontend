@@ -14,6 +14,10 @@ interface ApiKeyHeroBandProps {
   isRotating: boolean;
   onRotate: () => void;
   onRevoke: () => void;
+  /** Gates the Rotate button — mirrors the backend's apikeys.update requirement. */
+  canRotate: boolean;
+  /** Gates the Revoke button — mirrors the backend's apikeys.delete requirement (Revoke is a DELETE-verb endpoint). */
+  canRevoke: boolean;
 }
 
 const STATUS_BADGE_VARIANT: Record<ApiKeyDetail["status"], BadgeProps["variant"]> = {
@@ -28,7 +32,14 @@ const STATUS_DOT: Record<ApiKeyDetail["status"], string> = {
   expired: "bg-warning",
 };
 
-export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKeyHeroBandProps) {
+export function ApiKeyHeroBand({
+  detail,
+  isRotating,
+  onRotate,
+  onRevoke,
+  canRotate,
+  canRevoke,
+}: ApiKeyHeroBandProps) {
   const router = useRouter();
   const { t, direction } = useI18n();
   const [copied, setCopied] = useState(false);
@@ -93,27 +104,31 @@ export function ApiKeyHeroBand({ detail, isRotating, onRotate, onRevoke }: ApiKe
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onRotate}
-            disabled={isRotating || !detail.isActive}
-            loading={isRotating}
-            className="gap-1.5"
-          >
-            {!isRotating && <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />}
-            {t("apikeys.rotateKey")}
-          </Button>
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={onRevoke}
-            disabled={!detail.isActive}
-            className="gap-1.5"
-          >
-            <Ban className="h-3.5 w-3.5" aria-hidden="true" />
-            {t("apikeys.revoke")}
-          </Button>
+          {canRotate && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onRotate}
+              disabled={isRotating || !detail.isActive}
+              loading={isRotating}
+              className="gap-1.5"
+            >
+              {!isRotating && <RotateCcw className="h-3.5 w-3.5" aria-hidden="true" />}
+              {t("apikeys.rotateKey")}
+            </Button>
+          )}
+          {canRevoke && (
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={onRevoke}
+              disabled={!detail.isActive}
+              className="gap-1.5"
+            >
+              <Ban className="h-3.5 w-3.5" aria-hidden="true" />
+              {t("apikeys.revoke")}
+            </Button>
+          )}
         </div>
       </div>
     </div>

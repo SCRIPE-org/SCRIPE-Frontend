@@ -41,7 +41,7 @@ export function usePartyViewModel() {
     delete: async (id) => {
       await partyRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

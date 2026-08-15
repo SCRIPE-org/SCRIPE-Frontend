@@ -68,7 +68,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                 <div className="flex flex-col gap-0.5">
                   <Button
                     onClick={() => vm.handleMoveTrustMark(mark.id, "up")}
-                    disabled={idx === 0 || isTrustMarkBusy}
+                    disabled={idx === 0 || vm.isTrustMarkRowBusy(mark.id)}
                     variant="ghost"
                     size="icon"
                     className="h-5 w-5"
@@ -78,7 +78,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                   </Button>
                   <Button
                     onClick={() => vm.handleMoveTrustMark(mark.id, "down")}
-                    disabled={idx === marks.length - 1 || isTrustMarkBusy}
+                    disabled={idx === marks.length - 1 || vm.isTrustMarkRowBusy(mark.id)}
                     variant="ghost"
                     size="icon"
                     className="h-5 w-5"
@@ -109,7 +109,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                 <div className="flex shrink-0 items-center gap-1">
                   <Button
                     onClick={() => vm.handleOpenEditTrustMark(mark)}
-                    disabled={isTrustMarkBusy}
+                    disabled={vm.isTrustMarkRowBusy(mark.id)}
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
@@ -119,7 +119,7 @@ export function TrustMarksSection({ vm }: TrustMarksSectionProps) {
                   </Button>
                   <Button
                     onClick={() => vm.handleDeleteTrustMark(mark.id)}
-                    disabled={isTrustMarkBusy}
+                    disabled={vm.isTrustMarkRowBusy(mark.id)}
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive"

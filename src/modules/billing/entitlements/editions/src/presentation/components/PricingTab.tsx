@@ -546,7 +546,7 @@ export const PricingTab = memo(function PricingTab({
       {/* ═══════ STICKY SAVE BAR ═══════ */}
       {vm.isDirty && (
         <div className="fixed inset-x-0 bottom-0 z-sticky">
-          <div className="border-t bg-[color:color-mix(in_srgb,var(--nx-ground)_95%,transparent)] shadow-nx-bar-top backdrop-blur-md">
+          <div className="border-t bg-[color:color-mix(in_srgb,var(--nx-ground)_95%,transparent)] shadow-nx-bar-top">
             <div className="mx-auto max-w-screen-xl px-4 py-3 sm:px-6">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex min-w-0 items-center gap-3">

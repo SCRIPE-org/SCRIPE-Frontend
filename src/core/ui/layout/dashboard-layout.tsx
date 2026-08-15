@@ -16,7 +16,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useAppStore } from "@core/store/useAppStore";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 
 // Nexus is the only shell — statically imported (always needed, no lazy-load
 // delay). The multi-layout system was retired in favour of this single
@@ -43,7 +43,10 @@ function LoginWelcomeLoader() {
   const user = useAppStore((state) => state.user);
   const { t } = useI18n();
 
-  const avatarUrl = user ? resolveFileUrl(user.profileImageUrl) || undefined : undefined;
+  // Hook runs unconditionally regardless of `user` — it already handles
+  // null/undefined input gracefully.
+  const resolvedAvatarUrl = useResolvedFileUrl(user?.profileImageUrl);
+  const avatarUrl = user ? resolvedAvatarUrl || undefined : undefined;
 
   const getInitials = () => {
     if (!user) return "U";
@@ -198,10 +201,21 @@ function DashboardLayoutContent({
       // Branding just finished loading — wait one animation frame for
       // SettingsProvider to process the "tenant-branding-loaded" event
       // and re-merge settings (including dashboardThemeJson overrides).
-      const raf = requestAnimationFrame(() => {
-        setIsSettingsMergeSettled(true);
-      });
-      return () => cancelAnimationFrame(raf);
+      //
+      // Belt-and-suspenders: a 500ms fallback timer backs up the rAF. In
+      // practice the rAF can miss its window under real render timing (the
+      // effect re-running mid-transition, or a parent re-render landing
+      // between schedule and paint) and this gate — whose entire job is to
+      // wait AT MOST one frame — was observed hanging indefinitely instead,
+      // permanently blocking DashboardLayout for every fresh login. Whichever
+      // fires first wins; the other is a no-op via the isSettingsMergeSettled
+      // guard on the state setter's own condition below.
+      const raf = requestAnimationFrame(() => setIsSettingsMergeSettled(true));
+      const fallback = setTimeout(() => setIsSettingsMergeSettled(true), 500);
+      return () => {
+        cancelAnimationFrame(raf);
+        clearTimeout(fallback);
+      };
     }
   }, [isBrandingLoading, isSettingsMergeSettled]);
 

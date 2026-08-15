@@ -15,7 +15,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Image from "next/image";
-import { formatDateUtc } from "@core/common/utils";
+import { formatDateUtc, unresolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -65,6 +66,10 @@ export function OAuthAppCard({
   onDelete,
 }: OAuthAppCardProps) {
   const { t } = useI18n();
+  // `item.logoUri` was already run through the old (now-broken) resolveFileUrl
+  // by OAuthAppMapper; unresolve it back to a relative path first so the
+  // session hook can tell it apart from a genuinely-public absolute URL.
+  const resolvedLogoUri = useResolvedFileUrl(unresolveFileUrl(item.logoUri));
 
   return (
     <Card className="group relative overflow-hidden">
@@ -73,9 +78,9 @@ export function OAuthAppCard({
           {/* Left Side: Brand Logo, Name & Description */}
           <div className="flex flex-1 items-start gap-4">
             <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-nx-md border border-nx-line bg-nx-raised p-2 transition-[border-color,background-color] duration-nx-micro ease-nx-enter group-hover:border-nx-line-hi group-hover:bg-nx-accent-wash motion-reduce:transition-none">
-              {item.logoUri ? (
+              {item.logoUri && resolvedLogoUri ? (
                 <Image
-                  src={item.logoUri}
+                  src={resolvedLogoUri}
                   alt={item.displayName}
                   width={48}
                   height={48}

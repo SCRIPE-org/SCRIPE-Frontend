@@ -87,9 +87,9 @@ export const ar = {
       backendStep2Content:
         "قم بتشغيل ترحيلات Entity Framework لإنشاء أو تحديث مخطط قاعدة البيانات.",
       backendStep3Title: "تشغيل خادم API",
-      backendStep3Content: "قم بتشغيل خادم الواجهة الخلفية على https://localhost:5001.",
+      backendStep3Content: "قم بتشغيل خادم الواجهة الخلفية على https://localhost:5035.",
       backendRunningTip:
-        "سيبدأ خادم API على https://localhost:5001 افتراضياً. واجهة Swagger متاحة على /swagger في وضع التطوير.",
+        "سيبدأ خادم API على https://localhost:5035 افتراضياً. واجهة Swagger متاحة على /swagger في وضع التطوير.",
       frontendTitle: "تشغيل الواجهة الأمامية",
       frontendStep1Title: "تثبيت التبعيات",
       frontendStep1Content:

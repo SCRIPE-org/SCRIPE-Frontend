@@ -19,6 +19,10 @@ export const ar = {
     notes: "ملاحظات",
     resolution: "القرار",
     requesterNotes: "ملاحظات مقدم الطلب",
+    assignedAdmin: "المسؤول المكلّف",
+    exportFile: "ملف التصدير",
+    exportFileReady: "جاهز للتحميل",
+    exportFilePending: "لم يتم إنشاؤه بعد",
     overdue: "متأخر",
     completed: "مكتمل",
     allTypes: "جميع الأنواع",
@@ -116,5 +120,9 @@ export const ar = {
     subjectEmailPlaceholder: "subject@example.com",
     dsrNotFoundDesc:
       "تعذّر العثور على طلب موضوع البيانات هذا. ربما تم إلغاؤه أو أن الرابط غير صحيح.",
+    customFieldsSection: "الحقول المخصصة",
+    noCustomFields: "لا توجد حقول مخصصة معرّفة لطلبات موضوع البيانات بعد.",
+    customFieldsSaveError:
+      "تم تقديم الطلب، لكن فشل حفظ قيم الحقول المخصصة. يرجى المحاولة مرة أخرى.",
   },
 };

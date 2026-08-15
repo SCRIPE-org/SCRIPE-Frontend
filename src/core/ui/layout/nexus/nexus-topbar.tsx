@@ -23,7 +23,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { useWorkspace } from "@core/providers/workspace-provider";
 import { useSettings } from "@core/providers/settings-provider";
-import { LanguageSwitcher, ThemeSwitcher } from "@core/ui/layout/common";
+import { LanguageSwitcher, NxThemeSwitcher } from "@core/ui/layout/common";
 import { usePathname, useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { BRAND } from "@core/config/branding";
@@ -70,7 +70,8 @@ export function NexusTopbar({
   const parentName = segments[segments.length - 2] ?? "";
   const formattedPage = pageName.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-  const workspaceName = activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? "Platform";
+  const workspaceName =
+    activeWorkspace?.getLocalizedName(language) ?? BRAND?.name ?? t("chrome.section.platform");
   const activeRootName = activeRootItem
     ? resolveBilingualLabel(
         activeRootItem.nameEn || activeRootItem.nameAr,
@@ -89,12 +90,13 @@ export function NexusTopbar({
   };
 
   const formatParentSegmentAsTitle = (parentSegment: string): string => {
-    if (!parentSegment) return "Details";
+    if (!parentSegment) return t("common.details");
     let word = parentSegment.replace(/[-_]/g, " ");
     if (word.toLowerCase().endsWith("s") && word.length > 1) {
       word = word.slice(0, -1);
     }
-    return word.replace(/\b\w/g, (c) => c.toUpperCase()) + " Details";
+    const capitalized = word.replace(/\b\w/g, (c) => c.toUpperCase());
+    return t("navigation.entityDetailsTitle", { entity: capitalized });
   };
 
   let displayPageName = formattedPage;
@@ -131,7 +133,7 @@ export function NexusTopbar({
     (user as any)?.tenantName ??
     (user?.firstName
       ? `${user.firstName} ${user?.lastName ?? ""}`.trim()
-      : (BRAND?.name ?? "Platform"));
+      : (BRAND?.name ?? t("chrome.section.platform")));
 
   // ── Background — derived from cardStyle setting, surface token only ───────
   // Glass is the ONE opt-in frosted surface in this system, so it keeps its
@@ -238,7 +240,7 @@ export function NexusTopbar({
         )}
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <ThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
+          <NxThemeSwitcher buttonClassName="h-[33px] w-[33px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
           <LanguageSwitcher buttonClassName="h-[33px] w-[46px] text-nx-ink-3 hover:text-nx-ink hover:bg-nx-raised rounded-nx-control transition-[color,background-color,border-color,box-shadow] duration-nx-micro motion-reduce:transition-none" />
         </div>
 

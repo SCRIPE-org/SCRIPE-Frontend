@@ -9,6 +9,8 @@ export const en = {
     legalBasis: "Legal Basis",
     isAnonymized: "Anonymized on Erasure",
     isExported: "Included in Export",
+    scope: "Scope",
+    global: "Global",
     total: "total",
     categories: {
       ContactData: "Contact Data",

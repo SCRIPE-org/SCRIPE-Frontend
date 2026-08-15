@@ -45,7 +45,7 @@ export function CompleteStep({ wizard }: CompleteStepProps) {
         particleCount: 70,
         spread: 70,
         origin: { y: 0.4 },
-        colors: ["#A855F7", "#7C3AED", "#6366F1", "#22D3EE", "#22c55e"],
+        colors: ["#C6FF00", "#D7D8D6", "#3F4347", "#0D0D0E", "#22c55e"],
         disableForReducedMotion: true,
       });
     });

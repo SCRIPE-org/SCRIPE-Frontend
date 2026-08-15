@@ -26,11 +26,15 @@ export class QualificationService implements IQualificationService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<QualificationListResult> {
     const url = buildUrl(BASE_URL, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      sortBy: params.sortBy,
+      sortDirection: params.sortDirection,
     });
 
     const response = await this.api.get<QualificationListResponseJson>(url);
@@ -38,7 +42,7 @@ export class QualificationService implements IQualificationService {
     return {
       items: response.items.map((json) => QualificationModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

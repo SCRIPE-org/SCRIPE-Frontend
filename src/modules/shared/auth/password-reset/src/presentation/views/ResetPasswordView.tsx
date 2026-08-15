@@ -15,6 +15,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
@@ -70,22 +71,33 @@ export function ResetPasswordView() {
   const wrapperClass =
     "vault-stage relative flex min-h-screen w-full flex-col items-center justify-center overflow-hidden";
 
+  // Solid surface — DESIGN.md bans default glassmorphism.
   const cardStyle: React.CSSProperties = {
     background: "var(--sx-card-bg)",
     border: "1px solid var(--sx-card-border)",
     boxShadow: "var(--sx-card-shadow)",
-    backdropFilter: "blur(24px)",
-    WebkitBackdropFilter: "blur(24px)",
   };
 
   const topActions = (
-    <div
-      className="absolute right-6 top-6 z-20 flex items-center gap-1"
-      style={direction === "rtl" ? { right: "auto", left: "1.5rem" } : {}}
-    >
-      <LanguageSwitcher />
-      <ThemeSwitcher />
-    </div>
+    <>
+      {/* Masthead — the brand stays present on every auth surface */}
+      <div className="absolute start-6 top-6 z-20 flex items-center gap-2.5">
+        <Image src="/brand/app-logo.svg" alt="" width={28} height={28} aria-hidden="true" />
+        <span
+          className="text-base font-semibold tracking-tight"
+          style={{ color: "var(--sx-text)" }}
+        >
+          {companyName}
+        </span>
+      </div>
+      <div
+        className="absolute right-6 top-6 z-20 flex items-center gap-1"
+        style={direction === "rtl" ? { right: "auto", left: "1.5rem" } : {}}
+      >
+        <LanguageSwitcher />
+        <ThemeSwitcher />
+      </div>
+    </>
   );
 
   // ── Verifying ────────────────────────────────────────────────────────────

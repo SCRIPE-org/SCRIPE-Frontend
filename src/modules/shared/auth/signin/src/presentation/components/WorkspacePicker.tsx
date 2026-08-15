@@ -85,7 +85,7 @@ export function WorkspacePicker({
             autoComplete="email"
             disabled={isLoading}
             className="h-9 flex-1 text-sm"
-            aria-label="Email for workspace discovery"
+            aria-label={t("auth.workspacePicker.emailAriaLabel") || "Email for workspace discovery"}
           />
           <Button
             type="button"
@@ -112,7 +112,11 @@ export function WorkspacePicker({
 
       {/* Results */}
       {hasSearched && (
-        <div role="region" aria-label="Workspace results" aria-live="polite">
+        <div
+          role="region"
+          aria-label={t("auth.workspacePicker.resultsAriaLabel") || "Workspace results"}
+          aria-live="polite"
+        >
           {hasWorkspaces ? (
             <div className="flex flex-col gap-1.5">
               <p className="text-xs text-muted-foreground">
@@ -128,13 +132,13 @@ export function WorkspacePicker({
                       onClick={() => ws.isActivated && handleSelect(ws)}
                       disabled={!ws.isActivated}
                       aria-disabled={!ws.isActivated}
-                      aria-label={`${ws.tenantName}${!ws.isActivated ? " — setup pending" : ""}`}
+                      aria-label={`${ws.tenantName}${!ws.isActivated ? ` — ${t("auth.workspacePicker.setupPending") || "Setup pending"}` : ""}`}
                     >
                       {/* Workspace icon */}
                       <span
                         className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
                           ws.isPlatformAdmin
-                            ? "bg-primary/10 text-primary"
+                            ? "bg-primary/10 text-nx-accent"
                             : "bg-muted text-muted-foreground"
                         }`}
                         aria-hidden
@@ -149,7 +153,7 @@ export function WorkspacePicker({
                         </span>
                         <div className="flex items-center gap-1.5">
                           {ws.isPlatformAdmin && (
-                            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
+                            <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-nx-accent">
                               {t("auth.workspacePicker.platformAdmin") || "Platform"}
                             </span>
                           )}

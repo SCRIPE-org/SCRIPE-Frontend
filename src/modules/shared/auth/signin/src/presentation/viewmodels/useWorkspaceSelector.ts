@@ -8,6 +8,7 @@ import {
 } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { LoginStep } from "./use2FAHandler";
+import { getSafeRedirectPath } from "./redirect-safety";
 
 interface UseWorkspaceSelectorOptions {
   redirectPath: string;
@@ -96,7 +97,10 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
           hasTriggeredRedirect.current = true;
           const { useAppStore } = await import("@core/store/useAppStore");
           const mustChange = useAppStore.getState().mustChangePassword;
-          const targetPath = mustChange ? "/change-password" : redirectPath;
+          // redirectPath can originate from the attacker-controlled `?redirect=`
+          // query param — validate same-origin/relative before navigating
+          // (handleRedirect re-validates too, this is defense-in-depth).
+          const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
           setTimeout(() => handleRedirect(targetPath), 100);
         }
       } catch (err: unknown) {
@@ -157,7 +161,8 @@ export function useWorkspaceSelector(opts: UseWorkspaceSelectorOptions) {
           hasTriggeredRedirect.current = true;
           const { useAppStore } = await import("@core/store/useAppStore");
           const mustChange = useAppStore.getState().mustChangePassword;
-          setTimeout(() => handleRedirect(mustChange ? "/change-password" : redirectPath), 100);
+          const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
+          setTimeout(() => handleRedirect(targetPath), 100);
         }
       } catch (err: unknown) {
         if (err instanceof TwoFactorRequiredError) {

@@ -41,7 +41,7 @@ export function useContactPointViewModel() {
     delete: async (id) => {
       await contactPointRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

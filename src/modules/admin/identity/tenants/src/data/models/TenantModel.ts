@@ -65,7 +65,21 @@ export interface TenantTreeNodeJson {
 export interface TenantListResponseJson {
   items: TenantJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+/**
+ * Paginated tenant-tree-node list response json (getMyChildren) — distinct item
+ * shape (TenantTreeNodeJson, not TenantJson) from TenantListResponseJson above.
+ */
+export interface TenantTreeListResponseJson {
+  items: TenantTreeNodeJson[];
+  totalCount: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

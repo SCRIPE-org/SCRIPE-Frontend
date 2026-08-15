@@ -6,8 +6,13 @@ export interface AppReviewData {
   id: string;
   appListingId: string;
   appName: string;
-  tenantId: string;
-  tenantName: string;
+  /**
+   * The backend's AppReviewListResponse (the only review endpoint the
+   * frontend calls) exposes neither a tenant id nor a tenant/reviewer name —
+   * there is no identifying field to source this from, so it stays optional
+   * and unrendered rather than showing an empty badge.
+   */
+  tenantId?: string;
   rating: number;
   title: string;
   body: string;
@@ -32,9 +37,6 @@ export class AppReview {
   }
   get tenantId() {
     return this.data.tenantId;
-  }
-  get tenantName() {
-    return this.data.tenantName;
   }
   get rating() {
     return this.data.rating;

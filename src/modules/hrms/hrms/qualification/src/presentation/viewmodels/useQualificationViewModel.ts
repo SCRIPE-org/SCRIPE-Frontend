@@ -19,6 +19,8 @@ export function useQualificationViewModel() {
         page: params.page,
         pageSize: params.pageSize,
         search: params.search,
+        sortBy: params.sortBy,
+        sortDirection: params.sortDirection,
       });
       return {
         items: res.items || [],
@@ -41,7 +43,7 @@ export function useQualificationViewModel() {
     delete: async (id) => {
       await qualificationRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

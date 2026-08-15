@@ -83,7 +83,6 @@ export class RetentionPolicy {
  * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
  */
 export interface UpdateRetentionPolicyRequest {
-  policyId: string;
   retentionDays: number;
   expiryAction: string;
   isActive: boolean;

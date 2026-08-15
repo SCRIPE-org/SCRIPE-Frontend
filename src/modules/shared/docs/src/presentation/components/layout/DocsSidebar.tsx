@@ -73,20 +73,6 @@ export const docsIcons: Record<string, (props: LucideProps) => React.ReactNode> 
   scale: (props) => <Scale aria-hidden="true" {...props} />,
 };
 
-// ─── Helper: count total visible leaf items (recursive) ──────
-function countLeafItems(items: DocNavItem[]): number {
-  let count = 0;
-  for (const item of items) {
-    if (item.children && item.children.length > 0) {
-      count += 1; // sub-group header itself
-      count += item.children.length;
-    } else {
-      count += 1;
-    }
-  }
-  return count;
-}
-
 interface DocsSidebarProps {
   categories: DocCategory[];
   activeSlug: string;
@@ -176,26 +162,23 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
             <span style={{ flex: 1 }}>{t(item.titleKey)}</span>
             <ChevronRight size={14} aria-hidden="true" />
           </button>
-          <div
-            className="docs-sidebar-subgroup-items"
-            style={{
-              maxHeight: isSubOpen ? `${item.children.length * 36}px` : "0px",
-            }}
-          >
-            {item.children.map((child) => {
-              if (!child.slug) return null;
-              const isActive = child.slug === activeSlug;
-              return (
-                <Link
-                  key={child.id}
-                  href={`/docs/${child.slug}`}
-                  className="docs-sidebar-item docs-sidebar-item--nested"
-                  data-active={isActive}
-                >
-                  {t(child.titleKey)}
-                </Link>
-              );
-            })}
+          <div className="docs-sidebar-subgroup-items" data-expanded={isSubOpen}>
+            <div className="docs-sidebar-subgroup-items-inner">
+              {item.children.map((child) => {
+                if (!child.slug) return null;
+                const isActive = child.slug === activeSlug;
+                return (
+                  <Link
+                    key={child.id}
+                    href={`/docs/${child.slug}`}
+                    className="docs-sidebar-item docs-sidebar-item--nested"
+                    data-active={isActive}
+                  >
+                    {t(child.titleKey)}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
         </div>
       );
@@ -220,7 +203,6 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
   return (
     <aside className="docs-sidebar">
       {categories.map((cat) => {
-        const totalItems = countLeafItems(cat.items);
         return (
           <div key={cat.id} className="docs-sidebar-category">
             <button
@@ -233,13 +215,8 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
               <ChevronRight size={14} aria-hidden="true" />
             </button>
 
-            <div
-              className="docs-sidebar-items"
-              style={{
-                maxHeight: expanded[cat.id] ? `${totalItems * 36 + 100}px` : "0px",
-              }}
-            >
-              {cat.items.map(renderItem)}
+            <div className="docs-sidebar-items" data-expanded={expanded[cat.id] ?? false}>
+              <div className="docs-sidebar-items-inner">{cat.items.map(renderItem)}</div>
             </div>
           </div>
         );

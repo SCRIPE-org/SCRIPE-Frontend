@@ -105,7 +105,7 @@ export function useAuthLogin() {
         error.name === "WorkspaceSelectionRequiredError"
       )
         return;
-      operationError(error.message || t("auth.loginFailed"));
+      operationError("Login", undefined, error.message || t("auth.loginFailed"));
     },
   });
 }

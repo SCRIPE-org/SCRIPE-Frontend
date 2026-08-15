@@ -26,13 +26,21 @@ export interface RoleDetailHeaderProps {
   isLoading: boolean;
   isSaving: boolean;
   onSave: () => void;
+  /** Whether the permission matrix has unsaved edits since the last load/save. */
+  isDirty: boolean;
 }
 
 /**
  * Presentation UI component rendering the role detail header.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDetailHeaderProps) {
+export function RoleDetailHeader({
+  role,
+  isLoading,
+  isSaving,
+  onSave,
+  isDirty,
+}: RoleDetailHeaderProps) {
   const { t, language } = useI18n();
   const roleName = resolveBilingualLabel(role?.nameEn ?? "", role?.nameAr ?? "", language);
   const breadcrumbSegments = [
@@ -54,11 +62,26 @@ export function RoleDetailHeader({ role, isLoading, isSaving, onSave }: RoleDeta
       // column and the info card render it the same way.
       description={role?.code ? <span className="font-mono">{role.code}</span> : undefined}
       actions={
-        <Button onClick={onSave} loading={isSaving} disabled={isLoading} className="shrink-0">
+        // Reflects real edit state (see useRoleDetailViewModel's isDirty) instead
+        // of only gating on the loading flag — navigating away with a dozen
+        // permissions toggled and never saved used to be silent.
+        <Button
+          onClick={onSave}
+          loading={isSaving}
+          disabled={isLoading || !isDirty}
+          className="shrink-0"
+        >
           {!isSaving && <Save className="me-2 h-4 w-4" aria-hidden="true" />}
           {isSaving ? t("common.saving") : t("common.saveChanges")}
         </Button>
       }
-    />
+    >
+      {isDirty && !isLoading && (
+        <div className="flex items-center gap-2 rounded-nx-md border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning duration-nx-standard animate-in fade-in">
+          <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
+          {t("common.unsavedChanges")}
+        </div>
+      )}
+    </PageHeader>
   );
 }

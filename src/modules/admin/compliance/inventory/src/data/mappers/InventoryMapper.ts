@@ -20,6 +20,7 @@ const InventoryItemModelSchema = z.object({
   isAnonymizedOnErasure: z.boolean().optional().default(false),
   isIncludedInExport: z.boolean().optional().default(false),
   isActive: z.boolean().optional().default(false),
+  isGlobal: z.boolean().optional().default(false),
   notes: z.string().optional().nullable(),
 });
 
@@ -40,6 +41,7 @@ export class InventoryMapper {
       isAnonymizedOnErasure: validated.isAnonymizedOnErasure ?? false,
       isIncludedInExport: validated.isIncludedInExport ?? false,
       isActive: validated.isActive ?? false,
+      isGlobal: validated.isGlobal ?? false,
       notes: validated.notes ?? "",
     };
     return new InventoryItem(data);

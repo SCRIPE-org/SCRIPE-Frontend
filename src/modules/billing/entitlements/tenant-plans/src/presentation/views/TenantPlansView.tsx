@@ -60,6 +60,7 @@ export function TenantPlansView() {
       titleKey: "entitlements.tenantPlans.title",
       subtitleKey: "entitlements.tenantPlans.description",
       resource: "tenant_plans",
+      entityTypeKey: "entitlements.tenant-plan",
       customActions: [
         {
           label: t("entitlements.tenantPlans.comparison.heroTitle"),

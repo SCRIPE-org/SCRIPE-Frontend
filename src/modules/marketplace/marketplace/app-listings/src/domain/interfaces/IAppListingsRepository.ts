@@ -27,7 +27,8 @@ export interface IAppListingsRepository {
     isPublished?: boolean;
     isFeatured?: boolean;
     sortBy?: "popular" | "rating" | "newest" | "price";
-    pricingModel?: "Free" | "OneTime" | "Subscription";
+    /** Matches the real backend `PricingModel` enum (6 values, not the old 3). */
+    pricingModel?: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
   }): Promise<PagedResult<AppListing>>;
 
   /** Single listing by encrypted ID */
@@ -36,38 +37,41 @@ export interface IAppListingsRepository {
   /** List featured listings for the storefront hero */
   getFeatured(): Promise<AppListing[]>;
 
-  /** Create a new listing */
+  /**
+   * Create a new listing.
+   *
+   * Shaped to match the real backend `CreateAppListingRequest` exactly (see
+   * `CreateAppListingPayload` in `IAppListingsService` for the full rationale): `pluginId` and
+   * `tagline` are backend-required and were previously missing; `nameAr`/`descriptionAr`/a
+   * singular `categoryId`/`tags`/`screenshotUrls` do not exist on the backend contract.
+   */
   create(data: {
+    pluginId: string;
     developerProfileId: string;
     name: string;
-    nameAr: string;
+    tagline: string;
     description: string;
-    descriptionAr: string;
-    categoryId: string;
+    iconUrl: string;
     version: string;
-    pricingModel: "Free" | "OneTime" | "Subscription";
-    price?: number;
-    currency?: string;
-    billingInterval?: "Monthly" | "Annual";
-    tags?: string[];
-    iconUrl?: string;
-    screenshotUrls?: string[];
+    categoryIds?: string[];
   }): Promise<string>;
 
-  /** Update an existing listing */
+  /**
+   * Update an existing listing.
+   *
+   * Matches the real backend `UpdateAppListingRequest` exactly: `tagline` is backend-required
+   * (missing before); `nameAr`/`descriptionAr`/`categoryId`/`tags`/`screenshotUrls` do not exist
+   * on the backend contract.
+   */
   update(
     id: string,
-    data: Partial<{
+    data: {
       name: string;
-      nameAr: string;
+      tagline: string;
       description: string;
-      descriptionAr: string;
-      categoryId: string;
-      version: string;
       iconUrl: string;
-      screenshotUrls: string[];
-      tags: string[];
-    }>
+      version: string;
+    }
   ): Promise<void>;
 
   /** Delete a listing */
@@ -82,14 +86,23 @@ export interface IAppListingsRepository {
   /** Toggle featured status */
   toggleFeatured(id: string): Promise<void>;
 
-  /** Set or update pricing */
+  /**
+   * Set or update pricing.
+   *
+   * Matches the real backend `SetAppPricingRequest` exactly (see `SetPricingPayload` in
+   * `IAppListingsService` for the full rationale): `appListingId`/`trialDays` were missing;
+   * `price`/`currency` are backend-required, not optional; the pricing-model field is `model`
+   * on the wire (backend record parameter is `Model`, not `PricingModel`); `billingInterval`
+   * does not exist on the backend contract.
+   */
   setPricing(
     id: string,
     data: {
-      pricingModel: "Free" | "OneTime" | "Subscription";
-      price?: number;
-      currency?: string;
-      billingInterval?: "Monthly" | "Annual";
+      appListingId: string;
+      model: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
+      price: number;
+      currency: string;
+      trialDays: number;
     }
   ): Promise<void>;
 }

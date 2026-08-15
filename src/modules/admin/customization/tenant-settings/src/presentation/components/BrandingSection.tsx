@@ -84,7 +84,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
               <Input
                 type="color"
                 aria-label={t("tenantSettings.secondaryColor")}
-                value={settings.secondaryColor || "#6366f1"}
+                value={settings.secondaryColor || "#3F4347"}
                 onChange={(e) => updateField("secondaryColor", e.target.value || null)}
                 className="h-9 w-12 cursor-pointer p-1"
               />
@@ -92,7 +92,7 @@ export function BrandingSection({ settings, updateField }: BrandingSectionProps)
                 id="secondaryColor"
                 value={settings.secondaryColor ?? ""}
                 onChange={(e) => updateField("secondaryColor", e.target.value || null)}
-                placeholder="#6366f1"
+                placeholder="#3F4347"
               />
             </div>
             <p className="text-xs text-nx-ink-3">{t("tenantSettings.secondaryColorHelp")}</p>

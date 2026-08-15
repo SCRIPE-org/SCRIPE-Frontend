@@ -31,6 +31,7 @@ export function DynamicIcon({ name, size = 18 }: { name: string; size?: number }
 }
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "@core/ui/tooltip";
+import Image from "next/image";
 
 // NOTE: no TooltipProvider here — the rail mounts ONE provider at its nav
 // root (~150ms delay). One provider per button meant N providers per render
@@ -283,9 +284,12 @@ export function PrimaryRailLogo({
       aria-label={resolveBilingualLabel("Go to Home", "الصفحة الرئيسية", language)}
     >
       {tenantLogoUrl ? (
-        <img
+        <Image
           src={tenantLogoUrl}
-          alt="Logo"
+          alt={resolveBilingualLabel("Logo", "شعار", language)}
+          width={48}
+          height={48}
+          unoptimized
           style={{
             width: 48,
             height: 48,
@@ -297,18 +301,14 @@ export function PrimaryRailLogo({
           }}
         />
       ) : (
-        <span
-          style={{
-            fontSize: 22,
-            fontWeight: 900,
-            color: "var(--nx-on-fill)",
-            lineHeight: 1,
-            userSelect: "none",
-            letterSpacing: "-0.5px",
-          }}
-        >
-          N
-        </span>
+        <Image
+          src="/brand/app-logo.svg"
+          alt=""
+          width={28}
+          height={28}
+          style={{ width: 28, height: 28, objectFit: "contain" }}
+          aria-hidden="true"
+        />
       )}
     </div>
   );

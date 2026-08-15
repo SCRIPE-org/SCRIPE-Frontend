@@ -1,6 +1,6 @@
 // FILE-EXCEPTION: file length
 /**
- * Docs page locale â€” FR
+ * Docs page locale — FR
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const fr = {
@@ -13,7 +13,7 @@ export const fr = {
         "Le module des Droits (Entitlements) est le moteur de gestion des plans et des fonctionnalitÃ©s de SCRIPE. Il dÃ©finit les capacitÃ©s que chaque locataire (tenant) obtient, comment les plans (Ã©ditions) regroupent ces capacitÃ©s, et comment les abonnements lient les locataires aux plans.",
       whatIsTitle: "Que sont les Droits ?",
       whatIsIntro:
-        "Les Droits sont le module responsable de contrÃ´ler Ã  quelles fonctionnalitÃ©s un locataire peut accÃ©der en fonction de son Ã©dition (plan) souscrite. Il fournit une chaÃ®ne de rÃ©solution Ã  trois niveaux : Valeurs par dÃ©faut de la fonctionnalitÃ© â†’ Valeurs de l'Ã©dition â†’ Surcharges par locataire, garantissant une flexibilitÃ© maximale pour les opÃ©rateurs de la plateforme et les locataires revendeurs.",
+        "Les Droits sont le module responsable de contrÃ´ler Ã  quelles fonctionnalitÃ©s un locataire peut accÃ©der en fonction de son Ã©dition (plan) souscrite. Il fournit une chaÃ®ne de rÃ©solution Ã  trois niveaux : Valeurs par dÃ©faut de la fonctionnalitÃ© → Valeurs de l'Ã©dition → Surcharges par locataire, garantissant une flexibilitÃ© maximale pour les opÃ©rateurs de la plateforme et les locataires revendeurs.",
       architectureTitle: "Architecture",
       architectureIntro:
         "Le systÃ¨me de Droits est composÃ© de quatre domaines interconnectÃ©s qui travaillent ensemble pour fournir une solution complÃ¨te de contrÃ´le des fonctionnalitÃ©s.",
@@ -24,7 +24,7 @@ export const fr = {
         "Lorsque le systÃ¨me a besoin de dÃ©terminer la valeur d'une fonctionnalitÃ© pour un locataire, il suit une chaÃ®ne de prioritÃ© stricte. La source de prioritÃ© la plus Ã©levÃ©e qui fournit une valeur l'emporte.",
       pipelineTitle: "IntÃ©gration au Pipeline",
       pipelineIntro:
-        "SCRIPE intÃ¨gre les droits directement dans le pipeline CQRS de SCRIPE mediator via FeatureCheckBehavior. Les commandes et requÃªtes (queries) qui implÃ©mentent IRequireFeature sont automatiquement contrÃ´lÃ©es â€” si la valeur rÃ©solue de la fonctionnalitÃ© pour le locataire est dÃ©sactivÃ©e, la requÃªte est rejetÃ©e avant d'atteindre le gestionnaire (handler).",
+        "SCRIPE intÃ¨gre les droits directement dans le pipeline CQRS de SCRIPE mediator via FeatureCheckBehavior. Les commandes et requÃªtes (queries) qui implÃ©mentent IRequireFeature sont automatiquement contrÃ´lÃ©es — si la valeur rÃ©solue de la fonctionnalitÃ© pour le locataire est dÃ©sactivÃ©e, la requÃªte est rejetÃ©e avant d'atteindre le gestionnaire (handler).",
       pipelineTip:
         "Pour conditionner une commande Ã  une fonctionnalitÃ©, implÃ©mentez simplement IRequireFeature et dÃ©finissez RequiredFeatureName sur la clÃ© systÃ¨me stable de la fonctionnalitÃ© (ex. 'Chat.Enabled'). Aucun code supplÃ©mentaire n'est nÃ©cessaire.",
       backendTitle: "Structure du Backend",
@@ -38,14 +38,14 @@ export const fr = {
         "Le module des Droits expose 31 points de terminaison (endpoints) API rÃ©partis sur 4 contrÃ´leurs, tous authentifiÃ©s par JWT et protÃ©gÃ©s par une autorisation basÃ©e sur les permissions.",
       noOpTitle: "Solution de repli NoOp (Fallback)",
       noOpIntro:
-        "Lorsque le module des Droits n'est pas chargÃ© (ex. dans un microservice qui n'inclut pas les Droits), SCRIPE enregistre un NoOpFeatureCache. Cela permet aux commandes IRequireFeature de passer sans erreur â€” toutes les fonctionnalitÃ©s sont traitÃ©es comme activÃ©es par dÃ©faut.",
+        "Lorsque le module des Droits n'est pas chargÃ© (ex. dans un microservice qui n'inclut pas les Droits), SCRIPE enregistre un NoOpFeatureCache. Cela permet aux commandes IRequireFeature de passer sans erreur — toutes les fonctionnalitÃ©s sont traitÃ©es comme activÃ©es par dÃ©faut.",
       noOpNote:
         "La solution de repli NoOp garantit que les modules peuvent utiliser IRequireFeature sans dÃ©pendance stricte au module des Droits. En mode monolithe de production, le vÃ©ritable FeatureCache est toujours disponible.",
       contextAwareTitle: "Filtrage contextuel des pÃ©rimÃ¨tres",
       contextAwareIntro:
         "Toutes les pages de droits (FonctionnalitÃ©s, Ã‰ditions, Permissions) sont contextuelles. Le frontend dÃ©tecte si l'utilisateur est un administrateur systÃ¨me (tenantId est null), un administrateur de locataire ou en mode drill-down, et appelle des endpoints backend diffÃ©rents en consÃ©quence. Les administrateurs systÃ¨me voient le catalogue complet avec CRUD ; les administrateurs de locataires voient uniquement leurs donnÃ©es effectives en mode lecture seule.",
       resolutionTip:
-        "La chaÃ®ne de rÃ©solution est Ã©valuÃ©e de maniÃ¨re paresseuse (lazy) â€” les valeurs sont mises en cache aprÃ¨s la premiÃ¨re rÃ©solution et invalidÃ©es lorsque les abonnements, les Ã©ditions ou les surcharges changent.",
+        "La chaÃ®ne de rÃ©solution est Ã©valuÃ©e de maniÃ¨re paresseuse (lazy) — les valeurs sont mises en cache aprÃ¨s la premiÃ¨re rÃ©solution et invalidÃ©es lorsque les abonnements, les Ã©ditions ou les surcharges changent.",
       cqrsMapTitle: "Carte des Commandes et RequÃªtes CQRS",
       cqrsMapIntro:
         "Le module des Droits enregistre 31 gestionnaires (handlers) SCRIPE mediator couvrant les quatre domaines. Chaque commande possÃ¨de un validateur FluentValidation correspondant pour la validation des entrÃ©es.",
@@ -126,7 +126,7 @@ export const fr = {
       description:
         "Liaison locataire-Ã©dition avec gestion complÃ¨te du cycle de vie, tarification multi-devises, promotions, essais, rÃ©trogradations (downgrades), comportement d'expiration et export analytique avancÃ©.",
       intro:
-        "Les abonnements lient les locataires aux Ã©ditions (plans). Chaque locataire a un abonnement de base qui dÃ©termine son Ã©dition, et Ã©ventuellement des abonnements complÃ©mentaires pour des capacitÃ©s supplÃ©mentaires. Le systÃ¨me d'abonnement gÃ¨re l'ensemble du cycle de vie, de l'attribution au renouvellement, en passant par la rÃ©trogradation, la suspension et l'annulation â€” avec une tarification multi-devises intÃ©grÃ©e et un suivi des remises promotionnelles.",
+        "Les abonnements lient les locataires aux Ã©ditions (plans). Chaque locataire a un abonnement de base qui dÃ©termine son Ã©dition, et Ã©ventuellement des abonnements complÃ©mentaires pour des capacitÃ©s supplÃ©mentaires. Le systÃ¨me d'abonnement gÃ¨re l'ensemble du cycle de vie, de l'attribution au renouvellement, en passant par la rÃ©trogradation, la suspension et l'annulation — avec une tarification multi-devises intÃ©grÃ©e et un suivi des remises promotionnelles.",
       entityTitle: "EntitÃ© Abonnement",
       entityIntro:
         "Une TenantSubscription (Abonnement Locataire) lie un locataire Ã  une Ã©dition avec un suivi du cycle de vie. Elle prend en charge plusieurs types et statuts d'abonnement pour une gestion complÃ¨te du cycle de vie.",
@@ -149,7 +149,7 @@ export const fr = {
         "Chaque abonnement porte des mÃ©tadonnÃ©es de tarification complÃ¨tes : Devise (code ISO), MontantDeBase, MontantAjustement, MontantTotal, TauxDeChangeEnUsd et MontantTotalUsd. Cela permet un suivi prÃ©cis des revenus Ã  travers 9+ devises prises en charge (USD, EUR, GBP, SAR, AED, EGP, TRY, INR, et plus).",
       exchangeRateTitle: "Normalisation en USD",
       exchangeRateIntro:
-        "Tous les montants sont normalisÃ©s en USD via ExchangeRateToUsd pour des rapports MRR/ARR cohÃ©rents. Le champ TotalAmountUsd est calculÃ© au moment de l'abonnement et stockÃ© pour une prÃ©cision historique â€” les fluctuations de taux de change ne modifient pas rÃ©troactivement les enregistrements passÃ©s.",
+        "Tous les montants sont normalisÃ©s en USD via ExchangeRateToUsd pour des rapports MRR/ARR cohÃ©rents. Le champ TotalAmountUsd est calculÃ© au moment de l'abonnement et stockÃ© pour une prÃ©cision historique — les fluctuations de taux de change ne modifient pas rÃ©troactivement les enregistrements passÃ©s.",
       promotionsTitle: "Remises Promotionnelles",
       promotionsIntro:
         "Les abonnements prennent en charge les codes promo via le champ AppliedPromoCode. Lorsqu'une promotion valide est appliquÃ©e, un pourcentage PromotionDiscount est enregistrÃ© et le MontantAjustement reflÃ¨te la remise appliquÃ©e au MontantDeBase. Les promotions sont suivies par abonnement pour l'audit et l'analyse.",
@@ -160,22 +160,22 @@ export const fr = {
       exportFiltersIntro:
         "Les rapports prennent en charge des filtres avancÃ©s pour des analyses ciblÃ©es :",
       exportFilterDate:
-        "Plage de dates â€” filtrer par date de crÃ©ation de l'abonnement (7/30/90 derniers jours, derniÃ¨re annÃ©e ou plage personnalisÃ©e)",
+        "Plage de dates — filtrer par date de crÃ©ation de l'abonnement (7/30/90 derniers jours, derniÃ¨re annÃ©e ou plage personnalisÃ©e)",
       exportFilterExpiring:
-        "Expire bientÃ´t â€” trouver les abonnements expirant dans 5/7/14/30/60/90 jours",
-      exportFilterStatus: "Statut â€” Actif, Suspendu, AnnulÃ©, ExpirÃ©",
-      exportFilterEdition: "Ã‰dition â€” filtrer par plan/Ã©dition spÃ©cifique",
-      exportFilterCurrency: "Devise â€” afficher les montants dans la devise sÃ©lectionnÃ©e",
+        "Expire bientÃ´t — trouver les abonnements expirant dans 5/7/14/30/60/90 jours",
+      exportFilterStatus: "Statut — Actif, Suspendu, AnnulÃ©, ExpirÃ©",
+      exportFilterEdition: "Ã‰dition — filtrer par plan/Ã©dition spÃ©cifique",
+      exportFilterCurrency: "Devise — afficher les montants dans la devise sÃ©lectionnÃ©e",
       exportDaysLeftTitle: "Jours Restants Avant Expiration",
       exportDaysLeftIntro:
         "Les rapports incluent une colonne 'Jours Restants' calculÃ©e avec un codage couleur conditionnel : rouge (â‰¤7 jours), jaune (â‰¤30 jours), vert (>30 jours). Cela permet d'identifier en un coup d'Å“il les abonnements nÃ©cessitant une attention de renouvellement.",
       exportFormatsTitle: "DÃ©tails des Formats d'Export",
-      exportFormatCsv: "CSV â€” lÃ©ger, importable dans tout tableur ou outil BI",
+      exportFormatCsv: "CSV — lÃ©ger, importable dans tout tableur ou outil BI",
       exportFormatExcel:
-        "XLSX â€” classeur Excel professionnel avec en-tÃªtes stylisÃ©s, feuille de mÃ©tadonnÃ©es de filtre, mise en forme conditionnelle et colonnes Ã  taille automatique (ClosedXML)",
+        "XLSX — classeur Excel professionnel avec en-tÃªtes stylisÃ©s, feuille de mÃ©tadonnÃ©es de filtre, mise en forme conditionnelle et colonnes Ã  taille automatique (ClosedXML)",
       exportFormatPdf:
-        "PDF â€” document prÃªt Ã  imprimer avec page de couverture associÃ©e Ã  la marque, rÃ©sumÃ© statistique et tableaux de donnÃ©es paginÃ©s (QuestPDF)",
-      renewalTitle: "Renouvellement â€” ModÃ¨le Nouvelle Ligne (B2)",
+        "PDF — document prÃªt Ã  imprimer avec page de couverture associÃ©e Ã  la marque, rÃ©sumÃ© statistique et tableaux de donnÃ©es paginÃ©s (QuestPDF)",
+      renewalTitle: "Renouvellement — ModÃ¨le Nouvelle Ligne (B2)",
       renewalIntro:
         "Les renouvellements crÃ©ent une NOUVELLE ligne TenantSubscription au lieu d'Ã©craser l'enregistrement existant (modÃ¨le Stripe). L'ancien abonnement est marquÃ© ExpirÃ© (IsActive=false), tandis qu'une nouvelle ligne est crÃ©Ã©e avec un nouvel Id, StartDate=UtcNow, une tarification recalculÃ©e et les dÃ©tails promotionnels reportÃ©s.",
       renewalAuditTitle: "Piste d'Audit des Revenus",
@@ -183,10 +183,10 @@ export const fr = {
         "Chaque cycle de facturation produit sa propre ligne immuable en base de donnÃ©es avec une tarification figÃ©e au moment du renouvellement. Cela permet des rapports financiers prÃ©cis : tendances MRR, analyse du taux d'attrition par pÃ©riode et suivi des remboursements par cycle.",
       promoExpiryTitle: "Suivi d'Expiration des Promotions (A1)",
       promoExpiryIntro:
-        "Lorsqu'une promotion avec DurationDays > 0 est appliquÃ©e, le systÃ¨me calcule un horodatage PromotionExpiresAt. Ã€ chaque renouvellement, le gestionnaire vÃ©rifie si UtcNow > PromotionExpiresAt â€” si la promotion a expirÃ©, la remise est supprimÃ©e et NON reportÃ©e sur la nouvelle ligne d'abonnement.",
+        "Lorsqu'une promotion avec DurationDays > 0 est appliquÃ©e, le systÃ¨me calcule un horodatage PromotionExpiresAt. Ã€ chaque renouvellement, le gestionnaire vÃ©rifie si UtcNow > PromotionExpiresAt — si la promotion a expirÃ©, la remise est supprimÃ©e et NON reportÃ©e sur la nouvelle ligne d'abonnement.",
       concurrencyTitle: "Concurrence Optimiste (E1)",
       concurrencyIntro:
-        "Chaque TenantSubscription possÃ¨de un ConcurrencyStamp (Guid) avec [ConcurrencyCheck]. Le tampon est renouvelÃ© Ã  chaque opÃ©ration d'Ã©criture. Cela prÃ©vient les conditions de course â€” par exemple, une annulation concurrente + un travail de rapprochement â€” en levant une DbUpdateConcurrencyException en cas de collision.",
+        "Chaque TenantSubscription possÃ¨de un ConcurrencyStamp (Guid) avec [ConcurrencyCheck]. Le tampon est renouvelÃ© Ã  chaque opÃ©ration d'Ã©criture. Cela prÃ©vient les conditions de course — par exemple, une annulation concurrente + un travail de rapprochement — en levant une DbUpdateConcurrencyException en cas de collision.",
       validationTitle: "Validation des EntrÃ©es (G1)",
       validationIntro:
         "Les 8 commandes d'abonnement disposent de validateurs FluentValidation dÃ©diÃ©s. Les validateurs utilisent ILocalizer pour des messages d'erreur localisÃ©s (EN + AR). RÃ¨gles mÃ©tier : pas de renouvellement en essai, montants de remboursement positifs, limites de longueur de texte.",
@@ -234,7 +234,7 @@ export const fr = {
       description:
         "CapacitÃ©s contrÃ´lables de la plateforme avec des types de valeurs BoolÃ©en, NumÃ©rique et ChaÃ®ne de caractÃ¨res.",
       intro:
-        "Les fonctionnalitÃ©s sont les Ã©lÃ©ments de base atomiques du systÃ¨me de Droits. Chaque fonctionnalitÃ© reprÃ©sente une capacitÃ© contrÃ´lable â€” un commutateur boolÃ©en, un quota numÃ©rique ou une configuration textuelle. Les fonctionnalitÃ©s ont une clÃ© systÃ¨me stable (Name) qui ne change jamais, ce qui permet de les rÃ©fÃ©rencer en toute sÃ©curitÃ© dans le code.",
+        "Les fonctionnalitÃ©s sont les Ã©lÃ©ments de base atomiques du systÃ¨me de Droits. Chaque fonctionnalitÃ© reprÃ©sente une capacitÃ© contrÃ´lable — un commutateur boolÃ©en, un quota numÃ©rique ou une configuration textuelle. Les fonctionnalitÃ©s ont une clÃ© systÃ¨me stable (Name) qui ne change jamais, ce qui permet de les rÃ©fÃ©rencer en toute sÃ©curitÃ© dans le code.",
       entityTitle: "EntitÃ© FonctionnalitÃ©",
       entityIntro:
         "Une FonctionnalitÃ© (Feature) dÃ©finit une capacitÃ© contrÃ´lable de la plateforme. Le champ Name est une clÃ© systÃ¨me stable utilisÃ©e dans le code ; DisplayNameEn/DisplayNameAr sont des libellÃ©s destinÃ©s aux utilisateurs.",
@@ -262,7 +262,7 @@ export const fr = {
         "Le contrÃ´leur des FonctionnalitÃ©s expose 5 endpoints CRUD. Les fonctionnalitÃ©s systÃ¨me ne peuvent pas Ãªtre supprimÃ©es :",
       seedingTitle: "Initialisation des FonctionnalitÃ©s (Seeding)",
       seedingIntro:
-        "Les fonctionnalitÃ©s systÃ¨me sont automatiquement initialisÃ©es (seeded) au dÃ©marrage de l'application par EntitlementsStartupSeeder. L'initialiseur vÃ©rifie si chaque fonctionnalitÃ© systÃ¨me existe dÃ©jÃ  (par son Nom) et ne crÃ©e que celles qui manquent â€” les fonctionnalitÃ©s existantes ne sont jamais Ã©crasÃ©es.",
+        "Les fonctionnalitÃ©s systÃ¨me sont automatiquement initialisÃ©es (seeded) au dÃ©marrage de l'application par EntitlementsStartupSeeder. L'initialiseur vÃ©rifie si chaque fonctionnalitÃ© systÃ¨me existe dÃ©jÃ  (par son Nom) et ne crÃ©e que celles qui manquent — les fonctionnalitÃ©s existantes ne sont jamais Ã©crasÃ©es.",
       quotaTitle: "Suivi des Quotas (QuotaCounter)",
       quotaIntro:
         "Les fonctionnalitÃ©s numÃ©riques prennent en charge l'application automatique des quotas via l'entitÃ© QuotaCounter. Le FeatureCheckBehavior vÃ©rifie l'utilisation actuelle par rapport Ã  la limite rÃ©solue pour chaque commande IRequireFeature ciblant une fonctionnalitÃ© numÃ©rique.",
@@ -297,13 +297,13 @@ export const fr = {
       whenIntro:
         "Les surcharges sont conÃ§ues pour des cas exceptionnels oÃ¹ un locataire a besoin d'une valeur diffÃ©rente de celle fournie par son Ã©dition :",
       useCase1:
-        "Accords d'entreprise personnalisÃ©s â€” 'Donner Ã  Acme Corp 500 administrateurs au lieu des 50 standards'",
+        "Accords d'entreprise personnalisÃ©s — 'Donner Ã  Acme Corp 500 administrateurs au lieu des 50 standards'",
       useCase2:
-        "Offres promotionnelles â€” 'Activer le Chat Premium pour ce locataire pendant 30 jours'",
+        "Offres promotionnelles — 'Activer le Chat Premium pour ce locataire pendant 30 jours'",
       useCase3:
-        "Tests BÃªta â€” 'Activer le nouveau module de Facturation pour les premiers adoptants (early adopters)'",
+        "Tests BÃªta — 'Activer le nouveau module de Facturation pour les premiers adoptants (early adopters)'",
       useCase4:
-        "Augmentation temporaire â€” 'Augmenter la limite de tÃ©lÃ©chargement de fichiers pendant leur migration'",
+        "Augmentation temporaire — 'Augmenter la limite de tÃ©lÃ©chargement de fichiers pendant leur migration'",
       overuseWarning:
         "Les surcharges doivent Ãªtre utilisÃ©es avec parcimonie. Si de nombreux locataires ont besoin de la mÃªme surcharge, envisagez plutÃ´t de crÃ©er une nouvelle Ã©dition. Des surcharges excessives rendent le systÃ¨me plus difficile Ã  gÃ©rer et Ã  auditer.",
       resolvedTitle: "Endpoint des FonctionnalitÃ©s RÃ©solues",
@@ -319,7 +319,7 @@ export const fr = {
       settingIntro:
         "Pour dÃ©finir une surcharge, envoyez une requÃªte POST Ã  l'endpoint des fonctionnalitÃ©s du locataire avec l'ID de la fonctionnalitÃ©, la valeur personnalisÃ©e et une raison optionnelle Ã  des fins d'audit.",
       settingTip:
-        "Incluez toujours une raison lors de la dÃ©finition des surcharges â€” cela donne du sens aux pistes d'audit et aide les futurs administrateurs Ã  comprendre pourquoi la surcharge a Ã©tÃ© appliquÃ©e.",
+        "Incluez toujours une raison lors de la dÃ©finition des surcharges — cela donne du sens aux pistes d'audit et aide les futurs administrateurs Ã  comprendre pourquoi la surcharge a Ã©tÃ© appliquÃ©e.",
       expiryTitle: "Surcharges Expirables",
       expiryIntro:
         "Les surcharges peuvent avoir une date d'expiration (ExpiresAt) optionnelle. Lorsque la date d'expiration est passÃ©e, la surcharge est automatiquement dÃ©sactivÃ©e et la fonctionnalitÃ© revient Ã  la valeur de l'Ã©dition (ou Ã  la valeur par dÃ©faut globale).",
@@ -814,15 +814,15 @@ export const fr = {
           "DÃ©finissez la durÃ©e de conservation de catÃ©gories de donnÃ©es et ce qui se passe Ã  l'expiration. SCRIPE applique cela automatiquement via des tÃ¢ches en arriÃ¨re-plan.",
         policiesTitle: "Configuration de la politique",
         policiesIntro: "Chaque politique de conservation spÃ©cifie :",
-        field1: "DataCategory â€” Le type de donnÃ©es (ex: 'Profils Utilisateurs').",
-        field2: "RetentionDays â€” Combien de jours les donnÃ©es doivent Ãªtre conservÃ©es.",
+        field1: "DataCategory — Le type de donnÃ©es (ex: 'Profils Utilisateurs').",
+        field2: "RetentionDays — Combien de jours les donnÃ©es doivent Ãªtre conservÃ©es.",
         field3:
-          "ExpiryAction â€” Ce qui se passe Ã  l'expiration : Delete (Supprimer) ou Anonymize (Anonymiser).",
-        field4: "RegulationCode â€” Quelle rÃ©glementation l'exige (RGPD, CCPA, etc.).",
+          "ExpiryAction — Ce qui se passe Ã  l'expiration : Delete (Supprimer) ou Anonymize (Anonymiser).",
+        field4: "RegulationCode — Quelle rÃ©glementation l'exige (RGPD, CCPA, etc.).",
         actionsTitle: "Actions d'expiration",
         actionsIntro: "Ã€ l'expiration, SCRIPE applique l'une des deux actions :",
-        action1: "Delete â€” Supprime dÃ©finitivement tous les enregistrements correspondants.",
-        action2: "Anonymize â€” Remplace les PII par des jetons pseudonymes.",
+        action1: "Delete — Supprime dÃ©finitivement tous les enregistrements correspondants.",
+        action2: "Anonymize — Remplace les PII par des jetons pseudonymes.",
         automationTitle: "Application automatisÃ©e",
         automationIntro:
           "La tÃ¢che RetentionEnforcementJob s'exÃ©cute quotidiennement Ã  3h00 UTC, scannant toutes les politiques actives et appliquant l'action configurÃ©e.",
@@ -847,18 +847,18 @@ export const fr = {
       inventory: {
         title: "Inventaire des donnÃ©es",
         description:
-          "Un registre de toutes les catÃ©gories de donnÃ©es personnelles traitÃ©es â€” requis pour les Registres d'activitÃ©s de traitement (RoPA) Article 30 du RGPD.",
+          "Un registre de toutes les catÃ©gories de donnÃ©es personnelles traitÃ©es — requis pour les Registres d'activitÃ©s de traitement (RoPA) Article 30 du RGPD.",
         intro:
           "L'inventaire des donnÃ©es est un registre structurÃ© de toutes les catÃ©gories de donnÃ©es personnelles que la plateforme traite.",
         fieldsTitle: "Champs de l'inventaire",
         fieldsIntro: "Chaque Ã©lÃ©ment documente :",
-        field1: "DataCategory â€” Nom lisible (ex: 'Adresses e-mail').",
-        field2: "LegalBasis â€” Base lÃ©gale du RGPD (Consentement, Contrat, etc.).",
-        field3: "DataSubjects â€” Ã€ qui appartiennent les donnÃ©es.",
-        field4: "ProcessingPurpose â€” Pourquoi les donnÃ©es sont traitÃ©es.",
-        field5: "StorageLocation â€” OÃ¹ les donnÃ©es sont stockÃ©es.",
-        field6: "RetentionPeriod â€” DurÃ©e de conservation (liÃ© Ã  la politique).",
-        field7: "ThirdPartySharing â€” Si partagÃ© avec des tiers.",
+        field1: "DataCategory — Nom lisible (ex: 'Adresses e-mail').",
+        field2: "LegalBasis — Base lÃ©gale du RGPD (Consentement, Contrat, etc.).",
+        field3: "DataSubjects — Ã€ qui appartiennent les donnÃ©es.",
+        field4: "ProcessingPurpose — Pourquoi les donnÃ©es sont traitÃ©es.",
+        field5: "StorageLocation — OÃ¹ les donnÃ©es sont stockÃ©es.",
+        field6: "RetentionPeriod — DurÃ©e de conservation (liÃ© Ã  la politique).",
+        field7: "ThirdPartySharing — Si partagÃ© avec des tiers.",
         ropaTitle: "ConformitÃ© Ã  l'Article 30",
         ropaIntro:
           "Les organisations de plus de 250 employÃ©s doivent maintenir un RoPA. L'inventaire sert de RoPA en direct et interrogeable.",
@@ -879,13 +879,13 @@ export const fr = {
           "Les rapports de conformitÃ© sont gÃ©nÃ©rÃ©s de maniÃ¨re asynchrone et fournissent des rÃ©sumÃ©s prÃªts pour l'audit. Ils sont gÃ©nÃ©rÃ©s en arriÃ¨re-plan et stockÃ©s pour le tÃ©lÃ©chargement.",
         reportTypesTitle: "Types de rapports",
         reportTypesIntro: "Cinq types sont disponibles :",
-        type1: "AperÃ§u RGPD â€” RÃ©sumÃ© de haut niveau du statut RGPD.",
+        type1: "AperÃ§u RGPD — RÃ©sumÃ© de haut niveau du statut RGPD.",
         type2:
-          "RÃ©sumÃ© de l'activitÃ© DSR â€” Statistiques sur les volumes DSR, types, taux d'achÃ¨vement.",
-        type3: "Audit du consentement â€” Journal complet des accords et rÃ©vocations.",
-        type4: "Analyse de la conservation â€” Ã‰tat d'application actuel des politiques actives.",
+          "RÃ©sumÃ© de l'activitÃ© DSR — Statistiques sur les volumes DSR, types, taux d'achÃ¨vement.",
+        type3: "Audit du consentement — Journal complet des accords et rÃ©vocations.",
+        type4: "Analyse de la conservation — Ã‰tat d'application actuel des politiques actives.",
         type5:
-          "Export de l'inventaire des donnÃ©es â€” Export complet de l'inventaire (Article 30 RoPA).",
+          "Export de l'inventaire des donnÃ©es — Export complet de l'inventaire (Article 30 RoPA).",
         asyncTitle: "GÃ©nÃ©ration asynchrone",
         asyncIntro:
           "Les rapports sont asynchrones pour Ã©viter de bloquer les requÃªtes HTTP. Le systÃ¨me crÃ©e immÃ©diatement un ComplianceReport (IsReady=false) et met la tÃ¢che en file d'attente.",

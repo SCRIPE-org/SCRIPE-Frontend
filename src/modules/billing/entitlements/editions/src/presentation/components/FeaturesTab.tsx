@@ -56,7 +56,7 @@ interface FeaturesTabProps {
     value: boolean | number
   ) => void;
   removeFeature: (featureId: string) => void;
-  isRemovingFeature: boolean;
+  isRemovingFeature: (featureId: string) => boolean;
   overflowPolicy: string;
   setOverflowPolicy: (policy: string) => void;
   overflowPolicyChanged: boolean;
@@ -255,7 +255,7 @@ export function FeaturesTab({
                                   {isLabelModified && (
                                     <span
                                       className="inline-block h-1.5 w-1.5 rounded-full bg-info"
-                                      title="Marketing label modified"
+                                      title={t("entitlements.editions.marketingLabelModified")}
                                     />
                                   )}
                                 </div>
@@ -276,7 +276,7 @@ export function FeaturesTab({
                                         : "text-nx-ink-3 hover:text-nx-ink"
                                     }`}
                                     onClick={() => toggleLabelExpanded(feature.name)}
-                                    title="Edit marketing display label"
+                                    title={t("entitlements.editions.editMarketingLabel")}
                                   >
                                     <Tag className="h-3 w-3" />
                                     <Languages className="h-3 w-3" />
@@ -289,7 +289,7 @@ export function FeaturesTab({
                                     size="sm"
                                     className="h-7 px-2 text-destructive/60 hover:bg-destructive/10 hover:text-destructive"
                                     onClick={() => removeFeature(serverFeature.featureId)}
-                                    disabled={isRemovingFeature}
+                                    disabled={isRemovingFeature(serverFeature.featureId)}
                                     title={t("entitlements.editions.removeFeature")}
                                   >
                                     <Trash2 className="h-3.5 w-3.5" />
@@ -325,16 +325,16 @@ export function FeaturesTab({
                                     <div className="mb-2 flex items-center gap-1.5">
                                       <Tag className="h-3.5 w-3.5 text-info" />
                                       <span className="text-xs font-semibold uppercase tracking-wider text-info">
-                                        Marketing Display Label
+                                        {t("entitlements.editions.marketingLabelSectionTitle")}
                                       </span>
                                       <span className="text-xs text-nx-ink-3">
-                                        — overrides how this feature appears on plan cards
+                                        {t("entitlements.editions.marketingLabelSectionHint")}
                                       </span>
                                     </div>
                                     <div className="grid grid-cols-2 gap-3">
                                       <div className="space-y-1">
                                         <Label className="text-xs text-nx-ink-3">
-                                          🇺🇸 English label
+                                          {`🇺🇸 ${t("entitlements.editions.englishLabelField")}`}
                                         </Label>
                                         <Input
                                           type="text"
@@ -342,13 +342,13 @@ export function FeaturesTab({
                                           onChange={(e) =>
                                             setLocalLabel(feature.name, "en", e.target.value)
                                           }
-                                          placeholder="e.g. Up to 25 Admins"
+                                          placeholder={t("entitlements.editions.englishLabelPlaceholder")}
                                           className="h-8 text-sm"
                                         />
                                       </div>
                                       <div className="space-y-1">
                                         <Label className="text-xs text-nx-ink-3">
-                                          🇸🇦 Arabic label
+                                          {`🇸🇦 ${t("entitlements.editions.arabicLabelField")}`}
                                         </Label>
                                         <Input
                                           type="text"
@@ -357,7 +357,7 @@ export function FeaturesTab({
                                           onChange={(e) =>
                                             setLocalLabel(feature.name, "ar", e.target.value)
                                           }
-                                          placeholder="مثال: حتى 25 مشرف"
+                                          placeholder={t("entitlements.editions.arabicLabelPlaceholder")}
                                           className="h-8 text-sm"
                                         />
                                       </div>
@@ -365,7 +365,7 @@ export function FeaturesTab({
                                     {(effectiveLabel.en || effectiveLabel.ar) && (
                                       <div className="mt-2 flex items-center gap-1">
                                         <span className="text-[10px] text-nx-ink-3">
-                                          Preview:
+                                          {t("common.preview")}:
                                         </span>
                                         {effectiveLabel.en && (
                                           <Badge variant="secondary" className="text-[10px]">
@@ -390,7 +390,7 @@ export function FeaturesTab({
                                             setLocalLabel(feature.name, "ar", "");
                                           }}
                                         >
-                                          Clear
+                                          {t("common.clear")}
                                         </Button>
                                       </div>
                                     )}
@@ -522,7 +522,7 @@ function FeatureControl({
           className="h-8 w-44"
           aria-label={featureName ?? t("entitlements.features.valueType")}
         >
-          <SelectValue placeholder="Select..." />
+          <SelectValue placeholder={t("components.select.placeholder")} />
         </SelectTrigger>
         <SelectContent>
           {enumOptions.map((opt) => (

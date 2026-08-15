@@ -16,7 +16,7 @@ export const en = {
       isActive: "Active",
     },
     placeholders: {
-      siteId: "Enter the site ID",
+      siteId: "Search for a site...",
       code: "e.g. MAIN",
       name: "e.g. Main Campus",
       description: "Optional description",

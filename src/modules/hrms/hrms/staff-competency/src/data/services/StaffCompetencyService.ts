@@ -24,11 +24,15 @@ export class StaffCompetencyService implements IStaffCompetencyService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffCompetencyListResult> {
     const url = buildUrl(STAFF_COMPETENCY_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      sortBy: params.sortBy,
+      sortDirection: params.sortDirection,
     });
 
     const response = await this.api.get<StaffCompetencyListResponseJson>(url);
@@ -36,7 +40,7 @@ export class StaffCompetencyService implements IStaffCompetencyService {
     return {
       items: response.items.map((json) => StaffCompetencyModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

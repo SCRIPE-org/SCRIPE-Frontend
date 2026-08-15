@@ -26,7 +26,7 @@ export class RecommendationRuleRepository implements IRecommendationRuleReposito
     return {
       items: result.items.map((m) => RecommendationRuleMapper.toEntity(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,

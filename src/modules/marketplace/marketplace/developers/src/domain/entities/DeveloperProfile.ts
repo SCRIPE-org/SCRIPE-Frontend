@@ -12,8 +12,13 @@ export interface DeveloperProfileData {
   logoUrl: string | null;
   isVerified: boolean;
   appCount: number;
-  totalRevenue: number;
-  currency: string;
+  /**
+   * Neither the paginated developer list endpoint (DeveloperProfileListResponse)
+   * nor the detail endpoint (DeveloperProfileResponse) expose a revenue field
+   * today — null means "unavailable", never a real $0.00 balance.
+   */
+  totalRevenue: number | null;
+  currency: string | null;
   createdAt: string;
 }
 
@@ -60,7 +65,9 @@ export class DeveloperProfile {
     return this.data.createdAt;
   }
 
+  /** "Unavailable" (not a misleading $0.00) when the backend has no revenue data. */
   get revenueLabel(): string {
+    if (this.data.totalRevenue == null) return "—";
     return new Intl.NumberFormat("en", {
       style: "currency",
       currency: this.data.currency || "USD",

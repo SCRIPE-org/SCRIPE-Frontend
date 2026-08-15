@@ -18,11 +18,16 @@ export interface AnalyticsEventListResult {
   pageSize: number;
 }
 
+// Matches the backend's AnalyticsDailyMetricResponse field-for-field (see
+// AnalyticsEventModel.ts's AnalyticsDailyMetricJson for the wire-level contract).
 export interface AnalyticsDailyMetricResponse {
-  date: string;
   eventName: string;
+  bucketDateUtc: string;
   count: number;
-  sum?: number;
+  valueSum: number;
+  valueMin?: number | null;
+  valueMax?: number | null;
+  lastEventAt: string;
 }
 
 export interface IAnalyticsEventRepository {

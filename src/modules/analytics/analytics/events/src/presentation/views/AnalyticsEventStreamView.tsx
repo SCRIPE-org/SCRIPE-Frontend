@@ -92,7 +92,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
             <p className="max-w-[60ch] text-xs text-nx-ink-3">
               Verification: run{" "}
               <code className="rounded-nx-sm bg-nx-raised px-1 py-0.5">scripe test backend</code> →
-              Analytics.Application.Tests 9/9 confirm store + projection + idempotency are working.
+              Analytics.Application.Tests confirm store + projection + idempotency are working.
             </p>
           }
         />
@@ -129,9 +129,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                     {ev.subjectEntityId ? ev.subjectEntityId.slice(0, 8) + "…" : "—"}
                   </TableCell>
                   <TableCell variant="numeric" className="text-nx-ink-3">
-                    {ev.associatedNumericValue !== undefined && ev.associatedNumericValue !== null
-                      ? ev.associatedNumericValue
-                      : "—"}
+                    {ev.value !== undefined && ev.value !== null ? ev.value : "—"}
                   </TableCell>
                 </TableRow>
               ))}

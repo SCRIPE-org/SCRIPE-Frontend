@@ -9,6 +9,9 @@ export interface StaffCompetencyListParams {
   page: number;
   pageSize: number;
   search?: string;
+  /** Server-side sort column key (e.g. "competencyName") — optional, additive (F-85). */
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 }
 
 export interface IStaffCompetencyRepository {

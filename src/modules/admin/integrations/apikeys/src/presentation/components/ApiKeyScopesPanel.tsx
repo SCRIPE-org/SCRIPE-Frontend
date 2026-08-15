@@ -20,9 +20,16 @@ interface ApiKeyScopesPanelProps {
   detail: ApiKeyDetail;
   isUpdating: boolean;
   onUpdateScopes: (scopes: string) => void;
+  /** Gates editing/saving — mirrors the backend's apikeys.update requirement. */
+  canUpdate: boolean;
 }
 
-export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKeyScopesPanelProps) {
+export function ApiKeyScopesPanel({
+  detail,
+  isUpdating,
+  onUpdateScopes,
+  canUpdate,
+}: ApiKeyScopesPanelProps) {
   const { t, language } = useI18n();
   const { permissionRepository } = identityContainer;
 
@@ -64,9 +71,13 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
     setSelectedScopes([]);
   };
 
+  // Combines both gates the fields/button already render off of: the key must be usable
+  // (isActive) AND the caller must actually hold apikeys.update.
+  const canEdit = detail.isActive && canUpdate;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!detail.isActive) return;
+    if (!canEdit) return;
     onUpdateScopes(selectedScopes.join(","));
   };
 
@@ -104,7 +115,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                 variant="outline"
                 size="sm"
                 onClick={handleSelectAll}
-                disabled={!detail.isActive}
+                disabled={!canEdit}
               >
                 {t("apikeys.scopesPanel.selectAll")}
               </Button>
@@ -113,7 +124,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                 variant="outline"
                 size="sm"
                 onClick={handleDeselectAll}
-                disabled={!detail.isActive}
+                disabled={!canEdit}
               >
                 {t("apikeys.scopesPanel.deselectAll")}
               </Button>
@@ -127,7 +138,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
               className="h-9 ps-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              disabled={!detail.isActive}
+              disabled={!canEdit}
             />
           </div>
         </CardHeader>
@@ -173,7 +184,7 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
                           id={`scope-${p.code}`}
                           checked={isChecked}
                           onCheckedChange={(checked) => handleToggleScope(p.code, !!checked)}
-                          disabled={!detail.isActive}
+                          disabled={!canEdit}
                           className="mt-1"
                         />
                         <div
@@ -204,11 +215,13 @@ export function ApiKeyScopesPanel({ detail, isUpdating, onUpdateScopes }: ApiKey
             ))
           )}
         </CardContent>
-        <CardFooter className="justify-end border-t border-nx-line bg-nx-raised px-6 py-3">
-          <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !detail.isActive}>
-            {isUpdating ? t("common.saving") : t("common.saveChanges")}
-          </Button>
-        </CardFooter>
+        {canUpdate && (
+          <CardFooter className="justify-end border-t border-nx-line bg-nx-raised px-6 py-3">
+            <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !canEdit}>
+              {isUpdating ? t("common.saving") : t("common.saveChanges")}
+            </Button>
+          </CardFooter>
+        )}
       </Card>
     </form>
   );

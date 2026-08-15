@@ -72,7 +72,7 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
               type="email"
               value={vm.form.adminEmail}
               onChange={(e) => vm.updateField("adminEmail", e.target.value)}
-              placeholder="admin@example.com"
+              placeholder={t("tenant.adminEmailPlaceholder")}
               className="ps-10"
               aria-invalid={emailError || undefined}
               aria-describedby={emailError ? "tenant-admin-email-error" : undefined}

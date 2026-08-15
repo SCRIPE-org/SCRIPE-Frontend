@@ -65,6 +65,14 @@ export interface DataSubjectRequestData {
   reviewedBy?: string;
   notes?: string;
   resolution?: string;
+  dsrDeadlineDays?: number;
+  assignedToAdminId?: string;
+  exportFileUrl?: string;
+  erasureConfirmed?: boolean;
+  erasureExecuteAfter?: string;
+  requesterNotes?: string;
+  statusHistory?: DsrStatusHistory[];
+  moduleExecutions?: DsrModuleExecution[];
 }
 
 /**
@@ -138,30 +146,28 @@ export class DataSubjectRequest {
 
   // Detail properties
   get dsrDeadlineDays() {
-    return (this.data as any).dsrDeadlineDays ?? 0;
+    return this.data.dsrDeadlineDays ?? 0;
   }
   get assignedToAdminId() {
-    return (this.data as any).assignedToAdminId ?? null;
+    return this.data.assignedToAdminId ?? null;
   }
   get exportFileUrl() {
-    return (this.data as any).exportFileUrl ?? null;
+    return this.data.exportFileUrl ?? null;
   }
   get erasureConfirmed() {
-    return (this.data as any).erasureConfirmed ?? false;
+    return this.data.erasureConfirmed ?? false;
   }
   get erasureExecuteAfter() {
-    return (this.data as any).erasureExecuteAfter
-      ? new Date((this.data as any).erasureExecuteAfter)
-      : null;
+    return this.data.erasureExecuteAfter ? new Date(this.data.erasureExecuteAfter) : null;
   }
   get requesterNotes() {
-    return (this.data as any).requesterNotes ?? null;
+    return this.data.requesterNotes ?? null;
   }
   get statusHistory(): DsrStatusHistory[] {
-    return (this.data as any).statusHistory ?? [];
+    return this.data.statusHistory ?? [];
   }
   get moduleExecutions(): DsrModuleExecution[] {
-    return (this.data as any).moduleExecutions ?? [];
+    return this.data.moduleExecutions ?? [];
   }
 
   get canConfirmErasure() {

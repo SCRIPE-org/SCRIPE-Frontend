@@ -153,8 +153,11 @@ export function useRecycleBinViewModel() {
   }, [allTabItems, searchValue]);
 
   // Client-side pagination
-  const currentPage = tabPages[activeTab];
   const pagesCount = Math.max(1, Math.ceil(filteredItems.length / pageSize));
+  // Clamp to the last valid page — a restore/bulk-restore can shrink filteredItems
+  // below the page we were sitting on, which would otherwise render an empty list
+  // while still claiming to be on a page past the new end (e.g. "page 3 of 2").
+  const currentPage = Math.min(tabPages[activeTab], pagesCount);
 
   const paginatedItems: DeletedItem[] = useMemo(() => {
     const start = (currentPage - 1) * pageSize;

@@ -42,7 +42,7 @@ import {
   ar as custSettingsAr,
 } from "@modules/customization/settings/locales";
 import { en as custStudioEn, ar as custStudioAr } from "@modules/customization/studio/locales";
-// import { en as menusEn, ar as menusAr } from "@modules/customization/menus/locales";
+import { en as menusEn, ar as menusAr } from "@modules/customization/menus/locales";
 import {
   en as tenantSettingsEn,
   ar as tenantSettingsAr,
@@ -60,7 +60,6 @@ import {
 } from "@modules/entitlements/recommendation-rules/locales";
 import { en as editionsEn, ar as editionsAr } from "@modules/entitlements/editions/locales";
 import { en as featuresEn, ar as featuresAr } from "@modules/entitlements/features/locales";
-import { en as overridesEn, ar as overridesAr } from "@modules/entitlements/overrides/locales";
 import {
   en as subscriptionsEn,
   ar as subscriptionsAr,
@@ -96,10 +95,11 @@ import {
   ar as activateWorkspaceAr,
 } from "@modules/entitlements/activate-workspace/locales";
 
-// ─── Communication & Integrations ───────────────────────
+// ─── Communication, Integrations & Media ─────────────────
 import { en as communicationEn, ar as communicationAr } from "@modules/communication/core/locales";
 import { en as webhooksEn, ar as webhooksAr } from "@modules/integrations/webhooks/locales";
 import { en as apikeysEn, ar as apikeysAr } from "@modules/integrations/apikeys/locales";
+import { en as mediaEn, ar as mediaAr } from "@modules/media/locales";
 
 // ─── Ecosystem ─────────────────────────────────────────
 import { en as recycleBinEn, ar as recycleBinAr } from "@modules/ecosystem/recycle-bin/locales";
@@ -113,8 +113,7 @@ import { en as homeEn, ar as homeAr } from "@modules/home/core/locales";
 // ─── Deep Merge (shared utility) ───────────────────────
 import { deepMerge } from "@core/utils/deep-merge";
 
-/*
-// ─── Plugins (4 sub-modules, each owning their slice of the "plugins" key) ──
+// ─── Plugins (5 sub-modules, each owning their slice of the "plugins" key) ──
 import { en as pluginsCatalogEn, ar as pluginsCatalogAr } from "@modules/plugins/catalog/locales";
 import {
   en as pluginsInstalledEn,
@@ -129,7 +128,6 @@ import {
   en as pluginsDefinitionsEn,
   ar as pluginsDefinitionsAr,
 } from "@modules/plugins/definitions/locales";
-*/
 
 // ─── Compliance (7 sub-modules) ─────────────────────────────────────────────
 import {
@@ -151,6 +149,36 @@ import {
   en as compRegulationsEn,
   ar as compRegulationsAr,
 } from "@modules/compliance/regulations/locales";
+
+// ─── Hrms (7 sub-modules, each owning their slice of the "hrms" key) ───────
+import {
+  en as hrmsStaffMemberEn,
+  ar as hrmsStaffMemberAr,
+} from "@modules/hrms/staff-member/locales";
+import {
+  en as hrmsCertificationEn,
+  ar as hrmsCertificationAr,
+} from "@modules/hrms/certification/locales";
+import {
+  en as hrmsEmploymentRecordEn,
+  ar as hrmsEmploymentRecordAr,
+} from "@modules/hrms/employment-record/locales";
+import {
+  en as hrmsQualificationEn,
+  ar as hrmsQualificationAr,
+} from "@modules/hrms/qualification/locales";
+import {
+  en as hrmsStaffAssignmentEn,
+  ar as hrmsStaffAssignmentAr,
+} from "@modules/hrms/staff-assignment/locales";
+import {
+  en as hrmsStaffAvailabilityEn,
+  ar as hrmsStaffAvailabilityAr,
+} from "@modules/hrms/staff-availability/locales";
+import {
+  en as hrmsStaffCompetencyEn,
+  ar as hrmsStaffCompetencyAr,
+} from "@modules/hrms/staff-competency/locales";
 
 // ─── Marketplace (6 sub-modules, each owning their slice of the "marketplace" key) ──
 import {
@@ -175,10 +203,6 @@ import {
   ar as mktFinancialsAr,
 } from "@modules/marketplace/financials/locales";
 
-import { en as partyKernelEn, ar as partyKernelAr } from "@modules/party-kernel/core/locales";
-
-import { en as hrmsEn, ar as hrmsAr } from "@modules/hrms/core/locales";
-
 import {
   en as customFieldsEn,
   ar as customFieldsAr,
@@ -192,6 +216,15 @@ import {
   en as analyticsEventsEn,
   ar as analyticsEventsAr,
 } from "@modules/analytics/events/locales";
+
+// ─── Party Kernel (7 sub-modules) ───────────────────────────────────────────
+import { en as partyEn, ar as partyAr } from "@modules/party-kernel/party/locales";
+import { en as partyRoleEn, ar as partyRoleAr } from "@modules/party-kernel/party-role/locales";
+import { en as partyPersonEn, ar as partyPersonAr } from "@modules/party-kernel/party-person/locales";
+import { en as partyOrgEn, ar as partyOrgAr } from "@modules/party-kernel/party-organization/locales";
+import { en as partyRelEn, ar as partyRelAr } from "@modules/party-kernel/party-relationship/locales";
+import { en as contactPointEn, ar as contactPointAr } from "@modules/party-kernel/contact-point/locales";
+import { en as mergeCandidateEn, ar as mergeCandidateAr } from "@modules/party-kernel/merge-candidate/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -216,7 +249,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   // Customization
   custSettingsEn,
   custStudioEn,
-  // menusEn,
+  menusEn,
   tenantSettingsEn,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsEn,
@@ -224,7 +257,6 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   recommendationRulesEn,
   editionsEn,
   featuresEn,
-  overridesEn,
   subscriptionsEn,
   billingEn,
   tenantPlansEn,
@@ -235,24 +267,23 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   leadsEn,
   signupContentEn,
   activateWorkspaceEn,
-  // Communication & Integrations
+  // Communication, Integrations & Media
   communicationEn,
   webhooksEn,
   apikeysEn,
+  mediaEn,
   // Ecosystem
   recycleBinEn,
   // Profile
   profileEn,
   // Home
   homeEn,
-  /*
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogEn,
   pluginsInstalledEn,
   pluginsLogsEn,
   pluginsSettingsEn,
   pluginsDefinitionsEn,
-  */
   // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardEn,
   compDsrEn,
@@ -261,6 +292,14 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   compInventoryEn,
   compReportsEn,
   compRegulationsEn,
+  // Hrms (7 sub-modules, each owns their slice of the "hrms" key)
+  hrmsStaffMemberEn,
+  hrmsCertificationEn,
+  hrmsEmploymentRecordEn,
+  hrmsQualificationEn,
+  hrmsStaffAssignmentEn,
+  hrmsStaffAvailabilityEn,
+  hrmsStaffCompetencyEn,
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsEn,
   mktCategoriesEn,
@@ -268,11 +307,17 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktDevelopersEn,
   mktReviewsEn,
   mktFinancialsEn,
-  partyKernelEn,
-  hrmsEn,
   customFieldsEn,
   workManagementEn,
-  analyticsEventsEn
+  analyticsEventsEn,
+  // Party Kernel
+  partyEn,
+  partyRoleEn,
+  partyPersonEn,
+  partyOrgEn,
+  partyRelEn,
+  contactPointEn,
+  mergeCandidateEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -297,7 +342,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   // Customization
   custSettingsAr,
   custStudioAr,
-  // menusAr,
+  menusAr,
   tenantSettingsAr,
   // Entitlements (all share "entitlements" top-level key — deepMerge required)
   entitlementsAr,
@@ -305,7 +350,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   recommendationRulesAr,
   editionsAr,
   featuresAr,
-  overridesAr,
   subscriptionsAr,
   billingAr,
   tenantPlansAr,
@@ -316,24 +360,23 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   leadsAr,
   signupContentAr,
   activateWorkspaceAr,
-  // Communication & Integrations
+  // Communication, Integrations & Media
   communicationAr,
   webhooksAr,
   apikeysAr,
+  mediaAr,
   // Ecosystem
   recycleBinAr,
   // Profile
   profileAr,
   // Home
   homeAr,
-  /*
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
   pluginsCatalogAr,
   pluginsInstalledAr,
   pluginsLogsAr,
   pluginsSettingsAr,
   pluginsDefinitionsAr,
-  */
   // Compliance (7 sub-modules, each owns their slice of the "compliance" key)
   compDashboardAr,
   compDsrAr,
@@ -342,6 +385,14 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   compInventoryAr,
   compReportsAr,
   compRegulationsAr,
+  // Hrms (7 sub-modules, each owns their slice of the "hrms" key)
+  hrmsStaffMemberAr,
+  hrmsCertificationAr,
+  hrmsEmploymentRecordAr,
+  hrmsQualificationAr,
+  hrmsStaffAssignmentAr,
+  hrmsStaffAvailabilityAr,
+  hrmsStaffCompetencyAr,
   // Marketplace (6 sub-modules, all merge into "marketplace" key)
   mktListingsAr,
   mktCategoriesAr,
@@ -349,9 +400,15 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktDevelopersAr,
   mktReviewsAr,
   mktFinancialsAr,
-  partyKernelAr,
-  hrmsAr,
   customFieldsAr,
   workManagementAr,
-  analyticsEventsAr
+  analyticsEventsAr,
+  // Party Kernel
+  partyAr,
+  partyRoleAr,
+  partyPersonAr,
+  partyOrgAr,
+  partyRelAr,
+  contactPointAr,
+  mergeCandidateAr
 );

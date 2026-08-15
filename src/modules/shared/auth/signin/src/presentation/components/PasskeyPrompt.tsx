@@ -81,14 +81,14 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
             <div
               className="absolute inset-0 rounded-full"
               style={{
-                border: "2px solid rgba(168,85,247,0.3)",
+                border: "2px solid rgba(198,255,0,0.3)",
                 animation: "sxPop 1.5s ease-out infinite",
               }}
             />
             <div
               className="absolute inset-[-8px] rounded-full"
               style={{
-                border: "1px solid rgba(168,85,247,0.15)",
+                border: "1px solid rgba(198,255,0,0.15)",
                 animation: "sxPop 1.5s ease-out 0.3s infinite",
               }}
             />
@@ -98,8 +98,8 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
           className="flex h-16 w-16 items-center justify-center rounded-2xl"
           style={{
             background:
-              "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%)",
-            border: "1px solid rgba(168,85,247,0.3)",
+              "linear-gradient(135deg, rgba(198,255,0,0.15) 0%, rgba(198,255,0,0.08) 100%)",
+            border: "1px solid rgba(198,255,0,0.3)",
           }}
         >
           <svg
@@ -107,7 +107,7 @@ export function PasskeyPrompt({ onSuccess, onBack, isRTL, tenantId }: PasskeyPro
             height="32"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--sx-accent, #A855F7)"
+            stroke="var(--sx-accent, #C6FF00)"
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"

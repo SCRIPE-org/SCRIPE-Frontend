@@ -2,18 +2,19 @@
  * Raw DTO types matching the backend API response shape exactly.
  */
 
-/** Matches GET /tenant-gateways list item */
+/** Matches GET /tenant-gateways list item (TenantGatewayResponse on the backend) */
 export interface TenantGatewayModel {
   id: string;
-  gateway: string;
+  gatewayType: string;
   displayLabel: string | null;
   merchantId: string | null;
-  isEnabled: boolean;
+  isActive: boolean;
+  isDefault: boolean;
   isVerified: boolean;
   isTestMode: boolean;
   lastVerifiedAt: string | null;
   createdAt: string;
-  modifiedAt: string | null;
+  updatedAt: string | null;
 }
 
 /** Matches POST /tenant-gateways request body */

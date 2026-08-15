@@ -10,39 +10,63 @@
 
 import type { AppListingDto, AppListingListDto } from "../../data/models/AppListingModel";
 
-/** Payload for creating a new app listing. */
+/**
+ * Payload for creating a new app listing.
+ *
+ * Shaped to match the real backend `CreateAppListingRequest` (Marketplace.Application.DTOs.
+ * MarketplaceDTOs.cs) exactly: `pluginId` and `tagline` are backend-required fields that were
+ * previously missing here, while `nameAr`/`descriptionAr`/a singular `categoryId`/`tags` were
+ * fabricated fields the backend has never had (same family as the read-side AppListingMapper
+ * fix) — the backend only has `name`/`description` (no Arabic variants) and a plural
+ * `categoryIds` list. Pricing is NOT part of listing creation — it is a separate upsert via
+ * `SetAppPricingCommand`/`setPricing()` below, called after the listing exists.
+ */
 export interface CreateAppListingPayload {
+  pluginId: string;
   developerProfileId: string;
   name: string;
-  nameAr: string;
+  tagline: string;
   description: string;
-  descriptionAr: string;
-  categoryId: string;
+  iconUrl: string;
   version: string;
-  pricingModel: "Free" | "OneTime" | "Subscription";
-  price?: number;
-  currency?: string;
-  billingInterval?: "Monthly" | "Annual";
-  tags?: string[];
+  categoryIds?: string[];
 }
 
-/** Payload for updating an existing app listing. */
+/**
+ * Payload for updating an existing app listing.
+ *
+ * Matches the real backend `UpdateAppListingRequest` exactly: `tagline` is backend-required
+ * (missing before); `nameAr`/`descriptionAr`/`categoryId`/`tags` do not exist on the backend
+ * contract and have been dropped. Category assignments and pricing are managed through their
+ * own dedicated endpoints, not this one.
+ */
 export interface UpdateAppListingPayload {
-  name?: string;
-  nameAr?: string;
-  description?: string;
-  descriptionAr?: string;
-  categoryId?: string;
-  version?: string;
-  tags?: string[];
+  name: string;
+  tagline: string;
+  description: string;
+  iconUrl: string;
+  version: string;
 }
 
-/** Payload for setting pricing on an app listing. */
+/**
+ * Payload for setting pricing on an app listing.
+ *
+ * Matches the real backend `SetAppPricingRequest` exactly (Marketplace.Application.DTOs.
+ * MarketplaceDTOs.cs): `appListingId` (backend requires it to equal the route id) and
+ * `trialDays` were missing entirely; `price`/`currency` are backend-required (the record has no
+ * defaults) so are no longer optional; the pricing-model field is called `model` on the wire
+ * (the record's positional parameter is `Model`, not `PricingModel`) — sending it as
+ * `pricingModel` means the JSON serializer silently drops it and the backend defaults to
+ * `PricingModel.Free`. `model` now also covers all 6 real enum members (the backend has no
+ * `OneTime`, it's `PaidOnce`) and the fabricated `billingInterval` field (no such backend
+ * property) has been dropped.
+ */
 export interface SetPricingPayload {
-  pricingModel: "Free" | "OneTime" | "Subscription";
-  price?: number;
-  currency?: string;
-  billingInterval?: "Monthly" | "Annual";
+  appListingId: string;
+  model: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
+  price: number;
+  currency: string;
+  trialDays: number;
 }
 
 /** Query parameters for listing app listings. */
@@ -54,7 +78,8 @@ export interface GetAppListingsParams {
   isPublished?: boolean;
   isFeatured?: boolean;
   sortBy?: "popular" | "rating" | "newest" | "price";
-  pricingModel?: "Free" | "OneTime" | "Subscription";
+  /** Matches the real backend `PricingModel` enum (6 values, not the old 3). */
+  pricingModel?: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
 }
 
 /**

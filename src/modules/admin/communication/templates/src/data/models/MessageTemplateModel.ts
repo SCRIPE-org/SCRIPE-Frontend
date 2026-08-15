@@ -31,7 +31,7 @@ export interface MessageTemplateJson {
 export interface MessageTemplateListResponse {
   items: MessageTemplateJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }
 
@@ -47,7 +47,6 @@ export interface CreateMessageTemplateJson {
   body: string;
   language: string;
   isActive: boolean;
-  tenantId?: string;
   description?: string;
   placeholderSchema?: string;
   designVariables?: string;

@@ -29,7 +29,7 @@ export const ar = {
       maxConcurrentUsage: "الحد الأقصى للاستخدام المتزامن",
     },
     placeholders: {
-      facilityResourceProfileId: "أدخل معرّف ملف تعريف المورد",
+      facilityResourceProfileId: "ابحث عن ملف تعريف مورد...",
       namedUnitLabel: "مثال: ملعب، مسار، حجرة",
     },
     descriptions: {

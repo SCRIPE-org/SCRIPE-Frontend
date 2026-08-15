@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { cookies } from "next/headers";
 import { Analytics } from "@vercel/analytics/next";
@@ -7,35 +7,36 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { AppProvider } from "@core/providers/app-provider";
 import { STORAGE_KEYS } from "@core/config/storage-keys";
-import "@modules/auth"; // Eagerly run component registrations
-import "@modules/identity"; // Eagerly run identity registrations
-import "@modules/customization"; // Eagerly run customization registrations
-import "@modules/entitlements"; // Eagerly run entitlements registrations
+import { BRAND } from "@core/config/branding";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
   title: { default: "SCRIPE", template: "%s | SCRIPE" },
   description: "Professional SCRIPE with multi-language support",
-  keywords: ["SCRIPE", "next template", "administration", "system"],
+  keywords: ["SCRIPE", "administration", "system"],
   authors: [{ name: "SCRIPE Team" }],
   creator: "SCRIPE",
   publisher: "SCRIPE",
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/app-logo.png",
+    icon: [
+      { url: "/brand/favicon.ico" },
+      { url: "/brand/favicon.svg", type: "image/svg+xml" },
+      { url: "/brand/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/brand/favicon.ico",
+    apple: [{ url: "/brand/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.json",
   openGraph: {
     title: "SCRIPE",
     description: "Professional SCRIPE with multi-language support",
-    url: "https://app-name.com",
+    url: `https://${BRAND.domain}`,
     siteName: "SCRIPE",
     images: [
       {
-        url: "/app-logo.png",
-        width: 512,
-        height: 512,
+        url: "/brand/app-logo-1024.png",
+        width: 1024,
+        height: 1024,
         alt: "SCRIPE Logo",
       },
     ],
@@ -46,8 +47,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "SCRIPE",
     description: "Professional SCRIPE with multi-language support",
-    images: ["/app-logo.png"],
+    images: ["/brand/app-logo-1024.png"],
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0D0D0E",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

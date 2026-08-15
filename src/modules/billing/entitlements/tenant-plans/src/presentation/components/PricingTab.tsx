@@ -43,10 +43,27 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
-import { getCurrencyInfo, formatPrice } from "@core/constants/currencies";
+import { getCurrencyInfo } from "@core/constants/currencies";
 import type { PreviewRow } from "../viewmodels/useTenantPlanDetailViewModel";
 import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import type { TFn } from "./shared-helpers";
+
+/**
+ * Formats a preview amount using the currency's native symbol — the same
+ * symbol the override inputs above already show (`info?.symbol || code`).
+ * Intl.NumberFormat's `style: "currency"` falls back to the bare ISO code
+ * for currencies the "en-US" locale has no narrow symbol for (SAR, QAR,
+ * OMR, KWD, BHD, AED, EGP, ...), which made the Live Preview table disagree
+ * with the override input for the same currency.
+ */
+function formatPreviewAmount(amount: number, currencyCode: string): string {
+  const symbol = getCurrencyInfo(currencyCode)?.symbol || currencyCode;
+  const formattedAmount = amount.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  return `${symbol}${formattedAmount}`;
+}
 
 interface PricingTabProps {
   plan: TenantPlan;
@@ -608,18 +625,18 @@ export const PricingTab = memo(function PricingTab(props: PricingTabProps) {
                         </TableCell>
                         {plan.allowMonthly && (
                           <TableCell variant="numeric" className="font-medium">
-                            {formatPrice(row.monthlyAmount, row.currency)}
+                            {formatPreviewAmount(row.monthlyAmount, row.currency)}
                           </TableCell>
                         )}
                         {plan.allowYearly && (
                           <TableCell variant="numeric" className="font-medium">
-                            {formatPrice(row.yearlyAmount, row.currency)}
+                            {formatPreviewAmount(row.yearlyAmount, row.currency)}
                           </TableCell>
                         )}
                         {plan.allowLifetime && (
                           <TableCell variant="numeric" className="font-medium">
                             {row.lifetimeAmount > 0
-                              ? formatPrice(row.lifetimeAmount, row.currency)
+                              ? formatPreviewAmount(row.lifetimeAmount, row.currency)
                               : "—"}
                           </TableCell>
                         )}

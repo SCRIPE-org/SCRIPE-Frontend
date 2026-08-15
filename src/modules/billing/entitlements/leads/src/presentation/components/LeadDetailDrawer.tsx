@@ -174,7 +174,9 @@ export function LeadDetailDrawer({
       try {
         const preview = await onGetEmailPreview(lead.id, targetStatus);
         setEmailSubject(preview.subject);
-        setEmailBody(htmlToPlainText(preview.bodyHtml));
+        // bodyHtml is the full document (head/style/preheader) — tag-stripping it leaks the
+        // stylesheet into the draft as visible text. bodyFragmentHtml is the message only.
+        setEmailBody(htmlToPlainText(preview.bodyFragmentHtml));
         setPreviewStatus(targetStatus);
       } catch (err) {
         appLogger.error("Failed to fetch email preview:", err);

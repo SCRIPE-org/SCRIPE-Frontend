@@ -35,7 +35,7 @@ export class AnalyticsEventService implements IAnalyticsEventService {
     return {
       items: (response.items ?? []).map((json) => AnalyticsEventModel.fromJson(json)),
       totalCount: response.totalCount ?? 0,
-      page: response.page ?? params.page,
+      page: response.pageNumber ?? params.page,
       pageSize: response.pageSize ?? params.pageSize,
     };
   }

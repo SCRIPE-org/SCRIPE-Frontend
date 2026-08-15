@@ -637,7 +637,7 @@ function ThemeCard({
               <button
                 disabled
                 className="flex h-6 flex-1 cursor-not-allowed items-center justify-center gap-1 rounded-nx-control border border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] text-[9px] text-nx-accent opacity-80"
-                title="Contact your system administrator to purchase this theme"
+                title={t("studio.marketplace.contactAdminToBuy")}
               >
                 <ShoppingCart className="h-3 w-3" />
                 {theme.price ? formatCurrency(theme.price, theme.priceCurrency || "USD") : t("studio.marketplace.buy")}

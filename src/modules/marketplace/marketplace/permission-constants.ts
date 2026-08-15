@@ -32,4 +32,5 @@ export const MARKETPLACE_PERMISSIONS = {
   APP_PURCHASES_CREATE: "apppurchases.create",
   DEVELOPER_PAYOUTS_VIEW: "developerpayouts.view",
   DEVELOPER_PAYOUTS_PROCESS: "developerpayouts.process",
+  MARKETPLACE_SETTINGS_MANAGE: "marketplacesettings.manage",
 } as const;

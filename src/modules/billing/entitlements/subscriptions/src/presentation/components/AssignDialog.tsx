@@ -33,7 +33,8 @@ import { CurrencySelect } from "./CurrencySelect";
 export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps) {
   const { t } = useI18n();
 
-  const selectedEd = (editionsVm.items ?? []).find((ed) => ed.id === vm.selectedEditionId) ?? null;
+  const selectedEd =
+    (editionsVm.allEditionsForSelect ?? []).find((ed) => ed.id === vm.selectedEditionId) ?? null;
 
   return (
     <Dialog open={vm.showAssignDialog} onOpenChange={vm.setShowAssignDialog}>
@@ -49,7 +50,7 @@ export function AssignDialog({ vm, editionsVm }: SubscriptionEditionDialogProps)
             <Label>{t("entitlements.editions.editionName")}</Label>
             <GenericSelect
               type="searchable"
-              options={(editionsVm.items ?? []).map((ed) => ({
+              options={(editionsVm.allEditionsForSelect ?? []).map((ed) => ({
                 value: ed.id,
                 label: ed.displayNameEn || ed.name,
               }))}

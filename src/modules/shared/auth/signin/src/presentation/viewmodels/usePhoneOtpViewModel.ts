@@ -55,7 +55,11 @@ export interface UsePhoneOtpViewModelReturn {
  * - Cooldown prevents rapid resend (30s)
  */
 export function usePhoneOtpViewModel(
-  onSuccess: (result: { accessToken: string; refreshToken: string }) => void,
+  onSuccess: (result: {
+    accessToken: string;
+    refreshToken: string;
+    mustChangePassword?: boolean;
+  }) => void,
   onWorkspaceSelection?: (response: LoginResponseModel) => void
 ): UsePhoneOtpViewModelReturn {
   const { t } = useI18n();
@@ -155,7 +159,11 @@ export function usePhoneOtpViewModel(
       }
 
       // ── Single workspace: direct login ───────────────────────────────
-      onSuccess({ accessToken: result.accessToken, refreshToken: result.refreshToken ?? "" });
+      onSuccess({
+        accessToken: result.accessToken,
+        refreshToken: result.refreshToken ?? "",
+        mustChangePassword: result.mustChangePassword,
+      });
     } catch (err) {
       setErrorWithShake(
         err instanceof Error

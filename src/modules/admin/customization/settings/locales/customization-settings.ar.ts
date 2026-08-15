@@ -674,6 +674,14 @@ export const ar = {
       high: "عالٍ",
       highDesc: "حركات غنية",
     },
+    hoverType: {
+      title: "تأثير التحويم",
+      description: "تفعيل أو إيقاف إبراز الحدود عند التحويم",
+      none: "بدون",
+      noneDesc: "بدون تأثير تحويم",
+      elevate: "افتراضي",
+      elevateDesc: "تصبح الحدود أكثر سطوعاً عند التحويم",
+    },
     bgMode: {
       title: "وضع الخلفية",
       description: "اختر نظام الخلفية النشط",
@@ -1553,7 +1561,7 @@ export const ar = {
       textLabel: "نص الشعار",
       textPlaceholder: "أدخل نص الشعار...",
       textHelp: "النص المعروض كشعار",
-      imageInfo: "يستخدم الشعار الصوري الملف ‎/app-logo.png‎",
+      imageInfo: "يستخدم الشعار الصوري الملف ‎/brand/app-logo-1024.png‎",
       previewLabel: "معاينة الشعار",
       previewHelp: "معاينة حية للشعار مع الإعدادات الحالية",
       sizeOptions: {

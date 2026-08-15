@@ -14,6 +14,18 @@ export interface EntityTypeItemJson {
   owningModule: string;
   displayNameEn: string;
   displayNameAr: string;
+  /**
+   * False when no frontend screen renders this entity type's custom fields
+   * yet — the values API works for it, but a definition created against it
+   * won't appear on any form. Sourced from the backend entity-type registry
+   * (`EntityTypeItem.HasFrontendScreen`), deliberately not a hardcoded list
+   * here that would go stale the moment a screen ships.
+   *
+   * Optional so a response from an older backend (which omits the field)
+   * doesn't silently mark every entity type as screenless — see the
+   * `?? true` fallback where this is consumed.
+   */
+  hasFrontendScreen?: boolean;
 }
 
 /**
@@ -25,6 +37,8 @@ export interface CustomFieldJson {
   key: string;
   labelEn: string;
   labelAr?: string | null;
+  placeholderEn?: string | null;
+  placeholderAr?: string | null;
   valueType: number;
   isRequired: boolean;
   options?: string | null;
@@ -49,6 +63,8 @@ export interface CustomFieldListItemJson {
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
+  /** True for a platform-owned (TenantId == null) definition inherited by every tenant. */
+  isGlobal: boolean;
 }
 
 /**
@@ -87,7 +103,10 @@ export class CustomFieldModel {
     public readonly createdAt: string,
     public readonly labelAr?: string | null,
     public readonly options?: string | null,
-    public readonly modifiedAt?: string | null
+    public readonly modifiedAt?: string | null,
+    public readonly isGlobal?: boolean,
+    public readonly placeholderEn?: string | null,
+    public readonly placeholderAr?: string | null
   ) {}
 
   /**
@@ -106,12 +125,17 @@ export class CustomFieldModel {
       json.createdAt,
       json.labelAr,
       json.options,
-      json.modifiedAt
+      json.modifiedAt,
+      undefined,
+      json.placeholderEn,
+      json.placeholderAr
     );
   }
 
   /**
-   * Create CustomFieldModel from API list-row JSON (no options / modifiedAt)
+   * Create CustomFieldModel from API list-row JSON (no options / modifiedAt /
+   * placeholders — the list response is deliberately form-population-free,
+   * same convention as options).
    */
   static fromListJson(json: CustomFieldListItemJson): CustomFieldModel {
     return new CustomFieldModel(
@@ -126,7 +150,8 @@ export class CustomFieldModel {
       json.createdAt,
       json.labelAr,
       null,
-      null
+      null,
+      json.isGlobal
     );
   }
 
@@ -140,6 +165,8 @@ export class CustomFieldModel {
       key: this.key,
       labelEn: this.labelEn,
       labelAr: this.labelAr,
+      placeholderEn: this.placeholderEn,
+      placeholderAr: this.placeholderAr,
       valueType: this.valueType,
       isRequired: this.isRequired,
       options: this.options,

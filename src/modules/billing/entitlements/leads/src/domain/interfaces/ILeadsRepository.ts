@@ -64,7 +64,10 @@ export interface FeatureOverride {
  */
 export interface StatusEmailPreview {
   subject: string;
+  /** Full rendered document — for a real preview render only, never for an editable draft. */
   bodyHtml: string;
+  /** Unwrapped message content, no head/style/preheader — use this to seed an editable draft. */
+  bodyFragmentHtml: string;
   bodyText: string;
   templateKey: string;
   recipientEmail: string;

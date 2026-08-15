@@ -47,7 +47,14 @@ export class DevelopersRepository implements IDevelopersRepository {
     await this.service.verify(id);
   }
 
-  /** M-12 fix: Map d.developerName (backend field) not d.displayName (non-existent). */
+  /**
+   * M-12 fix: Map d.developerName (backend field) not d.displayName (non-existent).
+   *
+   * F-73 fix: neither DeveloperProfileListResponse (paginated list) nor
+   * DeveloperProfileResponse (detail) send a revenue/currency field at all —
+   * defaulting to 0 rendered a misleading "$0.00". Leave both null so the UI
+   * can render "unavailable" instead of a fabricated balance.
+   */
   private map(d: DeveloperDto): DeveloperProfile {
     return new DeveloperProfile({
       id: d.id,
@@ -59,8 +66,8 @@ export class DevelopersRepository implements IDevelopersRepository {
       logoUrl: d.logoUrl ?? null,
       isVerified: d.isVerified ?? false,
       appCount: d.appCount ?? 0,
-      totalRevenue: d.totalRevenue ?? 0,
-      currency: d.currency ?? "USD",
+      totalRevenue: d.totalRevenue ?? null,
+      currency: d.currency ?? null,
       createdAt: d.createdAt ?? new Date().toISOString(),
     });
   }

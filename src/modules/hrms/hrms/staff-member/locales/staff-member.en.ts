@@ -17,7 +17,7 @@ export const en = {
       isActive: "Active",
     },
     placeholders: {
-      identityUserId: "Enter the linked user account ID",
+      identityUserId: "Search by name or email...",
       firstName: "Jane",
       lastName: "Doe",
       email: "jane.doe@company.com",
@@ -25,6 +25,12 @@ export const en = {
     },
     descriptions: {
       isActive: "Whether this staff member's profile is currently active.",
+      identityUserId:
+        "Search for the Identity Admin or User account this staff profile should link to.",
+    },
+    status: {
+      linked: "Linked",
+      notLinked: "Not linked",
     },
   },
 };

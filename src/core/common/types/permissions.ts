@@ -28,6 +28,8 @@ import { PARTY_KERNEL_PERMISSIONS } from "@modules/party-kernel/permission-const
 import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 import { WORK_MANAGEMENT_PERMISSIONS } from "@modules/work-management/permission-constants";
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
+import { ANALYTICS_EVENTS_PERMISSIONS } from "@modules/analytics/permission-constants";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 
 // ── Re-export individual module permissions for direct access ─────────────────
 export {
@@ -46,6 +48,8 @@ export {
   HRMS_PERMISSIONS,
   WORK_MANAGEMENT_PERMISSIONS,
   CUSTOM_FIELDS_PERMISSIONS,
+  ANALYTICS_EVENTS_PERMISSIONS,
+  VENUE_PERMISSIONS,
 };
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -187,6 +191,8 @@ export const SYSTEM_PERMISSIONS = {
   ...HRMS_PERMISSIONS,
   ...WORK_MANAGEMENT_PERMISSIONS,
   ...CUSTOM_FIELDS_PERMISSIONS,
+  ...ANALYTICS_EVENTS_PERMISSIONS,
+  ...VENUE_PERMISSIONS,
 } as const;
 
 // ── Page permission mapping ───────────────────────────────────────────────────
@@ -391,6 +397,18 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // StaffAvailability Feature
   "/hrms/staff-availabilities": [SYSTEM_PERMISSIONS.STAFF_AVAILABILITY_VIEW],
+
+  // Venue Module (workspace home redirects to venue-setup — see venue/page.tsx)
+  "/venue": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+
+  // VenueProfile Feature
+  "/venue/venue-setup": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+
+  // Facility Feature
+  "/venue/facilities": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
+
+  // SchedulableResource Feature
+  "/venue/resource-builder": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
 
   // Work Items Module
   "/work-items": [SYSTEM_PERMISSIONS.WORK_ITEM_VIEW],

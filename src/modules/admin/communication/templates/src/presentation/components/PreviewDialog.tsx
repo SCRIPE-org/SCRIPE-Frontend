@@ -8,7 +8,7 @@ import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { EmptyState } from "@core/ui/empty-state";
 import { cn } from "@core/common/utils";
-import { Monitor, Tablet, Smartphone } from "lucide-react";
+import { Monitor, Tablet, Smartphone, Sun, Moon } from "lucide-react";
 import type { PreviewTemplateResponse } from "../../domain/entities/MessageTemplateRequests";
 
 // ─── Device Presets ─────────────────────────────────────────
@@ -22,21 +22,68 @@ const DEVICES = [
 
 type DeviceId = (typeof DEVICES)[number]["id"];
 
+// ─── Preview Canvas Skins ───────────────────────────────────
+// Mirrors the Dark/Light skins in Core.Application/Emails/ScripeEmailTheme.cs so
+// admins previewing here see the same canvas the backend actually ships — a
+// dark canvas by default (`EmailCanvas.Dark`), with Light reserved for
+// print-intended mail. Kept as literal values (not design tokens) because
+// this simulates a fixed, backend-owned email canvas, not the admin app's own.
+const EMAIL_CANVAS_SKIN = {
+  dark: { surface: "#0D0D0E", text: "#F7F8F5", link: "#C6FF00" },
+  light: { surface: "#F7F8F5", text: "#0D0D0E", link: "#4C6200" },
+} as const;
+type CanvasTheme = keyof typeof EMAIL_CANVAS_SKIN;
+
+// ─── Language / Direction ───────────────────────────────────
+const RTL_LANGS = new Set(["ar", "he", "fa", "ur"]);
+const ARABIC_SCRIPT_RE = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
+
+/**
+ * `PreviewTemplateResponse` carries only `subject`/`body` (see
+ * MessageTemplateRequests.ts) — the template's own `language` isn't part of
+ * this response, so callers that have it can pass it explicitly; absent that,
+ * direction is inferred from the actual resolved text, the same signal a mail
+ * client uses.
+ */
+function resolveLangDir(
+  explicitLanguage: string | undefined,
+  text: string
+): { lang: string; dir: "rtl" | "ltr" } {
+  if (explicitLanguage) {
+    return { lang: explicitLanguage, dir: RTL_LANGS.has(explicitLanguage) ? "rtl" : "ltr" };
+  }
+  const dir = ARABIC_SCRIPT_RE.test(text) ? "rtl" : "ltr";
+  return { lang: dir === "rtl" ? "ar" : "en", dir };
+}
+
 // ─── Props ──────────────────────────────────────────────────
 interface PreviewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   result: PreviewTemplateResponse | null;
   isLoading: boolean;
+  /** BCP-47 language of the previewed template (e.g. "en", "ar"). Falls back
+   *  to detecting the script of the rendered body when not passed. */
+  language?: string;
 }
 
 /**
  * Presentation UI component rendering the preview dialog.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
-export function PreviewDialog({ open, onOpenChange, result, isLoading }: PreviewDialogProps) {
+export function PreviewDialog({
+  open,
+  onOpenChange,
+  result,
+  isLoading,
+  language,
+}: PreviewDialogProps) {
   const { t } = useI18n();
   const [device, setDevice] = useState<DeviceId>("desktop");
+  // Defaults to dark: that's what EmailCanvas.Dark ships to recipients by
+  // default (see ScripeEmailTheme.cs) — the toggle lets admins also check the
+  // Light variant reserved for print-intended mail.
+  const [canvasTheme, setCanvasTheme] = useState<CanvasTheme>("dark");
 
   const sanitizedBody = useMemo(
     () =>
@@ -92,6 +139,19 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
     [result]
   );
 
+  const { lang: previewLang, dir: previewDir } = useMemo(
+    () => resolveLangDir(language, `${result?.subject ?? ""} ${result?.body ?? ""}`),
+    [language, result]
+  );
+
+  const skin = EMAIL_CANVAS_SKIN[canvasTheme];
+
+  const previewSrcDoc = useMemo(
+    () =>
+      `<!DOCTYPE html><html dir="${previewDir}" lang="${previewLang}"><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:${skin.text};padding:16px;background:${skin.surface}}img{max-width:100%;height:auto}a{color:${skin.link}}</style></head><body>${sanitizedBody}</body></html>`,
+    [previewDir, previewLang, skin, sanitizedBody]
+  );
+
   const currentDevice = DEVICES.find((d) => d.id === device)!;
 
   return (
@@ -115,38 +175,57 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
               </div>
             )}
 
-            {/* Device Switcher — chrome around the preview, not the simulated
-                email surface itself. */}
-            <div className="mx-auto flex w-fit items-center justify-center gap-1 rounded-nx-md border border-nx-line bg-nx-raised p-1">
-              {DEVICES.map((d) => {
-                const Icon = d.icon;
-                const label = t(d.labelKey);
-                return (
-                  <Button
-                    key={d.id}
-                    type="button"
-                    variant={device === d.id ? "default" : "ghost"}
-                    size="sm"
-                    className="h-8 gap-1.5 text-xs"
-                    onClick={() => setDevice(d.id)}
-                  >
-                    <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-                    {label}
-                  </Button>
-                );
-              })}
+            {/* Device Switcher + Canvas Toggle — chrome around the preview,
+                not the simulated email surface itself. */}
+            <div className="flex items-center justify-center gap-3">
+              <div className="flex w-fit items-center justify-center gap-1 rounded-nx-md border border-nx-line bg-nx-raised p-1">
+                {DEVICES.map((d) => {
+                  const Icon = d.icon;
+                  const label = t(d.labelKey);
+                  return (
+                    <Button
+                      key={d.id}
+                      type="button"
+                      variant={device === d.id ? "default" : "ghost"}
+                      size="sm"
+                      className="h-8 gap-1.5 text-xs"
+                      onClick={() => setDevice(d.id)}
+                    >
+                      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+                      {label}
+                    </Button>
+                  );
+                })}
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 text-xs"
+                onClick={() => setCanvasTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+              >
+                {canvasTheme === "dark" ? (
+                  <Moon className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Sun className="h-3.5 w-3.5" aria-hidden="true" />
+                )}
+                {canvasTheme === "dark" ? t("theme.dark") : t("theme.light")}
+              </Button>
             </div>
 
             {/* Body Preview — the device frame is chrome (nx tokens); the
-                canvas inside simulates an email client's own white
-                background, which stays bg-white regardless of theme. */}
+                canvas inside follows the toggle above. The backend ships a
+                fixed dark canvas by default (EmailCanvas.Dark in
+                ScripeEmailTheme.cs) with no light-mode media query, so this
+                defaults to dark instead of a hardcoded white that hasn't
+                matched production in a while. */}
             <div className="flex justify-center">
               <div
                 className={cn(
-                  "overflow-hidden rounded-nx-lg border border-nx-line bg-white shadow-nx-sm",
+                  "overflow-hidden rounded-nx-lg border border-nx-line shadow-nx-sm",
                   device === "mobile" && "border-2"
                 )}
-                style={{ width: `${currentDevice.width}px`, maxWidth: "100%" }}
+                style={{ width: `${currentDevice.width}px`, maxWidth: "100%", background: skin.surface }}
               >
                 {/* Simulated device bar (chrome) */}
                 <div className="flex items-center gap-1.5 border-b border-nx-line bg-nx-raised px-3 py-2">
@@ -162,10 +241,10 @@ export function PreviewDialog({ open, onOpenChange, result, isLoading }: Preview
                   </div>
                 </div>
 
-                {/* Content — the simulated email canvas, intentionally white
-                    (an email client renders on white regardless of theme). */}
+                {/* Content — the simulated email canvas, following the
+                    dark/light toggle above. */}
                 <iframe
-                  srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:14px;line-height:1.6;color:#000;padding:16px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${sanitizedBody}</body></html>`}
+                  srcDoc={previewSrcDoc}
                   sandbox="allow-same-origin"
                   className="w-full border-0"
                   style={{ minHeight: "200px", height: "400px" }}

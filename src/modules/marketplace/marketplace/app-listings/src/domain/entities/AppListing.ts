@@ -18,7 +18,7 @@ export interface AppListingData {
   iconUrl: string | null;
   screenshotUrls: string[];
   version: string;
-  pricingModel: "Free" | "OneTime" | "Subscription";
+  pricingModel: "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased";
   price: number | null;
   currency: string | null;
   billingInterval: "Monthly" | "Annual" | null;
@@ -120,7 +120,7 @@ export class AppListing {
       style: "currency",
       currency: this.data.currency,
     }).format(this.data.price);
-    if (this.data.pricingModel === "OneTime") return formatted;
+    if (this.data.pricingModel === "PaidOnce") return formatted;
     const interval = this.data.billingInterval === "Annual" ? "yr" : "mo";
     return `${formatted}/${interval}`;
   }

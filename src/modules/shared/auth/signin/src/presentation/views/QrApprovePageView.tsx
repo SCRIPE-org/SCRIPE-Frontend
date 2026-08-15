@@ -18,7 +18,7 @@ export function QrApprovePageView() {
       className="flex min-h-screen items-center justify-center p-4"
       style={{
         background:
-          "radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.12) 0%, transparent 60%), hsl(var(--background))",
+          "radial-gradient(ellipse at 50% 0%, rgba(198,255,0,0.1) 0%, transparent 60%), hsl(var(--background))",
       }}
     >
       <div
@@ -81,7 +81,7 @@ function QrApproveLoadingState() {
         />
         <div
           className="h-12 flex-1 animate-pulse rounded-xl"
-          style={{ background: "rgba(124,58,237,0.15)" }}
+          style={{ background: "rgba(198,255,0,0.12)" }}
         />
       </div>
     </div>

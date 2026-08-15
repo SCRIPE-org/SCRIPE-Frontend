@@ -33,7 +33,7 @@ export function ConvertDialog({ vm, editionsVm }: SubscriptionEditionDialogProps
     (s: SubscriptionListItem) => s.status === "Active" || s.status === "Trialing"
   )?.editionId;
   const selectedEd = activeSubEditionId
-    ? ((editionsVm.items ?? []).find((ed) => ed.id === activeSubEditionId) ?? null)
+    ? ((editionsVm.allEditionsForSelect ?? []).find((ed) => ed.id === activeSubEditionId) ?? null)
     : null;
 
   return (

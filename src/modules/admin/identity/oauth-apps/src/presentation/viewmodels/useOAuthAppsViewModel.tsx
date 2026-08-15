@@ -22,6 +22,7 @@ import { AppWindow, KeyRound, Pencil, Trash2, Check, Copy } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { formatUtc } from "@core/common/utils";
 import type { CrudAction } from "@core/crud/components/generic-crud-view";
+import Image from "next/image";
 
 /**
  * Exported constant defining parameters and fields for oauth app keys configurations.
@@ -263,9 +264,12 @@ export function useOAuthAppsViewModel() {
         render: (_val: unknown, item: OAuthAppListItem) => (
           <div className="flex items-center gap-2">
             {item.logoUri ? (
-              <img
+              <Image
                 src={item.logoUri}
                 alt={item.displayName}
+                width={20}
+                height={20}
+                unoptimized
                 className="h-5 w-5 rounded-nx-sm object-contain"
               />
             ) : (

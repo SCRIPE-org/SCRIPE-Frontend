@@ -111,10 +111,15 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
     enabled: !!providerId,
   });
 
-  // Populate form when provider data arrives (render-time state-sync)
-  const [prevProvider, setPrevProvider] = useState(provider);
-  if (provider && provider !== prevProvider) {
-    setPrevProvider(provider);
+  // Populate form when provider data first arrives for this id (render-time
+  // state-sync). Guarded by id, not object identity: react-query can return a
+  // new `provider` reference for the SAME record (refetchOnReconnect, a
+  // stale invalidation fired by another mutation, …) and that must never
+  // silently clobber edits the admin has in progress. Once the form has been
+  // initialized for this id, later refetches of the same id are ignored here.
+  const [initializedForId, setInitializedForId] = useState<string | undefined>(undefined);
+  if (provider && initializedForId !== providerId) {
+    setInitializedForId(providerId);
     setForm({
       name: provider.name,
       slug: provider.slug,

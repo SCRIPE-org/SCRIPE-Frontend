@@ -83,7 +83,7 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
       </div>
 
       {/* Waterfall Chart */}
-      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)]">
         <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
           <CardTitle className="text-sm font-medium text-nx-ink-3">
             {t("entitlements.analytics.revenue.mrrWaterfall")}
@@ -195,7 +195,7 @@ function SummaryCard({
     <div
       className={`rounded-nx-md border p-3 text-center transition-[background-color,border-color,box-shadow] duration-nx-standard ease-nx-enter motion-reduce:transition-none ${
         highlight
-          ? "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] bg-gradient-to-br from-nx-surface to-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] shadow-sm"
+          ? "border-[color:color-mix(in_srgb,var(--nx-line)_50%,transparent)] bg-gradient-to-br from-nx-surface to-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)]"
           : "border-[color:color-mix(in_srgb,var(--nx-line)_20%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-surface)_50%,transparent)]"
       }`}
     >

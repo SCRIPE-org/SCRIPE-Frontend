@@ -12,16 +12,28 @@ import { useI18n } from "@core/providers/i18n-provider";
  */
 export function useReviewsViewModel() {
   const queryClient = useQueryClient();
-  const { reviewsRepository } = marketplaceContainer;
+  const { reviewsRepository, appListingsRepository } = marketplaceContainer;
   const { success, error: showError } = useEnhancedToast();
   const { t } = useI18n();
   const [page, setPage] = useState(1);
+  const [appListingId, setAppListingId] = useState<string>("");
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["marketplace", "reviews"] });
 
+  // Reviews are scoped to a single app listing (backend requires it —
+  // GetAppReviewsQuery has no "all listings" mode). The app-listings list
+  // below feeds the listing-picker so admins can select which app's reviews
+  // to moderate; without a selection the query stays disabled (mirrors the
+  // developer-picker pattern in useFinancialsViewModel for payouts).
+  const appListingsQuery = useQuery({
+    queryKey: ["marketplace", "reviews-listing-options"],
+    queryFn: () => appListingsRepository.getAll({ page: 1, pageSize: 100 }),
+  });
+
   const reviewsQuery = useQuery({
-    queryKey: ["marketplace", "reviews", page],
-    queryFn: () => reviewsRepository.getAll({ page, pageSize: 20 }),
+    queryKey: ["marketplace", "reviews", appListingId, page],
+    queryFn: () => reviewsRepository.getAll({ page, pageSize: 20, appListingId }),
+    enabled: !!appListingId,
   });
 
   const moderateMutation = useMutation({
@@ -47,6 +59,13 @@ export function useReviewsViewModel() {
     isLoading: reviewsQuery.isLoading,
     error: reviewsQuery.error,
     setPage,
+
+    // App-listing picker (required — reviews cannot be listed without one)
+    appListingId,
+    setAppListingId,
+    appListingOptions: appListingsQuery.data?.items ?? [],
+    isLoadingAppListingOptions: appListingsQuery.isLoading,
+
     moderate: moderateMutation.mutate,
     isModerating: moderateMutation.isPending,
   };

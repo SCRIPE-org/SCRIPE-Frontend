@@ -202,19 +202,19 @@ spec:
         - name: scripe
           image: scripe-api:latest
           ports:
-            - containerPort: 5001
+            - containerPort: 5035
           # STARTUP: Allow up to 5 minutes for DB migration on first deploy
           startupProbe:
             httpGet:
               path: /health/startup
-              port: 5001
+              port: 5035
             failureThreshold: 30    # 30 × 10s = 5 minutes max
             periodSeconds: 10
           # LIVENESS: Is the process alive? If not, K8s kills the pod
           livenessProbe:
             httpGet:
               path: /health/live
-              port: 5001
+              port: 5035
             initialDelaySeconds: 5
             periodSeconds: 15
             timeoutSeconds: 3
@@ -223,7 +223,7 @@ spec:
           readinessProbe:
             httpGet:
               path: /health/ready
-              port: 5001
+              port: 5035
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
@@ -246,9 +246,9 @@ spec:
   scripe-api:
     image: scripe-api:latest
     ports:
-      - "5001:5001"
+      - "5035:5035"
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5001/health/live || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:5035/health/live || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -266,7 +266,7 @@ spec:
     environment:
       - MODULE_NAME=Identity
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5001/health/ready || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:5035/health/ready || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3`,

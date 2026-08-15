@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useConvertedAmount } from "@core/hooks/useConvertedAmount";
 import { entitlementsContainer } from "@modules/entitlements/di";
+import { chartColor, chartPalette } from "@core/ui/chart";
 import type { GlobalSubscriptionItem } from "../../domain/entities/Subscription";
 
 /**
@@ -45,36 +46,32 @@ export interface EditionRevenueItem {
   color: string;
 }
 
+// Status carries severity meaning (good/neutral/warn/danger), so it maps to
+// the measured semantic ramp rather than a categorical chart slot — GracePeriod
+// is the ramp's fourth step (ok -> warn -> high -> critical), never a second
+// amber (design bar SCRIPE_FRONTEND_DESIGN_BAR.md §1.9).
 const STATUS_CHART_COLORS: Record<string, string> = {
-  Active: "#10b981",
-  Trialing: "#3b82f6",
-  Suspended: "#f59e0b",
-  Canceled: "#ef4444",
-  Expired: "#6b7280",
-  GracePeriod: "#f97316",
+  Active: "hsl(var(--success))",
+  Trialing: "hsl(var(--info))",
+  Suspended: "hsl(var(--warning))",
+  Canceled: "hsl(var(--destructive))",
+  Expired: "var(--nx-ink-3)",
+  GracePeriod: "hsl(var(--warning-strong))",
 };
 
+// Type has no severity meaning — it is purely categorical, so each type owns
+// a fixed `--chart-*` slot (colour follows the entity, never dataset rank).
 const TYPE_CHART_COLORS: Record<string, string> = {
-  Monthly: "#8b5cf6",
-  Yearly: "#6366f1",
-  Lifetime: "#ec4899",
-  Trial: "#0ea5e9",
-  AddOn: "#14b8a6",
+  Monthly: chartColor(1),
+  Yearly: chartColor(4),
+  Lifetime: chartColor(6),
+  Trial: chartColor(3),
+  AddOn: chartColor(5),
 };
 
-const EDITION_CHART_COLORS = [
-  "#6366f1",
-  "#8b5cf6",
-  "#ec4899",
-  "#f43f5e",
-  "#ef4444",
-  "#f97316",
-  "#f59e0b",
-  "#10b981",
-  "#14b8a6",
-  "#0ea5e9",
-  "#3b82f6",
-];
+// Editions are an open-ended, tenant-defined set — cycle the fixed 8-slot
+// categorical palette rather than hand-picking hex per index.
+const EDITION_CHART_COLORS = chartPalette(8);
 
 /**
  * React hook/ViewModel orchestrating state and data flows for subscriptions overview view model.
@@ -183,7 +180,7 @@ export function useSubscriptionsOverviewViewModel() {
         status,
         count,
         percentage: Math.round((count / total) * 1000) / 10,
-        color: STATUS_CHART_COLORS[status] || "#6b7280",
+        color: STATUS_CHART_COLORS[status] || "var(--nx-ink-3)",
       }))
       .sort((a, b) => b.count - a.count);
   }, [subscriptions]);
@@ -200,7 +197,7 @@ export function useSubscriptionsOverviewViewModel() {
         type,
         count,
         percentage: Math.round((count / total) * 1000) / 10,
-        color: TYPE_CHART_COLORS[type] || "#6b7280",
+        color: TYPE_CHART_COLORS[type] || "var(--nx-ink-3)",
       }))
       .sort((a, b) => b.count - a.count);
   }, [subscriptions]);

@@ -61,6 +61,9 @@ function RecipientSearchInput({
   const { t } = useI18n();
   const dropdownRef = React.useRef<HTMLDivElement>(null);
   const [showDropdown, setShowDropdown] = React.useState(false);
+  const [activeIndex, setActiveIndex] = React.useState(-1);
+  const inputId = React.useId();
+  const listboxId = `${inputId}-listbox`;
 
   React.useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -72,20 +75,26 @@ function RecipientSearchInput({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // A highlighted index from a previous keystroke must never survive into a
+  // result set it no longer indexes into.
+  React.useEffect(() => {
+    setActiveIndex(-1);
+  }, [search, results]);
+
   const noResults = search.length >= 2 && !isSearching && results.length === 0;
   const showCustomHint = noResults && search.includes("@") && onCustomEmail;
+  const isOpen = showDropdown && search.length >= 2;
+  const activeOptionId = activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined;
 
   return (
     <div className="space-y-2">
-      <Label className={cn(error && "text-destructive")}>{label}</Label>
+      <Label htmlFor={inputId} className={cn(error && "text-destructive")}>
+        {label}
+      </Label>
       {selectedRecipients.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-1.5">
           {selectedRecipients.map((r) => (
-            <Badge
-              key={r.email}
-              variant={r.type === "custom" ? "outline" : "secondary"}
-              className={cn("gap-1", r.type === "custom" && "border-info/50 text-info")}
-            >
+            <Badge key={r.email} variant={r.type === "custom" ? "outline" : "secondary"} className="gap-1">
               {r.type === "custom" && <Mail className="h-3 w-3" aria-hidden="true" />}
               {r.name || r.email}
               <button
@@ -109,6 +118,13 @@ function RecipientSearchInput({
             aria-hidden="true"
           />
           <Input
+            id={inputId}
+            role="combobox"
+            aria-expanded={isOpen}
+            aria-controls={listboxId}
+            aria-autocomplete="list"
+            aria-haspopup="listbox"
+            aria-activedescendant={isOpen ? activeOptionId : undefined}
             placeholder={placeholder}
             value={search}
             onChange={(e) => {
@@ -117,10 +133,31 @@ function RecipientSearchInput({
             }}
             onFocus={() => setShowDropdown(true)}
             onKeyDown={(e) => {
-              if (e.key === "Enter" && onCustomEmail && search.trim()) {
+              if (isOpen && results.length > 0 && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
                 e.preventDefault();
-                const added = onCustomEmail(search);
-                if (added) setShowDropdown(false);
+                setActiveIndex((prev) => {
+                  const count = results.length;
+                  if (e.key === "ArrowDown") return (prev + 1) % count;
+                  return (prev - 1 + count) % count;
+                });
+                return;
+              }
+              if (e.key === "Escape" && isOpen) {
+                setShowDropdown(false);
+                return;
+              }
+              if (e.key === "Enter") {
+                if (isOpen && activeIndex >= 0 && results[activeIndex]) {
+                  e.preventDefault();
+                  onAdd(results[activeIndex]);
+                  setShowDropdown(false);
+                  return;
+                }
+                if (onCustomEmail && search.trim()) {
+                  e.preventDefault();
+                  const added = onCustomEmail(search);
+                  if (added) setShowDropdown(false);
+                }
               }
             }}
             className={cn("ps-9", error && "border-destructive focus-visible:ring-destructive")}
@@ -132,43 +169,57 @@ function RecipientSearchInput({
             />
           )}
         </div>
-        {showDropdown && search.length >= 2 && (
+        {isOpen && (
           <div className="absolute top-full z-dropdown mt-1 max-h-48 w-full overflow-y-auto rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover">
             {results.length > 0 ? (
-              results.map((r) => (
+              <div id={listboxId} role="listbox" aria-label={label}>
+                {results.map((r, idx) => (
+                  <button
+                    key={r.email}
+                    id={`${listboxId}-option-${idx}`}
+                    role="option"
+                    aria-selected={idx === activeIndex}
+                    type="button"
+                    className={cn(
+                      "flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none",
+                      idx === activeIndex && "bg-nx-hover"
+                    )}
+                    onMouseEnter={() => setActiveIndex(idx)}
+                    onClick={() => {
+                      onAdd(r);
+                      setShowDropdown(false);
+                    }}
+                  >
+                    <span className="font-medium text-nx-ink">{r.name || r.email}</span>
+                    <span className="text-xs text-nx-ink-3">{r.email}</span>
+                  </button>
+                ))}
+              </div>
+            ) : showCustomHint ? (
+              <div id={listboxId} role="listbox" aria-label={label}>
                 <button
-                  key={r.email}
+                  id={`${listboxId}-option-0`}
+                  role="option"
+                  aria-selected={false}
                   type="button"
-                  className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
+                  className="flex w-full items-center gap-2 px-3 py-3 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                   onClick={() => {
-                    onAdd(r);
-                    setShowDropdown(false);
+                    if (onCustomEmail) {
+                      const added = onCustomEmail(search);
+                      if (added) setShowDropdown(false);
+                    }
                   }}
                 >
-                  <span className="font-medium text-nx-ink">{r.name || r.email}</span>
-                  <span className="text-xs text-nx-ink-3">{r.email}</span>
+                  <Mail className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
+                  <span className="text-nx-ink">
+                    {t("messaging.email.sendToCustomEmail")}{" "}
+                    <strong className="text-nx-ink">{search.trim()}</strong>
+                  </span>
                 </button>
-              ))
-            ) : showCustomHint ? (
-              <button
-                type="button"
-                className="flex w-full items-center gap-2 px-3 py-3 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
-                onClick={() => {
-                  if (onCustomEmail) {
-                    const added = onCustomEmail(search);
-                    if (added) setShowDropdown(false);
-                  }
-                }}
-              >
-                <Mail className="h-4 w-4 text-info" aria-hidden="true" />
-                <span className="text-nx-ink">
-                  {t("messaging.email.sendToCustomEmail")}{" "}
-                  <strong className="text-info">{search.trim()}</strong>
-                </span>
-              </button>
+              </div>
             ) : (
               noResults && (
-                <div className="px-3 py-4 text-center text-sm text-nx-ink-3">
+                <div id={listboxId} role="status" className="px-3 py-4 text-center text-sm text-nx-ink-3">
                   <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
                   {t("messaging.email.noRecipientsFound")}{" "}
                   {t("messaging.email.noRecipientsFoundHint")}
@@ -246,6 +297,8 @@ export interface ComposeSectionProps {
  */
 export function ComposeSection(vm: ComposeSectionProps) {
   const { t } = useI18n();
+  const subjectId = React.useId();
+  const bodyLabelId = React.useId();
 
   return (
     <Card>
@@ -325,7 +378,7 @@ export function ComposeSection(vm: ComposeSectionProps) {
         {/* Subject */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label className={cn(vm.fieldErrors.subject && "text-destructive")}>
+            <Label htmlFor={subjectId} className={cn(vm.fieldErrors.subject && "text-destructive")}>
               {t("messaging.email.subject")} *
             </Label>
             <span
@@ -339,6 +392,7 @@ export function ComposeSection(vm: ComposeSectionProps) {
           </div>
           <div className="flex gap-1.5">
             <Input
+              id={subjectId}
               placeholder={t("messaging.email.subjectPlaceholder")}
               value={vm.subject}
               onChange={(e) => vm.setSubject(e.target.value)}
@@ -385,9 +439,12 @@ export function ComposeSection(vm: ComposeSectionProps) {
           </div>
         </div>
 
-        {/* Body — Rich Text Editor */}
-        <div className="space-y-2">
-          <Label className={cn(vm.fieldErrors.body && "text-destructive")}>
+        {/* Body — Rich Text Editor. RichTextEditor's contenteditable has no
+            id/aria-labelledby prop to bind a real htmlFor to (it lives inside
+            the shared, unowned rich-text-editor package), so the pairing is a
+            labelled group instead of a direct label/control association. */}
+        <div className="space-y-2" role="group" aria-labelledby={bodyLabelId}>
+          <Label id={bodyLabelId} className={cn(vm.fieldErrors.body && "text-destructive")}>
             {t("messaging.email.body")} *
           </Label>
           <RichTextEditor

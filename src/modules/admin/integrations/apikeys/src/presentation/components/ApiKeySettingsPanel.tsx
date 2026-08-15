@@ -13,9 +13,16 @@ interface ApiKeySettingsPanelProps {
   detail: ApiKeyDetail;
   isUpdating: boolean;
   onUpdate: (request: UpdateApiKeyDetailRequest) => void;
+  /** Gates editing/saving — mirrors the backend's apikeys.update requirement. */
+  canUpdate: boolean;
 }
 
-export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySettingsPanelProps) {
+export function ApiKeySettingsPanel({
+  detail,
+  isUpdating,
+  onUpdate,
+  canUpdate,
+}: ApiKeySettingsPanelProps) {
   const { t } = useI18n();
 
   const [name, setName] = useState(detail.name);
@@ -37,9 +44,14 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
     alertThreshold !== detail.alertThresholdPercent.toString() ||
     ipWhitelist !== (detail.ipWhitelist ?? "");
 
+  // Combines both gates the fields/button already render off of: the key must be usable
+  // (isActive) AND the caller must actually hold apikeys.update. Backend enforcement was
+  // always intact for this — this is closing the frontend-only defense-in-depth gap.
+  const canEdit = detail.isActive && canUpdate;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!detail.isActive) return;
+    if (!canEdit) return;
 
     onUpdate({
       name,
@@ -70,7 +82,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                disabled={!detail.isActive}
+                disabled={!canEdit}
               />
             </div>
             <div className="space-y-1.5">
@@ -82,8 +94,8 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
                 type="number"
                 value={rateLimit}
                 onChange={(e) => setRateLimit(e.target.value)}
-                placeholder="100 (Default)"
-                disabled={!detail.isActive}
+                placeholder={t("apikeys.settings.rateLimitPlaceholder")}
+                disabled={!canEdit}
               />
             </div>
           </div>
@@ -96,7 +108,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
               placeholder={t("apikeys.settings.descPlaceholder")}
-              disabled={!detail.isActive}
+              disabled={!canEdit}
             />
           </div>
 
@@ -110,8 +122,8 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
                 type="number"
                 value={monthlyQuota}
                 onChange={(e) => setMonthlyQuota(e.target.value)}
-                placeholder="Unlimited"
-                disabled={!detail.isActive}
+                placeholder={t("apikeys.settings.quotaPlaceholder")}
+                disabled={!canEdit}
               />
             </div>
             <div className="space-y-1.5">
@@ -126,7 +138,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
                 value={quotaResetDay}
                 onChange={(e) => setQuotaResetDay(e.target.value)}
                 required
-                disabled={!detail.isActive}
+                disabled={!canEdit}
               />
             </div>
             <div className="space-y-1.5">
@@ -141,7 +153,7 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
                 value={alertThreshold}
                 onChange={(e) => setAlertThreshold(e.target.value)}
                 required
-                disabled={!detail.isActive}
+                disabled={!canEdit}
               />
             </div>
           </div>
@@ -155,15 +167,17 @@ export function ApiKeySettingsPanel({ detail, isUpdating, onUpdate }: ApiKeySett
               value={ipWhitelist}
               onChange={(e) => setIpWhitelist(e.target.value)}
               placeholder="e.g. 192.168.1.1, 10.0.0.0/24 (Leave empty to allow all)"
-              disabled={!detail.isActive}
+              disabled={!canEdit}
             />
           </div>
         </CardContent>
-        <CardFooter className="justify-end border-t border-nx-line bg-nx-raised px-6 py-3">
-          <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !detail.isActive}>
-            {isUpdating ? t("common.saving") : t("common.saveChanges")}
-          </Button>
-        </CardFooter>
+        {canUpdate && (
+          <CardFooter className="justify-end border-t border-nx-line bg-nx-raised px-6 py-3">
+            <Button type="submit" size="sm" disabled={!hasChanges || isUpdating || !canEdit}>
+              {isUpdating ? t("common.saving") : t("common.saveChanges")}
+            </Button>
+          </CardFooter>
+        )}
       </Card>
     </form>
   );

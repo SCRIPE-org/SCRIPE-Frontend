@@ -162,12 +162,27 @@ export const en = {
       noFeatureValues: "No features configured yet.",
       setFeatureValue: "Set Value",
       featureUpdated: "Feature value updated",
+      marketingLabelModified: "Marketing label modified",
+      editMarketingLabel: "Edit marketing display label",
+      marketingLabelSectionTitle: "Marketing Display Label",
+      marketingLabelSectionHint: "— overrides how this feature appears on plan cards",
+      englishLabelField: "English label",
+      arabicLabelField: "Arabic label",
+      // Field-locked example content, not UI chrome: the EN box always wants
+      // an English example, the AR box always wants an Arabic one, regardless
+      // of the admin's own interface language — so these two hold the same
+      // literal value in both locale files by design (mirrors the sign-in
+      // vault's fixed-language fields, not a translation).
+      englishLabelPlaceholder: "e.g. Up to 25 Admins",
+      arabicLabelPlaceholder: "مثال: حتى 25 مشرف",
       removeFeature: "Remove Feature",
       featureRemoved: "Feature Removed",
       featureRemovedDesc: "The feature value was removed from this edition.",
       manageFeatures: "Manage Features",
       manageFeaturesDescription: "Manage features and limits for this subscription edition.",
       noEditions: "No editions found",
+      allEditionsLoadError:
+        "Couldn't load the full list of editions. Some dropdowns may show incomplete results.",
       systemBadge: "System",
       retiredBadge: "Retired",
       editionName: "Edition Name",

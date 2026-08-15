@@ -4,6 +4,7 @@
 import type {
   IWorkItemRepository,
   WorkItemListParams,
+  AssignableAdmin,
 } from "../../domain/interfaces/IWorkItemRepository";
 import type { IWorkItemService } from "../../domain/interfaces/IWorkItemService";
 import type { WorkItem } from "../../domain/entities/WorkItem";
@@ -41,5 +42,10 @@ export class WorkItemRepository implements IWorkItemRepository {
 
   async delete(id: string): Promise<void> {
     await this.service.delete(id);
+  }
+
+  async searchAssignableAdmins(search: string): Promise<AssignableAdmin[]> {
+    const model = await this.service.searchAssignableAdmins(search);
+    return model.items.map(WorkItemMapper.toAssignableAdmin);
   }
 }

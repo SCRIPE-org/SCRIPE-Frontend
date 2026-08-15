@@ -7,7 +7,7 @@
 
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
@@ -53,12 +53,14 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   const { t } = useI18n();
   const { success } = useEnhancedToast();
 
-  // Build query key using the factory — consistent with invalidation
-  const queryKey: string[] = tenantId
-    ? [...qk.admins.active(tenantId)]
-    : useMyTenant
-      ? [...qk.admins.all, "myTenant"]
-      : [...qk.admins.all];
+  // Build query key using the factory — memoized for reference stability
+  const queryKey: string[] = useMemo(() => {
+    return tenantId
+      ? [...qk.admins.active(tenantId)]
+      : useMyTenant
+        ? [...qk.admins.all, "myTenant"]
+        : [...qk.admins.all];
+  }, [tenantId, useMyTenant]);
 
   // ============ Core CRUD ViewModel (React Query Engine) ============
   const vm = useCrudViewModel<Admin, CreateAdminRequest, UpdateAdminRequest>(queryKey, {

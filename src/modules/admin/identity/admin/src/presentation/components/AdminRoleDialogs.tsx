@@ -16,6 +16,7 @@ import { Badge } from "@core/ui/badge";
 import { PasswordInput } from "@core/ui/password-input";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { EmptyState } from "@core/ui/empty-state";
 import { Shield, Trash2, Building2 } from "lucide-react";
@@ -57,8 +58,15 @@ export function AssignRoleDialog({
     }
   }, [open, vm]);
 
-  const handleSave = async () => {
+  // Assigning a role takes effect immediately — same as ManageRolesDialog and
+  // ViewRolesDialog's removal, this now goes through a confirmation step
+  // rather than committing on the first click (matches "Transfer Protection"
+  // and "Resend setup email" elsewhere in the admin view).
+  const [confirmOpen, setConfirmOpen] = useState(false);
+
+  const handleConfirmAssign = async () => {
     await vm.handleAssignSubmit();
+    setConfirmOpen(false);
     onOpenChange(false);
   };
 
@@ -101,6 +109,7 @@ export function AssignRoleDialog({
             type="multi"
             loading={vm.isLoadingRoles}
           />
+          <p className="text-xs text-nx-ink-3">{vm.t("roles.priorityHint")}</p>
         </div>
 
         {/* Inherit Toggle - Show if tenant selected */}
@@ -123,11 +132,27 @@ export function AssignRoleDialog({
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
             {vm.t("common.cancel")}
           </Button>
-          <Button onClick={handleSave} loading={isLoading} disabled={vm.assignRoleIds.length === 0}>
+          <Button
+            onClick={() => setConfirmOpen(true)}
+            loading={isLoading}
+            disabled={vm.assignRoleIds.length === 0}
+          >
             {vm.t("admin.role.assign")}
           </Button>
         </div>
       </div>
+
+      <ConfirmationDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        variant="warning"
+        title={vm.t("admin.role.assignTitle")}
+        description={`${vm.t("admin.role.assignDescription")} ${admin?.displayName || ""}`}
+        confirmText={vm.t("admin.role.assign")}
+        cancelText={vm.t("common.cancel")}
+        onConfirm={handleConfirmAssign}
+        isLoading={isLoading}
+      />
     </GenericModal>
   );
 }
@@ -156,12 +181,23 @@ export function ViewRolesDialog({
   // ViewModel handles fetching roles
   const vm = useAdminRolesViewModel(admin, async () => {}, onRemoveRole);
   const [removingId, setRemovingId] = useState<string | null>(null);
+  // Removal used to fire on the first Trash2 click — the same missing
+  // confirmation step as AssignRoleDialog/ManageRolesDialog, now closed with
+  // the same ConfirmationDialog pattern.
+  const [roleToRemove, setRoleToRemove] = useState<AdminRoleData | null>(null);
 
   const handleRemove = async (role: AdminRoleData) => {
     setRemovingId(role.roleId);
     await onRemoveRole(role.roleId, role.tenantId);
     await vm.refetchRoles();
     setRemovingId(null);
+  };
+
+  const handleConfirmRemove = async () => {
+    if (!roleToRemove) return;
+    const role = roleToRemove;
+    setRoleToRemove(null);
+    await handleRemove(role);
   };
 
   return (
@@ -216,7 +252,7 @@ export function ViewRolesDialog({
                   variant="ghost"
                   size="icon"
                   className="text-nx-ink-3 hover:bg-destructive/10 hover:text-destructive"
-                  onClick={() => handleRemove(role)}
+                  onClick={() => setRoleToRemove(role)}
                   loading={removingId === role.roleId}
                   disabled={isRemoving && removingId !== role.roleId}
                   aria-label={vm.t("common.delete")}
@@ -234,6 +270,23 @@ export function ViewRolesDialog({
           </Button>
         </div>
       </div>
+
+      <ConfirmationDialog
+        open={!!roleToRemove}
+        onOpenChange={(open) => {
+          if (!open) setRoleToRemove(null);
+        }}
+        variant="destructive"
+        title={vm.t("admin.role.removeConfirmTitle")}
+        description={vm.t("admin.role.removeConfirmDescription", {
+          role: roleToRemove?.roleNameEn ?? "",
+          admin: admin?.displayName ?? "",
+        })}
+        confirmText={vm.t("common.delete")}
+        cancelText={vm.t("common.cancel")}
+        onConfirm={handleConfirmRemove}
+        isLoading={isRemoving}
+      />
     </GenericModal>
   );
 }
@@ -312,6 +365,7 @@ export function ResetPasswordDialog({
             <Label htmlFor="password">{t("admin.writePassword")} *</Label>
             <PasswordInput
               id="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               minLength={6}
@@ -332,6 +386,152 @@ export function ResetPasswordDialog({
             variant="destructive"
           >
             {t("admin.resetPassword")}
+          </Button>
+        </div>
+      </div>
+    </GenericModal>
+  );
+}
+
+// ========== Manual Setup Dialog ==========
+
+interface ManualSetupDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  admin: Admin | null;
+  onManualSetup: (
+    newPassword: string,
+    confirmPassword: string,
+    mustChangePassword: boolean
+  ) => Promise<void>;
+  isLoading: boolean;
+}
+
+/**
+ * Presentation UI component rendering the manual account setup dialog.
+ * Lets an admin set a password directly for an email-invited admin who hasn't activated
+ * yet, as an alternative to resending the setup email, with an explicit choice of whether
+ * the target must change that password on next login.
+ */
+export function ManualSetupDialog({
+  open,
+  onOpenChange,
+  admin,
+  onManualSetup,
+  isLoading,
+}: ManualSetupDialogProps) {
+  const { t } = useI18n();
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [mustChangePassword, setMustChangePassword] = useState(true);
+  // Submit-time error — the button used to be silently `disabled` while invalid, which
+  // gave zero feedback when browser autofill left one field empty. Validating on click
+  // and surfacing the reason here means a click is never a silent no-op.
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Reset form when opening
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setPassword("");
+      setConfirmPassword("");
+      setMustChangePassword(true);
+      setSubmitError(null);
+    }
+  }
+
+  const passwordsMatch = password.length > 0 && password === confirmPassword;
+
+  const handleSubmit = async () => {
+    if (password.length < 6) {
+      setSubmitError(t("admin.passwordTooShort"));
+      return;
+    }
+    if (password !== confirmPassword) {
+      setSubmitError(t("admin.passwordsDoNotMatch"));
+      return;
+    }
+    setSubmitError(null);
+    try {
+      await onManualSetup(password, confirmPassword, mustChangePassword);
+      onOpenChange(false);
+    } catch {
+      // Mutation's onError already toasts the server-side reason (e.g. weak
+      // password rejected by tenant policy) — keep the dialog open so the
+      // admin can fix and retry instead of silently losing their input.
+    }
+  };
+
+  return (
+    <GenericModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t("admin.manualSetup")}
+      description={`${t("admin.manualSetupDesc")} ${admin?.displayName || ""}`}
+      size="sm"
+    >
+      <div className="space-y-4 py-2">
+        {submitError && (
+          <div className="rounded-nx-lg border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            {submitError}
+          </div>
+        )}
+
+        <div className="space-y-2">
+          <Label htmlFor="manualSetupPassword">{t("admin.setPasswordLabel")} *</Label>
+          <PasswordInput
+            id="manualSetupPassword"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setSubmitError(null);
+            }}
+            minLength={6}
+            placeholder={t("admin.writePassword")}
+            showStrengthIndicator={true}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="manualSetupConfirmPassword">{t("admin.confirmPassword")} *</Label>
+          <PasswordInput
+            id="manualSetupConfirmPassword"
+            autoComplete="new-password"
+            value={confirmPassword}
+            onChange={(e) => {
+              setConfirmPassword(e.target.value);
+              setSubmitError(null);
+            }}
+            minLength={6}
+            placeholder={t("admin.confirmPassword")}
+          />
+          {confirmPassword.length > 0 && !passwordsMatch && (
+            <p className="text-xs text-destructive">{t("admin.passwordsDoNotMatch")}</p>
+          )}
+        </div>
+
+        <div className="flex items-center justify-between rounded-nx-lg border border-nx-line bg-nx-raised p-3">
+          <div className="space-y-0.5">
+            <Label htmlFor="mustChangePassword" className="cursor-pointer text-sm font-medium">
+              {t("admin.mustChangePassword")}
+            </Label>
+            <p className="text-xs text-nx-ink-3">{t("admin.mustChangePasswordDescription")}</p>
+          </div>
+          <Switch
+            id="mustChangePassword"
+            checked={mustChangePassword}
+            onCheckedChange={setMustChangePassword}
+          />
+        </div>
+
+        <div className="flex justify-end gap-2 pt-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+            {t("common.cancel")}
+          </Button>
+          <Button onClick={handleSubmit} loading={isLoading}>
+            {t("admin.manualSetup")}
           </Button>
         </div>
       </div>

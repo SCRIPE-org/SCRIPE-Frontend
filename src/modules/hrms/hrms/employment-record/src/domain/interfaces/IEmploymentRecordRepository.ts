@@ -9,6 +9,9 @@ export interface EmploymentRecordListParams {
   page: number;
   pageSize: number;
   search?: string;
+  /** Server-side sort column key (e.g. "employmentType") — optional, additive (F-85). */
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 }
 
 export interface IEmploymentRecordRepository {

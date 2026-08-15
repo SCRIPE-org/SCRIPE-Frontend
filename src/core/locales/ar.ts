@@ -1223,6 +1223,14 @@ export const ar = {
     english: "الإنجليزية",
   },
   common: {
+    operationToast: {
+      successTitle: "تم {operation} بنجاح",
+      successWithItem: "تم {operationLower} {item} بنجاح.",
+      successGeneric: "اكتملت العملية بنجاح.",
+      errorTitle: "فشل {operation}",
+      errorWithItem: "فشل {operationLower} {item}.",
+      errorGeneric: "فشلت العملية.",
+    },
     included: "مُضمَّن",
     notIncluded: "غير مُضمَّن",
     welcomeBack: "مرحباً بعودتك، {{name}}",
@@ -1671,11 +1679,14 @@ export const ar = {
       offline: "أنت غير متصل بالإنترنت حالياً. يرجى التحقق من اتصالك بالإنترنت.",
       timeout: "انتهت مهلة الطلب. يرجى المحاولة مرة أخرى.",
       serverError: "حدث خطأ في الخادم. يرجى المحاولة لاحقاً.",
+      unknown: "حدث خطأ غير معروف.",
     },
     auth: {
       unauthorized: "ليس لديك صلاحية للوصول إلى هذا المورد.",
       sessionExpired: "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
       loginRequired: "يرجى تسجيل الدخول للمتابعة.",
+      forbidden: "ليس لديك صلاحية للقيام بهذا الإجراء.",
+      tenantContextForbidden: "ليس لديك صلاحية لتبديل سياق المستأجر.",
     },
     module: {
       description: "تعذّر تحميل {module}. لم يتأثر باقي التطبيق.",
@@ -1695,6 +1706,7 @@ export const ar = {
     description: "عرض واستعادة العناصر المحذوفة مؤخراً قبل الحذف النهائي",
     empty: "لا توجد إشعارات",
     emptyDesc: "لا توجد إشعارات حالياً",
+    loadError: "تعذّر تحميل الإشعارات",
   },
   export: {
     button: "تصدير التقرير",
@@ -1995,6 +2007,8 @@ export const ar = {
   navigation: {
     searchPlaceholder: "ابحث عن صفحة",
     togglePanel: "تبديل اللوحة",
+    primaryNav: "التنقل الرئيسي",
+    entityDetailsTitle: "تفاصيل {entity}",
     topbar: {
       workspacesMenu: "مساحات العمل",
       sectionsMenu: "الأقسام",
@@ -2056,6 +2070,9 @@ export const ar = {
     section: {
       locked: "مقفل",
       itemCount: "{count} عنصر",
+      module: "وحدة",
+      platform: "المنصة",
+      workspace: "مساحة العمل",
     },
     tenantBanner: {
       impersonating: "انتحال شخصية مستخدم",

@@ -13,7 +13,7 @@
 import { useEffect, useRef } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BRAND } from "@core/config/branding";
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 
 import { useLoginViewModel } from "../viewmodels/use-login-viewmodel";
 import { useSsoProviders } from "../viewmodels/useSsoProviders";
@@ -76,7 +76,8 @@ export function LoginView() {
 
   const sso = useSsoProviders({ tenantId, mode: branding?.identityProviderMode ?? "inherit" });
 
-  const logoSrc = branding?.logoUrl ? resolveFileUrl(branding.logoUrl) : "/app-logo.png";
+  const resolvedLogoSrc = useResolvedFileUrl(branding?.logoUrl);
+  const logoSrc = branding?.logoUrl ? resolvedLogoSrc || "/brand/app-logo-1024.png" : "/brand/app-logo-1024.png";
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 

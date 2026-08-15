@@ -35,6 +35,7 @@ export function ApiKeysView() {
       titleKey: "apikeys.title",
       subtitleKey: "apikeys.description",
       resource: "apikeys",
+      entityTypeKey: "integrations.api-key",
       columns: [
         {
           key: "name",

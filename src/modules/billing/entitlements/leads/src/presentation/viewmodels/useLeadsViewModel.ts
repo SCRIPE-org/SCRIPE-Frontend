@@ -19,6 +19,11 @@ import type {
 } from "../../domain/interfaces/ILeadsRepository";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import {
+  useCustomFieldsFormFields,
+  getCustomFieldsExtension,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
 
 // ── Query key factory (stable, typed) ─────────────────────────────────────────
 
@@ -28,6 +33,15 @@ const QUERY_KEYS = {
   detail: (id: string) => ["leads", "detail", id] as const,
   activity: (id: string) => ["leads", "activity", id] as const,
 };
+
+/**
+ * Registered in the backend's EntitlementsEntityTypeCatalog -- must match
+ * exactly. No ownerId is ever passed to useCustomFieldsFormFields below --
+ * CreateLeadDialog is create-only (there is no lead-edit form in this
+ * codebase, mirrors DSR_ENTITY_TYPE_KEY's identical "no edit form" comment),
+ * so this is always the create-form (definitions-only) shape.
+ */
+export const LEAD_ENTITY_TYPE_KEY = "entitlements.lead";
 
 // ── ViewModel ─────────────────────────────────────────────────────────────────
 
@@ -39,7 +53,7 @@ export function useLeadsViewModel() {
   const { leadsRepository } = entitlementsContainer;
   const queryClient = useQueryClient();
   const { t } = useI18n();
-  const { toast } = useEnhancedToast();
+  const { toast, error: toastError } = useEnhancedToast();
 
   // ── Filters & Pagination ──────────────────────────────────────────────────
   const [page, setPage] = useState(1);
@@ -53,6 +67,37 @@ export function useLeadsViewModel() {
 
   // ── Create dialog state ───────────────────────────────────────────────────
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+
+  // ── Custom Fields (Create dialog only — leads have no edit form) ─────────
+  // No ownerId — see LEAD_ENTITY_TYPE_KEY's own comment above.
+  const customFieldsQuery = useCustomFieldsFormFields(LEAD_ENTITY_TYPE_KEY, undefined);
+
+  // Keyed by the field's namespaced name (e.g. "__cf__nationality"), holding
+  // only values the user has actively edited this session — mirrors
+  // useWebhookFormViewModel's / useDsrViewModel's identical pattern.
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
+
+  const updateCustomFieldValue = useCallback((name: string, value: unknown) => {
+    setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  // Full-resubmit, matching GenericCrudView's own contract: every currently
+  // known custom field's effective value (edited-this-session or the fetched
+  // default) is sent, not just the ones the user touched.
+  const saveCustomFieldValues = useCallback(
+    async (ownerId: string) => {
+      const decoded: Record<string, unknown> = {};
+      for (const fc of customFieldsQuery.fieldConfigs) {
+        const key = decodeCustomFieldName(fc.name);
+        if (key === null) continue;
+        const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+        decoded[key] = raw === "" ? null : raw;
+      }
+      if (Object.keys(decoded).length === 0) return;
+      await getCustomFieldsExtension()?.saveValues(LEAD_ENTITY_TYPE_KEY, ownerId, decoded);
+    },
+    [customFieldsQuery.fieldConfigs, customFieldValues]
+  );
 
   // ── Convert dialog state ──────────────────────────────────────────────────
   const [convertLeadId, setConvertLeadId] = useState<string | null>(null);
@@ -80,6 +125,23 @@ export function useLeadsViewModel() {
     staleTime: 2 * 60 * 1000,
     placeholderData: (prev) => prev,
   });
+
+  // Delete / bulk-delete shrink the result set without ever touching `page`, which
+  // can strand the view on a page past the new end (e.g. "page 3 of 2" — an empty
+  // list even though earlier pages still have rows). Snap back once the server
+  // confirms the new total.
+  //
+  // Adjusted during render rather than in a useEffect so the correction lands in
+  // the same commit instead of an extra post-paint render pass.
+  const listTotalCount = listQuery.data?.totalCount;
+  const [lastSeenTotalCount, setLastSeenTotalCount] = useState(listTotalCount);
+  if (listTotalCount !== lastSeenTotalCount) {
+    setLastSeenTotalCount(listTotalCount);
+    if (listTotalCount !== undefined) {
+      const lastPage = Math.max(1, Math.ceil(listTotalCount / pageSize));
+      if (page > lastPage) setPage(lastPage);
+    }
+  }
 
   // ── Detail Query (fires only when a row is selected) ─────────────────────
   const detailQuery = useQuery({
@@ -142,6 +204,10 @@ export function useLeadsViewModel() {
     converted: allLeads.filter((l) => l.status === "Converted").length,
   };
 
+  // Per-row pending state — keyed by lead id so updating one card's status
+  // never busies/disables the others in the list/board.
+  const [pendingStatusLeadIds, setPendingStatusLeadIds] = useState<Set<string>>(new Set());
+
   // ── Update Status Mutation ────────────────────────────────────────────────
   const updateStatusMutation = useMutation({
     mutationFn: ({
@@ -168,6 +234,8 @@ export function useLeadsViewModel() {
         emailBodyOverride,
       }),
     onMutate: async ({ id, status }) => {
+      setPendingStatusLeadIds((prev) => new Set(prev).add(id));
+
       await queryClient.cancelQueries({ queryKey: ["leads", "list"] });
       await queryClient.cancelQueries({ queryKey: QUERY_KEYS.detail(id) });
 
@@ -205,16 +273,34 @@ export function useLeadsViewModel() {
       }
       toast({ title: t("leads.actions.statusUpdateError"), variant: "destructive" });
     },
+    onSettled: (_data, _error, { id }) => {
+      setPendingStatusLeadIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    },
   });
 
   // ── Create Lead Mutation ──────────────────────────────────────────────────
+  // No onSuccess here -- success side effects (invalidate, toast, dialog
+  // close) only fire from handleCreateLead once saveCustomFieldValues has
+  // also settled, so a custom-field save failure can never be masked by an
+  // immediate "created" toast that closes the dialog out from under it.
+  // Mirrors useWebhookFormViewModel's / useDsrViewModel's identical sequencing.
   const createLeadMutation = useMutation({
     mutationFn: (params: CreateLeadParams) => leadsRepository.createLead(params),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["leads"] });
-      setIsCreateDialogOpen(false);
+    onError: (err: Error) => {
+      toastError({ title: t("common.error"), description: err.message });
     },
   });
+
+  // isPending alone would flip back to false the instant the create mutation
+  // settles, re-enabling the dialog's submit button while
+  // saveCustomFieldValues is still in flight right after it -- this stays
+  // true for the whole orchestrated submit, same as
+  // useWebhookFormViewModel's identical guard.
+  const [isCreatingLead, setIsCreatingLead] = useState(false);
 
   // ── Convert to Tenant Mutation ────────────────────────────────────────────
   const convertToTenantMutation = useMutation({
@@ -440,9 +526,32 @@ export function useLeadsViewModel() {
   const handleCloseCreateDialog = useCallback(() => setIsCreateDialogOpen(false), []);
   const handleCreateLead = useCallback(
     async (params: CreateLeadParams) => {
-      await createLeadMutation.mutateAsync(params);
+      setIsCreatingLead(true);
+      try {
+        let newLeadId: string;
+        try {
+          newLeadId = await createLeadMutation.mutateAsync(params);
+        } catch {
+          return; // createLeadMutation's onError already toasted
+        }
+        try {
+          await saveCustomFieldValues(newLeadId);
+        } catch {
+          toastError({ title: t("leads.createDialog.customFieldsSaveError") });
+          return; // the lead WAS created -- don't pretend the whole save succeeded
+        }
+        queryClient.invalidateQueries({ queryKey: ["leads"] });
+        toast.success({
+          title: t("leads.createDialog.created"),
+          description: t("leads.createDialog.createdDesc"),
+        });
+        setCustomFieldValues({});
+        setIsCreateDialogOpen(false);
+      } finally {
+        setIsCreatingLead(false);
+      }
     },
-    [createLeadMutation]
+    [createLeadMutation, saveCustomFieldValues, queryClient, t, toastError, toast]
   );
 
   const handleOpenConvertDialog = useCallback((id: string) => setConvertLeadId(id), []);
@@ -566,8 +675,8 @@ export function useLeadsViewModel() {
     isLoadingComms,
 
     // Mutation state
-    isUpdatingStatus: updateStatusMutation.isPending,
-    isCreatingLead: createLeadMutation.isPending,
+    isUpdatingStatus: (id: string) => pendingStatusLeadIds.has(id),
+    isCreatingLead,
     isConvertingLead: convertToTenantMutation.isPending,
     isAssigningLead: assignLeadMutation.isPending,
     isAddingNote: addNoteMutation.isPending,
@@ -602,6 +711,12 @@ export function useLeadsViewModel() {
     handleOpenCreateDialog,
     handleCloseCreateDialog,
     handleCreateLead,
+    // Custom fields (Create dialog only — leads have no edit form)
+    customFieldConfigs: customFieldsQuery.fieldConfigs,
+    customFieldsLoading: customFieldsQuery.isLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields: customFieldsQuery.refetch,
     handleOpenConvertDialog,
     handleCloseConvertDialog,
     handleConvertToTenant,

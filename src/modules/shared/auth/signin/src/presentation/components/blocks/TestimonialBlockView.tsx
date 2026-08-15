@@ -2,6 +2,7 @@
 
 import type { TestimonialBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { clamp } from "./block-style-utils";
+import Image from "next/image";
 
 /**
  * Presentation UI component rendering the testimonial block view.
@@ -18,7 +19,7 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
       style={{ borderColor: props.borderColor }}
     >
       {rating > 0 && (
-        <div className="mb-2 text-sm text-primary">{"*".repeat(Math.round(rating))}</div>
+        <div className="mb-2 text-sm text-nx-accent">{"*".repeat(Math.round(rating))}</div>
       )}
       <blockquote
         className={props.displayStyle === "large-quote" ? "text-xl font-semibold" : "text-sm"}
@@ -27,9 +28,12 @@ export function TestimonialBlockView({ block }: { block: TestimonialBlock }) {
       </blockquote>
       <figcaption className="mt-4 flex items-center gap-3 text-sm">
         {props.avatar && (
-          <img
+          <Image
             src={props.avatar}
             alt={props.author}
+            width={40}
+            height={40}
+            unoptimized
             className="h-10 w-10 rounded-full object-cover"
           />
         )}

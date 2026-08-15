@@ -124,7 +124,7 @@ scrape_configs:
   # ── Monolith Mode (single target) ──
   - job_name: 'scripe-backend'
     static_configs:
-      - targets: ['host.docker.internal:5001']
+      - targets: ['host.docker.internal:5035']
     metrics_path: '/metrics'
     scrape_interval: 15s
 

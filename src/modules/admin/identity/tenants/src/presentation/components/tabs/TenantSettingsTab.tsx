@@ -32,7 +32,9 @@ import {
 import { useTenantSettingsViewModel } from "@modules/identity/tenants/src/presentation/viewmodels/useTenantSettingsViewModel";
 import { TenantSettingsEditDialog } from "../TenantSettingsEditDialog";
 import { Skeleton } from "@core/ui/skeleton";
-import { cn, resolveFileUrl } from "@core/common/utils";
+import { cn } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
+import Image from "next/image";
 
 interface TenantSettingsTabProps {
   tenantId: string;
@@ -53,6 +55,10 @@ export function TenantSettingsTab({
   const isRtl = direction === "rtl";
   const vm = useTenantSettingsViewModel(tenantId);
   const queryClient = useQueryClient();
+  // Hooks must run unconditionally — called here, before the loading/error/
+  // empty early returns below.
+  const resolvedLogoUrl = useResolvedFileUrl(vm.settings?.logoUrl);
+  const resolvedFaviconUrl = useResolvedFileUrl(vm.settings?.faviconUrl);
 
   if (vm.isLoading) {
     return (
@@ -191,10 +197,13 @@ export function TenantSettingsTab({
 
           <div className="flex items-center gap-6">
             {/* Logo */}
-            {settings.logoUrl ? (
-              <img
-                src={resolveFileUrl(settings.logoUrl)}
+            {settings.logoUrl && resolvedLogoUrl ? (
+              <Image
+                src={resolvedLogoUrl}
                 alt={t("tenant.logoPreview")}
+                width={64}
+                height={64}
+                unoptimized
                 className="h-16 w-16 rounded-nx-lg border border-nx-line bg-nx-raised object-contain p-1.5"
               />
             ) : (
@@ -235,13 +244,16 @@ export function TenantSettingsTab({
 
           {/* Additional branding details */}
           <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {settings.faviconUrl && (
+            {settings.faviconUrl && resolvedFaviconUrl && (
               <div className="rounded-nx-md border border-nx-line bg-nx-raised p-2">
                 <p className="text-xs text-nx-ink-2">{t("tenant.favicon")}</p>
                 <div className="mt-1">
-                  <img
-                    src={resolveFileUrl(settings.faviconUrl)}
-                    alt="Favicon"
+                  <Image
+                    src={resolvedFaviconUrl}
+                    alt={t("tenant.favicon")}
+                    width={32}
+                    height={32}
+                    unoptimized
                     className="h-8 w-8 object-contain"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";

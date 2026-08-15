@@ -6,6 +6,7 @@ import {
   isValidCtaUrl,
 } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 import { ASPECT_MAP, HOVER_MAP, SHADOW_MAP } from "./block-constants";
+import Image from "next/image";
 
 /**
  * Presentation UI component rendering the image block view.
@@ -14,9 +15,12 @@ import { ASPECT_MAP, HOVER_MAP, SHADOW_MAP } from "./block-constants";
 export function ImageBlockView({ block }: { block: ImageBlock }) {
   const props = block.props;
   const image = (
-    <img
+    <Image
       src={props.src}
       alt={props.alt}
+      width={800}
+      height={450}
+      unoptimized
       className={`w-full ${ASPECT_MAP[props.aspectRatio || "auto"]} ${HOVER_MAP[props.hoverEffect || "none"]} ${SHADOW_MAP[props.shadow || "none"]}`}
       style={{
         maxWidth: props.maxWidth,

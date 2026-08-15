@@ -9,6 +9,7 @@ import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { AppListing } from "../../domain/entities/AppListing";
 import { Star, Globe, EyeOff, Trash2, Zap, ExternalLink } from "lucide-react";
+import Image from "next/image";
 
 interface AppListingCardProps {
   listing: AppListing;
@@ -17,6 +18,7 @@ interface AppListingCardProps {
   onToggleFeatured: () => void;
   onDelete: () => void;
   isPublishing: boolean;
+  isTogglingFeatured: boolean;
   isDeleting: boolean;
 }
 
@@ -33,6 +35,7 @@ export function AppListingCard({
   onToggleFeatured,
   onDelete,
   isPublishing,
+  isTogglingFeatured,
   isDeleting,
 }: AppListingCardProps) {
   const { t } = useI18n();
@@ -44,7 +47,7 @@ export function AppListingCard({
         {/* Icon */}
         <div className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-nx-md bg-nx-raised">
           {listing.iconUrl ? (
-            <img src={listing.iconUrl} alt="" className="size-full object-cover" />
+            <Image src={listing.iconUrl} alt="" width={40} height={40} unoptimized className="size-full object-cover" />
           ) : (
             <span className="text-lg font-bold text-nx-ink-2" aria-hidden="true">
               {listing.name.charAt(0)}
@@ -139,6 +142,7 @@ export function AppListingCard({
             size="sm"
             variant={listing.isFeatured ? "secondary" : "ghost"}
             onClick={onToggleFeatured}
+            disabled={isTogglingFeatured}
             aria-label={
               listing.isFeatured
                 ? t("marketplace.listingsRemoveFeatured")

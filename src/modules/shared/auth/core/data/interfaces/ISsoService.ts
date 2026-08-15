@@ -21,4 +21,5 @@ export interface ISsoService {
     tenantId: string;
   }): Promise<SsoCallbackResultDto>;
   buildSamlLoginUrl(params: { providerId: string; redirectUri?: string }): string;
+  completeSamlCallback(params: { code: string; state: string }): Promise<SsoCallbackResultDto>;
 }

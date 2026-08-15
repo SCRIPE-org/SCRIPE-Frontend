@@ -19,6 +19,8 @@ export function useStaffAssignmentViewModel() {
         page: params.page,
         pageSize: params.pageSize,
         search: params.search,
+        sortBy: params.sortBy,
+        sortDirection: params.sortDirection,
       });
       return {
         items: res.items || [],
@@ -41,7 +43,7 @@ export function useStaffAssignmentViewModel() {
     delete: async (id) => {
       await staffAssignmentRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

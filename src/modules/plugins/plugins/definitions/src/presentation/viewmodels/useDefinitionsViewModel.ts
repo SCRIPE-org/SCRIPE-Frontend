@@ -10,8 +10,20 @@ import type {
   CreateDefinitionRequest,
   UpdateDefinitionRequest,
 } from "../../domain/interfaces/IDefinitionsRepository";
+import {
+  useCustomFieldsFormFields,
+  getCustomFieldsExtension,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
 
 const QUERY_KEY = ["plugins", "definitions"];
+
+/**
+ * Registered in the backend's PluginsEntityTypeCatalog -- must match
+ * exactly (see Plugins.Application/PluginsEntityTypeCatalog.cs). Mirrors
+ * useWebhookFormViewModel's WEBHOOK_ENTITY_TYPE_KEY pattern.
+ */
+export const DEFINITION_ENTITY_TYPE_KEY = "plugins.definition";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for definitions view model.
@@ -29,11 +41,13 @@ export function useDefinitionsViewModel() {
 
   const openCreateForm = () => {
     setEditingDefinition(null);
+    setCustomFieldValues({});
     setIsFormOpen(true);
   };
 
   const openEditForm = (def: PluginDefinition) => {
     setEditingDefinition(def);
+    setCustomFieldValues({});
     setIsFormOpen(true);
   };
 
@@ -41,6 +55,42 @@ export function useDefinitionsViewModel() {
     setIsFormOpen(false);
     setEditingDefinition(null);
   };
+
+  // ── Custom Fields ─────────────────────────────────────────────
+  // No ownerId in create mode (definitions only); keyed by the definition's
+  // id once editing an existing definition (definitions merged with their
+  // stored values) -- mirrors useWebhookFormViewModel's identical pattern.
+  const customFieldsQuery = useCustomFieldsFormFields(
+    DEFINITION_ENTITY_TYPE_KEY,
+    editingDefinition ? editingDefinition.id : undefined
+  );
+
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
+
+  const updateCustomFieldValue = (name: string, value: unknown) => {
+    setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Full-resubmit, matching GenericCrudView's own contract: every currently
+  // known custom field's effective value (edited-this-session or the fetched
+  // default) is sent, not just the ones the user touched.
+  const saveCustomFieldValues = async (ownerId: string) => {
+    const decoded: Record<string, unknown> = {};
+    for (const fc of customFieldsQuery.fieldConfigs) {
+      const key = decodeCustomFieldName(fc.name);
+      if (key === null) continue;
+      const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+      decoded[key] = raw === "" ? null : raw;
+    }
+    if (Object.keys(decoded).length === 0) return;
+    await getCustomFieldsExtension()?.saveValues(DEFINITION_ENTITY_TYPE_KEY, ownerId, decoded);
+  };
+
+  // ── Delete Confirmation State ────────────────────────────────────────────────
+  const [deletingDefinition, setDeletingDefinition] = useState<PluginDefinition | null>(null);
+
+  const openDeleteConfirm = (def: PluginDefinition) => setDeletingDefinition(def);
+  const closeDeleteConfirm = () => setDeletingDefinition(null);
 
   // ── Data Fetching ──────────────────────────────────────────────────────────
   const {
@@ -55,24 +105,19 @@ export function useDefinitionsViewModel() {
   });
 
   // ── Create Mutation ─────────────────────────────────────────────────────────
+  // No onSuccess here -- success side effects (invalidate, toast, closeForm)
+  // only fire from handleFormSubmit once saveCustomFieldValues has also
+  // settled, so a custom-field save failure can never be masked by an
+  // immediate "created" toast that closes the dialog out from under it.
+  // Mirrors useWebhookFormViewModel's create/update mutations.
   const createMutation = useMutation({
     mutationFn: (data: CreateDefinitionRequest) => definitionsRepository.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("plugins.defCreate") });
-      closeForm();
-    },
     onError: () => error({ title: t("plugins.definitionsError") }),
   });
 
   // ── Update Mutation ─────────────────────────────────────────────────────────
   const updateMutation = useMutation({
     mutationFn: (data: UpdateDefinitionRequest) => definitionsRepository.update(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
-      success({ title: t("plugins.defEdit") });
-      closeForm();
-    },
     onError: () => error({ title: t("plugins.definitionsError") }),
   });
 
@@ -102,6 +147,7 @@ export function useDefinitionsViewModel() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
       success({ title: t("plugins.defDelete") });
+      closeDeleteConfirm();
     },
     onError: () => error({ title: t("plugins.definitionsError") }),
   });
@@ -117,12 +163,49 @@ export function useDefinitionsViewModel() {
     tier2: definitions.filter((d) => d.isTier2).length,
   };
 
+  // isPending alone would flip back to false the instant the entity mutation
+  // settles, re-enabling Save while saveCustomFieldValues is still in flight
+  // right after it -- this stays true for the whole orchestrated submit.
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // ── Handlers ────────────────────────────────────────────────────────────────
-  const handleFormSubmit = (data: CreateDefinitionRequest) => {
-    if (editingDefinition) {
-      updateMutation.mutate({ ...data, id: editingDefinition.id });
-    } else {
-      createMutation.mutate(data);
+  const handleFormSubmit = async (data: CreateDefinitionRequest) => {
+    setIsSubmitting(true);
+    try {
+      if (editingDefinition) {
+        try {
+          await updateMutation.mutateAsync({ ...data, id: editingDefinition.id });
+        } catch {
+          return; // updateMutation's onError already toasted
+        }
+        try {
+          await saveCustomFieldValues(editingDefinition.id);
+        } catch {
+          error({ title: t("plugins.defCustomFieldsSaveError") });
+          return; // the definition WAS updated -- don't pretend the whole save succeeded
+        }
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+        success({ title: t("plugins.defEdit") });
+        closeForm();
+      } else {
+        let createdId: string;
+        try {
+          createdId = await createMutation.mutateAsync(data);
+        } catch {
+          return; // createMutation's onError already toasted
+        }
+        try {
+          await saveCustomFieldValues(createdId);
+        } catch {
+          error({ title: t("plugins.defCustomFieldsSaveError") });
+          return; // the definition WAS created -- don't pretend the whole save succeeded
+        }
+        queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+        success({ title: t("plugins.defCreate") });
+        closeForm();
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -141,7 +224,19 @@ export function useDefinitionsViewModel() {
     openEditForm,
     closeForm,
     handleFormSubmit,
-    isSubmitting: createMutation.isPending || updateMutation.isPending,
+    isSubmitting,
+
+    // Custom fields
+    customFieldConfigs: customFieldsQuery.fieldConfigs,
+    customFieldsLoading: customFieldsQuery.isLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields: customFieldsQuery.refetch,
+
+    // Delete confirmation
+    deletingDefinition,
+    openDeleteConfirm,
+    closeDeleteConfirm,
 
     // Actions
     publish: (id: string) => publishMutation.mutate(id),

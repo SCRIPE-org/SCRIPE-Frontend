@@ -153,6 +153,7 @@ const DialogContent = React.forwardRef<
       <DialogPrimitive.Content
         ref={ref}
         dir={dir ?? direction}
+        aria-describedby={props["aria-describedby"] ?? undefined}
         className={cn(positionClasses, className)}
         onOpenAutoFocus={(e) => {
           // Prevent auto focus to allow dropdown inputs to work

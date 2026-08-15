@@ -36,6 +36,25 @@ export function DsrDetailInfo({ dsr, t }: DsrDetailInfoProps) {
             value={formatDateTimeUtc(dsr.completedAt)}
           />
         )}
+        {dsr.assignedToAdminId && (
+          <DetailRow
+            label={t("compliance.assignedAdmin")}
+            value={dsr.assignedToAdminId}
+            mono
+            copyable={dsr.assignedToAdminId}
+          />
+        )}
+        {dsr.requestType === "Export" &&
+          (dsr.status === "Completed" || dsr.status === "PartiallyCompleted") && (
+            <DetailRow
+              label={t("compliance.exportFile")}
+              value={
+                dsr.exportFileUrl
+                  ? t("compliance.exportFileReady")
+                  : t("compliance.exportFilePending")
+              }
+            />
+          )}
         {dsr.requesterNotes && (
           <DetailRow
             layout="stacked"

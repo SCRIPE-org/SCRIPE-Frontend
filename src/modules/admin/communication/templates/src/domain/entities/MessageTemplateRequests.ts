@@ -15,7 +15,6 @@ export interface CreateMessageTemplateRequest {
   body: string;
   language: string;
   isActive: boolean;
-  tenantId?: string;
   description?: string;
   placeholderSchema?: string;
   designVariables?: string;

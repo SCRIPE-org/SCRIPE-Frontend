@@ -17,6 +17,7 @@ import type { ThemeCard } from "../../domain/entities/ThemeCard";
 import type { ThemeDetail } from "../../domain/entities/ThemeDetail";
 import type { ThemeFilterState } from "../../domain/types/ThemeTypes";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { useI18n } from "@core/providers/i18n-provider";
 
 interface UseThemeMarketplaceReturn {
   // Data
@@ -72,6 +73,7 @@ const DEFAULT_FILTERS: ThemeFilterState = {
 export function useThemeMarketplace(): UseThemeMarketplaceReturn {
   const { themeMarketplaceRepository } = customizationContainer;
   const { toast } = useEnhancedToast();
+  const { t } = useI18n();
 
   // Data
   const [themes, setThemes] = useState<ThemeCard[]>([]);
@@ -123,12 +125,12 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
       setThemes(result.items);
       setTotalCount(result.totalCount);
     } catch (err) {
-      toast({ title: "Failed to load themes", variant: "destructive" });
+      toast({ title: t("studio.gallery.toasts.loadFailed"), variant: "destructive" });
     } finally {
       setIsLoading(false);
       loadingRef.current = false;
     }
-  }, [themeMarketplaceRepository, page, pageSize, filters, activeTab, toast]);
+  }, [themeMarketplaceRepository, page, pageSize, filters, activeTab, toast, t]);
 
   // ── Load featured ──
   const loadFeatured = useCallback(async () => {
@@ -151,12 +153,12 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
         const detail = await themeMarketplaceRepository.getBySlug(slug);
         setSelectedTheme(detail);
       } catch {
-        toast({ title: "Failed to load theme details", variant: "destructive" });
+        toast({ title: t("studio.gallery.toasts.detailLoadFailed"), variant: "destructive" });
       } finally {
         setIsDetailLoading(false);
       }
     },
-    [themeMarketplaceRepository, toast]
+    [themeMarketplaceRepository, toast, t]
   );
 
   const closeDetail = useCallback(() => {
@@ -170,15 +172,16 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
       try {
         await themeMarketplaceRepository.apply(slug, merge);
         toast({
-          title: "Theme applied to draft",
-          description: "Open the customizer to preview and publish.",
+          title: t("studio.gallery.toasts.applySuccessTitle"),
+          description: t("studio.gallery.toasts.applySuccessDescription"),
         });
 
         // Refresh themes to update isApplied state
         await loadThemes();
         return true;
       } catch (err: any) {
-        const message = err?.message || err?.response?.data?.error || "Failed to apply theme";
+        const message =
+          err?.message || err?.response?.data?.error || t("studio.gallery.toasts.applyFailedFallback");
         // Detect system admin without tenant context
         if (
           message.includes("System admins") ||
@@ -186,9 +189,8 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
           message.includes("drilldown")
         ) {
           toast({
-            title: "No tenant selected",
-            description:
-              "System admins must enter a tenant (via Tenant World) before applying themes. Go to Tenants → Enter Tenant → then open the Customizer.",
+            title: t("studio.gallery.toasts.noTenantSelectedTitle"),
+            description: t("studio.gallery.toasts.noTenantSelectedDescription"),
             variant: "destructive",
           });
         } else {
@@ -199,7 +201,7 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
         setIsApplying(false);
       }
     },
-    [themeMarketplaceRepository, toast, loadThemes]
+    [themeMarketplaceRepository, toast, loadThemes, t]
   );
 
   // ── Toggle favorite ──
@@ -235,12 +237,12 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
           await openDetail(slug);
         }
       } catch {
-        toast({ title: "Failed to update favorite", variant: "destructive" });
+        toast({ title: t("studio.gallery.toasts.favoriteUpdateFailed"), variant: "destructive" });
       } finally {
         setIsTogglingFavorite(null);
       }
     },
-    [themeMarketplaceRepository, selectedTheme, toast, openDetail]
+    [themeMarketplaceRepository, selectedTheme, toast, openDetail, t]
   );
 
   // ── Auto-load on filter/page/tab change ──

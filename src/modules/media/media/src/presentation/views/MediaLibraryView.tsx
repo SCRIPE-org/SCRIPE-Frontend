@@ -1,10 +1,14 @@
 /**
  * Media Library View
  *
- * Honest placeholder for the Media Library page. There is no working media
- * backend yet — `getMediaContainer()` (see ../../../di.ts) returns an empty
- * container, so this view deliberately does NOT pretend uploads, folders or
- * asset browsing exist. It states plainly that the feature is coming soon
+ * Honest placeholder for the Media Library page. The media backend is fully
+ * implemented and working (chunked upload, MediasController CRUD,
+ * Downloads/UploadsController, the CanAccessFileQuery/session download chain)
+ * and is already exercised today via branding, avatars, and identity-provider
+ * uploads. What's missing is a dedicated browse/organize UI here, so
+ * `getMediaContainer()` (see ../../../di.ts) still returns an empty container
+ * and this view deliberately does NOT pretend a file list, folders, or asset
+ * browsing exist. It states plainly that this specific page is coming soon
  * instead of rendering a dead "Upload" button.
  */
 "use client";

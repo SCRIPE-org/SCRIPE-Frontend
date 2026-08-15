@@ -57,7 +57,7 @@ export interface RoleJson {
 export interface RoleListResponseJson {
   items: RoleJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

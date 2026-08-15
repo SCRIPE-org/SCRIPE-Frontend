@@ -52,6 +52,7 @@ export const ar = {
     defEdit: "تعديل التعريف",
     defEditDesc: "تحديث تفاصيل تعريف الإضافة.",
     defDelete: "حذف التعريف",
+    defDeleteConfirmDesc: "هل أنت متأكد من حذف تعريف الإضافة «{{name}}»؟ سيفقد المستأجرون الذين ثبّتوها الوصول إليها.",
     defPublish: "نشر",
     defDeprecate: "إهمال",
     defViewManifest: "عرض الملف التعريفي",
@@ -72,5 +73,11 @@ export const ar = {
     defPlaceholderFrontendUrl: "https://plugin.example.com/ui",
     defPlaceholderIconUrl: "https://cdn.example.com/icon.png",
     defPlaceholderManifest: '{"entryPoints": [], "permissions": []}',
+
+    // ── Custom fields section (in the create/edit form) ───────────────
+    defCustomFieldsSection: "الحقول المخصصة",
+    defCustomFieldsSectionDesc: "حقول إضافية مُهيأة على مستوى المنصة لتعريف الإضافة هذا.",
+    defNoCustomFields: "لا توجد حقول مخصصة بعد.",
+    defCustomFieldsSaveError: "تم حفظ التعريف، لكن فشل حفظ قيم الحقول المخصصة.",
   },
 };

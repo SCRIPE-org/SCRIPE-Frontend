@@ -24,13 +24,22 @@ export default defineConfig({
     setupFiles: ["./vitest.setup.ts"],
     include: ["**/*.{test,spec}.{ts,tsx}"],
     exclude: ["node_modules", ".next", "dist", "e2e"],
+    // Vitest's 5000ms default is too tight for this suite's view-level tests,
+    // which mount a whole screen (GenericCrudView + Radix primitives +
+    // react-query) inside jsdom and await async custom-field/definition
+    // fetches. Those pass in ~1-2s on an idle machine but exceed 5s when the
+    // box is loaded, producing timeouts that look like real failures and
+    // aren't -- the same file passes in 7s when run on its own. Raised so a
+    // busy CI runner doesn't turn a correct test into a flake; genuinely
+    // hung tests still fail, just 15s later.
+    testTimeout: 15000,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
       exclude: [
         "node_modules/",
         ".next/",
-        "src/core/ui/components/**", // Shadcn components
+        "src/core/ui/*.tsx", // Shadcn-pattern primitives live directly here, not in a components/ subdir
         "**/*.d.ts",
         "**/*.config.*",
       ],

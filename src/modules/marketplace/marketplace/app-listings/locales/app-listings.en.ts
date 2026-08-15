@@ -76,6 +76,9 @@ export const en = {
     toolbarPricingAll: "All Pricing",
     toolbarPricingOneTime: "One-time",
     toolbarPricingSubscription: "Subscription",
+    toolbarPricingFreemium: "Freemium",
+    toolbarPricingPerSeat: "Per Seat",
+    toolbarPricingUsageBased: "Usage-Based",
     // ── AppDetailView ──
     detailBackToListings: "Back to App Listings",
     detailFailedToLoad: "Failed to load app listing.",

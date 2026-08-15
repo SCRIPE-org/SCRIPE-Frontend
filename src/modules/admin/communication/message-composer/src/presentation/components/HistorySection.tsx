@@ -1,7 +1,8 @@
 // FILE-EXCEPTION: file length
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
+import DOMPurify from "dompurify";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -23,9 +24,75 @@ import {
   CheckCircle2,
   Clock,
   Search,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
 import type { SentEmail } from "../../domain/entities/Email";
+
+// ─── Preview Canvas Skins ───────────────────────────────────
+// Mirrors the Dark/Light skins in Core.Application/Emails/ScripeEmailTheme.cs so
+// admins previewing a sent email here see the same canvas the backend actually
+// ships — a dark canvas by default (`EmailCanvas.Dark`), with Light reserved
+// for print-intended mail. Kept as literal values (not design tokens) because
+// this simulates a fixed, backend-owned email canvas, not the admin app's own.
+const EMAIL_CANVAS_SKIN = {
+  dark: { surface: "#0D0D0E", text: "#F7F8F5", link: "#C6FF00" },
+  light: { surface: "#F7F8F5", text: "#0D0D0E", link: "#4C6200" },
+} as const;
+type CanvasTheme = keyof typeof EMAIL_CANVAS_SKIN;
+
+// ─── Language / Direction ───────────────────────────────────
+// SentEmail carries no language field of its own (see domain/entities/Email.ts),
+// so direction is inferred from the actual sent text — the same signal a mail
+// client uses.
+const ARABIC_SCRIPT_RE = /[؀-ۿݐ-ݿࢠ-ࣿﭐ-﷿ﹰ-﻿]/;
+
+function detectDir(text: string): { lang: string; dir: "rtl" | "ltr" } {
+  const dir = ARABIC_SCRIPT_RE.test(text) ? "rtl" : "ltr";
+  return { lang: dir === "rtl" ? "ar" : "en", dir };
+}
+
+// Same DOMPurify allow-list as templates/PreviewDialog.tsx — one sanitization
+// policy for every surface that renders admin- or lead-controlled HTML into a
+// srcDoc iframe, instead of each preview inventing its own regex denylist.
+const SANITIZE_OPTIONS = {
+  ALLOWED_TAGS: [
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "h5",
+    "h6",
+    "p",
+    "br",
+    "hr",
+    "span",
+    "div",
+    "strong",
+    "b",
+    "em",
+    "i",
+    "u",
+    "s",
+    "ul",
+    "ol",
+    "li",
+    "table",
+    "thead",
+    "tbody",
+    "tr",
+    "th",
+    "td",
+    "a",
+    "img",
+    "blockquote",
+    "pre",
+    "code",
+  ],
+  ALLOWED_ATTR: ["href", "src", "alt", "class", "style", "target", "rel", "width", "height"],
+  ALLOW_DATA_ATTR: false,
+};
 
 // ─── Props ──────────────────────────────────────────────────
 /**
@@ -76,12 +143,30 @@ function ExpandedEmailRow({
   email,
   onResend,
   onUseAsTemplate,
+  canvasTheme,
+  onToggleCanvasTheme,
 }: {
   email: SentEmail;
   onResend?: (email: SentEmail) => void;
   onUseAsTemplate?: (email: SentEmail) => void;
+  canvasTheme: CanvasTheme;
+  onToggleCanvasTheme: () => void;
 }) {
   const { t } = useI18n();
+  const skin = EMAIL_CANVAS_SKIN[canvasTheme];
+  const { lang: previewLang, dir: previewDir } = useMemo(
+    () => detectDir(`${email.subject} ${email.body}`),
+    [email.subject, email.body]
+  );
+  const sanitizedBody = useMemo(
+    () => DOMPurify.sanitize(email.body, SANITIZE_OPTIONS),
+    [email.body]
+  );
+  const previewSrcDoc = useMemo(
+    () =>
+      `<!DOCTYPE html><html dir="${previewDir}" lang="${previewLang}"><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:${skin.text};padding:12px;background:${skin.surface}}img{max-width:100%;height:auto}a{color:${skin.link}}</style></head><body>${sanitizedBody}</body></html>`,
+    [previewDir, previewLang, skin, sanitizedBody]
+  );
   return (
     <TableRow>
       <TableCell colSpan={6} className="p-0">
@@ -102,26 +187,49 @@ function ExpandedEmailRow({
 
           {/* Body Preview */}
           <div>
-            <p className="mb-1 text-xs font-medium text-nx-ink-3">
-              {t("messaging.email.bodyPreview")}
-            </p>
-            {/* This is the recipient's paper, not our chrome: HTML email always
-                renders on a light canvas regardless of the reader's client
-                theme, so this pane stays white on purpose. */}
-            <div className="max-h-[200px] overflow-hidden rounded-nx-lg border border-nx-line bg-white">
+            <div className="mb-1 flex items-center justify-between">
+              <p className="text-xs font-medium text-nx-ink-3">
+                {t("messaging.email.bodyPreview")}
+              </p>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-6 gap-1 px-1.5 text-[10px]"
+                onClick={onToggleCanvasTheme}
+              >
+                {canvasTheme === "dark" ? (
+                  <Moon className="h-3 w-3" aria-hidden="true" />
+                ) : (
+                  <Sun className="h-3 w-3" aria-hidden="true" />
+                )}
+                {canvasTheme === "dark" ? t("theme.dark") : t("theme.light")}
+              </Button>
+            </div>
+            {/* This is the recipient's paper, not our chrome. The backend ships
+                a fixed dark canvas by default (EmailCanvas.Dark in
+                ScripeEmailTheme.cs) with no light-mode media query, so this
+                pane follows the toggle above rather than staying hardcoded
+                white — it defaults to dark to match. */}
+            <div
+              className="max-h-[200px] overflow-hidden rounded-nx-lg border border-nx-line"
+              style={{ background: skin.surface }}
+            >
               {email.body.includes("<") ? (
                 <iframe
-                  srcDoc={`<!DOCTYPE html><html><head><meta charset="utf-8"/><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;font-size:13px;line-height:1.5;color:#000;padding:12px;background:#fff}img{max-width:100%;height:auto}a{color:#3b82f6}</style></head><body>${email.body
-                    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-                    .replace(/on\w+="[^"]*"/gi, "")
-                    .replace(/on\w+='[^']*'/gi, "")}</body></html>`}
+                  srcDoc={previewSrcDoc}
                   sandbox="allow-same-origin"
                   className="w-full border-0"
                   style={{ height: "180px" }}
                   title={t("messaging.email.bodyPreview")}
                 />
               ) : (
-                <pre className="whitespace-pre-wrap p-4 font-sans text-sm text-black">
+                <pre
+                  dir={previewDir}
+                  lang={previewLang}
+                  className="whitespace-pre-wrap p-4 font-sans text-sm"
+                  style={{ color: skin.text }}
+                >
                   {email.body}
                 </pre>
               )}
@@ -206,6 +314,10 @@ function ExpandedEmailRow({
 export function HistorySection(vm: HistorySectionProps) {
   const { t } = useI18n();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  // Defaults to dark: that's what EmailCanvas.Dark ships to recipients by
+  // default (see ScripeEmailTheme.cs). One toggle for every expanded row —
+  // it's a viewing preference, not per-email data.
+  const [canvasTheme, setCanvasTheme] = useState<CanvasTheme>("dark");
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
@@ -387,6 +499,10 @@ export function HistorySection(vm: HistorySectionProps) {
                         email={email}
                         onResend={vm.onResend}
                         onUseAsTemplate={vm.onUseAsTemplate}
+                        canvasTheme={canvasTheme}
+                        onToggleCanvasTheme={() =>
+                          setCanvasTheme((prev) => (prev === "dark" ? "light" : "dark"))
+                        }
                       />
                     )}
                   </React.Fragment>

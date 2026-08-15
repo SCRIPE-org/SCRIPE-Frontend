@@ -68,11 +68,11 @@ export const optionalIsoDate = () =>
     .optional()
     .nullable();
 
-/** UUID v4 format */
-export const uuidField = () => z.string().uuid("Expected valid UUID");
+/** Entity ID field (supports raw UUIDs and encrypted IDs) */
+export const uuidField = () => z.string().min(1, "Expected valid entity ID");
 
-/** Optional UUID */
-export const optionalUuid = () => z.string().uuid("Expected valid UUID").optional().nullable();
+/** Optional Entity ID */
+export const optionalUuid = () => z.string().optional().nullable();
 
 /** URL field */
 export const urlField = () => z.string().url("Expected valid URL").optional().nullable();

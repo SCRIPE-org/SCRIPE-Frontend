@@ -26,6 +26,10 @@ export function InventoryView() {
       titleKey: "compliance.dataInventory",
       subtitleKey: "compliance.dataInventoryDesc",
       resource: "compliance",
+      // Registered in the backend's ComplianceEntityTypeCatalog -- must match
+      // exactly. Create/edit both route through GenericCrudView's own modal
+      // here, so this one line is all the wiring this screen needs.
+      entityTypeKey: "compliance.data-inventory",
       columns: [
         {
           key: "moduleName",
@@ -72,6 +76,15 @@ export function InventoryView() {
           label: t("compliance.isExported"),
           render: (_val: unknown, item: InventoryItem) => (
             <span>{item.isIncludedInExport ? t("common.yes") : t("common.no")}</span>
+          ),
+        },
+        {
+          key: "isGlobal",
+          label: t("compliance.scope"),
+          render: (_val: unknown, item: InventoryItem) => (
+            <Badge variant={item.isGlobal ? "info" : "secondary"}>
+              {item.isGlobal ? t("compliance.global") : t("common.tenant")}
+            </Badge>
           ),
         },
       ],

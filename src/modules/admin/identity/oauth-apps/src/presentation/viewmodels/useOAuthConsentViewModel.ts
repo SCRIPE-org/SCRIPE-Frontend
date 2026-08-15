@@ -154,7 +154,11 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
     } catch (err) {
       setIsApproving(false);
       appLogger.error("Approval failed:", err);
-      operationError(err instanceof Error ? err.message : t("auth.sso.callbackErrorGeneric"));
+      operationError(
+        "Approve",
+        undefined,
+        err instanceof Error ? err.message : t("auth.sso.callbackErrorGeneric")
+      );
     }
   };
 

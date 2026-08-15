@@ -103,12 +103,13 @@ export const en = {
       revokeTitle: "Revoke this key",
       revokeDesc:
         "Immediately invalidates this key. All requests using it will return 401. This can be undone by contacting support.",
-      deleteTitle: "Permanently delete this key",
-      deleteDesc: "Deletes the key and ALL associated usage logs and stats. This CANNOT be undone.",
+      deleteTitle: "Delete this key",
+      deleteDesc:
+        "Disables the key and its usage logs and stats immediately. They are permanently removed after 30 days.",
       deleteBtn: "Delete",
-      deleteConfirmTitle: "Permanently Delete API Key?",
+      deleteConfirmTitle: "Delete API Key?",
       deleteConfirmDesc:
-        "This will delete the key and all its logs permanently. Type the key name to confirm.",
+        "This disables the key immediately; the key and its logs are permanently removed after 30 days. Type the key name to confirm.",
       typeToConfirm: "Type key name to confirm",
     },
     rotate: {
@@ -119,9 +120,11 @@ export const en = {
       title: "Configuration Settings",
       name: "Key Name",
       rateLimit: "Rate Limit (hits/min)",
+      rateLimitPlaceholder: "100 (Default)",
       desc: "Description",
       descPlaceholder: "Explain what this integration key is used for...",
       quota: "Monthly Quota (total hits)",
+      quotaPlaceholder: "Unlimited",
       resetDay: "Quota Reset Day (1-28)",
       alert: "Alert Threshold (%)",
       whitelist: "IP Whitelist (comma-separated)",

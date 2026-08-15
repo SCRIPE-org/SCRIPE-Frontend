@@ -27,7 +27,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
 
       {/* Logo */}
       <Link href="/docs" className="docs-header-logo">
-        <img src="/app-logo.png" alt={BRAND.namePascal} className="docs-header-logo-img" />
+        <Image src="/brand/app-logo-1024.png" alt={BRAND.namePascal} width={32} height={32} className="docs-header-logo-img" />
         <span>{BRAND.nameUpper}</span>
       </Link>
 
@@ -117,6 +117,7 @@ function DocsLangSwitcherInline() {
 
 // ─── Inline Theme Toggle ───────────────────────────────────────
 import { useTheme } from "next-themes";
+import Image from "next/image";
 
 function DocsThemeToggleInline() {
   const { t } = useDocsI18n();

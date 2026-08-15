@@ -26,7 +26,7 @@ export class VenueProfileService implements IVenueProfileService {
     return {
       items: response.items.map((json) => VenueProfileModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

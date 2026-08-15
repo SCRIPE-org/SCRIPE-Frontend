@@ -15,9 +15,13 @@ const PERSONA_ICONS: Record<Persona, string> = {
   partner: "🤝",
 };
 
+// --com-violet and --com-cyan now both resolve to Signal Lime (the retired
+// violet+cyan brand duo collapsed onto Relay's one committed signal — see
+// commercial.css), so investor/cofounder could no longer be told apart by
+// color. Reassigned across three genuinely distinct tokens instead.
 const PERSONA_COLORS: Record<Persona, string> = {
-  investor: "var(--com-cyan)",
-  cofounder: "var(--com-violet)",
+  investor: "var(--com-violet)",
+  cofounder: "var(--com-amber)",
   partner: "var(--com-emerald)",
 };
 

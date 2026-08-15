@@ -16,5 +16,8 @@ export const ar = {
     // ── ReviewsView ──
     reviewsCountLabel: "{{count}} مراجعة",
     reviewsDeleteConfirmDesc: "هل أنت متأكد من حذف هذه المراجعة؟ لا يمكن التراجع عن هذا الإجراء.",
+    reviewsSelectAppListingLabel: "التطبيق",
+    reviewsSelectAppListingPlaceholder: "اختر تطبيقًا…",
+    reviewsSelectAppListingPrompt: "اختر تطبيقًا أعلاه لعرض مراجعاته وإدارتها.",
   },
 };

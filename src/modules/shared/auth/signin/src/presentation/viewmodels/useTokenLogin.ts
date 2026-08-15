@@ -28,7 +28,7 @@ export function useTokenLogin() {
   const queryClient = useQueryClient();
 
   const completeTokenLogin = useCallback(
-    async (result: { accessToken: string; refreshToken?: string }) => {
+    async (result: { accessToken: string; refreshToken?: string; mustChangePassword?: boolean }) => {
       try {
         // 1. Persist the access token
         secureTokenService.setAccessToken(result.accessToken);
@@ -43,8 +43,15 @@ export function useTokenLogin() {
         // 4. Invalidate any stale queries so protected pages reload fresh
         queryClient.invalidateQueries();
 
-        // 5. Redirect to dashboard
-        router.replace("/dashboard");
+        // 5. Respect a pending forced password change — mirrors the check
+        // already done in the password-login and 2FA-login paths
+        // (use-login-viewmodel.ts / use2FAHandler.ts). Without this, phone-OTP,
+        // passkey, and QR login could bypass the mandatory password-change gate.
+        const mustChange = result.mustChangePassword ?? false;
+        useAppStore.getState().setMustChangePassword(mustChange);
+
+        // 6. Redirect to dashboard (or the change-password gate)
+        router.replace(mustChange ? "/change-password" : "/dashboard");
       } catch {
         // If profile fetch fails, token is invalid — redirect to login
         secureTokenService.clearTokens();

@@ -7,6 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
+import { getSafeRedirectPath } from "./redirect-safety";
 
 /**
  * Exported type defining parameters and fields for login step configurations.
@@ -88,7 +89,10 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
       }
 
       hasTriggeredRedirect.current = true;
-      const targetPath = mustChange ? "/change-password" : redirectPath;
+      // redirectPath can come from the attacker-controlled `?redirect=` query
+      // param — validate same-origin/relative before navigating (open-redirect
+      // protection), since this bypasses use-login-viewmodel's handleRedirect.
+      const targetPath = mustChange ? "/change-password" : getSafeRedirectPath(redirectPath);
       setTimeout(() => {
         router.replace(targetPath);
       }, 100);

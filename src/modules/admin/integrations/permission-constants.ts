@@ -19,5 +19,6 @@ export const INTEGRATIONS_PERMISSIONS = {
   // ── API Keys ────────────────────────────────────────────
   API_KEYS_VIEW: "apikeys.view",
   API_KEYS_CREATE: "apikeys.create",
+  API_KEYS_UPDATE: "apikeys.update",
   API_KEYS_DELETE: "apikeys.delete",
 } as const;

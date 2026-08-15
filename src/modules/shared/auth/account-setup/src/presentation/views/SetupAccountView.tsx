@@ -28,6 +28,7 @@ import {
   SetupErrorView,
   PasswordCheck,
 } from "../components/SetupAccountStateViews";
+import Image from "next/image";
 
 /**
  * SetupAccountView is the main public page component for the workspace administrator setup flow.
@@ -89,7 +90,7 @@ export function SetupAccountView() {
       <Card className="w-full max-w-md border-border/50 shadow-xl">
         <CardHeader className="pb-2 text-center">
           <div className="mx-auto mb-3 rounded-full bg-primary/10 p-3">
-            <KeyRound className="h-7 w-7 text-primary" />
+            <KeyRound className="h-7 w-7 text-nx-accent" />
           </div>
           <CardTitle className="text-xl">{t("auth.accountSetup.setPasswordTitle")}</CardTitle>
           <CardDescription>
@@ -270,17 +271,24 @@ function PasswordField({
 }
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
+  // Logical `end-6` auto-flips with dir (RTL -> left, LTR -> right) via
+  // Tailwind's inset-inline-end utility — no direction branch needed, same
+  // established convention this file's own PasswordField already uses
+  // (`end-3`/`pe-10` below) and the codebase's ESLint no-restricted-syntax
+  // rule requires in place of physical right-/pr- utilities.
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-12">
-      <div className="absolute right-6 top-6 z-20 flex items-center gap-1">
+      <div className="absolute end-6 top-6 z-20 flex items-center gap-1">
         <LanguageSwitcher />
         <ThemeSwitcher />
       </div>
       <div className="mb-8 flex flex-col items-center gap-3">
         <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-          <img
-            src="/app-logo.png"
+          <Image
+            src="/brand/app-logo-1024.png"
             alt={`${BRAND.name} Logo`}
+            width={56}
+            height={56}
             className="h-full w-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = "none";

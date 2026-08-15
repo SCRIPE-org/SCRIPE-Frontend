@@ -20,6 +20,9 @@ export const ar = {
     financialsPayoutStatusProcessing: "قيد المعالجة",
     financialsPayoutStatusPaid: "مدفوع",
     financialsPayoutStatusFailed: "فشل",
+    financialsSelectDeveloperLabel: "المطور",
+    financialsSelectDeveloperPlaceholder: "اختر مطورًا…",
+    financialsSelectDeveloperPrompt: "اختر مطورًا أعلاه لعرض مدفوعاته.",
     // ── RevenueChart ──
     financialsRevenueChartTitle: "الإيرادات عبر الزمن",
     financialsNoRevenueData: "لا توجد بيانات إيرادات.",

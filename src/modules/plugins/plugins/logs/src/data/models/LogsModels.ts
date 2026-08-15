@@ -19,6 +19,6 @@ export interface PluginExecutionLogModel {
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }

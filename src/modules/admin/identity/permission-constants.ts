@@ -79,4 +79,10 @@ export const IDENTITY_PERMISSIONS = {
   // ── System ──────────────────────────────────────────────
   SYSTEM_IMPERSONATE: "system.impersonate",
   SYSTEM_MANAGE_SETTINGS: "system.manage_settings",
+
+  // ── Identity Context (tenant-switch / scoped access / device sessions) ──
+  IDENTITY_CONTEXT_SWITCH: "identity_context.switch",
+  IDENTITY_CONTEXT_SCOPES_VIEW: "identity_context.scopes_view",
+  IDENTITY_CONTEXT_SCOPES_MANAGE: "identity_context.scopes_manage",
+  IDENTITY_CONTEXT_DEVICES_MANAGE: "identity_context.devices_manage",
 } as const;

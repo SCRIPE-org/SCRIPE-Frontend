@@ -45,7 +45,7 @@ export interface AuditLogEntryJson {
 export interface AuditLogPagedResultJson {
   items: AuditLogEntryJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
 }
 

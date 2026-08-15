@@ -25,7 +25,7 @@ export interface QualificationJson {
 export interface QualificationListResponseJson {
   items: QualificationJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

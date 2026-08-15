@@ -34,7 +34,15 @@ export function MethodChipsSection({ methodChips, isLoading, t }: MethodChipsSec
       >
         {t("auth.otherMethods") || "or use a different method"}
       </div>
-      <div className="flex flex-wrap justify-center gap-1.5">
+      {/* 4+ methods: balanced 2-column grid (a centered flex-wrap breaks 3+1,
+          which reads as a mistake); 3 or fewer keep the centered row. */}
+      <div
+        className={
+          methodChips.length >= 4
+            ? "grid grid-cols-2 gap-1.5"
+            : "flex flex-wrap justify-center gap-1.5"
+        }
+      >
         {methodChips.map((chip) => (
           <Button
             key={chip.key}
@@ -44,7 +52,7 @@ export function MethodChipsSection({ methodChips, isLoading, t }: MethodChipsSec
             onClick={chip.onClick}
             disabled={isLoading}
             data-method-chip
-            className="inline-flex items-center gap-1.5 rounded-full px-[11px] py-[7px] text-[12px] font-medium transition-all duration-150"
+            className="inline-flex items-center justify-center gap-1.5 rounded-full px-[11px] py-[7px] text-[12px] font-medium transition-all duration-150"
             style={{
               background: "var(--sx-chip-bg, rgba(255,255,255,0.03))",
               borderColor: "var(--sx-chip-border, rgba(255,255,255,0.08))",

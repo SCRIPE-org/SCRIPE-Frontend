@@ -18,7 +18,7 @@ export function GridOverlay({ gridRows, show }: GridOverlayProps) {
 
   return (
     <div
-      className="pointer-events-none absolute inset-0 z-10"
+      className="pointer-events-none absolute inset-0 z-raised"
       style={{
         display: "grid",
         gridTemplateColumns: `repeat(${CANVAS_GRID_COLUMNS}, 1fr)`,

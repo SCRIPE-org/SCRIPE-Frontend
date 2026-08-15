@@ -137,6 +137,13 @@ export const ar = {
       cancel: "إلغاء",
       create: "إنشاء العميل المحتمل",
       creating: "جارٍ الإنشاء…",
+      created: "تم إنشاء العميل المحتمل",
+      createdDesc: "تم إنشاء العميل المحتمل بنجاح.",
+      customFieldsSection: "الحقول المخصصة",
+      customFieldsSectionDesc: "حقول إضافية معرّفة من قبل مسؤول مساحة العمل",
+      noCustomFields: "لا توجد حقول مخصصة معرّفة للعملاء المحتملين بعد.",
+      customFieldsSaveError:
+        "تم إنشاء العميل المحتمل، لكن فشل حفظ قيم الحقول المخصصة. يرجى المحاولة مرة أخرى.",
       errors: {
         companyRequired: "اسم الشركة مطلوب.",
         contactRequired: "اسم جهة الاتصال مطلوب.",

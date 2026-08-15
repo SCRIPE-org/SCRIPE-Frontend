@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
 import type { AnswerOptionRequest } from "../../domain/entities/OnboardingQuestionRequests";
@@ -16,6 +17,11 @@ export function useOptionsEditorViewModel(questionId: string | null) {
   const key = ["entitlements", "onboarding-options", questionId];
   const { t } = useI18n();
   const { toast } = useEnhancedToast();
+
+  // Shared across update/delete/reorder — keyed by option id (reorder keys
+  // on the id of the row that moved) so acting on one row never busies or
+  // disables the others in the list.
+  const [pendingOptionIds, setPendingOptionIds] = useState<Set<string>>(new Set());
 
   const optionsQuery = useQuery({
     queryKey: key,
@@ -45,20 +51,51 @@ export function useOptionsEditorViewModel(questionId: string | null) {
   const updateMutation = useMutation({
     mutationFn: ({ optionId, req }: { optionId: string; req: AnswerOptionRequest }) =>
       repo.updateOption(questionId!, optionId, req),
+    onMutate: ({ optionId }) => {
+      setPendingOptionIds((prev) => new Set(prev).add(optionId));
+    },
     onSuccess: invalidate,
     onError: showMutationError,
+    onSettled: (_data, _err, { optionId }) => {
+      setPendingOptionIds((prev) => {
+        const next = new Set(prev);
+        next.delete(optionId);
+        return next;
+      });
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (optionId: string) => repo.deleteOption(questionId!, optionId),
+    onMutate: (optionId) => {
+      setPendingOptionIds((prev) => new Set(prev).add(optionId));
+    },
     onSuccess: invalidate,
     onError: showMutationError,
+    onSettled: (_data, _err, optionId) => {
+      setPendingOptionIds((prev) => {
+        const next = new Set(prev);
+        next.delete(optionId);
+        return next;
+      });
+    },
   });
 
   const reorderMutation = useMutation({
-    mutationFn: (orderedIds: string[]) => repo.reorderOptions(questionId!, orderedIds),
+    mutationFn: ({ orderedIds }: { orderedIds: string[]; movedId: string }) =>
+      repo.reorderOptions(questionId!, orderedIds),
+    onMutate: ({ movedId }) => {
+      setPendingOptionIds((prev) => new Set(prev).add(movedId));
+    },
     onSuccess: invalidate,
     onError: showMutationError,
+    onSettled: (_data, _err, { movedId }) => {
+      setPendingOptionIds((prev) => {
+        const next = new Set(prev);
+        next.delete(movedId);
+        return next;
+      });
+    },
   });
 
   const isMutating =
@@ -71,6 +108,7 @@ export function useOptionsEditorViewModel(questionId: string | null) {
     options: optionsQuery.data ?? [],
     isLoading: optionsQuery.isLoading,
     isMutating,
+    isOptionBusy: (optionId: string) => pendingOptionIds.has(optionId),
 
     createOption: createMutation.mutateAsync,
     isCreating: createMutation.isPending,
@@ -82,7 +120,8 @@ export function useOptionsEditorViewModel(questionId: string | null) {
     deleteOption: deleteMutation.mutateAsync,
     isDeleting: deleteMutation.isPending,
 
-    reorderOptions: reorderMutation.mutateAsync,
+    reorderOptions: (orderedIds: string[], movedId: string) =>
+      reorderMutation.mutateAsync({ orderedIds, movedId }),
     isReordering: reorderMutation.isPending,
   };
 }

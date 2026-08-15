@@ -9,11 +9,12 @@
  */
 "use client";
 
-import { resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
 import { BookOpen } from "lucide-react";
 import { Button } from "@core/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for production component props.
@@ -44,6 +45,9 @@ export function ProductionComponent({
   copyrightText,
 }: ProductionComponentProps) {
   const { t } = useI18n();
+  // Called unconditionally regardless of `type` — only the "image" case
+  // below uses it, but hooks can't run inside a switch branch.
+  const resolvedImageSrc = useResolvedFileUrl(props.src as string | undefined);
 
   switch (type) {
     case "logo":
@@ -56,9 +60,12 @@ export function ProductionComponent({
             borderRadius: "var(--login-radius-card, 12px)",
           }}
         >
-          <img
+          <Image
             src={logoUrl}
             alt={`${companyName} Logo`}
+            width={200}
+            height={80}
+            unoptimized
             className="h-full w-full object-contain"
             onError={(e) => {
               e.currentTarget.style.display = "none";
@@ -146,10 +153,13 @@ export function ProductionComponent({
       );
 
     case "image":
-      return (props.src as string) ? (
-        <img
-          src={resolveFileUrl(props.src as string)}
+      return (props.src as string) && resolvedImageSrc ? (
+        <Image
+          src={resolvedImageSrc}
           alt={(props.alt as string) || ""}
+          width={800}
+          height={450}
+          unoptimized
           style={{
             objectFit: (props.objectFit as React.CSSProperties["objectFit"]) || "cover",
             maxWidth: (props.maxWidth as string) || "100%",

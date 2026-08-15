@@ -21,6 +21,8 @@ export interface IStaffAssignmentService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffAssignmentListResult>;
   getById(id: string): Promise<StaffAssignmentModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

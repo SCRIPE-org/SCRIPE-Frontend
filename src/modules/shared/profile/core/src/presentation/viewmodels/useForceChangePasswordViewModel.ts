@@ -5,7 +5,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useAppStore } from "@core/store/useAppStore";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { container } from "@modules/profile/di";
-import { useServices } from "@core/providers/service-provider";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for force change password view model.
@@ -14,14 +13,10 @@ import { useServices } from "@core/providers/service-provider";
 export function useForceChangePasswordViewModel() {
   const { t, direction } = useI18n();
   const router = useRouter();
-  const setMustChangePassword = useAppStore((state) => state.setMustChangePassword);
-  const setAuth = useAppStore((state) => state.setAuth);
-  const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const logout = useAppStore((state) => state.logout);
   const { operationSuccess, operationError } = useEnhancedToast();
   const queryClient = useQueryClient();
   const { profileRepository } = container;
-  const { authRepository } = useServices();
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -66,33 +61,21 @@ export function useForceChangePasswordViewModel() {
           newPassword,
         });
 
-        const refreshResult = await authRepository.refreshToken();
-        if (refreshResult.kind === "ok") {
-          const refreshData = refreshResult.value;
-          setSubscriptionInfo(
-            refreshData.subscriptionStatus ?? null,
-            refreshData.gracePhase ?? null,
-            refreshData.editionName ?? null
-          );
-
-          try {
-            const user = await authRepository.getMe();
-            if (user) {
-              setAuth(user, user.permissions || [], []);
-            }
-          } catch {
-            /* non-critical */
-          }
-        }
-
-        setMustChangePassword(false);
+        // The backend revokes every refresh token for this admin as part of a successful
+        // password change (OWASP V3.3.3 — the old credential may have been compromised,
+        // so old sessions must not survive it). The refresh token this tab is holding is
+        // now dead, so calling refreshToken() here always fails with "Token has been
+        // revoked" — confirmed live. There is no session left to restore; the correct move
+        // is the same clean break as a manual logout, then let the admin sign back in with
+        // the password they just set.
+        logout();
+        queryClient.clear();
         operationSuccess(t("profile.security.passwordChanged"));
-        queryClient.invalidateQueries();
-        router.replace("/");
+        router.replace("/login");
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Password change failed";
         setSubmitError(msg);
-        operationError(msg);
+        operationError("Change password", undefined, msg);
       } finally {
         setIsSubmitting(false);
       }
@@ -102,10 +85,7 @@ export function useForceChangePasswordViewModel() {
       currentPassword,
       newPassword,
       profileRepository,
-      authRepository,
-      setMustChangePassword,
-      setAuth,
-      setSubscriptionInfo,
+      logout,
       operationSuccess,
       operationError,
       router,

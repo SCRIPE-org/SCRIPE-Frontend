@@ -82,6 +82,10 @@ export function useTenantGatewaysViewModel() {
     isEditing: false,
   });
 
+  // Per-row pending state — keyed by gateway type so verifying one gateway
+  // never busies/disables the Verify button on the other configured cards.
+  const [pendingVerifyTypes, setPendingVerifyTypes] = useState<Set<string>>(new Set());
+
   // ── Queries ──
   const {
     data: gateways = [],
@@ -104,8 +108,18 @@ export function useTenantGatewaysViewModel() {
 
   const verifyMutation = useMutation({
     mutationFn: (gatewayType: string) => tenantGatewayRepository.verifyGateway(gatewayType),
+    onMutate: (gatewayType) => {
+      setPendingVerifyTypes((prev) => new Set(prev).add(gatewayType));
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+    },
+    onSettled: (_data, _err, gatewayType) => {
+      setPendingVerifyTypes((prev) => {
+        const next = new Set(prev);
+        next.delete(gatewayType);
+        return next;
+      });
     },
   });
 
@@ -151,7 +165,7 @@ export function useTenantGatewaysViewModel() {
 
     // Mutation state
     isConfiguring: configureMutation.isPending,
-    isVerifying: verifyMutation.isPending,
+    isVerifying: (gatewayType: string) => pendingVerifyTypes.has(gatewayType),
     isRemoving: removeMutation.isPending,
     configureError: configureMutation.error,
     verifyError: verifyMutation.error,

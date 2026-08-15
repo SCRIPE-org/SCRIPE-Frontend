@@ -90,9 +90,9 @@ export const en = {
       backendStep2Content:
         "Run Entity Framework migrations to create or update the database schema.",
       backendStep3Title: "Run the API Server",
-      backendStep3Content: "Start the backend API server on https://localhost:5001.",
+      backendStep3Content: "Start the backend API server on https://localhost:5035.",
       backendRunningTip:
-        "The API server will start on https://localhost:5001 by default. Swagger UI is available at /swagger in development mode.",
+        "The API server will start on https://localhost:5035 by default. Swagger UI is available at /swagger in development mode.",
       frontendTitle: "Start the Frontend",
       frontendStep1Title: "Install Dependencies",
       frontendStep1Content:

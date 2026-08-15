@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useContactPointViewModel } from "../viewmodels/useContactPointViewModel";
 import type { ContactPoint } from "../../domain/entities/ContactPoint";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -50,6 +51,7 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
     titleKey: "contactPoint.title",
     subtitleKey: "contactPoint.description",
     resource: "contact-points",
+    entityTypeKey: "party.contact-point",
     columns: [
       {
         key: "partyId",
@@ -169,6 +171,22 @@ export const ContactPointListView = React.memo(function ContactPointListView() {
     }),
     getItemDisplayName: (item: ContactPoint) =>
       item.type && item.value ? `${item.type}: ${item.value}` : item.value || item.partyId,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<ContactPoint>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: ContactPoint) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: ContactPoint) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

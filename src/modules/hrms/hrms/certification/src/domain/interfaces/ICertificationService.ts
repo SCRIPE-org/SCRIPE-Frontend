@@ -21,6 +21,8 @@ export interface ICertificationService {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<CertificationListResult>;
   getById(id: string): Promise<CertificationModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;

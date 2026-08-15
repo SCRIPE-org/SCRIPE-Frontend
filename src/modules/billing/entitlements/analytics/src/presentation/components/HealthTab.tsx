@@ -103,7 +103,7 @@ export function HealthTab({ healthData, page, pageSize, onPageChange }: HealthTa
       </div>
 
       {/* Health Table */}
-      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)] shadow-sm">
+      <Card className="overflow-hidden border border-[color:color-mix(in_srgb,var(--nx-line)_30%,transparent)]">
         <CardHeader className="bg-[color:color-mix(in_srgb,var(--nx-raised)_20%,transparent)] pb-2">
           <CardTitle className="flex items-center justify-between text-sm font-medium text-nx-ink-3">
             <span>{t("entitlements.analytics.health.tenantHealth")}</span>

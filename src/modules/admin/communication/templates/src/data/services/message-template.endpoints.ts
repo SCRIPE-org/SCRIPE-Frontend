@@ -8,4 +8,5 @@ export const MESSAGE_TEMPLATE_ENDPOINTS = {
   DELETE: (id: string) => `${V1}/message-templates/${id}`,
   PREVIEW: `${V1}/message-templates/preview`,
   CLONE: (id: string) => `${V1}/message-templates/${id}/clone`,
+  RESET_DESIGN: (id: string) => `${V1}/message-templates/${id}/reset-design`,
 } as const;

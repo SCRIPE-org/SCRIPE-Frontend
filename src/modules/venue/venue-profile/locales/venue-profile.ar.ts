@@ -16,7 +16,7 @@ export const ar = {
       isActive: "نشط",
     },
     placeholders: {
-      siteId: "أدخل معرّف الموقع",
+      siteId: "ابحث عن موقع...",
       code: "مثال: MAIN",
       name: "مثال: الحرم الرئيسي",
       description: "وصف اختياري",

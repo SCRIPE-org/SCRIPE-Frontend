@@ -91,9 +91,9 @@ export const fr = {
       backendStep2Content:
         "Exécutez les migrations Entity Framework pour créer ou mettre à jour le schéma de la base de données.",
       backendStep3Title: "Exécuter le Serveur API",
-      backendStep3Content: "Démarrez le serveur API backend sur https://localhost:5001.",
+      backendStep3Content: "Démarrez le serveur API backend sur https://localhost:5035.",
       backendRunningTip:
-        "Le serveur API démarrera sur https://localhost:5001 par défaut. L'interface Swagger est disponible sur /swagger en mode développement.",
+        "Le serveur API démarrera sur https://localhost:5035 par défaut. L'interface Swagger est disponible sur /swagger en mode développement.",
       frontendTitle: "Démarrer le Frontend",
       frontendStep1Title: "Installer les Dépendances",
       frontendStep1Content:

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useSignupTheme } from "@core/providers/signup-theme";
 import type { WelcomeTrustMark } from "../../../domain/entities/OnboardingEntities";
+import Image from "next/image";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TrustRow — compliance marks + a "trusted by {count} teams" stat.
@@ -90,9 +91,12 @@ export function TrustRow({ trustMarks, trustedByCount, trustedByLabel }: TrustRo
                 ) : mark.assetUrl ? (
                   // Fallback for marks delivered as an asset rather than an icon.
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={mark.assetUrl}
                     alt=""
+                    width={16}
+                    height={16}
+                    unoptimized
                     aria-hidden="true"
                     className="h-4 w-auto"
                     style={{ opacity: 0.8 }}

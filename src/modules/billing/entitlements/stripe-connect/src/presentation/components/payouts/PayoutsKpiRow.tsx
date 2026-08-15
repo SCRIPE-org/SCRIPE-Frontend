@@ -7,8 +7,9 @@ import { DollarSign, Receipt, Banknote, TrendingUp } from "lucide-react";
 // ─────────────────────────────────────────────────────────────────────────────
 // Helpers
 // ─────────────────────────────────────────────────────────────────────────────
-const fmt = (cents: number) =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+// Backend already returns dollar-denominated decimals (converted from Stripe cents server-side).
+const fmt = (amount: number) =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(amount);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PayoutsKpiRow

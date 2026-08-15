@@ -30,16 +30,22 @@ export class ReviewsRepository implements IReviewsRepository {
     await this.service.delete(id);
   }
 
+  /**
+   * F-74 fix: the backend's AppReviewListResponse sends the review text as
+   * `content`, not `body` — reading `d.body` always returned undefined and
+   * silently rendered blank review text. It also has no tenant/reviewer name
+   * field at all (and no tenant id), so that identifying info is left
+   * unmapped rather than defaulted to a misleading empty string.
+   */
   private map(d: ReviewDto): AppReview {
     return new AppReview({
       id: d.id,
       appListingId: d.appListingId,
       appName: d.appName ?? "",
       tenantId: d.tenantId,
-      tenantName: d.tenantName ?? "",
       rating: d.rating ?? 0,
       title: d.title ?? "",
-      body: d.body ?? "",
+      body: d.content ?? "",
       createdAt: d.createdAt ?? new Date().toISOString(),
       isModerated: d.isModerated ?? false,
     });

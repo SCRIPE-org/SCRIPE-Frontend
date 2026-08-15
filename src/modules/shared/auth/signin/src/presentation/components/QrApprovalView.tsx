@@ -162,8 +162,8 @@ export function QrApprovalView({
           className="sx-rise mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl"
           style={{
             background:
-              "var(--sx-accent-bg, linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%))",
-            border: "1px solid var(--sx-accent-border, rgba(168,85,247,0.3))",
+              "var(--sx-accent-bg, linear-gradient(135deg, rgba(198,255,0,0.15) 0%, rgba(198,255,0,0.08) 100%))",
+            border: "1px solid var(--sx-accent-border, rgba(198,255,0,0.3))",
           }}
         >
           <svg

@@ -16,6 +16,7 @@ import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
  */
 export interface DesignVariables {
   primaryColor: string;
+  primaryForeground: string;
   secondaryColor: string;
   backgroundColor: string;
   textColor: string;
@@ -40,8 +41,9 @@ export interface DesignVariablesPanelProps {
  * Exported constant defining parameters and fields for d e f a u l t_ d e s i g n configurations.
  */
 export const DEFAULT_DESIGN: DesignVariables = {
-  primaryColor: "#3b82f6",
-  secondaryColor: "#6366f1",
+  primaryColor: "#C6FF00",
+  primaryForeground: "#0D0D0E",
+  secondaryColor: "#3F4347",
   backgroundColor: "#ffffff",
   textColor: "#1f2937",
   fontFamily: "Inter, sans-serif",
@@ -51,6 +53,32 @@ export const DEFAULT_DESIGN: DesignVariables = {
   logoUrl: "",
   footerText: "© {{currentYear}} {{companyName}}. All rights reserved.",
 };
+
+// ─── Contrast Helper ────────────────────────────────────────
+/**
+ * Simple WCAG relative-luminance check against black/white, used to pick a
+ * swatch's foreground for an ARBITRARY admin-chosen fill color. The app's own
+ * --nx-on-fill token is calibrated for this app's Lime accent specifically;
+ * reusing it against a color the admin can set to anything is the same
+ * contract violation this helper replaces.
+ */
+function getReadableForeground(hex: string): string {
+  const normalized = hex.trim().replace(/^#/, "");
+  const full =
+    normalized.length === 3
+      ? normalized
+          .split("")
+          .map((c) => c + c)
+          .join("")
+      : normalized;
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) return "#0D0D0E";
+  const r = parseInt(full.slice(0, 2), 16) / 255;
+  const g = parseInt(full.slice(2, 4), 16) / 255;
+  const b = parseInt(full.slice(4, 6), 16) / 255;
+  const toLinear = (c: number) => (c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4));
+  const luminance = 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+  return luminance > 0.5 ? "#0D0D0E" : "#ffffff";
+}
 
 const FONT_OPTIONS = [
   { value: "Inter, sans-serif", label: "Inter" },
@@ -88,7 +116,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-base">
-            <Paintbrush className="h-4 w-4" />
+            <Paintbrush className="h-4 w-4" aria-hidden="true" />
             {t("messaging.templates.design.title")}
           </CardTitle>
           <Button
@@ -96,9 +124,9 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             variant="ghost"
             size="sm"
             className="h-7 gap-1 text-xs"
-            onClick={() => onChange(DEFAULT_DESIGN)}
+            onClick={() => onChange({ ...DEFAULT_DESIGN })}
           >
-            <RotateCcw className="h-3 w-3" />
+            <RotateCcw className="h-3 w-3" aria-hidden="true" />
             {t("messaging.templates.design.reset")}
           </Button>
         </div>
@@ -249,7 +277,7 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
             <div className="px-4 py-3" style={{ backgroundColor: value.primaryColor }}>
               <span
                 style={{
-                  color: "#ffffff",
+                  color: getReadableForeground(value.primaryColor),
                   fontSize: `${Math.min(16, parseInt(value.headerFontSize) || 24)}px`,
                   fontWeight: 700,
                 }}
@@ -266,17 +294,26 @@ export function DesignVariablesPanel({ value, onChange }: DesignVariablesPanelPr
               >
                 {t("messaging.templates.design.previewBody")}
               </p>
-              <Button
-                type="button"
-                size="sm"
-                className="mt-2 text-xs font-medium text-white"
-                style={{
-                  backgroundColor: value.secondaryColor,
-                  borderRadius: `${value.borderRadius}px`,
-                }}
+              {/* Preview chip, not a submit action -- role="group" + an inner
+                  <span> (mirrors ButtonDesigner's live-preview swatch) keeps
+                  it out of tab order instead of a focusable, hoverable
+                  <Button> that goes nowhere. */}
+              <div
+                role="group"
+                aria-label={t("messaging.templates.design.previewButton")}
+                className="mt-2 inline-flex"
               >
-                {t("messaging.templates.design.previewButton")}
-              </Button>
+                <span
+                  className="inline-flex h-9 items-center justify-center px-3 text-xs font-medium"
+                  style={{
+                    backgroundColor: value.secondaryColor,
+                    borderRadius: `${value.borderRadius}px`,
+                    color: getReadableForeground(value.secondaryColor),
+                  }}
+                >
+                  {t("messaging.templates.design.previewButton")}
+                </span>
+              </div>
             </div>
           </div>
         </div>

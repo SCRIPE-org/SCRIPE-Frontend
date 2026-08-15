@@ -25,7 +25,7 @@ export interface ContactPointJson {
 export interface ContactPointListResponseJson {
   items: ContactPointJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

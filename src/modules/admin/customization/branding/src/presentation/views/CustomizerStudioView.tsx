@@ -401,6 +401,11 @@ export function CustomizerStudioView() {
         onClose={() => setShowSaveAsTheme(false)}
         getDraftJson={vm.buildDraftJson}
         onSaveTheme={vm.saveTheme}
+        customFieldConfigs={vm.themeCustomFieldConfigs}
+        customFieldsLoading={vm.themeCustomFieldsLoading}
+        customFieldValues={vm.themeCustomFieldValues}
+        onCustomFieldChange={vm.updateThemeCustomFieldValue}
+        onCustomFieldsCreated={() => void vm.refetchThemeCustomFields()}
       />
     </div>
   );

@@ -30,10 +30,13 @@ export class AnalyticsEventRepository implements IAnalyticsEventRepository {
   }): Promise<AnalyticsDailyMetricResponse[]> {
     const models = await this.service.getDailyMetrics(params);
     return (models ?? []).map((model) => ({
-      date: model.date,
       eventName: model.eventName,
+      bucketDateUtc: model.bucketDateUtc,
       count: model.count,
-      sum: model.sum,
+      valueSum: model.valueSum,
+      valueMin: model.valueMin,
+      valueMax: model.valueMax,
+      lastEventAt: model.lastEventAt,
     }));
   }
 }

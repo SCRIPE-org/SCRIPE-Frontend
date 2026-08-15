@@ -87,6 +87,25 @@ export function LeadsView() {
     window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, mode);
   };
 
+  // Every "open the drawer" cell below is a plain div, not a button — a
+  // table cell can't nest a real <button> around content that itself carries
+  // interactive children elsewhere in the row. Mirrors the accessible
+  // custom-clickable pattern from stat-card.tsx L189-199: role, tab stop and
+  // Enter/Space all wired by hand since the element can't be a real button.
+  const DRAWER_CELL_CLASS =
+    "h-full w-full cursor-pointer focus-visible:shadow-nx-focus focus-visible:outline-none";
+  const openDrawerCellProps = (leadId: string) => ({
+    role: "button" as const,
+    tabIndex: 0,
+    onClick: () => vm.handleOpenDrawer(leadId),
+    onKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        vm.handleOpenDrawer(leadId);
+      }
+    },
+  });
+
   const leads = vm.leads;
   const isAnyBulkPending = vm.isBulkClosing || vm.isBulkDeleting;
   const canCreateLead = has("leads.create");
@@ -101,7 +120,7 @@ export function LeadsView() {
       key: "companyName",
       label: t("leads.columns.company"),
       render: (_, lead) => (
-        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+        <div className={DRAWER_CELL_CLASS} {...openDrawerCellProps(lead.id)}>
           <p className="truncate font-medium text-nx-ink transition-colors duration-nx-micro ease-nx-enter group-hover:text-info motion-reduce:transition-none">
             {lead.companyName}
           </p>
@@ -124,7 +143,7 @@ export function LeadsView() {
       key: "contactName",
       label: t("leads.columns.contact"),
       render: (_, lead) => (
-        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+        <div className={DRAWER_CELL_CLASS} {...openDrawerCellProps(lead.id)}>
           <p className="truncate text-nx-ink">{lead.contactName}</p>
           <p className="mt-0.5 truncate text-xs text-nx-ink-3">{lead.email}</p>
         </div>
@@ -134,7 +153,7 @@ export function LeadsView() {
       key: "editionKey",
       label: t("leads.columns.edition"),
       render: (_, lead) => (
-        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+        <div className={DRAWER_CELL_CLASS} {...openDrawerCellProps(lead.id)}>
           {lead.editionKey ? (
             <span className="rounded-nx-sm bg-[color:color-mix(in_srgb,var(--nx-raised)_60%,transparent)] px-1.5 py-0.5 text-xs font-medium text-nx-ink">
               {humanizeEditionKey(lead.editionKey)}
@@ -149,7 +168,7 @@ export function LeadsView() {
       key: "status",
       label: t("leads.columns.status"),
       render: (_, lead) => (
-        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+        <div className={DRAWER_CELL_CLASS} {...openDrawerCellProps(lead.id)}>
           <span
             className={`inline-flex items-center gap-1.5 rounded-nx-sm border px-2 py-0.5 text-xs font-medium ${STATUS_STYLES[lead.status]}`}
           >
@@ -163,7 +182,7 @@ export function LeadsView() {
       key: "requestedAt",
       label: t("leads.columns.created"),
       render: (_, lead) => (
-        <div className="h-full w-full cursor-pointer" onClick={() => vm.handleOpenDrawer(lead.id)}>
+        <div className={DRAWER_CELL_CLASS} {...openDrawerCellProps(lead.id)}>
           <p className="text-xs text-nx-ink-3">{lead.relativeCreatedAt}</p>
           <p className="mt-0.5 text-[10px] text-nx-ink-3">{t(lead.sourceKey)}</p>
         </div>
@@ -247,7 +266,7 @@ export function LeadsView() {
               id="leads-create-btn"
               onClick={vm.handleOpenCreateDialog}
               size="sm"
-              className="ms-2 h-8 bg-info px-3 text-xs text-info-foreground hover:bg-info/90"
+              className="ms-2 h-8 px-3 text-xs"
             >
               {t("leads.createButton")}
             </Button>
@@ -302,7 +321,7 @@ export function LeadsView() {
             isLoading={vm.isLoading}
             onOpenDrawer={vm.handleOpenDrawer}
             onMoveLead={vm.handleUpdateStatus}
-            isMoving={vm.isUpdatingStatus || !canUpdateLead}
+            isMoving={(id: string) => vm.isUpdatingStatus(id) || !canUpdateLead}
           />
           {vm.totalPages > 1 && (
             <div className="flex flex-wrap items-center justify-end gap-3">
@@ -377,7 +396,7 @@ export function LeadsView() {
         lead={vm.selectedLead}
         isLoading={vm.isLoadingDetail}
         onUpdateStatus={vm.handleUpdateStatus}
-        isUpdatingStatus={vm.isUpdatingStatus}
+        isUpdatingStatus={vm.selectedLeadId ? vm.isUpdatingStatus(vm.selectedLeadId) : false}
         onGetEmailPreview={vm.handleGetEmailPreview}
         onConvert={canConvertLead ? vm.handleOpenConvertDialog : undefined}
         onAssign={canAssignLead ? vm.handleOpenAssignDialog : undefined}
@@ -406,6 +425,11 @@ export function LeadsView() {
         onSubmit={vm.handleCreateLead}
         isSubmitting={vm.isCreatingLead}
         availableEditions={vm.availableEditions}
+        customFieldConfigs={vm.customFieldConfigs}
+        customFieldsLoading={vm.customFieldsLoading}
+        customFieldValues={vm.customFieldValues}
+        onCustomFieldChange={vm.updateCustomFieldValue}
+        onCustomFieldsCreated={() => void vm.refetchCustomFields()}
       />
 
       {/* ── Convert to Tenant Wizard ── */}

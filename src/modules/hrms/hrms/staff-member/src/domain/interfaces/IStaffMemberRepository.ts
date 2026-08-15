@@ -4,11 +4,15 @@
  * Defines the contract for StaffMember data access.
  */
 import type { StaffMember } from "../entities/StaffMember";
+import type { IdentityUserSearchResult } from "./IStaffMemberService";
 
 export interface StaffMemberListParams {
   page: number;
   pageSize: number;
   search?: string;
+  /** Server-side sort column key (e.g. "firstName") — optional, additive (F-85). */
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 }
 
 export interface IStaffMemberRepository {
@@ -27,4 +31,5 @@ export interface IStaffMemberRepository {
   create(data: Record<string, unknown>): Promise<string>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
+  searchIdentityUsers(query: string): Promise<IdentityUserSearchResult[]>;
 }

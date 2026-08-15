@@ -188,17 +188,17 @@ export function useQrSignInViewModel(
               height="16"
               viewBox="0 0 24 24"
               fill="none"
-              stroke="#22D3EE"
+              stroke="#7DD3FC"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
             >
               <rect x="5" y="2" width="14" height="20" rx="2" />
-              <circle cx="12" cy="17" r="1" fill="#22D3EE" stroke="none" />
+              <circle cx="12" cy="17" r="1" fill="#7DD3FC" stroke="none" />
             </svg>
           ),
           label: t("auth.qr.scanned") || "QR code scanned! Waiting for approval…",
-          color: "#22D3EE",
+          color: "#7DD3FC",
         };
       case "approved":
         return {

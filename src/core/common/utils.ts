@@ -12,9 +12,23 @@ export function cn(...inputs: ClassValue[]) {
  * from the app's `language` setting ("en" | "ar"). Call sites used to inline
  * `language === "ar" ? "ar-EG" : "en-US"` at each use — 28 copies of the same
  * mapping, each a place a future locale change would be missed.
+ *
+ * Digits: plain `"ar-EG"` renders Eastern Arabic-Indic digits (٠١٢٣...) via
+ * `Intl.NumberFormat`. Roughly two dozen billing/marketplace call sites
+ * bypass this helper entirely and hardcode `"en-US"` specifically to avoid
+ * that — the project's established convention is Western digits everywhere,
+ * even in Arabic UI, so numerals stay legible next to Latin-script currency
+ * codes ($, USD, EGP) and don't visually fracture a single screen into two
+ * numeral systems depending on which component happened to format a given
+ * value. Rather than hunt down and "fix" every one of those call sites (that
+ * would flip THEM to the currently-wrong Eastern-Arabic-Indic behavior), this
+ * keeps `ar-EG` as the base locale (correct for month/weekday names, list
+ * formatting, etc.) but pins the numbering system to Latin via the `-u-nu-`
+ * Unicode extension — so `resolveIntlLocale("ar")` now agrees with the
+ * hardcoded `"en-US"` call sites on digit shape instead of contradicting them.
  */
 export function resolveIntlLocale(language: string): string {
-  return language === "ar" ? "ar-EG" : "en-US";
+  return language === "ar" ? "ar-EG-u-nu-latn" : "en-US";
 }
 
 /**
@@ -157,6 +171,20 @@ export function debounce<T extends (...args: any[]) => any>(
  * - If the value is empty/null → returns empty string
  * - If the value is already an absolute URL (http/https) → returns as-is
  * - Otherwise → prefixes with NEXT_PUBLIC_File_URL (server-hosted file)
+ *
+ * NOT for `<img>`/`<video>` rendering: `/api/files/*` now requires a JWT
+ * Bearer header (a P0 fix — see MiddlewarePipeline.cs), which native media
+ * tags can never attach, so the URL this returns for a relative path 401s
+ * when actually loaded by the browser. This stays synchronous on purpose —
+ * it is called from non-component mappers (`OAuthAppMapper`,
+ * `IdentityProviderMapper`) and from inside async upload handlers to build
+ * a plain string paired with `unresolveFileUrl` for round-tripping form
+ * values — and a working authenticated URL can't be produced synchronously
+ * (minting one is a network call). For anything actually painted into an
+ * `<img>`/`<video>` element, use the `useResolvedFileUrl()` hook
+ * (`@core/hooks/use-resolved-file-url`) instead: it mints/caches a
+ * DownloadsController session and resolves to the anonymous-safe
+ * `/downloads/session/{id}` redemption URL.
  *
  * Use this in mappers/repositories to resolve file paths from the API.
  */

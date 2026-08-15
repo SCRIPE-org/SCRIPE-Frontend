@@ -42,6 +42,8 @@ export interface RoleDetailHeaderProps {
   isLoading: boolean;
   isSaving: boolean;
   onSave: () => void;
+  /** Whether the permission matrix has unsaved edits since the last load/save. */
+  isDirty: boolean;
 }
 
 /**
@@ -97,6 +99,16 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [bulkScopeValue, setBulkScopeValue] = useState<string>("");
+  // Tracks unsaved edits so the header's Save button and "unsaved changes"
+  // banner reflect real state instead of just the in-flight save request —
+  // mirrors useOAuthAppDetailViewModel's isDirty flag.
+  const [isDirty, setIsDirty] = useState(false);
+  // Tracks which role we've already initialized `assignments` for — mirrors
+  // useRolePermissionsDialog's initializedRoleId guard. Without it, the
+  // staleTime: 0 query below refetches on every refocus/reconnect and hands
+  // back a new array reference for the SAME role, which would silently
+  // overwrite any in-progress unsaved permission edits.
+  const [initializedRoleId, setInitializedRoleId] = useState<string | null>(null);
 
   // === QUERIES ===
   const { data: role, isLoading: roleLoading } = useQuery<Role>({
@@ -140,31 +152,40 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     }
   }, [moduleGroups]);
 
-  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS ===
-  const [prevRolePerms, setPrevRolePerms] = useState(rolePermissions);
-  if (rolePermissions && rolePermissions !== prevRolePerms) {
-    setPrevRolePerms(rolePermissions);
-    if (rolePermissions.length > 0) {
-      appLogger.debug("rolePermissions raw:", rolePermissions);
+  // === INITIALIZE ASSIGNMENTS WHEN DATA LOADS (once per role) ===
+  // Guarded on roleId, not on rolePermissions' array reference: staleTime: 0
+  // means a window refocus can refetch and hand back a new (content-identical
+  // or server-normalized) array for the SAME role at any time, including
+  // mid-edit. Only a genuine role switch — or the first load — should reset
+  // the editor; a background refetch of the role you're already editing must
+  // not. The post-save refetch doesn't need to re-sync either: local
+  // `assignments` already holds exactly what was just saved, and
+  // saveMutation's onSuccess already clears isDirty directly.
+  useEffect(() => {
+    if (!roleId || rolePermissionsLoading || initializedRoleId === roleId) return;
+    if (!rolePermissions || rolePermissions.length === 0) return;
 
-      const newAssignments = new Map<string, PermissionAssignmentJson>();
+    appLogger.debug("rolePermissions raw:", rolePermissions);
 
-      rolePermissions.forEach((rp: any) => {
-        const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
+    const newAssignments = new Map<string, PermissionAssignmentJson>();
 
-        if (code) {
-          newAssignments.set(code, {
-            permissionId: rp.permissionId || rp.PermissionId || rp.id || rp.Id,
-            scopeOverride: rp.scope || rp.ScopeOverride,
-            restrictedFields: Array.isArray(rp.restrictedFields) ? rp.restrictedFields : undefined,
-          });
-        }
-      });
+    rolePermissions.forEach((rp: any) => {
+      const code = rp.permissionCode || rp.PermissionCode || rp.code || rp.Code;
 
-      appLogger.debug("Initialized assignments map size:", newAssignments.size);
-      setAssignments(newAssignments);
-    }
-  }
+      if (code) {
+        newAssignments.set(code, {
+          permissionId: rp.permissionId || rp.PermissionId || rp.id || rp.Id,
+          scopeOverride: rp.scope || rp.ScopeOverride,
+          restrictedFields: Array.isArray(rp.restrictedFields) ? rp.restrictedFields : undefined,
+        });
+      }
+    });
+
+    appLogger.debug("Initialized assignments map size:", newAssignments.size);
+    setAssignments(newAssignments);
+    setIsDirty(false);
+    setInitializedRoleId(roleId);
+  }, [roleId, rolePermissions, rolePermissionsLoading, initializedRoleId]);
 
   // Helper: flatten all permissions from module groups (for save payload)
   const getAllPermissionsFlat = (): Permission[] => {
@@ -203,6 +224,9 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["rolePermissions", roleId] });
       queryClient.invalidateQueries({ queryKey: ["role", roleId] });
+      // Reset immediately rather than waiting on the invalidated refetch, so
+      // the Save button/banner clear the instant the save resolves.
+      setIsDirty(false);
       success({
         title: t("common.success"),
         description: t("roleDetail.permissionsSaved"),
@@ -227,6 +251,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
 
   const togglePermission = useCallback(
     (permissionCode: string) => {
+      setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
         if (next.has(permissionCode)) {
@@ -250,6 +275,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   );
 
   const updateAssignment = useCallback((code: string, assignment: PermissionAssignmentJson) => {
+    setIsDirty(true);
     setAssignments((prev) => {
       const next = new Map(prev);
       next.set(code, assignment);
@@ -262,6 +288,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       const categoryCodes = permissions.map((p) => p.code);
       const allSelected = categoryCodes.every((code) => assignments.has(code));
 
+      setIsDirty(true);
       setAssignments((prev) => {
         const next = new Map(prev);
         categoryCodes.forEach((code) => {
@@ -307,6 +334,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
   const bulkUpdateScope = useCallback((scope: string) => {
     const scopeValue = scope === "own_tenant" ? undefined : scope;
 
+    setIsDirty(true);
     setAssignments((prev) => {
       const next = new Map(prev);
       Array.from(next.keys()).forEach((key) => {
@@ -332,6 +360,7 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       isLoading: roleLoading,
       isSaving: saveMutation.isPending,
       onSave: handleSave,
+      isDirty,
     } as RoleDetailHeaderProps,
 
     info: {

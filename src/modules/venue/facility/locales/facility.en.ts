@@ -15,7 +15,7 @@ export const en = {
       description: "Description",
     },
     placeholders: {
-      venueProfileId: "Enter the venue ID",
+      venueProfileId: "Search for a venue...",
       code: "e.g. BLD-A",
       name: "e.g. Building A",
       description: "Optional description",

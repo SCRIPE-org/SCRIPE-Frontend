@@ -31,9 +31,10 @@ import {
   Crown,
   Users,
   Mail,
+  KeyRound,
 } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
-import { ResetPasswordDialog } from "../components/AdminRoleDialogs";
+import { ResetPasswordDialog, ManualSetupDialog } from "../components/AdminRoleDialogs";
 import { ManageRolesDialog } from "../components/ManageRolesDialog";
 import { AdminTransferDialog } from "../components/AdminTransferDialog";
 import { AssignToGroupDialog } from "@modules/identity/core";
@@ -79,6 +80,8 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     handleBulkDelete,
     handleResendSetupEmail,
     isResendingSetupEmail,
+    handleManualSetup,
+    isManualSettingUp,
   } = useAdminsViewModel({ useMyTenant: !isSuperAdmin, tenantId });
 
   const configBase = getConfigBase();
@@ -87,6 +90,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const [selectedAdminForAction, setSelectedAdminForAction] = useState<Admin | null>(null);
   const [manageRolesDialogOpen, setManageRolesDialogOpen] = useState(false);
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
+  const [manualSetupDialogOpen, setManualSetupDialogOpen] = useState(false);
   const [assignToGroupDialogOpen, setAssignToGroupDialogOpen] = useState(false);
 
   // Bulk state
@@ -109,12 +113,30 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     setAssignToGroupDialogOpen(true);
   }, []);
 
+  const handleOpenManualSetup = useCallback((admin: Admin) => {
+    setSelectedAdminForAction(admin);
+    setManualSetupDialogOpen(true);
+  }, []);
+
   const onResetPasswordSubmit = useCallback(
     async (newPassword: string) => {
       if (!selectedAdminForAction) return;
       await handleResetPassword(selectedAdminForAction.id, newPassword);
     },
     [handleResetPassword, selectedAdminForAction]
+  );
+
+  const onManualSetupSubmit = useCallback(
+    async (newPassword: string, confirmPassword: string, mustChangePassword: boolean) => {
+      if (!selectedAdminForAction) return;
+      await handleManualSetup(
+        selectedAdminForAction.id,
+        newPassword,
+        confirmPassword,
+        mustChangePassword
+      );
+    },
+    [handleManualSetup, selectedAdminForAction]
   );
 
   // Configuration for the generic view
@@ -140,6 +162,10 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       titleKey: "admin.title",
       subtitleKey: "admin.description",
       resource: "admins", // Checks permissions (admins.view, admins.create, etc.)
+      // Registered in the backend's IdentityEntityTypeCatalog -- must match
+      // exactly. Create/edit both route through GenericCrudView's own modal
+      // here, so this one line is all the wiring this screen needs.
+      entityTypeKey: "identity.admin",
       columns: [
         {
           key: "username",
@@ -352,6 +378,16 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
             confirmButtonText: tFn("common.send"),
           },
           {
+            label: tFn("admin.manualSetup"),
+            onClick: (item: Admin) => handleOpenManualSetup(item),
+            variant: "ghost" as const,
+            icon: <KeyRound className="h-4 w-4" aria-hidden="true" />,
+            requiredPermission: SYSTEM_PERMISSIONS.ADMINS_RESET_PASSWORD,
+            // Only for admins who haven't activated their account yet — an alternative
+            // to resending the setup email.
+            show: (item: Admin) => item.needsAccountSetup,
+          },
+          {
             label: tFn("common.delete"),
             onClick: (item: Admin) => handleDeleteFn?.(item),
             variant: "ghost" as const,
@@ -413,6 +449,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleOpenManageRoles,
       handleOpenResetPassword,
       handleOpenAssignToGroup,
+      handleOpenManualSetup,
       handleImpersonate,
       handleOpenTransfer,
       handleTransferProtection,
@@ -460,6 +497,14 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         admin={selectedAdminForAction}
         onResetPassword={onResetPasswordSubmit}
         isLoading={isResettingPassword}
+      />
+
+      <ManualSetupDialog
+        open={manualSetupDialogOpen}
+        onOpenChange={setManualSetupDialogOpen}
+        admin={selectedAdminForAction}
+        onManualSetup={onManualSetupSubmit}
+        isLoading={isManualSettingUp}
       />
 
       <AdminTransferDialog

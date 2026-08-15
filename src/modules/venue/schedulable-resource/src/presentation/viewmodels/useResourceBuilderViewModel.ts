@@ -5,10 +5,14 @@ import { getVenueContainer } from "../../../../di";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
 import { buildResourceTree, type SchedulableResourceTreeNode } from "./resourceTree";
 
-const LARGE_PAGE_SIZE = 500;
+// The backend hard-caps pageSize at 100 regardless of what's requested (see
+// SchedulableResourcesController — P5.3 abuse-prevention clamp), so requesting more here
+// only lies about what we actually get back. Match the real cap: fine at Slice A scale (see
+// resourceTree.ts) — a server-side tree endpoint is the real fix once tenants exceed it.
+const LARGE_PAGE_SIZE = 100;
 
 export function useResourceBuilderViewModel() {
-  const { schedulableResourceRepository } = getVenueContainer();
+  const { schedulableResourceRepository, facilityResourceProfilePickerService } = getVenueContainer();
   const [tree, setTree] = useState<SchedulableResourceTreeNode[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -67,5 +71,26 @@ export function useResourceBuilderViewModel() {
     [schedulableResourceRepository, refresh]
   );
 
-  return { tree, loading, error, refresh, create, update, remove, getPublicationChecklist, publish };
+  // Powers the "Facility Resource Profile" `server-select` field on the
+  // create form — there is no dedicated CRUD page for this entity yet.
+  const searchFacilityResourceProfiles = useCallback(
+    async (query: string) => {
+      const results = await facilityResourceProfilePickerService.search(query);
+      return results.map((profile) => ({ value: profile.id, label: profile.name }));
+    },
+    [facilityResourceProfilePickerService]
+  );
+
+  return {
+    tree,
+    loading,
+    error,
+    refresh,
+    create,
+    update,
+    remove,
+    getPublicationChecklist,
+    publish,
+    searchFacilityResourceProfiles,
+  };
 }

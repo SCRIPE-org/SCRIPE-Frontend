@@ -30,6 +30,7 @@ export const AUTH_CORE_ENDPOINTS = {
   },
   SAML: {
     LOGIN: `${V1}/auth/saml/login`,
+    CALLBACK: `${V1}/auth/saml/callback`,
   },
   // ── Passkey / WebAuthn ──
   PASSKEY: {

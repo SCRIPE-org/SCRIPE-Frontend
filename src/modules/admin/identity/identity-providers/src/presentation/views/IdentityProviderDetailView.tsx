@@ -56,6 +56,7 @@ import {
   AlertDialogTrigger,
 } from "@core/ui/alert-dialog";
 import { Card, CardContent } from "@core/ui/card";
+import Image from "next/image";
 
 interface Props {
   providerId?: string;
@@ -304,9 +305,12 @@ export function IdentityProviderDetailView({ providerId }: Props) {
               }
             >
               {vm.form.iconUrl ? (
-                <img
+                <Image
                   src={vm.form.iconUrl}
                   alt={vm.form.name}
+                  width={24}
+                  height={24}
+                  unoptimized
                   className="h-6 w-6 rounded object-contain"
                 />
               ) : (

@@ -111,6 +111,17 @@ export interface IAdminRepository {
   resetPassword(id: string, newPassword: string): Promise<void>;
 
   /**
+   * Manually complete account setup for an email-invited admin who hasn't activated yet —
+   * sets the password directly and chooses whether the admin must change it on next login.
+   */
+  manualSetup(
+    id: string,
+    newPassword: string,
+    confirmPassword: string,
+    mustChangePassword: boolean
+  ): Promise<void>;
+
+  /**
    * Change admin's own password
    */
   changePassword(id: string, currentPassword: string, newPassword: string): Promise<void>;

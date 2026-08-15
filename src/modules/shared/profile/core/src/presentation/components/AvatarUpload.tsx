@@ -14,7 +14,8 @@ import { useRef, useState, useCallback } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@core/ui/avatar";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import { cn, resolveFileUrl } from "@core/common/utils";
+import { cn } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { Upload, Trash2, Camera } from "lucide-react";
 
 interface AvatarUploadProps {
@@ -50,7 +51,7 @@ export function AvatarUpload({
   const [localError, setLocalError] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const resolvedImageUrl = resolveFileUrl(currentImageUrl) || null;
+  const resolvedImageUrl = useResolvedFileUrl(currentImageUrl) || null;
   const displayUrl = previewUrl || resolvedImageUrl;
 
   const [prevDisplayUrl, setPrevDisplayUrl] = useState(displayUrl);

@@ -137,6 +137,13 @@ export const en = {
       cancel: "Cancel",
       create: "Create Lead",
       creating: "Creating…",
+      created: "Lead Created",
+      createdDesc: "The lead was created successfully.",
+      customFieldsSection: "Custom Fields",
+      customFieldsSectionDesc: "Extra fields defined by your workspace admin",
+      noCustomFields: "No custom fields defined for leads yet.",
+      customFieldsSaveError:
+        "The lead was created, but saving its custom field values failed. Please try again.",
       errors: {
         companyRequired: "Company name is required.",
         contactRequired: "Contact name is required.",

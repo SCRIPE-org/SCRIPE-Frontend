@@ -31,7 +31,7 @@ export class FeatureRepository implements IFeatureRepository {
     return {
       items: result.items.map((m) => FeatureMapper.toEntity(m)),
       totalCount: result.totalCount,
-      page: result.page,
+      pageNumber: result.pageNumber,
       pageSize: result.pageSize,
       totalPages: result.totalPages,
       hasNextPage: result.hasNextPage,

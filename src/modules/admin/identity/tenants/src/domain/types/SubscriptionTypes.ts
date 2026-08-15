@@ -51,6 +51,8 @@ export interface EditionThinModel {
   allowTrial?: boolean;
   /** True when no billing cycles are enabled \u2014 edition is permanently free. */
   isFree?: boolean;
+  /** True when this edition requires the Contact Sales flow \u2014 not assignable from the tenant-create wizard. */
+  isContactSalesOnly?: boolean;
 }
 
 // ── Subscription ─────────────────────────────────────────
@@ -98,7 +100,7 @@ export interface SubscriptionModel {
 export interface PagedEditionResult {
   items: EditionThinModel[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

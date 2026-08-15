@@ -15,6 +15,7 @@ import {
   type TenantJson,
   type TenantTreeNodeJson,
   type TenantListResponseJson,
+  type TenantTreeListResponseJson,
   type CreateTenantJson,
   type CreateTenantResultJson,
   type UpdateTenantJson,
@@ -59,7 +60,7 @@ export class TenantService implements ITenantService {
     return {
       items: response.items.map((json) => TenantModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: (response as any).pageNumber || response.page || 1,
+      page: response.pageNumber || 1,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -78,11 +79,11 @@ export class TenantService implements ITenantService {
       pageSize: params?.pageSize,
       search: params?.search,
     });
-    const response = await this.api.get<TenantTreeListResult>(url);
+    const response = await this.api.get<TenantTreeListResponseJson>(url);
     return {
-      items: response.items.map((json: any) => TenantTreeNodeModel.fromJson(json)),
+      items: response.items.map((json) => TenantTreeNodeModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: (response as any).pageNumber || response.page || 1,
+      page: response.pageNumber || 1,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

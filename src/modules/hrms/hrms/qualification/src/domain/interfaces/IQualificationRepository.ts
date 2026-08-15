@@ -9,6 +9,9 @@ export interface QualificationListParams {
   page: number;
   pageSize: number;
   search?: string;
+  /** Server-side sort column key (e.g. "title") — optional, additive (F-85). */
+  sortBy?: string;
+  sortDirection?: "asc" | "desc";
 }
 
 export interface IQualificationRepository {

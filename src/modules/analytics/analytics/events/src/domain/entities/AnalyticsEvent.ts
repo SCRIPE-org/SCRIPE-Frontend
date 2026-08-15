@@ -11,7 +11,7 @@ export interface AnalyticsEventData {
   occurredAt: string;
   subjectEntityTypeKey?: string | null;
   subjectEntityId?: string | null;
-  associatedNumericValue?: number | null;
+  value?: number | null;
   tenantId?: string | null;
 }
 
@@ -42,8 +42,8 @@ export class AnalyticsEvent {
     return this.data.subjectEntityId;
   }
 
-  get associatedNumericValue(): number | null | undefined {
-    return this.data.associatedNumericValue;
+  get value(): number | null | undefined {
+    return this.data.value;
   }
 
   get tenantId(): string | null | undefined {

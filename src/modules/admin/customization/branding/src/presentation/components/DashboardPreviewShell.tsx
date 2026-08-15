@@ -17,6 +17,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useMemo } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 import {
   SettingsContext,
   defaultSettings,
@@ -304,10 +305,12 @@ export function DashboardPreviewShell() {
 
 // ── Mock Dashboard Content ──
 function MockDashboardContent() {
+  const { t } = useI18n();
+
   const stats = [
     {
       icon: Users,
-      label: "Total Users",
+      label: t("studio.dashboardPreview.stats.totalUsers"),
       value: "2,847",
       change: "+12.5%",
       positive: true,
@@ -316,7 +319,7 @@ function MockDashboardContent() {
     },
     {
       icon: DollarSign,
-      label: "Revenue",
+      label: t("studio.dashboardPreview.stats.revenue"),
       value: "$48.2K",
       change: "+8.1%",
       positive: true,
@@ -325,7 +328,7 @@ function MockDashboardContent() {
     },
     {
       icon: Activity,
-      label: "Active Now",
+      label: t("studio.dashboardPreview.stats.activeNow"),
       value: "342",
       change: "-2.4%",
       positive: false,
@@ -334,7 +337,7 @@ function MockDashboardContent() {
     },
     {
       icon: Eye,
-      label: "Page Views",
+      label: t("studio.dashboardPreview.stats.pageViews"),
       value: "12.4K",
       change: "+23.7%",
       positive: true,
@@ -343,52 +346,66 @@ function MockDashboardContent() {
     },
   ];
 
+  // name/email/date are illustrative sample data, not chrome — left as literal
+  // content. role/status are real UI vocabulary (rendered via the maps below),
+  // so the raw values here stay as stable lookup keys, not display text.
   const tableRows = [
-    { name: "John Doe", email: "john@example.com", role: "Admin", status: "Active", date: "Today" },
+    { name: "John Doe", email: "john@example.com", role: "admin", status: "active", date: "Today" },
     {
       name: "Sarah Miller",
       email: "sarah@example.com",
-      role: "Editor",
-      status: "Active",
+      role: "editor",
+      status: "active",
       date: "Yesterday",
     },
     {
       name: "Alex Kim",
       email: "alex@example.com",
-      role: "Viewer",
-      status: "Pending",
+      role: "viewer",
+      status: "pending",
       date: "2 days ago",
     },
     {
       name: "Maria Garcia",
       email: "maria@example.com",
-      role: "Admin",
-      status: "Active",
+      role: "admin",
+      status: "active",
       date: "3 days ago",
     },
     {
       name: "James Wilson",
       email: "james@example.com",
-      role: "Editor",
-      status: "Inactive",
+      role: "editor",
+      status: "inactive",
       date: "1 week ago",
     },
   ];
+
+  const roleLabels: Record<string, string> = {
+    admin: t("studio.dashboardPreview.roles.admin"),
+    editor: t("studio.dashboardPreview.roles.editor"),
+    viewer: t("studio.dashboardPreview.roles.viewer"),
+  };
+  const statusLabels: Record<string, string> = {
+    active: t("studio.dashboardPreview.statuses.active"),
+    pending: t("studio.dashboardPreview.statuses.pending"),
+    inactive: t("studio.dashboardPreview.statuses.inactive"),
+  };
 
   return (
     <div className="space-y-6">
       {/* Page title */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-nx-ink">Dashboard</h1>
-          <p className="mt-1 text-sm text-nx-ink-3">Welcome back, Admin.</p>
+          <h1 className="text-2xl font-bold text-nx-ink">{t("studio.dashboardPreview.title")}</h1>
+          <p className="mt-1 text-sm text-nx-ink-3">{t("studio.dashboardPreview.welcomeBack")}</p>
         </div>
         <div className="flex gap-2">
           <button className="rounded-nx-control border border-nx-line bg-nx-ground px-3 py-1.5 text-sm text-nx-ink">
-            Export
+            {t("studio.dashboardPreview.export")}
           </button>
           <button className="rounded-nx-control bg-nx-accent-fill px-3 py-1.5 text-sm text-nx-on-fill">
-            + New Report
+            {t("studio.dashboardPreview.newReport")}
           </button>
         </div>
       </div>
@@ -413,7 +430,9 @@ function MockDashboardContent() {
                 )}
               >
                 <TrendingUp className={cn("h-3 w-3", !stat.positive && "rotate-180")} />
-                <span>{stat.change} from last month</span>
+                <span>
+                  {stat.change} {t("studio.dashboardPreview.fromLastMonth")}
+                </span>
               </div>
             </div>
           );
@@ -425,8 +444,10 @@ function MockDashboardContent() {
         <div className="rounded-nx-md border border-nx-line bg-nx-surface p-4 shadow-nx-sm lg:col-span-2">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <h3 className="font-semibold text-nx-ink">Revenue Overview</h3>
-              <p className="text-xs text-nx-ink-3">Monthly revenue</p>
+              <h3 className="font-semibold text-nx-ink">
+                {t("studio.dashboardPreview.revenueOverview")}
+              </h3>
+              <p className="text-xs text-nx-ink-3">{t("studio.dashboardPreview.monthlyRevenue")}</p>
             </div>
             <div className="flex gap-1">
               {["7d", "30d", "90d"].map((p, i) => (
@@ -463,8 +484,8 @@ function MockDashboardContent() {
         </div>
         <div className="rounded-nx-md border border-nx-line bg-nx-surface p-4 shadow-nx-sm">
           <div className="mb-4 flex items-center justify-between">
-            <h3 className="font-semibold text-nx-ink">Sources</h3>
-            <MoreHorizontal className="h-4 w-4 text-nx-ink-3" />
+            <h3 className="font-semibold text-nx-ink">{t("studio.dashboardPreview.sources")}</h3>
+            <MoreHorizontal className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
           </div>
           <div className="my-4 flex items-center justify-center">
             <div className="relative h-[100px] w-[100px]">
@@ -495,9 +516,9 @@ function MockDashboardContent() {
           </div>
           <div className="space-y-2">
             {[
-              { l: "Direct", p: "42%", opacity: "100%" },
-              { l: "Social", p: "28%", opacity: "60%" },
-              { l: "Referral", p: "18%", opacity: "30%" },
+              { l: t("studio.dashboardPreview.sourceLabels.direct"), p: "42%", opacity: "100%" },
+              { l: t("studio.dashboardPreview.sourceLabels.social"), p: "28%", opacity: "60%" },
+              { l: t("studio.dashboardPreview.sourceLabels.referral"), p: "18%", opacity: "30%" },
             ].map((item, i) => (
               <div key={i} className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -518,18 +539,26 @@ function MockDashboardContent() {
       <div className="rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-sm">
         <div className="flex items-center justify-between border-b border-nx-line p-4">
           <div>
-            <h3 className="font-semibold text-nx-ink">Recent Users</h3>
-            <p className="text-xs text-nx-ink-3">Latest registrations</p>
+            <h3 className="font-semibold text-nx-ink">{t("studio.dashboardPreview.recentUsers")}</h3>
+            <p className="text-xs text-nx-ink-3">
+              {t("studio.dashboardPreview.latestRegistrations")}
+            </p>
           </div>
           <button className="flex items-center gap-1 text-xs text-nx-accent">
-            View all <ArrowUpRight className="h-3 w-3" />
+            {t("studio.dashboardPreview.viewAll")} <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
           </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="border-b border-nx-line">
-                {["Name", "Email", "Role", "Status", "Date"].map((h) => (
+                {[
+                  t("studio.dashboardPreview.columns.name"),
+                  t("studio.dashboardPreview.columns.email"),
+                  t("studio.dashboardPreview.columns.role"),
+                  t("studio.dashboardPreview.columns.status"),
+                  t("studio.dashboardPreview.columns.date"),
+                ].map((h) => (
                   <th key={h} className="p-3 text-start text-xs font-medium text-nx-ink-3">
                     {h}
                   </th>
@@ -546,21 +575,21 @@ function MockDashboardContent() {
                   <td className="p-3 text-sm text-nx-ink-3">{row.email}</td>
                   <td className="p-3">
                     <span className="rounded-full bg-nx-raised px-2 py-0.5 text-xs text-nx-ink-3">
-                      {row.role}
+                      {roleLabels[row.role]}
                     </span>
                   </td>
                   <td className="p-3">
                     <span
                       className={cn(
                         "rounded-full px-2 py-0.5 text-xs",
-                        row.status === "Active"
+                        row.status === "active"
                           ? "bg-success/10 text-success"
-                          : row.status === "Pending"
+                          : row.status === "pending"
                             ? "bg-warning/10 text-warning"
                             : "bg-nx-raised text-nx-ink-3"
                       )}
                     >
-                      {row.status}
+                      {statusLabels[row.status]}
                     </span>
                   </td>
                   <td className="p-3 text-sm text-nx-ink-3">{row.date}</td>

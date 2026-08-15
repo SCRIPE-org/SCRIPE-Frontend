@@ -18,6 +18,7 @@ import { DocsPrevNext } from "../components/layout/DocsPrevNext";
 import { DocsMobileNav } from "../components/layout/DocsMobileNav";
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
+import Image from "next/image";
 
 // CommercialSubNav is intentionally omitted — replaced by the mega-menu in CommercialHeader
 
@@ -112,9 +113,11 @@ function CommercialFooter() {
               className="com-footer-logo"
               aria-label={t("commercialHeader.logoAria", { brand: BRAND.namePascal })}
             >
-              <img
-                src="/app-logo.png"
+              <Image
+                src="/brand/app-logo-1024.png"
                 alt={BRAND.namePascal}
+                width={24}
+                height={24}
                 style={{ width: 24, height: 24, objectFit: "contain" }}
               />
               <span>{BRAND.nameUpper}</span>

@@ -26,7 +26,7 @@ export interface CertificationJson {
 export interface CertificationListResponseJson {
   items: CertificationJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

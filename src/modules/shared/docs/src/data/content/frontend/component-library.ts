@@ -118,42 +118,45 @@ export function cn(...inputs: ClassValue[]) {
   {
     type: "code",
     language: "typescript",
-    filename: "brand.ts — Aurora Refined Brand Design Tokens",
+    filename: "brand.ts — SCRIPE Relay vNext Brand Design Tokens",
     code: `export const BRAND_TOKENS = {
   bg: {
-    base: "#06060E",
-    panel: "rgba(20,12,46,0.78)",
-    card: "linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85))",
-    glass: "rgba(6,6,14,0.85)",
+    base: "#050506",
+    panel: "rgba(21,23,25,0.86)",
+    card: "linear-gradient(180deg, rgba(21,23,25,.86), rgba(13,13,14,.92))",
+    glass: "rgba(13,13,14,0.85)",
   },
   gradient: {
-    cta: "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)",
-    page: "radial-gradient(140% 90% at 25% 25%, #1A1140 0%, #0A0820 40%, #06060E 80%, #04040A 100%)",
+    // Solid Signal Lime, not a gradient — DESIGN.md bans gradient CTAs.
+    cta: "linear-gradient(135deg, #C6FF00 0%, #C6FF00 100%)",
+    page: "radial-gradient(140% 90% at 25% 25%, #151719 0%, #0D0D0E 40%, #050506 80%, #030304 100%)",
   },
   palette: {
-    violet: "#A855F7",
-    violetDark: "#7C3AED",
-    indigo: "#6366F1",
-    cyan: "#22D3EE",
+    signal: "#C6FF00",
+    ink: "#0D0D0E",
+    void: "#050506",
+    carbon: "#151719",
+    graphite: "#3F4347",
+    mineral: "#D7D8D6",
   }
 };
 
 export const DARK_THEME = {
-  surface: "#06060E",
-  surfaceRaised: "rgba(20,12,46,0.78)",
-  borderCard: "1px solid rgba(168,85,247,0.22)",
-  gradientPage: "radial-gradient(140% 90% at 25% 25%, #1A1140 0%, #0A0820 40%, #06060E 80%, #04040A 100%)",
-  gradientCta: "linear-gradient(135deg, #A855F7 0%, #7C3AED 50%, #6366F1 100%)",
-  shadowCard: "0 25px 50px -12px rgba(0,0,0,.5), 0 0 80px -20px rgba(168,85,247,.15)"
+  surface: "#050506",
+  surfaceRaised: "rgba(21,23,25,0.86)",
+  borderCard: "1px solid rgba(198,255,0,0.18)",
+  gradientPage: "radial-gradient(140% 90% at 25% 25%, #151719 0%, #0D0D0E 40%, #050506 80%, #030304 100%)",
+  gradientCta: "linear-gradient(135deg, #C6FF00 0%, #C6FF00 100%)",
+  shadowCard: "0 25px 50px -12px rgba(13,13,14,.5)"
 };
 
 export const LIGHT_THEME = {
-  surface: "#F8F7FF",
+  surface: "#F7F8F5",
   surfaceRaised: "#FFFFFF",
-  borderCard: "1px solid rgba(168,85,247,0.18)",
-  gradientPage: "radial-gradient(140% 90% at 25% 25%, #EDE9FE 0%, #F5F3FF 40%, #F8F7FF 80%, #FAFAFE 100%)",
-  gradientCta: "linear-gradient(135deg, #7C3AED 0%, #6D28D9 50%, #4F46E5 100%)",
-  shadowCard: "0 4px 24px -4px rgba(124,58,237,0.12), 0 1px 3px rgba(0,0,0,0.06)"
+  borderCard: "1px solid rgba(76,98,0,0.18)",
+  gradientPage: "radial-gradient(140% 90% at 25% 25%, #F7F8F5 0%, #EEF0EB 40%, #FFFFFF 80%, #FFFFFF 100%)",
+  gradientCta: "linear-gradient(135deg, #C6FF00 0%, #C6FF00 100%)",
+  shadowCard: "0 4px 24px -4px rgba(13,13,14,0.12), 0 1px 3px rgba(0,0,0,0.06)"
 };`,
   },
   {
@@ -186,12 +189,12 @@ export const LIGHT_THEME = {
     code: `/* Binds dynamic HSL parameters for compile-time compilation */
 :root {
   --background: 0 0% 100%;
-  --primary: 262 83% 58%;
+  --primary: 74 100% 50%; /* Signal Lime */
   --border: 240 5.9% 90%;
 }
 .dark {
   --background: 240 10% 3.9%;
-  --primary: 262 83% 58%;
+  --primary: 74 100% 50%; /* Signal Lime — invariant across themes */
 }
 
 /* Tailwind maps class styles directly to HSL variables */

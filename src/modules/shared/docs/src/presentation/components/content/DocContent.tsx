@@ -26,6 +26,7 @@ import { StatsStripBlock } from "./StatsStripBlock";
 import { ValuePropsBlock } from "./ValuePropsBlock";
 import { CtaBannerBlock } from "./CtaBannerBlock";
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@core/ui/table";
+import Image from "next/image";
 
 interface DocContentProps {
   sections: DocSection[];
@@ -189,9 +190,12 @@ export function DocContent({ sections }: DocContentProps) {
           case "image":
             return (
               <figure key={key} style={{ marginBottom: "1.5rem" }}>
-                <img
+                <Image
                   src={section.src}
                   alt={section.alt}
+                  width={800}
+                  height={450}
+                  unoptimized
                   style={{ maxWidth: "100%", borderRadius: "var(--nx-radius-lg)" }}
                 />
                 {section.caption && (

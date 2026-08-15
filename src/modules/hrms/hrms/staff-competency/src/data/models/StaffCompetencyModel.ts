@@ -24,7 +24,7 @@ export interface StaffCompetencyJson {
 export interface StaffCompetencyListResponseJson {
   items: StaffCompetencyJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

@@ -206,9 +206,16 @@ interface GenericFormProps {
  * @param props.readOnly - Whether the form is in read-only mode
  * @returns JSX element representing the form
  */
+/**
+ * Stable identity for the omitted-prop case. An inline `initialValues = {}`
+ * default is re-created on EVERY render of this component, so the re-init
+ * effect below saw changed deps forever and re-entered itself.
+ */
+const NO_INITIAL_VALUES: Record<string, any> = {};
+
 export function GenericForm({
   fields,
-  initialValues = {},
+  initialValues = NO_INITIAL_VALUES,
   onSubmit,
   onCancel,
   readOnly = false,
@@ -255,22 +262,31 @@ export function GenericForm({
   // Re-initialize form data when fields change (for dynamic forms)
   // IMPORTANT: Only populate values for NEW fields that don't exist in the current
   // form data. Never overwrite existing user-typed values with initialValues.
+  // The updater MUST return the previous object unchanged when it adds nothing.
+  // It used to spread unconditionally, so every run produced a new state
+  // reference, React re-rendered, the effect re-ran on its unstable deps, and
+  // the form span out on "Maximum update depth exceeded" (React error #185).
+  // Bailing out on the no-op keeps that loop closed even if a caller rebuilds
+  // `fields` or `initialValues` on every render.
   React.useEffect(() => {
     setFormData((prevData) => {
+      let added = false;
       const preservedData = { ...prevData };
       fields.forEach((field) => {
         // Only set default/initial value if this field has NO value yet
         if (preservedData[field.name] === undefined) {
           if (field.defaultValue !== undefined) {
             preservedData[field.name] = field.defaultValue;
+            added = true;
           } else if (initialValues[field.name] !== undefined) {
             preservedData[field.name] = initialValues[field.name];
+            added = true;
           }
         }
       });
-      return preservedData;
+      return added ? preservedData : prevData;
     });
-  }, [fields, initializeFormData, initialValues]);
+  }, [fields, initialValues]);
 
   const handleChange = (name: string, value: any) => {
     // Clear error when user changes the field

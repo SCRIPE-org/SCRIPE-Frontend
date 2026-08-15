@@ -9,6 +9,8 @@
 
 import { useWebhookDetailViewModel } from "../viewmodels/useWebhookDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
+import { INTEGRATIONS_PERMISSIONS } from "@modules/integrations/permission-constants";
 import { WebhookStatusBadge } from "../components/WebhookStatusBadge";
 import { WebhookSecretPanel } from "../components/WebhookSecretPanel";
 import { WebhookAnalyticsChart } from "../components/WebhookAnalyticsChart";
@@ -71,6 +73,14 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  // Backend enforcement was always intact (Test/Toggle/Update/RotateSecret/ReplayDeadLetter
+  // all carry [PermissionRequired("webhooks.update")], Delete carries "webhooks.delete") —
+  // this page's controls previously rendered and were enabled purely off local UI state, with
+  // zero permission gating of their own. Computed once here and passed down to this view's
+  // own actions plus the secret panel and dead-letter queue below.
+  const canUpdate = usePermission(INTEGRATIONS_PERMISSIONS.WEBHOOKS_UPDATE);
+  const canDelete = usePermission(INTEGRATIONS_PERMISSIONS.WEBHOOKS_DELETE);
 
   // ─── Loading state ────────────────────────────────────────
   if (vm.isLoading) {
@@ -146,34 +156,42 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
         ]}
         actions={
           <>
-            <TestPingButton
-              onTest={vm.testPing}
-              isTesting={vm.isTesting}
-              testResult={vm.testResult}
-              onDismiss={vm.clearTestResult}
-            />
-            <Button variant="outline" size="sm" onClick={vm.toggle} loading={vm.isToggling}>
-              {!vm.isToggling &&
-                (webhook.isActive ? (
-                  <ToggleRight className="me-1.5 h-4 w-4 text-success" aria-hidden="true" />
-                ) : (
-                  <ToggleLeft className="me-1.5 h-4 w-4" aria-hidden="true" />
-                ))}
-              {webhook.isActive ? t("webhooks.deactivate") : t("webhooks.activate")}
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(true)}>
-              <Pencil className="me-1.5 h-4 w-4" aria-hidden="true" />
-              {t("common.edit")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-              onClick={() => setDeleteDialogOpen(true)}
-            >
-              <Trash2 className="me-1.5 h-4 w-4" aria-hidden="true" />
-              {t("common.delete")}
-            </Button>
+            {canUpdate && (
+              <TestPingButton
+                onTest={vm.testPing}
+                isTesting={vm.isTesting}
+                testResult={vm.testResult}
+                onDismiss={vm.clearTestResult}
+              />
+            )}
+            {canUpdate && (
+              <Button variant="outline" size="sm" onClick={vm.toggle} loading={vm.isToggling}>
+                {!vm.isToggling &&
+                  (webhook.isActive ? (
+                    <ToggleRight className="me-1.5 h-4 w-4 text-success" aria-hidden="true" />
+                  ) : (
+                    <ToggleLeft className="me-1.5 h-4 w-4" aria-hidden="true" />
+                  ))}
+                {webhook.isActive ? t("webhooks.deactivate") : t("webhooks.activate")}
+              </Button>
+            )}
+            {canUpdate && (
+              <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(true)}>
+                <Pencil className="me-1.5 h-4 w-4" aria-hidden="true" />
+                {t("common.edit")}
+              </Button>
+            )}
+            {canDelete && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setDeleteDialogOpen(true)}
+              >
+                <Trash2 className="me-1.5 h-4 w-4" aria-hidden="true" />
+                {t("common.delete")}
+              </Button>
+            )}
           </>
         }
         tabs={
@@ -305,6 +323,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
           onToggleVisibility={vm.toggleSecretVisibility}
           onRotate={vm.rotateSecret}
           isRotating={vm.isRotating}
+          canRotate={canUpdate}
         />
       </TabsContent>
 
@@ -340,6 +359,7 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
           isReplaying={vm.isReplaying}
           isReplayingAll={vm.isReplayingAll}
           isLoading={vm.isLoadingDeadLetters}
+          canReplay={canUpdate}
         />
       </TabsContent>
 

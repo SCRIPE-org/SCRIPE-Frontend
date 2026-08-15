@@ -154,11 +154,10 @@ export function PlanCard({
           : hovered
             ? `1px solid ${tokens.accent}40`
             : tokens.borderCard,
-        boxShadow: hovered
-          ? tokens.shadowCard
-          : isAccent
-            ? "0 4px 20px -2px rgba(124, 58, 237, 0.15)"
-            : "none",
+        // No resting-state glow, per the "accent only via ring + faint tint,
+        // never glow" rule above — the recommended card reads from its tinted
+        // background and border alone until it's actually hovered.
+        boxShadow: hovered ? tokens.shadowCard : "none",
       }}
     >
       {/* ── Row 1: reserved badge slot (fixed line; renders ≤ 1 badge) ── */}

@@ -73,6 +73,9 @@ export const ar = {
     toolbarPricingAll: "جميع خطط التسعير",
     toolbarPricingOneTime: "دفعة واحدة",
     toolbarPricingSubscription: "اشتراك",
+    toolbarPricingFreemium: "فريميوم",
+    toolbarPricingPerSeat: "لكل مقعد",
+    toolbarPricingUsageBased: "حسب الاستخدام",
     // ── AppDetailView ──
     detailBackToListings: "العودة إلى قائمة التطبيقات",
     detailFailedToLoad: "فشل تحميل بيانات التطبيق.",

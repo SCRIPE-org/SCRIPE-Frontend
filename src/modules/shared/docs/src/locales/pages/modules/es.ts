@@ -1,6 +1,6 @@
 // FILE-EXCEPTION: file length
 /**
- * Docs page locale â€” ES
+ * Docs page locale — ES
  * Auto-generated from monolithic doc locale. Do not edit the generation source.
  */
 export const es = {
@@ -13,7 +13,7 @@ export const es = {
         "El mÃ³dulo de Derechos (Entitlements) es el motor de gestiÃ³n de planes y funciones de SCRIPE. Define quÃ© capacidades obtiene cada inquilino (tenant), cÃ³mo los planes (ediciones) agrupan esas capacidades y cÃ³mo las suscripciones vinculan a los inquilinos con los planes.",
       whatIsTitle: "Â¿QuÃ© son los Derechos?",
       whatIsIntro:
-        "Derechos es el mÃ³dulo responsable de controlar a quÃ© funciones puede acceder un inquilino en funciÃ³n de su ediciÃ³n (plan) suscrita. Proporciona una cadena de resoluciÃ³n de tres niveles: Valores predeterminados de la funciÃ³n â†’ Valores de la ediciÃ³n â†’ Sobreescrituras por inquilino, lo que garantiza la mÃ¡xima flexibilidad tanto para los operadores de la plataforma como para los inquilinos revendedores.",
+        "Derechos es el mÃ³dulo responsable de controlar a quÃ© funciones puede acceder un inquilino en funciÃ³n de su ediciÃ³n (plan) suscrita. Proporciona una cadena de resoluciÃ³n de tres niveles: Valores predeterminados de la funciÃ³n → Valores de la ediciÃ³n → Sobreescrituras por inquilino, lo que garantiza la mÃ¡xima flexibilidad tanto para los operadores de la plataforma como para los inquilinos revendedores.",
       architectureTitle: "Arquitectura",
       architectureIntro:
         "El sistema de Derechos estÃ¡ compuesto por cuatro dominios interconectados que trabajan juntos para proporcionar una soluciÃ³n completa de control de funciones.",
@@ -124,7 +124,7 @@ export const es = {
       description:
         "VinculaciÃ³n de inquilinos a ediciones con gestiÃ³n completa del ciclo de vida, precios multidivisa, promociones, pruebas, descensos de plan (downgrades), comportamiento de expiraciÃ³n y exportaciÃ³n analÃ­tica avanzada.",
       intro:
-        "Las suscripciones vinculan a los inquilinos con las ediciones (planes). Cada inquilino tiene una suscripciÃ³n base que determina su ediciÃ³n y, opcionalmente, suscripciones complementarias para capacidades adicionales. El sistema de suscripciÃ³n maneja todo el ciclo de vida, desde la asignaciÃ³n hasta la renovaciÃ³n, el descenso de plan, la suspensiÃ³n y la cancelaciÃ³n â€” con precios multidivisa integrados y seguimiento de descuentos promocionales.",
+        "Las suscripciones vinculan a los inquilinos con las ediciones (planes). Cada inquilino tiene una suscripciÃ³n base que determina su ediciÃ³n y, opcionalmente, suscripciones complementarias para capacidades adicionales. El sistema de suscripciÃ³n maneja todo el ciclo de vida, desde la asignaciÃ³n hasta la renovaciÃ³n, el descenso de plan, la suspensiÃ³n y la cancelaciÃ³n — con precios multidivisa integrados y seguimiento de descuentos promocionales.",
       entityTitle: "Entidad de SuscripciÃ³n",
       entityIntro:
         "Una TenantSubscription vincula a un inquilino a una ediciÃ³n con seguimiento del ciclo de vida. Admite mÃºltiples tipos de suscripciÃ³n y estados para una gestiÃ³n completa del ciclo de vida.",
@@ -146,7 +146,7 @@ export const es = {
         "Cada suscripciÃ³n lleva metadatos completos de precios: Moneda (cÃ³digo ISO), MontoBase, MontoAjuste, MontoTotal, TipoDeCambioAUsd y MontoTotalUsd. Esto permite un seguimiento preciso de los ingresos en mÃ¡s de 9 monedas compatibles (USD, EUR, GBP, SAR, AED, EGP, TRY, INR y mÃ¡s).",
       exchangeRateTitle: "NormalizaciÃ³n en USD",
       exchangeRateIntro:
-        "Todos los montos se normalizan a USD a travÃ©s de ExchangeRateToUsd para informes MRR/ARR consistentes. El campo TotalAmountUsd se calcula en el momento de la suscripciÃ³n y se almacena para precisiÃ³n histÃ³rica â€” las fluctuaciones del tipo de cambio no modifican retroactivamente los registros anteriores.",
+        "Todos los montos se normalizan a USD a travÃ©s de ExchangeRateToUsd para informes MRR/ARR consistentes. El campo TotalAmountUsd se calcula en el momento de la suscripciÃ³n y se almacena para precisiÃ³n histÃ³rica — las fluctuaciones del tipo de cambio no modifican retroactivamente los registros anteriores.",
       promotionsTitle: "Descuentos Promocionales",
       promotionsIntro:
         "Las suscripciones admiten cÃ³digos promocionales a travÃ©s del campo AppliedPromoCode. Cuando se aplica una promociÃ³n vÃ¡lida, se registra un porcentaje PromotionDiscount y el MontoAjuste refleja el descuento aplicado al MontoBase. Las promociones se rastrean por suscripciÃ³n para auditorÃ­a y anÃ¡lisis.",
@@ -156,22 +156,22 @@ export const es = {
       exportFiltersTitle: "Filtros de ExportaciÃ³n",
       exportFiltersIntro: "Los informes admiten filtros avanzados para anÃ¡lisis especÃ­ficos:",
       exportFilterDate:
-        "Rango de fechas â€” filtrar por fecha de creaciÃ³n de suscripciÃ³n (Ãºltimos 7/30/90 dÃ­as, Ãºltimo aÃ±o o rango personalizado)",
+        "Rango de fechas — filtrar por fecha de creaciÃ³n de suscripciÃ³n (Ãºltimos 7/30/90 dÃ­as, Ãºltimo aÃ±o o rango personalizado)",
       exportFilterExpiring:
-        "Expira pronto â€” encontrar suscripciones que expiran dentro de 5/7/14/30/60/90 dÃ­as",
-      exportFilterStatus: "Estado â€” Activo, Suspendido, Cancelado, Expirado",
-      exportFilterEdition: "EdiciÃ³n â€” filtrar por plan/ediciÃ³n especÃ­fica",
-      exportFilterCurrency: "Moneda â€” mostrar montos en la moneda seleccionada",
+        "Expira pronto — encontrar suscripciones que expiran dentro de 5/7/14/30/60/90 dÃ­as",
+      exportFilterStatus: "Estado — Activo, Suspendido, Cancelado, Expirado",
+      exportFilterEdition: "EdiciÃ³n — filtrar por plan/ediciÃ³n especÃ­fica",
+      exportFilterCurrency: "Moneda — mostrar montos en la moneda seleccionada",
       exportDaysLeftTitle: "DÃ­as Restantes para la ExpiraciÃ³n",
       exportDaysLeftIntro:
         "Los informes incluyen una columna 'DÃ­as Restantes' calculada con codificaciÃ³n de colores condicional: rojo (â‰¤7 dÃ­as), amarillo (â‰¤30 dÃ­as), verde (>30 dÃ­as). Esto permite identificar de un vistazo las suscripciones que requieren atenciÃ³n de renovaciÃ³n.",
       exportFormatsTitle: "Detalles de Formatos de ExportaciÃ³n",
-      exportFormatCsv: "CSV â€” ligero, importable en cualquier hoja de cÃ¡lculo o herramienta BI",
+      exportFormatCsv: "CSV — ligero, importable en cualquier hoja de cÃ¡lculo o herramienta BI",
       exportFormatExcel:
-        "XLSX â€” libro de Excel profesional con encabezados estilizados, hoja de metadatos de filtro, formato condicional y columnas de tamaÃ±o automÃ¡tico (ClosedXML)",
+        "XLSX — libro de Excel profesional con encabezados estilizados, hoja de metadatos de filtro, formato condicional y columnas de tamaÃ±o automÃ¡tico (ClosedXML)",
       exportFormatPdf:
-        "PDF â€” documento listo para imprimir con pÃ¡gina de portada con marca, resumen estadÃ­stico y tablas de datos paginadas (QuestPDF)",
-      renewalTitle: "RenovaciÃ³n â€” PatrÃ³n de Fila Nueva (B2)",
+        "PDF — documento listo para imprimir con pÃ¡gina de portada con marca, resumen estadÃ­stico y tablas de datos paginadas (QuestPDF)",
+      renewalTitle: "RenovaciÃ³n — PatrÃ³n de Fila Nueva (B2)",
       renewalIntro:
         "Las renovaciones crean una NUEVA fila de TenantSubscription en lugar de sobrescribir el registro existente (patrÃ³n Stripe). La suscripciÃ³n antigua se marca como Expirada (IsActive=false), mientras se crea una nueva fila con Id fresco, StartDate=UtcNow, precios recalculados y detalles de promociÃ³n transferidos.",
       renewalAuditTitle: "Pista de AuditorÃ­a de Ingresos",
@@ -179,10 +179,10 @@ export const es = {
         "Cada ciclo de facturaciÃ³n produce su propia fila inmutable en la base de datos con precios fijados al momento de la renovaciÃ³n. Esto permite informes financieros precisos: tendencias de MRR, anÃ¡lisis de cancelaciones por perÃ­odo y seguimiento de reembolsos por ciclo.",
       promoExpiryTitle: "Seguimiento de Caducidad de Promociones (A1)",
       promoExpiryIntro:
-        "Cuando se aplica una promociÃ³n con DurationDays > 0, el sistema calcula una marca temporal PromotionExpiresAt. En cada renovaciÃ³n, el manejador verifica si UtcNow > PromotionExpiresAt â€” si la promociÃ³n ha expirado, el descuento se elimina y NO se transfiere a la nueva fila de suscripciÃ³n.",
+        "Cuando se aplica una promociÃ³n con DurationDays > 0, el sistema calcula una marca temporal PromotionExpiresAt. En cada renovaciÃ³n, el manejador verifica si UtcNow > PromotionExpiresAt — si la promociÃ³n ha expirado, el descuento se elimina y NO se transfiere a la nueva fila de suscripciÃ³n.",
       concurrencyTitle: "Concurrencia Optimista (E1)",
       concurrencyIntro:
-        "Cada TenantSubscription tiene un ConcurrencyStamp (Guid) con [ConcurrencyCheck]. El sello se renueva en cada operaciÃ³n de escritura. Esto previene condiciones de carrera â€” por ejemplo, cancelaciÃ³n concurrente + trabajo de reconciliaciÃ³n â€” lanzando DbUpdateConcurrencyException en colisiones.",
+        "Cada TenantSubscription tiene un ConcurrencyStamp (Guid) con [ConcurrencyCheck]. El sello se renueva en cada operaciÃ³n de escritura. Esto previene condiciones de carrera — por ejemplo, cancelaciÃ³n concurrente + trabajo de reconciliaciÃ³n — lanzando DbUpdateConcurrencyException en colisiones.",
       validationTitle: "ValidaciÃ³n de Entrada (G1)",
       validationIntro:
         "Los 8 comandos de suscripciÃ³n tienen validadores FluentValidation dedicados. Los validadores usan ILocalizer para mensajes de error localizados (EN + AR). Reglas de negocio: no renovar como prueba, montos de reembolso positivos, lÃ­mites de longitud de texto.",
@@ -292,13 +292,13 @@ export const es = {
       whenIntro:
         "Las sobreescrituras estÃ¡n diseÃ±adas para casos excepcionales en los que un inquilino necesita un valor diferente al que proporciona su ediciÃ³n:",
       useCase1:
-        "Acuerdos empresariales personalizados â€” 'Dar a Acme Corp 500 administradores en lugar de los 50 estÃ¡ndar'",
+        "Acuerdos empresariales personalizados — 'Dar a Acme Corp 500 administradores en lugar de los 50 estÃ¡ndar'",
       useCase2:
-        "Ofertas promocionales â€” 'Habilitar el Chat Premium para este inquilino durante 30 dÃ­as'",
+        "Ofertas promocionales — 'Habilitar el Chat Premium para este inquilino durante 30 dÃ­as'",
       useCase3:
-        "Pruebas Beta â€” 'Habilitar el nuevo mÃ³dulo de FacturaciÃ³n para los primeros usuarios'",
+        "Pruebas Beta — 'Habilitar el nuevo mÃ³dulo de FacturaciÃ³n para los primeros usuarios'",
       useCase4:
-        "Aumento temporal â€” 'Aumentar el lÃ­mite de carga de archivos durante su migraciÃ³n'",
+        "Aumento temporal — 'Aumentar el lÃ­mite de carga de archivos durante su migraciÃ³n'",
       overuseWarning:
         "Las sobreescrituras deben usarse con moderaciÃ³n. Si muchos inquilinos necesitan la misma sobreescritura, considere crear una nueva ediciÃ³n. El exceso de sobreescrituras hace que el sistema sea mÃ¡s difÃ­cil de gestionar y auditar.",
       resolvedTitle: "Endpoint de Funciones Resueltas",
@@ -802,15 +802,15 @@ export const es = {
         policiesTitle: "ConfiguraciÃ³n de la PolÃ­tica",
         policiesIntro: "Cada polÃ­tica de retenciÃ³n especifica:",
         field1:
-          "DataCategory â€” El tipo de datos (ej. 'Perfiles de Usuario', 'Registros de Consentimiento').",
-        field2: "RetentionDays â€” CuÃ¡ntos dÃ­as deben conservarse los datos.",
+          "DataCategory — El tipo de datos (ej. 'Perfiles de Usuario', 'Registros de Consentimiento').",
+        field2: "RetentionDays — CuÃ¡ntos dÃ­as deben conservarse los datos.",
         field3:
-          "ExpiryAction â€” QuÃ© ocurre cuando el periodo expira: Eliminar (Delete) o Anonimizar (Anonymize).",
-        field4: "RegulationCode â€” QuÃ© regulaciÃ³n exige esto (GDPR, CCPA, etc.).",
+          "ExpiryAction — QuÃ© ocurre cuando el periodo expira: Eliminar (Delete) o Anonimizar (Anonymize).",
+        field4: "RegulationCode — QuÃ© regulaciÃ³n exige esto (GDPR, CCPA, etc.).",
         actionsTitle: "Acciones de ExpiraciÃ³n",
         actionsIntro: "Al expirar, SCRIPE aplica una de dos acciones:",
-        action1: "Eliminar (Delete) â€” Elimina permanentemente todos los registros.",
-        action2: "Anonimizar (Anonymize) â€” Reemplaza la PII con tokens seudÃ³nimos.",
+        action1: "Eliminar (Delete) — Elimina permanentemente todos los registros.",
+        action2: "Anonimizar (Anonymize) — Reemplaza la PII con tokens seudÃ³nimos.",
         automationTitle: "AplicaciÃ³n Automatizada",
         automationIntro:
           "La tarea RetentionEnforcementJob se ejecuta diariamente escaneando polÃ­ticas y aplicando la acciÃ³n. Se crea un registro de auditorÃ­a RetentionExecution.",
@@ -835,18 +835,18 @@ export const es = {
       inventory: {
         title: "Inventario de Datos",
         description:
-          "Un registro de todas las categorÃ­as de datos personales procesadas â€” requerido por el ArtÃ­culo 30 del GDPR (RoPA).",
+          "Un registro de todas las categorÃ­as de datos personales procesadas — requerido por el ArtÃ­culo 30 del GDPR (RoPA).",
         intro:
           "El Inventario de Datos es un registro estructurado. SegÃºn el ArtÃ­culo 30 del GDPR, los controladores deben mantener un Registro de Actividades de Procesamiento (RoPA).",
         fieldsTitle: "Campos del Inventario",
         fieldsIntro: "Cada elemento documenta:",
-        field1: "DataCategory â€” Nombre legible de la categorÃ­a (ej. 'Direcciones de Email').",
-        field2: "LegalBasis â€” La base legal del GDPR (Consentimiento, Contrato, etc.).",
-        field3: "DataSubjects â€” A quiÃ©n pertenecen los datos (ej. 'Usuarios finales').",
-        field4: "ProcessingPurpose â€” Por quÃ© se procesan los datos (ej. 'Marketing').",
-        field5: "StorageLocation â€” DÃ³nde se almacenan (paÃ­s/regiÃ³n).",
-        field6: "RetentionPeriod â€” CuÃ¡nto tiempo se conservan.",
-        field7: "ThirdPartySharing â€” Si los datos se comparten con terceros.",
+        field1: "DataCategory — Nombre legible de la categorÃ­a (ej. 'Direcciones de Email').",
+        field2: "LegalBasis — La base legal del GDPR (Consentimiento, Contrato, etc.).",
+        field3: "DataSubjects — A quiÃ©n pertenecen los datos (ej. 'Usuarios finales').",
+        field4: "ProcessingPurpose — Por quÃ© se procesan los datos (ej. 'Marketing').",
+        field5: "StorageLocation — DÃ³nde se almacenan (paÃ­s/regiÃ³n).",
+        field6: "RetentionPeriod — CuÃ¡nto tiempo se conservan.",
+        field7: "ThirdPartySharing — Si los datos se comparten con terceros.",
         ropaTitle: "Cumplimiento del ArtÃ­culo 30",
         ropaIntro:
           "Organizaciones con mÃ¡s de 250 empleados deben mantener un RoPA. El inventario de SCRIPE sirve como un RoPA en vivo y exportable.",
@@ -867,15 +867,15 @@ export const es = {
           "Los Reportes de Cumplimiento son documentos generados de forma asÃ­ncrona que proporcionan resÃºmenes para inspecciones regulatorias o auditorÃ­as internas.",
         reportTypesTitle: "Tipos de Reportes",
         reportTypesIntro: "Hay cinco tipos de reportes disponibles:",
-        type1: "Resumen GDPR â€” Resumen de alto nivel del estado de cumplimiento de GDPR.",
+        type1: "Resumen GDPR — Resumen de alto nivel del estado de cumplimiento de GDPR.",
         type2:
-          "Resumen de Actividad DSR â€” EstadÃ­sticas sobre volumen, tipos y tasas de cumplimiento de DSR.",
+          "Resumen de Actividad DSR — EstadÃ­sticas sobre volumen, tipos y tasas de cumplimiento de DSR.",
         type3:
-          "AuditorÃ­a de Consentimiento â€” Registro completo de consentimientos otorgados y retirados.",
+          "AuditorÃ­a de Consentimiento — Registro completo de consentimientos otorgados y retirados.",
         type4:
-          "AnÃ¡lisis de RetenciÃ³n â€” Estado actual de cumplimiento de todas las polÃ­ticas activas.",
+          "AnÃ¡lisis de RetenciÃ³n — Estado actual de cumplimiento de todas las polÃ­ticas activas.",
         type5:
-          "ExportaciÃ³n de Inventario de Datos â€” ExportaciÃ³n completa del inventario (RoPA ArtÃ­culo 30).",
+          "ExportaciÃ³n de Inventario de Datos — ExportaciÃ³n completa del inventario (RoPA ArtÃ­culo 30).",
         asyncTitle: "GeneraciÃ³n AsÃ­ncrona",
         asyncIntro:
           "Los reportes se generan de forma asÃ­ncrona para no bloquear las peticiones HTTP. Cuando solicita un reporte, el sistema crea un registro ComplianceReport (IsReady=false) y encola la generaciÃ³n.",

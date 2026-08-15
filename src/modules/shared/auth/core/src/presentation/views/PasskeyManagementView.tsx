@@ -101,11 +101,11 @@ export function PasskeyManagementView() {
             className="flex h-10 w-10 items-center justify-center rounded-xl"
             style={{
               background:
-                "linear-gradient(135deg, rgba(168,85,247,0.15) 0%, rgba(124,58,237,0.1) 100%)",
-              border: "1px solid rgba(168,85,247,0.3)",
+                "linear-gradient(135deg, rgba(198,255,0,0.15) 0%, rgba(198,255,0,0.08) 100%)",
+              border: "1px solid rgba(198,255,0,0.3)",
             }}
           >
-            <Fingerprint className="h-5 w-5" style={{ color: "var(--sx-accent, #A855F7)" }} />
+            <Fingerprint className="h-5 w-5" style={{ color: "var(--sx-accent, #C6FF00)" }} />
           </div>
           <div>
             <h3
@@ -215,7 +215,7 @@ export function PasskeyManagementView() {
         <div className="flex items-center justify-center py-8">
           <span
             className="sx-spin1 inline-block h-6 w-6 rounded-full border-2 border-transparent border-t-current"
-            style={{ color: "var(--sx-accent, #A855F7)" }}
+            style={{ color: "var(--sx-accent, #C6FF00)" }}
           />
         </div>
       )}
@@ -247,11 +247,11 @@ export function PasskeyManagementView() {
           <div
             className="flex h-14 w-14 items-center justify-center rounded-2xl"
             style={{
-              background: "linear-gradient(135deg, rgba(168,85,247,0.1), rgba(124,58,237,0.05))",
-              border: "1px solid rgba(168,85,247,0.2)",
+              background: "linear-gradient(135deg, rgba(198,255,0,0.1), rgba(198,255,0,0.05))",
+              border: "1px solid rgba(198,255,0,0.2)",
             }}
           >
-            <Shield className="h-7 w-7" style={{ color: "var(--sx-accent, #A855F7)" }} />
+            <Shield className="h-7 w-7" style={{ color: "var(--sx-accent, #C6FF00)" }} />
           </div>
           <p className="text-sm font-medium" style={{ color: "var(--sx-text, var(--foreground))" }}>
             {t("auth.passkey.emptyTitle") || "No passkeys registered"}
@@ -284,8 +284,8 @@ export function PasskeyManagementView() {
                 style={{
                   background: passkey.isDiscoverable
                     ? "hsl(var(--success) / 0.1)"
-                    : "rgba(168,85,247,0.1)",
-                  border: `1px solid ${passkey.isDiscoverable ? "hsl(var(--success) / 0.2)" : "rgba(168,85,247,0.2)"}`,
+                    : "rgba(198,255,0,0.1)",
+                  border: `1px solid ${passkey.isDiscoverable ? "hsl(var(--success) / 0.2)" : "rgba(198,255,0,0.2)"}`,
                 }}
               >
                 <Fingerprint
@@ -293,7 +293,7 @@ export function PasskeyManagementView() {
                   style={{
                     color: passkey.isDiscoverable
                       ? "hsl(var(--success))"
-                      : "var(--sx-accent, #A855F7)",
+                      : "var(--sx-accent, #C6FF00)",
                   }}
                 />
               </div>

@@ -45,7 +45,7 @@ export class AdminService implements IAdminService {
     return {
       items: response.items.map((json) => AdminModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -66,7 +66,7 @@ export class AdminService implements IAdminService {
     return {
       items: response.items.map((json) => AdminModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -87,7 +87,7 @@ export class AdminService implements IAdminService {
     return {
       items: response.items.map((json) => AdminModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,
@@ -145,6 +145,19 @@ export class AdminService implements IAdminService {
 
   async resetPassword(id: string, newPassword: string): Promise<void> {
     await this.api.post(ADMIN_ENDPOINTS.RESET_PASSWORD(id), { newPassword });
+  }
+
+  async manualSetup(
+    id: string,
+    newPassword: string,
+    confirmPassword: string,
+    mustChangePassword: boolean
+  ): Promise<void> {
+    await this.api.post(ADMIN_ENDPOINTS.MANUAL_SETUP(id), {
+      newPassword,
+      confirmPassword,
+      mustChangePassword,
+    });
   }
 
   async changePassword(id: string, currentPassword: string, newPassword: string): Promise<void> {

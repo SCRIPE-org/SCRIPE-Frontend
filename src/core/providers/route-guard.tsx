@@ -25,6 +25,7 @@ import { secureTokenService } from "@core/common/secure-token-service";
 import { appLogger } from "@core/common/logger";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useQueryClient } from "@tanstack/react-query";
+import { authBroadcast } from "@core/common/broadcast-auth";
 
 interface RouteGuardProps {
   children: React.ReactNode;
@@ -142,6 +143,23 @@ export function RouteGuard({ children }: RouteGuardProps) {
   useEffect(() => {
     hasRedirected.current = false;
   }, [pathname]);
+
+  // ── Cross-tab refresh coordination (F-67) ───────────────────────────────
+  // RouteGuard's own silent-refresh-on-reload (Case 2 below) and ApiService's
+  // 401-interceptor refresh each call authRepository.refreshToken() through
+  // an independent lock, with no coordination between tabs. Since the
+  // backend's refresh cookie is single-use/rotating, two tabs refreshing at
+  // once means one call always fails. `onTokenRefreshed` already fires
+  // whenever ANY tab completes a refresh (broadcast-auth.ts persists the new
+  // access token into this tab's secureTokenService before the callback
+  // runs) — subscribe to it so a refresh that just landed elsewhere is
+  // trusted instead of racing a second /auth/refresh call.
+  useEffect(() => {
+    authBroadcast.onTokenRefreshed(() => {
+      appLogger.debug("[RouteGuard] Observed cross-tab token refresh — re-checking access");
+      setCheckTrigger((prev) => prev + 1);
+    });
+  }, []);
 
   useEffect(() => {
     const checkAccess = async () => {
@@ -329,6 +347,21 @@ export function RouteGuard({ children }: RouteGuardProps) {
           appLogger.error("[RouteGuard] Silent refresh failed:", error);
         }
 
+        // Our own /auth/refresh call may have failed simply because another
+        // tab (or ApiService's 401 interceptor) already rotated the
+        // single-use refresh cookie first — the onTokenRefreshed broadcast
+        // subscription above already persisted that tab's fresh token into
+        // secureTokenService. Trust it instead of forcing logout.
+        if (secureTokenService.hasToken()) {
+          appLogger.debug(
+            "[RouteGuard] Own refresh failed but a cross-tab refresh already succeeded — recovering"
+          );
+          isRefreshing.current = false;
+          setIsRestoringSession(false);
+          setCheckTrigger((prev) => prev + 1);
+          return;
+        }
+
         isRefreshing.current = false;
         setIsRestoringSession(false);
         appLogger.debug("[RouteGuard] Session expired → /login");
@@ -396,8 +429,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
     setSubscriptionInfo,
     hasRouteAccess,
     checkTrigger,
-    // NOTE: mustChangePassword intentionally NOT here — read via getState()
-    // NOTE: hasRouteAccess is stable (useCallback with [] deps)
+    queryClient,
   ]);
 
   if (!isMounted) return <>{children}</>;

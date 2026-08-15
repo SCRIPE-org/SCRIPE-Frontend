@@ -127,7 +127,11 @@ export function PostCredentialWorkspaceSelector({
       )}
 
       {/* Workspace Cards */}
-      <ul className="flex flex-col gap-2" role="list" aria-label="Available workspaces">
+      <ul
+        className="flex flex-col gap-2"
+        role="list"
+        aria-label={t("auth.workspaceSelection.availableWorkspaces") || "Available workspaces"}
+      >
         {workspaces.map((ws) => {
           const wsKey = getWorkspaceKey(ws);
           const isThisLoading = selectingId === wsKey;

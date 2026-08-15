@@ -11,7 +11,7 @@ export interface FacilityJson {
 export interface FacilityListResponseJson {
   items: FacilityJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

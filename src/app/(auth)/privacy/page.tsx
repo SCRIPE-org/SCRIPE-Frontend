@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { BRAND } from "@core/config/branding";
+import Image from "next/image";
 
 export const metadata: Metadata = {
   title: `Privacy Policy — ${BRAND.name}`,
@@ -12,37 +13,36 @@ export default function PrivacyPage() {
     <div
       className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-10"
       style={{
-        background: "var(--sx-bg, #06060E)",
+        background: "var(--sx-bg, #050506)",
         backgroundImage:
-          "radial-gradient(140% 90% at 25% 25%, #1A1140 0%, #0A0820 40%, #06060E 80%, #04040A 100%)",
+          "radial-gradient(140% 90% at 25% 25%, #151719 0%, #0D0D0E 40%, #050506 80%, #030304 100%)",
       }}
     >
-      {/* Ambient glow orbs */}
+      {/* Ambient glow — one static Signal Lime signal, not two competing hues */}
       <div
         className="pointer-events-none fixed left-1/4 top-1/4 -translate-x-1/2 -translate-y-1/2"
         style={{
           width: 600,
           height: 600,
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(198,255,0,0.07) 0%, transparent 70%)",
           filter: "blur(80px)",
-        }}
-      />
-      <div
-        className="pointer-events-none fixed bottom-1/4 right-1/4 translate-x-1/2 translate-y-1/2"
-        style={{
-          width: 400,
-          height: 400,
-          borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(34,211,238,0.05) 0%, transparent 70%)",
-          filter: "blur(60px)",
         }}
       />
 
       {/* Logo */}
       <div className="mb-6 flex flex-col items-center">
-        <img src="/app-logo.png" alt={BRAND.name} className="mb-2 h-10 w-auto" />
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-purple-300/60">
+        <Image
+          src="/brand/app-logo-1024.png"
+          alt={BRAND.name}
+          width={40}
+          height={40}
+          className="mb-2 h-10 w-auto"
+        />
+        <span
+          className="text-xs font-semibold uppercase tracking-[0.2em]"
+          style={{ color: "rgba(247,248,245,0.5)" }}
+        >
           Legal Agreement
         </span>
       </div>
@@ -51,31 +51,24 @@ export default function PrivacyPage() {
       <div
         className="relative w-full max-w-3xl overflow-hidden rounded-2xl"
         style={{
-          background: "linear-gradient(180deg, rgba(20,12,46,.78), rgba(10,8,28,.85))",
-          border: "1px solid rgba(168,85,247,.22)",
-          boxShadow: "0 25px 50px -12px rgba(0,0,0,.5), 0 0 80px -20px rgba(168,85,247,.15)",
+          background: "linear-gradient(180deg, rgba(21,23,25,.86), rgba(13,13,14,.92))",
+          border: "1px solid rgba(198,255,0,.16)",
+          boxShadow: "0 25px 50px -12px rgba(0,0,0,.5)",
         }}
       >
-        <div className="scrollbar-thin scrollbar-thumb-purple-900/50 scrollbar-track-transparent max-h-[70vh] space-y-6 overflow-y-auto p-6 sm:p-10">
+        <div className="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent max-h-[70vh] space-y-6 overflow-y-auto p-6 sm:p-10">
           <div className="border-b border-white/10 pb-4">
-            <h1
-              className="text-3xl font-extrabold"
-              style={{
-                background: "linear-gradient(180deg, #F5F2FF 0%, #C7B8F0 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
+            <h1 className="text-3xl font-extrabold" style={{ color: "#F7F8F5" }}>
               Privacy Policy
             </h1>
-            <p className="mt-2 text-xs" style={{ color: "rgba(245,242,255,0.4)" }}>
+            <p className="mt-2 text-xs" style={{ color: "rgba(247,248,245,0.4)" }}>
               Last updated: June 4, 2026
             </p>
           </div>
 
           <div
             className="space-y-4 text-sm leading-relaxed"
-            style={{ color: "rgba(245,242,255,0.75)" }}
+            style={{ color: "rgba(247,248,245,0.75)" }}
           >
             <p>
               At <strong>{BRAND.name}</strong>, we take your privacy and data isolation seriously.
@@ -148,7 +141,7 @@ export default function PrivacyPage() {
       {/* Footer */}
       <p
         className="mt-8 text-center text-[11px] font-medium"
-        style={{ color: "rgba(245,242,255,0.35)" }}
+        style={{ color: "rgba(247,248,245,0.35)" }}
       >
         © {new Date().getFullYear()} {BRAND.name} — All rights reserved
       </p>

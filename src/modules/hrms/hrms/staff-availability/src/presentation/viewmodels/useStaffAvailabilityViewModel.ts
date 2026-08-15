@@ -19,6 +19,8 @@ export function useStaffAvailabilityViewModel() {
         page: params.page,
         pageSize: params.pageSize,
         search: params.search,
+        sortBy: params.sortBy,
+        sortDirection: params.sortDirection,
       });
       return {
         items: res.items || [],
@@ -41,7 +43,7 @@ export function useStaffAvailabilityViewModel() {
     delete: async (id) => {
       await staffAvailabilityRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

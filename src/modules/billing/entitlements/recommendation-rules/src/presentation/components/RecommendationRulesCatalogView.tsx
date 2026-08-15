@@ -8,9 +8,10 @@
 
 import { useMemo } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { Badge, type BadgeProps } from "@core/ui/badge";
 import type { RecommendationRule } from "../../domain/entities/RecommendationRule";
+import { Pencil, Trash2 } from "lucide-react";
 
 const TIER_BADGE_VARIANT: Record<number, BadgeProps["variant"]> = {
   0: "secondary",
@@ -30,11 +31,24 @@ interface RecommendationRulesCatalogViewProps {
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
  */
 export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCatalogViewProps) {
+  // `vm` is typed as Record<string, unknown> at this prop boundary, but at runtime it is
+  // always the object returned by useCrudViewModel (see useRecommendationRulesViewModel.ts),
+  // which always exposes openEditModal/deleteItem. Narrow locally so getActions/deleteService
+  // below type-check without loosening the shared prop type.
+  const vmActions = vm as {
+    openEditModal: (item: RecommendationRule) => void;
+    deleteItem: (id: string) => Promise<void>;
+  };
+
   const config: CrudConfig<RecommendationRule> = useMemo(
     () => ({
       titleKey: "entitlements.onboarding.rules.title",
       subtitleKey: "entitlements.onboarding.rules.description",
       resource: "onboarding_rules",
+      // Registered in the backend's EntitlementsEntityTypeCatalog -- must match
+      // exactly. Create/edit both route through GenericCrudView's own modal
+      // here, so this one line is all the wiring this screen needs.
+      entityTypeKey: "entitlements.onboarding-rule",
 
       columns: [
         {
@@ -211,8 +225,24 @@ export function RecommendationRulesCatalogView({ vm, t }: RecommendationRulesCat
       ],
 
       getItemDisplayName: (item: RecommendationRule) => item.name,
+      deleteService: (id: string) => vmActions.deleteItem(id),
+      getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<RecommendationRule>[] => [
+        {
+          label: tFn("common.edit"),
+          onClick: (item: RecommendationRule) => vmActions.openEditModal(item),
+          variant: "ghost" as const,
+          icon: <Pencil className="h-4 w-4" />,
+        },
+        {
+          label: tFn("common.delete"),
+          onClick: (item: RecommendationRule) => handleDeleteFn?.(item),
+          variant: "ghost" as const,
+          className: "text-destructive hover:text-destructive/80",
+          icon: <Trash2 className="h-4 w-4" />,
+        },
+      ],
     }),
-    [t]
+    [t, vmActions]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

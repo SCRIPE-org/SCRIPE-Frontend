@@ -33,6 +33,10 @@ export function useSignupContentViewModel() {
   const [logoDialogOpen, setLogoDialogOpen] = useState(false);
   const [editingLogo, setEditingLogo] = useState<CustomerLogo | null>(null);
 
+  // Per-row pending state — keyed by id so mutating one row never busies/disables the others.
+  const [pendingTrustMarkIds, setPendingTrustMarkIds] = useState<Set<string>>(new Set());
+  const [pendingLogoIds, setPendingLogoIds] = useState<Set<string>>(new Set());
+
   // ── Query ────────────────────────────────────────────────────────────────────
   const contentQuery = useQuery({
     queryKey: QUERY_KEY,
@@ -86,6 +90,9 @@ export function useSignupContentViewModel() {
   const updateTrustMarkMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTrustMarkParams }) =>
       signupContentRepository.updateTrustMark(id, data),
+    onMutate: ({ id }) => {
+      setPendingTrustMarkIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       invalidate();
       setTrustMarkDialogOpen(false);
@@ -95,10 +102,20 @@ export function useSignupContentViewModel() {
     onError: () => {
       toast({ title: t("signupContent.error.save"), variant: "destructive" });
     },
+    onSettled: (_data, _err, { id }) => {
+      setPendingTrustMarkIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    },
   });
 
   const deleteTrustMarkMutation = useMutation({
     mutationFn: (id: string) => signupContentRepository.deleteTrustMark(id),
+    onMutate: (id) => {
+      setPendingTrustMarkIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       invalidate();
       toast({ title: t("signupContent.trustMarks.delete"), variant: "success" });
@@ -106,15 +123,33 @@ export function useSignupContentViewModel() {
     onError: () => {
       toast({ title: t("signupContent.error.save"), variant: "destructive" });
     },
+    onSettled: (_data, _err, id) => {
+      setPendingTrustMarkIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    },
   });
 
   const reorderTrustMarksMutation = useMutation({
-    mutationFn: (orderedIds: string[]) => signupContentRepository.reorderTrustMarks(orderedIds),
+    mutationFn: ({ orderedIds }: { orderedIds: string[]; id: string }) =>
+      signupContentRepository.reorderTrustMarks(orderedIds),
+    onMutate: ({ id }) => {
+      setPendingTrustMarkIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       invalidate();
     },
     onError: () => {
       toast({ title: t("signupContent.error.save"), variant: "destructive" });
+    },
+    onSettled: (_data, _err, { id }) => {
+      setPendingTrustMarkIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     },
   });
 
@@ -136,6 +171,9 @@ export function useSignupContentViewModel() {
   const updateCustomerLogoMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateCustomerLogoParams }) =>
       signupContentRepository.updateCustomerLogo(id, data),
+    onMutate: ({ id }) => {
+      setPendingLogoIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       invalidate();
       setLogoDialogOpen(false);
@@ -145,10 +183,20 @@ export function useSignupContentViewModel() {
     onError: () => {
       toast({ title: t("signupContent.error.save"), variant: "destructive" });
     },
+    onSettled: (_data, _err, { id }) => {
+      setPendingLogoIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    },
   });
 
   const deleteCustomerLogoMutation = useMutation({
     mutationFn: (id: string) => signupContentRepository.deleteCustomerLogo(id),
+    onMutate: (id) => {
+      setPendingLogoIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       invalidate();
       toast({ title: t("signupContent.customerLogos.delete"), variant: "success" });
@@ -156,15 +204,33 @@ export function useSignupContentViewModel() {
     onError: () => {
       toast({ title: t("signupContent.error.save"), variant: "destructive" });
     },
+    onSettled: (_data, _err, id) => {
+      setPendingLogoIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+    },
   });
 
   const reorderCustomerLogosMutation = useMutation({
-    mutationFn: (orderedIds: string[]) => signupContentRepository.reorderCustomerLogos(orderedIds),
+    mutationFn: ({ orderedIds }: { orderedIds: string[]; id: string }) =>
+      signupContentRepository.reorderCustomerLogos(orderedIds),
+    onMutate: ({ id }) => {
+      setPendingLogoIds((prev) => new Set(prev).add(id));
+    },
     onSuccess: () => {
       invalidate();
     },
     onError: () => {
       toast({ title: t("signupContent.error.save"), variant: "destructive" });
+    },
+    onSettled: (_data, _err, { id }) => {
+      setPendingLogoIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     },
   });
 
@@ -219,7 +285,7 @@ export function useSignupContentViewModel() {
       if (newIdx < 0 || newIdx >= marks.length) return;
       const reordered = [...marks];
       [reordered[idx], reordered[newIdx]] = [reordered[newIdx], reordered[idx]];
-      reorderTrustMarksMutation.mutate(reordered.map((m) => m.id));
+      reorderTrustMarksMutation.mutate({ orderedIds: reordered.map((m) => m.id), id });
     },
     [contentQuery.data?.trustMarks, reorderTrustMarksMutation]
   );
@@ -264,7 +330,7 @@ export function useSignupContentViewModel() {
       if (newIdx < 0 || newIdx >= logos.length) return;
       const reordered = [...logos];
       [reordered[idx], reordered[newIdx]] = [reordered[newIdx], reordered[idx]];
-      reorderCustomerLogosMutation.mutate(reordered.map((l) => l.id));
+      reorderCustomerLogosMutation.mutate({ orderedIds: reordered.map((l) => l.id), id });
     },
     [contentQuery.data?.customerLogos, reorderCustomerLogosMutation]
   );
@@ -290,6 +356,7 @@ export function useSignupContentViewModel() {
     isSavingTrustMark: createTrustMarkMutation.isPending || updateTrustMarkMutation.isPending,
     isDeletingTrustMark: deleteTrustMarkMutation.isPending,
     isReorderingTrustMarks: reorderTrustMarksMutation.isPending,
+    isTrustMarkRowBusy: (id: string) => pendingTrustMarkIds.has(id),
     handleOpenAddTrustMark,
     handleOpenEditTrustMark,
     handleCloseTrustMarkDialog,
@@ -303,6 +370,7 @@ export function useSignupContentViewModel() {
     isSavingLogo: createCustomerLogoMutation.isPending || updateCustomerLogoMutation.isPending,
     isDeletingLogo: deleteCustomerLogoMutation.isPending,
     isReorderingLogos: reorderCustomerLogosMutation.isPending,
+    isLogoRowBusy: (id: string) => pendingLogoIds.has(id),
     handleOpenAddLogo,
     handleOpenEditLogo,
     handleCloseLogoDialog,

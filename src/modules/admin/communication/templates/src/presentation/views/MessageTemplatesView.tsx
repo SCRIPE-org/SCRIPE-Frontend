@@ -15,19 +15,22 @@ import type {
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Copy, Eye, Pencil, Trash2, Download, Upload, BarChart3 } from "lucide-react";
-import { cn, formatUtc } from "@core/common/utils";
+import { formatUtc } from "@core/common/utils";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 
-// ─── Category Colors ────────────────────────────────────────
-const CATEGORY_COLORS: Record<TemplateCategory, { bg: string; text: string }> = {
-  transactional: { bg: "bg-info/15", text: "text-info" },
-  marketing: { bg: "bg-nx-accent-wash", text: "text-nx-accent" },
-  notification: { bg: "bg-nx-accent-wash", text: "text-nx-accent" },
-  onboarding: { bg: "bg-success/15", text: "text-success" },
-  security: { bg: "bg-destructive/15", text: "text-destructive" },
-  billing: { bg: "bg-warning/15", text: "text-warning" },
-  custom: { bg: "bg-nx-raised", text: "text-nx-ink-3" },
-};
+// Template category is a taxonomy, not a status — painting "security" in the
+// destructive token reads as "this failed", and reusing the same wash for
+// "marketing"/"notification" made them indistinguishable. One neutral chip
+// for every category; the label text is what tells them apart.
+//
+// TemplateCategory values are lowercase (backend contract); the
+// `messaging.templates.categories.*` locale keys are PascalCase, so the
+// lookup capitalizes before translating — the raw lowercase value rendered
+// untranslated in the Arabic build otherwise.
+function categoryLabel(value: TemplateCategory, t: (key: string) => string): string {
+  const key = value.charAt(0).toUpperCase() + value.slice(1);
+  return t(`messaging.templates.categories.${key}`);
+}
 
 /**
  * Presentation UI component rendering the message templates view.
@@ -74,9 +77,9 @@ export function MessageTemplatesView() {
       a.download = `template-${item.key}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      success({ title: "Template exported successfully" });
+      success({ title: t("messaging.templates.exportSuccess") });
     },
-    [success]
+    [success, t]
   );
 
   const handleImportClick = useCallback(() => {
@@ -103,14 +106,14 @@ export function MessageTemplatesView() {
           });
           router.push(`/communication/templates/new?${params.toString()}`);
         } catch {
-          success({ title: "Invalid template file" });
+          success({ title: t("messaging.templates.importError") });
         }
       };
       reader.readAsText(file);
       // Reset so same file can be re-imported
       e.target.value = "";
     },
-    [router, success]
+    [router, success, t]
   );
 
   // Navigate to full-page form instead of opening modal
@@ -148,13 +151,9 @@ export function MessageTemplatesView() {
                   —
                 </Badge>
               );
-            const colors = CATEGORY_COLORS[value] || CATEGORY_COLORS.custom;
             return (
-              <Badge
-                variant="outline"
-                className={cn("border-0 text-xs capitalize", colors.bg, colors.text)}
-              >
-                {value}
+              <Badge variant="secondary" className="text-xs">
+                {categoryLabel(value, t)}
               </Badge>
             );
           },
@@ -181,7 +180,7 @@ export function MessageTemplatesView() {
           label: t("messaging.templates.usage"),
           render: (value: number | undefined, item: MessageTemplate) => (
             <div className="flex items-center gap-1.5">
-              <BarChart3 className="h-3.5 w-3.5 text-nx-ink-3" />
+              <BarChart3 className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
               <span className="font-medium">{value ?? 0}</span>
               {item.lastUsedAt && (
                 <span className="text-xs text-nx-ink-3">
@@ -209,28 +208,28 @@ export function MessageTemplatesView() {
       getActions: (_vm: any, _t: any, handleDelete?: any): CrudAction<MessageTemplate>[] => [
         {
           label: t("common.edit"),
-          icon: <Pencil className="h-4 w-4" />,
+          icon: <Pencil className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handleEdit(item),
         },
         {
           label: t("messaging.templates.preview"),
-          icon: <Eye className="h-4 w-4" />,
+          icon: <Eye className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handlePreview(item),
         },
         {
           label: t("messaging.templates.clone"),
-          icon: <Copy className="h-4 w-4" />,
+          icon: <Copy className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handleClone(item.id),
           disabled: () => isCloning,
         },
         {
           label: t("messaging.templates.export"),
-          icon: <Download className="h-4 w-4" />,
+          icon: <Download className="h-4 w-4" aria-hidden="true" />,
           onClick: (item: MessageTemplate) => handleExport(item),
         },
         {
           label: t("common.delete"),
-          icon: <Trash2 className="h-4 w-4" />,
+          icon: <Trash2 className="h-4 w-4" aria-hidden="true" />,
           onClick: handleDelete,
           confirmTitle: t("messaging.templates.deleteTitle"),
           confirmDescription: t("messaging.templates.deleteDescription"),
@@ -261,8 +260,8 @@ export function MessageTemplatesView() {
             className="h-8 gap-1.5 text-xs"
             onClick={handleImportClick}
           >
-            <Upload className="h-3.5 w-3.5" />
-            Import
+            <Upload className="h-3.5 w-3.5" aria-hidden="true" />
+            {t("messaging.templates.import")}
           </Button>
           <input
             ref={fileInputRef}

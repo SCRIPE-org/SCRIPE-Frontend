@@ -6,7 +6,7 @@
  */
 import type { IApiService } from "@core/interfaces/api.interface";
 import { buildUrl } from "@/core/config/api-endpoints/_shared";
-import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/core/src/data/services/party-kernel.endpoints";
+import { PARTYKERNEL_ENDPOINTS } from "@modules/party-kernel/party-kernel.endpoints";
 import {
   PartyOrganizationModel,
   type PartyOrganizationJson,
@@ -38,7 +38,7 @@ export class PartyOrganizationService implements IPartyOrganizationService {
     return {
       items: response.items.map((json) => PartyOrganizationModel.fromJson(json)),
       totalCount: response.totalCount,
-      page: response.page,
+      page: response.pageNumber,
       pageSize: response.pageSize,
       totalPages: response.totalPages,
       hasNextPage: response.hasNextPage,

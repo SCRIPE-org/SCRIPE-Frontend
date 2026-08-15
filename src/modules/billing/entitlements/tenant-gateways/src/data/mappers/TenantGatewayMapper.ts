@@ -12,15 +12,16 @@ import {
 
 const TenantGatewayModelSchema = z.object({
   id: uuidField(),
-  gateway: optionalString(),
+  gatewayType: optionalString(),
   displayLabel: optionalString(),
   merchantId: optionalString(),
-  isEnabled: z.boolean().optional().default(false),
+  isActive: z.boolean().optional().default(false),
+  isDefault: z.boolean().optional().default(false),
   isVerified: z.boolean().optional().default(false),
   isTestMode: z.boolean().optional().default(false),
   lastVerifiedAt: optionalIsoDate(),
   createdAt: optionalString(),
-  modifiedAt: z.string().optional().nullable(),
+  updatedAt: z.string().optional().nullable(),
 });
 
 /**
@@ -32,15 +33,15 @@ export class TenantGatewayMapper {
 
     return new TenantGateway({
       id: validated.id,
-      gateway: validated.gateway ?? "",
+      gateway: validated.gatewayType ?? "",
       displayLabel: validated.displayLabel ?? "",
       merchantId: validated.merchantId ?? "",
-      isEnabled: validated.isEnabled ?? false,
+      isEnabled: validated.isActive ?? false,
       isVerified: validated.isVerified ?? false,
       isTestMode: validated.isTestMode ?? false,
       lastVerifiedAt: validated.lastVerifiedAt ?? null,
       createdAt: validated.createdAt ?? "",
-      modifiedAt: validated.modifiedAt ?? null,
+      modifiedAt: validated.updatedAt ?? null,
     });
   }
 }

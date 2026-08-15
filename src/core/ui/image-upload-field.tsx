@@ -14,6 +14,7 @@
 import { useRef, useState, useCallback } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn, resolveFileUrl } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -22,6 +23,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Upload, Link2, Trash2, ImageIcon, Check, X } from "lucide-react";
 import { SYSTEM_ENDPOINTS } from "@core/config/api-endpoints";
 import { getCoreContainer } from "@core/di";
+import Image from "next/image";
 
 // ─── Props ──────────────────────────────────────────────────────
 interface ImageUploadFieldProps {
@@ -70,7 +72,10 @@ export function ImageUploadField({
   // Resolved display URL
   // If we just uploaded a file, show the local blob URL (previewUrl),
   // otherwise ensure the value is resolved so newly uploaded relative paths preview correctly.
-  const displayUrl = previewUrl || resolveFileUrl(value) || "";
+  // The hook runs unconditionally (not inside the `||` chain) so hook order
+  // stays stable regardless of whether previewUrl is set.
+  const resolvedValueUrl = useResolvedFileUrl(value);
+  const displayUrl = previewUrl || resolvedValueUrl || "";
 
   // ─── File validation ──────────────────
   const validateFile = useCallback(
@@ -183,9 +188,12 @@ export function ImageUploadField({
           target. Uploading reports on the same row instead of replacing it. */}
       {displayUrl && (
         <div className="flex items-center gap-3 rounded-nx-control border border-nx-line bg-nx-surface p-3">
-          <img
+          <Image
             src={displayUrl}
             alt=""
+            width={56}
+            height={56}
+            unoptimized
             className="h-14 w-14 shrink-0 rounded-nx-sm border border-nx-line bg-nx-raised object-contain p-1"
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";

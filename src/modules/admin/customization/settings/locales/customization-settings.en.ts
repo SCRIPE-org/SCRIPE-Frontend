@@ -1045,6 +1045,14 @@ export const en = {
       high: "High",
       highDesc: "Rich animations",
     },
+    hoverType: {
+      title: "Hover Effect",
+      description: "Turn the hover border-highlight on or off",
+      none: "None",
+      noneDesc: "No hover effect",
+      elevate: "Default",
+      elevateDesc: "Border brightens on hover",
+    },
     bgMode: {
       title: "Background Mode",
       description: "Choose which background system is active",
@@ -1631,7 +1639,7 @@ export const en = {
       textLabel: "Logo Text",
       textPlaceholder: "Enter logo text...",
       textHelp: "Text displayed as the logo",
-      imageInfo: "The image logo uses the file at /app-logo.png",
+      imageInfo: "The image logo uses the file at /brand/app-logo-1024.png",
       previewLabel: "Logo Preview",
       previewHelp: "Live preview of your logo with current settings",
       sizeOptions: {

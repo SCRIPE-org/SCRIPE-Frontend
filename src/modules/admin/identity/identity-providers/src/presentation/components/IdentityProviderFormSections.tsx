@@ -23,6 +23,7 @@ import { BrandIcon } from "@core/ui/brand-icons";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Settings2, Globe, Palette, Shield, FileJson, Link2 } from "lucide-react";
 import type * as React from "react";
+import Image from "next/image";
 
 // The live preview always simulates the dark login card regardless of the
 // workspace's own theme, so it pins the frozen `--sx-*` vault tokens to their
@@ -30,9 +31,9 @@ import type * as React from "react";
 // verbatim from globals.css `:root` (see SSOButtonPreview for the full
 // light+dark pair; this inline preview only ever shows the dark frame).
 const PREVIEW_DARK_SX_VARS = {
-  "--sx-card-bg": "linear-gradient(180deg, rgba(20, 12, 46, 0.78), rgba(10, 8, 28, 0.85))",
-  "--sx-card-border": "rgba(168, 85, 247, 0.22)",
-  "--sx-text": "#f5f2ff",
+  "--sx-card-bg": "linear-gradient(180deg, rgba(21, 23, 25, 0.86), rgba(13, 13, 14, 0.92))",
+  "--sx-card-border": "rgba(198, 255, 0, 0.16)",
+  "--sx-text": "#f7f8f5",
   "--sx-field-bg": "rgba(255, 255, 255, 0.03)",
   "--sx-field-border": "rgba(255, 255, 255, 0.08)",
 } as React.CSSProperties;
@@ -567,9 +568,12 @@ export function AppearanceSection({ form, updateField }: FormSectionProps) {
               }}
             >
               {form.iconUrl ? (
-                <img
+                <Image
                   src={form.iconUrl}
                   alt=""
+                  width={18}
+                  height={18}
+                  unoptimized
                   className="h-[18px] w-[18px] shrink-0 rounded object-contain"
                   onError={(e) => {
                     (e.target as HTMLImageElement).style.display = "none";

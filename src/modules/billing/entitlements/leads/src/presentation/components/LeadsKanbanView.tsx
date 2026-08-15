@@ -11,7 +11,7 @@ interface LeadsKanbanViewProps {
   isLoading: boolean;
   onOpenDrawer: (id: string) => void;
   onMoveLead: (id: string, status: LeadStatus) => Promise<void>;
-  isMoving: boolean;
+  isMoving: (id: string) => boolean;
 }
 
 // Explicit literal fields, never derived from another class by string surgery —
@@ -71,7 +71,7 @@ export function LeadsKanbanView({
             key={status}
             className={`flex min-h-[400px] flex-col gap-2 rounded-nx-sm transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${dropStatus === status ? "bg-[color:color-mix(in_srgb,var(--nx-surface)_50%,transparent)]" : ""}`}
             onDragOver={(event) => {
-              if (!draggedLead || draggedLead.status === status || isMoving) return;
+              if (!draggedLead || draggedLead.status === status || isMoving(draggedLead.id)) return;
               event.preventDefault();
               event.dataTransfer.dropEffect = "move";
               setDropStatus(status);
@@ -110,7 +110,7 @@ export function LeadsKanbanView({
                     key={lead.id}
                     lead={lead}
                     onClick={onOpenDrawer}
-                    onDragStart={isMoving ? undefined : setDraggedLeadId}
+                    onDragStart={isMoving(lead.id) ? undefined : setDraggedLeadId}
                     onDragEnd={() => {
                       setDraggedLeadId(null);
                       setDropStatus(null);

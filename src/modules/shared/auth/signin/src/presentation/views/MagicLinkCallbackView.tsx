@@ -7,6 +7,9 @@
  * States:
  *   - verifying: spinner while POST /auth/magic-link/verify runs
  *   - success: brief success flash → redirect
+ *   - workspace-selection: in-page picker for multi-workspace accounts
+ *     (same pattern as SsoCallbackContent's "workspace_selection" state —
+ *     no redirect to a protected route before a session exists)
  *   - expired/invalid: error with "request a new link" CTA
  */
 "use client";
@@ -17,6 +20,7 @@ import { CheckCircle, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useMagicLinkCallbackViewModel } from "../viewmodels/useMagicLinkCallbackViewModel";
 import { VaultBackground } from "../components/layouts/VaultBackground";
+import { PostCredentialWorkspaceSelector } from "../components/PostCredentialWorkspaceSelector";
 
 /**
  * Presentation UI component rendering the magic link callback view.
@@ -34,9 +38,15 @@ export function MagicLinkCallbackView() {
     >
       <VaultBackground />
 
-      <div className="relative z-[1] flex w-full max-w-[440px] flex-col items-center px-5 py-12">
+      <div
+        className={`relative z-[1] flex w-full flex-col items-center px-5 py-12 ${
+          vm.state === "workspace-selection" ? "max-w-[480px]" : "max-w-[440px]"
+        }`}
+      >
         <div
-          className="sx-screen w-full rounded-[20px] p-8 text-center sm:p-9"
+          className={`sx-screen w-full rounded-[20px] p-8 sm:p-9 ${
+            vm.state === "workspace-selection" ? "text-start" : "text-center"
+          }`}
           style={{
             background: "var(--sx-card-bg)",
             border: "1px solid var(--sx-card-border)",
@@ -71,6 +81,18 @@ export function MagicLinkCallbackView() {
                 </p>
               </div>
             </div>
+          )}
+
+          {vm.state === "workspace-selection" && (
+            <PostCredentialWorkspaceSelector
+              email=""
+              workspaces={vm.availableWorkspaces}
+              onSelect={vm.selectWorkspace}
+              onUnlock={async () => {}}
+              onBack={vm.goBackToLogin}
+              isLoading={vm.isSelectingWorkspace}
+              error={vm.workspaceSelectionError}
+            />
           )}
 
           {vm.state === "error" && (

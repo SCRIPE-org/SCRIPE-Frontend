@@ -255,6 +255,14 @@ export const en = {
     },
   },
   common: {
+    operationToast: {
+      successTitle: "{operation} Successful",
+      successWithItem: "{item} has been {operationLower} successfully.",
+      successGeneric: "Operation completed successfully.",
+      errorTitle: "{operation} Failed",
+      errorWithItem: "Failed to {operationLower} {item}.",
+      errorGeneric: "Operation failed.",
+    },
     included: "Included",
     notIncluded: "Not included",
     welcomeBack: "Welcome back, {{name}}",
@@ -845,11 +853,14 @@ export const en = {
       offline: "You are currently offline. Please check your internet connection.",
       timeout: "Request timed out. Please try again.",
       serverError: "Server error occurred. Please try again later.",
+      unknown: "An unknown error occurred.",
     },
     auth: {
       unauthorized: "You are not authorized to access this resource.",
       sessionExpired: "Your session has expired. Please log in again.",
       loginRequired: "Please log in to continue.",
+      forbidden: "You do not have permission to perform this action.",
+      tenantContextForbidden: "You do not have permission to switch tenant context.",
     },
     module: {
       description: "{module} could not be loaded. The rest of the app is unaffected.",
@@ -906,6 +917,7 @@ export const en = {
     description: "Display notification bell in header",
     empty: "No notifications",
     emptyDesc: "No notifications currently",
+    loadError: "Couldn't load notifications",
   },
   imageUpload: {
     uploadTab: "Upload",
@@ -2005,6 +2017,8 @@ export const en = {
   navigation: {
     searchPlaceholder: "Search a page",
     togglePanel: "Toggle panel",
+    primaryNav: "Primary navigation",
+    entityDetailsTitle: "{entity} Details",
     topbar: {
       workspacesMenu: "Workspaces",
       sectionsMenu: "Sections",
@@ -2068,6 +2082,9 @@ export const en = {
     section: {
       locked: "Locked",
       itemCount: "{count} items",
+      module: "Module",
+      platform: "Platform",
+      workspace: "Workspace",
     },
     tenantBanner: {
       impersonating: "Impersonating user",

@@ -17,5 +17,8 @@ export const en = {
     reviewsCountLabel: "{{count}} reviews",
     reviewsDeleteConfirmDesc:
       "Are you sure you want to delete this review? This action cannot be undone.",
+    reviewsSelectAppListingLabel: "App",
+    reviewsSelectAppListingPlaceholder: "Select an app…",
+    reviewsSelectAppListingPrompt: "Select an app above to view and moderate its reviews.",
   },
 };

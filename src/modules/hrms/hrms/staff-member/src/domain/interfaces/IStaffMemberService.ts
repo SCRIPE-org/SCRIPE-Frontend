@@ -16,14 +16,27 @@ export interface StaffMemberListResult {
   hasPreviousPage: boolean;
 }
 
+/** One Identity Admin or User match for the Linked User Account picker (F-86). */
+export interface IdentityUserSearchResult {
+  /** Encrypted Identity Admin/User id — sent as-is to the backend. */
+  id: string;
+  name: string;
+  email: string;
+  kind: "admin" | "user";
+}
+
 export interface IStaffMemberService {
   getAll(params: {
     page: number;
     pageSize: number;
     search?: string;
+    sortBy?: string;
+    sortDirection?: "asc" | "desc";
   }): Promise<StaffMemberListResult>;
   getById(id: string): Promise<StaffMemberModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;
   delete(id: string): Promise<void>;
+  /** Search Identity Admins + Users by name/email for the Linked User Account picker (F-86). */
+  searchIdentityUsers(query: string): Promise<IdentityUserSearchResult[]>;
 }

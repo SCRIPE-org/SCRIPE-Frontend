@@ -41,7 +41,7 @@ export function usePartyRelationshipViewModel() {
     delete: async (id) => {
       await partyRelationshipRepository.delete(id);
     },
-  });
+  }, { deferSuccessEffects: true });
 
   return { vm };
 }

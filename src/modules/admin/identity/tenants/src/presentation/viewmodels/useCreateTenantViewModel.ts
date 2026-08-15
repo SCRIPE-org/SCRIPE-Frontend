@@ -241,18 +241,25 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   }, [form.editionId, form.subscriptionType, enabledSubscriptionTypes]);
 
   // ── Edition search ──
+  // Contact-Sales-only editions are excluded here: they have no billing type an
+  // admin can pick in this wizard (Allow* flags are all false by design) and
+  // require a negotiated price, which this stepper doesn't collect. Assigning
+  // one without an explicit type/price fails server-side and previously left
+  // tenants created with no subscription. Use "Convert Lead to Tenant" for
+  // Contact-Sales / enterprise deals instead.
   const handleSearchEditions = useCallback(
     async (query: string) => {
       try {
         const res = await tenantRepository.getAvailableEditions(1, 10, query);
+        const assignable = res.items.filter((ed) => !ed.isContactSalesOnly);
         setCachedEditions((prev) => {
           const merged = [...prev];
-          for (const ed of res.items) {
+          for (const ed of assignable) {
             if (!merged.find((e) => e.id === ed.id)) merged.push(ed);
           }
           return merged;
         });
-        return res.items.map((ed) => ({ value: ed.id, label: ed.name }));
+        return assignable.map((ed) => ({ value: ed.id, label: ed.name }));
       } catch (err) {
         appLogger.error("Failed to search editions:", err);
         return [];

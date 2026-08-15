@@ -11,7 +11,7 @@
  */
 "use client";
 
-import { resolveFileUrl } from "@/core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { sanitizeCss, sanitizeRichHtml } from "@core/common/sanitize";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -29,6 +29,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 // ── Logo ────────────────────────────────────────────────
 export function BuilderLogo({
@@ -42,15 +43,19 @@ export function BuilderLogo({
   [k: string]: unknown;
 }) {
   const { t } = useI18n();
+  const resolvedSrc = useResolvedFileUrl(src);
   const borderRadius =
     shape === "circle" ? "50%" : shape === "square" ? "0" : shape === "rounded" ? "8px" : undefined;
   return (
     <div className="flex w-full items-center justify-center">
-      <img
-        src={resolveFileUrl(src) || "/app-logo.png"}
+      <Image
+        src={resolvedSrc || "/brand/app-logo-1024.png"}
         alt={t("studio.builder.preview.logoAlt")}
+        width={200}
+        height={80}
+        unoptimized
         className="object-contain"
-        style={{ maxWidth: `${maxWidth}px`, maxHeight: "80px", borderRadius }}
+        style={{ maxWidth: `${maxWidth}px`, maxHeight: "80px", width: "auto", height: "auto", borderRadius }}
         onError={(e) => {
           (e.target as HTMLImageElement).style.display = "none";
         }}
@@ -425,7 +430,9 @@ export function BuilderImage({
   [k: string]: unknown;
 }) {
   const { t } = useI18n();
-  if (!src) {
+  // Called unconditionally, before the placeholder early return below.
+  const resolvedSrc = useResolvedFileUrl(src);
+  if (!src || !resolvedSrc) {
     return (
       <div
         className="flex h-32 w-full items-center justify-center rounded-nx-md border border-dashed border-nx-line bg-[color:color-mix(in_srgb,var(--nx-raised-2)_40%,transparent)]"
@@ -441,9 +448,12 @@ export function BuilderImage({
     );
   }
   return (
-    <img
-      src={resolveFileUrl(src)}
+    <Image
+      src={resolvedSrc}
       alt={alt}
+      width={800}
+      height={450}
+      unoptimized
       className="h-auto w-full"
       style={{
         objectFit: objectFit as React.CSSProperties["objectFit"],
@@ -644,7 +654,10 @@ export function BuilderVideoBg({
   [k: string]: unknown;
 }) {
   const { t } = useI18n();
-  if (!src) {
+  // Called unconditionally, before the placeholder early return below.
+  const resolvedSrc = useResolvedFileUrl(src);
+  const resolvedPoster = useResolvedFileUrl(poster);
+  if (!src || !resolvedSrc) {
     return (
       <div className="flex h-full min-h-[200px] w-full items-center justify-center rounded-nx-md border border-dashed border-[color:color-mix(in_srgb,var(--nx-accent)_30%,transparent)] bg-gradient-to-br from-[color:color-mix(in_srgb,var(--nx-accent)_10%,transparent)] to-info/10">
         <p className="text-xs text-nx-accent">{t("studio.builder.preview.videoBgPlaceholder")}</p>
@@ -653,8 +666,8 @@ export function BuilderVideoBg({
   }
   return (
     <video
-      src={resolveFileUrl(src)}
-      poster={resolveFileUrl(poster) || undefined}
+      src={resolvedSrc}
+      poster={resolvedPoster || undefined}
       autoPlay={autoplay}
       muted={muted}
       loop

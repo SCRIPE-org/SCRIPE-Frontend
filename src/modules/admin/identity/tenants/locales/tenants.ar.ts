@@ -447,6 +447,8 @@ export const ar = {
     autoRedirect: "ستتم إعادة توجيهك تلقائياً في غضون ثوانٍ قليلة...",
     fullRefundApplied: "تم تطبيق الاسترداد الكامل",
     noPromotion: "بدون عرض ترويجي",
+    promoApplied: "مُطبّق",
+    other: "أخرى",
     selectSubscriptionType: "اختر نوع الاشتراك",
     noSubscriptionTypesAvailable: "لا توجد أنواع اشتراك متاحة",
     searchCurrencies: "البحث عن العملات",

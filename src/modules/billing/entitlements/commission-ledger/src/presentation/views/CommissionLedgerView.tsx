@@ -30,7 +30,7 @@ export function CommissionLedgerView() {
                 variant="outline"
                 size="sm"
                 onClick={() => vm.actions.retry(invoice.id)}
-                disabled={vm.actions.isRetrying}
+                disabled={vm.actions.isRetrying(invoice.id)}
               >
                 <RefreshCw className="me-1 h-4 w-4" />
                 {t("entitlements.commissionLedger.retryCharge")}
@@ -41,7 +41,7 @@ export function CommissionLedgerView() {
                 onClick={() =>
                   vm.actions.waive(invoice.id, t("entitlements.commissionLedger.adminWaiver"))
                 }
-                disabled={vm.actions.isWaiving}
+                disabled={vm.actions.isWaiving(invoice.id)}
                 className="text-destructive"
               >
                 <XCircle className="me-1 h-4 w-4" />

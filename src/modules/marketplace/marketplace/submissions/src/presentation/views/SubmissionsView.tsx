@@ -150,6 +150,7 @@ export function SubmissionsView() {
                     variant="outline"
                     className="gap-1.5"
                     onClick={() => setPendingAction({ type: "revisions", submission: sub })}
+                    disabled={vm.isRequestingRevisions}
                   >
                     <RefreshCw className="size-3.5" aria-hidden="true" />{" "}
                     {t("marketplace.submissionsRevisionsAction")}
@@ -184,6 +185,7 @@ export function SubmissionsView() {
         }
         cancelText={t("common.cancel")}
         disableConfirm={notes.trim().length === 0}
+        isLoading={pendingAction?.type === "reject" ? vm.isRejecting : vm.isRequestingRevisions}
         onConfirm={handleConfirm}
       >
         <div className="space-y-2">

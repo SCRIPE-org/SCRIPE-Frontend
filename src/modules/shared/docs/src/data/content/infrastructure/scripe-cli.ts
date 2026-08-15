@@ -321,7 +321,7 @@ $ scripe db remove-migration -m CRM
 $ scripe db remove-migration -m CRM -p SqlServer
 
 # Rebuild frontend schemas to mirror live Backend structure
-$ scripe sync-api https://localhost:5001/swagger/v1/swagger.json -m crm`,
+$ scripe sync-api https://localhost:5035/swagger/v1/swagger.json -m crm`,
   },
 
   // ─── Project Configuration ──────────────────────────────────────

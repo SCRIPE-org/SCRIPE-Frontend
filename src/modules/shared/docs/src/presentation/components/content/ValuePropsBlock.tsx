@@ -100,22 +100,27 @@ const ICONS = [
   </svg>,
 ];
 
+// --com-violet and --com-cyan now both resolve to Signal Lime (the retired
+// violet+cyan brand duo collapsed onto Relay's one committed signal — see
+// commercial.css). Rotating through both here would repeat the same color
+// twice per cycle, so this uses --com-violet once per 3-item cycle instead
+// of alternating two tokens that are no longer visually distinct.
 const ICON_COLORS = [
   "var(--com-violet)",
-  "var(--com-cyan)",
   "var(--com-emerald)",
   "var(--com-amber)",
   "var(--com-violet)",
-  "var(--com-cyan)",
+  "var(--com-emerald)",
+  "var(--com-amber)",
 ];
 
 const ICON_BG_COLORS = [
-  "oklch(0.72 0.22 296 / 0.14)",
-  "oklch(0.84 0.155 213 / 0.12)",
+  "oklch(0.91 0.24 128 / 0.14)",
   "oklch(0.79 0.17 160 / 0.12)",
   "oklch(0.82 0.155 80 / 0.12)",
-  "oklch(0.72 0.22 296 / 0.14)",
-  "oklch(0.84 0.155 213 / 0.12)",
+  "oklch(0.91 0.24 128 / 0.14)",
+  "oklch(0.79 0.17 160 / 0.12)",
+  "oklch(0.82 0.155 80 / 0.12)",
 ];
 
 /* Mini bar chart data per cell */

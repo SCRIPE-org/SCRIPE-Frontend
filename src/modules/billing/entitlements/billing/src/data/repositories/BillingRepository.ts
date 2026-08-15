@@ -41,7 +41,7 @@ export class BillingRepository implements IBillingRepository {
     return {
       items,
       totalCount,
-      page: params.page,
+      pageNumber: params.page,
       pageSize: params.pageSize,
       totalPages,
       hasNextPage: params.page < totalPages,
@@ -66,7 +66,7 @@ export class BillingRepository implements IBillingRepository {
     return {
       items,
       totalCount,
-      page: params.page,
+      pageNumber: params.page,
       pageSize: params.pageSize,
       totalPages,
       hasNextPage: params.page < totalPages,

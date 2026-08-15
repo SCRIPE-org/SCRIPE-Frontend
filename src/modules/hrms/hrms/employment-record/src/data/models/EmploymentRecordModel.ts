@@ -25,7 +25,7 @@ export interface EmploymentRecordJson {
 export interface EmploymentRecordListResponseJson {
   items: EmploymentRecordJson[];
   totalCount: number;
-  page: number;
+  pageNumber: number;
   pageSize: number;
   totalPages: number;
   hasNextPage: boolean;

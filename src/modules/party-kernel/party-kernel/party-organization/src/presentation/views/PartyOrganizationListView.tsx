@@ -8,7 +8,8 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { usePartyOrganizationViewModel } from "../viewmodels/usePartyOrganizationViewModel";
 import type { PartyOrganization } from "../../domain/entities/PartyOrganization";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
@@ -32,6 +33,7 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
     titleKey: "partyOrganization.title",
     subtitleKey: "partyOrganization.description",
     resource: "party-organizations",
+    entityTypeKey: "party.organization",
     columns: [
       {
         key: "partyId",
@@ -118,6 +120,22 @@ export const PartyOrganizationListView = React.memo(function PartyOrganizationLi
       taxId: item.taxId,
     }),
     getItemDisplayName: (item: PartyOrganization) => item.legalName || item.partyId,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<PartyOrganization>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: PartyOrganization) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: PartyOrganization) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+      },
+    ],
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;

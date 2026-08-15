@@ -111,16 +111,16 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
                   height="40"
                   viewBox="0 0 24 24"
                   fill="none"
-                  stroke="#7C3AED"
+                  stroke="#4C6200"
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   style={{ animation: "sxPop 350ms ease-out both" }}
                 >
                   <rect x="5" y="2" width="14" height="20" rx="2" />
-                  <circle cx="12" cy="17" r="1" fill="#7C3AED" stroke="none" />
+                  <circle cx="12" cy="17" r="1" fill="#4C6200" stroke="none" />
                 </svg>
-                <span className="text-[13px] font-semibold" style={{ color: "#7C3AED" }}>
+                <span className="text-[13px] font-semibold" style={{ color: "#4C6200" }}>
                   {t("auth.qr.scannedLabel") || "Waiting for approval…"}
                 </span>
               </div>

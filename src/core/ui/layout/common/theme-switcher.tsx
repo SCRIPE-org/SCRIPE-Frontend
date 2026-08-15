@@ -11,8 +11,8 @@ import { Button } from "@core/ui/button";
  * TWO switchers, on purpose.
  *
  * `ThemeSwitcher` below paints the sign-in / signup vault palette: its solid
- * skin reads `tokens` out of `useSignupTheme()`, and those are the Aurora
- * constants (a fixed violet edge, a fixed raised surface) that belong to the
+ * skin reads `tokens` out of `useSignupTheme()`, the Relay vNext auth
+ * constants (a fixed Lime edge, a fixed raised surface) that belong to the
  * frozen auth surface. Six auth views and the branding preview that mirrors
  * them render it, so it keeps its name, its palette and its behaviour.
  *

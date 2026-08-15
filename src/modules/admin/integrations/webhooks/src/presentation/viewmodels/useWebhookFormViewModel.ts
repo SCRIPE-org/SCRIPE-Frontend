@@ -17,11 +17,49 @@ import type {
   CreateWebhookRequest,
   UpdateWebhookRequest,
 } from "../../domain/entities/WebhookRequests";
+import {
+  useCustomFieldsFormFields,
+  getCustomFieldsExtension,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
+
+/**
+ * Registered in the backend's IntegrationsEntityTypeCatalog -- must match
+ * exactly, and matches WebhooksView's own configBase.entityTypeKey (that
+ * screen's modal never mounts Custom Fields, since Create opens this bespoke
+ * dialog instead; this is the real integration point, for both modes this
+ * form supports — Edit is currently unreachable from WebhooksView (no Edit
+ * action in getActions yet), but wiring it here now means it works the day
+ * one is added, at no extra cost).
+ */
+export const WEBHOOK_ENTITY_TYPE_KEY = "integrations.webhook-subscription";
 
 interface UseWebhookFormViewModelOptions {
   mode: "create" | "edit";
   webhook?: WebhookSubscription | null;
   onSuccess?: () => void;
+}
+
+// Mirrors the backend's WebhookUrlPolicy.IsStructurallyValid (Core.Application.Features.
+// Webhooks) — https-only, always-blocked hosts. Previously this form allowed "https://*" OR
+// "http://localhost*" with locale copy promising "http://localhost allowed for dev," while
+// the backend creation validator allowed any http/https with no host restriction, and the
+// delivery engine always required https and always rejected localhost regardless of scheme
+// — so a webhook that passed both frontend and creation checks could still fail every
+// Test-ping/real delivery. Aligning all three to the delivery engine's (strictest, and the
+// only one that reflects "does this actually work") rule.
+const ALWAYS_BLOCKED_WEBHOOK_HOSTS = new Set(["localhost", "127.0.0.1", "::1", "0.0.0.0"]);
+
+function isValidWebhookUrl(value: string): boolean {
+  if (!value.startsWith("https://")) return false;
+  try {
+    // URL.hostname returns IPv6 literals bracketed (e.g. "[::1]"), so strip brackets before
+    // comparing — same normalization the backend policy applies to Uri.Host.
+    const host = new URL(value).hostname.replace(/^\[|\]$/g, "").toLowerCase();
+    return !ALWAYS_BLOCKED_WEBHOOK_HOSTS.has(host);
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -59,6 +97,36 @@ export function useWebhookFormViewModel({
     setMaxRetries(webhook.maxRetries);
     setMaxConsecutiveFailures(webhook.maxConsecutiveFailures);
   }
+
+  // ─── Custom Fields ─────────────────────────────────────────
+  // No ownerId in create mode (definitions only); keyed by the webhook's id
+  // once editing an existing subscription (definitions merged with their
+  // stored values) — mirrors useTemplateFormViewModel's identical pattern.
+  const customFieldsQuery = useCustomFieldsFormFields(
+    WEBHOOK_ENTITY_TYPE_KEY,
+    mode === "edit" ? webhook?.id : undefined
+  );
+
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, unknown>>({});
+
+  const updateCustomFieldValue = (name: string, value: unknown) => {
+    setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Full-resubmit, matching GenericCrudView's own contract: every currently
+  // known custom field's effective value (edited-this-session or the fetched
+  // default) is sent, not just the ones the user touched.
+  const saveCustomFieldValues = async (ownerId: string) => {
+    const decoded: Record<string, unknown> = {};
+    for (const fc of customFieldsQuery.fieldConfigs) {
+      const key = decodeCustomFieldName(fc.name);
+      if (key === null) continue;
+      const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+      decoded[key] = raw === "" ? null : raw;
+    }
+    if (Object.keys(decoded).length === 0) return;
+    await getCustomFieldsExtension()?.saveValues(WEBHOOK_ENTITY_TYPE_KEY, ownerId, decoded);
+  };
 
   // ─── Fetch available events ──────────────────────────────
   const { data: availableEvents, isLoading: isLoadingEvents } = useQuery({
@@ -98,16 +166,12 @@ export function useWebhookFormViewModel({
     : allEventsByCategory;
 
   // ─── Create mutation ─────────────────────────────────────
+  // No onSuccess here -- success side effects (invalidate, toast, onSuccess
+  // callback) only fire from handleSubmit once saveCustomFieldValues has also
+  // settled, so a custom-field save failure can never be masked by an
+  // immediate "created" toast that closes the dialog out from under it.
   const createMutation = useMutation({
     mutationFn: (data: CreateWebhookRequest) => webhookRepository.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: webhookKeys.all });
-      success({
-        title: t("webhooks.created"),
-        description: t("webhooks.createdDesc"),
-      });
-      onSuccess?.();
-    },
     onError: (err: Error) => {
       toastError({
         title: t("common.error"),
@@ -119,19 +183,6 @@ export function useWebhookFormViewModel({
   // ─── Update mutation ─────────────────────────────────────
   const updateMutation = useMutation({
     mutationFn: (data: UpdateWebhookRequest) => webhookRepository.update(webhook!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: webhookKeys.all });
-      if (webhook) {
-        queryClient.invalidateQueries({
-          queryKey: webhookKeys.detail(webhook.id),
-        });
-      }
-      success({
-        title: t("webhooks.updated"),
-        description: t("webhooks.updatedDesc"),
-      });
-      onSuccess?.();
-    },
     onError: (err: Error) => {
       toastError({
         title: t("common.error"),
@@ -140,39 +191,73 @@ export function useWebhookFormViewModel({
     },
   });
 
+  // isPending alone would flip back to false the instant the entity mutation
+  // settles, re-enabling Save while saveCustomFieldValues is still in flight
+  // right after it -- this stays true for the whole orchestrated submit.
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   // ─── Submit handler ──────────────────────────────────────
-  const handleSubmit = () => {
-    if (mode === "create") {
-      createMutation.mutate({
-        url,
-        description: description || undefined,
-        events: selectedEvents,
-        scope,
-        maxRetries,
-        maxConsecutiveFailures,
-      });
-    } else {
-      updateMutation.mutate({
-        url: url || undefined,
-        description: description || undefined,
-        events: selectedEvents.length > 0 ? selectedEvents : undefined,
-        scope,
-        maxRetries,
-        maxConsecutiveFailures,
-      });
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    try {
+      if (mode === "create") {
+        let created: WebhookSubscription;
+        try {
+          created = await createMutation.mutateAsync({
+            url,
+            description: description || undefined,
+            events: selectedEvents,
+            scope,
+            maxRetries,
+            maxConsecutiveFailures,
+          });
+        } catch {
+          return; // createMutation's onError already toasted
+        }
+        try {
+          await saveCustomFieldValues(created.id);
+        } catch {
+          toastError({ title: t("webhooks.customFieldsSaveError") });
+          return; // the webhook WAS created -- don't pretend the whole save succeeded
+        }
+        queryClient.invalidateQueries({ queryKey: webhookKeys.all });
+        success({ title: t("webhooks.created"), description: t("webhooks.createdDesc") });
+        onSuccess?.();
+      } else {
+        try {
+          await updateMutation.mutateAsync({
+            url: url || undefined,
+            description: description || undefined,
+            events: selectedEvents.length > 0 ? selectedEvents : undefined,
+            scope,
+            maxRetries,
+            maxConsecutiveFailures,
+          });
+        } catch {
+          return; // updateMutation's onError already toasted
+        }
+        try {
+          await saveCustomFieldValues(webhook!.id);
+        } catch {
+          toastError({ title: t("webhooks.customFieldsSaveError") });
+          return;
+        }
+        queryClient.invalidateQueries({ queryKey: webhookKeys.all });
+        queryClient.invalidateQueries({ queryKey: webhookKeys.detail(webhook!.id) });
+        success({ title: t("webhooks.updated"), description: t("webhooks.updatedDesc") });
+        onSuccess?.();
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   // ─── Validation ──────────────────────────────────────────
   const isValid =
-    url.trim().length > 0 &&
-    selectedEvents.length > 0 &&
-    (url.startsWith("https://") || url.startsWith("http://localhost"));
+    url.trim().length > 0 && selectedEvents.length > 0 && isValidWebhookUrl(url);
 
   const urlError =
-    url.length > 0 && !url.startsWith("https://") && !url.startsWith("http://localhost")
-      ? t("webhooks.urlHttpsRequired")
-      : undefined;
+    url.length > 0 && !isValidWebhookUrl(url) ? t("webhooks.urlHttpsRequired") : undefined;
 
   const eventsError = selectedEvents.length === 0 ? t("webhooks.eventsRequired") : undefined;
 
@@ -201,12 +286,19 @@ export function useWebhookFormViewModel({
 
     // Actions
     handleSubmit,
-    isSubmitting: createMutation.isPending || updateMutation.isPending,
+    isSubmitting,
 
     // Validation
     isValid,
     urlError,
     eventsError,
+
+    // Custom fields
+    customFieldConfigs: customFieldsQuery.fieldConfigs,
+    customFieldsLoading: customFieldsQuery.isLoading,
+    customFieldValues,
+    updateCustomFieldValue,
+    refetchCustomFields: customFieldsQuery.refetch,
 
     // Helpers
     toggleEvent: (eventKey: string) => {

@@ -31,6 +31,7 @@ import { useAppDetailViewModel } from "../viewmodels/useAppDetailViewModel";
 import { formatUtc } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { AppReview } from "@modules/marketplace";
+import Image from "next/image";
 
 interface AppDetailViewProps {
   /** The AppListing ID from route [id] */
@@ -103,7 +104,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         {/* App icon */}
         <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-nx-lg border border-nx-line bg-nx-raised">
           {listing.iconUrl ? (
-            <img src={listing.iconUrl} alt="" className="size-full object-cover" />
+            <Image src={listing.iconUrl} alt="" width={64} height={64} unoptimized className="size-full object-cover" />
           ) : (
             <span className="text-2xl font-bold text-nx-ink-2" aria-hidden="true">
               {listing.name.charAt(0)}
@@ -186,9 +187,12 @@ export function AppDetailView({ id }: AppDetailViewProps) {
       {/* ── Screenshot carousel (Phase 5.1) ─────────────────────────────────── */}
       {listing.screenshotUrls.length > 0 && (
         <div className="relative overflow-hidden rounded-nx-lg border border-nx-line bg-nx-raised">
-          <img
+          <Image
             src={listing.screenshotUrls[vm.screenshotIndex]}
             alt={t("marketplace.detailScreenshotAlt", { count: vm.screenshotIndex + 1 })}
+            width={800}
+            height={288}
+            unoptimized
             className="h-72 w-full object-cover"
           />
           {listing.screenshotUrls.length > 1 && (
@@ -436,9 +440,8 @@ function ReviewCard({ review, onDelete, isDeleting }: ReviewCardProps) {
       <div className="min-w-0 flex-1">
         {review.title && <p className="text-sm font-medium text-nx-ink">{review.title}</p>}
         {review.body && <p className="mt-0.5 line-clamp-3 text-xs text-nx-ink-2">{review.body}</p>}
-        <p className="mt-1 text-xs text-nx-ink-3">
-          {review.tenantName} · {formatUtc(review.createdAt, "MMM d, yyyy")}
-        </p>
+        {/* No tenant/reviewer name field exists on the backend review DTO — show the date alone. */}
+        <p className="mt-1 text-xs text-nx-ink-3">{formatUtc(review.createdAt, "MMM d, yyyy")}</p>
       </div>
 
       <Button

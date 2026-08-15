@@ -18,11 +18,13 @@ import {
   AlertCircle,
   Timer,
 } from "lucide-react";
-import { resolveFileUrl, formatTimeUtc } from "@core/common/utils";
+import { formatTimeUtc } from "@core/common/utils";
+import { useResolvedFileUrl } from "@core/hooks/use-resolved-file-url";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
+import Image from "next/image";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -91,6 +93,7 @@ export function WorkspaceCard({
 }: WorkspaceCardProps) {
   const { t } = useI18n();
   const state = getCardState(ws);
+  const resolvedLogoUrl = useResolvedFileUrl(ws.logoUrl);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [password, setPassword] = useState("");
@@ -116,17 +119,20 @@ export function WorkspaceCard({
       className={[
         "flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg border",
         ws.isPlatformAdmin
-          ? "border-primary/20 bg-primary/10 text-primary"
+          ? "border-primary/20 bg-primary/10 text-nx-accent"
           : state === "unlocked"
             ? "border-border bg-muted text-muted-foreground"
             : "border-border/50 bg-muted/50 text-muted-foreground/60",
       ].join(" ")}
       aria-hidden
     >
-      {ws.logoUrl ? (
-        <img
-          src={resolveFileUrl(ws.logoUrl)}
+      {ws.logoUrl && resolvedLogoUrl ? (
+        <Image
+          src={resolvedLogoUrl}
           alt=""
+          width={44}
+          height={44}
+          unoptimized
           className="h-full w-full object-cover"
           onError={(e) => {
             e.currentTarget.style.display = "none";
@@ -179,7 +185,7 @@ export function WorkspaceCard({
 
   // ── Platform badge ────────────────────────────────────────────────────────
   const platformBadge = ws.isPlatformAdmin && (
-    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary">
+    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-nx-accent">
       <ShieldCheck className="h-2.5 w-2.5" aria-hidden />
       {t("auth.workspaceSelection.platform") || "Platform"}
     </span>
@@ -228,14 +234,16 @@ export function WorkspaceCard({
           autoFocus
           autoComplete="current-password"
           disabled={isUnlocking}
-          className="h-9 pr-10 text-sm"
+          className="h-9 pe-10 text-sm"
           aria-label={`Password for ${ws.tenantName}`}
         />
         <button
           type="button"
           onClick={() => setShowPwd((v) => !v)}
-          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-          tabIndex={-1}
+          className="absolute end-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+          // Reachable by keyboard: a sighted keyboard user and a screen-reader
+          // user both need to verify what they typed before submitting, and
+          // this is the only control that lets them (WCAG 2.1.1, Level A).
           aria-label={showPwd ? "Hide password" : "Show password"}
         >
           {showPwd ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}

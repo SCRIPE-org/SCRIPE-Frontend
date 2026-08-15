@@ -12,6 +12,8 @@ export interface EntityTypeInfo {
   owningModule: string;
   displayNameEn: string;
   displayNameAr: string;
+  /** See EntityTypeItemJson's identical field for the full contract. */
+  hasFrontendScreen?: boolean;
 }
 
 /**
@@ -23,6 +25,8 @@ export interface CustomFieldData {
   key: string;
   labelEn: string;
   labelAr?: string | null;
+  placeholderEn?: string | null;
+  placeholderAr?: string | null;
   valueType: number;
   isRequired: boolean;
   options?: string | null;
@@ -30,6 +34,8 @@ export interface CustomFieldData {
   isActive: boolean;
   createdAt: string;
   modifiedAt?: string | null;
+  /** True for a platform-owned (TenantId == null) definition inherited by every tenant. Absent on detail fetches (list-only). */
+  isGlobal?: boolean;
 }
 
 /**
@@ -58,6 +64,14 @@ export class CustomField {
     return this.data.labelAr;
   }
 
+  get placeholderEn(): string | null | undefined {
+    return this.data.placeholderEn;
+  }
+
+  get placeholderAr(): string | null | undefined {
+    return this.data.placeholderAr;
+  }
+
   get valueType(): number {
     return this.data.valueType;
   }
@@ -84,5 +98,9 @@ export class CustomField {
 
   get modifiedAt(): string | null | undefined {
     return this.data.modifiedAt;
+  }
+
+  get isGlobal(): boolean {
+    return this.data.isGlobal ?? false;
   }
 }

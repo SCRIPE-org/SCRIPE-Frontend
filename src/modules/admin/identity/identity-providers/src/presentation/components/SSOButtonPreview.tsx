@@ -34,31 +34,31 @@ interface Props {
 // Values are copied from globals.css `:root` (dark) / `:root:not(.dark)`
 // (light) — this file does not choose or invent any of them.
 const LIGHT_SX_VARS = {
-  "--sx-card-bg": "linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 248, 255, 0.96))",
-  "--sx-card-border": "rgba(124, 58, 237, 0.18)",
+  "--sx-card-bg": "linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 248, 245, 0.96))",
+  "--sx-card-border": "rgba(76, 98, 0, 0.18)",
   "--sx-card-shadow":
-    "0 30px 80px rgba(76, 29, 149, 0.12), 0 0 0 1px rgba(124, 58, 237, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
-  "--sx-text": "#1a0f3d",
-  "--sx-text-faint": "rgba(26, 15, 61, 0.42)",
-  "--sx-divider": "rgba(76, 29, 149, 0.1)",
-  "--sx-field-bg": "rgba(124, 58, 237, 0.04)",
-  "--sx-field-bg-focus": "rgba(124, 58, 237, 0.08)",
-  "--sx-field-border": "rgba(76, 29, 149, 0.12)",
-  "--sx-field-border-focus": "#7c3aed",
+    "0 30px 80px rgba(13, 13, 14, 0.12), 0 0 0 1px rgba(76, 98, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.9)",
+  "--sx-text": "#0d0d0e",
+  "--sx-text-faint": "rgba(13, 13, 14, 0.42)",
+  "--sx-divider": "rgba(76, 98, 0, 0.1)",
+  "--sx-field-bg": "rgba(76, 98, 0, 0.04)",
+  "--sx-field-bg-focus": "rgba(76, 98, 0, 0.06)",
+  "--sx-field-border": "rgba(76, 98, 0, 0.12)",
+  "--sx-field-border-focus": "#4c6200",
 } as React.CSSProperties;
 
 const DARK_SX_VARS = {
-  "--sx-card-bg": "linear-gradient(180deg, rgba(20, 12, 46, 0.78), rgba(10, 8, 28, 0.85))",
-  "--sx-card-border": "rgba(168, 85, 247, 0.22)",
+  "--sx-card-bg": "linear-gradient(180deg, rgba(21, 23, 25, 0.86), rgba(13, 13, 14, 0.92))",
+  "--sx-card-border": "rgba(198, 255, 0, 0.16)",
   "--sx-card-shadow":
     "0 30px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.02), inset 0 1px 0 rgba(255, 255, 255, 0.07)",
-  "--sx-text": "#f5f2ff",
-  "--sx-text-faint": "rgba(245, 242, 255, 0.4)",
+  "--sx-text": "#f7f8f5",
+  "--sx-text-faint": "rgba(247, 248, 245, 0.4)",
   "--sx-divider": "rgba(255, 255, 255, 0.08)",
   "--sx-field-bg": "rgba(255, 255, 255, 0.03)",
-  "--sx-field-bg-focus": "rgba(124, 58, 237, 0.06)",
+  "--sx-field-bg-focus": "rgba(198, 255, 0, 0.05)",
   "--sx-field-border": "rgba(255, 255, 255, 0.08)",
-  "--sx-field-border-focus": "rgba(168, 85, 247, 0.55)",
+  "--sx-field-border-focus": "rgba(198, 255, 0, 0.55)",
 } as React.CSSProperties;
 
 /**

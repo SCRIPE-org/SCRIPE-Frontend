@@ -56,6 +56,8 @@ export const en = {
     defEdit: "Edit Definition",
     defEditDesc: "Update the plugin definition details.",
     defDelete: "Delete Definition",
+    defDeleteConfirmDesc:
+      'Are you sure you want to delete the plugin definition "{{name}}"? Tenants with it installed will lose access.',
     defPublish: "Publish",
     defDeprecate: "Deprecate",
     defViewManifest: "View Manifest",
@@ -76,5 +78,11 @@ export const en = {
     defPlaceholderFrontendUrl: "https://plugin.example.com/ui",
     defPlaceholderIconUrl: "https://cdn.example.com/icon.png",
     defPlaceholderManifest: '{"entryPoints": [], "permissions": []}',
+
+    // ── Custom fields section (in the create/edit form) ───────────────
+    defCustomFieldsSection: "Custom Fields",
+    defCustomFieldsSectionDesc: "Additional platform-configured fields for this plugin definition.",
+    defNoCustomFields: "No custom fields yet.",
+    defCustomFieldsSaveError: "The definition was saved, but its custom field values failed to save.",
   },
 };

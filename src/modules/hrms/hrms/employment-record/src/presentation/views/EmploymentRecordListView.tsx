@@ -8,17 +8,19 @@
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
-import type { CrudConfig } from "@core/crud/components/generic-crud-view";
+import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
+import { Pencil, Trash2 } from "lucide-react";
 import { useEmploymentRecordViewModel } from "../viewmodels/useEmploymentRecordViewModel";
 import type { EmploymentRecord } from "../../domain/entities/EmploymentRecord";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
+import { HRMS_PERMISSIONS } from "@modules/hrms/permission-constants";
 
 // P5.4: React.memo prevents unnecessary re-renders
 export const EmploymentRecordListView = React.memo(function EmploymentRecordListView() {
-  useModuleLocales(() => import("../../../locales"), "hrms");
+  useModuleLocales(() => import("../../../locales"), "hrms-employment-record");
   const { vm } = useEmploymentRecordViewModel();
   const { t, language } = useI18n();
   const locale = resolveIntlLocale(language);
@@ -27,6 +29,7 @@ export const EmploymentRecordListView = React.memo(function EmploymentRecordList
     titleKey: "employmentRecord.title",
     subtitleKey: "employmentRecord.description",
     resource: "employment-records",
+    entityTypeKey: "hrms.employment-record",
     columns: [
       {
         key: "staffMemberId",
@@ -133,6 +136,31 @@ export const EmploymentRecordListView = React.memo(function EmploymentRecordList
     // it has no name-shaped field of its own, so the FK remains the most
     // identifying value available.
     getItemDisplayName: (item: EmploymentRecord) => item.staffMemberId,
+    deleteService: (id: string) => vm.deleteItem(id),
+    getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<EmploymentRecord>[] => [
+      {
+        label: tFn("common.edit"),
+        onClick: (item: EmploymentRecord) => vm.openEditModal(item),
+        variant: "ghost" as const,
+        icon: <Pencil className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.EMPLOYMENT_RECORD_UPDATE,
+      },
+      {
+        label: tFn("common.delete"),
+        onClick: (item: EmploymentRecord) => handleDeleteFn?.(item),
+        variant: "ghost" as const,
+        className: "text-destructive hover:text-destructive/80",
+        icon: <Trash2 className="h-4 w-4" />,
+        requiredPermission: HRMS_PERMISSIONS.EMPLOYMENT_RECORD_DELETE,
+      },
+    ],
+    // F-85: opts this list into real server-side sort (see StaffMemberListView
+    // for the full rationale). Unset, a column click stays client-side-only.
+    customTableProps: {
+      sortColumn: vm.sortBy,
+      sortDirection: vm.sortDirection,
+      onSortChange: vm.handleSortChange,
+    },
   };
 
   return <GenericCrudView viewModel={vm} config={config} />;
