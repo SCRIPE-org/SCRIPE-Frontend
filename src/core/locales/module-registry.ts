@@ -217,6 +217,15 @@ import {
   ar as analyticsEventsAr,
 } from "@modules/analytics/events/locales";
 
+// ─── Party Kernel (7 sub-modules) ───────────────────────────────────────────
+import { en as partyEn, ar as partyAr } from "@modules/party-kernel/party/locales";
+import { en as partyRoleEn, ar as partyRoleAr } from "@modules/party-kernel/party-role/locales";
+import { en as partyPersonEn, ar as partyPersonAr } from "@modules/party-kernel/party-person/locales";
+import { en as partyOrgEn, ar as partyOrgAr } from "@modules/party-kernel/party-organization/locales";
+import { en as partyRelEn, ar as partyRelAr } from "@modules/party-kernel/party-relationship/locales";
+import { en as contactPointEn, ar as contactPointAr } from "@modules/party-kernel/contact-point/locales";
+import { en as mergeCandidateEn, ar as mergeCandidateAr } from "@modules/party-kernel/merge-candidate/locales";
+
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
@@ -300,7 +309,15 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktFinancialsEn,
   customFieldsEn,
   workManagementEn,
-  analyticsEventsEn
+  analyticsEventsEn,
+  // Party Kernel
+  partyEn,
+  partyRoleEn,
+  partyPersonEn,
+  partyOrgEn,
+  partyRelEn,
+  contactPointEn,
+  mergeCandidateEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -385,5 +402,13 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktFinancialsAr,
   customFieldsAr,
   workManagementAr,
-  analyticsEventsAr
+  analyticsEventsAr,
+  // Party Kernel
+  partyAr,
+  partyRoleAr,
+  partyPersonAr,
+  partyOrgAr,
+  partyRelAr,
+  contactPointAr,
+  mergeCandidateAr
 );
