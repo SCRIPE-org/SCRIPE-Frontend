@@ -73,4 +73,8 @@ export class MessageTemplateRepository implements IMessageTemplateRepository {
     const json = MessageTemplateMapper.toPreviewJson(data);
     return this.service.preview(json);
   }
+
+  async resetDesign(id: string): Promise<void> {
+    await this.service.resetDesign(id);
+  }
 }

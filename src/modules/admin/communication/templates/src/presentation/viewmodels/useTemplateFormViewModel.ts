@@ -272,6 +272,25 @@ export function useTemplateFormViewModel() {
     },
   });
 
+  // ─── Reset Design Mutation ───────────────────────────────
+  // Only meaningful for a tenant-cloned template — a global one already self-heals to the
+  // platform default on every deploy (MessageTemplateSeeder). Re-syncs the form from the
+  // server afterward rather than writing DEFAULT_DESIGN locally: that constant is the blank
+  // starting point for a brand-new template, not guaranteed to equal the platform default the
+  // backend just wrote (they have drifted from each other before and could again).
+  const resetDesignMutation = useMutation({
+    mutationFn: () => repo.resetDesign(templateId!),
+    onSuccess: async () => {
+      await refetch();
+      setInitializedForId(undefined); // let the load-sync effect below repopulate the form
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
+      success({ title: t("messaging.templates.resetDesignSuccess") });
+    },
+    onError: () => {
+      toastError({ title: t("messaging.templates.resetDesignError") });
+    },
+  });
+
   // isPending alone would flip back to false the instant the entity mutation
   // settles, re-enabling Save while saveCustomFieldValues is still in flight
   // right after it -- this stays true for the whole orchestrated submit.
@@ -418,6 +437,12 @@ export function useTemplateFormViewModel() {
     refetch,
     loadedTemplate: template,
     isSaving: isSubmitting,
+    // Reset only ever applies to a saved, tenant-owned template — never in create mode, and
+    // never on a global one (tenantId null), which already self-heals on every deploy. The view
+    // gates the button on this rather than reimplementing the same check.
+    canResetDesign: mode === "edit" && !!template?.tenantId,
+    handleResetDesign: () => resetDesignMutation.mutate(),
+    isResettingDesign: resetDesignMutation.isPending,
     channelOptions,
     languageOptions,
     categoryOptions,

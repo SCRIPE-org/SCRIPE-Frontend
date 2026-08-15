@@ -36,4 +36,5 @@ export interface IMessageTemplateService {
   delete(id: string): Promise<void>;
   clone(id: string, suffix?: string): Promise<{ id: string }>;
   preview(data: PreviewTemplateJson): Promise<PreviewTemplateResponseJson>;
+  resetDesign(id: string): Promise<void>;
 }

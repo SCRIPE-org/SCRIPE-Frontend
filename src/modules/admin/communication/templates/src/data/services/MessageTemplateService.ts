@@ -61,4 +61,8 @@ export class MessageTemplateService implements IMessageTemplateService {
   async preview(data: PreviewTemplateJson): Promise<PreviewTemplateResponseJson> {
     return this.api.post<PreviewTemplateResponseJson>(MESSAGE_TEMPLATE_ENDPOINTS.PREVIEW, data);
   }
+
+  async resetDesign(id: string): Promise<void> {
+    await this.api.post(MESSAGE_TEMPLATE_ENDPOINTS.RESET_DESIGN(id), {});
+  }
 }

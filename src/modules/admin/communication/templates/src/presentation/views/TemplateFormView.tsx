@@ -1,7 +1,7 @@
 // FILE-EXCEPTION: file length
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
 import {
   useTemplateFormViewModel,
   MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
@@ -16,11 +16,12 @@ import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
-import { ArrowLeft, Save, Settings, Palette, Braces, Eye, Tag } from "lucide-react";
+import { ArrowLeft, Save, Settings, Palette, Braces, Eye, Tag, RotateCcw } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import dynamic from "next/dynamic";
 
 // Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)
@@ -78,6 +79,7 @@ function CustomFieldsAddTrigger({
 export function TemplateFormView({ templateId: _templateId }: { templateId?: string } = {}) {
   const vm = useTemplateFormViewModel();
   const fieldIdBase = useId();
+  const [resetDesignDialogOpen, setResetDesignDialogOpen] = useState(false);
 
   // Edit mode has three real states: the initial fetch, a settled failure
   // (bad id, deleted template, network error), and a settled success. A
@@ -339,13 +341,37 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
 
               {/* Design Variables Tab */}
               <TabsContent value="design">
-                <CardContent className="pt-0">
+                <CardContent className="space-y-4 pt-0">
+                  {vm.canResetDesign && (
+                    <div className="flex justify-end">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setResetDesignDialogOpen(true)}
+                        disabled={vm.isResettingDesign}
+                      >
+                        <RotateCcw className="me-1.5 h-3.5 w-3.5" />
+                        {vm.t("messaging.templates.resetDesignAction")}
+                      </Button>
+                    </div>
+                  )}
                   <DesignVariablesPanel
                     value={vm.form.designVariables}
                     onChange={vm.updateDesignVariables}
                   />
                 </CardContent>
               </TabsContent>
+
+              <ConfirmationDialog
+                open={resetDesignDialogOpen}
+                onOpenChange={setResetDesignDialogOpen}
+                variant="warning"
+                title={vm.t("messaging.templates.resetDesignAction")}
+                description={vm.t("messaging.templates.resetDesignConfirm")}
+                isLoading={vm.isResettingDesign}
+                onConfirm={vm.handleResetDesign}
+              />
 
               {/* Live Preview Tab */}
               <TabsContent value="preview">

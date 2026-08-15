@@ -122,6 +122,11 @@ export const ar = {
       createError: "فشل في إنشاء القالب",
       updateSuccess: "تم تحديث القالب",
       updateError: "فشل في تحديث القالب",
+      resetDesignAction: "إعادة تعيين التصميم إلى الافتراضي",
+      resetDesignConfirm:
+        "إعادة تعيين ألوان هذا القالب والخط ونصف القطر إلى إعدادات المنصة الافتراضية؟ لن يتأثر الموضوع ونص الرسالة.",
+      resetDesignSuccess: "تمت إعادة تعيين التصميم إلى الإعداد الافتراضي",
+      resetDesignError: "فشلت إعادة تعيين التصميم",
       customFieldsTitle: "الحقول المخصصة",
       noCustomFields: "لم يتم تعريف حقول مخصصة",
       customFieldsSaveError: "فشل حفظ قيم الحقول المخصصة",

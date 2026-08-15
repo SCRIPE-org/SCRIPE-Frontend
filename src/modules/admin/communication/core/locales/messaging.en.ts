@@ -123,6 +123,11 @@ export const en = {
       createError: "Failed to create template",
       updateSuccess: "Template updated",
       updateError: "Failed to update template",
+      resetDesignAction: "Reset design to default",
+      resetDesignConfirm:
+        "Reset this template's colors, font and radius to the current platform default? Your subject and body text are not affected.",
+      resetDesignSuccess: "Design reset to platform default",
+      resetDesignError: "Failed to reset design",
       customFieldsTitle: "Custom Fields",
       noCustomFields: "No custom fields defined",
       customFieldsSaveError: "Failed to save custom field values",

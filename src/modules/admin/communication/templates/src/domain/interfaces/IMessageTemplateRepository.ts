@@ -23,4 +23,5 @@ export interface IMessageTemplateRepository {
   delete(id: string): Promise<void>;
   clone(id: string, suffix?: string): Promise<string>;
   preview(data: PreviewTemplateRequest): Promise<PreviewTemplateResponse>;
+  resetDesign(id: string): Promise<void>;
 }
