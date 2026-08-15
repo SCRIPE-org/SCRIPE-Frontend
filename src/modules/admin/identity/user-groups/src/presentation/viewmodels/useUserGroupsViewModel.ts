@@ -58,6 +58,14 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
   const { success, error: toastError } = useEnhancedToast();
   const { t } = useI18n();
 
+  // deferSuccessEffects: true -- this screen sets entityTypeKey (see
+  // getConfigBase below), so GenericCrudView also saves custom-field values
+  // after the user group itself is created/updated. Without this option,
+  // useCrudViewModel's onCreateSuccess/onUpdateSuccess fired the toast and
+  // closed the modal the instant createItem's own promise resolved -- before
+  // the custom-field save even started -- and a subsequent save failure had
+  // nowhere left to surface (design doc W0-1). Same pattern as
+  // useAdminsViewModel/useUsersViewModel/useWorkItemViewModel.
   const vm = useCrudViewModel<UserGroupListItem, CreateUserGroupRequest, UpdateUserGroupRequest>(
     [...userGroupKeys.all, useMyTenant ? "my-tenant" : tenantId || "all"],
     {
@@ -110,7 +118,8 @@ export function useUserGroupsViewModel(options?: { useMyTenant?: boolean; tenant
       delete: async (id: string) => {
         await repo.delete(id);
       },
-    }
+    },
+    { deferSuccessEffects: true }
   );
 
   // --- Cascade Dialog States ---
