@@ -17,6 +17,12 @@ export interface EntityTypeInfo {
 }
 
 /**
+ * CustomFieldValueType wire names -- see CustomFieldModel.ts's identical type
+ * for the full contract (why this is a string union, never a number).
+ */
+export type CustomFieldValueTypeName = "Text" | "Number" | "Boolean" | "Date" | "Select";
+
+/**
  * CustomField data from API
  */
 export interface CustomFieldData {
@@ -27,7 +33,7 @@ export interface CustomFieldData {
   labelAr?: string | null;
   placeholderEn?: string | null;
   placeholderAr?: string | null;
-  valueType: number;
+  valueType: CustomFieldValueTypeName;
   isRequired: boolean;
   options?: string | null;
   sortOrder: number;
@@ -72,7 +78,7 @@ export class CustomField {
     return this.data.placeholderAr;
   }
 
-  get valueType(): number {
+  get valueType(): CustomFieldValueTypeName {
     return this.data.valueType;
   }
 

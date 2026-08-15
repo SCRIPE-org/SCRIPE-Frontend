@@ -7,6 +7,18 @@
  */
 
 /**
+ * CustomFieldValueType wire names -- mirrors backend enum member names verbatim
+ * (CustomFields.Domain.Enums.CustomFieldValueType). The API's global
+ * JsonStringEnumConverter serializes enums as strings, so this is never a
+ * number on the wire. Duplicated (not imported) from the sibling
+ * custom-field-value submodule's identical type, matching this module's own
+ * "duplicate rather than cross-submodule-import" convention (see
+ * core/crud/customFieldsExtension.tsx's identical duplication and its doc
+ * comment for the reasoning).
+ */
+export type CustomFieldValueTypeName = "Text" | "Number" | "Boolean" | "Date" | "Select";
+
+/**
  * EntityType item JSON shape from API.
  */
 export interface EntityTypeItemJson {
@@ -39,7 +51,7 @@ export interface CustomFieldJson {
   labelAr?: string | null;
   placeholderEn?: string | null;
   placeholderAr?: string | null;
-  valueType: number;
+  valueType: CustomFieldValueTypeName;
   isRequired: boolean;
   options?: string | null;
   sortOrder: number;
@@ -58,7 +70,7 @@ export interface CustomFieldListItemJson {
   key: string;
   labelEn: string;
   labelAr?: string | null;
-  valueType: number;
+  valueType: CustomFieldValueTypeName;
   isRequired: boolean;
   sortOrder: number;
   isActive: boolean;
@@ -96,7 +108,7 @@ export class CustomFieldModel {
     public readonly entityTypeKey: string,
     public readonly key: string,
     public readonly labelEn: string,
-    public readonly valueType: number,
+    public readonly valueType: CustomFieldValueTypeName,
     public readonly isRequired: boolean,
     public readonly sortOrder: number,
     public readonly isActive: boolean,
