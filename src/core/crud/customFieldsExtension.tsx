@@ -116,6 +116,21 @@ export function decodeCustomFieldName(name: string): string | null {
  * FUNCTIONS on the registered extension (getFormFields), never to another
  * hook, so Rules of Hooks holds even if this fires before the CustomFields
  * module's bootstrap import has run (in which case it just returns empty).
+ *
+ * KNOWN INEFFICIENCY (design doc recon finding #5, verified and deliberately
+ * deferred to Wave 2): GenericCrudView mounts up to THREE independent
+ * instances of this hook for the same entityTypeKey (create/edit/view), each
+ * with its own useState/useEffect and no cache between them. create's
+ * instance calls getFormFields(key, undefined) -> getDefinitions(key); edit
+ * and view's instances call getFormFields(key, ownerId) -> getValues(key,
+ * ownerId) -- a different endpoint, so this is NOT three identical requests,
+ * but all three independently carry overlapping definition metadata (label,
+ * placeholder, options, valueType, required) with no sharing. The correct
+ * fix is a shared cache, which belongs in Wave 2 once the IValueTypeHandler
+ * registry (design doc §8) restructures this contract anyway --
+ * building a cache against the current shape now would likely be thrown
+ * away. customFieldsExtension.fetchCount.test.tsx pins today's call count so
+ * Wave 2 has a concrete before/after baseline.
  */
 export function useCustomFieldsFormFields(
   entityTypeKey: string | undefined,
