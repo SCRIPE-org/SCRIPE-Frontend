@@ -26,7 +26,7 @@ const sections: DocSection[] = [
     columns: 2,
     items: [
       {
-        icon: "LayoutGrid",
+        icon: "FormInput",
         titleKey: "modules.customFields.overview.featureTenant",
         descriptionKey: "modules.customFields.overview.featureTenantDesc",
       },
