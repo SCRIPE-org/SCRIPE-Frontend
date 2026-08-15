@@ -1136,12 +1136,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
               // AFTER that save rather than before it.
               //
               // Requires the screen's own useXViewModel to have opted into
-              // useCrudViewModel's { deferSuccessEffects: true } (all 14
-              // entityTypeKey screens do) — that option is what stops
-              // useGenericMutations' onCreateSuccess from firing the toast
-              // and closing the modal itself the instant createItem's own
-              // promise resolves, before this function has even reached the
-              // saveValues call above. Without that option, confirmCreateSuccess
+              // useCrudViewModel's { deferSuccessEffects: true } (every
+              // entityTypeKey screen with a create/edit path should) — that
+              // option is what stops useGenericMutations' onCreateSuccess
+              // from firing the toast and closing the modal itself the
+              // instant createItem's own promise resolves, before this
+              // function has even reached the saveValues call above.
+              // Without that option, confirmCreateSuccess
               // here is a harmless no-op on top of the auto-close: still
               // present, since it's called unconditionally whenever
               // entityTypeKey is set, but the auto behavior already won by
