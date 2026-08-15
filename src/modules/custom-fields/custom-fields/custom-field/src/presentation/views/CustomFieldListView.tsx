@@ -21,26 +21,28 @@ import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2, Globe2 } from "lucide-react";
 
-// SELECT value type == 4; Options are only allowed/required for Select fields.
-const SELECT_VALUE_TYPE = "4";
+// Options are only allowed/required for Select fields. Wire value is the
+// backend enum's string member name (JsonStringEnumConverter), never its
+// ordinal -- see design doc W0-3/GAP 1.
+const SELECT_VALUE_TYPE = "Select";
 
-// BOOLEAN == 2, DATE == 3 -- the two value types with no placeholder concept
-// (a Switch and a DatePicker, neither renders a text input a placeholder
-// would sit inside). Text(0)/Number(1)/Select(4) all keep the field.
-const NO_PLACEHOLDER_VALUE_TYPES = new Set(["2", "3"]);
+// Boolean/Date are the two value types with no placeholder concept (a Switch
+// and a DatePicker, neither renders a text input a placeholder would sit
+// inside). Text/Number/Select all keep the field.
+const NO_PLACEHOLDER_VALUE_TYPES = new Set(["Boolean", "Date"]);
 
-// CustomFieldValueType (0..4) mapped onto the nx Badge semantic tones — a
+// CustomFieldValueType wire names mapped onto the nx Badge semantic tones — a
 // value type is read-only metadata, so the tones are neutral/informational
 // rather than success/error.
 const VALUE_TYPE_VARIANTS: Record<
-  number,
+  string,
   "default" | "secondary" | "info" | "success" | "warning"
 > = {
-  0: "secondary", // Text
-  1: "info", // Number
-  2: "success", // Boolean
-  3: "warning", // Date
-  4: "default", // Select
+  Text: "secondary",
+  Number: "info",
+  Boolean: "success",
+  Date: "warning",
+  Select: "default",
 };
 
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
@@ -100,22 +102,22 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
 
   const valueTypeOptions = useMemo(
     () => [
-      { value: "0", label: t("customField.valueTypes.text") },
-      { value: "1", label: t("customField.valueTypes.number") },
-      { value: "2", label: t("customField.valueTypes.boolean") },
-      { value: "3", label: t("customField.valueTypes.date") },
-      { value: "4", label: t("customField.valueTypes.select") },
+      { value: "Text", label: t("customField.valueTypes.text") },
+      { value: "Number", label: t("customField.valueTypes.number") },
+      { value: "Boolean", label: t("customField.valueTypes.boolean") },
+      { value: "Date", label: t("customField.valueTypes.date") },
+      { value: "Select", label: t("customField.valueTypes.select") },
     ],
     [t]
   );
 
-  const valueTypeLabels = useMemo<Record<number, string>>(
+  const valueTypeLabels = useMemo<Record<string, string>>(
     () => ({
-      0: t("customField.valueTypes.text"),
-      1: t("customField.valueTypes.number"),
-      2: t("customField.valueTypes.boolean"),
-      3: t("customField.valueTypes.date"),
-      4: t("customField.valueTypes.select"),
+      Text: t("customField.valueTypes.text"),
+      Number: t("customField.valueTypes.number"),
+      Boolean: t("customField.valueTypes.boolean"),
+      Date: t("customField.valueTypes.date"),
+      Select: t("customField.valueTypes.select"),
     }),
     [t]
   );
@@ -153,9 +155,9 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         {
           key: "valueType",
           label: t("customField.fields.valueType"),
-          render: (value: number) => (
+          render: (value: string) => (
             <Badge variant={VALUE_TYPE_VARIANTS[value] ?? "secondary"}>
-              {valueTypeLabels[value] ?? String(value)}
+              {valueTypeLabels[value] ?? value}
             </Badge>
           ),
         },
@@ -327,6 +329,13 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           type: "textarea" as const,
           placeholder: t("customField.placeholders.options"),
           rows: 4,
+          // Missing on this (edit) form until now -- unlike the create form's
+          // identical field above, which has always had this guard. Editing a
+          // Text/Number/Boolean/Date field showed an editable Options textarea
+          // that UpdateCustomFieldCommandHandler's Select<->Options coupling
+          // check then rejected on submit (design doc recon finding #1).
+          isVisible: (form: Record<string, unknown>) =>
+            String(form.valueType) === SELECT_VALUE_TYPE,
         },
         {
           name: "isRequired",
@@ -352,7 +361,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         labelAr: "",
         placeholderEn: "",
         placeholderAr: "",
-        valueType: "0",
+        valueType: "Text",
         options: "",
         isRequired: false,
         sortOrder: 0,
@@ -364,7 +373,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       },
       editInitialValues: (item: CustomField) => ({
         id: item.id,
-        valueType: String(item.valueType),
+        valueType: item.valueType,
         labelEn: item.labelEn,
         labelAr: item.labelAr ?? "",
         placeholderEn: item.placeholderEn ?? "",
