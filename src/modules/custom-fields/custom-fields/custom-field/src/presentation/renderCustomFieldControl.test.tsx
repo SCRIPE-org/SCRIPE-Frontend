@@ -320,6 +320,19 @@ describe("renderCustomFieldControl", () => {
       expect(validateSelectCustomFieldValue(PRIORITY_FIELD, null, t)).toBeNull();
     });
 
+    // Regression test (review fix, M1): a whitespace-only value must resolve
+    // the SAME way as "" -- valid/empty -- NOT get rejected as "not one of
+    // the allowed options". The backend's SelectValueTypeHandler.IsEmpty is
+    // string.IsNullOrWhiteSpace-based and is checked before Validate ever
+    // runs (Wave 2 Step 2.1's own D35 ruling), so a Select field cleared to
+    // "   " is "clear this value" to the backend, not an invalid option --
+    // this function must reach the same verdict, not diverge and 400 client-
+    // side for something the backend would have accepted.
+    it("treats a whitespace-only value as empty/valid, not as an invalid option (M1)", () => {
+      expect(validateSelectCustomFieldValue(PRIORITY_FIELD, "   ", t)).toBeNull();
+      expect(validateSelectCustomFieldValue(PRIORITY_FIELD, "\t\n ", t)).toBeNull();
+    });
+
     it("returns null for non-select fc.type (not this function's concern)", () => {
       expect(
         validateSelectCustomFieldValue({ name: "cf_x", type: "text", label: "X" }, "anything", t)

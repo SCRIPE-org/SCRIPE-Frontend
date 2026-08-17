@@ -21,12 +21,19 @@
  * `onCustomFieldChange`), which this shared renderer already abstracts away
  * via the `onChange` prop. No drift found between the two sites for these 3
  * types. The Select branch is ported from WebhookFormCustomFieldsSection.tsx
- * specifically (not FeatureDefinitionFormView.tsx's or TemplateFormView.tsx's
- * divergent raw-Radix-`Select` version) per the governing pre-plan analysis's
- * D9 ruling: `GenericSelect` is the majority pattern (5 of 8 sites) with
- * better a11y/keyboard behavior, and the 2 raw-`Select` sites get converted
- * onto `GenericSelect` in Task 7 rather than this renderer preserving their
- * divergence.
+ * specifically (not the 3 divergent sites' raw-Radix-`Select` version) per the
+ * governing pre-plan analysis's D9 ruling: `GenericSelect` is the majority
+ * pattern (5 of 8 sites -- WebhookFormCustomFieldsSection.tsx,
+ * CreateLeadCustomFieldsSection.tsx, DefinitionFormCustomFieldsSection.tsx,
+ * SubmitDsrModal.tsx, SaveAsThemeModal.tsx) with better a11y/keyboard
+ * behavior, and the OTHER 3 sites' raw `Select` (from `@core/ui/select`, not
+ * `GenericSelect`) -- `TenantPlanStepCustomFields.tsx`, `TemplateFormView.tsx`,
+ * `FeatureDefinitionFormView.tsx` (also named E3/E6/E8 in the pre-plan
+ * analysis's own D9 section) -- get converted onto `GenericSelect` in Task 7
+ * rather than this renderer preserving their divergence. Re-verified directly
+ * against all 8 sites' real source for this task (not just the pre-plan
+ * analysis's own count) after an earlier draft of this comment undercounted
+ * it as "2 raw-Select sites" and dropped `TenantPlanStepCustomFields.tsx`.
  *
  * Placed flat in presentation/ (no `registry/` subfolder), matching Task 1's
  * valueTypeRegistry.ts -- this codebase has no `presentation/registry/`
@@ -199,10 +206,20 @@ export type TranslateFn = (key: string, params?: Record<string, unknown>) => str
  * backend would reach, just earlier and with a better message, not a
  * DIFFERENT verdict reached earlier.
  *
- * Returns `null` when `value` is empty/absent (required-ness is a separate,
- * pre-existing concern -- see this module's own generic "required" validation
- * -- not this function's job) or when `fc.type` isn't "select" at all, and
- * the (already-interpolated) error message string otherwise.
+ * Returns `null` when `value` is empty/absent/whitespace-only (required-ness
+ * is a separate, pre-existing concern -- see this module's own generic
+ * "required" validation -- not this function's job) or when `fc.type` isn't
+ * "select" at all, and the (already-interpolated) error message string
+ * otherwise. Whitespace-only ("   ") is deliberately treated the SAME as
+ * fully-empty, not as "not one of the allowed options": the backend's
+ * `SelectValueTypeHandler.IsEmpty` is `string.IsNullOrWhiteSpace`-based and is
+ * checked BEFORE `Validate` ever runs (see
+ * `SaveEntityCustomFieldValuesCommandHandler.cs`'s empty-value gate, and Wave
+ * 2 Step 2.1's own D35 ruling) -- so the backend would accept a whitespace-
+ * only submission as "clear this value," never reject it as invalid. Checking
+ * membership before the blank check would make this function reject a value
+ * the backend happily treats as empty, the exact kind of frontend/backend
+ * verdict mismatch D5 exists to eliminate, not reintroduce.
  *
  * NOT called automatically from the Select branch above. `GenericSelect` only
  * ever emits a value drawn from that branch's own `options` array (built from
@@ -234,13 +251,16 @@ export function validateSelectCustomFieldValue(
   t: TranslateFn
 ): string | null {
   if (fc.type !== "select") return null;
-  if (value === undefined || value === null || value === "") return null;
+  if (value === undefined || value === null) return null;
 
-  // Trimmed before comparison, mirroring SelectValueTypeHandler.Validate's own
-  // `scalar?.ToString()?.Trim()` -- incidental leading/trailing whitespace
-  // should resolve the SAME way the backend would, not diverge because the
-  // frontend forgot to trim before comparing.
+  // Trimmed BEFORE the emptiness check (not just before the membership
+  // check): the backend's IsEmpty gate runs on the trimmed/whitespace-aware
+  // value ahead of Validate, so " " must resolve to "empty" here too, not
+  // fall through to the membership check below and get rejected as "not one
+  // of the allowed options" -- see the doc comment above.
   const text = String(value).trim();
+  if (text === "") return null;
+
   const allowedLabels = fc.options?.map((opt) => opt.label) ?? [];
 
   // Ordinal / case-sensitive on purpose -- see the doc comment above.
