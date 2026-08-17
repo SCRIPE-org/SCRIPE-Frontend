@@ -7,13 +7,12 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import { Switch } from "@core/ui/switch";
-import { DatePicker } from "@core/ui/date-picker";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
 import { DSR_ENTITY_TYPE_KEY } from "../viewmodels/useDsrViewModel";
 
 // ── Option constants ──────────────────────────────────────────────────────────
@@ -53,10 +52,6 @@ interface SubmitDsrModalProps {
   customFieldValues: Record<string, unknown>;
   onCustomFieldChange: (name: string, value: unknown) => void;
   onCustomFieldsCreated: () => void;
-}
-
-function toFieldInputValue(value: unknown): string {
-  return value === undefined || value === null ? "" : String(value);
 }
 
 /** Mirrors TemplateFormView.tsx's own private CustomFieldsAddTrigger wrapper. */
@@ -205,63 +200,11 @@ export function SubmitDsrModal({
 
           {customFieldConfigs.map((fc) => {
             const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-
-            if (fc.type === "switch") {
-              return (
-                <div key={fc.name} className="flex items-center justify-between">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <Switch
-                    id={fc.name}
-                    checked={Boolean(value)}
-                    onCheckedChange={(v) => onCustomFieldChange(fc.name, v)}
-                  />
-                </div>
-              );
-            }
-
-            if (fc.type === "select") {
-              return (
-                <div key={fc.name} className="space-y-1.5">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <GenericSelect
-                    options={fc.options?.map((opt) => ({ value: opt.value, label: opt.label })) ?? []}
-                    value={toFieldInputValue(value)}
-                    onValueChange={(v: string | string[]) => onCustomFieldChange(fc.name, v as string)}
-                    placeholder={fc.placeholder || fc.label}
-                    type="single"
-                  />
-                </div>
-              );
-            }
-
-            if (fc.type === "date") {
-              return (
-                <div key={fc.name} className="space-y-1.5">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <DatePicker
-                    id={fc.name}
-                    type="date"
-                    value={toFieldInputValue(value)}
-                    onChange={(v) => onCustomFieldChange(fc.name, v)}
-                    required={fc.required}
-                  />
-                </div>
-              );
-            }
-
-            return (
-              <div key={fc.name} className="space-y-1.5">
-                <Label htmlFor={fc.name}>{fc.label}</Label>
-                <Input
-                  id={fc.name}
-                  type={fc.type === "number" ? "number" : "text"}
-                  value={toFieldInputValue(value)}
-                  onChange={(e) => onCustomFieldChange(fc.name, e.target.value)}
-                  placeholder={fc.placeholder}
-                  required={fc.required}
-                />
-              </div>
-            );
+            return renderCustomFieldControl({
+              fc,
+              value,
+              onChange: (v) => onCustomFieldChange(fc.name, v),
+            });
           })}
 
           {customFieldConfigs.length === 0 && !customFieldsLoading && (
