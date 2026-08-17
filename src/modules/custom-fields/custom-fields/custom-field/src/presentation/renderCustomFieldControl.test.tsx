@@ -30,6 +30,7 @@ vi.mock("@core/providers/settings-provider", () => ({
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     t: (key: string) => key,
+    language: "en",
   }),
 }));
 
@@ -122,5 +123,64 @@ describe("renderCustomFieldControl", () => {
       </>
     );
     expect(screen.getByLabelText("Nickname")).toBeDisabled();
+  });
+
+  it("renders a DatePicker for fc.type date", () => {
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_6", type: "date", label: "Start Date" },
+          value: "",
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    // The DatePicker renders a hidden input with type="date" and an accessible
+    // trigger div with role="combobox". Verify both are present.
+    const input = screen.getByLabelText("Start Date");
+    expect(input).toHaveAttribute("type", "date");
+  });
+
+  it("calls onChange when DatePicker value changes", () => {
+    const onChange = vi.fn();
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_7", type: "date", label: "Start Date" },
+          value: "",
+          onChange,
+        })}
+      </>
+    );
+    const input = screen.getByLabelText("Start Date") as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "2026-08-17" } });
+    expect(onChange).toHaveBeenCalledWith("2026-08-17");
+  });
+
+  // D9: isViewMode on the Date branch. FeatureDefinitionFormView.tsx's
+  // custom-field DatePicker branch uses `disabled={isViewMode}` (matching
+  // Input, not Switch's `readOnly`). This asserts that the trigger div is
+  // disabled and onClick/keyboard handlers are blocked.
+  it("disables the DatePicker when isViewMode is true (D9)", () => {
+    const onChange = vi.fn();
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_8", type: "date", label: "Start Date" },
+          value: "2026-08-17",
+          onChange,
+          isViewMode: true,
+        })}
+      </>
+    );
+    // The DatePicker's trigger div has aria-disabled="true" and tabindex="-1"
+    // when disabled. Query by role and aria-disabled.
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveAttribute("aria-disabled", "true");
+    expect(trigger).toHaveAttribute("tabindex", "-1");
+
+    // Attempt to click the trigger -- onChange should not fire
+    fireEvent.click(trigger);
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

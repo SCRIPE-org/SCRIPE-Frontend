@@ -29,6 +29,7 @@ import React from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
+import { DatePicker } from "@core/ui/date-picker";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 
 export interface CustomFieldControlProps {
@@ -88,8 +89,25 @@ export function renderCustomFieldControl({
     );
   }
 
-  // Select is Task 3 -- this task intentionally does not handle fc.type === "select" yet.
-  // Date is Task 4.
+  if (fc.type === "date") {
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label}
+        </Label>
+        <DatePicker
+          id={fc.name}
+          type="date"
+          value={toFieldInputValue(value)}
+          onChange={(v) => onChange(v)}
+          required={fc.required}
+          disabled={isViewMode}
+        />
+      </div>
+    );
+  }
+
+  // Select is Task 4 -- this task intentionally does not handle fc.type === "select" yet.
 
   return (
     <div key={fc.name} className="space-y-2">
