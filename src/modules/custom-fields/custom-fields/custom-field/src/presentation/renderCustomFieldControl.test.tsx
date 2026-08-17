@@ -21,7 +21,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
-import { renderCustomFieldControl } from "./renderCustomFieldControl";
+import { renderCustomFieldControl, validateSelectCustomFieldValue } from "./renderCustomFieldControl";
 
 vi.mock("@core/providers/settings-provider", () => ({
   useSettings: () => ({ switchStyle: "default", fontSize: "default", inputStyle: "default" }),
@@ -31,8 +31,29 @@ vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     t: (key: string) => key,
     language: "en",
+    direction: "ltr",
   }),
 }));
+
+// jsdom has no ResizeObserver -- GenericSelect's trigger tracks its own width
+// (for the panel's --radix-popover-trigger-width CSS var) on mount regardless
+// of open state, so this is needed even for tests that never open the panel.
+// Same polyfill SubmitDsrModal.customfields.test.tsx already added for its
+// own GenericSelect-backed fields.
+if (typeof (globalThis as any).ResizeObserver === "undefined") {
+  (globalThis as any).ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+}
+
+// jsdom also has no scrollIntoView -- cmdk calls it on the highlighted row's
+// layout effect as soon as the panel's option list mounts (open the Select,
+// and this throws before a single option is even queried).
+if (typeof Element.prototype.scrollIntoView !== "function") {
+  Element.prototype.scrollIntoView = () => {};
+}
 
 describe("renderCustomFieldControl", () => {
   it("renders a text input for fc.type text and reports changes", () => {
@@ -182,5 +203,148 @@ describe("renderCustomFieldControl", () => {
     // Attempt to click the trigger -- onChange should not fire
     fireEvent.click(trigger);
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  // ── fc.type === "select" (Wave 2 Step 2.2, Task 4) ──────────────────────
+  const PRIORITY_FIELD = {
+    name: "cf_priority",
+    type: "select" as const,
+    label: "Priority",
+    options: [
+      { value: "Low", label: "Low" },
+      { value: "Medium", label: "Medium" },
+      { value: "High", label: "High" },
+    ],
+  };
+
+  it("renders a GenericSelect for fc.type select, labeled and showing the field's options", () => {
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: PRIORITY_FIELD,
+          value: "",
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    // GenericSelect's trigger is a role="combobox" DIV, not a labellable HTML
+    // form element (input/select/textarea/etc.) -- confirmed against real
+    // test output (not assumed) that neither getByLabelText NOR getByRole's
+    // `name` option resolve a <label htmlFor> pointing at it: dom-
+    // accessibility-api's accessible-name computation restricts native
+    // label-association to actual form controls, same as the HTML spec's own
+    // "labelable element" category, so a <label htmlFor> on a plain div does
+    // not compute an accessible name in this stack (or in real browsers/AT --
+    // this isn't a testing-library-only quirk). This asserts the DOM wiring
+    // directly instead: the label's `for` and the trigger's `id` do match,
+    // even though that doesn't reach WAI-ARIA name computation for this
+    // element type -- `id={fc.name}` is still kept for parity with the other
+    // 3 branches and any consumer that queries by id directly.
+    expect(screen.getByText("Priority", { selector: "label" })).toHaveAttribute(
+      "for",
+      "cf_priority"
+    );
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveAttribute("id", "cf_priority");
+
+    fireEvent.click(trigger);
+    // fc.options flow straight through to the open panel's rows.
+    expect(screen.getByRole("option", { name: "Low" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "Medium" })).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: "High" })).toBeInTheDocument();
+  });
+
+  it("reports the option's LABEL string via onChange when an option is picked (D6)", () => {
+    const onChange = vi.fn();
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: PRIORITY_FIELD,
+          value: "",
+          onChange,
+        })}
+      </>
+    );
+    fireEvent.click(screen.getByRole("combobox"));
+    fireEvent.click(screen.getByRole("option", { name: "Medium" }));
+
+    // D6: the label text itself, not a synthetic id -- mapValueToFieldConfig
+    // (customFieldsCrudIntegration.tsx) builds every option as { value: o,
+    // label: o }, so this is also the only value GenericSelect could ever
+    // have emitted here.
+    expect(onChange).toHaveBeenCalledWith("Medium");
+  });
+
+  // D9: isViewMode on the Select branch. FeatureDefinitionFormView.tsx's real,
+  // already-shipped custom-field Select branch (pre-Task-4, raw Radix
+  // `Select`) uses `disabled={isViewMode}`, matching Input/DatePicker rather
+  // than Switch's `readOnly`.
+  it("disables the GenericSelect when isViewMode is true and blocks selection (D9)", () => {
+    const onChange = vi.fn();
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: PRIORITY_FIELD,
+          value: "Low",
+          onChange,
+          isViewMode: true,
+        })}
+      </>
+    );
+    const trigger = screen.getByRole("combobox");
+    expect(trigger).toHaveAttribute("aria-disabled", "true");
+    expect(trigger).toHaveAttribute("tabindex", "-1");
+
+    // Disabled means the panel never opens, so no option rows exist to click.
+    fireEvent.click(trigger);
+    expect(screen.queryByRole("option", { name: "Medium" })).not.toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  // D5: client-side option-membership validation, mirroring the backend's
+  // SelectValueTypeHandler.Validate (ordinal, case-sensitive Contains against
+  // definition.Options). Pure-function tests -- no rendering involved, since
+  // this guards a value already sitting in form state, not a value picked
+  // through GenericSelect's own UI (which can only ever emit a listed value).
+  describe("validateSelectCustomFieldValue (D5)", () => {
+    const t = (key: string, params?: Record<string, unknown>) =>
+      params ? `${key}:${JSON.stringify(params)}` : key;
+
+    it("returns null for an exact-match allowed value", () => {
+      expect(validateSelectCustomFieldValue(PRIORITY_FIELD, "Medium", t)).toBeNull();
+    });
+
+    it("returns null for empty/absent values (required-ness is a separate concern)", () => {
+      expect(validateSelectCustomFieldValue(PRIORITY_FIELD, "", t)).toBeNull();
+      expect(validateSelectCustomFieldValue(PRIORITY_FIELD, undefined, t)).toBeNull();
+      expect(validateSelectCustomFieldValue(PRIORITY_FIELD, null, t)).toBeNull();
+    });
+
+    it("returns null for non-select fc.type (not this function's concern)", () => {
+      expect(
+        validateSelectCustomFieldValue({ name: "cf_x", type: "text", label: "X" }, "anything", t)
+      ).toBeNull();
+    });
+
+    it("rejects a value not in fc.options", () => {
+      const message = validateSelectCustomFieldValue(PRIORITY_FIELD, "Urgent", t);
+      expect(message).not.toBeNull();
+      expect(message).toContain("customField.values.selectInvalidOption");
+    });
+
+    // Mirrors the backend's own
+    // Validate_ShouldPreserveCaseSensitivity_RejectingDifferentCasing test:
+    // "medium" must be rejected against a configured "Medium" -- the ordinal
+    // (case-sensitive) comparison is deliberate backend behavior, not a bug,
+    // and the frontend must reject the SAME way rather than "helpfully"
+    // accepting it, which would only move the mismatch to a later 422.
+    it("rejects a differently-cased value against a real configured option (D5 case sensitivity)", () => {
+      const message = validateSelectCustomFieldValue(PRIORITY_FIELD, "medium", t);
+      expect(message).not.toBeNull();
+    });
+
+    it("trims surrounding whitespace before comparing, mirroring the backend's own Trim()", () => {
+      expect(validateSelectCustomFieldValue(PRIORITY_FIELD, " Medium ", t)).toBeNull();
+    });
   });
 });

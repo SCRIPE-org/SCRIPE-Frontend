@@ -59,6 +59,19 @@ export const en = {
       select: "Select",
     },
 
+    // Per-type value validation messages (currently Select-only). Added early
+    // by Wave 2 Step 2.2 Task 4 (renderCustomFieldControl's Select branch,
+    // D5's client-side option-membership check) rather than waiting for the
+    // plan's own Task 10 -- Task 10 lands the rest of this step's i18n keys
+    // and should extend this block, not recreate selectInvalidOption.
+    values: {
+      // {value}/{field} interpolation, matching this module's `{x}` convention
+      // (never `{{x}}`). Wording mirrors the backend's own
+      // customFields.values.selectInvalidOption (SelectValueTypeHandler.Validate)
+      // so a user sees the same verdict client-side that a save would 422 with.
+      selectInvalidOption: "'{value}' is not a valid option for {field}.",
+    },
+
     // Required / Optional flag
     required: "Required",
     optional: "Optional",

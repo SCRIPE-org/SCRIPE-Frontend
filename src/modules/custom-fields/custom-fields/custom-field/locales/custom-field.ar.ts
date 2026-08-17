@@ -58,6 +58,19 @@ export const ar = {
       select: "اختيار",
     },
 
+    // رسائل التحقق الخاصة بكل نوع قيمة (حاليًا لحقول الاختيار فقط). أُضيفت
+    // مبكرًا ضمن المهمة 4 من الموجة 2 الخطوة 2.2 (فرع الاختيار في
+    // renderCustomFieldControl، والتحقق من انتماء القيمة للخيارات وفق القرار
+    // D5) بدلاً من انتظار المهمة 10 الخاصة بالخطة نفسها — يجب أن تُوسّع
+    // المهمة 10 هذا القسم لاحقًا لا أن تعيد إنشاء selectInvalidOption.
+    values: {
+      // تهيئة بصيغة {value}/{field}، بما يطابق تقاليد هذه الوحدة ({x} وليس
+      // {{x}}). الصياغة تعكس رسالة الخلفية نفسها
+      // customFields.values.selectInvalidOption (في SelectValueTypeHandler.Validate)
+      // حتى يرى المستخدم نفس الحكم الذي سيرفضه الحفظ بخطأ 422.
+      selectInvalidOption: "'{value}' ليست خيارًا صالحًا لحقل {field}.",
+    },
+
     // Required / Optional flag
     required: "إلزامي",
     optional: "اختياري",
