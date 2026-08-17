@@ -84,9 +84,12 @@ describe("formatCustomFieldValue", () => {
   // (Number/Boolean/Date -- locale formatting or a Badge element, not a bare
   // stringified value), OR named as one of the two types that deliberately
   // share that fallthrough by design (Text/Select). A type this switch has
-  // no case for -- exactly the shape of the reviewer's `Email` probe --
-  // throws instead of silently passing, which is what makes this gate
-  // actually fail for an unwired 6th type.
+  // no case for -- exactly the shape of the reviewer's `__NeverAValueType__`
+  // probe (a permanent sentinel that can never collide with a real
+  // CustomFieldValueType member, unlike the `Email` literal formerly used
+  // here, which is scheduled to become a real type in Wave 3.2) -- throws
+  // instead of silently passing, which is what makes this gate actually
+  // fail for an unwired 6th type.
   it.each(ALL_VALUE_TYPES)(
     "has explicit, provably-type-specific handling (or a documented deliberate fallthrough) for %s",
     (type) => {

@@ -93,8 +93,12 @@ describe("mapValueToFieldConfig", () => {
       // reproduces a backend that has already shipped a 6th value type the
       // frontend catalog doesn't know about yet -- exactly the "wire data,
       // no runtime guard" gap named above, not a type this app would ever
-      // construct itself.
-      valueType: "Email" as EntityCustomFieldValueData["valueType"],
+      // construct itself. `__NeverAValueType__` is a permanent sentinel,
+      // not a stand-in for a real type: it can never collide with a real
+      // CustomFieldValueType member, whereas `Email` (used here previously)
+      // is scheduled to become one in Wave 3.2, which would have turned
+      // this into a false-positive test of a mapped type.
+      valueType: "__NeverAValueType__" as EntityCustomFieldValueData["valueType"],
       isRequired: false,
       options: null,
       sortOrder: 0,
