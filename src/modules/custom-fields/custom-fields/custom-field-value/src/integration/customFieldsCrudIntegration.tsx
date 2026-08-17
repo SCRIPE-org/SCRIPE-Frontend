@@ -11,6 +11,7 @@ import type {
   CustomFieldValueTypeName,
 } from "../data/models/CustomFieldValueModel";
 import { InlineAddCustomFieldDialog } from "../presentation/components/InlineAddCustomFieldDialog";
+import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
 
 const VALUE_TYPE_TO_FIELD_TYPE: Record<CustomFieldValueTypeName, FieldConfig["type"]> = {
   Text: "text",
@@ -86,6 +87,11 @@ const customFieldsCrudIntegration: CustomFieldsExtensionApi = {
   saveValues,
   getBulkColumnValues,
   InlineAddTrigger: InlineAddCustomFieldDialog,
+  // Wave 2 Step 2.2 Task 5: read-side counterpart of getFormFields above --
+  // formatCustomFieldValue owns the Number/Boolean/Date/Text-and-Select
+  // per-type table-cell formatting buildCustomFieldColumn used to inline
+  // directly in `core`.
+  formatValueForDisplay: formatCustomFieldValue,
 };
 
 registerCustomFieldsExtension(customFieldsCrudIntegration);

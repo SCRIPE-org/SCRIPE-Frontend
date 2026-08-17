@@ -17,8 +17,6 @@
 import type { Column } from "@core/crud/components/generic-table";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Badge } from "@core/ui/badge";
-import { resolveIntlLocale } from "@core/common/utils";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 /**
@@ -81,6 +79,34 @@ export interface CustomFieldsExtensionApi {
     entityDisplayName?: string;
     onCreated: () => void;
   }>;
+  /**
+   * Read-side per-type cell formatter for buildCustomFieldColumn's dynamic
+   * table columns below — the read counterpart of getFormFields (which
+   * produces the EDIT-side FieldConfig per type). Wave 2 Step 2.2 Task 5:
+   * moves buildCustomFieldColumn's own inline Number/Boolean/Date/
+   * Text-and-Select-fallthrough switch out of `core` and into the
+   * CustomFields module (formatCustomFieldValue.tsx), the same
+   * "core defines the contract, the module implements it" shape already used
+   * for every other member of this interface, rather than adding a second,
+   * differently-keyed dispatch table that lives directly in `core`.
+   *
+   * Deliberately OPTIONAL, unlike the members above: making it required would
+   * force every hand-built `CustomFieldsExtensionApi` test double across this
+   * codebase's other suites (leads/webhooks/dsr/templates/generic-crud-view,
+   * none of which render a Number/Boolean/Date custom-field column today) to
+   * add a throwaway implementation just to keep compiling — churn with no
+   * connection to this task. buildCustomFieldColumn falls back to a plain
+   * `String(raw)` when this is absent, matching this switch's own pre-Task-5
+   * Text/Select default branch; the one real implementation
+   * (customFieldsCrudIntegration.tsx) always supplies it, so that fallback is
+   * only ever exercised by a test double that doesn't care about formatting.
+   */
+  formatValueForDisplay?: (
+    valueType: CustomFieldValueTypeName,
+    value: unknown,
+    language: string,
+    t: (key: string, params?: Record<string, string | number>) => string
+  ) => React.ReactNode;
 }
 
 let registeredApi: CustomFieldsExtensionApi | null = null;
@@ -178,8 +204,18 @@ export function useCustomFieldsFormFields(
   return { fieldConfigs, isLoading, error, refetch: fetchFields };
 }
 
-/** "No value set" — matches GenericTable's own formatCellValue em dash, muted since this is normal, not an error/loading state. */
-function EmptyCustomFieldCell() {
+/**
+ * "No value set" — matches GenericTable's own formatCellValue em dash, muted
+ * since this is normal, not an error/loading state. Exported (Wave 2 Step
+ * 2.2 Task 5) so the CustomFields module's formatCustomFieldValue.tsx can
+ * reuse the exact same empty-state markup for its own Number/Date NaN
+ * guards instead of duplicating this span — modules importing a component
+ * from `core` is the normal, permitted dependency direction (see
+ * docs/architecture/01-modularity.md's Dependency Rule), unlike the
+ * core-importing-modules direction this file's own extension point exists to
+ * avoid.
+ */
+export function EmptyCustomFieldCell() {
   return <span className="text-nx-ink-3">—</span>;
 }
 
@@ -221,36 +257,18 @@ function buildCustomFieldColumn(
       if (isEmptyCustomFieldValue(raw)) {
         return <EmptyCustomFieldCell />;
       }
-      switch (definition.valueType) {
-        case "Number": {
-          const num = typeof raw === "number" ? raw : Number(raw);
-          return Number.isNaN(num) ? (
-            <EmptyCustomFieldCell />
-          ) : (
-            num.toLocaleString(resolveIntlLocale(language))
-          );
-        }
-        case "Boolean": {
-          const bool = Boolean(raw);
-          return (
-            <Badge variant={bool ? "info" : "secondary"}>
-              {bool ? t("common.yes") : t("common.no")}
-            </Badge>
-          );
-        }
-        case "Date": {
-          const date = new Date(raw as string);
-          return Number.isNaN(date.getTime()) ? (
-            <EmptyCustomFieldCell />
-          ) : (
-            date.toLocaleDateString(resolveIntlLocale(language))
-          );
-        }
-        case "Text":
-        case "Select":
-        default:
-          return String(raw);
-      }
+      // Wave 2 Step 2.2 Task 5: the former inline Number/Boolean/Date/
+      // Text-and-Select-fallthrough switch now lives in the CustomFields
+      // module (formatCustomFieldValue.tsx) behind this extension point —
+      // see formatValueForDisplay's own doc comment above for why it is
+      // optional and what the String(raw) fallback below covers.
+      const formatted = getCustomFieldsExtension()?.formatValueForDisplay?.(
+        definition.valueType,
+        raw,
+        language,
+        t
+      );
+      return formatted !== undefined ? formatted : String(raw);
     },
   };
 }
