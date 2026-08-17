@@ -145,6 +145,12 @@ export function AssignLeadDialog({
               <Label htmlFor="assign-admin-id">{t("leads.assignDialog.adminId")}</Label>
               <GenericSelect
                 id="assign-admin-id"
+                // The trigger is a role="combobox" div, not a labelable
+                // HTML element, so the matching id above does not make
+                // <Label htmlFor> compute an accessible name for it (see
+                // generic-select.tsx's own `id`/`aria-label` prop doc
+                // comments). aria-label supplies the real accessible name.
+                aria-label={t("leads.assignDialog.adminId")}
                 type="searchable"
                 searchType="server"
                 options={[]}

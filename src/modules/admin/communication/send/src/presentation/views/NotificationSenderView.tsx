@@ -243,6 +243,12 @@ export function NotificationSenderView() {
                 <Label htmlFor={categoryId}>{t("messaging.notifications.category")}</Label>
                 <GenericSelect
                   id={categoryId}
+                  // The trigger is a role="combobox" div, not a labelable
+                  // HTML element, so the matching id above does not make
+                  // <Label htmlFor> compute an accessible name for it (see
+                  // generic-select.tsx's own `id`/`aria-label` prop doc
+                  // comments). aria-label supplies the real accessible name.
+                  aria-label={t("messaging.notifications.category")}
                   options={vm.categoryOptions}
                   value={vm.category}
                   onValueChange={(v: string | string[]) =>
@@ -256,6 +262,8 @@ export function NotificationSenderView() {
                 <Label htmlFor={typeId}>{t("messaging.notifications.type")}</Label>
                 <GenericSelect
                   id={typeId}
+                  // Same accessible-name gap as the category select above.
+                  aria-label={t("messaging.notifications.type")}
                   options={vm.typeOptions}
                   value={vm.type}
                   onValueChange={(v: string | string[]) => vm.setType(v as NotificationType)}

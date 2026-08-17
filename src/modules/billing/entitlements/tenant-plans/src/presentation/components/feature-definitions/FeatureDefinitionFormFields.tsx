@@ -86,6 +86,15 @@ export function FeatureDefinitionFormFields({ form, mode, t }: FeatureDefinition
       <div className="space-y-1.5">
         <Label htmlFor="fd-value-type">{t("entitlements.featureDefinitions.valueType")}</Label>
         <GenericSelect
+          // The trigger is a role="combobox" div, not a labelable HTML
+          // element, so the <Label htmlFor="fd-value-type"> above previously
+          // pointed at an id this select never carried, and even with a
+          // matching id, htmlFor couldn't compute an accessible name for it
+          // (see generic-select.tsx's own `id`/`aria-label` prop doc
+          // comments). `id` makes the htmlFor reference real; `aria-label`
+          // is what actually supplies the accessible name.
+          id="fd-value-type"
+          aria-label={t("entitlements.featureDefinitions.valueType")}
           type="single"
           options={valueTypeOptions}
           value={valueType}
