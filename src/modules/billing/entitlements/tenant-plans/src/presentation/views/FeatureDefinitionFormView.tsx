@@ -29,10 +29,9 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
 import { PageHeader } from "@core/ui/page-header";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { DatePicker } from "@core/ui/date-picker";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
 import {
   ArrowLeft,
   Save,
@@ -49,10 +48,6 @@ import {
   KeyRound,
   Layers,
 } from "lucide-react";
-
-function toFieldInputValue(value: unknown): string {
-  return value === undefined || value === null ? "" : String(value);
-}
 
 /** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
 function CustomFieldsAddTrigger({
@@ -479,75 +474,12 @@ export function FeatureDefinitionFormView({
         <CardContent className="space-y-5">
           {customFieldConfigs.map((fc: FieldConfig) => {
             const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-
-            if (fc.type === "switch") {
-              return (
-                <div key={fc.name} className="flex items-center justify-between">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <Switch
-                    id={fc.name}
-                    checked={Boolean(value)}
-                    onCheckedChange={(v) => updateCustomFieldValue(fc.name, v)}
-                    readOnly={isViewMode}
-                  />
-                </div>
-              );
-            }
-
-            if (fc.type === "select") {
-              return (
-                <div key={fc.name} className="space-y-2">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <Select
-                    value={toFieldInputValue(value)}
-                    onValueChange={(v) => updateCustomFieldValue(fc.name, v)}
-                    disabled={isViewMode}
-                  >
-                    <SelectTrigger id={fc.name}>
-                      <SelectValue placeholder={fc.placeholder || fc.label} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {fc.options?.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              );
-            }
-
-            if (fc.type === "date") {
-              return (
-                <div key={fc.name} className="space-y-2">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <DatePicker
-                    id={fc.name}
-                    type="date"
-                    value={toFieldInputValue(value)}
-                    onChange={(v) => updateCustomFieldValue(fc.name, v)}
-                    required={fc.required}
-                    disabled={isViewMode}
-                  />
-                </div>
-              );
-            }
-
-            return (
-              <div key={fc.name} className="space-y-2">
-                <Label htmlFor={fc.name}>{fc.label}</Label>
-                <Input
-                  id={fc.name}
-                  type={fc.type === "number" ? "number" : "text"}
-                  value={toFieldInputValue(value)}
-                  onChange={(e) => updateCustomFieldValue(fc.name, e.target.value)}
-                  placeholder={fc.placeholder}
-                  required={fc.required}
-                  disabled={isViewMode}
-                />
-              </div>
-            );
+            return renderCustomFieldControl({
+              fc,
+              value,
+              onChange: (v) => updateCustomFieldValue(fc.name, v),
+              isViewMode,
+            });
           })}
 
           {customFieldConfigs.length === 0 && !customFieldsLoading && (

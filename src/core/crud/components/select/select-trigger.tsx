@@ -20,6 +20,10 @@ export interface SelectTriggerProps {
   invalid?: boolean;
   required?: boolean;
   describedBy?: string;
+  /** Accessible name for this element — see `GenericSelectProps["aria-label"]`'s doc comment. */
+  ariaLabel?: string;
+  /** Accessible name via reference — see `GenericSelectProps["aria-labelledby"]`'s doc comment. */
+  ariaLabelledBy?: string;
   placeholder: string;
   selectedOptions: GenericSelectOption[];
   /** Full label for the single-selected option, including any tree path. */
@@ -73,6 +77,8 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
       invalid,
       required,
       describedBy,
+      ariaLabel,
+      ariaLabelledBy,
       placeholder,
       selectedOptions,
       displayLabel,
@@ -115,8 +121,16 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
           aria-describedby={describedBy}
           aria-disabled={disabled || undefined}
           aria-readonly={readOnly || undefined}
-          // The chips are inside, so the accessible name resolves to the
-          // selection. With nothing chosen it resolves to the placeholder.
+          // role="combobox" is Name From: author, not Name From: contents --
+          // the visible chips/placeholder text below are NOT enough on their
+          // own to give this element an accessible name (a prior version of
+          // this comment claimed otherwise; verified wrong against real
+          // testing-library/AT behavior during Wave 2 Step 2.2's Task 4/7b
+          // a11y fix). `aria-labelledby` wins over `aria-label` per the
+          // standard accessible-name computation order when a caller
+          // supplies both.
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
           tabIndex={interactive ? 0 : -1}
           className={cn(
             fieldVariants({ inputStyle: resolveFieldStyle(settings.inputStyle) }),

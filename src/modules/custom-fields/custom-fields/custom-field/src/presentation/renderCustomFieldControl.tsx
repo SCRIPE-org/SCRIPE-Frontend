@@ -40,6 +40,15 @@
  * convention anywhere (see that file's own header comment for the precedent
  * survey: subscriptions' constants.ts, signin's layouts/index.ts, settings'
  * settings-nav.tsx).
+ *
+ * Task 7b update: `TenantPlanStepCustomFields.tsx`, `TemplateFormView.tsx`
+ * and `FeatureDefinitionFormView.tsx` were converted onto this Select branch
+ * (closing the D9 divergence named above), and this is also where the T1
+ * a11y finding from Task 4's review got resolved -- see the `aria-label`
+ * prop on the `GenericSelect` element below, and `generic-select.tsx`'s own
+ * doc comment for the full mechanism. The fix is not scoped to these 3
+ * sites: it lands here, in the shared branch, so it closes the same latent
+ * gap for all 8 consumer sites at once.
  */
 import React from "react";
 import { Input } from "@core/ui/input";
@@ -148,6 +157,21 @@ export function renderCustomFieldControl({
           // Input all pass `id={fc.name}`), so this fixes that latent a11y gap
           // rather than porting it forward.
           id={fc.name}
+          // Wave 2 Step 2.2, Task 7b's a11y fix (tracked as finding T1 in
+          // Task 4's review): the <Label htmlFor={fc.name}> above never
+          // computed an accessible name for this control -- GenericSelect's
+          // trigger is a role="combobox" `<div>`, not a labelable HTML
+          // element, so `for`/`htmlFor` association is a no-op for it. That
+          // was a pre-existing, NOT-worsened gap for the 5 sites already
+          // wired to this branch (none of them passed `id` before Task 4
+          // either, so they had no association to lose). It would have been
+          // a REAL regression for the 3 raw-Radix-`Select` sites Task 7b
+          // converts onto this branch: their old `<button>` trigger WAS
+          // labelable, so their `<Label htmlFor>` genuinely worked pre-
+          // conversion. `aria-label` (now a first-class GenericSelect prop,
+          // see generic-select.tsx) closes the gap for all 8 consumer sites
+          // at once, not just these 3.
+          aria-label={fc.label}
           options={fc.options?.map((opt) => ({ value: opt.value, label: opt.label })) ?? []}
           value={toFieldInputValue(value)}
           onValueChange={(v: string | string[]) => {

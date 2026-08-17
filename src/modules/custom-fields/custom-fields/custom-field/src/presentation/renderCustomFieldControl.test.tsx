@@ -228,23 +228,22 @@ describe("renderCustomFieldControl", () => {
       </>
     );
     // GenericSelect's trigger is a role="combobox" DIV, not a labellable HTML
-    // form element (input/select/textarea/etc.) -- confirmed against real
-    // test output (not assumed) that neither getByLabelText NOR getByRole's
-    // `name` option resolve a <label htmlFor> pointing at it: dom-
-    // accessibility-api's accessible-name computation restricts native
-    // label-association to actual form controls, same as the HTML spec's own
-    // "labelable element" category, so a <label htmlFor> on a plain div does
-    // not compute an accessible name in this stack (or in real browsers/AT --
-    // this isn't a testing-library-only quirk). This asserts the DOM wiring
-    // directly instead: the label's `for` and the trigger's `id` do match,
-    // even though that doesn't reach WAI-ARIA name computation for this
-    // element type -- `id={fc.name}` is still kept for parity with the other
-    // 3 branches and any consumer that queries by id directly.
+    // form element (input/select/textarea/etc.), so the sibling <label
+    // htmlFor> above it does NOT itself compute an accessible name (HTML
+    // restricts `for`/`htmlFor` association to the labelable-element
+    // category, and ARIA's role="combobox" is Name From: author, not Name
+    // From: contents). That gap was tracked as finding T1 in Task 4's review
+    // and closed in Task 7b via a first-class `aria-label` prop on
+    // GenericSelect (see generic-select.tsx) -- this test asserts BOTH the
+    // (still-present, still-correct-for-sighted-users) `for`/`id` DOM wiring
+    // AND the real accessible name via `getByRole`'s `name` option, which is
+    // the discriminating check: it fails without the aria-label wiring and
+    // passes with it (verified locally before this fix landed).
     expect(screen.getByText("Priority", { selector: "label" })).toHaveAttribute(
       "for",
       "cf_priority"
     );
-    const trigger = screen.getByRole("combobox");
+    const trigger = screen.getByRole("combobox", { name: "Priority" });
     expect(trigger).toHaveAttribute("id", "cf_priority");
 
     fireEvent.click(trigger);

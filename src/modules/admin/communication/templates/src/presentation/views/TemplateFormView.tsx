@@ -11,7 +11,6 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Switch } from "@core/ui/switch";
-import { DatePicker } from "@core/ui/date-picker";
 import { DEFAULT_VARIABLES } from "@core/ui/rich-text-editor/VariablePicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -22,6 +21,7 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
 import dynamic from "next/dynamic";
 
 // Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)
@@ -47,10 +47,6 @@ const TemplateLivePreview = dynamic(
     import("../components/TemplateLivePreview").then((m) => ({ default: m.TemplateLivePreview })),
   { ssr: false }
 );
-
-function toFieldInputValue(value: unknown): string {
-  return value === undefined || value === null ? "" : String(value);
-}
 
 /** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
 function CustomFieldsAddTrigger({
@@ -389,71 +385,11 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                 <CardContent className="space-y-5 pt-0">
                   {vm.customFieldConfigs.map((fc: FieldConfig) => {
                     const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-
-                    if (fc.type === "switch") {
-                      return (
-                        <div key={fc.name} className="flex items-center justify-between">
-                          <Label htmlFor={fc.name}>{fc.label}</Label>
-                          <Switch
-                            id={fc.name}
-                            checked={Boolean(value)}
-                            onCheckedChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
-                          />
-                        </div>
-                      );
-                    }
-
-                    if (fc.type === "select") {
-                      return (
-                        <div key={fc.name} className="space-y-2">
-                          <Label htmlFor={fc.name}>{fc.label}</Label>
-                          <Select
-                            value={toFieldInputValue(value)}
-                            onValueChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
-                          >
-                            <SelectTrigger id={fc.name}>
-                              <SelectValue placeholder={fc.placeholder || fc.label} />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {fc.options?.map((opt) => (
-                                <SelectItem key={opt.value} value={opt.value}>
-                                  {opt.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      );
-                    }
-
-                    if (fc.type === "date") {
-                      return (
-                        <div key={fc.name} className="space-y-2">
-                          <Label htmlFor={fc.name}>{fc.label}</Label>
-                          <DatePicker
-                            id={fc.name}
-                            type="date"
-                            value={toFieldInputValue(value)}
-                            onChange={(v) => vm.updateCustomFieldValue(fc.name, v)}
-                            required={fc.required}
-                          />
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <div key={fc.name} className="space-y-2">
-                        <Label htmlFor={fc.name}>{fc.label}</Label>
-                        <Input
-                          id={fc.name}
-                          type={fc.type === "number" ? "number" : "text"}
-                          value={toFieldInputValue(value)}
-                          onChange={(e) => vm.updateCustomFieldValue(fc.name, e.target.value)}
-                          placeholder={fc.placeholder}
-                          required={fc.required}
-                        />
-                      </div>
-                    );
+                    return renderCustomFieldControl({
+                      fc,
+                      value,
+                      onChange: (v) => vm.updateCustomFieldValue(fc.name, v),
+                    });
                   })}
 
                   {vm.customFieldConfigs.length === 0 && !vm.customFieldsLoading && (
