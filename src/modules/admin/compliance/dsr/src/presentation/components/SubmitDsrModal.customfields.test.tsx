@@ -20,6 +20,14 @@ if (typeof (globalThis as any).ResizeObserver === "undefined") {
   };
 }
 
+// jsdom also has no scrollIntoView -- cmdk calls it on the highlighted row's
+// layout effect as soon as a GenericSelect panel's option list mounts (needed
+// below for the Select-type custom field coverage; same stub as
+// renderCustomFieldControl.test.tsx).
+if (typeof Element.prototype.scrollIntoView !== "function") {
+  Element.prototype.scrollIntoView = () => {};
+}
+
 import { SubmitDsrModal } from "./SubmitDsrModal";
 
 function registerFakeCustomFieldsExtension(
@@ -42,6 +50,24 @@ const PRIORITY_FIELD = {
   type: "text" as const,
   section: "Custom Fields",
 };
+
+// One FieldConfig per FieldConfig["type"] this catalog produces -- same 5
+// kinds renderCustomFieldControl.tsx's own switch handles (Wave 2 Step 2.2,
+// Task 11 integration coverage).
+const TEXT_FIELD = { name: "__cf__nickname", label: "Nickname", type: "text" as const };
+const NUMBER_FIELD = { name: "__cf__score", label: "Score", type: "number" as const };
+const SWITCH_FIELD = { name: "__cf__featured", label: "Featured", type: "switch" as const };
+const DATE_FIELD = { name: "__cf__startdate", label: "Start Date", type: "date" as const };
+const SELECT_FIELD = {
+  name: "__cf__priority2",
+  label: "Priority Level",
+  type: "select" as const,
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+  ],
+};
+const ALL_FIELD_TYPES = [TEXT_FIELD, NUMBER_FIELD, SWITCH_FIELD, DATE_FIELD, SELECT_FIELD];
 
 function baseProps(overrides: Partial<React.ComponentProps<typeof SubmitDsrModal>> = {}) {
   return {
@@ -75,6 +101,37 @@ describe("SubmitDsrModal + custom fields", () => {
     fireEvent.change(input, { target: { value: "High" } });
 
     expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__priority", "High");
+  });
+
+  // Wave 2 Step 2.2, Task 11: the test above only ever exercised the Text
+  // branch. This proves the other 4 FieldConfig["type"] kinds round-trip
+  // through renderCustomFieldControl's shared branches end-to-end (render ->
+  // change -> captured onCustomFieldChange value) through THIS site's own
+  // wiring, not just the isolated unit-level renderer tests.
+  it("round-trips a value of each of the 5 custom field types through the shared renderer end-to-end", async () => {
+    const onCustomFieldChange = vi.fn();
+    render(
+      <SubmitDsrModal
+        {...baseProps({ customFieldConfigs: ALL_FIELD_TYPES, onCustomFieldChange })}
+      />
+    );
+
+    fireEvent.change(await screen.findByLabelText("Nickname"), { target: { value: "Mo" } });
+    expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__nickname", "Mo");
+
+    fireEvent.change(screen.getByLabelText("Score"), { target: { value: "42" } });
+    expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__score", "42");
+
+    fireEvent.click(screen.getByRole("switch", { name: "Featured" }));
+    expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__featured", true);
+
+    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+    expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__startdate", "2026-08-17");
+
+    const trigger = screen.getByRole("combobox", { name: "Priority Level" });
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("option", { name: "Medium" }));
+    expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__priority2", "Medium");
   });
 
   it("shows the empty-state message when there are no custom fields and loading has settled", () => {

@@ -6,20 +6,10 @@ import {
   type CustomFieldsExtensionApi,
 } from "@core/crud/customFieldsExtension";
 import { customFieldsContainer } from "../../../di";
-import type {
-  EntityCustomFieldValueData,
-  CustomFieldValueTypeName,
-} from "../data/models/CustomFieldValueModel";
+import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 import { InlineAddCustomFieldDialog } from "../presentation/components/InlineAddCustomFieldDialog";
 import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
-
-const VALUE_TYPE_TO_FIELD_TYPE: Record<CustomFieldValueTypeName, FieldConfig["type"]> = {
-  Text: "text",
-  Number: "number",
-  Boolean: "switch",
-  Date: "date",
-  Select: "select",
-};
+import { VALUE_TYPE_CATALOG } from "../../../custom-field/src/presentation/valueTypeRegistry";
 
 /** Exported for the unit test above; not part of CustomFieldsExtensionApi itself. */
 export function mapValueToFieldConfig(data: EntityCustomFieldValueData, language: string): FieldConfig {
@@ -37,7 +27,7 @@ export function mapValueToFieldConfig(data: EntityCustomFieldValueData, language
     name: encodeCustomFieldName(data.key),
     label,
     placeholder,
-    type: VALUE_TYPE_TO_FIELD_TYPE[data.valueType],
+    type: VALUE_TYPE_CATALOG[data.valueType].fieldConfigType,
     required: data.isRequired,
     options,
     section: "Custom Fields",

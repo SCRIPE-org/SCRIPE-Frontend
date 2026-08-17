@@ -18,7 +18,7 @@
 //      file's own header doc comment).
 import React from "react";
 import type { ReactNode } from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -145,6 +145,50 @@ describe("FeatureDefinitionFormView + custom fields", () => {
     // in renderCustomFieldControl.tsx's Select branch, passes with it), not a
     // DOM id/for check.
     expect(screen.getByRole("combobox", { name: "Priority" })).toBeInTheDocument();
+  });
+
+  // Wave 2 Step 2.2, Task 11: the test above only ever asserted PRESENCE
+  // (roles/attributes) -- its own title claimed "reports changes" but never
+  // actually changed anything. This is the real round trip: fire a change on
+  // all 5 of renderCustomFieldControl's FieldConfig["type"] kinds via THIS
+  // site's own wiring (`onChange: (v) => updateCustomFieldValue(fc.name, v)`
+  // in FeatureDefinitionFormView.tsx), then read the value back off the
+  // rendered control -- proving updateCustomFieldValue's state genuinely
+  // round-trips back into each controlled control, not just that an onChange
+  // spy fired once.
+  it("round-trips a value of each of the 5 custom-field types through the shared renderer end-to-end", async () => {
+    registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue(ALL_FIELD_TYPES),
+    });
+
+    renderWithQueryClient(<FeatureDefinitionFormView />);
+
+    await screen.findByLabelText("Nickname");
+
+    // Text.
+    fireEvent.change(screen.getByLabelText("Nickname"), { target: { value: "Mo" } });
+    expect(screen.getByLabelText("Nickname")).toHaveValue("Mo");
+
+    // Number.
+    fireEvent.change(screen.getByLabelText("Score"), { target: { value: "42" } });
+    expect(screen.getByLabelText("Score")).toHaveValue(42);
+
+    // Boolean / Switch.
+    const switchControl = screen.getByRole("switch", { name: "Featured" });
+    expect(switchControl).toHaveAttribute("aria-checked", "false");
+    fireEvent.click(switchControl);
+    expect(switchControl).toHaveAttribute("aria-checked", "true");
+
+    // Date.
+    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+    expect(screen.getByLabelText("Start Date")).toHaveValue("2026-08-17");
+
+    // Select -- picking an option round-trips the option's label back as the
+    // GenericSelect trigger's own displayed value (D6: the label string, not
+    // a synthetic id).
+    fireEvent.click(screen.getByRole("combobox", { name: "Priority" }));
+    fireEvent.click(screen.getByRole("option", { name: "Medium" }));
+    expect(screen.getByRole("combobox", { name: "Priority" })).toHaveTextContent("Medium");
   });
 
   // D9 fidelity check: FeatureDefinitionFormView.tsx's real, already-shipped

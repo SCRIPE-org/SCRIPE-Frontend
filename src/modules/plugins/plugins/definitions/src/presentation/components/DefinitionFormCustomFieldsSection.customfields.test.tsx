@@ -54,6 +54,14 @@ if (typeof (globalThis as any).ResizeObserver === "undefined") {
   };
 }
 
+// jsdom also has no scrollIntoView -- cmdk calls it on the highlighted row's
+// layout effect as soon as a GenericSelect panel's option list mounts (needed
+// below for the Select-type custom field coverage; same stub as
+// renderCustomFieldControl.test.tsx).
+if (typeof Element.prototype.scrollIntoView !== "function") {
+  Element.prototype.scrollIntoView = () => {};
+}
+
 import { DefinitionsView } from "../views/DefinitionsView";
 import { DEFINITION_ENTITY_TYPE_KEY } from "../viewmodels/useDefinitionsViewModel";
 
@@ -84,6 +92,24 @@ const PRIORITY_FIELD = {
   type: "text" as const,
   section: "Custom Fields",
 };
+
+// One FieldConfig per FieldConfig["type"] this catalog produces -- same 5
+// kinds renderCustomFieldControl.tsx's own switch handles (Wave 2 Step 2.2,
+// Task 11 integration coverage).
+const TEXT_FIELD = { name: "__cf__nickname", label: "Nickname", type: "text" as const };
+const NUMBER_FIELD = { name: "__cf__score", label: "Score", type: "number" as const };
+const SWITCH_FIELD = { name: "__cf__featured", label: "Featured", type: "switch" as const };
+const DATE_FIELD = { name: "__cf__startdate", label: "Start Date", type: "date" as const };
+const SELECT_FIELD = {
+  name: "__cf__tier",
+  label: "Support Tier",
+  type: "select" as const,
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+  ],
+};
+const ALL_FIELD_TYPES = [TEXT_FIELD, NUMBER_FIELD, SWITCH_FIELD, DATE_FIELD, SELECT_FIELD];
 
 async function openCreateForm() {
   // Both the page header and the empty-state render a "New Definition"
@@ -121,6 +147,45 @@ describe("DefinitionFormDialog + custom fields", () => {
     const input = await screen.findByLabelText("Priority");
     fireEvent.change(input, { target: { value: "High" } });
     expect(input).toHaveValue("High");
+  });
+
+  // Wave 2 Step 2.2, Task 11: the test above only ever exercised the Text
+  // branch. This proves the other 4 FieldConfig["type"] kinds round-trip
+  // through renderCustomFieldControl's shared branches end-to-end (render ->
+  // change -> captured onChange value, verified via the create submission's
+  // saveValues call, THIS site's own real update mechanism), not just the
+  // isolated unit-level renderer tests.
+  it("round-trips a value of each of the 5 custom field types through the shared renderer end-to-end", async () => {
+    mockCreate.mockResolvedValue("new-definition-id");
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue(ALL_FIELD_TYPES),
+    });
+
+    renderWithQueryClient(<DefinitionsView />);
+    await openCreateForm();
+    fillRequiredFields();
+
+    fireEvent.change(await screen.findByLabelText("Nickname"), { target: { value: "Mo" } });
+    fireEvent.change(screen.getByLabelText("Score"), { target: { value: "42" } });
+    fireEvent.click(screen.getByRole("switch", { name: "Featured" }));
+    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+
+    const trigger = screen.getByRole("combobox", { name: "Support Tier" });
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("option", { name: "Medium" }));
+
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+
+    await waitFor(() => expect(mockCreate).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(extension.saveValues).toHaveBeenCalledWith(DEFINITION_ENTITY_TYPE_KEY, "new-definition-id", {
+        nickname: "Mo",
+        score: "42",
+        featured: true,
+        startdate: "2026-08-17",
+        tier: "Medium",
+      })
+    );
   });
 
   it("shows the empty-state message when there are no custom field definitions", async () => {

@@ -112,6 +112,32 @@ describe("TenantPlanStepCustomFields", () => {
     expect(screen.getByLabelText("Count")).toHaveAttribute("type", "number");
   });
 
+  // Wave 2 Step 2.2, Task 11: the test above only checked presence/attributes
+  // for Switch/Date/Number -- unlike the Text and Select tests just above it,
+  // it never actually changed a value and confirmed onChange captured it.
+  // Combined with those two, this completes round-trip coverage for all 5
+  // FieldConfig["type"] kinds this site's shared renderer produces.
+  it("reports changes for the switch, date picker, and number input via onChange", () => {
+    const onChange = vi.fn();
+    renderStep({
+      fieldConfigs: [
+        { name: "cf_active", type: "switch", label: "Active" },
+        { name: "cf_start", type: "date", label: "Start Date" },
+        { name: "cf_count", type: "number", label: "Count" },
+      ],
+      onChange,
+    });
+
+    fireEvent.click(screen.getByRole("switch", { name: "Active" }));
+    expect(onChange).toHaveBeenCalledWith("cf_active", true);
+
+    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+    expect(onChange).toHaveBeenCalledWith("cf_start", "2026-08-17");
+
+    fireEvent.change(screen.getByLabelText("Count"), { target: { value: "7" } });
+    expect(onChange).toHaveBeenCalledWith("cf_count", "7");
+  });
+
   it("shows the empty-state message when there are no custom fields and not loading", () => {
     renderStep({ fieldConfigs: [], loading: false });
     expect(screen.getByText("entitlements.tenantPlans.noCustomFields")).toBeInTheDocument();
