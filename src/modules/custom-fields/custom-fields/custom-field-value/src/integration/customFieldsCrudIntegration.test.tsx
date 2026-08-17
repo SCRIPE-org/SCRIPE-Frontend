@@ -1,6 +1,10 @@
+import React from "react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
+import "@testing-library/jest-dom";
 import { getCustomFieldsExtension, encodeCustomFieldName } from "@core/crud/customFieldsExtension";
-import { mapValueToFieldConfig } from "./customFieldsCrudIntegration";
+import { mapValueToFieldConfig, customFieldsCrudIntegration } from "./customFieldsCrudIntegration";
+import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 
 describe("mapValueToFieldConfig", () => {
@@ -70,5 +74,30 @@ describe("customFieldsCrudIntegration registration", () => {
   it("self-registers on import so getCustomFieldsExtension() returns a working API", async () => {
     await import("./customFieldsCrudIntegration");
     expect(getCustomFieldsExtension()).not.toBeNull();
+  });
+
+  // Wave 2 Step 2.2 Task 5 review follow-up: formatValueForDisplay is optional
+  // on CustomFieldsExtensionApi (so the ~10 unrelated test doubles across this
+  // codebase that hand-build a CustomFieldsExtensionApi literal keep compiling
+  // without it), which means a future edit could silently drop this line from
+  // the real registration below and NOTHING would fail to compile. The only
+  // render-path test that exercises buildCustomFieldColumn's actual output
+  // (generic-crud-view.customfields.test.tsx) uses a hand-built fake extension
+  // and a Text-typed column, whose formatted output (String(raw)) is
+  // byte-identical to the absent-field fallback -- so it cannot tell "wired
+  // correctly" apart from "silently broken". These two assertions are the
+  // ones that actually would fail if `formatValueForDisplay: formatCustomFieldValue`
+  // were ever deleted from customFieldsCrudIntegration's registration object.
+  it("wires formatValueForDisplay to the real formatCustomFieldValue function, not a stub or nothing", () => {
+    expect(customFieldsCrudIntegration.formatValueForDisplay).toBe(formatCustomFieldValue);
+  });
+
+  it("the REAL registered formatValueForDisplay renders live, locale-formatted output end-to-end", () => {
+    const t = (key: string) => key;
+    const formatValueForDisplay = customFieldsCrudIntegration.formatValueForDisplay;
+    expect(formatValueForDisplay).toBeDefined();
+
+    render(<>{formatValueForDisplay!("Number", 1234.5, "en", t)}</>);
+    expect(screen.getByText((1234.5).toLocaleString("en-US"))).toBeInTheDocument();
   });
 });
