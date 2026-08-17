@@ -629,6 +629,12 @@ export function GenericForm({
                 {field.type === "select" ? (
                   <GenericSelect
                     id={field.name}
+                    // Task 7b a11y fix (Wave 2 Step 2.2, T1): the trigger is a
+                    // role="combobox" div, not a labelable HTML element, so
+                    // the <Label htmlFor> above computes NO accessible name
+                    // for it. Same `label ?? name` fallback as
+                    // renderCustomFieldControl.tsx's Select branch.
+                    aria-label={field.label ?? field.name}
                     invalid={invalid}
                     required={field.required}
                     describedBy={describedBy}
@@ -654,6 +660,7 @@ export function GenericForm({
                 ) : field.type === "searchable-select" || field.type === "server-select" ? (
                   <GenericSelect
                     id={field.name}
+                    aria-label={field.label ?? field.name}
                     invalid={invalid}
                     required={field.required}
                     describedBy={describedBy}
@@ -695,6 +702,7 @@ export function GenericForm({
                 ) : field.type === "multi-select" ? (
                   <GenericSelect
                     id={field.name}
+                    aria-label={field.label ?? field.name}
                     invalid={invalid}
                     required={field.required}
                     describedBy={describedBy}
@@ -738,6 +746,7 @@ export function GenericForm({
                 ) : field.type === "tree" ? (
                   <GenericSelect
                     id={field.name}
+                    aria-label={field.label ?? field.name}
                     invalid={invalid}
                     required={field.required}
                     describedBy={describedBy}
