@@ -355,9 +355,10 @@ export class CustomFieldValidationError extends Error {}
  * stale (e.g. that field's Options were edited after the value was
  * captured, D5's own named risk).
  *
- * Wired into ONE consumer site (`useWebhookFormViewModel.ts`) as the
- * concrete proof this task requires; the other 7 sites' own save flows are
- * a tracked follow-up (Task 12's ledger) -- each is the same one-line call.
+ * Wired into all 8 consumer sites' save flows (9 flows, since
+ * TenantPlanStepCustomFields has separate create/edit viewmodels) -- each
+ * calls this as the first statement of its save function, before the
+ * decode loop and before saveValues/its equivalent.
  */
 export function assertSelectCustomFieldValuesValid(
   fieldConfigs: FieldConfig[],
