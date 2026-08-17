@@ -70,6 +70,30 @@ export interface ValueTypeCatalogEntry {
   labelKey: string;
 }
 
+/**
+ * Wave 2 Step 2.4, D3: `Record<CustomFieldValueTypeName, ...>` types as TOTAL
+ * over the 5 known members, but nothing at the wire boundary actually
+ * guarantees a real `data.valueType`/`form.valueType`/row `value` IS one of
+ * them (this catalog's own consumers already document that gap -- see
+ * customFieldsCrudIntegration.tsx's `mapValueToFieldConfig` comment on the I1
+ * fix). Indexing this Record directly with a value that only TypeScript
+ * *believes* is a `CustomFieldValueTypeName` compiles clean and gives no
+ * warning, but throws at runtime the moment it's wrong (`Cannot read
+ * properties of undefined`) unless the call site remembers its own explicit
+ * `?.` guard -- an easy, silent thing to forget, and exactly the bug I1 was.
+ *
+ * For anything touching real/wire data (a value decoded from an API
+ * response, unvalidated form state, a table row) prefer
+ * `getValueTypeCatalogEntry(type)` below instead of `VALUE_TYPE_CATALOG[type]`
+ * -- it takes a plain `string`, so there is no union-typed value to
+ * mistakenly trust, and returns `undefined` (not a crash) on a miss, forcing
+ * the caller to handle the fallback explicitly.
+ *
+ * Direct `VALUE_TYPE_CATALOG[type]` indexing stays fine, and does not need to
+ * change, for call sites iterating the compile-time `ALL_VALUE_TYPES` array
+ * itself (e.g. building a Select's own option list) -- `type` there is
+ * genuinely guaranteed to be a real member, not a guess about external data.
+ */
 export const VALUE_TYPE_CATALOG: Record<CustomFieldValueTypeName, ValueTypeCatalogEntry> = {
   Text: {
     fieldConfigType: "text",
@@ -107,6 +131,24 @@ export const VALUE_TYPE_CATALOG: Record<CustomFieldValueTypeName, ValueTypeCatal
     labelKey: "customField.valueTypes.select",
   },
 };
+
+/**
+ * Wave 2 Step 2.4, D3: the safe-lookup counterpart to `VALUE_TYPE_CATALOG[...]`
+ * for real/wire data. Takes a plain `string` on purpose, not the narrow
+ * `CustomFieldValueTypeName` union -- the entire point is defending against a
+ * value that ISN'T guaranteed to be a real union member (an unrecognized
+ * `valueType` a future backend type ships before this catalog knows about
+ * it), which a `CustomFieldValueTypeName`-typed parameter would let the
+ * caller assume away instead of handle. Returns `undefined` on a miss --
+ * never throws, never widens to `any` -- so the caller's own `??`/optional-
+ * chaining fallback (the same discipline `mapValueToFieldConfig` and
+ * `CustomFieldListView.tsx` already hand-apply at every wire-data call site
+ * today) is enforced by the return type itself rather than left to be
+ * remembered.
+ */
+export function getValueTypeCatalogEntry(type: string): ValueTypeCatalogEntry | undefined {
+  return VALUE_TYPE_CATALOG[type as CustomFieldValueTypeName];
+}
 
 /**
  * All 5 known type names, in the same fixed display order used everywhere

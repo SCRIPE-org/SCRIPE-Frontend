@@ -4,7 +4,7 @@
 // only proves every known CustomFieldValueTypeName has a complete, correctly
 // shaped catalog entry. No consumer is rewired against this catalog yet.
 import { describe, it, expect } from "vitest";
-import { VALUE_TYPE_CATALOG, ALL_VALUE_TYPES } from "./valueTypeRegistry";
+import { VALUE_TYPE_CATALOG, ALL_VALUE_TYPES, getValueTypeCatalogEntry } from "./valueTypeRegistry";
 
 describe("VALUE_TYPE_CATALOG", () => {
   it.each(ALL_VALUE_TYPES)("has a complete catalog entry for %s", (type) => {
@@ -71,5 +71,33 @@ describe("VALUE_TYPE_CATALOG", () => {
         labelKey: "customField.valueTypes.select",
       },
     });
+  });
+});
+
+// getValueTypeCatalogEntry -- safe-lookup helper (Wave 2 Step 2.4, D3).
+// VALUE_TYPE_CATALOG[type] types as total over CustomFieldValueTypeName, so a
+// caller that casts unvalidated wire/form data into that union and indexes
+// directly gets no compile-time warning it might be wrong, and a runtime
+// crash when it is (I1's exact bug class). This helper exists so that
+// defending against that is a return-type guarantee (`| undefined`), not
+// something every call site has to remember to `?.`-guard by hand.
+describe("getValueTypeCatalogEntry", () => {
+  it.each(ALL_VALUE_TYPES)("returns the real catalog entry for a known type %s", (type) => {
+    expect(getValueTypeCatalogEntry(type)).toBe(VALUE_TYPE_CATALOG[type]);
+  });
+
+  // The actual point of this helper: an unrecognized string -- exactly the
+  // shape of a not-yet-known-to-the-frontend backend value type -- must
+  // resolve to `undefined`, not throw and not silently type as `any`.
+  it("returns undefined (not throws, not any) for an unrecognized string", () => {
+    let result: ReturnType<typeof getValueTypeCatalogEntry>;
+    expect(() => {
+      result = getValueTypeCatalogEntry("SomeFutureType");
+    }).not.toThrow();
+    expect(result).toBeUndefined();
+  });
+
+  it("returns undefined for an empty string", () => {
+    expect(getValueTypeCatalogEntry("")).toBeUndefined();
   });
 });
