@@ -22,6 +22,10 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
+import {
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
 
 /**
  * Registered in the backend's IntegrationsEntityTypeCatalog -- must match
@@ -117,6 +121,16 @@ export function useWebhookFormViewModel({
   // known custom field's effective value (edited-this-session or the fetched
   // default) is sent, not just the ones the user touched.
   const saveCustomFieldValues = async (ownerId: string) => {
+    // D5 (final whole-branch review, I3 fix): reject a stale/invalid Select
+    // value client-side, with the real localized reason, BEFORE it ever
+    // reaches saveValues and comes back as a 422 -- see
+    // assertSelectCustomFieldValuesValid's own doc comment for why this is
+    // the right integration point. Throws CustomFieldValidationError, which
+    // handleSubmit's own catch blocks below distinguish from a genuine API
+    // failure so this shows the specific reason, not the generic
+    // "customFieldsSaveError" fallback.
+    assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+
     const decoded: Record<string, unknown> = {};
     for (const fc of customFieldsQuery.fieldConfigs) {
       const key = decodeCustomFieldName(fc.name);
@@ -216,8 +230,17 @@ export function useWebhookFormViewModel({
         }
         try {
           await saveCustomFieldValues(created.id);
-        } catch {
-          toastError({ title: t("webhooks.customFieldsSaveError") });
+        } catch (err) {
+          // D5: a CustomFieldValidationError carries its own already-localized,
+          // field-specific reason (e.g. "not one of the allowed options") --
+          // surface it verbatim instead of the generic fallback, which would
+          // otherwise tell the admin nothing about WHY the save failed.
+          toastError({
+            title:
+              err instanceof CustomFieldValidationError
+                ? err.message
+                : t("webhooks.customFieldsSaveError"),
+          });
           return; // the webhook WAS created -- don't pretend the whole save succeeded
         }
         queryClient.invalidateQueries({ queryKey: webhookKeys.all });
@@ -238,8 +261,13 @@ export function useWebhookFormViewModel({
         }
         try {
           await saveCustomFieldValues(webhook!.id);
-        } catch {
-          toastError({ title: t("webhooks.customFieldsSaveError") });
+        } catch (err) {
+          toastError({
+            title:
+              err instanceof CustomFieldValidationError
+                ? err.message
+                : t("webhooks.customFieldsSaveError"),
+          });
           return;
         }
         queryClient.invalidateQueries({ queryKey: webhookKeys.all });

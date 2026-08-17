@@ -66,14 +66,78 @@ describe("formatCustomFieldValue", () => {
     expect(screen.getByText((1234.5).toLocaleString("ar-EG-u-nu-latn"))).toBeInTheDocument();
   });
 
-  // Completeness exit-gate: every known CustomFieldValueTypeName must be
-  // handled by this function without throwing, mirroring
-  // valueTypeRegistry.test.ts's own "every type has a complete entry" gate
-  // for Task 1's VALUE_TYPE_CATALOG.
-  it.each(ALL_VALUE_TYPES)("has a read/format entry for %s", (type) => {
-    expect(() => formatCustomFieldValue(type, "1", "en", t)).not.toThrow();
-    expect(formatCustomFieldValue(type, "1", "en", t)).not.toBeUndefined();
-  });
+  // Completeness exit-gate (Final whole-branch review, I2 fix). The original
+  // gate here (`.not.toThrow()` + `.not.toBeUndefined()`) was VACUOUS: this
+  // function's own `default: return String(value)` fallthrough always
+  // satisfies both assertions for ANY type, handled or not -- the reviewer
+  // proved a hypothetical 6th type with NO real case added here still passed
+  // the whole suite, 367/367 green. A `default: return String(value)`
+  // fallback is fine to KEEP (Text/Select deliberately share it, per this
+  // file's own header comment) -- the fix is a gate that can tell "real,
+  // type-specific handling" apart from "silently fell through to the
+  // generic fallback", not removing the fallback itself.
+  //
+  // Every member of ALL_VALUE_TYPES (imported from valueTypeRegistry.ts, not
+  // a hardcoded literal list -- so a new catalog entry is picked up here for
+  // free) must be explicitly classified below as EITHER producing output
+  // that is provably distinct from the raw String(value) fallthrough
+  // (Number/Boolean/Date -- locale formatting or a Badge element, not a bare
+  // stringified value), OR named as one of the two types that deliberately
+  // share that fallthrough by design (Text/Select). A type this switch has
+  // no case for -- exactly the shape of the reviewer's `Email` probe --
+  // throws instead of silently passing, which is what makes this gate
+  // actually fail for an unwired 6th type.
+  it.each(ALL_VALUE_TYPES)(
+    "has explicit, provably-type-specific handling (or a documented deliberate fallthrough) for %s",
+    (type) => {
+      switch (type) {
+        case "Number": {
+          const out = formatCustomFieldValue(type, 1234.5, "en", t);
+          // String(1234.5) would be the un-grouped "1234.5" -- a real Number
+          // branch's toLocaleString output ("1,234.5") is what proves this
+          // isn't the generic fallthrough.
+          expect(out).not.toBe(String(1234.5));
+          expect(out).toBe((1234.5).toLocaleString("en-US"));
+          break;
+        }
+        case "Boolean": {
+          // String(true) is the bare string "true" -- a real Boolean branch
+          // returns a <Badge> React element, not a string at all.
+          const out = formatCustomFieldValue(type, true, "en", t);
+          expect(out).not.toBe(String(true));
+          expect(React.isValidElement(out)).toBe(true);
+          render(<>{out}</>);
+          expect(screen.getByText("common.yes")).toBeInTheDocument();
+          break;
+        }
+        case "Date": {
+          const iso = "2026-01-15T00:00:00Z";
+          const out = formatCustomFieldValue(type, iso, "en", t);
+          // String(iso) would be the raw ISO string unchanged -- a real Date
+          // branch's toLocaleDateString output is what proves formatting
+          // actually happened.
+          expect(out).not.toBe(String(iso));
+          expect(out).toBe(new Date(iso).toLocaleDateString("en-US"));
+          break;
+        }
+        case "Text":
+        case "Select":
+          // Documented, deliberate fallthrough (this file's own header
+          // comment names both explicitly) -- not a gap to "fix" by adding
+          // a redundant branch, just a fact this gate must state on purpose
+          // rather than accept by accident.
+          expect(formatCustomFieldValue(type, "Cairo", "en", t)).toBe("Cairo");
+          break;
+        default:
+          throw new Error(
+            `formatCustomFieldValue completeness gate has no classification for value type ` +
+              `"${type}". Add a real format branch in formatCustomFieldValue.tsx (or, if it should ` +
+              `deliberately share the generic String(value) fallthrough like Text/Select do, add an ` +
+              `explicit case for it above) before this type can be considered wired.`
+          );
+      }
+    }
+  );
 
   it("has exactly 5 known value types to cover", () => {
     expect(ALL_VALUE_TYPES).toHaveLength(5);

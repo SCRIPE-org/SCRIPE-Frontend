@@ -27,7 +27,28 @@ export function mapValueToFieldConfig(data: EntityCustomFieldValueData, language
     name: encodeCustomFieldName(data.key),
     label,
     placeholder,
-    type: VALUE_TYPE_CATALOG[data.valueType].fieldConfigType,
+    // Guarded, not a direct index: `data.valueType` is wire data with no
+    // runtime validation anywhere upstream (CustomFieldValueService.ts
+    // returns raw JSON untouched -- the wire contract is enforced only by a
+    // doc comment, never a discriminated union or runtime guard). Every
+    // OTHER VALUE_TYPE_CATALOG lookup on externally-sourced data already
+    // follows this `?? fallback` discipline (Task 6's own
+    // CustomFieldListView.tsx/InlineAddCustomFieldDialog.tsx guards,
+    // CustomFieldListView.unsetValueTypeVisibility.test.ts pins it) -- this
+    // one was the sole exception, and an un-guarded index throws
+    // `TypeError: Cannot read properties of undefined (reading
+    // 'fieldConfigType')` for any type this catalog doesn't (yet) know
+    // about, e.g. a backend-first Wave 3 deploy of a 6th type before the
+    // frontend redeploys. Since this runs inside getFormFields's `.map()`,
+    // ONE unknown type would otherwise throw for the WHOLE list and take
+    // down the custom-fields section on all 8 consumer sites at once.
+    // "text" restores the exact pre-catalog behavior: the old
+    // `VALUE_TYPE_TO_FIELD_TYPE[data.valueType]` Record index also returned
+    // `undefined` for an unknown key, and renderCustomFieldControl's own
+    // final fallthrough already renders an undefined/unrecognized fc.type as
+    // a plain text Input -- so `"text"` here is not a new decision, it's the
+    // literal value that behavior already resolved to.
+    type: VALUE_TYPE_CATALOG[data.valueType]?.fieldConfigType ?? "text",
     required: data.isRequired,
     options,
     section: "Custom Fields",

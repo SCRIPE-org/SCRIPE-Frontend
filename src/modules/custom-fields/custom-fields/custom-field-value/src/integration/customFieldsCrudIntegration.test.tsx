@@ -68,6 +68,47 @@ describe("mapValueToFieldConfig", () => {
     expect(mapValueToFieldConfig(bool, "en").type).toBe("switch");
     expect(mapValueToFieldConfig(date, "en").type).toBe("date");
   });
+
+  // Final whole-branch review, I1: `data.valueType` is wire data with no
+  // runtime validation anywhere upstream (CustomFieldValueService.ts returns
+  // raw JSON untouched -- the wire contract is enforced only by a doc
+  // comment, never a discriminated union or guard). A backend-first deploy
+  // of a new value type (e.g. Wave 3's `Email`) before the frontend
+  // redeploys is the normal, expected trigger for this. Before the I1 fix,
+  // the un-guarded `VALUE_TYPE_CATALOG[data.valueType].fieldConfigType`
+  // lookup threw `TypeError: Cannot read properties of undefined (reading
+  // 'fieldConfigType')` here -- and since this runs inside getFormFields's
+  // `.map()`, ONE unknown type anywhere in a tenant's definitions took down
+  // the custom-fields section on all 8 consumer sites at once, instead of
+  // rendering that one field as a plain text input the way the pre-catalog
+  // `VALUE_TYPE_TO_FIELD_TYPE[data.valueType]` Record index (which returns
+  // `undefined`, not a throw, for an unknown key) used to.
+  it("does not throw for an unrecognized wire valueType and degrades to a text FieldConfig (I1 regression)", () => {
+    const unknownType: EntityCustomFieldValueData = {
+      customFieldId: "id-5",
+      key: "contactEmail",
+      labelEn: "Contact Email",
+      labelAr: null,
+      // Cast past the CustomFieldValueTypeName union on purpose: this
+      // reproduces a backend that has already shipped a 6th value type the
+      // frontend catalog doesn't know about yet -- exactly the "wire data,
+      // no runtime guard" gap named above, not a type this app would ever
+      // construct itself.
+      valueType: "Email" as EntityCustomFieldValueData["valueType"],
+      isRequired: false,
+      options: null,
+      sortOrder: 0,
+      value: "mo@example.com",
+    };
+
+    let config: ReturnType<typeof mapValueToFieldConfig> | undefined;
+    expect(() => {
+      config = mapValueToFieldConfig(unknownType, "en");
+    }).not.toThrow();
+
+    expect(config?.type).toBe("text");
+    expect(config?.defaultValue).toBe("mo@example.com");
+  });
 });
 
 describe("customFieldsCrudIntegration registration", () => {

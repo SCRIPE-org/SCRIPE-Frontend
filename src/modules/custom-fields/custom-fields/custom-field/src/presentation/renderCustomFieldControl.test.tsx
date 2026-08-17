@@ -22,6 +22,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 import { renderCustomFieldControl, validateSelectCustomFieldValue } from "./renderCustomFieldControl";
+import { ALL_VALUE_TYPES, VALUE_TYPE_CATALOG } from "./valueTypeRegistry";
 
 vi.mock("@core/providers/settings-provider", () => ({
   useSettings: () => ({ switchStyle: "default", fontSize: "default", inputStyle: "default" }),
@@ -380,4 +381,97 @@ describe("renderCustomFieldControl", () => {
       expect(validateSelectCustomFieldValue(PRIORITY_FIELD, " Medium ", t)).toBeNull();
     });
   });
+});
+
+// Completeness exit-gate (Final whole-branch review, I2 fix). Every prior
+// test above renders one hand-picked FieldConfig["type"] and asserts its own
+// specific branch -- useful, but nothing tied that set of branches back to
+// VALUE_TYPE_CATALOG's actual, live set of fieldConfigType values, and
+// nothing failed if a new catalog entry's fieldConfigType had no matching
+// branch here at all. The reviewer proved this gap directly: added a
+// hypothetical 6th type (`Email`, fieldConfigType: "email") to the catalog,
+// added NO renderer branch, and the full suite stayed green -- the shared
+// text/number fallthrough silently absorbed it with no signal that a
+// dedicated branch was ever supposed to exist.
+//
+// This iterates ALL_VALUE_TYPES (from valueTypeRegistry.ts, not a hardcoded
+// literal list -- a new catalog entry is picked up automatically) and, for
+// each one's real VALUE_TYPE_CATALOG[type].fieldConfigType, renders through
+// renderCustomFieldControl exactly the way every real consumer site does and
+// asserts DOM shape that can only come from that fieldConfigType's own
+// dedicated branch (switch role, type="date" input, an open Select panel
+// with real option rows, etc.) -- not just "something rendered". A
+// fieldConfigType with no matching case below throws instead of silently
+// passing, which is what makes this gate actually fail for an unwired 6th
+// type instead of rubber-stamping it the way the pre-fix suite did.
+describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Final review I2)", () => {
+  it.each(ALL_VALUE_TYPES)(
+    "renders a control whose real DOM shape proves %s's own dedicated branch ran, not just that something rendered",
+    (valueType) => {
+      const entry = VALUE_TYPE_CATALOG[valueType];
+      const fc = {
+        name: `cf_${valueType.toLowerCase()}`,
+        label: valueType,
+        type: entry.fieldConfigType,
+        ...(entry.hasOptions
+          ? {
+              options: [
+                { value: "Alpha", label: "Alpha" },
+                { value: "Beta", label: "Beta" },
+              ],
+            }
+          : {}),
+      } as Parameters<typeof renderCustomFieldControl>[0]["fc"];
+
+      const onChange = vi.fn();
+      const { unmount } = render(
+        <>{renderCustomFieldControl({ fc, value: "", onChange })}</>
+      );
+
+      switch (entry.fieldConfigType) {
+        case "switch":
+          // Boolean's own dedicated branch: a real switch role, and clicking
+          // it reports a real boolean, not a string.
+          fireEvent.click(screen.getByRole("switch", { name: valueType }));
+          expect(onChange).toHaveBeenCalledWith(true);
+          break;
+        case "date":
+          // Date's own dedicated branch: a real <input type="date">.
+          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "date");
+          break;
+        case "select": {
+          // Select's own dedicated branch: an open GenericSelect panel with
+          // this fc's own options actually rendered as rows -- not
+          // reachable via the generic text/number Input fallthrough at all.
+          const trigger = screen.getByRole("combobox", { name: valueType });
+          fireEvent.click(trigger);
+          expect(screen.getByRole("option", { name: "Alpha" })).toBeInTheDocument();
+          expect(screen.getByRole("option", { name: "Beta" })).toBeInTheDocument();
+          fireEvent.click(screen.getByRole("option", { name: "Beta" }));
+          expect(onChange).toHaveBeenCalledWith("Beta");
+          break;
+        }
+        case "number":
+          // Number's own distinguishing mark on the shared Input branch:
+          // the numeric type attribute.
+          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "number");
+          break;
+        case "text":
+          // Text is DELIBERATELY the generic Input fallthrough's default
+          // case (this file's header comment, and renderCustomFieldControl.tsx's
+          // own final branch) -- asserted explicitly here, not assumed.
+          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "text");
+          break;
+        default:
+          throw new Error(
+            `renderCustomFieldControl completeness gate has no assertion strategy for ` +
+              `fieldConfigType "${entry.fieldConfigType}" (value type "${valueType}"). Add a ` +
+              `renderCustomFieldControl.tsx branch for it AND a matching case here before this ` +
+              `catalog entry can be considered wired.`
+          );
+      }
+
+      unmount();
+    }
+  );
 });

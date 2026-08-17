@@ -221,8 +221,21 @@ export function renderCustomFieldControl({
   );
 }
 
-/** Matches useI18n()'s own `t` signature (i18n-provider.tsx) without importing the provider. */
-export type TranslateFn = (key: string, params?: Record<string, unknown>) => string;
+/**
+ * Matches useI18n()'s own real `t` signature (i18n-provider.tsx:28) without
+ * importing the provider. Was previously `Record<string, unknown>` -- wider
+ * than the real `t`'s `Record<string, string | number>` params, which is
+ * only safe as long as nothing ever passes the actual useI18n() `t` in here
+ * (TypeScript's contravariant function-parameter check rejects a narrower-
+ * accepting function wherever a wider-accepting one is promised). That held
+ * by accident while `validateSelectCustomFieldValue` had zero production
+ * callers (final whole-branch review, I3) -- the first real caller
+ * (`assertSelectCustomFieldValuesValid`, wired into a real save flow) passes
+ * the real `t` and surfaced the mismatch as a build-time type error.
+ * Narrowed to match reality: every param object this module ever builds
+ * (`{ value: text, field: fc.label ?? fc.name }`) is string-valued anyway.
+ */
+export type TranslateFn = (key: string, params?: Record<string, string | number>) => string;
 
 /**
  * D5: client-side mirror of the backend's `SelectValueTypeHandler.Validate` --
@@ -301,4 +314,62 @@ export function validateSelectCustomFieldValue(
   }
 
   return null;
+}
+
+/**
+ * Thrown by `assertSelectCustomFieldValuesValid` below -- a distinct type so
+ * a consumer's save flow can tell "D5 rejected this value client-side, show
+ * ITS message" apart from "the actual saveValues API call failed, show the
+ * generic customFieldsSaveError toast" in the same catch block, without
+ * string-matching or a second try/catch layer.
+ */
+export class CustomFieldValidationError extends Error {}
+
+/**
+ * D5's actual save-flow integration point (final whole-branch review, I3
+ * fix). `validateSelectCustomFieldValue` above was correctly built
+ * hookless/render-agnostic (its own doc comment explains why the shared
+ * EDIT renderer must not auto-call it), but nothing was ever assigned the
+ * other half: an actual call from a save flow. That left the function
+ * fully tested but with zero production callers, and the round-trip 422 D5
+ * exists to prevent still happening unchanged.
+ *
+ * This is the one place that half belongs: every one of the 8 consumer
+ * sites' own save-flow function (`saveCustomFieldValues` / equivalent)
+ * already has to loop over `fieldConfigs` to decode names and apply the
+ * `"" -> null` default before calling `saveValues` -- see e.g.
+ * `useWebhookFormViewModel.ts`. Rather than duplicating a second, slightly
+ * different loop in all 8 places, this is the ONE reusable call a save flow
+ * makes before that loop: `assertSelectCustomFieldValuesValid(fieldConfigs,
+ * values, t)` at the top of `saveCustomFieldValues`, throwing
+ * `CustomFieldValidationError` with the first rejected Select field's
+ * already-localized message so the flow's own existing catch block can
+ * surface it verbatim instead of (or ahead of) the generic
+ * "customFieldsSaveError" fallback every site already has.
+ *
+ * `values[fc.name] ?? fc.defaultValue ?? ""` mirrors every site's own
+ * default-value fallback exactly (see useWebhookFormViewModel.ts's
+ * `saveCustomFieldValues`) -- this must validate the SAME effective value a
+ * site is about to submit, not just what the user actively typed this
+ * session, since an untouched field's own stored default can itself be
+ * stale (e.g. that field's Options were edited after the value was
+ * captured, D5's own named risk).
+ *
+ * Wired into ONE consumer site (`useWebhookFormViewModel.ts`) as the
+ * concrete proof this task requires; the other 7 sites' own save flows are
+ * a tracked follow-up (Task 12's ledger) -- each is the same one-line call.
+ */
+export function assertSelectCustomFieldValuesValid(
+  fieldConfigs: FieldConfig[],
+  values: Record<string, unknown>,
+  t: TranslateFn
+): void {
+  for (const fc of fieldConfigs) {
+    if (fc.type !== "select") continue;
+    const raw = values[fc.name] ?? fc.defaultValue ?? "";
+    const error = validateSelectCustomFieldValue(fc, raw, t);
+    if (error) {
+      throw new CustomFieldValidationError(error);
+    }
+  }
 }
