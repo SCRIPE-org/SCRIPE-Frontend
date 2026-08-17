@@ -10,13 +10,18 @@ import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { getCustomFieldsContainer } from "../../../../di";
+import {
+  VALUE_TYPE_CATALOG,
+  ALL_VALUE_TYPES,
+  type CustomFieldValueTypeName,
+} from "../../../../custom-field/src/presentation/valueTypeRegistry";
 
-// Matches CustomFieldListView.tsx's own constants — same enums, same rules
-// (Options only applies to Select fields; Boolean/Date have no placeholder
-// concept), kept in sync deliberately rather than imported: these are two
-// independent forms for the same backend command, not a shared component.
-const SELECT_VALUE_TYPE = "Select";
-const NO_PLACEHOLDER_VALUE_TYPES = new Set(["Boolean", "Date"]);
+// Shares CustomFieldListView.tsx's per-value-type catalog (badge tone,
+// placeholder/options applicability, display label) rather than
+// re-declaring its own copy of SELECT_VALUE_TYPE/NO_PLACEHOLDER_VALUE_TYPES/
+// the option array -- these were previously two independently-maintained
+// hardcoded lists for the same backend enum, with nothing enforcing they
+// stayed in sync (Wave 2 Step 2.2, D4).
 
 export function InlineAddCustomFieldDialog({
   entityTypeKey,
@@ -70,27 +75,27 @@ export function InlineAddCustomFieldDialog({
         label: t("customField.fields.valueType"),
         type: "select",
         required: true,
-        options: [
-          { value: "Text", label: t("customField.valueTypes.text") },
-          { value: "Number", label: t("customField.valueTypes.number") },
-          { value: "Boolean", label: t("customField.valueTypes.boolean") },
-          { value: "Date", label: t("customField.valueTypes.date") },
-          { value: "Select", label: t("customField.valueTypes.select") },
-        ],
+        options: ALL_VALUE_TYPES.map((type) => ({ value: type, label: t(VALUE_TYPE_CATALOG[type].labelKey) })),
       },
       {
         name: "placeholderEn",
         label: t("customField.fields.placeholderEn"),
         type: "text",
         placeholder: t("customField.placeholders.placeholderEn"),
-        isVisible: (form) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+        // A miss (unset/invalid valueType, e.g. before the user has picked
+        // one yet) falls back to `true` -- matches the old
+        // `!NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType))`, which
+        // evaluated to `true` (show) for an unset value.
+        isVisible: (form) =>
+          VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
       },
       {
         name: "placeholderAr",
         label: t("customField.fields.placeholderAr"),
         type: "text",
         placeholder: t("customField.placeholders.placeholderAr"),
-        isVisible: (form) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+        isVisible: (form) =>
+          VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
       },
       {
         name: "options",
@@ -98,7 +103,11 @@ export function InlineAddCustomFieldDialog({
         type: "textarea",
         placeholder: t("customField.placeholders.options"),
         rows: 4,
-        isVisible: (form) => String(form.valueType) === SELECT_VALUE_TYPE,
+        // A miss falls back to `false` -- matches the old
+        // `String(form.valueType) === SELECT_VALUE_TYPE`, which was already
+        // `false` (hide) for an unset value.
+        isVisible: (form) =>
+          VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
       },
       { name: "isRequired", label: t("customField.fields.isRequired"), type: "switch" },
       { name: "sortOrder", label: t("customField.fields.sortOrder"), type: "number", min: 0 },

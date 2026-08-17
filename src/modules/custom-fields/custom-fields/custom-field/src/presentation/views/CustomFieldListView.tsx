@@ -20,30 +20,19 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2, Globe2 } from "lucide-react";
+import {
+  VALUE_TYPE_CATALOG,
+  ALL_VALUE_TYPES,
+  type CustomFieldValueTypeName,
+} from "../valueTypeRegistry";
 
-// Options are only allowed/required for Select fields. Wire value is the
-// backend enum's string member name (JsonStringEnumConverter), never its
-// ordinal -- see design doc W0-3/GAP 1.
-const SELECT_VALUE_TYPE = "Select";
-
-// Boolean/Date are the two value types with no placeholder concept (a Switch
-// and a DatePicker, neither renders a text input a placeholder would sit
-// inside). Text/Number/Select all keep the field.
-const NO_PLACEHOLDER_VALUE_TYPES = new Set(["Boolean", "Date"]);
-
-// CustomFieldValueType wire names mapped onto the nx Badge semantic tones — a
-// value type is read-only metadata, so the tones are neutral/informational
-// rather than success/error.
-const VALUE_TYPE_VARIANTS: Record<
-  string,
-  "default" | "secondary" | "info" | "success" | "warning"
-> = {
-  Text: "secondary",
-  Number: "info",
-  Boolean: "success",
-  Date: "warning",
-  Select: "default",
-};
+// Single source of truth for per-value-type presentation metadata (badge
+// tone, placeholder/options applicability, display label) -- see
+// valueTypeRegistry.ts. Previously this file (and InlineAddCustomFieldDialog.tsx,
+// independently) hardcoded SELECT_VALUE_TYPE/NO_PLACEHOLDER_VALUE_TYPES/
+// VALUE_TYPE_VARIANTS/valueTypeOptions/valueTypeLabels separately, and the
+// edit form's `options` field visibility guard was missing entirely in one
+// of the two copies -- see CustomFieldListView.optionsVisibility.test.tsx.
 
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../locales"), "customFields");
@@ -101,24 +90,18 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   }, [entityTypes, language, t]);
 
   const valueTypeOptions = useMemo(
-    () => [
-      { value: "Text", label: t("customField.valueTypes.text") },
-      { value: "Number", label: t("customField.valueTypes.number") },
-      { value: "Boolean", label: t("customField.valueTypes.boolean") },
-      { value: "Date", label: t("customField.valueTypes.date") },
-      { value: "Select", label: t("customField.valueTypes.select") },
-    ],
+    () => ALL_VALUE_TYPES.map((type) => ({ value: type, label: t(VALUE_TYPE_CATALOG[type].labelKey) })),
     [t]
   );
 
-  const valueTypeLabels = useMemo<Record<string, string>>(
-    () => ({
-      Text: t("customField.valueTypes.text"),
-      Number: t("customField.valueTypes.number"),
-      Boolean: t("customField.valueTypes.boolean"),
-      Date: t("customField.valueTypes.date"),
-      Select: t("customField.valueTypes.select"),
-    }),
+  // Same fallback shape as the old `valueTypeLabels[value] ?? value` map:
+  // an unrecognized/unknown wire value falls back to the raw value itself
+  // rather than throwing or rendering blank.
+  const valueTypeLabelOf = useMemo(
+    () => (value: string) => {
+      const entry = VALUE_TYPE_CATALOG[value as CustomFieldValueTypeName];
+      return entry ? t(entry.labelKey) : value;
+    },
     [t]
   );
 
@@ -156,8 +139,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           key: "valueType",
           label: t("customField.fields.valueType"),
           render: (value: string) => (
-            <Badge variant={VALUE_TYPE_VARIANTS[value] ?? "secondary"}>
-              {valueTypeLabels[value] ?? value}
+            <Badge variant={VALUE_TYPE_CATALOG[value as CustomFieldValueTypeName]?.badgeVariant ?? "secondary"}>
+              {valueTypeLabelOf(value)}
             </Badge>
           ),
         },
@@ -231,15 +214,22 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           placeholder: t("customField.placeholders.placeholderEn"),
           // No placeholder concept for a Switch (Boolean) or DatePicker (Date)
           // input -- restrict to the value types that actually render a text
-          // input the user types into (Text/Number/Select).
-          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+          // input the user types into (Text/Number/Select). A miss (unset/
+          // invalid valueType, e.g. before the user has picked one yet)
+          // falls back to `true` -- matches the old
+          // `!NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType))`, which
+          // evaluated to `true` (show) for an unset value, since
+          // String(undefined) is never in the Set.
+          isVisible: (form: Record<string, unknown>) =>
+            VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
         },
         {
           name: "placeholderAr",
           label: t("customField.fields.placeholderAr"),
           type: "text" as const,
           placeholder: t("customField.placeholders.placeholderAr"),
-          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+          isVisible: (form: Record<string, unknown>) =>
+            VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
         },
         {
           name: "options",
@@ -247,8 +237,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           type: "textarea" as const,
           placeholder: t("customField.placeholders.options"),
           rows: 4,
+          // A miss falls back to `false` -- matches the old
+          // `String(form.valueType) === SELECT_VALUE_TYPE`, which was
+          // already `false` (hide) for an unset value.
           isVisible: (form: Record<string, unknown>) =>
-            String(form.valueType) === SELECT_VALUE_TYPE,
+            VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
         },
         {
           name: "isRequired",
@@ -314,14 +307,16 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           label: t("customField.fields.placeholderEn"),
           type: "text" as const,
           placeholder: t("customField.placeholders.placeholderEn"),
-          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+          isVisible: (form: Record<string, unknown>) =>
+            VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
         },
         {
           name: "placeholderAr",
           label: t("customField.fields.placeholderAr"),
           type: "text" as const,
           placeholder: t("customField.placeholders.placeholderAr"),
-          isVisible: (form: Record<string, unknown>) => !NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType)),
+          isVisible: (form: Record<string, unknown>) =>
+            VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
         },
         {
           name: "options",
@@ -334,8 +329,9 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           // Text/Number/Boolean/Date field showed an editable Options textarea
           // that UpdateCustomFieldCommandHandler's Select<->Options coupling
           // check then rejected on submit (design doc recon finding #1).
+          // Pinned by CustomFieldListView.optionsVisibility.test.tsx.
           isVisible: (form: Record<string, unknown>) =>
-            String(form.valueType) === SELECT_VALUE_TYPE,
+            VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
         },
         {
           name: "isRequired",
@@ -420,7 +416,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       language,
       entityTypeOptions,
       valueTypeOptions,
-      valueTypeLabels,
+      valueTypeLabelOf,
       vm,
       isEntityTypesError,
       refetchEntityTypes,

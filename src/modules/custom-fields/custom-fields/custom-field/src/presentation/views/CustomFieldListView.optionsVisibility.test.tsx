@@ -37,12 +37,22 @@ describe("CustomFieldListView edit-form Options visibility", () => {
 // it and would mask a regression here if the check weren't scoped to
 // editFields). Scoping to the slice of the source starting at "editFields: ["
 // is what makes it specific to the edit form; confirmed by hand that
-// deleting the real `isVisible: ... SELECT_VALUE_TYPE` guard on the edit
-// form's options field (CustomFieldListView.tsx around line 337) while
-// leaving everything else (including the identical create-form guard and
-// the comment above this field) intact makes this assertion fail.
+// deleting the real isVisible guard on the edit form's options field
+// (CustomFieldListView.tsx, in the editFields array) while leaving
+// everything else (including the identical create-form guard and the
+// comment above this field) intact makes this assertion fail.
+//
+// Wave 2 Step 2.2 Task 6 update: the guard's implementation changed from a
+// `String(form.valueType) === SELECT_VALUE_TYPE` string-equality check to a
+// `VALUE_TYPE_CATALOG[form.valueType]?.hasOptions ?? false` catalog lookup
+// (both files now share Task 1's VALUE_TYPE_CATALOG instead of each
+// independently re-declaring SELECT_VALUE_TYPE). The literal identifier this
+// regex looks for was updated to match -- the guard's actual EXISTENCE and
+// its scoping to editFields (not createFields) is still what's pinned, and
+// re-confirmed by hand that deleting the isVisible guard on the edit form's
+// options field still fails this assertion after the rewrite.
 describe("CustomFieldListView edit-form Options visibility (real source)", () => {
-  it("has an isVisible guard referencing SELECT_VALUE_TYPE on the edit form's options field", () => {
+  it("has an isVisible guard referencing VALUE_TYPE_CATALOG's hasOptions on the edit form's options field", () => {
     const here = dirname(fileURLToPath(import.meta.url));
     const source = readFileSync(resolve(here, "CustomFieldListView.tsx"), "utf-8");
 
@@ -51,7 +61,7 @@ describe("CustomFieldListView edit-form Options visibility (real source)", () =>
     const editFieldsSource = source.slice(editFieldsIdx);
 
     expect(editFieldsSource).toMatch(
-      /name:\s*"options"[\s\S]{0,600}?isVisible:[\s\S]{0,120}?SELECT_VALUE_TYPE/
+      /name:\s*"options"[\s\S]{0,900}?isVisible:[\s\S]{0,200}?VALUE_TYPE_CATALOG\[[\s\S]{0,100}?\]\?\.hasOptions/
     );
   });
 });
