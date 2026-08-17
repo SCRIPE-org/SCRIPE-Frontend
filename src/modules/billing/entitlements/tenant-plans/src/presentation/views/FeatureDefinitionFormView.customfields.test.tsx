@@ -18,7 +18,7 @@
 //      file's own header doc comment).
 import React from "react";
 import type { ReactNode } from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -27,12 +27,19 @@ import {
   type CustomFieldsExtensionApi,
 } from "@core/crud/customFieldsExtension";
 
-const { mockGetFeatureDefinitionById, mockCreateFeatureDefinition, mockUpdateFeatureDefinition } =
-  vi.hoisted(() => ({
-    mockGetFeatureDefinitionById: vi.fn(),
-    mockCreateFeatureDefinition: vi.fn(),
-    mockUpdateFeatureDefinition: vi.fn(),
-  }));
+const {
+  mockGetFeatureDefinitionById,
+  mockCreateFeatureDefinition,
+  mockUpdateFeatureDefinition,
+  mockSuccessToast,
+  mockErrorToast,
+} = vi.hoisted(() => ({
+  mockGetFeatureDefinitionById: vi.fn(),
+  mockCreateFeatureDefinition: vi.fn(),
+  mockUpdateFeatureDefinition: vi.fn(),
+  mockSuccessToast: vi.fn(),
+  mockErrorToast: vi.fn(),
+}));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -52,7 +59,7 @@ vi.mock("@core/hooks/use-module-locales", () => ({
 }));
 
 vi.mock("@core/hooks/use-enhanced-toast", () => ({
-  useEnhancedToast: () => ({ success: vi.fn(), error: vi.fn() }),
+  useEnhancedToast: () => ({ success: mockSuccessToast, error: mockErrorToast }),
 }));
 
 vi.mock("@modules/entitlements/di", () => ({
@@ -119,11 +126,32 @@ const SELECT_FIELD = {
 };
 const ALL_FIELD_TYPES = [TEXT_FIELD, NUMBER_FIELD, SWITCH_FIELD, DATE_FIELD, SELECT_FIELD];
 
+// Final whole-branch review, I3 follow-up: a defaultValue that is NOT one of
+// `options`' own labels -- simulating the real, named risk
+// validateSelectCustomFieldValue's own doc comment exists to catch (a stale
+// value already sitting in form state), reached WITHOUT ever touching the
+// Select control. GenericSelect can only ever emit a value drawn from its
+// own `options` array through the picker UI, so a real option click could
+// never reproduce an invalid value -- an untouched field's own fetched
+// default is the one real path to it.
+const STALE_SELECT_FIELD = {
+  name: "__cf__priority",
+  label: "Priority",
+  type: "select" as const,
+  defaultValue: "Urgent",
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+  ],
+};
+
 describe("FeatureDefinitionFormView + custom fields", () => {
   beforeEach(() => {
     mockGetFeatureDefinitionById.mockReset();
     mockCreateFeatureDefinition.mockReset();
     mockUpdateFeatureDefinition.mockReset();
+    mockSuccessToast.mockClear();
+    mockErrorToast.mockClear();
   });
 
   it("renders a labeled control for each of the 5 custom-field types and reports changes", async () => {
@@ -252,5 +280,46 @@ describe("FeatureDefinitionFormView + custom fields", () => {
 
     const selectTrigger = screen.getByRole("combobox", { name: "Priority" });
     expect(selectTrigger).not.toHaveAttribute("aria-disabled", "true");
+  });
+
+  // Final whole-branch review, I3 follow-up: D5's client-side Select
+  // validation (validateSelectCustomFieldValue, wired in via
+  // assertSelectCustomFieldValuesValid) must actually block this site's
+  // real save flow too, not just WebhookForm's. Uses STALE_SELECT_FIELD's
+  // own defaultValue ("Urgent", not one of its `options`' labels) reached by
+  // leaving the field completely untouched -- see that fixture's own
+  // comment for why a real option click could never reproduce this case.
+  it("rejects a stale default Select value and blocks the save before ever calling saveValues (D5)", async () => {
+    mockCreateFeatureDefinition.mockResolvedValue("new-feature-id");
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue([STALE_SELECT_FIELD]),
+    });
+
+    const { container } = renderWithQueryClient(<FeatureDefinitionFormView />);
+    await screen.findByRole("combobox", { name: "Priority" });
+
+    // Fill the minimum required fields (key + valueType) so isValid gates
+    // open -- deliberately not touching the Select control itself.
+    fireEvent.change(container.querySelector("#fd-key")!, {
+      target: { value: "test.feature" },
+    });
+    fireEvent.click(screen.getByText("entitlements.featureDefinitions.typeBoolean"));
+
+    fireEvent.click(screen.getAllByRole("button", { name: "common.create" })[0]);
+
+    // The feature definition itself still gets created (a separate
+    // mutation that always runs first, same shape as every other consumer
+    // site's save flow) -- but the custom-field value never reaches the
+    // API at all.
+    await waitFor(() => expect(mockCreateFeatureDefinition).toHaveBeenCalled());
+    expect(extension.saveValues).not.toHaveBeenCalled();
+    // This site pairs a generic "common.error" title with a specific
+    // description (its own established convention, e.g. createMutation's
+    // onError above) -- the identity-mocked `t` proves the SPECIFIC D5
+    // message reached the description, not the generic
+    // "customFieldsSaveError" fallback every other save failure gets here.
+    expect(mockErrorToast).toHaveBeenCalledWith(
+      expect.objectContaining({ description: "customField.values.selectInvalidOption" })
+    );
   });
 });

@@ -11,6 +11,10 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
+import {
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
 import type { MessageChannel, TemplateCategory } from "../../domain/entities/MessageTemplate";
 import type {
   CreateMessageTemplateRequest,
@@ -116,6 +120,16 @@ export function useTemplateFormViewModel() {
   // here would silently clear it.
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
+      // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
+      // Select value client-side, with the real localized reason, BEFORE it
+      // ever reaches saveValues and comes back as a 422 -- see
+      // assertSelectCustomFieldValuesValid's own doc comment
+      // (renderCustomFieldControl.tsx) for why this is the right integration
+      // point. Throws CustomFieldValidationError, which handleSubmit's own
+      // catch blocks below distinguish from a genuine API failure so they
+      // can show the specific reason, not the generic fallback.
+      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+
       const decoded: Record<string, unknown> = {};
       for (const fc of customFieldsQuery.fieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
@@ -130,7 +144,7 @@ export function useTemplateFormViewModel() {
         decoded
       );
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues]
+    [customFieldsQuery.fieldConfigs, customFieldValues, t]
   );
 
   // ─── Form State ──────────────────────────────────────────
@@ -332,8 +346,13 @@ export function useTemplateFormViewModel() {
         }
         try {
           await saveCustomFieldValues(newId);
-        } catch {
-          toastError({ title: t("messaging.templates.customFieldsSaveError") });
+        } catch (err) {
+          toastError({
+            title:
+              err instanceof CustomFieldValidationError
+                ? err.message
+                : t("messaging.templates.customFieldsSaveError"),
+          });
           return; // template was created -- don't pretend the whole save succeeded
         }
         queryClient.invalidateQueries({ queryKey: QUERY_KEY });
@@ -356,8 +375,13 @@ export function useTemplateFormViewModel() {
         }
         try {
           await saveCustomFieldValues(templateId!);
-        } catch {
-          toastError({ title: t("messaging.templates.customFieldsSaveError") });
+        } catch (err) {
+          toastError({
+            title:
+              err instanceof CustomFieldValidationError
+                ? err.message
+                : t("messaging.templates.customFieldsSaveError"),
+          });
           return;
         }
         queryClient.invalidateQueries({ queryKey: QUERY_KEY });

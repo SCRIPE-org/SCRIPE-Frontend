@@ -68,6 +68,17 @@ const PRIORITY_FIELD = {
   section: "Custom Fields",
 };
 
+const SOURCE_FIELD = {
+  name: "__cf__source",
+  label: "Source",
+  type: "select" as const,
+  section: "Custom Fields",
+  options: [
+    { value: "Referral", label: "Referral" },
+    { value: "Website", label: "Website" },
+  ],
+};
+
 const CREATE_PARAMS = {
   companyName: "Acme Corp",
   contactName: "John Smith",
@@ -192,6 +203,46 @@ describe("useLeadsViewModel + custom fields", () => {
     // whole save succeeded, same discipline as useWebhookFormViewModel /
     // useDsrViewModel.
     expect(result.current.isCreateDialogOpen).toBe(true);
+  });
+
+  // Final whole-branch review, I3 follow-up: D5's client-side Select
+  // validation (validateSelectCustomFieldValue, wired in via
+  // assertSelectCustomFieldValuesValid) must actually block this site's
+  // real save flow too, not just WebhookForm's -- a differently-cased value
+  // against a real configured option ("website" vs "Website") is the
+  // backend's own ordinal/case-sensitive rejection case, reproduced
+  // client-side, before any round trip.
+  it("rejects a differently-cased Select value and blocks the save before ever calling saveValues (D5)", async () => {
+    mockCreateLead.mockResolvedValue("new-lead-id");
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue([SOURCE_FIELD]),
+    });
+
+    const { result } = renderHook(() => useLeadsViewModel(), { wrapper });
+    await waitFor(() => expect(result.current.customFieldConfigs).toEqual([SOURCE_FIELD]));
+
+    act(() => {
+      // Lower-cased against the real configured "Website" -- same
+      // ordinal-mismatch case D5's own test file pins.
+      result.current.updateCustomFieldValue("__cf__source", "website");
+    });
+
+    await act(async () => {
+      await result.current.handleCreateLead(CREATE_PARAMS);
+    });
+
+    // The lead itself still gets created (a separate mutation, same shape
+    // as any other custom-field save failure) -- but the custom-field value
+    // never reaches the API at all.
+    expect(mockCreateLead).toHaveBeenCalled();
+    expect(extension.saveValues).not.toHaveBeenCalled();
+    expect(mockSuccessToast).not.toHaveBeenCalled();
+    // The identity-mocked `t` above returns the raw key -- proves the
+    // SPECIFIC D5 message reached the toast, not the generic
+    // "customFieldsSaveError" fallback every other save failure gets.
+    expect(mockErrorToast).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "customField.values.selectInvalidOption" })
+    );
   });
 
   it("does not attempt a custom-field save when the lead create itself fails", async () => {

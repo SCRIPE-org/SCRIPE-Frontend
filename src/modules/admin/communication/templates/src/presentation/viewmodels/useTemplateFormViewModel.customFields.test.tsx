@@ -81,6 +81,17 @@ const NATIONALITY_FIELD = {
   section: "Custom Fields",
 };
 
+const PRIORITY_SELECT_FIELD = {
+  name: "__cf__priority2",
+  label: "Priority Level",
+  type: "select" as const,
+  section: "Custom Fields",
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+  ],
+};
+
 const EXISTING_TEMPLATE = {
   id: "existing-template-id",
   key: "welcome",
@@ -237,6 +248,47 @@ describe("useTemplateFormViewModel + custom fields", () => {
     expect(mockRouterPush).not.toHaveBeenCalled();
     expect(mockErrorToast).toHaveBeenCalledWith(
       expect.objectContaining({ title: "messaging.templates.customFieldsSaveError" })
+    );
+  });
+
+  // Final whole-branch review, I3 follow-up: D5's client-side Select
+  // validation (validateSelectCustomFieldValue, wired in via
+  // assertSelectCustomFieldValuesValid) must actually block this site's
+  // real save flow too, not just WebhookForm's -- a differently-cased value
+  // against a real configured option ("medium" vs "Medium") is the
+  // backend's own ordinal/case-sensitive rejection case, reproduced
+  // client-side, before any round trip.
+  it("rejects a differently-cased Select value and blocks the save before ever calling saveValues (D5)", async () => {
+    mockCreate.mockResolvedValue("new-template-id");
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue([PRIORITY_SELECT_FIELD]),
+    });
+
+    const { result } = renderHook(() => useTemplateFormViewModel(), { wrapper });
+    await waitFor(() => expect(result.current.customFieldConfigs).toEqual([PRIORITY_SELECT_FIELD]));
+
+    act(() => {
+      result.current.updateField("body", "Hello");
+      // Lower-cased against the real configured "Medium" -- same
+      // ordinal-mismatch case D5's own test file pins.
+      result.current.updateCustomFieldValue("__cf__priority2", "medium");
+    });
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    // The template itself still gets created (a separate mutation, same
+    // shape as any other custom-field save failure) -- but the
+    // custom-field value never reaches the API at all.
+    expect(mockCreate).toHaveBeenCalled();
+    expect(extension.saveValues).not.toHaveBeenCalled();
+    expect(mockRouterPush).not.toHaveBeenCalled();
+    // The identity-mocked `t` above returns the raw key -- proves the
+    // SPECIFIC D5 message reached the toast, not the generic
+    // "customFieldsSaveError" fallback every other save failure gets.
+    expect(mockErrorToast).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "customField.values.selectInvalidOption" })
     );
   });
 

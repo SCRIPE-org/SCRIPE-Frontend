@@ -24,6 +24,10 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
+import {
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
 
 // ── Query key factory (stable, typed) ─────────────────────────────────────────
 
@@ -86,6 +90,16 @@ export function useLeadsViewModel() {
   // default) is sent, not just the ones the user touched.
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
+      // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
+      // Select value client-side, with the real localized reason, BEFORE it
+      // ever reaches saveValues and comes back as a 422 -- see
+      // assertSelectCustomFieldValuesValid's own doc comment
+      // (renderCustomFieldControl.tsx) for why this is the right integration
+      // point. Throws CustomFieldValidationError, which handleCreateLead's
+      // own catch block below distinguishes from a genuine API failure so it
+      // can show the specific reason, not the generic fallback.
+      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+
       const decoded: Record<string, unknown> = {};
       for (const fc of customFieldsQuery.fieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
@@ -96,7 +110,7 @@ export function useLeadsViewModel() {
       if (Object.keys(decoded).length === 0) return;
       await getCustomFieldsExtension()?.saveValues(LEAD_ENTITY_TYPE_KEY, ownerId, decoded);
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues]
+    [customFieldsQuery.fieldConfigs, customFieldValues, t]
   );
 
   // ── Convert dialog state ──────────────────────────────────────────────────
@@ -536,8 +550,13 @@ export function useLeadsViewModel() {
         }
         try {
           await saveCustomFieldValues(newLeadId);
-        } catch {
-          toastError({ title: t("leads.createDialog.customFieldsSaveError") });
+        } catch (err) {
+          toastError({
+            title:
+              err instanceof CustomFieldValidationError
+                ? err.message
+                : t("leads.createDialog.customFieldsSaveError"),
+          });
           return; // the lead WAS created -- don't pretend the whole save succeeded
         }
         queryClient.invalidateQueries({ queryKey: ["leads"] });

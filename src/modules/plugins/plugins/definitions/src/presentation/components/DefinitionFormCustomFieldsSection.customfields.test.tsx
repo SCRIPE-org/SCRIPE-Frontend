@@ -100,6 +100,26 @@ const TEXT_FIELD = { name: "__cf__nickname", label: "Nickname", type: "text" as 
 const NUMBER_FIELD = { name: "__cf__score", label: "Score", type: "number" as const };
 const SWITCH_FIELD = { name: "__cf__featured", label: "Featured", type: "switch" as const };
 const DATE_FIELD = { name: "__cf__startdate", label: "Start Date", type: "date" as const };
+// Final whole-branch review, I3 follow-up: a defaultValue that is NOT one of
+// `options`' own labels -- simulating the real, named risk
+// validateSelectCustomFieldValue's own doc comment exists to catch (a stale
+// value already sitting in form state, e.g. this field's Options were
+// edited server-side after the value was fetched/captured), reached here
+// WITHOUT ever touching the Select control. GenericSelect itself can only
+// ever emit a value drawn from its own `options` array through the picker
+// UI (D5's own doc comment), so a UI-driven `fireEvent.click` on a real
+// option could never reproduce an invalid value -- an untouched field's own
+// fetched default is the one real path to it.
+const STALE_SELECT_FIELD = {
+  name: "__cf__tier",
+  label: "Support Tier",
+  type: "select" as const,
+  defaultValue: "Urgent",
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+  ],
+};
 const SELECT_FIELD = {
   name: "__cf__tier",
   label: "Support Tier",
@@ -186,6 +206,36 @@ describe("DefinitionFormDialog + custom fields", () => {
         tier: "Medium",
       })
     );
+  });
+
+  // Final whole-branch review, I3 follow-up: D5's client-side Select
+  // validation (validateSelectCustomFieldValue, wired in via
+  // assertSelectCustomFieldValuesValid) must actually block this site's
+  // real save flow too, not just WebhookForm's. Uses STALE_SELECT_FIELD's
+  // own defaultValue ("Urgent", not one of its `options`' labels) reached by
+  // leaving the field completely untouched -- see that fixture's own
+  // comment for why a real option click could never reproduce this case.
+  it("rejects a stale default Select value and blocks the save before ever calling saveValues (D5)", async () => {
+    mockCreate.mockResolvedValue("new-definition-id");
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue([STALE_SELECT_FIELD]),
+    });
+
+    renderWithQueryClient(<DefinitionsView />);
+    await openCreateForm();
+    fillRequiredFields();
+    await screen.findByRole("combobox", { name: "Support Tier" });
+
+    // Deliberately not touching the Select control -- the untouched field's
+    // own stale fetched defaultValue is what must be rejected.
+    fireEvent.click(screen.getByRole("button", { name: "common.create" }));
+
+    // The definition entity itself still gets created (a separate mutation
+    // that always runs first, same shape as every other consumer site's
+    // save flow -- see webhooks/leads/dsr/templates) -- but the
+    // custom-field value never reaches the API at all.
+    await waitFor(() => expect(mockCreate).toHaveBeenCalled());
+    expect(extension.saveValues).not.toHaveBeenCalled();
   });
 
   it("shows the empty-state message when there are no custom field definitions", async () => {

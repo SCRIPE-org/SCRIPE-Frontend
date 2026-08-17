@@ -17,6 +17,10 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
+import {
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
 import type {
   DataSubjectRequest,
   DsrStatus,
@@ -130,6 +134,16 @@ export function useDsrViewModel() {
 
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
+      // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
+      // Select value client-side, with the real localized reason, BEFORE it
+      // ever reaches saveValues and comes back as a 422 -- see
+      // assertSelectCustomFieldValuesValid's own doc comment
+      // (renderCustomFieldControl.tsx) for why this is the right integration
+      // point. Throws CustomFieldValidationError, which handleSubmit's own
+      // catch block below distinguishes from a genuine API failure so it can
+      // show the specific reason, not the generic fallback.
+      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+
       const decoded: Record<string, unknown> = {};
       for (const fc of customFieldsQuery.fieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
@@ -140,7 +154,7 @@ export function useDsrViewModel() {
       if (Object.keys(decoded).length === 0) return;
       await getCustomFieldsExtension()?.saveValues(DSR_ENTITY_TYPE_KEY, ownerId, decoded);
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues]
+    [customFieldsQuery.fieldConfigs, customFieldValues, t]
   );
 
   // ── Mutations ─────────────────────────────────────────────────────────────────
@@ -200,7 +214,12 @@ export function useDsrViewModel() {
       try {
         await saveCustomFieldValues(newId);
       } catch (err) {
-        toastError({ title: t("compliance.customFieldsSaveError") });
+        toastError({
+          title:
+            err instanceof CustomFieldValidationError
+              ? err.message
+              : t("compliance.customFieldsSaveError"),
+        });
         // The DSR itself WAS created — re-throw only so the modal knows to
         // stay open with what the user typed, not to pretend nothing happened.
         throw err;
