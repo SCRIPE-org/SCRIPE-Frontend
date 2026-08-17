@@ -4,6 +4,8 @@
  * Domain entity representing a CustomField definition in the system.
  */
 
+import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
+
 /**
  * EntityType domain interface
  */
@@ -15,12 +17,6 @@ export interface EntityTypeInfo {
   /** See EntityTypeItemJson's identical field for the full contract. */
   hasFrontendScreen?: boolean;
 }
-
-/**
- * CustomFieldValueType wire names -- see CustomFieldModel.ts's identical type
- * for the full contract (why this is a string union, never a number).
- */
-export type CustomFieldValueTypeName = "Text" | "Number" | "Boolean" | "Date" | "Select";
 
 /**
  * CustomField data from API

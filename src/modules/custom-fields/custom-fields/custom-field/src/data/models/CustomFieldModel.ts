@@ -6,17 +6,7 @@
  * Mapper converts between CustomFieldModel <-> CustomField Entity.
  */
 
-/**
- * CustomFieldValueType wire names -- mirrors backend enum member names verbatim
- * (CustomFields.Domain.Enums.CustomFieldValueType). The API's global
- * JsonStringEnumConverter serializes enums as strings, so this is never a
- * number on the wire. Duplicated (not imported) from the sibling
- * custom-field-value submodule's identical type, matching this module's own
- * "duplicate rather than cross-submodule-import" convention (see
- * core/crud/customFieldsExtension.tsx's identical duplication and its doc
- * comment for the reasoning).
- */
-export type CustomFieldValueTypeName = "Text" | "Number" | "Boolean" | "Date" | "Select";
+import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
 /**
  * EntityType item JSON shape from API.
