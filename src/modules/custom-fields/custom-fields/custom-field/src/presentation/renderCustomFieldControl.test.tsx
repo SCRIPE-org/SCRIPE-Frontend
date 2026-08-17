@@ -274,6 +274,27 @@ describe("renderCustomFieldControl", () => {
     expect(onChange).toHaveBeenCalledWith("Medium");
   });
 
+  // Task 7b review, M2: FieldConfig["label"] is optional. Without a fallback,
+  // an undefined fc.label would make aria-label undefined too -- React omits
+  // undefined attributes, so the control would silently go right back to
+  // having NO accessible name at all, the exact regression this task exists
+  // to prevent, with no error and no failing test unless one specifically
+  // constructs a labelless FieldConfig (this one). Mirrors
+  // validateSelectCustomFieldValue's own `fc.label ?? fc.name` fallback.
+  it("falls back the Select control's accessible name to fc.name when fc.label is undefined (M2)", () => {
+    const fieldWithNoLabel = { ...PRIORITY_FIELD, label: undefined };
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: fieldWithNoLabel,
+          value: "",
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByRole("combobox", { name: "cf_priority" })).toBeInTheDocument();
+  });
+
   // D9: isViewMode on the Select branch. FeatureDefinitionFormView.tsx's real,
   // already-shipped custom-field Select branch (pre-Task-4, raw Radix
   // `Select`) uses `disabled={isViewMode}`, matching Input/DatePicker rather

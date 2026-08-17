@@ -170,8 +170,13 @@ export function renderCustomFieldControl({
           // labelable, so their `<Label htmlFor>` genuinely worked pre-
           // conversion. `aria-label` (now a first-class GenericSelect prop,
           // see generic-select.tsx) closes the gap for all 8 consumer sites
-          // at once, not just these 3.
-          aria-label={fc.label}
+          // at once, not just these 3. Falls back to `fc.name` the same way
+          // validateSelectCustomFieldValue does below (`fc.label ?? fc.name`)
+          // -- FieldConfig["label"] is optional, and an undefined aria-label
+          // would silently self-revert this exact fix for that one field,
+          // with no error and no test failure unless a test specifically
+          // constructs a labelless FieldConfig (Task 7b review, M2).
+          aria-label={fc.label ?? fc.name}
           options={fc.options?.map((opt) => ({ value: opt.value, label: opt.label })) ?? []}
           value={toFieldInputValue(value)}
           onValueChange={(v: string | string[]) => {

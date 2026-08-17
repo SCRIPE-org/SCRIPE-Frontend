@@ -60,7 +60,15 @@ export interface SelectTriggerProps {
  *      nothing, because only the inner button opened the panel.
  *   3. The accessible name of a `<button>` is its text content — and a
  *      multi-select's content lived in the sibling chips, so a populated
- *      multi-select announced itself with no name at all.
+ *      multi-select announced itself with no name at all. Moving to a
+ *      `<div role="combobox">` did NOT fix this by itself: per ARIA,
+ *      role="combobox" is Name From: author, not Name From: contents, so a
+ *      nameless `<button>` just became a nameless `<div>`. What actually
+ *      closes it is the `ariaLabel`/`ariaLabelledBy` props below, applied
+ *      to this same element as real `aria-label`/`aria-labelledby`
+ *      attributes (Wave 2 Step 2.2's Task 7b a11y fix) -- see those props'
+ *      own doc comments and `GenericSelectProps["aria-label"]`'s for the
+ *      full mechanism.
  *
  * It is a `div`, not a `button`, because the chips carry their own remove
  * controls and a button may not contain a button.
