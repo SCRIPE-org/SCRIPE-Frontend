@@ -60,6 +60,10 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { getBrowserLocalTimeZoneId } from "@core/utils/timezone";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import type { CustomFieldDateTimeValue } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
+import {
+  MultiSelectCustomFieldControl,
+  MULTI_SELECT_MAX_SELECTIONS,
+} from "./MultiSelectCustomFieldControl";
 
 export interface CustomFieldControlProps {
   fc: FieldConfig;
@@ -234,37 +238,26 @@ export function renderCustomFieldControl({
     );
   }
 
-  // Wave 3.1 Task 10: MultiSelect. The dispatch-correctness fix the pre-plan
-  // analysis's §5.2/TRAP 11 names explicitly: the Select branch above feeds
-  // `value` through `toFieldInputValue` (`String(value)`), which turns an
-  // array into the single string "a,b" -- `GenericSelect`'s own multi
-  // detection is `Array.isArray(value)`, so that string is neither a valid
-  // single value NOR ever detected as multi. This branch passes the array
-  // straight through untouched in both directions instead. Client-side
-  // option-membership validation (generalizing `validateSelectCustomFieldValue`
-  // to arrays) and the read side's chip/removable-token affordance in the
-  // OPEN panel are Task 11's job -- this branch only has to get a real
-  // selection saved and reloaded correctly, which it does: GenericSelect's
-  // "multi" mode already renders chips in the trigger and toggle semantics
-  // in the panel with no further wiring.
+  // Wave 3.1 Task 10 fixed the dispatch-correctness defect the pre-plan
+  // analysis's §5.2/TRAP 11 names explicitly (the Select branch's own
+  // `toFieldInputValue` -- `String(value)` -- would have turned an array
+  // into the single string "a,b", which `GenericSelect`'s own
+  // `Array.isArray(value)` multi-detection would never recognize as a
+  // selection). Wave 3.1 Task 11 replaces that minimal branch with the real
+  // control: ceiling enforcement (19 selections, MULTI_SELECT_MAX_SELECTIONS
+  // below), a live selection counter, and the WAI-ARIA listbox pattern --
+  // see MultiSelectCustomFieldControl.tsx's own header comment for the full
+  // design. `onChange` is typed `(value: unknown) => void` on this shared
+  // renderer, so it accepts the control's `string[]` callback with no cast.
   if (fc.type === "multi-select") {
     return (
-      <div key={fc.name} className="space-y-2">
-        <Label htmlFor={fc.name} className="text-sm font-medium">
-          {fc.label}
-        </Label>
-        <GenericSelect
-          id={fc.name}
-          aria-label={fc.label ?? fc.name}
-          options={fc.options?.map((opt) => ({ value: opt.value, label: opt.label })) ?? []}
-          value={Array.isArray(value) ? value : []}
-          onValueChange={(v: string | string[]) => onChange(v)}
-          placeholder={fc.placeholder || fc.label}
-          type="multi"
-          required={fc.required}
-          disabled={isViewMode}
-        />
-      </div>
+      <MultiSelectCustomFieldControl
+        key={fc.name}
+        fc={fc}
+        value={value}
+        onChange={onChange}
+        isViewMode={isViewMode}
+      />
     );
   }
 
@@ -368,11 +361,11 @@ export type TranslateFn = (key: string, params?: Record<string, string | number>
  * Returns `null` when `value` is empty/absent/whitespace-only (required-ness
  * is a separate, pre-existing concern -- see this module's own generic
  * "required" validation -- not this function's job) or when `fc.type` isn't
- * "select" at all, and the (already-interpolated) error message string
- * otherwise. Whitespace-only ("   ") is deliberately treated the SAME as
- * fully-empty, not as "not one of the allowed options": the backend's
- * `SelectValueTypeHandler.IsEmpty` is `string.IsNullOrWhiteSpace`-based and is
- * checked BEFORE `Validate` ever runs (see
+ * "select" or "multi-select" at all, and the (already-interpolated) error
+ * message string otherwise. Whitespace-only ("   ") is deliberately treated
+ * the SAME as fully-empty, not as "not one of the allowed options": the
+ * backend's `SelectValueTypeHandler.IsEmpty` is `string.IsNullOrWhiteSpace`-
+ * based and is checked BEFORE `Validate` ever runs (see
  * `SaveEntityCustomFieldValuesCommandHandler.cs`'s empty-value gate, and Wave
  * 2 Step 2.1's own D35 ruling) -- so the backend would accept a whitespace-
  * only submission as "clear this value," never reject it as invalid. Checking
@@ -380,15 +373,18 @@ export type TranslateFn = (key: string, params?: Record<string, string | number>
  * the backend happily treats as empty, the exact kind of frontend/backend
  * verdict mismatch D5 exists to eliminate, not reintroduce.
  *
- * NOT called automatically from the Select branch above. `GenericSelect` only
- * ever emits a value drawn from that branch's own `options` array (built from
- * `fc.options`), so a value reaching `onChange` through the picker UI can
- * never be out-of-list -- gating `onChange` itself would be dead defensive
- * code with no real attack surface via the UI. The actual risk this closes is
- * a STALE value already sitting in form state reaching a save/submit flow
- * (e.g. a field's `Options` were edited after this value was captured) --
- * exactly the case the backend's own 422 exists for today, and exactly what a
- * consumer should check before calling its save API, not on every keystroke.
+ * NOT called automatically from the Select/MultiSelect branches above.
+ * `GenericSelect` only ever emits a value drawn from that branch's own
+ * `options` array (built from `fc.options`), so a value reaching `onChange`
+ * through the picker UI can never be out-of-list or over the MultiSelect
+ * ceiling (`MultiSelectCustomFieldControl` disables every option once the
+ * cap is hit) -- gating `onChange` itself would be dead defensive code with
+ * no real attack surface via the UI. The actual risk this closes is a STALE
+ * value already sitting in form state reaching a save/submit flow (e.g. a
+ * field's `Options` were edited, or its cardinality shrank, after this value
+ * was captured) -- exactly the case the backend's own 422 exists for today,
+ * and exactly what a consumer should check before calling its save API, not
+ * on every keystroke.
  *
  * Exported as a separate, hookless function rather than folded into
  * `renderCustomFieldControl` itself or making that function hook-based:
@@ -403,12 +399,27 @@ export type TranslateFn = (key: string, params?: Record<string, string | number>
  * of the 8 sites already holds its own `t` from `useI18n()` for its section
  * headings, so threading it through here as an explicit parameter costs
  * nothing new and keeps this file's only hook-free.
+ *
+ * Wave 3.1 Task 11 generalizes this to "multi-select" (Task 10's own report
+ * flagged it as a "must build" item left undone: `validateSelectCustomFieldValue`
+ * was hard-gated to `fc.type === "select"`, so a bad MultiSelect payload
+ * silently passed here and only failed as a round-trip 422 -- reopening
+ * exactly the gap the original D5 fix round closed for Select). The name
+ * stays `validateSelectCustomFieldValue` -- not renamed -- because every
+ * existing call site (this file's own `assertSelectCustomFieldValuesValid`,
+ * every one of the 9 wired save flows, and this file's own test suite)
+ * already calls it as the one per-field validation entry point regardless of
+ * which options-owning type `fc` turns out to be; a rename would be a
+ * purely cosmetic churn across all of them for no behavioural gain.
  */
 export function validateSelectCustomFieldValue(
   fc: FieldConfig,
   value: unknown,
   t: TranslateFn
 ): string | null {
+  if (fc.type === "multi-select") {
+    return validateMultiSelectCustomFieldValue(fc, value, t);
+  }
   if (fc.type !== "select") return null;
   if (value === undefined || value === null) return null;
 
@@ -428,6 +439,83 @@ export function validateSelectCustomFieldValue(
       value: text,
       field: fc.label ?? fc.name,
     });
+  }
+
+  return null;
+}
+
+/**
+ * MultiSelect's half of D5, mirroring `MultiSelectValueTypeHandler.Validate`
+ * (CustomFields.Application, Wave 3.1 Task 8) check-for-check and in the
+ * SAME order, so this reaches the identical verdict the backend would --
+ * only earlier, and with a message the user can act on immediately instead
+ * of after a round-trip 422:
+ *
+ *   1. `submitted.Count > MaxSelections` -- `ErrorCodes.MaxLength`, message
+ *      key `multiSelectTooManySelections`. Checked FIRST, exactly like the
+ *      backend, so an over-the-ceiling submission is never also reported as
+ *      "contains an invalid option" even if it happens to have one.
+ *   2. Per label, trimmed: membership against `fc.options` (ordinal,
+ *      case-sensitive -- reuses `selectInvalidOption`, the SAME message key
+ *      Select's own membership check uses, because it is the SAME concept:
+ *      "not one of the allowed options"), then
+ *   3. duplicate detection (`ErrorCodes.Unique`, message key
+ *      `multiSelectDuplicateOption`) -- a MultiSelect value is a SET, not a
+ *      multiset, matching the backend's own stated reasoning ("selecting
+ *      'Red' twice has no meaning a single 'Red' doesn't already carry").
+ *
+ * `MULTI_SELECT_MAX_SELECTIONS` is imported from
+ * `MultiSelectCustomFieldControl.tsx` (not re-declared here) so the UI's
+ * ceiling-enforcement and this save-time check can never drift to two
+ * different numbers.
+ *
+ * A non-array `value` (untouched field, or a stale non-array leftover) is
+ * treated as an empty selection, not an error -- required-ness is a
+ * separate, pre-existing concern, exactly like the scalar Select branch
+ * above, and matches `MultiSelectCustomFieldControl`'s own defensive
+ * posture for the same input shape.
+ */
+function validateMultiSelectCustomFieldValue(
+  fc: FieldConfig,
+  value: unknown,
+  t: TranslateFn
+): string | null {
+  if (value === undefined || value === null) return null;
+  if (!Array.isArray(value) || value.length === 0) return null;
+
+  if (value.length > MULTI_SELECT_MAX_SELECTIONS) {
+    return t("customField.values.multiSelectTooManySelections", {
+      field: fc.label ?? fc.name,
+      max: MULTI_SELECT_MAX_SELECTIONS,
+    });
+  }
+
+  const allowedLabels = fc.options?.map((opt) => opt.label) ?? [];
+  const seen = new Set<string>();
+
+  for (const raw of value) {
+    // Trim, matching the backend's `raw?.Trim() ?? string.Empty` -- not a
+    // blank-is-empty special case the way the scalar Select branch has one:
+    // an array ENTRY that happens to be blank/whitespace is validated like
+    // any other string, exactly what MultiSelectValueTypeHandler.Validate
+    // does (it has no per-entry emptiness exemption, only the whole-array
+    // IsEmpty([]) check, which is handled above).
+    const text = String(raw).trim();
+
+    if (!allowedLabels.includes(text)) {
+      return t("customField.values.selectInvalidOption", {
+        value: text,
+        field: fc.label ?? fc.name,
+      });
+    }
+
+    if (seen.has(text)) {
+      return t("customField.values.multiSelectDuplicateOption", {
+        value: text,
+        field: fc.label ?? fc.name,
+      });
+    }
+    seen.add(text);
   }
 
   return null;
@@ -476,6 +564,19 @@ export class CustomFieldValidationError extends Error {}
  * TenantPlanStepCustomFields has separate create/edit viewmodels) -- each
  * calls this as the first statement of its save function, before the
  * decode loop and before saveValues/its equivalent.
+ *
+ * Wave 3.1 Task 11: the type filter below now also admits "multi-select",
+ * so MultiSelect gets the SAME save-flow enforcement Select already has --
+ * with ZERO changes to any of the 9 call sites. Every one of them already
+ * passes its FULL, unfiltered `fieldConfigs` list here (none of them
+ * pre-filter to `type === "select"` themselves -- verified by reading all 9
+ * before this change), so widening this one loop's guard is the entire fix;
+ * this is the exact "wire it into the real save flows" requirement the D5
+ * fix round already paid for once, reused rather than re-paid a second time
+ * for the second options-owning type. `values[fc.name] ?? fc.defaultValue ??
+ * ""` still needs no change either: an untouched MultiSelect field reads as
+ * `""` here, and `validateMultiSelectCustomFieldValue` treats any non-array
+ * (including `""`) as an empty selection, not an error.
  */
 export function assertSelectCustomFieldValuesValid(
   fieldConfigs: FieldConfig[],
@@ -483,7 +584,7 @@ export function assertSelectCustomFieldValuesValid(
   t: TranslateFn
 ): void {
   for (const fc of fieldConfigs) {
-    if (fc.type !== "select") continue;
+    if (fc.type !== "select" && fc.type !== "multi-select") continue;
     const raw = values[fc.name] ?? fc.defaultValue ?? "";
     const error = validateSelectCustomFieldValue(fc, raw, t);
     if (error) {

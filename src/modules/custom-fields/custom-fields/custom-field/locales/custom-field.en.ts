@@ -108,17 +108,36 @@ export const en = {
       multiSelect: "Multi-Select",
     },
 
-    // Per-type value validation messages (currently Select-only). Added early
-    // by Wave 2 Step 2.2 Task 4 (renderCustomFieldControl's Select branch,
-    // D5's client-side option-membership check) rather than waiting for the
-    // plan's own Task 10 -- Task 10 lands the rest of this step's i18n keys
-    // and should extend this block, not recreate selectInvalidOption.
+    // Per-type value validation messages. Added early by Wave 2 Step 2.2 Task
+    // 4 (renderCustomFieldControl's Select branch, D5's client-side
+    // option-membership check) -- Wave 3.1 Task 11 extends this block for
+    // MultiSelect rather than recreating selectInvalidOption, exactly as this
+    // comment originally asked of whichever task extended it next.
     values: {
       // {value}/{field} interpolation, matching this module's `{x}` convention
       // (never `{{x}}`). Wording mirrors the backend's own
       // customFields.values.selectInvalidOption (SelectValueTypeHandler.Validate)
       // so a user sees the same verdict client-side that a save would 422 with.
+      // Reused verbatim by MultiSelect's own membership check (Task 11) --
+      // "not one of the allowed options" is the same concept for both types.
       selectInvalidOption: "'{value}' is not a valid option for {field}.",
+      // Mirrors the backend's customFields.values.multiSelectTooManySelections
+      // (MultiSelectValueTypeHandler.Validate) -- shown client-side before a
+      // save ever hits the 422 for the same reason.
+      multiSelectTooManySelections: "{field} allows at most {max} selected options.",
+      // Mirrors customFields.values.multiSelectDuplicateOption. A MultiSelect
+      // value is a set, not a multiset -- selecting the same option twice is
+      // rejected the same way on both tiers.
+      multiSelectDuplicateOption: "'{value}' was selected more than once for {field}.",
+    },
+
+    // MultiSelect's live selection counter/ceiling hint (Wave 3.1 Task 11) --
+    // rendered below the control by MultiSelectCustomFieldControl.tsx, never
+    // a validation error: this is UI copy, not a rejected-save message (that
+    // is the `values` block above).
+    multiSelect: {
+      selectionCount: "{count} of {max} selected",
+      maxSelectionsReached: "Maximum of {max} selected — remove one to add another.",
     },
 
     // Required / Optional flag

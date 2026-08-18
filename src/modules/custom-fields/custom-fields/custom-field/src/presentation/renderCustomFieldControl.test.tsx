@@ -21,8 +21,15 @@ import React from "react";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
-import { renderCustomFieldControl, validateSelectCustomFieldValue } from "./renderCustomFieldControl";
+import {
+  renderCustomFieldControl,
+  validateSelectCustomFieldValue,
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "./renderCustomFieldControl";
+import { MULTI_SELECT_MAX_SELECTIONS } from "./MultiSelectCustomFieldControl";
 import { ALL_VALUE_TYPES, VALUE_TYPE_CATALOG } from "./valueTypeRegistry";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
 
 vi.mock("@core/providers/settings-provider", () => ({
   useSettings: () => ({ switchStyle: "default", fontSize: "default", inputStyle: "default" }),
@@ -379,6 +386,150 @@ describe("renderCustomFieldControl", () => {
 
     it("trims surrounding whitespace before comparing, mirroring the backend's own Trim()", () => {
       expect(validateSelectCustomFieldValue(PRIORITY_FIELD, " Medium ", t)).toBeNull();
+    });
+  });
+
+  // ── validateSelectCustomFieldValue generalized to multi-select (Wave 3.1
+  // Task 11) -- mirrors MultiSelectValueTypeHandler.Validate check-for-check:
+  // ceiling first, then per-label membership, then duplicates. Task 10's own
+  // report flagged this as the "must build" item it deliberately left undone.
+  describe("validateSelectCustomFieldValue generalized to multi-select (Task 11)", () => {
+    const t = (key: string, params?: Record<string, unknown>) =>
+      params ? `${key}:${JSON.stringify(params)}` : key;
+
+    const COLOR_FIELD: FieldConfig = {
+      name: "cf_colors",
+      type: "multi-select",
+      label: "Colors",
+      options: [
+        { value: "Red", label: "Red" },
+        { value: "Green", label: "Green" },
+        { value: "Blue", label: "Blue" },
+      ],
+    };
+
+    it("returns null for a valid, in-list selection", () => {
+      expect(validateSelectCustomFieldValue(COLOR_FIELD, ["Red", "Blue"], t)).toBeNull();
+    });
+
+    it("returns null for empty/absent/non-array values (required-ness is separate)", () => {
+      expect(validateSelectCustomFieldValue(COLOR_FIELD, [], t)).toBeNull();
+      expect(validateSelectCustomFieldValue(COLOR_FIELD, undefined, t)).toBeNull();
+      expect(validateSelectCustomFieldValue(COLOR_FIELD, null, t)).toBeNull();
+      // Every wired save flow's own `values[fc.name] ?? fc.defaultValue ?? ""`
+      // fallback lands here for an untouched MultiSelect field -- must not throw
+      // or reject.
+      expect(validateSelectCustomFieldValue(COLOR_FIELD, "", t)).toBeNull();
+    });
+
+    it("rejects a selection containing a value not in fc.options, reusing selectInvalidOption", () => {
+      const message = validateSelectCustomFieldValue(COLOR_FIELD, ["Red", "Purple"], t);
+      expect(message).toContain("customField.values.selectInvalidOption");
+      expect(message).toContain('"value":"Purple"');
+    });
+
+    it("rejects the same option selected twice", () => {
+      const message = validateSelectCustomFieldValue(COLOR_FIELD, ["Red", "Red"], t);
+      expect(message).toContain("customField.values.multiSelectDuplicateOption");
+      expect(message).toContain('"value":"Red"');
+    });
+
+    it(`rejects more than ${MULTI_SELECT_MAX_SELECTIONS} selections, checked BEFORE membership`, () => {
+      const tooMany = Array.from({ length: MULTI_SELECT_MAX_SELECTIONS + 1 }, (_, i) => `Bogus-${i}`);
+      const message = validateSelectCustomFieldValue(COLOR_FIELD, tooMany, t);
+      expect(message).toContain("customField.values.multiSelectTooManySelections");
+      expect(message).toContain(`"max":${MULTI_SELECT_MAX_SELECTIONS}`);
+      // NOT the invalid-option message, even though every entry here is also
+      // out-of-list -- the ceiling check must win when both would fire,
+      // mirroring the backend's own check order exactly.
+      expect(message).not.toContain("selectInvalidOption");
+    });
+
+    it(`accepts exactly ${MULTI_SELECT_MAX_SELECTIONS} valid, distinct selections (the boundary)`, () => {
+      // Only 3 real options exist on this fc, so reuse a field with enough
+      // options to actually reach the boundary without also tripping
+      // membership/duplicate checks.
+      const manyOptions = Array.from({ length: MULTI_SELECT_MAX_SELECTIONS }, (_, i) => ({
+        value: `Opt-${i + 1}`,
+        label: `Opt-${i + 1}`,
+      }));
+      const fc: FieldConfig = { name: "cf_many", type: "multi-select", label: "Many", options: manyOptions };
+      expect(
+        validateSelectCustomFieldValue(fc, manyOptions.map((o) => o.value), t)
+      ).toBeNull();
+    });
+
+    it("trims surrounding whitespace per entry before comparing, mirroring the backend's Trim()", () => {
+      expect(validateSelectCustomFieldValue(COLOR_FIELD, [" Red ", "Blue"], t)).toBeNull();
+    });
+
+    it("is ordinal/case-sensitive per entry, matching Select's own rule", () => {
+      const message = validateSelectCustomFieldValue(COLOR_FIELD, ["red"], t);
+      expect(message).toContain("customField.values.selectInvalidOption");
+    });
+  });
+
+  // ── assertSelectCustomFieldValuesValid: the real save-flow integration
+  // point, now covering BOTH options-owning types with the SAME loop (Task
+  // 11 widened its type filter; the 9 wired save-flow call sites needed no
+  // changes at all, since every one already passes its full, unfiltered
+  // fieldConfigs list here).
+  describe("assertSelectCustomFieldValuesValid covers multi-select (Task 11)", () => {
+    const t = (key: string, params?: Record<string, unknown>) =>
+      params ? `${key}:${JSON.stringify(params)}` : key;
+
+    const fieldConfigs: FieldConfig[] = [
+      {
+        name: "cf_priority",
+        type: "select",
+        label: "Priority",
+        options: [{ value: "Low", label: "Low" }],
+      },
+      {
+        name: "cf_colors",
+        type: "multi-select",
+        label: "Colors",
+        options: [
+          { value: "Red", label: "Red" },
+          { value: "Blue", label: "Blue" },
+        ],
+      },
+    ];
+
+    it("does not throw when both a select and a multi-select value are valid", () => {
+      expect(() =>
+        assertSelectCustomFieldValuesValid(
+          fieldConfigs,
+          { cf_priority: "Low", cf_colors: ["Red", "Blue"] },
+          t
+        )
+      ).not.toThrow();
+    });
+
+    it("throws CustomFieldValidationError for a stale/invalid multi-select value, before saveValues would 422", () => {
+      expect(() =>
+        assertSelectCustomFieldValuesValid(
+          fieldConfigs,
+          { cf_priority: "Low", cf_colors: ["Red", "Purple"] },
+          t
+        )
+      ).toThrow(CustomFieldValidationError);
+    });
+
+    it("still catches an invalid scalar Select value alongside a valid multi-select one", () => {
+      expect(() =>
+        assertSelectCustomFieldValuesValid(
+          fieldConfigs,
+          { cf_priority: "Urgent", cf_colors: ["Red"] },
+          t
+        )
+      ).toThrow(CustomFieldValidationError);
+    });
+
+    it("does not throw for an untouched multi-select field (no value, no defaultValue)", () => {
+      expect(() =>
+        assertSelectCustomFieldValuesValid(fieldConfigs, { cf_priority: "Low" }, t)
+      ).not.toThrow();
     });
   });
 
