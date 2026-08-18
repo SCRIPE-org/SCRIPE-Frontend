@@ -49,21 +49,30 @@
  * doc comment for the full mechanism. The fix is not scoped to these 3
  * sites: it lands here, in the shared branch, so it closes the same latent
  * gap for all 8 consumer sites at once.
+ *
+ * Wave 3.1 Task 12 update: the LongText and DateTime branches below now
+ * delegate to their own dedicated control components
+ * (`LongTextCustomFieldControl`/`DateTimeCustomFieldControl`), the same
+ * extraction Task 11 already did for MultiSelect -- see those files' own
+ * header comments for the counter/zone-disclosure behaviour they own. The
+ * Date branch also picked up a real `placeholder`, fixing the accessible
+ * name defect the governing pre-plan analysis's §5.4 names explicitly (every
+ * Date control was announced as the generic "Select date", not its own
+ * field name -- see that branch's own comment below).
  */
 import React from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
-import { Textarea } from "@core/ui/textarea";
 import { DatePicker } from "@core/ui/date-picker";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { getBrowserLocalTimeZoneId } from "@core/utils/timezone";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import type { CustomFieldDateTimeValue } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import {
   MultiSelectCustomFieldControl,
   MULTI_SELECT_MAX_SELECTIONS,
 } from "./MultiSelectCustomFieldControl";
+import { LongTextCustomFieldControl } from "./LongTextCustomFieldControl";
+import { DateTimeCustomFieldControl } from "./DateTimeCustomFieldControl";
 
 export interface CustomFieldControlProps {
   fc: FieldConfig;
@@ -144,6 +153,24 @@ export function renderCustomFieldControl({
           onChange={(v) => onChange(v)}
           required={fc.required}
           disabled={isViewMode}
+          // Wave 3.1 Task 12 fix (pre-plan analysis §5.4): DatePicker computes
+          // its OWN internal `aria-label` as `placeholder || t("common.selectDate")`
+          // (date-picker.tsx) -- with no `placeholder` passed, every Date
+          // control in the product was announced as the generic "Select
+          // date", never its own field name. `<Label htmlFor>` above cannot
+          // fix this itself: it binds only to the hidden `aria-hidden`
+          // native input DatePicker renders for `fireEvent`/form-submission
+          // purposes, not to the visible `role="combobox"` trigger a screen
+          // reader actually names -- the exact "test that cannot fail"
+          // §5.4 traces (`getByLabelText` resolves the hidden input
+          // regardless of `aria-hidden`, so the old test passed even though
+          // the real announced name was wrong; this file's own test now
+          // asserts the name via `getByRole` instead). `fc.placeholder ||
+          // fc.label || fc.name` mirrors the Select branch's own
+          // `fc.placeholder || fc.label` fallback above, with the same
+          // `?? fc.name` safety net `aria-label={fc.label ?? fc.name}`
+          // already uses there for a definition with no label at all.
+          placeholder={fc.placeholder || fc.label || fc.name}
         />
       </div>
     );
@@ -209,32 +236,22 @@ export function renderCustomFieldControl({
     );
   }
 
-  // Wave 3.1 Task 10: LongText. A minimal-but-real branch, not a stub --
-  // renders the same `Textarea` GenericForm's own "textarea" branch already
-  // uses, with the same string in/string out contract as the Text
-  // fallthrough below. Deliberately WITHOUT the character counter and
-  // resize-y/dir polish the pre-plan analysis's §5.1 calls for (`rows`
-  // default, `dir={direction}`, a shared counter component lifted out of
-  // GenericForm) -- that is Task 12's job once the control has a home to be
-  // polished in; shipping a plain, functionally-correct textarea now is
-  // strictly better than leaving LongText on the generic single-line Input
-  // fallthrough, which would silently cap it at whatever that Input renders.
+  // Wave 3.1 Task 12: LongText's real control -- a visible character counter
+  // (throttled aria-live announcement, no maxLength) against the server's
+  // 10,000-char cap, plus the dir/resize polish Task 10 explicitly deferred.
+  // Extracted into its own component (LongTextCustomFieldControl.tsx) rather
+  // than inlined here, the same way MultiSelect (Task 11) and DateTime
+  // (below) own real state-derived behaviour a plain `if` branch can't hold
+  // -- see that file's own header comment for the full design.
   if (fc.type === "textarea") {
     return (
-      <div key={fc.name} className="space-y-2">
-        <Label htmlFor={fc.name} className="text-sm font-medium">
-          {fc.label}
-        </Label>
-        <Textarea
-          id={fc.name}
-          value={toFieldInputValue(value)}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={fc.placeholder}
-          required={fc.required}
-          disabled={isViewMode}
-          rows={fc.rows || 4}
-        />
-      </div>
+      <LongTextCustomFieldControl
+        key={fc.name}
+        fc={fc}
+        value={value}
+        onChange={onChange}
+        isViewMode={isViewMode}
+      />
     );
   }
 
@@ -261,54 +278,23 @@ export function renderCustomFieldControl({
     );
   }
 
-  // Wave 3.1 Task 10: DateTime. The wire value is the two-piece
-  // `{ value, timeZoneId }` object CustomFieldValueModel.ts's
-  // CustomFieldDateTimeValue describes (DateTimeValueTypeHandler's own
-  // chosen shape) -- `toFieldInputValue` (a bare `String(value)`) would
-  // stringify that object into the useless literal "[object Object]", the
-  // same array-destroying failure mode the MultiSelect branch above avoids,
-  // so this branch unpacks and repacks the object by hand instead.
-  //
-  // The zone is REQUIRED once any instant is submitted (the backend rejects
-  // a half-blank submission as invalid, not as empty -- see
-  // DateTimeValueTypeHandler.IsEmpty's own doc comment), so this defaults a
-  // freshly-entered instant to the BROWSER's zone, captured explicitly here
-  // rather than left undefined -- "the value this user is entering right
-  // now" is exactly the case the pre-plan analysis's §5.3 says the browser
-  // zone is the correct default for (distinct from rendering someone ELSE's
-  // scheduled event, where `core/utils/timezone.ts`'s "never the browser's
-  // local zone" warning applies). Clearing the instant clears the whole
-  // value to `null` rather than leaving a zone-only half-blank object
-  // behind. This intentionally does NOT render the "resolved zone" text or a
-  // change affordance the pre-plan's §5.3 calls for -- that visible
-  // disclosure UI is Task 12's job; this branch's only job is to never lose
-  // or corrupt the zone a value already carries.
+  // Wave 3.1 Task 12: DateTime's real control -- the visible "resolved zone"
+  // disclosure plus its searchable-combobox "change" affordance Task 10
+  // explicitly deferred (its own report: "this intentionally does NOT
+  // render the resolved zone text or a change affordance"). Extracted into
+  // its own component (DateTimeCustomFieldControl.tsx) for the same reason
+  // as LongText/MultiSelect -- see that file's own header comment for how it
+  // structurally prevents a half-filled `{ value, timeZoneId }` submission
+  // (ruling R7) from ever being composed through the UI.
   if (fc.type === "datetime") {
-    const current =
-      value && typeof value === "object" ? (value as Partial<CustomFieldDateTimeValue>) : undefined;
     return (
-      <div key={fc.name} className="space-y-2">
-        <Label htmlFor={fc.name} className="text-sm font-medium">
-          {fc.label}
-        </Label>
-        <DatePicker
-          id={fc.name}
-          type="datetime-local"
-          value={current?.value ?? ""}
-          onChange={(v) =>
-            onChange(
-              v
-                ? ({
-                    value: v,
-                    timeZoneId: current?.timeZoneId || getBrowserLocalTimeZoneId(),
-                  } satisfies CustomFieldDateTimeValue)
-                : null
-            )
-          }
-          required={fc.required}
-          disabled={isViewMode}
-        />
-      </div>
+      <DateTimeCustomFieldControl
+        key={fc.name}
+        fc={fc}
+        value={value}
+        onChange={onChange}
+        isViewMode={isViewMode}
+      />
     );
   }
 

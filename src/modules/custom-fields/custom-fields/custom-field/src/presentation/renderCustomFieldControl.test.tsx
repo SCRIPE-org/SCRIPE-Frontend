@@ -154,7 +154,7 @@ describe("renderCustomFieldControl", () => {
     expect(screen.getByLabelText("Nickname")).toBeDisabled();
   });
 
-  it("renders a DatePicker for fc.type date", () => {
+  it("renders a DatePicker for fc.type date, with a REAL accessible name (Wave 3.1 Task 12 fix)", () => {
     render(
       <>
         {renderCustomFieldControl({
@@ -164,9 +164,26 @@ describe("renderCustomFieldControl", () => {
         })}
       </>
     );
-    // The DatePicker renders a hidden input with type="date" and an accessible
-    // trigger div with role="combobox". Verify both are present.
-    const input = screen.getByLabelText("Start Date");
+    // The discriminating check: the VISIBLE trigger's real, computed
+    // accessible name -- not `getByLabelText`, which the pre-plan analysis's
+    // §5.4 traces resolves to the HIDDEN `aria-hidden` input via the sibling
+    // `<Label htmlFor>` regardless of whether the visible control's own
+    // aria-label is correct ("a test that cannot fail"). Before this task's
+    // `placeholder` fix, this control's real accessible name was the generic
+    // `t("common.selectDate")`, never "Start Date".
+    const trigger = screen.getByRole("combobox", { name: "Start Date" });
+    expect(trigger).toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "common.selectDate" })).not.toBeInTheDocument();
+
+    // The underlying native input (grabbed via the DOM association a sighted
+    // dev tool would also find -- NOT used here to assert the accessible
+    // name) still carries the real `type="date"`. Scoped to `input`: now
+    // that the VISIBLE trigger's own aria-label also reads "Start Date" (the
+    // fix under test), a bare `getByLabelText("Start Date")` matches BOTH
+    // the hidden input (via `<Label htmlFor>`) and the trigger (via its own
+    // aria-label) -- this is itself evidence the fix landed, not a problem
+    // to work around silently.
+    const input = screen.getByLabelText("Start Date", { selector: "input" });
     expect(input).toHaveAttribute("type", "date");
   });
 
@@ -181,9 +198,24 @@ describe("renderCustomFieldControl", () => {
         })}
       </>
     );
-    const input = screen.getByLabelText("Start Date") as HTMLInputElement;
+    // Scoped to `input` -- see the comment in the previous test for why a
+    // bare `getByLabelText("Start Date")` is now ambiguous (by design).
+    const input = screen.getByLabelText("Start Date", { selector: "input" }) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "2026-08-17" } });
     expect(onChange).toHaveBeenCalledWith("2026-08-17");
+  });
+
+  it("falls back the Date control's accessible name to fc.name when fc.label is undefined", () => {
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_nolabel_date", type: "date" },
+          value: "",
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByRole("combobox", { name: "cf_nolabel_date" })).toBeInTheDocument();
   });
 
   // D9: isViewMode on the Date branch. FeatureDefinitionFormView.tsx's
@@ -649,9 +681,29 @@ describe("renderCustomFieldControl", () => {
     });
   });
 
-  // ── fc.type === "datetime" (Wave 3.1 Task 10: DateTime) ─────────────────
+  // ── fc.type === "datetime" (Wave 3.1 Task 10 branch, Task 12 real control) ─
+  // Every `getByLabelText("Meeting", ...)` call below is scoped to
+  // `{ selector: "input" }`: Task 12 gave the VISIBLE trigger its own real
+  // aria-label equal to "Meeting" too (fixing the generic "select date"
+  // defect §5.4 names), so a bare `getByLabelText("Meeting")` now matches
+  // BOTH the hidden native input (via `<Label htmlFor>`) and the trigger
+  // (via its own aria-label) -- ambiguous by design, not a regression. The
+  // dedicated accessible-name assertions live in
+  // DateTimeCustomFieldControl.test.tsx (role="group" and the instant
+  // trigger's own `getByRole` name); this file keeps its pre-existing
+  // structural (type/value) assertions working against the real input.
   describe("fc.type datetime (DateTime)", () => {
     const MEETING_FIELD = { name: "cf_meeting", type: "datetime" as const, label: "Meeting" };
+
+    it("wraps the control in a labelled group and gives the instant picker a real accessible name", () => {
+      render(
+        <>
+          {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange: vi.fn() })}
+        </>
+      );
+      expect(screen.getByRole("group", { name: "Meeting" })).toBeInTheDocument();
+      expect(screen.getByRole("combobox", { name: "Meeting" })).toBeInTheDocument();
+    });
 
     it("renders a datetime-local input", () => {
       render(
@@ -659,7 +711,7 @@ describe("renderCustomFieldControl", () => {
           {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange: vi.fn() })}
         </>
       );
-      expect(screen.getByLabelText("Meeting")).toHaveAttribute("type", "datetime-local");
+      expect(screen.getByLabelText("Meeting", { selector: "input" })).toHaveAttribute("type", "datetime-local");
     });
 
     // TRAP (pre-plan analysis §5.3/R7): the wire value is the two-piece
@@ -677,7 +729,7 @@ describe("renderCustomFieldControl", () => {
           })}
         </>
       );
-      expect(screen.getByLabelText("Meeting")).toHaveValue("2026-08-18T10:30");
+      expect(screen.getByLabelText("Meeting", { selector: "input" })).toHaveValue("2026-08-18T10:30");
     });
 
     it("reports a { value, timeZoneId } object via onChange, pairing a fresh instant with a zone", () => {
@@ -687,7 +739,7 @@ describe("renderCustomFieldControl", () => {
           {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange })}
         </>
       );
-      fireEvent.change(screen.getByLabelText("Meeting"), {
+      fireEvent.change(screen.getByLabelText("Meeting", { selector: "input" }), {
         target: { value: "2026-08-18T10:30" },
       });
       expect(onChange).toHaveBeenCalledTimes(1);
@@ -708,7 +760,7 @@ describe("renderCustomFieldControl", () => {
           })}
         </>
       );
-      fireEvent.change(screen.getByLabelText("Meeting"), {
+      fireEvent.change(screen.getByLabelText("Meeting", { selector: "input" }), {
         target: { value: "2026-08-19T09:00" },
       });
       expect(onChange).toHaveBeenCalledWith({ value: "2026-08-19T09:00", timeZoneId: "Africa/Cairo" });
@@ -725,7 +777,7 @@ describe("renderCustomFieldControl", () => {
           })}
         </>
       );
-      fireEvent.change(screen.getByLabelText("Meeting"), { target: { value: "" } });
+      fireEvent.change(screen.getByLabelText("Meeting", { selector: "input" }), { target: { value: "" } });
       expect(onChange).toHaveBeenCalledWith(null);
     });
   });
@@ -784,8 +836,19 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           expect(onChange).toHaveBeenCalledWith(true);
           break;
         case "date":
-          // Date's own dedicated branch: a real <input type="date">.
-          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "date");
+          // Date's own dedicated branch: a real <input type="date">, AND
+          // (Wave 3.1 Task 12) a real computed accessible name on the
+          // VISIBLE trigger -- not just a DOM association to the hidden
+          // input `getByLabelText` would also find even if the name were
+          // wrong (see this file's dedicated Date test above). Scoped to
+          // `input`: the trigger's own aria-label now equals `valueType`
+          // too, so a bare `getByLabelText(valueType)` is ambiguous here --
+          // by design, since it's the same fix under test.
+          expect(screen.getByLabelText(valueType, { selector: "input" })).toHaveAttribute(
+            "type",
+            "date"
+          );
+          expect(screen.getByRole("combobox", { name: valueType })).toBeInTheDocument();
           break;
         case "select": {
           // Select's own dedicated branch: an open GenericSelect panel with
@@ -815,15 +878,25 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           break;
         }
         case "textarea":
-          // LongText's own dedicated branch (Wave 3.1 Task 10): a real
-          // <textarea>, not the single-line Input fallthrough.
-          expect(screen.getByLabelText(valueType).tagName).toBe("TEXTAREA");
+          // LongText's own dedicated branch: a real <textarea>, not the
+          // single-line Input fallthrough. A plain <textarea> genuinely
+          // computes its accessible name from <Label htmlFor> (unlike
+          // GenericSelect's role="combobox" div), so `getByRole("textbox",
+          // { name })` here is a real name assertion, not just a DOM
+          // association check.
+          expect(screen.getByRole("textbox", { name: valueType }).tagName).toBe("TEXTAREA");
           break;
         case "datetime":
-          // DateTime's own dedicated branch (Wave 3.1 Task 10): a real
-          // <input type="datetime-local">, not the "date" branch's
-          // date-only input.
-          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "datetime-local");
+          // DateTime's own dedicated branch (Wave 3.1 Task 12): a real
+          // <input type="datetime-local">, wrapped in a labelled
+          // role="group" (GOV.UK date-input shape, §5.3) rather than the
+          // "date" branch's single date-only input. Scoped to `input` for
+          // the same reason as the "date" case above.
+          expect(screen.getByLabelText(valueType, { selector: "input" })).toHaveAttribute(
+            "type",
+            "datetime-local"
+          );
+          expect(screen.getByRole("group", { name: valueType })).toBeInTheDocument();
           break;
         case "number":
           // Number's own distinguishing mark on the shared Input branch:

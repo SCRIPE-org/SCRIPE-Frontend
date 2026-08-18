@@ -140,6 +140,29 @@ export const en = {
       maxSelectionsReached: "Maximum of {max} selected — remove one to add another.",
     },
 
+    // LongText's character counter (Wave 3.1 Task 12) -- rendered below the
+    // control by LongTextCustomFieldControl.tsx. UI copy, not a rejected-save
+    // message: the server's own 422 on a genuine over-cap save still speaks
+    // for itself. `charactersOverLimit` names the OVERAGE, not the raw count,
+    // matching GOV.UK's character-count component convention this control's
+    // "let the user over-type, never truncate silently" behaviour follows.
+    longText: {
+      characterCount: "{count} of {max} characters",
+      charactersOverLimit: "{overBy} characters too many (limit is {max})",
+    },
+
+    // DateTime's zone disclosure/change affordance (Wave 3.1 Task 12) --
+    // rendered by DateTimeCustomFieldControl.tsx. "Zone is a disclosure, not
+    // a question" (pre-plan analysis §5.3): the resolved zone always renders
+    // as plain text next to the instant, with a small "Change" link that
+    // swaps in a searchable timezone picker only on demand.
+    dateTime: {
+      zoneDisclosure: "Zone: {zone}",
+      changeTimezone: "Change",
+      cancelTimezoneChange: "Cancel",
+      timezonePickerLabel: "Timezone for {field}",
+    },
+
     // Required / Optional flag
     required: "Required",
     optional: "Optional",

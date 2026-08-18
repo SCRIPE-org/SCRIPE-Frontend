@@ -108,7 +108,14 @@ describe("TenantPlanStepCustomFields", () => {
     });
 
     expect(screen.getByRole("switch", { name: "Active" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Start Date")).toHaveAttribute("type", "date");
+    // Scoped to `input`: Wave 3.1 Task 12 gave the DatePicker trigger its own
+    // real aria-label equal to the field's label, so a bare
+    // `getByLabelText("Start Date")` is now ambiguous by design -- see
+    // renderCustomFieldControl.tsx's Date branch.
+    expect(screen.getByLabelText("Start Date", { selector: "input" })).toHaveAttribute(
+      "type",
+      "date"
+    );
     expect(screen.getByLabelText("Count")).toHaveAttribute("type", "number");
   });
 
@@ -131,7 +138,9 @@ describe("TenantPlanStepCustomFields", () => {
     fireEvent.click(screen.getByRole("switch", { name: "Active" }));
     expect(onChange).toHaveBeenCalledWith("cf_active", true);
 
-    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+    fireEvent.change(screen.getByLabelText("Start Date", { selector: "input" }), {
+      target: { value: "2026-08-17" },
+    });
     expect(onChange).toHaveBeenCalledWith("cf_start", "2026-08-17");
 
     fireEvent.change(screen.getByLabelText("Count"), { target: { value: "7" } });

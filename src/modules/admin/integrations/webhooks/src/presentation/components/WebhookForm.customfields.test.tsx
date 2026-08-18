@@ -151,8 +151,14 @@ describe("WebhookForm + custom fields", () => {
     fireEvent.click(switchControl);
     expect(switchControl).toHaveAttribute("aria-checked", "true");
 
-    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
-    expect(screen.getByLabelText("Start Date")).toHaveValue("2026-08-17");
+    // Scoped to `input`: Wave 3.1 Task 12 gave the DatePicker trigger its own
+    // real aria-label equal to the field's label, so a bare
+    // `getByLabelText("Start Date")` is now ambiguous by design -- see
+    // renderCustomFieldControl.tsx's Date branch.
+    fireEvent.change(screen.getByLabelText("Start Date", { selector: "input" }), {
+      target: { value: "2026-08-17" },
+    });
+    expect(screen.getByLabelText("Start Date", { selector: "input" })).toHaveValue("2026-08-17");
 
     const trigger = screen.getByRole("combobox", { name: "Severity" });
     fireEvent.click(trigger);

@@ -188,7 +188,13 @@ describe("DefinitionFormDialog + custom fields", () => {
     fireEvent.change(await screen.findByLabelText("Nickname"), { target: { value: "Mo" } });
     fireEvent.change(screen.getByLabelText("Score"), { target: { value: "42" } });
     fireEvent.click(screen.getByRole("switch", { name: "Featured" }));
-    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+    // Scoped to `input`: Wave 3.1 Task 12 gave the DatePicker trigger its own
+    // real aria-label equal to the field's label, so a bare
+    // `getByLabelText("Start Date")` is now ambiguous by design -- see
+    // renderCustomFieldControl.tsx's Date branch.
+    fireEvent.change(screen.getByLabelText("Start Date", { selector: "input" }), {
+      target: { value: "2026-08-17" },
+    });
 
     const trigger = screen.getByRole("combobox", { name: "Support Tier" });
     fireEvent.click(trigger);

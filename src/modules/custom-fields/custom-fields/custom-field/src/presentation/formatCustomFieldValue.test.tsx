@@ -42,15 +42,80 @@ describe("formatCustomFieldValue", () => {
     expect(badge.className).toContain("text-nx-ink-2");
   });
 
-  it("formats a Date via locale-aware toLocaleDateString", () => {
-    const iso = "2026-01-15T00:00:00Z";
-    render(<>{formatCustomFieldValue("Date", iso, "en", t)}</>);
-    expect(screen.getByText(new Date(iso).toLocaleDateString("en-US"))).toBeInTheDocument();
+  // Wave 3.1 Task 6 (backend) made Date a true calendar date: the wire value
+  // is now a BARE "yyyy-MM-dd" string (System.Text.Json's built-in DateOnly
+  // converter), never a full ISO instant -- these fixtures were updated from
+  // the pre-Wave-3.1 `"2026-01-15T00:00:00Z"` shape to match. See the
+  // dedicated "day-shift regression pin" describe block below for the actual
+  // bug this task fixed in the Date case itself.
+  it("formats a Date via locale-aware toLocaleDateString, constructed LOCALLY (never through a UTC instant)", () => {
+    render(<>{formatCustomFieldValue("Date", "2026-01-15", "en", t)}</>);
+    expect(screen.getByText(new Date(2026, 0, 15).toLocaleDateString("en-US"))).toBeInTheDocument();
   });
 
   it("renders the empty-cell marker for a Date value that doesn't parse", () => {
     render(<>{formatCustomFieldValue("Date", "not-a-date", "en", t)}</>);
     expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a full ISO instant -- Date must never accept one", () => {
+    // The pre-Wave-3.1 wire shape (a full instant) must now be REJECTED, not
+    // silently reinterpreted -- this type's own contract (Task 6/12) is a
+    // bare calendar date, never an instant.
+    render(<>{formatCustomFieldValue("Date", "2026-01-15T00:00:00Z", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  // ── Day-shift regression pin (Wave 3.1 Task 12) ─────────────────────────
+  // THE bug: `new Date("2026-08-18")` parses as UTC MIDNIGHT (ECMA-262
+  // 21.4.3.2 -- a date-only ISO string is always UTC), and the pre-fix code
+  // then called `toLocaleDateString()`, which renders in the VIEWER's own
+  // LOCAL zone. For any viewer west of UTC that instant falls on the
+  // PREVIOUS local calendar day, so the pre-fix implementation would print
+  // "8/17/2026" for a stored "2026-08-18" -- silently wrong, every time, for
+  // every such viewer. These tests set `process.env.TZ` to a real IANA zone
+  // (something `vi.setSystemTime` cannot do -- it changes the clock, not the
+  // zone) so they would FAIL under the old `new Date(iso).toLocaleDateString()`
+  // implementation and only pass against the fix (parse the three components
+  // and construct a LOCAL Date, never touching UTC).
+  describe("day-shift regression pin (must not shift the calendar day in any timezone)", () => {
+    it("does not print the day before for a viewer west of UTC (America/Los_Angeles, UTC-8)", () => {
+      const originalTz = process.env.TZ;
+      try {
+        process.env.TZ = "America/Los_Angeles";
+        render(<>{formatCustomFieldValue("Date", "2026-08-18", "en", t)}</>);
+        expect(screen.getByText("8/18/2026")).toBeInTheDocument();
+        expect(screen.queryByText("8/17/2026")).not.toBeInTheDocument();
+      } finally {
+        process.env.TZ = originalTz;
+      }
+    });
+
+    it("does not print the day after for a viewer east of UTC (Pacific/Kiritimati, UTC+14)", () => {
+      const originalTz = process.env.TZ;
+      try {
+        process.env.TZ = "Pacific/Kiritimati";
+        render(<>{formatCustomFieldValue("Date", "2026-08-18", "en", t)}</>);
+        expect(screen.getByText("8/18/2026")).toBeInTheDocument();
+        expect(screen.queryByText("8/19/2026")).not.toBeInTheDocument();
+      } finally {
+        process.env.TZ = originalTz;
+      }
+    });
+
+    it("renders the identical calendar day at a UTC-crossing boundary regardless of viewer timezone", () => {
+      // A date deliberately chosen with no other significance beyond
+      // exercising the same UTC-midnight-parse hazard at a different point
+      // in the calendar.
+      const originalTz = process.env.TZ;
+      try {
+        process.env.TZ = "America/Los_Angeles";
+        render(<>{formatCustomFieldValue("Date", "2026-01-01", "en", t)}</>);
+        expect(screen.getByText("1/1/2026")).toBeInTheDocument();
+      } finally {
+        process.env.TZ = originalTz;
+      }
+    });
   });
 
   it("returns the raw value as a plain string for Text", () => {
@@ -154,13 +219,18 @@ describe("formatCustomFieldValue", () => {
           break;
         }
         case "Date": {
-          const iso = "2026-01-15T00:00:00Z";
-          const out = formatCustomFieldValue(type, iso, "en", t);
-          // String(iso) would be the raw ISO string unchanged -- a real Date
-          // branch's toLocaleDateString output is what proves formatting
-          // actually happened.
-          expect(out).not.toBe(String(iso));
-          expect(out).toBe(new Date(iso).toLocaleDateString("en-US"));
+          // Bare "yyyy-MM-dd" -- the true-calendar-date wire shape (Wave 3.1
+          // Task 6), never a full instant (see the dedicated "never accepts
+          // a full instant" test above).
+          const bareDate = "2026-01-15";
+          const out = formatCustomFieldValue(type, bareDate, "en", t);
+          // String(bareDate) would be the raw string unchanged -- a real
+          // Date branch's toLocaleDateString output, constructed LOCALLY
+          // from the parsed y/m/d (never through a UTC-anchored
+          // `new Date(iso)` -- see this file's day-shift regression pin
+          // block), is what proves formatting actually happened.
+          expect(out).not.toBe(bareDate);
+          expect(out).toBe(new Date(2026, 0, 15).toLocaleDateString("en-US"));
           break;
         }
         case "LongText":

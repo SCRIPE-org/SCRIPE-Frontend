@@ -125,7 +125,16 @@ describe("SubmitDsrModal + custom fields", () => {
     fireEvent.click(screen.getByRole("switch", { name: "Featured" }));
     expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__featured", true);
 
-    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+    // Scoped to `input`: Wave 3.1 Task 12 gave the DatePicker trigger its own
+    // real aria-label equal to the field's label (fixing a pre-existing
+    // "generic selectDate" accessible-name defect), so a bare
+    // `getByLabelText("Start Date")` is now ambiguous -- it also matches the
+    // visible trigger, by design (see renderCustomFieldControl.tsx's Date
+    // branch and its own test file for the fix this is a direct consequence
+    // of).
+    fireEvent.change(screen.getByLabelText("Start Date", { selector: "input" }), {
+      target: { value: "2026-08-17" },
+    });
     expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__startdate", "2026-08-17");
 
     const trigger = screen.getByRole("combobox", { name: "Priority Level" });

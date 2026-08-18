@@ -208,8 +208,14 @@ describe("FeatureDefinitionFormView + custom fields", () => {
     expect(switchControl).toHaveAttribute("aria-checked", "true");
 
     // Date.
-    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
-    expect(screen.getByLabelText("Start Date")).toHaveValue("2026-08-17");
+    // Scoped to `input`: Wave 3.1 Task 12 gave the DatePicker trigger its own
+    // real aria-label equal to the field's label, so a bare
+    // `getByLabelText("Start Date")` is now ambiguous by design -- see
+    // renderCustomFieldControl.tsx's Date branch.
+    fireEvent.change(screen.getByLabelText("Start Date", { selector: "input" }), {
+      target: { value: "2026-08-17" },
+    });
+    expect(screen.getByLabelText("Start Date", { selector: "input" })).toHaveValue("2026-08-17");
 
     // Select -- picking an option round-trips the option's label back as the
     // GenericSelect trigger's own displayed value (D6: the label string, not
@@ -247,11 +253,14 @@ describe("FeatureDefinitionFormView + custom fields", () => {
     expect(switchControl).not.toBeDisabled();
 
     // Date -> aria-disabled trigger. DatePicker's own trigger derives its
-    // accessible name from placeholder/value, not fc.label -- with no
-    // placeholder and no value it falls back to t("common.selectDate")
-    // (identity-mocked above), which distinguishes it from the Select
-    // trigger's fc.label-derived name below.
-    const dateTrigger = screen.getByRole("combobox", { name: "common.selectDate" });
+    // accessible name from placeholder/value (Wave 3.1 Task 12:
+    // renderCustomFieldControl.tsx's Date branch now passes
+    // `fc.placeholder || fc.label || fc.name` as that placeholder, fixing
+    // the pre-existing "every Date control announces as the generic
+    // t('common.selectDate')" defect) -- with no value yet, the accessible
+    // name is now the field's own label, "Start Date" (DATE_FIELD's label),
+    // not the generic fallback.
+    const dateTrigger = screen.getByRole("combobox", { name: "Start Date" });
     expect(dateTrigger).toHaveAttribute("aria-disabled", "true");
 
     // Select -> aria-disabled trigger, real accessible name preserved even
@@ -275,7 +284,9 @@ describe("FeatureDefinitionFormView + custom fields", () => {
     const switchControl = screen.getByRole("switch", { name: "Featured" });
     expect(switchControl).not.toHaveAttribute("aria-readonly", "true");
 
-    const dateTrigger = screen.getByRole("combobox", { name: "common.selectDate" });
+    // See the previous test's comment: the trigger's accessible name is now
+    // the field's own label (Wave 3.1 Task 12), not "common.selectDate".
+    const dateTrigger = screen.getByRole("combobox", { name: "Start Date" });
     expect(dateTrigger).not.toHaveAttribute("aria-disabled", "true");
 
     const selectTrigger = screen.getByRole("combobox", { name: "Priority" });

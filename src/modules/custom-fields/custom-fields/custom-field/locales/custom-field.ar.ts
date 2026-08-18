@@ -134,6 +134,24 @@ export const ar = {
       maxSelectionsReached: "تم الوصول للحد الأقصى ({max}) — أزل خيارًا لإضافة آخر.",
     },
 
+    // عدّاد الأحرف لحقل النص الطويل (المهمة 12 من الموجة 3.1) — يُعرض أسفل
+    // الحقل بواسطة LongTextCustomFieldControl.tsx. نص واجهة، وليس رسالة رفض
+    // حفظ. charactersOverLimit تذكر مقدار الزيادة نفسه وليس العدد الكلي.
+    longText: {
+      characterCount: "{count} من {max} حرفًا",
+      charactersOverLimit: "زيادة {overBy} حرفًا عن الحد الأقصى ({max})",
+    },
+
+    // إظهار المنطقة الزمنية وإمكانية تغييرها لحقل التاريخ والوقت (المهمة 12
+    // من الموجة 3.1) — تُعرض بواسطة DateTimeCustomFieldControl.tsx. المنطقة
+    // الزمنية تُعرض دائمًا كنص، وليست سؤالًا يُطرح على المستخدم.
+    dateTime: {
+      zoneDisclosure: "المنطقة الزمنية: {zone}",
+      changeTimezone: "تغيير",
+      cancelTimezoneChange: "إلغاء",
+      timezonePickerLabel: "المنطقة الزمنية لحقل {field}",
+    },
+
     // Required / Optional flag
     required: "إلزامي",
     optional: "اختياري",

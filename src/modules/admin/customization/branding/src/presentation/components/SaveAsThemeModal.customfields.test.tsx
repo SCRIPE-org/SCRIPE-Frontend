@@ -123,7 +123,13 @@ describe("SaveAsThemeModal + custom fields", () => {
     fireEvent.click(screen.getByRole("switch", { name: "Featured" }));
     expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__featured", true);
 
-    fireEvent.change(screen.getByLabelText("Start Date"), { target: { value: "2026-08-17" } });
+    // Scoped to `input`: Wave 3.1 Task 12 gave the DatePicker trigger its own
+    // real aria-label equal to the field's label, so a bare
+    // `getByLabelText("Start Date")` is now ambiguous by design -- see
+    // renderCustomFieldControl.tsx's Date branch.
+    fireEvent.change(screen.getByLabelText("Start Date", { selector: "input" }), {
+      target: { value: "2026-08-17" },
+    });
     expect(onCustomFieldChange).toHaveBeenCalledWith("__cf__startdate", "2026-08-17");
 
     const trigger = screen.getByRole("combobox", { name: "Mood" });

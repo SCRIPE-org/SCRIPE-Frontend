@@ -72,6 +72,18 @@
  *      catalog-owned formatter shape in now, before those land, risks
  *      redesigning this same abstraction twice. Revisit once Tasks 11/12
  *      ship if the manual switch has grown unwieldy.
+ *
+ * FILE-OWNERSHIP NOTE (Wave 3.1 Task 12): Task 10/11 settled the LongText/
+ * DateTime/MultiSelect cases below and Task 12's brief named this file
+ * as theirs, not to be redesigned here. The ONE exception is the pre-existing
+ * `case "Date"` -- Task 10's own closing report explicitly left it untouched
+ * ("Flagging so nobody assumes this task fixed Date's existing UTC/local
+ * mismatch -- it did not touch it at all... is a backend+frontend joint-
+ * deploy change the pre-plan assigns to T12, not T10") and Task 12's own
+ * brief separately named this exact function's day-shift bug as the one
+ * real, must-fix defect in its scope. That single case (and its own test
+ * coverage in formatCustomFieldValue.test.tsx) is the only part of this file
+ * Task 12 touched -- see that case's own comment for the fix.
  */
 import React from "react";
 import { Badge } from "@core/ui/badge";
@@ -123,8 +135,46 @@ export function formatCustomFieldValue(
         </Badge>
       );
     }
+    // Wave 3.1 Task 12 bug fix -- a real, pre-existing day-shift defect, not
+    // a design question. Task 6 (backend) made Date a true calendar date:
+    // `DateValueTypeHandler.Project` now returns a C# `DateOnly`, and with no
+    // custom `DateOnly` JSON converter registered (confirmed by reading
+    // `ServiceExtensions.cs`'s `AddJsonOptions`), .NET's built-in converter
+    // serializes it as a BARE "yyyy-MM-dd" string on the wire -- no time
+    // component, no "Z", never an instant (Task 6's own report: the fallback
+    // path also always resolves to a `DateOnly` before it is ever
+    // serialized, so there is no transition-window wire-shape ambiguity).
+    //
+    // The code this replaced -- `new Date(value as string)` followed by
+    // `toLocaleDateString()` -- was already wrong for that bare-date shape
+    // before this task, and Task 6's true-date storage turns it from
+    // "sometimes wrong" into "wrong for every value, for every viewer west
+    // of UTC": per ECMA-262 21.4.3.2, a date-only ISO string parses as UTC
+    // MIDNIGHT, and `toLocaleDateString()` then renders in the VIEWER's own
+    // LOCAL zone. `new Date("2026-08-18")` is `2026-08-18T00:00:00.000Z`;
+    // for a viewer in `America/Los_Angeles` (UTC-8) that instant is
+    // `2026-08-17T16:00` LOCAL, so `toLocaleDateString()` silently prints
+    // "8/17/2026" -- one calendar day EARLIER than the value actually
+    // stored, for every viewer west of UTC, every time.
+    //
+    // Fix: parse the three calendar components directly out of the string
+    // and construct a LOCAL `Date` from them via the 3-arg constructor
+    // (`Date(y, m-1, d)` never touches UTC at all, unlike the 1-arg string
+    // constructor), so the same Y/M/D value round-trips through
+    // `toLocaleDateString()` unchanged in every timezone. A value that isn't
+    // exactly a bare `yyyy-MM-dd` string (including a full ISO instant --
+    // this type must never accept one) renders the same empty-cell marker
+    // every other type-specific parse failure in this switch already uses.
+    // Pinned in formatCustomFieldValue.test.tsx with a test that sets
+    // `process.env.TZ` to a zone west of UTC (and one east) and would fail
+    // under the old `new Date(iso)` implementation.
     case "Date": {
-      const date = new Date(value as string);
+      const match = typeof value === "string" ? /^(\d{4})-(\d{2})-(\d{2})$/.exec(value) : null;
+      if (!match) {
+        return <EmptyCustomFieldCell />;
+      }
+      const [, y, m, d] = match;
+      const date = new Date(Number(y), Number(m) - 1, Number(d));
       return Number.isNaN(date.getTime()) ? (
         <EmptyCustomFieldCell />
       ) : (
