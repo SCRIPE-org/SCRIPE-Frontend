@@ -28,6 +28,8 @@ export class CustomFieldMapper {
       createdAt: model.createdAt,
       modifiedAt: model.modifiedAt,
       isGlobal: model.isGlobal,
+      validatorKind: model.validatorKind,
+      validatorParam: model.validatorParam,
     };
     return new CustomField(data);
   }
@@ -51,7 +53,9 @@ export class CustomFieldMapper {
       entity.modifiedAt,
       entity.isGlobal,
       entity.placeholderEn,
-      entity.placeholderAr
+      entity.placeholderAr,
+      entity.validatorKind,
+      entity.validatorParam
     );
   }
 

@@ -38,6 +38,14 @@ export interface CustomFieldData {
   modifiedAt?: string | null;
   /** True for a platform-owned (TenantId == null) definition inherited by every tenant. Absent on detail fetches (list-only). */
   isGlobal?: boolean;
+  /**
+   * Wave 2 Step 2.5 Task 9. Wire name is the C# ValidatorKind member name
+   * (see validatorKindRegistry.ts). Absent on list rows (R3) -- only
+   * populated from a detail fetch.
+   */
+  validatorKind?: string | null;
+  /** Wave 2 Step 2.5 Task 9. Absent on list rows (R3), same as validatorKind. */
+  validatorParam?: string | null;
 }
 
 /**
@@ -104,5 +112,13 @@ export class CustomField {
 
   get isGlobal(): boolean {
     return this.data.isGlobal ?? false;
+  }
+
+  get validatorKind(): string | null | undefined {
+    return this.data.validatorKind;
+  }
+
+  get validatorParam(): string | null | undefined {
+    return this.data.validatorParam;
   }
 }

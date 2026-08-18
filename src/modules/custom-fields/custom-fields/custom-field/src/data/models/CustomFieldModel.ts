@@ -48,11 +48,31 @@ export interface CustomFieldJson {
   isActive: boolean;
   createdAt: string;
   modifiedAt?: string | null;
+  /**
+   * Wave 2 Step 2.5 Task 9. Wire name is the exact C# enum member name
+   * (e.g. "SwiftBic", "PostalCode") -- see validatorKindRegistry.ts for the
+   * closed set. Kept as a plain string here (not narrowed to
+   * ValidatorKindName) because that union's canonical home is currently the
+   * presentation-layer registry, not this data-layer DTO; narrowing here
+   * would mean this file importing a presentation-layer type, which is the
+   * wrong direction for this module's Data -> Presentation layering.
+   * `undefined`/`null` means no validator attached.
+   */
+  validatorKind?: string | null;
+  /**
+   * Wave 2 Step 2.5 Task 9. Free-form parameter for the 6 parameterized
+   * ValidatorKind members (e.g. "1,100" for NumericRange, "EG" for
+   * PostalCode). `undefined`/`null` for the 7 non-parameterized kinds.
+   */
+  validatorParam?: string | null;
 }
 
 /**
  * CustomField list-row JSON shape from API.
- * The list response omits `options` and `modifiedAt`.
+ * The list response omits `options`, `modifiedAt`, both placeholders, and
+ * (per R3, Wave 2 Step 2.5) `validatorKind`/`validatorParam` -- deliberately,
+ * not an oversight. `CustomFieldListResponse` on the backend has no such
+ * fields, so do not add them here.
  */
 export interface CustomFieldListItemJson {
   id: string;
@@ -108,7 +128,16 @@ export class CustomFieldModel {
     public readonly modifiedAt?: string | null,
     public readonly isGlobal?: boolean,
     public readonly placeholderEn?: string | null,
-    public readonly placeholderAr?: string | null
+    public readonly placeholderAr?: string | null,
+    // Wave 2 Step 2.5 Task 9 (TRAP 12) -- appended at the tail (positions
+    // 16/17) deliberately. This constructor's optionals already sit in a
+    // non-obvious order (labelAr, options, modifiedAt, isGlobal,
+    // placeholderEn, placeholderAr); inserting a new param anywhere before
+    // placeholderAr would silently reassign every positional call site's
+    // trailing string|null|undefined arguments to the wrong field, and
+    // TypeScript would not reliably catch it. Do not reorder.
+    public readonly validatorKind?: string | null,
+    public readonly validatorParam?: string | null
   ) {}
 
   /**
@@ -130,14 +159,18 @@ export class CustomFieldModel {
       json.modifiedAt,
       undefined,
       json.placeholderEn,
-      json.placeholderAr
+      json.placeholderAr,
+      json.validatorKind,
+      json.validatorParam
     );
   }
 
   /**
    * Create CustomFieldModel from API list-row JSON (no options / modifiedAt /
-   * placeholders — the list response is deliberately form-population-free,
-   * same convention as options).
+   * placeholders / validatorKind / validatorParam — the list response is
+   * deliberately form-population-free, same convention as options; R3, Wave
+   * 2 Step 2.5. The two new tail constructor params are simply omitted here
+   * so they default to `undefined` — that is correct, not a gap to "fix".
    */
   static fromListJson(json: CustomFieldListItemJson): CustomFieldModel {
     return new CustomFieldModel(
@@ -176,6 +209,8 @@ export class CustomFieldModel {
       isActive: this.isActive,
       createdAt: this.createdAt,
       modifiedAt: this.modifiedAt,
+      validatorKind: this.validatorKind,
+      validatorParam: this.validatorParam,
     };
   }
 }
