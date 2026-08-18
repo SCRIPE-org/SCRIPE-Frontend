@@ -95,10 +95,11 @@ export const en = {
     noFrontendScreenWarning:
       "No screen renders {entity} yet. This definition will save correctly and the values API will work for it, but it won't appear on any form until a screen is built for it.",
 
-    // CustomFieldValueType enum (0..12) -- Wave 3.1 Task 10 added longText/
+    // CustomFieldValueType enum (0..16) -- Wave 3.1 Task 10 added longText/
     // dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7); Wave 3.2
     // Batch 3 adds email/url/phone/percent/rating (Email=8, Url=9, Phone=10,
-    // Percent=11, Rating=12).
+    // Percent=11, Rating=12); Wave 3.3 Batch C adds currency/duration/time/
+    // color (Currency=13, Duration=14, Time=15, Color=16).
     valueTypes: {
       text: "Text",
       number: "Number",
@@ -113,6 +114,10 @@ export const en = {
       phone: "Phone",
       percent: "Percent",
       rating: "Rating",
+      currency: "Currency",
+      duration: "Duration",
+      time: "Time",
+      color: "Color",
     },
 
     // Per-type value validation messages. Added early by Wave 2 Step 2.2 Task
@@ -136,6 +141,13 @@ export const en = {
       // value is a set, not a multiset -- selecting the same option twice is
       // rejected the same way on both tiers.
       multiSelectDuplicateOption: "'{value}' was selected more than once for {field}.",
+      // Wave 3.3 Batch C: Currency's own half-blank guard (mirrors the
+      // backend's customFields.values.currencyAmountExpected/
+      // currencyCodeInvalid pair conceptually -- CurrencyValueTypeHandler.
+      // Validate requires BOTH pieces once either is present). Shown before
+      // a save ever hits the 422, from assertSelectCustomFieldValuesValid's
+      // own Currency check.
+      currencyIncomplete: "{field} needs both an amount and a currency code.",
     },
 
     // MultiSelect's live selection counter/ceiling hint (Wave 3.1 Task 11) --
@@ -168,6 +180,44 @@ export const en = {
       changeTimezone: "Change",
       cancelTimezoneChange: "Cancel",
       timezonePickerLabel: "Timezone for {field}",
+    },
+
+    // Duration's explicit unit annotation (Wave 3.3 Batch C) -- rendered
+    // beside the edit control (DurationCustomFieldControl.tsx) AND appended
+    // in the read-side formatter (formatCustomFieldValue.tsx), so a stored
+    // bare minute count is never ambiguous in either direction. Storage is
+    // bare minutes (backend ruling R4); this is the one string that makes
+    // that unit explicit instead of implicit.
+    duration: {
+      unitLabel: "minutes",
+    },
+
+    // Currency's paired amount + ISO 4217 code control (Wave 3.3 Batch C,
+    // rulings R1/R2) -- rendered by CurrencyCustomFieldControl.tsx.
+    // amountLabel/codeLabel are each sub-input's OWN accessible name (both
+    // pieces are required together once either is entered, so both need a
+    // real, distinguishing name of their own -- see that control's own
+    // header comment); pairHint is always-visible UI copy stating the
+    // requirement up front, not a rejected-save message (that is
+    // values.currencyIncomplete above).
+    currency: {
+      amountLabel: "{field} amount",
+      codeLabel: "{field} currency code",
+      codePlaceholder: "USD",
+      pairHint: "Amount and currency code are required together.",
+    },
+
+    // Color's generalized picker (Wave 3.3 Batch C, ruling R5) -- reuses
+    // core/ui/rich-text-editor/ColorPickerField.tsx via its new
+    // i18nKeyPrefix prop ("customField.color") so this module's own
+    // translations resolve instead of leaking that component's original
+    // editorBlocks.color.* keys into a namespace that does not own them.
+    // Same three suffixes that component's own default namespace already
+    // uses (swatch/custom/hexPlaceholder), just under this module's prefix.
+    color: {
+      swatch: "Use color {color}",
+      custom: "Custom hex color",
+      hexPlaceholder: "3b82f6",
     },
 
     // Required / Optional flag

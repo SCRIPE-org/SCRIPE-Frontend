@@ -88,6 +88,26 @@ export interface FieldConfig {
     | "password"
     | "email"
     | "number"
+    // Wave 3.3 Batch C (CustomFields' Currency/Duration value types).
+    // CustomFields-only dispatch keys, not consumed by this component's own
+    // render switch or its `customTypes`/date-conversion checks below --
+    // every CustomFields FieldConfig[] is rendered by
+    // renderCustomFieldControl.tsx directly (each of its 8-9 consumer sites
+    // calls that function inline; none of them mounts a <GenericForm> over
+    // these fields), the same "declared here for FieldConfig["type"]'s
+    // typing, dispatched elsewhere" shape "datetime"/"slider"/"multi-select"
+    // already established for CustomFields' own DateTime/Rating/MultiSelect.
+    // "currency" backs a real, dedicated CurrencyCustomFieldControl (a
+    // paired amount + ISO 4217 code control -- see that file's own header
+    // comment for why Currency could not simply reuse "number" the way
+    // Percent/Duration do: two independently required pieces need two
+    // inputs, not one). "duration" backs DurationCustomFieldControl (a
+    // number input with an explicit, localized "minutes" unit annotation --
+    // reusing bare "number" here would make Duration indistinguishable from
+    // Number/Percent inside this shared dispatcher, and re-introduce PD-2's
+    // "a bare number whose unit is implicit" ambiguity at the UI layer).
+    | "currency"
+    | "duration"
     | "tel"
     | "url"
     | "textarea"

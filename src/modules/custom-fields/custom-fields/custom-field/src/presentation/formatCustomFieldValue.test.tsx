@@ -291,6 +291,96 @@ describe("formatCustomFieldValue", () => {
     expect(screen.getByText("—")).toBeInTheDocument();
   });
 
+  // ── Wave 3.3 Batch C: Currency/Duration/Time/Color ──────────────────────
+
+  it("formats a Currency value as a real currency-formatted string (code display, not symbol)", () => {
+    // Intl.NumberFormat's currency style separates the code from the amount
+    // with a NO-BREAK SPACE (U+00A0), not an ASCII space --   here is
+    // deliberate, not a typo.
+    expect(formatCustomFieldValue("Currency", { amount: 1234.5, currencyCode: "USD" }, "en", t)).toBe(
+      "USD 1,234.50"
+    );
+  });
+
+  it("degrades a Currency value with a malformed stored code to a plain concatenation, never throwing", () => {
+    // "12A" is not a well-formed 3-letter alphabetic code -- Intl.NumberFormat
+    // throws a RangeError for it. A historical/corrupt row must still render
+    // legibly, not crash the cell.
+    expect(() =>
+      formatCustomFieldValue("Currency", { amount: 25, currencyCode: "12A" }, "en", t)
+    ).not.toThrow();
+    expect(formatCustomFieldValue("Currency", { amount: 25, currencyCode: "12A" }, "en", t)).toBe(
+      "12A 25"
+    );
+  });
+
+  it("renders the empty-cell marker for a Currency value missing its amount", () => {
+    render(<>{formatCustomFieldValue("Currency", { currencyCode: "USD" }, "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a Currency value missing its currency code", () => {
+    render(<>{formatCustomFieldValue("Currency", { amount: 25 }, "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a null Currency value", () => {
+    render(<>{formatCustomFieldValue("Currency", null, "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  // R4: storage is bare minutes -- the read side must state the unit
+  // explicitly, never a bare number (PD-2's own Percent-motivated rule).
+  it("formats a Duration value with its explicit minutes unit, not a bare number", () => {
+    expect(formatCustomFieldValue("Duration", 90, "en", t)).toBe(
+      "90 customField.duration.unitLabel"
+    );
+  });
+
+  it("preserves fractional Duration precision (1.5 minutes = 90 seconds, per R4)", () => {
+    expect(formatCustomFieldValue("Duration", 1.5, "en", t)).toBe(
+      "1.5 customField.duration.unitLabel"
+    );
+  });
+
+  it("renders the empty-cell marker for a Duration value that doesn't parse", () => {
+    render(<>{formatCustomFieldValue("Duration", "not-a-number", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("formats a canonical HH:mm:ss Time value via locale-aware time formatting", () => {
+    expect(formatCustomFieldValue("Time", "09:05:30", "en", t)).toBe("9:05:30 AM");
+  });
+
+  it("formats an afternoon Time value correctly (24h stored, 12h displayed)", () => {
+    expect(formatCustomFieldValue("Time", "14:30:00", "en", t)).toBe("2:30:00 PM");
+  });
+
+  it("renders the empty-cell marker for a Time value that isn't canonical HH:mm:ss", () => {
+    render(<>{formatCustomFieldValue("Time", "9:5:0", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for an out-of-range Time value", () => {
+    render(<>{formatCustomFieldValue("Time", "25:00:00", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("renders a Color value with its stored lowercase hex text", () => {
+    render(<>{formatCustomFieldValue("Color", "#3b82f6", "en", t)}</>);
+    expect(screen.getByText("#3b82f6")).toBeInTheDocument();
+  });
+
+  it("accepts the 3-digit hex shorthand for Color, unexpanded (R5: shorthand is not unified with full form)", () => {
+    render(<>{formatCustomFieldValue("Color", "#abc", "en", t)}</>);
+    expect(screen.getByText("#abc")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for an empty Color value", () => {
+    render(<>{formatCustomFieldValue("Color", "", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
   // Completeness exit-gate (Final whole-branch review, I2 fix). The original
   // gate here (`.not.toThrow()` + `.not.toBeUndefined()`) was VACUOUS: this
   // function's own `default: return String(value)` fallthrough always
@@ -433,6 +523,42 @@ describe("formatCustomFieldValue", () => {
           expect(out).toBe("3 / 5");
           break;
         }
+        // ── Wave 3.3 Batch C ────────────────────────────────────────────
+        case "Currency": {
+          // String({amount,currencyCode}) would be "[object Object]" -- a
+          // real Currency branch renders a locale-formatted currency string.
+          const raw = { amount: 1234.5, currencyCode: "USD" };
+          const out = formatCustomFieldValue(type, raw, "en", t);
+          expect(out).not.toBe(String(raw));
+          expect(out).toBe("USD 1,234.50");
+          break;
+        }
+        case "Duration": {
+          // String(90) would be the bare "90" -- a real Duration branch
+          // states the unit explicitly (R4/PD-2), provably distinct.
+          const out = formatCustomFieldValue(type, 90, "en", t);
+          expect(out).not.toBe("90");
+          expect(out).toContain("90");
+          expect(out).toContain("customField.duration.unitLabel");
+          break;
+        }
+        case "Time": {
+          // String("09:05:30") would be the raw stored text unchanged -- a
+          // real Time branch reformats it via locale-aware time formatting.
+          const out = formatCustomFieldValue(type, "09:05:30", "en", t);
+          expect(out).not.toBe("09:05:30");
+          expect(out).toBe("9:05:30 AM");
+          break;
+        }
+        case "Color": {
+          // A real Color branch renders a React element (swatch + text), not
+          // a bare string -- provably distinct from String(value).
+          const out = formatCustomFieldValue(type, "#3b82f6", "en", t);
+          expect(React.isValidElement(out)).toBe(true);
+          render(<>{out}</>);
+          expect(screen.getByText("#3b82f6")).toBeInTheDocument();
+          break;
+        }
         default:
           throw new Error(
             `formatCustomFieldValue completeness gate has no classification for value type ` +
@@ -444,7 +570,7 @@ describe("formatCustomFieldValue", () => {
     }
   );
 
-  it("has exactly 13 known value types to cover", () => {
-    expect(ALL_VALUE_TYPES).toHaveLength(13);
+  it("has exactly 17 known value types to cover", () => {
+    expect(ALL_VALUE_TYPES).toHaveLength(17);
   });
 });

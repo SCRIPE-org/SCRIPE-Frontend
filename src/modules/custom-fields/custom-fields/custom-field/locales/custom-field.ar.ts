@@ -89,10 +89,12 @@ export const ar = {
     noFrontendScreenWarning:
       "لا توجد شاشة تعرض {entity} حتى الآن. سيُحفظ هذا التعريف بشكل صحيح وستعمل واجهة القيم البرمجية معه، لكنه لن يظهر في أي نموذج إلى أن يتم بناء شاشة له.",
 
-    // CustomFieldValueType enum (0..12) -- المهمة 10 من الموجة 3.1 أضافت
+    // CustomFieldValueType enum (0..16) -- المهمة 10 من الموجة 3.1 أضافت
     // longText/dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7)؛
     // الدفعة 3 من الموجة 3.2 تضيف email/url/phone/percent/rating (Email=8,
-    // Url=9, Phone=10, Percent=11, Rating=12).
+    // Url=9, Phone=10, Percent=11, Rating=12)؛ الدفعة C من الموجة 3.3 تضيف
+    // currency/duration/time/color (Currency=13, Duration=14, Time=15,
+    // Color=16).
     valueTypes: {
       text: "نص",
       number: "رقم",
@@ -107,6 +109,10 @@ export const ar = {
       phone: "هاتف",
       percent: "نسبة مئوية",
       rating: "تقييم",
+      currency: "عملة",
+      duration: "المدة",
+      time: "الوقت",
+      color: "لون",
     },
 
     // رسائل التحقق الخاصة بكل نوع قيمة. أُضيفت مبكرًا ضمن المهمة 4 من الموجة 2
@@ -130,6 +136,9 @@ export const ar = {
       // قيمة الاختيار المتعدد هي مجموعة (Set) لا قائمة مكررة — اختيار نفس
       // الخيار مرتين يُرفض بنفس الطريقة على الواجهتين.
       multiSelectDuplicateOption: "تم اختيار '{value}' أكثر من مرة لحقل {field}.",
+      // الدفعة C من الموجة 3.3: تحقق الحقل الناقص لنوع العملة — كلا الجزأين
+      // (المبلغ ورمز العملة) مطلوبان معًا بمجرد إدخال أحدهما.
+      currencyIncomplete: "يحتاج حقل {field} إلى مبلغ ورمز عملة معًا.",
     },
 
     // تلميح العدّاد الحي/الحد الأقصى للاختيار المتعدد (المهمة 11 من الموجة
@@ -157,6 +166,31 @@ export const ar = {
       changeTimezone: "تغيير",
       cancelTimezoneChange: "إلغاء",
       timezonePickerLabel: "المنطقة الزمنية لحقل {field}",
+    },
+
+    // وحدة المدة الصريحة (الدفعة C من الموجة 3.3) — تُعرض بجانب حقل التحرير
+    // وفي التنسيق عند القراءة أيضًا، حتى لا يبقى عدد الدقائق المخزّن بلا
+    // وحدة واضحة في أي من الاتجاهين.
+    duration: {
+      unitLabel: "دقيقة",
+    },
+
+    // حقل العملة المزدوج: المبلغ + رمز العملة (الدفعة C من الموجة 3.3،
+    // القرارين R1/R2) — يُعرض بواسطة CurrencyCustomFieldControl.tsx.
+    currency: {
+      amountLabel: "مبلغ {field}",
+      codeLabel: "رمز عملة {field}",
+      codePlaceholder: "USD",
+      pairHint: "المبلغ ورمز العملة مطلوبان معًا.",
+    },
+
+    // منتقي اللون المُعمَّم (الدفعة C من الموجة 3.3، القرار R5) — يُعيد
+    // استخدام core/ui/rich-text-editor/ColorPickerField.tsx عبر خاصية
+    // i18nKeyPrefix الجديدة الخاصة به.
+    color: {
+      swatch: "استخدم اللون {color}",
+      custom: "لون سداسي مخصص",
+      hexPlaceholder: "3b82f6",
     },
 
     // Required / Optional flag

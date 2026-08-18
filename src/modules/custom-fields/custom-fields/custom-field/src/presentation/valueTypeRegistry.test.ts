@@ -23,7 +23,7 @@ describe("VALUE_TYPE_CATALOG", () => {
     expect(entry.labelKey).toMatch(/^customField\.valueTypes\./);
   });
 
-  it("has exactly 13 entries, matching ALL_VALUE_TYPES", () => {
+  it("has exactly 17 entries, matching ALL_VALUE_TYPES", () => {
     expect(Object.keys(VALUE_TYPE_CATALOG).sort()).toEqual([...ALL_VALUE_TYPES].sort());
   });
 
@@ -146,6 +146,34 @@ describe("VALUE_TYPE_CATALOG", () => {
         hasPlaceholder: false,
         hasOptions: false,
         labelKey: "customField.valueTypes.rating",
+      },
+      Currency: {
+        fieldConfigType: "currency",
+        badgeVariant: "info",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.currency",
+      },
+      Duration: {
+        fieldConfigType: "duration",
+        badgeVariant: "info",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.duration",
+      },
+      Time: {
+        fieldConfigType: "time",
+        badgeVariant: "warning",
+        hasPlaceholder: false,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.time",
+      },
+      Color: {
+        fieldConfigType: "color",
+        badgeVariant: "secondary",
+        hasPlaceholder: false,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.color",
       },
     });
   });

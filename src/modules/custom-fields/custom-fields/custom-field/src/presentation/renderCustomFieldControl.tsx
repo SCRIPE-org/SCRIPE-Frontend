@@ -75,6 +75,9 @@ import {
 } from "./MultiSelectCustomFieldControl";
 import { LongTextCustomFieldControl } from "./LongTextCustomFieldControl";
 import { DateTimeCustomFieldControl } from "./DateTimeCustomFieldControl";
+import { CurrencyCustomFieldControl } from "./CurrencyCustomFieldControl";
+import { DurationCustomFieldControl } from "./DurationCustomFieldControl";
+import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
 import { RATING_MIN, RATING_MAX } from "./valueTypeRegistry";
 
 export interface CustomFieldControlProps {
@@ -451,6 +454,128 @@ export function renderCustomFieldControl({
     );
   }
 
+  // Wave 3.3 Batch C: Currency's real control (rulings R1/R2) -- a paired
+  // amount + ISO 4217 code composite, structured exactly like DateTime's own
+  // `{ value, timeZoneId }` two-piece control (neither Currency piece is
+  // meaningful alone, per CurrencyValueTypeHandler.IsEmpty's own "empty only
+  // when BOTH are missing" ruling). Dispatched on a genuinely new
+  // `"currency"` FieldConfig["type"] rather than the backend Descriptor's
+  // reused `"number"` string -- see CurrencyCustomFieldControl.tsx's own
+  // header comment for why that backend string is not a frontend dispatch
+  // contract at all (nothing on the wire carries it).
+  if (fc.type === "currency") {
+    return (
+      <CurrencyCustomFieldControl
+        key={fc.name}
+        fc={fc}
+        value={value}
+        onChange={onChange}
+        isViewMode={isViewMode}
+      />
+    );
+  }
+
+  // Wave 3.3 Batch C: Duration's real control (ruling R4) -- a plain minutes
+  // number input with an explicit, localized unit annotation next to it, so
+  // a bare stored `90` is never ambiguous about its unit the way PD-2 was
+  // decided to avoid for Percent. See DurationCustomFieldControl.tsx's own
+  // header comment for why this needs a dedicated `"duration"` dispatch key
+  // (not reused "number") and why it needs a real component at all (the
+  // localized unit label requires useI18n(), which this hookless function
+  // cannot call itself).
+  if (fc.type === "duration") {
+    return (
+      <DurationCustomFieldControl
+        key={fc.name}
+        fc={fc}
+        value={value}
+        onChange={onChange}
+        isViewMode={isViewMode}
+      />
+    );
+  }
+
+  // Wave 3.3 Batch C: Time's real control (R6 -- the trap this batch exists
+  // to close). `"time"` is declared in FieldConfig["type"] (generic-form.tsx)
+  // but GenericForm itself routes it to DatePicker via an `as any` cast onto
+  // a `type` prop that only ever declares "date" | "datetime-local" -- an
+  // untested, effectively-undefined rendering path. That trap is irrelevant
+  // to CustomFields specifically (every consumer site calls this function
+  // directly, never <GenericForm>), but the pre-plan analysis's own R6 still
+  // asks for a REAL control here rather than silently falling through this
+  // file's shared text/number Input fallthrough (which would render
+  // type="text" -- no native time UI, no HH:mm:ss affordance at all).
+  //
+  // A real, working `<input type="time">` already exists in this codebase
+  // (custom-calendar.tsx:948-953), embedded un-exported inside
+  // CustomCalendar's own datetime-local time sub-picker -- but it is tightly
+  // coupled to THAT component's own combined date+time state
+  // (selectedTime/handleTimeChange) and its own one-off `timeInputStyles`
+  // constant, not a general-purpose control. Exporting and reusing it as-is
+  // would import DateTime-picker-specific coupling into a field that has no
+  // date component at all. Instead: reuse this file's own shared `Input`
+  // primitive (the SAME field surface Email/Url/Tel above already ride) with
+  // `type="time"` -- `Input`'s own `NUMERIC_INPUT_TYPES` set
+  // (core/ui/input.tsx) already lists `"time"` for tabular-figure styling,
+  // so this is not a new/foreign shape for that component, just its first
+  // CustomFields caller. This satisfies "build a small control" (R6's own
+  // wording) without duplicating custom-calendar.tsx's inline JSX a second
+  // time anywhere.
+  //
+  // `step={1}` turns on the native seconds field so the control can express
+  // (and, once the user picks a time, always emits) the canonical
+  // `HH:mm:ss` shape TimeValueTypeHandler stores -- without it, a native
+  // time input only round-trips `HH:mm`, silently dropping seconds. Zero
+  // padding is guaranteed by the native widget itself, not this code.
+  if (fc.type === "time") {
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label ?? fc.name}
+        </Label>
+        <Input
+          id={fc.name}
+          type="time"
+          step={1}
+          value={toFieldInputValue(value)}
+          onChange={(e) => onChange(e.target.value)}
+          required={fc.required}
+          disabled={isViewMode}
+          className="text-sm"
+        />
+      </div>
+    );
+  }
+
+  // Wave 3.3 Batch C: Color's real control (ruling R5). `"color"` is already
+  // declared in both FieldConfig["type"] and the backend's
+  // KnownFieldConfigTypes, but nothing branches on it here yet -- it falls
+  // through to this file's shared Input fallthrough below, which renders
+  // `type={fc.type === "number" ? "number" : "text"}`, i.e. a bare TEXT
+  // input with no hex entry, no swatches, and no relationship at all to the
+  // stored `#rrggbb`/`#rgb` value. `core/ui/rich-text-editor/ColorPickerField.tsx`
+  // is a real, mature, already-accessible 20-swatch-plus-hex-entry picker
+  // that R5 names as CustomFields' intended home for this type -- reused
+  // here via its new `i18nKeyPrefix` prop (`"customField.color"`) so this
+  // module's own translations resolve instead of leaking the rich-text-
+  // editor's `editorBlocks.color.*` keys into a namespace that does not own
+  // them. Its own label trap is already solved (`aria-labelledby` binding
+  // the trigger to both the field-name label and the live hex-value text,
+  // not `<Label htmlFor>`) -- verified by reading that file directly, not
+  // re-solved here.
+  if (fc.type === "color") {
+    return (
+      <ColorPickerField
+        key={fc.name}
+        label={fc.label ?? fc.name}
+        value={typeof value === "string" && value ? value : "#000000"}
+        onChange={(color) => onChange(color)}
+        disabled={isViewMode}
+        i18nKeyPrefix="customField.color"
+      />
+    );
+  }
+
   // Wave 3.2 Batch 3: Percent (fieldConfigType "number") is DELIBERATELY NOT
   // given its own branch above -- PercentValueTypeHandler's own Batch 2
   // report: "Percent's write surface is honestly just a numeric input
@@ -672,6 +797,44 @@ function validateMultiSelectCustomFieldValue(
 }
 
 /**
+ * Wave 3.3 Batch C: Currency's half of the "prevented, not just 422'd"
+ * requirement -- mirrors `CurrencyValueTypeHandler.IsEmpty`/`Validate`'s own
+ * two-piece ruling exactly (Task A's own report): "empty" is BOTH the amount
+ * and the code missing (not this function's concern -- required-ness is
+ * separate, matching every other validator in this file); anything else
+ * with exactly ONE piece missing is a genuinely INVALID half-blank
+ * submission that would 422 at Validate, so this returns a real,
+ * field-named message for it instead of letting a save proceed. A value
+ * that isn't the `{ amount, currencyCode }` shape at all (undefined, null,
+ * a stray non-object) is treated as fully blank -- defensive, matching
+ * `validateSelectCustomFieldValue`'s own "not this function's concern for a
+ * type/shape it doesn't recognize" posture.
+ */
+export function validateCurrencyCustomFieldValue(
+  fc: FieldConfig,
+  value: unknown,
+  t: TranslateFn
+): string | null {
+  if (fc.type !== "currency") return null;
+  if (value === undefined || value === null) return null;
+  if (typeof value !== "object" || Array.isArray(value)) return null;
+
+  const { amount, currencyCode } = value as { amount?: unknown; currencyCode?: unknown };
+  const amountMissing = amount === undefined || amount === null || amount === "";
+  const codeMissing = typeof currencyCode !== "string" || currencyCode.trim() === "";
+
+  // Fully blank -- "nothing to save", not an error. Mirrors
+  // CurrencyValueTypeHandler.IsEmpty exactly.
+  if (amountMissing && codeMissing) return null;
+
+  if (amountMissing || codeMissing) {
+    return t("customField.values.currencyIncomplete", { field: fc.label ?? fc.name });
+  }
+
+  return null;
+}
+
+/**
  * Thrown by `assertSelectCustomFieldValuesValid` below -- a distinct type so
  * a consumer's save flow can tell "D5 rejected this value client-side, show
  * ITS message" apart from "the actual saveValues API call failed, show the
@@ -727,6 +890,15 @@ export class CustomFieldValidationError extends Error {}
  * ""` still needs no change either: an untouched MultiSelect field reads as
  * `""` here, and `validateMultiSelectCustomFieldValue` treats any non-array
  * (including `""`) as an empty selection, not an error.
+ *
+ * Wave 3.3 Batch C: the loop below now also admits "currency", the same
+ * "widen the filter, touch zero call sites" shape Task 11 already used for
+ * "multi-select" -- every one of the 9 flows already passes its full,
+ * unfiltered fieldConfigs list here. Currency's own default fallback is
+ * `null` (not `""`, unlike Select/MultiSelect's string/array-shaped
+ * defaults) since its wire value is an object-or-null envelope --
+ * `validateCurrencyCustomFieldValue` treats both an untouched field's `null`
+ * and a stray non-object the same way: not this function's concern.
  */
 export function assertSelectCustomFieldValuesValid(
   fieldConfigs: FieldConfig[],
@@ -734,6 +906,14 @@ export function assertSelectCustomFieldValuesValid(
   t: TranslateFn
 ): void {
   for (const fc of fieldConfigs) {
+    if (fc.type === "currency") {
+      const raw = values[fc.name] ?? fc.defaultValue ?? null;
+      const error = validateCurrencyCustomFieldValue(fc, raw, t);
+      if (error) {
+        throw new CustomFieldValidationError(error);
+      }
+      continue;
+    }
     if (fc.type !== "select" && fc.type !== "multi-select") continue;
     const raw = values[fc.name] ?? fc.defaultValue ?? "";
     const error = validateSelectCustomFieldValue(fc, raw, t);

@@ -8,6 +8,10 @@
  * Batch 3 adds Email/Url/Phone/Percent/Rating -- members 8/9/10/11/12,
  * verified against the real backend enum (Email=8, Url=9, Phone=10,
  * Percent=11, Rating=12) rather than assumed from the pre-plan analysis.
+ * Wave 3.3 Batch C adds Currency/Duration/Time/Color -- members 13/14/15/16,
+ * verified against the real backend enum (CustomFieldValueType.cs) and the
+ * Wave 3.3 backend batch reports (Task A: Currency=13; Task B: Duration=14,
+ * Time=15, Color=16, in that order).
  */
 export type CustomFieldValueTypeName =
   | "Text"
@@ -22,7 +26,11 @@ export type CustomFieldValueTypeName =
   | "Url"
   | "Phone"
   | "Percent"
-  | "Rating";
+  | "Rating"
+  | "Currency"
+  | "Duration"
+  | "Time"
+  | "Color";
 
 /**
  * DateTime's wire shape (Wave 3.1 Task 7, ruling R7): a UTC instant plus a
@@ -42,15 +50,36 @@ export interface CustomFieldDateTimeValue {
 }
 
 /**
+ * Currency's wire shape (Wave 3.3 Batch C, mirroring backend ruling R1/R2 and
+ * CurrencyValueTypeHandler.Parse's own chosen envelope exactly):
+ * `{ "amount": <number>, "currencyCode": <code> }`. Neither piece is
+ * meaningful alone (R2's own justification for the new column), so this is a
+ * two-piece object like CustomFieldDateTimeValue above, not a bare scalar --
+ * `amount` stays `number | string` (not narrowed to `number`) because a
+ * control mid-edit legitimately holds a partially-typed string ("12." or "")
+ * before it parses as a real number, the same laxity CurrencyInput's own
+ * `object? Amount` allows on the backend. `currencyCode` is nullable because
+ * Project() reuses this same shape for a read where the code is (in
+ * principle) missing -- see CurrencyValue's own doc comment.
+ */
+export interface CustomFieldCurrencyValue {
+  amount: number | string;
+  currencyCode: string | null;
+}
+
+/**
  * CustomFieldValue wire shape — one entity type's active definition merged with
  * its stored value (if any) for a specific owner record. Value's runtime type
- * follows valueType: string (Text/Select/LongText/Email/Url/Phone -- Wave 3.2
- * Batch 3's three ValueText scalars need no new shape, they are plain strings
- * exactly like Text), number (Number/Percent/Rating -- Batch 3's two
- * ValueNumber scalars are likewise plain numbers, no new shape), boolean
- * (Boolean), ISO-8601 UTC string (Date), string[] (MultiSelect -- selected
- * option labels, order-preserving per R5), CustomFieldDateTimeValue
- * (DateTime), or null.
+ * follows valueType: string (Text/Select/LongText/Email/Url/Phone/Time/Color --
+ * Wave 3.2 Batch 3's three ValueText scalars and Wave 3.3 Batch C's Time
+ * (canonical "HH:mm:ss") and Color (lowercase hex) ValueText scalars need no
+ * new shape, they are plain strings exactly like Text), number
+ * (Number/Percent/Rating/Duration -- Batch 3's two ValueNumber scalars and
+ * Batch C's Duration (minutes, decimal) are likewise plain numbers, no new
+ * shape), boolean (Boolean), ISO-8601 UTC string (Date), string[]
+ * (MultiSelect -- selected option labels, order-preserving per R5),
+ * CustomFieldDateTimeValue (DateTime), CustomFieldCurrencyValue (Currency,
+ * Batch C's own two-piece amount+code envelope), or null.
  */
 export interface EntityCustomFieldValueData {
   customFieldId: string;
@@ -63,7 +92,14 @@ export interface EntityCustomFieldValueData {
   isRequired: boolean;
   options?: string[] | null;
   sortOrder: number;
-  value: string | number | boolean | string[] | CustomFieldDateTimeValue | null;
+  value:
+    | string
+    | number
+    | boolean
+    | string[]
+    | CustomFieldDateTimeValue
+    | CustomFieldCurrencyValue
+    | null;
 }
 
 /**

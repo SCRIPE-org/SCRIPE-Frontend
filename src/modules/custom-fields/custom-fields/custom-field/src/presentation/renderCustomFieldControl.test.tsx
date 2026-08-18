@@ -1001,6 +1001,251 @@ describe("renderCustomFieldControl", () => {
       expect(screen.getByRole("slider", { name: "Rating" })).toHaveAttribute("data-disabled");
     });
   });
+
+  // ── fc.type === "currency" (Wave 3.3 Batch C: Currency) ──────────────────
+  // Rich accessible-name/i18n-interpolation assertions for this control live
+  // in CurrencyCustomFieldControl.test.tsx itself (which mocks a
+  // params-aware `t`) -- this file's own convention (see the "datetime"
+  // block above) is to keep assertions here structural: does dispatch reach
+  // the real dedicated control, do values/onChange flow through correctly.
+  describe("fc.type currency (Currency)", () => {
+    const PRICE_FIELD = { name: "cf_price", type: "currency" as const, label: "Price" };
+
+    it("renders two real, independently-labelled amount and currency-code inputs inside a named group", () => {
+      render(<>{renderCustomFieldControl({ fc: PRICE_FIELD, value: null, onChange: vi.fn() })}</>);
+      expect(screen.getByRole("group", { name: "Price" })).toBeInTheDocument();
+      const amountInput = screen.getByRole("spinbutton");
+      expect(amountInput).toHaveAttribute("type", "number");
+      const codeInput = screen.getByRole("textbox");
+      expect(codeInput).toHaveAttribute("maxlength", "3");
+    });
+
+    it("emits the new amount via onChange when the amount input changes", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: PRICE_FIELD,
+            value: { amount: "50", currencyCode: "USD" },
+            onChange,
+          })}
+        </>
+      );
+      fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "100" } });
+      expect(onChange).toHaveBeenCalledWith({ amount: "100", currencyCode: "USD" });
+    });
+
+    it("uppercases the currency code as it is typed", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: PRICE_FIELD,
+            value: { amount: "5", currencyCode: "" },
+            onChange,
+          })}
+        </>
+      );
+      fireEvent.change(screen.getByRole("textbox"), { target: { value: "usd" } });
+      expect(onChange).toHaveBeenCalledWith({ amount: "5", currencyCode: "USD" });
+    });
+
+    it("clears to null once the only populated piece is blanked out", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: PRICE_FIELD,
+            value: { amount: "50", currencyCode: "" },
+            onChange,
+          })}
+        </>
+      );
+      fireEvent.change(screen.getByRole("spinbutton"), { target: { value: "" } });
+      expect(onChange).toHaveBeenCalledWith(null);
+    });
+
+    it("disables both inputs when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: PRICE_FIELD,
+            value: { amount: "50", currencyCode: "USD" },
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByRole("spinbutton")).toBeDisabled();
+      expect(screen.getByRole("textbox")).toBeDisabled();
+    });
+  });
+
+  // ── fc.type === "duration" (Wave 3.3 Batch C: Duration) ──────────────────
+  describe("fc.type duration (Duration)", () => {
+    const SETUP_FIELD = { name: "cf_setup", type: "duration" as const, label: "Setup Buffer" };
+
+    it("gives the number input a REAL accessible name via getByRole (verified, not assumed)", () => {
+      render(<>{renderCustomFieldControl({ fc: SETUP_FIELD, value: "", onChange: vi.fn() })}</>);
+      const input = screen.getByRole("spinbutton", { name: "Setup Buffer" });
+      expect(input).toHaveAttribute("type", "number");
+    });
+
+    it("shows the minutes unit as visible text beside the input, not folded away", () => {
+      render(<>{renderCustomFieldControl({ fc: SETUP_FIELD, value: 90, onChange: vi.fn() })}</>);
+      expect(screen.getByText("customField.duration.unitLabel")).toBeInTheDocument();
+    });
+
+    it("reports the raw typed value via onChange", () => {
+      const onChange = vi.fn();
+      render(<>{renderCustomFieldControl({ fc: SETUP_FIELD, value: "", onChange })}</>);
+      fireEvent.change(screen.getByRole("spinbutton", { name: "Setup Buffer" }), {
+        target: { value: "45" },
+      });
+      expect(onChange).toHaveBeenCalledWith("45");
+    });
+
+    it("disables the input when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: SETUP_FIELD,
+            value: 90,
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByRole("spinbutton", { name: "Setup Buffer" })).toBeDisabled();
+    });
+  });
+
+  // ── fc.type === "time" (Wave 3.3 Batch C: Time, R6's own named trap) ─────
+  describe("fc.type time (Time)", () => {
+    it('renders a real type="time" input with second-level granularity and reports changes', () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_time", type: "time", label: "Kickoff" },
+            value: "",
+            onChange,
+          })}
+        </>
+      );
+      // input[type=time] has NO ARIA role mapping at all -- confirmed
+      // directly against aria-query's own elementRoles table (date/time/
+      // week/month inputs are excluded from every role bucket, unlike
+      // type=number's "spinbutton" or type=text's "textbox"), so
+      // `getByRole` cannot query this element by any role name; there is no
+      // role to ask for. This is a single, genuinely native, directly
+      // labelable <input> with no decoy element the way DatePicker/
+      // GenericSelect/Slider have (this branch deliberately avoids
+      // DatePicker's own broken "time" cast -- see this branch's own
+      // comment in renderCustomFieldControl.tsx), so `getByLabelText`'s
+      // real `for`/`id` association is itself the correct, non-decoy
+      // verification here, not a workaround for a broken pattern.
+      const input = screen.getByLabelText("Kickoff");
+      expect(input).toHaveAttribute("type", "time");
+      expect(input).toHaveAttribute("step", "1");
+      fireEvent.change(input, { target: { value: "09:05:30" } });
+      expect(onChange).toHaveBeenCalledWith("09:05:30");
+    });
+
+    it("falls back the accessible name to fc.name when fc.label is undefined", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_time_nolabel", type: "time" },
+            value: "",
+            onChange: vi.fn(),
+          })}
+        </>
+      );
+      expect(screen.getByLabelText("cf_time_nolabel")).toBeInTheDocument();
+    });
+
+    it("disables the time input when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_time", type: "time", label: "Kickoff" },
+            value: "09:05:30",
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByLabelText("Kickoff")).toBeDisabled();
+    });
+  });
+
+  // ── fc.type === "color" (Wave 3.3 Batch C: Color) ─────────────────────────
+  describe("fc.type color (Color)", () => {
+    const COLOR_FIELD = { name: "cf_color", type: "color" as const, label: "Team Color" };
+
+    it("renders a real, accessibly-named picker trigger (aria-labelledby, not <Label htmlFor> -- verified, not re-solved)", () => {
+      render(
+        <>
+          {renderCustomFieldControl({ fc: COLOR_FIELD, value: "#3b82f6", onChange: vi.fn() })}
+        </>
+      );
+      // ColorPickerField's own accessible-name mechanism is aria-labelledby,
+      // concatenating the field label and the live hex-value text -- R5's
+      // own "already solves the label trap itself" claim, verified here
+      // through this dispatcher rather than re-trusted.
+      expect(screen.getByRole("button", { name: "Team Color #3b82f6" })).toBeInTheDocument();
+    });
+
+    it("defaults an empty/non-string value to a real hex placeholder rather than an empty swatch", () => {
+      render(<>{renderCustomFieldControl({ fc: COLOR_FIELD, value: null, onChange: vi.fn() })}</>);
+      expect(screen.getByRole("button", { name: "Team Color #000000" })).toBeInTheDocument();
+    });
+
+    it("uses THIS module's own i18n namespace for the picker's internal copy, never the rich-text-editor's editorBlocks.color.*", () => {
+      render(
+        <>
+          {renderCustomFieldControl({ fc: COLOR_FIELD, value: "#3b82f6", onChange: vi.fn() })}
+        </>
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Team Color #3b82f6" }));
+      // This file's own top-of-file `t` mock returns the bare key
+      // (ignoring params), so a swatch button's REAL computed aria-label IS
+      // the key string itself once i18nKeyPrefix is threaded through --
+      // the discriminating proof that CustomFields' own "customField.color"
+      // prefix reached ColorPickerField, not left at its
+      // "editorBlocks.color" default.
+      expect(
+        screen.queryAllByRole("button", { name: "customField.color.swatch" }).length
+      ).toBeGreaterThan(0);
+      expect(
+        screen.queryByRole("button", { name: "editorBlocks.color.swatch" })
+      ).not.toBeInTheDocument();
+    });
+
+    it("reports the picked swatch's hex value via onChange", () => {
+      const onChange = vi.fn();
+      render(<>{renderCustomFieldControl({ fc: COLOR_FIELD, value: "#3b82f6", onChange })}</>);
+      fireEvent.click(screen.getByRole("button", { name: "Team Color #3b82f6" }));
+      const swatches = screen.getAllByRole("button", { name: "customField.color.swatch" });
+      fireEvent.click(swatches[0]);
+      expect(onChange).toHaveBeenCalledWith("#3b82f6");
+    });
+
+    it("disables the trigger (a real disabled button, not just visually dimmed) when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: COLOR_FIELD,
+            value: "#3b82f6",
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByRole("button", { name: "Team Color #3b82f6" })).toBeDisabled();
+    });
+  });
 });
 
 // Completeness exit-gate (Final whole-branch review, I2 fix). Every prior
@@ -1155,6 +1400,53 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           // dispatcher, not just in isolation.
           expect(screen.getByRole("slider", { name: valueType })).toBeInTheDocument();
           break;
+        // ── Wave 3.3 Batch C ────────────────────────────────────────────
+        case "currency": {
+          // Currency's own dedicated branch: two real, independently
+          // labelled inputs inside a named group -- not reachable via the
+          // shared number/text Input fallthrough at all (it has no concept
+          // of a paired amount + code control).
+          expect(screen.getByRole("group", { name: valueType })).toBeInTheDocument();
+          const amountInput = screen.getByRole("spinbutton");
+          expect(amountInput).toHaveAttribute("type", "number");
+          fireEvent.change(amountInput, { target: { value: "10" } });
+          expect(onChange).toHaveBeenCalledWith({ amount: "10", currencyCode: "" });
+          break;
+        }
+        case "duration": {
+          // Duration's own dedicated branch: a real accessible name via
+          // getByRole, AND the explicit localized unit label rendered
+          // visibly beside it -- the discriminating difference from the
+          // plain "number" case above, which has no unit annotation at all.
+          const input = screen.getByRole("spinbutton", { name: valueType });
+          expect(input).toHaveAttribute("type", "number");
+          expect(screen.getByText("customField.duration.unitLabel")).toBeInTheDocument();
+          break;
+        }
+        case "time": {
+          // Time's own dedicated branch (R6, the trap this batch closes): a
+          // real <input type="time"> with second-level granularity, reached
+          // through getByLabelText -- input[type=time] has NO ARIA role
+          // mapping at all (confirmed against aria-query's own
+          // elementRoles table), so getByRole cannot query this element by
+          // any name; getByLabelText's real for/id association is the
+          // correct, non-decoy check here (see this file's dedicated "time"
+          // describe block above for the full reasoning).
+          const input = screen.getByLabelText(valueType);
+          expect(input).toHaveAttribute("type", "time");
+          expect(input).toHaveAttribute("step", "1");
+          break;
+        }
+        case "color": {
+          // Color's own dedicated branch (R5): the generalized
+          // ColorPickerField, not the bare native <input type="color"> (no
+          // hex entry, no presets) the shared fallthrough would otherwise
+          // produce for an unbranched "color" fieldConfigType.
+          expect(
+            screen.getByRole("button", { name: `${valueType} #000000` })
+          ).toBeInTheDocument();
+          break;
+        }
         default:
           throw new Error(
             `renderCustomFieldControl completeness gate has no assertion strategy for ` +

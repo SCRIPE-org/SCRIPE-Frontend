@@ -291,6 +291,80 @@ export const VALUE_TYPE_CATALOG: Record<CustomFieldValueTypeName, ValueTypeCatal
     hasOptions: false,
     labelKey: "customField.valueTypes.rating",
   },
+  /**
+   * Wave 3.3 Batch C (backend rulings R1/R2). `fieldConfigType: "currency"`
+   * is a genuinely NEW dispatch key, not a reuse of the backend Descriptor's
+   * own `FieldConfigType: "number"` -- that backend string is never
+   * transmitted over the wire (EntityCustomFieldValueData carries only
+   * `valueType`), so there is no cross-system contract requiring this
+   * catalog to match it, and reusing "number" here would make Currency
+   * indistinguishable from Number/Percent/Duration inside
+   * renderCustomFieldControl's own dispatch, which needs to render a
+   * genuinely different (paired amount + code) control -- see
+   * CurrencyCustomFieldControl.tsx's own header comment. `hasPlaceholder:
+   * true` matches the backend Descriptor's own value (the amount is a typed
+   * numeric input, same placeholder concept as Number/Percent).
+   */
+  Currency: {
+    fieldConfigType: "currency",
+    badgeVariant: "info",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.currency",
+  },
+  /**
+   * Wave 3.3 Batch C (backend ruling R4). `fieldConfigType: "duration"` is
+   * likewise a new dispatch key rather than the backend Descriptor's reused
+   * `"number"` -- see DurationCustomFieldControl.tsx's own header comment
+   * for why a dedicated key is required here too (the unit annotation must
+   * not silently apply to every other Number-shaped field sharing "number").
+   * `hasPlaceholder: true` matches the backend's own
+   * `ExpectedHasPlaceholder[Duration] = true` (Task B's report).
+   */
+  Duration: {
+    fieldConfigType: "duration",
+    badgeVariant: "info",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.duration",
+  },
+  /**
+   * Wave 3.3 Batch C (backend ruling R3, this batch's own R6). `"time"` is
+   * NOT a new FieldConfig["type"] member -- it already existed
+   * (generic-form.tsx), but as a declared-and-mis-routed trap (R6: GenericForm
+   * sends it through DatePicker via an `as any` cast onto a `type` prop that
+   * only declares "date" | "datetime-local"). Reused here deliberately,
+   * honestly, because renderCustomFieldControl.tsx now has a REAL dedicated
+   * "time" branch (a real `<input type="time" step={1}>` via the shared
+   * Input primitive) that never touches DatePicker/GenericForm's broken
+   * path at all. `hasPlaceholder: false` matches the backend's own
+   * `ExpectedHasPlaceholder[Time] = false` (Task B's report) -- a time value
+   * has no single free-text placeholder concept the way Number/Text do.
+   */
+  Time: {
+    fieldConfigType: "time",
+    badgeVariant: "warning",
+    hasPlaceholder: false,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.time",
+  },
+  /**
+   * Wave 3.3 Batch C (backend ruling R5). `"color"` already existed in
+   * FieldConfig["type"] too, declared but unbranched (fell through to a bare
+   * native `<input type="color">` via this file's shared fallthrough --
+   * no hex entry, no presets). Now wired to the generalized
+   * `ColorPickerField` (see renderCustomFieldControl.tsx's own "color"
+   * branch). `hasPlaceholder: false` matches the backend's own
+   * `ExpectedHasPlaceholder[Color] = false` (Task B's report) -- a swatch
+   * picker has no free-text placeholder concept.
+   */
+  Color: {
+    fieldConfigType: "color",
+    badgeVariant: "secondary",
+    hasPlaceholder: false,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.color",
+  },
 };
 
 /**
@@ -312,14 +386,15 @@ export function getValueTypeCatalogEntry(type: string): ValueTypeCatalogEntry | 
 }
 
 /**
- * All 13 known type names, in the same fixed display order used everywhere
+ * All 17 known type names, in the same fixed display order used everywhere
  * else in this module (CustomFieldListView.tsx's valueTypeOptions,
  * InlineAddCustomFieldDialog.tsx) -- and matching
- * CustomFieldValueType's own backend declaration order (Text=0 .. Rating=12),
+ * CustomFieldValueType's own backend declaration order (Text=0 .. Color=16),
  * so the type picker's option order reads the same as the enum's shipped
- * history rather than an arbitrary regrouping. Wave 3.2 Batch 3 appends
- * Email/Url/Phone/Percent/Rating (8-12), the exact order the backend's own
- * enum and Batch 1/2 reports assign them.
+ * history rather than an arbitrary regrouping. Wave 3.2 Batch 3 appended
+ * Email/Url/Phone/Percent/Rating (8-12); Wave 3.3 Batch C appends
+ * Currency/Duration/Time/Color (13-16), the exact order the backend's own
+ * enum and Wave 3.3 Task A/B reports assign them.
  */
 export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Text",
@@ -335,4 +410,8 @@ export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Phone",
   "Percent",
   "Rating",
+  "Currency",
+  "Duration",
+  "Time",
+  "Color",
 ];

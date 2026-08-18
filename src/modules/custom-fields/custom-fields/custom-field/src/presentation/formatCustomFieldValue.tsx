@@ -92,6 +92,7 @@ import { EmptyCustomFieldCell } from "@core/crud/customFieldsExtension";
 import { formatInTimeZone, isValidTimeZoneId } from "@core/utils/timezone";
 import { parsePhoneNumberFromString } from "libphonenumber-js";
 import type {
+  CustomFieldCurrencyValue,
   CustomFieldDateTimeValue,
   CustomFieldValueTypeName,
 } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
@@ -351,6 +352,107 @@ export function formatCustomFieldValue(
       const num = typeof value === "number" ? value : Number(value);
       if (Number.isNaN(num)) return <EmptyCustomFieldCell />;
       return `${num} / ${RATING_MAX}`;
+    }
+    // Currency (Wave 3.3 Batch C, rulings R1/R2): a real, locale-aware
+    // currency-formatted string ("USD 1,234.56"), not a bare number next to
+    // a bare code -- `Intl.NumberFormat`'s own `style: "currency"` handles
+    // grouping, decimal separator AND the currency's conventional decimal
+    // places for free. `currencyDisplay: "code"` (not the default "symbol")
+    // is deliberate: R2's own ruling is that no authoritative ISO 4217 list
+    // exists in this repo, so a shape-valid-but-unassigned code (e.g. "ZZZ")
+    // is accepted server-side -- a symbol lookup for an unrecognized code
+    // would be ambiguous or absent, while the code itself is always exactly
+    // what was stored, unambiguous by construction.
+    // `Intl.NumberFormat` THROWS a RangeError for a currency code it does
+    // not recognize as ISO 4217-shaped at all (distinct from "recognized
+    // shape, not a real/assigned currency", which it accepts and formats) --
+    // caught here and degraded to a plain locale-formatted concatenation,
+    // the same "never throw, degrade to the raw stored data" posture Url/
+    // Phone/Date already use in this switch for their own malformed-input
+    // cases. This is legitimate stored data either way, never hidden.
+    case "Currency": {
+      const currency =
+        value && typeof value === "object" ? (value as Partial<CustomFieldCurrencyValue>) : null;
+      const amountNum =
+        typeof currency?.amount === "number" ? currency.amount : Number(currency?.amount);
+      if (!currency || Number.isNaN(amountNum) || !currency.currencyCode) {
+        return <EmptyCustomFieldCell />;
+      }
+      try {
+        return new Intl.NumberFormat(resolveIntlLocale(language), {
+          style: "currency",
+          currency: currency.currencyCode,
+          currencyDisplay: "code",
+        }).format(amountNum);
+      } catch {
+        return `${currency.currencyCode} ${amountNum.toLocaleString(resolveIntlLocale(language), { maximumFractionDigits: 6 })}`;
+      }
+    }
+    // Duration (Wave 3.3 Batch C, ruling R4): storage is bare minutes -- the
+    // read side is the OTHER half (alongside DurationCustomFieldControl's
+    // edit-side annotation) of making that unit explicit rather than
+    // implicit, so a table cell never shows a bare, unit-less "90" the way
+    // PD-2 was decided to avoid for Percent. `maximumFractionDigits: 6`
+    // mirrors Percent's own choice (matches ValueNumber's `HasPrecision(18,
+    // 6)` column headroom) so a stored `1.5` (= 90 seconds, per R4) round-
+    // trips as "1.5 minutes", never silently rounded to "2 minutes".
+    case "Duration": {
+      const num = typeof value === "number" ? value : Number(value);
+      if (Number.isNaN(num)) return <EmptyCustomFieldCell />;
+      return `${num.toLocaleString(resolveIntlLocale(language), { maximumFractionDigits: 6 })} ${t("customField.duration.unitLabel")}`;
+    }
+    // Time (Wave 3.3 Batch C, ruling R3): the stored value is canonical,
+    // zero-padded `HH:mm:ss` text -- already human-legible, but not
+    // locale-aware (a 24-hour "14:30:00" reads oddly for a 12-hour-clock
+    // locale). Parsed by hand into its three numeric components and used to
+    // construct a LOCAL `Date` (never a UTC-anchored `new Date(string)`),
+    // the exact same "parse the components directly" shape this switch's
+    // own Date case uses to avoid its day-shift hazard -- there is no
+    // day-shift risk for a time-only value, but the same discipline avoids
+    // introducing one by accident. A value that isn't exactly two-digit
+    // `HH:mm:ss` (including a legacy un-padded submission that somehow
+    // reached storage before the backend's own normalization, or a
+    // corrupted value) renders the empty-cell marker, matching every other
+    // type-specific parse failure in this switch.
+    case "Time": {
+      const match = typeof value === "string" ? /^(\d{2}):(\d{2}):(\d{2})$/.exec(value) : null;
+      if (!match) return <EmptyCustomFieldCell />;
+      const [, h, m, s] = match;
+      const hours = Number(h);
+      const minutes = Number(m);
+      const seconds = Number(s);
+      if (hours > 23 || minutes > 59 || seconds > 59) return <EmptyCustomFieldCell />;
+      const date = new Date(2000, 0, 1, hours, minutes, seconds);
+      return new Intl.DateTimeFormat(resolveIntlLocale(language), { timeStyle: "medium" }).format(
+        date
+      );
+    }
+    // Color (Wave 3.3 Batch C, ruling R5): a small swatch alongside the
+    // stored hex text, not just the raw string -- the same "make the value
+    // visually legible, not just technically present" treatment Boolean's
+    // Badge and MultiSelect's chips already give their own types in this
+    // switch. The swatch only renders when the stored text is genuinely a
+    // valid `#rgb`/`#rrggbb` hex shape (re-validated here, not trusted
+    // blindly) -- both because a historical/corrupt value must never throw
+    // trying to paint an invalid CSS color, and because this value feeds a
+    // `style` attribute directly, the same "never trust a stored value
+    // blindly" discipline Url's own read case already applies to its `href`.
+    case "Color": {
+      const text = typeof value === "string" ? value : String(value);
+      if (!text) return <EmptyCustomFieldCell />;
+      const isValidHex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(text);
+      return (
+        <span className="inline-flex items-center gap-1.5">
+          {isValidHex && (
+            <span
+              aria-hidden="true"
+              className="h-3.5 w-3.5 shrink-0 rounded-nx-sm border border-nx-line"
+              style={{ backgroundColor: text }}
+            />
+          )}
+          <span className="font-mono text-xs">{text}</span>
+        </span>
+      );
     }
     default:
       return String(value);

@@ -30,7 +30,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
  * lockstep — this file's own header comment documents why there are exactly
  * two, not one. Wave 3.2 Batch 3 adds Email/Url/Phone/Percent/Rating the
  * same way (verified against the real backend enum: Email=8, Url=9,
- * Phone=10, Percent=11, Rating=12).
+ * Phone=10, Percent=11, Rating=12). Wave 3.3 Batch C adds
+ * Currency/Duration/Time/Color the same way (Currency=13, Duration=14,
+ * Time=15, Color=16).
  */
 export type CustomFieldValueTypeName =
   | "Text"
@@ -45,7 +47,11 @@ export type CustomFieldValueTypeName =
   | "Url"
   | "Phone"
   | "Percent"
-  | "Rating";
+  | "Rating"
+  | "Currency"
+  | "Duration"
+  | "Time"
+  | "Color";
 
 /**
  * One active custom-field definition shaped as a table-column header — thinner
