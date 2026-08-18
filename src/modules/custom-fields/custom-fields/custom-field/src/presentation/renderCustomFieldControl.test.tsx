@@ -781,6 +781,226 @@ describe("renderCustomFieldControl", () => {
       expect(onChange).toHaveBeenCalledWith(null);
     });
   });
+
+  // ── fc.type === "email" (Wave 3.2 Batch 3) ───────────────────────────────
+  // TRAP (pre-plan analysis, trap #1): the shared Input fallthrough's ternary
+  // only special-cases "number" -- everything else, including "email", would
+  // silently render type="text" without this branch. Asserted directly here.
+  describe("fc.type email (Email)", () => {
+    it("renders a real type=\"email\" input and reports changes", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_email", type: "email", label: "Contact Email" },
+            value: "",
+            onChange,
+          })}
+        </>
+      );
+      const input = screen.getByLabelText("Contact Email");
+      expect(input).toHaveAttribute("type", "email");
+      fireEvent.change(input, { target: { value: "a@b.com" } });
+      expect(onChange).toHaveBeenCalledWith("a@b.com");
+    });
+
+    it("disables the email input when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_email", type: "email", label: "Contact Email" },
+            value: "a@b.com",
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByLabelText("Contact Email")).toBeDisabled();
+    });
+  });
+
+  // ── fc.type === "url" (Wave 3.2 Batch 3) ─────────────────────────────────
+  describe("fc.type url (Url)", () => {
+    it("renders a real type=\"url\" input and reports changes", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_url", type: "url", label: "Website" },
+            value: "",
+            onChange,
+          })}
+        </>
+      );
+      const input = screen.getByLabelText("Website");
+      expect(input).toHaveAttribute("type", "url");
+      fireEvent.change(input, { target: { value: "https://example.com" } });
+      expect(onChange).toHaveBeenCalledWith("https://example.com");
+    });
+
+    it("disables the url input when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_url", type: "url", label: "Website" },
+            value: "https://example.com",
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByLabelText("Website")).toBeDisabled();
+    });
+  });
+
+  // ── fc.type === "tel" (Wave 3.2 Batch 3: Phone, wired to core/ui/phone-input.tsx) ─
+  describe("fc.type tel (Phone)", () => {
+    // THE discriminating check the batch brief asked to verify, not assume:
+    // PhoneInput wraps a composite (flag-select button + text input) in a
+    // plain div, so whether `id`/`<Label htmlFor>` genuinely binds to the
+    // real inner input needed proving, not trusting -- getByRole, never
+    // getByLabelText, per the "verify, don't trust" discipline Wave 3.1 Task
+    // 11 established for GenericSelect's identical-shaped question.
+    it("gives the real underlying number input a REAL accessible name via getByRole (verified, not assumed)", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_phone", type: "tel", label: "Phone" },
+            value: "",
+            onChange: vi.fn(),
+          })}
+        </>
+      );
+      const input = screen.getByRole("textbox", { name: "Phone" });
+      expect(input).toBeInTheDocument();
+      expect(input.tagName).toBe("INPUT");
+    });
+
+    it("reports the raw typed value via onChange", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_phone", type: "tel", label: "Phone" },
+            value: "",
+            onChange,
+          })}
+        </>
+      );
+      const input = screen.getByRole("textbox", { name: "Phone" });
+      fireEvent.change(input, { target: { value: "+201234567890" } });
+      expect(onChange).toHaveBeenCalledWith("+201234567890");
+    });
+
+    it("falls back the accessible name to fc.name when fc.label is undefined", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_phone_nolabel", type: "tel" },
+            value: "",
+            onChange: vi.fn(),
+          })}
+        </>
+      );
+      expect(screen.getByRole("textbox", { name: "cf_phone_nolabel" })).toBeInTheDocument();
+    });
+
+    it("disables the phone input when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_phone", type: "tel", label: "Phone" },
+            value: "",
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByRole("textbox", { name: "Phone" })).toBeDisabled();
+    });
+  });
+
+  // ── fc.type === "slider" (Wave 3.2 Batch 3: Rating) ──────────────────────
+  describe("fc.type slider (Rating)", () => {
+    // THE discriminating check: proves the core/ui/slider.tsx fix (forwarding
+    // aria-label onto the Radix Thumb, not just the Root) actually landed --
+    // this test FAILS against the pre-fix slider.tsx (the Thumb would carry
+    // Radix's own generic "Value" fallback label instead).
+    it("gives the Radix Slider Thumb a REAL accessible name via getByRole (verified, not assumed)", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_rating", type: "slider", label: "Rating" },
+            value: null,
+            onChange: vi.fn(),
+          })}
+        </>
+      );
+      expect(screen.getByRole("slider", { name: "Rating" })).toBeInTheDocument();
+    });
+
+    it("reports a numeric value via onChange when the thumb moves (simulated via keyboard)", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_rating", type: "slider", label: "Rating" },
+            value: 2,
+            onChange,
+          })}
+        </>
+      );
+      const thumb = screen.getByRole("slider", { name: "Rating" });
+      thumb.focus();
+      fireEvent.keyDown(thumb, { key: "ArrowRight" });
+      expect(onChange).toHaveBeenCalledWith(3);
+    });
+
+    it("defaults an empty/untouched value to RATING_MIN for the thumb's position without calling onChange", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_rating", type: "slider", label: "Rating" },
+            value: null,
+            onChange,
+          })}
+        </>
+      );
+      expect(screen.getByRole("slider", { name: "Rating" })).toHaveAttribute("aria-valuenow", "1");
+      expect(onChange).not.toHaveBeenCalled();
+    });
+
+    it("clamps the accessible value range to 1-5", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_rating", type: "slider", label: "Rating" },
+            value: 4,
+            onChange: vi.fn(),
+          })}
+        </>
+      );
+      const thumb = screen.getByRole("slider", { name: "Rating" });
+      expect(thumb).toHaveAttribute("aria-valuemin", "1");
+      expect(thumb).toHaveAttribute("aria-valuemax", "5");
+      expect(thumb).toHaveAttribute("aria-valuenow", "4");
+    });
+
+    it("disables the slider when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_rating", type: "slider", label: "Rating" },
+            value: 3,
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByRole("slider", { name: "Rating" })).toHaveAttribute("data-disabled");
+    });
+  });
 });
 
 // Completeness exit-gate (Final whole-branch review, I2 fix). Every prior
@@ -900,7 +1120,9 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           break;
         case "number":
           // Number's own distinguishing mark on the shared Input branch:
-          // the numeric type attribute.
+          // the numeric type attribute. Percent (Wave 3.2 Batch 3) also
+          // resolves to this exact case -- it deliberately shares Number's
+          // fieldConfigType and this same code path, not a gap.
           expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "number");
           break;
         case "text":
@@ -908,6 +1130,30 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           // case (this file's header comment, and renderCustomFieldControl.tsx's
           // own final branch) -- asserted explicitly here, not assumed.
           expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "text");
+          break;
+        // ── Wave 3.2 Batch 3 ────────────────────────────────────────────
+        case "email":
+          // Email's own dedicated branch (trap #1): a real type="email"
+          // input, not the shared fallthrough's type="text" default.
+          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "email");
+          break;
+        case "url":
+          // Url's own dedicated branch (trap #1): a real type="url" input.
+          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "url");
+          break;
+        case "tel":
+          // Phone's own dedicated branch: PhoneInput's real underlying
+          // number input, reached via getByRole (not getByLabelText) -- the
+          // discriminating, verify-don't-trust check for this composite
+          // control's accessible name.
+          expect(screen.getByRole("textbox", { name: valueType })).toBeInTheDocument();
+          break;
+        case "slider":
+          // Rating's own dedicated branch: a real Radix Slider Thumb with a
+          // REAL computed accessible name -- proves the core/ui/slider.tsx
+          // aria-label-forwarding fix actually applies through this shared
+          // dispatcher, not just in isolation.
+          expect(screen.getByRole("slider", { name: valueType })).toBeInTheDocument();
           break;
         default:
           throw new Error(

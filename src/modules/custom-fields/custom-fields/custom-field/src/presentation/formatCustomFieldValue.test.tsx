@@ -171,6 +171,126 @@ describe("formatCustomFieldValue", () => {
     expect(screen.getByText("—")).toBeInTheDocument();
   });
 
+  // ── Wave 3.2 Batch 3: Email/Url/Phone/Percent/Rating ────────────────────
+
+  it("renders Email as a real mailto: link, not plain text", () => {
+    render(<>{formatCustomFieldValue("Email", "a@b.com", "en", t)}</>);
+    const link = screen.getByText("a@b.com");
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveAttribute("href", "mailto:a@b.com");
+  });
+
+  it("renders the empty-cell marker for an empty Email value", () => {
+    render(<>{formatCustomFieldValue("Email", "", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  // R4 -- the module's first live <a href>. target=_blank + noopener noreferrer
+  // is mandatory (opening a tab that can reach back via window.opener is the
+  // exact hazard rel="noopener noreferrer" exists to close).
+  it("renders an http(s) Url as a real anchor with target=_blank and rel=noopener noreferrer", () => {
+    render(<>{formatCustomFieldValue("Url", "https://example.com", "en", t)}</>);
+    const link = screen.getByText("https://example.com");
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveAttribute("href", "https://example.com");
+    expect(link).toHaveAttribute("target", "_blank");
+    expect(link).toHaveAttribute("rel", "noopener noreferrer");
+  });
+
+  it("renders a plain http Url as a real clickable anchor too (R4: http is legitimate, not just https)", () => {
+    render(<>{formatCustomFieldValue("Url", "http://companysite.com", "en", t)}</>);
+    const link = screen.getByText("http://companysite.com");
+    expect(link.tagName).toBe("A");
+    expect(link).toHaveAttribute("href", "http://companysite.com");
+  });
+
+  // Defence-in-depth against a HISTORICAL row written before UrlValueTypeHandler's
+  // write-time scheme allowlist existed (trap #5 / R4). Every one of these must
+  // render as inert plain text -- present (not hidden), but never wired to
+  // href, so the browser can never navigate/execute it.
+  it.each([
+    "javascript:alert(1)",
+    "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==",
+    "vbscript:msgbox(1)",
+    "file:///etc/passwd",
+  ])("renders a dangerous-scheme Url value (%s) as inert plain text, never a clickable anchor", (dangerous) => {
+    render(<>{formatCustomFieldValue("Url", dangerous, "en", t)}</>);
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.getByText(dangerous)).toBeInTheDocument();
+  });
+
+  it("renders an unparsable Url value as inert plain text rather than throwing", () => {
+    expect(() => render(<>{formatCustomFieldValue("Url", "not a url", "en", t)}</>)).not.toThrow();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for an empty Url value", () => {
+    render(<>{formatCustomFieldValue("Url", "", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("formats a stored E.164 Phone value in international format, not the raw stored string", () => {
+    render(<>{formatCustomFieldValue("Phone", "+201234567890", "en", t)}</>);
+    // Proves real formatting happened (spacing/grouping), not a bare
+    // passthrough of the stored E.164 string.
+    expect(screen.queryByText("+201234567890")).not.toBeInTheDocument();
+    expect(screen.getByText(/^\+20/)).toBeInTheDocument();
+  });
+
+  it("falls back to the raw stored string for a Phone value that doesn't parse, rather than throwing", () => {
+    expect(() =>
+      render(<>{formatCustomFieldValue("Phone", "not-a-number", "en", t)}</>)
+    ).not.toThrow();
+    expect(screen.getByText("not-a-number")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for an empty Phone value", () => {
+    render(<>{formatCustomFieldValue("Phone", "", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  // ── R5: THE Percent formatting trap ─────────────────────────────────────
+  // Intl.NumberFormat(locale, { style: "percent" }) expects a 0-1 FRACTION
+  // and multiplies by 100 -- PercentValueTypeHandler stores 0-100 (PD-2), so
+  // naively feeding a stored 25 into that API would render "2500%". This is
+  // the test that pins the fix: a stored 25 must display as "25%", and must
+  // NEVER display as "2500%".
+  it("displays a stored Percent value of 25 as '25%', never '2500%' (R5 pin)", () => {
+    const out = formatCustomFieldValue("Percent", 25, "en", t);
+    expect(out).toBe("25%");
+    expect(out).not.toBe("2500%");
+  });
+
+  it("preserves fractional Percent precision (33.5 displays as '33.5%', decimals are allowed)", () => {
+    expect(formatCustomFieldValue("Percent", 33.5, "en", t)).toBe("33.5%");
+  });
+
+  it("displays a Percent value of 100 as '100%'", () => {
+    expect(formatCustomFieldValue("Percent", 100, "en", t)).toBe("100%");
+  });
+
+  it("displays a Percent value of 0 as '0%'", () => {
+    expect(formatCustomFieldValue("Percent", 0, "en", t)).toBe("0%");
+  });
+
+  it("accepts a stringly-typed Percent value the same as a real number", () => {
+    expect(formatCustomFieldValue("Percent", "25", "en", t)).toBe("25%");
+  });
+
+  it("renders the empty-cell marker for a Percent value that doesn't parse", () => {
+    render(<>{formatCustomFieldValue("Percent", "not-a-number", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("formats Rating as 'N / 5', matching the write control's own ceiling", () => {
+    expect(formatCustomFieldValue("Rating", 3, "en", t)).toBe("3 / 5");
+  });
+
+  it("renders the empty-cell marker for a Rating value that doesn't parse", () => {
+    render(<>{formatCustomFieldValue("Rating", "not-a-number", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
   // Completeness exit-gate (Final whole-branch review, I2 fix). The original
   // gate here (`.not.toThrow()` + `.not.toBeUndefined()`) was VACUOUS: this
   // function's own `default: return String(value)` fallthrough always
@@ -264,6 +384,55 @@ describe("formatCustomFieldValue", () => {
           expect(String(out)).toContain("UTC");
           break;
         }
+        // ── Wave 3.2 Batch 3 ────────────────────────────────────────────
+        case "Email": {
+          // String("a@b.com") would be the bare string -- a real Email
+          // branch renders a mailto: anchor element, not a string at all.
+          const out = formatCustomFieldValue(type, "a@b.com", "en", t);
+          expect(React.isValidElement(out)).toBe(true);
+          render(<>{out}</>);
+          const link = screen.getByText("a@b.com");
+          expect(link.tagName).toBe("A");
+          expect(link).toHaveAttribute("href", "mailto:a@b.com");
+          break;
+        }
+        case "Url": {
+          // A real Url branch renders a live, target=_blank anchor for a
+          // safe scheme -- not a bare string.
+          const out = formatCustomFieldValue(type, "https://example.com", "en", t);
+          expect(React.isValidElement(out)).toBe(true);
+          render(<>{out}</>);
+          const link = screen.getByText("https://example.com");
+          expect(link.tagName).toBe("A");
+          expect(link).toHaveAttribute("target", "_blank");
+          break;
+        }
+        case "Phone": {
+          // String("+201234567890") would be the bare E.164 string -- a real
+          // Phone branch reformats it into international spacing, provably
+          // different from the raw stored value.
+          const out = formatCustomFieldValue(type, "+201234567890", "en", t);
+          expect(out).not.toBe("+201234567890");
+          break;
+        }
+        case "Percent": {
+          // THE R5 trap, restated at the completeness-gate level: a real
+          // Percent branch must render "25%", never "2500%"
+          // (Intl.NumberFormat's percent style would produce the latter if
+          // fed the stored 0-100 number directly).
+          const out = formatCustomFieldValue(type, 25, "en", t);
+          expect(out).toBe("25%");
+          expect(out).not.toBe("2500%");
+          break;
+        }
+        case "Rating": {
+          // String(3) would be the bare "3" -- a real Rating branch names
+          // the ceiling too ("3 / 5"), provably distinct from the raw value.
+          const out = formatCustomFieldValue(type, 3, "en", t);
+          expect(out).not.toBe("3");
+          expect(out).toBe("3 / 5");
+          break;
+        }
         default:
           throw new Error(
             `formatCustomFieldValue completeness gate has no classification for value type ` +
@@ -275,7 +444,7 @@ describe("formatCustomFieldValue", () => {
     }
   );
 
-  it("has exactly 8 known value types to cover", () => {
-    expect(ALL_VALUE_TYPES).toHaveLength(8);
+  it("has exactly 13 known value types to cover", () => {
+    expect(ALL_VALUE_TYPES).toHaveLength(13);
   });
 });

@@ -4,7 +4,13 @@
 // only proves every known CustomFieldValueTypeName has a complete, correctly
 // shaped catalog entry. No consumer is rewired against this catalog yet.
 import { describe, it, expect } from "vitest";
-import { VALUE_TYPE_CATALOG, ALL_VALUE_TYPES, getValueTypeCatalogEntry } from "./valueTypeRegistry";
+import {
+  VALUE_TYPE_CATALOG,
+  ALL_VALUE_TYPES,
+  getValueTypeCatalogEntry,
+  RATING_MIN,
+  RATING_MAX,
+} from "./valueTypeRegistry";
 
 describe("VALUE_TYPE_CATALOG", () => {
   it.each(ALL_VALUE_TYPES)("has a complete catalog entry for %s", (type) => {
@@ -17,7 +23,7 @@ describe("VALUE_TYPE_CATALOG", () => {
     expect(entry.labelKey).toMatch(/^customField\.valueTypes\./);
   });
 
-  it("has exactly 8 entries, matching ALL_VALUE_TYPES", () => {
+  it("has exactly 13 entries, matching ALL_VALUE_TYPES", () => {
     expect(Object.keys(VALUE_TYPE_CATALOG).sort()).toEqual([...ALL_VALUE_TYPES].sort());
   });
 
@@ -29,6 +35,17 @@ describe("VALUE_TYPE_CATALOG", () => {
     for (const type of ALL_VALUE_TYPES) {
       expect(VALUE_TYPE_CATALOG[type].hasOptions).toBe(type === "Select" || type === "MultiSelect");
     }
+  });
+
+  // Wave 3.2 Batch 3, backend ruling R2: Rating's ceiling is a code-owned
+  // constant (RatingValueTypeHandler.MinRating/MaxRating), not a per-field
+  // config knob -- pinned here since both the write control
+  // (renderCustomFieldControl.tsx's "slider" branch) and the read formatter
+  // (formatCustomFieldValue.tsx's "Rating" case, "N / 5") import these exact
+  // values from this module.
+  it("pins Rating's ceiling to 1-5, matching the backend's hardcoded RatingValueTypeHandler constants", () => {
+    expect(RATING_MIN).toBe(1);
+    expect(RATING_MAX).toBe(5);
   });
 
   // Pins the catalog's values byte-identical to the still-live hardcoded
@@ -94,6 +111,41 @@ describe("VALUE_TYPE_CATALOG", () => {
         hasPlaceholder: true,
         hasOptions: true,
         labelKey: "customField.valueTypes.multiSelect",
+      },
+      Email: {
+        fieldConfigType: "email",
+        badgeVariant: "secondary",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.email",
+      },
+      Url: {
+        fieldConfigType: "url",
+        badgeVariant: "secondary",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.url",
+      },
+      Phone: {
+        fieldConfigType: "tel",
+        badgeVariant: "secondary",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.phone",
+      },
+      Percent: {
+        fieldConfigType: "number",
+        badgeVariant: "info",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.percent",
+      },
+      Rating: {
+        fieldConfigType: "slider",
+        badgeVariant: "warning",
+        hasPlaceholder: false,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.rating",
       },
     });
   });

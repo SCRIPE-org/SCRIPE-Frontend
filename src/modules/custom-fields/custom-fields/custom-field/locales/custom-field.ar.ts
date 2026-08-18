@@ -89,8 +89,10 @@ export const ar = {
     noFrontendScreenWarning:
       "لا توجد شاشة تعرض {entity} حتى الآن. سيُحفظ هذا التعريف بشكل صحيح وستعمل واجهة القيم البرمجية معه، لكنه لن يظهر في أي نموذج إلى أن يتم بناء شاشة له.",
 
-    // CustomFieldValueType enum (0..7) -- المهمة 10 من الموجة 3.1 تضيف
-    // longText/dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7).
+    // CustomFieldValueType enum (0..12) -- المهمة 10 من الموجة 3.1 أضافت
+    // longText/dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7)؛
+    // الدفعة 3 من الموجة 3.2 تضيف email/url/phone/percent/rating (Email=8,
+    // Url=9, Phone=10, Percent=11, Rating=12).
     valueTypes: {
       text: "نص",
       number: "رقم",
@@ -100,6 +102,11 @@ export const ar = {
       longText: "نص طويل",
       dateTime: "التاريخ والوقت",
       multiSelect: "اختيار متعدد",
+      email: "بريد إلكتروني",
+      url: "رابط",
+      phone: "هاتف",
+      percent: "نسبة مئوية",
+      rating: "تقييم",
     },
 
     // رسائل التحقق الخاصة بكل نوع قيمة. أُضيفت مبكرًا ضمن المهمة 4 من الموجة 2

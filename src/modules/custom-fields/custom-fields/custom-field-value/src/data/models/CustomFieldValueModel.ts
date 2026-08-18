@@ -2,9 +2,12 @@
  * CustomFieldValueType wire names -- mirrors backend enum member names verbatim
  * (CustomFields.Domain.Enums.CustomFieldValueType). The API's global
  * JsonStringEnumConverter serializes enums as strings, so this is never a
- * number on the wire. Wave 3.1 Task 10 adds LongText/DateTime/MultiSelect --
+ * number on the wire. Wave 3.1 Task 10 added LongText/DateTime/MultiSelect --
  * the backend enum's members 5/6/7 (see that file's own doc comment for why
- * Date=3 keeps its existing member rather than being renumbered).
+ * Date=3 keeps its existing member rather than being renumbered). Wave 3.2
+ * Batch 3 adds Email/Url/Phone/Percent/Rating -- members 8/9/10/11/12,
+ * verified against the real backend enum (Email=8, Url=9, Phone=10,
+ * Percent=11, Rating=12) rather than assumed from the pre-plan analysis.
  */
 export type CustomFieldValueTypeName =
   | "Text"
@@ -14,7 +17,12 @@ export type CustomFieldValueTypeName =
   | "Select"
   | "LongText"
   | "DateTime"
-  | "MultiSelect";
+  | "MultiSelect"
+  | "Email"
+  | "Url"
+  | "Phone"
+  | "Percent"
+  | "Rating";
 
 /**
  * DateTime's wire shape (Wave 3.1 Task 7, ruling R7): a UTC instant plus a
@@ -36,7 +44,10 @@ export interface CustomFieldDateTimeValue {
 /**
  * CustomFieldValue wire shape — one entity type's active definition merged with
  * its stored value (if any) for a specific owner record. Value's runtime type
- * follows valueType: string (Text/Select/LongText), number (Number), boolean
+ * follows valueType: string (Text/Select/LongText/Email/Url/Phone -- Wave 3.2
+ * Batch 3's three ValueText scalars need no new shape, they are plain strings
+ * exactly like Text), number (Number/Percent/Rating -- Batch 3's two
+ * ValueNumber scalars are likewise plain numbers, no new shape), boolean
  * (Boolean), ISO-8601 UTC string (Date), string[] (MultiSelect -- selected
  * option labels, order-preserving per R5), CustomFieldDateTimeValue
  * (DateTime), or null.

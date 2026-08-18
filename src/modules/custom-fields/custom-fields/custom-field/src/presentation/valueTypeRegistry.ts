@@ -46,6 +46,25 @@ import type { CustomFieldValueTypeName } from "../../../custom-field-value/src/d
  */
 export type ValueTypeBadgeVariant = "default" | "secondary" | "info" | "success" | "warning";
 
+/**
+ * Rating's 1-5 ceiling (Wave 3.2 Batch 3, backend ruling R2) -- a code-owned
+ * constant mirroring `RatingValueTypeHandler.MinRating`/`MaxRating`
+ * byte-for-byte, the same "no per-field config knob" precedent
+ * `MULTI_SELECT_MAX_SELECTIONS` (MultiSelectCustomFieldControl.tsx) and
+ * `LONG_TEXT_MAX_CHARACTERS` (LongTextCustomFieldControl.tsx) already set.
+ * Lives here, not in a dedicated Rating control file (R6: no new component
+ * was needed -- Rating reuses `@core/ui/slider.tsx` directly), because both
+ * the write side (renderCustomFieldControl.tsx's "slider" branch) and the
+ * read side (formatCustomFieldValue.tsx's "Rating" case, "N / 5") need the
+ * SAME number and this catalog module is the one file both already import
+ * from -- a pure-data home, matching this file's own "mirrors the backend's
+ * pure-data ValueTypeDescriptor" convention (see this file's own header
+ * comment) rather than one presentation file reaching into another's
+ * component-heavy module just for a constant.
+ */
+export const RATING_MIN = 1;
+export const RATING_MAX = 5;
+
 export interface ValueTypeCatalogEntry {
   /**
    * The FieldConfig["type"] this value type maps to for editing -- identical
@@ -180,6 +199,98 @@ export const VALUE_TYPE_CATALOG: Record<CustomFieldValueTypeName, ValueTypeCatal
     hasOptions: true,
     labelKey: "customField.valueTypes.multiSelect",
   },
+  /**
+   * Wave 3.2 Batch 3 (backend rulings R1/R4, this batch's own R6). Byte-
+   * identical to EmailValueTypeHandler.Descriptor's HasOptions/HasPlaceholder
+   * on the backend (Batch 1's own report: ExpectedHasOptions false,
+   * ExpectedHasPlaceholder true). `fieldConfigType: "email"` is an existing
+   * FieldConfig["type"] (generic-form.tsx already maps it onto a native
+   * `type="email"` input) reused verbatim, not invented -- same "reuse a real
+   * frontend concept" rule every prior wave has followed.
+   */
+  Email: {
+    fieldConfigType: "email",
+    badgeVariant: "secondary",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.email",
+  },
+  /**
+   * Wave 3.2 Batch 3 (backend ruling R4 -- the wave's one genuine security
+   * ruling: http/https allowlisted at WRITE time, everything else 422s).
+   * Byte-identical to UrlValueTypeHandler.Descriptor
+   * (ExpectedHasOptions/ExpectedHasPlaceholder, Batch 1's own report).
+   * `fieldConfigType: "url"` is likewise an existing, reused FieldConfig type.
+   */
+  Url: {
+    fieldConfigType: "url",
+    badgeVariant: "secondary",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.url",
+  },
+  /**
+   * Wave 3.2 Batch 3 (backend ruling R3 -- ValueText stores canonical E.164,
+   * no region column; the frontend's own PhoneInput, `core/ui/phone-input.tsx`,
+   * derives the flag/region for display from the number itself, matching the
+   * backend's identical choice). Byte-identical to
+   * PhoneValueTypeHandler.Descriptor. `fieldConfigType: "tel"` is the existing
+   * FieldConfig["type"] this batch wires PhoneInput to for the first time --
+   * see renderCustomFieldControl.tsx's own "tel" branch for why `id` genuinely
+   * binds an accessible name here (verified against PhoneInput's real source,
+   * not assumed).
+   */
+  Phone: {
+    fieldConfigType: "tel",
+    badgeVariant: "secondary",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.phone",
+  },
+  /**
+   * Wave 3.2 Batch 3 (backend ruling R5 -- PD-2's storage/display disagreement
+   * reappearing at the formatting layer; see formatCustomFieldValue.tsx's own
+   * "Percent" case for the fix and the pinning test). `fieldConfigType:
+   * "number"` is DELIBERATE, not a placeholder -- PercentValueTypeHandler's
+   * own Batch 2 report: "Percent's write surface is honestly just a numeric
+   * input constrained 0-100 by Validate -- the same shape Number already
+   * renders through." Reusing "number" means this type needs NO new
+   * renderCustomFieldControl.tsx branch at all (the existing shared Input
+   * fallthrough already renders `type="number"` correctly for it, the exact
+   * same code path Number itself already exercises) -- only its OWN
+   * formatCustomFieldValue.tsx case, since read-side formatting is keyed by
+   * valueType, not fieldConfigType. `hasPlaceholder: true` matches Number's
+   * own value (Batch 2's report, `ExpectedHasPlaceholder: Percent: true`).
+   */
+  Percent: {
+    fieldConfigType: "number",
+    badgeVariant: "info",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.percent",
+  },
+  /**
+   * Wave 3.2 Batch 3 (backend ruling R2 -- an integer 1-5, 5 a hardcoded
+   * handler constant, 0 explicitly invalid/not "unrated"). `fieldConfigType:
+   * "slider"` is the natural fit for a small discrete scale and reuses the
+   * existing, mature `@core/ui/slider.tsx` (Radix) -- already an existing
+   * FieldConfig["type"], and the same value Wave 3.1 Task 10's own probe used
+   * as its hypothetical 9th type precisely because it was a real
+   * FieldConfig["type"] with NO dedicated renderCustomFieldControl.tsx branch
+   * yet (that probe predicted this exact type would need real wiring, not
+   * ride any existing fallback). `hasPlaceholder: false` mirrors Batch 2's own
+   * mid-implementation correction (checked generic-form.tsx's real "slider"
+   * branch and `slider.tsx` directly: Radix's Slider has no placeholder
+   * concept at all) -- not assumed true-by-default the way DateTime's own
+   * identity-formula mistake was originally made and caught.
+   */
+  Rating: {
+    fieldConfigType: "slider",
+    badgeVariant: "warning",
+    hasPlaceholder: false,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.rating",
+  },
 };
 
 /**
@@ -201,12 +312,14 @@ export function getValueTypeCatalogEntry(type: string): ValueTypeCatalogEntry | 
 }
 
 /**
- * All 8 known type names, in the same fixed display order used everywhere
+ * All 13 known type names, in the same fixed display order used everywhere
  * else in this module (CustomFieldListView.tsx's valueTypeOptions,
  * InlineAddCustomFieldDialog.tsx) -- and matching
- * CustomFieldValueType's own backend declaration order (Text=0 .. MultiSelect=7),
+ * CustomFieldValueType's own backend declaration order (Text=0 .. Rating=12),
  * so the type picker's option order reads the same as the enum's shipped
- * history rather than an arbitrary regrouping.
+ * history rather than an arbitrary regrouping. Wave 3.2 Batch 3 appends
+ * Email/Url/Phone/Percent/Rating (8-12), the exact order the backend's own
+ * enum and Batch 1/2 reports assign them.
  */
 export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Text",
@@ -217,4 +330,9 @@ export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "LongText",
   "DateTime",
   "MultiSelect",
+  "Email",
+  "Url",
+  "Phone",
+  "Percent",
+  "Rating",
 ];

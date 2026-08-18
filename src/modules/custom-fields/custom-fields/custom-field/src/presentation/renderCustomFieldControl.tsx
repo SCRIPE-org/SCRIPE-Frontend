@@ -65,6 +65,8 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { DatePicker } from "@core/ui/date-picker";
+import { Slider } from "@core/ui/slider";
+import { PhoneInput } from "@core/ui/phone-input";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import {
@@ -73,6 +75,7 @@ import {
 } from "./MultiSelectCustomFieldControl";
 import { LongTextCustomFieldControl } from "./LongTextCustomFieldControl";
 import { DateTimeCustomFieldControl } from "./DateTimeCustomFieldControl";
+import { RATING_MIN, RATING_MAX } from "./valueTypeRegistry";
 
 export interface CustomFieldControlProps {
   fc: FieldConfig;
@@ -298,6 +301,167 @@ export function renderCustomFieldControl({
     );
   }
 
+  // Wave 3.2 Batch 3 (trap #1, verified): the shared Input fallthrough at the
+  // bottom of this function only special-cases "number" -- everything else,
+  // INCLUDING "email"/"tel"/"url", silently renders `type="text"`. That is
+  // invisible when testing only through GenericForm (its own switch already
+  // maps `email`/`tel`/`url` onto the right native `type` -- see
+  // generic-form.tsx), but every one of the 8-9 CustomFields consumer sites
+  // renders through THIS function, not GenericForm, so each of these three
+  // needs its own explicit branch here. Email's write surface is a plain
+  // `type="email"` input -- EmailValueTypeHandler's own validation
+  // (MailAddress parsing) is server-side; this control does not duplicate
+  // that logic, only gives the browser's own email affordances (keyboard on
+  // mobile, basic format hinting) a chance to run.
+  if (fc.type === "email") {
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label ?? fc.name}
+        </Label>
+        <Input
+          id={fc.name}
+          type="email"
+          value={toFieldInputValue(value)}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={fc.placeholder}
+          required={fc.required}
+          disabled={isViewMode}
+          className="text-sm"
+        />
+      </div>
+    );
+  }
+
+  // Url's write surface is likewise a plain `type="url"` input. R4's actual
+  // security boundary (the http/https scheme allowlist) is enforced
+  // server-side at write time by UrlValueTypeHandler -- this control does not
+  // duplicate that check, it only gets the browser's own URL-shape hinting.
+  // The read side (formatCustomFieldValue.tsx's "Url" case) is the one that
+  // must not blindly trust a stored value -- see that case's own comment.
+  if (fc.type === "url") {
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label ?? fc.name}
+        </Label>
+        <Input
+          id={fc.name}
+          type="url"
+          value={toFieldInputValue(value)}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={fc.placeholder}
+          required={fc.required}
+          disabled={isViewMode}
+          className="text-sm"
+        />
+      </div>
+    );
+  }
+
+  // Phone wires the existing, mature `core/ui/phone-input.tsx` (libphonenumber,
+  // flags, country search, RTL, en/ar locale tables) into the CustomFields
+  // family for the first time (R3/R6) -- no new component was built. `id`
+  // passed here genuinely reaches the real underlying `<input>` element (not
+  // just the composite's outer `<div>`): traced through
+  // react-phone-number-input's own source
+  // (PhoneInputWithCountry.js's `_excluded` destructure list omits "id", so
+  // it survives into `rest`, which is spread onto the library's
+  // `InputComponent` -- our own `PhoneInputComponent` in phone-input.tsx
+  // spreads that straight onto a real `<input>`). So `<Label htmlFor={fc.name}>`
+  // DOES compute a real accessible name here, unlike GenericSelect's
+  // `role="combobox"` div -- verified with `getByRole("textbox", { name })`
+  // in this file's own test, per the "verify, don't trust getByLabelText"
+  // discipline Wave 3.1 Task 11 established for exactly this class of claim.
+  if (fc.type === "tel") {
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label ?? fc.name}
+        </Label>
+        <PhoneInput
+          id={fc.name}
+          value={toFieldInputValue(value)}
+          onChange={(v) => onChange(v)}
+          disabled={isViewMode}
+        />
+      </div>
+    );
+  }
+
+  // Rating's real control (R2/R6): a discrete Radix Slider, min 1 / max 5 /
+  // step 1 -- RATING_MIN/RATING_MAX above, code-owned constants mirroring
+  // RatingValueTypeHandler's own hardcoded ceiling, not a per-field config
+  // knob. No new component was built (reuses `@core/ui/slider.tsx` directly,
+  // the same primitive GenericForm's own "slider" branch already wires up).
+  //
+  // ACCESSIBLE NAME -- a real bug found and fixed, not assumed away: the
+  // governing pre-plan analysis's R7 claimed "Rating's Radix slider thumb is
+  // a real focusable, labelable element" (implying `<Label htmlFor>` would
+  // work here the way it does for a plain `<input>`). Tracing Radix's own
+  // source (@radix-ui/react-slider) disproves that: `id` passed to `Slider`
+  // lands on the ROOT `<span>` (via `...sliderProps` in the library's
+  // `Slider` component), never on the Thumb -- and the Thumb (the actual
+  // `role="slider"` element a screen reader focuses) computes its accessible
+  // name from ITS OWN `aria-label` prop, falling back to a generic
+  // library-default "Value" label if none is given. `@core/ui/slider.tsx`
+  // did not forward an `aria-label` to the Thumb at all before this batch, so
+  // every Slider in the app (not just this one) had NO real per-instance
+  // accessible name. Fixed at the shared primitive (`core/ui/slider.tsx`),
+  // the same "close the gap once, at the shared component, for every
+  // consumer" shape Wave 2 Step 2.2 Task 7b used for GenericSelect's
+  // `aria-label` fix -- see that file's own comment. Verified here (not
+  // assumed) via `getByRole("slider", { name })` in this file's own test AND
+  // a dedicated `core/ui/slider.test.tsx`.
+  //
+  // EMPTY/UNSET DISPLAY: a Radix Slider always needs a real number to
+  // position its thumb -- there is no "no selection yet" visual state for a
+  // slider (the same inherent limitation GenericForm's own "slider" branch
+  // already has, defaulting to `field.min ?? 0`). An untouched/empty Rating
+  // field is shown at RATING_MIN (1), matching that existing convention --
+  // it does NOT mean "rated 1", only "nothing dragged yet"; onChange is never
+  // called until the user actually moves the thumb, so an untouched field
+  // still submits as empty (IsEmpty), never a false "1".
+  if (fc.type === "slider") {
+    const numericValue =
+      typeof value === "number" && Number.isFinite(value) ? value : RATING_MIN;
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label}
+        </Label>
+        <Slider
+          id={fc.name}
+          aria-label={fc.label ?? fc.name}
+          value={[numericValue]}
+          onValueChange={(v) => onChange(v[0])}
+          min={RATING_MIN}
+          max={RATING_MAX}
+          step={1}
+          disabled={isViewMode}
+          className="w-full"
+        />
+        <div className="flex items-baseline justify-between text-xs text-nx-ink-3">
+          <span>{fc.label}</span>
+          <span className="font-medium tabular-nums text-nx-ink-2">
+            {numericValue} / {RATING_MAX}
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // Wave 3.2 Batch 3: Percent (fieldConfigType "number") is DELIBERATELY NOT
+  // given its own branch above -- PercentValueTypeHandler's own Batch 2
+  // report: "Percent's write surface is honestly just a numeric input
+  // constrained 0-100 by Validate -- the same shape Number already renders
+  // through." This shared fallthrough already special-cases "number" (the
+  // ternary below), so Percent gets a real, correct `type="number"` input for
+  // free via the exact code path Number itself already exercises and tests
+  // cover -- adding a second, textually-separate branch that produces
+  // identical DOM would be duplication, not a fix. Percent's read-side DOES
+  // still need its own case (formatCustomFieldValue.tsx, R5's `%`-suffix
+  // fix), since that dispatch is keyed on valueType, not fieldConfigType.
   return (
     <div key={fc.name} className="space-y-2">
       <Label htmlFor={fc.name} className="text-sm font-medium">

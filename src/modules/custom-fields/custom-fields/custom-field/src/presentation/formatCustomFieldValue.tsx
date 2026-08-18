@@ -90,10 +90,12 @@ import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
 import { EmptyCustomFieldCell } from "@core/crud/customFieldsExtension";
 import { formatInTimeZone, isValidTimeZoneId } from "@core/utils/timezone";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import type {
   CustomFieldDateTimeValue,
   CustomFieldValueTypeName,
 } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
+import { RATING_MAX } from "./valueTypeRegistry";
 
 /** Matches useI18n()'s own `t` signature, and buildCustomFieldColumn's existing `t` parameter. */
 export type FormatTranslateFn = (key: string, params?: Record<string, string | number>) => string;
@@ -242,6 +244,113 @@ export function formatCustomFieldValue(
       } catch {
         return <EmptyCustomFieldCell />;
       }
+    }
+    // Email (Wave 3.2 Batch 3, R6): a real `mailto:` link, not plain text --
+    // the one read-side treatment R6 names explicitly for this type.
+    // EmailValueTypeHandler's own write-time check (`MailAddress` parsing,
+    // `parsed.Address == trimmed`) already rejects a `"Display Name <addr>"`
+    // wrapper, so every stored value here is a bare address -- safe to drop
+    // straight into `mailto:` with no extra encoding beyond what a template
+    // literal already does (no query-string params like `?cc=`/`?body=` can
+    // be smuggled in, since those would have failed the write-time
+    // `Address == trimmed` equality check).
+    case "Email": {
+      const text = typeof value === "string" ? value : String(value);
+      if (!text) return <EmptyCustomFieldCell />;
+      return (
+        <a href={`mailto:${text}`} className="text-nx-accent hover:underline">
+          {text}
+        </a>
+      );
+    }
+    // Url (Wave 3.2 Batch 3, R4/trap #3): this module's FIRST live `<a href>`
+    // -- `target="_blank" rel="noopener noreferrer"` per R4's explicit
+    // instruction (no `rel="noopener noreferrer"` would let the opened page
+    // reach back via `window.opener`). UrlValueTypeHandler's http/https
+    // scheme allowlist is the real defence, but it only runs at WRITE time
+    // and only as of this wave's backend deploy -- a row written before that
+    // (or, in principle, one that reached the column through some other path
+    // this module doesn't control) could still hold a `javascript:`/`data:`/
+    // `vbscript:`/`file:` value. This is the module's first live anchor, so
+    // there is no existing sink to inherit encoding/scheme discipline from --
+    // the scheme is re-checked HERE, client-side, as defence-in-depth: only
+    // `http:`/`https:` ever become a clickable anchor; anything else
+    // (including a value that fails to parse as an absolute URL at all)
+    // renders as inert plain text -- still shown (this is legitimate stored
+    // data, not something to hide), just never wired to `href`.
+    case "Url": {
+      const text = typeof value === "string" ? value : String(value);
+      if (!text) return <EmptyCustomFieldCell />;
+      let isSafeScheme = false;
+      try {
+        const parsed = new URL(text);
+        isSafeScheme = parsed.protocol === "http:" || parsed.protocol === "https:";
+      } catch {
+        isSafeScheme = false;
+      }
+      if (!isSafeScheme) {
+        return text;
+      }
+      return (
+        <a
+          href={text}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-nx-accent hover:underline"
+        >
+          {text}
+        </a>
+      );
+    }
+    // Phone (Wave 3.2 Batch 3, R3): the stored value is canonical E.164
+    // ("+201234567890"), correct but not itself human-friendly.
+    // `libphonenumber-js` is already a real dependency of this module's own
+    // edit control (`core/ui/phone-input.tsx` imports it) -- reused here, not
+    // newly added, purely for its international-format ("+20 123 456 7890")
+    // read-side rendering. Falls back to the raw stored string if it doesn't
+    // parse (defensive, matching Number/Date's own NaN/invalid-parse
+    // fallback pattern in this same switch -- a malformed historical value
+    // must never throw, only degrade to its plain stored form).
+    case "Phone": {
+      const text = typeof value === "string" ? value : String(value);
+      if (!text) return <EmptyCustomFieldCell />;
+      try {
+        const parsed = parsePhoneNumberFromString(text);
+        return parsed ? parsed.formatInternational() : text;
+      } catch {
+        return text;
+      }
+    }
+    // Percent (Wave 3.2 Batch 3, R5 -- THE formatting trap this batch exists
+    // to defend against). `PercentValueTypeHandler` stores 0-100, the number
+    // the user typed (PD-2) -- NOT a 0-1 fraction.
+    // `Intl.NumberFormat(locale, { style: "percent" })` expects a 0-1
+    // fraction and MULTIPLIES BY 100 internally, so feeding it a stored `25`
+    // directly would render "2500%". Deliberately NOT using that API at all
+    // (rather than remembering to divide by 100 first, which is one silent
+    // off-by-100x away from reintroducing this exact bug the next time this
+    // case is touched): format the number with the locale's own
+    // grouping/decimal rules via `toLocaleString` -- the SAME call Number's
+    // own case above uses -- then hand-append "%". `maximumFractionDigits: 6`
+    // matches `ValueNumber`'s own `HasPrecision(18, 6)` column headroom
+    // (Percent decimals are allowed, unlike Rating) so a stored `33.5`
+    // round-trips as "33.5%", never rounded away.
+    // Pinned by a test asserting a stored 25 renders "25%", never "2500%".
+    case "Percent": {
+      const num = typeof value === "number" ? value : Number(value);
+      if (Number.isNaN(num)) return <EmptyCustomFieldCell />;
+      return `${num.toLocaleString(resolveIntlLocale(language), { maximumFractionDigits: 6 })}%`;
+    }
+    // Rating (Wave 3.2 Batch 3, R2/R6): "N / 5" is the whole read-side
+    // treatment -- R6 states this explicitly ("Read side '3 / 5' is
+    // sufficient for v1; a star-glyph control is explicitly out of scope").
+    // `RATING_MAX` is imported from valueTypeRegistry.ts, the same constant
+    // the write-side Slider branch uses, so the two can never drift to
+    // different ceilings.
+    case "Rating": {
+      const num = typeof value === "number" ? value : Number(value);
+      if (Number.isNaN(num)) return <EmptyCustomFieldCell />;
+      return `${num} / ${RATING_MAX}`;
     }
     default:
       return String(value);

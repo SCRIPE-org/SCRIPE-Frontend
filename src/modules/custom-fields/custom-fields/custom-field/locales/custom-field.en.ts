@@ -95,8 +95,10 @@ export const en = {
     noFrontendScreenWarning:
       "No screen renders {entity} yet. This definition will save correctly and the values API will work for it, but it won't appear on any form until a screen is built for it.",
 
-    // CustomFieldValueType enum (0..7) -- Wave 3.1 Task 10 adds longText/
-    // dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7).
+    // CustomFieldValueType enum (0..12) -- Wave 3.1 Task 10 added longText/
+    // dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7); Wave 3.2
+    // Batch 3 adds email/url/phone/percent/rating (Email=8, Url=9, Phone=10,
+    // Percent=11, Rating=12).
     valueTypes: {
       text: "Text",
       number: "Number",
@@ -106,6 +108,11 @@ export const en = {
       longText: "Long Text",
       dateTime: "Date & Time",
       multiSelect: "Multi-Select",
+      email: "Email",
+      url: "URL",
+      phone: "Phone",
+      percent: "Percent",
+      rating: "Rating",
     },
 
     // Per-type value validation messages. Added early by Wave 2 Step 2.2 Task

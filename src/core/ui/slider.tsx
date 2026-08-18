@@ -10,10 +10,26 @@ import { cn } from "@core/common/utils";
 // depends on hitting a hairline. Disabled reads through the group-data hook
 // (Radix stamps data-disabled on the root) with dedicated tokens on every
 // part, never a 50% wash over the whole control.
+//
+// ACCESSIBLE NAME (Wave 3.2 Batch 3 fix): Radix's own `SliderThumb` computes
+// its accessible name from ITS OWN `aria-label` prop (falling back to a
+// generic, unhelpful "Value" label if none is given) -- NOT from an `id`
+// passed to `Slider`/`SliderPrimitive.Root`, which lands on the ROOT `<span>`
+// instead (verified directly against @radix-ui/react-slider's source: `id`
+// flows into Root's own `...sliderProps` spread, never down to Thumb). A
+// sibling `<Label htmlFor={id}>` therefore never gives the Thumb a real
+// accessible name, the same class of gap `generic-select.tsx`'s own
+// `aria-label` prop fixes for `role="combobox"`. Before this fix NO consumer
+// of this shared component could give its Thumb a real per-instance name --
+// this destructures the standard `aria-label` prop off `props` and forwards
+// it explicitly onto `Thumb`, closing the gap for every consumer at once, not
+// just the one that surfaced it (CustomFields' Rating control). Backward
+// compatible: a consumer that passes no `aria-label` gets `undefined` on the
+// Thumb, identical to today's behavior.
 const Slider = React.forwardRef<
   React.ElementRef<typeof SliderPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>
->(({ className, ...props }, ref) => (
+>(({ className, "aria-label": ariaLabel, ...props }, ref) => (
   <SliderPrimitive.Root
     ref={ref}
     className={cn(
@@ -33,7 +49,10 @@ const Slider = React.forwardRef<
     {/* Raised thumb behind a strong hairline. Press lights the EDGE instead of
         scaling the knob — a 20px circle that grows under the finger reads as a
         wobble, and the pointer is already on it. */}
-    <SliderPrimitive.Thumb className="block h-5 w-5 cursor-grab rounded-full border border-nx-line-hi bg-nx-raised-2 shadow-nx-sm transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-accent focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none active:cursor-grabbing active:border-nx-accent active:shadow-[inset_0_0_0_1px_var(--nx-accent)] group-data-[disabled]:cursor-not-allowed group-data-[disabled]:border-nx-line group-data-[disabled]:bg-nx-raised group-data-[disabled]:shadow-none motion-reduce:transition-none" />
+    <SliderPrimitive.Thumb
+      aria-label={ariaLabel}
+      className="block h-5 w-5 cursor-grab rounded-full border border-nx-line-hi bg-nx-raised-2 shadow-nx-sm transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-accent focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none active:cursor-grabbing active:border-nx-accent active:shadow-[inset_0_0_0_1px_var(--nx-accent)] group-data-[disabled]:cursor-not-allowed group-data-[disabled]:border-nx-line group-data-[disabled]:bg-nx-raised group-data-[disabled]:shadow-none motion-reduce:transition-none"
+    />
   </SliderPrimitive.Root>
 ));
 Slider.displayName = SliderPrimitive.Root.displayName;
