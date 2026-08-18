@@ -9,6 +9,41 @@
 import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
 /**
+ * Mirrors `CustomFields.Domain.Enums.ValidatorKind`'s wire names, in the
+ * enum's own declared order. Wave 2 Step 2.5 Task 10: this is now the
+ * canonical declaration site, re-exported by `../../presentation/
+ * validatorKindRegistry.ts` -- Task 8 originally declared it there (this
+ * file's `validatorKind` field didn't exist yet at Task 8 time, and Task 9
+ * couldn't touch the registry file per its own ownership scope), mirroring
+ * the same data-layer-defines/presentation-re-exports shape already
+ * established for `CustomFieldValueTypeName` (declared in
+ * `CustomFieldValueModel.ts`, re-exported by `valueTypeRegistry.ts`).
+ *
+ * NOTE: `CustomFieldJson.validatorKind` and `CustomField.data.validatorKind`
+ * below deliberately still type as plain `string | null` rather than this
+ * union -- narrowing those would cascade into `CustomFieldMapper.ts`'s
+ * constructor-argument typing and `domain/entities/CustomField.ts`'s
+ * `CustomFieldData.validatorKind`, both outside this task's file ownership.
+ * Moving the union's declaration here (so there's exactly one canonical copy
+ * instead of two) was in scope; retyping every field that carries the value
+ * is a follow-up.
+ */
+export type ValidatorKindName =
+  | "Iban"
+  | "EgyptianNationalId"
+  | "SaudiNationalId"
+  | "EmiratiNationalId"
+  | "Imei"
+  | "SwiftBic"
+  | "VehiclePlate"
+  | "PostalCode"
+  | "NumericRange"
+  | "LengthRange"
+  | "OneOfList"
+  | "WildcardContains"
+  | "WildcardStartsWith";
+
+/**
  * EntityType item JSON shape from API.
  */
 export interface EntityTypeItemJson {
@@ -49,14 +84,13 @@ export interface CustomFieldJson {
   createdAt: string;
   modifiedAt?: string | null;
   /**
-   * Wave 2 Step 2.5 Task 9. Wire name is the exact C# enum member name
-   * (e.g. "SwiftBic", "PostalCode") -- see validatorKindRegistry.ts for the
-   * closed set. Kept as a plain string here (not narrowed to
-   * ValidatorKindName) because that union's canonical home is currently the
-   * presentation-layer registry, not this data-layer DTO; narrowing here
-   * would mean this file importing a presentation-layer type, which is the
-   * wrong direction for this module's Data -> Presentation layering.
-   * `undefined`/`null` means no validator attached.
+   * Wave 2 Step 2.5 Task 9/10. Wire name is the exact C# enum member name
+   * (e.g. "SwiftBic", "PostalCode") -- see the `ValidatorKindName` union
+   * above (this file, as of Task 10) for the closed set. Still typed as a
+   * plain string here rather than that union -- see the union's own doc
+   * comment above for why the field-level narrowing is a deliberate
+   * follow-up, not an oversight. `undefined`/`null` means no validator
+   * attached.
    */
   validatorKind?: string | null;
   /**

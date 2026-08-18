@@ -25,6 +25,7 @@ import {
   ALL_VALUE_TYPES,
   type CustomFieldValueTypeName,
 } from "../valueTypeRegistry";
+import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../validatorKindRegistry";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -91,6 +92,59 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
 
   const valueTypeOptions = useMemo(
     () => ALL_VALUE_TYPES.map((type) => ({ value: type, label: t(VALUE_TYPE_CATALOG[type].labelKey) })),
+    [t]
+  );
+
+  // Wave 2 Step 2.5 Task 10 (D5: admin-definition-form only). The picker is
+  // fully optional -- a leading sentinel option lets an admin explicitly
+  // pick "no validator" (or clear a previously-attached one on Edit), same
+  // as picking any real kind. Selecting it writes "" into form state; the
+  // write-seam normalization in useCustomFieldViewModel.ts (TRAP 1) turns
+  // that into `null` before it ever reaches the API, since a nullable enum
+  // can't deserialize "".
+  const validatorKindOptions = useMemo(
+    () => [
+      { value: "", label: t("customField.validatorKindNone") },
+      ...ALL_VALIDATOR_KINDS.map((kind) => ({
+        value: kind,
+        label: t(VALIDATOR_KIND_CATALOG[kind].labelKey),
+      })),
+    ],
+    [t]
+  );
+
+  // One FieldConfig per parameterized ValidatorKind (6 of the 13), built
+  // from the catalog rather than hand-enumerated -- each entry is visible
+  // only when its own kind is the one currently selected, so exactly one (or
+  // none) of these ever renders/submits for a given form state, and adding a
+  // 14th member later needs no new field here. PostalCode alone renders as a
+  // closed-set picker (its catalog entry's supportedParamValues) instead of
+  // free text, so its 7-country allowlist is read from the same catalog the
+  // backend's own definition-time gate is pinned against
+  // (validatorKindRegistry.ts / ValidatorPresets.SupportedPostalCodeCountries),
+  // never re-typed here. An AE selection isn't offered (Task 8's catalog
+  // already excludes it, R9) -- if a stale/legacy value still names it, the
+  // backend's own dedicated AE-rejection message surfaces through
+  // GenericForm's existing serverError handling rather than being swallowed
+  // here.
+  const validatorParamFields = useMemo(
+    () =>
+      ALL_VALIDATOR_KINDS.filter((kind) => VALIDATOR_KIND_CATALOG[kind].hasParam).map((kind) => {
+        const entry = VALIDATOR_KIND_CATALOG[kind];
+        const isClosedSet = entry.supportedParamValues !== undefined;
+        return {
+          name: "validatorParam",
+          label: t("customField.fields.validatorParam"),
+          type: (isClosedSet ? "select" : "text") as "select" | "text",
+          placeholder: isClosedSet ? undefined : t(entry.paramHintKey as string),
+          description: t(entry.paramHintKey as string),
+          options: isClosedSet
+            ? entry.supportedParamValues!.map((code) => ({ value: code, label: code }))
+            : undefined,
+          isVisible: (form: Record<string, unknown>) =>
+            form.valueType === "Text" && form.validatorKind === kind,
+        };
+      }),
     [t]
   );
 
@@ -232,6 +286,21 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
         },
         {
+          name: "validatorKind",
+          label: t("customField.fields.validatorKind"),
+          type: "select" as const,
+          options: validatorKindOptions,
+          description: t("customField.validatorKindDescription"),
+          // D5: admin-definition-form only, and D4: Text value type only --
+          // this catalog exists solely for the Text handler's dispatch, same
+          // conditional-visibility mechanism the Options field below uses
+          // for Select. Literal "Text" comparison, not a catalog lookup,
+          // because this feature is inherently Text-specific rather than a
+          // per-value-type property every type carries an opinion on.
+          isVisible: (form: Record<string, unknown>) => form.valueType === "Text",
+        },
+        ...validatorParamFields,
+        {
           name: "options",
           label: t("customField.fields.options"),
           type: "textarea" as const,
@@ -319,6 +388,16 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
         },
         {
+          name: "validatorKind",
+          label: t("customField.fields.validatorKind"),
+          type: "select" as const,
+          options: validatorKindOptions,
+          description: t("customField.validatorKindDescription"),
+          // Same D5/D4 reasoning as the create form's identical field above.
+          isVisible: (form: Record<string, unknown>) => form.valueType === "Text",
+        },
+        ...validatorParamFields,
+        {
           name: "options",
           label: t("customField.fields.options"),
           type: "textarea" as const,
@@ -358,6 +437,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         placeholderEn: "",
         placeholderAr: "",
         valueType: "Text",
+        validatorKind: "",
+        validatorParam: "",
         options: "",
         isRequired: false,
         sortOrder: 0,
@@ -374,6 +455,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         labelAr: item.labelAr ?? "",
         placeholderEn: item.placeholderEn ?? "",
         placeholderAr: item.placeholderAr ?? "",
+        validatorKind: item.validatorKind ?? "",
+        validatorParam: item.validatorParam ?? "",
         options: item.options ?? "",
         isRequired: item.isRequired,
         sortOrder: item.sortOrder,
@@ -417,6 +500,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       entityTypeOptions,
       valueTypeOptions,
       valueTypeLabelOf,
+      validatorKindOptions,
+      validatorParamFields,
       vm,
       isEntityTypesError,
       refetchEntityTypes,

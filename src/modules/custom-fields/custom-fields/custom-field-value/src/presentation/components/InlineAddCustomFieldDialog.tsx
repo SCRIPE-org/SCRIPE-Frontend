@@ -15,6 +15,10 @@ import {
   ALL_VALUE_TYPES,
   type CustomFieldValueTypeName,
 } from "../../../../custom-field/src/presentation/valueTypeRegistry";
+import {
+  VALIDATOR_KIND_CATALOG,
+  ALL_VALIDATOR_KINDS,
+} from "../../../../custom-field/src/presentation/validatorKindRegistry";
 
 // Shares CustomFieldListView.tsx's per-value-type catalog (badge tone,
 // placeholder/options applicability, display label) rather than
@@ -47,6 +51,41 @@ export function InlineAddCustomFieldDialog({
   // session.
   useModuleLocales(() => import("../../../../custom-field/locales"), "customFields");
   const { t } = useI18n();
+
+  // Wave 2 Step 2.5 Task 10 (D5: admin-definition-form only). Same catalog-
+  // driven shape as CustomFieldListView.tsx's identical construction --
+  // kept in sync deliberately, not shared/imported, matching this file's
+  // existing convention for its other per-value-type field logic.
+  const validatorKindOptions = useMemo(
+    () => [
+      { value: "", label: t("customField.validatorKindNone") },
+      ...ALL_VALIDATOR_KINDS.map((kind) => ({
+        value: kind,
+        label: t(VALIDATOR_KIND_CATALOG[kind].labelKey),
+      })),
+    ],
+    [t]
+  );
+
+  const validatorParamFields = useMemo<FieldConfig[]>(
+    () =>
+      ALL_VALIDATOR_KINDS.filter((kind) => VALIDATOR_KIND_CATALOG[kind].hasParam).map((kind) => {
+        const entry = VALIDATOR_KIND_CATALOG[kind];
+        const isClosedSet = entry.supportedParamValues !== undefined;
+        return {
+          name: "validatorParam",
+          label: t("customField.fields.validatorParam"),
+          type: isClosedSet ? "select" : "text",
+          placeholder: isClosedSet ? undefined : t(entry.paramHintKey as string),
+          description: t(entry.paramHintKey as string),
+          options: isClosedSet
+            ? entry.supportedParamValues!.map((code) => ({ value: code, label: code }))
+            : undefined,
+          isVisible: (form) => form.valueType === "Text" && form.validatorKind === kind,
+        };
+      }),
+    [t]
+  );
 
   const fields = useMemo<FieldConfig[]>(
     () => [
@@ -98,6 +137,18 @@ export function InlineAddCustomFieldDialog({
           VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
       },
       {
+        name: "validatorKind",
+        label: t("customField.fields.validatorKind"),
+        type: "select",
+        options: validatorKindOptions,
+        description: t("customField.validatorKindDescription"),
+        // D5/D4: admin-definition-form only, Text value type only. Literal
+        // "Text" comparison -- see CustomFieldListView.tsx's identical field
+        // for the full reasoning.
+        isVisible: (form) => form.valueType === "Text",
+      },
+      ...validatorParamFields,
+      {
         name: "options",
         label: t("customField.fields.options"),
         type: "textarea",
@@ -124,7 +175,7 @@ export function InlineAddCustomFieldDialog({
           : t("customField.isGlobalDescription.tenantContext"),
       },
     ],
-    [t, isSuperAdmin, isPlatformContext]
+    [t, isSuperAdmin, isPlatformContext, validatorKindOptions, validatorParamFields]
   );
 
   if (!canCreate) return null;
@@ -153,7 +204,22 @@ export function InlineAddCustomFieldDialog({
             }}
             onSubmit={async (data) => {
               const { customFieldRepository } = getCustomFieldsContainer();
-              await customFieldRepository.create({ ...data, entityTypeKey });
+              await customFieldRepository.create({
+                ...data,
+                entityTypeKey,
+                // Wave 2 Step 2.5 Task 10 (TRAP 1), this dialog's own write
+                // seam (R4). `validatorKind` is a nullable enum on the wire
+                // -- "" is neither JSON null nor a member name, so it fails
+                // model binding outright, unlike `options` (a plain
+                // `string?`) which survives "" today. The picker's "no
+                // validator" option submits "" when chosen, and
+                // generic-form.tsx's submitData is a raw spread of formData
+                // with no per-field coercion beyond dates/numbers, so ""
+                // reaches here verbatim unless normalized right before this
+                // call -- the only seam this dialog owns.
+                validatorKind: data.validatorKind === "" ? null : data.validatorKind,
+                validatorParam: data.validatorParam === "" ? null : data.validatorParam,
+              });
               setOpen(false);
               onCreated();
             }}

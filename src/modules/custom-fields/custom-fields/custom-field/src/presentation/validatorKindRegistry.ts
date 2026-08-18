@@ -6,18 +6,17 @@
  * validators the backend ships (`CustomFields.Domain.Enums.ValidatorKind`,
  * D2/D3/S-1 -- tenants compose an existing member on a field definition;
  * they never author a pattern themselves, there is no tenant-raw-regex path
- * anywhere in this module). This module only DEFINES the catalog. No
- * consumer is rewired yet -- that is Task 10 in this same plan.
+ * anywhere in this module). Task 10 is this catalog's first real consumer
+ * (the admin-form picker in `CustomFieldListView.tsx` / `InlineAddCustomFieldDialog.tsx`).
  *
- * Unlike `CustomFieldValueTypeName` (re-exported here from the
- * already-shipped `CustomFieldValueModel.ts`), `ValidatorKindName` has no
- * existing frontend home yet: Task 9 (frontend read path -- CustomFieldModel.ts,
- * CustomFieldMapper.ts, CustomField.ts) has not landed at the time this file
- * is written, and this task's file ownership explicitly excludes those
- * files. This file is therefore the canonical definition of the type until
- * a later task re-exports it from the read-path model the way
- * `valueTypeRegistry.ts` re-exports `CustomFieldValueTypeName` -- not this
- * task's call to make.
+ * `ValidatorKindName` itself is re-exported from `CustomFieldModel.ts`
+ * (Wave 2 Step 2.5 Task 10), the same data-layer-defines/presentation-
+ * re-exports shape `valueTypeRegistry.ts` already uses for
+ * `CustomFieldValueTypeName`. It started life declared directly in this
+ * file at Task 8 time, because `CustomFieldModel.ts` didn't carry a
+ * `validatorKind` field yet and Task 9's file ownership excluded this
+ * registry file -- Task 10 owns both files and moved the declaration to
+ * close that gap.
  *
  * Member strings are the exact C# enum member names, character for
  * character -- `ServiceExtensions.cs:57` registers a bare
@@ -33,22 +32,13 @@
 /**
  * Mirrors `CustomFields.Domain.Enums.ValidatorKind`'s wire names, in the
  * enum's own declared order (values 0..12 -- that file's doc comment: "must
- * NEVER be renumbered, reordered, or reused once shipped").
+ * NEVER be renumbered, reordered, or reused once shipped"). Canonical
+ * declaration lives in `CustomFieldModel.ts` (data layer) as of Task 10; see
+ * that file's doc comment on the type for the reasoning.
  */
-export type ValidatorKindName =
-  | "Iban"
-  | "EgyptianNationalId"
-  | "SaudiNationalId"
-  | "EmiratiNationalId"
-  | "Imei"
-  | "SwiftBic"
-  | "VehiclePlate"
-  | "PostalCode"
-  | "NumericRange"
-  | "LengthRange"
-  | "OneOfList"
-  | "WildcardContains"
-  | "WildcardStartsWith";
+export type { ValidatorKindName } from "../data/models/CustomFieldModel";
+
+import type { ValidatorKindName } from "../data/models/CustomFieldModel";
 
 export interface ValidatorKindCatalogEntry {
   /**

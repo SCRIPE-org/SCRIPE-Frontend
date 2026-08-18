@@ -25,6 +25,8 @@ export const en = {
       isActive: "Active",
       scope: "Scope",
       isGlobal: "Global (all tenants)",
+      validatorKind: "Validator",
+      validatorParam: "Validator Parameter",
     },
 
     // Form placeholders
@@ -36,6 +38,44 @@ export const en = {
       placeholderEn: "e.g. Enter your shirt size",
       placeholderAr: "e.g. أدخل مقاس القميص",
       options: "One option per line — Select fields only",
+    },
+
+    // Validator picker — Wave 2 Step 2.5 Task 10. Admin-definition-form only
+    // (D5); appears only for Text fields, mirroring the conditional
+    // visibility the Options field above already uses for Select. The
+    // closed 13-member set itself is ALL_VALIDATOR_KINDS/VALIDATOR_KIND_CATALOG
+    // (validatorKindRegistry.ts, Task 8) — these keys are display text only,
+    // not a second source of truth for which kinds exist.
+    validatorKindNone: "No validator",
+    validatorKindDescription:
+      "Optional format check applied when this field is saved. Leave as \"No validator\" for a free-form Text field.",
+    validatorKinds: {
+      iban: "IBAN",
+      egyptianNationalId: "Egyptian National ID",
+      saudiNationalId: "Saudi National ID",
+      emiratiNationalId: "Emirati ID (UAE)",
+      imei: "IMEI",
+      swiftBic: "SWIFT / BIC Code",
+      vehiclePlate: "Vehicle Plate Number",
+      postalCode: "Postal Code",
+      numericRange: "Numeric Range",
+      lengthRange: "Length Range",
+      oneOfList: "One of a List",
+      wildcardContains: "Contains Text",
+      wildcardStartsWith: "Starts With Text",
+    },
+    // Per-kind hint shown next to the Validator Parameter input, for the 6
+    // parameterized kinds only (validatorKindRegistry.ts's paramHintKey).
+    validatorKindParamHints: {
+      postalCode: "Select the country whose postal-code format this field should validate against.",
+      numericRange:
+        'Minimum and maximum allowed number, separated by a comma, e.g. "1,100". Leave either side blank for no limit on that end.',
+      lengthRange:
+        'Minimum and maximum allowed character length, separated by a comma, e.g. "2,50". Leave either side blank for no limit on that end.',
+      oneOfList:
+        "One allowed value per line. The saved value must match one of these exactly (case-sensitive).",
+      wildcardContains: "The value must contain this text (case-sensitive).",
+      wildcardStartsWith: "The value must start with this text (case-sensitive).",
     },
 
     // Entity-type picker: grouped by whether a screen actually renders this
