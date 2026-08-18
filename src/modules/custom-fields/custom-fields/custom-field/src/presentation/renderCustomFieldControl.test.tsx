@@ -18,7 +18,7 @@
 // mocking keeps this test aligned with the project's established pattern for
 // rendering @core/ui/switch directly).
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 import { renderCustomFieldControl, validateSelectCustomFieldValue } from "./renderCustomFieldControl";
@@ -381,6 +381,203 @@ describe("renderCustomFieldControl", () => {
       expect(validateSelectCustomFieldValue(PRIORITY_FIELD, " Medium ", t)).toBeNull();
     });
   });
+
+  // ── fc.type === "textarea" (Wave 3.1 Task 10: LongText) ─────────────────
+  describe("fc.type textarea (LongText)", () => {
+    it("renders a Textarea and reports changes as a plain string", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_bio", type: "textarea", label: "Bio" },
+            value: "",
+            onChange,
+          })}
+        </>
+      );
+      const control = screen.getByLabelText("Bio");
+      expect(control.tagName).toBe("TEXTAREA");
+      fireEvent.change(control, { target: { value: "A longer answer." } });
+      expect(onChange).toHaveBeenCalledWith("A longer answer.");
+    });
+
+    it("disables the Textarea when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: { name: "cf_bio", type: "textarea", label: "Bio" },
+            value: "existing",
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByLabelText("Bio")).toBeDisabled();
+    });
+  });
+
+  // ── fc.type === "multi-select" (Wave 3.1 Task 10: MultiSelect) ──────────
+  describe("fc.type multi-select (MultiSelect)", () => {
+    const COLOR_FIELD = {
+      name: "cf_colors",
+      type: "multi-select" as const,
+      label: "Colors",
+      options: [
+        { value: "Red", label: "Red" },
+        { value: "Green", label: "Green" },
+        { value: "Blue", label: "Blue" },
+      ],
+    };
+
+    // TRAP (pre-plan analysis §5.2/TRAP 11): the Select branch's own
+    // `toFieldInputValue` stringifies its value (`String(value)`), which
+    // would turn an array into "a,b" and destroy its array-ness before
+    // GenericSelect ever sees it. This is the discriminating assertion that
+    // the MultiSelect branch does NOT reuse that helper.
+    it("passes an array value straight through to GenericSelect, not stringified", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: COLOR_FIELD,
+            value: ["Red"],
+            onChange: vi.fn(),
+          })}
+        </>
+      );
+      const trigger = screen.getByRole("combobox", { name: "Colors" });
+      // A destroyed-to-string value ("Red") would leave GenericSelect's own
+      // `Array.isArray(value)` multi-detection seeing a plain string, not a
+      // selection -- the trigger renders a selected-value chip only when it
+      // genuinely received an array. Scoped to the (closed) trigger itself
+      // so this doesn't ambiguously match an "Red" option row once open.
+      expect(within(trigger).getByText("Red")).toBeInTheDocument();
+    });
+
+    it("reports a real string[] via onChange when an option is picked, not a joined string", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: COLOR_FIELD,
+            value: [],
+            onChange,
+          })}
+        </>
+      );
+      fireEvent.click(screen.getByRole("combobox", { name: "Colors" }));
+      fireEvent.click(screen.getByRole("option", { name: "Blue" }));
+      expect(onChange).toHaveBeenCalledWith(["Blue"]);
+    });
+
+    it("treats a non-array value defensively as an empty selection rather than throwing", () => {
+      expect(() =>
+        render(
+          <>
+            {renderCustomFieldControl({
+              fc: COLOR_FIELD,
+              value: "",
+              onChange: vi.fn(),
+            })}
+          </>
+        )
+      ).not.toThrow();
+    });
+
+    it("disables the GenericSelect when isViewMode is true", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: COLOR_FIELD,
+            value: ["Red"],
+            onChange: vi.fn(),
+            isViewMode: true,
+          })}
+        </>
+      );
+      expect(screen.getByRole("combobox")).toHaveAttribute("aria-disabled", "true");
+    });
+  });
+
+  // ── fc.type === "datetime" (Wave 3.1 Task 10: DateTime) ─────────────────
+  describe("fc.type datetime (DateTime)", () => {
+    const MEETING_FIELD = { name: "cf_meeting", type: "datetime" as const, label: "Meeting" };
+
+    it("renders a datetime-local input", () => {
+      render(
+        <>
+          {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange: vi.fn() })}
+        </>
+      );
+      expect(screen.getByLabelText("Meeting")).toHaveAttribute("type", "datetime-local");
+    });
+
+    // TRAP (pre-plan analysis §5.3/R7): the wire value is the two-piece
+    // `{ value, timeZoneId }` object, not a bare string -- a branch that
+    // reused `toFieldInputValue` (`String(value)`) would stringify it into
+    // the useless "[object Object]" instead of reflecting the instant back
+    // into the input.
+    it("reflects the object value's own `value` piece into the input, not '[object Object]'", () => {
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: MEETING_FIELD,
+            value: { value: "2026-08-18T10:30", timeZoneId: "Africa/Cairo" },
+            onChange: vi.fn(),
+          })}
+        </>
+      );
+      expect(screen.getByLabelText("Meeting")).toHaveValue("2026-08-18T10:30");
+    });
+
+    it("reports a { value, timeZoneId } object via onChange, pairing a fresh instant with a zone", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange })}
+        </>
+      );
+      fireEvent.change(screen.getByLabelText("Meeting"), {
+        target: { value: "2026-08-18T10:30" },
+      });
+      expect(onChange).toHaveBeenCalledTimes(1);
+      const emitted = onChange.mock.calls[0][0] as { value: string; timeZoneId: string };
+      expect(emitted.value).toBe("2026-08-18T10:30");
+      expect(typeof emitted.timeZoneId).toBe("string");
+      expect(emitted.timeZoneId.length).toBeGreaterThan(0);
+    });
+
+    it("preserves the existing timeZoneId when only the instant changes", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: MEETING_FIELD,
+            value: { value: "2026-08-18T10:30", timeZoneId: "Africa/Cairo" },
+            onChange,
+          })}
+        </>
+      );
+      fireEvent.change(screen.getByLabelText("Meeting"), {
+        target: { value: "2026-08-19T09:00" },
+      });
+      expect(onChange).toHaveBeenCalledWith({ value: "2026-08-19T09:00", timeZoneId: "Africa/Cairo" });
+    });
+
+    it("clears to null (not a zone-only half-blank object) when the instant is cleared", () => {
+      const onChange = vi.fn();
+      render(
+        <>
+          {renderCustomFieldControl({
+            fc: MEETING_FIELD,
+            value: { value: "2026-08-18T10:30", timeZoneId: "Africa/Cairo" },
+            onChange,
+          })}
+        </>
+      );
+      fireEvent.change(screen.getByLabelText("Meeting"), { target: { value: "" } });
+      expect(onChange).toHaveBeenCalledWith(null);
+    });
+  });
 });
 
 // Completeness exit-gate (Final whole-branch review, I2 fix). Every prior
@@ -451,6 +648,32 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           expect(onChange).toHaveBeenCalledWith("Beta");
           break;
         }
+        case "multi-select": {
+          // MultiSelect's own dedicated branch (Wave 3.1 Task 10): an open
+          // GenericSelect panel in MULTI mode -- picking an option reports a
+          // real string[], not the single string the "select" case above
+          // asserts, and specifically NOT the array-destroyed
+          // `toFieldInputValue` string the shared Input fallthrough would
+          // have produced.
+          const trigger = screen.getByRole("combobox", { name: valueType });
+          fireEvent.click(trigger);
+          expect(screen.getByRole("option", { name: "Alpha" })).toBeInTheDocument();
+          expect(screen.getByRole("option", { name: "Beta" })).toBeInTheDocument();
+          fireEvent.click(screen.getByRole("option", { name: "Beta" }));
+          expect(onChange).toHaveBeenCalledWith(["Beta"]);
+          break;
+        }
+        case "textarea":
+          // LongText's own dedicated branch (Wave 3.1 Task 10): a real
+          // <textarea>, not the single-line Input fallthrough.
+          expect(screen.getByLabelText(valueType).tagName).toBe("TEXTAREA");
+          break;
+        case "datetime":
+          // DateTime's own dedicated branch (Wave 3.1 Task 10): a real
+          // <input type="datetime-local">, not the "date" branch's
+          // date-only input.
+          expect(screen.getByLabelText(valueType)).toHaveAttribute("type", "datetime-local");
+          break;
         case "number":
           // Number's own distinguishing mark on the shared Input branch:
           // the numeric type attribute.

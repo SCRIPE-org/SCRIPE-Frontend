@@ -54,9 +54,12 @@ import React from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
+import { Textarea } from "@core/ui/textarea";
 import { DatePicker } from "@core/ui/date-picker";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { getBrowserLocalTimeZoneId } from "@core/utils/timezone";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
+import type { CustomFieldDateTimeValue } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
 export interface CustomFieldControlProps {
   fc: FieldConfig;
@@ -195,6 +198,120 @@ export function renderCustomFieldControl({
           }}
           placeholder={fc.placeholder || fc.label}
           type="single"
+          required={fc.required}
+          disabled={isViewMode}
+        />
+      </div>
+    );
+  }
+
+  // Wave 3.1 Task 10: LongText. A minimal-but-real branch, not a stub --
+  // renders the same `Textarea` GenericForm's own "textarea" branch already
+  // uses, with the same string in/string out contract as the Text
+  // fallthrough below. Deliberately WITHOUT the character counter and
+  // resize-y/dir polish the pre-plan analysis's §5.1 calls for (`rows`
+  // default, `dir={direction}`, a shared counter component lifted out of
+  // GenericForm) -- that is Task 12's job once the control has a home to be
+  // polished in; shipping a plain, functionally-correct textarea now is
+  // strictly better than leaving LongText on the generic single-line Input
+  // fallthrough, which would silently cap it at whatever that Input renders.
+  if (fc.type === "textarea") {
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label}
+        </Label>
+        <Textarea
+          id={fc.name}
+          value={toFieldInputValue(value)}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={fc.placeholder}
+          required={fc.required}
+          disabled={isViewMode}
+          rows={fc.rows || 4}
+        />
+      </div>
+    );
+  }
+
+  // Wave 3.1 Task 10: MultiSelect. The dispatch-correctness fix the pre-plan
+  // analysis's §5.2/TRAP 11 names explicitly: the Select branch above feeds
+  // `value` through `toFieldInputValue` (`String(value)`), which turns an
+  // array into the single string "a,b" -- `GenericSelect`'s own multi
+  // detection is `Array.isArray(value)`, so that string is neither a valid
+  // single value NOR ever detected as multi. This branch passes the array
+  // straight through untouched in both directions instead. Client-side
+  // option-membership validation (generalizing `validateSelectCustomFieldValue`
+  // to arrays) and the read side's chip/removable-token affordance in the
+  // OPEN panel are Task 11's job -- this branch only has to get a real
+  // selection saved and reloaded correctly, which it does: GenericSelect's
+  // "multi" mode already renders chips in the trigger and toggle semantics
+  // in the panel with no further wiring.
+  if (fc.type === "multi-select") {
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label}
+        </Label>
+        <GenericSelect
+          id={fc.name}
+          aria-label={fc.label ?? fc.name}
+          options={fc.options?.map((opt) => ({ value: opt.value, label: opt.label })) ?? []}
+          value={Array.isArray(value) ? value : []}
+          onValueChange={(v: string | string[]) => onChange(v)}
+          placeholder={fc.placeholder || fc.label}
+          type="multi"
+          required={fc.required}
+          disabled={isViewMode}
+        />
+      </div>
+    );
+  }
+
+  // Wave 3.1 Task 10: DateTime. The wire value is the two-piece
+  // `{ value, timeZoneId }` object CustomFieldValueModel.ts's
+  // CustomFieldDateTimeValue describes (DateTimeValueTypeHandler's own
+  // chosen shape) -- `toFieldInputValue` (a bare `String(value)`) would
+  // stringify that object into the useless literal "[object Object]", the
+  // same array-destroying failure mode the MultiSelect branch above avoids,
+  // so this branch unpacks and repacks the object by hand instead.
+  //
+  // The zone is REQUIRED once any instant is submitted (the backend rejects
+  // a half-blank submission as invalid, not as empty -- see
+  // DateTimeValueTypeHandler.IsEmpty's own doc comment), so this defaults a
+  // freshly-entered instant to the BROWSER's zone, captured explicitly here
+  // rather than left undefined -- "the value this user is entering right
+  // now" is exactly the case the pre-plan analysis's §5.3 says the browser
+  // zone is the correct default for (distinct from rendering someone ELSE's
+  // scheduled event, where `core/utils/timezone.ts`'s "never the browser's
+  // local zone" warning applies). Clearing the instant clears the whole
+  // value to `null` rather than leaving a zone-only half-blank object
+  // behind. This intentionally does NOT render the "resolved zone" text or a
+  // change affordance the pre-plan's §5.3 calls for -- that visible
+  // disclosure UI is Task 12's job; this branch's only job is to never lose
+  // or corrupt the zone a value already carries.
+  if (fc.type === "datetime") {
+    const current =
+      value && typeof value === "object" ? (value as Partial<CustomFieldDateTimeValue>) : undefined;
+    return (
+      <div key={fc.name} className="space-y-2">
+        <Label htmlFor={fc.name} className="text-sm font-medium">
+          {fc.label}
+        </Label>
+        <DatePicker
+          id={fc.name}
+          type="datetime-local"
+          value={current?.value ?? ""}
+          onChange={(v) =>
+            onChange(
+              v
+                ? ({
+                    value: v,
+                    timeZoneId: current?.timeZoneId || getBrowserLocalTimeZoneId(),
+                  } satisfies CustomFieldDateTimeValue)
+                : null
+            )
+          }
           required={fc.required}
           disabled={isViewMode}
         />

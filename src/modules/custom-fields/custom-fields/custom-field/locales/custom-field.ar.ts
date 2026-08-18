@@ -89,13 +89,17 @@ export const ar = {
     noFrontendScreenWarning:
       "لا توجد شاشة تعرض {entity} حتى الآن. سيُحفظ هذا التعريف بشكل صحيح وستعمل واجهة القيم البرمجية معه، لكنه لن يظهر في أي نموذج إلى أن يتم بناء شاشة له.",
 
-    // CustomFieldValueType enum (0..4)
+    // CustomFieldValueType enum (0..7) -- المهمة 10 من الموجة 3.1 تضيف
+    // longText/dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7).
     valueTypes: {
       text: "نص",
       number: "رقم",
       boolean: "قيمة منطقية",
       date: "تاريخ",
       select: "اختيار",
+      longText: "نص طويل",
+      dateTime: "التاريخ والوقت",
+      multiSelect: "اختيار متعدد",
     },
 
     // رسائل التحقق الخاصة بكل نوع قيمة (حاليًا لحقول الاختيار فقط). أُضيفت

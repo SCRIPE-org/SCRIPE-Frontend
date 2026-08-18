@@ -130,6 +130,56 @@ export const VALUE_TYPE_CATALOG: Record<CustomFieldValueTypeName, ValueTypeCatal
     hasOptions: true,
     labelKey: "customField.valueTypes.select",
   },
+  /**
+   * Wave 3.1 Task 5/10 (ruling R8). Byte-identical to
+   * LongTextValueTypeHandler.Descriptor on the backend (that handler's own
+   * doc comment says so explicitly) -- a genuinely separate capability from
+   * Text (its own ValueLongText column, no HasMaxLength), not a taller
+   * textarea over the same 4000-char column, even though the two share
+   * `hasPlaceholder`/`badgeVariant` here.
+   */
+  LongText: {
+    fieldConfigType: "textarea",
+    badgeVariant: "secondary",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.longText",
+  },
+  /**
+   * Wave 3.1 Task 7/10 (ruling R7). Byte-identical to
+   * DateTimeValueTypeHandler.Descriptor on the backend. `hasPlaceholder:
+   * false` is deliberate, not the same value Date/Boolean happen to share
+   * for unrelated reasons -- a DateTime value is a two-piece (instant +
+   * zone) object, and there is no single text placeholder concept for it.
+   * `fieldConfigType: "datetime"` is an existing FieldConfig["type"]
+   * (generic-form.tsx maps it onto an HTML `datetime-local` input), not a
+   * new frontend concept invented for this type.
+   */
+  DateTime: {
+    fieldConfigType: "datetime",
+    badgeVariant: "warning",
+    hasPlaceholder: false,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.dateTime",
+  },
+  /**
+   * Wave 3.1 Task 8/10 (rulings R5, R9). Byte-identical to
+   * MultiSelectValueTypeHandler.Descriptor on the backend. `hasOptions:
+   * true` puts MultiSelect in the same options-owning family as Select for
+   * every catalog-driven guard below (the admin form's Options textarea
+   * visibility, `SelectOptionsOwnership`'s backend twin) -- it is the
+   * SECOND type this capability flag was built to generalize for (Wave 3.1
+   * Task 4), not a special case bolted on here. `hasPlaceholder: true`
+   * because the same GenericSelect component this renders through already
+   * has a placeholder concept in its multi mode.
+   */
+  MultiSelect: {
+    fieldConfigType: "multi-select",
+    badgeVariant: "default",
+    hasPlaceholder: true,
+    hasOptions: true,
+    labelKey: "customField.valueTypes.multiSelect",
+  },
 };
 
 /**
@@ -151,9 +201,12 @@ export function getValueTypeCatalogEntry(type: string): ValueTypeCatalogEntry | 
 }
 
 /**
- * All 5 known type names, in the same fixed display order used everywhere
+ * All 8 known type names, in the same fixed display order used everywhere
  * else in this module (CustomFieldListView.tsx's valueTypeOptions,
- * InlineAddCustomFieldDialog.tsx).
+ * InlineAddCustomFieldDialog.tsx) -- and matching
+ * CustomFieldValueType's own backend declaration order (Text=0 .. MultiSelect=7),
+ * so the type picker's option order reads the same as the enum's shipped
+ * history rather than an arbitrary regrouping.
  */
 export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Text",
@@ -161,4 +214,7 @@ export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Boolean",
   "Date",
   "Select",
+  "LongText",
+  "DateTime",
+  "MultiSelect",
 ];

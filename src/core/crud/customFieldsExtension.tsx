@@ -25,9 +25,20 @@ import { useCallback, useEffect, useMemo, useState } from "react";
  * name, never its numeric ordinal — see the CustomFields module's own
  * CustomFieldValueModel.ts, which this duplicates rather than imports, for
  * the same "core never imports from modules" reason FieldConfig[] is the
- * boundary type for getFormFields below).
+ * boundary type for getFormFields below). Wave 3.1 Task 10 adds
+ * LongText/DateTime/MultiSelect to both declarations of this union in
+ * lockstep — this file's own header comment documents why there are exactly
+ * two, not one.
  */
-export type CustomFieldValueTypeName = "Text" | "Number" | "Boolean" | "Date" | "Select";
+export type CustomFieldValueTypeName =
+  | "Text"
+  | "Number"
+  | "Boolean"
+  | "Date"
+  | "Select"
+  | "LongText"
+  | "DateTime"
+  | "MultiSelect";
 
 /**
  * One active custom-field definition shaped as a table-column header — thinner

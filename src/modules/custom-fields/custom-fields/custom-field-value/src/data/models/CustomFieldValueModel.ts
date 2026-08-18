@@ -2,15 +2,44 @@
  * CustomFieldValueType wire names -- mirrors backend enum member names verbatim
  * (CustomFields.Domain.Enums.CustomFieldValueType). The API's global
  * JsonStringEnumConverter serializes enums as strings, so this is never a
- * number on the wire.
+ * number on the wire. Wave 3.1 Task 10 adds LongText/DateTime/MultiSelect --
+ * the backend enum's members 5/6/7 (see that file's own doc comment for why
+ * Date=3 keeps its existing member rather than being renumbered).
  */
-export type CustomFieldValueTypeName = "Text" | "Number" | "Boolean" | "Date" | "Select";
+export type CustomFieldValueTypeName =
+  | "Text"
+  | "Number"
+  | "Boolean"
+  | "Date"
+  | "Select"
+  | "LongText"
+  | "DateTime"
+  | "MultiSelect";
+
+/**
+ * DateTime's wire shape (Wave 3.1 Task 7, ruling R7): a UTC instant plus a
+ * per-value IANA zone id, both required once either piece is submitted --
+ * mirrors the backend's `DateTimeZoneInput`/`DateTimeZoneValue` records
+ * exactly (`{ "value": <instant>, "timeZoneId": <IANA id> }` on the wire,
+ * property names verbatim, see DateTimeValueTypeHandler.cs). `value` is
+ * typed as `string` here (an ISO-8601 UTC instant) rather than mirroring the
+ * backend's wider `object?` acceptance (string/number/bool) -- every real
+ * value this module ever WRITES is a `datetime-local` input string, and
+ * every value it ever READS is a serialized `DateTime`, so `string` is the
+ * only shape either direction of this module actually produces or expects.
+ */
+export interface CustomFieldDateTimeValue {
+  value: string;
+  timeZoneId: string;
+}
 
 /**
  * CustomFieldValue wire shape — one entity type's active definition merged with
  * its stored value (if any) for a specific owner record. Value's runtime type
- * follows valueType: string (Text/Select), number (Number), boolean (Boolean),
- * ISO-8601 UTC string (Date), or null.
+ * follows valueType: string (Text/Select/LongText), number (Number), boolean
+ * (Boolean), ISO-8601 UTC string (Date), string[] (MultiSelect -- selected
+ * option labels, order-preserving per R5), CustomFieldDateTimeValue
+ * (DateTime), or null.
  */
 export interface EntityCustomFieldValueData {
   customFieldId: string;
@@ -23,7 +52,7 @@ export interface EntityCustomFieldValueData {
   isRequired: boolean;
   options?: string[] | null;
   sortOrder: number;
-  value: string | number | boolean | null;
+  value: string | number | boolean | string[] | CustomFieldDateTimeValue | null;
 }
 
 /**

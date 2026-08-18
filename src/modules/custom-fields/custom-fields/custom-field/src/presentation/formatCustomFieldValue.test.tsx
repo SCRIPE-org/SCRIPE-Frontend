@@ -66,6 +66,46 @@ describe("formatCustomFieldValue", () => {
     expect(screen.getByText((1234.5).toLocaleString("ar-EG-u-nu-latn"))).toBeInTheDocument();
   });
 
+  // ── Wave 3.1 Task 10: LongText/MultiSelect/DateTime ─────────────────────
+
+  it("returns the raw value as a plain string for LongText (same fallthrough as Text/Select)", () => {
+    expect(formatCustomFieldValue("LongText", "A much longer paragraph of text.", "en", t)).toBe(
+      "A much longer paragraph of text."
+    );
+  });
+
+  it("renders each selected MultiSelect label as its own chip, not a joined string", () => {
+    render(<>{formatCustomFieldValue("MultiSelect", ["Red", "Blue"], "en", t)}</>);
+    expect(screen.getByText("Red")).toBeInTheDocument();
+    expect(screen.getByText("Blue")).toBeInTheDocument();
+    // The joined-comma string must never appear as a single text node --
+    // that is precisely the ambiguous-with-Text failure mode chips exist to
+    // avoid (pre-plan analysis §5.2).
+    expect(screen.queryByText("Red,Blue")).not.toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a MultiSelect value with zero selections", () => {
+    render(<>{formatCustomFieldValue("MultiSelect", [], "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("formats a DateTime value with both the instant and its stored zone id", () => {
+    const value = { value: "2026-01-15T12:30:00Z", timeZoneId: "UTC" };
+    render(<>{formatCustomFieldValue("DateTime", value, "en", t)}</>);
+    expect(screen.getByText(/UTC/)).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a DateTime value missing its zone id", () => {
+    render(<>{formatCustomFieldValue("DateTime", { value: "2026-01-15T12:30:00Z" }, "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a DateTime value with an unrecognized zone id", () => {
+    const value = { value: "2026-01-15T12:30:00Z", timeZoneId: "Not/AZone" };
+    render(<>{formatCustomFieldValue("DateTime", value, "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
   // Completeness exit-gate (Final whole-branch review, I2 fix). The original
   // gate here (`.not.toThrow()` + `.not.toBeUndefined()`) was VACUOUS: this
   // function's own `default: return String(value)` fallthrough always
@@ -123,6 +163,7 @@ describe("formatCustomFieldValue", () => {
           expect(out).toBe(new Date(iso).toLocaleDateString("en-US"));
           break;
         }
+        case "LongText":
         case "Text":
         case "Select":
           // Documented, deliberate fallthrough (this file's own header
@@ -131,6 +172,28 @@ describe("formatCustomFieldValue", () => {
           // rather than accept by accident.
           expect(formatCustomFieldValue(type, "Cairo", "en", t)).toBe("Cairo");
           break;
+        case "MultiSelect": {
+          // String(["Red","Blue"]) would be the joined "Red,Blue" -- a real
+          // MultiSelect branch renders one Badge element per label, not a
+          // string at all.
+          const out = formatCustomFieldValue(type, ["Red", "Blue"], "en", t);
+          expect(out).not.toBe(String(["Red", "Blue"]));
+          expect(React.isValidElement(out)).toBe(true);
+          render(<>{out}</>);
+          expect(screen.getByText("Red")).toBeInTheDocument();
+          expect(screen.getByText("Blue")).toBeInTheDocument();
+          break;
+        }
+        case "DateTime": {
+          // String({ value, timeZoneId }) would be the useless
+          // "[object Object]" -- a real DateTime branch resolves the
+          // instant AND names its zone.
+          const raw = { value: "2026-01-15T12:30:00Z", timeZoneId: "UTC" };
+          const out = formatCustomFieldValue(type, raw, "en", t);
+          expect(out).not.toBe(String(raw));
+          expect(String(out)).toContain("UTC");
+          break;
+        }
         default:
           throw new Error(
             `formatCustomFieldValue completeness gate has no classification for value type ` +
@@ -142,7 +205,7 @@ describe("formatCustomFieldValue", () => {
     }
   );
 
-  it("has exactly 5 known value types to cover", () => {
-    expect(ALL_VALUE_TYPES).toHaveLength(5);
+  it("has exactly 8 known value types to cover", () => {
+    expect(ALL_VALUE_TYPES).toHaveLength(8);
   });
 });

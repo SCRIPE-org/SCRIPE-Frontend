@@ -17,13 +17,17 @@ describe("VALUE_TYPE_CATALOG", () => {
     expect(entry.labelKey).toMatch(/^customField\.valueTypes\./);
   });
 
-  it("has exactly 5 entries, matching ALL_VALUE_TYPES", () => {
+  it("has exactly 8 entries, matching ALL_VALUE_TYPES", () => {
     expect(Object.keys(VALUE_TYPE_CATALOG).sort()).toEqual([...ALL_VALUE_TYPES].sort());
   });
 
-  it("only Select owns options", () => {
+  // Wave 3.1 Task 10: MultiSelect is the SECOND options-owning type (rulings
+  // R5/R9) -- `SelectOptionsOwnership`'s backend twin was generalized from a
+  // concrete-class check to this same `HasOptions` capability flag for
+  // exactly this reason (Task 4). Only Select and MultiSelect may say yes.
+  it("only Select and MultiSelect own options", () => {
     for (const type of ALL_VALUE_TYPES) {
-      expect(VALUE_TYPE_CATALOG[type].hasOptions).toBe(type === "Select");
+      expect(VALUE_TYPE_CATALOG[type].hasOptions).toBe(type === "Select" || type === "MultiSelect");
     }
   });
 
@@ -69,6 +73,27 @@ describe("VALUE_TYPE_CATALOG", () => {
         hasPlaceholder: true,
         hasOptions: true,
         labelKey: "customField.valueTypes.select",
+      },
+      LongText: {
+        fieldConfigType: "textarea",
+        badgeVariant: "secondary",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.longText",
+      },
+      DateTime: {
+        fieldConfigType: "datetime",
+        badgeVariant: "warning",
+        hasPlaceholder: false,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.dateTime",
+      },
+      MultiSelect: {
+        fieldConfigType: "multi-select",
+        badgeVariant: "default",
+        hasPlaceholder: true,
+        hasOptions: true,
+        labelKey: "customField.valueTypes.multiSelect",
       },
     });
   });

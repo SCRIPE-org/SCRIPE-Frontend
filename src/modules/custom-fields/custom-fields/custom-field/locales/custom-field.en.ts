@@ -95,13 +95,17 @@ export const en = {
     noFrontendScreenWarning:
       "No screen renders {entity} yet. This definition will save correctly and the values API will work for it, but it won't appear on any form until a screen is built for it.",
 
-    // CustomFieldValueType enum (0..4)
+    // CustomFieldValueType enum (0..7) -- Wave 3.1 Task 10 adds longText/
+    // dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7).
     valueTypes: {
       text: "Text",
       number: "Number",
       boolean: "Boolean",
       date: "Date",
       select: "Select",
+      longText: "Long Text",
+      dateTime: "Date & Time",
+      multiSelect: "Multi-Select",
     },
 
     // Per-type value validation messages (currently Select-only). Added early
