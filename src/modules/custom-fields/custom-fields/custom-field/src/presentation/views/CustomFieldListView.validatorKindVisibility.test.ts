@@ -70,7 +70,7 @@ describe("CustomFieldListView.tsx — real source", () => {
     expect(source).not.toMatch(/"EG",\s*"SA",\s*"US",\s*"GB",\s*"DE",\s*"FR",\s*"CA"/);
   });
 
-  it("createInitialValues and editInitialValues both carry validatorKind/validatorParam, matching this file's own '' / ?? '' conventions for every other optional field", () => {
+  it("createInitialValues carries validatorKind/validatorParam, matching this file's own '' convention for every other optional field", () => {
     const createInitialIdx = source.indexOf("createInitialValues:");
     const editInitialIdx = source.indexOf("editInitialValues:");
     expect(createInitialIdx).toBeGreaterThan(-1);
@@ -79,10 +79,31 @@ describe("CustomFieldListView.tsx — real source", () => {
     const createInitialSource = source.slice(createInitialIdx, editInitialIdx);
     expect(createInitialSource).toMatch(/validatorKind:\s*""/);
     expect(createInitialSource).toMatch(/validatorParam:\s*""/);
+  });
 
+  // The edit half of this case used to live here as a source regex asserting
+  // that `validatorKind: item.validatorKind ?? ""` appeared below
+  // `editInitialValues:`. It did appear, and it passed — while the object that
+  // expression ran against was a LIST ROW with no validatorKind at all, so
+  // every edit silently detached the validator (fix round, finding C-1). The
+  // regex could never have caught that: it checked the text, not the value.
+  //
+  // The builder is now its own module and is exercised for real, against real
+  // entities, in customFieldEditInitialValues.test.ts (unit) and
+  // __tests__/useCustomFieldViewModel.editHydration.test.tsx (the whole
+  // list-row -> detail-fetch -> form -> update-payload chain). What is left
+  // here is the one thing those cannot see: that this view still delegates to
+  // that builder instead of quietly reintroducing an inline copy.
+  it("delegates editInitialValues to the shared builder rather than inlining it", () => {
+    const editInitialIdx = source.indexOf("editInitialValues:");
     const editInitialSource = source.slice(editInitialIdx, source.indexOf("getItemDisplayName:"));
-    expect(editInitialSource).toMatch(/validatorKind:\s*item\.validatorKind\s*\?\?\s*""/);
-    expect(editInitialSource).toMatch(/validatorParam:\s*item\.validatorParam\s*\?\?\s*""/);
+
+    expect(editInitialSource).toMatch(/editInitialValues:\s*buildCustomFieldEditInitialValues/);
+    expect(source).toMatch(
+      /import\s*\{\s*buildCustomFieldEditInitialValues\s*\}\s*from\s*"\.\.\/customFieldEditInitialValues"/
+    );
+    // No inline `item.<field> ?? ""` reconstruction anywhere in the config.
+    expect(editInitialSource).not.toMatch(/item\.validatorKind/);
   });
 
   // TRAP 8 (fact sheet §6): the pinning test at

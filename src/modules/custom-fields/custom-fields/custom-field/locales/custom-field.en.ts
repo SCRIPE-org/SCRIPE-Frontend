@@ -9,6 +9,11 @@ export const en = {
     noItems: "No custom fields found",
     searchPlaceholder: "Search custom fields...",
     entityTypesLoadFailed: "Couldn't load entity types. The Entity Type field may be unavailable.",
+    // Shown when the detail fetch behind the Edit button fails. The edit form
+    // is deliberately NOT opened in that case: it would be populated from the
+    // list row, whose response omits options, both placeholders and the
+    // validator, and saving it would silently erase all of them.
+    editLoadFailed: "Couldn't load this custom field for editing. Please try again.",
 
     // Field labels — shared between the table columns and the create/edit forms
     fields: {

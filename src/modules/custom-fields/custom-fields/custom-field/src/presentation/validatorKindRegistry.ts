@@ -79,9 +79,25 @@ export interface ValidatorKindCatalogEntry {
    * so there was never a real pattern to validate against there, unlike
    * VehiclePlate's genuine cross-jurisdiction permissiveness (R11). Task 10
    * renders this list instead of hardcoding it a second time, so the
-   * frontend's offered options and the backend's actual gate can never
-   * drift apart. `undefined` for every other kind, including the other 5
-   * parameterized ones -- none of them has a closed value set.
+   * frontend's offered options and this catalog cannot drift apart.
+   *
+   * CORRECTION (Step 2.5 fix round, finding I-1): this comment used to claim
+   * the offered options and "the backend's actual gate" can never drift
+   * apart. That was an overclaim. The guarantee holds only WITHIN this repo
+   * -- the picker reads this array instead of re-typing the seven codes. The
+   * array itself is still a hand transcription of
+   * `ValidatorPresets.SupportedPostalCodeCountries`, and nothing in the
+   * frontend build or test suite reads that C# file, so a backend change to
+   * the supported set leaves every test here green. The same is true of
+   * `ValidatorKindName` / `ALL_VALIDATOR_KINDS` versus the C# enum: a review
+   * pass added a 14th backend member and only the backend's own
+   * `ValidatorKindDispatchSymmetryTests` noticed. The partial mitigation is
+   * `validatorKindRegistry.backendContract.test.ts`, which parses both C#
+   * files directly when a sibling `SCRIPE-Backend` checkout is present (the
+   * normal superproject layout) and reports itself skipped when it is not.
+   *
+   * `undefined` for every other kind, including the other 5 parameterized
+   * ones -- none of them has a closed value set.
    */
   supportedParamValues?: readonly string[];
 }

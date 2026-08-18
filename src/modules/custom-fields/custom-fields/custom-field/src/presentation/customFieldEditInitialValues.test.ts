@@ -1,0 +1,105 @@
+/**
+ * buildCustomFieldEditInitialValues — Wave 2 Step 2.5 fix round (C-1).
+ *
+ * Runs the REAL builder against REAL `CustomField` entities produced by the
+ * REAL model + mapper from REAL wire JSON, in both shapes the read path can
+ * produce: a detail response and a list row.
+ *
+ * The list-row case is deliberately asserted as a documented HAZARD rather
+ * than as desired behaviour. The builder cannot defend itself — it has no way
+ * to tell a sparse list row from a definition that genuinely has no
+ * placeholders — so the invariant it depends on ("callers pass a detail
+ * fetch") is enforced one level up, in
+ * `useCustomFieldViewModel.openEditModal`, and pinned by
+ * `__tests__/useCustomFieldViewModel.editHydration.test.tsx`. Spelling the
+ * hazard out here is what stops a future reader from "simplifying" that
+ * hydration back out again.
+ */
+import { describe, it, expect } from "vitest";
+import { CustomFieldModel } from "../data/models/CustomFieldModel";
+import { CustomFieldMapper } from "../data/mappers/CustomFieldMapper";
+import { buildCustomFieldEditInitialValues } from "./customFieldEditInitialValues";
+
+const DETAIL_JSON = {
+  id: "enc-1",
+  entityTypeKey: "party.person",
+  key: "bank_account",
+  labelEn: "Bank Account",
+  labelAr: "الحساب البنكي",
+  placeholderEn: "GB00 XXXX",
+  placeholderAr: "أدخل رقم الآيبان",
+  valueType: "Text" as const,
+  isRequired: true,
+  options: null,
+  sortOrder: 3,
+  isActive: true,
+  createdAt: "2026-08-01T00:00:00Z",
+  modifiedAt: null,
+  validatorKind: "Iban",
+  validatorParam: null,
+};
+
+const LIST_ROW_JSON = {
+  id: "enc-1",
+  entityTypeKey: "party.person",
+  key: "bank_account",
+  labelEn: "Bank Account",
+  labelAr: "الحساب البنكي",
+  valueType: "Text" as const,
+  isRequired: true,
+  sortOrder: 3,
+  isActive: true,
+  createdAt: "2026-08-01T00:00:00Z",
+  isGlobal: false,
+};
+
+describe("buildCustomFieldEditInitialValues", () => {
+  it("carries every stored value through from a detail-fetched definition", () => {
+    const item = CustomFieldMapper.toEntity(CustomFieldModel.fromJson(DETAIL_JSON));
+
+    expect(buildCustomFieldEditInitialValues(item)).toEqual({
+      id: "enc-1",
+      valueType: "Text",
+      labelEn: "Bank Account",
+      labelAr: "الحساب البنكي",
+      placeholderEn: "GB00 XXXX",
+      placeholderAr: "أدخل رقم الآيبان",
+      validatorKind: "Iban",
+      validatorParam: "",
+      options: "",
+      isRequired: true,
+      sortOrder: 3,
+      isActive: true,
+    });
+  });
+
+  it("preserves a Select definition's options verbatim", () => {
+    const item = CustomFieldMapper.toEntity(
+      CustomFieldModel.fromJson({
+        ...DETAIL_JSON,
+        valueType: "Select" as const,
+        options: "Small\nMedium\nLarge",
+        validatorKind: null,
+      })
+    );
+
+    expect(buildCustomFieldEditInitialValues(item).options).toBe("Small\nMedium\nLarge");
+  });
+
+  it("HAZARD: a list row blanks the validator, the options and both placeholders — which is why callers must hydrate first", () => {
+    const listRow = CustomFieldMapper.toEntity(CustomFieldModel.fromListJson(LIST_ROW_JSON));
+    const values = buildCustomFieldEditInitialValues(listRow);
+
+    // These four are what the update handler would then write back as blank.
+    expect(values.validatorKind).toBe("");
+    expect(values.validatorParam).toBe("");
+    expect(values.placeholderEn).toBe("");
+    expect(values.placeholderAr).toBe("");
+    expect(values.options).toBe("");
+    // The fields the list row DOES carry survive, which is why the defect was
+    // invisible in the UI: the form looked correctly populated.
+    expect(values.labelEn).toBe("Bank Account");
+    expect(values.sortOrder).toBe(3);
+    expect(values.isActive).toBe(true);
+  });
+});

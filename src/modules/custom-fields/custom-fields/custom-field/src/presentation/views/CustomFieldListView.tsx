@@ -26,6 +26,7 @@ import {
   type CustomFieldValueTypeName,
 } from "../valueTypeRegistry";
 import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../validatorKindRegistry";
+import { buildCustomFieldEditInitialValues } from "../customFieldEditInitialValues";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -119,10 +120,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   // none) of these ever renders/submits for a given form state, and adding a
   // 14th member later needs no new field here. PostalCode alone renders as a
   // closed-set picker (its catalog entry's supportedParamValues) instead of
-  // free text, so its 7-country allowlist is read from the same catalog the
-  // backend's own definition-time gate is pinned against
-  // (validatorKindRegistry.ts / ValidatorPresets.SupportedPostalCodeCountries),
-  // never re-typed here. An AE selection isn't offered (Task 8's catalog
+  // free text, so its 7-country allowlist is read from validatorKindRegistry.ts
+  // rather than re-typed here. Note what that does and does not buy (corrected
+  // in the Step 2.5 fix round, finding I-1): it removes a SECOND frontend copy
+  // of the list, but the catalog's own copy is still a hand transcription of
+  // the backend's ValidatorPresets.SupportedPostalCodeCountries -- see that
+  // catalog entry's doc comment, and validatorKindRegistry.backendContract.test.ts,
+  // which is the only thing that actually compares the two.
+  // An AE selection isn't offered (Task 8's catalog
   // already excludes it, R9) -- if a stale/legacy value still names it, the
   // backend's own dedicated AE-rejection message surfaces through
   // GenericForm's existing serverError handling rather than being swallowed
@@ -448,20 +453,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         // into every other tenant, require an explicit opt-in.
         isGlobal: isPlatformContext,
       },
-      editInitialValues: (item: CustomField) => ({
-        id: item.id,
-        valueType: item.valueType,
-        labelEn: item.labelEn,
-        labelAr: item.labelAr ?? "",
-        placeholderEn: item.placeholderEn ?? "",
-        placeholderAr: item.placeholderAr ?? "",
-        validatorKind: item.validatorKind ?? "",
-        validatorParam: item.validatorParam ?? "",
-        options: item.options ?? "",
-        isRequired: item.isRequired,
-        sortOrder: item.sortOrder,
-        isActive: item.isActive,
-      }),
+      // Extracted to its own module during the Step 2.5 fix round (C-1) so a
+      // test can run the REAL builder against a REAL entity instead of
+      // regex-matching this file's source for `item.validatorKind ?? ""` --
+      // which is precisely how C-1 shipped with every test green. Every `??
+      // ""` in there BLANKS the corresponding column on the next save, so the
+      // item it receives must be a detail fetch, never a list row; that is
+      // guaranteed by useCustomFieldViewModel's own openEditModal.
+      editInitialValues: buildCustomFieldEditInitialValues,
       // labelEn is the genuinely human-readable field; key is the technical
       // fallback for the (rare) record missing a label.
       getItemDisplayName: (item: CustomField) => item.labelEn || item.key,

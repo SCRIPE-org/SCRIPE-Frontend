@@ -6,8 +6,11 @@
  */
 "use client";
 
+import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
+import { useI18n } from "@core/providers/i18n-provider";
+import { toast } from "@core/hooks/use-enhanced-toast";
 import { getCustomFieldsContainer } from "../../../../di";
 import type { CustomField } from "../../domain/entities/CustomField";
 
@@ -39,6 +42,7 @@ export function normalizeValidatorFields(data: Record<string, unknown>): Record<
 
 export function useCustomFieldViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
+  const { t } = useI18n();
 
   const {
     data: entityTypes = [],
@@ -51,7 +55,7 @@ export function useCustomFieldViewModel() {
     staleTime: 1000 * 60 * 60, // Cache entity types for 1 hour
   });
 
-  const vm = useCrudViewModel(["customField"], {
+  const baseVm = useCrudViewModel(["customField"], {
     getAll: async (params) => {
       const res = await customFieldRepository.getAll({
         page: params.page,
@@ -82,6 +86,55 @@ export function useCustomFieldViewModel() {
       await customFieldRepository.delete(id);
     },
   });
+
+  const baseOpenEditModal = baseVm.openEditModal;
+
+  /**
+   * Wave 2 Step 2.5 fix round, finding C-1 -- the edit modal MUST be populated
+   * from a detail fetch, never from the list row the table already has.
+   *
+   * `useCrudViewModel.openEditModal` is a bare `setEditingItem(item)`, and
+   * `generic-crud-view.tsx` hands whatever that stores straight to this
+   * screen's `editInitialValues`. The list row is built by
+   * `CustomFieldModel.fromListJson` from `CustomFieldListResponse`, which
+   * deliberately omits `options`, `placeholderEn`, `placeholderAr`,
+   * `validatorKind` and `validatorParam` (ruling R3) -- so every one of those
+   * arrived at the form as `null`/`undefined`, was turned into `""` by
+   * `buildCustomFieldEditInitialValues`, and was then submitted verbatim
+   * (`GenericForm.submitData` is a raw spread of form state; `isVisible`
+   * filters rendering, never the payload).
+   *
+   * `UpdateCustomFieldCommandHandler` assigns all five from the request with
+   * no "absent means unchanged" semantics, so the observed effect was:
+   *
+   *   - renaming a Text field, or toggling `isActive`, silently DETACHED its
+   *     validator (clearing a validator is legal by design, so nothing
+   *     rejected it) and every later value went unvalidated;
+   *   - both placeholders were silently overwritten with `""`;
+   *   - a Select field could not be saved at all -- the blanked `options`
+   *     tripped `customFields.optionsRequired` and the update 422'd.
+   *
+   * Fixing it here rather than by adding the two validator columns to
+   * `CustomFieldListResponse` (the narrow patch) closes all three at once and
+   * leaves no trap for the next form-populating field somebody adds.
+   *
+   * On a failed fetch the modal is deliberately NOT opened. Falling back to
+   * the list row would reinstate exactly the silent data loss above, with the
+   * admin given no reason to suspect anything.
+   */
+  const openEditModal = useCallback(
+    async (item: CustomField) => {
+      try {
+        const detail = await customFieldRepository.getById(item.id);
+        baseOpenEditModal(detail);
+      } catch {
+        toast.error(t("customField.editLoadFailed"));
+      }
+    },
+    [customFieldRepository, baseOpenEditModal, t]
+  );
+
+  const vm = { ...baseVm, openEditModal };
 
   return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes };
 }

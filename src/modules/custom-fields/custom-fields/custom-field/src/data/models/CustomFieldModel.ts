@@ -205,6 +205,15 @@ export class CustomFieldModel {
    * deliberately form-population-free, same convention as options; R3, Wave
    * 2 Step 2.5. The two new tail constructor params are simply omitted here
    * so they default to `undefined` — that is correct, not a gap to "fix".
+   *
+   * "Form-population-free" is load-bearing, not descriptive (Step 2.5 fix
+   * round, finding C-1): a row produced here must NEVER be handed to
+   * `buildCustomFieldEditInitialValues`, because every field missing above
+   * becomes `""` there and is then written back as blank. For a long time it
+   * was — `useCrudViewModel.openEditModal` stored the list row verbatim and
+   * the edit form read it — which silently detached validators, blanked both
+   * placeholders, and made Select definitions unsaveable. The edit path now
+   * goes through `getById` first; see `useCustomFieldViewModel.openEditModal`.
    */
   static fromListJson(json: CustomFieldListItemJson): CustomFieldModel {
     return new CustomFieldModel(
