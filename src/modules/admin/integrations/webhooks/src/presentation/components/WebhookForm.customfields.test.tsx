@@ -176,6 +176,28 @@ describe("WebhookForm + custom fields", () => {
     await waitFor(() => expect(screen.getByText("webhooks.noCustomFields")).toBeInTheDocument());
   });
 
+  // Wave 5 row 5.6 (design spec §5.4; pre-plan R2's "hand-rolled" shape):
+  // this dialog hosts InlineAddCustomFieldDialog (now a modal={false} Sheet)
+  // via WebhookFormCustomFieldsSection, so its own outer Dialog must also be
+  // modal={false} — a modal={true} outer would `hideOthers()` the whole
+  // rest of the document, including anything the inline-add trigger opens.
+  // This proves the fix behaviorally (structure/reachability), not merely
+  // that the form mounts — see core/ui/__tests__/dialog.test.tsx's own
+  // comment for the exact aria-hidden mechanism being asserted against here.
+  it("renders as a non-modal dialog: a sentinel outside it stays reachable via getByRole while it is open", async () => {
+    registerFakeCustomFieldsExtension();
+
+    renderWithQueryClient(
+      <div>
+        <button type="button">host-page-sentinel</button>
+        <WebhookForm mode="create" open onOpenChange={vi.fn()} onSuccess={vi.fn()} />
+      </div>
+    );
+
+    expect(await screen.findByRole("dialog", { name: "webhooks.create" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "host-page-sentinel" })).toBeInTheDocument();
+  });
+
   it("renders the inline add-custom-field trigger and refetches definitions when it reports a new field was created", async () => {
     const getFormFields = vi
       .fn()

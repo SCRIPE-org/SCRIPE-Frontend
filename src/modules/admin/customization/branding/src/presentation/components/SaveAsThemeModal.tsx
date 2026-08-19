@@ -10,7 +10,15 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogPortal,
+  NonModalScrim,
+} from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
@@ -169,7 +177,14 @@ export function SaveAsThemeModal({
   ]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    // Wave 5 row 5.6 (design spec §5.4; pre-plan R2's "hand-rolled" shape):
+    // hosts InlineAddCustomFieldDialog (a modal={false} Sheet) via
+    // ThemeCustomFieldsAddTrigger above -- see WebhookForm.tsx's identical
+    // comment for the full defect/remedy.
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()} modal={false}>
+      <DialogPortal>
+        <NonModalScrim open={isOpen} />
+      </DialogPortal>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

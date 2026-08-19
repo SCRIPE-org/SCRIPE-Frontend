@@ -79,6 +79,56 @@ export const overlayHeaderClasses = "flex flex-col gap-1.5 pe-8 text-start";
 export const overlayFooterClasses =
   "flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end";
 
+/**
+ * Wheel/touch scroll-chain guard for a hand-rolled non-modal scrim.
+ *
+ * Radix's own scroll lock (react-remove-scroll) only mounts inside
+ * DialogOverlayImpl, and DialogOverlay itself renders nothing at all when
+ * the Root is `modal={false}` (`context.modal ? <DialogOverlayImpl/> : null`
+ * in @radix-ui/react-dialog) — see GenericModal's own comment
+ * (generic-modal.tsx) for the first place this was worked out. Every
+ * non-modal dialog that re-adds its own scrim in place of Radix's therefore
+ * has to re-supply this too: without it, a wheel/touch gesture over the
+ * scrim scroll-chains straight into the page behind it. React's
+ * root-delegated wheel/touch handlers are passive and cannot cancel, so this
+ * attaches a real, non-passive pair directly to the scrim node; it dies with
+ * the node when the portal unmounts.
+ */
+export function useScrimScrollLock() {
+  return React.useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const cancelScroll = (event: Event) => event.preventDefault();
+    node.addEventListener("wheel", cancelScroll, { passive: false });
+    node.addEventListener("touchmove", cancelScroll, { passive: false });
+  }, []);
+}
+
+/**
+ * The hand-rolled scrim itself, factored out so every `modal={false}` dialog
+ * in the family (GenericModal today; InlineAddCustomFieldDialog and its
+ * handful of hand-rolled hosts as of Wave 5 row 5.6) renders the exact same
+ * recipe instead of a fifth near-identical copy. Not wired into GenericModal
+ * itself — that component's scrim predates this extraction and stays as-is
+ * (its own deliberate `modal={false}` choice is not to be disturbed) — but
+ * every *new* non-modal dialog should reach for this rather than re-deriving
+ * it.
+ *
+ * Render this as a sibling of Content inside the same Portal, exactly where
+ * Radix's own Overlay would go — it fully replaces that overlay, it is not
+ * layered alongside it.
+ */
+export function NonModalScrim({ open }: { open: boolean }) {
+  const lockScrimScroll = useScrimScrollLock();
+  return (
+    <div
+      ref={lockScrimScroll}
+      aria-hidden="true"
+      data-state={open ? "open" : "closed"}
+      className={overlayScrimClasses}
+    />
+  );
+}
+
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>

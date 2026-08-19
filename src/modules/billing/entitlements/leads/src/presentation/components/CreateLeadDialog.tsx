@@ -10,7 +10,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPortal,
   DialogTitle,
+  NonModalScrim,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -138,12 +140,20 @@ export function CreateLeadDialog({
   };
 
   return (
+    // Wave 5 row 5.6 (design spec §5.4; pre-plan R2's "hand-rolled" shape):
+    // hosts InlineAddCustomFieldDialog (a modal={false} Sheet) via
+    // CreateLeadCustomFieldsSection -- see WebhookForm.tsx's identical
+    // comment for the full defect/remedy.
     <Dialog
       open={open}
       onOpenChange={(nextOpen) => {
         if (!nextOpen) handleClose();
       }}
+      modal={false}
     >
+      <DialogPortal>
+        <NonModalScrim open={open} />
+      </DialogPortal>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[520px]">
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">

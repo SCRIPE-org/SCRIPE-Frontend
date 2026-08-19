@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
+import { NonModalScrim } from "@core/ui/dialog";
+import { Sheet, SheetContent, SheetHeader, SheetPortal, SheetTitle } from "@core/ui/sheet";
+import { ScrollArea } from "@core/ui/scroll-area";
 import { Button } from "@core/ui/button";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import { usePermission } from "@core/hooks/use-permission";
@@ -185,48 +187,86 @@ export function InlineAddCustomFieldDialog({
       <Button type="button" variant="ghost" size="sm" onClick={() => setOpen(true)}>
         {t("customField.inlineAdd.trigger")}
       </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
+      {/*
+       * Wave 5 row 5.6 (design spec §5.4, ruling #1/#2; pre-plan R2/R3): this
+       * used to be a bare `<Dialog>` -- Radix default `modal={true}` -- that
+       * nested inside every host record form this trigger mounts in (~30
+       * GenericCrudView screens via CustomFieldsExtensionTrigger, plus the
+       * bespoke screens that consume InlineAddTrigger directly). The host is
+       * either GenericModal (already `modal={false}`, deliberately, see
+       * generic-modal.tsx:148) or one of the four hand-rolled dialogs fixed
+       * alongside this one -- either way, a `modal={true}` dialog trapping
+       * focus *inside itself* here fought the host's own FocusScope/
+       * hideOthers state the moment both were open, which is the literal
+       * defect: "two dialogs, two close buttons, two scroll containers".
+       *
+       * Two changes, not one:
+       *  - `modal={false}` on this Sheet, matching every other non-modal
+       *    container in the family. Radix skips its own overlay in this mode
+       *    (SheetOverlay returns null when context.modal is false), so
+       *    NonModalScrim re-adds it by hand from the SAME shared recipe
+       *    GenericModal originated (core/ui/dialog.tsx).
+       *  - A Sheet instead of a centered Dialog: the design spec's own
+       *    ruling is that field-definition authoring should not be a dialog
+       *    launched from a record form at all, ideally its own route. A full
+       *    route is disproportionate here specifically -- it would discard
+       *    whatever the admin has already typed into the host record form --
+       *    which is exactly the case R3 names for falling back to
+       *    core/ui/sheet.tsx's non-modal side panel instead of a route.
+       */}
+      <Sheet open={open} onOpenChange={setOpen} modal={false}>
+        <SheetPortal>
+          <NonModalScrim open={open} />
+        </SheetPortal>
+        <SheetContent
+          side="end"
+          aria-describedby={undefined}
+          className="flex w-full flex-col gap-0 p-0 sm:max-w-lg"
+        >
+          <SheetHeader className="shrink-0 border-b border-nx-line px-6 py-5">
+            <SheetTitle>
               {t("customField.inlineAdd.dialogTitle", { entity: entityDisplayName || entityTypeKey })}
-            </DialogTitle>
-          </DialogHeader>
-          <GenericForm
-            fields={fields}
-            initialValues={{
-              valueType: "Text",
-              placeholderEn: "",
-              placeholderAr: "",
-              isRequired: false,
-              sortOrder: 0,
-              isGlobal: isPlatformContext,
-            }}
-            onSubmit={async (data) => {
-              const { customFieldRepository } = getCustomFieldsContainer();
-              await customFieldRepository.create({
-                ...data,
-                entityTypeKey,
-                // Wave 2 Step 2.5 Task 10 (TRAP 1), this dialog's own write
-                // seam (R4). `validatorKind` is a nullable enum on the wire
-                // -- "" is neither JSON null nor a member name, so it fails
-                // model binding outright, unlike `options` (a plain
-                // `string?`) which survives "" today. The picker's "no
-                // validator" option submits "" when chosen, and
-                // generic-form.tsx's submitData is a raw spread of formData
-                // with no per-field coercion beyond dates/numbers, so ""
-                // reaches here verbatim unless normalized right before this
-                // call -- the only seam this dialog owns.
-                validatorKind: data.validatorKind === "" ? null : data.validatorKind,
-                validatorParam: data.validatorParam === "" ? null : data.validatorParam,
-              });
-              setOpen(false);
-              onCreated();
-            }}
-            onCancel={() => setOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+            </SheetTitle>
+          </SheetHeader>
+          <ScrollArea className="flex-1">
+            <div className="px-6 py-6">
+              <GenericForm
+                fields={fields}
+                initialValues={{
+                  valueType: "Text",
+                  placeholderEn: "",
+                  placeholderAr: "",
+                  isRequired: false,
+                  sortOrder: 0,
+                  isGlobal: isPlatformContext,
+                }}
+                onSubmit={async (data) => {
+                  const { customFieldRepository } = getCustomFieldsContainer();
+                  await customFieldRepository.create({
+                    ...data,
+                    entityTypeKey,
+                    // Wave 2 Step 2.5 Task 10 (TRAP 1), this dialog's own write
+                    // seam (R4). `validatorKind` is a nullable enum on the wire
+                    // -- "" is neither JSON null nor a member name, so it fails
+                    // model binding outright, unlike `options` (a plain
+                    // `string?`) which survives "" today. The picker's "no
+                    // validator" option submits "" when chosen, and
+                    // generic-form.tsx's submitData is a raw spread of formData
+                    // with no per-field coercion beyond dates/numbers, so ""
+                    // reaches here verbatim unless normalized right before this
+                    // call -- the only seam this dialog owns.
+                    validatorKind: data.validatorKind === "" ? null : data.validatorKind,
+                    validatorParam: data.validatorParam === "" ? null : data.validatorParam,
+                  });
+                  setOpen(false);
+                  onCreated();
+                }}
+                onCancel={() => setOpen(false)}
+              />
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
