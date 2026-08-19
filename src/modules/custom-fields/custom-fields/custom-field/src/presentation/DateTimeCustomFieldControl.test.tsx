@@ -37,6 +37,24 @@ if (typeof Element.prototype.scrollIntoView !== "function") {
   Element.prototype.scrollIntoView = () => {};
 }
 
+// TimezonePicker.tsx caches Intl.supportedValuesOf("timeZone")'s real
+// ~400-entry result at MODULE scope, computed once and reused for every
+// render in this file's process. The "Change affordance" test below opens
+// that picker for real (this file does not mock TimezonePicker), which asks
+// cmdk to mount ~400 CommandItem rows in jsdom -- expensive enough that a
+// full `vitest run` under worker-pool CPU contention can push it past its
+// 15s timeout (see TimezonePicker.test.tsx, which stubs this for the same
+// reason). Stubbing to a small real, multi-region set keeps the same
+// Intl.supportedValuesOf code path under test while cutting the DOM cost.
+vi.spyOn(Intl, "supportedValuesOf").mockReturnValue([
+  "UTC",
+  "Africa/Cairo",
+  "America/New_York",
+  "Asia/Tokyo",
+  "Europe/London",
+  "Australia/Sydney",
+]);
+
 const MEETING_FIELD: FieldConfig = { name: "cf_meeting", type: "datetime", label: "Meeting" };
 
 /**

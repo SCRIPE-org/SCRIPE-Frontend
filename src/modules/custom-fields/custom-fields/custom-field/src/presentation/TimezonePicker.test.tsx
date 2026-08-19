@@ -21,6 +21,29 @@ vi.mock("@core/providers/i18n-provider", () => ({
   }),
 }));
 
+// TimezonePicker.tsx caches `Intl.supportedValuesOf("timeZone")`'s ~400-entry
+// real result at MODULE scope (`cachedZones`), computed once on first render
+// and reused for every test in this file. Left un-stubbed, that first render
+// mounts the real ~400-entry set, and three of the tests below open the
+// picker -- each one asks cmdk to mount ~400 CommandItem rows in jsdom, which
+// is expensive enough that a full `vitest run` under worker-pool CPU
+// contention can push a single test past its 15s timeout (an isolated rerun
+// has the CPU to itself and stays fast, matching what made this flaky rather
+// than reliably slow). None of these tests are exercising the SIZE of the
+// runtime's set, only that the picker renders real ids sourced from it and
+// reports/handles them correctly, so a small, real, multi-region stub proves
+// the same wiring for a fraction of the DOM cost. This still goes through the
+// component's real `Intl.supportedValuesOf` branch, not the no-API fallback.
+const STUBBED_TIME_ZONES = [
+  "UTC",
+  "Africa/Cairo",
+  "America/New_York",
+  "Asia/Tokyo",
+  "Europe/London",
+  "Australia/Sydney",
+];
+vi.spyOn(Intl, "supportedValuesOf").mockReturnValue(STUBBED_TIME_ZONES);
+
 if (typeof (globalThis as any).ResizeObserver === "undefined") {
   (globalThis as any).ResizeObserver = class {
     observe() {}
@@ -45,9 +68,10 @@ describe("TimezonePicker", () => {
     render(<TimezonePicker id="tz" value="UTC" onChange={vi.fn()} aria-label="Timezone" />);
     const trigger = screen.getByRole("combobox", { name: "Timezone" });
     fireEvent.click(trigger);
-    // A handful of real ids, from different regions, must all be present --
-    // proving this is the runtime's full supported set, not a short
-    // hand-rolled sample.
+    // Ids from different regions, all drawn from this file's stubbed
+    // Intl.supportedValuesOf (see the top of this file) -- proving the panel
+    // renders whatever the runtime API returns, not a short hand-rolled
+    // sample baked into the component itself.
     expect(screen.getByRole("option", { name: "Africa/Cairo" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "America/New_York" })).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Asia/Tokyo" })).toBeInTheDocument();
