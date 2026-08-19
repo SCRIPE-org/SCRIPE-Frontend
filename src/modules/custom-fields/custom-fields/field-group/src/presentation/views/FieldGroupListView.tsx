@@ -118,9 +118,19 @@ export function FieldGroupListView() {
   const handleSubmit = useCallback(
     async (values: FieldGroupFormValues) => {
       try {
-        if (editingGroup) {
+        // Branches on `vm.editingId`, NOT on the resolved `editingGroup`. Those
+        // two can disagree, and the disagreement was reachable straight from
+        // the UI: the editor is a panel ABOVE a live list whose rows stay
+        // mounted, so deleting the row being edited (or any refetch that drops
+        // it) left `editingGroup` null while `vm.editingId` still named the
+        // group. `isEditorOpen` and the panel heading both key off `editingId`,
+        // so Save under an "Edit Field Group" heading took the else branch and
+        // CREATED a new group. The id is the panel's identity everywhere now;
+        // a Save against a row that really has gone fails as a 404 update,
+        // which is honest, instead of writing a row nobody asked for.
+        if (vm.editingId !== null) {
           await vm.updateGroup({
-            id: editingGroup.id,
+            id: vm.editingId,
             input: {
               labelEn: values.labelEn,
               labelAr: values.labelAr.length > 0 ? values.labelAr : null,
@@ -146,14 +156,19 @@ export function FieldGroupListView() {
         // unhandled promise rejection with no extra information in it.
       }
     },
-    [editingGroup, entityTypeKey, vm]
+    [entityTypeKey, vm]
   );
 
   const handleConfirmDelete = useCallback(async () => {
     if (!pendingDelete) return;
+    const deletedId = pendingDelete.id;
     try {
-      await vm.deleteGroup(pendingDelete.id);
+      await vm.deleteGroup(deletedId);
       setPendingDelete(null);
+      // The editor is a panel, not a modal, so it survives a delete performed
+      // from the row underneath it. Leaving it open over a group that no longer
+      // exists offers an Edit form for nothing.
+      if (vm.editingId === deletedId) vm.closeEditor();
     } catch {
       // Same reasoning as handleSubmit; the dialog stays open on failure.
     }
@@ -247,8 +262,11 @@ export function FieldGroupListView() {
             <FieldGroupEditor
               // Remounts when the target changes, so the uncontrolled initial
               // state inside the editor is re-seeded from the new group rather
-              // than keeping the previous row's values.
-              key={editingGroup?.id ?? "create"}
+              // than keeping the previous row's values. Keyed on the id rather
+              // than on the resolved row: if the row disappears mid-edit the key
+              // must NOT change, or the admin's typed values are blanked out
+              // from under them by an unrelated refetch.
+              key={vm.editingId ?? "create"}
               group={editingGroup}
               labels={editorLabels}
               canChooseScope={vm.isSuperAdmin}

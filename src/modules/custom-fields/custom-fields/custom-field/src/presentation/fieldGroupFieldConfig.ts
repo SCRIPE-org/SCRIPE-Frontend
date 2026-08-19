@@ -79,3 +79,43 @@ export function buildFieldGroupField({
 export function isFieldGroupPickerVisible(form: Record<string, unknown>): boolean {
   return typeof form.entityTypeKey === "string" && form.entityTypeKey.length > 0;
 }
+
+export interface FieldGroupPickerVisibilityArgs {
+  /**
+   * Whether the caller holds `custom-field-groups.view`.
+   *
+   * The picker's option list comes from `GET /field-groups`, which the backend
+   * gates on that permission -- it is a NEW permission (Wave 5 row 5.2), so
+   * every role that predates the row lacks it, including roles holding the full
+   * `custom-fields.*` set. Rendering the picker to such an admin means a 403 on
+   * every modal open and a picker that can only ever offer "no group".
+   *
+   * Hiding the field is safe for the stored value: `GenericForm` seeds
+   * `formData` from `initialValues` and submits a raw spread of that state,
+   * and `isVisible` gates rendering and required-validation only -- it never
+   * removes the key. So an edit save by an admin who cannot see the picker
+   * still carries the field's existing `fieldGroupId` unchanged. Pinned by
+   * `fieldGroupFieldConfig.test.tsx`; removing the field from the `fields`
+   * array instead would NOT be safe on the create form, whose
+   * `createInitialValues` is the only thing seeding the key there.
+   */
+  canView: boolean;
+  /**
+   * Whether an entity type must be chosen first. True on the create form (the
+   * list endpoint has no "all groups" mode, so there is genuinely nothing to
+   * offer yet); false on the edit form, where `entityTypeKey` is immutable and
+   * already known.
+   */
+  requireEntityType: boolean;
+}
+
+/**
+ * Build the picker's `isVisible` guard. Both call sites go through this, so the
+ * permission half can never be wired on one form and forgotten on the other.
+ */
+export function makeFieldGroupPickerVisibility({
+  canView,
+  requireEntityType,
+}: FieldGroupPickerVisibilityArgs): (form: Record<string, unknown>) => boolean {
+  return (form) => canView && (!requireEntityType || isFieldGroupPickerVisible(form));
+}

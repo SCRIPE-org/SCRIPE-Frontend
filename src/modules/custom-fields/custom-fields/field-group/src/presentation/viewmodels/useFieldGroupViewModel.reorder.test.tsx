@@ -251,6 +251,51 @@ describe("useFieldGroupViewModel — reorder", () => {
     ]);
   });
 
+  describe("the server's 100-item cap", () => {
+    // `ReorderFieldGroupsRequest.Items` carries `[MaxLength(100)]` and the
+    // handler re-checks it, so an over-cap payload 400s with nothing persisted.
+    // Both move routes go through one gate; each is pinned separately, because
+    // a guard on the buttons alone would leave drag able to fire the doomed
+    // request.
+    const OVER_CAP = Array.from({ length: 101 }, (_, i) =>
+      group(`g${i}`, `Group ${String(i).padStart(3, "0")}`, i)
+    );
+
+    /** Reorder PUTs only — the helper above assumes at least one exists. */
+    function reorderCallCount(put: ReturnType<typeof vi.fn>) {
+      return put.mock.calls.filter(
+        ([url]) => typeof url === "string" && url.endsWith("/field-groups/reorder")
+      ).length;
+    }
+
+    it("sends nothing when a button move would exceed it", async () => {
+      const { put, result } = await renderReady(OVER_CAP);
+
+      act(() => result.current.moveDown("g0"));
+
+      await waitFor(() => expect(result.current.isReordering).toBe(false));
+      expect(reorderCallCount(put)).toBe(0);
+    });
+
+    it("sends nothing when a DRAG move would exceed it either", async () => {
+      const { put, result } = await renderReady(OVER_CAP);
+
+      act(() => result.current.moveBefore("g100", "g0"));
+
+      await waitFor(() => expect(result.current.isReordering).toBe(false));
+      expect(reorderCallCount(put)).toBe(0);
+    });
+
+    it("still submits a payload sitting exactly on the cap", async () => {
+      const { put, result } = await renderReady(OVER_CAP.slice(0, 100));
+
+      act(() => result.current.moveDown("g0"));
+
+      await waitFor(() => expect(put).toHaveBeenCalled());
+      expect(lastReorderItems(put)).toHaveLength(100);
+    });
+  });
+
   it("never fires the list request without an entity type — the endpoint has no 'all groups' mode", async () => {
     const { get } = setup([group("a", "Alpha", 0)]);
 

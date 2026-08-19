@@ -35,6 +35,17 @@ export function fieldGroupsQueryKey(entityTypeKey: string) {
   return ["customFields", "fieldGroups", entityTypeKey] as const;
 }
 
+/**
+ * The server's own ceiling on one reorder request.
+ *
+ * `ReorderFieldGroupsRequest.Items` carries `[MaxLength(100)]`, enforced again
+ * inside `ReorderFieldGroupsCommandHandler`. Reorder is all-or-nothing, so an
+ * entity type with more reorderable groups than this would 400 on EVERY move
+ * with only a generic "couldn't save the new order" toast to show for it. The
+ * cap is checked here so the caller is told the actual reason instead.
+ */
+export const REORDER_MAX_ITEMS = 100;
+
 export function useFieldGroupViewModel(entityTypeKey: string) {
   const { fieldGroupRepository, customFieldRepository } = getCustomFieldsContainer();
   const { t } = useI18n();
@@ -170,6 +181,25 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
   const reorderableGroups = useMemo(() => groups.filter(canMutate), [groups, canMutate]);
 
   /**
+   * The single gate every reorder payload passes through -- both the button
+   * pair and the drag path -- so the server's `[MaxLength(100)]` cap cannot be
+   * exceeded by one route while the other guards it.
+   */
+  const submitReorder = useCallback(
+    (items: { id: string; sortOrder: number }[]) => {
+      if (items.length > REORDER_MAX_ITEMS) {
+        toast.error({
+          title: t("fieldGroup.toast.reorderFailed"),
+          description: t("fieldGroup.toast.reorderTooMany", { max: REORDER_MAX_ITEMS }),
+        });
+        return;
+      }
+      reorderMutation.mutate(items);
+    },
+    [reorderMutation, t]
+  );
+
+  /**
    * Swap two adjacent entries of `reorderableGroups` and submit the whole
    * subset renumbered from its new order. Renumbering (rather than swapping
    * just the two SortOrder values) is what makes this correct when several
@@ -183,9 +213,9 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
 
       const next = [...reorderableGroups];
       [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-      reorderMutation.mutate(next.map((group, i) => ({ id: group.id, sortOrder: i })));
+      submitReorder(next.map((group, i) => ({ id: group.id, sortOrder: i })));
     },
-    [reorderableGroups, reorderMutation]
+    [reorderableGroups, submitReorder]
   );
 
   const moveUp = useCallback(
@@ -241,9 +271,9 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
       const next = [...reorderableGroups];
       const [moved] = next.splice(from, 1);
       next.splice(to, 0, moved);
-      reorderMutation.mutate(next.map((group, i) => ({ id: group.id, sortOrder: i })));
+      submitReorder(next.map((group, i) => ({ id: group.id, sortOrder: i })));
     },
-    [reorderableGroups, reorderMutation]
+    [reorderableGroups, submitReorder]
   );
 
   // ── Inline editor state (no modal — see FieldGroupListView) ──────────

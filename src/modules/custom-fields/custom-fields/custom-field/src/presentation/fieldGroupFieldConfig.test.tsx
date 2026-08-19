@@ -12,13 +12,14 @@
  * against a completely nameless control.
  */
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom/vitest";
 import { GenericForm, type FieldConfig } from "@core/ui/forms/generic-form";
 import {
   buildFieldGroupField,
   isFieldGroupPickerVisible,
+  makeFieldGroupPickerVisibility,
   FIELD_GROUP_FIELD_NAME,
 } from "./fieldGroupFieldConfig";
 
@@ -61,12 +62,16 @@ function buildField(overrides: Partial<Parameters<typeof buildFieldGroupField>[0
   });
 }
 
-function renderField(field: FieldConfig, initialValues: Record<string, unknown> = {}) {
+function renderField(
+  field: FieldConfig,
+  initialValues: Record<string, unknown> = {},
+  onSubmit: (data: Record<string, unknown>) => Promise<void> = async () => {}
+) {
   return render(
     <GenericForm
       fields={[field]}
       initialValues={initialValues}
-      onSubmit={async () => {}}
+      onSubmit={onSubmit as (data: Record<string, unknown>) => Promise<void>}
       onCancel={() => {}}
     />
   );
@@ -84,10 +89,17 @@ describe("field-group picker FieldConfig", () => {
     expect(buildField().name).toBe("fieldGroupId");
   });
 
-  it("leads with a 'no group' sentinel so an admin can clear an existing assignment", () => {
+  // NOT a guard on the sentinel itself. `buildFieldGroupField` receives
+  // `options` from its caller and passes the array through untouched, so this
+  // case proves passthrough-in-order and nothing more — deleting the sentinel
+  // from `useFieldGroupOptions`, where it is actually constructed, would leave
+  // it green. The real guard lives in
+  // `field-group/src/presentation/viewmodels/useFieldGroupOptions.test.tsx`.
+  it("passes the caller's option list through in order, sentinel included", () => {
     const field = buildField();
 
-    expect(field.options?.[0]).toEqual({ value: "", label: "customField.fieldGroupNone" });
+    expect(field.options).toEqual(GROUP_OPTIONS);
+    expect(field.options?.[0]).toBe(GROUP_OPTIONS[0]);
   });
 
   it("passes the loading flag through, so a select waiting on its groups is not just an empty list", () => {
@@ -131,5 +143,77 @@ describe("isFieldGroupPickerVisible (create-form guard)", () => {
     expect(
       screen.getByRole("combobox", { name: "customField.fields.fieldGroup" })
     ).toBeInTheDocument();
+  });
+});
+
+/**
+ * The permission half of the guard (row 5.2 fix round, review finding I-3).
+ *
+ * `GET /field-groups` is gated on `custom-field-groups.view` — a permission
+ * introduced WITH this row, so every pre-existing role lacks it, including roles
+ * holding the whole `custom-fields.*` set. Rendering the picker to such an admin
+ * meant a 403 on every create/edit modal open and a picker that could only ever
+ * offer "no group".
+ *
+ * Hiding a field is only safe if the stored value survives the save, and that is
+ * the case this suite has to earn rather than assume: it is the exact shape of
+ * the Wave 2.5 C-1 defect (a field silently detached on every unrelated edit).
+ */
+describe("makeFieldGroupPickerVisibility (permission gate)", () => {
+  it("hides the picker from an admin who cannot read field groups, on both forms", () => {
+    const editForm = makeFieldGroupPickerVisibility({ canView: false, requireEntityType: false });
+    const createForm = makeFieldGroupPickerVisibility({ canView: false, requireEntityType: true });
+
+    expect(editForm({ entityTypeKey: "party.person" })).toBe(false);
+    expect(createForm({ entityTypeKey: "party.person" })).toBe(false);
+  });
+
+  it("still requires an entity type on the create form when the admin CAN read groups", () => {
+    const createForm = makeFieldGroupPickerVisibility({ canView: true, requireEntityType: true });
+
+    expect(createForm({})).toBe(false);
+    expect(createForm({ entityTypeKey: "" })).toBe(false);
+    expect(createForm({ entityTypeKey: "party.person" })).toBe(true);
+  });
+
+  it("needs no entity type on the edit form, where the key is immutable and known", () => {
+    const editForm = makeFieldGroupPickerVisibility({ canView: true, requireEntityType: false });
+
+    expect(editForm({})).toBe(true);
+  });
+
+  it("keeps the field out of the DOM entirely, through the real GenericForm", () => {
+    const field: FieldConfig = {
+      ...buildField(),
+      isVisible: makeFieldGroupPickerVisibility({ canView: false, requireEntityType: false }),
+    };
+    renderField(field, { fieldGroupId: "enc-group-1" });
+
+    expect(
+      screen.queryByRole("combobox", { name: "customField.fields.fieldGroup" })
+    ).not.toBeInTheDocument();
+  });
+
+  it("still submits the stored group when the picker is hidden — hiding the control must not detach the group", async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const field: FieldConfig = {
+      ...buildField(),
+      isVisible: makeFieldGroupPickerVisibility({ canView: false, requireEntityType: false }),
+    };
+    const { container } = renderField(field, { fieldGroupId: "enc-group-1" }, onSubmit);
+
+    // Submitting the form element directly rather than clicking a label-matched
+    // button: the point of the case is the payload, and the form is the one
+    // element guaranteed to be present when every field is hidden.
+    const form = container.querySelector("form");
+    expect(form).not.toBeNull();
+    fireEvent.submit(form as HTMLFormElement);
+
+    // `isVisible` gates rendering and required-validation only. GenericForm
+    // seeds formData from initialValues and submits a raw spread of it, so the
+    // key survives. If it did not, an admin without the new permission would
+    // silently ungroup every field they edited.
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit.mock.calls[0][0]).toMatchObject({ fieldGroupId: "enc-group-1" });
   });
 });

@@ -6,7 +6,7 @@
  */
 "use client";
 
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
@@ -30,7 +30,9 @@ import {
 import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../validatorKindRegistry";
 import { buildCustomFieldEditInitialValues } from "../customFieldEditInitialValues";
 import { useFieldGroupOptions } from "../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions";
-import { buildFieldGroupField, isFieldGroupPickerVisible } from "../fieldGroupFieldConfig";
+import { buildFieldGroupField, makeFieldGroupPickerVisibility } from "../fieldGroupFieldConfig";
+import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
+import { usePermission } from "@core/hooks/use-permission";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -68,11 +70,30 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   const [createEntityTypeKey, setCreateEntityTypeKey] = useState("");
   const activeEntityTypeKey =
     vm.isEditModalOpen && vm.editingItem ? vm.editingItem.entityTypeKey : createEntityTypeKey;
+  /**
+   * `custom-field-groups.view` is a NEW permission (row 5.2), so no role that
+   * predates it holds it -- including roles carrying the full `custom-fields.*`
+   * set. Without this gate such an admin got a 403 from
+   * `GET /field-groups` on every create/edit modal open, plus the
+   * `fieldGroupLoadFailed` copy under a picker that could only ever offer "no
+   * group". It also gates the "Manage field groups" link below, which would
+   * otherwise lead to a page `PAGE_PERMISSIONS` refuses.
+   */
+  const canViewFieldGroups = usePermission(CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_VIEW);
   const {
     options: fieldGroupOptions,
     isLoading: isFieldGroupsLoading,
     isError: isFieldGroupsError,
-  } = useFieldGroupOptions(activeEntityTypeKey);
+  } = useFieldGroupOptions(activeEntityTypeKey, { enabled: canViewFieldGroups });
+
+  /** Handle to the pending deferral below, so unmount can cancel it. */
+  const entityTypeDeferRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (entityTypeDeferRef.current !== null) clearTimeout(entityTypeDeferRef.current);
+    },
+    []
+  );
 
   /**
    * Deferred with setTimeout(0) on purpose: `FieldConfig.onChange` is invoked
@@ -88,7 +109,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
    */
   const handleEntityTypeChange = useCallback((value: unknown) => {
     const key = typeof value === "string" ? value : "";
-    setTimeout(() => setCreateEntityTypeKey(key), 0);
+    // Tracked and cleared on unmount: a modal closed within the same tick as
+    // an entity-type change would otherwise leave a timer that fires setState
+    // on an unmounted component.
+    if (entityTypeDeferRef.current !== null) clearTimeout(entityTypeDeferRef.current);
+    entityTypeDeferRef.current = setTimeout(() => setCreateEntityTypeKey(key), 0);
     return { fieldGroupId: "" };
   }, []);
 
@@ -211,14 +236,22 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
    * admin saves during that window.
    */
   const fieldGroupField = useMemo(
-    () =>
-      buildFieldGroupField({
+    () => ({
+      ...buildFieldGroupField({
         t,
         options: fieldGroupOptions,
         isLoading: isFieldGroupsLoading,
         isError: isFieldGroupsError,
       }),
-    [t, fieldGroupOptions, isFieldGroupsLoading, isFieldGroupsError]
+      // The EDIT form's guard: permission only, no entity-type condition
+      // (entityTypeKey is immutable and already known there). The create form
+      // spreads this and overrides `isVisible` with the two-condition variant.
+      isVisible: makeFieldGroupPickerVisibility({
+        canView: canViewFieldGroups,
+        requireEntityType: false,
+      }),
+    }),
+    [t, fieldGroupOptions, isFieldGroupsLoading, isFieldGroupsError, canViewFieldGroups]
   );
 
   // Same fallback shape as the old `valueTypeLabels[value] ?? value` map:
@@ -256,13 +289,17 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
                 it: /custom-fields/field-groups has no sidebar nav entry of its
                 own (that needs a backend nav-seed change, out of this row's
                 frontend-only scope), so the definitions screen is its entry
-                point. */}
-            <Link href="/custom-fields/field-groups">
-              <Button variant="outline" size="sm">
-                <FolderTree className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
-                {t("customField.fieldGroupsLink")}
-              </Button>
-            </Link>
+                point. Gated on the same permission the destination page and its
+                backing endpoint require -- offering a link to a page that will
+                refuse the caller is a dead end, not a discovery. */}
+            {canViewFieldGroups && (
+              <Link href="/custom-fields/field-groups">
+                <Button variant="outline" size="sm">
+                  <FolderTree className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+                  {t("customField.fieldGroupsLink")}
+                </Button>
+              </Link>
+            )}
             {/* Wave 5 row 5.5. Third link, same reasoning as the two beside
                 it: /custom-fields/entity-types has no sidebar nav entry of
                 its own (nav is backend-seeded, out of this row's
@@ -432,7 +469,13 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           label: t("customField.fields.isRequired"),
           type: "switch" as const,
         },
-        { ...fieldGroupField, isVisible: isFieldGroupPickerVisible },
+        {
+          ...fieldGroupField,
+          isVisible: makeFieldGroupPickerVisibility({
+            canView: canViewFieldGroups,
+            requireEntityType: true,
+          }),
+        },
         {
           name: "sortOrder",
           label: t("customField.fields.sortOrder"),
@@ -625,6 +668,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       validatorKindOptions,
       validatorParamFields,
       fieldGroupField,
+      canViewFieldGroups,
       handleEntityTypeChange,
       vm,
       isEntityTypesError,

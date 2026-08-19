@@ -67,6 +67,11 @@ export const en = {
       deleteFailed: "Couldn't delete the field group.",
       reordered: "Field group order saved.",
       reorderFailed: "Couldn't save the new order. Nothing was changed.",
+      // The server caps one reorder request at {max} groups and rejects the
+      // whole payload above it, so a move on a very long list would otherwise
+      // fail with only the generic message above and no way to tell why.
+      reorderTooMany:
+        "This entity type has more than {max} reorderable groups, which is more than one reorder request can carry. Split them across entity types, or delete groups you no longer use.",
     },
   },
 };

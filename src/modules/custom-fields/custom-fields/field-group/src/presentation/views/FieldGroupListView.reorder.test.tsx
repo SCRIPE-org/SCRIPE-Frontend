@@ -391,6 +391,83 @@ describe("FieldGroupListView — delete confirmation", () => {
     await waitFor(() => expect(repository.delete).toHaveBeenCalledWith("a"));
   });
 
+  it("closes the editor when the row being edited is the row deleted", async () => {
+    // The editor is a PANEL above the list, not a modal over it, so the row's
+    // own Delete button stays live while its Edit form is open.
+    repository.getByEntityType
+      .mockResolvedValueOnce([makeGroup("a", "Alpha", 0)])
+      .mockResolvedValue([]);
+    await renderWithEntityType();
+
+    fireEvent.click(screen.getByRole("button", { name: translate("common.edit") }));
+    await screen.findByRole("textbox", { name: translate("fieldGroup.fields.labelEn") });
+
+    fireEvent.click(screen.getByRole("button", { name: translate("common.delete") }));
+    const dialog = await screen.findByRole("alertdialog");
+    fireEvent.click(within(dialog).getByRole("button", { name: translate("common.delete") }));
+
+    await waitFor(() => expect(repository.delete).toHaveBeenCalledWith("a"));
+    // An "Edit Field Group" form over a group that no longer exists offers an
+    // edit for nothing.
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("textbox", { name: translate("fieldGroup.fields.labelEn") })
+      ).toBeNull()
+    );
+    expect(repository.create).not.toHaveBeenCalled();
+  });
+
+  it("saves an edit as an UPDATE even when the edited row has vanished from the refetched list", async () => {
+    // The identity bug this pins, in full: the editor panel used to resolve its
+    // target by looking the id up in `vm.groups`, while the panel's OPEN state
+    // and its heading keyed off the id itself. Any refetch that dropped the row
+    // — a concurrent delete elsewhere, or the invalidation a reorder fires —
+    // left the heading reading "Edit Field Group" while the submit handler took
+    // the create branch, so Save wrote a BRAND-NEW group.
+    //
+    // Reached here without deleting anything: reorder invalidates the list, and
+    // the second fetch no longer contains the edited row.
+    repository.getByEntityType
+      .mockResolvedValueOnce([
+        makeGroup("a", "Alpha", 0),
+        makeGroup("b", "Beta", 1),
+        makeGroup("c", "Gamma", 2),
+      ])
+      .mockResolvedValue([makeGroup("b", "Beta", 0), makeGroup("c", "Gamma", 1)]);
+    repository.reorder.mockResolvedValue(undefined);
+    repository.update.mockResolvedValue(undefined);
+    await renderWithEntityType();
+
+    // Edit the FIRST row (Alpha), then move the second row down: the reorder
+    // invalidation refetches a list Alpha is no longer in.
+    fireEvent.click(screen.getAllByRole("button", { name: translate("common.edit") })[0]);
+    const labelEn = await screen.findByRole("textbox", {
+      name: translate("fieldGroup.fields.labelEn"),
+    });
+    expect(labelEn).toHaveValue("Alpha");
+
+    fireEvent.click(screen.getAllByRole("button", { name: translate("fieldGroup.moveDown") })[1]);
+    await waitFor(() => expect(repository.reorder).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(screen.getAllByRole("listitem")).toHaveLength(2));
+
+    // The panel is still open, still headed "Edit", and the admin's typed value
+    // is still there — the remount key follows the id, not the resolved row.
+    expect(
+      screen.getByRole("heading", { name: translate("fieldGroup.editTitle") })
+    ).toBeInTheDocument();
+    fireEvent.change(labelEn, { target: { value: "Alpha renamed" } });
+    fireEvent.click(screen.getByRole("button", { name: translate("common.save") }));
+
+    await waitFor(() => expect(repository.update).toHaveBeenCalledTimes(1));
+    expect(repository.update).toHaveBeenCalledWith("a", {
+      labelEn: "Alpha renamed",
+      labelAr: null,
+      sortOrder: 0,
+    });
+    // The whole point: no spurious row was created under an Edit heading.
+    expect(repository.create).not.toHaveBeenCalled();
+  });
+
   it("deletes nothing when the confirmation is cancelled", async () => {
     await renderWithEntityType();
     fireEvent.click(screen.getByRole("button", { name: translate("common.delete") }));

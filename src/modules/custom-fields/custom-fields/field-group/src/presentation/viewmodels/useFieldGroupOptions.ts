@@ -16,6 +16,15 @@
  * An empty key means "nothing to ask for": the query stays idle and the hook
  * returns just the "no group" sentinel, which is exactly what the create form
  * should show before an entity type has been chosen.
+ *
+ * WHY THE CALLER CAN DISABLE IT
+ * -----------------------------
+ * `GET /field-groups` is gated on `custom-field-groups.view`, a permission
+ * introduced with this row and therefore absent from every role that predates
+ * it. An admin holding the full `custom-fields.*` set without it would hit a
+ * 403 on every create/edit modal open -- an avoidable, repeating error state
+ * for a role that exists today. The caller passes `enabled: false` in that
+ * case and the query never fires.
  */
 "use client";
 
@@ -38,7 +47,19 @@ import { fieldGroupsQueryKey } from "./useFieldGroupViewModel";
  */
 export const NO_FIELD_GROUP_VALUE = "";
 
-export function useFieldGroupOptions(entityTypeKey: string) {
+export interface UseFieldGroupOptionsArgs {
+  /**
+   * Whether the caller may read field groups at all. `false` keeps the query
+   * idle -- the hook still returns the sentinel-only option list, so the
+   * picker degrades to "no group" rather than to a 403 toast.
+   */
+  enabled?: boolean;
+}
+
+export function useFieldGroupOptions(
+  entityTypeKey: string,
+  { enabled = true }: UseFieldGroupOptionsArgs = {}
+) {
   const { fieldGroupRepository } = getCustomFieldsContainer();
   const { t, language } = useI18n();
 
@@ -49,7 +70,7 @@ export function useFieldGroupOptions(entityTypeKey: string) {
   } = useQuery({
     queryKey: fieldGroupsQueryKey(entityTypeKey),
     queryFn: () => fieldGroupRepository.getByEntityType(entityTypeKey),
-    enabled: entityTypeKey.length > 0,
+    enabled: enabled && entityTypeKey.length > 0,
   });
 
   const options = useMemo(
