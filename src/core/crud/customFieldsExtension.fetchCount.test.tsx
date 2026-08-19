@@ -15,6 +15,7 @@ import {
   useCustomFieldsFormFields,
   type CustomFieldsExtensionApi,
 } from "./customFieldsExtension";
+import type { FieldConfig } from "@core/ui/forms/generic-form";
 
 function HookProbe({ ownerId }: { ownerId?: string }) {
   useCustomFieldsFormFields("party.person", ownerId);
@@ -22,7 +23,9 @@ function HookProbe({ ownerId }: { ownerId?: string }) {
 }
 
 describe("useCustomFieldsFormFields call count (characterization)", () => {
-  let getFormFields: ReturnType<typeof vi.fn>;
+  let getFormFields: ReturnType<
+    typeof vi.fn<(entityTypeKey: string, ownerId?: string) => Promise<FieldConfig[]>>
+  >;
 
   beforeEach(() => {
     getFormFields = vi.fn().mockResolvedValue([]);

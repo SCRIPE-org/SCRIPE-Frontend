@@ -137,14 +137,6 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     ];
   }, [entityTypes, language, t]);
 
-  // Keyed for an O(1) lookup from the form's live entityTypeKey selection --
-  // backs the "no screen yet" warning below.
-  const entityTypesByKey = useMemo(() => {
-    const map = new Map<string, (typeof entityTypes)[number]>();
-    for (const item of entityTypes ?? []) map.set(item.key, item);
-    return map;
-  }, [entityTypes]);
-
   const noFrontendScreenDescription = useMemo(() => {
     const apiOnlyEntities = (entityTypes ?? []).filter((item) => !(item.hasFrontendScreen ?? true));
     if (apiOnlyEntities.length === 0) return undefined;
@@ -663,6 +655,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       t,
       language,
       entityTypeOptions,
+      noFrontendScreenDescription,
       valueTypeOptions,
       valueTypeLabelOf,
       validatorKindOptions,
