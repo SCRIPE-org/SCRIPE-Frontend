@@ -109,6 +109,15 @@ export const en = {
     enterField: "e.g. Salary, SSN",
     noRestrictions: "No field restrictions",
     restrictionHint: "Specific API fields to hide from the user.",
+    // Tier 1 slice 7: the picker now suggests real custom-field keys. The copy has
+    // to stay honest about what it can offer -- built-in record properties are
+    // restrictable too but are not enumerable from the client, so the suggestion
+    // list is always partial and the input deliberately stays free text.
+    restrictedFieldRequiredWarning: "required — cannot be restricted",
+    restrictedFieldsRequiredConflict:
+      "These fields are required, so restricting them will be rejected and the whole save will fail: {fields}. Make them optional first, or remove them here.",
+    restrictedFieldsTruncated:
+      "This record type has more custom fields than can be listed here, so some suggestions are missing. You can still type any field name.",
     selectPermissions: "Select Permissions",
     selectPermissionsPlaceholder: "Select Permissions Placeholder",
     managePermissions: "Manage Permissions",

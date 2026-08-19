@@ -16,6 +16,8 @@ export interface EntityTypeInfo {
   displayNameAr: string;
   /** See EntityTypeItemJson's identical field for the full contract. */
   hasFrontendScreen?: boolean;
+  /** See EntityTypeItemJson's identical field for the full contract. */
+  permissionResource?: string;
 }
 
 /**

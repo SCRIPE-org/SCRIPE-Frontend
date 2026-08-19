@@ -63,6 +63,24 @@ export interface EntityTypeItemJson {
    * `?? true` fallback where this is consumed.
    */
   hasFrontendScreen?: boolean;
+  /**
+   * The permission resource guarding this entity type's own data (e.g.
+   * `party-people`) — the resource its values authorize against, and the key
+   * field-level restrictions are recorded under.
+   *
+   * Present so a client can translate between the two vocabularies field-level
+   * security straddles: restrictions are configured per permission RESOURCE, while
+   * custom fields are defined per ENTITY TYPE. The mapping is **one-to-many** —
+   * `media.medias` and `media.file` both report `medias` — so resolving a resource
+   * means unioning across every entity type that reports it, never stopping at the
+   * first match.
+   *
+   * Optional because the backend omitted it until Tier 1 slice 7, and both this
+   * response and its client cache are held for an hour — so existing sessions keep
+   * serving the resource-less shape for a while after that ships. Consumers must
+   * degrade rather than assume it is there.
+   */
+  permissionResource?: string;
 }
 
 /**
