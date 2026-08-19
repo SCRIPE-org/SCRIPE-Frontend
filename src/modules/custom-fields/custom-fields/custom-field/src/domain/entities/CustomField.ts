@@ -46,6 +46,12 @@ export interface CustomFieldData {
   validatorKind?: string | null;
   /** Wave 2 Step 2.5 Task 9. Absent on list rows (R3), same as validatorKind. */
   validatorParam?: string | null;
+  /**
+   * Wave 5 row 5.2. Encrypted id of the FieldGroup this definition belongs to,
+   * or null/undefined when ungrouped. Absent on list rows, same as the two
+   * validator columns — `CustomFieldListResponse` does not carry it.
+   */
+  fieldGroupId?: string | null;
 }
 
 /**
@@ -120,5 +126,9 @@ export class CustomField {
 
   get validatorParam(): string | null | undefined {
     return this.data.validatorParam;
+  }
+
+  get fieldGroupId(): string | null | undefined {
+    return this.data.fieldGroupId;
   }
 }

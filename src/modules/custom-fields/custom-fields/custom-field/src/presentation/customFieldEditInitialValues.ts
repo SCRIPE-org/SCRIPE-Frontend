@@ -22,13 +22,21 @@
  *     the request, with no "null means no change" semantics anywhere.
  *   - A cleared `validatorKind` is *legal* by design (clearing a validator is
  *     always allowed), so it is accepted silently rather than rejected.
+ *   - Wave 5 row 5.2 adds `fieldGroupId` to exactly the same hazard class:
+ *     `UpdateCustomFieldCommandHandler` resolves it from the request and
+ *     assigns `resolvedFieldGroupId` (null when the request omits it or sends
+ *     `""`), so an omitted/blank group on update means UNGROUP THIS FIELD, not
+ *     "leave its group alone". `CustomFieldListResponse` does not carry
+ *     `fieldGroupId` either, so the same list-row-vs-detail-fetch rule below
+ *     governs it.
  *
  * Therefore the `item` passed here MUST be a fully-hydrated definition from
  * the detail endpoint (`GET /v1/custom-fields/{id}` -> `CustomFieldResponse`
  * -> `CustomFieldModel.fromJson`), never a list row. `CustomFieldListResponse`
- * deliberately omits `options`, both placeholders and both validator columns
- * (ruling R3), so `CustomFieldModel.fromListJson` leaves them
- * `null`/`undefined` and every `?? ""` below would blank a real stored value.
+ * deliberately omits `options`, both placeholders, both validator columns
+ * (ruling R3) and `fieldGroupId` (Wave 5 row 5.2), so
+ * `CustomFieldModel.fromListJson` leaves them `null`/`undefined` and every
+ * `?? ""` below would blank a real stored value.
  * `useCustomFieldViewModel.openEditModal` is what guarantees the hydration.
  */
 import type { CustomField } from "../domain/entities/CustomField";
@@ -56,6 +64,14 @@ export type CustomFieldEditInitialValues = {
   placeholderAr: string;
   validatorKind: string;
   validatorParam: string;
+  /**
+   * Wave 5 row 5.2. `""` means "no group". Submitted verbatim; the backend's
+   * `string.IsNullOrEmpty` check treats `""` and an absent value identically,
+   * so an empty string is the honest wire representation of "ungrouped" and
+   * needs no write-seam normalization the way `validatorKind` does (that one
+   * is a nullable ENUM, which cannot deserialize `""` at all).
+   */
+  fieldGroupId: string;
   options: string;
   isRequired: boolean;
   sortOrder: number;
@@ -80,6 +96,7 @@ export function buildCustomFieldEditInitialValues(item: CustomField): CustomFiel
     placeholderAr: item.placeholderAr ?? "",
     validatorKind: item.validatorKind ?? "",
     validatorParam: item.validatorParam ?? "",
+    fieldGroupId: item.fieldGroupId ?? "",
     options: item.options ?? "",
     isRequired: item.isRequired,
     sortOrder: item.sortOrder,

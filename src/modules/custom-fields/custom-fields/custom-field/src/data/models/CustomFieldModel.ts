@@ -99,14 +99,23 @@ export interface CustomFieldJson {
    * PostalCode). `undefined`/`null` for the 7 non-parameterized kinds.
    */
   validatorParam?: string | null;
+  /**
+   * Wave 5 row 5.2. Encrypted `FieldGroup` id this definition is assigned to,
+   * or `null`/`undefined` when the field is ungrouped. DETAIL response only --
+   * `CustomFieldListResponse` deliberately does NOT carry it (see
+   * `CustomFieldListItemJson` below), exactly like the two validator columns,
+   * because the list response is form-population-free.
+   */
+  fieldGroupId?: string | null;
 }
 
 /**
  * CustomField list-row JSON shape from API.
- * The list response omits `options`, `modifiedAt`, both placeholders, and
- * (per R3, Wave 2 Step 2.5) `validatorKind`/`validatorParam` -- deliberately,
- * not an oversight. `CustomFieldListResponse` on the backend has no such
- * fields, so do not add them here.
+ * The list response omits `options`, `modifiedAt`, both placeholders,
+ * (per R3, Wave 2 Step 2.5) `validatorKind`/`validatorParam`, and (Wave 5 row
+ * 5.2) `fieldGroupId` -- deliberately, not an oversight.
+ * `CustomFieldListResponse` on the backend has no such fields, so do not add
+ * them here.
  */
 export interface CustomFieldListItemJson {
   id: string;
@@ -171,7 +180,13 @@ export class CustomFieldModel {
     // trailing string|null|undefined arguments to the wrong field, and
     // TypeScript would not reliably catch it. Do not reorder.
     public readonly validatorKind?: string | null,
-    public readonly validatorParam?: string | null
+    public readonly validatorParam?: string | null,
+    // Wave 5 row 5.2 -- appended at the tail (position 18) for the exact same
+    // reason the two validator params were: every optional below `createdAt`
+    // is positional and interchangeably typed `string | null | undefined`, so
+    // inserting anywhere earlier would silently reassign existing call sites'
+    // arguments to the wrong field without a type error. Do not reorder.
+    public readonly fieldGroupId?: string | null
   ) {}
 
   /**
@@ -195,16 +210,18 @@ export class CustomFieldModel {
       json.placeholderEn,
       json.placeholderAr,
       json.validatorKind,
-      json.validatorParam
+      json.validatorParam,
+      json.fieldGroupId
     );
   }
 
   /**
    * Create CustomFieldModel from API list-row JSON (no options / modifiedAt /
-   * placeholders / validatorKind / validatorParam — the list response is
-   * deliberately form-population-free, same convention as options; R3, Wave
-   * 2 Step 2.5. The two new tail constructor params are simply omitted here
-   * so they default to `undefined` — that is correct, not a gap to "fix".
+   * placeholders / validatorKind / validatorParam / fieldGroupId — the list
+   * response is deliberately form-population-free, same convention as options;
+   * R3, Wave 2 Step 2.5, extended by Wave 5 row 5.2. The three tail
+   * constructor params are simply omitted here so they default to `undefined`
+   * — that is correct, not a gap to "fix".
    *
    * "Form-population-free" is load-bearing, not descriptive (Step 2.5 fix
    * round, finding C-1): a row produced here must NEVER be handed to
@@ -254,6 +271,7 @@ export class CustomFieldModel {
       modifiedAt: this.modifiedAt,
       validatorKind: this.validatorKind,
       validatorParam: this.validatorParam,
+      fieldGroupId: this.fieldGroupId,
     };
   }
 }

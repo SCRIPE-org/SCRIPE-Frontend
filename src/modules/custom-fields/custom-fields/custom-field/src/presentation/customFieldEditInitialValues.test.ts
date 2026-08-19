@@ -37,6 +37,7 @@ const DETAIL_JSON = {
   modifiedAt: null,
   validatorKind: "Iban",
   validatorParam: null,
+  fieldGroupId: "enc-group-7",
 };
 
 const LIST_ROW_JSON = {
@@ -66,6 +67,7 @@ describe("buildCustomFieldEditInitialValues", () => {
       placeholderAr: "أدخل رقم الآيبان",
       validatorKind: "Iban",
       validatorParam: "",
+      fieldGroupId: "enc-group-7",
       options: "",
       isRequired: true,
       sortOrder: 3,
@@ -86,16 +88,20 @@ describe("buildCustomFieldEditInitialValues", () => {
     expect(buildCustomFieldEditInitialValues(item).options).toBe("Small\nMedium\nLarge");
   });
 
-  it("HAZARD: a list row blanks the validator, the options and both placeholders — which is why callers must hydrate first", () => {
+  it("HAZARD: a list row blanks the validator, the options, both placeholders and the field group — which is why callers must hydrate first", () => {
     const listRow = CustomFieldMapper.toEntity(CustomFieldModel.fromListJson(LIST_ROW_JSON));
     const values = buildCustomFieldEditInitialValues(listRow);
 
-    // These four are what the update handler would then write back as blank.
+    // These are what the update handler would then write back as blank.
     expect(values.validatorKind).toBe("");
     expect(values.validatorParam).toBe("");
     expect(values.placeholderEn).toBe("");
     expect(values.placeholderAr).toBe("");
     expect(values.options).toBe("");
+    // Wave 5 row 5.2 joined the same hazard class: CustomFieldListResponse
+    // carries no fieldGroupId either, and an empty one on update UNGROUPS the
+    // field rather than leaving its group alone.
+    expect(values.fieldGroupId).toBe("");
     // The fields the list row DOES carry survive, which is why the defect was
     // invisible in the UI: the form looked correctly populated.
     expect(values.labelEn).toBe("Bank Account");

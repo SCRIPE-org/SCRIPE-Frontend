@@ -22,11 +22,19 @@ import { CustomFieldValueRepository } from "./custom-field-value/src/data/reposi
 import type { ICustomFieldValueService } from "./custom-field-value/src/domain/interfaces/ICustomFieldValueService";
 import type { ICustomFieldValueRepository } from "./custom-field-value/src/domain/interfaces/ICustomFieldValueRepository";
 
+// FieldGroup (Wave 5 row 5.2)
+import { FieldGroupService } from "./field-group/src/data/services/FieldGroupService";
+import { FieldGroupRepository } from "./field-group/src/data/repositories/FieldGroupRepository";
+import type { IFieldGroupService } from "./field-group/src/domain/interfaces/IFieldGroupService";
+import type { IFieldGroupRepository } from "./field-group/src/domain/interfaces/IFieldGroupRepository";
+
 export interface CustomFieldsContainer {
   customFieldService: ICustomFieldService;
   customFieldRepository: ICustomFieldRepository;
   customFieldValueService: ICustomFieldValueService;
   customFieldValueRepository: ICustomFieldValueRepository;
+  fieldGroupService: IFieldGroupService;
+  fieldGroupRepository: IFieldGroupRepository;
 }
 
 let _container: CustomFieldsContainer | null = null;
@@ -40,12 +48,15 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
 
     const customFieldService = new CustomFieldService(apiService);
     const customFieldValueService = new CustomFieldValueService(apiService);
+    const fieldGroupService = new FieldGroupService(apiService);
 
     _container = {
       customFieldService,
       customFieldRepository: new CustomFieldRepository(customFieldService),
       customFieldValueService,
       customFieldValueRepository: new CustomFieldValueRepository(customFieldValueService),
+      fieldGroupService,
+      fieldGroupRepository: new FieldGroupRepository(fieldGroupService),
     };
   }
 
@@ -61,5 +72,8 @@ export const customFieldsContainer = {
   },
   get customFieldValueRepository() {
     return getCustomFieldsContainer().customFieldValueRepository;
+  },
+  get fieldGroupRepository() {
+    return getCustomFieldsContainer().fieldGroupRepository;
   },
 };

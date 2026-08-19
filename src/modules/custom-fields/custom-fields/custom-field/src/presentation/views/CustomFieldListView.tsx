@@ -6,7 +6,7 @@
  */
 "use client";
 
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
@@ -21,7 +21,7 @@ import { Button } from "@core/ui/button";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
-import { Pencil, Trash2, Globe2, ListTree } from "lucide-react";
+import { Pencil, Trash2, Globe2, ListTree, FolderTree } from "lucide-react";
 import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
@@ -29,6 +29,8 @@ import {
 } from "../valueTypeRegistry";
 import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../validatorKindRegistry";
 import { buildCustomFieldEditInitialValues } from "../customFieldEditInitialValues";
+import { useFieldGroupOptions } from "../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions";
+import { buildFieldGroupField, isFieldGroupPickerVisible } from "../fieldGroupFieldConfig";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -50,6 +52,45 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   // exact same form behaves for anyone else. The form gives no other hint of
   // this, so it's surfaced here, before "Add" is even clicked.
   const isPlatformContext = isSuperAdmin && !isInTenantWorld;
+
+  // ── Field-group picker (Wave 5 row 5.2) ─────────────────────────────
+  //
+  // Which groups are offered depends on the definition's entity type, but
+  // `FieldConfig.options` is a STATIC array, evaluated when the config object
+  // is built -- only `isVisible` ever receives live form state. So the entity
+  // type currently in play is tracked here instead:
+  //
+  //   - editing: `editingItem` is a DETAIL fetch (see openEditModal) and
+  //     already carries `entityTypeKey`, which is immutable, so it cannot
+  //     change mid-edit;
+  //   - creating: whatever the entityTypeKey select holds right now, pushed up
+  //     by that field's own onChange below.
+  const [createEntityTypeKey, setCreateEntityTypeKey] = useState("");
+  const activeEntityTypeKey =
+    vm.isEditModalOpen && vm.editingItem ? vm.editingItem.entityTypeKey : createEntityTypeKey;
+  const {
+    options: fieldGroupOptions,
+    isLoading: isFieldGroupsLoading,
+    isError: isFieldGroupsError,
+  } = useFieldGroupOptions(activeEntityTypeKey);
+
+  /**
+   * Deferred with setTimeout(0) on purpose: `FieldConfig.onChange` is invoked
+   * from INSIDE GenericForm's `setFormData` updater, and calling another
+   * component's setState from there is React's "cannot update a component
+   * while rendering a different component" violation. TenantDialogs.tsx
+   * already defers the same way at its own equivalent seam.
+   *
+   * The returned object is merged into form state synchronously by
+   * GenericForm, clearing any group chosen for the PREVIOUS entity type -- a
+   * group id from one entity type is never valid for another, and the backend
+   * rejects the mismatch outright.
+   */
+  const handleEntityTypeChange = useCallback((value: unknown) => {
+    const key = typeof value === "string" ? value : "";
+    setTimeout(() => setCreateEntityTypeKey(key), 0);
+    return { fieldGroupId: "" };
+  }, []);
 
   const entityTypeOptions = useMemo(() => {
     if (!entityTypes || entityTypes.length === 0) return [];
@@ -155,6 +196,31 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     [t]
   );
 
+  /**
+   * The field-group picker, shared verbatim by the create and edit forms
+   * (Wave 5 row 5.2). Built by `fieldGroupFieldConfig.ts` rather than inline
+   * here, so a test can render the REAL config through the REAL GenericForm --
+   * see that module's own header for why `type: "select"` is load-bearing for
+   * the control's accessible name.
+   *
+   * While the groups query is still in flight the option list holds only the
+   * "no group" sentinel, so an already-assigned group renders momentarily
+   * blank. That is display only: GenericForm seeds `formData` from
+   * `editInitialValues`, not from the option list, and submits a raw spread of
+   * that state -- so the stored `fieldGroupId` is still what gets sent if the
+   * admin saves during that window.
+   */
+  const fieldGroupField = useMemo(
+    () =>
+      buildFieldGroupField({
+        t,
+        options: fieldGroupOptions,
+        isLoading: isFieldGroupsLoading,
+        isError: isFieldGroupsError,
+      }),
+    [t, fieldGroupOptions, isFieldGroupsLoading, isFieldGroupsError]
+  );
+
   // Same fallback shape as the old `valueTypeLabels[value] ?? value` map:
   // an unrecognized/unknown wire value falls back to the raw value itself
   // rather than throwing or rendering blank.
@@ -179,11 +245,22 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // only scope), so it is surfaced here instead.
       customHeaderContent: (
         <div className="flex flex-col gap-3">
-          <div>
+          <div className="flex flex-wrap gap-2">
             <Link href="/custom-fields/value-types">
               <Button variant="outline" size="sm">
                 <ListTree className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
                 {t("customField.valueTypeCatalog.browseLink")}
+              </Button>
+            </Link>
+            {/* Wave 5 row 5.2. Same reasoning as the value-types link beside
+                it: /custom-fields/field-groups has no sidebar nav entry of its
+                own (that needs a backend nav-seed change, out of this row's
+                frontend-only scope), so the definitions screen is its entry
+                point. */}
+            <Link href="/custom-fields/field-groups">
+              <Button variant="outline" size="sm">
+                <FolderTree className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+                {t("customField.fieldGroupsLink")}
               </Button>
             </Link>
           </div>
@@ -256,6 +333,9 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           placeholder: t("customField.placeholders.entityTypeKey"),
           required: true,
           description: noFrontendScreenDescription,
+          // Wave 5 row 5.2 -- drives the field-group picker's option list and
+          // clears a stale cross-entity-type group selection.
+          onChange: handleEntityTypeChange,
         },
         {
           name: "key",
@@ -340,6 +420,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           label: t("customField.fields.isRequired"),
           type: "switch" as const,
         },
+        { ...fieldGroupField, isVisible: isFieldGroupPickerVisible },
         {
           name: "sortOrder",
           label: t("customField.fields.sortOrder"),
@@ -440,6 +521,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           label: t("customField.fields.isRequired"),
           type: "switch" as const,
         },
+        // Always rendered on edit: the definition's entityTypeKey is already
+        // known (immutable, and carried on the hydrated editingItem), so
+        // unlike the create form there is no "pick an entity type first"
+        // state to guard against. This field MUST be present -- omitting it
+        // would submit no fieldGroupId, and UpdateCustomFieldCommandHandler
+        // reads that as "ungroup this field", silently detaching the group on
+        // every unrelated edit. Exactly the shape of the Wave 2.5 C-1 defect.
+        fieldGroupField,
         {
           name: "sortOrder",
           label: t("customField.fields.sortOrder"),
@@ -462,6 +551,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         valueType: "Text",
         validatorKind: "",
         validatorParam: "",
+        // "" is the "no group" sentinel; the backend reads empty and absent
+        // identically, so a field created without touching the picker is
+        // simply ungrouped.
+        fieldGroupId: "",
         options: "",
         isRequired: false,
         sortOrder: 0,
@@ -519,6 +612,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       valueTypeLabelOf,
       validatorKindOptions,
       validatorParamFields,
+      fieldGroupField,
+      handleEntityTypeChange,
       vm,
       isEntityTypesError,
       refetchEntityTypes,

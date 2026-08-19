@@ -32,6 +32,7 @@ export const en = {
       isGlobal: "Global (all tenants)",
       validatorKind: "Validator",
       validatorParam: "Validator Parameter",
+      fieldGroup: "Field Group",
     },
 
     // Form placeholders
@@ -219,6 +220,17 @@ export const en = {
       custom: "Custom hex color",
       hexPlaceholder: "3b82f6",
     },
+
+    // Field-group picker on the definition form -- Wave 5 row 5.2. The groups
+    // themselves are managed on /custom-fields/field-groups (own dictionary,
+    // `fieldGroup.*`); these three keys are the picker's own copy, which
+    // belongs with the form that renders it.
+    fieldGroupNone: "No group",
+    fieldGroupDescription:
+      "Optional. Groups this field with the others in the same group when the entity's form is rendered. Leave as \"No group\" to keep it ungrouped.",
+    fieldGroupLoadFailed:
+      "Couldn't load the field groups for this entity type. Saving now keeps this field's current group unchanged.",
+    fieldGroupsLink: "Manage field groups",
 
     // Required / Optional flag
     required: "Required",

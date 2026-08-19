@@ -30,6 +30,7 @@ export class CustomFieldMapper {
       isGlobal: model.isGlobal,
       validatorKind: model.validatorKind,
       validatorParam: model.validatorParam,
+      fieldGroupId: model.fieldGroupId,
     };
     return new CustomField(data);
   }
@@ -55,7 +56,8 @@ export class CustomFieldMapper {
       entity.placeholderEn,
       entity.placeholderAr,
       entity.validatorKind,
-      entity.validatorParam
+      entity.validatorParam,
+      entity.fieldGroupId
     );
   }
 

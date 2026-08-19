@@ -423,6 +423,14 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // here too -- without it, canAccessPage() would fall through to "no entry
   // = open to any authenticated user" instead of requiring CUSTOM_FIELD_VIEW.
   "/custom-fields/value-types": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+  // Field Groups admin screen (Wave 5 row 5.2). Needs its OWN entry for the
+  // same reason value-types does — PAGE_PERMISSIONS matches by exact path, not
+  // by prefix, so without this the page would fall through to "no entry = open
+  // to any authenticated user". Gated on the field-group view permission
+  // rather than the parent's: the backend's FieldGroupsController requires
+  // `custom-field-groups.view` on every read, so an admin holding only
+  // `custom-fields.view` would reach an empty screen and a 403.
+  "/custom-fields/field-groups": [SYSTEM_PERMISSIONS.FIELD_GROUP_VIEW],
 
   // Analytics & Dashboard Events
   "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],

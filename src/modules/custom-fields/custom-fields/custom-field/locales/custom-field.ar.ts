@@ -28,6 +28,7 @@ export const ar = {
       isGlobal: "عام (لكل المستأجرين)",
       validatorKind: "أداة التحقق",
       validatorParam: "مُعامل أداة التحقق",
+      fieldGroup: "مجموعة الحقول",
     },
 
     // Form placeholders
@@ -192,6 +193,16 @@ export const ar = {
       custom: "لون سداسي مخصص",
       hexPlaceholder: "3b82f6",
     },
+
+    // منتقي مجموعة الحقول في نموذج التعريف — الموجة 5، الصف 5.2. تُدار
+    // المجموعات نفسها في /custom-fields/field-groups (قاموس مستقل تحت
+    // `fieldGroup.*`)، وهذه المفاتيح خاصة بالمنتقي داخل هذا النموذج.
+    fieldGroupNone: "بدون مجموعة",
+    fieldGroupDescription:
+      "اختياري. يجمع هذا الحقل مع بقية حقول المجموعة نفسها عند عرض نموذج الكيان. اتركه على \"بدون مجموعة\" ليبقى غير مُجمَّع.",
+    fieldGroupLoadFailed:
+      "تعذّر تحميل مجموعات الحقول لنوع الكيان هذا. الحفظ الآن يُبقي مجموعة هذا الحقل الحالية كما هي.",
+    fieldGroupsLink: "إدارة مجموعات الحقول",
 
     // Required / Optional flag
     required: "إلزامي",
