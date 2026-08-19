@@ -21,7 +21,7 @@ import { Button } from "@core/ui/button";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
-import { Pencil, Trash2, Globe2, ListTree, FolderTree } from "lucide-react";
+import { Pencil, Trash2, Globe2, ListTree, FolderTree, Boxes } from "lucide-react";
 import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
@@ -261,6 +261,18 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
               <Button variant="outline" size="sm">
                 <FolderTree className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
                 {t("customField.fieldGroupsLink")}
+              </Button>
+            </Link>
+            {/* Wave 5 row 5.5. Third link, same reasoning as the two beside
+                it: /custom-fields/entity-types has no sidebar nav entry of
+                its own (nav is backend-seeded, out of this row's
+                frontend-only scope), so this screen is its entry point. It
+                is the reference page for the Entity Type field the create
+                form below asks for, which makes this its natural home. */}
+            <Link href="/custom-fields/entity-types">
+              <Button variant="outline" size="sm">
+                <Boxes className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+                {t("customField.entityTypeCatalog.browseLink")}
               </Button>
             </Link>
           </div>

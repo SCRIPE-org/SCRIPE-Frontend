@@ -423,6 +423,13 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // here too -- without it, canAccessPage() would fall through to "no entry
   // = open to any authenticated user" instead of requiring CUSTOM_FIELD_VIEW.
   "/custom-fields/value-types": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+  // Entity Types registry (Wave 5 row 5.5) -- read-only reference page nested
+  // under /custom-fields, needing its own entry for the same exact-path
+  // reason value-types does. Gated on the PARENT's permission, not a new one:
+  // its only data source is GET /custom-fields/entity-types, which the
+  // backend's CustomFieldsController gates on `custom-fields.view` -- so an
+  // admin who can reach /custom-fields can already read exactly this list.
+  "/custom-fields/entity-types": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
   // Field Groups admin screen (Wave 5 row 5.2). Needs its OWN entry for the
   // same reason value-types does — PAGE_PERMISSIONS matches by exact path, not
   // by prefix, so without this the page would fall through to "no entry = open

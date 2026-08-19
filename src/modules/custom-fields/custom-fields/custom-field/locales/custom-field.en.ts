@@ -319,5 +319,39 @@ export const en = {
         color: "A colour-swatch picker with a custom hex-code entry.",
       },
     },
+
+    // Entity Types registry -- Wave 5 row 5.5. Read-only reference page at
+    // /custom-fields/entity-types, reached from a link on the definitions
+    // screen above. The two "has a screen" columns are the operator-facing
+    // half of this row's drift check: `hasFrontendScreen` is a hand-typed
+    // literal at each backend registration site, and `entityScreenManifest.ts`
+    // is this repo's own answer to the same question -- so the page shows
+    // both claims rather than presenting either one as settled fact.
+    entityTypeCatalog: {
+      title: "Entity Types",
+      description:
+        "Every entity type a custom field can be defined against, which module owns it, and whether a screen in this app renders its custom fields. This registry is read-only -- entity types are declared by backend modules at startup and cannot be added, edited, or removed here.",
+      browseLink: "Browse entity types",
+      loadFailed: "Couldn't load entity types. Please try again.",
+      empty: "No entity types are registered.",
+      stats: {
+        total: "Entity Types",
+        withScreen: "Have a Screen",
+        drift: "Out of Sync",
+      },
+      columns: {
+        entityType: "Entity Type",
+        key: "Key",
+        owningModule: "Owning Module",
+        backendScreen: "Screen (per backend)",
+        frontendScreen: "Screen (in this app)",
+        status: "Status",
+      },
+      agreement: {
+        aligned: "In sync",
+        backendClaimsScreenOnly: "Backend expects a screen",
+        frontendScreenOnly: "Screen exists, backend unaware",
+      },
+    },
   },
 };
