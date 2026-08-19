@@ -250,5 +250,62 @@ export const en = {
       trigger: "+ Add custom field",
       dialogTitle: "Add custom field — {entity}",
     },
+
+    // Value Types catalog -- Wave 5 row 5.4. Read-only reference page at
+    // /custom-fields/value-types, browsable from a link on the definitions
+    // screen above. Design spec §7: "Browse available types, what each is
+    // for, which are entitlement-locked." The entitlement-lock column is
+    // deliberately OMITTED here -- §4.6's Availability/RequiredFeature
+    // descriptor fields were never implemented on either side (pre-plan
+    // analysis R5), so there is no real data to show; a fabricated or
+    // always-empty column would be worse than no column.
+    valueTypeCatalog: {
+      title: "Value Types",
+      description:
+        "Every value type a custom field can use, what it's for, and how it behaves. This catalog is read-only -- value types are fixed by the platform and cannot be added, edited, or removed here.",
+      browseLink: "Browse value types",
+      stats: {
+        total: "Value Types",
+        withOptions: "Own an Options List",
+        withValidator: "Support a Validator",
+      },
+      columns: {
+        valueType: "Value Type",
+        description: "Description",
+        placeholder: "Placeholder",
+        options: "Options List",
+        validator: "Validator",
+      },
+      // One sentence per value type: what it's for AND what its control
+      // looks like, since the catalog module's own fieldConfigType is an
+      // internal dispatch key (e.g. "tel", "datetime"), not user-facing
+      // copy. Leaf names here are deliberately identical to valueTypes.*
+      // above -- ValueTypeCatalogView derives this key from each catalog
+      // entry's own labelKey suffix rather than a second hand-kept map, so
+      // the two blocks can never silently drift apart in which 17 names
+      // they cover.
+      descriptions: {
+        text: "A single-line, free-form text field. The only value type that can carry an optional format validator (see the Validator column).",
+        number: "A numeric input for whole or decimal values.",
+        boolean: "An on/off toggle switch. Has no placeholder or options.",
+        date: "A calendar date picker, with no time component.",
+        select: "A single choice from a fixed list of options you define when creating the field.",
+        longText:
+          "A multi-line text area for longer free-form content, capped at 10,000 characters.",
+        dateTime:
+          "A combined date-and-time picker. The saved instant carries an explicit time zone.",
+        multiSelect:
+          "Multiple choices from a fixed list of options you define, up to 19 selections.",
+        email: "A single-line field for an email address.",
+        url: "A single-line field for a web address. Only http and https links are accepted.",
+        phone: "A phone number field, stored and validated in international E.164 format.",
+        percent: "A numeric value between 0 and 100, displayed with a % sign.",
+        rating: "A 1-to-5 rating captured on a slider. There is no free-text entry.",
+        currency: "A paired amount and currency code -- both are required together.",
+        duration: "A length of time, entered and stored in minutes.",
+        time: "A time-of-day picker, with no date component.",
+        color: "A colour-swatch picker with a custom hex-code entry.",
+      },
+    },
   },
 };

@@ -4,6 +4,7 @@
 
 // Views
 export { CustomFieldListView } from "./src/presentation/views/CustomFieldListView";
+export { ValueTypeCatalogView } from "./src/presentation/views/ValueTypeCatalogView";
 
 // Entities
 export { CustomField } from "./src/domain/entities/CustomField";

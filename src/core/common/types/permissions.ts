@@ -415,6 +415,14 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Custom Fields Module
   "/custom-fields": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+  // Value Types catalog (Wave 5 row 5.4) -- read-only reference page nested
+  // under /custom-fields. Gated by the same permission as its parent: the
+  // navigation store's hasRouteAccess() already grants it via prefix match
+  // against the parent route (routeSlice.ts), but PAGE_PERMISSIONS matches
+  // by exact path/segment-count only (no prefix), so it needs its own entry
+  // here too -- without it, canAccessPage() would fall through to "no entry
+  // = open to any authenticated user" instead of requiring CUSTOM_FIELD_VIEW.
+  "/custom-fields/value-types": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
 
   // Analytics & Dashboard Events
   "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],

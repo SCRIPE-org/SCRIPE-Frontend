@@ -7,6 +7,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import Link from "next/link";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
 import type { CrudConfig, CrudAction } from "@core/crud/components/generic-crud-view";
 import { useCustomFieldViewModel } from "../viewmodels/useCustomFieldViewModel";
@@ -16,10 +17,11 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
 import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { Badge } from "@core/ui/badge";
+import { Button } from "@core/ui/button";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
-import { Pencil, Trash2, Globe2 } from "lucide-react";
+import { Pencil, Trash2, Globe2, ListTree } from "lucide-react";
 import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
@@ -170,20 +172,36 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       subtitleKey: "customField.description",
       resource: "custom-fields",
       // Entity types feed the create form's dropdown; a failed fetch previously left it
-      // silently empty with no indication anything was wrong.
-      customHeaderContent: isEntityTypesError ? (
-        <ErrorMessage
-          size="sm"
-          message={t("customField.entityTypesLoadFailed")}
-          onRetry={() => refetchEntityTypes()}
-        />
-      ) : isPlatformContext ? (
-        <Alert variant="info">
-          <Globe2 />
-          <AlertTitle>{t("customField.platformContext.title")}</AlertTitle>
-          <AlertDescription>{t("customField.platformContext.description")}</AlertDescription>
-        </Alert>
-      ) : undefined,
+      // silently empty with no indication anything was wrong. The Value
+      // Types catalog link (Wave 5 row 5.4) is its only entry point --
+      // /custom-fields/value-types has no sidebar nav item of its own (that
+      // would need a backend nav-seed change, out of this row's frontend-
+      // only scope), so it is surfaced here instead.
+      customHeaderContent: (
+        <div className="flex flex-col gap-3">
+          <div>
+            <Link href="/custom-fields/value-types">
+              <Button variant="outline" size="sm">
+                <ListTree className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+                {t("customField.valueTypeCatalog.browseLink")}
+              </Button>
+            </Link>
+          </div>
+          {isEntityTypesError ? (
+            <ErrorMessage
+              size="sm"
+              message={t("customField.entityTypesLoadFailed")}
+              onRetry={() => refetchEntityTypes()}
+            />
+          ) : isPlatformContext ? (
+            <Alert variant="info">
+              <Globe2 />
+              <AlertTitle>{t("customField.platformContext.title")}</AlertTitle>
+              <AlertDescription>{t("customField.platformContext.description")}</AlertDescription>
+            </Alert>
+          ) : null}
+        </div>
+      ),
       columns: [
         { key: "entityTypeKey", label: t("customField.fields.entityTypeKey"), sortable: true },
         { key: "key", label: t("customField.fields.key"), sortable: true },
