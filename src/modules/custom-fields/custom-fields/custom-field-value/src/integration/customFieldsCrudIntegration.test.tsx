@@ -146,3 +146,69 @@ describe("customFieldsCrudIntegration registration", () => {
     expect(screen.getByText((1234.5).toLocaleString("en-US"))).toBeInTheDocument();
   });
 });
+
+describe("mapValueToFieldConfig — visibility rules (Wave 5 row 5.3)", () => {
+  const base: EntityCustomFieldValueData = {
+    customFieldId: "id-reason",
+    key: "reason",
+    labelEn: "Termination Reason",
+    labelAr: null,
+    valueType: "Text",
+    isRequired: false,
+    options: null,
+    sortOrder: 1,
+    value: null,
+  };
+
+  const ruled: EntityCustomFieldValueData = {
+    ...base,
+    visibilityRules: [
+      { operandFieldKey: "status", operator: "equals", value: "terminated", priority: 0 },
+    ],
+  };
+
+  it("attaches no isVisible when the field has no rules", () => {
+    // A field without rules must keep behaving exactly as it did before this wave — an undefined
+    // isVisible, which generic-form treats as "always render".
+    expect(mapValueToFieldConfig(base, "en").isVisible).toBeUndefined();
+    expect(mapValueToFieldConfig({ ...base, visibilityRules: [] }, "en").isVisible).toBeUndefined();
+  });
+
+  it("evaluates against LIVE form state, so a create form reveals the field as the user types", () => {
+    // THE CASE THE WHOLE CLIENT-SIDE EVALUATOR EXISTS FOR. On a create form the server has no values,
+    // so it marks every conditional field hidden and cannot re-evaluate as the user fills the form.
+    const config = mapValueToFieldConfig(ruled, "en");
+
+    expect(config.isVisible).toBeDefined();
+    expect(config.isVisible!({ [encodeCustomFieldName("status")]: "active" })).toBe(false);
+    expect(config.isVisible!({ [encodeCustomFieldName("status")]: "terminated" })).toBe(true);
+  });
+
+  it("reads siblings by their NAMESPACED form name", () => {
+    // Form state is namespaced (`__cf__status`) while a rule names its operand by the plain key
+    // ("status"). Getting this wrong makes every rule read undefined and hide its field forever.
+    const config = mapValueToFieldConfig(ruled, "en");
+
+    // The un-namespaced key must NOT satisfy it.
+    expect(config.isVisible!({ status: "terminated" })).toBe(false);
+    expect(config.isVisible!({ [encodeCustomFieldName("status")]: "terminated" })).toBe(true);
+  });
+
+  it("falls back to the sibling's stored value when the form has not touched it", () => {
+    // An EDIT form does not seed every field into form state before first interaction. Without the
+    // fallback, an untouched operand reads as absent and hides a field that should be showing.
+    const config = mapValueToFieldConfig(ruled, "en", (fieldKey) =>
+      fieldKey === "status" ? "terminated" : null
+    );
+
+    expect(config.isVisible!({})).toBe(true);
+  });
+
+  it("prefers the live form value over the stored fallback", () => {
+    // The user has just changed the operand; the stored value is now stale. Preferring the stored one
+    // would make the form stop responding to the very edit that should reveal or hide the field.
+    const config = mapValueToFieldConfig(ruled, "en", () => "terminated");
+
+    expect(config.isVisible!({ [encodeCustomFieldName("status")]: "active" })).toBe(false);
+  });
+});

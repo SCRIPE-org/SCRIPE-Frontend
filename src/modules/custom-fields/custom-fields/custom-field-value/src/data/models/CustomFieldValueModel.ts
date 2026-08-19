@@ -13,6 +13,8 @@
  * Wave 3.3 backend batch reports (Task A: Currency=13; Task B: Duration=14,
  * Time=15, Color=16, in that order).
  */
+import type { FieldVisibilityRuleData } from "../../domain/fieldVisibility";
+
 export type CustomFieldValueTypeName =
   | "Text"
   | "Number"
@@ -100,6 +102,27 @@ export interface EntityCustomFieldValueData {
     | CustomFieldDateTimeValue
     | CustomFieldCurrencyValue
     | null;
+  /**
+   * Wave 5 row 5.3. True when a visibility rule hides this field for THIS record's current state, in
+   * which case `value` is null regardless of what is stored.
+   *
+   * The field is REPORTED, not omitted — unlike a field-level-security restriction, which the server
+   * strips entirely. The distinction is deliberate: a restricted field is one the caller may never
+   * see, so the client must not learn it exists; a hidden field is one the caller may see as soon as
+   * the record's own data makes it applicable, so the client needs to know about it in order to
+   * reveal it when the operand changes.
+   *
+   * Optional because a server predating row 5.3 omits it; absent means "not hidden".
+   */
+  isHidden?: boolean;
+  /**
+   * Wave 5 row 5.3. Every rule governing this field, so a form can re-evaluate visibility LIVE.
+   *
+   * The rules travel rather than only their outcome because the CREATE form carries no owner id, so
+   * the server has no values to evaluate against and marks every conditional field hidden — and it
+   * cannot re-evaluate as the user types. See `fieldVisibility.ts`.
+   */
+  visibilityRules?: FieldVisibilityRuleData[] | null;
 }
 
 /**
@@ -130,4 +153,14 @@ export interface CustomFieldColumnData {
 export interface BulkEntityCustomFieldValuesData {
   columns: CustomFieldColumnData[];
   valuesByOwnerId: Record<string, Record<string, string | number | boolean | null>>;
+  /**
+   * Wave 5 row 5.3. Per owner, the field keys a visibility rule hides for THAT record. Absent owners
+   * have no hidden fields; the whole map is absent when no rule applies anywhere.
+   *
+   * A parallel channel rather than a missing key inside `valuesByOwnerId`, because an absence there
+   * already means two other things (no stored value, and an owner that failed the existence gate) —
+   * and because a column exists once per result set while visibility varies per ROW, so this can
+   * never be expressed by dropping a column.
+   */
+  hiddenKeysByOwnerId?: Record<string, string[]> | null;
 }

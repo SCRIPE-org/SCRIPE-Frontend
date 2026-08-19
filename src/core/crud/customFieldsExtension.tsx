@@ -71,6 +71,17 @@ export interface BulkColumnValuesResult {
   columns: CustomFieldColumnDefinition[];
   /** Keyed by the exact (encrypted) owner id string the caller requested, then by each column's `key`. An id the server couldn't verify is simply absent — render that row's cells empty, not an error. */
   valuesByOwnerId: Record<string, Record<string, unknown>>;
+  /**
+   * Wave 5 row 5.3. Per owner, the field keys a visibility rule hides for THAT record.
+   *
+   * A parallel channel, because visibility varies per ROW while a column exists once per result set —
+   * so this can never be expressed by dropping a column, and expressing it as a missing key inside
+   * `valuesByOwnerId` would overload an absence that already means two other things.
+   *
+   * Optional: a server predating row 5.3 omits it, and the server has already nulled the value
+   * regardless, so a client ignoring this renders an empty cell — correct, just without knowing why.
+   */
+  hiddenKeysByOwnerId?: Record<string, string[]> | null;
 }
 
 export interface CustomFieldsExtensionApi {
@@ -259,7 +270,9 @@ function buildCustomFieldColumn(
   definition: CustomFieldColumnDefinition,
   valuesByOwnerId: Record<string, Record<string, unknown>>,
   language: string,
-  t: (key: string, params?: Record<string, string | number>) => string
+  t: (key: string, params?: Record<string, string | number>) => string,
+  /** Wave 5 row 5.3 — per owner, the keys a rule hides for that record. */
+  hiddenKeysByOwnerId?: Record<string, string[]> | null
 ): Column<any> {
   return {
     // Synthetic key: no row type in the host screen has a real property
@@ -277,6 +290,21 @@ function buildCustomFieldColumn(
     // table (end-aligned, tabular figures) rather than inventing a new one.
     className: definition.valueType === "Number" ? "text-end tabular-nums" : undefined,
     render: (_value: unknown, row: any) => {
+      // ── Wave 5 row 5.3 ──────────────────────────────────────────────────────────────────────
+      //
+      // PER ROW, not per column: the same field can be hidden for one record and shown for the next,
+      // which is exactly why the column itself is never dropped. Rendered as the ordinary empty cell
+      // rather than a distinct "hidden" marker — a field that does not apply to this record reads as
+      // having no value, and a special marker would draw attention to precisely the thing the rule
+      // exists to keep out of the way.
+      //
+      // Defence in depth only: the server has already nulled the value, so removing this changes
+      // nothing about what is transmitted.
+      const hiddenForRow = hiddenKeysByOwnerId?.[row?.id];
+      if (hiddenForRow?.some((key) => key.toLowerCase() === definition.key.toLowerCase())) {
+        return <EmptyCustomFieldCell />;
+      }
+
       const raw = valuesByOwnerId[row?.id]?.[definition.key];
       if (isEmptyCustomFieldValue(raw)) {
         return <EmptyCustomFieldCell />;
@@ -321,6 +349,7 @@ export function useCustomFieldColumns(
   const [valuesByOwnerId, setValuesByOwnerId] = useState<Record<string, Record<string, unknown>>>(
     {}
   );
+  const [hiddenKeysByOwnerId, setHiddenKeysByOwnerId] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -338,6 +367,7 @@ export function useCustomFieldColumns(
     if (!entityTypeKey || !api || ownerIds.length === 0) {
       setDefinitions([]);
       setValuesByOwnerId({});
+      setHiddenKeysByOwnerId({});
       setIsLoading(false);
       setError(null);
       return;
@@ -348,6 +378,9 @@ export function useCustomFieldColumns(
       const result = await api.getBulkColumnValues(entityTypeKey, ownerIds);
       setDefinitions(result.columns.slice().sort((a, b) => a.sortOrder - b.sortOrder));
       setValuesByOwnerId(result.valuesByOwnerId);
+      // Reset to {} rather than left alone when the server sends nothing: a previous page whose rows
+      // had hidden fields must not leave stale keys hiding cells on the next page.
+      setHiddenKeysByOwnerId(result.hiddenKeysByOwnerId ?? {});
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
       // Deliberately not clearing definitions/valuesByOwnerId here — a failed
@@ -369,9 +402,9 @@ export function useCustomFieldColumns(
   const columns = useMemo<Column<any>[]>(
     () =>
       definitions.map((definition) =>
-        buildCustomFieldColumn(definition, valuesByOwnerId, language, t)
+        buildCustomFieldColumn(definition, valuesByOwnerId, language, t, hiddenKeysByOwnerId)
       ),
-    [definitions, valuesByOwnerId, language, t]
+    [definitions, valuesByOwnerId, hiddenKeysByOwnerId, language, t]
   );
 
   return { columns, isLoading, error };

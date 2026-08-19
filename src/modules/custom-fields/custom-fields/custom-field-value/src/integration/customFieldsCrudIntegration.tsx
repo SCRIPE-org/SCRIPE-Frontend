@@ -10,9 +10,15 @@ import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValue
 import { InlineAddCustomFieldDialog } from "../presentation/components/InlineAddCustomFieldDialog";
 import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
 import { VALUE_TYPE_CATALOG } from "../../../custom-field/src/presentation/valueTypeRegistry";
+import { isFieldVisible } from "../domain/fieldVisibility";
 
 /** Exported for the unit test above; not part of CustomFieldsExtensionApi itself. */
-export function mapValueToFieldConfig(data: EntityCustomFieldValueData, language: string): FieldConfig {
+export function mapValueToFieldConfig(
+  data: EntityCustomFieldValueData,
+  language: string,
+  /** Reads a sibling field's SERVER-SIDE value, for rules evaluated before the user touches the form. */
+  siblingFallback?: (fieldKey: string) => unknown
+): FieldConfig {
   const label = language === "ar" && data.labelAr ? data.labelAr : data.labelEn;
   // Same fallback shape as label: the Arabic placeholder wins only when both
   // the language is "ar" AND one was actually set, otherwise fall back to
@@ -53,6 +59,30 @@ export function mapValueToFieldConfig(data: EntityCustomFieldValueData, language
     options,
     section: "Custom Fields",
     defaultValue: data.value ?? undefined,
+    // ── Wave 5 row 5.3: visibility rules, evaluated LIVE against the open form ──────────────────
+    //
+    // Attached only when the field actually has rules, so a field without them keeps a plain
+    // undefined `isVisible` and behaves exactly as before.
+    //
+    // `isVisible` is the right hook rather than a new mechanism: generic-form already consults it
+    // both when RENDERING a field and when deciding whether to VALIDATE it, so a hidden required
+    // field cannot block submission — which matters because the server refuses that combination at
+    // configuration time and this keeps the client agreeing with it.
+    //
+    // The lookup goes through encodeCustomFieldName because form state is namespaced: a rule names a
+    // sibling by its plain custom-field key ("status"), while the form holds it under "__cf__status".
+    // Falling back to the sibling's own stored value is deliberate — on an EDIT form a field the user
+    // has not touched may not be in form state yet, and treating that as absent would hide a field
+    // that should be showing.
+    ...(data.visibilityRules && data.visibilityRules.length > 0
+      ? {
+          isVisible: (formData: Record<string, unknown>) =>
+            isFieldVisible(data.visibilityRules, (fieldKey) => {
+              const encoded = encodeCustomFieldName(fieldKey);
+              return encoded in formData ? formData[encoded] : siblingFallback?.(fieldKey);
+            }),
+        }
+      : {}),
   };
 }
 
@@ -71,7 +101,14 @@ async function getFormFields(entityTypeKey: string, ownerId?: string): Promise<F
   return results
     .slice()
     .sort((a, b) => a.sortOrder - b.sortOrder)
-    .map((d) => mapValueToFieldConfig(d, "en"));
+    // The sibling fallback reads each field's SERVER-SIDE value, so a rule on an edit form evaluates
+    // correctly before the user has touched anything. Built once over the fetched list rather than
+    // per field, so it is one closure over a map instead of a scan per lookup per keystroke.
+    .map((d, _index, all) =>
+      mapValueToFieldConfig(d, "en", (fieldKey) =>
+        all.find((candidate) => candidate.key.toLowerCase() === fieldKey.toLowerCase())?.value ?? null
+      )
+    );
 }
 
 async function saveValues(

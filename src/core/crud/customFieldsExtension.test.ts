@@ -158,3 +158,122 @@ describe("useCustomFieldColumns", () => {
     expect(result.current.columns).toEqual([]);
   });
 });
+
+describe("useCustomFieldColumns — per-record visibility (Wave 5 row 5.3)", () => {
+  const COLUMN = {
+    customFieldId: "cf-1",
+    key: "reason",
+    labelEn: "Termination Reason",
+    labelAr: null,
+    valueType: "Text" as const,
+    options: null,
+    sortOrder: 0,
+  };
+
+  function bulk(overrides: Partial<BulkColumnValuesResult> = {}): BulkColumnValuesResult {
+    return {
+      columns: [COLUMN],
+      valuesByOwnerId: {
+        "owner-a": { reason: "redundancy" },
+        "owner-b": { reason: "resigned" },
+      },
+      ...overrides,
+    };
+  }
+
+  /** Renders one row's cell through the built column, the way GenericTable does. */
+  function renderCell(column: { render?: (v: unknown, row: unknown) => unknown }, ownerId: string) {
+    return column.render?.(undefined, { id: ownerId });
+  }
+
+  it("keeps ONE column while blanking only the rows a rule hides", async () => {
+    // The point of the parallel channel: the same field is shown for one record and hidden for the
+    // next, so this can never be expressed by dropping the column.
+    const api = makeApi({
+      getBulkColumnValues: vi.fn().mockResolvedValue(
+        bulk({ hiddenKeysByOwnerId: { "owner-b": ["reason"] } })
+      ),
+    });
+    registerCustomFieldsExtension(api);
+
+    const { result } = renderHook(() =>
+      useCustomFieldColumns("party.person", ["owner-a", "owner-b"])
+    );
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(result.current.columns).toHaveLength(1);
+    const column = result.current.columns[0] as never as {
+      render?: (v: unknown, row: unknown) => unknown;
+    };
+    // Shown for A (a real value), blanked for B (the empty-cell element, not the stored string).
+    expect(renderCell(column, "owner-a")).toBe("redundancy");
+    expect(renderCell(column, "owner-b")).not.toBe("resigned");
+  });
+
+  it("renders every row normally when the server sends no hidden channel", async () => {
+    // A server predating row 5.3 omits the field entirely; nothing may change for it.
+    const api = makeApi({ getBulkColumnValues: vi.fn().mockResolvedValue(bulk()) });
+    registerCustomFieldsExtension(api);
+
+    const { result } = renderHook(() =>
+      useCustomFieldColumns("party.person", ["owner-a", "owner-b"])
+    );
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    const column = result.current.columns[0] as never as {
+      render?: (v: unknown, row: unknown) => unknown;
+    };
+    expect(renderCell(column, "owner-a")).toBe("redundancy");
+    expect(renderCell(column, "owner-b")).toBe("resigned");
+  });
+
+  it("clears stale hidden keys when a later page reports none", async () => {
+    // Found by mutation: nothing covered the RESET. Leaving the previous page's map in place would
+    // keep hiding cells on rows that have no rules at all — a stale-state bug that only appears on
+    // the second page, which is exactly the kind nobody reproduces by hand.
+    const first = bulk({ hiddenKeysByOwnerId: { "owner-b": ["reason"] } });
+    const second = bulk();
+    const getBulkColumnValues = vi
+      .fn()
+      .mockResolvedValueOnce(first)
+      .mockResolvedValueOnce(second);
+    registerCustomFieldsExtension(makeApi({ getBulkColumnValues }));
+
+    const { result, rerender } = renderHook(
+      ({ ids }: { ids: string[] }) => useCustomFieldColumns("party.person", ids),
+      { initialProps: { ids: ["owner-a", "owner-b"] } }
+    );
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    // Second page: a different id set, so the hook refetches.
+    rerender({ ids: ["owner-a", "owner-b", "owner-c"] });
+    await waitFor(() => expect(getBulkColumnValues).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    const column = result.current.columns[0] as never as {
+      render?: (v: unknown, row: unknown) => unknown;
+    };
+    expect(renderCell(column, "owner-b")).toBe("resigned");
+  });
+
+  it("matches hidden keys case-insensitively", async () => {
+    // Key casing is provider-collation-dependent in the database, and every other key comparison in
+    // this feature is case-insensitive. A case-sensitive match here would silently show a hidden cell.
+    const api = makeApi({
+      getBulkColumnValues: vi.fn().mockResolvedValue(
+        bulk({ hiddenKeysByOwnerId: { "owner-b": ["REASON"] } })
+      ),
+    });
+    registerCustomFieldsExtension(api);
+
+    const { result } = renderHook(() =>
+      useCustomFieldColumns("party.person", ["owner-a", "owner-b"])
+    );
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    const column = result.current.columns[0] as never as {
+      render?: (v: unknown, row: unknown) => unknown;
+    };
+    expect(renderCell(column, "owner-b")).not.toBe("resigned");
+  });
+});
