@@ -21,7 +21,7 @@ import { Button } from "@core/ui/button";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
-import { Pencil, Trash2, Globe2, ListTree, FolderTree, Boxes } from "lucide-react";
+import { BarChart3, Boxes, FolderTree, Globe2, History, ListTree, Pencil, Trash2 } from "lucide-react";
 import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
@@ -33,6 +33,9 @@ import { useFieldGroupOptions } from "../../../../field-group/src/presentation/v
 import { buildFieldGroupField, makeFieldGroupPickerVisibility } from "../fieldGroupFieldConfig";
 import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
 import { usePermission } from "@core/hooks/use-permission";
+import { FieldHistoryDialog } from "../FieldHistoryDialog";
+import { FieldImpactDialog } from "../FieldImpactDialog";
+import { useFieldInsightViewModel } from "../viewmodels/useFieldInsightViewModel";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -80,6 +83,13 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
    * otherwise lead to a page `PAGE_PERMISSIONS` refuses.
    */
   const canViewFieldGroups = usePermission(CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_VIEW);
+  const canViewHistory = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_HISTORY);
+  const canViewUsage = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_USAGE);
+  const insight = useFieldInsightViewModel();
+  // Destructured so the config memo below can depend on the STABLE callbacks. Depending on
+  // `insight` itself would satisfy the linter and defeat the memo: the hook returns a fresh
+  // object literal every render even though each callback inside it is memoized.
+  const { openUsage, openHistory, requestDelete } = insight;
   const {
     options: fieldGroupOptions,
     isLoading: isFieldGroupsLoading,
@@ -689,7 +699,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // fallback for the (rare) record missing a label.
       getItemDisplayName: (item: CustomField) => item.labelEn || item.key,
       deleteService: (id: string) => vm.deleteItem(id),
-      getActions: (_vmInstance, tFn, handleDeleteFn): CrudAction<CustomField>[] => [
+      // handleDeleteFn is deliberately unused: the delete action below routes through the
+      // impact flow instead of the generic confirm dialog. Kept in the signature because it is
+      // positional.
+      getActions: (_vmInstance, tFn, _handleDeleteFn): CrudAction<CustomField>[] => [
         {
           label: tFn("common.edit"),
           onClick: (item: CustomField) => vm.openEditModal(item),
@@ -708,8 +721,29 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           show: (item: CustomField) => isPlatformContext || !item.isGlobal,
         },
         {
+          label: tFn("customField.impact.actionLabel"),
+          onClick: (item: CustomField) => openUsage(item.id),
+          variant: "ghost" as const,
+          icon: <BarChart3 className="h-4 w-4" />,
+          show: () => canViewUsage,
+        },
+        {
+          label: tFn("customField.history.actionLabel"),
+          onClick: (item: CustomField) => openHistory(item.id),
+          variant: "ghost" as const,
+          icon: <History className="h-4 w-4" />,
+          show: () => canViewHistory,
+        },
+        {
           label: tFn("common.delete"),
-          onClick: (item: CustomField) => handleDeleteFn?.(item),
+          // Deliberately NOT handleDeleteFn. The generic confirm dialog asks "are you sure?" with no
+          // numbers; this flow fetches the real impact first and only asks when there is something to
+          // lose -- and when there is, it shows what. Two confirmations for one delete would be worse
+          // than either alone, so the generic one is bypassed rather than layered.
+          onClick: async (item: CustomField) => {
+            const deleted = await requestDelete(item.id);
+            if (deleted) await vm.refreshItems();
+          },
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
@@ -723,6 +757,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // Wave 6 ruling R10. Safe to depend on precisely because it is memoized on [t] -- an
       // unmemoized array literal here would recompute this whole config on every render.
       classificationFields,
+      // Wave 6 rows 6.6/6.3. The individual CALLBACKS, not the `insight` object -- that object is a
+      // fresh literal on every render (only its callbacks are memoized), so depending on it would
+      // recompute this whole config every render.
+      openUsage,
+      openHistory,
+      requestDelete,
+      canViewHistory,
+      canViewUsage,
       entityTypeOptions,
       noFrontendScreenDescription,
       valueTypeOptions,
@@ -740,5 +782,61 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     ]
   );
 
-  return <GenericCrudView viewModel={vm} config={config} />;
+  // Rendered as SIBLINGS of the CRUD view rather than inside its config, because both are
+  // page-level overlays driven by state this component owns -- GenericCrudView has no slot for a
+  // dialog it does not manage, and threading them through it would couple the generic view to two
+  // CustomFields-specific concerns.
+  // Resolves an id back to a display label from the rows already loaded. Falls back to an empty
+  // string rather than the raw id: an encrypted id in a dialog title is noise, and the dialog is
+  // always opened from a row the user just clicked, so the label is present in practice.
+  const insightFieldLabel = useCallback(
+    (fieldId: string | null): string => {
+      if (!fieldId) return "";
+      const row = (vm.items as CustomField[] | undefined)?.find((item) => item.id === fieldId);
+      return row ? row.labelEn || row.key : "";
+    },
+    [vm.items]
+  );
+
+  return (
+    <>
+      <GenericCrudView viewModel={vm} config={config} />
+
+      <FieldHistoryDialog
+        open={insight.historyFieldId !== null}
+        onOpenChange={(open) => {
+          if (!open) insight.closeHistory();
+        }}
+        fieldLabel={insightFieldLabel(insight.historyFieldId)}
+        history={insight.history}
+        isLoading={insight.isHistoryLoading}
+        isError={insight.isHistoryError}
+        errorMessage={insight.historyErrorMessage}
+        page={insight.historyPage}
+        onPageChange={insight.setHistoryPage}
+      />
+
+      <FieldImpactDialog
+        open={insight.usageFieldId !== null}
+        onOpenChange={(open) => {
+          if (!open) insight.closeUsage();
+        }}
+        fieldLabel={insightFieldLabel(insight.usageFieldId)}
+        usage={insight.usage}
+        isLoading={insight.isUsageLoading}
+        isError={insight.isUsageError}
+        // Confirm mode ONLY when this dialog was opened by a delete. Opened from the row action it
+        // is informational, and attaching a destructive button to an informational view is how
+        // someone deletes a field they only wanted to inspect.
+        onConfirmDelete={
+          insight.isConfirmingDelete && insight.usageFieldId !== null
+            ? async () => {
+                await insight.confirmDelete(insight.usageFieldId!);
+                await vm.refreshItems();
+              }
+            : undefined
+        }
+      />
+    </>
+  );
 });

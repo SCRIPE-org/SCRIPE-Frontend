@@ -16,6 +16,63 @@ export const en = {
     editLoadFailed: "Couldn't load this custom field for editing. Please try again.",
 
     // Field labels — shared between the table columns and the create/edit forms
+    // Wave 6 row 6.6 — definition change history.
+    history: {
+      actionLabel: "History",
+      title: "Change history — {field}",
+      description:
+        "Every recorded change to this field, its versions, its options and its visibility rules. " +
+        "Newest first.",
+      empty: "No changes have been recorded for this field.",
+      loadFailed: "Couldn't load the change history. Please try again.",
+      performedBy: "by {user}",
+      systemActor: "system",
+      // Shown next to Purged so it cannot be read as an ordinary delete.
+      purgedNote: "permanently removed",
+      pageOf: "Page {page} of {totalPages} — {total} change(s)",
+      kind: {
+        Created: "Created",
+        Updated: "Updated",
+        Deactivated: "Deactivated",
+        Reactivated: "Reactivated",
+        Deleted: "Deleted",
+        Restored: "Restored",
+        Purged: "Purged",
+      },
+      part: {
+        Field: "Field",
+        Definition: "Definition",
+        Version: "Version",
+        Option: "Option",
+        VisibilityRule: "Visibility rule",
+      },
+    },
+
+    // Wave 6 row 6.3 — usage & impact, and the delete confirmation.
+    impact: {
+      actionLabel: "Usage & impact",
+      title: "Usage & impact — {field}",
+      confirmTitle: "Delete {field}?",
+      // These two are NOT interchangeable. For a field inherited by every organisation the
+      // caller-scoped and platform-wide totals differ by orders of magnitude, and nothing about the
+      // number itself says which one is shown.
+      scopeYourOrganisation: "Counts below cover your organisation only.",
+      scopeAllOrganisations: "Counts below cover every organisation on the platform.",
+      loadFailed: "Couldn't load usage for this field.",
+      storedValues: "{count} stored value(s)",
+      legacyValues: "{count} value(s) in the legacy store",
+      options: "{count} option(s)",
+      dependentFields: "{count} other field(s) are shown or hidden based on this field's value",
+      rulesHiding: "{count} rule(s) can hide this field on some records",
+      affectedTenants: "{count} organisation(s) hold values for this field",
+      byRecordType: "By record type",
+      destructiveWarning:
+        "Deleting this field will destroy its stored values once the retention window passes. " +
+        "This cannot be undone after that point.",
+      deleteAnyway: "Delete anyway",
+      deleteConfirm: "Delete",
+    },
+
     fields: {
       entityTypeKey: "Entity Type",
       key: "Key",

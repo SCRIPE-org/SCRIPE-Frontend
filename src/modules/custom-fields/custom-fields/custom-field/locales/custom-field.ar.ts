@@ -12,6 +12,59 @@ export const ar = {
     editLoadFailed: "تعذّر تحميل هذا الحقل المخصص للتعديل. يُرجى المحاولة مرة أخرى.",
 
     // Field labels — shared between the table columns and the create/edit forms
+    // الموجة 6 الصف 6.6 — سجل التغييرات.
+    history: {
+      actionLabel: "السجل",
+      title: "سجل التغييرات — {field}",
+      description:
+        "كل تغيير مسجل على هذا الحقل وإصداراته وخياراته وقواعد إظهاره. " +
+        "الأحدث أولاً.",
+      empty: "لم يُسجل أي تغيير على هذا الحقل.",
+      loadFailed: "تعذر تحميل سجل التغييرات. الرجاء المحاولة مرة أخرى.",
+      performedBy: "بواسطة {user}",
+      systemActor: "النطام",
+      purgedNote: "محذوف نهائياً",
+      pageOf: "صفحة {page} من {totalPages} — {total} تغيير",
+      kind: {
+        Created: "أُنشئ",
+        Updated: "عُدّل",
+        Deactivated: "أُوقف",
+        Reactivated: "أُعيد تنشيطه",
+        Deleted: "حُذف",
+        Restored: "استُعيد",
+        Purged: "أُزيل نهائياً",
+      },
+      part: {
+        Field: "الحقل",
+        Definition: "التعريف",
+        Version: "الإصدار",
+        Option: "الخيار",
+        VisibilityRule: "قاعدة الإظهار",
+      },
+    },
+
+    // الموجة 6 الصف 6.3 — الاستخدام والأثر.
+    impact: {
+      actionLabel: "الاستخدام والأثر",
+      title: "الاستخدام والأثر — {field}",
+      confirmTitle: "حذف {field}؟",
+      scopeYourOrganisation: "الأرقام أدناه تغطي مؤسستك فقط.",
+      scopeAllOrganisations: "الأرقام أدناه تغطي جميع المؤسسات على المنصة.",
+      loadFailed: "تعذر تحميل استخدام هذا الحقل.",
+      storedValues: "{count} قيمة مخزّنة",
+      legacyValues: "{count} قيمة في المخزن القديم",
+      options: "{count} خيار",
+      dependentFields: "{count} حقل آخر يظهر أو يُخفى بناءً على قيمة هذا الحقل",
+      rulesHiding: "{count} قاعدة يمكن أن تخفي هذا الحقل على بعض السجلات",
+      affectedTenants: "{count} مؤسسة تحتفظ بقيم لهذا الحقل",
+      byRecordType: "حسب نوع السجل",
+      destructiveWarning:
+        "سيؤدي حذف هذا الحقل إلى إتلاف قيمه المخزّنة بعد انتهاء فترة الاستبقاء. " +
+        "ولا يمكن التراجع بعد ذلك.",
+      deleteAnyway: "الحذف على أي حال",
+      deleteConfirm: "حذف",
+    },
+
     fields: {
       entityTypeKey: "نوع الكيان",
       key: "المفتاح",

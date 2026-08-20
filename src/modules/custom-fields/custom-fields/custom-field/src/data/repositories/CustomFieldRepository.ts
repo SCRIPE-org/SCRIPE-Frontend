@@ -52,7 +52,15 @@ export class CustomFieldRepository implements ICustomFieldRepository {
     await this.service.update(id, data);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.service.delete(id);
+  async delete(id: string, force?: boolean): Promise<void> {
+    await this.service.delete(id, force);
+  }
+
+  async getHistory(id: string, page: number, pageSize: number) {
+    return this.service.getHistory(id, page, pageSize);
+  }
+
+  async getUsage(id: string) {
+    return this.service.getUsage(id);
   }
 }

@@ -17,6 +17,7 @@ import type {
   CustomFieldListResult,
 } from "../../domain/interfaces/ICustomFieldService";
 import { CUSTOM_FIELD_ENDPOINTS } from "./custom-field.endpoints";
+import type { FieldHistoryPage, FieldUsage } from "../../domain/entities/FieldInsight";
 
 export class CustomFieldService implements ICustomFieldService {
   constructor(private readonly api: IApiService) {}
@@ -64,7 +65,19 @@ export class CustomFieldService implements ICustomFieldService {
     await this.api.put(CUSTOM_FIELD_ENDPOINTS.UPDATE(id), data);
   }
 
-  async delete(id: string): Promise<void> {
-    await this.api.delete(CUSTOM_FIELD_ENDPOINTS.DELETE(id));
+  async delete(id: string, force?: boolean): Promise<void> {
+    await this.api.delete(CUSTOM_FIELD_ENDPOINTS.DELETE(id, force));
+  }
+
+  async getHistory(id: string, page: number, pageSize: number): Promise<FieldHistoryPage> {
+    // Returned as-is: display-only projections with no round trip to lose anything on. See
+    // FieldInsight.ts for why these skip the entity/model/mapper ceremony CustomField needs.
+    return this.api.get<FieldHistoryPage>(
+      CUSTOM_FIELD_ENDPOINTS.HISTORY(id, page, pageSize)
+    );
+  }
+
+  async getUsage(id: string): Promise<FieldUsage> {
+    return this.api.get<FieldUsage>(CUSTOM_FIELD_ENDPOINTS.USAGE(id));
   }
 }

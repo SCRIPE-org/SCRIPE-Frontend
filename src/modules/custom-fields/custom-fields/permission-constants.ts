@@ -25,4 +25,11 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
   FIELD_GROUP_UPDATE: "custom-field-groups.update",
   FIELD_GROUP_DELETE: "custom-field-groups.delete",
   FIELD_GROUP_REORDER: "custom-field-groups.reorder",
+
+  // ── Wave 6 rows 6.6 and 6.3 ─────────────────────────────
+  // Separate permissions, not folded under `view`: a field's change history names WHO changed what
+  // and when, and its usage exposes value counts -- both are strictly more sensitive than seeing
+  // that the field exists, and the backend gates them independently.
+  VIEW_HISTORY: "custom-fields.view-history",
+  VIEW_USAGE: "custom-fields.view-usage",
 } as const;
