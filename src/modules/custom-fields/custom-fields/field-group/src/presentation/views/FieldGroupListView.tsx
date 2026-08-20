@@ -102,6 +102,8 @@ export function FieldGroupListView() {
   const editorLabels = useMemo(
     () => ({
       heading: vm.editingId ? t("fieldGroup.editTitle") : t("fieldGroup.addNew"),
+      stableKey: t("fieldGroup.fields.stableKey"),
+      stableKeyHint: t("fieldGroup.fields.stableKeyHint"),
       labelEn: t("fieldGroup.fields.labelEn"),
       labelAr: t("fieldGroup.fields.labelAr"),
       sortOrder: t("fieldGroup.fields.sortOrder"),
@@ -140,6 +142,9 @@ export function FieldGroupListView() {
         } else {
           await vm.createGroup({
             entityTypeKey,
+            // Wave 6 row 6.5. Create-only: the update branch above deliberately omits it, because a
+            // schema re-import matches on this value and a rename would turn an update into a create.
+            stableKey: values.stableKey,
             labelEn: values.labelEn,
             labelAr: values.labelAr.length > 0 ? values.labelAr : null,
             sortOrder: values.sortOrder,

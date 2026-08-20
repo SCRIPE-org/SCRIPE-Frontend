@@ -17,6 +17,7 @@ import type { FieldGroupJson } from "../models/FieldGroupModel";
 const GROUP_JSON: FieldGroupJson = {
   id: "enc-group-1",
   entityTypeKey: "party.person",
+  stableKey: "group_1",
   labelEn: "Contact details",
   labelAr: "بيانات الاتصال",
   sortOrder: 2,
@@ -77,6 +78,7 @@ describe("FieldGroupService", () => {
   it("posts a create to the collection route and returns the new id", async () => {
     const result = await harness.service.create({
       entityTypeKey: "party.person",
+      stableKey: "contact_details",
       labelEn: "Contact details",
       labelAr: null,
       sortOrder: 0,
@@ -85,6 +87,7 @@ describe("FieldGroupService", () => {
 
     expect(harness.api.post).toHaveBeenCalledWith("/v1/custom-fields/field-groups", {
       entityTypeKey: "party.person",
+      stableKey: "contact_details",
       labelEn: "Contact details",
       labelAr: null,
       sortOrder: 0,

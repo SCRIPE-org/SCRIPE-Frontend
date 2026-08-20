@@ -139,6 +139,7 @@ function makeGroup(id: string, labelEn: string, sortOrder: number, isGlobal = fa
   return new FieldGroup({
     id,
     entityTypeKey: "party.person",
+    stableKey: "group_1",
     labelEn,
     labelAr: null,
     sortOrder,
@@ -279,8 +280,15 @@ describe("FieldGroupListView — inline create/edit panel", () => {
     await renderWithEntityType();
     fireEvent.click(screen.getByRole("button", { name: translate("fieldGroup.addNew") }));
 
+    // Wave 6 row 6.5: the key is required on create, so the save button stays disabled until it is
+    // filled. Typed in mixed case deliberately -- the input lowercases as it is typed, which is what
+    // keeps it consistent with the pattern attribute that forbids uppercase.
     fireEvent.change(
-      await screen.findByRole("textbox", { name: translate("fieldGroup.fields.labelEn") }),
+      await screen.findByRole("textbox", { name: translate("fieldGroup.fields.stableKey") }),
+      { target: { value: "Contact_Details" } }
+    );
+    fireEvent.change(
+      screen.getByRole("textbox", { name: translate("fieldGroup.fields.labelEn") }),
       { target: { value: "Contact details" } }
     );
     fireEvent.change(screen.getByRole("textbox", { name: translate("fieldGroup.fields.labelAr") }), {
@@ -294,6 +302,7 @@ describe("FieldGroupListView — inline create/edit panel", () => {
     await waitFor(() => expect(repository.create).toHaveBeenCalledTimes(1));
     expect(repository.create).toHaveBeenCalledWith({
       entityTypeKey: "party.person",
+      stableKey: "contact_details",
       labelEn: "Contact details",
       labelAr: "بيانات الاتصال",
       sortOrder: 3,

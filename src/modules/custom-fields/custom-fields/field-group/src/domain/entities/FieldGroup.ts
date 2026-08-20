@@ -20,6 +20,15 @@
 export interface FieldGroupData {
   id: string;
   entityTypeKey: string;
+  /**
+   * Immutable machine key, unique per (entity type, tenant) — the group's portable identity
+   * (Wave 6 row 6.5).
+   *
+   * Absent from the UPDATE shape on purpose, exactly like `entityTypeKey`: a schema re-import matches
+   * on this value, so allowing a rename would silently turn an update into a create against a
+   * previously exported bundle.
+   */
+  stableKey: string;
   labelEn: string;
   labelAr?: string | null;
   sortOrder: number;
@@ -45,6 +54,10 @@ export class FieldGroup {
 
   get entityTypeKey(): string {
     return this.data.entityTypeKey;
+  }
+
+  get stableKey(): string {
+    return this.data.stableKey;
   }
 
   get labelEn(): string {

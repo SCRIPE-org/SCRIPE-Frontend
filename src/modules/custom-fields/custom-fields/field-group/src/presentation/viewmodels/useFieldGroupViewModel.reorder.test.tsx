@@ -53,7 +53,15 @@ vi.mock("@core/providers/tenant-context-provider", () => ({
 const ENTITY_TYPE = "party.person";
 
 function group(id: string, labelEn: string, sortOrder: number, isGlobal = false): FieldGroupJson {
-  return { id, entityTypeKey: ENTITY_TYPE, labelEn, labelAr: null, sortOrder, isGlobal };
+  return {
+    id,
+    entityTypeKey: ENTITY_TYPE,
+    stableKey: `g_${id}`,
+    labelEn,
+    labelAr: null,
+    sortOrder,
+    isGlobal,
+  };
 }
 
 function wrapper({ children }: { children: ReactNode }) {

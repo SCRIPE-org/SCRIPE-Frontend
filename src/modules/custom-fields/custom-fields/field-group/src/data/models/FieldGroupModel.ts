@@ -14,6 +14,15 @@
 export interface FieldGroupJson {
   id: string;
   entityTypeKey: string;
+  /**
+   * Immutable machine key, unique per (entity type, tenant) — the group's portable identity
+   * (Wave 6 row 6.5).
+   *
+   * Absent from the UPDATE shape on purpose, exactly like `entityTypeKey`: a schema re-import matches
+   * on this value, so allowing a rename would silently turn an update into a create against a
+   * previously exported bundle.
+   */
+  stableKey: string;
   labelEn: string;
   labelAr?: string | null;
   sortOrder: number;
@@ -29,6 +38,8 @@ export interface FieldGroupJson {
  */
 export interface CreateFieldGroupRequestJson {
   entityTypeKey: string;
+  /** Must match ^[a-z][a-z0-9_]*$ — the same grammar a custom field's key uses. */
+  stableKey: string;
   labelEn: string;
   labelAr?: string | null;
   sortOrder: number;
@@ -73,6 +84,10 @@ export class FieldGroupModel {
   constructor(
     public readonly id: string,
     public readonly entityTypeKey: string,
+    // Positioned third, matching the wire shape. Every parameter up to labelAr is required, so there
+    // is no trailing-optional convention to preserve and no silent argument shift to worry about --
+    // TypeScript rejects a call site that does not supply it.
+    public readonly stableKey: string,
     public readonly labelEn: string,
     public readonly sortOrder: number,
     public readonly isGlobal: boolean,
@@ -84,6 +99,7 @@ export class FieldGroupModel {
     return new FieldGroupModel(
       json.id,
       json.entityTypeKey,
+      json.stableKey,
       json.labelEn,
       json.sortOrder,
       // A response from a backend predating the IsGlobal column would omit it;
@@ -99,6 +115,7 @@ export class FieldGroupModel {
     return {
       id: this.id,
       entityTypeKey: this.entityTypeKey,
+      stableKey: this.stableKey,
       labelEn: this.labelEn,
       labelAr: this.labelAr,
       sortOrder: this.sortOrder,

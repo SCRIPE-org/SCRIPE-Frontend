@@ -13,6 +13,7 @@ export class FieldGroupMapper {
     const data: FieldGroupData = {
       id: model.id,
       entityTypeKey: model.entityTypeKey,
+      stableKey: model.stableKey,
       labelEn: model.labelEn,
       labelAr: model.labelAr,
       sortOrder: model.sortOrder,
@@ -26,6 +27,7 @@ export class FieldGroupMapper {
     return new FieldGroupModel(
       entity.id,
       entity.entityTypeKey,
+      entity.stableKey,
       entity.labelEn,
       entity.sortOrder,
       entity.isGlobal,

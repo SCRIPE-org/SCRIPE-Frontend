@@ -48,7 +48,16 @@ vi.mock("@core/providers/i18n-provider", () => ({
 const ENTITY_TYPE = "party.person";
 
 function group(id: string, labelEn: string, labelAr: string | null, sortOrder: number): FieldGroupJson {
-  return { id, entityTypeKey: ENTITY_TYPE, labelEn, labelAr, sortOrder, isGlobal: false };
+  // stableKey derived from the id so every fixture group has a distinct one (Wave 6 row 6.5).
+  return {
+    id,
+    entityTypeKey: ENTITY_TYPE,
+    stableKey: `g_${id}`,
+    labelEn,
+    labelAr,
+    sortOrder,
+    isGlobal: false,
+  };
 }
 
 function wrapper({ children }: { children: ReactNode }) {

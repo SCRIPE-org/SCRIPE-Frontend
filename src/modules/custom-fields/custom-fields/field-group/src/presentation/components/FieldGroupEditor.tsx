@@ -25,6 +25,12 @@ import { Switch } from "@core/ui/switch";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
 export interface FieldGroupFormValues {
+  /**
+   * Immutable machine key (Wave 6 row 6.5). Meaningful on CREATE only — the update path does not
+   * send it, because a schema re-import matches on this value and a rename would silently turn an
+   * update into a create against a previously exported bundle.
+   */
+  stableKey: string;
   labelEn: string;
   labelAr: string;
   sortOrder: number;
@@ -33,6 +39,8 @@ export interface FieldGroupFormValues {
 
 export interface FieldGroupEditorLabels {
   heading: string;
+  stableKey: string;
+  stableKeyHint: string;
   labelEn: string;
   labelAr: string;
   sortOrder: string;
@@ -67,6 +75,7 @@ export function FieldGroupEditor({
   const fieldId = useId();
   const isEdit = group !== null;
 
+  const [stableKey, setStableKey] = useState(group?.stableKey ?? "");
   const [labelEn, setLabelEn] = useState(group?.labelEn ?? "");
   const [labelAr, setLabelAr] = useState(group?.labelAr ?? "");
   const [sortOrder, setSortOrder] = useState(String(group?.sortOrder ?? 0));
@@ -79,6 +88,9 @@ export function FieldGroupEditor({
         event.preventDefault();
         if (isSaving) return;
         onSubmit({
+          // Already lowercase -- the input lowercases as it is typed, so the pattern attribute and
+          // the submitted value can never disagree. Trimmed only.
+          stableKey: stableKey.trim(),
           labelEn: labelEn.trim(),
           labelAr: labelAr.trim(),
           // An empty/garbage number input yields NaN, which would serialize to
@@ -91,6 +103,27 @@ export function FieldGroupEditor({
       <h2 className="text-sm font-semibold text-nx-ink">{labels.heading}</h2>
 
       <div className="grid gap-4 sm:grid-cols-2">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor={`${fieldId}-stableKey`}>{labels.stableKey}</Label>
+          <Input
+            id={`${fieldId}-stableKey`}
+            value={stableKey}
+            onChange={(event) => setStableKey(event.target.value.toLowerCase())}
+            required
+            maxLength={100}
+            // Mirrors the server's own regex on CreateFieldGroupRequest, so an invalid key is caught
+            // before a round trip rather than after one.
+            pattern="[a-z][a-z0-9_]*"
+            // Read-only on edit, not hidden: the admin needs to SEE the key an export will carry, and
+            // must not be able to change it. Hiding it would leave them unable to correlate a bundle
+            // with the group it refers to.
+            readOnly={isEdit}
+            disabled={isEdit}
+            dir="ltr"
+          />
+          <p className="text-xs text-nx-ink-subtle">{labels.stableKeyHint}</p>
+        </div>
+
         <div className="flex flex-col gap-1.5">
           <Label htmlFor={`${fieldId}-labelEn`}>{labels.labelEn}</Label>
           <Input
@@ -139,7 +172,7 @@ export function FieldGroupEditor({
       </div>
 
       <div className="flex items-center gap-2">
-        <Button type="submit" size="sm" disabled={isSaving || labelEn.trim().length === 0}>
+        <Button type="submit" size="sm" disabled={isSaving || labelEn.trim().length === 0 || stableKey.trim().length === 0}>
           {labels.save}
         </Button>
         <Button type="button" size="sm" variant="ghost" onClick={onCancel}>

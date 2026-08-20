@@ -20,6 +20,8 @@ import type { FieldGroup } from "../entities/FieldGroup";
 
 export interface CreateFieldGroupInput {
   entityTypeKey: string;
+  /** Immutable machine key, ^[a-z][a-z0-9_]*$. Absent from UpdateFieldGroupInput on purpose. */
+  stableKey: string;
   labelEn: string;
   labelAr?: string | null;
   sortOrder: number;

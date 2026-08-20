@@ -20,6 +20,9 @@ export const ar = {
 
     fields: {
       entityTypeKey: "نوع الكيان",
+      stableKey: "المفتاح",
+      stableKeyHint:
+        "حروف لاتينية صغيرة وأرقام وشرطات سفلية. لا يمكن تغييره لاحقاً — يعتمد عليه التصدير والاستيراد.",
       labelEn: "التسمية (إنجليزي)",
       labelAr: "التسمية (عربي)",
       sortOrder: "الترتيب",

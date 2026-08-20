@@ -24,6 +24,9 @@ export const en = {
 
     fields: {
       entityTypeKey: "Entity Type",
+      stableKey: "Key",
+      stableKeyHint:
+        "Lowercase letters, digits and underscores. Cannot be changed later — exports and imports match on it.",
       labelEn: "Label (English)",
       labelAr: "Label (Arabic)",
       sortOrder: "Order",

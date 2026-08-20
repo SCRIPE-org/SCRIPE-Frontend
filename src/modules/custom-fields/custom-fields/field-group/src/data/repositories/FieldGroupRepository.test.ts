@@ -31,7 +31,7 @@ describe("FieldGroupRepository", () => {
       getByEntityType: vi
         .fn()
         .mockResolvedValue([
-          new FieldGroupModel("enc-1", "party.person", "Contact", 2, false, "اتصال"),
+          new FieldGroupModel("enc-1", "party.person", "stable_party.person", "Contact", 2, false, "اتصال"),
         ]),
     });
 
@@ -49,7 +49,7 @@ describe("FieldGroupRepository", () => {
     const service = makeService({
       getByEntityType: vi
         .fn()
-        .mockResolvedValue([new FieldGroupModel("enc-1", "party.person", "Contact", 0, false, null)]),
+        .mockResolvedValue([new FieldGroupModel("enc-1", "party.person", "stable_party.person", "Contact", 0, false, null)]),
     });
 
     const [group] = await new FieldGroupRepository(service).getByEntityType("party.person");
@@ -67,6 +67,7 @@ describe("FieldGroupRepository", () => {
       labelAr: null,
       sortOrder: 1,
       entityTypeKey: "party.person",
+      stableKey: "contact",
       isGlobal: true,
       id: "enc-1",
     } as unknown as UpdateFieldGroupInput;
@@ -86,6 +87,7 @@ describe("FieldGroupRepository", () => {
 
     await repository.create({
       entityTypeKey: "party.person",
+      stableKey: "contact",
       labelEn: "Contact",
       sortOrder: 0,
       isGlobal: false,

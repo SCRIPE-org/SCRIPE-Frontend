@@ -28,6 +28,7 @@ export class FieldGroupRepository implements IFieldGroupRepository {
   async create(data: CreateFieldGroupInput): Promise<string> {
     const response = await this.service.create({
       entityTypeKey: data.entityTypeKey,
+      stableKey: data.stableKey,
       labelEn: data.labelEn,
       labelAr: data.labelAr ?? null,
       sortOrder: data.sortOrder,
