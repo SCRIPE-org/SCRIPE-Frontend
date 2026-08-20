@@ -136,23 +136,21 @@ export function LongTextCustomFieldControl({
 
   const [announcement, setAnnouncement] = React.useState("");
   const lastAnnouncedZoneRef = React.useRef<CounterZone>("safe");
-  // Read inside the effect below without becoming a dep -- the effect must
-  // fire ONLY when `zone` itself changes (that is the entire throttling
-  // mechanism), not on every keystroke that leaves the zone unchanged.
-  const latestCountsRef = React.useRef({ length, overBy });
-  latestCountsRef.current = { length, overBy };
 
   React.useEffect(() => {
+    // The ref read/write below happens inside the effect, never during
+    // render -- the early return is what makes this fire an announcement
+    // only when `zone` itself changes, not on every keystroke that leaves
+    // the zone unchanged, even though `length`/`overBy` are effect deps.
     if (zone === lastAnnouncedZoneRef.current) return;
     lastAnnouncedZoneRef.current = zone;
-    const { length: len, overBy: over } = latestCountsRef.current;
     if (zone === "over") {
       setAnnouncement(
-        t("customField.longText.charactersOverLimit", { overBy: over, max: LONG_TEXT_MAX_CHARACTERS })
+        t("customField.longText.charactersOverLimit", { overBy, max: LONG_TEXT_MAX_CHARACTERS })
       );
     } else if (zone === "nearLimit") {
       setAnnouncement(
-        t("customField.longText.characterCount", { count: len, max: LONG_TEXT_MAX_CHARACTERS })
+        t("customField.longText.characterCount", { count: length, max: LONG_TEXT_MAX_CHARACTERS })
       );
     } else {
       // Back to safe (e.g. the user deleted text after being near/over the
@@ -160,7 +158,7 @@ export function LongTextCustomFieldControl({
       // sitting there un-announced-again.
       setAnnouncement("");
     }
-  }, [zone, t]);
+  }, [zone, length, overBy, t]);
 
   const counterText =
     zone === "over"
