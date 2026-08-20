@@ -68,6 +68,10 @@ describe("buildCustomFieldEditInitialValues", () => {
       validatorKind: "Iban",
       validatorParam: "",
       fieldGroupId: "enc-group-7",
+      // Added by the bilingual options editor. This assertion is deliberately EXHAUSTIVE -- it
+      // exists because a new form-populating field once slipped in and silently blanked stored
+      // data on every save, so a new key must be acknowledged here rather than tolerated.
+      optionsAr: "",
       options: "",
       isRequired: true,
       sortOrder: 3,

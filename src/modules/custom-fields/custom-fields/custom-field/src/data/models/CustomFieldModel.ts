@@ -97,6 +97,7 @@ export interface CustomFieldJson {
   valueType: CustomFieldValueTypeName;
   isRequired: boolean;
   options?: string | null;
+  optionsAr?: string | null;
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
@@ -186,6 +187,7 @@ export class CustomFieldModel {
     public readonly createdAt: string,
     public readonly labelAr?: string | null,
     public readonly options?: string | null,
+    public readonly optionsAr?: string | null,
     public readonly modifiedAt?: string | null,
     public readonly isGlobal?: boolean,
     public readonly placeholderEn?: string | null,
@@ -223,6 +225,7 @@ export class CustomFieldModel {
       json.createdAt,
       json.labelAr,
       json.options,
+      json.optionsAr,
       json.modifiedAt,
       undefined,
       json.placeholderEn,
@@ -262,6 +265,9 @@ export class CustomFieldModel {
       json.isActive,
       json.createdAt,
       json.labelAr,
+      // options, optionsAr, modifiedAt -- all deliberately absent from the LIST response (see this
+      // method's own doc comment: a row built here must never populate the edit form).
+      null,
       null,
       null,
       json.isGlobal
@@ -283,6 +289,7 @@ export class CustomFieldModel {
       valueType: this.valueType,
       isRequired: this.isRequired,
       options: this.options,
+      optionsAr: this.optionsAr,
       sortOrder: this.sortOrder,
       isActive: this.isActive,
       createdAt: this.createdAt,

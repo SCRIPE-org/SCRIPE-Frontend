@@ -51,6 +51,7 @@ export class CustomFieldMapper {
       entity.createdAt,
       entity.labelAr,
       entity.options,
+      entity.optionsAr,
       entity.modifiedAt,
       entity.isGlobal,
       entity.placeholderEn,

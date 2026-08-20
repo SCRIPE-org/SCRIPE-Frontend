@@ -447,9 +447,17 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         {
           name: "options",
           label: t("customField.fields.options"),
-          type: "textarea" as const,
-          placeholder: t("customField.placeholders.options"),
-          rows: 4,
+          // Wave 5 follow-up: was a "one option per line" textarea, which could not express an Arabic
+          // label at all, gave no affordance for adding or removing a single option, and turned a
+          // stray blank line into a silently dropped option. The control writes BOTH newline lists
+          // (see pairedName) so they cannot be persisted out of alignment.
+          type: "bilingual-options" as const,
+          pairedName: "optionsAr",
+          placeholder: t("customField.placeholders.optionEn"),
+          searchPlaceholder: t("customField.placeholders.optionAr"),
+          addLabel: t("customField.actions.addOption"),
+          removeLabel: t("customField.actions.removeOption"),
+          emptyHint: t("customField.placeholders.optionsEmpty"),
           // A miss falls back to `false` -- matches the old
           // `String(form.valueType) === SELECT_VALUE_TYPE`, which was
           // already `false` (hide) for an unset value.
@@ -551,9 +559,17 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         {
           name: "options",
           label: t("customField.fields.options"),
-          type: "textarea" as const,
-          placeholder: t("customField.placeholders.options"),
-          rows: 4,
+          // Wave 5 follow-up: was a "one option per line" textarea, which could not express an Arabic
+          // label at all, gave no affordance for adding or removing a single option, and turned a
+          // stray blank line into a silently dropped option. The control writes BOTH newline lists
+          // (see pairedName) so they cannot be persisted out of alignment.
+          type: "bilingual-options" as const,
+          pairedName: "optionsAr",
+          placeholder: t("customField.placeholders.optionEn"),
+          searchPlaceholder: t("customField.placeholders.optionAr"),
+          addLabel: t("customField.actions.addOption"),
+          removeLabel: t("customField.actions.removeOption"),
+          emptyHint: t("customField.placeholders.optionsEmpty"),
           // Missing on this (edit) form until now -- unlike the create form's
           // identical field above, which has always had this guard. Editing a
           // Text/Number/Boolean/Date field showed an editable Options textarea

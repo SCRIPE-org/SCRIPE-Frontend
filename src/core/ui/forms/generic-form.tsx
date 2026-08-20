@@ -43,6 +43,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
+import { BilingualOptionsEditor } from "@core/ui/forms/bilingual-options-editor";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Switch } from "@core/ui/switch";
 import { Separator } from "@core/ui/separator";
@@ -111,6 +112,7 @@ export interface FieldConfig {
     | "tel"
     | "url"
     | "textarea"
+    | "bilingual-options"
     | "richtext"
     | "select"
     | "searchable-select"
@@ -142,8 +144,20 @@ export interface FieldConfig {
   min?: number | string; // For number, date, range inputs
   max?: number | string; // For number, date, range inputs
   step?: number | string; // For number, range inputs
+  /**
+   * For "bilingual-options": the form key holding the SECOND (Arabic) newline-separated list. The
+   * control edits both halves together and writes both keys, because the two are positionally
+   * aligned and editing one without the other would misalign every option after the edit.
+   */
+  pairedName?: string;
   rows?: number; // For textarea
   cols?: number; // For textarea
+  /** For "bilingual-options": the "add another option" button's label. */
+  addLabel?: string;
+  /** For "bilingual-options": the per-row remove button's accessible label. */
+  removeLabel?: string;
+  /** For "bilingual-options": the hint shown when no options exist yet. */
+  emptyHint?: string;
   accept?: string; // For file inputs and image uploader
   multiple?: boolean; // For file inputs and multi-select
   // Image uploader specific options
@@ -308,7 +322,7 @@ export function GenericForm({
     });
   }, [fields, initialValues]);
 
-  const handleChange = (name: string, value: any) => {
+  const handleChange = (name: string, value: any, extraKeys?: Record<string, any>) => {
     // Clear error when user changes the field
     if (errors[name]) {
       setErrors((prev) => {
@@ -319,7 +333,11 @@ export function GenericForm({
     }
 
     setFormData((prev) => {
-      const newData = { ...prev, [name]: value };
+      // `extraKeys` lets ONE control own more than one form key -- used by the bilingual options
+      // editor, whose two newline lists are positionally aligned and must be written together or
+      // every option after an edit shifts onto the wrong translation. Merged before the field's own
+      // onChange runs, so a caller can still override.
+      const newData = { ...prev, [name]: value, ...(extraKeys ?? {}) };
 
       // Find the field that changed and call its onChange callback if it exists
       const field = fields.find((f) => f.name === name);
@@ -781,6 +799,29 @@ export function GenericForm({
                     searchPlaceholder={field.searchPlaceholder}
                     disabled={inert}
                     className={getInputClasses(getInputHeight())}
+                  />
+                ) : field.type === "bilingual-options" ? (
+                  <BilingualOptionsEditor
+                    id={field.name}
+                    value={formData[field.name] ?? ""}
+                    valueAr={field.pairedName ? (formData[field.pairedName] ?? "") : ""}
+                    // Writes BOTH halves in one update. handleChange merges an object returned by
+                    // the field's own onChange, so the paired key travels with the primary one and
+                    // the two lists can never be persisted out of step.
+                    onChange={(next) =>
+                      handleChange(
+                        field.name,
+                        next.en,
+                        field.pairedName ? { [field.pairedName]: next.ar } : undefined
+                      )
+                    }
+                    disabled={field.disabled || inert}
+                    readOnly={readOnly}
+                    labelEn={field.placeholder ?? "English"}
+                    labelAr={field.searchPlaceholder ?? "العربية"}
+                    addLabel={field.addLabel ?? "Add option"}
+                    removeLabel={field.removeLabel ?? "Remove"}
+                    emptyHint={field.emptyHint ?? ""}
                   />
                 ) : field.type === "textarea" ? (
                   <Textarea

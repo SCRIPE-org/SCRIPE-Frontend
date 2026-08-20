@@ -34,6 +34,8 @@ export interface CustomFieldData {
   valueType: CustomFieldValueTypeName;
   isRequired: boolean;
   options?: string | null;
+  /** Arabic option labels, newline-separated and positionally aligned with `options`. */
+  optionsAr?: string | null;
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
@@ -100,6 +102,10 @@ export class CustomField {
 
   get options(): string | null | undefined {
     return this.data.options;
+  }
+
+  get optionsAr(): string | null | undefined {
+    return this.data.optionsAr;
   }
 
   get sortOrder(): number {

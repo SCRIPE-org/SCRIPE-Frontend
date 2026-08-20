@@ -51,6 +51,10 @@ describe("CustomFieldListView edit-form Options visibility", () => {
 // its scoping to editFields (not createFields) is still what's pinned, and
 // re-confirmed by hand that deleting the isVisible guard on the edit form's
 // options field still fails this assertion after the rewrite.
+// Built from parts rather than written as an escaped literal: an earlier edit emitted a real
+// newline inside this string and broke the whole file's parse.
+const FIELD_BLOCK_END = String.fromCharCode(10) + "        },";
+
 describe("CustomFieldListView edit-form Options visibility (real source)", () => {
   it("has an isVisible guard referencing VALUE_TYPE_CATALOG's hasOptions on the edit form's options field", () => {
     const here = dirname(fileURLToPath(import.meta.url));
@@ -60,8 +64,26 @@ describe("CustomFieldListView edit-form Options visibility (real source)", () =>
     expect(editFieldsIdx).toBeGreaterThan(-1);
     const editFieldsSource = source.slice(editFieldsIdx);
 
-    expect(editFieldsSource).toMatch(
-      /name:\s*"options"[\s\S]{0,900}?isVisible:[\s\S]{0,200}?VALUE_TYPE_CATALOG\[[\s\S]{0,100}?\]\?\.hasOptions/
+    // Bounded to the options field's OWN object literal rather than a character window.
+    //
+    // It used to be a proximity regex allowing 900 characters between `name: "options"` and
+    // `isVisible:`. That broke the moment the field gained more properties (the bilingual options
+    // editor added six), reporting a guard-deleted failure when the guard was untouched at 1312
+    // characters' distance. A proximity heuristic measures formatting, not the thing it means to pin.
+    //
+    // Slicing to the field's own literal is both stricter (a guard on a DIFFERENT field can no longer
+    // satisfy it) and stable (adding properties cannot break it).
+    const optionsIdx = editFieldsSource.indexOf('name: "options"');
+    expect(optionsIdx).toBeGreaterThan(-1);
+    // The options field's own object literal ends at the next line that closes a block at this
+    // file's field-array indentation.
+    const afterOptions = editFieldsSource.slice(optionsIdx);
+    const blockEnd = afterOptions.indexOf(FIELD_BLOCK_END);
+    expect(blockEnd).toBeGreaterThan(-1);
+    const optionsFieldSource = afterOptions.slice(0, blockEnd);
+
+    expect(optionsFieldSource).toMatch(
+      /isVisible:[\s\S]{0,200}?VALUE_TYPE_CATALOG\[[\s\S]{0,100}?\]\?\.hasOptions/
     );
   });
 });

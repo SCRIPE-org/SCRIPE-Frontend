@@ -36,7 +36,14 @@ export const en = {
     },
 
     // Form placeholders
+    actions: {
+      removeOption: "Remove option",
+      addOption: "Add option",
+    },
     placeholders: {
+      optionsEmpty: "No options yet — add the first one below.",
+      optionAr: "Arabic label",
+      optionEn: "English label",
       entityTypeKey: "e.g. party.person",
       key: "e.g. shirt_size",
       labelEn: "Enter English label",

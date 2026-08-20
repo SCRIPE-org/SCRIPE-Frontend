@@ -32,7 +32,14 @@ export const ar = {
     },
 
     // Form placeholders
+    actions: {
+      removeOption: "حذف الخيار",
+      addOption: "إضافة خيار",
+    },
     placeholders: {
+      optionsEmpty: "لا توجد خيارات بعد — أضف الأول أدناه.",
+      optionAr: "التسمية بالعربية",
+      optionEn: "التسمية بالإنجليزية",
       entityTypeKey: "مثال: party.person",
       key: "مثال: shirt_size",
       labelEn: "أدخل التسمية بالإنجليزية",

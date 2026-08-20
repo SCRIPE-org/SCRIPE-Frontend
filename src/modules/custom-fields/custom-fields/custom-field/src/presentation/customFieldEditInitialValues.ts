@@ -73,6 +73,7 @@ export type CustomFieldEditInitialValues = {
    */
   fieldGroupId: string;
   options: string;
+  optionsAr: string;
   isRequired: boolean;
   sortOrder: number;
   isActive: boolean;
@@ -98,6 +99,10 @@ export function buildCustomFieldEditInitialValues(item: CustomField): CustomFiel
     validatorParam: item.validatorParam ?? "",
     fieldGroupId: item.fieldGroupId ?? "",
     options: item.options ?? "",
+    // Same "?? \"\"" discipline as every other form-populating field here: absent must
+    // become an empty string, not undefined, or the controlled editor loses its value on
+    // first render and writes the loss back on save.
+    optionsAr: item.optionsAr ?? "",
     isRequired: item.isRequired,
     sortOrder: item.sortOrder,
     isActive: item.isActive,
