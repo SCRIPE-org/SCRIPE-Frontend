@@ -23,6 +23,14 @@ export class CustomFieldMapper {
       valueType: model.valueType,
       isRequired: model.isRequired,
       options: model.options,
+      // optionsAr was added to the model, the JSON shape and the entity in the Wave 5
+      // bilingual-options change but never mapped HERE, so entity.optionsAr came back undefined
+      // after every round trip -- the edit form then seeded "" and cleared the Arabic labels on the
+      // next save. Same dropped-property class as the backend controller's own OptionsAr bug.
+      // customFieldMapper.completeness.test.ts now pins every CustomFieldData key against the model.
+      optionsAr: model.optionsAr,
+      sensitivity: model.sensitivity,
+      isExportable: model.isExportable,
       sortOrder: model.sortOrder,
       isActive: model.isActive,
       createdAt: model.createdAt,
@@ -58,7 +66,9 @@ export class CustomFieldMapper {
       entity.placeholderAr,
       entity.validatorKind,
       entity.validatorParam,
-      entity.fieldGroupId
+      entity.fieldGroupId,
+      entity.sensitivity,
+      entity.isExportable
     );
   }
 

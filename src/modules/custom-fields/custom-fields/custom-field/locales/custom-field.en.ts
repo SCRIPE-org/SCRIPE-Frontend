@@ -33,6 +33,25 @@ export const en = {
       validatorKind: "Validator",
       validatorParam: "Validator Parameter",
       fieldGroup: "Field Group",
+      sensitivity: "Sensitivity",
+      isExportable: "Include in exports",
+    },
+
+    // Wave 6 ruling R10 — data classification. The VALUES sent to the server are the C# enum member
+    // names ("None"/"Internal"/"Confidential"/"Restricted"); these are display labels only.
+    sensitivity: {
+      none: "Unclassified",
+      internal: "Internal",
+      confidential: "Confidential",
+      restricted: "Restricted",
+    },
+    hints: {
+      sensitivity:
+        "How this field's values should be treated. This is a label for reporting and export " +
+        "handling \u2014 it does not control who can see the field. Use field-level security for that.",
+      isExportable:
+        "Off keeps this field out of spreadsheet exports. This is tidying, not a permission \u2014 " +
+        "anyone who can already read the field can still read its values elsewhere.",
     },
 
     // Form placeholders

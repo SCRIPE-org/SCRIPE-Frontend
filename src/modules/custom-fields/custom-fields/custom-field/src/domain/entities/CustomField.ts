@@ -36,6 +36,20 @@ export interface CustomFieldData {
   options?: string | null;
   /** Arabic option labels, newline-separated and positionally aligned with `options`. */
   optionsAr?: string | null;
+  /**
+   * Data classification (Wave 6 ruling R10). Wire values are the C# enum member names:
+   * `"None" | "Internal" | "Confidential" | "Restricted"`.
+   *
+   * A curation and disclosure-control label, NOT the access-control mechanism — field-level
+   * security is what decides who may read a value.
+   */
+  sensitivity?: string | null;
+  /**
+   * Whether this field appears in exports (capability C08). Defaults to `true` server-side.
+   *
+   * Not a security boundary: turning it off is curation, not authorization.
+   */
+  isExportable?: boolean | null;
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
@@ -106,6 +120,14 @@ export class CustomField {
 
   get optionsAr(): string | null | undefined {
     return this.data.optionsAr;
+  }
+
+  get sensitivity(): string | null | undefined {
+    return this.data.sensitivity;
+  }
+
+  get isExportable(): boolean | null | undefined {
+    return this.data.isExportable;
   }
 
   get sortOrder(): number {

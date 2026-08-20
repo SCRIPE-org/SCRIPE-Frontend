@@ -74,6 +74,10 @@ export type CustomFieldEditInitialValues = {
   fieldGroupId: string;
   options: string;
   optionsAr: string;
+  /** Wave 6 ruling R10. Wire value is the C# enum member name; `""` is never valid, so it is
+   *  normalized to `"None"` on read rather than submitted empty. */
+  sensitivity: string;
+  isExportable: boolean;
   isRequired: boolean;
   sortOrder: number;
   isActive: boolean;
@@ -103,6 +107,12 @@ export function buildCustomFieldEditInitialValues(item: CustomField): CustomFiel
     // become an empty string, not undefined, or the controlled editor loses its value on
     // first render and writes the loss back on save.
     optionsAr: item.optionsAr ?? "",
+    // Wave 6 ruling R10. Both defaults MATCH THE SERVER'S, and that matters more here than for any
+    // other field on this form: the update command replaces every property, so a form that seeded
+    // the wrong default would write it back as truth on the next unrelated save. `isExportable`
+    // defaults TRUE -- seeding false would silently un-export every field an admin edited.
+    sensitivity: item.sensitivity ?? "None",
+    isExportable: item.isExportable ?? true,
     isRequired: item.isRequired,
     sortOrder: item.sortOrder,
     isActive: item.isActive,

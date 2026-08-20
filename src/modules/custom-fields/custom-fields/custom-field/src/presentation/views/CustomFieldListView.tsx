@@ -152,7 +152,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   }, [entityTypes, language, t]);
 
   const valueTypeOptions = useMemo(
-    () => ALL_VALUE_TYPES.map((type) => ({ value: type, label: t(VALUE_TYPE_CATALOG[type].labelKey) })),
+    () =>
+      ALL_VALUE_TYPES.map((type) => ({ value: type, label: t(VALUE_TYPE_CATALOG[type].labelKey) })),
     [t]
   );
 
@@ -227,6 +228,44 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
    * that state -- so the stored `fieldGroupId` is still what gets sent if the
    * admin saves during that window.
    */
+  /**
+   * Wave 6 ruling R10 — the classification pair, declared once and spread into BOTH forms.
+   *
+   * Duplicating them would be the same shape as the Wave 2.5 C-1 defect this file already carries a
+   * comment about: the update command replaces every property, so a field present on create and
+   * missing on edit silently resets to its default on every unrelated save. `isExportable` defaults
+   * to TRUE server-side, so the reset direction here would silently RE-ENABLE export on a field an
+   * admin had deliberately excluded.
+   */
+  const classificationFields = useMemo(
+    () => [
+      {
+        name: "sensitivity",
+        label: t("customField.fields.sensitivity"),
+        type: "select" as const,
+        // Wire values are the C# enum member names, not display strings — see the backend's
+        // FieldSensitivity. Sending a translated label would fail enum binding.
+        options: [
+          { value: "None", label: t("customField.sensitivity.none") },
+          { value: "Internal", label: t("customField.sensitivity.internal") },
+          { value: "Confidential", label: t("customField.sensitivity.confidential") },
+          { value: "Restricted", label: t("customField.sensitivity.restricted") },
+        ],
+        description: t("customField.hints.sensitivity"),
+      },
+      {
+        name: "isExportable",
+        label: t("customField.fields.isExportable"),
+        type: "switch" as const,
+        description: t("customField.hints.isExportable"),
+      },
+    ],
+    // Memoized for the same reason fieldGroupField below is: it is consumed inside the config
+    // useMemo, and a fresh array identity on every render would make that memo recompute every
+    // render -- which is what the exhaustive-deps warning is actually about.
+    [t]
+  );
+
   const fieldGroupField = useMemo(
     () => ({
       ...buildFieldGroupField({
@@ -334,7 +373,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           key: "valueType",
           label: t("customField.fields.valueType"),
           render: (value: string) => (
-            <Badge variant={VALUE_TYPE_CATALOG[value as CustomFieldValueTypeName]?.badgeVariant ?? "secondary"}>
+            <Badge
+              variant={
+                VALUE_TYPE_CATALOG[value as CustomFieldValueTypeName]?.badgeVariant ?? "secondary"
+              }
+            >
               {valueTypeLabelOf(value)}
             </Badge>
           ),
@@ -482,6 +525,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           type: "number" as const,
           min: 0,
         },
+        ...classificationFields,
         {
           name: "isGlobal",
           label: t("customField.fields.isGlobal"),
@@ -598,6 +642,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           type: "number" as const,
           min: 0,
         },
+        ...classificationFields,
         {
           name: "isActive",
           label: t("customField.fields.isActive"),
@@ -612,6 +657,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         placeholderEn: "",
         placeholderAr: "",
         valueType: "Text",
+        // Wave 6 ruling R10. These MUST match the server's defaults: a create form seeding
+        // isExportable=false would make every new field non-exportable, which is precisely the
+        // zero-column export defect R10 identified.
+        sensitivity: "None",
+        isExportable: true,
         validatorKind: "",
         validatorParam: "",
         // "" is the "no group" sentinel; the backend reads empty and absent
@@ -670,6 +720,9 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     [
       t,
       language,
+      // Wave 6 ruling R10. Safe to depend on precisely because it is memoized on [t] -- an
+      // unmemoized array literal here would recompute this whole config on every render.
+      classificationFields,
       entityTypeOptions,
       noFrontendScreenDescription,
       valueTypeOptions,

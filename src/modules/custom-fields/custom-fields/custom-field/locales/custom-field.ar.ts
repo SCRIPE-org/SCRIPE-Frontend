@@ -29,6 +29,8 @@ export const ar = {
       validatorKind: "أداة التحقق",
       validatorParam: "مُعامل أداة التحقق",
       fieldGroup: "مجموعة الحقول",
+      sensitivity: "الحساسية",
+      isExportable: "تضمين في التصدير",
     },
 
     // Form placeholders
@@ -36,6 +38,22 @@ export const ar = {
       removeOption: "حذف الخيار",
       addOption: "إضافة خيار",
     },
+    // الموجة 6 الحكم R10 — تصنيف البيانات.
+    sensitivity: {
+      none: "غير مصنف",
+      internal: "داخلي",
+      confidential: "سري",
+      restricted: "مقيد",
+    },
+    hints: {
+      sensitivity:
+        "كيف ينبغي التعامل مع قيم هذا الحقل. هذا وسم للتقارير والتصدير " +
+        "ولا يتحكم في من يمكنه رؤية الحقل. استخدم أمان الحقول لذلك.",
+      isExportable:
+        "إيقافه يخرج هذا الحقل من ملفات التصدير. هذا ترتيب وليس إذنًا — " +
+        "من يمكنه قراءة الحقل يمكنه قراءة قيمه في أماكن أخرى.",
+    },
+
     placeholders: {
       optionsEmpty: "لا توجد خيارات بعد — أضف الأول أدناه.",
       optionAr: "التسمية بالعربية",

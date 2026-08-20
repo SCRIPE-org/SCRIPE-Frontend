@@ -98,6 +98,9 @@ export interface CustomFieldJson {
   isRequired: boolean;
   options?: string | null;
   optionsAr?: string | null;
+  /** Wave 6 ruling R10. C# enum member name: "None" | "Internal" | "Confidential" | "Restricted". */
+  sensitivity?: string | null;
+  isExportable?: boolean | null;
   sortOrder: number;
   isActive: boolean;
   createdAt: string;
@@ -206,7 +209,12 @@ export class CustomFieldModel {
     // is positional and interchangeably typed `string | null | undefined`, so
     // inserting anywhere earlier would silently reassign existing call sites'
     // arguments to the wrong field without a type error. Do not reorder.
-    public readonly fieldGroupId?: string | null
+    public readonly fieldGroupId?: string | null,
+    // Wave 6 ruling R10 -- appended at the tail (positions 19/20) for the same reason every optional
+    // above was: they are positional and interchangeably typed, so inserting earlier would silently
+    // reassign existing call sites' arguments to the wrong field with no type error. Do not reorder.
+    public readonly sensitivity?: string | null,
+    public readonly isExportable?: boolean | null
   ) {}
 
   /**
@@ -232,7 +240,9 @@ export class CustomFieldModel {
       json.placeholderAr,
       json.validatorKind,
       json.validatorParam,
-      json.fieldGroupId
+      json.fieldGroupId,
+      json.sensitivity,
+      json.isExportable
     );
   }
 
@@ -297,6 +307,8 @@ export class CustomFieldModel {
       validatorKind: this.validatorKind,
       validatorParam: this.validatorParam,
       fieldGroupId: this.fieldGroupId,
+      sensitivity: this.sensitivity,
+      isExportable: this.isExportable,
     };
   }
 }

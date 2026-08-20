@@ -73,6 +73,12 @@ describe("buildCustomFieldEditInitialValues", () => {
       // data on every save, so a new key must be acknowledged here rather than tolerated.
       optionsAr: "",
       options: "",
+      // Wave 6 ruling R10. Acknowledged here rather than tolerated, per this assertion's own note
+      // above. Both values are the SERVER's defaults, seeded because DETAIL_JSON carries neither --
+      // and isExportable must be TRUE, since seeding false would silently un-export every field an
+      // admin edited through this form.
+      sensitivity: "None",
+      isExportable: true,
       isRequired: true,
       sortOrder: 3,
       isActive: true,
