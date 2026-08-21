@@ -39,6 +39,12 @@ import { useFieldInsightViewModel } from "../viewmodels/useFieldInsightViewModel
 // Wave 6 row 6.5. Self-contained: it owns its own permission gate, its own open
 // state and its own locale chunk, so it adds nothing to the config memo below.
 import { SchemaExportButton } from "../../../../schema/src/presentation/components/SchemaExportButton";
+// Wave 6 row 6.4. Same shape as the schema button beside it, and self-contained
+// for the same reasons. This is the endpoint's FIRST frontend caller: the export
+// route has been complete server-side for a while with no way to reach it from
+// the product, and the operator guide told testers to click an Export action in
+// this header that did not exist.
+import { DefinitionExportButton } from "../../../../definition-export/src/presentation/components/DefinitionExportButton";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -362,6 +368,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
                 Gated internally on `custom-fields.export`, the same permission
                 the endpoint requires, and renders nothing without it. */}
             <SchemaExportButton />
+            {/* Wave 6 row 6.4. The spreadsheet of DEFINITIONS, next to the JSON
+                schema bundle because both are exports of this screen's contents
+                and an admin looking for one will look for the other in the same
+                place. Two separate actions rather than one with a format picker:
+                they answer different questions (audit my configuration vs. move
+                it to another environment) and only one of them can be refused
+                for size. Gated internally on `custom-fields.export`, the same
+                permission the endpoint requires, and renders nothing without it. */}
+            <DefinitionExportButton />
           </div>
           {isEntityTypesError ? (
             <ErrorMessage
