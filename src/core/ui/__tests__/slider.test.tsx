@@ -67,4 +67,54 @@ describe("Slider", () => {
     expect(thumb).toHaveAttribute("aria-valuemax", "5");
     expect(thumb).toHaveAttribute("aria-valuenow", "4");
   });
+
+  // aria-valuetext forwarding -- the same gap as aria-label, and fixed the same
+  // way. Radix computes aria-valuenow/min/max onto the Thumb but has no notion
+  // of a human-readable value, and an aria-valuetext left on Root lands on a
+  // <span> with no role="slider", so a screen reader announces the bare number
+  // where the control means something else ("3 of 5 stars", "Medium").
+  it("gives the Thumb a REAL aria-valuetext when one is passed", () => {
+    render(
+      <Slider aria-label="Rating" aria-valuetext="3 of 5 stars" value={[3]} min={1} max={5} />
+    );
+    expect(screen.getByRole("slider", { name: "Rating" })).toHaveAttribute(
+      "aria-valuetext",
+      "3 of 5 stars"
+    );
+  });
+
+  it("does not leave aria-valuetext on the Root -- it must land on the Thumb specifically", () => {
+    const { container } = render(
+      <Slider aria-label="Rating" aria-valuetext="3 of 5 stars" value={[3]} min={1} max={5} />
+    );
+    expect(container.firstElementChild).not.toHaveAttribute("aria-valuetext");
+    expect(container.querySelectorAll('[aria-valuetext="3 of 5 stars"]')).toHaveLength(1);
+  });
+
+  it("is backward compatible: no aria-valuetext means no attribute at all", () => {
+    render(<Slider aria-label="Rating" value={[3]} min={1} max={5} />);
+    expect(screen.getByRole("slider", { name: "Rating" })).not.toHaveAttribute("aria-valuetext");
+  });
+
+  // The knob's border is the ENTIRE visual boundary of a focusable control, so
+  // WCAG 1.4.11 wants 3:1 against both the fill it sits on and the surface
+  // behind it. Measured against globals.css: --nx-line-hi (#3f4347 dark,
+  // #aeb4ad light) gives 1.95:1 on --nx-surface, 1.64:1 on the knob's own
+  // --nx-raised-2, and 2.11:1 on light #ffffff -- the edge was effectively
+  // invisible everywhere it appears. --nx-ink-3 gives 6.06:1 / 5.11:1 dark and
+  // 4.72:1 / 3.82:1 light against those same pairs. Asserted on the class
+  // because jsdom computes no colours; the numbers live in the component's own
+  // comment next to the change.
+  it("draws the thumb border on a token that clears 3:1 in both themes", () => {
+    render(<Slider aria-label="Rating" value={[3]} min={1} max={5} />);
+    const thumb = screen.getByRole("slider", { name: "Rating" });
+    expect(thumb).toHaveClass("border-nx-ink-3");
+    expect(thumb.className).not.toMatch(/(^|\s)border-nx-line-hi(\s|$)/);
+  });
+
+  it("still drops the disabled thumb to the quiet hairline -- inert is exempt from 1.4.11", () => {
+    render(<Slider aria-label="Rating" value={[3]} min={1} max={5} disabled />);
+    const thumb = screen.getByRole("slider", { name: "Rating" });
+    expect(thumb).toHaveClass("group-data-[disabled]:border-nx-line");
+  });
 });

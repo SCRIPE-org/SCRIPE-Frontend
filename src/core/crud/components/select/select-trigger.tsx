@@ -72,6 +72,28 @@ export interface SelectTriggerProps {
  *
  * It is a `div`, not a `button`, because the chips carry their own remove
  * controls and a button may not contain a button.
+ *
+ * WHICH IS WHY THE `onKeyDown` BELOW IS LOAD-BEARING, not a nicety. Radix's
+ * `PopoverTrigger` wires exactly one interaction — `onClick:
+ * composeEventHandlers(props.onClick, context.onOpenToggle)` (verified against
+ * @radix-ui/react-popover's dist: there is no `onKeyDown` anywhere in that
+ * component). Radix gets Enter/Space for free ONLY because it renders
+ * `Primitive.button` by default: the browser synthesises a click from those two
+ * keys for a real `<button>`. `asChild` over a `<div>` throws that away, and
+ * nothing else in this file supplied it — so before this handler existed a
+ * keyboard-only user could not open a Select, MultiSelect, tree select or
+ * timezone picker ANYWHERE in the product. Every value in the select family was
+ * pointer-only.
+ *
+ * The durable fix would be to render a real `<button type="button">` and let
+ * the platform do it. That form is NOT available here: the three nested
+ * controls below — each chip's remove button, the "+N" overflow button (itself
+ * a `PopoverTrigger` for a second Popover) and the clear button — are
+ * interactive content, which a `<button>` may not contain. Nesting them would
+ * be invalid HTML with real consequences (browsers do not reliably hit-test a
+ * button inside a button, and the inner controls would inherit the outer
+ * button's implicit submit/activation behaviour), and it is the reason this
+ * element is a `div` in the first place. So the keys are re-implemented instead.
  */
 export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps>(
   (
@@ -154,6 +176,45 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
             className
           )}
           {...wrapperProps}
+          // Enter / Space / ArrowDown open the panel — see the "load-bearing"
+          // paragraph in this component's doc comment for why the platform does
+          // not supply them here.
+          //
+          // It dispatches a real click rather than calling an open callback so
+          // that the ONE toggle path stays Radix's own composed `onClick`: the
+          // Popover context's `onOpenToggle`, plus any consumer `onClick`
+          // arriving through `wrapperProps`. A parallel "open" channel would
+          // drift from the pointer path the first time either side changed.
+          //
+          // Deliberately placed AFTER {...wrapperProps} — same discipline as
+          // dialog.tsx's `onFocusOutside`. A consumer handler still runs (it is
+          // composed first, and can veto by calling preventDefault), but a
+          // caller who happens to pass `onKeyDown` for its own reasons cannot
+          // silently delete the only way to open this control by keyboard.
+          //
+          // The `event.target !== event.currentTarget` guard keeps the handler
+          // off the nested chip-remove / "+N" / clear buttons. Those already
+          // stop keydown propagation individually, but this makes the trigger
+          // itself the only source, so a future nested control cannot start
+          // toggling the panel when someone activates it.
+          onKeyDown={(event) => {
+            wrapperProps?.onKeyDown?.(event);
+            if (!interactive) return;
+            if (event.target !== event.currentTarget) return;
+            if (event.defaultPrevented) return;
+            if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+            const key = event.key;
+            if (key !== "Enter" && key !== " " && key !== "ArrowDown") return;
+            // ArrowDown is "open", not "toggle" — once the panel is up, cmdk
+            // owns the arrows for moving through the options.
+            if (key === "ArrowDown" && open) return;
+
+            // Space would scroll the page and Enter would submit a surrounding
+            // form; both belong to the combobox while it has focus.
+            event.preventDefault();
+            event.currentTarget.click();
+          }}
         >
           {visibleChips.map((option) => (
             <Badge
