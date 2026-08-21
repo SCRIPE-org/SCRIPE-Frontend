@@ -36,6 +36,9 @@ import { usePermission } from "@core/hooks/use-permission";
 import { FieldHistoryDialog } from "../FieldHistoryDialog";
 import { FieldImpactDialog } from "../FieldImpactDialog";
 import { useFieldInsightViewModel } from "../viewmodels/useFieldInsightViewModel";
+// Wave 6 row 6.5. Self-contained: it owns its own permission gate, its own open
+// state and its own locale chunk, so it adds nothing to the config memo below.
+import { SchemaExportButton } from "../../../../schema/src/presentation/components/SchemaExportButton";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -353,6 +356,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
                 {t("customField.entityTypeCatalog.browseLink")}
               </Button>
             </Link>
+            {/* Wave 6 row 6.5. Not a link -- the schema export is an ACTION with
+                a scope choice, so it opens a dialog over this screen rather than
+                navigating away from the definitions the admin is exporting.
+                Gated internally on `custom-fields.export`, the same permission
+                the endpoint requires, and renders nothing without it. */}
+            <SchemaExportButton />
           </div>
           {isEntityTypesError ? (
             <ErrorMessage
