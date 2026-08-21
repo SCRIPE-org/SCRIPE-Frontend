@@ -96,6 +96,15 @@ import "./modules/compliance/compliance-regulation-profiles";
 
 // Modules (Custom Fields — Wave 2A / 2A-09)
 import "./modules/custom-fields/custom-fields-overview";
+import "./modules/custom-fields/custom-fields";
+import "./modules/custom-fields/custom-fields-value-types";
+import "./modules/custom-fields/custom-fields-defining";
+import "./modules/custom-fields/custom-fields-field-groups";
+import "./modules/custom-fields/custom-fields-options";
+import "./modules/custom-fields/custom-fields-validators";
+import "./modules/custom-fields/custom-fields-security";
+import "./modules/custom-fields/custom-fields-managing";
+import "./modules/custom-fields/custom-fields-limits";
 
 // Modules (WorkManagement — Wave 2A / 2A-10)
 import "./modules/work-management/work-management-overview";
