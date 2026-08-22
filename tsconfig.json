@@ -70,14 +70,12 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    ".storybook/**/*.ts"
   ],
   "exclude": [
     "node_modules",
     "vitest.config.ts",
-    "vitest.setup.ts",
-    "**/*.stories.tsx",
-    "**/*.stories.ts",
-    ".storybook"
+    "vitest.setup.ts"
   ]
 }
