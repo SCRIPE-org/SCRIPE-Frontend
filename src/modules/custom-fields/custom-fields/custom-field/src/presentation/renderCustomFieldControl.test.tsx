@@ -1011,12 +1011,17 @@ describe("renderCustomFieldControl", () => {
   describe("fc.type currency (Currency)", () => {
     const PRICE_FIELD = { name: "cf_price", type: "currency" as const, label: "Price" };
 
+    // The code input queries here say "combobox", not "textbox": an
+    // `<input type="text" list="...">` maps to role combobox per HTML-AAM, and
+    // the code input carries a `list` for the SUPPORTED_CURRENCIES datalist.
+    // Retargeted to the real role, not loosened -- see
+    // CurrencyCustomFieldControl.test.tsx's own note on this.
     it("renders two real, independently-labelled amount and currency-code inputs inside a named group", () => {
       render(<>{renderCustomFieldControl({ fc: PRICE_FIELD, value: null, onChange: vi.fn() })}</>);
       expect(screen.getByRole("group", { name: "Price" })).toBeInTheDocument();
       const amountInput = screen.getByRole("spinbutton");
       expect(amountInput).toHaveAttribute("type", "number");
-      const codeInput = screen.getByRole("textbox");
+      const codeInput = screen.getByRole("combobox");
       expect(codeInput).toHaveAttribute("maxlength", "3");
     });
 
@@ -1046,7 +1051,7 @@ describe("renderCustomFieldControl", () => {
           })}
         </>
       );
-      fireEvent.change(screen.getByRole("textbox"), { target: { value: "usd" } });
+      fireEvent.change(screen.getByRole("combobox"), { target: { value: "usd" } });
       expect(onChange).toHaveBeenCalledWith({ amount: "5", currencyCode: "USD" });
     });
 
@@ -1077,7 +1082,7 @@ describe("renderCustomFieldControl", () => {
         </>
       );
       expect(screen.getByRole("spinbutton")).toBeDisabled();
-      expect(screen.getByRole("textbox")).toBeDisabled();
+      expect(screen.getByRole("combobox")).toBeDisabled();
     });
   });
 

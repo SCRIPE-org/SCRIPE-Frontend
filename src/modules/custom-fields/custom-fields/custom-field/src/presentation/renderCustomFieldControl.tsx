@@ -102,16 +102,20 @@ export interface CustomFieldControlProps {
    * Optional, so all 8 hand-wired consumer sites keep compiling and behaving
    * exactly as before — none of them has a per-field validation verdict to pass
    * (they validate at save time through `assertSelectCustomFieldValuesValid`
-   * below, not per field). Only the reference branch reads it today, because it
-   * is the only branch whose control accepts one; a branch that cannot honour it
-   * silently ignoring it is better than a prop it pretends to support.
+   * below, not per field). Read by the three branches whose controls accept it —
+   * reference, currency and duration, i.e. exactly the types GenericForm draws
+   * through this dispatcher; a branch that cannot honour it silently ignoring it
+   * is better than a prop it pretends to support.
    */
   invalid?: boolean;
   /**
    * Id of the hint/error node the HOST rendered below this field, for
    * `aria-describedby`. Same origin and same optionality as `invalid` above.
-   * `EntityReferenceCustomFieldControl` composes it with its own note rather than
-   * overwriting it (`aria-describedby` takes an id list), so both are announced.
+   * Every branch that reads it COMPOSES rather than overwrites it
+   * (`aria-describedby` takes an id list), so the host's message and the
+   * control's own note are both announced: `EntityReferenceCustomFieldControl`
+   * appends its resolution note, `CurrencyCustomFieldControl` its pairing hint,
+   * `DurationCustomFieldControl` its minutes unit.
    */
   describedBy?: string;
 }
@@ -493,6 +497,11 @@ export function renderCustomFieldControl({
   // reused `"number"` string -- see CurrencyCustomFieldControl.tsx's own
   // header comment for why that backend string is not a frontend dispatch
   // contract at all (nothing on the wire carries it).
+  //
+  // `invalid`/`describedBy` are forwarded (Wave 4 follow-up): GenericForm now
+  // draws Currency through this dispatcher, and it owns the errors map and the
+  // hint/error node -- a control that dropped them would render a red error
+  // paragraph no screen reader ever associates with either input.
   if (fc.type === "currency") {
     return (
       <CurrencyCustomFieldControl
@@ -501,6 +510,8 @@ export function renderCustomFieldControl({
         value={value}
         onChange={onChange}
         isViewMode={isViewMode}
+        invalid={invalid}
+        describedBy={describedBy}
       />
     );
   }
@@ -513,6 +524,8 @@ export function renderCustomFieldControl({
   // (not reused "number") and why it needs a real component at all (the
   // localized unit label requires useI18n(), which this hookless function
   // cannot call itself).
+  // `invalid`/`describedBy` forwarded for the same reason as Currency's branch
+  // above -- both types are drawn by GenericForm through this dispatcher now.
   if (fc.type === "duration") {
     return (
       <DurationCustomFieldControl
@@ -521,6 +534,8 @@ export function renderCustomFieldControl({
         value={value}
         onChange={onChange}
         isViewMode={isViewMode}
+        invalid={invalid}
+        describedBy={describedBy}
       />
     );
   }

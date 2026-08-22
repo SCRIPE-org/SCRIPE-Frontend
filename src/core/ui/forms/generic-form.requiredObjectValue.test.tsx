@@ -51,6 +51,33 @@ const REFERENCE_FIELD: FieldConfig = {
   required: true,
 };
 
+/**
+ * Currency is the SECOND object-valued type, and the reason
+ * `OBJECT_VALUED_FIELD_TYPES` became `OBJECT_VALUED_EMPTINESS_CHECKS`: its
+ * envelope is `{ amount, currencyCode }`, which has nothing in common with a
+ * reference's `{ entityTypeKey, entityId }`, so a set-plus-one-hardcoded-shape
+ * could not serve both.
+ *
+ * This arm had NEVER RUN for Currency before this change -- not because it was
+ * wrong, but because `"currency"` reached neither the render switch nor the
+ * `customTypes` required-validation set, so no Currency field was ever validated
+ * here at all.
+ */
+const CURRENCY_FIELD: FieldConfig = {
+  name: "price",
+  label: "Price",
+  type: "currency",
+  required: true,
+};
+
+/** Duration is extension-drawn but NOT object-valued -- a plain minutes scalar. */
+const DURATION_FIELD: FieldConfig = {
+  name: "sessionLength",
+  label: "Session Length",
+  type: "duration",
+  required: true,
+};
+
 /** Renders one field and returns the submit spy plus the submit button. */
 function renderWithValue(field: FieldConfig, value: unknown) {
   const onSubmit = vi.fn().mockResolvedValue(undefined);
@@ -191,6 +218,219 @@ describe("GenericForm required-validation treats objects as always-filled (Wave 
   });
 });
 
+// ── Currency: the second object-valued type ───────────────────────────────────
+//
+// WHERE THIS RULE COMES FROM, since "empty" is not obvious for a two-piece money
+// value and was not invented here. `CurrencyValueTypeHandler` (backend
+// CustomFields.Application/ValueTypes) answers two different questions:
+//
+//   - `IsEmpty` is true only when the amount AND the code are both missing --
+//     "nothing to save".
+//   - `Validate`, which runs for everything IsEmpty let through, requires BOTH.
+//     Its own doc comment is explicit that this split is deliberate: treating a
+//     half-blank as empty "would silently skip Validate and let a
+//     genuinely-entered (but incomplete ...) amount or code through with no
+//     error".
+//
+// So a required Currency is satisfied only by a value the server will actually
+// store, which means both pieces present -- composed from the two, not picked
+// from one. Same presence-not-shape scope as the reference rule above: the code's
+// alpha-3 grammar is `pattern` on the control plus the server's own
+// `currencyCodeInvalid`, never a "this field is required" verdict.
+describe("GenericForm required-validation for a Currency field (never ran before this fix)", () => {
+  it("blocks submit for a required currency with a blank amount and a real code", async () => {
+    // THE named case. A user who typed only the code has entered something, so
+    // the pre-existing scalar arm sees a non-null object and waves it through --
+    // straight into `currencyAmountExpected`, a 422 the user cannot connect to
+    // this field.
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, {
+      amount: "",
+      currencyCode: "USD",
+    });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("blocks submit for a required currency with a real amount and no code", async () => {
+    // The mirror half. R2's own justification for storing the code at all is that
+    // "a stored 100.00 is meaningless without knowing which currency it is in".
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, { amount: "150.75" });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("blocks submit for a whitespace-only currency code, matching the backend's IsNullOrWhiteSpace gate", async () => {
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, {
+      amount: "150.75",
+      currencyCode: "   ",
+    });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("blocks submit for a required currency that is an empty object", async () => {
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, {});
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("fails closed for a scalar on a currency field — no bare number is a currency", async () => {
+    // `CurrencyValueTypeHandler.Parse` refuses a non-object payload outright
+    // ("Currency has no single-scalar wire shape"), so neither can this.
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, "150.75");
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("accepts a ZERO amount with a code — zero is a value, and truthiness is not the test", async () => {
+    // The discriminating case for how "blank" is written. A `!money.amount` check
+    // would read exactly right and reject a legitimate 0.00, which the handler
+    // enforces no minimum against. RED against a truthiness implementation.
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, {
+      amount: 0,
+      currencyCode: "USD",
+    });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
+  });
+
+  it("accepts a NEGATIVE amount with a code — a credit or refund is a real currency value", async () => {
+    // `CurrencyValueTypeHandler.Validate` applies no minimum (unlike Duration's,
+    // which rejects negatives), so this must not be refused here either.
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, {
+      amount: "-25.50",
+      currencyCode: "EUR",
+    });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
+  });
+
+  it("submits a COMPLETE currency untouched, and does not rename or coerce either piece", async () => {
+    const { onSubmit, submit } = renderWithValue(CURRENCY_FIELD, {
+      amount: "150.75",
+      currencyCode: "USD",
+    });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith({ price: { amount: "150.75", currencyCode: "USD" } });
+  });
+
+  it("ignores a non-required currency field entirely, half-blank or not", async () => {
+    const { onSubmit, submit } = renderWithValue(
+      { ...CURRENCY_FIELD, required: false },
+      { amount: "150.75" }
+    );
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
+  });
+});
+
+// ── Duration: extension-drawn, but deliberately NOT object-valued ─────────────
+//
+// The pre-existing scalar arm is not merely harmless for Duration, it is the
+// right rule: `DurationValueTypeHandler.IsEmpty` is `null || whitespace-only
+// string`, and its `Validate` accepts zero outright ("a zero-minute
+// buffer/duration is a legitimate value") while rejecting negatives. Blank,
+// absent and zero are three distinguishable states server-side, and the arm
+// already distinguishes them the same way. These tests exist so that stays true.
+describe("GenericForm required-validation for a Duration field (scalar arm, unchanged)", () => {
+  it("blocks submit for a required duration that is absent", async () => {
+    const { onSubmit, submit } = renderWithValue(DURATION_FIELD, undefined);
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("blocks submit for a required duration cleared back to an empty string", async () => {
+    // What the control emits when the operator selects the number and deletes it.
+    const { onSubmit, submit } = renderWithValue(DURATION_FIELD, "");
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["a numeric zero", 0],
+    ["a string zero, which is what the control actually emits", "0"],
+  ])("accepts %s — the backend accepts a zero-minute duration", async (_label, value) => {
+    // THE discriminating case for Duration, and the reason no `!val` shortcut may
+    // ever be introduced into the scalar arm: zero minutes is a legitimate stored
+    // value ("no setup buffer"), so refusing it as "required" would make a real
+    // value unenterable.
+    const { onSubmit, submit } = renderWithValue(DURATION_FIELD, value);
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
+  });
+
+  it("accepts a FRACTIONAL duration — ValueNumber is decimal, 1.5 means 90 seconds", async () => {
+    const { onSubmit, submit } = renderWithValue(DURATION_FIELD, "1.5");
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit).toHaveBeenCalledWith({ sessionLength: "1.5" });
+  });
+
+  it("waves an object through on a duration field — it is not in the object-valued map", async () => {
+    // The no-change case, pinned rather than inferred: Duration must NOT pick up
+    // Currency's or the reference's envelope rule just because all three are
+    // extension-drawn. The two sets are separate for exactly this reason.
+    const { onSubmit, submit } = renderWithValue(DURATION_FIELD, { minutes: 90 });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
+  });
+});
+
 // The other half of the fix: the object arm must be reachable ONLY for types
 // declared object-valued. Every field type that shipped before Wave 4 has to
 // behave exactly as it did, which for an object value means "waved through" --
@@ -231,7 +471,8 @@ describe("GenericForm required-validation -- no behaviour change for pre-Wave-4 
   });
 
   it("never reaches the object arm for a required DATETIME field -- the value is a string by then", async () => {
-    // The reason "datetime" is NOT in OBJECT_VALUED_FIELD_TYPES, proven rather
+    // The reason "datetime" has no entry in OBJECT_VALUED_EMPTINESS_CHECKS,
+    // proven rather
     // than asserted: this component routes every date-family value through
     // toDateInputValue on initialisation, and that helper returns "" for
     // anything it cannot read as a date (an object throws on .getTime() inside

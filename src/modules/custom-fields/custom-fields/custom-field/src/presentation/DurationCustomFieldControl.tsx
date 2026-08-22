@@ -51,12 +51,49 @@
  * rendering an EMPTY `<Label>` otherwise), not a fresh translated
  * `aria-label` override -- there is no second/auxiliary control here the
  * way Currency's paired code input needs one, so the plain native
- * `for`/`id` association is both correct and sufficient on its own. The
- * unit annotation is a plain VISIBLE sibling `<span>` (never `aria-hidden`),
- * the same "un-hidden baseline row" shape the Rating branch's own
- * `{numericValue} / {RATING_MAX}` read-out already uses -- a screen reader
- * traversing the form encounters the input's name, then the unit text, in
- * natural DOM order, with no interpolation or second locale key needed.
+ * `for`/`id` association is both correct and sufficient on its own.
+ *
+ * That native `for`/`id` name is also exactly why `<GenericForm>` must suppress
+ * ITS own label for this type: the host's label targets the same `fc.name`, and
+ * the accessible-name computation concatenates every matching `<label>`, so a
+ * kept host label would have announced "Setup BufferSetup Buffer" as well as
+ * showing the text twice. See `EXTENSION_DRAWN_FIELD_TYPES` in
+ * `core/ui/forms/generic-form.tsx`, where each of the three extension-drawn
+ * types' distinct labelling mechanism is recorded.
+ *
+ * **The unit annotation stays a VISIBLE sibling `<span>` (never
+ * `aria-hidden`)**, in a `flex items-center gap-2` row -- which is not just this
+ * control's own habit but the dominant unit-annotated-numeric pattern in the
+ * repo (`TokenConfigSection.tsx`'s access-token-lifetime and refresh-token-
+ * lifetime fields are the same `<Input className="w-24" /> + <span>{unit}</span>`
+ * shape), and there is no prefix/suffix/addon slot on `@core/ui/input.tsx` to
+ * use instead -- verified, not assumed: the only `suffix` prop in `@core/ui` is
+ * `stat-card.tsx`'s, which is read-only display.
+ *
+ * **What DID change (Wave 4 follow-up, when this control was admitted to
+ * `<GenericForm>`):** the span is now also the input's accessible DESCRIPTION,
+ * via an id in `aria-describedby`. Being visible in DOM order was never the same
+ * thing as being announced with the field: a screen-reader user landing on the
+ * input heard "Setup Buffer, spin button" and had to keep browsing to discover
+ * the unit -- for a control whose entire reason to exist is making that unit
+ * explicit (ruling R4/PD-2). Wiring it as a description says it on arrival while
+ * leaving the accessible NAME untouched, so the `getByRole("spinbutton", { name })`
+ * gates in this file and in renderCustomFieldControl.test.tsx keep asserting the
+ * same thing. Composed with any host-supplied `describedBy` rather than
+ * overwriting it -- `aria-describedby` takes an id LIST, the same composition
+ * `EntityReferenceCustomFieldControl` already does for its own note.
+ *
+ * **Rejected, deliberately, when this control was reviewed for generic-form
+ * use:** an hours+minutes pair, a +/- stepper, and preset chips. No two-field or
+ * stepper duration control exists anywhere in this repo to be consistent with.
+ * Presets DO have a precedent (`core/ui/export-interval-select.tsx`'s chip row,
+ * `useApiKeysViewModel`'s expiry select), but both pick from a FIXED domain
+ * vocabulary; a tenant-defined Duration field has no such vocabulary -- the same
+ * field type has to serve a session length, a warm-up, and a clip length, and
+ * any preset set would be this control guessing at one of them. An "= 1 h 30 m"
+ * read-out was rejected for a sharper reason: `formatCustomFieldValue.tsx`'s own
+ * Duration case renders "90 minutes", so an hours read-out here would make one
+ * stored value read differently in the table and in the form.
  */
 import * as React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -70,6 +107,16 @@ export interface DurationCustomFieldControlProps {
   onChange: (value: unknown) => void;
   /** Mirrors every other renderCustomFieldControl branch's isViewMode contract. */
   isViewMode?: boolean;
+  /**
+   * The HOST form's validation verdict for this field, when it has one. Supplied
+   * by `GenericFormCustomFieldControl` (GenericForm holds an `errors` map and
+   * renders its own error node); absent at the 8 hand-wired sites, which validate
+   * at save time instead. See `CustomFieldControlProps` in
+   * renderCustomFieldControl.tsx.
+   */
+  invalid?: boolean;
+  /** Id of the host's hint/error node, composed into this input's own description. */
+  describedBy?: string;
 }
 
 function toFieldInputValue(value: unknown): string {
@@ -81,9 +128,12 @@ export function DurationCustomFieldControl({
   value,
   onChange,
   isViewMode,
+  invalid,
+  describedBy,
 }: DurationCustomFieldControlProps): React.ReactElement {
   const { t } = useI18n();
   const unitLabel = t("customField.duration.unitLabel");
+  const unitId = `${fc.name}-unit`;
 
   return (
     <div className="space-y-2">
@@ -95,20 +145,49 @@ export function DurationCustomFieldControl({
           id={fc.name}
           type="number"
           min={0}
+          // `step="any"` is load-bearing here, and measured rather than assumed.
+          // An <input type="number"> with no step steps by 1, and the step BASE
+          // is `min` if present -- which `min={0}` on the line above makes it. So
+          // the accepted values were 0, 1, 2 ... and `1.5` was a stepMismatch,
+          // which does not merely style the field: a form containing an invalid
+          // control never fires `submit` at all. 1.5 is a documented, supported
+          // Duration value (ruling R4: ValueNumber is decimal(18,6), "1.5 = 90
+          // seconds") that formatCustomFieldValue.tsx deliberately round-trips as
+          // "1.5 minutes" rather than rounding -- so a value the table displayed
+          // could not be re-saved through the form.
+          //
+          // The gap only became reachable when this control was admitted to
+          // <GenericForm>, whose <form> carries no noValidate: at the 8
+          // hand-wired sites nothing submits natively, so the mismatch was inert.
+          // (CurrencyCustomFieldControl's amount carries the same declaration for
+          // a different reason -- it has no `min`, so its step base tracked its
+          // own value and it was never actually broken. See that file.)
+          //
+          // `min={0}` stays -- it mirrors the handler's own MinDurationMinutes = 0
+          // (zero accepted, negatives rejected), and `step="any"` relaxes the step
+          // check only, never the floor.
+          step="any"
           value={toFieldInputValue(value)}
           onChange={(e) => onChange(e.target.value)}
           placeholder={fc.placeholder}
           required={fc.required}
           disabled={isViewMode}
+          aria-invalid={invalid || undefined}
+          // The unit is part of what this field MEANS, so it rides in the
+          // description rather than only sitting next to the box -- see this
+          // file's header comment. Composed, never overwritten: a host's own
+          // hint/error id keeps its place in the list.
+          aria-describedby={[describedBy, unitId].filter(Boolean).join(" ")}
           className="max-w-[10rem] text-sm"
         />
-        {/* Visible, never aria-hidden -- a screen reader already announces
-            this in natural DOM order right after the input's own real name
-            (fieldName, via <Label htmlFor> above), the same un-hidden
-            baseline-row shape the Rating branch's own "N / 5" read-out
-            uses. Storage is bare minutes (backend ruling R4); this is the
-            one place that unit becomes explicit instead of implicit. */}
-        <span className="shrink-0 text-sm text-nx-ink-3">{unitLabel}</span>
+        {/* Visible, never aria-hidden. Storage is bare minutes (backend ruling
+            R4); this is the one place that unit becomes explicit instead of
+            implicit, so hiding it from either the sighted or the screen-reader
+            path would defeat the control. It now carries an id purely so the
+            input can point at it -- the rendered text is unchanged. */}
+        <span id={unitId} className="shrink-0 text-sm text-nx-ink-3">
+          {unitLabel}
+        </span>
       </div>
     </div>
   );
