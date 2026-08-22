@@ -46,6 +46,10 @@ const sections: DocSection[] = [
       ["Options", `${K}.ctlOptionsDoes`, `${K}.ctlOptionsWhen`],
       ["Validator", `${K}.ctlValidatorDoes`, `${K}.ctlValidatorWhen`],
       ["Validator Parameter", `${K}.ctlValidatorParamDoes`, `${K}.ctlValidatorParamWhen`],
+      // Wave 4 follow-up: EntityReference only, and never for UserReference --
+      // its one legal target is fixed in the platform, so there is nothing to
+      // choose. Unlike the three permanent settings it can be changed later.
+      ["Target Entity Type", `${K}.ctlReferenceTargetDoes`, `${K}.ctlReferenceTargetWhen`],
       ["Field Group", `${K}.ctlFieldGroupDoes`, `${K}.ctlFieldGroupWhen`],
       ["Required", `${K}.ctlRequiredDoes`, `${K}.ctlAlways`],
       ["Sort Order", `${K}.ctlSortOrderDoes`, `${K}.ctlAlways`],
@@ -130,6 +134,8 @@ const sections: DocSection[] = [
       [`${K}.rejValidatorExtraParam`, `${K}.rejValidatorExtraParamMsg`],
       [`${K}.rejRequiredRestricted`, `${K}.rejRequiredRestrictedMsg`],
       [`${K}.rejGroupWrongType`, `${K}.rejGroupWrongTypeMsg`],
+      [`${K}.rejReferenceTargetUnknown`, `${K}.rejReferenceTargetUnknownMsg`],
+      [`${K}.rejReferenceTargetNotAllowed`, `${K}.rejReferenceTargetNotAllowedMsg`],
       [`${K}.rejGlobalNotSuperAdmin`, `${K}.rejGlobalNotSuperAdminMsg`],
       [`${K}.rejQuota`, `${K}.rejQuotaMsg`],
     ],
@@ -152,6 +158,7 @@ const sections: DocSection[] = [
           `${K}.editable5`,
           `${K}.editable6`,
           `${K}.editable7`,
+          `${K}.editable8`,
         ],
       },
       {

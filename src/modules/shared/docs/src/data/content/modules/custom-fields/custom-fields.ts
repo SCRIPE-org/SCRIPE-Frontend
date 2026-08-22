@@ -33,7 +33,7 @@ const sections: DocSection[] = [
         descriptionKey: `${K}.featDefineOnceDesc`,
       },
       { icon: "check", titleKey: `${K}.featTyped`, descriptionKey: `${K}.featTypedDesc` },
-      { icon: "layers", titleKey: `${K}.featSeventeen`, descriptionKey: `${K}.featSeventeenDesc` },
+      { icon: "layers", titleKey: `${K}.featValueTypes`, descriptionKey: `${K}.featValueTypesDesc` },
       { icon: "building", titleKey: `${K}.featScoped`, descriptionKey: `${K}.featScopedDesc` },
       { icon: "shield", titleKey: `${K}.featSecured`, descriptionKey: `${K}.featSecuredDesc` },
       { icon: "chart", titleKey: `${K}.featAccountable`, descriptionKey: `${K}.featAccountableDesc` },
@@ -58,6 +58,7 @@ const sections: DocSection[] = [
       ["Field Group", `${K}.partFieldGroup`, `${K}.changeAnytime`],
       ["Options", `${K}.partOptions`, `${K}.changeAnytimeCare`],
       ["Validator / Validator Parameter", `${K}.partValidator`, `${K}.changeAnytimeCare`],
+      ["Target Entity Type", `${K}.partReferenceTarget`, `${K}.changeAnytimeCare`],
       ["Sensitivity", `${K}.partSensitivity`, `${K}.changeAnytime`],
       ["Include in exports", `${K}.partExportable`, `${K}.changeAnytime`],
       ["Active", `${K}.partActive`, `${K}.changeAnytime`],
@@ -107,6 +108,8 @@ const sections: DocSection[] = [
     headers: [`${K}.thPage`, `${K}.thCovers`],
     rows: [
       [`${K}.pageValueTypes`, `${K}.coversValueTypes`],
+      [`${K}.pageReferences`, `${K}.coversReferences`],
+      [`${K}.pageReferenceLookups`, `${K}.coversReferenceLookups`],
       [`${K}.pageDefining`, `${K}.coversDefining`],
       [`${K}.pageGroups`, `${K}.coversGroups`],
       [`${K}.pageOptions`, `${K}.coversOptions`],
@@ -146,6 +149,10 @@ registerPage({
   category: "modules",
   order: 1,
   sections,
-  relatedSlugs: ["modules/custom-fields-value-types", "modules/custom-fields-defining"],
+  relatedSlugs: [
+    "modules/custom-fields-value-types",
+    "modules/custom-fields-references",
+    "modules/custom-fields-defining",
+  ],
   lastUpdated: "2026-08-21",
 });

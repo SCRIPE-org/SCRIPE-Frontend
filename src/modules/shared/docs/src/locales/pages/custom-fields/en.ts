@@ -2,9 +2,16 @@
 /**
  * Exported constant defining parameters and fields for en configurations.
  *
- * Custom Fields product documentation — nine pages under the Custom Fields
+ * Custom Fields product documentation — eleven pages under the Custom Fields
  * section of the docs portal. Namespaced under modules.customFields.docs so it
  * never collides with the developer-facing modules.customFields.overview page.
+ *
+ * The two reference pages (references, referenceLookups) cover the value types
+ * that point at a record in another module. They are deliberately two pages: one
+ * about what a reference IS, one about the three lookups that draw it and every
+ * way each can fail. Splitting them keeps the failure table — the part an
+ * operator reaches for when something is wrong — from being buried behind the
+ * conceptual material.
  */
 export const en = {
   modules: {
@@ -32,9 +39,9 @@ export const en = {
           featTyped: "Checked on the way in",
           featTypedDesc:
             "Each value type has its own rules — a real email address, a hex colour, a rating from 1 to 5 — so a wrong value is refused with a specific message rather than quietly stored and discovered six months later.",
-          featSeventeen: "Seventeen value types",
-          featSeventeenDesc:
-            "Text and long text, single and multiple choice, numbers, percentages, ratings, money, durations, dates, date-and-time with a real time zone, times, email, web addresses, phone numbers, yes/no and colour.",
+          featValueTypes: "Nineteen value types",
+          featValueTypesDesc:
+            "Text and long text, single and multiple choice, numbers, percentages, ratings, money, durations, dates, date-and-time with a real time zone, times, email, web addresses, phone numbers, yes/no and colour — plus two that store no text at all and point at a record in another part of the product instead.",
           featScoped: "Yours, or the whole platform's",
           featScopedDesc:
             "A field you create belongs to your workspace only. Platform administrators can create global fields that every workspace inherits and no workspace can edit or delete.",
@@ -55,7 +62,7 @@ export const en = {
             "The kind of record the field belongs to — people, staff members, bookings, and so on.",
           partKey:
             "The machine name, used in error messages and exports. Lower case, starts with a letter, letters, digits and underscores only.",
-          partValueType: "One of the seventeen types, deciding what can be entered and how it is checked.",
+          partValueType: "One of the nineteen types, deciding what can be entered and how it is checked.",
           partLabelEn: "The English label people see above the input.",
           partLabelAr: "The Arabic label, optional. Falls back to the English one when blank.",
           partPlaceholder:
@@ -65,6 +72,8 @@ export const en = {
           partFieldGroup: "The optional heading the field is gathered under.",
           partOptions: "The list of allowed answers. Select and MultiSelect only.",
           partValidator: "An optional extra format check, plus its setting. Text fields only.",
+          partReferenceTarget:
+            "The one kind of record this field's values may point at, or nothing to let each value choose its own. Entity Reference fields only.",
           partSensitivity:
             "A classification label — Unclassified, Internal, Confidential or Restricted — for reporting and export handling.",
           partExportable:
@@ -121,7 +130,13 @@ export const en = {
           thCovers: "What it covers",
           pageValueTypes: "Value Types",
           coversValueTypes:
-            "All seventeen types, one at a time: what each one stores, what it accepts, what it rejects, and worked example inputs with the error code the product returns.",
+            "All nineteen types, one at a time: what each one stores, what it accepts, what it rejects, and worked example inputs with the error code the product returns.",
+          pageReferences: "Reference Fields",
+          coversReferences:
+            "The two types that point at a record in another part of the product: which of them to use, what is actually stored, why a name is never stored with it, pinning a target, what may be referenced, and the workspace rules.",
+          pageReferenceLookups: "Reference Lookups",
+          coversReferenceLookups:
+            "The three lookups behind a reference field, what every answer means, the five failure states and whose problem each one is, what happens when the referenced record is deleted, and how the picker behaves.",
           pageDefining: "Defining a Field",
           coversDefining:
             "The definition form control by control, the full walkthrough, key naming rules, creating a field from inside a record, and every rejection you can hit.",
@@ -168,9 +183,9 @@ export const en = {
         valueTypes: {
           title: "Value Types",
           description:
-            "All seventeen custom-field value types: what each one stores, exactly what it accepts and rejects, worked example inputs, and the error codes the product returns.",
+            "All nineteen custom-field value types: what each one stores, exactly what it accepts and rejects, worked example inputs, and the error codes the product returns.",
           intro:
-            "Every custom field has exactly one value type, chosen when the field is defined. The value type decides what control appears on the form, what the product accepts, how the value is stored and how it is displayed afterwards. This page covers all seventeen, one at a time, with example inputs that are accepted and example inputs that are refused.",
+            "Every custom field has exactly one value type, chosen when the field is defined. The value type decides what control appears on the form, what the product accepts, how the value is stored and how it is displayed afterwards. This page covers all nineteen, one at a time, with example inputs that are accepted and example inputs that are refused. Seventeen of them store something you typed; the last two store a pointer at a record somewhere else, and have a page of their own as well.",
           permanentTitle: "The value type can never be changed",
           permanentContent:
             "Once a field is saved, its value type is fixed for the life of the field. There is no conversion — answers already recorded under the old type would stop making sense. If you pick the wrong type, the field has to be deleted and recreated, and the answers already stored against it are lost with it. Spend the extra minute up front.",
@@ -179,7 +194,7 @@ export const en = {
           orderIntro:
             "Every save runs the same four steps in the same order for every type. Knowing the order explains most surprises.",
           order1:
-            "Is the value empty? A missing value, a blank string, or a string of nothing but spaces counts as empty. For MultiSelect an empty list counts too, and for DateTime and Currency a value counts as empty only when both of its parts are missing.",
+            "Is the value empty? A missing value, a blank string, or a string of nothing but spaces counts as empty. For MultiSelect an empty list counts too, and for DateTime, Currency and the two reference types a value counts as empty only when both of its parts are missing.",
           order2:
             "If it is empty and the field is Required, the save is refused with VALIDATION_REQUIRED. If it is empty and the field is not required, the stored value is cleared and nothing else runs — no type check, no validator.",
           order3:
@@ -433,6 +448,60 @@ export const en = {
           colorBadLength: "Refused: VALIDATION_INVALID_FORMAT. Three or six digits, nothing in between.",
           colorNamed: "Refused: VALIDATION_INVALID_FORMAT. Colour names are not accepted, only hex values.",
 
+          groupReferenceTitle: "References to another record",
+          referenceGroupIntro:
+            "The last two types store no text of their own. Each one stores a pointer at a record somewhere else in the product, and the name you see is looked up fresh every time the field is displayed rather than saved alongside the pointer. Both store the same two pieces — the kind of record and that record's own identity — and both treat a value as empty only when both pieces are missing. There is a great deal more to say about them than fits a table; the Reference Fields and Reference Lookups pages say it.",
+          entityReferenceTitle: "EntityReference",
+          entityReferenceStores:
+            "A pointer at a record of any kind this installation can answer for and you are allowed to view. Renders as a searchable picker over that kind of record — preceded by a second picker for the kind itself, when the definition does not pin one.",
+          entityReferenceChecks:
+            "Both pieces are required together. The kind of record must be registered and, when the definition pins one, must be that one. The identity must be readable. And you must have been able to read that record at the moment you saved, which is what stops a pointer being used to reach data you cannot open directly. Each check refuses with its own message rather than a generic one.",
+          refOk:
+            "Accepted. The answer records both the kind of record and that record's identity, and the picker shows the record's current name from then on.",
+          refIncomplete:
+            "Refused as an incomplete reference. Half a pointer is not treated as an empty field — it means somebody began answering and stopped.",
+          refIncompleteToo:
+            "Refused the same way. An identity with no kind of record names a row but no table, so there is nothing to look it up in.",
+          refMismatch:
+            "Refused, and the message names both what the field expects and what arrived. The pin is a deliberate restriction, so this is the refusal working rather than failing.",
+          refUnknownType:
+            "Refused: ENTITY_UNKNOWN_TYPE, naming the identifier. Only reachable from a request that bypasses the picker, which never offers an unregistered kind of record.",
+          refInvalidId:
+            "Refused: ENTITY_INVALID_ID. An identity is opaque and must be sent back exactly as it was received — one altered character makes it unreadable.",
+          refForbidden:
+            "Refused: AUTH_FORBIDDEN, naming the field. Storing a pointer at a record is a deferred read of that record, so it needs the same permission reading it would.",
+          refEmpty:
+            "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required. Only both pieces missing counts as empty.",
+          exRefOk: "A staff member chosen from the picker",
+          exRefTypeOnly: "A kind of record chosen, with no record picked",
+          exRefIdOnly: "A record picked, with no kind of record sent",
+          exRefWrongType: "A person, on a field pinned to staff members",
+          exRefUnknownType: "A kind of record that is not registered",
+          exRefEdited: "A stored identity altered by one character",
+          exRefNoAccess: "A record of a kind you may not view",
+          exRefBothBlank: "Both parts left blank",
+
+          userReferenceTitle: "UserReference",
+          userReferenceStores:
+            "A pointer at a user account — assigned to, reviewed by, account manager. Renders as a searchable picker over user accounts, and never shows a control for choosing a kind of record, because there is only one.",
+          userReferenceChecks:
+            "Every check EntityReference makes, plus one narrower rule: the only kind of record accepted is a user account. That list is fixed by the platform rather than by configuration, and an attempt to point this type at anything else is refused both when a definition is configured and when a value is saved.",
+          usrOk: "Accepted, exactly as an EntityReference is. The answer is self-describing in the same way.",
+          usrDormant:
+            "Accepted. A locked-out account is dormant rather than deleted: it still exists, it is still offered by the picker with an inactive marker, and it is a legitimate answer for something that already happened.",
+          usrAdminRefused:
+            "Refused, with a message naming what is allowed. An administrator can belong to no workspace at all, which is the one property a reference target must never have.",
+          usrGroupRefused:
+            "Refused the same way. A group is safe to read but is not a person, and a field typed UserReference that resolved to a group would be lying about what it holds.",
+          usrThemeRefused:
+            "Refused the same way. A shared platform catalogue row belongs to no workspace and is not a person either — excluded twice over.",
+          usrEmpty: "Treated as empty on exactly the same terms as EntityReference.",
+          exUsrOk: "A user account chosen from the picker",
+          exUsrDormant: "An account whose sign-in is currently locked out",
+          exUsrAdmin: "An administrator record",
+          exUsrGroup: "A user group",
+          exUsrTheme: "A login theme",
+
           emptyTitle: "Empty values and the Required toggle",
           emptyIntro:
             "Every type shares one definition of empty, and it is checked before anything else. A value counts as empty when:",
@@ -440,7 +509,9 @@ export const en = {
           empty2: "it is blank, or made up of nothing but spaces;",
           empty3: "for MultiSelect, the list of selections is explicitly empty;",
           empty4: "for DateTime, both the instant and the time zone are missing — not just one of them;",
-          empty5: "for Currency, both the amount and the currency code are missing — not just one of them.",
+          empty5: "for Currency, both the amount and the currency code are missing — not just one of them;",
+          empty6:
+            "for EntityReference and UserReference, both the kind of record and the record's identity are missing — not just one of them.",
           emptyOutcome:
             "An empty value on a Required field is refused with VALIDATION_REQUIRED. An empty value on an optional field is accepted and the stored answer is cleared — the row is kept rather than deleted, so history is not lost.",
           emptyWarnTitle: "Rating is the exception worth remembering",
@@ -449,7 +520,7 @@ export const en = {
 
           codesTitle: "Error codes you may see",
           codesIntro:
-            "Every refusal is an HTTP 422 with one of these machine-readable codes. If you ever see a 500 from saving a custom-field value, that is a defect worth reporting — the validation path is written to refuse cleanly, never to fail.",
+            "Almost every refusal is an HTTP 422 with one of these machine-readable codes; the last one in the table is a 403, because it is about your access rather than about the shape of what you sent. If you ever see a 500 from saving a custom-field value, that is a defect worth reporting — the validation path is written to refuse cleanly, never to fail.",
           thCode: "Code",
           thWhenItFires: "When it fires",
           codeRequired: "The field is Required and the submitted value is empty or whitespace-only.",
@@ -464,6 +535,12 @@ export const en = {
             "Text past 4,000 characters, LongText past 10,000, an Email or Url past 4,000, more than 19 MultiSelect selections, or a Length Range validator's upper bound.",
           codeMinLength: "A Length Range validator's lower bound.",
           codeUnique: "The same MultiSelect option was submitted more than once in one save.",
+          codeUnknownEntityType:
+            "A reference names a kind of record that is not registered in this installation.",
+          codeInvalidId:
+            "A reference's stored identity could not be read — altered on its way through something, or a value that predates a change.",
+          codeForbidden:
+            "A reference points at a record you are not allowed to read. This one is a 403 rather than a 422, because it is about your access and not about the value's shape.",
           codesInfoTitle: "Messages name the key, not the label",
           codesInfoContent:
             "Error messages quote the field's machine key — 'shirt_size' — rather than its display label. If you are matching a message to a field, match on the key.",
@@ -475,6 +552,525 @@ export const en = {
             "Each row shows the type's name, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Text is the only row showing validator support — that is the Text-only boundary made visible.",
           catalogueNoPlanColumn:
             "There is deliberately no plan or entitlement column on that screen. Value types are not individually plan-gated, so a column implying otherwise would be showing something that does not exist.",
+        },
+
+        // ═══════════════════════════════════════════════════
+        //  Reference Fields
+        // ═══════════════════════════════════════════════════
+        references: {
+          title: "Reference Fields",
+          description:
+            "The two value types that point at a record in another module — Entity Reference and User Reference: which to use, what is actually stored, why the name is never saved with it, how a target type is pinned, what may be referenced, and the workspace rules.",
+          intro:
+            "Every other value type stores something you typed. These two store a pointer: the field holds no text of its own, only the identity of another record somewhere else in the product. A field on an administrator record that says which staff member they are, a field on a booking that says who reviewed it, a field on a person that says which account manager looks after them — all three are one record pointing at another, and until these types existed there was no way to record that without retyping a name and watching it drift.",
+          oneLineTitle: "In one sentence",
+          oneLineContent:
+            "A reference field stores which record you picked, never what that record was called — so the name you see is always the name that record has right now, and always one you are allowed to see.",
+
+          whatTitle: "What a reference field gives you",
+          whatIntro:
+            "A reference is not a text field that happens to contain somebody's name. It is a real pointer, checked when you save it and re-checked every time it is read, and every one of the following follows from that.",
+          featPointsAt: "Points at a real record",
+          featPointsAtDesc:
+            "You pick from a searchable list of records that actually exist, in your own workspace, rather than typing a name and hoping it matches. Nothing is stored until a real record has been chosen.",
+          featLiveName: "Always shows the current name",
+          featLiveNameDesc:
+            "The name is looked up fresh each time the field is displayed. When somebody's name is corrected on their own record, every reference pointing at them shows the correction immediately — there is no copy to go stale.",
+          featPermission: "Carries the target's own permissions",
+          featPermissionDesc:
+            "Reading the name needs permission to view that kind of record, not permission to view the record holding the field. Somebody who may edit the owner record but may not read staff sees that a reference is set and does not see who it points at.",
+          featSearch: "Searchable, paged, and it tells you what it cannot do",
+          featSearchDesc:
+            "The picker searches the target module's own records a page at a time, marks a dormant record as inactive rather than hiding it, and says in words when there is nothing you are allowed to point at — never an empty dropdown that reads as \"there are no records\".",
+          featPinned: "Can be pinned to one kind of record",
+          featPinnedDesc:
+            "An Entity Reference field can be pinned so that every value must point at, say, a staff member — or left unpinned, in which case each value chooses its own kind of record and records that choice alongside the pointer.",
+          featSelfHealing: "Clears itself when the target is deleted",
+          featSelfHealingDesc:
+            "Delete the record a reference points at and the pointer is cleared automatically. The value row itself survives with its audit trail — only the pointer goes, and nothing has to be tidied up by hand.",
+
+          whichTitle: "Entity Reference or User Reference",
+          whichIntro:
+            "There are two reference value types and they are mechanically almost identical. The difference is entirely about what each one is allowed to point at, and therefore about how much you have to configure. Pick User Reference whenever the answer is \"a person who logs in\"; pick Entity Reference for everything else.",
+          thAspect: "Aspect",
+          thEntityRef: "Entity Reference",
+          thUserRef: "User Reference",
+          aspTargets: "What it may point at",
+          entTargets:
+            "Any kind of record the platform can currently answer for and you are allowed to view.",
+          usrTargets:
+            "Exactly one kind of record: a user account. Nothing else is accepted, ever, and that list is fixed by the platform rather than by configuration.",
+          aspConfig: "What you configure",
+          entConfig:
+            "Optionally, a Target Entity Type on the definition. Leaving it unpinned is a real and permanently supported choice, not an unfinished one.",
+          usrConfig:
+            "Nothing at all. There is no target picker on the definition form for this type, because there is no decision to make.",
+          aspPicker: "What the person filling it in sees",
+          entPicker:
+            "On a pinned field, one searchable list of that kind of record. On an unpinned field, two controls: first the kind of record, then the record.",
+          usrPicker: "One searchable list of user accounts. There is never a type control.",
+          aspUse: "Reach for it when",
+          entUse:
+            "The answer is a business record — a staff member, a person, a facility — or when different records under the same field legitimately point at different kinds of thing.",
+          usrUse:
+            "The answer is an account: assigned to, reviewed by, account manager, approved by.",
+          aspStorage: "How the answer is stored",
+          entStorage: "The kind of record, plus that record's own identity. Both, always together.",
+          usrStorage:
+            "Identically. The stored value is self-describing in exactly the same way, which is what keeps an old answer readable after the definition changes.",
+          whichInfoTitle: "Why these are two types and not one setting",
+          whichInfoContent:
+            "The list of things a User Reference may point at is a security decision, so it is fixed in the platform rather than typed into a definition by an administrator. And because the type is recorded on every stored answer, the question \"which of our fields hold references to people?\" has an answer even for values whose definition has since been changed. A single type with a setting would have lost both properties.",
+
+          storedTitle: "What is actually stored",
+          storedIntro:
+            "A reference value is two pieces, held together. This is the same shape Currency uses for its amount and its code, and for the same reason: neither piece means anything on its own.",
+          thPiece: "Piece",
+          thWhat: "What it is",
+          thRequired: "Required?",
+          pieceTypeName: "The kind of record",
+          pieceIdName: "The record's identity",
+          pieceTypeKey:
+            "The kind of record being pointed at, as a stable identifier — for example hrms.staff-member. It is stored on the answer itself, not looked up from the definition.",
+          pieceTypeKeyRequired: "Yes — always, on every answer",
+          pieceId:
+            "The identity of the specific record being pointed at, as an opaque string.",
+          pieceIdRequired: "Yes — always, on every answer",
+          storedNeither:
+            "An identity with no kind of record names a row but no table; a kind of record with no identity names a table but no row. So a value is treated as empty only when both pieces are missing — which is exactly how Currency and Date & Time behave — and half of a reference is refused rather than quietly stored or quietly cleared. If you ever see a save refused for an incomplete reference, one of the two controls was left alone.",
+          storedIdsTitle: "The identity is opaque, and must stay that way",
+          storedIdsContent:
+            "The identity of the target record never travels as a readable database key. It arrives as an encrypted string, and anything reading or writing a reference must send back exactly the string it received — unchanged, uncut, not lower-cased, not checked against any pattern. Alter one character and the product correctly reports the stored reference as malformed, on a reference that was perfectly good a moment earlier. There is nothing in that string for a human to read, and nothing worth trying to read.",
+          storedSymmetryTitle: "The same two names in both directions",
+          storedSymmetryContent:
+            "A reference is written under the same two property names it is read under: entityTypeKey and entityId. There is no second spelling for the way up, and none for the way down. If you are integrating against the values API, send back exactly the field names you were given — inventing a different name for the identity on the way in is not a spelling preference, it is a save that silently carries no pointer at all and is then refused as an incomplete reference.",
+
+          nameTitle: "Why the display name is never stored",
+          nameIntro:
+            "The obvious design is to save the name next to the identity, so a reference can be displayed without asking anybody anything. The product deliberately does not do that, and the reason is a permission boundary rather than a preference about freshness.",
+          nameWhy:
+            "A name saved alongside the pointer would sit inside the record that holds the field, and would therefore be readable by anybody holding permission to view that record. But the name belongs to the target — it is guarded by the permission that protects that kind of record. Snapshotting it hands a name to somebody who was never granted the permission that protects it. That is a permission bypass wearing a performance argument, and no amount of caching makes it a different thing.",
+          nameCost:
+            "So a name is resolved live, on every read, through a call that re-applies the target's own view permission and the target module's own workspace filter every single time. The practical benefit is the one you would want anyway: a name corrected on its own record is corrected everywhere it is referenced, instantly, with nothing to re-run and no stale copies to hunt down.",
+          nameInfoTitle: "What you will notice as a result",
+          nameInfoContent:
+            "Two things, both intentional. A reference field shows a brief loading state while its name is fetched, rather than appearing instantly with text and then correcting itself. And two people looking at the same record can legitimately see different things in the same field: one the staff member's name, the other a note that they may see there is a reference but not who it points at. Neither is a fault.",
+
+          pinTitle: "Pinning a target type on the definition",
+          pinIntro:
+            "An Entity Reference definition carries one optional setting of its own: Target Entity Type. It answers \"what kind of record may this field point at?\", and it is offered only for Entity Reference — a User Reference field never shows it, because its answer is already fixed.",
+          thState: "State of the setting",
+          thMeans: "What it means",
+          thPickerShows: "What the record form then shows",
+          stateUnpinned: "Not pinned — any allowed type",
+          meansUnpinned:
+            "Every answer may point at any kind of record the person filling it in is allowed to reference, and each answer records which kind it chose. This is the state a brand-new definition starts in, and it stays legal forever.",
+          pickerUnpinned:
+            "Two controls in order: a Record type control, then the record itself. The second is inert until the first is answered, and choosing a type does not move the cursor into the record control — you are left where you are, with the record control now available.",
+          statePinned: "Pinned to one type",
+          meansPinned:
+            "Every new answer must point at a record of that one kind. An answer of any other kind is refused with a message naming both what was expected and what arrived.",
+          pickerPinned: "One control: the record. There is no type control at all.",
+          stateUserRef: "A User Reference field",
+          meansUserRef:
+            "Permanently equivalent to being pinned to user accounts, decided by the platform. An attempt to pin it to anything else is refused at definition time, not at save time.",
+          pickerUserRef: "One control: the user account. There is never a type control.",
+          pinRepoint:
+            "The setting can be changed later, including on a field that already holds answers, and this is deliberate — refusing would mean a mis-pinned field could never be corrected without first destroying real data. What happens is worth stating exactly, because both halves matter: every answer already stored is left completely alone and still reads back correctly, because each answer carries its own kind of record. The next save of a record whose answer is of the old kind is refused, until somebody picks that answer again.",
+          pinRepointDetail:
+            "The edit form says so before you save it. Read that line rather than assuming either extreme — re-pointing is neither free nor destructive.",
+          pinWarnTitle: "One consequence of re-pointing to check for",
+          pinWarnContent:
+            "An unpinned field that already holds an answer offers no type control while that answer is in place, because the answer's own kind of record is used instead. Re-picking is therefore confined to the kind of record it already points at. Clear the field and the type control comes back. This is a real limit rather than a defect, and it is the one shape of this feature most likely to be reported as one.",
+
+          targetsTitle: "What can currently be referenced",
+          targetsIntro:
+            "The list is not \"every record type in the product\". A kind of record can only be referenced when the module that owns it supplies a way to search and resolve its records — reading its own data through its own screens' rules, so a picker can never be broader than the screen it mirrors. Three kinds of record supply that today.",
+          thType: "Record type",
+          thKey: "Identifier",
+          thOwner: "Owned by",
+          thShows: "What the picker shows for each row",
+          typeStaff: "Staff Member",
+          keyStaff: "hrms.staff-member",
+          ownerStaff: "The staff management module",
+          showsStaff:
+            "The person's name, with their job title beneath it as the disambiguator. Deliberately the job title rather than an email address: a picker needs to tell two people with the same name apart, and does not need their contact details to do it.",
+          typeUser: "User",
+          keyUser: "identity.user",
+          ownerUser: "The identity module",
+          showsUser:
+            "The account holder's name, with the username beneath it. An account whose sign-in is currently locked out is shown as inactive but stays selectable.",
+          typePerson: "Party Person",
+          keyPerson: "party.person",
+          ownerPerson: "The party and relationship module",
+          showsPerson:
+            "The person's name only. The owning module supplies no second line at all, having judged that anything it could add would be personal data a picker does not need.",
+          targetsRefused:
+            "Anything else is refused rather than answered with an empty list, and the difference is the whole point: an empty list looks like a normal result and would tell an administrator \"there are no staff members\", which is a false statement wearing the appearance of a correct one. A kind of record the platform cannot answer for produces a clear refusal instead, which the record form renders as a sentence saying this kind of record is not available in this installation.",
+          targetsEmpty:
+            "And a genuinely empty list of available types is itself a legitimate answer, not a failure. It means \"there is nothing you may point a reference at\", which happens for two quite different reasons: the modules owning those records may not be part of this installation, or you may not hold view access to any of them. The product names both possibilities without claiming either, because only one of them is fixed by asking for permissions.",
+          targetsWhyNot:
+            "Three kinds of record that look as though they belong on that list and are excluded on purpose:",
+          targetsWhyNotAdmin:
+            "Administrator records. An administrator can belong to no workspace at all — a platform administrator has none — so a pointer at one could reach outside every workspace boundary in the product. That is the one property a reference target must never have, and it is why a User Reference field refuses an administrator outright rather than merely omitting them from a list.",
+          targetsWhyNotGroup:
+            "User groups. Perfectly safe, and simply not a person. A field typed User Reference that resolved to a group would be lying about what it holds.",
+          targetsWhyNotTheme:
+            "Shared platform catalogue rows such as login themes. They belong to no workspace by design, so they fail the same test administrator records fail, and they are not people either.",
+          targetsInfoTitle: "The list you see is the list you may use",
+          targetsInfoContent:
+            "The available types are filtered before they reach you: registered, answerable by this installation, and permitted for you. Every entry you are offered will work when you use it, and nothing you are offered will refuse you on the next click. That is why the list is fetched when you open the control rather than when the form loads — a record form with several reference fields nobody touches asks nothing of the other modules at all.",
+
+          tenantTitle: "Workspace and platform rules",
+          tenantIntro:
+            "References cross a module boundary, which makes the workspace boundary the thing to be precise about. Five rules, all of them enforced rather than advisory.",
+          tenant1:
+            "Everything is workspace-guarded. Both searching for a record and resolving one you already hold read through the owning module's own repository, so the same workspace filter and the same deleted-record filter apply that apply on that module's own screens. You can only point at records your workspace can already see.",
+          tenant2:
+            "Holding an identity is not a permission. A reference is re-authorised on every single read: the target's own view permission is required again, every time, and the fact that the pointer is already stored counts for nothing.",
+          tenant3:
+            "Another workspace's record and a deleted record are one indistinguishable answer, deliberately. If they were told apart, somebody could test identities one at a time to learn what exists in a workspace they cannot see. \"You may not see this kind of record\" is told apart from \"this record is gone\", because those two have opposite fixes and neither reveals anything.",
+          tenant4:
+            "Platform-level records belong to platform administrators. A custom field created at platform level is inherited by every workspace and can only be created, edited or deleted by a platform administrator — including the pinned target type on a platform-level reference field, which no workspace can change.",
+          tenant5:
+            "Nobody may assign an administrator outside their own workspace. In practice the product goes further than the rule requires: an administrator record cannot be pointed at by a reference field at all, in your own workspace or any other, precisely because an administrator may sit outside every workspace.",
+          tenantWarnTitle: "One thing this does not do",
+          tenantWarnContent:
+            "A reference is as strict as the target's own list screen, and no stricter. If a kind of record is visible to a role through its own screen, it is selectable through a picker for that same role — narrower rules than \"this whole workspace\" are not applied on top. So do not treat a reference picker as a way to hide records that the target module itself already shows.",
+
+          exampleTitle: "A worked example: an administrator record pointing at a staff member",
+          exampleIntro:
+            "The case these types were built for. Your administrators are also employees, and you want each administrator record to say which staff record is the same person — recorded once, correctly, and never retyped.",
+          ex1Title: "Decide which type you need",
+          ex1Content:
+            "The answer is a staff member, not a login account, so this is an Entity Reference. If the question had been \"who reviewed this?\", the answer would be an account and User Reference would be the right choice — and the value type is permanent, so it is worth the moment's thought.",
+          ex2Title: "Define the field",
+          ex2Content:
+            "On the Custom Fields screen choose Add, pick the administrator record type, set the key to staff_record, the English label to Staff record, and the value type to Entity Reference. A Target Entity Type control appears as soon as you choose that value type.",
+          ex3Title: "Pin the target to Staff Member",
+          ex3Content:
+            "Set Target Entity Type to Staff Member. That is what turns the field from \"a pointer at something\" into \"a pointer at a staff member\", and it is what lets the record form show one control instead of two. Leave it as Not pinned only if you genuinely want different administrators pointing at different kinds of record.",
+          ex4Title: "Fill it in on a record",
+          ex4Content:
+            "Open any administrator record. The Custom Fields section now shows a Staff record control with a placeholder inviting you to select a record. Open it, type part of a name, and the list narrows to matching staff members with their job titles beneath. Pick one and save the record.",
+          ex5Title: "Read it back, and notice what happened",
+          ex5Content:
+            "Reopen the record. The field shows the staff member's name — fetched just now, not remembered from your save. Change that person's surname on their own staff record, come back, and the reference shows the new surname without anybody touching the administrator record.",
+          ex6Title: "Check the two behaviours that matter",
+          ex6Content:
+            "Sign in as somebody who may edit administrators but may not view staff: the field is present, it says the stored value is fine and that they may not see the name, and they cannot overwrite it. Then delete the staff member: the reference clears itself, the administrator record keeps its value row and its history, and the field reads as empty rather than as a broken pointer.",
+
+          userExampleTitle: "A worked example: a Reviewed by field",
+          userExampleIntro:
+            "The User Reference case, which is shorter precisely because there is nothing to configure.",
+          ux1Title: "Define the field",
+          ux1Content:
+            "Add a field on the record type you want, set the key to reviewed_by, the label to Reviewed by, and the value type to User Reference. No target control appears, and that is correct — the answer can only ever be a user account.",
+          ux2Title: "Fill it in",
+          ux2Content:
+            "Open a record of that type. The Reviewed by control offers a searchable list of user accounts, each with its username beneath the name. Accounts that are currently locked out are marked inactive and remain selectable, because they are legitimate answers for something that already happened.",
+          ux3Title: "Confirm what it stores",
+          ux3Content:
+            "The answer records the user account type and that account's identity — the same two pieces an Entity Reference stores, so a field that says User Reference is telling you what it holds rather than just what it was configured as.",
+          ux4Title: "Confirm what it refuses",
+          ux4Content:
+            "There is no way, from this form or from a request that bypasses it, to make this field point at an administrator, a user group or a platform catalogue row. The refusal comes with a message naming what is allowed, and it is refused at definition time as well as at save time.",
+
+          notTitle: "What reference fields are not",
+          notIntro:
+            "Reasonable expectations that these types deliberately do not meet. None of these is a fault to report.",
+          not1:
+            "They are not a relationship the product understands. Nothing is calculated from a reference, nothing is triggered by it, and no screen gains a \"records pointing at this one\" list because a reference exists.",
+          not2:
+            "They are not a way to hide records. A picker shows exactly what the target module's own screens show to that same person. If somebody should not see a kind of record, that is a permission on that kind of record.",
+          not3:
+            "They do not store a name, ever, and there is no setting to make them. A field that must survive the target being deleted with the old name still readable is a Text field, and accepting that it will drift is the price of that choice.",
+          not4:
+            "They are not many-to-many. One reference field holds one pointer. There is no multi-value reference type, and Multi-Select cannot be pointed at records — its answers are text you authored.",
+          not5:
+            "They cannot point at every kind of record. Only the kinds whose owning module supplies a searchable, permission-checked list can be referenced, and the rest are refused rather than silently offered.",
+          not6:
+            "They are not carried in the definitions spreadsheet export. That file has eighteen columns and a pinned target type is not one of them, so an exported definition does not record what its field points at.",
+
+          nextTitle: "Where to go next",
+          nextIntro:
+            "The mechanics of looking a reference up — the three lookups, every failure state, and what to do about each — are on their own page.",
+          thPage: "Page",
+          thCovers: "What it covers",
+          pageLookups: "Reference Lookups",
+          coversLookups:
+            "The three lookups behind a reference, what every answer and every refusal means, the five failure states and whose problem each one is, delete behaviour, and how the picker paginates.",
+          pageValueTypes: "Value Types",
+          coversValueTypes:
+            "All nineteen value types side by side, including these two, with worked example inputs and the error code each rejection returns.",
+          pageDefining: "Defining a Field",
+          coversDefining:
+            "The definition form control by control, including the Target Entity Type control and every rejection it can produce.",
+        },
+
+        // ═══════════════════════════════════════════════════
+        //  Reference Lookups
+        // ═══════════════════════════════════════════════════
+        referenceLookups: {
+          title: "Reference Lookups",
+          description:
+            "How a reference is looked up: the three lookups behind a reference field, what every answer means, the five failure states and whose problem each one is, what happens when the referenced record is deleted, and how the picker behaves.",
+          intro:
+            "A reference field is drawn by three separate lookups: one asks which kinds of record you may point at, one searches a chosen kind, and one resolves a pointer you already hold back to a name. This page covers all three, every answer each one can give, and — the part worth reading before anything goes wrong — what each different kind of failure means and who can fix it.",
+          whyThreeTitle: "Why the name arrives separately",
+          whyThreeContent:
+            "The record's own values are read in one call; each reference's name is then resolved in its own. That is not an oversight. Resolving a name is guarded by the target's own permission, so it has to be its own permission-checked read — and doing it inline would mean one cross-module query per reference per row, which on a list of records is a query per cell.",
+
+          endpointsTitle: "The three lookups",
+          endpointsIntro:
+            "All three live under one address of their own rather than alongside the other custom-fields calls, and that is deliberate: these read other modules' data, so they are guarded by the target kind of record's own view permission and not by the permission to administer field definitions. Somebody who administers custom fields but may not read staff is refused here, correctly.",
+          endpointsTypes: "Lists the kinds of record this caller may point at right now.",
+          endpointsSearch: "Returns one page of selectable records of one kind, optionally filtered.",
+          endpointsResolve: "Resolves one pointer the caller already holds back to its record.",
+          endpointsPermission:
+            "So there is no single permission that opens this feature. All three require you to be signed in as an administrator, and each then requires the view permission for the kind of record in the address: listing staff members needs the staff view permission, listing user accounts needs the one for user accounts. The consequence to expect is that the same person can be admitted by one of these lookups and refused by the next, on the same screen, and both answers are correct.",
+
+          typesTitle: "Listing what you may point at",
+          typesWhat:
+            "This answers with the filtered set, not the full catalogue: registered, answerable by this installation, and permitted for you. Every entry it returns is usable immediately, which is the whole reason it exists — a control that offered every registered kind of record would be offering choices that refuse you on the next click, and the alternative of trying each one in turn is a fistful of denials per page load.",
+          typesEmpty:
+            "An empty list is a success, not a failure. It means \"you may not point a reference at anything\", and it is rendered as an explanatory sentence inside the control rather than as an error or as a silently empty dropdown. It has two possible causes and the product names both without asserting either: the owning modules may not be part of this installation, or you may not hold view access to them. Only the second is fixed by asking for permissions, which is why copy naming one cause would send somebody to do something that cannot work.",
+          typesShape:
+            "Each entry carries its stable identifier, the module that owns it, and a display name in English and Arabic. Those names come from the platform's own registry rather than from this application's translations, so they are shown as supplied and never looked up as translation keys.",
+
+          searchTitle: "Searching one kind of record",
+          searchWhat:
+            "One page of selectable records, in a stable order, with an optional free-text filter. Which columns the filter matches is the owning module's choice rather than a promise made here.",
+          searchPaging:
+            "A page holds twenty rows by default. Asking for more than a hundred is silently capped rather than refused, and the order is stable across calls on purpose — an unstable order makes page two return rows you already saw on page one. The control loads the first page, then accumulates further pages behind a Load more control rather than replacing what you were looking at.",
+          searchRows:
+            "Each row carries a display name that is never blank, an optional second line to tell two similarly named records apart, and a flag saying whether the record is dormant. Deleted records are not returned at all, so that flag never means deleted — a dormant row is present, selectable, and a perfectly valid answer.",
+          searchTyping:
+            "Typing is debounced before it becomes a request. Without that, an eight-character name would fire eight cross-module queries, seven of whose answers are thrown away — and the one that renders would be whichever returned last rather than the one matching what you typed.",
+
+          resolveTitle: "Resolving a pointer you already hold",
+          resolveWhat:
+            "The read half of the feature, and the only way a stored reference ever becomes a name on screen. It takes the kind of record and the identity, and returns exactly the same shape a picker row has — so a reference loaded from the database and a record you just picked are drawn from one contract rather than two.",
+          resolveGates:
+            "It applies every gate the search applies: the kind of record must be registered, you must hold that kind's own view permission, this installation must be able to answer for it, and the record is read through the owning module's workspace-filtered and deleted-record-filtered repository. Nothing about this being a display-only read relaxes any of them.",
+          resolveNoName:
+            "It is also the only place a name comes from. Nothing about a stored reference includes a name, by design, so a field that cannot resolve shows a specific sentence about why — never a name it remembered from earlier.",
+
+          statusesTitle: "What each answer means",
+          statusesIntro:
+            "The answers are deliberately distinguishable from each other, with exactly one merge preserved. Read this table as the map from what the product tells you to what you should do about it.",
+          thAnswer: "Answer",
+          thWhatItMeans: "What it means",
+          thWhoFixes: "Whose problem it is",
+          ansOk: "Success",
+          ansOkMeans:
+            "The record resolved. You get its current name, its optional second line, and whether it is dormant.",
+          ansOkFixes: "Nobody — this is the normal case.",
+          ansForbidden: "Not permitted",
+          ansForbiddenMeans:
+            "You do not hold the view permission for that kind of record. This says nothing whatsoever about the record, or about whether it still exists.",
+          ansForbiddenFixes:
+            "Whoever administers roles. It is a fact about your own access, and you could already have learnt it by reading your own permissions.",
+          ansNotFound: "Not found",
+          ansNotFoundMeans:
+            "The record does not resolve. It was deleted, or it belongs to a workspace you cannot see — merged into one answer on purpose so this lookup cannot be used to test what exists elsewhere.",
+          ansNotFoundFixes:
+            "Whoever owns the data. Pick a different record, or clear the field.",
+          ansUnknownType: "Unknown record type",
+          ansUnknownTypeMeans:
+            "The kind of record named is not registered at all. This describes the installation, not any record — it usually means a field was pinned to a kind of record that has since been retired.",
+          ansUnknownTypeFixes: "Whoever administers the deployment.",
+          ansUnavailable: "Module not available",
+          ansUnavailableMeans:
+            "The kind of record is registered but the module that owns it is not part of this installation, so nothing here can answer for it. No permission grant will ever change this.",
+          ansUnavailableFixes: "Whoever administers the deployment.",
+          ansInvalidId: "Invalid identity",
+          ansInvalidIdMeans:
+            "The identity sent could not be read at all. Either it was altered on its way through something, or a stored value predates a change and can no longer be interpreted.",
+          ansInvalidIdFixes:
+            "Whoever is filling the record in — pick the record again. This one is replaced, never re-pointed.",
+          statusesInfoTitle: "What the answers deliberately do not tell you",
+          statusesInfoContent:
+            "\"Deleted\" and \"in a workspace you cannot see\" are one answer and always will be. Splitting them would let somebody probe identities one at a time to learn what exists in another workspace. Everything else is distinguishable, because everything else describes either your own access or this installation — neither of which is a secret from you.",
+
+          failuresTitle: "The five failure states, and why they read differently",
+          failuresIntro:
+            "A reference field can fail to display for five distinct reasons. They are five different sentences on screen because they are five different problems with five different remedies, and this is the single most important table on this page.",
+          thState: "What has happened",
+          thOnScreen: "What the field says and does",
+          thYouDo: "What to do",
+          stNoPermission: "You may not view that kind of record",
+          scrNoPermission:
+            "The field states that the stored value is fine but that its name cannot be shown to you, and becomes read-only — readable, with no picker. It is deliberately not blanked, because blanking it would invite somebody with no visibility into the target to overwrite a perfectly good reference.",
+          doNoPermission:
+            "Nothing about the data. Ask whoever administers roles for view access to that kind of record.",
+          stGone: "The referenced record no longer exists",
+          scrGone:
+            "The field states that the record cannot be found, offers both possible reasons — deleted, or in an organisation you cannot see — and claims neither. It stays editable.",
+          doGone: "Pick a different record, or clear the field. Re-picking is the fix.",
+          stMalformed: "The stored reference is malformed",
+          scrMalformed:
+            "The field states that what is stored cannot be read at all, stays editable, and additionally marks itself as invalid — because unlike a dangling pointer this is not a value the product ever legitimately produced.",
+          doMalformed:
+            "Pick the record again. This one has to be replaced rather than re-pointed, and it is worth reporting if you did not cause it.",
+          stTransient: "The lookup could not run just now",
+          scrTransient:
+            "The field states that it could not load the referenced record at the moment and that the reference itself is fine, and offers a Try again control.",
+          doTransient:
+            "Try again. Emphatically do not clear the field — the stored value is good, and clearing it is the one action that turns a passing failure into real data loss.",
+          stTypeUnavailable: "This installation cannot answer for that kind of record",
+          scrTypeUnavailable:
+            "The field states that this kind of record is not available in this installation, and offers no Try again control — because retrying will refuse identically every time.",
+          doTypeUnavailable:
+            "Ask whoever administers the deployment which kinds of record this installation can use. This is an installation matter, not a permission one.",
+          greyDashTitle: "Why this is not one grey dash",
+          greyDashContent:
+            "Every one of the five could be rendered as an empty field, and the result would be a pointer at a deleted record sitting unnoticed for a year — indistinguishable from a field nobody ever filled in, and indistinguishable from a colleague simply not having permission. Merging them is not a cosmetic simplification; it deletes the only information that says whose problem it is. If you are ever tempted to make these read the same, this is the paragraph that says why not.",
+          emptyVsFailedTitle: "An empty field is a sixth thing entirely",
+          emptyVsFailedContent:
+            "A reference that was never filled in reads as empty, and that is a different fact from all five above. This is why a populated reference whose target is gone is never reported as empty: an operator looking at a blank cell must be able to tell \"nobody answered this\" from \"the answer points at something that is no longer there\".",
+
+          saveTitle: "What is checked when a reference is saved",
+          saveIntro:
+            "Every reference save runs the same checks in the same order, and each one fails with its own message rather than a generic \"invalid reference\". Knowing the order explains every refusal you can hit.",
+          save1:
+            "Both pieces present. A submission missing either the kind of record or the identity is refused as an incomplete reference — never treated as an empty field, because half a reference means somebody started answering and stopped.",
+          save2:
+            "The kind of record is registered. An unregistered identifier has no permission behind it, so there would be nothing for the later checks to check against. Refused, naming the identifier.",
+          save3:
+            "The kind of record is allowed for this value type. Always true for Entity Reference; for User Reference this is the fixed platform allowlist, and the refusal names what is allowed rather than only that your choice was not.",
+          save4:
+            "The kind of record agrees with the definition's pin, if there is one. Refused naming both what was expected and what arrived. An unpinned definition skips this check entirely — unpinned means \"any allowed kind\", and must never be read as \"nothing configured, therefore nothing valid\".",
+          save5:
+            "The identity can be read. A stale or altered identity is refused cleanly as an invalid identity, on that one field, rather than failing the whole save with an unexplained error.",
+          save6:
+            "You could read that record right now. This is the check that makes everything else safe, and it is deliberately a single flat refusal with no detail — see below.",
+          saveGate:
+            "That last check holds you to the target kind of record's own view permission and resolves the record through the owning module's workspace-filtered repository. Without it the feature would be an extraction tool rather than a reference: somebody who may edit an administrator record but may not read staff could store an arbitrary staff identity and then read the name back through the resolve lookup. Storing a pointer at data is a read of that data, deferred.",
+          saveGateInfoTitle: "Why that one refusal says so little",
+          saveGateInfoContent:
+            "This is the one place in the whole feature where you supply an arbitrary identity, so it is the one place that could be turned into a way of testing what exists in another workspace. It therefore collapses every reason into one refusal. The read side can afford to be specific for the opposite reason: by then, the identity is one this gate already approved.",
+          saveWhatStored:
+            "One detail with a real consequence: the answer stores the kind of record the value actually points at, never the definition's pin. The two are equal at the moment of saving precisely because of the fourth check — but writing the pin instead would silently rewrite the meaning of every stored answer the day somebody re-points the field, which is the one property that keeps an old answer readable.",
+
+          deleteTitle: "When the referenced record is deleted",
+          deleteIntro:
+            "Deleting a record that other records point at is a normal operation and needs no clean-up. The pointers clear themselves.",
+          d1Title: "The record is deleted, in the ordinary way",
+          d1Content:
+            "Somebody deletes the staff member, the user account or the person through that module's own screen, holding that module's own delete permission. Nothing about custom fields is involved yet.",
+          d2Title: "The deletion records that it happened",
+          d2Content:
+            "The delete and the note saying it happened are committed together, in one transaction. Either both happen or neither does, so there is no window in which a record is gone but nothing recorded the fact.",
+          d3Title: "Every pointer at that record is cleared",
+          d3Content:
+            "Both pieces of each affected answer are cleared together, in the same pass. Never one without the other — half a reference is the one state nothing can display and no operator can repair.",
+          d4Title: "The value row survives",
+          d4Content:
+            "Nothing is deleted. Each answer keeps its row, its version, its place in the record's set of answers and its audit trail. Only the pointer goes, which is why the field reads afterwards as genuinely empty rather than as broken.",
+          deleteScope:
+            "The clearing covers both places answers are stored, including the older store still holding pre-migration answers, and it covers deleted answer rows too — a deleted row still holding a stale pointer would hand that stale pointer back to anybody who later restored it.",
+          deleteIdempotent:
+            "Clearing a pointer that is already clear does nothing, deliberately, so the operation is safe to repeat. The record's own snapshots of earlier answers are not swept, and do not need to be: they are short-retention rollback artefacts that are removed on their own schedule and are never a live display path in the meantime.",
+          deleteInfoTitle: "Before the pointer clears, and where it never does",
+          deleteInfoContent:
+            "There is a short window between a deletion and the pointers clearing, and there are kinds of record whose module does not announce its deletions at all. In both cases a reference simply reports honestly that its record cannot be found, which is exactly the second row of the failure table above. Nothing displays a wrong name, and nothing displays an empty field pretending nobody answered.",
+          deleteSoftTitle: "A record that is merely hidden counts as gone",
+          deleteSoftContent:
+            "Most deletions in the product hide the record rather than physically removing it. A hidden record is already unreachable through the owning module's own screens, so a reference correctly treats it as gone — a record an administrator cannot see is not a record a reference may resolve to.",
+
+          pickerTitle: "How the picker behaves",
+          pickerIntro:
+            "Details of the control itself that are easier to read once than to work out from its behaviour.",
+          thBehaviour: "Behaviour",
+          thWhy: "Why it is that way",
+          pkLazy: "Nothing is fetched until you open the control.",
+          pkLazyWhy:
+            "A record form can carry several reference fields. One nobody touches should not query another module at all, and the answers are cached afterwards, so re-opening the control costs nothing.",
+          pkTwoControls: "An unpinned field shows two controls, and neither steals focus from the other.",
+          pkTwoControlsWhy:
+            "Choosing a kind of record leaves you on that control with the record control now available one step away. Automatically opening the record picker would pull focus out from under somebody still reading what they just chose.",
+          pkAccumulate: "Further pages add to the list rather than replacing it.",
+          pkAccumulateWhy:
+            "A search over a whole workspace's staff table needs paging, and a list that replaced itself would lose the row you scrolled past on your way to Load more.",
+          pkDormant: "A dormant record is marked, not hidden.",
+          pkDormantWhy:
+            "It still exists and is still a valid answer — a departed staff member kept for historical assignments is exactly the case. Treating it as invalid would make historical references unsavable.",
+          pkNoResults: "An unmatched filter and an empty list read differently.",
+          pkNoResultsWhy:
+            "\"Your filter matched nothing\" is about what you typed. \"There is nothing you may point at\" is about your access. One sentence for both would tell somebody who mistyped that they have no permissions.",
+          pkNoRetry: "Two of the failure states offer no Try again control.",
+          pkNoRetryWhy:
+            "A permission refusal and an unavailable module refuse identically every time. A button inviting you to hammer them would be worse than no button. Only a genuine transport failure gets a retry, because that is the one a retry fixes.",
+          pkViewMode: "In view mode the control is disabled rather than merely unclickable.",
+          pkViewModeWhy:
+            "A reference picker is a picker, so it follows the same convention every other picker on these forms follows. Its own read-only state, used when you may not view the target's name, is a different thing and looks different.",
+          pkNoLabelTrick: "The control names itself for assistive technology.",
+          pkNoLabelTrickWhy:
+            "Its visible label is real, clickable wiring, but the accessible name is set on the control directly — a label alone cannot name a control of this shape. Two reference fields on one form therefore announce distinctly rather than both announcing as \"Record type\".",
+
+          diagnoseTitle: "Diagnosing a reference that will not display",
+          diagnoseIntro:
+            "In order. Each step rules out one of the five states above, and the first four need no access you do not already have.",
+          dg1Title: "Read the sentence in the field",
+          dg1Content:
+            "The five states never share wording, so the field has already told you which one you are in. This step is listed first because it is the one most often skipped.",
+          dg2Title: "If it offers Try again, use it",
+          dg2Content:
+            "Only the transient failure offers one. If the field resolves on the second attempt, nothing was ever wrong with the stored value and there is nothing to fix.",
+          dg3Title: "Check the same field on another record",
+          dg3Content:
+            "If every reference of that kind fails identically, it is your permissions or the installation — not the data. If only this one fails, the record it points at is the thing to look at.",
+          dg4Title: "Have somebody with full access open the same record",
+          dg4Content:
+            "If they see a name and you do not, it is a permission on that kind of record. If they see the same failure, it is the data or the installation.",
+          dg5Title: "Only then decide whether to re-pick or clear",
+          dg5Content:
+            "Re-pick when the record is genuinely gone or the stored value is malformed. Clear only when the field should be empty. Never clear a field that reported a transient failure — that is the one action that converts somebody else's outage into your data loss.",
+
+          limitsTitle: "Limits and deliberate gaps",
+          limitsIntro:
+            "Stated so nobody spends an afternoon looking for a setting that is not there.",
+          thLimit: "Limit",
+          thDetail: "Detail",
+          limPageSize: "Records per page in the picker",
+          limPageSizeDetail:
+            "Twenty by default. A request for more than a hundred is capped rather than refused, and the cap is applied twice on the way in.",
+          limDebounce: "Delay between typing and searching",
+          limDebounceDetail:
+            "A fixed short pause, the same one every server-backed picker in the product uses. Not configurable.",
+          limNoName: "No stored display name",
+          limNoNameDetail:
+            "There is no setting anywhere to snapshot a name alongside a pointer, and there will not be one — it would hand a name guarded by one permission to anybody holding another.",
+          limNoBacklinks: "No \"what points at this record\" view",
+          limNoBacklinksDetail:
+            "Nothing lists the references pointing at a given record. Deleting a record does not warn you how many pointers it is about to clear.",
+          limNoExport: "Not in the definitions export",
+          limNoExportDetail:
+            "The eighteen-column definitions spreadsheet has no column for a pinned target type, so an exported definition does not record what its field points at.",
+          limNoMulti: "One pointer per field",
+          limNoMultiDetail:
+            "There is no multi-value reference type. Two answers means two fields.",
+          limNoTypeFilter: "The picker cannot be narrowed by anything but text",
+          limNoTypeFilterDetail:
+            "Which columns the free-text filter matches is the owning module's choice, and there are no additional filters — no \"active only\", no filter by group.",
+          limNoAdminTarget: "Administrator records cannot be referenced",
+          limNoAdminTargetDetail:
+            "Not from the definition form and not from a request that bypasses it. An administrator may sit outside every workspace, which is the one property a reference target must not have.",
+
+          nextTitle: "Where to go next",
+          nextIntro: "The concepts behind these lookups are on the Reference Fields page.",
+          thPage: "Page",
+          thCovers: "What it covers",
+          pageReferences: "Reference Fields",
+          coversReferences:
+            "What the two reference types are, which to use, what is stored, why no name is kept, pinning a target type, what may be referenced, and the workspace rules.",
+          pageSecurity: "Field-Level Security",
+          coversSecurity:
+            "The separate mechanism for hiding a whole field from a role or user group — which is a different thing from not being allowed to read a reference's target.",
+          pageLimits: "Limits and Behaviours",
+          coversLimits:
+            "Every fixed cap and deliberate limitation across the whole feature, references included.",
         },
 
         // ═══════════════════════════════════════════════════
@@ -519,7 +1115,7 @@ export const en = {
             "The Arabic label. Optional — an Arabic reader sees the English label when this is blank.",
           ctlAlways: "Always.",
           ctlValueTypeDoes:
-            "Chooses one of the seventeen types, deciding the control, the validation and the storage. Selecting it is what reveals the Options box or the Validator dropdown.",
+            "Chooses one of the nineteen types, deciding the control, the validation and the storage. Selecting it is what reveals the Options box, the Validator dropdown or the Target Entity Type dropdown.",
           ctlValueTypeWhen: "On create only. Permanent after saving.",
           ctlPlaceholderEnDoes:
             "Optional greyed-out hint shown inside the empty input, in English — for example \"e.g. Enter your shirt size\".",
@@ -532,11 +1128,15 @@ export const en = {
           ctlValidatorDoes:
             "Attaches one of the 13 built-in format checks. Defaults to no validator. See the Validators page.",
           ctlValidatorWhen:
-            "Only when the value type is Text. It is never shown for the other sixteen types.",
+            "Only when the value type is Text. It is never shown for the other eighteen types.",
           ctlValidatorParamDoes:
             "Supplies the setting a parameterised check needs — a country dropdown for Postal Code, free text for the other five.",
           ctlValidatorParamWhen:
             "Only once one of the six parameterised validators is chosen.",
+          ctlReferenceTargetDoes:
+            "Pins the field to one kind of record, so every value must point at a record of that kind. Its first option, Not pinned — any allowed type, is a real and permanent choice rather than a placeholder: leave it there and each value names its own kind of record instead. It is the only way to clear a pin, so it stays available even when the list of kinds is empty or fails to load, and the control is never disabled.",
+          ctlReferenceTargetWhen:
+            "Only when the value type is Entity Reference. A User Reference field never shows it, because its one legal target is fixed by the platform and there is nothing to choose. Unlike the three permanent settings, this one can be changed later — read the warning on the edit form before you do.",
           ctlFieldGroupDoes:
             "Puts the field under one of the record type's field groups, or under no group. Changing the record type clears the choice.",
           ctlFieldGroupWhen:
@@ -567,13 +1167,13 @@ export const en = {
             "Choose the kind of record the field belongs to. If your record type is marked API only, stop and reconsider — the field will save, but nothing in the interface will render it.",
           s3Title: "Choose the value type",
           s3Content:
-            "Pick from the seventeen. This is the decision that cannot be undone later, and it is also what makes the Options box or the Validator dropdown appear further down the form.",
+            "Pick from the nineteen. This is the decision that cannot be undone later, and it is also what makes the Options box, the Validator dropdown or the Target Entity Type dropdown appear further down the form.",
           s4Title: "Name the field",
           s4Content:
             "Enter the English label, an Arabic label if you have one, and the key. The key is permanent, so pick something you will still recognise in an error message a year from now.",
           s5Title: "Fill in the type's own settings",
           s5Content:
-            "For Select and MultiSelect, add the options. For Text, choose a validator if you want one and supply its setting. Add placeholders if the control takes them.",
+            "For Select and MultiSelect, add the options. For Text, choose a validator if you want one and supply its setting. For Entity Reference, decide whether to pin a Target Entity Type. Add placeholders if the control takes them.",
           s6Title: "Set behaviour and position",
           s6Content:
             "Turn Required on or off, set the Sort Order, and choose a Field Group if you use them. A group only offers itself if it belongs to the record type you chose.",
@@ -646,6 +1246,12 @@ export const en = {
           rejGroupWrongType: "A field group belonging to a different record type",
           rejGroupWrongTypeMsg:
             "Refused: the selected field group belongs to a different entity type. Changing the record type on the form clears the group choice for exactly this reason.",
+          rejReferenceTargetUnknown: "Pinning a target that is not a registered record type",
+          rejReferenceTargetUnknownMsg:
+            "Refused, naming the identifier: it is not a registered entity type. Only reachable by bypassing the dropdown, which offers nothing unregistered.",
+          rejReferenceTargetNotAllowed: "Pinning a User Reference field to anything but a user account",
+          rejReferenceTargetNotAllowedMsg:
+            "Refused, naming the value type and listing what it does allow. The dropdown is not shown for that type at all, so this is the server refusing what the form already declined to offer.",
           rejGlobalNotSuperAdmin: "Creating a global field without being a platform Super Admin",
           rejGlobalNotSuperAdminMsg: "Refused: only a platform Super Admin can create a global custom field.",
           rejQuota: "Passing your plan's field limit",
@@ -663,6 +1269,8 @@ export const en = {
           editable5: "Active, which retires the field without touching its stored answers",
           editable6: "The options list — though renaming an option changes what existing records display",
           editable7: "The validator and its setting — though this never re-checks answers already saved",
+          editable8:
+            "The Target Entity Type on an Entity Reference field — answers already stored keep working, and the next save of one of the old kind is refused until it is picked again",
           permanentTitle: "Permanent once saved",
           permanent1: "The record type",
           permanent2: "The key",
@@ -1201,7 +1809,7 @@ export const en = {
 
           limitsTitle: "What validators do not do",
           limit1:
-            "They only ever attach to a Text field. There is no way to put a format check on any of the other sixteen types.",
+            "They only ever attach to a Text field. There is no way to put a format check on any of the other eighteen types.",
           limit2:
             "They never re-check values that were already saved. Attaching a validator to a field that holds answers leaves those answers exactly as they are, including ones that would now fail, until somebody re-enters and saves them.",
           limit3:
@@ -1461,7 +2069,7 @@ export const en = {
           colKey: "The field's machine key.",
           colLabelEn: "The English label.",
           colLabelAr: "The Arabic label, blank if none was set.",
-          colValueType: "One of the seventeen value types.",
+          colValueType: "One of the nineteen value types.",
           colRequired: "Whether the field is required.",
           colActive: "Whether the field is still offered on forms.",
           colSortOrder: "The field's position among the record type's custom fields.",
@@ -1481,16 +2089,16 @@ export const en = {
           exportSafetyTitle: "Labels that look like formulas stay text",
           exportSafetyContent:
             "Every cell is written as inert text, never as a formula. A field labelled =SUM(A1) arrives in the file as the literal characters, not as a calculation — and the same holds for a label beginning with +, -, @, or a tab followed by =. This is categorical rather than a filter of known cases.",
-          exportLimitTitle: "Two limits on the export",
+          exportLimitTitle: "Three limits on the export",
           exportLimitContent:
-            "It contains definitions and never anybody's answers — there is no values export anywhere in the product. And past 10,000 definitions it refuses outright, telling you to narrow the export to a single record type, rather than handing you a truncated file that looks complete. Fields restricted from you are absent from the file rather than blank.",
+            "It contains definitions and never anybody's answers — there is no values export anywhere in the product. Past 10,000 definitions it refuses outright, telling you to narrow the export to a single record type, rather than handing you a truncated file that looks complete. And the 18 columns above are the whole file: a reference field's pinned Target Entity Type is not one of them, so an exported definition does not record what its field points at. Fields restricted from you are absent from the file rather than blank.",
 
           referenceTitle: "The two reference screens",
           referenceIntro:
             "Both are reached from links in the Custom Fields page header, both are read-only, and both are gated behind the same view permission as the Custom Fields screen itself. Neither has a sidebar entry of its own, which is deliberate.",
           valueTypesScreenTitle: "Value Types",
           valueTypesScreenIntro:
-            "A table of all seventeen value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer \"what types exist\" without opening a definition form. Text is the only row showing validator support.",
+            "A table of all nineteen value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer \"what types exist\" without opening a definition form. Text is the only row showing validator support, and the two reference types show no options list of their own — the records they offer come from another module rather than from a list you author.",
           entityTypesScreenTitle: "Entity Types",
           entityTypesScreenIntro:
             "A list of every record type a custom field can be attached to: its display name, its key, and the module that owns it.",
@@ -1525,6 +2133,8 @@ export const en = {
           limPhoneDigits: "Phone digits, after the leading +",
           limCurrencyCode: "Currency code length, uppercase letters",
           limDuration: "Duration upper bound",
+          limReferencePage: "Records per page in a reference picker",
+          limReferencePageMax: "Largest page a reference picker may ask for",
           limGroupReorder: "Field groups per record type in one reorder",
           limExportRows: "Definitions per spreadsheet export",
           limFieldsPerWorkspace: "Custom fields per workspace",
@@ -1607,6 +2217,47 @@ export const en = {
           tOracleBytes: "Long Arabic text can be refused below the stated character cap on one database.",
           tOracleBytesWhy:
             "The 4,000-character Text cap is an exact character count on two of the three supported databases. On the third it is counted in bytes, so multi-byte text — Arabic included — can reach the limit sooner. Use LongText if you are close to the boundary.",
+
+          referencesTitle: "Reference behaviours",
+          fNoStoredName: "A reference never stores the name of the record it points at.",
+          fNoStoredNameWhy:
+            "A stored name would sit inside the record holding the field, and would therefore be readable by anybody who can read that record — while the name itself is guarded by the target's own permission. There is no setting to turn this on, and there will not be one. The compensating benefit is that a name corrected on its own record is corrected everywhere it is referenced, immediately.",
+          fIdOpaque: "The identity of the referenced record is opaque and must be round-tripped unchanged.",
+          fIdOpaqueWhy:
+            "It is another module's key, encrypted for the wire, and nothing about it is meant to be read or reshaped. One altered character and the product correctly reports the stored reference as malformed. Send back exactly the string you received.",
+          fSameNames: "A reference is written under the same two names it is read under.",
+          fSameNamesWhy:
+            "There is no asymmetry between the read shape and the write shape. Anyone integrating against the values API should echo the two property names they were given; inventing a different name for the identity on the way in produces a save carrying no pointer at all, which is then refused as an incomplete reference.",
+          fFiveFailures: "A reference that will not display says which of five things happened.",
+          fFiveFailuresWhy:
+            "No permission, record gone, malformed value, a lookup that failed just now, and a kind of record this installation cannot answer for are five different problems with five different remedies. Rendering them all as one blank field is what leaves a pointer at a deleted record unnoticed for a year.",
+          fMergedAnswers: "\"Deleted\" and \"in a workspace you cannot see\" are one answer.",
+          fMergedAnswersWhy:
+            "Telling them apart would let somebody test identities one at a time to discover what exists in another workspace. \"You may not view this kind of record\" is told apart from both, because it describes the reader's own access and reveals nothing.",
+          fDeleteClears: "Deleting a referenced record clears every pointer at it and keeps every value row.",
+          fDeleteClearsWhy:
+            "Both pieces of each affected answer are cleared together, never one without the other. Nothing is deleted: the answer keeps its row, its version and its audit trail, so the field afterwards reads as genuinely empty rather than as broken.",
+          fNoBacklinks: "Nothing lists the references pointing at a given record.",
+          fNoBacklinksWhy:
+            "There is no \"what points at this?\" view anywhere, and deleting a record does not warn you how many pointers it is about to clear. The clearing is silent because it is safe, not because it is hidden.",
+          fLimitedTargets: "Only three kinds of record can currently be referenced.",
+          fLimitedTargetsWhy:
+            "Staff members, user accounts and party people — the kinds whose owning module supplies a searchable, permission-checked list. Anything else is refused rather than answered with an empty list, because an empty list looks like a correct result and would say \"there are none of these\" when the truth is \"this cannot be asked\".",
+          fNoAdminTarget: "Administrator records cannot be referenced at all.",
+          fNoAdminTargetWhy:
+            "An administrator may belong to no workspace — a platform administrator has none — so a pointer at one could reach past every workspace boundary in the product. A User Reference field refuses one outright, and the definition form never offers one.",
+          fUnpinnedIsLegal: "Leaving a reference field unpinned is a permanent, supported state.",
+          fUnpinnedIsLegalWhy:
+            "It means \"any kind this person may reference\", and each answer records which kind it chose. It must never be read as \"nothing configured, therefore nothing valid\" — the record form handles it by asking for the kind of record first and the record second.",
+          fPopulatedUnpinned: "A populated unpinned field offers no way to change the kind of record.",
+          fPopulatedUnpinnedWhy:
+            "The stored answer's own kind is used for the picker, so re-picking is confined to that kind. Clearing the field brings the type control back. A real limit rather than a defect, and the shape of this feature most likely to be reported as one.",
+          fNotExported: "A pinned target type is not in the definitions export.",
+          fNotExportedWhy:
+            "The spreadsheet has 18 columns and none of them is the target type, so an exported definition does not record what its field points at.",
+          fSingleValue: "A reference field holds exactly one pointer.",
+          fSingleValueWhy:
+            "There is no multi-value reference type. Two answers means two fields, and MultiSelect cannot be pointed at records — its answers are text you authored.",
 
           optionsTitle: "Option behaviours",
           oTextIsValue: "The English option text is the stored answer.",
@@ -1700,7 +2351,7 @@ export const en = {
           absentIntro:
             "Asked often enough to be worth stating plainly. None of these is a fault to report.",
           absent1:
-            "The seventeen value types are the complete set. There is no type for uploading a file or an image, for formatted rich text, or for pointing at another record — that kind of information belongs to the record's own built-in fields and attachments.",
+            "The nineteen value types are the complete set. There is no type for uploading a file or an image, and none for formatted rich text — that kind of information belongs to the record's own built-in fields and attachments. Pointing at another record is the one item that used to be on this list and no longer is: Entity Reference and User Reference do exactly that, and have two pages of their own.",
           absent2:
             "There is no values export. The spreadsheet export covers definitions only.",
           absent3:

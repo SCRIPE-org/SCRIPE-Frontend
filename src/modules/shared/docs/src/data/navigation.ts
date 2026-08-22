@@ -682,6 +682,18 @@ export const navigationData: DocCategoryData[] = [
             order: 0.2,
           },
           {
+            id: "mod-cf-references",
+            titleKey: "modules.customFields.docs.references.title",
+            slug: "modules/custom-fields-references",
+            order: 0.21,
+          },
+          {
+            id: "mod-cf-reference-lookups",
+            titleKey: "modules.customFields.docs.referenceLookups.title",
+            slug: "modules/custom-fields-reference-lookups",
+            order: 0.22,
+          },
+          {
             id: "mod-cf-defining",
             titleKey: "modules.customFields.docs.defining.title",
             slug: "modules/custom-fields-defining",

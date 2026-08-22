@@ -172,13 +172,48 @@ const sections: DocSection[] = [
     ["red", "colorNamed"],
   ]),
 
+  // ─── References ───────────────────────────────────────────
+  // Wave 4's two types (EntityReference = 17, UserReference = 18). Their own
+  // group rather than rows appended to another, because they are the only two
+  // that store a pointer instead of a typed value -- and a short intro before
+  // the blocks, since a table of accepted/refused inputs cannot carry the one
+  // thing a reader has to know first (the name is never stored). The depth
+  // lives on modules/custom-fields-references and its lookups sibling.
+  { type: "heading", level: 2, titleKey: `${K}.groupReferenceTitle`, id: "references" },
+  { type: "paragraph", contentKey: `${K}.referenceGroupIntro` },
+  ...typeBlock("type-entity-reference", "entityReference", [
+    [`${K}.exRefOk`, "refOk"],
+    [`${K}.exRefTypeOnly`, "refIncomplete"],
+    [`${K}.exRefIdOnly`, "refIncompleteToo"],
+    [`${K}.exRefWrongType`, "refMismatch"],
+    [`${K}.exRefUnknownType`, "refUnknownType"],
+    [`${K}.exRefEdited`, "refInvalidId"],
+    [`${K}.exRefNoAccess`, "refForbidden"],
+    [`${K}.exRefBothBlank`, "refEmpty"],
+  ]),
+  ...typeBlock("type-user-reference", "userReference", [
+    [`${K}.exUsrOk`, "usrOk"],
+    [`${K}.exUsrDormant`, "usrDormant"],
+    [`${K}.exUsrAdmin`, "usrAdminRefused"],
+    [`${K}.exUsrGroup`, "usrGroupRefused"],
+    [`${K}.exUsrTheme`, "usrThemeRefused"],
+    [`${K}.exRefBothBlank`, "usrEmpty"],
+  ]),
+
   // ─── Empty values ─────────────────────────────────────────
   { type: "heading", level: 2, titleKey: `${K}.emptyTitle`, id: "empty-values" },
   { type: "paragraph", contentKey: `${K}.emptyIntro` },
   {
     type: "list",
     variant: "unordered",
-    items: [`${K}.empty1`, `${K}.empty2`, `${K}.empty3`, `${K}.empty4`, `${K}.empty5`],
+    items: [
+      `${K}.empty1`,
+      `${K}.empty2`,
+      `${K}.empty3`,
+      `${K}.empty4`,
+      `${K}.empty5`,
+      `${K}.empty6`,
+    ],
   },
   { type: "paragraph", contentKey: `${K}.emptyOutcome` },
   {
@@ -203,6 +238,12 @@ const sections: DocSection[] = [
       ["VALIDATION_MAX_LENGTH", `${K}.codeMaxLength`],
       ["VALIDATION_MIN_LENGTH", `${K}.codeMinLength`],
       ["VALIDATION_UNIQUE", `${K}.codeUnique`],
+      // The three reference-specific refusals. AUTH_FORBIDDEN is a 403 rather
+      // than a 422, which the intro above now says -- it is about the caller's
+      // access to the referenced record, not about the shape of the value.
+      ["ENTITY_UNKNOWN_TYPE", `${K}.codeUnknownEntityType`],
+      ["ENTITY_INVALID_ID", `${K}.codeInvalidId`],
+      ["AUTH_FORBIDDEN", `${K}.codeForbidden`],
     ],
   },
   {
@@ -226,6 +267,10 @@ registerPage({
   category: "modules",
   order: 2,
   sections,
-  relatedSlugs: ["modules/custom-fields", "modules/custom-fields-validators"],
+  relatedSlugs: [
+    "modules/custom-fields",
+    "modules/custom-fields-references",
+    "modules/custom-fields-validators",
+  ],
   lastUpdated: "2026-08-21",
 });

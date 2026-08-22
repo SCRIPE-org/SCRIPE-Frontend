@@ -29,6 +29,8 @@ const sections: DocSection[] = [
       [`${K}.limPhoneDigits`, "8 – 15", `${K}.cfgNo`],
       [`${K}.limCurrencyCode`, "3", `${K}.cfgNo`],
       [`${K}.limDuration`, `${K}.valNoUpperBound`, `${K}.cfgNo`],
+      [`${K}.limReferencePage`, "20", `${K}.cfgNo`],
+      [`${K}.limReferencePageMax`, "100", `${K}.cfgNo`],
       [`${K}.limGroupReorder`, "100", `${K}.cfgNo`],
       [`${K}.limExportRows`, "10,000", `${K}.cfgNo`],
       [`${K}.limFieldsPerWorkspace`, `${K}.valPlanQuota`, `${K}.cfgPlan`],
@@ -73,6 +75,32 @@ const sections: DocSection[] = [
       [`${K}.tPercentStorage`, `${K}.tPercentStorageWhy`],
       [`${K}.tTextNotTrimmed`, `${K}.tTextNotTrimmedWhy`],
       [`${K}.tOracleBytes`, `${K}.tOracleBytesWhy`],
+    ],
+  },
+
+  // ─── References ───────────────────────────────────────────
+  // Wave 4's two reference types. Their own group rather than rows in the
+  // value-type table above, because most of what is worth stating about them is
+  // not about what they accept -- it is about what they deliberately never do
+  // (store a name, list backlinks, reach an administrator record).
+  { type: "heading", level: 2, titleKey: `${K}.referencesTitle`, id: "reference-behaviours" },
+  {
+    type: "table",
+    headers: [`${K}.thBehaviour`, `${K}.thWhy`],
+    rows: [
+      [`${K}.fNoStoredName`, `${K}.fNoStoredNameWhy`],
+      [`${K}.fIdOpaque`, `${K}.fIdOpaqueWhy`],
+      [`${K}.fSameNames`, `${K}.fSameNamesWhy`],
+      [`${K}.fFiveFailures`, `${K}.fFiveFailuresWhy`],
+      [`${K}.fMergedAnswers`, `${K}.fMergedAnswersWhy`],
+      [`${K}.fDeleteClears`, `${K}.fDeleteClearsWhy`],
+      [`${K}.fNoBacklinks`, `${K}.fNoBacklinksWhy`],
+      [`${K}.fLimitedTargets`, `${K}.fLimitedTargetsWhy`],
+      [`${K}.fNoAdminTarget`, `${K}.fNoAdminTargetWhy`],
+      [`${K}.fUnpinnedIsLegal`, `${K}.fUnpinnedIsLegalWhy`],
+      [`${K}.fPopulatedUnpinned`, `${K}.fPopulatedUnpinnedWhy`],
+      [`${K}.fNotExported`, `${K}.fNotExportedWhy`],
+      [`${K}.fSingleValue`, `${K}.fSingleValueWhy`],
     ],
   },
 

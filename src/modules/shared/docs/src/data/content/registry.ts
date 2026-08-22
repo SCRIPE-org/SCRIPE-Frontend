@@ -98,6 +98,8 @@ import "./modules/compliance/compliance-regulation-profiles";
 import "./modules/custom-fields/custom-fields-overview";
 import "./modules/custom-fields/custom-fields";
 import "./modules/custom-fields/custom-fields-value-types";
+import "./modules/custom-fields/custom-fields-references";
+import "./modules/custom-fields/custom-fields-reference-lookups";
 import "./modules/custom-fields/custom-fields-defining";
 import "./modules/custom-fields/custom-fields-field-groups";
 import "./modules/custom-fields/custom-fields-options";
