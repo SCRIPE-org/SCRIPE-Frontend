@@ -176,6 +176,43 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
             className
           )}
           {...wrapperProps}
+          // Blocks the POINTER path when the field is disabled or read-only.
+          //
+          // `<PopoverTrigger asChild disabled={!interactive}>` above looks like
+          // it already does this, and does not. `disabled` on PopoverTrigger is
+          // the NATIVE attribute, meaningful only while Radix renders its
+          // default `Primitive.button`; over this `div` it lands as a
+          // non-standard DOM attribute the browser ignores, and Radix wires no
+          // disabled check of its own into `onOpenToggle`. This is the exact
+          // root cause the doc comment above describes for Enter/Space -- and
+          // the keyboard half was guarded (`if (!interactive) return`) while the
+          // pointer half was not, so a disabled or read-only select opened on
+          // click.
+          //
+          // Nothing shipped was visibly broken, because GenericSelect masks it
+          // in its own `handleOpenChange` (`if (disabled || readOnly) return`).
+          // That mask is the problem: it makes correctness a thing each
+          // consumer must remember, and SelectTrigger is imported directly
+          // outside GenericSelect now. Fixed here so the primitive is right and
+          // a consumer's own guard is redundant belt-and-braces rather than the
+          // only thing standing between a read-only field and an open picker.
+          //
+          // preventDefault is what suppresses the open, not a return: Radix's
+          // trigger is `onClick: composeEventHandlers(props.onClick,
+          // context.onOpenToggle)`, and composeEventHandlers skips its second
+          // handler once the event is defaultPrevented. Slot runs this child
+          // handler before the trigger's own, so the veto lands in time.
+          //
+          // Placed AFTER {...wrapperProps} and calling the consumer's handler
+          // explicitly -- identical discipline to the onKeyDown below, for the
+          // same reason: a caller passing onClick for its own purposes must not
+          // be able to silently delete this guard. The consumer handler still
+          // runs first even when inert, exactly as the keyboard path already
+          // does, so the two paths stay symmetric.
+          onClick={(event) => {
+            wrapperProps?.onClick?.(event);
+            if (!interactive) event.preventDefault();
+          }}
           // Enter / Space / ArrowDown open the panel — see the "load-bearing"
           // paragraph in this component's doc comment for why the platform does
           // not supply them here.

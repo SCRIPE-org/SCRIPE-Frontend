@@ -353,7 +353,31 @@ export class ApiService implements IApiService {
           // Show it inline; do not navigate the user away from what they were doing.
           if (data.errorCode) {
             appLogger.warn(`Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`);
-            return Promise.reject(new Error(data.message || translateCore("errors.auth.forbidden")));
+
+            // Attach the parsed body as `details`, exactly as every other rejection path in this
+            // file does (the generic authenticated path and the public instance's, both below).
+            //
+            // WHY THIS MATTERS AND WHAT BREAKS WITHOUT IT: `IApiService` deliberately exposes no
+            // HTTP status codes to callers, so `error.details` — the `ErrorResponse` body, carrying
+            // both `statusCode` and `errorCode` — is the ONLY machine-readable classification a
+            // caller ever gets. Rejecting with a bare `new Error(message)` here left the localized
+            // server message as the sole signal, and a caller keying on a message works in English
+            // and silently stops working in Arabic. So every structured business-rule 403 arrived
+            // indistinguishable from an unclassifiable failure, and any caller wanting to branch on
+            // one had nothing to branch on. Concretely, the entity-lookup picker classifies a 403
+            // into a distinct "you do not have permission to view this type of record" state
+            // (EntityLookupError) keyed on `details.errorCode` / `details.statusCode`; with the body
+            // dropped, that state was correct code that could not be reached in production.
+            //
+            // `error.response.data`, not the narrowed `data` local: `data` is `?? {}`-defaulted for
+            // safe property reads, and the sibling paths attach the raw body. Reaching Case 2 at all
+            // requires a truthy `data.errorCode`, so the two are the same object here — using the
+            // raw one keeps this path literally identical to its siblings.
+            const forbiddenError = new Error(
+              data.message || translateCore("errors.auth.forbidden")
+            ) as Error & { details?: unknown };
+            forbiddenError.details = error.response.data;
+            return Promise.reject(forbiddenError);
           }
 
           // Case 3: No structured error body — a real authorization/permission failure
