@@ -60,6 +60,14 @@ import { ImageUploader } from "@core/ui/image-uploader";
 import { PasswordInput } from "@core/ui/password-input";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { PermissionCode } from "@core/common/types/permissions";
+// Type-only for the props contract, plus the registry READ. Not a cycle: this
+// module is `core`, and customFieldsExtension.tsx's own import of `FieldConfig`
+// from this file is `import type`, erased at build — its only runtime imports
+// are react and the i18n provider.
+import {
+  getCustomFieldsExtension,
+  type CustomFieldFormControlProps,
+} from "@core/crud/customFieldsExtension";
 
 /**
  * Field option for select, radio, and other choice-based inputs
@@ -111,35 +119,33 @@ export interface FieldConfig {
     | "duration"
     // Wave 4 (CustomFields' EntityReference/UserReference value types). Both
     // map here: they differ only in which target entity type their picker is
-    // fed, which is data, not a control kind. Declared for
-    // FieldConfig["type"]'s typing and DISPATCHED ELSEWHERE, the same shape
-    // "currency"/"duration"/"datetime"/"slider"/"multi-select" already
-    // established -- the real control is
-    // EntityReferenceCustomFieldControl, reached through
-    // renderCustomFieldControl.tsx, which is the dispatcher all 8-9
-    // CustomFields consumer sites call.
+    // fed, which is data, not a control kind.
     //
-    // NO RENDER BRANCH IS ADDED HERE ON PURPOSE, and the reason is a
-    // dependency-rule one rather than a "later" one: this control needs the
-    // CustomFields module (the entity-lookup search/resolve hooks, which
-    // reach the module's DI container), and `core` must not import from
-    // `src/modules/*` -- docs/architecture/01-modularity.md's Dependency
-    // Rule, the same constraint that produced core/crud/customFieldsExtension.tsx
-    // as a REGISTRY rather than an import. A direct import would also close a
-    // runtime cycle (generic-form -> control -> module DI -> valueTypeRegistry
-    // -> generic-form) and pull the whole CustomFields data layer into every
-    // form in the product. If GenericForm itself ever needs to draw one, the
-    // honest route is a new member on CustomFieldsExtensionApi, not an import
-    // here.
+    // THIS COMPONENT DOES DRAW IT, but never by importing the control. Earlier
+    // waves left this type with no render arm on purpose -- the control needs
+    // the CustomFields module (the entity-lookup search/resolve hooks, which
+    // reach that module's DI container), `core` must not import from
+    // `src/modules/*` (docs/architecture/01-modularity.md's Dependency Rule),
+    // and a direct import would additionally close a runtime cycle
+    // (generic-form -> control -> module DI -> valueTypeRegistry ->
+    // generic-form) and pull the whole CustomFields data layer into every form
+    // in the product. That comment named the honest route itself, and this is
+    // it: `CustomFieldsExtensionApi.FieldControl`, reached through the same
+    // registry every other module capability arrives by. See
+    // `EXTENSION_DRAWN_FIELD_TYPES` and `CustomFieldExtensionControl` below.
     //
-    // It IS added to the required-validation `customTypes` set below, which is
-    // not a contradiction: custom-field FieldConfigs genuinely DO reach this
-    // component's submit path (generic-crud-view.tsx concatenates
+    // Leaving the arm out was not a neutral "later": custom-field FieldConfigs
+    // genuinely reach this component (generic-crud-view.tsx concatenates
     // useCustomFieldsFormFields's fieldConfigs into the `fields` it hands
-    // <GenericForm>), even though they are drawn by the fallthrough there. A
-    // required reference field submitted blank has to be caught in that path
-    // too, and a reference value is an object, which the old emptiness check
-    // waved through -- see `isRequiredFieldEmpty` below.
+    // <GenericForm>, and `visibleFields` filters only on isVisible/permissions),
+    // so an unhandled type fell through to the plain `<Input type={field.type}>`
+    // default -- a text box showing `[object Object]` that replaced the stored
+    // object with a string the moment anyone typed in it.
+    //
+    // It is also in the required-validation `customTypes` set below: a required
+    // reference submitted blank has to be caught in this path too, and a
+    // reference value is an object, which the old emptiness check waved through
+    // -- see `isRequiredFieldEmpty` below.
     | "entity-reference"
     | "tel"
     | "url"
@@ -196,10 +202,12 @@ export interface FieldConfig {
    * unpinned EntityReference accepts any registered entity type, so there is no single answer) and
    * not merely an unwired one.
    *
-   * A CARRIER ONLY — this component never reads it. Like "currency"/"duration"/"datetime" before it,
-   * `"entity-reference"` is declared for `FieldConfig["type"]`'s typing and DISPATCHED ELSEWHERE
-   * (renderCustomFieldControl.tsx), because the control needs the CustomFields module and `core`
-   * must not import from `src/modules/*` — see the `"entity-reference"` member's own comment above.
+   * A CARRIER ONLY — this component never reads it, and still does not: the whole `field` is handed
+   * to `CustomFieldsExtensionApi.FieldControl` (or to renderCustomFieldControl.tsx at the 8
+   * hand-wired sites), and the pin is read there, because the control needs the CustomFields module
+   * and `core` must not import from `src/modules/*` — see the `"entity-reference"` member's own
+   * comment above. Passing `field` whole rather than unpacked scalars is exactly what keeps this
+   * carrier working without a new prop on the extension contract.
    * The field travels here rather than in a module-side side-channel because `FieldConfig[]` IS the
    * boundary type the extension hands across that line; a parallel map keyed by field name would
    * have to be threaded through every one of the nine consumer sites separately.
@@ -319,6 +327,126 @@ const NO_INITIAL_VALUES: Record<string, any> = {};
  * evidence, not a free generalisation.
  */
 const OBJECT_VALUED_FIELD_TYPES = new Set<FieldConfig["type"]>(["entity-reference"]);
+
+/**
+ * Field types this component declares for `FieldConfig["type"]`'s typing but
+ * cannot draw itself, and therefore routes to
+ * `CustomFieldsExtensionApi.FieldControl`.
+ *
+ * A set rather than a `field.type === "entity-reference"` literal in the two
+ * places that need it (the label suppression and the render arm) so admitting
+ * the next such type is one line here, not two scattered comparisons that can
+ * drift apart. Same reasoning as `OBJECT_VALUED_FIELD_TYPES` above, and the two
+ * are deliberately SEPARATE sets: "core cannot draw this" and "this value is a
+ * multi-piece object" are different questions with different answers (a future
+ * scalar-valued type could need the module's control, and a future object-valued
+ * type could be drawable here).
+ *
+ * `"currency"` and `"duration"` are NOT members yet, on purpose. Both are in the
+ * same "declared here, dispatched elsewhere" position and both DO fall through to
+ * the text `<Input>` in a GenericForm today, so they are real gaps — but their
+ * controls (`CurrencyCustomFieldControl`, `DurationCustomFieldControl`) have their
+ * own labelling arrangements, and admitting them means verifying each against
+ * this component's label/hint/error anatomy rather than assuming it. Changing
+ * behaviour for two shipped types on an assumption is a separate decision with
+ * its own evidence.
+ */
+const EXTENSION_DRAWN_FIELD_TYPES = new Set<FieldConfig["type"]>(["entity-reference"]);
+
+/**
+ * One field of a type only the CustomFields module can draw — plus the explicit
+ * state for when that module is not present.
+ *
+ * THE FALLBACK IS THE POINT. `core` is usable with no CustomFields module
+ * registered (every hand-built `CustomFieldsExtensionApi` test double in this
+ * codebase omits `FieldControl`, and `FieldControl` is optional for exactly that
+ * reason), and the one thing that path must never do is what the bug did: fall
+ * through to `<Input type="entity-reference" value={formData[name] ?? ""}>`,
+ * which renders a stored reference object as `[object Object]` in an editable
+ * text box and replaces it with a string on the first keystroke. So this renders
+ * an inert, explanatory field instead.
+ *
+ * WHAT IT DOES NOT SHOW is deliberate: not the held value. A reference's
+ * `entityId` is an ENCRYPTED foreign primary key, and the only thing that turns
+ * it into a human name is the resolve hook inside the very module that is
+ * missing. Printing the raw value would leak an opaque id into the page and read
+ * as data corruption; printing nothing at all and saying why is honest. The
+ * value itself is untouched — there is no `onChange` path here, so whatever was
+ * loaded is still in `formData` and is resubmitted verbatim.
+ *
+ * THE COPY REUSES `errors.module.*`, a CORE locale key pair, which matters more
+ * than it looks: a module locale key (`customField.*`) is registered by the very
+ * module whose absence produced this state, so on the path that actually renders
+ * it `t()` would return the bare key. `module-error-boundary.tsx` already
+ * composes these same two keys the same way, for the same fact.
+ *
+ * A11Y: the label/`aria-invalid`/`aria-describedby` contract this component's
+ * other branches provide is kept. The label is rendered here rather than by the
+ * shared header above (see `EXTENSION_DRAWN_FIELD_TYPES` in that condition),
+ * because the registered control renders its own label — the alternative was two
+ * visible labels on the same field. `role="group"` is what makes `aria-label`
+ * and `aria-describedby` actually exposed on a `<div>`; `aria-disabled` rather
+ * than `disabled` because there is no widget here to disable, only a statement.
+ */
+function CustomFieldExtensionControl({
+  field,
+  value,
+  onChange,
+  disabled,
+  invalid,
+  describedBy,
+}: CustomFieldFormControlProps) {
+  const { t } = useI18n();
+  // Read at render, not through a hook: this is a plain module-level variable
+  // lookup (the same way buildCustomFieldColumn reads it), and registration
+  // happens once from the app's composition root before any screen mounts.
+  const FieldControl = getCustomFieldsExtension()?.FieldControl;
+
+  if (FieldControl) {
+    return (
+      <FieldControl
+        field={field}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        invalid={invalid}
+        describedBy={describedBy}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={field.name} className="text-start">
+        {field.label}
+      </Label>
+      {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props --
+          `aria-invalid` is a GLOBAL ARIA state (WAI-ARIA 1.1 promoted it to
+          §6.5 Global States and Properties, and 1.2 keeps it there), so it is
+          valid on any role including `group`. The rule's role table is
+          aria-query's older per-role list, which predates that promotion — the
+          warning is the plugin being out of date, not this markup being wrong.
+          It is kept rather than dropped because this component's every other
+          branch sets it, and the required-field pass genuinely does reject this
+          field; `aria-describedby` alone would leave the rejection unannounced
+          as a state. */}
+      <div
+        id={field.name}
+        role="group"
+        aria-label={field.label ?? field.name}
+        aria-disabled="true"
+        aria-invalid={invalid || undefined}
+        aria-describedby={describedBy}
+        // Matches Input's own disabled skin (input.tsx: border-nx-line,
+        // bg-nx-raised, text-nx-ink-3, no shadow) so it reads as a field that
+        // is present but inoperable, not as a paragraph that lost its box.
+        className="flex min-h-10 w-full cursor-not-allowed items-center rounded-nx-control border border-nx-line bg-nx-raised px-3 py-2 text-sm text-nx-ink-3"
+      >
+        {t("errors.module.description", { module: t("errors.module.unnamed") })}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Whether a required field counts as unfilled at submit time.
@@ -794,11 +922,22 @@ export function GenericForm({
                 key={field.name}
                 className={cn("relative", getFieldSpacing(), gridded && field.colSpan === 2 && "sm:col-span-2")}
               >
-                {field.type !== "switch" && field.type !== "checkbox" && (
-                  <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
-                    {field.label}
-                  </Label>
-                )}
+                {/* Switch and checkbox label themselves on their own row.
+                    Extension-drawn types are excluded for the same reason: the
+                    module's control renders its own label/control pair (it has
+                    to — its accessible name comes from `aria-label`, since the
+                    trigger is a role="combobox" div that `<Label htmlFor>`
+                    alone cannot name), so keeping this one would put two
+                    identical visible labels on the field. The label is not
+                    lost: it moves into whichever branch of
+                    `CustomFieldExtensionControl` actually renders. */}
+                {field.type !== "switch" &&
+                  field.type !== "checkbox" &&
+                  !EXTENSION_DRAWN_FIELD_TYPES.has(field.type) && (
+                    <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
+                      {field.label}
+                    </Label>
+                  )}
                 {field.type === "select" ? (
                   <GenericSelect
                     id={field.name}
@@ -934,6 +1073,26 @@ export function GenericForm({
                     searchPlaceholder={field.searchPlaceholder}
                     disabled={inert}
                     className={getInputClasses(getInputHeight())}
+                  />
+                ) : EXTENSION_DRAWN_FIELD_TYPES.has(field.type) ? (
+                  // The whole field, label included, comes from the CustomFields
+                  // module through the extension registry — or, when no module is
+                  // registered, from the explicit inert state
+                  // `CustomFieldExtensionControl` renders instead. What must never
+                  // happen here is falling through to the text `<Input>` below.
+                  //
+                  // `formData[field.name]` is passed RAW, with no `?? ""`
+                  // normalisation: the fallthrough's `?? ""` is precisely what
+                  // turned an absent object value into an empty string the server
+                  // then refused. Absent stays `undefined`, and the control decides
+                  // what "no value" means for its own type.
+                  <CustomFieldExtensionControl
+                    field={field}
+                    value={formData[field.name]}
+                    onChange={(next) => handleChange(field.name, next)}
+                    disabled={inert}
+                    invalid={invalid}
+                    describedBy={describedBy}
                   />
                 ) : field.type === "bilingual-options" ? (
                   <BilingualOptionsEditor

@@ -1,10 +1,17 @@
 /**
  * useEntityLookupAvailableTypes — the entity types this caller may point a reference AT (Wave 4)
  *
- * Backs the DEFINITION-level target-type picker on the custom-field definition form, which is the
- * only consumer `getAvailableTypes` has ever had: the endpoint and the repository method landed with
- * the rest of the lookup layer, and until an admin could actually SET the pin there was nothing to
- * call them from.
+ * Two consumers, both of which ask the same question and neither of which can answer it locally:
+ *
+ *   - The DEFINITION-level target-type picker on the custom-field definition form, which offers an
+ *     admin the types a pin may name.
+ *   - The VALUE-side picker's type selector (`EntityReferenceCustomFieldControl`), shown when a
+ *     definition pinned nothing, so the record editor names the type before the record.
+ *
+ * The second consumer defers the request by MOUNTING, not by the `enabled` gate: it calls this hook
+ * from a component that lives inside its popover content, which Radix mounts only while the panel is
+ * open. So a record form carrying unpinned reference fields nobody opens makes no request at all,
+ * and the cache below means the first open is the only one that costs anything.
  *
  * WHY AN EMPTY LIST IS DATA AND NOT A FAILURE
  * -------------------------------------------

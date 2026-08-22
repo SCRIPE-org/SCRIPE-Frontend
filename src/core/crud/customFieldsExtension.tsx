@@ -91,6 +91,50 @@ export interface BulkColumnValuesResult {
   hiddenKeysByOwnerId?: Record<string, string[]> | null;
 }
 
+/**
+ * Everything a host form hands a custom-field control that `core` itself
+ * cannot draw. Consumed by `CustomFieldsExtensionApi.FieldControl` below.
+ *
+ * WHY THIS SHAPE, AND WHY NOTHING MORE. The five props are exactly the facts
+ * the host owns and the control cannot derive:
+ *   - `field` carries everything definition-shaped (name/label/placeholder/
+ *     required/options/`referenceTargetEntityTypeKey`). It is passed whole
+ *     rather than as unpacked scalars precisely so the NEXT type admitted here
+ *     needs no new prop: a type whose control reads `options` or `min`/`max`
+ *     already has them.
+ *   - `value` + `onChange` are the controlled-input contract, `unknown` in both
+ *     directions because the whole point of this member is types whose form
+ *     value is not a scalar. The host merges the reported value into its own
+ *     form state; it never interprets it.
+ *   - `invalid` / `describedBy` / `disabled` are the three host-owned facts a
+ *     control cannot see for itself: whether the host's own validation pass
+ *     rejected this field, which node the host rendered the hint or error into,
+ *     and whether the whole form is read-only. Without them the control cannot
+ *     honour the same `aria-invalid`/`aria-describedby` contract the host's own
+ *     branches provide, which is the difference between an accessible field and
+ *     one that merely looks right.
+ *
+ * Deliberately ABSENT: `required` (already on `field`), `id`/`label`/
+ * `placeholder` (already on `field`), and anything reference-specific. A member
+ * only one value type can ever use would have to be replaced the first time a
+ * second object-valued type needs drawing; this one just gets a second arm in
+ * the implementation's own dispatch.
+ */
+export interface CustomFieldFormControlProps {
+  /** The already-namespaced FieldConfig this extension itself produced (see getFormFields). */
+  field: FieldConfig;
+  /** Current form value for `field.name`, exactly as the host holds it — never coerced on the way in. */
+  value: unknown;
+  /** Report a new value. The host merges it into its own form state verbatim. */
+  onChange: (next: unknown) => void;
+  /** The host's read-only/disabled state for this field (a view dialog, or `field.disabled`). */
+  disabled?: boolean;
+  /** True when the host's own validation pass rejected this field — drives `aria-invalid`. */
+  invalid?: boolean;
+  /** Id of the hint or error node the host renders below the control, for `aria-describedby`. */
+  describedBy?: string;
+}
+
 export interface CustomFieldsExtensionApi {
   /** Active definitions for entityTypeKey, merged with ownerId's stored values when given, mapped to already-namespaced FieldConfig[]. */
   getFormFields: (entityTypeKey: string, ownerId?: string) => Promise<FieldConfig[]>;
@@ -121,6 +165,42 @@ export interface CustomFieldsExtensionApi {
     entityDisplayName?: string;
     onCreated: () => void;
   }>;
+  /**
+   * Draws the whole field — label, control, and any hint the control owns — for
+   * one FieldConfig whose `type` `core` declares for typing but cannot render
+   * itself. The EDIT-side counterpart of `formatValueForDisplay` below, and the
+   * component-valued sibling of `InlineAddTrigger` above.
+   *
+   * WHY THIS MEMBER EXISTS AT ALL. `getFormFields` hands `core` a
+   * `FieldConfig[]` that GenericCrudView concatenates straight into
+   * `<GenericForm fields={...}>`, so those fields genuinely reach GenericForm's
+   * render switch — and a type with no arm there fell through to the plain
+   * `<Input type={field.type} value={formData[field.name] ?? ""}>` default.
+   * For an object-valued type that renders as `[object Object]` in a text box
+   * the operator can type over, replacing the object with a string the server
+   * refuses. That is 30 CrudConfig sites declaring `entityTypeKey:` against 8
+   * that call the module's own dispatcher directly.
+   *
+   * The fix could NOT be an import: the control needs the CustomFields module
+   * (its entity-lookup hooks reach that module's DI container) and `core` must
+   * not import from `src/modules/*` — docs/architecture/01-modularity.md's
+   * Dependency Rule, the same constraint that makes this whole file a registry.
+   * A direct import would additionally close a runtime cycle (generic-form →
+   * control → module DI → valueTypeRegistry → generic-form) and pull the entire
+   * CustomFields data layer into every form in the product. So the control
+   * arrives the way every other module capability here does: core states the
+   * contract, the module registers the implementation.
+   *
+   * Deliberately OPTIONAL, for exactly the reason `formatValueForDisplay`
+   * below is: making it required would force every hand-built
+   * `CustomFieldsExtensionApi` test double across this codebase's other suites
+   * (leads/webhooks/dsr/templates/generic-crud-view) to add a throwaway
+   * component just to keep compiling. What must NOT happen when it is absent is
+   * the silent text-box fallthrough — GenericForm renders an explicit, inert,
+   * explanatory field instead. See `CustomFieldExtensionControl` in
+   * generic-form.tsx.
+   */
+  FieldControl?: React.ComponentType<CustomFieldFormControlProps>;
   /**
    * Read-side per-type cell formatter for buildCustomFieldColumn's dynamic
    * table columns below — the read counterpart of getFormFields (which

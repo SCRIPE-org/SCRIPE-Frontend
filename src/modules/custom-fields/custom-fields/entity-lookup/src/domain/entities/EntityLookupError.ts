@@ -19,27 +19,31 @@
  *
  * WHAT IT KEYS ON, AND WHY THAT AND NOT THE HTTP STATUS
  * ----------------------------------------------------
- * `IApiService` does not expose response status codes. What it does expose — for every rejection
- * except the 403 branch — is `error.details`, the parsed `ErrorResponse` body, which carries BOTH
+ * `IApiService` does not expose response status codes. What it does expose, on every rejection that
+ * carried a structured body, is `error.details` — the parsed `ErrorResponse`, which carries BOTH
  * `statusCode` and `errorCode`. `errorCode` is checked first because it is machine-readable and
  * language-independent (the same reasoning `DefinitionExportError` in this module already relies
  * on), and `statusCode` is the fallback for codes this file has not enumerated. Nothing keys on the
  * message: it is localized server text, so a message match would work in English and stop working
  * in Arabic.
  *
- * KNOWN TRANSPORT GAP — READ BEFORE CHANGING THE 403 PATH
- * ------------------------------------------------------
- * `ApiService`'s response interceptor attaches `errObj.details` on its generic error path, but its
- * dedicated 403 branch rejects with a bare `new Error(message)` and no `details`. So a real 403
- * currently arrives here carrying nothing to classify, and lands in `unknown` -> the control's
- * generic failure text, not its "no access" text. The `AUTH_FORBIDDEN` / status-403 arms below are
- * therefore correct and currently unreachable in production; they light up the moment that branch
- * preserves the body, which is a one-line change in `src/core/services/api.service.ts` outside this
- * work package's file ownership.
+ * WHICH 403s REACH THIS FILE, AND WHICH NEVER WILL
+ * ------------------------------------------------
+ * The `AUTH_FORBIDDEN` / status-403 arms below are live. `ApiService`'s 403 branch attaches the
+ * parsed body as `details` on its business-rule case (a 403 carrying an `errorCode`), so a refusal
+ * from `EntityLookupRegistry` — which returns `Error.Forbidden(ErrorCodes.Forbidden, ...)`, i.e.
+ * `AUTH_FORBIDDEN`, and reaches the wire through `this.ErrorResult(result.Error)` — arrives here with
+ * a classifiable body and lands in `forbidden`. That is the 403 this feature actually produces: the
+ * caller's role lacks the TARGET entity type's `view` permission.
  *
- * The deliberate choice here is to leave the gap visible rather than paper over it by matching the
- * localized 403 message, which would appear to work and then silently stop when the UI language
- * changes — a worse outcome than an honest generic error.
+ * The one 403 that cannot reach here is a failure of the ASP.NET authorization POLICY itself — the
+ * controller's coarse `[Authorize]`/`[AdminOnly]` — which returns an empty body and therefore no
+ * `errorCode`. `ApiService` treats that as "you have no business being on this page" and hard
+ * redirects to `/not-authorized` before any classification happens. So it is not a state this
+ * taxonomy has to name: by the time it would be classified, the page is already gone.
+ *
+ * Nothing here keys on the message, and nothing ever should: it is localized server text, so a
+ * message match would appear to work and then silently stop when the UI language changes.
  */
 
 /** ErrorResponse.errorCode for a permission failure on the target entity type. */

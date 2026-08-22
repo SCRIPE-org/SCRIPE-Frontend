@@ -127,10 +127,11 @@ interface ResolveOutcome {
 /**
  * Resolves one held reference to its display record.
  *
- * Accepts the READ shape (`{ entityTypeKey, entityId }`), typed as this submodule's own
- * `EntityLookupReference` rather than `CustomFieldValueModel`'s `CustomFieldEntityReferenceValue` so
- * the lookup layer carries no dependency on the values layer. The two are structurally identical, so
- * a caller passes its own type straight in.
+ * Accepts a stored reference — `{ entityTypeKey, entityId }`, the same two property names on the way
+ * down and on the way up, so there is no second shape to translate from. It is typed as this
+ * submodule's own `EntityLookupReference` rather than `CustomFieldValueModel`'s
+ * `CustomFieldEntityReferenceValue` so the lookup layer carries no dependency on the values layer.
+ * The two are structurally identical, so a caller passes its own type straight in.
  *
  * @param reference The stored reference, or null when the field is empty (`status: "idle"`).
  */

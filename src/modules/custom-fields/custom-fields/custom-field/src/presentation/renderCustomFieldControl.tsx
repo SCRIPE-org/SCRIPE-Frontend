@@ -91,6 +91,29 @@ export interface CustomFieldControlProps {
   onChange: (value: unknown) => void;
   /** D9: FeatureDefinitionFormView.tsx needs this from day one, not bolted on later. */
   isViewMode?: boolean;
+  /**
+   * The HOST form's own validation verdict for this field, for controls that can
+   * surface one. Added for `GenericFormCustomFieldControl`, the bridge that lets a
+   * plain `<GenericForm>` draw a custom field through
+   * `CustomFieldsExtensionApi.FieldControl`: GenericForm holds an `errors` map and
+   * renders its own error node, and a control that ignored that would drop the
+   * `aria-invalid` its sibling branches all set.
+   *
+   * Optional, so all 8 hand-wired consumer sites keep compiling and behaving
+   * exactly as before — none of them has a per-field validation verdict to pass
+   * (they validate at save time through `assertSelectCustomFieldValuesValid`
+   * below, not per field). Only the reference branch reads it today, because it
+   * is the only branch whose control accepts one; a branch that cannot honour it
+   * silently ignoring it is better than a prop it pretends to support.
+   */
+  invalid?: boolean;
+  /**
+   * Id of the hint/error node the HOST rendered below this field, for
+   * `aria-describedby`. Same origin and same optionality as `invalid` above.
+   * `EntityReferenceCustomFieldControl` composes it with its own note rather than
+   * overwriting it (`aria-describedby` takes an id list), so both are announced.
+   */
+  describedBy?: string;
 }
 
 /** Ported verbatim from the 8 duplicated consumer sites' own toFieldInputValue helper. */
@@ -134,6 +157,8 @@ export function renderCustomFieldControl({
   value,
   onChange,
   isViewMode,
+  invalid,
+  describedBy,
 }: CustomFieldControlProps): React.ReactNode {
   if (fc.type === "switch") {
     return (
@@ -684,6 +709,13 @@ export function renderCustomFieldControl({
         required={fc.required}
         disabled={isViewMode}
         placeholder={fc.placeholder}
+        // Forwarded so a HOST form's own validation verdict and hint/error node
+        // reach the control. Undefined at all 8 hand-wired sites (they validate
+        // at save time, not per field), which is exactly the control's existing
+        // behaviour: its `invalid || status === "invalid"` and its describedBy
+        // composition both already handle an absent caller value.
+        invalid={invalid}
+        describedBy={describedBy}
       />
     );
   }
@@ -947,6 +979,92 @@ export function validateCurrencyCustomFieldValue(
 }
 
 /**
+ * EntityReference/UserReference's half of the "prevented, not just 422'd"
+ * requirement.
+ *
+ * THE GAP THIS CLOSES. The 8 hand-wired consumer sites do not run GenericForm's
+ * required-field pass (they render each field through
+ * `renderCustomFieldControl` inside their own sections and validate at save time
+ * through `assertSelectCustomFieldValuesValid` below), and that function had arms
+ * for currency, select and multi-select and none for entity-reference. So a
+ * required reference left blank at any of those 8 sites was submitted blank and
+ * refused on a round trip -- and on a CREATE flow refused only after the owner
+ * record had already been written.
+ *
+ * TWO REFUSALS, TWO MESSAGES, mirroring the backend rather than inventing a rule
+ * (`EntityReferenceValueTypeHandler`: `IsEmpty` is BOTH pieces blank, `Validate`
+ * refuses unless BOTH are present and non-blank):
+ *
+ *   1. A PARTIALLY filled reference -- anything that is not two non-blank
+ *      strings but is not fully blank either. `Validate` answers this with a 422
+ *      (`customFields.values.referenceIncomplete`), so it is a genuinely invalid
+ *      value regardless of whether the field is required, exactly like Currency's
+ *      half-blank case above. Reported as
+ *      `customField.entityReference.invalid`, an EXISTING key whose wording is
+ *      already precisely this fact ("The reference stored in this field is
+ *      malformed and can't be read at all. Choose a record again to replace
+ *      it."). Not reachable through the control's own UI -- `handleSelect`
+ *      always emits both properties and `handleClear` emits null -- so this
+ *      covers stale or tampered form state, which is the same surface
+ *      `validateCurrencyCustomFieldValue` exists for.
+ *   2. A FULLY blank value on a REQUIRED field. Reported as
+ *      `validation.required`, the same core key GenericForm shows for the
+ *      identical condition -- one defect, one wording, whichever path the
+ *      operator came in by.
+ *
+ * WHY REQUIRED-NESS IS CHECKED HERE, when every other validator in this file
+ * explicitly declines to. Because for those types nothing was lost: a blank
+ * Select at a hand-wired site is also submitted blank, but that is a
+ * pre-existing, type-independent gap in those 8 sites' own validation, whereas
+ * this function is the ONLY client-side gate a reference field has there --
+ * `isRequiredFieldEmpty` in generic-form.tsx covers the GenericForm path and
+ * nothing covered this one. Deliberately NOT generalised to every type in the
+ * same change: widening the required rule to select/multi-select/currency would
+ * alter 9 shipped save flows for types that never asked for it, which is a
+ * separate decision with its own evidence.
+ *
+ * A fully blank value on an OPTIONAL field returns null -- "nothing to save", not
+ * an error, matching every other validator here and the backend's own `IsEmpty`.
+ *
+ * @param fc The field being validated; a non-reference type returns null immediately.
+ * @param value The effective value about to be submitted.
+ * @param t The caller's own `useI18n()` translate function.
+ * @returns An already-localized refusal message, or null when the value is submittable.
+ */
+export function validateEntityReferenceCustomFieldValue(
+  fc: FieldConfig,
+  value: unknown,
+  t: TranslateFn
+): string | null {
+  if (fc.type !== "entity-reference") return null;
+
+  // `isEntityReferenceValue` is a SHAPE guard, not a completeness one (see its
+  // own doc comment), so a `{ entityTypeKey: "x", entityId: "" }` passes it. The
+  // completeness question is asked here, per this caller, exactly as that comment
+  // says each caller must.
+  const candidate =
+    value !== null && typeof value === "object" && !Array.isArray(value)
+      ? (value as { entityTypeKey?: unknown; entityId?: unknown })
+      : null;
+  const typeKey = typeof candidate?.entityTypeKey === "string" ? candidate.entityTypeKey.trim() : "";
+  const entityId = typeof candidate?.entityId === "string" ? candidate.entityId.trim() : "";
+
+  // Fully blank covers null, undefined, "" and a stray non-object as well as an
+  // object with both pieces blank -- all of them mean "no reference here", which
+  // is what the backend's IsEmpty means too.
+  if (typeKey === "" && entityId === "") {
+    return fc.required ? t("validation.required") : null;
+  }
+
+  // Exactly one piece present: a value Validate refuses outright.
+  if (typeKey === "" || entityId === "") {
+    return t("customField.entityReference.invalid");
+  }
+
+  return null;
+}
+
+/**
  * Thrown by `assertSelectCustomFieldValuesValid` below -- a distinct type so
  * a consumer's save flow can tell "D5 rejected this value client-side, show
  * ITS message" apart from "the actual saveValues API call failed, show the
@@ -1011,6 +1129,14 @@ export class CustomFieldValidationError extends Error {}
  * defaults) since its wire value is an object-or-null envelope --
  * `validateCurrencyCustomFieldValue` treats both an untouched field's `null`
  * and a stray non-object the same way: not this function's concern.
+ *
+ * Wave 4 follow-up: the loop also admits "entity-reference" now, the same
+ * "widen the loop, touch zero call sites" shape. It is the one arm that also
+ * enforces REQUIRED-ness, and
+ * `validateEntityReferenceCustomFieldValue`'s own doc comment explains why that
+ * is not an inconsistency: this function is the only client-side gate a
+ * reference field has at the 8 hand-wired sites, so without it a required
+ * reference left blank was submitted blank and refused on a round trip.
  */
 export function assertSelectCustomFieldValuesValid(
   fieldConfigs: FieldConfig[],
@@ -1021,6 +1147,17 @@ export function assertSelectCustomFieldValuesValid(
     if (fc.type === "currency") {
       const raw = values[fc.name] ?? fc.defaultValue ?? null;
       const error = validateCurrencyCustomFieldValue(fc, raw, t);
+      if (error) {
+        throw new CustomFieldValidationError(error);
+      }
+      continue;
+    }
+    if (fc.type === "entity-reference") {
+      // `?? null` like Currency's arm above, not `?? ""`: a reference's wire value
+      // is an object-or-null envelope, and `validateEntityReferenceCustomFieldValue`
+      // reads null, undefined and a stray non-object all as "fully blank" anyway.
+      const raw = values[fc.name] ?? fc.defaultValue ?? null;
+      const error = validateEntityReferenceCustomFieldValue(fc, raw, t);
       if (error) {
         throw new CustomFieldValidationError(error);
       }

@@ -85,22 +85,56 @@
  * valid value, so it is marked with a chip rather than treated as an error or
  * filtered out of the list.
  *
- * **No target type configured is a first-class state, not an empty list.**
- * Definition-level target pinning for EntityReference is a separate work item;
- * until it lands a definition cannot say what its picker should offer.
- * `targetEntityTypeKey` is therefore a prop, and the absence of one renders a
- * disabled field plus a localized explanation -- never a dropdown that opens
- * onto nothing, which reads as "the server returned no records" and sends the
- * operator looking in the wrong place. UserReference, whose target is fixed at
- * `identity.user` by the backend's own allowlist, always has one and so ships
- * fully usable today.
+ * **An UNPINNED definition gets a type selector, not a dead field.** A
+ * definition may pin its target to one entity type or leave it unpinned, and
+ * unpinned is what `createInitialValues` seeds -- so it is the default an admin
+ * gets. The backend means something specific by it: a value may point at any
+ * type the caller is allowed to reference, and each value stores its OWN
+ * `entityTypeKey` beside the id precisely so an unpinned field's values stay
+ * self-describing. So the absence of a target makes this control ask for the
+ * TYPE first and the record second. Rendering a disabled field instead was the
+ * defect worth naming: on the default definition shape it is unfillable, and on
+ * a required one it is unsatisfiable -- `isRequiredFieldEmpty` reports it empty
+ * and blocks the whole record's submit with nothing the operator can do to
+ * comply.
+ *
+ * When a target IS pinned there is no type selector at all and nothing else
+ * about the flow changes. UserReference is permanently in that case: its target
+ * is server-resolved to `identity.user` by the backend's own allowlist, so it
+ * arrives pinned and must never be offered a choice.
+ *
+ * **Two comboboxes, and neither ever moves focus to the other.** This is the
+ * exact shape where focus management breaks, so the rule is stated rather than
+ * left to emerge: each combobox owns its own `Popover`, each Popover returns
+ * focus to its OWN trigger on close (Radix's default), and this file calls
+ * `.focus()` nowhere. Picking a type therefore leaves the operator on the type
+ * field with the record field newly enabled one Tab away; it deliberately does
+ * NOT auto-open the record picker, which would yank focus out from under
+ * someone still reading what they just chose. The type field precedes the
+ * record field in the DOM because it gates it.
+ *
+ * **The available-types list is fetched when the type panel opens, not on
+ * mount.** The same gate, for the same reason, as the record search below: a
+ * record form can carry several unpinned reference fields, and a form whose
+ * reference fields nobody touches should not query the lookup registry at all.
+ * The hook is react-query-backed, so the first open is the only request and
+ * every later one is served from its cache. What the gate costs is that "you
+ * may not reference anything" is found on opening the list rather than
+ * announced under the field -- which is why the empty answer is rendered as an
+ * explanatory state INSIDE the panel: never an error (it is a 200, and a
+ * correct authorization outcome) and never a silently empty dropdown, which
+ * reads as "the server returned no records" and sends the operator looking in
+ * the wrong place.
  *
  * **A stored value still renders when the picker cannot be used.** Resolution
  * is driven by `value.entityTypeKey`, which travels with the value, not by
- * `targetEntityTypeKey`. So a field whose definition lost (or has not yet
- * gained) a pinned target still shows what it holds; only CHANGING it is
- * disabled. Hiding a value because the config that would let you edit it is
- * missing loses information for no gain.
+ * `targetEntityTypeKey`. So a field whose definition lost its pinned target
+ * still shows what it holds. One consequence is a real limit rather than an
+ * oversight, and is recorded here so it is not rediscovered as a bug:
+ * `renderCustomFieldControl` derives this prop from the pin OR, failing that,
+ * the stored value's own key, so a POPULATED unpinned field arrives WITH a
+ * target and gets no type selector -- re-picking is confined to the type the
+ * value already points at. Clearing the field brings the selector back.
  *
  * **Accessible name via `aria-label`, never `<Label htmlFor>` alone.** The
  * trigger is a `<div role="combobox">`, and per ARIA that role is Name From:
@@ -111,7 +145,7 @@
  * comes from `aria-label={label ?? id}`.
  */
 import * as React from "react";
-import { Inbox, SearchX } from "lucide-react";
+import { Inbox, Layers, SearchX, ShieldOff, Unplug } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
@@ -120,16 +154,20 @@ import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Skeleton } from "@core/ui/skeleton";
 import { Popover, PopoverContent } from "@core/ui/popover";
-import { Command, CommandInput, CommandList } from "@core/ui/command";
+import { Command, CommandEmpty, CommandInput, CommandList } from "@core/ui/command";
 import { SelectTrigger } from "@core/crud/components/select/select-trigger";
 import { SelectOptionRow } from "@core/crud/components/select/select-option-row";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { useEntityLookupSearch } from "../../../entity-lookup/src/presentation/hooks/useEntityLookupSearch";
+import { useEntityLookupAvailableTypes } from "../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes";
 import {
   useResolveEntityReference,
   type EntityReferenceResolveStatus,
 } from "../../../entity-lookup/src/presentation/hooks/useResolveEntityReference";
-import type { EntityLookupItem } from "../../../entity-lookup/src/data/models/EntityLookupModel";
+import type {
+  EntityLookupItem,
+  EntityLookupType,
+} from "../../../entity-lookup/src/data/models/EntityLookupModel";
 import type { CustomFieldEntityReferenceValue } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
 /**
@@ -142,6 +180,142 @@ const I18N = "customField.entityReference";
 /** Skeleton rows shown while the first page is in flight -- same count `SelectPanel` uses, so the panel keeps its height and the list does not jump when results land. */
 const LOADING_ROW_COUNT = 5;
 
+/**
+ * An entity type's name in the reader's language.
+ *
+ * These two names are SERVER-supplied, not locale keys -- they come from the
+ * module registry, so they are not in our dictionaries and must not be looked
+ * up there. The `||` chain is not defensive noise: a blank name renders a row
+ * with nothing to click on, and the registry key is at least identifiable.
+ *
+ * Shared by the list rows and the closed field, so the same type cannot read
+ * one way in the panel and another way in the field it was chosen into.
+ */
+function typeDisplayName(type: EntityLookupType, language: string): string {
+  const localized = language === "ar" ? type.displayNameAr : type.displayNameEn;
+  return localized || type.displayNameEn || type.key;
+}
+
+/** The skeleton list both panels show while their first request is in flight. */
+function LoadingRows(): React.ReactElement {
+  return (
+    <div className="space-y-1 p-1" aria-hidden="true">
+      {Array.from({ length: LOADING_ROW_COUNT }).map((_, index) => (
+        <Skeleton key={index} className="h-8 w-full rounded-nx-sm" />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * The type list -- and the only thing in this file that reads the
+ * available-types endpoint.
+ *
+ * Its own component for one structural reason: it is rendered inside
+ * `PopoverContent`, which Radix mounts only while that panel is open, so the
+ * fetch is gated on the panel actually being opened without any `enabled`
+ * bookkeeping in the parent -- and a record form whose reference fields nobody
+ * touches issues no request at all. The hook is react-query-backed, so
+ * reopening reads its cache rather than the network.
+ *
+ * It owns the whole panel body, live region included, rather than just the
+ * rows: the two things worth announcing -- "still loading" and "N types" -- are
+ * both facts only this component holds, and passing them back up to be
+ * announced there would mean lifting the fetch back out of the lazy mount.
+ *
+ * Three answers, three renderings, for the same reason the record panel splits
+ * its own: an empty list, a failed fetch and an unmatched filter are three
+ * different facts, and only the middle one is worth a retry. `isEmpty` comes
+ * from the hook rather than from `types.length === 0`, which is also true
+ * mid-flight and after a failure -- see that hook's own doc comment.
+ */
+function ReferenceTypeOptions({
+  selectedKey,
+  onSelect,
+}: {
+  /** Currently chosen type key, so its row carries the tick. */
+  selectedKey: string | null;
+  onSelect: (type: EntityLookupType) => void;
+}): React.ReactElement {
+  const { t, language } = useI18n();
+  const { types, isLoading, isError, isEmpty, refetch } = useEntityLookupAvailableTypes();
+
+  const body = (() => {
+    if (isLoading) return <LoadingRows />;
+
+    if (isError) {
+      // A transport failure, and the only branch here a retry can fix. There is
+      // no `forbidden` arm on purpose: this endpoint answers "you may not
+      // reference anything" with a 200 and an empty array, so a permission
+      // outcome arrives as `isEmpty` and never as an error.
+      return (
+        <div className="p-2">
+          <ErrorMessage size="sm" message={t(`${I18N}.typesFailed`)} onRetry={refetch} />
+        </div>
+      );
+    }
+
+    if (isEmpty) {
+      // Two causes, and the copy names both without asserting either: the
+      // server filters this list on provider composition AS WELL AS permission,
+      // so in a split deployment it is empty for a reason no permission grant
+      // would fix.
+      return (
+        <EmptyState
+          bare
+          size="sm"
+          icon={Layers}
+          title={t(`${I18N}.noTypesAvailable`)}
+          description={t(`${I18N}.noTypesAvailableHint`)}
+        />
+      );
+    }
+
+    return (
+      <>
+        {/* cmdk filters this list itself (`shouldFilter` is left on, unlike the
+            record panel where the SERVER filters), so it also owns the "your
+            filter matched nothing" case -- which is a different sentence from
+            "there is nothing you may reference" above. */}
+        <CommandEmpty>{t(`${I18N}.typeNoResults`)}</CommandEmpty>
+        {types.map((type) => (
+          <SelectOptionRow
+            key={type.key}
+            option={{
+              value: type.key,
+              label: typeDisplayName(type, language),
+              // The owning module as the row's second line. `EntityLookupType`
+              // documents this field as being for grouping a long list rather
+              // than filtering one; showing it here is neither -- it is
+              // disambiguation, because two modules may each register a type
+              // whose display name reads the same.
+              description: type.owningModule,
+            }}
+            selected={type.key === selectedKey}
+            multi={false}
+            onSelect={() => onSelect(type)}
+          />
+        ))}
+      </>
+    );
+  })();
+
+  return (
+    <>
+      {/* Announced, not just drawn -- the same treatment the record panel gets,
+          and needed here for the same reason: the first open of this panel is a
+          network round trip, and a list that silently fills in underneath a
+          screen-reader user gives them nothing. */}
+      <span className="sr-only" aria-live="polite">
+        {isLoading
+          ? t("common.loading")
+          : t("components.select.optionsAvailable", { count: types.length })}
+      </span>
+      <CommandList>{body}</CommandList>
+    </>
+  );
+}
+
 export interface EntityReferenceCustomFieldControlProps {
   /**
    * Lands on the `role="combobox"` element, so the sibling `<Label htmlFor>`
@@ -150,7 +324,13 @@ export interface EntityReferenceCustomFieldControlProps {
    */
   id: string;
   label?: string;
-  /** Target entity type key. null/undefined => render the "no target configured" state. */
+  /**
+   * The pinned target entity type key.
+   *
+   * null/undefined/blank means the definition pinned nothing, which is a
+   * legitimate and permanent configuration -- so it renders the type selector
+   * described in this file's header, NOT a disabled field.
+   */
   targetEntityTypeKey?: string | null;
   value: CustomFieldEntityReferenceValue | null;
   onChange: (next: CustomFieldEntityReferenceValue | null) => void;
@@ -165,9 +345,9 @@ export interface EntityReferenceCustomFieldControlProps {
  * The picker for `EntityReference` and `UserReference` custom-field values.
  *
  * Controlled: the parent owns `value`, and every selection or clear is
- * reported through `onChange` as `{ entityTypeKey, entityId }`. See this file's header
- * comment for the four states this renders (no target / resolving+resolved /
- * forbidden / missing / invalid) and why each is distinct.
+ * reported through `onChange` as `{ entityTypeKey, entityId }`. See this file's
+ * header comment for the states this renders (unpinned-awaiting-a-type /
+ * resolving+resolved / forbidden / missing / invalid) and why each is distinct.
  */
 export function EntityReferenceCustomFieldControl({
   id,
@@ -181,9 +361,16 @@ export function EntityReferenceCustomFieldControl({
   describedBy,
   placeholder,
 }: EntityReferenceCustomFieldControlProps): React.ReactElement {
-  const { t } = useI18n();
+  const { t, language } = useI18n();
   const hintId = React.useId();
   const [open, setOpen] = React.useState(false);
+  const [typeOpen, setTypeOpen] = React.useState(false);
+
+  // The type an operator chose for an UNPINNED field. The whole object, not
+  // just the key, so the closed field can show a real name without the
+  // available-types list being in hand -- which it is not, by design, once the
+  // type panel has closed again.
+  const [chosenType, setChosenType] = React.useState<EntityLookupType | null>(null);
 
   // The panel's search box is driven by LOCAL state, not by the hook's own
   // `query`. The hook documents `setQuery` as "debounced internally", and a
@@ -195,8 +382,31 @@ export function EntityReferenceCustomFieldControl({
 
   // Whitespace-only is not a target key. A definition that stored " " would
   // otherwise open a picker against a type key the server cannot route.
-  const hasTarget = typeof targetEntityTypeKey === "string" && targetEntityTypeKey.trim() !== "";
+  const pinnedTarget =
+    typeof targetEntityTypeKey === "string" && targetEntityTypeKey.trim() !== ""
+      ? targetEntityTypeKey
+      : null;
+
+  // No pin => the definition left the target open, so the operator names it.
+  // Derived from the prop alone, never from `chosenType`: the selector must not
+  // disappear the moment it is used, or changing a wrong choice would be
+  // impossible.
+  const needsTypeChoice = pinnedTarget === null;
+
+  // What the record picker actually searches, and what a new pick is stamped
+  // with. The pin wins when there is one -- see the precedence pinned in
+  // renderCustomFieldControl.referenceTargetEntityTypeKey.test.tsx.
+  const effectiveTarget = pinnedTarget ?? chosenType?.key ?? null;
+  const hasTarget = effectiveTarget !== null;
   const canPick = hasTarget && !disabled;
+
+  // A derived id rather than a second `useId`: `<Label htmlFor>` has to point
+  // at this element, and a caller that wants to reach either field from outside
+  // (a test, an anchor, a focus call after a validation summary) can then
+  // compute both ids from the one it was given.
+  const typeFieldId = `${id}__type`;
+  const typeFieldLabel = t(`${I18N}.typeLabel`);
+  const chosenTypeLabel = chosenType ? typeDisplayName(chosenType, language) : "";
 
   // Gated on `open`, deliberately. A record form can carry a dozen reference
   // fields; firing a dozen first-page lookups on mount to populate lists
@@ -208,7 +418,7 @@ export function EntityReferenceCustomFieldControl({
   // hook (no target at all vs. a target nobody has asked about yet), so both
   // are stated honestly rather than folding one into the other.
   const search = useEntityLookupSearch({
-    entityTypeKey: hasTarget ? targetEntityTypeKey : null,
+    entityTypeKey: effectiveTarget,
     enabled: canPick && open,
   });
 
@@ -309,11 +519,40 @@ export function EntityReferenceCustomFieldControl({
    * never from the option, which carries only an id.
    */
   const handleSelect = (option: GenericSelectOption) => {
-    onChange({ entityTypeKey: targetEntityTypeKey as string, entityId: option.value });
+    // A guard, not a cast. This panel only mounts while `canPick`, so the
+    // target is always present here -- but writing `as string` would let a
+    // future refactor emit `{ entityTypeKey: undefined }`, which the backend's
+    // `Validate` answers with the 422 written for a half-filled reference.
+    if (effectiveTarget === null) return;
+    onChange({ entityTypeKey: effectiveTarget, entityId: option.value });
     handleOpenChange(false);
   };
 
   const handleClear = () => onChange(null);
+
+  const handleTypeOpenChange = (next: boolean) => {
+    // Same reasoning as `handleOpenChange`: `SelectTrigger` is a <div>, so
+    // Radix's `disabled` attribute does not stop a pointer click on its own.
+    if (next && disabled) return;
+    setTypeOpen(next);
+  };
+
+  /**
+   * Records the chosen type and closes only the TYPE panel.
+   *
+   * Focus goes back to the type trigger, because that is where Radix returns it
+   * from the popover it owns. The record picker is deliberately left closed and
+   * unfocused -- see this file's header on why auto-advancing would steal focus.
+   *
+   * The held value is NOT cleared. A value keeps its own `entityTypeKey`, so it
+   * still resolves and still reads back correctly after the offer changes; this
+   * is the same "the pin wins the offer without costing the value its display
+   * name" split the definition-level pin already relies on.
+   */
+  const handleTypeSelect = (type: EntityLookupType) => {
+    setChosenType(type);
+    setTypeOpen(false);
+  };
 
   /**
    * The described-by region. Composed rather than overwritten: a caller that
@@ -323,6 +562,9 @@ export function EntityReferenceCustomFieldControl({
    */
   const hint = (() => {
     if (!hasTarget) {
+      // Unpinned and nothing chosen yet: the record field is inert, so the note
+      // says which of the two fields to use first. It is an instruction, not an
+      // apology -- the operator can complete this field without an admin.
       return <p className="text-xs text-nx-ink-3">{t(`${I18N}.noTargetConfigured`)}</p>;
     }
     if (status === "resolved" && item) {
@@ -351,30 +593,60 @@ export function EntityReferenceCustomFieldControl({
     [describedBy, hint ? hintId : null].filter(Boolean).join(" ") || undefined;
 
   /**
-   * The panel's list body. Five states, five different things -- the same
-   * discipline `SelectPanel` documents, for the same reason: a failed request,
-   * an empty type and an unmatched search are three different problems and one
-   * shared "No Results" node hides all three.
+   * The panel's list body. Seven states, seven different things -- the same
+   * discipline `SelectPanel` documents, for the same reason: a refused request,
+   * an unanswerable type, a failed request, an empty type and an unmatched
+   * search are five different problems and one shared "No Results" node hides
+   * all five.
    */
   const panelBody = (() => {
     if (search.error) {
+      // The failure's `kind` is the whole reason the data layer classifies at
+      // all, and collapsing it here would throw that away at the last step.
+      // What separates these branches is not severity, it is WHO can fix it:
+      //   forbidden   -- the caller's role lacks the target type's `.view`.
+      //                  Newly reachable, because a pinned empty field now
+      //                  searches the moment its panel opens. A Retry button
+      //                  here would invite an operator to hammer a request that
+      //                  will refuse them identically every time.
+      //   unavailable -- the type is unregistered, or its owning module is not
+      //                  composed into this deployment. Also un-retryable, and
+      //                  a different remedy again: this build cannot answer for
+      //                  that type at all.
+      //   everything else -- network, 500, a timeout. Retry is exactly right.
+      // Copy comes from the dictionary, never off the error object: the server
+      // message is localized server-side text and would arrive in whichever
+      // language the API chose.
+      if (search.error.kind === "forbidden") {
+        return (
+          <EmptyState
+            bare
+            size="sm"
+            icon={ShieldOff}
+            title={t(`${I18N}.searchForbidden`)}
+            description={t(`${I18N}.searchForbiddenHint`)}
+          />
+        );
+      }
+      if (search.error.kind === "unavailable") {
+        return (
+          <EmptyState
+            bare
+            size="sm"
+            icon={Unplug}
+            title={t(`${I18N}.searchUnavailable`)}
+            description={t(`${I18N}.searchUnavailableHint`)}
+          />
+        );
+      }
       return (
         <div className="p-2">
-          {/* Deliberately the localized key rather than anything read off the
-              error object: the lookup error's own shape belongs to the data
-              layer, and a raw server string would arrive untranslated. */}
           <ErrorMessage size="sm" message={t(`${I18N}.searchFailed`)} onRetry={search.reload} />
         </div>
       );
     }
     if (search.isLoading) {
-      return (
-        <div className="space-y-1 p-1" aria-hidden="true">
-          {Array.from({ length: LOADING_ROW_COUNT }).map((_, index) => (
-            <Skeleton key={index} className="h-8 w-full rounded-nx-sm" />
-          ))}
-        </div>
-      );
+      return <LoadingRows />;
     }
     if (options.length === 0) {
       return draft.trim() ? (
@@ -396,6 +668,68 @@ export function EntityReferenceCustomFieldControl({
 
   return (
     <div className="space-y-2">
+      {/* The TYPE field, for an unpinned definition only, and FIRST in the DOM
+          because it gates the one below it. A pinned field -- every
+          UserReference, and every EntityReference an admin pinned -- renders
+          nothing here at all. */}
+      {needsTypeChoice && (
+        <div className="space-y-2">
+          <Label htmlFor={typeFieldId} className="text-sm font-medium">
+            {typeFieldLabel}
+          </Label>
+
+          <Popover open={typeOpen} onOpenChange={handleTypeOpenChange}>
+            <SelectTrigger
+              id={typeFieldId}
+              open={typeOpen}
+              multi={false}
+              disabled={disabled}
+              // Never `required`: what the form requires is a RECORD, and
+              // marking this one required would report a second missing field
+              // for one empty value.
+              placeholder={t(`${I18N}.typePlaceholder`)}
+              // The visible label is short; the accessible name names the field
+              // it belongs to, so two reference fields on one form do not both
+              // announce as "Record type". The short label is a substring of
+              // it, which is what WCAG's Label-in-Name asks for.
+              ariaLabel={t(`${I18N}.typeLabelFor`, { field: label ?? id })}
+              selectedOptions={
+                chosenType ? [{ value: chosenType.key, label: chosenTypeLabel }] : []
+              }
+              displayLabel={chosenTypeLabel}
+              maxSelectedDisplay={1}
+              // Nothing to clear TO. The field is already unpinned; emptying
+              // this selector would only re-disable the record picker, so the
+              // way to change a wrong choice is to pick another type.
+              allowClear={false}
+              onClear={() => undefined}
+              onRemoveOne={() => undefined}
+            />
+
+            <PopoverContent
+              align="start"
+              className="w-[var(--radix-popover-trigger-width)] min-w-56 p-0"
+            >
+              {/* `shouldFilter` left ON, unlike the record panel: this list is
+                  client-held and small, so cmdk is the right filter and no
+                  server round trip is involved. */}
+              <Command label={t("select.optionsLabel")}>
+                <CommandInput
+                  aria-label={t("select.searchLabel")}
+                  placeholder={t(`${I18N}.typeSearchPlaceholder`)}
+                />
+                {/* Mounted with the panel, which is what defers the fetch --
+                    see the component's own doc comment. */}
+                <ReferenceTypeOptions
+                  selectedKey={chosenType?.key ?? null}
+                  onSelect={handleTypeSelect}
+                />
+              </Command>
+            </PopoverContent>
+          </Popover>
+        </div>
+      )}
+
       {label && (
         <Label htmlFor={id} className="text-sm font-medium">
           {label}

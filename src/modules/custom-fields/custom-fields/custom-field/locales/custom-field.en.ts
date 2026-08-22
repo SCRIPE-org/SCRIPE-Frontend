@@ -361,9 +361,53 @@ export const en = {
     // name for the element showing the current selection, rendered next to the
     // resolved name rather than wrapping it, so a control that forgot to
     // interpolate cannot leak a raw `{placeholder}` into the page.
+    //
+    // THE `type*` KEYS BELONG TO THE SECOND COMBOBOX, shown only for a field
+    // whose definition pinned NO target -- which is the default shape a new
+    // definition gets. An unpinned field lets a value point at any type the
+    // caller may reference, and each value stores its own entityTypeKey, so the
+    // record editor picks the type first and the record second. `typeLabel` is
+    // the short visible label and `typeLabelFor` the accessible name; the first
+    // is a substring of the second on purpose (WCAG's Label in Name), and the
+    // second interpolates the field so two reference fields on one form do not
+    // both announce as "Record type".
+    //
+    // `noTargetConfigured` is what that field says before a type is chosen. It
+    // is an INSTRUCTION, not an apology: nothing is broken and no administrator
+    // is needed -- there are simply two steps and this names the first. It used
+    // to tell the reader to go and set a target on the definition, which was
+    // advice a record editor usually cannot act on and, now that the picker
+    // handles an unpinned field, is not the remedy either.
+    //
+    // noTypesAvailable/-Hint is the server answering with an EMPTY list of
+    // referenceable types. Not an error (it is a 200) and not a filter that
+    // matched nothing (`typeNoResults`), which is why it is its own pair. The
+    // hint names BOTH causes without asserting either, exactly as `missing`
+    // does for 403-vs-404: EntityLookupRegistry.GetAvailableTypes filters on
+    // provider composition AS WELL AS permission, so in a split deployment this
+    // is empty for a reason no permission grant would fix.
+    //
+    // searchForbidden/-Hint and searchUnavailable/-Hint split what used to be
+    // one "search failed, try again" for every way a lookup can fail. Both are
+    // rendered WITHOUT a retry, which is the point: 403 means this caller's role
+    // may not list that type (a permission change), and `unavailable` means this
+    // deployment cannot answer for that type at all -- an unregistered key, or
+    // an owning module that is not composed into this host (an install change).
+    // A Retry button on either invites an operator to hammer a request that will
+    // refuse them identically every time. searchFailed keeps the retry, because
+    // a network or 500 failure is the one that a retry genuinely fixes.
     entityReference: {
       noTargetConfigured:
-        "This field doesn't say which entity type it points at yet, so there is nothing to choose from. Set the target type on the field's definition to enable it.",
+        "This field isn't pinned to one entity type, so choose the type of record you want to point at first, then the record itself.",
+      typeLabel: "Record type",
+      typeLabelFor: "Record type for {field}",
+      typePlaceholder: "Choose a record type",
+      typeSearchPlaceholder: "Type to filter...",
+      typeNoResults: "No record type matches that filter.",
+      noTypesAvailable: "There are no record types you can point this field at.",
+      noTypesAvailableHint:
+        "Either the modules that own them aren't part of this deployment, or you don't have view access to them — either way, ask your system administrator.",
+      typesFailed: "Couldn't load the record types you can choose from. Please try again.",
       searchPlaceholder: "Type to search...",
       placeholder: "Select a record",
       searching: "Searching...",
@@ -379,6 +423,12 @@ export const en = {
       resolveFailed:
         "Couldn't load the referenced record just now. The reference itself is fine — please try again.",
       searchFailed: "Couldn't search for records just now. Please try again.",
+      searchForbidden: "You don't have permission to browse this type of record.",
+      searchForbiddenHint:
+        "The records are there — your role just can't list them. Ask your system administrator for view access to this record type.",
+      searchUnavailable: "This type of record isn't available in this deployment.",
+      searchUnavailableHint:
+        "The module that owns it isn't installed here, so there's nothing to list. Ask your system administrator which record types this field can use.",
       retry: "Try again",
       inactiveSuffix: "(inactive)",
       selectedLabel: "Selected record",
@@ -421,6 +471,14 @@ export const en = {
     // It is worded to hold on both forms: it must not promise an unpinned outcome, because an
     // already-pinned field keeps its pin through a save made while the list is empty (form state is
     // seeded from the stored value, not from the option list).
+    //
+    // It also must not name only ONE cause, which is what it used to do. `EntityLookupRegistry.
+    // GetAvailableTypes` filters on `Resolve(t.Key) is not null` -- provider composition -- BEFORE it
+    // filters on `HasPermission`, so in a split deployment the list is empty for a reason no
+    // permission grant will ever fix, and "ask an administrator for view access" sends the admin to
+    // do something that cannot work. The honest shape is the one `entityReference.missing` already
+    // uses for the 403/404 merge a few keys above: name both possibilities, claim neither, and say
+    // what follows either way.
     referenceTarget: {
       unpinned: "Not pinned — any allowed type",
       description:
@@ -428,7 +486,7 @@ export const en = {
       repointWarning:
         "Changing this leaves values already stored alone: each one keeps pointing at the record it points at now, and still reads back correctly. The next save of a record whose value is of the old type will be refused until that value is picked again.",
       noneAvailable:
-        "There are no entity types you can reference, so there is nothing to choose from here. Any target type already set on this field is left as it is. Ask your system administrator for view access to the record types you need.",
+        "There are no entity types you can reference. Either the modules that own them aren't part of this deployment, or you don't have view access to them — either way there is nothing to choose from here, and any target type already set on this field is left as it is. Ask your system administrator which record types are available to you.",
       loadFailed:
         "Couldn't load the entity types you can reference. Saving now keeps this field's current target type unchanged.",
     },

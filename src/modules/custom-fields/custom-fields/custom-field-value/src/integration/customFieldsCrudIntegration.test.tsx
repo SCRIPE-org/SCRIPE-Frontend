@@ -6,6 +6,7 @@ import { getCustomFieldsExtension, encodeCustomFieldName } from "@core/crud/cust
 import { mapValueToFieldConfig, customFieldsCrudIntegration } from "./customFieldsCrudIntegration";
 import { customFieldsContainer } from "../../../di";
 import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
+import { GenericFormCustomFieldControl } from "../../../custom-field/src/presentation/GenericFormCustomFieldControl";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 
 describe("mapValueToFieldConfig", () => {
@@ -136,6 +137,16 @@ describe("customFieldsCrudIntegration registration", () => {
   // were ever deleted from customFieldsCrudIntegration's registration object.
   it("wires formatValueForDisplay to the real formatCustomFieldValue function, not a stub or nothing", () => {
     expect(customFieldsCrudIntegration.formatValueForDisplay).toBe(formatCustomFieldValue);
+  });
+
+  // The EDIT-side twin of the assertion above, and optional for the identical
+  // reason -- so the identical silent-deletion risk applies. If
+  // `FieldControl: GenericFormCustomFieldControl` were dropped from the
+  // registration object, nothing would fail to compile and every generic CRUD
+  // screen's reference fields would quietly become core's inert "could not be
+  // loaded" state. This is the assertion that fails instead.
+  it("wires FieldControl to the real GenericFormCustomFieldControl, not a stub or nothing", () => {
+    expect(customFieldsCrudIntegration.FieldControl).toBe(GenericFormCustomFieldControl);
   });
 
   it("the REAL registered formatValueForDisplay renders live, locale-formatted output end-to-end", () => {

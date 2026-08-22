@@ -317,7 +317,32 @@ describe("useEntityLookupSearch", () => {
 
     act(() => result.current.reload());
 
-    await waitFor(() => expect(search).toHaveBeenCalledTimes(2));
+    // Waits for the retry to SETTLE, not merely to have been sent, and the
+    // difference is what made this test flaky under parallel load rather than
+    // wrong.
+    //
+    // `reload` bumps the nonce, which changes the scope key, which is precisely
+    // how the accumulation is emptied -- a fresh page 1 must not stack on top of
+    // pages 1..n. So `items` is legitimately `[]` for the whole window between
+    // the request going out and its answer coming back. `isLoading` is derived
+    // `true` across exactly that window, so a panel shows skeletons there and
+    // never a confident "no results"; the hook is behaving correctly and there
+    // is no product defect here.
+    //
+    // The old wait was on "the second request has been MADE", which is true one
+    // microtask after `reload` and says nothing about the rows. Whether the
+    // mock's already-resolved promise had also flushed by then was down to how
+    // many task boundaries `act` happened to cross -- so the list assertion
+    // passed on an idle machine and failed when the run was loaded.
+    //
+    // `isLoading === false` is the condition the list assertion actually depends
+    // on, and it cannot lie in the unsafe direction: `settledRequestKey` is
+    // written in the request promise's `finally`, strictly after the rows are
+    // written in its `then`, so this can never report settled while the rows are
+    // still missing.
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+    expect(search).toHaveBeenCalledTimes(2);
     expect(search.mock.calls[1][1]).toMatchObject({ page: 1 });
     // Not two copies of page 1 stacked on each other.
     expect(result.current.items).toHaveLength(1);

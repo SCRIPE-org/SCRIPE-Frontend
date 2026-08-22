@@ -9,6 +9,7 @@ import { customFieldsContainer } from "../../../di";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 import { InlineAddCustomFieldDialog } from "../presentation/components/InlineAddCustomFieldDialog";
 import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
+import { GenericFormCustomFieldControl } from "../../../custom-field/src/presentation/GenericFormCustomFieldControl";
 import { VALUE_TYPE_CATALOG } from "../../../custom-field/src/presentation/valueTypeRegistry";
 import { isFieldVisible } from "../domain/fieldVisibility";
 
@@ -179,6 +180,19 @@ const customFieldsCrudIntegration: CustomFieldsExtensionApi = {
   saveValues,
   getBulkColumnValues,
   InlineAddTrigger: InlineAddCustomFieldDialog,
+  // EDIT-side counterpart of formatValueForDisplay below: the control a host form
+  // draws for a custom-field type `core` declares but cannot render itself
+  // (today, "entity-reference"). Registered here rather than imported by
+  // generic-form.tsx because that import direction is the one the Dependency Rule
+  // forbids -- see GenericFormCustomFieldControl.tsx's own header, and the
+  // FieldControl member's doc comment in core/crud/customFieldsExtension.tsx.
+  //
+  // Without this line every generic CRUD screen with custom fields (30
+  // CrudConfig sites declare `entityTypeKey:`, against 8 that call
+  // renderCustomFieldControl directly) renders a reference field as core's
+  // explicit "this section could not be loaded" state -- correct, but inert. The
+  // registration is what makes the picker actually appear there.
+  FieldControl: GenericFormCustomFieldControl,
   // Wave 2 Step 2.2 Task 5: read-side counterpart of getFormFields above --
   // formatCustomFieldValue owns the Number/Boolean/Date/Text-and-Select
   // per-type table-cell formatting buildCustomFieldColumn used to inline

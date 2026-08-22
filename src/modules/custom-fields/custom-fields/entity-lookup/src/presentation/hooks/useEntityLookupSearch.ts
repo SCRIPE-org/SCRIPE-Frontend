@@ -50,9 +50,10 @@ export interface UseEntityLookupSearchArgs {
   /**
    * Registry key of the type being searched, e.g. `identity.user` for UserReference.
    *
-   * Nullable because an EntityReference field has no configured target until definition-level target
-   * pinning lands. An absent key is a valid resting state, not an error: the hook does not fetch, and
-   * the control renders its "no target entity type configured" state.
+   * Nullable because a definition may pin no target at all — a legitimate, permanent configuration
+   * in which each value names its own type. An absent key is therefore a valid resting state, not an
+   * error: the hook does not fetch, and the control asks the operator which type to search before it
+   * has anything to search.
    */
   entityTypeKey?: string | null;
   /**

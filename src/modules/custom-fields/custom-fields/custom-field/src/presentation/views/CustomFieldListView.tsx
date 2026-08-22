@@ -61,6 +61,110 @@ import { DefinitionExportButton } from "../../../../definition-export/src/presen
 // of the two copies -- see CustomFieldListView.optionsVisibility.test.tsx.
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Registry-sourced entity type names -- wire data, compiler-unchecked
+//
+// TWO of this view's option lists are built from the backend ENTITY-TYPE REGISTRY: the definition's
+// own entity type (`EntityTypeItemJson`, via `useCustomFieldViewModel`) and the reference target
+// pin's candidate list (`EntityLookupType`, via `useEntityLookupAvailableTypes`). Both wire shapes
+// declare `key`/`owningModule`/`displayNameEn`/`displayNameAr` as non-optional `string`, and NOTHING
+// enforces that at runtime -- neither has a mapper or a runtime guard, and `EntityLookupModel.ts`'s
+// own header records the consequence in as many words: "the runtime hands back `undefined` and a
+// picker row renders blank". The names come from each module's own `registry.Register(...)` call, so
+// one module shipping a type without an Arabic name is the entire trigger.
+//
+// A BLANK ROW WAS THE OPTIMISTIC READING. `String.prototype.localeCompare` on an absent name is a
+// `TypeError`, and the target-type sort that called it runs inside a render-phase `useMemo`, so one
+// half-registered entity type took the whole definitions screen down in Arabic rather than costing
+// the list one row. These helpers exist so neither list can dereference an unchecked wire string
+// again, and are exported so their behaviour can be tested against the real functions instead of
+// regex-matched out of this file -- the same reason `buildReferenceTargetField` below is exported.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The `key`/`owningModule`/`displayNameEn`/`displayNameAr` quartet both registry-sourced wire shapes
+ * carry.
+ *
+ * Structural rather than a union of the two interfaces: `EntityLookupType` lives in the
+ * entity-lookup submodule and `EntityTypeItemJson` in this one, they were declared independently,
+ * and the helpers below need nothing either declares beyond these four properties. Both are
+ * assignable to it with no cast.
+ */
+export interface RegistryNamedType {
+  key: string;
+  owningModule: string;
+  displayNameEn: string;
+  displayNameAr: string;
+}
+
+/**
+ * Returns `value` when it is genuinely a usable string, `undefined` otherwise.
+ *
+ * Deliberately the same shape as `getValueTypeCatalogEntry` (valueTypeRegistry.ts): it takes
+ * `unknown` rather than the `string` the compiler believes in -- the whole point is defending
+ * against a value that ISN'T one, which a `string` parameter would let the caller assume away -- and
+ * it answers with `undefined` on a miss instead of throwing, so the caller's fallback is forced by
+ * the return type rather than left to be remembered. That is the discipline `mapValueToFieldConfig`
+ * (customFieldsCrudIntegration.tsx) already applies at its own wire boundary, for the same reason.
+ *
+ * Whitespace-only counts as a miss: `"   "` is as unreadable in a dropdown as an absent name, and
+ * unlike an absent one it would sort ahead of every real name in its group.
+ */
+export function readWireString(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+  return value.trim() === "" ? undefined : value;
+}
+
+/**
+ * The display name to show for one registry type, or `undefined` when the wire supplied neither.
+ *
+ * Falls back to the OTHER language before giving up -- the same "Arabic wins only when one was
+ * actually set, otherwise English" rule `mapValueToFieldConfig` applies to a custom field's own
+ * bilingual label pair. A type registered with an English name only is far better shown under that
+ * name than under its key. For a fully-populated pair this is byte-identical to the plain
+ * `language === "ar" ? ar : en` it replaces, so nothing about well-formed data moves.
+ *
+ * Not `resolveBilingualLabel` (@core/common/utils): that returns `string` unconditionally and has no
+ * concept of a miss, which is exactly the assumption being guarded against here.
+ */
+export function resolveRegistryTypeName(
+  type: RegistryNamedType,
+  language: string
+): string | undefined {
+  const active = language === "ar" ? type?.displayNameAr : type?.displayNameEn;
+  const other = language === "ar" ? type?.displayNameEn : type?.displayNameAr;
+  return readWireString(active) ?? readWireString(other);
+}
+
+/**
+ * One option label for a registry type: `Name (key)`, or the bare key when no name arrived.
+ *
+ * WHY THE KEY, AND NOT BLANK, AND NOT A TRANSLATED "(unnamed)". The backend's own lookup providers
+ * face this exact question one layer down and answer it the same way: `EntityLookupItem.displayName`
+ * is documented as "Never blank -- a provider that cannot build one falls back to the id"
+ * (EntityLookupModel.ts). The reasoning carries over intact. A row with no text cannot be typed for
+ * in a searchable picker, cannot be named in a bug report, and cannot be told apart from a second
+ * nameless row, so it is unselectable in practice even though it is present. The key is the one
+ * string guaranteed to be meaningful here: it is the value being submitted, it is already shown
+ * beside every other name in this same list, and it carries the owning module in its own prefix
+ * (`hrms.staff-member`) -- so a keyed row degrades to "technical but actionable" instead of
+ * "invisible". A translated placeholder would need a new locale string and would still leave two
+ * unnamed types indistinguishable.
+ *
+ * The parenthesised key is dropped in that case rather than doubled: `hrms.staff-member
+ * (hrms.staff-member)` reads as a rendering bug, which is the one thing this row is not.
+ *
+ * `""` is returned only when the type has neither a name nor a key. Both call sites drop such rows
+ * before labelling them (an option whose value is unusable must not be offered at all), so this is
+ * the total-function tail rather than a state the product renders.
+ */
+export function formatRegistryTypeOptionLabel(type: RegistryNamedType, language: string): string {
+  const name = resolveRegistryTypeName(type, language);
+  const key = readWireString(type?.key);
+  if (name === undefined) return key ?? "";
+  return key === undefined ? name : `${name} (${key})`;
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Definition-level reference target pin (Wave 4 follow-up)
 //
 // `CustomField.ReferenceTargetEntityTypeKey` says which ONE entity type a reference field's values
@@ -167,17 +271,57 @@ export interface BuildReferenceTargetFieldArgs {
 }
 
 /**
+ * Sort order for the target-type option list: owning module, then the displayed name, then the key.
+ *
+ * TOTAL BY CONSTRUCTION. Every operand goes through `readWireString` and defaults to `""`, because
+ * `localeCompare` on an absent property is a `TypeError` and this comparator runs inside a
+ * render-phase `useMemo` -- one entity type registered without the active language's name used to
+ * throw from here and take the whole definitions screen down, rather than costing the list one row.
+ * For a well-formed list every operand is the same string it always was, so the resulting order is
+ * unchanged; `CustomFieldListView.referenceTargetPicker.test.tsx` pins the full order in both
+ * languages so the guard cannot quietly reshuffle what it is protecting.
+ *
+ * The middle key is the name the row ACTUALLY SHOWS, which for a nameless row is its key (see
+ * `formatRegistryTypeOptionLabel`). Filing such a row under `""` instead would put it ahead of every
+ * named row in its module for a reason nothing on screen explains.
+ *
+ * Only the name comparison is locale-aware, exactly as before: `owningModule` and `key` are ASCII
+ * registry identifiers rather than display text, and collating them under `ar-EG` would order the
+ * grouping by rules that have nothing to do with anything visible.
+ */
+function compareReferenceTargetOptions(
+  a: RegistryNamedType,
+  b: RegistryNamedType,
+  language: string
+): number {
+  const moduleOf = (type: RegistryNamedType) => readWireString(type?.owningModule) ?? "";
+  const keyOf = (type: RegistryNamedType) => readWireString(type?.key) ?? "";
+  const shownNameOf = (type: RegistryNamedType) =>
+    resolveRegistryTypeName(type, language) ?? keyOf(type);
+
+  return (
+    moduleOf(a).localeCompare(moduleOf(b)) ||
+    shownNameOf(a).localeCompare(shownNameOf(b), resolveIntlLocale(language)) ||
+    keyOf(a).localeCompare(keyOf(b))
+  );
+}
+
+/**
  * Builds the target-entity-type picker's `FieldConfig`.
  *
- * OPTION ORDER AND LABELS. Sorted by `owningModule`, then by the displayed name, then by key -- the
- * same "grouping by sort order rather than by a visual divider" this file already applies to the
- * entity-type picker above, because `GenericSelect` has no optgroup primitive here. The label is
- * `Name (key)`, matching that picker exactly; no separate `— Module` suffix is appended because the
- * key shown beside the name already opens with the owning module's own namespace (`identity.user` is
- * registered by `Identity`, `hrms.staff-member` by `Hrms`), so a suffix would restate what is two
- * characters to its left. The names themselves come from the backend entity-type registry and are NOT
- * translation keys -- they must be read off `displayNameEn`/`displayNameAr` and never looked up in
- * this module's locale files.
+ * OPTION ORDER AND LABELS. Sorted by `owningModule`, then by the displayed name, then by key (see
+ * `compareReferenceTargetOptions`) -- the same "grouping by sort order rather than by a visual
+ * divider" this file already applies to the entity-type picker above, because `GenericSelect` has no
+ * optgroup primitive here. The label is `Name (key)`, matching that picker exactly; no separate
+ * `— Module` suffix is appended because the key shown beside the name already opens with the owning
+ * module's own namespace (`identity.user` is registered by `Identity`, `hrms.staff-member` by
+ * `Hrms`), so a suffix would restate what is two characters to its left. The names themselves come
+ * from the backend entity-type registry and are NOT translation keys -- they must be read off
+ * `displayNameEn`/`displayNameAr` and never looked up in this module's locale files.
+ *
+ * NONE OF THOSE FOUR PROPERTIES IS GUARANTEED TO ARRIVE, whatever the wire types say -- see the
+ * registry-name helpers at the top of this file for the exposure and for what a row missing its name
+ * renders as instead of blank. A row missing its KEY is dropped outright; the reason is at the filter.
  *
  * THE SENTINEL IS ALWAYS PRESENT, in every state including the empty and failed ones. It is not a
  * "no selection" placeholder: unpinned is a legal, permanent configuration, and selecting the
@@ -199,21 +343,26 @@ export function buildReferenceTargetField({
   isEmpty,
   isExistingDefinition,
 }: BuildReferenceTargetFieldArgs): FieldConfig {
-  const nameOf = (type: EntityLookupType) =>
-    language === "ar" ? type.displayNameAr : type.displayNameEn;
+  // "An array" is a wire claim like any other. `useEntityLookupAvailableTypes` defaults an ABSENT
+  // body to `[]`, which covers a 204 but not a malformed 200 -- and a non-iterable reaching the
+  // spread below throws from the same render-phase memo as everything else here.
+  const availableTypes: readonly EntityLookupType[] = Array.isArray(types) ? types : [];
 
   const options: FieldOption[] = [
     { value: UNPINNED_REFERENCE_TARGET, label: t("customField.referenceTarget.unpinned") },
-    // Copied before sorting: `types` comes straight from a react-query cache, and sorting in place
-    // would mutate cached data every consumer shares.
-    ...[...types]
-      .sort(
-        (a, b) =>
-          a.owningModule.localeCompare(b.owningModule) ||
-          nameOf(a).localeCompare(nameOf(b), resolveIntlLocale(language)) ||
-          a.key.localeCompare(b.key)
-      )
-      .map((type) => ({ value: type.key, label: `${nameOf(type)} (${type.key})` })),
+    ...availableTypes
+      // DROPPED, not degraded -- the one place in this builder where absent beats present. `value`
+      // IS the key: without one the option submits `undefined`, and the only string available to
+      // substitute is `""`, which is already spoken for as the UNPIN sentinel. A keyless row given
+      // that value would silently clear the pin when clicked, which is worse than a row that is
+      // simply not offered.
+      .filter((type) => readWireString(type?.key) !== undefined)
+      // `.filter` above already returns a fresh array, which is what keeps the `.sort` below off the
+      // react-query cache `types` points at -- sorting in place would reorder the list for every
+      // other consumer. It stands in for the explicit `[...types]` copy this used to make, so do not
+      // remove it without restoring one.
+      .sort((a, b) => compareReferenceTargetOptions(a, b, language))
+      .map((type) => ({ value: type.key, label: formatRegistryTypeOptionLabel(type, language) })),
   ];
 
   // Precedence matters and is not arbitrary. A FAILURE must not be described as "there is nothing you
@@ -327,18 +476,29 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   }, []);
 
   const entityTypeOptions = useMemo(() => {
-    if (!entityTypes || entityTypes.length === 0) return [];
+    // `Array.isArray`, not the old `!entityTypes || entityTypes.length === 0`: that guard let a
+    // malformed 200 body through (`{}.length` is `undefined`, which is not `0`) to the `.filter`
+    // below, and a TypeError raised from this memo takes the screen, not the dropdown.
+    const available: typeof entityTypes = Array.isArray(entityTypes) ? entityTypes : [];
+    // Same reason the reference-target picker drops keyless rows: `value` IS the key, and an option
+    // that submits `undefined` for a REQUIRED field is worse than one that is not offered.
+    const usable = available.filter((item) => readWireString(item?.key) !== undefined);
+    if (usable.length === 0) return [];
     // Screen-backed entities first, API-only ones after -- native <select>/
     // GenericSelect has no optgroup primitive here, so the grouping is done
     // by sort order plus a label suffix rather than a visual divider. `?? true`
     // matches an older backend response that omits the field (treat as
     // screen-backed, the pre-this-feature default) rather than mislabeling
     // every entity type as API-only.
-    const onScreen = entityTypes.filter((item) => item.hasFrontendScreen ?? true);
-    const apiOnly = entityTypes.filter((item) => !(item.hasFrontendScreen ?? true));
+    const onScreen = usable.filter((item) => item.hasFrontendScreen ?? true);
+    const apiOnly = usable.filter((item) => !(item.hasFrontendScreen ?? true));
     const toOption = (item: (typeof entityTypes)[number], suffix?: string) => ({
       value: item.key,
-      label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})${suffix ?? ""}`,
+      // Guarded, and key-labelled on a miss, exactly as the target-type picker above is: this list
+      // is read from the SAME backend registry through the same unchecked wire contract, and the
+      // inlined ternary this replaces rendered a type missing the active language's name as the
+      // literal text "undefined (hrms.staff-member)".
+      label: `${formatRegistryTypeOptionLabel(item, language)}${suffix ?? ""}`,
     });
     return [
       ...onScreen.map((item) => toOption(item)),
@@ -347,17 +507,25 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   }, [entityTypes, language, t]);
 
   const noFrontendScreenDescription = useMemo(() => {
-    const apiOnlyEntities = (entityTypes ?? []).filter((item) => !(item.hasFrontendScreen ?? true));
-    if (apiOnlyEntities.length === 0) return undefined;
+    // Array-guarded for the same reason `entityTypeOptions` above is; `?? []` alone covered only an
+    // absent body.
+    const available: typeof entityTypes = Array.isArray(entityTypes) ? entityTypes : [];
+    const apiOnlyEntities = available.filter((item) => !(item?.hasFrontendScreen ?? true));
     // Static, always-visible note rather than a live per-selection popup --
     // GenericForm has no "computed text tied to another field's current
     // value" primitive today. Combined with the label suffix above (which
     // IS per-option), this still tells an admin, before they pick anything,
     // that some entries in the list won't render on any screen yet.
     const names = apiOnlyEntities
-      .map((item) => (language === "ar" ? item.displayNameAr : item.displayNameEn))
-      .join(", ");
-    return t("customField.noFrontendScreenWarning", { entity: names });
+      // Name, else key -- the same fallback the option labels use, so this sentence names the same
+      // rows the dropdown does. The inlined ternary it replaces listed the word "undefined" for a
+      // type registered without the active language's name.
+      .map((item) => resolveRegistryTypeName(item, language) ?? readWireString(item?.key))
+      .filter((name): name is string => name !== undefined);
+    // Nothing nameable to warn about reads as no warning at all, rather than as a sentence with a
+    // hole where the entity names belong.
+    if (names.length === 0) return undefined;
+    return t("customField.noFrontendScreenWarning", { entity: names.join(", ") });
   }, [entityTypes, language, t]);
 
   const valueTypeOptions = useMemo(
