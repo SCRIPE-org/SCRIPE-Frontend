@@ -28,6 +28,12 @@ import { FieldGroupRepository } from "./field-group/src/data/repositories/FieldG
 import type { IFieldGroupService } from "./field-group/src/domain/interfaces/IFieldGroupService";
 import type { IFieldGroupRepository } from "./field-group/src/domain/interfaces/IFieldGroupRepository";
 
+// EntityLookup (Wave 4 — EntityReference / UserReference)
+import { EntityLookupService } from "./entity-lookup/src/data/services/EntityLookupService";
+import { EntityLookupRepository } from "./entity-lookup/src/data/repositories/EntityLookupRepository";
+import type { IEntityLookupService } from "./entity-lookup/src/domain/interfaces/IEntityLookupService";
+import type { IEntityLookupRepository } from "./entity-lookup/src/domain/interfaces/IEntityLookupRepository";
+
 export interface CustomFieldsContainer {
   customFieldService: ICustomFieldService;
   customFieldRepository: ICustomFieldRepository;
@@ -35,6 +41,17 @@ export interface CustomFieldsContainer {
   customFieldValueRepository: ICustomFieldValueRepository;
   fieldGroupService: IFieldGroupService;
   fieldGroupRepository: IFieldGroupRepository;
+  /**
+   * Registered here rather than in a submodule-local container like `definition-export/di.ts`.
+   *
+   * That file's own header says a third local container is the signal to merge them upward instead
+   * of adding one — and unlike those, this change owns this file, so there is no reason to deviate.
+   * It also matters more here than for an export button: the lookup endpoints must carry the current
+   * `X-Tenant-Context` header, and sharing this container's single cached `ApiService` is what
+   * guarantees they do.
+   */
+  entityLookupService: IEntityLookupService;
+  entityLookupRepository: IEntityLookupRepository;
 }
 
 let _container: CustomFieldsContainer | null = null;
@@ -49,6 +66,7 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
     const customFieldService = new CustomFieldService(apiService);
     const customFieldValueService = new CustomFieldValueService(apiService);
     const fieldGroupService = new FieldGroupService(apiService);
+    const entityLookupService = new EntityLookupService(apiService);
 
     _container = {
       customFieldService,
@@ -57,6 +75,8 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
       customFieldValueRepository: new CustomFieldValueRepository(customFieldValueService),
       fieldGroupService,
       fieldGroupRepository: new FieldGroupRepository(fieldGroupService),
+      entityLookupService,
+      entityLookupRepository: new EntityLookupRepository(entityLookupService),
     };
   }
 
@@ -75,5 +95,8 @@ export const customFieldsContainer = {
   },
   get fieldGroupRepository() {
     return getCustomFieldsContainer().fieldGroupRepository;
+  },
+  get entityLookupRepository() {
+    return getCustomFieldsContainer().entityLookupRepository;
   },
 };
