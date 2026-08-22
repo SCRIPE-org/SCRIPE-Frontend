@@ -12,7 +12,7 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
 import { DSR_ENTITY_TYPE_KEY } from "../viewmodels/useDsrViewModel";
 
 // ── Option constants ──────────────────────────────────────────────────────────

@@ -7,7 +7,7 @@
  */
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { EntityTypeCatalogView } from "@modules/custom-fields/custom-field/src/presentation/views/EntityTypeCatalogView";
+import { EntityTypeCatalogView } from "@modules/custom-fields/custom-field";
 
 export const metadata: Metadata = {
   title: "Entity Types",

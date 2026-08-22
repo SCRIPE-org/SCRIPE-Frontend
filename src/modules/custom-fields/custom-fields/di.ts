@@ -7,6 +7,13 @@
  * - Services wrap IApiService (API calls only)
  * - Repositories use Services and map Models → Entities
  * - ViewModels use Repositories
+ *
+ * The submodule imports below deliberately reach past each submodule's own barrel and
+ * into its `src/data/` layer. This container is the composition root, not a consumer:
+ * it is the one place allowed to name a concrete Service/Repository, and no submodule
+ * barrel exports them precisely so nothing else can. Routing these through a barrel
+ * would also be a real import cycle -- `custom-field/index.ts` eagerly loads
+ * `CustomFieldListView`, which imports this file.
  */
 import { getModuleApiService } from "@/core/services/api-factory";
 

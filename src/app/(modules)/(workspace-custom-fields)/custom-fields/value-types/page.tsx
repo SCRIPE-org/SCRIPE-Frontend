@@ -6,7 +6,7 @@
  */
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { ValueTypeCatalogView } from "@modules/custom-fields/custom-field/src/presentation/views/ValueTypeCatalogView";
+import { ValueTypeCatalogView } from "@modules/custom-fields/custom-field";
 
 export const metadata: Metadata = {
   title: "Value Types",

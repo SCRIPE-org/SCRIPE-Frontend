@@ -16,7 +16,7 @@ import {
 import {
   assertSelectCustomFieldValuesValid,
   CustomFieldValidationError,
-} from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+} from "@modules/custom-fields/custom-field";
 import { TENANT_PLAN_ENTITY_TYPE_KEY } from "./useTenantPlanCreateViewModel";
 import type { UpdateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
 

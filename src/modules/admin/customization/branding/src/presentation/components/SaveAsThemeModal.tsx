@@ -27,7 +27,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Palette, Sparkles, Sliders } from "lucide-react";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
 import { THEME_ENTITY_TYPE_KEY } from "../viewmodels/useStudioViewModel";
 
 interface SaveAsThemeModalProps {

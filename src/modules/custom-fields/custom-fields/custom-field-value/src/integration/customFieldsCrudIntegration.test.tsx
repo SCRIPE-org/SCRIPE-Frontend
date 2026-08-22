@@ -5,8 +5,7 @@ import "@testing-library/jest-dom";
 import { getCustomFieldsExtension, encodeCustomFieldName } from "@core/crud/customFieldsExtension";
 import { mapValueToFieldConfig, customFieldsCrudIntegration } from "./customFieldsCrudIntegration";
 import { customFieldsContainer } from "../../../di";
-import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
-import { GenericFormCustomFieldControl } from "../../../custom-field/src/presentation/GenericFormCustomFieldControl";
+import { formatCustomFieldValue, GenericFormCustomFieldControl } from "../../../custom-field";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 
 describe("mapValueToFieldConfig", () => {

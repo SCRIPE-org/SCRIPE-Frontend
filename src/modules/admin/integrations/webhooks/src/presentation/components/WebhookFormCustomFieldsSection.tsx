@@ -3,7 +3,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Sliders } from "lucide-react";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
 import { WEBHOOK_ENTITY_TYPE_KEY, type WebhookFormViewModel } from "../viewmodels/useWebhookFormViewModel";
 
 interface WebhookFormCustomFieldsSectionProps {

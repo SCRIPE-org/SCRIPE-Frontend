@@ -16,11 +16,9 @@ import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
   type CustomFieldValueTypeName,
-} from "../../../../custom-field/src/presentation/valueTypeRegistry";
-import {
   VALIDATOR_KIND_CATALOG,
   ALL_VALIDATOR_KINDS,
-} from "../../../../custom-field/src/presentation/validatorKindRegistry";
+} from "../../../../custom-field";
 
 // Shares CustomFieldListView.tsx's per-value-type catalog (badge tone,
 // placeholder/options applicability, display label) rather than

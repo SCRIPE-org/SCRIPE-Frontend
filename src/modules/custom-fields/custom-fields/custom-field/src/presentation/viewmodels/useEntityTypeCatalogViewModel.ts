@@ -18,7 +18,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomFieldsContainer } from "../../../../di";
 import type { EntityTypeInfo } from "../../domain/entities/CustomField";
-import { hasFrontendScreenInThisRepo } from "../entityScreenManifest";
+import { hasFrontendScreenInThisRepo } from "../registries/entityScreenManifest";
 
 /**
  * How one entity type's two claims line up.

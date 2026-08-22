@@ -34,7 +34,7 @@
  * the property names carry the meaning.
  */
 import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
-import type { ValidatorKindName } from "../../../../custom-field/src/data/models/CustomFieldModel";
+import type { ValidatorKindName } from "../../../../custom-field";
 
 /** The only `FormatVersion` this client writes files for — `SchemaBundle.CurrentFormatVersion`. */
 export const SUPPORTED_SCHEMA_FORMAT_VERSION = 1;

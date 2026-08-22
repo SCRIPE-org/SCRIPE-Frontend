@@ -33,7 +33,7 @@ import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
-import { useRestrictableCustomFieldKeys } from "@modules/custom-fields/custom-field/src/presentation/viewmodels/useRestrictableCustomFieldKeys";
+import { useRestrictableCustomFieldKeys } from "@modules/custom-fields/custom-field";
 import {
   PermissionScopes,
   type PermissionAssignmentJson,

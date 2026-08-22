@@ -21,7 +21,7 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
 import dynamic from "next/dynamic";
 
 // Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)

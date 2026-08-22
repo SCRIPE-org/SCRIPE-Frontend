@@ -2,7 +2,7 @@
 
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
 import { TENANT_PLAN_ENTITY_TYPE_KEY } from "../../viewmodels/useTenantPlanCreateViewModel";
 
 interface TenantPlanStepCustomFieldsProps {

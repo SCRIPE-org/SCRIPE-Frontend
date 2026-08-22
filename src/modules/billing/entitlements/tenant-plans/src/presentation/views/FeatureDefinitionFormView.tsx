@@ -31,7 +31,7 @@ import { Badge } from "@core/ui/badge";
 import { PageHeader } from "@core/ui/page-header";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
 import {
   ArrowLeft,
   Save,

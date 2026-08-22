@@ -15,7 +15,7 @@
  * that.
  */
 import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
-import type { ValidatorKindName } from "../../../../custom-field/src/data/models/CustomFieldModel";
+import type { ValidatorKindName } from "../../../../custom-field";
 import { SUPPORTED_SCHEMA_FORMAT_VERSION } from "../../data/models/SchemaBundleModel";
 
 /**

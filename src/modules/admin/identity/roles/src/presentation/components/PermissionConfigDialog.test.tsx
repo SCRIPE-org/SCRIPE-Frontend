@@ -28,7 +28,7 @@ import type { ReactNode } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { en as coreEn } from "@core/locales/en";
 import { getCustomFieldsContainer } from "@modules/custom-fields/di";
-import { CustomField } from "@modules/custom-fields/custom-field/src/domain/entities/CustomField";
+import { CustomField } from "@modules/custom-fields/custom-field";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 
 vi.mock("@modules/custom-fields/di", () => ({ getCustomFieldsContainer: vi.fn() }));

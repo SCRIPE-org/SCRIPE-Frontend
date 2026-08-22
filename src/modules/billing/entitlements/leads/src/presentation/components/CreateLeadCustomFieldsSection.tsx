@@ -4,7 +4,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Sliders } from "lucide-react";
 import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
 import { LEAD_ENTITY_TYPE_KEY } from "../viewmodels/useLeadsViewModel";
 
 interface CreateLeadCustomFieldsSectionProps {

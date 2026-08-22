@@ -8,9 +8,11 @@ import {
 import { customFieldsContainer } from "../../../di";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 import { InlineAddCustomFieldDialog } from "../presentation/components/InlineAddCustomFieldDialog";
-import { formatCustomFieldValue } from "../../../custom-field/src/presentation/formatCustomFieldValue";
-import { GenericFormCustomFieldControl } from "../../../custom-field/src/presentation/GenericFormCustomFieldControl";
-import { VALUE_TYPE_CATALOG } from "../../../custom-field/src/presentation/valueTypeRegistry";
+import {
+  formatCustomFieldValue,
+  GenericFormCustomFieldControl,
+  VALUE_TYPE_CATALOG,
+} from "../../../custom-field";
 import { isFieldVisible } from "../domain/fieldVisibility";
 
 /** Exported for the unit test above; not part of CustomFieldsExtensionApi itself. */
