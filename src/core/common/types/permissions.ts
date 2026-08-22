@@ -438,6 +438,15 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // `custom-field-groups.view` on every read, so an admin holding only
   // `custom-fields.view` would reach an empty screen and a 403.
   "/custom-fields/field-groups": [SYSTEM_PERMISSIONS.FIELD_GROUP_VIEW],
+  // Option Sets admin screen (P-4). Needs its OWN entry for the same exact-path
+  // reason value-types does. Gated on the option-set view permission rather than
+  // the parent's: the backend's OptionSetsController requires
+  // `custom-field-option-sets.view` on every read, so an admin holding only
+  // `custom-fields.view` would reach an empty screen and a 403. Only `.view` is
+  // listed -- the five write permissions gate CONTROLS inside the screen, not
+  // arrival at it, and requiring them here would hide the read-only reference
+  // sets (ISO 3166 / ISO 4217 / BCP 47) from the auditors who need to read them.
+  "/custom-fields/option-sets": [SYSTEM_PERMISSIONS.OPTION_SET_VIEW],
 
   // Analytics & Dashboard Events
   "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],

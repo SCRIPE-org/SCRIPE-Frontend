@@ -21,7 +21,17 @@ import { Button } from "@core/ui/button";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
 import { resolveIntlLocale } from "@core/common/utils";
-import { BarChart3, Boxes, FolderTree, Globe2, History, ListTree, Pencil, Trash2 } from "lucide-react";
+import {
+  BarChart3,
+  Boxes,
+  FolderTree,
+  Globe2,
+  History,
+  Layers,
+  ListTree,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
@@ -395,6 +405,16 @@ export function buildReferenceTargetField({
 
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../../locales"), "customFields");
+  // P-4. A SECOND locale chunk, loaded only for the "Option Sets" link's label. The label is
+  // `optionSet.title` -- the destination screen's own name -- and that key lives in the option-set
+  // chunk, not this module's. Naming the screen from the screen's own dictionary is what keeps the
+  // two from drifting into "Option Sets" here and something else one route away, which is exactly
+  // what a duplicated `customField.optionSetsLink` string would eventually do. Same dedup key the
+  // option-set views use, so mounting the destination afterwards costs no second fetch. The chunk
+  // loads asynchronously, so the button renders its raw key for one frame on a cold visit -- the
+  // same behaviour every lazily-loaded label in this app has, and the reason it is one short label
+  // rather than the page's own heading.
+  useModuleLocales(() => import("../../../../../option-set/locales"), "customFieldOptionSets");
   const { t, language } = useI18n();
   const { vm, entityTypes, isEntityTypesError, refetchEntityTypes } = useCustomFieldViewModel();
   const { isSuperAdmin } = usePermissions();
@@ -431,6 +451,17 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
    * otherwise lead to a page `PAGE_PERMISSIONS` refuses.
    */
   const canViewFieldGroups = usePermission(CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_VIEW);
+  /**
+   * P-4. Gates the "Option Sets" link below, and nothing else on this screen -- unlike
+   * `canViewFieldGroups`, no picker here reads option sets, because a definition binds to a set
+   * VERSION from its own version editor rather than from this list.
+   *
+   * `custom-field-option-sets.view` is a new permission, so no role predating P-4 holds it,
+   * including roles carrying the full `custom-fields.*` set. Without this gate such an admin would
+   * be offered a link to a page `PAGE_PERMISSIONS` refuses -- a dead end, not a discovery, which is
+   * the same reason the field-groups link is gated.
+   */
+  const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW);
   const canViewHistory = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_HISTORY);
   const canViewUsage = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_USAGE);
   const insight = useFieldInsightViewModel();
@@ -755,6 +786,27 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
                 <Button variant="outline" size="sm">
                   <FolderTree className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
                   {t("customField.fieldGroupsLink")}
+                </Button>
+              </Link>
+            )}
+            {/* P-4. Placed next to the field-groups link rather than at the end
+                of the row because those two are the pair that MANAGE something
+                (both open an editor, both are permission-gated, both can refuse
+                a write), while value-types and entity-types are read-only
+                reference catalogues. /custom-fields/option-sets likewise has no
+                backend-seeded sidebar nav entry of its own, so this screen is
+                its entry point -- and the natural one, since an option set is
+                what a Select or MultiSelect definition on this list binds to
+                instead of carrying its own inline option list. Gated on the same
+                permission the destination page and OptionSetsController require,
+                for the reason spelled out at `canViewOptionSets`. The label is
+                the destination's own `optionSet.title`; see the second
+                `useModuleLocales` call above for why it is not a local string. */}
+            {canViewOptionSets && (
+              <Link href="/custom-fields/option-sets">
+                <Button variant="outline" size="sm">
+                  <Layers className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+                  {t("optionSet.title")}
                 </Button>
               </Link>
             )}
@@ -1241,6 +1293,9 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       referenceTargetFields,
       fieldGroupField,
       canViewFieldGroups,
+      // P-4. Gates the Option Sets link inside `customHeaderContent`, so it has to be here or the
+      // link would keep its first-render visibility after the permission set resolves.
+      canViewOptionSets,
       handleEntityTypeChange,
       vm,
       isEntityTypesError,

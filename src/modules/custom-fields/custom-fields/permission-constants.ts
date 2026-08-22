@@ -5,8 +5,9 @@
  *
  * Keys MUST match the backend CustomFieldsPermissionProvider resource keys
  * ({resource}.{action}, kebab-case plural) exactly for permission parity.
- * The backend emits `custom-fields` x CRUD and (Wave 5 row 5.2)
- * `custom-field-groups` x CRUD + reorder.
+ * The backend emits `custom-fields` x CRUD, (Wave 5 row 5.2)
+ * `custom-field-groups` x CRUD + reorder, and (P-4)
+ * `custom-field-option-sets` x CRUD + publish + bind.
  */
 export const CUSTOM_FIELDS_PERMISSIONS = {
   // ── Custom Fields ───────────────────────────────────────
@@ -25,6 +26,27 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
   FIELD_GROUP_UPDATE: "custom-field-groups.update",
   FIELD_GROUP_DELETE: "custom-field-groups.delete",
   FIELD_GROUP_REORDER: "custom-field-groups.reorder",
+
+  // ── Option Sets (P-4) ───────────────────────────────────
+  // `publish` and `bind` are a SIXTH and SEVENTH action beyond the CRUD quartet,
+  // and the backend's OptionSetsController gates them independently. That split
+  // is the point, not bookkeeping: `update` covers renaming a set and editing a
+  // DRAFT version's items, which changes nothing any record or field is using
+  // yet, whereas `publish` takes a version live (deprecating the incumbent, so
+  // every field bound to it starts offering a different list) and `bind` points
+  // a field version at a set version (which can deactivate options a tenant was
+  // offering a moment ago). So an admin can be allowed to curate a set's items
+  // without being allowed to release them or to repoint a live field.
+  //
+  // `create` deliberately has no version-scoped twin: the backend gates BOTH
+  // `POST /option-sets` and `POST /option-sets/{id}/versions` on it, because
+  // opening a new draft is the same act of authoring as declaring the set.
+  OPTION_SET_VIEW: "custom-field-option-sets.view",
+  OPTION_SET_CREATE: "custom-field-option-sets.create",
+  OPTION_SET_UPDATE: "custom-field-option-sets.update",
+  OPTION_SET_DELETE: "custom-field-option-sets.delete",
+  OPTION_SET_PUBLISH: "custom-field-option-sets.publish",
+  OPTION_SET_BIND: "custom-field-option-sets.bind",
 
   // ── Wave 6 rows 6.6 and 6.3 ─────────────────────────────
   // Separate permissions, not folded under `view`: a field's change history names WHO changed what

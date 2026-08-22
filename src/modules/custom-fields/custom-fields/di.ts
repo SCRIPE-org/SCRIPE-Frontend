@@ -35,6 +35,12 @@ import { FieldGroupRepository } from "./field-group/src/data/repositories/FieldG
 import type { IFieldGroupService } from "./field-group/src/domain/interfaces/IFieldGroupService";
 import type { IFieldGroupRepository } from "./field-group/src/domain/interfaces/IFieldGroupRepository";
 
+// OptionSet (P-4 — shared, versioned option sets)
+import { OptionSetService } from "./option-set/src/data/services/OptionSetService";
+import { OptionSetRepository } from "./option-set/src/data/repositories/OptionSetRepository";
+import type { IOptionSetService } from "./option-set/src/domain/interfaces/IOptionSetService";
+import type { IOptionSetRepository } from "./option-set/src/domain/interfaces/IOptionSetRepository";
+
 // EntityLookup (Wave 4 — EntityReference / UserReference)
 import { EntityLookupService } from "./entity-lookup/src/data/services/EntityLookupService";
 import { EntityLookupRepository } from "./entity-lookup/src/data/repositories/EntityLookupRepository";
@@ -48,6 +54,17 @@ export interface CustomFieldsContainer {
   customFieldValueRepository: ICustomFieldValueRepository;
   fieldGroupService: IFieldGroupService;
   fieldGroupRepository: IFieldGroupRepository;
+  /**
+   * Option sets (P-4). Registered here rather than in an option-set-local container for the same
+   * reason `entityLookup*` below is: this container's single cached `ApiService` is what carries the
+   * current `X-Tenant-Context` header, and option sets are the one CustomFields surface where that
+   * header changes the ANSWER rather than just the authorization -- a platform-context read returns
+   * the seeded platform sets as writable, a tenant-context read returns the same rows as read-only
+   * reference data. A second ApiService could disagree with the rest of the module about which
+   * context the admin is in.
+   */
+  optionSetService: IOptionSetService;
+  optionSetRepository: IOptionSetRepository;
   /**
    * Registered here rather than in a submodule-local container like `definition-export/di.ts`.
    *
@@ -73,6 +90,7 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
     const customFieldService = new CustomFieldService(apiService);
     const customFieldValueService = new CustomFieldValueService(apiService);
     const fieldGroupService = new FieldGroupService(apiService);
+    const optionSetService = new OptionSetService(apiService);
     const entityLookupService = new EntityLookupService(apiService);
 
     _container = {
@@ -82,6 +100,8 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
       customFieldValueRepository: new CustomFieldValueRepository(customFieldValueService),
       fieldGroupService,
       fieldGroupRepository: new FieldGroupRepository(fieldGroupService),
+      optionSetService,
+      optionSetRepository: new OptionSetRepository(optionSetService),
       entityLookupService,
       entityLookupRepository: new EntityLookupRepository(entityLookupService),
     };
@@ -102,6 +122,9 @@ export const customFieldsContainer = {
   },
   get fieldGroupRepository() {
     return getCustomFieldsContainer().fieldGroupRepository;
+  },
+  get optionSetRepository() {
+    return getCustomFieldsContainer().optionSetRepository;
   },
   get entityLookupRepository() {
     return getCustomFieldsContainer().entityLookupRepository;
