@@ -45,6 +45,11 @@ const FULL_JSON: CustomFieldJson = {
   fieldGroupId: "enc-group",
   sensitivity: "Confidential",
   isExportable: false,
+  // Wave 4 follow-up. A definition-level reference target pin. Present in this fixture even though
+  // FULL_JSON's valueType is Select — this file pins the MAPPER's completeness, and the mapper does
+  // not (and must not) know which value types may legally carry a pin; that refusal belongs to the
+  // backend's ReferenceTargetOwnership gate, not to a copy of it on the client.
+  referenceTargetEntityTypeKey: "hrms.staff-member",
 };
 
 /**
@@ -109,6 +114,50 @@ describe("CustomFieldMapper round-trip completeness", () => {
     // Named explicitly, not just covered by the sweep above. This one shipped broken, and a named
     // test says so to whoever reads the file next.
     expect(CustomFieldMapper.fromJsonToEntity(FULL_JSON).optionsAr).toBe("صغير\nكبير");
+  });
+
+  it("preserves the reference target pin specifically", () => {
+    // Named rather than left to the sweep above, for the same reason optionsAr is: this column is in
+    // the C-1 hazard class. It is detail-response only, and the update command full-replaces it, so a
+    // drop anywhere on the JSON -> model -> entity path turns every unrelated edit of a pinned
+    // reference field into a silent unpin.
+    expect(CustomFieldMapper.fromJsonToEntity(FULL_JSON).referenceTargetEntityTypeKey).toBe(
+      "hrms.staff-member"
+    );
+  });
+
+  it("leaves an omitted reference target pin undefined rather than defaulting it to a key", () => {
+    // Unpinned must be distinguishable from "not fetched" on the ENTITY. The coercion to "" belongs
+    // to the edit-form initial-values builder, which documents why blanking is safe there; inventing
+    // a value here would make a list row indistinguishable from a genuinely unpinned definition.
+    const { referenceTargetEntityTypeKey, ...withoutPin } = FULL_JSON;
+    void referenceTargetEntityTypeKey;
+
+    expect(
+      CustomFieldMapper.fromJsonToEntity(withoutPin as CustomFieldJson)
+        .referenceTargetEntityTypeKey
+    ).toBeUndefined();
+  });
+
+  it("never invents a reference target pin for a list row", () => {
+    // CustomFieldListResponse carries no ReferenceTargetEntityTypeKey (verified against that record),
+    // so `fromListJson` must leave it undefined. Asserted so nobody "fixes" the list mapper by
+    // guessing.
+    const listRow = CustomFieldModel.fromListJson({
+      id: "enc-id",
+      entityTypeKey: "staff",
+      key: "jersey_size",
+      labelEn: "Jersey size",
+      valueType: "EntityReference",
+      isRequired: false,
+      sortOrder: 0,
+      isActive: true,
+      createdAt: "2026-08-20T10:00:00Z",
+      isGlobal: false,
+    });
+
+    expect(listRow.referenceTargetEntityTypeKey).toBeUndefined();
+    expect(CustomFieldMapper.toEntity(listRow).referenceTargetEntityTypeKey).toBeUndefined();
   });
 
   it("preserves the classification specifically", () => {
@@ -189,6 +238,7 @@ describe("CustomFieldMapper round-trip completeness", () => {
       "validatorKind",
       "validatorParam",
       "fieldGroupId",
+      "referenceTargetEntityTypeKey",
     ];
 
     const unpopulated = declared.filter((k) => read(k as string) === undefined);

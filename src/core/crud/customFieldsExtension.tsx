@@ -32,7 +32,12 @@ import { useCallback, useEffect, useMemo, useState } from "react";
  * same way (verified against the real backend enum: Email=8, Url=9,
  * Phone=10, Percent=11, Rating=12). Wave 3.3 Batch C adds
  * Currency/Duration/Time/Color the same way (Currency=13, Duration=14,
- * Time=15, Color=16).
+ * Time=15, Color=16). Wave 4 adds EntityReference=17/UserReference=18 the
+ * same way, read off the real backend enum. That lockstep is not optional
+ * here: `BulkColumnValuesResult.columns` is typed against THIS union while
+ * the module's `getBulkColumnValues` returns columns typed against ITS
+ * union, so a member present there and missing here is an outright build
+ * error, not a silently narrower type.
  */
 export type CustomFieldValueTypeName =
   | "Text"
@@ -51,7 +56,9 @@ export type CustomFieldValueTypeName =
   | "Currency"
   | "Duration"
   | "Time"
-  | "Color";
+  | "Color"
+  | "EntityReference"
+  | "UserReference";
 
 /**
  * One active custom-field definition shaped as a table-column header — thinner

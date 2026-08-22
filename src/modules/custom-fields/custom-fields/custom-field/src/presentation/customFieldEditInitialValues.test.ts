@@ -68,6 +68,10 @@ describe("buildCustomFieldEditInitialValues", () => {
       validatorKind: "Iban",
       validatorParam: "",
       fieldGroupId: "enc-group-7",
+      // Wave 4 follow-up, acknowledged here rather than tolerated, per this assertion's own note
+      // below. `""` because DETAIL_JSON carries no pin -- and `""` is the honest wire value for
+      // "unpinned", which the server reads identically to an absent one.
+      referenceTargetEntityTypeKey: "",
       // Added by the bilingual options editor. This assertion is deliberately EXHAUSTIVE -- it
       // exists because a new form-populating field once slipped in and silently blanked stored
       // data on every save, so a new key must be acknowledged here rather than tolerated.
@@ -98,6 +102,24 @@ describe("buildCustomFieldEditInitialValues", () => {
     expect(buildCustomFieldEditInitialValues(item).options).toBe("Small\nMedium\nLarge");
   });
 
+  it("carries a stored reference target pin through from a detail-fetched definition", () => {
+    // The positive case for the Wave 4 follow-up column, separate from the exhaustive assertion
+    // above (which only ever sees an unpinned definition). A pinned EntityReference must arrive at
+    // the form holding its pin, because the update command replaces the column from the request.
+    const item = CustomFieldMapper.toEntity(
+      CustomFieldModel.fromJson({
+        ...DETAIL_JSON,
+        valueType: "EntityReference" as const,
+        validatorKind: null,
+        referenceTargetEntityTypeKey: "hrms.staff-member",
+      })
+    );
+
+    expect(buildCustomFieldEditInitialValues(item).referenceTargetEntityTypeKey).toBe(
+      "hrms.staff-member"
+    );
+  });
+
   it("HAZARD: a list row blanks the validator, the options, both placeholders and the field group — which is why callers must hydrate first", () => {
     const listRow = CustomFieldMapper.toEntity(CustomFieldModel.fromListJson(LIST_ROW_JSON));
     const values = buildCustomFieldEditInitialValues(listRow);
@@ -112,6 +134,9 @@ describe("buildCustomFieldEditInitialValues", () => {
     // carries no fieldGroupId either, and an empty one on update UNGROUPS the
     // field rather than leaving its group alone.
     expect(values.fieldGroupId).toBe("");
+    // The Wave 4 follow-up column joined it again: no ReferenceTargetEntityTypeKey on the list
+    // response, and a blank one on update UNPINS the field's target entity type.
+    expect(values.referenceTargetEntityTypeKey).toBe("");
     // The fields the list row DOES carry survive, which is why the defect was
     // invisible in the UI: the form looked correctly populated.
     expect(values.labelEn).toBe("Bank Account");

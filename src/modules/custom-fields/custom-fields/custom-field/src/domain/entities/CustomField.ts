@@ -70,6 +70,26 @@ export interface CustomFieldData {
    * validator columns — `CustomFieldListResponse` does not carry it.
    */
   fieldGroupId?: string | null;
+  /**
+   * Wave 4 follow-up. Registry key of the entity type this REFERENCE field is pinned to (e.g.
+   * `"hrms.staff-member"`), or null/undefined when the field is UNPINNED.
+   *
+   * Unpinned is a legal, permanent state rather than "not configured yet": every reference field
+   * that existed before the column did is unpinned, and the backend's own
+   * `CustomField.ReferenceTargetEntityTypeKey` doc comment records that a required pin would have
+   * made each one unsavable. An unpinned field lets each VALUE name its own target type; a pinned
+   * one constrains the next write to that one type.
+   *
+   * Always null for a value type that targets nothing at all — the backend refuses a pin on such a
+   * type rather than storing one it could never enforce (`ReferenceTargetOwnership`).
+   *
+   * DETAIL-FETCH ONLY, exactly like `fieldGroupId` and the two validator columns:
+   * `CustomFieldListResponse` does not carry it, so a list row leaves this `undefined`. That is
+   * load-bearing, not cosmetic — `UpdateCustomFieldCommandHandler` FULL-REPLACES the column, so an
+   * edit form seeded from a list row would submit no pin and silently UNPIN the field on the next
+   * unrelated save. Same C-1 hazard class the validator columns and `fieldGroupId` are in.
+   */
+  referenceTargetEntityTypeKey?: string | null;
 }
 
 /**
@@ -160,5 +180,17 @@ export class CustomField {
 
   get fieldGroupId(): string | null | undefined {
     return this.data.fieldGroupId;
+  }
+
+  /**
+   * The definition-level reference target pin. See `CustomFieldData.referenceTargetEntityTypeKey`.
+   *
+   * Deliberately NOT coalesced to `""` or to a default the way `isGlobal` coalesces to `false`:
+   * "unpinned" and "we did not fetch it" must stay distinguishable here, because only the second
+   * one is a bug. The form-state coercion to `""` belongs in the edit-form initial-values builder,
+   * which is the one place that documents why blanking is safe there.
+   */
+  get referenceTargetEntityTypeKey(): string | null | undefined {
+    return this.data.referenceTargetEntityTypeKey;
   }
 }

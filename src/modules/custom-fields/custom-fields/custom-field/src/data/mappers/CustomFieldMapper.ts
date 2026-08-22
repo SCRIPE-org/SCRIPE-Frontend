@@ -39,6 +39,12 @@ export class CustomFieldMapper {
       validatorKind: model.validatorKind,
       validatorParam: model.validatorParam,
       fieldGroupId: model.fieldGroupId,
+      // Wave 4 follow-up. Copied here for the same reason optionsAr's omission above was a bug: the
+      // edit form seeds from the ENTITY, so a column that does not survive this mapper arrives as
+      // undefined, gets blanked to "" by the initial-values builder, and is written back as blank by
+      // an update command that full-replaces every property. For this column that means an unrelated
+      // rename silently UNPINS a field an admin deliberately pinned to one entity type.
+      referenceTargetEntityTypeKey: model.referenceTargetEntityTypeKey,
     };
     return new CustomField(data);
   }
@@ -68,7 +74,8 @@ export class CustomFieldMapper {
       entity.validatorParam,
       entity.fieldGroupId,
       entity.sensitivity,
-      entity.isExportable
+      entity.isExportable,
+      entity.referenceTargetEntityTypeKey
     );
   }
 

@@ -31,6 +31,12 @@ import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../validatorKindReg
 import { buildCustomFieldEditInitialValues } from "../customFieldEditInitialValues";
 import { useFieldGroupOptions } from "../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions";
 import { buildFieldGroupField, makeFieldGroupPickerVisibility } from "../fieldGroupFieldConfig";
+// Wave 4 follow-up. The definition-level reference target pin's option list. Deep import, matching
+// this module's own convention for reaching into the entity-lookup submodule (see
+// EntityReferenceCustomFieldControl.tsx) rather than through that submodule's index.
+import { useEntityLookupAvailableTypes } from "../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes";
+import type { EntityLookupType } from "../../../../entity-lookup/src/data/models/EntityLookupModel";
+import type { FieldConfig, FieldOption } from "@core/ui/forms/generic-form";
 import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
 import { usePermission } from "@core/hooks/use-permission";
 import { FieldHistoryDialog } from "../FieldHistoryDialog";
@@ -53,6 +59,190 @@ import { DefinitionExportButton } from "../../../../definition-export/src/presen
 // VALUE_TYPE_VARIANTS/valueTypeOptions/valueTypeLabels separately, and the
 // edit form's `options` field visibility guard was missing entirely in one
 // of the two copies -- see CustomFieldListView.optionsVisibility.test.tsx.
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Definition-level reference target pin (Wave 4 follow-up)
+//
+// `CustomField.ReferenceTargetEntityTypeKey` says which ONE entity type a reference field's values
+// may point at. The backend has accepted it on both `CreateCustomFieldRequest` and
+// `UpdateCustomFieldRequest` (MaxLength 100 on each) since the column landed; nothing in the product
+// set it, so every EntityReference definition could only be created UNPINNED.
+//
+// Exported rather than left inline so its own tests can run the REAL config object and the REAL
+// predicate instead of regex-matching this file's source for an expression that may or may not mean
+// anything at runtime. That regex style is exactly how the Wave 2.5 C-1 data-loss defect shipped with
+// a fully green suite -- see `customFieldEditInitialValues.ts`, extracted for the same reason.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The form-state key, and therefore the WIRE property name.
+ *
+ * `GenericForm.submitData` is a raw spread of form state, so this string is what lands on
+ * `CreateCustomFieldRequest.ReferenceTargetEntityTypeKey` /
+ * `UpdateCustomFieldRequest.ReferenceTargetEntityTypeKey` under the API's camelCase policy. It must
+ * match those property names exactly; a typo here is a silently ignored pin, not a compile error.
+ */
+export const REFERENCE_TARGET_FIELD_NAME = "referenceTargetEntityTypeKey";
+
+/**
+ * What "unpinned" is written as in form state.
+ *
+ * `""`, not `null` or an absent key, and each of the three would behave differently:
+ *
+ *  - `""` reaches the server and is read as unpinned. Both arms of the backend gate accept it:
+ *    `ReferenceTargetOwnership.NormalizeTargetEntityType` short-circuits on
+ *    `string.IsNullOrWhiteSpace` for a value type that targets nothing, and
+ *    `EntityReferenceValueTypeHandler.NormalizeTargetEntityTypeKey` returns `Result.Success(null)` for
+ *    a blank submission on one that does. So a Text or Boolean definition submitting `""` is NOT
+ *    refused for carrying a meaningless target -- which is what makes it safe to keep this key in form
+ *    state for every value type rather than trying to strip it for most of them.
+ *  - An ABSENT key would be read identically by the server, but the key cannot be absent on the edit
+ *    form anyway: the update command full-replaces the column, so an edit that omitted it would unpin
+ *    the field. Keeping one representation for both forms removes that as a thing to remember.
+ *  - `null` would work too, but `""` is what a `<select>` sentinel option can actually hold, and this
+ *    module already uses `""` as the sentinel for the field-group picker for the same reason.
+ *
+ * Note this is the opposite decision from `validatorKind`, which needs a write-seam coercion to
+ * `null`: that one is a nullable C# ENUM and cannot model-bind `""` at all. This column is a plain
+ * `string?`, so `""` binds and is then normalized server-side.
+ */
+export const UNPINNED_REFERENCE_TARGET = "";
+
+/**
+ * The value type whose definitions may be pinned FROM THIS FORM.
+ *
+ * A literal, not a `VALUE_TYPE_CATALOG` lookup -- the same call the `validatorKind` guard below makes
+ * and for the same reason: "may carry a definition-level target pin" is not a property every value
+ * type has an opinion about, and the authoritative answer lives on the backend handler capability
+ * (`IEntityTargetedValueTypeHandler`), which this catalog deliberately does not mirror. Mirroring it
+ * here would create a second source of truth that goes stale silently the day a third targeted type
+ * ships.
+ */
+const PINNABLE_VALUE_TYPE: CustomFieldValueTypeName = "EntityReference";
+
+/**
+ * Whether the target-type picker is shown for the definition currently in the form.
+ *
+ * EntityReference only. UserReference is deliberately EXCLUDED even though the backend would accept a
+ * pin on it: its target allowlist is exactly one key (`identity.user`, with `identity.admin`,
+ * `identity.theme` and `identity.user-group` each excluded for a recorded reason), and
+ * `UserReferenceValueTypeHandler.ImplicitTargetEntityTypeKey` already resolves that single target for
+ * an UNPINNED field. So there is nothing to choose: a picker offering one option would imply a
+ * decision the admin does not actually get to make, and a picker offering a way to "clear" it would
+ * imply the target could be something else.
+ *
+ * Hidden also means hidden for every non-reference type, and hidden for an unset `valueType` (the
+ * create form's state before the admin has picked one) -- `undefined === "EntityReference"` is false,
+ * so this degrades closed with no fallback needed, unlike the catalog-lookup guards which need an
+ * explicit `??`.
+ *
+ * Hiding the field does NOT drop the key from the payload: `isVisible` gates rendering and
+ * required-validation only, and `GenericForm` submits a raw spread of form state. That is the
+ * behaviour this relies on -- a UserReference definition pinned through the API keeps its pin through
+ * an edit made on this form, because the seeded value travels even though the control never draws.
+ */
+export function isReferenceTargetPickerVisible(form: Record<string, unknown>): boolean {
+  return form.valueType === PINNABLE_VALUE_TYPE;
+}
+
+/** Inputs for {@link buildReferenceTargetField}. */
+export interface BuildReferenceTargetFieldArgs {
+  /** i18n lookup; the same `t` the surrounding view uses. */
+  t: (key: string) => string;
+  /** Active UI language, deciding which of the server's two display names is shown. */
+  language: string;
+  /** The types this caller may reference, from `useEntityLookupAvailableTypes`. */
+  types: readonly EntityLookupType[];
+  /** Available-types query in flight -- renders the select's own loading state. */
+  isLoading: boolean;
+  /** The query FAILED (network, 500). Not the same as it answering with an empty list. */
+  isError: boolean;
+  /** The query SUCCEEDED and the answer was empty: "you may not reference anything". */
+  isEmpty: boolean;
+  /**
+   * True for the EDIT form. Adds the re-point consequence to the helper text, which is only a
+   * question that can arise for a definition that already exists and may already hold values.
+   */
+  isExistingDefinition: boolean;
+}
+
+/**
+ * Builds the target-entity-type picker's `FieldConfig`.
+ *
+ * OPTION ORDER AND LABELS. Sorted by `owningModule`, then by the displayed name, then by key -- the
+ * same "grouping by sort order rather than by a visual divider" this file already applies to the
+ * entity-type picker above, because `GenericSelect` has no optgroup primitive here. The label is
+ * `Name (key)`, matching that picker exactly; no separate `— Module` suffix is appended because the
+ * key shown beside the name already opens with the owning module's own namespace (`identity.user` is
+ * registered by `Identity`, `hrms.staff-member` by `Hrms`), so a suffix would restate what is two
+ * characters to its left. The names themselves come from the backend entity-type registry and are NOT
+ * translation keys -- they must be read off `displayNameEn`/`displayNameAr` and never looked up in
+ * this module's locale files.
+ *
+ * THE SENTINEL IS ALWAYS PRESENT, in every state including the empty and failed ones. It is not a
+ * "no selection" placeholder: unpinned is a legal, permanent configuration, and selecting the
+ * sentinel is the ONLY way to clear an existing pin. Dropping it when the list is empty would make an
+ * accidentally-pinned field uncorrectable by anyone who cannot see that type.
+ *
+ * THE CONTROL IS NEVER DISABLED, for the same reason. A disabled select on an empty or failed list
+ * would take away the one action that still makes sense there (unpin), and would look identical to a
+ * permissions problem.
+ *
+ * @returns A `select` FieldConfig, spread verbatim into the create and edit field arrays.
+ */
+export function buildReferenceTargetField({
+  t,
+  language,
+  types,
+  isLoading,
+  isError,
+  isEmpty,
+  isExistingDefinition,
+}: BuildReferenceTargetFieldArgs): FieldConfig {
+  const nameOf = (type: EntityLookupType) =>
+    language === "ar" ? type.displayNameAr : type.displayNameEn;
+
+  const options: FieldOption[] = [
+    { value: UNPINNED_REFERENCE_TARGET, label: t("customField.referenceTarget.unpinned") },
+    // Copied before sorting: `types` comes straight from a react-query cache, and sorting in place
+    // would mutate cached data every consumer shares.
+    ...[...types]
+      .sort(
+        (a, b) =>
+          a.owningModule.localeCompare(b.owningModule) ||
+          nameOf(a).localeCompare(nameOf(b), resolveIntlLocale(language)) ||
+          a.key.localeCompare(b.key)
+      )
+      .map((type) => ({ value: type.key, label: `${nameOf(type)} (${type.key})` })),
+  ];
+
+  // Precedence matters and is not arbitrary. A FAILURE must not be described as "there is nothing you
+  // can reference" (that would send an admin to ask for permissions they already have), and an EMPTY
+  // list must not be described as a failure (it is a 200 and a correct authorization outcome). Only
+  // once neither holds is there a pin to explain, and only on an existing definition is re-pointing a
+  // thing that can happen.
+  const description = isError
+    ? t("customField.referenceTarget.loadFailed")
+    : isEmpty
+      ? t("customField.referenceTarget.noneAvailable")
+      : isExistingDefinition
+        ? `${t("customField.referenceTarget.description")} ${t("customField.referenceTarget.repointWarning")}`
+        : t("customField.referenceTarget.description");
+
+  return {
+    name: REFERENCE_TARGET_FIELD_NAME,
+    label: t("customField.fields.referenceTargetEntityTypeKey"),
+    // Load-bearing for accessibility, exactly as `fieldGroupFieldConfig.ts` records for its own
+    // picker: GenericForm's `select` branch is the one that passes `aria-label` down to GenericSelect,
+    // and that aria-label is the control's only accessible name because the trigger is a
+    // `role="combobox"` div that no `<label for>` can attach to.
+    type: "select",
+    options,
+    loading: isLoading,
+    description,
+    isVisible: isReferenceTargetPickerVisible,
+  };
+}
 
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../locales"), "customFields");
@@ -284,6 +474,56 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     // render -- which is what the exhaustive-deps warning is actually about.
     [t]
   );
+
+  // ── Reference target pin (Wave 4 follow-up) ─────────────────────────
+  //
+  // Fetched unconditionally on this screen rather than gated on the live `valueType`, for two
+  // reasons. FieldConfig.options is a STATIC array evaluated when the config is built and only
+  // `isVisible` sees live form state (the same constraint the field-group picker above works
+  // around), so waiting until EntityReference is selected would mean the picker's first render has
+  // no options in it. And unlike `GET /field-groups`, this list needs no permission gate to be safe
+  // to ask for: `GET /entity-lookup/types` carries only the controller's `[Authorize]`/`[AdminOnly]`
+  // -- no `[PermissionRequired]`, no documented 403 -- and answers a caller who may reference
+  // nothing with a 200 and an empty array. So there is no role for which fetching it produces the
+  // repeating 403 that `canViewFieldGroups` exists to prevent. It is cached for an hour, so this
+  // costs one request per session, not one per modal open.
+  const {
+    types: referenceTargetTypes,
+    isLoading: isReferenceTargetTypesLoading,
+    isError: isReferenceTargetTypesError,
+    isEmpty: isReferenceTargetTypesEmpty,
+  } = useEntityLookupAvailableTypes();
+
+  /**
+   * The picker, in its two forms.
+   *
+   * Built as ONE memoized pair rather than two independent memos so the create and edit copies can
+   * never be given different option lists -- the only thing that may legitimately differ between
+   * them is the helper text, and that difference is a single argument. Same reasoning as
+   * `classificationFields` above: memoized because it is consumed inside the config `useMemo`, and a
+   * fresh object identity every render would make that memo recompute every render.
+   */
+  const referenceTargetFields = useMemo(() => {
+    const shared = {
+      t,
+      language,
+      types: referenceTargetTypes,
+      isLoading: isReferenceTargetTypesLoading,
+      isError: isReferenceTargetTypesError,
+      isEmpty: isReferenceTargetTypesEmpty,
+    };
+    return {
+      create: buildReferenceTargetField({ ...shared, isExistingDefinition: false }),
+      edit: buildReferenceTargetField({ ...shared, isExistingDefinition: true }),
+    };
+  }, [
+    t,
+    language,
+    referenceTargetTypes,
+    isReferenceTargetTypesLoading,
+    isReferenceTargetTypesError,
+    isReferenceTargetTypesEmpty,
+  ]);
 
   const fieldGroupField = useMemo(
     () => ({
@@ -521,6 +761,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           isVisible: (form: Record<string, unknown>) => form.valueType === "Text",
         },
         ...validatorParamFields,
+        // Wave 4 follow-up. Sits next to the validator picker rather than beside the entity-type
+        // select at the top, because the two are the same kind of thing: a per-value-type
+        // configuration that is only meaningful for one value type and is hidden for every other.
+        // Putting it at the top would place a field about REFERENCES immediately below the field
+        // about which entity the definition is FOR, which are opposite directions of the same word.
+        referenceTargetFields.create,
         {
           name: "options",
           label: t("customField.fields.options"),
@@ -634,6 +880,24 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           isVisible: (form: Record<string, unknown>) => form.valueType === "Text",
         },
         ...validatorParamFields,
+        // Wave 4 follow-up, and MANDATORY on this form rather than optional -- same reasoning as the
+        // field-group picker further down. `UpdateCustomFieldCommandHandler` assigns
+        // `entity.ReferenceTargetEntityTypeKey` from the gate's output on every update with no
+        // "absent means unchanged" semantics, so a form that omitted this field would submit no pin
+        // and silently UNPIN the definition on every unrelated save -- turning a deliberate "this
+        // field holds an Employee" into "this field holds anything". That is the Wave 2.5 C-1 defect
+        // exactly, which is also why `CustomFieldResponse` returns the current pin and why
+        // `buildCustomFieldEditInitialValues` seeds it.
+        //
+        // The EDIT copy differs from the create copy only in its helper text, which adds what
+        // re-pointing a live definition does: nothing to values already stored (each keeps its own
+        // target type and still resolves), but the next save of a record holding an old-type value is
+        // REFUSED by `EntityReferenceValueTypeHandler.Validate` with
+        // `customFields.values.referenceTargetTypeMismatch`. No migration is offered here and none is
+        // implied -- the backend deliberately does not refuse the re-point (its own comment: refusing
+        // would mean a mis-pinned field could never be corrected without deleting real data), so the
+        // only honest thing this form can do is say what the next save will do.
+        referenceTargetFields.edit,
         {
           name: "options",
           label: t("customField.fields.options"),
@@ -702,6 +966,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         // identically, so a field created without touching the picker is
         // simply ungrouped.
         fieldGroupId: "",
+        // Wave 4 follow-up. Seeded for EVERY value type, not only the reference ones, and that is
+        // what makes the picker's `isVisible` guard safe: `GenericForm` submits a raw spread of form
+        // state, so a key absent from these initial values would never reach the payload at all -- not
+        // even when the admin has selected EntityReference and used the picker, since `isVisible`
+        // controls rendering, not form state. Sending `""` for a Text or Boolean definition is
+        // accepted, not refused: `ReferenceTargetOwnership.NormalizeTargetEntityType` treats a blank
+        // submission as "unpinned" before it ever asks whether the value type could carry a pin.
+        [REFERENCE_TARGET_FIELD_NAME]: UNPINNED_REFERENCE_TARGET,
         options: "",
         isRequired: false,
         sortOrder: 0,
@@ -795,6 +1067,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       valueTypeLabelOf,
       validatorKindOptions,
       validatorParamFields,
+      // Wave 4 follow-up. Safe to depend on for the same reason `classificationFields` is: it is
+      // memoized on its own inputs, so the identity only changes when the option list, the language
+      // or the query's state actually changes.
+      referenceTargetFields,
       fieldGroupField,
       canViewFieldGroups,
       handleEntityTypeChange,

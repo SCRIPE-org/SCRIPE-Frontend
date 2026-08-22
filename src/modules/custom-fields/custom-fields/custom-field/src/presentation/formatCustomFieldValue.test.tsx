@@ -6,7 +6,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import "@testing-library/jest-dom";
 import { formatCustomFieldValue } from "./formatCustomFieldValue";
-import { ALL_VALUE_TYPES } from "./valueTypeRegistry";
+import { ALL_VALUE_TYPES, VALUE_TYPE_CATALOG } from "./valueTypeRegistry";
 
 // Matches renderCustomFieldControl.test.tsx's own `t` stub convention: the
 // key itself stands in for the translated string.
@@ -559,6 +559,42 @@ describe("formatCustomFieldValue", () => {
           expect(screen.getByText("#3b82f6")).toBeInTheDocument();
           break;
         }
+        case "EntityReference":
+        case "UserReference": {
+          // Wave 4. Two things are provably true of a real reference branch,
+          // and both are the point of it:
+          //
+          //  1. It is NOT the String(value) fallthrough. That fallthrough
+          //     would render the literal "[object Object]" for a two-piece
+          //     reference envelope.
+          //  2. The ENCRYPTED ID IS NOWHERE IN THE OUTPUT. This is the
+          //     assertion that matters: the id is another module's primary
+          //     key, opaque to every reader, and rendering it into a table
+          //     cell leaks it into screenshots, exports and support tickets
+          //     while telling nobody anything. The name it would stand in for
+          //     is not stored (by design) and cannot be resolved
+          //     synchronously, so the branch renders what IS known -- the
+          //     value type's own label plus the target TABLE's key -- and
+          //     never the row's id.
+          const out = formatCustomFieldValue(
+            type,
+            { entityTypeKey: "hrms.staff-member", entityId: "ENC-must-not-be-rendered" },
+            "en",
+            t
+          );
+          expect(out).not.toBe(String({ entityTypeKey: "x", entityId: "y" }));
+          expect(React.isValidElement(out)).toBe(true);
+          const { container } = render(<>{out}</>);
+          expect(container.textContent).not.toContain("ENC-must-not-be-rendered");
+          // And not blank either: a filled reference must never look like a
+          // field that was never filled in.
+          expect(container.textContent?.trim()).not.toBe("");
+          expect(screen.getByText("hrms.staff-member")).toBeInTheDocument();
+          expect(
+            screen.getByText(VALUE_TYPE_CATALOG[type].labelKey)
+          ).toBeInTheDocument();
+          break;
+        }
         default:
           throw new Error(
             `formatCustomFieldValue completeness gate has no classification for value type ` +
@@ -570,7 +606,76 @@ describe("formatCustomFieldValue", () => {
     }
   );
 
-  it("has exactly 17 known value types to cover", () => {
-    expect(ALL_VALUE_TYPES).toHaveLength(17);
+  // Wave 4 raises this from 17 to 19 (EntityReference = 17, UserReference = 18
+  // on the backend enum). Kept as a literal on purpose: this is the ONE
+  // deliberate count-to-maintain in the module -- every other test derives its
+  // expectation from ALL_VALUE_TYPES.length, so without this pin a new catalog
+  // entry could be added with no branch anywhere and every derived assertion
+  // would happily iterate over it. Editing this number is the moment someone
+  // has to confirm the new type is actually wired.
+  it("has exactly 19 known value types to cover", () => {
+    expect(ALL_VALUE_TYPES).toHaveLength(19);
+  });
+});
+
+// EntityReference / UserReference read-side rendering -- Wave 4.
+//
+// This is the one case in the switch that CANNOT show the thing a reader
+// actually wants (the target's name): names are never stored, by design, and
+// resolving one is async and permission-checked. So these tests pin the three
+// properties of the compromise, each of which is a decision someone could
+// reasonably undo by accident:
+//   - the encrypted id never appears (it is opaque and it is a primary key)
+//   - a filled reference never renders blank (blank means "never filled in")
+//   - a value that is not reference-shaped degrades like every other
+//     type-specific parse failure in this switch, not like a filled reference
+describe("formatCustomFieldValue -- EntityReference / UserReference", () => {
+  const REFERENCE = { entityTypeKey: "hrms.staff-member", entityId: "ENC-do-not-render-me" };
+
+  it.each(["EntityReference", "UserReference"] as const)(
+    "never renders the encrypted id for %s",
+    (type) => {
+      const { container } = render(<>{formatCustomFieldValue(type, REFERENCE, "en", t)}</>);
+      expect(container.textContent).not.toContain("ENC-do-not-render-me");
+    }
+  );
+
+  it.each(["EntityReference", "UserReference"] as const)(
+    "never renders blank for a filled %s -- blank is what an unfilled field looks like",
+    (type) => {
+      const { container } = render(<>{formatCustomFieldValue(type, REFERENCE, "en", t)}</>);
+      expect(container.textContent?.trim()).not.toBe("");
+      // Specifically not the empty-cell marker either: the value IS there.
+      expect(container.textContent).not.toBe("—");
+    }
+  );
+
+  it("labels the cell with the value type's own catalog label, so the two reference types read differently", () => {
+    render(<>{formatCustomFieldValue("EntityReference", REFERENCE, "en", t)}</>);
+    expect(screen.getByText("customField.valueTypes.entityReference")).toBeInTheDocument();
+    expect(
+      screen.queryByText("customField.valueTypes.userReference")
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows the target entity-type key, which names a TABLE and reveals nothing about the row", () => {
+    render(<>{formatCustomFieldValue("UserReference", { ...REFERENCE, entityTypeKey: "identity.user" }, "en", t)}</>);
+    expect(screen.getByText("identity.user")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a value that is not reference-shaped at all", () => {
+    // Matches Date/Time/Currency/MultiSelect's own per-type parse-failure
+    // posture. Distinct from the blank case above: this is corrupt or
+    // out-of-band data, not a valid reference whose name is unavailable.
+    render(<>{formatCustomFieldValue("EntityReference", "just-a-string", "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  it("renders the empty-cell marker for a reference with no target type key", () => {
+    // A key with no id names a table but no row, and an id with no key cannot
+    // be dispatched to a module at all -- Project() already returns null
+    // rather than a half-reference, so reaching here means data corruption.
+    render(<>{formatCustomFieldValue("EntityReference", { entityTypeKey: "", entityId: "ENC-1" }, "en", t)}</>);
+    expect(screen.getByText("—")).toBeInTheDocument();
   });
 });

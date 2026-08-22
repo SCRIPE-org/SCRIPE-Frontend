@@ -23,7 +23,7 @@ describe("VALUE_TYPE_CATALOG", () => {
     expect(entry.labelKey).toMatch(/^customField\.valueTypes\./);
   });
 
-  it("has exactly 17 entries, matching ALL_VALUE_TYPES", () => {
+  it("has exactly 19 entries, matching ALL_VALUE_TYPES", () => {
     expect(Object.keys(VALUE_TYPE_CATALOG).sort()).toEqual([...ALL_VALUE_TYPES].sort());
   });
 
@@ -175,7 +175,48 @@ describe("VALUE_TYPE_CATALOG", () => {
         hasOptions: false,
         labelKey: "customField.valueTypes.color",
       },
+      EntityReference: {
+        fieldConfigType: "entity-reference",
+        badgeVariant: "default",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.entityReference",
+      },
+      UserReference: {
+        fieldConfigType: "entity-reference",
+        badgeVariant: "default",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.userReference",
+      },
     });
+  });
+
+  // Wave 4. The two reference types share ONE fieldConfigType on purpose --
+  // they differ only in which target key their picker is fed, which is data,
+  // not a control kind (see the catalog entries' own comments). Pinned so a
+  // later "UserReference deserves its own key" change has to be a deliberate,
+  // reviewed edit here rather than a silent divergence that quietly leaves
+  // one of the two types with no renderCustomFieldControl branch at all.
+  it("maps both reference types onto the same entity-reference control, and nothing else onto it", () => {
+    for (const type of ALL_VALUE_TYPES) {
+      expect(VALUE_TYPE_CATALOG[type].fieldConfigType === "entity-reference").toBe(
+        type === "EntityReference" || type === "UserReference"
+      );
+    }
+  });
+
+  // Wave 4. `hasOptions: false` on both reference types is load-bearing, not
+  // incidental: the definition-level target pin
+  // (CustomField.ReferenceTargetEntityTypeKey) is a target CONSTRAINT, not an
+  // option list, and flipping this to true would route the whole type through
+  // SelectOptionsOwnership and every Select-shaped option path in the module.
+  // Covered by the "only Select and MultiSelect own options" test above, and
+  // restated here so the reason is recorded next to the reference types
+  // themselves rather than only inside a test about Select.
+  it("keeps both reference types out of the options-owning family", () => {
+    expect(VALUE_TYPE_CATALOG.EntityReference.hasOptions).toBe(false);
+    expect(VALUE_TYPE_CATALOG.UserReference.hasOptions).toBe(false);
   });
 });
 

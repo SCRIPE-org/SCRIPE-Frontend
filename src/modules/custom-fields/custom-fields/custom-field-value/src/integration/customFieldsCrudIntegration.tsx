@@ -59,6 +59,24 @@ export function mapValueToFieldConfig(
     options,
     section: "Custom Fields",
     defaultValue: data.value ?? undefined,
+    // ── Wave 4 follow-up: the definition's pinned reference target ──────────────────────────────
+    //
+    // Carried straight through, with no ValueType branch, because the SERVER already applied one:
+    // `ResolveTargetEntityType` returns null for every non-reference type, so a Text field's wire
+    // payload has nothing here to forward. Branching on `data.valueType` again would be a second,
+    // frontend-side copy of that rule that could disagree with it after the next value type lands.
+    //
+    // WHY THIS IS THE ONLY PLUMBING SITE. Every FieldConfig the product renders for a custom field
+    // is built here: `useCustomFieldsFormFields` (core/crud/customFieldsExtension.tsx) calls the
+    // registered extension's `getFormFields`, which is this file's, which maps through this
+    // function — and the nine consumer sites receive the finished `FieldConfig[]` and only hand each
+    // entry to `renderCustomFieldControl`. Verified by reading each `customFieldConfigs`/
+    // `fieldConfigs` producer, not assumed: none of them constructs a FieldConfig itself.
+    //
+    // `?? undefined` rather than `?? null`, so a non-reference field's config simply has no opinion
+    // here instead of an explicit null on every one of them. Both read identically downstream (the
+    // control treats null and undefined as "no target"), so the quieter object wins.
+    referenceTargetEntityTypeKey: data.referenceTargetEntityTypeKey ?? undefined,
     // ── Wave 5 row 5.3: visibility rules, evaluated LIVE against the open form ──────────────────
     //
     // Attached only when the field actually has rules, so a field without them keeps a plain
@@ -111,6 +129,32 @@ async function getFormFields(entityTypeKey: string, ownerId?: string): Promise<F
     );
 }
 
+/**
+ * THE ONE CHOKE POINT every custom-field save passes through, which is why what
+ * it does NOT do matters more than what it does.
+ *
+ * Every custom-field save in the product funnels through this function:
+ * `getCustomFieldsExtension()?.saveValues(...)` is what generic-crud-view.tsx
+ * and all nine consumer-site save flows call (verified by reading every
+ * `saveValues` call site, not assumed).
+ *
+ * IT DELIBERATELY PERFORMS NO PER-TYPE TRANSLATION, and that is worth stating
+ * because a previous revision of this file did. A reference value reads and
+ * writes under the SAME property names (`entityTypeKey` + `entityId`) -- see the
+ * verified backend trace on `isEntityReferenceValue` in CustomFieldValueModel.ts
+ * for why the C# record's `EncryptedEntityId` parameter name is not a wire name.
+ * RENAMING EITHER PROPERTY HERE IS A DATA-LOSS BUG, not a cosmetic one: the last
+ * revision that renamed `entityId` made every fully-picked reference fail with
+ * the 422 meant for a half-filled one, and on a create it failed only after the
+ * owner record had already been written -- a saved row with none of its custom
+ * field values.
+ *
+ * So: values go to the repository exactly as the form holds them. No coercion,
+ * no `""`-to-null defaulting (that already happened in each caller), no
+ * per-value-type branches. If a value type ever does need a wire translation,
+ * it belongs in that type's own model module with a test that submits the real
+ * shape, not in a loop here.
+ */
 async function saveValues(
   entityTypeKey: string,
   ownerId: string,

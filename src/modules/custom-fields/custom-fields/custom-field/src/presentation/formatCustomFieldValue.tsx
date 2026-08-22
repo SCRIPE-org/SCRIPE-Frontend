@@ -96,7 +96,8 @@ import type {
   CustomFieldDateTimeValue,
   CustomFieldValueTypeName,
 } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
-import { RATING_MAX } from "./valueTypeRegistry";
+import { isEntityReferenceValue } from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
+import { RATING_MAX, VALUE_TYPE_CATALOG } from "./valueTypeRegistry";
 
 /** Matches useI18n()'s own `t` signature, and buildCustomFieldColumn's existing `t` parameter. */
 export type FormatTranslateFn = (key: string, params?: Record<string, string | number>) => string;
@@ -451,6 +452,67 @@ export function formatCustomFieldValue(
             />
           )}
           <span className="font-mono text-xs">{text}</span>
+        </span>
+      );
+    }
+    // EntityReference / UserReference (Wave 4). THE HARD CASE IN THIS FILE,
+    // and the reasoning matters more than the four lines it produces.
+    //
+    // This function is SYNCHRONOUS, hookless, and called once per table CELL.
+    // A reference's display name is not in the stored value and never will be:
+    // `Project` refuses to snapshot one because the owner record's view
+    // permission would then be enough to read a name the TARGET type's own
+    // permission resource guards. The only way to obtain a name is
+    // `IEntityLookupRegistry.ResolveAsync` -- async, permission-checked, and
+    // one cross-module query per reference. So there are exactly four things
+    // this case could do, and three of them are wrong:
+    //
+    //   (a) Render the stored `entityId`. REFUSED. It is an encrypted primary
+    //       key -- an opaque ciphertext that means nothing to a reader, and
+    //       putting it in a table cell leaks it into every screenshot, CSV
+    //       export and support ticket for no benefit at all.
+    //   (b) Render nothing / a blank. REFUSED, and this is the specific defect
+    //       the backend's own `Project` doc comment is written against: blank
+    //       is what "this field was never filled in" looks like, and an
+    //       operator staring at a blank cell has to be able to tell a
+    //       never-filled field from a filled one whose name simply is not
+    //       available here. Collapsing the two is how a dangling reference
+    //       stays invisible for a year.
+    //   (c) Return a component that resolves the name itself. REFUSED. It
+    //       would work, and it would fan out one permission-checked
+    //       cross-module query PER ROW on every list read of any table with a
+    //       reference column -- exactly the cost `Project` is written to avoid
+    //       by not resolving on the read path. The resolve belongs to the
+    //       EDIT control, which renders one reference at a time.
+    //   (d) Render what IS synchronously known, honestly. TAKEN.
+    //
+    // What is known is the target's entity-type KEY. It is stored (it has to
+    // be -- an id with no key cannot be dispatched to a module), and it is not
+    // sensitive: it names a TABLE, not a row, and reveals nothing about the
+    // record or the caller's access to it. So the cell says what KIND of thing
+    // this is (the value type's own catalog label -- "Entity Reference" /
+    // "User Reference", already localized and already required to exist by the
+    // catalog/locale parity gate) and WHICH table it points into. That is a
+    // cell a reader can act on: it is unmistakably a filled reference, and the
+    // name is one click away in the record's own form, where resolving it
+    // costs one query instead of one per row.
+    //
+    // A value that is not reference-shaped at all falls to
+    // `EmptyCustomFieldCell`, matching every other type-specific parse failure
+    // in this switch (Date, Time, Currency, MultiSelect). That is not the
+    // blank case (b) refuses: (b) is about a value that IS a valid reference.
+    // A shape this function cannot read is corrupt or out-of-band data, and
+    // `Project` already returns null rather than a half-reference for the one
+    // way that could happen legitimately.
+    case "EntityReference":
+    case "UserReference": {
+      if (!isEntityReferenceValue(value) || value.entityTypeKey.trim() === "") {
+        return <EmptyCustomFieldCell />;
+      }
+      return (
+        <span className="inline-flex items-center gap-1.5">
+          <Badge variant="default">{t(VALUE_TYPE_CATALOG[valueType].labelKey)}</Badge>
+          <span className="font-mono text-xs text-nx-ink-3">{value.entityTypeKey}</span>
         </span>
       );
     }

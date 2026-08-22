@@ -77,6 +77,11 @@ import { LongTextCustomFieldControl } from "./LongTextCustomFieldControl";
 import { DateTimeCustomFieldControl } from "./DateTimeCustomFieldControl";
 import { CurrencyCustomFieldControl } from "./CurrencyCustomFieldControl";
 import { DurationCustomFieldControl } from "./DurationCustomFieldControl";
+import { EntityReferenceCustomFieldControl } from "./EntityReferenceCustomFieldControl";
+import {
+  isEntityReferenceValue,
+  type CustomFieldEntityReferenceValue,
+} from "../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
 import { RATING_MIN, RATING_MAX } from "./valueTypeRegistry";
 
@@ -572,6 +577,113 @@ export function renderCustomFieldControl({
         onChange={(color) => onChange(color)}
         disabled={isViewMode}
         i18nKeyPrefix="customField.color"
+      />
+    );
+  }
+
+  // Wave 4: EntityReference/UserReference's real control -- a paged,
+  // debounced server-search picker whose stored value is a two-piece
+  // `{ entityTypeKey, entityId }` envelope and whose display name is NOT in
+  // that envelope (it is resolved live, permission-checked, on every render;
+  // see EntityReferenceCustomFieldControl.tsx's own header for why a
+  // snapshotted name is refused). Both value types dispatch here: they differ
+  // only in which target key is offered, which is data, not a control kind.
+  //
+  // PROPS, NOT `{ fc, value, onChange, isViewMode }`. This is the first branch
+  // that does not hand the whole FieldConfig to its component, and that is on
+  // purpose rather than drift: this control's contract is a fixed, narrow prop
+  // set (id / label / targetEntityTypeKey / value / onChange / required /
+  // disabled / invalid / describedBy / placeholder) shared with a second
+  // consumer surface, so it takes the pieces it needs instead of a form-layer
+  // object it would have to know how to read. The mapping is done here, once.
+  //
+  // `disabled={isViewMode}`, NOT `readOnly`. This file's own header records the
+  // split it reproduces from FeatureDefinitionFormView.tsx: Switch takes
+  // `readOnly` (blocks the change, keeps focus and live colours), while every
+  // picker/input family control -- Input, DatePicker, GenericSelect -- takes
+  // `disabled`. A reference picker is a picker, so it follows Select's
+  // precedent. (The control itself DOES use `readOnly` internally for its own
+  // 403 state, which is a different question: "you may not read the target's
+  // name" is not "this form is in view mode".)
+  //
+  // `invalid`/`describedBy` are NOT passed, matching every other branch here:
+  // this renderer has no per-field error channel at all -- error text is owned
+  // by each consumer site's own form layout, and no branch in this file
+  // receives or forwards one. Wiring only this one control to props nothing
+  // supplies would be dead parameter-passing that reads as though errors were
+  // handled here.
+  //
+  // TARGET TYPE: THE DEFINITION'S PIN FIRST, THE STORED VALUE'S OWN KEY
+  // SECOND. Both sources are real and both are needed; the ORDER is the whole
+  // decision, so it is spelled out here rather than left to be inferred.
+  //
+  // What each source means:
+  //   * `fc.referenceTargetEntityTypeKey` (CustomField.ReferenceTargetEntityTypeKey, resolved
+  //     server-side by `IValueTypeHandlerRegistry.ResolveTargetEntityType` and carried here through
+  //     `mapValueToFieldConfig`) is what a NEW pick MAY point at. It is the definition's current
+  //     configuration, so it is the only source that can answer for an EMPTY field.
+  //   * `reference.entityTypeKey` is what THIS value DOES point at -- durable per-value data the
+  //     backend stores precisely so a historical reference stays interpretable after its definition
+  //     is re-pointed.
+  //
+  // WHY THE PIN WINS. This prop feeds the SEARCH only; the held value's display name is resolved off
+  // `value` inside the control, never off this prop (verified in
+  // EntityReferenceCustomFieldControl.tsx -- `useEntityLookupSearch({ entityTypeKey:
+  // targetEntityTypeKey })` vs `useResolveEntityReference(value)`). So preferring the pin costs
+  // nothing on the read side: a value pointing at the old type still renders its real name. Getting
+  // this backwards is what costs something -- a field re-pointed from `hrms.staff-member` to
+  // `identity.user` would keep offering staff members to anyone editing a record that still holds an
+  // old value, i.e. the picker would quietly disagree with the definition and every new pick made
+  // through it would be one the write-side gate then refuses.
+  //
+  // WHY THE VALUE FALLBACK SURVIVES. An unpinned EntityReference is not a misconfiguration: any
+  // registered entity type is a legal target, so the definition genuinely has no single answer to
+  // report (`EntityReferenceValueTypeHandler.ImplicitTargetEntityTypeKey` is null and its doc
+  // comment says so). For those fields the value is the only source there is, and dropping the
+  // fallback would take a populated, perfectly operable reference and disable its picker.
+  //
+  // WITH NEITHER SOURCE the control gets `null` and renders its explicit, localized "no target
+  // entity type configured" state -- deliberately NOT an empty dropdown, which reads as "the server
+  // has no records" and sends whoever hits it looking in the wrong place entirely.
+  //
+  // USERREFERENCE NEEDS NO SPECIAL CASE, and must not be given one. Its target is fixed at
+  // `identity.user` by a code-owned allowlist, and the server already reports that through the pin
+  // for unpinned UserReference fields too (`UserReferenceValueTypeHandler.ImplicitTargetEntityTypeKey`
+  // derives it from `AllowedTargetKeys`), which is exactly why the pin is delivered on the same
+  // property at the same resolution as a real EntityReference pin. Restating `identity.user` here
+  // would duplicate a backend allowlist this layer cannot see -- and it is not even expressible:
+  // both value types share `fieldConfigType: "entity-reference"`, so this branch cannot tell them
+  // apart. If the pin is absent (a server predating it), UserReference degrades to the value
+  // fallback like everything else; it never depends on the pin being configured by an admin.
+  if (fc.type === "entity-reference") {
+    const reference: CustomFieldEntityReferenceValue | null = isEntityReferenceValue(value)
+      ? value
+      : null;
+    // `.trim() || null` rather than `?? null`: null, undefined, "" and a
+    // whitespace-only pin all have to collapse to "no pin" so they fall
+    // through to the value. Whitespace is not hypothetical padding on the
+    // check -- the control's own `hasTarget` guard already refuses a
+    // whitespace key (a picker opened against " " would query a route the
+    // server cannot resolve), and a pin that reaches THERE as whitespace has
+    // already lost the value's usable key on the way past this line.
+    const pinnedTarget = fc.referenceTargetEntityTypeKey?.trim() || null;
+    // No wrapping <Label> here, unlike the inline branches above: this control
+    // renders its own label/control pair (it has to -- its accessible name
+    // comes from `aria-label`, since the trigger is a role="combobox" div that
+    // `<Label htmlFor>` alone cannot name), so adding one would duplicate it.
+    // Same shape as the textarea/multi-select/datetime/currency/duration
+    // branches, all of which delegate the whole field.
+    return (
+      <EntityReferenceCustomFieldControl
+        key={fc.name}
+        id={fc.name}
+        label={fc.label ?? fc.name}
+        targetEntityTypeKey={pinnedTarget ?? reference?.entityTypeKey ?? null}
+        value={reference}
+        onChange={(next) => onChange(next)}
+        required={fc.required}
+        disabled={isViewMode}
+        placeholder={fc.placeholder}
       />
     );
   }

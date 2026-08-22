@@ -92,6 +92,11 @@ export const en = {
       fieldGroup: "Field Group",
       sensitivity: "Sensitivity",
       isExportable: "Include in exports",
+      // Wave 4 follow-up. Deliberately NOT "Entity Type" -- `entityTypeKey` above already owns that
+      // label and means the opposite direction: which records this field is DEFINED ON. This one is
+      // which records its values POINT AT. Two fields on the same form reading "Entity Type" would be
+      // unanswerable without opening the code.
+      referenceTargetEntityTypeKey: "Target Entity Type",
     },
 
     // Wave 6 ruling R10 — data classification. The VALUES sent to the server are the C# enum member
@@ -179,11 +184,12 @@ export const en = {
     noFrontendScreenWarning:
       "No screen renders {entity} yet. This definition will save correctly and the values API will work for it, but it won't appear on any form until a screen is built for it.",
 
-    // CustomFieldValueType enum (0..16) -- Wave 3.1 Task 10 added longText/
+    // CustomFieldValueType enum (0..18) -- Wave 3.1 Task 10 added longText/
     // dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7); Wave 3.2
     // Batch 3 adds email/url/phone/percent/rating (Email=8, Url=9, Phone=10,
     // Percent=11, Rating=12); Wave 3.3 Batch C adds currency/duration/time/
-    // color (Currency=13, Duration=14, Time=15, Color=16).
+    // color (Currency=13, Duration=14, Time=15, Color=16); Wave 4 adds
+    // entityReference/userReference (EntityReference=17, UserReference=18).
     valueTypes: {
       text: "Text",
       number: "Number",
@@ -202,6 +208,8 @@ export const en = {
       duration: "Duration",
       time: "Time",
       color: "Color",
+      entityReference: "Entity Reference",
+      userReference: "User Reference",
     },
 
     // Per-type value validation messages. Added early by Wave 2 Step 2.2 Task
@@ -304,6 +312,127 @@ export const en = {
       hexPlaceholder: "3b82f6",
     },
 
+    // EntityReference / UserReference record picker (Wave 4) -- rendered by
+    // EntityReferenceCustomFieldControl.tsx, shared by both value types (they
+    // differ only in which target entity type key is supplied, which is data,
+    // not a second control).
+    //
+    // A stored reference holds the target's encrypted id and NOTHING else --
+    // never a snapshot of its name, because a snapshotted name would be
+    // readable by anyone holding the OWNER record's permission while the name
+    // itself is guarded by the TARGET type's. Every string below therefore
+    // covers a state the picker can only be in *because* the display name has
+    // to be fetched on every render rather than read out of the stored value.
+    //
+    // forbidden / missing / invalid are THREE DIFFERENT SITUATIONS with three
+    // different fixes, and are deliberately worded so an operator can tell
+    // which one they are looking at without asking anyone:
+    //   forbidden (403) -- the caller's own role lacks the TARGET type's view
+    //     permission. The stored value is intact; the fix is a permission
+    //     change, so the copy says so and names who can make it.
+    //   missing (404) -- the referenced record itself is gone: deleted, or in a
+    //     tenant this caller cannot see. The backend merges those two on
+    //     purpose (so the endpoint cannot be used to probe whether an id exists
+    //     in someone else's tenant), so the copy offers both without claiming
+    //     which. The fix is a data change: pick another record, or clear.
+    //   invalid (400) -- the stored reference is malformed and cannot be read
+    //     at all; it has to be replaced, not re-pointed.
+    // Rendering 403 and 404 as the same grey dash is exactly what makes a
+    // dangling reference invisible for a year (EntityLookupController's own doc
+    // comment says so), which is why none of the three shares any wording.
+    //
+    // resolveFailed is the fourth, boring case -- a network/server failure. It
+    // states that the reference is fine specifically so it is not mistaken for
+    // `missing` and acted on by clearing a perfectly good value.
+    //
+    // inactiveSuffix marks a row that still exists and is still selectable,
+    // just dormant. It must never read as "deleted": a deleted row does not
+    // resolve at all and gets `missing` instead.
+    //
+    // resolveFailed and searchFailed are deliberately two strings, not one.
+    // resolveFailed asserts "the reference itself is fine" -- true when a stored
+    // reference could not be looked up, and the reason the operator must NOT
+    // react by clearing a good value. That claim is not available to make about
+    // a SEARCH that could not run, which is about the picker, not the value.
+    // Collapsing them would put a reassurance about the stored value on a
+    // failure that says nothing about it.
+    //
+    // selectedLabel takes NO interpolation on purpose -- it is the accessible
+    // name for the element showing the current selection, rendered next to the
+    // resolved name rather than wrapping it, so a control that forgot to
+    // interpolate cannot leak a raw `{placeholder}` into the page.
+    entityReference: {
+      noTargetConfigured:
+        "This field doesn't say which entity type it points at yet, so there is nothing to choose from. Set the target type on the field's definition to enable it.",
+      searchPlaceholder: "Type to search...",
+      placeholder: "Select a record",
+      searching: "Searching...",
+      noResults: "No records match that search.",
+      loadMore: "Load more",
+      resolving: "Loading the referenced record...",
+      forbidden:
+        "The stored value is fine, but you don't have permission to view this type of record, so its name can't be shown. Ask your system administrator to grant you view access.",
+      missing:
+        "The referenced record can't be found. It was deleted, or it belongs to an organisation you can't see — either way this field now points at nothing. Choose a different record, or clear the field.",
+      invalid:
+        "The reference stored in this field is malformed and can't be read at all. Choose a record again to replace it.",
+      resolveFailed:
+        "Couldn't load the referenced record just now. The reference itself is fine — please try again.",
+      searchFailed: "Couldn't search for records just now. Please try again.",
+      retry: "Try again",
+      inactiveSuffix: "(inactive)",
+      selectedLabel: "Selected record",
+    },
+
+    // Definition-level TARGET TYPE picker (Wave 4 follow-up) -- the admin form's counterpart to the
+    // value-side `entityReference` block above. That one is about a stored VALUE; this one is about
+    // the DEFINITION saying which entity type its values may point at.
+    //
+    // Kept as its own block rather than merged into `entityReference`, because the two are read by
+    // different people in different places: those strings appear on a record form to whoever fills the
+    // field in, these appear on the definitions screen to whoever configures it. The one string that
+    // straddles both is `entityReference.noTargetConfigured` -- shown to the record editor when this
+    // picker was never used -- and it deliberately points at this feature by name.
+    //
+    // `unpinned` is a REAL CHOICE, not a "none" placeholder, which is why it is worded as a state
+    // rather than as an absence: an unpinned reference field accepts any type its value type allows
+    // and names the target per value, which is what every reference field created before this option
+    // existed does, and stays legal forever (the backend's own
+    // CustomField.ReferenceTargetEntityTypeKey doc comment says a required pin would have made those
+    // fields unsavable). So it must be selectable in order to CLEAR a pin, not merely to decline one.
+    //
+    // `repointWarning` is the one string in this block that had to be written rather than chosen, and
+    // the claim it makes is checked against real backend behaviour, not assumed:
+    //   - `UpdateCustomFieldCommandHandler` does not refuse a re-point even when values already exist;
+    //     its own comment says refusing would mean an admin could never correct a mis-pinned field
+    //     without first deleting real data.
+    //   - Each stored value keeps its OWN target entity type key, so nothing already written becomes
+    //     wrong or unreadable -- the pin constrains the NEXT write only.
+    //   - That next write is genuinely REFUSED, not silently rewritten:
+    //     `EntityReferenceValueTypeHandler.Validate` compares the value's type against the pin and
+    //     returns `customFields.values.referenceTargetTypeMismatch`.
+    // So the honest copy is "old values keep working, the next save of one is refused" -- not "this is
+    // safe" and not "this will break your data". There is no migration and this form offers none;
+    // saying nothing at all is what would leave an admin to discover the refusal from a record editor
+    // weeks later.
+    //
+    // `noneAvailable` covers the server answering with an EMPTY list, which means "you may not
+    // reference anything" and is a 200, not a failure -- see EntityLookupController.GetAvailableTypes.
+    // It is worded to hold on both forms: it must not promise an unpinned outcome, because an
+    // already-pinned field keeps its pin through a save made while the list is empty (form state is
+    // seeded from the stored value, not from the option list).
+    referenceTarget: {
+      unpinned: "Not pinned — any allowed type",
+      description:
+        "Optional. Pins this field to one entity type, so every value must point at a record of that type. Leave it unpinned and each value names its own target type instead.",
+      repointWarning:
+        "Changing this leaves values already stored alone: each one keeps pointing at the record it points at now, and still reads back correctly. The next save of a record whose value is of the old type will be refused until that value is picked again.",
+      noneAvailable:
+        "There are no entity types you can reference, so there is nothing to choose from here. Any target type already set on this field is left as it is. Ask your system administrator for view access to the record types you need.",
+      loadFailed:
+        "Couldn't load the entity types you can reference. Saving now keeps this field's current target type unchanged.",
+    },
+
     // Field-group picker on the definition form -- Wave 5 row 5.2. The groups
     // themselves are managed on /custom-fields/field-groups (own dictionary,
     // `fieldGroup.*`); these three keys are the picker's own copy, which
@@ -400,6 +529,10 @@ export const en = {
         duration: "A length of time, entered and stored in minutes.",
         time: "A time-of-day picker, with no date component.",
         color: "A colour-swatch picker with a custom hex-code entry.",
+        entityReference:
+          "A pointer to another record, chosen from a searchable list of one entity type. Only the pointer is stored, so the name shown is always read from the target record itself.",
+        userReference:
+          "A pointer to a user account, chosen from a searchable list of users. Only the pointer is stored, so the name shown is always read from that account itself.",
       },
     },
 

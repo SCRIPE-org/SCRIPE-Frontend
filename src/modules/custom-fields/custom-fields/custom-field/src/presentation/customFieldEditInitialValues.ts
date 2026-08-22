@@ -22,6 +22,12 @@
  *     the request, with no "null means no change" semantics anywhere.
  *   - A cleared `validatorKind` is *legal* by design (clearing a validator is
  *     always allowed), so it is accepted silently rather than rejected.
+ *   - The Wave 4 follow-up adds `referenceTargetEntityTypeKey` to the same class again:
+ *     `UpdateCustomFieldCommandHandler` assigns the reference-target gate's output
+ *     unconditionally (null when the request omits it or sends `""`), so an omitted or
+ *     blank pin on update means UNPIN THIS FIELD, not "leave its target type alone".
+ *     `CustomFieldListResponse` does not carry it either, so the same
+ *     list-row-vs-detail-fetch rule below governs it.
  *   - Wave 5 row 5.2 adds `fieldGroupId` to exactly the same hazard class:
  *     `UpdateCustomFieldCommandHandler` resolves it from the request and
  *     assigns `resolvedFieldGroupId` (null when the request omits it or sends
@@ -34,7 +40,8 @@
  * the detail endpoint (`GET /v1/custom-fields/{id}` -> `CustomFieldResponse`
  * -> `CustomFieldModel.fromJson`), never a list row. `CustomFieldListResponse`
  * deliberately omits `options`, both placeholders, both validator columns
- * (ruling R3) and `fieldGroupId` (Wave 5 row 5.2), so
+ * (ruling R3), `fieldGroupId` (Wave 5 row 5.2) and
+ * `referenceTargetEntityTypeKey` (Wave 4 follow-up), so
  * `CustomFieldModel.fromListJson` leaves them `null`/`undefined` and every
  * `?? ""` below would blank a real stored value.
  * `useCustomFieldViewModel.openEditModal` is what guarantees the hydration.
@@ -72,6 +79,21 @@ export type CustomFieldEditInitialValues = {
    * is a nullable ENUM, which cannot deserialize `""` at all).
    */
   fieldGroupId: string;
+  /**
+   * Wave 4 follow-up. The definition-level reference target pin, or `""` for an unpinned field.
+   *
+   * `""` is the honest wire representation of "unpinned" and needs no write-seam normalization:
+   * `ReferenceTargetOwnership.NormalizeTargetEntityType` and
+   * `EntityReferenceValueTypeHandler.NormalizeTargetEntityTypeKey` both branch on
+   * `string.IsNullOrWhiteSpace`, so an empty string and an absent value mean the identical thing to
+   * the server. Same situation as `fieldGroupId` above, and the opposite of `validatorKind`, which is
+   * a nullable ENUM and cannot model-bind `""` at all.
+   *
+   * Carried for EVERY value type, not only the reference ones. A Text definition round-trips `""`
+   * here, which the server accepts as "unpinned" rather than refusing as a meaningless target -- the
+   * blank check runs before the "may this value type carry a pin at all" check.
+   */
+  referenceTargetEntityTypeKey: string;
   options: string;
   optionsAr: string;
   /** Wave 6 ruling R10. Wire value is the C# enum member name; `""` is never valid, so it is
@@ -102,6 +124,14 @@ export function buildCustomFieldEditInitialValues(item: CustomField): CustomFiel
     validatorKind: item.validatorKind ?? "",
     validatorParam: item.validatorParam ?? "",
     fieldGroupId: item.fieldGroupId ?? "",
+    // Wave 4 follow-up. Joins the same hazard class as `fieldGroupId` and the two validator columns:
+    // `CustomFieldResponse` carries the pin but `CustomFieldListResponse` does not, and
+    // `UpdateCustomFieldCommandHandler` full-replaces the column from the gate's output on every
+    // update. So a list row reaching this function blanks the pin, and the next save UNPINS the
+    // definition -- turning "this field holds an Employee" into "this field holds anything" with
+    // nobody having asked. The detail-fetch requirement in this module's header comment is what
+    // prevents that; there is no defence available inside this function.
+    referenceTargetEntityTypeKey: item.referenceTargetEntityTypeKey ?? "",
     options: item.options ?? "",
     // Same "?? \"\"" discipline as every other form-populating field here: absent must
     // become an empty string, not undefined, or the controlled editor loses its value on

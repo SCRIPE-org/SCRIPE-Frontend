@@ -365,6 +365,77 @@ export const VALUE_TYPE_CATALOG: Record<CustomFieldValueTypeName, ValueTypeCatal
     hasOptions: false,
     labelKey: "customField.valueTypes.color",
   },
+  /**
+   * Wave 4. A field on one record holding the (encrypted) id of a record in
+   * another table.
+   *
+   * `fieldConfigType: "entity-reference"` is a genuinely NEW dispatch key and
+   * deliberately NOT the backend Descriptor's own `FieldConfigType:
+   * "server-select"`. That backend string is never transmitted (the wire's
+   * `EntityCustomFieldValueData` carries only `valueType`), so there is no
+   * cross-system contract to honour here -- the same reasoning Currency and
+   * Duration already used to decline the backend's reused `"number"`. And
+   * reusing `"server-select"` would be actively wrong rather than merely
+   * lossy: that member is threaded through `GenericSelect`'s searchable mode
+   * (generic-form.tsx), whose whole contract is a flat `FieldOption[]` of
+   * `{ value, label }` pairs. A reference has no label to put in one -- the
+   * target's name is NOT stored and cannot be resolved synchronously (see
+   * `CustomFieldEntityReferenceValue`'s own doc comment), so every option
+   * would have to be fetched, permission-checked and resolved per keystroke
+   * through a control that assumes it already holds its options. The read
+   * value is also a two-piece object, not the single string
+   * `onValueChange` emits. A dedicated key keeps this type distinguishable
+   * inside renderCustomFieldControl's dispatch, which is what lets it reach a
+   * control that actually resolves names.
+   *
+   * `hasOptions: false` is load-bearing, not incidental -- it is the frontend
+   * twin of the backend Descriptor's own load-bearing false. The definition-
+   * level "which entity type may this field point at" pin
+   * (`CustomField.ReferenceTargetEntityTypeKey`) is a target constraint, NOT
+   * an option list, and modelling it as one would route this type through
+   * every Select-shaped options path in the module.
+   *
+   * `hasPlaceholder: true` matches the backend Descriptor: the control is a
+   * search box, and a search box has a placeholder ("Search employees...").
+   *
+   * `badgeVariant: "default"` -- same value the backend Descriptor picks, and
+   * shared with Select/MultiSelect on purpose: this is the same PICKER family
+   * (a search-and-choose control over server-supplied candidates), and badge
+   * variants carry family, not identity. They are explicitly not required to
+   * be unique -- Text/LongText/Email/Url/Phone/Color already share
+   * "secondary", and Number/Percent/Currency/Duration already share "info".
+   */
+  EntityReference: {
+    fieldConfigType: "entity-reference",
+    badgeVariant: "default",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.entityReference",
+  },
+  /**
+   * Wave 4. A reference to a person who can log in -- "assigned to",
+   * "reviewed by". Identical to EntityReference above in every catalog field
+   * except its label key, exactly as the backend's own
+   * `UserReferenceValueTypeHandler.Descriptor` is identical to its base's
+   * except for the label.
+   *
+   * The two types share `fieldConfigType` because they differ in WHICH target
+   * key is offered, which is data, not a control kind -- UserReference's
+   * target is a code-owned allowlist of exactly one key (`identity.user`;
+   * `identity.admin` is excluded because `Admin.TenantId` is nullable, so an
+   * admin row can sit outside every tenant filter), while EntityReference's
+   * comes from the definition's own pin. One control, two data sources. A
+   * separate `"user-select"` dispatch key would be the "declare a type
+   * nothing renders" trap the backend Descriptor's own comment warns about,
+   * reproduced on this side of the wire.
+   */
+  UserReference: {
+    fieldConfigType: "entity-reference",
+    badgeVariant: "default",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.userReference",
+  },
 };
 
 /**
@@ -386,15 +457,16 @@ export function getValueTypeCatalogEntry(type: string): ValueTypeCatalogEntry | 
 }
 
 /**
- * All 17 known type names, in the same fixed display order used everywhere
+ * All 19 known type names, in the same fixed display order used everywhere
  * else in this module (CustomFieldListView.tsx's valueTypeOptions,
  * InlineAddCustomFieldDialog.tsx) -- and matching
- * CustomFieldValueType's own backend declaration order (Text=0 .. Color=16),
- * so the type picker's option order reads the same as the enum's shipped
- * history rather than an arbitrary regrouping. Wave 3.2 Batch 3 appended
- * Email/Url/Phone/Percent/Rating (8-12); Wave 3.3 Batch C appends
- * Currency/Duration/Time/Color (13-16), the exact order the backend's own
- * enum and Wave 3.3 Task A/B reports assign them.
+ * CustomFieldValueType's own backend declaration order (Text=0 ..
+ * UserReference=18), so the type picker's option order reads the same as the
+ * enum's shipped history rather than an arbitrary regrouping. Wave 3.2 Batch 3
+ * appended Email/Url/Phone/Percent/Rating (8-12); Wave 3.3 Batch C appended
+ * Currency/Duration/Time/Color (13-16); Wave 4 appends EntityReference (17)
+ * and UserReference (18), read off the real backend enum in that order rather
+ * than assumed to be the next two free numbers.
  */
 export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Text",
@@ -414,4 +486,6 @@ export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Duration",
   "Time",
   "Color",
+  "EntityReference",
+  "UserReference",
 ];

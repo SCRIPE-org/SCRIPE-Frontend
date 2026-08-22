@@ -1447,6 +1447,32 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           ).toBeInTheDocument();
           break;
         }
+        // ── Wave 4 ──────────────────────────────────────────────────────
+        case "entity-reference": {
+          // BOTH reference value types resolve to this one case, on purpose:
+          // they share a control and differ only in which target key it is
+          // fed. The gate builds its FieldConfig from the catalog alone, so it
+          // renders with an EMPTY value AND no definition pin -- the one state
+          // in which neither target source has an answer. What must be proved
+          // here is that the branch reaches a control which says so, rather
+          // than falling through to the shared text Input (which would render
+          // an empty text box, or, once a value existed, the literal
+          // "[object Object]"). Which source wins when they DO have answers is
+          // a separate question, pinned in
+          // renderCustomFieldControl.referenceTargetEntityTypeKey.test.tsx.
+          //
+          // Two discriminating facts, neither reachable from the fallthrough:
+          // a role="combobox" that is explicitly NOT operable, and the
+          // localized explanation of why. An empty dropdown would satisfy
+          // neither -- it reads as "the server returned no records", which
+          // sends whoever hits it looking in entirely the wrong place.
+          const trigger = screen.getByRole("combobox", { name: valueType });
+          expect(trigger).toHaveAttribute("aria-disabled", "true");
+          expect(
+            screen.getByText("customField.entityReference.noTargetConfigured")
+          ).toBeInTheDocument();
+          break;
+        }
         default:
           throw new Error(
             `renderCustomFieldControl completeness gate has no assertion strategy for ` +
@@ -1459,4 +1485,120 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
       unmount();
     }
   );
+});
+
+// EntityReference / UserReference branch -- Wave 4.
+//
+// Three decisions live in this branch rather than in the control, so they are
+// pinned here rather than in EntityReferenceCustomFieldControl.test.tsx:
+//   1. WHERE THE TARGET TYPE COMES FROM. Two sources: the definition's pin
+//      (`fc.referenceTargetEntityTypeKey`) and the stored value's own key,
+//      which the backend keeps per value so a reference stays interpretable
+//      after its definition is re-pointed. The cases below cover the
+//      VALUE-sourced ones -- pin present, pin absent, both absent, and which
+//      one wins when they disagree, live in
+//      renderCustomFieldControl.referenceTargetEntityTypeKey.test.tsx, whose
+//      lookup-hook mocks would otherwise change what this file proves.
+//   2. VALUE NARROWING. The renderer's `value` is `unknown`. Anything that is
+//      not reference-shaped becomes null rather than being handed through,
+//      because the control's own fallback for an unrecognised value would put
+//      something meaningless in the field.
+//   3. isViewMode -> `disabled`, not `readOnly`. This file's header records the
+//      family split: Switch takes readOnly, every picker/input family control
+//      takes disabled. A reference picker is a picker.
+describe("renderCustomFieldControl -- entity-reference branch (Wave 4)", () => {
+  const FC = { name: "cf_assignee", type: "entity-reference", label: "Assignee" } as const;
+
+  it("derives the target entity type from the STORED VALUE, so a populated reference is operable", () => {
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { ...FC },
+          value: { entityTypeKey: "hrms.staff-member", entityId: "ENC-1" },
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+
+    const trigger = screen.getByRole("combobox", { name: "Assignee" });
+    expect(trigger).not.toHaveAttribute("aria-disabled", "true");
+    expect(
+      screen.queryByText("customField.entityReference.noTargetConfigured")
+    ).not.toBeInTheDocument();
+  });
+
+  it("renders the explicit no-target state for an empty value, never an empty dropdown", () => {
+    render(<>{renderCustomFieldControl({ fc: { ...FC }, value: null, onChange: vi.fn() })}</>);
+
+    expect(screen.getByRole("combobox", { name: "Assignee" })).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    );
+    expect(
+      screen.getByText("customField.entityReference.noTargetConfigured")
+    ).toBeInTheDocument();
+  });
+
+  it.each([
+    ["a bare string", "ENC-1"],
+    ["a number", 42],
+    ["an array", ["ENC-1"]],
+    [
+      "an object whose id is misnamed `encryptedEntityId`",
+      { entityTypeKey: "hrms.staff-member", encryptedEntityId: "ENC-1" },
+    ],
+    ["a partial object", { entityTypeKey: "hrms.staff-member" }],
+  ])("narrows %s to null instead of handing it to the control", (_label, value) => {
+    render(<>{renderCustomFieldControl({ fc: { ...FC }, value, onChange: vi.fn() })}</>);
+
+    // Narrowed to null => no target => the explicit no-target state. The
+    // misnamed-id row is the one that matters most, and it is not "the write
+    // shape" -- there is no write shape, a reference is `entityId` in both
+    // directions. It is simply an object missing `entityId`, i.e. what a
+    // renaming bug upstream would produce, and it must not be mistaken for a
+    // readable reference.
+    expect(
+      screen.getByText("customField.entityReference.noTargetConfigured")
+    ).toBeInTheDocument();
+  });
+
+  it("passes isViewMode through as `disabled`, matching every other picker branch in this file", () => {
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { ...FC },
+          value: { entityTypeKey: "hrms.staff-member", entityId: "ENC-1" },
+          onChange: vi.fn(),
+          isViewMode: true,
+        })}
+      </>
+    );
+
+    expect(screen.getByRole("combobox", { name: "Assignee" })).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    );
+  });
+
+  it("labels the field from fc.label, falling back to fc.name when a definition has no label", () => {
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_unlabelled", type: "entity-reference" },
+          value: null,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+
+    expect(screen.getByRole("combobox", { name: "cf_unlabelled" })).toBeInTheDocument();
+  });
+
+  it("renders exactly one label -- the control owns its own, so the branch must not add a second", () => {
+    render(<>{renderCustomFieldControl({ fc: { ...FC }, value: null, onChange: vi.fn() })}</>);
+
+    // A duplicated <Label htmlFor> would make getAllByText return two nodes
+    // and give the field two visible names.
+    expect(screen.getAllByText("Assignee")).toHaveLength(1);
+  });
 });

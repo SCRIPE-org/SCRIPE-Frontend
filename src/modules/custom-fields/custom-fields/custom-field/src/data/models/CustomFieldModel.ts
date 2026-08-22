@@ -129,13 +129,25 @@ export interface CustomFieldJson {
    * because the list response is form-population-free.
    */
   fieldGroupId?: string | null;
+  /**
+   * Wave 4 follow-up. Registry key of the entity type a REFERENCE field's definition is pinned to,
+   * or `null`/`undefined` for an unpinned field. Wire name is camelCase
+   * `referenceTargetEntityTypeKey`, from `CustomFieldResponse.ReferenceTargetEntityTypeKey`
+   * (verified against that record, not inferred from the entity).
+   *
+   * DETAIL response only, same as `fieldGroupId` and the two validator columns above --
+   * `CustomFieldListResponse` has no such property, so do not add it to
+   * `CustomFieldListItemJson` below.
+   */
+  referenceTargetEntityTypeKey?: string | null;
 }
 
 /**
  * CustomField list-row JSON shape from API.
  * The list response omits `options`, `modifiedAt`, both placeholders,
- * (per R3, Wave 2 Step 2.5) `validatorKind`/`validatorParam`, and (Wave 5 row
- * 5.2) `fieldGroupId` -- deliberately, not an oversight.
+ * (per R3, Wave 2 Step 2.5) `validatorKind`/`validatorParam`, (Wave 5 row
+ * 5.2) `fieldGroupId`, and (Wave 4 follow-up)
+ * `referenceTargetEntityTypeKey` -- deliberately, not an oversight.
  * `CustomFieldListResponse` on the backend has no such fields, so do not add
  * them here.
  */
@@ -214,7 +226,12 @@ export class CustomFieldModel {
     // above was: they are positional and interchangeably typed, so inserting earlier would silently
     // reassign existing call sites' arguments to the wrong field with no type error. Do not reorder.
     public readonly sensitivity?: string | null,
-    public readonly isExportable?: boolean | null
+    public readonly isExportable?: boolean | null,
+    // Wave 4 follow-up -- appended at the tail (position 21) for the same reason every optional
+    // above was: they are positional and interchangeably typed `string | null | undefined`, so
+    // inserting anywhere earlier would silently reassign existing call sites' arguments to the
+    // wrong field with no type error. Do not reorder.
+    public readonly referenceTargetEntityTypeKey?: string | null
   ) {}
 
   /**
@@ -242,7 +259,8 @@ export class CustomFieldModel {
       json.validatorParam,
       json.fieldGroupId,
       json.sensitivity,
-      json.isExportable
+      json.isExportable,
+      json.referenceTargetEntityTypeKey
     );
   }
 
@@ -309,6 +327,7 @@ export class CustomFieldModel {
       fieldGroupId: this.fieldGroupId,
       sensitivity: this.sensitivity,
       isExportable: this.isExportable,
+      referenceTargetEntityTypeKey: this.referenceTargetEntityTypeKey,
     };
   }
 }

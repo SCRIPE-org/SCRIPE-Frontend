@@ -109,6 +109,38 @@ export interface FieldConfig {
     // "a bare number whose unit is implicit" ambiguity at the UI layer).
     | "currency"
     | "duration"
+    // Wave 4 (CustomFields' EntityReference/UserReference value types). Both
+    // map here: they differ only in which target entity type their picker is
+    // fed, which is data, not a control kind. Declared for
+    // FieldConfig["type"]'s typing and DISPATCHED ELSEWHERE, the same shape
+    // "currency"/"duration"/"datetime"/"slider"/"multi-select" already
+    // established -- the real control is
+    // EntityReferenceCustomFieldControl, reached through
+    // renderCustomFieldControl.tsx, which is the dispatcher all 8-9
+    // CustomFields consumer sites call.
+    //
+    // NO RENDER BRANCH IS ADDED HERE ON PURPOSE, and the reason is a
+    // dependency-rule one rather than a "later" one: this control needs the
+    // CustomFields module (the entity-lookup search/resolve hooks, which
+    // reach the module's DI container), and `core` must not import from
+    // `src/modules/*` -- docs/architecture/01-modularity.md's Dependency
+    // Rule, the same constraint that produced core/crud/customFieldsExtension.tsx
+    // as a REGISTRY rather than an import. A direct import would also close a
+    // runtime cycle (generic-form -> control -> module DI -> valueTypeRegistry
+    // -> generic-form) and pull the whole CustomFields data layer into every
+    // form in the product. If GenericForm itself ever needs to draw one, the
+    // honest route is a new member on CustomFieldsExtensionApi, not an import
+    // here.
+    //
+    // It IS added to the required-validation `customTypes` set below, which is
+    // not a contradiction: custom-field FieldConfigs genuinely DO reach this
+    // component's submit path (generic-crud-view.tsx concatenates
+    // useCustomFieldsFormFields's fieldConfigs into the `fields` it hands
+    // <GenericForm>), even though they are drawn by the fallthrough there. A
+    // required reference field submitted blank has to be caught in that path
+    // too, and a reference value is an object, which the old emptiness check
+    // waved through -- see `isRequiredFieldEmpty` below.
+    | "entity-reference"
     | "tel"
     | "url"
     | "textarea"
@@ -158,6 +190,24 @@ export interface FieldConfig {
   removeLabel?: string;
   /** For "bilingual-options": the hint shown when no options exist yet. */
   emptyHint?: string;
+  /**
+   * For "entity-reference": the entity type the field's DEFINITION is pinned to, i.e. what the
+   * picker should offer. Absent/null means the definition does not say, which is a real state (an
+   * unpinned EntityReference accepts any registered entity type, so there is no single answer) and
+   * not merely an unwired one.
+   *
+   * A CARRIER ONLY — this component never reads it. Like "currency"/"duration"/"datetime" before it,
+   * `"entity-reference"` is declared for `FieldConfig["type"]`'s typing and DISPATCHED ELSEWHERE
+   * (renderCustomFieldControl.tsx), because the control needs the CustomFields module and `core`
+   * must not import from `src/modules/*` — see the `"entity-reference"` member's own comment above.
+   * The field travels here rather than in a module-side side-channel because `FieldConfig[]` IS the
+   * boundary type the extension hands across that line; a parallel map keyed by field name would
+   * have to be threaded through every one of the nine consumer sites separately.
+   *
+   * NOT consulted by `isRequiredFieldEmpty`, on purpose: whether a reference is filled is a question
+   * about the VALUE's two pieces, and a pin says nothing about whether the user picked anything.
+   */
+  referenceTargetEntityTypeKey?: string | null;
   accept?: string; // For file inputs and image uploader
   multiple?: boolean; // For file inputs and multi-select
   // Image uploader specific options
@@ -246,6 +296,84 @@ interface GenericFormProps {
  * effect below saw changed deps forever and re-entered itself.
  */
 const NO_INITIAL_VALUES: Record<string, any> = {};
+
+/**
+ * Field types whose form value is a multi-piece OBJECT envelope rather than a
+ * scalar or an array, and whose required-validation therefore cannot be decided
+ * by looking at the envelope alone.
+ *
+ * Exactly one member today: `"entity-reference"`, whose value is
+ * `{ entityTypeKey, entityId }`. Deliberately a set rather than a hardcoded
+ * `field.type === "entity-reference"` check, so the next object-valued type
+ * (Currency's `{ amount, currencyCode }` and DateTime's `{ value, timeZoneId }`
+ * are the obvious candidates) is a one-line addition with a test rather than a
+ * second copy of the logic.
+ *
+ * Currency and DateTime are NOT members yet, on purpose. `"currency"` is not in
+ * the `customTypes` required-validation set at all, so adding it here would
+ * change nothing; `"datetime"` IS in that set, but this component converts
+ * every date-family value through `toDateInputValue`/`fromDateInputValue`, so
+ * what reaches the check is a STRING, never the two-piece object. Admitting
+ * either would be changing behaviour for a shipped type on a guess about a
+ * shape that does not arrive here — which is a separate decision with its own
+ * evidence, not a free generalisation.
+ */
+const OBJECT_VALUED_FIELD_TYPES = new Set<FieldConfig["type"]>(["entity-reference"]);
+
+/**
+ * Whether a required field counts as unfilled at submit time.
+ *
+ * THE BUG THIS EXISTS FOR: the check used to be, inline and in one expression,
+ * `val === undefined || val === null || val === "" || (Array.isArray(val) &&
+ * val.length === 0)`. Every arm of that tests a scalar or an array, so ANY
+ * object passed — `{}` included, and `{ entityTypeKey: "hrms.staff-member",
+ * entityId: "" }` in particular. A required entity-reference field with nothing
+ * actually picked therefore validated as filled, submitted, and came back a 422
+ * from the server (or, worse, wrote a half-blank the server then had to refuse)
+ * instead of showing the user "this field is required" next to the field.
+ *
+ * The scalar and array arms are reproduced here byte-for-byte and are reached
+ * first, so behaviour for every field type that existed before is unchanged: a
+ * type outside `OBJECT_VALUED_FIELD_TYPES` still falls through to `false` for a
+ * non-empty scalar and for any object, exactly as before. Only a field whose
+ * type is declared object-valued gets the new arm.
+ *
+ * The reference arm mirrors the backend's own write gate rather than inventing a
+ * rule: `EntityReferenceValueTypeHandler.Validate` refuses a reference unless
+ * BOTH the target type key and the encrypted id are present and non-blank, so a
+ * half-blank reference is not a storable value and "required" must not accept
+ * one. A non-object value on a reference field fails closed for the same reason
+ * — no scalar can ever be a reference.
+ *
+ * The reference shape is restated here rather than imported from the
+ * CustomFields module's own `isEntityReferenceValue`, and that is required
+ * rather than sloppy: `core` cannot import from `src/modules/*`
+ * (docs/architecture/01-modularity.md's Dependency Rule — the same constraint
+ * that makes core/crud/customFieldsExtension.tsx a registry instead of an
+ * import, and that makes this file's `FieldConfig[]` the boundary type in the
+ * first place). If the wire shape ever changes, both have to change.
+ *
+ * @param field The field being validated; its `type` selects the strategy.
+ * @param val The current form value for that field.
+ * @returns True when the value should be reported as a missing required field.
+ */
+function isRequiredFieldEmpty(field: FieldConfig, val: unknown): boolean {
+  if (val === undefined || val === null || val === "") return true;
+  if (Array.isArray(val)) return val.length === 0;
+
+  if (OBJECT_VALUED_FIELD_TYPES.has(field.type)) {
+    if (typeof val !== "object") return true;
+    const ref = val as { entityTypeKey?: unknown; entityId?: unknown };
+    return (
+      typeof ref.entityTypeKey !== "string" ||
+      ref.entityTypeKey.trim() === "" ||
+      typeof ref.entityId !== "string" ||
+      ref.entityId.trim() === ""
+    );
+  }
+
+  return false;
+}
 
 export function GenericForm({
   fields,
@@ -381,6 +509,12 @@ export function GenericForm({
       "week",
       "image",
       "richtext",
+      // Wave 4: the reference picker is a custom control with no native
+      // `required` attribute for the browser to enforce, exactly like every
+      // other member of this set. It reaches this submit path via
+      // generic-crud-view.tsx, which concatenates the CustomFields extension's
+      // fieldConfigs into <GenericForm>'s own `fields`.
+      "entity-reference",
     ]);
 
     const newErrors: Record<string, string> = {};
@@ -392,11 +526,12 @@ export function GenericForm({
       // Only validate custom component types (native inputs are validated by browser)
       if (!customTypes.has(field.type)) return;
 
-      const val = formData[field.name];
-      const isEmpty =
-        val === undefined || val === null || val === "" || (Array.isArray(val) && val.length === 0);
-
-      if (isEmpty) {
+      // Object-aware since Wave 4 -- the inline scalar/array-only expression
+      // this replaced treated EVERY object as filled, so a required
+      // entity-reference field with nothing picked submitted empty. See
+      // `isRequiredFieldEmpty` for the full reasoning and for why no existing
+      // field type's behaviour changes.
+      if (isRequiredFieldEmpty(field, formData[field.name])) {
         // No `|| "English literal"` fallback: t() returns the bare key on a
         // miss, never a falsy value, so the fallback was dead code that could
         // only ever ship untranslated English.
