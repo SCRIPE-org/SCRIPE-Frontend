@@ -14,7 +14,7 @@
  *     ticket may write. Note that the `AbortController` alone does NOT fix this — an aborted request
  *     whose response is already in flight still settles.
  *  3. A WRITE AFTER UNMOUNT. Close the picker mid-flight and the response lands on a dead component.
- *     Fixed by `isMountedRef`.
+ *     Fixed by request-local cancellation in the effect cleanup.
  *
  * EVERY FLAG IS DERIVED; NOTHING IS SET SYNCHRONOUSLY IN AN EFFECT
  * ---------------------------------------------------------------
@@ -184,13 +184,6 @@ export function useEntityLookupSearch({
 
   // Ticket counter. Only the holder of the current ticket may write.
   const requestSeqRef = useRef(0);
-  const isMountedRef = useRef(true);
-  useEffect(
-    () => () => {
-      isMountedRef.current = false;
-    },
-    []
-  );
 
   // The debounce. Runs only while the typed text differs from what has been committed, so once the
   // commit lands the effect re-runs and returns immediately -- no trailing timer, no second request.
@@ -211,9 +204,10 @@ export function useEntityLookupSearch({
     const seq = ++requestSeqRef.current;
     const controller = new AbortController();
     const isFirstPage = request.page === 1;
+    let cancelled = false;
 
-    /** True once this request has been superseded or the component has gone. */
-    const isStale = () => !isMountedRef.current || seq !== requestSeqRef.current;
+    /** True once this effect has been cleaned up or a newer request owns the ticket. */
+    const isStale = () => cancelled || seq !== requestSeqRef.current;
 
     void customFieldsContainer.entityLookupRepository
       .search(
@@ -258,7 +252,10 @@ export function useEntityLookupSearch({
     // Cleanup runs BEFORE the next effect body, so the abort lands while this request still holds the
     // current ticket and its replacement takes a new one -- which is what makes a late response
     // identifiable as stale rather than merely late.
-    return () => controller.abort();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [
     canFetch,
     entityTypeKey,

@@ -161,18 +161,11 @@ export function useResolveEntityReference(
     requestKey === null ? "idle" : (settled?.status ?? "loading");
   const item = settled?.item ?? null;
 
-  // Same ticket-and-mount discipline as `useEntityLookupSearch`. It matters here too, and for a less
+  // Same ticket-and-request discipline as `useEntityLookupSearch`. It matters here too, and for a less
   // obvious reason: clearing a reference and immediately picking a different one fires two resolves,
   // and if the first is slower the field ends up displaying the record the user just removed while
   // holding the id of the one they chose.
   const requestSeqRef = useRef(0);
-  const isMountedRef = useRef(true);
-  useEffect(
-    () => () => {
-      isMountedRef.current = false;
-    },
-    []
-  );
 
   useEffect(() => {
     if (requestKey === null || !entityTypeKey || !entityId) {
@@ -185,9 +178,10 @@ export function useResolveEntityReference(
 
     const seq = ++requestSeqRef.current;
     const controller = new AbortController();
+    let cancelled = false;
 
-    /** True once this resolve has been superseded or the component has gone. */
-    const isStale = () => !isMountedRef.current || seq !== requestSeqRef.current;
+    /** True once this effect has been cleaned up or a newer resolve owns the ticket. */
+    const isStale = () => cancelled || seq !== requestSeqRef.current;
 
     void customFieldsContainer.entityLookupRepository
       .resolve(entityTypeKey, entityId, controller.signal)
@@ -208,7 +202,10 @@ export function useResolveEntityReference(
         });
       });
 
-    return () => controller.abort();
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [requestKey, entityTypeKey, entityId]);
 
   const retry = useCallback(() => setRetryNonce((prev) => prev + 1), []);

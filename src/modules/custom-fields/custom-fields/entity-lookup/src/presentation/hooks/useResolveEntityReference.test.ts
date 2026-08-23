@@ -8,6 +8,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { createElement, StrictMode, type ReactNode } from "react";
 import { useResolveEntityReference } from "./useResolveEntityReference";
 import { customFieldsContainer } from "../../../../di";
 import type { EntityLookupItem } from "../../data/models/EntityLookupModel";
@@ -23,6 +24,10 @@ vi.mock("../../../../di", () => ({
 }));
 
 const resolve = vi.mocked(customFieldsContainer.entityLookupRepository.resolve);
+
+function strictModeWrapper({ children }: { children: ReactNode }) {
+  return createElement(StrictMode, null, children);
+}
 
 const REFERENCE = { entityTypeKey: "hrms.staff-member", entityId: "AbC-dEf_123" };
 
@@ -59,6 +64,25 @@ describe("useResolveEntityReference", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("resolves a held reference after StrictMode replays the effect", async () => {
+    const record = resolvedItem({ displayName: "Super Admin", secondary: "superadmin" });
+    const response = deferred<EntityLookupItem>();
+    resolve.mockReturnValue(response.promise);
+
+    const { result } = renderHook(() => useResolveEntityReference(REFERENCE), {
+      wrapper: strictModeWrapper,
+      reactStrictMode: true,
+    });
+
+    await act(async () => {
+      response.settle(record);
+      await response.promise;
+    });
+
+    await waitFor(() => expect(result.current.status).toBe("resolved"));
+    expect(result.current.item).toEqual(record);
   });
 
   it("is idle and silent when no reference is held", async () => {

@@ -12,6 +12,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { createElement, StrictMode, type ReactNode } from "react";
 import { useEntityLookupSearch } from "./useEntityLookupSearch";
 import { customFieldsContainer } from "../../../../di";
 import { ENTITY_LOOKUP_SEARCH_DEBOUNCE_MS } from "../../data/models/EntityLookupModel";
@@ -28,6 +29,10 @@ vi.mock("../../../../di", () => ({
 }));
 
 const search = vi.mocked(customFieldsContainer.entityLookupRepository.search);
+
+function strictModeWrapper({ children }: { children: ReactNode }) {
+  return createElement(StrictMode, null, children);
+}
 
 /** One picker row. */
 function item(id: string): EntityLookupItem {
@@ -85,6 +90,30 @@ describe("useEntityLookupSearch", () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("renders a successful lookup result after StrictMode replays the effect", async () => {
+    const superAdmin: EntityLookupItem = {
+      id: "super-admin-id",
+      displayName: "Super Admin",
+      secondary: "superadmin",
+      isActive: true,
+    };
+    const response = deferred<ReturnType<typeof page>>();
+    search.mockReturnValue(response.promise);
+
+    const { result } = renderHook(
+      () => useEntityLookupSearch({ entityTypeKey: "identity.admin" }),
+      { wrapper: strictModeWrapper, reactStrictMode: true }
+    );
+
+    await act(async () => {
+      response.resolve({ ...page([]), items: [superAdmin], totalCount: 1 });
+      await response.promise;
+    });
+
+    await waitFor(() => expect(result.current.isLoading).toBe(false));
+    expect(result.current.items).toEqual([superAdmin]);
   });
 
   it("typing five characters fires ONE request, not five", async () => {
@@ -290,6 +319,40 @@ describe("useEntityLookupSearch", () => {
 
     await waitFor(() => expect(search).toHaveBeenCalledTimes(1));
     expect(result.current.items).toEqual([]);
+  });
+
+  it("aborts a closing picker request and fetches fresh results when reopened", async () => {
+    const firstResponse = deferred<ReturnType<typeof page>>();
+    let firstSignal: AbortSignal | undefined;
+    search
+      .mockImplementationOnce((_key, _query, signal) => {
+        firstSignal = signal;
+        return firstResponse.promise;
+      })
+      .mockResolvedValueOnce(page(["reopened"]));
+
+    const { result, rerender } = renderHook(
+      (props: { enabled: boolean }) =>
+        useEntityLookupSearch({ entityTypeKey: "hrms.staff-member", enabled: props.enabled }),
+      { initialProps: { enabled: false } }
+    );
+
+    rerender({ enabled: true });
+    await waitFor(() => expect(search).toHaveBeenCalledTimes(1));
+
+    rerender({ enabled: false });
+    expect(firstSignal?.aborted).toBe(true);
+    expect(result.current.isLoading).toBe(false);
+
+    rerender({ enabled: true });
+    await waitFor(() => expect(result.current.items.map((entry) => entry.id)).toEqual(["reopened"]));
+
+    await act(async () => {
+      firstResponse.resolve(page(["stale"]));
+      await firstResponse.promise;
+    });
+
+    expect(result.current.items.map((entry) => entry.id)).toEqual(["reopened"]);
   });
 
   it("classifies a search failure instead of reporting an empty list", async () => {
