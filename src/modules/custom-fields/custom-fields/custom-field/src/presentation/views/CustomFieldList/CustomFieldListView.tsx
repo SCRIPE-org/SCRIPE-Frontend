@@ -24,6 +24,7 @@ import { resolveIntlLocale } from "@core/common/utils";
 import {
   BarChart3,
   Boxes,
+  Eye,
   FolderTree,
   Globe2,
   History,
@@ -56,6 +57,7 @@ import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../../permission-constants";
 import { usePermission } from "@core/hooks/use-permission";
 import { FieldHistoryDialog } from "../../dialogs/FieldHistoryDialog";
 import { FieldImpactDialog } from "../../dialogs/FieldImpactDialog";
+import { CustomFieldDetailDialog } from "../../dialogs/CustomFieldDetailDialog";
 import { useFieldInsightViewModel } from "../../viewmodels/useFieldInsightViewModel";
 // P-4 follow-up. The option-set backend (bind/rebind/unbind) shipped with no frontend caller; this
 // is it. See useOptionSetBindingViewModel.ts's own header for the design this dialog implements.
@@ -494,6 +496,9 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   // that happens.
   const optionSetBinding = useOptionSetBindingViewModel();
   const { openBinding } = optionSetBinding;
+  const [detailFieldId, setDetailFieldId] = useState<string | null>(null);
+  const openDetail = useCallback((id: string) => setDetailFieldId(id), []);
+  const closeDetail = useCallback(() => setDetailFieldId(null), []);
   const {
     options: fieldGroupOptions,
     isLoading: isFieldGroupsLoading,
@@ -1254,6 +1259,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // positional.
       getActions: (_vmInstance, tFn, _handleDeleteFn): CrudAction<CustomField>[] => [
         {
+          label: tFn("customField.details.actionLabel"),
+          onClick: (item: CustomField) => openDetail(item.id),
+          variant: "ghost" as const,
+          icon: <Eye className="h-4 w-4" />,
+        },
+        {
           label: tFn("common.edit"),
           onClick: (item: CustomField) => vm.openEditModal(item),
           variant: "ghost" as const,
@@ -1328,6 +1339,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // Wave 6 rows 6.6/6.3. The individual CALLBACKS, not the `insight` object -- that object is a
       // fresh literal on every render (only its callbacks are memoized), so depending on it would
       // recompute this whole config every render.
+      openDetail,
       openUsage,
       openHistory,
       requestDelete,
@@ -1377,6 +1389,22 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   return (
     <>
       <GenericCrudView viewModel={vm} config={config} />
+
+      <CustomFieldDetailDialog
+        open={detailFieldId !== null}
+        onOpenChange={(open) => {
+          if (!open) closeDetail();
+        }}
+        fieldId={detailFieldId}
+        fieldLabel={insightFieldLabel(detailFieldId)}
+        canEdit={
+          isPlatformContext ||
+          (detailFieldId
+            ? !(vm.items as CustomField[] | undefined)?.find((item) => item.id === detailFieldId)?.isGlobal
+            : true)
+        }
+        onEdit={(field) => vm.openEditModal(field)}
+      />
 
       <FieldHistoryDialog
         open={insight.historyFieldId !== null}
