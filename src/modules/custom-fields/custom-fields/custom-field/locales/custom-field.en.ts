@@ -615,6 +615,17 @@ export const en = {
 
     // Platform-owned (TenantId == null) definition, inherited by every tenant
     global: "Global",
+    scopeOptions: {
+      global: "Global — available to every tenant",
+      platformOnly: "Platform only — not available to tenants",
+      tenant: "This tenant only",
+    },
+    scopeDescription: {
+      platform:
+        "Choose whether this platform definition is inherited by every tenant or stays available only to platform administrators.",
+      tenant:
+        "This definition belongs only to the tenant you are currently viewing. Tenant forms also show inherited global fields.",
+    },
 
     // Shown on the definitions screen when a Super Admin has no tenant
     // context — the exact same form creates a GLOBAL definition here,

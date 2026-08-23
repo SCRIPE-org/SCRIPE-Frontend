@@ -169,4 +169,37 @@ describe("BilingualOptionsEditor", () => {
 
     expect(screen.queryByRole("button", { name: "Add option" })).not.toBeInTheDocument();
   });
+
+  it("allows typing into an initially empty English input and calls onChange", () => {
+    const onChange = vi.fn();
+    render(<BilingualOptionsEditor value="" valueAr="" onChange={onChange} {...props} />);
+
+    const enInput = screen.getByLabelText("English label 1");
+    fireEvent.change(enInput, { target: { value: "Option 1" } });
+
+    expect(onChange).toHaveBeenCalledWith({ en: "Option 1", ar: "" });
+  });
+
+  it("allows typing into an initially empty Arabic input", () => {
+    const onChange = vi.fn();
+    render(<BilingualOptionsEditor value="" valueAr="" onChange={onChange} {...props} />);
+
+    const arInput = screen.getByLabelText("Arabic label 1");
+    fireEvent.change(arInput, { target: { value: "خيار 1" } });
+
+    expect(arInput).toHaveValue("خيار 1");
+  });
+
+  it("renders a new row when Add option is clicked and allows typing into both rows", () => {
+    const onChange = vi.fn();
+    render(<BilingualOptionsEditor value="" valueAr="" onChange={onChange} {...props} />);
+
+    fireEvent.change(screen.getByLabelText("English label 1"), { target: { value: "First" } });
+    fireEvent.click(screen.getByRole("button", { name: "Add option" }));
+
+    expect(screen.getByLabelText("English label 2")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("English label 2"), { target: { value: "Second" } });
+
+    expect(onChange).toHaveBeenCalledWith({ en: "First\nSecond", ar: "" });
+  });
 });

@@ -12,6 +12,7 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { getCustomFieldsContainer } from "../../../../di";
+import { normalizeCustomFieldCreateScope } from "../form/customFieldScopeFieldConfig";
 import type { CustomField } from "../../domain/entities/CustomField";
 
 /**
@@ -74,7 +75,9 @@ export function useCustomFieldViewModel() {
     },
     create: async (data) => {
       const id = await customFieldRepository.create(
-        normalizeValidatorFields(data as Record<string, unknown>)
+        normalizeValidatorFields(
+          normalizeCustomFieldCreateScope(data as Record<string, unknown>)
+        )
       );
       return { id } as unknown as CustomField;
     },

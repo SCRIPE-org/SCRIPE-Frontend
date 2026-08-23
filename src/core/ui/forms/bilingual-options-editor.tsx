@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -58,8 +58,28 @@ export interface BilingualOptionsEditorProps {
  */
 export function parseBilingualOptions(value: string, valueAr: string): BilingualOptionRow[] {
   const en = (value ?? "").split("\n").map((s) => s.trim()).filter((s) => s.length > 0);
-  const ar = (valueAr ?? "").split("\n").map((s) => s.trim()).filter((s) => s.length > 0);
-  return en.map((label, index) => ({ en: label, ar: ar[index] ?? "" }));
+  const rawAr = (valueAr ?? "").split("\n").map((s) => s.trim());
+  const filteredAr = rawAr.filter((s) => s.length > 0);
+
+  if (en.length === 0) {
+    if (filteredAr.length > 0) {
+      return filteredAr.map((ar) => ({ en: "", ar }));
+    }
+    return [];
+  }
+
+  // If rawAr has the same length as en, preserve empty lines (handles untranslated middle options like "صغير\n\nكبير")
+  if (rawAr.length === en.length) {
+    return en.map((label, index) => ({ en: label, ar: rawAr[index] ?? "" }));
+  }
+
+  // If filtered non-empty Arabic matches en's length (e.g. extra blank lines in valueAr)
+  if (filteredAr.length === en.length) {
+    return en.map((label, index) => ({ en: label, ar: filteredAr[index] ?? "" }));
+  }
+
+  const arSource = rawAr.length >= en.length ? rawAr : filteredAr;
+  return en.map((label, index) => ({ en: label, ar: arSource[index] ?? "" }));
 }
 
 /**
@@ -81,6 +101,30 @@ export function serializeBilingualOptions(rows: BilingualOptionRow[]): { en: str
   };
 }
 
+interface InternalOptionRow {
+  id: string;
+  en: string;
+  ar: string;
+}
+
+let rowSequence = 0;
+function createInternalRow(en = "", ar = ""): InternalOptionRow {
+  rowSequence += 1;
+  return {
+    id: `bilingual-option-row-${rowSequence}`,
+    en,
+    ar,
+  };
+}
+
+function parseToInternalRows(value: string, valueAr: string): InternalOptionRow[] {
+  const parsed = parseBilingualOptions(value, valueAr);
+  if (parsed.length === 0) {
+    return [createInternalRow("", "")];
+  }
+  return parsed.map((row) => createInternalRow(row.en, row.ar));
+}
+
 export function BilingualOptionsEditor({
   value,
   valueAr,
@@ -94,44 +138,67 @@ export function BilingualOptionsEditor({
   emptyHint,
   id,
 }: BilingualOptionsEditorProps) {
-  const rows = useMemo(() => parseBilingualOptions(value, valueAr), [value, valueAr]);
+  const [rows, setRows] = useState<InternalOptionRow[]>(() => parseToInternalRows(value, valueAr));
+  const lastEmittedRef = useRef<{ en: string; ar: string } | null>(null);
+
+  useEffect(() => {
+    const currentEn = value ?? "";
+    const currentAr = valueAr ?? "";
+    if (
+      lastEmittedRef.current !== null &&
+      lastEmittedRef.current.en === currentEn &&
+      lastEmittedRef.current.ar === currentAr
+    ) {
+      return;
+    }
+    setRows(parseToInternalRows(currentEn, currentAr));
+  }, [value, valueAr]);
 
   const commit = useCallback(
-    (next: BilingualOptionRow[]) => onChange(serializeBilingualOptions(next)),
+    (nextRows: InternalOptionRow[]) => {
+      setRows(nextRows);
+      const serialized = serializeBilingualOptions(nextRows);
+      lastEmittedRef.current = serialized;
+      onChange(serialized);
+    },
     [onChange]
   );
 
   const updateRow = useCallback(
-    (index: number, patch: Partial<BilingualOptionRow>) => {
-      // Rebuilt from the parsed rows rather than mutated, so the two stored strings are always
-      // re-derived together and cannot drift apart.
-      commit(rows.map((row, i) => (i === index ? { ...row, ...patch } : row)));
+    (rowId: string, patch: Partial<BilingualOptionRow>) => {
+      const next = rows.map((row) => (row.id === rowId ? { ...row, ...patch } : row));
+      commit(next);
     },
     [rows, commit]
   );
 
-  // An empty English box would be dropped by serialisation, so a row being typed into needs to
-  // survive. Adding appends a placeholder the user immediately fills; until they do, it is not
-  // serialised, which is the correct behaviour for an option with no label.
-  const addRow = useCallback(() => commit([...rows, { en: "", ar: "" }]), [rows, commit]);
+  const addRow = useCallback(() => {
+    commit([...rows, createInternalRow("", "")]);
+  }, [rows, commit]);
+
   const removeRow = useCallback(
-    (index: number) => commit(rows.filter((_, i) => i !== index)),
+    (rowId: string) => {
+      const remaining = rows.filter((row) => row.id !== rowId);
+      const next = remaining.length === 0 ? [createInternalRow("", "")] : remaining;
+      commit(next);
+    },
     [rows, commit]
   );
 
   const inert = disabled || readOnly;
-  // A row is always rendered so there is something to type into, even when nothing is stored yet.
-  const displayRows = rows.length > 0 ? rows : [{ en: "", ar: "" }];
+  const hasStoredOptions = rows.some((row) => row.en.trim().length > 0 || row.ar.trim().length > 0);
 
   return (
     <div className="space-y-2" id={id}>
-      {rows.length === 0 && <p className="text-xs text-muted-foreground">{emptyHint}</p>}
+      {!hasStoredOptions && emptyHint ? (
+        <p className="text-xs text-muted-foreground">{emptyHint}</p>
+      ) : null}
 
-      {displayRows.map((row, index) => (
-        <div key={index} className="flex items-start gap-2">
+      {rows.map((row, index) => (
+        <div key={row.id} className="flex items-start gap-2">
           <Input
             value={row.en}
-            onChange={(e) => updateRow(index, { en: e.target.value })}
+            onChange={(e) => updateRow(row.id, { en: e.target.value })}
             placeholder={labelEn}
             disabled={inert}
             readOnly={readOnly}
@@ -141,13 +208,11 @@ export function BilingualOptionsEditor({
           />
           <Input
             value={row.ar}
-            onChange={(e) => updateRow(index, { ar: e.target.value })}
+            onChange={(e) => updateRow(row.id, { ar: e.target.value })}
             placeholder={labelAr}
             disabled={inert}
             readOnly={readOnly}
             aria-label={`${labelAr} ${index + 1}`}
-            // Pinned RTL regardless of the app's direction: this box holds Arabic by definition, so
-            // it must read right-to-left even while the surrounding UI is English.
             dir="rtl"
             className="flex-1"
           />
@@ -155,8 +220,8 @@ export function BilingualOptionsEditor({
             type="button"
             variant="ghost"
             size="icon"
-            onClick={() => removeRow(index)}
-            disabled={inert || displayRows.length === 1}
+            onClick={() => removeRow(row.id)}
+            disabled={inert || rows.length === 1}
             aria-label={`${removeLabel} ${index + 1}`}
             className={cn("shrink-0", inert && "invisible")}
           >

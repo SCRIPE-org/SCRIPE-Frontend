@@ -55,6 +55,8 @@
 
 import { useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { usePermissions } from "@core/providers/permission-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { getCustomFieldsContainer } from "../../../../di";
 import type { EntityLookupType } from "../../data/models/EntityLookupModel";
 
@@ -126,6 +128,13 @@ export function useEntityLookupAvailableTypes({
   enabled = true,
 }: UseEntityLookupAvailableTypesArgs = {}): UseEntityLookupAvailableTypesResult {
   const { entityLookupRepository } = getCustomFieldsContainer();
+  const { permissions } = usePermissions();
+  const { currentTenant } = useTenantContext();
+  const queryKey = [
+    ...ENTITY_LOOKUP_AVAILABLE_TYPES_QUERY_KEY,
+    currentTenant?.id ?? "platform",
+    [...permissions].sort(),
+  ] as const;
 
   const {
     data: types = [],
@@ -134,7 +143,7 @@ export function useEntityLookupAvailableTypes({
     isSuccess,
     refetch: refetchQuery,
   } = useQuery({
-    queryKey: ENTITY_LOOKUP_AVAILABLE_TYPES_QUERY_KEY,
+    queryKey,
     queryFn: () => entityLookupRepository.getAvailableTypes(),
     enabled,
     staleTime: AVAILABLE_TYPES_STALE_TIME_MS,

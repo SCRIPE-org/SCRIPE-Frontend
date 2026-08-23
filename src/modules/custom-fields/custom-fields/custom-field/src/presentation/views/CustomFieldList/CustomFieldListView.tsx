@@ -40,6 +40,10 @@ import {
 } from "../../registries/valueTypeRegistry";
 import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../../registries/validatorKindRegistry";
 import { buildCustomFieldEditInitialValues } from "../../form/customFieldEditInitialValues";
+import {
+  buildCustomFieldScopeField,
+  getInitialCustomFieldScope,
+} from "../../form/customFieldScopeFieldConfig";
 import { useFieldGroupOptions } from "../../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions";
 import { buildFieldGroupField, makeFieldGroupPickerVisibility } from "../../form/fieldGroupFieldConfig";
 // Wave 4 follow-up. The definition-level reference target pin's option list. Deep import, matching
@@ -767,6 +771,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   // Same fallback shape as the old `valueTypeLabels[value] ?? value` map:
   // an unrecognized/unknown wire value falls back to the raw value itself
   // rather than throwing or rendering blank.
+  const scopeField = useMemo(
+    () => buildCustomFieldScopeField({ t, isPlatformContext }),
+    [t, isPlatformContext]
+  );
   const valueTypeLabelOf = useMemo(
     () => (value: string) => {
       const entry = VALUE_TYPE_CATALOG[value as CustomFieldValueTypeName];
@@ -898,8 +906,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         {
           key: "isGlobal",
           label: t("customField.fields.scope"),
-          render: (value: boolean) =>
-            value ? <Badge variant="outline">{t("customField.global")}</Badge> : null,
+          render: (value: boolean) => (
+            <Badge variant="outline">
+              {value
+                ? t("customField.scopeOptions.global")
+                : isPlatformContext
+                  ? t("customField.scopeOptions.platformOnly")
+                  : t("customField.scopeOptions.tenant")}
+            </Badge>
+          ),
         },
         {
           key: "valueType",
@@ -1064,25 +1079,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           min: 0,
         },
         ...classificationFields,
-        {
-          name: "isGlobal",
-          label: t("customField.fields.isGlobal"),
-          type: "switch" as const,
-          // Only a Super Admin can ever create a global definition (backend
-          // independently re-checks this -- see globalRequiresSuperAdmin).
-          // In pure platform context there's no tenant to scope to, so every
-          // definition is global regardless of this switch's value; shown
-          // disabled+on there rather than hidden, so the dialog itself says
-          // so instead of relying on the page-level banner behind it, which
-          // this modal covers. Only genuinely a *choice* -- and so only
-          // interactive -- when a Super Admin has drilled into a specific
-          // tenant and could otherwise create a merely-tenant-scoped field.
-          isVisible: () => isSuperAdmin,
-          disabled: isPlatformContext,
-          description: isPlatformContext
-            ? t("customField.isGlobalDescription.platformContext")
-            : t("customField.isGlobalDescription.tenantContext"),
-        },
+        scopeField,
       ],
       // Not offered on edit: scope is a create-time decision only, same as
       // entityTypeKey/key below -- changing which tenants a live definition
@@ -1235,11 +1232,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         options: "",
         isRequired: false,
         sortOrder: 0,
-        // True in pure platform context: honest default (see the field's own
-        // disabled/description logic above -- it's not a real choice there).
-        // False when drilled into a tenant: don't default to leaking a field
-        // into every other tenant, require an explicit opt-in.
-        isGlobal: isPlatformContext,
+        // Scope is a deliberate platform decision and a fixed tenant value.
+        // It is removed before the request is sent; only the normalized
+        // isGlobal flag reaches the backend, which independently enforces it.
+        scope: getInitialCustomFieldScope(isPlatformContext),
       },
       // Extracted to its own module during the Step 2.5 fix round (C-1) so a
       // test can run the REAL builder against a REAL entity instead of
@@ -1349,6 +1345,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       // or the query's state actually changes.
       referenceTargetFields,
       fieldGroupField,
+      scopeField,
       canViewFieldGroups,
       // P-4. Gates the Option Sets link inside `customHeaderContent`, so it has to be here or the
       // link would keep its first-render visibility after the permission set resolves.
@@ -1357,7 +1354,6 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       vm,
       isEntityTypesError,
       refetchEntityTypes,
-      isSuperAdmin,
       isPlatformContext,
     ]
   );

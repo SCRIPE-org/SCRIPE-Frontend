@@ -19,6 +19,23 @@ import {
   VALIDATOR_KIND_CATALOG,
   ALL_VALIDATOR_KINDS,
 } from "../../../../custom-field";
+import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
+import { useFieldGroupOptions } from "../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions";
+import {
+  buildFieldGroupField,
+  makeFieldGroupPickerVisibility,
+} from "../../../../custom-field/src/presentation/form/fieldGroupFieldConfig";
+import {
+  buildReferenceTargetField,
+  REFERENCE_TARGET_FIELD_NAME,
+  UNPINNED_REFERENCE_TARGET,
+} from "../../../../custom-field/src/presentation/form/referenceTargetFieldConfig";
+import {
+  buildCustomFieldScopeField,
+  getInitialCustomFieldScope,
+  normalizeCustomFieldCreateScope,
+} from "../../../../custom-field/src/presentation/form/customFieldScopeFieldConfig";
+import { useEntityLookupAvailableTypes } from "../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes";
 
 // Shares CustomFieldListView.tsx's per-value-type catalog (badge tone,
 // placeholder/options applicability, display label) rather than
@@ -40,9 +57,9 @@ export function InlineAddCustomFieldDialog({
   const canCreate = usePermission("custom-fields.create");
   const { isSuperAdmin } = usePermissions();
   const { isInTenantWorld } = useTenantContext();
-  // Same reasoning as CustomFieldListView.tsx's own isPlatformContext: with
-  // no tenant drilled into, there's no tenant to scope a new definition to,
-  // so it's always global regardless of the switch below.
+  // Scope is selectable only for a platform Super Admin outside tenant context.
+  // Platform-only is the default there; tenant context is always tenant-scoped.
+  // The backend independently derives and enforces the same boundary.
   const isPlatformContext = isSuperAdmin && !isInTenantWorld;
   // The "customField" translation namespace is owned by the definitions
   // screen (CustomFieldListView), not this one — this dialog can mount
@@ -50,7 +67,19 @@ export function InlineAddCustomFieldDialog({
   // Idempotent: a no-op if the definitions screen already loaded it this
   // session.
   useModuleLocales(() => import("../../../../custom-field/locales"), "customFields");
-  const { t } = useI18n();
+  const { t, language } = useI18n();
+  const canViewFieldGroups = usePermission(CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_VIEW);
+  const {
+    options: fieldGroupOptions,
+    isLoading: isFieldGroupsLoading,
+    isError: isFieldGroupsError,
+  } = useFieldGroupOptions(entityTypeKey, { enabled: canViewFieldGroups });
+  const {
+    types: referenceTargetTypes,
+    isLoading: isReferenceTargetTypesLoading,
+    isError: isReferenceTargetTypesError,
+    isEmpty: isReferenceTargetTypesEmpty,
+  } = useEntityLookupAvailableTypes();
 
   // Wave 2 Step 2.5 Task 10 (D5: admin-definition-form only). Same catalog-
   // driven shape as CustomFieldListView.tsx's identical construction --
@@ -87,6 +116,72 @@ export function InlineAddCustomFieldDialog({
     [t]
   );
 
+  const fieldGroupField = useMemo(
+    () => ({
+      ...buildFieldGroupField({
+        t,
+        options: fieldGroupOptions,
+        isLoading: isFieldGroupsLoading,
+        isError: isFieldGroupsError,
+      }),
+      isVisible: makeFieldGroupPickerVisibility({
+        canView: canViewFieldGroups,
+        requireEntityType: false,
+      }),
+    }),
+    [t, fieldGroupOptions, isFieldGroupsLoading, isFieldGroupsError, canViewFieldGroups]
+  );
+
+  const referenceTargetField = useMemo(
+    () =>
+      buildReferenceTargetField({
+        t,
+        language,
+        types: referenceTargetTypes,
+        isLoading: isReferenceTargetTypesLoading,
+        isError: isReferenceTargetTypesError,
+        isEmpty: isReferenceTargetTypesEmpty,
+        isExistingDefinition: false,
+      }),
+    [
+      t,
+      language,
+      referenceTargetTypes,
+      isReferenceTargetTypesLoading,
+      isReferenceTargetTypesError,
+      isReferenceTargetTypesEmpty,
+    ]
+  );
+
+  const classificationFields = useMemo<FieldConfig[]>(
+    () => [
+      {
+        name: "sensitivity",
+        label: t("customField.fields.sensitivity"),
+        type: "select",
+        options: [
+          { value: "None", label: t("customField.sensitivity.none") },
+          { value: "Internal", label: t("customField.sensitivity.internal") },
+          { value: "Confidential", label: t("customField.sensitivity.confidential") },
+          { value: "Restricted", label: t("customField.sensitivity.restricted") },
+        ],
+        description: t("customField.hints.sensitivity"),
+      },
+      {
+        name: "isExportable",
+        label: t("customField.fields.isExportable"),
+        type: "switch",
+        description: t("customField.hints.isExportable"),
+      },
+    ],
+    [t]
+  );
+
+  const scopeField = useMemo(
+    () => buildCustomFieldScopeField({ t, isPlatformContext }),
+    [t, isPlatformContext]
+  );
+
   const fields = useMemo<FieldConfig[]>(
     () => [
       {
@@ -114,17 +209,16 @@ export function InlineAddCustomFieldDialog({
         label: t("customField.fields.valueType"),
         type: "select",
         required: true,
-        options: ALL_VALUE_TYPES.map((type) => ({ value: type, label: t(VALUE_TYPE_CATALOG[type].labelKey) })),
+        options: ALL_VALUE_TYPES.map((type) => ({
+          value: type,
+          label: t(VALUE_TYPE_CATALOG[type].labelKey),
+        })),
       },
       {
         name: "placeholderEn",
         label: t("customField.fields.placeholderEn"),
         type: "text",
         placeholder: t("customField.placeholders.placeholderEn"),
-        // A miss (unset/invalid valueType, e.g. before the user has picked
-        // one yet) falls back to `true` -- matches the old
-        // `!NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType))`, which
-        // evaluated to `true` (show) for an unset value.
         isVisible: (form) =>
           VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
       },
@@ -142,40 +236,38 @@ export function InlineAddCustomFieldDialog({
         type: "select",
         options: validatorKindOptions,
         description: t("customField.validatorKindDescription"),
-        // D5/D4: admin-definition-form only, Text value type only. Literal
-        // "Text" comparison -- see CustomFieldListView.tsx's identical field
-        // for the full reasoning.
         isVisible: (form) => form.valueType === "Text",
       },
       ...validatorParamFields,
+      referenceTargetField,
       {
         name: "options",
         label: t("customField.fields.options"),
-        type: "textarea",
-        placeholder: t("customField.placeholders.options"),
-        rows: 4,
-        // A miss falls back to `false` -- matches the old
-        // `String(form.valueType) === SELECT_VALUE_TYPE`, which was already
-        // `false` (hide) for an unset value.
+        type: "bilingual-options",
+        pairedName: "optionsAr",
+        placeholder: t("customField.placeholders.optionEn"),
+        searchPlaceholder: t("customField.placeholders.optionAr"),
+        addLabel: t("customField.actions.addOption"),
+        removeLabel: t("customField.actions.removeOption"),
+        emptyHint: t("customField.placeholders.optionsEmpty"),
         isVisible: (form) =>
           VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
       },
       { name: "isRequired", label: t("customField.fields.isRequired"), type: "switch" },
+      fieldGroupField,
       { name: "sortOrder", label: t("customField.fields.sortOrder"), type: "number", min: 0 },
-      {
-        name: "isGlobal",
-        label: t("customField.fields.isGlobal"),
-        type: "switch",
-        // See CustomFieldListView.tsx's identical field for the full
-        // reasoning — kept in sync deliberately, not shared/imported.
-        isVisible: () => isSuperAdmin,
-        disabled: isPlatformContext,
-        description: isPlatformContext
-          ? t("customField.isGlobalDescription.platformContext")
-          : t("customField.isGlobalDescription.tenantContext"),
-      },
+      ...classificationFields,
+      scopeField,
     ],
-    [t, isSuperAdmin, isPlatformContext, validatorKindOptions, validatorParamFields]
+    [
+      t,
+      validatorKindOptions,
+      validatorParamFields,
+      referenceTargetField,
+      fieldGroupField,
+      classificationFields,
+      scopeField,
+    ]
   );
 
   if (!canCreate) return null;
@@ -234,28 +326,28 @@ export function InlineAddCustomFieldDialog({
                   valueType: "Text",
                   placeholderEn: "",
                   placeholderAr: "",
+                  options: "",
+                  optionsAr: "",
+                  validatorKind: "",
+                  validatorParam: "",
+                  [REFERENCE_TARGET_FIELD_NAME]: UNPINNED_REFERENCE_TARGET,
+                  fieldGroupId: "",
+                  sensitivity: "None",
+                  isExportable: true,
                   isRequired: false,
                   sortOrder: 0,
-                  isGlobal: isPlatformContext,
+                  scope: getInitialCustomFieldScope(isPlatformContext),
                 }}
                 onSubmit={async (data) => {
                   const { customFieldRepository } = getCustomFieldsContainer();
-                  await customFieldRepository.create({
-                    ...data,
-                    entityTypeKey,
-                    // Wave 2 Step 2.5 Task 10 (TRAP 1), this dialog's own write
-                    // seam (R4). `validatorKind` is a nullable enum on the wire
-                    // -- "" is neither JSON null nor a member name, so it fails
-                    // model binding outright, unlike `options` (a plain
-                    // `string?`) which survives "" today. The picker's "no
-                    // validator" option submits "" when chosen, and
-                    // generic-form.tsx's submitData is a raw spread of formData
-                    // with no per-field coercion beyond dates/numbers, so ""
-                    // reaches here verbatim unless normalized right before this
-                    // call -- the only seam this dialog owns.
-                    validatorKind: data.validatorKind === "" ? null : data.validatorKind,
-                    validatorParam: data.validatorParam === "" ? null : data.validatorParam,
-                  });
+                  await customFieldRepository.create(
+                    normalizeCustomFieldCreateScope({
+                      ...data,
+                      entityTypeKey,
+                      validatorKind: data.validatorKind === "" ? null : data.validatorKind,
+                      validatorParam: data.validatorParam === "" ? null : data.validatorParam,
+                    })
+                  );
                   setOpen(false);
                   onCreated();
                 }}

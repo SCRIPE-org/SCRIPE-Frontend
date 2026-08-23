@@ -528,6 +528,17 @@ export const ar = {
     // Platform-owned (TenantId == null) definition, inherited by every tenant
     global: "عام",
 
+    scopeOptions: {
+      global: "عام — متاح لجميع المستأجرين",
+      platformOnly: "للمنصة فقط — غير متاح للمستأجرين",
+      tenant: "هذا المستأجر فقط",
+    },
+    scopeDescription: {
+      platform:
+        "اختر ما إذا كان هذا التعريف موروثًا لكل المستأجرين أو متاحًا لمسؤولي المنصة فقط.",
+      tenant:
+        "هذا التعريف يخص المستأجر الذي تعرضه الآن فقط. تعرض نماذج المستأجر أيضًا الحقول العامة الموروثة.",
+    },
     // Shown on the definitions screen when a Super Admin has no tenant
     // context — the exact same form creates a GLOBAL definition here,
     // with no other visual difference from a tenant-scoped one.

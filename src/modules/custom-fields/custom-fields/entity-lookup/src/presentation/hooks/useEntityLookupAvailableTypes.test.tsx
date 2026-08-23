@@ -20,6 +20,8 @@ import { getCustomFieldsContainer } from "../../../../di";
 import type { EntityLookupType } from "../../data/models/EntityLookupModel";
 
 vi.mock("../../../../di", () => ({ getCustomFieldsContainer: vi.fn() }));
+vi.mock("@core/providers/permission-provider", () => ({ usePermissions: () => ({ permissions: [] }) }));
+vi.mock("@core/providers/tenant-context-provider", () => ({ useTenantContext: () => ({ currentTenant: null }) }));
 
 const getAvailableTypes = vi.fn();
 
