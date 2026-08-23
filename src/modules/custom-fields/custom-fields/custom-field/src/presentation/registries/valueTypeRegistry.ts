@@ -71,6 +71,35 @@ export type ValueTypeBadgeVariant = "default" | "secondary" | "info" | "success"
 export const RATING_MIN = 1;
 export const RATING_MAX = 5;
 
+/**
+ * RichText's 50,000-character ceiling (Wave 3.4) -- a code-owned constant
+ * mirroring `RichTextValueTypeHandler.MaxRichTextLength` byte-for-byte, with no
+ * per-field config knob, exactly like `RATING_MAX` above.
+ *
+ * MEASURED ON THE RAW MARKUP, not the visible words, because that is what the
+ * server measures and where it measures it: the handler caps the input BEFORE
+ * sanitizing, since handing an unbounded body to an HTML parser is the denial of
+ * service and the cap is the mitigation. Counting the same string on this side is
+ * what makes the limit predictable for the operator -- sanitizing shrinks the
+ * value by an amount that depends on what the allowlist trimmed, so a cap
+ * measured after would be un-anticipatable. Five times LongText's 10,000 on the
+ * same `ValueLongText` column, for that handler's stated reason: a paragraph of
+ * prose carries tags, and the operator's mental budget is the words.
+ *
+ * IT LIVES HERE RATHER THAN IN `RichTextCustomFieldControl`, which is where
+ * `LONG_TEXT_MAX_CHARACTERS` and `MULTI_SELECT_MAX_SELECTIONS` each live -- and
+ * the departure is deliberate, for the reason `RATING_MIN`/`RATING_MAX` are here
+ * too, plus one that is specific to this type. Two files need the number: the
+ * control and `customFieldValueValidation.ts`. That validator module is imported
+ * by all nine consumer save flows for `assertSelectCustomFieldValuesValid`, and
+ * importing the constant from the control would pull the CONTROL into every one
+ * of them -- which now means pulling TipTap and its ~15 editor packages into nine
+ * viewmodels that never render an editor. This module is pure data with no React
+ * import at all, so it is the one home both sides can reach for free. (The
+ * renderer still imports the control, unavoidably: it has to draw it.)
+ */
+export const RICH_TEXT_MAX_CHARACTERS = 50_000;
+
 export interface ValueTypeCatalogEntry {
   /**
    * The FieldConfig["type"] this value type maps to for editing -- identical
@@ -442,6 +471,110 @@ export const VALUE_TYPE_CATALOG: Record<CustomFieldValueTypeName, ValueTypeCatal
     hasOptions: false,
     labelKey: "customField.valueTypes.userReference",
   },
+  /**
+   * Wave 3.4. A field holding one uploaded file -- "signed waiver", "medical
+   * certificate". Every value below is a byte-for-byte restatement of
+   * `FileValueTypeHandler.Descriptor` (BadgeVariant "default",
+   * HasPlaceholder false, HasOptions false, FieldConfigType "media-file"),
+   * read off that file rather than inferred from the reference family it
+   * inherits from -- which matters, because ONE of those four is where it
+   * departs from the family.
+   *
+   * `hasPlaceholder: false` is that departure, and it is the backend's own.
+   * EntityReference and UserReference declare true because their control
+   * genuinely is a search box and a search box has a placeholder; a media
+   * reference has no free text to prompt for, so declaring true would put a
+   * placeholder column in the admin catalog that nothing consumes.
+   *
+   * `fieldConfigType: "media-file"` is a NEW `FieldConfig["type"]` member, and
+   * deliberately not that union's EXISTING `"file"` member. This is the one
+   * place where "reuse a real frontend concept" -- the rule Percent and
+   * Duration followed onto `"number"` -- gives the wrong answer, so the
+   * distinction is spelled out: reuse is right when the existing control
+   * produces the right VALUE SHAPE, and only then. `"file"` is drawn by
+   * GenericForm's own switch as `<Input type="file">`, whose value is a browser
+   * `File` object; a media reference's value is `{ entityTypeKey, entityId }`.
+   * Pointing at `"file"` would render a control that produces a shape the write
+   * path 422s, on all ~30 CrudConfig screens where the core form draws custom
+   * fields itself -- the exact defect `"entity-reference"` was added to fix.
+   * Verified against generic-form.tsx's real render arms, not assumed.
+   *
+   * Reusing `"entity-reference"` instead would be wrong for a different reason:
+   * that key reaches a name-resolving picker over the whole target type, which
+   * for `media.file` offers every readable media row including tenant-global
+   * ones -- i.e. it systematically offers the picks the backend's owner-pair
+   * fence then refuses. See `MediaReferenceCustomFieldControl.tsx`.
+   */
+  File: {
+    fieldConfigType: "media-file",
+    badgeVariant: "default",
+    hasPlaceholder: false,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.file",
+  },
+  /**
+   * Wave 3.4. A file constrained to an image -- "profile photo", "kit design".
+   * Byte-for-byte `ImageValueTypeHandler.Descriptor`, which is identical to
+   * File's above except the label key, exactly as the two handlers are.
+   *
+   * A SEPARATE `fieldConfigType` FROM FILE'S, and the precedent is
+   * Select/MultiSelect rather than EntityReference/UserReference. Those two
+   * reference types can share one key because what differs between them (which
+   * target type the picker searches) arrives on another property the control
+   * already reads. Nothing carries the image-only restriction: BOTH media types
+   * pin the same target key `media.file`, so a shared key would leave the
+   * control unable to tell an Image field from a File field at all, and the
+   * image-only constraint would be literally inexpressible in the branch --
+   * `renderCustomFieldControl`'s UserReference comment records that exact
+   * limitation for the pair that does share a key. Two keys can still route to
+   * one component with a differing prop, which is what `"select"` and
+   * `"multi-select"` already do over one `GenericSelect`.
+   *
+   * Not `"image"`, for File's reason: that member exists and is drawn by
+   * GenericForm's own switch through `ImageUploader`, whose value is a base64
+   * STRING.
+   */
+  Image: {
+    fieldConfigType: "media-image",
+    badgeVariant: "default",
+    hasPlaceholder: false,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.image",
+  },
+  /**
+   * Wave 3.4. Formatted prose authored in the product's own editor -- a
+   * coaching note with paragraphs and a list, a policy blurb with a link. Byte-
+   * for-byte `RichTextValueTypeHandler.Descriptor`.
+   *
+   * `badgeVariant: "secondary"` puts it in the text family with Text, LongText,
+   * Email, Url and Phone, which is what it is: a longer piece of writing.
+   * `hasPlaceholder: true` follows LongText -- an editor prompts an empty field
+   * the same way a textarea does, and `RichTextEditor` takes a real
+   * `placeholder` prop. `hasOptions: false` -- markup is not an option list.
+   *
+   * `fieldConfigType: "rich-text"` is a NEW member and deliberately NOT the
+   * union's existing `"richtext"`. This one is the sharpest version of the
+   * value-shape trap above, because `"richtext"` really does render a rich-text
+   * editor, so it looks like exactly the reuse this catalog keeps preferring.
+   * It is drawn by GenericForm's own switch, and that arm reads and writes a
+   * BARE STRING (`value={formData[field.name] ?? ""}`, `onChange={(value) =>
+   * handleChange(field.name, value)}`) -- the one shape this value type
+   * refuses, because `InputSanitizationMiddleware`'s carve-out for the values
+   * route is the PATH `values.*.html`, so a bare string arrives tag-stripped
+   * and would be stored with its markup deleted. `"richtext"` is also absent
+   * from `EXTENSION_DRAWN_FIELD_TYPES`, and a shipped test
+   * (generic-form.requiredObjectValue.test.tsx) pins its current
+   * every-object-is-filled required behaviour, so admitting it there would
+   * change a shipped type as a side effect. A new key changes nothing that
+   * exists.
+   */
+  RichText: {
+    fieldConfigType: "rich-text",
+    badgeVariant: "secondary",
+    hasPlaceholder: true,
+    hasOptions: false,
+    labelKey: "customField.valueTypes.richText",
+  },
 };
 
 /**
@@ -463,16 +596,29 @@ export function getValueTypeCatalogEntry(type: string): ValueTypeCatalogEntry | 
 }
 
 /**
- * All 19 known type names, in the same fixed display order used everywhere
+ * All 22 known type names, in the same fixed display order used everywhere
  * else in this module (CustomFieldListView.tsx's valueTypeOptions,
  * InlineAddCustomFieldDialog.tsx) -- and matching
  * CustomFieldValueType's own backend declaration order (Text=0 ..
- * UserReference=18), so the type picker's option order reads the same as the
+ * RichText=21), so the type picker's option order reads the same as the
  * enum's shipped history rather than an arbitrary regrouping. Wave 3.2 Batch 3
  * appended Email/Url/Phone/Percent/Rating (8-12); Wave 3.3 Batch C appended
- * Currency/Duration/Time/Color (13-16); Wave 4 appends EntityReference (17)
- * and UserReference (18), read off the real backend enum in that order rather
- * than assumed to be the next two free numbers.
+ * Currency/Duration/Time/Color (13-16); Wave 4 appended EntityReference (17)
+ * and UserReference (18); Wave 3.4 appends File (19), Image (20) and RichText
+ * (21) -- each read off the real backend enum in that order rather than
+ * assumed to be the next free numbers.
+ *
+ * THIS ARRAY IS THE ONE PLACE TYPESCRIPT CANNOT CHECK. `VALUE_TYPE_CATALOG` is
+ * a total `Record<CustomFieldValueTypeName, ...>`, so the compiler refuses a
+ * missing catalog entry -- but this is a plain `readonly
+ * CustomFieldValueTypeName[]`, so a type added to the union and the catalog and
+ * forgotten HERE compiles clean, and every gate in the module that iterates
+ * `ALL_VALUE_TYPES` (the render-completeness gate, the format-completeness
+ * gate, the locale-description parity gate) would then pass by never looking at
+ * the new type at all. `valueTypeRegistry.test.ts` closes that with two
+ * assertions that compare this array against the catalog's own keys and against
+ * the backend enum's ordinals; do not weaken either into something derived from
+ * this array alone.
  */
 export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Text",
@@ -494,4 +640,7 @@ export const ALL_VALUE_TYPES: readonly CustomFieldValueTypeName[] = [
   "Color",
   "EntityReference",
   "UserReference",
+  "File",
+  "Image",
+  "RichText",
 ];

@@ -62,6 +62,18 @@
  * name defect the governing pre-plan analysis's §5.4 names explicitly (every
  * Date control was announced as the generic "Select date", not its own
  * field name -- see that branch's own comment below).
+ *
+ * Wave 3.4 update: three more branches, and all three are here for the same
+ * reason rather than for widget variety -- their VALUE SHAPE. `"media-file"`,
+ * `"media-image"` and `"rich-text"` are new `FieldConfig["type"]` members even
+ * though `"file"`, `"image"` and `"richtext"` already existed, because each of
+ * those three pre-existing members is drawn by GenericForm's own switch through
+ * a control that produces a shape the backend refuses for these types (a browser
+ * `File`, a base64 string, and a bare string respectively). That is the same
+ * defect class Wave 4 fixed for `"entity-reference"`, avoided in advance rather
+ * than after the fact. Media's two branches share one control and differ only in
+ * `imagesOnly`; RichText's branch narrows `unknown` to the `{ html }` envelope
+ * its control wraps and unwraps.
  */
 import React from "react";
 import { Input } from "@core/ui/input";
@@ -78,9 +90,13 @@ import { DateTimeCustomFieldControl } from "../controls/DateTime/DateTimeCustomF
 import { CurrencyCustomFieldControl } from "../controls/Currency/CurrencyCustomFieldControl";
 import { DurationCustomFieldControl } from "../controls/Duration/DurationCustomFieldControl";
 import { EntityReferenceCustomFieldControl } from "../controls/EntityReference/EntityReferenceCustomFieldControl";
+import { MediaReferenceCustomFieldControl } from "../controls/MediaReference/MediaReferenceCustomFieldControl";
+import { RichTextCustomFieldControl } from "../controls/RichText/RichTextCustomFieldControl";
 import {
   isEntityReferenceValue,
+  isRichTextValue,
   type CustomFieldEntityReferenceValue,
+  type CustomFieldRichTextValue,
 } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import { ColorPickerField } from "@core/ui/rich-text-editor/ColorPickerField";
 import { RATING_MIN, RATING_MAX } from "../registries/valueTypeRegistry";
@@ -102,10 +118,12 @@ export interface CustomFieldControlProps {
    * Optional, so all 8 hand-wired consumer sites keep compiling and behaving
    * exactly as before — none of them has a per-field validation verdict to pass
    * (they validate at save time through `assertSelectCustomFieldValuesValid`
-   * in customFieldValueValidation.ts, not per field). Read by the three branches whose controls accept it —
-   * reference, currency and duration, i.e. exactly the types GenericForm draws
-   * through this dispatcher; a branch that cannot honour it silently ignoring it
-   * is better than a prop it pretends to support.
+   * in customFieldValueValidation.ts, not per field). Read by the branches whose
+   * controls accept it — reference, currency, duration and, since Wave 3.4, the
+   * two media branches and rich text: i.e. exactly the six types GenericForm
+   * draws through this dispatcher (`EXTENSION_DRAWN_FIELD_TYPES`). A branch that
+   * cannot honour it silently ignoring it is better than a prop it pretends to
+   * support.
    */
   invalid?: boolean;
   /**
@@ -729,6 +747,100 @@ export function renderCustomFieldControl({
         // at save time, not per field), which is exactly the control's existing
         // behaviour: its `invalid || status === "invalid"` and its describedBy
         // composition both already handle an absent caller value.
+        invalid={invalid}
+        describedBy={describedBy}
+      />
+    );
+  }
+
+  // Wave 3.4: File and Image -- both media reference types, ONE control, two
+  // branches. The branches exist separately only to set `imagesOnly`, which is
+  // the whole difference between the two value types at this tier and has
+  // nowhere else to travel: both types pin the SAME target entity type
+  // (`media.file`, from a code-owned one-key allowlist on each handler), so
+  // unlike EntityReference/UserReference -- which share a dispatch key because
+  // what differs between them arrives on `fc.referenceTargetEntityTypeKey` --
+  // there is no property here that could carry the image-only rule. That is why
+  // the catalog gives them two fieldConfigTypes; this is the code that consumes
+  // the distinction.
+  //
+  // VALUE NARROWING, same posture as the reference branch below: `value` is
+  // `unknown`, and anything that is not reference-shaped becomes null rather
+  // than being handed through, because the control's contract is the envelope
+  // and a base64 string or a browser `File` reaching it would be the exact
+  // mis-wiring its own header comment is written against.
+  //
+  // TARGET KEY FROM THE PIN, THEN THE VALUE -- the identical two-source
+  // ordering, and the same `.trim() || null` collapse, as the reference branch.
+  // It is not copied for symmetry: the backend resolves the pin for these types
+  // too (`ImplicitTargetEntityTypeKey` derives it from each handler's
+  // `AllowedTargetKeys`, guarded on there being exactly one), so the pin is
+  // delivered on the same property at the same resolution. Restating
+  // `"media.file"` as a literal here would duplicate a backend allowlist this
+  // layer cannot see, which is the standing argument the UserReference note
+  // below makes for its own key.
+  //
+  // `disabled={isViewMode}`, matching the picker family (the control has a
+  // button, not a text surface with anything to copy).
+  if (fc.type === "media-file" || fc.type === "media-image") {
+    const reference: CustomFieldEntityReferenceValue | null = isEntityReferenceValue(value)
+      ? value
+      : null;
+    const pinnedTarget = fc.referenceTargetEntityTypeKey?.trim() || null;
+    // No wrapping <Label>: the control renders its own label/region pair,
+    // because its announced name comes from the group's `aria-label` rather
+    // than a `<Label htmlFor>` a role="group" div cannot be named by.
+    return (
+      <MediaReferenceCustomFieldControl
+        key={fc.name}
+        id={fc.name}
+        label={fc.label ?? fc.name}
+        targetEntityTypeKey={pinnedTarget ?? reference?.entityTypeKey ?? null}
+        imagesOnly={fc.type === "media-image"}
+        value={reference}
+        onChange={(next) => onChange(next)}
+        required={fc.required}
+        disabled={isViewMode}
+        invalid={invalid}
+        describedBy={describedBy}
+      />
+    );
+  }
+
+  // Wave 3.4: RichText. The one branch in this file whose job is a WIRE SHAPE
+  // rather than a widget choice.
+  //
+  // `RichTextEditor` is `value: string` / `onChange(html: string)`; the wire is
+  // the one-key object `{ html }`, and a bare string is REFUSED by
+  // `RichTextValueTypeHandler.Parse` -- not as a matter of taste, but because
+  // `InputSanitizationMiddleware`'s carve-out for this route is the PATH
+  // `values.*.html`, so a bare string at `values.myField` arrives with every tag
+  // already stripped and storing it would report success over destroyed markup.
+  // The wrap/unwrap therefore lives in the control (see its header), and this
+  // branch does the `unknown` -> envelope narrowing, exactly as the two
+  // reference branches do theirs.
+  //
+  // `isRichTextValue(value) ? value : null` also quietly does the useful thing
+  // for the one shape most likely to arrive by mistake: a BARE STRING narrows to
+  // null, so a field holding out-of-band string data renders as empty rather
+  // than as a string the control would then re-emit in a shape the server
+  // refuses.
+  //
+  // NOT `"richtext"`, which already exists in FieldConfig["type"]: that member
+  // is drawn by GenericForm's own switch and its arm reads and writes a bare
+  // string. See the RichText entry in valueTypeRegistry.ts for the full trap.
+  if (fc.type === "rich-text") {
+    const rich: CustomFieldRichTextValue | null = isRichTextValue(value) ? value : null;
+    return (
+      <RichTextCustomFieldControl
+        key={fc.name}
+        id={fc.name}
+        label={fc.label ?? fc.name}
+        value={rich}
+        onChange={(next) => onChange(next)}
+        required={fc.required}
+        disabled={isViewMode}
+        placeholder={fc.placeholder}
         invalid={invalid}
         describedBy={describedBy}
       />

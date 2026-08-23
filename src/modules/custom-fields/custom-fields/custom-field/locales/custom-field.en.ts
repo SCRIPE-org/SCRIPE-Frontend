@@ -184,12 +184,18 @@ export const en = {
     noFrontendScreenWarning:
       "No screen renders {entity} yet. This definition will save correctly and the values API will work for it, but it won't appear on any form until a screen is built for it.",
 
-    // CustomFieldValueType enum (0..18) -- Wave 3.1 Task 10 added longText/
+    // CustomFieldValueType enum (0..21) -- Wave 3.1 Task 10 added longText/
     // dateTime/multiSelect (LongText=5, DateTime=6, MultiSelect=7); Wave 3.2
     // Batch 3 adds email/url/phone/percent/rating (Email=8, Url=9, Phone=10,
     // Percent=11, Rating=12); Wave 3.3 Batch C adds currency/duration/time/
     // color (Currency=13, Duration=14, Time=15, Color=16); Wave 4 adds
-    // entityReference/userReference (EntityReference=17, UserReference=18).
+    // entityReference/userReference (EntityReference=17, UserReference=18);
+    // Wave 3.4 adds file/image/richText (File=19, Image=20, RichText=21).
+    //
+    // These three leaf names are FRONTEND-OWNED. The backend Descriptors point
+    // at `customField.valueTypes.file`/`.image`/`.richText` as their LabelKey,
+    // but no backend resource file declares a `customField.valueTypes`
+    // namespace at all -- the labels have always resolved here.
     valueTypes: {
       text: "Text",
       number: "Number",
@@ -210,6 +216,9 @@ export const en = {
       color: "Color",
       entityReference: "Entity Reference",
       userReference: "User Reference",
+      file: "File",
+      image: "Image",
+      richText: "Rich Text",
     },
 
     // Per-type value validation messages. Added early by Wave 2 Step 2.2 Task
@@ -240,6 +249,60 @@ export const en = {
       // a save ever hits the 422, from assertSelectCustomFieldValuesValid's
       // own Currency check.
       currencyIncomplete: "{field} needs both an amount and a currency code.",
+      // Wave 3.4. RichText's two client-raised refusals, both mirroring
+      // RichTextValueTypeHandler and both with real callers in
+      // customFieldValueValidation.ts.
+      //
+      // richTextInvalidShape covers a value that is not the `{ html }` envelope
+      // -- most often a BARE STRING, which the server refuses because the
+      // sanitization middleware's carve-out is the path `values.*.html`, so a
+      // bare string arrives with its markup already stripped. The wording names
+      // what is wrong and does not blame the operator, because the operator
+      // cannot produce this state through the editor: it comes from stale or
+      // out-of-band form state.
+      richTextInvalidShape: "The content stored in {field} isn't in a format this editor can read.",
+      // Mirrors customFields.values.richTextTooLong. The cap is on the RAW
+      // MARKUP, not the visible words, and the copy says so -- otherwise an
+      // operator who can see three pages of text is told they have exceeded
+      // 50,000 characters and reasonably concludes the count is broken.
+      richTextTooLong: "{field} is over the {max}-character limit, counting formatting.",
+      // Wave 3.4. The half-blank media reference -- a value the backend refuses
+      // outright (it inherits EntityReference's `referenceIncomplete`) whether or
+      // not the field is required. Deliberately NOT worded as
+      // customField.entityReference.invalid is ("Choose a record again"): a media
+      // field has no picker yet, so that advice would send the operator looking
+      // for an affordance that does not exist.
+      mediaReferenceIncomplete: "The file stored in {field} is only half-recorded and can't be read.",
+      // ── The three server-only media verdicts ─────────────────────────────
+      //
+      // MIRRORS WITH NO CLIENT CALLER, and that is deliberate rather than
+      // pending. All three depend on the MediaFile row itself -- whether it
+      // exists and is visible, whether its owner pair IS the record being
+      // edited, and what its content type is -- and a stored value carries an
+      // entity type key and an encrypted id and nothing else. There is not even
+      // a way to fetch the row: no IEntityLookupProvider is registered for
+      // `media.file`, so it can be neither searched nor resolved. So the client
+      // cannot reach any of these verdicts, and guessing at one would be exactly
+      // the frontend/backend verdict mismatch this whole block exists to
+      // eliminate. They are kept in step with the backend's own
+      // customFields.values.* strings so the pair stays discoverable, and so an
+      // owner-scoped media endpoint (the thing that would give the media control
+      // a real picker) has the copy already written rather than inventing a
+      // second wording for a message the server is already sending.
+      //
+      // mediaReferenceNotFound merges "no such file" and "not visible to you"
+      // because the SERVER merges them, on purpose: separating them would turn
+      // the refusal into a probe for which ids exist in other tenants.
+      mediaReferenceNotFound: "The file referenced by {field} couldn't be found.",
+      // The owner-pair refusal. It NAMES NO OWNER, matching the backend's own
+      // reasoning: reporting which record owns the file would answer a question
+      // the caller has no permission to ask, which is the cross-tenant
+      // disclosure the check was added to prevent.
+      mediaReferenceOwnerMismatch: "That file belongs to a different record, so it can't be attached to this one in {field}.",
+      // Image's content-type refusal, raised after the owner-pair check has
+      // already passed -- so it never reveals what kind of file an arbitrary id
+      // points at.
+      mediaReferenceNotAnImage: "{field} only accepts an image file.",
     },
 
     // MultiSelect's live selection counter/ceiling hint (Wave 3.1 Task 11) --
@@ -282,6 +345,50 @@ export const en = {
     // that unit explicit instead of implicit.
     duration: {
       unitLabel: "minutes",
+    },
+
+    // RichText's raw-markup counter (Wave 3.4) -- rendered below the editor by
+    // RichTextCustomFieldControl.tsx. UI copy, not a rejected-save message
+    // (that is values.richTextTooLong above).
+    //
+    // "including formatting" is doing real work in both strings. The number
+    // counts the RAW HTML, which is what the server caps and what the operator
+    // cannot see; without saying so, a counter reading "1,240 of 50,000" beside
+    // eight visible words looks like a bug. Same overage-not-total convention
+    // charactersOverLimit follows for LongText.
+    richText: {
+      characterCount: "{count} of {max} characters, including formatting",
+      charactersOverLimit: "{overBy} characters too many, including formatting (limit is {max})",
+    },
+
+    // File/Image's media reference control (Wave 3.4) -- rendered by
+    // MediaReferenceCustomFieldControl.tsx, shared by both value types with
+    // imagesOnly selecting between the pairs below.
+    //
+    // The two "attached" lines say only THAT something is attached, never what.
+    // The stored value is an encrypted media id and there is no endpoint that
+    // would turn it into a file name (no lookup provider is registered for
+    // `media.file`), so a name would have to be invented -- and rendering the
+    // id instead would leak another module's primary key into every screenshot
+    // while telling the reader nothing.
+    //
+    // attachUnavailable is the honest centre of this control and is phrased as a
+    // fact about the product, NOT an error: the field is correctly configured
+    // and any stored value is fine. Attaching requires knowing the file belongs
+    // to THIS record, and nothing on this tier can ask that question yet, so
+    // offering a picker would offer picks the server then refuses. The copy says
+    // where the operation does live rather than apologising.
+    mediaReference: {
+      fileAttached: "A file is attached to this field.",
+      imageAttached: "An image is attached to this field.",
+      noFile: "No file attached.",
+      noImage: "No image attached.",
+      clear: "Remove",
+      attachUnavailable:
+        "Files are attached from this record's own media, not from this field. You can remove what's here.",
+      notConfigured:
+        "This field isn't pointed at a file library yet, so nothing can be attached to it.",
+      imagesOnly: "This field only accepts an image.",
     },
 
     // Currency's paired amount + ISO 4217 code control (Wave 3.3 Batch C,
@@ -564,8 +671,11 @@ export const en = {
       // copy. Leaf names here are deliberately identical to valueTypes.*
       // above -- ValueTypeCatalogView derives this key from each catalog
       // entry's own labelKey suffix rather than a second hand-kept map, so
-      // the two blocks can never silently drift apart in which 17 names
-      // they cover.
+      // the two blocks can never silently drift apart in which names they
+      // cover. valueTypeCatalog.locale.test.ts proves that against the live
+      // ALL_VALUE_TYPES rather than against a number written here, which is
+      // why no count is stated: it was already stale once (it said 17 while
+      // 19 types shipped).
       descriptions: {
         text: "A single-line, free-form text field. The only value type that can carry an optional format validator (see the Validator column).",
         number: "A numeric input for whole or decimal values.",
@@ -591,6 +701,11 @@ export const en = {
           "A pointer to another record, chosen from a searchable list of one entity type. Only the pointer is stored, so the name shown is always read from the target record itself.",
         userReference:
           "A pointer to a user account, chosen from a searchable list of users. Only the pointer is stored, so the name shown is always read from that account itself.",
+        file: "A pointer to one uploaded file. The file must already belong to the record being edited, which is what keeps one organisation's files out of another's records.",
+        image:
+          "A pointer to one uploaded image. Same ownership rule as File, plus the file itself has to be an image.",
+        richText:
+          "Formatted text with paragraphs, lists and links, written in the built-in editor. Capped at 50,000 characters including the formatting.",
       },
     },
 

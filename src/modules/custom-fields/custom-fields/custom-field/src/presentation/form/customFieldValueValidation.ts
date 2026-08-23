@@ -19,6 +19,11 @@
  */
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { MULTI_SELECT_MAX_SELECTIONS } from "../controls/MultiSelect/MultiSelectCustomFieldControl";
+// From the pure-data registry, NOT from the RichText control that also re-exports
+// it: this module is imported by all nine consumer save flows, and reaching
+// through the control would pull TipTap and its editor packages into every one of
+// them. The registry has no React import at all.
+import { RICH_TEXT_MAX_CHARACTERS } from "../registries/valueTypeRegistry";
 
 /**
  * Matches useI18n()'s own real `t` signature (i18n-provider.tsx:28) without
@@ -335,6 +340,164 @@ export function validateEntityReferenceCustomFieldValue(
 }
 
 /**
+ * Wave 3.4. File / Image -- the completeness half of the media reference rule,
+ * and ONLY that half.
+ *
+ * WHAT THIS CANNOT CHECK, said first because it is the important part. The
+ * backend's real gate on a media value is the OWNER PAIR: the referenced
+ * `MediaFile`'s `(OwnerEntityTypeKey, OwnerEntityId)` must BE the record being
+ * edited, which is what fences a media value to the caller's tenant given that
+ * `MediaFile.TenantId` is nullable and therefore visible cross-tenant through
+ * the ambient filter. Image additionally requires an image content type. Neither
+ * fact is in the value -- it carries an entity type key and an encrypted id and
+ * nothing else -- and neither is reachable from this tier at all (no
+ * `IEntityLookupProvider` is registered for `media.file`, so the row cannot even
+ * be resolved). So this function deliberately does NOT mirror
+ * `mediaReferenceNotFound` / `mediaReferenceOwnerMismatch` /
+ * `mediaReferenceNotAnImage`; those are server verdicts, arriving already
+ * localized, and a client-side guess at them would be a verdict mismatch, which
+ * is the one thing D5's whole design forbids.
+ *
+ * WHAT IT DOES CHECK is exactly what `validateEntityReferenceCustomFieldValue`
+ * checks, because a media value is a reference envelope and `FileValueTypeHandler`
+ * inherits that handler's `Validate` verbatim:
+ *   1. Exactly one of the two pieces present -- a value `Validate` refuses
+ *      outright with `referenceIncomplete`, regardless of required-ness.
+ *   2. A fully blank value on a REQUIRED field.
+ *
+ * A SEPARATE MESSAGE FROM THE REFERENCE ONE, deliberately.
+ * `customField.entityReference.invalid` says "Choose a record again to replace
+ * it", which is sound advice for a picker and false here: there is no picker on
+ * a media field yet (see `MediaReferenceCustomFieldControl`'s header), so telling
+ * the operator to choose again sends them looking for an affordance that does not
+ * exist. `customField.values.mediaReferenceIncomplete` states the defect without
+ * prescribing a remedy the UI cannot offer.
+ *
+ * REQUIRED-NESS IS ENFORCED HERE for the reason
+ * `validateEntityReferenceCustomFieldValue` gives for its own: at the 8
+ * hand-wired sites this is the ONLY client-side gate these types have --
+ * `isRequiredFieldEmpty` covers the GenericForm path and nothing covers this one.
+ *
+ * @param fc The field being validated; a non-media type returns null immediately.
+ * @param value The effective value about to be submitted.
+ * @param t The caller's own `useI18n()` translate function.
+ * @returns An already-localized refusal message, or null when the value is submittable.
+ */
+export function validateMediaReferenceCustomFieldValue(
+  fc: FieldConfig,
+  value: unknown,
+  t: TranslateFn
+): string | null {
+  if (fc.type !== "media-file" && fc.type !== "media-image") return null;
+
+  const candidate =
+    value !== null && typeof value === "object" && !Array.isArray(value)
+      ? (value as { entityTypeKey?: unknown; entityId?: unknown })
+      : null;
+  const typeKey = typeof candidate?.entityTypeKey === "string" ? candidate.entityTypeKey.trim() : "";
+  const entityId = typeof candidate?.entityId === "string" ? candidate.entityId.trim() : "";
+
+  // Fully blank covers null, undefined, "" and a stray non-object as well as an
+  // object with both pieces blank -- all of them mean "nothing attached", which
+  // is what the backend's IsEmpty means too.
+  if (typeKey === "" && entityId === "") {
+    return fc.required ? t("validation.required") : null;
+  }
+
+  // Exactly one piece present: a value Validate refuses outright.
+  if (typeKey === "" || entityId === "") {
+    return t("customField.values.mediaReferenceIncomplete", { field: fc.label ?? fc.name });
+  }
+
+  return null;
+}
+
+/**
+ * Wave 3.4. RichText -- the client-side mirror of
+ * `RichTextValueTypeHandler.Validate`, plus the one refusal that handler's
+ * `Parse` owns.
+ *
+ * THREE VERDICTS, and they are three different facts rather than three flavours
+ * of "invalid":
+ *
+ *   1. A NON-ENVELOPE VALUE -> `customField.values.richTextInvalidShape`. The
+ *      sharpest instance is a BARE STRING, which is the shape anyone would reach
+ *      for and the shape the write path refuses: the sanitization middleware's
+ *      carve-out for the values route is the PATH `values.*.html`, so a bare
+ *      string at `values.myField` arrives with every tag stripped, and accepting
+ *      it would mean storing mutilated prose under a 200. On the server this
+ *      lands in `Parse` (WasExtractable: false -> `unsupportedType`) rather than
+ *      in `Validate`, so the two tiers report it under different keys -- which is
+ *      why the mirror uses the SHAPE key: `unsupportedType` is a message about a
+ *      value type the server does not know, and quoting it at a user whose field
+ *      simply holds the wrong shape would be a worse sentence than the honest
+ *      one. Not reachable through this module's own control, whose `onChange` is
+ *      typed to the envelope; this covers stale or out-of-band form state, the
+ *      same surface `validateCurrencyCustomFieldValue` exists for.
+ *   2. OVER THE CAP -> `customField.values.richTextTooLong`. Measured on the RAW
+ *      markup and against the same 50,000 the handler uses, imported from the
+ *      control rather than re-typed, so the two cannot drift.
+ *   3. BLANK ON A REQUIRED FIELD -> `validation.required`, the same core key
+ *      GenericForm shows for the identical condition.
+ *
+ * WHITESPACE-ONLY MARKUP IS BLANK, matching `IsEmpty`'s
+ * `string.IsNullOrWhiteSpace` exactly -- so on an OPTIONAL field it is "nothing
+ * to save", never a refusal. Checking the cap before the blank check would be the
+ * classic ordering bug, but it cannot bite here: a blank string is never over a
+ * 50,000 cap. The order below still puts blank first, so the reasoning is
+ * readable rather than merely lucky.
+ *
+ * MARKUP THAT RENDERS TO NOTHING (`<p></p>`) IS NOT BLANK, because the backend
+ * says it is not: deciding whether markup renders to nothing means parsing it,
+ * which `IsEmpty` declines to do per field per save. Treating it as filled is
+ * what keeps this function's verdict equal to the server's, which is the whole
+ * contract.
+ *
+ * @param fc The field being validated; a non-rich-text type returns null immediately.
+ * @param value The effective value about to be submitted.
+ * @param t The caller's own `useI18n()` translate function.
+ * @returns An already-localized refusal message, or null when the value is submittable.
+ */
+export function validateRichTextCustomFieldValue(
+  fc: FieldConfig,
+  value: unknown,
+  t: TranslateFn
+): string | null {
+  if (fc.type !== "rich-text") return null;
+
+  // An absent value is an untouched or cleared field, not a shape error -- the
+  // wire's own "clear this field" is null, so this must not be mistaken for
+  // malformed data.
+  if (value === null || value === undefined) {
+    return fc.required ? t("validation.required") : null;
+  }
+
+  const html =
+    typeof value === "object" && !Array.isArray(value)
+      ? (value as { html?: unknown }).html
+      : undefined;
+
+  // A bare string lands here, and so does a number, an array, and an object
+  // whose `html` is not a string -- the same four shapes Parse fails closed on.
+  if (typeof html !== "string") {
+    return t("customField.values.richTextInvalidShape", { field: fc.label ?? fc.name });
+  }
+
+  if (html.trim() === "") {
+    return fc.required ? t("validation.required") : null;
+  }
+
+  if (html.length > RICH_TEXT_MAX_CHARACTERS) {
+    return t("customField.values.richTextTooLong", {
+      field: fc.label ?? fc.name,
+      max: RICH_TEXT_MAX_CHARACTERS,
+    });
+  }
+
+  return null;
+}
+
+/**
  * Thrown by `assertSelectCustomFieldValuesValid` below -- a distinct type so
  * a consumer's save flow can tell "D5 rejected this value client-side, show
  * ITS message" apart from "the actual saveValues API call failed, show the
@@ -407,6 +570,12 @@ export class CustomFieldValidationError extends Error {}
  * is not an inconsistency: this function is the only client-side gate a
  * reference field has at the 8 hand-wired sites, so without it a required
  * reference left blank was submitted blank and refused on a round trip.
+ *
+ * Wave 3.4 admits `"media-file"`, `"media-image"` and `"rich-text"` -- same
+ * shape again, still zero call-site changes. The loop's per-arm comments record
+ * the one thing that is NOT uniform: rich text must default to `null` rather than
+ * `""`, because `""` is a bare string and a bare string is the shape its
+ * validator (and the server) refuse.
  */
 export function assertSelectCustomFieldValuesValid(
   fieldConfigs: FieldConfig[],
@@ -428,6 +597,39 @@ export function assertSelectCustomFieldValuesValid(
       // reads null, undefined and a stray non-object all as "fully blank" anyway.
       const raw = values[fc.name] ?? fc.defaultValue ?? null;
       const error = validateEntityReferenceCustomFieldValue(fc, raw, t);
+      if (error) {
+        throw new CustomFieldValidationError(error);
+      }
+      continue;
+    }
+    // Wave 3.4: the two media types and rich text, the same "widen the loop,
+    // touch zero call sites" shape every wave since Task 11 has used -- all 9
+    // flows already pass their FULL, unfiltered fieldConfigs list here, so
+    // widening this guard is the entire wiring.
+    //
+    // `?? null` for all three, like Currency and the reference arm above and NOT
+    // Select's `?? ""`: every one of them is an object-or-null envelope on the
+    // wire, and each validator reads null, undefined and a stray non-object as
+    // "nothing here". For rich text the distinction is load-bearing rather than
+    // cosmetic -- `?? ""` would hand `validateRichTextCustomFieldValue` a BARE
+    // STRING, which is precisely the shape it refuses, so an untouched optional
+    // field would fail its own save with a shape error.
+    //
+    // Both arms enforce required-ness, like the reference arm and unlike
+    // Select/Currency; each validator's own doc comment records why that is not
+    // an inconsistency (they are the only client-side gate these types have at
+    // the 8 hand-wired sites).
+    if (fc.type === "media-file" || fc.type === "media-image") {
+      const raw = values[fc.name] ?? fc.defaultValue ?? null;
+      const error = validateMediaReferenceCustomFieldValue(fc, raw, t);
+      if (error) {
+        throw new CustomFieldValidationError(error);
+      }
+      continue;
+    }
+    if (fc.type === "rich-text") {
+      const raw = values[fc.name] ?? fc.defaultValue ?? null;
+      const error = validateRichTextCustomFieldValue(fc, raw, t);
       if (error) {
         throw new CustomFieldValidationError(error);
       }

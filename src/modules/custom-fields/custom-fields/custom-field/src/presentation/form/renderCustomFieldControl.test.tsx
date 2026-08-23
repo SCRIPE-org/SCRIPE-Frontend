@@ -1478,6 +1478,64 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           ).toBeInTheDocument();
           break;
         }
+        // ── Wave 3.4 ──────────────────────────────────────────
+        case "media-file":
+        case "media-image": {
+          // File and Image's shared control, reached through two dispatch keys.
+          // The gate builds its FieldConfig from the catalog alone, so there is
+          // no definition pin and no value -- the state in which the field is
+          // not pointed at anything yet.
+          //
+          // THE DISCRIMINATING FACT is a labelled role="group" containing a
+          // localized statement. Neither is reachable from the shared text Input
+          // fallthrough, which would render an `<input type="text">` -- and once
+          // a value existed, the literal "[object Object]" in it. An empty
+          // dropdown would not do either: this control has no picker at all, on
+          // purpose (no owner-scoped media endpoint exists, and the general
+          // reference picker would offer exactly the picks the backend's
+          // owner-pair fence refuses), so it says so instead of implying the
+          // server returned nothing.
+          expect(screen.getByRole("group", { name: valueType })).toBeInTheDocument();
+          expect(
+            screen.getByText("customField.mediaReference.notConfigured")
+          ).toBeInTheDocument();
+          // The ONE thing that differs between the two value types at this tier,
+          // asserted as a difference rather than as two separate facts: Image
+          // states its image-only requirement up front, File does not have one
+          // to state. If the two keys were ever collapsed onto one, this is the
+          // assertion that fails.
+          if (entry.fieldConfigType === "media-image") {
+            expect(screen.getByText("customField.mediaReference.imagesOnly")).toBeInTheDocument();
+            expect(screen.getByText("customField.mediaReference.noImage")).toBeInTheDocument();
+          } else {
+            expect(
+              screen.queryByText("customField.mediaReference.imagesOnly")
+            ).not.toBeInTheDocument();
+            expect(screen.getByText("customField.mediaReference.noFile")).toBeInTheDocument();
+          }
+          break;
+        }
+        case "rich-text": {
+          // RichText's own dedicated branch, mounting the REAL editor (TipTap
+          // runs in jsdom; nothing is stubbed in this file).
+          //
+          // `getByRole("textbox", { name })` ALONE WOULD NOT DISCRIMINATE -- the
+          // shared Input fallthrough renders `<input type="text">`, which is
+          // also a named textbox. What no `<input>` can ever carry is
+          // `contenteditable` and `aria-multiline`, so those are the assertions
+          // that actually distinguish this branch. They also prove the a11y
+          // forwarding lands on the element that takes focus rather than on a
+          // wrapper: `contenteditable` confers no implicit ARIA role, so a
+          // nameless, roleless contenteditable is what this branch produces
+          // without RichTextEditor's forwarding props being wired.
+          const editor = screen.getByRole("textbox", { name: valueType });
+          expect(editor).toHaveAttribute("contenteditable", "true");
+          expect(editor).toHaveAttribute("aria-multiline", "true");
+          // And the raw-markup counter, which is this control's own furniture --
+          // the fallthrough has none.
+          expect(screen.getByText("customField.richText.characterCount")).toBeInTheDocument();
+          break;
+        }
         default:
           throw new Error(
             `renderCustomFieldControl completeness gate has no assertion strategy for ` +
@@ -1605,5 +1663,294 @@ describe("renderCustomFieldControl -- entity-reference branch (Wave 4)", () => {
     // A duplicated <Label htmlFor> would make getAllByText return two nodes
     // and give the field two visible names.
     expect(screen.getAllByText("Assignee")).toHaveLength(1);
+  });
+});
+
+// File / Image and RichText branches -- Wave 3.4.
+//
+// Three decisions live in these branches rather than in the controls, so they
+// are pinned here rather than in the controls' own test files:
+//   1. VALUE NARROWING. The renderer's `value` is `unknown`, and each branch
+//      narrows it with the shape guard for ITS envelope. The case that matters
+//      is a shape belonging to the OTHER type, or a bare string -- both must
+//      become null rather than reaching a control that would then re-emit them.
+//   2. WHICH KEY MEANS "IMAGES ONLY". The two media value types differ only in
+//      that flag, and the flag is derived from the dispatch key here because
+//      there is no other property that could carry it.
+//   3. THE MEDIA TARGET KEY IS READ FROM THE PIN, NOT WRITTEN AS A LITERAL.
+describe("renderCustomFieldControl -- media branches (Wave 3.4)", () => {
+  const STORED = { entityTypeKey: "media.file", entityId: "ENC-media-1" };
+
+  it("derives imagesOnly from the dispatch key, which is the only thing that carries it", () => {
+    // Two renders, one assertion each way. Asserting only the Image side would
+    // pass against a control that hardcoded `imagesOnly` true, which is why the
+    // File side's NEGATIVE assertion is here: it is the half that fails if the
+    // two keys are ever collapsed into one.
+    const { unmount } = render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_photo", type: "media-image", label: "Photo" },
+          value: null,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByText("customField.mediaReference.imagesOnly")).toBeInTheDocument();
+    unmount();
+
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_waiver", type: "media-file", label: "Waiver" },
+          value: null,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.queryByText("customField.mediaReference.imagesOnly")).not.toBeInTheDocument();
+  });
+
+  it("narrows a value that is not reference-shaped to null instead of handing it through", () => {
+    // The two shapes most likely to arrive by mistake are the ones the
+    // pre-existing "image"/"file" FieldConfig arms produce: a base64 string and
+    // a browser File. Both must read as "nothing attached" rather than being
+    // rendered or re-emitted. Asserted through the state text, because that is
+    // the only externally visible consequence of the narrowing.
+    const onChange = vi.fn();
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_waiver", type: "media-file", label: "Waiver" },
+          value: "data:image/png;base64,AAAA",
+          onChange,
+        })}
+      </>
+    );
+    expect(screen.getByText("customField.mediaReference.noFile")).toBeInTheDocument();
+    expect(screen.queryByText("customField.mediaReference.fileAttached")).not.toBeInTheDocument();
+    // And nothing was written back: a render must never mutate the value it was
+    // given, which is exactly what the text-input fallthrough did.
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("narrows a RICH-TEXT envelope to null on a media field, and the reverse", () => {
+    // The two new object envelopes must not be interchangeable. A `{ html }`
+    // value on a media field is out-of-band data, not a reference.
+    const { unmount } = render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_waiver", type: "media-file", label: "Waiver" },
+          value: { html: "<p>not a file</p>" },
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByText("customField.mediaReference.noFile")).toBeInTheDocument();
+    unmount();
+
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_notes", type: "rich-text", label: "Notes" },
+          value: STORED,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    // A reference envelope on a rich-text field renders an EMPTY editor -- and
+    // specifically not the encrypted id, which is what `String(value)` or a
+    // careless `value.entityId` would have put in the box.
+    const editor = screen.getByRole("textbox", { name: "Notes" });
+    expect(editor.textContent).not.toContain("ENC-media-1");
+    expect(editor.textContent?.trim()).toBe("");
+  });
+
+  it("reads the media target key off the definition pin rather than a hardcoded media.file", () => {
+    // The control renders `attachUnavailable` when the field IS pointed at
+    // something and `notConfigured` when it is not, so the pin's arrival is
+    // observable without exposing the key itself. Both directions are asserted:
+    // a branch that hardcoded "media.file" would report `attachUnavailable`
+    // even with no pin and no value, and the second half is what catches it.
+    const { unmount } = render(
+      <>
+        {renderCustomFieldControl({
+          fc: {
+            name: "cf_waiver",
+            type: "media-file",
+            label: "Waiver",
+            referenceTargetEntityTypeKey: "media.file",
+          },
+          value: null,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByText("customField.mediaReference.attachUnavailable")).toBeInTheDocument();
+    unmount();
+
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_waiver", type: "media-file", label: "Waiver" },
+          value: null,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByText("customField.mediaReference.notConfigured")).toBeInTheDocument();
+  });
+
+  it("falls back to the STORED value's own key when the definition has no pin", () => {
+    // Same two-source ordering the reference branch documents: a populated field
+    // whose definition lost its pin is still a configured, operable field,
+    // because the value carries its own key. Without the fallback this renders
+    // "not pointed at a file library" over a field that plainly holds a file.
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_waiver", type: "media-file", label: "Waiver" },
+          value: STORED,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByText("customField.mediaReference.attachUnavailable")).toBeInTheDocument();
+    expect(screen.getByText("customField.mediaReference.fileAttached")).toBeInTheDocument();
+  });
+
+  it("passes isViewMode through as disabled, so a view-mode field offers no Remove", () => {
+    // The picker-family mapping (`disabled`, not `readOnly`) this file's header
+    // records. Withholding ONLY isViewMode and keeping everything else identical
+    // is what makes this a test of that prop rather than of the control's
+    // general behaviour: the same field WITHOUT it does render Remove, asserted
+    // first so the second half cannot pass vacuously.
+    const { unmount } = render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_waiver", type: "media-file", label: "Waiver" },
+          value: STORED,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(
+      screen.getByRole("button", { name: "customField.mediaReference.clear" })
+    ).toBeInTheDocument();
+    unmount();
+
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_waiver", type: "media-file", label: "Waiver" },
+          value: STORED,
+          onChange: vi.fn(),
+          isViewMode: true,
+        })}
+      </>
+    );
+    expect(
+      screen.queryByRole("button", { name: "customField.mediaReference.clear" })
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe("renderCustomFieldControl -- rich-text branch (Wave 3.4)", () => {
+  it("unwraps the { html } envelope for the editor rather than handing it the object", () => {
+    // The observable difference between unwrapping and not: the editor is a
+    // `value: string` component, so passing the object renders the literal
+    // "[object Object]" as the document's text. Asserting the prose is present
+    // AND that literal is absent covers both halves.
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_notes", type: "rich-text", label: "Notes" },
+          value: { html: "<p>Two-footed tackle drill</p>" },
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    const editor = screen.getByRole("textbox", { name: "Notes" });
+    expect(editor.textContent).toContain("Two-footed tackle drill");
+    expect(editor.textContent).not.toContain("[object Object]");
+  });
+
+  it("narrows a BARE STRING to null -- the one shape the write path refuses", () => {
+    // A bare string is what "richtext"'s pre-existing GenericForm arm produces
+    // and what `RichTextValueTypeHandler.Parse` answers WasExtractable:false for.
+    // If it were passed through instead of narrowed, the editor would display it
+    // and then re-emit it on the first keystroke, turning stale data into a
+    // guaranteed 422. It reads as an empty field instead.
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_notes", type: "rich-text", label: "Notes" },
+          value: "<p>stale bare string</p>",
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    const editor = screen.getByRole("textbox", { name: "Notes" });
+    expect(editor.textContent).not.toContain("stale bare string");
+  });
+
+  it("forwards the field's placeholder to the editor instead of the editor's own default", () => {
+    // RichTextEditor falls back to `t("editor.placeholder")` -- a
+    // rich-text-editor namespace key -- when given none, so a custom field with
+    // its own configured placeholder would silently show generic copy. TipTap
+    // renders the placeholder as a `data-placeholder` attribute on the first
+    // empty paragraph.
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: {
+            name: "cf_notes",
+            type: "rich-text",
+            label: "Notes",
+            placeholder: "Session takeaways",
+          },
+          value: null,
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(document.querySelector('[data-placeholder="Session takeaways"]')).not.toBeNull();
+    expect(document.querySelector('[data-placeholder="editor.placeholder"]')).toBeNull();
+  });
+
+  it("passes isViewMode through as the editor's readOnly, which also removes the toolbar", () => {
+    // Same withhold-exactly-one shape as the media case: the editable render is
+    // asserted first, so the read-only assertion cannot pass against a control
+    // that never renders a toolbar at all.
+    const { unmount } = render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_notes", type: "rich-text", label: "Notes" },
+          value: { html: "<p>x</p>" },
+          onChange: vi.fn(),
+        })}
+      </>
+    );
+    expect(screen.getByRole("textbox", { name: "Notes" })).toHaveAttribute(
+      "contenteditable",
+      "true"
+    );
+    expect(screen.getAllByRole("button").length).toBeGreaterThan(0);
+    unmount();
+
+    render(
+      <>
+        {renderCustomFieldControl({
+          fc: { name: "cf_notes", type: "rich-text", label: "Notes" },
+          value: { html: "<p>x</p>" },
+          onChange: vi.fn(),
+          isViewMode: true,
+        })}
+      </>
+    );
+    expect(screen.getByRole("textbox", { name: "Notes" })).toHaveAttribute(
+      "contenteditable",
+      "false"
+    );
+    expect(screen.queryAllByRole("button")).toHaveLength(0);
   });
 });

@@ -97,7 +97,10 @@ import type {
   CustomFieldDateTimeValue,
   CustomFieldValueTypeName,
 } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
-import { isEntityReferenceValue } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
+import {
+  isEntityReferenceValue,
+  isRichTextValue,
+} from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import { RATING_MAX, VALUE_TYPE_CATALOG } from "../registries/valueTypeRegistry";
 
 /** Matches useI18n()'s own `t` signature, and buildCustomFieldColumn's existing `t` parameter. */
@@ -517,7 +520,120 @@ export function formatCustomFieldValue(
         </span>
       );
     }
+    // File / Image (Wave 3.4). Mechanically the reference case above, and
+    // deliberately IDENTICAL to it rather than "improved" -- every one of that
+    // case's four options weighs the same here, and the same one wins:
+    //
+    //   - Rendering the stored `entityId`: refused. It is the media row's
+    //     ENCRYPTED primary key, meaningless to a reader, and a table cell is
+    //     the fastest route from a primary key to a screenshot in a support
+    //     ticket.
+    //   - Rendering the file's NAME: not available, and not merely unwired. No
+    //     `IEntityLookupProvider` is registered for `media.file` anywhere in the
+    //     backend (Identity, Hrms, OrganizationCore and PartyKernel register
+    //     theirs; Media registers none), so there is no resolve endpoint to
+    //     call. Even if there were, this function is synchronous, hookless and
+    //     runs once per CELL -- resolving here is the per-row permission-checked
+    //     fan-out the reference case refuses as its option (c).
+    //   - Rendering a blank: refused, for that case's reason. Blank is what a
+    //     never-filled field looks like, and an operator has to be able to tell
+    //     an unattached field from an attached one whose name is unavailable.
+    //
+    // So the cell says WHAT KIND of thing this is (the value type's own catalog
+    // label, so File and Image read differently -- which is the one thing a
+    // reader can act on differently) and WHICH TABLE it points into. Two cases
+    // rather than one shared arm, because that label is the difference.
+    //
+    // NOTE ON WHAT THIS CELL DOES **NOT** CLAIM: that the value is currently
+    // valid. The backend's owner-pair fence is a WRITE-time check, so a stored
+    // reference whose media row has since been re-owned still renders here as a
+    // filled reference. Asserting otherwise would need the media row, which is
+    // exactly the per-row query above.
+    case "File":
+    case "Image": {
+      if (!isEntityReferenceValue(value) || value.entityTypeKey.trim() === "") {
+        return <EmptyCustomFieldCell />;
+      }
+      return (
+        <span className="inline-flex items-center gap-1.5">
+          <Badge variant="default">{t(VALUE_TYPE_CATALOG[valueType].labelKey)}</Badge>
+          <span className="font-mono text-xs text-nx-ink-3">{value.entityTypeKey}</span>
+        </span>
+      );
+    }
+    // RichText (Wave 3.4). PLAIN TEXT IN A TABLE CELL, never the markup.
+    //
+    // NO `dangerouslySetInnerHTML` HERE, and the reason is not that the value is
+    // untrusted -- it is trusted: `RichTextValueTypeHandler.Validate` runs
+    // `HtmlAllowlistSanitizer.SanitizeRichText` before the value is stored, and
+    // `Project` returns what was stored, so what arrives has already been through
+    // an allowlist that refuses `style` and `img` outright. The reason is that a
+    // table cell is the wrong place for block markup at all: paragraphs, lists
+    // and headings inside a fixed-height cell break the row rhythm of every
+    // other column, and injecting HTML here would additionally make this cell's
+    // safety depend on a sanitizer running on the OTHER side of the wire, which
+    // is a coupling worth not creating for a cell that wants one line of text.
+    // The full markup is one click away in the record's own form, rendered by
+    // the editor that owns it.
+    //
+    // TAGS STRIPPED BY REGEX, NOT BY A PARSER, and this is a deliberate trade
+    // rather than laziness. `new DOMParser().parseFromString(html,
+    // "text/html").body.textContent` would handle entities and malformed markup
+    // properly and is inert (no scripts, no image loads) -- but this is a "use
+    // client" module that Next.js still PRE-RENDERS on the server, where
+    // `DOMParser` does not exist. Guarding on its presence would mean the same
+    // stored value producing two different cell texts depending on which side
+    // rendered it, which is worse than a regex whose limits are known. The
+    // entity decode below covers what the backend allowlist can actually emit;
+    // anything else surfaces as its literal entity text, which is legible if
+    // imperfect.
+    //
+    // An empty result gets `EmptyCustomFieldCell`, matching every other
+    // type-specific "present but nothing to show" case in this switch. It is
+    // reachable for a real stored value: `<p></p>` is markup the server accepts
+    // and stores, because deciding whether markup renders to nothing means
+    // parsing it -- which `IsEmpty` declines to do on every field of every save.
+    case "RichText": {
+      const html = isRichTextValue(value) ? value.html : null;
+      if (html === null) {
+        return <EmptyCustomFieldCell />;
+      }
+      const text = htmlToPlainText(html);
+      return text === "" ? <EmptyCustomFieldCell /> : text;
+    }
     default:
       return String(value);
   }
+}
+
+/**
+ * Reduces stored rich-text markup to one line of readable text for a table cell.
+ *
+ * Block boundaries become a SPACE rather than vanishing: without it
+ * `<p>One</p><p>Two</p>` reads as "OneTwo", which looks like corrupt data rather
+ * than two paragraphs. A newline would be worse than a space here, since the cell
+ * is single-line anyway and a stray newline only adds invisible whitespace.
+ *
+ * The entity list is the set `HtmlAllowlistSanitizer.SanitizeRichText`'s output
+ * can actually contain, decoded in an order that matters: `&amp;` is decoded LAST
+ * so a stored `&amp;lt;` surfaces as the literal text `&lt;` rather than being
+ * double-decoded into `<` — which would turn escaped text back into something
+ * that looks like markup.
+ *
+ * @param html Stored, already-sanitized markup.
+ * @returns Collapsed, trimmed plain text; the empty string when the markup
+ * renders to nothing.
+ */
+function htmlToPlainText(html: string): string {
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
 }

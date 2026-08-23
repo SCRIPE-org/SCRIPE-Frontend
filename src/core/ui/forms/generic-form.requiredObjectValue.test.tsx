@@ -513,3 +513,197 @@ describe("GenericForm required-validation -- no behaviour change for pre-Wave-4 
     expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
   });
 });
+
+// The three Wave 3.4 object-valued types.
+//
+// Membership in `OBJECT_VALUED_EMPTINESS_CHECKS` is what these pin, and the two
+// media types are the interesting half: they hold the SAME
+// `{ entityTypeKey, entityId }` envelope a general reference does, so they share
+// the predicate by IDENTITY -- `"entity-reference"`, `"media-file"` and
+// `"media-image"` all point at one function. That is deliberate, and it is why
+// the tests below deliberately re-prove the half-blank cases per type instead of
+// trusting the reference block above: three map entries can be wired to two
+// predicates as easily as to one, and the failure mode is silent.
+//
+// RichText's rule is its own, and its shape is different from every other entry
+// in that map: `{ html }`, blank when the markup is blank.
+//
+// NOTE ON WHAT IS NOT CHANGED, because the neighbouring test in this file states
+// the opposite for a similarly-named type: `"richtext"` -- the PRE-EXISTING
+// member, drawn by this component's own switch with a bare-string value -- keeps
+// its "any object is filled" behaviour, and the test above named
+// "still accepts an object on a required RICHTEXT field" still passes unchanged.
+// `"rich-text"` is a separate member for exactly that reason: admitting the old
+// one to the map would have changed a shipped type's behaviour as a side effect
+// of adding a new one.
+describe("GenericForm required-validation -- Wave 3.4's object-valued types", () => {
+  const MEDIA_FILE_FIELD: FieldConfig = {
+    name: "waiver",
+    label: "Waiver",
+    type: "media-file",
+    required: true,
+  };
+  const MEDIA_IMAGE_FIELD: FieldConfig = {
+    name: "photo",
+    label: "Photo",
+    type: "media-image",
+    required: true,
+  };
+  const RICH_TEXT_FIELD: FieldConfig = {
+    name: "notes",
+    label: "Notes",
+    type: "rich-text",
+    required: true,
+  };
+
+  it.each([
+    ["media-file", MEDIA_FILE_FIELD],
+    ["media-image", MEDIA_IMAGE_FIELD],
+  ] as const)(
+    "blocks submit for a required %s whose entityId is blank -- the object that would validate as filled",
+    async (_label, field) => {
+      const { onSubmit, submit } = renderWithValue(field, {
+        entityTypeKey: "media.file",
+        entityId: "",
+      });
+
+      fireEvent.click(submit);
+
+      await waitFor(() => {
+        expect(screen.getByText("validation.required")).toBeInTheDocument();
+      });
+      expect(onSubmit).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each([
+    ["media-file", MEDIA_FILE_FIELD],
+    ["media-image", MEDIA_IMAGE_FIELD],
+  ] as const)("blocks submit for a required %s holding an empty object", async (_label, field) => {
+    const { onSubmit, submit } = renderWithValue(field, {});
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["media-file", MEDIA_FILE_FIELD],
+    ["media-image", MEDIA_IMAGE_FIELD],
+  ] as const)(
+    "fails closed for a BASE64 STRING on a required %s -- the shape FieldConfig's own image arm produces",
+    async (_label, field) => {
+      // Not a hypothetical wrong shape: it is exactly what `"image"`'s
+      // ImageUploader arm emits, and the reason these types could not reuse that
+      // member. A scalar on an object-valued field must never read as filled.
+      const { onSubmit, submit } = renderWithValue(field, "data:image/png;base64,AAAA");
+
+      fireEvent.click(submit);
+
+      await waitFor(() => {
+        expect(screen.getByText("validation.required")).toBeInTheDocument();
+      });
+      expect(onSubmit).not.toHaveBeenCalled();
+    }
+  );
+
+  it.each([
+    ["media-file", MEDIA_FILE_FIELD],
+    ["media-image", MEDIA_IMAGE_FIELD],
+  ] as const)(
+    "submits a COMPLETE %s reference untouched, with both property names intact",
+    async (_label, field) => {
+      // The positive half, without which every assertion above could be satisfied
+      // by a predicate that rejects everything. And the property names are
+      // asserted rather than the object's mere presence: read and write spell
+      // them identically all the way to the wire, so a rename anywhere is a
+      // data-loss bug rather than a style choice.
+      const stored = { entityTypeKey: "media.file", entityId: "ENC-abc" };
+      const { onSubmit, submit } = renderWithValue(field, stored);
+
+      fireEvent.click(submit);
+
+      await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+      expect(onSubmit.mock.calls[0][0][field.name]).toEqual(stored);
+      expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
+    }
+  );
+
+  it("blocks submit for a required rich-text field whose html is blank", async () => {
+    const { onSubmit, submit } = renderWithValue(RICH_TEXT_FIELD, { html: "" });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("blocks submit for a required rich-text field whose html is whitespace only", async () => {
+    // Matches `RichTextValueTypeHandler.IsEmpty`'s own
+    // `string.IsNullOrWhiteSpace`, so the two tiers agree about whether the field
+    // is filled.
+    const { onSubmit, submit } = renderWithValue(RICH_TEXT_FIELD, { html: "  \n " });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("blocks submit for a required rich-text field holding an object with no html at all", async () => {
+    const { onSubmit, submit } = renderWithValue(RICH_TEXT_FIELD, { some: "object" });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
+  it("ACCEPTS markup that renders to nothing on a required rich-text field, because the server does", async () => {
+    // `<p></p>` is a real stored value server-side: deciding whether markup
+    // renders to nothing means parsing it, which `IsEmpty` declines to do per
+    // field per save. Blocking it here would refuse a submit the server accepts,
+    // which is a worse defect than the one being fixed -- so this is the
+    // deliberate limit of the rule, asserted rather than left implicit.
+    const { onSubmit, submit } = renderWithValue(RICH_TEXT_FIELD, { html: "<p></p>" });
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText("validation.required")).not.toBeInTheDocument();
+  });
+
+  it("submits a real rich-text envelope untouched, with `html` still spelled `html`", async () => {
+    const stored = { html: "<p>Pressing drill</p>" };
+    const { onSubmit, submit } = renderWithValue(RICH_TEXT_FIELD, stored);
+
+    fireEvent.click(submit);
+
+    await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+    expect(onSubmit.mock.calls[0][0].notes).toEqual(stored);
+  });
+
+  it("fails closed for a BARE STRING on a required rich-text field", async () => {
+    // The shape `"richtext"`'s own arm produces and the shape this type refuses.
+    // Caught by the object rule's `typeof val !== "object"` guard rather than by
+    // the scalar arm (a non-empty string passes that one), which is the correct
+    // outcome either way: a string is not an envelope, so the field is not filled.
+    const { onSubmit, submit } = renderWithValue(RICH_TEXT_FIELD, "<p>bare</p>");
+
+    fireEvent.click(submit);
+
+    await waitFor(() => {
+      expect(screen.getByText("validation.required")).toBeInTheDocument();
+    });
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+});

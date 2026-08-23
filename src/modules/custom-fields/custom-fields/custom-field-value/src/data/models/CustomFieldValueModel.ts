@@ -19,6 +19,13 @@
  * because the stored integer is durable per-value data that has to keep
  * saying what the value MEANT after its definition is re-pointed -- see
  * UserReferenceValueTypeHandler's own doc comment for the full reasoning.
+ * Wave 3.4 adds File/Image/RichText -- members 19/20/21, read straight off the
+ * real enum (`CustomFieldValueType.cs` declares `File = 19, Image = 20,
+ * RichText = 21`). File and Image are DISTINCT members rather than
+ * EntityReference pinned at `media.file`, for the reason
+ * `FileValueTypeHandler`/`ImageValueTypeHandler` give: both pin the same single
+ * target key, so nothing would be left to tell an image-only field from a
+ * general file field at write time if they shared one member.
  */
 import type { FieldVisibilityRuleData } from "../../domain/fieldVisibility";
 
@@ -41,7 +48,10 @@ export type CustomFieldValueTypeName =
   | "Time"
   | "Color"
   | "EntityReference"
-  | "UserReference";
+  | "UserReference"
+  | "File"
+  | "Image"
+  | "RichText";
 
 /**
  * DateTime's wire shape (Wave 3.1 Task 7, ruling R7): a UTC instant plus a
@@ -166,6 +176,70 @@ export function isEntityReferenceValue(v: unknown): v is CustomFieldEntityRefere
 }
 
 /**
+ * RichText's wire shape (Wave 3.4) -- a ONE-KEY OBJECT, in both directions:
+ * `{ "html": "<p>hello</p>" }`. Mirrors the backend's `RichTextInput(string?
+ * Html)` on the way up and `RichTextProjection(string Html)` on the way down;
+ * both spell the single JSON property `html`, so, as with a reference, read and
+ * write are the same shape and there is nothing to translate.
+ *
+ * WHY THE ENVELOPE EXISTS AT ALL, since a bare string is the obvious modelling
+ * and is the one thing the backend REFUSES. `InputSanitizationMiddleware` strips
+ * HTML tags out of every string in every request body except the paths listed in
+ * `InputSanitizationOptions.HtmlBearingRoutes`, and the entry for the values PUT
+ * is the PATH `values.*.html` -- pinned to the `html` member of a field's value
+ * object. A bare string submitted at `values.myField` does not match that path,
+ * so it would arrive at the handler already stripped of every tag: the server
+ * would report success while storing prose whose paragraphs, links and lists had
+ * been deleted in transit. So `RichTextValueTypeHandler.Parse` returns
+ * `WasExtractable: false` for a bare string (and for a number, an array, and an
+ * object whose `html` is present but not a string), which surfaces as a 422
+ * `customFields.values.unsupportedType`.
+ *
+ * WHAT THAT MEANS FOR THIS LAYER: a control that emits a bare string is not
+ * "slightly off", it is a field that can never be saved. `RichTextEditor` is
+ * `value: string` / `onChange(html: string)`, so the wrap/unwrap has to happen
+ * somewhere, and it happens in `RichTextCustomFieldControl` -- never in
+ * `saveValues`, whose doc comment is a standing prohibition on per-type wire
+ * translation in that loop.
+ *
+ * The stored markup is ALREADY SANITIZED by the time a read returns it: the
+ * backend runs `HtmlAllowlistSanitizer.SanitizeRichText` at write time and
+ * `Project` hands back exactly what was stored, which is what lets the editor
+ * show the operator what was actually kept rather than what they typed. It is
+ * still not a licence to inject it somewhere unrelated: the read-side table
+ * formatter deliberately strips it to plain text rather than using
+ * `dangerouslySetInnerHTML` in a cell.
+ */
+export interface CustomFieldRichTextValue {
+  html: string;
+}
+
+/**
+ * Shape guard for a rich-text value -- true when `v` is an object carrying
+ * `html` as a string.
+ *
+ * SHAPE, NOT EMPTINESS, exactly like `isEntityReferenceValue` above and for the
+ * same split of responsibilities: `{ html: "" }` passes this guard, because
+ * whether an empty envelope counts as "nothing to save" is a question each
+ * caller answers for itself (required-field emptiness in generic-form.tsx wants
+ * blank markup to read as unfilled; the control wants to emit `null` rather than
+ * `{ html: "" }` when the editor is cleared, so the field is genuinely cleared
+ * server-side instead of storing an empty string).
+ *
+ * A BARE STRING IS REJECTED, which is the whole point of having a guard here
+ * rather than `typeof v === "string"` anywhere: the wire shape is an object, a
+ * string is the shape the backend refuses, and a guard that accepted both would
+ * let the refused shape travel to the wire under the name of a valid value.
+ *
+ * @param v Any value -- unvalidated wire data, form state, anything.
+ * @returns True when `v` is an object whose `html` property is a string.
+ */
+export function isRichTextValue(v: unknown): v is CustomFieldRichTextValue {
+  if (v === null || typeof v !== "object" || Array.isArray(v)) return false;
+  return typeof (v as { html?: unknown }).html === "string";
+}
+
+/**
  * CustomFieldValue wire shape — one entity type's active definition merged with
  * its stored value (if any) for a specific owner record. Value's runtime type
  * follows valueType: string (Text/Select/LongText/Email/Url/Phone/Time/Color --
@@ -180,7 +254,12 @@ export function isEntityReferenceValue(v: unknown): v is CustomFieldEntityRefere
  * Batch C's own two-piece amount+code envelope),
  * CustomFieldEntityReferenceValue (EntityReference/UserReference -- Wave 4's
  * two-piece target-type + encrypted-id envelope, spelled identically on read and
- * on write, see that type's own doc comment), or null.
+ * on write, see that type's own doc comment; Wave 3.4's File/Image reuse that
+ * SAME envelope verbatim, since both are references whose target is a
+ * `media.file` row -- `FileValueTypeHandler` extends
+ * `EntityReferenceValueTypeHandler` and inherits its `Project`, so there is no
+ * new read shape to model for them), CustomFieldRichTextValue (RichText --
+ * Wave 3.4's one-key `{ html }` envelope), or null.
  */
 export interface EntityCustomFieldValueData {
   customFieldId: string;
@@ -201,6 +280,7 @@ export interface EntityCustomFieldValueData {
     | CustomFieldDateTimeValue
     | CustomFieldCurrencyValue
     | CustomFieldEntityReferenceValue
+    | CustomFieldRichTextValue
     | null;
   /**
    * Wave 5 row 5.3. True when a visibility rule hides this field for THIS record's current state, in

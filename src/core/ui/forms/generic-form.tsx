@@ -159,6 +159,47 @@ export interface FieldConfig {
     // reference value is an object, which the old emptiness check waved through
     // -- see `isRequiredFieldEmpty` below.
     | "entity-reference"
+    // Wave 3.4 (CustomFields' File/Image/RichText value types). All three are
+    // EXTENSION-DRAWN, like "entity-reference" above and for the same
+    // Dependency-Rule reason: their controls live in the CustomFields module and
+    // `core` must not import from `src/modules/*`.
+    //
+    // WHY THREE NEW MEMBERS RATHER THAN REUSING "file", "image" AND "richtext",
+    // which already exist a few lines below and already render. Because all
+    // three of those render arms produce a DIFFERENT VALUE SHAPE than these
+    // types accept, and this component's own history is the argument: the
+    // `[object Object]` defect "entity-reference" was added to fix was exactly a
+    // custom-field type routed to an arm whose value shape did not match.
+    //   - "file" renders `<Input type="file">`, whose value is a browser `File`.
+    //   - "image" renders `<ImageUploader>`, whose value is a base64 string.
+    //   - "richtext" renders `<RichTextEditor value={formData[name] ?? ""}
+    //     onChange={(value) => handleChange(name, value)}>`, i.e. a bare string.
+    // A File/Image value is `{ entityTypeKey, entityId }` -- a reference to a
+    // media row -- and a RichText value is `{ html }`. The server refuses each of
+    // the three wrong shapes outright (RichText's refusal is deliberate: the
+    // input-sanitization middleware's carve-out for the values route is the PATH
+    // `values.*.html`, so a bare string arrives with every tag already stripped
+    // and storing it would silently destroy the operator's markup). So pointing
+    // at the existing member would not be a shortcut, it would ship a field that
+    // 422s on every save on the ~30 CrudConfig screens where this component
+    // draws custom fields itself.
+    //
+    // Adding the new types TO the existing members' render arms was the other
+    // option and is worse: it would make those three arms permanently dead and
+    // permanently seize the three most generically-named members of this union
+    // for "a reference to a media row" and "prose in an object envelope", so a
+    // real upload field could never use them again.
+    //
+    // "media-file" and "media-image" are TWO members, not one shared media key,
+    // because both value types pin the same target entity type and nothing else
+    // carries the image-only restriction -- see the catalog entries in the
+    // CustomFields module for the full reasoning. Both are object-valued, so
+    // both need an `OBJECT_VALUED_EMPTINESS_CHECKS` rule; "rich-text" is object-
+    // valued too and needs its own, since a blank `{ html: "" }` envelope is an
+    // unfilled field.
+    | "media-file"
+    | "media-image"
+    | "rich-text"
     | "tel"
     | "url"
     | "textarea"
@@ -361,16 +402,12 @@ const OBJECT_VALUED_EMPTINESS_CHECKS: Partial<
    * PRESENCE, not shape: this does not try to judge whether `entityId` is a
    * well-formed encrypted id. A malformed-but-present value is a FORMAT problem
    * with its own message, not a missing one.
+   *
+   * The body moved into `referenceEnvelopeIsEmpty` below when Wave 3.4's two
+   * media types joined it: they hold the same envelope, and three inline copies
+   * of one rule is how one of them ends up corrected and the other two do not.
    */
-  "entity-reference": (value) => {
-    const ref = value as { entityTypeKey?: unknown; entityId?: unknown };
-    return (
-      typeof ref.entityTypeKey !== "string" ||
-      ref.entityTypeKey.trim() === "" ||
-      typeof ref.entityId !== "string" ||
-      ref.entityId.trim() === ""
-    );
-  },
+  "entity-reference": referenceEnvelopeIsEmpty,
   /**
    * Currency's rule is read off `CurrencyValueTypeHandler` (backend
    * CustomFields.Application/ValueTypes), whose two methods answer two
@@ -409,7 +446,79 @@ const OBJECT_VALUED_EMPTINESS_CHECKS: Partial<
       typeof money.currencyCode !== "string" || money.currencyCode.trim() === "";
     return amountMissing || codeMissing;
   },
+  /**
+   * Wave 3.4. File and Image (CustomFields' two media reference types) hold the
+   * SAME `{ entityTypeKey, entityId }` envelope a general reference does -- on
+   * the backend `FileValueTypeHandler` literally extends
+   * `EntityReferenceValueTypeHandler` -- so the rule is `"entity-reference"`'s,
+   * reused by reference to it rather than re-derived, which is what keeps a
+   * later correction to one from silently leaving the other two behind.
+   *
+   * SHARED BUT STILL THREE ENTRIES, not one entry under a shared key: the two
+   * media types deliberately carry two different `FieldConfig["type"]` members
+   * (only two keys can express "this one is images-only"), and this map is keyed
+   * by that member, so each needs its own line. Predicate identity is the
+   * mechanism that keeps them honest about being the same rule.
+   *
+   * The presence-not-shape scope carries over too. Whether the referenced media
+   * row is actually OWNED by the record being edited -- the backend's owner-pair
+   * fence, and the whole reason `media.file` is a legal reference target at all
+   * -- is not a question this layer can answer at all: it needs the media row.
+   * A required field being "filled" therefore means "the operator picked
+   * something", never "the server will accept it".
+   */
+  "media-file": referenceEnvelopeIsEmpty,
+  "media-image": referenceEnvelopeIsEmpty,
+  /**
+   * Wave 3.4. RichText's envelope is `{ html }` and blank markup is an unfilled
+   * field, so a required rich-text field is not satisfied by an empty editor.
+   *
+   * WHITESPACE COUNTS AS BLANK, matching `RichTextValueTypeHandler.IsEmpty`
+   * exactly (`string.IsNullOrWhiteSpace(input.Html)`) -- a field the operator
+   * cleared should read as cleared, and an editor that leaves a stray newline
+   * behind has not stored a value.
+   *
+   * MARKUP THAT RENDERS TO NOTHING (`<p></p>`) IS NOT BLANK HERE, and that is
+   * the backend's decision reproduced rather than a gap: deciding whether markup
+   * renders to nothing means parsing it, which that handler's own comment
+   * declines to do on every field of every save. The control avoids producing
+   * this state (it emits `null` when the editor is empty) so it is reachable
+   * only from stored or out-of-band data, and it is refused server-side by
+   * nothing -- an empty paragraph is a value the server stores. Treating it as
+   * filled is therefore the answer that agrees with the server, which is the
+   * whole contract of this map.
+   */
+  "rich-text": (value) => {
+    const rich = value as { html?: unknown };
+    return typeof rich.html !== "string" || rich.html.trim() === "";
+  },
 };
+
+/**
+ * The reference-envelope rule, extracted so the three field types that share it
+ * (`"entity-reference"` and Wave 3.4's two media types) share the FUNCTION and
+ * not merely a copy of its body. Mirrors the backend's own write gate:
+ * `EntityReferenceValueTypeHandler.Validate` refuses a reference unless BOTH the
+ * target type key and the encrypted id are present and non-blank, so a
+ * half-blank reference is not a storable value and "required" must not accept
+ * one.
+ *
+ * PRESENCE, not shape: this does not try to judge whether `entityId` is a
+ * well-formed encrypted id. A malformed-but-present value is a FORMAT problem
+ * with its own message, not a missing one.
+ *
+ * @param value The field's current value, already known to be a non-null object.
+ * @returns True when the envelope is missing either piece, i.e. counts as unfilled.
+ */
+function referenceEnvelopeIsEmpty(value: object): boolean {
+  const ref = value as { entityTypeKey?: unknown; entityId?: unknown };
+  return (
+    typeof ref.entityTypeKey !== "string" ||
+    ref.entityTypeKey.trim() === "" ||
+    typeof ref.entityId !== "string" ||
+    ref.entityId.trim() === ""
+  );
+}
 
 /**
  * Field types this component declares for `FieldConfig["type"]`'s typing but
@@ -462,10 +571,36 @@ const OBJECT_VALUED_EMPTINESS_CHECKS: Partial<
  * "verify, don't assume" was asking for; it carries the same declaration as a
  * guard, with its own reasoning recorded in that file.
  */
+/*
+ * Wave 3.4 admits `"media-file"`, `"media-image"` and `"rich-text"`, and the
+ * per-control labelling check this set's comment demands was done for each
+ * rather than inherited from the three above:
+ *
+ *   - `MediaReferenceCustomFieldControl` renders its own `<Label htmlFor={id}>`
+ *     over a `role="group"` region, and the group carries an `aria-label`.
+ *     Keeping this component's label would show two identical visible labels;
+ *     the announced name comes from the group's own `aria-label`, so the
+ *     duplicate would be visual only -- Currency's case exactly.
+ *   - `RichTextCustomFieldControl` renders its own `<Label htmlFor={id}>` and
+ *     binds it to the editor's contenteditable region by `aria-labelledby`,
+ *     because `<Label htmlFor>` alone names nothing on a `role="textbox"` div.
+ *     A second `<label for>` from here would be concatenated into the announced
+ *     name per the accname spec -- Duration's case, arrived at by a different
+ *     mechanism. Suppression required for all three.
+ *
+ * Membership here also carries two consequences these types genuinely need, and
+ * that is why it is the right set rather than a fourth ad-hoc condition: the
+ * spread into `handleSubmit`'s `customTypes` (none of the three has a native
+ * `required` attribute the browser could enforce -- the media control has no
+ * form element in it at all) and the label suppression above.
+ */
 const EXTENSION_DRAWN_FIELD_TYPES = new Set<FieldConfig["type"]>([
   "entity-reference",
   "currency",
   "duration",
+  "media-file",
+  "media-image",
+  "rich-text",
 ]);
 
 /**

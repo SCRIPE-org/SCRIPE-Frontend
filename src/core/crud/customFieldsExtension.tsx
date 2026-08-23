@@ -33,11 +33,20 @@ import { useCallback, useEffect, useMemo, useState } from "react";
  * Phone=10, Percent=11, Rating=12). Wave 3.3 Batch C adds
  * Currency/Duration/Time/Color the same way (Currency=13, Duration=14,
  * Time=15, Color=16). Wave 4 adds EntityReference=17/UserReference=18 the
- * same way, read off the real backend enum. That lockstep is not optional
+ * same way, read off the real backend enum. Wave 3.4 adds
+ * File=19/Image=20/RichText=21, likewise. That lockstep is not optional
  * here: `BulkColumnValuesResult.columns` is typed against THIS union while
  * the module's `getBulkColumnValues` returns columns typed against ITS
  * union, so a member present there and missing here is an outright build
  * error, not a silently narrower type.
+ *
+ * The build error is worth naming, because it is the whole safety mechanism and
+ * it reads as unrelated when you hit it: adding a member to the module's union
+ * alone fails at
+ * `customFieldsCrudIntegration.tsx`'s `getBulkColumnValues` return with
+ * "Type 'CustomFieldColumnData[]' is not assignable to
+ * 'CustomFieldColumnDefinition[]'". That is this union being narrower, not a
+ * data-layer fault, and the fix is here.
  */
 export type CustomFieldValueTypeName =
   | "Text"
@@ -58,7 +67,10 @@ export type CustomFieldValueTypeName =
   | "Time"
   | "Color"
   | "EntityReference"
-  | "UserReference";
+  | "UserReference"
+  | "File"
+  | "Image"
+  | "RichText";
 
 /**
  * One active custom-field definition shaped as a table-column header — thinner

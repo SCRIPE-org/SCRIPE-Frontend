@@ -10,6 +10,7 @@ import {
   getValueTypeCatalogEntry,
   RATING_MIN,
   RATING_MAX,
+  RICH_TEXT_MAX_CHARACTERS,
 } from "./valueTypeRegistry";
 
 describe("VALUE_TYPE_CATALOG", () => {
@@ -23,8 +24,77 @@ describe("VALUE_TYPE_CATALOG", () => {
     expect(entry.labelKey).toMatch(/^customField\.valueTypes\./);
   });
 
-  it("has exactly 19 entries, matching ALL_VALUE_TYPES", () => {
+  // THE ONE ASSERTION TYPESCRIPT CANNOT MAKE FOR US. `VALUE_TYPE_CATALOG` is a
+  // total Record over the union, so a missing catalog entry is a compile error --
+  // but `ALL_VALUE_TYPES` is a plain array, so a type added to the union and the
+  // catalog while this array is left alone compiles clean, and every gate in the
+  // module that iterates ALL_VALUE_TYPES then passes by never seeing the new
+  // type. This is the assertion that fails in that case, in both directions.
+  // Wave 3.4 raises the count from 19 to 22 (File=19, Image=20, RichText=21).
+  it("has exactly 22 entries, matching ALL_VALUE_TYPES in both directions", () => {
     expect(Object.keys(VALUE_TYPE_CATALOG).sort()).toEqual([...ALL_VALUE_TYPES].sort());
+    expect(ALL_VALUE_TYPES).toHaveLength(22);
+  });
+
+  // The catalog's own header claims ALL_VALUE_TYPES is ordered by the backend
+  // enum's declaration order, and several other files' comments lean on that
+  // claim. The `.sort()`-based check above cannot see order at all, so this pins
+  // it as the literal ordinal sequence read off CustomFieldValueType.cs.
+  //
+  // It is spelled out here rather than derived, but NOT because the enum
+  // "cannot be imported" -- a prior version of this comment said exactly that,
+  // and it was false: `valueTypeRegistry.backendContract.test.ts` in this same
+  // directory parses the real C# enum and asserts this array against it,
+  // member-for-member and ordinal-for-ordinal, in both directions, whenever a
+  // `SCRIPE-Backend` checkout sits beside this repo. What is true is narrower:
+  // that cross-repo test SKIPS in a frontend-only checkout (no C# to parse),
+  // and the literal list below is what keeps this ordering claim under a real
+  // assertion even then -- the same reason `RICH_TEXT_MAX_CHARACTERS` is
+  // pinned to a bare literal two tests below rather than left to that same
+  // cross-repo file alone.
+  it("orders ALL_VALUE_TYPES by the backend enum's ordinals, Text=0 through RichText=21", () => {
+    expect([...ALL_VALUE_TYPES]).toEqual([
+      "Text", // 0
+      "Number", // 1
+      "Boolean", // 2
+      "Date", // 3
+      "Select", // 4
+      "LongText", // 5
+      "DateTime", // 6
+      "MultiSelect", // 7
+      "Email", // 8
+      "Url", // 9
+      "Phone", // 10
+      "Percent", // 11
+      "Rating", // 12
+      "Currency", // 13
+      "Duration", // 14
+      "Time", // 15
+      "Color", // 16
+      "EntityReference", // 17
+      "UserReference", // 18
+      "File", // 19
+      "Image", // 20
+      "RichText", // 21
+    ]);
+  });
+
+  // Wave 3.4 adversarial-review fix round, finding P1. Every consuming test
+  // (customFieldValueValidation.richText.test.ts, RichTextCustomFieldControl's
+  // own tests, and the rest of the five files that touch this constant) writes
+  // its boundary assertions as `"x".repeat(RICH_TEXT_MAX_CHARACTERS)` /
+  // `RICH_TEXT_MAX_CHARACTERS + 1` -- correct for testing a BOUNDARY, but every
+  // one of them agrees with the constant for ANY value it holds, zero included,
+  // so none of them can catch this constant itself drifting from the backend's
+  // `RichTextValueTypeHandler.MaxRichTextLength` (a change to either side alone,
+  // with no matching change on the other). `valueTypeRegistry.backendContract
+  // .test.ts` catches that drift when a `SCRIPE-Backend` checkout is present,
+  // but SKIPS without one -- this bare-literal pin is what keeps a real
+  // assertion alive in a frontend-only checkout, the same role
+  // `formatCustomFieldValue.test.tsx`'s own `toHaveLength(22)` plays for
+  // ALL_VALUE_TYPES's count.
+  it("pins RICH_TEXT_MAX_CHARACTERS to the literal 50,000, matching RichTextValueTypeHandler.MaxRichTextLength", () => {
+    expect(RICH_TEXT_MAX_CHARACTERS).toBe(50_000);
   });
 
   // Wave 3.1 Task 10: MultiSelect is the SECOND options-owning type (rulings
@@ -189,6 +259,33 @@ describe("VALUE_TYPE_CATALOG", () => {
         hasOptions: false,
         labelKey: "customField.valueTypes.userReference",
       },
+      // Wave 3.4. These three are transcribed from the real backend
+      // Descriptors (FileValueTypeHandler / ImageValueTypeHandler /
+      // RichTextValueTypeHandler), not from the reference family they resemble
+      // -- File and Image differ from EntityReference/UserReference in exactly
+      // one field, `hasPlaceholder`, and that is the field an assumed copy
+      // would have got wrong.
+      File: {
+        fieldConfigType: "media-file",
+        badgeVariant: "default",
+        hasPlaceholder: false,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.file",
+      },
+      Image: {
+        fieldConfigType: "media-image",
+        badgeVariant: "default",
+        hasPlaceholder: false,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.image",
+      },
+      RichText: {
+        fieldConfigType: "rich-text",
+        badgeVariant: "secondary",
+        hasPlaceholder: true,
+        hasOptions: false,
+        labelKey: "customField.valueTypes.richText",
+      },
     });
   });
 
@@ -217,6 +314,35 @@ describe("VALUE_TYPE_CATALOG", () => {
   it("keeps both reference types out of the options-owning family", () => {
     expect(VALUE_TYPE_CATALOG.EntityReference.hasOptions).toBe(false);
     expect(VALUE_TYPE_CATALOG.UserReference.hasOptions).toBe(false);
+  });
+
+  // Wave 3.4. THE TWO MEDIA TYPES DO NOT SHARE A fieldConfigType, and unlike
+  // the reference pair above that is not a stylistic choice: both pin the same
+  // target key (`media.file`), so a shared key would leave
+  // renderCustomFieldControl unable to tell an Image field from a File field at
+  // all, and the image-only restriction -- the only thing that distinguishes
+  // them -- would be inexpressible in the branch. Pinned as INEQUALITY rather
+  // than as two literals, so it states the property instead of restating the
+  // whole-catalog toEqual above.
+  it("gives File and Image two distinct fieldConfigTypes, since nothing else carries the image-only rule", () => {
+    expect(VALUE_TYPE_CATALOG.File.fieldConfigType).not.toBe(
+      VALUE_TYPE_CATALOG.Image.fieldConfigType
+    );
+  });
+
+  // Wave 3.4. The three value-shape traps, stated as the thing that must NOT be
+  // true rather than as the thing that is -- the whole-catalog toEqual already
+  // says what each key IS and would go red for any change; what it does not say
+  // is WHY these three particular strings were refused. Each of the three
+  // pre-existing union members below renders a real control that produces a
+  // value shape the backend refuses for that type: `"file"` a browser File
+  // object, `"image"` a base64 string, `"richtext"` a bare string. A later edit
+  // that "simplifies" any of these onto the pre-existing member ships a field
+  // that 422s on every save, on every generic CRUD screen.
+  it("refuses the three pre-existing union members whose controls produce the wrong value shape", () => {
+    expect(VALUE_TYPE_CATALOG.File.fieldConfigType).not.toBe("file");
+    expect(VALUE_TYPE_CATALOG.Image.fieldConfigType).not.toBe("image");
+    expect(VALUE_TYPE_CATALOG.RichText.fieldConfigType).not.toBe("richtext");
   });
 });
 

@@ -595,6 +595,59 @@ describe("formatCustomFieldValue", () => {
           ).toBeInTheDocument();
           break;
         }
+        // ── Wave 3.4 ────────────────────────────────────────────────────
+        case "File":
+        case "Image": {
+          // Mechanically the reference case above, and the two assertions that
+          // matter are the same two:
+          //
+          //  1. NOT the String(value) fallthrough, which would print
+          //     "[object Object]" for the two-piece envelope.
+          //  2. THE ENCRYPTED ID IS NOWHERE IN THE OUTPUT. It is the media row's
+          //     primary key; a table cell puts it in every screenshot and export
+          //     while telling nobody anything, and there is no name to show
+          //     instead -- no lookup provider is registered for `media.file`, so
+          //     nothing could resolve one even asynchronously.
+          //
+          // Plus one fact specific to these two: File and Image render DIFFERENT
+          // labels, which is the only thing distinguishing them in a table. A
+          // shared arm returning one label for both would satisfy every other
+          // assertion here, so the label is checked against each type's OWN
+          // catalog entry.
+          const out = formatCustomFieldValue(
+            type,
+            { entityTypeKey: "media.file", entityId: "ENC-must-not-be-rendered" },
+            "en",
+            t
+          );
+          expect(out).not.toBe(String({ entityTypeKey: "x", entityId: "y" }));
+          expect(React.isValidElement(out)).toBe(true);
+          const { container } = render(<>{out}</>);
+          expect(container.textContent).not.toContain("ENC-must-not-be-rendered");
+          // And not blank either: a filled field must never look like an empty one.
+          expect(container.textContent?.trim()).not.toBe("");
+          expect(screen.getByText("media.file")).toBeInTheDocument();
+          expect(screen.getByText(VALUE_TYPE_CATALOG[type].labelKey)).toBeInTheDocument();
+          break;
+        }
+        case "RichText": {
+          // A real RichText branch strips the markup to plain text. Three
+          // assertions, each ruling out a different wrong implementation:
+          //   - `not.toBe(String(raw))` rules out the generic fallthrough, which
+          //     would print "[object Object]" for the envelope.
+          //   - the tag text being absent rules out printing `value.html`
+          //     verbatim, which would put raw `<p>` markup in the cell.
+          //   - the prose being present rules out rendering nothing, and rules
+          //     out an implementation that dropped the text along with the tags.
+          const raw = { html: "<p>Pressing <strong>drill</strong></p>" };
+          const out = formatCustomFieldValue(type, raw, "en", t);
+          expect(out).not.toBe(String(raw));
+          expect(String(out)).not.toContain("<p>");
+          expect(String(out)).not.toContain("<strong>");
+          expect(String(out)).toContain("Pressing");
+          expect(String(out)).toContain("drill");
+          break;
+        }
         default:
           throw new Error(
             `formatCustomFieldValue completeness gate has no classification for value type ` +
@@ -606,15 +659,15 @@ describe("formatCustomFieldValue", () => {
     }
   );
 
-  // Wave 4 raises this from 17 to 19 (EntityReference = 17, UserReference = 18
-  // on the backend enum). Kept as a literal on purpose: this is the ONE
+  // Wave 3.4 raises this from 19 to 22 (File = 19, Image = 20, RichText = 21 on
+  // the backend enum). Kept as a literal on purpose: this is the ONE
   // deliberate count-to-maintain in the module -- every other test derives its
   // expectation from ALL_VALUE_TYPES.length, so without this pin a new catalog
   // entry could be added with no branch anywhere and every derived assertion
   // would happily iterate over it. Editing this number is the moment someone
   // has to confirm the new type is actually wired.
-  it("has exactly 19 known value types to cover", () => {
-    expect(ALL_VALUE_TYPES).toHaveLength(19);
+  it("has exactly 22 known value types to cover", () => {
+    expect(ALL_VALUE_TYPES).toHaveLength(22);
   });
 });
 
@@ -677,5 +730,133 @@ describe("formatCustomFieldValue -- EntityReference / UserReference", () => {
     // rather than a half-reference, so reaching here means data corruption.
     render(<>{formatCustomFieldValue("EntityReference", { entityTypeKey: "", entityId: "ENC-1" }, "en", t)}</>);
     expect(screen.getByText("—")).toBeInTheDocument();
+  });
+});
+
+// RichText read-side rendering -- Wave 3.4.
+//
+// The read side of a rich-text value has one hard rule and one easy trap. The
+// rule: a table cell gets PLAIN TEXT, never markup and never
+// `dangerouslySetInnerHTML`. The trap: it is tempting to reach for a DOM parser,
+// which would handle entities and malformed markup properly -- and this is a
+// "use client" module that Next.js still PRE-RENDERS on the server, where
+// `DOMParser` does not exist. A presence guard around it would make the same
+// stored value produce two different cell texts depending on which side rendered
+// it, so the implementation is a deterministic regex strip and these tests pin
+// its limits explicitly rather than leaving them to be discovered.
+describe("formatCustomFieldValue -- RichText (Wave 3.4)", () => {
+  const t = (key: string, params?: Record<string, string | number>) =>
+    params ? `${key}:${JSON.stringify(params)}` : key;
+
+  it("renders plain text, with no angle brackets left anywhere in the output", () => {
+    const out = formatCustomFieldValue(
+      "RichText",
+      { html: "<h2>Session</h2><p>Two-footed <em>tackle</em> drill</p>" },
+      "en",
+      t
+    );
+    const { container } = render(<>{out}</>);
+    expect(container.textContent).toContain("Session");
+    expect(container.textContent).toContain("Two-footed");
+    expect(container.textContent).toContain("tackle");
+    // The discriminating assertion: no markup survived. `container.innerHTML`
+    // rather than textContent, so an implementation that injected the HTML as
+    // real elements fails here too -- textContent alone would look identical.
+    expect(container.innerHTML).not.toContain("<h2>");
+    expect(container.innerHTML).not.toContain("<em>");
+    expect(container.innerHTML).not.toContain("&lt;h2&gt;");
+  });
+
+  it("does not inject the stored markup as real DOM, even though the value is trusted", () => {
+    // The value IS trusted -- the server sanitized it through an allowlist before
+    // storing it and returns exactly what it stored. This is not an XSS test. It
+    // is a layout and coupling test: block markup inside a fixed-height cell
+    // breaks the row rhythm of every other column, and injecting HTML would make
+    // this cell's safety depend on a sanitizer running on the other side of the
+    // wire. An anchor is used because it is the most conspicuous thing the
+    // allowlist DOES permit.
+    const { container } = render(
+      <>
+        {formatCustomFieldValue(
+          "RichText",
+          { html: '<p>See <a href="https://example.com">the policy</a></p>' },
+          "en",
+          t
+        )}
+      </>
+    );
+    expect(container.querySelector("a")).toBeNull();
+    expect(container.textContent).toContain("the policy");
+  });
+
+  it("separates block boundaries with a space, so two paragraphs do not read as one word", () => {
+    // Without this, `<p>One</p><p>Two</p>` renders "OneTwo", which looks like
+    // corrupt data rather than two paragraphs.
+    const { container } = render(
+      <>{formatCustomFieldValue("RichText", { html: "<p>One</p><p>Two</p>" }, "en", t)}</>
+    );
+    expect(container.textContent).toBe("One Two");
+  });
+
+  it("collapses whitespace instead of preserving the markup's own indentation", () => {
+    const { container } = render(
+      <>
+        {formatCustomFieldValue(
+          "RichText",
+          { html: "<ul>\n  <li>First</li>\n  <li>Second</li>\n</ul>" },
+          "en",
+          t
+        )}
+      </>
+    );
+    expect(container.textContent).toBe("First Second");
+  });
+
+  it("decodes the entities the backend allowlist can emit", () => {
+    const { container } = render(
+      <>
+        {formatCustomFieldValue(
+          "RichText",
+          { html: "<p>Under-13s &amp; Under-15s &nbsp;&quot;A&quot; squad</p>" },
+          "en",
+          t
+        )}
+      </>
+    );
+    expect(container.textContent).toBe('Under-13s & Under-15s "A" squad');
+  });
+
+  it("does not DOUBLE-decode, so escaped text stays escaped text", () => {
+    // `&amp;lt;` is the stored form of the literal characters `&lt;`. Decoding
+    // `&amp;` before `&lt;` would turn it into `<`, i.e. turn text the author
+    // deliberately escaped back into something that reads as markup. The ordering
+    // in `htmlToPlainText` is what prevents it, and this is the assertion that
+    // catches a reordering.
+    const { container } = render(
+      <>{formatCustomFieldValue("RichText", { html: "<p>&amp;lt;p&amp;gt;</p>" }, "en", t)}</>
+    );
+    expect(container.textContent).toBe("&lt;p&gt;");
+  });
+
+  it("renders the empty-cell marker for markup that reduces to nothing", () => {
+    // Reachable for a real stored value: `<p></p>` is markup the server accepts
+    // and stores, because deciding whether markup renders to nothing means
+    // parsing it -- which `IsEmpty` declines to do on every field of every save.
+    // So the read side is the first place that question gets asked, and a blank
+    // cell with no marker would be indistinguishable from a broken formatter.
+    const { container } = render(
+      <>{formatCustomFieldValue("RichText", { html: "<p></p>" }, "en", t)}</>
+    );
+    expect(container.textContent?.trim()).not.toBe("");
+  });
+
+  it("renders the empty-cell marker for a BARE STRING, which is not a rich-text value", () => {
+    // A bare string is the shape the write path refuses, so its presence in
+    // stored data means out-of-band or stale data. Rendering it would make a cell
+    // that looks fine over a value no save can ever accept.
+    const { container } = render(
+      <>{formatCustomFieldValue("RichText", "<p>bare</p>", "en", t)}</>
+    );
+    expect(container.textContent).not.toContain("bare");
   });
 });
