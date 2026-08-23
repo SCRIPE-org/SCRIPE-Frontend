@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -138,27 +138,41 @@ export function BilingualOptionsEditor({
   emptyHint,
   id,
 }: BilingualOptionsEditorProps) {
-  const [rows, setRows] = useState<InternalOptionRow[]>(() => parseToInternalRows(value, valueAr));
-  const lastEmittedRef = useRef<{ en: string; ar: string } | null>(null);
+  const [state, setState] = useState(() => ({
+    value,
+    valueAr,
+    rows: parseToInternalRows(value, valueAr),
+    lastEmitted: null as { en: string; ar: string } | null,
+  }));
 
-  useEffect(() => {
-    const currentEn = value ?? "";
-    const currentAr = valueAr ?? "";
-    if (
-      lastEmittedRef.current !== null &&
-      lastEmittedRef.current.en === currentEn &&
-      lastEmittedRef.current.ar === currentAr
-    ) {
-      return;
-    }
-    setRows(parseToInternalRows(currentEn, currentAr));
-  }, [value, valueAr]);
+  const currentEn = value ?? "";
+  const currentAr = valueAr ?? "";
+
+  // Synchronize internal rows during render when value / valueAr change externally
+  if (value !== state.value || valueAr !== state.valueAr) {
+    const isMatchingLastEmitted =
+      state.lastEmitted !== null &&
+      state.lastEmitted.en === currentEn &&
+      state.lastEmitted.ar === currentAr;
+
+    setState({
+      value,
+      valueAr,
+      rows: isMatchingLastEmitted ? state.rows : parseToInternalRows(currentEn, currentAr),
+      lastEmitted: state.lastEmitted,
+    });
+  }
+
+  const { rows } = state;
 
   const commit = useCallback(
     (nextRows: InternalOptionRow[]) => {
-      setRows(nextRows);
       const serialized = serializeBilingualOptions(nextRows);
-      lastEmittedRef.current = serialized;
+      setState((prev) => ({
+        ...prev,
+        rows: nextRows,
+        lastEmitted: serialized,
+      }));
       onChange(serialized);
     },
     [onChange]
