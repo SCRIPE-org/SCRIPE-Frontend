@@ -46,10 +46,12 @@ import { STORAGE_KEYS } from "@core/config/storage-keys";
 // the only way this file can prove the actual user-visible consequence rather than restating the
 // implementation. Nothing in that module is modified by these tests.
 //
-// Deep path rather than the submodule's `index.ts` barrel on purpose: the barrel also re-exports the
-// react-query hooks, so importing it would drag a provider-dependent graph into a transport-level
-// unit test. `EntityLookupError` is a side-effect-free class.
-import { EntityLookupError } from "@modules/custom-fields/entity-lookup/src/domain/entities/EntityLookupError";
+// Imported via the submodule's `index.ts` barrel, matching every other cross-module import in this
+// codebase. The barrel also re-exports the react-query hooks (`useEntityLookupSearch` and friends),
+// so this drags their module graph -- including the DI container and `@tanstack/react-query` -- into
+// this file's import chain. None of it executes: `EntityLookupError` is a side-effect-free class and
+// nothing here calls a hook, so the extra graph is load cost, not a live dependency.
+import { EntityLookupError } from "@modules/custom-fields/entity-lookup";
 
 /** The interceptor's rejection handler: `(error) => Promise<never>` in practice. */
 type RejectedHandler = (error: unknown) => Promise<unknown>;

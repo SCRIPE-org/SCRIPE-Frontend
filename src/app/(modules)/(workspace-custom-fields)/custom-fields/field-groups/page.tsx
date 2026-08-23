@@ -7,7 +7,7 @@
  */
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { FieldGroupListView } from "@modules/custom-fields/field-group/src/presentation/views/FieldGroupListView";
+import { FieldGroupListView } from "@modules/custom-fields/field-group";
 
 export const metadata: Metadata = {
   title: "Field Groups",

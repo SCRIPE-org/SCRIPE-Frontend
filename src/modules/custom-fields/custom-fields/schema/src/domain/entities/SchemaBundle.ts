@@ -58,6 +58,7 @@ export interface SchemaDefinitionData {
   isExportable: boolean;
   groupStableKey: string | null;
   isGlobal: boolean;
+  referenceTargetEntityTypeKey: string | null;
 }
 
 /** A bundle as the read path produces it. */

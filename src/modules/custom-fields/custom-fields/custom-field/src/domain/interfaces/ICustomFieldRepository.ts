@@ -5,7 +5,7 @@
  * Works with domain entities, not DTOs.
  */
 import type { CustomField, EntityTypeInfo } from "../entities/CustomField";
-import type { FieldHistoryPage, FieldUsage } from "../entities/FieldInsight";
+import type { FieldHistoryPage, FieldUsage, FieldVersionsResponse } from "../entities/FieldInsight";
 
 export interface CustomFieldListParams {
   page: number;
@@ -34,4 +34,5 @@ export interface ICustomFieldRepository {
   delete(id: string, force?: boolean): Promise<void>;
   getHistory(id: string, page: number, pageSize: number): Promise<FieldHistoryPage>;
   getUsage(id: string): Promise<FieldUsage>;
+  getVersions(id: string): Promise<FieldVersionsResponse>;
 }

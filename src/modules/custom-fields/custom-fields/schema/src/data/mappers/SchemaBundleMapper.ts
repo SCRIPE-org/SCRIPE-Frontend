@@ -97,6 +97,7 @@ export class SchemaBundleMapper {
       isExportable: model.isExportable,
       groupStableKey: model.groupStableKey,
       isGlobal: model.isGlobal,
+      referenceTargetEntityTypeKey: model.referenceTargetEntityTypeKey,
     };
   }
 }

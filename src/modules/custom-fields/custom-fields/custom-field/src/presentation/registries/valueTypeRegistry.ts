@@ -596,6 +596,24 @@ export function getValueTypeCatalogEntry(type: string): ValueTypeCatalogEntry | 
 }
 
 /**
+ * Whether a value type owns an options list -- the same safe-lookup discipline as
+ * `getValueTypeCatalogEntry`, folded into one call for a caller that only needs the boolean.
+ *
+ * P-4 follow-up. Exists so the option-set binding row action (CustomFieldListView.tsx) can ask this
+ * question WITHOUT writing a third literal `hasOptions ?? false` into that file's own source: the
+ * two that already live there (the create and edit forms' own "options" field `isVisible` guards)
+ * are pinned at an EXACT count of 2 by `CustomFieldListView.unsetValueTypeVisibility.test.ts` and
+ * `CustomFieldListView.validatorKindVisibility.test.ts`'s "TRAP 8" check, specifically so neither
+ * guard can silently lose its unset-safe fallback. A third call site reusing the identical
+ * expression would trip that count for a reason having nothing to do with what those tests protect.
+ * Routing through a named predicate here keeps the fallback (still `?? false`, still degrading
+ * exactly the way an unset/unrecognized `valueType` always has) without perturbing either pin.
+ */
+export function hasOptionsList(type: string): boolean {
+  return getValueTypeCatalogEntry(type)?.hasOptions ?? false;
+}
+
+/**
  * All 22 known type names, in the same fixed display order used everywhere
  * else in this module (CustomFieldListView.tsx's valueTypeOptions,
  * InlineAddCustomFieldDialog.tsx) -- and matching

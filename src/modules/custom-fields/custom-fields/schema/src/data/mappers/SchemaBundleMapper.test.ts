@@ -62,6 +62,7 @@ const DEFINITION: SchemaDefinitionJson = {
   isExportable: false,
   groupStableKey: "contact_details",
   isGlobal: true,
+  referenceTargetEntityTypeKey: "party.organization",
 };
 
 const BUNDLE: SchemaBundleJson = {
@@ -114,6 +115,7 @@ describe("SchemaBundleMapper round trip", () => {
     expect(definition.isExportable).toBe(false);
     expect(definition.groupStableKey).toBe("contact_details");
     expect(definition.isGlobal).toBe(true);
+    expect(definition.referenceTargetEntityTypeKey).toBe("party.organization");
   });
 
   it("carries every group field through, one assertion per field", () => {
@@ -175,6 +177,7 @@ describe("SchemaBundleMapper null and absence handling", () => {
           validatorKind: undefined,
           validatorParam: undefined,
           groupStableKey: undefined,
+          referenceTargetEntityTypeKey: undefined,
         },
       ],
     } as unknown as SchemaBundleJson;
@@ -192,6 +195,7 @@ describe("SchemaBundleMapper null and absence handling", () => {
     expect(emitted.definitions[0].validatorKind).toBeNull();
     expect(emitted.definitions[0].validatorParam).toBeNull();
     expect(emitted.definitions[0].groupStableKey).toBeNull();
+    expect(emitted.definitions[0].referenceTargetEntityTypeKey).toBeNull();
     // Still serialisable with the nulls present, not dropped as undefined -- `JSON.stringify` omits
     // undefined properties entirely, which would silently shorten the file.
     expect(JSON.parse(JSON.stringify(emitted)).definitions[0]).toHaveProperty("validatorKind", null);

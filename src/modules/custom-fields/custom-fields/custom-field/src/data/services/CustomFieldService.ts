@@ -17,7 +17,11 @@ import type {
   CustomFieldListResult,
 } from "../../domain/interfaces/ICustomFieldService";
 import { CUSTOM_FIELD_ENDPOINTS } from "./custom-field.endpoints";
-import type { FieldHistoryPage, FieldUsage } from "../../domain/entities/FieldInsight";
+import type {
+  FieldHistoryPage,
+  FieldUsage,
+  FieldVersionsResponse,
+} from "../../domain/entities/FieldInsight";
 
 export class CustomFieldService implements ICustomFieldService {
   constructor(private readonly api: IApiService) {}
@@ -79,5 +83,11 @@ export class CustomFieldService implements ICustomFieldService {
 
   async getUsage(id: string): Promise<FieldUsage> {
     return this.api.get<FieldUsage>(CUSTOM_FIELD_ENDPOINTS.USAGE(id));
+  }
+
+  async getVersions(id: string): Promise<FieldVersionsResponse> {
+    // Returned as-is, same as getHistory/getUsage above: a display-only projection with no round
+    // trip to lose anything on.
+    return this.api.get<FieldVersionsResponse>(CUSTOM_FIELD_ENDPOINTS.VERSIONS(id));
   }
 }

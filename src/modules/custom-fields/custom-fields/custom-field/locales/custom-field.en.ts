@@ -742,5 +742,61 @@ export const en = {
         frontendScreenOnly: "Screen exists, backend unaware",
       },
     },
+
+    // P-4 follow-up. Attach/switch/detach a shared option set on a Select or MultiSelect field's
+    // definition -- see useOptionSetBindingViewModel.ts's own header for why bind/rebind/unbind are
+    // three distinct actions here rather than one "save" button, and for why this dialog cannot know
+    // ahead of time whether a field is already following a shared set.
+    optionSetBinding: {
+      actionLabel: "Option set",
+      title: "Shared option set — {field}",
+      description:
+        "Attach a shared, versioned list of options to this field instead of typing your own, or manage an existing attachment below.",
+      pickerLabel: "Shared option set",
+      pickerPlaceholder: "Choose a shared option set...",
+      searchPlaceholder: "Search option sets...",
+      noResults: "No option sets match your search.",
+      noSetsAvailable: "No shared option sets are available yet.",
+      noSetsAvailableHint:
+        "A published option set has to exist before it can be attached here. Create one from Option Sets and publish a version first.",
+      loadSetsFailed: "Couldn't load option sets. Please try again.",
+      platformOwned: "Platform-wide",
+      versionLoadFailed: "Couldn't load this field's active version. Please try again.",
+      // A field predating the version-twin backfill, or one whose twin has no Published version yet
+      // -- there is genuinely nothing to bind to.
+      noActiveVersion: "This field has no active version yet, so it can't use a shared option set.",
+      permissionNote:
+        "You can view option sets, but attaching, switching or detaching one needs the option-set bind permission.",
+      pickASetHint: "Choose a set above first.",
+      attach: {
+        title: "Attach",
+        description:
+          "Adds the shared set's options to this field. Any option you already typed here is kept — unless its key exactly matches one in the shared set, in which case the attach is blocked until you rename yours.",
+        action: "Attach",
+      },
+      switch: {
+        title: "Switch",
+        description:
+          "Moves this field to a different shared set. Any of its options that aren't in the new set are deactivated, not deleted — records that already used them keep working. Options you typed by hand are left alone unless their key collides with the new set.",
+        action: "Switch",
+      },
+      detach: {
+        title: "Detach",
+        description:
+          "Removes the shared set from this field. Every option row is left exactly as it is — nothing is deactivated or deleted — so the field keeps offering what it does today.",
+        action: "Detach",
+      },
+      toast: {
+        bound: "Attached: {inserted} option(s) added, {preserved} of your own kept.",
+        bindFailed: "Couldn't attach the option set.",
+        switched:
+          "Switched: {inserted} option(s) added, {deactivated} deactivated, {preserved} of your own kept.",
+        switchFailed: "Couldn't switch the option set.",
+        detached: "Detached. Every option was left exactly as it was.",
+        detachFailed: "Couldn't detach the option set.",
+        permissionDenied: "You don't have permission to change this field's option set.",
+        noActiveVersion: "This field has no active version to change.",
+      },
+    },
   },
 };

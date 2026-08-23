@@ -17,4 +17,11 @@ export const CUSTOM_FIELD_ENDPOINTS = {
   /** Wave 6 row 6.3 -- value counts and delete impact. */
   USAGE: (id: string) => `${V1}/custom-fields/${id}/usage`,
   ENTITY_TYPES: `${V1}/custom-fields/entity-types`,
+  /**
+   * P-4 follow-up (option-set binding). `FieldVersionsController`'s only read route -- a SEPARATE
+   * controller under `custom-fields/versions`, not `custom-fields/{id}/versions`; see that
+   * controller's own header for why the version lifecycle sits in its own flat segment rather than
+   * nested under this one.
+   */
+  VERSIONS: (id: string) => `${V1}/custom-fields/versions/${id}`,
 } as const;

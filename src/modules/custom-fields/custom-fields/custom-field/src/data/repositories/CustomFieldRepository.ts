@@ -63,4 +63,8 @@ export class CustomFieldRepository implements ICustomFieldRepository {
   async getUsage(id: string) {
     return this.service.getUsage(id);
   }
+
+  async getVersions(id: string) {
+    return this.service.getVersions(id);
+  }
 }

@@ -111,3 +111,40 @@ export interface FieldUsage {
    */
   wouldDestroyDataOnDelete: boolean;
 }
+
+/**
+ * One version in a field's version chain -- `GET /custom-fields/versions/{customFieldId}`.
+ *
+ * Display-only, same reasoning as `FieldUsage`/`FieldHistoryPage` above: nothing here round-trips
+ * through a form. The one consumer today is the option-set binding picker, which needs exactly one
+ * fact this shape carries -- WHICH version is the field's live one -- to know what a bind/rebind/
+ * unbind call should target; see `resolveActiveFieldVersion`.
+ *
+ * Deliberately does NOT carry `OptionSetVersionId`: the backend's `FieldVersionSummary` record does
+ * not return it (see that record's own doc comment -- the config/concurrency-shaped fields are kept
+ * off this read for the same reason), so there is no way for this shape, or anything built on it, to
+ * learn ahead of time whether a version already follows a shared set. The binding dialog is built
+ * around that absence rather than around a fiction of knowing it -- see
+ * `useOptionSetBindingViewModel`'s own header.
+ */
+export interface FieldVersionSummary {
+  /** Encrypted `FieldVersion.Id`. This is the `fieldVersionId` bind/rebind/unbind take. */
+  id: string;
+  /** 1-based, never reused -- a gap in the sequence means an earlier version was discarded. */
+  versionNumber: number;
+  status: "Draft" | "Published" | "Deprecated" | "Archived";
+  optionCount: number;
+  ruleCount: number;
+  isPlatformOwned: boolean;
+  effectiveFromUtc?: string | null;
+  effectiveToUtc?: string | null;
+  publishedAtUtc?: string | null;
+}
+
+/** The field's whole version chain, newest first, plus the two facts a caller would otherwise scan for. */
+export interface FieldVersionsResponse {
+  fieldId: string;
+  versions: FieldVersionSummary[];
+  hasDraft: boolean;
+  publishedVersionNumber?: number | null;
+}

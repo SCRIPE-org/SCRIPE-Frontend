@@ -90,6 +90,7 @@ const BUNDLE: SchemaBundleJson = {
       isExportable: true,
       groupStableKey: "contact_details",
       isGlobal: false,
+      referenceTargetEntityTypeKey: null,
     },
   ],
 };

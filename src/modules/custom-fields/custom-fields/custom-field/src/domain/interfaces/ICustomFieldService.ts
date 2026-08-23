@@ -5,7 +5,7 @@
  * Implemented by CustomFieldService in the data layer.
  */
 import type { CustomFieldModel, EntityTypeItemJson } from "../../data/models/CustomFieldModel";
-import type { FieldHistoryPage, FieldUsage } from "../entities/FieldInsight";
+import type { FieldHistoryPage, FieldUsage, FieldVersionsResponse } from "../entities/FieldInsight";
 
 export interface CustomFieldListResult {
   items: CustomFieldModel[];
@@ -35,4 +35,6 @@ export interface ICustomFieldService {
   delete(id: string, force?: boolean): Promise<void>;
   getHistory(id: string, page: number, pageSize: number): Promise<FieldHistoryPage>;
   getUsage(id: string): Promise<FieldUsage>;
+  /** `GET /custom-fields/versions/{id}` -- the field's version chain. See `FieldVersionsResponse`. */
+  getVersions(id: string): Promise<FieldVersionsResponse>;
 }

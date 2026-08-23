@@ -104,6 +104,11 @@ export interface SchemaDefinitionJson {
   groupStableKey: string | null;
   /** True for a platform-owned definition. Same reasoning as `SchemaGroupJson.isGlobal`. */
   isGlobal: boolean;
+  /**
+   * Which entity type a Reference-type field is pinned to, or null when unpinned. Trailing on the
+   * backend record (`SchemaDefinition.ReferenceTargetEntityTypeKey`) so it stays last here too.
+   */
+  referenceTargetEntityTypeKey: string | null;
 }
 
 /** `SchemaBundle` — the whole response body. */
@@ -187,6 +192,7 @@ export class SchemaDefinitionModel {
   readonly isExportable: boolean;
   readonly groupStableKey: string | null;
   readonly isGlobal: boolean;
+  readonly referenceTargetEntityTypeKey: string | null;
 
   constructor(fields: SchemaDefinitionJson) {
     this.entityTypeKey = fields.entityTypeKey;
@@ -207,6 +213,7 @@ export class SchemaDefinitionModel {
     this.isExportable = fields.isExportable;
     this.groupStableKey = fields.groupStableKey ?? null;
     this.isGlobal = fields.isGlobal;
+    this.referenceTargetEntityTypeKey = fields.referenceTargetEntityTypeKey ?? null;
   }
 
   /** Create a SchemaDefinitionModel from API JSON. */
@@ -235,6 +242,7 @@ export class SchemaDefinitionModel {
       isExportable: this.isExportable,
       groupStableKey: this.groupStableKey,
       isGlobal: this.isGlobal,
+      referenceTargetEntityTypeKey: this.referenceTargetEntityTypeKey,
     };
   }
 }

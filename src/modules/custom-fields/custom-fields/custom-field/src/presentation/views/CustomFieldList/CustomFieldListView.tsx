@@ -35,6 +35,7 @@ import {
 import {
   VALUE_TYPE_CATALOG,
   ALL_VALUE_TYPES,
+  hasOptionsList,
   type CustomFieldValueTypeName,
 } from "../../registries/valueTypeRegistry";
 import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../../registries/validatorKindRegistry";
@@ -52,15 +53,29 @@ import { usePermission } from "@core/hooks/use-permission";
 import { FieldHistoryDialog } from "../../dialogs/FieldHistoryDialog";
 import { FieldImpactDialog } from "../../dialogs/FieldImpactDialog";
 import { useFieldInsightViewModel } from "../../viewmodels/useFieldInsightViewModel";
+// P-4 follow-up. The option-set backend (bind/rebind/unbind) shipped with no frontend caller; this
+// is it. See useOptionSetBindingViewModel.ts's own header for the design this dialog implements.
+import { OptionSetBindingDialog } from "../../dialogs/OptionSetBindingDialog";
+import { useOptionSetBindingViewModel } from "../../viewmodels/useOptionSetBindingViewModel";
 // Wave 6 row 6.5. Self-contained: it owns its own permission gate, its own open
 // state and its own locale chunk, so it adds nothing to the config memo below.
 import { SchemaExportButton } from "../../../../../schema/src/presentation/components/SchemaExportButton";
+// Wave 6 row 6.5's import half, counterpart to the export button beside it --
+// same schema submodule, same self-contained shape, own permission gate
+// (custom-field-groups.create AND custom-fields.create) and its own dialog.
+import { SchemaImportButton } from "../../../../../schema/src/presentation/components/SchemaImportButton";
 // Wave 6 row 6.4. Same shape as the schema button beside it, and self-contained
 // for the same reasons. This is the endpoint's FIRST frontend caller: the export
 // route has been complete server-side for a while with no way to reach it from
 // the product, and the operator guide told testers to click an Export action in
 // this header that did not exist.
 import { DefinitionExportButton } from "../../../../../definition-export/src/presentation/components/DefinitionExportButton";
+// Wave 6 row 6.4's completion. The data-shaped sibling of the two buttons above:
+// definitions and schema both export CONFIGURATION, this exports the stored
+// VALUES recorded against real records. Also self-contained, but its own
+// permission gate is data-driven rather than a single static permission --
+// see the component's own doc comment for why.
+import { ValueExportButton } from "../../../../../value-export/src/presentation/components/ValueExportButton";
 
 // Single source of truth for per-value-type presentation metadata (badge
 // tone, placeholder/options applicability, display label) -- see
@@ -469,6 +484,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   // `insight` itself would satisfy the linter and defeat the memo: the hook returns a fresh
   // object literal every render even though each callback inside it is memoized.
   const { openUsage, openHistory, requestDelete } = insight;
+  // P-4 follow-up -- the option-set binding dialog's state and writes. Called unconditionally, same
+  // shape as `insight` above: the dialog itself only mounts once a row action opens it (see the
+  // render below), but the row action's OWN gate (`canViewOptionSets`) needs `openBinding` before
+  // that happens.
+  const optionSetBinding = useOptionSetBindingViewModel();
+  const { openBinding } = optionSetBinding;
   const {
     options: fieldGroupOptions,
     isLoading: isFieldGroupsLoading,
@@ -828,6 +849,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
                 Gated internally on `custom-fields.export`, the same permission
                 the endpoint requires, and renders nothing without it. */}
             <SchemaExportButton />
+            {/* Wave 6 row 6.5's import half. Placed immediately next to the
+                export button it counterparts -- an admin who exported a
+                schema to move it somewhere else looks for the way back in
+                the same place they found the way out. Gated on BOTH
+                `custom-field-groups.create` and `custom-fields.create`, the
+                same two permissions the endpoint itself requires, and
+                renders nothing without both. */}
+            <SchemaImportButton />
             {/* Wave 6 row 6.4. The spreadsheet of DEFINITIONS, next to the JSON
                 schema bundle because both are exports of this screen's contents
                 and an admin looking for one will look for the other in the same
@@ -837,6 +866,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
                 for size. Gated internally on `custom-fields.export`, the same
                 permission the endpoint requires, and renders nothing without it. */}
             <DefinitionExportButton />
+            {/* Wave 6 row 6.4's completion. Exports the STORED VALUES recorded
+                against this entity type's records -- the data-shaped sibling of
+                the two buttons before it, which both export configuration. Its
+                own permission gate is data-driven (per-entity-type view access)
+                rather than the single static `custom-fields.export` the two
+                buttons above check, so it renders nothing only once the entity-
+                type catalog is loaded and none of it is viewable by this caller
+                -- see `ValueExportButton`'s own doc comment. */}
+            <ValueExportButton />
           </div>
           {isEntityTypesError ? (
             <ErrorMessage
@@ -1237,6 +1275,24 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           show: (item: CustomField) => isPlatformContext || !item.isGlobal,
         },
         {
+          // P-4 follow-up. Only for a value type that actually owns an options list -- every other
+          // type has no shared-set concept and offering this action there would open a dialog with
+          // nothing to attach. Gated on the SAME permission the destination's own picker re-checks
+          // (`canViewOptionSets`, `custom-field-option-sets.view`) -- offering a row action that
+          // opens onto a dialog the picker inside it will refuse is the same dead end this file's
+          // other option-set gate already avoids.
+          label: tFn("customField.optionSetBinding.actionLabel"),
+          onClick: (item: CustomField) => openBinding(item.id, item.labelEn || item.key),
+          variant: "ghost" as const,
+          icon: <Layers className="h-4 w-4" />,
+          // `hasOptionsList`, not a third inline catalog-lookup-with-fallback expression written out
+          // by hand -- see that helper's own doc comment: the two hand-written copies that already
+          // exist in this file (the create and edit forms' own "options" field guards, just below)
+          // are pinned at an EXACT count by two other test files, and a third literal copy of that
+          // same expression here would trip that pin for a reason unrelated to what it protects.
+          show: (item: CustomField) => canViewOptionSets && hasOptionsList(item.valueType),
+        },
+        {
           label: tFn("customField.impact.actionLabel"),
           onClick: (item: CustomField) => openUsage(item.id),
           variant: "ghost" as const,
@@ -1279,6 +1335,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       openUsage,
       openHistory,
       requestDelete,
+      openBinding,
       canViewHistory,
       canViewUsage,
       entityTypeOptions,
@@ -1360,6 +1417,35 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
             : undefined
         }
       />
+
+      {/* P-4 follow-up. Conditionally mounted, unlike the two dialogs above: `useOptionSetBindingViewModel`
+          shares `useOptionSetViewModel`'s sets-list query, which fires the moment it is called with
+          `canView` true, so mounting this dialog only while a field is actually targeted keeps that
+          request from firing before any admin has opened it. */}
+      {optionSetBinding.target && (
+        <OptionSetBindingDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) optionSetBinding.closeBinding();
+          }}
+          fieldLabel={optionSetBinding.target.fieldLabel}
+          canBind={optionSetBinding.canBind}
+          bindableSets={optionSetBinding.bindableSets}
+          isSetsLoading={optionSetBinding.isSetsLoading}
+          isSetsError={optionSetBinding.isSetsError}
+          onRetrySets={optionSetBinding.refetchSets}
+          isVersionLoading={optionSetBinding.isVersionLoading}
+          isVersionError={optionSetBinding.isVersionError}
+          onRetryVersion={optionSetBinding.refetchVersion}
+          hasActiveVersion={optionSetBinding.hasActiveVersion}
+          onAttach={optionSetBinding.bind}
+          onSwitch={optionSetBinding.rebind}
+          onDetach={optionSetBinding.unbind}
+          isAttaching={optionSetBinding.isBinding}
+          isSwitching={optionSetBinding.isRebinding}
+          isDetaching={optionSetBinding.isUnbinding}
+        />
+      )}
     </>
   );
 });

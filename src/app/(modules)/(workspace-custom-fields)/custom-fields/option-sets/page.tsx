@@ -15,7 +15,7 @@
  */
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { OptionSetListView } from "@modules/custom-fields/option-set/src/presentation/views/OptionSetListView";
+import { OptionSetListView } from "@modules/custom-fields/option-set";
 
 export const metadata: Metadata = {
   title: "Option Sets",
