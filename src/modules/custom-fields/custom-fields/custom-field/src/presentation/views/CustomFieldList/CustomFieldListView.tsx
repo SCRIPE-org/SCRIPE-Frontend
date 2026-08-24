@@ -1240,7 +1240,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         // Scope is a deliberate platform decision and a fixed tenant value.
         // It is removed before the request is sent; only the normalized
         // isGlobal flag reaches the backend, which independently enforces it.
-        scope: getInitialCustomFieldScope(isPlatformContext),
+        isGlobal: getInitialCustomFieldScope(isPlatformContext),
       },
       // Extracted to its own module during the Step 2.5 fix round (C-1) so a
       // test can run the REAL builder against a REAL entity instead of

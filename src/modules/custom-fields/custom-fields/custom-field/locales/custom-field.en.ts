@@ -108,6 +108,9 @@ export const en = {
       restricted: "Restricted",
     },
     hints: {
+      isGlobal:
+        "When enabled, this field is inherited by every tenant across the platform. " +
+        "When disabled, it remains scoped to platform records only.",
       sensitivity:
         "How this field's values should be treated. This is a label for reporting and export " +
         "handling \u2014 it does not control who can see the field. Use field-level security for that.",

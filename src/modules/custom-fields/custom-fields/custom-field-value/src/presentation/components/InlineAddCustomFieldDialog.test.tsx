@@ -151,26 +151,22 @@ describe("InlineAddCustomFieldDialog", () => {
       vi.mocked(useTenantContext).mockReturnValue(defaultTenantContext as any);
     });
 
-    it("offers explicit Global and Platform-only choices in pure platform context, defaulting safely to Platform-only", () => {
+    it("offers isGlobal switch in pure platform context, defaulting safely to false", () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      const scope = screen.getByRole("combobox", { name: "customField.fields.scope" });
-      expect(scope).toHaveTextContent("customField.scopeOptions.platformOnly");
-
-      fireEvent.click(scope);
-      expect(screen.getByRole("option", { name: "customField.scopeOptions.global" })).toBeInTheDocument();
-      expect(
-        screen.getByRole("option", { name: /customField\.scopeOptions\.platformOnly$/ })
-      ).toBeInTheDocument();
+      const isGlobalSwitch = screen.getByRole("switch", { name: "customField.fields.isGlobal" });
+      expect(isGlobalSwitch).not.toBeChecked();
     });
 
-    it("submits isGlobal:true only after an explicit Global selection", async () => {
+    it("submits isGlobal:true when isGlobal switch is toggled", async () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      fireEvent.click(screen.getByRole("combobox", { name: "customField.fields.scope" }));
-      fireEvent.click(screen.getByRole("option", { name: "customField.scopeOptions.global" }));
+      const isGlobalSwitch = screen.getByRole("switch", { name: "customField.fields.isGlobal" });
+      fireEvent.click(isGlobalSwitch);
+      expect(isGlobalSwitch).toBeChecked();
+
       fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
       fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });
       fireEvent.click(screen.getByText("common.save"));
@@ -180,7 +176,7 @@ describe("InlineAddCustomFieldDialog", () => {
       );
     });
 
-    it("locks tenant-context authors to tenant scope and submits isGlobal:false", async () => {
+    it("locks tenant-context authors to tenant scope and hides isGlobal switch submitting isGlobal:false", async () => {
       const { useTenantContext } = await import("@core/providers/tenant-context-provider");
       vi.mocked(useTenantContext).mockReturnValue({
         ...defaultTenantContext,
@@ -191,8 +187,7 @@ describe("InlineAddCustomFieldDialog", () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      const scope = screen.getByRole("combobox", { name: "customField.fields.scope" });
-      expect(scope).toHaveTextContent("customField.scopeOptions.tenant");
+      expect(screen.queryByRole("switch", { name: "customField.fields.isGlobal" })).not.toBeInTheDocument();
 
       fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
       fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });

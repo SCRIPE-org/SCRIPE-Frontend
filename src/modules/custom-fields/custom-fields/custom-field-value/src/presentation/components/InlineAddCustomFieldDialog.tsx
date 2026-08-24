@@ -336,7 +336,7 @@ export function InlineAddCustomFieldDialog({
                   isExportable: true,
                   isRequired: false,
                   sortOrder: 0,
-                  scope: getInitialCustomFieldScope(isPlatformContext),
+                  isGlobal: getInitialCustomFieldScope(isPlatformContext),
                 }}
                 onSubmit={async (data) => {
                   const { customFieldRepository } = getCustomFieldsContainer();

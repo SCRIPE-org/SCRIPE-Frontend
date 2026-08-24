@@ -99,8 +99,11 @@ describe("CustomFieldDetailDialog", () => {
       {
         id: "group-1",
         entityTypeKey: "party.person",
-        nameEn: "Personal Info",
-        nameAr: "المعلومات الشخصية",
+        stableKey: "personal_info",
+        labelEn: "Personal Info",
+        labelAr: "المعلومات الشخصية",
+        sortOrder: 0,
+        isGlobal: false,
       },
     ]);
   });
@@ -154,7 +157,7 @@ describe("CustomFieldDetailDialog", () => {
 
     // Check header labels and key
     expect(screen.getByRole("heading", { name: /National ID/i })).toBeInTheDocument();
-    expect(screen.getByText("(الرقم القومي)")).toBeInTheDocument();
+    expect(screen.getAllByText(/الرقم القومي/)[0]).toBeInTheDocument();
     expect(screen.getByText("national_id")).toBeInTheDocument();
 
     // Check entity type display
