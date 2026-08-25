@@ -33,6 +33,17 @@ if (typeof (globalThis as any).ResizeObserver === "undefined") {
   };
 }
 
+/**
+ * What the server sends as `jobRunId` for a refused dry run.
+ *
+ * NOT null: the backend's `ChangeFieldTypeResult.JobRunId` is a non-nullable `Guid`, documented as
+ * "non-empty only when values were actually written", so a refusal serialises the all-zero Guid
+ * rather than omitting the field. The dialog only reads `jobRunId` inside its `applied` branch, so
+ * this value is never rendered -- it is here to keep the fixture a shape the API can actually
+ * produce.
+ */
+const REFUSED_RUN_JOB_ID = "00000000-0000-0000-0000-000000000000";
+
 const mockAvailableTargetTypes = [
   "Text",
   "Number",
@@ -150,14 +161,22 @@ describe("ConvertValueTypeDialog", () => {
   it("renders refusal table when dry-run fails with refusals", () => {
     const refusalResult: ChangeFieldTypeResult = {
       applied: false,
-      jobRunId: null,
+      jobRunId: REFUSED_RUN_JOB_ID,
       kind: "Lossy",
-      totalScanned: 5,
+      examined: 5,
       converted: 0,
       totalRefusals: 2,
       refusals: [
-        { ownerEntityId: "ath-101", reason: "Value 'invalid' cannot parse as Number" },
-        { ownerEntityId: "ath-102", reason: "Value 'N/A' cannot parse as Number" },
+        {
+          entityFieldValueId: "efv-101",
+          ownerEntityId: "ath-101",
+          reason: "Value 'invalid' cannot parse as Number",
+        },
+        {
+          entityFieldValueId: "efv-102",
+          ownerEntityId: "ath-102",
+          reason: "Value 'N/A' cannot parse as Number",
+        },
       ],
     };
 
@@ -201,7 +220,7 @@ describe("ConvertValueTypeDialog", () => {
       applied: true,
       jobRunId: "job-run-77",
       kind: "Lossless",
-      totalScanned: 25,
+      examined: 25,
       converted: 25,
       totalRefusals: 0,
       refusals: [],

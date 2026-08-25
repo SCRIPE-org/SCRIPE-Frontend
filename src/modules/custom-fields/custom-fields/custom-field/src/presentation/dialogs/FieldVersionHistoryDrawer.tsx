@@ -207,7 +207,7 @@ export function FieldVersionHistoryDrawer({
                 <p className="text-xs text-amber-800 dark:text-amber-300">
                   {t("customField.versions.draftNotice", {
                     defaultValue:
-                      "This draft is isolated. Changes will not affect live production forms until published.",
+                      "This draft is a snapshot from when it was created. It will not pick up any edits made to the live version while it stays open. Publishing replaces the live version with this draft, discarding any live edits made in the meantime.",
                   })}
                 </p>
 
@@ -255,7 +255,7 @@ export function FieldVersionHistoryDrawer({
                     <p className="text-xs text-muted-foreground">
                       {t("customField.versions.createDraftExplanation", {
                         defaultValue:
-                          "Mint a draft copy from the live definition to edit options and visibility rules safely.",
+                          "Mint a draft copy from the live definition to edit options and visibility rules safely. Publish it quickly: it won't pick up live edits made while it's open, and publishing overwrites the live version with the draft as it stood at creation.",
                       })}
                     </p>
                   </div>

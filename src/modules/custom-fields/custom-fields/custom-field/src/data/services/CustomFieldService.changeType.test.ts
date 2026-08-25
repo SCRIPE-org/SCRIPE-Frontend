@@ -12,7 +12,7 @@ describe("CustomFieldService type change & rollback API calls", () => {
       applied: true,
       jobRunId: "job-123",
       kind: "Lossless",
-      totalScanned: 50,
+      examined: 50,
       converted: 50,
       totalRefusals: 0,
       refusals: [],
@@ -39,10 +39,16 @@ describe("CustomFieldService type change & rollback API calls", () => {
   });
 
   it("rollbackFieldTypeChange posts to /v1/custom-fields/change-type/{jobRunId}/rollback", async () => {
+    // Mirrors the backend record verbatim (SnapshotsFound/Restored/ValuesGone/Unreadable/
+    // TypeReverted). The previous fixture named seven properties of which only `restored` was
+    // real, which is exactly why the drift went unnoticed: the service reads this shape through an
+    // unchecked generic, so a fictional fixture round-trips happily through a passing test.
     const mockRollbackResult: RollbackFieldTypeChangeResult = {
-      applied: true,
-      restoredRows: 50,
-      message: "Successfully rolled back type change",
+      snapshotsFound: 50,
+      restored: 50,
+      valuesGone: 0,
+      unreadable: 0,
+      typeReverted: true,
     };
 
     const api: IApiService = {

@@ -210,15 +210,37 @@ export interface ChangeFieldTypeResult {
 
 /**
  * The outcome of a type-change rollback attempt.
+ *
+ * MIRRORS THE BACKEND RECORD EXACTLY, AND MUST KEEP DOING SO.
+ * ----------------------------------------------------------------
+ * `RollbackFieldTypeChangeCommand.RollbackFieldTypeChangeResult` is returned straight out of
+ * `CustomFieldsController.RollbackFieldTypeChange` via `Ok(result.Value)` — there is no reshaping
+ * DTO anywhere on the path, and `CustomFieldService` reads it through an unchecked
+ * `api.post<RollbackFieldTypeChangeResult>` generic. Nothing at runtime validates that this
+ * interface matches what actually arrives, so a name invented here silently reads `undefined`
+ * forever. An earlier revision of this interface declared seven properties of which only
+ * `restored` was real; the rollback alert rendered "restored N records back to type ''" and the
+ * partial-failure counts below were dropped entirely.
+ *
+ * WHY THE SKIP COUNTS ARE NOT COSMETIC
+ * -------------------------------------
+ * The command's own doc comment is explicit that it "reports partial failure rather than success:
+ * a value row deleted since the change, or a snapshot that cannot be read, is counted and
+ * returned. A rollback that silently skipped either would tell an operator their data was restored
+ * while leaving converted values in place." Presenting a rollback as clean while `valuesGone` or
+ * `unreadable` is non-zero re-creates precisely the failure the backend refuses to commit.
  */
 export interface RollbackFieldTypeChangeResult {
-  jobRunId: string;
-  fieldId: string;
-  restoredToType: string;
+  /** Snapshots the run captured — the denominator `restored` should be read against. */
+  snapshotsFound: number;
+  /** Prior values actually written back. */
   restored: number;
-  skippedDeleted: number;
-  skippedUnreadable: number;
-  isPartial: boolean;
+  /** Snapshots whose value row no longer exists, so nothing could be restored onto it. */
+  valuesGone: number;
+  /** Snapshots that could not be deserialized. Their records still hold converted values. */
+  unreadable: number;
+  /** Whether the field's declared value type was moved back to the pre-change type. */
+  typeReverted: boolean;
 }
 
 /**

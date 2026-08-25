@@ -9,6 +9,16 @@ import type {
   RollbackFieldTypeChangeResult,
 } from "../../domain/entities/FieldInsight";
 import { toast } from "@core/hooks/use-enhanced-toast";
+import { makeCustomField } from "../../testSupport/makeCustomField";
+
+/**
+ * What the server sends as `jobRunId` for a refused dry run.
+ *
+ * NOT null: the backend's `ChangeFieldTypeResult.JobRunId` is a non-nullable `Guid`, documented as
+ * "non-empty only when values were actually written", so a refusal serialises the all-zero Guid
+ * rather than omitting the field.
+ */
+const REFUSED_RUN_JOB_ID = "00000000-0000-0000-0000-000000000000";
 
 vi.mock("../../../../di", () => ({ getCustomFieldsContainer: vi.fn() }));
 vi.mock("@core/hooks/use-enhanced-toast", () => ({
@@ -48,19 +58,16 @@ describe("useConvertValueTypeViewModel", () => {
     rollbackFieldTypeChange: vi.fn(),
   };
 
-  const sampleField: CustomField = {
+  // `openConvert` reads id/key/labelEn/valueType, which are class getters over `data` --
+  // so this has to be a real entity, not an object literal.
+  const sampleField: CustomField = makeCustomField({
     id: "field-1",
     entityTypeKey: "Athlete",
     key: "bio",
     labelEn: "Biography",
     labelAr: "السيرة الذاتية",
     valueType: "Text",
-    isRequired: false,
-    isGlobal: false,
-    order: 0,
-    isFilterable: true,
-    isSearchable: true,
-  };
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -177,7 +184,7 @@ describe("useConvertValueTypeViewModel", () => {
       applied: true,
       jobRunId: "job-run-99",
       kind: "Lossless",
-      totalScanned: 10,
+      examined: 10,
       converted: 10,
       totalRefusals: 0,
       refusals: [],
@@ -208,14 +215,22 @@ describe("useConvertValueTypeViewModel", () => {
   it("handles dry-run refusal properly without mutating data", async () => {
     const refusedResult: ChangeFieldTypeResult = {
       applied: false,
-      jobRunId: null,
+      jobRunId: REFUSED_RUN_JOB_ID,
       kind: "Lossy",
-      totalScanned: 10,
+      examined: 10,
       converted: 0,
       totalRefusals: 2,
       refusals: [
-        { ownerEntityId: "ath-1", reason: "Cannot parse 'abc' as Number" },
-        { ownerEntityId: "ath-2", reason: "Cannot parse 'xyz' as Number" },
+        {
+          entityFieldValueId: "efv-1",
+          ownerEntityId: "ath-1",
+          reason: "Cannot parse 'abc' as Number",
+        },
+        {
+          entityFieldValueId: "efv-2",
+          ownerEntityId: "ath-2",
+          reason: "Cannot parse 'xyz' as Number",
+        },
       ],
     };
     mockRepo.changeFieldType.mockResolvedValueOnce(refusedResult);
@@ -240,9 +255,11 @@ describe("useConvertValueTypeViewModel", () => {
 
   it("executes rollback successfully", async () => {
     const rollbackResult: RollbackFieldTypeChangeResult = {
-      applied: true,
-      restoredRows: 10,
-      message: "Rolled back successfully",
+      snapshotsFound: 10,
+      restored: 10,
+      valuesGone: 0,
+      unreadable: 0,
+      typeReverted: true,
     };
     mockRepo.rollbackFieldTypeChange.mockResolvedValueOnce(rollbackResult);
 
@@ -261,5 +278,37 @@ describe("useConvertValueTypeViewModel", () => {
     expect(mockRepo.rollbackFieldTypeChange).toHaveBeenCalledWith("job-run-99");
     expect(result.current.lastRollbackResult).toEqual(rollbackResult);
     expect(toast.success).toHaveBeenCalled();
+  });
+
+  // THE REGRESSION GUARD. A rollback returns 200 whether or not it restored everything -- the
+  // command counts what it could not put back and returns it rather than failing. Reporting that
+  // as success is the exact failure the backend refuses to commit: it tells an operator their data
+  // is back while those records still hold converted values. Deleting the skip branch in
+  // useConvertValueTypeViewModel's rollback onSuccess turns this red.
+  it("reports a rollback that skipped records as a WARNING, never as success", async () => {
+    const partialResult: RollbackFieldTypeChangeResult = {
+      snapshotsFound: 10,
+      restored: 7,
+      valuesGone: 2,
+      unreadable: 1,
+      typeReverted: true,
+    };
+    mockRepo.rollbackFieldTypeChange.mockResolvedValueOnce(partialResult);
+
+    const { result } = renderHook(() => useConvertValueTypeViewModel(), {
+      wrapper: createWrapper(),
+    });
+
+    act(() => {
+      result.current.openConvert(sampleField);
+    });
+
+    await act(async () => {
+      await result.current.executeRollback("job-run-99");
+    });
+
+    expect(toast.warning).toHaveBeenCalled();
+    expect(toast.success).not.toHaveBeenCalled();
+    expect(result.current.lastRollbackResult).toEqual(partialResult);
   });
 });

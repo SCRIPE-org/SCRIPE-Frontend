@@ -4,6 +4,8 @@ import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 import { FieldVisibilityRulesDialog } from "./FieldVisibilityRulesDialog";
 import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsight";
+import type { CustomField } from "../../domain/entities/CustomField";
+import { makeCustomField } from "../../testSupport/makeCustomField";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
@@ -41,9 +43,11 @@ const mockRules: FieldVisibilityRuleAdmin[] = [
   },
 ];
 
-const mockSiblings = [
-  { id: "f-1", key: "department", labelEn: "Department" },
-  { id: "f-2", key: "role", labelEn: "Role" },
+// `siblingFields` is `readonly CustomField[]`, and CustomField is a class reading through `data`,
+// so a `{ id, key, labelEn }` literal would leave every getter the dialog calls undefined.
+const mockSiblings: readonly CustomField[] = [
+  makeCustomField({ id: "f-1", key: "department", labelEn: "Department" }),
+  makeCustomField({ id: "f-2", key: "role", labelEn: "Role" }),
 ];
 
 describe("FieldVisibilityRulesDialog", () => {
@@ -63,11 +67,15 @@ describe("FieldVisibilityRulesDialog", () => {
         rules={mockRules}
         isRulesLoading={false}
         isRulesError={false}
+        onRetryRules={vi.fn()}
         siblingFields={mockSiblings}
         isSiblingFieldsLoading={false}
         onCreateRule={vi.fn()}
         onUpdateRule={vi.fn()}
         onDeleteRule={vi.fn()}
+        isCreating={false}
+        isUpdating={false}
+        isDeleting={false}
       />
     );
 
@@ -92,11 +100,15 @@ describe("FieldVisibilityRulesDialog", () => {
         rules={[]}
         isRulesLoading={false}
         isRulesError={false}
+        onRetryRules={vi.fn()}
         siblingFields={mockSiblings}
         isSiblingFieldsLoading={false}
         onCreateRule={vi.fn()}
         onUpdateRule={vi.fn()}
         onDeleteRule={vi.fn()}
+        isCreating={false}
+        isUpdating={false}
+        isDeleting={false}
       />
     );
 
@@ -122,11 +134,15 @@ describe("FieldVisibilityRulesDialog", () => {
         rules={[]}
         isRulesLoading={false}
         isRulesError={false}
+        onRetryRules={vi.fn()}
         siblingFields={mockSiblings}
         isSiblingFieldsLoading={false}
         onCreateRule={onCreate}
         onUpdateRule={vi.fn()}
         onDeleteRule={vi.fn()}
+        isCreating={false}
+        isUpdating={false}
+        isDeleting={false}
       />
     );
 
@@ -177,11 +193,15 @@ describe("FieldVisibilityRulesDialog", () => {
         rules={mockRules}
         isRulesLoading={false}
         isRulesError={false}
+        onRetryRules={vi.fn()}
         siblingFields={mockSiblings}
         isSiblingFieldsLoading={false}
         onCreateRule={vi.fn()}
         onUpdateRule={vi.fn()}
         onDeleteRule={onDelete}
+        isCreating={false}
+        isUpdating={false}
+        isDeleting={false}
       />
     );
 

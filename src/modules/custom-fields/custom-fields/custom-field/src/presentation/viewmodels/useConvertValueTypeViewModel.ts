@@ -154,10 +154,26 @@ export function useConvertValueTypeViewModel() {
     onSuccess: (res: RollbackFieldTypeChangeResult) => {
       setLastRollbackResult(res);
       invalidateCaches();
+
+      // A 200 means the rollback RAN, not that it restored everything. The command counts the
+      // snapshots it could not act on and returns them rather than failing the call, so treating
+      // any 200 as success is what would tell an operator their data is back while converted
+      // values remain in place -- see RollbackFieldTypeChangeResult's own doc comment.
+      const skipped = res.valuesGone + res.unreadable;
+      if (skipped > 0) {
+        toast.warning(
+          t("customField.convertValueType.toast.rollbackPartial", {
+            restored: res.restored,
+            snapshotsFound: res.snapshotsFound,
+            skipped,
+          })
+        );
+        return;
+      }
+
       toast.success(
         t("customField.convertValueType.toast.rollbackSuccess", {
           restored: res.restored,
-          targetType: res.restoredToType,
         })
       );
     },

@@ -11,6 +11,7 @@ import type {
   DiscardFieldVersionDraftResult,
 } from "../../domain/entities/FieldInsight";
 import { toast } from "@core/hooks/use-enhanced-toast";
+import { makeCustomField } from "../../testSupport/makeCustomField";
 
 vi.mock("../../../../di", () => ({ getCustomFieldsContainer: vi.fn() }));
 vi.mock("@core/hooks/use-enhanced-toast", () => ({
@@ -52,25 +53,16 @@ describe("useFieldVersionsViewModel", () => {
     discardFieldVersionDraft: vi.fn(),
   };
 
-  const sampleField: CustomField = {
+  // `openVersions` reads id/labelEn/key/entityTypeKey, which are class getters over `data` --
+  // so this has to be a real entity, not an object literal cast into position.
+  const sampleField: CustomField = makeCustomField({
     id: "field-101",
     entityTypeKey: "StaffMember",
     key: "jerseyNumber",
     labelEn: "Jersey Number",
     labelAr: "رقم القميص",
     valueType: "Number",
-    isRequired: false,
-    isGlobal: false,
-    order: 0,
-    options: [],
-    validationRules: {},
-    isSearchable: true,
-    isFilterable: true,
-    showInList: true,
-    status: "Active",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  } as unknown as CustomField;
+  });
 
   const mockVersions: FieldVersionsResponse = {
     fieldId: "field-101",
@@ -78,14 +70,15 @@ describe("useFieldVersionsViewModel", () => {
     publishedVersionNumber: 1,
     versions: [
       {
-        versionId: "v-1",
+        id: "v-1",
         versionNumber: 1,
         status: "Published",
-        effectiveFrom: "2026-08-01T00:00:00Z",
-        effectiveTo: null,
-        optionsCount: 0,
-        rulesCount: 0,
-        createdAt: "2026-08-01T00:00:00Z",
+        optionCount: 0,
+        ruleCount: 0,
+        isPlatformOwned: false,
+        effectiveFromUtc: "2026-08-01T00:00:00Z",
+        effectiveToUtc: null,
+        publishedAtUtc: "2026-08-01T00:00:00Z",
       },
     ],
   };

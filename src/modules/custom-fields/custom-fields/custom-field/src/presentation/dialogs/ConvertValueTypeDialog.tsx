@@ -16,7 +16,6 @@ import {
   RefreshCcw,
   RotateCcw,
   ShieldAlert,
-  Sliders,
   XCircle,
 } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
@@ -329,18 +328,39 @@ export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog
                 </Alert>
               )}
 
-              {lastRollbackResult && (
-                <Alert variant="info">
-                  <Info className="h-4 w-4" />
-                  <AlertTitle>{t("customField.convertValueType.result.rolledBackTitle")}</AlertTitle>
-                  <AlertDescription>
-                    {t("customField.convertValueType.result.rolledBackDescription", {
-                      restored: lastRollbackResult.restored,
-                      type: lastRollbackResult.restoredToType,
-                    })}
-                  </AlertDescription>
-                </Alert>
-              )}
+              {/* A rollback that ran is not the same as a rollback that restored everything.
+                  `valuesGone` and `unreadable` are the records the command could NOT put back --
+                  their rows still hold converted values -- so a non-zero skip count is reported as
+                  a warning naming the shortfall, never as the clean "rolled back" confirmation. */}
+              {lastRollbackResult &&
+                (lastRollbackResult.valuesGone + lastRollbackResult.unreadable > 0 ? (
+                  <Alert variant="warning">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>
+                      {t("customField.convertValueType.result.rolledBackPartialTitle")}
+                    </AlertTitle>
+                    <AlertDescription>
+                      {t("customField.convertValueType.result.rolledBackPartialDescription", {
+                        restored: lastRollbackResult.restored,
+                        snapshotsFound: lastRollbackResult.snapshotsFound,
+                        valuesGone: lastRollbackResult.valuesGone,
+                        unreadable: lastRollbackResult.unreadable,
+                      })}
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <Alert variant="info">
+                    <Info className="h-4 w-4" />
+                    <AlertTitle>
+                      {t("customField.convertValueType.result.rolledBackTitle")}
+                    </AlertTitle>
+                    <AlertDescription>
+                      {t("customField.convertValueType.result.rolledBackDescription", {
+                        restored: lastRollbackResult.restored,
+                      })}
+                    </AlertDescription>
+                  </Alert>
+                ))}
             </div>
           )}
         </div>
