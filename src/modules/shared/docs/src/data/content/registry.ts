@@ -103,6 +103,7 @@ import "./modules/custom-fields/custom-fields-reference-lookups";
 import "./modules/custom-fields/custom-fields-defining";
 import "./modules/custom-fields/custom-fields-field-groups";
 import "./modules/custom-fields/custom-fields-options";
+import "./modules/custom-fields/custom-fields-option-sets";
 import "./modules/custom-fields/custom-fields-validators";
 import "./modules/custom-fields/custom-fields-security";
 import "./modules/custom-fields/custom-fields-managing";

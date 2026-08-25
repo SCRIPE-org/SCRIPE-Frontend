@@ -24,4 +24,23 @@ export const CUSTOM_FIELD_ENDPOINTS = {
    * nested under this one.
    */
   VERSIONS: (id: string) => `${V1}/custom-fields/versions/${id}`,
+  /**
+   * Visibility Rules endpoints (Wave 5 row 5.3) — flat controller at `custom-fields/visibility-rules`.
+   */
+  VISIBILITY_RULES: (customFieldId: string) =>
+    `${V1}/custom-fields/visibility-rules?customFieldId=${customFieldId}`,
+  CREATE_VISIBILITY_RULE: `${V1}/custom-fields/visibility-rules`,
+  UPDATE_VISIBILITY_RULE: (id: string) => `${V1}/custom-fields/visibility-rules/${id}`,
+  DELETE_VISIBILITY_RULE: (id: string) => `${V1}/custom-fields/visibility-rules/${id}`,
+  /**
+   * Value-Type Conversion endpoints (Wave 6 row 6.2).
+   */
+  CHANGE_TYPE: (id: string) => `${V1}/custom-fields/${id}/change-type`,
+  ROLLBACK_CHANGE_TYPE: (jobRunId: string) => `${V1}/custom-fields/change-type/${jobRunId}/rollback`,
+  /**
+   * Version Lifecycle endpoints (Step 1.3 / P-10).
+   */
+  CREATE_VERSION_DRAFT: (customFieldId: string) => `${V1}/custom-fields/versions/${customFieldId}/draft`,
+  PUBLISH_VERSION: (customFieldId: string) => `${V1}/custom-fields/versions/${customFieldId}/publish`,
+  DISCARD_VERSION_DRAFT: (customFieldId: string) => `${V1}/custom-fields/versions/${customFieldId}/discard-draft`,
 } as const;

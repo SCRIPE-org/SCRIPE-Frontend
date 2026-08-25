@@ -21,6 +21,10 @@ const sections: DocSection[] = [
     headers: [`${K}.thAction`, `${K}.thDoes`, `${K}.thNeeds`],
     rows: [
       ["Edit", `${K}.actEdit`, "custom-fields.update"],
+      ["Option sets", `${K}.actOptionSets`, "custom-fields.update"],
+      ["Visibility rules", `${K}.actVisibilityRules`, "custom-fields.update"],
+      ["Convert value type", `${K}.actConvertType`, "custom-fields.update"],
+      ["Version history & drafts", `${K}.actVersions`, "custom-fields.view"],
       ["History", `${K}.actHistory`, "custom-fields.view"],
       ["Usage & impact", `${K}.actUsage`, "custom-fields.view"],
       ["Delete", `${K}.actDelete`, "custom-fields.delete"],
@@ -36,6 +40,93 @@ const sections: DocSection[] = [
     variant: "caution",
     titleKey: `${K}.editWarnTitle`,
     contentKey: `${K}.editWarnContent`,
+  },
+
+  // ─── Visibility Rules Administration ──────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: `${K}.visibilityRulesTitle`,
+    id: "visibility-rules-administration",
+  },
+  { type: "paragraph", contentKey: `${K}.visibilityRulesIntro` },
+  {
+    type: "table",
+    headers: [`${K}.thOperator`, `${K}.thOperatorMeaning`, `${K}.thOperatorExample`],
+    rows: [
+      [`${K}.opEquals`, `${K}.opEqualsMeaning`, `${K}.opEqualsExample`],
+      [`${K}.opNotEquals`, `${K}.opNotEqualsMeaning`, `${K}.opNotEqualsExample`],
+      [`${K}.opIsEmpty`, `${K}.opIsEmptyMeaning`, `${K}.opIsEmptyExample`],
+      [`${K}.opIsNotEmpty`, `${K}.opIsNotEmptyMeaning`, `${K}.opIsNotEmptyExample`],
+      [`${K}.opIn`, `${K}.opInMeaning`, `${K}.opInExample`],
+      [`${K}.opNotIn`, `${K}.opNotInMeaning`, `${K}.opNotInExample`],
+      [`${K}.opGreaterThan`, `${K}.opGreaterThanMeaning`, `${K}.opGreaterThanExample`],
+      [`${K}.opLessThan`, `${K}.opLessThanMeaning`, `${K}.opLessThanExample`],
+    ],
+  },
+  { type: "paragraph", contentKey: `${K}.visibilityRulesEvaluation` },
+  {
+    type: "info",
+    variant: "tip",
+    titleKey: `${K}.visibilityRulesTipTitle`,
+    contentKey: `${K}.visibilityRulesTipContent`,
+  },
+
+  // ─── Value-Type Conversion & Rollback ─────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: `${K}.conversionTitle`,
+    id: "value-type-conversion",
+  },
+  { type: "paragraph", contentKey: `${K}.conversionIntro` },
+  {
+    type: "table",
+    headers: [`${K}.thConversionClass`, `${K}.thConversionPairs`, `${K}.thConversionRisk`],
+    rows: [
+      [`${K}.classLossless`, `${K}.classLosslessPairs`, `${K}.classLosslessRisk`],
+      [`${K}.classLossy`, `${K}.classLossyPairs`, `${K}.classLossyRisk`],
+      [`${K}.classIncompatible`, `${K}.classIncompatiblePairs`, `${K}.classIncompatibleRisk`],
+    ],
+  },
+  {
+    type: "info",
+    variant: "caution",
+    titleKey: `${K}.conversionLossyWarnTitle`,
+    contentKey: `${K}.conversionLossyWarnContent`,
+  },
+  { type: "paragraph", contentKey: `${K}.conversionDryRunIntro` },
+  {
+    type: "info",
+    variant: "success",
+    titleKey: `${K}.conversionRollbackTitle`,
+    contentKey: `${K}.conversionRollbackContent`,
+  },
+
+  // ─── Field Versions & Drafts Lifecycle ────────────────────
+  {
+    type: "heading",
+    level: 2,
+    titleKey: `${K}.versionsTitle`,
+    id: "version-history-and-drafts",
+  },
+  { type: "paragraph", contentKey: `${K}.versionsIntro` },
+  {
+    type: "table",
+    headers: [`${K}.thVersionStatus`, `${K}.thVersionMeaning`, `${K}.thVersionActions`],
+    rows: [
+      [`${K}.vStatusDraft`, `${K}.vMeaningDraft`, `${K}.vActionsDraft`],
+      [`${K}.vStatusPublished`, `${K}.vMeaningPublished`, `${K}.vActionsPublished`],
+      [`${K}.vStatusDeprecated`, `${K}.vMeaningDeprecated`, `${K}.vActionsDeprecated`],
+      [`${K}.vStatusArchived`, `${K}.vMeaningArchived`, `${K}.vActionsArchived`],
+    ],
+  },
+  { type: "paragraph", contentKey: `${K}.versionsPromotionIntro` },
+  {
+    type: "info",
+    variant: "warning",
+    titleKey: `${K}.versionsRuleGuardTitle`,
+    contentKey: `${K}.versionsRuleGuardContent`,
   },
 
   // ─── Deactivate vs delete ─────────────────────────────────

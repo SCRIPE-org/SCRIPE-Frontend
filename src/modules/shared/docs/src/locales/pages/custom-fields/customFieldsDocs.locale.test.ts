@@ -37,6 +37,11 @@
 import { describe, it, expect } from "vitest";
 import { en } from "./en";
 import { ar } from "./ar";
+import { de } from "./de";
+import { es } from "./es";
+import { fr } from "./fr";
+import { ru } from "./ru";
+import { zh } from "./zh";
 import { DocsRepository } from "../../../data/repositories/DocsRepository";
 
 // Registering the eleven Custom Fields pages, and only those: this test is
@@ -49,6 +54,7 @@ import "../../../data/content/modules/custom-fields/custom-fields-reference-look
 import "../../../data/content/modules/custom-fields/custom-fields-defining";
 import "../../../data/content/modules/custom-fields/custom-fields-field-groups";
 import "../../../data/content/modules/custom-fields/custom-fields-options";
+import "../../../data/content/modules/custom-fields/custom-fields-option-sets";
 import "../../../data/content/modules/custom-fields/custom-fields-validators";
 import "../../../data/content/modules/custom-fields/custom-fields-security";
 import "../../../data/content/modules/custom-fields/custom-fields-managing";
@@ -66,6 +72,7 @@ const SLUGS = [
   "modules/custom-fields-defining",
   "modules/custom-fields-field-groups",
   "modules/custom-fields-options",
+  "modules/custom-fields-option-sets",
   "modules/custom-fields-validators",
   "modules/custom-fields-security",
   "modules/custom-fields-managing",
@@ -155,14 +162,25 @@ const referencedKeys: string[] = (() => {
 })();
 
 describe("custom-fields docs locale parity", () => {
-  it("covers exactly the same leaf keys in en and ar", () => {
-    expect(leafPaths(ar).sort()).toEqual(leafPaths(en).sort());
+  it("covers exactly the same leaf keys in all 7 languages (en, ar, de, es, fr, ru, zh)", () => {
+    const enKeys = leafPaths(en).sort();
+    expect(leafPaths(ar).sort()).toEqual(enKeys);
+    expect(leafPaths(de).sort()).toEqual(enKeys);
+    expect(leafPaths(es).sort()).toEqual(enKeys);
+    expect(leafPaths(fr).sort()).toEqual(enKeys);
+    expect(leafPaths(ru).sort()).toEqual(enKeys);
+    expect(leafPaths(zh).sort()).toEqual(enKeys);
   });
 
-  it("has no empty, untrimmed or TODO-marked values in either language", () => {
+  it("has no empty, untrimmed or TODO-marked values in any of the 7 languages", () => {
     for (const [name, dictionary] of [
       ["en", en],
       ["ar", ar],
+      ["de", de],
+      ["es", es],
+      ["fr", fr],
+      ["ru", ru],
+      ["zh", zh],
     ] as const) {
       for (const path of leafPaths(dictionary)) {
         const value = readPath(dictionary, path);
@@ -194,11 +212,16 @@ describe("custom-fields docs page completeness", () => {
     }
   });
 
-  it("resolves every key the pages reference, in both languages", () => {
+  it("resolves every key the pages reference, in all 7 languages", () => {
     expect(referencedKeys.length).toBeGreaterThan(0);
     for (const key of referencedKeys) {
       expect(typeof readPath(en, key), `en:${key}`).toBe("string");
       expect(typeof readPath(ar, key), `ar:${key}`).toBe("string");
+      expect(typeof readPath(de, key), `de:${key}`).toBe("string");
+      expect(typeof readPath(es, key), `es:${key}`).toBe("string");
+      expect(typeof readPath(fr, key), `fr:${key}`).toBe("string");
+      expect(typeof readPath(ru, key), `ru:${key}`).toBe("string");
+      expect(typeof readPath(zh, key), `zh:${key}`).toBe("string");
     }
   });
 

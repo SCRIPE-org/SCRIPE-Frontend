@@ -148,3 +148,117 @@ export interface FieldVersionsResponse {
   hasDraft: boolean;
   publishedVersionNumber?: number | null;
 }
+
+/**
+ * One visibility rule as the ADMINISTRATION surface sees it — Wave 5 row 5.3.
+ * Matches FieldVisibilityRuleAdminResponse from backend.
+ */
+export interface FieldVisibilityRuleAdmin {
+  /** The rule's encrypted id. */
+  id: string;
+  /** The stored JSON payload verbatim, for round-tripping through an editor. */
+  expressionJson: string;
+  /** Parsed out for display. Null when the stored expression cannot be read. */
+  operandFieldKey?: string | null;
+  /** Parsed out for display. Null when the expression cannot be read. */
+  operator?: string | null;
+  /** Evaluation order, for determinism and diagnostics only. */
+  priority: number;
+  /** True when the stored expression fails to parse. */
+  isUnreadable: boolean;
+}
+
+/** Create-rule request body. */
+export interface CreateFieldVisibilityRuleRequest {
+  customFieldId: string;
+  expressionJson: string;
+  priority?: number;
+}
+
+/** Update-rule request body. */
+export interface UpdateFieldVisibilityRuleRequest {
+  expressionJson: string;
+  priority?: number;
+}
+
+/**
+ * How a conversion between two value types behaves (Wave 6 row 6.2).
+ */
+export type ConversionKind = "NoChange" | "Lossless" | "Lossy" | "Impossible";
+
+/**
+ * One value that could not be converted during dry-run.
+ */
+export interface ConversionRefusal {
+  entityFieldValueId: string;
+  ownerEntityId: string;
+  reason: string;
+}
+
+/**
+ * The outcome of a type-change attempt.
+ */
+export interface ChangeFieldTypeResult {
+  jobRunId: string;
+  kind: ConversionKind;
+  examined: number;
+  converted: number;
+  refusals: ConversionRefusal[];
+  totalRefusals: number;
+  applied: boolean;
+}
+
+/**
+ * The outcome of a type-change rollback attempt.
+ */
+export interface RollbackFieldTypeChangeResult {
+  jobRunId: string;
+  fieldId: string;
+  restoredToType: string;
+  restored: number;
+  skippedDeleted: number;
+  skippedUnreadable: number;
+  isPartial: boolean;
+}
+
+/**
+ * Change-type request payload.
+ */
+export interface ChangeFieldTypeRequest {
+  targetType: string;
+  confirmDataLoss?: boolean;
+}
+
+/**
+ * Result of minting a new draft version of a custom field.
+ */
+export interface CreateFieldVersionDraftResult {
+  draftVersionId: string;
+  versionNumber: number;
+  optionsCopied: number;
+  rulesCopied: number;
+  tenantsWithRules: number;
+}
+
+/**
+ * Result of publishing the draft version of a custom field.
+ */
+export interface PublishFieldVersionResult {
+  publishedVersionId: string;
+  versionNumber: number;
+  deprecatedVersionId?: string | null;
+  rulesOnPublishedVersion: number;
+}
+
+/**
+ * Result of discarding/archiving the draft version of a custom field.
+ */
+export interface DiscardFieldVersionDraftResult {
+  discardedVersionId: string;
+  versionNumber: number;
+  optionsRetained: number;
+  rulesRetained: number;
+}
+
+
+

@@ -712,6 +712,12 @@ export const navigationData: DocCategoryData[] = [
             order: 0.5,
           },
           {
+            id: "mod-cf-option-sets",
+            titleKey: "modules.customFields.docs.optionSets.title",
+            slug: "modules/custom-fields-option-sets",
+            order: 0.55,
+          },
+          {
             id: "mod-cf-validators",
             titleKey: "modules.customFields.docs.validators.title",
             slug: "modules/custom-fields-validators",

@@ -1954,11 +1954,19 @@ export const en = {
 
           rowMenuTitle: "The row menu",
           rowMenuIntro:
-            "Every field in the list has a row menu with four actions. Each needs its own permission, so a role may see some and not others.",
+            "Every field in the list has a row menu with eight actions. Each needs its own permission, so a role may see some and not others.",
           thAction: "Action",
           thDoes: "What it does",
           thNeeds: "Permission",
           actEdit: "Opens the definition form, populated from the field's full detail.",
+          actOptionSets:
+            "Attaches, configures or detaches a shared versioned option set for Select or MultiSelect fields.",
+          actVisibilityRules:
+            "Opens the conditional visibility rule dialog to configure show-or-hide rules evaluated against sibling fields.",
+          actConvertType:
+            "Converts the field's value type with preflight dry-run validation, lossy confirmation safeguards and 1-click snapshot rollback.",
+          actVersions:
+            "Opens the version history and drafts drawer to stage changes in an isolated draft before publishing to production.",
           actHistory:
             "Lists every recorded change to the field's definition, newest first, with who and when.",
           actUsage:
@@ -1974,6 +1982,99 @@ export const en = {
           editWarnTitle: "Two edits reach backwards",
           editWarnContent:
             "Renaming an option changes what every existing record displays, because the option text is the stored answer. Attaching or changing a validator does not re-check answers already saved, so a field can hold values that its own current validator would refuse. Both are covered in detail on the Options and Validators pages.",
+
+          // Visibility Rules
+          visibilityRulesTitle: "Visibility rules administration",
+          visibilityRulesIntro:
+            "Visibility rules allow fields to be shown or hidden dynamically on record forms based on the values of sibling custom fields on the same record type. When a rule is active, client-side forms and server-side validation evaluate the conditions deterministically.",
+          thOperator: "Operator",
+          thOperatorMeaning: "Condition evaluated",
+          thOperatorExample: "Example trigger",
+          opEquals: "Equals",
+          opEqualsMeaning: "The controlling field's value exactly matches the target value.",
+          opEqualsExample: "Show Kit Size when Staff Role equals Coach.",
+          opNotEquals: "Does not equal",
+          opNotEqualsMeaning: "The controlling field has any value other than the target value.",
+          opNotEqualsExample: "Show Dietary Requirements when Meal Plan does not equal None.",
+          opIsEmpty: "Is empty",
+          opIsEmptyMeaning: "The controlling field holds no stored answer or null.",
+          opIsEmptyExample: "Show Explanation when ID Number is empty.",
+          opIsNotEmpty: "Is not empty",
+          opIsNotEmptyMeaning: "The controlling field has any non-null, non-empty value.",
+          opIsNotEmptyExample: "Show Expiry Date when Passport Number is not empty.",
+          opIn: "In set",
+          opInMeaning: "The controlling field's answer is one of multiple comma-separated values.",
+          opInExample: "Show Specialization when Department in Medical, Coaching, Analytics.",
+          opNotIn: "Not in set",
+          opNotInMeaning: "The controlling field's answer is none of the listed values.",
+          opNotInExample: "Show General Notes when Category not in VIP, Board.",
+          opGreaterThan: "Greater than",
+          opGreaterThanMeaning: "The numeric or date answer strictly exceeds the threshold.",
+          opGreaterThanExample: "Show Clearance Details when Security Level greater than 3.",
+          opLessThan: "Less than",
+          opLessThanMeaning: "The numeric or date answer is strictly below the threshold.",
+          opLessThanExample: "Show Parental Consent when Age less than 18.",
+          visibilityRulesEvaluation:
+            "Rules execute with deterministic priority. When multiple rules target the same field, Hide actions take precedence over Show actions. Hidden fields are omitted from mandatory validation checks, preventing unfulfillable validation blockages.",
+          visibilityRulesTipTitle: "Conditioning on sibling fields only",
+          visibilityRulesTipContent:
+            "A rule can only reference sibling fields defined on the exact same entity type. Cross-entity conditions (e.g. checking a tenant setting from a person field) are not permitted to preserve single-record transactional integrity.",
+
+          // Conversion
+          conversionTitle: "Value-type conversion and dry-run rollback",
+          conversionIntro:
+            "Converting a field's value type allows changing data representations without dropping existing fields or re-entering data. Conversions are categorized into three safety classes.",
+          thConversionClass: "Safety class",
+          thConversionPairs: "Supported type pairs",
+          thConversionRisk: "Data preservation guarantee",
+          classLossless: "Lossless (Zero-risk)",
+          classLosslessPairs:
+            "Text → LongText, Number → Text, Date → DateTime, Select → MultiSelect, Boolean → Text, Number → Decimal, Decimal → Text",
+          classLosslessRisk:
+            "100% data fidelity preserved. All existing values parse directly into the target representation without truncation.",
+          classLossy: "Lossy (Requires confirmation)",
+          classLossyPairs:
+            "LongText → Text (truncates past 500 chars), DateTime → Date (drops time component)",
+          classLossyRisk:
+            "Potential truncation or precision reduction. The modal requires explicit typed confirmation before proceeding.",
+          classIncompatible: "Incompatible (Blocked)",
+          classIncompatiblePairs:
+            "EntityReference ↔ Text, UserReference ↔ Number, Complex JSON ↔ Boolean",
+          classIncompatibleRisk:
+            "Blocked by the server engine. Conversions between structurally incompatible domain types are refused.",
+          conversionLossyWarnTitle: "Lossy conversions alter data permanently",
+          conversionLossyWarnContent:
+            "Truncating long text or dropping timestamps permanently reshapes historical records. Always run Usage & impact first to inspect how many records will be affected.",
+          conversionDryRunIntro:
+            "Before executing any conversion, the server runs a complete dry-run audit against all stored values for the field. If even a single stored value fails conversion parsing (such as non-numeric text when converting to Number), the entire operation is safely refused with a conflict diagnosis.",
+          conversionRollbackTitle: "1-Click snapshot rollback",
+          conversionRollbackContent:
+            "Every type conversion creates an immutable prior-value snapshot. If an unforeseen downstream issue occurs after converting, administrators can invoke 1-click rollback to restore the previous value type and exact stored values instantly.",
+
+          // Versions & Drafts
+          versionsTitle: "Field definition versions and drafts lifecycle",
+          versionsIntro:
+            "Field definition versioning guarantees zero-downtime evolution. Administrators stage proposed changes in an isolated draft version, test them safely, and promote to production in one atomic transaction.",
+          thVersionStatus: "Status",
+          thVersionMeaning: "Lifecycle meaning",
+          thVersionActions: "Available actions",
+          vStatusDraft: "Draft",
+          vMeaningDraft: "An uncommitted, isolated working version. Not visible on production record forms.",
+          vActionsDraft: "Add options, edit validation, update visibility rules, Publish, Discard.",
+          vStatusPublished: "Published",
+          vMeaningPublished: "The active production version currently powering all record forms.",
+          vActionsPublished: "Create Draft (mints new working version), View History, Manage Rules.",
+          vStatusDeprecated: "Deprecated",
+          vMeaningDeprecated: "A former published version replaced by a newer published version.",
+          vActionsDeprecated: "Read-only audit record. Retained for historical record integrity.",
+          vStatusArchived: "Archived",
+          vMeaningArchived: "A retired version no longer active in any tenant scope.",
+          vActionsArchived: "Historical reference only.",
+          versionsPromotionIntro:
+            "Promoting a draft to Published automatically deprecates the incumbent version in the same database transaction. The version number increments monotonically, and form caches are invalidated instantly across all connected clients.",
+          versionsRuleGuardTitle: "Draft rule loss protection",
+          versionsRuleGuardContent:
+            "If a draft removes options or changes types referenced by active visibility rules, the publishing preflight refuses promotion until rules are reconciled, preventing broken conditional branches in production forms.",
 
           retireTitle: "Retiring a field: deactivate or delete",
           retireIntro:
@@ -2010,7 +2111,7 @@ export const en = {
           partVersion: "A version of the definition.",
           partOption: "One entry in the field's options list.",
           partVisibilityRule:
-            "A conditional show-or-hide rule attached to the field. There is no screen for creating one, so in practice most workspaces will never see an entry of this kind.",
+            "A conditional show-or-hide rule attached to the field, managed via the Visibility Rules dialog.",
           historyScopeTitle: "History covers the definition, never the answers",
           historyScopeContent:
             "This dialog will not tell you who changed a particular person's nationality, and it is not meant to. Listing value changes here would turn it into a readable copy of everybody's field data, going around field-level security and every other visibility rule at once. Only definition-side changes are eligible, and the value-bearing records are excluded by name rather than by omission.",
@@ -2365,6 +2466,139 @@ export const en = {
           absentInfoTitle: "If you need one of these",
           absentInfoContent:
             "Say so to whoever owns your product roadmap rather than working around it in a way that costs you data. Recreating a field to change something permanent destroys the answers already stored against it, and that is the expensive mistake this page exists to prevent.",
+        },
+
+        // ═══════════════════════════════════════════════════
+        //  Option Sets (shared, versioned lists)
+        // ═══════════════════════════════════════════════════
+        optionSets: {
+          title: "Option Sets",
+          description:
+            "Reusable, versioned lists of choices. Point many fields at one set, and every field that uses it changes together.",
+          intro:
+            "An option set is a named, versioned collection of choices that multiple Select and MultiSelect custom fields share. Instead of each field maintaining its own private inline options list, fields bind to an option set version. When business requirements evolve, an administrator creates a new version, updates the choices, and publishes it — immediately updating every bound field across the product without manual field-by-field updates.",
+          whenToUseTitle: "When to use an Option Set vs inline options",
+          whenToUseContent:
+            "Use an Option Set whenever the same list of choices is needed across more than one field (for example, Country codes, Priority levels, or Department lists), or when you need auditable version history and staged publishing. Use inline options when a choice list is unique to a single field and will never be reused.",
+
+          kindsTitle: "Three kinds of Option Sets",
+          kindsIntro:
+            "SCRIPE distinguishes three kinds of option sets based on their origin, ownership, and editability rules:",
+          thKind: "Kind",
+          thOwner: "Owner",
+          thWhoCanEdit: "Who can edit",
+          thScope: "Scope",
+          kindSeeded: "Seeded (Platform-maintained)",
+          ownerPlatform: "Platform",
+          editNobody: "Nobody (Read-only)",
+          scopeGlobal: "Global (All tenants)",
+          kindPlatform: "Platform-created",
+          editPlatformAdmin: "Platform administrators",
+          scopeGlobalOrTenant: "Global or tenant-scoped",
+          kindTenant: "Tenant-created",
+          ownerTenant: "Tenant",
+          editTenantAdmin: "Tenant administrators",
+          scopeTenantOnly: "Tenant workspace only",
+          seededReadOnlyTitle: "Why seeded sets are read-only",
+          seededReadOnlyContent:
+            "Seeded sets (such as ISO 3166-1 country codes and ISO 4217 currencies) are marked as system-managed. The server strictly refuses all mutating actions — creating draft versions, editing options, publishing, or deletion — for everyone, including Super Admins. If you need a customized variant of a seeded list, create your own tenant or platform set instead.",
+
+          lifecycleTitle: "Version lifecycle and states",
+          lifecycleIntro:
+            "Every option set manages its choices through immutable versions. A version moves through four discrete lifecycle states:",
+          thStatus: "Status",
+          thMeaning: "Meaning",
+          thNextState: "Next state",
+          statusDraft: "Draft",
+          meaningDraft:
+            "Editable draft version. Choices can be added, updated, reordered, or deactivated. Not visible on active record forms until published.",
+          nextDraft: "Published (via Publish action)",
+          statusPublished: "Published",
+          meaningPublished:
+            "The active, live version. Bound fields render exactly these choices on create and edit forms. Immutable.",
+          nextPublished: "Deprecated (when a newer draft is published)",
+          statusDeprecated: "Deprecated",
+          meaningDeprecated:
+            "Superseded by a newer published version. Historical records referencing choices in this version continue to render correctly. Cannot be bound to new fields.",
+          nextDeprecated: "Archived (when retired)",
+          statusArchived: "Archived",
+          meaningArchived:
+            "Permanently retired from active use. Retained strictly for historical audit trails. Immutable.",
+          nextArchived: "None (Terminal state)",
+          lifecycleOnlyOnePublished:
+            "Exactly one version can be Published at any time. Publishing a draft automatically deprecates the previously published incumbent version in a single atomic operation.",
+          publishSwapTitle: "Atomic publish swap",
+          publishSwapContent:
+            "When you publish a new draft, the current published version is superseded and marked Deprecated immediately. No data is lost: records that previously saved values from the older version remain intact and display their stored labels.",
+
+          draftTitle: "Creating and editing a draft version",
+          draftIntro:
+            "To add or modify choices in an option set, follow the staged versioning workflow:",
+          draft1:
+            "Click Create draft version on the option set detail panel. A new draft is initialized.",
+          draft2:
+            "Enter a unique Key and English label for each option. Both are required before saving is enabled. You can optionally provide Arabic labels, color tints, icon keys, and sort orders.",
+          draft3:
+            "Click Save draft to persist the options list. The draft is saved to the server but remains unexposed to active record forms.",
+          draft4:
+            "When ready, click Publish version. The version becomes live and all bound fields immediately serve the updated choices.",
+          draftSaveHintTitle: "Draft validation requirements",
+          draftSaveHintContent:
+            "A draft requires at least one valid option with a non-empty Key and English label. Each Key must be unique within the version. The Save draft button automatically enables as soon as all rows satisfy these validation rules.",
+
+          bindingTitle: "Binding fields to an Option Set",
+          bindingIntro:
+            "Fields with value types Select or MultiSelect can bind to an option set instead of maintaining inline options. Three lifecycle actions are supported:",
+          thAction: "Action",
+          thWhatItDoes: "What it does",
+          thEffect: "Effect on existing data",
+          actionBind: "Bind",
+          doingBind:
+            "Attaches a custom field definition to an option set's published version.",
+          effectBind:
+            "Field switches from inline options to the option set's choices. Previously saved values are preserved.",
+          actionSwitch: "Switch version",
+          doingSwitch:
+            "Points a bound field to a newer published version of the same or another option set.",
+          effectSwitch:
+            "Field begins offering the new version's choices. Historical records continue rendering previously selected options.",
+          actionDetach: "Detach (Unbind)",
+          doingDetach:
+            "Removes the option set binding, reverting the field back to standalone inline options.",
+          effectDetach:
+            "Field stops querying the option set. Stored record values remain intact.",
+          switchCautionTitle: "Binding stability",
+          switchCautionContent:
+            "When detaching or switching option sets, ensure that existing record values remain compatible with the new choice keys. Deactivating an option rather than removing its key guarantees that historical records display without interruption.",
+
+          platformAdminTitle: "Platform administrator capabilities",
+          platformAdminIntro:
+            "Platform Super Administrators operate with elevated system-wide governance rights:",
+          platformAdmin1:
+            "Create global option sets shared across all tenant workspaces.",
+          platformAdmin2:
+            "Create and publish new versions for platform-owned (non-seeded) option sets.",
+          platformAdmin3:
+            "Manage option set availability across multi-tenant boundaries.",
+          platformAdmin4:
+            "Inspect version chains and audit logs for all option sets platform-wide.",
+          platformAdmin5:
+            "Respect system-managed boundaries: platform-maintained seeded sets remain immutable for platform admins as well.",
+          platformContextTitle: "Platform context detection",
+          platformContextContent:
+            "When operating in the platform management console (without drilling into a specific tenant), newly created option sets automatically default to Global scope, making them accessible to all tenant environments.",
+
+          rulesTitle: "Key operational rules to remember",
+          rule1:
+            "Option sets are versioned, not directly edited: choices are modified by creating a draft and publishing it.",
+          rule2:
+            "Keys are permanent identifiers: once an option is published with a key, do not change its key in subsequent versions if you want existing values to remain mapped.",
+          rule3:
+            "Deactivate rather than delete: deactivating an option stops it from being offered on new forms while preserving it on historical records.",
+          rule4:
+            "Single published version: only one version is active at a time; publishing a draft automatically deprecates the previous version.",
+          rule5:
+            "System-managed sets are strictly read-only: seeded standard sets cannot be modified by any user or administrator.",
         },
       },
     },

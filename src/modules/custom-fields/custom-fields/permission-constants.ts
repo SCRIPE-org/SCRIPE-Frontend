@@ -15,6 +15,7 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
   CUSTOM_FIELD_CREATE: "custom-fields.create",
   CUSTOM_FIELD_UPDATE: "custom-fields.update",
   CUSTOM_FIELD_DELETE: "custom-fields.delete",
+  CUSTOM_FIELD_PUBLISH: "custom-fields.publish",
 
   // ── Field Groups (Wave 5 row 5.2) ───────────────────────
   // `reorder` is a FIFTH action, not part of the CRUD quartet: the backend
@@ -54,4 +55,11 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
   // that the field exists, and the backend gates them independently.
   VIEW_HISTORY: "custom-fields.view-history",
   VIEW_USAGE: "custom-fields.view-usage",
+
+  // ── Visibility Rules (Wave 5 row 5.3) ───────────────────
+  VISIBILITY_RULE_VIEW: "custom-field-visibility-rules.view",
+  VISIBILITY_RULE_CREATE: "custom-field-visibility-rules.create",
+  VISIBILITY_RULE_UPDATE: "custom-field-visibility-rules.update",
+  VISIBILITY_RULE_DELETE: "custom-field-visibility-rules.delete",
 } as const;
+

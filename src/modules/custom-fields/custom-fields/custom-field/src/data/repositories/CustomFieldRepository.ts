@@ -15,6 +15,17 @@ import type {
 } from "../../domain/interfaces/ICustomFieldRepository";
 import type { ICustomFieldService } from "../../domain/interfaces/ICustomFieldService";
 import type { CustomField } from "../../domain/entities/CustomField";
+import type {
+  FieldVisibilityRuleAdmin,
+  CreateFieldVisibilityRuleRequest,
+  UpdateFieldVisibilityRuleRequest,
+  ChangeFieldTypeRequest,
+  ChangeFieldTypeResult,
+  RollbackFieldTypeChangeResult,
+  CreateFieldVersionDraftResult,
+  PublishFieldVersionResult,
+  DiscardFieldVersionDraftResult,
+} from "../../domain/entities/FieldInsight";
 import { CustomFieldMapper } from "../mappers/CustomFieldMapper";
 
 export class CustomFieldRepository implements ICustomFieldRepository {
@@ -67,4 +78,43 @@ export class CustomFieldRepository implements ICustomFieldRepository {
   async getVersions(id: string) {
     return this.service.getVersions(id);
   }
+
+  async createFieldVersionDraft(customFieldId: string): Promise<CreateFieldVersionDraftResult> {
+    return this.service.createFieldVersionDraft(customFieldId);
+  }
+
+  async publishFieldVersion(customFieldId: string): Promise<PublishFieldVersionResult> {
+    return this.service.publishFieldVersion(customFieldId);
+  }
+
+  async discardFieldVersionDraft(customFieldId: string): Promise<DiscardFieldVersionDraftResult> {
+    return this.service.discardFieldVersionDraft(customFieldId);
+  }
+
+  async getVisibilityRules(customFieldId: string): Promise<FieldVisibilityRuleAdmin[]> {
+    return this.service.getVisibilityRules(customFieldId);
+  }
+
+  async createVisibilityRule(data: CreateFieldVisibilityRuleRequest): Promise<string> {
+    const response = await this.service.createVisibilityRule(data);
+    return response.id;
+  }
+
+  async updateVisibilityRule(id: string, data: UpdateFieldVisibilityRuleRequest): Promise<void> {
+    await this.service.updateVisibilityRule(id, data);
+  }
+
+  async deleteVisibilityRule(id: string): Promise<void> {
+    await this.service.deleteVisibilityRule(id);
+  }
+
+  async changeFieldType(id: string, data: ChangeFieldTypeRequest): Promise<ChangeFieldTypeResult> {
+    return this.service.changeFieldType(id, data);
+  }
+
+  async rollbackFieldTypeChange(jobRunId: string): Promise<RollbackFieldTypeChangeResult> {
+    return this.service.rollbackFieldTypeChange(jobRunId);
+  }
 }
+
+

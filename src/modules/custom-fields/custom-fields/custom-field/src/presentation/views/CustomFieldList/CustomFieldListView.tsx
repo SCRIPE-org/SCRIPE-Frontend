@@ -26,11 +26,14 @@ import {
   Boxes,
   Eye,
   FolderTree,
+  GitBranch,
   Globe2,
   History,
   Layers,
   ListTree,
   Pencil,
+  RefreshCcw,
+  Sliders,
   Trash2,
 } from "lucide-react";
 import {
@@ -63,6 +66,16 @@ import { useFieldInsightViewModel } from "../../viewmodels/useFieldInsightViewMo
 // is it. See useOptionSetBindingViewModel.ts's own header for the design this dialog implements.
 import { OptionSetBindingDialog } from "../../dialogs/OptionSetBindingDialog";
 import { useOptionSetBindingViewModel } from "../../viewmodels/useOptionSetBindingViewModel";
+// Wave 5 row 5.3. Data-driven visibility rules administration dialog.
+import { FieldVisibilityRulesDialog } from "../../dialogs/FieldVisibilityRulesDialog";
+import { useFieldVisibilityRulesViewModel } from "../../viewmodels/useFieldVisibilityRulesViewModel";
+// Step 1.2. Value type conversion and rollback dialog.
+import { ConvertValueTypeDialog } from "../../dialogs/ConvertValueTypeDialog";
+import { useConvertValueTypeViewModel } from "../../viewmodels/useConvertValueTypeViewModel";
+// Step 1.3. Definition version history and drafts drawer.
+import { FieldVersionHistoryDrawer } from "../../dialogs/FieldVersionHistoryDrawer";
+import { useFieldVersionsViewModel } from "../../viewmodels/useFieldVersionsViewModel";
+
 // Wave 6 row 6.5. Self-contained: it owns its own permission gate, its own open
 // state and its own locale chunk, so it adds nothing to the config memo below.
 import { SchemaExportButton } from "../../../../../schema/src/presentation/components/SchemaExportButton";
@@ -496,6 +509,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   // that happens.
   const optionSetBinding = useOptionSetBindingViewModel();
   const { openBinding } = optionSetBinding;
+  // Wave 5 row 5.3. Visibility rules dialog state and mutations.
+  const visibilityRules = useFieldVisibilityRulesViewModel();
+  const { openRules } = visibilityRules;
+  // Step 1.2. Value-type conversion and rollback dialog state and mutations.
+  const convertValueType = useConvertValueTypeViewModel();
+  const { openConvert } = convertValueType;
+  // Step 1.3. Definition version history and drafts drawer state and mutations.
+  const fieldVersions = useFieldVersionsViewModel();
+  const { openVersions } = fieldVersions;
   const [detailFieldId, setDetailFieldId] = useState<string | null>(null);
   const openDetail = useCallback((id: string) => setDetailFieldId(id), []);
   const closeDetail = useCallback(() => setDetailFieldId(null), []);
@@ -1296,6 +1318,30 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           show: () => canViewUsage,
         },
         {
+          // Wave 5 row 5.3. Visibility rules management for this custom field.
+          label: tFn("customField.visibilityRules.actionLabel"),
+          onClick: (item: CustomField) => openRules(item),
+          variant: "ghost" as const,
+          icon: <Sliders className="h-4 w-4" />,
+          show: () => visibilityRules.canView,
+        },
+        {
+          // Step 1.2. Value-type conversion dialog. Gated on custom-fields.update (canUpdate).
+          label: tFn("customField.convertValueType.actionLabel"),
+          onClick: (item: CustomField) => openConvert(item),
+          variant: "ghost" as const,
+          icon: <RefreshCcw className="h-4 w-4" />,
+          show: (item: CustomField) => convertValueType.canUpdate && (isPlatformContext || !item.isGlobal),
+        },
+        {
+          // Step 1.3. Version history and drafts drawer. Gated on custom-fields.view.
+          label: tFn("customField.versions.actionLabel"),
+          onClick: (item: CustomField) => openVersions(item),
+          variant: "ghost" as const,
+          icon: <GitBranch className="h-4 w-4" />,
+          show: () => fieldVersions.canView,
+        },
+        {
           label: tFn("customField.history.actionLabel"),
           onClick: (item: CustomField) => openHistory(item.id),
           variant: "ghost" as const,
@@ -1333,8 +1379,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       openHistory,
       requestDelete,
       openBinding,
+      openRules,
+      openConvert,
+      openVersions,
       canViewHistory,
       canViewUsage,
+      visibilityRules.canView,
+      convertValueType.canUpdate,
+      fieldVersions.canView,
       entityTypeOptions,
       noFrontendScreenDescription,
       valueTypeOptions,
@@ -1459,6 +1511,85 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           isDetaching={optionSetBinding.isUnbinding}
         />
       )}
+
+      {/* Wave 5 row 5.3. Custom Field Visibility Rules administration dialog. */}
+      {visibilityRules.target && (
+        <FieldVisibilityRulesDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) visibilityRules.closeRules();
+          }}
+          fieldId={visibilityRules.target.fieldId}
+          fieldLabel={visibilityRules.target.fieldLabel}
+          fieldKey={visibilityRules.target.fieldKey}
+          isRequired={visibilityRules.target.isRequired}
+          canView={visibilityRules.canView}
+          canCreate={visibilityRules.canCreate}
+          canUpdate={visibilityRules.canUpdate}
+          canDelete={visibilityRules.canDelete}
+          rules={visibilityRules.rules}
+          isRulesLoading={visibilityRules.isRulesLoading}
+          isRulesError={visibilityRules.isRulesError}
+          rulesErrorMessage={visibilityRules.rulesErrorMessage}
+          onRetryRules={visibilityRules.refetchRules}
+          siblingFields={visibilityRules.siblingFields}
+          isSiblingFieldsLoading={visibilityRules.isSiblingFieldsLoading}
+          onCreateRule={visibilityRules.createRule}
+          onUpdateRule={visibilityRules.updateRule}
+          onDeleteRule={visibilityRules.deleteRule}
+          isCreating={visibilityRules.isCreating}
+          isUpdating={visibilityRules.isUpdating}
+          isDeleting={visibilityRules.isDeleting}
+        />
+      )}
+
+      {/* Step 1.2. Custom Field Value-Type Conversion and Rollback dialog. */}
+      {convertValueType.target && (
+        <ConvertValueTypeDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) convertValueType.closeConvert();
+          }}
+          fieldId={convertValueType.target.fieldId}
+          fieldLabel={convertValueType.target.fieldLabel}
+          fieldKey={convertValueType.target.fieldKey}
+          currentType={convertValueType.target.currentType}
+          availableTargetTypes={convertValueType.availableTargetTypes}
+          selectedTargetType={convertValueType.selectedTargetType}
+          onSelectTargetType={convertValueType.setSelectedTargetType}
+          confirmDataLoss={convertValueType.confirmDataLoss}
+          onConfirmDataLossChange={convertValueType.setConfirmDataLoss}
+          conversionKind={convertValueType.conversionKind}
+          isLossy={convertValueType.isLossy}
+          canExecute={convertValueType.canExecute}
+          canUpdate={convertValueType.canUpdate}
+          isConverting={convertValueType.isConverting}
+          onExecuteConvert={convertValueType.executeConvert}
+          lastResult={convertValueType.lastResult}
+          isRollingBack={convertValueType.isRollingBack}
+          onExecuteRollback={convertValueType.executeRollback}
+          lastRollbackResult={convertValueType.lastRollbackResult}
+        />
+      )}
+
+      {/* Step 1.3. Custom Field Definition Versions and Drafts Drawer. */}
+      {fieldVersions.target && (
+        <FieldVersionHistoryDrawer
+          isOpen={fieldVersions.isOpen}
+          onClose={fieldVersions.closeVersions}
+          target={fieldVersions.target}
+          versionsData={fieldVersions.versionsData}
+          isLoading={fieldVersions.isLoading}
+          isCreatingDraft={fieldVersions.isCreatingDraft}
+          isPublishing={fieldVersions.isPublishing}
+          isDiscarding={fieldVersions.isDiscarding}
+          canPublish={fieldVersions.canPublish}
+          onCreateDraft={fieldVersions.handleCreateDraft}
+          onPublish={fieldVersions.handlePublish}
+          onDiscard={fieldVersions.handleDiscard}
+        />
+      )}
     </>
   );
 });
+
