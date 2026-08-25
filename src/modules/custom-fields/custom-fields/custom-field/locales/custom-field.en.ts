@@ -108,9 +108,6 @@ export const en = {
       restricted: "Restricted",
     },
     hints: {
-      isGlobal:
-        "When enabled, this field is inherited by every tenant across the platform. " +
-        "When disabled, it remains scoped to platform records only.",
       sensitivity:
         "How this field's values should be treated. This is a label for reporting and export " +
         "handling \u2014 it does not control who can see the field. Use field-level security for that.",
@@ -856,6 +853,8 @@ export const en = {
         neverModified: "Never modified",
         globalScope: "Platform Global (all tenants)",
         tenantScope: "Tenant Specific",
+        scopeDescriptionGlobal: "Inherited and available to all tenants across the platform.",
+        scopeDescriptionTenant: "Private to this tenant organization only.",
       },
       optionsTable: {
         index: "#",
@@ -865,6 +864,12 @@ export const en = {
       },
       copyKey: "Copy key",
       keyCopied: "Key copied to clipboard",
+    },
+    formSections: {
+      identity: "Basic Information",
+      typeAndValidation: "Data Type & Validation",
+      layout: "Organization & Grouping",
+      governance: "Behavior & Governance",
     },
   },
 };

@@ -114,6 +114,7 @@ function getRequiredPermissionsForPath(pathname: string): PermissionCode[] | und
 export function PermissionProvider({ children }: PermissionProviderProps) {
   const permissions = useAppStore((state) => state.permissions);
   const roles = useAppStore((state) => state.roles);
+  const user = useAppStore((state) => state.user);
 
   const hasPermission = useCallback(
     (permission: PermissionCode): boolean => {
@@ -155,8 +156,15 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
   }, [roles]);
 
   const isSuperAdmin = useMemo(() => {
-    return permissions.includes("*");
-  }, [permissions]);
+    return (
+      permissions.includes("*") ||
+      roles.some((r) => r.roleName?.toLowerCase().includes("super")) ||
+      (roles as any[]).some?.((r: any) => r.name?.toLowerCase().includes("super")) ||
+      user?.adminTypeName?.toLowerCase().includes("super") ||
+      (user as any)?.isSuperAdmin === true ||
+      (user as any)?.role?.toLowerCase().includes("super")
+    );
+  }, [permissions, roles, user]);
 
   const value = useMemo(
     () => ({

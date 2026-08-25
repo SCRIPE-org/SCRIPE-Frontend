@@ -529,6 +529,14 @@ export function OptionSetDetailPanel({
               size="sm"
               title={t("optionSet.versions.noItems.title")}
               description={t("optionSet.versions.noItems.description")}
+              action={
+                canOfferNewDraft && newDraftRows === null ? (
+                  <Button type="button" size="sm" onClick={startNewDraft}>
+                    <FilePlus2 className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                    {t("optionSet.versions.createDraft")}
+                  </Button>
+                ) : undefined
+              }
             />
           ) : (
             <div className="overflow-x-auto rounded-nx-md border border-nx-line">
@@ -551,10 +559,12 @@ export function OptionSetDetailPanel({
                       <TableCell>
                         <OptionSetStatusBadge kind="version" status={version.status} />
                       </TableCell>
-                      <TableCell className="text-sm text-nx-ink-2" dir="ltr">
-                        {version.publishedAtUtc
-                          ? formatDateTime(version.publishedAtUtc)
-                          : t("optionSet.versions.notPublished")}
+                      <TableCell className="text-sm text-nx-ink-2">
+                        {version.publishedAtUtc ? (
+                          <span dir="ltr">{formatDateTime(version.publishedAtUtc)}</span>
+                        ) : (
+                          t("optionSet.versions.notPublished")
+                        )}
                       </TableCell>
                       <TableCell className="text-sm text-nx-ink-2">
                         {/* `itemCount`, never `items.length`: these are summary rows, whose `items` is
@@ -600,6 +610,9 @@ export function OptionSetDetailPanel({
           <h3 id={newDraftHeadingId} className="text-sm font-semibold text-nx-ink">
             {t("optionSet.versions.createDraft")}
           </h3>
+          <p className="text-xs text-nx-ink-subtle">
+            {t("optionSet.versions.newDraftHint")}
+          </p>
 
           <OptionSetItemsEditor
             items={newDraftRows}

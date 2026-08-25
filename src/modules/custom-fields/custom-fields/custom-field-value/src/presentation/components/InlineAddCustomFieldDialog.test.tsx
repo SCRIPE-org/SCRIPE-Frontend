@@ -156,17 +156,14 @@ describe("InlineAddCustomFieldDialog", () => {
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
       const isGlobalSwitch = screen.getByRole("switch", { name: "customField.fields.isGlobal" });
-      expect(isGlobalSwitch).not.toBeChecked();
+      expect(isGlobalSwitch).toHaveAttribute("data-state", "unchecked");
     });
 
-    it("submits isGlobal:true when isGlobal switch is toggled", async () => {
+    it("submits isGlobal:true only after toggling the isGlobal switch", async () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      const isGlobalSwitch = screen.getByRole("switch", { name: "customField.fields.isGlobal" });
-      fireEvent.click(isGlobalSwitch);
-      expect(isGlobalSwitch).toBeChecked();
-
+      fireEvent.click(screen.getByRole("switch", { name: "customField.fields.isGlobal" }));
       fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
       fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });
       fireEvent.click(screen.getByText("common.save"));
@@ -176,7 +173,7 @@ describe("InlineAddCustomFieldDialog", () => {
       );
     });
 
-    it("locks tenant-context authors to tenant scope and hides isGlobal switch submitting isGlobal:false", async () => {
+    it("locks tenant-context authors to tenant scope (no isGlobal switch) and submits isGlobal:false", async () => {
       const { useTenantContext } = await import("@core/providers/tenant-context-provider");
       vi.mocked(useTenantContext).mockReturnValue({
         ...defaultTenantContext,

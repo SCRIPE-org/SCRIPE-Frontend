@@ -27,6 +27,12 @@ import { getCustomFieldsContainer } from "../../../../di";
 vi.mock("../../../../di", () => ({
   getCustomFieldsContainer: vi.fn(),
 }));
+vi.mock("../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions", () => ({
+  useFieldGroupOptions: vi.fn(() => ({ options: [], isLoading: false, isError: false })),
+}));
+vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
+  useEntityLookupAvailableTypes: vi.fn(() => ({ types: [], isLoading: false, isError: false, isEmpty: true })),
+}));
 // i18n-provider is deliberately NOT mocked here (matching
 // InlineAddCustomFieldDialog.test.tsx's own convention) -- its real
 // out-of-provider fallback both returns the raw translation key from t() and

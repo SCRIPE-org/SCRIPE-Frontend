@@ -159,6 +159,7 @@ export function InlineAddCustomFieldDialog({
         name: "sensitivity",
         label: t("customField.fields.sensitivity"),
         type: "select",
+        section: t("customField.formSections.governance"),
         options: [
           { value: "None", label: t("customField.sensitivity.none") },
           { value: "Internal", label: t("customField.sensitivity.internal") },
@@ -171,6 +172,7 @@ export function InlineAddCustomFieldDialog({
         name: "isExportable",
         label: t("customField.fields.isExportable"),
         type: "switch",
+        section: t("customField.formSections.governance"),
         description: t("customField.hints.isExportable"),
       },
     ],
@@ -178,16 +180,21 @@ export function InlineAddCustomFieldDialog({
   );
 
   const scopeField = useMemo(
-    () => buildCustomFieldScopeField({ t, isPlatformContext }),
+    () => ({
+      ...buildCustomFieldScopeField({ t, isPlatformContext }),
+      section: t("customField.formSections.governance"),
+    }),
     [t, isPlatformContext]
   );
 
   const fields = useMemo<FieldConfig[]>(
     () => [
+      // 1. Basic Information
       {
         name: "key",
         label: t("customField.fields.key"),
         type: "text",
+        section: t("customField.formSections.identity"),
         placeholder: t("customField.placeholders.key"),
         required: true,
       },
@@ -195,6 +202,7 @@ export function InlineAddCustomFieldDialog({
         name: "labelEn",
         label: t("customField.fields.labelEn"),
         type: "text",
+        section: t("customField.formSections.identity"),
         placeholder: t("customField.placeholders.labelEn"),
         required: true,
       },
@@ -202,12 +210,15 @@ export function InlineAddCustomFieldDialog({
         name: "labelAr",
         label: t("customField.fields.labelAr"),
         type: "text",
+        section: t("customField.formSections.identity"),
         placeholder: t("customField.placeholders.labelAr"),
       },
+      // 2. Data Type & Validation
       {
         name: "valueType",
         label: t("customField.fields.valueType"),
         type: "select",
+        section: t("customField.formSections.typeAndValidation"),
         required: true,
         options: ALL_VALUE_TYPES.map((type) => ({
           value: type,
@@ -218,6 +229,7 @@ export function InlineAddCustomFieldDialog({
         name: "placeholderEn",
         label: t("customField.fields.placeholderEn"),
         type: "text",
+        section: t("customField.formSections.typeAndValidation"),
         placeholder: t("customField.placeholders.placeholderEn"),
         isVisible: (form) =>
           VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
@@ -226,6 +238,7 @@ export function InlineAddCustomFieldDialog({
         name: "placeholderAr",
         label: t("customField.fields.placeholderAr"),
         type: "text",
+        section: t("customField.formSections.typeAndValidation"),
         placeholder: t("customField.placeholders.placeholderAr"),
         isVisible: (form) =>
           VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
@@ -234,16 +247,24 @@ export function InlineAddCustomFieldDialog({
         name: "validatorKind",
         label: t("customField.fields.validatorKind"),
         type: "select",
+        section: t("customField.formSections.typeAndValidation"),
         options: validatorKindOptions,
         description: t("customField.validatorKindDescription"),
         isVisible: (form) => form.valueType === "Text",
       },
-      ...validatorParamFields,
-      referenceTargetField,
+      ...validatorParamFields.map((f) => ({
+        ...f,
+        section: t("customField.formSections.typeAndValidation"),
+      })),
+      {
+        ...referenceTargetField,
+        section: t("customField.formSections.typeAndValidation"),
+      },
       {
         name: "options",
         label: t("customField.fields.options"),
         type: "bilingual-options",
+        section: t("customField.formSections.typeAndValidation"),
         pairedName: "optionsAr",
         placeholder: t("customField.placeholders.optionEn"),
         searchPlaceholder: t("customField.placeholders.optionAr"),
@@ -253,9 +274,25 @@ export function InlineAddCustomFieldDialog({
         isVisible: (form) =>
           VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
       },
-      { name: "isRequired", label: t("customField.fields.isRequired"), type: "switch" },
-      fieldGroupField,
-      { name: "sortOrder", label: t("customField.fields.sortOrder"), type: "number", min: 0 },
+      // 3. Organization & Grouping
+      {
+        ...fieldGroupField,
+        section: t("customField.formSections.layout"),
+      },
+      {
+        name: "sortOrder",
+        label: t("customField.fields.sortOrder"),
+        type: "number",
+        section: t("customField.formSections.layout"),
+        min: 0,
+      },
+      // 4. Behavior & Governance
+      {
+        name: "isRequired",
+        label: t("customField.fields.isRequired"),
+        type: "switch",
+        section: t("customField.formSections.governance"),
+      },
       ...classificationFields,
       scopeField,
     ],
@@ -336,7 +373,7 @@ export function InlineAddCustomFieldDialog({
                   isExportable: true,
                   isRequired: false,
                   sortOrder: 0,
-                  isGlobal: getInitialCustomFieldScope(isPlatformContext),
+                  scope: getInitialCustomFieldScope(isPlatformContext),
                 }}
                 onSubmit={async (data) => {
                   const { customFieldRepository } = getCustomFieldsContainer();

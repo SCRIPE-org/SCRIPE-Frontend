@@ -157,7 +157,7 @@ describe("CustomFieldDetailDialog", () => {
 
     // Check header labels and key
     expect(screen.getByRole("heading", { name: /National ID/i })).toBeInTheDocument();
-    expect(screen.getAllByText(/الرقم القومي/)[0]).toBeInTheDocument();
+    expect(screen.getByText("(الرقم القومي)")).toBeInTheDocument();
     expect(screen.getByText("national_id")).toBeInTheDocument();
 
     // Check entity type display
@@ -214,7 +214,7 @@ describe("CustomFieldDetailDialog", () => {
     expect(screen.getByText("كبير")).toBeInTheDocument();
 
     // Check scope
-    expect(screen.getByText("customField.details.fields.globalScope")).toBeInTheDocument();
+    expect(screen.getAllByText("customField.details.fields.globalScope")[0]).toBeInTheDocument();
   });
 
   it("renders pinned reference target for an EntityReference field", async () => {

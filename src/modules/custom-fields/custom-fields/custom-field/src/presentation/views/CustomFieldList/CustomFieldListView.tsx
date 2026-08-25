@@ -681,6 +681,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         name: "sensitivity",
         label: t("customField.fields.sensitivity"),
         type: "select" as const,
+        section: t("customField.formSections.governance"),
         // Wire values are the C# enum member names, not display strings — see the backend's
         // FieldSensitivity. Sending a translated label would fail enum binding.
         options: [
@@ -695,6 +696,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         name: "isExportable",
         label: t("customField.fields.isExportable"),
         type: "switch" as const,
+        section: t("customField.formSections.governance"),
         description: t("customField.hints.isExportable"),
       },
     ],
@@ -742,8 +744,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       isEmpty: isReferenceTargetTypesEmpty,
     };
     return {
-      create: buildReferenceTargetField({ ...shared, isExistingDefinition: false }),
-      edit: buildReferenceTargetField({ ...shared, isExistingDefinition: true }),
+      create: {
+        ...buildReferenceTargetField({ ...shared, isExistingDefinition: false }),
+        section: t("customField.formSections.typeAndValidation"),
+      },
+      edit: {
+        ...buildReferenceTargetField({ ...shared, isExistingDefinition: true }),
+        section: t("customField.formSections.typeAndValidation"),
+      },
     };
   }, [
     t,
@@ -762,6 +770,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         isLoading: isFieldGroupsLoading,
         isError: isFieldGroupsError,
       }),
+      section: t("customField.formSections.layout"),
       // The EDIT form's guard: permission only, no entity-type condition
       // (entityTypeKey is immutable and already known there). The create form
       // spreads this and overrides `isVisible` with the two-condition variant.
@@ -777,7 +786,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   // an unrecognized/unknown wire value falls back to the raw value itself
   // rather than throwing or rendering blank.
   const scopeField = useMemo(
-    () => buildCustomFieldScopeField({ t, isPlatformContext }),
+    () => ({
+      ...buildCustomFieldScopeField({ t, isPlatformContext }),
+      section: t("customField.formSections.governance"),
+    }),
     [t, isPlatformContext]
   );
   const valueTypeLabelOf = useMemo(
@@ -961,10 +973,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         },
       ],
       createFields: [
+        // 1. Basic Information
         {
           name: "entityTypeKey",
           label: t("customField.fields.entityTypeKey"),
           type: "select" as const,
+          section: t("customField.formSections.identity"),
           options: entityTypeOptions,
           placeholder: t("customField.placeholders.entityTypeKey"),
           required: true,
@@ -977,6 +991,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "key",
           label: t("customField.fields.key"),
           type: "text" as const,
+          section: t("customField.formSections.identity"),
           placeholder: t("customField.placeholders.key"),
           required: true,
         },
@@ -984,6 +999,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "labelEn",
           label: t("customField.fields.labelEn"),
           type: "text" as const,
+          section: t("customField.formSections.identity"),
           placeholder: t("customField.placeholders.labelEn"),
           required: true,
         },
@@ -991,12 +1007,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "labelAr",
           label: t("customField.fields.labelAr"),
           type: "text" as const,
+          section: t("customField.formSections.identity"),
           placeholder: t("customField.placeholders.labelAr"),
         },
+        // 2. Data Type & Validation
         {
           name: "valueType",
           label: t("customField.fields.valueType"),
           type: "select" as const,
+          section: t("customField.formSections.typeAndValidation"),
           options: valueTypeOptions,
           required: true,
         },
@@ -1004,15 +1023,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "placeholderEn",
           label: t("customField.fields.placeholderEn"),
           type: "text" as const,
+          section: t("customField.formSections.typeAndValidation"),
           placeholder: t("customField.placeholders.placeholderEn"),
-          // No placeholder concept for a Switch (Boolean) or DatePicker (Date)
-          // input -- restrict to the value types that actually render a text
-          // input the user types into (Text/Number/Select). A miss (unset/
-          // invalid valueType, e.g. before the user has picked one yet)
-          // falls back to `true` -- matches the old
-          // `!NO_PLACEHOLDER_VALUE_TYPES.has(String(form.valueType))`, which
-          // evaluated to `true` (show) for an unset value, since
-          // String(undefined) is never in the Set.
           isVisible: (form: Record<string, unknown>) =>
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
         },
@@ -1020,6 +1032,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "placeholderAr",
           label: t("customField.fields.placeholderAr"),
           type: "text" as const,
+          section: t("customField.formSections.typeAndValidation"),
           placeholder: t("customField.placeholders.placeholderAr"),
           isVisible: (form: Record<string, unknown>) =>
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
@@ -1028,50 +1041,34 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "validatorKind",
           label: t("customField.fields.validatorKind"),
           type: "select" as const,
+          section: t("customField.formSections.typeAndValidation"),
           options: validatorKindOptions,
           description: t("customField.validatorKindDescription"),
-          // D5: admin-definition-form only, and D4: Text value type only --
-          // this catalog exists solely for the Text handler's dispatch, same
-          // conditional-visibility mechanism the Options field below uses
-          // for Select. Literal "Text" comparison, not a catalog lookup,
-          // because this feature is inherently Text-specific rather than a
-          // per-value-type property every type carries an opinion on.
           isVisible: (form: Record<string, unknown>) => form.valueType === "Text",
         },
-        ...validatorParamFields,
-        // Wave 4 follow-up. Sits next to the validator picker rather than beside the entity-type
-        // select at the top, because the two are the same kind of thing: a per-value-type
-        // configuration that is only meaningful for one value type and is hidden for every other.
-        // Putting it at the top would place a field about REFERENCES immediately below the field
-        // about which entity the definition is FOR, which are opposite directions of the same word.
+        ...validatorParamFields.map((f) => ({
+          ...f,
+          section: t("customField.formSections.typeAndValidation"),
+        })),
         referenceTargetFields.create,
         {
           name: "options",
           label: t("customField.fields.options"),
-          // Wave 5 follow-up: was a "one option per line" textarea, which could not express an Arabic
-          // label at all, gave no affordance for adding or removing a single option, and turned a
-          // stray blank line into a silently dropped option. The control writes BOTH newline lists
-          // (see pairedName) so they cannot be persisted out of alignment.
           type: "bilingual-options" as const,
+          section: t("customField.formSections.typeAndValidation"),
           pairedName: "optionsAr",
           placeholder: t("customField.placeholders.optionEn"),
           searchPlaceholder: t("customField.placeholders.optionAr"),
           addLabel: t("customField.actions.addOption"),
           removeLabel: t("customField.actions.removeOption"),
           emptyHint: t("customField.placeholders.optionsEmpty"),
-          // A miss falls back to `false` -- matches the old
-          // `String(form.valueType) === SELECT_VALUE_TYPE`, which was
-          // already `false` (hide) for an unset value.
           isVisible: (form: Record<string, unknown>) =>
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
         },
-        {
-          name: "isRequired",
-          label: t("customField.fields.isRequired"),
-          type: "switch" as const,
-        },
+        // 3. Organization & Grouping
         {
           ...fieldGroupField,
+          section: t("customField.formSections.layout"),
           isVisible: makeFieldGroupPickerVisibility({
             canView: canViewFieldGroups,
             requireEntityType: true,
@@ -1081,7 +1078,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "sortOrder",
           label: t("customField.fields.sortOrder"),
           type: "number" as const,
+          section: t("customField.formSections.layout"),
           min: 0,
+        },
+        // 4. Behavior & Governance
+        {
+          name: "isRequired",
+          label: t("customField.fields.isRequired"),
+          type: "switch" as const,
+          section: t("customField.formSections.governance"),
         },
         ...classificationFields,
         scopeField,
@@ -1101,10 +1106,12 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         // is, same reason "id" is carried as hidden state rather than looked
         // up separately.
         { name: "valueType", type: "hidden" as const },
+        // 1. Basic Information
         {
           name: "labelEn",
           label: t("customField.fields.labelEn"),
           type: "text" as const,
+          section: t("customField.formSections.identity"),
           placeholder: t("customField.placeholders.labelEn"),
           required: true,
         },
@@ -1112,12 +1119,15 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "labelAr",
           label: t("customField.fields.labelAr"),
           type: "text" as const,
+          section: t("customField.formSections.identity"),
           placeholder: t("customField.placeholders.labelAr"),
         },
+        // 2. Data Type & Validation
         {
           name: "placeholderEn",
           label: t("customField.fields.placeholderEn"),
           type: "text" as const,
+          section: t("customField.formSections.typeAndValidation"),
           placeholder: t("customField.placeholders.placeholderEn"),
           isVisible: (form: Record<string, unknown>) =>
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
@@ -1126,6 +1136,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "placeholderAr",
           label: t("customField.fields.placeholderAr"),
           type: "text" as const,
+          section: t("customField.formSections.typeAndValidation"),
           placeholder: t("customField.placeholders.placeholderAr"),
           isVisible: (form: Record<string, unknown>) =>
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
@@ -1134,77 +1145,55 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           name: "validatorKind",
           label: t("customField.fields.validatorKind"),
           type: "select" as const,
+          section: t("customField.formSections.typeAndValidation"),
           options: validatorKindOptions,
           description: t("customField.validatorKindDescription"),
-          // Same D5/D4 reasoning as the create form's identical field above.
           isVisible: (form: Record<string, unknown>) => form.valueType === "Text",
         },
-        ...validatorParamFields,
-        // Wave 4 follow-up, and MANDATORY on this form rather than optional -- same reasoning as the
-        // field-group picker further down. `UpdateCustomFieldCommandHandler` assigns
-        // `entity.ReferenceTargetEntityTypeKey` from the gate's output on every update with no
-        // "absent means unchanged" semantics, so a form that omitted this field would submit no pin
-        // and silently UNPIN the definition on every unrelated save -- turning a deliberate "this
-        // field holds an Employee" into "this field holds anything". That is the Wave 2.5 C-1 defect
-        // exactly, which is also why `CustomFieldResponse` returns the current pin and why
-        // `buildCustomFieldEditInitialValues` seeds it.
-        //
-        // The EDIT copy differs from the create copy only in its helper text, which adds what
-        // re-pointing a live definition does: nothing to values already stored (each keeps its own
-        // target type and still resolves), but the next save of a record holding an old-type value is
-        // REFUSED by `EntityReferenceValueTypeHandler.Validate` with
-        // `customFields.values.referenceTargetTypeMismatch`. No migration is offered here and none is
-        // implied -- the backend deliberately does not refuse the re-point (its own comment: refusing
-        // would mean a mis-pinned field could never be corrected without deleting real data), so the
-        // only honest thing this form can do is say what the next save will do.
+        ...validatorParamFields.map((f) => ({
+          ...f,
+          section: t("customField.formSections.typeAndValidation"),
+        })),
         referenceTargetFields.edit,
         {
           name: "options",
           label: t("customField.fields.options"),
-          // Wave 5 follow-up: was a "one option per line" textarea, which could not express an Arabic
-          // label at all, gave no affordance for adding or removing a single option, and turned a
-          // stray blank line into a silently dropped option. The control writes BOTH newline lists
-          // (see pairedName) so they cannot be persisted out of alignment.
           type: "bilingual-options" as const,
+          section: t("customField.formSections.typeAndValidation"),
           pairedName: "optionsAr",
           placeholder: t("customField.placeholders.optionEn"),
           searchPlaceholder: t("customField.placeholders.optionAr"),
           addLabel: t("customField.actions.addOption"),
           removeLabel: t("customField.actions.removeOption"),
           emptyHint: t("customField.placeholders.optionsEmpty"),
-          // Missing on this (edit) form until now -- unlike the create form's
-          // identical field above, which has always had this guard. Editing a
-          // Text/Number/Boolean/Date field showed an editable Options textarea
-          // that UpdateCustomFieldCommandHandler's Select<->Options coupling
-          // check then rejected on submit (design doc recon finding #1).
-          // Pinned by CustomFieldListView.optionsVisibility.test.tsx.
           isVisible: (form: Record<string, unknown>) =>
             VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
         },
+        // 3. Organization & Grouping
         {
-          name: "isRequired",
-          label: t("customField.fields.isRequired"),
-          type: "switch" as const,
+          ...fieldGroupField,
+          section: t("customField.formSections.layout"),
         },
-        // Always rendered on edit: the definition's entityTypeKey is already
-        // known (immutable, and carried on the hydrated editingItem), so
-        // unlike the create form there is no "pick an entity type first"
-        // state to guard against. This field MUST be present -- omitting it
-        // would submit no fieldGroupId, and UpdateCustomFieldCommandHandler
-        // reads that as "ungroup this field", silently detaching the group on
-        // every unrelated edit. Exactly the shape of the Wave 2.5 C-1 defect.
-        fieldGroupField,
         {
           name: "sortOrder",
           label: t("customField.fields.sortOrder"),
           type: "number" as const,
+          section: t("customField.formSections.layout"),
           min: 0,
+        },
+        // 4. Behavior & Governance
+        {
+          name: "isRequired",
+          label: t("customField.fields.isRequired"),
+          type: "switch" as const,
+          section: t("customField.formSections.governance"),
         },
         ...classificationFields,
         {
           name: "isActive",
           label: t("customField.fields.isActive"),
           type: "switch" as const,
+          section: t("customField.formSections.governance"),
         },
       ],
       createInitialValues: {
@@ -1240,7 +1229,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         // Scope is a deliberate platform decision and a fixed tenant value.
         // It is removed before the request is sent; only the normalized
         // isGlobal flag reaches the backend, which independently enforces it.
-        isGlobal: getInitialCustomFieldScope(isPlatformContext),
+        scope: getInitialCustomFieldScope(isPlatformContext),
       },
       // Extracted to its own module during the Step 2.5 fix round (C-1) so a
       // test can run the REAL builder against a REAL entity instead of

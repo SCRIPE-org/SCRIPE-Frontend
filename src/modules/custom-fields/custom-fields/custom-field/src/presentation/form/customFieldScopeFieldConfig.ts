@@ -1,21 +1,20 @@
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 
-export type CustomFieldCreationScope = "global" | "platformOnly" | "tenant";
+export type CustomFieldCreationScope = "global" | "platformOnly" | "tenant" | boolean;
 
-export const CUSTOM_FIELD_SCOPE_FIELD_NAME = "isGlobal";
+export const CUSTOM_FIELD_SCOPE_FIELD_NAME = "scope";
 
 /**
- * Builds the isGlobal switch control shared by the standalone definitions page
- * and inline host-form drawers.
+ * Builds the one scope control shared by the standalone definitions page and
+ * inline host-form drawers.
  *
- * When in Platform Context (Super Admin without an active tenant):
- *   Renders a Switch for `isGlobal`.
- *   - Checked (true): Global across all tenants
- *   - Unchecked (false): Platform records only
+ * For Platform SuperAdmins (outside tenant context):
+ * - Renders a clean Switch "Global (all tenants)" allowing SuperAdmin to choose
+ *   whether the definition is global across all tenants or platform-only.
  *
- * When in Tenant Context (managing custom fields for a specific tenant):
- *   The switch is completely HIDDEN from the form, because definitions created
- *   inside a tenant are automatically scoped to that tenant only.
+ * For Tenant context:
+ * - Hidden from the form (`isVisible: () => false`) so tenant users are not
+ *   confused by a disabled dummy dropdown with no selectable choices.
  */
 export function buildCustomFieldScopeField({
   t,
@@ -28,8 +27,8 @@ export function buildCustomFieldScopeField({
     return {
       name: CUSTOM_FIELD_SCOPE_FIELD_NAME,
       type: "hidden",
+      defaultValue: "tenant",
       isVisible: () => false,
-      defaultValue: false,
     };
   }
 
@@ -37,24 +36,34 @@ export function buildCustomFieldScopeField({
     name: CUSTOM_FIELD_SCOPE_FIELD_NAME,
     label: t("customField.fields.isGlobal"),
     type: "switch",
-    description: t("customField.hints.isGlobal") || t("customField.scopeDescription.platform"),
+    description: t("customField.isGlobalDescription.platformContext") || t("customField.scopeDescription.platform"),
     isVisible: () => true,
   };
 }
 
-/** Default is false (platform-only in platform context; tenant-only in tenant context). */
-export function getInitialCustomFieldScope(_isPlatformContext: boolean): boolean {
-  return false;
+/** Platform-only is default (false for isGlobal switch); Tenant is "tenant" */
+export function getInitialCustomFieldScope(isPlatformContext: boolean): CustomFieldCreationScope {
+  return isPlatformContext ? false : "tenant";
 }
 
 /**
- * Normalizes form state to ensure isGlobal boolean is cleanly extracted and submitted.
+ * Removes UI-only scope state and maps the explicit platform choice to the
+ * request property the backend already accepts. Tenant-scoped authors always
+ * submit false; the backend remains the authorization boundary.
  */
 export function normalizeCustomFieldCreateScope(
   data: Record<string, unknown>
 ): Record<string, unknown> {
-  const { scope, ...request } = data;
-  const isGlobal = Boolean(data.isGlobal ?? (scope === "global"));
+  const { [CUSTOM_FIELD_SCOPE_FIELD_NAME]: scope, isGlobal: rawIsGlobal, ...request } = data;
+  let isGlobal = false;
+  if (typeof scope === "boolean") {
+    isGlobal = scope;
+  } else if (scope === "global") {
+    isGlobal = true;
+  } else if (typeof rawIsGlobal === "boolean") {
+    isGlobal = rawIsGlobal;
+  }
+
   return {
     ...request,
     isGlobal,

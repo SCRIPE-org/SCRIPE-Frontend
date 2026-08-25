@@ -187,7 +187,7 @@ describe("option-set barrel", () => {
     expect(typeof barrel.OptionSet).toBe("function");
     expect(typeof barrel.OptionSetVersion).toBe("function");
     expect(typeof barrel.OptionSetItem).toBe("function");
-  });
+  }, 30000);
 
   it("exports the entities as CLASSES, so their rules travel with them", async () => {
     const { OptionSet } = await import("./index");

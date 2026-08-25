@@ -429,7 +429,7 @@ export function OptionSetItemsEditor({
     labelKey: string,
     placeholderKey: string | null,
     maxLength: number,
-    direction: "ltr" | "auto"
+    direction: "ltr" | "rtl" | "auto"
   ) => {
     const inputId = `${baseId}-${row.rowId}-${field}`;
     const messageId = `${inputId}-message`;
@@ -473,10 +473,10 @@ export function OptionSetItemsEditor({
   };
 
   /** One read-only text cell, for a version nobody may edit. Empty optionals read as "None". */
-  const renderStaticCell = (value: string | null, direction: "ltr" | "auto") => (
-    <TableCell className="align-top" dir={direction}>
+  const renderStaticCell = (value: string | null, direction: "ltr" | "rtl" | "auto") => (
+    <TableCell className="align-top">
       {value && value.trim().length > 0 ? (
-        value
+        <span dir={direction}>{value}</span>
       ) : (
         <span className="text-nx-ink-3">{t("common.none")}</span>
       )}
@@ -569,7 +569,7 @@ export function OptionSetItemsEditor({
                             "optionSet.items.fields.labelEn",
                             "optionSet.items.placeholders.labelEn",
                             OPTION_SET_ITEM_LABEL_MAX_LENGTH,
-                            "auto"
+                            "ltr"
                           )}
                           {renderTextCell(
                             row,
@@ -578,7 +578,7 @@ export function OptionSetItemsEditor({
                             "optionSet.items.fields.labelAr",
                             "optionSet.items.placeholders.labelAr",
                             OPTION_SET_ITEM_LABEL_MAX_LENGTH,
-                            "auto"
+                            "rtl"
                           )}
                           {renderTextCell(
                             row,
@@ -602,8 +602,8 @@ export function OptionSetItemsEditor({
                       ) : (
                         <>
                           {renderStaticCell(row.key, "ltr")}
-                          {renderStaticCell(row.labelEn, "auto")}
-                          {renderStaticCell(row.labelAr, "auto")}
+                          {renderStaticCell(row.labelEn, "ltr")}
+                          {renderStaticCell(row.labelAr, "rtl")}
                           {renderStaticCell(row.color, "ltr")}
                           {renderStaticCell(row.iconKey, "ltr")}
                         </>

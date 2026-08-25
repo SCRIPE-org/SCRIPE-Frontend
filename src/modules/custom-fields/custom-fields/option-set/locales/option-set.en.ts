@@ -189,6 +189,11 @@ export const en = {
       createDraft: "Create draft version",
       createDraftHint:
         "A new draft starts empty — nothing is copied forward, so you decide the whole list.",
+      // Shown as a subtitle directly under the new-draft form heading.
+      // The form starts with one blank row and Save disabled until key + labelEn are filled,
+      // which reads as "read-only" unless something explains the requirement.
+      newDraftHint:
+        "Fill in the Key and English label for each option to enable Save. The Key must be unique within this version and cannot change once published.",
       saveDraft: "Save draft",
       publish: "Publish version",
       openVersion: "Open version {number}",
