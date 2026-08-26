@@ -64,14 +64,19 @@ export function CreateLeadCustomFieldsSection({
         </div>
       </div>
 
-      {customFieldConfigs.map((fc) => {
-        const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-        return renderCustomFieldControl({
-          fc,
-          value,
-          onChange: (v) => onCustomFieldChange(fc.name, v),
-        });
-      })}
+      {customFieldConfigs
+        // Same visibility check GenericForm's own `visibleFields` applies (generic-form.tsx) --
+        // without it, a field carrying a visibility rule (customFieldsCrudIntegration.tsx attaches
+        // one to `isVisible` whenever visibilityRules is non-empty) rendered unconditionally here.
+        .filter((fc) => !fc.isVisible || fc.isVisible(customFieldValues))
+        .map((fc) => {
+          const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+          return renderCustomFieldControl({
+            fc,
+            value,
+            onChange: (v) => onCustomFieldChange(fc.name, v),
+          });
+        })}
 
       {customFieldConfigs.length === 0 && !customFieldsLoading && (
         <p className="text-sm text-nx-ink-2">{t("leads.createDialog.noCustomFields")}</p>

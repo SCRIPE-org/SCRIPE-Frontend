@@ -472,15 +472,21 @@ export function FeatureDefinitionFormView({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {customFieldConfigs.map((fc: FieldConfig) => {
-            const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-            return renderCustomFieldControl({
-              fc,
-              value,
-              onChange: (v) => updateCustomFieldValue(fc.name, v),
-              isViewMode,
-            });
-          })}
+          {customFieldConfigs
+            // Same visibility check GenericForm's own `visibleFields` applies (generic-form.tsx) --
+            // without it, a field carrying a visibility rule (customFieldsCrudIntegration.tsx
+            // attaches one to `isVisible` whenever visibilityRules is non-empty) rendered
+            // unconditionally here.
+            .filter((fc: FieldConfig) => !fc.isVisible || fc.isVisible(customFieldValues))
+            .map((fc: FieldConfig) => {
+              const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+              return renderCustomFieldControl({
+                fc,
+                value,
+                onChange: (v) => updateCustomFieldValue(fc.name, v),
+                isViewMode,
+              });
+            })}
 
           {customFieldConfigs.length === 0 && !customFieldsLoading && (
             <p className="text-sm text-nx-ink-3">

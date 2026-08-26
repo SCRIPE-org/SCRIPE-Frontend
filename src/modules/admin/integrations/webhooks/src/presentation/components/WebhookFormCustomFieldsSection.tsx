@@ -51,14 +51,19 @@ export function WebhookFormCustomFieldsSection({ vm }: WebhookFormCustomFieldsSe
         </div>
       </div>
 
-      {vm.customFieldConfigs.map((fc) => {
-        const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-        return renderCustomFieldControl({
-          fc,
-          value,
-          onChange: (v) => vm.updateCustomFieldValue(fc.name, v),
-        });
-      })}
+      {vm.customFieldConfigs
+        // Same visibility check GenericForm's own `visibleFields` applies (generic-form.tsx) --
+        // without it, a field carrying a visibility rule (customFieldsCrudIntegration.tsx attaches
+        // one to `isVisible` whenever visibilityRules is non-empty) rendered unconditionally here.
+        .filter((fc) => !fc.isVisible || fc.isVisible(vm.customFieldValues))
+        .map((fc) => {
+          const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+          return renderCustomFieldControl({
+            fc,
+            value,
+            onChange: (v) => vm.updateCustomFieldValue(fc.name, v),
+          });
+        })}
 
       {vm.customFieldConfigs.length === 0 && !vm.customFieldsLoading && (
         <p className="text-sm text-nx-ink-2">{t("webhooks.noCustomFields")}</p>

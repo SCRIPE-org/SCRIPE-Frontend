@@ -51,14 +51,20 @@ export function TenantPlanStepCustomFields({
   return (
     <div className="space-y-6">
       <div className="space-y-5">
-        {fieldConfigs.map((fc) => {
-          const value = values[fc.name] ?? fc.defaultValue ?? "";
-          return renderCustomFieldControl({
-            fc,
-            value,
-            onChange: (v) => onChange(fc.name, v),
-          });
-        })}
+        {fieldConfigs
+          // Same visibility check GenericForm's own `visibleFields` applies (generic-form.tsx) --
+          // without it, a field carrying a visibility rule (customFieldsCrudIntegration.tsx attaches
+          // one to `isVisible` whenever visibilityRules is non-empty) rendered unconditionally here,
+          // ignoring the rule entirely instead of just not reaching GenericForm's own filter.
+          .filter((fc) => !fc.isVisible || fc.isVisible(values))
+          .map((fc) => {
+            const value = values[fc.name] ?? fc.defaultValue ?? "";
+            return renderCustomFieldControl({
+              fc,
+              value,
+              onChange: (v) => onChange(fc.name, v),
+            });
+          })}
 
         {fieldConfigs.length === 0 && !loading && (
           <p className="text-sm text-nx-ink-2">{t("entitlements.tenantPlans.noCustomFields")}</p>

@@ -383,14 +383,20 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
               {/* Custom Fields Tab */}
               <TabsContent value="customFields">
                 <CardContent className="space-y-5 pt-0">
-                  {vm.customFieldConfigs.map((fc: FieldConfig) => {
-                    const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-                    return renderCustomFieldControl({
-                      fc,
-                      value,
-                      onChange: (v) => vm.updateCustomFieldValue(fc.name, v),
-                    });
-                  })}
+                  {vm.customFieldConfigs
+                    // Same visibility check GenericForm's own `visibleFields` applies
+                    // (generic-form.tsx) -- without it, a field carrying a visibility rule
+                    // (customFieldsCrudIntegration.tsx attaches one to `isVisible` whenever
+                    // visibilityRules is non-empty) rendered unconditionally here.
+                    .filter((fc: FieldConfig) => !fc.isVisible || fc.isVisible(vm.customFieldValues))
+                    .map((fc: FieldConfig) => {
+                      const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
+                      return renderCustomFieldControl({
+                        fc,
+                        value,
+                        onChange: (v) => vm.updateCustomFieldValue(fc.name, v),
+                      });
+                    })}
 
                   {vm.customFieldConfigs.length === 0 && !vm.customFieldsLoading && (
                     <p className="text-sm text-nx-ink-2">
