@@ -139,6 +139,8 @@ export interface FieldVersionSummary {
   effectiveFromUtc?: string | null;
   effectiveToUtc?: string | null;
   publishedAtUtc?: string | null;
+  /** Encrypted `OptionSetVersion.Id` this version is bound to, or null/undefined when unbound. */
+  boundOptionSetVersionId?: string | null;
 }
 
 /** The field's whole version chain, newest first, plus the two facts a caller would otherwise scan for. */

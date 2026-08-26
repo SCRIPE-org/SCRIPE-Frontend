@@ -1503,11 +1503,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           isVersionError={optionSetBinding.isVersionError}
           onRetryVersion={optionSetBinding.refetchVersion}
           hasActiveVersion={optionSetBinding.hasActiveVersion}
-          onAttach={optionSetBinding.bind}
-          onSwitch={optionSetBinding.rebind}
+          boundSet={optionSetBinding.boundSet}
+          onAttach={optionSetBinding.attach}
           onDetach={optionSetBinding.unbind}
-          isAttaching={optionSetBinding.isBinding}
-          isSwitching={optionSetBinding.isRebinding}
+          isAttaching={optionSetBinding.isAttaching}
           isDetaching={optionSetBinding.isUnbinding}
         />
       )}

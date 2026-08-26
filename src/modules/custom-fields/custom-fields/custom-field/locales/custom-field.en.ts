@@ -779,6 +779,13 @@ export const en = {
       permissionNote:
         "You can view option sets, but attaching, switching or detaching one needs the option-set bind permission.",
       pickASetHint: "Choose a set above first.",
+      currentlyBound: "Currently bound to \"{set}\".",
+      currentlyUnbound: "Not bound to any option set.",
+      noneOption: "No shared option set",
+      attachAtCreateHint:
+        "Optional. Attaches a shared, versioned list of options once the field is created. Any manual options you set above are kept, unless one of their keys collides with the set.",
+      attachAtCreateFailed:
+        "The field was created, but attaching the option set failed. Open the field's \"Option set\" action to attach it.",
       attach: {
         title: "Attach",
         description:

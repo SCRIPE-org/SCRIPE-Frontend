@@ -12,15 +12,13 @@
  * the two write paths to call, and guessing wrong is a 409 with no recovery offered. So this hook
  * exposes three actions and lets the dialog offer three controls -- see `OptionSetBindingDialog`.
  *
- * WHY THERE IS NO "IS THIS FIELD CURRENTLY BOUND" FLAG HERE, AND WHY THAT IS NOT AN OVERSIGHT
- * ---------------------------------------------------------------------------------------------
- * Nothing this product exposes says so. `FieldVersionSummary` (from `GET custom-fields/versions/
- * {id}`) does not carry `OptionSetVersionId` -- the backend's own record omits it -- and no
- * option-set read exposes a reverse lookup from field to set either. So this hook cannot pre-select
- * "Bind" over "Rebind" for the caller; it can only make each of the three actions do exactly what its
- * own handler documents, and let the server's refusal (surfaced verbatim through the toast) tell the
- * admin which one applies. Building a fake "currently bound" indicator by guessing would be worse
- * than admitting the product cannot answer that question yet.
+ * "IS THIS FIELD CURRENTLY BOUND", ANSWERED FOR REAL NOW
+ * --------------------------------------------------------
+ * `FieldVersionSummary.boundOptionSetVersionId` now carries `FieldVersion.OptionSetVersionId`
+ * straight from the read model, so `boundSet` below resolves a real answer instead of forcing the
+ * dialog to offer Bind and Rebind as two blind buttons and let a 409 sort it out. `bind`/`rebind`/
+ * `unbind` stay three separate actions -- the underlying handlers still have different preconditions
+ * -- but the dialog can now pick the right one itself instead of asking the admin to guess.
  *
  * WHICH FIELD VERSION A BIND ACTUALLY TARGETS
  * --------------------------------------------
@@ -106,11 +104,26 @@ export function useOptionSetBindingViewModel() {
   const versions: FieldVersionSummary[] = versionsQuery.data?.versions ?? [];
   const activeVersion = useMemo(() => resolveActiveFieldVersion(versions), [versions]);
   const fieldVersionId = activeVersion?.id ?? null;
+  const boundOptionSetVersionId = activeVersion?.boundOptionSetVersionId ?? null;
 
   /** Readable AND published -- see `OptionSet.isBindable`'s own doc comment for why `isSystemManaged` is not part of this filter. */
   const bindableSets: OptionSet[] = useMemo(
     () => optionSets.sets.filter((set) => set.isBindable),
     [optionSets.sets]
+  );
+
+  /**
+   * The set the active version is bound to right now, resolved by matching its
+   * `boundOptionSetVersionId` against each set's own `publishedVersionId` -- not against
+   * `bindableSets`, deliberately, so a set that WAS bound but has since lost its published version
+   * (or been made otherwise unbindable) still resolves to a name instead of silently disappearing.
+   */
+  const boundSet: OptionSet | null = useMemo(
+    () =>
+      boundOptionSetVersionId === null
+        ? null
+        : (optionSets.sets.find((set) => set.publishedVersionId === boundOptionSetVersionId) ?? null),
+    [optionSets.sets, boundOptionSetVersionId]
   );
 
   const invalidateAfterBindingChange = useCallback(() => {
@@ -223,6 +236,20 @@ export function useOptionSetBindingViewModel() {
     [refuseAction, rebindMutation, fieldVersionId, t]
   );
 
+  /**
+   * The one action a caller who does not want to think about bind-vs-rebind needs: attach the given
+   * set, choosing the right handler from `boundOptionSetVersionId` computed above rather than asking
+   * the caller to know which one applies. A no-op success when the field is already bound to exactly
+   * this set -- there is nothing to write, and treating it as an error would be wrong.
+   */
+  const attach = useCallback(
+    async (optionSetVersionId: string): Promise<boolean> => {
+      if (optionSetVersionId === boundOptionSetVersionId) return true;
+      return boundOptionSetVersionId === null ? bind(optionSetVersionId) : rebind(optionSetVersionId);
+    },
+    [boundOptionSetVersionId, bind, rebind]
+  );
+
   const unbind = useCallback(async (): Promise<boolean> => {
     const refusal = refuseAction();
     if (refusal) {
@@ -255,11 +282,16 @@ export function useOptionSetBindingViewModel() {
     refetchVersion: versionsQuery.refetch,
     hasActiveVersion: fieldVersionId !== null,
 
+    boundOptionSetVersionId,
+    boundSet,
+
     bind,
     rebind,
     unbind,
+    attach,
     isBinding: bindMutation.isPending,
     isRebinding: rebindMutation.isPending,
     isUnbinding: unbindMutation.isPending,
+    isAttaching: bindMutation.isPending || rebindMutation.isPending,
   };
 }

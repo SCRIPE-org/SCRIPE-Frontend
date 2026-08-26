@@ -103,14 +103,14 @@ describe("both source files carry the unset-safe `??` fallback on every isVisibl
     expect(optionsGuards.every((m) => m[1] === "false")).toBe(true);
   });
 
-  it("InlineAddCustomFieldDialog.tsx: 2 hasPlaceholder guards fall back to `?? true`, 1 hasOptions guard falls back to `?? false`", () => {
+  it("InlineAddCustomFieldDialog.tsx: 2 hasPlaceholder guards fall back to `?? true`, 2 hasOptions guards fall back to `?? false` (manual options + the option-set picker)", () => {
     const placeholderGuards = [...inlineDialogSource.matchAll(/hasPlaceholder\s*\?\?\s*(\w+)/g)];
     const optionsGuards = [...inlineDialogSource.matchAll(/hasOptions\s*\?\?\s*(\w+)/g)];
 
     expect(placeholderGuards).toHaveLength(2);
     expect(placeholderGuards.every((m) => m[1] === "true")).toBe(true);
 
-    expect(optionsGuards).toHaveLength(1);
+    expect(optionsGuards).toHaveLength(2);
     expect(optionsGuards.every((m) => m[1] === "false")).toBe(true);
   });
 });

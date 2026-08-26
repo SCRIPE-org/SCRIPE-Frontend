@@ -36,6 +36,9 @@ import {
   normalizeCustomFieldCreateScope,
 } from "../../../../custom-field/src/presentation/form/customFieldScopeFieldConfig";
 import { useEntityLookupAvailableTypes } from "../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes";
+import { useOptionSetViewModel } from "../../../../option-set/src/presentation/viewmodels/useOptionSetViewModel";
+import { resolveActiveFieldVersion } from "../../../../custom-field/src/presentation/viewmodels/useOptionSetBindingViewModel";
+import { toast } from "@core/hooks/use-enhanced-toast";
 
 // Shares CustomFieldListView.tsx's per-value-type catalog (badge tone,
 // placeholder/options applicability, display label) rather than
@@ -80,6 +83,15 @@ export function InlineAddCustomFieldDialog({
     isError: isReferenceTargetTypesError,
     isEmpty: isReferenceTargetTypesEmpty,
   } = useEntityLookupAvailableTypes();
+  const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW);
+  const canBindOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_BIND);
+  // `null`: this consumer never opens a set's own detail/version-chain view, same reason
+  // useOptionSetBindingViewModel passes null -- only the list's `isBindable` flag is read here.
+  const optionSets = useOptionSetViewModel(null);
+  const bindableOptionSets = useMemo(
+    () => optionSets.sets.filter((set) => set.isBindable),
+    [optionSets.sets]
+  );
 
   // Wave 2 Step 2.5 Task 10 (D5: admin-definition-form only). Same catalog-
   // driven shape as CustomFieldListView.tsx's identical construction --
@@ -114,6 +126,21 @@ export function InlineAddCustomFieldDialog({
         };
       }),
     [t]
+  );
+
+  // Attaching a shared option set at create time, not just after the fact -- the field editor's
+  // own Option Set action (CustomFieldListView) previously required a field to already exist before
+  // any set could be attached to it, forcing "create with 3 options, then hunt for a second dialog to
+  // attach a set" as two disconnected steps. This form still keeps the manual "options" field above:
+  // the backend's bind (OptionSetBindingApplier.ApplyAsync) already merges the two -- hand-typed
+  // options are kept unless their key collides with the set -- so picking BOTH is a supported,
+  // intended combination, not a UI trick.
+  const optionSetOptions = useMemo(
+    () => [
+      { value: "", label: t("customField.optionSetBinding.noneOption") },
+      ...bindableOptionSets.map((set) => ({ value: set.id, label: set.displayLabel(language) })),
+    ],
+    [t, bindableOptionSets, language]
   );
 
   const fieldGroupField = useMemo(
@@ -274,6 +301,18 @@ export function InlineAddCustomFieldDialog({
         isVisible: (form) =>
           VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
       },
+      {
+        name: "optionSetId",
+        label: t("customField.optionSetBinding.pickerLabel"),
+        type: "select",
+        section: t("customField.formSections.typeAndValidation"),
+        options: optionSetOptions,
+        description: t("customField.optionSetBinding.attachAtCreateHint"),
+        isVisible: (form) =>
+          canViewOptionSets &&
+          canBindOptionSets &&
+          (VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false),
+      },
       // 3. Organization & Grouping
       {
         ...fieldGroupField,
@@ -301,6 +340,9 @@ export function InlineAddCustomFieldDialog({
       validatorKindOptions,
       validatorParamFields,
       referenceTargetField,
+      optionSetOptions,
+      canViewOptionSets,
+      canBindOptionSets,
       fieldGroupField,
       classificationFields,
       scopeField,
@@ -368,6 +410,7 @@ export function InlineAddCustomFieldDialog({
                   validatorKind: "",
                   validatorParam: "",
                   [REFERENCE_TARGET_FIELD_NAME]: UNPINNED_REFERENCE_TARGET,
+                  optionSetId: "",
                   fieldGroupId: "",
                   sensitivity: "None",
                   isExportable: true,
@@ -376,15 +419,45 @@ export function InlineAddCustomFieldDialog({
                   scope: getInitialCustomFieldScope(isPlatformContext),
                 }}
                 onSubmit={async (data) => {
-                  const { customFieldRepository } = getCustomFieldsContainer();
-                  await customFieldRepository.create(
+                  const { customFieldRepository, optionSetRepository } = getCustomFieldsContainer();
+                  const { optionSetId, ...rest } = data as Record<string, unknown> & {
+                    optionSetId?: string;
+                  };
+                  const fieldId = await customFieldRepository.create(
                     normalizeCustomFieldCreateScope({
-                      ...data,
+                      ...rest,
                       entityTypeKey,
-                      validatorKind: data.validatorKind === "" ? null : data.validatorKind,
-                      validatorParam: data.validatorParam === "" ? null : data.validatorParam,
+                      validatorKind: rest.validatorKind === "" ? null : rest.validatorKind,
+                      validatorParam: rest.validatorParam === "" ? null : rest.validatorParam,
                     })
                   );
+
+                  // Attach the chosen option set AFTER the field exists -- binding targets a
+                  // FieldVersionId, which only exists once the create handler has minted the
+                  // field's definition twin and Published version. The manual "options" this admin
+                  // may have just typed are kept: OptionSetBindingApplier.ApplyAsync preserves any
+                  // hand-authored option whose key doesn't collide with the set.
+                  if (optionSetId) {
+                    const chosen = bindableOptionSets.find((set) => set.id === optionSetId);
+                    if (chosen?.publishedVersionId) {
+                      try {
+                        const { versions } = await customFieldRepository.getVersions(fieldId);
+                        const active = resolveActiveFieldVersion(versions);
+                        if (active) {
+                          await optionSetRepository.bind(active.id, chosen.publishedVersionId);
+                        }
+                      } catch {
+                        // The field itself was created successfully -- this create flow must not
+                        // roll it back over a binding failure. The admin can attach the set from
+                        // the field's own "Option set" action afterward; the toast says so rather
+                        // than leaving them to notice the set silently never applied.
+                        toast.error({
+                          title: t("customField.optionSetBinding.attachAtCreateFailed"),
+                        });
+                      }
+                    }
+                  }
+
                   setOpen(false);
                   onCreated();
                 }}

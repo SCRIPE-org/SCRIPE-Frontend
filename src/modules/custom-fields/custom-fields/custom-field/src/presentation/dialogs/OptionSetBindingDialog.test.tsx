@@ -6,22 +6,19 @@ import { OptionSetBindingDialog } from "./OptionSetBindingDialog";
 import { OptionSet } from "../../../../option-set/src/domain/entities/OptionSet";
 
 /**
- * The dialog that wires the picker to bind/rebind/unbind -- P-4's missing consumer.
+ * The dialog that wires the picker to attach/detach -- P-4's missing consumer.
  *
  * WHAT EACH GROUP OF CASES PROTECTS
  * ------------------------------------
- *  - EACH ACTION RENDERS ITS OWN CONFIRMATION COPY KEY, and only that one -- not a generic shared
- *    "are you sure?" that would let attach's and switch's very different consequences (kept-unless-
- *    colliding vs. deactivated-not-deleted) collapse into the same sentence. What the copy actually
- *    SAYS, word for word against the backend handlers' own doc comments, is pinned separately in
- *    `custom-field.optionSetBinding.locale.test.ts` -- the same split `FieldImpactDialog.test.tsx`
- *    (key-wiring, with `t` mocked to echo the key) and `customField.wave34.locale.test.ts` (real
- *    copy content) already draw for this module.
- *  - THE PERMISSION GATE disables all three actions when exactly `.bind` is withheld -- the picker
- *    itself stays usable (an admin who can only VIEW option sets can still see what exists), which is
- *    what tells this case apart from a blanket "everything disabled" that would pass for the wrong
- *    reason.
- *  - Attach/Switch require a set to be chosen first; Detach does not, because it takes no set.
+ *  - STATE-AWARE, NOT THREE BLIND BUTTONS: `boundSet` (from `FieldVersionSummary.
+ *    boundOptionSetVersionId`) drives which action shows. Unbound gets "Attach"; bound gets "Change
+ *    option set" and a "Detach" option. There is never a moment where both "Attach" and "Switch" show
+ *    at once, because the caller no longer has to guess which applies -- see
+ *    `useOptionSetBindingViewModel.attach` for the bind-vs-rebind choice this dialog no longer makes.
+ *  - THE PERMISSION GATE disables the action when exactly `.bind` is withheld -- the picker itself
+ *    stays usable (an admin who can only VIEW option sets can still see what exists).
+ *  - THE CURRENT-STATE BANNER says what's bound today, in real language, not a guess -- this is the
+ *    exact fact the pre-fix dialog could never answer.
  */
 
 vi.mock("@core/providers/i18n-provider", () => ({
@@ -64,9 +61,21 @@ const SIZES = new OptionSet({
   publishedVersionNumber: 1,
 });
 
+const COLORS = new OptionSet({
+  id: "set-2",
+  stableKey: "colors",
+  labelEn: "Colors",
+  labelAr: null,
+  description: null,
+  isSystemManaged: false,
+  isPlatformOwned: false,
+  versionCount: 1,
+  publishedVersionId: "osv-2",
+  publishedVersionNumber: 1,
+});
+
 function renderDialog(overrides: Partial<React.ComponentProps<typeof OptionSetBindingDialog>> = {}) {
   const onAttach = vi.fn(async () => true);
-  const onSwitch = vi.fn(async () => true);
   const onDetach = vi.fn(async () => true);
   const onOpenChange = vi.fn();
 
@@ -76,7 +85,7 @@ function renderDialog(overrides: Partial<React.ComponentProps<typeof OptionSetBi
       onOpenChange={onOpenChange}
       fieldLabel="Jersey size"
       canBind
-      bindableSets={[SIZES]}
+      bindableSets={[SIZES, COLORS]}
       isSetsLoading={false}
       isSetsError={false}
       onRetrySets={vi.fn()}
@@ -84,17 +93,16 @@ function renderDialog(overrides: Partial<React.ComponentProps<typeof OptionSetBi
       isVersionError={false}
       onRetryVersion={vi.fn()}
       hasActiveVersion
+      boundSet={null}
       onAttach={onAttach}
-      onSwitch={onSwitch}
       onDetach={onDetach}
       isAttaching={false}
-      isSwitching={false}
       isDetaching={false}
       {...overrides}
     />
   );
 
-  return { onAttach, onSwitch, onDetach, onOpenChange };
+  return { onAttach, onDetach, onOpenChange };
 }
 
 function pickSizes() {
@@ -102,28 +110,66 @@ function pickSizes() {
   fireEvent.click(screen.getByRole("option", { name: /Sizes/ }));
 }
 
-describe("confirmation copy keys", () => {
-  it("renders each action's own description key, not a shared generic one", () => {
-    renderDialog();
+function pickColors() {
+  fireEvent.click(screen.getByRole("combobox"));
+  fireEvent.click(screen.getByRole("option", { name: /Colors/ }));
+}
+
+describe("current binding state", () => {
+  it("says the field is unbound when boundSet is null", () => {
+    renderDialog({ boundSet: null });
+
+    expect(
+      screen.getByText("customField.optionSetBinding.currentlyUnbound")
+    ).toBeInTheDocument();
+  });
+
+  it("names the bound set when boundSet is provided", () => {
+    renderDialog({ boundSet: SIZES });
+
+    expect(
+      screen.getByText(
+        'customField.optionSetBinding.currentlyBound:{"set":"Sizes"}'
+      )
+    ).toBeInTheDocument();
+  });
+});
+
+describe("the action offered depends on binding state, never both at once", () => {
+  it("offers Attach and no Detach when unbound", () => {
+    renderDialog({ boundSet: null });
 
     expect(screen.getByText("customField.optionSetBinding.attach.description")).toBeInTheDocument();
+    expect(
+      screen.queryByText("customField.optionSetBinding.switch.description")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "customField.optionSetBinding.detach.action" })
+    ).not.toBeInTheDocument();
+  });
+
+  it("offers Change option set and Detach when already bound", () => {
+    renderDialog({ boundSet: SIZES });
+
     expect(screen.getByText("customField.optionSetBinding.switch.description")).toBeInTheDocument();
-    expect(screen.getByText("customField.optionSetBinding.detach.description")).toBeInTheDocument();
+    expect(
+      screen.queryByText("customField.optionSetBinding.attach.description")
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" })
+    ).toBeInTheDocument();
   });
 });
 
 describe("the permission gate", () => {
-  it("disables attach, switch and detach when canBind is false, EVEN WITH a set already chosen", () => {
-    renderDialog({ canBind: false });
+  it("disables the action and detach when canBind is false, EVEN WITH a set already chosen", () => {
+    renderDialog({ canBind: false, boundSet: SIZES });
     // The picker itself is not part of the gate -- `.view` alone is enough to browse what exists --
     // so a set can still be picked here. Doing so isolates the assertion below from the SEPARATE,
-    // legitimate "no set chosen yet" reason attach/switch also disable for: if this test left no
-    // set selected, a buggy implementation that dropped the permission check entirely would still
-    // show disabled buttons, for the wrong reason, and pass regardless.
-    pickSizes();
+    // legitimate "no set chosen yet" reason the action also disables for.
+    pickColors();
 
     expect(screen.getByText("customField.optionSetBinding.permissionNote")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" })).toBeDisabled();
   });
@@ -133,35 +179,19 @@ describe("the permission gate", () => {
 
     fireEvent.click(screen.getByRole("combobox"));
 
-    // `.view` alone is enough to see what exists; only the write actions need `.bind`. Proven
-    // behaviourally (the panel actually opens and offers the set), not by reading an `aria-disabled`
-    // attribute a plain `role="combobox"` div could carry without jest-dom's `toBeDisabled()` ever
-    // noticing either way.
     expect(screen.getByRole("option", { name: /Sizes/ })).toBeInTheDocument();
-  });
-
-  it("enables all three once canBind is true and a set is chosen", () => {
-    renderDialog({ canBind: true });
-    pickSizes();
-
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeEnabled();
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" })).toBeEnabled();
   });
 });
 
-describe("attach and switch require a chosen set; detach does not", () => {
-  it("keeps attach and switch disabled until a set is picked", () => {
-    renderDialog();
+describe("attach requires a chosen DIFFERENT set", () => {
+  it("keeps attach disabled until a set is picked", () => {
+    renderDialog({ boundSet: null });
 
     expect(screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeDisabled();
-    // Detach never needed a picker selection -- it takes no set at all.
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" })).toBeEnabled();
   });
 
   it("attach sends the chosen set's PUBLISHED version id, not the field's own id", async () => {
-    const { onAttach } = renderDialog();
+    const { onAttach } = renderDialog({ boundSet: null });
     pickSizes();
 
     fireEvent.click(screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" }));
@@ -169,18 +199,22 @@ describe("attach and switch require a chosen set; detach does not", () => {
     expect(onAttach).toHaveBeenCalledWith("osv-1");
   });
 
-  it("switch calls its own handler, never attach's", async () => {
-    const { onAttach, onSwitch } = renderDialog();
-    pickSizes();
+  it("disables the action when the picked set is already the bound one -- nothing to write", () => {
+    renderDialog({ boundSet: SIZES });
+    // The dialog pre-selects the current binding on open, so no extra pick is needed here.
 
-    fireEvent.click(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" }));
+    expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeDisabled();
+  });
 
-    expect(onSwitch).toHaveBeenCalledWith("osv-1");
-    expect(onAttach).not.toHaveBeenCalled();
+  it("enables the action once a genuinely different set is picked", () => {
+    renderDialog({ boundSet: SIZES });
+    pickColors();
+
+    expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeEnabled();
   });
 
   it("detach calls its own handler with no set argument", async () => {
-    const { onDetach } = renderDialog();
+    const { onDetach } = renderDialog({ boundSet: SIZES });
 
     fireEvent.click(screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" }));
 
