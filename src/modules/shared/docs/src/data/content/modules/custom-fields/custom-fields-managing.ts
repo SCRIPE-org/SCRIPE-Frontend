@@ -121,6 +121,12 @@ const sections: DocSection[] = [
       [`${K}.vStatusArchived`, `${K}.vMeaningArchived`, `${K}.vActionsArchived`],
     ],
   },
+  {
+    type: "info",
+    variant: "warning",
+    titleKey: `${K}.versionsSnapshotWarnTitle`,
+    contentKey: `${K}.versionsSnapshotWarnContent`,
+  },
   { type: "paragraph", contentKey: `${K}.versionsPromotionIntro` },
   {
     type: "info",

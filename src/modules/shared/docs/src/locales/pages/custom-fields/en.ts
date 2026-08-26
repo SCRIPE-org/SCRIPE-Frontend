@@ -39,9 +39,9 @@ export const en = {
           featTyped: "Checked on the way in",
           featTypedDesc:
             "Each value type has its own rules — a real email address, a hex colour, a rating from 1 to 5 — so a wrong value is refused with a specific message rather than quietly stored and discovered six months later.",
-          featValueTypes: "Nineteen value types",
+          featValueTypes: "Twenty-two value types",
           featValueTypesDesc:
-            "Text and long text, single and multiple choice, numbers, percentages, ratings, money, durations, dates, date-and-time with a real time zone, times, email, web addresses, phone numbers, yes/no and colour — plus two that store no text at all and point at a record in another part of the product instead.",
+            "Text and long text, formatted rich text, single and multiple choice, numbers, percentages, ratings, money, durations, dates, date-and-time with a real time zone, times, email, web addresses, phone numbers, yes/no and colour — plus a file and an image, and two that store no text at all and point at a record in another part of the product instead.",
           featScoped: "Yours, or the whole platform's",
           featScopedDesc:
             "A field you create belongs to your workspace only. Platform administrators can create global fields that every workspace inherits and no workspace can edit or delete.",
@@ -62,7 +62,7 @@ export const en = {
             "The kind of record the field belongs to — people, staff members, bookings, and so on.",
           partKey:
             "The machine name, used in error messages and exports. Lower case, starts with a letter, letters, digits and underscores only.",
-          partValueType: "One of the nineteen types, deciding what can be entered and how it is checked.",
+          partValueType: "One of the twenty-two types, deciding what can be entered and how it is checked.",
           partLabelEn: "The English label people see above the input.",
           partLabelAr: "The Arabic label, optional. Falls back to the English one when blank.",
           partPlaceholder:
@@ -120,7 +120,7 @@ export const en = {
             "A few things people reasonably expect of them, that they deliberately do not do.",
           not1: "They are not a substitute for a real feature. A custom field stores and displays an answer; it does not calculate anything, trigger anything, or appear in a report you have not built.",
           not2: "They are not an access-control mechanism. The Sensitivity setting is a label. Field-level security, configured on roles and user groups, is the thing that actually hides a field.",
-          not3: "They are not a document store. There is no value type for uploading a file or an image; attachments belong to the record's own attachment features.",
+          not3: "They are not a full document library. File and Image each hold one managed reference, not a version history or a gallery — broader attachment workflows belong to the record's own attachment features. Attaching a new File or Image value isn't available from this screen yet; both types can be defined and an existing value can be viewed or cleared.",
           not4: "They are not free-form. Every field has exactly one value type, chosen up front and permanent, and every value is checked against it on the way in.",
           not5: "They are not retroactive. Tightening a field — making it required, or attaching a format check — never goes back and re-checks answers that were already saved.",
 
@@ -130,7 +130,7 @@ export const en = {
           thCovers: "What it covers",
           pageValueTypes: "Value Types",
           coversValueTypes:
-            "All nineteen types, one at a time: what each one stores, what it accepts, what it rejects, and worked example inputs with the error code the product returns.",
+            "All twenty-two types, one at a time: what each one stores, what it accepts, what it rejects, and worked example inputs with the error code the product returns.",
           pageReferences: "Reference Fields",
           coversReferences:
             "The two types that point at a record in another part of the product: which of them to use, what is actually stored, why a name is never stored with it, pinning a target, what may be referenced, and the workspace rules.",
@@ -183,9 +183,9 @@ export const en = {
         valueTypes: {
           title: "Value Types",
           description:
-            "All nineteen custom-field value types: what each one stores, exactly what it accepts and rejects, worked example inputs, and the error codes the product returns.",
+            "All twenty-two custom-field value types: what each one stores, exactly what it accepts and rejects, worked example inputs, and the error codes the product returns.",
           intro:
-            "Every custom field has exactly one value type, chosen when the field is defined. The value type decides what control appears on the form, what the product accepts, how the value is stored and how it is displayed afterwards. This page covers all nineteen, one at a time, with example inputs that are accepted and example inputs that are refused. Seventeen of them store something you typed; the last two store a pointer at a record somewhere else, and have a page of their own as well.",
+            "Every custom field has exactly one value type, chosen when the field is defined. The value type decides what control appears on the form, what the product accepts, how the value is stored and how it is displayed afterwards. This page covers all twenty-two, one at a time, with example inputs that are accepted and example inputs that are refused. Eighteen of them store something you typed; the other four store a pointer instead — two at a record somewhere else in the product, with a page of their own as well, and two at a single uploaded file or image.",
           permanentTitle: "The value type can never be changed",
           permanentContent:
             "Once a field is saved, its value type is fixed for the life of the field. There is no conversion — answers already recorded under the old type would stop making sense. If you pick the wrong type, the field has to be deleted and recreated, and the answers already stored against it are lost with it. Spend the extra minute up front.",
@@ -194,7 +194,7 @@ export const en = {
           orderIntro:
             "Every save runs the same four steps in the same order for every type. Knowing the order explains most surprises.",
           order1:
-            "Is the value empty? A missing value, a blank string, or a string of nothing but spaces counts as empty. For MultiSelect an empty list counts too, and for DateTime, Currency and the two reference types a value counts as empty only when both of its parts are missing.",
+            "Is the value empty? A missing value, a blank string, or a string of nothing but spaces counts as empty. For MultiSelect an empty list counts too, and for DateTime, Currency and the four reference-shaped types (EntityReference, UserReference, File, Image) a value counts as empty only when both of its parts are missing.",
           order2:
             "If it is empty and the field is Required, the save is refused with VALIDATION_REQUIRED. If it is empty and the field is not required, the stored value is cleared and nothing else runs — no type check, no validator.",
           order3:
@@ -502,6 +502,42 @@ export const en = {
           exUsrGroup: "A user group",
           exUsrTheme: "A login theme",
 
+          groupMediaTitle: "Media and formatted text",
+          mediaGroupIntro:
+            "File and Image are built the same way as the two reference types above — a pointer, not stored text — but each one points at a single uploaded file instead of another record. RichText is different again: it stores real formatted content, authored in the product's own editor.",
+
+          fileTitle: "File",
+          fileStores:
+            "A pointer at one uploaded file — a signed waiver, a medical certificate, an insurance document. Renders as a small status control showing whether a file is attached, with a Clear button when one is.",
+          fileChecks:
+            "A stored value is only accepted when the referenced file is genuinely attached to the record you are editing — a security check that stops a file meant for one record being pointed at from another. Attaching a new file from this screen is not available yet: the field can be defined today, and an existing value can be viewed or cleared, but filling one in for the first time is on its way in a future release.",
+          fileAttachedExample: "A record whose File field already holds a value",
+          fileAttachedOutcome: "Shown as attached, with a Clear control. There is currently no attach control alongside it.",
+          fileClearExample: "Clear an attached file, then save",
+          fileClearOutcome: "Accepted — the value is removed.",
+
+          imageTitle: "Image",
+          imageStores:
+            "File's sibling, restricted to images — a player photo, a facility hero shot, a team crest. Same status control, same current limitation on attaching a new one.",
+          imageChecks:
+            "Everything File checks, plus the referenced file itself must be an image. Attaching a new image from this screen is not available yet either — see File, above.",
+          imageAttachedExample: "A record whose Image field already holds a value",
+          imageAttachedOutcome: "Shown as attached, with a Clear control.",
+
+          richTextTitle: "RichText",
+          richTextStores:
+            "Formatted prose authored in the product's own editor — a coaching note with paragraphs and a bulleted list, a policy blurb with a link. Renders as a real rich-text editor, not a plain box.",
+          richTextChecks:
+            "Up to 50,000 characters of markup, checked before it is cleaned up automatically: an inline style and an embedded image are both removed, because the first can visually hijack the surrounding page and the second can quietly track whoever later views the field. There is no separate warning when that happens — reopen the field afterwards and what you see is exactly what was kept.",
+          richTextOkExample: "A paragraph with a bold word and a bulleted list",
+          richTextOkOutcome: "Accepted, and every element is kept.",
+          richTextStyleExample: "Content pasted with an inline style applied",
+          richTextStyleOutcome: "Accepted, with the style removed. The visible text and structure are kept.",
+          richTextImgExample: "Content with an embedded image",
+          richTextImgOutcome: "Accepted, with the image removed. A picture belongs on a File or Image field instead.",
+          richTextTooLongExample: "More than 50,000 characters of markup",
+          richTextTooLongOutcome: "Refused — shorten it and try again.",
+
           emptyTitle: "Empty values and the Required toggle",
           emptyIntro:
             "Every type shares one definition of empty, and it is checked before anything else. A value counts as empty when:",
@@ -541,6 +577,12 @@ export const en = {
             "A reference's stored identity could not be read — altered on its way through something, or a value that predates a change.",
           codeForbidden:
             "A reference points at a record you are not allowed to read. This one is a 403 rather than a 422, because it is about your access and not about the value's shape.",
+          codeMediaOwnerMismatch:
+            "A File or Image value points at an upload that is not attached to the record you are editing. This one is a 403, for the same reason as the reference Forbidden case above — it is about ownership, not shape.",
+          codeMediaNotAnImage:
+            "An Image field was pointed at a real, owned upload that is not actually an image.",
+          codeRichTextShape:
+            "A RichText value did not arrive as the expected {\"html\": \"...\"} shape.",
           codesInfoTitle: "Messages name the key, not the label",
           codesInfoContent:
             "Error messages quote the field's machine key — 'shirt_size' — rather than its display label. If you are matching a message to a field, match on the key.",
@@ -802,7 +844,7 @@ export const en = {
             "The three lookups behind a reference, what every answer and every refusal means, the five failure states and whose problem each one is, delete behaviour, and how the picker paginates.",
           pageValueTypes: "Value Types",
           coversValueTypes:
-            "All nineteen value types side by side, including these two, with worked example inputs and the error code each rejection returns.",
+            "All twenty-two value types side by side, including these two, with worked example inputs and the error code each rejection returns.",
           pageDefining: "Defining a Field",
           coversDefining:
             "The definition form control by control, including the Target Entity Type control and every rejection it can produce.",
@@ -1115,7 +1157,7 @@ export const en = {
             "The Arabic label. Optional — an Arabic reader sees the English label when this is blank.",
           ctlAlways: "Always.",
           ctlValueTypeDoes:
-            "Chooses one of the nineteen types, deciding the control, the validation and the storage. Selecting it is what reveals the Options box, the Validator dropdown or the Target Entity Type dropdown.",
+            "Chooses one of the twenty-two types, deciding the control, the validation and the storage. Selecting it is what reveals the Options box, the Validator dropdown or the Target Entity Type dropdown.",
           ctlValueTypeWhen: "On create only. Permanent after saving.",
           ctlPlaceholderEnDoes:
             "Optional greyed-out hint shown inside the empty input, in English — for example \"e.g. Enter your shirt size\".",
@@ -1128,7 +1170,7 @@ export const en = {
           ctlValidatorDoes:
             "Attaches one of the 13 built-in format checks. Defaults to no validator. See the Validators page.",
           ctlValidatorWhen:
-            "Only when the value type is Text. It is never shown for the other eighteen types.",
+            "Only when the value type is Text. It is never shown for the other twenty-one types.",
           ctlValidatorParamDoes:
             "Supplies the setting a parameterised check needs — a country dropdown for Postal Code, free text for the other five.",
           ctlValidatorParamWhen:
@@ -1167,7 +1209,7 @@ export const en = {
             "Choose the kind of record the field belongs to. If your record type is marked API only, stop and reconsider — the field will save, but nothing in the interface will render it.",
           s3Title: "Choose the value type",
           s3Content:
-            "Pick from the nineteen. This is the decision that cannot be undone later, and it is also what makes the Options box, the Validator dropdown or the Target Entity Type dropdown appear further down the form.",
+            "Pick from the twenty-two. This is the decision that cannot be undone later, and it is also what makes the Options box, the Validator dropdown or the Target Entity Type dropdown appear further down the form.",
           s4Title: "Name the field",
           s4Content:
             "Enter the English label, an Arabic label if you have one, and the key. The key is permanent, so pick something you will still recognise in an error message a year from now.",
@@ -1540,7 +1582,7 @@ export const en = {
           notYetTitle: "What the options list does not do",
           notYetIntro: "Three things people reasonably ask for, and what the answer is today.",
           notYet1:
-            "There is no way to reuse one list across several fields. A Countries list needed by three fields is written three times, and edited three times.",
+            "Reusing one list across several fields means attaching an Option Set, rather than typing the same options into each field. A field's own options and an attached Option Set's options can both be in play at once — the field just does not automatically pick up an Option Set's later edits unless it is re-attached.",
           notYet2:
             "There is no colour, icon or code per option that you can set. The label is the whole option as far as the definition form is concerned.",
           notYet3:
@@ -1809,7 +1851,7 @@ export const en = {
 
           limitsTitle: "What validators do not do",
           limit1:
-            "They only ever attach to a Text field. There is no way to put a format check on any of the other eighteen types.",
+            "They only ever attach to a Text field. There is no way to put a format check on any of the other twenty-one types.",
           limit2:
             "They never re-check values that were already saved. Attaching a validator to a field that holds answers leaves those answers exactly as they are, including ones that would now fail, until somebody re-enters and saves them.",
           limit3:
@@ -1964,9 +2006,9 @@ export const en = {
           actVisibilityRules:
             "Opens the conditional visibility rule dialog to configure show-or-hide rules evaluated against sibling fields.",
           actConvertType:
-            "Converts the field's value type with preflight dry-run validation, lossy confirmation safeguards and 1-click snapshot rollback.",
+            "Opens a dialog to convert the field's value type: pick a target from the types it can safely become, confirm if the conversion is lossy, and roll back afterwards if needed.",
           actVersions:
-            "Opens the version history and drafts drawer to stage changes in an isolated draft before publishing to production.",
+            "Opens the version history drawer: read the chain of versions, mint a new draft, or publish or discard one already minted.",
           actHistory:
             "Lists every recorded change to the field's definition, newest first, with who and when.",
           actUsage:
@@ -2021,60 +2063,65 @@ export const en = {
             "A rule can only reference sibling fields defined on the exact same entity type. Cross-entity conditions (e.g. checking a tenant setting from a person field) are not permitted to preserve single-record transactional integrity.",
 
           // Conversion
-          conversionTitle: "Value-type conversion and dry-run rollback",
+          conversionTitle: "Value-type conversion and rollback",
           conversionIntro:
-            "Converting a field's value type allows changing data representations without dropping existing fields or re-entering data. Conversions are categorized into three safety classes.",
+            "Converting a field's declared value type is a separate operation, reached from its own row-menu action rather than the edit form — it changes how already-stored answers are represented, not just what future ones look like. Only nine specific type pairs are allowed; every other pair is refused outright, including any pair touching a reference type, File, Image or RichText.",
           thConversionClass: "Safety class",
           thConversionPairs: "Supported type pairs",
           thConversionRisk: "Data preservation guarantee",
-          classLossless: "Lossless (Zero-risk)",
+          classLossless: "Lossless",
           classLosslessPairs:
-            "Text → LongText, Number → Text, Date → DateTime, Select → MultiSelect, Boolean → Text, Number → Decimal, Decimal → Text",
+            "Text → LongText, Number → Text, Number → LongText, Percent → Text, Rating → Text, Percent → Number, Rating → Number",
           classLosslessRisk:
-            "100% data fidelity preserved. All existing values parse directly into the target representation without truncation.",
-          classLossy: "Lossy (Requires confirmation)",
-          classLossyPairs:
-            "LongText → Text (truncates past 500 chars), DateTime → Date (drops time component)",
+            "Every existing value parses directly into the target type with nothing lost — a number formatted as text, or a percentage or rating re-read as a plain number.",
+          classLossy: "Lossy (requires confirmation)",
+          classLossyPairs: "LongText → Text, Text → Number",
           classLossyRisk:
-            "Potential truncation or precision reduction. The modal requires explicit typed confirmation before proceeding.",
-          classIncompatible: "Incompatible (Blocked)",
+            "Neither pair truncates. LongText → Text refuses any row past Text's own 4,000-character cap, naming its actual length. Text → Number refuses any row that does not parse as a number. Either way, refused rows are reported and left completely untouched — only rows that convert cleanly are changed.",
+          classIncompatible: "Not offered",
           classIncompatiblePairs:
-            "EntityReference ↔ Text, UserReference ↔ Number, Complex JSON ↔ Boolean",
+            "Every other pair — 453 of the 462 possible, including any pair touching EntityReference, UserReference, File, Image or RichText.",
           classIncompatibleRisk:
-            "Blocked by the server engine. Conversions between structurally incompatible domain types are refused.",
-          conversionLossyWarnTitle: "Lossy conversions alter data permanently",
+            "Refused before anything runs. A reference-shaped or media-shaped value has no meaningful text or number form to convert into, and the reverse direction has nothing real to point at.",
+          conversionLossyWarnTitle: "A lossy conversion permanently changes every row that succeeds",
           conversionLossyWarnContent:
-            "Truncating long text or dropping timestamps permanently reshapes historical records. Always run Usage & impact first to inspect how many records will be affected.",
+            "Rows that convert are changed permanently; rows that fail are refused and reported by name, never truncated or silently cleared. Always run Usage & impact first to see how many records will be affected before confirming.",
           conversionDryRunIntro:
-            "Before executing any conversion, the server runs a complete dry-run audit against all stored values for the field. If even a single stored value fails conversion parsing (such as non-numeric text when converting to Number), the entire operation is safely refused with a conflict diagnosis.",
-          conversionRollbackTitle: "1-Click snapshot rollback",
+            "Before writing anything, the server checks every stored value against the target type. Rows that pass convert; rows that fail are refused and reported by name, left completely untouched — a lossy conversion can partially succeed, converting what parses and refusing what does not, rather than being all-or-nothing.",
+          conversionRollbackTitle: "Snapshot rollback",
           conversionRollbackContent:
-            "Every type conversion creates an immutable prior-value snapshot. If an unforeseen downstream issue occurs after converting, administrators can invoke 1-click rollback to restore the previous value type and exact stored values instantly.",
+            "Every conversion writes a prior-value snapshot for each row before changing it. A Super Admin can roll back a specific conversion run by its job-run id, restoring the exact prior values — snapshots expire and are purged automatically after seven days, so a rollback has a real window rather than being available indefinitely.",
 
           // Versions & Drafts
           versionsTitle: "Field definition versions and drafts lifecycle",
           versionsIntro:
-            "Field definition versioning guarantees zero-downtime evolution. Administrators stage proposed changes in an isolated draft version, test them safely, and promote to production in one atomic transaction.",
+            "A definition's live scalars, options and visibility rules can be cloned into an isolated draft, then either published — replacing the live version in one step — or discarded, leaving the live version untouched either way.",
           thVersionStatus: "Status",
           thVersionMeaning: "Lifecycle meaning",
           thVersionActions: "Available actions",
           vStatusDraft: "Draft",
-          vMeaningDraft: "An uncommitted, isolated working version. Not visible on production record forms.",
-          vActionsDraft: "Add options, edit validation, update visibility rules, Publish, Discard.",
+          vMeaningDraft:
+            "An isolated clone of the definition as it stood at the moment it was minted — its own copy of the scalars, options and visibility rules. Not served on any record form.",
+          vActionsDraft:
+            "Publish, Discard. Nothing currently edits a draft after it is minted — a wrong clone has to be discarded and re-minted.",
           vStatusPublished: "Published",
-          vMeaningPublished: "The active production version currently powering all record forms.",
-          vActionsPublished: "Create Draft (mints new working version), View History, Manage Rules.",
+          vMeaningPublished: "The one active version currently served on every record form for this field.",
+          vActionsPublished: "Create Draft (mints a new working clone), View History.",
           vStatusDeprecated: "Deprecated",
-          vMeaningDeprecated: "A former published version replaced by a newer published version.",
-          vActionsDeprecated: "Read-only audit record. Retained for historical record integrity.",
+          vMeaningDeprecated:
+            "A former Published version, replaced when a draft was promoted. Its cloned options and rules stay attached to it but are inert — enforcement only ever reads the current Published version.",
+          vActionsDeprecated: "Read-only audit record. Retained for historical integrity.",
           vStatusArchived: "Archived",
-          vMeaningArchived: "A retired version no longer active in any tenant scope.",
+          vMeaningArchived: "A discarded draft, kept rather than deleted so its version number can never be reissued.",
           vActionsArchived: "Historical reference only.",
+          versionsSnapshotWarnTitle: "A draft is a snapshot, not a live mirror",
+          versionsSnapshotWarnContent:
+            "A draft does not track edits made to the live version while it stays open — it holds only what the live version looked like at the moment it was minted. Publishing does not merge the two: it replaces the live version outright with the draft's snapshot, silently discarding any live edits made in the meantime. Publish a draft promptly, or re-mint it if the live version has moved on since.",
           versionsPromotionIntro:
-            "Promoting a draft to Published automatically deprecates the incumbent version in the same database transaction. The version number increments monotonically, and form caches are invalidated instantly across all connected clients.",
-          versionsRuleGuardTitle: "Draft rule loss protection",
+            "Publishing a draft deprecates the incumbent Published version in the same save. The version number always increments, and every form load from that point serves the new Published version.",
+          versionsRuleGuardTitle: "A publish that would silently lose every visibility rule is refused",
           versionsRuleGuardContent:
-            "If a draft removes options or changes types referenced by active visibility rules, the publishing preflight refuses promotion until rules are reconciled, preventing broken conditional branches in production forms.",
+            "Visibility rules are cloned onto a draft at the moment it is minted, not fetched fresh at publish time — so by the time a publish happens there is ordinarily nothing left to lose. The one case this backstop exists for is the outgoing version genuinely carrying rules while the draft carries none: publish is refused outright rather than silently making every conditionally-hidden field on that record type unconditionally visible.",
 
           retireTitle: "Retiring a field: deactivate or delete",
           retireIntro:
@@ -2170,7 +2217,7 @@ export const en = {
           colKey: "The field's machine key.",
           colLabelEn: "The English label.",
           colLabelAr: "The Arabic label, blank if none was set.",
-          colValueType: "One of the nineteen value types.",
+          colValueType: "One of the twenty-two value types.",
           colRequired: "Whether the field is required.",
           colActive: "Whether the field is still offered on forms.",
           colSortOrder: "The field's position among the record type's custom fields.",
@@ -2199,7 +2246,7 @@ export const en = {
             "Both are reached from links in the Custom Fields page header, both are read-only, and both are gated behind the same view permission as the Custom Fields screen itself. Neither has a sidebar entry of its own, which is deliberate.",
           valueTypesScreenTitle: "Value Types",
           valueTypesScreenIntro:
-            "A table of all nineteen value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer \"what types exist\" without opening a definition form. Text is the only row showing validator support, and the two reference types show no options list of their own — the records they offer come from another module rather than from a list you author.",
+            "A table of all twenty-two value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer \"what types exist\" without opening a definition form. Text is the only row showing validator support, and the four reference-shaped types (EntityReference, UserReference, File, Image) show no options list of their own — what they point at comes from another module or an upload rather than from a list you author.",
           entityTypesScreenTitle: "Entity Types",
           entityTypesScreenIntro:
             "A list of every record type a custom field can be attached to: its display name, its key, and the module that owns it.",
@@ -2370,9 +2417,9 @@ export const en = {
           oEnglishStored: "The Arabic option label is display only.",
           oEnglishStoredWhy:
             "The two label lists are matched row by row, and the English one is what is written to the record and validated against. An Arabic reader sees Arabic on the way in and on the way out; the data underneath stays one consistent value.",
-          oNoSharedSets: "Each field carries its own options list.",
+          oNoSharedSets: "An attached Option Set does not automatically follow its own later edits.",
           oNoSharedSetsWhy:
-            "There is no way to define a list once and reuse it across several fields. A Countries list needed by three fields is written and maintained three times.",
+            "A Countries Option Set can be defined once and attached to several fields, which is the way to avoid writing the same list three times. What it does not do is propagate a later edit to that Option Set onto fields that already attached it — each attachment has to be refreshed on purpose.",
 
           groupsTitle: "Field-group behaviours",
           gStableKeyFixed: "A group's stable key can never be changed, by anybody.",
@@ -2424,9 +2471,9 @@ export const en = {
           eRestrictedAbsent: "Fields restricted from you are absent from the file, not blank.",
           eRestrictedAbsentWhy:
             "Field-level security applies to the export exactly as it does on screen, and a blank column would still reveal that the field exists.",
-          eNoImport: "Definitions can be exported but not imported.",
+          eNoImport: "The spreadsheet export is one-way; bulk creation goes through a separate JSON import instead.",
           eNoImportWhy:
-            "There is no import path, so a spreadsheet cannot be used to create fields in bulk. The export is a report, not a template.",
+            "The exported spreadsheet is a report for reading, not a template that can be re-imported. Creating fields in bulk is real, but it is a different path: a JSON schema bundle, built to the field-definition schema and imported as its own step, round-trips in a way the spreadsheet does not.",
           eTextCells: "Every export cell is written as text.",
           eTextCellsWhy:
             "A label beginning with =, +, - or @ arrives as literal characters rather than as a spreadsheet formula. This is categorical rather than a filter of known cases, so nothing that looks like a calculation can become one.",
@@ -2452,13 +2499,13 @@ export const en = {
           absentIntro:
             "Asked often enough to be worth stating plainly. None of these is a fault to report.",
           absent1:
-            "The nineteen value types are the complete set. There is no type for uploading a file or an image, and none for formatted rich text — that kind of information belongs to the record's own built-in fields and attachments. Pointing at another record is the one item that used to be on this list and no longer is: Entity Reference and User Reference do exactly that, and have two pages of their own.",
+            "The twenty-two value types are the complete set. File, Image and RichText are in that set, not missing from it — though attaching a new file or image from a record's own form is not built yet; see their own sections above for exactly what works today. Pointing at another record is the one item that used to be on this list and no longer is: Entity Reference and User Reference do exactly that, and have two pages of their own.",
           absent2:
-            "There is no values export. The spreadsheet export covers definitions only.",
+            "There is a values export, not just a definitions export — up to 10,000 cells in one file. Larger sets are refused rather than silently truncated.",
           absent3:
-            "There is no import, and no bulk creation. Fields are created one at a time, on the form.",
+            "There is no one-at-a-time-only rule. Bulk creation is real, through a JSON schema-bundle import — see Managing, above — even though the spreadsheet export itself does not double as an import template.",
           absent4:
-            "There is no shared options list. Each field carries and maintains its own.",
+            "There is a shared options list, called an Option Set, that several fields can attach. What it does not do is push a later edit onto fields that already attached it automatically.",
           absent5:
             "There is no conditional show-or-hide that an administrator can configure. A field is either on the form or it is not, subject to Active and to field-level security.",
           absent6:

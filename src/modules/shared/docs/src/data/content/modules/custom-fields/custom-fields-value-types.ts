@@ -200,6 +200,26 @@ const sections: DocSection[] = [
     [`${K}.exRefBothBlank`, "usrEmpty"],
   ]),
 
+  // ─── Media and formatted text ──────────────────────────────
+  // Wave 3.4's three types (File = 19, Image = 20, RichText = 21). File and
+  // Image share the reference family's pointer shape -- see the group intro
+  // for why they still get their own group instead of joining the one above --
+  // and RichText stores real content, so its block is a typed-value one like
+  // Text's, not a pointer-shaped one.
+  { type: "heading", level: 2, titleKey: `${K}.groupMediaTitle`, id: "media-and-formatted-text" },
+  { type: "paragraph", contentKey: `${K}.mediaGroupIntro` },
+  ...typeBlock("type-file", "file", [
+    [`${K}.fileAttachedExample`, "fileAttachedOutcome"],
+    [`${K}.fileClearExample`, "fileClearOutcome"],
+  ]),
+  ...typeBlock("type-image", "image", [[`${K}.imageAttachedExample`, "imageAttachedOutcome"]]),
+  ...typeBlock("type-rich-text", "richText", [
+    [`${K}.richTextOkExample`, "richTextOkOutcome"],
+    [`${K}.richTextStyleExample`, "richTextStyleOutcome"],
+    [`${K}.richTextImgExample`, "richTextImgOutcome"],
+    [`${K}.richTextTooLongExample`, "richTextTooLongOutcome"],
+  ]),
+
   // ─── Empty values ─────────────────────────────────────────
   { type: "heading", level: 2, titleKey: `${K}.emptyTitle`, id: "empty-values" },
   { type: "paragraph", contentKey: `${K}.emptyIntro` },
@@ -244,6 +264,13 @@ const sections: DocSection[] = [
       ["ENTITY_UNKNOWN_TYPE", `${K}.codeUnknownEntityType`],
       ["ENTITY_INVALID_ID", `${K}.codeInvalidId`],
       ["AUTH_FORBIDDEN", `${K}.codeForbidden`],
+      // File and Image add one more Forbidden refusal on top of the reference
+      // ones above, plus a Validation refusal that is deliberately NOT
+      // Forbidden even though it is about a file's own properties -- see the
+      // intro copy for why. RichText's is a plain shape refusal.
+      ["AUTH_FORBIDDEN", `${K}.codeMediaOwnerMismatch`],
+      ["VALIDATION_INVALID_FORMAT", `${K}.codeMediaNotAnImage`],
+      ["VALIDATION_INVALID_FORMAT", `${K}.codeRichTextShape`],
     ],
   },
   {

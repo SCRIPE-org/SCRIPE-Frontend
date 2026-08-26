@@ -30,8 +30,15 @@
  *     listed by name below rather than detected by a heuristic, so adding one
  *     is a deliberate act.
  *
- * The other language files in this directory are English-fallback stubs on
- * purpose and are deliberately not checked here.
+ * All 7 languages (en, ar, de, es, fr, ru, zh) are genuine, hand-translated
+ * content — none is an English-fallback stub — and guarantees 1, 2 and the
+ * page-completeness checks below run against all seven. Guarantee 3's
+ * real-script-and-not-copied check runs against Arabic specifically; German,
+ * Spanish, French, Russian and Chinese share enough short UI-label-style
+ * strings with deliberately-kept English literals (value type names like
+ * "Text", status words like "Draft", operator labels like "Equals") that the
+ * same check would need a much larger, lower-confidence allowlist to avoid
+ * false failures, so it is not applied to them here.
  */
 
 import { describe, it, expect } from "vitest";
@@ -246,16 +253,25 @@ describe("custom-fields docs page completeness", () => {
     }
   });
 
-  it("states nineteen value types rather than seventeen wherever a count appears", () => {
-    // EntityReference = 17 and UserReference = 18 brought the enum to nineteen
-    // members. Every page that counted them said "seventeen" until they
-    // shipped, and a stale count is the one error in this section a reader can
-    // check against the product in five seconds.
+  it("states twenty-two value types rather than nineteen wherever a count appears", () => {
+    // File = 19, Image = 20 and RichText = 21 brought the enum from nineteen
+    // members to twenty-two. Every page that counted them said "nineteen"
+    // until they shipped (and, before that, "seventeen" until EntityReference
+    // and UserReference shipped) — a stale count is the one error in this
+    // section a reader can check against the product in five seconds, so both
+    // superseded words must be fully gone, with no legitimate use left of
+    // either: the one sentence that used to contrast "seventeen" typed-value
+    // types with "nineteen" total now contrasts "eighteen" with "twenty-two"
+    // instead, since File and Image joined the pointer-shaped side of that
+    // split rather than the typed side.
     const flat = leafPaths(en).map((path) => readPath(en, path) as string);
-    const stale = flat.filter((value) => /\bseventeen\b/i.test(value));
-    // The one legitimate remaining use: the Value Types intro contrasting the
-    // seventeen typed-value types with the two reference types.
-    expect(stale).toHaveLength(1);
-    expect(stale[0]).toMatch(/nineteen/i);
+    expect(flat.filter((value) => /\bseventeen\b/i.test(value))).toHaveLength(0);
+    expect(flat.filter((value) => /\bnineteen\b/i.test(value))).toHaveLength(0);
+    // "Eighteen" alone is not unique to the value-type split: the definitions
+    // spreadsheet genuinely has eighteen columns, an unrelated fact that must
+    // not be mistaken for a stale count. Only the value carrying BOTH numbers
+    // together is the one this check is about.
+    const contrast = flat.filter((value) => /\beighteen\b/i.test(value) && /twenty-two/i.test(value));
+    expect(contrast).toHaveLength(1);
   });
 });

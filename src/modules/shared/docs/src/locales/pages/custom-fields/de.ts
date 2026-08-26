@@ -2,1716 +2,2675 @@
 /**
  * Exported constant defining parameters and fields for de configurations.
  *
- * Custom Fields product documentation — German (de).
+ * Custom Fields product documentation — German (de). Eleven pages under the
+ * Custom Fields section of the docs portal. Namespaced under
+ * modules.customFields.docs so it never collides with the developer-facing
+ * modules.customFields.overview page.
+ *
+ * Translation conventions used throughout this file:
+ *
+ * - Identifiers stay in Latin script and untranslated: entity-type registry
+ *   keys such as hrms.staff-member, party.person, identity.user, media.file;
+ *   machine error codes such as VALIDATION_REQUIRED, AUTH_FORBIDDEN,
+ *   ENTITY_INVALID_ID; JSON/wire-shape property names such as entityTypeKey
+ *   and entityId; and quoted literal example inputs that test an exact string
+ *   match (an email address, a phone number, a hex colour, an IBAN, a postal
+ *   code). Only the prose around them is translated.
+ * - The twenty-two value-type names (Text, LongText, Select, MultiSelect,
+ *   Number, Percent, Rating, Currency, Duration, Date, DateTime, Time, Email,
+ *   Url, Phone, Boolean, Color, EntityReference, UserReference, File, Image,
+ *   RichText) are given in English throughout, because they are the literal
+ *   names shown in the interface the product itself currently uses — there is
+ *   no German-localised build of the custom-fields screens to translate them
+ *   against yet. The same applies to specific form controls, buttons and
+ *   status labels quoted from that interface (Required, Active, Sort Order,
+ *   Target Entity Type, Save, Add, Draft, Published, and so on).
+ * - "Custom Field" / "Custom Fields" is translated throughout as
+ *   "benutzerdefiniertes Feld" / "benutzerdefinierte Felder", and the page and
+ *   screen names built around that subject (Value Types, Field Groups, Option
+ *   Sets, and so on) are translated into natural German, since those are
+ *   section names that belong to this docs portal rather than quotes from an
+ *   English-only screen.
+ * - "Workspace" is Arbeitsbereich and "record" is Datensatz, matching the
+ *   rest of this docs portal.
  */
 export const de = {
   modules: {
     customFields: {
       docs: {
+        // ═══════════════════════════════════════════════════
+        //  Benutzerdefinierte Felder (Startseite des Abschnitts)
+        // ═══════════════════════════════════════════════════
         home: {
           title: "Benutzerdefinierte Felder",
-          description: "Add your own fields to the records you already use — what a benutzerdefiniertes Feld is, what it is made of, how it is scoped, and where to find the rest of the documentation.",
-          intro: "Benutzerdefinierte Felder let you add your own information to the records you already work with — a nationality on a person, a preferred foot on a player, a purchase-order number on a booking — without waiting for a release and without anybody writing code. You define the field once on the Benutzerdefinierte Felder screen, and from that moment every create and edit form for that kind of record shows it, the record list gains a column for it, and the value you type is stored against that specific record.",
+          description:
+            "Fügen Sie den Datensätzen, die Sie bereits verwenden, eigene Felder hinzu — was ein benutzerdefiniertes Feld ist, woraus es besteht, wie sein Geltungsbereich festgelegt wird und wo Sie die übrige Dokumentation finden.",
+          intro:
+            "Mit benutzerdefinierten Feldern fügen Sie den Datensätzen, mit denen Sie ohnehin arbeiten, eigene Informationen hinzu — eine Nationalität bei einer Person, den bevorzugten Fuß bei einem Spieler, eine Bestellnummer bei einer Buchung — ohne auf ein Release zu warten und ohne dass jemand Code schreiben muss. Sie definieren das Feld einmal auf dem Bildschirm Benutzerdefinierte Felder, und von diesem Moment an zeigt jedes Erstellungs- und Bearbeitungsformular für diese Art von Datensatz es an, die Datensatzliste erhält dafür eine Spalte, und der eingegebene Wert wird bei genau diesem Datensatz gespeichert.",
           valueInfoTitle: "In einem Satz",
-          valueInfoContent: "A benutzerdefiniertes Feld is a question you decide to ask about a record: defined once by an administrator, and answered from then on by everybody who fills that record in.",
-          whatTitle: "What you get",
-          whatIntro: "Benutzerdefinierte Felder are not a free-text notes box bolted onto the side of a record. Each one is a real, typed, named field with its own validation rules, its own place in the form, its own column in the list, and its own audit trail.",
-          featDefineOnce: "Defined once, used everywhere",
-          featDefineOnceDesc: "Add the field on the Benutzerdefinierte Felder screen and every create and edit form for that record type picks it up, along with an extra column in the record list. No release, no code, no waiting.",
-          featTyped: "Checked on the way in",
-          featTypedDesc: "Each value type has its own rules — a real email address, a hex colour, a rating from 1 to 5 — so a wrong value is refused with a specific message rather than quietly stored and discovered six months later.",
-          featValueTypes: "Nineteen value types",
-          featValueTypesDesc: "Text and long text, single and multiple choice, numbers, percentages, ratings, money, durations, dates, date-and-time with a real time zone, times, email, web addresses, phone numbers, yes/no and colour — plus two that store no text at all and point at a record in another part of the product instead.",
-          featScoped: "Yours, or the whole platform's",
-          featScopedDesc: "A field you create belongs to your workspace only. Platform administrators can create global fields that every workspace inherits and no workspace can edit or delete.",
-          featSecured: "Restrictable field by field",
-          featSecuredDesc: "A role or a user group can hide a specific field from the people holding it, and the product will not let somebody who cannot see a value erase it by editing the record around it.",
-          featAccountable: "Accountable",
-          featAccountableDesc: "Every definition change is recorded with who and when, a usage report tells you how many answers a field holds before you delete it, and the whole set of definitions exports to a spreadsheet.",
-          anatomyTitle: "What a field is made of",
-          anatomyIntro: "This is the complete set of things a field definition carries. Three of them are permanent once saved, because answers already recorded against them would stop making sense if they moved. Control names are shown as they appear in the English interface.",
-          thPart: "Setting",
-          thWhat: "What it is",
-          thChange: "Changeable later?",
-          partEntityType: "The kind of record the field belongs to — people, staff members, bookings, and so on.",
-          partKey: "The machine name, used in error messages and exports. Lower case, starts with a letter, letters, digits and underscores only.",
-          partValueType: "One of the nineteen types, deciding what can be entered and how it is checked.",
-          partLabelEn: "The English label people see above the input.",
-          partLabelAr: "The Arabic label, optional. Falls back to the English one when blank.",
-          partPlaceholder: "Optional greyed-out hint text shown inside the empty input, in each language.",
-          partRequired: "Whether a record can be saved with this field left blank.",
-          partSortOrder: "Where the field sits relative to the other benutzerdefinierte Felder on the form.",
-          partFieldGroup: "The optional heading the field is gathered under.",
-          partOptions: "The list of allowed answers. Select and MultiSelect only.",
-          partValidator: "An optional extra format check, plus its setting. Text fields only.",
-          partReferenceTarget: "The one kind of record this field's values may point at, or nothing to let each value choose its own. Entity Reference fields only.",
-          partSensitivity: "A classification label — Unclassified, Internal, Confidential or Restricted — for reporting and export handling.",
-          partExportable: "A marker saying whether this field's values should be included in exports. It does not affect the definitions export, which always lists the field and reports the flag.",
-          partActive: "Whether the field is still offered on forms. An inactive field keeps its stored answers.",
-          partScope: "Whether the field belongs to your workspace or to the whole platform. Decided by who creates it.",
-          changeNever: "No — permanent once saved",
-          changeAnytime: "Yes, at any time",
-          changeAnytimeConditions: "Yes, unless a role or group restricts the field",
-          changeAnytimeCare: "Yes, but read the warnings first",
-          exampleTitle: "A worked example, start to finish",
-          exampleIntro: "Suppose the academy needs to record each player's nationality, and the product has no such field. Nothing here needs a developer.",
-          ex1Title: "Decide what you are asking",
-          ex1Content: "The question is \"what nationality is this player?\". The answer is a short piece of text with no fixed list of choices, so the value type is Text. If you did want a fixed list, Select would be the right choice instead — and that decision is permanent, so it is worth a moment's thought.",
-          ex2Title: "Define the field",
-          ex2Content: "On the Benutzerdefinierte Felder screen, choose Add. Pick the record type for people, set the key to nationality, the English label to Nationality, the value type to Text, and leave Required off for now. Save.",
-          ex3Title: "Fill it in",
-          ex3Content: "Open any player record. A Benutzerdefinierte Felder section now shows a Nationality input, empty. Type a value and save the record. No error means the value was accepted and stored against that player.",
-          ex4Title: "Read it back",
-          ex4Content: "Reopen the record and the value is there. The record list also has a Nationality column now, so you can see the answer for every player at once without opening any of them.",
-          ex5Title: "Tighten it up",
-          ex5Content: "Later you decide the field must always be filled in. Edit the definition and turn Required on. From then on a player cannot be saved with Nationality blank — but note that players saved earlier with it blank stay as they are until somebody edits them.",
-          scopeTitle: "Your workspace, or the whole platform",
-          scopeIntro: "A field created by an administrator inside a workspace belongs to that workspace. Nobody in another workspace sees it, and its answers are never visible outside it. This is the normal case and needs no thought.",
-          scopeGlobal: "A platform administrator working with no workspace selected creates a global field instead, and the form shows a Global (all tenants) switch when that applies. A global field is inherited by every workspace: everybody can fill it in, and nobody but a platform administrator can edit, reorder or delete it. Global fields also skip the per-workspace field quota.",
-          scopeInfoTitle: "Scope is decided at creation",
-          scopeInfoContent: "There is no way to convert a workspace field into a global one, or the reverse. If the scope is wrong, the field has to be recreated at the right scope — and any answers already recorded against the old one stay with the old one.",
-          notTitle: "What benutzerdefinierte Felder are not",
-          notIntro: "A few things people reasonably expect of them, that they deliberately do not do.",
-          not1: "They are not a substitute for a real feature. A benutzerdefiniertes Feld stores and displays an answer; it does not calculate anything, trigger anything, or appear in a report you have not built.",
-          not2: "They are not an access-control mechanism. The Sensitivity setting is a label. Field-level security, configured on roles and user groups, is the thing that actually hides a field.",
-          not3: "They are not a document store. There is no value type for uploading a file or an image; attachments belong to the record's own attachment features.",
-          not4: "They are not free-form. Every field has exactly one value type, chosen up front and permanent, and every value is checked against it on the way in.",
-          not5: "They are not retroactive. Tightening a field — making it required, or attaching a format check — never goes back and re-checks answers that were already saved.",
-          nextTitle: "Where to go next",
-          nextIntro: "The rest of this section covers each part in full.",
-          thPage: "Page",
-          thCovers: "What it covers",
+          valueInfoContent:
+            "Ein benutzerdefiniertes Feld ist eine Frage, die Sie sich entscheiden, zu einem Datensatz zu stellen: einmal von einem Administrator definiert und von da an von jedem beantwortet, der diesen Datensatz ausfüllt.",
+
+          whatTitle: "Was Sie bekommen",
+          whatIntro:
+            "Benutzerdefinierte Felder sind keine frei formulierbare Notizbox, die seitlich an einen Datensatz angeflanscht ist. Jedes ist ein echtes, typisiertes, benanntes Feld mit eigenen Validierungsregeln, einem eigenen Platz im Formular, einer eigenen Spalte in der Liste und einem eigenen Prüfpfad.",
+          featDefineOnce: "Einmal definiert, überall verwendet",
+          featDefineOnceDesc:
+            "Fügen Sie das Feld auf dem Bildschirm Benutzerdefinierte Felder hinzu, und jedes Erstellungs- und Bearbeitungsformular für diesen Datensatztyp übernimmt es, zusammen mit einer zusätzlichen Spalte in der Datensatzliste. Kein Release, kein Code, keine Wartezeit.",
+          featTyped: "Geprüft beim Eingeben",
+          featTypedDesc:
+            "Jeder Werttyp hat seine eigenen Regeln — eine echte E-Mail-Adresse, eine Hex-Farbe, eine Bewertung von 1 bis 5 —, sodass ein falscher Wert mit einer konkreten Meldung zurückgewiesen wird, statt still gespeichert und erst sechs Monate später entdeckt zu werden.",
+          featValueTypes: "Zweiundzwanzig Werttypen",
+          featValueTypesDesc:
+            "Text und langer Text, formatierter Rich Text, Einzel- und Mehrfachauswahl, Zahlen, Prozentsätze, Bewertungen, Geldbeträge, Zeitdauern, Datumsangaben, Datum und Uhrzeit mit echter Zeitzone, Uhrzeiten, E-Mail, Webadressen, Telefonnummern, Ja/Nein und Farbe — dazu eine Datei und ein Bild sowie zwei Typen, die überhaupt keinen Text speichern, sondern stattdessen auf einen Datensatz in einem anderen Teil des Produkts verweisen.",
+          featScoped: "Ihr eigenes, oder das der ganzen Plattform",
+          featScopedDesc:
+            "Ein von Ihnen erstelltes Feld gehört ausschließlich Ihrem Arbeitsbereich. Plattformadministratoren können globale Felder anlegen, die jeder Arbeitsbereich erbt und die kein Arbeitsbereich bearbeiten oder löschen kann.",
+          featSecured: "Feld für Feld einschränkbar",
+          featSecuredDesc:
+            "Eine Rolle oder eine Benutzergruppe kann ein bestimmtes Feld vor den Personen verbergen, die sie innehaben, und das Produkt lässt niemanden, der einen Wert nicht sehen darf, diesen durch Bearbeiten des umgebenden Datensatzes löschen.",
+          featAccountable: "Nachvollziehbar",
+          featAccountableDesc:
+            "Jede Änderung an einer Definition wird mit Wer und Wann protokolliert, ein Nutzungsbericht zeigt Ihnen, wie viele Antworten ein Feld enthält, bevor Sie es löschen, und die gesamte Menge der Definitionen lässt sich in eine Tabellenkalkulation exportieren.",
+
+          anatomyTitle: "Woraus ein Feld besteht",
+          anatomyIntro:
+            "Dies ist die vollständige Menge dessen, was eine Felddefinition trägt. Drei davon sind nach dem Speichern dauerhaft, weil bereits erfasste Antworten keinen Sinn mehr ergäben, wenn sie sich änderten. Namen von Bedienelementen werden so angegeben, wie sie in der englischsprachigen Oberfläche erscheinen.",
+          thPart: "Einstellung",
+          thWhat: "Was sie ist",
+          thChange: "Später änderbar?",
+          partEntityType:
+            "Die Art von Datensatz, zu der das Feld gehört — Personen, Mitarbeitende, Buchungen und so weiter.",
+          partKey:
+            "Der maschinenlesbare Name, verwendet in Fehlermeldungen und Exporten. Kleinbuchstaben, beginnt mit einem Buchstaben, nur Buchstaben, Ziffern und Unterstriche.",
+          partValueType: "Einer der zweiundzwanzig Typen; er legt fest, was eingegeben werden kann und wie es geprüft wird.",
+          partLabelEn: "Die englische Bezeichnung, die Personen über dem Eingabefeld sehen.",
+          partLabelAr: "Die arabische Bezeichnung, optional. Fällt bei leerem Wert auf die englische zurück.",
+          partPlaceholder:
+            "Optionaler, grau dargestellter Hinweistext im leeren Eingabefeld, für jede Sprache einzeln.",
+          partRequired: "Ob ein Datensatz gespeichert werden kann, während dieses Feld leer bleibt.",
+          partSortOrder: "Wo das Feld im Verhältnis zu den anderen benutzerdefinierten Feldern im Formular steht.",
+          partFieldGroup: "Die optionale Überschrift, unter der das Feld zusammengefasst wird.",
+          partOptions: "Die Liste der zulässigen Antworten. Nur bei Select und MultiSelect.",
+          partValidator: "Eine optionale zusätzliche Formatprüfung samt ihrer Einstellung. Nur bei Textfeldern.",
+          partReferenceTarget:
+            "Die eine Art von Datensatz, auf die die Werte dieses Felds verweisen dürfen, oder nichts, damit jeder Wert seine eigene Art wählt. Nur bei EntityReference-Feldern.",
+          partSensitivity:
+            "Ein Klassifizierungs-Label — Unclassified, Internal, Confidential oder Restricted — für Berichte und den Umgang beim Export.",
+          partExportable:
+            "Eine Markierung, die angibt, ob die Werte dieses Felds in Exporte aufgenommen werden sollen. Sie wirkt sich nicht auf den Definitionsexport aus, der das Feld immer auflistet und den Wert dieser Markierung mit ausweist.",
+          partActive:
+            "Ob das Feld weiterhin in Formularen angeboten wird. Ein inaktives Feld behält seine gespeicherten Antworten.",
+          partScope:
+            "Ob das Feld Ihrem Arbeitsbereich gehört oder der gesamten Plattform. Entschieden durch die Person, die es anlegt.",
+          changeNever: "Nein — nach dem Speichern dauerhaft",
+          changeAnytime: "Ja, jederzeit",
+          changeAnytimeConditions: "Ja, sofern keine Rolle oder Gruppe das Feld einschränkt",
+          changeAnytimeCare: "Ja, aber lesen Sie zuerst die Warnhinweise",
+
+          exampleTitle: "Ein durchgerechnetes Beispiel, von Anfang bis Ende",
+          exampleIntro:
+            "Angenommen, die Akademie muss die Nationalität jedes Spielers erfassen, und das Produkt hat noch kein solches Feld. Nichts davon braucht einen Entwickler.",
+          ex1Title: "Entscheiden Sie, wonach Sie fragen",
+          ex1Content:
+            "Die Frage lautet: \"Welche Nationalität hat dieser Spieler?\". Die Antwort ist ein kurzer Text ohne feste Auswahlliste, also ist der Werttyp Text. Wollten Sie tatsächlich eine feste Liste, wäre stattdessen Select die richtige Wahl — und diese Entscheidung ist dauerhaft, also lohnt sich ein Moment des Nachdenkens.",
+          ex2Title: "Definieren Sie das Feld",
+          ex2Content:
+            "Wählen Sie auf dem Bildschirm Benutzerdefinierte Felder Hinzufügen. Wählen Sie den Datensatztyp für Personen, setzen Sie den Schlüssel auf nationality, die englische Bezeichnung auf Nationality, den Werttyp auf Text, und lassen Sie Required vorerst ausgeschaltet. Speichern.",
+          ex3Title: "Füllen Sie es aus",
+          ex3Content:
+            "Öffnen Sie einen beliebigen Spielerdatensatz. Ein Abschnitt Benutzerdefinierte Felder zeigt nun ein Eingabefeld Nationality, leer. Geben Sie einen Wert ein und speichern Sie den Datensatz. Keine Fehlermeldung bedeutet, dass der Wert angenommen und bei diesem Spieler gespeichert wurde.",
+          ex4Title: "Lesen Sie ihn wieder aus",
+          ex4Content:
+            "Öffnen Sie den Datensatz erneut, und der Wert ist da. Die Datensatzliste hat jetzt ebenfalls eine Spalte Nationality, sodass Sie die Antwort für jeden Spieler auf einen Blick sehen, ohne einen einzigen davon zu öffnen.",
+          ex5Title: "Ziehen Sie es an",
+          ex5Content:
+            "Später entscheiden Sie, dass das Feld immer ausgefüllt sein muss. Bearbeiten Sie die Definition und schalten Sie Required ein. Von da an kann ein Spieler nicht mehr mit leerem Nationality gespeichert werden — aber Spieler, die zuvor mit leerem Feld gespeichert wurden, bleiben unverändert, bis jemand sie bearbeitet.",
+
+          scopeTitle: "Ihr Arbeitsbereich, oder die gesamte Plattform",
+          scopeIntro:
+            "Ein Feld, das ein Administrator innerhalb eines Arbeitsbereichs anlegt, gehört diesem Arbeitsbereich. Niemand in einem anderen Arbeitsbereich sieht es, und seine Antworten sind außerhalb davon nie sichtbar. Das ist der Normalfall und erfordert kein weiteres Nachdenken.",
+          scopeGlobal:
+            "Ein Plattformadministrator, der ohne ausgewählten Arbeitsbereich arbeitet, legt stattdessen ein globales Feld an, und das Formular zeigt in diesem Fall einen Schalter Global (all tenants). Ein globales Feld wird von jedem Arbeitsbereich geerbt: Jeder kann es ausfüllen, und niemand außer einem Plattformadministrator kann es bearbeiten, umsortieren oder löschen. Globale Felder umgehen außerdem das Feldkontingent pro Arbeitsbereich.",
+          scopeInfoTitle: "Der Geltungsbereich wird bei der Erstellung festgelegt",
+          scopeInfoContent:
+            "Es gibt keine Möglichkeit, ein Arbeitsbereichsfeld nachträglich in ein globales umzuwandeln oder umgekehrt. Ist der Geltungsbereich falsch, muss das Feld im richtigen Geltungsbereich neu angelegt werden — und bereits zum alten Feld erfasste Antworten verbleiben beim alten Feld.",
+
+          notTitle: "Was benutzerdefinierte Felder nicht sind",
+          notIntro:
+            "Ein paar Dinge, die man vernünftigerweise von ihnen erwarten könnte, die sie aber bewusst nicht leisten.",
+          not1: "Sie sind kein Ersatz für eine echte Funktion. Ein benutzerdefiniertes Feld speichert und zeigt eine Antwort an; es berechnet nichts, löst nichts aus und erscheint in keinem Bericht, den Sie nicht selbst gebaut haben.",
+          not2: "Sie sind kein Zugriffskontrollmechanismus. Die Einstellung Sensitivity ist ein Label. Die Sicherheit auf Feldebene, konfiguriert auf Rollen und Benutzergruppen, ist das, was ein Feld tatsächlich verbirgt.",
+          not3: "Sie sind keine vollständige Dokumentenverwaltung. File und Image halten jeweils genau einen verwalteten Verweis, keinen Versionsverlauf und keine Galerie — umfassendere Anhang-Workflows gehören zu den eigenen Anhangfunktionen des Datensatzes. Das Anhängen eines neuen File- oder Image-Werts ist über diesen Bildschirm noch nicht möglich; beide Typen lassen sich definieren, und ein vorhandener Wert lässt sich ansehen oder löschen.",
+          not4: "Sie sind nicht frei formbar. Jedes Feld hat genau einen Werttyp, im Voraus gewählt und dauerhaft, und jeder Wert wird beim Eingeben dagegen geprüft.",
+          not5: "Sie wirken nicht rückwirkend. Ein Feld zu verschärfen — es als Pflichtfeld zu markieren oder eine Formatprüfung anzuhängen — geht nie zurück, um bereits gespeicherte Antworten erneut zu prüfen.",
+
+          nextTitle: "Wie es weitergeht",
+          nextIntro: "Der Rest dieses Abschnitts behandelt jeden Teil vollständig.",
+          thPage: "Seite",
+          thCovers: "Was sie behandelt",
           pageValueTypes: "Werttypen",
-          coversValueTypes: "All nineteen types, one at a time: what each one stores, what it accepts, what it rejects, and worked example inputs with the error code the product returns.",
-          pageReferences: "Reference Fields",
-          coversReferences: "The two types that point at a record in another part of the product: which of them to use, what is actually stored, why a name is never stored with it, pinning a target, what may be referenced, and the workspace rules.",
+          coversValueTypes:
+            "Alle zweiundzwanzig Typen, einer nach dem anderen: was jeder speichert, was er akzeptiert, was er zurückweist, sowie durchgerechnete Beispieleingaben mit dem Fehlercode, den das Produkt zurückgibt.",
+          pageReferences: "Referenzfelder",
+          coversReferences:
+            "Die beiden Typen, die auf einen Datensatz in einem anderen Teil des Produkts verweisen: welchen davon Sie verwenden, was tatsächlich gespeichert wird, warum niemals ein Name mitgespeichert wird, das Festlegen eines Ziels, was referenziert werden darf, sowie die Arbeitsbereichsregeln.",
           pageReferenceLookups: "Referenz-Lookups",
-          coversReferenceLookups: "The three lookups behind a reference field, what every answer means, the five failure states and whose problem each one is, what happens when the referenced record is deleted, and how the picker behaves.",
-          pageDefining: "Defining a Field",
-          coversDefining: "The definition form control by control, the full walkthrough, key naming rules, creating a field from inside a record, and every rejection you can hit.",
+          coversReferenceLookups:
+            "Die drei Lookups hinter einem Referenzfeld, was jede Antwort bedeutet, die fünf Fehlerzustände und wessen Problem jeder davon ist, was beim Löschen des referenzierten Datensatzes passiert, und wie sich die Auswahlkomponente verhält.",
+          pageDefining: "Ein Feld definieren",
+          coversDefining:
+            "Das Definitionsformular Element für Element, die vollständige Schritt-für-Schritt-Anleitung, die Regeln für Schlüsselnamen, das Anlegen eines Felds direkt aus einem Datensatz heraus, und jede Ablehnung, auf die Sie stoßen können.",
           pageGroups: "Feldgruppen",
-          coversGroups: "Gathering a record type's fields under headings, the stable key, ordering, deleting, global groups, and what groups do and do not affect.",
-          pageOptions: "Options",
-          coversOptions: "Writing the allowed answers for Select and MultiSelect, the bilingual option editor, how a submitted value is matched, and what changing the list later does to existing records.",
-          pageValidators: "Validators",
-          coversValidators: "All 13 built-in format checks with valid and invalid example inputs, the six that need a setting, the seven supported postal-code countries, and what a rejection looks like.",
-          pageSecurity: "Field-Level Security",
-          coversSecurity: "Restricting a field on a role or user group, what a restricted person sees, why their saves do not destroy hidden values, and why required and restricted cannot be combined.",
-          pageManaging: "Managing Fields",
-          coversManaging: "Editing, deactivating, the definition history dialog, the usage and impact report, deleting without destroying data, the spreadsheet export, and the two read-only reference screens.",
-          pageLimits: "Limits and Behaviours",
-          coversLimits: "Every fixed cap, every deliberate limitation, and the reason for each — so you do not spend an afternoon looking for a setting that is not there.",
-          accessTitle: "Permissions",
-          accessIntro: "Working with definitions needs permissions of its own. Filling in a field somebody else defined needs nothing beyond access to the record itself.",
-          thNeed: "Permission",
-          thWhoNeedsIt: "What it allows",
-          permView: "See the Benutzerdefinierte Felder screen, the definition list, the History and Usage dialogs, and the two read-only reference screens.",
-          permCreate: "Create a definition, including through the Add benutzerdefiniertes Feld link inside a record form.",
-          permUpdate: "Edit an existing definition.",
-          permDelete: "Delete a definition, including confirming a destructive delete.",
-          permGroups: "The field-groups feature, gated separately. A role holding every custom-fields permission above does not automatically hold these.",
-          planInfoTitle: "Benutzerdefinierte Felder are part of your plan",
-          planInfoContent: "The feature is entitlement-gated and quota-limited: the Free edition allows zero fields, and every plan has a maximum number of fields per workspace. If the Benutzerdefinierte Felder screen is missing, the Add button is absent, or a save is refused for quota, that is a plan matter rather than a fault. Global platform fields do not count against a workspace's quota.",
+          coversGroups:
+            "Das Zusammenfassen der Felder eines Datensatztyps unter Überschriften, der stabile Schlüssel, die Reihenfolge, das Löschen, globale Gruppen, und was Gruppen beeinflussen und was nicht.",
+          pageOptions: "Optionen",
+          coversOptions:
+            "Das Schreiben der zulässigen Antworten für Select und MultiSelect, der zweisprachige Options-Editor, wie ein übermittelter Wert abgeglichen wird, und was eine spätere Änderung der Liste mit bestehenden Datensätzen macht.",
+          pageValidators: "Validatoren",
+          coversValidators:
+            "Alle 13 integrierten Formatprüfungen mit gültigen und ungültigen Beispieleingaben, die sechs, die eine Einstellung benötigen, die sieben unterstützten Länder für Postleitzahlen, und wie eine Ablehnung aussieht.",
+          pageSecurity: "Sicherheit auf Feldebene",
+          coversSecurity:
+            "Das Einschränken eines Felds auf einer Rolle oder Benutzergruppe, was eine eingeschränkte Person sieht, warum ihre Speichervorgänge verborgene Werte nicht zerstören, und warum sich Pflichtfeld und eingeschränkt nicht kombinieren lassen.",
+          pageManaging: "Felder verwalten",
+          coversManaging:
+            "Bearbeiten, Deaktivieren, der Dialog zum Definitionsverlauf, der Nutzungs- und Auswirkungsbericht, das Löschen ohne Datenverlust, der Tabellenexport, und die beiden schreibgeschützten Referenzbildschirme.",
+          pageLimits: "Grenzwerte und Verhalten",
+          coversLimits:
+            "Jede feste Obergrenze, jede bewusste Einschränkung und der Grund dafür — damit Sie keinen Nachmittag mit der Suche nach einer Einstellung verbringen, die es gar nicht gibt.",
+
+          accessTitle: "Berechtigungen",
+          accessIntro:
+            "Die Arbeit mit Definitionen braucht eigene Berechtigungen. Ein von jemand anderem definiertes Feld auszufüllen braucht nichts weiter als Zugriff auf den Datensatz selbst.",
+          thNeed: "Berechtigung",
+          thWhoNeedsIt: "Was sie erlaubt",
+          permView:
+            "Den Bildschirm Benutzerdefinierte Felder sehen, die Liste der Definitionen, die Dialoge History und Usage sowie die beiden schreibgeschützten Referenzbildschirme.",
+          permCreate:
+            "Eine Definition anlegen, auch über den Link Add custom field innerhalb eines Datensatzformulars.",
+          permUpdate: "Eine bestehende Definition bearbeiten.",
+          permDelete: "Eine Definition löschen, einschließlich der Bestätigung eines zerstörerischen Löschvorgangs.",
+          permGroups:
+            "Die Feldgruppen-Funktion, gesondert freigeschaltet. Eine Rolle, die bereits jede der obigen Berechtigungen für benutzerdefinierte Felder besitzt, erhält diese nicht automatisch mit.",
+          planInfoTitle: "Benutzerdefinierte Felder sind Teil Ihres Plans",
+          planInfoContent:
+            "Die Funktion ist berechtigungs- und kontingentgebunden: Die Free-Edition erlaubt null Felder, und jeder Plan hat eine Höchstzahl an Feldern pro Arbeitsbereich. Fehlt der Bildschirm Benutzerdefinierte Felder, fehlt die Schaltfläche Add, oder wird ein Speichervorgang wegen des Kontingents abgelehnt, ist das eine Frage des Plans und kein Fehler. Globale Plattformfelder zählen nicht gegen das Kontingent eines Arbeitsbereichs.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Werttypen
+        // ═══════════════════════════════════════════════════
         valueTypes: {
           title: "Werttypen",
-          description: "All nineteen custom-field value types: what each one stores, exactly what it accepts and rejects, worked example inputs, and the error codes the product returns.",
-          intro: "Every benutzerdefiniertes Feld has exactly one value type, chosen when the field is defined. The value type decides what control appears on the form, what the product accepts, how the value is stored and how it is displayed afterwards. This page covers all nineteen, one at a time, with example inputs that are accepted and example inputs that are refused. Seventeen of them store something you typed; the last two store a pointer at a record somewhere else, and have a page of their own as well.",
-          permanentTitle: "The value type can never be changed",
-          permanentContent: "Once a field is saved, its value type is fixed for the life of the field. There is no conversion — answers already recorded under the old type would stop making sense. If you pick the wrong type, the field has to be deleted and recreated, and the answers already stored against it are lost with it. Spend the extra minute up front.",
-          orderTitle: "How a submitted value is checked",
-          orderIntro: "Every save runs the same four steps in the same order for every type. Knowing the order explains most surprises.",
-          order1: "Is the value empty? A missing value, a blank string, or a string of nothing but spaces counts as empty. For MultiSelect an empty list counts too, and for DateTime, Currency and the two reference types a value counts as empty only when both of its parts are missing.",
-          order2: "If it is empty and the field is Required, the save is refused with VALIDATION_REQUIRED. If it is empty and the field is not required, the stored value is cleared and nothing else runs — no type check, no validator.",
-          order3: "If it is not empty, the type's own rules run: length caps, number parsing, range checks, allowed-option matching, format checks.",
-          order4: "For a Text field with a validator attached, and only then, the validator runs last — after the global 4,000-character cap and after the validator's own shorter length cap.",
-          orderKeyNote: "One detail worth knowing before you read any error message: the message names the field's key, not its label. A field labelled Nationality with the key nationality produces \"'nationality' expects a date.\", not \"'Nationality'\".",
-          thExample: "Example input",
-          thOutcome: "What happens",
-          groupTextTitle: "Text and choices",
+          description:
+            "Alle zweiundzwanzig Werttypen für benutzerdefinierte Felder: was jeder speichert, was er genau akzeptiert und zurückweist, durchgerechnete Beispieleingaben, und die Fehlercodes, die das Produkt zurückgibt.",
+          intro:
+            "Jedes benutzerdefinierte Feld hat genau einen Werttyp, gewählt bei der Definition des Felds. Der Werttyp bestimmt, welches Bedienelement im Formular erscheint, was das Produkt akzeptiert, wie der Wert gespeichert wird und wie er anschließend angezeigt wird. Diese Seite behandelt alle zweiundzwanzig, einen nach dem anderen, mit Beispieleingaben, die angenommen werden, und Beispieleingaben, die zurückgewiesen werden. Achtzehn davon speichern etwas, das Sie eingegeben haben; die übrigen vier speichern stattdessen einen Verweis — zwei auf einen Datensatz an anderer Stelle im Produkt, mit einer eigenen Seite dafür, und zwei auf eine einzelne hochgeladene Datei oder ein einzelnes Bild.",
+          permanentTitle: "Der Werttyp lässt sich nie mehr ändern",
+          permanentContent:
+            "Sobald ein Feld gespeichert ist, steht sein Werttyp für die gesamte Lebensdauer des Felds fest. Es gibt keine Umwandlung — bereits erfasste Antworten unter dem alten Typ würden keinen Sinn mehr ergeben. Wählen Sie den falschen Typ, muss das Feld gelöscht und neu angelegt werden, und die bereits dazu gespeicherten Antworten gehen dabei verloren. Investieren Sie die zusätzliche Minute im Voraus.",
+
+          orderTitle: "Wie ein übermittelter Wert geprüft wird",
+          orderIntro:
+            "Jeder Speichervorgang durchläuft für jeden Typ dieselben vier Schritte in derselben Reihenfolge. Diese Reihenfolge zu kennen erklärt die meisten Überraschungen.",
+          order1:
+            "Ist der Wert leer? Ein fehlender Wert, eine leere Zeichenkette oder eine Zeichenkette aus nichts als Leerzeichen zählt als leer. Bei MultiSelect zählt auch eine explizit leere Liste, und bei DateTime, Currency sowie den vier referenzförmigen Typen (EntityReference, UserReference, File, Image) gilt ein Wert nur dann als leer, wenn beide seiner Teile fehlen.",
+          order2:
+            "Ist er leer und das Feld ist Required, wird der Speichervorgang mit VALIDATION_REQUIRED zurückgewiesen. Ist er leer und das Feld ist nicht Required, wird der gespeicherte Wert gelöscht und nichts weiter läuft ab — keine Typprüfung, kein Validator.",
+          order3:
+            "Ist er nicht leer, laufen die typeigenen Regeln: Längenobergrenzen, Zahlen-Parsing, Bereichsprüfungen, Abgleich zulässiger Optionen, Formatprüfungen.",
+          order4:
+            "Bei einem Textfeld mit angehängtem Validator, und nur dann, läuft der Validator zuletzt — nach der globalen Obergrenze von 4.000 Zeichen und nach der eigenen, kürzeren Längenobergrenze des Validators.",
+          orderKeyNote:
+            "Ein Detail, das sich zu kennen lohnt, bevor Sie irgendeine Fehlermeldung lesen: Die Meldung nennt den Schlüssel des Felds, nicht seine Bezeichnung. Ein Feld mit der Bezeichnung Nationality und dem Schlüssel nationality erzeugt \"'nationality' expects a date.\", nicht \"'Nationality'\".",
+
+          thExample: "Beispieleingabe",
+          thOutcome: "Was passiert",
+
+          groupTextTitle: "Text und Auswahl",
           textTitle: "Text",
-          textStores: "A single line of free-form text, up to 4,000 characters. Renders as an ordinary single-line input.",
-          textChecks: "The only check is the length cap — unless a validator is attached, which makes Text the only type that can carry a format check. The value is stored exactly as submitted; unlike Select, Text does not trim surrounding spaces.",
-          textOk: "Accepted, and stored exactly as submitted.",
-          textTooLong: "Refused: VALIDATION_MAX_LENGTH. Text stops at 4,000 characters — use LongText for anything longer.",
-          textBlankOptional: "Accepted, and stored as cleared. Whitespace-only counts as empty, so any attached validator never runs on it.",
-          textBlankRequired: "Refused: VALIDATION_REQUIRED. Whitespace-only counts as empty here too.",
-          exText4500: "A value 4,500 characters long",
-          exSpacesOptional: "Three spaces, on a field that is not Required",
-          exSpacesRequired: "Three spaces, on a Required field",
+          textStores:
+            "Eine einzelne Zeile frei formulierbaren Textes, bis zu 4.000 Zeichen. Wird als gewöhnliches einzeiliges Eingabefeld dargestellt.",
+          textChecks:
+            "Die einzige Prüfung ist die Längenobergrenze — sofern kein Validator angehängt ist, was Text zum einzigen Typ macht, der eine Formatprüfung tragen kann. Der Wert wird exakt so gespeichert, wie er übermittelt wurde; anders als Select entfernt Text keine umgebenden Leerzeichen.",
+          textOk: "Angenommen, und exakt so gespeichert, wie übermittelt.",
+          textTooLong:
+            "Zurückgewiesen: VALIDATION_MAX_LENGTH. Text endet bei 4.000 Zeichen — verwenden Sie LongText für alles, was länger ist.",
+          textBlankOptional:
+            "Angenommen, und als gelöscht gespeichert. Reine Leerzeichen zählen als leer, sodass ein angehängter Validator darauf nie läuft.",
+          textBlankRequired: "Zurückgewiesen: VALIDATION_REQUIRED. Reine Leerzeichen zählen auch hier als leer.",
+          exText4500: "Ein Wert mit einer Länge von 4.500 Zeichen",
+          exSpacesOptional: "Drei Leerzeichen, bei einem Feld, das nicht Required ist",
+          exSpacesRequired: "Drei Leerzeichen, bei einem Required-Feld",
+
           longTextTitle: "LongText",
-          longTextStores: "Longer free-form content, up to 10,000 characters. Renders as a real multi-line text area, not a taller single-line box.",
-          longTextChecks: "Only the 10,000-character cap. LongText cannot carry a validator. The on-screen counter turns red once you pass the cap, but it does not stop you typing — the refusal comes when you save.",
-          longTextOk: "Accepted. This is well past Text's own 4,000-character cap, which is the reason LongText exists.",
-          longTextTooLong: "Refused: VALIDATION_MAX_LENGTH, naming the 10,000-character cap.",
-          exLong6000: "A 6,000-character description",
-          exLong12000: "A 12,000-character description",
+          longTextStores:
+            "Längerer frei formulierbarer Inhalt, bis zu 10.000 Zeichen. Wird als echtes mehrzeiliges Textfeld dargestellt, nicht als höher gezogenes einzeiliges Feld.",
+          longTextChecks:
+            "Nur die Obergrenze von 10.000 Zeichen. LongText kann keinen Validator tragen. Der Zähler auf dem Bildschirm wird rot, sobald Sie die Obergrenze überschreiten, hindert Sie aber nicht am Weitertippen — die Zurückweisung kommt erst beim Speichern.",
+          longTextOk:
+            "Angenommen. Das liegt deutlich über der eigenen 4.000-Zeichen-Grenze von Text, was der Grund ist, warum LongText existiert.",
+          longTextTooLong: "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 10.000 Zeichen.",
+          exLong6000: "Eine Beschreibung mit 6.000 Zeichen",
+          exLong12000: "Eine Beschreibung mit 12.000 Zeichen",
+
           selectTitle: "Select",
-          selectStores: "One answer chosen from a list you write yourself. Renders as a dropdown offering exactly your options.",
-          selectChecks: "The submitted value must match one of the field's configured options exactly. Both sides are trimmed before comparison, and the comparison is case-sensitive. For an options list of Small, Medium, Large:",
-          selectOk: "Accepted, and stored as the option text itself.",
-          selectTrimmed: "Accepted. Surrounding spaces are trimmed before the comparison.",
-          selectCase: "Refused: VALIDATION_INVALID_FORMAT. Matching is case-sensitive, so Medium and medium are different answers — which also means the two can legitimately both exist as separate options.",
-          selectUnknown: "Refused: VALIDATION_INVALID_FORMAT. The message quotes the rejected value and the field's key.",
-          exSelectPadded: "\" Medium\" with a leading space",
+          selectStores:
+            "Eine Antwort, gewählt aus einer selbst verfassten Liste. Wird als Dropdown dargestellt, das genau Ihre Optionen anbietet.",
+          selectChecks:
+            "Der übermittelte Wert muss exakt mit einer der konfigurierten Optionen des Felds übereinstimmen. Beide Seiten werden vor dem Vergleich getrimmt, und der Vergleich unterscheidet Groß-/Kleinschreibung. Für eine Optionsliste aus Small, Medium, Large gilt:",
+          selectOk: "Angenommen, und als der Optionstext selbst gespeichert.",
+          selectTrimmed: "Angenommen. Umgebende Leerzeichen werden vor dem Vergleich entfernt.",
+          selectCase:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich unterscheidet Groß-/Kleinschreibung, sodass Medium und medium unterschiedliche Antworten sind — was auch bedeutet, dass beide rechtmäßig als getrennte Optionen existieren können.",
+          selectUnknown:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die Meldung zitiert den zurückgewiesenen Wert und den Schlüssel des Felds.",
+          exSelectPadded: "\" Medium\" mit einem führenden Leerzeichen",
+
           multiSelectTitle: "MultiSelect",
-          multiSelectStores: "Several answers from the same kind of list, up to 19 of them. Renders as a multi-select combobox with a live \"N of 19 selected\" counter.",
-          multiSelectChecks: "Every submitted answer must be one of the field's configured options, no answer may repeat, and there may be at most 19. The order you pick in is preserved end to end. For an options list of Red, Green, Blue, Yellow:",
-          multiOk: "Accepted, and read back in the order picked — Blue first, then Red — not re-sorted into the order the options were listed in.",
-          multiTooMany: "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19. The picker itself makes the twentieth option unselectable, so reaching this needs a request that bypasses the form.",
-          multiDuplicate: "Refused: VALIDATION_UNIQUE. A repeated answer is rejected rather than quietly collapsed to one.",
-          multiUnknown: "Refused: VALIDATION_INVALID_FORMAT — Purple is not one of the field's options.",
-          multiEmpty: "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required.",
-          exMultiTwo: "Blue, then Red",
-          exMultiTwenty: "20 selections",
-          exMultiRepeat: "Red, then Red again",
-          exMultiEmptyList: "An explicitly empty list",
-          groupNumberTitle: "Numbers and measures",
+          multiSelectStores:
+            "Mehrere Antworten aus derselben Art von Liste, bis zu 19 davon. Wird als Mehrfachauswahl-Combobox mit einem live mitlaufenden Zähler \"N of 19 selected\" dargestellt.",
+          multiSelectChecks:
+            "Jede übermittelte Antwort muss eine der konfigurierten Optionen des Felds sein, keine Antwort darf sich wiederholen, und es dürfen höchstens 19 sein. Die Reihenfolge, in der Sie auswählen, bleibt durchgehend erhalten. Für eine Optionsliste aus Red, Green, Blue, Yellow gilt:",
+          multiOk:
+            "Angenommen, und in der gewählten Reihenfolge zurückgelesen — zuerst Blue, dann Red — nicht neu sortiert in die Reihenfolge, in der die Optionen aufgeführt waren.",
+          multiTooMany:
+            "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19. Die Auswahlkomponente selbst macht die zwanzigste Option nicht auswählbar, sodass dies nur über eine Anfrage erreichbar ist, die das Formular umgeht.",
+          multiDuplicate:
+            "Zurückgewiesen: VALIDATION_UNIQUE. Eine wiederholte Antwort wird zurückgewiesen, statt still auf eine zusammengeführt zu werden.",
+          multiUnknown: "Zurückgewiesen: VALIDATION_INVALID_FORMAT — Purple gehört nicht zu den Optionen des Felds.",
+          multiEmpty:
+            "Als leer behandelt: gelöscht, wenn das Feld optional ist, zurückgewiesen mit VALIDATION_REQUIRED, wenn es Required ist.",
+          exMultiTwo: "Blue, dann Red",
+          exMultiTwenty: "20 Auswahlen",
+          exMultiRepeat: "Red, dann noch einmal Red",
+          exMultiEmptyList: "Eine explizit leere Liste",
+
+          groupNumberTitle: "Zahlen und Maße",
           numberTitle: "Number",
-          numberStores: "Any number, whole or with decimals, positive or negative, with up to six decimal places.",
-          numberChecks: "Only that the value parses as a number. No minimum, maximum, precision or rounding rule is applied, so choose Number when genuinely any number is a valid answer — and choose Percent, Rating, Currency or Duration when it is not.",
-          numberOk: "Accepted.",
-          numberNegative: "Accepted. Negative values are perfectly valid for this type.",
-          numberPrecision: "Accepted, and stored to six decimal places. Anything finer than that is not preserved.",
-          numberInvalid: "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a number\". A number written as words is not parsed.",
+          numberStores:
+            "Eine beliebige Zahl, ganzzahlig oder mit Dezimalstellen, positiv oder negativ, mit bis zu sechs Nachkommastellen.",
+          numberChecks:
+            "Es wird nur geprüft, ob sich der Wert als Zahl parsen lässt. Es gibt keine Mindest-, Höchst-, Präzisions- oder Rundungsregel, wählen Sie Number also, wenn wirklich jede Zahl eine gültige Antwort ist — und wählen Sie Percent, Rating, Currency oder Duration, wenn das nicht der Fall ist.",
+          numberOk: "Angenommen.",
+          numberNegative: "Angenommen. Negative Werte sind für diesen Typ vollkommen gültig.",
+          numberPrecision:
+            "Angenommen, und auf sechs Nachkommastellen gespeichert. Alles Feinere als das bleibt nicht erhalten.",
+          numberInvalid:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet \"expects a number\". Eine als Wort geschriebene Zahl wird nicht geparst.",
           exAboutForty: "\"about 40\"",
+
           percentTitle: "Percent",
-          percentStores: "A percentage between 0 and 100 inclusive, decimals allowed. Renders as a plain numeric input, and displays afterwards as the number with a % sign appended.",
-          percentChecks: "The value must parse as a number and fall inside 0 to 100. It is stored exactly as typed — this is the detail to get right if you ever read the raw data or build an export.",
-          percentOk: "Accepted, and shown afterwards as 25%.",
-          percentDecimal: "Accepted, and shown as 33.5%. Fractions of a percentage point are kept exactly.",
-          percentQuarter: "Accepted — but it means a quarter of one percent, shown as 0.25%. Percent stores the number you would say out loud, never a 0-to-1 fraction.",
-          percentTooHigh: "Refused: VALIDATION_RANGE, naming the bounds 0 and 100.",
-          percentNegative: "Refused: VALIDATION_RANGE. The lower bound is 0, and it is inclusive.",
+          percentStores:
+            "Ein Prozentsatz zwischen 0 und 100 einschließlich, Dezimalstellen erlaubt. Wird als einfaches numerisches Eingabefeld dargestellt und anschließend als die Zahl mit angehängtem %-Zeichen angezeigt.",
+          percentChecks:
+            "Der Wert muss sich als Zahl parsen lassen und zwischen 0 und 100 liegen. Er wird exakt so gespeichert, wie eingegeben — das ist das Detail, das Sie richtig haben müssen, falls Sie je die Rohdaten lesen oder einen Export bauen.",
+          percentOk: "Angenommen, und anschließend als 25% angezeigt.",
+          percentDecimal: "Angenommen, und als 33,5% angezeigt. Bruchteile eines Prozentpunkts bleiben exakt erhalten.",
+          percentQuarter:
+            "Angenommen — bedeutet aber ein Viertel eines Prozents, angezeigt als 0,25%. Percent speichert die Zahl, die Sie laut aussprechen würden, nie einen Bruch zwischen 0 und 1.",
+          percentTooHigh: "Zurückgewiesen: VALIDATION_RANGE, unter Nennung der Grenzen 0 und 100.",
+          percentNegative: "Zurückgewiesen: VALIDATION_RANGE. Die Untergrenze ist 0, und sie ist einschließend.",
+
           ratingTitle: "Rating",
-          ratingStores: "A whole number from 1 to 5, captured on a slider. Displays afterwards as \"4 / 5\".",
-          ratingChecks: "The value must parse as a number, be a whole number, and fall between 1 and 5 inclusive. There is no star control and no free-text entry.",
-          ratingOk: "Accepted, and shown as 4 / 5.",
-          ratingZero: "Refused: VALIDATION_RANGE. A zero is a real submitted value that fails the 1-to-5 check; it is not read as \"unrated\".",
-          ratingFraction: "Refused: VALIDATION_RANGE. Half ratings are not supported — this is a genuine difference from Number, which allows any decimal.",
-          ratingTooHigh: "Refused: VALIDATION_RANGE, with the same message a 0 gets.",
-          ratingUntouched: "Saved as empty, not as 1. The slider thumb has to sit somewhere, so an untouched field shows at its leftmost position — that is a display artefact, not a stored answer.",
-          exRatingUntouched: "The slider left untouched on a new record",
+          ratingStores:
+            "Eine ganze Zahl von 1 bis 5, erfasst über einen Schieberegler. Wird anschließend als \"4 / 5\" angezeigt.",
+          ratingChecks:
+            "Der Wert muss sich als Zahl parsen lassen, eine ganze Zahl sein und zwischen 1 und 5 einschließlich liegen. Es gibt weder ein Sterne-Element noch eine Freitexteingabe.",
+          ratingOk: "Angenommen, und als 4 / 5 angezeigt.",
+          ratingZero:
+            "Zurückgewiesen: VALIDATION_RANGE. Eine 0 ist ein echter übermittelter Wert, der die Prüfung von 1 bis 5 nicht besteht; sie wird nicht als \"unbewertet\" gelesen.",
+          ratingFraction:
+            "Zurückgewiesen: VALIDATION_RANGE. Halbe Bewertungen werden nicht unterstützt — das ist ein echter Unterschied zu Number, das jede Dezimalzahl erlaubt.",
+          ratingTooHigh: "Zurückgewiesen: VALIDATION_RANGE, mit derselben Meldung, die auch eine 0 erhält.",
+          ratingUntouched:
+            "Wird als leer gespeichert, nicht als 1. Der Schieberegler muss irgendwo stehen, sodass ein unberührtes Feld an seiner äußersten linken Position erscheint — das ist ein Anzeigeartefakt, keine gespeicherte Antwort.",
+          exRatingUntouched: "Der Schieberegler, unberührt gelassen bei einem neuen Datensatz",
+
           currencyTitle: "Currency",
-          currencyStores: "An amount together with its three-letter currency code, held as two independent inputs inside one labelled group. Displays afterwards through the reader's own number formatting, showing the code rather than a symbol so EUR and USD are never ambiguous.",
-          currencyChecks: "Both parts are required together. The amount must parse as a number; the code must be exactly three uppercase ASCII letters. The code input uppercases and letter-filters as you type, because the check itself does not coerce lower case — it rejects it.",
-          currencyOk: "Accepted. Displays as the amount alongside the code, for example USD 100.50.",
-          currencyLower: "Refused if it ever reaches the server: VALIDATION_INVALID_FORMAT, naming the 3-letter ISO 4217 requirement. In the form itself the input forces upper case as you type, so you will not normally see this.",
-          currencyNoCode: "Refused: VALIDATION_INVALID_FORMAT. The form also blocks this before it calls the server, with a message saying the field needs both an amount and a currency code.",
-          currencyNoAmount: "Refused the same way. A code with no amount is a broken value, not a cleared one — only both parts missing counts as empty.",
-          currencyZzz: "Accepted. Only the shape of the code is checked, never its membership of the real ISO 4217 list, so a well-formed code that does not exist gets through. The display falls back to \"ZZZ 100.50\" for a code the reader's browser does not recognise.",
-          currencyMinor: "Accepted, and it means ten thousand and fifty. There are no minor units anywhere in custom-field storage — 100.50 is stored as 100.50, never as 10050.",
-          exCurrencyOk: "100.50 with the code USD",
-          exCurrencyLower: "100.50 with the code usd",
-          exCurrencyNoCode: "100.50 with the code left blank",
-          exCurrencyNoAmount: "The amount left blank with the code USD",
-          exCurrencyZzz: "100.50 with the code ZZZ",
-          exCurrencyMinor: "10050 with the code USD",
+          currencyStores:
+            "Ein Betrag zusammen mit seinem dreibuchstabigen Währungscode, gehalten als zwei unabhängige Eingaben innerhalb einer beschrifteten Gruppe. Wird anschließend über die eigene Zahlenformatierung des Lesers angezeigt, wobei der Code statt eines Symbols gezeigt wird, sodass EUR und USD nie mehrdeutig sind.",
+          currencyChecks:
+            "Beide Teile sind zusammen erforderlich. Der Betrag muss sich als Zahl parsen lassen; der Code muss aus genau drei großgeschriebenen ASCII-Buchstaben bestehen. Das Code-Eingabefeld wandelt beim Tippen in Großbuchstaben um und filtert Buchstaben, weil die Prüfung selbst Kleinschreibung nicht umwandelt — sie weist sie zurück.",
+          currencyOk: "Angenommen. Wird als Betrag neben dem Code angezeigt, zum Beispiel USD 100.50.",
+          currencyLower:
+            "Zurückgewiesen, sofern es je den Server erreicht: VALIDATION_INVALID_FORMAT, unter Nennung der Anforderung von drei Buchstaben nach ISO 4217. Im Formular selbst erzwingt das Eingabefeld beim Tippen Großschreibung, sodass Sie das normalerweise nicht zu sehen bekommen.",
+          currencyNoCode:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das Formular blockiert dies bereits, bevor es den Server aufruft, mit einer Meldung, dass das Feld sowohl einen Betrag als auch einen Währungscode braucht.",
+          currencyNoAmount:
+            "Auf dieselbe Weise zurückgewiesen. Ein Code ohne Betrag ist ein defekter Wert, kein gelöschter — nur wenn beide Teile fehlen, zählt das als leer.",
+          currencyZzz:
+            "Angenommen. Geprüft wird nur die Form des Codes, nie seine Mitgliedschaft in der echten ISO-4217-Liste, sodass ein wohlgeformter, aber nicht existierender Code durchkommt. Die Anzeige weicht für einen Code, den der Browser des Lesers nicht erkennt, auf \"ZZZ 100.50\" aus.",
+          currencyMinor:
+            "Angenommen, und bedeutet zehntausendfünfzig. In der Speicherung benutzerdefinierter Felder gibt es nirgends kleinste Währungseinheiten — 100.50 wird als 100.50 gespeichert, nie als 10050.",
+          exCurrencyOk: "100.50 mit dem Code USD",
+          exCurrencyLower: "100.50 mit dem Code usd",
+          exCurrencyNoCode: "100.50 mit leer gelassenem Code",
+          exCurrencyNoAmount: "Der Betrag leer gelassen, mit dem Code USD",
+          exCurrencyZzz: "100.50 mit dem Code ZZZ",
+          exCurrencyMinor: "10050 mit dem Code USD",
+
           durationTitle: "Duration",
-          durationStores: "A length of time counted in minutes. Renders as a number input with a visible \"minutes\" label beside it, never as a bare unlabelled number.",
-          durationChecks: "The value must parse as a number and must not be negative. Zero is accepted — a legitimate \"no buffer\". There is no upper bound at all.",
-          durationOk: "Accepted, and displayed as 90 minutes.",
-          durationFraction: "Accepted, and kept exactly as 1.5 — ninety seconds. Decimals are not rounded to whole minutes.",
-          durationZero: "Accepted. Zero is a real answer, not an empty one.",
-          durationLarge: "Accepted — 5,400 minutes, which is three and a half days. Nothing warns you, because there is no maximum.",
-          durationNegative: "Refused: VALIDATION_RANGE, with a message saying the value must not be negative.",
-          groupDateTitle: "Dates and times",
+          durationStores:
+            "Eine Zeitdauer, gezählt in Minuten. Wird als numerisches Eingabefeld mit sichtbarer Beschriftung \"minutes\" daneben dargestellt, nie als nackte, unbeschriftete Zahl.",
+          durationChecks:
+            "Der Wert muss sich als Zahl parsen lassen und darf nicht negativ sein. Null wird angenommen — ein rechtmäßiger \"kein Puffer\"-Wert. Es gibt überhaupt keine Obergrenze.",
+          durationOk: "Angenommen, und als 90 minutes angezeigt.",
+          durationFraction:
+            "Angenommen, und exakt als 1.5 gehalten — neunzig Sekunden. Dezimalstellen werden nicht auf ganze Minuten gerundet.",
+          durationZero: "Angenommen. Null ist eine echte Antwort, keine leere.",
+          durationLarge:
+            "Angenommen — 5.400 Minuten, das sind dreieinhalb Tage. Nichts warnt Sie, denn es gibt kein Maximum.",
+          durationNegative: "Zurückgewiesen: VALIDATION_RANGE, mit einer Meldung, dass der Wert nicht negativ sein darf.",
+
+          groupDateTitle: "Daten und Uhrzeiten",
           dateTitle: "Date",
-          dateStores: "A calendar date with no time component at all — a birthday, a contract date, an expiry. Renders as a date picker.",
-          dateChecks: "Only that the value parses as a date. Because the stored value is a plain calendar date rather than a moment in time, it reads back identically for every viewer regardless of their time zone.",
-          dateOk: "Accepted, and read back as the same calendar date for every viewer, anywhere.",
-          dateNoTime: "Ignored. Date holds no time component, so a time submitted alongside the date is simply not stored. Use DateTime when the time matters.",
-          dateInvalid: "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a date\".",
-          exDateWithTime: "A date with a time component attached",
+          dateStores:
+            "Ein Kalenderdatum ganz ohne Zeitanteil — ein Geburtstag, ein Vertragsdatum, ein Ablaufdatum. Wird als Datumsauswahl dargestellt.",
+          dateChecks:
+            "Es wird nur geprüft, ob sich der Wert als Datum parsen lässt. Da der gespeicherte Wert ein reines Kalenderdatum ist und kein Zeitpunkt, liest er sich für jeden Betrachter unabhängig von dessen Zeitzone identisch zurück.",
+          dateOk: "Angenommen, und für jeden Betrachter, überall, als dasselbe Kalenderdatum zurückgelesen.",
+          dateNoTime:
+            "Ignoriert. Date hält keinen Zeitanteil, sodass eine zusammen mit dem Datum übermittelte Uhrzeit schlicht nicht gespeichert wird. Verwenden Sie DateTime, wenn die Uhrzeit eine Rolle spielt.",
+          dateInvalid: "Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet \"expects a date\".",
+          exDateWithTime: "Ein Datum mit angehängtem Zeitanteil",
           exNotADate: "\"next Tuesday\"",
+
           dateTimeTitle: "DateTime",
-          dateTimeStores: "A precise moment together with the time zone it belongs to. Both halves are stored, so a kick-off at 18:00 in Cairo still reads as 18:00 in Cairo for somebody looking at it from London.",
-          dateTimeChecks: "The instant must parse, and the time zone must be a recognised IANA zone identifier. The zone is required as soon as either half is present — an instant with no zone is refused, not silently interpreted. The form shows the zone as a small disclosure beside the entered time, with a Change link that opens a searchable picker.",
-          dateTimeOk: "Accepted. Both the instant and its zone are read back exactly as entered.",
-          dateTimeNoZone: "Refused: VALIDATION_INVALID_TIMEZONE. A moment with no zone is exactly what DateTime exists to prevent.",
-          dateTimeBadZone: "Refused: VALIDATION_INVALID_TIMEZONE, naming the unrecognised identifier. Zones are real IANA names such as Africa/Cairo or Asia/Tokyo.",
-          dateTimeEmpty: "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required. Only both halves missing counts as empty.",
-          exDateTimeOk: "18:00 on 21 August 2026, zone Africa/Cairo",
-          exDateTimeNoZone: "18:00 on 21 August 2026, zone left blank",
-          exDateTimeBadZone: "18:00 on 21 August 2026, zone Not/AZone",
-          exDateTimeBothBlank: "Both the instant and the zone left blank",
+          dateTimeStores:
+            "Ein genauer Zeitpunkt zusammen mit der Zeitzone, zu der er gehört. Beide Hälften werden gespeichert, sodass ein Anstoß um 18:00 Uhr in Kairo für jemanden, der von London aus schaut, weiterhin als 18:00 Uhr in Kairo gelesen wird.",
+          dateTimeChecks:
+            "Der Zeitpunkt muss sich parsen lassen, und die Zeitzone muss ein anerkannter IANA-Zonenbezeichner sein. Die Zone ist erforderlich, sobald eine der beiden Hälften vorhanden ist — ein Zeitpunkt ohne Zone wird zurückgewiesen, nicht still interpretiert. Das Formular zeigt die Zone als kleinen Hinweis neben der eingegebenen Uhrzeit, mit einem Link Change, der eine durchsuchbare Auswahl öffnet.",
+          dateTimeOk: "Angenommen. Sowohl der Zeitpunkt als auch seine Zone werden exakt wie eingegeben zurückgelesen.",
+          dateTimeNoZone:
+            "Zurückgewiesen: VALIDATION_INVALID_TIMEZONE. Ein Zeitpunkt ohne Zone ist genau das, was DateTime verhindern soll.",
+          dateTimeBadZone:
+            "Zurückgewiesen: VALIDATION_INVALID_TIMEZONE, unter Nennung des nicht erkannten Bezeichners. Zonen sind echte IANA-Namen wie Africa/Cairo oder Asia/Tokyo.",
+          dateTimeEmpty:
+            "Als leer behandelt: gelöscht, wenn das Feld optional ist, zurückgewiesen mit VALIDATION_REQUIRED, wenn es Required ist. Nur wenn beide Hälften fehlen, zählt das als leer.",
+          exDateTimeOk: "18:00 Uhr am 21. August 2026, Zone Africa/Cairo",
+          exDateTimeNoZone: "18:00 Uhr am 21. August 2026, Zone leer gelassen",
+          exDateTimeBadZone: "18:00 Uhr am 21. August 2026, Zone Not/AZone",
+          exDateTimeBothBlank: "Sowohl der Zeitpunkt als auch die Zone leer gelassen",
+
           timeTitle: "Time",
-          timeStores: "A time of day on a 24-hour clock, seconds included, with no date attached — an opening time, a curfew, a kick-off slot. Renders as a native time picker with seconds enabled, and displays afterwards in each reader's own local time format.",
-          timeChecks: "The value must be hours, minutes and seconds separated by colons, with hours 0 to 23, minutes 0 to 59 and seconds 0 to 59. Unpadded input is accepted and normalised rather than refused.",
-          timeOk: "Accepted, and shown in the reader's own format — for example 2:30:00 PM for an English (US) reader.",
-          timeNormalised: "Accepted, and normalised to 09:05:00 before storage. Two submissions of the same time written with different digit widths always end up identical.",
-          timeHourRange: "Refused: VALIDATION_INVALID_FORMAT. Hours run 0 to 23, so 24 is out of range.",
-          timeMinuteRange: "Refused: VALIDATION_INVALID_FORMAT. Minutes run 0 to 59.",
-          timeAmPm: "Refused: VALIDATION_INVALID_FORMAT. Twelve-hour text is not parsed — the stored form is always 24-hour, even though the display is not.",
-          groupContactTitle: "Contact details and links",
+          timeStores:
+            "Eine Tageszeit im 24-Stunden-Format, einschließlich Sekunden, ohne zugehöriges Datum — eine Öffnungszeit, eine Sperrstunde, ein Anstoßzeitpunkt. Wird als native Zeitauswahl mit aktivierten Sekunden dargestellt und anschließend im jeweils eigenen lokalen Zeitformat des Lesers angezeigt.",
+          timeChecks:
+            "Der Wert muss aus durch Doppelpunkte getrennten Stunden, Minuten und Sekunden bestehen, mit Stunden von 0 bis 23, Minuten von 0 bis 59 und Sekunden von 0 bis 59. Nicht aufgefüllte Eingaben werden angenommen und normalisiert statt zurückgewiesen.",
+          timeOk: "Angenommen, und im eigenen Format des Lesers angezeigt — zum Beispiel 2:30:00 PM für einen englischsprachigen (US-)Leser.",
+          timeNormalised:
+            "Angenommen, und vor der Speicherung auf 09:05:00 normalisiert. Zwei Übermittlungen derselben Uhrzeit mit unterschiedlicher Ziffernbreite landen immer identisch.",
+          timeHourRange: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Stunden laufen von 0 bis 23, sodass 24 außerhalb des Bereichs liegt.",
+          timeMinuteRange: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Minuten laufen von 0 bis 59.",
+          timeAmPm:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Zwölf-Stunden-Text wird nicht geparst — die gespeicherte Form ist immer 24-Stunden, auch wenn die Anzeige es nicht ist.",
+
+          groupContactTitle: "Kontaktdaten und Links",
           emailTitle: "Email",
-          emailStores: "An email address. Renders as a native email input, and displays afterwards as a clickable mail link.",
-          emailChecks: "The address is parsed as a real address rather than matched against a pattern, and it must be nothing but the address. Case is preserved exactly as typed — no lowercasing.",
-          emailOk: "Accepted, stored with its exact capitalisation, and shown as a clickable mail link.",
-          emailDisplayName: "Refused: VALIDATION_INVALID_EMAIL. A display-name wrapper parses as an address but is rejected rather than silently stripped, because an Email field has no display name to keep.",
-          emailInvalid: "Refused: VALIDATION_INVALID_EMAIL.",
+          emailStores:
+            "Eine E-Mail-Adresse. Wird als natives E-Mail-Eingabefeld dargestellt und anschließend als klickbarer Mail-Link angezeigt.",
+          emailChecks:
+            "Die Adresse wird als echte Adresse geparst statt gegen ein Muster abgeglichen, und sie darf nichts als die Adresse enthalten. Groß-/Kleinschreibung bleibt exakt wie eingegeben erhalten — keine Umwandlung in Kleinbuchstaben.",
+          emailOk:
+            "Angenommen, mit exakter Groß-/Kleinschreibung gespeichert, und als klickbarer Mail-Link angezeigt.",
+          emailDisplayName:
+            "Zurückgewiesen: VALIDATION_INVALID_EMAIL. Eine Umhüllung mit Anzeigenamen lässt sich zwar als Adresse parsen, wird aber zurückgewiesen statt still entfernt, weil ein Email-Feld keinen Anzeigenamen zu bewahren hat.",
+          emailInvalid: "Zurückgewiesen: VALIDATION_INVALID_EMAIL.",
           exEmailDisplayName: "\"Test User <test@example.com>\"",
+
           urlTitle: "Url",
-          urlStores: "A web address. Renders as a native URL input, and displays afterwards as a real link that opens in a new tab.",
-          urlChecks: "The value must be an absolute address whose scheme is exactly http or https. Every other scheme is refused. The scheme is checked again on the way out, before the value is ever rendered as a link.",
-          urlOk: "Accepted, and shown as a link opening in a new tab.",
-          urlHttpOk: "Accepted. Plain http is deliberately allowed — a company site or an internal address during setup is legitimate data.",
-          urlNoScheme: "Refused: VALIDATION_INVALID_FORMAT. A bare host is rejected rather than guessed at, so nothing has to decide whether you meant http or https.",
-          urlScheme: "Refused: VALIDATION_INVALID_FORMAT. This is a real security boundary, not a style rule — and because the scheme is re-checked before display, even a value stored before this check existed shows as inert text rather than a live link.",
-          urlFtp: "Refused: VALIDATION_INVALID_FORMAT. Only http and https are on the list.",
+          urlStores:
+            "Eine Webadresse. Wird als natives URL-Eingabefeld dargestellt und anschließend als echter Link angezeigt, der sich in einem neuen Tab öffnet.",
+          urlChecks:
+            "Der Wert muss eine absolute Adresse sein, deren Schema exakt http oder https ist. Jedes andere Schema wird zurückgewiesen. Das Schema wird beim Ausgeben erneut geprüft, bevor der Wert je als Link gerendert wird.",
+          urlOk: "Angenommen, und als Link angezeigt, der sich in einem neuen Tab öffnet.",
+          urlHttpOk:
+            "Angenommen. Einfaches http ist bewusst erlaubt — eine Firmenseite oder eine interne Adresse während der Einrichtung ist legitime Daten.",
+          urlNoScheme:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Ein nackter Host wird zurückgewiesen statt erraten, sodass nichts entscheiden muss, ob http oder https gemeint war.",
+          urlScheme:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das ist eine echte Sicherheitsgrenze, keine Stilregel — und weil das Schema erneut vor der Anzeige geprüft wird, erscheint sogar ein Wert, der vor Einführung dieser Prüfung gespeichert wurde, als reglosen Text statt als aktiver Link.",
+          urlFtp: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Nur http und https stehen auf der Liste.",
+
           phoneTitle: "Phone",
-          phoneStores: "A phone number in international format. Renders through a country picker with flags and search, and displays afterwards reformatted for readability — for example +20 123 456 7890.",
-          phoneChecks: "The stored value must start with a +, its first digit must not be zero, and it must hold between 8 and 15 digits in total. That is a check on shape only.",
-          phoneOk: "Accepted, and displayed reformatted rather than as the bare stored string.",
-          phoneNoPlus: "Refused: VALIDATION_INVALID_FORMAT. The leading + is part of the format.",
-          phoneLeadingZero: "Refused: VALIDATION_INVALID_FORMAT. A country code never starts with zero.",
-          phoneTooShort: "Refused: VALIDATION_INVALID_FORMAT. Seven digits is below the minimum of eight.",
-          phoneUnassignable: "Accepted by the server, which checks shape only and not whether the number could really exist. The form's own picker additionally checks the number against the selected country's real numbering plan, so you cannot build this value through the interface — only a request that bypasses the form.",
-          groupOtherTitle: "Yes/no and colour",
+          phoneStores:
+            "Eine Telefonnummer im internationalen Format. Wird über eine Länderauswahl mit Flaggen und Suche dargestellt und anschließend zur besseren Lesbarkeit umformatiert angezeigt — zum Beispiel +20 123 456 7890.",
+          phoneChecks:
+            "Der gespeicherte Wert muss mit einem + beginnen, seine erste Ziffer darf nicht Null sein, und er muss insgesamt zwischen 8 und 15 Ziffern enthalten. Das ist eine reine Formprüfung.",
+          phoneOk: "Angenommen, und umformatiert angezeigt statt als nackte gespeicherte Zeichenkette.",
+          phoneNoPlus: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das führende + ist Teil des Formats.",
+          phoneLeadingZero: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Eine Landesvorwahl beginnt nie mit Null.",
+          phoneTooShort: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Sieben Ziffern liegen unter dem Minimum von acht.",
+          phoneUnassignable:
+            "Vom Server angenommen, der nur die Form prüft und nicht, ob die Nummer wirklich existieren könnte. Die Auswahlkomponente des Formulars prüft die Nummer zusätzlich gegen den echten Nummernplan des gewählten Landes, sodass Sie diesen Wert nicht über die Oberfläche erzeugen können — nur über eine Anfrage, die das Formular umgeht.",
+
+          groupOtherTitle: "Ja/Nein und Farbe",
           booleanTitle: "Boolean",
-          booleanStores: "A plain yes or no. Renders as an on/off toggle. Has no placeholder and no options.",
-          booleanChecks: "Only the words true and false are parsed, in either case. Nothing else is treated as a synonym.",
-          boolTrue: "Accepted.",
-          boolFalse: "Accepted.",
-          boolOne: "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a boolean\". A numeric 1 is not read as true.",
-          boolYes: "Refused: VALIDATION_INVALID_FORMAT. Neither yes/no nor on/off is accepted.",
+          booleanStores: "Ein einfaches Ja oder Nein. Wird als Ein/Aus-Schalter dargestellt. Hat weder Platzhalter noch Optionen.",
+          booleanChecks:
+            "Es werden nur die Wörter true und false geparst, unabhängig von Groß-/Kleinschreibung. Nichts anderes wird als Synonym behandelt.",
+          boolTrue: "Angenommen.",
+          boolFalse: "Angenommen.",
+          boolOne:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT — die Meldung lautet \"expects a boolean\". Eine numerische 1 wird nicht als true gelesen.",
+          boolYes: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Weder yes/no noch on/off wird angenommen.",
+
           colorTitle: "Color",
-          colorStores: "A colour, stored as a hex value. Renders as a grid of twenty swatches plus a custom hex entry, and displays afterwards as the hex text with a small matching colour chip beside it.",
-          colorChecks: "The value must be a # followed by exactly three or exactly six hexadecimal digits. Case is normalised to lower case on save; length is not.",
-          colorOk: "Accepted, and stored as #aabbcc. Upper case is folded down to lower case.",
-          colorShort: "Accepted, and kept as #abc. The shorthand is never expanded to #aabbcc, even though a renderer treats the two as the same colour — so the same colour can legitimately be stored two ways across different records.",
-          colorNoHash: "Refused: VALIDATION_INVALID_FORMAT. The leading # is required.",
-          colorBadLength: "Refused: VALIDATION_INVALID_FORMAT. Three or six digits, nothing in between.",
-          colorNamed: "Refused: VALIDATION_INVALID_FORMAT. Colour names are not accepted, only hex values.",
-          groupReferenceTitle: "References to another record",
-          referenceGroupIntro: "The last two types store no text of their own. Each one stores a pointer at a record somewhere else in the product, and the name you see is looked up fresh every time the field is displayed rather than saved alongside the pointer. Both store the same two pieces — the kind of record and that record's own identity — and both treat a value as empty only when both pieces are missing. There is a great deal more to say about them than fits a table; the Reference Fields and Referenz-Lookups pages say it.",
+          colorStores:
+            "Eine Farbe, gespeichert als Hex-Wert. Wird als Raster aus zwanzig Farbfeldern plus einer benutzerdefinierten Hex-Eingabe dargestellt und anschließend als Hex-Text mit einem kleinen passenden Farbchip daneben angezeigt.",
+          colorChecks:
+            "Der Wert muss aus einem # gefolgt von genau drei oder genau sechs Hexadezimalziffern bestehen. Groß-/Kleinschreibung wird beim Speichern auf Kleinbuchstaben normalisiert; die Länge nicht.",
+          colorOk: "Angenommen, und als #aabbcc gespeichert. Großbuchstaben werden auf Kleinbuchstaben umgelegt.",
+          colorShort:
+            "Angenommen, und als #abc beibehalten. Die Kurzform wird nie zu #aabbcc erweitert, auch wenn ein Renderer beide als dieselbe Farbe behandelt — sodass dieselbe Farbe über verschiedene Datensätze hinweg rechtmäßig auf zwei Arten gespeichert sein kann.",
+          colorNoHash: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das führende # ist erforderlich.",
+          colorBadLength: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Drei oder sechs Ziffern, nichts dazwischen.",
+          colorNamed: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Farbnamen werden nicht angenommen, nur Hex-Werte.",
+
+          groupReferenceTitle: "Verweise auf einen anderen Datensatz",
+          referenceGroupIntro:
+            "Die letzten beiden Typen speichern selbst keinen Text. Jeder speichert einen Verweis auf einen Datensatz an anderer Stelle im Produkt, und der angezeigte Name wird jedes Mal, wenn das Feld angezeigt wird, frisch nachgeschlagen, statt zusammen mit dem Verweis gespeichert zu werden. Beide speichern dieselben zwei Bestandteile — die Art des Datensatzes und die Identität dieses Datensatzes — und beide behandeln einen Wert nur dann als leer, wenn beide Bestandteile fehlen. Es gibt weit mehr dazu zu sagen, als in eine Tabelle passt; die Seiten Referenzfelder und Referenz-Lookups sagen es.",
           entityReferenceTitle: "EntityReference",
-          entityReferenceStores: "A pointer at a record of any kind this installation can answer for and you are allowed to view. Renders as a searchable picker over that kind of record — preceded by a second picker for the kind itself, when the definition does not pin one.",
-          entityReferenceChecks: "Both pieces are required together. The kind of record must be registered and, when the definition pins one, must be that one. The identity must be readable. And you must have been able to read that record at the moment you saved, which is what stops a pointer being used to reach data you cannot open directly. Each check refuses with its own message rather than a generic one.",
-          refOk: "Accepted. The answer records both the kind of record and that record's identity, and the picker shows the record's current name from then on.",
-          refIncomplete: "Refused as an incomplete reference. Half a pointer is not treated as an empty field — it means somebody began answering and stopped.",
-          refIncompleteToo: "Refused the same way. An identity with no kind of record names a row but no table, so there is nothing to look it up in.",
-          refMismatch: "Refused, and the message names both what the field expects and what arrived. The pin is a deliberate restriction, so this is the refusal working rather than failing.",
-          refUnknownType: "Refused: ENTITY_UNKNOWN_TYPE, naming the identifier. Only reachable from a request that bypasses the picker, which never offers an unregistered kind of record.",
-          refInvalidId: "Refused: ENTITY_INVALID_ID. An identity is opaque and must be sent back exactly as it was received — one altered character makes it unreadable.",
-          refForbidden: "Refused: AUTH_FORBIDDEN, naming the field. Storing a pointer at a record is a deferred read of that record, so it needs the same permission reading it would.",
-          refEmpty: "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required. Only both pieces missing counts as empty.",
-          exRefOk: "A staff member chosen from the picker",
-          exRefTypeOnly: "A kind of record chosen, with no record picked",
-          exRefIdOnly: "A record picked, with no kind of record sent",
-          exRefWrongType: "A person, on a field pinned to staff members",
-          exRefUnknownType: "A kind of record that is not registered",
-          exRefEdited: "A stored identity altered by one character",
-          exRefNoAccess: "A record of a kind you may not view",
-          exRefBothBlank: "Both parts left blank",
+          entityReferenceStores:
+            "Ein Verweis auf einen Datensatz jeder Art, für die diese Installation zuständig sein kann und die Sie ansehen dürfen. Wird als durchsuchbare Auswahl über diese Art von Datensatz dargestellt — davor eine zweite Auswahl für die Art selbst, wenn die Definition keine festlegt.",
+          entityReferenceChecks:
+            "Beide Bestandteile sind zusammen erforderlich. Die Art des Datensatzes muss registriert sein und, wenn die Definition eine festlegt, genau diese sein. Die Identität muss lesbar sein. Und Sie müssen in der Lage gewesen sein, diesen Datensatz im Moment des Speicherns zu lesen — das verhindert, dass ein Verweis benutzt wird, um an Daten zu gelangen, die Sie nicht direkt öffnen dürfen. Jede Prüfung weist mit ihrer eigenen Meldung zurück statt mit einer allgemeinen.",
+          refOk:
+            "Angenommen. Die Antwort erfasst sowohl die Art des Datensatzes als auch dessen Identität, und die Auswahlkomponente zeigt von da an den aktuellen Namen des Datensatzes.",
+          refIncomplete:
+            "Als unvollständiger Verweis zurückgewiesen. Ein halber Verweis wird nicht als leeres Feld behandelt — er bedeutet, dass jemand mit dem Antworten begonnen und aufgehört hat.",
+          refIncompleteToo:
+            "Auf dieselbe Weise zurückgewiesen. Eine Identität ohne Art von Datensatz benennt eine Zeile, aber keine Tabelle, sodass es nichts gibt, worin nachgeschlagen werden könnte.",
+          refMismatch:
+            "Zurückgewiesen, und die Meldung nennt sowohl, was das Feld erwartet, als auch, was ankam. Die Festlegung ist eine bewusste Einschränkung, also ist dies die Zurückweisung, die funktioniert, statt zu versagen.",
+          refUnknownType:
+            "Zurückgewiesen: ENTITY_UNKNOWN_TYPE, unter Nennung des Bezeichners. Nur über eine Anfrage erreichbar, die die Auswahlkomponente umgeht, denn diese bietet nie eine nicht registrierte Art von Datensatz an.",
+          refInvalidId:
+            "Zurückgewiesen: ENTITY_INVALID_ID. Eine Identität ist undurchsichtig und muss exakt so zurückgesendet werden, wie sie empfangen wurde — ein verändertes Zeichen macht sie unlesbar.",
+          refForbidden:
+            "Zurückgewiesen: AUTH_FORBIDDEN, unter Nennung des Felds. Einen Verweis auf einen Datensatz zu speichern ist eine aufgeschobene Lesung dieses Datensatzes, braucht also dieselbe Berechtigung, die auch dessen Lesen bräuchte.",
+          refEmpty:
+            "Als leer behandelt: gelöscht, wenn das Feld optional ist, zurückgewiesen mit VALIDATION_REQUIRED, wenn es Required ist. Nur wenn beide Bestandteile fehlen, zählt das als leer.",
+          exRefOk: "Ein über die Auswahlkomponente gewähltes Mitglied des Personals",
+          exRefTypeOnly: "Eine gewählte Art von Datensatz, ohne gewählten Datensatz",
+          exRefIdOnly: "Ein gewählter Datensatz, ohne übermittelte Art von Datensatz",
+          exRefWrongType: "Eine Person, bei einem auf Mitarbeitende festgelegten Feld",
+          exRefUnknownType: "Eine Art von Datensatz, die nicht registriert ist",
+          exRefEdited: "Eine gespeicherte Identität, um ein Zeichen verändert",
+          exRefNoAccess: "Ein Datensatz einer Art, die Sie nicht ansehen dürfen",
+          exRefBothBlank: "Beide Teile leer gelassen",
+
           userReferenceTitle: "UserReference",
-          userReferenceStores: "A pointer at a user account — assigned to, reviewed by, account manager. Renders as a searchable picker over user accounts, and never shows a control for choosing a kind of record, because there is only one.",
-          userReferenceChecks: "Every check EntityReference makes, plus one narrower rule: the only kind of record accepted is a user account. That list is fixed by the platform rather than by configuration, and an attempt to point this type at anything else is refused both when a definition is configured and when a value is saved.",
-          usrOk: "Accepted, exactly as an EntityReference is. The answer is self-describing in the same way.",
-          usrDormant: "Accepted. A locked-out account is dormant rather than deleted: it still exists, it is still offered by the picker with an inactive marker, and it is a legitimate answer for something that already happened.",
-          usrAdminRefused: "Refused, with a message naming what is allowed. An administrator can belong to no workspace at all, which is the one property a reference target must never have.",
-          usrGroupRefused: "Refused the same way. A group is safe to read but is not a person, and a field typed UserReference that resolved to a group would be lying about what it holds.",
-          usrThemeRefused: "Refused the same way. A shared platform catalogue row belongs to no workspace and is not a person either — excluded twice over.",
-          usrEmpty: "Treated as empty on exactly the same terms as EntityReference.",
-          exUsrOk: "A user account chosen from the picker",
-          exUsrDormant: "An account whose sign-in is currently locked out",
-          exUsrAdmin: "An administrator record",
-          exUsrGroup: "A user group",
-          exUsrTheme: "A login theme",
-          emptyTitle: "Empty values and the Required toggle",
-          emptyIntro: "Every type shares one definition of empty, and it is checked before anything else. A value counts as empty when:",
-          empty1: "it is missing from the save entirely;",
-          empty2: "it is blank, or made up of nothing but spaces;",
-          empty3: "for MultiSelect, the list of selections is explicitly empty;",
-          empty4: "for DateTime, both the instant and the time zone are missing — not just one of them;",
-          empty5: "for Currency, both the amount and the currency code are missing — not just one of them;",
-          empty6: "for EntityReference and UserReference, both the kind of record and the record's identity are missing — not just one of them.",
-          emptyOutcome: "An empty value on a Required field is refused with VALIDATION_REQUIRED. An empty value on an optional field is accepted and the stored answer is cleared — the row is kept rather than deleted, so history is not lost.",
-          emptyWarnTitle: "Rating is the exception worth remembering",
-          emptyWarnContent: "An explicitly submitted 0 on a Rating field is a real, non-empty value and fails the 1-to-5 range check exactly as a 6 would. Only a genuinely missing or blank submission counts as unrated. Separately, and for the same reason a slider needs a position, an untouched Rating field appears to sit at 1 while still being empty.",
-          codesTitle: "Error codes you may see",
-          codesIntro: "Almost every refusal is an HTTP 422 with one of these machine-readable codes; the last one in the table is a 403, because it is about your access rather than about the shape of what you sent. If you ever see a 500 from saving a custom-field value, that is a defect worth reporting — the validation path is written to refuse cleanly, never to fail.",
+          userReferenceStores:
+            "Ein Verweis auf ein Benutzerkonto — assigned to, reviewed by, account manager. Wird als durchsuchbare Auswahl über Benutzerkonten dargestellt und zeigt nie ein Element zur Wahl einer Art von Datensatz, weil es nur eine gibt.",
+          userReferenceChecks:
+            "Jede Prüfung, die EntityReference vornimmt, plus eine engere Regel: Die einzige akzeptierte Art von Datensatz ist ein Benutzerkonto. Diese Liste ist von der Plattform festgelegt, nicht durch Konfiguration, und ein Versuch, diesen Typ auf etwas anderes zu richten, wird sowohl bei der Konfiguration einer Definition als auch beim Speichern eines Werts zurückgewiesen.",
+          usrOk: "Angenommen, exakt wie bei EntityReference. Die Antwort ist auf dieselbe Weise selbstbeschreibend.",
+          usrDormant:
+            "Angenommen. Ein gesperrtes Konto ist ruhend, nicht gelöscht: Es existiert weiterhin, wird von der Auswahlkomponente weiterhin mit einer Inaktiv-Markierung angeboten, und ist eine legitime Antwort für etwas, das bereits geschehen ist.",
+          usrAdminRefused:
+            "Zurückgewiesen, mit einer Meldung, die nennt, was erlaubt ist. Ein Administrator kann zu überhaupt keinem Arbeitsbereich gehören, was die eine Eigenschaft ist, die ein Referenzziel niemals haben darf.",
+          usrGroupRefused:
+            "Auf dieselbe Weise zurückgewiesen. Eine Gruppe ist gefahrlos zu lesen, aber keine Person, und ein als UserReference typisiertes Feld, das sich zu einer Gruppe auflöste, würde über das lügen, was es enthält.",
+          usrThemeRefused:
+            "Auf dieselbe Weise zurückgewiesen. Eine gemeinsam genutzte Plattformkatalog-Zeile gehört zu keinem Arbeitsbereich und ist ebenfalls keine Person — doppelt ausgeschlossen.",
+          usrEmpty: "Zu genau denselben Bedingungen als leer behandelt wie bei EntityReference.",
+          exUsrOk: "Ein über die Auswahlkomponente gewähltes Benutzerkonto",
+          exUsrDormant: "Ein Konto, dessen Anmeldung derzeit gesperrt ist",
+          exUsrAdmin: "Ein Administrator-Datensatz",
+          exUsrGroup: "Eine Benutzergruppe",
+          exUsrTheme: "Ein Anmelde-Theme",
+
+          groupMediaTitle: "Medien und formatierter Text",
+          mediaGroupIntro:
+            "File und Image sind auf dieselbe Weise gebaut wie die beiden Referenztypen oben — ein Verweis, kein gespeicherter Text —, aber jeder verweist auf eine einzelne hochgeladene Datei statt auf einen anderen Datensatz. RichText ist wieder anders: Es speichert echten formatierten Inhalt, verfasst im eigenen Editor des Produkts.",
+
+          fileTitle: "File",
+          fileStores:
+            "Ein Verweis auf eine hochgeladene Datei — eine unterschriebene Haftungsfreistellung, ein ärztliches Attest, ein Versicherungsdokument. Wird als kleines Statuselement dargestellt, das anzeigt, ob eine Datei angehängt ist, mit einer Schaltfläche Clear, wenn das der Fall ist.",
+          fileChecks:
+            "Ein gespeicherter Wert wird nur angenommen, wenn die referenzierte Datei tatsächlich an den Datensatz angehängt ist, den Sie gerade bearbeiten — eine Sicherheitsprüfung, die verhindert, dass eine für einen Datensatz bestimmte Datei von einem anderen aus referenziert wird. Das Anhängen einer neuen Datei ist über diesen Bildschirm noch nicht möglich: Das Feld lässt sich bereits heute definieren, und ein vorhandener Wert lässt sich ansehen oder löschen, aber ihn zum ersten Mal auszufüllen kommt erst mit einem künftigen Release.",
+          fileAttachedExample: "Ein Datensatz, dessen File-Feld bereits einen Wert enthält",
+          fileAttachedOutcome: "Wird als angehängt angezeigt, mit einem Element Clear. Ein Element zum Anhängen gibt es derzeit nicht daneben.",
+          fileClearExample: "Eine angehängte Datei löschen, dann speichern",
+          fileClearOutcome: "Angenommen — der Wert wird entfernt.",
+
+          imageTitle: "Image",
+          imageStores:
+            "Das Gegenstück zu File, beschränkt auf Bilder — ein Spielerfoto, eine Hero-Aufnahme einer Anlage, ein Vereinswappen. Dasselbe Statuselement, dieselbe derzeitige Einschränkung beim Anhängen eines neuen Werts.",
+          imageChecks:
+            "Alles, was File prüft, plus die referenzierte Datei selbst muss ein Bild sein. Das Anhängen eines neuen Bildes ist über diesen Bildschirm ebenfalls noch nicht möglich — siehe File oben.",
+          imageAttachedExample: "Ein Datensatz, dessen Image-Feld bereits einen Wert enthält",
+          imageAttachedOutcome: "Wird als angehängt angezeigt, mit einem Element Clear.",
+
+          richTextTitle: "RichText",
+          richTextStores:
+            "Formatierte Prosa, verfasst im eigenen Editor des Produkts — eine Trainernotiz mit Absätzen und einer Aufzählungsliste, ein Hinweistext zu einer Richtlinie mit einem Link. Wird als echter Rich-Text-Editor dargestellt, nicht als schlichtes Feld.",
+          richTextChecks:
+            "Bis zu 50.000 Zeichen Markup, geprüft bevor es automatisch bereinigt wird: Ein Inline-Stil und ein eingebettetes Bild werden beide entfernt, weil ersteres die umgebende Seite optisch kapern kann und letzteres im Stillen nachverfolgen kann, wer das Feld später ansieht. Dabei erscheint keine gesonderte Warnung — öffnen Sie das Feld anschließend erneut, und was Sie sehen, ist genau das, was erhalten blieb.",
+          richTextOkExample: "Ein Absatz mit einem fett gedruckten Wort und einer Aufzählungsliste",
+          richTextOkOutcome: "Angenommen, und jedes Element bleibt erhalten.",
+          richTextStyleExample: "Eingefügter Inhalt mit angewendetem Inline-Stil",
+          richTextStyleOutcome: "Angenommen, mit entferntem Stil. Der sichtbare Text und die Struktur bleiben erhalten.",
+          richTextImgExample: "Inhalt mit eingebettetem Bild",
+          richTextImgOutcome: "Angenommen, mit entferntem Bild. Ein Bild gehört stattdessen in ein File- oder Image-Feld.",
+          richTextTooLongExample: "Mehr als 50.000 Zeichen Markup",
+          richTextTooLongOutcome: "Zurückgewiesen — kürzen Sie es und versuchen Sie es erneut.",
+
+          emptyTitle: "Leere Werte und der Schalter Required",
+          emptyIntro:
+            "Jeder Typ teilt eine Definition von leer, und sie wird vor allem anderen geprüft. Ein Wert zählt als leer, wenn:",
+          empty1: "er beim Speichern vollständig fehlt;",
+          empty2: "er leer ist oder aus nichts als Leerzeichen besteht;",
+          empty3: "bei MultiSelect die Liste der Auswahlen explizit leer ist;",
+          empty4: "bei DateTime sowohl der Zeitpunkt als auch die Zeitzone fehlen — nicht nur eines von beiden;",
+          empty5: "bei Currency sowohl der Betrag als auch der Währungscode fehlen — nicht nur eines von beiden;",
+          empty6:
+            "bei EntityReference, UserReference, File und Image beide Hälften des Verweises fehlen — nicht nur eine von beiden.",
+          emptyOutcome:
+            "Ein leerer Wert bei einem Required-Feld wird mit VALIDATION_REQUIRED zurückgewiesen. Ein leerer Wert bei einem optionalen Feld wird angenommen, und die gespeicherte Antwort wird gelöscht — die Zeile bleibt erhalten statt gelöscht zu werden, sodass der Verlauf nicht verloren geht.",
+          emptyWarnTitle: "Rating ist die Ausnahme, die man sich merken sollte",
+          emptyWarnContent:
+            "Eine explizit übermittelte 0 bei einem Rating-Feld ist ein echter, nicht leerer Wert und besteht die Bereichsprüfung von 1 bis 5 ebenso wenig wie eine 6. Nur eine wirklich fehlende oder leere Übermittlung zählt als unbewertet. Unabhängig davon, und aus demselben Grund, aus dem ein Schieberegler eine Position braucht, erscheint ein unberührtes Rating-Feld so, als stünde es auf 1, während es dabei leer bleibt.",
+
+          codesTitle: "Fehlercodes, die Ihnen begegnen können",
+          codesIntro:
+            "Fast jede Zurückweisung ist ein HTTP 422 mit einem dieser maschinenlesbaren Codes; der letzte in der Tabelle ist ein 403, weil es dabei um Ihren Zugriff geht, nicht um die Form dessen, was Sie gesendet haben. Sollten Sie je einen 500 beim Speichern eines Werts für ein benutzerdefiniertes Feld sehen, ist das ein meldenswerter Fehler — der Validierungspfad ist so geschrieben, dass er sauber zurückweist, niemals versagt.",
           thCode: "Code",
-          thWhenItFires: "When it fires",
-          codeRequired: "The field is Required and the submitted value is empty or whitespace-only.",
-          codeInvalidFormat: "The value does not match the shape the type expects — an unparsable number, date or time, an option that is not on the list, a disallowed URL scheme, a bad phone shape, a bad hex colour, a bad currency code, or most validator failures.",
-          codeInvalidEmail: "An Email field's value is not a real address, or carries a display name.",
-          codeInvalidTimezone: "A DateTime value is missing its time zone once an instant is present, or names a zone that is not a recognised IANA identifier.",
-          codeRange: "A number is outside its type's bounds — Percent outside 0 to 100, Rating outside a whole 1 to 5, a negative Duration, or a Numeric Range validator's own bounds.",
-          codeMaxLength: "Text past 4,000 characters, LongText past 10,000, an Email or Url past 4,000, more than 19 MultiSelect selections, or a Length Range validator's upper bound.",
-          codeMinLength: "A Length Range validator's lower bound.",
-          codeUnique: "The same MultiSelect option was submitted more than once in one save.",
-          codeUnknownEntityType: "A reference names a kind of record that is not registered in this installation.",
-          codeInvalidId: "A reference's stored identity could not be read — altered on its way through something, or a value that predates a change.",
-          codeForbidden: "A reference points at a record you are not allowed to read. This one is a 403 rather than a 422, because it is about your access and not about the value's shape.",
-          codesInfoTitle: "Messages name the key, not the label",
-          codesInfoContent: "Error messages quote the field's machine key — 'shirt_size' — rather than its display label. If you are matching a message to a field, match on the key.",
-          catalogueTitle: "The Werttypen screen in the product",
-          catalogueIntro: "The product carries its own read-only catalogue of these types, reached from a link in the Benutzerdefinierte Felder page header. It is documentation, not configuration: nothing on it can be added, edited or removed, because value types are fixed by the platform. It is gated behind the same permission as the Benutzerdefinierte Felder screen itself, and it is fully translated, right-to-left included.",
-          catalogueColumns: "Each row shows the type's name, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Text is the only row showing validator support — that is the Text-only boundary made visible.",
-          catalogueNoPlanColumn: "There is deliberately no plan or entitlement column on that screen. Werttypen are not individually plan-gated, so a column implying otherwise would be showing something that does not exist.",
+          thWhenItFires: "Wann er ausgelöst wird",
+          codeRequired: "Das Feld ist Required, und der übermittelte Wert ist leer oder besteht nur aus Leerzeichen.",
+          codeInvalidFormat:
+            "Der Wert entspricht nicht der vom Typ erwarteten Form — eine nicht parsbare Zahl, ein nicht parsbares Datum oder eine nicht parsbare Uhrzeit, eine Option, die nicht auf der Liste steht, ein nicht zulässiges URL-Schema, eine falsche Telefonform, eine falsche Hex-Farbe, ein falscher Währungscode, oder die meisten Validator-Fehlschläge.",
+          codeInvalidEmail: "Der Wert eines Email-Felds ist keine echte Adresse oder trägt einen Anzeigenamen.",
+          codeInvalidTimezone:
+            "Bei einem DateTime-Wert fehlt die Zeitzone, obwohl ein Zeitpunkt vorhanden ist, oder er nennt eine Zone, die kein anerkannter IANA-Bezeichner ist.",
+          codeRange:
+            "Eine Zahl liegt außerhalb der Grenzen ihres Typs — Percent außerhalb von 0 bis 100, Rating außerhalb einer ganzen Zahl von 1 bis 5, eine negative Duration, oder außerhalb der eigenen Grenzen eines Numeric-Range-Validators.",
+          codeMaxLength:
+            "Text jenseits von 4.000 Zeichen, LongText jenseits von 10.000, ein Email oder Url jenseits von 4.000, mehr als 19 MultiSelect-Auswahlen, oder die Obergrenze eines Length-Range-Validators.",
+          codeMinLength: "Die Untergrenze eines Length-Range-Validators.",
+          codeUnique: "Dieselbe MultiSelect-Option wurde in einem Speichervorgang mehr als einmal übermittelt.",
+          codeUnknownEntityType:
+            "Ein Verweis nennt eine Art von Datensatz, die in dieser Installation nicht registriert ist.",
+          codeInvalidId:
+            "Die gespeicherte Identität eines Verweises ließ sich nicht lesen — auf dem Weg irgendwo verändert, oder ein Wert, der von vor einer Änderung stammt.",
+          codeForbidden:
+            "Ein Verweis zeigt auf einen Datensatz, den Sie nicht lesen dürfen. Dies ist ein 403, kein 422, weil es um Ihren Zugriff geht und nicht um die Form des Werts.",
+          codeMediaOwnerMismatch:
+            "Ein File- oder Image-Wert zeigt auf eine Datei, die nicht an den gerade gespeicherten Datensatz angehängt ist. Ebenfalls ein 403 statt eines 422, aus demselben Grund wie oben.",
+          codeMediaNotAnImage:
+            "Der Wert eines Image-Felds zeigt auf eine Datei, die kein Bild ist.",
+          codeRichTextShape:
+            "Der Wert eines RichText-Felds wurde nicht als Objekt mit einer Eigenschaft 'html' gesendet.",
+          codesInfoTitle: "Meldungen nennen den Schlüssel, nicht die Bezeichnung",
+          codesInfoContent:
+            "Fehlermeldungen zitieren den maschinenlesbaren Schlüssel des Felds — 'shirt_size' — statt seiner Anzeigebezeichnung. Wenn Sie eine Meldung einem Feld zuordnen, gleichen Sie über den Schlüssel ab.",
+
+          catalogueTitle: "Der Bildschirm Werttypen im Produkt",
+          catalogueIntro:
+            "Das Produkt führt einen eigenen schreibgeschützten Katalog dieser Typen, erreichbar über einen Link im Seitenkopf der Seite Benutzerdefinierte Felder. Das ist Dokumentation, keine Konfiguration: Nichts darauf kann hinzugefügt, bearbeitet oder entfernt werden, weil Werttypen von der Plattform festgelegt sind. Er ist hinter derselben Berechtigung wie der Bildschirm Benutzerdefinierte Felder selbst verborgen, und er ist vollständig übersetzt, rechts-nach-links eingeschlossen.",
+          catalogueColumns:
+            "Jede Zeile zeigt den Namen des Typs, eine Beschreibung, wofür er gedacht ist, ob er einen Platzhalter annimmt, ob er eine Optionsliste besitzt, und ob er einen Validator unterstützt. Text ist die einzige Zeile, die Validator-Unterstützung zeigt — das macht die Text-exklusive Grenze sichtbar.",
+          catalogueNoPlanColumn:
+            "Auf diesem Bildschirm gibt es bewusst keine Plan- oder Berechtigungsspalte. Werttypen sind nicht einzeln planabhängig freigeschaltet, sodass eine Spalte, die das Gegenteil andeutet, etwas zeigen würde, das nicht existiert.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Referenzfelder
+        // ═══════════════════════════════════════════════════
         references: {
-          title: "Reference Fields",
-          description: "The two value types that point at a record in another module — Entity Reference and User Reference: which to use, what is actually stored, why the name is never saved with it, how a target type is pinned, what may be referenced, and the workspace rules.",
-          intro: "Every other value type stores something you typed. These two store a pointer: the field holds no text of its own, only the identity of another record somewhere else in the product. A field on an administrator record that says which staff member they are, a field on a booking that says who reviewed it, a field on a person that says which account manager looks after them — all three are one record pointing at another, and until these types existed there was no way to record that without retyping a name and watching it drift.",
+          title: "Referenzfelder",
+          description:
+            "Die beiden Werttypen, die auf einen Datensatz in einem anderen Modul verweisen — Entity Reference und User Reference: welchen Sie verwenden, was tatsächlich gespeichert wird, warum der Name nie mitgespeichert wird, wie ein Zieltyp festgelegt wird, was referenziert werden darf, und die Arbeitsbereichsregeln.",
+          intro:
+            "Jeder andere Werttyp speichert etwas, das Sie eingegeben haben. Diese beiden speichern einen Verweis: Das Feld enthält keinen eigenen Text, nur die Identität eines anderen Datensatzes irgendwo im Produkt. Ein Feld auf einem Administrator-Datensatz, das angibt, welches Mitglied des Personals er ist, ein Feld auf einer Buchung, das angibt, wer sie geprüft hat, ein Feld auf einer Person, das angibt, welcher Account Manager sich um sie kümmert — alle drei sind ein Datensatz, der auf einen anderen zeigt, und bevor es diese Typen gab, gab es keine Möglichkeit, das zu erfassen, ohne einen Namen erneut einzutippen und zuzusehen, wie er auseinanderdriftet.",
           oneLineTitle: "In einem Satz",
-          oneLineContent: "A reference field stores which record you picked, never what that record was called — so the name you see is always the name that record has right now, and always one you are allowed to see.",
-          whatTitle: "What a reference field gives you",
-          whatIntro: "A reference is not a text field that happens to contain somebody's name. It is a real pointer, checked when you save it and re-checked every time it is read, and every one of the following follows from that.",
-          featPointsAt: "Points at a real record",
-          featPointsAtDesc: "You pick from a searchable list of records that actually exist, in your own workspace, rather than typing a name and hoping it matches. Nothing is stored until a real record has been chosen.",
-          featLiveName: "Always shows the current name",
-          featLiveNameDesc: "The name is looked up fresh each time the field is displayed. When somebody's name is corrected on their own record, every reference pointing at them shows the correction immediately — there is no copy to go stale.",
-          featPermission: "Carries the target's own permissions",
-          featPermissionDesc: "Reading the name needs permission to view that kind of record, not permission to view the record holding the field. Somebody who may edit the owner record but may not read staff sees that a reference is set and does not see who it points at.",
-          featSearch: "Searchable, paged, and it tells you what it cannot do",
-          featSearchDesc: "The picker searches the target module's own records a page at a time, marks a dormant record as inactive rather than hiding it, and says in words when there is nothing you are allowed to point at — never an empty dropdown that reads as \"there are no records\".",
-          featPinned: "Can be pinned to one kind of record",
-          featPinnedDesc: "An Entity Reference field can be pinned so that every value must point at, say, a staff member — or left unpinned, in which case each value chooses its own kind of record and records that choice alongside the pointer.",
-          featSelfHealing: "Clears itself when the target is deleted",
-          featSelfHealingDesc: "Delete the record a reference points at and the pointer is cleared automatically. The value row itself survives with its audit trail — only the pointer goes, and nothing has to be tidied up by hand.",
-          whichTitle: "Entity Reference or User Reference",
-          whichIntro: "There are two reference value types and they are mechanically almost identical. The difference is entirely about what each one is allowed to point at, and therefore about how much you have to configure. Pick User Reference whenever the answer is \"a person who logs in\"; pick Entity Reference for everything else.",
-          thAspect: "Aspect",
+          oneLineContent:
+            "Ein Referenzfeld speichert, welchen Datensatz Sie gewählt haben, nie wie dieser Datensatz hieß — sodass der angezeigte Name immer der Name ist, den dieser Datensatz gerade jetzt trägt, und immer einer, den Sie sehen dürfen.",
+
+          whatTitle: "Was Ihnen ein Referenzfeld bietet",
+          whatIntro:
+            "Eine Referenz ist kein Textfeld, das zufällig den Namen von jemandem enthält. Es ist ein echter Verweis, geprüft beim Speichern und bei jedem Lesen erneut geprüft, und jedes der folgenden Merkmale folgt daraus.",
+          featPointsAt: "Zeigt auf einen echten Datensatz",
+          featPointsAtDesc:
+            "Sie wählen aus einer durchsuchbaren Liste von Datensätzen, die tatsächlich existieren, in Ihrem eigenen Arbeitsbereich, statt einen Namen einzutippen und zu hoffen, dass er passt. Es wird nichts gespeichert, bevor ein echter Datensatz gewählt wurde.",
+          featLiveName: "Zeigt immer den aktuellen Namen",
+          featLiveNameDesc:
+            "Der Name wird bei jeder Anzeige des Felds frisch nachgeschlagen. Wird der Name von jemandem auf dessen eigenem Datensatz korrigiert, zeigt jeder auf diese Person zeigende Verweis die Korrektur sofort — es gibt keine Kopie, die veralten könnte.",
+          featPermission: "Trägt die eigenen Berechtigungen des Ziels",
+          featPermissionDesc:
+            "Um den Namen zu lesen, braucht es die Berechtigung, diese Art von Datensatz anzusehen, nicht die Berechtigung, den Datensatz mit dem Feld anzusehen. Jemand, der den besitzenden Datensatz bearbeiten, aber Personal nicht lesen darf, sieht, dass eine Referenz gesetzt ist, und sieht nicht, worauf sie zeigt.",
+          featSearch: "Durchsuchbar, seitenweise, und sagt Ihnen, was sie nicht kann",
+          featSearchDesc:
+            "Die Auswahlkomponente durchsucht die eigenen Datensätze des Zielmoduls seitenweise, markiert einen ruhenden Datensatz als inaktiv statt ihn zu verbergen, und sagt in Worten, wenn es nichts gibt, worauf Sie verweisen dürfen — nie ein leeres Dropdown, das sich liest wie \"es gibt keine Datensätze\".",
+          featPinned: "Kann auf eine Art von Datensatz festgelegt werden",
+          featPinnedDesc:
+            "Ein Entity-Reference-Feld kann so festgelegt werden, dass jeder Wert auf, sagen wir, ein Mitglied des Personals zeigen muss — oder nicht festgelegt bleiben, wobei dann jeder Wert seine eigene Art von Datensatz wählt und diese Wahl zusammen mit dem Verweis speichert.",
+          featSelfHealing: "Leert sich selbst, wenn das Ziel gelöscht wird",
+          featSelfHealingDesc:
+            "Löschen Sie den Datensatz, auf den ein Verweis zeigt, und der Verweis wird automatisch geleert. Die Wertzeile selbst überlebt mit ihrem Prüfpfad — nur der Verweis geht, und nichts muss von Hand aufgeräumt werden.",
+
+          whichTitle: "Entity Reference oder User Reference",
+          whichIntro:
+            "Es gibt zwei Referenz-Werttypen, und sie sind mechanisch fast identisch. Der Unterschied liegt vollständig darin, worauf jeder zeigen darf, und damit darin, wie viel Sie konfigurieren müssen. Wählen Sie User Reference, wenn die Antwort \"eine Person, die sich anmeldet\" lautet; wählen Sie Entity Reference für alles andere.",
+          thAspect: "Aspekt",
           thEntityRef: "Entity Reference",
           thUserRef: "User Reference",
-          aspTargets: "What it may point at",
-          entTargets: "Any kind of record the platform can currently answer for and you are allowed to view.",
-          usrTargets: "Exactly one kind of record: a user account. Nothing else is accepted, ever, and that list is fixed by the platform rather than by configuration.",
-          aspConfig: "What you configure",
-          entConfig: "Optionally, a Target Entity Type on the definition. Leaving it unpinned is a real and permanently supported choice, not an unfinished one.",
-          usrConfig: "Nothing at all. There is no target picker on the definition form for this type, because there is no decision to make.",
-          aspPicker: "What the person filling it in sees",
-          entPicker: "On a pinned field, one searchable list of that kind of record. On an unpinned field, two controls: first the kind of record, then the record.",
-          usrPicker: "One searchable list of user accounts. There is never a type control.",
-          aspUse: "Reach for it when",
-          entUse: "The answer is a business record — a staff member, a person, a facility — or when different records under the same field legitimately point at different kinds of thing.",
-          usrUse: "The answer is an account: assigned to, reviewed by, account manager, approved by.",
-          aspStorage: "How the answer is stored",
-          entStorage: "The kind of record, plus that record's own identity. Both, always together.",
-          usrStorage: "Identically. The stored value is self-describing in exactly the same way, which is what keeps an old answer readable after the definition changes.",
-          whichInfoTitle: "Why these are two types and not one setting",
-          whichInfoContent: "The list of things a User Reference may point at is a security decision, so it is fixed in the platform rather than typed into a definition by an administrator. And because the type is recorded on every stored answer, the question \"which of our fields hold references to people?\" has an answer even for values whose definition has since been changed. A single type with a setting would have lost both properties.",
-          storedTitle: "What is actually stored",
-          storedIntro: "A reference value is two pieces, held together. This is the same shape Currency uses for its amount and its code, and for the same reason: neither piece means anything on its own.",
-          thPiece: "Piece",
-          thWhat: "What it is",
-          thRequired: "Required?",
-          pieceTypeName: "The kind of record",
-          pieceIdName: "The record's identity",
-          pieceTypeKey: "The kind of record being pointed at, as a stable identifier — for example hrms.staff-member. It is stored on the answer itself, not looked up from the definition.",
-          pieceTypeKeyRequired: "Yes — always, on every answer",
-          pieceId: "The identity of the specific record being pointed at, as an opaque string.",
-          pieceIdRequired: "Yes — always, on every answer",
-          storedNeither: "An identity with no kind of record names a row but no table; a kind of record with no identity names a table but no row. So a value is treated as empty only when both pieces are missing — which is exactly how Currency and Date & Time behave — and half of a reference is refused rather than quietly stored or quietly cleared. If you ever see a save refused for an incomplete reference, one of the two controls was left alone.",
-          storedIdsTitle: "The identity is opaque, and must stay that way",
-          storedIdsContent: "The identity of the target record never travels as a readable database key. It arrives as an encrypted string, and anything reading or writing a reference must send back exactly the string it received — unchanged, uncut, not lower-cased, not checked against any pattern. Alter one character and the product correctly reports the stored reference as malformed, on a reference that was perfectly good a moment earlier. There is nothing in that string for a human to read, and nothing worth trying to read.",
-          storedSymmetryTitle: "The same two names in both directions",
-          storedSymmetryContent: "A reference is written under the same two property names it is read under: entityTypeKey and entityId. There is no second spelling for the way up, and none for the way down. If you are integrating against the values API, send back exactly the field names you were given — inventing a different name for the identity on the way in is not a spelling preference, it is a save that silently carries no pointer at all and is then refused as an incomplete reference.",
-          nameTitle: "Why the display name is never stored",
-          nameIntro: "The obvious design is to save the name next to the identity, so a reference can be displayed without asking anybody anything. The product deliberately does not do that, and the reason is a permission boundary rather than a preference about freshness.",
-          nameWhy: "A name saved alongside the pointer would sit inside the record that holds the field, and would therefore be readable by anybody holding permission to view that record. But the name belongs to the target — it is guarded by the permission that protects that kind of record. Snapshotting it hands a name to somebody who was never granted the permission that protects it. That is a permission bypass wearing a performance argument, and no amount of caching makes it a different thing.",
-          nameCost: "So a name is resolved live, on every read, through a call that re-applies the target's own view permission and the target module's own workspace filter every single time. The practical benefit is the one you would want anyway: a name corrected on its own record is corrected everywhere it is referenced, instantly, with nothing to re-run and no stale copies to hunt down.",
-          nameInfoTitle: "What you will notice as a result",
-          nameInfoContent: "Two things, both intentional. A reference field shows a brief loading state while its name is fetched, rather than appearing instantly with text and then correcting itself. And two people looking at the same record can legitimately see different things in the same field: one the staff member's name, the other a note that they may see there is a reference but not who it points at. Neither is a fault.",
-          pinTitle: "Pinning a target type on the definition",
-          pinIntro: "An Entity Reference definition carries one optional setting of its own: Target Entity Type. It answers \"what kind of record may this field point at?\", and it is offered only for Entity Reference — a User Reference field never shows it, because its answer is already fixed.",
-          thState: "State of the setting",
-          thMeans: "What it means",
-          thPickerShows: "What the record form then shows",
-          stateUnpinned: "Not pinned — any allowed type",
-          meansUnpinned: "Every answer may point at any kind of record the person filling it in is allowed to reference, and each answer records which kind it chose. This is the state a brand-new definition starts in, and it stays legal forever.",
-          pickerUnpinned: "Two controls in order: a Record type control, then the record itself. The second is inert until the first is answered, and choosing a type does not move the cursor into the record control — you are left where you are, with the record control now available.",
-          statePinned: "Pinned to one type",
-          meansPinned: "Every new answer must point at a record of that one kind. An answer of any other kind is refused with a message naming both what was expected and what arrived.",
-          pickerPinned: "One control: the record. There is no type control at all.",
-          stateUserRef: "A User Reference field",
-          meansUserRef: "Permanently equivalent to being pinned to user accounts, decided by the platform. An attempt to pin it to anything else is refused at definition time, not at save time.",
-          pickerUserRef: "One control: the user account. There is never a type control.",
-          pinRepoint: "The setting can be changed later, including on a field that already holds answers, and this is deliberate — refusing would mean a mis-pinned field could never be corrected without first destroying real data. What happens is worth stating exactly, because both halves matter: every answer already stored is left completely alone and still reads back correctly, because each answer carries its own kind of record. The next save of a record whose answer is of the old kind is refused, until somebody picks that answer again.",
-          pinRepointDetail: "The edit form says so before you save it. Read that line rather than assuming either extreme — re-pointing is neither free nor destructive.",
-          pinWarnTitle: "One consequence of re-pointing to check for",
-          pinWarnContent: "An unpinned field that already holds an answer offers no type control while that answer is in place, because the answer's own kind of record is used instead. Re-picking is therefore confined to the kind of record it already points at. Clear the field and the type control comes back. This is a real limit rather than a defect, and it is the one shape of this feature most likely to be reported as one.",
-          targetsTitle: "What can currently be referenced",
-          targetsIntro: "The list is not \"every record type in the product\". A kind of record can only be referenced when the module that owns it supplies a way to search and resolve its records — reading its own data through its own screens' rules, so a picker can never be broader than the screen it mirrors. Three kinds of record supply that today.",
-          thType: "Record type",
-          thKey: "Identifier",
-          thOwner: "Owned by",
-          thShows: "What the picker shows for each row",
+          aspTargets: "Worauf es zeigen darf",
+          entTargets:
+            "Jede Art von Datensatz, für die die Plattform derzeit zuständig sein kann und die Sie ansehen dürfen.",
+          usrTargets:
+            "Genau eine Art von Datensatz: ein Benutzerkonto. Nichts anderes wird jemals angenommen, und diese Liste ist von der Plattform festgelegt, nicht durch Konfiguration.",
+          aspConfig: "Was Sie konfigurieren",
+          entConfig:
+            "Optional einen Target Entity Type auf der Definition. Ihn nicht festzulegen ist eine echte und dauerhaft unterstützte Wahl, keine unfertige.",
+          usrConfig:
+            "Überhaupt nichts. Für diesen Typ gibt es keine Zielauswahl auf dem Definitionsformular, weil es keine Entscheidung zu treffen gibt.",
+          aspPicker: "Was die ausfüllende Person sieht",
+          entPicker:
+            "Bei einem festgelegten Feld eine durchsuchbare Liste dieser Art von Datensatz. Bei einem nicht festgelegten Feld zwei Elemente: zuerst die Art des Datensatzes, dann der Datensatz.",
+          usrPicker: "Eine durchsuchbare Liste von Benutzerkonten. Es gibt nie ein Element zur Typwahl.",
+          aspUse: "Greifen Sie darauf zurück, wenn",
+          entUse:
+            "Die Antwort ein Geschäftsdatensatz ist — ein Mitglied des Personals, eine Person, eine Anlage — oder wenn verschiedene Datensätze unter demselben Feld rechtmäßig auf unterschiedliche Arten von Dingen zeigen.",
+          usrUse:
+            "Die Antwort ein Konto ist: assigned to, reviewed by, account manager, approved by.",
+          aspStorage: "Wie die Antwort gespeichert wird",
+          entStorage: "Die Art des Datensatzes, plus die eigene Identität dieses Datensatzes. Beides, immer zusammen.",
+          usrStorage:
+            "Identisch. Der gespeicherte Wert ist auf genau dieselbe Weise selbstbeschreibend, was ihn dazu befähigt, auch nach einer Änderung der Definition lesbar zu bleiben.",
+          whichInfoTitle: "Warum das zwei Typen sind und keine einzelne Einstellung",
+          whichInfoContent:
+            "Die Liste dessen, worauf ein User Reference zeigen darf, ist eine Sicherheitsentscheidung, also ist sie in der Plattform festgelegt statt von einem Administrator in eine Definition eingetippt. Und weil der Typ bei jeder gespeicherten Antwort mit erfasst wird, hat die Frage \"welche unserer Felder enthalten Verweise auf Personen?\" eine Antwort, selbst für Werte, deren Definition sich seither geändert hat. Ein einzelner Typ mit einer Einstellung hätte beide Eigenschaften verloren.",
+
+          storedTitle: "Was tatsächlich gespeichert wird",
+          storedIntro:
+            "Ein Referenzwert besteht aus zwei zusammengehaltenen Teilen. Das ist dieselbe Form, die Currency für seinen Betrag und seinen Code verwendet, und aus demselben Grund: Kein Teil bedeutet für sich allein etwas.",
+          thPiece: "Teil",
+          thWhat: "Was er ist",
+          thRequired: "Erforderlich?",
+          pieceTypeName: "Die Art des Datensatzes",
+          pieceIdName: "Die Identität des Datensatzes",
+          pieceTypeKey:
+            "Die Art des Datensatzes, auf die verwiesen wird, als stabiler Bezeichner — zum Beispiel hrms.staff-member. Er wird bei der Antwort selbst gespeichert, nicht aus der Definition nachgeschlagen.",
+          pieceTypeKeyRequired: "Ja — immer, bei jeder Antwort",
+          pieceId:
+            "Die Identität des konkreten Datensatzes, auf den verwiesen wird, als undurchsichtige Zeichenkette.",
+          pieceIdRequired: "Ja — immer, bei jeder Antwort",
+          storedNeither:
+            "Eine Identität ohne Art von Datensatz benennt eine Zeile, aber keine Tabelle; eine Art von Datensatz ohne Identität benennt eine Tabelle, aber keine Zeile. Ein Wert gilt daher nur dann als leer, wenn beide Teile fehlen — genau wie sich Currency und Date & Time verhalten —, und die Hälfte einer Referenz wird zurückgewiesen statt still gespeichert oder still geleert. Sollten Sie je einen wegen einer unvollständigen Referenz zurückgewiesenen Speichervorgang sehen, wurde eines der beiden Elemente unberührt gelassen.",
+          storedIdsTitle: "Die Identität ist undurchsichtig, und muss es bleiben",
+          storedIdsContent:
+            "Die Identität des Zieldatensatzes reist nie als lesbarer Datenbankschlüssel. Sie kommt als verschlüsselte Zeichenkette an, und alles, was eine Referenz liest oder schreibt, muss exakt die empfangene Zeichenkette zurücksenden — unverändert, ungekürzt, nicht kleingeschrieben, gegen kein Muster geprüft. Verändern Sie ein Zeichen, und das Produkt meldet den gespeicherten Verweis zu Recht als fehlerhaft, bei einer Referenz, die einen Moment zuvor noch vollkommen in Ordnung war. In dieser Zeichenkette gibt es nichts für einen Menschen zu lesen, und nichts, das zu lesen sich lohnte.",
+          storedSymmetryTitle: "Dieselben zwei Namen in beiden Richtungen",
+          storedSymmetryContent:
+            "Eine Referenz wird unter denselben zwei Eigenschaftsnamen geschrieben, unter denen sie gelesen wird: entityTypeKey und entityId. Es gibt keine zweite Schreibweise für den einen Weg, und keine für den anderen. Wenn Sie gegen die Values-API integrieren, senden Sie exakt die Feldnamen zurück, die Ihnen gegeben wurden — für die Identität auf dem Hinweg einen anderen Namen zu erfinden ist keine Frage der Schreibweise, sondern ein Speichervorgang, der still überhaupt keinen Verweis mit sich führt und dann als unvollständige Referenz zurückgewiesen wird.",
+
+          nameTitle: "Warum der Anzeigename nie gespeichert wird",
+          nameIntro:
+            "Das naheliegende Design wäre, den Namen neben der Identität zu speichern, damit eine Referenz angezeigt werden kann, ohne irgendjemanden etwas zu fragen. Das Produkt tut das bewusst nicht, und der Grund ist eine Berechtigungsgrenze, keine Vorliebe in Sachen Aktualität.",
+          nameWhy:
+            "Ein neben dem Verweis gespeicherter Name würde innerhalb des Datensatzes liegen, der das Feld trägt, und wäre daher für jeden lesbar, der die Berechtigung hat, diesen Datensatz anzusehen. Der Name gehört aber zum Ziel — er wird von der Berechtigung geschützt, die diese Art von Datensatz schützt. Ihn als Momentaufnahme zu speichern würde jemandem einen Namen aushändigen, dem nie die Berechtigung erteilt wurde, die ihn schützt. Das ist eine Umgehung von Berechtigungen im Gewand eines Performance-Arguments, und keine noch so große Zwischenspeicherung macht daraus etwas anderes.",
+          nameCost:
+            "Ein Name wird also bei jedem Lesen live aufgelöst, über einen Aufruf, der jedes Mal erneut die eigene Ansichtsberechtigung des Ziels und den eigenen Arbeitsbereichsfilter des Zielmoduls anwendet. Der praktische Vorteil ist genau der, den Sie ohnehin wollen würden: Ein auf seinem eigenen Datensatz korrigierter Name ist überall, wo er referenziert wird, sofort korrigiert, ohne dass irgendetwas erneut ausgeführt werden muss und ohne veraltete Kopien, nach denen gesucht werden müsste.",
+          nameInfoTitle: "Was Sie dadurch bemerken werden",
+          nameInfoContent:
+            "Zwei Dinge, beide beabsichtigt. Ein Referenzfeld zeigt kurz einen Ladezustand, während sein Name abgerufen wird, statt sofort mit Text zu erscheinen und sich dann zu korrigieren. Und zwei Personen, die auf denselben Datensatz schauen, können in demselben Feld rechtmäßig unterschiedliche Dinge sehen: die eine den Namen des Mitarbeiters, die andere einen Hinweis, dass eine Referenz vorhanden ist, aber nicht, worauf sie zeigt. Keines von beiden ist ein Fehler.",
+
+          pinTitle: "Einen Zieltyp auf der Definition festlegen",
+          pinIntro:
+            "Eine Entity-Reference-Definition trägt eine eigene optionale Einstellung: Target Entity Type. Sie beantwortet \"auf welche Art von Datensatz darf dieses Feld zeigen?\", und sie wird nur für Entity Reference angeboten — ein User-Reference-Feld zeigt sie nie, weil seine Antwort bereits feststeht.",
+          thState: "Zustand der Einstellung",
+          thMeans: "Was er bedeutet",
+          thPickerShows: "Was das Datensatzformular dann zeigt",
+          stateUnpinned: "Nicht festgelegt — jede erlaubte Art",
+          meansUnpinned:
+            "Jede Antwort darf auf jede Art von Datensatz zeigen, die die ausfüllende Person referenzieren darf, und jede Antwort erfasst, welche Art sie gewählt hat. In diesem Zustand beginnt eine brandneue Definition, und er bleibt für immer zulässig.",
+          pickerUnpinned:
+            "Zwei Elemente in dieser Reihenfolge: ein Element Record type, dann der Datensatz selbst. Das zweite bleibt untätig, bis das erste beantwortet ist, und die Wahl einer Art bewegt den Cursor nicht in das Datensatz-Element hinein — Sie bleiben, wo Sie sind, wobei das Datensatz-Element nun verfügbar ist.",
+          statePinned: "Auf eine Art festgelegt",
+          meansPinned:
+            "Jede neue Antwort muss auf einen Datensatz genau dieser einen Art zeigen. Eine Antwort einer anderen Art wird zurückgewiesen, mit einer Meldung, die sowohl das Erwartete als auch das Angekommene nennt.",
+          pickerPinned: "Ein Element: der Datensatz. Es gibt überhaupt kein Typ-Element.",
+          stateUserRef: "Ein User-Reference-Feld",
+          meansUserRef:
+            "Dauerhaft gleichbedeutend damit, auf Benutzerkonten festgelegt zu sein, entschieden von der Plattform. Ein Versuch, es auf etwas anderes festzulegen, wird bereits bei der Definition zurückgewiesen, nicht erst beim Speichern.",
+          pickerUserRef: "Ein Element: das Benutzerkonto. Es gibt nie ein Typ-Element.",
+          pinRepoint:
+            "Die Einstellung lässt sich später ändern, auch bei einem Feld, das bereits Antworten enthält, und das ist beabsichtigt — eine Ablehnung würde bedeuten, dass ein falsch festgelegtes Feld nie korrigiert werden könnte, ohne zuerst echte Daten zu zerstören. Was dabei geschieht, lohnt sich, genau festzuhalten, denn beide Hälften zählen: Jede bereits gespeicherte Antwort wird vollständig in Ruhe gelassen und liest sich weiterhin korrekt zurück, weil jede Antwort ihre eigene Art von Datensatz mitträgt. Der nächste Speichervorgang eines Datensatzes, dessen Antwort noch von der alten Art ist, wird zurückgewiesen, bis jemand diese Antwort erneut wählt.",
+          pinRepointDetail:
+            "Das Bearbeitungsformular sagt das, bevor Sie speichern. Lesen Sie diese Zeile, statt eines der beiden Extreme anzunehmen — ein Umstellen des Ziels ist weder folgenlos noch zerstörerisch.",
+          pinWarnTitle: "Eine Folge des Umstellens, auf die Sie achten sollten",
+          pinWarnContent:
+            "Ein nicht festgelegtes Feld, das bereits eine Antwort enthält, bietet solange kein Typ-Element an, wie diese Antwort besteht, weil stattdessen die eigene Art von Datensatz der Antwort verwendet wird. Ein erneutes Wählen ist daher auf die Art von Datensatz beschränkt, auf die es bereits zeigt. Leeren Sie das Feld, und das Typ-Element kommt zurück. Das ist eine echte Grenze und kein Fehler, und es ist die Ausprägung dieser Funktion, die am ehesten als Fehler gemeldet wird.",
+
+          targetsTitle: "Was derzeit referenziert werden kann",
+          targetsIntro:
+            "Die Liste lautet nicht \"jeder Datensatztyp im Produkt\". Eine Art von Datensatz kann nur referenziert werden, wenn das Modul, dem sie gehört, eine Möglichkeit bereitstellt, ihre Datensätze zu suchen und aufzulösen — indem es seine eigenen Daten nach den Regeln seiner eigenen Bildschirme liest, sodass eine Auswahlkomponente nie umfassender sein kann als der Bildschirm, den sie spiegelt. Drei Arten von Datensatz stellen das heute bereit.",
+          thType: "Datensatztyp",
+          thKey: "Bezeichner",
+          thOwner: "Gehört zu",
+          thShows: "Was die Auswahlkomponente für jede Zeile zeigt",
           typeStaff: "Staff Member",
           keyStaff: "hrms.staff-member",
-          ownerStaff: "The staff management module",
-          showsStaff: "The person's name, with their job title beneath it as the disambiguator. Deliberately the job title rather than an email address: a picker needs to tell two people with the same name apart, and does not need their contact details to do it.",
+          ownerStaff: "Dem Modul für die Personalverwaltung",
+          showsStaff:
+            "Den Namen der Person, mit ihrer Berufsbezeichnung darunter als Unterscheidungsmerkmal. Bewusst die Berufsbezeichnung statt einer E-Mail-Adresse: Eine Auswahlkomponente muss zwei Personen mit demselben Namen auseinanderhalten können und braucht dafür nicht deren Kontaktdaten.",
           typeUser: "User",
           keyUser: "identity.user",
-          ownerUser: "The identity module",
-          showsUser: "The account holder's name, with the username beneath it. An account whose sign-in is currently locked out is shown as inactive but stays selectable.",
+          ownerUser: "Dem Identitätsmodul",
+          showsUser:
+            "Den Namen des Kontoinhabers, mit dem Benutzernamen darunter. Ein Konto, dessen Anmeldung derzeit gesperrt ist, wird als inaktiv angezeigt, bleibt aber auswählbar.",
           typePerson: "Party Person",
           keyPerson: "party.person",
-          ownerPerson: "The party and relationship module",
-          showsPerson: "The person's name only. The owning module supplies no second line at all, having judged that anything it could add would be personal data a picker does not need.",
-          targetsRefused: "Anything else is refused rather than answered with an empty list, and the difference is the whole point: an empty list looks like a normal result and would tell an administrator \"there are no staff members\", which is a false statement wearing the appearance of a correct one. A kind of record the platform cannot answer for produces a clear refusal instead, which the record form renders as a sentence saying this kind of record is not available in this installation.",
-          targetsEmpty: "And a genuinely empty list of available types is itself a legitimate answer, not a failure. It means \"there is nothing you may point a reference at\", which happens for two quite different reasons: the modules owning those records may not be part of this installation, or you may not hold view access to any of them. The product names both possibilities without claiming either, because only one of them is fixed by asking for permissions.",
-          targetsWhyNot: "Three kinds of record that look as though they belong on that list and are excluded on purpose:",
-          targetsWhyNotAdmin: "Administrator records. An administrator can belong to no workspace at all — a platform administrator has none — so a pointer at one could reach outside every workspace boundary in the product. That is the one property a reference target must never have, and it is why a User Reference field refuses an administrator outright rather than merely omitting them from a list.",
-          targetsWhyNotGroup: "User groups. Perfectly safe, and simply not a person. A field typed User Reference that resolved to a group would be lying about what it holds.",
-          targetsWhyNotTheme: "Shared platform catalogue rows such as login themes. They belong to no workspace by design, so they fail the same test administrator records fail, and they are not people either.",
-          targetsInfoTitle: "The list you see is the list you may use",
-          targetsInfoContent: "The available types are filtered before they reach you: registered, answerable by this installation, and permitted for you. Every entry you are offered will work when you use it, and nothing you are offered will refuse you on the next click. That is why the list is fetched when you open the control rather than when the form loads — a record form with several reference fields nobody touches asks nothing of the other modules at all.",
-          tenantTitle: "Workspace and platform rules",
-          tenantIntro: "References cross a module boundary, which makes the workspace boundary the thing to be precise about. Five rules, all of them enforced rather than advisory.",
-          tenant1: "Everything is workspace-guarded. Both searching for a record and resolving one you already hold read through the owning module's own repository, so the same workspace filter and the same deleted-record filter apply that apply on that module's own screens. You can only point at records your workspace can already see.",
-          tenant2: "Holding an identity is not a permission. A reference is re-authorised on every single read: the target's own view permission is required again, every time, and the fact that the pointer is already stored counts for nothing.",
-          tenant3: "Another workspace's record and a deleted record are one indistinguishable answer, deliberately. If they were told apart, somebody could test identities one at a time to learn what exists in a workspace they cannot see. \"You may not see this kind of record\" is told apart from \"this record is gone\", because those two have opposite fixes and neither reveals anything.",
-          tenant4: "Platform-level records belong to platform administrators. A benutzerdefiniertes Feld created at platform level is inherited by every workspace and can only be created, edited or deleted by a platform administrator — including the pinned target type on a platform-level reference field, which no workspace can change.",
-          tenant5: "Nobody may assign an administrator outside their own workspace. In practice the product goes further than the rule requires: an administrator record cannot be pointed at by a reference field at all, in your own workspace or any other, precisely because an administrator may sit outside every workspace.",
-          tenantWarnTitle: "One thing this does not do",
-          tenantWarnContent: "A reference is as strict as the target's own list screen, and no stricter. If a kind of record is visible to a role through its own screen, it is selectable through a picker for that same role — narrower rules than \"this whole workspace\" are not applied on top. So do not treat a reference picker as a way to hide records that the target module itself already shows.",
-          exampleTitle: "A worked example: an administrator record pointing at a staff member",
-          exampleIntro: "The case these types were built for. Your administrators are also employees, and you want each administrator record to say which staff record is the same person — recorded once, correctly, and never retyped.",
-          ex1Title: "Decide which type you need",
-          ex1Content: "The answer is a staff member, not a login account, so this is an Entity Reference. If the question had been \"who reviewed this?\", the answer would be an account and User Reference would be the right choice — and the value type is permanent, so it is worth the moment's thought.",
-          ex2Title: "Define the field",
-          ex2Content: "On the Benutzerdefinierte Felder screen choose Add, pick the administrator record type, set the key to staff_record, the English label to Staff record, and the value type to Entity Reference. A Target Entity Type control appears as soon as you choose that value type.",
-          ex3Title: "Pin the target to Staff Member",
-          ex3Content: "Set Target Entity Type to Staff Member. That is what turns the field from \"a pointer at something\" into \"a pointer at a staff member\", and it is what lets the record form show one control instead of two. Leave it as Not pinned only if you genuinely want different administrators pointing at different kinds of record.",
-          ex4Title: "Fill it in on a record",
-          ex4Content: "Open any administrator record. The Benutzerdefinierte Felder section now shows a Staff record control with a placeholder inviting you to select a record. Open it, type part of a name, and the list narrows to matching staff members with their job titles beneath. Pick one and save the record.",
-          ex5Title: "Read it back, and notice what happened",
-          ex5Content: "Reopen the record. The field shows the staff member's name — fetched just now, not remembered from your save. Change that person's surname on their own staff record, come back, and the reference shows the new surname without anybody touching the administrator record.",
-          ex6Title: "Check the two behaviours that matter",
-          ex6Content: "Sign in as somebody who may edit administrators but may not view staff: the field is present, it says the stored value is fine and that they may not see the name, and they cannot overwrite it. Then delete the staff member: the reference clears itself, the administrator record keeps its value row and its history, and the field reads as empty rather than as a broken pointer.",
-          userExampleTitle: "A worked example: a Reviewed by field",
-          userExampleIntro: "The User Reference case, which is shorter precisely because there is nothing to configure.",
-          ux1Title: "Define the field",
-          ux1Content: "Add a field on the record type you want, set the key to reviewed_by, the label to Reviewed by, and the value type to User Reference. No target control appears, and that is correct — the answer can only ever be a user account.",
-          ux2Title: "Fill it in",
-          ux2Content: "Open a record of that type. The Reviewed by control offers a searchable list of user accounts, each with its username beneath the name. Accounts that are currently locked out are marked inactive and remain selectable, because they are legitimate answers for something that already happened.",
-          ux3Title: "Confirm what it stores",
-          ux3Content: "The answer records the user account type and that account's identity — the same two pieces an Entity Reference stores, so a field that says User Reference is telling you what it holds rather than just what it was configured as.",
-          ux4Title: "Confirm what it refuses",
-          ux4Content: "There is no way, from this form or from a request that bypasses it, to make this field point at an administrator, a user group or a platform catalogue row. The refusal comes with a message naming what is allowed, and it is refused at definition time as well as at save time.",
-          notTitle: "What reference fields are not",
-          notIntro: "Reasonable expectations that these types deliberately do not meet. None of these is a fault to report.",
-          not1: "They are not a relationship the product understands. Nothing is calculated from a reference, nothing is triggered by it, and no screen gains a \"records pointing at this one\" list because a reference exists.",
-          not2: "They are not a way to hide records. A picker shows exactly what the target module's own screens show to that same person. If somebody should not see a kind of record, that is a permission on that kind of record.",
-          not3: "They do not store a name, ever, and there is no setting to make them. A field that must survive the target being deleted with the old name still readable is a Text field, and accepting that it will drift is the price of that choice.",
-          not4: "They are not many-to-many. One reference field holds one pointer. There is no multi-value reference type, and Multi-Select cannot be pointed at records — its answers are text you authored.",
-          not5: "They cannot point at every kind of record. Only the kinds whose owning module supplies a searchable, permission-checked list can be referenced, and the rest are refused rather than silently offered.",
-          not6: "They are not carried in the definitions spreadsheet export. That file has eighteen columns and a pinned target type is not one of them, so an exported definition does not record what its field points at.",
-          nextTitle: "Where to go next",
-          nextIntro: "The mechanics of looking a reference up — the three lookups, every failure state, and what to do about each — are on their own page.",
-          thPage: "Page",
-          thCovers: "What it covers",
+          ownerPerson: "Dem Modul für Parteien und Beziehungen",
+          showsPerson:
+            "Nur den Namen der Person. Das besitzende Modul liefert überhaupt keine zweite Zeile, da es beurteilt hat, dass alles, was es hinzufügen könnte, personenbezogene Daten wären, die eine Auswahlkomponente nicht braucht.",
+          targetsRefused:
+            "Alles andere wird zurückgewiesen statt mit einer leeren Liste beantwortet, und dieser Unterschied ist der springende Punkt: Eine leere Liste sieht wie ein normales Ergebnis aus und würde einem Administrator sagen \"es gibt keine Mitarbeitenden\", was eine falsche Aussage im Gewand einer richtigen ist. Eine Art von Datensatz, für die die Plattform nicht zuständig sein kann, erzeugt stattdessen eine klare Zurückweisung, die das Datensatzformular als Satz darstellt, der besagt, dass diese Art von Datensatz in dieser Installation nicht verfügbar ist.",
+          targetsEmpty:
+            "Und eine wirklich leere Liste verfügbarer Typen ist selbst eine legitime Antwort, kein Fehlschlag. Sie bedeutet \"es gibt nichts, worauf Sie eine Referenz richten dürfen\", was aus zwei ganz unterschiedlichen Gründen passieren kann: Die Module, denen diese Datensätze gehören, sind möglicherweise nicht Teil dieser Installation, oder Sie besitzen möglicherweise keinen Lesezugriff auf keinen davon. Das Produkt nennt beide Möglichkeiten, ohne eine davon zu behaupten, denn nur die zweite lässt sich durch das Beantragen von Berechtigungen beheben.",
+          targetsWhyNot:
+            "Drei Arten von Datensatz, die so aussehen, als gehörten sie auf diese Liste, und die absichtlich ausgeschlossen sind:",
+          targetsWhyNotAdmin:
+            "Administrator-Datensätze. Ein Administrator kann zu überhaupt keinem Arbeitsbereich gehören — ein Plattformadministrator hat keinen —, sodass ein Verweis auf einen davon jede Arbeitsbereichsgrenze im Produkt überschreiten könnte. Das ist die eine Eigenschaft, die ein Referenzziel niemals haben darf, und deshalb weist ein User-Reference-Feld einen Administrator rundheraus zurück, statt ihn nur aus einer Liste wegzulassen.",
+          targetsWhyNotGroup:
+            "Benutzergruppen. Vollkommen gefahrlos, und schlicht keine Person. Ein als User Reference typisiertes Feld, das sich zu einer Gruppe auflöste, würde über das lügen, was es enthält.",
+          targetsWhyNotTheme:
+            "Gemeinsam genutzte Plattformkatalog-Zeilen wie Anmelde-Themes. Sie gehören per Entwurf zu keinem Arbeitsbereich, fallen also durch denselben Test wie Administrator-Datensätze, und sind ebenfalls keine Personen.",
+          targetsInfoTitle: "Die Liste, die Sie sehen, ist die Liste, die Sie nutzen dürfen",
+          targetsInfoContent:
+            "Die verfügbaren Typen werden gefiltert, bevor sie Sie erreichen: registriert, von dieser Installation beantwortbar, und für Sie zulässig. Jeder Eintrag, der Ihnen angeboten wird, funktioniert, wenn Sie ihn benutzen, und nichts, was Ihnen angeboten wird, weist Sie beim nächsten Klick zurück. Deshalb wird die Liste abgerufen, wenn Sie das Element öffnen, statt wenn das Formular lädt — ein Datensatzformular mit mehreren Referenzfeldern, die niemand anfasst, verlangt den anderen Modulen überhaupt nichts ab.",
+
+          tenantTitle: "Arbeitsbereichs- und Plattformregeln",
+          tenantIntro:
+            "Referenzen überschreiten eine Modulgrenze, was die Arbeitsbereichsgrenze zu dem Punkt macht, bei dem Genauigkeit zählt. Fünf Regeln, alle durchgesetzt statt nur empfohlen.",
+          tenant1:
+            "Alles ist arbeitsbereichsgeschützt. Sowohl die Suche nach einem Datensatz als auch das Auflösen eines bereits gehaltenen Datensatzes lesen über das eigene Repository des besitzenden Moduls, sodass derselbe Arbeitsbereichsfilter und derselbe Filter für gelöschte Datensätze gelten, die auch auf den eigenen Bildschirmen dieses Moduls gelten. Sie können nur auf Datensätze verweisen, die Ihr Arbeitsbereich bereits sehen kann.",
+          tenant2:
+            "Eine Identität zu besitzen ist keine Berechtigung. Eine Referenz wird bei jedem einzelnen Lesen erneut autorisiert: Die eigene Ansichtsberechtigung des Ziels ist jedes Mal erneut erforderlich, und die Tatsache, dass der Verweis bereits gespeichert ist, zählt für nichts.",
+          tenant3:
+            "Ein Datensatz eines anderen Arbeitsbereichs und ein gelöschter Datensatz sind bewusst eine ununterscheidbare Antwort. Wären sie unterscheidbar, könnte jemand Identitäten einzeln durchprobieren, um herauszufinden, was in einem Arbeitsbereich existiert, den er nicht sehen kann. \"Sie dürfen diese Art von Datensatz nicht sehen\" wird von \"dieser Datensatz ist weg\" unterschieden, weil diese beiden entgegengesetzte Abhilfen haben und keine von beiden irgendetwas preisgibt.",
+          tenant4:
+            "Datensätze auf Plattformebene gehören Plattformadministratoren. Ein auf Plattformebene angelegtes benutzerdefiniertes Feld wird von jedem Arbeitsbereich geerbt und kann nur von einem Plattformadministrator angelegt, bearbeitet oder gelöscht werden — einschließlich des festgelegten Zieltyps eines Referenzfelds auf Plattformebene, den kein Arbeitsbereich ändern kann.",
+          tenant5:
+            "Niemand darf einen Administrator außerhalb des eigenen Arbeitsbereichs zuweisen. In der Praxis geht das Produkt über das hinaus, was die Regel verlangt: Ein Administrator-Datensatz kann überhaupt nicht von einem Referenzfeld referenziert werden, weder im eigenen Arbeitsbereich noch in einem anderen, genau weil ein Administrator außerhalb jedes Arbeitsbereichs stehen kann.",
+          tenantWarnTitle: "Eine Sache, die dies nicht leistet",
+          tenantWarnContent:
+            "Eine Referenz ist so streng wie der eigene Listenbildschirm des Ziels, und nicht strenger. Ist eine Art von Datensatz für eine Rolle über deren eigenen Bildschirm sichtbar, ist sie über eine Auswahlkomponente für dieselbe Rolle auswählbar — engere Regeln als \"dieser gesamte Arbeitsbereich\" werden nicht zusätzlich angewendet. Behandeln Sie eine Referenz-Auswahlkomponente also nicht als Möglichkeit, Datensätze zu verbergen, die das Zielmodul selbst bereits zeigt.",
+
+          exampleTitle: "Ein durchgerechnetes Beispiel: ein Administrator-Datensatz, der auf ein Mitglied des Personals zeigt",
+          exampleIntro:
+            "Der Fall, für den diese Typen gebaut wurden. Ihre Administratoren sind auch Angestellte, und Sie möchten, dass jeder Administrator-Datensatz angibt, welcher Personal-Datensatz dieselbe Person ist — einmal korrekt erfasst, und nie erneut eingetippt.",
+          ex1Title: "Entscheiden Sie, welchen Typ Sie brauchen",
+          ex1Content:
+            "Die Antwort ist ein Mitglied des Personals, kein Login-Konto, also ist dies eine Entity Reference. Hätte die Frage \"wer hat das geprüft?\" gelautet, wäre die Antwort ein Konto und User Reference die richtige Wahl gewesen — und der Werttyp ist dauerhaft, also lohnt sich der Moment des Nachdenkens.",
+          ex2Title: "Definieren Sie das Feld",
+          ex2Content:
+            "Wählen Sie auf dem Bildschirm Benutzerdefinierte Felder Add, wählen Sie den Administrator-Datensatztyp, setzen Sie den Schlüssel auf staff_record, die englische Bezeichnung auf Staff record, und den Werttyp auf Entity Reference. Ein Element Target Entity Type erscheint, sobald Sie diesen Werttyp wählen.",
+          ex3Title: "Legen Sie das Ziel auf Staff Member fest",
+          ex3Content:
+            "Setzen Sie Target Entity Type auf Staff Member. Das ist es, was das Feld von \"einem Verweis auf irgendetwas\" zu \"einem Verweis auf ein Mitglied des Personals\" macht, und es ist das, was das Datensatzformular ein einzelnes Element statt zweier zeigen lässt. Lassen Sie es nur dann als Not pinned, wenn Sie wirklich möchten, dass verschiedene Administratoren auf verschiedene Arten von Datensatz zeigen.",
+          ex4Title: "Füllen Sie es bei einem Datensatz aus",
+          ex4Content:
+            "Öffnen Sie einen beliebigen Administrator-Datensatz. Der Abschnitt Benutzerdefinierte Felder zeigt nun ein Element Staff record mit einem Platzhalter, der Sie einlädt, einen Datensatz zu wählen. Öffnen Sie es, tippen Sie einen Teil eines Namens, und die Liste verengt sich auf passende Mitglieder des Personals mit ihrer Berufsbezeichnung darunter. Wählen Sie eines und speichern Sie den Datensatz.",
+          ex5Title: "Lesen Sie es zurück, und bemerken Sie, was geschah",
+          ex5Content:
+            "Öffnen Sie den Datensatz erneut. Das Feld zeigt den Namen des Mitglieds des Personals — soeben abgerufen, nicht aus Ihrem Speichervorgang erinnert. Ändern Sie den Nachnamen dieser Person auf ihrem eigenen Personal-Datensatz, kommen Sie zurück, und die Referenz zeigt den neuen Nachnamen, ohne dass jemand den Administrator-Datensatz angefasst hätte.",
+          ex6Title: "Prüfen Sie die beiden Verhaltensweisen, die zählen",
+          ex6Content:
+            "Melden Sie sich als jemand an, der Administratoren bearbeiten, aber Personal nicht ansehen darf: Das Feld ist vorhanden, es sagt, dass der gespeicherte Wert in Ordnung ist und dass diese Person den Namen nicht sehen darf, und sie kann ihn nicht überschreiben. Löschen Sie dann das Mitglied des Personals: Die Referenz leert sich selbst, der Administrator-Datensatz behält seine Wertzeile und seinen Verlauf, und das Feld liest sich als leer statt als defekter Verweis.",
+
+          userExampleTitle: "Ein durchgerechnetes Beispiel: ein Feld Reviewed by",
+          userExampleIntro:
+            "Der Fall für User Reference, der genau deshalb kürzer ist, weil es nichts zu konfigurieren gibt.",
+          ux1Title: "Definieren Sie das Feld",
+          ux1Content:
+            "Fügen Sie ein Feld bei dem gewünschten Datensatztyp hinzu, setzen Sie den Schlüssel auf reviewed_by, die Bezeichnung auf Reviewed by, und den Werttyp auf User Reference. Es erscheint kein Ziel-Element, und das ist richtig so — die Antwort kann immer nur ein Benutzerkonto sein.",
+          ux2Title: "Füllen Sie es aus",
+          ux2Content:
+            "Öffnen Sie einen Datensatz dieses Typs. Das Element Reviewed by bietet eine durchsuchbare Liste von Benutzerkonten, jedes mit seinem Benutzernamen unter dem Namen. Konten, die derzeit gesperrt sind, werden als inaktiv markiert und bleiben auswählbar, weil sie legitime Antworten für etwas sind, das bereits geschehen ist.",
+          ux3Title: "Bestätigen Sie, was es speichert",
+          ux3Content:
+            "Die Antwort erfasst den Typ Benutzerkonto und die Identität dieses Kontos — dieselben zwei Bestandteile, die auch eine Entity Reference speichert, sodass ein Feld, das User Reference angibt, Ihnen sagt, was es enthält, statt nur, wie es konfiguriert wurde.",
+          ux4Title: "Bestätigen Sie, was es zurückweist",
+          ux4Content:
+            "Es gibt keine Möglichkeit, weder über dieses Formular noch über eine Anfrage, die es umgeht, dieses Feld auf einen Administrator, eine Benutzergruppe oder eine Plattformkatalog-Zeile zeigen zu lassen. Die Zurückweisung kommt mit einer Meldung, die nennt, was erlaubt ist, und sie erfolgt sowohl bei der Definition als auch beim Speichern.",
+
+          notTitle: "Was Referenzfelder nicht sind",
+          notIntro:
+            "Vernünftige Erwartungen, die diese Typen bewusst nicht erfüllen. Keine davon ist ein meldenswerter Fehler.",
+          not1:
+            "Sie sind keine Beziehung, die das Produkt versteht. Nichts wird aus einer Referenz berechnet, nichts wird durch sie ausgelöst, und kein Bildschirm gewinnt eine Liste \"Datensätze, die auf diesen zeigen\", nur weil eine Referenz existiert.",
+          not2:
+            "Sie sind kein Weg, um Datensätze zu verbergen. Eine Auswahlkomponente zeigt exakt das, was die eigenen Bildschirme des Zielmoduls derselben Person zeigen. Sollte jemand eine Art von Datensatz nicht sehen, ist das eine Berechtigung auf dieser Art von Datensatz.",
+          not3:
+            "Sie speichern nie einen Namen, und es gibt keine Einstellung, die das ändert. Ein Feld, das das Löschen des Ziels überleben muss, wobei der alte Name weiterhin lesbar bleibt, ist ein Textfeld, und zu akzeptieren, dass es auseinanderdriftet, ist der Preis dieser Wahl.",
+          not4:
+            "Sie sind nicht mehrwertig. Ein Referenzfeld enthält einen Verweis. Es gibt keinen mehrwertigen Referenztyp, und MultiSelect kann nicht auf Datensätze verweisen — seine Antworten sind von Ihnen verfasster Text.",
+          not5:
+            "Sie können nicht auf jede Art von Datensatz zeigen. Nur die Arten, deren besitzendes Modul eine durchsuchbare, berechtigungsgeprüfte Liste bereitstellt, können referenziert werden, und der Rest wird zurückgewiesen statt still angeboten.",
+          not6:
+            "Sie werden nicht im Tabellenexport der Definitionen mitgeführt. Diese Datei hat achtzehn Spalten, und ein festgelegter Zieltyp ist keine davon, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt.",
+
+          nextTitle: "Wie es weitergeht",
+          nextIntro:
+            "Die Mechanik des Nachschlagens einer Referenz — die drei Lookups, jeder Fehlerzustand, und was in jedem Fall zu tun ist — steht auf einer eigenen Seite.",
+          thPage: "Seite",
+          thCovers: "Was sie behandelt",
           pageLookups: "Referenz-Lookups",
-          coversLookups: "The three lookups behind a reference, what every answer and every refusal means, the five failure states and whose problem each one is, delete behaviour, and how the picker paginates.",
+          coversLookups:
+            "Die drei Lookups hinter einer Referenz, was jede Antwort und jede Zurückweisung bedeutet, die fünf Fehlerzustände und wessen Problem jeder davon ist, das Löschverhalten, und wie die Auswahlkomponente paginiert.",
           pageValueTypes: "Werttypen",
-          coversValueTypes: "All nineteen value types side by side, including these two, with worked example inputs and the error code each rejection returns.",
-          pageDefining: "Defining a Field",
-          coversDefining: "The definition form control by control, including the Target Entity Type control and every rejection it can produce.",
+          coversValueTypes:
+            "Alle zweiundzwanzig Werttypen im Vergleich, einschließlich dieser beiden, mit durchgerechneten Beispieleingaben und dem Fehlercode, den jede Zurückweisung zurückgibt.",
+          pageDefining: "Ein Feld definieren",
+          coversDefining:
+            "Das Definitionsformular Element für Element, einschließlich des Elements Target Entity Type und jeder Zurückweisung, die es erzeugen kann.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Referenz-Lookups
+        // ═══════════════════════════════════════════════════
         referenceLookups: {
           title: "Referenz-Lookups",
-          description: "How a reference is looked up: the three lookups behind a reference field, what every answer means, the five failure states and whose problem each one is, what happens when the referenced record is deleted, and how the picker behaves.",
-          intro: "A reference field is drawn by three separate lookups: one asks which kinds of record you may point at, one searches a chosen kind, and one resolves a pointer you already hold back to a name. This page covers all three, every answer each one can give, and — the part worth reading before anything goes wrong — what each different kind of failure means and who can fix it.",
-          whyThreeTitle: "Why the name arrives separately",
-          whyThreeContent: "The record's own values are read in one call; each reference's name is then resolved in its own. That is not an oversight. Resolving a name is guarded by the target's own permission, so it has to be its own permission-checked read — and doing it inline would mean one cross-module query per reference per row, which on a list of records is a query per cell.",
-          endpointsTitle: "The three lookups",
-          endpointsIntro: "All three live under one address of their own rather than alongside the other custom-fields calls, and that is deliberate: these read other modules' data, so they are guarded by the target kind of record's own view permission and not by the permission to administer field definitions. Somebody who administers benutzerdefinierte Felder but may not read staff is refused here, correctly.",
-          endpointsTypes: "Lists the kinds of record this caller may point at right now.",
-          endpointsSearch: "Returns one page of selectable records of one kind, optionally filtered.",
-          endpointsResolve: "Resolves one pointer the caller already holds back to its record.",
-          endpointsPermission: "So there is no single permission that opens this feature. All three require you to be signed in as an administrator, and each then requires the view permission for the kind of record in the address: listing staff members needs the staff view permission, listing user accounts needs the one for user accounts. The consequence to expect is that the same person can be admitted by one of these lookups and refused by the next, on the same screen, and both answers are correct.",
-          typesTitle: "Listing what you may point at",
-          typesWhat: "This answers with the filtered set, not the full catalogue: registered, answerable by this installation, and permitted for you. Every entry it returns is usable immediately, which is the whole reason it exists — a control that offered every registered kind of record would be offering choices that refuse you on the next click, and the alternative of trying each one in turn is a fistful of denials per page load.",
-          typesEmpty: "An empty list is a success, not a failure. It means \"you may not point a reference at anything\", and it is rendered as an explanatory sentence inside the control rather than as an error or as a silently empty dropdown. It has two possible causes and the product names both without asserting either: the owning modules may not be part of this installation, or you may not hold view access to them. Only the second is fixed by asking for permissions, which is why copy naming one cause would send somebody to do something that cannot work.",
-          typesShape: "Each entry carries its stable identifier, the module that owns it, and a display name in English and Arabic. Those names come from the platform's own registry rather than from this application's translations, so they are shown as supplied and never looked up as translation keys.",
-          searchTitle: "Searching one kind of record",
-          searchWhat: "One page of selectable records, in a stable order, with an optional free-text filter. Which columns the filter matches is the owning module's choice rather than a promise made here.",
-          searchPaging: "A page holds twenty rows by default. Asking for more than a hundred is silently capped rather than refused, and the order is stable across calls on purpose — an unstable order makes page two return rows you already saw on page one. The control loads the first page, then accumulates further pages behind a Load more control rather than replacing what you were looking at.",
-          searchRows: "Each row carries a display name that is never blank, an optional second line to tell two similarly named records apart, and a flag saying whether the record is dormant. Deleted records are not returned at all, so that flag never means deleted — a dormant row is present, selectable, and a perfectly valid answer.",
-          searchTyping: "Typing is debounced before it becomes a request. Without that, an eight-character name would fire eight cross-module queries, seven of whose answers are thrown away — and the one that renders would be whichever returned last rather than the one matching what you typed.",
-          resolveTitle: "Resolving a pointer you already hold",
-          resolveWhat: "The read half of the feature, and the only way a stored reference ever becomes a name on screen. It takes the kind of record and the identity, and returns exactly the same shape a picker row has — so a reference loaded from the database and a record you just picked are drawn from one contract rather than two.",
-          resolveGates: "It applies every gate the search applies: the kind of record must be registered, you must hold that kind's own view permission, this installation must be able to answer for it, and the record is read through the owning module's workspace-filtered and deleted-record-filtered repository. Nothing about this being a display-only read relaxes any of them.",
-          resolveNoName: "It is also the only place a name comes from. Nothing about a stored reference includes a name, by design, so a field that cannot resolve shows a specific sentence about why — never a name it remembered from earlier.",
-          statusesTitle: "What each answer means",
-          statusesIntro: "The answers are deliberately distinguishable from each other, with exactly one merge preserved. Read this table as the map from what the product tells you to what you should do about it.",
-          thAnswer: "Answer",
-          thWhatItMeans: "What it means",
-          thWhoFixes: "Whose problem it is",
-          ansOk: "Success",
-          ansOkMeans: "The record resolved. You get its current name, its optional second line, and whether it is dormant.",
-          ansOkFixes: "Nobody — this is the normal case.",
-          ansForbidden: "Not permitted",
-          ansForbiddenMeans: "You do not hold the view permission for that kind of record. This says nothing whatsoever about the record, or about whether it still exists.",
-          ansForbiddenFixes: "Whoever administers roles. It is a fact about your own access, and you could already have learnt it by reading your own permissions.",
-          ansNotFound: "Not found",
-          ansNotFoundMeans: "The record does not resolve. It was deleted, or it belongs to a workspace you cannot see — merged into one answer on purpose so this lookup cannot be used to test what exists elsewhere.",
-          ansNotFoundFixes: "Whoever owns the data. Pick a different record, or clear the field.",
-          ansUnknownType: "Unknown record type",
-          ansUnknownTypeMeans: "The kind of record named is not registered at all. This describes the installation, not any record — it usually means a field was pinned to a kind of record that has since been retired.",
-          ansUnknownTypeFixes: "Whoever administers the deployment.",
-          ansUnavailable: "Module not available",
-          ansUnavailableMeans: "The kind of record is registered but the module that owns it is not part of this installation, so nothing here can answer for it. No permission grant will ever change this.",
-          ansUnavailableFixes: "Whoever administers the deployment.",
-          ansInvalidId: "Invalid identity",
-          ansInvalidIdMeans: "The identity sent could not be read at all. Either it was altered on its way through something, or a stored value predates a change and can no longer be interpreted.",
-          ansInvalidIdFixes: "Whoever is filling the record in — pick the record again. This one is replaced, never re-pointed.",
-          statusesInfoTitle: "What the answers deliberately do not tell you",
-          statusesInfoContent: "\"Deleted\" and \"in a workspace you cannot see\" are one answer and always will be. Splitting them would let somebody probe identities one at a time to learn what exists in another workspace. Everything else is distinguishable, because everything else describes either your own access or this installation — neither of which is a secret from you.",
-          failuresTitle: "The five failure states, and why they read differently",
-          failuresIntro: "A reference field can fail to display for five distinct reasons. They are five different sentences on screen because they are five different problems with five different remedies, and this is the single most important table on this page.",
-          thState: "What has happened",
-          thOnScreen: "What the field says and does",
-          thYouDo: "What to do",
-          stNoPermission: "You may not view that kind of record",
-          scrNoPermission: "The field states that the stored value is fine but that its name cannot be shown to you, and becomes read-only — readable, with no picker. It is deliberately not blanked, because blanking it would invite somebody with no visibility into the target to overwrite a perfectly good reference.",
-          doNoPermission: "Nothing about the data. Ask whoever administers roles for view access to that kind of record.",
-          stGone: "The referenced record no longer exists",
-          scrGone: "The field states that the record cannot be found, offers both possible reasons — deleted, or in an organisation you cannot see — and claims neither. It stays editable.",
-          doGone: "Pick a different record, or clear the field. Re-picking is the fix.",
-          stMalformed: "The stored reference is malformed",
-          scrMalformed: "The field states that what is stored cannot be read at all, stays editable, and additionally marks itself as invalid — because unlike a dangling pointer this is not a value the product ever legitimately produced.",
-          doMalformed: "Pick the record again. This one has to be replaced rather than re-pointed, and it is worth reporting if you did not cause it.",
-          stTransient: "The lookup could not run just now",
-          scrTransient: "The field states that it could not load the referenced record at the moment and that the reference itself is fine, and offers a Try again control.",
-          doTransient: "Try again. Emphatically do not clear the field — the stored value is good, and clearing it is the one action that turns a passing failure into real data loss.",
-          stTypeUnavailable: "This installation cannot answer for that kind of record",
-          scrTypeUnavailable: "The field states that this kind of record is not available in this installation, and offers no Try again control — because retrying will refuse identically every time.",
-          doTypeUnavailable: "Ask whoever administers the deployment which kinds of record this installation can use. This is an installation matter, not a permission one.",
-          greyDashTitle: "Why this is not one grey dash",
-          greyDashContent: "Every one of the five could be rendered as an empty field, and the result would be a pointer at a deleted record sitting unnoticed for a year — indistinguishable from a field nobody ever filled in, and indistinguishable from a colleague simply not having permission. Merging them is not a cosmetic simplification; it deletes the only information that says whose problem it is. If you are ever tempted to make these read the same, this is the paragraph that says why not.",
-          emptyVsFailedTitle: "An empty field is a sixth thing entirely",
-          emptyVsFailedContent: "A reference that was never filled in reads as empty, and that is a different fact from all five above. This is why a populated reference whose target is gone is never reported as empty: an operator looking at a blank cell must be able to tell \"nobody answered this\" from \"the answer points at something that is no longer there\".",
-          saveTitle: "What is checked when a reference is saved",
-          saveIntro: "Every reference save runs the same checks in the same order, and each one fails with its own message rather than a generic \"invalid reference\". Knowing the order explains every refusal you can hit.",
-          save1: "Both pieces present. A submission missing either the kind of record or the identity is refused as an incomplete reference — never treated as an empty field, because half a reference means somebody started answering and stopped.",
-          save2: "The kind of record is registered. An unregistered identifier has no permission behind it, so there would be nothing for the later checks to check against. Refused, naming the identifier.",
-          save3: "The kind of record is allowed for this value type. Always true for Entity Reference; for User Reference this is the fixed platform allowlist, and the refusal names what is allowed rather than only that your choice was not.",
-          save4: "The kind of record agrees with the definition's pin, if there is one. Refused naming both what was expected and what arrived. An unpinned definition skips this check entirely — unpinned means \"any allowed kind\", and must never be read as \"nothing configured, therefore nothing valid\".",
-          save5: "The identity can be read. A stale or altered identity is refused cleanly as an invalid identity, on that one field, rather than failing the whole save with an unexplained error.",
-          save6: "You could read that record right now. This is the check that makes everything else safe, and it is deliberately a single flat refusal with no detail — see below.",
-          saveGate: "That last check holds you to the target kind of record's own view permission and resolves the record through the owning module's workspace-filtered repository. Without it the feature would be an extraction tool rather than a reference: somebody who may edit an administrator record but may not read staff could store an arbitrary staff identity and then read the name back through the resolve lookup. Storing a pointer at data is a read of that data, deferred.",
-          saveGateInfoTitle: "Why that one refusal says so little",
-          saveGateInfoContent: "This is the one place in the whole feature where you supply an arbitrary identity, so it is the one place that could be turned into a way of testing what exists in another workspace. It therefore collapses every reason into one refusal. The read side can afford to be specific for the opposite reason: by then, the identity is one this gate already approved.",
-          saveWhatStored: "One detail with a real consequence: the answer stores the kind of record the value actually points at, never the definition's pin. The two are equal at the moment of saving precisely because of the fourth check — but writing the pin instead would silently rewrite the meaning of every stored answer the day somebody re-points the field, which is the one property that keeps an old answer readable.",
-          deleteTitle: "When the referenced record is deleted",
-          deleteIntro: "Deleting a record that other records point at is a normal operation and needs no clean-up. The pointers clear themselves.",
-          d1Title: "The record is deleted, in the ordinary way",
-          d1Content: "Somebody deletes the staff member, the user account or the person through that module's own screen, holding that module's own delete permission. Nothing about benutzerdefinierte Felder is involved yet.",
-          d2Title: "The deletion records that it happened",
-          d2Content: "The delete and the note saying it happened are committed together, in one transaction. Either both happen or neither does, so there is no window in which a record is gone but nothing recorded the fact.",
-          d3Title: "Every pointer at that record is cleared",
-          d3Content: "Both pieces of each affected answer are cleared together, in the same pass. Never one without the other — half a reference is the one state nothing can display and no operator can repair.",
-          d4Title: "The value row survives",
-          d4Content: "Nothing is deleted. Each answer keeps its row, its version, its place in the record's set of answers and its audit trail. Only the pointer goes, which is why the field reads afterwards as genuinely empty rather than as broken.",
-          deleteScope: "The clearing covers both places answers are stored, including the older store still holding pre-migration answers, and it covers deleted answer rows too — a deleted row still holding a stale pointer would hand that stale pointer back to anybody who later restored it.",
-          deleteIdempotent: "Clearing a pointer that is already clear does nothing, deliberately, so the operation is safe to repeat. The record's own snapshots of earlier answers are not swept, and do not need to be: they are short-retention rollback artefacts that are removed on their own schedule and are never a live display path in the meantime.",
-          deleteInfoTitle: "Before the pointer clears, and where it never does",
-          deleteInfoContent: "There is a short window between a deletion and the pointers clearing, and there are kinds of record whose module does not announce its deletions at all. In both cases a reference simply reports honestly that its record cannot be found, which is exactly the second row of the failure table above. Nothing displays a wrong name, and nothing displays an empty field pretending nobody answered.",
-          deleteSoftTitle: "A record that is merely hidden counts as gone",
-          deleteSoftContent: "Most deletions in the product hide the record rather than physically removing it. A hidden record is already unreachable through the owning module's own screens, so a reference correctly treats it as gone — a record an administrator cannot see is not a record a reference may resolve to.",
-          pickerTitle: "How the picker behaves",
-          pickerIntro: "Details of the control itself that are easier to read once than to work out from its behaviour.",
-          thBehaviour: "Behaviour",
-          thWhy: "Why it is that way",
-          pkLazy: "Nothing is fetched until you open the control.",
-          pkLazyWhy: "A record form can carry several reference fields. One nobody touches should not query another module at all, and the answers are cached afterwards, so re-opening the control costs nothing.",
-          pkTwoControls: "An unpinned field shows two controls, and neither steals focus from the other.",
-          pkTwoControlsWhy: "Choosing a kind of record leaves you on that control with the record control now available one step away. Automatically opening the record picker would pull focus out from under somebody still reading what they just chose.",
-          pkAccumulate: "Further pages add to the list rather than replacing it.",
-          pkAccumulateWhy: "A search over a whole workspace's staff table needs paging, and a list that replaced itself would lose the row you scrolled past on your way to Load more.",
-          pkDormant: "A dormant record is marked, not hidden.",
-          pkDormantWhy: "It still exists and is still a valid answer — a departed staff member kept for historical assignments is exactly the case. Treating it as invalid would make historical references unsavable.",
-          pkNoResults: "An unmatched filter and an empty list read differently.",
-          pkNoResultsWhy: "\"Your filter matched nothing\" is about what you typed. \"There is nothing you may point at\" is about your access. One sentence for both would tell somebody who mistyped that they have no permissions.",
-          pkNoRetry: "Two of the failure states offer no Try again control.",
-          pkNoRetryWhy: "A permission refusal and an unavailable module refuse identically every time. A button inviting you to hammer them would be worse than no button. Only a genuine transport failure gets a retry, because that is the one a retry fixes.",
-          pkViewMode: "In view mode the control is disabled rather than merely unclickable.",
-          pkViewModeWhy: "A reference picker is a picker, so it follows the same convention every other picker on these forms follows. Its own read-only state, used when you may not view the target's name, is a different thing and looks different.",
-          pkNoLabelTrick: "The control names itself for assistive technology.",
-          pkNoLabelTrickWhy: "Its visible label is real, clickable wiring, but the accessible name is set on the control directly — a label alone cannot name a control of this shape. Two reference fields on one form therefore announce distinctly rather than both announcing as \"Record type\".",
-          diagnoseTitle: "Diagnosing a reference that will not display",
-          diagnoseIntro: "In order. Each step rules out one of the five states above, and the first four need no access you do not already have.",
-          dg1Title: "Read the sentence in the field",
-          dg1Content: "The five states never share wording, so the field has already told you which one you are in. This step is listed first because it is the one most often skipped.",
-          dg2Title: "If it offers Try again, use it",
-          dg2Content: "Only the transient failure offers one. If the field resolves on the second attempt, nothing was ever wrong with the stored value and there is nothing to fix.",
-          dg3Title: "Check the same field on another record",
-          dg3Content: "If every reference of that kind fails identically, it is your permissions or the installation — not the data. If only this one fails, the record it points at is the thing to look at.",
-          dg4Title: "Have somebody with full access open the same record",
-          dg4Content: "If they see a name and you do not, it is a permission on that kind of record. If they see the same failure, it is the data or the installation.",
-          dg5Title: "Only then decide whether to re-pick or clear",
-          dg5Content: "Re-pick when the record is genuinely gone or the stored value is malformed. Clear only when the field should be empty. Never clear a field that reported a transient failure — that is the one action that converts somebody else's outage into your data loss.",
-          limitsTitle: "Limits and deliberate gaps",
-          limitsIntro: "Stated so nobody spends an afternoon looking for a setting that is not there.",
-          thLimit: "Limit",
+          description:
+            "Wie eine Referenz nachgeschlagen wird: die drei Lookups hinter einem Referenzfeld, was jede Antwort bedeutet, die fünf Fehlerzustände und wessen Problem jeder davon ist, was beim Löschen des referenzierten Datensatzes passiert, und wie sich die Auswahlkomponente verhält.",
+          intro:
+            "Ein Referenzfeld wird durch drei getrennte Lookups gezeichnet: einer fragt, auf welche Arten von Datensatz Sie verweisen dürfen, einer durchsucht eine gewählte Art, und einer löst einen bereits gehaltenen Verweis zu einem Namen auf. Diese Seite behandelt alle drei, jede Antwort, die jeder von ihnen geben kann, und — der Teil, der sich zu lesen lohnt, bevor irgendetwas schiefgeht — was jede unterschiedliche Art von Fehlschlag bedeutet und wer sie beheben kann.",
+          whyThreeTitle: "Warum der Name gesondert eintrifft",
+          whyThreeContent:
+            "Die eigenen Werte des Datensatzes werden in einem Aufruf gelesen; der Name jeder Referenz wird dann in seinem eigenen aufgelöst. Das ist kein Versehen. Das Auflösen eines Namens wird von der eigenen Berechtigung des Ziels geschützt, muss also seine eigene berechtigungsgeprüfte Lesung sein — und es inline zu tun würde eine modulübergreifende Abfrage pro Referenz pro Zeile bedeuten, was bei einer Liste von Datensätzen eine Abfrage pro Zelle wäre.",
+
+          endpointsTitle: "Die drei Lookups",
+          endpointsIntro:
+            "Alle drei liegen unter einer eigenen Adresse statt neben den übrigen Aufrufen für benutzerdefinierte Felder, und das ist beabsichtigt: Sie lesen Daten anderer Module, also werden sie von der eigenen Ansichtsberechtigung der jeweiligen Zielart geschützt, nicht von der Berechtigung, Felddefinitionen zu verwalten. Jemand, der benutzerdefinierte Felder verwaltet, aber Personal nicht lesen darf, wird hier zu Recht zurückgewiesen.",
+          endpointsTypes: "Listet die Arten von Datensatz, auf die dieser Aufrufer gerade jetzt verweisen darf.",
+          endpointsSearch: "Gibt eine Seite auswählbarer Datensätze einer Art zurück, optional gefiltert.",
+          endpointsResolve: "Löst einen Verweis, den der Aufrufer bereits hält, zu seinem Datensatz auf.",
+          endpointsPermission:
+            "Es gibt also keine einzelne Berechtigung, die diese Funktion öffnet. Alle drei verlangen, dass Sie als Administrator angemeldet sind, und jeder verlangt dann die Ansichtsberechtigung für die Art von Datensatz in der Adresse: Mitglieder des Personals aufzulisten braucht die Ansichtsberechtigung für Personal, Benutzerkonten aufzulisten braucht die für Benutzerkonten. Die zu erwartende Folge ist, dass dieselbe Person von einem dieser Lookups zugelassen und vom nächsten zurückgewiesen werden kann, auf demselben Bildschirm, und beide Antworten sind korrekt.",
+
+          typesTitle: "Auflisten, worauf Sie verweisen dürfen",
+          typesWhat:
+            "Dies antwortet mit der gefilterten Menge, nicht dem vollständigen Katalog: registriert, von dieser Installation beantwortbar, und für Sie zulässig. Jeder zurückgegebene Eintrag ist sofort nutzbar, was der ganze Grund für seine Existenz ist — ein Element, das jede registrierte Art von Datensatz anbieten würde, würde Möglichkeiten anbieten, die Sie beim nächsten Klick zurückweisen, und die Alternative, jede der Reihe nach auszuprobieren, wäre eine Handvoll Ablehnungen pro Seitenaufruf.",
+          typesEmpty:
+            "Eine leere Liste ist ein Erfolg, kein Fehlschlag. Sie bedeutet \"Sie dürfen auf nichts eine Referenz richten\", und sie wird als erklärender Satz innerhalb des Elements dargestellt statt als Fehler oder als still leeres Dropdown. Sie hat zwei mögliche Ursachen, und das Produkt nennt beide, ohne eine zu behaupten: Die besitzenden Module sind möglicherweise nicht Teil dieser Installation, oder Sie besitzen möglicherweise keinen Lesezugriff auf sie. Nur die zweite lässt sich durch das Beantragen von Berechtigungen beheben, weshalb ein Text, der eine Ursache benennt, jemanden dazu bringen würde, etwas zu tun, das nicht funktionieren kann.",
+          typesShape:
+            "Jeder Eintrag trägt seinen stabilen Bezeichner, das Modul, dem er gehört, und einen Anzeigenamen auf Englisch und Arabisch. Diese Namen stammen aus der eigenen Registry der Plattform statt aus den Übersetzungen dieser Anwendung, sodass sie so gezeigt werden, wie sie geliefert wurden, und nie als Übersetzungsschlüssel nachgeschlagen werden.",
+
+          searchTitle: "Eine Art von Datensatz durchsuchen",
+          searchWhat:
+            "Eine Seite auswählbarer Datensätze, in stabiler Reihenfolge, mit einem optionalen Freitextfilter. Welche Spalten der Filter durchsucht, ist die Wahl des besitzenden Moduls, keine hier gegebene Zusage.",
+          searchPaging:
+            "Eine Seite enthält standardmäßig zwanzig Zeilen. Eine Anfrage nach mehr als hundert wird still gedeckelt statt zurückgewiesen, und die Reihenfolge ist absichtlich über Aufrufe hinweg stabil — eine instabile Reihenfolge würde dazu führen, dass Seite zwei Zeilen zurückgibt, die Sie schon auf Seite eins gesehen haben. Das Element lädt die erste Seite und sammelt weitere Seiten dann hinter einem Element Load more an, statt zu ersetzen, was Sie gerade betrachtet haben.",
+          searchRows:
+            "Jede Zeile trägt einen Anzeigenamen, der nie leer ist, eine optionale zweite Zeile, um zwei ähnlich benannte Datensätze auseinanderzuhalten, und eine Markierung, ob der Datensatz ruhend ist. Gelöschte Datensätze werden überhaupt nicht zurückgegeben, sodass diese Markierung nie gelöscht bedeutet — eine ruhende Zeile ist vorhanden, auswählbar, und eine vollkommen gültige Antwort.",
+          searchTyping:
+            "Das Tippen wird verzögert (debounced), bevor daraus eine Anfrage wird. Ohne das würde ein achtzeichiger Name acht modulübergreifende Abfragen auslösen, von denen sieben Antworten verworfen würden — und die, die gerendert wird, wäre diejenige, die zuletzt zurückkam, statt derjenigen, die zu dem passt, was Sie getippt haben.",
+
+          resolveTitle: "Einen bereits gehaltenen Verweis auflösen",
+          resolveWhat:
+            "Die Lese-Hälfte der Funktion, und der einzige Weg, wie eine gespeicherte Referenz je zu einem Namen auf dem Bildschirm wird. Er nimmt die Art des Datensatzes und die Identität und gibt genau dieselbe Form zurück, die auch eine Zeile der Auswahlkomponente hat — sodass eine aus der Datenbank geladene Referenz und ein soeben gewählter Datensatz aus einem einzigen Vertrag statt aus zwei gezeichnet werden.",
+          resolveGates:
+            "Er wendet jede Schranke an, die auch die Suche anwendet: Die Art des Datensatzes muss registriert sein, Sie müssen die eigene Ansichtsberechtigung dieser Art besitzen, diese Installation muss für sie zuständig sein können, und der Datensatz wird über das arbeitsbereichsgefilterte und um gelöschte Datensätze bereinigte Repository des besitzenden Moduls gelesen. Nichts an der Tatsache, dass dies eine reine Anzeigelesung ist, lockert eine davon.",
+          resolveNoName:
+            "Er ist auch die einzige Stelle, von der ein Name stammt. Nichts an einer gespeicherten Referenz enthält von sich aus einen Namen, mit Absicht, sodass ein Feld, das sich nicht auflösen lässt, einen konkreten Satz zeigt, warum — nie einen Namen, an den es sich von früher erinnert.",
+
+          statusesTitle: "Was jede Antwort bedeutet",
+          statusesIntro:
+            "Die Antworten sind bewusst voneinander unterscheidbar, mit genau einer beibehaltenen Zusammenlegung. Lesen Sie diese Tabelle als die Landkarte von dem, was Ihnen das Produkt mitteilt, zu dem, was Sie deswegen tun sollten.",
+          thAnswer: "Antwort",
+          thWhatItMeans: "Was sie bedeutet",
+          thWhoFixes: "Wessen Problem es ist",
+          ansOk: "Erfolg",
+          ansOkMeans:
+            "Der Datensatz wurde aufgelöst. Sie erhalten seinen aktuellen Namen, seine optionale zweite Zeile, und ob er ruhend ist.",
+          ansOkFixes: "Niemandes — das ist der Normalfall.",
+          ansForbidden: "Nicht zulässig",
+          ansForbiddenMeans:
+            "Sie besitzen nicht die Ansichtsberechtigung für diese Art von Datensatz. Das sagt überhaupt nichts über den Datensatz aus, oder darüber, ob er noch existiert.",
+          ansForbiddenFixes:
+            "Wer auch immer Rollen verwaltet. Es ist eine Tatsache über Ihren eigenen Zugriff, und Sie hätten sie bereits durch das Lesen Ihrer eigenen Berechtigungen erfahren können.",
+          ansNotFound: "Nicht gefunden",
+          ansNotFoundMeans:
+            "Der Datensatz löst sich nicht auf. Er wurde gelöscht, oder er gehört zu einem Arbeitsbereich, den Sie nicht sehen können — absichtlich zu einer Antwort zusammengeführt, damit dieser Lookup nicht benutzt werden kann, um zu testen, was anderswo existiert.",
+          ansNotFoundFixes:
+            "Wer auch immer die Daten besitzt. Wählen Sie einen anderen Datensatz, oder leeren Sie das Feld.",
+          ansUnknownType: "Unbekannter Datensatztyp",
+          ansUnknownTypeMeans:
+            "Die genannte Art von Datensatz ist überhaupt nicht registriert. Das beschreibt die Installation, nicht irgendeinen Datensatz — es bedeutet meist, dass ein Feld auf eine Art von Datensatz festgelegt wurde, die seither ausgemustert wurde.",
+          ansUnknownTypeFixes: "Wer auch immer die Bereitstellung verwaltet.",
+          ansUnavailable: "Modul nicht verfügbar",
+          ansUnavailableMeans:
+            "Die Art von Datensatz ist registriert, aber das Modul, dem sie gehört, ist nicht Teil dieser Installation, sodass nichts hier für sie zuständig sein kann. Keine Berechtigungsvergabe wird das je ändern.",
+          ansUnavailableFixes: "Wer auch immer die Bereitstellung verwaltet.",
+          ansInvalidId: "Ungültige Identität",
+          ansInvalidIdMeans:
+            "Die gesendete Identität ließ sich überhaupt nicht lesen. Entweder wurde sie auf ihrem Weg irgendwo verändert, oder ein gespeicherter Wert stammt von vor einer Änderung und lässt sich nicht mehr interpretieren.",
+          ansInvalidIdFixes:
+            "Wer auch immer den Datensatz ausfüllt — wählen Sie den Datensatz erneut. Dieser wird ersetzt, nie neu verknüpft.",
+          statusesInfoTitle: "Was die Antworten bewusst nicht verraten",
+          statusesInfoContent:
+            "\"Gelöscht\" und \"in einem Arbeitsbereich, den Sie nicht sehen können\" sind eine Antwort und werden es immer bleiben. Sie zu trennen würde jemandem erlauben, Identitäten einzeln durchzuprobieren, um herauszufinden, was in einem anderen Arbeitsbereich existiert. Alles andere ist unterscheidbar, weil alles andere entweder Ihren eigenen Zugriff oder diese Installation beschreibt — von denen keines ein Geheimnis vor Ihnen ist.",
+
+          failuresTitle: "Die fünf Fehlerzustände, und warum sie sich unterschiedlich lesen",
+          failuresIntro:
+            "Ein Referenzfeld kann aus fünf unterschiedlichen Gründen nicht angezeigt werden. Es sind fünf verschiedene Sätze auf dem Bildschirm, weil es fünf verschiedene Probleme mit fünf verschiedenen Abhilfen sind, und das ist die mit Abstand wichtigste Tabelle auf dieser Seite.",
+          thState: "Was passiert ist",
+          thOnScreen: "Was das Feld sagt und tut",
+          thYouDo: "Was Sie tun sollten",
+          stNoPermission: "Sie dürfen diese Art von Datensatz nicht ansehen",
+          scrNoPermission:
+            "Das Feld gibt an, dass der gespeicherte Wert in Ordnung ist, sein Name Ihnen aber nicht gezeigt werden kann, und wird schreibgeschützt — lesbar, ohne Auswahlkomponente. Es wird bewusst nicht geleert, weil das Leeren jemanden ohne Einsicht in das Ziel dazu einladen würde, eine vollkommen gute Referenz zu überschreiben.",
+          doNoPermission:
+            "Nichts an den Daten. Bitten Sie, wer auch immer Rollen verwaltet, um Ansichtszugriff auf diese Art von Datensatz.",
+          stGone: "Der referenzierte Datensatz existiert nicht mehr",
+          scrGone:
+            "Das Feld gibt an, dass der Datensatz nicht gefunden werden kann, nennt beide möglichen Gründe — gelöscht, oder in einer Organisation, die Sie nicht sehen können — und behauptet keinen von beiden. Es bleibt bearbeitbar.",
+          doGone: "Wählen Sie einen anderen Datensatz, oder leeren Sie das Feld. Erneutes Wählen ist die Abhilfe.",
+          stMalformed: "Die gespeicherte Referenz ist fehlerhaft",
+          scrMalformed:
+            "Das Feld gibt an, dass sich das Gespeicherte überhaupt nicht lesen lässt, bleibt bearbeitbar, und markiert sich zusätzlich als ungültig — weil dies, anders als ein baumelnder Verweis, kein Wert ist, den das Produkt je rechtmäßig erzeugt hätte.",
+          doMalformed:
+            "Wählen Sie den Datensatz erneut. Dieser muss ersetzt statt neu verknüpft werden, und es lohnt sich, ihn zu melden, wenn Sie ihn nicht selbst verursacht haben.",
+          stTransient: "Der Lookup konnte gerade eben nicht ausgeführt werden",
+          scrTransient:
+            "Das Feld gibt an, dass es den referenzierten Datensatz im Moment nicht laden konnte und dass die Referenz selbst in Ordnung ist, und bietet ein Element Try again.",
+          doTransient:
+            "Versuchen Sie es erneut. Leeren Sie das Feld auf keinen Fall — der gespeicherte Wert ist gut, und ihn zu leeren ist die eine Handlung, die einen vorübergehenden Fehlschlag in echten Datenverlust verwandelt.",
+          stTypeUnavailable: "Diese Installation kann für diese Art von Datensatz nicht zuständig sein",
+          scrTypeUnavailable:
+            "Das Feld gibt an, dass diese Art von Datensatz in dieser Installation nicht verfügbar ist, und bietet kein Element Try again an — weil ein erneuter Versuch jedes Mal identisch zurückgewiesen würde.",
+          doTypeUnavailable:
+            "Fragen Sie, wer auch immer die Bereitstellung verwaltet, welche Arten von Datensatz diese Installation nutzen kann. Das ist eine Frage der Installation, keine der Berechtigung.",
+          greyDashTitle: "Warum das nicht ein einziger grauer Strich ist",
+          greyDashContent:
+            "Jeder der fünf Fälle könnte als leeres Feld dargestellt werden, und das Ergebnis wäre ein Verweis auf einen gelöschten Datensatz, der ein Jahr lang unbemerkt bleibt — nicht zu unterscheiden von einem Feld, das nie jemand ausgefüllt hat, und nicht zu unterscheiden von einer Kollegin, die einfach keine Berechtigung hat. Diese zusammenzulegen ist keine kosmetische Vereinfachung; es löscht die einzige Information, die sagt, wessen Problem es ist. Sollten Sie je versucht sein, diese gleich lesen zu lassen, ist dies der Absatz, der sagt, warum nicht.",
+          emptyVsFailedTitle: "Ein leeres Feld ist eine sechste Sache",
+          emptyVsFailedContent:
+            "Eine Referenz, die nie ausgefüllt wurde, liest sich als leer, und das ist eine andere Tatsache als alle fünf oben. Deshalb wird eine ausgefüllte Referenz, deren Ziel weg ist, nie als leer gemeldet: Ein Betrachter, der auf eine leere Zelle schaut, muss \"niemand hat das beantwortet\" von \"die Antwort zeigt auf etwas, das nicht mehr da ist\" unterscheiden können.",
+
+          saveTitle: "Was beim Speichern einer Referenz geprüft wird",
+          saveIntro:
+            "Jeder Speichervorgang einer Referenz durchläuft dieselben Prüfungen in derselben Reihenfolge, und jede scheitert mit ihrer eigenen Meldung statt mit einer allgemeinen \"ungültige Referenz\". Diese Reihenfolge zu kennen erklärt jede Zurückweisung, auf die Sie stoßen können.",
+          save1:
+            "Beide Teile vorhanden. Eine Übermittlung, der entweder die Art des Datensatzes oder die Identität fehlt, wird als unvollständige Referenz zurückgewiesen — nie als leeres Feld behandelt, weil eine halbe Referenz bedeutet, dass jemand mit dem Antworten begonnen und aufgehört hat.",
+          save2:
+            "Die Art des Datensatzes ist registriert. Ein nicht registrierter Bezeichner hat keine Berechtigung hinter sich, sodass es nichts gäbe, wogegen die späteren Prüfungen prüfen könnten. Zurückgewiesen, unter Nennung des Bezeichners.",
+          save3:
+            "Die Art des Datensatzes ist für diesen Werttyp zulässig. Bei Entity Reference immer wahr; bei User Reference ist dies die feste Positivliste der Plattform, und die Zurückweisung nennt, was erlaubt ist, statt nur, dass Ihre Wahl es nicht war.",
+          save4:
+            "Die Art des Datensatzes stimmt mit der Festlegung der Definition überein, sofern es eine gibt. Zurückgewiesen, unter Nennung sowohl dessen, was erwartet wurde, als auch dessen, was ankam. Eine nicht festgelegte Definition überspringt diese Prüfung vollständig — nicht festgelegt bedeutet \"jede erlaubte Art\", und darf nie als \"nichts konfiguriert, also nichts gültig\" gelesen werden.",
+          save5:
+            "Die Identität lässt sich lesen. Eine veraltete oder veränderte Identität wird sauber als ungültige Identität zurückgewiesen, bei genau diesem Feld, statt den gesamten Speichervorgang mit einem unerklärten Fehler scheitern zu lassen.",
+          save6:
+            "Sie konnten diesen Datensatz gerade jetzt lesen. Das ist die Prüfung, die alles andere sicher macht, und sie ist absichtlich eine einzige knappe Zurückweisung ohne Details — siehe unten.",
+          saveGate:
+            "Diese letzte Prüfung hält Sie an die eigene Ansichtsberechtigung der Zielart und löst den Datensatz über das arbeitsbereichsgefilterte Repository des besitzenden Moduls auf. Ohne sie wäre die Funktion ein Extraktionswerkzeug statt eine Referenz: Jemand, der einen Administrator-Datensatz bearbeiten, aber Personal nicht lesen darf, könnte eine beliebige Personal-Identität speichern und den Namen dann über den Resolve-Lookup zurücklesen. Einen Verweis auf Daten zu speichern ist eine aufgeschobene Lesung dieser Daten.",
+          saveGateInfoTitle: "Warum diese eine Zurückweisung so wenig sagt",
+          saveGateInfoContent:
+            "Das ist die einzige Stelle in der gesamten Funktion, an der Sie eine beliebige Identität liefern, also die einzige Stelle, die zu einem Mittel werden könnte, um zu testen, was in einem anderen Arbeitsbereich existiert. Sie fasst deshalb jeden Grund zu einer einzigen Zurückweisung zusammen. Die Leseseite kann sich aus dem entgegengesetzten Grund Genauigkeit leisten: Zu diesem Zeitpunkt ist die Identität bereits eine, die diese Schranke schon genehmigt hat.",
+          saveWhatStored:
+            "Ein Detail mit einer echten Konsequenz: Die Antwort speichert die Art von Datensatz, auf die der Wert tatsächlich zeigt, nie die Festlegung der Definition. Beide sind im Moment des Speicherns genau wegen der vierten Prüfung gleich — aber stattdessen die Festlegung zu schreiben würde still die Bedeutung jeder gespeicherten Antwort umschreiben, an dem Tag, an dem jemand das Feld neu festlegt, was genau die Eigenschaft ist, die eine alte Antwort lesbar hält.",
+
+          deleteTitle: "Wenn der referenzierte Datensatz gelöscht wird",
+          deleteIntro:
+            "Einen Datensatz zu löschen, auf den andere Datensätze zeigen, ist ein normaler Vorgang und braucht keine Aufräumarbeiten. Die Verweise leeren sich selbst.",
+          d1Title: "Der Datensatz wird auf die übliche Weise gelöscht",
+          d1Content:
+            "Jemand löscht das Mitglied des Personals, das Benutzerkonto oder die Person über den eigenen Bildschirm dieses Moduls, mit der eigenen Löschberechtigung dieses Moduls. An diesem Punkt ist noch nichts mit benutzerdefinierten Feldern verbunden.",
+          d2Title: "Die Löschung erfasst, dass sie geschehen ist",
+          d2Content:
+            "Die Löschung und der Hinweis, dass sie geschehen ist, werden zusammen in einer Transaktion festgeschrieben. Entweder geschehen beide, oder keines von beiden, sodass es kein Zeitfenster gibt, in dem ein Datensatz weg ist, ohne dass etwas diese Tatsache erfasst hätte.",
+          d3Title: "Jeder Verweis auf diesen Datensatz wird geleert",
+          d3Content:
+            "Beide Teile jeder betroffenen Antwort werden zusammen geleert, im selben Durchgang. Nie eines ohne das andere — eine halbe Referenz ist der eine Zustand, den nichts anzeigen und den kein Betreiber reparieren kann.",
+          d4Title: "Die Wertzeile überlebt",
+          d4Content:
+            "Nichts wird gelöscht. Jede Antwort behält ihre Zeile, ihre Version, ihren Platz in der Menge der Antworten des Datensatzes und ihren Prüfpfad. Nur der Verweis geht, weshalb sich das Feld anschließend als wirklich leer liest statt als defekt.",
+          deleteScope:
+            "Das Leeren erfasst beide Orte, an denen Antworten gespeichert werden, einschließlich des älteren Speichers, der noch Antworten von vor der Migration enthält, und es erfasst auch gelöschte Wertzeilen — eine gelöschte Zeile, die noch einen veralteten Verweis enthält, würde diesen veralteten Verweis an jeden zurückgeben, der sie später wiederherstellt.",
+          deleteIdempotent:
+            "Einen bereits geleerten Verweis zu leeren bewirkt absichtlich nichts, sodass der Vorgang gefahrlos wiederholt werden kann. Die eigenen Momentaufnahmen früherer Antworten des Datensatzes werden nicht durchgefegt, und müssen es auch nicht: Es sind kurzlebige Rollback-Artefakte, die nach ihrem eigenen Zeitplan entfernt werden und in der Zwischenzeit nie ein aktiver Anzeigepfad sind.",
+          deleteInfoTitle: "Bevor der Verweis sich leert, und wo er es nie tut",
+          deleteInfoContent:
+            "Es gibt ein kurzes Zeitfenster zwischen einer Löschung und dem Leeren der Verweise, und es gibt Arten von Datensatz, deren Modul seine Löschungen überhaupt nicht bekannt gibt. In beiden Fällen meldet eine Referenz schlicht ehrlich, dass ihr Datensatz nicht gefunden werden kann, was genau der zweiten Zeile der Fehlertabelle oben entspricht. Nichts zeigt einen falschen Namen an, und nichts zeigt ein leeres Feld vor, das so tut, als hätte niemand geantwortet.",
+          deleteSoftTitle: "Ein Datensatz, der nur verborgen ist, zählt als weg",
+          deleteSoftContent:
+            "Die meisten Löschungen im Produkt verbergen den Datensatz, statt ihn physisch zu entfernen. Ein verborgener Datensatz ist über die eigenen Bildschirme des besitzenden Moduls bereits unerreichbar, sodass eine Referenz ihn zu Recht als weg behandelt — ein Datensatz, den ein Administrator nicht sehen kann, ist kein Datensatz, auf den eine Referenz aufgelöst werden darf.",
+
+          pickerTitle: "Wie sich die Auswahlkomponente verhält",
+          pickerIntro:
+            "Details des Elements selbst, die sich einmal zu lesen leichter fällt, als sie aus seinem Verhalten herzuleiten.",
+          thBehaviour: "Verhalten",
+          thWhy: "Warum es so ist",
+          pkLazy: "Es wird nichts abgerufen, bevor Sie das Element öffnen.",
+          pkLazyWhy:
+            "Ein Datensatzformular kann mehrere Referenzfelder tragen. Eines, das niemand anfasst, sollte kein anderes Modul überhaupt befragen, und die Antworten werden anschließend zwischengespeichert, sodass das erneute Öffnen des Elements nichts kostet.",
+          pkTwoControls: "Ein nicht festgelegtes Feld zeigt zwei Elemente, und keines nimmt dem anderen den Fokus.",
+          pkTwoControlsWhy:
+            "Eine Art von Datensatz zu wählen lässt Sie auf diesem Element, wobei das Datensatz-Element nun einen Schritt entfernt verfügbar ist. Die Datensatzauswahl automatisch zu öffnen würde jemandem den Fokus entziehen, der noch liest, was er gerade gewählt hat.",
+          pkAccumulate: "Weitere Seiten ergänzen die Liste, statt sie zu ersetzen.",
+          pkAccumulateWhy:
+            "Eine Suche über die gesamte Personal-Tabelle eines Arbeitsbereichs braucht Seiten, und eine Liste, die sich selbst ersetzt, würde die Zeile verlieren, an der Sie auf dem Weg zu Load more vorbeigescrollt sind.",
+          pkDormant: "Ein ruhender Datensatz wird markiert, nicht verborgen.",
+          pkDormantWhy:
+            "Er existiert weiterhin und ist weiterhin eine gültige Antwort — ein ausgeschiedenes Mitglied des Personals, das für historische Zuweisungen aufbewahrt wird, ist genau dieser Fall. Ihn als ungültig zu behandeln würde historische Referenzen unspeicherbar machen.",
+          pkNoResults: "Ein unpassender Filter und eine leere Liste lesen sich unterschiedlich.",
+          pkNoResultsWhy:
+            "\"Ihr Filter traf auf nichts\" betrifft das, was Sie getippt haben. \"Es gibt nichts, worauf Sie zeigen dürfen\" betrifft Ihren Zugriff. Ein Satz für beides würde jemandem, der sich vertippt hat, sagen, er habe keine Berechtigungen.",
+          pkNoRetry: "Zwei der Fehlerzustände bieten kein Element Try again an.",
+          pkNoRetryWhy:
+            "Eine Berechtigungsverweigerung und ein nicht verfügbares Modul weisen jedes Mal identisch zurück. Eine Schaltfläche, die Sie einlädt, darauf einzuhämmern, wäre schlechter als keine Schaltfläche. Nur ein echter Übertragungsfehler erhält einen erneuten Versuch, weil das der eine ist, den ein erneuter Versuch behebt.",
+          pkViewMode: "Im Ansichtsmodus ist das Element deaktiviert statt nur unklickbar.",
+          pkViewModeWhy:
+            "Eine Referenz-Auswahlkomponente ist eine Auswahlkomponente, sie folgt also derselben Konvention wie jede andere Auswahlkomponente auf diesen Formularen. Ihr eigener schreibgeschützter Zustand, verwendet, wenn Sie den Namen des Ziels nicht ansehen dürfen, ist eine andere Sache und sieht anders aus.",
+          pkNoLabelTrick: "Das Element benennt sich selbst für unterstützende Technologien.",
+          pkNoLabelTrickWhy:
+            "Seine sichtbare Bezeichnung ist echte, klickbare Verdrahtung, aber der barrierefreie Name wird direkt am Element gesetzt — eine Bezeichnung allein kann ein Element dieser Form nicht benennen. Zwei Referenzfelder auf einem Formular kündigen sich daher unterscheidbar an, statt beide als \"Record type\" anzukündigen.",
+
+          diagnoseTitle: "Eine Referenz diagnostizieren, die sich nicht anzeigen lässt",
+          diagnoseIntro:
+            "Der Reihe nach. Jeder Schritt schließt einen der fünf oben genannten Zustände aus, und die ersten vier brauchen keinen Zugriff, den Sie nicht bereits haben.",
+          dg1Title: "Lesen Sie den Satz im Feld",
+          dg1Content:
+            "Die fünf Zustände teilen sich nie denselben Wortlaut, das Feld hat Ihnen also bereits gesagt, in welchem Sie sich befinden. Dieser Schritt steht an erster Stelle, weil er am häufigsten übersprungen wird.",
+          dg2Title: "Bietet es Try again an, nutzen Sie es",
+          dg2Content:
+            "Nur der vorübergehende Fehlschlag bietet eines an. Löst sich das Feld beim zweiten Versuch auf, war mit dem gespeicherten Wert nie etwas falsch, und es gibt nichts zu reparieren.",
+          dg3Title: "Prüfen Sie dasselbe Feld bei einem anderen Datensatz",
+          dg3Content:
+            "Scheitert jede Referenz dieser Art identisch, liegt es an Ihren Berechtigungen oder der Installation — nicht an den Daten. Scheitert nur diese eine, ist der Datensatz, auf den sie zeigt, die Sache, die Sie sich ansehen sollten.",
+          dg4Title: "Lassen Sie jemanden mit vollem Zugriff denselben Datensatz öffnen",
+          dg4Content:
+            "Sieht diese Person einen Namen und Sie nicht, ist es eine Berechtigung auf dieser Art von Datensatz. Sieht sie denselben Fehlschlag, liegt es an den Daten oder der Installation.",
+          dg5Title: "Erst dann entscheiden, ob erneut gewählt oder geleert wird",
+          dg5Content:
+            "Wählen Sie erneut, wenn der Datensatz wirklich weg oder der gespeicherte Wert fehlerhaft ist. Leeren Sie nur, wenn das Feld leer sein sollte. Leeren Sie nie ein Feld, das einen vorübergehenden Fehlschlag gemeldet hat — das ist die eine Handlung, die den Ausfall von jemand anderem in Ihren Datenverlust verwandelt.",
+
+          limitsTitle: "Grenzen und bewusste Lücken",
+          limitsIntro:
+            "Klar festgehalten, damit niemand einen Nachmittag mit der Suche nach einer Einstellung verbringt, die es nicht gibt.",
+          thLimit: "Grenze",
           thDetail: "Detail",
-          limPageSize: "Records per page in the picker",
-          limPageSizeDetail: "Twenty by default. A request for more than a hundred is capped rather than refused, and the cap is applied twice on the way in.",
-          limDebounce: "Delay between typing and searching",
-          limDebounceDetail: "A fixed short pause, the same one every server-backed picker in the product uses. Not configurable.",
-          limNoName: "No stored display name",
-          limNoNameDetail: "There is no setting anywhere to snapshot a name alongside a pointer, and there will not be one — it would hand a name guarded by one permission to anybody holding another.",
-          limNoBacklinks: "No \"what points at this record\" view",
-          limNoBacklinksDetail: "Nothing lists the references pointing at a given record. Deleting a record does not warn you how many pointers it is about to clear.",
-          limNoExport: "Not in the definitions export",
-          limNoExportDetail: "The eighteen-column definitions spreadsheet has no column for a pinned target type, so an exported definition does not record what its field points at.",
-          limNoMulti: "One pointer per field",
-          limNoMultiDetail: "There is no multi-value reference type. Two answers means two fields.",
-          limNoTypeFilter: "The picker cannot be narrowed by anything but text",
-          limNoTypeFilterDetail: "Which columns the free-text filter matches is the owning module's choice, and there are no additional filters — no \"active only\", no filter by group.",
-          limNoAdminTarget: "Administrator records cannot be referenced",
-          limNoAdminTargetDetail: "Not from the definition form and not from a request that bypasses it. An administrator may sit outside every workspace, which is the one property a reference target must not have.",
-          nextTitle: "Where to go next",
-          nextIntro: "The concepts behind these lookups are on the Reference Fields page.",
-          thPage: "Page",
-          thCovers: "What it covers",
-          pageReferences: "Reference Fields",
-          coversReferences: "What the two reference types are, which to use, what is stored, why no name is kept, pinning a target type, what may be referenced, and the workspace rules.",
-          pageSecurity: "Field-Level Security",
-          coversSecurity: "The separate mechanism for hiding a whole field from a role or user group — which is a different thing from not being allowed to read a reference's target.",
-          pageLimits: "Limits and Behaviours",
-          coversLimits: "Every fixed cap and deliberate limitation across the whole feature, references included.",
+          limPageSize: "Datensätze pro Seite in der Auswahlkomponente",
+          limPageSizeDetail:
+            "Standardmäßig zwanzig. Eine Anfrage nach mehr als hundert wird gedeckelt statt zurückgewiesen, und der Deckel wird auf dem Weg zweimal angewendet.",
+          limDebounce: "Verzögerung zwischen Tippen und Suchen",
+          limDebounceDetail:
+            "Eine feste, kurze Pause, dieselbe, die jede serverseitig gestützte Auswahlkomponente im Produkt verwendet. Nicht konfigurierbar.",
+          limNoName: "Kein gespeicherter Anzeigename",
+          limNoNameDetail:
+            "Es gibt nirgends eine Einstellung, um einen Namen als Momentaufnahme neben einem Verweis zu speichern, und es wird auch keine geben — sie würde einen von einer Berechtigung geschützten Namen an jeden aushändigen, der eine andere besitzt.",
+          limNoBacklinks: "Keine Ansicht \"was zeigt auf diesen Datensatz\"",
+          limNoBacklinksDetail:
+            "Nichts listet die Referenzen auf, die auf einen gegebenen Datensatz zeigen. Einen Datensatz zu löschen warnt Sie nicht, wie viele Verweise dabei gleich geleert werden.",
+          limNoExport: "Nicht im Definitionsexport",
+          limNoExportDetail:
+            "Die Tabelle der Definitionen mit achtzehn Spalten hat keine Spalte für einen festgelegten Zieltyp, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt.",
+          limNoMulti: "Ein Verweis pro Feld",
+          limNoMultiDetail:
+            "Es gibt keinen mehrwertigen Referenztyp. Zwei Antworten bedeuten zwei Felder.",
+          limNoTypeFilter: "Die Auswahlkomponente lässt sich durch nichts außer Text eingrenzen",
+          limNoTypeFilterDetail:
+            "Welche Spalten der Freitextfilter durchsucht, ist die Wahl des besitzenden Moduls, und es gibt keine zusätzlichen Filter — kein \"nur aktive\", kein Filtern nach Gruppe.",
+          limNoAdminTarget: "Administrator-Datensätze können nicht referenziert werden",
+          limNoAdminTargetDetail:
+            "Weder vom Definitionsformular noch von einer Anfrage, die es umgeht. Ein Administrator kann außerhalb jedes Arbeitsbereichs stehen, was die eine Eigenschaft ist, die ein Referenzziel nicht haben darf.",
+
+          nextTitle: "Wie es weitergeht",
+          nextIntro: "Die Konzepte hinter diesen Lookups stehen auf der Seite Referenzfelder.",
+          thPage: "Seite",
+          thCovers: "Was sie behandelt",
+          pageReferences: "Referenzfelder",
+          coversReferences:
+            "Was die beiden Referenztypen sind, welchen Sie verwenden, was gespeichert wird, warum kein Name aufbewahrt wird, das Festlegen eines Zieltyps, was referenziert werden darf, und die Arbeitsbereichsregeln.",
+          pageSecurity: "Sicherheit auf Feldebene",
+          coversSecurity:
+            "Der gesonderte Mechanismus, um ein ganzes Feld vor einer Rolle oder Benutzergruppe zu verbergen — was eine andere Sache ist, als das Ziel einer Referenz nicht lesen zu dürfen.",
+          pageLimits: "Grenzwerte und Verhalten",
+          coversLimits:
+            "Jede feste Obergrenze und jede bewusste Einschränkung der gesamten Funktion, Referenzen eingeschlossen.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Ein Feld definieren
+        // ═══════════════════════════════════════════════════
         defining: {
-          title: "Defining a Field",
-          description: "The definition form control by control, the full walkthrough, the rules for keys, creating a field from inside a record, every rejection, and what can still be changed after saving.",
-          intro: "Field definitions live on the Benutzerdefinierte Felder screen in the Administration workspace. This page walks the whole form: every control, what reveals it, what it does, and what happens when a save is refused. Control names are given as they appear in the English interface.",
-          beforeTitle: "Two decisions to make before you open the form",
-          beforeContent: "The record type and the value type are both permanent once saved, and so is the key. Everything else can be edited later. If you are unsure which value type fits, read the Werttypen page first — recreating a field means losing every answer already stored against it.",
-          whereTitle: "Where the screen is",
-          whereIntro: "Benutzerdefinierte Felder are administered from four related screens.",
-          where1: "The Benutzerdefinierte Felder screen itself, in the Administration workspace, is where definitions are created, edited, deactivated and deleted, and where a validator is attached.",
-          where2: "The Feldgruppen screen, reached from a link in that page's header, gathers a record type's fields under headings.",
-          where3: "The Werttypen and Entity Types screens, also reached from that header, are read-only references. They have no sidebar entry of their own by design.",
-          where4: "The Add benutzerdefiniertes Feld link at the end of the Benutzerdefinierte Felder section on a record form opens the same definition form in a side panel, without leaving the record.",
-          controlsTitle: "The form, control by control",
-          controlsIntro: "Not every control is always visible. Several appear only once a particular value type or scope is chosen, which is why the form looks shorter than this table on any given day.",
-          thControl: "Control",
-          thDoes: "What it does",
-          thWhenShown: "When it appears",
-          ctlEntityTypeDoes: "Chooses the kind of record the field belongs to. Record types with no screen in this app are listed after the rest and marked API only — a field on one of those is reachable through the API but has nowhere to render.",
-          ctlEntityTypeWhen: "On create. Fixed and not editable when the form is opened from inside a record, and permanent after saving.",
-          ctlKeyDoes: "Sets the machine name used in error messages, exports and the API. Lower case, must start with a letter, and may contain only letters, digits and underscores.",
-          ctlKeyWhen: "On create only. Permanent after saving.",
-          ctlLabelEnDoes: "The English label shown above the input on every form. Required.",
-          ctlLabelArDoes: "The Arabic label. Optional — an Arabic reader sees the English label when this is blank.",
-          ctlAlways: "Always.",
-          ctlValueTypeDoes: "Chooses one of the nineteen types, deciding the control, the validation and the storage. Selecting it is what reveals the Options box, the Validator dropdown or the Target Entity Type dropdown.",
-          ctlValueTypeWhen: "On create only. Permanent after saving.",
-          ctlPlaceholderEnDoes: "Optional greyed-out hint shown inside the empty input, in English — for example \"e.g. Enter your shirt size\".",
-          ctlPlaceholderArDoes: "The same hint in Arabic.",
-          ctlPlaceholderWhen: "Only for the value types whose control has a placeholder at all. Boolean, Rating, Color, Date and the other picker-based types have none.",
-          ctlOptionsDoes: "Holds the list of allowed answers, one row per option, with an English and an Arabic label for each. See the Options page.",
-          ctlOptionsWhen: "Only when the value type is Select or MultiSelect.",
-          ctlValidatorDoes: "Attaches one of the 13 built-in format checks. Defaults to no validator. See the Validators page.",
-          ctlValidatorWhen: "Only when the value type is Text. It is never shown for the other eighteen types.",
-          ctlValidatorParamDoes: "Supplies the setting a parameterised check needs — a country dropdown for Postal Code, free text for the other five.",
-          ctlValidatorParamWhen: "Only once one of the six parameterised validators is chosen.",
-          ctlReferenceTargetDoes: "Pins the field to one kind of record, so every value must point at a record of that kind. Its first option, Not pinned — any allowed type, is a real and permanent choice rather than a placeholder: leave it there and each value names its own kind of record instead. It is the only way to clear a pin, so it stays available even when the list of kinds is empty or fails to load, and the control is never disabled.",
-          ctlReferenceTargetWhen: "Only when the value type is Entity Reference. A User Reference field never shows it, because its one legal target is fixed by the platform and there is nothing to choose. Unlike the three permanent settings, this one can be changed later — read the warning on the edit form before you do.",
-          ctlFieldGroupDoes: "Puts the field under one of the record type's field groups, or under no group. Changing the record type clears the choice.",
-          ctlFieldGroupWhen: "Only when you hold the field-groups view permission and at least one group exists for the chosen record type.",
-          ctlRequiredDoes: "Refuses a save that leaves the field blank. Whitespace-only counts as blank for every value type.",
-          ctlSortOrderDoes: "Positions the field relative to the other benutzerdefinierte Felder on the form. Lower numbers come first.",
-          ctlSensitivityDoes: "Labels how the field's contents should be treated — Unclassified, Internal, Confidential or Restricted. Defaults to Unclassified. It is a label for reporting and export handling; it does not control who can see the field.",
-          ctlExportableDoes: "Marks whether this field's values should be included in exports. On by default. It is tidying rather than a permission — anybody who can already read the field can still read its values elsewhere — and it does not remove the field from the definitions export, which lists it either way.",
-          ctlActiveDoes: "Whether the field is still offered on forms. Turning it off retires the field without touching the answers already stored against it.",
-          ctlActiveWhen: "On edit. A newly created field is active.",
-          ctlGlobalDoes: "Creates the field for every workspace on the platform rather than for one. Global fields skip the per-workspace quota, and only a platform administrator can edit or delete them afterwards.",
-          ctlGlobalWhen: "Only for a platform Super Admin working with no workspace selected. On create only — a field's scope is permanent.",
-          stepsTitle: "Step by step",
-          stepsIntro: "The whole flow, for the ordinary case of a workspace-scoped field.",
-          s1Title: "Open the Benutzerdefinierte Felder screen and choose Add",
-          s1Content: "The screen lists every field your workspace can see, including any global fields inherited from the platform. Global rows carry a badge and offer no edit or delete controls.",
-          s2Title: "Pick the record type",
-          s2Content: "Choose the kind of record the field belongs to. If your record type is marked API only, stop and reconsider — the field will save, but nothing in the interface will render it.",
-          s3Title: "Choose the value type",
-          s3Content: "Pick from the nineteen. This is the decision that cannot be undone later, and it is also what makes the Options box, the Validator dropdown or the Target Entity Type dropdown appear further down the form.",
-          s4Title: "Name the field",
-          s4Content: "Enter the English label, an Arabic label if you have one, and the key. The key is permanent, so pick something you will still recognise in an error message a year from now.",
-          s5Title: "Fill in the type's own settings",
-          s5Content: "For Select and MultiSelect, add the options. For Text, choose a validator if you want one and supply its setting. For Entity Reference, decide whether to pin a Target Entity Type. Add placeholders if the control takes them.",
-          s6Title: "Set behaviour and position",
-          s6Content: "Turn Required on or off, set the Sort Order, and choose a Field Group if you use them. A group only offers itself if it belongs to the record type you chose.",
-          s7Title: "Set the classification",
-          s7Content: "Sensitivity defaults to Unclassified and Include in exports defaults to on. Leave both alone unless you have a reason — the export default in particular exists so that fields are never quietly missing from a spreadsheet.",
-          s8Title: "Save, and read the message if it is refused",
-          s8Content: "A refusal is always specific about what is wrong. The table further down this page lists every rejection you can hit and what it means.",
-          keyTitle: "Choosing a key",
-          keyIntro: "The key is the field's machine name. It appears in every error message, in the spreadsheet export, and in the API. It must be lower case, start with a letter, and contain only letters, digits and underscores — and it must be unique for that record type within your workspace.",
-          thKeyExample: "Key",
-          thOutcome: "What happens",
-          keyOk: "Accepted. This is the shape to aim for.",
-          keyOkDigits: "Accepted. Digits and underscores are fine after the first character.",
-          keyUpper: "Refused. Keys are lower case.",
-          keyLeadingDigit: "Refused. A key must start with a letter.",
-          keyHyphen: "Refused. Hyphens are not part of the grammar — use an underscore.",
-          keySpace: "Refused. Spaces are not allowed.",
-          keyWarnTitle: "The key is permanent",
-          keyWarnContent: "Once the field is saved, the key cannot be changed by anybody, because answers already stored are addressed by it. If a key is wrong, the field has to be deleted and recreated — and deleting it destroys the answers already recorded against it. This is the single most common regret when defining a field in a hurry.",
-          inlineTitle: "Adding a field from inside a record",
-          inlineIntro: "You do not have to leave what you are doing to add a field. Every form that supports benutzerdefinierte Felder ends its Benutzerdefinierte Felder section with an Add benutzerdefiniertes Feld link, gated behind the create permission.",
-          i1Title: "Click Add benutzerdefiniertes Feld",
-          i1Content: "The definition form opens in a side panel rather than a dialog on top of a dialog. The record form behind it stays visible and readable, and nothing you have already typed into it is lost.",
-          i2Title: "Note the record type is fixed",
-          i2Content: "The record type is shown as context rather than as a dropdown — it is whatever screen you are already on. Every other control behaves exactly as it does on the full screen, validator picker included.",
-          i3Title: "Fill in and save",
-          i3Content: "The panel closes and the new field appears immediately in the still-open record form, empty and ready to fill in.",
-          i4Title: "Carry on with the record",
-          i4Content: "Fill in the new field along with everything else and save the record once. The definition and the answer are two separate saves, in that order.",
-          inlineInfoTitle: "If the link is not there",
-          inlineInfoContent: "The Add benutzerdefiniertes Feld link only appears for somebody holding the create permission. Without it, the Benutzerdefinierte Felder section still works normally for filling in existing fields — only the shortcut to defining a new one is absent. And on a record type with no benutzerdefinierte Felder defined yet, the Benutzerdefinierte Felder section does not appear at all.",
-          rejectTitle: "What gets rejected, and why",
-          rejectIntro: "Every refusal at definition time carries a specific message. These are the ones you can actually hit from the form or from a request that bypasses it.",
+          title: "Ein Feld definieren",
+          description:
+            "Das Definitionsformular Element für Element, die vollständige Schritt-für-Schritt-Anleitung, die Regeln für Schlüssel, das Anlegen eines Felds direkt aus einem Datensatz heraus, jede Zurückweisung, und was sich nach dem Speichern noch ändern lässt.",
+          intro:
+            "Felddefinitionen leben auf dem Bildschirm Benutzerdefinierte Felder im Arbeitsbereich Administration. Diese Seite geht das gesamte Formular durch: jedes Element, was es sichtbar macht, was es tut, und was passiert, wenn ein Speichervorgang zurückgewiesen wird. Namen von Bedienelementen werden so angegeben, wie sie in der englischsprachigen Oberfläche erscheinen.",
+          beforeTitle: "Zwei Entscheidungen, bevor Sie das Formular öffnen",
+          beforeContent:
+            "Der Datensatztyp und der Werttyp sind beide nach dem Speichern dauerhaft, und ebenso der Schlüssel. Alles andere lässt sich später bearbeiten. Sind Sie unsicher, welcher Werttyp passt, lesen Sie zuerst die Seite Werttypen — ein Feld neu anzulegen bedeutet, jede bereits dazu gespeicherte Antwort zu verlieren.",
+
+          whereTitle: "Wo sich der Bildschirm befindet",
+          whereIntro: "Benutzerdefinierte Felder werden von vier verwandten Bildschirmen aus verwaltet.",
+          where1:
+            "Der Bildschirm Benutzerdefinierte Felder selbst, im Arbeitsbereich Administration, ist, wo Definitionen angelegt, bearbeitet, deaktiviert und gelöscht werden, und wo ein Validator angehängt wird.",
+          where2:
+            "Der Bildschirm Feldgruppen, erreichbar über einen Link im Seitenkopf dieser Seite, fasst die Felder eines Datensatztyps unter Überschriften zusammen.",
+          where3:
+            "Die Bildschirme Werttypen und Entitätstypen, ebenfalls über diesen Seitenkopf erreichbar, sind schreibgeschützte Referenzen. Sie haben absichtlich keinen eigenen Eintrag in der Seitenleiste.",
+          where4:
+            "Der Link Add custom field am Ende des Abschnitts Benutzerdefinierte Felder auf einem Datensatzformular öffnet dasselbe Definitionsformular in einem Seitenpanel, ohne den Datensatz zu verlassen.",
+
+          controlsTitle: "Das Formular, Element für Element",
+          controlsIntro:
+            "Nicht jedes Element ist immer sichtbar. Mehrere erscheinen erst, sobald ein bestimmter Werttyp oder Geltungsbereich gewählt ist, weshalb das Formular an einem gegebenen Tag kürzer aussieht als diese Tabelle.",
+          thControl: "Element",
+          thDoes: "Was es tut",
+          thWhenShown: "Wann es erscheint",
+          ctlEntityTypeDoes:
+            "Wählt den Datensatztyp, zu dem das Feld gehört. Datensatztypen ohne eigenen Bildschirm in dieser Anwendung werden nach den übrigen aufgeführt und mit API only markiert — ein Feld auf einem davon ist über die API erreichbar, hat aber nirgends, wo es dargestellt werden könnte.",
+          ctlEntityTypeWhen:
+            "Bei der Erstellung. Fest und nicht bearbeitbar, wenn das Formular aus einem Datensatz heraus geöffnet wird, und dauerhaft nach dem Speichern.",
+          ctlKeyDoes:
+            "Setzt den maschinenlesbaren Namen, der in Fehlermeldungen, Exporten und der API verwendet wird. Kleinbuchstaben, muss mit einem Buchstaben beginnen, und darf nur Buchstaben, Ziffern und Unterstriche enthalten.",
+          ctlKeyWhen: "Nur bei der Erstellung. Dauerhaft nach dem Speichern.",
+          ctlLabelEnDoes: "Die englische Bezeichnung, die über dem Eingabefeld auf jedem Formular gezeigt wird. Erforderlich.",
+          ctlLabelArDoes:
+            "Die arabische Bezeichnung. Optional — ein arabischsprachiger Leser sieht die englische Bezeichnung, wenn dies leer bleibt.",
+          ctlAlways: "Immer.",
+          ctlValueTypeDoes:
+            "Wählt einen der zweiundzwanzig Typen und entscheidet damit über das Bedienelement, die Validierung und die Speicherung. Diese Wahl ist es, die das Feld Options, das Dropdown Validator oder das Dropdown Target Entity Type sichtbar macht.",
+          ctlValueTypeWhen: "Nur bei der Erstellung. Dauerhaft nach dem Speichern.",
+          ctlPlaceholderEnDoes:
+            "Optionaler, grau dargestellter Hinweis im leeren Eingabefeld, auf Englisch — zum Beispiel \"e.g. Enter your shirt size\".",
+          ctlPlaceholderArDoes: "Derselbe Hinweis auf Arabisch.",
+          ctlPlaceholderWhen:
+            "Nur bei den Werttypen, deren Bedienelement überhaupt einen Platzhalter hat. Boolean, Rating, Color, Date und die anderen auswahlbasierten Typen haben keinen.",
+          ctlOptionsDoes:
+            "Enthält die Liste der zulässigen Antworten, eine Zeile pro Option, mit einer englischen und einer arabischen Bezeichnung für jede. Siehe die Seite Optionen.",
+          ctlOptionsWhen: "Nur wenn der Werttyp Select oder MultiSelect ist.",
+          ctlValidatorDoes:
+            "Hängt eine der 13 integrierten Formatprüfungen an. Voreingestellt ist kein Validator. Siehe die Seite Validatoren.",
+          ctlValidatorWhen:
+            "Nur wenn der Werttyp Text ist. Für die anderen einundzwanzig Typen wird es nie gezeigt.",
+          ctlValidatorParamDoes:
+            "Liefert die Einstellung, die eine parametrisierte Prüfung braucht — ein Länder-Dropdown für Postal Code, Freitext für die anderen fünf.",
+          ctlValidatorParamWhen:
+            "Nur sobald einer der sechs parametrisierten Validatoren gewählt ist.",
+          ctlReferenceTargetDoes:
+            "Legt das Feld auf eine Art von Datensatz fest, sodass jeder Wert auf einen Datensatz dieser Art zeigen muss. Seine erste Option, Not pinned — any allowed type, ist eine echte und dauerhafte Wahl statt eines Platzhalters: Lassen Sie sie stehen, und jeder Wert benennt stattdessen seine eigene Art von Datensatz. Es ist der einzige Weg, eine Festlegung zu löschen, bleibt also auch verfügbar, wenn die Liste der Arten leer ist oder nicht lädt, und das Element wird nie deaktiviert.",
+          ctlReferenceTargetWhen:
+            "Nur wenn der Werttyp Entity Reference ist. Ein User-Reference-Feld zeigt es nie, weil sein einziges rechtmäßiges Ziel von der Plattform festgelegt ist und es nichts zu wählen gibt. Anders als die drei dauerhaften Einstellungen lässt sich diese später ändern — lesen Sie die Warnung auf dem Bearbeitungsformular, bevor Sie es tun.",
+          ctlFieldGroupDoes:
+            "Ordnet das Feld einer der Feldgruppen des Datensatztyps zu, oder keiner Gruppe. Das Ändern des Datensatztyps löscht die Wahl.",
+          ctlFieldGroupWhen:
+            "Nur wenn Sie die Ansichtsberechtigung für Feldgruppen besitzen und mindestens eine Gruppe für den gewählten Datensatztyp existiert.",
+          ctlRequiredDoes:
+            "Weist einen Speichervorgang zurück, der das Feld leer lässt. Reine Leerzeichen zählen bei jedem Werttyp als leer.",
+          ctlSortOrderDoes:
+            "Positioniert das Feld im Verhältnis zu den anderen benutzerdefinierten Feldern im Formular. Niedrigere Zahlen kommen zuerst.",
+          ctlSensitivityDoes:
+            "Beschriftet, wie der Inhalt des Felds behandelt werden soll — Unclassified, Internal, Confidential oder Restricted. Voreingestellt ist Unclassified. Es ist ein Label für Berichte und den Umgang beim Export; es steuert nicht, wer das Feld sehen kann.",
+          ctlExportableDoes:
+            "Markiert, ob die Werte dieses Felds in Exporte aufgenommen werden sollen. Standardmäßig eingeschaltet. Das ist Aufräumen, keine Berechtigung — wer das Feld bereits lesen kann, kann seine Werte weiterhin anderswo lesen —, und es entfernt das Feld nicht aus dem Definitionsexport, der es so oder so auflistet.",
+          ctlActiveDoes:
+            "Ob das Feld weiterhin in Formularen angeboten wird. Es auszuschalten legt das Feld still, ohne die bereits dazu gespeicherten Antworten anzufassen.",
+          ctlActiveWhen: "Bei der Bearbeitung. Ein neu angelegtes Feld ist aktiv.",
+          ctlGlobalDoes:
+            "Legt das Feld für jeden Arbeitsbereich der Plattform an statt für einen einzelnen. Globale Felder umgehen das Kontingent pro Arbeitsbereich, und nur ein Plattformadministrator kann sie anschließend bearbeiten oder löschen.",
+          ctlGlobalWhen:
+            "Nur für einen Plattform-Super-Admin, der ohne ausgewählten Arbeitsbereich arbeitet. Nur bei der Erstellung — der Geltungsbereich eines Felds ist dauerhaft.",
+
+          stepsTitle: "Schritt für Schritt",
+          stepsIntro: "Der gesamte Ablauf, für den gewöhnlichen Fall eines auf den Arbeitsbereich beschränkten Felds.",
+          s1Title: "Öffnen Sie den Bildschirm Benutzerdefinierte Felder und wählen Sie Add",
+          s1Content:
+            "Der Bildschirm listet jedes Feld, das Ihr Arbeitsbereich sehen kann, einschließlich geerbter globaler Felder von der Plattform. Globale Zeilen tragen ein Abzeichen und bieten keine Bearbeitungs- oder Löschelemente.",
+          s2Title: "Wählen Sie den Datensatztyp",
+          s2Content:
+            "Wählen Sie die Art von Datensatz, zu der das Feld gehört. Ist Ihr Datensatztyp als API only markiert, halten Sie inne und überdenken Sie es — das Feld wird gespeichert, aber nichts in der Oberfläche wird es darstellen.",
+          s3Title: "Wählen Sie den Werttyp",
+          s3Content:
+            "Wählen Sie aus den zweiundzwanzig. Das ist die Entscheidung, die sich später nicht rückgängig machen lässt, und sie ist auch das, was das Feld Options, das Dropdown Validator oder das Dropdown Target Entity Type weiter unten im Formular erscheinen lässt.",
+          s4Title: "Benennen Sie das Feld",
+          s4Content:
+            "Geben Sie die englische Bezeichnung ein, eine arabische, falls Sie eine haben, und den Schlüssel. Der Schlüssel ist dauerhaft, wählen Sie also etwas, das Sie auch in einem Jahr noch in einer Fehlermeldung erkennen.",
+          s5Title: "Füllen Sie die eigenen Einstellungen des Typs aus",
+          s5Content:
+            "Fügen Sie bei Select und MultiSelect die Optionen hinzu. Wählen Sie bei Text einen Validator, falls Sie einen möchten, und liefern Sie dessen Einstellung. Entscheiden Sie bei Entity Reference, ob Sie einen Target Entity Type festlegen. Fügen Sie Platzhalter hinzu, wenn das Element sie annimmt.",
+          s6Title: "Legen Sie Verhalten und Position fest",
+          s6Content:
+            "Schalten Sie Required ein oder aus, setzen Sie die Sort Order, und wählen Sie eine Field Group, falls Sie welche verwenden. Eine Gruppe bietet sich nur an, wenn sie zu dem gewählten Datensatztyp gehört.",
+          s7Title: "Legen Sie die Klassifizierung fest",
+          s7Content:
+            "Sensitivity ist standardmäßig Unclassified, und Include in exports ist standardmäßig eingeschaltet. Lassen Sie beides unverändert, sofern Sie keinen Grund haben — insbesondere die Export-Voreinstellung existiert, damit Felder nie still aus einer Tabelle fehlen.",
+          s8Title: "Speichern, und die Meldung lesen, falls zurückgewiesen",
+          s8Content:
+            "Eine Zurückweisung ist immer konkret darüber, was falsch ist. Die Tabelle weiter unten auf dieser Seite listet jede Ablehnung, auf die Sie stoßen können, und was sie bedeutet.",
+
+          keyTitle: "Einen Schlüssel wählen",
+          keyIntro:
+            "Der Schlüssel ist der maschinenlesbare Name des Felds. Er erscheint in jeder Fehlermeldung, im Tabellenexport und in der API. Er muss aus Kleinbuchstaben bestehen, mit einem Buchstaben beginnen, und darf nur Buchstaben, Ziffern und Unterstriche enthalten — und er muss für diesen Datensatztyp innerhalb Ihres Arbeitsbereichs eindeutig sein.",
+          thKeyExample: "Schlüssel",
+          thOutcome: "Was passiert",
+          keyOk: "Angenommen. Das ist die Form, die Sie anstreben sollten.",
+          keyOkDigits: "Angenommen. Ziffern und Unterstriche sind nach dem ersten Zeichen in Ordnung.",
+          keyUpper: "Zurückgewiesen. Schlüssel bestehen aus Kleinbuchstaben.",
+          keyLeadingDigit: "Zurückgewiesen. Ein Schlüssel muss mit einem Buchstaben beginnen.",
+          keyHyphen: "Zurückgewiesen. Bindestriche gehören nicht zur Grammatik — verwenden Sie einen Unterstrich.",
+          keySpace: "Zurückgewiesen. Leerzeichen sind nicht erlaubt.",
+          keyWarnTitle: "Der Schlüssel ist dauerhaft",
+          keyWarnContent:
+            "Sobald das Feld gespeichert ist, kann der Schlüssel von niemandem mehr geändert werden, weil bereits gespeicherte Antworten über ihn adressiert werden. Ist ein Schlüssel falsch, muss das Feld gelöscht und neu angelegt werden — und das Löschen zerstört die bereits dazu erfassten Antworten. Das ist das mit Abstand häufigste Bedauern, wenn ein Feld in Eile definiert wird.",
+
+          inlineTitle: "Ein Feld direkt aus einem Datensatz heraus hinzufügen",
+          inlineIntro:
+            "Sie müssen nicht verlassen, woran Sie gerade arbeiten, um ein Feld hinzuzufügen. Jedes Formular, das benutzerdefinierte Felder unterstützt, beendet seinen Abschnitt Benutzerdefinierte Felder mit einem Link Add custom field, gesperrt hinter der Erstellungsberechtigung.",
+          i1Title: "Klicken Sie auf Add custom field",
+          i1Content:
+            "Das Definitionsformular öffnet sich in einem Seitenpanel statt in einem Dialog über einem Dialog. Das dahinterliegende Datensatzformular bleibt sichtbar und lesbar, und nichts, was Sie bereits eingetippt haben, geht verloren.",
+          i2Title: "Beachten Sie, dass der Datensatztyp feststeht",
+          i2Content:
+            "Der Datensatztyp wird als Kontext gezeigt statt als Dropdown — es ist, welcher Bildschirm auch immer Sie sich gerade befinden. Jedes andere Element verhält sich exakt wie auf dem vollständigen Bildschirm, Validator-Dropdown eingeschlossen.",
+          i3Title: "Ausfüllen und speichern",
+          i3Content:
+            "Das Panel schließt sich, und das neue Feld erscheint sofort im weiterhin geöffneten Datensatzformular, leer und bereit zum Ausfüllen.",
+          i4Title: "Mit dem Datensatz fortfahren",
+          i4Content:
+            "Füllen Sie das neue Feld zusammen mit allem anderen aus und speichern Sie den Datensatz einmal. Die Definition und die Antwort sind zwei getrennte Speichervorgänge, in dieser Reihenfolge.",
+          inlineInfoTitle: "Wenn der Link nicht da ist",
+          inlineInfoContent:
+            "Der Link Add custom field erscheint nur für jemanden mit der Erstellungsberechtigung. Ohne sie funktioniert der Abschnitt Benutzerdefinierte Felder weiterhin normal zum Ausfüllen bestehender Felder — nur die Abkürzung zum Definieren eines neuen fehlt. Und bei einem Datensatztyp ohne bisher definierte benutzerdefinierte Felder erscheint der Abschnitt Benutzerdefinierte Felder überhaupt nicht.",
+
+          rejectTitle: "Was zurückgewiesen wird, und warum",
+          rejectIntro:
+            "Jede Zurückweisung bei der Definition trägt eine konkrete Meldung. Dies sind diejenigen, auf die Sie tatsächlich vom Formular aus oder über eine Anfrage stoßen können, die es umgeht.",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          rejDuplicateKey: "A key that already exists for that record type",
-          rejDuplicateKeyMsg: "Refused as already existing. Keys are unique per record type within a workspace — the same key on a different record type is fine.",
-          rejUnknownEntityType: "A record type that is not registered",
-          rejUnknownEntityTypeMsg: "Refused, naming the key: it is not a registered entity type. Only reachable by bypassing the dropdown.",
-          rejNoOptions: "A Select or MultiSelect field with no options",
-          rejNoOptionsMsg: "Refused: options are required for Select fields.",
-          rejOptionsOnOther: "Options supplied for a type that does not take them",
-          rejOptionsOnOtherMsg: "Refused: options are only allowed for Select fields.",
-          rejValidatorNonText: "A validator attached to a non-Text field",
-          rejValidatorNonTextMsg: "Refused, naming the type: a validator can only be attached to a Text field. The dropdown is not even shown for those types, so this is the server refusing the same thing a second time.",
-          rejValidatorNoParam: "A parameterised validator with its setting left blank",
-          rejValidatorNoParamMsg: "Refused, naming the validator: it requires a parameter.",
-          rejValidatorExtraParam: "A setting supplied for a validator that takes none",
-          rejValidatorExtraParamMsg: "Refused, naming the validator: it does not accept a parameter.",
-          rejRequiredRestricted: "Marking a field required while a role or group restricts it",
-          rejRequiredRestrictedMsg: "Refused, naming the field: it cannot be made required while it is restricted. Remove the restriction first, or leave the field optional.",
-          rejGroupWrongType: "A field group belonging to a different record type",
-          rejGroupWrongTypeMsg: "Refused: the selected field group belongs to a different entity type. Changing the record type on the form clears the group choice for exactly this reason.",
-          rejReferenceTargetUnknown: "Pinning a target that is not a registered record type",
-          rejReferenceTargetUnknownMsg: "Refused, naming the identifier: it is not a registered entity type. Only reachable by bypassing the dropdown, which offers nothing unregistered.",
-          rejReferenceTargetNotAllowed: "Pinning a User Reference field to anything but a user account",
-          rejReferenceTargetNotAllowedMsg: "Refused, naming the value type and listing what it does allow. The dropdown is not shown for that type at all, so this is the server refusing what the form already declined to offer.",
-          rejGlobalNotSuperAdmin: "Creating a global field without being a platform Super Admin",
-          rejGlobalNotSuperAdminMsg: "Refused: only a platform Super Admin can create a global benutzerdefiniertes Feld.",
-          rejQuota: "Passing your plan's field limit",
-          rejQuotaMsg: "Refused on quota. The Free edition allows zero fields; every other plan has its own maximum per workspace. Global platform fields do not count against it.",
-          afterTitle: "After saving: what can still change",
-          afterIntro: "Three things are permanent, and everything else is not. It is worth knowing which is which before you save rather than after.",
-          editableTitle: "Editable at any time",
-          editable1: "Both labels, and both placeholders",
-          editable2: "Required — unless a role or user group restricts the field",
-          editable3: "Sort Order, and the Field Group",
-          editable4: "Sensitivity, and Include in exports",
-          editable5: "Active, which retires the field without touching its stored answers",
-          editable6: "The options list — though renaming an option changes what existing records display",
-          editable7: "The validator and its setting — though this never re-checks answers already saved",
-          editable8: "The Target Entity Type on an Entity Reference field — answers already stored keep working, and the next save of one of the old kind is refused until it is picked again",
-          permanentTitle: "Permanent once saved",
-          permanent1: "The record type",
-          permanent2: "The key",
-          permanent3: "The value type",
-          permanent4: "The scope — workspace or global",
-          afterOutro: "There is no migration path for any of the four permanent settings. Getting one wrong means deleting the field and starting again, which destroys the answers already recorded against it.",
-          verifyTitle: "Checking it worked",
-          verifyIntro: "Four quick checks that catch almost every mistake.",
-          verify1: "Open a record of that type. The Benutzerdefinierte Felder section should show your new field, empty, with the label and placeholder you set.",
-          verify2: "Type a value and save. No error means the value was accepted; reopen the record and confirm it is still there.",
-          verify3: "Clear the value and save again. On an optional field this should succeed and leave the field genuinely empty, not showing the old value.",
-          verify4: "Check the record list. Your field should be an extra column there too, showing the answer for every record at once.",
-          verifyWarnTitle: "If the field does not appear",
-          verifyWarnContent: "Check the record type first — a field defined against a record type marked API only has nowhere to render. Then check Active. Then check whether a role or user group restricts the field's key, because a restricted field is omitted entirely rather than shown blank, and looks exactly like a field that was never defined.",
+          thWhatYouSee: "Was Sie sehen",
+          rejDuplicateKey: "Ein Schlüssel, der für diesen Datensatztyp bereits existiert",
+          rejDuplicateKeyMsg:
+            "Als bereits vorhanden zurückgewiesen. Schlüssel sind pro Datensatztyp innerhalb eines Arbeitsbereichs eindeutig — derselbe Schlüssel bei einem anderen Datensatztyp ist in Ordnung.",
+          rejUnknownEntityType: "Ein Datensatztyp, der nicht registriert ist",
+          rejUnknownEntityTypeMsg:
+            "Zurückgewiesen, unter Nennung des Schlüssels: Er ist kein registrierter Entitätstyp. Nur durch Umgehen des Dropdowns erreichbar.",
+          rejNoOptions: "Ein Select- oder MultiSelect-Feld ohne Optionen",
+          rejNoOptionsMsg: "Zurückgewiesen: Optionen sind für Select-Felder erforderlich.",
+          rejOptionsOnOther: "Optionen geliefert für einen Typ, der sie nicht annimmt",
+          rejOptionsOnOtherMsg: "Zurückgewiesen: Optionen sind nur für Select-Felder erlaubt.",
+          rejValidatorNonText: "Ein Validator, angehängt an ein Nicht-Text-Feld",
+          rejValidatorNonTextMsg:
+            "Zurückgewiesen, unter Nennung des Typs: Ein Validator kann nur an ein Textfeld angehängt werden. Das Dropdown wird für diese Typen nicht einmal gezeigt, dies ist also der Server, der dasselbe ein zweites Mal zurückweist.",
+          rejValidatorNoParam: "Ein parametrisierter Validator mit leer gelassener Einstellung",
+          rejValidatorNoParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er benötigt einen Parameter.",
+          rejValidatorExtraParam: "Eine Einstellung für einen Validator geliefert, der keine annimmt",
+          rejValidatorExtraParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er akzeptiert keinen Parameter.",
+          rejRequiredRestricted: "Ein Feld als Required markieren, während eine Rolle oder Gruppe es einschränkt",
+          rejRequiredRestrictedMsg:
+            "Zurückgewiesen, unter Nennung des Felds: Es kann nicht als erforderlich markiert werden, während es eingeschränkt ist. Entfernen Sie zuerst die Einschränkung, oder lassen Sie das Feld optional.",
+          rejGroupWrongType: "Eine Feldgruppe, die zu einem anderen Datensatztyp gehört",
+          rejGroupWrongTypeMsg:
+            "Zurückgewiesen: Die gewählte Feldgruppe gehört zu einem anderen Entitätstyp. Das Ändern des Datensatztyps auf dem Formular löscht die Gruppenwahl genau aus diesem Grund.",
+          rejReferenceTargetUnknown: "Ein Ziel festlegen, das kein registrierter Datensatztyp ist",
+          rejReferenceTargetUnknownMsg:
+            "Zurückgewiesen, unter Nennung des Bezeichners: Er ist kein registrierter Entitätstyp. Nur durch Umgehen des Dropdowns erreichbar, das nichts Unregistriertes anbietet.",
+          rejReferenceTargetNotAllowed: "Ein User-Reference-Feld auf etwas anderes als ein Benutzerkonto festlegen",
+          rejReferenceTargetNotAllowedMsg:
+            "Zurückgewiesen, unter Nennung des Werttyps und Auflistung dessen, was er tatsächlich erlaubt. Das Dropdown wird für diesen Typ überhaupt nicht gezeigt, dies ist also der Server, der zurückweist, was das Formular bereits abgelehnt hat anzubieten.",
+          rejGlobalNotSuperAdmin: "Ein globales Feld anlegen, ohne Plattform-Super-Admin zu sein",
+          rejGlobalNotSuperAdminMsg: "Zurückgewiesen: Nur ein Plattform-Super-Admin kann ein globales benutzerdefiniertes Feld anlegen.",
+          rejQuota: "Die Feldgrenze Ihres Plans überschreiten",
+          rejQuotaMsg:
+            "Wegen Kontingent zurückgewiesen. Die Free-Edition erlaubt null Felder; jeder andere Plan hat sein eigenes Maximum pro Arbeitsbereich. Globale Plattformfelder zählen nicht dagegen.",
+
+          afterTitle: "Nach dem Speichern: Was sich noch ändern lässt",
+          afterIntro:
+            "Drei Dinge sind dauerhaft, und alles andere ist es nicht. Es lohnt sich, zu wissen, was was ist, bevor Sie speichern, statt danach.",
+          editableTitle: "Jederzeit bearbeitbar",
+          editable1: "Beide Bezeichnungen, und beide Platzhalter",
+          editable2: "Required — sofern keine Rolle oder Benutzergruppe das Feld einschränkt",
+          editable3: "Sort Order, und die Field Group",
+          editable4: "Sensitivity, und Include in exports",
+          editable5: "Active, was das Feld stilllegt, ohne seine gespeicherten Antworten anzufassen",
+          editable6: "Die Optionsliste — auch wenn das Umbenennen einer Option ändert, was bestehende Datensätze anzeigen",
+          editable7: "Der Validator und seine Einstellung — auch wenn dies bereits gespeicherte Antworten nie erneut prüft",
+          editable8:
+            "Der Target Entity Type eines Entity-Reference-Felds — bereits gespeicherte Antworten funktionieren weiter, und der nächste Speichervorgang einer Antwort der alten Art wird zurückgewiesen, bis sie erneut gewählt wird",
+          permanentTitle: "Nach dem Speichern dauerhaft",
+          permanent1: "Der Datensatztyp",
+          permanent2: "Der Schlüssel",
+          permanent3: "Der Werttyp",
+          permanent4: "Der Geltungsbereich — Arbeitsbereich oder global",
+          afterOutro:
+            "Für keine der vier dauerhaften Einstellungen gibt es einen Migrationspfad. Eine davon falsch zu haben bedeutet, das Feld zu löschen und neu zu beginnen, was die bereits dazu erfassten Antworten zerstört.",
+
+          verifyTitle: "Prüfen, ob es funktioniert hat",
+          verifyIntro: "Vier schnelle Prüfungen, die fast jeden Fehler abfangen.",
+          verify1:
+            "Öffnen Sie einen Datensatz dieses Typs. Der Abschnitt Benutzerdefinierte Felder sollte Ihr neues Feld zeigen, leer, mit der von Ihnen gesetzten Bezeichnung und dem Platzhalter.",
+          verify2:
+            "Geben Sie einen Wert ein und speichern Sie. Kein Fehler bedeutet, dass der Wert angenommen wurde; öffnen Sie den Datensatz erneut und bestätigen Sie, dass er noch da ist.",
+          verify3:
+            "Löschen Sie den Wert und speichern Sie erneut. Bei einem optionalen Feld sollte dies gelingen und das Feld wirklich leer lassen, nicht den alten Wert zeigen.",
+          verify4:
+            "Prüfen Sie die Datensatzliste. Ihr Feld sollte dort ebenfalls eine zusätzliche Spalte sein, die die Antwort für jeden Datensatz auf einmal zeigt.",
+          verifyWarnTitle: "Wenn das Feld nicht erscheint",
+          verifyWarnContent:
+            "Prüfen Sie zuerst den Datensatztyp — ein Feld, das gegen einen als API only markierten Datensatztyp definiert ist, hat nirgends, wo es dargestellt werden könnte. Prüfen Sie dann Active. Prüfen Sie dann, ob eine Rolle oder Benutzergruppe den Schlüssel des Felds einschränkt, denn ein eingeschränktes Feld wird vollständig ausgelassen statt leer gezeigt, und sieht genau wie ein Feld aus, das nie definiert wurde.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Feldgruppen
+        // ═══════════════════════════════════════════════════
         groups: {
           title: "Feldgruppen",
-          description: "Gathering a record type's benutzerdefinierte Felder under headings you order by hand: creating a group, the permanent stable key, ordering, deleting, global groups, and what a group does not affect.",
-          intro: "A field group gathers several of one record type's benutzerdefinierte Felder under a heading, in an order you set by hand. Without groups, benutzerdefinierte Felder simply appear in Sort Order under a single Benutzerdefinierte Felder heading; with them, you can separate contact details from medical details from kit preferences on the same form. Groups are managed on the Feldgruppen screen, reached from a link in the Benutzerdefinierte Felder page header.",
-          permInfoTitle: "Field groups need their own permissions",
-          permInfoContent: "The whole feature is gated on a separate set of permissions from field definitions, including a distinct one for reordering. A role that already holds every custom-fields permission does not automatically hold these. Without them there is no Manage field groups link and no Field Group picker on the definition form at all — nothing is broken, the feature simply is not granted. Editing a field that already has a group and saving keeps that group rather than clearing it.",
-          whatTitle: "What a group is made of",
-          whatIntro: "Groups belong to exactly one record type, so the screen shows nothing until you pick one — and the empty state says so rather than looking broken.",
-          thPart: "Setting",
-          thWhat: "What it is",
-          thChange: "Changeable later?",
-          partEntityType: "The record type whose fields this group can gather.",
-          partStableKey: "A machine name for the group, unique within the record type. Lower case, starts with a letter, letters, digits and underscores only.",
-          partLabelEn: "The English heading shown above the group's fields.",
-          partLabelAr: "The Arabic heading.",
-          partSortOrder: "Where the group sits relative to the record type's other groups.",
-          partScope: "Whether the group belongs to your workspace or to the whole platform.",
-          changeNever: "No — permanent once saved",
-          changeAnytime: "Yes, at any time",
-          createTitle: "Creating a group",
-          createIntro: "Four steps, on the Feldgruppen screen.",
-          c1Title: "Pick the record type",
-          c1Content: "Nothing is listed before you do. A group is only ever valid for one record type, so there is no all-record-types view to start from.",
-          c2Title: "Give it a stable key",
-          c2Content: "The form requires one. It lowercases as you type and refuses characters outside the grammar. Choose carefully — this one is permanent.",
-          c3Title: "Give it labels and an order",
-          c3Content: "An English heading, an Arabic heading, and a number deciding where the group sits among the record type's other groups.",
-          c4Title: "Save, then assign fields to it",
-          c4Content: "The group appears in the list. Open any benutzerdefiniertes Feld definition for the same record type and a Field Group picker now offers it, alongside a no group entry.",
-          stableKeyTitle: "The stable key",
-          stableKeyIntro: "The stable key is the group's machine name. It follows the same grammar as a field key — lower case, starting with a letter, letters, digits and underscores — and it must be unique among that record type's groups.",
-          thKeyExample: "Stable key",
-          thOutcome: "What happens",
-          skOk: "Accepted.",
-          skLowercased: "Accepted, and lowercased as you type. You will see it become contact_details.",
-          skHyphen: "Refused as you type. The input rejects characters outside the grammar.",
-          skLeadingDigit: "Refused. A stable key must start with a letter.",
-          skDuplicate: "Refused, naming the key: a field group with that key already exists for this record type.",
-          exSkDuplicate: "A key already used by another group on the same record type",
-          stableKeyWhy: "Once the group is saved, the stable key is visible but greyed out and cannot be changed by anybody. That is deliberate rather than an oversight: exported schema names a group by this key, so renaming it would silently turn a future re-import from an update into a create, against a bundle that has already shipped. Being able to see the key still matters — you need it to match an exported bundle to the group it refers to — which is why it is shown rather than hidden.",
-          stableKeyWarnTitle: "There is no rename",
-          stableKeyWarnContent: "If a stable key is wrong, the group has to be deleted and recreated, and every field assigned to it has to be reassigned. Do not expect an edit button to appear — its absence is the design.",
-          assignTitle: "Assigning a field to a group",
-          assignIntro: "Assignment happens on the field, not on the group. There is no drag-fields-into-a-group screen.",
-          assign1: "Open a benutzerdefiniertes Feld definition for the same record type. A Field Group picker offers every group on that record type, plus a no group entry.",
-          assign2: "Choosing no group is the only way to ungroup a field. There is no separate unset control anywhere else.",
-          assign3: "Changing the record type on a create form clears any group already chosen, because a group from one record type is never valid for another.",
-          assign4: "A field can belong to at most one group. There is no way to show one field under two headings.",
-          orderTitle: "Ordering groups",
-          orderIntro: "Groups are ordered on the Feldgruppen screen, by dragging a row or by using its Move up and Move down buttons. Both do the same thing and both persist.",
-          orderKeyboard: "The buttons are not a convenience feature. A keyboard-only user has no drag gesture, so the buttons are the accessible path and are expected to work identically — if a row moves by dragging but not by button, that is a defect.",
-          orderLimitTitle: "Reordering stops working past 100 groups",
-          orderLimitContent: "A reorder request carries the whole reorderable set at once, and more than 100 groups for a single record type is refused outright. Past that point no group on that record type can be moved at all. The screen says so rather than failing generically, but the ceiling is real and is not configurable.",
-          orderGlobalTitle: "You cannot position your group relative to a global one",
-          orderGlobalContent: "Reordering is all or nothing and refuses any group the caller does not own, so a workspace's reorder covers only its own groups, which are then renumbered from zero. Those numbers can collide with a global group's own order, and the tie is broken on the English label. The visible effect is that moving your group to the top can land it below a global group and look as though nothing happened.",
-          deleteTitle: "Deleting a group",
-          deleteIntro: "Deleting a group never deletes fields. The confirmation says so explicitly, and afterwards the fields still exist and are simply ungrouped, appearing under the default Benutzerdefinierte Felder heading again.",
-          deleteEditing: "One edge worth knowing: if you start editing a group and then delete that same group from its row while the edit panel is still open, the panel closes and no new group is created. Saving at that point does not resurrect the group under a new identity.",
-          globalTitle: "Global groups",
-          globalIntro: "A platform administrator with no workspace selected creates a global group, and a notice on the screen explains that. The scope switch appears on create and never on edit, because a group's scope is permanent in the same way a field's is.",
-          globalTenantView: "Inside a workspace, a global group shows a Global badge and offers no edit, delete or move controls at all. That is not the interface hiding something arbitrarily — the server would refuse those operations, so the controls are not offered.",
-          effectTitle: "What a group does and does not affect",
-          doesTitle: "A group does",
-          does1: "Put related fields together under one heading on the record form",
-          does2: "Let you order groups by hand, by dragging or with Move up and Move down",
-          does3: "Carry its own English and Arabic heading, translated like everything else",
-          does4: "Survive a field being deleted, and let a field leave it via the no group entry",
-          doesNotTitle: "A group does not",
-          doesNot1: "Control who can see a field — that is field-level security, which is unrelated",
-          doesNot2: "Delete its fields when the group itself is deleted",
-          doesNot3: "Carry across record types, or apply to more than one record type at once",
-          doesNot4: "Change how a value is validated, stored, exported or displayed",
-          errorsTitle: "Group errors you may see",
+          description:
+            "Die benutzerdefinierten Felder eines Datensatztyps unter von Hand geordneten Überschriften zusammenfassen: eine Gruppe anlegen, der dauerhafte stabile Schlüssel, die Reihenfolge, das Löschen, globale Gruppen, und was eine Gruppe nicht beeinflusst.",
+          intro:
+            "Eine Feldgruppe fasst mehrere benutzerdefinierte Felder eines Datensatztyps unter einer Überschrift zusammen, in einer von Hand festgelegten Reihenfolge. Ohne Gruppen erscheinen benutzerdefinierte Felder schlicht in der Sort Order unter einer einzigen Überschrift Custom Fields; mit ihnen können Sie Kontaktdaten von medizinischen Details von Ausrüstungspräferenzen auf demselben Formular trennen. Gruppen werden auf dem Bildschirm Feldgruppen verwaltet, erreichbar über einen Link im Seitenkopf der Seite Benutzerdefinierte Felder.",
+          permInfoTitle: "Feldgruppen brauchen ihre eigenen Berechtigungen",
+          permInfoContent:
+            "Die gesamte Funktion ist über einen von Felddefinitionen getrennten Satz Berechtigungen gesperrt, einschließlich einer eigenen für das Umsortieren. Eine Rolle, die bereits jede Berechtigung für benutzerdefinierte Felder besitzt, erhält diese nicht automatisch mit. Ohne sie gibt es weder einen Link Manage field groups noch ein Field-Group-Auswahlfeld auf dem Definitionsformular — nichts ist defekt, die Funktion ist schlicht nicht gewährt. Ein Feld zu bearbeiten, das bereits eine Gruppe hat, und zu speichern, behält diese Gruppe, statt sie zu löschen.",
+
+          whatTitle: "Woraus eine Gruppe besteht",
+          whatIntro:
+            "Gruppen gehören zu genau einem Datensatztyp, sodass der Bildschirm nichts zeigt, bis Sie einen wählen — und der Leerzustand sagt das, statt defekt zu wirken.",
+          thPart: "Einstellung",
+          thWhat: "Was sie ist",
+          thChange: "Später änderbar?",
+          partEntityType: "Der Datensatztyp, dessen Felder diese Gruppe zusammenfassen kann.",
+          partStableKey:
+            "Ein maschinenlesbarer Name für die Gruppe, eindeutig innerhalb des Datensatztyps. Kleinbuchstaben, beginnt mit einem Buchstaben, nur Buchstaben, Ziffern und Unterstriche.",
+          partLabelEn: "Die englische Überschrift über den Feldern der Gruppe.",
+          partLabelAr: "Die arabische Überschrift.",
+          partSortOrder: "Wo die Gruppe im Verhältnis zu den anderen Gruppen des Datensatztyps steht.",
+          partScope: "Ob die Gruppe Ihrem Arbeitsbereich gehört oder der gesamten Plattform.",
+          changeNever: "Nein — nach dem Speichern dauerhaft",
+          changeAnytime: "Ja, jederzeit",
+
+          createTitle: "Eine Gruppe anlegen",
+          createIntro: "Vier Schritte, auf dem Bildschirm Feldgruppen.",
+          c1Title: "Wählen Sie den Datensatztyp",
+          c1Content:
+            "Bevor Sie das tun, ist nichts aufgelistet. Eine Gruppe ist immer nur für einen Datensatztyp gültig, es gibt also keine datensatztypübergreifende Ansicht, von der aus zu starten wäre.",
+          c2Title: "Geben Sie ihr einen stabilen Schlüssel",
+          c2Content:
+            "Das Formular verlangt einen. Es wandelt beim Tippen in Kleinbuchstaben um und weist Zeichen außerhalb der Grammatik zurück. Wählen Sie sorgfältig — dieser ist dauerhaft.",
+          c3Title: "Geben Sie ihr Bezeichnungen und eine Reihenfolge",
+          c3Content:
+            "Eine englische Überschrift, eine arabische Überschrift, und eine Zahl, die entscheidet, wo die Gruppe unter den anderen Gruppen des Datensatztyps steht.",
+          c4Title: "Speichern, dann Felder zuordnen",
+          c4Content:
+            "Die Gruppe erscheint in der Liste. Öffnen Sie eine beliebige Felddefinition für denselben Datensatztyp, und ein Field-Group-Auswahlfeld bietet sie nun an, neben einem Eintrag no group.",
+
+          stableKeyTitle: "Der stabile Schlüssel",
+          stableKeyIntro:
+            "Der stabile Schlüssel ist der maschinenlesbare Name der Gruppe. Er folgt derselben Grammatik wie ein Feldschlüssel — Kleinbuchstaben, beginnt mit einem Buchstaben, Buchstaben, Ziffern und Unterstriche — und muss unter den Gruppen dieses Datensatztyps eindeutig sein.",
+          thKeyExample: "Stabiler Schlüssel",
+          thOutcome: "Was passiert",
+          skOk: "Angenommen.",
+          skLowercased: "Angenommen, und beim Tippen in Kleinbuchstaben umgewandelt. Sie sehen, wie er zu contact_details wird.",
+          skHyphen: "Beim Tippen zurückgewiesen. Das Eingabefeld weist Zeichen außerhalb der Grammatik zurück.",
+          skLeadingDigit: "Zurückgewiesen. Ein stabiler Schlüssel muss mit einem Buchstaben beginnen.",
+          skDuplicate:
+            "Zurückgewiesen, unter Nennung des Schlüssels: Eine Feldgruppe mit diesem Schlüssel existiert für diesen Datensatztyp bereits.",
+          exSkDuplicate: "Ein Schlüssel, den eine andere Gruppe desselben Datensatztyps bereits verwendet",
+          stableKeyWhy:
+            "Sobald die Gruppe gespeichert ist, ist der stabile Schlüssel sichtbar, aber ausgegraut, und kann von niemandem geändert werden. Das ist beabsichtigt, kein Versehen: Ein exportiertes Schema benennt eine Gruppe über diesen Schlüssel, sodass ein Umbenennen einen künftigen erneuten Import als Update still in ein Anlegen verwandeln würde, gegen ein Paket, das bereits ausgeliefert wurde. Den Schlüssel sehen zu können zählt trotzdem — Sie brauchen ihn, um ein exportiertes Paket der Gruppe zuzuordnen, auf die es sich bezieht —, weshalb er gezeigt statt verborgen wird.",
+          stableKeyWarnTitle: "Es gibt kein Umbenennen",
+          stableKeyWarnContent:
+            "Ist ein stabiler Schlüssel falsch, muss die Gruppe gelöscht und neu angelegt werden, und jedes ihr zugeordnete Feld muss neu zugeordnet werden. Erwarten Sie nicht, dass eine Bearbeiten-Schaltfläche erscheint — ihr Fehlen ist das Design.",
+
+          assignTitle: "Ein Feld einer Gruppe zuordnen",
+          assignIntro:
+            "Die Zuordnung geschieht am Feld, nicht an der Gruppe. Es gibt keinen Bildschirm, um Felder in eine Gruppe zu ziehen.",
+          assign1:
+            "Öffnen Sie eine Felddefinition für denselben Datensatztyp. Ein Field-Group-Auswahlfeld bietet jede Gruppe dieses Datensatztyps an, plus einen Eintrag no group.",
+          assign2:
+            "No group zu wählen ist der einzige Weg, ein Feld aus einer Gruppe zu lösen. Es gibt sonst nirgends ein gesondertes Element zum Aufheben.",
+          assign3:
+            "Das Ändern des Datensatztyps auf einem Erstellungsformular löscht jede bereits gewählte Gruppe, weil eine Gruppe eines Datensatztyps für einen anderen nie gültig ist.",
+          assign4:
+            "Ein Feld kann höchstens einer Gruppe angehören. Es gibt keinen Weg, ein Feld unter zwei Überschriften zu zeigen.",
+
+          orderTitle: "Gruppen ordnen",
+          orderIntro:
+            "Gruppen werden auf dem Bildschirm Feldgruppen geordnet, durch Ziehen einer Zeile oder mit ihren Schaltflächen Move up und Move down. Beide tun dasselbe, und beide bleiben dauerhaft.",
+          orderKeyboard:
+            "Die Schaltflächen sind keine bloße Annehmlichkeit. Jemand, der nur die Tastatur nutzt, hat keine Ziehgeste, die Schaltflächen sind also der barrierefreie Weg und sollen identisch funktionieren — bewegt sich eine Zeile durch Ziehen, aber nicht über die Schaltfläche, ist das ein Fehler.",
+          orderLimitTitle: "Das Umsortieren funktioniert ab 100 Gruppen nicht mehr",
+          orderLimitContent:
+            "Eine Umsortierungsanfrage trägt die gesamte umsortierbare Menge auf einmal, und mehr als 100 Gruppen für einen einzelnen Datensatztyp wird rundheraus zurückgewiesen. Ab diesem Punkt kann keine Gruppe dieses Datensatztyps mehr bewegt werden. Der Bildschirm sagt das, statt allgemein zu scheitern, aber die Obergrenze ist echt und nicht konfigurierbar.",
+          orderGlobalTitle: "Sie können Ihre Gruppe nicht relativ zu einer globalen positionieren",
+          orderGlobalContent:
+            "Das Umsortieren ist alles oder nichts und weist jede Gruppe zurück, die der Aufrufer nicht besitzt, sodass die Umsortierung eines Arbeitsbereichs nur dessen eigene Gruppen erfasst, die dann bei null neu nummeriert werden. Diese Zahlen können mit der eigenen Reihenfolge einer globalen Gruppe kollidieren, und der Gleichstand wird über die englische Bezeichnung entschieden. Der sichtbare Effekt ist, dass das Verschieben Ihrer Gruppe an die Spitze sie unterhalb einer globalen Gruppe landen lassen kann und so aussieht, als wäre nichts geschehen.",
+
+          deleteTitle: "Eine Gruppe löschen",
+          deleteIntro:
+            "Das Löschen einer Gruppe löscht nie Felder. Die Bestätigung sagt das ausdrücklich, und anschließend existieren die Felder weiterhin und sind schlicht nicht mehr gruppiert, erscheinen wieder unter der Standardüberschrift Custom Fields.",
+          deleteEditing:
+            "Ein Randfall, den man kennen sollte: Beginnen Sie, eine Gruppe zu bearbeiten, und löschen Sie dieselbe Gruppe dann aus ihrer Zeile heraus, während das Bearbeitungspanel noch offen ist, schließt sich das Panel, und keine neue Gruppe wird angelegt. Zu speichern erweckt die Gruppe an diesem Punkt nicht unter einer neuen Identität wieder.",
+
+          globalTitle: "Globale Gruppen",
+          globalIntro:
+            "Ein Plattformadministrator ohne ausgewählten Arbeitsbereich legt eine globale Gruppe an, und ein Hinweis auf dem Bildschirm erklärt das. Der Geltungsbereich-Schalter erscheint bei der Erstellung und nie bei der Bearbeitung, weil der Geltungsbereich einer Gruppe genauso dauerhaft ist wie der eines Felds.",
+          globalTenantView:
+            "Innerhalb eines Arbeitsbereichs zeigt eine globale Gruppe ein Abzeichen Global und bietet überhaupt keine Bearbeitungs-, Lösch- oder Verschiebeelemente. Das ist nicht die Oberfläche, die willkürlich etwas verbirgt — der Server würde diese Vorgänge zurückweisen, die Elemente werden also gar nicht erst angeboten.",
+
+          effectTitle: "Was eine Gruppe beeinflusst und was nicht",
+          doesTitle: "Eine Gruppe leistet",
+          does1: "Verwandte Felder auf dem Datensatzformular unter einer Überschrift zusammenzufassen",
+          does2: "Gruppen von Hand zu ordnen, durch Ziehen oder mit Move up und Move down",
+          does3: "Eine eigene englische und arabische Überschrift zu tragen, übersetzt wie alles andere",
+          does4: "Das Löschen eines Felds zu überleben, und ein Feld über den Eintrag no group verlassen zu lassen",
+          doesNotTitle: "Eine Gruppe leistet nicht",
+          doesNot1: "Zu steuern, wer ein Feld sehen kann — das ist Sicherheit auf Feldebene, ein unabhängiges Thema",
+          doesNot2: "Ihre Felder zu löschen, wenn die Gruppe selbst gelöscht wird",
+          doesNot3: "Datensatztypen zu überschreiten oder auf mehr als einen Datensatztyp gleichzeitig zu wirken",
+          doesNot4: "Zu ändern, wie ein Wert validiert, gespeichert, exportiert oder angezeigt wird",
+
+          errorsTitle: "Gruppenfehler, die Ihnen begegnen können",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          errDuplicateKey: "A stable key already used on that record type",
-          errDuplicateKeyMsg: "Refused, naming the key: a field group with that key already exists for this entity type.",
-          errWrongEntityType: "Assigning a field to a group from another record type",
-          errWrongEntityTypeMsg: "Refused: the selected field group belongs to a different entity type.",
-          errTooManyReorder: "Reordering more than 100 groups at once",
-          errTooManyReorderMsg: "Refused, naming the maximum: more than that many groups cannot be reordered in one request.",
-          errDuplicateReorder: "The same group listed twice in one reorder",
-          errDuplicateReorderMsg: "Refused: the same field group appears more than once in the reorder list.",
-          errMixedReorder: "Groups from two record types in one reorder",
-          errMixedReorderMsg: "Refused: all field groups in one reorder request must belong to the same entity type.",
-          errGlobalNotSuperAdmin: "Creating a global group without being a platform Super Admin",
-          errGlobalNotSuperAdminMsg: "Refused: only a platform Super Admin can create a global field group.",
-          errNoDefinition: "Assigning a group to a field with no definition record yet",
-          errNoDefinitionMsg: "Refused, explaining that the field has no definition record and that the definitions backfill has to be run first. This only happens in an environment upgraded from an older version.",
+          thWhatYouSee: "Was Sie sehen",
+          errDuplicateKey: "Ein stabiler Schlüssel, der bei diesem Datensatztyp bereits verwendet wird",
+          errDuplicateKeyMsg: "Zurückgewiesen, unter Nennung des Schlüssels: Eine Feldgruppe mit diesem Schlüssel existiert für diesen Entitätstyp bereits.",
+          errWrongEntityType: "Ein Feld einer Gruppe eines anderen Datensatztyps zuordnen",
+          errWrongEntityTypeMsg: "Zurückgewiesen: Die gewählte Feldgruppe gehört zu einem anderen Entitätstyp.",
+          errTooManyReorder: "Mehr als 100 Gruppen auf einmal umsortieren",
+          errTooManyReorderMsg: "Zurückgewiesen, unter Nennung der Obergrenze: So viele Gruppen lassen sich nicht in einer Anfrage umsortieren.",
+          errDuplicateReorder: "Dieselbe Gruppe zweimal in einer Umsortierung aufgeführt",
+          errDuplicateReorderMsg: "Zurückgewiesen: Dieselbe Feldgruppe erscheint mehr als einmal in der Umsortierungsliste.",
+          errMixedReorder: "Gruppen aus zwei Datensatztypen in einer Umsortierung",
+          errMixedReorderMsg: "Zurückgewiesen: Alle Feldgruppen in einer Umsortierungsanfrage müssen zum selben Entitätstyp gehören.",
+          errGlobalNotSuperAdmin: "Eine globale Gruppe anlegen, ohne Plattform-Super-Admin zu sein",
+          errGlobalNotSuperAdminMsg: "Zurückgewiesen: Nur ein Plattform-Super-Admin kann eine globale Feldgruppe anlegen.",
+          errNoDefinition: "Einem Feld ohne bisherigen Definitionsdatensatz eine Gruppe zuordnen",
+          errNoDefinitionMsg:
+            "Zurückgewiesen, mit der Erklärung, dass das Feld keinen Definitionsdatensatz hat und die Nachbefüllung der Definitionen zuerst ausgeführt werden muss. Das passiert nur in einer Umgebung, die von einer älteren Version aktualisiert wurde.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Optionen
+        // ═══════════════════════════════════════════════════
         options: {
-          title: "Options",
-          description: "Writing the allowed answers for Select and MultiSelect fields: the bilingual option editor, how a submitted value is matched, and what adding, renaming or removing an option does to records that already exist.",
-          intro: "A Select or MultiSelect field carries its own list of allowed answers. The list belongs to the field — there is no shared list reused across several fields — and it is written on the definition form, in the Options box that appears as soon as you choose either of those two value types. Both types use exactly the same list and the same editor; the only difference is that a MultiSelect answer can hold several entries from it at once.",
-          storedInfoTitle: "The English option text is the stored answer",
-          storedInfoContent: "There is no separate hidden code behind an option. The English label you type is literally what gets written onto every record that chooses it, and it is what the product compares a submitted value against. The Arabic label is for display only. This one fact explains every behaviour on this page.",
-          editorTitle: "The options editor",
-          editorIntro: "Options are edited as a list of rows rather than as free text. Each row is one option.",
-          editor1: "Add option adds a row at the end of the list.",
-          editor2: "Each row takes an English label and an Arabic label.",
-          editor3: "Remove option deletes a row.",
-          editor4: "Row order is the order the options are offered in on the record form, top to bottom.",
-          editor5: "An empty list shows a prompt to add the first option — a Select field with no options cannot be saved.",
-          editorBilingual: "The two labels are stored as two parallel lists, matched up row by row. An Arabic reader sees the Arabic label; the answer written onto the record is the English one either way. Leaving an Arabic label blank is allowed, and that option then shows its English label to everybody.",
-          exampleTitle: "A worked example",
-          exampleIntro: "A shirt-size field on a Select type, with three options. The right-hand column is what actually lands on a record.",
-          thEnglish: "English label",
-          thArabic: "Arabic label",
-          thStored: "Stored on the record",
-          exampleOutro: "An Arabic-reading user picking متوسط stores Medium, exactly as an English-reading user picking Medium does. Both see their own language on the way in and on the way out; the data underneath is one consistent value.",
-          matchTitle: "How a submitted value is matched",
-          matchIntro: "The submitted value is trimmed, then compared against the English labels exactly. The comparison is case-sensitive. Using the three options above:",
-          thSubmitted: "Submitted value",
-          thOutcome: "What happens",
-          matchOk: "Accepted, and stored as Medium.",
-          matchTrimmed: "Accepted. Both sides are trimmed before comparison, so surrounding spaces never cause a spurious rejection.",
-          matchCase: "Refused: VALIDATION_INVALID_FORMAT. Case matters — which also means Medium and medium can legitimately coexist as two separate options if you really want them to.",
-          matchArabic: "Refused if submitted directly to the API: only the English labels are matched. Choosing متوسط in the interface works normally, because the interface submits the English label behind it.",
-          matchUnknown: "Refused: VALIDATION_INVALID_FORMAT, with a message quoting both the rejected value and the field's key.",
-          matchBlank: "Treated as empty: stored as cleared on an optional field, refused with VALIDATION_REQUIRED on a required one.",
-          exPadded: "\" Medium\" with a leading space",
-          exBlank: "A blank value",
-          multiTitle: "MultiSelect specifics",
-          multiIntro: "MultiSelect reuses this same list and this same editor. What differs is the value: several answers at once, in the order they were picked, up to a hard ceiling of 19.",
-          multiOrder: "Accepted, and read back as Blue then Red — the order picked, not the order the options were listed in.",
-          multiRemove: "Accepted. Removing one selection leaves the others in their existing relative order.",
-          multiTooMany: "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19. The picker makes every unselected option unpickable once you reach 19, and shows a live \"N of 19 selected\" counter, so this is normally unreachable from the interface.",
-          multiDuplicate: "Refused: VALIDATION_UNIQUE. A repeated selection is rejected, not collapsed.",
-          multiEmpty: "Treated as empty, exactly as a blank scalar is for every other type: cleared on an optional field, refused on a required one.",
-          exMultiOrder: "Blue, then Red — on a field whose options list Red before Blue",
-          exMultiRemove: "Removing one selection from three",
-          exMultiTwenty: "A twentieth selection",
-          exMultiRepeat: "The same option selected twice",
-          exMultiEmptyList: "An explicitly empty list",
-          multiOrderWarnTitle: "Selection order is not option order",
-          multiOrderWarnContent: "Because a MultiSelect answer preserves the order it was picked in, a list column showing that answer is not guaranteed to read in the order you authored the options. That is what makes order round-trip faithfully, but it surprises most people the first time they notice it.",
-          changingTitle: "Changing the list later",
-          changingIntro: "The options list is editable at any time. Because the option text is the stored answer, some edits reach backwards into records that already exist and some do not.",
-          thChange: "Edit",
-          thEffect: "Effect on records that already exist",
-          chgAdd: "Adding a new option",
-          chgAddEffect: "None. Existing answers are untouched; the new option simply becomes available.",
-          chgRename: "Renaming an English label",
-          chgRenameEffect: "Every record already holding the old text now displays the new text. Nothing is migrated and nothing is lost, because the option row is what the record points at — but the answer people see has changed under them.",
-          chgRemove: "Removing an option",
-          chgRemoveEffect: "Records already holding it keep their stored answer and keep displaying it. The option is no longer offered to anybody new, and the next time somebody edits one of those records they will have to choose a different answer to save it.",
-          chgReorder: "Reordering the rows",
-          chgReorderEffect: "Changes the order the options are offered in. It does not change any stored answer, and it does not reorder an existing MultiSelect answer, which keeps the order it was picked in.",
-          chgArabicOnly: "Changing only an Arabic label",
-          chgArabicOnlyEffect: "Display only. The stored answer is the English label, so nothing about the data changes.",
-          renameWarnTitle: "Rename with care, and prefer adding",
-          renameWarnContent: "Renaming an option is the one edit that silently rewrites what history looks like: a record answered \"Medium\" last year will read as whatever you renamed Medium to. If the distinction matters to you, add a new option and stop offering the old one rather than renaming it.",
-          errorsTitle: "Option errors you may see",
+          title: "Optionen",
+          description:
+            "Die zulässigen Antworten für Select- und MultiSelect-Felder schreiben: der zweisprachige Options-Editor, wie ein übermittelter Wert abgeglichen wird, und was das Hinzufügen, Umbenennen oder Entfernen einer Option mit bereits bestehenden Datensätzen macht.",
+          intro:
+            "Ein Select- oder MultiSelect-Feld trägt seine eigene Liste zulässiger Antworten. Die Liste gehört zum Feld — es gibt keine gemeinsam genutzte, über mehrere Felder wiederverwendete Liste —, und sie wird auf dem Definitionsformular geschrieben, im Feld Options, das erscheint, sobald Sie einen dieser beiden Werttypen wählen. Beide Typen verwenden genau dieselbe Liste und denselben Editor; der einzige Unterschied ist, dass eine MultiSelect-Antwort mehrere Einträge daraus gleichzeitig enthalten kann.",
+          storedInfoTitle: "Der englische Optionstext ist die gespeicherte Antwort",
+          storedInfoContent:
+            "Es gibt keinen separaten, verborgenen Code hinter einer Option. Die englische Bezeichnung, die Sie eintippen, ist buchstäblich das, was auf jeden Datensatz geschrieben wird, der sie wählt, und es ist das, wogegen das Produkt einen übermittelten Wert vergleicht. Die arabische Bezeichnung dient nur der Anzeige. Diese eine Tatsache erklärt jedes Verhalten auf dieser Seite.",
+
+          editorTitle: "Der Options-Editor",
+          editorIntro:
+            "Optionen werden als Liste von Zeilen bearbeitet, nicht als Freitext. Jede Zeile ist eine Option.",
+          editor1: "Add option fügt am Ende der Liste eine Zeile hinzu.",
+          editor2: "Jede Zeile nimmt eine englische und eine arabische Bezeichnung an.",
+          editor3: "Remove option löscht eine Zeile.",
+          editor4:
+            "Die Zeilenreihenfolge ist die Reihenfolge, in der die Optionen auf dem Datensatzformular angeboten werden, von oben nach unten.",
+          editor5:
+            "Eine leere Liste zeigt eine Aufforderung, die erste Option hinzuzufügen — ein Select-Feld ohne Optionen kann nicht gespeichert werden.",
+          editorBilingual:
+            "Die beiden Bezeichnungen werden als zwei parallele Listen gespeichert, Zeile für Zeile zugeordnet. Ein arabischsprachiger Leser sieht die arabische Bezeichnung; die auf den Datensatz geschriebene Antwort ist so oder so die englische. Eine arabische Bezeichnung leer zu lassen ist erlaubt, und diese Option zeigt dann jedem ihre englische Bezeichnung.",
+
+          exampleTitle: "Ein durchgerechnetes Beispiel",
+          exampleIntro:
+            "Ein Feld für Hemdgröße vom Typ Select, mit drei Optionen. Die rechte Spalte ist das, was tatsächlich auf einem Datensatz landet.",
+          thEnglish: "Englische Bezeichnung",
+          thArabic: "Arabische Bezeichnung",
+          thStored: "Auf dem Datensatz gespeichert",
+          exampleOutro:
+            "Ein arabischsprachiger Nutzer, der متوسط wählt, speichert Medium, genau wie ein englischsprachiger Nutzer, der Medium wählt. Beide sehen ihre eigene Sprache auf dem Hin- und dem Rückweg; die zugrunde liegenden Daten sind ein einziger, konsistenter Wert.",
+
+          matchTitle: "Wie ein übermittelter Wert abgeglichen wird",
+          matchIntro:
+            "Der übermittelte Wert wird getrimmt und dann exakt mit den englischen Bezeichnungen verglichen. Der Vergleich unterscheidet Groß-/Kleinschreibung. Anhand der drei obigen Optionen:",
+          thSubmitted: "Übermittelter Wert",
+          thOutcome: "Was passiert",
+          matchOk: "Angenommen, und als Medium gespeichert.",
+          matchTrimmed:
+            "Angenommen. Beide Seiten werden vor dem Vergleich getrimmt, sodass umgebende Leerzeichen nie eine unbegründete Zurückweisung verursachen.",
+          matchCase:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Groß-/Kleinschreibung zählt — was auch bedeutet, dass Medium und medium rechtmäßig als zwei getrennte Optionen nebeneinander bestehen können, wenn Sie das wirklich möchten.",
+          matchArabic:
+            "Zurückgewiesen, sofern direkt an die API übermittelt: Nur die englischen Bezeichnungen werden abgeglichen. Das Wählen von متوسط in der Oberfläche funktioniert normal, weil die Oberfläche im Hintergrund die englische Bezeichnung übermittelt.",
+          matchUnknown:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT, mit einer Meldung, die sowohl den zurückgewiesenen Wert als auch den Schlüssel des Felds zitiert.",
+          matchBlank:
+            "Als leer behandelt: bei einem optionalen Feld als gelöscht gespeichert, bei einem erforderlichen mit VALIDATION_REQUIRED zurückgewiesen.",
+          exPadded: "\" Medium\" mit einem führenden Leerzeichen",
+          exBlank: "Ein leerer Wert",
+
+          multiTitle: "Besonderheiten von MultiSelect",
+          multiIntro:
+            "MultiSelect verwendet dieselbe Liste und denselben Editor wieder. Der Unterschied liegt im Wert: mehrere Antworten gleichzeitig, in der Reihenfolge, in der sie gewählt wurden, bis zu einer festen Obergrenze von 19.",
+          multiOrder:
+            "Angenommen, und als Blue dann Red zurückgelesen — die gewählte Reihenfolge, nicht die Reihenfolge, in der die Optionen aufgeführt waren.",
+          multiRemove:
+            "Angenommen. Das Entfernen einer Auswahl lässt die übrigen in ihrer bestehenden relativen Reihenfolge.",
+          multiTooMany:
+            "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19. Die Auswahlkomponente macht jede nicht gewählte Option ab 19 nicht mehr auswählbar und zeigt einen live mitlaufenden Zähler \"N of 19 selected\", sodass dies über die Oberfläche normalerweise unerreichbar ist.",
+          multiDuplicate: "Zurückgewiesen: VALIDATION_UNIQUE. Eine wiederholte Auswahl wird zurückgewiesen, nicht zusammengelegt.",
+          multiEmpty:
+            "Als leer behandelt, genau wie ein leerer skalarer Wert bei jedem anderen Typ: bei einem optionalen Feld gelöscht, bei einem erforderlichen zurückgewiesen.",
+          exMultiOrder: "Blue, dann Red — bei einem Feld, dessen Optionsliste Red vor Blue führt",
+          exMultiRemove: "Eine Auswahl von dreien entfernen",
+          exMultiTwenty: "Eine zwanzigste Auswahl",
+          exMultiRepeat: "Dieselbe Option zweimal gewählt",
+          exMultiEmptyList: "Eine explizit leere Liste",
+          multiOrderWarnTitle: "Die Auswahlreihenfolge ist nicht die Optionsreihenfolge",
+          multiOrderWarnContent:
+            "Weil eine MultiSelect-Antwort die Reihenfolge bewahrt, in der sie gewählt wurde, ist eine Listenspalte, die diese Antwort zeigt, nicht garantiert in der Reihenfolge zu lesen, in der Sie die Optionen verfasst haben. Das ist es, was die Reihenfolge originalgetreu hin- und zurückreisen lässt, überrascht aber die meisten Menschen beim ersten Mal, wenn sie es bemerken.",
+
+          changingTitle: "Die Liste später ändern",
+          changingIntro:
+            "Die Optionsliste ist jederzeit bearbeitbar. Weil der Optionstext die gespeicherte Antwort ist, greifen manche Änderungen rückwirkend in bereits bestehende Datensätze ein, andere nicht.",
+          thChange: "Bearbeitung",
+          thEffect: "Wirkung auf bereits bestehende Datensätze",
+          chgAdd: "Eine neue Option hinzufügen",
+          chgAddEffect: "Keine. Bestehende Antworten bleiben unberührt; die neue Option wird schlicht verfügbar.",
+          chgRename: "Eine englische Bezeichnung umbenennen",
+          chgRenameEffect:
+            "Jeder Datensatz, der bereits den alten Text trägt, zeigt nun den neuen Text. Nichts wird migriert und nichts geht verloren, weil die Optionszeile das ist, worauf der Datensatz zeigt — aber die Antwort, die Menschen sehen, hat sich unter ihnen geändert.",
+          chgRemove: "Eine Option entfernen",
+          chgRemoveEffect:
+            "Datensätze, die sie bereits tragen, behalten ihre gespeicherte Antwort und zeigen sie weiterhin an. Die Option wird niemandem Neuem mehr angeboten, und beim nächsten Mal, wenn jemand einen dieser Datensätze bearbeitet, muss er eine andere Antwort wählen, um zu speichern.",
+          chgReorder: "Die Zeilen umsortieren",
+          chgReorderEffect:
+            "Ändert die Reihenfolge, in der die Optionen angeboten werden. Ändert keine gespeicherte Antwort, und sortiert eine bestehende MultiSelect-Antwort nicht um, die die Reihenfolge behält, in der sie gewählt wurde.",
+          chgArabicOnly: "Nur eine arabische Bezeichnung ändern",
+          chgArabicOnlyEffect:
+            "Nur die Anzeige. Die gespeicherte Antwort ist die englische Bezeichnung, sodass sich an den Daten nichts ändert.",
+          renameWarnTitle: "Mit Vorsicht umbenennen, und Hinzufügen bevorzugen",
+          renameWarnContent:
+            "Eine Option umzubenennen ist die eine Bearbeitung, die still umschreibt, wie sich der Verlauf liest: Ein Datensatz, der letztes Jahr mit \"Medium\" beantwortet wurde, liest sich als das, wozu Sie Medium umbenannt haben. Ist Ihnen die Unterscheidung wichtig, fügen Sie eine neue Option hinzu und bieten Sie die alte nicht mehr an, statt sie umzubenennen.",
+
+          errorsTitle: "Optionsfehler, die Ihnen begegnen können",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          errNoOptions: "Saving a Select or MultiSelect field with an empty list",
-          errNoOptionsMsg: "Refused: options are required for Select fields.",
-          errOptionsOnOther: "Options supplied on a type that does not take them",
-          errOptionsOnOtherMsg: "Refused: options are only allowed for Select fields.",
-          errNotAllowed: "A value that is not one of the options",
-          errNotAllowedMsg: "Refused: VALIDATION_INVALID_FORMAT, quoting the value and the field's key.",
-          errTooMany: "More than 19 MultiSelect selections",
-          errTooManyMsg: "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19.",
-          errDuplicate: "The same MultiSelect option twice in one save",
-          errDuplicateMsg: "Refused: VALIDATION_UNIQUE, quoting the repeated value.",
-          notYetTitle: "What the options list does not do",
-          notYetIntro: "Three things people reasonably ask for, and what the answer is today.",
-          notYet1: "There is no way to reuse one list across several fields. A Countries list needed by three fields is written three times, and edited three times.",
-          notYet2: "There is no colour, icon or code per option that you can set. The label is the whole option as far as the definition form is concerned.",
-          notYet3: "There is no ceiling on how many options a list may hold, but a MultiSelect answer still cannot select more than 19 of them.",
+          thWhatYouSee: "Was Sie sehen",
+          errNoOptions: "Ein Select- oder MultiSelect-Feld mit leerer Liste speichern",
+          errNoOptionsMsg: "Zurückgewiesen: Optionen sind für Select-Felder erforderlich.",
+          errOptionsOnOther: "Optionen geliefert bei einem Typ, der sie nicht annimmt",
+          errOptionsOnOtherMsg: "Zurückgewiesen: Optionen sind nur für Select-Felder erlaubt.",
+          errNotAllowed: "Ein Wert, der keine der Optionen ist",
+          errNotAllowedMsg:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT, unter Zitat des Werts und des Schlüssels des Felds.",
+          errTooMany: "Mehr als 19 MultiSelect-Auswahlen",
+          errTooManyMsg: "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung der Obergrenze von 19.",
+          errDuplicate: "Dieselbe MultiSelect-Option zweimal in einem Speichervorgang",
+          errDuplicateMsg: "Zurückgewiesen: VALIDATION_UNIQUE, unter Zitat des wiederholten Werts.",
+
+          notYetTitle: "Was die Optionsliste nicht leistet",
+          notYetIntro: "Drei Dinge, die vernünftigerweise nachgefragt werden, und was die Antwort heute ist.",
+          notYet1:
+            "Die eigene Inline-Liste dieses Felds kann nicht selbst von einem anderen Feld wiederverwendet werden — die Options jedes Felds sind seine eigenen, hier eingetippt. Eine Länderliste, die drei Felder brauchen, muss deshalb aber nicht mehr dreimal geschrieben werden: Binden Sie stattdessen alle drei an ein gemeinsam genutztes, versioniertes Option Set (siehe Optionssets) und bearbeiten Sie es einmal.",
+          notYet2:
+            "Es gibt keine Farbe, kein Symbol und keinen Code pro Option, den Sie setzen können. Die Bezeichnung ist, soweit es das Definitionsformular betrifft, die ganze Option.",
+          notYet3:
+            "Es gibt keine Obergrenze dafür, wie viele Optionen eine Liste enthalten darf, aber eine MultiSelect-Antwort kann trotzdem nicht mehr als 19 davon auswählen.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Validatoren
+        // ═══════════════════════════════════════════════════
         validators: {
-          title: "Validators",
-          description: "All 13 built-in format checks for Text fields, with accepted and rejected example inputs, the six that need a setting, the seven supported postal-code countries, and every rejection you can hit.",
-          intro: "A validator is an optional extra format check you attach to a Text field at definition time, so a value in the wrong shape is refused the moment somebody tries to save it instead of quietly becoming bad data that surfaces months later. You pick one of 13 built-in checks from a dropdown, and seven of them need no further setting.",
-          textOnlyTitle: "Validators are Text-only",
-          textOnlyContent: "A validator can only ever be attached to a Text field. Not Number, not Date, not Select, not Email, not Url, not Phone, not LongText, not any of the others — the Validator dropdown is not even shown for them, and the server refuses the same thing again if a request bypasses the form. If you need an email address with extra constraints, the answer today is a Text field with a validator rather than an Email field.",
-          whyClosedTitle: "Why there is no pattern box",
-          whyClosedIntro: "There is deliberately no free-text or regular-expression entry anywhere in the product. A pattern written by hand can be made to consume enormous amounts of processing time on a short input, which turns a data-entry form into a way of taking the system down. The set of checks is therefore fixed and curated instead, and each one carries its own short length cap and its own time limit.",
-          howTitle: "How a validator runs",
-          howIntro: "Four things happen in this order every time a value is saved into the field.",
-          how1: "If the value is empty or nothing but spaces, it is treated as empty and no validator runs at all.",
-          how2: "The global 4,000-character Text cap runs, and refuses with VALIDATION_MAX_LENGTH if the value is longer.",
-          how3: "The validator's own, much shorter length cap runs — 11 characters for a SWIFT code, 15 for an IMEI, and so on — and also refuses with VALIDATION_MAX_LENGTH.",
-          how4: "Only then does the validator's actual check run, refusing with its own code and message.",
-          howTwoPoints: "The check is enforced at two separate points, and it is worth knowing both exist. At definition time, an invalid validator or setting combination is refused when you save the definition. At value time, the validator runs again against every value somebody saves into the field.",
-          fixedTitle: "The seven checks with no setting",
-          fixedIntro: "These validate a specific external format and never take a parameter — supplying one is itself refused. Three of them verify a real check digit, which means a single mistyped digit is caught rather than only a wrong length.",
+          title: "Validatoren",
+          description:
+            "Alle 13 integrierten Formatprüfungen für Textfelder, mit angenommenen und zurückgewiesenen Beispieleingaben, den sechs, die eine Einstellung benötigen, den sieben unterstützten Ländern für Postleitzahlen, und jeder Zurückweisung, auf die Sie stoßen können.",
+          intro:
+            "Ein Validator ist eine optionale zusätzliche Formatprüfung, die Sie bei der Definition an ein Textfeld anhängen, sodass ein Wert der falschen Form in dem Moment zurückgewiesen wird, in dem jemand versucht, ihn zu speichern, statt still zu einer schlechten Angabe zu werden, die Monate später auftaucht. Sie wählen eine von 13 integrierten Prüfungen aus einem Dropdown, und sieben davon brauchen keine weitere Einstellung.",
+          textOnlyTitle: "Validatoren sind Text-exklusiv",
+          textOnlyContent:
+            "Ein Validator kann immer nur an ein Textfeld angehängt werden. Nicht an Number, nicht an Date, nicht an Select, nicht an Email, nicht an Url, nicht an Phone, nicht an LongText, an keinen der anderen — das Dropdown Validator wird für sie nicht einmal gezeigt, und der Server weist dasselbe erneut zurück, falls eine Anfrage das Formular umgeht. Brauchen Sie eine E-Mail-Adresse mit zusätzlichen Einschränkungen, ist die Antwort heute ein Textfeld mit einem Validator statt eines Email-Felds.",
+
+          whyClosedTitle: "Warum es kein Muster-Feld gibt",
+          whyClosedIntro:
+            "Es gibt bewusst nirgends im Produkt eine Freitext- oder Regex-Eingabe. Ein von Hand geschriebenes Muster lässt sich so gestalten, dass es enorm viel Rechenzeit für eine kurze Eingabe verbraucht, was ein Dateneingabeformular in einen Weg verwandelt, das System lahmzulegen. Die Menge der Prüfungen ist deshalb stattdessen fest und kuratiert, und jede trägt ihre eigene kurze Längenobergrenze und ihr eigenes Zeitlimit.",
+
+          howTitle: "Wie ein Validator läuft",
+          howIntro: "Vier Dinge geschehen in dieser Reihenfolge, jedes Mal, wenn ein Wert in das Feld gespeichert wird.",
+          how1: "Ist der Wert leer oder besteht er aus nichts als Leerzeichen, wird er als leer behandelt, und es läuft überhaupt kein Validator.",
+          how2: "Die globale Textobergrenze von 4.000 Zeichen läuft und weist mit VALIDATION_MAX_LENGTH zurück, falls der Wert länger ist.",
+          how3:
+            "Die eigene, deutlich kürzere Längenobergrenze des Validators läuft — 11 Zeichen für einen SWIFT-Code, 15 für eine IMEI, und so weiter — und weist ebenfalls mit VALIDATION_MAX_LENGTH zurück.",
+          how4: "Erst dann läuft die tatsächliche Prüfung des Validators, die mit ihrem eigenen Code und ihrer eigenen Meldung zurückweist.",
+          howTwoPoints:
+            "Die Prüfung wird an zwei getrennten Punkten durchgesetzt, und es lohnt sich, zu wissen, dass es beide gibt. Bei der Definition wird eine ungültige Kombination aus Validator und Einstellung zurückgewiesen, wenn Sie die Definition speichern. Beim Wert läuft der Validator erneut gegen jeden Wert, den jemand in das Feld speichert.",
+
+          fixedTitle: "Die sieben Prüfungen ohne Einstellung",
+          fixedIntro:
+            "Diese validieren ein bestimmtes externes Format und nehmen nie einen Parameter — einen zu liefern wird selbst zurückgewiesen. Drei von ihnen verifizieren eine echte Prüfziffer, was bedeutet, dass eine einzelne fehlgetippte Ziffer erkannt wird und nicht nur eine falsche Länge.",
           thValidator: "Validator",
-          thShape: "Shape",
-          thMaxLength: "Max length",
-          thChecksum: "Check digit",
-          shapeIban: "Two letters, two digits, then 11 to 30 letters or digits",
-          shapeImei: "Exactly 15 digits",
-          shapeSwift: "Six letters, two letters or digits, optionally three more",
-          shapePlate: "2 to 15 letters, digits, spaces or hyphens, either case",
-          shapeEgypt: "14 digits: century marker, then a plausible YYMMDD, then seven more",
-          shapeSaudi: "10 digits starting with 1 or 2",
-          shapeEmirati: "784, four digits, seven digits, one digit — hyphens optional",
-          checksumReal: "Yes — verified",
-          checksumNone: "None in the standard",
-          checksumUnpublished: "Not verified — none published",
-          thExample: "Example input",
-          thOutcome: "What happens",
+          thShape: "Form",
+          thMaxLength: "Maximallänge",
+          thChecksum: "Prüfziffer",
+          shapeIban: "Zwei Buchstaben, zwei Ziffern, dann 11 bis 30 Buchstaben oder Ziffern",
+          shapeImei: "Genau 15 Ziffern",
+          shapeSwift: "Sechs Buchstaben, zwei Buchstaben oder Ziffern, optional drei weitere",
+          shapePlate: "2 bis 15 Buchstaben, Ziffern, Leerzeichen oder Bindestriche, beliebige Groß-/Kleinschreibung",
+          shapeEgypt: "14 Ziffern: Jahrhundertmarker, dann ein plausibles JJMMTT, dann sieben weitere",
+          shapeSaudi: "10 Ziffern, beginnend mit 1 oder 2",
+          shapeEmirati: "784, vier Ziffern, sieben Ziffern, eine Ziffer — Bindestriche optional",
+          checksumReal: "Ja — verifiziert",
+          checksumNone: "Keine im Standard",
+          checksumUnpublished: "Nicht verifiziert — keine veröffentlicht",
+          thExample: "Beispieleingabe",
+          thOutcome: "Was passiert",
+
           ibanTitle: "IBAN",
-          ibanFor: "For an international bank account number. Use it wherever a wrong digit would send money to the wrong place.",
-          ibanChecks: "The shape is checked first, then the real ISO check digits are verified. Capped at 34 characters — no live IBAN is longer. The value is matched exactly as submitted: it is not uppercased and spaces are not stripped for you.",
-          ibanOk: "Accepted. Shape and check digits both hold.",
-          ibanBadCheck: "Refused: VALIDATION_INVALID_FORMAT. The shape is perfectly valid and only the check digit is wrong — which is precisely the class of mistake a shape-only check would miss.",
-          ibanLower: "Refused. The letters must be upper case.",
-          ibanSpaces: "Refused. IBANs are often printed in groups of four for readability, but the stored form has no spaces in it.",
+          ibanFor:
+            "Für eine internationale Bankkontonummer. Verwenden Sie sie überall, wo eine falsche Ziffer Geld an die falsche Stelle senden würde.",
+          ibanChecks:
+            "Die Form wird zuerst geprüft, dann werden die echten ISO-Prüfziffern verifiziert. Auf 34 Zeichen gedeckelt — keine reale IBAN ist länger. Der Wert wird exakt so abgeglichen, wie übermittelt: Er wird nicht großgeschrieben, und Leerzeichen werden nicht für Sie entfernt.",
+          ibanOk: "Angenommen. Form und Prüfziffern stimmen beide.",
+          ibanBadCheck:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die Form ist vollkommen gültig, und nur die Prüfziffer ist falsch — genau die Art von Fehler, die eine reine Formprüfung übersehen würde.",
+          ibanLower: "Zurückgewiesen. Die Buchstaben müssen großgeschrieben sein.",
+          ibanSpaces:
+            "Zurückgewiesen. IBANs werden zur besseren Lesbarkeit oft in Vierergruppen gedruckt, aber die gespeicherte Form enthält keine Leerzeichen.",
+
           imeiTitle: "IMEI",
-          imeiFor: "For a mobile device's identity number, as printed on the device or its box.",
-          imeiChecks: "Exactly 15 digits, then the real check digit is verified. Capped at 15 characters. The 16- and 17-character display variants some devices show are not accepted.",
-          imeiOk: "Accepted.",
-          imeiBadCheck: "Refused: VALIDATION_INVALID_FORMAT. Fifteen digits, right shape, wrong final digit.",
-          imeiShort: "Refused: VALIDATION_INVALID_FORMAT. Fourteen digits fails the shape check — the length cap only ever catches a value longer than 15.",
+          imeiFor: "Für die Identitätsnummer eines Mobilgeräts, wie sie auf dem Gerät oder seiner Verpackung aufgedruckt ist.",
+          imeiChecks:
+            "Genau 15 Ziffern, dann wird die echte Prüfziffer verifiziert. Auf 15 Zeichen gedeckelt. Die 16- und 17-stelligen Anzeigevarianten mancher Geräte werden nicht angenommen.",
+          imeiOk: "Angenommen.",
+          imeiBadCheck:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Fünfzehn Ziffern, richtige Form, falsche letzte Ziffer.",
+          imeiShort:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Vierzehn Ziffern scheitern an der Formprüfung — die Längenobergrenze erfasst nur einen Wert, der länger als 15 ist.",
+
           swiftBicTitle: "SWIFT / BIC Code",
-          swiftBicFor: "For a bank identifier code, used alongside an account number for an international transfer.",
-          swiftBicChecks: "Eight or eleven characters: six letters, then two letters or digits, then optionally three more letters or digits. Upper case only, no separators, capped at 11 characters. There is no check digit in the standard, so a well-formed code that belongs to no real bank is accepted.",
-          swiftOk8: "Accepted — the eight-character form.",
-          swiftOk11: "Accepted — the eleven-character form with a branch code.",
-          swiftDigit: "Refused: VALIDATION_INVALID_FORMAT. The first six characters must all be letters.",
-          swiftLower: "Refused. This is a fixed external format, and lower case is not part of it.",
-          swiftLength: "Refused. Eight or eleven characters exactly — nine is neither.",
+          swiftBicFor: "Für einen Bankleitzahl-Code, verwendet zusammen mit einer Kontonummer bei einer internationalen Überweisung.",
+          swiftBicChecks:
+            "Acht oder elf Zeichen: sechs Buchstaben, dann zwei Buchstaben oder Ziffern, dann optional drei weitere Buchstaben oder Ziffern. Nur Großbuchstaben, keine Trennzeichen, auf 11 Zeichen gedeckelt. Es gibt im Standard keine Prüfziffer, sodass ein wohlgeformter Code, der zu keiner echten Bank gehört, angenommen wird.",
+          swiftOk8: "Angenommen — die achtstellige Form.",
+          swiftOk11: "Angenommen — die elfstellige Form mit einem Filialcode.",
+          swiftDigit: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die ersten sechs Zeichen müssen alle Buchstaben sein.",
+          swiftLower: "Zurückgewiesen. Dies ist ein festes externes Format, und Kleinbuchstaben gehören nicht dazu.",
+          swiftLength: "Zurückgewiesen. Acht oder elf Zeichen genau — neun ist keins von beiden.",
+
           plateTitle: "Vehicle Plate Number",
-          plateFor: "For a vehicle registration plate, where you want to catch obvious nonsense without committing to any one country's format.",
-          plateChecks: "2 to 15 characters, made up of letters, digits, spaces and hyphens in any combination. Case-insensitive. Deliberately permissive — there is no country-specific plate format anywhere in this check, because plate formats differ by country and by vehicle class within a country.",
-          plateOk: "Accepted.",
-          plateLowerOk: "Accepted. Unlike SWIFT, this check does not care about case.",
-          plateTooShort: "Refused: VALIDATION_INVALID_FORMAT. The minimum is two characters.",
-          plateBadChar: "Refused. A slash is not one of the four allowed character classes.",
+          plateFor:
+            "Für ein Fahrzeugkennzeichen, wenn Sie offensichtlichen Unsinn abfangen möchten, ohne sich auf das Format eines bestimmten Landes festzulegen.",
+          plateChecks:
+            "2 bis 15 Zeichen, bestehend aus Buchstaben, Ziffern, Leerzeichen und Bindestrichen in beliebiger Kombination. Ohne Unterscheidung von Groß-/Kleinschreibung. Bewusst großzügig — es gibt in dieser Prüfung nirgends ein länderspezifisches Kennzeichenformat, weil sich Kennzeichenformate von Land zu Land und von Fahrzeugklasse zu Fahrzeugklasse innerhalb eines Landes unterscheiden.",
+          plateOk: "Angenommen.",
+          plateLowerOk: "Angenommen. Anders als SWIFT kümmert sich diese Prüfung nicht um Groß-/Kleinschreibung.",
+          plateTooShort: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Das Minimum sind zwei Zeichen.",
+          plateBadChar: "Zurückgewiesen. Ein Schrägstrich gehört zu keiner der vier erlaubten Zeichenklassen.",
+
           egyptIdTitle: "Egyptian National ID",
-          egyptIdFor: "For an Egyptian national identity number.",
-          egyptIdChecks: "Fourteen digits: a century marker of 2 or 3, then a date of birth as YYMMDD that has to be calendar-plausible, then seven more digits. Structure only — Egypt has never published a check-digit algorithm, so the last digit is not verified. Shipping a guessed algorithm would reject real, valid IDs, which is worse than not checking.",
-          egyptOk: "Accepted.",
-          egyptBadMonth: "Refused: VALIDATION_INVALID_FORMAT. Month 13 is not a plausible month.",
-          egyptBadDay: "Refused. Day 32 is not a plausible day.",
-          egyptBadCentury: "Refused. The century marker must be 2 or 3.",
-          egyptLength: "Refused. Thirteen digits is not fourteen.",
+          egyptIdFor: "Für eine ägyptische nationale Personalausweisnummer.",
+          egyptIdChecks:
+            "Vierzehn Ziffern: ein Jahrhundertmarker von 2 oder 3, dann ein Geburtsdatum als JJMMTT, das kalendarisch plausibel sein muss, dann sieben weitere Ziffern. Nur Struktur — Ägypten hat nie einen Prüfziffer-Algorithmus veröffentlicht, die letzte Ziffer wird also nicht verifiziert. Einen geratenen Algorithmus auszuliefern würde echte, gültige Ausweisnummern zurückweisen, was schlimmer ist, als gar nicht zu prüfen.",
+          egyptOk: "Angenommen.",
+          egyptBadMonth: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Monat 13 ist kein plausibler Monat.",
+          egyptBadDay: "Zurückgewiesen. Tag 32 ist kein plausibler Tag.",
+          egyptBadCentury: "Zurückgewiesen. Der Jahrhundertmarker muss 2 oder 3 sein.",
+          egyptLength: "Zurückgewiesen. Dreizehn Ziffern sind keine vierzehn.",
+
           saudiIdTitle: "Saudi National ID",
-          saudiIdFor: "For a Saudi national identity number or an Iqama (residency) number.",
-          saudiIdChecks: "Ten digits, the first being 1 for a citizen or 2 for a resident, and the real check digit is verified. Capped at 10 characters.",
-          saudiOk: "Accepted. Shape and check digit both hold.",
-          saudiBadCheck: "Refused: VALIDATION_INVALID_FORMAT. Right shape, wrong check digit.",
-          saudiBadPrefix: "Refused. The first digit must be 1 or 2.",
-          saudiLength: "Refused. Nine digits is not ten.",
+          saudiIdFor: "Für eine saudi-arabische nationale Personalausweisnummer oder eine Iqama-Nummer (Aufenthaltstitel).",
+          saudiIdChecks:
+            "Zehn Ziffern, die erste ist 1 für Staatsangehörige oder 2 für Ansässige, und die echte Prüfziffer wird verifiziert. Auf 10 Zeichen gedeckelt.",
+          saudiOk: "Angenommen. Form und Prüfziffer stimmen beide.",
+          saudiBadCheck: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Richtige Form, falsche Prüfziffer.",
+          saudiBadPrefix: "Zurückgewiesen. Die erste Ziffer muss 1 oder 2 sein.",
+          saudiLength: "Zurückgewiesen. Neun Ziffern sind keine zehn.",
+
           emiratiIdTitle: "Emirati ID (UAE)",
-          emiratiIdFor: "For an Emirates ID number.",
-          emiratiIdChecks: "The 784-YYYY-XXXXXXX-C form, with the hyphens optional. Capped at 18 characters. Structure only — the UAE has never published a check-digit algorithm, so the final digit is not verified, for the same reason as the Egyptian check.",
-          emiratiOk: "Accepted, hyphens and all.",
-          emiratiNoHyphens: "Accepted. The hyphens are optional, so both written forms work.",
-          emiratiBadPrefix: "Refused: VALIDATION_INVALID_FORMAT. Every Emirates ID starts with 784.",
-          emiratiLength: "Refused. The middle block is seven digits, not six.",
-          paramTitle: "The six checks that need a setting",
-          paramIntro: "These require a Validator Parameter, and leaving it blank is refused at definition time — as is supplying one for a validator that takes none. The Validator Parameter control appears as soon as you pick one of these six.",
-          thParamFormat: "Setting format",
-          thParamExample: "Example setting",
-          paramFmtPostal: "A country, chosen from a dropdown of the seven supported ones",
-          paramFmtNumeric: "Two comma-separated bounds; either side may be blank for an open end",
-          paramFmtLength: "Two comma-separated character counts; either side may be blank",
-          paramFmtOneOf: "One allowed value per line",
-          paramFmtContains: "Any literal text",
-          paramFmtStartsWith: "Any literal text",
-          paramExOneOf: "Goalkeeper / Defender / Midfielder / Forward, one per line",
+          emiratiIdFor: "Für eine Emirates-ID-Nummer.",
+          emiratiIdChecks:
+            "Die Form 784-JJJJ-XXXXXXX-C, mit optionalen Bindestrichen. Auf 18 Zeichen gedeckelt. Nur Struktur — die VAE haben nie einen Prüfziffer-Algorithmus veröffentlicht, die letzte Ziffer wird also aus demselben Grund wie bei der ägyptischen Prüfung nicht verifiziert.",
+          emiratiOk: "Angenommen, Bindestriche und alles.",
+          emiratiNoHyphens: "Angenommen. Die Bindestriche sind optional, beide geschriebenen Formen funktionieren also.",
+          emiratiBadPrefix: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Jede Emirates-ID beginnt mit 784.",
+          emiratiLength: "Zurückgewiesen. Der mittlere Block hat sieben Ziffern, nicht sechs.",
+
+          paramTitle: "Die sechs Prüfungen, die eine Einstellung benötigen",
+          paramIntro:
+            "Diese verlangen einen Validator Parameter, und ihn leer zu lassen wird bei der Definition zurückgewiesen — ebenso wie einen für einen Validator zu liefern, der keinen annimmt. Das Element Validator Parameter erscheint, sobald Sie einen dieser sechs wählen.",
+          thParamFormat: "Format der Einstellung",
+          thParamExample: "Beispieleinstellung",
+          paramFmtPostal: "Ein Land, gewählt aus einem Dropdown der sieben unterstützten",
+          paramFmtNumeric: "Zwei durch Komma getrennte Grenzen; jede Seite darf für ein offenes Ende leer bleiben",
+          paramFmtLength: "Zwei durch Komma getrennte Zeichenzahlen; jede Seite darf leer bleiben",
+          paramFmtOneOf: "Ein zulässiger Wert pro Zeile",
+          paramFmtContains: "Beliebiger literaler Text",
+          paramFmtStartsWith: "Beliebiger literaler Text",
+          paramExOneOf: "Goalkeeper / Defender / Midfielder / Forward, einer pro Zeile",
+
           postalTitle: "Postal Code",
-          postalFor: "For a postal code in a specific country. The country is part of the definition, not something the person filling in the record chooses.",
-          postalChecks: "The value is matched against the real postal-code format of the country you configured. Capped at 16 characters. Seven countries are supported and the dropdown never offers any others.",
-          postalEgOk: "Accepted. Egypt is five digits.",
-          postalEgBad: "Refused: VALIDATION_INVALID_FORMAT. Four digits is not five.",
-          postalUsOk: "Accepted. The five-digit and the ZIP+4 forms are both valid.",
-          postalGbOk: "Accepted. The UK format is matched in either case, with or without its space.",
-          postalCaOk: "Accepted, including the real letter exclusions Canada Post applies.",
-          exPostalEg: "11511, with the setting EG",
-          exPostalEgBad: "1151, with the setting EG",
-          exPostalUsPlus4: "90210-1234, with the setting US",
-          exPostalGb: "SW1A 1AA, with the setting GB",
-          exPostalCa: "K1A 0B1, with the setting CA",
+          postalFor:
+            "Für eine Postleitzahl eines bestimmten Landes. Das Land ist Teil der Definition, keine Wahl, die die Person trifft, die den Datensatz ausfüllt.",
+          postalChecks:
+            "Der Wert wird gegen das echte Postleitzahlenformat des von Ihnen konfigurierten Landes abgeglichen. Auf 16 Zeichen gedeckelt. Sieben Länder werden unterstützt, und das Dropdown bietet nie andere an.",
+          postalEgOk: "Angenommen. Ägypten hat fünf Ziffern.",
+          postalEgBad: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Vier Ziffern sind keine fünf.",
+          postalUsOk: "Angenommen. Sowohl die fünfstellige als auch die ZIP+4-Form sind gültig.",
+          postalGbOk: "Angenommen. Das britische Format wird in beiden Fällen abgeglichen, mit oder ohne Leerzeichen.",
+          postalCaOk: "Angenommen, einschließlich der echten Buchstabenausschlüsse, die Canada Post anwendet.",
+          exPostalEg: "11511, mit der Einstellung EG",
+          exPostalEgBad: "1151, mit der Einstellung EG",
+          exPostalUsPlus4: "90210-1234, mit der Einstellung US",
+          exPostalGb: "SW1A 1AA, mit der Einstellung GB",
+          exPostalCa: "K1A 0B1, mit der Einstellung CA",
+
           numericRangeTitle: "Numeric Range",
-          numericRangeFor: "For a number inside bounds you set, on a field that is Text rather than Number — a shirt number, a squad size, a jersey count.",
-          numericRangeChecks: "The value must parse as a number and fall inside the range. The setting is two comma-separated bounds; leaving one side blank makes that end open, but leaving both blank is refused, because a range that accepts everything is the same as attaching no validator at all.",
-          numericOk: "Accepted.",
-          numericOut: "Refused: VALIDATION_RANGE.",
-          numericNotANumber: "Refused: VALIDATION_RANGE. A value that is not a number cannot be inside a range.",
-          numericOpenOk: "Accepted. An open upper bound means any number at or above the lower one.",
-          numericBothBlank: "Refused at definition time, explaining that the validator needs at least one bound.",
-          exNumeric50: "50, with the setting 1,100",
-          exNumeric150: "150, with the setting 1,100",
-          exNumericText: "\"fifty\", with the setting 1,100",
-          exNumericOpen: "5000, with the setting 1,",
-          exNumericBothBlank: "The setting , with both sides blank",
+          numericRangeFor:
+            "Für eine Zahl innerhalb von Ihnen gesetzter Grenzen, bei einem Feld, das Text statt Number ist — eine Trikotnummer, eine Kadergröße, eine Anzahl von Trikots.",
+          numericRangeChecks:
+            "Der Wert muss sich als Zahl parsen lassen und innerhalb des Bereichs liegen. Die Einstellung besteht aus zwei durch Komma getrennten Grenzen; eine Seite leer zu lassen macht dieses Ende offen, aber beide leer zu lassen wird zurückgewiesen, weil ein Bereich, der alles akzeptiert, dasselbe ist wie gar keinen Validator anzuhängen.",
+          numericOk: "Angenommen.",
+          numericOut: "Zurückgewiesen: VALIDATION_RANGE.",
+          numericNotANumber: "Zurückgewiesen: VALIDATION_RANGE. Ein Wert, der keine Zahl ist, kann nicht innerhalb eines Bereichs liegen.",
+          numericOpenOk: "Angenommen. Eine offene Obergrenze bedeutet jede Zahl bei oder über der unteren.",
+          numericBothBlank:
+            "Bei der Definition zurückgewiesen, mit der Erklärung, dass der Validator mindestens eine Grenze braucht.",
+          exNumeric50: "50, mit der Einstellung 1,100",
+          exNumeric150: "150, mit der Einstellung 1,100",
+          exNumericText: "\"fifty\", mit der Einstellung 1,100",
+          exNumericOpen: "5000, mit der Einstellung 1,",
+          exNumericBothBlank: "Die Einstellung , mit beiden Seiten leer",
+
           lengthRangeTitle: "Length Range",
-          lengthRangeFor: "For text that has to be a certain length — a two-letter code, a reference of at least eight characters.",
-          lengthRangeChecks: "The number of characters must fall inside the range. The setting is two comma-separated character counts, and either side may be left blank for an open end. This check produces two distinct codes rather than one, so you can tell too short from too long.",
-          lengthOk: "Accepted.",
-          lengthTooShort: "Refused: VALIDATION_MIN_LENGTH, naming the minimum.",
-          lengthTooLong: "Refused: VALIDATION_MAX_LENGTH, naming the maximum.",
-          exLength10: "\"Alexandria\" — 10 characters, with the setting 2,50",
-          exLength1: "\"A\" — 1 character, with the setting 2,50",
-          exLength80: "An 80-character value, with the setting 2,50",
+          lengthRangeFor:
+            "Für Text, der eine bestimmte Länge haben muss — ein zweibuchstabiger Code, eine Referenz von mindestens acht Zeichen.",
+          lengthRangeChecks:
+            "Die Anzahl der Zeichen muss innerhalb des Bereichs liegen. Die Einstellung besteht aus zwei durch Komma getrennten Zeichenzahlen, und jede Seite darf für ein offenes Ende leer bleiben. Diese Prüfung erzeugt zwei unterschiedliche Codes statt einem, sodass Sie zu kurz von zu lang unterscheiden können.",
+          lengthOk: "Angenommen.",
+          lengthTooShort: "Zurückgewiesen: VALIDATION_MIN_LENGTH, unter Nennung des Minimums.",
+          lengthTooLong: "Zurückgewiesen: VALIDATION_MAX_LENGTH, unter Nennung des Maximums.",
+          exLength10: "\"Alexandria\" — 10 Zeichen, mit der Einstellung 2,50",
+          exLength1: "\"A\" — 1 Zeichen, mit der Einstellung 2,50",
+          exLength80: "Ein Wert mit 80 Zeichen, mit der Einstellung 2,50",
+
           oneOfListTitle: "One of a List",
-          oneOfListFor: "For a closed set of answers on a Text field. If the closed set is the whole point of the field, a Select field is usually the better choice — but this exists for the case where you want a validator's behaviour on a Text field.",
-          oneOfListChecks: "The value must exactly match one line of the list you configured, one value per line. Matching is case-sensitive.",
-          oneOfOk: "Accepted.",
-          oneOfCase: "Refused: VALIDATION_INVALID_FORMAT. The match is case-sensitive.",
-          oneOfUnknown: "Refused: VALIDATION_INVALID_FORMAT. The value is not on the list.",
+          oneOfListFor:
+            "Für eine geschlossene Menge von Antworten bei einem Textfeld. Ist die geschlossene Menge der ganze Sinn des Felds, ist ein Select-Feld meist die bessere Wahl — aber dieser Validator existiert für den Fall, dass Sie das Verhalten eines Validators bei einem Textfeld möchten.",
+          oneOfListChecks:
+            "Der Wert muss exakt einer Zeile der von Ihnen konfigurierten Liste entsprechen, ein Wert pro Zeile. Der Abgleich unterscheidet Groß-/Kleinschreibung.",
+          oneOfOk: "Angenommen.",
+          oneOfCase: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich unterscheidet Groß-/Kleinschreibung.",
+          oneOfUnknown: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Wert steht nicht auf der Liste.",
+
           containsTitle: "Contains Text",
-          containsFor: "For a value that must include a marker somewhere in it — a club prefix, a season tag, a department code.",
-          containsChecks: "The value must contain the literal text you configured, matched case-sensitively.",
-          containsOk: "Accepted, with the setting FC-.",
-          containsCase: "Refused: VALIDATION_INVALID_FORMAT. The match respects case.",
-          containsMissing: "Refused: VALIDATION_INVALID_FORMAT. The marker is not present.",
+          containsFor:
+            "Für einen Wert, der irgendwo eine Kennzeichnung enthalten muss — ein Vereinspräfix, eine Saison-Kennung, einen Abteilungscode.",
+          containsChecks: "Der Wert muss den von Ihnen konfigurierten literalen Text enthalten, unter Berücksichtigung der Groß-/Kleinschreibung.",
+          containsOk: "Angenommen, mit der Einstellung FC-.",
+          containsCase: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich beachtet Groß-/Kleinschreibung.",
+          containsMissing: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Die Kennzeichnung ist nicht vorhanden.",
+
           startsWithTitle: "Starts With Text",
-          startsWithFor: "For a value that must begin with a prefix — a country code, a branch code, a fixed reference stem.",
-          startsWithChecks: "The value must begin with the literal text you configured, matched case-sensitively.",
-          startsOk: "Accepted, with the setting EG-.",
-          startsWrongPlace: "Refused: VALIDATION_INVALID_FORMAT. The text is present but not at the start — use Contains Text if position does not matter.",
-          startsCase: "Refused: VALIDATION_INVALID_FORMAT. The match respects case.",
-          postalCountriesTitle: "The seven Postal Code countries",
-          postalCountriesIntro: "Postal Code ships real, cited formats for exactly seven countries, and the setting is a dropdown rather than free text, so no other country can be chosen from the form.",
-          thCountry: "Country",
+          startsWithFor:
+            "Für einen Wert, der mit einem Präfix beginnen muss — einem Ländercode, einem Filialcode, einem festen Referenzstamm.",
+          startsWithChecks: "Der Wert muss mit dem von Ihnen konfigurierten literalen Text beginnen, unter Berücksichtigung der Groß-/Kleinschreibung.",
+          startsOk: "Angenommen, mit der Einstellung EG-.",
+          startsWrongPlace:
+            "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Text ist vorhanden, aber nicht am Anfang — verwenden Sie Contains Text, wenn die Position keine Rolle spielt.",
+          startsCase: "Zurückgewiesen: VALIDATION_INVALID_FORMAT. Der Abgleich beachtet Groß-/Kleinschreibung.",
+
+          postalCountriesTitle: "Die sieben Länder für Postal Code",
+          postalCountriesIntro:
+            "Postal Code liefert echte, belegte Formate für genau sieben Länder, und die Einstellung ist ein Dropdown statt Freitext, sodass vom Formular aus kein anderes Land gewählt werden kann.",
+          thCountry: "Land",
           thFormat: "Format",
-          thValidExample: "Valid example",
-          fmtEg: "Exactly five digits",
-          fmtSa: "Five digits, optionally a hyphen and a four-digit extension",
-          fmtUs: "A five-digit ZIP, optionally a hyphen and a four-digit extension",
-          fmtGb: "The standard UK postcode shape, either case, space optional",
-          fmtDe: "Exactly five digits, leading zero allowed",
-          fmtFr: "Exactly five digits",
-          fmtCa: "The A1A 1A1 shape, with Canada Post's real letter exclusions applied",
-          uaeTitle: "The United Arab Emirates is deliberately absent",
-          uaeContent: "The UAE has no national postal-code system, so there is no real format to check a value against — strict or loose. It is not a missing entry waiting to be added: attempting to use it is refused at definition time with its own explanatory message, distinct from the generic unsupported-country message you would get for a typo, telling you to leave the field without a validator instead. The dropdown never offers it.",
-          attachTitle: "Rejections when attaching a validator",
-          attachIntro: "These all happen at definition time, before any value is ever saved. Several are only reachable from a request that bypasses the form, because the form does not offer the invalid combination in the first place.",
+          thValidExample: "Gültiges Beispiel",
+          fmtEg: "Genau fünf Ziffern",
+          fmtSa: "Fünf Ziffern, optional ein Bindestrich und eine vierstellige Erweiterung",
+          fmtUs: "Ein fünfstelliges ZIP, optional ein Bindestrich und eine vierstellige Erweiterung",
+          fmtGb: "Die standardmäßige Form eines britischen Postcodes, beliebige Groß-/Kleinschreibung, Leerzeichen optional",
+          fmtDe: "Genau fünf Ziffern, führende Null erlaubt",
+          fmtFr: "Genau fünf Ziffern",
+          fmtCa: "Die Form A1A 1A1, mit den echten Buchstabenausschlüssen von Canada Post angewendet",
+          uaeTitle: "Die Vereinigten Arabischen Emirate fehlen bewusst",
+          uaeContent:
+            "Die VAE haben kein nationales Postleitzahlensystem, es gibt also kein echtes Format, gegen das ein Wert geprüft werden könnte — weder streng noch locker. Das ist kein fehlender Eintrag, der noch hinzugefügt werden soll: Der Versuch, es zu verwenden, wird bei der Definition mit einer eigenen erklärenden Meldung zurückgewiesen, verschieden von der allgemeinen Meldung für ein nicht unterstütztes Land, die Sie bei einem Tippfehler bekämen, und die Ihnen sagt, das Feld stattdessen ohne Validator zu lassen. Das Dropdown bietet es nie an.",
+
+          attachTitle: "Zurückweisungen beim Anhängen eines Validators",
+          attachIntro:
+            "Diese geschehen alle bei der Definition, bevor je ein Wert gespeichert wird. Mehrere sind nur über eine Anfrage erreichbar, die das Formular umgeht, weil das Formular die ungültige Kombination gar nicht erst anbietet.",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          attNonText: "A validator on a field that is not Text",
-          attNonTextMsg: "Refused, naming the value type: a validator can only be attached to a Text field.",
-          attNoParam: "A parameterised validator with a blank setting",
-          attNoParamMsg: "Refused, naming the validator: it requires a parameter.",
-          attExtraParam: "A setting on one of the seven that take none",
-          attExtraParamMsg: "Refused, naming the validator: it does not accept a parameter.",
-          attBadRange: "A malformed range setting",
-          attBadRangeMsg: "Refused, explaining that two comma-separated bounds are needed, that either side may be blank, and that the lower bound must not exceed the upper one.",
-          attNoBound: "A range setting with both sides blank",
-          attNoBoundMsg: "Refused, explaining that a parameter with both sides blank would accept every value, which is the same as attaching no validator at all.",
-          attUnsupportedCountry: "A Postal Code country that is not one of the seven",
-          attUnsupportedCountryMsg: "Refused, naming the country and listing the seven supported ones: EG, SA, US, GB, DE, FR, CA.",
-          attUae: "Postal Code with AE",
-          attUaeMsg: "Refused with its own dedicated message, explaining that the UAE has no national postal-code system and that the field should be left without a validator instead.",
-          codesTitle: "Validator error codes",
-          codesIntro: "Every validator rejection is an HTTP 422, never a 500. If a validator failure ever produces a 500, that is a defect worth reporting — each one is written to refuse cleanly.",
+          thWhatYouSee: "Was Sie sehen",
+          attNonText: "Ein Validator bei einem Feld, das nicht Text ist",
+          attNonTextMsg:
+            "Zurückgewiesen, unter Nennung des Werttyps: Ein Validator kann nur an ein Textfeld angehängt werden.",
+          attNoParam: "Ein parametrisierter Validator mit leerer Einstellung",
+          attNoParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er benötigt einen Parameter.",
+          attExtraParam: "Eine Einstellung bei einem der sieben, die keine annehmen",
+          attExtraParamMsg: "Zurückgewiesen, unter Nennung des Validators: Er akzeptiert keinen Parameter.",
+          attBadRange: "Eine fehlerhafte Bereichseinstellung",
+          attBadRangeMsg:
+            "Zurückgewiesen, mit der Erklärung, dass zwei durch Komma getrennte Grenzen benötigt werden, dass jede Seite leer bleiben darf, und dass die untere Grenze die obere nicht überschreiten darf.",
+          attNoBound: "Eine Bereichseinstellung mit beiden Seiten leer",
+          attNoBoundMsg:
+            "Zurückgewiesen, mit der Erklärung, dass ein Parameter mit beiden Seiten leer jeden Wert akzeptieren würde, was dasselbe ist wie gar keinen Validator anzuhängen.",
+          attUnsupportedCountry: "Ein Postal-Code-Land, das keines der sieben ist",
+          attUnsupportedCountryMsg:
+            "Zurückgewiesen, unter Nennung des Landes und Auflistung der sieben unterstützten: EG, SA, US, GB, DE, FR, CA.",
+          attUae: "Postal Code mit AE",
+          attUaeMsg:
+            "Zurückgewiesen mit einer eigenen, gesonderten Meldung, die erklärt, dass die VAE kein nationales Postleitzahlensystem haben und das Feld stattdessen ohne Validator gelassen werden sollte.",
+
+          codesTitle: "Fehlercodes von Validatoren",
+          codesIntro:
+            "Jede Validator-Zurückweisung ist ein HTTP 422, nie ein 500. Sollte ein Validator-Fehlschlag je einen 500 erzeugen, ist das ein meldenswerter Fehler — jeder ist so geschrieben, dass er sauber zurückweist.",
           thCode: "Code",
-          thWhenItFires: "When it fires",
-          codeInvalidFormat: "Most validator failures: a shape that does not match, a check digit that does not verify, a value that is not on a One of a List list, a Contains or Starts With marker that is absent, or a postal code that does not match its country.",
-          codeRange: "Numeric Range — the value is outside the bounds, or is not a number at all.",
-          codeMaxLength: "The global 4,000-character Text cap, a validator's own shorter cap, or Length Range's upper bound.",
-          codeMinLength: "Length Range's lower bound.",
-          codeRequired: "The field is Required and the value is empty. This fires before any validator runs, so a whitespace-only value on a required field gets the generic required message rather than a validator-specific one.",
-          codesInfoTitle: "Messages name the key, not the label",
-          codesInfoContent: "A validator message quotes the field's machine key — \"'shirt_size' is not a valid IBAN.\" — rather than its display label. Match on the key when you are tracing a failure.",
-          limitsTitle: "What validators do not do",
-          limit1: "They only ever attach to a Text field. There is no way to put a format check on any of the other eighteen types.",
-          limit2: "They never re-check values that were already saved. Attaching a validator to a field that holds answers leaves those answers exactly as they are, including ones that would now fail, until somebody re-enters and saves them.",
-          limit3: "They never run on an empty value. On a field that is not Required, a value of nothing but spaces is stored as cleared with no validator error at all — mark the field Required if a blank answer should be refused.",
-          limit4: "They cannot be searched or filtered for. There is no view of every field using IBAN; the only way to see which validator a field has is to open that field.",
-          limit5: "They have no browsable reference inside the product. To see the list of validators you open a Text field's definition form and read the dropdown.",
-          limit6: "They cannot be written by hand. There is no regular-expression or pattern entry anywhere, by design, and the 13 built-in checks are the complete set.",
+          thWhenItFires: "Wann er ausgelöst wird",
+          codeInvalidFormat:
+            "Die meisten Validator-Fehlschläge: eine Form, die nicht passt, eine Prüfziffer, die sich nicht verifizieren lässt, ein Wert, der nicht auf einer One-of-a-List-Liste steht, eine fehlende Contains- oder Starts-With-Kennzeichnung, oder eine Postleitzahl, die nicht zu ihrem Land passt.",
+          codeRange: "Numeric Range — der Wert liegt außerhalb der Grenzen, oder ist überhaupt keine Zahl.",
+          codeMaxLength:
+            "Die globale Textobergrenze von 4.000 Zeichen, die eigene kürzere Obergrenze eines Validators, oder die Obergrenze von Length Range.",
+          codeMinLength: "Die Untergrenze von Length Range.",
+          codeRequired:
+            "Das Feld ist Required, und der Wert ist leer. Das wird ausgelöst, bevor irgendein Validator läuft, sodass ein reiner Leerzeichen-Wert bei einem erforderlichen Feld die allgemeine Required-Meldung erhält statt einer validatorspezifischen.",
+          codesInfoTitle: "Meldungen nennen den Schlüssel, nicht die Bezeichnung",
+          codesInfoContent:
+            "Eine Validator-Meldung zitiert den maschinenlesbaren Schlüssel des Felds — \"'shirt_size' is not a valid IBAN.\" — statt seiner Anzeigebezeichnung. Gleichen Sie über den Schlüssel ab, wenn Sie einem Fehlschlag nachgehen.",
+
+          limitsTitle: "Was Validatoren nicht leisten",
+          limit1:
+            "Sie hängen sich immer nur an ein Textfeld. Es gibt keinen Weg, eine Formatprüfung an einen der anderen einundzwanzig Typen anzubringen.",
+          limit2:
+            "Sie prüfen nie erneut Werte, die bereits gespeichert wurden. Einen Validator an ein Feld anzuhängen, das Antworten enthält, lässt diese Antworten exakt so, wie sie sind, einschließlich solcher, die nun scheitern würden, bis jemand sie erneut eingibt und speichert.",
+          limit3:
+            "Sie laufen nie bei einem leeren Wert. Bei einem Feld, das nicht Required ist, wird ein Wert aus nichts als Leerzeichen ohne jeden Validator-Fehler als gelöscht gespeichert — markieren Sie das Feld als Required, falls eine leere Antwort zurückgewiesen werden soll.",
+          limit4:
+            "Sie lassen sich nicht durchsuchen oder filtern. Es gibt keine Ansicht aller Felder, die IBAN verwenden; der einzige Weg zu sehen, welchen Validator ein Feld hat, ist, dieses Feld zu öffnen.",
+          limit5:
+            "Sie haben keine durchsuchbare Referenz im Produkt selbst. Um die Liste der Validatoren zu sehen, öffnen Sie das Definitionsformular eines Textfelds und lesen das Dropdown.",
+          limit6:
+            "Sie lassen sich nicht von Hand schreiben. Es gibt bewusst nirgends eine Regex- oder Muster-Eingabe, und die 13 integrierten Prüfungen sind die vollständige Menge.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Sicherheit auf Feldebene
+        // ═══════════════════════════════════════════════════
         security: {
-          title: "Field-Level Security",
-          description: "Hiding a specific benutzerdefiniertes Feld from the people holding a role or user group: how it is configured, what they see, why their saves do not destroy hidden values, and why required and restricted cannot be combined.",
-          intro: "Field-level security lets you hide a named field from the people holding a particular role or user group. It applies to benutzerdefinierte Felder exactly as it does to a screen's built-in fields — a field an administrator has deliberately restricted is not readable through the custom-field API either. This is the mechanism to reach for when a value genuinely must not be seen.",
-          notSensitivityTitle: "This is not the Sensitivity setting",
-          notSensitivityContent: "A field definition's Sensitivity setting — Unclassified, Internal, Confidential, Restricted — is a label for reporting and export handling. It does not restrict access to anything, and the two mechanisms are entirely unconnected. If you want a field hidden, configure it here, on the role or user group, not on the field definition.",
-          whereTitle: "Where restrictions are configured",
-          whereIntro: "Restrictions are set on the thing that grants access, not on the field. There are two places, and they add together.",
-          where1: "Per role: the restricted-fields list on a permission, in that role's permission dialog.",
-          where2: "Per user group: the group's own restrictions.",
-          whereKeyed: "Field names are typed by hand, and they are keyed by the permission resource that already guards the record — employees, party-people — rather than by record type. The details below are worth reading once before you configure anything.",
-          thAspect: "Aspect",
-          thBehaviour: "Behaviour",
-          aspSources: "Two sources",
-          behSources: "A role restriction and a group restriction union together. A group can never widen what a role has restricted, and there is no override in either direction.",
-          aspCase: "Case",
-          behCase: "Matching ignores case, so Salary, salary and SALARY are the same field.",
-          aspResource: "Keying",
-          behResource: "Restrictions are keyed by permission resource, the same resource that guards the record itself — not by entity type and not by field group.",
-          aspBuiltIn: "Scope of the mechanism",
-          behBuiltIn: "The same mechanism covers a screen's built-in fields and its benutzerdefinierte Felder. One restricted-fields list, one behaviour.",
-          aspExempt: "Exemption",
-          behExempt: "The platform system administrator is always exempt and always sees every field. That is the same exemption the built-in mechanism already makes.",
-          seesTitle: "What a restricted person sees",
-          seesIntro: "Nothing at all. The field is not greyed out, not blank, not marked as hidden — the entry is omitted from the record form and from the record list entirely.",
-          seesIndistinguishable: "An omitted field is indistinguishable from a field that was never defined. That is deliberate: showing a placeholder would tell somebody there is a value they are not allowed to see, which is itself information. It also means a colleague reporting that a field is missing may be describing a restriction rather than a fault — check the role and group restrictions before you go looking for a defect.",
-          savingTitle: "Saving around a hidden field",
-          savingIntro: "This is the part worth understanding properly, because the obvious implementation would destroy data. When somebody saves a record, the save replaces the whole set of custom-field values at once — so a field absent from the request would normally mean \"clear it\".",
-          savingWhy: "A restricted field is absent for a completely different reason: the person was never sent it. The product tells those two cases apart, and leaves a restricted field's stored value exactly as it was. Somebody who cannot see a value can no longer erase it by editing the record around it.",
-          savingInfoTitle: "The practical consequence",
-          savingInfoContent: "You can safely give somebody edit access to a record while restricting one sensitive field on it. Their ordinary edits go through, and the value they cannot see survives untouched.",
-          writingTitle: "Writing a restricted field on purpose",
-          writingIntro: "An attempt to write a restricted field explicitly is refused outright, and nothing else in the same save is applied either. Rejecting the whole request rather than quietly dropping the one field is deliberate: a save reported as successful but silently missing a field is the harder failure to notice.",
-          writingProbe: "The refusal also fires when the submitted value happens to equal the stored one, so nobody can work out a hidden value by testing which submissions are accepted.",
-          thAttempt: "Attempt",
-          thResult: "Result",
-          attSaveOthers: "Saving the record, changing only fields you can see",
-          resSaveOthers: "Succeeds. The restricted field's stored value is left exactly as it was, not cleared.",
-          attWriteRestricted: "Sending a value for the restricted field",
-          resWriteRestricted: "Refused with a message naming the field, and the record is not saved at all — not even the fields you were allowed to change.",
-          attWriteSameValue: "Sending the restricted field's current value",
-          resWriteSameValue: "Refused the same way. The result does not depend on whether your guess was right, so it cannot be used to probe the value.",
-          attReadApi: "Reading the record's custom-field values directly",
-          resReadApi: "The restricted field is absent from the response. This was the gap that field-level security used to leave open for benutzerdefinierte Felder specifically, and it is closed.",
-          requiredTitle: "Required and restricted cannot be combined",
-          requiredIntro: "A required field can never be filled in by somebody who is not allowed to see it — they would be unable to save the record at all. The product therefore refuses the combination, in whichever order you attempt it.",
-          thSituation: "Attempt",
-          thWhatYouSee: "What you see",
-          reqRestrictRequired: "Restricting a field that is currently required",
-          reqRestrictRequiredMsg: "Refused, naming the field.",
-          reqRequireRestricted: "Marking a field required while a role or group restricts it",
-          reqRequireRestrictedMsg: "Refused, naming the field and telling you to remove the restriction first or leave the field optional.",
-          requiredInfoTitle: "Order does not help",
-          requiredInfoContent: "Doing the two operations in the other order does not get around the rule. Both directions are checked, so there is no sequence that leaves a field both required and restricted.",
-          reachTitle: "Where else a restriction reaches",
-          reachIntro: "A restriction is not only a form-level thing. It applies consistently everywhere the field's values could otherwise surface.",
-          reach1: "The record form: the field is omitted.",
-          reach2: "The record list: the column is omitted.",
-          reach3: "The custom-field value API: the field is absent from the response, and refused on write.",
-          reach4: "The definitions spreadsheet export: restricted columns are absent from the file rather than present and blank.",
-          exampleTitle: "A worked example",
-          exampleIntro: "Restricting a salary field on a staff record, and confirming it behaves.",
-          e1Title: "Define the field and give it a value",
-          e1Content: "As an administrator who can see everything, define a benutzerdefiniertes Feld with the key salary on the staff record type, and set a value on one record.",
-          e2Title: "Restrict it on a role",
-          e2Content: "Add salary to the restricted-fields list on the relevant permission in a role, then sign in as somebody holding only that role.",
-          e3Title: "Confirm it is absent, not blank",
-          e3Content: "Open the same staff record. The Salary field should not be on the form at all, and there should be no Salary column in the staff list. If you see it empty rather than missing, the restriction is not applied.",
-          e4Title: "Save the record and check the value survived",
-          e4Content: "As that restricted user, change something else on the record and save. Then, as the unrestricted administrator, reopen the record and confirm the salary is still there. This is the case that would destroy data in a naive implementation.",
-          e5Title: "Confirm the two rules that protect the configuration",
-          e5Content: "Try to mark salary required while the restriction is in place — refused. Remove the restriction, mark it required, then try to restrict it again — also refused. Finally, put the same key in a user group's restrictions instead of a role's and confirm it behaves identically.",
-          proofTitle: "One honest caveat about verification",
-          proofContent: "Every authorisation behaviour described on this page is enforced by real, unit-tested guards, but there is currently no end-to-end automated test proving it through the full HTTP stack. That makes manual verification genuinely informative here rather than redundant — if you are commissioning a workspace where a field must not be seen, check it by hand once.",
+          title: "Sicherheit auf Feldebene",
+          description:
+            "Ein bestimmtes benutzerdefiniertes Feld vor den Personen verbergen, die eine Rolle oder Benutzergruppe innehaben: wie es konfiguriert wird, was diese Personen sehen, warum ihre Speichervorgänge verborgene Werte nicht zerstören, und warum sich Pflichtfeld und eingeschränkt nicht kombinieren lassen.",
+          intro:
+            "Sicherheit auf Feldebene lässt Sie ein benanntes Feld vor den Personen verbergen, die eine bestimmte Rolle oder Benutzergruppe innehaben. Sie gilt für benutzerdefinierte Felder exakt so, wie für die eingebauten Felder eines Bildschirms — ein Feld, das ein Administrator bewusst eingeschränkt hat, ist auch über die API für benutzerdefinierte Felder nicht lesbar. Das ist der Mechanismus, zu dem Sie greifen, wenn ein Wert wirklich nicht gesehen werden darf.",
+          notSensitivityTitle: "Das ist nicht die Einstellung Sensitivity",
+          notSensitivityContent:
+            "Die Einstellung Sensitivity einer Felddefinition — Unclassified, Internal, Confidential, Restricted — ist ein Label für Berichte und den Umgang beim Export. Sie schränkt den Zugriff auf nichts ein, und die beiden Mechanismen sind völlig unabhängig voneinander. Möchten Sie ein Feld verborgen haben, konfigurieren Sie es hier, auf der Rolle oder Benutzergruppe, nicht auf der Felddefinition.",
+
+          whereTitle: "Wo Einschränkungen konfiguriert werden",
+          whereIntro:
+            "Einschränkungen werden auf der Sache gesetzt, die Zugriff gewährt, nicht auf dem Feld. Es gibt zwei Stellen, und sie addieren sich.",
+          where1:
+            "Pro Rolle: die Liste eingeschränkter Felder bei einer Berechtigung, im Berechtigungsdialog dieser Rolle.",
+          where2: "Pro Benutzergruppe: die eigenen Einschränkungen der Gruppe.",
+          whereKeyed:
+            "Feldnamen werden von Hand eingetippt, und sie sind über die Berechtigungsressource verschlüsselt, die den Datensatz bereits schützt — employees, party-people — statt über den Datensatztyp. Die folgenden Details lohnt es sich, einmal zu lesen, bevor Sie irgendetwas konfigurieren.",
+          thAspect: "Aspekt",
+          thBehaviour: "Verhalten",
+          aspSources: "Zwei Quellen",
+          behSources:
+            "Eine Rolleneinschränkung und eine Gruppeneinschränkung vereinigen sich. Eine Gruppe kann nie erweitern, was eine Rolle eingeschränkt hat, und es gibt in keiner Richtung eine Überschreibung.",
+          aspCase: "Groß-/Kleinschreibung",
+          behCase: "Der Abgleich ignoriert Groß-/Kleinschreibung, sodass Salary, salary und SALARY dasselbe Feld sind.",
+          aspResource: "Verschlüsselung",
+          behResource:
+            "Einschränkungen sind über die Berechtigungsressource verschlüsselt, dieselbe Ressource, die auch den Datensatz selbst schützt — nicht über den Entitätstyp und nicht über die Feldgruppe.",
+          aspBuiltIn: "Umfang des Mechanismus",
+          behBuiltIn:
+            "Derselbe Mechanismus deckt sowohl die eingebauten Felder eines Bildschirms als auch seine benutzerdefinierten Felder ab. Eine Liste eingeschränkter Felder, ein Verhalten.",
+          aspExempt: "Ausnahme",
+          behExempt:
+            "Der Systemadministrator der Plattform ist immer ausgenommen und sieht immer jedes Feld. Das ist dieselbe Ausnahme, die der eingebaute Mechanismus bereits macht.",
+
+          seesTitle: "Was eine eingeschränkte Person sieht",
+          seesIntro:
+            "Überhaupt nichts. Das Feld wird nicht ausgegraut, nicht leer gezeigt, nicht als verborgen markiert — der Eintrag wird vollständig aus dem Datensatzformular und aus der Datensatzliste ausgelassen.",
+          seesIndistinguishable:
+            "Ein ausgelassenes Feld ist nicht von einem Feld zu unterscheiden, das nie definiert wurde. Das ist beabsichtigt: Einen Platzhalter zu zeigen würde jemandem sagen, dass es einen Wert gibt, den er nicht sehen darf, was selbst eine Information ist. Es bedeutet auch, dass eine Kollegin, die meldet, ein Feld fehle, eine Einschränkung statt eines Fehlers beschreiben könnte — prüfen Sie die Rollen- und Gruppeneinschränkungen, bevor Sie nach einem Defekt suchen.",
+
+          savingTitle: "Speichern rund um ein verborgenes Feld",
+          savingIntro:
+            "Das ist der Teil, den es sich lohnt, richtig zu verstehen, weil die naheliegende Umsetzung Daten zerstören würde. Wenn jemand einen Datensatz speichert, ersetzt der Speichervorgang die gesamte Menge der Werte benutzerdefinierter Felder auf einmal — ein in der Anfrage fehlendes Feld würde also normalerweise \"leeren\" bedeuten.",
+          savingWhy:
+            "Ein eingeschränktes Feld fehlt aus einem ganz anderen Grund: Der Person wurde es nie gesendet. Das Produkt unterscheidet diese beiden Fälle und lässt den gespeicherten Wert eines eingeschränkten Felds exakt so, wie er war. Jemand, der einen Wert nicht sehen kann, kann ihn nicht mehr löschen, indem er den Datensatz drum herum bearbeitet.",
+          savingInfoTitle: "Die praktische Konsequenz",
+          savingInfoContent:
+            "Sie können jemandem gefahrlos Bearbeitungszugriff auf einen Datensatz geben, während Sie ein sensibles Feld darauf einschränken. Seine gewöhnlichen Bearbeitungen gehen durch, und der Wert, den er nicht sehen kann, überlebt unberührt.",
+
+          writingTitle: "Ein eingeschränktes Feld absichtlich schreiben",
+          writingIntro:
+            "Ein Versuch, ein eingeschränktes Feld ausdrücklich zu schreiben, wird rundheraus zurückgewiesen, und nichts anderes im selben Speichervorgang wird ebenfalls angewendet. Die gesamte Anfrage abzulehnen statt das eine Feld still fallen zu lassen ist beabsichtigt: ein als erfolgreich gemeldeter Speichervorgang, dem still ein Feld fehlt, ist der schwerer zu bemerkende Fehlschlag.",
+          writingProbe:
+            "Die Zurückweisung greift auch dann, wenn der übermittelte Wert zufällig dem gespeicherten entspricht, sodass niemand einen verborgenen Wert herausfinden kann, indem er testet, welche Übermittlungen angenommen werden.",
+          thAttempt: "Versuch",
+          thResult: "Ergebnis",
+          attSaveOthers: "Den Datensatz speichern, nur Felder ändernd, die Sie sehen können",
+          resSaveOthers:
+            "Gelingt. Der gespeicherte Wert des eingeschränkten Felds bleibt exakt so, wie er war, nicht geleert.",
+          attWriteRestricted: "Einen Wert für das eingeschränkte Feld senden",
+          resWriteRestricted:
+            "Zurückgewiesen mit einer Meldung, die das Feld nennt, und der Datensatz wird überhaupt nicht gespeichert — nicht einmal die Felder, die Sie ändern durften.",
+          attWriteSameValue: "Den aktuellen Wert des eingeschränkten Felds senden",
+          resWriteSameValue:
+            "Auf dieselbe Weise zurückgewiesen. Das Ergebnis hängt nicht davon ab, ob Ihre Vermutung richtig war, es kann also nicht benutzt werden, um den Wert zu erproben.",
+          attReadApi: "Die Werte benutzerdefinierter Felder des Datensatzes direkt lesen",
+          resReadApi:
+            "Das eingeschränkte Feld fehlt in der Antwort. Das war die Lücke, die Sicherheit auf Feldebene speziell bei benutzerdefinierten Feldern früher offen ließ, und sie ist geschlossen.",
+
+          requiredTitle: "Required und eingeschränkt lassen sich nicht kombinieren",
+          requiredIntro:
+            "Ein erforderliches Feld kann nie von jemandem ausgefüllt werden, der es nicht sehen darf — diese Person könnte den Datensatz überhaupt nicht speichern. Das Produkt weist die Kombination deshalb zurück, in welcher Reihenfolge Sie es auch versuchen.",
+          thSituation: "Versuch",
+          thWhatYouSee: "Was Sie sehen",
+          reqRestrictRequired: "Ein derzeit erforderliches Feld einschränken",
+          reqRestrictRequiredMsg: "Zurückgewiesen, unter Nennung des Felds.",
+          reqRequireRestricted: "Ein Feld als erforderlich markieren, während eine Rolle oder Gruppe es einschränkt",
+          reqRequireRestrictedMsg:
+            "Zurückgewiesen, unter Nennung des Felds und mit dem Hinweis, zuerst die Einschränkung zu entfernen oder das Feld optional zu lassen.",
+          requiredInfoTitle: "Die Reihenfolge hilft nicht",
+          requiredInfoContent:
+            "Die beiden Vorgänge in der anderen Reihenfolge auszuführen umgeht die Regel nicht. Beide Richtungen werden geprüft, es gibt also keine Abfolge, die ein Feld sowohl erforderlich als auch eingeschränkt zurücklässt.",
+
+          reachTitle: "Wo eine Einschränkung sonst noch reicht",
+          reachIntro:
+            "Eine Einschränkung ist keine reine Formularsache. Sie gilt konsistent überall, wo die Werte des Felds sonst auftauchen könnten.",
+          reach1: "Das Datensatzformular: Das Feld wird ausgelassen.",
+          reach2: "Die Datensatzliste: Die Spalte wird ausgelassen.",
+          reach3:
+            "Die API für die Werte benutzerdefinierter Felder: Das Feld fehlt in der Antwort und wird beim Schreiben zurückgewiesen.",
+          reach4:
+            "Der Tabellenexport der Definitionen: Eingeschränkte Spalten fehlen in der Datei, statt vorhanden und leer zu sein.",
+
+          exampleTitle: "Ein durchgerechnetes Beispiel",
+          exampleIntro:
+            "Ein Gehaltsfeld auf einem Personal-Datensatz einschränken, und bestätigen, dass es sich richtig verhält.",
+          e1Title: "Definieren Sie das Feld und geben Sie ihm einen Wert",
+          e1Content:
+            "Definieren Sie als Administrator, der alles sehen kann, ein benutzerdefiniertes Feld mit dem Schlüssel salary beim Datensatztyp für Personal, und setzen Sie einen Wert bei einem Datensatz.",
+          e2Title: "Schränken Sie es auf einer Rolle ein",
+          e2Content:
+            "Fügen Sie salary der Liste eingeschränkter Felder bei der betreffenden Berechtigung einer Rolle hinzu, und melden Sie sich dann als jemand an, der nur diese Rolle innehat.",
+          e3Title: "Bestätigen Sie, dass es fehlt, nicht leer ist",
+          e3Content:
+            "Öffnen Sie denselben Personal-Datensatz. Das Feld Salary sollte überhaupt nicht auf dem Formular sein, und es sollte keine Spalte Salary in der Personalliste geben. Sehen Sie es leer statt fehlend, ist die Einschränkung nicht angewendet.",
+          e4Title: "Speichern Sie den Datensatz und prüfen Sie, ob der Wert überlebt hat",
+          e4Content:
+            "Ändern Sie als diese eingeschränkte Person etwas anderes am Datensatz und speichern Sie. Öffnen Sie den Datensatz dann als der uneingeschränkte Administrator erneut und bestätigen Sie, dass das Gehalt noch da ist. Das ist der Fall, der bei einer naiven Umsetzung Daten zerstören würde.",
+          e5Title: "Bestätigen Sie die beiden Regeln, die die Konfiguration schützen",
+          e5Content:
+            "Versuchen Sie, salary als erforderlich zu markieren, während die Einschränkung besteht — zurückgewiesen. Entfernen Sie die Einschränkung, markieren Sie es als erforderlich, und versuchen Sie dann, es erneut einzuschränken — ebenfalls zurückgewiesen. Setzen Sie schließlich denselben Schlüssel in die Einschränkungen einer Benutzergruppe statt einer Rolle und bestätigen Sie, dass es sich identisch verhält.",
+          proofTitle: "Ein ehrlicher Vorbehalt zur Verifikation",
+          proofContent:
+            "Jedes auf dieser Seite beschriebene Autorisierungsverhalten wird von echten, unit-getesteten Schranken durchgesetzt, aber es gibt derzeit keinen automatisierten End-to-End-Test, der es über den vollen HTTP-Stack nachweist. Das macht eine manuelle Prüfung hier wirklich aufschlussreich statt überflüssig — wenn Sie einen Arbeitsbereich in Betrieb nehmen, in dem ein Feld nicht gesehen werden darf, prüfen Sie es einmal von Hand.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Felder verwalten
+        // ═══════════════════════════════════════════════════
         managing: {
-          title: "Managing Fields",
-          description: "Editing and retiring definitions, the change-history dialog, the usage and impact report, deleting without destroying data, the 18-column spreadsheet export, and the two read-only reference screens.",
-          intro: "Once fields exist, the Benutzerdefinierte Felder screen is where they are looked after: edited, retired, audited, measured and exported. This page covers each of those, and the two read-only reference screens that answer \"what types exist\" and \"what record types can I attach to\".",
-          rowMenuTitle: "The row menu",
-          rowMenuIntro: "Every field in the list has a row menu with eight actions. Each needs its own permission, so a role may see some and not others.",
-          thAction: "Action",
-          thDoes: "What it does",
-          thNeeds: "Permission",
-          actEdit: "Opens the definition form, populated from the field's full detail.",
-          actOptionSets: "Attaches, configures or detaches a shared versioned Optionssatz for Select or MultiSelect fields.",
-          actVisibilityRules: "Opens the conditional visibility rule dialog to configure show-or-hide rules evaluated against sibling fields.",
-          actConvertType: "Converts the field's value type with preflight dry-run validation, lossy confirmation safeguards and 1-click snapshot rollback.",
-          actVersions: "Opens the version history and drafts drawer to stage changes in an isolated draft before publishing to production.",
-          actHistory: "Lists every recorded change to the field's definition, newest first, with who and when.",
-          actUsage: "Reports how many answers the field holds, broken down by record type, and whether deleting it would destroy data.",
-          actDelete: "Deletes the definition — refused first if it holds answers, until you confirm explicitly.",
-          editTitle: "Editing a definition",
-          editIntro: "Editing opens the same form as creating, with the permanent settings shown but not editable: record type, key, value type and scope. Everything else can be changed, and the changes take effect on the next form somebody opens.",
-          editLoadFailure: "If the detail behind the Edit button fails to load, the form deliberately does not open, and you get a message instead. That is a safeguard rather than an inconvenience: the list row does not carry the options, the placeholders or the validator, so opening a form populated from it and saving would silently erase all three.",
-          editWarnTitle: "Two edits reach backwards",
-          editWarnContent: "Renaming an option changes what every existing record displays, because the option text is the stored answer. Attaching or changing a validator does not re-check answers already saved, so a field can hold values that its own current validator would refuse. Both are covered in detail on the Options and Validators pages.",
-          visibilityRulesTitle: "Sichtbarkeitsregeln administration",
-          visibilityRulesIntro: "Sichtbarkeitsregeln allow fields to be shown or hidden dynamically on record forms based on the values of sibling benutzerdefinierte Felder on the same record type. When a rule is active, client-side forms and server-side validation evaluate the conditions deterministically.",
+          title: "Felder verwalten",
+          description:
+            "Definitionen bearbeiten und stilllegen, der Dialog zum Änderungsverlauf, der Nutzungs- und Auswirkungsbericht, das Löschen ohne Datenverlust, der Tabellenexport mit 18 Spalten, und die beiden schreibgeschützten Referenzbildschirme.",
+          intro:
+            "Sobald Felder existieren, ist der Bildschirm Benutzerdefinierte Felder die Stelle, an der sie gepflegt werden: bearbeitet, stillgelegt, geprüft, gemessen und exportiert. Diese Seite behandelt jedes davon, sowie die beiden schreibgeschützten Referenzbildschirme, die \"welche Typen existieren\" und \"welche Datensatztypen kann ich anhängen\" beantworten.",
+
+          rowMenuTitle: "Das Zeilenmenü",
+          rowMenuIntro:
+            "Jedes Feld in der Liste hat ein Zeilenmenü mit acht Aktionen. Jede braucht ihre eigene Berechtigung, sodass eine Rolle manche sehen kann und andere nicht.",
+          thAction: "Aktion",
+          thDoes: "Was sie tut",
+          thNeeds: "Berechtigung",
+          actEdit: "Öffnet das Definitionsformular, befüllt mit dem vollständigen Detail des Felds.",
+          actOptionSets:
+            "Hängt ein gemeinsam genutztes, versioniertes Option Set für Select- oder MultiSelect-Felder an, konfiguriert es oder trennt es ab.",
+          actVisibilityRules:
+            "Öffnet den Dialog für bedingte Sichtbarkeitsregeln, um Anzeige- oder Verbergungsregeln zu konfigurieren, ausgewertet gegen Geschwisterfelder.",
+          actConvertType:
+            "Öffnet einen Dialog zur Umwandlung des Werttyps des Felds: Wählen Sie ein Ziel aus den Typen, in die es sich gefahrlos umwandeln lässt, bestätigen Sie im Fall einer verlustbehafteten Umwandlung, und machen Sie den Vorgang bei Bedarf anschließend per Rollback rückgängig.",
+          actVersions:
+            "Öffnet die Schublade für den Versionsverlauf: Lesen Sie die Kette der Versionen, erzeugen Sie einen neuen Entwurf, oder veröffentlichen oder verwerfen Sie einen bereits erzeugten.",
+          actHistory:
+            "Listet jede erfasste Änderung an der Definition des Felds, neueste zuerst, mit Wer und Wann.",
+          actUsage:
+            "Berichtet, wie viele Antworten das Feld enthält, aufgeschlüsselt nach Datensatztyp, und ob ein Löschen Daten zerstören würde.",
+          actDelete:
+            "Löscht die Definition — zunächst zurückgewiesen, falls sie Antworten enthält, bis Sie ausdrücklich bestätigen.",
+
+          editTitle: "Eine Definition bearbeiten",
+          editIntro:
+            "Das Bearbeiten öffnet dasselbe Formular wie das Erstellen, wobei die dauerhaften Einstellungen gezeigt, aber nicht bearbeitbar sind: Datensatztyp, Schlüssel, Werttyp und Geltungsbereich. Alles andere lässt sich ändern, und die Änderungen wirken sich auf das nächste Formular aus, das jemand öffnet.",
+          editLoadFailure:
+            "Scheitert das Laden des Details hinter der Schaltfläche Edit, öffnet sich das Formular bewusst nicht, und Sie erhalten stattdessen eine Meldung. Das ist eine Schutzmaßnahme, keine Unannehmlichkeit: Die Listenzeile trägt weder die Optionen noch die Platzhalter noch den Validator, sodass das Öffnen eines damit befüllten Formulars und das Speichern alle drei still auslöschen würde.",
+          editWarnTitle: "Zwei Bearbeitungen greifen rückwirkend",
+          editWarnContent:
+            "Eine Option umzubenennen ändert, was jeder bestehende Datensatz anzeigt, weil der Optionstext die gespeicherte Antwort ist. Das Anhängen oder Ändern eines Validators prüft bereits gespeicherte Antworten nicht erneut, ein Feld kann also Werte enthalten, die sein eigener aktueller Validator zurückweisen würde. Beides wird ausführlich auf den Seiten Optionen und Validatoren behandelt.",
+
+          // Visibility Rules
+          visibilityRulesTitle: "Verwaltung von Sichtbarkeitsregeln",
+          visibilityRulesIntro:
+            "Sichtbarkeitsregeln erlauben es, Felder auf Datensatzformularen dynamisch anzuzeigen oder zu verbergen, abhängig von den Werten von Geschwisterfeldern desselben Datensatztyps. Ist eine Regel aktiv, werten sowohl clientseitige Formulare als auch die serverseitige Validierung die Bedingungen deterministisch aus.",
           thOperator: "Operator",
-          thOperatorMeaning: "Condition evaluated",
-          thOperatorExample: "Example trigger",
+          thOperatorMeaning: "Ausgewertete Bedingung",
+          thOperatorExample: "Beispielauslöser",
           opEquals: "Equals",
-          opEqualsMeaning: "The controlling field's value exactly matches the target value.",
-          opEqualsExample: "Show Kit Size when Staff Role equals Coach.",
+          opEqualsMeaning: "Der Wert des steuernden Felds stimmt exakt mit dem Zielwert überein.",
+          opEqualsExample: "Zeige Kit Size, wenn Staff Role gleich Coach ist.",
           opNotEquals: "Does not equal",
-          opNotEqualsMeaning: "The controlling field has any value other than the target value.",
-          opNotEqualsExample: "Show Dietary Requirements when Meal Plan does not equal None.",
+          opNotEqualsMeaning: "Das steuernde Feld hat einen beliebigen anderen Wert als den Zielwert.",
+          opNotEqualsExample: "Zeige Dietary Requirements, wenn Meal Plan ungleich None ist.",
           opIsEmpty: "Is empty",
-          opIsEmptyMeaning: "The controlling field holds no stored answer or null.",
-          opIsEmptyExample: "Show Explanation when ID Number is empty.",
+          opIsEmptyMeaning: "Das steuernde Feld enthält keine gespeicherte Antwort oder null.",
+          opIsEmptyExample: "Zeige Explanation, wenn ID Number leer ist.",
           opIsNotEmpty: "Is not empty",
-          opIsNotEmptyMeaning: "The controlling field has any non-null, non-empty value.",
-          opIsNotEmptyExample: "Show Expiry Date when Passport Number is not empty.",
+          opIsNotEmptyMeaning: "Das steuernde Feld hat einen beliebigen nicht-null, nicht-leeren Wert.",
+          opIsNotEmptyExample: "Zeige Expiry Date, wenn Passport Number nicht leer ist.",
           opIn: "In set",
-          opInMeaning: "The controlling field's answer is one of multiple comma-separated values.",
-          opInExample: "Show Specialization when Department in Medical, Coaching, Analytics.",
+          opInMeaning: "Die Antwort des steuernden Felds ist einer von mehreren durch Komma getrennten Werten.",
+          opInExample: "Zeige Specialization, wenn Department in Medical, Coaching, Analytics ist.",
           opNotIn: "Not in set",
-          opNotInMeaning: "The controlling field's answer is none of the listed values.",
-          opNotInExample: "Show General Notes when Category not in VIP, Board.",
+          opNotInMeaning: "Die Antwort des steuernden Felds ist keiner der aufgeführten Werte.",
+          opNotInExample: "Zeige General Notes, wenn Category nicht in VIP, Board ist.",
           opGreaterThan: "Greater than",
-          opGreaterThanMeaning: "The numeric or date answer strictly exceeds the threshold.",
-          opGreaterThanExample: "Show Clearance Details when Security Level greater than 3.",
+          opGreaterThanMeaning: "Die numerische oder Datumsantwort übersteigt den Schwellenwert echt.",
+          opGreaterThanExample: "Zeige Clearance Details, wenn Security Level größer als 3 ist.",
           opLessThan: "Less than",
-          opLessThanMeaning: "The numeric or date answer is strictly below the threshold.",
-          opLessThanExample: "Show Parental Consent when Age less than 18.",
-          visibilityRulesEvaluation: "Rules execute with deterministic priority. When multiple rules target the same field, Hide actions take precedence over Show actions. Hidden fields are omitted from mandatory validation checks, preventing unfulfillable validation blockages.",
-          visibilityRulesTipTitle: "Conditioning on sibling fields only",
-          visibilityRulesTipContent: "A rule can only reference sibling fields defined on the exact same entity type. Cross-entity conditions (e.g. checking a tenant setting from a person field) are not permitted to preserve single-record transactional integrity.",
-          conversionTitle: "Value-type conversion and dry-run rollback",
-          conversionIntro: "Converting a field's value type allows changing data representations without dropping existing fields or re-entering data. Conversions are categorized into three safety classes.",
-          thConversionClass: "Safety class",
-          thConversionPairs: "Supported type pairs",
-          thConversionRisk: "Data preservation guarantee",
-          classLossless: "Verlustfrei (Zero-risk)",
-          classLosslessPairs: "Text → LongText, Number → Text, Date → DateTime, Select → MultiSelect, Boolean → Text, Number → Decimal, Decimal → Text",
-          classLosslessRisk: "100% data fidelity preserved. All existing values parse directly into the target representation without truncation.",
-          classLossy: "Verlustbehaftet (Requires confirmation)",
-          classLossyPairs: "LongText → Text (truncates past 500 chars), DateTime → Date (drops time component)",
-          classLossyRisk: "Potential truncation or precision reduction. The modal requires explicit typed confirmation before proceeding.",
-          classIncompatible: "Incompatible (Blocked)",
-          classIncompatiblePairs: "EntityReference ↔ Text, UserReference ↔ Number, Complex JSON ↔ Boolean",
-          classIncompatibleRisk: "Blocked by the server engine. Conversions between structurally incompatible domain types are refused.",
-          conversionLossyWarnTitle: "Verlustbehaftet conversions alter data permanently",
-          conversionLossyWarnContent: "Truncating long text or dropping timestamps permanently reshapes historical records. Always run Usage & impact first to inspect how many records will be affected.",
-          conversionDryRunIntro: "Before executing any conversion, the server runs a complete dry-run audit against all stored values for the field. If even a single stored value fails conversion parsing (such as non-numeric text when converting to Number), the entire operation is safely refused with a conflict diagnosis.",
-          conversionRollbackTitle: "1-Click snapshot rollback",
-          conversionRollbackContent: "Every type conversion creates an immutable prior-value snapshot. If an unforeseen downstream issue occurs after converting, administrators can invoke 1-click rollback to restore the previous value type and exact stored values instantly.",
-          versionsTitle: "Field definition versions and drafts lifecycle",
-          versionsIntro: "Field definition versioning guarantees zero-downtime evolution. Administrators stage proposed changes in an isolated draft version, test them safely, and promote to production in one atomic transaction.",
+          opLessThanMeaning: "Die numerische oder Datumsantwort liegt echt unter dem Schwellenwert.",
+          opLessThanExample: "Zeige Parental Consent, wenn Age kleiner als 18 ist.",
+          visibilityRulesEvaluation:
+            "Regeln werden mit deterministischer Priorität ausgeführt. Zielen mehrere Regeln auf dasselbe Feld, haben Hide-Aktionen Vorrang vor Show-Aktionen. Verborgene Felder werden aus den Pflichtfeld-Prüfungen ausgelassen, was unerfüllbare Validierungsblockaden verhindert.",
+          visibilityRulesTipTitle: "Bedingungen nur über Geschwisterfelder",
+          visibilityRulesTipContent:
+            "Eine Regel kann sich nur auf Geschwisterfelder beziehen, die für exakt denselben Entitätstyp definiert sind. Entitätsübergreifende Bedingungen (zum Beispiel die Einstellung eines Mandanten aus einem Personenfeld heraus zu prüfen) sind nicht zulässig, um die transaktionale Integrität eines einzelnen Datensatzes zu bewahren.",
+
+          // Conversion
+          conversionTitle: "Werttyp-Umwandlung und Rollback",
+          conversionIntro:
+            "Die Umwandlung des deklarierten Werttyps eines Felds ist ein eigenständiger Vorgang, erreichbar über eine eigene Aktion im Zeilenmenü statt über das Bearbeitungsformular — sie ändert, wie bereits gespeicherte Antworten repräsentiert werden, nicht nur, wie künftige aussehen werden. Nur neun bestimmte Typenpaare sind zulässig; jedes andere Paar wird rundweg zurückgewiesen, einschließlich jedes Paars, das einen Referenztyp, File, Image oder RichText berührt.",
+          thConversionClass: "Sicherheitsklasse",
+          thConversionPairs: "Unterstützte Typenpaare",
+          thConversionRisk: "Garantie zum Erhalt der Daten",
+          classLossless: "Verlustfrei",
+          classLosslessPairs:
+            "Text → LongText, Number → Text, Number → LongText, Percent → Text, Rating → Text, Percent → Number, Rating → Number",
+          classLosslessRisk:
+            "Jeder bestehende Wert lässt sich direkt und ohne Verlust in den Zieltyp umwandeln — etwa eine als Text formatierte Zahl oder ein Prozentwert bzw. eine Bewertung, die als einfache Zahl neu gelesen wird.",
+          classLossy: "Verlustbehaftet (Bestätigung erforderlich)",
+          classLossyPairs: "LongText → Text, Text → Number",
+          classLossyRisk:
+            "LongText → Text kürzt alles, was über die eigene 4.000-Zeichen-Grenze von Text hinausgeht. Text → Number kürzt überhaupt nicht — die gesamte Umwandlung wird zurückgewiesen, sobald auch nur ein einziger gespeicherter Wert sich nicht als Zahl parsen lässt, statt den Rest umzuwandeln und diesen einen zurückzulassen.",
+          classIncompatible: "Nicht angeboten",
+          classIncompatiblePairs:
+            "Jedes andere Paar — 453 der 462 möglichen, einschließlich jedes Paars, das EntityReference, UserReference, File, Image oder RichText berührt.",
+          classIncompatibleRisk:
+            "Wird zurückgewiesen, bevor überhaupt etwas ausgeführt wird. Ein referenzförmiger oder medienförmiger Wert hat keine sinnvolle Text- oder Zahlenform, in die er umgewandelt werden könnte, und in umgekehrter Richtung gibt es nichts Reales, worauf verwiesen werden könnte.",
+          conversionLossyWarnTitle:
+            "Eine verlustbehaftete Umwandlung wird dauerhaft auf jeden gespeicherten Wert angewendet",
+          conversionLossyWarnContent:
+            "Langen Text abzuschneiden formt historische Datensätze dauerhaft um. Führen Sie vor dem Bestätigen immer zuerst Usage & impact aus, um zu sehen, wie viele Datensätze betroffen sein werden.",
+          conversionDryRunIntro:
+            "Bevor irgendetwas geändert wird, prüft der Server jeden gespeicherten Wert gegen den Zieltyp. Würde auch nur ein einziger Wert bei der Umwandlung scheitern, wird der gesamte Vorgang von vornherein zurückgewiesen, statt ihn halb fertig stehen zu lassen.",
+          conversionRollbackTitle: "Rollback per Schnappschuss",
+          conversionRollbackContent:
+            "Jede Umwandlung schreibt für jede Zeile einen Schnappschuss des vorherigen Werts, bevor dieser geändert wird. Ein Super Admin kann für einen bestimmten Umwandlungslauf anhand seiner Job-Run-ID ein Rollback durchführen und so die exakten vorherigen Werte wiederherstellen — Schnappschüsse laufen nach sieben Tagen automatisch ab und werden dann gelöscht, ein Rollback steht also nur in einem echten Zeitfenster zur Verfügung und nicht unbegrenzt.",
+
+          // Versions & Drafts
+          versionsTitle: "Lebenszyklus von Felddefinitions-Versionen und -Entwürfen",
+          versionsIntro:
+            "Die aktiven Skalarwerte, Optionen und Sichtbarkeitsregeln einer Definition lassen sich in einen isolierten Entwurf klonen und anschließend entweder veröffentlichen — wodurch die aktive Version in einem einzigen Schritt ersetzt wird — oder verwerfen, wobei die aktive Version unangetastet bleibt, so oder so.",
           thVersionStatus: "Status",
-          thVersionMeaning: "Lifecycle meaning",
-          thVersionActions: "Available actions",
+          thVersionMeaning: "Bedeutung im Lebenszyklus",
+          thVersionActions: "Verfügbare Aktionen",
           vStatusDraft: "Draft",
-          vMeaningDraft: "An uncommitted, isolated working version. Not visible on production record forms.",
-          vActionsDraft: "Add options, edit validation, update Sichtbarkeitsregeln, Publish, Discard.",
+          vMeaningDraft:
+            "Ein isolierter Klon der Definition, wie sie in dem Moment stand, in dem er erzeugt wurde — mit einer eigenen Kopie der Skalarwerte, Optionen und Sichtbarkeitsregeln. Wird auf keinem Datensatzformular ausgeliefert.",
+          vActionsDraft:
+            "Publish, Discard. Aktuell lässt sich an einem Entwurf nach dem Erzeugen nichts mehr bearbeiten — ein fehlerhafter Klon muss verworfen und neu erzeugt werden.",
           vStatusPublished: "Published",
-          vMeaningPublished: "The active production version currently powering all record forms.",
-          vActionsPublished: "Create Draft (mints new working version), View History, Manage Rules.",
+          vMeaningPublished:
+            "Die eine aktive Version, die derzeit auf jedem Datensatzformular für dieses Feld ausgeliefert wird.",
+          vActionsPublished: "Create Draft (erzeugt einen neuen Arbeitsklon), View History.",
           vStatusDeprecated: "Deprecated",
-          vMeaningDeprecated: "A former published version replaced by a newer published version.",
-          vActionsDeprecated: "Read-only audit record. Retained for historical record integrity.",
+          vMeaningDeprecated:
+            "Eine frühere Published-Version, ersetzt, als ein Entwurf befördert wurde. Ihre geklonten Optionen und Regeln bleiben an ihr hängen, sind jedoch wirkungslos — die Durchsetzung liest ausschließlich die aktuelle Published-Version.",
+          vActionsDeprecated: "Schreibgeschützter Prüfeintrag. Aufbewahrt für die historische Integrität.",
           vStatusArchived: "Archived",
-          vMeaningArchived: "A retired version no longer active in any tenant scope.",
-          vActionsArchived: "Historical reference only.",
-          versionsPromotionIntro: "Promoting a draft to Published automatically deprecates the incumbent version in the same database transaction. The version number increments monotonically, and form caches are invalidated instantly across all connected clients.",
-          versionsRuleGuardTitle: "Draft rule loss protection",
-          versionsRuleGuardContent: "If a draft removes options or changes types referenced by active Sichtbarkeitsregeln, the publishing preflight refuses promotion until rules are reconciled, preventing broken conditional branches in production forms.",
-          retireTitle: "Retiring a field: deactivate or delete",
-          retireIntro: "These are not the same operation and the difference matters. If you are unsure, deactivate — it is the reversible one.",
-          deactivateTitle: "Turning Active off",
-          deactivate1: "The field stops being offered on create and edit forms",
-          deactivate2: "Every answer already stored is kept, untouched",
-          deactivate3: "It is reversible — turning Active back on restores the field as it was",
-          deactivate4: "It is recorded in history as Deactivated, and can be Reactivated later",
-          deleteColTitle: "Deleting the definition",
-          deleteCol1: "Refused on the first attempt if the field holds any answers",
-          deleteCol2: "Destroys those answers once the retention window passes, if you confirm",
-          deleteCol3: "Frees the key, so a new field could later reuse it — with none of the old answers",
-          deleteCol4: "Is recorded in history as Deleted, and may be Restored while it is recoverable",
-          historyTitle: "Definition history",
-          historyIntro: "The History entry in a field's row menu opens a dialog listing what has happened to that field's definition, newest first, with the person who did it and when. A change made by the system rather than a person is attributed to the system. Entries are paged, and the dialog says how many changes there are in total.",
-          thEvent: "Event",
-          thMeans: "What it means",
-          evCreated: "The field was defined.",
-          evUpdated: "Something on the definition changed — a label, a flag, the validator, the options.",
-          evDeactivated: "Active was turned off, retiring the field without touching its answers.",
-          evReactivated: "Active was turned back on.",
-          evDeleted: "The definition was deleted and is still recoverable.",
-          evRestored: "A deleted definition was brought back.",
-          evPurged: "The definition was permanently removed and is no longer recoverable. The dialog marks this one explicitly so it cannot be read as an ordinary delete.",
-          historyParts: "Each entry also says which part of the field it concerns, because a field is more than a single row.",
-          thPart: "Part",
-          partField: "The field itself.",
-          partDefinition: "The definition record behind it.",
-          partVersion: "A version of the definition.",
-          partOption: "One entry in the field's options list.",
-          partVisibilityRule: "A conditional show-or-hide rule attached to the field, managed via the Sichtbarkeitsregeln dialog.",
-          historyScopeTitle: "History covers the definition, never the answers",
-          historyScopeContent: "This dialog will not tell you who changed a particular person's nationality, and it is not meant to. Listing value changes here would turn it into a readable copy of everybody's field data, going around field-level security and every other visibility rule at once. Only definition-side changes are eligible, and the value-bearing records are excluded by name rather than by omission.",
-          historyUnavailableTitle: "If history says the module is unavailable",
-          historyUnavailableContent: "That is a deployment shape rather than a fault in the field: the audit store lives in another module, and this deployment is running without it. No history was recorded for that period either. It is one for whoever administers the deployment, not something you can fix from the screen. History on a global platform field is separately restricted to platform administrators, and shows a different message.",
-          usageTitle: "Usage and impact",
-          usageIntro: "The Usage & impact entry in the row menu reports what the field is actually carrying before you change or remove it. Read the whole dialog rather than one number.",
-          thReading: "What it shows",
-          readStoredValues: "Stored values",
-          readStoredValuesMeans: "How many answers exist for this field.",
-          readLegacyValues: "Values in the legacy store",
-          readLegacyValuesMeans: "Answers still held in the older storage from before the current value store. Counted separately so a migration in progress is visible rather than hidden.",
-          readOptions: "Options",
-          readOptionsMeans: "How many options the field's list holds, for a Select or MultiSelect field.",
-          readByRecordType: "By record type",
-          readByRecordTypeMeans: "The same answer count split by the kind of record holding it, so you can see where the data actually is.",
-          readAffectedOrgs: "Organisations holding values",
-          readAffectedOrgsMeans: "For a global platform field, how many workspaces hold answers for it. This is the number that makes a delete genuinely consequential.",
-          readScopeNotice: "The scope notice at the top",
-          readScopeNoticeMeans: "Says whether the counts below cover your workspace only or every workspace on the platform. The two differ by orders of magnitude for an inherited field, and nothing about a bare number tells you which one you are looking at.",
-          usageWarnTitle: "Read the warning, not the number",
-          usageWarnContent: "The \"this will destroy data\" line comes from the server's own verdict, never from the count on screen. A global platform field is measured across every workspace that inherited it, so it can show zero in your own workspace and still warn you — correctly. The warning is the thing to trust.",
-          deleteTitle: "Deleting without destroying data",
-          deleteIntro: "Deleting a field that holds answers takes two deliberate steps. A field with no answers takes one.",
-          d1Title: "Open Usage & impact first",
-          d1Content: "See how many answers exist and where they are. If the number surprises you, stop here — deactivating the field is almost always the better move.",
-          d2Title: "Choose Delete",
-          d2Content: "If the field holds answers, the delete is refused with a conflict and the dialog explains exactly what would be lost, naming the number of stored values and the number of record types.",
-          d3Title: "Confirm the destructive delete",
-          d3Content: "Confirming from inside that dialog is what actually proceeds. This is a separate, explicit act rather than a second click on the same button, so a field with data cannot be removed by momentum.",
-          d4Title: "Or delete an empty field in one step",
-          d4Content: "A field with no answers deletes with no warning and no extra step, because there is nothing to lose.",
-          deleteRetention: "A confirmed delete destroys the stored answers once the retention window passes, not instantly. Until then the definition may still be Restored, and history records both the delete and the restore. After the window, the answers are gone and the history entry reads as Purged.",
-          exportTitle: "Exporting definitions to a spreadsheet",
-          exportIntro: "The Export action in the Benutzerdefinierte Felder page header downloads a spreadsheet of the definitions you can see, one row per field with headers on the first row. These are the 18 columns.",
-          thColumn: "Column",
-          thContains: "Contains",
-          colEntityType: "The record type the field is defined against.",
-          colKey: "The field's machine key.",
-          colLabelEn: "The English label.",
-          colLabelAr: "The Arabic label, blank if none was set.",
-          colValueType: "One of the nineteen value types.",
-          colRequired: "Whether the field is required.",
-          colActive: "Whether the field is still offered on forms.",
-          colSortOrder: "The field's position among the record type's benutzerdefinierte Felder.",
-          colOptionsEn: "The English options, for a Select or MultiSelect field.",
-          colOptionsAr: "The Arabic options, aligned with the English ones.",
-          colSensitivity: "The classification label set on the definition.",
-          colExportable: "The Include in exports setting, reported as Yes or No. It is never used to filter this file — a definitions export that dropped rows would hide exactly the fields an administrator most needs to audit.",
-          colValidator: "The attached validator, for a Text field.",
-          colValidatorParam: "The validator's setting, where it takes one.",
-          colPlaceholderEn: "The English placeholder hint.",
-          colPlaceholderAr: "The Arabic placeholder hint.",
-          colScope: "Platform for a global field, Organisation for a workspace one.",
-          colCreated: "When the definition was created, in UTC.",
-          exportBooleans: "Yes/no columns are written as the words Yes and No rather than as spreadsheet booleans, so they survive being opened in a different language and still read as intended.",
-          exportSafetyTitle: "Labels that look like formulas stay text",
-          exportSafetyContent: "Every cell is written as inert text, never as a formula. A field labelled =SUM(A1) arrives in the file as the literal characters, not as a calculation — and the same holds for a label beginning with +, -, @, or a tab followed by =. This is categorical rather than a filter of known cases.",
-          exportLimitTitle: "Three limits on the export",
-          exportLimitContent: "It contains definitions and never anybody's answers — there is no values export anywhere in the product. Past 10,000 definitions it refuses outright, telling you to narrow the export to a single record type, rather than handing you a truncated file that looks complete. And the 18 columns above are the whole file: a reference field's pinned Target Entity Type is not one of them, so an exported definition does not record what its field points at. Fields restricted from you are absent from the file rather than blank.",
-          referenceTitle: "The two reference screens",
-          referenceIntro: "Both are reached from links in the Benutzerdefinierte Felder page header, both are read-only, and both are gated behind the same view permission as the Benutzerdefinierte Felder screen itself. Neither has a sidebar entry of its own, which is deliberate.",
+          vMeaningArchived:
+            "Ein verworfener Entwurf, der aufbewahrt statt gelöscht wird, damit seine Versionsnummer niemals erneut vergeben werden kann.",
+          vActionsArchived: "Nur historische Referenz.",
+          versionsSnapshotWarnTitle: "Ein Entwurf ist eine Momentaufnahme, kein Live-Spiegel",
+          versionsSnapshotWarnContent:
+            "Ein Entwurf verfolgt keine Änderungen an der Live-Version, während er geöffnet bleibt — er enthält nur den Stand der Live-Version zum Zeitpunkt seiner Erstellung. Die Veröffentlichung führt die beiden nicht zusammen: Sie ersetzt die Live-Version vollständig durch die Momentaufnahme des Entwurfs und verwirft dabei stillschweigend alle in der Zwischenzeit vorgenommenen Live-Änderungen. Veröffentlichen Sie einen Entwurf zeitnah, oder erstellen Sie ihn neu, wenn sich die Live-Version inzwischen weiterentwickelt hat.",
+          versionsPromotionIntro:
+            "Das Veröffentlichen eines Entwurfs setzt die amtierende Published-Version im selben Speichervorgang auf Deprecated. Die Versionsnummer wird dabei immer erhöht, und jedes Laden eines Formulars liefert ab diesem Zeitpunkt die neue Published-Version aus.",
+          versionsRuleGuardTitle:
+            "Eine Veröffentlichung, die stillschweigend jede Sichtbarkeitsregel verlieren würde, wird zurückgewiesen",
+          versionsRuleGuardContent:
+            "Sichtbarkeitsregeln werden in dem Moment, in dem ein Entwurf erzeugt wird, auf ihn geklont, nicht erst zum Zeitpunkt der Veröffentlichung neu abgerufen — zum Zeitpunkt der Veröffentlichung gibt es also im Normalfall nichts mehr zu verlieren. Der eine Fall, für den diese Absicherung existiert, ist der, dass die ausgehende Version tatsächlich Regeln trägt, während der Entwurf keine trägt: Die Veröffentlichung wird dann rundweg zurückgewiesen, statt stillschweigend jedes bedingt verborgene Feld dieses Datensatztyps bedingungslos sichtbar zu machen.",
+
+          retireTitle: "Ein Feld stilllegen: deaktivieren oder löschen",
+          retireIntro:
+            "Das sind nicht dieselben Vorgänge, und der Unterschied zählt. Sind Sie unsicher, deaktivieren Sie — das ist der umkehrbare.",
+          deactivateTitle: "Active ausschalten",
+          deactivate1: "Das Feld wird nicht mehr auf Erstellungs- und Bearbeitungsformularen angeboten",
+          deactivate2: "Jede bereits gespeicherte Antwort bleibt erhalten, unberührt",
+          deactivate3: "Es ist umkehrbar — Active wieder einzuschalten stellt das Feld wieder her, wie es war",
+          deactivate4: "Es wird im Verlauf als Deactivated erfasst und kann später Reactivated werden",
+          deleteColTitle: "Die Definition löschen",
+          deleteCol1: "Beim ersten Versuch zurückgewiesen, falls das Feld irgendwelche Antworten enthält",
+          deleteCol2: "Zerstört diese Antworten, sobald das Aufbewahrungsfenster verstreicht, falls Sie bestätigen",
+          deleteCol3: "Gibt den Schlüssel frei, sodass ein neues Feld ihn später wiederverwenden könnte — ohne eine der alten Antworten",
+          deleteCol4: "Wird im Verlauf als Deleted erfasst und kann Restored werden, solange sie wiederherstellbar ist",
+
+          historyTitle: "Definitionsverlauf",
+          historyIntro:
+            "Der Eintrag History im Zeilenmenü eines Felds öffnet einen Dialog, der auflistet, was mit der Definition dieses Felds geschehen ist, neueste zuerst, mit der Person, die es getan hat, und wann. Eine vom System statt von einer Person vorgenommene Änderung wird dem System zugeschrieben. Einträge werden paginiert, und der Dialog sagt, wie viele Änderungen es insgesamt gibt.",
+          thEvent: "Ereignis",
+          thMeans: "Was es bedeutet",
+          evCreated: "Das Feld wurde definiert.",
+          evUpdated: "Etwas an der Definition hat sich geändert — eine Bezeichnung, ein Kennzeichen, der Validator, die Optionen.",
+          evDeactivated: "Active wurde ausgeschaltet, wodurch das Feld stillgelegt wird, ohne seine Antworten anzufassen.",
+          evReactivated: "Active wurde wieder eingeschaltet.",
+          evDeleted: "Die Definition wurde gelöscht und ist noch wiederherstellbar.",
+          evRestored: "Eine gelöschte Definition wurde zurückgeholt.",
+          evPurged:
+            "Die Definition wurde dauerhaft entfernt und ist nicht mehr wiederherstellbar. Der Dialog markiert diesen Eintrag ausdrücklich, damit er nicht als gewöhnliches Löschen gelesen werden kann.",
+          historyParts:
+            "Jeder Eintrag sagt auch, welchen Teil des Felds er betrifft, denn ein Feld ist mehr als eine einzelne Zeile.",
+          thPart: "Teil",
+          partField: "Das Feld selbst.",
+          partDefinition: "Der dahinterliegende Definitionsdatensatz.",
+          partVersion: "Eine Version der Definition.",
+          partOption: "Ein Eintrag in der Optionsliste des Felds.",
+          partVisibilityRule:
+            "Eine bedingte Anzeige- oder Verbergungsregel, angehängt an das Feld, verwaltet über den Dialog Visibility Rules.",
+          historyScopeTitle: "Der Verlauf deckt die Definition ab, nie die Antworten",
+          historyScopeContent:
+            "Dieser Dialog wird Ihnen nicht sagen, wer die Nationalität einer bestimmten Person geändert hat, und das ist auch nicht seine Absicht. Wertänderungen hier aufzulisten würde ihn in eine lesbare Kopie der Felddaten aller verwandeln, unter Umgehung der Sicherheit auf Feldebene und jeder anderen Sichtbarkeitsregel zugleich. Nur Änderungen auf der Definitionsseite sind zulässig, und die wertetragenden Datensätze sind namentlich ausgeschlossen statt durch Auslassung.",
+          historyUnavailableTitle: "Wenn der Verlauf sagt, das Modul sei nicht verfügbar",
+          historyUnavailableContent:
+            "Das ist eine Frage der Bereitstellungsform, kein Fehler beim Feld: Der Prüfspeicher liegt in einem anderen Modul, und diese Bereitstellung läuft ohne es. Für diesen Zeitraum wurde auch kein Verlauf erfasst. Das ist eine Sache für die Person, die die Bereitstellung verwaltet, nichts, das Sie vom Bildschirm aus beheben können. Der Verlauf eines globalen Plattformfelds ist gesondert auf Plattformadministratoren beschränkt und zeigt eine andere Meldung.",
+
+          usageTitle: "Nutzung und Auswirkung",
+          usageIntro:
+            "Der Eintrag Usage & impact im Zeilenmenü berichtet, was das Feld tatsächlich trägt, bevor Sie es ändern oder entfernen. Lesen Sie den ganzen Dialog statt einer einzelnen Zahl.",
+          thReading: "Was er zeigt",
+          readStoredValues: "Gespeicherte Werte",
+          readStoredValuesMeans: "Wie viele Antworten für dieses Feld existieren.",
+          readLegacyValues: "Werte im Legacy-Speicher",
+          readLegacyValuesMeans:
+            "Antworten, die noch im älteren Speicher von vor dem aktuellen Werte-Speicher gehalten werden. Gesondert gezählt, damit eine laufende Migration sichtbar ist statt verborgen.",
+          readOptions: "Optionen",
+          readOptionsMeans: "Wie viele Optionen die Liste des Felds enthält, bei einem Select- oder MultiSelect-Feld.",
+          readByRecordType: "Nach Datensatztyp",
+          readByRecordTypeMeans:
+            "Dieselbe Anzahl von Antworten, aufgeschlüsselt nach der Art des Datensatzes, der sie hält, sodass Sie sehen können, wo sich die Daten tatsächlich befinden.",
+          readAffectedOrgs: "Organisationen mit Werten",
+          readAffectedOrgsMeans:
+            "Bei einem globalen Plattformfeld, wie viele Arbeitsbereiche Antworten dafür halten. Das ist die Zahl, die ein Löschen wirklich folgenreich macht.",
+          readScopeNotice: "Der Geltungsbereich-Hinweis oben",
+          readScopeNoticeMeans:
+            "Sagt, ob die untenstehenden Zahlen nur Ihren Arbeitsbereich oder jeden Arbeitsbereich der Plattform abdecken. Die beiden unterscheiden sich bei einem geerbten Feld um Größenordnungen, und nichts an einer nackten Zahl sagt Ihnen, welche der beiden Sie gerade betrachten.",
+          usageWarnTitle: "Lesen Sie die Warnung, nicht die Zahl",
+          usageWarnContent:
+            "Die Zeile \"this will destroy data\" stammt aus dem eigenen Urteil des Servers, nie aus der Zahl auf dem Bildschirm. Ein globales Plattformfeld wird über jeden Arbeitsbereich gemessen, der es geerbt hat, sodass es in Ihrem eigenen Arbeitsbereich null zeigen und Sie trotzdem zu Recht warnen kann. Die Warnung ist das, dem Sie vertrauen sollten.",
+
+          deleteTitle: "Löschen, ohne Daten zu zerstören",
+          deleteIntro:
+            "Ein Feld zu löschen, das Antworten enthält, braucht zwei bewusste Schritte. Ein Feld ohne Antworten braucht einen.",
+          d1Title: "Öffnen Sie zuerst Usage & impact",
+          d1Content:
+            "Sehen Sie, wie viele Antworten existieren und wo sie sind. Überrascht Sie die Zahl, halten Sie hier inne — das Feld zu deaktivieren ist fast immer der bessere Schritt.",
+          d2Title: "Wählen Sie Delete",
+          d2Content:
+            "Enthält das Feld Antworten, wird das Löschen mit einem Konflikt zurückgewiesen, und der Dialog erklärt genau, was verloren ginge, unter Nennung der Zahl gespeicherter Werte und der Zahl der Datensatztypen.",
+          d3Title: "Bestätigen Sie das zerstörerische Löschen",
+          d3Content:
+            "Die Bestätigung von innerhalb dieses Dialogs ist es, was den Vorgang tatsächlich fortsetzt. Das ist ein separater, ausdrücklicher Akt statt eines zweiten Klicks auf dieselbe Schaltfläche, sodass ein Feld mit Daten nicht aus Schwung entfernt werden kann.",
+          d4Title: "Oder löschen Sie ein leeres Feld in einem Schritt",
+          d4Content:
+            "Ein Feld ohne Antworten löscht sich ohne Warnung und ohne zusätzlichen Schritt, weil es nichts zu verlieren gibt.",
+          deleteRetention:
+            "Ein bestätigtes Löschen zerstört die gespeicherten Antworten erst, sobald das Aufbewahrungsfenster verstreicht, nicht sofort. Bis dahin kann die Definition noch Restored werden, und der Verlauf erfasst sowohl das Löschen als auch die Wiederherstellung. Nach dem Fenster sind die Antworten weg, und der Verlaufseintrag liest sich als Purged.",
+
+          exportTitle: "Definitionen in eine Tabelle exportieren",
+          exportIntro:
+            "Die Aktion Export im Seitenkopf der Seite Benutzerdefinierte Felder lädt eine Tabelle der Definitionen herunter, die Sie sehen können, eine Zeile pro Feld mit Kopfzeilen in der ersten Zeile. Dies sind die 18 Spalten.",
+          thColumn: "Spalte",
+          thContains: "Enthält",
+          colEntityType: "Der Datensatztyp, gegen den das Feld definiert ist.",
+          colKey: "Der maschinenlesbare Schlüssel des Felds.",
+          colLabelEn: "Die englische Bezeichnung.",
+          colLabelAr: "Die arabische Bezeichnung, leer, falls keine gesetzt wurde.",
+          colValueType: "Einer der zweiundzwanzig Werttypen.",
+          colRequired: "Ob das Feld erforderlich ist.",
+          colActive: "Ob das Feld weiterhin in Formularen angeboten wird.",
+          colSortOrder: "Die Position des Felds unter den benutzerdefinierten Feldern des Datensatztyps.",
+          colOptionsEn: "Die englischen Optionen, bei einem Select- oder MultiSelect-Feld.",
+          colOptionsAr: "Die arabischen Optionen, an die englischen angepasst.",
+          colSensitivity: "Das auf der Definition gesetzte Klassifizierungs-Label.",
+          colExportable:
+            "Die Einstellung Include in exports, gemeldet als Yes oder No. Sie wird nie benutzt, um diese Datei zu filtern — ein Definitionsexport, der Zeilen ausließe, würde genau die Felder verbergen, die ein Administrator am ehesten prüfen muss.",
+          colValidator: "Der angehängte Validator, bei einem Textfeld.",
+          colValidatorParam: "Die Einstellung des Validators, wo er eine annimmt.",
+          colPlaceholderEn: "Der englische Platzhalter-Hinweis.",
+          colPlaceholderAr: "Der arabische Platzhalter-Hinweis.",
+          colScope: "Platform bei einem globalen Feld, Organisation bei einem Arbeitsbereichsfeld.",
+          colCreated: "Wann die Definition angelegt wurde, in UTC.",
+          exportBooleans:
+            "Ja/Nein-Spalten werden als die Wörter Yes und No geschrieben statt als Tabellenkalkulations-Booleans, sodass sie das Öffnen in einer anderen Sprache überstehen und weiterhin wie beabsichtigt zu lesen sind.",
+          exportSafetyTitle: "Bezeichnungen, die wie Formeln aussehen, bleiben Text",
+          exportSafetyContent:
+            "Jede Zelle wird als regloser Text geschrieben, nie als Formel. Eine Bezeichnung mit dem Namen =SUM(A1) landet in der Datei als die buchstäblichen Zeichen, nicht als Berechnung — und dasselbe gilt für eine Bezeichnung, die mit +, -, @ oder einem Tabulator gefolgt von = beginnt. Das ist kategorisch statt ein Filter bekannter Fälle.",
+          exportLimitTitle: "Drei Grenzen des Exports",
+          exportLimitContent:
+            "Er enthält Definitionen und nie die Antworten von irgendjemandem — es gibt nirgends im Produkt einen Werteexport. Über 10.000 Definitionen hinaus weist er rundheraus zurück, mit dem Hinweis, den Export auf einen einzigen Datensatztyp einzugrenzen, statt Ihnen eine abgeschnittene Datei zu geben, die vollständig aussieht. Und die 18 Spalten oben sind die ganze Datei: Der festgelegte Target Entity Type eines Referenzfelds ist keine davon, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt. Vor Ihnen eingeschränkte Felder fehlen in der Datei, statt leer zu sein.",
+
+          referenceTitle: "Die beiden Referenzbildschirme",
+          referenceIntro:
+            "Beide sind über Links im Seitenkopf der Seite Benutzerdefinierte Felder erreichbar, beide sind schreibgeschützt, und beide sind hinter derselben Ansichtsberechtigung wie der Bildschirm Benutzerdefinierte Felder selbst gesperrt. Keiner hat einen eigenen Eintrag in der Seitenleiste, was beabsichtigt ist.",
           valueTypesScreenTitle: "Werttypen",
-          valueTypesScreenIntro: "A table of all nineteen value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer \"what types exist\" without opening a definition form. Text is the only row showing validator support, and the two reference types show no options list of their own — the records they offer come from another module rather than from a list you author.",
-          entityTypesScreenTitle: "Entity Types",
-          entityTypesScreenIntro: "A list of every record type a benutzerdefiniertes Feld can be attached to: its display name, its key, and the module that owns it.",
-          entityTypesScreenDrift: "It also shows two separate screen columns plus a status, which is not a duplication. One is what the platform claims about this application; the other is what this application actually has. The status column says whether the two agree, and a row reading Out of Sync is a real defect worth reporting — it means either a field pointed at a record type nobody can render, or a screen the platform does not know exists.",
-          apiOnlyTitle: "API-only record types",
-          apiOnlyContent: "A record type with no screen in this application is still a legal target for a benutzerdefiniertes Feld. It is listed after the screen-backed ones on the definition form, with an API only suffix. A field defined against one of those is reachable through the API and has nowhere at all to render in the interface — which is fine if that is what you intended, and a puzzle if it is not.",
+          valueTypesScreenIntro:
+            "Eine Tabelle aller zweiundzwanzig Werttypen mit, für jeden, einer Beschreibung, wofür er gedacht ist, ob er einen Platzhalter annimmt, ob er eine eigene Optionsliste besitzt, und ob er einen Validator unterstützt. Nutzen Sie sie, um \"welche Typen existieren\" zu beantworten, ohne ein Definitionsformular zu öffnen. Text ist die einzige Zeile, die Validator-Unterstützung zeigt, und die vier referenzförmigen Typen zeigen keine eigene Optionsliste — was sie anbieten, stammt aus einem anderen Modul oder aus einer hochgeladenen Datei, nicht aus einer von Ihnen verfassten Liste.",
+          entityTypesScreenTitle: "Entitätstypen",
+          entityTypesScreenIntro:
+            "Eine Liste jedes Datensatztyps, an den ein benutzerdefiniertes Feld angehängt werden kann: sein Anzeigename, sein Schlüssel, und das Modul, dem er gehört.",
+          entityTypesScreenDrift:
+            "Sie zeigt auch zwei getrennte Bildschirm-Spalten plus einen Status, was keine Dopplung ist. Die eine ist das, was die Plattform über diese Anwendung behauptet; die andere ist das, was diese Anwendung tatsächlich hat. Die Statusspalte sagt, ob die beiden übereinstimmen, und eine Zeile mit Out of Sync ist ein echter, meldenswerter Fehler — sie bedeutet entweder, dass ein Feld auf einen Datensatztyp zeigt, den niemand darstellen kann, oder auf einen Bildschirm, von dem die Plattform nichts weiß.",
+          apiOnlyTitle: "Nur per API erreichbare Datensatztypen",
+          apiOnlyContent:
+            "Ein Datensatztyp ohne Bildschirm in dieser Anwendung ist trotzdem ein rechtmäßiges Ziel für ein benutzerdefiniertes Feld. Er wird auf dem Definitionsformular nach den bildschirmgestützten aufgeführt, mit einem Zusatz API only. Ein gegen einen davon definiertes Feld ist über die API erreichbar und hat in der Oberfläche nirgends, wo es dargestellt werden könnte — was in Ordnung ist, falls das beabsichtigt war, und ein Rätsel, falls nicht.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Grenzwerte und Verhalten
+        // ═══════════════════════════════════════════════════
         limits: {
-          title: "Limits and Behaviours",
-          description: "Every fixed cap and every deliberate limitation in benutzerdefinierte Felder, each with the reason it is that way — so nobody spends an afternoon looking for a setting that does not exist.",
-          intro: "This page collects every limit a custom-fields administrator can reasonably expect to hit, and says why each one is where it is. Everything here describes current behaviour rather than a promise about the future. A limit stated plainly is cheaper than a limit discovered at four in the afternoon.",
-          numbersTitle: "The fixed numbers",
-          numbersIntro: "These are constants in the product. None of them can be raised or lowered for an individual field, and only the last one varies at all.",
-          thLimit: "Limit",
-          thValue: "Value",
-          thConfigurable: "Configurable?",
-          limTextLength: "Text field length, in characters",
-          limLongTextLength: "LongText field length, in characters",
-          limMultiSelect: "MultiSelect selections per value",
-          limRating: "Rating scale, whole numbers only",
-          limPercent: "Percent range, inclusive",
-          limPhoneDigits: "Phone digits, after the leading +",
-          limCurrencyCode: "Currency code length, uppercase letters",
-          limDuration: "Duration upper bound",
-          limReferencePage: "Records per page in a reference picker",
-          limReferencePageMax: "Largest page a reference picker may ask for",
-          limGroupReorder: "Field groups per record type in one reorder",
-          limExportRows: "Definitions per spreadsheet export",
-          limFieldsPerWorkspace: "Benutzerdefinierte Felder per workspace",
-          cfgNo: "No",
-          cfgPlan: "Set by your plan",
-          valNoUpperBound: "None",
-          valPlanQuota: "Plan quota — zero on the Free edition",
-          validatorsTitle: "Validator behaviours",
-          thBehaviour: "Behaviour",
-          thWhy: "Why",
-          vTextOnly: "Validators attach to Text fields only.",
-          vTextOnlyWhy: "The safety argument for the built-in patterns was derived for single-line text input. Extending it to a differently shaped input needs that analysis redone, and that is not something to smuggle into a feature release. A Text field with a validator is the answer when you need an email address with extra constraints.",
-          vNoRetro: "Attaching a validator never re-checks answers already saved.",
-          vNoRetroWhy: "Validation runs in exactly one place: the save path. Nothing walks historical data when a validator is newly attached, so a field can legitimately hold values its own current validator would refuse, until somebody re-enters them.",
-          vWhitespace: "A whitespace-only value skips validation entirely unless the field is Required.",
-          vWhitespaceWhy: "The emptiness check runs before any type or validator check. On an optional field a value of nothing but spaces is therefore stored as cleared with no validator error at all. Mark the field Required if a blank answer should be refused.",
-          vNoRegex: "There is no pattern or regular-expression box anywhere.",
-          vNoRegexWhy: "A hand-written pattern can be made to consume enormous processing time on a short input, turning a data-entry form into a way of taking the system down. The 13 curated checks exist precisely so that nobody has to author one.",
-          vNoFilter: "The definitions list cannot be filtered or searched by validator.",
-          vNoFilterWhy: "No such view was built. To see which validator a field uses, open that field's definition form.",
-          vNoReference: "There is no browsable validator reference inside the product.",
-          vNoReferenceWhy: "Werttypen and record types each got a read-only reference screen; validators did not. The dropdown on a Text field's definition form is the only in-product list.",
-          vNoChecksumEgUae: "The Egyptian and Emirati ID checks verify structure but not a check digit.",
-          vNoChecksumEgUaeWhy: "Neither country publishes a check-digit algorithm, and the community guesses found during research disagreed with each other. A wrong algorithm would reject real, valid IDs, which is worse than not checking the final digit at all.",
-          vNoAe: "Postal Code does not support the United Arab Emirates.",
-          vNoAeWhy: "The UAE has no national postal-code system, so there is nothing to validate against. Attempting it is refused with its own explanatory message rather than a generic one.",
-          typesTitle: "Value-type behaviours",
-          tValueTypeFixed: "A field's value type can never be changed.",
-          tValueTypeFixedWhy: "Answers already recorded under the old type would stop making sense, and there is no conversion. The same applies to the key, the record type and the scope.",
-          tMultiOrder: "A MultiSelect answer reads back in selection order, not option order.",
-          tMultiOrderWhy: "Preserving the order somebody picked in is what makes the value round-trip faithfully. The cost is that a list column showing that answer is not guaranteed to follow the order you authored the options in.",
-          tLongTextNoBlock: "LongText lets you type past its 10,000-character cap.",
-          tLongTextNoBlockWhy: "The on-screen counter turns red, but there is no pre-submit block the way MultiSelect blocks a twentieth selection. The refusal comes from the save.",
-          tCurrencyShape: "A Currency code is checked for shape only.",
-          tCurrencyShapeWhy: "There is no authoritative list of real currency codes in the product to check against, and a workspace may legitimately need any of roughly 180 real ones. Three uppercase letters is therefore the whole check, and a well-formed but non-existent code such as ZZZ is accepted.",
-          tCurrencyPlain: "Currency stores a plain amount, never minor units.",
-          tCurrencyPlainWhy: "It follows the same convention as every other monetary amount in the product. 100.50 is stored as 100.50, never as 10050 — which matters if you ever read the raw data or build a report on it.",
-          tDurationMinutes: "Duration's unit is always minutes, and it has no maximum.",
-          tDurationMinutesWhy: "Minutes is the convention the scheduling and booking parts of the product already use for duration-shaped data, and the form labels the unit visibly rather than leaving a bare number. Only negative values are refused; there is no upper bound and no per-field way to set one.",
-          tRatingSlider: "An untouched Rating field shows its slider at 1 while still being empty.",
-          tRatingSliderWhy: "A slider always needs a real number to position its thumb. Nothing is submitted until somebody actually moves it, so the field genuinely saves as empty — but it looks like a 1 until you know that.",
-          tRatingZero: "A Rating of 0 is refused rather than treated as unrated.",
-          tRatingZeroWhy: "Unrated means the field was left genuinely empty. An explicitly submitted 0 is a real value that fails the 1-to-5 check exactly as a 6 would, and it gets the same message.",
-          tPhoneShape: "Phone validates shape, not whether the number could exist.",
-          tPhoneShapeWhy: "The server checks the international grammar only. The form's own picker additionally checks the digits against the selected country's real numbering plan, so the gap is only reachable from a request that bypasses the form — an accepted data-quality limitation rather than a security one.",
-          tPhoneFlag: "Phone's displayed country flag can be wrong on a shared calling code.",
-          tPhoneFlagWhy: "Some calling codes are shared by several countries, and there is no separate country column — the flag is derived from the number itself. The stored number is unaffected; only the flag beside it can pick the wrong country within a shared code.",
-          tColorShorthand: "Color never unifies the three-digit and six-digit forms.",
-          tColorShorthandWhy: "Both are valid and both persist exactly as submitted, so the same colour can be stored two ways across different records. Only case is normalised, always to lower case.",
-          tTimeText: "Time is stored as canonical text rather than as a database time.",
-          tTimeTextWhy: "A deliberate storage choice, made to avoid repeating a known sorting problem that an existing time column elsewhere in the product has on one database. Unpadded input is accepted and normalised, so two spellings of the same time always converge.",
-          tPercentStorage: "Percent stores the number you would say aloud, not a fraction.",
-          tPercentStorageWhy: "25 is stored as 25 and displayed as 25%. It is never 0.25, and the display appends the sign rather than running a fraction-based formatter, specifically so a 25 can never be shown as 2500%.",
-          tTextNotTrimmed: "Text does not trim surrounding spaces; Select does.",
-          tTextNotTrimmedWhy: "A Text value is stored exactly as submitted, because leading or trailing space can be meaningful in free text. A Select value is trimmed on both sides before being matched against the options, so a stray space never causes a spurious rejection.",
-          tOracleBytes: "Long Arabic text can be refused below the stated character cap on one database.",
-          tOracleBytesWhy: "The 4,000-character Text cap is an exact character count on two of the three supported databases. On the third it is counted in bytes, so multi-byte text — Arabic included — can reach the limit sooner. Use LongText if you are close to the boundary.",
-          referencesTitle: "Reference behaviours",
-          fNoStoredName: "A reference never stores the name of the record it points at.",
-          fNoStoredNameWhy: "A stored name would sit inside the record holding the field, and would therefore be readable by anybody who can read that record — while the name itself is guarded by the target's own permission. There is no setting to turn this on, and there will not be one. The compensating benefit is that a name corrected on its own record is corrected everywhere it is referenced, immediately.",
-          fIdOpaque: "The identity of the referenced record is opaque and must be round-tripped unchanged.",
-          fIdOpaqueWhy: "It is another module's key, encrypted for the wire, and nothing about it is meant to be read or reshaped. One altered character and the product correctly reports the stored reference as malformed. Send back exactly the string you received.",
-          fSameNames: "A reference is written under the same two names it is read under.",
-          fSameNamesWhy: "There is no asymmetry between the read shape and the write shape. Anyone integrating against the values API should echo the two property names they were given; inventing a different name for the identity on the way in produces a save carrying no pointer at all, which is then refused as an incomplete reference.",
-          fFiveFailures: "A reference that will not display says which of five things happened.",
-          fFiveFailuresWhy: "No permission, record gone, malformed value, a lookup that failed just now, and a kind of record this installation cannot answer for are five different problems with five different remedies. Rendering them all as one blank field is what leaves a pointer at a deleted record unnoticed for a year.",
-          fMergedAnswers: "\"Deleted\" and \"in a workspace you cannot see\" are one answer.",
-          fMergedAnswersWhy: "Telling them apart would let somebody test identities one at a time to discover what exists in another workspace. \"You may not view this kind of record\" is told apart from both, because it describes the reader's own access and reveals nothing.",
-          fDeleteClears: "Deleting a referenced record clears every pointer at it and keeps every value row.",
-          fDeleteClearsWhy: "Both pieces of each affected answer are cleared together, never one without the other. Nothing is deleted: the answer keeps its row, its version and its audit trail, so the field afterwards reads as genuinely empty rather than as broken.",
-          fNoBacklinks: "Nothing lists the references pointing at a given record.",
-          fNoBacklinksWhy: "There is no \"what points at this?\" view anywhere, and deleting a record does not warn you how many pointers it is about to clear. The clearing is silent because it is safe, not because it is hidden.",
-          fLimitedTargets: "Only three kinds of record can currently be referenced.",
-          fLimitedTargetsWhy: "Staff members, user accounts and party people — the kinds whose owning module supplies a searchable, permission-checked list. Anything else is refused rather than answered with an empty list, because an empty list looks like a correct result and would say \"there are none of these\" when the truth is \"this cannot be asked\".",
-          fNoAdminTarget: "Administrator records cannot be referenced at all.",
-          fNoAdminTargetWhy: "An administrator may belong to no workspace — a platform administrator has none — so a pointer at one could reach past every workspace boundary in the product. A User Reference field refuses one outright, and the definition form never offers one.",
-          fUnpinnedIsLegal: "Leaving a reference field unpinned is a permanent, supported state.",
-          fUnpinnedIsLegalWhy: "It means \"any kind this person may reference\", and each answer records which kind it chose. It must never be read as \"nothing configured, therefore nothing valid\" — the record form handles it by asking for the kind of record first and the record second.",
-          fPopulatedUnpinned: "A populated unpinned field offers no way to change the kind of record.",
-          fPopulatedUnpinnedWhy: "The stored answer's own kind is used for the picker, so re-picking is confined to that kind. Clearing the field brings the type control back. A real limit rather than a defect, and the shape of this feature most likely to be reported as one.",
-          fNotExported: "A pinned target type is not in the definitions export.",
-          fNotExportedWhy: "The spreadsheet has 18 columns and none of them is the target type, so an exported definition does not record what its field points at.",
-          fSingleValue: "A reference field holds exactly one pointer.",
-          fSingleValueWhy: "There is no multi-value reference type. Two answers means two fields, and MultiSelect cannot be pointed at records — its answers are text you authored.",
-          optionsTitle: "Option behaviours",
-          oTextIsValue: "The English option text is the stored answer.",
-          oTextIsValueWhy: "There is no separate code behind an option, so renaming one changes what every existing record displays. Prefer adding a new option and retiring the old one when the distinction matters.",
-          oCaseSensitive: "Option matching is exact and case-sensitive.",
-          oCaseSensitiveWhy: "Two options differing only by case are a legitimately distinct pair, and folding case would make them collide. Both sides are trimmed first, so only case and content matter.",
-          oEnglishStored: "The Arabic option label is display only.",
-          oEnglishStoredWhy: "The two label lists are matched row by row, and the English one is what is written to the record and validated against. An Arabic reader sees Arabic on the way in and on the way out; the data underneath stays one consistent value.",
-          oNoSharedSets: "Each field carries its own options list.",
-          oNoSharedSetsWhy: "There is no way to define a list once and reuse it across several fields. A Countries list needed by three fields is written and maintained three times.",
-          groupsTitle: "Field-group behaviours",
-          gStableKeyFixed: "A group's stable key can never be changed, by anybody.",
-          gStableKeyFixedWhy: "Exported schema names a group by this key, so a rename would silently turn a future re-import from an update into a create, against a bundle already shipped. A wrong key means recreating the group.",
-          gReorderCeiling: "Reordering refuses more than 100 groups on one record type.",
-          gReorderCeilingWhy: "A reorder request carries the whole set at once. Past 100, no group on that record type can be moved at all — the screen says so rather than failing generically.",
-          gGlobalOrdering: "A workspace cannot position its group relative to a global one.",
-          gGlobalOrderingWhy: "Reordering is all-or-nothing and refuses any group the caller does not own, so a workspace's own groups are renumbered from zero. Those numbers can collide with a global group's, the tie is broken on the English label, and the visible effect is that moving your group to the top can leave it below a global one.",
-          gSeparatePerms: "Field groups need their own permissions.",
-          gSeparatePermsWhy: "They are gated separately from field definitions, including a distinct permission for reordering. A role holding every custom-fields permission does not get them automatically, and without them the link and the picker are simply absent.",
-          gOneEntityType: "A group belongs to exactly one record type.",
-          gOneEntityTypeWhy: "Nothing is listed until you pick a record type, and changing a field's record type clears its group, because a group from one type is never valid for another.",
-          gUniquenessIndex: "In an upgraded database, stable-key uniqueness rests on the application check.",
-          gUniquenessIndexWhy: "Groups that existed before stable keys carry an empty key until a backfill is run, and the database-level uniqueness constraint stays switched off until that has happened everywhere — it would otherwise reject the second of those empty keys.",
-          securityTitle: "Security and classification behaviours",
-          sSensitivityLabel: "Sensitivity is a label, not an access control.",
-          sSensitivityLabelWhy: "It is stored, round-tripped and reportable, and it changes nothing about who can read a value. Field-level security is the mechanism that restricts access, and the two are unconnected.",
-          sRestrictedByResource: "Restrictions are keyed by permission resource, not by record type.",
-          sRestrictedByResourceWhy: "It is the same resource that already guards the record itself, so one restricted-fields list covers a screen's built-in fields and its benutzerdefinierte Felder alike. Names are matched without regard to case.",
-          sRestrictedInvisible: "A restricted field is absent, not blank.",
-          sRestrictedInvisibleWhy: "Showing a placeholder would reveal that a value exists, which is itself information. The consequence is that a restricted field is indistinguishable from one that was never defined — worth remembering when somebody reports a missing field.",
-          sRejectWholeSave: "Writing a restricted field refuses the entire save.",
-          sRejectWholeSaveWhy: "Quietly dropping the one field and reporting success is the harder failure to notice. The refusal also fires when the submitted value equals the stored one, so nobody can probe a hidden value by testing what is accepted.",
-          sRequiredExclusive: "Required and restricted cannot be combined.",
-          sRequiredExclusiveWhy: "Somebody who cannot see a field could never satisfy it, so the record would be unsaveable for them. Both directions are refused, whichever you try first, and the message names the field.",
-          sHistoryNoValues: "Definition history never shows value changes.",
-          sHistoryNoValuesWhy: "Including them would make the dialog a readable copy of everybody's field data, going around field-level security and every other visibility rule at once. The value-bearing records are excluded by name rather than by omission.",
-          exportTitle: "Export and portability behaviours",
-          eDefinitionsOnly: "The spreadsheet export contains definitions, never answers.",
-          eDefinitionsOnlyWhy: "It is a definitions export by design, and there is no values export anywhere in the product. Nobody's data can leave through it.",
-          eRefusesPastLimit: "Past 10,000 definitions the export refuses instead of truncating.",
-          eRefusesPastLimitWhy: "A silently truncated file is worse than no file, because it looks complete. The refusal tells you to narrow the export to a single record type.",
-          eRestrictedAbsent: "Fields restricted from you are absent from the file, not blank.",
-          eRestrictedAbsentWhy: "Field-level security applies to the export exactly as it does on screen, and a blank column would still reveal that the field exists.",
-          eNoImport: "Definitions can be exported but not imported.",
-          eNoImportWhy: "There is no import path, so a spreadsheet cannot be used to create fields in bulk. The export is a report, not a template.",
-          eTextCells: "Every export cell is written as text.",
-          eTextCellsWhy: "A label beginning with =, +, - or @ arrives as literal characters rather than as a spreadsheet formula. This is categorical rather than a filter of known cases, so nothing that looks like a calculation can become one.",
-          reachTitle: "Where fields do and do not appear",
-          rApiOnlyTypes: "Some record types have no screen at all.",
-          rApiOnlyTypesWhy: "They are legal targets and are listed last on the definition form with an API only suffix. A field defined against one is reachable through the API and has nowhere in the interface to render.",
-          rHandRolledForms: "A handful of screens wire their benutzerdefinierte Felder by hand.",
-          rHandRolledFormsWhy: "Most screens pick benutzerdefinierte Felder up automatically. A few whose create and edit interfaces predate that mechanism — among them webhooks, message templates, tenant plans, plugin definitions, leads and themes — implement the same Benutzerdefinierte Felder section themselves. Behaviour should be identical; if it is not, that is worth reporting.",
-          rDsrCreateOnly: "Data subject requests take benutzerdefinierte Felder on create only.",
-          rDsrCreateOnlyWhy: "A submitted request moves through a review workflow rather than being generally editable, so there is no edit form to carry benutzerdefinierte Felder into. That is by design, not an omission.",
-          rDialogForms: "Most record create and edit forms are still dialogs.",
-          rDialogFormsWhy: "Custom-field authoring itself moved out of a nested dialog into a side panel, which is why adding a field from inside a record no longer stacks two dialogs. The surrounding record forms were deliberately left alone — moving them is a much wider change across modules that have nothing to do with benutzerdefinierte Felder.",
-          rNoSidebarEntry: "The Werttypen and Entity Types screens have no sidebar entry.",
-          rNoSidebarEntryWhy: "Sidebar navigation is seeded centrally, and these two were deliberately left out of that seed. They are reached from links in the Benutzerdefinierte Felder page header instead.",
-          absentTitle: "Things the product does not do",
-          absentIntro: "Asked often enough to be worth stating plainly. None of these is a fault to report.",
-          absent1: "The nineteen value types are the complete set. There is no type for uploading a file or an image, and none for formatted rich text — that kind of information belongs to the record's own built-in fields and attachments. Pointing at another record is the one item that used to be on this list and no longer is: Entity Reference and User Reference do exactly that, and have two pages of their own.",
-          absent2: "There is no values export. The spreadsheet export covers definitions only.",
-          absent3: "There is no import, and no bulk creation. Fields are created one at a time, on the form.",
-          absent4: "There is no shared options list. Each field carries and maintains its own.",
-          absent5: "There is no conditional show-or-hide that an administrator can configure. A field is either on the form or it is not, subject to Active and to field-level security.",
-          absent6: "There is no calculation, no default value, and no cross-field rule. A benutzerdefiniertes Feld records an answer; it does not derive one.",
-          absentInfoTitle: "If you need one of these",
-          absentInfoContent: "Say so to whoever owns your product roadmap rather than working around it in a way that costs you data. Recreating a field to change something permanent destroys the answers already stored against it, and that is the expensive mistake this page exists to prevent.",
+          title: "Grenzwerte und Verhalten",
+          description:
+            "Jede feste Obergrenze und jede bewusste Einschränkung bei benutzerdefinierten Feldern, jeweils mit dem Grund, warum sie so ist — damit niemand einen Nachmittag mit der Suche nach einer Einstellung verbringt, die es nicht gibt.",
+          intro:
+            "Diese Seite versammelt jede Grenze, auf die ein Administrator für benutzerdefinierte Felder vernünftigerweise stoßen kann, und sagt, warum jede dort ist, wo sie ist. Alles hier beschreibt aktuelles Verhalten statt eines Versprechens über die Zukunft. Eine klar ausgesprochene Grenze ist billiger als eine um vier Uhr nachmittags entdeckte.",
+
+          numbersTitle: "Die festen Zahlen",
+          numbersIntro:
+            "Das sind Konstanten im Produkt. Keine davon lässt sich für ein einzelnes Feld anheben oder senken, und nur die letzte variiert überhaupt.",
+          thLimit: "Grenze",
+          thValue: "Wert",
+          thConfigurable: "Konfigurierbar?",
+          limTextLength: "Länge eines Text-Felds, in Zeichen",
+          limLongTextLength: "Länge eines LongText-Felds, in Zeichen",
+          limMultiSelect: "MultiSelect-Auswahlen pro Wert",
+          limRating: "Bewertungsskala, nur ganze Zahlen",
+          limPercent: "Percent-Bereich, einschließlich",
+          limPhoneDigits: "Telefonziffern, nach dem führenden +",
+          limCurrencyCode: "Länge des Währungscodes, Großbuchstaben",
+          limDuration: "Obergrenze von Duration",
+          limReferencePage: "Datensätze pro Seite in einer Referenz-Auswahlkomponente",
+          limReferencePageMax: "Größte Seite, die eine Referenz-Auswahlkomponente anfragen darf",
+          limGroupReorder: "Feldgruppen pro Datensatztyp in einer Umsortierung",
+          limExportRows: "Definitionen pro Tabellenexport",
+          limFieldsPerWorkspace: "Benutzerdefinierte Felder pro Arbeitsbereich",
+          cfgNo: "Nein",
+          cfgPlan: "Von Ihrem Plan festgelegt",
+          valNoUpperBound: "Keine",
+          valPlanQuota: "Plan-Kontingent — null bei der Free-Edition",
+
+          validatorsTitle: "Validator-Verhalten",
+          thBehaviour: "Verhalten",
+          thWhy: "Warum",
+          vTextOnly: "Validatoren hängen sich nur an Textfelder an.",
+          vTextOnlyWhy:
+            "Das Sicherheitsargument für die eingebauten Muster wurde für einzeilige Texteingabe hergeleitet. Es auf eine anders geformte Eingabe auszudehnen bräuchte diese Analyse erneut, und das ist nichts, das man in ein Feature-Release hineinschmuggelt. Ein Textfeld mit einem Validator ist die Antwort, wenn Sie eine E-Mail-Adresse mit zusätzlichen Einschränkungen brauchen.",
+          vNoRetro: "Einen Validator anzuhängen prüft nie bereits gespeicherte Antworten erneut.",
+          vNoRetroWhy:
+            "Die Validierung läuft an genau einer Stelle: dem Speicherpfad. Nichts durchläuft historische Daten, wenn ein Validator neu angehängt wird, sodass ein Feld rechtmäßig Werte enthalten kann, die sein eigener aktueller Validator zurückweisen würde, bis jemand sie erneut eingibt.",
+          vWhitespace: "Ein Wert aus nichts als Leerzeichen überspringt die Validierung vollständig, außer das Feld ist Required.",
+          vWhitespaceWhy:
+            "Die Leere-Prüfung läuft vor jeder Typ- oder Validator-Prüfung. Bei einem optionalen Feld wird ein Wert aus nichts als Leerzeichen daher ohne jeden Validator-Fehler als gelöscht gespeichert. Markieren Sie das Feld als Required, falls eine leere Antwort zurückgewiesen werden soll.",
+          vNoRegex: "Es gibt nirgends ein Muster- oder Regex-Feld.",
+          vNoRegexWhy:
+            "Ein von Hand geschriebenes Muster lässt sich so gestalten, dass es enorm viel Rechenzeit für eine kurze Eingabe verbraucht, was ein Dateneingabeformular in einen Weg verwandelt, das System lahmzulegen. Die 13 kuratierten Prüfungen existieren genau deshalb, damit niemand eines verfassen muss.",
+          vNoFilter: "Die Definitionsliste lässt sich nicht nach Validator filtern oder durchsuchen.",
+          vNoFilterWhy:
+            "Eine solche Ansicht wurde nicht gebaut. Um zu sehen, welchen Validator ein Feld nutzt, öffnen Sie das Definitionsformular dieses Felds.",
+          vNoReference: "Es gibt keine durchsuchbare Validator-Referenz im Produkt selbst.",
+          vNoReferenceWhy:
+            "Werttypen und Datensatztypen erhielten je einen schreibgeschützten Referenzbildschirm; Validatoren nicht. Das Dropdown auf dem Definitionsformular eines Textfelds ist die einzige produktinterne Liste.",
+          vNoChecksumEgUae: "Die Prüfungen für ägyptische und emiratische Ausweise verifizieren die Struktur, aber keine Prüfziffer.",
+          vNoChecksumEgUaeWhy:
+            "Keines der beiden Länder veröffentlicht einen Prüfziffer-Algorithmus, und die während der Recherche gefundenen Vermutungen der Community widersprachen einander. Ein falscher Algorithmus würde echte, gültige Ausweisnummern zurückweisen, was schlimmer ist, als die letzte Ziffer gar nicht zu prüfen.",
+          vNoAe: "Postal Code unterstützt die Vereinigten Arabischen Emirate nicht.",
+          vNoAeWhy:
+            "Die VAE haben kein nationales Postleitzahlensystem, es gibt also nichts, wogegen geprüft werden könnte. Der Versuch wird mit einer eigenen erklärenden Meldung zurückgewiesen statt mit einer allgemeinen.",
+
+          typesTitle: "Werttyp-Verhalten",
+          tValueTypeFixed: "Der Werttyp eines Felds lässt sich nie ändern.",
+          tValueTypeFixedWhy:
+            "Bereits unter dem alten Typ erfasste Antworten würden keinen Sinn mehr ergeben, und es gibt keine Umwandlung. Dasselbe gilt für den Schlüssel, den Datensatztyp und den Geltungsbereich.",
+          tMultiOrder: "Eine MultiSelect-Antwort liest sich in Auswahlreihenfolge zurück, nicht in Optionsreihenfolge.",
+          tMultiOrderWhy:
+            "Die Reihenfolge zu bewahren, in der jemand gewählt hat, ist es, was den Wert originalgetreu hin- und zurückreisen lässt. Der Preis dafür ist, dass eine Listenspalte, die diese Antwort zeigt, nicht garantiert der Reihenfolge folgt, in der Sie die Optionen verfasst haben.",
+          tLongTextNoBlock: "LongText lässt Sie über seine 10.000-Zeichen-Grenze hinaus tippen.",
+          tLongTextNoBlockWhy:
+            "Der Zähler auf dem Bildschirm wird rot, aber es gibt keine Sperre vor dem Absenden, wie MultiSelect eine zwanzigste Auswahl sperrt. Die Zurückweisung kommt vom Speichervorgang.",
+          tCurrencyShape: "Ein Currency-Code wird nur auf seine Form geprüft.",
+          tCurrencyShapeWhy:
+            "Es gibt im Produkt keine maßgebliche Liste echter Währungscodes, gegen die geprüft werden könnte, und ein Arbeitsbereich könnte rechtmäßig jeden der ungefähr 180 echten brauchen. Drei Großbuchstaben sind daher die ganze Prüfung, und ein wohlgeformter, aber nicht existierender Code wie ZZZ wird angenommen.",
+          tCurrencyPlain: "Currency speichert einen einfachen Betrag, nie kleinste Einheiten.",
+          tCurrencyPlainWhy:
+            "Das folgt derselben Konvention wie jeder andere Geldbetrag im Produkt. 100.50 wird als 100.50 gespeichert, nie als 10050 — was zählt, falls Sie je die Rohdaten lesen oder einen Bericht darauf bauen.",
+          tDurationMinutes: "Die Einheit von Duration ist immer Minuten, und es gibt kein Maximum.",
+          tDurationMinutesWhy:
+            "Minuten sind die Konvention, die die Planungs- und Buchungsteile des Produkts bereits für zeitdauerförmige Daten verwenden, und das Formular beschriftet die Einheit sichtbar statt eine nackte Zahl zu lassen. Nur negative Werte werden zurückgewiesen; es gibt keine Obergrenze und keinen Weg pro Feld, eine zu setzen.",
+          tRatingSlider: "Ein unberührtes Rating-Feld zeigt seinen Schieberegler bei 1, während es leer bleibt.",
+          tRatingSliderWhy:
+            "Ein Schieberegler braucht immer eine echte Zahl, um seinen Griff zu positionieren. Nichts wird übermittelt, bevor jemand ihn tatsächlich bewegt, das Feld speichert also tatsächlich als leer — sieht aber wie eine 1 aus, bis man das weiß.",
+          tRatingZero: "Eine Rating von 0 wird zurückgewiesen statt als unbewertet behandelt.",
+          tRatingZeroWhy:
+            "Unbewertet bedeutet, dass das Feld wirklich leer gelassen wurde. Eine ausdrücklich übermittelte 0 ist ein echter Wert, der die Prüfung von 1 bis 5 ebenso wenig besteht wie eine 6, und erhält dieselbe Meldung.",
+          tPhoneShape: "Phone validiert die Form, nicht, ob die Nummer existieren könnte.",
+          tPhoneShapeWhy:
+            "Der Server prüft nur die internationale Grammatik. Die eigene Auswahlkomponente des Formulars prüft die Ziffern zusätzlich gegen den echten Nummernplan des gewählten Landes, sodass die Lücke nur über eine Anfrage erreichbar ist, die das Formular umgeht — eine akzeptierte Einschränkung der Datenqualität, keine der Sicherheit.",
+          tPhoneFlag: "Die angezeigte Länderflagge von Phone kann bei einer gemeinsam genutzten Vorwahl falsch sein.",
+          tPhoneFlagWhy:
+            "Manche Vorwahlen werden von mehreren Ländern gemeinsam genutzt, und es gibt keine gesonderte Länderspalte — die Flagge wird aus der Nummer selbst abgeleitet. Die gespeicherte Nummer ist unberührt; nur die Flagge daneben kann innerhalb eines gemeinsam genutzten Codes das falsche Land wählen.",
+          tColorShorthand: "Color vereinheitlicht nie die drei- und sechsstelligen Formen.",
+          tColorShorthandWhy:
+            "Beide sind gültig und bleiben genau so erhalten, wie übermittelt, sodass dieselbe Farbe über verschiedene Datensätze hinweg auf zwei Arten gespeichert sein kann. Nur die Groß-/Kleinschreibung wird normalisiert, immer auf Kleinbuchstaben.",
+          tTimeText: "Time wird als kanonischer Text gespeichert statt als Datenbank-Zeit.",
+          tTimeTextWhy:
+            "Eine bewusste Speicherentscheidung, getroffen, um ein bekanntes Sortierproblem zu vermeiden, das eine bestehende Zeit-Spalte anderswo im Produkt bei einer Datenbank hat. Nicht aufgefüllte Eingaben werden angenommen und normalisiert, sodass zwei Schreibweisen derselben Uhrzeit immer zusammenlaufen.",
+          tPercentStorage: "Percent speichert die Zahl, die Sie laut aussprechen würden, keinen Bruch.",
+          tPercentStorageWhy:
+            "25 wird als 25 gespeichert und als 25% angezeigt. Nie als 0.25, und die Anzeige hängt das Zeichen an, statt einen bruchbasierten Formatierer laufen zu lassen, gerade damit eine 25 nie als 2500% erscheinen kann.",
+          tTextNotTrimmed: "Text entfernt keine umgebenden Leerzeichen; Select schon.",
+          tTextNotTrimmedWhy:
+            "Ein Text-Wert wird exakt so gespeichert, wie übermittelt, weil ein führendes oder folgendes Leerzeichen in Freitext bedeutungsvoll sein kann. Ein Select-Wert wird auf beiden Seiten getrimmt, bevor er mit den Optionen abgeglichen wird, sodass ein verirrtes Leerzeichen nie eine unbegründete Zurückweisung verursacht.",
+          tOracleBytes: "Langer arabischer Text kann unterhalb der genannten Zeichenobergrenze bei einer Datenbank zurückgewiesen werden.",
+          tOracleBytesWhy:
+            "Die 4.000-Zeichen-Grenze von Text ist bei zwei der drei unterstützten Datenbanken eine exakte Zeichenanzahl. Bei der dritten wird sie in Bytes gezählt, sodass mehrbyteiger Text — Arabisch eingeschlossen — die Grenze früher erreichen kann. Verwenden Sie LongText, wenn Sie nahe an der Grenze sind.",
+
+          referencesTitle: "Referenz-Verhalten",
+          fNoStoredName: "Eine Referenz speichert nie den Namen des Datensatzes, auf den sie zeigt.",
+          fNoStoredNameWhy:
+            "Ein gespeicherter Name würde innerhalb des Datensatzes mit dem Feld liegen und wäre daher für jeden lesbar, der diesen Datensatz lesen kann — während der Name selbst von der eigenen Berechtigung des Ziels geschützt wird. Es gibt keine Einstellung, um das einzuschalten, und es wird auch keine geben. Der ausgleichende Vorteil ist, dass ein auf seinem eigenen Datensatz korrigierter Name sofort überall korrigiert ist, wo er referenziert wird.",
+          fIdOpaque: "Die Identität des referenzierten Datensatzes ist undurchsichtig und muss unverändert hin- und zurückreisen.",
+          fIdOpaqueWhy:
+            "Es ist der Schlüssel eines anderen Moduls, für die Übertragung verschlüsselt, und nichts daran ist zum Lesen oder Umformen gedacht. Ein verändertes Zeichen, und das Produkt meldet den gespeicherten Verweis zu Recht als fehlerhaft. Senden Sie exakt die Zeichenkette zurück, die Sie empfangen haben.",
+          fSameNames: "Eine Referenz wird unter denselben zwei Namen geschrieben, unter denen sie gelesen wird.",
+          fSameNamesWhy:
+            "Es gibt keine Asymmetrie zwischen der Leseform und der Schreibform. Wer gegen die Values-API integriert, sollte die beiden Eigenschaftsnamen widerspiegeln, die er erhalten hat; für die Identität auf dem Hinweg einen anderen Namen zu erfinden erzeugt einen Speichervorgang, der überhaupt keinen Verweis mit sich führt, der dann als unvollständige Referenz zurückgewiesen wird.",
+          fFiveFailures: "Eine Referenz, die sich nicht anzeigen lässt, sagt, welches von fünf Dingen geschehen ist.",
+          fFiveFailuresWhy:
+            "Keine Berechtigung, der Datensatz ist weg, ein fehlerhafter Wert, ein Lookup, der gerade eben gescheitert ist, und eine Art von Datensatz, für die diese Installation nicht zuständig sein kann, sind fünf verschiedene Probleme mit fünf verschiedenen Abhilfen. Sie alle als ein leeres Feld darzustellen ist es, was einen Verweis auf einen gelöschten Datensatz ein Jahr lang unbemerkt lässt.",
+          fMergedAnswers: "\"Gelöscht\" und \"in einem Arbeitsbereich, den Sie nicht sehen können\" sind eine Antwort.",
+          fMergedAnswersWhy:
+            "Sie zu unterscheiden würde jemandem erlauben, Identitäten einzeln durchzuprobieren, um herauszufinden, was in einem anderen Arbeitsbereich existiert. \"Sie dürfen diese Art von Datensatz nicht ansehen\" wird von beiden unterschieden, weil es den eigenen Zugriff des Lesers beschreibt und nichts preisgibt.",
+          fDeleteClears: "Das Löschen eines referenzierten Datensatzes leert jeden Verweis darauf und behält jede Wertzeile.",
+          fDeleteClearsWhy:
+            "Beide Teile jeder betroffenen Antwort werden zusammen geleert, nie eines ohne das andere. Nichts wird gelöscht: Die Antwort behält ihre Zeile, ihre Version und ihren Prüfpfad, sodass sich das Feld anschließend wirklich als leer liest statt als defekt.",
+          fNoBacklinks: "Nichts listet die Referenzen auf, die auf einen gegebenen Datensatz zeigen.",
+          fNoBacklinksWhy:
+            "Es gibt nirgends eine Ansicht \"was zeigt hierauf?\", und einen Datensatz zu löschen warnt Sie nicht, wie viele Verweise dabei gleich geleert werden. Das Leeren geschieht still, weil es sicher ist, nicht weil es verborgen ist.",
+          fLimitedTargets: "Derzeit können nur drei Arten von Datensatz referenziert werden.",
+          fLimitedTargetsWhy:
+            "Mitglieder des Personals, Benutzerkonten und Personen (Party Person) — die Arten, deren besitzendes Modul eine durchsuchbare, berechtigungsgeprüfte Liste bereitstellt. Alles andere wird zurückgewiesen statt mit einer leeren Liste beantwortet, weil eine leere Liste wie ein korrektes Ergebnis aussieht und \"es gibt keine davon\" sagen würde, wenn die Wahrheit \"das lässt sich nicht fragen\" ist.",
+          fNoAdminTarget: "Administrator-Datensätze können überhaupt nicht referenziert werden.",
+          fNoAdminTargetWhy:
+            "Ein Administrator kann zu keinem Arbeitsbereich gehören — ein Plattformadministrator hat keinen —, sodass ein Verweis auf einen davon jede Arbeitsbereichsgrenze im Produkt überschreiten könnte. Ein User-Reference-Feld weist einen rundheraus zurück, und das Definitionsformular bietet nie einen an.",
+          fUnpinnedIsLegal: "Ein Referenzfeld nicht festzulegen ist ein dauerhafter, unterstützter Zustand.",
+          fUnpinnedIsLegalWhy:
+            "Es bedeutet \"jede Art, die diese Person referenzieren darf\", und jede Antwort erfasst, welche Art sie gewählt hat. Es darf nie als \"nichts konfiguriert, also nichts gültig\" gelesen werden — das Datensatzformular behandelt es, indem es zuerst nach der Art von Datensatz fragt und danach nach dem Datensatz.",
+          fPopulatedUnpinned: "Ein ausgefülltes, nicht festgelegtes Feld bietet keinen Weg, die Art des Datensatzes zu ändern.",
+          fPopulatedUnpinnedWhy:
+            "Die eigene Art der gespeicherten Antwort wird für die Auswahlkomponente verwendet, ein erneutes Wählen ist also auf diese Art beschränkt. Das Leeren des Felds bringt das Typ-Element zurück. Eine echte Grenze und kein Fehler, und die Ausprägung dieser Funktion, die am ehesten als einer gemeldet wird.",
+          fNotExported: "Ein festgelegter Zieltyp steht nicht im Definitionsexport.",
+          fNotExportedWhy:
+            "Die Tabelle hat 18 Spalten, und keine davon ist der Zieltyp, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt.",
+          fSingleValue: "Ein Referenzfeld enthält genau einen Verweis.",
+          fSingleValueWhy:
+            "Es gibt keinen mehrwertigen Referenztyp. Zwei Antworten bedeuten zwei Felder, und MultiSelect kann nicht auf Datensätze verweisen — seine Antworten sind von Ihnen verfasster Text.",
+
+          optionsTitle: "Options-Verhalten",
+          oTextIsValue: "Der englische Optionstext ist die gespeicherte Antwort.",
+          oTextIsValueWhy:
+            "Es gibt keinen separaten Code hinter einer Option, sodass das Umbenennen einer Option ändert, was jeder bestehende Datensatz anzeigt. Bevorzugen Sie es, eine neue Option hinzuzufügen und die alte auslaufen zu lassen, wenn die Unterscheidung wichtig ist.",
+          oCaseSensitive: "Der Options-Abgleich ist exakt und unterscheidet Groß-/Kleinschreibung.",
+          oCaseSensitiveWhy:
+            "Zwei sich nur in der Groß-/Kleinschreibung unterscheidende Optionen sind ein rechtmäßig unterschiedliches Paar, und Groß-/Kleinschreibung zu ignorieren würde sie kollidieren lassen. Beide Seiten werden zuerst getrimmt, sodass nur Schreibweise und Inhalt zählen.",
+          oEnglishStored: "Die arabische Optionsbezeichnung dient nur der Anzeige.",
+          oEnglishStoredWhy:
+            "Die beiden Bezeichnungslisten werden Zeile für Zeile abgeglichen, und die englische ist es, was auf den Datensatz geschrieben und dagegen validiert wird. Ein arabischsprachiger Leser sieht Arabisch auf dem Hin- und dem Rückweg; die zugrunde liegenden Daten bleiben ein einziger konsistenter Wert.",
+          oNoSharedSets: "Die Inline-Optionsliste eines Felds ist seine eigene — eine gemeinsam zu nutzen ist ein separater, bewusster Schritt.",
+          oNoSharedSetsWhy:
+            "Eine Optionsliste bei einem Feld einzutippen hält sie privat für dieses Feld; sie wird nicht automatisch woanders wiederverwendet. Eine Länderliste, die drei Felder brauchen, muss deshalb aber nicht mehr dreimal geschrieben und gepflegt werden — binden Sie stattdessen alle drei an dasselbe gemeinsam genutzte, versionierte Option Set, und eine spätere Bearbeitung des Sets aktualisiert jedes gebundene Feld zusammen.",
+
+          groupsTitle: "Feldgruppen-Verhalten",
+          gStableKeyFixed: "Der stabile Schlüssel einer Gruppe kann von niemandem geändert werden.",
+          gStableKeyFixedWhy:
+            "Exportiertes Schema benennt eine Gruppe über diesen Schlüssel, sodass ein Umbenennen einen künftigen erneuten Import als Update still in ein Anlegen verwandeln würde, gegen ein Paket, das bereits ausgeliefert wurde. Ein falscher Schlüssel bedeutet, die Gruppe neu anzulegen.",
+          gReorderCeiling: "Das Umsortieren weist mehr als 100 Gruppen bei einem Datensatztyp zurück.",
+          gReorderCeilingWhy:
+            "Eine Umsortierungsanfrage trägt die gesamte Menge auf einmal. Ab 100 kann keine Gruppe dieses Datensatztyps mehr bewegt werden — der Bildschirm sagt das, statt allgemein zu scheitern.",
+          gGlobalOrdering: "Ein Arbeitsbereich kann seine Gruppe nicht relativ zu einer globalen positionieren.",
+          gGlobalOrderingWhy:
+            "Das Umsortieren ist alles oder nichts und weist jede Gruppe zurück, die der Aufrufer nicht besitzt, sodass die eigenen Gruppen eines Arbeitsbereichs bei null neu nummeriert werden. Diese Zahlen können mit denen einer globalen Gruppe kollidieren, der Gleichstand wird über die englische Bezeichnung entschieden, und der sichtbare Effekt ist, dass das Verschieben Ihrer Gruppe an die Spitze sie unterhalb einer globalen landen lassen kann.",
+          gSeparatePerms: "Feldgruppen brauchen ihre eigenen Berechtigungen.",
+          gSeparatePermsWhy:
+            "Sie sind getrennt von Felddefinitionen gesperrt, einschließlich einer eigenen Berechtigung für das Umsortieren. Eine Rolle, die jede Berechtigung für benutzerdefinierte Felder besitzt, erhält diese nicht automatisch, und ohne sie fehlen der Link und die Auswahlkomponente schlicht.",
+          gOneEntityType: "Eine Gruppe gehört zu genau einem Datensatztyp.",
+          gOneEntityTypeWhy:
+            "Nichts wird aufgelistet, bis Sie einen Datensatztyp wählen, und das Ändern des Datensatztyps eines Felds löscht dessen Gruppe, weil eine Gruppe eines Typs für einen anderen nie gültig ist.",
+          gUniquenessIndex: "In einer aktualisierten Datenbank ruht die Eindeutigkeit des stabilen Schlüssels auf der Anwendungsprüfung.",
+          gUniquenessIndexWhy:
+            "Gruppen, die vor stabilen Schlüsseln existierten, tragen einen leeren Schlüssel, bis eine Nachbefüllung läuft, und die Eindeutigkeitsbeschränkung auf Datenbankebene bleibt abgeschaltet, bis das überall geschehen ist — sie würde sonst den zweiten dieser leeren Schlüssel zurückweisen.",
+
+          securityTitle: "Sicherheits- und Klassifizierungsverhalten",
+          sSensitivityLabel: "Sensitivity ist ein Label, keine Zugriffskontrolle.",
+          sSensitivityLabelWhy:
+            "Es wird gespeichert, hin- und zurückgereicht und berichtet, und es ändert nichts daran, wer einen Wert lesen kann. Sicherheit auf Feldebene ist der Mechanismus, der den Zugriff einschränkt, und die beiden sind unabhängig voneinander.",
+          sRestrictedByResource: "Einschränkungen sind über die Berechtigungsressource verschlüsselt, nicht über den Datensatztyp.",
+          sRestrictedByResourceWhy:
+            "Es ist dieselbe Ressource, die bereits den Datensatz selbst schützt, sodass eine Liste eingeschränkter Felder sowohl die eingebauten Felder eines Bildschirms als auch seine benutzerdefinierten Felder abdeckt. Namen werden ohne Rücksicht auf Groß-/Kleinschreibung abgeglichen.",
+          sRestrictedInvisible: "Ein eingeschränktes Feld fehlt, ist nicht leer.",
+          sRestrictedInvisibleWhy:
+            "Einen Platzhalter zu zeigen würde verraten, dass ein Wert existiert, was selbst eine Information ist. Die Folge ist, dass ein eingeschränktes Feld nicht von einem zu unterscheiden ist, das nie definiert wurde — es lohnt sich, das zu wissen, wenn jemand ein fehlendes Feld meldet.",
+          sRejectWholeSave: "Ein eingeschränktes Feld zu schreiben weist den gesamten Speichervorgang zurück.",
+          sRejectWholeSaveWhy:
+            "Das eine Feld still fallen zu lassen und Erfolg zu melden ist der schwerer zu bemerkende Fehlschlag. Die Zurückweisung greift auch dann, wenn der übermittelte Wert dem gespeicherten entspricht, sodass niemand einen verborgenen Wert erproben kann, indem er testet, was angenommen wird.",
+          sRequiredExclusive: "Required und eingeschränkt lassen sich nicht kombinieren.",
+          sRequiredExclusiveWhy:
+            "Jemand, der ein Feld nicht sehen kann, könnte es nie erfüllen, sodass der Datensatz für diese Person unspeicherbar wäre. Beide Richtungen werden zurückgewiesen, egal, welche Sie zuerst versuchen, und die Meldung nennt das Feld.",
+          sHistoryNoValues: "Der Definitionsverlauf zeigt nie Wertänderungen.",
+          sHistoryNoValuesWhy:
+            "Sie einzuschließen würde den Dialog in eine lesbare Kopie der Felddaten aller verwandeln, unter Umgehung der Sicherheit auf Feldebene und jeder anderen Sichtbarkeitsregel zugleich. Die wertetragenden Datensätze sind namentlich ausgeschlossen statt durch Auslassung.",
+
+          exportTitle: "Export- und Portabilitätsverhalten",
+          eDefinitionsOnly: "Der Tabellenexport enthält Definitionen, nie Antworten.",
+          eDefinitionsOnlyWhy:
+            "Er ist per Entwurf ein Definitionsexport, und es gibt nirgends im Produkt einen Werteexport. Niemandes Daten können darüber abfließen.",
+          eRefusesPastLimit: "Über 10.000 Definitionen hinaus weist der Export zurück, statt abzuschneiden.",
+          eRefusesPastLimitWhy:
+            "Eine still abgeschnittene Datei ist schlimmer als keine Datei, weil sie vollständig aussieht. Die Zurückweisung sagt Ihnen, den Export auf einen einzigen Datensatztyp einzugrenzen.",
+          eRestrictedAbsent: "Vor Ihnen eingeschränkte Felder fehlen in der Datei, sind nicht leer.",
+          eRestrictedAbsentWhy:
+            "Sicherheit auf Feldebene gilt für den Export exakt wie auf dem Bildschirm, und eine leere Spalte würde immer noch verraten, dass das Feld existiert.",
+          eNoImport: "Der Tabellenexport ist ein Bericht, keine Vorlage — aber ein separates Paketformat reist hin und zurück.",
+          eNoImportWhy:
+            "Der XLSX-Export existiert zum Lesen, nicht zum erneuten Hochladen, eine Tabelle kann also weiterhin nicht genutzt werden, um Felder in großer Zahl anzulegen. Ein anderes, JSON-geformtes portables Schema-Paket kann das: Exportieren Sie die Gruppen und Definitionen eines Entitätstyps, und importieren Sie dasselbe Paket dann — in diesen Arbeitsbereich oder einen anderen — über seinen eigenen Drop-Zone-Dialog, der angelegte, übersprungene und gescheiterte Elemente pro Gruppe meldet statt einer bloßen Zahl.",
+          eTextCells: "Jede Export-Zelle wird als Text geschrieben.",
+          eTextCellsWhy:
+            "Eine Bezeichnung, die mit =, +, - oder @ beginnt, landet als buchstäbliche Zeichen statt als Tabellenkalkulationsformel. Das ist kategorisch statt ein Filter bekannter Fälle, sodass nichts, das wie eine Berechnung aussieht, zu einer werden kann.",
+
+          reachTitle: "Wo Felder erscheinen und wo nicht",
+          rApiOnlyTypes: "Manche Datensatztypen haben überhaupt keinen Bildschirm.",
+          rApiOnlyTypesWhy:
+            "Sie sind rechtmäßige Ziele und werden auf dem Definitionsformular zuletzt aufgeführt, mit einem Zusatz API only. Ein gegen einen davon definiertes Feld ist über die API erreichbar und hat in der Oberfläche nirgends, wo es dargestellt werden könnte.",
+          rHandRolledForms: "Eine Handvoll Bildschirme verdrahtet ihre benutzerdefinierten Felder von Hand.",
+          rHandRolledFormsWhy:
+            "Die meisten Bildschirme übernehmen benutzerdefinierte Felder automatisch. Ein paar, deren Erstellungs- und Bearbeitungsoberflächen älter sind als dieser Mechanismus — darunter Webhooks, Nachrichtenvorlagen, Mandantenpläne, Plugin-Definitionen, Leads und Themes — implementieren denselben Abschnitt Benutzerdefinierte Felder selbst. Das Verhalten sollte identisch sein; ist es das nicht, lohnt sich eine Meldung.",
+          rDsrCreateOnly: "Datenschutzanfragen (Data Subject Requests) nehmen benutzerdefinierte Felder nur bei der Erstellung an.",
+          rDsrCreateOnlyWhy:
+            "Eine eingereichte Anfrage durchläuft einen Prüf-Workflow statt allgemein bearbeitbar zu sein, es gibt also kein Bearbeitungsformular, das benutzerdefinierte Felder hineintragen könnte. Das ist Design, keine Auslassung.",
+          rDialogForms: "Die meisten Erstellungs- und Bearbeitungsformulare für Datensätze sind noch Dialoge.",
+          rDialogFormsWhy:
+            "Das Verfassen benutzerdefinierter Felder selbst zog aus einem verschachtelten Dialog in ein Seitenpanel um, weshalb das Hinzufügen eines Felds aus einem Datensatz heraus nicht mehr zwei Dialoge stapelt. Die umgebenden Datensatzformulare wurden bewusst unangetastet gelassen — sie zu verschieben ist eine viel breitere Änderung über Module hinweg, die mit benutzerdefinierten Feldern nichts zu tun haben.",
+          rNoSidebarEntry: "Die Bildschirme Werttypen und Entitätstypen haben keinen Eintrag in der Seitenleiste.",
+          rNoSidebarEntryWhy:
+            "Die Navigation der Seitenleiste wird zentral eingesät, und diese beiden wurden bewusst aus dieser Aussaat ausgelassen. Sie sind stattdessen über Links im Seitenkopf der Seite Benutzerdefinierte Felder erreichbar.",
+
+          absentTitle: "Dinge, die das Produkt nicht leistet",
+          absentIntro:
+            "Oft genug nachgefragt, um es klar auszusprechen. Keine davon ist ein meldenswerter Fehler.",
+          absent1:
+            "Die zweiundzwanzig Werttypen sind die vollständige Menge. Zwei Einträge, die früher auf dieser Liste standen, sind es nicht mehr: File und Image speichern eine hochgeladene Datei oder ein Bild, und RichText speichert formatierte Prosa — siehe die Seite Werttypen. Das Anhängen eines neuen File- oder Image-Werts ist im Produkt allerdings noch nicht verfügbar; beide lassen sich heute definieren, und ein vorhandener Wert lässt sich nur ansehen oder löschen.",
+          absent2:
+            "Der Werteexport weist zurück statt abzuschneiden, sobald eine Anfrage 10.000 Zellen überschreiten würde — exportieren Sie stattdessen eine engere Auswahl von Datensätzen, statt eine Teildatei zu erwarten.",
+          absent3:
+            "Es gibt keine Massenerstellung aus einer Tabellenkalkulation. Ein portables Schema-Paket (JSON) kann über den Import-Dialog viele Felddefinitionen auf einmal anlegen; ein einzelnes Feld für sich wird weiterhin einzeln angelegt, auf dem Formular.",
+          absent4:
+            "Eine veröffentlichte Option-Set-Version bewegt die bereits an eine frühere gebundenen Felder nicht automatisch mit — ein Administrator bindet jedes Feld ausdrücklich neu. Das ist beabsichtigt: automatisches Nachfolgen würde still ändern, was bereits gegen die alte Liste gespeicherte Werte bedeuten.",
+          absent5:
+            "Es gibt kein bedingtes Anzeigen oder Verbergen, das ein Administrator konfigurieren kann. Ein Feld ist entweder auf dem Formular oder nicht, vorbehaltlich Active und der Sicherheit auf Feldebene.",
+          absent6:
+            "Es gibt keine Berechnung, keinen Standardwert und keine feldübergreifende Regel. Ein benutzerdefiniertes Feld erfasst eine Antwort; es leitet keine ab.",
+          absentInfoTitle: "Falls Sie eines davon brauchen",
+          absentInfoContent:
+            "Sagen Sie es, wer auch immer Ihre Produkt-Roadmap besitzt, statt es auf eine Weise zu umgehen, die Sie Daten kostet. Ein Feld neu anzulegen, um etwas Dauerhaftes zu ändern, zerstört die bereits dazu gespeicherten Antworten, und das ist der teure Fehler, den diese Seite verhindern soll.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Option Sets (gemeinsam genutzte, versionierte Listen)
+        // ═══════════════════════════════════════════════════
         optionSets: {
-          title: "Optionssätze",
-          description: "Reusable, versioned lists of choices. Point many fields at one set, and every field that uses it changes together.",
-          intro: "An Optionssatz is a named, versioned collection of choices that multiple Select and MultiSelect benutzerdefinierte Felder share. Instead of each field maintaining its own private inline options list, fields bind to an Optionssatz version. When business requirements evolve, an administrator creates a new version, updates the choices, and publishes it — immediately updating every bound field across the product without manual field-by-field updates.",
-          whenToUseTitle: "When to use an Optionssatz vs inline options",
-          whenToUseContent: "Use an Optionssatz whenever the same list of choices is needed across more than one field (for example, Country codes, Priority levels, or Department lists), or when you need auditable version history and staged publishing. Use inline options when a choice list is unique to a single field and will never be reused.",
-          kindsTitle: "Three kinds of Optionssätze",
-          kindsIntro: "SCRIPE distinguishes three kinds of Optionssätze based on their origin, ownership, and editability rules:",
-          thKind: "Kind",
-          thOwner: "Owner",
-          thWhoCanEdit: "Who can edit",
-          thScope: "Scope",
-          kindSeeded: "Seeded (Platform-maintained)",
-          ownerPlatform: "Platform",
-          editNobody: "Nobody (Read-only)",
-          scopeGlobal: "Global (All tenants)",
-          kindPlatform: "Platform-created",
-          editPlatformAdmin: "Platform administrators",
-          scopeGlobalOrTenant: "Global or tenant-scoped",
-          kindTenant: "Tenant-created",
-          ownerTenant: "Tenant",
-          editTenantAdmin: "Tenant administrators",
-          scopeTenantOnly: "Tenant workspace only",
-          seededReadOnlyTitle: "Why seeded sets are read-only",
-          seededReadOnlyContent: "Seeded sets (such as ISO 3166-1 country codes and ISO 4217 currencies) are marked as system-managed. The server strictly refuses all mutating actions — creating draft versions, editing options, publishing, or deletion — for everyone, including Super Admins. If you need a customized variant of a seeded list, create your own tenant or platform set instead.",
-          lifecycleTitle: "Version lifecycle and states",
-          lifecycleIntro: "Every Optionssatz manages its choices through immutable versions. A version moves through four discrete lifecycle states:",
+          title: "Optionssets",
+          description:
+            "Wiederverwendbare, versionierte Listen von Auswahlmöglichkeiten. Binden Sie viele Felder an ein Set, und jedes Feld, das es verwendet, ändert sich gemeinsam.",
+          intro:
+            "Ein Option Set ist eine benannte, versionierte Sammlung von Auswahlmöglichkeiten, die sich mehrere Select- und MultiSelect-Felder teilen. Statt dass jedes Feld seine eigene private Inline-Optionsliste pflegt, binden sich Felder an eine Option-Set-Version. Ändern sich die geschäftlichen Anforderungen, legt ein Administrator eine neue Version an, aktualisiert die Auswahlmöglichkeiten, und veröffentlicht sie — wodurch sofort jedes gebundene Feld im gesamten Produkt aktualisiert wird, ohne manuelle Aktualisierungen Feld für Feld.",
+          whenToUseTitle: "Wann ein Option Set statt Inline-Optionen verwenden",
+          whenToUseContent:
+            "Verwenden Sie ein Option Set immer dann, wenn dieselbe Liste von Auswahlmöglichkeiten bei mehr als einem Feld gebraucht wird (zum Beispiel Ländercodes, Prioritätsstufen oder Abteilungslisten), oder wenn Sie einen nachvollziehbaren Versionsverlauf und ein gestaffeltes Veröffentlichen brauchen. Verwenden Sie Inline-Optionen, wenn eine Auswahlliste einem einzigen Feld eigen ist und nie wiederverwendet wird.",
+
+          kindsTitle: "Drei Arten von Optionssets",
+          kindsIntro:
+            "SCRIPE unterscheidet drei Arten von Optionssets nach ihrer Herkunft, Eigentümerschaft und Bearbeitungsregeln:",
+          thKind: "Art",
+          thOwner: "Eigentümer",
+          thWhoCanEdit: "Wer bearbeiten darf",
+          thScope: "Geltungsbereich",
+          kindSeeded: "Vorbefüllt (von der Plattform gepflegt)",
+          ownerPlatform: "Plattform",
+          editNobody: "Niemand (schreibgeschützt)",
+          scopeGlobal: "Global (alle Mandanten)",
+          kindPlatform: "Von der Plattform angelegt",
+          editPlatformAdmin: "Plattformadministratoren",
+          scopeGlobalOrTenant: "Global oder auf Mandantenebene",
+          kindTenant: "Von einem Mandanten angelegt",
+          ownerTenant: "Mandant",
+          editTenantAdmin: "Mandantenadministratoren",
+          scopeTenantOnly: "Nur der Arbeitsbereich des Mandanten",
+          seededReadOnlyTitle: "Warum vorbefüllte Sets schreibgeschützt sind",
+          seededReadOnlyContent:
+            "Vorbefüllte Sets (etwa ISO-3166-1-Ländercodes und ISO-4217-Währungen) sind als systemverwaltet markiert. Der Server weist jede verändernde Aktion strikt zurück — Entwurfsversionen anlegen, Optionen bearbeiten, veröffentlichen oder löschen — für jeden, Super Admins eingeschlossen. Brauchen Sie eine angepasste Variante einer vorbefüllten Liste, legen Sie stattdessen ein eigenes Mandanten- oder Plattform-Set an.",
+
+          lifecycleTitle: "Versionslebenszyklus und Zustände",
+          lifecycleIntro:
+            "Jedes Option Set verwaltet seine Auswahlmöglichkeiten über unveränderliche Versionen. Eine Version durchläuft vier eigenständige Lebenszyklus-Zustände:",
           thStatus: "Status",
-          thMeaning: "Meaning",
-          thNextState: "Next state",
+          thMeaning: "Bedeutung",
+          thNextState: "Nächster Zustand",
           statusDraft: "Draft",
-          meaningDraft: "Editable draft version. Choices can be added, updated, reordered, or deactivated. Not visible on active record forms until published.",
-          nextDraft: "Published (via Publish action)",
+          meaningDraft:
+            "Bearbeitbare Entwurfsversion. Auswahlmöglichkeiten können hinzugefügt, aktualisiert, umsortiert oder deaktiviert werden. Auf aktiven Datensatzformularen erst nach der Veröffentlichung sichtbar.",
+          nextDraft: "Published (über die Aktion Publish)",
           statusPublished: "Published",
-          meaningPublished: "The active, live version. Bound fields render exactly these choices on create and edit forms. Immutable.",
-          nextPublished: "Deprecated (when a newer draft is published)",
+          meaningPublished:
+            "Die aktive, live geschaltete Version. Gebundene Felder rendern auf Erstellungs- und Bearbeitungsformularen exakt diese Auswahlmöglichkeiten. Unveränderlich.",
+          nextPublished: "Deprecated (wenn ein neuerer Entwurf veröffentlicht wird)",
           statusDeprecated: "Deprecated",
-          meaningDeprecated: "Superseded by a newer published version. Historical records referencing choices in this version continue to render correctly. Cannot be bound to new fields.",
-          nextDeprecated: "Archived (when retired)",
+          meaningDeprecated:
+            "Abgelöst durch eine neuere veröffentlichte Version. Historische Datensätze, die auf Auswahlmöglichkeiten dieser Version verweisen, werden weiterhin korrekt dargestellt. Kann nicht an neue Felder gebunden werden.",
+          nextDeprecated: "Archived (bei der Stilllegung)",
           statusArchived: "Archived",
-          meaningArchived: "Permanently retired from active use. Retained strictly for historical audit trails. Immutable.",
-          nextArchived: "None (Terminal state)",
-          lifecycleOnlyOnePublished: "Exactly one version can be Published at any time. Publishing a draft automatically deprecates the previously published incumbent version in a single atomic operation.",
-          publishSwapTitle: "Atomic publish swap",
-          publishSwapContent: "When you publish a new draft, the current published version is superseded and marked Deprecated immediately. No data is lost: records that previously saved values from the older version remain intact and display their stored labels.",
-          draftTitle: "Creating and editing a draft version",
-          draftIntro: "To add or modify choices in an Optionssatz, follow the staged versioning workflow:",
-          draft1: "Click Create draft version on the Optionssatz detail panel. A new draft is initialized.",
-          draft2: "Enter a unique Key and English label for each option. Both are required before saving is enabled. You can optionally provide Arabic labels, color tints, icon keys, and sort orders.",
-          draft3: "Click Save draft to persist the options list. The draft is saved to the server but remains unexposed to active record forms.",
-          draft4: "When ready, click Publish version. The version becomes live and all bound fields immediately serve the updated choices.",
-          draftSaveHintTitle: "Draft validation requirements",
-          draftSaveHintContent: "A draft requires at least one valid option with a non-empty Key and English label. Each Key must be unique within the version. The Save draft button automatically enables as soon as all rows satisfy these validation rules.",
-          bindingTitle: "Binding fields to an Optionssatz",
-          bindingIntro: "Fields with value types Select or MultiSelect can bind to an Optionssatz instead of maintaining inline options. Three lifecycle actions are supported:",
-          thAction: "Action",
-          thWhatItDoes: "What it does",
-          thEffect: "Effect on existing data",
+          meaningArchived:
+            "Dauerhaft aus der aktiven Nutzung genommen. Wird strikt für historische Prüfpfade aufbewahrt. Unveränderlich.",
+          nextArchived: "Keiner (Endzustand)",
+          lifecycleOnlyOnePublished:
+            "Zu jedem Zeitpunkt kann genau eine Version Published sein. Einen Entwurf zu veröffentlichen setzt die zuvor amtierende veröffentlichte Version automatisch in einem einzigen atomaren Vorgang auf Deprecated.",
+          publishSwapTitle: "Atomarer Veröffentlichungswechsel",
+          publishSwapContent:
+            "Wenn Sie einen neuen Entwurf veröffentlichen, wird die aktuelle veröffentlichte Version sofort abgelöst und als Deprecated markiert. Es gehen keine Daten verloren: Datensätze, die zuvor Werte aus der älteren Version gespeichert haben, bleiben unverändert und zeigen ihre gespeicherten Bezeichnungen weiterhin an.",
+
+          draftTitle: "Eine Entwurfsversion anlegen und bearbeiten",
+          draftIntro:
+            "Um Auswahlmöglichkeiten in einem Option Set hinzuzufügen oder zu ändern, folgen Sie dem gestaffelten Versionierungs-Workflow:",
+          draft1:
+            "Klicken Sie im Detailpanel des Option Sets auf Create draft version. Ein neuer Entwurf wird initialisiert.",
+          draft2:
+            "Geben Sie für jede Option einen eindeutigen Key und eine englische Bezeichnung ein. Beide sind erforderlich, bevor das Speichern aktiviert wird. Optional können Sie arabische Bezeichnungen, Farbtöne, Symbol-Keys und Sortierreihenfolgen angeben.",
+          draft3:
+            "Klicken Sie auf Save draft, um die Optionsliste zu übernehmen. Der Entwurf wird auf dem Server gespeichert, bleibt aber für aktive Datensatzformulare unsichtbar.",
+          draft4:
+            "Wenn Sie bereit sind, klicken Sie auf Publish version. Die Version geht live, und alle gebundenen Felder liefern sofort die aktualisierten Auswahlmöglichkeiten aus.",
+          draftSaveHintTitle: "Validierungsanforderungen für Entwürfe",
+          draftSaveHintContent:
+            "Ein Entwurf braucht mindestens eine gültige Option mit einem nicht leeren Key und einer englischen Bezeichnung. Jeder Key muss innerhalb der Version eindeutig sein. Die Schaltfläche Save draft aktiviert sich automatisch, sobald alle Zeilen diese Validierungsregeln erfüllen.",
+
+          bindingTitle: "Felder an ein Option Set binden",
+          bindingIntro:
+            "Felder mit den Werttypen Select oder MultiSelect können sich an ein Option Set binden, statt Inline-Optionen zu pflegen. Drei Lebenszyklus-Aktionen werden unterstützt:",
+          thAction: "Aktion",
+          thWhatItDoes: "Was sie tut",
+          thEffect: "Wirkung auf bestehende Daten",
           actionBind: "Bind",
-          doingBind: "Attaches a benutzerdefiniertes Feld definition to an Optionssatz's published version.",
-          effectBind: "Field switches from inline options to the Optionssatz's choices. Previously saved values are preserved.",
+          doingBind:
+            "Hängt eine Definition eines benutzerdefinierten Felds an die veröffentlichte Version eines Option Sets an.",
+          effectBind:
+            "Das Feld wechselt von Inline-Optionen zu den Auswahlmöglichkeiten des Option Sets. Bereits gespeicherte Werte bleiben erhalten.",
           actionSwitch: "Switch version",
-          doingSwitch: "Points a bound field to a newer published version of the same or another Optionssatz.",
-          effectSwitch: "Field begins offering the new version's choices. Historical records continue rendering previously selected options.",
+          doingSwitch:
+            "Richtet ein gebundenes Feld auf eine neuere veröffentlichte Version desselben oder eines anderen Option Sets aus.",
+          effectSwitch:
+            "Das Feld bietet nun die Auswahlmöglichkeiten der neuen Version an. Historische Datensätze zeigen weiterhin die zuvor gewählten Optionen an.",
           actionDetach: "Detach (Unbind)",
-          doingDetach: "Removes the Optionssatz binding, reverting the field back to standalone inline options.",
-          effectDetach: "Field stops querying the Optionssatz. Stored record values remain intact.",
-          switchCautionTitle: "Binding stability",
-          switchCautionContent: "When detaching or switching Optionssätze, ensure that existing record values remain compatible with the new choice keys. Deactivating an option rather than removing its key guarantees that historical records display without interruption.",
-          platformAdminTitle: "Platform administrator capabilities",
-          platformAdminIntro: "Platform Super Administrators operate with elevated system-wide governance rights:",
-          platformAdmin1: "Create global Optionssätze shared across all tenant workspaces.",
-          platformAdmin2: "Create and publish new versions for platform-owned (non-seeded) Optionssätze.",
-          platformAdmin3: "Manage Optionssatz availability across multi-tenant boundaries.",
-          platformAdmin4: "Inspect version chains and audit logs for all Optionssätze platform-wide.",
-          platformAdmin5: "Respect system-managed boundaries: platform-maintained seeded sets remain immutable for platform admins as well.",
-          platformContextTitle: "Platform context detection",
-          platformContextContent: "When operating in the platform management console (without drilling into a specific tenant), newly created Optionssätze automatically default to Global scope, making them accessible to all tenant environments.",
-          rulesTitle: "Wichtige operative Regeln",
-          rule1: "Optionssätze are versioned, not directly edited: choices are modified by creating a draft and publishing it.",
-          rule2: "Keys are permanent identifiers: once an option is published with a key, do not change its key in subsequent versions if you want existing values to remain mapped.",
-          rule3: "Deactivate rather than delete: deactivating an option stops it from being offered on new forms while preserving it on historical records.",
-          rule4: "Single published version: only one version is active at a time; publishing a draft automatically deprecates the previous version.",
-          rule5: "System-managed sets are strictly read-only: seeded standard sets cannot be modified by any user or administrator.",
+          doingDetach:
+            "Entfernt die Bindung an das Option Set und lässt das Feld zu eigenständigen Inline-Optionen zurückkehren.",
+          effectDetach:
+            "Das Feld fragt das Option Set nicht mehr ab. Gespeicherte Datensatzwerte bleiben unverändert.",
+          switchCautionTitle: "Stabilität der Bindung",
+          switchCautionContent:
+            "Stellen Sie beim Trennen oder Wechseln von Optionssets sicher, dass bestehende Datensatzwerte mit den neuen Options-Keys kompatibel bleiben. Eine Option zu deaktivieren statt ihren Key zu entfernen garantiert, dass historische Datensätze unterbrechungsfrei angezeigt werden.",
+
+          platformAdminTitle: "Fähigkeiten des Plattformadministrators",
+          platformAdminIntro:
+            "Plattform-Super-Admins arbeiten mit erweiterten, systemweiten Governance-Rechten:",
+          platformAdmin1:
+            "Globale Optionssets anlegen, die von allen Mandanten-Arbeitsbereichen gemeinsam genutzt werden.",
+          platformAdmin2:
+            "Neue Versionen für plattformeigene (nicht vorbefüllte) Optionssets anlegen und veröffentlichen.",
+          platformAdmin3:
+            "Die Verfügbarkeit von Optionssets über mandantenübergreifende Grenzen hinweg verwalten.",
+          platformAdmin4:
+            "Versionsketten und Prüfprotokolle für alle Optionssets plattformweit einsehen.",
+          platformAdmin5:
+            "Systemverwaltete Grenzen respektieren: plattformgepflegte vorbefüllte Sets bleiben auch für Plattformadministratoren unveränderlich.",
+          platformContextTitle: "Erkennung des Plattformkontexts",
+          platformContextContent:
+            "Wird in der Plattform-Verwaltungskonsole gearbeitet (ohne in einen bestimmten Mandanten hinabzusteigen), werden neu angelegte Optionssets automatisch auf den Geltungsbereich Global voreingestellt, wodurch sie für jede Mandantenumgebung zugänglich werden.",
+
+          rulesTitle: "Wichtige betriebliche Regeln, die man sich merken sollte",
+          rule1:
+            "Optionssets werden versioniert, nicht direkt bearbeitet: Auswahlmöglichkeiten werden geändert, indem ein Entwurf angelegt und veröffentlicht wird.",
+          rule2:
+            "Keys sind dauerhafte Bezeichner: Ist eine Option einmal mit einem Key veröffentlicht, ändern Sie diesen Key in späteren Versionen nicht, wenn bestehende Werte zugeordnet bleiben sollen.",
+          rule3:
+            "Deaktivieren statt löschen: Eine Option zu deaktivieren verhindert, dass sie auf neuen Formularen angeboten wird, während sie bei historischen Datensätzen erhalten bleibt.",
+          rule4:
+            "Eine einzige veröffentlichte Version: Immer nur eine Version ist aktiv; einen Entwurf zu veröffentlichen setzt die vorherige Version automatisch auf Deprecated.",
+          rule5:
+            "Systemverwaltete Sets sind strikt schreibgeschützt: Vorbefüllte Standardsets können von keinem Benutzer oder Administrator geändert werden.",
         },
       },
     },

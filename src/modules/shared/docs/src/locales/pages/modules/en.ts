@@ -65,13 +65,13 @@ export const en = {
           "Fields attach to a host entity via its canonical entity-type key, validated against the cross-module Entity-Type Registry — never via a foreign key.",
         featureTyped: "Typed Values",
         featureTypedDesc:
-          "Each field declares a value type (Text, Number, Boolean, Date, or Select), avoiding an untyped metadata blob and enabling proper validation.",
+          "Each field declares one of twenty-two value types — from plain text and numbers through references, an uploaded file or image, and formatted rich text — avoiding an untyped metadata blob and enabling proper validation.",
         featureIsolation: "Immutable Keys",
         featureIsolationDesc:
           "The entity-type key and machine key are immutable after creation so already-stored values remain addressable; only display and behaviour metadata can be edited.",
         valueTypesTitle: "Value Types",
         valueTypesIntro:
-          "Supported value types are Text, Number, Boolean, Date, and Select. Select fields carry a newline-separated list of allowed options; non-Select fields must not carry options. The API enforces this on both create and update.",
+          "Twenty-two value types are supported end to end — see the operator documentation's Value Types page for the complete list. Select and MultiSelect fields carry a newline-separated list of allowed options; other types must not carry options. The API enforces this on both create and update.",
         modelTitle: "Data Model",
         modelIntro:
           "A CustomField carries: EntityTypeKey (registered), Key (machine key, unique per tenant + entity type), LabelEn / LabelAr, ValueType, IsRequired, Options (Select only), SortOrder, and IsActive. Uniqueness is enforced per (TenantId, EntityTypeKey, Key).",

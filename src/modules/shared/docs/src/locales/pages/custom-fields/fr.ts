@@ -2,1716 +2,2670 @@
 /**
  * Exported constant defining parameters and fields for fr configurations.
  *
- * Custom Fields product documentation — French (fr).
+ * Custom Fields product documentation — twelve pages under the Custom Fields
+ * section of the docs portal. Namespaced under modules.customFields.docs so it
+ * never collides with the developer-facing modules.customFields.overview page.
+ *
+ * Translation conventions used throughout this file:
+ *
+ * - Identifiers stay in Latin/code form and are never translated: machine
+ *   error codes (VALIDATION_REQUIRED, AUTH_FORBIDDEN, ...), the literal name
+ *   of a value type when it is being used as a type identifier (Text, Select,
+ *   EntityReference, File, Image, RichText, ...), entity-type registry keys
+ *   (hrms.staff-member, party.person, identity.user, media.file), JSON/wire
+ *   shapes ({ "html": "..." }, { entityTypeKey, entityId }), and quoted
+ *   example inputs that a reader is meant to reproduce character for
+ *   character (a malformed email, a phone number, a hex colour, "about 40").
+ *   Only the prose around these is translated.
+ * - Where a value type is first introduced as a page heading, the French
+ *   term is followed by the English identifier in brackets — "Texte [Text]",
+ *   "Sélection [Select]" — the same convention already used in ar.ts for this
+ *   dictionary. Inline mentions elsewhere use the bare English identifier.
+ * - The product interface itself has no French localisation yet (only English
+ *   and Arabic), so quoted product-output strings such as "expects a date"
+ *   or "'shirt_size' is not a valid IBAN." are left in English exactly as the
+ *   software would show them — translating them would describe a message
+ *   nobody actually sees on screen.
+ * - "Workspace" is "espace de travail" throughout. "Tenant" is kept as the
+ *   established French SaaS loanword where the source text uses it as a
+ *   category label (Option Sets' Tenant-created / Tenant administrators).
+ * - Numbers spelled out in English ("twenty-two", "eighteen") are translated
+ *   as French words. A round character cap stated as a numeral (4,000,
+ *   10,000, 50,000) is rendered with the French thousands space (4 000,
+ *   10 000, 50 000). A numeral that is itself a literal example value someone
+ *   would type into a field (a currency amount, a duration, a percentage) is
+ *   left in its original digit form, because changing "100.50" to "100,50"
+ *   would describe an input the parser may not accept.
  */
 export const fr = {
   modules: {
     customFields: {
       docs: {
+        // ═══════════════════════════════════════════════════
+        //  Champs personnalisés (page d'accueil de la section)
+        // ═══════════════════════════════════════════════════
         home: {
-          title: "Champs Personnalisés",
-          description: "Add your own fields to the records you already use — what a champ personnalisé is, what it is made of, how it is scoped, and where to find the rest of the documentation.",
-          intro: "Champs personnalisés let you add your own information to the records you already work with — a nationality on a person, a preferred foot on a player, a purchase-order number on a booking — without waiting for a release and without anybody writing code. You define the field once on the Champs Personnalisés screen, and from that moment every create and edit form for that kind of record shows it, the record list gains a column for it, and the value you type is stored against that specific record.",
+          title: "Champs personnalisés",
+          description:
+            "Ajoutez vos propres champs aux enregistrements que vous utilisez déjà — ce qu'est un champ personnalisé, de quoi il est composé, comment sa portée est définie, et où trouver le reste de la documentation.",
+          intro:
+            "Les champs personnalisés vous permettent d'ajouter vos propres informations aux enregistrements que vous manipulez déjà — une nationalité sur une personne, un pied fort sur un joueur, un numéro de bon de commande sur une réservation — sans attendre une nouvelle version et sans qu'il soit besoin d'écrire une seule ligne de code. Vous définissez le champ une fois sur l'écran Champs personnalisés, et à partir de ce moment, tous les formulaires de création et de modification pour ce type d'enregistrement l'affichent, la liste des enregistrements gagne une colonne pour lui, et la valeur que vous saisissez est stockée pour cet enregistrement précis.",
           valueInfoTitle: "En une phrase",
-          valueInfoContent: "A champ personnalisé is a question you decide to ask about a record: defined once by an administrator, and answered from then on by everybody who fills that record in.",
-          whatTitle: "What you get",
-          whatIntro: "Champs personnalisés are not a free-text notes box bolted onto the side of a record. Each one is a real, typed, named field with its own validation rules, its own place in the form, its own column in the list, and its own audit trail.",
-          featDefineOnce: "Defined once, used everywhere",
-          featDefineOnceDesc: "Add the field on the Champs Personnalisés screen and every create and edit form for that record type picks it up, along with an extra column in the record list. No release, no code, no waiting.",
-          featTyped: "Checked on the way in",
-          featTypedDesc: "Each value type has its own rules — a real email address, a hex colour, a rating from 1 to 5 — so a wrong value is refused with a specific message rather than quietly stored and discovered six months later.",
-          featValueTypes: "Nineteen value types",
-          featValueTypesDesc: "Text and long text, single and multiple choice, numbers, percentages, ratings, money, durations, dates, date-and-time with a real time zone, times, email, web addresses, phone numbers, yes/no and colour — plus two that store no text at all and point at a record in another part of the product instead.",
-          featScoped: "Yours, or the whole platform's",
-          featScopedDesc: "A field you create belongs to your workspace only. Platform administrators can create global fields that every workspace inherits and no workspace can edit or delete.",
-          featSecured: "Restrictable field by field",
-          featSecuredDesc: "A role or a user group can hide a specific field from the people holding it, and the product will not let somebody who cannot see a value erase it by editing the record around it.",
-          featAccountable: "Accountable",
-          featAccountableDesc: "Every definition change is recorded with who and when, a usage report tells you how many answers a field holds before you delete it, and the whole set of definitions exports to a spreadsheet.",
-          anatomyTitle: "What a field is made of",
-          anatomyIntro: "This is the complete set of things a field definition carries. Three of them are permanent once saved, because answers already recorded against them would stop making sense if they moved. Control names are shown as they appear in the English interface.",
-          thPart: "Setting",
-          thWhat: "What it is",
-          thChange: "Changeable later?",
-          partEntityType: "The kind of record the field belongs to — people, staff members, bookings, and so on.",
-          partKey: "The machine name, used in error messages and exports. Lower case, starts with a letter, letters, digits and underscores only.",
-          partValueType: "One of the nineteen types, deciding what can be entered and how it is checked.",
-          partLabelEn: "The English label people see above the input.",
-          partLabelAr: "The Arabic label, optional. Falls back to the English one when blank.",
-          partPlaceholder: "Optional greyed-out hint text shown inside the empty input, in each language.",
-          partRequired: "Whether a record can be saved with this field left blank.",
-          partSortOrder: "Where the field sits relative to the other champs personnalisés on the form.",
-          partFieldGroup: "The optional heading the field is gathered under.",
-          partOptions: "The list of allowed answers. Select and MultiSelect only.",
-          partValidator: "An optional extra format check, plus its setting. Text fields only.",
-          partReferenceTarget: "The one kind of record this field's values may point at, or nothing to let each value choose its own. Entity Reference fields only.",
-          partSensitivity: "A classification label — Unclassified, Internal, Confidential or Restricted — for reporting and export handling.",
-          partExportable: "A marker saying whether this field's values should be included in exports. It does not affect the definitions export, which always lists the field and reports the flag.",
-          partActive: "Whether the field is still offered on forms. An inactive field keeps its stored answers.",
-          partScope: "Whether the field belongs to your workspace or to the whole platform. Decided by who creates it.",
-          changeNever: "No — permanent once saved",
-          changeAnytime: "Yes, at any time",
-          changeAnytimeConditions: "Yes, unless a role or group restricts the field",
-          changeAnytimeCare: "Yes, but read the warnings first",
-          exampleTitle: "A worked example, start to finish",
-          exampleIntro: "Suppose the academy needs to record each player's nationality, and the product has no such field. Nothing here needs a developer.",
-          ex1Title: "Decide what you are asking",
-          ex1Content: "The question is \"what nationality is this player?\". The answer is a short piece of text with no fixed list of choices, so the value type is Text. If you did want a fixed list, Select would be the right choice instead — and that decision is permanent, so it is worth a moment's thought.",
-          ex2Title: "Define the field",
-          ex2Content: "On the Champs Personnalisés screen, choose Add. Pick the record type for people, set the key to nationality, the English label to Nationality, the value type to Text, and leave Required off for now. Save.",
-          ex3Title: "Fill it in",
-          ex3Content: "Open any player record. A Champs Personnalisés section now shows a Nationality input, empty. Type a value and save the record. No error means the value was accepted and stored against that player.",
-          ex4Title: "Read it back",
-          ex4Content: "Reopen the record and the value is there. The record list also has a Nationality column now, so you can see the answer for every player at once without opening any of them.",
-          ex5Title: "Tighten it up",
-          ex5Content: "Later you decide the field must always be filled in. Edit the definition and turn Required on. From then on a player cannot be saved with Nationality blank — but note that players saved earlier with it blank stay as they are until somebody edits them.",
-          scopeTitle: "Your workspace, or the whole platform",
-          scopeIntro: "A field created by an administrator inside a workspace belongs to that workspace. Nobody in another workspace sees it, and its answers are never visible outside it. This is the normal case and needs no thought.",
-          scopeGlobal: "A platform administrator working with no workspace selected creates a global field instead, and the form shows a Global (all tenants) switch when that applies. A global field is inherited by every workspace: everybody can fill it in, and nobody but a platform administrator can edit, reorder or delete it. Global fields also skip the per-workspace field quota.",
-          scopeInfoTitle: "Scope is decided at creation",
-          scopeInfoContent: "There is no way to convert a workspace field into a global one, or the reverse. If the scope is wrong, the field has to be recreated at the right scope — and any answers already recorded against the old one stay with the old one.",
-          notTitle: "What champs personnalisés are not",
-          notIntro: "A few things people reasonably expect of them, that they deliberately do not do.",
-          not1: "They are not a substitute for a real feature. A champ personnalisé stores and displays an answer; it does not calculate anything, trigger anything, or appear in a report you have not built.",
-          not2: "They are not an access-control mechanism. The Sensitivity setting is a label. Field-level security, configured on roles and user groups, is the thing that actually hides a field.",
-          not3: "They are not a document store. There is no value type for uploading a file or an image; attachments belong to the record's own attachment features.",
-          not4: "They are not free-form. Every field has exactly one value type, chosen up front and permanent, and every value is checked against it on the way in.",
-          not5: "They are not retroactive. Tightening a field — making it required, or attaching a format check — never goes back and re-checks answers that were already saved.",
-          nextTitle: "Where to go next",
-          nextIntro: "The rest of this section covers each part in full.",
+          valueInfoContent:
+            "Un champ personnalisé est une question que vous décidez de poser à propos d'un enregistrement : définie une fois par un administrateur, et à laquelle répond ensuite quiconque remplit cet enregistrement.",
+
+          whatTitle: "Ce que vous obtenez",
+          whatIntro:
+            "Les champs personnalisés ne sont pas une simple zone de notes en texte libre accolée à un enregistrement. Chacun est un champ réel, typé, nommé, avec ses propres règles de validation, sa propre place dans le formulaire, sa propre colonne dans la liste, et son propre historique.",
+          featDefineOnce: "Défini une fois, utilisé partout",
+          featDefineOnceDesc:
+            "Ajoutez le champ sur l'écran Champs personnalisés et tous les formulaires de création et de modification pour ce type d'enregistrement l'adoptent, avec une colonne supplémentaire dans la liste des enregistrements. Aucune nouvelle version, aucun code, aucune attente.",
+          featTyped: "Vérifié à la saisie",
+          featTypedDesc:
+            "Chaque type de valeur a ses propres règles — une véritable adresse e-mail, une couleur hexadécimale, une note de 1 à 5 — de sorte qu'une valeur incorrecte est refusée avec un message précis plutôt que stockée silencieusement et découverte six mois plus tard.",
+          featValueTypes: "Vingt-deux types de valeur",
+          featValueTypesDesc:
+            "Texte et texte long, texte enrichi mis en forme, choix simple et choix multiple, nombres, pourcentages, notes, montants, durées, dates, date et heure avec un véritable fuseau horaire, heures, e-mail, adresses web, numéros de téléphone, oui/non et couleur — plus un fichier et une image, et deux types qui ne stockent aucun texte et pointent à la place vers un enregistrement d'une autre partie du produit.",
+          featScoped: "Le vôtre, ou celui de toute la plateforme",
+          featScopedDesc:
+            "Un champ que vous créez n'appartient qu'à votre espace de travail. Les administrateurs de la plateforme peuvent créer des champs globaux hérités par tous les espaces de travail, qu'aucun espace de travail ne peut modifier ni supprimer.",
+          featSecured: "Restreignable champ par champ",
+          featSecuredDesc:
+            "Un rôle ou un groupe d'utilisateurs peut masquer un champ précis aux personnes qui le détiennent, et le produit ne laissera pas quelqu'un qui ne peut pas voir une valeur l'effacer en modifiant l'enregistrement autour d'elle.",
+          featAccountable: "Traçable",
+          featAccountableDesc:
+            "Chaque changement de définition est enregistré avec qui l'a fait et quand, un rapport d'utilisation vous indique combien de réponses un champ contient avant que vous ne le supprimiez, et l'ensemble des définitions s'exporte vers une feuille de calcul.",
+
+          anatomyTitle: "De quoi un champ est composé",
+          anatomyIntro:
+            "Voici l'ensemble complet des éléments que porte une définition de champ. Trois d'entre eux sont définitifs une fois enregistrés, car les réponses déjà consignées sous ces réglages n'auraient plus de sens s'ils changeaient. Les noms des contrôles sont donnés tels qu'ils apparaissent dans l'interface anglaise.",
+          thPart: "Paramètre",
+          thWhat: "Ce que c'est",
+          thChange: "Modifiable plus tard ?",
+          partEntityType:
+            "Le type d'enregistrement auquel le champ appartient — personnes, membres du personnel, réservations, etc.",
+          partKey:
+            "Le nom machine, utilisé dans les messages d'erreur et les exports. En minuscules, commence par une lettre, uniquement des lettres, des chiffres et des tirets bas.",
+          partValueType: "L'un des vingt-deux types, qui détermine ce qui peut être saisi et comment c'est vérifié.",
+          partLabelEn: "Le libellé anglais que les utilisateurs voient au-dessus du champ de saisie.",
+          partLabelAr: "Le libellé arabe, facultatif. Si vide, le libellé anglais est utilisé à la place.",
+          partPlaceholder:
+            "Texte indicatif grisé, facultatif, affiché dans le champ vide, dans chaque langue.",
+          partRequired: "Si un enregistrement peut être sauvegardé avec ce champ laissé vide.",
+          partSortOrder: "Où le champ se situe par rapport aux autres champs personnalisés du formulaire.",
+          partFieldGroup: "L'en-tête facultatif sous lequel le champ est rassemblé.",
+          partOptions: "La liste des réponses autorisées. Uniquement pour Select et MultiSelect.",
+          partValidator: "Une vérification de format supplémentaire facultative, plus son paramètre. Uniquement pour les champs Text.",
+          partReferenceTarget:
+            "Le seul type d'enregistrement vers lequel les valeurs de ce champ peuvent pointer, ou rien pour laisser chaque valeur choisir le sien. Uniquement pour les champs Entity Reference.",
+          partSensitivity:
+            "Un libellé de classification — Non classifié, Interne, Confidentiel ou Restreint — pour le reporting et la gestion des exports.",
+          partExportable:
+            "Un indicateur précisant si les valeurs de ce champ doivent figurer dans les exports. Il n'affecte pas l'export des définitions, qui liste toujours le champ et rapporte cet indicateur.",
+          partActive:
+            "Si le champ est encore proposé sur les formulaires. Un champ inactif conserve ses réponses déjà enregistrées.",
+          partScope:
+            "Si le champ appartient à votre espace de travail ou à toute la plateforme. Décidé par qui le crée.",
+          changeNever: "Non — définitif une fois enregistré",
+          changeAnytime: "Oui, à tout moment",
+          changeAnytimeConditions: "Oui, sauf si un rôle ou un groupe restreint le champ",
+          changeAnytimeCare: "Oui, mais lisez d'abord les avertissements",
+
+          exampleTitle: "Un exemple concret, de bout en bout",
+          exampleIntro:
+            "Supposons que l'académie doive enregistrer la nationalité de chaque joueur, et que le produit n'ait pas un tel champ. Rien ici n'exige de développeur.",
+          ex1Title: "Décidez ce que vous demandez",
+          ex1Content:
+            "La question est « quelle est la nationalité de ce joueur ? ». La réponse est un court texte sans liste de choix fixe, donc le type de valeur est Text. Si vous vouliez vraiment une liste fixe, Select serait le bon choix à la place — et cette décision est définitive, elle mérite donc un instant de réflexion.",
+          ex2Title: "Définissez le champ",
+          ex2Content:
+            "Sur l'écran Champs personnalisés, choisissez Add. Sélectionnez le type d'enregistrement Personnes, définissez la clé sur nationality, le libellé anglais sur Nationality, le type de valeur sur Text, et laissez Required désactivé pour l'instant. Enregistrez.",
+          ex3Title: "Remplissez-le",
+          ex3Content:
+            "Ouvrez n'importe quel enregistrement de joueur. Une section Champs personnalisés affiche maintenant un champ Nationality, vide. Saisissez une valeur et enregistrez la fiche. L'absence d'erreur signifie que la valeur a été acceptée et stockée pour ce joueur.",
+          ex4Title: "Relisez-le",
+          ex4Content:
+            "Rouvrez l'enregistrement : la valeur est là. La liste des enregistrements possède désormais aussi une colonne Nationality, ce qui permet de voir la réponse de chaque joueur d'un seul coup d'œil, sans en ouvrir aucun.",
+          ex5Title: "Renforcez-le",
+          ex5Content:
+            "Plus tard, vous décidez que le champ doit toujours être rempli. Modifiez la définition et activez Obligatoire. À partir de là, un joueur ne peut plus être enregistré avec Nationality vide — mais notez que les joueurs déjà enregistrés avec ce champ vide restent tels quels jusqu'à ce que quelqu'un les modifie.",
+
+          scopeTitle: "Votre espace de travail, ou toute la plateforme",
+          scopeIntro:
+            "Un champ créé par un administrateur à l'intérieur d'un espace de travail appartient à cet espace de travail. Personne dans un autre espace de travail ne le voit, et ses réponses ne sont jamais visibles en dehors. C'est le cas normal, et il ne nécessite aucune réflexion particulière.",
+          scopeGlobal:
+            "Un administrateur de la plateforme travaillant sans espace de travail sélectionné crée à la place un champ global, et le formulaire affiche alors un interrupteur Global (tous les espaces de travail). Un champ global est hérité par tous les espaces de travail : tout le monde peut le remplir, et seul un administrateur de la plateforme peut le modifier, le réordonner ou le supprimer. Les champs globaux échappent aussi au quota de champs par espace de travail.",
+          scopeInfoTitle: "La portée se décide à la création",
+          scopeInfoContent:
+            "Il n'existe aucun moyen de convertir un champ d'espace de travail en champ global, ni l'inverse. Si la portée est incorrecte, le champ doit être recréé avec la bonne portée — et les réponses déjà enregistrées sous l'ancien champ restent attachées à celui-ci.",
+
+          notTitle: "Ce que les champs personnalisés ne sont pas",
+          notIntro:
+            "Quelques attentes raisonnables que l'on peut avoir à leur égard, et auxquelles ils ne répondent délibérément pas.",
+          not1: "Ils ne remplacent pas une véritable fonctionnalité. Un champ personnalisé stocke et affiche une réponse ; il ne calcule rien, ne déclenche rien, et n'apparaît dans aucun rapport que vous n'avez pas construit.",
+          not2: "Ce ne sont pas un mécanisme de contrôle d'accès. Le paramètre Sensibilité est un libellé. La sécurité au niveau du champ, configurée sur les rôles et les groupes d'utilisateurs, est ce qui masque réellement un champ.",
+          not3: "Ce ne sont pas une bibliothèque documentaire complète. File et Image contiennent chacun une seule référence gérée, pas un historique de versions ni une galerie — les flux de pièces jointes plus larges relèvent des propres fonctionnalités de pièces jointes de l'enregistrement. Le rattachement d'une nouvelle valeur File ou Image n'est pas encore possible depuis cet écran : les deux types peuvent être définis, et une valeur existante peut être consultée ou effacée.",
+          not4: "Ils ne sont pas de forme libre. Chaque champ a exactement un type de valeur, choisi au départ et définitif, et chaque valeur y est vérifiée à la saisie.",
+          not5: "Ils ne sont pas rétroactifs. Durcir un champ — le rendre obligatoire, ou lui attacher une vérification de format — ne revient jamais en arrière pour revérifier les réponses déjà enregistrées.",
+
+          nextTitle: "Où aller ensuite",
+          nextIntro: "Le reste de cette section couvre chaque partie en détail.",
           thPage: "Page",
-          thCovers: "What it covers",
-          pageValueTypes: "Types de Valeurs",
-          coversValueTypes: "All nineteen types, one at a time: what each one stores, what it accepts, what it rejects, and worked example inputs with the error code the product returns.",
-          pageReferences: "Reference Fields",
-          coversReferences: "The two types that point at a record in another part of the product: which of them to use, what is actually stored, why a name is never stored with it, pinning a target, what may be referenced, and the workspace rules.",
-          pageReferenceLookups: "Recherches de Référence",
-          coversReferenceLookups: "The three lookups behind a reference field, what every answer means, the five failure states and whose problem each one is, what happens when the referenced record is deleted, and how the picker behaves.",
-          pageDefining: "Defining a Field",
-          coversDefining: "The definition form control by control, the full walkthrough, key naming rules, creating a field from inside a record, and every rejection you can hit.",
-          pageGroups: "Groupes de Champs",
-          coversGroups: "Gathering a record type's fields under headings, the stable key, ordering, deleting, global groups, and what groups do and do not affect.",
+          thCovers: "Ce qu'elle couvre",
+          pageValueTypes: "Types de valeur",
+          coversValueTypes:
+            "Les vingt-deux types, un par un : ce que chacun stocke, ce qu'il accepte, ce qu'il rejette, et des exemples de saisie avec le code d'erreur que le produit renvoie.",
+          pageReferences: "Champs de référence",
+          coversReferences:
+            "Les deux types qui pointent vers un enregistrement d'une autre partie du produit : lequel utiliser, ce qui est réellement stocké, pourquoi un nom n'y est jamais stocké, comment épingler une cible, ce qui peut être référencé, et les règles d'espace de travail.",
+          pageReferenceLookups: "Recherches de référence",
+          coversReferenceLookups:
+            "Les trois recherches qui se cachent derrière un champ de référence, ce que signifie chaque réponse, les cinq états d'échec et à qui chacun incombe, ce qui se passe quand l'enregistrement référencé est supprimé, et comment se comporte le sélecteur.",
+          pageDefining: "Définir un champ",
+          coversDefining:
+            "Le formulaire de définition contrôle par contrôle, le parcours complet, les règles de nommage des clés, la création d'un champ depuis l'intérieur d'un enregistrement, et chaque refus que vous pouvez rencontrer.",
+          pageGroups: "Groupes de champs",
+          coversGroups:
+            "Rassembler les champs d'un type d'enregistrement sous des en-têtes, la clé stable, l'ordonnancement, la suppression, les groupes globaux, et ce que les groupes affectent ou n'affectent pas.",
           pageOptions: "Options",
-          coversOptions: "Writing the allowed answers for Select and MultiSelect, the bilingual option editor, how a submitted value is matched, and what changing the list later does to existing records.",
-          pageValidators: "Validators",
-          coversValidators: "All 13 built-in format checks with valid and invalid example inputs, the six that need a setting, the seven supported postal-code countries, and what a rejection looks like.",
-          pageSecurity: "Field-Level Security",
-          coversSecurity: "Restricting a field on a role or user group, what a restricted person sees, why their saves do not destroy hidden values, and why required and restricted cannot be combined.",
-          pageManaging: "Managing Fields",
-          coversManaging: "Editing, deactivating, the definition history dialog, the usage and impact report, deleting without destroying data, the spreadsheet export, and the two read-only reference screens.",
-          pageLimits: "Limits and Behaviours",
-          coversLimits: "Every fixed cap, every deliberate limitation, and the reason for each — so you do not spend an afternoon looking for a setting that is not there.",
+          coversOptions:
+            "Rédiger les réponses autorisées pour Select et MultiSelect, l'éditeur d'options bilingue, comment une valeur soumise est comparée, et ce que change plus tard la modification de la liste sur les enregistrements existants.",
+          pageValidators: "Validateurs",
+          coversValidators:
+            "Les 13 vérifications de format intégrées avec des exemples de saisie valides et invalides, les six qui nécessitent un paramètre, les sept pays de code postal pris en charge, et à quoi ressemble un refus.",
+          pageSecurity: "Sécurité au niveau du champ",
+          coversSecurity:
+            "Restreindre un champ sur un rôle ou un groupe d'utilisateurs, ce que voit une personne restreinte, pourquoi ses enregistrements ne détruisent pas les valeurs masquées, et pourquoi obligatoire et restreint ne peuvent pas être combinés.",
+          pageManaging: "Gestion des champs",
+          coversManaging:
+            "Modifier, désactiver, la boîte de dialogue d'historique de définition, le rapport d'utilisation et d'impact, supprimer sans détruire de données, l'export vers une feuille de calcul, et les deux écrans de référence en lecture seule.",
+          pageLimits: "Limites et comportements",
+          coversLimits:
+            "Chaque plafond fixe, chaque limitation délibérée, et la raison de chacune — pour que vous ne passiez pas un après-midi à chercher un paramètre qui n'existe pas.",
+
           accessTitle: "Permissions",
-          accessIntro: "Working with definitions needs permissions of its own. Filling in a field somebody else defined needs nothing beyond access to the record itself.",
+          accessIntro:
+            "Travailler avec les définitions nécessite ses propres permissions. Remplir un champ que quelqu'un d'autre a défini ne demande rien de plus que l'accès à l'enregistrement lui-même.",
           thNeed: "Permission",
-          thWhoNeedsIt: "What it allows",
-          permView: "See the Champs Personnalisés screen, the definition list, the History and Usage dialogs, and the two read-only reference screens.",
-          permCreate: "Create a definition, including through the Add champ personnalisé link inside a record form.",
-          permUpdate: "Edit an existing definition.",
-          permDelete: "Delete a definition, including confirming a destructive delete.",
-          permGroups: "The field-groups feature, gated separately. A role holding every custom-fields permission above does not automatically hold these.",
-          planInfoTitle: "Champs personnalisés are part of your plan",
-          planInfoContent: "The feature is entitlement-gated and quota-limited: the Free edition allows zero fields, and every plan has a maximum number of fields per workspace. If the Champs Personnalisés screen is missing, the Add button is absent, or a save is refused for quota, that is a plan matter rather than a fault. Global platform fields do not count against a workspace's quota.",
+          thWhoNeedsIt: "Ce qu'elle permet",
+          permView:
+            "Voir l'écran Champs personnalisés, la liste des définitions, les boîtes de dialogue Historique et Utilisation, et les deux écrans de référence en lecture seule.",
+          permCreate:
+            "Créer une définition, y compris via le lien Add custom field à l'intérieur d'un formulaire d'enregistrement.",
+          permUpdate: "Modifier une définition existante.",
+          permDelete: "Supprimer une définition, y compris confirmer une suppression destructrice.",
+          permGroups:
+            "La fonctionnalité des groupes de champs, verrouillée séparément. Un rôle détenant déjà toutes les permissions de champs personnalisés ci-dessus ne détient pas automatiquement celles-ci.",
+          planInfoTitle: "Les champs personnalisés font partie de votre forfait",
+          planInfoContent:
+            "La fonctionnalité est soumise à un droit d'accès et à un quota : l'édition Free n'autorise aucun champ, et chaque forfait a un nombre maximal de champs par espace de travail. Si l'écran Champs personnalisés est absent, si le bouton Add manque, ou si un enregistrement est refusé pour quota, il s'agit d'une question de forfait plutôt que d'un défaut. Les champs globaux de la plateforme ne comptent pas dans le quota d'un espace de travail.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Types de valeur
+        // ═══════════════════════════════════════════════════
         valueTypes: {
-          title: "Types de Valeurs",
-          description: "All nineteen custom-field value types: what each one stores, exactly what it accepts and rejects, worked example inputs, and the error codes the product returns.",
-          intro: "Every champ personnalisé has exactly one value type, chosen when the field is defined. The value type decides what control appears on the form, what the product accepts, how the value is stored and how it is displayed afterwards. This page covers all nineteen, one at a time, with example inputs that are accepted and example inputs that are refused. Seventeen of them store something you typed; the last two store a pointer at a record somewhere else, and have a page of their own as well.",
-          permanentTitle: "The value type can never be changed",
-          permanentContent: "Once a field is saved, its value type is fixed for the life of the field. There is no conversion — answers already recorded under the old type would stop making sense. If you pick the wrong type, the field has to be deleted and recreated, and the answers already stored against it are lost with it. Spend the extra minute up front.",
-          orderTitle: "How a submitted value is checked",
-          orderIntro: "Every save runs the same four steps in the same order for every type. Knowing the order explains most surprises.",
-          order1: "Is the value empty? A missing value, a blank string, or a string of nothing but spaces counts as empty. For MultiSelect an empty list counts too, and for DateTime, Currency and the two reference types a value counts as empty only when both of its parts are missing.",
-          order2: "If it is empty and the field is Required, the save is refused with VALIDATION_REQUIRED. If it is empty and the field is not required, the stored value is cleared and nothing else runs — no type check, no validator.",
-          order3: "If it is not empty, the type's own rules run: length caps, number parsing, range checks, allowed-option matching, format checks.",
-          order4: "For a Text field with a validator attached, and only then, the validator runs last — after the global 4,000-character cap and after the validator's own shorter length cap.",
-          orderKeyNote: "One detail worth knowing before you read any error message: the message names the field's key, not its label. A field labelled Nationality with the key nationality produces \"'nationality' expects a date.\", not \"'Nationality'\".",
-          thExample: "Example input",
-          thOutcome: "What happens",
-          groupTextTitle: "Text and choices",
-          textTitle: "Text",
-          textStores: "A single line of free-form text, up to 4,000 characters. Renders as an ordinary single-line input.",
-          textChecks: "The only check is the length cap — unless a validator is attached, which makes Text the only type that can carry a format check. The value is stored exactly as submitted; unlike Select, Text does not trim surrounding spaces.",
-          textOk: "Accepted, and stored exactly as submitted.",
-          textTooLong: "Refused: VALIDATION_MAX_LENGTH. Text stops at 4,000 characters — use LongText for anything longer.",
-          textBlankOptional: "Accepted, and stored as cleared. Whitespace-only counts as empty, so any attached validator never runs on it.",
-          textBlankRequired: "Refused: VALIDATION_REQUIRED. Whitespace-only counts as empty here too.",
-          exText4500: "A value 4,500 characters long",
-          exSpacesOptional: "Three spaces, on a field that is not Required",
-          exSpacesRequired: "Three spaces, on a Required field",
-          longTextTitle: "LongText",
-          longTextStores: "Longer free-form content, up to 10,000 characters. Renders as a real multi-line text area, not a taller single-line box.",
-          longTextChecks: "Only the 10,000-character cap. LongText cannot carry a validator. The on-screen counter turns red once you pass the cap, but it does not stop you typing — the refusal comes when you save.",
-          longTextOk: "Accepted. This is well past Text's own 4,000-character cap, which is the reason LongText exists.",
-          longTextTooLong: "Refused: VALIDATION_MAX_LENGTH, naming the 10,000-character cap.",
-          exLong6000: "A 6,000-character description",
-          exLong12000: "A 12,000-character description",
-          selectTitle: "Select",
-          selectStores: "One answer chosen from a list you write yourself. Renders as a dropdown offering exactly your options.",
-          selectChecks: "The submitted value must match one of the field's configured options exactly. Both sides are trimmed before comparison, and the comparison is case-sensitive. For an options list of Small, Medium, Large:",
-          selectOk: "Accepted, and stored as the option text itself.",
-          selectTrimmed: "Accepted. Surrounding spaces are trimmed before the comparison.",
-          selectCase: "Refused: VALIDATION_INVALID_FORMAT. Matching is case-sensitive, so Medium and medium are different answers — which also means the two can legitimately both exist as separate options.",
-          selectUnknown: "Refused: VALIDATION_INVALID_FORMAT. The message quotes the rejected value and the field's key.",
-          exSelectPadded: "\" Medium\" with a leading space",
-          multiSelectTitle: "MultiSelect",
-          multiSelectStores: "Several answers from the same kind of list, up to 19 of them. Renders as a multi-select combobox with a live \"N of 19 selected\" counter.",
-          multiSelectChecks: "Every submitted answer must be one of the field's configured options, no answer may repeat, and there may be at most 19. The order you pick in is preserved end to end. For an options list of Red, Green, Blue, Yellow:",
-          multiOk: "Accepted, and read back in the order picked — Blue first, then Red — not re-sorted into the order the options were listed in.",
-          multiTooMany: "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19. The picker itself makes the twentieth option unselectable, so reaching this needs a request that bypasses the form.",
-          multiDuplicate: "Refused: VALIDATION_UNIQUE. A repeated answer is rejected rather than quietly collapsed to one.",
-          multiUnknown: "Refused: VALIDATION_INVALID_FORMAT — Purple is not one of the field's options.",
-          multiEmpty: "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required.",
-          exMultiTwo: "Blue, then Red",
-          exMultiTwenty: "20 selections",
-          exMultiRepeat: "Red, then Red again",
-          exMultiEmptyList: "An explicitly empty list",
-          groupNumberTitle: "Numbers and measures",
-          numberTitle: "Number",
-          numberStores: "Any number, whole or with decimals, positive or negative, with up to six decimal places.",
-          numberChecks: "Only that the value parses as a number. No minimum, maximum, precision or rounding rule is applied, so choose Number when genuinely any number is a valid answer — and choose Percent, Rating, Currency or Duration when it is not.",
-          numberOk: "Accepted.",
-          numberNegative: "Accepted. Negative values are perfectly valid for this type.",
-          numberPrecision: "Accepted, and stored to six decimal places. Anything finer than that is not preserved.",
-          numberInvalid: "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a number\". A number written as words is not parsed.",
+          title: "Types de valeur",
+          description:
+            "Les vingt-deux types de valeur des champs personnalisés : ce que chacun stocke, exactement ce qu'il accepte et rejette, des exemples de saisie, et les codes d'erreur que le produit renvoie.",
+          intro:
+            "Chaque champ personnalisé a exactement un type de valeur, choisi lors de la définition du champ. Le type de valeur détermine le contrôle qui apparaît sur le formulaire, ce que le produit accepte, comment la valeur est stockée et comment elle s'affiche ensuite. Cette page couvre les vingt-deux, un par un, avec des exemples de saisie acceptés et des exemples de saisie refusés. Dix-huit d'entre eux stockent ce que vous avez tapé ; les quatre autres stockent un pointeur à la place — deux vers un enregistrement situé ailleurs dans le produit, avec une page qui leur est propre, et deux vers un unique fichier ou image téléversé.",
+          permanentTitle: "Le type de valeur ne peut jamais être changé",
+          permanentContent:
+            "Une fois qu'un champ est enregistré, son type de valeur est figé pour toute la durée de vie du champ. Il n'existe aucune conversion — les réponses déjà enregistrées sous l'ancien type n'auraient plus de sens. Si vous choisissez le mauvais type, le champ doit être supprimé et recréé, et les réponses déjà stockées pour lui sont perdues avec lui. Prenez la minute supplémentaire en amont.",
+
+          orderTitle: "Comment une valeur soumise est vérifiée",
+          orderIntro:
+            "Chaque enregistrement exécute les quatre mêmes étapes, dans le même ordre, pour chaque type. Connaître cet ordre explique la plupart des surprises.",
+          order1:
+            "La valeur est-elle vide ? Une valeur absente, une chaîne vide, ou une chaîne composée uniquement d'espaces compte comme vide. Pour MultiSelect, une liste vide compte aussi, et pour DateTime, Currency et les quatre types en forme de référence (EntityReference, UserReference, File, Image), une valeur ne compte comme vide que lorsque ses deux parties sont absentes.",
+          order2:
+            "Si elle est vide et que le champ est Obligatoire, l'enregistrement est refusé avec VALIDATION_REQUIRED. Si elle est vide et que le champ n'est pas obligatoire, la valeur stockée est effacée et rien d'autre ne s'exécute — ni vérification de type, ni validateur.",
+          order3:
+            "Si elle n'est pas vide, les règles propres au type s'exécutent : plafonds de longueur, analyse des nombres, vérifications de plage, correspondance avec les options autorisées, vérifications de format.",
+          order4:
+            "Pour un champ Text auquel un validateur est attaché, et alors seulement, le validateur s'exécute en dernier — après le plafond global de 4 000 caractères et après le plafond de longueur, plus court, propre au validateur.",
+          orderKeyNote:
+            "Un détail à connaître avant de lire un message d'erreur : le message nomme la clé du champ, pas son libellé. Un champ libellé Nationality avec la clé nationality produit « 'nationality' expects a date. », pas « 'Nationality' ».",
+
+          thExample: "Exemple de saisie",
+          thOutcome: "Ce qui se passe",
+
+          groupTextTitle: "Texte et choix",
+          textTitle: "Texte [Text]",
+          textStores:
+            "Une seule ligne de texte libre, jusqu'à 4 000 caractères. S'affiche comme un champ de saisie mono-ligne ordinaire.",
+          textChecks:
+            "La seule vérification est le plafond de longueur — sauf si un validateur est attaché, ce qui fait de Text le seul type pouvant porter une vérification de format. La valeur est stockée exactement telle que soumise ; contrairement à Select, Text ne supprime pas les espaces qui l'entourent.",
+          textOk: "Acceptée, et stockée exactement telle que soumise.",
+          textTooLong:
+            "Refusée : VALIDATION_MAX_LENGTH. Text s'arrête à 4 000 caractères — utilisez LongText pour tout ce qui est plus long.",
+          textBlankOptional:
+            "Acceptée, et stockée comme effacée. Une valeur composée uniquement d'espaces compte comme vide, donc un validateur éventuellement attaché ne s'exécute jamais dessus.",
+          textBlankRequired: "Refusée : VALIDATION_REQUIRED. Ici aussi, une valeur composée uniquement d'espaces compte comme vide.",
+          exText4500: "Une valeur longue de 4 500 caractères",
+          exSpacesOptional: "Trois espaces, sur un champ non Obligatoire",
+          exSpacesRequired: "Trois espaces, sur un champ Obligatoire",
+
+          longTextTitle: "Texte long [LongText]",
+          longTextStores:
+            "Un contenu libre plus long, jusqu'à 10 000 caractères. S'affiche comme une véritable zone de texte multiligne, pas comme une boîte mono-ligne agrandie.",
+          longTextChecks:
+            "Seul le plafond de 10 000 caractères s'applique. LongText ne peut pas porter de validateur. Le compteur à l'écran passe au rouge une fois le plafond dépassé, mais il ne vous empêche pas de continuer à taper — le refus survient à l'enregistrement.",
+          longTextOk:
+            "Acceptée. C'est bien au-delà du plafond de 4 000 caractères propre à Text, qui est la raison d'être de LongText.",
+          longTextTooLong: "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 10 000 caractères.",
+          exLong6000: "Une description de 6 000 caractères",
+          exLong12000: "Une description de 12 000 caractères",
+
+          selectTitle: "Sélection [Select]",
+          selectStores:
+            "Une réponse choisie dans une liste que vous rédigez vous-même. S'affiche comme une liste déroulante proposant exactement vos options.",
+          selectChecks:
+            "La valeur soumise doit correspondre exactement à l'une des options configurées pour le champ. Les deux côtés sont épurés des espaces avant comparaison, et la comparaison est sensible à la casse. Pour une liste d'options Small, Medium, Large :",
+          selectOk: "Acceptée, et stockée telle quelle comme le texte de l'option.",
+          selectTrimmed: "Acceptée. Les espaces qui l'entourent sont supprimés avant la comparaison.",
+          selectCase:
+            "Refusée : VALIDATION_INVALID_FORMAT. La comparaison est sensible à la casse, donc Medium et medium sont des réponses différentes — ce qui signifie aussi que les deux peuvent légitimement exister comme deux options distinctes.",
+          selectUnknown:
+            "Refusée : VALIDATION_INVALID_FORMAT. Le message cite la valeur rejetée et la clé du champ.",
+          exSelectPadded: "« Medium » précédé d'une espace",
+
+          multiSelectTitle: "Sélection multiple [MultiSelect]",
+          multiSelectStores:
+            "Plusieurs réponses issues du même type de liste, jusqu'à 19. S'affiche comme un champ à sélection multiple avec un compteur en direct « N sur 19 sélectionnées ».",
+          multiSelectChecks:
+            "Chaque réponse soumise doit être l'une des options configurées pour le champ, aucune réponse ne peut se répéter, et il ne peut y en avoir plus de 19. L'ordre de sélection est conservé de bout en bout. Pour une liste d'options Red, Green, Blue, Yellow :",
+          multiOk:
+            "Acceptée, et relue dans l'ordre de sélection — Blue d'abord, puis Red — sans être retriée dans l'ordre où les options étaient listées.",
+          multiTooMany:
+            "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 19. Le sélecteur lui-même rend la vingtième option impossible à choisir, donc atteindre ce cas nécessite une requête qui contourne le formulaire.",
+          multiDuplicate:
+            "Refusée : VALIDATION_UNIQUE. Une réponse répétée est rejetée plutôt que silencieusement réduite à une seule.",
+          multiUnknown: "Refusée : VALIDATION_INVALID_FORMAT — Purple ne fait pas partie des options du champ.",
+          multiEmpty:
+            "Traitée comme vide : effacée si le champ est facultatif, refusée avec VALIDATION_REQUIRED s'il est obligatoire.",
+          exMultiTwo: "Blue, puis Red",
+          exMultiTwenty: "20 sélections",
+          exMultiRepeat: "Red, puis Red à nouveau",
+          exMultiEmptyList: "Une liste explicitement vide",
+
+          groupNumberTitle: "Nombres et mesures",
+          numberTitle: "Nombre [Number]",
+          numberStores:
+            "Tout nombre, entier ou décimal, positif ou négatif, avec jusqu'à six décimales.",
+          numberChecks:
+            "La seule vérification est que la valeur s'analyse comme un nombre. Aucune règle de minimum, de maximum, de précision ou d'arrondi n'est appliquée : choisissez Number lorsque véritablement n'importe quel nombre est une réponse valide — et choisissez Percent, Rating, Currency ou Duration lorsque ce n'est pas le cas.",
+          numberOk: "Acceptée.",
+          numberNegative: "Acceptée. Les valeurs négatives sont parfaitement valides pour ce type.",
+          numberPrecision:
+            "Acceptée, et stockée avec six décimales. Toute précision plus fine n'est pas conservée.",
+          numberInvalid:
+            "Refusée : VALIDATION_INVALID_FORMAT — le message indique « expects a number ». Un nombre écrit en toutes lettres n'est pas analysé.",
           exAboutForty: "\"about 40\"",
-          percentTitle: "Percent",
-          percentStores: "A percentage between 0 and 100 inclusive, decimals allowed. Renders as a plain numeric input, and displays afterwards as the number with a % sign appended.",
-          percentChecks: "The value must parse as a number and fall inside 0 to 100. It is stored exactly as typed — this is the detail to get right if you ever read the raw data or build an export.",
-          percentOk: "Accepted, and shown afterwards as 25%.",
-          percentDecimal: "Accepted, and shown as 33.5%. Fractions of a percentage point are kept exactly.",
-          percentQuarter: "Accepted — but it means a quarter of one percent, shown as 0.25%. Percent stores the number you would say out loud, never a 0-to-1 fraction.",
-          percentTooHigh: "Refused: VALIDATION_RANGE, naming the bounds 0 and 100.",
-          percentNegative: "Refused: VALIDATION_RANGE. The lower bound is 0, and it is inclusive.",
-          ratingTitle: "Rating",
-          ratingStores: "A whole number from 1 to 5, captured on a slider. Displays afterwards as \"4 / 5\".",
-          ratingChecks: "The value must parse as a number, be a whole number, and fall between 1 and 5 inclusive. There is no star control and no free-text entry.",
-          ratingOk: "Accepted, and shown as 4 / 5.",
-          ratingZero: "Refused: VALIDATION_RANGE. A zero is a real submitted value that fails the 1-to-5 check; it is not read as \"unrated\".",
-          ratingFraction: "Refused: VALIDATION_RANGE. Half ratings are not supported — this is a genuine difference from Number, which allows any decimal.",
-          ratingTooHigh: "Refused: VALIDATION_RANGE, with the same message a 0 gets.",
-          ratingUntouched: "Saved as empty, not as 1. The slider thumb has to sit somewhere, so an untouched field shows at its leftmost position — that is a display artefact, not a stored answer.",
-          exRatingUntouched: "The slider left untouched on a new record",
-          currencyTitle: "Currency",
-          currencyStores: "An amount together with its three-letter currency code, held as two independent inputs inside one labelled group. Displays afterwards through the reader's own number formatting, showing the code rather than a symbol so EUR and USD are never ambiguous.",
-          currencyChecks: "Both parts are required together. The amount must parse as a number; the code must be exactly three uppercase ASCII letters. The code input uppercases and letter-filters as you type, because the check itself does not coerce lower case — it rejects it.",
-          currencyOk: "Accepted. Displays as the amount alongside the code, for example USD 100.50.",
-          currencyLower: "Refused if it ever reaches the server: VALIDATION_INVALID_FORMAT, naming the 3-letter ISO 4217 requirement. In the form itself the input forces upper case as you type, so you will not normally see this.",
-          currencyNoCode: "Refused: VALIDATION_INVALID_FORMAT. The form also blocks this before it calls the server, with a message saying the field needs both an amount and a currency code.",
-          currencyNoAmount: "Refused the same way. A code with no amount is a broken value, not a cleared one — only both parts missing counts as empty.",
-          currencyZzz: "Accepted. Only the shape of the code is checked, never its membership of the real ISO 4217 list, so a well-formed code that does not exist gets through. The display falls back to \"ZZZ 100.50\" for a code the reader's browser does not recognise.",
-          currencyMinor: "Accepted, and it means ten thousand and fifty. There are no minor units anywhere in custom-field storage — 100.50 is stored as 100.50, never as 10050.",
-          exCurrencyOk: "100.50 with the code USD",
-          exCurrencyLower: "100.50 with the code usd",
-          exCurrencyNoCode: "100.50 with the code left blank",
-          exCurrencyNoAmount: "The amount left blank with the code USD",
-          exCurrencyZzz: "100.50 with the code ZZZ",
-          exCurrencyMinor: "10050 with the code USD",
-          durationTitle: "Duration",
-          durationStores: "A length of time counted in minutes. Renders as a number input with a visible \"minutes\" label beside it, never as a bare unlabelled number.",
-          durationChecks: "The value must parse as a number and must not be negative. Zero is accepted — a legitimate \"no buffer\". There is no upper bound at all.",
-          durationOk: "Accepted, and displayed as 90 minutes.",
-          durationFraction: "Accepted, and kept exactly as 1.5 — ninety seconds. Decimals are not rounded to whole minutes.",
-          durationZero: "Accepted. Zero is a real answer, not an empty one.",
-          durationLarge: "Accepted — 5,400 minutes, which is three and a half days. Nothing warns you, because there is no maximum.",
-          durationNegative: "Refused: VALIDATION_RANGE, with a message saying the value must not be negative.",
-          groupDateTitle: "Dates and times",
-          dateTitle: "Date",
-          dateStores: "A calendar date with no time component at all — a birthday, a contract date, an expiry. Renders as a date picker.",
-          dateChecks: "Only that the value parses as a date. Because the stored value is a plain calendar date rather than a moment in time, it reads back identically for every viewer regardless of their time zone.",
-          dateOk: "Accepted, and read back as the same calendar date for every viewer, anywhere.",
-          dateNoTime: "Ignored. Date holds no time component, so a time submitted alongside the date is simply not stored. Use DateTime when the time matters.",
-          dateInvalid: "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a date\".",
-          exDateWithTime: "A date with a time component attached",
+
+          percentTitle: "Pourcentage [Percent]",
+          percentStores:
+            "Un pourcentage compris entre 0 et 100 inclus, décimales autorisées. S'affiche comme un simple champ de saisie numérique, puis se présente ensuite comme le nombre suivi du signe %.",
+          percentChecks:
+            "La valeur doit s'analyser comme un nombre et se situer entre 0 et 100. Elle est stockée exactement telle que saisie — c'est le détail à bien maîtriser si vous lisez un jour les données brutes ou construisez un export.",
+          percentOk: "Acceptée, et affichée ensuite comme 25%.",
+          percentDecimal: "Acceptée, et affichée comme 33.5%. Les fractions de point de pourcentage sont conservées exactement.",
+          percentQuarter:
+            "Acceptée — mais cela signifie un quart d'un pour cent, affiché comme 0.25%. Percent stocke le nombre que vous diriez à voix haute, jamais une fraction entre 0 et 1.",
+          percentTooHigh: "Refusée : VALIDATION_RANGE, en nommant les bornes 0 et 100.",
+          percentNegative: "Refusée : VALIDATION_RANGE. La borne inférieure est 0, et elle est incluse.",
+
+          ratingTitle: "Note [Rating]",
+          ratingStores:
+            "Un nombre entier de 1 à 5, saisi sur un curseur. S'affiche ensuite comme « 4 / 5 ».",
+          ratingChecks:
+            "La valeur doit s'analyser comme un nombre, être un nombre entier, et se situer entre 1 et 5 inclus. Il n'y a ni contrôle en étoiles ni saisie de texte libre.",
+          ratingOk: "Acceptée, et affichée comme 4 / 5.",
+          ratingZero:
+            "Refusée : VALIDATION_RANGE. Un zéro est une valeur réellement soumise qui échoue à la vérification de plage 1 à 5 ; il n'est pas interprété comme « non noté ».",
+          ratingFraction:
+            "Refusée : VALIDATION_RANGE. Les demi-notes ne sont pas prises en charge — c'est une différence réelle avec Number, qui autorise n'importe quelle décimale.",
+          ratingTooHigh: "Refusée : VALIDATION_RANGE, avec le même message qu'un 0.",
+          ratingUntouched:
+            "Enregistrée comme vide, pas comme 1. La poignée du curseur doit bien se trouver quelque part, donc un champ non touché s'affiche à sa position la plus à gauche — c'est un artefact d'affichage, pas une réponse stockée.",
+          exRatingUntouched: "Le curseur laissé intact sur un nouvel enregistrement",
+
+          currencyTitle: "Devise [Currency]",
+          currencyStores:
+            "Un montant accompagné de son code de devise à trois lettres, conservé comme deux champs de saisie indépendants à l'intérieur d'un même groupe libellé. S'affiche ensuite selon le formatage numérique propre au lecteur, en montrant le code plutôt qu'un symbole afin que EUR et USD ne soient jamais ambigus.",
+          currencyChecks:
+            "Les deux parties sont exigées ensemble. Le montant doit s'analyser comme un nombre ; le code doit être exactement trois lettres ASCII majuscules. Le champ du code se met en majuscules et filtre les lettres au fur et à mesure de la saisie, car la vérification elle-même ne convertit pas les minuscules — elle les rejette.",
+          currencyOk: "Acceptée. S'affiche comme le montant accompagné du code, par exemple USD 100.50.",
+          currencyLower:
+            "Refusée si elle atteint un jour le serveur : VALIDATION_INVALID_FORMAT, en nommant l'exigence des trois lettres de la norme ISO 4217. Dans le formulaire lui-même, le champ force les majuscules au fur et à mesure de la saisie, donc vous ne verrez normalement pas ce cas.",
+          currencyNoCode:
+            "Refusée : VALIDATION_INVALID_FORMAT. Le formulaire bloque aussi ce cas avant même d'appeler le serveur, avec un message indiquant que le champ a besoin à la fois d'un montant et d'un code de devise.",
+          currencyNoAmount:
+            "Refusée de la même façon. Un code sans montant est une valeur incomplète, pas une valeur effacée — seule l'absence des deux parties compte comme vide.",
+          currencyZzz:
+            "Acceptée. Seule la forme du code est vérifiée, jamais son appartenance à la véritable liste ISO 4217, donc un code bien formé mais inexistant passe. L'affichage se replie sur « ZZZ 100.50 » pour un code que le navigateur du lecteur ne reconnaît pas.",
+          currencyMinor:
+            "Acceptée, et cela signifie dix mille cinquante. Il n'existe nulle part d'unités mineures dans le stockage des champs personnalisés — 100.50 est stocké comme 100.50, jamais comme 10050.",
+          exCurrencyOk: "100.50 avec le code USD",
+          exCurrencyLower: "100.50 avec le code usd",
+          exCurrencyNoCode: "100.50 avec le code laissé vide",
+          exCurrencyNoAmount: "Le montant laissé vide avec le code USD",
+          exCurrencyZzz: "100.50 avec le code ZZZ",
+          exCurrencyMinor: "10050 avec le code USD",
+
+          durationTitle: "Durée [Duration]",
+          durationStores:
+            "Une durée comptée en minutes. S'affiche comme un champ numérique avec un libellé « minutes » visible à côté, jamais comme un nombre nu sans unité.",
+          durationChecks:
+            "La valeur doit s'analyser comme un nombre et ne doit pas être négative. Zéro est accepté — un « aucun tampon » légitime. Il n'y a aucune borne supérieure.",
+          durationOk: "Acceptée, et affichée comme 90 minutes.",
+          durationFraction:
+            "Acceptée, et conservée exactement comme 1.5 — quatre-vingt-dix secondes. Les décimales ne sont pas arrondies à la minute entière.",
+          durationZero: "Acceptée. Zéro est une réponse réelle, pas une réponse vide.",
+          durationLarge:
+            "Acceptée — 5 400 minutes, soit trois jours et demi. Rien ne vous avertit, car il n'y a pas de maximum.",
+          durationNegative: "Refusée : VALIDATION_RANGE, avec un message indiquant que la valeur ne doit pas être négative.",
+
+          groupDateTitle: "Dates et heures",
+          dateTitle: "Date [Date]",
+          dateStores:
+            "Une date calendaire sans aucune composante horaire — un anniversaire, une date de contrat, une expiration. S'affiche comme un sélecteur de date.",
+          dateChecks:
+            "La seule vérification est que la valeur s'analyse comme une date. Comme la valeur stockée est une simple date calendaire plutôt qu'un instant précis, elle se relit identiquement pour chaque lecteur, quel que soit son fuseau horaire.",
+          dateOk: "Acceptée, et relue comme la même date calendaire pour chaque lecteur, où qu'il soit.",
+          dateNoTime:
+            "Ignorée. Date ne contient aucune composante horaire, donc une heure soumise en même temps que la date n'est tout simplement pas stockée. Utilisez DateTime lorsque l'heure compte.",
+          dateInvalid: "Refusée : VALIDATION_INVALID_FORMAT — le message indique « expects a date ».",
+          exDateWithTime: "Une date à laquelle est rattachée une composante horaire",
           exNotADate: "\"next Tuesday\"",
-          dateTimeTitle: "DateTime",
-          dateTimeStores: "A precise moment together with the time zone it belongs to. Both halves are stored, so a kick-off at 18:00 in Cairo still reads as 18:00 in Cairo for somebody looking at it from London.",
-          dateTimeChecks: "The instant must parse, and the time zone must be a recognised IANA zone identifier. The zone is required as soon as either half is present — an instant with no zone is refused, not silently interpreted. The form shows the zone as a small disclosure beside the entered time, with a Change link that opens a searchable picker.",
-          dateTimeOk: "Accepted. Both the instant and its zone are read back exactly as entered.",
-          dateTimeNoZone: "Refused: VALIDATION_INVALID_TIMEZONE. A moment with no zone is exactly what DateTime exists to prevent.",
-          dateTimeBadZone: "Refused: VALIDATION_INVALID_TIMEZONE, naming the unrecognised identifier. Zones are real IANA names such as Africa/Cairo or Asia/Tokyo.",
-          dateTimeEmpty: "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required. Only both halves missing counts as empty.",
-          exDateTimeOk: "18:00 on 21 August 2026, zone Africa/Cairo",
-          exDateTimeNoZone: "18:00 on 21 August 2026, zone left blank",
-          exDateTimeBadZone: "18:00 on 21 August 2026, zone Not/AZone",
-          exDateTimeBothBlank: "Both the instant and the zone left blank",
-          timeTitle: "Time",
-          timeStores: "A time of day on a 24-hour clock, seconds included, with no date attached — an opening time, a curfew, a kick-off slot. Renders as a native time picker with seconds enabled, and displays afterwards in each reader's own local time format.",
-          timeChecks: "The value must be hours, minutes and seconds separated by colons, with hours 0 to 23, minutes 0 to 59 and seconds 0 to 59. Unpadded input is accepted and normalised rather than refused.",
-          timeOk: "Accepted, and shown in the reader's own format — for example 2:30:00 PM for an English (US) reader.",
-          timeNormalised: "Accepted, and normalised to 09:05:00 before storage. Two submissions of the same time written with different digit widths always end up identical.",
-          timeHourRange: "Refused: VALIDATION_INVALID_FORMAT. Hours run 0 to 23, so 24 is out of range.",
-          timeMinuteRange: "Refused: VALIDATION_INVALID_FORMAT. Minutes run 0 to 59.",
-          timeAmPm: "Refused: VALIDATION_INVALID_FORMAT. Twelve-hour text is not parsed — the stored form is always 24-hour, even though the display is not.",
-          groupContactTitle: "Contact details and links",
-          emailTitle: "Email",
-          emailStores: "An email address. Renders as a native email input, and displays afterwards as a clickable mail link.",
-          emailChecks: "The address is parsed as a real address rather than matched against a pattern, and it must be nothing but the address. Case is preserved exactly as typed — no lowercasing.",
-          emailOk: "Accepted, stored with its exact capitalisation, and shown as a clickable mail link.",
-          emailDisplayName: "Refused: VALIDATION_INVALID_EMAIL. A display-name wrapper parses as an address but is rejected rather than silently stripped, because an Email field has no display name to keep.",
-          emailInvalid: "Refused: VALIDATION_INVALID_EMAIL.",
+
+          dateTimeTitle: "Date et heure [DateTime]",
+          dateTimeStores:
+            "Un instant précis accompagné du fuseau horaire auquel il appartient. Les deux moitiés sont stockées, de sorte qu'un coup d'envoi à 18:00 au Caire se relit toujours comme 18:00 au Caire pour quelqu'un qui le consulte depuis Londres.",
+          dateTimeChecks:
+            "L'instant doit s'analyser correctement, et le fuseau horaire doit être un identifiant de fuseau IANA reconnu. Le fuseau est exigé dès que l'une des deux moitiés est présente — un instant sans fuseau est refusé, jamais interprété silencieusement. Le formulaire affiche le fuseau comme une petite indication à côté de l'heure saisie, avec un lien Change qui ouvre un sélecteur permettant la recherche.",
+          dateTimeOk: "Acceptée. L'instant et son fuseau sont tous deux relus exactement tels que saisis.",
+          dateTimeNoZone:
+            "Refusée : VALIDATION_INVALID_TIMEZONE. Un instant sans fuseau est exactement ce que DateTime existe pour empêcher.",
+          dateTimeBadZone:
+            "Refusée : VALIDATION_INVALID_TIMEZONE, en nommant l'identifiant non reconnu. Les fuseaux sont de véritables noms IANA tels que Africa/Cairo ou Asia/Tokyo.",
+          dateTimeEmpty:
+            "Traitée comme vide : effacée si le champ est facultatif, refusée avec VALIDATION_REQUIRED s'il est obligatoire. Seule l'absence des deux moitiés compte comme vide.",
+          exDateTimeOk: "18:00 le 21 août 2026, fuseau Africa/Cairo",
+          exDateTimeNoZone: "18:00 le 21 août 2026, fuseau laissé vide",
+          exDateTimeBadZone: "18:00 le 21 août 2026, fuseau Not/AZone",
+          exDateTimeBothBlank: "L'instant et le fuseau laissés vides tous les deux",
+
+          timeTitle: "Heure [Time]",
+          timeStores:
+            "Une heure du jour sur une horloge 24 heures, secondes comprises, sans date associée — une heure d'ouverture, un couvre-feu, un créneau de coup d'envoi. S'affiche comme un sélecteur d'heure natif avec les secondes activées, puis se présente ensuite dans le format horaire local propre à chaque lecteur.",
+          timeChecks:
+            "La valeur doit être des heures, minutes et secondes séparées par des deux-points, avec des heures de 0 à 23, des minutes de 0 à 59 et des secondes de 0 à 59. Une saisie sans zéros de tête est acceptée et normalisée plutôt que refusée.",
+          timeOk: "Acceptée, et affichée dans le format propre au lecteur — par exemple 2:30:00 PM pour un lecteur en anglais (États-Unis).",
+          timeNormalised:
+            "Acceptée, et normalisée en 09:05:00 avant stockage. Deux soumissions de la même heure écrites avec des largeurs de chiffres différentes finissent toujours identiques.",
+          timeHourRange: "Refusée : VALIDATION_INVALID_FORMAT. Les heures vont de 0 à 23, donc 24 est hors plage.",
+          timeMinuteRange: "Refusée : VALIDATION_INVALID_FORMAT. Les minutes vont de 0 à 59.",
+          timeAmPm:
+            "Refusée : VALIDATION_INVALID_FORMAT. Le texte sur 12 heures n'est pas analysé — la forme stockée est toujours sur 24 heures, même si l'affichage ne l'est pas.",
+
+          groupContactTitle: "Coordonnées et liens",
+          emailTitle: "E-mail [Email]",
+          emailStores:
+            "Une adresse e-mail. S'affiche comme un champ de saisie e-mail natif, puis se présente ensuite comme un lien de messagerie cliquable.",
+          emailChecks:
+            "L'adresse est analysée comme une véritable adresse plutôt que comparée à un motif, et elle ne doit contenir rien d'autre que l'adresse. La casse est conservée exactement telle que saisie — aucune mise en minuscules.",
+          emailOk:
+            "Acceptée, stockée avec sa casse exacte, et affichée comme un lien de messagerie cliquable.",
+          emailDisplayName:
+            "Refusée : VALIDATION_INVALID_EMAIL. Une enveloppe avec nom d'affichage s'analyse comme une adresse mais est rejetée plutôt que silencieusement dépouillée, car un champ Email n'a aucun nom d'affichage à conserver.",
+          emailInvalid: "Refusée : VALIDATION_INVALID_EMAIL.",
           exEmailDisplayName: "\"Test User <test@example.com>\"",
-          urlTitle: "Url",
-          urlStores: "A web address. Renders as a native URL input, and displays afterwards as a real link that opens in a new tab.",
-          urlChecks: "The value must be an absolute address whose scheme is exactly http or https. Every other scheme is refused. The scheme is checked again on the way out, before the value is ever rendered as a link.",
-          urlOk: "Accepted, and shown as a link opening in a new tab.",
-          urlHttpOk: "Accepted. Plain http is deliberately allowed — a company site or an internal address during setup is legitimate data.",
-          urlNoScheme: "Refused: VALIDATION_INVALID_FORMAT. A bare host is rejected rather than guessed at, so nothing has to decide whether you meant http or https.",
-          urlScheme: "Refused: VALIDATION_INVALID_FORMAT. This is a real security boundary, not a style rule — and because the scheme is re-checked before display, even a value stored before this check existed shows as inert text rather than a live link.",
-          urlFtp: "Refused: VALIDATION_INVALID_FORMAT. Only http and https are on the list.",
-          phoneTitle: "Phone",
-          phoneStores: "A phone number in international format. Renders through a country picker with flags and search, and displays afterwards reformatted for readability — for example +20 123 456 7890.",
-          phoneChecks: "The stored value must start with a +, its first digit must not be zero, and it must hold between 8 and 15 digits in total. That is a check on shape only.",
-          phoneOk: "Accepted, and displayed reformatted rather than as the bare stored string.",
-          phoneNoPlus: "Refused: VALIDATION_INVALID_FORMAT. The leading + is part of the format.",
-          phoneLeadingZero: "Refused: VALIDATION_INVALID_FORMAT. A country code never starts with zero.",
-          phoneTooShort: "Refused: VALIDATION_INVALID_FORMAT. Seven digits is below the minimum of eight.",
-          phoneUnassignable: "Accepted by the server, which checks shape only and not whether the number could really exist. The form's own picker additionally checks the number against the selected country's real numbering plan, so you cannot build this value through the interface — only a request that bypasses the form.",
-          groupOtherTitle: "Yes/no and colour",
-          booleanTitle: "Boolean",
-          booleanStores: "A plain yes or no. Renders as an on/off toggle. Has no placeholder and no options.",
-          booleanChecks: "Only the words true and false are parsed, in either case. Nothing else is treated as a synonym.",
-          boolTrue: "Accepted.",
-          boolFalse: "Accepted.",
-          boolOne: "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a boolean\". A numeric 1 is not read as true.",
-          boolYes: "Refused: VALIDATION_INVALID_FORMAT. Neither yes/no nor on/off is accepted.",
-          colorTitle: "Color",
-          colorStores: "A colour, stored as a hex value. Renders as a grid of twenty swatches plus a custom hex entry, and displays afterwards as the hex text with a small matching colour chip beside it.",
-          colorChecks: "The value must be a # followed by exactly three or exactly six hexadecimal digits. Case is normalised to lower case on save; length is not.",
-          colorOk: "Accepted, and stored as #aabbcc. Upper case is folded down to lower case.",
-          colorShort: "Accepted, and kept as #abc. The shorthand is never expanded to #aabbcc, even though a renderer treats the two as the same colour — so the same colour can legitimately be stored two ways across different records.",
-          colorNoHash: "Refused: VALIDATION_INVALID_FORMAT. The leading # is required.",
-          colorBadLength: "Refused: VALIDATION_INVALID_FORMAT. Three or six digits, nothing in between.",
-          colorNamed: "Refused: VALIDATION_INVALID_FORMAT. Colour names are not accepted, only hex values.",
-          groupReferenceTitle: "References to another record",
-          referenceGroupIntro: "The last two types store no text of their own. Each one stores a pointer at a record somewhere else in the product, and the name you see is looked up fresh every time the field is displayed rather than saved alongside the pointer. Both store the same two pieces — the kind of record and that record's own identity — and both treat a value as empty only when both pieces are missing. There is a great deal more to say about them than fits a table; the Reference Fields and Recherches de Référence pages say it.",
-          entityReferenceTitle: "EntityReference",
-          entityReferenceStores: "A pointer at a record of any kind this installation can answer for and you are allowed to view. Renders as a searchable picker over that kind of record — preceded by a second picker for the kind itself, when the definition does not pin one.",
-          entityReferenceChecks: "Both pieces are required together. The kind of record must be registered and, when the definition pins one, must be that one. The identity must be readable. And you must have been able to read that record at the moment you saved, which is what stops a pointer being used to reach data you cannot open directly. Each check refuses with its own message rather than a generic one.",
-          refOk: "Accepted. The answer records both the kind of record and that record's identity, and the picker shows the record's current name from then on.",
-          refIncomplete: "Refused as an incomplete reference. Half a pointer is not treated as an empty field — it means somebody began answering and stopped.",
-          refIncompleteToo: "Refused the same way. An identity with no kind of record names a row but no table, so there is nothing to look it up in.",
-          refMismatch: "Refused, and the message names both what the field expects and what arrived. The pin is a deliberate restriction, so this is the refusal working rather than failing.",
-          refUnknownType: "Refused: ENTITY_UNKNOWN_TYPE, naming the identifier. Only reachable from a request that bypasses the picker, which never offers an unregistered kind of record.",
-          refInvalidId: "Refused: ENTITY_INVALID_ID. An identity is opaque and must be sent back exactly as it was received — one altered character makes it unreadable.",
-          refForbidden: "Refused: AUTH_FORBIDDEN, naming the field. Storing a pointer at a record is a deferred read of that record, so it needs the same permission reading it would.",
-          refEmpty: "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required. Only both pieces missing counts as empty.",
-          exRefOk: "A staff member chosen from the picker",
-          exRefTypeOnly: "A kind of record chosen, with no record picked",
-          exRefIdOnly: "A record picked, with no kind of record sent",
-          exRefWrongType: "A person, on a field pinned to staff members",
-          exRefUnknownType: "A kind of record that is not registered",
-          exRefEdited: "A stored identity altered by one character",
-          exRefNoAccess: "A record of a kind you may not view",
-          exRefBothBlank: "Both parts left blank",
-          userReferenceTitle: "UserReference",
-          userReferenceStores: "A pointer at a user account — assigned to, reviewed by, account manager. Renders as a searchable picker over user accounts, and never shows a control for choosing a kind of record, because there is only one.",
-          userReferenceChecks: "Every check EntityReference makes, plus one narrower rule: the only kind of record accepted is a user account. That list is fixed by the platform rather than by configuration, and an attempt to point this type at anything else is refused both when a definition is configured and when a value is saved.",
-          usrOk: "Accepted, exactly as an EntityReference is. The answer is self-describing in the same way.",
-          usrDormant: "Accepted. A locked-out account is dormant rather than deleted: it still exists, it is still offered by the picker with an inactive marker, and it is a legitimate answer for something that already happened.",
-          usrAdminRefused: "Refused, with a message naming what is allowed. An administrator can belong to no workspace at all, which is the one property a reference target must never have.",
-          usrGroupRefused: "Refused the same way. A group is safe to read but is not a person, and a field typed UserReference that resolved to a group would be lying about what it holds.",
-          usrThemeRefused: "Refused the same way. A shared platform catalogue row belongs to no workspace and is not a person either — excluded twice over.",
-          usrEmpty: "Treated as empty on exactly the same terms as EntityReference.",
-          exUsrOk: "A user account chosen from the picker",
-          exUsrDormant: "An account whose sign-in is currently locked out",
-          exUsrAdmin: "An administrator record",
-          exUsrGroup: "A user group",
-          exUsrTheme: "A login theme",
-          emptyTitle: "Empty values and the Required toggle",
-          emptyIntro: "Every type shares one definition of empty, and it is checked before anything else. A value counts as empty when:",
-          empty1: "it is missing from the save entirely;",
-          empty2: "it is blank, or made up of nothing but spaces;",
-          empty3: "for MultiSelect, the list of selections is explicitly empty;",
-          empty4: "for DateTime, both the instant and the time zone are missing — not just one of them;",
-          empty5: "for Currency, both the amount and the currency code are missing — not just one of them;",
-          empty6: "for EntityReference and UserReference, both the kind of record and the record's identity are missing — not just one of them.",
-          emptyOutcome: "An empty value on a Required field is refused with VALIDATION_REQUIRED. An empty value on an optional field is accepted and the stored answer is cleared — the row is kept rather than deleted, so history is not lost.",
-          emptyWarnTitle: "Rating is the exception worth remembering",
-          emptyWarnContent: "An explicitly submitted 0 on a Rating field is a real, non-empty value and fails the 1-to-5 range check exactly as a 6 would. Only a genuinely missing or blank submission counts as unrated. Separately, and for the same reason a slider needs a position, an untouched Rating field appears to sit at 1 while still being empty.",
-          codesTitle: "Error codes you may see",
-          codesIntro: "Almost every refusal is an HTTP 422 with one of these machine-readable codes; the last one in the table is a 403, because it is about your access rather than about the shape of what you sent. If you ever see a 500 from saving a custom-field value, that is a defect worth reporting — the validation path is written to refuse cleanly, never to fail.",
+
+          urlTitle: "Url [Url]",
+          urlStores:
+            "Une adresse web. S'affiche comme un champ de saisie URL natif, puis se présente ensuite comme un véritable lien qui s'ouvre dans un nouvel onglet.",
+          urlChecks:
+            "La valeur doit être une adresse absolue dont le protocole est exactement http ou https. Tout autre protocole est refusé. Le protocole est revérifié à la sortie, avant que la valeur ne soit jamais rendue comme un lien.",
+          urlOk: "Acceptée, et affichée comme un lien s'ouvrant dans un nouvel onglet.",
+          urlHttpOk:
+            "Acceptée. Le simple http est délibérément autorisé — un site d'entreprise ou une adresse interne en cours de mise en place est une donnée légitime.",
+          urlNoScheme:
+            "Refusée : VALIDATION_INVALID_FORMAT. Un hôte nu est rejeté plutôt que deviné, afin que rien n'ait à décider si vous vouliez dire http ou https.",
+          urlScheme:
+            "Refusée : VALIDATION_INVALID_FORMAT. C'est une véritable limite de sécurité, pas une règle de style — et comme le protocole est revérifié avant affichage, même une valeur stockée avant l'existence de cette vérification s'affiche comme du texte inerte plutôt que comme un lien actif.",
+          urlFtp: "Refusée : VALIDATION_INVALID_FORMAT. Seuls http et https figurent sur la liste.",
+
+          phoneTitle: "Téléphone [Phone]",
+          phoneStores:
+            "Un numéro de téléphone au format international. S'affiche via un sélecteur de pays avec drapeaux et recherche, puis se présente ensuite reformaté pour la lisibilité — par exemple +20 123 456 7890.",
+          phoneChecks:
+            "La valeur stockée doit commencer par un +, son premier chiffre ne doit pas être zéro, et elle doit contenir entre 8 et 15 chiffres au total. C'est une vérification de forme uniquement.",
+          phoneOk: "Acceptée, et affichée reformatée plutôt que comme la chaîne brute stockée.",
+          phoneNoPlus: "Refusée : VALIDATION_INVALID_FORMAT. Le + initial fait partie du format.",
+          phoneLeadingZero: "Refusée : VALIDATION_INVALID_FORMAT. Un indicatif de pays ne commence jamais par zéro.",
+          phoneTooShort: "Refusée : VALIDATION_INVALID_FORMAT. Sept chiffres, c'est en dessous du minimum de huit.",
+          phoneUnassignable:
+            "Acceptée par le serveur, qui ne vérifie que la forme et non si le numéro pourrait réellement exister. Le sélecteur du formulaire vérifie en plus les chiffres par rapport au plan de numérotation réel du pays sélectionné, donc vous ne pouvez pas construire cette valeur via l'interface — seulement via une requête qui contourne le formulaire.",
+
+          groupOtherTitle: "Oui/non et couleur",
+          booleanTitle: "Valeur booléenne [Boolean]",
+          booleanStores: "Un simple oui ou non. S'affiche comme un interrupteur marche/arrêt. N'a ni texte indicatif ni options.",
+          booleanChecks:
+            "Seuls les mots true et false sont analysés, quelle que soit la casse. Rien d'autre n'est traité comme un synonyme.",
+          boolTrue: "Acceptée.",
+          boolFalse: "Acceptée.",
+          boolOne:
+            "Refusée : VALIDATION_INVALID_FORMAT — le message indique « expects a boolean ». Un 1 numérique n'est pas interprété comme true.",
+          boolYes: "Refusée : VALIDATION_INVALID_FORMAT. Ni yes/no ni on/off ne sont acceptés.",
+
+          colorTitle: "Couleur [Color]",
+          colorStores:
+            "Une couleur, stockée sous forme de valeur hexadécimale. S'affiche comme une grille de vingt pastilles plus une saisie hexadécimale personnalisée, puis se présente ensuite comme le texte hexadécimal accompagné d'une petite pastille de couleur correspondante.",
+          colorChecks:
+            "La valeur doit être un # suivi d'exactement trois ou exactement six chiffres hexadécimaux. La casse est normalisée en minuscules à l'enregistrement ; la longueur ne l'est pas.",
+          colorOk: "Acceptée, et stockée comme #aabbcc. Les majuscules sont ramenées en minuscules.",
+          colorShort:
+            "Acceptée, et conservée telle quelle comme #abc. La forme abrégée n'est jamais développée en #aabbcc, même si un moteur de rendu traite les deux comme la même couleur — de sorte que la même couleur peut légitimement être stockée de deux façons selon les enregistrements.",
+          colorNoHash: "Refusée : VALIDATION_INVALID_FORMAT. Le # initial est obligatoire.",
+          colorBadLength: "Refusée : VALIDATION_INVALID_FORMAT. Trois ou six chiffres, rien entre les deux.",
+          colorNamed: "Refusée : VALIDATION_INVALID_FORMAT. Les noms de couleur ne sont pas acceptés, seulement les valeurs hexadécimales.",
+
+          groupReferenceTitle: "Références vers un autre enregistrement",
+          referenceGroupIntro:
+            "Les deux derniers types ne stockent aucun texte qui leur soit propre. Chacun stocke un pointeur vers un enregistrement situé ailleurs dans le produit, et le nom que vous voyez est recherché à nouveau chaque fois que le champ s'affiche, plutôt que sauvegardé aux côtés du pointeur. Les deux stockent les deux mêmes éléments — le type d'enregistrement et l'identité propre de cet enregistrement — et tous deux ne traitent une valeur comme vide que lorsque ces deux éléments sont absents. Il y a bien plus à en dire que ce qu'un tableau peut contenir ; les pages Champs de référence et Recherches de référence le disent.",
+          entityReferenceTitle: "Référence d'entité [EntityReference]",
+          entityReferenceStores:
+            "Un pointeur vers un enregistrement de tout type que cette installation peut résoudre et que vous êtes autorisé à consulter. S'affiche comme un sélecteur avec recherche sur ce type d'enregistrement — précédé d'un second sélecteur pour le type lui-même, lorsque la définition n'en épingle aucun.",
+          entityReferenceChecks:
+            "Les deux éléments sont exigés ensemble. Le type d'enregistrement doit être enregistré et, lorsque la définition en épingle un, doit être celui-là. L'identité doit être lisible. Et vous devez avoir été en mesure de lire cet enregistrement au moment où vous avez sauvegardé, ce qui empêche un pointeur d'être utilisé pour atteindre des données que vous ne pouvez pas ouvrir directement. Chaque vérification refuse avec son propre message plutôt qu'un message générique.",
+          refOk:
+            "Acceptée. La réponse enregistre à la fois le type d'enregistrement et l'identité de cet enregistrement, et le sélecteur affiche désormais le nom actuel de l'enregistrement.",
+          refIncomplete:
+            "Refusée comme référence incomplète. La moitié d'un pointeur n'est pas traitée comme un champ vide — cela signifie que quelqu'un a commencé à répondre et s'est arrêté.",
+          refIncompleteToo:
+            "Refusée de la même façon. Une identité sans type d'enregistrement nomme une ligne mais aucune table, donc il n'y a rien où la rechercher.",
+          refMismatch:
+            "Refusée, et le message nomme à la fois ce que le champ attend et ce qui est arrivé. L'épinglage est une restriction délibérée, donc c'est le refus qui fonctionne, pas un échec.",
+          refUnknownType:
+            "Refusée : ENTITY_UNKNOWN_TYPE, en nommant l'identifiant. Accessible uniquement via une requête qui contourne le sélecteur, lequel ne propose jamais de type d'enregistrement non enregistré.",
+          refInvalidId:
+            "Refusée : ENTITY_INVALID_ID. Une identité est opaque et doit être renvoyée exactement telle qu'elle a été reçue — un seul caractère modifié la rend illisible.",
+          refForbidden:
+            "Refusée : AUTH_FORBIDDEN, en nommant le champ. Stocker un pointeur vers un enregistrement est une lecture différée de cet enregistrement, elle nécessite donc la même permission que sa lecture directe.",
+          refEmpty:
+            "Traitée comme vide : effacée si le champ est facultatif, refusée avec VALIDATION_REQUIRED s'il est obligatoire. Seule l'absence des deux éléments compte comme vide.",
+          exRefOk: "Un membre du personnel choisi dans le sélecteur",
+          exRefTypeOnly: "Un type d'enregistrement choisi, sans enregistrement sélectionné",
+          exRefIdOnly: "Un enregistrement sélectionné, sans type d'enregistrement envoyé",
+          exRefWrongType: "Une personne, sur un champ épinglé aux membres du personnel",
+          exRefUnknownType: "Un type d'enregistrement qui n'est pas enregistré",
+          exRefEdited: "Une identité stockée modifiée d'un caractère",
+          exRefNoAccess: "Un enregistrement d'un type que vous n'êtes peut-être pas autorisé à consulter",
+          exRefBothBlank: "Les deux parties laissées vides",
+
+          userReferenceTitle: "Référence d'utilisateur [UserReference]",
+          userReferenceStores:
+            "Un pointeur vers un compte utilisateur — assigné à, révisé par, gestionnaire de compte. S'affiche comme un sélecteur avec recherche sur les comptes utilisateurs, et n'affiche jamais de contrôle pour choisir un type d'enregistrement, puisqu'il n'y en a qu'un.",
+          userReferenceChecks:
+            "Toutes les vérifications que fait EntityReference, plus une règle plus étroite : le seul type d'enregistrement accepté est un compte utilisateur. Cette liste est fixée par la plateforme plutôt que par la configuration, et une tentative de pointer ce type vers autre chose est refusée aussi bien lorsqu'une définition est configurée que lorsqu'une valeur est enregistrée.",
+          usrOk: "Acceptée, exactement comme l'est une EntityReference. La réponse est autodescriptive de la même façon.",
+          usrDormant:
+            "Acceptée. Un compte verrouillé est dormant plutôt que supprimé : il existe toujours, il est toujours proposé par le sélecteur avec un marqueur d'inactivité, et c'est une réponse légitime pour quelque chose qui s'est déjà produit.",
+          usrAdminRefused:
+            "Refusée, avec un message nommant ce qui est autorisé. Un administrateur peut n'appartenir à aucun espace de travail du tout, ce qui est la seule propriété qu'une cible de référence ne doit jamais avoir.",
+          usrGroupRefused:
+            "Refusée de la même façon. Un groupe peut être lu sans danger mais n'est pas une personne, et un champ de type UserReference qui se résoudrait en un groupe mentirait sur ce qu'il contient.",
+          usrThemeRefused:
+            "Refusée de la même façon. Une ligne de catalogue partagé de la plateforme n'appartient à aucun espace de travail et n'est pas non plus une personne — exclue à double titre.",
+          usrEmpty: "Traitée comme vide exactement dans les mêmes conditions qu'EntityReference.",
+          exUsrOk: "Un compte utilisateur choisi dans le sélecteur",
+          exUsrDormant: "Un compte dont la connexion est actuellement verrouillée",
+          exUsrAdmin: "Un enregistrement d'administrateur",
+          exUsrGroup: "Un groupe d'utilisateurs",
+          exUsrTheme: "Un thème de connexion",
+
+          groupMediaTitle: "Médias et texte mis en forme",
+          mediaGroupIntro:
+            "File et Image sont construits de la même façon que les deux types de référence ci-dessus — un pointeur, pas du texte stocké — mais chacun pointe vers un unique fichier téléversé plutôt que vers un autre enregistrement. RichText est différent : il stocke un véritable contenu mis en forme, rédigé dans l'éditeur propre au produit.",
+
+          fileTitle: "Fichier [File]",
+          fileStores:
+            "Un pointeur vers un unique fichier téléversé — une décharge signée, un certificat médical, un document d'assurance. S'affiche comme un petit indicateur de statut montrant si un fichier est rattaché, avec un bouton Clear lorsque c'est le cas.",
+          fileChecks:
+            "Une valeur stockée n'est acceptée que lorsque le fichier référencé est véritablement rattaché à l'enregistrement que vous modifiez — une vérification de sécurité qui empêche un fichier destiné à un enregistrement d'être pointé depuis un autre. Rattacher un nouveau fichier depuis cet écran n'est pas encore possible : le champ peut être défini dès aujourd'hui, et une valeur existante peut être consultée ou effacée, mais le remplir pour la première fois arrivera dans une future version.",
+          fileAttachedExample: "Un enregistrement dont le champ File contient déjà une valeur",
+          fileAttachedOutcome: "Affiché comme rattaché, avec un contrôle Clear. Il n'existe actuellement aucun contrôle de rattachement à côté.",
+          fileClearExample: "Effacer un fichier rattaché, puis enregistrer",
+          fileClearOutcome: "Acceptée — la valeur est supprimée.",
+
+          imageTitle: "Image [Image]",
+          imageStores:
+            "Le pendant de File, restreint aux images — une photo de joueur, une photo principale d'installation, un blason d'équipe. Le même indicateur de statut, la même limitation actuelle sur le rattachement d'une nouvelle valeur.",
+          imageChecks:
+            "Tout ce que vérifie File, plus le fait que le fichier référencé doit lui-même être une image. Rattacher une nouvelle image depuis cet écran n'est pas non plus encore possible — voir File, ci-dessus.",
+          imageAttachedExample: "Un enregistrement dont le champ Image contient déjà une valeur",
+          imageAttachedOutcome: "Affiché comme rattaché, avec un contrôle Clear.",
+
+          richTextTitle: "Texte enrichi [RichText]",
+          richTextStores:
+            "Une prose mise en forme, rédigée dans l'éditeur propre au produit — une note d'entraînement avec des paragraphes et une liste à puces, un texte de politique avec un lien. S'affiche comme un véritable éditeur de texte enrichi, pas une simple boîte de texte.",
+          richTextChecks:
+            "Jusqu'à 50 000 caractères de balisage, vérifiés avant d'être automatiquement nettoyés : un style en ligne et une image intégrée sont tous deux supprimés, car le premier peut visuellement détourner la page environnante et la seconde peut suivre silencieusement quiconque consulte le champ par la suite. Il n'y a pas d'avertissement séparé quand cela se produit — rouvrez le champ ensuite, et ce que vous voyez est exactement ce qui a été conservé.",
+          richTextOkExample: "Un paragraphe avec un mot en gras et une liste à puces",
+          richTextOkOutcome: "Acceptée, et chaque élément est conservé.",
+          richTextStyleExample: "Un contenu collé avec un style en ligne appliqué",
+          richTextStyleOutcome: "Acceptée, avec le style supprimé. Le texte visible et la structure sont conservés.",
+          richTextImgExample: "Un contenu avec une image intégrée",
+          richTextImgOutcome: "Acceptée, avec l'image supprimée. Une image a sa place dans un champ File ou Image plutôt qu'ici.",
+          richTextTooLongExample: "Plus de 50 000 caractères de balisage",
+          richTextTooLongOutcome: "Refusée — raccourcissez-le et réessayez.",
+
+          emptyTitle: "Valeurs vides et l'interrupteur Required",
+          emptyIntro:
+            "Chaque type partage une même définition du vide, vérifiée avant tout le reste. Une valeur compte comme vide quand :",
+          empty1: "elle est totalement absente de l'enregistrement ;",
+          empty2: "elle est vide, ou composée uniquement d'espaces ;",
+          empty3: "pour MultiSelect, la liste des sélections est explicitement vide ;",
+          empty4: "pour DateTime, l'instant et le fuseau horaire sont tous deux absents — pas seulement l'un des deux ;",
+          empty5: "pour Currency, le montant et le code de devise sont tous deux absents — pas seulement l'un des deux ;",
+          empty6:
+            "pour EntityReference, UserReference, File et Image, les deux moitiés du pointeur sont absentes — pas seulement l'une des deux.",
+          emptyOutcome:
+            "Une valeur vide sur un champ Obligatoire est refusée avec VALIDATION_REQUIRED. Une valeur vide sur un champ facultatif est acceptée et la réponse stockée est effacée — la ligne est conservée plutôt que supprimée, afin que l'historique ne soit pas perdu.",
+          emptyWarnTitle: "Rating est l'exception à retenir",
+          emptyWarnContent:
+            "Un 0 explicitement soumis sur un champ Rating est une valeur réelle, non vide, qui échoue à la vérification de plage 1 à 5 exactement comme le ferait un 6. Seule une soumission véritablement absente ou vide compte comme non notée. Séparément, et pour la même raison qu'un curseur a besoin d'une position, un champ Rating non touché semble se trouver sur 1 tout en étant vide.",
+
+          codesTitle: "Codes d'erreur que vous pourriez voir",
+          codesIntro:
+            "Presque tous les refus sont une réponse HTTP 422 avec l'un de ces codes lisibles par une machine ; le dernier du tableau est un 403, car il concerne votre accès plutôt que la forme de ce que vous avez envoyé. Si vous voyez un jour un 500 lors de l'enregistrement d'une valeur de champ personnalisé, c'est un défaut qui mérite d'être signalé — le chemin de validation est écrit pour refuser proprement, jamais pour échouer.",
           thCode: "Code",
-          thWhenItFires: "When it fires",
-          codeRequired: "The field is Required and the submitted value is empty or whitespace-only.",
-          codeInvalidFormat: "The value does not match the shape the type expects — an unparsable number, date or time, an option that is not on the list, a disallowed URL scheme, a bad phone shape, a bad hex colour, a bad currency code, or most validator failures.",
-          codeInvalidEmail: "An Email field's value is not a real address, or carries a display name.",
-          codeInvalidTimezone: "A DateTime value is missing its time zone once an instant is present, or names a zone that is not a recognised IANA identifier.",
-          codeRange: "A number is outside its type's bounds — Percent outside 0 to 100, Rating outside a whole 1 to 5, a negative Duration, or a Numeric Range validator's own bounds.",
-          codeMaxLength: "Text past 4,000 characters, LongText past 10,000, an Email or Url past 4,000, more than 19 MultiSelect selections, or a Length Range validator's upper bound.",
-          codeMinLength: "A Length Range validator's lower bound.",
-          codeUnique: "The same MultiSelect option was submitted more than once in one save.",
-          codeUnknownEntityType: "A reference names a kind of record that is not registered in this installation.",
-          codeInvalidId: "A reference's stored identity could not be read — altered on its way through something, or a value that predates a change.",
-          codeForbidden: "A reference points at a record you are not allowed to read. This one is a 403 rather than a 422, because it is about your access and not about the value's shape.",
-          codesInfoTitle: "Messages name the key, not the label",
-          codesInfoContent: "Error messages quote the field's machine key — 'shirt_size' — rather than its display label. If you are matching a message to a field, match on the key.",
-          catalogueTitle: "The Types de Valeurs screen in the product",
-          catalogueIntro: "The product carries its own read-only catalogue of these types, reached from a link in the Champs Personnalisés page header. It is documentation, not configuration: nothing on it can be added, edited or removed, because value types are fixed by the platform. It is gated behind the same permission as the Champs Personnalisés screen itself, and it is fully translated, right-to-left included.",
-          catalogueColumns: "Each row shows the type's name, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Text is the only row showing validator support — that is the Text-only boundary made visible.",
-          catalogueNoPlanColumn: "There is deliberately no plan or entitlement column on that screen. Types de valeurs are not individually plan-gated, so a column implying otherwise would be showing something that does not exist.",
+          thWhenItFires: "Quand il se déclenche",
+          codeRequired: "Le champ est Obligatoire et la valeur soumise est vide ou composée uniquement d'espaces.",
+          codeInvalidFormat:
+            "La valeur ne correspond pas à la forme attendue par le type — un nombre, une date ou une heure inanalysable, une option absente de la liste, un protocole d'URL non autorisé, une forme de téléphone incorrecte, une couleur hexadécimale incorrecte, un code de devise incorrect, ou la plupart des échecs de validateur.",
+          codeInvalidEmail: "La valeur d'un champ Email n'est pas une véritable adresse, ou porte un nom d'affichage.",
+          codeInvalidTimezone:
+            "Une valeur DateTime est dépourvue de fuseau horaire alors qu'un instant est présent, ou nomme un fuseau qui n'est pas un identifiant IANA reconnu.",
+          codeRange:
+            "Un nombre est hors des bornes de son type — Percent hors de 0 à 100, Rating hors d'un entier de 1 à 5, un Duration négatif, ou les propres bornes d'un validateur Numeric Range.",
+          codeMaxLength:
+            "Text au-delà de 4 000 caractères, LongText au-delà de 10 000, un Email ou Url au-delà de 4 000, plus de 19 sélections MultiSelect, ou la borne supérieure d'un validateur Length Range.",
+          codeMinLength: "La borne inférieure d'un validateur Length Range.",
+          codeUnique: "La même option MultiSelect a été soumise plus d'une fois dans un même enregistrement.",
+          codeUnknownEntityType:
+            "Une référence nomme un type d'enregistrement qui n'est pas enregistré dans cette installation.",
+          codeInvalidId:
+            "L'identité stockée d'une référence n'a pas pu être lue — modifiée en chemin par quelque chose, ou une valeur antérieure à un changement.",
+          codeForbidden:
+            "Une référence pointe vers un enregistrement que vous n'êtes pas autorisé à lire. Celui-ci est un 403 plutôt qu'un 422, car il concerne votre accès et non la forme de la valeur.",
+          codeMediaOwnerMismatch:
+            "Une valeur File ou Image pointe vers un fichier qui n'est pas rattaché à l'enregistrement en cours d'enregistrement. Également un 403 plutôt qu'un 422, pour la même raison que ci-dessus.",
+          codeMediaNotAnImage:
+            "La valeur d'un champ Image pointe vers un fichier qui n'est pas une image.",
+          codeRichTextShape:
+            "La valeur d'un champ RichText n'a pas été envoyée comme un objet avec une propriété 'html'.",
+          codesInfoTitle: "Les messages nomment la clé, pas le libellé",
+          codesInfoContent:
+            "Les messages d'erreur citent la clé machine du champ — 'shirt_size' — plutôt que son libellé affiché. Si vous rapprochez un message d'un champ, faites correspondre sur la clé.",
+
+          catalogueTitle: "L'écran Types de valeur dans le produit",
+          catalogueIntro:
+            "Le produit possède son propre catalogue en lecture seule de ces types, accessible depuis un lien dans l'en-tête de la page Champs personnalisés. C'est de la documentation, pas de la configuration : rien n'y peut être ajouté, modifié ou supprimé, car les types de valeur sont fixés par la plateforme. Il est verrouillé derrière la même permission que l'écran Champs personnalisés lui-même, et il est entièrement traduit, de droite à gauche compris.",
+          catalogueColumns:
+            "Chaque ligne montre le nom du type, une description de son usage, s'il prend un texte indicatif, s'il possède une liste d'options, et s'il prend en charge un validateur. Text est la seule ligne montrant une prise en charge de validateur — c'est la limite propre à Text rendue visible.",
+          catalogueNoPlanColumn:
+            "Il n'y a délibérément aucune colonne de forfait ou de droit d'accès sur cet écran. Les types de valeur ne sont pas soumis à un droit d'accès individuel, donc une colonne qui suggérerait le contraire montrerait quelque chose qui n'existe pas.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Champs de référence
+        // ═══════════════════════════════════════════════════
         references: {
-          title: "Reference Fields",
-          description: "The two value types that point at a record in another module — Entity Reference and User Reference: which to use, what is actually stored, why the name is never saved with it, how a target type is pinned, what may be referenced, and the workspace rules.",
-          intro: "Every other value type stores something you typed. These two store a pointer: the field holds no text of its own, only the identity of another record somewhere else in the product. A field on an administrator record that says which staff member they are, a field on a booking that says who reviewed it, a field on a person that says which account manager looks after them — all three are one record pointing at another, and until these types existed there was no way to record that without retyping a name and watching it drift.",
+          title: "Champs de référence",
+          description:
+            "Les deux types de valeur qui pointent vers un enregistrement d'un autre module — Entity Reference et User Reference : lequel utiliser, ce qui est réellement stocké, pourquoi le nom n'est jamais sauvegardé avec, comment un type cible est épinglé, ce qui peut être référencé, et les règles d'espace de travail.",
+          intro:
+            "Tous les autres types de valeur stockent quelque chose que vous avez saisi. Ces deux-là stockent un pointeur : le champ ne contient aucun texte qui lui soit propre, seulement l'identité d'un autre enregistrement situé ailleurs dans le produit. Un champ sur un enregistrement d'administrateur qui indique de quel membre du personnel il s'agit, un champ sur une réservation qui indique qui l'a révisée, un champ sur une personne qui indique quel gestionnaire de compte s'occupe d'elle — les trois sont un enregistrement pointant vers un autre, et avant l'existence de ces types, il n'y avait aucun moyen d'enregistrer cela sans retaper un nom et le regarder dériver.",
           oneLineTitle: "En une phrase",
-          oneLineContent: "A reference field stores which record you picked, never what that record was called — so the name you see is always the name that record has right now, and always one you are allowed to see.",
-          whatTitle: "What a reference field gives you",
-          whatIntro: "A reference is not a text field that happens to contain somebody's name. It is a real pointer, checked when you save it and re-checked every time it is read, and every one of the following follows from that.",
-          featPointsAt: "Points at a real record",
-          featPointsAtDesc: "You pick from a searchable list of records that actually exist, in your own workspace, rather than typing a name and hoping it matches. Nothing is stored until a real record has been chosen.",
-          featLiveName: "Always shows the current name",
-          featLiveNameDesc: "The name is looked up fresh each time the field is displayed. When somebody's name is corrected on their own record, every reference pointing at them shows the correction immediately — there is no copy to go stale.",
-          featPermission: "Carries the target's own permissions",
-          featPermissionDesc: "Reading the name needs permission to view that kind of record, not permission to view the record holding the field. Somebody who may edit the owner record but may not read staff sees that a reference is set and does not see who it points at.",
-          featSearch: "Searchable, paged, and it tells you what it cannot do",
-          featSearchDesc: "The picker searches the target module's own records a page at a time, marks a dormant record as inactive rather than hiding it, and says in words when there is nothing you are allowed to point at — never an empty dropdown that reads as \"there are no records\".",
-          featPinned: "Can be pinned to one kind of record",
-          featPinnedDesc: "An Entity Reference field can be pinned so that every value must point at, say, a staff member — or left unpinned, in which case each value chooses its own kind of record and records that choice alongside the pointer.",
-          featSelfHealing: "Clears itself when the target is deleted",
-          featSelfHealingDesc: "Delete the record a reference points at and the pointer is cleared automatically. The value row itself survives with its audit trail — only the pointer goes, and nothing has to be tidied up by hand.",
-          whichTitle: "Entity Reference or User Reference",
-          whichIntro: "There are two reference value types and they are mechanically almost identical. The difference is entirely about what each one is allowed to point at, and therefore about how much you have to configure. Pick User Reference whenever the answer is \"a person who logs in\"; pick Entity Reference for everything else.",
+          oneLineContent:
+            "Un champ de référence stocke l'enregistrement que vous avez choisi, jamais le nom que portait cet enregistrement — de sorte que le nom que vous voyez est toujours celui que cet enregistrement porte actuellement, et toujours un nom que vous êtes autorisé à voir.",
+
+          whatTitle: "Ce que vous apporte un champ de référence",
+          whatIntro:
+            "Une référence n'est pas un champ de texte qui contiendrait par hasard le nom de quelqu'un. C'est un véritable pointeur, vérifié quand vous l'enregistrez et revérifié chaque fois qu'il est lu, et chacun des points suivants en découle.",
+          featPointsAt: "Pointe vers un enregistrement réel",
+          featPointsAtDesc:
+            "Vous choisissez dans une liste consultable d'enregistrements qui existent réellement, dans votre propre espace de travail, plutôt que de taper un nom en espérant qu'il corresponde. Rien n'est stocké tant qu'un enregistrement réel n'a pas été choisi.",
+          featLiveName: "Affiche toujours le nom actuel",
+          featLiveNameDesc:
+            "Le nom est recherché à nouveau chaque fois que le champ s'affiche. Quand le nom de quelqu'un est corrigé sur son propre enregistrement, chaque référence qui pointe vers lui affiche la correction immédiatement — il n'y a aucune copie susceptible de devenir obsolète.",
+          featPermission: "Porte les permissions propres à la cible",
+          featPermissionDesc:
+            "Lire le nom nécessite la permission de consulter ce type d'enregistrement, pas la permission de consulter l'enregistrement qui porte le champ. Quelqu'un qui peut modifier l'enregistrement propriétaire mais ne peut pas lire le personnel voit qu'une référence est définie sans voir vers qui elle pointe.",
+          featSearch: "Consultable par recherche, paginé, et il vous dit ce qu'il ne peut pas faire",
+          featSearchDesc:
+            "Le sélecteur recherche dans les propres enregistrements du module cible, une page à la fois, marque un enregistrement dormant comme inactif plutôt que de le masquer, et indique en toutes lettres lorsqu'il n'y a rien que vous soyez autorisé à cibler — jamais une liste déroulante vide qui se lirait comme « il n'existe aucun enregistrement ».",
+          featPinned: "Peut être épinglé à un type d'enregistrement",
+          featPinnedDesc:
+            "Un champ Entity Reference peut être épinglé de sorte que chaque valeur doive pointer vers, disons, un membre du personnel — ou laissé non épinglé, auquel cas chaque valeur choisit son propre type d'enregistrement et enregistre ce choix aux côtés du pointeur.",
+          featSelfHealing: "S'efface de lui-même quand la cible est supprimée",
+          featSelfHealingDesc:
+            "Supprimez l'enregistrement vers lequel pointe une référence, et le pointeur s'efface automatiquement. La ligne de valeur elle-même survit avec son historique — seul le pointeur disparaît, et rien n'a besoin d'être nettoyé à la main.",
+
+          whichTitle: "Entity Reference ou User Reference",
+          whichIntro:
+            "Il existe deux types de valeur de référence, et ils sont mécaniquement presque identiques. La différence porte entièrement sur ce que chacun est autorisé à cibler, et donc sur ce que vous devez configurer. Choisissez User Reference chaque fois que la réponse est « une personne qui se connecte » ; choisissez Entity Reference pour tout le reste.",
           thAspect: "Aspect",
           thEntityRef: "Entity Reference",
           thUserRef: "User Reference",
-          aspTargets: "What it may point at",
-          entTargets: "Any kind of record the platform can currently answer for and you are allowed to view.",
-          usrTargets: "Exactly one kind of record: a user account. Nothing else is accepted, ever, and that list is fixed by the platform rather than by configuration.",
-          aspConfig: "What you configure",
-          entConfig: "Optionally, a Target Entity Type on the definition. Leaving it unpinned is a real and permanently supported choice, not an unfinished one.",
-          usrConfig: "Nothing at all. There is no target picker on the definition form for this type, because there is no decision to make.",
-          aspPicker: "What the person filling it in sees",
-          entPicker: "On a pinned field, one searchable list of that kind of record. On an unpinned field, two controls: first the kind of record, then the record.",
-          usrPicker: "One searchable list of user accounts. There is never a type control.",
-          aspUse: "Reach for it when",
-          entUse: "The answer is a business record — a staff member, a person, a facility — or when different records under the same field legitimately point at different kinds of thing.",
-          usrUse: "The answer is an account: assigned to, reviewed by, account manager, approved by.",
-          aspStorage: "How the answer is stored",
-          entStorage: "The kind of record, plus that record's own identity. Both, always together.",
-          usrStorage: "Identically. The stored value is self-describing in exactly the same way, which is what keeps an old answer readable after the definition changes.",
-          whichInfoTitle: "Why these are two types and not one setting",
-          whichInfoContent: "The list of things a User Reference may point at is a security decision, so it is fixed in the platform rather than typed into a definition by an administrator. And because the type is recorded on every stored answer, the question \"which of our fields hold references to people?\" has an answer even for values whose definition has since been changed. A single type with a setting would have lost both properties.",
-          storedTitle: "What is actually stored",
-          storedIntro: "A reference value is two pieces, held together. This is the same shape Currency uses for its amount and its code, and for the same reason: neither piece means anything on its own.",
-          thPiece: "Piece",
-          thWhat: "What it is",
-          thRequired: "Required?",
-          pieceTypeName: "The kind of record",
-          pieceIdName: "The record's identity",
-          pieceTypeKey: "The kind of record being pointed at, as a stable identifier — for example hrms.staff-member. It is stored on the answer itself, not looked up from the definition.",
-          pieceTypeKeyRequired: "Yes — always, on every answer",
-          pieceId: "The identity of the specific record being pointed at, as an opaque string.",
-          pieceIdRequired: "Yes — always, on every answer",
-          storedNeither: "An identity with no kind of record names a row but no table; a kind of record with no identity names a table but no row. So a value is treated as empty only when both pieces are missing — which is exactly how Currency and Date & Time behave — and half of a reference is refused rather than quietly stored or quietly cleared. If you ever see a save refused for an incomplete reference, one of the two controls was left alone.",
-          storedIdsTitle: "The identity is opaque, and must stay that way",
-          storedIdsContent: "The identity of the target record never travels as a readable database key. It arrives as an encrypted string, and anything reading or writing a reference must send back exactly the string it received — unchanged, uncut, not lower-cased, not checked against any pattern. Alter one character and the product correctly reports the stored reference as malformed, on a reference that was perfectly good a moment earlier. There is nothing in that string for a human to read, and nothing worth trying to read.",
-          storedSymmetryTitle: "The same two names in both directions",
-          storedSymmetryContent: "A reference is written under the same two property names it is read under: entityTypeKey and entityId. There is no second spelling for the way up, and none for the way down. If you are integrating against the values API, send back exactly the field names you were given — inventing a different name for the identity on the way in is not a spelling preference, it is a save that silently carries no pointer at all and is then refused as an incomplete reference.",
-          nameTitle: "Why the display name is never stored",
-          nameIntro: "The obvious design is to save the name next to the identity, so a reference can be displayed without asking anybody anything. The product deliberately does not do that, and the reason is a permission boundary rather than a preference about freshness.",
-          nameWhy: "A name saved alongside the pointer would sit inside the record that holds the field, and would therefore be readable by anybody holding permission to view that record. But the name belongs to the target — it is guarded by the permission that protects that kind of record. Snapshotting it hands a name to somebody who was never granted the permission that protects it. That is a permission bypass wearing a performance argument, and no amount of caching makes it a different thing.",
-          nameCost: "So a name is resolved live, on every read, through a call that re-applies the target's own view permission and the target module's own workspace filter every single time. The practical benefit is the one you would want anyway: a name corrected on its own record is corrected everywhere it is referenced, instantly, with nothing to re-run and no stale copies to hunt down.",
-          nameInfoTitle: "What you will notice as a result",
-          nameInfoContent: "Two things, both intentional. A reference field shows a brief loading state while its name is fetched, rather than appearing instantly with text and then correcting itself. And two people looking at the same record can legitimately see different things in the same field: one the staff member's name, the other a note that they may see there is a reference but not who it points at. Neither is a fault.",
-          pinTitle: "Pinning a target type on the definition",
-          pinIntro: "An Entity Reference definition carries one optional setting of its own: Target Entity Type. It answers \"what kind of record may this field point at?\", and it is offered only for Entity Reference — a User Reference field never shows it, because its answer is already fixed.",
-          thState: "State of the setting",
-          thMeans: "What it means",
-          thPickerShows: "What the record form then shows",
-          stateUnpinned: "Not pinned — any allowed type",
-          meansUnpinned: "Every answer may point at any kind of record the person filling it in is allowed to reference, and each answer records which kind it chose. This is the state a brand-new definition starts in, and it stays legal forever.",
-          pickerUnpinned: "Two controls in order: a Record type control, then the record itself. The second is inert until the first is answered, and choosing a type does not move the cursor into the record control — you are left where you are, with the record control now available.",
-          statePinned: "Pinned to one type",
-          meansPinned: "Every new answer must point at a record of that one kind. An answer of any other kind is refused with a message naming both what was expected and what arrived.",
-          pickerPinned: "One control: the record. There is no type control at all.",
-          stateUserRef: "A User Reference field",
-          meansUserRef: "Permanently equivalent to being pinned to user accounts, decided by the platform. An attempt to pin it to anything else is refused at definition time, not at save time.",
-          pickerUserRef: "One control: the user account. There is never a type control.",
-          pinRepoint: "The setting can be changed later, including on a field that already holds answers, and this is deliberate — refusing would mean a mis-pinned field could never be corrected without first destroying real data. What happens is worth stating exactly, because both halves matter: every answer already stored is left completely alone and still reads back correctly, because each answer carries its own kind of record. The next save of a record whose answer is of the old kind is refused, until somebody picks that answer again.",
-          pinRepointDetail: "The edit form says so before you save it. Read that line rather than assuming either extreme — re-pointing is neither free nor destructive.",
-          pinWarnTitle: "One consequence of re-pointing to check for",
-          pinWarnContent: "An unpinned field that already holds an answer offers no type control while that answer is in place, because the answer's own kind of record is used instead. Re-picking is therefore confined to the kind of record it already points at. Clear the field and the type control comes back. This is a real limit rather than a defect, and it is the one shape of this feature most likely to be reported as one.",
-          targetsTitle: "What can currently be referenced",
-          targetsIntro: "The list is not \"every record type in the product\". A kind of record can only be referenced when the module that owns it supplies a way to search and resolve its records — reading its own data through its own screens' rules, so a picker can never be broader than the screen it mirrors. Three kinds of record supply that today.",
-          thType: "Record type",
-          thKey: "Identifier",
-          thOwner: "Owned by",
-          thShows: "What the picker shows for each row",
+          aspTargets: "Vers quoi il peut pointer",
+          entTargets:
+            "Tout type d'enregistrement que la plateforme peut actuellement résoudre et que vous êtes autorisé à consulter.",
+          usrTargets:
+            "Exactement un type d'enregistrement : un compte utilisateur. Rien d'autre n'est jamais accepté, et cette liste est fixée par la plateforme plutôt que par la configuration.",
+          aspConfig: "Ce que vous configurez",
+          entConfig:
+            "Facultativement, un Target Entity Type sur la définition. Le laisser non épinglé est un choix réel et durablement pris en charge, pas un choix inachevé.",
+          usrConfig:
+            "Rien du tout. Il n'y a aucun sélecteur de cible sur le formulaire de définition pour ce type, car il n'y a aucune décision à prendre.",
+          aspPicker: "Ce que voit la personne qui le remplit",
+          entPicker:
+            "Sur un champ épinglé, une seule liste consultable de ce type d'enregistrement. Sur un champ non épinglé, deux contrôles : d'abord le type d'enregistrement, puis l'enregistrement.",
+          usrPicker: "Une seule liste consultable de comptes utilisateurs. Il n'y a jamais de contrôle de type.",
+          aspUse: "À utiliser quand",
+          entUse:
+            "La réponse est un enregistrement métier — un membre du personnel, une personne, une installation — ou lorsque différents enregistrements sous le même champ pointent légitimement vers différents types de choses.",
+          usrUse:
+            "La réponse est un compte : assigné à, révisé par, gestionnaire de compte, approuvé par.",
+          aspStorage: "Comment la réponse est stockée",
+          entStorage: "Le type d'enregistrement, plus l'identité propre de cet enregistrement. Les deux, toujours ensemble.",
+          usrStorage:
+            "De façon identique. La valeur stockée est autodescriptive exactement de la même manière, ce qui est ce qui garde une ancienne réponse lisible après un changement de définition.",
+          whichInfoTitle: "Pourquoi ce sont deux types et non un seul paramètre",
+          whichInfoContent:
+            "La liste de ce vers quoi un User Reference peut pointer est une décision de sécurité, elle est donc fixée dans la plateforme plutôt que saisie dans une définition par un administrateur. Et comme le type est enregistré sur chaque réponse stockée, la question « lesquels de nos champs contiennent des références à des personnes ? » a une réponse même pour des valeurs dont la définition a depuis été modifiée. Un type unique avec un paramètre aurait perdu ces deux propriétés.",
+
+          storedTitle: "Ce qui est réellement stocké",
+          storedIntro:
+            "Une valeur de référence, ce sont deux éléments, tenus ensemble. C'est la même forme que celle utilisée par Currency pour son montant et son code, et pour la même raison : aucun des deux éléments ne signifie quoi que ce soit seul.",
+          thPiece: "Élément",
+          thWhat: "Ce que c'est",
+          thRequired: "Obligatoire ?",
+          pieceTypeName: "Le type d'enregistrement",
+          pieceIdName: "L'identité de l'enregistrement",
+          pieceTypeKey:
+            "Le type d'enregistrement ciblé, sous forme d'identifiant stable — par exemple hrms.staff-member. Il est stocké sur la réponse elle-même, pas recherché depuis la définition.",
+          pieceTypeKeyRequired: "Oui — toujours, sur chaque réponse",
+          pieceId:
+            "L'identité de l'enregistrement précis ciblé, sous forme de chaîne opaque.",
+          pieceIdRequired: "Oui — toujours, sur chaque réponse",
+          storedNeither:
+            "Une identité sans type d'enregistrement nomme une ligne mais aucune table ; un type d'enregistrement sans identité nomme une table mais aucune ligne. Une valeur n'est donc traitée comme vide que lorsque les deux éléments sont absents — exactement comme se comportent Currency et Date & Time — et la moitié d'une référence est refusée plutôt que silencieusement stockée ou silencieusement effacée. Si vous voyez un jour un enregistrement refusé pour référence incomplète, l'un des deux contrôles a été laissé de côté.",
+          storedIdsTitle: "L'identité est opaque, et doit le rester",
+          storedIdsContent:
+            "L'identité de l'enregistrement cible ne circule jamais comme une clé de base de données lisible. Elle arrive sous forme de chaîne chiffrée, et tout ce qui lit ou écrit une référence doit renvoyer exactement la chaîne qu'il a reçue — inchangée, non tronquée, non mise en minuscules, non vérifiée par rapport à un quelconque motif. Modifiez un seul caractère et le produit signale à juste titre que la référence stockée est mal formée, alors qu'elle était parfaitement valide un instant plus tôt. Il n'y a rien dans cette chaîne qu'un humain puisse lire, ni rien qui vaille la peine d'essayer.",
+          storedSymmetryTitle: "Les deux mêmes noms dans les deux sens",
+          storedSymmetryContent:
+            "Une référence est écrite sous les deux mêmes noms de propriété que ceux sous lesquels elle est lue : entityTypeKey et entityId. Il n'y a pas de seconde orthographe pour le sens de l'écriture, ni pour celui de la lecture. Si vous intégrez avec l'API des valeurs, renvoyez exactement les noms de champs qui vous ont été donnés — inventer un nom différent pour l'identité à l'entrée n'est pas une simple variante orthographique, c'est un enregistrement qui ne porte silencieusement aucun pointeur du tout, et qui est ensuite refusé comme référence incomplète.",
+
+          nameTitle: "Pourquoi le nom affiché n'est jamais stocké",
+          nameIntro:
+            "La conception évidente serait d'enregistrer le nom à côté de l'identité, afin qu'une référence puisse s'afficher sans rien demander à personne. Le produit ne le fait délibérément pas, et la raison est une limite de permission plutôt qu'une préférence sur la fraîcheur des données.",
+          nameWhy:
+            "Un nom enregistré aux côtés du pointeur se trouverait à l'intérieur de l'enregistrement qui porte le champ, et serait donc lisible par quiconque détient la permission de consulter cet enregistrement. Or le nom appartient à la cible — il est protégé par la permission qui protège ce type d'enregistrement. Le figer reviendrait à donner un nom à quelqu'un qui n'a jamais reçu la permission qui le protège. C'est un contournement de permission déguisé en argument de performance, et aucune mise en cache n'en fait autre chose.",
+          nameCost:
+            "Un nom est donc résolu en direct, à chaque lecture, via un appel qui réapplique à chaque fois la permission de consultation propre à la cible et le propre filtre d'espace de travail du module cible. Le bénéfice pratique est celui que vous voudriez de toute façon : un nom corrigé sur son propre enregistrement est corrigé partout où il est référencé, instantanément, sans rien à relancer et sans copie obsolète à traquer.",
+          nameInfoTitle: "Ce que vous remarquerez en conséquence",
+          nameInfoContent:
+            "Deux choses, toutes deux intentionnelles. Un champ de référence affiche un bref état de chargement pendant que son nom est récupéré, plutôt que d'apparaître instantanément avec un texte qui se corrige ensuite. Et deux personnes regardant le même enregistrement peuvent légitimement voir des choses différentes dans le même champ : l'une le nom du membre du personnel, l'autre une note indiquant qu'une référence existe sans montrer vers qui elle pointe. Aucun des deux cas n'est un défaut.",
+
+          pinTitle: "Épingler un type cible sur la définition",
+          pinIntro:
+            "Une définition Entity Reference porte un paramètre facultatif qui lui est propre : Target Entity Type. Il répond à « quel type d'enregistrement ce champ peut-il cibler ? », et il n'est proposé que pour Entity Reference — un champ User Reference ne l'affiche jamais, car sa réponse est déjà figée.",
+          thState: "État du paramètre",
+          thMeans: "Ce que cela signifie",
+          thPickerShows: "Ce que montre alors le formulaire d'enregistrement",
+          stateUnpinned: "Non épinglé — tout type autorisé",
+          meansUnpinned:
+            "Chaque réponse peut pointer vers tout type d'enregistrement que la personne qui remplit le champ est autorisée à référencer, et chaque réponse enregistre le type qu'elle a choisi. C'est l'état dans lequel démarre toute nouvelle définition, et il reste valide indéfiniment.",
+          pickerUnpinned:
+            "Deux contrôles dans l'ordre : un contrôle de type d'enregistrement, puis l'enregistrement lui-même. Le second est inerte tant que le premier n'a pas de réponse, et choisir un type ne déplace pas le curseur vers le contrôle d'enregistrement — vous restez où vous êtes, le contrôle d'enregistrement devenant simplement disponible.",
+          statePinned: "Épinglé à un type",
+          meansPinned:
+            "Chaque nouvelle réponse doit pointer vers un enregistrement de ce type unique. Une réponse de tout autre type est refusée avec un message nommant à la fois ce qui était attendu et ce qui est arrivé.",
+          pickerPinned: "Un seul contrôle : l'enregistrement. Il n'y a aucun contrôle de type.",
+          stateUserRef: "Un champ User Reference",
+          meansUserRef:
+            "Équivalent en permanence à un épinglage sur les comptes utilisateurs, décidé par la plateforme. Une tentative de l'épingler sur autre chose est refusée dès la définition, pas seulement à l'enregistrement.",
+          pickerUserRef: "Un seul contrôle : le compte utilisateur. Il n'y a jamais de contrôle de type.",
+          pinRepoint:
+            "Le paramètre peut être modifié plus tard, y compris sur un champ qui contient déjà des réponses, et c'est délibéré : refuser cela signifierait qu'un champ mal épinglé ne pourrait jamais être corrigé sans d'abord détruire des données réelles. Ce qui se passe alors mérite d'être énoncé précisément, car les deux volets comptent : chaque réponse déjà stockée est laissée totalement intacte et continue de se relire correctement, car chaque réponse porte son propre type d'enregistrement. Le prochain enregistrement d'une fiche dont la réponse est de l'ancien type est refusé, jusqu'à ce que quelqu'un choisisse à nouveau cette réponse.",
+          pinRepointDetail:
+            "Le formulaire de modification le précise avant que vous n'enregistriez. Lisez cette ligne plutôt que de présumer l'un ou l'autre extrême — le repointage n'est ni gratuit ni destructeur.",
+          pinWarnTitle: "Une conséquence du repointage à surveiller",
+          pinWarnContent:
+            "Un champ non épinglé qui contient déjà une réponse n'offre aucun contrôle de type tant que cette réponse est en place, car le propre type de la réponse est utilisé à la place. Reprendre une sélection se limite donc au type déjà ciblé. Effacez le champ, et le contrôle de type revient. C'est une limite réelle plutôt qu'un défaut, et c'est la manifestation de cette fonctionnalité la plus susceptible d'être signalée comme telle.",
+
+          targetsTitle: "Ce qui peut actuellement être référencé",
+          targetsIntro:
+            "La liste n'est pas « tous les types d'enregistrement du produit ». Un type d'enregistrement ne peut être référencé que lorsque le module qui le possède fournit un moyen de rechercher et de résoudre ses enregistrements — en lisant ses propres données selon les règles de ses propres écrans, de sorte qu'un sélecteur ne peut jamais être plus large que l'écran qu'il reflète. Trois types d'enregistrement le fournissent aujourd'hui.",
+          thType: "Type d'enregistrement",
+          thKey: "Identifiant",
+          thOwner: "Détenu par",
+          thShows: "Ce que le sélecteur affiche pour chaque ligne",
           typeStaff: "Staff Member",
           keyStaff: "hrms.staff-member",
-          ownerStaff: "The staff management module",
-          showsStaff: "The person's name, with their job title beneath it as the disambiguator. Deliberately the job title rather than an email address: a picker needs to tell two people with the same name apart, and does not need their contact details to do it.",
+          ownerStaff: "Le module de gestion du personnel",
+          showsStaff:
+            "Le nom de la personne, avec son intitulé de poste en dessous comme élément de distinction. Délibérément l'intitulé de poste plutôt qu'une adresse e-mail : un sélecteur doit permettre de distinguer deux personnes homonymes, sans avoir besoin de leurs coordonnées pour cela.",
           typeUser: "User",
           keyUser: "identity.user",
-          ownerUser: "The identity module",
-          showsUser: "The account holder's name, with the username beneath it. An account whose sign-in is currently locked out is shown as inactive but stays selectable.",
+          ownerUser: "Le module d'identité",
+          showsUser:
+            "Le nom du titulaire du compte, avec le nom d'utilisateur en dessous. Un compte dont la connexion est actuellement verrouillée s'affiche comme inactif mais reste sélectionnable.",
           typePerson: "Party Person",
           keyPerson: "party.person",
-          ownerPerson: "The party and relationship module",
-          showsPerson: "The person's name only. The owning module supplies no second line at all, having judged that anything it could add would be personal data a picker does not need.",
-          targetsRefused: "Anything else is refused rather than answered with an empty list, and the difference is the whole point: an empty list looks like a normal result and would tell an administrator \"there are no staff members\", which is a false statement wearing the appearance of a correct one. A kind of record the platform cannot answer for produces a clear refusal instead, which the record form renders as a sentence saying this kind of record is not available in this installation.",
-          targetsEmpty: "And a genuinely empty list of available types is itself a legitimate answer, not a failure. It means \"there is nothing you may point a reference at\", which happens for two quite different reasons: the modules owning those records may not be part of this installation, or you may not hold view access to any of them. The product names both possibilities without claiming either, because only one of them is fixed by asking for permissions.",
-          targetsWhyNot: "Three kinds of record that look as though they belong on that list and are excluded on purpose:",
-          targetsWhyNotAdmin: "Administrator records. An administrator can belong to no workspace at all — a platform administrator has none — so a pointer at one could reach outside every workspace boundary in the product. That is the one property a reference target must never have, and it is why a User Reference field refuses an administrator outright rather than merely omitting them from a list.",
-          targetsWhyNotGroup: "User groups. Perfectly safe, and simply not a person. A field typed User Reference that resolved to a group would be lying about what it holds.",
-          targetsWhyNotTheme: "Shared platform catalogue rows such as login themes. They belong to no workspace by design, so they fail the same test administrator records fail, and they are not people either.",
-          targetsInfoTitle: "The list you see is the list you may use",
-          targetsInfoContent: "The available types are filtered before they reach you: registered, answerable by this installation, and permitted for you. Every entry you are offered will work when you use it, and nothing you are offered will refuse you on the next click. That is why the list is fetched when you open the control rather than when the form loads — a record form with several reference fields nobody touches asks nothing of the other modules at all.",
-          tenantTitle: "Workspace and platform rules",
-          tenantIntro: "References cross a module boundary, which makes the workspace boundary the thing to be precise about. Five rules, all of them enforced rather than advisory.",
-          tenant1: "Everything is workspace-guarded. Both searching for a record and resolving one you already hold read through the owning module's own repository, so the same workspace filter and the same deleted-record filter apply that apply on that module's own screens. You can only point at records your workspace can already see.",
-          tenant2: "Holding an identity is not a permission. A reference is re-authorised on every single read: the target's own view permission is required again, every time, and the fact that the pointer is already stored counts for nothing.",
-          tenant3: "Another workspace's record and a deleted record are one indistinguishable answer, deliberately. If they were told apart, somebody could test identities one at a time to learn what exists in a workspace they cannot see. \"You may not see this kind of record\" is told apart from \"this record is gone\", because those two have opposite fixes and neither reveals anything.",
-          tenant4: "Platform-level records belong to platform administrators. A champ personnalisé created at platform level is inherited by every workspace and can only be created, edited or deleted by a platform administrator — including the pinned target type on a platform-level reference field, which no workspace can change.",
-          tenant5: "Nobody may assign an administrator outside their own workspace. In practice the product goes further than the rule requires: an administrator record cannot be pointed at by a reference field at all, in your own workspace or any other, precisely because an administrator may sit outside every workspace.",
-          tenantWarnTitle: "One thing this does not do",
-          tenantWarnContent: "A reference is as strict as the target's own list screen, and no stricter. If a kind of record is visible to a role through its own screen, it is selectable through a picker for that same role — narrower rules than \"this whole workspace\" are not applied on top. So do not treat a reference picker as a way to hide records that the target module itself already shows.",
-          exampleTitle: "A worked example: an administrator record pointing at a staff member",
-          exampleIntro: "The case these types were built for. Your administrators are also employees, and you want each administrator record to say which staff record is the same person — recorded once, correctly, and never retyped.",
-          ex1Title: "Decide which type you need",
-          ex1Content: "The answer is a staff member, not a login account, so this is an Entity Reference. If the question had been \"who reviewed this?\", the answer would be an account and User Reference would be the right choice — and the value type is permanent, so it is worth the moment's thought.",
-          ex2Title: "Define the field",
-          ex2Content: "On the Champs Personnalisés screen choose Add, pick the administrator record type, set the key to staff_record, the English label to Staff record, and the value type to Entity Reference. A Target Entity Type control appears as soon as you choose that value type.",
-          ex3Title: "Pin the target to Staff Member",
-          ex3Content: "Set Target Entity Type to Staff Member. That is what turns the field from \"a pointer at something\" into \"a pointer at a staff member\", and it is what lets the record form show one control instead of two. Leave it as Not pinned only if you genuinely want different administrators pointing at different kinds of record.",
-          ex4Title: "Fill it in on a record",
-          ex4Content: "Open any administrator record. The Champs Personnalisés section now shows a Staff record control with a placeholder inviting you to select a record. Open it, type part of a name, and the list narrows to matching staff members with their job titles beneath. Pick one and save the record.",
-          ex5Title: "Read it back, and notice what happened",
-          ex5Content: "Reopen the record. The field shows the staff member's name — fetched just now, not remembered from your save. Change that person's surname on their own staff record, come back, and the reference shows the new surname without anybody touching the administrator record.",
-          ex6Title: "Check the two behaviours that matter",
-          ex6Content: "Sign in as somebody who may edit administrators but may not view staff: the field is present, it says the stored value is fine and that they may not see the name, and they cannot overwrite it. Then delete the staff member: the reference clears itself, the administrator record keeps its value row and its history, and the field reads as empty rather than as a broken pointer.",
-          userExampleTitle: "A worked example: a Reviewed by field",
-          userExampleIntro: "The User Reference case, which is shorter precisely because there is nothing to configure.",
-          ux1Title: "Define the field",
-          ux1Content: "Add a field on the record type you want, set the key to reviewed_by, the label to Reviewed by, and the value type to User Reference. No target control appears, and that is correct — the answer can only ever be a user account.",
-          ux2Title: "Fill it in",
-          ux2Content: "Open a record of that type. The Reviewed by control offers a searchable list of user accounts, each with its username beneath the name. Accounts that are currently locked out are marked inactive and remain selectable, because they are legitimate answers for something that already happened.",
-          ux3Title: "Confirm what it stores",
-          ux3Content: "The answer records the user account type and that account's identity — the same two pieces an Entity Reference stores, so a field that says User Reference is telling you what it holds rather than just what it was configured as.",
-          ux4Title: "Confirm what it refuses",
-          ux4Content: "There is no way, from this form or from a request that bypasses it, to make this field point at an administrator, a user group or a platform catalogue row. The refusal comes with a message naming what is allowed, and it is refused at definition time as well as at save time.",
-          notTitle: "What reference fields are not",
-          notIntro: "Reasonable expectations that these types deliberately do not meet. None of these is a fault to report.",
-          not1: "They are not a relationship the product understands. Nothing is calculated from a reference, nothing is triggered by it, and no screen gains a \"records pointing at this one\" list because a reference exists.",
-          not2: "They are not a way to hide records. A picker shows exactly what the target module's own screens show to that same person. If somebody should not see a kind of record, that is a permission on that kind of record.",
-          not3: "They do not store a name, ever, and there is no setting to make them. A field that must survive the target being deleted with the old name still readable is a Text field, and accepting that it will drift is the price of that choice.",
-          not4: "They are not many-to-many. One reference field holds one pointer. There is no multi-value reference type, and Multi-Select cannot be pointed at records — its answers are text you authored.",
-          not5: "They cannot point at every kind of record. Only the kinds whose owning module supplies a searchable, permission-checked list can be referenced, and the rest are refused rather than silently offered.",
-          not6: "They are not carried in the definitions spreadsheet export. That file has eighteen columns and a pinned target type is not one of them, so an exported definition does not record what its field points at.",
-          nextTitle: "Where to go next",
-          nextIntro: "The mechanics of looking a reference up — the three lookups, every failure state, and what to do about each — are on their own page.",
+          ownerPerson: "Le module de tiers et relations",
+          showsPerson:
+            "Le nom de la personne uniquement. Le module propriétaire ne fournit aucune seconde ligne, ayant jugé que tout ce qu'il pourrait ajouter serait une donnée personnelle dont un sélecteur n'a pas besoin.",
+          targetsRefused:
+            "Tout le reste est refusé plutôt que répondu par une liste vide, et la différence est tout l'enjeu : une liste vide ressemble à un résultat normal et dirait à un administrateur « il n'existe aucun membre du personnel », ce qui est une affirmation fausse revêtant l'apparence d'une affirmation correcte. Un type d'enregistrement pour lequel la plateforme ne peut pas répondre produit à la place un refus clair, que le formulaire d'enregistrement affiche comme une phrase indiquant que ce type d'enregistrement n'est pas disponible dans cette installation.",
+          targetsEmpty:
+            "Et une liste véritablement vide de types disponibles est elle-même une réponse légitime, pas un échec. Elle signifie « il n'y a rien vers quoi vous puissiez pointer une référence », ce qui arrive pour deux raisons bien distinctes : les modules propriétaires de ces enregistrements peuvent ne pas faire partie de cette installation, ou vous pouvez ne détenir aucun accès en consultation à aucun d'eux. Le produit nomme les deux possibilités sans affirmer laquelle s'applique, car seule l'une des deux se règle en demandant des permissions.",
+          targetsWhyNot:
+            "Trois types d'enregistrement qui semblent devoir figurer sur cette liste et en sont exclus délibérément :",
+          targetsWhyNotAdmin:
+            "Les enregistrements d'administrateur. Un administrateur peut n'appartenir à aucun espace de travail du tout — un administrateur de plateforme n'en a aucun — de sorte qu'un pointeur vers l'un d'eux pourrait franchir toutes les limites d'espace de travail du produit. C'est la seule propriété qu'une cible de référence ne doit jamais avoir, et c'est pourquoi un champ User Reference refuse purement et simplement un administrateur plutôt que de simplement l'omettre d'une liste.",
+          targetsWhyNotGroup:
+            "Les groupes d'utilisateurs. Parfaitement sûrs à lire, et simplement pas une personne. Un champ typé User Reference qui se résoudrait en un groupe mentirait sur ce qu'il contient.",
+          targetsWhyNotTheme:
+            "Les lignes de catalogue partagé de la plateforme telles que les thèmes de connexion. Elles n'appartiennent par conception à aucun espace de travail, elles échouent donc au même test que les enregistrements d'administrateur, et elles ne sont pas non plus des personnes.",
+          targetsInfoTitle: "La liste que vous voyez est la liste que vous pouvez utiliser",
+          targetsInfoContent:
+            "Les types disponibles sont filtrés avant de vous parvenir : enregistrés, résolubles par cette installation, et autorisés pour vous. Chaque entrée qui vous est proposée fonctionnera lorsque vous l'utiliserez, et rien de ce qui vous est proposé ne vous refusera au clic suivant. C'est pourquoi la liste est récupérée à l'ouverture du contrôle plutôt qu'au chargement du formulaire — un formulaire d'enregistrement comportant plusieurs champs de référence auxquels personne ne touche ne demande rien du tout aux autres modules.",
+
+          tenantTitle: "Règles d'espace de travail et de plateforme",
+          tenantIntro:
+            "Les références traversent une frontière de module, ce qui fait de la frontière d'espace de travail le point sur lequel il faut être précis. Cinq règles, toutes appliquées et non simplement recommandées.",
+          tenant1:
+            "Tout est protégé par l'espace de travail. Rechercher un enregistrement comme résoudre un enregistrement déjà détenu passent tous deux par le propre référentiel du module propriétaire, de sorte que s'appliquent le même filtre d'espace de travail et le même filtre d'enregistrements supprimés que sur les propres écrans de ce module. Vous ne pouvez cibler que des enregistrements que votre espace de travail peut déjà voir.",
+          tenant2:
+            "Détenir une identité n'est pas une permission. Une référence est réautorisée à chaque lecture : la propre permission de consultation de la cible est exigée à nouveau, à chaque fois, et le fait que le pointeur soit déjà stocké ne compte pour rien.",
+          tenant3:
+            "L'enregistrement d'un autre espace de travail et un enregistrement supprimé forment une seule réponse indissociable, délibérément. S'ils étaient distingués, quelqu'un pourrait tester des identités une par une pour découvrir ce qui existe dans un espace de travail qu'il ne peut pas voir. « Vous n'êtes pas autorisé à voir ce type d'enregistrement » est distingué de « cet enregistrement a disparu », car ces deux cas appellent des corrections opposées et aucun des deux ne révèle quoi que ce soit.",
+          tenant4:
+            "Les enregistrements de niveau plateforme appartiennent aux administrateurs de la plateforme. Un champ personnalisé créé au niveau plateforme est hérité par chaque espace de travail et ne peut être créé, modifié ou supprimé que par un administrateur de la plateforme — y compris le type cible épinglé sur un champ de référence de niveau plateforme, qu'aucun espace de travail ne peut modifier.",
+          tenant5:
+            "Personne ne peut assigner un administrateur en dehors de son propre espace de travail. En pratique, le produit va plus loin que ce qu'exige la règle : un enregistrement d'administrateur ne peut absolument pas être ciblé par un champ de référence, ni dans votre propre espace de travail ni dans aucun autre, précisément parce qu'un administrateur peut se situer en dehors de tout espace de travail.",
+          tenantWarnTitle: "Une chose que cela ne fait pas",
+          tenantWarnContent:
+            "Une référence est aussi stricte que le propre écran de liste de la cible, et pas plus stricte. Si un type d'enregistrement est visible pour un rôle via son propre écran, il est sélectionnable via un sélecteur pour ce même rôle — aucune règle plus étroite que « tout cet espace de travail » n'est appliquée par-dessus. Ne traitez donc pas un sélecteur de référence comme un moyen de masquer des enregistrements que le module cible montre déjà de lui-même.",
+
+          exampleTitle: "Un exemple concret : un enregistrement d'administrateur pointant vers un membre du personnel",
+          exampleIntro:
+            "Le cas pour lequel ces types ont été conçus. Vos administrateurs sont aussi des employés, et vous voulez que chaque enregistrement d'administrateur indique quel enregistrement de personnel correspond à la même personne — enregistré une fois, correctement, et jamais retapé.",
+          ex1Title: "Décidez de quel type vous avez besoin",
+          ex1Content:
+            "La réponse est un membre du personnel, pas un compte de connexion, il s'agit donc d'un Entity Reference. Si la question avait été « qui a révisé ceci ? », la réponse aurait été un compte et User Reference aurait été le bon choix — et le type de valeur est définitif, cela mérite donc un instant de réflexion.",
+          ex2Title: "Définissez le champ",
+          ex2Content:
+            "Sur l'écran Champs personnalisés, choisissez Add, sélectionnez le type d'enregistrement administrateur, définissez la clé sur staff_record, le libellé anglais sur Staff record, et le type de valeur sur Entity Reference. Un contrôle Target Entity Type apparaît dès que vous choisissez ce type de valeur.",
+          ex3Title: "Épinglez la cible sur Staff Member",
+          ex3Content:
+            "Définissez Target Entity Type sur Staff Member. C'est ce qui transforme le champ de « un pointeur vers quelque chose » en « un pointeur vers un membre du personnel », et c'est ce qui permet au formulaire d'enregistrement d'afficher un seul contrôle au lieu de deux. Ne laissez Not pinned que si vous voulez vraiment que différents administrateurs pointent vers différents types d'enregistrement.",
+          ex4Title: "Remplissez-le sur un enregistrement",
+          ex4Content:
+            "Ouvrez n'importe quel enregistrement d'administrateur. La section Champs personnalisés affiche désormais un contrôle Staff record avec un texte indicatif vous invitant à sélectionner un enregistrement. Ouvrez-le, tapez une partie d'un nom, et la liste se restreint aux membres du personnel correspondants avec leur intitulé de poste en dessous. Choisissez-en un et enregistrez la fiche.",
+          ex5Title: "Relisez-la, et remarquez ce qui s'est passé",
+          ex5Content:
+            "Rouvrez l'enregistrement. Le champ affiche le nom du membre du personnel — récupéré à l'instant, pas mémorisé depuis votre enregistrement. Changez le nom de famille de cette personne sur son propre enregistrement de personnel, revenez, et la référence affiche le nouveau nom de famille sans que personne n'ait touché à l'enregistrement d'administrateur.",
+          ex6Title: "Vérifiez les deux comportements qui comptent",
+          ex6Content:
+            "Connectez-vous en tant que quelqu'un qui peut modifier les administrateurs mais ne peut pas consulter le personnel : le champ est présent, il indique que la valeur stockée est correcte et que cette personne n'est pas autorisée à voir le nom, et elle ne peut pas l'écraser. Supprimez ensuite le membre du personnel : la référence s'efface d'elle-même, l'enregistrement d'administrateur conserve sa ligne de valeur et son historique, et le champ se lit comme vide plutôt que comme un pointeur cassé.",
+
+          userExampleTitle: "Un exemple concret : un champ Reviewed by",
+          userExampleIntro:
+            "Le cas User Reference, plus court précisément parce qu'il n'y a rien à configurer.",
+          ux1Title: "Définissez le champ",
+          ux1Content:
+            "Ajoutez un champ sur le type d'enregistrement souhaité, définissez la clé sur reviewed_by, le libellé sur Reviewed by, et le type de valeur sur User Reference. Aucun contrôle de cible n'apparaît, et c'est normal — la réponse ne peut jamais être qu'un compte utilisateur.",
+          ux2Title: "Remplissez-le",
+          ux2Content:
+            "Ouvrez un enregistrement de ce type. Le contrôle Reviewed by propose une liste consultable de comptes utilisateurs, chacun avec son nom d'utilisateur sous le nom. Les comptes actuellement verrouillés sont marqués inactifs et restent sélectionnables, car ce sont des réponses légitimes pour quelque chose qui s'est déjà produit.",
+          ux3Title: "Confirmez ce qu'il stocke",
+          ux3Content:
+            "La réponse enregistre le type de compte utilisateur et l'identité de ce compte — les deux mêmes éléments que stocke un Entity Reference, de sorte qu'un champ marqué User Reference indique ce qu'il contient plutôt que simplement ce pour quoi il a été configuré.",
+          ux4Title: "Confirmez ce qu'il refuse",
+          ux4Content:
+            "Il n'existe aucun moyen, depuis ce formulaire ou depuis une requête qui le contourne, de faire pointer ce champ vers un administrateur, un groupe d'utilisateurs ou une ligne de catalogue de plateforme. Le refus arrive avec un message nommant ce qui est autorisé, et il est refusé aussi bien à la définition qu'à l'enregistrement.",
+
+          notTitle: "Ce que les champs de référence ne sont pas",
+          notIntro:
+            "Des attentes raisonnables auxquelles ces types ne répondent délibérément pas. Aucune n'est un défaut à signaler.",
+          not1:
+            "Ce n'est pas une relation que le produit comprend. Rien n'est calculé à partir d'une référence, rien n'en est déclenché, et aucun écran ne gagne une liste « enregistrements pointant vers celui-ci » du simple fait qu'une référence existe.",
+          not2:
+            "Ce n'est pas un moyen de masquer des enregistrements. Un sélecteur montre exactement ce que les propres écrans du module cible montrent à cette même personne. Si quelqu'un ne doit pas voir un type d'enregistrement, cela relève d'une permission sur ce type d'enregistrement.",
+          not3:
+            "Ils ne stockent jamais de nom, et il n'existe aucun paramètre pour en changer. Un champ qui doit survivre à la suppression de sa cible avec l'ancien nom encore lisible est un champ Text, et accepter qu'il dérive avec le temps est le prix de ce choix.",
+          not4:
+            "Ce n'est pas du plusieurs-à-plusieurs. Un champ de référence contient un seul pointeur. Il n'existe aucun type de référence à valeurs multiples, et Multi-Select ne peut pas pointer vers des enregistrements — ses réponses sont du texte que vous avez rédigé.",
+          not5:
+            "Ils ne peuvent pas cibler tous les types d'enregistrement. Seuls les types dont le module propriétaire fournit une liste consultable et vérifiée par permission peuvent être référencés, et les autres sont refusés plutôt que silencieusement proposés.",
+          not6:
+            "Ce n'est pas inclus dans l'export des définitions en feuille de calcul. Ce fichier compte dix-huit colonnes et un type cible épinglé n'en fait pas partie, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ.",
+
+          nextTitle: "Où aller ensuite",
+          nextIntro:
+            "La mécanique de recherche d'une référence — les trois recherches, chaque état d'échec, et ce qu'il faut faire pour chacun — se trouve sur sa propre page.",
           thPage: "Page",
-          thCovers: "What it covers",
-          pageLookups: "Recherches de Référence",
-          coversLookups: "The three lookups behind a reference, what every answer and every refusal means, the five failure states and whose problem each one is, delete behaviour, and how the picker paginates.",
-          pageValueTypes: "Types de Valeurs",
-          coversValueTypes: "All nineteen value types side by side, including these two, with worked example inputs and the error code each rejection returns.",
-          pageDefining: "Defining a Field",
-          coversDefining: "The definition form control by control, including the Target Entity Type control and every rejection it can produce.",
+          thCovers: "Ce qu'elle couvre",
+          pageLookups: "Recherches de référence",
+          coversLookups:
+            "Les trois recherches derrière une référence, ce que signifie chaque réponse et chaque refus, les cinq états d'échec et à qui chacun incombe, le comportement à la suppression, et comment le sélecteur pagine.",
+          pageValueTypes: "Types de valeur",
+          coversValueTypes:
+            "Les vingt-deux types de valeur côte à côte, y compris ces deux-là, avec des exemples de saisie et le code d'erreur que renvoie chaque refus.",
+          pageDefining: "Définir un champ",
+          coversDefining:
+            "Le formulaire de définition contrôle par contrôle, y compris le contrôle Target Entity Type et chaque refus qu'il peut produire.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Recherches de référence
+        // ═══════════════════════════════════════════════════
         referenceLookups: {
-          title: "Recherches de Référence",
-          description: "How a reference is looked up: the three lookups behind a reference field, what every answer means, the five failure states and whose problem each one is, what happens when the referenced record is deleted, and how the picker behaves.",
-          intro: "A reference field is drawn by three separate lookups: one asks which kinds of record you may point at, one searches a chosen kind, and one resolves a pointer you already hold back to a name. This page covers all three, every answer each one can give, and — the part worth reading before anything goes wrong — what each different kind of failure means and who can fix it.",
-          whyThreeTitle: "Why the name arrives separately",
-          whyThreeContent: "The record's own values are read in one call; each reference's name is then resolved in its own. That is not an oversight. Resolving a name is guarded by the target's own permission, so it has to be its own permission-checked read — and doing it inline would mean one cross-module query per reference per row, which on a list of records is a query per cell.",
-          endpointsTitle: "The three lookups",
-          endpointsIntro: "All three live under one address of their own rather than alongside the other custom-fields calls, and that is deliberate: these read other modules' data, so they are guarded by the target kind of record's own view permission and not by the permission to administer field definitions. Somebody who administers champs personnalisés but may not read staff is refused here, correctly.",
-          endpointsTypes: "Lists the kinds of record this caller may point at right now.",
-          endpointsSearch: "Returns one page of selectable records of one kind, optionally filtered.",
-          endpointsResolve: "Resolves one pointer the caller already holds back to its record.",
-          endpointsPermission: "So there is no single permission that opens this feature. All three require you to be signed in as an administrator, and each then requires the view permission for the kind of record in the address: listing staff members needs the staff view permission, listing user accounts needs the one for user accounts. The consequence to expect is that the same person can be admitted by one of these lookups and refused by the next, on the same screen, and both answers are correct.",
-          typesTitle: "Listing what you may point at",
-          typesWhat: "This answers with the filtered set, not the full catalogue: registered, answerable by this installation, and permitted for you. Every entry it returns is usable immediately, which is the whole reason it exists — a control that offered every registered kind of record would be offering choices that refuse you on the next click, and the alternative of trying each one in turn is a fistful of denials per page load.",
-          typesEmpty: "An empty list is a success, not a failure. It means \"you may not point a reference at anything\", and it is rendered as an explanatory sentence inside the control rather than as an error or as a silently empty dropdown. It has two possible causes and the product names both without asserting either: the owning modules may not be part of this installation, or you may not hold view access to them. Only the second is fixed by asking for permissions, which is why copy naming one cause would send somebody to do something that cannot work.",
-          typesShape: "Each entry carries its stable identifier, the module that owns it, and a display name in English and Arabic. Those names come from the platform's own registry rather than from this application's translations, so they are shown as supplied and never looked up as translation keys.",
-          searchTitle: "Searching one kind of record",
-          searchWhat: "One page of selectable records, in a stable order, with an optional free-text filter. Which columns the filter matches is the owning module's choice rather than a promise made here.",
-          searchPaging: "A page holds twenty rows by default. Asking for more than a hundred is silently capped rather than refused, and the order is stable across calls on purpose — an unstable order makes page two return rows you already saw on page one. The control loads the first page, then accumulates further pages behind a Load more control rather than replacing what you were looking at.",
-          searchRows: "Each row carries a display name that is never blank, an optional second line to tell two similarly named records apart, and a flag saying whether the record is dormant. Deleted records are not returned at all, so that flag never means deleted — a dormant row is present, selectable, and a perfectly valid answer.",
-          searchTyping: "Typing is debounced before it becomes a request. Without that, an eight-character name would fire eight cross-module queries, seven of whose answers are thrown away — and the one that renders would be whichever returned last rather than the one matching what you typed.",
-          resolveTitle: "Resolving a pointer you already hold",
-          resolveWhat: "The read half of the feature, and the only way a stored reference ever becomes a name on screen. It takes the kind of record and the identity, and returns exactly the same shape a picker row has — so a reference loaded from the database and a record you just picked are drawn from one contract rather than two.",
-          resolveGates: "It applies every gate the search applies: the kind of record must be registered, you must hold that kind's own view permission, this installation must be able to answer for it, and the record is read through the owning module's workspace-filtered and deleted-record-filtered repository. Nothing about this being a display-only read relaxes any of them.",
-          resolveNoName: "It is also the only place a name comes from. Nothing about a stored reference includes a name, by design, so a field that cannot resolve shows a specific sentence about why — never a name it remembered from earlier.",
-          statusesTitle: "What each answer means",
-          statusesIntro: "The answers are deliberately distinguishable from each other, with exactly one merge preserved. Read this table as the map from what the product tells you to what you should do about it.",
-          thAnswer: "Answer",
-          thWhatItMeans: "What it means",
-          thWhoFixes: "Whose problem it is",
-          ansOk: "Success",
-          ansOkMeans: "The record resolved. You get its current name, its optional second line, and whether it is dormant.",
-          ansOkFixes: "Nobody — this is the normal case.",
-          ansForbidden: "Not permitted",
-          ansForbiddenMeans: "You do not hold the view permission for that kind of record. This says nothing whatsoever about the record, or about whether it still exists.",
-          ansForbiddenFixes: "Whoever administers roles. It is a fact about your own access, and you could already have learnt it by reading your own permissions.",
-          ansNotFound: "Not found",
-          ansNotFoundMeans: "The record does not resolve. It was deleted, or it belongs to a workspace you cannot see — merged into one answer on purpose so this lookup cannot be used to test what exists elsewhere.",
-          ansNotFoundFixes: "Whoever owns the data. Pick a different record, or clear the field.",
-          ansUnknownType: "Unknown record type",
-          ansUnknownTypeMeans: "The kind of record named is not registered at all. This describes the installation, not any record — it usually means a field was pinned to a kind of record that has since been retired.",
-          ansUnknownTypeFixes: "Whoever administers the deployment.",
-          ansUnavailable: "Module not available",
-          ansUnavailableMeans: "The kind of record is registered but the module that owns it is not part of this installation, so nothing here can answer for it. No permission grant will ever change this.",
-          ansUnavailableFixes: "Whoever administers the deployment.",
-          ansInvalidId: "Invalid identity",
-          ansInvalidIdMeans: "The identity sent could not be read at all. Either it was altered on its way through something, or a stored value predates a change and can no longer be interpreted.",
-          ansInvalidIdFixes: "Whoever is filling the record in — pick the record again. This one is replaced, never re-pointed.",
-          statusesInfoTitle: "What the answers deliberately do not tell you",
-          statusesInfoContent: "\"Deleted\" and \"in a workspace you cannot see\" are one answer and always will be. Splitting them would let somebody probe identities one at a time to learn what exists in another workspace. Everything else is distinguishable, because everything else describes either your own access or this installation — neither of which is a secret from you.",
-          failuresTitle: "The five failure states, and why they read differently",
-          failuresIntro: "A reference field can fail to display for five distinct reasons. They are five different sentences on screen because they are five different problems with five different remedies, and this is the single most important table on this page.",
-          thState: "What has happened",
-          thOnScreen: "What the field says and does",
-          thYouDo: "What to do",
-          stNoPermission: "You may not view that kind of record",
-          scrNoPermission: "The field states that the stored value is fine but that its name cannot be shown to you, and becomes read-only — readable, with no picker. It is deliberately not blanked, because blanking it would invite somebody with no visibility into the target to overwrite a perfectly good reference.",
-          doNoPermission: "Nothing about the data. Ask whoever administers roles for view access to that kind of record.",
-          stGone: "The referenced record no longer exists",
-          scrGone: "The field states that the record cannot be found, offers both possible reasons — deleted, or in an organisation you cannot see — and claims neither. It stays editable.",
-          doGone: "Pick a different record, or clear the field. Re-picking is the fix.",
-          stMalformed: "The stored reference is malformed",
-          scrMalformed: "The field states that what is stored cannot be read at all, stays editable, and additionally marks itself as invalid — because unlike a dangling pointer this is not a value the product ever legitimately produced.",
-          doMalformed: "Pick the record again. This one has to be replaced rather than re-pointed, and it is worth reporting if you did not cause it.",
-          stTransient: "The lookup could not run just now",
-          scrTransient: "The field states that it could not load the referenced record at the moment and that the reference itself is fine, and offers a Try again control.",
-          doTransient: "Try again. Emphatically do not clear the field — the stored value is good, and clearing it is the one action that turns a passing failure into real data loss.",
-          stTypeUnavailable: "This installation cannot answer for that kind of record",
-          scrTypeUnavailable: "The field states that this kind of record is not available in this installation, and offers no Try again control — because retrying will refuse identically every time.",
-          doTypeUnavailable: "Ask whoever administers the deployment which kinds of record this installation can use. This is an installation matter, not a permission one.",
-          greyDashTitle: "Why this is not one grey dash",
-          greyDashContent: "Every one of the five could be rendered as an empty field, and the result would be a pointer at a deleted record sitting unnoticed for a year — indistinguishable from a field nobody ever filled in, and indistinguishable from a colleague simply not having permission. Merging them is not a cosmetic simplification; it deletes the only information that says whose problem it is. If you are ever tempted to make these read the same, this is the paragraph that says why not.",
-          emptyVsFailedTitle: "An empty field is a sixth thing entirely",
-          emptyVsFailedContent: "A reference that was never filled in reads as empty, and that is a different fact from all five above. This is why a populated reference whose target is gone is never reported as empty: an operator looking at a blank cell must be able to tell \"nobody answered this\" from \"the answer points at something that is no longer there\".",
-          saveTitle: "What is checked when a reference is saved",
-          saveIntro: "Every reference save runs the same checks in the same order, and each one fails with its own message rather than a generic \"invalid reference\". Knowing the order explains every refusal you can hit.",
-          save1: "Both pieces present. A submission missing either the kind of record or the identity is refused as an incomplete reference — never treated as an empty field, because half a reference means somebody started answering and stopped.",
-          save2: "The kind of record is registered. An unregistered identifier has no permission behind it, so there would be nothing for the later checks to check against. Refused, naming the identifier.",
-          save3: "The kind of record is allowed for this value type. Always true for Entity Reference; for User Reference this is the fixed platform allowlist, and the refusal names what is allowed rather than only that your choice was not.",
-          save4: "The kind of record agrees with the definition's pin, if there is one. Refused naming both what was expected and what arrived. An unpinned definition skips this check entirely — unpinned means \"any allowed kind\", and must never be read as \"nothing configured, therefore nothing valid\".",
-          save5: "The identity can be read. A stale or altered identity is refused cleanly as an invalid identity, on that one field, rather than failing the whole save with an unexplained error.",
-          save6: "You could read that record right now. This is the check that makes everything else safe, and it is deliberately a single flat refusal with no detail — see below.",
-          saveGate: "That last check holds you to the target kind of record's own view permission and resolves the record through the owning module's workspace-filtered repository. Without it the feature would be an extraction tool rather than a reference: somebody who may edit an administrator record but may not read staff could store an arbitrary staff identity and then read the name back through the resolve lookup. Storing a pointer at data is a read of that data, deferred.",
-          saveGateInfoTitle: "Why that one refusal says so little",
-          saveGateInfoContent: "This is the one place in the whole feature where you supply an arbitrary identity, so it is the one place that could be turned into a way of testing what exists in another workspace. It therefore collapses every reason into one refusal. The read side can afford to be specific for the opposite reason: by then, the identity is one this gate already approved.",
-          saveWhatStored: "One detail with a real consequence: the answer stores the kind of record the value actually points at, never the definition's pin. The two are equal at the moment of saving precisely because of the fourth check — but writing the pin instead would silently rewrite the meaning of every stored answer the day somebody re-points the field, which is the one property that keeps an old answer readable.",
-          deleteTitle: "When the referenced record is deleted",
-          deleteIntro: "Deleting a record that other records point at is a normal operation and needs no clean-up. The pointers clear themselves.",
-          d1Title: "The record is deleted, in the ordinary way",
-          d1Content: "Somebody deletes the staff member, the user account or the person through that module's own screen, holding that module's own delete permission. Nothing about champs personnalisés is involved yet.",
-          d2Title: "The deletion records that it happened",
-          d2Content: "The delete and the note saying it happened are committed together, in one transaction. Either both happen or neither does, so there is no window in which a record is gone but nothing recorded the fact.",
-          d3Title: "Every pointer at that record is cleared",
-          d3Content: "Both pieces of each affected answer are cleared together, in the same pass. Never one without the other — half a reference is the one state nothing can display and no operator can repair.",
-          d4Title: "The value row survives",
-          d4Content: "Nothing is deleted. Each answer keeps its row, its version, its place in the record's set of answers and its audit trail. Only the pointer goes, which is why the field reads afterwards as genuinely empty rather than as broken.",
-          deleteScope: "The clearing covers both places answers are stored, including the older store still holding pre-migration answers, and it covers deleted answer rows too — a deleted row still holding a stale pointer would hand that stale pointer back to anybody who later restored it.",
-          deleteIdempotent: "Clearing a pointer that is already clear does nothing, deliberately, so the operation is safe to repeat. The record's own snapshots of earlier answers are not swept, and do not need to be: they are short-retention rollback artefacts that are removed on their own schedule and are never a live display path in the meantime.",
-          deleteInfoTitle: "Before the pointer clears, and where it never does",
-          deleteInfoContent: "There is a short window between a deletion and the pointers clearing, and there are kinds of record whose module does not announce its deletions at all. In both cases a reference simply reports honestly that its record cannot be found, which is exactly the second row of the failure table above. Nothing displays a wrong name, and nothing displays an empty field pretending nobody answered.",
-          deleteSoftTitle: "A record that is merely hidden counts as gone",
-          deleteSoftContent: "Most deletions in the product hide the record rather than physically removing it. A hidden record is already unreachable through the owning module's own screens, so a reference correctly treats it as gone — a record an administrator cannot see is not a record a reference may resolve to.",
-          pickerTitle: "How the picker behaves",
-          pickerIntro: "Details of the control itself that are easier to read once than to work out from its behaviour.",
-          thBehaviour: "Behaviour",
-          thWhy: "Why it is that way",
-          pkLazy: "Nothing is fetched until you open the control.",
-          pkLazyWhy: "A record form can carry several reference fields. One nobody touches should not query another module at all, and the answers are cached afterwards, so re-opening the control costs nothing.",
-          pkTwoControls: "An unpinned field shows two controls, and neither steals focus from the other.",
-          pkTwoControlsWhy: "Choosing a kind of record leaves you on that control with the record control now available one step away. Automatically opening the record picker would pull focus out from under somebody still reading what they just chose.",
-          pkAccumulate: "Further pages add to the list rather than replacing it.",
-          pkAccumulateWhy: "A search over a whole workspace's staff table needs paging, and a list that replaced itself would lose the row you scrolled past on your way to Load more.",
-          pkDormant: "A dormant record is marked, not hidden.",
-          pkDormantWhy: "It still exists and is still a valid answer — a departed staff member kept for historical assignments is exactly the case. Treating it as invalid would make historical references unsavable.",
-          pkNoResults: "An unmatched filter and an empty list read differently.",
-          pkNoResultsWhy: "\"Your filter matched nothing\" is about what you typed. \"There is nothing you may point at\" is about your access. One sentence for both would tell somebody who mistyped that they have no permissions.",
-          pkNoRetry: "Two of the failure states offer no Try again control.",
-          pkNoRetryWhy: "A permission refusal and an unavailable module refuse identically every time. A button inviting you to hammer them would be worse than no button. Only a genuine transport failure gets a retry, because that is the one a retry fixes.",
-          pkViewMode: "In view mode the control is disabled rather than merely unclickable.",
-          pkViewModeWhy: "A reference picker is a picker, so it follows the same convention every other picker on these forms follows. Its own read-only state, used when you may not view the target's name, is a different thing and looks different.",
-          pkNoLabelTrick: "The control names itself for assistive technology.",
-          pkNoLabelTrickWhy: "Its visible label is real, clickable wiring, but the accessible name is set on the control directly — a label alone cannot name a control of this shape. Two reference fields on one form therefore announce distinctly rather than both announcing as \"Record type\".",
-          diagnoseTitle: "Diagnosing a reference that will not display",
-          diagnoseIntro: "In order. Each step rules out one of the five states above, and the first four need no access you do not already have.",
-          dg1Title: "Read the sentence in the field",
-          dg1Content: "The five states never share wording, so the field has already told you which one you are in. This step is listed first because it is the one most often skipped.",
-          dg2Title: "If it offers Try again, use it",
-          dg2Content: "Only the transient failure offers one. If the field resolves on the second attempt, nothing was ever wrong with the stored value and there is nothing to fix.",
-          dg3Title: "Check the same field on another record",
-          dg3Content: "If every reference of that kind fails identically, it is your permissions or the installation — not the data. If only this one fails, the record it points at is the thing to look at.",
-          dg4Title: "Have somebody with full access open the same record",
-          dg4Content: "If they see a name and you do not, it is a permission on that kind of record. If they see the same failure, it is the data or the installation.",
-          dg5Title: "Only then decide whether to re-pick or clear",
-          dg5Content: "Re-pick when the record is genuinely gone or the stored value is malformed. Clear only when the field should be empty. Never clear a field that reported a transient failure — that is the one action that converts somebody else's outage into your data loss.",
-          limitsTitle: "Limits and deliberate gaps",
-          limitsIntro: "Stated so nobody spends an afternoon looking for a setting that is not there.",
-          thLimit: "Limit",
-          thDetail: "Detail",
-          limPageSize: "Records per page in the picker",
-          limPageSizeDetail: "Twenty by default. A request for more than a hundred is capped rather than refused, and the cap is applied twice on the way in.",
-          limDebounce: "Delay between typing and searching",
-          limDebounceDetail: "A fixed short pause, the same one every server-backed picker in the product uses. Not configurable.",
-          limNoName: "No stored display name",
-          limNoNameDetail: "There is no setting anywhere to snapshot a name alongside a pointer, and there will not be one — it would hand a name guarded by one permission to anybody holding another.",
-          limNoBacklinks: "No \"what points at this record\" view",
-          limNoBacklinksDetail: "Nothing lists the references pointing at a given record. Deleting a record does not warn you how many pointers it is about to clear.",
-          limNoExport: "Not in the definitions export",
-          limNoExportDetail: "The eighteen-column definitions spreadsheet has no column for a pinned target type, so an exported definition does not record what its field points at.",
-          limNoMulti: "One pointer per field",
-          limNoMultiDetail: "There is no multi-value reference type. Two answers means two fields.",
-          limNoTypeFilter: "The picker cannot be narrowed by anything but text",
-          limNoTypeFilterDetail: "Which columns the free-text filter matches is the owning module's choice, and there are no additional filters — no \"active only\", no filter by group.",
-          limNoAdminTarget: "Administrator records cannot be referenced",
-          limNoAdminTargetDetail: "Not from the definition form and not from a request that bypasses it. An administrator may sit outside every workspace, which is the one property a reference target must not have.",
-          nextTitle: "Where to go next",
-          nextIntro: "The concepts behind these lookups are on the Reference Fields page.",
+          title: "Recherches de référence",
+          description:
+            "Comment une référence est recherchée : les trois recherches derrière un champ de référence, ce que signifie chaque réponse, les cinq états d'échec et à qui chacun incombe, ce qui se passe quand l'enregistrement référencé est supprimé, et comment se comporte le sélecteur.",
+          intro:
+            "Un champ de référence est composé à partir de trois recherches distinctes : l'une demande quels types d'enregistrement vous pouvez cibler, l'une recherche dans un type choisi, et l'une résout un pointeur déjà détenu pour en retrouver un nom. Cette page couvre les trois, chaque réponse que chacune peut donner, et — la partie à lire avant que quelque chose ne tourne mal — ce que signifie chaque type d'échec et qui peut le corriger.",
+          whyThreeTitle: "Pourquoi le nom arrive séparément",
+          whyThreeContent:
+            "Les propres valeurs de l'enregistrement sont lues en un seul appel ; le nom de chaque référence est ensuite résolu dans le sien. Ce n'est pas un oubli. Résoudre un nom est protégé par la propre permission de la cible, il doit donc s'agir de sa propre lecture vérifiée par permission — et le faire en ligne signifierait une requête inter-modules par référence et par ligne, ce qui, sur une liste d'enregistrements, donne une requête par cellule.",
+
+          endpointsTitle: "Les trois recherches",
+          endpointsIntro:
+            "Toutes trois vivent sous une adresse qui leur est propre plutôt qu'aux côtés des autres appels de champs personnalisés, et c'est délibéré : elles lisent les données d'autres modules, elles sont donc protégées par la propre permission de consultation du type d'enregistrement cible, et non par la permission d'administrer les définitions de champs. Quelqu'un qui administre les champs personnalisés mais ne peut pas lire le personnel est refusé ici, à juste titre.",
+          endpointsTypes: "Liste les types d'enregistrement que cet appelant peut cibler dès maintenant.",
+          endpointsSearch: "Renvoie une page d'enregistrements sélectionnables d'un type, éventuellement filtrée.",
+          endpointsResolve: "Résout un pointeur déjà détenu par l'appelant pour retrouver son enregistrement.",
+          endpointsPermission:
+            "Il n'existe donc aucune permission unique qui ouvre cette fonctionnalité. Toutes trois exigent d'être connecté en tant qu'administrateur, et chacune exige ensuite la permission de consultation du type d'enregistrement présent dans l'adresse : lister les membres du personnel nécessite la permission de consultation du personnel, lister les comptes utilisateurs nécessite celle des comptes utilisateurs. La conséquence à prévoir est que la même personne peut être admise par l'une de ces recherches et refusée par la suivante, sur le même écran, et les deux réponses sont correctes.",
+
+          typesTitle: "Lister ce que vous pouvez cibler",
+          typesWhat:
+            "Ceci répond avec l'ensemble filtré, pas le catalogue complet : enregistré, résoluble par cette installation, et autorisé pour vous. Chaque entrée renvoyée est immédiatement utilisable, ce qui est toute la raison d'être de cette recherche — un contrôle qui proposerait tous les types d'enregistrement enregistrés proposerait des choix qui vous refuseraient au clic suivant, et l'alternative consistant à tous les essayer un par un représente une poignée de refus par chargement de page.",
+          typesEmpty:
+            "Une liste vide est un succès, pas un échec. Elle signifie « vous n'êtes autorisé à cibler aucune référence », et elle est rendue comme une phrase explicative à l'intérieur du contrôle plutôt que comme une erreur ou comme une liste déroulante silencieusement vide. Elle a deux causes possibles, et le produit nomme les deux sans affirmer laquelle s'applique : les modules propriétaires peuvent ne pas faire partie de cette installation, ou vous pouvez ne détenir aucun accès en consultation sur eux. Seule la seconde se règle en demandant des permissions, ce qui explique pourquoi un texte ne nommant qu'une seule cause enverrait quelqu'un faire quelque chose qui ne peut pas fonctionner.",
+          typesShape:
+            "Chaque entrée porte son identifiant stable, le module qui le possède, et un nom d'affichage en anglais et en arabe. Ces noms proviennent du propre registre de la plateforme plutôt que des traductions de cette application, ils sont donc affichés tels que fournis et jamais recherchés comme des clés de traduction.",
+
+          searchTitle: "Rechercher dans un type d'enregistrement",
+          searchWhat:
+            "Une page d'enregistrements sélectionnables, dans un ordre stable, avec un filtre en texte libre facultatif. Les colonnes sur lesquelles porte le filtre relèvent du choix du module propriétaire plutôt que d'une promesse faite ici.",
+          searchPaging:
+            "Une page contient vingt lignes par défaut. Demander plus de cent est silencieusement plafonné plutôt que refusé, et l'ordre est délibérément stable d'un appel à l'autre — un ordre instable ferait que la page deux renverrait des lignes déjà vues sur la page un. Le contrôle charge la première page, puis accumule les pages suivantes derrière un contrôle Load more plutôt que de remplacer ce que vous étiez en train de regarder.",
+          searchRows:
+            "Chaque ligne porte un nom d'affichage jamais vide, une seconde ligne facultative pour distinguer deux enregistrements au nom similaire, et un indicateur signalant si l'enregistrement est dormant. Les enregistrements supprimés ne sont jamais renvoyés du tout, donc cet indicateur ne signifie jamais supprimé — une ligne dormante est présente, sélectionnable, et une réponse parfaitement valide.",
+          searchTyping:
+            "La frappe est temporisée avant de devenir une requête. Sans cela, un nom de huit caractères déclencherait huit requêtes inter-modules, dont sept réponses seraient jetées — et celle qui s'affiche serait celle arrivée en dernier plutôt que celle correspondant à ce que vous avez tapé.",
+
+          resolveTitle: "Résoudre un pointeur déjà détenu",
+          resolveWhat:
+            "Le versant lecture de la fonctionnalité, et le seul moyen pour une référence stockée de devenir un nom à l'écran. Cette recherche prend le type d'enregistrement et l'identité, et renvoie exactement la même forme qu'une ligne de sélecteur — de sorte qu'une référence chargée depuis la base de données et un enregistrement que vous venez de choisir proviennent d'un seul contrat plutôt que de deux.",
+          resolveGates:
+            "Elle applique chaque filtre qu'applique la recherche : le type d'enregistrement doit être enregistré, vous devez détenir la propre permission de consultation de ce type, cette installation doit pouvoir y répondre, et l'enregistrement est lu via le référentiel du module propriétaire filtré par espace de travail et par enregistrements supprimés. Le fait qu'il s'agisse d'une lecture d'affichage uniquement n'assouplit aucun de ces points.",
+          resolveNoName:
+            "C'est aussi le seul endroit d'où provient un nom. Rien dans une référence stockée ne comprend de nom, par conception, donc un champ qui ne peut pas se résoudre affiche une phrase précise expliquant pourquoi — jamais un nom dont il se serait souvenu depuis avant.",
+
+          statusesTitle: "Ce que signifie chaque réponse",
+          statusesIntro:
+            "Les réponses sont délibérément distinctes les unes des autres, avec exactement une fusion conservée. Lisez ce tableau comme la correspondance entre ce que le produit vous dit et ce que vous devez en faire.",
+          thAnswer: "Réponse",
+          thWhatItMeans: "Ce que cela signifie",
+          thWhoFixes: "À qui cela incombe",
+          ansOk: "Succès",
+          ansOkMeans:
+            "L'enregistrement s'est résolu. Vous obtenez son nom actuel, sa seconde ligne facultative, et s'il est dormant.",
+          ansOkFixes: "Personne — c'est le cas normal.",
+          ansForbidden: "Non autorisé",
+          ansForbiddenMeans:
+            "Vous ne détenez pas la permission de consultation de ce type d'enregistrement. Cela ne dit absolument rien sur l'enregistrement lui-même, ni sur le fait qu'il existe toujours.",
+          ansForbiddenFixes:
+            "Quiconque administre les rôles. C'est un fait sur votre propre accès, que vous auriez déjà pu apprendre en lisant vos propres permissions.",
+          ansNotFound: "Introuvable",
+          ansNotFoundMeans:
+            "L'enregistrement ne se résout pas. Il a été supprimé, ou il appartient à un espace de travail que vous ne pouvez pas voir — fusionnés en une seule réponse délibérément, afin que cette recherche ne puisse pas servir à tester ce qui existe ailleurs.",
+          ansNotFoundFixes:
+            "Quiconque possède la donnée. Choisissez un autre enregistrement, ou videz le champ.",
+          ansUnknownType: "Type d'enregistrement inconnu",
+          ansUnknownTypeMeans:
+            "Le type d'enregistrement nommé n'est pas enregistré du tout. Ceci décrit l'installation, pas un enregistrement précis — cela signifie généralement qu'un champ a été épinglé à un type d'enregistrement qui a depuis été retiré.",
+          ansUnknownTypeFixes: "Quiconque administre le déploiement.",
+          ansUnavailable: "Module non disponible",
+          ansUnavailableMeans:
+            "Le type d'enregistrement est enregistré mais le module qui le possède ne fait pas partie de cette installation, donc rien ici ne peut y répondre. Aucun octroi de permission ne changera jamais cela.",
+          ansUnavailableFixes: "Quiconque administre le déploiement.",
+          ansInvalidId: "Identité invalide",
+          ansInvalidIdMeans:
+            "L'identité envoyée n'a pas pu être lue du tout. Soit elle a été modifiée en chemin par quelque chose, soit une valeur stockée est antérieure à un changement et ne peut plus être interprétée.",
+          ansInvalidIdFixes:
+            "Quiconque remplit l'enregistrement — choisissez à nouveau l'enregistrement. Celui-ci est remplacé, jamais repointé.",
+          statusesInfoTitle: "Ce que les réponses ne vous disent délibérément pas",
+          statusesInfoContent:
+            "« Supprimé » et « dans un espace de travail que vous ne pouvez pas voir » sont une seule réponse et le resteront toujours. Les séparer permettrait à quelqu'un de sonder des identités une par une pour découvrir ce qui existe dans un autre espace de travail. Tout le reste est distinguable, car tout le reste décrit soit votre propre accès, soit cette installation — dont aucun n'est un secret pour vous.",
+
+          failuresTitle: "Les cinq états d'échec, et pourquoi ils se lisent différemment",
+          failuresIntro:
+            "Un champ de référence peut échouer à s'afficher pour cinq raisons distinctes. Ce sont cinq phrases différentes à l'écran parce que ce sont cinq problèmes différents avec cinq remèdes différents, et c'est le tableau le plus important de cette page.",
+          thState: "Ce qui s'est passé",
+          thOnScreen: "Ce que dit et fait le champ",
+          thYouDo: "Ce qu'il faut faire",
+          stNoPermission: "Vous n'êtes peut-être pas autorisé à consulter ce type d'enregistrement",
+          scrNoPermission:
+            "Le champ indique que la valeur stockée est correcte mais que son nom ne peut pas vous être montré, et devient en lecture seule — lisible, sans sélecteur. Il n'est délibérément pas vidé, car le vider inviterait quelqu'un sans visibilité sur la cible à écraser une référence parfaitement valide.",
+          doNoPermission:
+            "Rien concernant la donnée. Demandez à qui administre les rôles un accès en consultation à ce type d'enregistrement.",
+          stGone: "L'enregistrement référencé n'existe plus",
+          scrGone:
+            "Le champ indique que l'enregistrement est introuvable, propose les deux raisons possibles — supprimé, ou dans une organisation que vous ne pouvez pas voir — et n'affirme ni l'une ni l'autre. Il reste modifiable.",
+          doGone: "Choisissez un autre enregistrement, ou videz le champ. Reprendre une sélection est la solution.",
+          stMalformed: "La référence stockée est mal formée",
+          scrMalformed:
+            "Le champ indique que ce qui est stocké ne peut pas être lu du tout, reste modifiable, et se marque en plus comme invalide — car contrairement à un pointeur en suspens, ce n'est pas une valeur que le produit a jamais légitimement produite.",
+          doMalformed:
+            "Choisissez à nouveau l'enregistrement. Celui-ci doit être remplacé plutôt que repointé, et cela vaut la peine d'être signalé si vous n'en êtes pas la cause.",
+          stTransient: "La recherche n'a pas pu s'exécuter à l'instant",
+          scrTransient:
+            "Le champ indique qu'il n'a pas pu charger l'enregistrement référencé pour le moment et que la référence elle-même est correcte, et propose un contrôle Try again.",
+          doTransient:
+            "Réessayez. Ne videz surtout pas le champ — la valeur stockée est correcte, et la vider est la seule action qui transforme une panne passagère en véritable perte de donnée.",
+          stTypeUnavailable: "Cette installation ne peut pas répondre pour ce type d'enregistrement",
+          scrTypeUnavailable:
+            "Le champ indique que ce type d'enregistrement n'est pas disponible dans cette installation, et n'offre aucun contrôle Try again — car réessayer refusera identiquement à chaque fois.",
+          doTypeUnavailable:
+            "Demandez à qui administre le déploiement quels types d'enregistrement cette installation peut utiliser. C'est une question d'installation, pas de permission.",
+          greyDashTitle: "Pourquoi ce n'est pas un simple tiret gris",
+          greyDashContent:
+            "Chacun des cinq cas pourrait être rendu comme un champ vide, et le résultat serait un pointeur vers un enregistrement supprimé qui passerait inaperçu pendant un an — indissociable d'un champ que personne n'a jamais rempli, et indissociable d'un collègue qui n'a simplement pas la permission. Les fusionner n'est pas une simplification cosmétique ; cela supprime la seule information qui indique à qui incombe le problème. Si vous êtes un jour tenté de faire lire ces cas de la même façon, voici le paragraphe qui explique pourquoi ne pas le faire.",
+          emptyVsFailedTitle: "Un champ vide est une sixième chose, entièrement différente",
+          emptyVsFailedContent:
+            "Une référence qui n'a jamais été remplie se lit comme vide, et c'est un fait différent des cinq précédents. C'est pourquoi une référence remplie dont la cible a disparu n'est jamais présentée comme vide : un opérateur regardant une cellule vierge doit pouvoir distinguer « personne n'a répondu à ceci » de « la réponse pointe vers quelque chose qui n'existe plus ».",
+
+          saveTitle: "Ce qui est vérifié quand une référence est enregistrée",
+          saveIntro:
+            "Chaque enregistrement de référence exécute les mêmes vérifications dans le même ordre, et chacune échoue avec son propre message plutôt qu'un générique « référence invalide ». Connaître cet ordre explique chaque refus que vous pouvez rencontrer.",
+          save1:
+            "Les deux éléments sont présents. Une soumission à laquelle il manque soit le type d'enregistrement soit l'identité est refusée comme référence incomplète — jamais traitée comme un champ vide, car la moitié d'une référence signifie que quelqu'un a commencé à répondre et s'est arrêté.",
+          save2:
+            "Le type d'enregistrement est enregistré. Un identifiant non enregistré n'a aucune permission derrière lui, il n'y aurait donc rien contre quoi les vérifications suivantes pourraient se mesurer. Refusée, en nommant l'identifiant.",
+          save3:
+            "Le type d'enregistrement est autorisé pour ce type de valeur. Toujours vrai pour Entity Reference ; pour User Reference, c'est la liste blanche fixe de la plateforme, et le refus nomme ce qui est autorisé plutôt que seulement le fait que votre choix ne l'était pas.",
+          save4:
+            "Le type d'enregistrement correspond à l'épinglage de la définition, s'il y en a un. Refusée en nommant à la fois ce qui était attendu et ce qui est arrivé. Une définition non épinglée saute entièrement cette vérification — non épinglé signifie « tout type autorisé », et ne doit jamais être lu comme « rien de configuré, donc rien de valide ».",
+          save5:
+            "L'identité peut être lue. Une identité obsolète ou modifiée est refusée proprement comme identité invalide, sur ce seul champ, plutôt que de faire échouer tout l'enregistrement avec une erreur inexpliquée.",
+          save6:
+            "Vous pouviez lire cet enregistrement à l'instant même. C'est la vérification qui rend tout le reste sûr, et c'est délibérément un refus plat unique, sans détail — voir ci-dessous.",
+          saveGate:
+            "Cette dernière vérification vous soumet à la propre permission de consultation du type d'enregistrement cible et résout l'enregistrement via le référentiel filtré par espace de travail du module propriétaire. Sans elle, la fonctionnalité serait un outil d'extraction plutôt qu'une référence : quelqu'un qui peut modifier un enregistrement d'administrateur mais ne peut pas lire le personnel pourrait stocker une identité de personnel arbitraire puis relire le nom via la recherche de résolution. Stocker un pointeur vers une donnée est une lecture de cette donnée, différée.",
+          saveGateInfoTitle: "Pourquoi ce refus unique en dit si peu",
+          saveGateInfoContent:
+            "C'est le seul endroit de toute la fonctionnalité où vous fournissez une identité arbitraire, c'est donc le seul endroit qui pourrait être détourné en moyen de tester ce qui existe dans un autre espace de travail. Il regroupe donc toutes les raisons en un seul refus. Le versant lecture peut se permettre d'être précis pour la raison inverse : à ce stade, l'identité est déjà une identité que ce filtre a approuvée.",
+          saveWhatStored:
+            "Un détail aux conséquences réelles : la réponse stocke le type d'enregistrement que la valeur cible réellement, jamais l'épinglage de la définition. Les deux sont identiques au moment de l'enregistrement précisément à cause de la quatrième vérification — mais écrire l'épinglage à la place réécrirait silencieusement le sens de chaque réponse stockée le jour où quelqu'un repointe le champ, ce qui est précisément la propriété qui garde une ancienne réponse lisible.",
+
+          deleteTitle: "Quand l'enregistrement référencé est supprimé",
+          deleteIntro:
+            "Supprimer un enregistrement que d'autres enregistrements ciblent est une opération normale qui ne nécessite aucun nettoyage. Les pointeurs s'effacent d'eux-mêmes.",
+          d1Title: "L'enregistrement est supprimé, de façon ordinaire",
+          d1Content:
+            "Quelqu'un supprime le membre du personnel, le compte utilisateur ou la personne via le propre écran de ce module, en détenant la propre permission de suppression de ce module. Rien concernant les champs personnalisés n'entre encore en jeu.",
+          d2Title: "La suppression enregistre qu'elle a eu lieu",
+          d2Content:
+            "La suppression et la note indiquant qu'elle a eu lieu sont validées ensemble, en une seule transaction. Soit les deux se produisent, soit aucune ne se produit, il n'y a donc aucune fenêtre pendant laquelle un enregistrement a disparu sans que rien n'ait enregistré le fait.",
+          d3Title: "Chaque pointeur vers cet enregistrement est effacé",
+          d3Content:
+            "Les deux éléments de chaque réponse concernée sont effacés ensemble, dans la même passe. Jamais l'un sans l'autre — la moitié d'une référence est le seul état que rien ne peut afficher et qu'aucun opérateur ne peut réparer.",
+          d4Title: "La ligne de valeur survit",
+          d4Content:
+            "Rien n'est supprimé. Chaque réponse conserve sa ligne, sa version, sa place dans l'ensemble des réponses de l'enregistrement et son historique. Seul le pointeur disparaît, ce qui explique pourquoi le champ se lit ensuite comme véritablement vide plutôt que comme cassé.",
+          deleteScope:
+            "L'effacement couvre les deux emplacements où les réponses sont stockées, y compris l'ancien magasin qui contient encore des réponses antérieures à la migration, et il couvre aussi les lignes de réponse supprimées — une ligne supprimée qui conserverait encore un pointeur obsolète le redonnerait à quiconque la restaurerait plus tard.",
+          deleteIdempotent:
+            "Effacer un pointeur déjà vide ne fait rien, délibérément, de sorte que l'opération est sûre à répéter. Les propres instantanés de réponses antérieures de l'enregistrement ne sont pas balayés, et n'ont pas besoin de l'être : ce sont des artefacts de restauration à rétention courte, supprimés selon leur propre calendrier, et qui ne constituent jamais entre-temps un chemin d'affichage actif.",
+          deleteInfoTitle: "Avant que le pointeur ne s'efface, et là où il ne s'efface jamais",
+          deleteInfoContent:
+            "Il existe une courte fenêtre entre une suppression et l'effacement des pointeurs, et il existe des types d'enregistrement dont le module n'annonce pas du tout ses suppressions. Dans les deux cas, une référence se contente de signaler honnêtement que son enregistrement est introuvable, ce qui correspond exactement à la deuxième ligne du tableau des échecs ci-dessus. Rien n'affiche un nom erroné, et rien n'affiche un champ vide en prétendant que personne n'y a répondu.",
+          deleteSoftTitle: "Un enregistrement simplement masqué compte comme disparu",
+          deleteSoftContent:
+            "La plupart des suppressions dans le produit masquent l'enregistrement plutôt que de le retirer physiquement. Un enregistrement masqué est déjà inaccessible via les propres écrans du module propriétaire, une référence le traite donc à juste titre comme disparu — un enregistrement qu'un administrateur ne peut pas voir n'est pas un enregistrement vers lequel une référence peut se résoudre.",
+
+          pickerTitle: "Comment se comporte le sélecteur",
+          pickerIntro:
+            "Des détails du contrôle lui-même, plus faciles à lire une fois que de les déduire de son comportement.",
+          thBehaviour: "Comportement",
+          thWhy: "Pourquoi il en est ainsi",
+          pkLazy: "Rien n'est récupéré tant que vous n'ouvrez pas le contrôle.",
+          pkLazyWhy:
+            "Un formulaire d'enregistrement peut porter plusieurs champs de référence. Celui auquel personne ne touche ne devrait interroger aucun autre module du tout, et les réponses sont mises en cache ensuite, donc rouvrir le contrôle ne coûte rien.",
+          pkTwoControls: "Un champ non épinglé affiche deux contrôles, et aucun ne vole le focus à l'autre.",
+          pkTwoControlsWhy:
+            "Choisir un type d'enregistrement vous laisse sur ce contrôle, le contrôle d'enregistrement devenant disponible à une étape près. Ouvrir automatiquement le sélecteur d'enregistrement retirerait le focus à quelqu'un qui relit encore ce qu'il vient de choisir.",
+          pkAccumulate: "Les pages suivantes s'ajoutent à la liste plutôt que de la remplacer.",
+          pkAccumulateWhy:
+            "Une recherche sur la table de personnel de tout un espace de travail nécessite la pagination, et une liste qui se remplacerait ferait perdre la ligne dépassée en chemin vers Load more.",
+          pkDormant: "Un enregistrement dormant est marqué, pas masqué.",
+          pkDormantWhy:
+            "Il existe toujours et reste une réponse valide — un membre du personnel parti, conservé pour des affectations historiques, en est exactement le cas. Le traiter comme invalide rendrait les références historiques impossibles à enregistrer.",
+          pkNoResults: "Un filtre sans correspondance et une liste vide se lisent différemment.",
+          pkNoResultsWhy:
+            "« Votre filtre n'a rien trouvé » concerne ce que vous avez tapé. « Il n'y a rien que vous puissiez cibler » concerne votre accès. Une phrase unique pour les deux dirait à quelqu'un ayant fait une faute de frappe qu'il n'a aucune permission.",
+          pkNoRetry: "Deux des états d'échec n'offrent aucun contrôle Try again.",
+          pkNoRetryWhy:
+            "Un refus de permission et un module indisponible refusent identiquement à chaque fois. Un bouton vous invitant à insister serait pire que pas de bouton. Seule une véritable panne de transport bénéficie d'une nouvelle tentative, car c'est la seule qu'une nouvelle tentative corrige.",
+          pkViewMode: "En mode consultation, le contrôle est désactivé plutôt que simplement non cliquable.",
+          pkViewModeWhy:
+            "Un sélecteur de référence est un sélecteur, il suit donc la même convention que tout autre sélecteur de ces formulaires. Son propre état de lecture seule, utilisé quand vous n'êtes pas autorisé à voir le nom de la cible, est une chose différente qui a une apparence différente.",
+          pkNoLabelTrick: "Le contrôle se nomme lui-même pour les technologies d'assistance.",
+          pkNoLabelTrickWhy:
+            "Son libellé visible est un vrai câblage cliquable, mais le nom accessible est défini directement sur le contrôle — un libellé seul ne peut pas nommer un contrôle de cette forme. Deux champs de référence sur un même formulaire s'annoncent donc distinctement plutôt que tous deux comme « Record type ».",
+
+          diagnoseTitle: "Diagnostiquer une référence qui ne s'affiche pas",
+          diagnoseIntro:
+            "Dans l'ordre. Chaque étape écarte l'un des cinq états ci-dessus, et les quatre premières ne nécessitent aucun accès que vous ne déteniez déjà.",
+          dg1Title: "Lisez la phrase dans le champ",
+          dg1Content:
+            "Les cinq états n'ont jamais le même libellé, donc le champ vous a déjà indiqué dans lequel vous vous trouvez. Cette étape est citée en premier car c'est celle qu'on saute le plus souvent.",
+          dg2Title: "S'il propose Try again, utilisez-le",
+          dg2Content:
+            "Seul l'échec transitoire en propose un. Si le champ se résout à la deuxième tentative, rien n'a jamais été défectueux dans la valeur stockée, et il n'y a rien à corriger.",
+          dg3Title: "Vérifiez le même champ sur un autre enregistrement",
+          dg3Content:
+            "Si chaque référence de ce type échoue de façon identique, c'est vos permissions ou l'installation — pas la donnée. Si seule celle-ci échoue, c'est l'enregistrement qu'elle cible qu'il faut examiner.",
+          dg4Title: "Faites ouvrir le même enregistrement par quelqu'un ayant un accès complet",
+          dg4Content:
+            "S'il voit un nom et pas vous, c'est une permission sur ce type d'enregistrement. S'il voit le même échec, c'est la donnée ou l'installation.",
+          dg5Title: "Ce n'est qu'alors qu'il faut décider de reprendre une sélection ou de vider le champ",
+          dg5Content:
+            "Reprenez une sélection quand l'enregistrement a véritablement disparu ou que la valeur stockée est mal formée. Videz le champ seulement quand il doit être vide. Ne videz jamais un champ qui a signalé un échec transitoire — c'est la seule action qui transforme une panne chez quelqu'un d'autre en perte de vos propres données.",
+
+          limitsTitle: "Limites et écarts délibérés",
+          limitsIntro: "Énoncés pour que personne ne passe un après-midi à chercher un paramètre qui n'existe pas.",
+          thLimit: "Limite",
+          thDetail: "Détail",
+          limPageSize: "Enregistrements par page dans le sélecteur",
+          limPageSizeDetail:
+            "Vingt par défaut. Une demande de plus de cent est plafonnée plutôt que refusée, et le plafond est appliqué deux fois à l'entrée.",
+          limDebounce: "Délai entre la frappe et la recherche",
+          limDebounceDetail:
+            "Une courte pause fixe, la même que celle utilisée par tout sélecteur du produit adossé au serveur. Non configurable.",
+          limNoName: "Aucun nom d'affichage stocké",
+          limNoNameDetail:
+            "Il n'existe nulle part de paramètre pour figer un nom aux côtés d'un pointeur, et il n'y en aura pas — cela reviendrait à donner un nom protégé par une permission à quiconque en détient une autre.",
+          limNoBacklinks: "Aucune vue « qu'est-ce qui pointe vers cet enregistrement »",
+          limNoBacklinksDetail:
+            "Rien ne liste les références qui pointent vers un enregistrement donné. Supprimer un enregistrement ne vous avertit pas du nombre de pointeurs qu'il s'apprête à effacer.",
+          limNoExport: "Absent de l'export des définitions",
+          limNoExportDetail:
+            "La feuille de calcul des définitions à dix-huit colonnes n'a aucune colonne pour un type cible épinglé, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ.",
+          limNoMulti: "Un pointeur par champ",
+          limNoMultiDetail:
+            "Il n'existe aucun type de référence à valeurs multiples. Deux réponses signifient deux champs.",
+          limNoTypeFilter: "Le sélecteur ne peut être restreint que par du texte",
+          limNoTypeFilterDetail:
+            "Les colonnes sur lesquelles porte le filtre en texte libre relèvent du choix du module propriétaire, et il n'existe aucun filtre supplémentaire — ni « actifs seulement », ni filtre par groupe.",
+          limNoAdminTarget: "Les enregistrements d'administrateur ne peuvent pas être référencés",
+          limNoAdminTargetDetail:
+            "Ni depuis le formulaire de définition, ni depuis une requête qui le contourne. Un administrateur peut se situer en dehors de tout espace de travail, ce qui est la seule propriété qu'une cible de référence ne doit pas avoir.",
+
+          nextTitle: "Où aller ensuite",
+          nextIntro: "Les concepts derrière ces recherches se trouvent sur la page Champs de référence.",
           thPage: "Page",
-          thCovers: "What it covers",
-          pageReferences: "Reference Fields",
-          coversReferences: "What the two reference types are, which to use, what is stored, why no name is kept, pinning a target type, what may be referenced, and the workspace rules.",
-          pageSecurity: "Field-Level Security",
-          coversSecurity: "The separate mechanism for hiding a whole field from a role or user group — which is a different thing from not being allowed to read a reference's target.",
-          pageLimits: "Limits and Behaviours",
-          coversLimits: "Every fixed cap and deliberate limitation across the whole feature, references included.",
+          thCovers: "Ce qu'elle couvre",
+          pageReferences: "Champs de référence",
+          coversReferences:
+            "Ce que sont les deux types de référence, lequel utiliser, ce qui est stocké, pourquoi aucun nom n'est conservé, l'épinglage d'un type cible, ce qui peut être référencé, et les règles d'espace de travail.",
+          pageSecurity: "Sécurité au niveau du champ",
+          coversSecurity:
+            "Le mécanisme distinct pour masquer un champ entier à un rôle ou un groupe d'utilisateurs — ce qui est différent du fait de ne pas être autorisé à lire la cible d'une référence.",
+          pageLimits: "Limites et comportements",
+          coversLimits:
+            "Chaque plafond fixe et chaque limitation délibérée à travers toute la fonctionnalité, références comprises.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Définir un champ
+        // ═══════════════════════════════════════════════════
         defining: {
-          title: "Defining a Field",
-          description: "The definition form control by control, the full walkthrough, the rules for keys, creating a field from inside a record, every rejection, and what can still be changed after saving.",
-          intro: "Field definitions live on the Champs Personnalisés screen in the Administration workspace. This page walks the whole form: every control, what reveals it, what it does, and what happens when a save is refused. Control names are given as they appear in the English interface.",
-          beforeTitle: "Two decisions to make before you open the form",
-          beforeContent: "The record type and the value type are both permanent once saved, and so is the key. Everything else can be edited later. If you are unsure which value type fits, read the Types de Valeurs page first — recreating a field means losing every answer already stored against it.",
-          whereTitle: "Where the screen is",
-          whereIntro: "Champs personnalisés are administered from four related screens.",
-          where1: "The Champs Personnalisés screen itself, in the Administration workspace, is where definitions are created, edited, deactivated and deleted, and where a validator is attached.",
-          where2: "The Groupes de Champs screen, reached from a link in that page's header, gathers a record type's fields under headings.",
-          where3: "The Types de Valeurs and Entity Types screens, also reached from that header, are read-only references. They have no sidebar entry of their own by design.",
-          where4: "The Add champ personnalisé link at the end of the Champs Personnalisés section on a record form opens the same definition form in a side panel, without leaving the record.",
-          controlsTitle: "The form, control by control",
-          controlsIntro: "Not every control is always visible. Several appear only once a particular value type or scope is chosen, which is why the form looks shorter than this table on any given day.",
-          thControl: "Control",
-          thDoes: "What it does",
-          thWhenShown: "When it appears",
-          ctlEntityTypeDoes: "Chooses the kind of record the field belongs to. Record types with no screen in this app are listed after the rest and marked API only — a field on one of those is reachable through the API but has nowhere to render.",
-          ctlEntityTypeWhen: "On create. Fixed and not editable when the form is opened from inside a record, and permanent after saving.",
-          ctlKeyDoes: "Sets the machine name used in error messages, exports and the API. Lower case, must start with a letter, and may contain only letters, digits and underscores.",
-          ctlKeyWhen: "On create only. Permanent after saving.",
-          ctlLabelEnDoes: "The English label shown above the input on every form. Required.",
-          ctlLabelArDoes: "The Arabic label. Optional — an Arabic reader sees the English label when this is blank.",
-          ctlAlways: "Always.",
-          ctlValueTypeDoes: "Chooses one of the nineteen types, deciding the control, the validation and the storage. Selecting it is what reveals the Options box, the Validator dropdown or the Target Entity Type dropdown.",
-          ctlValueTypeWhen: "On create only. Permanent after saving.",
-          ctlPlaceholderEnDoes: "Optional greyed-out hint shown inside the empty input, in English — for example \"e.g. Enter your shirt size\".",
-          ctlPlaceholderArDoes: "The same hint in Arabic.",
-          ctlPlaceholderWhen: "Only for the value types whose control has a placeholder at all. Boolean, Rating, Color, Date and the other picker-based types have none.",
-          ctlOptionsDoes: "Holds the list of allowed answers, one row per option, with an English and an Arabic label for each. See the Options page.",
-          ctlOptionsWhen: "Only when the value type is Select or MultiSelect.",
-          ctlValidatorDoes: "Attaches one of the 13 built-in format checks. Defaults to no validator. See the Validators page.",
-          ctlValidatorWhen: "Only when the value type is Text. It is never shown for the other eighteen types.",
-          ctlValidatorParamDoes: "Supplies the setting a parameterised check needs — a country dropdown for Postal Code, free text for the other five.",
-          ctlValidatorParamWhen: "Only once one of the six parameterised validators is chosen.",
-          ctlReferenceTargetDoes: "Pins the field to one kind of record, so every value must point at a record of that kind. Its first option, Not pinned — any allowed type, is a real and permanent choice rather than a placeholder: leave it there and each value names its own kind of record instead. It is the only way to clear a pin, so it stays available even when the list of kinds is empty or fails to load, and the control is never disabled.",
-          ctlReferenceTargetWhen: "Only when the value type is Entity Reference. A User Reference field never shows it, because its one legal target is fixed by the platform and there is nothing to choose. Unlike the three permanent settings, this one can be changed later — read the warning on the edit form before you do.",
-          ctlFieldGroupDoes: "Puts the field under one of the record type's field groups, or under no group. Changing the record type clears the choice.",
-          ctlFieldGroupWhen: "Only when you hold the field-groups view permission and at least one group exists for the chosen record type.",
-          ctlRequiredDoes: "Refuses a save that leaves the field blank. Whitespace-only counts as blank for every value type.",
-          ctlSortOrderDoes: "Positions the field relative to the other champs personnalisés on the form. Lower numbers come first.",
-          ctlSensitivityDoes: "Labels how the field's contents should be treated — Unclassified, Internal, Confidential or Restricted. Defaults to Unclassified. It is a label for reporting and export handling; it does not control who can see the field.",
-          ctlExportableDoes: "Marks whether this field's values should be included in exports. On by default. It is tidying rather than a permission — anybody who can already read the field can still read its values elsewhere — and it does not remove the field from the definitions export, which lists it either way.",
-          ctlActiveDoes: "Whether the field is still offered on forms. Turning it off retires the field without touching the answers already stored against it.",
-          ctlActiveWhen: "On edit. A newly created field is active.",
-          ctlGlobalDoes: "Creates the field for every workspace on the platform rather than for one. Global fields skip the per-workspace quota, and only a platform administrator can edit or delete them afterwards.",
-          ctlGlobalWhen: "Only for a platform Super Admin working with no workspace selected. On create only — a field's scope is permanent.",
-          stepsTitle: "Step by step",
-          stepsIntro: "The whole flow, for the ordinary case of a workspace-scoped field.",
-          s1Title: "Open the Champs Personnalisés screen and choose Add",
-          s1Content: "The screen lists every field your workspace can see, including any global fields inherited from the platform. Global rows carry a badge and offer no edit or delete controls.",
-          s2Title: "Pick the record type",
-          s2Content: "Choose the kind of record the field belongs to. If your record type is marked API only, stop and reconsider — the field will save, but nothing in the interface will render it.",
-          s3Title: "Choose the value type",
-          s3Content: "Pick from the nineteen. This is the decision that cannot be undone later, and it is also what makes the Options box, the Validator dropdown or the Target Entity Type dropdown appear further down the form.",
-          s4Title: "Name the field",
-          s4Content: "Enter the English label, an Arabic label if you have one, and the key. The key is permanent, so pick something you will still recognise in an error message a year from now.",
-          s5Title: "Fill in the type's own settings",
-          s5Content: "For Select and MultiSelect, add the options. For Text, choose a validator if you want one and supply its setting. For Entity Reference, decide whether to pin a Target Entity Type. Add placeholders if the control takes them.",
-          s6Title: "Set behaviour and position",
-          s6Content: "Turn Required on or off, set the Sort Order, and choose a Field Group if you use them. A group only offers itself if it belongs to the record type you chose.",
-          s7Title: "Set the classification",
-          s7Content: "Sensitivity defaults to Unclassified and Include in exports defaults to on. Leave both alone unless you have a reason — the export default in particular exists so that fields are never quietly missing from a spreadsheet.",
-          s8Title: "Save, and read the message if it is refused",
-          s8Content: "A refusal is always specific about what is wrong. The table further down this page lists every rejection you can hit and what it means.",
-          keyTitle: "Choosing a key",
-          keyIntro: "The key is the field's machine name. It appears in every error message, in the spreadsheet export, and in the API. It must be lower case, start with a letter, and contain only letters, digits and underscores — and it must be unique for that record type within your workspace.",
-          thKeyExample: "Key",
-          thOutcome: "What happens",
-          keyOk: "Accepted. This is the shape to aim for.",
-          keyOkDigits: "Accepted. Digits and underscores are fine after the first character.",
-          keyUpper: "Refused. Keys are lower case.",
-          keyLeadingDigit: "Refused. A key must start with a letter.",
-          keyHyphen: "Refused. Hyphens are not part of the grammar — use an underscore.",
-          keySpace: "Refused. Spaces are not allowed.",
-          keyWarnTitle: "The key is permanent",
-          keyWarnContent: "Once the field is saved, the key cannot be changed by anybody, because answers already stored are addressed by it. If a key is wrong, the field has to be deleted and recreated — and deleting it destroys the answers already recorded against it. This is the single most common regret when defining a field in a hurry.",
-          inlineTitle: "Adding a field from inside a record",
-          inlineIntro: "You do not have to leave what you are doing to add a field. Every form that supports champs personnalisés ends its Champs Personnalisés section with an Add champ personnalisé link, gated behind the create permission.",
-          i1Title: "Click Add champ personnalisé",
-          i1Content: "The definition form opens in a side panel rather than a dialog on top of a dialog. The record form behind it stays visible and readable, and nothing you have already typed into it is lost.",
-          i2Title: "Note the record type is fixed",
-          i2Content: "The record type is shown as context rather than as a dropdown — it is whatever screen you are already on. Every other control behaves exactly as it does on the full screen, validator picker included.",
-          i3Title: "Fill in and save",
-          i3Content: "The panel closes and the new field appears immediately in the still-open record form, empty and ready to fill in.",
-          i4Title: "Carry on with the record",
-          i4Content: "Fill in the new field along with everything else and save the record once. The definition and the answer are two separate saves, in that order.",
-          inlineInfoTitle: "If the link is not there",
-          inlineInfoContent: "The Add champ personnalisé link only appears for somebody holding the create permission. Without it, the Champs Personnalisés section still works normally for filling in existing fields — only the shortcut to defining a new one is absent. And on a record type with no champs personnalisés defined yet, the Champs Personnalisés section does not appear at all.",
-          rejectTitle: "What gets rejected, and why",
-          rejectIntro: "Every refusal at definition time carries a specific message. These are the ones you can actually hit from the form or from a request that bypasses it.",
+          title: "Définir un champ",
+          description:
+            "Le formulaire de définition contrôle par contrôle, le parcours complet, les règles de clés, la création d'un champ depuis l'intérieur d'un enregistrement, chaque refus, et ce qui peut encore être modifié après l'enregistrement.",
+          intro:
+            "Les définitions de champs vivent sur l'écran Champs personnalisés, dans l'espace de travail Administration. Cette page parcourt tout le formulaire : chaque contrôle, ce qui le révèle, ce qu'il fait, et ce qui se passe quand un enregistrement est refusé. Les noms des contrôles sont donnés tels qu'ils apparaissent dans l'interface anglaise.",
+          beforeTitle: "Deux décisions à prendre avant d'ouvrir le formulaire",
+          beforeContent:
+            "Le type d'enregistrement et le type de valeur sont tous deux définitifs une fois enregistrés, et la clé l'est aussi. Tout le reste peut être modifié plus tard. Si vous n'êtes pas sûr du type de valeur qui convient, lisez d'abord la page Types de valeur — recréer un champ signifie perdre chaque réponse déjà stockée pour lui.",
+
+          whereTitle: "Où se trouve l'écran",
+          whereIntro: "Les champs personnalisés s'administrent depuis quatre écrans liés.",
+          where1:
+            "L'écran Champs personnalisés lui-même, dans l'espace de travail Administration, est l'endroit où les définitions sont créées, modifiées, désactivées et supprimées, et où un validateur est attaché.",
+          where2:
+            "L'écran Groupes de champs, accessible depuis un lien dans l'en-tête de cette page, rassemble les champs d'un type d'enregistrement sous des en-têtes.",
+          where3:
+            "Les écrans Types de valeur et Types d'entité, également accessibles depuis cet en-tête, sont des références en lecture seule. Ils n'ont volontairement pas leur propre entrée de menu latéral.",
+          where4:
+            "Le lien Add custom field à la fin de la section Champs personnalisés d'un formulaire d'enregistrement ouvre le même formulaire de définition dans un panneau latéral, sans quitter l'enregistrement.",
+
+          controlsTitle: "Le formulaire, contrôle par contrôle",
+          controlsIntro:
+            "Tous les contrôles ne sont pas toujours visibles. Plusieurs n'apparaissent qu'une fois un type de valeur ou une portée particulière choisis, ce qui explique pourquoi le formulaire paraît plus court que ce tableau, un jour donné.",
+          thControl: "Contrôle",
+          thDoes: "Ce qu'il fait",
+          thWhenShown: "Quand il apparaît",
+          ctlEntityTypeDoes:
+            "Choisit le type d'enregistrement auquel le champ appartient. Les types d'enregistrement sans écran dans cette application sont listés après les autres et marqués API only — un champ sur l'un d'eux est accessible via l'API mais n'a nulle part où s'afficher.",
+          ctlEntityTypeWhen:
+            "À la création. Figé et non modifiable quand le formulaire est ouvert depuis l'intérieur d'un enregistrement, et définitif après l'enregistrement.",
+          ctlKeyDoes:
+            "Définit le nom machine utilisé dans les messages d'erreur, les exports et l'API. En minuscules, doit commencer par une lettre, et ne peut contenir que des lettres, des chiffres et des tirets bas.",
+          ctlKeyWhen: "À la création uniquement. Définitif après l'enregistrement.",
+          ctlLabelEnDoes: "Le libellé anglais affiché au-dessus du champ de saisie sur chaque formulaire. Obligatoire.",
+          ctlLabelArDoes:
+            "Le libellé arabe. Facultatif — un lecteur arabophone voit le libellé anglais quand celui-ci est vide.",
+          ctlAlways: "Toujours.",
+          ctlValueTypeDoes:
+            "Choisit l'un des vingt-deux types, déterminant le contrôle, la validation et le stockage. Le choisir est ce qui révèle la boîte Options, la liste déroulante Validator ou la liste déroulante Target Entity Type.",
+          ctlValueTypeWhen: "À la création uniquement. Définitif après l'enregistrement.",
+          ctlPlaceholderEnDoes:
+            "Texte indicatif grisé facultatif affiché dans le champ vide, en anglais — par exemple « e.g. Enter your shirt size ».",
+          ctlPlaceholderArDoes: "Le même texte indicatif en arabe.",
+          ctlPlaceholderWhen:
+            "Uniquement pour les types de valeur dont le contrôle possède un texte indicatif. Boolean, Rating, Color, Date et les autres types à base de sélecteur n'en ont aucun.",
+          ctlOptionsDoes:
+            "Contient la liste des réponses autorisées, une ligne par option, avec un libellé anglais et un libellé arabe pour chacune. Voir la page Options.",
+          ctlOptionsWhen: "Uniquement quand le type de valeur est Select ou MultiSelect.",
+          ctlValidatorDoes:
+            "Attache l'une des 13 vérifications de format intégrées. Par défaut, aucun validateur. Voir la page Validateurs.",
+          ctlValidatorWhen:
+            "Uniquement quand le type de valeur est Text. Il n'est jamais affiché pour les vingt et un autres types.",
+          ctlValidatorParamDoes:
+            "Fournit le paramètre dont a besoin une vérification paramétrée — une liste déroulante de pays pour Postal Code, du texte libre pour les cinq autres.",
+          ctlValidatorParamWhen:
+            "Uniquement une fois choisi l'un des six validateurs paramétrés.",
+          ctlReferenceTargetDoes:
+            "Épingle le champ à un type d'enregistrement, de sorte que chaque valeur doive pointer vers un enregistrement de ce type. Sa première option, Not pinned — any allowed type, est un choix réel et permanent plutôt qu'un espace réservé : laissez-la telle quelle et chaque valeur nommera son propre type d'enregistrement à la place. C'est le seul moyen de retirer un épinglage, il reste donc disponible même quand la liste des types est vide ou ne se charge pas, et le contrôle n'est jamais désactivé.",
+          ctlReferenceTargetWhen:
+            "Uniquement quand le type de valeur est Entity Reference. Un champ User Reference ne l'affiche jamais, car sa seule cible légale est fixée par la plateforme et il n'y a rien à choisir. Contrairement aux trois paramètres définitifs, celui-ci peut être modifié plus tard — lisez l'avertissement du formulaire de modification avant de le faire.",
+          ctlFieldGroupDoes:
+            "Place le champ sous l'un des groupes de champs du type d'enregistrement, ou sous aucun groupe. Changer le type d'enregistrement efface le choix.",
+          ctlFieldGroupWhen:
+            "Uniquement si vous détenez la permission de consultation des groupes de champs et qu'au moins un groupe existe pour le type d'enregistrement choisi.",
+          ctlRequiredDoes:
+            "Refuse un enregistrement qui laisse le champ vide. Une valeur composée uniquement d'espaces compte comme vide pour chaque type de valeur.",
+          ctlSortOrderDoes:
+            "Positionne le champ par rapport aux autres champs personnalisés du formulaire. Les nombres les plus petits viennent en premier.",
+          ctlSensitivityDoes:
+            "Qualifie la façon dont le contenu du champ doit être traité — Unclassified, Internal, Confidential ou Restricted. Par défaut, Unclassified. C'est un libellé pour le reporting et la gestion des exports ; il ne contrôle pas qui peut voir le champ.",
+          ctlExportableDoes:
+            "Marque si les valeurs de ce champ doivent figurer dans les exports. Activé par défaut. C'est un rangement plutôt qu'une permission — quiconque peut déjà lire le champ peut toujours lire ses valeurs ailleurs — et cela ne retire pas le champ de l'export des définitions, qui le liste dans tous les cas.",
+          ctlActiveDoes:
+            "Si le champ est encore proposé sur les formulaires. Le désactiver retire le champ sans toucher aux réponses déjà stockées pour lui.",
+          ctlActiveWhen: "À la modification. Un champ nouvellement créé est actif.",
+          ctlGlobalDoes:
+            "Crée le champ pour tous les espaces de travail de la plateforme plutôt que pour un seul. Les champs globaux échappent au quota par espace de travail, et seul un administrateur de la plateforme peut ensuite les modifier ou les supprimer.",
+          ctlGlobalWhen:
+            "Uniquement pour un Super Admin de la plateforme travaillant sans espace de travail sélectionné. À la création uniquement — la portée d'un champ est définitive.",
+
+          stepsTitle: "Étape par étape",
+          stepsIntro: "Le déroulement complet, pour le cas ordinaire d'un champ à portée d'espace de travail.",
+          s1Title: "Ouvrez l'écran Champs personnalisés et choisissez Add",
+          s1Content:
+            "L'écran liste chaque champ que votre espace de travail peut voir, y compris tout champ global hérité de la plateforme. Les lignes globales portent un badge et n'offrent aucun contrôle de modification ou de suppression.",
+          s2Title: "Choisissez le type d'enregistrement",
+          s2Content:
+            "Choisissez le type d'enregistrement auquel appartient le champ. Si votre type d'enregistrement est marqué API only, arrêtez-vous et reconsidérez — le champ s'enregistrera, mais rien dans l'interface ne l'affichera.",
+          s3Title: "Choisissez le type de valeur",
+          s3Content:
+            "Choisissez parmi les vingt-deux. C'est la décision qui ne peut plus être annulée par la suite, et c'est aussi ce qui fait apparaître plus bas dans le formulaire la boîte Options, la liste déroulante Validator ou la liste déroulante Target Entity Type.",
+          s4Title: "Nommez le champ",
+          s4Content:
+            "Saisissez le libellé anglais, un libellé arabe si vous en avez un, et la clé. La clé est définitive, choisissez donc quelque chose que vous reconnaîtrez encore dans un message d'erreur dans un an.",
+          s5Title: "Renseignez les paramètres propres au type",
+          s5Content:
+            "Pour Select et MultiSelect, ajoutez les options. Pour Text, choisissez un validateur si vous en voulez un et fournissez son paramètre. Pour Entity Reference, décidez si vous épinglez un Target Entity Type. Ajoutez des textes indicatifs si le contrôle les accepte.",
+          s6Title: "Définissez le comportement et la position",
+          s6Content:
+            "Activez ou désactivez Required, définissez Sort Order, et choisissez un Field Group si vous en utilisez. Un groupe ne se propose que s'il appartient au type d'enregistrement choisi.",
+          s7Title: "Définissez la classification",
+          s7Content:
+            "Sensitivity vaut par défaut Unclassified et Include in exports est activé par défaut. Laissez les deux tels quels sauf raison contraire — la valeur par défaut de l'export existe en particulier pour qu'aucun champ ne manque silencieusement d'une feuille de calcul.",
+          s8Title: "Enregistrez, et lisez le message en cas de refus",
+          s8Content:
+            "Un refus est toujours précis sur ce qui ne va pas. Le tableau plus bas sur cette page liste chaque refus que vous pouvez rencontrer et ce qu'il signifie.",
+
+          keyTitle: "Choisir une clé",
+          keyIntro:
+            "La clé est le nom machine du champ. Elle apparaît dans chaque message d'erreur, dans l'export en feuille de calcul, et dans l'API. Elle doit être en minuscules, commencer par une lettre, et ne contenir que des lettres, des chiffres et des tirets bas — et elle doit être unique pour ce type d'enregistrement au sein de votre espace de travail.",
+          thKeyExample: "Clé",
+          thOutcome: "Ce qui se passe",
+          keyOk: "Acceptée. C'est la forme à viser.",
+          keyOkDigits: "Acceptée. Les chiffres et les tirets bas sont autorisés après le premier caractère.",
+          keyUpper: "Refusée. Les clés sont en minuscules.",
+          keyLeadingDigit: "Refusée. Une clé doit commencer par une lettre.",
+          keyHyphen: "Refusée. Les traits d'union ne font pas partie de la grammaire — utilisez un tiret bas.",
+          keySpace: "Refusée. Les espaces ne sont pas autorisés.",
+          keyWarnTitle: "La clé est définitive",
+          keyWarnContent:
+            "Une fois le champ enregistré, la clé ne peut être modifiée par personne, car les réponses déjà stockées sont adressées par elle. Si une clé est incorrecte, le champ doit être supprimé et recréé — et le supprimer détruit les réponses déjà enregistrées pour lui. C'est le regret le plus courant lorsqu'on définit un champ dans la précipitation.",
+
+          inlineTitle: "Ajouter un champ depuis l'intérieur d'un enregistrement",
+          inlineIntro:
+            "Vous n'avez pas à quitter ce que vous faites pour ajouter un champ. Chaque formulaire prenant en charge les champs personnalisés termine sa section Champs personnalisés par un lien Add custom field, verrouillé derrière la permission de création.",
+          i1Title: "Cliquez sur Add custom field",
+          i1Content:
+            "Le formulaire de définition s'ouvre dans un panneau latéral plutôt que dans une boîte de dialogue par-dessus une autre. Le formulaire d'enregistrement derrière lui reste visible et lisible, et rien de ce que vous y avez déjà saisi n'est perdu.",
+          i2Title: "Notez que le type d'enregistrement est figé",
+          i2Content:
+            "Le type d'enregistrement est affiché comme un contexte plutôt que comme une liste déroulante — c'est celui de l'écran où vous vous trouvez déjà. Tous les autres contrôles se comportent exactement comme sur l'écran complet, sélecteur de validateur compris.",
+          i3Title: "Remplissez et enregistrez",
+          i3Content:
+            "Le panneau se ferme et le nouveau champ apparaît immédiatement dans le formulaire d'enregistrement toujours ouvert, vide et prêt à être rempli.",
+          i4Title: "Poursuivez avec l'enregistrement",
+          i4Content:
+            "Remplissez le nouveau champ avec le reste et enregistrez la fiche une seule fois. La définition et la réponse sont deux enregistrements séparés, dans cet ordre.",
+          inlineInfoTitle: "Si le lien n'est pas présent",
+          inlineInfoContent:
+            "Le lien Add custom field n'apparaît que pour quelqu'un détenant la permission de création. Sans elle, la section Champs personnalisés continue de fonctionner normalement pour remplir les champs existants — seul le raccourci pour en définir un nouveau est absent. Et sur un type d'enregistrement sans aucun champ personnalisé encore défini, la section Champs personnalisés n'apparaît pas du tout.",
+
+          rejectTitle: "Ce qui est rejeté, et pourquoi",
+          rejectIntro:
+            "Chaque refus à la définition porte un message précis. Voici ceux que vous pouvez réellement rencontrer depuis le formulaire ou depuis une requête qui le contourne.",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          rejDuplicateKey: "A key that already exists for that record type",
-          rejDuplicateKeyMsg: "Refused as already existing. Keys are unique per record type within a workspace — the same key on a different record type is fine.",
-          rejUnknownEntityType: "A record type that is not registered",
-          rejUnknownEntityTypeMsg: "Refused, naming the key: it is not a registered entity type. Only reachable by bypassing the dropdown.",
-          rejNoOptions: "A Select or MultiSelect field with no options",
-          rejNoOptionsMsg: "Refused: options are required for Select fields.",
-          rejOptionsOnOther: "Options supplied for a type that does not take them",
-          rejOptionsOnOtherMsg: "Refused: options are only allowed for Select fields.",
-          rejValidatorNonText: "A validator attached to a non-Text field",
-          rejValidatorNonTextMsg: "Refused, naming the type: a validator can only be attached to a Text field. The dropdown is not even shown for those types, so this is the server refusing the same thing a second time.",
-          rejValidatorNoParam: "A parameterised validator with its setting left blank",
-          rejValidatorNoParamMsg: "Refused, naming the validator: it requires a parameter.",
-          rejValidatorExtraParam: "A setting supplied for a validator that takes none",
-          rejValidatorExtraParamMsg: "Refused, naming the validator: it does not accept a parameter.",
-          rejRequiredRestricted: "Marking a field required while a role or group restricts it",
-          rejRequiredRestrictedMsg: "Refused, naming the field: it cannot be made required while it is restricted. Remove the restriction first, or leave the field optional.",
-          rejGroupWrongType: "A field group belonging to a different record type",
-          rejGroupWrongTypeMsg: "Refused: the selected field group belongs to a different entity type. Changing the record type on the form clears the group choice for exactly this reason.",
-          rejReferenceTargetUnknown: "Pinning a target that is not a registered record type",
-          rejReferenceTargetUnknownMsg: "Refused, naming the identifier: it is not a registered entity type. Only reachable by bypassing the dropdown, which offers nothing unregistered.",
-          rejReferenceTargetNotAllowed: "Pinning a User Reference field to anything but a user account",
-          rejReferenceTargetNotAllowedMsg: "Refused, naming the value type and listing what it does allow. The dropdown is not shown for that type at all, so this is the server refusing what the form already declined to offer.",
-          rejGlobalNotSuperAdmin: "Creating a global field without being a platform Super Admin",
-          rejGlobalNotSuperAdminMsg: "Refused: only a platform Super Admin can create a global champ personnalisé.",
-          rejQuota: "Passing your plan's field limit",
-          rejQuotaMsg: "Refused on quota. The Free edition allows zero fields; every other plan has its own maximum per workspace. Global platform fields do not count against it.",
-          afterTitle: "After saving: what can still change",
-          afterIntro: "Three things are permanent, and everything else is not. It is worth knowing which is which before you save rather than after.",
-          editableTitle: "Editable at any time",
-          editable1: "Both labels, and both placeholders",
-          editable2: "Required — unless a role or user group restricts the field",
-          editable3: "Sort Order, and the Field Group",
-          editable4: "Sensitivity, and Include in exports",
-          editable5: "Active, which retires the field without touching its stored answers",
-          editable6: "The options list — though renaming an option changes what existing records display",
-          editable7: "The validator and its setting — though this never re-checks answers already saved",
-          editable8: "The Target Entity Type on an Entity Reference field — answers already stored keep working, and the next save of one of the old kind is refused until it is picked again",
-          permanentTitle: "Permanent once saved",
-          permanent1: "The record type",
-          permanent2: "The key",
-          permanent3: "The value type",
-          permanent4: "The scope — workspace or global",
-          afterOutro: "There is no migration path for any of the four permanent settings. Getting one wrong means deleting the field and starting again, which destroys the answers already recorded against it.",
-          verifyTitle: "Checking it worked",
-          verifyIntro: "Four quick checks that catch almost every mistake.",
-          verify1: "Open a record of that type. The Champs Personnalisés section should show your new field, empty, with the label and placeholder you set.",
-          verify2: "Type a value and save. No error means the value was accepted; reopen the record and confirm it is still there.",
-          verify3: "Clear the value and save again. On an optional field this should succeed and leave the field genuinely empty, not showing the old value.",
-          verify4: "Check the record list. Your field should be an extra column there too, showing the answer for every record at once.",
-          verifyWarnTitle: "If the field does not appear",
-          verifyWarnContent: "Check the record type first — a field defined against a record type marked API only has nowhere to render. Then check Active. Then check whether a role or user group restricts the field's key, because a restricted field is omitted entirely rather than shown blank, and looks exactly like a field that was never defined.",
+          thWhatYouSee: "Ce que vous voyez",
+          rejDuplicateKey: "Une clé qui existe déjà pour ce type d'enregistrement",
+          rejDuplicateKeyMsg:
+            "Refusée comme déjà existante. Les clés sont uniques par type d'enregistrement au sein d'un espace de travail — la même clé sur un autre type d'enregistrement ne pose pas de problème.",
+          rejUnknownEntityType: "Un type d'enregistrement qui n'est pas enregistré",
+          rejUnknownEntityTypeMsg:
+            "Refusée, en nommant la clé : ce n'est pas un type d'entité enregistré. Accessible uniquement en contournant la liste déroulante.",
+          rejNoOptions: "Un champ Select ou MultiSelect sans options",
+          rejNoOptionsMsg: "Refusée : des options sont requises pour les champs Select.",
+          rejOptionsOnOther: "Des options fournies pour un type qui ne les accepte pas",
+          rejOptionsOnOtherMsg: "Refusée : les options ne sont autorisées que pour les champs Select.",
+          rejValidatorNonText: "Un validateur attaché à un champ qui n'est pas Text",
+          rejValidatorNonTextMsg:
+            "Refusée, en nommant le type : un validateur ne peut être attaché qu'à un champ Text. La liste déroulante n'est même pas affichée pour ces types, ce serveur refuse donc une seconde fois la même chose.",
+          rejValidatorNoParam: "Un validateur paramétré dont le paramètre est laissé vide",
+          rejValidatorNoParamMsg: "Refusée, en nommant le validateur : il exige un paramètre.",
+          rejValidatorExtraParam: "Un paramètre fourni pour un validateur qui n'en accepte aucun",
+          rejValidatorExtraParamMsg: "Refusée, en nommant le validateur : il n'accepte aucun paramètre.",
+          rejRequiredRestricted: "Marquer un champ obligatoire alors qu'un rôle ou un groupe le restreint",
+          rejRequiredRestrictedMsg:
+            "Refusée, en nommant le champ : il ne peut pas être rendu obligatoire tant qu'il est restreint. Retirez d'abord la restriction, ou laissez le champ facultatif.",
+          rejGroupWrongType: "Un groupe de champs appartenant à un autre type d'enregistrement",
+          rejGroupWrongTypeMsg:
+            "Refusée : le groupe de champs sélectionné appartient à un autre type d'entité. Changer le type d'enregistrement sur le formulaire efface le choix de groupe précisément pour cette raison.",
+          rejReferenceTargetUnknown: "Épingler une cible qui n'est pas un type d'enregistrement enregistré",
+          rejReferenceTargetUnknownMsg:
+            "Refusée, en nommant l'identifiant : ce n'est pas un type d'entité enregistré. Accessible uniquement en contournant la liste déroulante, qui ne propose rien de non enregistré.",
+          rejReferenceTargetNotAllowed: "Épingler un champ User Reference à autre chose qu'un compte utilisateur",
+          rejReferenceTargetNotAllowedMsg:
+            "Refusée, en nommant le type de valeur et en listant ce qu'il autorise. La liste déroulante n'est pas du tout affichée pour ce type, ce serveur refuse donc ce que le formulaire a déjà refusé de proposer.",
+          rejGlobalNotSuperAdmin: "Créer un champ global sans être un Super Admin de la plateforme",
+          rejGlobalNotSuperAdminMsg: "Refusée : seul un Super Admin de la plateforme peut créer un champ personnalisé global.",
+          rejQuota: "Dépasser la limite de champs de votre forfait",
+          rejQuotaMsg:
+            "Refusée pour quota. L'édition Free n'autorise aucun champ ; chaque autre forfait a son propre maximum par espace de travail. Les champs globaux de la plateforme ne comptent pas dans ce quota.",
+
+          afterTitle: "Après l'enregistrement : ce qui peut encore changer",
+          afterIntro:
+            "Trois éléments sont définitifs, et tout le reste ne l'est pas. Mieux vaut savoir lequel est lequel avant d'enregistrer plutôt qu'après.",
+          editableTitle: "Modifiable à tout moment",
+          editable1: "Les deux libellés, et les deux textes indicatifs",
+          editable2: "Required — sauf si un rôle ou un groupe d'utilisateurs restreint le champ",
+          editable3: "Sort Order, et le Field Group",
+          editable4: "Sensitivity, et Include in exports",
+          editable5: "Active, qui retire le champ sans toucher à ses réponses stockées",
+          editable6: "La liste d'options — bien que renommer une option change ce qu'affichent les enregistrements existants",
+          editable7: "Le validateur et son paramètre — bien que cela ne revérifie jamais les réponses déjà enregistrées",
+          editable8:
+            "Le Target Entity Type d'un champ Entity Reference — les réponses déjà stockées continuent de fonctionner, et le prochain enregistrement d'une réponse de l'ancien type est refusé jusqu'à ce qu'elle soit choisie à nouveau",
+          permanentTitle: "Définitif une fois enregistré",
+          permanent1: "Le type d'enregistrement",
+          permanent2: "La clé",
+          permanent3: "Le type de valeur",
+          permanent4: "La portée — espace de travail ou globale",
+          afterOutro:
+            "Il n'existe aucun chemin de migration pour aucun des quatre paramètres définitifs. Se tromper sur l'un d'eux signifie supprimer le champ et recommencer, ce qui détruit les réponses déjà enregistrées pour lui.",
+
+          verifyTitle: "Vérifier que cela a fonctionné",
+          verifyIntro: "Quatre vérifications rapides qui détectent presque toutes les erreurs.",
+          verify1:
+            "Ouvrez un enregistrement de ce type. La section Champs personnalisés devrait afficher votre nouveau champ, vide, avec le libellé et le texte indicatif que vous avez définis.",
+          verify2:
+            "Saisissez une valeur et enregistrez. L'absence d'erreur signifie que la valeur a été acceptée ; rouvrez l'enregistrement et confirmez qu'elle est toujours là.",
+          verify3:
+            "Videz la valeur et enregistrez à nouveau. Sur un champ facultatif, cela devrait réussir et laisser le champ véritablement vide, sans afficher l'ancienne valeur.",
+          verify4:
+            "Vérifiez la liste des enregistrements. Votre champ devrait aussi y être une colonne supplémentaire, montrant la réponse de chaque enregistrement d'un seul coup d'œil.",
+          verifyWarnTitle: "Si le champ n'apparaît pas",
+          verifyWarnContent:
+            "Vérifiez d'abord le type d'enregistrement — un champ défini sur un type d'enregistrement marqué API only n'a nulle part où s'afficher. Vérifiez ensuite Active. Vérifiez enfin si un rôle ou un groupe d'utilisateurs restreint la clé du champ, car un champ restreint est entièrement omis plutôt qu'affiché vide, et ressemble exactement à un champ qui n'a jamais été défini.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Groupes de champs
+        // ═══════════════════════════════════════════════════
         groups: {
-          title: "Groupes de Champs",
-          description: "Gathering a record type's champs personnalisés under headings you order by hand: creating a group, the permanent stable key, ordering, deleting, global groups, and what a group does not affect.",
-          intro: "A field group gathers several of one record type's champs personnalisés under a heading, in an order you set by hand. Without groups, champs personnalisés simply appear in Sort Order under a single Champs Personnalisés heading; with them, you can separate contact details from medical details from kit preferences on the same form. Groups are managed on the Groupes de Champs screen, reached from a link in the Champs Personnalisés page header.",
-          permInfoTitle: "Field groups need their own permissions",
-          permInfoContent: "The whole feature is gated on a separate set of permissions from field definitions, including a distinct one for reordering. A role that already holds every custom-fields permission does not automatically hold these. Without them there is no Manage field groups link and no Field Group picker on the definition form at all — nothing is broken, the feature simply is not granted. Editing a field that already has a group and saving keeps that group rather than clearing it.",
-          whatTitle: "What a group is made of",
-          whatIntro: "Groups belong to exactly one record type, so the screen shows nothing until you pick one — and the empty state says so rather than looking broken.",
-          thPart: "Setting",
-          thWhat: "What it is",
-          thChange: "Changeable later?",
-          partEntityType: "The record type whose fields this group can gather.",
-          partStableKey: "A machine name for the group, unique within the record type. Lower case, starts with a letter, letters, digits and underscores only.",
-          partLabelEn: "The English heading shown above the group's fields.",
-          partLabelAr: "The Arabic heading.",
-          partSortOrder: "Where the group sits relative to the record type's other groups.",
-          partScope: "Whether the group belongs to your workspace or to the whole platform.",
-          changeNever: "No — permanent once saved",
-          changeAnytime: "Yes, at any time",
-          createTitle: "Creating a group",
-          createIntro: "Four steps, on the Groupes de Champs screen.",
-          c1Title: "Pick the record type",
-          c1Content: "Nothing is listed before you do. A group is only ever valid for one record type, so there is no all-record-types view to start from.",
-          c2Title: "Give it a stable key",
-          c2Content: "The form requires one. It lowercases as you type and refuses characters outside the grammar. Choose carefully — this one is permanent.",
-          c3Title: "Give it labels and an order",
-          c3Content: "An English heading, an Arabic heading, and a number deciding where the group sits among the record type's other groups.",
-          c4Title: "Save, then assign fields to it",
-          c4Content: "The group appears in the list. Open any champ personnalisé definition for the same record type and a Field Group picker now offers it, alongside a no group entry.",
-          stableKeyTitle: "The stable key",
-          stableKeyIntro: "The stable key is the group's machine name. It follows the same grammar as a field key — lower case, starting with a letter, letters, digits and underscores — and it must be unique among that record type's groups.",
-          thKeyExample: "Stable key",
-          thOutcome: "What happens",
-          skOk: "Accepted.",
-          skLowercased: "Accepted, and lowercased as you type. You will see it become contact_details.",
-          skHyphen: "Refused as you type. The input rejects characters outside the grammar.",
-          skLeadingDigit: "Refused. A stable key must start with a letter.",
-          skDuplicate: "Refused, naming the key: a field group with that key already exists for this record type.",
-          exSkDuplicate: "A key already used by another group on the same record type",
-          stableKeyWhy: "Once the group is saved, the stable key is visible but greyed out and cannot be changed by anybody. That is deliberate rather than an oversight: exported schema names a group by this key, so renaming it would silently turn a future re-import from an update into a create, against a bundle that has already shipped. Being able to see the key still matters — you need it to match an exported bundle to the group it refers to — which is why it is shown rather than hidden.",
-          stableKeyWarnTitle: "There is no rename",
-          stableKeyWarnContent: "If a stable key is wrong, the group has to be deleted and recreated, and every field assigned to it has to be reassigned. Do not expect an edit button to appear — its absence is the design.",
-          assignTitle: "Assigning a field to a group",
-          assignIntro: "Assignment happens on the field, not on the group. There is no drag-fields-into-a-group screen.",
-          assign1: "Open a champ personnalisé definition for the same record type. A Field Group picker offers every group on that record type, plus a no group entry.",
-          assign2: "Choosing no group is the only way to ungroup a field. There is no separate unset control anywhere else.",
-          assign3: "Changing the record type on a create form clears any group already chosen, because a group from one record type is never valid for another.",
-          assign4: "A field can belong to at most one group. There is no way to show one field under two headings.",
-          orderTitle: "Ordering groups",
-          orderIntro: "Groups are ordered on the Groupes de Champs screen, by dragging a row or by using its Move up and Move down buttons. Both do the same thing and both persist.",
-          orderKeyboard: "The buttons are not a convenience feature. A keyboard-only user has no drag gesture, so the buttons are the accessible path and are expected to work identically — if a row moves by dragging but not by button, that is a defect.",
-          orderLimitTitle: "Reordering stops working past 100 groups",
-          orderLimitContent: "A reorder request carries the whole reorderable set at once, and more than 100 groups for a single record type is refused outright. Past that point no group on that record type can be moved at all. The screen says so rather than failing generically, but the ceiling is real and is not configurable.",
-          orderGlobalTitle: "You cannot position your group relative to a global one",
-          orderGlobalContent: "Reordering is all or nothing and refuses any group the caller does not own, so a workspace's reorder covers only its own groups, which are then renumbered from zero. Those numbers can collide with a global group's own order, and the tie is broken on the English label. The visible effect is that moving your group to the top can land it below a global group and look as though nothing happened.",
-          deleteTitle: "Deleting a group",
-          deleteIntro: "Deleting a group never deletes fields. The confirmation says so explicitly, and afterwards the fields still exist and are simply ungrouped, appearing under the default Champs Personnalisés heading again.",
-          deleteEditing: "One edge worth knowing: if you start editing a group and then delete that same group from its row while the edit panel is still open, the panel closes and no new group is created. Saving at that point does not resurrect the group under a new identity.",
-          globalTitle: "Global groups",
-          globalIntro: "A platform administrator with no workspace selected creates a global group, and a notice on the screen explains that. The scope switch appears on create and never on edit, because a group's scope is permanent in the same way a field's is.",
-          globalTenantView: "Inside a workspace, a global group shows a Global badge and offers no edit, delete or move controls at all. That is not the interface hiding something arbitrarily — the server would refuse those operations, so the controls are not offered.",
-          effectTitle: "What a group does and does not affect",
-          doesTitle: "A group does",
-          does1: "Put related fields together under one heading on the record form",
-          does2: "Let you order groups by hand, by dragging or with Move up and Move down",
-          does3: "Carry its own English and Arabic heading, translated like everything else",
-          does4: "Survive a field being deleted, and let a field leave it via the no group entry",
-          doesNotTitle: "A group does not",
-          doesNot1: "Control who can see a field — that is field-level security, which is unrelated",
-          doesNot2: "Delete its fields when the group itself is deleted",
-          doesNot3: "Carry across record types, or apply to more than one record type at once",
-          doesNot4: "Change how a value is validated, stored, exported or displayed",
-          errorsTitle: "Group errors you may see",
+          title: "Groupes de champs",
+          description:
+            "Rassembler les champs personnalisés d'un type d'enregistrement sous des en-têtes que vous ordonnez à la main : créer un groupe, la clé stable définitive, l'ordonnancement, la suppression, les groupes globaux, et ce qu'un groupe n'affecte pas.",
+          intro:
+            "Un groupe de champs rassemble plusieurs champs personnalisés d'un même type d'enregistrement sous un en-tête, dans un ordre que vous définissez à la main. Sans groupes, les champs personnalisés apparaissent simplement selon Sort Order sous un unique en-tête Champs personnalisés ; avec eux, vous pouvez séparer les coordonnées des informations médicales et des préférences d'équipement sur le même formulaire. Les groupes se gèrent sur l'écran Groupes de champs, accessible depuis un lien dans l'en-tête de la page Champs personnalisés.",
+          permInfoTitle: "Les groupes de champs ont besoin de leurs propres permissions",
+          permInfoContent:
+            "Toute la fonctionnalité est verrouillée par un ensemble de permissions distinct de celui des définitions de champs, y compris une permission propre pour la réorganisation. Un rôle détenant déjà toutes les permissions de champs personnalisés ne les détient pas automatiquement. Sans elles, il n'y a ni lien Manage field groups ni sélecteur Field Group sur le formulaire de définition — rien n'est cassé, la fonctionnalité n'est simplement pas accordée. Modifier un champ qui a déjà un groupe et enregistrer conserve ce groupe plutôt que de l'effacer.",
+
+          whatTitle: "De quoi un groupe est composé",
+          whatIntro:
+            "Les groupes appartiennent à exactement un type d'enregistrement, donc l'écran n'affiche rien tant que vous n'en avez pas choisi un — et l'état vide le précise plutôt que de paraître cassé.",
+          thPart: "Paramètre",
+          thWhat: "Ce que c'est",
+          thChange: "Modifiable plus tard ?",
+          partEntityType: "Le type d'enregistrement dont ce groupe peut rassembler les champs.",
+          partStableKey:
+            "Un nom machine pour le groupe, unique au sein du type d'enregistrement. En minuscules, commence par une lettre, uniquement des lettres, des chiffres et des tirets bas.",
+          partLabelEn: "L'en-tête anglais affiché au-dessus des champs du groupe.",
+          partLabelAr: "L'en-tête arabe.",
+          partSortOrder: "Où le groupe se situe par rapport aux autres groupes du type d'enregistrement.",
+          partScope: "Si le groupe appartient à votre espace de travail ou à toute la plateforme.",
+          changeNever: "Non — définitif une fois enregistré",
+          changeAnytime: "Oui, à tout moment",
+
+          createTitle: "Créer un groupe",
+          createIntro: "Quatre étapes, sur l'écran Groupes de champs.",
+          c1Title: "Choisissez le type d'enregistrement",
+          c1Content:
+            "Rien n'est listé avant que vous ne le fassiez. Un groupe n'est jamais valide que pour un seul type d'enregistrement, il n'existe donc aucune vue tous-types-confondus pour démarrer.",
+          c2Title: "Donnez-lui une clé stable",
+          c2Content:
+            "Le formulaire en exige une. Elle se met en minuscules au fur et à mesure de la saisie et refuse les caractères hors grammaire. Choisissez avec soin — celle-ci est définitive.",
+          c3Title: "Donnez-lui des libellés et un ordre",
+          c3Content:
+            "Un en-tête anglais, un en-tête arabe, et un nombre déterminant où le groupe se situe parmi les autres groupes du type d'enregistrement.",
+          c4Title: "Enregistrez, puis assignez-lui des champs",
+          c4Content:
+            "Le groupe apparaît dans la liste. Ouvrez n'importe quelle définition de champ personnalisé pour le même type d'enregistrement, et un sélecteur Field Group le propose désormais, aux côtés d'une entrée no group.",
+
+          stableKeyTitle: "La clé stable",
+          stableKeyIntro:
+            "La clé stable est le nom machine du groupe. Elle suit la même grammaire qu'une clé de champ — minuscules, commence par une lettre, lettres, chiffres et tirets bas — et elle doit être unique parmi les groupes de ce type d'enregistrement.",
+          thKeyExample: "Clé stable",
+          thOutcome: "Ce qui se passe",
+          skOk: "Acceptée.",
+          skLowercased: "Acceptée, et mise en minuscules au fur et à mesure de la saisie. Vous la verrez devenir contact_details.",
+          skHyphen: "Refusée au fur et à mesure de la saisie. Le champ rejette les caractères hors grammaire.",
+          skLeadingDigit: "Refusée. Une clé stable doit commencer par une lettre.",
+          skDuplicate:
+            "Refusée, en nommant la clé : un groupe de champs avec cette clé existe déjà pour ce type d'enregistrement.",
+          exSkDuplicate: "Une clé déjà utilisée par un autre groupe sur le même type d'enregistrement",
+          stableKeyWhy:
+            "Une fois le groupe enregistré, la clé stable est visible mais grisée et ne peut être modifiée par personne. C'est délibéré plutôt qu'un oubli : le schéma exporté nomme un groupe par cette clé, donc la renommer transformerait silencieusement une future réimportation d'une mise à jour en une création, contre un ensemble déjà livré. Pouvoir voir la clé compte tout de même — vous en avez besoin pour faire correspondre un ensemble exporté au groupe auquel il se réfère — ce qui explique pourquoi elle est affichée plutôt que masquée.",
+          stableKeyWarnTitle: "Il n'existe aucun renommage",
+          stableKeyWarnContent:
+            "Si une clé stable est incorrecte, le groupe doit être supprimé et recréé, et chaque champ qui lui était assigné doit être réassigné. Ne vous attendez pas à voir apparaître un bouton de modification — son absence est voulue.",
+
+          assignTitle: "Assigner un champ à un groupe",
+          assignIntro:
+            "L'assignation se fait sur le champ, pas sur le groupe. Il n'existe aucun écran permettant de glisser des champs dans un groupe.",
+          assign1:
+            "Ouvrez une définition de champ personnalisé pour le même type d'enregistrement. Un sélecteur Field Group propose chaque groupe de ce type d'enregistrement, plus une entrée no group.",
+          assign2:
+            "Choisir no group est le seul moyen de retirer un champ d'un groupe. Il n'existe aucun autre contrôle de désassignation ailleurs.",
+          assign3:
+            "Changer le type d'enregistrement sur un formulaire de création efface tout groupe déjà choisi, car un groupe d'un type d'enregistrement n'est jamais valide pour un autre.",
+          assign4:
+            "Un champ ne peut appartenir qu'à un seul groupe au maximum. Il n'existe aucun moyen d'afficher un même champ sous deux en-têtes.",
+
+          orderTitle: "Ordonner les groupes",
+          orderIntro:
+            "Les groupes s'ordonnent sur l'écran Groupes de champs, en faisant glisser une ligne ou en utilisant ses boutons Move up et Move down. Les deux font la même chose et les deux sont conservés.",
+          orderKeyboard:
+            "Les boutons ne sont pas un simple confort. Un utilisateur au clavier seul n'a aucun geste de glisser-déposer, les boutons constituent donc le chemin accessible et sont censés fonctionner à l'identique — si une ligne se déplace par glisser-déposer mais pas par bouton, c'est un défaut.",
+          orderLimitTitle: "La réorganisation cesse de fonctionner au-delà de 100 groupes",
+          orderLimitContent:
+            "Une requête de réorganisation transporte tout l'ensemble réorganisable d'un coup, et plus de 100 groupes pour un même type d'enregistrement est purement refusé. Au-delà de ce seuil, aucun groupe de ce type d'enregistrement ne peut plus être déplacé. L'écran le signale plutôt que d'échouer de façon générique, mais le plafond est réel et n'est pas configurable.",
+          orderGlobalTitle: "Vous ne pouvez pas positionner votre groupe par rapport à un groupe global",
+          orderGlobalContent:
+            "La réorganisation est tout ou rien et refuse tout groupe que l'appelant ne possède pas, donc la réorganisation d'un espace de travail ne couvre que ses propres groupes, qui sont ensuite renumérotés à partir de zéro. Ces numéros peuvent entrer en collision avec le propre ordre d'un groupe global, et l'égalité se départage sur le libellé anglais. L'effet visible est que déplacer votre groupe tout en haut peut le faire atterrir en dessous d'un groupe global et donner l'impression que rien ne s'est passé.",
+
+          deleteTitle: "Supprimer un groupe",
+          deleteIntro:
+            "Supprimer un groupe ne supprime jamais de champs. La confirmation le précise explicitement, et par la suite les champs existent toujours et sont simplement dégroupés, réapparaissant sous l'en-tête par défaut Champs personnalisés.",
+          deleteEditing:
+            "Un cas particulier à connaître : si vous commencez à modifier un groupe puis supprimez ce même groupe depuis sa ligne pendant que le panneau de modification est encore ouvert, le panneau se ferme et aucun nouveau groupe n'est créé. Enregistrer à ce moment-là ne ressuscite pas le groupe sous une nouvelle identité.",
+
+          globalTitle: "Groupes globaux",
+          globalIntro:
+            "Un administrateur de la plateforme sans espace de travail sélectionné crée un groupe global, et un avis sur l'écran l'explique. L'interrupteur de portée apparaît à la création et jamais à la modification, car la portée d'un groupe est définitive de la même façon que celle d'un champ.",
+          globalTenantView:
+            "À l'intérieur d'un espace de travail, un groupe global affiche un badge Global et n'offre aucun contrôle de modification, de suppression ou de déplacement. Ce n'est pas l'interface qui masque quelque chose arbitrairement — le serveur refuserait ces opérations, les contrôles ne sont donc pas proposés.",
+
+          effectTitle: "Ce qu'un groupe affecte, et ce qu'il n'affecte pas",
+          doesTitle: "Un groupe fait cela",
+          does1: "Rassembler des champs liés sous un même en-tête sur le formulaire d'enregistrement",
+          does2: "Vous laisser ordonner les groupes à la main, par glisser-déposer ou avec Move up et Move down",
+          does3: "Porter son propre en-tête anglais et arabe, traduit comme tout le reste",
+          does4: "Survivre à la suppression d'un champ, et laisser un champ le quitter via l'entrée no group",
+          doesNotTitle: "Un groupe ne fait pas cela",
+          doesNot1: "Contrôler qui peut voir un champ — cela relève de la sécurité au niveau du champ, qui est sans rapport",
+          doesNot2: "Supprimer ses champs quand le groupe lui-même est supprimé",
+          doesNot3: "Se propager entre types d'enregistrement, ni s'appliquer à plus d'un type d'enregistrement à la fois",
+          doesNot4: "Changer la façon dont une valeur est validée, stockée, exportée ou affichée",
+
+          errorsTitle: "Erreurs de groupe que vous pourriez voir",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          errDuplicateKey: "A stable key already used on that record type",
-          errDuplicateKeyMsg: "Refused, naming the key: a field group with that key already exists for this entity type.",
-          errWrongEntityType: "Assigning a field to a group from another record type",
-          errWrongEntityTypeMsg: "Refused: the selected field group belongs to a different entity type.",
-          errTooManyReorder: "Reordering more than 100 groups at once",
-          errTooManyReorderMsg: "Refused, naming the maximum: more than that many groups cannot be reordered in one request.",
-          errDuplicateReorder: "The same group listed twice in one reorder",
-          errDuplicateReorderMsg: "Refused: the same field group appears more than once in the reorder list.",
-          errMixedReorder: "Groups from two record types in one reorder",
-          errMixedReorderMsg: "Refused: all field groups in one reorder request must belong to the same entity type.",
-          errGlobalNotSuperAdmin: "Creating a global group without being a platform Super Admin",
-          errGlobalNotSuperAdminMsg: "Refused: only a platform Super Admin can create a global field group.",
-          errNoDefinition: "Assigning a group to a field with no definition record yet",
-          errNoDefinitionMsg: "Refused, explaining that the field has no definition record and that the definitions backfill has to be run first. This only happens in an environment upgraded from an older version.",
+          thWhatYouSee: "Ce que vous voyez",
+          errDuplicateKey: "Une clé stable déjà utilisée sur ce type d'enregistrement",
+          errDuplicateKeyMsg: "Refusée, en nommant la clé : un groupe de champs avec cette clé existe déjà pour ce type d'entité.",
+          errWrongEntityType: "Assigner un champ à un groupe d'un autre type d'enregistrement",
+          errWrongEntityTypeMsg: "Refusée : le groupe de champs sélectionné appartient à un autre type d'entité.",
+          errTooManyReorder: "Réorganiser plus de 100 groupes en une fois",
+          errTooManyReorderMsg: "Refusée, en nommant le maximum : au-delà de ce nombre de groupes, aucune réorganisation n'est possible en une seule requête.",
+          errDuplicateReorder: "Le même groupe listé deux fois dans une réorganisation",
+          errDuplicateReorderMsg: "Refusée : le même groupe de champs apparaît plus d'une fois dans la liste de réorganisation.",
+          errMixedReorder: "Des groupes de deux types d'enregistrement dans une même réorganisation",
+          errMixedReorderMsg: "Refusée : tous les groupes de champs d'une même requête de réorganisation doivent appartenir au même type d'entité.",
+          errGlobalNotSuperAdmin: "Créer un groupe global sans être un Super Admin de la plateforme",
+          errGlobalNotSuperAdminMsg: "Refusée : seul un Super Admin de la plateforme peut créer un groupe de champs global.",
+          errNoDefinition: "Assigner un groupe à un champ n'ayant pas encore d'enregistrement de définition",
+          errNoDefinitionMsg:
+            "Refusée, en expliquant que le champ n'a pas d'enregistrement de définition et que le rétro-remplissage des définitions doit d'abord être exécuté. Cela ne se produit que dans un environnement mis à niveau depuis une version plus ancienne.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Options
+        // ═══════════════════════════════════════════════════
         options: {
           title: "Options",
-          description: "Writing the allowed answers for Select and MultiSelect fields: the bilingual option editor, how a submitted value is matched, and what adding, renaming or removing an option does to records that already exist.",
-          intro: "A Select or MultiSelect field carries its own list of allowed answers. The list belongs to the field — there is no shared list reused across several fields — and it is written on the definition form, in the Options box that appears as soon as you choose either of those two value types. Both types use exactly the same list and the same editor; the only difference is that a MultiSelect answer can hold several entries from it at once.",
-          storedInfoTitle: "The English option text is the stored answer",
-          storedInfoContent: "There is no separate hidden code behind an option. The English label you type is literally what gets written onto every record that chooses it, and it is what the product compares a submitted value against. The Arabic label is for display only. This one fact explains every behaviour on this page.",
-          editorTitle: "The options editor",
-          editorIntro: "Options are edited as a list of rows rather than as free text. Each row is one option.",
-          editor1: "Add option adds a row at the end of the list.",
-          editor2: "Each row takes an English label and an Arabic label.",
-          editor3: "Remove option deletes a row.",
-          editor4: "Row order is the order the options are offered in on the record form, top to bottom.",
-          editor5: "An empty list shows a prompt to add the first option — a Select field with no options cannot be saved.",
-          editorBilingual: "The two labels are stored as two parallel lists, matched up row by row. An Arabic reader sees the Arabic label; the answer written onto the record is the English one either way. Leaving an Arabic label blank is allowed, and that option then shows its English label to everybody.",
-          exampleTitle: "A worked example",
-          exampleIntro: "A shirt-size field on a Select type, with three options. The right-hand column is what actually lands on a record.",
-          thEnglish: "English label",
-          thArabic: "Arabic label",
-          thStored: "Stored on the record",
-          exampleOutro: "An Arabic-reading user picking متوسط stores Medium, exactly as an English-reading user picking Medium does. Both see their own language on the way in and on the way out; the data underneath is one consistent value.",
-          matchTitle: "How a submitted value is matched",
-          matchIntro: "The submitted value is trimmed, then compared against the English labels exactly. The comparison is case-sensitive. Using the three options above:",
-          thSubmitted: "Submitted value",
-          thOutcome: "What happens",
-          matchOk: "Accepted, and stored as Medium.",
-          matchTrimmed: "Accepted. Both sides are trimmed before comparison, so surrounding spaces never cause a spurious rejection.",
-          matchCase: "Refused: VALIDATION_INVALID_FORMAT. Case matters — which also means Medium and medium can legitimately coexist as two separate options if you really want them to.",
-          matchArabic: "Refused if submitted directly to the API: only the English labels are matched. Choosing متوسط in the interface works normally, because the interface submits the English label behind it.",
-          matchUnknown: "Refused: VALIDATION_INVALID_FORMAT, with a message quoting both the rejected value and the field's key.",
-          matchBlank: "Treated as empty: stored as cleared on an optional field, refused with VALIDATION_REQUIRED on a required one.",
-          exPadded: "\" Medium\" with a leading space",
-          exBlank: "A blank value",
-          multiTitle: "MultiSelect specifics",
-          multiIntro: "MultiSelect reuses this same list and this same editor. What differs is the value: several answers at once, in the order they were picked, up to a hard ceiling of 19.",
-          multiOrder: "Accepted, and read back as Blue then Red — the order picked, not the order the options were listed in.",
-          multiRemove: "Accepted. Removing one selection leaves the others in their existing relative order.",
-          multiTooMany: "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19. The picker makes every unselected option unpickable once you reach 19, and shows a live \"N of 19 selected\" counter, so this is normally unreachable from the interface.",
-          multiDuplicate: "Refused: VALIDATION_UNIQUE. A repeated selection is rejected, not collapsed.",
-          multiEmpty: "Treated as empty, exactly as a blank scalar is for every other type: cleared on an optional field, refused on a required one.",
-          exMultiOrder: "Blue, then Red — on a field whose options list Red before Blue",
-          exMultiRemove: "Removing one selection from three",
-          exMultiTwenty: "A twentieth selection",
-          exMultiRepeat: "The same option selected twice",
-          exMultiEmptyList: "An explicitly empty list",
-          multiOrderWarnTitle: "Selection order is not option order",
-          multiOrderWarnContent: "Because a MultiSelect answer preserves the order it was picked in, a list column showing that answer is not guaranteed to read in the order you authored the options. That is what makes order round-trip faithfully, but it surprises most people the first time they notice it.",
-          changingTitle: "Changing the list later",
-          changingIntro: "The options list is editable at any time. Because the option text is the stored answer, some edits reach backwards into records that already exist and some do not.",
-          thChange: "Edit",
-          thEffect: "Effect on records that already exist",
-          chgAdd: "Adding a new option",
-          chgAddEffect: "None. Existing answers are untouched; the new option simply becomes available.",
-          chgRename: "Renaming an English label",
-          chgRenameEffect: "Every record already holding the old text now displays the new text. Nothing is migrated and nothing is lost, because the option row is what the record points at — but the answer people see has changed under them.",
-          chgRemove: "Removing an option",
-          chgRemoveEffect: "Records already holding it keep their stored answer and keep displaying it. The option is no longer offered to anybody new, and the next time somebody edits one of those records they will have to choose a different answer to save it.",
-          chgReorder: "Reordering the rows",
-          chgReorderEffect: "Changes the order the options are offered in. It does not change any stored answer, and it does not reorder an existing MultiSelect answer, which keeps the order it was picked in.",
-          chgArabicOnly: "Changing only an Arabic label",
-          chgArabicOnlyEffect: "Display only. The stored answer is the English label, so nothing about the data changes.",
-          renameWarnTitle: "Rename with care, and prefer adding",
-          renameWarnContent: "Renaming an option is the one edit that silently rewrites what history looks like: a record answered \"Medium\" last year will read as whatever you renamed Medium to. If the distinction matters to you, add a new option and stop offering the old one rather than renaming it.",
-          errorsTitle: "Option errors you may see",
+          description:
+            "Rédiger les réponses autorisées pour les champs Select et MultiSelect : l'éditeur d'options bilingue, comment une valeur soumise est comparée, et ce que fait l'ajout, le renommage ou la suppression d'une option aux enregistrements déjà existants.",
+          intro:
+            "Un champ Select ou MultiSelect porte sa propre liste de réponses autorisées. La liste appartient au champ — il n'existe aucune liste partagée réutilisée entre plusieurs champs — et elle se rédige sur le formulaire de définition, dans la boîte Options qui apparaît dès que vous choisissez l'un de ces deux types de valeur. Les deux types utilisent exactement la même liste et le même éditeur ; la seule différence est qu'une réponse MultiSelect peut contenir plusieurs entrées de cette liste à la fois.",
+          storedInfoTitle: "Le texte anglais de l'option est la réponse stockée",
+          storedInfoContent:
+            "Il n'existe aucun code caché séparé derrière une option. Le libellé anglais que vous saisissez est littéralement ce qui s'écrit sur chaque enregistrement qui le choisit, et c'est ce à quoi le produit compare une valeur soumise. Le libellé arabe n'est là que pour l'affichage. Ce seul fait explique tout le comportement de cette page.",
+
+          editorTitle: "L'éditeur d'options",
+          editorIntro:
+            "Les options se modifient comme une liste de lignes plutôt que comme du texte libre. Chaque ligne est une option.",
+          editor1: "Add option ajoute une ligne à la fin de la liste.",
+          editor2: "Chaque ligne comporte un libellé anglais et un libellé arabe.",
+          editor3: "Remove option supprime une ligne.",
+          editor4:
+            "L'ordre des lignes est l'ordre dans lequel les options sont proposées sur le formulaire d'enregistrement, de haut en bas.",
+          editor5:
+            "Une liste vide affiche une invite à ajouter la première option — un champ Select sans options ne peut pas être enregistré.",
+          editorBilingual:
+            "Les deux libellés sont stockés comme deux listes parallèles, associées ligne par ligne. Un lecteur arabophone voit le libellé arabe ; la réponse écrite sur l'enregistrement est de toute façon celle en anglais. Laisser un libellé arabe vide est autorisé, et cette option affiche alors son libellé anglais à tout le monde.",
+
+          exampleTitle: "Un exemple concret",
+          exampleIntro:
+            "Un champ taille de maillot sur un type Select, avec trois options. La colonne de droite est ce qui atterrit réellement sur un enregistrement.",
+          thEnglish: "Libellé anglais",
+          thArabic: "Libellé arabe",
+          thStored: "Stocké sur l'enregistrement",
+          exampleOutro:
+            "Un utilisateur arabophone qui choisit متوسط stocke Medium, exactement comme le fait un utilisateur anglophone qui choisit Medium. Les deux voient leur propre langue à l'entrée comme à la sortie ; la donnée sous-jacente est une valeur unique et cohérente.",
+
+          matchTitle: "Comment une valeur soumise est comparée",
+          matchIntro:
+            "La valeur soumise est épurée de ses espaces, puis comparée exactement aux libellés anglais. La comparaison est sensible à la casse. En reprenant les trois options ci-dessus :",
+          thSubmitted: "Valeur soumise",
+          thOutcome: "Ce qui se passe",
+          matchOk: "Acceptée, et stockée comme Medium.",
+          matchTrimmed:
+            "Acceptée. Les deux côtés sont épurés de leurs espaces avant comparaison, donc des espaces superflus ne provoquent jamais un rejet inattendu.",
+          matchCase:
+            "Refusée : VALIDATION_INVALID_FORMAT. La casse compte — ce qui signifie aussi que Medium et medium peuvent légitimement coexister comme deux options distinctes si vous le souhaitez vraiment.",
+          matchArabic:
+            "Refusée si soumise directement à l'API : seuls les libellés anglais sont comparés. Choisir متوسط dans l'interface fonctionne normalement, car l'interface soumet le libellé anglais qui se cache derrière.",
+          matchUnknown:
+            "Refusée : VALIDATION_INVALID_FORMAT, avec un message citant à la fois la valeur rejetée et la clé du champ.",
+          matchBlank:
+            "Traitée comme vide : stockée comme effacée sur un champ facultatif, refusée avec VALIDATION_REQUIRED sur un champ obligatoire.",
+          exPadded: "« Medium » précédé d'une espace",
+          exBlank: "Une valeur vide",
+
+          multiTitle: "Particularités de MultiSelect",
+          multiIntro:
+            "MultiSelect réutilise cette même liste et ce même éditeur. Ce qui diffère, c'est la valeur : plusieurs réponses à la fois, dans l'ordre où elles ont été choisies, jusqu'à un plafond strict de 19.",
+          multiOrder:
+            "Acceptée, et relue comme Blue puis Red — l'ordre de sélection, pas l'ordre dans lequel les options étaient listées.",
+          multiRemove:
+            "Acceptée. Retirer une sélection laisse les autres dans leur ordre relatif existant.",
+          multiTooMany:
+            "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 19. Le sélecteur rend impossible le choix de toute option non sélectionnée une fois 19 atteintes, et affiche un compteur en direct « N sur 19 sélectionnées », de sorte que ce cas est normalement inatteignable depuis l'interface.",
+          multiDuplicate: "Refusée : VALIDATION_UNIQUE. Une sélection répétée est rejetée, pas fusionnée.",
+          multiEmpty:
+            "Traitée comme vide, exactement comme l'est une valeur scalaire vide pour tout autre type : effacée sur un champ facultatif, refusée sur un champ obligatoire.",
+          exMultiOrder: "Blue, puis Red — sur un champ dont la liste d'options place Red avant Blue",
+          exMultiRemove: "Retirer une sélection parmi trois",
+          exMultiTwenty: "Une vingtième sélection",
+          exMultiRepeat: "La même option sélectionnée deux fois",
+          exMultiEmptyList: "Une liste explicitement vide",
+          multiOrderWarnTitle: "L'ordre de sélection n'est pas l'ordre des options",
+          multiOrderWarnContent:
+            "Comme une réponse MultiSelect conserve l'ordre dans lequel elle a été choisie, une colonne de liste affichant cette réponse ne se lit pas nécessairement dans l'ordre où vous avez rédigé les options. C'est ce qui permet à l'ordre de survivre fidèlement à l'aller-retour, mais cela surprend la plupart des gens la première fois qu'ils le remarquent.",
+
+          changingTitle: "Modifier la liste plus tard",
+          changingIntro:
+            "La liste d'options est modifiable à tout moment. Comme le texte de l'option est la réponse stockée, certaines modifications rejaillissent sur les enregistrements déjà existants, et d'autres non.",
+          thChange: "Modification",
+          thEffect: "Effet sur les enregistrements déjà existants",
+          chgAdd: "Ajouter une nouvelle option",
+          chgAddEffect: "Aucun. Les réponses existantes ne sont pas touchées ; la nouvelle option devient simplement disponible.",
+          chgRename: "Renommer un libellé anglais",
+          chgRenameEffect:
+            "Chaque enregistrement contenant déjà l'ancien texte affiche désormais le nouveau texte. Rien n'est migré et rien n'est perdu, car c'est la ligne d'option que cible l'enregistrement — mais la réponse que voient les gens a changé sous leurs yeux.",
+          chgRemove: "Supprimer une option",
+          chgRemoveEffect:
+            "Les enregistrements qui la détiennent déjà conservent leur réponse stockée et continuent de l'afficher. L'option n'est plus proposée à personne de nouveau, et la prochaine fois que quelqu'un modifie l'un de ces enregistrements, il devra choisir une autre réponse pour l'enregistrer.",
+          chgReorder: "Réordonner les lignes",
+          chgReorderEffect:
+            "Change l'ordre dans lequel les options sont proposées. Cela ne change aucune réponse stockée, et cela ne réordonne pas une réponse MultiSelect existante, qui conserve l'ordre dans lequel elle a été choisie.",
+          chgArabicOnly: "Changer uniquement un libellé arabe",
+          chgArabicOnlyEffect:
+            "Affichage uniquement. La réponse stockée est le libellé anglais, donc rien ne change dans la donnée.",
+          renameWarnTitle: "Renommez avec précaution, et préférez ajouter",
+          renameWarnContent:
+            "Renommer une option est la seule modification qui réécrit silencieusement l'apparence de l'historique : un enregistrement ayant répondu « Medium » l'année dernière se lira comme ce en quoi vous avez renommé Medium. Si la distinction compte pour vous, ajoutez une nouvelle option et cessez de proposer l'ancienne plutôt que de la renommer.",
+
+          errorsTitle: "Erreurs d'option que vous pourriez voir",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          errNoOptions: "Saving a Select or MultiSelect field with an empty list",
-          errNoOptionsMsg: "Refused: options are required for Select fields.",
-          errOptionsOnOther: "Options supplied on a type that does not take them",
-          errOptionsOnOtherMsg: "Refused: options are only allowed for Select fields.",
-          errNotAllowed: "A value that is not one of the options",
-          errNotAllowedMsg: "Refused: VALIDATION_INVALID_FORMAT, quoting the value and the field's key.",
-          errTooMany: "More than 19 MultiSelect selections",
-          errTooManyMsg: "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19.",
-          errDuplicate: "The same MultiSelect option twice in one save",
-          errDuplicateMsg: "Refused: VALIDATION_UNIQUE, quoting the repeated value.",
-          notYetTitle: "What the options list does not do",
-          notYetIntro: "Three things people reasonably ask for, and what the answer is today.",
-          notYet1: "There is no way to reuse one list across several fields. A Countries list needed by three fields is written three times, and edited three times.",
-          notYet2: "There is no colour, icon or code per option that you can set. The label is the whole option as far as the definition form is concerned.",
-          notYet3: "There is no ceiling on how many options a list may hold, but a MultiSelect answer still cannot select more than 19 of them.",
+          thWhatYouSee: "Ce que vous voyez",
+          errNoOptions: "Enregistrer un champ Select ou MultiSelect avec une liste vide",
+          errNoOptionsMsg: "Refusée : des options sont requises pour les champs Select.",
+          errOptionsOnOther: "Des options fournies sur un type qui ne les accepte pas",
+          errOptionsOnOtherMsg: "Refusée : les options ne sont autorisées que pour les champs Select.",
+          errNotAllowed: "Une valeur qui n'est pas l'une des options",
+          errNotAllowedMsg:
+            "Refusée : VALIDATION_INVALID_FORMAT, citant la valeur et la clé du champ.",
+          errTooMany: "Plus de 19 sélections MultiSelect",
+          errTooManyMsg: "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 19.",
+          errDuplicate: "La même option MultiSelect deux fois dans un même enregistrement",
+          errDuplicateMsg: "Refusée : VALIDATION_UNIQUE, citant la valeur répétée.",
+
+          notYetTitle: "Ce que la liste d'options ne fait pas",
+          notYetIntro: "Trois choses que l'on demande raisonnablement, et quelle est la réponse aujourd'hui.",
+          notYet1:
+            "La liste intégrée propre à ce champ ne peut pas elle-même être réutilisée par un autre champ — les options de chaque champ lui sont propres, rédigées ici. Une liste de pays dont ont besoin trois champs n'a toutefois plus besoin d'être écrite trois fois : liez plutôt les trois à un Option Set partagé et versionné (voir Jeux d'options) et modifiez-le une seule fois.",
+          notYet2:
+            "Il n'existe aucune couleur, icône ou code par option que vous puissiez définir. Le libellé est toute l'option, en ce qui concerne le formulaire de définition.",
+          notYet3:
+            "Il n'existe aucun plafond sur le nombre d'options qu'une liste peut contenir, mais une réponse MultiSelect ne peut toujours pas en sélectionner plus de 19.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Validateurs
+        // ═══════════════════════════════════════════════════
         validators: {
-          title: "Validators",
-          description: "All 13 built-in format checks for Text fields, with accepted and rejected example inputs, the six that need a setting, the seven supported postal-code countries, and every rejection you can hit.",
-          intro: "A validator is an optional extra format check you attach to a Text field at definition time, so a value in the wrong shape is refused the moment somebody tries to save it instead of quietly becoming bad data that surfaces months later. You pick one of 13 built-in checks from a dropdown, and seven of them need no further setting.",
-          textOnlyTitle: "Validators are Text-only",
-          textOnlyContent: "A validator can only ever be attached to a Text field. Not Number, not Date, not Select, not Email, not Url, not Phone, not LongText, not any of the others — the Validator dropdown is not even shown for them, and the server refuses the same thing again if a request bypasses the form. If you need an email address with extra constraints, the answer today is a Text field with a validator rather than an Email field.",
-          whyClosedTitle: "Why there is no pattern box",
-          whyClosedIntro: "There is deliberately no free-text or regular-expression entry anywhere in the product. A pattern written by hand can be made to consume enormous amounts of processing time on a short input, which turns a data-entry form into a way of taking the system down. The set of checks is therefore fixed and curated instead, and each one carries its own short length cap and its own time limit.",
-          howTitle: "How a validator runs",
-          howIntro: "Four things happen in this order every time a value is saved into the field.",
-          how1: "If the value is empty or nothing but spaces, it is treated as empty and no validator runs at all.",
-          how2: "The global 4,000-character Text cap runs, and refuses with VALIDATION_MAX_LENGTH if the value is longer.",
-          how3: "The validator's own, much shorter length cap runs — 11 characters for a SWIFT code, 15 for an IMEI, and so on — and also refuses with VALIDATION_MAX_LENGTH.",
-          how4: "Only then does the validator's actual check run, refusing with its own code and message.",
-          howTwoPoints: "The check is enforced at two separate points, and it is worth knowing both exist. At definition time, an invalid validator or setting combination is refused when you save the definition. At value time, the validator runs again against every value somebody saves into the field.",
-          fixedTitle: "The seven checks with no setting",
-          fixedIntro: "These validate a specific external format and never take a parameter — supplying one is itself refused. Three of them verify a real check digit, which means a single mistyped digit is caught rather than only a wrong length.",
-          thValidator: "Validator",
-          thShape: "Shape",
-          thMaxLength: "Max length",
-          thChecksum: "Check digit",
-          shapeIban: "Two letters, two digits, then 11 to 30 letters or digits",
-          shapeImei: "Exactly 15 digits",
-          shapeSwift: "Six letters, two letters or digits, optionally three more",
-          shapePlate: "2 to 15 letters, digits, spaces or hyphens, either case",
-          shapeEgypt: "14 digits: century marker, then a plausible YYMMDD, then seven more",
-          shapeSaudi: "10 digits starting with 1 or 2",
-          shapeEmirati: "784, four digits, seven digits, one digit — hyphens optional",
-          checksumReal: "Yes — verified",
-          checksumNone: "None in the standard",
-          checksumUnpublished: "Not verified — none published",
-          thExample: "Example input",
-          thOutcome: "What happens",
+          title: "Validateurs",
+          description:
+            "Les 13 vérifications de format intégrées pour les champs Text, avec des exemples de saisie acceptés et rejetés, les six qui nécessitent un paramètre, les sept pays de code postal pris en charge, et chaque refus que vous pouvez rencontrer.",
+          intro:
+            "Un validateur est une vérification de format supplémentaire et facultative que vous attachez à un champ Text à la définition, afin qu'une valeur de mauvaise forme soit refusée dès que quelqu'un tente de l'enregistrer, plutôt que de devenir silencieusement une donnée corrompue qui ne se révèle que des mois plus tard. Vous choisissez l'une des 13 vérifications intégrées dans une liste déroulante, et sept d'entre elles ne nécessitent aucun autre paramètre.",
+          textOnlyTitle: "Les validateurs sont réservés à Text",
+          textOnlyContent:
+            "Un validateur ne peut être attaché qu'à un champ Text. Ni Number, ni Date, ni Select, ni Email, ni Url, ni Phone, ni LongText, ni aucun des autres — la liste déroulante Validator n'est même pas affichée pour eux, et le serveur refuse à nouveau la même chose si une requête contourne le formulaire. Si vous avez besoin d'une adresse e-mail avec des contraintes supplémentaires, la réponse aujourd'hui est un champ Text avec un validateur plutôt qu'un champ Email.",
+
+          whyClosedTitle: "Pourquoi il n'existe aucune zone de motif",
+          whyClosedIntro:
+            "Il n'existe délibérément aucune saisie de texte libre ni d'expression régulière nulle part dans le produit. Un motif écrit à la main peut être conçu pour consommer un temps de traitement énorme sur une saisie courte, ce qui transforme un formulaire de saisie en moyen de mettre le système à genoux. L'ensemble des vérifications est donc fixé et sélectionné à l'avance, et chacune porte son propre plafond de longueur court et sa propre limite de temps.",
+
+          howTitle: "Comment un validateur s'exécute",
+          howIntro: "Quatre choses se produisent dans cet ordre, chaque fois qu'une valeur est enregistrée dans le champ.",
+          how1: "Si la valeur est vide ou composée uniquement d'espaces, elle est traitée comme vide et aucun validateur ne s'exécute du tout.",
+          how2: "Le plafond global de 4 000 caractères de Text s'applique, et refuse avec VALIDATION_MAX_LENGTH si la valeur est plus longue.",
+          how3:
+            "Le propre plafond de longueur du validateur, bien plus court, s'applique ensuite — 11 caractères pour un code SWIFT, 15 pour un IMEI, et ainsi de suite — et refuse aussi avec VALIDATION_MAX_LENGTH.",
+          how4: "C'est seulement alors que s'exécute la véritable vérification du validateur, qui refuse avec son propre code et son propre message.",
+          howTwoPoints:
+            "La vérification s'applique en deux points distincts, et il vaut la peine de savoir que les deux existent. À la définition, une combinaison invalide de validateur et de paramètre est refusée quand vous enregistrez la définition. À l'enregistrement de la valeur, le validateur s'exécute à nouveau contre chaque valeur que quelqu'un enregistre dans le champ.",
+
+          fixedTitle: "Les sept vérifications sans paramètre",
+          fixedIntro:
+            "Celles-ci vérifient un format externe précis et ne prennent jamais de paramètre — en fournir un est lui-même refusé. Trois d'entre elles vérifient un véritable chiffre de contrôle, ce qui signifie qu'un seul chiffre mal saisi est détecté, et pas seulement une mauvaise longueur.",
+          thValidator: "Validateur",
+          thShape: "Forme",
+          thMaxLength: "Longueur max.",
+          thChecksum: "Chiffre de contrôle",
+          shapeIban: "Deux lettres, deux chiffres, puis 11 à 30 lettres ou chiffres",
+          shapeImei: "Exactement 15 chiffres",
+          shapeSwift: "Six lettres, deux lettres ou chiffres, éventuellement trois de plus",
+          shapePlate: "2 à 15 lettres, chiffres, espaces ou traits d'union, quelle que soit la casse",
+          shapeEgypt: "14 chiffres : marqueur de siècle, puis une date AAMMJJ plausible, puis sept chiffres de plus",
+          shapeSaudi: "10 chiffres commençant par 1 ou 2",
+          shapeEmirati: "784, quatre chiffres, sept chiffres, un chiffre — traits d'union facultatifs",
+          checksumReal: "Oui — vérifié",
+          checksumNone: "Aucun dans la norme",
+          checksumUnpublished: "Non vérifié — aucun publié",
+          thExample: "Exemple de saisie",
+          thOutcome: "Ce qui se passe",
+
           ibanTitle: "IBAN",
-          ibanFor: "For an international bank account number. Use it wherever a wrong digit would send money to the wrong place.",
-          ibanChecks: "The shape is checked first, then the real ISO check digits are verified. Capped at 34 characters — no live IBAN is longer. The value is matched exactly as submitted: it is not uppercased and spaces are not stripped for you.",
-          ibanOk: "Accepted. Shape and check digits both hold.",
-          ibanBadCheck: "Refused: VALIDATION_INVALID_FORMAT. The shape is perfectly valid and only the check digit is wrong — which is precisely the class of mistake a shape-only check would miss.",
-          ibanLower: "Refused. The letters must be upper case.",
-          ibanSpaces: "Refused. IBANs are often printed in groups of four for readability, but the stored form has no spaces in it.",
+          ibanFor:
+            "Pour un numéro de compte bancaire international. À utiliser partout où un chiffre erroné enverrait de l'argent au mauvais endroit.",
+          ibanChecks:
+            "La forme est vérifiée en premier, puis les véritables chiffres de contrôle ISO sont vérifiés. Plafonné à 34 caractères — aucun IBAN réel n'est plus long. La valeur est comparée exactement telle que soumise : elle n'est pas mise en majuscules et les espaces n'en sont pas retirés pour vous.",
+          ibanOk: "Acceptée. La forme et les chiffres de contrôle sont tous deux corrects.",
+          ibanBadCheck:
+            "Refusée : VALIDATION_INVALID_FORMAT. La forme est parfaitement valide et seul le chiffre de contrôle est erroné — exactement le genre d'erreur qu'une vérification de forme seule manquerait.",
+          ibanLower: "Refusée. Les lettres doivent être en majuscules.",
+          ibanSpaces:
+            "Refusée. Les IBAN sont souvent imprimés en groupes de quatre pour la lisibilité, mais la forme stockée ne contient aucune espace.",
+
           imeiTitle: "IMEI",
-          imeiFor: "For a mobile device's identity number, as printed on the device or its box.",
-          imeiChecks: "Exactly 15 digits, then the real check digit is verified. Capped at 15 characters. The 16- and 17-character display variants some devices show are not accepted.",
-          imeiOk: "Accepted.",
-          imeiBadCheck: "Refused: VALIDATION_INVALID_FORMAT. Fifteen digits, right shape, wrong final digit.",
-          imeiShort: "Refused: VALIDATION_INVALID_FORMAT. Fourteen digits fails the shape check — the length cap only ever catches a value longer than 15.",
-          swiftBicTitle: "SWIFT / BIC Code",
-          swiftBicFor: "For a bank identifier code, used alongside an account number for an international transfer.",
-          swiftBicChecks: "Eight or eleven characters: six letters, then two letters or digits, then optionally three more letters or digits. Upper case only, no separators, capped at 11 characters. There is no check digit in the standard, so a well-formed code that belongs to no real bank is accepted.",
-          swiftOk8: "Accepted — the eight-character form.",
-          swiftOk11: "Accepted — the eleven-character form with a branch code.",
-          swiftDigit: "Refused: VALIDATION_INVALID_FORMAT. The first six characters must all be letters.",
-          swiftLower: "Refused. This is a fixed external format, and lower case is not part of it.",
-          swiftLength: "Refused. Eight or eleven characters exactly — nine is neither.",
-          plateTitle: "Vehicle Plate Number",
-          plateFor: "For a vehicle registration plate, where you want to catch obvious nonsense without committing to any one country's format.",
-          plateChecks: "2 to 15 characters, made up of letters, digits, spaces and hyphens in any combination. Case-insensitive. Deliberately permissive — there is no country-specific plate format anywhere in this check, because plate formats differ by country and by vehicle class within a country.",
-          plateOk: "Accepted.",
-          plateLowerOk: "Accepted. Unlike SWIFT, this check does not care about case.",
-          plateTooShort: "Refused: VALIDATION_INVALID_FORMAT. The minimum is two characters.",
-          plateBadChar: "Refused. A slash is not one of the four allowed character classes.",
-          egyptIdTitle: "Egyptian National ID",
-          egyptIdFor: "For an Egyptian national identity number.",
-          egyptIdChecks: "Fourteen digits: a century marker of 2 or 3, then a date of birth as YYMMDD that has to be calendar-plausible, then seven more digits. Structure only — Egypt has never published a check-digit algorithm, so the last digit is not verified. Shipping a guessed algorithm would reject real, valid IDs, which is worse than not checking.",
-          egyptOk: "Accepted.",
-          egyptBadMonth: "Refused: VALIDATION_INVALID_FORMAT. Month 13 is not a plausible month.",
-          egyptBadDay: "Refused. Day 32 is not a plausible day.",
-          egyptBadCentury: "Refused. The century marker must be 2 or 3.",
-          egyptLength: "Refused. Thirteen digits is not fourteen.",
-          saudiIdTitle: "Saudi National ID",
-          saudiIdFor: "For a Saudi national identity number or an Iqama (residency) number.",
-          saudiIdChecks: "Ten digits, the first being 1 for a citizen or 2 for a resident, and the real check digit is verified. Capped at 10 characters.",
-          saudiOk: "Accepted. Shape and check digit both hold.",
-          saudiBadCheck: "Refused: VALIDATION_INVALID_FORMAT. Right shape, wrong check digit.",
-          saudiBadPrefix: "Refused. The first digit must be 1 or 2.",
-          saudiLength: "Refused. Nine digits is not ten.",
-          emiratiIdTitle: "Emirati ID (UAE)",
-          emiratiIdFor: "For an Emirates ID number.",
-          emiratiIdChecks: "The 784-YYYY-XXXXXXX-C form, with the hyphens optional. Capped at 18 characters. Structure only — the UAE has never published a check-digit algorithm, so the final digit is not verified, for the same reason as the Egyptian check.",
-          emiratiOk: "Accepted, hyphens and all.",
-          emiratiNoHyphens: "Accepted. The hyphens are optional, so both written forms work.",
-          emiratiBadPrefix: "Refused: VALIDATION_INVALID_FORMAT. Every Emirates ID starts with 784.",
-          emiratiLength: "Refused. The middle block is seven digits, not six.",
-          paramTitle: "The six checks that need a setting",
-          paramIntro: "These require a Validator Parameter, and leaving it blank is refused at definition time — as is supplying one for a validator that takes none. The Validator Parameter control appears as soon as you pick one of these six.",
-          thParamFormat: "Setting format",
-          thParamExample: "Example setting",
-          paramFmtPostal: "A country, chosen from a dropdown of the seven supported ones",
-          paramFmtNumeric: "Two comma-separated bounds; either side may be blank for an open end",
-          paramFmtLength: "Two comma-separated character counts; either side may be blank",
-          paramFmtOneOf: "One allowed value per line",
-          paramFmtContains: "Any literal text",
-          paramFmtStartsWith: "Any literal text",
-          paramExOneOf: "Goalkeeper / Defender / Midfielder / Forward, one per line",
-          postalTitle: "Postal Code",
-          postalFor: "For a postal code in a specific country. The country is part of the definition, not something the person filling in the record chooses.",
-          postalChecks: "The value is matched against the real postal-code format of the country you configured. Capped at 16 characters. Seven countries are supported and the dropdown never offers any others.",
-          postalEgOk: "Accepted. Egypt is five digits.",
-          postalEgBad: "Refused: VALIDATION_INVALID_FORMAT. Four digits is not five.",
-          postalUsOk: "Accepted. The five-digit and the ZIP+4 forms are both valid.",
-          postalGbOk: "Accepted. The UK format is matched in either case, with or without its space.",
-          postalCaOk: "Accepted, including the real letter exclusions Canada Post applies.",
-          exPostalEg: "11511, with the setting EG",
-          exPostalEgBad: "1151, with the setting EG",
-          exPostalUsPlus4: "90210-1234, with the setting US",
-          exPostalGb: "SW1A 1AA, with the setting GB",
-          exPostalCa: "K1A 0B1, with the setting CA",
-          numericRangeTitle: "Numeric Range",
-          numericRangeFor: "For a number inside bounds you set, on a field that is Text rather than Number — a shirt number, a squad size, a jersey count.",
-          numericRangeChecks: "The value must parse as a number and fall inside the range. The setting is two comma-separated bounds; leaving one side blank makes that end open, but leaving both blank is refused, because a range that accepts everything is the same as attaching no validator at all.",
-          numericOk: "Accepted.",
-          numericOut: "Refused: VALIDATION_RANGE.",
-          numericNotANumber: "Refused: VALIDATION_RANGE. A value that is not a number cannot be inside a range.",
-          numericOpenOk: "Accepted. An open upper bound means any number at or above the lower one.",
-          numericBothBlank: "Refused at definition time, explaining that the validator needs at least one bound.",
-          exNumeric50: "50, with the setting 1,100",
-          exNumeric150: "150, with the setting 1,100",
-          exNumericText: "\"fifty\", with the setting 1,100",
-          exNumericOpen: "5000, with the setting 1,",
-          exNumericBothBlank: "The setting , with both sides blank",
-          lengthRangeTitle: "Length Range",
-          lengthRangeFor: "For text that has to be a certain length — a two-letter code, a reference of at least eight characters.",
-          lengthRangeChecks: "The number of characters must fall inside the range. The setting is two comma-separated character counts, and either side may be left blank for an open end. This check produces two distinct codes rather than one, so you can tell too short from too long.",
-          lengthOk: "Accepted.",
-          lengthTooShort: "Refused: VALIDATION_MIN_LENGTH, naming the minimum.",
-          lengthTooLong: "Refused: VALIDATION_MAX_LENGTH, naming the maximum.",
-          exLength10: "\"Alexandria\" — 10 characters, with the setting 2,50",
-          exLength1: "\"A\" — 1 character, with the setting 2,50",
-          exLength80: "An 80-character value, with the setting 2,50",
-          oneOfListTitle: "One of a List",
-          oneOfListFor: "For a closed set of answers on a Text field. If the closed set is the whole point of the field, a Select field is usually the better choice — but this exists for the case where you want a validator's behaviour on a Text field.",
-          oneOfListChecks: "The value must exactly match one line of the list you configured, one value per line. Matching is case-sensitive.",
-          oneOfOk: "Accepted.",
-          oneOfCase: "Refused: VALIDATION_INVALID_FORMAT. The match is case-sensitive.",
-          oneOfUnknown: "Refused: VALIDATION_INVALID_FORMAT. The value is not on the list.",
-          containsTitle: "Contains Text",
-          containsFor: "For a value that must include a marker somewhere in it — a club prefix, a season tag, a department code.",
-          containsChecks: "The value must contain the literal text you configured, matched case-sensitively.",
-          containsOk: "Accepted, with the setting FC-.",
-          containsCase: "Refused: VALIDATION_INVALID_FORMAT. The match respects case.",
-          containsMissing: "Refused: VALIDATION_INVALID_FORMAT. The marker is not present.",
-          startsWithTitle: "Starts With Text",
-          startsWithFor: "For a value that must begin with a prefix — a country code, a branch code, a fixed reference stem.",
-          startsWithChecks: "The value must begin with the literal text you configured, matched case-sensitively.",
-          startsOk: "Accepted, with the setting EG-.",
-          startsWrongPlace: "Refused: VALIDATION_INVALID_FORMAT. The text is present but not at the start — use Contains Text if position does not matter.",
-          startsCase: "Refused: VALIDATION_INVALID_FORMAT. The match respects case.",
-          postalCountriesTitle: "The seven Postal Code countries",
-          postalCountriesIntro: "Postal Code ships real, cited formats for exactly seven countries, and the setting is a dropdown rather than free text, so no other country can be chosen from the form.",
-          thCountry: "Country",
+          imeiFor: "Pour le numéro d'identité d'un appareil mobile, tel qu'imprimé sur l'appareil ou sa boîte.",
+          imeiChecks:
+            "Exactement 15 chiffres, puis le véritable chiffre de contrôle est vérifié. Plafonné à 15 caractères. Les variantes d'affichage à 16 et 17 caractères que montrent certains appareils ne sont pas acceptées.",
+          imeiOk: "Acceptée.",
+          imeiBadCheck:
+            "Refusée : VALIDATION_INVALID_FORMAT. Quinze chiffres, bonne forme, dernier chiffre erroné.",
+          imeiShort:
+            "Refusée : VALIDATION_INVALID_FORMAT. Quatorze chiffres échouent à la vérification de forme — le plafond de longueur ne détecte jamais qu'une valeur plus longue que 15.",
+
+          swiftBicTitle: "Code SWIFT / BIC",
+          swiftBicFor: "Pour un code d'identification bancaire, utilisé aux côtés d'un numéro de compte pour un virement international.",
+          swiftBicChecks:
+            "Huit ou onze caractères : six lettres, puis deux lettres ou chiffres, puis éventuellement trois lettres ou chiffres de plus. Majuscules uniquement, aucun séparateur, plafonné à 11 caractères. Il n'existe aucun chiffre de contrôle dans la norme, donc un code bien formé n'appartenant à aucune banque réelle est accepté.",
+          swiftOk8: "Acceptée — la forme à huit caractères.",
+          swiftOk11: "Acceptée — la forme à onze caractères avec un code d'agence.",
+          swiftDigit: "Refusée : VALIDATION_INVALID_FORMAT. Les six premiers caractères doivent tous être des lettres.",
+          swiftLower: "Refusée. C'est un format externe fixe, et les minuscules n'en font pas partie.",
+          swiftLength: "Refusée. Huit ou onze caractères exactement — neuf n'est ni l'un ni l'autre.",
+
+          plateTitle: "Numéro de plaque d'immatriculation",
+          plateFor:
+            "Pour une plaque d'immatriculation de véhicule, quand vous voulez détecter une absurdité évidente sans vous engager sur le format d'un pays en particulier.",
+          plateChecks:
+            "2 à 15 caractères, composés de lettres, de chiffres, d'espaces et de traits d'union dans n'importe quelle combinaison. Insensible à la casse. Délibérément permissif — cette vérification ne contient aucun format de plaque propre à un pays, car les formats de plaque varient selon le pays et selon la catégorie de véhicule au sein d'un même pays.",
+          plateOk: "Acceptée.",
+          plateLowerOk: "Acceptée. Contrairement à SWIFT, cette vérification ne se soucie pas de la casse.",
+          plateTooShort: "Refusée : VALIDATION_INVALID_FORMAT. Le minimum est de deux caractères.",
+          plateBadChar: "Refusée. Une barre oblique ne fait pas partie des quatre classes de caractères autorisées.",
+
+          egyptIdTitle: "Numéro national égyptien",
+          egyptIdFor: "Pour un numéro d'identité nationale égyptien.",
+          egyptIdChecks:
+            "Quatorze chiffres : un marqueur de siècle valant 2 ou 3, puis une date de naissance au format AAMMJJ qui doit être plausible sur le calendrier, puis sept chiffres de plus. Structure uniquement — l'Égypte n'a jamais publié d'algorithme de chiffre de contrôle, donc le dernier chiffre n'est pas vérifié. Livrer un algorithme deviné rejetterait de véritables identités valides, ce qui est pire que de ne pas vérifier du tout.",
+          egyptOk: "Acceptée.",
+          egyptBadMonth: "Refusée : VALIDATION_INVALID_FORMAT. Le mois 13 n'est pas un mois plausible.",
+          egyptBadDay: "Refusée. Le jour 32 n'est pas un jour plausible.",
+          egyptBadCentury: "Refusée. Le marqueur de siècle doit valoir 2 ou 3.",
+          egyptLength: "Refusée. Treize chiffres, ce n'est pas quatorze.",
+
+          saudiIdTitle: "Numéro d'identité saoudien",
+          saudiIdFor: "Pour un numéro d'identité nationale saoudien ou un numéro d'Iqama (résidence).",
+          saudiIdChecks:
+            "Dix chiffres, le premier valant 1 pour un citoyen ou 2 pour un résident, et le véritable chiffre de contrôle est vérifié. Plafonné à 10 caractères.",
+          saudiOk: "Acceptée. La forme et le chiffre de contrôle sont tous deux corrects.",
+          saudiBadCheck: "Refusée : VALIDATION_INVALID_FORMAT. Bonne forme, chiffre de contrôle erroné.",
+          saudiBadPrefix: "Refusée. Le premier chiffre doit valoir 1 ou 2.",
+          saudiLength: "Refusée. Neuf chiffres, ce n'est pas dix.",
+
+          emiratiIdTitle: "Identité émiratie (EAU)",
+          emiratiIdFor: "Pour un numéro d'identité des Émirats.",
+          emiratiIdChecks:
+            "La forme 784-AAAA-XXXXXXX-C, avec les traits d'union facultatifs. Plafonné à 18 caractères. Structure uniquement — les Émirats arabes unis n'ont jamais publié d'algorithme de chiffre de contrôle, donc le dernier chiffre n'est pas vérifié, pour la même raison que la vérification égyptienne.",
+          emiratiOk: "Acceptée, traits d'union compris.",
+          emiratiNoHyphens: "Acceptée. Les traits d'union sont facultatifs, donc les deux formes d'écriture fonctionnent.",
+          emiratiBadPrefix: "Refusée : VALIDATION_INVALID_FORMAT. Chaque identité des Émirats commence par 784.",
+          emiratiLength: "Refusée. Le bloc du milieu compte sept chiffres, pas six.",
+
+          paramTitle: "Les six vérifications qui nécessitent un paramètre",
+          paramIntro:
+            "Celles-ci exigent un Validator Parameter, et le laisser vide est refusé dès la définition — tout comme en fournir un pour un validateur qui n'en accepte aucun. Le contrôle Validator Parameter apparaît dès que vous choisissez l'un de ces six validateurs.",
+          thParamFormat: "Format du paramètre",
+          thParamExample: "Exemple de paramètre",
+          paramFmtPostal: "Un pays, choisi dans une liste déroulante des sept pris en charge",
+          paramFmtNumeric: "Deux bornes séparées par une virgule ; chaque côté peut être vide pour une extrémité ouverte",
+          paramFmtLength: "Deux nombres de caractères séparés par une virgule ; chaque côté peut être vide",
+          paramFmtOneOf: "Une valeur autorisée par ligne",
+          paramFmtContains: "N'importe quel texte littéral",
+          paramFmtStartsWith: "N'importe quel texte littéral",
+          paramExOneOf: "Goalkeeper / Defender / Midfielder / Forward, un par ligne",
+
+          postalTitle: "Code postal",
+          postalFor:
+            "Pour un code postal d'un pays précis. Le pays fait partie de la définition, ce n'est pas quelque chose que choisit la personne qui remplit l'enregistrement.",
+          postalChecks:
+            "La valeur est comparée au véritable format de code postal du pays que vous avez configuré. Plafonné à 16 caractères. Sept pays sont pris en charge et la liste déroulante n'en propose jamais d'autres.",
+          postalEgOk: "Acceptée. L'Égypte utilise cinq chiffres.",
+          postalEgBad: "Refusée : VALIDATION_INVALID_FORMAT. Quatre chiffres, ce n'est pas cinq.",
+          postalUsOk: "Acceptée. Les formes à cinq chiffres et ZIP+4 sont toutes deux valides.",
+          postalGbOk: "Acceptée. Le format britannique est comparé quelle que soit la casse, avec ou sans son espace.",
+          postalCaOk: "Acceptée, y compris les véritables exclusions de lettres qu'applique Postes Canada.",
+          exPostalEg: "11511, avec le paramètre EG",
+          exPostalEgBad: "1151, avec le paramètre EG",
+          exPostalUsPlus4: "90210-1234, avec le paramètre US",
+          exPostalGb: "SW1A 1AA, avec le paramètre GB",
+          exPostalCa: "K1A 0B1, avec le paramètre CA",
+
+          numericRangeTitle: "Plage numérique",
+          numericRangeFor:
+            "Pour un nombre à l'intérieur de bornes que vous définissez, sur un champ Text plutôt que Number — un numéro de maillot, une taille d'effectif, un nombre de maillots.",
+          numericRangeChecks:
+            "La valeur doit s'analyser comme un nombre et se situer à l'intérieur de la plage. Le paramètre est deux bornes séparées par une virgule ; laisser un côté vide rend cette extrémité ouverte, mais laisser les deux vides est refusé, car une plage qui accepte tout revient au même qu'attacher aucun validateur.",
+          numericOk: "Acceptée.",
+          numericOut: "Refusée : VALIDATION_RANGE.",
+          numericNotANumber: "Refusée : VALIDATION_RANGE. Une valeur qui n'est pas un nombre ne peut pas se situer à l'intérieur d'une plage.",
+          numericOpenOk: "Acceptée. Une borne supérieure ouverte signifie n'importe quel nombre égal ou supérieur à la borne inférieure.",
+          numericBothBlank:
+            "Refusée à la définition, en expliquant que le validateur a besoin d'au moins une borne.",
+          exNumeric50: "50, avec le paramètre 1,100",
+          exNumeric150: "150, avec le paramètre 1,100",
+          exNumericText: "\"fifty\", avec le paramètre 1,100",
+          exNumericOpen: "5000, avec le paramètre 1,",
+          exNumericBothBlank: "Le paramètre , avec les deux côtés vides",
+
+          lengthRangeTitle: "Plage de longueur",
+          lengthRangeFor:
+            "Pour un texte devant avoir une certaine longueur — un code à deux lettres, une référence d'au moins huit caractères.",
+          lengthRangeChecks:
+            "Le nombre de caractères doit se situer à l'intérieur de la plage. Le paramètre est deux nombres de caractères séparés par une virgule, et chaque côté peut être laissé vide pour une extrémité ouverte. Cette vérification produit deux codes distincts plutôt qu'un seul, afin de distinguer trop court de trop long.",
+          lengthOk: "Acceptée.",
+          lengthTooShort: "Refusée : VALIDATION_MIN_LENGTH, en nommant le minimum.",
+          lengthTooLong: "Refusée : VALIDATION_MAX_LENGTH, en nommant le maximum.",
+          exLength10: "« Alexandria » — 10 caractères, avec le paramètre 2,50",
+          exLength1: "« A » — 1 caractère, avec le paramètre 2,50",
+          exLength80: "Une valeur de 80 caractères, avec le paramètre 2,50",
+
+          oneOfListTitle: "Une valeur d'une liste",
+          oneOfListFor:
+            "Pour un ensemble fermé de réponses sur un champ Text. Si l'ensemble fermé est tout l'enjeu du champ, un champ Select est généralement le meilleur choix — mais celui-ci existe pour le cas où vous voulez le comportement d'un validateur sur un champ Text.",
+          oneOfListChecks:
+            "La valeur doit correspondre exactement à l'une des lignes de la liste que vous avez configurée, une valeur par ligne. La comparaison est sensible à la casse.",
+          oneOfOk: "Acceptée.",
+          oneOfCase: "Refusée : VALIDATION_INVALID_FORMAT. La comparaison est sensible à la casse.",
+          oneOfUnknown: "Refusée : VALIDATION_INVALID_FORMAT. La valeur ne figure pas dans la liste.",
+
+          containsTitle: "Contient un texte",
+          containsFor:
+            "Pour une valeur devant inclure un marqueur quelque part en son sein — un préfixe de club, une étiquette de saison, un code de département.",
+          containsChecks: "La valeur doit contenir le texte littéral que vous avez configuré, comparé de façon sensible à la casse.",
+          containsOk: "Acceptée, avec le paramètre FC-.",
+          containsCase: "Refusée : VALIDATION_INVALID_FORMAT. La comparaison respecte la casse.",
+          containsMissing: "Refusée : VALIDATION_INVALID_FORMAT. Le marqueur est absent.",
+
+          startsWithTitle: "Commence par un texte",
+          startsWithFor:
+            "Pour une valeur devant commencer par un préfixe — un indicatif de pays, un code d'agence, un radical de référence fixe.",
+          startsWithChecks: "La valeur doit commencer par le texte littéral que vous avez configuré, comparé de façon sensible à la casse.",
+          startsOk: "Acceptée, avec le paramètre EG-.",
+          startsWrongPlace:
+            "Refusée : VALIDATION_INVALID_FORMAT. Le texte est présent mais pas au début — utilisez Contains Text si la position n'a pas d'importance.",
+          startsCase: "Refusée : VALIDATION_INVALID_FORMAT. La comparaison respecte la casse.",
+
+          postalCountriesTitle: "Les sept pays de Postal Code",
+          postalCountriesIntro:
+            "Postal Code fournit des formats réels et documentés pour exactement sept pays, et le paramètre est une liste déroulante plutôt que du texte libre, donc aucun autre pays ne peut être choisi depuis le formulaire.",
+          thCountry: "Pays",
           thFormat: "Format",
-          thValidExample: "Valid example",
-          fmtEg: "Exactly five digits",
-          fmtSa: "Five digits, optionally a hyphen and a four-digit extension",
-          fmtUs: "A five-digit ZIP, optionally a hyphen and a four-digit extension",
-          fmtGb: "The standard UK postcode shape, either case, space optional",
-          fmtDe: "Exactly five digits, leading zero allowed",
-          fmtFr: "Exactly five digits",
-          fmtCa: "The A1A 1A1 shape, with Canada Post's real letter exclusions applied",
-          uaeTitle: "The United Arab Emirates is deliberately absent",
-          uaeContent: "The UAE has no national postal-code system, so there is no real format to check a value against — strict or loose. It is not a missing entry waiting to be added: attempting to use it is refused at definition time with its own explanatory message, distinct from the generic unsupported-country message you would get for a typo, telling you to leave the field without a validator instead. The dropdown never offers it.",
-          attachTitle: "Rejections when attaching a validator",
-          attachIntro: "These all happen at definition time, before any value is ever saved. Several are only reachable from a request that bypasses the form, because the form does not offer the invalid combination in the first place.",
+          thValidExample: "Exemple valide",
+          fmtEg: "Exactement cinq chiffres",
+          fmtSa: "Cinq chiffres, éventuellement un trait d'union et une extension de quatre chiffres",
+          fmtUs: "Un ZIP à cinq chiffres, éventuellement un trait d'union et une extension de quatre chiffres",
+          fmtGb: "La forme standard du code postal britannique, quelle que soit la casse, espace facultatif",
+          fmtDe: "Exactement cinq chiffres, zéro de tête autorisé",
+          fmtFr: "Exactement cinq chiffres",
+          fmtCa: "La forme A1A 1A1, avec les véritables exclusions de lettres de Postes Canada appliquées",
+          uaeTitle: "Les Émirats arabes unis sont délibérément absents",
+          uaeContent:
+            "Les Émirats arabes unis n'ont aucun système de code postal national, il n'existe donc aucun format réel auquel comparer une valeur — ni strict, ni permissif. Ce n'est pas une entrée manquante en attente d'ajout : tenter de l'utiliser est refusé dès la définition avec son propre message explicatif, distinct du message générique de pays non pris en charge que vous obtiendriez pour une faute de frappe, vous indiquant de laisser plutôt le champ sans validateur. La liste déroulante ne le propose jamais.",
+
+          attachTitle: "Refus à l'attachement d'un validateur",
+          attachIntro:
+            "Tous ces cas surviennent à la définition, avant qu'aucune valeur ne soit jamais enregistrée. Plusieurs ne sont accessibles que depuis une requête qui contourne le formulaire, car le formulaire ne propose pas la combinaison invalide en premier lieu.",
           thSituation: "Situation",
-          thWhatYouSee: "What you see",
-          attNonText: "A validator on a field that is not Text",
-          attNonTextMsg: "Refused, naming the value type: a validator can only be attached to a Text field.",
-          attNoParam: "A parameterised validator with a blank setting",
-          attNoParamMsg: "Refused, naming the validator: it requires a parameter.",
-          attExtraParam: "A setting on one of the seven that take none",
-          attExtraParamMsg: "Refused, naming the validator: it does not accept a parameter.",
-          attBadRange: "A malformed range setting",
-          attBadRangeMsg: "Refused, explaining that two comma-separated bounds are needed, that either side may be blank, and that the lower bound must not exceed the upper one.",
-          attNoBound: "A range setting with both sides blank",
-          attNoBoundMsg: "Refused, explaining that a parameter with both sides blank would accept every value, which is the same as attaching no validator at all.",
-          attUnsupportedCountry: "A Postal Code country that is not one of the seven",
-          attUnsupportedCountryMsg: "Refused, naming the country and listing the seven supported ones: EG, SA, US, GB, DE, FR, CA.",
-          attUae: "Postal Code with AE",
-          attUaeMsg: "Refused with its own dedicated message, explaining that the UAE has no national postal-code system and that the field should be left without a validator instead.",
-          codesTitle: "Validator error codes",
-          codesIntro: "Every validator rejection is an HTTP 422, never a 500. If a validator failure ever produces a 500, that is a defect worth reporting — each one is written to refuse cleanly.",
+          thWhatYouSee: "Ce que vous voyez",
+          attNonText: "Un validateur sur un champ qui n'est pas Text",
+          attNonTextMsg:
+            "Refusée, en nommant le type de valeur : un validateur ne peut être attaché qu'à un champ Text.",
+          attNoParam: "Un validateur paramétré avec un paramètre vide",
+          attNoParamMsg: "Refusée, en nommant le validateur : il exige un paramètre.",
+          attExtraParam: "Un paramètre sur l'un des sept qui n'en acceptent aucun",
+          attExtraParamMsg: "Refusée, en nommant le validateur : il n'accepte aucun paramètre.",
+          attBadRange: "Un paramètre de plage mal formé",
+          attBadRangeMsg:
+            "Refusée, en expliquant que deux bornes séparées par une virgule sont nécessaires, que chaque côté peut être vide, et que la borne inférieure ne doit pas dépasser la borne supérieure.",
+          attNoBound: "Un paramètre de plage avec les deux côtés vides",
+          attNoBoundMsg:
+            "Refusée, en expliquant qu'un paramètre dont les deux côtés sont vides accepterait toute valeur, ce qui revient au même qu'attacher aucun validateur.",
+          attUnsupportedCountry: "Un pays de Postal Code qui n'est pas l'un des sept",
+          attUnsupportedCountryMsg:
+            "Refusée, en nommant le pays et en listant les sept pris en charge : EG, SA, US, GB, DE, FR, CA.",
+          attUae: "Postal Code avec AE",
+          attUaeMsg:
+            "Refusée avec son propre message dédié, expliquant que les Émirats arabes unis n'ont aucun système de code postal national et que le champ devrait plutôt rester sans validateur.",
+
+          codesTitle: "Codes d'erreur des validateurs",
+          codesIntro:
+            "Chaque refus de validateur est une réponse HTTP 422, jamais un 500. Si un échec de validateur produit un jour un 500, c'est un défaut qui mérite d'être signalé — chacun est écrit pour refuser proprement.",
           thCode: "Code",
-          thWhenItFires: "When it fires",
-          codeInvalidFormat: "Most validator failures: a shape that does not match, a check digit that does not verify, a value that is not on a One of a List list, a Contains or Starts With marker that is absent, or a postal code that does not match its country.",
-          codeRange: "Numeric Range — the value is outside the bounds, or is not a number at all.",
-          codeMaxLength: "The global 4,000-character Text cap, a validator's own shorter cap, or Length Range's upper bound.",
-          codeMinLength: "Length Range's lower bound.",
-          codeRequired: "The field is Required and the value is empty. This fires before any validator runs, so a whitespace-only value on a required field gets the generic required message rather than a validator-specific one.",
-          codesInfoTitle: "Messages name the key, not the label",
-          codesInfoContent: "A validator message quotes the field's machine key — \"'shirt_size' is not a valid IBAN.\" — rather than its display label. Match on the key when you are tracing a failure.",
-          limitsTitle: "What validators do not do",
-          limit1: "They only ever attach to a Text field. There is no way to put a format check on any of the other eighteen types.",
-          limit2: "They never re-check values that were already saved. Attaching a validator to a field that holds answers leaves those answers exactly as they are, including ones that would now fail, until somebody re-enters and saves them.",
-          limit3: "They never run on an empty value. On a field that is not Required, a value of nothing but spaces is stored as cleared with no validator error at all — mark the field Required if a blank answer should be refused.",
-          limit4: "They cannot be searched or filtered for. There is no view of every field using IBAN; the only way to see which validator a field has is to open that field.",
-          limit5: "They have no browsable reference inside the product. To see the list of validators you open a Text field's definition form and read the dropdown.",
-          limit6: "They cannot be written by hand. There is no regular-expression or pattern entry anywhere, by design, and the 13 built-in checks are the complete set.",
+          thWhenItFires: "Quand il se déclenche",
+          codeInvalidFormat:
+            "La plupart des échecs de validateur : une forme qui ne correspond pas, un chiffre de contrôle qui ne se vérifie pas, une valeur absente d'une liste One of a List, un marqueur Contains ou Starts With absent, ou un code postal qui ne correspond pas à son pays.",
+          codeRange: "Numeric Range — la valeur est hors des bornes, ou n'est pas un nombre du tout.",
+          codeMaxLength:
+            "Le plafond global de 4 000 caractères de Text, le propre plafond plus court d'un validateur, ou la borne supérieure de Length Range.",
+          codeMinLength: "La borne inférieure de Length Range.",
+          codeRequired:
+            "Le champ est Obligatoire et la valeur est vide. Ceci se déclenche avant qu'aucun validateur ne s'exécute, donc une valeur composée uniquement d'espaces sur un champ obligatoire reçoit le message générique d'obligation plutôt qu'un message propre au validateur.",
+          codesInfoTitle: "Les messages nomment la clé, pas le libellé",
+          codesInfoContent:
+            "Un message de validateur cite la clé machine du champ — « 'shirt_size' is not a valid IBAN. » — plutôt que son libellé affiché. Faites correspondre sur la clé lorsque vous tracez un échec.",
+
+          limitsTitle: "Ce que les validateurs ne font pas",
+          limit1:
+            "Ils ne s'attachent jamais qu'à un champ Text. Il n'existe aucun moyen de poser une vérification de format sur aucun des vingt et un autres types.",
+          limit2:
+            "Ils ne revérifient jamais les valeurs déjà enregistrées. Attacher un validateur à un champ qui contient des réponses laisse ces réponses exactement telles quelles, y compris celles qui échoueraient désormais, jusqu'à ce que quelqu'un les ressaisisse et les enregistre.",
+          limit3:
+            "Ils ne s'exécutent jamais sur une valeur vide. Sur un champ non Obligatoire, une valeur composée uniquement d'espaces est stockée comme effacée sans aucune erreur de validateur — marquez le champ Obligatoire si une réponse vide doit être refusée.",
+          limit4:
+            "Ils ne peuvent être ni recherchés ni filtrés. Il n'existe aucune vue de tous les champs utilisant IBAN ; le seul moyen de voir quel validateur porte un champ est d'ouvrir ce champ.",
+          limit5:
+            "Ils n'ont aucune référence consultable à l'intérieur du produit. Pour voir la liste des validateurs, vous ouvrez le formulaire de définition d'un champ Text et lisez la liste déroulante.",
+          limit6:
+            "Ils ne peuvent pas être écrits à la main. Il n'existe nulle part de saisie d'expression régulière ou de motif, par conception, et les 13 vérifications intégrées forment l'ensemble complet.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Sécurité au niveau du champ
+        // ═══════════════════════════════════════════════════
         security: {
-          title: "Field-Level Security",
-          description: "Hiding a specific champ personnalisé from the people holding a role or user group: how it is configured, what they see, why their saves do not destroy hidden values, and why required and restricted cannot be combined.",
-          intro: "Field-level security lets you hide a named field from the people holding a particular role or user group. It applies to champs personnalisés exactly as it does to a screen's built-in fields — a field an administrator has deliberately restricted is not readable through the custom-field API either. This is the mechanism to reach for when a value genuinely must not be seen.",
-          notSensitivityTitle: "This is not the Sensitivity setting",
-          notSensitivityContent: "A field definition's Sensitivity setting — Unclassified, Internal, Confidential, Restricted — is a label for reporting and export handling. It does not restrict access to anything, and the two mechanisms are entirely unconnected. If you want a field hidden, configure it here, on the role or user group, not on the field definition.",
-          whereTitle: "Where restrictions are configured",
-          whereIntro: "Restrictions are set on the thing that grants access, not on the field. There are two places, and they add together.",
-          where1: "Per role: the restricted-fields list on a permission, in that role's permission dialog.",
-          where2: "Per user group: the group's own restrictions.",
-          whereKeyed: "Field names are typed by hand, and they are keyed by the permission resource that already guards the record — employees, party-people — rather than by record type. The details below are worth reading once before you configure anything.",
+          title: "Sécurité au niveau du champ",
+          description:
+            "Masquer un champ personnalisé précis aux personnes détenant un rôle ou un groupe d'utilisateurs : comment cela se configure, ce qu'elles voient, pourquoi leurs enregistrements ne détruisent pas les valeurs masquées, et pourquoi obligatoire et restreint ne peuvent pas être combinés.",
+          intro:
+            "La sécurité au niveau du champ vous permet de masquer un champ nommé aux personnes détenant un rôle ou un groupe d'utilisateurs particulier. Elle s'applique aux champs personnalisés exactement comme aux champs intégrés d'un écran — un champ qu'un administrateur a délibérément restreint n'est pas non plus lisible via l'API des champs personnalisés. C'est le mécanisme vers lequel se tourner quand une valeur ne doit véritablement pas être vue.",
+          notSensitivityTitle: "Ce n'est pas le paramètre Sensitivity",
+          notSensitivityContent:
+            "Le paramètre Sensitivity d'une définition de champ — Unclassified, Internal, Confidential, Restricted — est un libellé pour le reporting et la gestion des exports. Il ne restreint l'accès à rien, et les deux mécanismes sont totalement indépendants. Si vous voulez qu'un champ soit masqué, configurez-le ici, sur le rôle ou le groupe d'utilisateurs, pas sur la définition du champ.",
+
+          whereTitle: "Où les restrictions se configurent",
+          whereIntro:
+            "Les restrictions se définissent sur ce qui accorde l'accès, pas sur le champ. Il existe deux endroits, et ils s'additionnent.",
+          where1:
+            "Par rôle : la liste des champs restreints sur une permission, dans la boîte de dialogue de permissions de ce rôle.",
+          where2: "Par groupe d'utilisateurs : les propres restrictions du groupe.",
+          whereKeyed:
+            "Les noms de champ sont saisis à la main, et ils sont indexés par la ressource de permission qui protège déjà l'enregistrement — employees, party-people — plutôt que par type d'enregistrement. Les détails ci-dessous méritent d'être lus une fois avant de configurer quoi que ce soit.",
           thAspect: "Aspect",
-          thBehaviour: "Behaviour",
-          aspSources: "Two sources",
-          behSources: "A role restriction and a group restriction union together. A group can never widen what a role has restricted, and there is no override in either direction.",
-          aspCase: "Case",
-          behCase: "Matching ignores case, so Salary, salary and SALARY are the same field.",
-          aspResource: "Keying",
-          behResource: "Restrictions are keyed by permission resource, the same resource that guards the record itself — not by entity type and not by field group.",
-          aspBuiltIn: "Scope of the mechanism",
-          behBuiltIn: "The same mechanism covers a screen's built-in fields and its champs personnalisés. One restricted-fields list, one behaviour.",
+          thBehaviour: "Comportement",
+          aspSources: "Deux sources",
+          behSources:
+            "Une restriction de rôle et une restriction de groupe s'additionnent par union. Un groupe ne peut jamais élargir ce qu'un rôle a restreint, et il n'existe de dérogation dans aucun des deux sens.",
+          aspCase: "Casse",
+          behCase: "La comparaison ignore la casse, donc Salary, salary et SALARY désignent le même champ.",
+          aspResource: "Indexation",
+          behResource:
+            "Les restrictions sont indexées par ressource de permission, la même ressource qui protège l'enregistrement lui-même — ni par type d'entité, ni par groupe de champs.",
+          aspBuiltIn: "Portée du mécanisme",
+          behBuiltIn:
+            "Le même mécanisme couvre les champs intégrés d'un écran et ses champs personnalisés. Une seule liste de champs restreints, un seul comportement.",
           aspExempt: "Exemption",
-          behExempt: "The platform system administrator is always exempt and always sees every field. That is the same exemption the built-in mechanism already makes.",
-          seesTitle: "What a restricted person sees",
-          seesIntro: "Nothing at all. The field is not greyed out, not blank, not marked as hidden — the entry is omitted from the record form and from the record list entirely.",
-          seesIndistinguishable: "An omitted field is indistinguishable from a field that was never defined. That is deliberate: showing a placeholder would tell somebody there is a value they are not allowed to see, which is itself information. It also means a colleague reporting that a field is missing may be describing a restriction rather than a fault — check the role and group restrictions before you go looking for a defect.",
-          savingTitle: "Saving around a hidden field",
-          savingIntro: "This is the part worth understanding properly, because the obvious implementation would destroy data. When somebody saves a record, the save replaces the whole set of custom-field values at once — so a field absent from the request would normally mean \"clear it\".",
-          savingWhy: "A restricted field is absent for a completely different reason: the person was never sent it. The product tells those two cases apart, and leaves a restricted field's stored value exactly as it was. Somebody who cannot see a value can no longer erase it by editing the record around it.",
-          savingInfoTitle: "The practical consequence",
-          savingInfoContent: "You can safely give somebody edit access to a record while restricting one sensitive field on it. Their ordinary edits go through, and the value they cannot see survives untouched.",
-          writingTitle: "Writing a restricted field on purpose",
-          writingIntro: "An attempt to write a restricted field explicitly is refused outright, and nothing else in the same save is applied either. Rejecting the whole request rather than quietly dropping the one field is deliberate: a save reported as successful but silently missing a field is the harder failure to notice.",
-          writingProbe: "The refusal also fires when the submitted value happens to equal the stored one, so nobody can work out a hidden value by testing which submissions are accepted.",
-          thAttempt: "Attempt",
-          thResult: "Result",
-          attSaveOthers: "Saving the record, changing only fields you can see",
-          resSaveOthers: "Succeeds. The restricted field's stored value is left exactly as it was, not cleared.",
-          attWriteRestricted: "Sending a value for the restricted field",
-          resWriteRestricted: "Refused with a message naming the field, and the record is not saved at all — not even the fields you were allowed to change.",
-          attWriteSameValue: "Sending the restricted field's current value",
-          resWriteSameValue: "Refused the same way. The result does not depend on whether your guess was right, so it cannot be used to probe the value.",
-          attReadApi: "Reading the record's custom-field values directly",
-          resReadApi: "The restricted field is absent from the response. This was the gap that field-level security used to leave open for champs personnalisés specifically, and it is closed.",
-          requiredTitle: "Required and restricted cannot be combined",
-          requiredIntro: "A required field can never be filled in by somebody who is not allowed to see it — they would be unable to save the record at all. The product therefore refuses the combination, in whichever order you attempt it.",
-          thSituation: "Attempt",
-          thWhatYouSee: "What you see",
-          reqRestrictRequired: "Restricting a field that is currently required",
-          reqRestrictRequiredMsg: "Refused, naming the field.",
-          reqRequireRestricted: "Marking a field required while a role or group restricts it",
-          reqRequireRestrictedMsg: "Refused, naming the field and telling you to remove the restriction first or leave the field optional.",
-          requiredInfoTitle: "Order does not help",
-          requiredInfoContent: "Doing the two operations in the other order does not get around the rule. Both directions are checked, so there is no sequence that leaves a field both required and restricted.",
-          reachTitle: "Where else a restriction reaches",
-          reachIntro: "A restriction is not only a form-level thing. It applies consistently everywhere the field's values could otherwise surface.",
-          reach1: "The record form: the field is omitted.",
-          reach2: "The record list: the column is omitted.",
-          reach3: "The custom-field value API: the field is absent from the response, and refused on write.",
-          reach4: "The definitions spreadsheet export: restricted columns are absent from the file rather than present and blank.",
-          exampleTitle: "A worked example",
-          exampleIntro: "Restricting a salary field on a staff record, and confirming it behaves.",
-          e1Title: "Define the field and give it a value",
-          e1Content: "As an administrator who can see everything, define a champ personnalisé with the key salary on the staff record type, and set a value on one record.",
-          e2Title: "Restrict it on a role",
-          e2Content: "Add salary to the restricted-fields list on the relevant permission in a role, then sign in as somebody holding only that role.",
-          e3Title: "Confirm it is absent, not blank",
-          e3Content: "Open the same staff record. The Salary field should not be on the form at all, and there should be no Salary column in the staff list. If you see it empty rather than missing, the restriction is not applied.",
-          e4Title: "Save the record and check the value survived",
-          e4Content: "As that restricted user, change something else on the record and save. Then, as the unrestricted administrator, reopen the record and confirm the salary is still there. This is the case that would destroy data in a naive implementation.",
-          e5Title: "Confirm the two rules that protect the configuration",
-          e5Content: "Try to mark salary required while the restriction is in place — refused. Remove the restriction, mark it required, then try to restrict it again — also refused. Finally, put the same key in a user group's restrictions instead of a role's and confirm it behaves identically.",
-          proofTitle: "One honest caveat about verification",
-          proofContent: "Every authorisation behaviour described on this page is enforced by real, unit-tested guards, but there is currently no end-to-end automated test proving it through the full HTTP stack. That makes manual verification genuinely informative here rather than redundant — if you are commissioning a workspace where a field must not be seen, check it by hand once.",
+          behExempt:
+            "L'administrateur système de la plateforme est toujours exempté et voit toujours chaque champ. C'est la même exemption que fait déjà le mécanisme intégré.",
+
+          seesTitle: "Ce que voit une personne restreinte",
+          seesIntro:
+            "Rien du tout. Le champ n'est ni grisé, ni vide, ni marqué comme masqué — l'entrée est omise du formulaire d'enregistrement et de la liste des enregistrements, entièrement.",
+          seesIndistinguishable:
+            "Un champ omis est indissociable d'un champ qui n'a jamais été défini. C'est délibéré : afficher un espace réservé indiquerait à quelqu'un qu'une valeur existe sans qu'il soit autorisé à la voir, ce qui est déjà une information. Cela signifie aussi qu'un collègue signalant qu'un champ manque décrit peut-être une restriction plutôt qu'un défaut — vérifiez les restrictions de rôle et de groupe avant de partir à la recherche d'un bogue.",
+
+          savingTitle: "Enregistrer autour d'un champ masqué",
+          savingIntro:
+            "C'est la partie qui mérite d'être bien comprise, car l'implémentation évidente détruirait des données. Quand quelqu'un enregistre un enregistrement, l'enregistrement remplace tout l'ensemble des valeurs de champs personnalisés d'un coup — donc un champ absent de la requête signifierait normalement « l'effacer ».",
+          savingWhy:
+            "Un champ restreint est absent pour une raison totalement différente : il n'a jamais été envoyé à cette personne. Le produit distingue ces deux cas, et laisse la valeur stockée d'un champ restreint exactement telle qu'elle était. Quelqu'un qui ne peut pas voir une valeur ne peut plus l'effacer en modifiant l'enregistrement autour d'elle.",
+          savingInfoTitle: "La conséquence pratique",
+          savingInfoContent:
+            "Vous pouvez en toute sécurité donner à quelqu'un un accès de modification sur un enregistrement tout en restreignant un champ sensible dessus. Ses modifications ordinaires passent, et la valeur qu'il ne peut pas voir survit intacte.",
+
+          writingTitle: "Écrire délibérément dans un champ restreint",
+          writingIntro:
+            "Une tentative d'écrire explicitement dans un champ restreint est purement refusée, et rien d'autre dans le même enregistrement n'est appliqué non plus. Rejeter toute la requête plutôt que de silencieusement ignorer ce seul champ est délibéré : un enregistrement rapporté comme réussi mais manquant silencieusement un champ est l'échec le plus difficile à remarquer.",
+          writingProbe:
+            "Le refus se déclenche aussi quand la valeur soumise se trouve être égale à celle stockée, de sorte que personne ne peut deviner une valeur masquée en testant quelles soumissions sont acceptées.",
+          thAttempt: "Tentative",
+          thResult: "Résultat",
+          attSaveOthers: "Enregistrer la fiche en ne changeant que les champs que vous pouvez voir",
+          resSaveOthers:
+            "Réussit. La valeur stockée du champ restreint est laissée exactement telle quelle, pas effacée.",
+          attWriteRestricted: "Envoyer une valeur pour le champ restreint",
+          resWriteRestricted:
+            "Refusé avec un message nommant le champ, et l'enregistrement n'est pas du tout sauvegardé — pas même les champs que vous étiez autorisé à changer.",
+          attWriteSameValue: "Envoyer la valeur actuelle du champ restreint",
+          resWriteSameValue:
+            "Refusé de la même façon. Le résultat ne dépend pas de la justesse de votre supposition, il ne peut donc pas servir à sonder la valeur.",
+          attReadApi: "Lire directement les valeurs de champs personnalisés de l'enregistrement",
+          resReadApi:
+            "Le champ restreint est absent de la réponse. C'était la brèche que la sécurité au niveau du champ laissait ouverte spécifiquement pour les champs personnalisés, et elle est fermée.",
+
+          requiredTitle: "Obligatoire et restreint ne peuvent pas être combinés",
+          requiredIntro:
+            "Un champ obligatoire ne peut jamais être rempli par quelqu'un qui n'est pas autorisé à le voir — il lui serait impossible d'enregistrer la fiche du tout. Le produit refuse donc la combinaison, quel que soit l'ordre dans lequel vous la tentez.",
+          thSituation: "Tentative",
+          thWhatYouSee: "Ce que vous voyez",
+          reqRestrictRequired: "Restreindre un champ actuellement obligatoire",
+          reqRestrictRequiredMsg: "Refusée, en nommant le champ.",
+          reqRequireRestricted: "Marquer un champ obligatoire alors qu'un rôle ou un groupe le restreint",
+          reqRequireRestrictedMsg:
+            "Refusée, en nommant le champ et en vous invitant à retirer d'abord la restriction ou à laisser le champ facultatif.",
+          requiredInfoTitle: "L'ordre n'aide pas",
+          requiredInfoContent:
+            "Effectuer les deux opérations dans l'autre ordre ne contourne pas la règle. Les deux sens sont vérifiés, il n'existe donc aucune séquence qui laisse un champ à la fois obligatoire et restreint.",
+
+          reachTitle: "Où d'autre une restriction s'étend",
+          reachIntro:
+            "Une restriction n'est pas seulement une affaire de formulaire. Elle s'applique de façon cohérente partout où les valeurs du champ pourraient autrement apparaître.",
+          reach1: "Le formulaire d'enregistrement : le champ est omis.",
+          reach2: "La liste des enregistrements : la colonne est omise.",
+          reach3:
+            "L'API des valeurs de champs personnalisés : le champ est absent de la réponse, et refusé à l'écriture.",
+          reach4:
+            "L'export en feuille de calcul des définitions : les colonnes restreintes sont absentes du fichier plutôt que présentes et vides.",
+
+          exampleTitle: "Un exemple concret",
+          exampleIntro:
+            "Restreindre un champ salaire sur un enregistrement de personnel, et confirmer son comportement.",
+          e1Title: "Définissez le champ et donnez-lui une valeur",
+          e1Content:
+            "En tant qu'administrateur pouvant tout voir, définissez un champ personnalisé avec la clé salary sur le type d'enregistrement personnel, et définissez une valeur sur un enregistrement.",
+          e2Title: "Restreignez-le sur un rôle",
+          e2Content:
+            "Ajoutez salary à la liste des champs restreints sur la permission concernée dans un rôle, puis connectez-vous en tant que quelqu'un détenant uniquement ce rôle.",
+          e3Title: "Confirmez qu'il est absent, pas vide",
+          e3Content:
+            "Ouvrez le même enregistrement de personnel. Le champ Salary ne devrait pas du tout figurer sur le formulaire, et il ne devrait y avoir aucune colonne Salary dans la liste du personnel. Si vous le voyez vide plutôt qu'absent, la restriction n'est pas appliquée.",
+          e4Title: "Enregistrez la fiche et vérifiez que la valeur a survécu",
+          e4Content:
+            "En tant qu'utilisateur restreint, changez autre chose sur l'enregistrement et enregistrez. Puis, en tant qu'administrateur non restreint, rouvrez l'enregistrement et confirmez que le salaire est toujours là. C'est le cas qui détruirait des données dans une implémentation naïve.",
+          e5Title: "Confirmez les deux règles qui protègent la configuration",
+          e5Content:
+            "Essayez de marquer salary comme obligatoire pendant que la restriction est en place — refusé. Retirez la restriction, marquez-le obligatoire, puis essayez de le restreindre à nouveau — également refusé. Enfin, placez la même clé dans les restrictions d'un groupe d'utilisateurs plutôt que d'un rôle, et confirmez qu'elle se comporte à l'identique.",
+          proofTitle: "Une réserve honnête sur la vérification",
+          proofContent:
+            "Chaque comportement d'autorisation décrit sur cette page est appliqué par de véritables garde-fous testés unitairement, mais il n'existe actuellement aucun test automatisé de bout en bout le prouvant à travers toute la pile HTTP. Cela rend la vérification manuelle véritablement informative ici plutôt que redondante — si vous mettez en service un espace de travail où un champ ne doit pas être vu, vérifiez-le une fois à la main.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Gestion des champs
+        // ═══════════════════════════════════════════════════
         managing: {
-          title: "Managing Fields",
-          description: "Editing and retiring definitions, the change-history dialog, the usage and impact report, deleting without destroying data, the 18-column spreadsheet export, and the two read-only reference screens.",
-          intro: "Once fields exist, the Champs Personnalisés screen is where they are looked after: edited, retired, audited, measured and exported. This page covers each of those, and the two read-only reference screens that answer \"what types exist\" and \"what record types can I attach to\".",
-          rowMenuTitle: "The row menu",
-          rowMenuIntro: "Every field in the list has a row menu with eight actions. Each needs its own permission, so a role may see some and not others.",
+          title: "Gestion des champs",
+          description:
+            "Modifier et retirer des définitions, la boîte de dialogue d'historique des changements, le rapport d'utilisation et d'impact, supprimer sans détruire de données, l'export en feuille de calcul à 18 colonnes, et les deux écrans de référence en lecture seule.",
+          intro:
+            "Une fois les champs créés, l'écran Champs personnalisés est l'endroit où on les entretient : modifiés, retirés, audités, mesurés et exportés. Cette page couvre chacun de ces points, ainsi que les deux écrans de référence en lecture seule qui répondent à « quels types existent » et « à quels types d'enregistrement puis-je rattacher un champ ».",
+
+          rowMenuTitle: "Le menu de ligne",
+          rowMenuIntro:
+            "Chaque champ de la liste possède un menu de ligne avec huit actions. Chacune nécessite sa propre permission, donc un rôle peut en voir certaines et pas d'autres.",
           thAction: "Action",
-          thDoes: "What it does",
+          thDoes: "Ce qu'elle fait",
           thNeeds: "Permission",
-          actEdit: "Opens the definition form, populated from the field's full detail.",
-          actOptionSets: "Attaches, configures or detaches a shared versioned jeu d'options for Select or MultiSelect fields.",
-          actVisibilityRules: "Opens the conditional visibility rule dialog to configure show-or-hide rules evaluated against sibling fields.",
-          actConvertType: "Converts the field's value type with preflight dry-run validation, lossy confirmation safeguards and 1-click snapshot rollback.",
-          actVersions: "Opens the version history and drafts drawer to stage changes in an isolated draft before publishing to production.",
-          actHistory: "Lists every recorded change to the field's definition, newest first, with who and when.",
-          actUsage: "Reports how many answers the field holds, broken down by record type, and whether deleting it would destroy data.",
-          actDelete: "Deletes the definition — refused first if it holds answers, until you confirm explicitly.",
-          editTitle: "Editing a definition",
-          editIntro: "Editing opens the same form as creating, with the permanent settings shown but not editable: record type, key, value type and scope. Everything else can be changed, and the changes take effect on the next form somebody opens.",
-          editLoadFailure: "If the detail behind the Edit button fails to load, the form deliberately does not open, and you get a message instead. That is a safeguard rather than an inconvenience: the list row does not carry the options, the placeholders or the validator, so opening a form populated from it and saving would silently erase all three.",
-          editWarnTitle: "Two edits reach backwards",
-          editWarnContent: "Renaming an option changes what every existing record displays, because the option text is the stored answer. Attaching or changing a validator does not re-check answers already saved, so a field can hold values that its own current validator would refuse. Both are covered in detail on the Options and Validators pages.",
-          visibilityRulesTitle: "Règles de visibilité administration",
-          visibilityRulesIntro: "Règles de visibilité allow fields to be shown or hidden dynamically on record forms based on the values of sibling champs personnalisés on the same record type. When a rule is active, client-side forms and server-side validation evaluate the conditions deterministically.",
-          thOperator: "Operator",
-          thOperatorMeaning: "Condition evaluated",
-          thOperatorExample: "Example trigger",
-          opEquals: "Equals",
-          opEqualsMeaning: "The controlling field's value exactly matches the target value.",
-          opEqualsExample: "Show Kit Size when Staff Role equals Coach.",
-          opNotEquals: "Does not equal",
-          opNotEqualsMeaning: "The controlling field has any value other than the target value.",
-          opNotEqualsExample: "Show Dietary Requirements when Meal Plan does not equal None.",
-          opIsEmpty: "Is empty",
-          opIsEmptyMeaning: "The controlling field holds no stored answer or null.",
-          opIsEmptyExample: "Show Explanation when ID Number is empty.",
-          opIsNotEmpty: "Is not empty",
-          opIsNotEmptyMeaning: "The controlling field has any non-null, non-empty value.",
-          opIsNotEmptyExample: "Show Expiry Date when Passport Number is not empty.",
-          opIn: "In set",
-          opInMeaning: "The controlling field's answer is one of multiple comma-separated values.",
-          opInExample: "Show Specialization when Department in Medical, Coaching, Analytics.",
-          opNotIn: "Not in set",
-          opNotInMeaning: "The controlling field's answer is none of the listed values.",
-          opNotInExample: "Show General Notes when Category not in VIP, Board.",
-          opGreaterThan: "Greater than",
-          opGreaterThanMeaning: "The numeric or date answer strictly exceeds the threshold.",
-          opGreaterThanExample: "Show Clearance Details when Security Level greater than 3.",
-          opLessThan: "Less than",
-          opLessThanMeaning: "The numeric or date answer is strictly below the threshold.",
-          opLessThanExample: "Show Parental Consent when Age less than 18.",
-          visibilityRulesEvaluation: "Rules execute with deterministic priority. When multiple rules target the same field, Hide actions take precedence over Show actions. Hidden fields are omitted from mandatory validation checks, preventing unfulfillable validation blockages.",
-          visibilityRulesTipTitle: "Conditioning on sibling fields only",
-          visibilityRulesTipContent: "A rule can only reference sibling fields defined on the exact same entity type. Cross-entity conditions (e.g. checking a tenant setting from a person field) are not permitted to preserve single-record transactional integrity.",
-          conversionTitle: "Value-type conversion and dry-run rollback",
-          conversionIntro: "Converting a field's value type allows changing data representations without dropping existing fields or re-entering data. Conversions are categorized into three safety classes.",
-          thConversionClass: "Safety class",
-          thConversionPairs: "Supported type pairs",
-          thConversionRisk: "Data preservation guarantee",
-          classLossless: "Sans perte (Zero-risk)",
-          classLosslessPairs: "Text → LongText, Number → Text, Date → DateTime, Select → MultiSelect, Boolean → Text, Number → Decimal, Decimal → Text",
-          classLosslessRisk: "100% data fidelity preserved. All existing values parse directly into the target representation without truncation.",
-          classLossy: "Avec perte (Requires confirmation)",
-          classLossyPairs: "LongText → Text (truncates past 500 chars), DateTime → Date (drops time component)",
-          classLossyRisk: "Potential truncation or precision reduction. The modal requires explicit typed confirmation before proceeding.",
-          classIncompatible: "Incompatible (Blocked)",
-          classIncompatiblePairs: "EntityReference ↔ Text, UserReference ↔ Number, Complex JSON ↔ Boolean",
-          classIncompatibleRisk: "Blocked by the server engine. Conversions between structurally incompatible domain types are refused.",
-          conversionLossyWarnTitle: "Avec perte conversions alter data permanently",
-          conversionLossyWarnContent: "Truncating long text or dropping timestamps permanently reshapes historical records. Always run Usage & impact first to inspect how many records will be affected.",
-          conversionDryRunIntro: "Before executing any conversion, the server runs a complete dry-run audit against all stored values for the field. If even a single stored value fails conversion parsing (such as non-numeric text when converting to Number), the entire operation is safely refused with a conflict diagnosis.",
-          conversionRollbackTitle: "1-Click snapshot rollback",
-          conversionRollbackContent: "Every type conversion creates an immutable prior-value snapshot. If an unforeseen downstream issue occurs after converting, administrators can invoke 1-click rollback to restore the previous value type and exact stored values instantly.",
-          versionsTitle: "Field definition versions and drafts lifecycle",
-          versionsIntro: "Field definition versioning guarantees zero-downtime evolution. Administrators stage proposed changes in an isolated draft version, test them safely, and promote to production in one atomic transaction.",
-          thVersionStatus: "Status",
-          thVersionMeaning: "Lifecycle meaning",
-          thVersionActions: "Available actions",
-          vStatusDraft: "Draft",
-          vMeaningDraft: "An uncommitted, isolated working version. Not visible on production record forms.",
-          vActionsDraft: "Add options, edit validation, update règles de visibilité, Publish, Discard.",
-          vStatusPublished: "Published",
-          vMeaningPublished: "The active production version currently powering all record forms.",
-          vActionsPublished: "Create Draft (mints new working version), View History, Manage Rules.",
-          vStatusDeprecated: "Deprecated",
-          vMeaningDeprecated: "A former published version replaced by a newer published version.",
-          vActionsDeprecated: "Read-only audit record. Retained for historical record integrity.",
-          vStatusArchived: "Archived",
-          vMeaningArchived: "A retired version no longer active in any tenant scope.",
-          vActionsArchived: "Historical reference only.",
-          versionsPromotionIntro: "Promoting a draft to Published automatically deprecates the incumbent version in the same database transaction. The version number increments monotonically, and form caches are invalidated instantly across all connected clients.",
-          versionsRuleGuardTitle: "Draft rule loss protection",
-          versionsRuleGuardContent: "If a draft removes options or changes types referenced by active règles de visibilité, the publishing preflight refuses promotion until rules are reconciled, preventing broken conditional branches in production forms.",
-          retireTitle: "Retiring a field: deactivate or delete",
-          retireIntro: "These are not the same operation and the difference matters. If you are unsure, deactivate — it is the reversible one.",
-          deactivateTitle: "Turning Active off",
-          deactivate1: "The field stops being offered on create and edit forms",
-          deactivate2: "Every answer already stored is kept, untouched",
-          deactivate3: "It is reversible — turning Active back on restores the field as it was",
-          deactivate4: "It is recorded in history as Deactivated, and can be Reactivated later",
-          deleteColTitle: "Deleting the definition",
-          deleteCol1: "Refused on the first attempt if the field holds any answers",
-          deleteCol2: "Destroys those answers once the retention window passes, if you confirm",
-          deleteCol3: "Frees the key, so a new field could later reuse it — with none of the old answers",
-          deleteCol4: "Is recorded in history as Deleted, and may be Restored while it is recoverable",
-          historyTitle: "Definition history",
-          historyIntro: "The History entry in a field's row menu opens a dialog listing what has happened to that field's definition, newest first, with the person who did it and when. A change made by the system rather than a person is attributed to the system. Entries are paged, and the dialog says how many changes there are in total.",
-          thEvent: "Event",
-          thMeans: "What it means",
-          evCreated: "The field was defined.",
-          evUpdated: "Something on the definition changed — a label, a flag, the validator, the options.",
-          evDeactivated: "Active was turned off, retiring the field without touching its answers.",
-          evReactivated: "Active was turned back on.",
-          evDeleted: "The definition was deleted and is still recoverable.",
-          evRestored: "A deleted definition was brought back.",
-          evPurged: "The definition was permanently removed and is no longer recoverable. The dialog marks this one explicitly so it cannot be read as an ordinary delete.",
-          historyParts: "Each entry also says which part of the field it concerns, because a field is more than a single row.",
-          thPart: "Part",
-          partField: "The field itself.",
-          partDefinition: "The definition record behind it.",
-          partVersion: "A version of the definition.",
-          partOption: "One entry in the field's options list.",
-          partVisibilityRule: "A conditional show-or-hide rule attached to the field, managed via the Règles de Visibilité dialog.",
-          historyScopeTitle: "History covers the definition, never the answers",
-          historyScopeContent: "This dialog will not tell you who changed a particular person's nationality, and it is not meant to. Listing value changes here would turn it into a readable copy of everybody's field data, going around field-level security and every other visibility rule at once. Only definition-side changes are eligible, and the value-bearing records are excluded by name rather than by omission.",
-          historyUnavailableTitle: "If history says the module is unavailable",
-          historyUnavailableContent: "That is a deployment shape rather than a fault in the field: the audit store lives in another module, and this deployment is running without it. No history was recorded for that period either. It is one for whoever administers the deployment, not something you can fix from the screen. History on a global platform field is separately restricted to platform administrators, and shows a different message.",
-          usageTitle: "Usage and impact",
-          usageIntro: "The Usage & impact entry in the row menu reports what the field is actually carrying before you change or remove it. Read the whole dialog rather than one number.",
-          thReading: "What it shows",
-          readStoredValues: "Stored values",
-          readStoredValuesMeans: "How many answers exist for this field.",
-          readLegacyValues: "Values in the legacy store",
-          readLegacyValuesMeans: "Answers still held in the older storage from before the current value store. Counted separately so a migration in progress is visible rather than hidden.",
+          actEdit: "Ouvre le formulaire de définition, préempli à partir du détail complet du champ.",
+          actOptionSets:
+            "Attache, configure ou détache un jeu d'options partagé et versionné pour les champs Select ou MultiSelect.",
+          actVisibilityRules:
+            "Ouvre la boîte de dialogue de règles de visibilité conditionnelle pour configurer des règles d'affichage ou de masquage évaluées par rapport aux champs frères.",
+          actConvertType:
+            "Ouvre une boîte de dialogue pour convertir le type de valeur du champ : choisir une cible parmi les types vers lesquels il peut évoluer sans risque, confirmer si la conversion entraîne une perte de données, puis revenir en arrière ensuite si nécessaire.",
+          actVersions:
+            "Ouvre le tiroir d'historique des versions : consulter la chaîne des versions, générer un nouveau brouillon, ou publier ou abandonner un brouillon déjà généré.",
+          actHistory:
+            "Liste chaque changement enregistré sur la définition du champ, du plus récent au plus ancien, avec qui l'a fait et quand.",
+          actUsage:
+            "Indique combien de réponses le champ contient, ventilées par type d'enregistrement, et si le supprimer détruirait des données.",
+          actDelete:
+            "Supprime la définition — refusé d'abord si elle contient des réponses, jusqu'à confirmation explicite.",
+
+          editTitle: "Modifier une définition",
+          editIntro:
+            "La modification ouvre le même formulaire que la création, avec les paramètres définitifs affichés mais non modifiables : type d'enregistrement, clé, type de valeur et portée. Tout le reste peut être changé, et les changements prennent effet dès le prochain formulaire que quelqu'un ouvre.",
+          editLoadFailure:
+            "Si le détail derrière le bouton Edit échoue à se charger, le formulaire ne s'ouvre délibérément pas, et vous obtenez un message à la place. C'est une protection plutôt qu'un désagrément : la ligne de la liste ne porte pas les options, les textes indicatifs ou le validateur, donc ouvrir un formulaire préempli à partir d'elle et enregistrer effacerait silencieusement les trois.",
+          editWarnTitle: "Deux modifications rejaillissent en arrière",
+          editWarnContent:
+            "Renommer une option change ce qu'affiche chaque enregistrement existant, car le texte de l'option est la réponse stockée. Attacher ou changer un validateur ne revérifie pas les réponses déjà enregistrées, donc un champ peut contenir des valeurs que son validateur actuel refuserait désormais. Les deux sont détaillés sur les pages Options et Validateurs.",
+
+          // Règles de visibilité
+          visibilityRulesTitle: "Administration des règles de visibilité",
+          visibilityRulesIntro:
+            "Les règles de visibilité permettent d'afficher ou de masquer des champs dynamiquement sur les formulaires d'enregistrement, en fonction des valeurs de champs personnalisés frères du même type d'enregistrement. Quand une règle est active, les formulaires côté client et la validation côté serveur évaluent les conditions de façon déterministe.",
+          thOperator: "Opérateur",
+          thOperatorMeaning: "Condition évaluée",
+          thOperatorExample: "Exemple de déclencheur",
+          opEquals: "Égal à",
+          opEqualsMeaning: "La valeur du champ contrôlant correspond exactement à la valeur cible.",
+          opEqualsExample: "Afficher Kit Size quand Staff Role est égal à Coach.",
+          opNotEquals: "Différent de",
+          opNotEqualsMeaning: "Le champ contrôlant a toute valeur autre que la valeur cible.",
+          opNotEqualsExample: "Afficher Dietary Requirements quand Meal Plan est différent de None.",
+          opIsEmpty: "Est vide",
+          opIsEmptyMeaning: "Le champ contrôlant ne contient aucune réponse stockée, ou une valeur nulle.",
+          opIsEmptyExample: "Afficher Explanation quand ID Number est vide.",
+          opIsNotEmpty: "N'est pas vide",
+          opIsNotEmptyMeaning: "Le champ contrôlant a une valeur non nulle et non vide.",
+          opIsNotEmptyExample: "Afficher Expiry Date quand Passport Number n'est pas vide.",
+          opIn: "Dans l'ensemble",
+          opInMeaning: "La réponse du champ contrôlant est l'une de plusieurs valeurs séparées par des virgules.",
+          opInExample: "Afficher Specialization quand Department est dans Medical, Coaching, Analytics.",
+          opNotIn: "Absent de l'ensemble",
+          opNotInMeaning: "La réponse du champ contrôlant ne figure dans aucune des valeurs listées.",
+          opNotInExample: "Afficher General Notes quand Category n'est pas dans VIP, Board.",
+          opGreaterThan: "Supérieur à",
+          opGreaterThanMeaning: "La réponse numérique ou de date dépasse strictement le seuil.",
+          opGreaterThanExample: "Afficher Clearance Details quand Security Level est supérieur à 3.",
+          opLessThan: "Inférieur à",
+          opLessThanMeaning: "La réponse numérique ou de date est strictement inférieure au seuil.",
+          opLessThanExample: "Afficher Parental Consent quand Age est inférieur à 18.",
+          visibilityRulesEvaluation:
+            "Les règles s'exécutent selon une priorité déterministe. Quand plusieurs règles ciblent le même champ, les actions Hide priment sur les actions Show. Les champs masqués sont omis des vérifications de validation obligatoire, ce qui évite des blocages de validation impossibles à satisfaire.",
+          visibilityRulesTipTitle: "Conditionner uniquement sur des champs frères",
+          visibilityRulesTipContent:
+            "Une règle ne peut référencer que des champs frères définis sur exactement le même type d'entité. Les conditions inter-entités (par exemple vérifier un paramètre de tenant depuis un champ de personne) ne sont pas autorisées, afin de préserver l'intégrité transactionnelle d'un enregistrement unique.",
+
+          // Conversion
+          conversionTitle: "Conversion de type de valeur et restauration",
+          conversionIntro:
+            "Convertir le type de valeur déclaré d'un champ est une opération distincte, accessible via sa propre action du menu de ligne plutôt que via le formulaire de modification — elle change la façon dont les réponses déjà stockées sont représentées, pas seulement l'apparence que prendront les futures réponses. Seules neuf paires de types précises sont autorisées ; toute autre paire est refusée d'emblée, y compris toute paire impliquant un type de référence, File, Image ou RichText.",
+          thConversionClass: "Catégorie de sécurité",
+          thConversionPairs: "Paires de types prises en charge",
+          thConversionRisk: "Garantie de préservation des données",
+          classLossless: "Sans perte",
+          classLosslessPairs:
+            "Text → LongText, Number → Text, Number → LongText, Percent → Text, Rating → Text, Percent → Number, Rating → Number",
+          classLosslessRisk:
+            "Chaque valeur existante s'analyse directement dans le type cible sans rien perdre — un nombre mis en forme comme du texte, ou un pourcentage ou une note relue comme un simple nombre.",
+          classLossy: "Avec perte (confirmation requise)",
+          classLossyPairs: "LongText → Text, Text → Number",
+          classLossyRisk:
+            "LongText → Text tronque tout ce qui dépasse le plafond propre à Text de 4 000 caractères. Text → Number ne tronque rien du tout — elle refuse l'opération entière dès qu'une seule valeur stockée échoue à s'analyser comme un nombre, plutôt que de convertir le reste en laissant celle-ci de côté.",
+          classIncompatible: "Non proposée",
+          classIncompatiblePairs:
+            "Toute autre paire — 453 des 462 possibles, y compris toute paire impliquant EntityReference, UserReference, File, Image ou RichText.",
+          classIncompatibleRisk:
+            "Refusée avant même que quoi que ce soit ne s'exécute. Une valeur de type référence ou média n'a aucune forme textuelle ou numérique sensée vers laquelle convertir, et le sens inverse n'a rien de réel vers quoi pointer.",
+          conversionLossyWarnTitle: "Une conversion avec perte s'applique à chaque valeur stockée, de façon permanente",
+          conversionLossyWarnContent:
+            "Tronquer un texte long remodèle en permanence des enregistrements historiques. Exécutez toujours Usage & impact en premier pour voir combien d'enregistrements seront affectés avant de confirmer.",
+          conversionDryRunIntro:
+            "Avant de rien changer, le serveur vérifie chaque valeur stockée par rapport au type cible. Si ne serait-ce qu'une seule valeur échouerait à se convertir, l'opération entière est refusée d'emblée plutôt que laissée à moitié faite.",
+          conversionRollbackTitle: "Restauration par instantané",
+          conversionRollbackContent:
+            "Chaque conversion enregistre un instantané de la valeur antérieure pour chaque ligne avant de la modifier. Un Super Admin peut restaurer une exécution de conversion précise à l'aide de son identifiant d'exécution (job-run id), rétablissant exactement les valeurs antérieures — les instantanés expirent et sont purgés automatiquement au bout de sept jours, de sorte qu'une restauration dispose d'une fenêtre réelle plutôt que d'être disponible indéfiniment.",
+
+          // Versions et brouillons
+          versionsTitle: "Cycle de vie des versions et des brouillons de définition de champ",
+          versionsIntro:
+            "Les scalaires, options et règles de visibilité en production d'une définition peuvent être clonés dans un brouillon isolé, puis soit publiés — remplaçant la version en production en une seule étape —, soit abandonnés, laissant la version en production intacte dans les deux cas.",
+          thVersionStatus: "Statut",
+          thVersionMeaning: "Signification dans le cycle de vie",
+          thVersionActions: "Actions disponibles",
+          vStatusDraft: "Brouillon",
+          vMeaningDraft: "Un clone isolé de la définition telle qu'elle se présentait au moment de sa génération — sa propre copie des scalaires, des options et des règles de visibilité. N'est servi sur aucun formulaire d'enregistrement.",
+          vActionsDraft: "Publish, Discard. Rien ne permet actuellement de modifier un brouillon après sa génération — un clone erroné doit être abandonné puis régénéré.",
+          vStatusPublished: "Publié",
+          vMeaningPublished: "L'unique version active actuellement servie sur chaque formulaire d'enregistrement pour ce champ.",
+          vActionsPublished: "Create Draft (génère un nouveau clone de travail), View History.",
+          vStatusDeprecated: "Déprécié",
+          vMeaningDeprecated: "Une ancienne version publiée, remplacée lors de la promotion d'un brouillon. Ses options et règles clonées lui restent attachées mais sont inertes — l'application des règles ne lit jamais que la version publiée actuelle.",
+          vActionsDeprecated: "Enregistrement d'audit en lecture seule. Conservé pour l'intégrité de l'historique.",
+          vStatusArchived: "Archivé",
+          vMeaningArchived: "Un brouillon abandonné, conservé plutôt que supprimé afin que son numéro de version ne puisse jamais être réattribué.",
+          vActionsArchived: "Référence historique uniquement.",
+          versionsSnapshotWarnTitle: "Un brouillon est un instantané, pas un miroir en direct",
+          versionsSnapshotWarnContent:
+            "Un brouillon ne suit pas les modifications apportées à la version en ligne pendant qu'il reste ouvert — il ne conserve que l'état de la version en ligne au moment de sa création. La publication ne fusionne pas les deux : elle remplace entièrement la version en ligne par l'instantané du brouillon, annulant silencieusement toute modification en ligne effectuée entre-temps. Publiez un brouillon rapidement, ou recréez-le si la version en ligne a évolué depuis.",
+          versionsPromotionIntro:
+            "Publier un brouillon déprécie la version publiée en place dans le même enregistrement. Le numéro de version s'incrémente toujours, et chaque chargement de formulaire à partir de ce moment sert la nouvelle version publiée.",
+          versionsRuleGuardTitle: "Une publication qui ferait silencieusement perdre toutes les règles de visibilité est refusée",
+          versionsRuleGuardContent:
+            "Les règles de visibilité sont clonées sur un brouillon au moment de sa génération, et non récupérées à nouveau au moment de la publication — de sorte qu'au moment où une publication a lieu, il n'y a normalement plus rien à perdre. Le seul cas pour lequel ce garde-fou existe est celui où la version sortante porte réellement des règles alors que le brouillon n'en porte aucune : la publication est alors refusée d'emblée, plutôt que de rendre silencieusement visible sans condition chaque champ conditionnellement masqué de ce type d'enregistrement.",
+
+          retireTitle: "Retirer un champ : désactiver ou supprimer",
+          retireIntro:
+            "Ce ne sont pas la même opération, et la différence compte. En cas de doute, désactivez — c'est l'opération réversible.",
+          deactivateTitle: "Désactiver Active",
+          deactivate1: "Le champ cesse d'être proposé sur les formulaires de création et de modification",
+          deactivate2: "Chaque réponse déjà stockée est conservée, intacte",
+          deactivate3: "C'est réversible — réactiver Active restaure le champ tel qu'il était",
+          deactivate4: "C'est enregistré dans l'historique comme Deactivated, et peut être Reactivated plus tard",
+          deleteColTitle: "Supprimer la définition",
+          deleteCol1: "Refusée à la première tentative si le champ contient des réponses",
+          deleteCol2: "Détruit ces réponses une fois le délai de rétention écoulé, si vous confirmez",
+          deleteCol3: "Libère la clé, de sorte qu'un nouveau champ pourrait plus tard la réutiliser — sans aucune des anciennes réponses",
+          deleteCol4: "Est enregistrée dans l'historique comme Deleted, et peut être Restored tant qu'elle est récupérable",
+
+          historyTitle: "Historique de définition",
+          historyIntro:
+            "L'entrée History du menu de ligne d'un champ ouvre une boîte de dialogue listant ce qui est arrivé à la définition de ce champ, du plus récent au plus ancien, avec la personne qui l'a fait et quand. Un changement effectué par le système plutôt que par une personne est attribué au système. Les entrées sont paginées, et la boîte de dialogue indique le nombre total de changements.",
+          thEvent: "Événement",
+          thMeans: "Ce que cela signifie",
+          evCreated: "Le champ a été défini.",
+          evUpdated: "Quelque chose sur la définition a changé — un libellé, un indicateur, le validateur, les options.",
+          evDeactivated: "Active a été désactivé, retirant le champ sans toucher à ses réponses.",
+          evReactivated: "Active a été réactivé.",
+          evDeleted: "La définition a été supprimée et reste récupérable.",
+          evRestored: "Une définition supprimée a été restaurée.",
+          evPurged:
+            "La définition a été retirée de façon permanente et n'est plus récupérable. La boîte de dialogue le marque explicitement afin que cela ne soit pas lu comme une suppression ordinaire.",
+          historyParts:
+            "Chaque entrée précise aussi quelle partie du champ elle concerne, car un champ est plus qu'une seule ligne.",
+          thPart: "Partie",
+          partField: "Le champ lui-même.",
+          partDefinition: "L'enregistrement de définition qui le sous-tend.",
+          partVersion: "Une version de la définition.",
+          partOption: "Une entrée de la liste d'options du champ.",
+          partVisibilityRule:
+            "Une règle conditionnelle d'affichage ou de masquage attachée au champ, gérée via la boîte de dialogue Visibility Rules.",
+          historyScopeTitle: "L'historique couvre la définition, jamais les réponses",
+          historyScopeContent:
+            "Cette boîte de dialogue ne vous dira pas qui a changé la nationalité d'une personne précise, et ce n'est pas son but. Y lister les changements de valeur en ferait une copie lisible des données de champs de tout le monde, contournant d'un coup la sécurité au niveau du champ et toute autre règle de visibilité. Seuls les changements côté définition sont éligibles, et les enregistrements porteurs de valeurs sont exclus nommément plutôt que par simple omission.",
+          historyUnavailableTitle: "Si l'historique indique que le module n'est pas disponible",
+          historyUnavailableContent:
+            "C'est une caractéristique du déploiement plutôt qu'un défaut du champ : le magasin d'audit vit dans un autre module, et ce déploiement fonctionne sans lui. Aucun historique n'a non plus été enregistré pour cette période. Cela relève de qui administre le déploiement, pas de quelque chose que vous pouvez corriger depuis l'écran. L'historique d'un champ global de plateforme est en outre réservé aux administrateurs de la plateforme, et affiche un message différent.",
+
+          usageTitle: "Utilisation et impact",
+          usageIntro:
+            "L'entrée Usage & impact du menu de ligne indique ce que le champ porte réellement avant que vous ne le changiez ou ne le supprimiez. Lisez toute la boîte de dialogue plutôt qu'un seul chiffre.",
+          thReading: "Ce qu'elle montre",
+          readStoredValues: "Valeurs stockées",
+          readStoredValuesMeans: "Combien de réponses existent pour ce champ.",
+          readLegacyValues: "Valeurs dans l'ancien magasin",
+          readLegacyValuesMeans:
+            "Réponses encore détenues dans l'ancien stockage antérieur au magasin de valeurs actuel. Comptées séparément afin qu'une migration en cours soit visible plutôt que masquée.",
           readOptions: "Options",
-          readOptionsMeans: "How many options the field's list holds, for a Select or MultiSelect field.",
-          readByRecordType: "By record type",
-          readByRecordTypeMeans: "The same answer count split by the kind of record holding it, so you can see where the data actually is.",
-          readAffectedOrgs: "Organisations holding values",
-          readAffectedOrgsMeans: "For a global platform field, how many workspaces hold answers for it. This is the number that makes a delete genuinely consequential.",
-          readScopeNotice: "The scope notice at the top",
-          readScopeNoticeMeans: "Says whether the counts below cover your workspace only or every workspace on the platform. The two differ by orders of magnitude for an inherited field, and nothing about a bare number tells you which one you are looking at.",
-          usageWarnTitle: "Read the warning, not the number",
-          usageWarnContent: "The \"this will destroy data\" line comes from the server's own verdict, never from the count on screen. A global platform field is measured across every workspace that inherited it, so it can show zero in your own workspace and still warn you — correctly. The warning is the thing to trust.",
-          deleteTitle: "Deleting without destroying data",
-          deleteIntro: "Deleting a field that holds answers takes two deliberate steps. A field with no answers takes one.",
-          d1Title: "Open Usage & impact first",
-          d1Content: "See how many answers exist and where they are. If the number surprises you, stop here — deactivating the field is almost always the better move.",
-          d2Title: "Choose Delete",
-          d2Content: "If the field holds answers, the delete is refused with a conflict and the dialog explains exactly what would be lost, naming the number of stored values and the number of record types.",
-          d3Title: "Confirm the destructive delete",
-          d3Content: "Confirming from inside that dialog is what actually proceeds. This is a separate, explicit act rather than a second click on the same button, so a field with data cannot be removed by momentum.",
-          d4Title: "Or delete an empty field in one step",
-          d4Content: "A field with no answers deletes with no warning and no extra step, because there is nothing to lose.",
-          deleteRetention: "A confirmed delete destroys the stored answers once the retention window passes, not instantly. Until then the definition may still be Restored, and history records both the delete and the restore. After the window, the answers are gone and the history entry reads as Purged.",
-          exportTitle: "Exporting definitions to a spreadsheet",
-          exportIntro: "The Export action in the Champs Personnalisés page header downloads a spreadsheet of the definitions you can see, one row per field with headers on the first row. These are the 18 columns.",
-          thColumn: "Column",
-          thContains: "Contains",
-          colEntityType: "The record type the field is defined against.",
-          colKey: "The field's machine key.",
-          colLabelEn: "The English label.",
-          colLabelAr: "The Arabic label, blank if none was set.",
-          colValueType: "One of the nineteen value types.",
-          colRequired: "Whether the field is required.",
-          colActive: "Whether the field is still offered on forms.",
-          colSortOrder: "The field's position among the record type's champs personnalisés.",
-          colOptionsEn: "The English options, for a Select or MultiSelect field.",
-          colOptionsAr: "The Arabic options, aligned with the English ones.",
-          colSensitivity: "The classification label set on the definition.",
-          colExportable: "The Include in exports setting, reported as Yes or No. It is never used to filter this file — a definitions export that dropped rows would hide exactly the fields an administrator most needs to audit.",
-          colValidator: "The attached validator, for a Text field.",
-          colValidatorParam: "The validator's setting, where it takes one.",
-          colPlaceholderEn: "The English placeholder hint.",
-          colPlaceholderAr: "The Arabic placeholder hint.",
-          colScope: "Platform for a global field, Organisation for a workspace one.",
-          colCreated: "When the definition was created, in UTC.",
-          exportBooleans: "Yes/no columns are written as the words Yes and No rather than as spreadsheet booleans, so they survive being opened in a different language and still read as intended.",
-          exportSafetyTitle: "Labels that look like formulas stay text",
-          exportSafetyContent: "Every cell is written as inert text, never as a formula. A field labelled =SUM(A1) arrives in the file as the literal characters, not as a calculation — and the same holds for a label beginning with +, -, @, or a tab followed by =. This is categorical rather than a filter of known cases.",
-          exportLimitTitle: "Three limits on the export",
-          exportLimitContent: "It contains definitions and never anybody's answers — there is no values export anywhere in the product. Past 10,000 definitions it refuses outright, telling you to narrow the export to a single record type, rather than handing you a truncated file that looks complete. And the 18 columns above are the whole file: a reference field's pinned Target Entity Type is not one of them, so an exported definition does not record what its field points at. Fields restricted from you are absent from the file rather than blank.",
-          referenceTitle: "The two reference screens",
-          referenceIntro: "Both are reached from links in the Champs Personnalisés page header, both are read-only, and both are gated behind the same view permission as the Champs Personnalisés screen itself. Neither has a sidebar entry of its own, which is deliberate.",
-          valueTypesScreenTitle: "Types de Valeurs",
-          valueTypesScreenIntro: "A table of all nineteen value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer \"what types exist\" without opening a definition form. Text is the only row showing validator support, and the two reference types show no options list of their own — the records they offer come from another module rather than from a list you author.",
-          entityTypesScreenTitle: "Entity Types",
-          entityTypesScreenIntro: "A list of every record type a champ personnalisé can be attached to: its display name, its key, and the module that owns it.",
-          entityTypesScreenDrift: "It also shows two separate screen columns plus a status, which is not a duplication. One is what the platform claims about this application; the other is what this application actually has. The status column says whether the two agree, and a row reading Out of Sync is a real defect worth reporting — it means either a field pointed at a record type nobody can render, or a screen the platform does not know exists.",
-          apiOnlyTitle: "API-only record types",
-          apiOnlyContent: "A record type with no screen in this application is still a legal target for a champ personnalisé. It is listed after the screen-backed ones on the definition form, with an API only suffix. A field defined against one of those is reachable through the API and has nowhere at all to render in the interface — which is fine if that is what you intended, and a puzzle if it is not.",
+          readOptionsMeans: "Combien d'options contient la liste du champ, pour un champ Select ou MultiSelect.",
+          readByRecordType: "Par type d'enregistrement",
+          readByRecordTypeMeans:
+            "Le même décompte de réponses ventilé par type d'enregistrement qui les détient, afin que vous puissiez voir où se trouve réellement la donnée.",
+          readAffectedOrgs: "Organisations détenant des valeurs",
+          readAffectedOrgsMeans:
+            "Pour un champ global de plateforme, combien d'espaces de travail détiennent des réponses pour lui. C'est le chiffre qui rend une suppression véritablement lourde de conséquences.",
+          readScopeNotice: "L'avis de portée en haut",
+          readScopeNoticeMeans:
+            "Indique si les décomptes ci-dessous couvrent uniquement votre espace de travail ou toute la plateforme. Les deux diffèrent d'ordres de grandeur pour un champ hérité, et rien dans un simple chiffre ne vous dit lequel vous regardez.",
+          usageWarnTitle: "Lisez l'avertissement, pas le chiffre",
+          usageWarnContent:
+            "La ligne « ceci détruira des données » provient du propre verdict du serveur, jamais du chiffre affiché à l'écran. Un champ global de plateforme est mesuré à travers chaque espace de travail qui en a hérité, il peut donc afficher zéro dans votre propre espace de travail tout en vous avertissant — à juste titre. C'est l'avertissement qu'il faut croire.",
+
+          deleteTitle: "Supprimer sans détruire de données",
+          deleteIntro:
+            "Supprimer un champ contenant des réponses nécessite deux étapes délibérées. Un champ sans réponse n'en nécessite qu'une.",
+          d1Title: "Ouvrez d'abord Usage & impact",
+          d1Content:
+            "Voyez combien de réponses existent et où elles se trouvent. Si le chiffre vous surprend, arrêtez-vous ici — désactiver le champ est presque toujours la meilleure option.",
+          d2Title: "Choisissez Delete",
+          d2Content:
+            "Si le champ contient des réponses, la suppression est refusée avec un conflit, et la boîte de dialogue explique exactement ce qui serait perdu, en nommant le nombre de valeurs stockées et le nombre de types d'enregistrement.",
+          d3Title: "Confirmez la suppression destructrice",
+          d3Content:
+            "Confirmer depuis l'intérieur de cette boîte de dialogue est ce qui fait réellement avancer les choses. C'est un acte distinct et explicite plutôt qu'un second clic sur le même bouton, de sorte qu'un champ contenant des données ne peut pas être supprimé par élan.",
+          d4Title: "Ou supprimez un champ vide en une seule étape",
+          d4Content:
+            "Un champ sans réponse se supprime sans avertissement et sans étape supplémentaire, car il n'y a rien à perdre.",
+          deleteRetention:
+            "Une suppression confirmée détruit les réponses stockées une fois le délai de rétention écoulé, pas instantanément. Jusque-là, la définition peut encore être Restored, et l'historique enregistre à la fois la suppression et la restauration. Passé ce délai, les réponses ont disparu et l'entrée d'historique se lit comme Purged.",
+
+          exportTitle: "Exporter les définitions vers une feuille de calcul",
+          exportIntro:
+            "L'action Export dans l'en-tête de la page Champs personnalisés télécharge une feuille de calcul des définitions que vous pouvez voir, une ligne par champ avec des en-têtes sur la première ligne. Voici les 18 colonnes.",
+          thColumn: "Colonne",
+          thContains: "Contient",
+          colEntityType: "Le type d'enregistrement contre lequel le champ est défini.",
+          colKey: "La clé machine du champ.",
+          colLabelEn: "Le libellé anglais.",
+          colLabelAr: "Le libellé arabe, vide si aucun n'a été défini.",
+          colValueType: "L'un des vingt-deux types de valeur.",
+          colRequired: "Si le champ est obligatoire.",
+          colActive: "Si le champ est encore proposé sur les formulaires.",
+          colSortOrder: "La position du champ parmi les champs personnalisés du type d'enregistrement.",
+          colOptionsEn: "Les options en anglais, pour un champ Select ou MultiSelect.",
+          colOptionsAr: "Les options en arabe, alignées avec les anglaises.",
+          colSensitivity: "Le libellé de classification défini sur la définition.",
+          colExportable:
+            "Le paramètre Include in exports, rapporté comme Yes ou No. Il ne sert jamais à filtrer ce fichier — un export de définitions qui omettrait des lignes masquerait précisément les champs qu'un administrateur a le plus besoin d'auditer.",
+          colValidator: "Le validateur attaché, pour un champ Text.",
+          colValidatorParam: "Le paramètre du validateur, lorsqu'il en prend un.",
+          colPlaceholderEn: "Le texte indicatif anglais.",
+          colPlaceholderAr: "Le texte indicatif arabe.",
+          colScope: "Platform pour un champ global, Organisation pour un champ d'espace de travail.",
+          colCreated: "Quand la définition a été créée, en UTC.",
+          exportBooleans:
+            "Les colonnes oui/non sont écrites comme les mots Yes et No plutôt que comme des booléens de tableur, afin qu'elles survivent à une ouverture dans une autre langue et continuent de se lire comme prévu.",
+          exportSafetyTitle: "Les libellés qui ressemblent à des formules restent du texte",
+          exportSafetyContent:
+            "Chaque cellule est écrite comme du texte inerte, jamais comme une formule. Un champ libellé =SUM(A1) arrive dans le fichier comme les caractères littéraux, pas comme un calcul — et il en va de même pour un libellé commençant par +, -, @, ou une tabulation suivie de =. C'est catégorique plutôt qu'un filtrage de cas connus.",
+          exportLimitTitle: "Trois limites de l'export",
+          exportLimitContent:
+            "Il contient des définitions et jamais les réponses de qui que ce soit — il n'existe nulle part d'export de valeurs dans le produit. Au-delà de 10 000 définitions, il refuse purement et simplement, en vous invitant à restreindre l'export à un seul type d'enregistrement, plutôt que de vous remettre un fichier tronqué qui paraîtrait complet. Et les 18 colonnes ci-dessus constituent tout le fichier : le Target Entity Type épinglé d'un champ de référence n'en fait pas partie, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ. Les champs qui vous sont restreints sont absents du fichier plutôt que vides.",
+
+          referenceTitle: "Les deux écrans de référence",
+          referenceIntro:
+            "Les deux sont accessibles depuis des liens dans l'en-tête de la page Champs personnalisés, les deux sont en lecture seule, et les deux sont verrouillés derrière la même permission de consultation que l'écran Champs personnalisés lui-même. Aucun n'a sa propre entrée de menu latéral, ce qui est délibéré.",
+          valueTypesScreenTitle: "Types de valeur",
+          valueTypesScreenIntro:
+            "Un tableau des vingt-deux types de valeur avec, pour chacun, une description de son usage, s'il prend un texte indicatif, s'il possède une liste d'options, et s'il prend en charge un validateur. À utiliser pour répondre à « quels types existent » sans ouvrir de formulaire de définition. Text est la seule ligne montrant une prise en charge de validateur, et les quatre types en forme de référence ne montrent aucune liste d'options qui leur soit propre — ce qu'ils proposent provient d'un autre module, ou d'un fichier téléversé, plutôt que d'une liste que vous rédigez.",
+          entityTypesScreenTitle: "Types d'entité",
+          entityTypesScreenIntro:
+            "Une liste de chaque type d'enregistrement auquel un champ personnalisé peut être rattaché : son nom d'affichage, sa clé, et le module qui le possède.",
+          entityTypesScreenDrift:
+            "Elle montre aussi deux colonnes d'écran distinctes plus un statut, ce qui n'est pas une redondance. L'une indique ce que la plateforme prétend au sujet de cette application ; l'autre indique ce que cette application possède réellement. La colonne de statut indique si les deux concordent, et une ligne indiquant Out of Sync est un véritable défaut qui mérite d'être signalé — cela signifie soit qu'un champ cible un type d'enregistrement que personne ne peut afficher, soit un écran dont la plateforme ignore l'existence.",
+          apiOnlyTitle: "Types d'enregistrement API uniquement",
+          apiOnlyContent:
+            "Un type d'enregistrement sans écran dans cette application reste une cible légale pour un champ personnalisé. Il est listé après ceux adossés à un écran sur le formulaire de définition, avec un suffixe API only. Un champ défini contre l'un d'eux est accessible via l'API et n'a nulle part où s'afficher dans l'interface — ce qui est très bien si c'était l'intention, et une énigme sinon.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Limites et comportements
+        // ═══════════════════════════════════════════════════
         limits: {
-          title: "Limits and Behaviours",
-          description: "Every fixed cap and every deliberate limitation in champs personnalisés, each with the reason it is that way — so nobody spends an afternoon looking for a setting that does not exist.",
-          intro: "This page collects every limit a custom-fields administrator can reasonably expect to hit, and says why each one is where it is. Everything here describes current behaviour rather than a promise about the future. A limit stated plainly is cheaper than a limit discovered at four in the afternoon.",
-          numbersTitle: "The fixed numbers",
-          numbersIntro: "These are constants in the product. None of them can be raised or lowered for an individual field, and only the last one varies at all.",
-          thLimit: "Limit",
-          thValue: "Value",
-          thConfigurable: "Configurable?",
-          limTextLength: "Text field length, in characters",
-          limLongTextLength: "LongText field length, in characters",
-          limMultiSelect: "MultiSelect selections per value",
-          limRating: "Rating scale, whole numbers only",
-          limPercent: "Percent range, inclusive",
-          limPhoneDigits: "Phone digits, after the leading +",
-          limCurrencyCode: "Currency code length, uppercase letters",
-          limDuration: "Duration upper bound",
-          limReferencePage: "Records per page in a reference picker",
-          limReferencePageMax: "Largest page a reference picker may ask for",
-          limGroupReorder: "Field groups per record type in one reorder",
-          limExportRows: "Definitions per spreadsheet export",
-          limFieldsPerWorkspace: "Champs personnalisés per workspace",
-          cfgNo: "No",
-          cfgPlan: "Set by your plan",
-          valNoUpperBound: "None",
-          valPlanQuota: "Plan quota — zero on the Free edition",
-          validatorsTitle: "Validator behaviours",
-          thBehaviour: "Behaviour",
-          thWhy: "Why",
-          vTextOnly: "Validators attach to Text fields only.",
-          vTextOnlyWhy: "The safety argument for the built-in patterns was derived for single-line text input. Extending it to a differently shaped input needs that analysis redone, and that is not something to smuggle into a feature release. A Text field with a validator is the answer when you need an email address with extra constraints.",
-          vNoRetro: "Attaching a validator never re-checks answers already saved.",
-          vNoRetroWhy: "Validation runs in exactly one place: the save path. Nothing walks historical data when a validator is newly attached, so a field can legitimately hold values its own current validator would refuse, until somebody re-enters them.",
-          vWhitespace: "A whitespace-only value skips validation entirely unless the field is Required.",
-          vWhitespaceWhy: "The emptiness check runs before any type or validator check. On an optional field a value of nothing but spaces is therefore stored as cleared with no validator error at all. Mark the field Required if a blank answer should be refused.",
-          vNoRegex: "There is no pattern or regular-expression box anywhere.",
-          vNoRegexWhy: "A hand-written pattern can be made to consume enormous processing time on a short input, turning a data-entry form into a way of taking the system down. The 13 curated checks exist precisely so that nobody has to author one.",
-          vNoFilter: "The definitions list cannot be filtered or searched by validator.",
-          vNoFilterWhy: "No such view was built. To see which validator a field uses, open that field's definition form.",
-          vNoReference: "There is no browsable validator reference inside the product.",
-          vNoReferenceWhy: "Types de valeurs and record types each got a read-only reference screen; validators did not. The dropdown on a Text field's definition form is the only in-product list.",
-          vNoChecksumEgUae: "The Egyptian and Emirati ID checks verify structure but not a check digit.",
-          vNoChecksumEgUaeWhy: "Neither country publishes a check-digit algorithm, and the community guesses found during research disagreed with each other. A wrong algorithm would reject real, valid IDs, which is worse than not checking the final digit at all.",
-          vNoAe: "Postal Code does not support the United Arab Emirates.",
-          vNoAeWhy: "The UAE has no national postal-code system, so there is nothing to validate against. Attempting it is refused with its own explanatory message rather than a generic one.",
-          typesTitle: "Value-type behaviours",
-          tValueTypeFixed: "A field's value type can never be changed.",
-          tValueTypeFixedWhy: "Answers already recorded under the old type would stop making sense, and there is no conversion. The same applies to the key, the record type and the scope.",
-          tMultiOrder: "A MultiSelect answer reads back in selection order, not option order.",
-          tMultiOrderWhy: "Preserving the order somebody picked in is what makes the value round-trip faithfully. The cost is that a list column showing that answer is not guaranteed to follow the order you authored the options in.",
-          tLongTextNoBlock: "LongText lets you type past its 10,000-character cap.",
-          tLongTextNoBlockWhy: "The on-screen counter turns red, but there is no pre-submit block the way MultiSelect blocks a twentieth selection. The refusal comes from the save.",
-          tCurrencyShape: "A Currency code is checked for shape only.",
-          tCurrencyShapeWhy: "There is no authoritative list of real currency codes in the product to check against, and a workspace may legitimately need any of roughly 180 real ones. Three uppercase letters is therefore the whole check, and a well-formed but non-existent code such as ZZZ is accepted.",
-          tCurrencyPlain: "Currency stores a plain amount, never minor units.",
-          tCurrencyPlainWhy: "It follows the same convention as every other monetary amount in the product. 100.50 is stored as 100.50, never as 10050 — which matters if you ever read the raw data or build a report on it.",
-          tDurationMinutes: "Duration's unit is always minutes, and it has no maximum.",
-          tDurationMinutesWhy: "Minutes is the convention the scheduling and booking parts of the product already use for duration-shaped data, and the form labels the unit visibly rather than leaving a bare number. Only negative values are refused; there is no upper bound and no per-field way to set one.",
-          tRatingSlider: "An untouched Rating field shows its slider at 1 while still being empty.",
-          tRatingSliderWhy: "A slider always needs a real number to position its thumb. Nothing is submitted until somebody actually moves it, so the field genuinely saves as empty — but it looks like a 1 until you know that.",
-          tRatingZero: "A Rating of 0 is refused rather than treated as unrated.",
-          tRatingZeroWhy: "Unrated means the field was left genuinely empty. An explicitly submitted 0 is a real value that fails the 1-to-5 check exactly as a 6 would, and it gets the same message.",
-          tPhoneShape: "Phone validates shape, not whether the number could exist.",
-          tPhoneShapeWhy: "The server checks the international grammar only. The form's own picker additionally checks the digits against the selected country's real numbering plan, so the gap is only reachable from a request that bypasses the form — an accepted data-quality limitation rather than a security one.",
-          tPhoneFlag: "Phone's displayed country flag can be wrong on a shared calling code.",
-          tPhoneFlagWhy: "Some calling codes are shared by several countries, and there is no separate country column — the flag is derived from the number itself. The stored number is unaffected; only the flag beside it can pick the wrong country within a shared code.",
-          tColorShorthand: "Color never unifies the three-digit and six-digit forms.",
-          tColorShorthandWhy: "Both are valid and both persist exactly as submitted, so the same colour can be stored two ways across different records. Only case is normalised, always to lower case.",
-          tTimeText: "Time is stored as canonical text rather than as a database time.",
-          tTimeTextWhy: "A deliberate storage choice, made to avoid repeating a known sorting problem that an existing time column elsewhere in the product has on one database. Unpadded input is accepted and normalised, so two spellings of the same time always converge.",
-          tPercentStorage: "Percent stores the number you would say aloud, not a fraction.",
-          tPercentStorageWhy: "25 is stored as 25 and displayed as 25%. It is never 0.25, and the display appends the sign rather than running a fraction-based formatter, specifically so a 25 can never be shown as 2500%.",
-          tTextNotTrimmed: "Text does not trim surrounding spaces; Select does.",
-          tTextNotTrimmedWhy: "A Text value is stored exactly as submitted, because leading or trailing space can be meaningful in free text. A Select value is trimmed on both sides before being matched against the options, so a stray space never causes a spurious rejection.",
-          tOracleBytes: "Long Arabic text can be refused below the stated character cap on one database.",
-          tOracleBytesWhy: "The 4,000-character Text cap is an exact character count on two of the three supported databases. On the third it is counted in bytes, so multi-byte text — Arabic included — can reach the limit sooner. Use LongText if you are close to the boundary.",
-          referencesTitle: "Reference behaviours",
-          fNoStoredName: "A reference never stores the name of the record it points at.",
-          fNoStoredNameWhy: "A stored name would sit inside the record holding the field, and would therefore be readable by anybody who can read that record — while the name itself is guarded by the target's own permission. There is no setting to turn this on, and there will not be one. The compensating benefit is that a name corrected on its own record is corrected everywhere it is referenced, immediately.",
-          fIdOpaque: "The identity of the referenced record is opaque and must be round-tripped unchanged.",
-          fIdOpaqueWhy: "It is another module's key, encrypted for the wire, and nothing about it is meant to be read or reshaped. One altered character and the product correctly reports the stored reference as malformed. Send back exactly the string you received.",
-          fSameNames: "A reference is written under the same two names it is read under.",
-          fSameNamesWhy: "There is no asymmetry between the read shape and the write shape. Anyone integrating against the values API should echo the two property names they were given; inventing a different name for the identity on the way in produces a save carrying no pointer at all, which is then refused as an incomplete reference.",
-          fFiveFailures: "A reference that will not display says which of five things happened.",
-          fFiveFailuresWhy: "No permission, record gone, malformed value, a lookup that failed just now, and a kind of record this installation cannot answer for are five different problems with five different remedies. Rendering them all as one blank field is what leaves a pointer at a deleted record unnoticed for a year.",
-          fMergedAnswers: "\"Deleted\" and \"in a workspace you cannot see\" are one answer.",
-          fMergedAnswersWhy: "Telling them apart would let somebody test identities one at a time to discover what exists in another workspace. \"You may not view this kind of record\" is told apart from both, because it describes the reader's own access and reveals nothing.",
-          fDeleteClears: "Deleting a referenced record clears every pointer at it and keeps every value row.",
-          fDeleteClearsWhy: "Both pieces of each affected answer are cleared together, never one without the other. Nothing is deleted: the answer keeps its row, its version and its audit trail, so the field afterwards reads as genuinely empty rather than as broken.",
-          fNoBacklinks: "Nothing lists the references pointing at a given record.",
-          fNoBacklinksWhy: "There is no \"what points at this?\" view anywhere, and deleting a record does not warn you how many pointers it is about to clear. The clearing is silent because it is safe, not because it is hidden.",
-          fLimitedTargets: "Only three kinds of record can currently be referenced.",
-          fLimitedTargetsWhy: "Staff members, user accounts and party people — the kinds whose owning module supplies a searchable, permission-checked list. Anything else is refused rather than answered with an empty list, because an empty list looks like a correct result and would say \"there are none of these\" when the truth is \"this cannot be asked\".",
-          fNoAdminTarget: "Administrator records cannot be referenced at all.",
-          fNoAdminTargetWhy: "An administrator may belong to no workspace — a platform administrator has none — so a pointer at one could reach past every workspace boundary in the product. A User Reference field refuses one outright, and the definition form never offers one.",
-          fUnpinnedIsLegal: "Leaving a reference field unpinned is a permanent, supported state.",
-          fUnpinnedIsLegalWhy: "It means \"any kind this person may reference\", and each answer records which kind it chose. It must never be read as \"nothing configured, therefore nothing valid\" — the record form handles it by asking for the kind of record first and the record second.",
-          fPopulatedUnpinned: "A populated unpinned field offers no way to change the kind of record.",
-          fPopulatedUnpinnedWhy: "The stored answer's own kind is used for the picker, so re-picking is confined to that kind. Clearing the field brings the type control back. A real limit rather than a defect, and the shape of this feature most likely to be reported as one.",
-          fNotExported: "A pinned target type is not in the definitions export.",
-          fNotExportedWhy: "The spreadsheet has 18 columns and none of them is the target type, so an exported definition does not record what its field points at.",
-          fSingleValue: "A reference field holds exactly one pointer.",
-          fSingleValueWhy: "There is no multi-value reference type. Two answers means two fields, and MultiSelect cannot be pointed at records — its answers are text you authored.",
-          optionsTitle: "Option behaviours",
-          oTextIsValue: "The English option text is the stored answer.",
-          oTextIsValueWhy: "There is no separate code behind an option, so renaming one changes what every existing record displays. Prefer adding a new option and retiring the old one when the distinction matters.",
-          oCaseSensitive: "Option matching is exact and case-sensitive.",
-          oCaseSensitiveWhy: "Two options differing only by case are a legitimately distinct pair, and folding case would make them collide. Both sides are trimmed first, so only case and content matter.",
-          oEnglishStored: "The Arabic option label is display only.",
-          oEnglishStoredWhy: "The two label lists are matched row by row, and the English one is what is written to the record and validated against. An Arabic reader sees Arabic on the way in and on the way out; the data underneath stays one consistent value.",
-          oNoSharedSets: "Each field carries its own options list.",
-          oNoSharedSetsWhy: "There is no way to define a list once and reuse it across several fields. A Countries list needed by three fields is written and maintained three times.",
-          groupsTitle: "Field-group behaviours",
-          gStableKeyFixed: "A group's stable key can never be changed, by anybody.",
-          gStableKeyFixedWhy: "Exported schema names a group by this key, so a rename would silently turn a future re-import from an update into a create, against a bundle already shipped. A wrong key means recreating the group.",
-          gReorderCeiling: "Reordering refuses more than 100 groups on one record type.",
-          gReorderCeilingWhy: "A reorder request carries the whole set at once. Past 100, no group on that record type can be moved at all — the screen says so rather than failing generically.",
-          gGlobalOrdering: "A workspace cannot position its group relative to a global one.",
-          gGlobalOrderingWhy: "Reordering is all-or-nothing and refuses any group the caller does not own, so a workspace's own groups are renumbered from zero. Those numbers can collide with a global group's, the tie is broken on the English label, and the visible effect is that moving your group to the top can leave it below a global one.",
-          gSeparatePerms: "Field groups need their own permissions.",
-          gSeparatePermsWhy: "They are gated separately from field definitions, including a distinct permission for reordering. A role holding every custom-fields permission does not get them automatically, and without them the link and the picker are simply absent.",
-          gOneEntityType: "A group belongs to exactly one record type.",
-          gOneEntityTypeWhy: "Nothing is listed until you pick a record type, and changing a field's record type clears its group, because a group from one type is never valid for another.",
-          gUniquenessIndex: "In an upgraded database, stable-key uniqueness rests on the application check.",
-          gUniquenessIndexWhy: "Groups that existed before stable keys carry an empty key until a backfill is run, and the database-level uniqueness constraint stays switched off until that has happened everywhere — it would otherwise reject the second of those empty keys.",
-          securityTitle: "Security and classification behaviours",
-          sSensitivityLabel: "Sensitivity is a label, not an access control.",
-          sSensitivityLabelWhy: "It is stored, round-tripped and reportable, and it changes nothing about who can read a value. Field-level security is the mechanism that restricts access, and the two are unconnected.",
-          sRestrictedByResource: "Restrictions are keyed by permission resource, not by record type.",
-          sRestrictedByResourceWhy: "It is the same resource that already guards the record itself, so one restricted-fields list covers a screen's built-in fields and its champs personnalisés alike. Names are matched without regard to case.",
-          sRestrictedInvisible: "A restricted field is absent, not blank.",
-          sRestrictedInvisibleWhy: "Showing a placeholder would reveal that a value exists, which is itself information. The consequence is that a restricted field is indistinguishable from one that was never defined — worth remembering when somebody reports a missing field.",
-          sRejectWholeSave: "Writing a restricted field refuses the entire save.",
-          sRejectWholeSaveWhy: "Quietly dropping the one field and reporting success is the harder failure to notice. The refusal also fires when the submitted value equals the stored one, so nobody can probe a hidden value by testing what is accepted.",
-          sRequiredExclusive: "Required and restricted cannot be combined.",
-          sRequiredExclusiveWhy: "Somebody who cannot see a field could never satisfy it, so the record would be unsaveable for them. Both directions are refused, whichever you try first, and the message names the field.",
-          sHistoryNoValues: "Definition history never shows value changes.",
-          sHistoryNoValuesWhy: "Including them would make the dialog a readable copy of everybody's field data, going around field-level security and every other visibility rule at once. The value-bearing records are excluded by name rather than by omission.",
-          exportTitle: "Export and portability behaviours",
-          eDefinitionsOnly: "The spreadsheet export contains definitions, never answers.",
-          eDefinitionsOnlyWhy: "It is a definitions export by design, and there is no values export anywhere in the product. Nobody's data can leave through it.",
-          eRefusesPastLimit: "Past 10,000 definitions the export refuses instead of truncating.",
-          eRefusesPastLimitWhy: "A silently truncated file is worse than no file, because it looks complete. The refusal tells you to narrow the export to a single record type.",
-          eRestrictedAbsent: "Fields restricted from you are absent from the file, not blank.",
-          eRestrictedAbsentWhy: "Field-level security applies to the export exactly as it does on screen, and a blank column would still reveal that the field exists.",
-          eNoImport: "Definitions can be exported but not imported.",
-          eNoImportWhy: "There is no import path, so a spreadsheet cannot be used to create fields in bulk. The export is a report, not a template.",
-          eTextCells: "Every export cell is written as text.",
-          eTextCellsWhy: "A label beginning with =, +, - or @ arrives as literal characters rather than as a spreadsheet formula. This is categorical rather than a filter of known cases, so nothing that looks like a calculation can become one.",
-          reachTitle: "Where fields do and do not appear",
-          rApiOnlyTypes: "Some record types have no screen at all.",
-          rApiOnlyTypesWhy: "They are legal targets and are listed last on the definition form with an API only suffix. A field defined against one is reachable through the API and has nowhere in the interface to render.",
-          rHandRolledForms: "A handful of screens wire their champs personnalisés by hand.",
-          rHandRolledFormsWhy: "Most screens pick champs personnalisés up automatically. A few whose create and edit interfaces predate that mechanism — among them webhooks, message templates, tenant plans, plugin definitions, leads and themes — implement the same Champs Personnalisés section themselves. Behaviour should be identical; if it is not, that is worth reporting.",
-          rDsrCreateOnly: "Data subject requests take champs personnalisés on create only.",
-          rDsrCreateOnlyWhy: "A submitted request moves through a review workflow rather than being generally editable, so there is no edit form to carry champs personnalisés into. That is by design, not an omission.",
-          rDialogForms: "Most record create and edit forms are still dialogs.",
-          rDialogFormsWhy: "Custom-field authoring itself moved out of a nested dialog into a side panel, which is why adding a field from inside a record no longer stacks two dialogs. The surrounding record forms were deliberately left alone — moving them is a much wider change across modules that have nothing to do with champs personnalisés.",
-          rNoSidebarEntry: "The Types de Valeurs and Entity Types screens have no sidebar entry.",
-          rNoSidebarEntryWhy: "Sidebar navigation is seeded centrally, and these two were deliberately left out of that seed. They are reached from links in the Champs Personnalisés page header instead.",
-          absentTitle: "Things the product does not do",
-          absentIntro: "Asked often enough to be worth stating plainly. None of these is a fault to report.",
-          absent1: "The nineteen value types are the complete set. There is no type for uploading a file or an image, and none for formatted rich text — that kind of information belongs to the record's own built-in fields and attachments. Pointing at another record is the one item that used to be on this list and no longer is: Entity Reference and User Reference do exactly that, and have two pages of their own.",
-          absent2: "There is no values export. The spreadsheet export covers definitions only.",
-          absent3: "There is no import, and no bulk creation. Fields are created one at a time, on the form.",
-          absent4: "There is no shared options list. Each field carries and maintains its own.",
-          absent5: "There is no conditional show-or-hide that an administrator can configure. A field is either on the form or it is not, subject to Active and to field-level security.",
-          absent6: "There is no calculation, no default value, and no cross-field rule. A champ personnalisé records an answer; it does not derive one.",
-          absentInfoTitle: "If you need one of these",
-          absentInfoContent: "Say so to whoever owns your product roadmap rather than working around it in a way that costs you data. Recreating a field to change something permanent destroys the answers already stored against it, and that is the expensive mistake this page exists to prevent.",
+          title: "Limites et comportements",
+          description:
+            "Chaque plafond fixe et chaque limitation délibérée des champs personnalisés, avec pour chacune la raison de son existence — pour que personne ne passe un après-midi à chercher un paramètre qui n'existe pas.",
+          intro:
+            "Cette page rassemble chaque limite qu'un administrateur de champs personnalisés peut raisonnablement rencontrer, et explique pourquoi chacune est ce qu'elle est. Tout ici décrit le comportement actuel plutôt qu'une promesse sur l'avenir. Une limite énoncée clairement coûte moins cher qu'une limite découverte à quatre heures de l'après-midi.",
+
+          numbersTitle: "Les chiffres fixes",
+          numbersIntro:
+            "Ce sont des constantes du produit. Aucune ne peut être relevée ou abaissée pour un champ individuel, et seule la dernière varie réellement.",
+          thLimit: "Limite",
+          thValue: "Valeur",
+          thConfigurable: "Configurable ?",
+          limTextLength: "Longueur du champ Text, en caractères",
+          limLongTextLength: "Longueur du champ LongText, en caractères",
+          limMultiSelect: "Sélections MultiSelect par valeur",
+          limRating: "Échelle de Rating, nombres entiers uniquement",
+          limPercent: "Plage de Percent, bornes incluses",
+          limPhoneDigits: "Chiffres du téléphone, après le + initial",
+          limCurrencyCode: "Longueur du code de devise, lettres majuscules",
+          limDuration: "Borne supérieure de Duration",
+          limReferencePage: "Enregistrements par page dans un sélecteur de référence",
+          limReferencePageMax: "Plus grande page qu'un sélecteur de référence puisse demander",
+          limGroupReorder: "Groupes de champs par type d'enregistrement dans une réorganisation",
+          limExportRows: "Définitions par export en feuille de calcul",
+          limFieldsPerWorkspace: "Champs personnalisés par espace de travail",
+          cfgNo: "Non",
+          cfgPlan: "Défini par votre forfait",
+          valNoUpperBound: "Aucune",
+          valPlanQuota: "Quota du forfait — zéro sur l'édition Free",
+
+          validatorsTitle: "Comportements des validateurs",
+          thBehaviour: "Comportement",
+          thWhy: "Pourquoi",
+          vTextOnly: "Les validateurs ne s'attachent qu'aux champs Text.",
+          vTextOnlyWhy:
+            "L'argument de sécurité des motifs intégrés a été établi pour une saisie de texte mono-ligne. L'étendre à une saisie de forme différente exigerait de refaire cette analyse, et ce n'est pas quelque chose à glisser discrètement dans une version. Un champ Text avec un validateur est la réponse quand vous avez besoin d'une adresse e-mail avec des contraintes supplémentaires.",
+          vNoRetro: "Attacher un validateur ne revérifie jamais les réponses déjà enregistrées.",
+          vNoRetroWhy:
+            "La validation ne s'exécute qu'à un seul endroit : le chemin d'enregistrement. Rien ne parcourt les données historiques quand un validateur est nouvellement attaché, donc un champ peut légitimement contenir des valeurs que son validateur actuel refuserait, jusqu'à ce que quelqu'un les ressaisisse.",
+          vWhitespace: "Une valeur composée uniquement d'espaces échappe entièrement à la validation, sauf si le champ est Obligatoire.",
+          vWhitespaceWhy:
+            "La vérification de vide s'exécute avant toute vérification de type ou de validateur. Sur un champ facultatif, une valeur composée uniquement d'espaces est donc stockée comme effacée sans aucune erreur de validateur. Marquez le champ Obligatoire si une réponse vide doit être refusée.",
+          vNoRegex: "Il n'existe nulle part de zone de motif ou d'expression régulière.",
+          vNoRegexWhy:
+            "Un motif écrit à la main peut être conçu pour consommer un temps de traitement énorme sur une saisie courte, transformant un formulaire de saisie en moyen de mettre le système à genoux. Les 13 vérifications sélectionnées existent précisément pour que personne n'ait à en rédiger une.",
+          vNoFilter: "La liste des définitions ne peut être ni filtrée ni recherchée par validateur.",
+          vNoFilterWhy:
+            "Aucune vue de ce type n'a été construite. Pour voir quel validateur utilise un champ, ouvrez le formulaire de définition de ce champ.",
+          vNoReference: "Il n'existe aucune référence consultable de validateurs à l'intérieur du produit.",
+          vNoReferenceWhy:
+            "Les types de valeur et les types d'enregistrement ont chacun reçu un écran de référence en lecture seule ; pas les validateurs. La liste déroulante du formulaire de définition d'un champ Text est la seule liste disponible dans le produit.",
+          vNoChecksumEgUae: "Les vérifications d'identité égyptienne et émiratie contrôlent la structure mais pas un chiffre de contrôle.",
+          vNoChecksumEgUaeWhy:
+            "Aucun des deux pays ne publie d'algorithme de chiffre de contrôle, et les hypothèses communautaires trouvées lors des recherches se contredisaient entre elles. Un algorithme erroné rejetterait de véritables identités valides, ce qui est pire que de ne pas vérifier du tout le dernier chiffre.",
+          vNoAe: "Postal Code ne prend pas en charge les Émirats arabes unis.",
+          vNoAeWhy:
+            "Les Émirats arabes unis n'ont aucun système de code postal national, il n'y a donc rien à quoi comparer une valeur. Tenter de l'utiliser est refusé avec son propre message explicatif plutôt qu'un message générique.",
+
+          typesTitle: "Comportements des types de valeur",
+          tValueTypeFixed: "Le type de valeur d'un champ ne peut jamais être changé.",
+          tValueTypeFixedWhy:
+            "Les réponses déjà enregistrées sous l'ancien type n'auraient plus de sens, et il n'existe aucune conversion. Il en va de même pour la clé, le type d'enregistrement et la portée.",
+          tMultiOrder: "Une réponse MultiSelect se relit dans l'ordre de sélection, pas dans l'ordre des options.",
+          tMultiOrderWhy:
+            "Conserver l'ordre de sélection est ce qui permet à la valeur de survivre fidèlement à l'aller-retour. Le coût est qu'une colonne de liste affichant cette réponse ne suit pas nécessairement l'ordre dans lequel vous avez rédigé les options.",
+          tLongTextNoBlock: "LongText vous laisse taper au-delà de son plafond de 10 000 caractères.",
+          tLongTextNoBlockWhy:
+            "Le compteur à l'écran passe au rouge, mais il n'existe aucun blocage avant soumission comme celui que MultiSelect applique à une vingtième sélection. Le refus vient de l'enregistrement.",
+          tCurrencyShape: "Un code de devise n'est vérifié que sur sa forme.",
+          tCurrencyShapeWhy:
+            "Il n'existe dans le produit aucune liste faisant autorité de véritables codes de devise à laquelle comparer, et un espace de travail peut légitimement avoir besoin de n'importe lequel des quelque 180 codes réels. Trois lettres majuscules constituent donc toute la vérification, et un code bien formé mais inexistant tel que ZZZ passe.",
+          tCurrencyPlain: "Currency stocke un montant simple, jamais des unités mineures.",
+          tCurrencyPlainWhy:
+            "Cela suit la même convention que tout autre montant monétaire du produit. 100.50 est stocké comme 100.50, jamais comme 10050 — ce qui compte si vous lisez un jour les données brutes ou construisez un rapport dessus.",
+          tDurationMinutes: "L'unité de Duration est toujours la minute, et elle n'a aucun maximum.",
+          tDurationMinutesWhy:
+            "La minute est la convention déjà utilisée par les parties planification et réservation du produit pour les données de type durée, et le formulaire libelle l'unité visiblement plutôt que de laisser un nombre nu. Seules les valeurs négatives sont refusées ; il n'y a aucune borne supérieure ni aucun moyen par champ d'en définir une.",
+          tRatingSlider: "Un champ Rating non touché affiche son curseur sur 1 tout en étant vide.",
+          tRatingSliderWhy:
+            "Un curseur a toujours besoin d'un nombre réel pour positionner sa poignée. Rien n'est soumis tant que quelqu'un ne l'a pas réellement déplacé, donc le champ s'enregistre véritablement comme vide — mais il ressemble à un 1 tant qu'on ne le sait pas.",
+          tRatingZero: "Un Rating de 0 est refusé plutôt que traité comme non noté.",
+          tRatingZeroWhy:
+            "Non noté signifie que le champ a été laissé véritablement vide. Un 0 explicitement soumis est une valeur réelle qui échoue à la vérification de 1 à 5 exactement comme le ferait un 6, et reçoit le même message.",
+          tPhoneShape: "Phone valide la forme, pas si le numéro pourrait réellement exister.",
+          tPhoneShapeWhy:
+            "Le serveur ne vérifie que la grammaire internationale. Le sélecteur du formulaire vérifie en plus les chiffres par rapport au plan de numérotation réel du pays sélectionné, donc l'écart n'est accessible que depuis une requête qui contourne le formulaire — une limitation acceptée de qualité de donnée plutôt qu'une limitation de sécurité.",
+          tPhoneFlag: "Le drapeau de pays affiché par Phone peut être erroné sur un indicatif partagé.",
+          tPhoneFlagWhy:
+            "Certains indicatifs sont partagés par plusieurs pays, et il n'existe aucune colonne de pays séparée — le drapeau est déduit du numéro lui-même. Le numéro stocké n'est pas affecté ; seul le drapeau à côté peut désigner le mauvais pays au sein d'un indicatif partagé.",
+          tColorShorthand: "Color n'unifie jamais les formes à trois et à six chiffres.",
+          tColorShorthandWhy:
+            "Les deux sont valides et persistent toutes deux exactement telles que soumises, de sorte que la même couleur peut être stockée de deux façons selon les enregistrements. Seule la casse est normalisée, toujours en minuscules.",
+          tTimeText: "Time est stocké comme du texte canonique plutôt que comme une heure de base de données.",
+          tTimeTextWhy:
+            "Un choix de stockage délibéré, fait pour éviter de reproduire un problème de tri connu que subit une colonne d'heure existante ailleurs dans le produit sur une base de données. Une saisie sans zéros de tête est acceptée et normalisée, de sorte que deux écritures de la même heure convergent toujours.",
+          tPercentStorage: "Percent stocke le nombre que vous diriez à voix haute, pas une fraction.",
+          tPercentStorageWhy:
+            "25 est stocké comme 25 et affiché comme 25%. Ce n'est jamais 0.25, et l'affichage ajoute simplement le signe plutôt que de faire tourner un formateur basé sur les fractions, spécifiquement pour qu'un 25 ne puisse jamais s'afficher comme 2500%.",
+          tTextNotTrimmed: "Text ne supprime pas les espaces qui l'entourent ; Select le fait.",
+          tTextNotTrimmedWhy:
+            "Une valeur Text est stockée exactement telle que soumise, car un espace en début ou en fin peut avoir un sens dans du texte libre. Une valeur Select est épurée des deux côtés avant d'être comparée aux options, de sorte qu'une espace égarée ne provoque jamais un rejet inattendu.",
+          tOracleBytes: "Un long texte arabe peut être refusé en dessous du plafond de caractères annoncé sur une base de données.",
+          tOracleBytesWhy:
+            "Le plafond de 4 000 caractères de Text est un décompte de caractères exact sur deux des trois bases de données prises en charge. Sur la troisième, il est compté en octets, donc un texte multi-octets — l'arabe compris — peut atteindre la limite plus tôt. Utilisez LongText si vous êtes proche de cette limite.",
+
+          referencesTitle: "Comportements des références",
+          fNoStoredName: "Une référence ne stocke jamais le nom de l'enregistrement qu'elle cible.",
+          fNoStoredNameWhy:
+            "Un nom stocké se trouverait à l'intérieur de l'enregistrement portant le champ, et serait donc lisible par quiconque peut lire cet enregistrement — alors que le nom lui-même est protégé par la propre permission de la cible. Il n'existe aucun paramètre pour activer cela, et il n'y en aura pas. Le bénéfice compensatoire est qu'un nom corrigé sur son propre enregistrement est corrigé partout où il est référencé, immédiatement.",
+          fIdOpaque: "L'identité de l'enregistrement référencé est opaque et doit faire l'aller-retour inchangée.",
+          fIdOpaqueWhy:
+            "C'est la clé d'un autre module, chiffrée pour le transport, et rien dedans n'est destiné à être lu ou remanié. Un seul caractère modifié, et le produit signale à juste titre que la référence stockée est mal formée. Renvoyez exactement la chaîne que vous avez reçue.",
+          fSameNames: "Une référence est écrite sous les deux mêmes noms que ceux sous lesquels elle est lue.",
+          fSameNamesWhy:
+            "Il n'existe aucune asymétrie entre la forme de lecture et la forme d'écriture. Quiconque intègre avec l'API des valeurs doit reprendre les deux noms de propriété qui lui ont été donnés ; inventer un nom différent pour l'identité à l'entrée produit un enregistrement ne portant aucun pointeur du tout, ensuite refusé comme référence incomplète.",
+          fFiveFailures: "Une référence qui ne s'affiche pas indique lequel de cinq événements s'est produit.",
+          fFiveFailuresWhy:
+            "Aucune permission, enregistrement disparu, valeur mal formée, une recherche qui vient d'échouer, et un type d'enregistrement pour lequel cette installation ne peut pas répondre : cinq problèmes différents avec cinq remèdes différents. Les rendre tous comme un champ vide est ce qui laisserait un pointeur vers un enregistrement supprimé passer inaperçu pendant un an.",
+          fMergedAnswers: "« Supprimé » et « dans un espace de travail que vous ne pouvez pas voir » sont une seule réponse.",
+          fMergedAnswersWhy:
+            "Les distinguer permettrait à quelqu'un de tester des identités une par une pour découvrir ce qui existe dans un autre espace de travail. « Vous n'êtes pas autorisé à consulter ce type d'enregistrement » est distingué des deux, car cela décrit le propre accès du lecteur et ne révèle rien.",
+          fDeleteClears: "Supprimer un enregistrement référencé efface chaque pointeur vers lui et conserve chaque ligne de valeur.",
+          fDeleteClearsWhy:
+            "Les deux éléments de chaque réponse concernée sont effacés ensemble, jamais l'un sans l'autre. Rien n'est supprimé : la réponse conserve sa ligne, sa version et son historique, de sorte que le champ se lit ensuite comme véritablement vide plutôt que comme cassé.",
+          fNoBacklinks: "Rien ne liste les références qui pointent vers un enregistrement donné.",
+          fNoBacklinksWhy:
+            "Il n'existe nulle part de vue « qu'est-ce qui pointe vers ceci ? », et supprimer un enregistrement ne vous avertit pas du nombre de pointeurs qu'il s'apprête à effacer. L'effacement est silencieux parce qu'il est sûr, pas parce qu'il est caché.",
+          fLimitedTargets: "Seuls trois types d'enregistrement peuvent actuellement être référencés.",
+          fLimitedTargetsWhy:
+            "Membres du personnel, comptes utilisateurs et personnes de tiers — les types dont le module propriétaire fournit une liste consultable et vérifiée par permission. Tout le reste est refusé plutôt que répondu par une liste vide, car une liste vide ressemble à un résultat correct et dirait « il n'en existe aucun » alors que la vérité est « cela ne peut pas être demandé ».",
+          fNoAdminTarget: "Les enregistrements d'administrateur ne peuvent absolument pas être référencés.",
+          fNoAdminTargetWhy:
+            "Un administrateur peut n'appartenir à aucun espace de travail — un administrateur de plateforme n'en a aucun — de sorte qu'un pointeur vers l'un d'eux pourrait franchir toutes les limites d'espace de travail du produit. Un champ User Reference en refuse un purement et simplement, et le formulaire de définition n'en propose jamais.",
+          fUnpinnedIsLegal: "Laisser un champ de référence non épinglé est un état permanent et pris en charge.",
+          fUnpinnedIsLegalWhy:
+            "Cela signifie « tout type que cette personne peut référencer », et chaque réponse enregistre le type qu'elle a choisi. Cela ne doit jamais être lu comme « rien de configuré, donc rien de valide » — le formulaire d'enregistrement le gère en demandant d'abord le type d'enregistrement, puis l'enregistrement.",
+          fPopulatedUnpinned: "Un champ non épinglé et rempli n'offre aucun moyen de changer le type d'enregistrement.",
+          fPopulatedUnpinnedWhy:
+            "Le propre type de la réponse stockée est utilisé pour le sélecteur, donc reprendre une sélection se limite à ce type. Vider le champ fait revenir le contrôle de type. Une limite réelle plutôt qu'un défaut, et la manifestation de cette fonctionnalité la plus susceptible d'être signalée comme telle.",
+          fNotExported: "Un type cible épinglé ne figure pas dans l'export des définitions.",
+          fNotExportedWhy:
+            "La feuille de calcul compte 18 colonnes et aucune n'est le type cible, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ.",
+          fSingleValue: "Un champ de référence contient exactement un pointeur.",
+          fSingleValueWhy:
+            "Il n'existe aucun type de référence à valeurs multiples. Deux réponses signifient deux champs, et Multi-Select ne peut pas pointer vers des enregistrements — ses réponses sont du texte que vous avez rédigé.",
+
+          optionsTitle: "Comportements des options",
+          oTextIsValue: "Le texte anglais de l'option est la réponse stockée.",
+          oTextIsValueWhy:
+            "Il n'existe aucun code séparé derrière une option, donc renommer l'une d'elles change ce qu'affiche chaque enregistrement existant. Préférez ajouter une nouvelle option et retirer l'ancienne quand la distinction compte.",
+          oCaseSensitive: "La comparaison des options est exacte et sensible à la casse.",
+          oCaseSensitiveWhy:
+            "Deux options qui ne diffèrent que par la casse forment une paire légitimement distincte, et ignorer la casse les ferait entrer en collision. Les deux côtés sont d'abord épurés de leurs espaces, donc seules la casse et le contenu comptent.",
+          oEnglishStored: "Le libellé arabe d'une option est réservé à l'affichage.",
+          oEnglishStoredWhy:
+            "Les deux listes de libellés sont associées ligne par ligne, et c'est la liste anglaise qui est écrite sur l'enregistrement et validée contre elle. Un lecteur arabophone voit de l'arabe à l'entrée comme à la sortie ; la donnée sous-jacente reste une valeur unique et cohérente.",
+          oNoSharedSets: "La liste d'options intégrée d'un champ lui est propre — en partager une est une étape distincte et délibérée.",
+          oNoSharedSetsWhy:
+            "Rédiger une liste Options sur un champ la garde privée à ce champ ; elle n'est pas automatiquement réutilisée ailleurs. Une liste de pays dont ont besoin trois champs n'a toutefois plus besoin d'être écrite et maintenue trois fois — liez plutôt les trois au même Option Set partagé et versionné, et une modification ultérieure de ce jeu met à jour tous les champs liés ensemble.",
+
+          groupsTitle: "Comportements des groupes de champs",
+          gStableKeyFixed: "La clé stable d'un groupe ne peut jamais être changée, par personne.",
+          gStableKeyFixedWhy:
+            "Le schéma exporté nomme un groupe par cette clé, donc un renommage transformerait silencieusement une future réimportation d'une mise à jour en une création, contre un ensemble déjà livré. Une clé incorrecte signifie recréer le groupe.",
+          gReorderCeiling: "La réorganisation refuse plus de 100 groupes sur un même type d'enregistrement.",
+          gReorderCeilingWhy:
+            "Une requête de réorganisation transporte tout l'ensemble d'un coup. Au-delà de 100, aucun groupe de ce type d'enregistrement ne peut plus être déplacé du tout — l'écran le signale plutôt que d'échouer de façon générique.",
+          gGlobalOrdering: "Un espace de travail ne peut pas positionner son groupe par rapport à un groupe global.",
+          gGlobalOrderingWhy:
+            "La réorganisation est tout ou rien et refuse tout groupe que l'appelant ne possède pas, donc les propres groupes d'un espace de travail sont renumérotés à partir de zéro. Ces numéros peuvent entrer en collision avec ceux d'un groupe global, l'égalité se départage sur le libellé anglais, et l'effet visible est que déplacer votre groupe tout en haut peut le laisser en dessous d'un groupe global.",
+          gSeparatePerms: "Les groupes de champs ont besoin de leurs propres permissions.",
+          gSeparatePermsWhy:
+            "Ils sont verrouillés séparément des définitions de champs, y compris une permission distincte pour la réorganisation. Un rôle détenant toutes les permissions de champs personnalisés ne les obtient pas automatiquement, et sans elles, le lien et le sélecteur sont simplement absents.",
+          gOneEntityType: "Un groupe appartient à exactement un type d'enregistrement.",
+          gOneEntityTypeWhy:
+            "Rien n'est listé tant que vous n'avez pas choisi un type d'enregistrement, et changer le type d'enregistrement d'un champ efface son groupe, car un groupe d'un type n'est jamais valide pour un autre.",
+          gUniquenessIndex: "Dans une base de données mise à niveau, l'unicité de la clé stable repose sur la vérification applicative.",
+          gUniquenessIndexWhy:
+            "Les groupes qui existaient avant les clés stables portent une clé vide jusqu'à l'exécution d'un rétro-remplissage, et la contrainte d'unicité au niveau de la base de données reste désactivée tant que cela ne s'est pas produit partout — sinon elle rejetterait la seconde de ces clés vides.",
+
+          securityTitle: "Comportements de sécurité et de classification",
+          sSensitivityLabel: "Sensitivity est un libellé, pas un contrôle d'accès.",
+          sSensitivityLabelWhy:
+            "Il est stocké, restitué et exploitable en reporting, et il ne change rien à qui peut lire une valeur. La sécurité au niveau du champ est le mécanisme qui restreint l'accès, et les deux sont indépendants.",
+          sRestrictedByResource: "Les restrictions sont indexées par ressource de permission, pas par type d'enregistrement.",
+          sRestrictedByResourceWhy:
+            "C'est la même ressource qui protège déjà l'enregistrement lui-même, donc une seule liste de champs restreints couvre à la fois les champs intégrés d'un écran et ses champs personnalisés. Les noms sont comparés sans tenir compte de la casse.",
+          sRestrictedInvisible: "Un champ restreint est absent, pas vide.",
+          sRestrictedInvisibleWhy:
+            "Afficher un espace réservé révélerait qu'une valeur existe, ce qui est déjà une information. La conséquence est qu'un champ restreint est indissociable d'un champ qui n'a jamais été défini — à retenir quand quelqu'un signale un champ manquant.",
+          sRejectWholeSave: "Écrire dans un champ restreint refuse tout l'enregistrement.",
+          sRejectWholeSaveWhy:
+            "Ignorer silencieusement le seul champ concerné et rapporter un succès est l'échec le plus difficile à remarquer. Le refus se déclenche aussi quand la valeur soumise est égale à celle stockée, de sorte que personne ne peut sonder une valeur masquée en testant ce qui est accepté.",
+          sRequiredExclusive: "Obligatoire et restreint ne peuvent pas être combinés.",
+          sRequiredExclusiveWhy:
+            "Quelqu'un qui ne peut pas voir un champ ne pourrait jamais le satisfaire, donc l'enregistrement lui serait impossible à sauvegarder. Les deux sens sont refusés, quel que soit celui tenté en premier, et le message nomme le champ.",
+          sHistoryNoValues: "L'historique de définition n'affiche jamais les changements de valeur.",
+          sHistoryNoValuesWhy:
+            "Les inclure ferait de la boîte de dialogue une copie lisible des données de champs de tout le monde, contournant d'un coup la sécurité au niveau du champ et toute autre règle de visibilité. Les enregistrements porteurs de valeurs sont exclus nommément plutôt que par simple omission.",
+
+          exportTitle: "Comportements d'export et de portabilité",
+          eDefinitionsOnly: "L'export en feuille de calcul contient des définitions, jamais des réponses.",
+          eDefinitionsOnlyWhy:
+            "C'est par conception un export de définitions, et il n'existe nulle part dans le produit d'export de valeurs. Aucune donnée de qui que ce soit ne peut sortir par ce biais.",
+          eRefusesPastLimit: "Au-delà de 10 000 définitions, l'export refuse plutôt que de tronquer.",
+          eRefusesPastLimitWhy:
+            "Un fichier silencieusement tronqué est pire qu'aucun fichier, car il paraît complet. Le refus vous invite à restreindre l'export à un seul type d'enregistrement.",
+          eRestrictedAbsent: "Les champs qui vous sont restreints sont absents du fichier, pas vides.",
+          eRestrictedAbsentWhy:
+            "La sécurité au niveau du champ s'applique à l'export exactement comme à l'écran, et une colonne vide révélerait quand même que le champ existe.",
+          eNoImport: "L'export en feuille de calcul est un rapport, pas un modèle — mais un format d'ensemble séparé fait l'aller-retour.",
+          eNoImportWhy:
+            "L'export XLSX existe pour être lu, pas réimporté, donc une feuille de calcul ne peut toujours pas servir à créer des champs en masse. Un ensemble de schéma portable distinct, au format JSON, le peut : exportez les groupes et définitions d'un type d'enregistrement, puis importez ce même ensemble — dans cet espace de travail ou un autre — via sa propre boîte de dialogue de dépôt, qui rapporte les éléments créés, ignorés et échoués par groupe plutôt qu'un simple total.",
+          eTextCells: "Chaque cellule exportée est écrite comme du texte.",
+          eTextCellsWhy:
+            "Un libellé commençant par =, +, - ou @ arrive comme des caractères littéraux plutôt que comme une formule de tableur. C'est catégorique plutôt qu'un filtrage de cas connus, de sorte que rien qui ressemble à un calcul ne puisse en devenir un.",
+
+          reachTitle: "Où les champs apparaissent, et où ils n'apparaissent pas",
+          rApiOnlyTypes: "Certains types d'enregistrement n'ont aucun écran du tout.",
+          rApiOnlyTypesWhy:
+            "Ce sont des cibles légales, listées en dernier sur le formulaire de définition avec un suffixe API only. Un champ défini contre l'un d'eux est accessible via l'API et n'a nulle part où s'afficher dans l'interface.",
+          rHandRolledForms: "Une poignée d'écrans câblent leurs champs personnalisés à la main.",
+          rHandRolledFormsWhy:
+            "La plupart des écrans récupèrent automatiquement les champs personnalisés. Quelques-uns dont les interfaces de création et de modification précèdent ce mécanisme — parmi eux les webhooks, les modèles de message, les forfaits de tenant, les définitions de plugin, les prospects et les thèmes — implémentent eux-mêmes la même section Champs personnalisés. Le comportement devrait être identique ; si ce n'est pas le cas, cela mérite d'être signalé.",
+          rDsrCreateOnly: "Les demandes de personne concernée ne prennent les champs personnalisés qu'à la création.",
+          rDsrCreateOnlyWhy:
+            "Une demande soumise traverse un flux de révision plutôt que d'être généralement modifiable, il n'existe donc aucun formulaire de modification pour y porter des champs personnalisés. C'est voulu, pas un oubli.",
+          rDialogForms: "La plupart des formulaires de création et de modification d'enregistrement restent des boîtes de dialogue.",
+          rDialogFormsWhy:
+            "La rédaction des champs personnalisés elle-même est sortie d'une boîte de dialogue imbriquée pour rejoindre un panneau latéral, ce qui explique pourquoi ajouter un champ depuis l'intérieur d'un enregistrement n'empile plus deux boîtes de dialogue. Les formulaires d'enregistrement environnants ont été délibérément laissés tels quels — les déplacer est un changement bien plus large, à travers des modules qui n'ont rien à voir avec les champs personnalisés.",
+          rNoSidebarEntry: "Les écrans Types de valeur et Types d'entité n'ont aucune entrée de menu latéral.",
+          rNoSidebarEntryWhy:
+            "La navigation du menu latéral est initialisée de façon centralisée, et ces deux écrans en ont été délibérément exclus. Ils sont accessibles depuis des liens dans l'en-tête de la page Champs personnalisés à la place.",
+
+          absentTitle: "Ce que le produit ne fait pas",
+          absentIntro:
+            "Assez souvent demandé pour mériter d'être énoncé clairement. Aucun de ces points n'est un défaut à signaler.",
+          absent1:
+            "Les vingt-deux types de valeur forment l'ensemble complet. Deux éléments qui figuraient autrefois sur cette liste n'y sont plus : File et Image stockent un fichier ou une image téléversés, et RichText stocke une prose mise en forme — voir la page Types de valeur. Rattacher une nouvelle valeur File ou Image n'est cependant pas encore possible depuis le produit ; les deux peuvent être définis dès aujourd'hui, et une valeur existante ne peut être que consultée ou effacée.",
+          absent2:
+            "L'export des valeurs refuse plutôt que de tronquer dès qu'une requête dépasserait 10 000 cellules — exportez une tranche d'enregistrements plus étroite plutôt que d'espérer un fichier partiel.",
+          absent3:
+            "Il n'existe aucune création en masse depuis une feuille de calcul. Un ensemble de schéma portable (JSON) peut créer de nombreuses définitions de champ à la fois via la boîte de dialogue d'import ; un champ isolé se crée encore un par un, sur le formulaire.",
+          absent4:
+            "Une version d'option set publiée ne déplace pas automatiquement les champs déjà liés à une version antérieure — un administrateur relie chaque champ explicitement. C'est délibéré : suivre automatiquement changerait silencieusement le sens des valeurs déjà enregistrées sous l'ancienne liste.",
+          absent5:
+            "Il n'existe aucun affichage ou masquage conditionnel qu'un administrateur puisse configurer. Un champ est soit sur le formulaire, soit non, sous réserve d'Active et de la sécurité au niveau du champ.",
+          absent6:
+            "Il n'existe ni calcul, ni valeur par défaut, ni règle inter-champs. Un champ personnalisé enregistre une réponse ; il n'en déduit aucune.",
+          absentInfoTitle: "Si vous avez besoin de l'un de ces éléments",
+          absentInfoContent:
+            "Faites-le savoir à qui possède votre feuille de route produit plutôt que de le contourner d'une façon qui vous coûte des données. Recréer un champ pour changer quelque chose de définitif détruit les réponses déjà stockées pour lui, et c'est précisément l'erreur coûteuse que cette page existe pour prévenir.",
         },
+
+        // ═══════════════════════════════════════════════════
+        //  Jeux d'options (listes partagées et versionnées)
+        // ═══════════════════════════════════════════════════
         optionSets: {
-          title: "Jeux d'Options",
-          description: "Reusable, versioned lists of choices. Point many fields at one set, and every field that uses it changes together.",
-          intro: "An jeu d'options is a named, versioned collection of choices that multiple Select and MultiSelect champs personnalisés share. Instead of each field maintaining its own private inline options list, fields bind to an jeu d'options version. When business requirements evolve, an administrator creates a new version, updates the choices, and publishes it — immediately updating every bound field across the product without manual field-by-field updates.",
-          whenToUseTitle: "When to use an Jeu d'Options vs inline options",
-          whenToUseContent: "Use an Jeu d'Options whenever the same list of choices is needed across more than one field (for example, Country codes, Priority levels, or Department lists), or when you need auditable version history and staged publishing. Use inline options when a choice list is unique to a single field and will never be reused.",
-          kindsTitle: "Three kinds of Jeux d'Options",
-          kindsIntro: "SCRIPE distinguishes three kinds of jeux d'options based on their origin, ownership, and editability rules:",
-          thKind: "Kind",
-          thOwner: "Owner",
-          thWhoCanEdit: "Who can edit",
-          thScope: "Scope",
-          kindSeeded: "Seeded (Platform-maintained)",
-          ownerPlatform: "Platform",
-          editNobody: "Nobody (Read-only)",
-          scopeGlobal: "Global (All tenants)",
-          kindPlatform: "Platform-created",
-          editPlatformAdmin: "Platform administrators",
-          scopeGlobalOrTenant: "Global or tenant-scoped",
-          kindTenant: "Tenant-created",
+          title: "Jeux d'options",
+          description:
+            "Des listes de choix réutilisables et versionnées. Faites pointer plusieurs champs vers un même jeu, et chaque champ qui l'utilise change ensemble.",
+          intro:
+            "Un jeu d'options (option set) est une collection nommée et versionnée de choix que plusieurs champs personnalisés Select et MultiSelect partagent. Plutôt que chaque champ entretienne sa propre liste d'options intégrée et privée, les champs se lient à une version de jeu d'options. Quand les besoins métier évoluent, un administrateur crée une nouvelle version, met à jour les choix, et la publie — mettant immédiatement à jour chaque champ lié à travers le produit, sans mise à jour manuelle champ par champ.",
+          whenToUseTitle: "Quand utiliser un jeu d'options plutôt que des options intégrées",
+          whenToUseContent:
+            "Utilisez un jeu d'options chaque fois que la même liste de choix est nécessaire sur plus d'un champ (par exemple, des codes pays, des niveaux de priorité, ou des listes de départements), ou quand vous avez besoin d'un historique de versions auditable et d'une publication par étapes. Utilisez des options intégrées quand une liste de choix est propre à un seul champ et ne sera jamais réutilisée.",
+
+          kindsTitle: "Trois types de jeux d'options",
+          kindsIntro:
+            "SCRIPE distingue trois types de jeux d'options selon leur origine, leur propriétaire, et leurs règles de modification :",
+          thKind: "Type",
+          thOwner: "Propriétaire",
+          thWhoCanEdit: "Qui peut modifier",
+          thScope: "Portée",
+          kindSeeded: "Prédéfini (maintenu par la plateforme)",
+          ownerPlatform: "Plateforme",
+          editNobody: "Personne (lecture seule)",
+          scopeGlobal: "Global (tous les tenants)",
+          kindPlatform: "Créé par la plateforme",
+          editPlatformAdmin: "Administrateurs de la plateforme",
+          scopeGlobalOrTenant: "Portée globale ou tenant",
+          kindTenant: "Créé par le tenant",
           ownerTenant: "Tenant",
-          editTenantAdmin: "Tenant administrators",
-          scopeTenantOnly: "Tenant workspace only",
-          seededReadOnlyTitle: "Why seeded sets are read-only",
-          seededReadOnlyContent: "Seeded sets (such as ISO 3166-1 country codes and ISO 4217 currencies) are marked as system-managed. The server strictly refuses all mutating actions — creating draft versions, editing options, publishing, or deletion — for everyone, including Super Admins. If you need a customized variant of a seeded list, create your own tenant or platform set instead.",
-          lifecycleTitle: "Version lifecycle and states",
-          lifecycleIntro: "Every jeu d'options manages its choices through immutable versions. A version moves through four discrete lifecycle states:",
-          thStatus: "Status",
-          thMeaning: "Meaning",
-          thNextState: "Next state",
-          statusDraft: "Draft",
-          meaningDraft: "Editable draft version. Choices can be added, updated, reordered, or deactivated. Not visible on active record forms until published.",
-          nextDraft: "Published (via Publish action)",
-          statusPublished: "Published",
-          meaningPublished: "The active, live version. Bound fields render exactly these choices on create and edit forms. Immutable.",
-          nextPublished: "Deprecated (when a newer draft is published)",
-          statusDeprecated: "Deprecated",
-          meaningDeprecated: "Superseded by a newer published version. Historical records referencing choices in this version continue to render correctly. Cannot be bound to new fields.",
-          nextDeprecated: "Archived (when retired)",
-          statusArchived: "Archived",
-          meaningArchived: "Permanently retired from active use. Retained strictly for historical audit trails. Immutable.",
-          nextArchived: "None (Terminal state)",
-          lifecycleOnlyOnePublished: "Exactly one version can be Published at any time. Publishing a draft automatically deprecates the previously published incumbent version in a single atomic operation.",
-          publishSwapTitle: "Atomic publish swap",
-          publishSwapContent: "When you publish a new draft, the current published version is superseded and marked Deprecated immediately. No data is lost: records that previously saved values from the older version remain intact and display their stored labels.",
-          draftTitle: "Creating and editing a draft version",
-          draftIntro: "To add or modify choices in an jeu d'options, follow the staged versioning workflow:",
-          draft1: "Click Create draft version on the jeu d'options detail panel. A new draft is initialized.",
-          draft2: "Enter a unique Key and English label for each option. Both are required before saving is enabled. You can optionally provide Arabic labels, color tints, icon keys, and sort orders.",
-          draft3: "Click Save draft to persist the options list. The draft is saved to the server but remains unexposed to active record forms.",
-          draft4: "When ready, click Publish version. The version becomes live and all bound fields immediately serve the updated choices.",
-          draftSaveHintTitle: "Draft validation requirements",
-          draftSaveHintContent: "A draft requires at least one valid option with a non-empty Key and English label. Each Key must be unique within the version. The Save draft button automatically enables as soon as all rows satisfy these validation rules.",
-          bindingTitle: "Binding fields to an Jeu d'Options",
-          bindingIntro: "Fields with value types Select or MultiSelect can bind to an jeu d'options instead of maintaining inline options. Three lifecycle actions are supported:",
+          editTenantAdmin: "Administrateurs du tenant",
+          scopeTenantOnly: "Espace de travail du tenant uniquement",
+          seededReadOnlyTitle: "Pourquoi les jeux prédéfinis sont en lecture seule",
+          seededReadOnlyContent:
+            "Les jeux prédéfinis (tels que les codes pays ISO 3166-1 et les devises ISO 4217) sont marqués comme gérés par le système. Le serveur refuse strictement toute action de modification — créer des versions brouillon, modifier des options, publier, ou supprimer — pour tout le monde, Super Admins compris. Si vous avez besoin d'une variante personnalisée d'une liste prédéfinie, créez plutôt votre propre jeu de tenant ou de plateforme.",
+
+          lifecycleTitle: "Cycle de vie et états des versions",
+          lifecycleIntro:
+            "Chaque jeu d'options gère ses choix à travers des versions immuables. Une version traverse quatre états distincts de cycle de vie :",
+          thStatus: "Statut",
+          thMeaning: "Signification",
+          thNextState: "État suivant",
+          statusDraft: "Brouillon",
+          meaningDraft:
+            "Version brouillon modifiable. Les choix peuvent être ajoutés, mis à jour, réordonnés ou désactivés. Non visible sur les formulaires d'enregistrement actifs tant qu'elle n'est pas publiée.",
+          nextDraft: "Published (via l'action Publish)",
+          statusPublished: "Publié",
+          meaningPublished:
+            "La version active et en direct. Les champs liés affichent exactement ces choix sur les formulaires de création et de modification. Immuable.",
+          nextPublished: "Deprecated (quand un brouillon plus récent est publié)",
+          statusDeprecated: "Déprécié",
+          meaningDeprecated:
+            "Remplacé par une version publiée plus récente. Les enregistrements historiques référençant des choix de cette version continuent de s'afficher correctement. Ne peut plus être lié à de nouveaux champs.",
+          nextDeprecated: "Archived (au retrait)",
+          statusArchived: "Archivé",
+          meaningArchived:
+            "Retiré définitivement de l'usage actif. Conservé strictement pour l'historique d'audit. Immuable.",
+          nextArchived: "Aucun (état terminal)",
+          lifecycleOnlyOnePublished:
+            "Exactement une version peut être Published à tout moment. Publier un brouillon déprécie automatiquement la version publiée en place en une seule opération atomique.",
+          publishSwapTitle: "Bascule atomique de publication",
+          publishSwapContent:
+            "Quand vous publiez un nouveau brouillon, la version publiée actuelle est immédiatement remplacée et marquée Deprecated. Aucune donnée n'est perdue : les enregistrements ayant précédemment stocké des valeurs de l'ancienne version restent intacts et affichent leurs libellés stockés.",
+
+          draftTitle: "Créer et modifier une version brouillon",
+          draftIntro:
+            "Pour ajouter ou modifier des choix dans un jeu d'options, suivez le flux de versionnage par étapes :",
+          draft1:
+            "Cliquez sur Create draft version dans le panneau de détail du jeu d'options. Un nouveau brouillon est initialisé.",
+          draft2:
+            "Saisissez une Key unique et un libellé anglais pour chaque option. Les deux sont obligatoires avant que l'enregistrement ne soit possible. Vous pouvez facultativement fournir des libellés arabes, des teintes de couleur, des clés d'icône, et des ordres de tri.",
+          draft3:
+            "Cliquez sur Save draft pour enregistrer la liste d'options. Le brouillon est sauvegardé sur le serveur mais reste invisible pour les formulaires d'enregistrement actifs.",
+          draft4:
+            "Quand vous êtes prêt, cliquez sur Publish version. La version devient active et tous les champs liés proposent immédiatement les choix mis à jour.",
+          draftSaveHintTitle: "Exigences de validation d'un brouillon",
+          draftSaveHintContent:
+            "Un brouillon exige au moins une option valide avec une Key et un libellé anglais non vides. Chaque Key doit être unique au sein de la version. Le bouton Save draft s'active automatiquement dès que toutes les lignes satisfont ces règles de validation.",
+
+          bindingTitle: "Lier des champs à un jeu d'options",
+          bindingIntro:
+            "Les champs de type de valeur Select ou MultiSelect peuvent se lier à un jeu d'options plutôt que d'entretenir des options intégrées. Trois actions de cycle de vie sont prises en charge :",
           thAction: "Action",
-          thWhatItDoes: "What it does",
-          thEffect: "Effect on existing data",
+          thWhatItDoes: "Ce qu'elle fait",
+          thEffect: "Effet sur les données existantes",
           actionBind: "Bind",
-          doingBind: "Attaches a champ personnalisé definition to an jeu d'options's published version.",
-          effectBind: "Field switches from inline options to the jeu d'options's choices. Previously saved values are preserved.",
+          doingBind:
+            "Attache une définition de champ personnalisé à la version publiée d'un jeu d'options.",
+          effectBind:
+            "Le champ passe des options intégrées aux choix du jeu d'options. Les valeurs déjà enregistrées sont préservées.",
           actionSwitch: "Switch version",
-          doingSwitch: "Points a bound field to a newer published version of the same or another jeu d'options.",
-          effectSwitch: "Field begins offering the new version's choices. Historical records continue rendering previously selected options.",
-          actionDetach: "Detach (Unbind)",
-          doingDetach: "Removes the jeu d'options binding, reverting the field back to standalone inline options.",
-          effectDetach: "Field stops querying the jeu d'options. Stored record values remain intact.",
-          switchCautionTitle: "Binding stability",
-          switchCautionContent: "When detaching or switching jeux d'options, ensure that existing record values remain compatible with the new choice keys. Deactivating an option rather than removing its key guarantees that historical records display without interruption.",
-          platformAdminTitle: "Platform administrator capabilities",
-          platformAdminIntro: "Platform Super Administrators operate with elevated system-wide governance rights:",
-          platformAdmin1: "Create global jeux d'options shared across all tenant workspaces.",
-          platformAdmin2: "Create and publish new versions for platform-owned (non-seeded) jeux d'options.",
-          platformAdmin3: "Manage jeu d'options availability across multi-tenant boundaries.",
-          platformAdmin4: "Inspect version chains and audit logs for all jeux d'options platform-wide.",
-          platformAdmin5: "Respect system-managed boundaries: platform-maintained seeded sets remain immutable for platform admins as well.",
-          platformContextTitle: "Platform context detection",
-          platformContextContent: "When operating in the platform management console (without drilling into a specific tenant), newly created jeux d'options automatically default to Global scope, making them accessible to all tenant environments.",
+          doingSwitch:
+            "Fait pointer un champ lié vers une version publiée plus récente du même jeu d'options ou d'un autre.",
+          effectSwitch:
+            "Le champ commence à proposer les choix de la nouvelle version. Les enregistrements historiques continuent d'afficher les options précédemment sélectionnées.",
+          actionDetach: "Detach (dissocier)",
+          doingDetach:
+            "Retire la liaison au jeu d'options, faisant revenir le champ à des options intégrées autonomes.",
+          effectDetach:
+            "Le champ cesse d'interroger le jeu d'options. Les valeurs enregistrées restent intactes.",
+          switchCautionTitle: "Stabilité de la liaison",
+          switchCautionContent:
+            "Lors d'une dissociation ou d'un changement de jeu d'options, assurez-vous que les valeurs déjà enregistrées restent compatibles avec les nouvelles clés de choix. Désactiver une option plutôt que de retirer sa clé garantit que les enregistrements historiques s'affichent sans interruption.",
+
+          platformAdminTitle: "Capacités de l'administrateur de plateforme",
+          platformAdminIntro:
+            "Les Super Administrateurs de la plateforme opèrent avec des droits de gouvernance élevés à l'échelle du système :",
+          platformAdmin1:
+            "Créer des jeux d'options globaux partagés entre tous les espaces de travail des tenants.",
+          platformAdmin2:
+            "Créer et publier de nouvelles versions pour les jeux d'options détenus par la plateforme (non prédéfinis).",
+          platformAdmin3:
+            "Gérer la disponibilité des jeux d'options à travers les frontières multi-tenants.",
+          platformAdmin4:
+            "Inspecter les chaînes de versions et les journaux d'audit de tous les jeux d'options à l'échelle de la plateforme.",
+          platformAdmin5:
+            "Respecter les frontières gérées par le système : les jeux prédéfinis maintenus par la plateforme restent immuables, même pour les administrateurs de plateforme.",
+          platformContextTitle: "Détection du contexte plateforme",
+          platformContextContent:
+            "Quand vous opérez dans la console de gestion de la plateforme (sans être entré dans un tenant précis), les jeux d'options nouvellement créés adoptent automatiquement la portée Global par défaut, les rendant accessibles à tous les environnements de tenant.",
+
           rulesTitle: "Règles opérationnelles clés à retenir",
-          rule1: "Jeux d'options are versioned, not directly edited: choices are modified by creating a draft and publishing it.",
-          rule2: "Keys are permanent identifiers: once an option is published with a key, do not change its key in subsequent versions if you want existing values to remain mapped.",
-          rule3: "Deactivate rather than delete: deactivating an option stops it from being offered on new forms while preserving it on historical records.",
-          rule4: "Single published version: only one version is active at a time; publishing a draft automatically deprecates the previous version.",
-          rule5: "System-managed sets are strictly read-only: seeded standard sets cannot be modified by any user or administrator.",
+          rule1:
+            "Les jeux d'options sont versionnés, pas modifiés directement : les choix se modifient en créant un brouillon et en le publiant.",
+          rule2:
+            "Les clés sont des identifiants permanents : une fois qu'une option est publiée avec une clé, ne changez pas cette clé dans les versions suivantes si vous voulez que les valeurs existantes restent correspondantes.",
+          rule3:
+            "Désactivez plutôt que de supprimer : désactiver une option l'empêche d'être proposée sur les nouveaux formulaires tout en la préservant sur les enregistrements historiques.",
+          rule4:
+            "Une seule version publiée : une seule version est active à la fois ; publier un brouillon déprécie automatiquement la version précédente.",
+          rule5:
+            "Les jeux gérés par le système sont strictement en lecture seule : les jeux standard prédéfinis ne peuvent être modifiés par aucun utilisateur ni administrateur.",
         },
       },
     },
