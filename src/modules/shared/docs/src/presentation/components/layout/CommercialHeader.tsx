@@ -344,6 +344,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
           {/* Logo */}
           <Link
             href="/commercial"
+            prefetch={false}
             className="com-header-logo"
             aria-label={t("commercialHeader.logoAria", { brand: BRAND.namePascal })}
           >
@@ -416,6 +417,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
             {/* Tech docs link */}
             <Link
               href="/docs"
+              prefetch={false}
               className="com-header-btn"
               aria-label={t("commercialHeader.techDocsAria")}
             >
@@ -426,6 +428,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
             {/* CTA */}
             <Link
               href="/commercial/pricing-showcase"
+              prefetch={false}
               className="com-header-cta"
               aria-label={t("commercialHeader.pricingAria")}
             >
@@ -474,6 +477,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 className="com-mega-link"
                 style={{ "--di": idx } as CSSProperties}
                 data-active={pathname === item.href ? "true" : "false"}

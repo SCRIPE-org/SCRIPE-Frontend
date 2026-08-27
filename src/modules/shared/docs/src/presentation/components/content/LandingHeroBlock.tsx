@@ -228,6 +228,7 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
             <motion.div className="com-hero-ctas" variants={fadeUp}>
               <Link
                 href={section.primaryCtaHref}
+                prefetch={false}
                 className="com-btn com-btn--primary com-btn--hero"
               >
                 {t(section.primaryCtaKey)}

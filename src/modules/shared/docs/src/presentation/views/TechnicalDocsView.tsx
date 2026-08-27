@@ -68,7 +68,9 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                 description={t("common.notFoundDescription", { slug })}
                 action={
                   <Button asChild>
-                    <Link href="/docs">{t("common.home")}</Link>
+                    <Link href="/docs" prefetch={false}>
+                      {t("common.home")}
+                    </Link>
                   </Button>
                 }
               />

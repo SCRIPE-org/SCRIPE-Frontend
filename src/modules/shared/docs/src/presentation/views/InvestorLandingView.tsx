@@ -146,7 +146,7 @@ export function InvestorLandingView() {
             ))}
           </ul>
 
-          <Link href={data.ctaHref} className="inv-cta-btn">
+          <Link href={data.ctaHref} prefetch={false} className="inv-cta-btn">
             <span>{t(data.ctaLabel)}</span>
             <span className="ms-1" aria-hidden="true">
               →
