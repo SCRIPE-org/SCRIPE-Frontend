@@ -186,9 +186,9 @@ export const en = {
             "All twenty-two custom-field value types: what each one stores, exactly what it accepts and rejects, worked example inputs, and the error codes the product returns.",
           intro:
             "Every custom field has exactly one value type, chosen when the field is defined. The value type decides what control appears on the form, what the product accepts, how the value is stored and how it is displayed afterwards. This page covers all twenty-two, one at a time, with example inputs that are accepted and example inputs that are refused. Eighteen of them store something you typed; the other four store a pointer instead — two at a record somewhere else in the product, with a page of their own as well, and two at a single uploaded file or image.",
-          permanentTitle: "The value type can never be changed",
+          permanentTitle: "Changing the value type later is a separate, restricted operation",
           permanentContent:
-            "Once a field is saved, its value type is fixed for the life of the field. There is no conversion — answers already recorded under the old type would stop making sense. If you pick the wrong type, the field has to be deleted and recreated, and the answers already stored against it are lost with it. Spend the extra minute up front.",
+            "Nine specific type pairs can be converted after the fact, from the field's own row-menu action — see the Managing page — but every other pair is refused outright, and converting is not something to plan around: pick the right type up front where you can, because the far more common outcome of picking wrong is deleting and recreating the field, losing the answers already stored against it.",
 
           orderTitle: "How a submitted value is checked",
           orderIntro:
@@ -360,7 +360,7 @@ export const en = {
           dateTimeStores:
             "A precise moment together with the time zone it belongs to. Both halves are stored, so a kick-off at 18:00 in Cairo still reads as 18:00 in Cairo for somebody looking at it from London.",
           dateTimeChecks:
-            "The instant must parse, and the time zone must be a recognised IANA zone identifier. The zone is required as soon as either half is present — an instant with no zone is refused, not silently interpreted. The form shows the zone as a small disclosure beside the entered time, with a Change link that opens a searchable picker.",
+            "The instant must parse, and the time zone must be a zone id the server recognises — in practice an IANA identifier such as \"Africa/Cairo\", though the underlying check is platform-dependent and a Windows-hosted deployment also accepts a native Windows id such as \"Egypt Standard Time\". The zone is required as soon as either half is present — an instant with no zone is refused, not silently interpreted. The form shows the zone as a small disclosure beside the entered time, with a Change link that opens a searchable picker.",
           dateTimeOk: "Accepted. Both the instant and its zone are read back exactly as entered.",
           dateTimeNoZone:
             "Refused: VALIDATION_INVALID_TIMEZONE. A moment with no zone is exactly what DateTime exists to prevent.",
@@ -536,7 +536,7 @@ export const en = {
           richTextImgExample: "Content with an embedded image",
           richTextImgOutcome: "Accepted, with the image removed. A picture belongs on a File or Image field instead.",
           richTextTooLongExample: "More than 50,000 characters of markup",
-          richTextTooLongOutcome: "Refused — shorten it and try again.",
+          richTextTooLongOutcome: "Refused: VALIDATION_MAX_LENGTH — shorten it and try again.",
 
           emptyTitle: "Empty values and the Required toggle",
           emptyIntro:
@@ -547,7 +547,7 @@ export const en = {
           empty4: "for DateTime, both the instant and the time zone are missing — not just one of them;",
           empty5: "for Currency, both the amount and the currency code are missing — not just one of them;",
           empty6:
-            "for EntityReference and UserReference, both the kind of record and the record's identity are missing — not just one of them.",
+            "for EntityReference, UserReference, File and Image, both halves of the pointer are missing — not just one of them.",
           emptyOutcome:
             "An empty value on a Required field is refused with VALIDATION_REQUIRED. An empty value on an optional field is accepted and the stored answer is cleared — the row is kept rather than deleted, so history is not lost.",
           emptyWarnTitle: "Rating is the exception worth remembering",
@@ -556,7 +556,7 @@ export const en = {
 
           codesTitle: "Error codes you may see",
           codesIntro:
-            "Almost every refusal is an HTTP 422 with one of these machine-readable codes; the last one in the table is a 403, because it is about your access rather than about the shape of what you sent. If you ever see a 500 from saving a custom-field value, that is a defect worth reporting — the validation path is written to refuse cleanly, never to fail.",
+            "Almost every refusal is an HTTP 422 with one of these machine-readable codes; two of them are a 403 instead, because they are about your access rather than about the shape of what you sent. A third one is worth flagging separately: its code name reads like a 404, but the response is still a 422 — see the note beside it below. If you ever see a 500 from saving a custom-field value, that is a defect worth reporting — the validation path is written to refuse cleanly, never to fail.",
           thCode: "Code",
           thWhenItFires: "When it fires",
           codeRequired: "The field is Required and the submitted value is empty or whitespace-only.",
@@ -564,11 +564,11 @@ export const en = {
             "The value does not match the shape the type expects — an unparsable number, date or time, an option that is not on the list, a disallowed URL scheme, a bad phone shape, a bad hex colour, a bad currency code, or most validator failures.",
           codeInvalidEmail: "An Email field's value is not a real address, or carries a display name.",
           codeInvalidTimezone:
-            "A DateTime value is missing its time zone once an instant is present, or names a zone that is not a recognised IANA identifier.",
+            "A DateTime value is missing its time zone once an instant is present, or names a zone the server does not recognise.",
           codeRange:
             "A number is outside its type's bounds — Percent outside 0 to 100, Rating outside a whole 1 to 5, a negative Duration, or a Numeric Range validator's own bounds.",
           codeMaxLength:
-            "Text past 4,000 characters, LongText past 10,000, an Email or Url past 4,000, more than 19 MultiSelect selections, or a Length Range validator's upper bound.",
+            "Text past 4,000 characters, LongText past 10,000, RichText past 50,000, an Email or Url past 4,000, more than 19 MultiSelect selections, or a Length Range validator's upper bound.",
           codeMinLength: "A Length Range validator's lower bound.",
           codeUnique: "The same MultiSelect option was submitted more than once in one save.",
           codeUnknownEntityType:
@@ -579,6 +579,8 @@ export const en = {
             "A reference points at a record you are not allowed to read. This one is a 403 rather than a 422, because it is about your access and not about the value's shape.",
           codeMediaOwnerMismatch:
             "A File or Image value points at an upload that is not attached to the record you are editing. This one is a 403, for the same reason as the reference Forbidden case above — it is about ownership, not shape.",
+          codeMediaNotFound:
+            "A File or Image value's id will not decrypt, or decrypts to an upload that no longer exists. The code name reads like a 404, but the response is a 422 — the same shape every other malformed-value refusal on this page uses, not the not-found shape a client might expect from the name.",
           codeMediaNotAnImage:
             "An Image field was pointed at a real, owned upload that is not actually an image.",
           codeRichTextShape:
@@ -727,7 +729,7 @@ export const en = {
 
           targetsTitle: "What can currently be referenced",
           targetsIntro:
-            "The list is not \"every record type in the product\". A kind of record can only be referenced when the module that owns it supplies a way to search and resolve its records — reading its own data through its own screens' rules, so a picker can never be broader than the screen it mirrors. Three kinds of record supply that today.",
+            "The list is not \"every record type in the product\". A kind of record can only be referenced when the module that owns it supplies a way to search and resolve its records — reading its own data through its own screens' rules, so a picker can never be broader than the screen it mirrors. Six kinds of record supply that today; the last three joined the first three in a later release.",
           thType: "Record type",
           thKey: "Identifier",
           thOwner: "Owned by",
@@ -747,14 +749,27 @@ export const en = {
           ownerPerson: "The party and relationship module",
           showsPerson:
             "The person's name only. The owning module supplies no second line at all, having judged that anything it could add would be personal data a picker does not need.",
+          typeAdmin: "Administrator",
+          keyAdmin: "identity.admin",
+          ownerAdmin: "The identity module",
+          showsAdmin:
+            "The administrator's name, falling back to the username when both name parts are blank, with the username as the second line. Deliberately never the email address, phone number, role names, or whether the row is a Super Admin — the narrowest of the three person-like rows on this list, because an admin record is the most sensitive thing this seam can point at.",
+          typeTeam: "Team",
+          keyTeam: "organization.team",
+          ownerTeam: "The organization module",
+          showsTeam:
+            "The team's name only, with no second line. Two teams sharing a name in different departments render identically today — the department that would tell them apart is not on this picker's row.",
+          typeBranch: "Branch",
+          keyBranch: "organization.branch",
+          ownerBranch: "The organization module",
+          showsBranch:
+            "The branch's name, with its time zone beneath it as the disambiguator — the same reason two branches both called \"Main\" are told apart on the branches screen itself.",
           targetsRefused:
             "Anything else is refused rather than answered with an empty list, and the difference is the whole point: an empty list looks like a normal result and would tell an administrator \"there are no staff members\", which is a false statement wearing the appearance of a correct one. A kind of record the platform cannot answer for produces a clear refusal instead, which the record form renders as a sentence saying this kind of record is not available in this installation.",
           targetsEmpty:
             "And a genuinely empty list of available types is itself a legitimate answer, not a failure. It means \"there is nothing you may point a reference at\", which happens for two quite different reasons: the modules owning those records may not be part of this installation, or you may not hold view access to any of them. The product names both possibilities without claiming either, because only one of them is fixed by asking for permissions.",
           targetsWhyNot:
-            "Three kinds of record that look as though they belong on that list and are excluded on purpose:",
-          targetsWhyNotAdmin:
-            "Administrator records. An administrator can belong to no workspace at all — a platform administrator has none — so a pointer at one could reach outside every workspace boundary in the product. That is the one property a reference target must never have, and it is why a User Reference field refuses an administrator outright rather than merely omitting them from a list.",
+            "Two kinds of record that look as though they belong on that list and are excluded on purpose (administrator records used to be a third, until a later release gave them a lookup provider of their own — they are on the table above now, not here):",
           targetsWhyNotGroup:
             "User groups. Perfectly safe, and simply not a person. A field typed User Reference that resolved to a group would be lying about what it holds.",
           targetsWhyNotTheme:
@@ -1096,9 +1111,9 @@ export const en = {
           limNoTypeFilter: "The picker cannot be narrowed by anything but text",
           limNoTypeFilterDetail:
             "Which columns the free-text filter matches is the owning module's choice, and there are no additional filters — no \"active only\", no filter by group.",
-          limNoAdminTarget: "Administrator records cannot be referenced",
+          limNoAdminTarget: "User Reference still refuses an administrator, even though Entity Reference no longer does",
           limNoAdminTargetDetail:
-            "Not from the definition form and not from a request that bypasses it. An administrator may sit outside every workspace, which is the one property a reference target must not have.",
+            "Not from the definition form and not from a request that bypasses it. User Reference's allowed target is exactly one thing, identity.user, by original design — an administrator's own record is a different kind of row, and pointing a User Reference field at one is refused regardless of which module the request came through. Entity Reference has offered administrators as a target since a later release added a lookup provider for them; this limit is User Reference's alone.",
 
           nextTitle: "Where to go next",
           nextIntro: "The concepts behind these lookups are on the Reference Fields page.",
@@ -1182,7 +1197,7 @@ export const en = {
           ctlFieldGroupDoes:
             "Puts the field under one of the record type's field groups, or under no group. Changing the record type clears the choice.",
           ctlFieldGroupWhen:
-            "Only when you hold the field-groups view permission and at least one group exists for the chosen record type.",
+            "Only when you hold the field-groups view permission, and — on the main definitions screen — once a record type has been chosen; the inline panel shows it as soon as you have the permission, since it already knows the record type. Shown either way even when the chosen record type has no groups yet, offering only \"no group\" until one exists.",
           ctlRequiredDoes:
             "Refuses a save that leaves the field blank. Whitespace-only counts as blank for every value type.",
           ctlSortOrderDoes:
@@ -1249,7 +1264,10 @@ export const en = {
             "The definition form opens in a side panel rather than a dialog on top of a dialog. The record form behind it stays visible and readable, and nothing you have already typed into it is lost.",
           i2Title: "Note the record type is fixed",
           i2Content:
-            "The record type is shown as context rather than as a dropdown — it is whatever screen you are already on. Every other control behaves exactly as it does on the full screen, validator picker included.",
+            "The record type is shown as context rather than as a dropdown — it is whatever screen you are already on. Every other control from the full screen behaves the same way here, validator picker included, with one addition this panel has that the full screen does not — see next.",
+          i2bTitle: "Optionally attach a shared Option Set",
+          i2bContent:
+            "For Select or MultiSelect, this panel — and only this panel, not the main definitions screen's own form — offers an Option Set picker alongside the manual Options editor. Choosing one binds it to the field the moment it is created, in the same step: any manual options typed in above are kept, merged with the set's own rather than replaced by it. Shown only when you hold both the option-sets view and bind permissions.",
           i3Title: "Fill in and save",
           i3Content:
             "The panel closes and the new field appears immediately in the still-open record form, empty and ready to fill in.",
@@ -2057,7 +2075,7 @@ export const en = {
           opLessThanMeaning: "The numeric or date answer is strictly below the threshold.",
           opLessThanExample: "Show Parental Consent when Age less than 18.",
           visibilityRulesEvaluation:
-            "Rules execute with deterministic priority. When multiple rules target the same field, Hide actions take precedence over Show actions. Hidden fields are omitted from mandatory validation checks, preventing unfulfillable validation blockages.",
+            "A field with several rules is visible only when every one of them is satisfied — a plain AND across all of them, not a contest between competing Show and Hide actions, because a rule only ever expresses one condition to be visible under. Priority orders the rules for diagnostics and display only; it never changes which rules apply. A field a rule is currently hiding is skipped by Required validation too, so a condition nobody can see never blocks a save.",
           visibilityRulesTipTitle: "Conditioning on sibling fields only",
           visibilityRulesTipContent:
             "A rule can only reference sibling fields defined on the exact same entity type. Cross-entity conditions (e.g. checking a tenant setting from a person field) are not permitted to preserve single-record transactional integrity.",
@@ -2077,17 +2095,17 @@ export const en = {
           classLossy: "Lossy (requires confirmation)",
           classLossyPairs: "LongText → Text, Text → Number",
           classLossyRisk:
-            "Neither pair truncates. LongText → Text refuses any row past Text's own 4,000-character cap, naming its actual length. Text → Number refuses any row that does not parse as a number. Either way, refused rows are reported and left completely untouched — only rows that convert cleanly are changed.",
+            "Neither pair truncates. LongText → Text refuses the whole operation the moment one stored value is over Text's own 4,000-character cap, naming its actual length. Text → Number refuses the whole operation the moment one stored value fails to parse as a number. Either way, a single bad row blocks every row — there is no partial conversion that changes some records and leaves others as they were.",
           classIncompatible: "Not offered",
           classIncompatiblePairs:
             "Every other pair — 453 of the 462 possible, including any pair touching EntityReference, UserReference, File, Image or RichText.",
           classIncompatibleRisk:
             "Refused before anything runs. A reference-shaped or media-shaped value has no meaningful text or number form to convert into, and the reverse direction has nothing real to point at.",
-          conversionLossyWarnTitle: "A lossy conversion permanently changes every row that succeeds",
+          conversionLossyWarnTitle: "A lossy conversion is applied to every stored value, permanently",
           conversionLossyWarnContent:
-            "Rows that convert are changed permanently; rows that fail are refused and reported by name, never truncated or silently cleared. Always run Usage & impact first to see how many records will be affected before confirming.",
+            "A successful run changes every row at once — there is no separate confirmation per record, and nothing is truncated or cleared silently outside of what the target type's own conversion does. Always run Usage & impact first to see how many records will be affected before confirming.",
           conversionDryRunIntro:
-            "Before writing anything, the server checks every stored value against the target type. Rows that pass convert; rows that fail are refused and reported by name, left completely untouched — a lossy conversion can partially succeed, converting what parses and refusing what does not, rather than being all-or-nothing.",
+            "Before changing anything, the server checks every stored value against the target type in a first pass that writes nothing. If even one value would fail to convert, the whole operation is refused up front, naming every failing row, and nothing is changed — it is all-or-nothing, never a partial conversion that leaves some rows old and some new.",
           conversionRollbackTitle: "Snapshot rollback",
           conversionRollbackContent:
             "Every conversion writes a prior-value snapshot for each row before changing it. A Super Admin can roll back a specific conversion run by its job-run id, restoring the exact prior values — snapshots expire and are purged automatically after seven days, so a rollback has a real window rather than being available indefinitely.",
@@ -2239,7 +2257,7 @@ export const en = {
             "Every cell is written as inert text, never as a formula. A field labelled =SUM(A1) arrives in the file as the literal characters, not as a calculation — and the same holds for a label beginning with +, -, @, or a tab followed by =. This is categorical rather than a filter of known cases.",
           exportLimitTitle: "Three limits on the export",
           exportLimitContent:
-            "It contains definitions and never anybody's answers — there is no values export anywhere in the product. Past 10,000 definitions it refuses outright, telling you to narrow the export to a single record type, rather than handing you a truncated file that looks complete. And the 18 columns above are the whole file: a reference field's pinned Target Entity Type is not one of them, so an exported definition does not record what its field points at. Fields restricted from you are absent from the file rather than blank.",
+            "It contains definitions and never anybody's answers — a separate values export, its own endpoint and header button, is where the answers themselves live (see Limits and Behaviours). Past 10,000 definitions it refuses outright, telling you to narrow the export to a single record type, rather than handing you a truncated file that looks complete. And the 18 columns above are the whole file: a reference field's pinned Target Entity Type is not one of them, so an exported definition does not record what its field points at. Fields restricted from you are absent from the file rather than blank.",
 
           referenceTitle: "The two reference screens",
           referenceIntro:
@@ -2320,9 +2338,9 @@ export const en = {
             "The UAE has no national postal-code system, so there is nothing to validate against. Attempting it is refused with its own explanatory message rather than a generic one.",
 
           typesTitle: "Value-type behaviours",
-          tValueTypeFixed: "A field's value type can never be changed.",
+          tValueTypeFixed: "The key, the record type and the scope can never be changed once a field is saved.",
           tValueTypeFixedWhy:
-            "Answers already recorded under the old type would stop making sense, and there is no conversion. The same applies to the key, the record type and the scope.",
+            "Renaming, retargeting or rescoping after the fact would make every already-stored answer ambiguous about what it means. The value type is the one exception with a narrow escape hatch: nine specific type pairs can be converted after the fact — see Managing — everything else still means delete and recreate.",
           tMultiOrder: "A MultiSelect answer reads back in selection order, not option order.",
           tMultiOrderWhy:
             "Preserving the order somebody picked in is what makes the value round-trip faithfully. The cost is that a list column showing that answer is not guaranteed to follow the order you authored the options in.",
@@ -2464,16 +2482,16 @@ export const en = {
           exportTitle: "Export and portability behaviours",
           eDefinitionsOnly: "The spreadsheet export contains definitions, never answers.",
           eDefinitionsOnlyWhy:
-            "It is a definitions export by design, and there is no values export anywhere in the product. Nobody's data can leave through it.",
+            "It is a definitions export by design — a separate values export exists as its own endpoint and header button for the answers themselves, capped at 10,000 cells rather than truncated past it.",
           eRefusesPastLimit: "Past 10,000 definitions the export refuses instead of truncating.",
           eRefusesPastLimitWhy:
             "A silently truncated file is worse than no file, because it looks complete. The refusal tells you to narrow the export to a single record type.",
           eRestrictedAbsent: "Fields restricted from you are absent from the file, not blank.",
           eRestrictedAbsentWhy:
             "Field-level security applies to the export exactly as it does on screen, and a blank column would still reveal that the field exists.",
-          eNoImport: "The spreadsheet export is one-way; bulk creation goes through a separate JSON import instead.",
+          eNoImport: "The spreadsheet export is one-way, and the one bulk-creation path this product has ever offered is switched off.",
           eNoImportWhy:
-            "The exported spreadsheet is a report for reading, not a template that can be re-imported. Creating fields in bulk is real, but it is a different path: a JSON schema bundle, built to the field-definition schema and imported as its own step, round-trips in a way the spreadsheet does not.",
+            "The exported spreadsheet is a report for reading, not a template that can be re-imported. A JSON schema-bundle import exists — its own dialog, its own endpoint, its own per-group outcome table — but every call to it is refused with a 409 by a deliberate, permanent containment switch, alongside the matching schema export. Bulk field creation is not available through the product today, by that switch's design rather than by omission.",
           eTextCells: "Every export cell is written as text.",
           eTextCellsWhy:
             "A label beginning with =, +, - or @ arrives as literal characters rather than as a spreadsheet formula. This is categorical rather than a filter of known cases, so nothing that looks like a calculation can become one.",
@@ -2503,7 +2521,7 @@ export const en = {
           absent2:
             "There is a values export, not just a definitions export — up to 10,000 cells in one file. Larger sets are refused rather than silently truncated.",
           absent3:
-            "There is no one-at-a-time-only rule. Bulk creation is real, through a JSON schema-bundle import — see Managing, above — even though the spreadsheet export itself does not double as an import template.",
+            "There is a bulk-creation path, a JSON schema-bundle import with its own dialog — but it is currently switched off, refusing every call outright rather than actually creating anything, alongside its matching schema export. Today, in practice, fields are still created one at a time on the form.",
           absent4:
             "There is a shared options list, called an Option Set, that several fields can attach. What it does not do is push a later edit onto fields that already attached it automatically.",
           absent5:
@@ -2595,7 +2613,7 @@ export const en = {
 
           bindingTitle: "Binding fields to an Option Set",
           bindingIntro:
-            "Fields with value types Select or MultiSelect can bind to an option set instead of maintaining inline options. Three lifecycle actions are supported:",
+            "Fields with value types Select or MultiSelect can bind to an option set instead of maintaining inline options — either attached in the same step as creating the field, on the create form itself, or through one of three lifecycle actions available afterward on a field that already exists:",
           thAction: "Action",
           thWhatItDoes: "What it does",
           thEffect: "Effect on existing data",

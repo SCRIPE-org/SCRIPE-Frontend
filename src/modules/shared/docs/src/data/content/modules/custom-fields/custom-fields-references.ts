@@ -136,6 +136,9 @@ const sections: DocSection[] = [
       [`${K}.typeStaff`, `${K}.keyStaff`, `${K}.ownerStaff`, `${K}.showsStaff`],
       [`${K}.typeUser`, `${K}.keyUser`, `${K}.ownerUser`, `${K}.showsUser`],
       [`${K}.typePerson`, `${K}.keyPerson`, `${K}.ownerPerson`, `${K}.showsPerson`],
+      [`${K}.typeAdmin`, `${K}.keyAdmin`, `${K}.ownerAdmin`, `${K}.showsAdmin`],
+      [`${K}.typeTeam`, `${K}.keyTeam`, `${K}.ownerTeam`, `${K}.showsTeam`],
+      [`${K}.typeBranch`, `${K}.keyBranch`, `${K}.ownerBranch`, `${K}.showsBranch`],
     ],
   },
   { type: "paragraph", contentKey: `${K}.targetsRefused` },
@@ -145,7 +148,6 @@ const sections: DocSection[] = [
     type: "list",
     variant: "unordered",
     items: [
-      `${K}.targetsWhyNotAdmin`,
       `${K}.targetsWhyNotGroup`,
       `${K}.targetsWhyNotTheme`,
     ],
@@ -250,5 +252,5 @@ registerPage({
     "modules/custom-fields-reference-lookups",
     "modules/custom-fields-defining",
   ],
-  lastUpdated: "2026-08-22",
+  lastUpdated: "2026-08-27",
 });

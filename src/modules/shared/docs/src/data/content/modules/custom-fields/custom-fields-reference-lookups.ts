@@ -256,5 +256,5 @@ registerPage({
     "modules/custom-fields-security",
     "modules/custom-fields-limits",
   ],
-  lastUpdated: "2026-08-22",
+  lastUpdated: "2026-08-27",
 });

@@ -166,5 +166,5 @@ registerPage({
     "modules/custom-fields-value-types",
     "modules/custom-fields-defining",
   ],
-  lastUpdated: "2026-08-25",
+  lastUpdated: "2026-08-27",
 });

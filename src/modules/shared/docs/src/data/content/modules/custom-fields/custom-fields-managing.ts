@@ -21,8 +21,8 @@ const sections: DocSection[] = [
     headers: [`${K}.thAction`, `${K}.thDoes`, `${K}.thNeeds`],
     rows: [
       ["Edit", `${K}.actEdit`, "custom-fields.update"],
-      ["Option sets", `${K}.actOptionSets`, "custom-fields.update"],
-      ["Visibility rules", `${K}.actVisibilityRules`, "custom-fields.update"],
+      ["Option sets", `${K}.actOptionSets`, "custom-field-option-sets.view"],
+      ["Visibility rules", `${K}.actVisibilityRules`, "custom-field-visibility-rules.view"],
       ["Convert value type", `${K}.actConvertType`, "custom-fields.update"],
       ["Version history & drafts", `${K}.actVersions`, "custom-fields.view"],
       ["History", `${K}.actHistory`, "custom-fields.view"],
@@ -301,5 +301,5 @@ registerPage({
   order: 8,
   sections,
   relatedSlugs: ["modules/custom-fields-security", "modules/custom-fields-limits"],
-  lastUpdated: "2026-08-21",
+  lastUpdated: "2026-08-27",
 });

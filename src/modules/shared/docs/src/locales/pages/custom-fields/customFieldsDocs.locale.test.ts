@@ -93,7 +93,7 @@ const SLUGS = [
  * Two kinds, and both are deliberate rather than untranslated. The first three
  * are quoted EXAMPLE INPUTS — the literal characters somebody types into a
  * field, which have to be reproduced exactly for the surrounding row to mean
- * anything. The last three are entity-type registry keys, quoted so an
+ * anything. The rest are entity-type registry keys, quoted so an
  * administrator can match what the product shows them; translating one would
  * name nothing.
  *
@@ -108,6 +108,9 @@ const LATIN_LITERAL_PATHS = new Set([
   `${NS}.references.keyStaff`,
   `${NS}.references.keyUser`,
   `${NS}.references.keyPerson`,
+  `${NS}.references.keyAdmin`,
+  `${NS}.references.keyTeam`,
+  `${NS}.references.keyBranch`,
 ]);
 
 /** Any character in the Arabic Unicode block. */
@@ -194,7 +197,11 @@ describe("custom-fields docs locale parity", () => {
         expect(typeof value, `${name}:${path}`).toBe("string");
         expect((value as string).trim().length, `${name}:${path}`).toBeGreaterThan(0);
         expect(value, `${name}:${path}`).toBe((value as string).trim());
-        expect(value, `${name}:${path}`).not.toMatch(/TODO|FIXME/i);
+        // Word-boundary match, not a bare substring: a bare /TODO/i false-positives on legitimate
+        // prose that happens to contain the letters -- Spanish "todos" ("all"/"every") being the
+        // concrete case that surfaced this, since "TODO" sits inside it with no word boundary after
+        // the "o". A real placeholder marker never has a word character glued onto its far end.
+        expect(value, `${name}:${path}`).not.toMatch(/\b(TODO|FIXME)\b/i);
       }
     }
   });

@@ -208,9 +208,9 @@ export const es = {
             "Los veintidós tipos de valor de los campos personalizados: qué almacena cada uno, qué acepta y qué rechaza exactamente, ejemplos de entradas resueltos, y los códigos de error que devuelve el producto.",
           intro:
             "Cada campo personalizado tiene exactamente un tipo de valor, elegido al definir el campo. El tipo de valor decide qué control aparece en el formulario, qué acepta el producto, cómo se almacena el valor y cómo se muestra después. Esta página cubre los veintidós, uno por uno, con ejemplos de entradas que se aceptan y ejemplos de entradas que se rechazan. Dieciocho de ellos almacenan algo que tú escribiste; los otros cuatro almacenan en su lugar un puntero: dos a un registro de otra parte del producto, con una página propia además, y dos a un único archivo o imagen subidos.",
-          permanentTitle: "El tipo de valor nunca se puede cambiar",
+          permanentTitle: "Cambiar el tipo de valor más adelante es una operación aparte y restringida",
           permanentContent:
-            "Una vez guardado un campo, su tipo de valor queda fijado para toda la vida del campo. No existe conversión: las respuestas ya registradas bajo el tipo antiguo dejarían de tener sentido. Si eliges el tipo equivocado, el campo tiene que eliminarse y volver a crearse, y las respuestas ya almacenadas contra él se pierden con él. Dedica ese minuto extra al principio.",
+            "Nueve pares de tipos concretos se pueden convertir después, desde la propia acción del menú de fila del campo — ver Gestión de Campos —, pero cualquier otro par se rechaza de plano, y convertir no es algo con lo que contar de antemano: elige el tipo correcto desde el principio siempre que puedas, porque el resultado, con diferencia más frecuente al elegir mal, es eliminar y volver a crear el campo, perdiendo las respuestas ya almacenadas contra él.",
 
           orderTitle: "Cómo se comprueba un valor enviado",
           orderIntro:
@@ -378,7 +378,7 @@ export const es = {
           dateTimeStores:
             "Un instante preciso junto con la zona horaria a la que pertenece. Se almacenan las dos mitades, así que un inicio a las 18:00 en El Cairo se sigue leyendo como las 18:00 en El Cairo para alguien que lo consulte desde Londres.",
           dateTimeChecks:
-            "El instante debe interpretarse, y la zona horaria debe ser un identificador de zona IANA reconocido. La zona es obligatoria en cuanto está presente cualquiera de las dos mitades: un instante sin zona se rechaza, no se interpreta silenciosamente. El formulario muestra la zona como un pequeño detalle junto a la hora introducida, con un enlace Change que abre un selector con búsqueda.",
+            "El instante debe interpretarse, y la zona horaria debe ser un identificador de zona que el servidor reconozca: en la práctica, un identificador IANA como Africa/Cairo, aunque la comprobación subyacente depende de la plataforma y un despliegue alojado en Windows también acepta un identificador nativo de Windows como Egypt Standard Time. La zona es obligatoria en cuanto está presente cualquiera de las dos mitades: un instante sin zona se rechaza, no se interpreta silenciosamente. El formulario muestra la zona como un pequeño detalle junto a la hora introducida, con un enlace Change que abre un selector con búsqueda.",
           dateTimeOk: "Aceptado. Tanto el instante como su zona se devuelven exactamente como se introdujeron.",
           dateTimeNoZone:
             "Rechazado: VALIDATION_INVALID_TIMEZONE. Un instante sin zona es exactamente lo que DateTime existe para impedir.",
@@ -553,7 +553,7 @@ export const es = {
           richTextImgExample: "Contenido con una imagen incrustada",
           richTextImgOutcome: "Aceptado, con la imagen eliminada. Una imagen pertenece en su lugar a un campo File o Image.",
           richTextTooLongExample: "Más de 50.000 caracteres de marcado",
-          richTextTooLongOutcome: "Rechazado: acórtalo e inténtalo de nuevo.",
+          richTextTooLongOutcome: "Rechazado: VALIDATION_MAX_LENGTH — acórtalo e inténtalo de nuevo.",
 
           emptyTitle: "Valores vacíos y el interruptor Required",
           emptyIntro:
@@ -573,7 +573,7 @@ export const es = {
 
           codesTitle: "Códigos de error que puedes ver",
           codesIntro:
-            "La inmensa mayoría de los rechazos son un HTTP 422 con uno de estos códigos legibles por máquina; el último de la tabla es un 403, porque trata sobre tu acceso y no sobre la forma de lo que enviaste. Si alguna vez ves un 500 al guardar el valor de un campo personalizado, es un defecto que merece reportarse: la ruta de validación está escrita para rechazar con limpieza, nunca para fallar.",
+            "La inmensa mayoría de los rechazos son un HTTP 422 con uno de estos códigos legibles por máquina; dos de ellos son un 403 en su lugar, porque tratan sobre tu acceso y no sobre la forma de lo que enviaste. Un tercero merece señalarse aparte: su nombre de código suena a un 404, pero la respuesta sigue siendo un 422 — ver la nota junto a él más abajo. Si alguna vez ves un 500 al guardar el valor de un campo personalizado, es un defecto que merece reportarse: la ruta de validación está escrita para rechazar con limpieza, nunca para fallar.",
           thCode: "Código",
           thWhenItFires: "Cuándo se produce",
           codeRequired: "El campo es Required y el valor enviado está vacío o hecho solo de espacios.",
@@ -581,11 +581,11 @@ export const es = {
             "El valor no coincide con la forma que el tipo espera: un número, fecha u hora que no se puede interpretar, una opción que no está en la lista, un esquema de URL no permitido, una forma de teléfono incorrecta, un color hexadecimal incorrecto, un código de moneda incorrecto, o la mayoría de los fallos de validador.",
           codeInvalidEmail: "El valor de un campo Email no es una dirección real, o lleva un nombre para mostrar.",
           codeInvalidTimezone:
-            "A un valor DateTime le falta la zona horaria una vez presente el instante, o indica una zona que no es un identificador IANA reconocido.",
+            "A un valor DateTime le falta la zona horaria una vez presente el instante, o indica una zona que el servidor no reconoce.",
           codeRange:
             "Un número está fuera de los límites de su tipo: Percent fuera de 0 a 100, Rating fuera de un 1 a 5 entero, un Duration negativo, o los límites propios de un validador Numeric Range.",
           codeMaxLength:
-            "Text por encima de 4.000 caracteres, LongText por encima de 10.000, un Email o Url por encima de 4.000, más de 19 selecciones en MultiSelect, o el límite superior de un validador Length Range.",
+            "Text por encima de 4.000 caracteres, LongText por encima de 10.000, RichText por encima de 50.000, un Email o Url por encima de 4.000, más de 19 selecciones en MultiSelect, o el límite superior de un validador Length Range.",
           codeMinLength: "El límite inferior de un validador Length Range.",
           codeUnique: "La misma opción de MultiSelect se envió más de una vez en un mismo guardado.",
           codeUnknownEntityType: "Una referencia nombra un tipo de registro que no está registrado en esta instalación.",
@@ -594,7 +594,9 @@ export const es = {
           codeForbidden:
             "Una referencia apunta a un registro que no tienes permiso para leer. Este es un 403 y no un 422, porque trata sobre tu acceso y no sobre la forma del valor.",
           codeMediaOwnerMismatch:
-            "Un valor File o Image apunta a un archivo que no está adjunto al registro que se está guardando. También un 403 y no un 422, por el mismo motivo anterior.",
+            "Un valor File o Image apunta a un archivo que no está adjunto al registro que estás editando. Este también es un 403, por el mismo motivo que el caso Forbidden de la referencia anterior: trata sobre la propiedad, no sobre la forma.",
+          codeMediaNotFound:
+            "El id de un valor File o Image no se puede descifrar, o se descifra en un archivo que ya no existe. El nombre del código suena a un 404, pero la respuesta es un 422: la misma forma que usa cualquier otro rechazo por valor mal formado de esta página, no la forma de «no encontrado» que un cliente podría esperar por el nombre.",
           codeMediaNotAnImage: "El valor de un campo Image apunta a un archivo que no es una imagen.",
           codeRichTextShape: "El valor de un campo RichText no se envió como un objeto con una propiedad 'html'.",
           codesInfoTitle: "Los mensajes nombran la clave, no la etiqueta",
@@ -737,7 +739,7 @@ export const es = {
 
           targetsTitle: "Qué se puede referenciar actualmente",
           targetsIntro:
-            "La lista no es «cualquier tipo de registro del producto». Un tipo de registro solo se puede referenciar cuando el módulo propietario ofrece una forma de buscar y resolver sus registros, leyendo sus propios datos con las reglas de sus propias pantallas, así que un selector nunca puede ser más amplio que la pantalla que refleja. Hoy hay tres tipos de registro que lo ofrecen.",
+            "La lista no es «cualquier tipo de registro del producto». Un tipo de registro solo se puede referenciar cuando el módulo propietario ofrece una forma de buscar y resolver sus registros, leyendo sus propios datos con las reglas de sus propias pantallas, así que un selector nunca puede ser más amplio que la pantalla que refleja. Hoy hay seis tipos de registro que lo ofrecen; los tres últimos se sumaron a los tres primeros en una versión posterior.",
           thType: "Tipo de registro",
           thKey: "Identificador",
           thOwner: "Propiedad de",
@@ -757,13 +759,27 @@ export const es = {
           ownerPerson: "El módulo de terceros y relaciones",
           showsPerson:
             "Solo el nombre de la persona. El módulo propietario no aporta ninguna segunda línea, al considerar que cualquier cosa que pudiera añadir sería un dato personal que un selector no necesita.",
+          typeAdmin: "Administrator",
+          keyAdmin: "identity.admin",
+          ownerAdmin: "El módulo de identidad",
+          showsAdmin:
+            "El nombre del administrador, que recurre al nombre de usuario cuando ambas partes del nombre están vacías, con el nombre de usuario como segunda línea. Deliberadamente nunca la dirección de correo, el teléfono, los nombres de rol, ni si la fila es Super Admin: la más restringida de las tres filas de tipo persona de esta lista, porque un registro de administrador es lo más sensible a lo que puede apuntar este punto de conexión.",
+          typeTeam: "Team",
+          keyTeam: "organization.team",
+          ownerTeam: "El módulo de organización",
+          showsTeam:
+            "Solo el nombre del equipo, sin segunda línea. Hoy, dos equipos que comparten nombre en departamentos distintos se muestran de forma idéntica: el departamento que los distinguiría no está en la fila de este selector.",
+          typeBranch: "Branch",
+          keyBranch: "organization.branch",
+          ownerBranch: "El módulo de organización",
+          showsBranch:
+            "El nombre de la sucursal, con su zona horaria debajo como elemento para distinguirla: el mismo motivo por el que dos sucursales llamadas ambas «Main» se distinguen entre sí en la propia pantalla de sucursales.",
           targetsRefused:
             "Cualquier otra cosa se rechaza en lugar de responderse con una lista vacía, y ahí radica precisamente la clave: una lista vacía parece un resultado normal y le diría a un administrador «no hay miembros del personal», una afirmación falsa con apariencia de correcta. Un tipo de registro para el que la plataforma no puede responder produce en su lugar un rechazo claro, que el formulario del registro representa como una frase que indica que ese tipo de registro no está disponible en esta instalación.",
           targetsEmpty:
             "Y una lista de tipos disponibles genuinamente vacía es en sí misma una respuesta legítima, no un fallo. Significa «no hay nada a lo que puedas apuntar una referencia», lo que ocurre por dos motivos bastante distintos: los módulos propietarios de esos registros pueden no formar parte de esta instalación, o puede que no tengas acceso de visualización a ninguno de ellos. El producto nombra las dos posibilidades sin afirmar ninguna, porque solo una de ellas se soluciona pidiendo permisos.",
-          targetsWhyNot: "Tres tipos de registro que parecen pertenecer a esa lista y se excluyen a propósito:",
-          targetsWhyNotAdmin:
-            "Los registros de administrador. Un administrador puede no pertenecer a ningún espacio de trabajo en absoluto —un administrador de la plataforma no tiene ninguno—, así que un puntero a uno de ellos podría llegar más allá de cualquier límite de espacio de trabajo del producto. Esa es la única propiedad que un destino de referencia nunca debe tener, y por eso un campo User Reference rechaza a un administrador de plano en lugar de limitarse a omitirlo de una lista.",
+          targetsWhyNot:
+            "Dos tipos de registro que parecen pertenecer a esa lista y se excluyen a propósito (los registros de administrador solían ser un tercero, hasta que una versión posterior les dio su propio proveedor de búsqueda; ahora están en la tabla de arriba, no aquí):",
           targetsWhyNotGroup:
             "Los grupos de usuarios. Perfectamente seguros de leer, y simplemente no son una persona. Un campo de tipo User Reference que resolviera a un grupo estaría mintiendo sobre lo que contiene.",
           targetsWhyNotTheme:
@@ -1094,9 +1110,9 @@ export const es = {
           limNoTypeFilter: "El selector no se puede acotar con nada más que texto",
           limNoTypeFilterDetail:
             "Qué columnas coinciden con el filtro de texto libre es decisión del módulo propietario, y no hay filtros adicionales: ni «solo activos», ni filtro por grupo.",
-          limNoAdminTarget: "Los registros de administrador no se pueden referenciar",
+          limNoAdminTarget: "User Reference sigue rechazando a un administrador, aunque Entity Reference ya no lo hace",
           limNoAdminTargetDetail:
-            "Ni desde el formulario de definición ni desde una solicitud que lo evite. Un administrador puede situarse fuera de cualquier espacio de trabajo, que es la única propiedad que un destino de referencia no debe tener.",
+            "Ni desde el formulario de definición ni desde una solicitud que lo evite. El destino permitido de User Reference es exactamente una cosa, identity.user, por diseño original: el propio registro de un administrador es un tipo de fila distinto, y apuntar un campo User Reference a uno se rechaza sin importar por qué módulo haya llegado la solicitud. Entity Reference ofrece administradores como destino desde que una versión posterior le añadió un proveedor de búsqueda para ellos; este límite es solo de User Reference.",
 
           nextTitle: "Dónde seguir",
           nextIntro: "Los conceptos detrás de estas búsquedas están en la página Campos de Referencia.",
@@ -1166,7 +1182,8 @@ export const es = {
           ctlReferenceTargetWhen:
             "Solo cuando el tipo de valor es Entity Reference. Un campo User Reference nunca lo muestra, porque su único destino legal lo fija la plataforma y no hay nada que elegir. A diferencia de los tres ajustes permanentes, este se puede cambiar más adelante; lee la advertencia del formulario de edición antes de hacerlo.",
           ctlFieldGroupDoes: "Coloca el campo bajo uno de los grupos de campos del tipo de registro, o bajo ningún grupo. Cambiar el tipo de registro borra la elección.",
-          ctlFieldGroupWhen: "Solo cuando tienes el permiso de visualización de grupos de campos y existe al menos un grupo para el tipo de registro elegido.",
+          ctlFieldGroupWhen:
+            "Solo cuando tienes el permiso de visualización de grupos de campos y —en la pantalla completa— una vez elegido un tipo de registro; el panel abierto desde dentro de un registro lo muestra en cuanto tienes el permiso, porque ya conoce el tipo de registro. Se muestra en ambos casos incluso cuando el tipo de registro elegido todavía no tiene grupos, ofreciendo solo la entrada de ningún grupo hasta que exista alguno.",
           ctlRequiredDoes: "Rechaza un guardado que deje el campo en blanco. Un valor hecho solo de espacios cuenta como en blanco para cualquier tipo de valor.",
           ctlSortOrderDoes: "Sitúa el campo respecto a los demás campos personalizados del formulario. Los números más bajos van primero.",
           ctlSensitivityDoes:
@@ -1221,7 +1238,10 @@ export const es = {
             "El formulario de definición se abre en un panel lateral y no en un cuadro de diálogo sobre otro cuadro de diálogo. El formulario del registro que hay detrás sigue visible y legible, y no se pierde nada de lo que ya hubieras escrito en él.",
           i2Title: "Observa que el tipo de registro está fijo",
           i2Content:
-            "El tipo de registro se muestra como contexto y no como un desplegable: es el que corresponda a la pantalla en la que ya estás. Cualquier otro control se comporta exactamente igual que en la pantalla completa, selector de validador incluido.",
+            "El tipo de registro se muestra como contexto y no como un desplegable: es el que corresponda a la pantalla en la que ya estás. Cualquier otro control se comporta exactamente igual que en la pantalla completa, selector de validador incluido, con una novedad que tiene este panel y que la pantalla completa no — ver el punto siguiente.",
+          i2bTitle: "Adjuntar opcionalmente un Option Set compartido",
+          i2bContent:
+            "Para Select o MultiSelect, este panel —y solo este panel, no el propio formulario de la pantalla completa— ofrece un selector de Option Set junto al editor manual de Options. Elegir uno lo vincula al campo en el mismo momento en que se crea, en el mismo paso: las opciones manuales ya escritas arriba se conservan, combinadas con las del conjunto en lugar de sustituidas por él. Solo se muestra cuando tienes tanto el permiso de visualización de conjuntos de opciones como el de vinculación.",
           i3Title: "Rellena y guarda",
           i3Content: "El panel se cierra y el campo nuevo aparece de inmediato en el formulario del registro, que sigue abierto, vacío y listo para rellenar.",
           i4Title: "Continúa con el registro",
@@ -1944,7 +1964,7 @@ export const es = {
           opLessThanMeaning: "La respuesta numérica o de fecha está estrictamente por debajo del umbral.",
           opLessThanExample: "Mostrar Parental Consent cuando Age sea menor que 18.",
           visibilityRulesEvaluation:
-            "Las reglas se ejecutan con una prioridad determinista. Cuando varias reglas afectan al mismo campo, las acciones de ocultar tienen prioridad sobre las de mostrar. Los campos ocultos se omiten de las comprobaciones de validación obligatorias, evitando bloqueos de validación imposibles de cumplir.",
+            "Un campo con varias reglas solo es visible cuando se cumplen todas ellas: un simple Y entre todas, no una competición entre las acciones Show y Hide, porque cada regla solo expresa una condición bajo la que ser visible. Priority ordena las reglas únicamente a efectos de diagnóstico y visualización; nunca cambia qué reglas se aplican. Un campo que una regla está ocultando en ese momento también se omite de la validación Required, así que una condición que nadie puede ver nunca bloquea un guardado.",
           visibilityRulesTipTitle: "Solo se condiciona a campos hermanos",
           visibilityRulesTipContent:
             "Una regla solo puede referenciar campos hermanos definidos exactamente en el mismo tipo de entidad. No se permiten condiciones entre entidades distintas (por ejemplo, comprobar un ajuste del espacio de trabajo desde un campo de persona), para preservar la integridad transaccional de un único registro.",
@@ -1964,7 +1984,7 @@ export const es = {
           classLossy: "Con pérdidas (requiere confirmación)",
           classLossyPairs: "LongText → Text, Text → Number",
           classLossyRisk:
-            "LongText → Text trunca cualquier contenido que supere el propio límite de 4.000 caracteres de Text. Text → Number no trunca en absoluto: rechaza la operación completa en cuanto un solo valor almacenado no logra interpretarse como número, en lugar de convertir el resto y dejar ese valor atrás.",
+            "Ninguno de los dos pares trunca. LongText → Text rechaza la operación completa en cuanto un solo valor almacenado supera el propio límite de 4.000 caracteres de Text, indicando su longitud real. Text → Number rechaza la operación completa en cuanto un solo valor almacenado no logra interpretarse como número. En ambos casos, una sola fila mala bloquea todas las filas: no existe una conversión parcial que cambie unos registros y deje otros como estaban.",
           classIncompatible: "No se ofrece",
           classIncompatiblePairs:
             "El resto de los pares posibles —453 de los 462—, incluido cualquier par que implique EntityReference, UserReference, File, Image o RichText.",
@@ -1972,9 +1992,9 @@ export const es = {
             "Se rechaza antes de ejecutar nada. Un valor con forma de referencia o de contenido multimedia no tiene una forma de texto o de número con sentido a la que convertirse, y la dirección inversa no tiene nada real a lo que apuntar.",
           conversionLossyWarnTitle: "Una conversión con pérdidas se aplica a cada valor almacenado, de forma permanente",
           conversionLossyWarnContent:
-            "Truncar texto largo remodela de forma permanente los registros históricos. Ejecuta siempre antes Usage & impact para ver cuántos registros se verán afectados antes de confirmar.",
+            "Una ejecución correcta cambia todas las filas a la vez: no hay una confirmación aparte por registro, y nada se trunca ni se borra en silencio más allá de lo que haga la propia conversión del tipo de destino. Ejecuta siempre antes Usage & impact para ver cuántos registros se verán afectados antes de confirmar.",
           conversionDryRunIntro:
-            "Antes de cambiar nada, el servidor comprueba cada valor almacenado contra el tipo de destino. Si un solo valor fallara al convertirse, la operación se rechaza por completo de antemano en lugar de quedar a medias.",
+            "Antes de cambiar nada, el servidor comprueba cada valor almacenado contra el tipo de destino en una primera pasada que no escribe nada. Si un solo valor fallara al convertirse, la operación completa se rechaza de antemano, indicando cada fila que falla, y no se cambia nada: no hay término medio, nunca una conversión parcial que deje algunas filas con el tipo antiguo y otras con el nuevo.",
           conversionRollbackTitle: "Reversión mediante instantánea",
           conversionRollbackContent:
             "Cada conversión escribe una instantánea del valor anterior para cada fila antes de modificarla. Un Super Admin puede revertir una ejecución de conversión concreta mediante su job-run id, restaurando los valores anteriores exactos. Las instantáneas caducan y se purgan automáticamente pasados siete días, así que la reversión tiene una ventana real de tiempo, en lugar de estar disponible de forma indefinida.",
@@ -2113,7 +2133,7 @@ export const es = {
             "Toda celda se escribe como texto inerte, nunca como fórmula. Un campo etiquetado =SUM(A1) llega al archivo como esos caracteres literales, no como un cálculo, y lo mismo ocurre con una etiqueta que empiece por +, -, @, o un tabulador seguido de =. Esto es categórico y no un filtro de casos conocidos.",
           exportLimitTitle: "Tres límites en la exportación",
           exportLimitContent:
-            "Contiene definiciones y nunca las respuestas de nadie: no existe ninguna exportación de valores en ningún punto del producto. Pasadas las 10.000 definiciones se rechaza de plano, indicándote que acotes la exportación a un único tipo de registro, en lugar de entregarte un archivo truncado con apariencia de completo. Y las 18 columnas anteriores son el archivo entero: el Target Entity Type anclado de un campo de referencia no es una de ellas, así que una definición exportada no registra a qué apunta su campo. Los campos que tienes restringidos están ausentes del archivo en lugar de en blanco.",
+            "Contiene definiciones y nunca las respuestas de nadie: una exportación de valores aparte, con su propio endpoint y su propio botón en el encabezado, es donde viven las respuestas propiamente dichas (ver Límites y Comportamientos). Pasadas las 10.000 definiciones se rechaza de plano, indicándote que acotes la exportación a un único tipo de registro, en lugar de entregarte un archivo truncado con apariencia de completo. Y las 18 columnas anteriores son el archivo entero: el Target Entity Type anclado de un campo de referencia no es una de ellas, así que una definición exportada no registra a qué apunta su campo. Los campos que tienes restringidos están ausentes del archivo en lugar de en blanco.",
 
           referenceTitle: "Las dos pantallas de referencia",
           referenceIntro:
@@ -2190,8 +2210,9 @@ export const es = {
           vNoAeWhy: "Los Emiratos no tienen un sistema nacional de códigos postales, así que no hay nada contra lo que validar. Intentarlo se rechaza con su propio mensaje explicativo y no con uno genérico.",
 
           typesTitle: "Comportamientos de los tipos de valor",
-          tValueTypeFixed: "El tipo de valor de un campo nunca se puede cambiar.",
-          tValueTypeFixedWhy: "Las respuestas ya registradas bajo el tipo antiguo dejarían de tener sentido, y no existe conversión. Lo mismo se aplica a la clave, al tipo de registro y al alcance.",
+          tValueTypeFixed: "La clave, el tipo de registro y el alcance nunca se pueden cambiar una vez guardado un campo.",
+          tValueTypeFixedWhy:
+            "Cambiar la clave, el tipo de registro o el alcance después de guardado haría que cada respuesta ya almacenada resultara ambigua sobre lo que significa. El tipo de valor es la única excepción, con una vía de escape estrecha: nueve pares de tipos concretos se pueden convertir después — ver Gestión de Campos —; cualquier otro caso sigue significando eliminar y volver a crear.",
           tMultiOrder: "Una respuesta MultiSelect se lee de vuelta en el orden de selección, no en el orden de las opciones.",
           tMultiOrderWhy:
             "Conservar el orden en que alguien eligió es lo que hace que el valor se conserve con fidelidad. El coste es que una columna de lista que muestre esa respuesta no tiene garantizado seguir el orden en que redactaste las opciones.",
@@ -2311,14 +2332,15 @@ export const es = {
 
           exportTitle: "Comportamientos de exportación y portabilidad",
           eDefinitionsOnly: "La exportación a hoja de cálculo contiene definiciones, nunca respuestas.",
-          eDefinitionsOnlyWhy: "Es una exportación de definiciones por diseño, y no existe ninguna exportación de valores en ningún punto del producto. Los datos de nadie pueden salir por ahí.",
+          eDefinitionsOnlyWhy:
+            "Es una exportación de definiciones por diseño: existe una exportación de valores aparte, con su propio endpoint y su propio botón en el encabezado para las respuestas propiamente dichas, limitada a 10.000 celdas, que se rechaza en lugar de truncarse al superar ese límite.",
           eRefusesPastLimit: "Pasadas las 10.000 definiciones la exportación se rechaza en lugar de truncarse.",
           eRefusesPastLimitWhy: "Un archivo truncado en silencio es peor que ningún archivo, porque parece completo. El rechazo te indica que acotes la exportación a un único tipo de registro.",
           eRestrictedAbsent: "Los campos que tienes restringidos están ausentes del archivo, no en blanco.",
           eRestrictedAbsentWhy: "La seguridad a nivel de campo se aplica a la exportación exactamente igual que en pantalla, y una columna en blanco seguiría revelando que el campo existe.",
-          eNoImport: "La exportación a hoja de cálculo es un informe, no una plantilla, pero un formato de paquete independiente sí permite ida y vuelta.",
+          eNoImport: "La exportación a hoja de cálculo es de un solo sentido, y la única vía de creación masiva que este producto ha ofrecido jamás está desactivada.",
           eNoImportWhy:
-            "La exportación XLSX existe para leerse, no para volver a subirse, así que una hoja de cálculo sigue sin poder usarse para crear campos en masa. Un paquete de esquema portátil distinto, en formato JSON, sí puede: exporta los grupos y definiciones de un tipo de entidad, y después importa ese mismo paquete —en este espacio de trabajo o en otro— mediante su propio cuadro de zona de arrastre, que informa de los elementos creados, omitidos y fallidos por grupo en lugar de un simple recuento.",
+            "La hoja de cálculo exportada es un informe para leer, no una plantilla que se pueda volver a importar. Existe una importación de paquete de esquema en JSON —con su propio cuadro de diálogo, su propio endpoint y su propia tabla de resultados por grupo—, pero cada llamada a ella se rechaza con un 409 mediante un interruptor de contención deliberado y permanente, que bloquea igualmente la exportación de esquema correspondiente. La creación masiva de campos no está disponible hoy en el producto: es el diseño de ese interruptor, no una omisión.",
           eTextCells: "Toda celda de la exportación se escribe como texto.",
           eTextCellsWhy: "Una etiqueta que empiece por =, +, - o @ llega como caracteres literales y no como una fórmula de hoja de cálculo. Esto es categórico y no un filtro de casos conocidos, así que nada que parezca un cálculo puede convertirse en uno.",
 
@@ -2341,7 +2363,8 @@ export const es = {
           absent1:
             "Los veintidós tipos de valor son el conjunto completo. Dos elementos que antes no estaban en esta lista ahora sí: File e Image almacenan un archivo o una imagen subidos, y RichText almacena prosa con formato; ver la página Tipos de Valor. Sin embargo, adjuntar un nuevo valor File o Image todavía no está disponible en el producto; ambos se pueden definir hoy, y un valor ya existente solo se puede consultar o borrar.",
           absent2: "La exportación de valores se rechaza en lugar de truncarse en cuanto una solicitud superaría las 10.000 celdas; exporta un conjunto más reducido de registros en lugar de esperar un archivo parcial.",
-          absent3: "No existe creación masiva desde una hoja de cálculo. Un paquete de esquema portátil (JSON) puede crear muchas definiciones de campo a la vez a través del cuadro de importación; un único campo por sí solo se sigue creando de uno en uno, en el formulario.",
+          absent3:
+            "Existe una vía de creación masiva, una importación de paquete de esquema en JSON con su propio cuadro de diálogo, pero un interruptor de contención la mantiene desactivada: rechaza de plano cualquier llamada en lugar de crear nada, igual que ocurre con la exportación de esquema correspondiente. Hoy, en la práctica, los campos se siguen creando de uno en uno en el formulario.",
           absent4:
             "Una versión publicada de un option set no traslada automáticamente los campos ya vinculados a una anterior: un administrador tiene que revincular cada campo explícitamente. Esto es deliberado: seguir el cambio automáticamente cambiaría en silencio el significado de los valores ya guardados contra la lista antigua.",
           absent5: "No hay ningún mostrar-u-ocultar condicional que un administrador pueda configurar. Un campo está en el formulario o no lo está, sujeto a Active y a la seguridad a nivel de campo.",
@@ -2419,7 +2442,8 @@ export const es = {
             "Un borrador exige al menos una opción válida con una Key y una etiqueta en inglés no vacías. Cada Key debe ser única dentro de la versión. El botón Save draft se habilita automáticamente en cuanto todas las filas cumplen estas reglas de validación.",
 
           bindingTitle: "Vincular campos a un Option Set",
-          bindingIntro: "Los campos con tipo de valor Select o MultiSelect se pueden vincular a un conjunto de opciones en lugar de mantener opciones integradas. Se admiten tres acciones de ciclo de vida:",
+          bindingIntro:
+            "Los campos con tipo de valor Select o MultiSelect se pueden vincular a un conjunto de opciones en lugar de mantener opciones integradas: ya sea adjuntándolo en el mismo paso en que se crea el campo, en el propio formulario de creación, o mediante una de las tres acciones de ciclo de vida disponibles después en un campo que ya existe:",
           thAction: "Acción",
           thWhatItDoes: "Qué hace",
           thEffect: "Efecto sobre los datos existentes",

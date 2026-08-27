@@ -269,6 +269,7 @@ const sections: DocSection[] = [
       // Forbidden even though it is about a file's own properties -- see the
       // intro copy for why. RichText's is a plain shape refusal.
       ["AUTH_FORBIDDEN", `${K}.codeMediaOwnerMismatch`],
+      ["ENTITY_NOT_FOUND", `${K}.codeMediaNotFound`],
       ["VALIDATION_INVALID_FORMAT", `${K}.codeMediaNotAnImage`],
       ["VALIDATION_INVALID_FORMAT", `${K}.codeRichTextShape`],
     ],
@@ -299,5 +300,5 @@ registerPage({
     "modules/custom-fields-references",
     "modules/custom-fields-validators",
   ],
-  lastUpdated: "2026-08-21",
+  lastUpdated: "2026-08-27",
 });

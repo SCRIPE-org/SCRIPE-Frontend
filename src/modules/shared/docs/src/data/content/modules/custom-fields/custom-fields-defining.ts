@@ -107,6 +107,7 @@ const sections: DocSection[] = [
     steps: [
       { titleKey: `${K}.i1Title`, contentKey: `${K}.i1Content` },
       { titleKey: `${K}.i2Title`, contentKey: `${K}.i2Content` },
+      { titleKey: `${K}.i2bTitle`, contentKey: `${K}.i2bContent` },
       { titleKey: `${K}.i3Title`, contentKey: `${K}.i3Content` },
       { titleKey: `${K}.i4Title`, contentKey: `${K}.i4Content` },
     ],
@@ -194,5 +195,5 @@ registerPage({
   order: 3,
   sections,
   relatedSlugs: ["modules/custom-fields-value-types", "modules/custom-fields-options"],
-  lastUpdated: "2026-08-21",
+  lastUpdated: "2026-08-27",
 });

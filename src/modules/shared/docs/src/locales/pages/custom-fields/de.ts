@@ -207,9 +207,9 @@ export const de = {
             "Alle zweiundzwanzig Werttypen für benutzerdefinierte Felder: was jeder speichert, was er genau akzeptiert und zurückweist, durchgerechnete Beispieleingaben, und die Fehlercodes, die das Produkt zurückgibt.",
           intro:
             "Jedes benutzerdefinierte Feld hat genau einen Werttyp, gewählt bei der Definition des Felds. Der Werttyp bestimmt, welches Bedienelement im Formular erscheint, was das Produkt akzeptiert, wie der Wert gespeichert wird und wie er anschließend angezeigt wird. Diese Seite behandelt alle zweiundzwanzig, einen nach dem anderen, mit Beispieleingaben, die angenommen werden, und Beispieleingaben, die zurückgewiesen werden. Achtzehn davon speichern etwas, das Sie eingegeben haben; die übrigen vier speichern stattdessen einen Verweis — zwei auf einen Datensatz an anderer Stelle im Produkt, mit einer eigenen Seite dafür, und zwei auf eine einzelne hochgeladene Datei oder ein einzelnes Bild.",
-          permanentTitle: "Der Werttyp lässt sich nie mehr ändern",
+          permanentTitle: "Den Werttyp später zu ändern ist ein eigener, eingeschränkter Vorgang",
           permanentContent:
-            "Sobald ein Feld gespeichert ist, steht sein Werttyp für die gesamte Lebensdauer des Felds fest. Es gibt keine Umwandlung — bereits erfasste Antworten unter dem alten Typ würden keinen Sinn mehr ergeben. Wählen Sie den falschen Typ, muss das Feld gelöscht und neu angelegt werden, und die bereits dazu gespeicherten Antworten gehen dabei verloren. Investieren Sie die zusätzliche Minute im Voraus.",
+            "Neun bestimmte Typenpaare lassen sich nachträglich umwandeln, über die eigene Aktion des Felds im Zeilenmenü — siehe die Seite Felder verwalten —, aber jedes andere Paar wird rundheraus zurückgewiesen, und mit einer Umwandlung sollte man nicht planen: Wählen Sie den richtigen Typ von vornherein, wo immer Sie können, denn das weitaus häufigere Ergebnis einer falschen Wahl ist, das Feld zu löschen und neu anzulegen und dabei die bereits dazu gespeicherten Antworten zu verlieren.",
 
           orderTitle: "Wie ein übermittelter Wert geprüft wird",
           orderIntro:
@@ -381,7 +381,7 @@ export const de = {
           dateTimeStores:
             "Ein genauer Zeitpunkt zusammen mit der Zeitzone, zu der er gehört. Beide Hälften werden gespeichert, sodass ein Anstoß um 18:00 Uhr in Kairo für jemanden, der von London aus schaut, weiterhin als 18:00 Uhr in Kairo gelesen wird.",
           dateTimeChecks:
-            "Der Zeitpunkt muss sich parsen lassen, und die Zeitzone muss ein anerkannter IANA-Zonenbezeichner sein. Die Zone ist erforderlich, sobald eine der beiden Hälften vorhanden ist — ein Zeitpunkt ohne Zone wird zurückgewiesen, nicht still interpretiert. Das Formular zeigt die Zone als kleinen Hinweis neben der eingegebenen Uhrzeit, mit einem Link Change, der eine durchsuchbare Auswahl öffnet.",
+            "Der Zeitpunkt muss sich parsen lassen, und die Zeitzone muss ein Zonen-Bezeichner sein, den der Server erkennt — in der Praxis ein IANA-Bezeichner wie \"Africa/Cairo\", wobei die zugrunde liegende Prüfung plattformabhängig ist und eine unter Windows gehostete Bereitstellung auch einen nativen Windows-Bezeichner wie \"Egypt Standard Time\" akzeptiert. Die Zone ist erforderlich, sobald eine der beiden Hälften vorhanden ist — ein Zeitpunkt ohne Zone wird zurückgewiesen, nicht still interpretiert. Das Formular zeigt die Zone als kleinen Hinweis neben der eingegebenen Uhrzeit, mit einem Link Change, der eine durchsuchbare Auswahl öffnet.",
           dateTimeOk: "Angenommen. Sowohl der Zeitpunkt als auch seine Zone werden exakt wie eingegeben zurückgelesen.",
           dateTimeNoZone:
             "Zurückgewiesen: VALIDATION_INVALID_TIMEZONE. Ein Zeitpunkt ohne Zone ist genau das, was DateTime verhindern soll.",
@@ -557,7 +557,7 @@ export const de = {
           richTextImgExample: "Inhalt mit eingebettetem Bild",
           richTextImgOutcome: "Angenommen, mit entferntem Bild. Ein Bild gehört stattdessen in ein File- oder Image-Feld.",
           richTextTooLongExample: "Mehr als 50.000 Zeichen Markup",
-          richTextTooLongOutcome: "Zurückgewiesen — kürzen Sie es und versuchen Sie es erneut.",
+          richTextTooLongOutcome: "Zurückgewiesen: VALIDATION_MAX_LENGTH — kürzen Sie es und versuchen Sie es erneut.",
 
           emptyTitle: "Leere Werte und der Schalter Required",
           emptyIntro:
@@ -568,7 +568,7 @@ export const de = {
           empty4: "bei DateTime sowohl der Zeitpunkt als auch die Zeitzone fehlen — nicht nur eines von beiden;",
           empty5: "bei Currency sowohl der Betrag als auch der Währungscode fehlen — nicht nur eines von beiden;",
           empty6:
-            "bei EntityReference, UserReference, File und Image beide Hälften des Verweises fehlen — nicht nur eine von beiden.",
+            "bei EntityReference, UserReference, File und Image beide Hälften des Verweises fehlen — nicht nur eine davon.",
           emptyOutcome:
             "Ein leerer Wert bei einem Required-Feld wird mit VALIDATION_REQUIRED zurückgewiesen. Ein leerer Wert bei einem optionalen Feld wird angenommen, und die gespeicherte Antwort wird gelöscht — die Zeile bleibt erhalten statt gelöscht zu werden, sodass der Verlauf nicht verloren geht.",
           emptyWarnTitle: "Rating ist die Ausnahme, die man sich merken sollte",
@@ -577,7 +577,7 @@ export const de = {
 
           codesTitle: "Fehlercodes, die Ihnen begegnen können",
           codesIntro:
-            "Fast jede Zurückweisung ist ein HTTP 422 mit einem dieser maschinenlesbaren Codes; der letzte in der Tabelle ist ein 403, weil es dabei um Ihren Zugriff geht, nicht um die Form dessen, was Sie gesendet haben. Sollten Sie je einen 500 beim Speichern eines Werts für ein benutzerdefiniertes Feld sehen, ist das ein meldenswerter Fehler — der Validierungspfad ist so geschrieben, dass er sauber zurückweist, niemals versagt.",
+            "Fast jede Zurückweisung ist ein HTTP 422 mit einem dieser maschinenlesbaren Codes; zwei davon sind stattdessen ein 403, weil es dabei um Ihren Zugriff geht, nicht um die Form dessen, was Sie gesendet haben. Ein dritter verdient eine gesonderte Erwähnung: Sein Codename liest sich wie ein 404, aber die Antwort ist trotzdem ein 422 — siehe den Hinweis daneben weiter unten. Sollten Sie je einen 500 beim Speichern eines Werts für ein benutzerdefiniertes Feld sehen, ist das ein meldenswerter Fehler — der Validierungspfad ist so geschrieben, dass er sauber zurückweist, niemals versagt.",
           thCode: "Code",
           thWhenItFires: "Wann er ausgelöst wird",
           codeRequired: "Das Feld ist Required, und der übermittelte Wert ist leer oder besteht nur aus Leerzeichen.",
@@ -585,11 +585,11 @@ export const de = {
             "Der Wert entspricht nicht der vom Typ erwarteten Form — eine nicht parsbare Zahl, ein nicht parsbares Datum oder eine nicht parsbare Uhrzeit, eine Option, die nicht auf der Liste steht, ein nicht zulässiges URL-Schema, eine falsche Telefonform, eine falsche Hex-Farbe, ein falscher Währungscode, oder die meisten Validator-Fehlschläge.",
           codeInvalidEmail: "Der Wert eines Email-Felds ist keine echte Adresse oder trägt einen Anzeigenamen.",
           codeInvalidTimezone:
-            "Bei einem DateTime-Wert fehlt die Zeitzone, obwohl ein Zeitpunkt vorhanden ist, oder er nennt eine Zone, die kein anerkannter IANA-Bezeichner ist.",
+            "Bei einem DateTime-Wert fehlt die Zeitzone, sobald ein Zeitpunkt vorhanden ist, oder er nennt eine Zone, die der Server nicht erkennt.",
           codeRange:
             "Eine Zahl liegt außerhalb der Grenzen ihres Typs — Percent außerhalb von 0 bis 100, Rating außerhalb einer ganzen Zahl von 1 bis 5, eine negative Duration, oder außerhalb der eigenen Grenzen eines Numeric-Range-Validators.",
           codeMaxLength:
-            "Text jenseits von 4.000 Zeichen, LongText jenseits von 10.000, ein Email oder Url jenseits von 4.000, mehr als 19 MultiSelect-Auswahlen, oder die Obergrenze eines Length-Range-Validators.",
+            "Text jenseits von 4.000 Zeichen, LongText jenseits von 10.000, RichText jenseits von 50.000, ein Email oder Url jenseits von 4.000, mehr als 19 MultiSelect-Auswahlen, oder die Obergrenze eines Length-Range-Validators.",
           codeMinLength: "Die Untergrenze eines Length-Range-Validators.",
           codeUnique: "Dieselbe MultiSelect-Option wurde in einem Speichervorgang mehr als einmal übermittelt.",
           codeUnknownEntityType:
@@ -599,7 +599,9 @@ export const de = {
           codeForbidden:
             "Ein Verweis zeigt auf einen Datensatz, den Sie nicht lesen dürfen. Dies ist ein 403, kein 422, weil es um Ihren Zugriff geht und nicht um die Form des Werts.",
           codeMediaOwnerMismatch:
-            "Ein File- oder Image-Wert zeigt auf eine Datei, die nicht an den gerade gespeicherten Datensatz angehängt ist. Ebenfalls ein 403 statt eines 422, aus demselben Grund wie oben.",
+            "Ein File- oder Image-Wert zeigt auf eine hochgeladene Datei, die nicht an den Datensatz angehängt ist, den Sie gerade bearbeiten. Dies ist ein 403, aus demselben Grund wie der Forbidden-Fall bei Referenzen oben — es geht um Eigentümerschaft, nicht um die Form.",
+          codeMediaNotFound:
+            "Die ID eines File- oder Image-Werts lässt sich nicht entschlüsseln, oder sie entschlüsselt sich zu einer hochgeladenen Datei, die nicht mehr existiert. Der Codename liest sich wie ein 404, aber die Antwort ist ein 422 — dieselbe Form, die jede andere Zurückweisung eines fehlerhaften Werts auf dieser Seite verwendet, nicht die Not-found-Form, die ein Client aufgrund des Namens erwarten könnte.",
           codeMediaNotAnImage:
             "Der Wert eines Image-Felds zeigt auf eine Datei, die kein Bild ist.",
           codeRichTextShape:
@@ -748,7 +750,7 @@ export const de = {
 
           targetsTitle: "Was derzeit referenziert werden kann",
           targetsIntro:
-            "Die Liste lautet nicht \"jeder Datensatztyp im Produkt\". Eine Art von Datensatz kann nur referenziert werden, wenn das Modul, dem sie gehört, eine Möglichkeit bereitstellt, ihre Datensätze zu suchen und aufzulösen — indem es seine eigenen Daten nach den Regeln seiner eigenen Bildschirme liest, sodass eine Auswahlkomponente nie umfassender sein kann als der Bildschirm, den sie spiegelt. Drei Arten von Datensatz stellen das heute bereit.",
+            "Die Liste lautet nicht \"jeder Datensatztyp im Produkt\". Eine Art von Datensatz kann nur referenziert werden, wenn das Modul, dem sie gehört, eine Möglichkeit bereitstellt, ihre Datensätze zu suchen und aufzulösen — indem es seine eigenen Daten nach den Regeln seiner eigenen Bildschirme liest, sodass eine Auswahlkomponente nie umfassender sein kann als der Bildschirm, den sie spiegelt. Sechs Arten von Datensatz stellen das heute bereit; die letzten drei kamen in einem späteren Release zu den ersten drei hinzu.",
           thType: "Datensatztyp",
           thKey: "Bezeichner",
           thOwner: "Gehört zu",
@@ -768,14 +770,27 @@ export const de = {
           ownerPerson: "Dem Modul für Parteien und Beziehungen",
           showsPerson:
             "Nur den Namen der Person. Das besitzende Modul liefert überhaupt keine zweite Zeile, da es beurteilt hat, dass alles, was es hinzufügen könnte, personenbezogene Daten wären, die eine Auswahlkomponente nicht braucht.",
+          typeAdmin: "Administrator",
+          keyAdmin: "identity.admin",
+          ownerAdmin: "Dem Identitätsmodul",
+          showsAdmin:
+            "Den Namen des Administrators, mit Rückgriff auf den Benutzernamen, wenn beide Namensteile leer sind, und dem Benutzernamen als zweiter Zeile. Bewusst nie die E-Mail-Adresse, die Telefonnummer, Rollennamen oder ob die Zeile ein Super Admin ist — die schmalste der drei personenähnlichen Zeilen auf dieser Liste, weil ein Administrator-Datensatz das Sensibelste ist, worauf diese Schnittstelle zeigen kann.",
+          typeTeam: "Team",
+          keyTeam: "organization.team",
+          ownerTeam: "Dem Organisationsmodul",
+          showsTeam:
+            "Nur den Namen des Teams, ohne zweite Zeile. Zwei Teams, die sich in unterschiedlichen Abteilungen einen Namen teilen, werden heute identisch dargestellt — die Abteilung, die sie auseinanderhalten würde, steht nicht in der Zeile dieser Auswahlkomponente.",
+          typeBranch: "Branch",
+          keyBranch: "organization.branch",
+          ownerBranch: "Dem Organisationsmodul",
+          showsBranch:
+            "Den Namen der Niederlassung, mit ihrer Zeitzone darunter als Unterscheidungsmerkmal — aus demselben Grund, aus dem zwei beide \"Main\" genannte Niederlassungen bereits auf dem Bildschirm für Niederlassungen selbst auseinandergehalten werden.",
           targetsRefused:
             "Alles andere wird zurückgewiesen statt mit einer leeren Liste beantwortet, und dieser Unterschied ist der springende Punkt: Eine leere Liste sieht wie ein normales Ergebnis aus und würde einem Administrator sagen \"es gibt keine Mitarbeitenden\", was eine falsche Aussage im Gewand einer richtigen ist. Eine Art von Datensatz, für die die Plattform nicht zuständig sein kann, erzeugt stattdessen eine klare Zurückweisung, die das Datensatzformular als Satz darstellt, der besagt, dass diese Art von Datensatz in dieser Installation nicht verfügbar ist.",
           targetsEmpty:
             "Und eine wirklich leere Liste verfügbarer Typen ist selbst eine legitime Antwort, kein Fehlschlag. Sie bedeutet \"es gibt nichts, worauf Sie eine Referenz richten dürfen\", was aus zwei ganz unterschiedlichen Gründen passieren kann: Die Module, denen diese Datensätze gehören, sind möglicherweise nicht Teil dieser Installation, oder Sie besitzen möglicherweise keinen Lesezugriff auf keinen davon. Das Produkt nennt beide Möglichkeiten, ohne eine davon zu behaupten, denn nur die zweite lässt sich durch das Beantragen von Berechtigungen beheben.",
           targetsWhyNot:
-            "Drei Arten von Datensatz, die so aussehen, als gehörten sie auf diese Liste, und die absichtlich ausgeschlossen sind:",
-          targetsWhyNotAdmin:
-            "Administrator-Datensätze. Ein Administrator kann zu überhaupt keinem Arbeitsbereich gehören — ein Plattformadministrator hat keinen —, sodass ein Verweis auf einen davon jede Arbeitsbereichsgrenze im Produkt überschreiten könnte. Das ist die eine Eigenschaft, die ein Referenzziel niemals haben darf, und deshalb weist ein User-Reference-Feld einen Administrator rundheraus zurück, statt ihn nur aus einer Liste wegzulassen.",
+            "Zwei Arten von Datensatz, die so aussehen, als gehörten sie auf diese Liste, und die absichtlich ausgeschlossen sind (Administrator-Datensätze waren früher eine dritte, bis ein späteres Release ihnen einen eigenen Lookup-Provider gab — sie stehen jetzt oben in der Tabelle, nicht hier):",
           targetsWhyNotGroup:
             "Benutzergruppen. Vollkommen gefahrlos, und schlicht keine Person. Ein als User Reference typisiertes Feld, das sich zu einer Gruppe auflöste, würde über das lügen, was es enthält.",
           targetsWhyNotTheme:
@@ -1117,9 +1132,9 @@ export const de = {
           limNoTypeFilter: "Die Auswahlkomponente lässt sich durch nichts außer Text eingrenzen",
           limNoTypeFilterDetail:
             "Welche Spalten der Freitextfilter durchsucht, ist die Wahl des besitzenden Moduls, und es gibt keine zusätzlichen Filter — kein \"nur aktive\", kein Filtern nach Gruppe.",
-          limNoAdminTarget: "Administrator-Datensätze können nicht referenziert werden",
+          limNoAdminTarget: "User Reference weist einen Administrator weiterhin zurück, obwohl Entity Reference das nicht mehr tut",
           limNoAdminTargetDetail:
-            "Weder vom Definitionsformular noch von einer Anfrage, die es umgeht. Ein Administrator kann außerhalb jedes Arbeitsbereichs stehen, was die eine Eigenschaft ist, die ein Referenzziel nicht haben darf.",
+            "Weder vom Definitionsformular noch von einer Anfrage, die es umgeht. Das zulässige Ziel von User Reference ist von Anfang an genau eine Sache, identity.user — der eigene Datensatz eines Administrators ist eine andere Art von Zeile, und ein User-Reference-Feld darauf zeigen zu lassen wird zurückgewiesen, unabhängig davon, über welches Modul die Anfrage kam. Entity Reference bietet Administratoren als Ziel an, seit ein späteres Release einen Lookup-Provider für sie hinzugefügt hat; diese Grenze gilt allein für User Reference.",
 
           nextTitle: "Wie es weitergeht",
           nextIntro: "Die Konzepte hinter diesen Lookups stehen auf der Seite Referenzfelder.",
@@ -1203,7 +1218,7 @@ export const de = {
           ctlFieldGroupDoes:
             "Ordnet das Feld einer der Feldgruppen des Datensatztyps zu, oder keiner Gruppe. Das Ändern des Datensatztyps löscht die Wahl.",
           ctlFieldGroupWhen:
-            "Nur wenn Sie die Ansichtsberechtigung für Feldgruppen besitzen und mindestens eine Gruppe für den gewählten Datensatztyp existiert.",
+            "Nur wenn Sie die Ansichtsberechtigung für Feldgruppen besitzen und — auf dem Hauptbildschirm für Definitionen — sobald ein Datensatztyp gewählt wurde; das Inline-Panel zeigt es bereits, sobald Sie die Berechtigung besitzen, da es den Datensatztyp bereits kennt. In beiden Fällen auch dann gezeigt, wenn der gewählte Datensatztyp noch keine Gruppen hat, wobei bis dahin nur \"no group\" angeboten wird.",
           ctlRequiredDoes:
             "Weist einen Speichervorgang zurück, der das Feld leer lässt. Reine Leerzeichen zählen bei jedem Werttyp als leer.",
           ctlSortOrderDoes:
@@ -1270,7 +1285,10 @@ export const de = {
             "Das Definitionsformular öffnet sich in einem Seitenpanel statt in einem Dialog über einem Dialog. Das dahinterliegende Datensatzformular bleibt sichtbar und lesbar, und nichts, was Sie bereits eingetippt haben, geht verloren.",
           i2Title: "Beachten Sie, dass der Datensatztyp feststeht",
           i2Content:
-            "Der Datensatztyp wird als Kontext gezeigt statt als Dropdown — es ist, welcher Bildschirm auch immer Sie sich gerade befinden. Jedes andere Element verhält sich exakt wie auf dem vollständigen Bildschirm, Validator-Dropdown eingeschlossen.",
+            "Der Datensatztyp wird als Kontext gezeigt statt als Dropdown — es ist, welcher Bildschirm auch immer Sie sich gerade befinden. Jedes andere Element verhält sich exakt wie auf dem vollständigen Bildschirm, Validator-Dropdown eingeschlossen, mit einer Ergänzung, die dieses Panel hat und der vollständige Bildschirm nicht — siehe den nächsten Punkt.",
+          i2bTitle: "Optional ein gemeinsam genutztes Option Set anhängen",
+          i2bContent:
+            "Bei Select oder MultiSelect bietet dieses Panel — und nur dieses Panel, nicht das eigene Formular des Hauptbildschirms für Definitionen — neben dem manuellen Options-Editor eine Option-Set-Auswahl an. Eines zu wählen bindet es in demselben Schritt an das Feld, in dem Moment, in dem es angelegt wird: Manuell weiter oben eingetippte Optionen bleiben erhalten und werden mit denen des Sets zusammengeführt, statt durch sie ersetzt zu werden. Nur gezeigt, wenn Sie sowohl die Ansichts- als auch die Bindungsberechtigung für Option Sets besitzen.",
           i3Title: "Ausfüllen und speichern",
           i3Content:
             "Das Panel schließt sich, und das neue Feld erscheint sofort im weiterhin geöffneten Datensatzformular, leer und bereit zum Ausfüllen.",
@@ -2078,7 +2096,7 @@ export const de = {
           opLessThanMeaning: "Die numerische oder Datumsantwort liegt echt unter dem Schwellenwert.",
           opLessThanExample: "Zeige Parental Consent, wenn Age kleiner als 18 ist.",
           visibilityRulesEvaluation:
-            "Regeln werden mit deterministischer Priorität ausgeführt. Zielen mehrere Regeln auf dasselbe Feld, haben Hide-Aktionen Vorrang vor Show-Aktionen. Verborgene Felder werden aus den Pflichtfeld-Prüfungen ausgelassen, was unerfüllbare Validierungsblockaden verhindert.",
+            "Ein Feld mit mehreren Regeln ist nur sichtbar, wenn jede einzelne davon erfüllt ist — ein einfaches UND über alle hinweg, kein Wettstreit zwischen konkurrierenden Show- und Hide-Aktionen, denn eine Regel drückt immer nur eine Bedingung aus, unter der das Feld sichtbar ist. Priority ordnet die Regeln nur für Diagnose und Anzeige; sie ändert nie, welche Regeln gelten. Ein Feld, das eine Regel gerade verbirgt, wird auch von der Required-Validierung ausgelassen, sodass eine Bedingung, die niemand sehen kann, nie einen Speichervorgang blockiert.",
           visibilityRulesTipTitle: "Bedingungen nur über Geschwisterfelder",
           visibilityRulesTipContent:
             "Eine Regel kann sich nur auf Geschwisterfelder beziehen, die für exakt denselben Entitätstyp definiert sind. Entitätsübergreifende Bedingungen (zum Beispiel die Einstellung eines Mandanten aus einem Personenfeld heraus zu prüfen) sind nicht zulässig, um die transaktionale Integrität eines einzelnen Datensatzes zu bewahren.",
@@ -2098,18 +2116,18 @@ export const de = {
           classLossy: "Verlustbehaftet (Bestätigung erforderlich)",
           classLossyPairs: "LongText → Text, Text → Number",
           classLossyRisk:
-            "LongText → Text kürzt alles, was über die eigene 4.000-Zeichen-Grenze von Text hinausgeht. Text → Number kürzt überhaupt nicht — die gesamte Umwandlung wird zurückgewiesen, sobald auch nur ein einziger gespeicherter Wert sich nicht als Zahl parsen lässt, statt den Rest umzuwandeln und diesen einen zurückzulassen.",
+            "Keines der beiden Paare kürzt. LongText → Text weist den gesamten Vorgang zurück, sobald auch nur ein gespeicherter Wert die eigene 4.000-Zeichen-Grenze von Text überschreitet, unter Nennung seiner tatsächlichen Länge. Text → Number weist den gesamten Vorgang zurück, sobald auch nur ein gespeicherter Wert sich nicht als Zahl parsen lässt. So oder so blockiert eine einzige fehlerhafte Zeile alle Zeilen — es gibt keine teilweise Umwandlung, die manche Datensätze ändert und andere lässt, wie sie waren.",
           classIncompatible: "Nicht angeboten",
           classIncompatiblePairs:
             "Jedes andere Paar — 453 der 462 möglichen, einschließlich jedes Paars, das EntityReference, UserReference, File, Image oder RichText berührt.",
           classIncompatibleRisk:
             "Wird zurückgewiesen, bevor überhaupt etwas ausgeführt wird. Ein referenzförmiger oder medienförmiger Wert hat keine sinnvolle Text- oder Zahlenform, in die er umgewandelt werden könnte, und in umgekehrter Richtung gibt es nichts Reales, worauf verwiesen werden könnte.",
           conversionLossyWarnTitle:
-            "Eine verlustbehaftete Umwandlung wird dauerhaft auf jeden gespeicherten Wert angewendet",
+            "Eine verlustbehaftete Umwandlung wirkt sich dauerhaft auf jeden gespeicherten Wert aus",
           conversionLossyWarnContent:
-            "Langen Text abzuschneiden formt historische Datensätze dauerhaft um. Führen Sie vor dem Bestätigen immer zuerst Usage & impact aus, um zu sehen, wie viele Datensätze betroffen sein werden.",
+            "Ein erfolgreicher Lauf ändert alle Zeilen auf einmal — es gibt keine gesonderte Bestätigung pro Datensatz, und nichts wird still gekürzt oder gelöscht, außer dem, was die eigene Umwandlung des Zieltyps ohnehin tut. Führen Sie vor dem Bestätigen immer zuerst Usage & impact aus, um zu sehen, wie viele Datensätze betroffen sein werden.",
           conversionDryRunIntro:
-            "Bevor irgendetwas geändert wird, prüft der Server jeden gespeicherten Wert gegen den Zieltyp. Würde auch nur ein einziger Wert bei der Umwandlung scheitern, wird der gesamte Vorgang von vornherein zurückgewiesen, statt ihn halb fertig stehen zu lassen.",
+            "Bevor irgendetwas geändert wird, prüft der Server jeden gespeicherten Wert gegen den Zieltyp in einem ersten Durchgang, der nichts schreibt. Würde auch nur ein einziger Wert bei der Umwandlung scheitern, wird der gesamte Vorgang von vornherein zurückgewiesen, unter Nennung jeder fehlschlagenden Zeile, und nichts wird geändert — es ist alles oder nichts, nie eine teilweise Umwandlung, die manche Zeilen alt und manche neu zurücklässt.",
           conversionRollbackTitle: "Rollback per Schnappschuss",
           conversionRollbackContent:
             "Jede Umwandlung schreibt für jede Zeile einen Schnappschuss des vorherigen Werts, bevor dieser geändert wird. Ein Super Admin kann für einen bestimmten Umwandlungslauf anhand seiner Job-Run-ID ein Rollback durchführen und so die exakten vorherigen Werte wiederherstellen — Schnappschüsse laufen nach sieben Tagen automatisch ab und werden dann gelöscht, ein Rollback steht also nur in einem echten Zeitfenster zur Verfügung und nicht unbegrenzt.",
@@ -2264,7 +2282,7 @@ export const de = {
             "Jede Zelle wird als regloser Text geschrieben, nie als Formel. Eine Bezeichnung mit dem Namen =SUM(A1) landet in der Datei als die buchstäblichen Zeichen, nicht als Berechnung — und dasselbe gilt für eine Bezeichnung, die mit +, -, @ oder einem Tabulator gefolgt von = beginnt. Das ist kategorisch statt ein Filter bekannter Fälle.",
           exportLimitTitle: "Drei Grenzen des Exports",
           exportLimitContent:
-            "Er enthält Definitionen und nie die Antworten von irgendjemandem — es gibt nirgends im Produkt einen Werteexport. Über 10.000 Definitionen hinaus weist er rundheraus zurück, mit dem Hinweis, den Export auf einen einzigen Datensatztyp einzugrenzen, statt Ihnen eine abgeschnittene Datei zu geben, die vollständig aussieht. Und die 18 Spalten oben sind die ganze Datei: Der festgelegte Target Entity Type eines Referenzfelds ist keine davon, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt. Vor Ihnen eingeschränkte Felder fehlen in der Datei, statt leer zu sein.",
+            "Er enthält Definitionen und nie die Antworten von irgendjemandem — ein separater Werteexport, mit eigenem Endpunkt und eigener Schaltfläche im Seitenkopf, ist die Stelle, an der die Antworten selbst leben (siehe Grenzwerte und Verhalten). Über 10.000 Definitionen hinaus weist er rundheraus zurück, mit dem Hinweis, den Export auf einen einzigen Datensatztyp einzugrenzen, statt Ihnen eine abgeschnittene Datei zu geben, die vollständig aussieht. Und die 18 Spalten oben sind die ganze Datei: Der festgelegte Target Entity Type eines Referenzfelds ist keine davon, sodass eine exportierte Definition nicht erfasst, worauf ihr Feld zeigt. Vor Ihnen eingeschränkte Felder fehlen in der Datei, statt leer zu sein.",
 
           referenceTitle: "Die beiden Referenzbildschirme",
           referenceIntro:
@@ -2345,9 +2363,9 @@ export const de = {
             "Die VAE haben kein nationales Postleitzahlensystem, es gibt also nichts, wogegen geprüft werden könnte. Der Versuch wird mit einer eigenen erklärenden Meldung zurückgewiesen statt mit einer allgemeinen.",
 
           typesTitle: "Werttyp-Verhalten",
-          tValueTypeFixed: "Der Werttyp eines Felds lässt sich nie ändern.",
+          tValueTypeFixed: "Der Schlüssel, der Datensatztyp und der Geltungsbereich lassen sich nie mehr ändern, sobald ein Feld gespeichert ist.",
           tValueTypeFixedWhy:
-            "Bereits unter dem alten Typ erfasste Antworten würden keinen Sinn mehr ergeben, und es gibt keine Umwandlung. Dasselbe gilt für den Schlüssel, den Datensatztyp und den Geltungsbereich.",
+            "Ein nachträgliches Umbenennen, Neuausrichten oder Ändern des Geltungsbereichs würde jede bereits gespeicherte Antwort darüber im Unklaren lassen, was sie bedeutet. Der Werttyp ist die eine Ausnahme mit einem schmalen Hintertürchen: Neun bestimmte Typenpaare lassen sich nachträglich umwandeln — siehe die Seite Felder verwalten —, bei allem anderen bedeutet es weiterhin Löschen und Neuanlegen.",
           tMultiOrder: "Eine MultiSelect-Antwort liest sich in Auswahlreihenfolge zurück, nicht in Optionsreihenfolge.",
           tMultiOrderWhy:
             "Die Reihenfolge zu bewahren, in der jemand gewählt hat, ist es, was den Wert originalgetreu hin- und zurückreisen lässt. Der Preis dafür ist, dass eine Listenspalte, die diese Antwort zeigt, nicht garantiert der Reihenfolge folgt, in der Sie die Optionen verfasst haben.",
@@ -2489,16 +2507,16 @@ export const de = {
           exportTitle: "Export- und Portabilitätsverhalten",
           eDefinitionsOnly: "Der Tabellenexport enthält Definitionen, nie Antworten.",
           eDefinitionsOnlyWhy:
-            "Er ist per Entwurf ein Definitionsexport, und es gibt nirgends im Produkt einen Werteexport. Niemandes Daten können darüber abfließen.",
+            "Er ist per Entwurf ein Definitionsexport — ein separater Werteexport existiert als eigener Endpunkt und eigene Schaltfläche im Seitenkopf für die Antworten selbst, gedeckelt bei 10.000 Zellen statt darüber hinaus abgeschnitten zu werden.",
           eRefusesPastLimit: "Über 10.000 Definitionen hinaus weist der Export zurück, statt abzuschneiden.",
           eRefusesPastLimitWhy:
             "Eine still abgeschnittene Datei ist schlimmer als keine Datei, weil sie vollständig aussieht. Die Zurückweisung sagt Ihnen, den Export auf einen einzigen Datensatztyp einzugrenzen.",
           eRestrictedAbsent: "Vor Ihnen eingeschränkte Felder fehlen in der Datei, sind nicht leer.",
           eRestrictedAbsentWhy:
             "Sicherheit auf Feldebene gilt für den Export exakt wie auf dem Bildschirm, und eine leere Spalte würde immer noch verraten, dass das Feld existiert.",
-          eNoImport: "Der Tabellenexport ist ein Bericht, keine Vorlage — aber ein separates Paketformat reist hin und zurück.",
+          eNoImport: "Der Tabellenexport ist eine Einbahnstraße, und der einzige Weg zur Massenerstellung, den dieses Produkt je angeboten hat, ist abgeschaltet.",
           eNoImportWhy:
-            "Der XLSX-Export existiert zum Lesen, nicht zum erneuten Hochladen, eine Tabelle kann also weiterhin nicht genutzt werden, um Felder in großer Zahl anzulegen. Ein anderes, JSON-geformtes portables Schema-Paket kann das: Exportieren Sie die Gruppen und Definitionen eines Entitätstyps, und importieren Sie dasselbe Paket dann — in diesen Arbeitsbereich oder einen anderen — über seinen eigenen Drop-Zone-Dialog, der angelegte, übersprungene und gescheiterte Elemente pro Gruppe meldet statt einer bloßen Zahl.",
+            "Die exportierte Tabelle ist ein Bericht zum Lesen, keine Vorlage, die sich erneut importieren lässt. Ein JSON-Schema-Paket-Import existiert — mit eigenem Dialog, eigenem Endpunkt, eigener Ergebnistabelle pro Gruppe —, aber jeder Aufruf davon wird mit einem 409 zurückgewiesen, durch einen bewussten, dauerhaften Sperrschalter, zusammen mit dem passenden Schema-Export. Die Massenerstellung von Feldern ist über das Produkt heute nicht verfügbar, aufgrund der Auslegung dieses Schalters und nicht aus Versehen.",
           eTextCells: "Jede Export-Zelle wird als Text geschrieben.",
           eTextCellsWhy:
             "Eine Bezeichnung, die mit =, +, - oder @ beginnt, landet als buchstäbliche Zeichen statt als Tabellenkalkulationsformel. Das ist kategorisch statt ein Filter bekannter Fälle, sodass nichts, das wie eine Berechnung aussieht, zu einer werden kann.",
@@ -2528,7 +2546,7 @@ export const de = {
           absent2:
             "Der Werteexport weist zurück statt abzuschneiden, sobald eine Anfrage 10.000 Zellen überschreiten würde — exportieren Sie stattdessen eine engere Auswahl von Datensätzen, statt eine Teildatei zu erwarten.",
           absent3:
-            "Es gibt keine Massenerstellung aus einer Tabellenkalkulation. Ein portables Schema-Paket (JSON) kann über den Import-Dialog viele Felddefinitionen auf einmal anlegen; ein einzelnes Feld für sich wird weiterhin einzeln angelegt, auf dem Formular.",
+            "Es gibt einen Weg zur Massenerstellung, einen JSON-Schema-Paket-Import mit eigenem Dialog — aber er ist derzeit abgeschaltet und weist jeden Aufruf rundheraus zurück, statt tatsächlich irgendetwas anzulegen, zusammen mit dem passenden Schema-Export. Heute werden Felder in der Praxis weiterhin einzeln auf dem Formular angelegt.",
           absent4:
             "Eine veröffentlichte Option-Set-Version bewegt die bereits an eine frühere gebundenen Felder nicht automatisch mit — ein Administrator bindet jedes Feld ausdrücklich neu. Das ist beabsichtigt: automatisches Nachfolgen würde still ändern, was bereits gegen die alte Liste gespeicherte Werte bedeuten.",
           absent5:
@@ -2620,7 +2638,7 @@ export const de = {
 
           bindingTitle: "Felder an ein Option Set binden",
           bindingIntro:
-            "Felder mit den Werttypen Select oder MultiSelect können sich an ein Option Set binden, statt Inline-Optionen zu pflegen. Drei Lebenszyklus-Aktionen werden unterstützt:",
+            "Felder mit den Werttypen Select oder MultiSelect können sich an ein Option Set binden, statt Inline-Optionen zu pflegen — entweder im selben Schritt wie das Anlegen des Felds angehängt, direkt auf dem Erstellungsformular, oder anschließend über eine von drei Lebenszyklus-Aktionen, die für ein bereits bestehendes Feld verfügbar sind:",
           thAction: "Aktion",
           thWhatItDoes: "Was sie tut",
           thEffect: "Wirkung auf bestehende Daten",

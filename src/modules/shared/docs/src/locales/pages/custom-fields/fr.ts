@@ -210,9 +210,9 @@ export const fr = {
             "Les vingt-deux types de valeur des champs personnalisés : ce que chacun stocke, exactement ce qu'il accepte et rejette, des exemples de saisie, et les codes d'erreur que le produit renvoie.",
           intro:
             "Chaque champ personnalisé a exactement un type de valeur, choisi lors de la définition du champ. Le type de valeur détermine le contrôle qui apparaît sur le formulaire, ce que le produit accepte, comment la valeur est stockée et comment elle s'affiche ensuite. Cette page couvre les vingt-deux, un par un, avec des exemples de saisie acceptés et des exemples de saisie refusés. Dix-huit d'entre eux stockent ce que vous avez tapé ; les quatre autres stockent un pointeur à la place — deux vers un enregistrement situé ailleurs dans le produit, avec une page qui leur est propre, et deux vers un unique fichier ou image téléversé.",
-          permanentTitle: "Le type de valeur ne peut jamais être changé",
+          permanentTitle: "Changer le type de valeur plus tard est une opération distincte et restreinte",
           permanentContent:
-            "Une fois qu'un champ est enregistré, son type de valeur est figé pour toute la durée de vie du champ. Il n'existe aucune conversion — les réponses déjà enregistrées sous l'ancien type n'auraient plus de sens. Si vous choisissez le mauvais type, le champ doit être supprimé et recréé, et les réponses déjà stockées pour lui sont perdues avec lui. Prenez la minute supplémentaire en amont.",
+            "Neuf paires de types précises peuvent être converties après coup, depuis la propre action du champ dans le menu de ligne — voir la page Gestion des champs — mais toute autre paire est refusée d'emblée, et il ne faut pas compter sur la conversion pour rattraper un mauvais choix : choisissez le bon type dès le départ chaque fois que possible, car l'issue de loin la plus fréquente d'un mauvais choix reste de supprimer et recréer le champ, perdant du même coup les réponses déjà stockées pour lui.",
 
           orderTitle: "Comment une valeur soumise est vérifiée",
           orderIntro:
@@ -384,7 +384,7 @@ export const fr = {
           dateTimeStores:
             "Un instant précis accompagné du fuseau horaire auquel il appartient. Les deux moitiés sont stockées, de sorte qu'un coup d'envoi à 18:00 au Caire se relit toujours comme 18:00 au Caire pour quelqu'un qui le consulte depuis Londres.",
           dateTimeChecks:
-            "L'instant doit s'analyser correctement, et le fuseau horaire doit être un identifiant de fuseau IANA reconnu. Le fuseau est exigé dès que l'une des deux moitiés est présente — un instant sans fuseau est refusé, jamais interprété silencieusement. Le formulaire affiche le fuseau comme une petite indication à côté de l'heure saisie, avec un lien Change qui ouvre un sélecteur permettant la recherche.",
+            "L'instant doit s'analyser correctement, et le fuseau horaire doit être un identifiant de fuseau que le serveur reconnaît — en pratique un identifiant IANA tel que « Africa/Cairo », bien que la vérification sous-jacente dépende de la plateforme : un déploiement hébergé sous Windows accepte aussi un identifiant Windows natif tel que « Egypt Standard Time ». Le fuseau est exigé dès que l'une des deux moitiés est présente — un instant sans fuseau est refusé, jamais interprété silencieusement. Le formulaire affiche le fuseau comme une petite indication à côté de l'heure saisie, avec un lien Change qui ouvre un sélecteur permettant la recherche.",
           dateTimeOk: "Acceptée. L'instant et son fuseau sont tous deux relus exactement tels que saisis.",
           dateTimeNoZone:
             "Refusée : VALIDATION_INVALID_TIMEZONE. Un instant sans fuseau est exactement ce que DateTime existe pour empêcher.",
@@ -560,7 +560,7 @@ export const fr = {
           richTextImgExample: "Un contenu avec une image intégrée",
           richTextImgOutcome: "Acceptée, avec l'image supprimée. Une image a sa place dans un champ File ou Image plutôt qu'ici.",
           richTextTooLongExample: "Plus de 50 000 caractères de balisage",
-          richTextTooLongOutcome: "Refusée — raccourcissez-le et réessayez.",
+          richTextTooLongOutcome: "Refusée : VALIDATION_MAX_LENGTH — raccourcissez-le et réessayez.",
 
           emptyTitle: "Valeurs vides et l'interrupteur Required",
           emptyIntro:
@@ -580,7 +580,7 @@ export const fr = {
 
           codesTitle: "Codes d'erreur que vous pourriez voir",
           codesIntro:
-            "Presque tous les refus sont une réponse HTTP 422 avec l'un de ces codes lisibles par une machine ; le dernier du tableau est un 403, car il concerne votre accès plutôt que la forme de ce que vous avez envoyé. Si vous voyez un jour un 500 lors de l'enregistrement d'une valeur de champ personnalisé, c'est un défaut qui mérite d'être signalé — le chemin de validation est écrit pour refuser proprement, jamais pour échouer.",
+            "Presque tous les refus sont une réponse HTTP 422 avec l'un de ces codes lisibles par une machine ; deux d'entre eux sont plutôt un 403, car ils concernent votre accès plutôt que la forme de ce que vous avez envoyé. Un troisième mérite d'être signalé à part : son nom de code se lit comme un 404, mais la réponse reste un 422 — voir la remarque à côté de lui ci-dessous. Si vous voyez un jour un 500 lors de l'enregistrement d'une valeur de champ personnalisé, c'est un défaut qui mérite d'être signalé — le chemin de validation est écrit pour refuser proprement, jamais pour échouer.",
           thCode: "Code",
           thWhenItFires: "Quand il se déclenche",
           codeRequired: "Le champ est Obligatoire et la valeur soumise est vide ou composée uniquement d'espaces.",
@@ -588,11 +588,11 @@ export const fr = {
             "La valeur ne correspond pas à la forme attendue par le type — un nombre, une date ou une heure inanalysable, une option absente de la liste, un protocole d'URL non autorisé, une forme de téléphone incorrecte, une couleur hexadécimale incorrecte, un code de devise incorrect, ou la plupart des échecs de validateur.",
           codeInvalidEmail: "La valeur d'un champ Email n'est pas une véritable adresse, ou porte un nom d'affichage.",
           codeInvalidTimezone:
-            "Une valeur DateTime est dépourvue de fuseau horaire alors qu'un instant est présent, ou nomme un fuseau qui n'est pas un identifiant IANA reconnu.",
+            "Une valeur DateTime est dépourvue de fuseau horaire alors qu'un instant est présent, ou nomme un fuseau que le serveur ne reconnaît pas.",
           codeRange:
             "Un nombre est hors des bornes de son type — Percent hors de 0 à 100, Rating hors d'un entier de 1 à 5, un Duration négatif, ou les propres bornes d'un validateur Numeric Range.",
           codeMaxLength:
-            "Text au-delà de 4 000 caractères, LongText au-delà de 10 000, un Email ou Url au-delà de 4 000, plus de 19 sélections MultiSelect, ou la borne supérieure d'un validateur Length Range.",
+            "Text au-delà de 4 000 caractères, LongText au-delà de 10 000, RichText au-delà de 50 000, un Email ou Url au-delà de 4 000, plus de 19 sélections MultiSelect, ou la borne supérieure d'un validateur Length Range.",
           codeMinLength: "La borne inférieure d'un validateur Length Range.",
           codeUnique: "La même option MultiSelect a été soumise plus d'une fois dans un même enregistrement.",
           codeUnknownEntityType:
@@ -602,7 +602,9 @@ export const fr = {
           codeForbidden:
             "Une référence pointe vers un enregistrement que vous n'êtes pas autorisé à lire. Celui-ci est un 403 plutôt qu'un 422, car il concerne votre accès et non la forme de la valeur.",
           codeMediaOwnerMismatch:
-            "Une valeur File ou Image pointe vers un fichier qui n'est pas rattaché à l'enregistrement en cours d'enregistrement. Également un 403 plutôt qu'un 422, pour la même raison que ci-dessus.",
+            "Une valeur File ou Image pointe vers un fichier téléversé qui n'est pas rattaché à l'enregistrement que vous modifiez. Celui-ci est un 403, pour la même raison que le cas Forbidden des références ci-dessus — il s'agit de propriété, pas de forme.",
+          codeMediaNotFound:
+            "L'identité d'une valeur File ou Image ne parvient pas à se déchiffrer, ou se déchiffre vers un fichier téléversé qui n'existe plus. Le nom du code se lit comme un 404, mais la réponse est un 422 — la même forme qu'utilise tout autre refus de valeur mal formée sur cette page, pas la forme « introuvable » qu'un client pourrait attendre d'après le nom.",
           codeMediaNotAnImage:
             "La valeur d'un champ Image pointe vers un fichier qui n'est pas une image.",
           codeRichTextShape:
@@ -751,7 +753,7 @@ export const fr = {
 
           targetsTitle: "Ce qui peut actuellement être référencé",
           targetsIntro:
-            "La liste n'est pas « tous les types d'enregistrement du produit ». Un type d'enregistrement ne peut être référencé que lorsque le module qui le possède fournit un moyen de rechercher et de résoudre ses enregistrements — en lisant ses propres données selon les règles de ses propres écrans, de sorte qu'un sélecteur ne peut jamais être plus large que l'écran qu'il reflète. Trois types d'enregistrement le fournissent aujourd'hui.",
+            "La liste n'est pas « tous les types d'enregistrement du produit ». Un type d'enregistrement ne peut être référencé que lorsque le module qui le possède fournit un moyen de rechercher et de résoudre ses enregistrements — en lisant ses propres données selon les règles de ses propres écrans, de sorte qu'un sélecteur ne peut jamais être plus large que l'écran qu'il reflète. Six types d'enregistrement le fournissent aujourd'hui ; les trois derniers ont rejoint les trois premiers lors d'une version ultérieure.",
           thType: "Type d'enregistrement",
           thKey: "Identifiant",
           thOwner: "Détenu par",
@@ -771,14 +773,27 @@ export const fr = {
           ownerPerson: "Le module de tiers et relations",
           showsPerson:
             "Le nom de la personne uniquement. Le module propriétaire ne fournit aucune seconde ligne, ayant jugé que tout ce qu'il pourrait ajouter serait une donnée personnelle dont un sélecteur n'a pas besoin.",
+          typeAdmin: "Administrator",
+          keyAdmin: "identity.admin",
+          ownerAdmin: "Le module d'identité",
+          showsAdmin:
+            "Le nom de l'administrateur, revenant au nom d'utilisateur lorsque les deux parties du nom sont vides, avec le nom d'utilisateur en seconde ligne. Délibérément jamais l'adresse e-mail, le numéro de téléphone, les noms de rôle, ni si la ligne est un Super Admin — la plus restreinte des trois lignes de type personne de cette liste, car un enregistrement d'administrateur est la chose la plus sensible que ce mécanisme de référence puisse cibler.",
+          typeTeam: "Team",
+          keyTeam: "organization.team",
+          ownerTeam: "Le module d'organisation",
+          showsTeam:
+            "Le nom de l'équipe uniquement, sans seconde ligne. Deux équipes portant le même nom dans des services différents s'affichent aujourd'hui de façon identique — le service qui permettrait de les distinguer ne figure pas sur la ligne de ce sélecteur.",
+          typeBranch: "Branch",
+          keyBranch: "organization.branch",
+          ownerBranch: "Le module d'organisation",
+          showsBranch:
+            "Le nom de la succursale, avec son fuseau horaire en dessous comme élément de distinction — la même raison qui permet de distinguer deux succursales toutes deux appelées « Main » sur l'écran des succursales lui-même.",
           targetsRefused:
             "Tout le reste est refusé plutôt que répondu par une liste vide, et la différence est tout l'enjeu : une liste vide ressemble à un résultat normal et dirait à un administrateur « il n'existe aucun membre du personnel », ce qui est une affirmation fausse revêtant l'apparence d'une affirmation correcte. Un type d'enregistrement pour lequel la plateforme ne peut pas répondre produit à la place un refus clair, que le formulaire d'enregistrement affiche comme une phrase indiquant que ce type d'enregistrement n'est pas disponible dans cette installation.",
           targetsEmpty:
             "Et une liste véritablement vide de types disponibles est elle-même une réponse légitime, pas un échec. Elle signifie « il n'y a rien vers quoi vous puissiez pointer une référence », ce qui arrive pour deux raisons bien distinctes : les modules propriétaires de ces enregistrements peuvent ne pas faire partie de cette installation, ou vous pouvez ne détenir aucun accès en consultation à aucun d'eux. Le produit nomme les deux possibilités sans affirmer laquelle s'applique, car seule l'une des deux se règle en demandant des permissions.",
           targetsWhyNot:
-            "Trois types d'enregistrement qui semblent devoir figurer sur cette liste et en sont exclus délibérément :",
-          targetsWhyNotAdmin:
-            "Les enregistrements d'administrateur. Un administrateur peut n'appartenir à aucun espace de travail du tout — un administrateur de plateforme n'en a aucun — de sorte qu'un pointeur vers l'un d'eux pourrait franchir toutes les limites d'espace de travail du produit. C'est la seule propriété qu'une cible de référence ne doit jamais avoir, et c'est pourquoi un champ User Reference refuse purement et simplement un administrateur plutôt que de simplement l'omettre d'une liste.",
+            "Deux types d'enregistrement qui semblent devoir figurer sur cette liste et en sont exclus délibérément (les enregistrements d'administrateur en formaient autrefois un troisième, jusqu'à ce qu'une version ultérieure leur donne leur propre fournisseur de recherche — ils figurent désormais dans le tableau ci-dessus, pas ici) :",
           targetsWhyNotGroup:
             "Les groupes d'utilisateurs. Parfaitement sûrs à lire, et simplement pas une personne. Un champ typé User Reference qui se résoudrait en un groupe mentirait sur ce qu'il contient.",
           targetsWhyNotTheme:
@@ -1119,9 +1134,9 @@ export const fr = {
           limNoTypeFilter: "Le sélecteur ne peut être restreint que par du texte",
           limNoTypeFilterDetail:
             "Les colonnes sur lesquelles porte le filtre en texte libre relèvent du choix du module propriétaire, et il n'existe aucun filtre supplémentaire — ni « actifs seulement », ni filtre par groupe.",
-          limNoAdminTarget: "Les enregistrements d'administrateur ne peuvent pas être référencés",
+          limNoAdminTarget: "User Reference refuse toujours un administrateur, même si Entity Reference ne le fait plus",
           limNoAdminTargetDetail:
-            "Ni depuis le formulaire de définition, ni depuis une requête qui le contourne. Un administrateur peut se situer en dehors de tout espace de travail, ce qui est la seule propriété qu'une cible de référence ne doit pas avoir.",
+            "Ni depuis le formulaire de définition, ni depuis une requête qui le contourne. La cible autorisée de User Reference est exactement une seule chose, identity.user, par conception d'origine — l'enregistrement propre d'un administrateur est un type de ligne différent, et pointer un champ User Reference vers l'un d'eux est refusé quel que soit le module par lequel la requête est passée. Entity Reference propose les administrateurs comme cible depuis qu'une version ultérieure leur a ajouté un fournisseur de recherche ; cette limite est propre à User Reference seul.",
 
           nextTitle: "Où aller ensuite",
           nextIntro: "Les concepts derrière ces recherches se trouvent sur la page Champs de référence.",
@@ -1205,7 +1220,7 @@ export const fr = {
           ctlFieldGroupDoes:
             "Place le champ sous l'un des groupes de champs du type d'enregistrement, ou sous aucun groupe. Changer le type d'enregistrement efface le choix.",
           ctlFieldGroupWhen:
-            "Uniquement si vous détenez la permission de consultation des groupes de champs et qu'au moins un groupe existe pour le type d'enregistrement choisi.",
+            "Uniquement si vous détenez la permission de consultation des groupes de champs et — sur l'écran principal des définitions — une fois qu'un type d'enregistrement a été choisi ; le panneau intégré l'affiche dès que vous détenez la permission, puisqu'il connaît déjà le type d'enregistrement. Affiché dans les deux cas même lorsque le type d'enregistrement choisi n'a encore aucun groupe, en ne proposant alors que no group jusqu'à ce qu'un groupe existe.",
           ctlRequiredDoes:
             "Refuse un enregistrement qui laisse le champ vide. Une valeur composée uniquement d'espaces compte comme vide pour chaque type de valeur.",
           ctlSortOrderDoes:
@@ -1272,7 +1287,10 @@ export const fr = {
             "Le formulaire de définition s'ouvre dans un panneau latéral plutôt que dans une boîte de dialogue par-dessus une autre. Le formulaire d'enregistrement derrière lui reste visible et lisible, et rien de ce que vous y avez déjà saisi n'est perdu.",
           i2Title: "Notez que le type d'enregistrement est figé",
           i2Content:
-            "Le type d'enregistrement est affiché comme un contexte plutôt que comme une liste déroulante — c'est celui de l'écran où vous vous trouvez déjà. Tous les autres contrôles se comportent exactement comme sur l'écran complet, sélecteur de validateur compris.",
+            "Le type d'enregistrement est affiché comme un contexte plutôt que comme une liste déroulante — c'est celui de l'écran où vous vous trouvez déjà. Tous les autres contrôles de l'écran complet se comportent ici de la même façon, sélecteur de validateur compris, à l'exception d'un ajout que ce panneau possède et que l'écran complet n'a pas — voir la suite.",
+          i2bTitle: "Rattacher facultativement un Option Set partagé",
+          i2bContent:
+            "Pour Select ou MultiSelect, ce panneau — et lui seul, pas le propre formulaire de l'écran principal des définitions — propose un sélecteur Option Set aux côtés de l'éditeur d'options manuel. En choisir un le lie au champ dès sa création, dans la même étape : les options saisies manuellement au-dessus sont conservées, fusionnées avec celles du jeu plutôt que remplacées par elles. Affiché uniquement si vous détenez à la fois la permission de consultation des jeux d'options et celle de liaison.",
           i3Title: "Remplissez et enregistrez",
           i3Content:
             "Le panneau se ferme et le nouveau champ apparaît immédiatement dans le formulaire d'enregistrement toujours ouvert, vide et prêt à être rempli.",
@@ -2080,7 +2098,7 @@ export const fr = {
           opLessThanMeaning: "La réponse numérique ou de date est strictement inférieure au seuil.",
           opLessThanExample: "Afficher Parental Consent quand Age est inférieur à 18.",
           visibilityRulesEvaluation:
-            "Les règles s'exécutent selon une priorité déterministe. Quand plusieurs règles ciblent le même champ, les actions Hide priment sur les actions Show. Les champs masqués sont omis des vérifications de validation obligatoire, ce qui évite des blocages de validation impossibles à satisfaire.",
+            "Un champ associé à plusieurs règles n'est visible que lorsque chacune d'elles est satisfaite — un simple ET entre toutes, et non un arbitrage entre des actions Show et Hide qui s'affronteraient, car une règle n'exprime jamais qu'une seule condition de visibilité. La priorité ne sert qu'à ordonner les règles pour le diagnostic et l'affichage ; elle ne change jamais quelles règles s'appliquent. Un champ qu'une règle est en train de masquer est également ignoré par la validation Required, de sorte qu'une condition que personne ne peut voir ne bloque jamais un enregistrement.",
           visibilityRulesTipTitle: "Conditionner uniquement sur des champs frères",
           visibilityRulesTipContent:
             "Une règle ne peut référencer que des champs frères définis sur exactement le même type d'entité. Les conditions inter-entités (par exemple vérifier un paramètre de tenant depuis un champ de personne) ne sont pas autorisées, afin de préserver l'intégrité transactionnelle d'un enregistrement unique.",
@@ -2100,7 +2118,7 @@ export const fr = {
           classLossy: "Avec perte (confirmation requise)",
           classLossyPairs: "LongText → Text, Text → Number",
           classLossyRisk:
-            "LongText → Text tronque tout ce qui dépasse le plafond propre à Text de 4 000 caractères. Text → Number ne tronque rien du tout — elle refuse l'opération entière dès qu'une seule valeur stockée échoue à s'analyser comme un nombre, plutôt que de convertir le reste en laissant celle-ci de côté.",
+            "Aucune des deux paires ne tronque quoi que ce soit. LongText → Text refuse l'opération entière dès qu'une seule valeur stockée dépasse le plafond propre à Text de 4 000 caractères, en nommant sa longueur réelle. Text → Number refuse l'opération entière dès qu'une seule valeur stockée échoue à s'analyser comme un nombre. Dans les deux cas, une seule ligne défectueuse bloque toutes les lignes — il n'existe aucune conversion partielle qui changerait certains enregistrements en laissant les autres tels quels.",
           classIncompatible: "Non proposée",
           classIncompatiblePairs:
             "Toute autre paire — 453 des 462 possibles, y compris toute paire impliquant EntityReference, UserReference, File, Image ou RichText.",
@@ -2108,9 +2126,9 @@ export const fr = {
             "Refusée avant même que quoi que ce soit ne s'exécute. Une valeur de type référence ou média n'a aucune forme textuelle ou numérique sensée vers laquelle convertir, et le sens inverse n'a rien de réel vers quoi pointer.",
           conversionLossyWarnTitle: "Une conversion avec perte s'applique à chaque valeur stockée, de façon permanente",
           conversionLossyWarnContent:
-            "Tronquer un texte long remodèle en permanence des enregistrements historiques. Exécutez toujours Usage & impact en premier pour voir combien d'enregistrements seront affectés avant de confirmer.",
+            "Une exécution réussie change toutes les lignes à la fois — il n'existe aucune confirmation séparée par enregistrement, et rien n'est tronqué ni effacé silencieusement en dehors de ce que fait la propre conversion du type cible. Exécutez toujours Usage & impact en premier pour voir combien d'enregistrements seront affectés avant de confirmer.",
           conversionDryRunIntro:
-            "Avant de rien changer, le serveur vérifie chaque valeur stockée par rapport au type cible. Si ne serait-ce qu'une seule valeur échouerait à se convertir, l'opération entière est refusée d'emblée plutôt que laissée à moitié faite.",
+            "Avant de rien changer, le serveur vérifie chaque valeur stockée par rapport au type cible, dans une première passe qui n'écrit rien. Si ne serait-ce qu'une seule valeur échouerait à se convertir, l'opération entière est refusée d'emblée, en nommant chaque ligne en échec, et rien n'est changé — c'est tout ou rien, jamais une conversion partielle qui laisserait certaines lignes à l'ancien état et d'autres au nouveau.",
           conversionRollbackTitle: "Restauration par instantané",
           conversionRollbackContent:
             "Chaque conversion enregistre un instantané de la valeur antérieure pour chaque ligne avant de la modifier. Un Super Admin peut restaurer une exécution de conversion précise à l'aide de son identifiant d'exécution (job-run id), rétablissant exactement les valeurs antérieures — les instantanés expirent et sont purgés automatiquement au bout de sept jours, de sorte qu'une restauration dispose d'une fenêtre réelle plutôt que d'être disponible indéfiniment.",
@@ -2259,7 +2277,7 @@ export const fr = {
             "Chaque cellule est écrite comme du texte inerte, jamais comme une formule. Un champ libellé =SUM(A1) arrive dans le fichier comme les caractères littéraux, pas comme un calcul — et il en va de même pour un libellé commençant par +, -, @, ou une tabulation suivie de =. C'est catégorique plutôt qu'un filtrage de cas connus.",
           exportLimitTitle: "Trois limites de l'export",
           exportLimitContent:
-            "Il contient des définitions et jamais les réponses de qui que ce soit — il n'existe nulle part d'export de valeurs dans le produit. Au-delà de 10 000 définitions, il refuse purement et simplement, en vous invitant à restreindre l'export à un seul type d'enregistrement, plutôt que de vous remettre un fichier tronqué qui paraîtrait complet. Et les 18 colonnes ci-dessus constituent tout le fichier : le Target Entity Type épinglé d'un champ de référence n'en fait pas partie, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ. Les champs qui vous sont restreints sont absents du fichier plutôt que vides.",
+            "Il contient des définitions et jamais les réponses de qui que ce soit — un export des valeurs séparé, avec sa propre adresse et son propre bouton dans l'en-tête, est l'endroit où vivent les réponses elles-mêmes (voir Limites et comportements). Au-delà de 10 000 définitions, il refuse purement et simplement, en vous invitant à restreindre l'export à un seul type d'enregistrement, plutôt que de vous remettre un fichier tronqué qui paraîtrait complet. Et les 18 colonnes ci-dessus constituent tout le fichier : le Target Entity Type épinglé d'un champ de référence n'en fait pas partie, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ. Les champs qui vous sont restreints sont absents du fichier plutôt que vides.",
 
           referenceTitle: "Les deux écrans de référence",
           referenceIntro:
@@ -2340,9 +2358,9 @@ export const fr = {
             "Les Émirats arabes unis n'ont aucun système de code postal national, il n'y a donc rien à quoi comparer une valeur. Tenter de l'utiliser est refusé avec son propre message explicatif plutôt qu'un message générique.",
 
           typesTitle: "Comportements des types de valeur",
-          tValueTypeFixed: "Le type de valeur d'un champ ne peut jamais être changé.",
+          tValueTypeFixed: "La clé, le type d'enregistrement et la portée d'un champ ne peuvent jamais être changés une fois enregistrés.",
           tValueTypeFixedWhy:
-            "Les réponses déjà enregistrées sous l'ancien type n'auraient plus de sens, et il n'existe aucune conversion. Il en va de même pour la clé, le type d'enregistrement et la portée.",
+            "Renommer la clé, changer le type d'enregistrement visé ou changer la portée après coup rendrait chaque réponse déjà stockée ambiguë quant à sa signification. Le type de valeur est la seule exception, avec une échappatoire étroite : neuf paires de types précises peuvent être converties après coup — voir Gestion des champs — tout le reste signifie encore supprimer et recréer.",
           tMultiOrder: "Une réponse MultiSelect se relit dans l'ordre de sélection, pas dans l'ordre des options.",
           tMultiOrderWhy:
             "Conserver l'ordre de sélection est ce qui permet à la valeur de survivre fidèlement à l'aller-retour. Le coût est qu'une colonne de liste affichant cette réponse ne suit pas nécessairement l'ordre dans lequel vous avez rédigé les options.",
@@ -2484,16 +2502,16 @@ export const fr = {
           exportTitle: "Comportements d'export et de portabilité",
           eDefinitionsOnly: "L'export en feuille de calcul contient des définitions, jamais des réponses.",
           eDefinitionsOnlyWhy:
-            "C'est par conception un export de définitions, et il n'existe nulle part dans le produit d'export de valeurs. Aucune donnée de qui que ce soit ne peut sortir par ce biais.",
+            "C'est par conception un export de définitions — un export des valeurs séparé existe, avec sa propre adresse et son propre bouton dans l'en-tête, pour les réponses elles-mêmes, plafonné à 10 000 cellules plutôt que tronqué au-delà.",
           eRefusesPastLimit: "Au-delà de 10 000 définitions, l'export refuse plutôt que de tronquer.",
           eRefusesPastLimitWhy:
             "Un fichier silencieusement tronqué est pire qu'aucun fichier, car il paraît complet. Le refus vous invite à restreindre l'export à un seul type d'enregistrement.",
           eRestrictedAbsent: "Les champs qui vous sont restreints sont absents du fichier, pas vides.",
           eRestrictedAbsentWhy:
             "La sécurité au niveau du champ s'applique à l'export exactement comme à l'écran, et une colonne vide révélerait quand même que le champ existe.",
-          eNoImport: "L'export en feuille de calcul est un rapport, pas un modèle — mais un format d'ensemble séparé fait l'aller-retour.",
+          eNoImport: "L'export en feuille de calcul est à sens unique, et l'unique chemin de création en masse que ce produit ait jamais proposé est désactivé.",
           eNoImportWhy:
-            "L'export XLSX existe pour être lu, pas réimporté, donc une feuille de calcul ne peut toujours pas servir à créer des champs en masse. Un ensemble de schéma portable distinct, au format JSON, le peut : exportez les groupes et définitions d'un type d'enregistrement, puis importez ce même ensemble — dans cet espace de travail ou un autre — via sa propre boîte de dialogue de dépôt, qui rapporte les éléments créés, ignorés et échoués par groupe plutôt qu'un simple total.",
+            "La feuille de calcul exportée est un rapport destiné à la lecture, pas un modèle réimportable. Un import d'ensemble de schéma portable, au format JSON, existe — avec sa propre boîte de dialogue, sa propre adresse, son propre tableau de résultats par groupe — mais chaque appel qui lui est fait est refusé avec un 409 par un interrupteur de confinement délibéré et permanent, aux côtés de l'export de schéma correspondant. La création de champs en masse n'est pas disponible dans le produit aujourd'hui, du fait de la conception même de cet interrupteur plutôt que par omission.",
           eTextCells: "Chaque cellule exportée est écrite comme du texte.",
           eTextCellsWhy:
             "Un libellé commençant par =, +, - ou @ arrive comme des caractères littéraux plutôt que comme une formule de tableur. C'est catégorique plutôt qu'un filtrage de cas connus, de sorte que rien qui ressemble à un calcul ne puisse en devenir un.",
@@ -2523,7 +2541,7 @@ export const fr = {
           absent2:
             "L'export des valeurs refuse plutôt que de tronquer dès qu'une requête dépasserait 10 000 cellules — exportez une tranche d'enregistrements plus étroite plutôt que d'espérer un fichier partiel.",
           absent3:
-            "Il n'existe aucune création en masse depuis une feuille de calcul. Un ensemble de schéma portable (JSON) peut créer de nombreuses définitions de champ à la fois via la boîte de dialogue d'import ; un champ isolé se crée encore un par un, sur le formulaire.",
+            "Il existe un chemin de création en masse, un import d'ensemble de schéma portable au format JSON avec sa propre boîte de dialogue — mais il est actuellement désactivé, refusant purement et simplement chaque appel plutôt que de réellement créer quoi que ce soit, aux côtés de son export de schéma correspondant. Aujourd'hui, en pratique, les champs se créent encore un par un, sur le formulaire.",
           absent4:
             "Une version d'option set publiée ne déplace pas automatiquement les champs déjà liés à une version antérieure — un administrateur relie chaque champ explicitement. C'est délibéré : suivre automatiquement changerait silencieusement le sens des valeurs déjà enregistrées sous l'ancienne liste.",
           absent5:
@@ -2615,7 +2633,7 @@ export const fr = {
 
           bindingTitle: "Lier des champs à un jeu d'options",
           bindingIntro:
-            "Les champs de type de valeur Select ou MultiSelect peuvent se lier à un jeu d'options plutôt que d'entretenir des options intégrées. Trois actions de cycle de vie sont prises en charge :",
+            "Les champs de type de valeur Select ou MultiSelect peuvent se lier à un jeu d'options plutôt que d'entretenir des options intégrées — soit rattaché dès la même étape que la création du champ, sur le formulaire de création lui-même, soit ensuite, sur un champ déjà existant, via l'une de trois actions de cycle de vie :",
           thAction: "Action",
           thWhatItDoes: "Ce qu'elle fait",
           thEffect: "Effet sur les données existantes",
