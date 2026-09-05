@@ -208,7 +208,7 @@ export function OptionSetEditorDialog({
     // Identity-keyed on purpose, so a refetch that produces an equal-but-new OptionSet does not
     // discard in-flight edits. Listing the individual fields would do exactly that.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, optionSet?.id]);
+  }, [open, optionSet?.id, isPlatformContext]);
 
   /**
    * The reason the form is withheld, with the entity's answer winning.
@@ -446,23 +446,34 @@ export function OptionSetEditorDialog({
                   <p className="text-xs text-nx-ink-3">{t("optionSet.immutable.isGlobal")}</p>
                 </div>
               )
-            ) : (
-              canChooseScope && (
+            ) : canChooseScope && (
+              isPlatformContext ? (
+                <div className="flex flex-col gap-1.5">
+                  <span className="text-sm font-medium text-nx-ink-2">
+                    {t("optionSet.fields.isGlobal")}
+                  </span>
+                  <div>
+                    <Badge variant="info" className="gap-1">
+                      <Globe2 className="h-3 w-3" aria-hidden="true" />
+                      {t("optionSet.badge.platformOwned")}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-nx-ink-3">
+                    {t("optionSet.isGlobalDescription.platformContext")}
+                  </p>
+                </div>
+              ) : (
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor={`${fieldId}-isGlobal`}>{t("optionSet.fields.isGlobal")}</Label>
                   <Switch
                     id={`${fieldId}-isGlobal`}
                     checked={isGlobal}
                     onCheckedChange={setIsGlobal}
-                    // Inert rather than hidden in platform context: the set IS global, and showing the
-                    // switch on says so more clearly than omitting the row.
-                    disabled={isPlatformContext || isSaving}
+                    disabled={isSaving}
                     aria-describedby={`${fieldId}-isGlobal-hint`}
                   />
                   <p id={`${fieldId}-isGlobal-hint`} className="text-xs text-nx-ink-3">
-                    {isPlatformContext
-                      ? t("optionSet.isGlobalDescription.platformContext")
-                      : t("optionSet.isGlobalDescription.tenantContext")}
+                    {t("optionSet.isGlobalDescription.tenantContext")}
                   </p>
                 </div>
               )

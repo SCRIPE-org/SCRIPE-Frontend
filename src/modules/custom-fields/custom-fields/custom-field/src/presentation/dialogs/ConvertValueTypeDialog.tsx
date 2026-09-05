@@ -22,6 +22,7 @@ import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
+import { Label } from "@core/ui/label";
 import {
   Dialog,
   DialogContent,
@@ -164,15 +165,15 @@ export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog
 
           {/* Target Type Selector */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-nx-ink-2">
+            <Label htmlFor="convert-target-type-select" className="text-xs font-medium text-nx-ink-2">
               {t("customField.convertValueType.selectTargetType")}
-            </label>
+            </Label>
             <Select
               value={selectedTargetType}
               onValueChange={onSelectTargetType}
               disabled={isConverting || isRollingBack || Boolean(lastResult?.applied)}
             >
-              <SelectTrigger className="h-9">
+              <SelectTrigger id="convert-target-type-select" aria-label={t("customField.convertValueType.selectTargetType")} className="h-9">
                 <SelectValue placeholder={t("customField.convertValueType.selectPlaceholder")} />
               </SelectTrigger>
               <SelectContent>

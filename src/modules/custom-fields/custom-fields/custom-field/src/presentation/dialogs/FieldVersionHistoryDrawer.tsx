@@ -47,6 +47,7 @@ export interface FieldVersionHistoryDrawerProps {
   isPublishing: boolean;
   isDiscarding: boolean;
   canPublish: boolean;
+  isPlatformContext?: boolean;
   onCreateDraft: () => Promise<void>;
   onPublish: () => Promise<void>;
   onDiscard: () => Promise<void>;
@@ -62,6 +63,7 @@ export function FieldVersionHistoryDrawer({
   isPublishing,
   isDiscarding,
   canPublish,
+  isPlatformContext = false,
   onCreateDraft,
   onPublish,
   onDiscard,
@@ -69,6 +71,7 @@ export function FieldVersionHistoryDrawer({
   const { t, language } = useI18n();
 
   const isMutating = isCreatingDraft || isPublishing || isDiscarding;
+  const canMutateVersion = canPublish && (isPlatformContext || !target?.isGlobal);
 
   const sortedVersions = useMemo(() => {
     if (!versionsData?.versions) return [];
@@ -211,7 +214,7 @@ export function FieldVersionHistoryDrawer({
                   })}
                 </p>
 
-                {canPublish && (
+                {canMutateVersion && (
                   <div className="flex items-center gap-2 pt-2 border-t border-amber-200 dark:border-amber-900/60">
                     <Button
                       size="sm"
@@ -244,7 +247,7 @@ export function FieldVersionHistoryDrawer({
                 )}
               </div>
             ) : (
-              canPublish && (
+              canMutateVersion && (
                 <div className="p-4 rounded-xl border border-dashed bg-card flex items-center justify-between gap-4">
                   <div className="space-y-0.5">
                     <h4 className="text-sm font-medium text-foreground">

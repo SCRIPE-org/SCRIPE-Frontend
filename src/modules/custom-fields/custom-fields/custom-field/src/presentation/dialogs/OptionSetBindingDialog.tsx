@@ -90,8 +90,7 @@ export function OptionSetBindingDialog({
   const [selectedSetId, setSelectedSetId] = React.useState<string | null>(null);
   React.useEffect(() => {
     if (open) setSelectedSetId(boundSet?.id ?? null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset on open only, not on every boundSet change
-  }, [open]);
+  }, [open, boundSet?.id]);
 
   const selectedSet = bindableSets.find((set) => set.id === selectedSetId) ?? null;
   const isBusy = isAttaching || isDetaching;

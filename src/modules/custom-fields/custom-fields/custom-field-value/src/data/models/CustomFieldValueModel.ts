@@ -29,29 +29,8 @@
  */
 import type { FieldVisibilityRuleData } from "../../domain/fieldVisibility";
 
-export type CustomFieldValueTypeName =
-  | "Text"
-  | "Number"
-  | "Boolean"
-  | "Date"
-  | "Select"
-  | "LongText"
-  | "DateTime"
-  | "MultiSelect"
-  | "Email"
-  | "Url"
-  | "Phone"
-  | "Percent"
-  | "Rating"
-  | "Currency"
-  | "Duration"
-  | "Time"
-  | "Color"
-  | "EntityReference"
-  | "UserReference"
-  | "File"
-  | "Image"
-  | "RichText";
+import type { CustomFieldValueTypeName } from "../../domain/entities/CustomFieldValue";
+export type { CustomFieldValueTypeName };
 
 /**
  * DateTime's wire shape (Wave 3.1 Task 7, ruling R7): a UTC instant plus a

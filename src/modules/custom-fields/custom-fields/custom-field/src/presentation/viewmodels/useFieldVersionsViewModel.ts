@@ -24,6 +24,7 @@ export interface FieldVersionsTarget {
   fieldLabel: string;
   fieldKey: string;
   entityTypeKey: string;
+  isGlobal?: boolean;
 }
 
 export function fieldVersionsQueryKey(fieldId: string) {
@@ -145,6 +146,7 @@ export function useFieldVersionsViewModel() {
       fieldLabel: isCustomField ? (field.labelEn || field.key) : field.fieldLabel,
       fieldKey: isCustomField ? field.key : field.fieldKey,
       entityTypeKey: field.entityTypeKey,
+      isGlobal: isCustomField ? field.isGlobal : (field as FieldVersionsTarget).isGlobal,
     });
   }, []);
 

@@ -24,7 +24,6 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { getCustomFieldsContainer } from "../../../../di";
 import { getSchemaExportContainer } from "../../../di";
-import { SchemaBundleMapper } from "../../data/mappers/SchemaBundleMapper";
 import type { SchemaBundle } from "../../domain/entities/SchemaBundle";
 
 /**
@@ -43,16 +42,14 @@ export const ALL_ENTITY_TYPES_VALUE = "";
  *
  * Exported so a caller can substitute it and so its two non-obvious properties are testable:
  *
- *  1. **The file content comes from the MAPPER's reverse direction**, not from the raw response. The
- *     entity is the only thing that crosses the repository boundary, so `toModel(...).toJson()` is
- *     the single place the wire shape is reconstructed — and the single place a dropped property
- *     would truncate the file. `SchemaBundleMapper.test.ts` pins that round trip.
+ *  1. **The file content comes from bundle.toJson()**, not from raw response or data mappers. The
+ *     entity is the only thing that crosses the repository boundary, preserving Clean Architecture.
  *  2. **Two-space indent and a trailing newline.** The bundle exists to be diffed and committed;
  *     minified JSON diffs as one enormous line, and a missing final newline makes every text tool
  *     complain about the last one.
  */
 export function downloadSchemaBundle(bundle: SchemaBundle): void {
-  const json = `${JSON.stringify(SchemaBundleMapper.toModel(bundle).toJson(), null, 2)}\n`;
+  const json = `${JSON.stringify(bundle.toJson(), null, 2)}\n`;
   const blob = new Blob([json], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 

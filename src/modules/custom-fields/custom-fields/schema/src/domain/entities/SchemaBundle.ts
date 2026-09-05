@@ -14,9 +14,11 @@
  * the same schema must be byte-identical so they can be diffed, and every one of those would break
  * that.
  */
-import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
+import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/domain/entities/CustomFieldValue";
 import type { ValidatorKindName } from "../../../../custom-field";
-import { SUPPORTED_SCHEMA_FORMAT_VERSION } from "../../data/models/SchemaBundleModel";
+
+/** The only `FormatVersion` this client writes files for — `SchemaBundle.CurrentFormatVersion`. */
+export const SUPPORTED_SCHEMA_FORMAT_VERSION = 1;
 
 /**
  * One field group in a bundle, identified by `(entityTypeKey, stableKey)`.
@@ -143,5 +145,45 @@ export class SchemaBundle {
   suggestedFileName(): string {
     const scope = this.data.entityTypeKey ?? "all";
     return `custom-field-schema.${scope}.v${this.data.formatVersion}.json`;
+  }
+
+  /**
+   * Convert back to the API JSON shape, preserving exact C# record declaration order.
+   * Enables serializing to JSON without violating Clean Architecture by importing DTO mappers into presentation.
+   */
+  toJson(): Record<string, unknown> {
+    return {
+      formatVersion: this.formatVersion,
+      entityTypeKey: this.entityTypeKey,
+      groups: this.groups.map((group) => ({
+        entityTypeKey: group.entityTypeKey,
+        stableKey: group.stableKey,
+        labelEn: group.labelEn,
+        labelAr: group.labelAr,
+        sortOrder: group.sortOrder,
+        isGlobal: group.isGlobal,
+      })),
+      definitions: this.definitions.map((definition) => ({
+        entityTypeKey: definition.entityTypeKey,
+        key: definition.key,
+        labelEn: definition.labelEn,
+        labelAr: definition.labelAr,
+        placeholderEn: definition.placeholderEn,
+        placeholderAr: definition.placeholderAr,
+        valueType: definition.valueType,
+        isRequired: definition.isRequired,
+        isActive: definition.isActive,
+        sortOrder: definition.sortOrder,
+        options: definition.options,
+        optionsAr: definition.optionsAr,
+        validatorKind: definition.validatorKind,
+        validatorParam: definition.validatorParam,
+        sensitivity: definition.sensitivity,
+        isExportable: definition.isExportable,
+        groupStableKey: definition.groupStableKey,
+        isGlobal: definition.isGlobal,
+        referenceTargetEntityTypeKey: definition.referenceTargetEntityTypeKey,
+      })),
+    };
   }
 }

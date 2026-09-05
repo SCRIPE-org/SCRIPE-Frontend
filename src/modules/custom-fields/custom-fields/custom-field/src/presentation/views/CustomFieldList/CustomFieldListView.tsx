@@ -498,6 +498,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW);
   const canViewHistory = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_HISTORY);
   const canViewUsage = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_USAGE);
+  const canUpdate = usePermission(CUSTOM_FIELDS_PERMISSIONS.CUSTOM_FIELD_UPDATE);
+  const canDelete = usePermission(CUSTOM_FIELDS_PERMISSIONS.CUSTOM_FIELD_DELETE);
   const insight = useFieldInsightViewModel();
   // Destructured so the config memo below can depend on the STABLE callbacks. Depending on
   // `insight` itself would satisfy the linter and defeat the memo: the hook returns a fresh
@@ -1290,7 +1292,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           // backend will unconditionally reject isn't a softer failure mode,
           // it's a confusing one -- hide both instead of letting the click
           // round-trip into an error.
-          show: (item: CustomField) => isPlatformContext || !item.isGlobal,
+          show: (item: CustomField) => canUpdate && (isPlatformContext || !item.isGlobal),
         },
         {
           // P-4 follow-up. Only for a value type that actually owns an options list -- every other
@@ -1308,7 +1310,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           // exist in this file (the create and edit forms' own "options" field guards, just below)
           // are pinned at an EXACT count by two other test files, and a third literal copy of that
           // same expression here would trip that pin for a reason unrelated to what it protects.
-          show: (item: CustomField) => canViewOptionSets && hasOptionsList(item.valueType),
+          show: (item: CustomField) => canViewOptionSets && (isPlatformContext || !item.isGlobal) && hasOptionsList(item.valueType),
         },
         {
           label: tFn("customField.impact.actionLabel"),
@@ -1323,7 +1325,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           onClick: (item: CustomField) => openRules(item),
           variant: "ghost" as const,
           icon: <Sliders className="h-4 w-4" />,
-          show: () => visibilityRules.canView,
+          show: (item: CustomField) => visibilityRules.canView && (isPlatformContext || !item.isGlobal),
         },
         {
           // Step 1.2. Value-type conversion dialog. Gated on custom-fields.update (canUpdate).
@@ -1361,7 +1363,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           variant: "ghost" as const,
           className: "text-destructive hover:text-destructive/80",
           icon: <Trash2 className="h-4 w-4" />,
-          show: (item: CustomField) => isPlatformContext || !item.isGlobal,
+          show: (item: CustomField) => canDelete && (isPlatformContext || !item.isGlobal),
         },
       ],
     }),
@@ -1407,6 +1409,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       vm,
       isEntityTypesError,
       refetchEntityTypes,
+      canUpdate,
+      canDelete,
       isPlatformContext,
     ]
   );
@@ -1439,10 +1443,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         fieldId={detailFieldId}
         fieldLabel={insightFieldLabel(detailFieldId)}
         canEdit={
-          isPlatformContext ||
-          (detailFieldId
-            ? !(vm.items as CustomField[] | undefined)?.find((item) => item.id === detailFieldId)?.isGlobal
-            : true)
+          canUpdate &&
+          (isPlatformContext ||
+            (detailFieldId
+              ? !(vm.items as CustomField[] | undefined)?.find((item) => item.id === detailFieldId)?.isGlobal
+              : false))
         }
         onEdit={(field) => vm.openEditModal(field)}
       />
@@ -1583,6 +1588,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           isPublishing={fieldVersions.isPublishing}
           isDiscarding={fieldVersions.isDiscarding}
           canPublish={fieldVersions.canPublish}
+          isPlatformContext={isPlatformContext}
           onCreateDraft={fieldVersions.handleCreateDraft}
           onPublish={fieldVersions.handlePublish}
           onDiscard={fieldVersions.handleDiscard}

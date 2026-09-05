@@ -13,7 +13,7 @@ import type {
   EntityLookupItem,
   EntityLookupSearchQuery,
   EntityLookupType,
-} from "../../data/models/EntityLookupModel";
+} from "../entities/EntityLookup";
 
 export interface IEntityLookupRepository {
   /** Types this caller may reference. `[]` means "you may not reference anything" and is not an error. */

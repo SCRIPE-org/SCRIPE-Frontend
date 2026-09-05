@@ -404,7 +404,7 @@ export function OptionSetListView() {
                               entirely, and the sentence that explains it is in the panel and in the
                               dialog -- see the file header. */}
                           <div className="flex items-center justify-end gap-1">
-                            {canUpdate ? (
+                            {canUpdate && vm.canUpdateSet(set) ? (
                               <Button
                                 type="button"
                                 variant="ghost"
@@ -418,7 +418,7 @@ export function OptionSetListView() {
                                 {t("common.edit")}
                               </Button>
                             ) : null}
-                            {canDelete ? (
+                            {canDelete && vm.canDeleteSet(set) ? (
                               <Button
                                 type="button"
                                 variant="ghost"

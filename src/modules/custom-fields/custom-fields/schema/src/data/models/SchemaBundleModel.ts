@@ -36,8 +36,7 @@
 import type { CustomFieldValueTypeName } from "../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import type { ValidatorKindName } from "../../../../custom-field";
 
-/** The only `FormatVersion` this client writes files for — `SchemaBundle.CurrentFormatVersion`. */
-export const SUPPORTED_SCHEMA_FORMAT_VERSION = 1;
+export { SUPPORTED_SCHEMA_FORMAT_VERSION } from "../../domain/entities/SchemaBundle";
 
 /**
  * `SchemaGroup` — a field group identified by `(EntityTypeKey, StableKey)`.

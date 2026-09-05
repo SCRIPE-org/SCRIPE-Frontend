@@ -205,12 +205,11 @@ describe("scope report on the edit form", () => {
     expect(screen.queryByText("optionSet.fields.isGlobal")).not.toBeInTheDocument();
   });
 
-  it("shows the switch on and inert in platform context, because the set is global regardless", () => {
+  it("shows the platform badge and description in platform context, and no switch", () => {
     renderDialog({ isPlatformContext: true });
 
-    const scopeSwitch = screen.getByRole("switch");
-    expect(scopeSwitch).toBeChecked();
-    expect(scopeSwitch).toBeDisabled();
+    expect(screen.queryByRole("switch")).not.toBeInTheDocument();
+    expect(screen.getByText("optionSet.badge.platformOwned")).toBeInTheDocument();
     expect(screen.getByText("optionSet.isGlobalDescription.platformContext")).toBeInTheDocument();
     expect(screen.getByText("optionSet.platformContext.title")).toBeInTheDocument();
   });

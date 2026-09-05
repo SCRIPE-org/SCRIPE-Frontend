@@ -6,7 +6,7 @@
  */
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -137,7 +137,10 @@ export function useCustomFieldViewModel() {
     [customFieldRepository, baseOpenEditModal, t]
   );
 
-  const vm = { ...baseVm, openEditModal };
+  const vm = useMemo(
+    () => ({ ...baseVm, openEditModal }),
+    [baseVm, openEditModal]
+  );
 
   return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes };
 }

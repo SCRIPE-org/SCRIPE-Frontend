@@ -31,12 +31,12 @@ import { RoleDeleteDialog } from "../components/RoleDeleteDialog";
 export function RolesView() {
   useModuleLocales(() => import("../../../locales"), "roles");
 
-  const { t, language } = useI18n();
   const router = useRouter();
-  const { isSuperAdmin } = usePermissions();
+  const { t, language } = useI18n();
+  const { isPlatformSuperAdmin } = usePermissions();
 
-  // Logic: Super Admins see System/Context (Auto-Scoped), Tenant Admins see My Tenant
-  const viewModel = useRolesViewModel({ useMyTenant: !isSuperAdmin });
+  // Logic: Platform Super Admins outside drill-down see System roles; Tenant Admins see My Tenant roles
+  const viewModel = useRolesViewModel({ useMyTenant: !isPlatformSuperAdmin });
   const { handleBulkDelete, deleteRole, isDeletingRole } = viewModel;
 
   // Assign to Group dialog state
