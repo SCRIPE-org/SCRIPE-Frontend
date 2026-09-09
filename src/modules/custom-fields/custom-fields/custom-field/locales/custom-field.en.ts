@@ -97,6 +97,13 @@ export const en = {
       // which records its values POINT AT. Two fields on the same form reading "Entity Type" would be
       // unanswerable without opening the code.
       referenceTargetEntityTypeKey: "Target Entity Type",
+      optionsSource: "Options Source",
+      optionSet: "Shared Option Set",
+    },
+
+    optionsSource: {
+      custom: "Custom Options",
+      optionSet: "Shared Option Set",
     },
 
     // Wave 6 ruling R10 — data classification. The VALUES sent to the server are the C# enum member
@@ -108,6 +115,10 @@ export const en = {
       restricted: "Restricted",
     },
     hints: {
+      optionsSource:
+        "Choose whether this field defines its own standalone options or connects to a shared reusable option set.",
+      optionSetSelect:
+        "Select a published option set to populate and manage this field's options automatically.",
       sensitivity:
         "How this field's values should be treated. This is a label for reporting and export " +
         "handling \u2014 it does not control who can see the field. Use field-level security for that.",
@@ -122,6 +133,7 @@ export const en = {
       addOption: "Add option",
     },
     placeholders: {
+      selectOptionSet: "Select an option set...",
       optionsEmpty: "No options yet — add the first one below.",
       optionAr: "Arabic label",
       optionEn: "English label",
@@ -781,6 +793,13 @@ export const en = {
       pickASetHint: "Choose a set above first.",
       currentlyBound: "Currently bound to \"{set}\".",
       currentlyUnbound: "Not bound to any option set.",
+      currentStatusLabel: "Current Options Status",
+      boundBadge: "Bound to Shared Set",
+      unboundBadge: "Standalone Custom Options",
+      boundExplanation:
+        "This field's options are synchronized with the central option set. When updates are published to the set, you can switch or rebind to apply them.",
+      unboundExplanation:
+        "This field currently uses independent standalone options authored specifically for it. You can attach a shared option set below to standardize its options.",
       noneOption: "No shared option set",
       attachAtCreateHint:
         "Optional. Attaches a shared, versioned list of options once the field is created. Any manual options you set above are kept, unless one of their keys collides with the set.",

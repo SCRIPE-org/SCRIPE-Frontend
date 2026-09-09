@@ -824,6 +824,17 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     [t]
   );
 
+  const optionSetOptions = useMemo(
+    () =>
+      optionSetBinding.bindableSets.map((set) => ({
+        value: set.publishedVersionId!,
+        label: set.isPlatformOwned
+          ? `${set.displayLabel(language)} (${t("customField.optionSetBinding.platformOwned")})`
+          : set.displayLabel(language),
+      })),
+    [optionSetBinding.bindableSets, language, t]
+  );
+
   const config: CrudConfig<CustomField> = useMemo(
     () => ({
       titleKey: "customField.title",
@@ -1075,6 +1086,36 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           section: t("customField.formSections.typeAndValidation"),
         })),
         referenceTargetFields.create,
+        // Options Source & Option Set binding selection for Select / MultiSelect fields
+        {
+          name: "optionsSource",
+          label: t("customField.fields.optionsSource"),
+          type: "radio" as const,
+          section: t("customField.formSections.typeAndValidation"),
+          options: [
+            { value: "custom", label: t("customField.optionsSource.custom") },
+            { value: "optionSet", label: t("customField.optionsSource.optionSet") },
+          ],
+          description: t("customField.hints.optionsSource"),
+          isVisible: (form: Record<string, unknown>) =>
+            canViewOptionSets &&
+            (form.valueType === "Select" || form.valueType === "MultiSelect"),
+        },
+        {
+          name: "optionSetVersionId",
+          label: t("customField.fields.optionSet"),
+          type: "select" as const,
+          section: t("customField.formSections.typeAndValidation"),
+          options: optionSetOptions,
+          placeholder: t("customField.placeholders.selectOptionSet"),
+          description: t("customField.hints.optionSetSelect"),
+          loading: optionSetBinding.isSetsLoading,
+          required: true,
+          isVisible: (form: Record<string, unknown>) =>
+            canViewOptionSets &&
+            (form.valueType === "Select" || form.valueType === "MultiSelect") &&
+            form.optionsSource === "optionSet",
+        },
         {
           name: "options",
           label: t("customField.fields.options"),
@@ -1087,7 +1128,10 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
           removeLabel: t("customField.actions.removeOption"),
           emptyHint: t("customField.placeholders.optionsEmpty"),
           isVisible: (form: Record<string, unknown>) =>
-            VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
+            Boolean(
+              (VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false) &&
+                (!canViewOptionSets || form.optionsSource === "custom" || !form.optionsSource)
+            ),
         },
         // 3. Organization & Grouping
         {
@@ -1247,6 +1291,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         // accepted, not refused: `ReferenceTargetOwnership.NormalizeTargetEntityType` treats a blank
         // submission as "unpinned" before it ever asks whether the value type could carry a pin.
         [REFERENCE_TARGET_FIELD_NAME]: UNPINNED_REFERENCE_TARGET,
+        optionsSource: "custom",
+        optionSetVersionId: "",
         options: "",
         isRequired: false,
         sortOrder: 0,
@@ -1402,6 +1448,8 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       fieldGroupField,
       scopeField,
       canViewFieldGroups,
+      optionSetOptions,
+      optionSetBinding.isSetsLoading,
       // P-4. Gates the Option Sets link inside `customHeaderContent`, so it has to be here or the
       // link would keep its first-render visibility after the permission set resolves.
       canViewOptionSets,

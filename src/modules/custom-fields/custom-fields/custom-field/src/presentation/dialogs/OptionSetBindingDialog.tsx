@@ -17,7 +17,8 @@
  * confirmations for one action is worse than one that says the truth.
  */
 import * as React from "react";
-import { AlertTriangle, CheckCircle2, Layers } from "lucide-react";
+import { AlertTriangle, ArrowRightLeft, CheckCircle2, Layers, Link2, Unlink } from "lucide-react";
+import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
@@ -147,24 +148,56 @@ export function OptionSetBindingDialog({
         )}
 
         <div
-          className="flex items-center gap-2 rounded-md border border-nx-line bg-nx-raised p-3 text-sm"
+          className="rounded-lg border border-nx-line bg-nx-raised p-4 space-y-2.5"
           data-testid="option-set-binding-current-state"
         >
-          {boundSet ? (
-            <>
-              <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
-              <span>
-                {t("customField.optionSetBinding.currentlyBound", {
-                  set: boundSet.displayLabel(language),
-                })}
-              </span>
-            </>
-          ) : (
-            <>
-              <Layers className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
-              <span>{t("customField.optionSetBinding.currentlyUnbound")}</span>
-            </>
-          )}
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-3">
+              {t("customField.optionSetBinding.currentStatusLabel")}
+            </span>
+            {boundSet ? (
+              <Badge variant="success" className="gap-1.5 py-0.5">
+                <CheckCircle2 className="h-3 w-3 shrink-0" aria-hidden="true" />
+                {t("customField.optionSetBinding.boundBadge")}
+              </Badge>
+            ) : (
+              <Badge variant="secondary" className="gap-1.5 py-0.5">
+                <Layers className="h-3 w-3 shrink-0" aria-hidden="true" />
+                {t("customField.optionSetBinding.unboundBadge")}
+              </Badge>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 text-sm font-medium">
+            {boundSet ? (
+              <>
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
+                <span className="text-nx-ink font-semibold">
+                  {t("customField.optionSetBinding.currentlyBound", {
+                    set: boundSet.displayLabel(language),
+                  })}
+                </span>
+                {boundSet.isPlatformOwned && (
+                  <Badge variant="outline" className="text-[10px] py-0 px-1.5">
+                    {t("customField.optionSetBinding.platformOwned")}
+                  </Badge>
+                )}
+              </>
+            ) : (
+              <>
+                <Layers className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
+                <span className="text-nx-ink-2">
+                  {t("customField.optionSetBinding.currentlyUnbound")}
+                </span>
+              </>
+            )}
+          </div>
+
+          <p className="text-xs text-nx-ink-3">
+            {boundSet
+              ? t("customField.optionSetBinding.boundExplanation")
+              : t("customField.optionSetBinding.unboundExplanation")}
+          </p>
         </div>
 
         <OptionSetPicker
@@ -184,54 +217,75 @@ export function OptionSetBindingDialog({
           disabled={isBusy}
         />
 
-        <div className="space-y-3 rounded-md border border-nx-line p-3">
-          <div>
-            <p className="text-sm font-medium">
-              {boundSet
-                ? t("customField.optionSetBinding.switch.title")
-                : t("customField.optionSetBinding.attach.title")}
-            </p>
-            <p className="text-xs text-nx-ink-3">
-              {boundSet
-                ? t("customField.optionSetBinding.switch.description")
-                : t("customField.optionSetBinding.attach.description")}
-            </p>
+        <div className="space-y-3 rounded-lg border border-nx-line bg-nx-surface p-4 shadow-sm">
+          <div className="flex items-start gap-2.5">
+            {boundSet ? (
+              <ArrowRightLeft className="mt-0.5 h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
+            ) : (
+              <Link2 className="mt-0.5 h-4 w-4 shrink-0 text-nx-accent" aria-hidden="true" />
+            )}
+            <div>
+              <p className="text-sm font-semibold text-nx-ink">
+                {boundSet
+                  ? t("customField.optionSetBinding.switch.title")
+                  : t("customField.optionSetBinding.attach.title")}
+              </p>
+              <p className="mt-0.5 text-xs text-nx-ink-3 leading-relaxed">
+                {boundSet
+                  ? t("customField.optionSetBinding.switch.description")
+                  : t("customField.optionSetBinding.attach.description")}
+              </p>
+            </div>
           </div>
-          <Button
-            type="button"
-            size="sm"
-            onClick={handleAttach}
-            disabled={!canBind || !selectedSet || isSelectingCurrentSet || isBusy}
-          >
-            {boundSet
-              ? t("customField.optionSetBinding.switch.action")
-              : t("customField.optionSetBinding.attach.action")}
-          </Button>
+          <div className="flex justify-end pt-1">
+            <Button
+              type="button"
+              size="sm"
+              onClick={handleAttach}
+              disabled={!canBind || !selectedSet || isSelectingCurrentSet || isBusy}
+              className="gap-1.5"
+            >
+              {boundSet ? (
+                <ArrowRightLeft className="h-3.5 w-3.5" aria-hidden="true" />
+              ) : (
+                <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
+              )}
+              {boundSet
+                ? t("customField.optionSetBinding.switch.action")
+                : t("customField.optionSetBinding.attach.action")}
+            </Button>
+          </div>
         </div>
 
         {boundSet && (
-          <div className="space-y-3 rounded-md border border-destructive/40 p-3">
-            <div className="flex items-start gap-2">
+          <div className="space-y-3 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
+            <div className="flex items-start gap-2.5">
               <AlertTriangle
                 className="mt-0.5 h-4 w-4 shrink-0 text-destructive"
                 aria-hidden="true"
               />
               <div>
-                <p className="text-sm font-medium">{t("customField.optionSetBinding.detach.title")}</p>
-                <p className="text-xs text-nx-ink-3">
+                <p className="text-sm font-semibold text-destructive">
+                  {t("customField.optionSetBinding.detach.title")}
+                </p>
+                <p className="mt-0.5 text-xs text-nx-ink-3 leading-relaxed">
                   {t("customField.optionSetBinding.detach.description")}
                 </p>
               </div>
             </div>
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={handleDetach}
-              disabled={!canBind || isBusy}
-            >
-              {t("customField.optionSetBinding.detach.action")}
-            </Button>
+            <div className="flex justify-end pt-1">
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                onClick={handleDetach}
+                disabled={!canBind || isBusy}
+                className="gap-1.5"
+              >
+                <Unlink className="h-3.5 w-3.5" aria-hidden="true" />
+                {t("customField.optionSetBinding.detach.action")}
+              </Button>
+            </div>
           </div>
         )}
       </div>

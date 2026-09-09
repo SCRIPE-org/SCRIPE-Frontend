@@ -74,9 +74,23 @@ export function useCustomFieldViewModel() {
       };
     },
     create: async (data) => {
+      const payload = { ...(data as Record<string, unknown>) };
+      if (
+        payload.optionsSource === "optionSet" &&
+        typeof payload.optionSetVersionId === "string" &&
+        payload.optionSetVersionId.trim() !== ""
+      ) {
+        payload.optionSetVersionId = payload.optionSetVersionId.trim();
+        delete payload.options;
+        delete payload.optionsAr;
+      } else {
+        delete payload.optionSetVersionId;
+      }
+      delete payload.optionsSource;
+
       const id = await customFieldRepository.create(
         normalizeValidatorFields(
-          normalizeCustomFieldCreateScope(data as Record<string, unknown>)
+          normalizeCustomFieldCreateScope(payload)
         )
       );
       return { id } as unknown as CustomField;
