@@ -243,12 +243,15 @@ export function OptionSetBindingDialog({
               size="sm"
               onClick={handleAttach}
               disabled={!canBind || !selectedSet || isSelectingCurrentSet || isBusy}
+              loading={isAttaching}
               className="gap-1.5"
             >
-              {boundSet ? (
-                <ArrowRightLeft className="h-3.5 w-3.5" aria-hidden="true" />
-              ) : (
-                <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
+              {!isAttaching && (
+                boundSet ? (
+                  <ArrowRightLeft className="h-3.5 w-3.5" aria-hidden="true" />
+                ) : (
+                  <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
+                )
               )}
               {boundSet
                 ? t("customField.optionSetBinding.switch.action")
@@ -280,9 +283,10 @@ export function OptionSetBindingDialog({
                 size="sm"
                 onClick={handleDetach}
                 disabled={!canBind || isBusy}
+                loading={isDetaching}
                 className="gap-1.5"
               >
-                <Unlink className="h-3.5 w-3.5" aria-hidden="true" />
+                {!isDetaching && <Unlink className="h-3.5 w-3.5" aria-hidden="true" />}
                 {t("customField.optionSetBinding.detach.action")}
               </Button>
             </div>
