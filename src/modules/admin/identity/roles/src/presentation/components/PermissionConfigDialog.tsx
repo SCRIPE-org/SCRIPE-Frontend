@@ -32,8 +32,8 @@ import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
-import { CUSTOM_FIELDS_PERMISSIONS } from "@modules/custom-fields/permission-constants";
-import { useRestrictableCustomFieldKeys } from "@modules/custom-fields/custom-field";
+import { CUSTOM_FIELDS_PERMISSIONS } from "@core/common/types/permissions";
+import { useRestrictableCustomFieldKeys } from "@core/hooks/use-restrictable-custom-field-keys";
 import {
   PermissionScopes,
   type PermissionAssignmentJson,

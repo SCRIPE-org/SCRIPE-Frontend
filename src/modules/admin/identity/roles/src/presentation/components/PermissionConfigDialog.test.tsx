@@ -27,11 +27,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useAppStore } from "@core/store/useAppStore";
 import { en as coreEn } from "@core/locales/en";
-import { getCustomFieldsContainer } from "@modules/custom-fields/di";
-import { CustomField } from "@modules/custom-fields/custom-field";
+import {
+  useRestrictableCustomFieldKeys,
+  type RestrictableCustomFieldKey,
+} from "@core/hooks/use-restrictable-custom-field-keys";
 import { PermissionConfigDialog } from "./PermissionConfigDialog";
 
-vi.mock("@modules/custom-fields/di", () => ({ getCustomFieldsContainer: vi.fn() }));
+vi.mock("@core/hooks/use-restrictable-custom-field-keys", () => ({
+  useRestrictableCustomFieldKeys: vi.fn(),
+}));
 
 /** Resolves `role.*` against the REAL core dictionary, with `{param}` interpolation. */
 function translate(key: string, params?: Record<string, string | number>): string {
@@ -66,42 +70,39 @@ globalThis.ResizeObserver ??= class {
   disconnect() {}
 } as unknown as typeof ResizeObserver;
 
-function definition(key: string, isRequired = false) {
-  return new CustomField({
-    id: `id-${key}`,
-    entityTypeKey: "party.person",
+function definition(key: string, isRequired = false): RestrictableCustomFieldKey {
+  return {
     key,
     labelEn: `${key} label`,
-    valueType: "Text",
     isRequired,
-    sortOrder: 0,
-    isActive: true,
-    createdAt: "2026-01-01",
-  } as never);
+  };
 }
 
-function setupContainer(definitions: CustomField[]) {
-  const getAll = vi.fn().mockResolvedValue({
-    items: definitions,
-    totalCount: definitions.length,
-    page: 1,
-    pageSize: 100,
-    totalPages: 1,
-    hasNextPage: false,
-    hasPreviousPage: false,
+function setupContainer(definitions: RestrictableCustomFieldKey[]) {
+  const getAll = vi.fn();
+  const getEntityTypes = vi.fn();
+
+  vi.mocked(useRestrictableCustomFieldKeys).mockImplementation((resource, args) => {
+    if (!args?.enabled || !resource) {
+      return {
+        keys: [],
+        isLoading: false,
+        isError: false,
+        isTruncated: false,
+        isAvailable: false,
+      };
+    }
+    getEntityTypes();
+    getAll();
+    return {
+      keys: [...definitions].sort((a, b) => a.key.localeCompare(b.key)),
+      isLoading: false,
+      isError: false,
+      isTruncated: false,
+      isAvailable: true,
+    };
   });
-  const getEntityTypes = vi.fn().mockResolvedValue([
-    {
-      key: "party.person",
-      owningModule: "PartyKernel",
-      displayNameEn: "Person",
-      displayNameAr: "شخص",
-      permissionResource: "party-people",
-    },
-  ]);
-  vi.mocked(getCustomFieldsContainer).mockReturnValue({
-    customFieldRepository: { getAll, getEntityTypes },
-  } as never);
+
   return { getAll, getEntityTypes };
 }
 
