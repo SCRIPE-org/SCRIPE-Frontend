@@ -8,14 +8,11 @@
 
 import { useCallback, useState } from "react";
 import { integrationsContainer } from "@modules/integrations/di";
-import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import type { CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { useQuery } from "@tanstack/react-query";
-import { useAppStore } from "@core/store/useAppStore";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
+import { usePermissionCatalog } from "@core/hooks/use-permission-catalog";
 import { resolveBilingualLabel } from "@core/common/utils";
 import { ApiKey, CreateApiKeyRequest } from "../../domain/entities/ApiKey";
 
@@ -27,28 +24,11 @@ export const apiKeyKeys = {
 
 export function useApiKeysViewModel() {
   const { apiKeyRepository } = integrationsContainer;
-  const { permissionRepository } = identityContainer;
   const { t, language } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
 
-  // ── Tenant Context Resolution for permission scopes picker ────────────────
-  const userTenantId = useAppStore((s) => s.user?.tenantId);
-  const { currentTenant, isInTenantWorld } = useTenantContext();
-  const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
-  const effectiveTenantId = isInTenantWorld ? currentTenant?.id : userTenantId;
-
-  // Query permissions based on active tenant scope
-  const { data: permissions = [] } = useQuery({
-    queryKey: ["permissions", "scopes-picker", effectiveTenantId],
-    queryFn: () => {
-      if (isSystemCatalogMode || !effectiveTenantId) {
-        return permissionRepository.getAll();
-      }
-      return permissionRepository.getForTenant(effectiveTenantId);
-    },
-    staleTime: 10 * 60 * 1000, // 10 min cache - permissions rarely change
-    retry: 1,
-  });
+  // Query permissions based on active tenant scope via core catalog hook
+  const { data: permissions = [] } = usePermissionCatalog();
 
   // Plaintext key storage (shown once to user upon creation)
   const [generatedKey, setGeneratedKey] = useState<string | null>(null);
@@ -151,7 +131,7 @@ export function useApiKeysViewModel() {
           searchType: "client" as const,
           description: t("apikeys.scopesDescription"),
           options: permissions.map((p) => ({
-            label: `${resolveBilingualLabel(p.nameEn ?? "", p.nameAr ?? "", language) || p.code} (${p.code})`,
+            label: `${resolveBilingualLabel(p.nameEn ?? p.displayNameEn ?? "", p.nameAr ?? p.displayNameAr ?? "", language) || p.code} (${p.code})`,
             value: p.code,
           })),
         },
