@@ -16,7 +16,7 @@ import { use2FAHandler } from "./use2FAHandler";
 import { useWorkspaceSelector } from "./useWorkspaceSelector";
 import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { getAuthContainer } from "@modules/auth/di";
-import { getSafeRedirectPath } from "./redirect-safety";
+import { getSafeRedirectPath } from "../utils/redirect-safety";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for login form data.
