@@ -17,6 +17,7 @@ import { usePermissions } from "@core/providers/permission-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import {
   UserCheck,
@@ -173,7 +174,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           sortable: true,
           render: (_val: unknown, admin: Admin) => (
             <div className="flex items-center gap-2">
-              <span>{admin.username}</span>
+              <span className={cn(!admin.username && "text-nx-ink-3")}>{admin.username || "—"}</span>
               {admin.hasGuardianProtection && (
                 <TooltipProvider>
                   <Tooltip>
@@ -196,7 +197,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         {
           key: "name",
           label: t("admin.name"),
-          render: (_val: unknown, admin: Admin) => <span>{admin.displayName}</span>,
+          render: (_val: unknown, admin: Admin) => (
+            <span className={cn(!admin.displayName && "text-nx-ink-3")}>{admin.displayName || "—"}</span>
+          ),
         },
         {
           key: "email",

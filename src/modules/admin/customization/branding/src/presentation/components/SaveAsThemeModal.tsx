@@ -25,9 +25,8 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
 import { Palette, Sparkles, Sliders } from "lucide-react";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import { THEME_ENTITY_TYPE_KEY } from "../viewmodels/useStudioViewModel";
 
 interface SaveAsThemeModalProps {
@@ -49,26 +48,6 @@ interface SaveAsThemeModalProps {
   customFieldValues: Record<string, unknown>;
   onCustomFieldChange: (name: string, value: unknown) => void;
   onCustomFieldsCreated: () => void;
-}
-
-/** Mirrors TemplateFormView.tsx's own private CustomFieldsAddTrigger wrapper. */
-function ThemeCustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={THEME_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
 }
 
 const CATEGORIES = [
@@ -300,28 +279,16 @@ export function SaveAsThemeModal({
               </div>
             </div>
 
-            {customFieldConfigs
-              // Same visibility check GenericForm's own `visibleFields` applies (generic-form.tsx)
-              // -- without it, a field carrying a visibility rule (customFieldsCrudIntegration.tsx
-              // attaches one to `isVisible` whenever visibilityRules is non-empty) rendered
-              // unconditionally here.
-              .filter((fc) => !fc.isVisible || fc.isVisible(customFieldValues))
-              .map((fc) => {
-                const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-                return renderCustomFieldControl({
-                  fc,
-                  value,
-                  onChange: (v) => onCustomFieldChange(fc.name, v),
-                });
-              })}
-
-            {customFieldConfigs.length === 0 && !customFieldsLoading && (
-              <p className="text-sm text-nx-ink-2">{t("studio.saveTheme.noCustomFields")}</p>
-            )}
-
-            <ThemeCustomFieldsAddTrigger
+            <CustomFieldsSection
+              configs={customFieldConfigs}
+              values={customFieldValues}
+              onChange={onCustomFieldChange}
+              isLoading={customFieldsLoading}
+              emptyMessage={t("studio.saveTheme.noCustomFields")}
+              entityTypeKey={THEME_ENTITY_TYPE_KEY}
               entityDisplayName={t("studio.saveTheme.title")}
-              onCreated={onCustomFieldsCreated}
+              onFieldCreated={onCustomFieldsCreated}
+              className="space-y-3"
             />
           </div>
         </div>

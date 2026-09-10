@@ -10,9 +10,8 @@ import { Textarea } from "@core/ui/textarea";
 import { GenericModal } from "@core/crud/components/generic-modal";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import { DSR_ENTITY_TYPE_KEY } from "../viewmodels/useDsrViewModel";
 
 // ── Option constants ──────────────────────────────────────────────────────────
@@ -52,26 +51,6 @@ interface SubmitDsrModalProps {
   customFieldValues: Record<string, unknown>;
   onCustomFieldChange: (name: string, value: unknown) => void;
   onCustomFieldsCreated: () => void;
-}
-
-/** Mirrors TemplateFormView.tsx's own private CustomFieldsAddTrigger wrapper. */
-function DsrCustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={DSR_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
 }
 
 // ── Component ─────────────────────────────────────────────────────────────────
@@ -198,28 +177,16 @@ export function SubmitDsrModal({
         <div className="space-y-3 border-t border-nx-line pt-4">
           <p className="text-sm font-medium text-nx-ink">{t("compliance.customFieldsSection")}</p>
 
-          {customFieldConfigs
-            // Same visibility check GenericForm's own `visibleFields` applies (generic-form.tsx) --
-            // without it, a field carrying a visibility rule (customFieldsCrudIntegration.tsx
-            // attaches one to `isVisible` whenever visibilityRules is non-empty) rendered
-            // unconditionally here.
-            .filter((fc) => !fc.isVisible || fc.isVisible(customFieldValues))
-            .map((fc) => {
-              const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-              return renderCustomFieldControl({
-                fc,
-                value,
-                onChange: (v) => onCustomFieldChange(fc.name, v),
-              });
-            })}
-
-          {customFieldConfigs.length === 0 && !customFieldsLoading && (
-            <p className="text-sm text-nx-ink-2">{t("compliance.noCustomFields")}</p>
-          )}
-
-          <DsrCustomFieldsAddTrigger
+          <CustomFieldsSection
+            configs={customFieldConfigs}
+            values={customFieldValues}
+            onChange={onCustomFieldChange}
+            isLoading={customFieldsLoading}
+            emptyMessage={t("compliance.noCustomFields")}
+            entityTypeKey={DSR_ENTITY_TYPE_KEY}
             entityDisplayName={t("compliance.dsr")}
-            onCreated={onCustomFieldsCreated}
+            onFieldCreated={onCustomFieldsCreated}
+            className="space-y-3"
           />
         </div>
 
