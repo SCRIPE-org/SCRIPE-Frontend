@@ -55,6 +55,10 @@ export { ValueTypeCatalogView } from "./src/presentation/views/ValueTypeCatalog/
 export { renderCustomFieldControl } from "./src/presentation/form/renderCustomFieldControl";
 export { GenericFormCustomFieldControl } from "./src/presentation/form/GenericFormCustomFieldControl";
 export { formatCustomFieldValue } from "./src/presentation/form/formatCustomFieldValue";
+export {
+  CustomFieldsSection,
+  type CustomFieldsSectionProps,
+} from "./src/presentation/components/CustomFieldsSection";
 
 // ---------------------------------------------------------------------------
 // Save-time validation

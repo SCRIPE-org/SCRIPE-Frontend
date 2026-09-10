@@ -31,7 +31,7 @@
  */
 import type { OptionSet, OptionSetDetail } from "../entities/OptionSet";
 import type { OptionSetVersion } from "../entities/OptionSetVersion";
-import type { OptionSetItemWritableStatus } from "../../data/models/OptionSetModel";
+import type { OptionSetItemWritableStatus } from "../entities/OptionSetItem";
 
 export interface CreateOptionSetInput {
   /** Immutable machine key, <=100 chars, unique per tenant. Absent from the update input on purpose. */

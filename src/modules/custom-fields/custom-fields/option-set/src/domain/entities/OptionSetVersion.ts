@@ -21,7 +21,8 @@
  * exactly the destructive edit the backend's itemless-version refusal exists to prevent. Use
  * `hasLoadedItems` before reading `items`.
  */
-import type { FieldVersionStatus } from "../../data/models/OptionSetModel";
+export type FieldVersionStatus = "Draft" | "Published" | "Deprecated" | "Archived";
+
 import type { OptionSetItem } from "./OptionSetItem";
 
 /**
@@ -61,6 +62,10 @@ export interface OptionSetVersionData {
  */
 export class OptionSetVersion {
   constructor(public readonly data: OptionSetVersionData) {}
+
+  copyWith(updates: Partial<OptionSetVersionData>): OptionSetVersion {
+    return new OptionSetVersion({ ...this.data, ...updates });
+  }
 
   get id(): string {
     return this.data.id;

@@ -17,7 +17,16 @@
  * Everything here is about whether the bytes are worth handing to the browser — which is a question
  * a client CAN answer, and the only one it has any business answering.
  */
-import { XLSX_CONTENT_TYPE } from "../../data/models/DefinitionExportModel";
+/**
+ * The openxml spreadsheet content type produced on export.
+ */
+export const XLSX_CONTENT_TYPE =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+/**
+ * Maximum export rows allowed.
+ */
+export const MAX_EXPORT_ROWS = 10_000;
 
 /** An export as the read path produces it. */
 export interface DefinitionExportData {
@@ -37,6 +46,13 @@ export interface DefinitionExportData {
  */
 export class DefinitionExport {
   constructor(public readonly data: DefinitionExportData) {}
+
+  copyWith(updates: Partial<DefinitionExportData>): DefinitionExport {
+    return new DefinitionExport({
+      ...this.data,
+      ...updates,
+    });
+  }
 
   get entityTypeKey(): string | null {
     return this.data.entityTypeKey;

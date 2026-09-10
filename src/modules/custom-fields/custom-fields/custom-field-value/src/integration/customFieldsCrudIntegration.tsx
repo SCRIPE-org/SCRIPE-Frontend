@@ -9,8 +9,10 @@ import { customFieldsContainer } from "../../../di";
 import type { EntityCustomFieldValueData } from "../data/models/CustomFieldValueModel";
 import { InlineAddCustomFieldDialog } from "../presentation/components/InlineAddCustomFieldDialog";
 import {
+  CustomFieldsSection,
   formatCustomFieldValue,
   GenericFormCustomFieldControl,
+  useRestrictableCustomFieldKeys,
   VALUE_TYPE_CATALOG,
 } from "../../../custom-field";
 import { isFieldVisible } from "../domain/fieldVisibility";
@@ -200,6 +202,8 @@ const customFieldsCrudIntegration: CustomFieldsExtensionApi = {
   // per-type table-cell formatting buildCustomFieldColumn used to inline
   // directly in `core`.
   formatValueForDisplay: formatCustomFieldValue,
+  Section: CustomFieldsSection,
+  useRestrictableCustomFieldKeys,
 };
 
 registerCustomFieldsExtension(customFieldsCrudIntegration);

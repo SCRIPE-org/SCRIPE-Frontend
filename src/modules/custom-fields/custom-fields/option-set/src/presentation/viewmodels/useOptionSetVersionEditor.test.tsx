@@ -42,7 +42,7 @@ import {
 // The rules module itself, plus the table's exports: the "one rule set for both Save paths" cases
 // below compare the three by identity, which is the only way to state that there is one
 // implementation rather than two that currently agree.
-import * as optionSetItemRules from "./optionSetItemRules";
+import * as optionSetItemRules from "../form/optionSetItemRules";
 import {
   collectOptionSetItemIssues as tableCollectIssues,
   newOptionSetDraftItem,

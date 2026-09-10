@@ -27,35 +27,17 @@
 
 import React from "react";
 import { Database } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { usePermissions } from "@core/hooks/use-permission";
-import { getCustomFieldsContainer } from "../../../../di";
-import { isEntityTypeViewableForValueExport } from "../viewmodels/useValueExportViewModel";
+import { useValueExportButtonViewModel } from "../viewmodels/useValueExportButtonViewModel";
 import { ValueExportDialog } from "./ValueExportDialog";
 
 export function ValueExportButton() {
   useModuleLocales(() => import("../../../locales"), "customFieldValueExport");
   const { t } = useI18n();
-  const { has: hasPermission } = usePermissions();
+  const { canExport } = useValueExportButtonViewModel();
   const [isOpen, setIsOpen] = React.useState(false);
-
-  // Same cache entry `CustomFieldListView` and every sibling export dialog use -- see this file's
-  // header for why that keeps this synchronous in practice.
-  const { customFieldRepository } = getCustomFieldsContainer();
-  const { data: entityTypes } = useQuery({
-    queryKey: ["customFields", "entityTypes"],
-    queryFn: () => customFieldRepository.getEntityTypes(),
-    staleTime: 1000 * 60 * 60,
-  });
-
-  // Undefined while the query has never resolved (fresh session, cold cache): treated as "not yet
-  // known whether there is anything to export" rather than as "nothing", so the button does not
-  // flash into existence a moment after the header first paints.
-  const canExport =
-    entityTypes?.some((item) => isEntityTypeViewableForValueExport(item, hasPermission)) ?? false;
 
   if (!canExport) return null;
 

@@ -24,7 +24,16 @@
  * contents are the server's contract with a spreadsheet application, not with this client.
  * Everything here is about whether the bytes are worth handing to the browser.
  */
-import { XLSX_CONTENT_TYPE } from "../../data/models/ValueExportModel";
+/**
+ * The openxml spreadsheet content type produced on export.
+ */
+export const XLSX_CONTENT_TYPE =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+/**
+ * Maximum export rows allowed.
+ */
+export const MAX_EXPORT_ROWS = 10_000;
 
 /** An export as the read path produces it. */
 export interface ValueExportData {
@@ -44,6 +53,13 @@ export interface ValueExportData {
  */
 export class ValueExport {
   constructor(public readonly data: ValueExportData) {}
+
+  copyWith(updates: Partial<ValueExportData>): ValueExport {
+    return new ValueExport({
+      ...this.data,
+      ...updates,
+    });
+  }
 
   get entityTypeKey(): string {
     return this.data.entityTypeKey;

@@ -14,14 +14,14 @@
  * THE FILE PICKER IS A DROP ZONE, MATCHING `AttachmentUploader`'S OWN SHAPE
  * -------------------------------------------------------------------------
  * Click-to-open OR drag-and-drop, keyboard-operable (Enter/Space activate the hidden input, same
- * as `AttachmentUploader`'s own control) rather than a bare native `<input type="file">` sitting
+ * as `AttachmentUploader`'s own control) rather than a bare native file input sitting
  * unstyled in the dialog -- this module already has a file-picking convention elsewhere in the app
  * and there is no reason to invent a plainer one here.
  */
 "use client";
 
 import React from "react";
-import { AlertCircle, FileJson, Info, Upload, X } from "lucide-react";
+import { AlertCircle, Info, Upload } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
@@ -41,21 +41,14 @@ import {
   TableHeader,
   TableRow,
 } from "@core/ui/table";
-import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { SchemaImportGroupOutcome } from "../../domain/entities/SchemaImportResult";
 import { useSchemaImportViewModel } from "../viewmodels/useSchemaImportViewModel";
+import { SchemaImportDropZone } from "./SchemaImportDropZone";
 
 export interface SchemaImportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function formatFileSize(bytes: number): string {
-  const kib = bytes / 1024;
-  if (kib < 1) return `${bytes} B`;
-  if (kib < 1024) return `${kib.toFixed(1)} KB`;
-  return `${(kib / 1024).toFixed(1)} MB`;
 }
 
 function outcomeBadgeVariant(outcome: SchemaImportGroupOutcome): "success" | "warning" | "destructive" {
@@ -67,8 +60,6 @@ function outcomeBadgeVariant(outcome: SchemaImportGroupOutcome): "success" | "wa
 export function SchemaImportDialog({ open, onOpenChange }: SchemaImportDialogProps) {
   const { t } = useI18n();
   const vm = useSchemaImportViewModel();
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const [dragOver, setDragOver] = React.useState(false);
 
   const handleOpenChange = React.useCallback(
     (next: boolean) => {
@@ -114,104 +105,12 @@ export function SchemaImportDialog({ open, onOpenChange }: SchemaImportDialogPro
             <span>{t("schemaImport.collisionNote")}</span>
           </p>
 
-          {/* The file picker: a drop zone, click-to-open or drag-and-drop, keyboard-operable. */}
-          {!vm.selectedFile ? (
-            <div
-              role="button"
-              tabIndex={disabled ? -1 : 0}
-              aria-disabled={disabled || undefined}
-              aria-label={t("schemaImport.dropZoneLabel")}
-              data-testid="schema-import-drop-zone"
-              className={cn(
-                "cursor-pointer rounded-nx-lg border-2 border-dashed p-6 text-center transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-                "focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none",
-                dragOver && "border-nx-accent bg-nx-accent-wash",
-                !dragOver && "border-nx-line hover:border-nx-accent",
-                disabled && "cursor-not-allowed opacity-50"
-              )}
-              onClick={() => !disabled && inputRef.current?.click()}
-              onKeyDown={(e) => {
-                if (disabled) return;
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  inputRef.current?.click();
-                }
-              }}
-              onDragOver={(e) => {
-                e.preventDefault();
-                if (!disabled) setDragOver(true);
-              }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={(e) => {
-                e.preventDefault();
-                setDragOver(false);
-                if (!disabled) handleFiles(e.dataTransfer.files);
-              }}
-            >
-              <Upload className="mx-auto mb-2 h-6 w-6 text-nx-ink-3" aria-hidden="true" />
-              <p className="text-sm text-nx-ink-2">{t("schemaImport.dropZoneLabel")}</p>
-              <p className="mt-1 text-xs text-nx-ink-3">{t("schemaImport.dropZoneHint")}</p>
-              <input
-                ref={inputRef}
-                type="file"
-                accept="application/json,.json"
-                className="hidden"
-                aria-label={t("schemaImport.chooseFile")}
-                onChange={(e) => {
-                  handleFiles(e.target.files);
-                  e.target.value = "";
-                }}
-                disabled={disabled}
-              />
-            </div>
-          ) : (
-            <div
-              className="flex items-center gap-2 rounded-nx-md border border-nx-line bg-nx-raised p-2"
-              data-testid="schema-import-selected-file"
-            >
-              <FileJson className="h-4 w-4 shrink-0 text-nx-ink-3" aria-hidden="true" />
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-nx-ink">{vm.selectedFile.name}</p>
-                <span className="text-xs text-nx-ink-3">
-                  {formatFileSize(vm.selectedFile.size)}
-                </span>
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={() => inputRef.current?.click()}
-                disabled={disabled}
-              >
-                {t("schemaImport.changeFile")}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="h-7 w-7 p-0"
-                onClick={vm.clearFile}
-                disabled={disabled}
-                aria-label={t("schemaImport.removeFile")}
-              >
-                <X className="h-3.5 w-3.5" aria-hidden="true" />
-              </Button>
-              {/* Kept mounted (hidden) so "change file" can reopen the same picker without
-                  re-rendering the whole drop zone back in. */}
-              <input
-                ref={inputRef}
-                type="file"
-                accept="application/json,.json"
-                className="hidden"
-                aria-label={t("schemaImport.chooseFile")}
-                onChange={(e) => {
-                  handleFiles(e.target.files);
-                  e.target.value = "";
-                }}
-                disabled={disabled}
-              />
-            </div>
-          )}
+          <SchemaImportDropZone
+            selectedFile={vm.selectedFile}
+            disabled={disabled}
+            onFilesSelected={handleFiles}
+            onClearFile={vm.clearFile}
+          />
 
           {vm.isReadingFile && (
             <p className="text-sm text-muted-foreground" role="status">

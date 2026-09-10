@@ -44,65 +44,16 @@ import {
   type EntityLookupItem,
 } from "../../data/models/EntityLookupModel";
 import { EntityLookupError } from "../../domain/entities/EntityLookupError";
+import type {
+  UseEntityLookupSearchArgs,
+  UseEntityLookupSearchResult,
+  SearchRequest,
+} from "./useEntityLookupSearch.types";
 
-/** Arguments for {@link useEntityLookupSearch}. */
-export interface UseEntityLookupSearchArgs {
-  /**
-   * Registry key of the type being searched, e.g. `identity.user` for UserReference.
-   *
-   * Nullable because a definition may pin no target at all — a legitimate, permanent configuration
-   * in which each value names its own type. An absent key is therefore a valid resting state, not an
-   * error: the hook does not fetch, and the control asks the operator which type to search before it
-   * has anything to search.
-   */
-  entityTypeKey?: string | null;
-  /**
-   * Gate for "do not fetch yet". Defaults to true.
-   *
-   * Exists so a closed picker does not query another module's repository on every form render. It is
-   * NOT a substitute for `entityTypeKey` being absent — the two mean different things and the control
-   * renders differently for each.
-   */
-  enabled?: boolean;
-  /** Page size. Defaults to 20; the server caps it at 100 regardless. */
-  pageSize?: number;
-}
-
-/** What {@link useEntityLookupSearch} returns. */
-export interface UseEntityLookupSearchResult {
-  /** The live text in the search box — updates on every keystroke, ahead of the debounce. */
-  query: string;
-  /** Sets the search text. Debounced internally; N keystrokes inside one window cause one request. */
-  setQuery: (next: string) => void;
-  /** Rows accumulated across every page fetched for the CURRENT query. Empty when the query changes. */
-  items: EntityLookupItem[];
-  /** True while the FIRST page of the current query is in flight. Drives the panel's skeleton. */
-  isLoading: boolean;
-  /** True while a subsequent page is in flight. Kept separate so appending does not blank the list. */
-  isLoadingMore: boolean;
-  /** Whether the server says another page exists. */
-  hasNextPage: boolean;
-  /** Requests the next page, appending to `items`. A no-op while a request is in flight or at the end. */
-  loadMore: () => void;
-  /** The classified failure of the current request, or null. `null` with `items: []` means "no matches". */
-  error: EntityLookupError | null;
-  /** Re-runs the current query from page 1. For the retry affordance on `error`. */
-  reload: () => void;
-}
-
-/** Everything about "what is being asked for", so it can be reset as one value. */
-interface SearchRequest {
-  /** The target type this request belongs to. Its presence here is what makes the reset derivable. */
-  entityTypeKey: string | null | undefined;
-  /** What the box shows, updated per keystroke. */
-  query: string;
-  /** What has actually been asked for. Trails `query` by the debounce window. */
-  requestQuery: string;
-  /** 1-based. */
-  page: number;
-  /** Bumped by `reload`, so a retry re-fetches even when query and page are unchanged. */
-  nonce: number;
-}
+export type {
+  UseEntityLookupSearchArgs,
+  UseEntityLookupSearchResult,
+};
 
 function initialRequest(entityTypeKey: string | null | undefined): SearchRequest {
   return { entityTypeKey, query: "", requestQuery: "", page: 1, nonce: 0 };

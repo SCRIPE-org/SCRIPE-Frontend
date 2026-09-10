@@ -30,23 +30,10 @@
  * response headers, so this mirrors the handler's own naming rule instead of reading it.
  */
 
-/**
- * `XlsxContentType` in `ExportCustomFieldValuesQueryHandler` — the only content type this route
- * produces on success. Same literal value as the definitions export's own constant; compared with
- * `startsWith` wherever it is used, never `===`.
- */
-export const XLSX_CONTENT_TYPE =
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-/**
- * `ExportCustomFieldValuesQueryHandler.MaxExportRows`.
- *
- * UNLIKE the definitions export's identically-named constant, this bounds a CELL count — owners
- * multiplied by visible fields — not a row (definition) count. A values export can hit this ceiling
- * with far fewer owner records once a record type carries many fields. Mirrored here only so the
- * refusal message can name the cap in the reader's own language; the client never enforces it.
- */
-export const MAX_EXPORT_ROWS = 10_000;
+export {
+  XLSX_CONTENT_TYPE,
+  MAX_EXPORT_ROWS,
+} from "../../domain/entities/ValueExport";
 
 /** `ErrorCodes.Range` — returned when the export is REFUSED for exceeding `MaxExportRows`. */
 export const ROW_CAP_ERROR_CODE = "VALIDATION_RANGE";

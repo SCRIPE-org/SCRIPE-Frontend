@@ -15,30 +15,37 @@ import type {
 } from "../models/EntityLookupModel";
 import type { IEntityLookupRepository } from "../../domain/interfaces/IEntityLookupRepository";
 import type { IEntityLookupService } from "../../domain/interfaces/IEntityLookupService";
+import { EntityLookupMapper } from "../mappers/EntityLookupMapper";
 
 export class EntityLookupRepository implements IEntityLookupRepository {
   constructor(private readonly service: IEntityLookupService) {}
 
   /** Types this caller may reference; `[]` is a legitimate answer. */
-  getAvailableTypes(signal?: AbortSignal): Promise<EntityLookupType[]> {
-    return this.service.getAvailableTypes(signal);
+  async getAvailableTypes(signal?: AbortSignal): Promise<EntityLookupType[]> {
+    const types = await this.service.getAvailableTypes(signal);
+    return types.map(EntityLookupMapper.toTypeEntity);
   }
 
   /** One page of selectable records. */
-  search(
+  async search(
     entityTypeKey: string,
     query: EntityLookupSearchQuery,
     signal?: AbortSignal
   ): Promise<PagedResult<EntityLookupItem>> {
-    return this.service.search(entityTypeKey, query, signal);
+    const result = await this.service.search(entityTypeKey, query, signal);
+    return {
+      ...result,
+      items: result.items.map(EntityLookupMapper.toEntity),
+    };
   }
 
   /** Resolves one held reference; rejects with a classified `EntityLookupError`. */
-  resolve(
+  async resolve(
     entityTypeKey: string,
     encryptedId: string,
     signal?: AbortSignal
   ): Promise<EntityLookupItem> {
-    return this.service.resolve(entityTypeKey, encryptedId, signal);
+    const item = await this.service.resolve(entityTypeKey, encryptedId, signal);
+    return EntityLookupMapper.toEntity(item);
   }
 }

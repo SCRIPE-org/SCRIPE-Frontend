@@ -98,6 +98,10 @@ export interface CustomFieldData {
 export class CustomField {
   constructor(public readonly data: CustomFieldData) {}
 
+  copyWith(updates: Partial<CustomFieldData>): CustomField {
+    return new CustomField({ ...this.data, ...updates });
+  }
+
   get id(): string {
     return this.data.id;
   }

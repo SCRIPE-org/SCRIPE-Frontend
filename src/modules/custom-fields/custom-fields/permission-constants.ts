@@ -61,5 +61,12 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
   VISIBILITY_RULE_CREATE: "custom-field-visibility-rules.create",
   VISIBILITY_RULE_UPDATE: "custom-field-visibility-rules.update",
   VISIBILITY_RULE_DELETE: "custom-field-visibility-rules.delete",
+
+  // ── Import / Export (Wave 6 rows 6.4 and 6.5) ─────────────
+  EXPORT: "custom-fields.export",
+  IMPORT: "custom-fields.import",
 } as const;
+
+export const CUSTOM_FIELDS_EXPORT_PERMISSION = "custom-fields.export";
+export const CUSTOM_FIELDS_IMPORT_PERMISSION = "custom-fields.import";
 

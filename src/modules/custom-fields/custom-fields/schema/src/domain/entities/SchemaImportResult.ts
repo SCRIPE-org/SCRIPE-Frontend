@@ -37,6 +37,10 @@ export interface SchemaImportGroupResultData {
 export class SchemaImportResult {
   constructor(public readonly groups: SchemaImportGroupResultData[]) {}
 
+  copyWith(groups?: SchemaImportGroupResultData[]): SchemaImportResult {
+    return new SchemaImportResult(groups ?? [...this.groups]);
+  }
+
   get createdCount(): number {
     return this.groups.filter((g) => g.outcome === "Created").length;
   }

@@ -43,25 +43,10 @@
  * so it differs from the server's by the request latency and by nothing else.
  */
 
-/**
- * `XlsxContentType` in `ExportCustomFieldDefinitionsQueryHandler` — the only content type this route
- * produces on success.
- *
- * Compared with `startsWith` wherever it is used, never `===`: a response may legitimately arrive as
- * `...sheet; charset=utf-8`, and an equality check would reject a perfectly good workbook.
- */
-export const XLSX_CONTENT_TYPE =
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-
-/**
- * `MaxExportRows` in `ExportCustomFieldDefinitionsQueryHandler`.
- *
- * Mirrored so the refusal message can name the cap in the reader's own language rather than relying
- * on the server's sentence surviving a blob-typed error body. The client NEVER enforces it — it
- * cannot, it does not know the row count until the server has already refused — so a drift here
- * misstates a number in one sentence and breaks nothing.
- */
-export const MAX_EXPORT_ROWS = 10_000;
+export {
+  XLSX_CONTENT_TYPE,
+  MAX_EXPORT_ROWS,
+} from "../../domain/entities/DefinitionExport";
 
 /**
  * `ErrorCodes.Range` — the code the handler returns when the export is REFUSED for exceeding

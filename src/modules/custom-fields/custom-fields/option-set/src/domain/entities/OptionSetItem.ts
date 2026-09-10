@@ -15,7 +15,8 @@
  * The predicates below live here rather than in the view because they are all statements about the
  * option lifecycle, and getting one wrong is a data-integrity bug rather than a layout bug.
  */
-import type { FieldOptionStatus, OptionSetItemWritableStatus } from "../../data/models/OptionSetModel";
+export type FieldOptionStatus = "Active" | "Deactivated" | "Deleted";
+export type OptionSetItemWritableStatus = Exclude<FieldOptionStatus, "Deleted">;
 
 /**
  * An item as the read path produces it.
@@ -48,6 +49,10 @@ export interface OptionSetItemData {
  */
 export class OptionSetItem {
   constructor(public readonly data: OptionSetItemData) {}
+
+  copyWith(updates: Partial<OptionSetItemData>): OptionSetItem {
+    return new OptionSetItem({ ...this.data, ...updates });
+  }
 
   get id(): string {
     return this.data.id;

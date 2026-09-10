@@ -24,7 +24,7 @@
  * the optional fields are typed `string | null` and every read here normalises with `?? ""`.
  */
 import type { OptionSetItemInput } from "../../domain/interfaces/IOptionSetRepository";
-import type { OptionSetItemWritableStatus } from "../../data/models/OptionSetModel";
+import type { OptionSetItemWritableStatus } from "../../domain/entities/OptionSetItem";
 
 /* ── Server-side length caps, mirrored so the 400 never happens ────────────────────────────────── */
 

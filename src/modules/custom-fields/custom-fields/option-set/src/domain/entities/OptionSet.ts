@@ -75,6 +75,13 @@ export interface OptionSetDetail {
 export class OptionSet {
   constructor(public readonly data: OptionSetData) {}
 
+  copyWith(updates: Partial<OptionSetData>): OptionSet {
+    return new OptionSet({
+      ...this.data,
+      ...updates,
+    });
+  }
+
   get id(): string {
     return this.data.id;
   }

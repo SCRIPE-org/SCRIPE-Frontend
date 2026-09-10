@@ -1,34 +1,9 @@
 /**
- * Field Groups admin screen -- Wave 5 row 5.2
+ * Field Groups Administration Screen
  *
- * `/custom-fields/field-groups`. Lists one entity type's groups in their
- * display order and lets an admin create, rename, reorder and delete them.
- * `FieldGroup` shipped in Wave 1.1 as a table with no read or write path at
- * all; this screen and the group picker on the definitions form are its first.
- *
- * PAGE SHAPE, decided deliberately
- * --------------------------------
- * NOT a `CrudConfig` over `GenericCrudView`, for the same reason row 5.4's
- * Value Types catalog is not: the content is not a paginated, searchable,
- * sortable table. It is one entity type's hand-ordered list, read from an
- * endpoint with no pagination envelope and no search parameter, whose entire
- * purpose is an order the admin sets by hand. `GenericCrudView` would
- * contribute a pager over a single page, a search box the API cannot honour,
- * and column sorting that directly contradicts the manual order -- and would
- * still not provide the reorder affordance, which would have to be bolted on
- * beside it anyway.
- *
- * CONTAINER CHOICE: a plain route page, no dialog anywhere except the delete
- * confirmation. Create/edit is an INLINE panel (see FieldGroupEditor). Wave 5
- * row 5.6 spent a commit removing nested-modal focus traps from this module,
- * and three custom-fields screens are already routed as plain pages with zero
- * nesting; a four-input form is not disproportionate enough to need a Sheet,
- * let alone a Dialog. Nothing here can nest a modal inside a modal.
- *
- * REORDER ACCESSIBILITY: native drag is paired with real Move up / Move down
- * buttons (FieldGroupRow) -- WCAG 2.2 SC 2.5.7. The `@dnd-kit` reorder
- * implementations elsewhere in this codebase are pointer-only and are NOT the
- * pattern followed here.
+ * Route: `/custom-fields/field-groups`.
+ * Lists one entity type's groups in their configured display order and enables
+ * creating, renaming, reordering, and deleting field groups.
  */
 "use client";
 
@@ -48,14 +23,11 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { ChevronLeft, ChevronRight, FolderTree, Globe2, Plus } from "lucide-react";
 import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
 import { useFieldGroupViewModel } from "../viewmodels/useFieldGroupViewModel";
-import { FieldGroupRow } from "../components/FieldGroupRow";
+import { FieldGroupList } from "../components/FieldGroupList";
 import { FieldGroupEditor, type FieldGroupFormValues } from "../components/FieldGroupEditor";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
 export function FieldGroupListView() {
-  // Two dictionaries: this screen's own strings, plus the definitions screen's
-  // (`customField.*`), which owns `common`-adjacent copy this page reuses and
-  // the entity-type group labels below.
   useModuleLocales(() => import("../../../locales"), "customFieldGroups");
   useModuleLocales(
     () => import("../../../../custom-field/locales"),
@@ -120,16 +92,6 @@ export function FieldGroupListView() {
   const handleSubmit = useCallback(
     async (values: FieldGroupFormValues) => {
       try {
-        // Branches on `vm.editingId`, NOT on the resolved `editingGroup`. Those
-        // two can disagree, and the disagreement was reachable straight from
-        // the UI: the editor is a panel ABOVE a live list whose rows stay
-        // mounted, so deleting the row being edited (or any refetch that drops
-        // it) left `editingGroup` null while `vm.editingId` still named the
-        // group. `isEditorOpen` and the panel heading both key off `editingId`,
-        // so Save under an "Edit Field Group" heading took the else branch and
-        // CREATED a new group. The id is the panel's identity everywhere now;
-        // a Save against a row that really has gone fails as a 404 update,
-        // which is honest, instead of writing a row nobody asked for.
         if (vm.editingId !== null) {
           await vm.updateGroup({
             id: vm.editingId,
@@ -142,8 +104,6 @@ export function FieldGroupListView() {
         } else {
           await vm.createGroup({
             entityTypeKey,
-            // Wave 6 row 6.5. Create-only: the update branch above deliberately omits it, because a
-            // schema re-import matches on this value and a rename would turn an update into a create.
             stableKey: values.stableKey,
             labelEn: values.labelEn,
             labelAr: values.labelAr.length > 0 ? values.labelAr : null,
@@ -151,14 +111,9 @@ export function FieldGroupListView() {
             isGlobal: values.isGlobal,
           });
         }
-        // Only on success: a failed save leaves the panel open with the
-        // admin's input intact, and the mutation's own onError has already
-        // surfaced why.
         vm.closeEditor();
       } catch {
-        // Swallowed deliberately. `mutateAsync` rejects in addition to firing
-        // onError, and an un-awaited rejection here would surface as an
-        // unhandled promise rejection with no extra information in it.
+        // Errors are surfaced via mutation callbacks
       }
     },
     [entityTypeKey, vm]
@@ -170,12 +125,9 @@ export function FieldGroupListView() {
     try {
       await vm.deleteGroup(deletedId);
       setPendingDelete(null);
-      // The editor is a panel, not a modal, so it survives a delete performed
-      // from the row underneath it. Leaving it open over a group that no longer
-      // exists offers an Edit form for nothing.
       if (vm.editingId === deletedId) vm.closeEditor();
     } catch {
-      // Same reasoning as handleSubmit; the dialog stays open on failure.
+      // Handled via mutation callback
     }
   }, [pendingDelete, vm]);
 
@@ -226,10 +178,6 @@ export function FieldGroupListView() {
         <Label htmlFor="field-group-entity-type">{t("fieldGroup.fields.entityTypeKey")}</Label>
         <GenericSelect
           id="field-group-entity-type"
-          // GenericSelect's trigger is a role="combobox" DIV, so the <Label
-          // htmlFor> above computes no accessible name for it. aria-label is
-          // opt-in on this component and must be passed explicitly — every
-          // CustomFields site already does.
           aria-label={t("fieldGroup.fields.entityTypeKey")}
           type="single"
           options={entityTypeOptions}
@@ -265,12 +213,6 @@ export function FieldGroupListView() {
         <div className="flex flex-col gap-4">
           {isEditorOpen && (
             <FieldGroupEditor
-              // Remounts when the target changes, so the uncontrolled initial
-              // state inside the editor is re-seeded from the new group rather
-              // than keeping the previous row's values. Keyed on the id rather
-              // than on the resolved row: if the row disappears mid-edit the key
-              // must NOT change, or the admin's typed values are blanked out
-              // from under them by an unrelated refetch.
               key={vm.editingId ?? "create"}
               group={editingGroup}
               labels={editorLabels}
@@ -289,33 +231,28 @@ export function FieldGroupListView() {
               description={t("fieldGroup.noItems.description")}
             />
           ) : (
-            <ul className="overflow-hidden rounded-nx-md border border-nx-line">
-              {vm.groups.map((group) => (
-                <FieldGroupRow
-                  key={group.id}
-                  group={group}
-                  language={language}
-                  labels={rowLabels}
-                  canMutate={vm.canMutate(group)}
-                  canMoveUp={vm.canMoveUp(group.id)}
-                  canMoveDown={vm.canMoveDown(group.id)}
-                  isReordering={vm.isReordering}
-                  onMoveUp={() => vm.moveUp(group.id)}
-                  onMoveDown={() => vm.moveDown(group.id)}
-                  onEdit={() => vm.startEdit(group.id)}
-                  onDelete={() => setPendingDelete(group)}
-                  isDragging={draggedId === group.id}
-                  isDropTarget={dropTargetId === group.id}
-                  onDragStart={() => setDraggedId(group.id)}
-                  onDragEnd={() => {
-                    setDraggedId(null);
-                    setDropTargetId(null);
-                  }}
-                  onDragEnterRow={() => setDropTargetId(group.id)}
-                  onDropOnRow={() => handleDrop(group.id)}
-                />
-              ))}
-            </ul>
+            <FieldGroupList
+              groups={vm.groups}
+              language={language}
+              labels={rowLabels}
+              canMutate={vm.canMutate}
+              canMoveUp={vm.canMoveUp}
+              canMoveDown={vm.canMoveDown}
+              isReordering={vm.isReordering}
+              onMoveUp={vm.moveUp}
+              onMoveDown={vm.moveDown}
+              onEdit={vm.startEdit}
+              onDelete={setPendingDelete}
+              draggedId={draggedId}
+              dropTargetId={dropTargetId}
+              onDragStart={setDraggedId}
+              onDragEnd={() => {
+                setDraggedId(null);
+                setDropTargetId(null);
+              }}
+              onDragEnterRow={setDropTargetId}
+              onDropOnRow={handleDrop}
+            />
           )}
         </div>
       )}
@@ -327,10 +264,6 @@ export function FieldGroupListView() {
         }}
         variant="destructive"
         title={t("fieldGroup.deleteTitle")}
-        // Deleting a group UNGROUPS its fields — it never blocks and never
-        // cascades. Saying so here is the difference between an admin who
-        // knows what the button does and one who assumes it deletes the
-        // fields inside.
         description={t("fieldGroup.deleteConfirm", {
           name: pendingDelete?.displayLabel(language) ?? "",
         })}

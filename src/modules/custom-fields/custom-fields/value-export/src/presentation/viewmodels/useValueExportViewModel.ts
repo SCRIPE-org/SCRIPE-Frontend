@@ -55,8 +55,10 @@ import { DownloadInterceptedError } from "@core/errors/download-intercepted";
 import type { EntityTypeInfo } from "../../../../custom-field/src/domain/entities/CustomField";
 import { getCustomFieldsContainer } from "../../../../di";
 import { getValueExportContainer } from "../../../di";
-import { MAX_EXPORT_ROWS } from "../../data/models/ValueExportModel";
-import type { ValueExport } from "../../domain/entities/ValueExport";
+import {
+  MAX_EXPORT_ROWS,
+  type ValueExport,
+} from "../../domain/entities/ValueExport";
 import { ValueExportError } from "../../domain/entities/ValueExportError";
 
 /**

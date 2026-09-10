@@ -27,7 +27,7 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
-import { CUSTOM_FIELDS_EXPORT_PERMISSION } from "../../data/services/schema-export.endpoints";
+import { CUSTOM_FIELDS_EXPORT_PERMISSION } from "../../../../permission-constants";
 import { SchemaExportDialog } from "./SchemaExportDialog";
 
 export function SchemaExportButton() {

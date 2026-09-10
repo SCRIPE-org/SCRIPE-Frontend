@@ -1,19 +1,12 @@
 /**
- * FieldGroup ViewModel -- Wave 5 row 5.2
+ * FieldGroup ViewModel
  *
- * State for the Field Groups admin screen: the entity-type discovery query,
- * the per-entity-type group list, and the four write paths (create, update,
- * delete, reorder).
- *
- * NOT built on `useCrudViewModel`. That hook is paginated-table shaped
- * (page/pageSize/search/sort, one modal per operation) and the field-group
- * read is a single unpaginated array scoped to one entity type, whose whole
- * point is a hand-ordered list. Row 5.4's Value Types catalog made the same
- * call for the same reason -- see `ValueTypeCatalogView`'s header comment.
+ * State management for the Field Groups admin screen: entity type discovery,
+ * entity-type scoped group lists, and CRUD operations (create, update, delete, reorder).
  */
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
@@ -25,27 +18,20 @@ import type {
   CreateFieldGroupInput,
   UpdateFieldGroupInput,
 } from "../../domain/interfaces/IFieldGroupRepository";
+import { useFieldGroupReorder, REORDER_MAX_ITEMS } from "./useFieldGroupReorder";
+
+export { REORDER_MAX_ITEMS };
 
 /**
- * Query key for one entity type's groups. Exported so the picker hook
- * (`useFieldGroupOptions`) and this screen share ONE cache entry instead of
- * each fetching the same list under a key of its own.
+ * Query key for one entity type's groups. Shared between field group views and pickers.
  */
 export function fieldGroupsQueryKey(entityTypeKey: string) {
   return ["customFields", "fieldGroups", entityTypeKey] as const;
 }
 
 /**
- * The server's own ceiling on one reorder request.
- *
- * `ReorderFieldGroupsRequest.Items` carries `[MaxLength(100)]`, enforced again
- * inside `ReorderFieldGroupsCommandHandler`. Reorder is all-or-nothing, so an
- * entity type with more reorderable groups than this would 400 on EVERY move
- * with only a generic "couldn't save the new order" toast to show for it. The
- * cap is checked here so the caller is told the actual reason instead.
+ * Hook providing data fetching, mutations, and editor state for field groups of a given entity type.
  */
-export const REORDER_MAX_ITEMS = 100;
-
 export function useFieldGroupViewModel(entityTypeKey: string) {
   const { fieldGroupRepository, customFieldRepository } = getCustomFieldsContainer();
   const { t } = useI18n();
@@ -54,28 +40,20 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
   const { isInTenantWorld } = useTenantContext();
 
   /**
-   * Same definition `CustomFieldListView` uses: a Super Admin who has not
-   * drilled into a tenant is a genuine platform principal. Everything created
-   * from there is platform-owned, and only from there can an existing
-   * platform-owned row be mutated.
+   * Super Admins operating outside a tenant scope act in platform context.
+   * Entities created in this context are platform-owned.
    */
   const isPlatformContext = isSuperAdmin && !isInTenantWorld;
 
   /**
-   * A tenant-scoped caller can SEE a global group (the tenant filter admits
-   * TenantId == null rows) but every write path re-checks ownership and
-   * rejects it with a bare "not found". Offering Edit/Delete/Move on a row the
-   * backend will unconditionally refuse is a confusing failure, not a softer
-   * one -- same reasoning, and same predicate shape, as CustomFieldListView's
-   * `show: (item) => isPlatformContext || !item.isGlobal`.
+   * Determines whether the current user has permission to mutate a given group.
+   * Tenant administrators can mutate tenant-owned groups, while platform groups require platform context.
    */
   const canMutate = useCallback(
     (group: FieldGroup) => isPlatformContext || !group.isGlobal,
     [isPlatformContext]
   );
 
-  // Shares CustomFieldListView's cache entry (identical key + repository
-  // method), so opening this screen after that one costs no extra request.
   const {
     data: entityTypes = [],
     isLoading: isEntityTypesLoading,
@@ -95,9 +73,6 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
   } = useQuery({
     queryKey: fieldGroupsQueryKey(entityTypeKey),
     queryFn: () => fieldGroupRepository.getByEntityType(entityTypeKey),
-    // The endpoint has no "all entity types" mode -- without a key there is
-    // nothing to ask for, so the query stays idle rather than firing a request
-    // that would 400 or return every tenant's groups.
     enabled: entityTypeKey.length > 0,
   });
 
@@ -138,9 +113,6 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
     mutationFn: (id: string) => fieldGroupRepository.delete(id),
     onSuccess: () => {
       invalidateGroups();
-      // The definitions list is stale too: deleting a group ungroups every
-      // field in it, so any cached custom-field detail carrying that
-      // fieldGroupId now names a group that no longer exists.
       queryClient.invalidateQueries({ queryKey: ["customField"] });
       toast.success(t("fieldGroup.toast.deleted"));
     },
@@ -152,131 +124,20 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
     },
   });
 
-  const reorderMutation = useMutation({
-    mutationFn: (items: { id: string; sortOrder: number }[]) =>
-      fieldGroupRepository.reorder(items),
-    onSuccess: () => {
-      invalidateGroups();
-      toast.success(t("fieldGroup.toast.reordered"));
-    },
-    onError: (err: Error) => {
-      toast.error({
-        title: t("fieldGroup.toast.reorderFailed"),
-        description: err.message || undefined,
-      });
-    },
+  const {
+    canMoveUp,
+    canMoveDown,
+    moveUp,
+    moveDown,
+    moveBefore,
+    isReordering,
+  } = useFieldGroupReorder({
+    groups,
+    canMutate,
+    onInvalidate: invalidateGroups,
   });
 
-  /**
-   * The subset a move may touch, in the server's own display order.
-   *
-   * Reorder is all-or-nothing server-side: one id the caller cannot mutate
-   * fails the ENTIRE request and persists nothing. So a tenant-scoped admin's
-   * payload must contain only their own groups. The visible consequence is
-   * narrow and deliberate: they reorder their own groups relative to each
-   * other, and where a platform-owned group lands among them is not theirs to
-   * decide. In platform context every row is mutable and the payload is a
-   * clean 0..n-1 normalization of the whole list.
-   */
-  const reorderableGroups = useMemo(() => groups.filter(canMutate), [groups, canMutate]);
-
-  /**
-   * The single gate every reorder payload passes through -- both the button
-   * pair and the drag path -- so the server's `[MaxLength(100)]` cap cannot be
-   * exceeded by one route while the other guards it.
-   */
-  const submitReorder = useCallback(
-    (items: { id: string; sortOrder: number }[]) => {
-      if (items.length > REORDER_MAX_ITEMS) {
-        toast.error({
-          title: t("fieldGroup.toast.reorderFailed"),
-          description: t("fieldGroup.toast.reorderTooMany", { max: REORDER_MAX_ITEMS }),
-        });
-        return;
-      }
-      reorderMutation.mutate(items);
-    },
-    [reorderMutation, t]
-  );
-
-  /**
-   * Swap two adjacent entries of `reorderableGroups` and submit the whole
-   * subset renumbered from its new order. Renumbering (rather than swapping
-   * just the two SortOrder values) is what makes this correct when several
-   * groups still share the create-time default of 0 -- swapping two equal
-   * values is a no-op, and the list would silently refuse to move.
-   */
-  const submitSwap = useCallback(
-    (index: number, targetIndex: number) => {
-      if (index < 0 || targetIndex < 0) return;
-      if (index >= reorderableGroups.length || targetIndex >= reorderableGroups.length) return;
-
-      const next = [...reorderableGroups];
-      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
-      submitReorder(next.map((group, i) => ({ id: group.id, sortOrder: i })));
-    },
-    [reorderableGroups, submitReorder]
-  );
-
-  const moveUp = useCallback(
-    (id: string) => {
-      const index = reorderableGroups.findIndex((group) => group.id === id);
-      if (index <= 0) return;
-      submitSwap(index, index - 1);
-    },
-    [reorderableGroups, submitSwap]
-  );
-
-  const moveDown = useCallback(
-    (id: string) => {
-      const index = reorderableGroups.findIndex((group) => group.id === id);
-      if (index < 0 || index >= reorderableGroups.length - 1) return;
-      submitSwap(index, index + 1);
-    },
-    [reorderableGroups, submitSwap]
-  );
-
-  /**
-   * Whether a given group can move in a direction -- the single source of
-   * truth for both the button's `disabled` state and the handler's own guard,
-   * so a disabled control and a no-op handler can never disagree.
-   */
-  const canMoveUp = useCallback(
-    (id: string) => reorderableGroups.findIndex((group) => group.id === id) > 0,
-    [reorderableGroups]
-  );
-
-  const canMoveDown = useCallback(
-    (id: string) => {
-      const index = reorderableGroups.findIndex((group) => group.id === id);
-      return index >= 0 && index < reorderableGroups.length - 1;
-    },
-    [reorderableGroups]
-  );
-
-  /**
-   * Native-drag drop handler, kept in lockstep with moveUp/moveDown: it
-   * resolves both ends to positions inside `reorderableGroups` and reuses the
-   * same renumbering payload. Drag is the SECOND way to do this, never the
-   * only one -- see FieldGroupRow for the button pair that satisfies WCAG 2.2
-   * SC 2.5.7.
-   */
-  const moveBefore = useCallback(
-    (draggedId: string, targetId: string) => {
-      if (draggedId === targetId) return;
-      const from = reorderableGroups.findIndex((group) => group.id === draggedId);
-      const to = reorderableGroups.findIndex((group) => group.id === targetId);
-      if (from < 0 || to < 0) return;
-
-      const next = [...reorderableGroups];
-      const [moved] = next.splice(from, 1);
-      next.splice(to, 0, moved);
-      submitReorder(next.map((group, i) => ({ id: group.id, sortOrder: i })));
-    },
-    [reorderableGroups, submitReorder]
-  );
-
-  // ── Inline editor state (no modal — see FieldGroupListView) ──────────
+  // Inline editor state for creating and editing field groups
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -307,8 +168,6 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
     refetchGroups,
 
     isPlatformContext,
-    // Only a Super Admin may even ASK for a global group; the backend
-    // re-checks and 403s anyone else who sends isGlobal=true.
     isSuperAdmin,
     canMutate,
     canMoveUp,
@@ -316,7 +175,7 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
     moveUp,
     moveDown,
     moveBefore,
-    isReordering: reorderMutation.isPending,
+    isReordering,
 
     createGroup: createMutation.mutateAsync,
     updateGroup: updateMutation.mutateAsync,

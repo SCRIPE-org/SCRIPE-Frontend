@@ -78,6 +78,13 @@ export interface SchemaBundleData {
 export class SchemaBundle {
   constructor(public readonly data: SchemaBundleData) {}
 
+  copyWith(updates: Partial<SchemaBundleData>): SchemaBundle {
+    return new SchemaBundle({
+      ...this.data,
+      ...updates,
+    });
+  }
+
   get formatVersion(): number {
     return this.data.formatVersion;
   }

@@ -43,8 +43,20 @@ export interface CustomFieldEntityReferenceValue {
   entityId: string;
 }
 
+export function isEntityReferenceValue(v: unknown): v is CustomFieldEntityReferenceValue {
+  if (v === null || typeof v !== "object" || Array.isArray(v)) return false;
+  const candidate = v as { entityTypeKey?: unknown; entityId?: unknown };
+  return typeof candidate.entityTypeKey === "string" && typeof candidate.entityId === "string";
+}
+
 export interface CustomFieldRichTextValue {
   html: string;
+}
+
+export function isRichTextValue(v: unknown): v is CustomFieldRichTextValue {
+  if (v === null || typeof v !== "object" || Array.isArray(v)) return false;
+  const candidate = v as { html?: unknown };
+  return typeof candidate.html === "string";
 }
 
 export interface EntityCustomFieldValueData {

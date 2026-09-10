@@ -241,6 +241,61 @@ export interface CustomFieldsExtensionApi {
     language: string,
     t: (key: string, params?: Record<string, string | number>) => string
   ) => React.ReactNode;
+  /**
+   * Reusable section component for rendering custom fields inside any host form
+   * (e.g. Webhook Form, Lead Form, Template Form, Theme Modal, etc.).
+   */
+  Section?: React.ComponentType<CustomFieldsSectionProps>;
+  /**
+   * Lists the custom-field keys an admin could restrict for one permission resource.
+   */
+  useRestrictableCustomFieldKeys?: UseRestrictableCustomFieldKeysHook;
+}
+
+export interface RestrictableCustomFieldKey {
+  key: string;
+  labelEn: string;
+  isRequired: boolean;
+}
+
+export interface UseRestrictableCustomFieldKeysArgs {
+  enabled?: boolean;
+}
+
+export interface UseRestrictableCustomFieldKeysResult {
+  keys: RestrictableCustomFieldKey[];
+  isLoading: boolean;
+  isError: boolean;
+  isTruncated: boolean;
+  isAvailable: boolean;
+}
+
+export type UseRestrictableCustomFieldKeysHook = (
+  permissionResource: string | undefined,
+  args?: UseRestrictableCustomFieldKeysArgs
+) => UseRestrictableCustomFieldKeysResult;
+
+export interface CustomFieldsSectionProps {
+  /** The field configuration schemas (from useEntityCustomFields or ViewModel). */
+  configs: readonly FieldConfig[];
+  /** Current custom field values dictionary. */
+  values: Record<string, unknown>;
+  /** Callback fired whenever any custom field value changes. */
+  onChange: (key: string, value: unknown) => void;
+  /** Whether custom field definitions are currently loading. */
+  isLoading?: boolean;
+  /** Message displayed when no custom fields are defined for this entity type. */
+  emptyMessage?: string;
+  /** Entity type key (e.g. 'integrations.webhook-subscription') for inline creation. */
+  entityTypeKey?: string;
+  /** Localized entity display name for the inline creation modal title. */
+  entityDisplayName?: string;
+  /** Callback to refetch custom fields when an inline field is created. */
+  onFieldCreated?: () => void;
+  /** Whether the controls are in read-only / view mode. */
+  isViewMode?: boolean;
+  /** Optional container CSS class name. */
+  className?: string;
 }
 
 let registeredApi: CustomFieldsExtensionApi | null = null;

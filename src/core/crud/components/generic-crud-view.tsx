@@ -609,8 +609,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   );
 
   const createFieldsWithCustom = useMemo(
-    () => [...(createFields ?? []), ...customFieldsForCreate.fieldConfigs],
-    [createFields, customFieldsForCreate.fieldConfigs]
+    () =>
+      [...(createFields ?? []), ...customFieldsForCreate.fieldConfigs].filter(
+        (field) => !isFieldRestricted(field.name)
+      ),
+    [createFields, customFieldsForCreate.fieldConfigs, isFieldRestricted]
   );
 
   /**
@@ -662,15 +665,21 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     [resolveEditFields, viewModel.editingItem]
   );
   const editFieldsWithCustom = useMemo(
-    () => [...editFieldsOwn, ...customFieldsForEdit.fieldConfigs],
-    [editFieldsOwn, customFieldsForEdit.fieldConfigs]
+    () =>
+      [...editFieldsOwn, ...customFieldsForEdit.fieldConfigs].filter(
+        (field) => !isFieldRestricted(field.name)
+      ),
+    [editFieldsOwn, customFieldsForEdit.fieldConfigs, isFieldRestricted]
   );
   // Same entity-owned field set as Edit (editFieldsOwn) — View has never had
   // its own field-shape resolution, only the custom-field portion needs the
   // view-item-keyed source.
   const viewFieldsWithCustom = useMemo(
-    () => [...editFieldsOwn, ...customFieldsForView.fieldConfigs],
-    [editFieldsOwn, customFieldsForView.fieldConfigs]
+    () =>
+      [...editFieldsOwn, ...customFieldsForView.fieldConfigs].filter(
+        (field) => !isFieldRestricted(field.name)
+      ),
+    [editFieldsOwn, customFieldsForView.fieldConfigs, isFieldRestricted]
   );
 
   // NOTE (not fixed here): this key embeds `editingItem?.id`, and
@@ -1115,6 +1124,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           initialValues={config?.createInitialValues || {}}
           onSubmit={async (data) => {
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
+            // Sanitize: never submit restricted fields to the server
+            for (const key of Object.keys(entityData)) {
+              if (isFieldRestricted(key)) {
+                delete entityData[key];
+              }
+            }
             const created = await viewModel.createItem(entityData);
             const newId = (created as { id?: string } | undefined)?.id;
             if (config?.entityTypeKey) {
@@ -1200,6 +1215,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           onSubmit={async (data) => {
             if (!viewModel.editingItem) return;
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
+            // Sanitize: never submit restricted fields to the server
+            for (const key of Object.keys(entityData)) {
+              if (isFieldRestricted(key)) {
+                delete entityData[key];
+              }
+            }
             await viewModel.updateItem(viewModel.editingItem.id, entityData);
             if (config?.entityTypeKey) {
               if (Object.keys(customFieldValues).length > 0) {

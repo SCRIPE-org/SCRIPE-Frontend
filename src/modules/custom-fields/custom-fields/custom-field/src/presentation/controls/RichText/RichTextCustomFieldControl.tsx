@@ -89,7 +89,7 @@ import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { RichTextEditor } from "@core/ui/rich-text-editor/RichTextEditor";
-import type { CustomFieldRichTextValue } from "../../../../../custom-field-value/src/data/models/CustomFieldValueModel";
+import type { CustomFieldRichTextValue } from "../../../../../custom-field-value/src/domain/entities/CustomFieldValue";
 import { RICH_TEXT_MAX_CHARACTERS } from "../../registries/valueTypeRegistry";
 
 /**

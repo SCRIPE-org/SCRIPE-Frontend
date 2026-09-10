@@ -39,8 +39,10 @@ import { toast } from "@core/hooks/use-enhanced-toast";
 import { DownloadInterceptedError } from "@core/errors/download-intercepted";
 import { getCustomFieldsContainer } from "../../../../di";
 import { getDefinitionExportContainer } from "../../../di";
-import { MAX_EXPORT_ROWS } from "../../data/models/DefinitionExportModel";
-import type { DefinitionExport } from "../../domain/entities/DefinitionExport";
+import {
+  MAX_EXPORT_ROWS,
+  type DefinitionExport,
+} from "../../domain/entities/DefinitionExport";
 import { DefinitionExportError } from "../../domain/entities/DefinitionExportError";
 
 /**

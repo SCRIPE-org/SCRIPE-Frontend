@@ -49,7 +49,7 @@ import {
 // The rules module the table re-exports from. Imported separately so the cases below can state that
 // this component holds no second copy of the rules -- see "one rule set for both Save paths" in
 // useOptionSetVersionEditor.test.tsx for the other half of that pin.
-import * as optionSetItemRules from "../viewmodels/optionSetItemRules";
+import * as optionSetItemRules from "../form/optionSetItemRules";
 import { OptionSetItem } from "../../domain/entities/OptionSetItem";
 
 // The primitives this table is built from (Input, Label, Button, Badge, Table) all read the Settings

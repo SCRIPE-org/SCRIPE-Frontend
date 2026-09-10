@@ -48,6 +48,13 @@ export interface FieldGroupData {
 export class FieldGroup {
   constructor(public readonly data: FieldGroupData) {}
 
+  copyWith(updates: Partial<FieldGroupData>): FieldGroup {
+    return new FieldGroup({
+      ...this.data,
+      ...updates,
+    });
+  }
+
   get id(): string {
     return this.data.id;
   }
