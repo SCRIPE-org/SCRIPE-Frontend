@@ -22,7 +22,6 @@ import { usePermission } from "@core/hooks/use-permission";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { KPICardsSection } from "../components/KPICardsSection";
 import { DashboardStudioPanel } from "../components/DashboardStudioPanel";
-import { DASHBOARD_ENDPOINTS } from "../../data/services/dashboard.endpoints";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { PageHeader } from "@core/ui/page-header";
@@ -260,7 +259,7 @@ export function DashboardView() {
       <ReportExportDialog
         open={exportOpen}
         onClose={() => setExportOpen(false)}
-        endpoint={DASHBOARD_ENDPOINTS.EXPORT_OVERVIEW}
+        endpoint={vm.exportEndpoint}
         titleKey="export.overview.title"
         descriptionKey="export.overview.description"
       />

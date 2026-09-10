@@ -16,6 +16,7 @@ import type {
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface IDashboardRepository {
+  readonly exportEndpoint: string;
   getSummary(): Promise<DashboardSummary>;
   getLoginActivity(days?: number): Promise<LoginActivityPoint[]>;
   getRecentChanges(limit?: number): Promise<RecentChange[]>;

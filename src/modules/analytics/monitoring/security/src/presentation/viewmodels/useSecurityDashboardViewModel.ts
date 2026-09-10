@@ -162,5 +162,6 @@ export function useSecurityDashboardViewModel() {
     timeline,
     isLoading,
     refetchAll,
+    exportEndpoint: monitoringContainer.securityRepository.exportEndpoint,
   };
 }

@@ -129,5 +129,6 @@ export function useDashboardViewModel() {
     isLoading,
     hasError,
     refetchAll,
+    exportEndpoint: monitoringContainer.dashboardRepository.exportEndpoint,
   };
 }

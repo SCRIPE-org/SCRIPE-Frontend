@@ -12,7 +12,6 @@ import { usePathname } from "next/navigation";
 import { useTenantAnalyticsViewModel } from "../viewmodels/useTenantAnalyticsViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { TenantMetricsCards } from "../components/TenantMetricsCards";
-import { ANALYTICS_ENDPOINTS } from "../../data/services/analytics.endpoints";
 import { Button } from "@core/ui/button";
 import { PageHeader } from "@core/ui/page-header";
 import { BarChart3, FileDown, Settings2 } from "lucide-react";
@@ -117,7 +116,7 @@ export function TenantAnalyticsView() {
       <ReportExportDialog
         open={exportOpen}
         onClose={() => setExportOpen(false)}
-        endpoint={ANALYTICS_ENDPOINTS.EXPORT_ANALYTICS}
+        endpoint={vm.exportEndpoint}
         titleKey="export.analytics.title"
         descriptionKey="export.analytics.description"
       />

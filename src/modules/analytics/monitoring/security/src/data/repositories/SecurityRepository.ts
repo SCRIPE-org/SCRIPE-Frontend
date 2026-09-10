@@ -13,12 +13,15 @@ import type {
   SecurityChange,
 } from "../../domain/entities/SecurityEntities";
 import { SecurityMapper } from "../mappers/SecurityMapper";
+import { SECURITY_ENDPOINTS } from "../services/security.endpoints";
 
 /**
  * Repository layer implementing client request queries for security.
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class SecurityRepository implements ISecurityRepository {
+  readonly exportEndpoint = SECURITY_ENDPOINTS.EXPORT_SECURITY;
+
   constructor(private readonly service: ISecurityService) {}
 
   async getSecurityEvents(days?: number): Promise<SecurityEvent[]> {
