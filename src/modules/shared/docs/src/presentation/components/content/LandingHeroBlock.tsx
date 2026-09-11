@@ -8,6 +8,7 @@
 import type { CSSProperties } from "react";
 import { useRef } from "react";
 import Link from "next/link";
+import { Button } from "@core/ui/button";
 import { motion, type Variants, useScroll, useTransform } from "framer-motion";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { usePublicPlatformStats } from "../../hooks/usePublicPlatformStats";
@@ -130,12 +131,12 @@ export function LandingHeroBlock({ section }: { section: LandingHeroBlockSection
                 {t(section.primaryCtaKey)}
                 <ArrowIcon />
               </Link>
-              <button type="button" className="com-btn com-btn--play">
+              <Button type="button" variant="ghost" className="com-btn com-btn--play">
                 <span className="com-btn-play-ring">
                   <PlayIcon />
                 </span>
                 Watch demo
-              </button>
+              </Button>
             </motion.div>
 
             {/* Trust strip */}

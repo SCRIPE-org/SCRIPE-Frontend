@@ -32,7 +32,7 @@ import {
   type UseMenuOverrideViewModelResult,
   flattenMenuTree,
   buildMenuOverrideRequest,
-} from "./menuOverrideTypes";
+} from "../types/menuOverrideTypes";
 
 // Re-export contract interfaces for external consumers
 export type {

@@ -2,6 +2,7 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Input } from "@core/ui/input";
+import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
@@ -61,15 +62,16 @@ export function ScopesGrantsSection({
             {standardScopes.map((scope) => {
               const selected = currentScopes.includes(scope);
               return (
-                <button
+                <Button
                   key={scope}
                   type="button"
+                  variant="ghost"
                   aria-pressed={selected}
                   onClick={() => toggleScope(scope)}
-                  className="cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
+                  className="h-auto p-0 cursor-pointer rounded-full hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
                 >
                   <Badge variant={selected ? "info" : "outline"}>{scope}</Badge>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -89,15 +91,16 @@ export function ScopesGrantsSection({
             {standardGrantTypes.map((grant) => {
               const selected = currentGrants.includes(grant);
               return (
-                <button
+                <Button
                   key={grant}
                   type="button"
+                  variant="ghost"
                   aria-pressed={selected}
                   onClick={() => toggleGrant(grant)}
-                  className="cursor-pointer rounded-full focus-visible:shadow-nx-focus focus-visible:outline-none"
+                  className="h-auto p-0 cursor-pointer rounded-full hover:bg-transparent focus-visible:shadow-nx-focus focus-visible:outline-none"
                 >
                   <Badge variant={selected ? "success" : "outline"}>{grant}</Badge>
-                </button>
+                </Button>
               );
             })}
           </div>

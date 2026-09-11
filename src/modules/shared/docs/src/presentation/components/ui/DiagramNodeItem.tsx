@@ -1,6 +1,7 @@
 "use client";
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import { Button } from "@core/ui/button";
 import type { DiagramNode } from "../../../domain/entities/DocSection";
 
 interface DiagramNodeItemProps {
@@ -17,13 +18,14 @@ interface DiagramNodeItemProps {
 export function DiagramNodeItem({ node, isActive, onClick }: DiagramNodeItemProps) {
   const { t } = useDocsI18n();
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       aria-pressed={isActive}
       className={`docs-diagram-node-item docs-node-${node.type} ${isActive ? "active" : ""}`}
       onClick={onClick}
     >
       {t(node.labelKey)}
-    </button>
+    </Button>
   );
 }

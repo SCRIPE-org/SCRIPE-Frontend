@@ -4,6 +4,7 @@
  * Stitches together the mock widgets (title header, KPI stats grid, analytical charts,
  * and recent user activities table) to populate the customizer dashboard preview.
  */
+// UI-EXCEPTION: compact studio layout - mock dashboard canvas preview controls
 "use client";
 
 import { useI18n } from "@core/providers/i18n-provider";

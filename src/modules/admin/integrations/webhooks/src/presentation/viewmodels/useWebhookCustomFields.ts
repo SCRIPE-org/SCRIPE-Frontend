@@ -11,7 +11,7 @@ import {
 import {
   assertSelectCustomFieldValuesValid,
 } from "@modules/custom-fields/custom-field";
-import { WEBHOOK_ENTITY_TYPE_KEY } from "./webhookFormTypes";
+import { WEBHOOK_ENTITY_TYPE_KEY } from "../types/webhookFormTypes";
 
 /**
  * Hook orchestrating custom fields state, validation, and storage for webhooks.

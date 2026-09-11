@@ -18,12 +18,12 @@ import type {
   CreateWebhookRequest,
   UpdateWebhookRequest,
 } from "../../domain/entities/WebhookRequests";
-import { CustomFieldValidationError } from "@modules/custom-fields/custom-field";
+import { CustomFieldValidationError } from "@core/crud/customFieldsExtension";
 import {
   WEBHOOK_ENTITY_TYPE_KEY,
   type UseWebhookFormViewModelOptions,
   isValidWebhookUrl,
-} from "./webhookFormTypes";
+} from "../types/webhookFormTypes";
 import { useWebhookCustomFields } from "./useWebhookCustomFields";
 import { useWebhookEvents } from "./useWebhookEvents";
 

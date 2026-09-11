@@ -50,4 +50,14 @@ export class EmploymentRecord {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated employment record data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new EmploymentRecord instance with updated values.
+   */
+  copyWith(updates: Partial<EmploymentRecordData>): EmploymentRecord {
+    return new EmploymentRecord({ ...this.data, ...updates });
+  }
 }

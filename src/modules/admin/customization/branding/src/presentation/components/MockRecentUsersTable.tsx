@@ -4,6 +4,7 @@
  * Renders the mock user table inside the customizer studio dashboard preview.
  * Displays user avatars, names, roles, statuses, and registration timestamps.
  */
+// UI-EXCEPTION: compact studio layout - mock dashboard canvas preview controls
 "use client";
 
 import { ArrowUpRight } from "lucide-react";

@@ -62,4 +62,14 @@ export class WorkItem {
   get modifiedAt(): string | null | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated work item data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new WorkItem instance with updated values.
+   */
+  copyWith(updates: Partial<WorkItemData>): WorkItem {
+    return new WorkItem({ ...this.data, ...updates });
+  }
 }

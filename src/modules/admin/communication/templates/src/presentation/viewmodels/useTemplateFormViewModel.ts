@@ -13,7 +13,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { communicationContainer } from "@modules/communication/di";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { CustomFieldValidationError } from "@modules/custom-fields/custom-field";
+import { CustomFieldValidationError } from "@core/crud/customFieldsExtension";
 import type { TemplateCategory } from "../../domain/entities/MessageTemplate";
 import type {
   CreateMessageTemplateRequest,
@@ -32,7 +32,7 @@ import {
   TEMPLATE_CHANNEL_OPTIONS,
   TEMPLATE_LANGUAGE_OPTIONS,
   TEMPLATE_CATEGORY_OPTIONS,
-} from "./templateFormTypes";
+} from "../types/templateFormTypes";
 import { useTemplateCustomFields } from "./useTemplateCustomFields";
 
 export {

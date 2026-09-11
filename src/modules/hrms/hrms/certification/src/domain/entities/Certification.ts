@@ -55,4 +55,14 @@ export class Certification {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated certification data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new Certification instance with updated values.
+   */
+  copyWith(updates: Partial<CertificationData>): Certification {
+    return new Certification({ ...this.data, ...updates });
+  }
 }

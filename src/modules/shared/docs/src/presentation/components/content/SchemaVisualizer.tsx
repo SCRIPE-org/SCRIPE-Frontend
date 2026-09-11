@@ -5,6 +5,7 @@ import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import type { SchemaTable } from "../../../domain/entities/DocSection";
 import { SchemaColumnRow } from "../ui/SchemaColumnRow";
 import { Table, TableHeader, TableBody, TableRow, TableHead } from "@core/ui/table";
+import { Button } from "@core/ui/button";
 
 interface SchemaVisualizerProps {
   tables: SchemaTable[];
@@ -29,16 +30,17 @@ export function SchemaVisualizer({ tables, titleKey }: SchemaVisualizerProps) {
         <div className="docs-explorer-sidebar">
           <div className="docs-explorer-header">{t("schema.entities")}</div>
           {tables.map((tbl, idx) => (
-            <button
+            <Button
               key={idx}
               type="button"
+              variant="ghost"
               aria-pressed={idx === activeTableIdx}
-              className={`docs-tree-node ${idx === activeTableIdx ? "active" : ""}`}
+              className={`docs-tree-node h-auto p-0 ${idx === activeTableIdx ? "active" : ""}`}
               onClick={() => setActiveTableIdx(idx)}
             >
               <span aria-hidden="true">📊</span>
               <span>{tbl.tableName}</span>
-            </button>
+            </Button>
           ))}
         </div>
         <div className="docs-explorer-panel" style={{ padding: "0.5rem" }}>

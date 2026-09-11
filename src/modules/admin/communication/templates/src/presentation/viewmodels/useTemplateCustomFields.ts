@@ -18,7 +18,7 @@ import {
 import {
   MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
   type TemplateFormMode,
-} from "./templateFormTypes";
+} from "../types/templateFormTypes";
 
 /**
  * Hook coordinating custom fields state and full-resubmit persistence for template forms.

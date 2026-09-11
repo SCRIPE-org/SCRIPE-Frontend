@@ -24,11 +24,9 @@ export {
   type TranslateFn,
 };
 
-/**
- * Custom validation error thrown when a custom field value violates validation constraints.
- * Allows save workflows to distinguish validation errors from API failure states.
- */
-export class CustomFieldValidationError extends Error {}
+import { CustomFieldValidationError } from "@core/crud/customFieldsExtension";
+
+export { CustomFieldValidationError };
 
 /**
  * Validates all custom field values against their corresponding field configurations.

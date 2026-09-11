@@ -52,6 +52,10 @@ const PRESETS_FILE = path.join(
   BACKEND_ROOT,
   "src/Modules/CustomFields/CustomFields.Application/ValueTypes/ValidatorPresets.cs"
 );
+const POSTAL_CODES_FILE = path.join(
+  BACKEND_ROOT,
+  "src/Modules/CustomFields/CustomFields.Application/ValueTypes/ValidatorPresets.PostalCodes.cs"
+);
 const OWNERSHIP_FILE = path.join(
   BACKEND_ROOT,
   "src/Modules/CustomFields/CustomFields.Application/ValueTypes/ValidatorKindOwnership.cs"
@@ -101,7 +105,10 @@ const suite = backendAvailable ? describe : describe.skip;
 
 suite("validatorKindRegistry pinned against the real SCRIPE-Backend source", () => {
   const enumSource = backendAvailable ? fs.readFileSync(ENUM_FILE, "utf8") : "";
-  const presetsSource = backendAvailable ? fs.readFileSync(PRESETS_FILE, "utf8") : "";
+  const presetsSource = backendAvailable
+    ? fs.readFileSync(PRESETS_FILE, "utf8") +
+      (fs.existsSync(POSTAL_CODES_FILE) ? fs.readFileSync(POSTAL_CODES_FILE, "utf8") : "")
+    : "";
   const ownershipSource = backendAvailable ? fs.readFileSync(OWNERSHIP_FILE, "utf8") : "";
 
   const enumMembers = parseEnumMembers(enumSource);

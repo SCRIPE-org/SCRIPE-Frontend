@@ -45,4 +45,14 @@ export class PartyOrganization {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated party organization data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new PartyOrganization instance with updated values.
+   */
+  copyWith(updates: Partial<PartyOrganizationData>): PartyOrganization {
+    return new PartyOrganization({ ...this.data, ...updates });
+  }
 }

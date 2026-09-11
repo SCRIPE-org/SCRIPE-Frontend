@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import { Button } from "@core/ui/button";
 import type { GlossaryTerm } from "../../../domain/entities/DocSection";
 
 interface GlossaryCardProps {
@@ -27,9 +28,10 @@ export function GlossaryCard({ term }: GlossaryCardProps) {
 
   return (
     <li>
-      <button
+      <Button
         type="button"
-        className="docs-glossary-card"
+        variant="ghost"
+        className="docs-glossary-card h-auto p-0 hover:bg-transparent text-start font-normal"
         aria-pressed={!primaryIsEnglish}
         onClick={() => setPrimaryIsEnglish((current) => !current)}
       >
@@ -45,7 +47,7 @@ export function GlossaryCard({ term }: GlossaryCardProps) {
         </span>
         <span className="docs-glossary-desc">{t(term.descriptionKey)}</span>
         <span className="docs-glossary-indicator">{t("common.glossaryFlip")}</span>
-      </button>
+      </Button>
     </li>
   );
 }

@@ -4,6 +4,7 @@
  * Renders the preview charts row inside the customizer studio dashboard preview.
  * Includes a monthly revenue bar chart simulation and a traffic source distribution donut chart.
  */
+// UI-EXCEPTION: compact studio layout - mock dashboard canvas preview controls
 "use client";
 
 import { MoreHorizontal } from "lucide-react";

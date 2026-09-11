@@ -16,6 +16,7 @@ import {
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { Button } from "@core/ui/button";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { BRAND } from "@core/config/branding";
 import {
@@ -173,11 +174,13 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
                   onMouseEnter={() => openSection(section.id)}
                   onMouseLeave={scheduleClose}
                 >
-                  <button
+                  <Button
+                    type="button"
+                    variant="ghost"
                     ref={(el) => {
                       triggerRefs.current[section.id] = el;
                     }}
-                    className="com-nav-trigger"
+                    className="com-nav-trigger h-auto p-0 hover:bg-transparent"
                     data-active={isOpen ? "true" : "false"}
                     aria-expanded={isOpen}
                     aria-haspopup="true"
@@ -193,7 +196,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
                   >
                     {t(sectionLabelKey(section.id))}
                     <ChevronDown />
-                  </button>
+                  </Button>
                 </div>
               );
             })}
@@ -202,8 +205,10 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
           {/* Right actions */}
           <div className="com-header-actions">
             {/* Search */}
-            <button
-              className="com-header-btn com-header-search-btn"
+            <Button
+              type="button"
+              variant="ghost"
+              className="com-header-btn com-header-search-btn h-auto hover:bg-transparent"
               onClick={onSearchOpen}
               aria-label={t("commercialHeader.searchAriaLabel")}
               id="commercial-search-trigger"
@@ -213,7 +218,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
               </span>
               <span>{t("commercialHeader.searchLabel")}</span>
               <kbd className="com-header-search-shortcut">{t("common.searchShortcut")}</kbd>
-            </button>
+            </Button>
 
             {/* Tech docs link */}
             <Link
@@ -238,14 +243,16 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
             </Link>
 
             {/* Mobile menu */}
-            <button
-              className="com-header-hamburger"
+            <Button
+              type="button"
+              variant="ghost"
+              className="com-header-hamburger h-auto p-0 hover:bg-transparent"
               onClick={onMobileMenuOpen}
               aria-label={t("commercialHeader.mobileMenuAria")}
               id="commercial-mobile-menu-btn"
             >
               <MenuIcon />
-            </button>
+            </Button>
           </div>
         </div>
       </header>

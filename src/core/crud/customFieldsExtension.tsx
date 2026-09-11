@@ -20,6 +20,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 /**
+ * Custom validation error thrown when a custom field value violates validation constraints.
+ * Allows save workflows to distinguish validation errors from API failure states.
+ */
+export class CustomFieldValidationError extends Error {}
+
+/**
  * Mirrors CustomFields.Domain.Enums.CustomFieldValueType's wire names (the
  * API's global JsonStringEnumConverter serializes every enum as its member
  * name, never its numeric ordinal — see the CustomFields module's own

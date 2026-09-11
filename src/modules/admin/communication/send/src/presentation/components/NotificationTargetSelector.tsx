@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
+import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Search, X } from "lucide-react";
@@ -86,16 +87,18 @@ export function NotificationTargetSelector({
             <Badge key={target.id} variant="secondary" className="gap-1">
               {target.name}
               <span className="text-xs text-nx-ink-3">({target.type})</span>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => onRemoveTarget(target.id)}
-                className="rounded-full hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
+                className="h-4 w-4 p-0 rounded-full hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
                 aria-label={t("messaging.notifications.removeTargetNamed", {
                   name: target.name,
                 })}
               >
                 <X className="h-3 w-3" aria-hidden="true" />
-              </button>
+              </Button>
             </Badge>
           ))}
         </div>
@@ -134,10 +137,11 @@ export function NotificationTargetSelector({
           <div className="absolute top-full z-dropdown mt-1 max-h-48 w-full overflow-y-auto rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover">
             {searchResults.length > 0 ? (
               searchResults.map((target) => (
-                <button
+                <Button
                   key={`${target.type}-${target.id}`}
                   type="button"
-                  className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
+                  variant="ghost"
+                  className="flex h-auto w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                   onClick={() => {
                     onAddTarget(target);
                     setShowDropdown(false);
@@ -147,7 +151,7 @@ export function NotificationTargetSelector({
                   <Badge variant="outline" className="text-xs">
                     {target.type}
                   </Badge>
-                </button>
+                </Button>
               ))
             ) : isSearchError ? (
               <div className="px-3 py-4 text-center text-sm text-destructive">

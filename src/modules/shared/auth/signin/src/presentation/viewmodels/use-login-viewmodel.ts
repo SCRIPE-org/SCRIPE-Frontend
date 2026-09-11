@@ -18,7 +18,7 @@ import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { getAuthContainer } from "@modules/auth/di";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
 
-import type { LoginFormData, LoginStep } from "./loginTypes";
+import type { LoginFormData, LoginStep } from "../types/loginTypes";
 export type { LoginFormData, LoginStep };
 
 /**

@@ -3,6 +3,7 @@
 import type { CSSProperties } from "react";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Button } from "@core/ui/button";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 
 type Persona = "investor" | "cofounder" | "partner";
@@ -101,10 +102,11 @@ export function PersonaSelector() {
             const content = personaKeys[persona];
             const isSelected = selected === persona;
             return (
-              <button
+              <Button
                 key={persona}
                 type="button"
-                className="com-persona-tab"
+                variant="ghost"
+                className="com-persona-tab h-auto p-0"
                 data-active={isSelected}
                 aria-selected={isSelected}
                 role="tab"
@@ -123,7 +125,7 @@ export function PersonaSelector() {
                   <small>{content.label}</small>
                 </span>
                 <span className="com-persona-tab-num">{String(idx + 1).padStart(2, "0")}</span>
-              </button>
+              </Button>
             );
           })}
         </div>

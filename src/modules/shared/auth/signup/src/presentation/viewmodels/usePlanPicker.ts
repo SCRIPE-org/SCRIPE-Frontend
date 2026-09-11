@@ -36,7 +36,7 @@ import {
   type PlanPickerEdition,
   type PlanPickerViewModel,
   type UsePlanPickerArgs,
-} from "./planPickerTypes";
+} from "../types/planPickerTypes";
 
 export type { PlanPickerEdition, PlanPickerViewModel, UsePlanPickerArgs };
 

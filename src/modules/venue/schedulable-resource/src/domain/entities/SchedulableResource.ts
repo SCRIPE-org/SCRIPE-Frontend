@@ -70,6 +70,16 @@ export class SchedulableResource {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated schedulable resource data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new SchedulableResource instance with updated values.
+   */
+  copyWith(updates: Partial<SchedulableResourceData>): SchedulableResource {
+    return new SchedulableResource({ ...this.data, ...updates });
+  }
 }
 
 export interface PublicationBlocker {
