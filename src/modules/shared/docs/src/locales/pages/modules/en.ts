@@ -1015,7 +1015,7 @@ export const en = {
           "Always bump CurrentConsentVersion when your privacy policy changes materially. This triggers the automated re-consent flow and provides a legally defensible audit trail of when users re-acknowledged the updated policy.",
       },
     },
-    // ── Plugins Module (Phase 15) ────────────────────────────
+    // ── Plugins Module ───────────────────────────────────────
     plugins: {
       overview: {
         title: "Plugin System Overview",
@@ -1841,7 +1841,7 @@ export const en = {
         "Get platform management dashboard KPIs (total commissions, quota utilization, trial snapshots)",
     },
 
-    // ─── Marketplace Module (Phase 16) ────────────────────────────
+    // ─── Marketplace Module ────────────────────────────────────────
     marketplaceOverview: {
       title: "Marketplace Overview",
       description:
@@ -1972,7 +1972,7 @@ export const en = {
         "Every app version submission passes through an automated scan followed by manual admin review before it can be published to the storefront.",
     },
 
-    // ─── Plugins Entity Pages (Phase 16) ─────────────────────────
+    // ─── Plugins Entity Pages ─────────────────────────────────────
     pluginEntities: {
       title: "Plugin Definition & Versioning",
       description:

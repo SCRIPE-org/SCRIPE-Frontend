@@ -357,7 +357,7 @@ export const ru = {
       },
     },
 
-    // ── Plugins Module (Phase 15) ────────────────────────────
+    // ── Plugins Module ───────────────────────────────────────
     plugins: {
       overview: {
         title: "Модуль комплаенса",

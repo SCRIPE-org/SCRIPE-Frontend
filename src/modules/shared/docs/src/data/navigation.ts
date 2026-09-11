@@ -662,7 +662,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Custom Fields Module (Wave 2A / 2A-09) ─────────────────
+      // ── Custom Fields Module ────────────────────────────────────
       {
         id: "mod-custom-fields",
         titleKey: "nav.customFields",
@@ -749,7 +749,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Work Management Module (Wave 2A / 2A-10) ───────────────
+      // ── Work Management Module ──────────────────────────────────
       {
         id: "mod-work-management",
         titleKey: "nav.workManagement",
@@ -764,7 +764,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Analytics Module (Wave 2A / 2A-11) ─────────────────────
+      // ── Analytics Module ────────────────────────────────────────
       {
         id: "mod-analytics",
         titleKey: "nav.analytics",
@@ -779,7 +779,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── HRMS Module (Wave 2A) ─────────────────
+      // ── HRMS Module ─────────────────────────────────────────────
       {
         id: "mod-hrms",
         titleKey: "nav.hrms",
@@ -794,7 +794,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Party Kernel Module (Wave 2A) ───────────
+      // ── Party Kernel Module ─────────────────────────────────────
       {
         id: "mod-party-kernel",
         titleKey: "nav.partyKernel",
@@ -809,7 +809,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Organization Core Module (Wave 2A) ──────
+      // ── Organization Core Module ─────────────────────────────────
       {
         id: "mod-organization-core",
         titleKey: "nav.organizationCore",
@@ -824,7 +824,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Plugin System (Phase 15) ───────────────────────────────
+      // ── Plugin System ───────────────────────────────────────────
       {
         id: "mod-plugins",
         titleKey: "nav.plugins",

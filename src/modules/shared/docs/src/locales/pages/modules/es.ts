@@ -337,7 +337,7 @@ export const es = {
       },
     },
 
-    // ── Plugins Module (Phase 15) ────────────────────────────
+    // ── Plugins Module ───────────────────────────────────────
     plugins: {
       overview: {
         title: "Módulo de Cumplimiento",

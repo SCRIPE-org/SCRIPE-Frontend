@@ -357,7 +357,7 @@ export const fr = {
       },
     },
 
-    // ── Plugins Module (Phase 15) ────────────────────────────
+    // ── Plugins Module ───────────────────────────────────────
     plugins: {
       overview: {
         title: "Module de Conformité",

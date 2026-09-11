@@ -337,7 +337,7 @@ export const de = {
       },
     },
 
-    // ── Plugins Module (Phase 15) ────────────────────────────
+    // ── Plugins Module ───────────────────────────────────────
     plugins: {
       overview: {
         title: "Compliance-Modul",

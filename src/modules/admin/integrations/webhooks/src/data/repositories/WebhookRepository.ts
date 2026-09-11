@@ -115,7 +115,7 @@ export class WebhookRepository implements IWebhookRepository {
     return WebhookMapper.toDeliveryStatsEntity(json);
   }
 
-  // ─── Analytics & Health (Phase 7) ──────────────────────────
+  // ─── Analytics & Health ────────────────────────────────────
 
   async getAnalytics(subscriptionId: string, days: number = 30): Promise<WebhookAnalytics> {
     const json = await this.service.getAnalytics(subscriptionId, days);
@@ -127,7 +127,7 @@ export class WebhookRepository implements IWebhookRepository {
     return WebhookMapper.toHealthSummaryEntity(json);
   }
 
-  // ─── Dead Letter Queue (Phase 7) ───────────────────────────
+  // ─── Dead Letter Queue ─────────────────────────────────────
 
   async getDeadLetters(params: {
     subscriptionId: string;
@@ -149,7 +149,7 @@ export class WebhookRepository implements IWebhookRepository {
     await this.service.replayAllDeadLetters(subscriptionId);
   }
 
-  // ─── Bulk Operations (Phase 7) ─────────────────────────────
+  // ─── Bulk Operations ───────────────────────────────────────
 
   async bulkToggle(isActive: boolean): Promise<void> {
     await this.service.bulkToggle(isActive);

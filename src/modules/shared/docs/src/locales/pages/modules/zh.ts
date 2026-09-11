@@ -320,7 +320,7 @@ export const zh = {
       },
     },
 
-    // ── Plugins Module (Phase 15) ────────────────────────────
+    // ── Plugins Module ───────────────────────────────────────
     plugins: {
       overview: {
         title: "合规模块",
