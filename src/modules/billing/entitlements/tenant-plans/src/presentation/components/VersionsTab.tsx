@@ -1,15 +1,15 @@
 /**
  * VersionsTab — Immutable version history with publish dialog.
  *
- * Elevated Tier 2 — Tier 1 parity:
- * - Shows ordered version history (newest first)
+ * Provides:
+ * - Ordered version history (newest first)
  * - "Publish New Version" dialog with optional change notes
  * - Status badge (Published / Archived)
- * - Snapshot feature/pricing count derived from JSON
+ * - Snapshot feature/pricing counts derived from version payloads
  */
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -24,149 +24,31 @@ import {
   DialogFooter,
   DialogDescription,
 } from "@core/ui/dialog";
-import { GitBranch, Clock, User, Rocket, ChevronDown, ChevronUp, Code2 } from "lucide-react";
-import { cn, formatUtc } from "@core/common/utils";
-import type { TenantPlan, TenantPlanVersionData } from "../../domain/entities/TenantPlan";
+import { GitBranch, Rocket } from "lucide-react";
+import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import type { TFn } from "./shared-helpers";
+import { VersionCard } from "./VersionCard";
 
-interface VersionsTabProps {
+export interface VersionsTabProps {
+  /** The tenant plan aggregate whose version history is being managed. */
   plan: TenantPlan;
+  /** Translation function. */
   t: TFn;
+  /** Callback fired when the operator publishes a new plan version snapshot. */
   onPublish: (changeNotes?: string) => void;
+  /** Indicates whether an active version publishing operation is in progress. */
   isPublishing: boolean;
 }
 
-// ── Safe JSON count helper ──
-function countJsonArray(json: string | undefined): number {
-  if (!json) return 0;
-  try {
-    const parsed = JSON.parse(json);
-    return Array.isArray(parsed) ? parsed.length : 0;
-  } catch {
-    return 0;
-  }
-}
-
-// ── Version Card ──
-function VersionCard({
-  version,
-  isLatest,
-  t,
-}: {
-  version: TenantPlanVersionData;
-  isLatest: boolean;
-  t: TFn;
-}) {
-  const [showSnapshot, setShowSnapshot] = useState(false);
-
-  const featureCount = countJsonArray(version.featureValuesJson);
-  const priceCount = countJsonArray(version.pricingSnapshotJson);
-
-  const statusVariant =
-    version.status === "Published"
-      ? "success"
-      : version.status === "Archived"
-        ? "secondary"
-        : "outline";
-
-  return (
-    <div
-      className={cn(
-        "rounded-nx-md border transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
-        isLatest
-          ? "border-[color:color-mix(in_srgb,var(--nx-accent)_40%,transparent)] bg-nx-accent-wash"
-          : "border-nx-line bg-nx-surface"
-      )}
-    >
-      <div className="flex items-start gap-3 p-3">
-        {/* Version badge */}
-        <div
-          className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-            isLatest ? "bg-nx-accent-fill text-nx-on-fill" : "bg-nx-raised text-nx-ink-2"
-          )}
-        >
-          v{version.versionNumber}
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-semibold">
-              {t("entitlements.tenantPlans.versionNumber")} {version.versionNumber}
-            </span>
-            <Badge variant={statusVariant} className="text-[10px]">
-              {version.status}
-            </Badge>
-            {isLatest && (
-              <Badge variant="default" className="text-[10px]">
-                {t("entitlements.tenantPlans.latestBadge")}
-              </Badge>
-            )}
-          </div>
-
-          {version.changeNotes && (
-            <p className="mt-0.5 text-xs leading-relaxed text-nx-ink-2">{version.changeNotes}</p>
-          )}
-
-          <div className="mt-1.5 flex flex-wrap items-center gap-4 text-xs text-nx-ink-2">
-            <span className="flex items-center gap-1">
-              <Clock className="h-3 w-3" aria-hidden="true" />
-              {version.publishedAt
-                ? formatUtc(version.publishedAt, "PPp")
-                : formatUtc(version.createdAt, "PPp")}
-            </span>
-            {version.publishedBy && (
-              <span className="flex items-center gap-1">
-                <User className="h-3 w-3" aria-hidden="true" />
-                {version.publishedBy}
-              </span>
-            )}
-            <span>
-              {featureCount} {t("entitlements.tenantPlans.features")}
-            </span>
-            <span>
-              {priceCount} {t("entitlements.tenantPlans.priceCountPlural")}
-            </span>
-          </div>
-        </div>
-
-        {/* Snapshot toggle */}
-        {version.featureValuesJson && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-7 shrink-0 text-xs"
-            onClick={() => setShowSnapshot((s) => !s)}
-            aria-expanded={showSnapshot}
-            aria-label={t("entitlements.tenantPlans.viewSnapshot")}
-          >
-            <Code2 className="me-1 h-3 w-3" aria-hidden="true" />
-            {showSnapshot ? (
-              <ChevronUp className="h-3 w-3" aria-hidden="true" />
-            ) : (
-              <ChevronDown className="h-3 w-3" aria-hidden="true" />
-            )}
-          </Button>
-        )}
-      </div>
-
-      {/* Collapsible snapshot */}
-      {showSnapshot && version.featureValuesJson && (
-        <div className="px-3 pb-3">
-          <div className="max-h-40 overflow-auto rounded-nx-md border border-nx-line bg-nx-raised p-2 font-mono text-[10px] leading-relaxed text-nx-ink-2">
-            {JSON.stringify(JSON.parse(version.featureValuesJson), null, 2)}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 /**
- * Presentation UI component rendering the versions tab.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Presentation UI component rendering the plan versions tab.
+ * Arranges layout boundaries and accessibility targets using the core design system.
+ * Coordinates version history listing and publish new version dialog workflows.
+ *
+ * @param props The plan entity, translation helper, and publish callback.
+ * @returns An accessible interface for version auditing and deployment.
  */
-export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabProps) {
+export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabProps): React.JSX.Element {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [changeNotes, setChangeNotes] = useState("");
 
@@ -180,7 +62,7 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
 
   return (
     <div className="space-y-4">
-      {/* Header card */}
+      {/* Header card container */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -196,7 +78,7 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
               )}
             </div>
 
-            {/* Publish button — only for Draft or Published plans */}
+            {/* Publish button — available for non-archived plans */}
             {!plan.isArchived && (
               <Button
                 size="sm"
@@ -231,7 +113,7 @@ export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabPro
         </CardContent>
       </Card>
 
-      {/* Publish Dialog */}
+      {/* Publish New Version Dialog */}
       <Dialog open={isPublishOpen} onOpenChange={setIsPublishOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>

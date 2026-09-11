@@ -1,7 +1,7 @@
 // UI-EXCEPTION: compact studio layout
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNotificationSenderViewModel } from "../viewmodels/useNotificationSenderViewModel";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
@@ -10,12 +10,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core
 import { Input } from "@core/ui/input";
 import { Textarea } from "@core/ui/textarea";
 import { Button } from "@core/ui/button";
-import { Badge } from "@core/ui/badge";
 import { Label } from "@core/ui/label";
-import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { Bell, Send, X, RotateCcw, Search } from "lucide-react";
+import { Bell, Send, RotateCcw } from "lucide-react";
 import { cn } from "@core/common/utils";
+import { NotificationTargetSelector } from "../components/NotificationTargetSelector";
 import type { NotificationType, NotificationCategory } from "../../domain/entities/Notification";
 
 const TITLE_MAX = 150;
@@ -23,9 +22,12 @@ const MESSAGE_MAX = 2000;
 
 /**
  * Presentation UI component rendering the notification sender view.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Arranges layout boundaries and accessibility targets using the shared design system.
+ * Coordinates recipient targeting, message composition, and dispatch confirmation.
+ *
+ * @returns An accessible, interactive notification dispatch interface.
  */
-export function NotificationSenderView() {
+export function NotificationSenderView(): React.JSX.Element {
   const vm = useNotificationSenderViewModel();
   const { t } = useI18n();
   const targetsId = React.useId();
@@ -35,7 +37,7 @@ export function NotificationSenderView() {
   const typeId = React.useId();
   const actionUrlId = React.useId();
 
-  // Ctrl+Enter shortcut
+  // Keyboard shortcut: Ctrl/Cmd + Enter to trigger sending
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
@@ -45,27 +47,7 @@ export function NotificationSenderView() {
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [vm, vm.handleSend]);
-
-  // Close target dropdown on outside click
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [showDropdown, setShowDropdown] = React.useState(false);
-
-  useEffect(() => {
-    function handleClickOutside(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setShowDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const noResults =
-    vm.targetSearch.length >= 2 &&
-    !vm.isSearchingTargets &&
-    !vm.isTargetSearchError &&
-    vm.targetResults.length === 0;
+  }, [vm]);
 
   return (
     <>
@@ -95,95 +77,21 @@ export function NotificationSenderView() {
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Targets */}
-            <div className="space-y-2">
-              <Label htmlFor={targetsId} className={cn(vm.fieldErrors.targets && "text-destructive")}>
-                {t("messaging.notifications.targets")} *
-              </Label>
-              {vm.selectedTargets.length > 0 && (
-                <div className="mb-2 flex flex-wrap gap-1.5">
-                  {vm.selectedTargets.map((target) => (
-                    <Badge key={target.id} variant="secondary" className="gap-1">
-                      {target.name}
-                      <span className="text-xs text-nx-ink-3">({target.type})</span>
-                      <button
-                        type="button"
-                        onClick={() => vm.removeTarget(target.id)}
-                        className="rounded-full hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
-                        aria-label={t("messaging.notifications.removeTargetNamed", {
-                          name: target.name,
-                        })}
-                      >
-                        <X className="h-3 w-3" aria-hidden="true" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
-              )}
-              <div className="relative" ref={dropdownRef}>
-                <div className="relative">
-                  <Search
-                    className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
-                    aria-hidden="true"
-                  />
-                  <Input
-                    id={targetsId}
-                    placeholder={t("messaging.notifications.searchTargets")}
-                    value={vm.targetSearch}
-                    onChange={(e) => {
-                      vm.setTargetSearch(e.target.value);
-                      setShowDropdown(true);
-                    }}
-                    onFocus={() => setShowDropdown(true)}
-                    className={cn(
-                      "ps-9",
-                      vm.fieldErrors.targets && "border-destructive focus-visible:ring-destructive"
-                    )}
-                  />
-                  {vm.isSearchingTargets && (
-                    <LoadingSpinner
-                      size="inline"
-                      className="absolute end-3 top-1/2 -translate-y-1/2 text-nx-ink-3"
-                    />
-                  )}
-                </div>
-                {showDropdown && vm.targetSearch.length >= 2 && (
-                  <div className="absolute top-full z-dropdown mt-1 max-h-48 w-full overflow-y-auto rounded-nx-md border border-nx-line bg-nx-popover shadow-nx-popover">
-                    {vm.targetResults.length > 0 ? (
-                      vm.targetResults.map((target) => (
-                        <button
-                          key={`${target.type}-${target.id}`}
-                          type="button"
-                          className="flex w-full items-center justify-between px-3 py-2 text-start text-sm hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
-                          onClick={() => {
-                            vm.addTarget(target);
-                            setShowDropdown(false);
-                          }}
-                        >
-                          <span className="font-medium text-nx-ink">{target.name}</span>
-                          <Badge variant="outline" className="text-xs">
-                            {target.type}
-                          </Badge>
-                        </button>
-                      ))
-                    ) : vm.isTargetSearchError ? (
-                      <div className="px-3 py-4 text-center text-sm text-destructive">
-                        {t("common.error")}
-                      </div>
-                    ) : (
-                      noResults && (
-                        <div className="px-3 py-4 text-center text-sm text-nx-ink-3">
-                          <Search className="mx-auto mb-1 h-5 w-5 opacity-40" aria-hidden="true" />
-                          {t("messaging.notifications.noTargetsFound")}
-                        </div>
-                      )
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
+            {/* Target Recipients Selection */}
+            <NotificationTargetSelector
+              inputId={targetsId}
+              selectedTargets={vm.selectedTargets}
+              searchQuery={vm.targetSearch}
+              searchResults={vm.targetResults}
+              isSearching={vm.isSearchingTargets}
+              isSearchError={vm.isTargetSearchError}
+              hasError={vm.fieldErrors.targets}
+              onSearchChange={vm.setTargetSearch}
+              onAddTarget={vm.addTarget}
+              onRemoveTarget={vm.removeTarget}
+            />
 
-            {/* Title */}
+            {/* Notification Title */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor={titleId} className={cn(vm.fieldErrors.title && "text-destructive")}>
@@ -210,7 +118,7 @@ export function NotificationSenderView() {
               />
             </div>
 
-            {/* Message */}
+            {/* Message Body Content */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor={messageId} className={cn(vm.fieldErrors.message && "text-destructive")}>
@@ -237,17 +145,12 @@ export function NotificationSenderView() {
               />
             </div>
 
-            {/* Category & Priority */}
+            {/* Classification: Category & Type */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor={categoryId}>{t("messaging.notifications.category")}</Label>
                 <GenericSelect
                   id={categoryId}
-                  // The trigger is a role="combobox" div, not a labelable
-                  // HTML element, so the matching id above does not make
-                  // <Label htmlFor> compute an accessible name for it (see
-                  // generic-select.tsx's own `id`/`aria-label` prop doc
-                  // comments). aria-label supplies the real accessible name.
                   aria-label={t("messaging.notifications.category")}
                   options={vm.categoryOptions}
                   value={vm.category}
@@ -262,7 +165,6 @@ export function NotificationSenderView() {
                 <Label htmlFor={typeId}>{t("messaging.notifications.type")}</Label>
                 <GenericSelect
                   id={typeId}
-                  // Same accessible-name gap as the category select above.
                   aria-label={t("messaging.notifications.type")}
                   options={vm.typeOptions}
                   value={vm.type}
@@ -272,7 +174,7 @@ export function NotificationSenderView() {
               </div>
             </div>
 
-            {/* Action URL */}
+            {/* Optional Deep Link Action URL */}
             <div className="space-y-2">
               <Label htmlFor={actionUrlId}>{t("messaging.notifications.actionUrl")}</Label>
               <Input
@@ -283,7 +185,7 @@ export function NotificationSenderView() {
               />
             </div>
 
-            {/* Actions */}
+            {/* Form Actions */}
             <div className="flex items-center justify-between pt-2">
               <p className="text-xs text-nx-ink-3">{t("messaging.notifications.ctrlEnterHint")}</p>
               <Button onClick={vm.handleSend} loading={vm.isSending} className="gap-2">
@@ -295,7 +197,7 @@ export function NotificationSenderView() {
         </Card>
       </div>
 
-      {/* Send Confirmation Dialog */}
+      {/* Dispatch Confirmation Dialog */}
       <ConfirmationDialog
         open={vm.confirmSendOpen}
         onOpenChange={vm.setConfirmSendOpen}

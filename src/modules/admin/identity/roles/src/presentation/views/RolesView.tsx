@@ -13,16 +13,16 @@ import { useRolesViewModel } from "../viewmodels/useRolesViewModel";
 import {
   GenericCrudView,
   type CrudConfig,
-  type CrudColumn,
 } from "@core/crud/components/generic-crud-view";
 import { Shield, Pencil, Trash, Copy, Users } from "lucide-react";
-import { Badge } from "@core/ui/badge";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { Role } from "../../domain/entities/Role";
 import { AssignToGroupDialog } from "@modules/identity/core";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { RoleDeleteDialog } from "../components/RoleDeleteDialog";
+import { getRolesCrudColumns } from "./rolesCrudColumns";
+import { getRoleCreateFields, getRoleEditFields } from "./rolesFormFields";
 
 /**
  * Presentation UI component rendering the roles view.
@@ -63,156 +63,16 @@ export function RolesView() {
     setDeleteDialogOpen(true);
   }, []);
 
-  const columns: CrudColumn<Role>[] = [
-    {
-      key: "nameAr",
-      label: t("roles.name"),
-      sortable: true,
-      className: "font-medium",
-      render: (value: unknown, role: Role) => role.getLocalizedName(language),
-    },
-    {
-      key: "code",
-      label: t("roles.code"),
-      sortable: true,
-      className: "font-mono text-xs text-nx-ink-3",
-    },
-    {
-      key: "description",
-      // roles.description is the PAGE subtitle; the column label is the field one.
-      label: t("roles.descriptionField"),
-      className: "hidden max-w-[28rem] truncate md:table-cell",
-      render: (value: unknown, role: Role) => {
-        const text = role.getLocalizedDescription(language);
-        return text ? (
-          <span className="block truncate text-nx-ink-2" title={text}>
-            {text}
-          </span>
-        ) : (
-          <span className="text-nx-ink-3">-</span>
-        );
-      },
-    },
-    {
-      // Numeric column: right-aligned tabular figures rather than a manual
-      // centered fixed width, so priorities read as a clean column of numbers.
-      key: "priority",
-      label: t("roles.priority"),
-      sortable: true,
-      className: "text-end tabular-nums",
-    },
-    {
-      key: "groups",
-      label: t("roles.groups"),
-      render: (_val: unknown, role: Role) => {
-        const groups = role.getLocalizedGroups(language);
-        if (groups.length === 0) {
-          return <span className="text-nx-ink-3">-</span>;
-        }
-        // Cap at two chips + a "+N" overflow on ONE line — variable group counts
-        // no longer ripple into ragged, multi-height rows.
-        const shown = groups.slice(0, 2);
-        const overflow = groups.length - shown.length;
-        return (
-          <div className="flex items-center gap-1 truncate">
-            {shown.map((groupName, index) => (
-              <Badge
-                key={`${index}-${groupName}`}
-                variant="secondary"
-                className="max-w-[10rem] shrink-0 truncate text-xs"
-              >
-                {groupName}
-              </Badge>
-            ))}
-            {overflow > 0 && (
-              <Badge variant="outline" className="shrink-0 text-xs tabular-nums">
-                +{overflow}
-              </Badge>
-            )}
-          </div>
-        );
-      },
-    },
-  ];
+  const columns = getRolesCrudColumns(t, language);
 
   const config: CrudConfig<Role> = {
     titleKey: "roles.title",
     subtitleKey: "roles.description",
     resource: "roles", // Checks permissions (roles.view, roles.create, etc.)
     columns,
-    createFields: [
-      {
-        name: "nameEn",
-        label: t("roles.nameEn"),
-        type: "text",
-        required: true,
-        placeholder: t("roles.namePlaceholder"),
-      },
-      {
-        name: "nameAr",
-        label: t("roles.nameAr"),
-        type: "text",
-        required: true,
-        placeholder: t("roles.nameArPlaceholder"),
-      },
-      {
-        name: "code",
-        label: t("roles.code"),
-        type: "text",
-        required: true,
-        placeholder: t("roles.codePlaceholder"),
-        description: t("roles.codeHint"),
-      },
-      {
-        name: "descriptionEn",
-        label: t("roles.descriptionEn"),
-        type: "textarea",
-        placeholder: t("roles.descriptionPlaceholder"),
-      },
-      {
-        name: "descriptionAr",
-        label: t("roles.descriptionAr"),
-        type: "textarea",
-        placeholder: t("roles.descriptionArPlaceholder"),
-      },
-      {
-        name: "priority",
-        label: t("roles.priority"),
-        type: "number",
-        defaultValue: 100,
-        description: t("roles.priorityHint"),
-      },
-    ],
-    editFields: [
-      {
-        name: "nameEn",
-        label: t("roles.nameEn"),
-        type: "text",
-        required: true,
-      },
-      {
-        name: "nameAr",
-        label: t("roles.nameAr"),
-        type: "text",
-        required: true,
-      },
-      {
-        name: "descriptionEn",
-        label: t("roles.descriptionEn"),
-        type: "textarea",
-      },
-      {
-        name: "descriptionAr",
-        label: t("roles.descriptionAr"),
-        type: "textarea",
-      },
-      {
-        name: "priority",
-        label: t("roles.priority"),
-        type: "number",
-        description: t("roles.priorityHint"),
-      },
-    ],
+    createFields: getRoleCreateFields(t),
+    editFields: getRoleEditFields(t),
+
     getActions: (vm, t, _handleDelete) => [
       // Manage Permissions (Custom Action)
       {
