@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: static documentation content
 /**
  * Custom Fields — Managing fields (product documentation).
  *

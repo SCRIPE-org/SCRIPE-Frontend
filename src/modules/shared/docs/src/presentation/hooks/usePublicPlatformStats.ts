@@ -10,9 +10,15 @@ import { useQuery } from "@tanstack/react-query";
 import { getBaseApiService } from "@core/services/api-factory";
 import { V1 } from "@core/config/api-endpoints/_shared";
 
-interface PublicPlatformStatsResponse {
+/**
+ * Telemetry response payload representing high-level public platform metrics.
+ */
+export interface PublicPlatformStatsResponse {
+  /** Total count of active tenants provisioned across the platform */
   activeTenants: number;
+  /** Number of active operational business modules */
   activeModules: number;
+  /** Service level agreement uptime commitment indicator */
   uptimeSla: string;
 }
 
