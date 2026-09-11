@@ -23,93 +23,22 @@ import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { authContainer } from "@modules/auth/di";
 import { buildComparisonCategories } from "../helpers/planHelpers";
-import { CURRENCY_TO_COUNTRY } from "../helpers/currencyGeo";
 import {
   computeAnnualSavingsPercent,
   isRecommendedEdition,
   derivePriorityKeys,
   deriveBusinessType,
 } from "../helpers/planPickerLogic";
-import type { PlanEdition, ComparisonCategory, PublicEdition } from "../../domain/entities";
-import type { OnboardingRecommendation } from "../../domain/entities/OnboardingEntities";
+import type { PlanEdition, PublicEdition } from "../../domain/entities";
+import {
+  resolveLocale,
+  SEEDED_CURRENCIES,
+  type PlanPickerEdition,
+  type PlanPickerViewModel,
+  type UsePlanPickerArgs,
+} from "./planPickerTypes";
 
-// Currencies with hand-set native prices in the seeder; everything else is
-// FX-converted from USD (shown approximate). Mirrors the legacy picker.
-const SEEDED_CURRENCIES = new Set(["USD", "EUR", "SAR", "EGP"]);
-
-// Map an app language to a sensible BCP-47 locale for Intl number formatting.
-// Currency formatting is driven by the `currency` code; the locale only affects
-// grouping/decimal glyphs and RTL digit shaping.
-function resolveLocale(language: string, currency: string): string {
-  if (language === "ar") return "ar";
-  const country = CURRENCY_TO_COUNTRY[currency?.toUpperCase()];
-  return country ? `en-${country}` : "en-US";
-}
-
-/** A plan edition enriched with the precomputed "is this the recommended one?" flag. */
-export interface PlanPickerEdition extends PlanEdition {
-  /** True when this edition matches the server recommendation (encrypted-id compare). */
-  isRecommended: boolean;
-}
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for plan picker view model.
- */
-export interface PlanPickerViewModel {
-  // ── Load state ─────────────────────────────────────────────────────────────
-  isLoading: boolean;
-  isError: boolean;
-  retry: () => void;
-
-  // ── Industry (vertical) switch — replaces the old tab row ────────────────────
-  /** The active vertical slug whose catalog is shown (general | erp | healthcare | …). */
-  activeIndustry: string | null;
-  /** Switch verticals — refetches that vertical's catalog. */
-  setIndustry: (slug: string) => void;
-  /** Available industries to switch between (slug + localized label), from the categories API. */
-  industries: { slug: string; label: string }[];
-
-  // ── Currency (server/geo-locked — display only) ──────────────────────────────
-  /** Resolved ISO-4217 currency code (read-only; never user-switchable here). */
-  currency: string;
-  /** BCP-47 locale used for Intl.NumberFormat. */
-  locale: string;
-  /** Geo-detected country (ISO 3166-1 alpha-2), or null — for the quiet region line. */
-  detectedCountry: string | null;
-  /** True when prices are FX-converted from USD (shown approximate). */
-  isFxConverted: boolean;
-
-  // ── Billing cycle + savings ──────────────────────────────────────────────────
-  billingCycle: "monthly" | "annual";
-  setBillingCycle: (cycle: "monthly" | "annual") => void;
-  /** Computed annual savings %, 0 when not applicable. */
-  annualSavingsPercent: number;
-  /** True when at least one edition is paid (so the toggle is meaningful). */
-  hasPaidEditions: boolean;
-
-  // ── Editions ──────────────────────────────────────────────────────────────────
-  /** The vertical's editions in tier order, each flagged with isRecommended. */
-  editions: PlanPickerEdition[];
-
-  // ── Comparison matrix ─────────────────────────────────────────────────────────
-  comparisonCategories: ComparisonCategory[];
-  /** Q3 priority values (lowercased) — used to highlight matching comparison rows. */
-  priorityKeys: string[];
-}
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for use plan picker args.
- */
-export interface UsePlanPickerArgs {
-  /** The chosen vertical from discovery (wizard.businessType). Defaults the industry. */
-  businessType: string | null;
-  /** The collected discovery answers — Q3 priorities drive comparison-row highlighting. */
-  discoveryAnswers: Record<string, string[]>;
-  /** The server recommendation (lands asynchronously; undefined while loading/absent). */
-  recommendation: OnboardingRecommendation | undefined;
-  initialCurrency?: string;
-  initialCountry?: string | null;
-}
+export type { PlanPickerEdition, PlanPickerViewModel, UsePlanPickerArgs };
 
 /**
  * React hook/ViewModel orchestrating state and data flows for plan picker.

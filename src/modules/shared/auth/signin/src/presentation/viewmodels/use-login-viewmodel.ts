@@ -18,27 +18,8 @@ import { useMagicLinkHandler } from "./useMagicLinkHandler";
 import { getAuthContainer } from "@modules/auth/di";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
 
-/**
- * Interface defining property specifications, keys types, and structural contract rules for login form data.
- */
-export interface LoginFormData {
-  identifier: string;
-  password: string;
-  staySignedIn: boolean;
-}
-
-/**
- * Exported type defining parameters and fields for login step configurations.
- */
-export type LoginStep =
-  | "credentials"
-  | "two-factor"
-  | "workspace-selection"
-  | "magic-link-request"
-  | "magic-link-sent"
-  | "phone-otp"
-  | "passkey"
-  | "qr-login";
+import type { LoginFormData, LoginStep } from "./loginTypes";
+export type { LoginFormData, LoginStep };
 
 /**
  * React hook/ViewModel orchestrating state and data flows for login view model.
