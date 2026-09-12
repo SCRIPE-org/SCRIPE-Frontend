@@ -8,7 +8,7 @@
 // concrete "before" number to compare against, and so this call count
 // doesn't silently regress further (e.g. a future change accidentally
 // causing 4+ calls) before Wave 2 lands.
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { render, waitFor } from "@testing-library/react";
 import {
   registerCustomFieldsExtension,
@@ -22,10 +22,10 @@ function HookProbe({ ownerId }: { ownerId?: string }) {
 }
 
 describe("useCustomFieldsFormFields call count (characterization)", () => {
-  let getFormFields: ReturnType<typeof vi.fn>;
+  let getFormFields: Mock<CustomFieldsExtensionApi["getFormFields"]>;
 
   beforeEach(() => {
-    getFormFields = vi.fn().mockResolvedValue([]);
+    getFormFields = vi.fn<CustomFieldsExtensionApi["getFormFields"]>().mockResolvedValue([]);
     const api: CustomFieldsExtensionApi = {
       getFormFields,
       saveValues: vi.fn(),

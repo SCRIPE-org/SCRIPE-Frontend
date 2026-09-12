@@ -48,6 +48,8 @@ import {
   // ── Phase 3-5 icons (Compliance, Ecosystem, Developer) ──
   Boxes,
   Clock,
+  CalendarPlus,
+  CalendarDays,
   ClipboardCheck,
   Code,
   Database,
@@ -129,6 +131,8 @@ export const iconMap: Record<string, LucideIcon> = {
   // ── Phase 3: Compliance & Governance ──
   Scale: Scale,
   Clock: Clock,
+  CalendarPlus: CalendarPlus,
+  CalendarDays: CalendarDays,
   ClipboardCheck: ClipboardCheck,
   FileStack: FileStack,
   ShieldAlert: ShieldAlert,

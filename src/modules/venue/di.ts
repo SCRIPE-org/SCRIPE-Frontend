@@ -30,6 +30,12 @@ import { FacilityRepository } from "./facility/src/data/repositories/FacilityRep
 import type { IFacilityService } from "./facility/src/domain/interfaces/IFacilityService";
 import type { IFacilityRepository } from "./facility/src/domain/interfaces/IFacilityRepository";
 
+// Facility Resource Profile
+import { FacilityResourceProfileService } from "./facility-resource-profile/src/data/services/FacilityResourceProfileService";
+import { FacilityResourceProfileRepository } from "./facility-resource-profile/src/data/repositories/FacilityResourceProfileRepository";
+import type { IFacilityResourceProfileService } from "./facility-resource-profile/src/domain/interfaces/IFacilityResourceProfileService";
+import type { IFacilityResourceProfileRepository } from "./facility-resource-profile/src/domain/interfaces/IFacilityResourceProfileRepository";
+
 // SchedulableResource
 import { SchedulableResourceService } from "./schedulable-resource/src/data/services/SchedulableResourceService";
 import { SchedulableResourceRepository } from "./schedulable-resource/src/data/repositories/SchedulableResourceRepository";
@@ -38,20 +44,51 @@ import type { ISchedulableResourceService } from "./schedulable-resource/src/dom
 import type { ISchedulableResourceRepository } from "./schedulable-resource/src/domain/interfaces/ISchedulableResourceRepository";
 import type { IFacilityResourceProfilePickerService } from "./schedulable-resource/src/domain/interfaces/IFacilityResourceProfilePickerService";
 
+// Availability
+import { AvailabilityService } from "./availability/src/data/services/AvailabilityService";
+import { AvailabilityRepository } from "./availability/src/data/repositories/AvailabilityRepository";
+import type { IAvailabilityService } from "./availability/src/domain/interfaces/IAvailabilityService";
+import type { IAvailabilityRepository } from "./availability/src/domain/interfaces/IAvailabilityRepository";
+
+// Booking Operator Workspace
+import { BookingService } from "./booking/src/data/services/BookingService";
+import { BookingRepository } from "./booking/src/data/repositories/BookingRepository";
+import { CustomerPickerService } from "./booking/src/data/services/CustomerPickerService";
+import { CustomerRepository } from "./booking/src/data/repositories/CustomerRepository";
+import type { IBookingService } from "./booking/src/domain/interfaces/IBookingService";
+import type { IBookingRepository } from "./booking/src/domain/interfaces/IBookingRepository";
+import type { ICustomerPickerService } from "./booking/src/domain/interfaces/ICustomerPickerService";
+import type { ICustomerRepository } from "./booking/src/domain/interfaces/ICustomerRepository";
+
+// Operations Calendar
+import { OperationsCalendarService } from "./operations-calendar/src/data/services/OperationsCalendarService";
+import { OperationsCalendarRepository } from "./operations-calendar/src/data/repositories/OperationsCalendarRepository";
+import type { IOperationsCalendarService } from "./operations-calendar/src/domain/interfaces/IOperationsCalendarService";
+import type { IOperationsCalendarRepository } from "./operations-calendar/src/domain/interfaces/IOperationsCalendarRepository";
+
+// Booking 360
+import { Booking360Service } from "./booking-360/src/data/services/Booking360Service";
+import { Booking360Repository } from "./booking-360/src/data/repositories/Booking360Repository";
+import type { IBooking360Service } from "./booking-360/src/domain/interfaces/IBooking360Service";
+import type { IBooking360Repository } from "./booking-360/src/domain/interfaces/IBooking360Repository";
+
+import { VenueOverviewService } from "./venue-overview/src/data/services/VenueOverviewService";
+import type { IVenueOverviewService } from "./venue-overview/src/domain/interfaces/IVenueOverviewService";
+
 interface VenueContainer {
   venueProfileRepository: IVenueProfileRepository;
   facilityRepository: IFacilityRepository;
+  facilityResourceProfileRepository: IFacilityResourceProfileRepository;
   schedulableResourceRepository: ISchedulableResourceRepository;
+  availabilityRepository: IAvailabilityRepository;
+  bookingRepository: IBookingRepository;
+  customerRepository: ICustomerRepository;
+  operationsCalendarRepository: IOperationsCalendarRepository;
+  booking360Repository: IBooking360Repository;
+  venueOverviewService: IVenueOverviewService;
   /** Site picker for the Venue Profile "Site" field — OrganizationCore is a different backend module. */
   sitePickerService: ISitePickerService;
-  /** Facility Resource Profile picker for the Resource Builder form — no dedicated CRUD page exists yet. */
-  facilityResourceProfilePickerService: IFacilityResourceProfilePickerService;
-}
-
-/**
- * Wire auth lifecycle handlers onto a module-scoped ApiService instance the
- * same way auth/di.ts wires them onto the shared base instance.
- *
+  /** Lightweight picker retained for the Resource Builder form. */
  * getModuleApiService() returns the SHARED base instance whenever no
  * dedicated module env var is configured (today's monolith deployment), so
  * this is a harmless no-op re-wiring of the same object in that case. It
@@ -93,21 +130,49 @@ export function getVenueContainer(): VenueContainer {
   // Sites (for the Venue Profile picker) live in OrganizationCore — a third,
   // separate backend module this workspace only ever reads from.
   const organizationCoreApi = getModuleApiService("ORGANIZATIONCORE");
+  const partyKernelApi = getModuleApiService("PARTYKERNEL");
 
   wireModuleApiLifecycle(facilityOperationsApi);
   wireModuleApiLifecycle(resourceSchedulingBookingApi);
   wireModuleApiLifecycle(organizationCoreApi);
+  wireModuleApiLifecycle(partyKernelApi);
 
   const venueProfileService: IVenueProfileService = new VenueProfileService(facilityOperationsApi);
   const facilityService: IFacilityService = new FacilityService(facilityOperationsApi);
+  const facilityResourceProfileService: IFacilityResourceProfileService =
+    new FacilityResourceProfileService(facilityOperationsApi);
   const schedulableResourceService: ISchedulableResourceService = new SchedulableResourceService(
     resourceSchedulingBookingApi
   );
+  const availabilityService: IAvailabilityService = new AvailabilityService(
+    resourceSchedulingBookingApi
+  );
+  const bookingService: IBookingService = new BookingService(resourceSchedulingBookingApi);
+  const customerPickerService: ICustomerPickerService = new CustomerPickerService(partyKernelApi);
+  const operationsCalendarService: IOperationsCalendarService = new OperationsCalendarService(
+    resourceSchedulingBookingApi
+  );
+  const booking360Service: IBooking360Service = new Booking360Service(resourceSchedulingBookingApi);
 
   container = {
     venueProfileRepository: new VenueProfileRepository(venueProfileService),
     facilityRepository: new FacilityRepository(facilityService),
+    facilityResourceProfileRepository: new FacilityResourceProfileRepository(
+      facilityResourceProfileService
+    ),
     schedulableResourceRepository: new SchedulableResourceRepository(schedulableResourceService),
+    availabilityRepository: new AvailabilityRepository(availabilityService),
+    bookingRepository: new BookingRepository(bookingService),
+    customerRepository: new CustomerRepository(customerPickerService),
+    operationsCalendarRepository: new OperationsCalendarRepository(operationsCalendarService),
+    booking360Repository: new Booking360Repository(booking360Service),
+    venueOverviewService: new VenueOverviewService(
+      new OperationsCalendarRepository(operationsCalendarService),
+      new SchedulableResourceRepository(schedulableResourceService),
+      new FacilityResourceProfileRepository(facilityResourceProfileService),
+      new FacilityRepository(facilityService),
+      new CustomerRepository(customerPickerService)
+    ),
     sitePickerService: new SitePickerService(organizationCoreApi),
     facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(facilityOperationsApi),
   };

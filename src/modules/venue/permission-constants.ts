@@ -11,13 +11,8 @@
  * (FacilityOperations) and SchedulableResourcesController.cs
  * (ResourceSchedulingBooking).
  *
- * FacilityResourceProfile has no dedicated CRUD page today — it is only
- * consumed read-only via FacilityResourceProfilePickerService inside the
- * Resource Builder's create/edit form (see venue/di.ts's comment on
- * facilityResourceProfilePickerService). Its 4 constants are still declared
- * here so this module's frontend-declared permissions match the backend's 16
- * enforced permissions exactly (permission-parity guard) and so a future
- * dedicated page has a named reference ready to use.
+ * Resource Profile and Availability are dedicated operator surfaces. Keys remain
+ * exact mirrors of the two owning backend modules' permission providers.
  */
 export const VENUE_PERMISSIONS = {
   // ── Facilities ───────────────────────────────────────────
@@ -26,7 +21,7 @@ export const VENUE_PERMISSIONS = {
   FACILITY_UPDATE: "facilities.update",
   FACILITY_DELETE: "facilities.delete",
 
-  // ── Facility Resource Profiles (no dedicated page yet) ────
+  // ── Facility Resource Profiles ─────────────────────────────
   FACILITY_RESOURCE_PROFILE_VIEW: "facility-resource-profiles.view",
   FACILITY_RESOURCE_PROFILE_CREATE: "facility-resource-profiles.create",
   FACILITY_RESOURCE_PROFILE_UPDATE: "facility-resource-profiles.update",
@@ -43,4 +38,26 @@ export const VENUE_PERMISSIONS = {
   SCHEDULABLE_RESOURCE_CREATE: "schedulable-resources.create",
   SCHEDULABLE_RESOURCE_UPDATE: "schedulable-resources.update",
   SCHEDULABLE_RESOURCE_DELETE: "schedulable-resources.delete",
+
+  // ── Availability ───────────────────────────────────────────
+  AVAILABILITY_CALENDAR_VIEW: "availability-calendars.view",
+  AVAILABILITY_CALENDAR_CREATE: "availability-calendars.create",
+  AVAILABILITY_CALENDAR_UPDATE: "availability-calendars.update",
+  AVAILABILITY_SEARCH_VIEW: "availability-search.view",
+
+  // ── Booking Operator Workspace ────────────────────────────
+  RESERVATION_VIEW: "reservations.view",
+  RESERVATION_CREATE: "reservations.create",
+  RESERVATION_CONFIRM: "reservations.confirm",
+  RESERVATION_CHECK_IN: "reservations.check-in",
+  RESERVATION_COMPLETE: "reservations.complete",
+  RESERVATION_NO_SHOW: "reservations.no-show",
+  RESERVATION_CANCEL: "reservations.cancel",
+  RESERVATION_RESCHEDULE: "reservations.reschedule",
+  RESERVATION_CHANGE_RESOURCE: "reservations.change-resource",
+  BOOKING_HOLD_CREATE: "booking-holds.create",
+
+  // Cross-module read consumed by the Venue composition layer. Party Kernel
+  // remains the owner of the permission and customer data.
+  CUSTOMER_PARTY_VIEW: "parties.view",
 } as const;

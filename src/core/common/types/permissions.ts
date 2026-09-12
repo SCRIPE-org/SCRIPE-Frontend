@@ -407,8 +407,24 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Facility Feature
   "/venue/facilities": [SYSTEM_PERMISSIONS.FACILITY_VIEW],
 
+  // Facility Resource Profile Feature
+  "/venue/resource-profiles": [SYSTEM_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW],
+
   // SchedulableResource Feature
   "/venue/resource-builder": [SYSTEM_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW],
+
+  // Availability Feature
+  "/venue/availability": [SYSTEM_PERMISSIONS.AVAILABILITY_CALENDAR_VIEW],
+
+  // Booking Operator Workspace — confirmation is deliberately not a page
+  // prerequisite so a delegated operator can search and create a hold.
+  "/venue/bookings/new": [SYSTEM_PERMISSIONS.RESERVATION_CREATE],
+
+  // Operations Calendar — action permissions are checked independently.
+  "/venue/calendar": [SYSTEM_PERMISSIONS.RESERVATION_VIEW],
+
+  // Canonical operational detail — enrichment and action permissions are checked independently.
+  "/venue/bookings/[reservationId]": [SYSTEM_PERMISSIONS.RESERVATION_VIEW],
 
   // Work Items Module
   "/work-items": [SYSTEM_PERMISSIONS.WORK_ITEM_VIEW],

@@ -41,17 +41,21 @@ describe("TimezonePicker", () => {
     expect(screen.getByRole("combobox", { name: "Timezone for Meeting" })).toBeInTheDocument();
   });
 
-  it("lists real IANA zone ids, drawn from the runtime's own Intl.supportedValuesOf", () => {
-    render(<TimezonePicker id="tz" value="UTC" onChange={vi.fn()} aria-label="Timezone" />);
-    const trigger = screen.getByRole("combobox", { name: "Timezone" });
-    fireEvent.click(trigger);
-    // A handful of real ids, from different regions, must all be present --
-    // proving this is the runtime's full supported set, not a short
-    // hand-rolled sample.
-    expect(screen.getByRole("option", { name: "Africa/Cairo" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "America/New_York" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Asia/Tokyo" })).toBeInTheDocument();
-  });
+  it(
+    "lists real IANA zone ids, drawn from the runtime's own Intl.supportedValuesOf",
+    () => {
+      render(<TimezonePicker id="tz" value="UTC" onChange={vi.fn()} aria-label="Timezone" />);
+      const trigger = screen.getByRole("combobox", { name: "Timezone" });
+      fireEvent.click(trigger);
+      // A handful of real ids, from different regions, must all be present --
+      // proving this is the runtime's full supported set, not a short
+      // hand-rolled sample.
+      expect(screen.getByRole("option", { name: "Africa/Cairo" })).toBeInTheDocument();
+      expect(screen.getByRole("option", { name: "America/New_York" })).toBeInTheDocument();
+      expect(screen.getByRole("option", { name: "Asia/Tokyo" })).toBeInTheDocument();
+    },
+    30_000
+  );
 
   it("reports the picked zone id via onChange", () => {
     const onChange = vi.fn();

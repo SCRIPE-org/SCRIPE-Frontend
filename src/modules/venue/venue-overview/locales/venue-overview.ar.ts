@@ -1,0 +1,80 @@
+export const ar = {
+  venueOverview: {
+    title: "نظرة عامة على الموقع",
+    subtitle: "رؤية تشغيلية مباشرة لنشاط الموقع اليوم.",
+    header: {
+      today: "اليوم",
+      timezone: "المنطقة الزمنية",
+      facility: "المرفق",
+      allFacilities: "جميع المرافق",
+      refresh: "تحديث النظرة العامة",
+      refreshing: "جاري التحديث...",
+    },
+    kpis: {
+      todayReservations: "حجوزات اليوم",
+      todayReservationsSubtext: "{{confirmed}} مؤكد · {{checkedIn}} تم تسجيل الوصول",
+      activeHolds: "الحجوزات المؤقتة النشطة",
+      nearestExpiry: "أقرب انتهاء خلال {{mins}} دقيقة",
+      noActiveHolds: "لا تتوفر حجوزات مؤقتة نشطة",
+      checkedInNow: "في الخدمة الآن",
+      checkedInNowSubtext: "قيد التشغيل المباشر حالياً",
+      activeResources: "الموارد النشطة اليوم",
+      activeResourcesSubtext: "مدرجة ضمن جدول اليوم",
+    },
+    operationalLoad: {
+      title: "الحمل التشغيلي لليوم",
+      subtitle: "التوزيع الساعي لكتل الحجوزات المجدولة على مدار الجدول التشغيلي لليوم.",
+      noLoad: "لا يوجد حمل تشغيلي مجدول لليوم.",
+      legend: {
+        checkedIn: "تم تسجيل الوصول",
+        confirmed: "مؤكد",
+        held: "مؤقت",
+        completed: "مكتمل",
+        other: "أخرى",
+      },
+      hourLabel: "{{hour}}:00",
+    },
+    atAGlance: {
+      title: "ملخص اليوم السريع",
+      subtitle: "ملخص حالات دورة حياة الحجوزات الممثلة في جدول اليوم.",
+      noBookings: "لم يتم تسجيل أي نشاط حجوزات لليوم.",
+    },
+    upNext: {
+      title: "الحجوزات القادمة",
+      subtitle: "الجدول الزمني التنازلي للحجوزات المتبقية لليوم.",
+      noUpcoming: "لا تتوفر حجوزات قادمة مجدولة لليوم.",
+      columns: {
+        time: "الوقت",
+        resource: "المورد",
+        customer: "العميل",
+        reference: "المرجع",
+        status: "الحالة",
+      },
+      customerUnavailable: "اسم العميل غير متوفر",
+      customerRestricted: "محظور الوصول",
+    },
+    resourceActivity: {
+      title: "نشاط الموارد",
+      subtitle: "مسح تشغيلي سريع للموارد المشاركة في جدول اليوم.",
+      noResources: "لا تتوفر موارد قابلة للجدولة.",
+      status: {
+        checkedIn: "تم تسجيل الوصول · حتى {{time}}",
+        nextBooking: "الحجز القادم · {{time}}",
+        noActiveBooking: "لا يوجد حجز نشط",
+      },
+    },
+    quickActions: {
+      title: "إجراءات المشغّل السريعة",
+      newBooking: "حجز جديد",
+      openCalendar: "فتح التقويم",
+      viewBookings: "عرض جميع الحجوزات",
+    },
+    deferred: {
+      recentActivity: "تم تأجيل موجز النشاط التشغيلي الحديث: لا يتوفر عرض موجز عابر للحجوزات محدد.",
+    },
+    errors: {
+      loadFailed: "البيانات التشغيلية غير متوفرة للنظرة العامة للموقع.",
+      retry: "إعادة تحميل النظرة العامة",
+    },
+  },
+};

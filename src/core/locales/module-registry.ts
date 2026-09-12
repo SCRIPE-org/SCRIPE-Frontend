@@ -226,6 +226,19 @@ import { en as partyRelEn, ar as partyRelAr } from "@modules/party-kernel/party-
 import { en as contactPointEn, ar as contactPointAr } from "@modules/party-kernel/contact-point/locales";
 import { en as mergeCandidateEn, ar as mergeCandidateAr } from "@modules/party-kernel/merge-candidate/locales";
 
+// ─── Venue ─────────────────────────────────────────────
+import { en as profileEn } from "@modules/venue/facility-resource-profile/locales/resource-profile.en";
+import { ar as profileAr } from "@modules/venue/facility-resource-profile/locales/resource-profile.ar";
+import { en as availabilityEn } from "@modules/venue/availability/locales/availability.en";
+import { ar as availabilityAr } from "@modules/venue/availability/locales/availability.ar";
+import { en as bookingEn } from "@modules/venue/booking/locales/booking.en";
+import { ar as bookingAr } from "@modules/venue/booking/locales/booking.ar";
+import { en as booking360En } from "@modules/venue/booking-360/locales/booking-360.en";
+import { ar as booking360Ar } from "@modules/venue/booking-360/locales/booking-360.ar";
+import { en as calendarEn } from "@modules/venue/operations-calendar/locales/operations-calendar.en";
+import { ar as calendarAr } from "@modules/venue/operations-calendar/locales/operations-calendar.ar";
+import { en as venueOverviewEn, ar as venueOverviewAr } from "@modules/venue/venue-overview/locales";
+
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
   {},
@@ -317,7 +330,14 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   partyOrgEn,
   partyRelEn,
   contactPointEn,
-  mergeCandidateEn
+  mergeCandidateEn,
+  // Venue
+  profileEn,
+  availabilityEn,
+  bookingEn,
+  booking360En,
+  calendarEn,
+  venueOverviewEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -410,5 +430,12 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   partyOrgAr,
   partyRelAr,
   contactPointAr,
-  mergeCandidateAr
+  mergeCandidateAr,
+  // Venue
+  profileAr,
+  availabilityAr,
+  bookingAr,
+  booking360Ar,
+  calendarAr,
+  venueOverviewAr
 );

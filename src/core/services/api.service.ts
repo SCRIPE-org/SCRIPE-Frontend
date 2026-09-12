@@ -353,7 +353,15 @@ export class ApiService implements IApiService {
           // Show it inline; do not navigate the user away from what they were doing.
           if (data.errorCode) {
             appLogger.warn(`Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`);
-            return Promise.reject(new Error(data.message || translateCore("errors.auth.forbidden")));
+            const businessError = new Error(
+              data.message || translateCore("errors.auth.forbidden")
+            ) as Error & { details?: typeof data; status?: number };
+            // Preserve the structured Result/Error payload for domain-specific UI states
+            // (for example Feature unavailable vs Permission denied). The previous plain
+            // Error kept the message but discarded the only machine-readable distinction.
+            businessError.details = data;
+            businessError.status = 403;
+            return Promise.reject(businessError);
           }
 
           // Case 3: No structured error body — a real authorization/permission failure
@@ -378,6 +386,7 @@ export class ApiService implements IApiService {
         appLogger.error(`API Error: ${message}`);
         const errObj = new Error(message) as any;
         errObj.details = error.response?.data;
+        errObj.status = error.response?.status;
         return Promise.reject(errObj);
       }
     );

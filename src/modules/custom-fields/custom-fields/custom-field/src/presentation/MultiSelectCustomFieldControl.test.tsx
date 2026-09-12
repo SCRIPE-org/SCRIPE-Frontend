@@ -6,7 +6,7 @@
 // when a test never opens the panel) since this control is built on the
 // exact same GenericSelect/Popover/cmdk stack.
 import React from "react";
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 import {

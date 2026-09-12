@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { VenueOverviewView } from "@modules/venue/venue-overview/src/presentation/views/VenueOverviewView";
 
 export default function VenuePage() {
-  redirect("/venue/venue-setup");
+  return <VenueOverviewView />;
 }
