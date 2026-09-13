@@ -4,7 +4,6 @@
  * and HTML document rendering helpers for the email template live preview component.
  */
 
-import type React from "react";
 import DOMPurify from "dompurify";
 import { Monitor, Tablet, Smartphone } from "lucide-react";
 import type { DesignVariables } from "./DesignVariablesPanel";

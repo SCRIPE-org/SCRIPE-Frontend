@@ -3,10 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 import { ConvertValueTypeDialog } from "./ConvertValueTypeDialog";
-import type {
-  ChangeFieldTypeResult,
-  RollbackFieldTypeChangeResult,
-} from "../../domain/entities/FieldInsight";
+import type { ChangeFieldTypeResult } from "../../domain/entities/FieldInsight";
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({

@@ -16,10 +16,7 @@ import { getCustomFieldsContainer } from "../../../../di";
 import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
 import type { CustomField } from "../../domain/entities/CustomField";
 import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsight";
-import {
-  FIELD_VISIBILITY_OPERATORS,
-  type FieldVisibilityOperator,
-} from "../../../../custom-field-value/src/domain/fieldVisibility";
+import type { FieldVisibilityOperator } from "../../../../custom-field-value/src/domain/fieldVisibility";
 
 export interface FieldVisibilityRuleTarget {
   fieldId: string;

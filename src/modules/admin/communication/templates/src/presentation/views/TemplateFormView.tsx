@@ -18,7 +18,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { ArrowLeft, Save, Settings, Palette, Braces, Eye, Tag, RotateCcw } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
 import { CustomFieldsSection } from "@core/components/custom-fields";
 import dynamic from "next/dynamic";

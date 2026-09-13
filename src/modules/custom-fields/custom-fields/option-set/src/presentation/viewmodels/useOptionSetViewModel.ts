@@ -14,12 +14,7 @@ import {
   optionSetsQueryKey,
   optionSetDetailQueryKey,
 } from "../form/optionSetQueryKeys";
-import {
-  reportOptionSetRefusal,
-  type OptionSetRefusal,
-  type OptionSetRefusalReason,
-  type OptionSetTranslate,
-} from "../form/optionSetRefusalTypes";
+import type { OptionSetRefusal } from "../form/optionSetRefusalTypes";
 import {
   checkCreateVersionRefusal,
   checkDeleteRefusal,

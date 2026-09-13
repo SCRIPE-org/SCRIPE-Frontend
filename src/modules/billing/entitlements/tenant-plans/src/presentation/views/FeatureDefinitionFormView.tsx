@@ -29,7 +29,6 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
 import { PageHeader } from "@core/ui/page-header";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { CustomFieldsSection } from "@core/components/custom-fields";
 import {
   ArrowLeft,

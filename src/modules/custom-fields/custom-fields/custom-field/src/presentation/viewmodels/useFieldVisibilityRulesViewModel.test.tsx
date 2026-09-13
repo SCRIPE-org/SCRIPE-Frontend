@@ -7,7 +7,6 @@ import {
   buildFieldVisibilityExpressionJson,
   parseFieldVisibilityExpressionJson,
 } from "./useFieldVisibilityRulesViewModel";
-import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsight";
 
 vi.mock("../../../../di", () => ({ getCustomFieldsContainer: vi.fn() }));
 vi.mock("@core/hooks/use-enhanced-toast", () => ({

@@ -88,15 +88,16 @@ export function useConvertValueTypeViewModel() {
     setLastRollbackResult(null);
   }, []);
 
-  const conversionKind = useMemo(() => {
-    if (!target?.currentType || !selectedTargetType) return null;
-    return classifyValueTypeConversion(target.currentType, selectedTargetType);
-  }, [target?.currentType, selectedTargetType]);
+  const currentType = target?.currentType;
+  const conversionKind =
+    currentType && selectedTargetType
+      ? classifyValueTypeConversion(currentType, selectedTargetType)
+      : null;
 
-  const isLossy = useMemo(() => {
-    if (!target?.currentType || !selectedTargetType) return false;
-    return isConversionLossy(target.currentType, selectedTargetType);
-  }, [target?.currentType, selectedTargetType]);
+  const isLossy =
+    currentType && selectedTargetType
+      ? isConversionLossy(currentType, selectedTargetType)
+      : false;
 
   const canExecute = useMemo(() => {
     if (!canUpdate || !target || !selectedTargetType) return false;

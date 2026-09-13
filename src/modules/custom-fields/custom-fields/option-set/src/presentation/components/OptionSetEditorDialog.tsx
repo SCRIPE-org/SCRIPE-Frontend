@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useCallback, useEffect, useId, useState } from "react";
 import { Button } from "@core/ui/button";

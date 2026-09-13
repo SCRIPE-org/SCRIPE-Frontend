@@ -38,12 +38,12 @@ jobs:
         with:
           category: "/language:javascript-typescript"
           upload: false
-          output: ../codeql-results
+          output: codeql-results
 
       - name: Upload Security Analysis SARIF
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: frontend-codeql-sarif
-          path: ../codeql-results
+          path: codeql-results
           retention-days: 7
