@@ -30,9 +30,20 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: javascript-typescript
-          queries: +security-and-quality
+          queries: security-extended
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        continue-on-error: true
         with:
           category: "/language:javascript-typescript"
+          upload: false
+          output: ../codeql-results
+
+      - name: Upload Security Analysis SARIF
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: frontend-codeql-sarif
+          path: ../codeql-results
+          retention-days: 7

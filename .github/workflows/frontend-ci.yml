@@ -21,8 +21,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Enable Corepack & Setup pnpm
-        run: corepack enable && corepack prepare pnpm@9.15.4 --activate
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
 
       - name: Setup Node.js 22 with Cache
         uses: actions/setup-node@v4

@@ -16,6 +16,7 @@ jobs:
   pr-title:
     name: Validate PR Title
     runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]'
     steps:
       - name: Semantic PR Check
         uses: amannn/action-semantic-pull-request@v5
