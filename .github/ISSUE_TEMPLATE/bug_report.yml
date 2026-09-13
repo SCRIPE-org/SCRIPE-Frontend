@@ -1,0 +1,49 @@
+name: "🐛 Frontend Bug Report"
+description: Report a bug in Next.js 16 / React 19 web portal.
+title: "[Frontend Bug]: "
+labels: ["frontend", "bug", "triage"]
+body:
+  - type: dropdown
+    id: submodule
+    attributes:
+      label: Target Frontend Submodule / Route
+      options:
+        - System / Auth / Shell
+        - Facility Operations
+        - Scheduling & Booking
+        - Academy Operations
+        - Football Intelligence
+        - Core UI Components (@core/ui/*)
+        - Localization (EN / AR RTL)
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction Steps
+      placeholder: |
+        1. Open page '...'
+        2. Click on '...'
+        3. See UI error
+    validations:
+      required: true
+  - type: textarea
+    id: console_errors
+    attributes:
+      label: Browser Console Errors
+      render: shell
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Architecture Check
+      options:
+        - label: Follows View -> ViewModel -> Repository -> Service data flow.
+          required: true
+        - label: Tested in both LTR (English) and RTL (Arabic).
+          required: true
