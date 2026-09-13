@@ -227,8 +227,8 @@ import { en as contactPointEn, ar as contactPointAr } from "@modules/party-kerne
 import { en as mergeCandidateEn, ar as mergeCandidateAr } from "@modules/party-kernel/merge-candidate/locales";
 
 // ─── Venue ─────────────────────────────────────────────
-import { en as profileEn } from "@modules/venue/facility-resource-profile/locales/resource-profile.en";
-import { ar as profileAr } from "@modules/venue/facility-resource-profile/locales/resource-profile.ar";
+import { en as venueResourceProfileEn } from "@modules/venue/facility-resource-profile/locales/resource-profile.en";
+import { ar as venueResourceProfileAr } from "@modules/venue/facility-resource-profile/locales/resource-profile.ar";
 import { en as availabilityEn } from "@modules/venue/availability/locales/availability.en";
 import { ar as availabilityAr } from "@modules/venue/availability/locales/availability.ar";
 import { en as bookingEn } from "@modules/venue/booking/locales/booking.en";
@@ -288,7 +288,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   // Ecosystem
   recycleBinEn,
   // Profile
-  profileEn,
+  venueResourceProfileEn,
   // Home
   homeEn,
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
@@ -388,7 +388,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   // Ecosystem
   recycleBinAr,
   // Profile
-  profileAr,
+  venueResourceProfileAr,
   // Home
   homeAr,
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)

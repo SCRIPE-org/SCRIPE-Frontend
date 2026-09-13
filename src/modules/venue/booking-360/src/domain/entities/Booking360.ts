@@ -46,6 +46,7 @@ export interface Booking360ProfileContext {
 }
 
 export interface Booking360FacilityContext {
+  id: string;
   name: string;
 }
 

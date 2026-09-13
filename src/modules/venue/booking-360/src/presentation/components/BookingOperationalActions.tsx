@@ -99,9 +99,9 @@ export function BookingOperationalActions(props: Props) {
   const reasonInvalid = reasonMissing || reasonTooLong;
   const confirmed = props.status === "Confirmed";
   const checkedIn = props.status === "CheckedIn";
-  const held = props.status === "Held";
+  const cancellable = ["Draft", "Requested", "Held", "PendingApproval", "Confirmed"].includes(props.status);
   const hasAction = (confirmed && (props.canCheckIn || props.canMarkNoShow || props.canCancel || props.canReschedule || props.canChangeResource)) ||
-    (checkedIn && props.canComplete) || (held && props.canCancel);
+    (checkedIn && props.canComplete) || (cancellable && props.canCancel);
 
   useEffect(() => {
     if (props.feedback) regionRef.current?.focus();
@@ -302,7 +302,7 @@ export function BookingOperationalActions(props: Props) {
                 </AlertDialog>
               )}
 
-              {(confirmed || held) && props.canCancel && props.onCancel && (
+              {cancellable && props.canCancel && props.onCancel && (
                 <BookingCancelDialog
                   open={cancelOpen}
                   onOpenChange={setCancelOpen}

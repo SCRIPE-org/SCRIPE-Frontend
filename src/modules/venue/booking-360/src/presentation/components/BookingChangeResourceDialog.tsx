@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ArrowRight, AlertCircle, CheckCircle2, Layers } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
@@ -28,6 +28,15 @@ interface Props {
 }
 
 export function BookingChangeResourceDialog(props: Props) {
+  const {
+    currentEndUtc,
+    currentResourceId,
+    currentStartUtc,
+    facilityId,
+    quantity,
+    t,
+    timeZoneId,
+  } = props;
   const [searching, setSearching] = useState(false);
   const [candidates, setCandidates] = useState<AvailabilitySearchResult[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<AvailabilitySearchResult | null>(null);
@@ -47,8 +56,8 @@ export function BookingChangeResourceDialog(props: Props) {
     if (!open) resetState();
   };
 
-  const searchAlternativeResources = async () => {
-    if (!props.facilityId || !props.currentStartUtc || !props.currentEndUtc) return;
+  const searchAlternativeResources = useCallback(async () => {
+    if (!facilityId || !currentStartUtc || !currentEndUtc) return;
     setSearching(true);
     setError(null);
     setSelectedCandidate(null);
@@ -60,8 +69,8 @@ export function BookingChangeResourceDialog(props: Props) {
       ]);
       const profilesMap = new Map(profilePage.items.map((p) => [p.id, p]));
       const facilityResourceIds = resourcePage.items
-        .filter((r) => r.isPublished && !r.isComposite && r.id !== props.currentResourceId)
-        .filter((r) => profilesMap.get(r.facilityResourceProfileId)?.facilityId === props.facilityId)
+        .filter((r) => r.isPublished && !r.isComposite && r.id !== currentResourceId)
+        .filter((r) => profilesMap.get(r.facilityResourceProfileId)?.facilityId === facilityId)
         .map((r) => r.id);
 
       if (facilityResourceIds.length === 0) {
@@ -70,16 +79,16 @@ export function BookingChangeResourceDialog(props: Props) {
       }
 
       // Convert UTC interval to local strings for availability search API
-      const startLocal = localStringForUtc(props.currentStartUtc, props.timeZoneId);
-      const endLocal = localStringForUtc(props.currentEndUtc, props.timeZoneId);
+      const startLocal = localStringForUtc(currentStartUtc, timeZoneId);
+      const endLocal = localStringForUtc(currentEndUtc, timeZoneId);
 
       const searchPromises = facilityResourceIds.map((resId) =>
         availabilityRepository.search({
           resourceId: resId,
-          timeZoneId: props.timeZoneId,
+          timeZoneId,
           startLocal,
           endLocal,
-          quantity: props.quantity,
+          quantity,
         }).catch(() => null)
       );
 
@@ -87,17 +96,25 @@ export function BookingChangeResourceDialog(props: Props) {
       const available = searchResults.filter((c): c is AvailabilitySearchResult => c !== null && c.isAvailable);
       setCandidates(available);
     } catch {
-      setError(props.t("booking360.changeResource.conflict"));
+      setError(t("booking360.changeResource.conflict"));
     } finally {
       setSearching(false);
     }
-  };
+  }, [
+    currentEndUtc,
+    currentResourceId,
+    currentStartUtc,
+    facilityId,
+    quantity,
+    t,
+    timeZoneId,
+  ]);
 
   useEffect(() => {
     if (props.open && step === "search") {
       void searchAlternativeResources();
     }
-  }, [props.open]);
+  }, [props.open, searchAlternativeResources, step]);
 
   const handleSelectCandidate = (candidate: AvailabilitySearchResult) => {
     setSelectedCandidate(candidate);

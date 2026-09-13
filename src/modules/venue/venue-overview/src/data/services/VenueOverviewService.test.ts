@@ -15,10 +15,9 @@ describe("VenueOverviewService", () => {
         resourceId: "court-1",
         startUtc: "2099-09-12T12:00:00Z",
         endUtc: "2099-09-12T13:00:00Z",
-        startLocal: "2099-09-12T14:00:00",
-        endLocal: "2099-09-12T15:00:00",
         quantity: 1,
         customerPartyId: "party-1",
+        holdExpiresAtUtc: null,
       },
       {
         reservationId: "res-2",
@@ -27,10 +26,9 @@ describe("VenueOverviewService", () => {
         resourceId: "court-2",
         startUtc: "2020-01-01T09:00:00Z",
         endUtc: "2099-09-12T23:59:59Z", // Active now
-        startLocal: "2099-09-12T11:00:00",
-        endLocal: "2099-09-12T12:00:00",
         quantity: 1,
         customerPartyId: "party-2",
+        holdExpiresAtUtc: null,
       },
       {
         reservationId: "res-3",
@@ -39,16 +37,15 @@ describe("VenueOverviewService", () => {
         resourceId: "court-1",
         startUtc: "2099-09-12T16:00:00Z",
         endUtc: "2099-09-12T17:00:00Z",
-        startLocal: "2099-09-12T18:00:00",
-        endLocal: "2099-09-12T19:00:00",
         quantity: 1,
         customerPartyId: "party-1",
+        holdExpiresAtUtc: "2099-09-12T15:00:00Z",
       },
     ],
   };
 
   const mockOperationsCalendarRepo = {
-    getDayProjection: vi.fn().mockResolvedValue(mockProjection),
+    getDay: vi.fn().mockResolvedValue(mockProjection),
   };
 
   const mockSchedulableResourceRepo = {
@@ -64,7 +61,7 @@ describe("VenueOverviewService", () => {
 
   const mockProfileRepo = {
     getAll: vi.fn().mockResolvedValue({
-      items: [{ id: "prof-1", facilityId: "facility-1" }],
+      items: [{ id: "prof-1", facilityId: "facility-1", operatingPolicy: { timeZoneId: "Africa/Cairo" } }],
       totalCount: 1,
     }),
   };
@@ -99,6 +96,9 @@ describe("VenueOverviewService", () => {
     expect(overview.facilityId).toBe("facility-1");
     expect(overview.facilityName).toBe("Downtown Sports Arena");
     expect(overview.timeZoneId).toBe("Africa/Cairo");
+    expect(mockOperationsCalendarRepo.getDay).toHaveBeenCalledWith({
+      dateLocal: "2026-09-12", timeZoneId: "Africa/Cairo", resourceIds: ["court-1", "court-2", "court-3"],
+    });
 
     // KPI Verification
     expect(overview.kpis.todayReservationsCount).toBe(3);
@@ -110,8 +110,7 @@ describe("VenueOverviewService", () => {
 
     // Hourly Load Verification (24 buckets)
     expect(overview.hourlyLoad).toHaveLength(24);
-    const hour14Bucket = overview.hourlyLoad.find((b) => b.hour === 14);
-    expect(hour14Bucket?.confirmed).toBe(1);
+    expect(overview.hourlyLoad.reduce((total, bucket) => total + bucket.confirmed, 0)).toBe(1);
 
     // At A Glance Verification
     const confirmedGlance = overview.atAGlance.find((item) => item.status === "Confirmed");

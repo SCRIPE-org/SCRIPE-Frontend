@@ -63,7 +63,7 @@ describe("useBooking360ViewModel", () => {
     expect(result.current.state.facility?.name).toBe("Downtown");
     expect(result.current.state.profile).toEqual({ name: "Indoor Court", timeZoneId: "Africa/Cairo" });
     expect(result.current.state.resource).toEqual({ name: "Court 1" });
-    expect(result.current.state.facility).toEqual({ name: "Downtown" });
+    expect(result.current.state.facility).toEqual({ id: "facility-1", name: "Downtown" });
     expect(value.customerRepository.getById).toHaveBeenCalledWith("party-1");
     expect(value.schedulableResourceRepository.getById).toHaveBeenCalledWith("resource-1");
     expect(value.facilityResourceProfileRepository.getById).toHaveBeenCalledOnce();

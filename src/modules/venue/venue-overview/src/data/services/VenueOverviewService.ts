@@ -17,6 +17,22 @@ export interface ICustomerPartyRepository {
   getById(id: string): Promise<{ id: string; displayName: string } | null>;
 }
 
+function toLocalDateTime(utc: string, timeZoneId: string): string {
+  const values = new Intl.DateTimeFormat("en-CA", {
+    timeZone: timeZoneId,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(new Date(utc));
+  const part = (type: Intl.DateTimeFormatPartTypes) =>
+    values.find((value) => value.type === type)?.value ?? "00";
+  return `${part("year")}-${part("month")}-${part("day")}T${part("hour")}:${part("minute")}:${part("second")}`;
+}
+
 export class VenueOverviewService implements IVenueOverviewService {
   constructor(
     private readonly operationsCalendarRepo: IOperationsCalendarRepository,
@@ -57,23 +73,38 @@ export class VenueOverviewService implements IVenueOverviewService {
     const nowUtc = new Date();
     const currentUtcIso = nowUtc.toISOString();
 
-    // 2. Fetch authoritative Day Projection & Resources in parallel
-    const [projectionResult, resourcePageResult, profilePageResult] = await Promise.allSettled([
-      this.operationsCalendarRepo.getDayProjection(facilityId, localDate),
+    // 2. Resolve facility resources and timezone before requesting the authoritative projection.
+    // The calendar contract deliberately requires both; a facility-level wildcard would leak
+    // occupancy outside the resources the overview is allowed to compose.
+    const [resourcePageResult, profilePageResult] = await Promise.allSettled([
       this.schedulableResourceRepo.getAll({ page: 1, pageSize: 100 }),
       this.profileRepo.getAll({ page: 1, pageSize: 100 }),
     ]);
-
-    if (projectionResult.status === "rejected") {
-      throw new Error("Failed to load operations calendar day projection for venue overview.");
-    }
-
-    const projection = projectionResult.value;
     const resources = resourcePageResult.status === "fulfilled" ? resourcePageResult.value.items : [];
     const profiles = profilePageResult.status === "fulfilled" ? profilePageResult.value.items : [];
 
+    const facilityProfileIds = new Set(
+      profiles.filter((profile) => profile.facilityId === facilityId).map((profile) => profile.id)
+    );
+    const facilityResources = resources.filter(
+      (resource) => resource.isPublished && !resource.isComposite &&
+        facilityProfileIds.has(resource.facilityResourceProfileId)
+    );
+    const timeZoneId = profiles.find((profile) => profile.facilityId === facilityId)
+      ?.operatingPolicy?.timeZoneId ?? "UTC";
+
+    let projection;
+    try {
+      projection = await this.operationsCalendarRepo.getDay({
+        dateLocal: localDate,
+        timeZoneId,
+        resourceIds: facilityResources.map((resource) => resource.id),
+      });
+    } catch {
+      throw new Error("Failed to load operations calendar day projection for venue overview.");
+    }
+
     const blocks = projection.blocks ?? [];
-    const timeZoneId = projection.timeZoneId || "UTC";
 
     // Build resource ID to name lookup
     const resourceMap = new Map(resources.map((r) => [r.id, r.name]));
@@ -111,7 +142,7 @@ export class VenueOverviewService implements IVenueOverviewService {
     // Expiry subtext if available in projection blocks
     if (heldBlocks.length > 0) {
       const expiries = heldBlocks
-        .map((b) => (b as unknown as { activeHold?: { expiresAtUtc?: string } }).activeHold?.expiresAtUtc)
+        .map((block) => block.holdExpiresAtUtc)
         .filter((exp): exp is string => Boolean(exp))
         .sort();
       if (expiries.length > 0) nearestHoldExpiryUtc = expiries[0]!;
@@ -151,8 +182,7 @@ export class VenueOverviewService implements IVenueOverviewService {
     }));
 
     for (const b of blocks) {
-      // Parse local hour from b.startLocal (format "YYYY-MM-DDTHH:mm:ss")
-      const localTimePart = b.startLocal.split("T")[1];
+      const localTimePart = toLocalDateTime(b.startUtc, timeZoneId).split("T")[1];
       const startHour = localTimePart ? parseInt(localTimePart.split(":")[0] ?? "0", 10) : 0;
       const validHour = isNaN(startHour) ? 0 : Math.min(Math.max(startHour, 0), 23);
       const bucket = hourlyBuckets[validHour]!;
@@ -211,19 +241,12 @@ export class VenueOverviewService implements IVenueOverviewService {
         status: b.status as Booking360Status,
         startUtc: b.startUtc,
         endUtc: b.endUtc,
-        startLocal: b.startLocal,
-        endLocal: b.endLocal,
+        startLocal: toLocalDateTime(b.startUtc, timeZoneId),
+        endLocal: toLocalDateTime(b.endUtc, timeZoneId),
       };
     });
 
-    // 11. Derive Operational List: Resource Activity
-    // Filter profiles for current facility
-    const facilityProfileIds = new Set(
-      profiles.filter((p) => p.facilityId === facilityId).map((p) => p.id)
-    );
-    const facilityResources = resources.filter(
-      (r) => r.isPublished && !r.isComposite && facilityProfileIds.has(r.facilityResourceProfileId)
-    );
+    // 11. Derive Operational List: Resource Activity.
 
     const resourceActivity: VenueOverviewResourceActivityItem[] = facilityResources.map((res) => {
       const resBlocks = blocks.filter((b) => b.resourceId === res.id);

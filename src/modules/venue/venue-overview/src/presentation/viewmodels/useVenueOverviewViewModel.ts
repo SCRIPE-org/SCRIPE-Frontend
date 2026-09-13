@@ -71,7 +71,7 @@ export function useVenueOverviewViewModel(
       } catch {
         // Dropdown facilities read error fallback
       }
-    } catch (err) {
+    } catch {
       setState((curr) => ({
         ...curr,
         stage: "failed",
@@ -82,7 +82,7 @@ export function useVenueOverviewViewModel(
 
   useEffect(() => {
     void load(initialFacilityId, initialLocalDate);
-  }, [initialFacilityId, initialLocalDate]);
+  }, [initialFacilityId, initialLocalDate, load]);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);

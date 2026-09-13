@@ -26,7 +26,7 @@ function vm(patch: Record<string, unknown> = {}) {
       stage: "ready", reservation, customer: { id: "party-1", type: "Person", displayName: "Mona Hassan" },
       resource: { id: "resource-1", name: "Court 1", facilityResourceProfileId: "profile-1" },
       profile: { name: "Indoor Court", timeZoneId: "Africa/Cairo" },
-      facility: { name: "Downtown" }, enrichmentLoading: false, customerError: false,
+      facility: { id: "facility-1", name: "Downtown" }, enrichmentLoading: false, customerError: false,
       resourceError: false, facilityError: false, activeAction: null, actionError: null,
       operationalFeedback: null, ...patch,
     },

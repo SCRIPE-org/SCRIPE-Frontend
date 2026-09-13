@@ -138,6 +138,14 @@ describe("BookingOperationalActions", () => {
     expect(props.onCancel).toHaveBeenCalledWith("Customer cancelled booking");
   });
 
+  it.each(["Draft", "Requested", "Held", "PendingApproval"] as const)(
+    "exposes the ordinary T13 cancellation action for %s",
+    (status) => {
+      renderActions({ status });
+      expect(screen.getByRole("button", { name: "booking360.actions.cancel" })).toBeEnabled();
+    }
+  );
+
   it("opens reschedule dialog when reschedule action is clicked", () => {
     renderActions({ status: "Confirmed", canReschedule: true });
     const trigger = screen.getByRole("button", { name: "booking360.actions.reschedule" });

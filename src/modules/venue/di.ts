@@ -89,6 +89,10 @@ interface VenueContainer {
   /** Site picker for the Venue Profile "Site" field — OrganizationCore is a different backend module. */
   sitePickerService: ISitePickerService;
   /** Lightweight picker retained for the Resource Builder form. */
+  facilityResourceProfilePickerService: IFacilityResourceProfilePickerService;
+}
+
+/**
  * getModuleApiService() returns the SHARED base instance whenever no
  * dedicated module env var is configured (today's monolith deployment), so
  * this is a harmless no-op re-wiring of the same object in that case. It

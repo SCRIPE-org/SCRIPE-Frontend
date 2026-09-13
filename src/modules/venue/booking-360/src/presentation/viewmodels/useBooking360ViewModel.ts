@@ -111,7 +111,7 @@ export function useBooking360ViewModel(
       if (facilityId && canViewFacility) {
         try {
           const source = await facilityRepository.getById(facilityId);
-          facility = { name: source.name };
+          facility = { id: facilityId, name: source.name };
         } catch {
           facilityError = true;
         }
@@ -169,7 +169,7 @@ export function useBooking360ViewModel(
       submitting.current = false;
       setState((current) => ({ ...current, activeAction: null }));
     }
-  }, [bookingRepository, load, state.reservation]);
+  }, [bookingRepository, load, state.reservation, state.stage]);
 
 interface TransitionOptions {
   reason?: string;
@@ -188,7 +188,9 @@ interface TransitionOptions {
       ? reservation.status === "CheckedIn"
       : action === "checkIn" || action === "noShow" || action === "reschedule" || action === "changeResource"
       ? reservation.status === "Confirmed"
-      : reservation.status === "Held" || reservation.status === "Confirmed";
+      : action === "cancel"
+      ? ["Draft", "Requested", "Held", "PendingApproval", "Confirmed"].includes(reservation.status)
+      : false;
     if (!isEligible) return;
 
     const normalizedReason = options?.reason?.trim() ?? "";

@@ -35,7 +35,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
   if (state.stage === "loading" && !state.facilityName) {
     return (
       <div className="flex h-96 items-center justify-center p-8">
-        <LoadingSpinner size="lg" label={t("venueOverview.header.refreshing")} />
+        <LoadingSpinner size="lg" />
       </div>
     );
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Plus, Calendar, ArrowRight } from "lucide-react";
+import { Plus, Calendar } from "lucide-react";
 import { Button } from "@core/ui/button";
 
 interface Props {

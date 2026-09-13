@@ -23,24 +23,25 @@ function secondsBetween(expiresAtUtc: string, now: number): number {
 }
 
 export function BookingHoldState(props: Props) {
+  const { asOfUtc, expiresAtUtc, onExpired } = props;
   const [remaining, setRemaining] = useState(() => secondsBetween(props.expiresAtUtc, Date.parse(props.asOfUtc)));
   useEffect(() => {
     let reported = false;
-    const serverAnchor = Date.parse(props.asOfUtc);
+    const serverAnchor = Date.parse(asOfUtc);
     const clientAnchor = Date.now();
     const update = () => {
       const elapsed = Math.max(0, Date.now() - clientAnchor);
-      const value = secondsBetween(props.expiresAtUtc, serverAnchor + elapsed);
+      const value = secondsBetween(expiresAtUtc, serverAnchor + elapsed);
       setRemaining(value);
       if (value === 0 && !reported) {
         reported = true;
-        props.onExpired();
+        onExpired();
       }
     };
     update();
     const timer = window.setInterval(update, 1000);
     return () => window.clearInterval(timer);
-  }, [props.asOfUtc, props.expiresAtUtc, props.onExpired]);
+  }, [asOfUtc, expiresAtUtc, onExpired]);
   const expiry = new Intl.DateTimeFormat(props.locale, {
     dateStyle: "medium", timeStyle: "short", timeZone: props.timeZoneId,
   }).format(new Date(props.expiresAtUtc));
