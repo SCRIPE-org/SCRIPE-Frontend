@@ -33,6 +33,10 @@ function toLocalDateTime(utc: string, timeZoneId: string): string {
   return `${part("year")}-${part("month")}-${part("day")}T${part("hour")}:${part("minute")}:${part("second")}`;
 }
 
+// Mirrors the server-enforced Operations Calendar request bound. The overview must
+// never send an invalid request or derive tenant/facility KPIs from a silent subset.
+const MAX_OVERVIEW_RESOURCES = 50;
+
 export class VenueOverviewService implements IVenueOverviewService {
   constructor(
     private readonly operationsCalendarRepo: IOperationsCalendarRepository,
@@ -116,6 +120,32 @@ export class VenueOverviewService implements IVenueOverviewService {
     );
     const timeZoneId = profiles.find((profile) => profile.facilityId === facilityId)
       ?.operatingPolicy?.timeZoneId ?? "UTC";
+
+    if (facilityResources.length > MAX_OVERVIEW_RESOURCES) {
+      return {
+        stage: "limited",
+        facilityId,
+        facilityName,
+        timeZoneId,
+        asOfUtc: currentUtcIso,
+        localDate,
+        kpis: {
+          todayReservationsCount: 0,
+          todayReservationsConfirmedCount: 0,
+          todayReservationsCheckedInCount: 0,
+          activeHoldsCount: 0,
+          nearestHoldExpiryUtc: null,
+          checkedInNowCount: 0,
+          activeResourcesCount: 0,
+        },
+        hourlyLoad: [],
+        atAGlance: [],
+        upNext: [],
+        resourceActivity: [],
+        recentActivityDeferred: true,
+        error: false,
+      };
+    }
 
     let projection;
     try {

@@ -77,6 +77,20 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
     );
   }
 
+  if (state.stage === "limited") {
+    return (
+      <div className="p-6 max-w-lg mx-auto my-12" dir={dir} data-testid="venue-overview-limited">
+        <Alert>
+          <AlertCircle className="size-4" aria-hidden="true" />
+          <AlertTitle className="font-bold">{t("venueOverview.errors.resourceLimitTitle")}</AlertTitle>
+          <AlertDescription className="mt-2">
+            {t("venueOverview.errors.resourceLimitDescription")}
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
+
   return (
     <div
       className="p-4 sm:p-6 max-w-[1600px] mx-auto space-y-6 text-nx-ink"

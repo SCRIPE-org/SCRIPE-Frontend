@@ -79,6 +79,8 @@ export const en = {
     errors: {
       loadFailed: "Operational data unavailable for Venue Overview.",
       retry: "Retry loading overview",
+      resourceLimitTitle: "This facility exceeds the overview resource limit",
+      resourceLimitDescription: "The overview is unavailable until a bounded facility projection is configured. No partial booking data is shown.",
     },
   },
 };

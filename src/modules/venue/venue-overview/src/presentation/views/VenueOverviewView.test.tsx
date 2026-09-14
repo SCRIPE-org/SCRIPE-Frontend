@@ -138,7 +138,7 @@ describe("VenueOverviewView", () => {
   });
 
   it("renders an explicit empty state instead of a fictional facility", async () => {
-    mockVenueOverviewService.getOverview.mockResolvedValueOnce({
+    mockVenueOverviewService.getOverview.mockResolvedValue({
       ...mockOverviewState,
       stage: "empty",
       facilityId: "",
@@ -152,5 +152,20 @@ describe("VenueOverviewView", () => {
     });
     expect(screen.getByText("venueOverview.empty.noFacilityTitle")).toBeInTheDocument();
     expect(screen.queryByText("Main Facility")).not.toBeInTheDocument();
+  });
+
+  it("renders a transparent bounded-overview message instead of partial operational data", async () => {
+    mockVenueOverviewService.getOverview.mockResolvedValueOnce({
+      ...mockOverviewState,
+      stage: "limited",
+      error: false,
+    });
+
+    render(<VenueOverviewView />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("venue-overview-limited")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("venue-overview-view")).not.toBeInTheDocument();
   });
 });

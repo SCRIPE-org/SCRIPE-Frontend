@@ -177,4 +177,31 @@ describe("VenueOverviewService", () => {
     expect(overview.facilityName).toBe("");
     expect(mockOperationsCalendarRepo.getDay).not.toHaveBeenCalled();
   });
+
+  it("refuses to derive a partial overview when the facility exceeds the calendar resource bound", async () => {
+    mockOperationsCalendarRepo.getDay.mockClear();
+    const resources = Array.from({ length: 51 }, (_, index) => ({
+      id: `court-${index + 1}`,
+      name: `Court ${index + 1}`,
+      facilityResourceProfileId: "prof-1",
+      isPublished: true,
+      isComposite: false,
+    }));
+    const resourceRepo = {
+      getAll: vi.fn().mockResolvedValue({ items: resources, totalCount: resources.length }),
+    };
+    const service = new VenueOverviewService(
+      mockOperationsCalendarRepo as never,
+      resourceRepo as never,
+      mockProfileRepo as never,
+      mockFacilityRepo as never,
+      mockCustomerRepo as never
+    );
+
+    const overview = await service.getOverview("facility-1", "2026-09-12");
+
+    expect(overview.stage).toBe("limited");
+    expect(overview.facilityId).toBe("facility-1");
+    expect(mockOperationsCalendarRepo.getDay).not.toHaveBeenCalled();
+  });
 });
