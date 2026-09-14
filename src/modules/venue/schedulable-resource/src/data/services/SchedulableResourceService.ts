@@ -15,11 +15,12 @@ import { SCHEDULABLE_RESOURCE_ENDPOINTS } from "./schedulable-resource.endpoints
 export class SchedulableResourceService implements ISchedulableResourceService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<SchedulableResourceListResult> {
+  async getAll(params: { page: number; pageSize: number; search?: string; facilityResourceProfileIds?: string[] }): Promise<SchedulableResourceListResult> {
     const url = buildUrl(SCHEDULABLE_RESOURCE_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
       search: params.search,
+      facilityResourceProfileIds: params.facilityResourceProfileIds?.join(","),
     });
     const response = await this.api.get<SchedulableResourceListResponseJson>(url);
     return {

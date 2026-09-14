@@ -4,6 +4,8 @@ export interface SchedulableResourceListParams {
   page: number;
   pageSize: number;
   search?: string;
+  /** FacilityOperations-owned profile IDs, used only as neutral cross-module references. */
+  facilityResourceProfileIds?: string[];
 }
 
 export interface ISchedulableResourceRepository {

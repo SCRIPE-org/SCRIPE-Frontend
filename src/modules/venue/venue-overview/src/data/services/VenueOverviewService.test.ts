@@ -71,6 +71,7 @@ describe("VenueOverviewService", () => {
       items: [{ id: "facility-1", name: "Downtown Sports Arena" }],
       totalCount: 1,
     }),
+    getById: vi.fn().mockResolvedValue({ id: "facility-1", name: "Downtown Sports Arena" }),
   };
 
   const mockCustomerRepo = {
@@ -178,7 +179,40 @@ describe("VenueOverviewService", () => {
     expect(mockOperationsCalendarRepo.getDay).not.toHaveBeenCalled();
   });
 
-  it("refuses to derive a partial overview when the facility exceeds the calendar resource bound", async () => {
+  it("keeps a caller-selected facility instead of silently replacing it with the first list page", async () => {
+    const selectedFacilityRepo = {
+      getAll: vi.fn().mockResolvedValue({
+        items: [{ id: "facility-1", name: "First Facility" }], totalCount: 2,
+      }),
+      getById: vi.fn().mockResolvedValue({ id: "facility-2", name: "Selected Facility" }),
+    };
+    const selectedProfiles = {
+      getAll: vi.fn().mockResolvedValue({
+        items: [{ id: "profile-2", facilityId: "facility-2", operatingPolicy: { timeZoneId: "UTC" } }], totalCount: 1,
+      }),
+    };
+    const selectedResources = {
+      getAll: vi.fn().mockResolvedValue({
+        items: [{ id: "court-2", name: "Selected Court", facilityResourceProfileId: "profile-2", isPublished: true, isComposite: false }],
+        totalCount: 1,
+      }),
+    };
+    const service = new VenueOverviewService(
+      mockOperationsCalendarRepo as never,
+      selectedResources as never,
+      selectedProfiles as never,
+      selectedFacilityRepo as never,
+      mockCustomerRepo as never
+    );
+
+    const overview = await service.getOverview("facility-2", "2026-09-12");
+
+    expect(overview.facilityId).toBe("facility-2");
+    expect(overview.facilityName).toBe("Selected Facility");
+    expect(selectedFacilityRepo.getById).toHaveBeenCalledWith("facility-2");
+  });
+
+  it("batches a large facility through the bounded calendar contract without losing resources", async () => {
     mockOperationsCalendarRepo.getDay.mockClear();
     const resources = Array.from({ length: 51 }, (_, index) => ({
       id: `court-${index + 1}`,
@@ -200,8 +234,32 @@ describe("VenueOverviewService", () => {
 
     const overview = await service.getOverview("facility-1", "2026-09-12");
 
-    expect(overview.stage).toBe("limited");
+    expect(overview.stage).toBe("ready");
     expect(overview.facilityId).toBe("facility-1");
-    expect(mockOperationsCalendarRepo.getDay).not.toHaveBeenCalled();
+    expect(mockOperationsCalendarRepo.getDay).toHaveBeenCalledTimes(2);
+    expect(mockOperationsCalendarRepo.getDay).toHaveBeenNthCalledWith(1, {
+      dateLocal: "2026-09-12", timeZoneId: "Africa/Cairo", resourceIds: resources.slice(0, 50).map((resource) => resource.id),
+    });
+    expect(mockOperationsCalendarRepo.getDay).toHaveBeenNthCalledWith(2, {
+      dateLocal: "2026-09-12", timeZoneId: "Africa/Cairo", resourceIds: resources.slice(50).map((resource) => resource.id),
+    });
+  });
+
+  it("refuses to derive partial KPIs when a bounded calendar batch is truncated", async () => {
+    const truncatedCalendarRepo = {
+      getDay: vi.fn().mockResolvedValue({ ...mockProjection, isTruncated: true }),
+    };
+    const service = new VenueOverviewService(
+      truncatedCalendarRepo as never,
+      mockSchedulableResourceRepo as never,
+      mockProfileRepo as never,
+      mockFacilityRepo as never,
+      mockCustomerRepo as never
+    );
+
+    const overview = await service.getOverview("facility-1", "2026-09-12");
+
+    expect(overview.stage).toBe("limited");
+    expect(overview.kpis.todayReservationsCount).toBe(0);
   });
 });

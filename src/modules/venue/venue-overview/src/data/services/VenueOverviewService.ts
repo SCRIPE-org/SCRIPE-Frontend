@@ -33,9 +33,17 @@ function toLocalDateTime(utc: string, timeZoneId: string): string {
   return `${part("year")}-${part("month")}-${part("day")}T${part("hour")}:${part("minute")}:${part("second")}`;
 }
 
-// Mirrors the server-enforced Operations Calendar request bound. The overview must
-// never send an invalid request or derive tenant/facility KPIs from a silent subset.
+// Mirrors the server-enforced Operations Calendar request bound. Larger facilities
+// are fetched in complete batches; each request remains independently valid.
 const MAX_OVERVIEW_RESOURCES = 50;
+const MAX_PROFILE_FILTERS = 100;
+const PAGE_SIZE = 100;
+
+function chunks<T>(items: readonly T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let offset = 0; offset < items.length; offset += size) result.push(items.slice(offset, offset + size));
+  return result;
+}
 
 export class VenueOverviewService implements IVenueOverviewService {
   constructor(
@@ -53,20 +61,25 @@ export class VenueOverviewService implements IVenueOverviewService {
     // 1. Resolve facility context
     let facilityId = facilityIdInput;
     let facilityName = "";
-    try {
-      const facilityPage = await this.facilityRepo.getAll({ page: 1, pageSize: 50 });
-      if (facilityPage.items.length > 0) {
-        const found = facilityId ? facilityPage.items.find((f) => f.id === facilityId) : facilityPage.items[0];
-        if (found) {
-          facilityId = found.id;
-          facilityName = found.name;
-        } else {
+    if (facilityIdInput) {
+      try {
+        const facility = await this.facilityRepo.getById(facilityIdInput);
+        facilityId = facility.id;
+        facilityName = facility.name;
+      } catch {
+        // A caller-selected facility must never be silently replaced by another facility.
+        throw new Error("Failed to resolve the selected facility for venue overview.");
+      }
+    } else {
+      try {
+        const facilityPage = await this.facilityRepo.getAll({ page: 1, pageSize: 50 });
+        if (facilityPage.items.length > 0) {
           facilityId = facilityPage.items[0]!.id;
           facilityName = facilityPage.items[0]!.name;
         }
+      } catch {
+        // The no-selection path has no authoritative facility context to project.
       }
-    } catch {
-      // Fallback if facility list fails
     }
 
     const localDate = targetLocalDateInput || new Date().toISOString().slice(0, 10);
@@ -104,24 +117,62 @@ export class VenueOverviewService implements IVenueOverviewService {
     // 2. Resolve facility resources and timezone before requesting the authoritative projection.
     // The calendar contract deliberately requires both; a facility-level wildcard would leak
     // occupancy outside the resources the overview is allowed to compose.
-    const [resourcePageResult, profilePageResult] = await Promise.allSettled([
-      this.schedulableResourceRepo.getAll({ page: 1, pageSize: 100 }),
-      this.profileRepo.getAll({ page: 1, pageSize: 100 }),
-    ]);
-    const resources = resourcePageResult.status === "fulfilled" ? resourcePageResult.value.items : [];
-    const profiles = profilePageResult.status === "fulfilled" ? profilePageResult.value.items : [];
+    const firstProfilePage = await this.profileRepo.getAll({
+      page: 1,
+      pageSize: PAGE_SIZE,
+      facilityId,
+    });
+    const profiles = [...firstProfilePage.items];
+    for (let page = 2; profiles.length < firstProfilePage.totalCount; page += 1) {
+      const nextPage = await this.profileRepo.getAll({ page, pageSize: PAGE_SIZE, facilityId });
+      profiles.push(...nextPage.items);
+      if (nextPage.items.length === 0) break;
+    }
 
-    const facilityProfileIds = new Set(
-      profiles.filter((profile) => profile.facilityId === facilityId).map((profile) => profile.id)
+    const facilityProfileIds = profiles.map((profile) => profile.id);
+    const resourcePages = await Promise.all(
+      chunks(facilityProfileIds, MAX_PROFILE_FILTERS).map(async (profileIds) => {
+        const firstPage = await this.schedulableResourceRepo.getAll({
+          page: 1,
+          pageSize: PAGE_SIZE,
+          facilityResourceProfileIds: profileIds,
+        });
+        const pages = [...firstPage.items];
+        for (let page = 2; pages.length < firstPage.totalCount; page += 1) {
+          const nextPage = await this.schedulableResourceRepo.getAll({
+            page,
+            pageSize: PAGE_SIZE,
+            facilityResourceProfileIds: profileIds,
+          });
+          pages.push(...nextPage.items);
+          if (nextPage.items.length === 0) break;
+        }
+        return pages;
+      })
     );
-    const facilityResources = resources.filter(
-      (resource) => resource.isPublished && !resource.isComposite &&
-        facilityProfileIds.has(resource.facilityResourceProfileId)
-    );
-    const timeZoneId = profiles.find((profile) => profile.facilityId === facilityId)
+    const resources = resourcePages.flat();
+    const facilityResources = resources.filter((resource) => resource.isPublished && !resource.isComposite);
+    const timeZoneId = profiles[0]
       ?.operatingPolicy?.timeZoneId ?? "UTC";
 
-    if (facilityResources.length > MAX_OVERVIEW_RESOURCES) {
+    let projections;
+    try {
+      projections = await Promise.all(
+        chunks(facilityResources, MAX_OVERVIEW_RESOURCES).map((resourceBatch) =>
+          this.operationsCalendarRepo.getDay({
+            dateLocal: localDate,
+            timeZoneId,
+            resourceIds: resourceBatch.map((resource) => resource.id),
+          })
+        )
+      );
+    } catch {
+      throw new Error("Failed to load operations calendar day projection for venue overview.");
+    }
+
+    // The calendar explicitly tells us when it cannot return a complete batch. Never
+    // compose partial KPIs from that response; the UI must state the limit honestly.
+    if (projections.some((projection) => projection.isTruncated)) {
       return {
         stage: "limited",
         facilityId,
@@ -129,36 +180,12 @@ export class VenueOverviewService implements IVenueOverviewService {
         timeZoneId,
         asOfUtc: currentUtcIso,
         localDate,
-        kpis: {
-          todayReservationsCount: 0,
-          todayReservationsConfirmedCount: 0,
-          todayReservationsCheckedInCount: 0,
-          activeHoldsCount: 0,
-          nearestHoldExpiryUtc: null,
-          checkedInNowCount: 0,
-          activeResourcesCount: 0,
-        },
-        hourlyLoad: [],
-        atAGlance: [],
-        upNext: [],
-        resourceActivity: [],
-        recentActivityDeferred: true,
-        error: false,
+        kpis: { todayReservationsCount: 0, todayReservationsConfirmedCount: 0, todayReservationsCheckedInCount: 0, activeHoldsCount: 0, nearestHoldExpiryUtc: null, checkedInNowCount: 0, activeResourcesCount: 0 },
+        hourlyLoad: [], atAGlance: [], upNext: [], resourceActivity: [], recentActivityDeferred: true, error: false,
       };
     }
 
-    let projection;
-    try {
-      projection = await this.operationsCalendarRepo.getDay({
-        dateLocal: localDate,
-        timeZoneId,
-        resourceIds: facilityResources.map((resource) => resource.id),
-      });
-    } catch {
-      throw new Error("Failed to load operations calendar day projection for venue overview.");
-    }
-
-    const blocks = projection.blocks ?? [];
+    const blocks = projections.flatMap((projection) => projection.blocks ?? []);
 
     // Build resource ID to name lookup
     const resourceMap = new Map(resources.map((r) => [r.id, r.name]));
@@ -356,7 +383,7 @@ export class VenueOverviewService implements IVenueOverviewService {
       facilityId,
       facilityName,
       timeZoneId,
-      asOfUtc: projection.asOfUtc || currentUtcIso,
+      asOfUtc: projections[0]?.asOfUtc || currentUtcIso,
       localDate,
       kpis,
       hourlyLoad: hourlyBuckets,
