@@ -2,9 +2,8 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Sliders } from "lucide-react";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import { DEFINITION_ENTITY_TYPE_KEY } from "../viewmodels/useDefinitionsViewModel";
 
 interface DefinitionFormCustomFieldsSectionProps {
@@ -15,34 +14,9 @@ interface DefinitionFormCustomFieldsSectionProps {
   refetchCustomFields: () => Promise<void>;
 }
 
-/** Mirrors WebhookFormCustomFieldsSection.tsx's own private add-trigger wrapper. */
-function DefinitionCustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={DEFINITION_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
-}
-
 /**
  * Presentation UI component rendering the plugin definition form's custom
- * fields section. Mirrors WebhookFormCustomFieldsSection.tsx's shape exactly
- * -- same per-type rendering (switch/select/date/text/number), same empty
- * state, same inline add-trigger -- adapted to props instead of a single
- * `vm` object since DefinitionFormDialog is a controlled/dumb component with
- * no paired per-dialog viewmodel (useDefinitionsViewModel owns the mutations
- * and is shared with the list view).
+ * fields section using the shared CustomFieldsSection component.
  */
 export function DefinitionFormCustomFieldsSection({
   customFieldConfigs,
@@ -67,22 +41,16 @@ export function DefinitionFormCustomFieldsSection({
         </div>
       </div>
 
-      {customFieldConfigs.map((fc) => {
-        const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-        return renderCustomFieldControl({
-          fc,
-          value,
-          onChange: (v) => updateCustomFieldValue(fc.name, v),
-        });
-      })}
-
-      {customFieldConfigs.length === 0 && !customFieldsLoading && (
-        <p className="text-sm text-nx-ink-2">{t("plugins.defNoCustomFields")}</p>
-      )}
-
-      <DefinitionCustomFieldsAddTrigger
+      <CustomFieldsSection
+        configs={customFieldConfigs}
+        values={customFieldValues}
+        onChange={updateCustomFieldValue}
+        isLoading={customFieldsLoading}
+        emptyMessage={t("plugins.defNoCustomFields")}
+        entityTypeKey={DEFINITION_ENTITY_TYPE_KEY}
         entityDisplayName={t("plugins.defTitle")}
-        onCreated={() => void refetchCustomFields()}
+        onFieldCreated={() => void refetchCustomFields()}
+        className="space-y-5"
       />
     </section>
   );

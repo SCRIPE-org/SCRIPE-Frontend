@@ -47,7 +47,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 import { usePermission } from "@core/hooks/use-permission";
 import { usePermissions } from "@core/hooks/use-permissions";
-import { useRestrictedFields } from "@core/hooks/use-restricted-fields";
+import { useIsFieldRestricted } from "@core/hooks/use-restricted-fields";
 import type { PermissionCode } from "@core/common/types/permissions";
 import {
   useCustomFieldsFormFields,
@@ -541,8 +541,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     .filter((id: unknown): id is string => typeof id === "string" && id.length > 0);
   const customFieldColumns = useCustomFieldColumns(config?.entityTypeKey, customFieldColumnOwnerIds);
 
-  // === Layer 1: Explicit restricted fields from /me response ===
-  const restrictedFields = useRestrictedFields(config?.resource);
+  // Field-level security, keyed on the screen's OWN resource — the same resource
+  // that guards the record itself, never Custom Fields' admin resource. Getting
+  // that wrong is not a smaller filter, it is no filter: it was the exact defect
+  // that let custom-field values bypass FLS on the server until Tier 1 fixed it.
+  const isFieldRestricted = useIsFieldRestricted(config?.resource);
 
   // Only real field-level security hides a column now.
   //
@@ -556,17 +559,25 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // paginated; and it had already forced a compatibility shim into the domain
   // model to work around itself.
   //
-  // Custom-field columns are appended AFTER the screen's own (already
-  // FLS-filtered) columns — additive extra data, never primary — and are
-  // never themselves subject to the FLS filter above, which is keyed on the
-  // screen's own static field names and has no relationship to a dynamic
-  // custom field's synthetic key.
+  // CUSTOM-FIELD COLUMNS ARE FILTERED TOO, on the same restricted set. They used
+  // to be exempt, and the comment here justified it on the grounds that a custom
+  // field's key "has no relationship to" the screen's static field names. That was
+  // wrong on the only point that mattered: `buildCustomFieldColumn` sets
+  // `key: definition.key` — the field's real machine key — which is precisely the
+  // string an admin types into the restricted-field list and precisely what the
+  // server now matches on. So the same filter applies, with no translation needed.
+  //
+  // This is defence in depth, not the control. After Tier 1 the server omits a
+  // restricted custom field from the bulk response entirely, so its column would
+  // usually not be built in the first place. Filtering here means the UI cannot
+  // render a header for a field it will never receive a value for — including
+  // against a stale cache or an older server.
   const columns = useMemo(
     () => [
-      ...allColumns.filter((col) => !restrictedFields.includes(col.key)),
-      ...customFieldColumns.columns,
+      ...allColumns.filter((col) => !isFieldRestricted(col.key)),
+      ...customFieldColumns.columns.filter((col) => !isFieldRestricted(col.key)),
     ],
-    [allColumns, restrictedFields, customFieldColumns.columns]
+    [allColumns, isFieldRestricted, customFieldColumns.columns]
   );
 
   // Wrap actions to use the generic individual action handler
@@ -598,8 +609,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   );
 
   const createFieldsWithCustom = useMemo(
-    () => [...(createFields ?? []), ...customFieldsForCreate.fieldConfigs],
-    [createFields, customFieldsForCreate.fieldConfigs]
+    () =>
+      [...(createFields ?? []), ...customFieldsForCreate.fieldConfigs].filter(
+        (field) => !isFieldRestricted(field.name)
+      ),
+    [createFields, customFieldsForCreate.fieldConfigs, isFieldRestricted]
   );
 
   /**
@@ -651,15 +665,21 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     [resolveEditFields, viewModel.editingItem]
   );
   const editFieldsWithCustom = useMemo(
-    () => [...editFieldsOwn, ...customFieldsForEdit.fieldConfigs],
-    [editFieldsOwn, customFieldsForEdit.fieldConfigs]
+    () =>
+      [...editFieldsOwn, ...customFieldsForEdit.fieldConfigs].filter(
+        (field) => !isFieldRestricted(field.name)
+      ),
+    [editFieldsOwn, customFieldsForEdit.fieldConfigs, isFieldRestricted]
   );
   // Same entity-owned field set as Edit (editFieldsOwn) — View has never had
   // its own field-shape resolution, only the custom-field portion needs the
   // view-item-keyed source.
   const viewFieldsWithCustom = useMemo(
-    () => [...editFieldsOwn, ...customFieldsForView.fieldConfigs],
-    [editFieldsOwn, customFieldsForView.fieldConfigs]
+    () =>
+      [...editFieldsOwn, ...customFieldsForView.fieldConfigs].filter(
+        (field) => !isFieldRestricted(field.name)
+      ),
+    [editFieldsOwn, customFieldsForView.fieldConfigs, isFieldRestricted]
   );
 
   // NOTE (not fixed here): this key embeds `editingItem?.id`, and
@@ -1104,6 +1124,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           initialValues={config?.createInitialValues || {}}
           onSubmit={async (data) => {
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
+            // Sanitize: never submit restricted fields to the server
+            for (const key of Object.keys(entityData)) {
+              if (isFieldRestricted(key)) {
+                delete entityData[key];
+              }
+            }
             const created = await viewModel.createItem(entityData);
             const newId = (created as { id?: string } | undefined)?.id;
             if (config?.entityTypeKey) {
@@ -1189,6 +1215,12 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
           onSubmit={async (data) => {
             if (!viewModel.editingItem) return;
             const { entityData, customFieldValues } = splitCustomFieldValues(data);
+            // Sanitize: never submit restricted fields to the server
+            for (const key of Object.keys(entityData)) {
+              if (isFieldRestricted(key)) {
+                delete entityData[key];
+              }
+            }
             await viewModel.updateItem(viewModel.editingItem.id, entityData);
             if (config?.entityTypeKey) {
               if (Object.keys(customFieldValues).length > 0) {

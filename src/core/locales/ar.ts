@@ -86,6 +86,11 @@ export const ar = {
     enterField: "مثال: الراتب، رقم الضمان الاجتماعي",
     noRestrictions: "لا توجد قيود على الحقول",
     restrictionHint: "حقول API محددة لإخفائها عن المستخدم.",
+    restrictedFieldRequiredWarning: "إلزامي — لا يمكن تقييده",
+    restrictedFieldsRequiredConflict:
+      "هذه الحقول إلزامية، لذا سيُرفض تقييدها وسيفشل الحفظ بالكامل: {fields}. اجعلها اختيارية أولاً، أو أزلها من هنا.",
+    restrictedFieldsTruncated:
+      "يحتوي هذا النوع من السجلات على حقول مخصصة أكثر مما يمكن إدراجه هنا، لذا بعض الاقتراحات غير ظاهرة. لا يزال بإمكانك كتابة أي اسم حقل.",
     name: "الاسم",
     code: "الرمز",
     description: "الوصف",

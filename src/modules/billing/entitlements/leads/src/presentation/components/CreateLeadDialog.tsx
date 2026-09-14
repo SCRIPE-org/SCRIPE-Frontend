@@ -1,102 +1,70 @@
+/**
+ * CreateLeadDialog — Modal dialog for capturing and qualifying incoming sales leads.
+ * Orchestrates form validation, edition selection, and dynamic custom fields.
+ */
+
 "use client";
 
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPortal,
   DialogTitle,
+  NonModalScrim,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
-import { Textarea } from "@core/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@core/ui/form";
+import { Form } from "@core/ui/form";
 import { useI18n } from "@core/providers/i18n-provider";
 import { PlusCircle } from "lucide-react";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { CreateLeadCustomFieldsSection } from "./CreateLeadCustomFieldsSection";
+import {
+  type CreateLeadFormData,
+  type CreateLeadFormValues,
+  EMPTY_VALUES,
+  buildSchema,
+} from "./CreateLeadDialogSchema";
+import { CreateLeadFormFields } from "./CreateLeadFormFields";
+
+export type { CreateLeadFormData };
 
 /**
- * Interface defining property specifications, keys types, and structural contract rules for create lead form data.
+ * Props for the lead creation dialog modal.
  */
-export interface CreateLeadFormData {
-  companyName: string;
-  contactName: string;
-  email: string;
-  phone?: string;
-  editionKey?: string;
-  message?: string;
-  notes?: string;
-}
-
 interface CreateLeadDialogProps {
+  /** Visibility toggle state */
   open: boolean;
+  /** Modal close callback */
   onClose: () => void;
+  /** Submission handler receiving validated lead payload */
   onSubmit: (data: CreateLeadFormData) => Promise<void>;
+  /** Asynchronous pending submission indicator */
   isSubmitting: boolean;
+  /** Available editions configured on the platform */
   availableEditions: Array<{ key: string; displayName: string }>;
+  /** Metadata definitions for dynamic custom fields */
   customFieldConfigs: FieldConfig[];
+  /** Loading state for custom field schema resolution */
   customFieldsLoading: boolean;
+  /** Current values dictionary for custom fields */
   customFieldValues: Record<string, unknown>;
+  /** Change callback for custom field values */
   onCustomFieldChange: (name: string, value: unknown) => void;
+  /** Refresh trigger when new custom field attributes are registered inline */
   onCustomFieldsCreated: () => void;
 }
 
-// react-hook-form owns every field as a plain string (optional fields default
-// to ""), so the trim()/undefined mapping into CreateLeadFormData happens
-// once, at submit — the same place the hand-rolled version did it.
-interface CreateLeadFormValues {
-  companyName: string;
-  contactName: string;
-  email: string;
-  phone: string;
-  editionKey: string;
-  message: string;
-  notes: string;
-}
-
-const EMPTY_VALUES: CreateLeadFormValues = {
-  companyName: "",
-  contactName: "",
-  email: "",
-  phone: "",
-  editionKey: "",
-  message: "",
-  notes: "",
-};
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-// Built once per render with the live t() so every message re-localizes on a
-// language switch, same shape as the CommissionRateConfig / signup-content
-// dialogs already do.
-function buildSchema(t: (key: string) => string) {
-  return z.object({
-    companyName: z.string().trim().min(1, t("leads.createDialog.errors.companyRequired")),
-    contactName: z.string().trim().min(1, t("leads.createDialog.errors.contactRequired")),
-    email: z.string().trim().regex(EMAIL_PATTERN, t("leads.createDialog.errors.emailInvalid")),
-    // Phone stays optional: empty passes, and only a non-empty value is
-    // checked against the phone library — identical to the manual
-    // `form.phone?.trim() && !isValidPhoneNumber(form.phone)` guard.
-    phone: z.string().refine((value) => !value.trim() || isValidPhoneNumber(value), {
-      message: t("leads.createDialog.errors.phoneInvalid"),
-    }),
-    editionKey: z.string(),
-    message: z.string(),
-    notes: z.string(),
-  });
-}
-
 /**
- * Presentation UI component rendering the create lead dialog.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Modal dialog presenting lead capture forms and custom field attachments.
+ *
+ * @param props Dialog control properties, available editions, and custom field delegates.
+ * @returns Dialog portal containing accessible form controls.
  */
 export function CreateLeadDialog({
   open,
@@ -143,7 +111,11 @@ export function CreateLeadDialog({
       onOpenChange={(nextOpen) => {
         if (!nextOpen) handleClose();
       }}
+      modal={false}
     >
+      <DialogPortal>
+        <NonModalScrim open={open} />
+      </DialogPortal>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[520px]">
         <DialogHeader>
           <div className="mb-1 flex items-center gap-3">
@@ -161,163 +133,11 @@ export function CreateLeadDialog({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleValid)} className="space-y-5 py-2">
-            <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="companyName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("leads.createDialog.company")} <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={t("leads.createDialog.companyPlaceholder")}
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="contactName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("leads.createDialog.contact")} <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder={t("leads.createDialog.contactPlaceholder")}
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      {t("leads.createDialog.email")} <span className="text-destructive">*</span>
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="name@company.com"
-                        disabled={isSubmitting}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* PhoneInput drives its own error skin from the `error` string
-                  prop, not from aria-invalid, so this field intentionally
-                  stays outside FormControl and hands fieldState's message to
-                  it directly — that prop wiring must not change. */}
-              <FormField
-                control={form.control}
-                name="phone"
-                render={({ field, fieldState }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="cl-phone">{t("leads.createDialog.phone")}</FormLabel>
-                    <PhoneInput
-                      id="cl-phone"
-                      value={field.value}
-                      onChange={field.onChange}
-                      onBlur={field.onBlur}
-                      disabled={isSubmitting}
-                      error={fieldState.error?.message}
-                    />
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            {availableEditions.length > 0 && (
-              <FormField
-                control={form.control}
-                name="editionKey"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="cl-edition">
-                      {t("leads.createDialog.editionInterest")}
-                    </FormLabel>
-                    <Select
-                      value={field.value || "none"}
-                      onValueChange={(value) => field.onChange(value === "none" ? "" : value)}
-                      disabled={isSubmitting}
-                    >
-                      <FormControl>
-                        <SelectTrigger id="cl-edition">
-                          <SelectValue placeholder={t("leads.createDialog.editionPlaceholder")} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">{t("leads.createDialog.editionNone")}</SelectItem>
-                        {availableEditions.map((edition) => (
-                          <SelectItem key={edition.key} value={edition.key}>
-                            {edition.displayName}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </FormItem>
-                )}
-              />
-            )}
-
-            <FormField
+            <CreateLeadFormFields
               control={form.control}
-              name="message"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("leads.createDialog.message")}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={t("leads.createDialog.messagePlaceholder")}
-                      rows={3}
-                      className="resize-none"
-                      disabled={isSubmitting}
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("leads.createDialog.notes")}</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder={t("leads.createDialog.notesPlaceholder")}
-                      rows={2}
-                      className="resize-none"
-                      disabled={isSubmitting}
-                      {...field}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
+              isSubmitting={isSubmitting}
+              availableEditions={availableEditions}
+              t={t}
             />
 
             <CreateLeadCustomFieldsSection

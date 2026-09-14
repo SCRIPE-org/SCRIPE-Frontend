@@ -42,7 +42,17 @@ interface PermissionContextType {
   roleNames: string[];
 
   /**
-   * Whether the user is a super admin (has wildcard permission)
+   * Whether the user is a platform super admin (no tenant claim/context, highest system operator)
+   */
+  isPlatformSuperAdmin: boolean;
+
+  /**
+   * Whether the user is a tenant super admin (belongs to a tenant and holds tenant super admin role)
+   */
+  isTenantSuperAdmin: boolean;
+
+  /**
+   * Whether the user is a super admin (alias for isPlatformSuperAdmin for platform-level operations)
    */
   isSuperAdmin: boolean;
 }
@@ -114,6 +124,7 @@ function getRequiredPermissionsForPath(pathname: string): PermissionCode[] | und
 export function PermissionProvider({ children }: PermissionProviderProps) {
   const permissions = useAppStore((state) => state.permissions);
   const roles = useAppStore((state) => state.roles);
+  const user = useAppStore((state) => state.user);
 
   const hasPermission = useCallback(
     (permission: PermissionCode): boolean => {
@@ -154,9 +165,34 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     return roles.map((r) => r.roleName);
   }, [roles]);
 
-  const isSuperAdmin = useMemo(() => {
-    return permissions.includes("*");
-  }, [permissions]);
+  const isPlatformSuperAdmin = useMemo(() => {
+    // A user is a PLATFORM Super Admin ONLY if they belong to NO tenant (system-level)
+    // and hold platform-wide superadmin privileges.
+    if (user?.tenantId) {
+      return false;
+    }
+    return (
+      permissions.includes("*") ||
+      roles.some((r) => r.roleCode === "SYSTEM_SUPER_ADMIN" || r.roleName === "System Super Admin") ||
+      user?.isProtected === true ||
+      (user as any)?.isSuperAdmin === true ||
+      user?.adminTypeName?.toLowerCase() === "system super admin"
+    );
+  }, [permissions, roles, user]);
+
+  const isTenantSuperAdmin = useMemo(() => {
+    if (!user?.tenantId) return false;
+    return (
+      roles.some(
+        (r) =>
+          r.roleCode?.endsWith("_SUPER_ADMIN") ||
+          r.roleName?.toLowerCase().includes("super")
+      ) || Boolean(user?.adminTypeName?.toLowerCase().includes("super"))
+    );
+  }, [roles, user]);
+
+  // Backward-compatibility: isSuperAdmin aliases isPlatformSuperAdmin
+  const isSuperAdmin = isPlatformSuperAdmin;
 
   const value = useMemo(
     () => ({
@@ -166,6 +202,8 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
       hasAllPermissions,
       canAccessPage,
       roleNames,
+      isPlatformSuperAdmin,
+      isTenantSuperAdmin,
       isSuperAdmin,
     }),
     [
@@ -175,6 +213,8 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
       hasAllPermissions,
       canAccessPage,
       roleNames,
+      isPlatformSuperAdmin,
+      isTenantSuperAdmin,
       isSuperAdmin,
     ]
   );

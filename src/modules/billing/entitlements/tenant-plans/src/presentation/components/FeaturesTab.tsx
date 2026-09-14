@@ -219,13 +219,14 @@ export function FeaturesTab({
           return (
             <Card key={category} className="overflow-hidden">
               <CardHeader className="py-3">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => toggleCategory(category)}
                   aria-expanded={!isCollapsed}
                   className={cn(
-                    "flex w-full items-center justify-between gap-2 rounded-nx-sm text-start",
-                    "transition-colors duration-nx-micro ease-nx-enter hover:bg-nx-hover motion-reduce:transition-none",
+                    "flex h-auto w-full items-center justify-between gap-2 p-0 rounded-nx-sm text-start hover:bg-transparent",
+                    "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none"
                   )}
                 >
@@ -241,7 +242,7 @@ export function FeaturesTab({
                     <CardTitle className="text-base">{category}</CardTitle>
                   </div>
                   <Badge variant="outline">{items.length}</Badge>
-                </button>
+                </Button>
               </CardHeader>
 
               {!isCollapsed && (

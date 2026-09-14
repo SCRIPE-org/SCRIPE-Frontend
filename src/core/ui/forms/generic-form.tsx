@@ -43,6 +43,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
+import { BilingualOptionsEditor } from "@core/ui/forms/bilingual-options-editor";
 import GenericSelect from "@core/crud/components/generic-select";
 import { Switch } from "@core/ui/switch";
 import { Separator } from "@core/ui/separator";
@@ -59,6 +60,14 @@ import { ImageUploader } from "@core/ui/image-uploader";
 import { PasswordInput } from "@core/ui/password-input";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { PermissionCode } from "@core/common/types/permissions";
+// Type-only for the props contract, plus the registry READ. Not a cycle: this
+// module is `core`, and customFieldsExtension.tsx's own import of `FieldConfig`
+// from this file is `import type`, erased at build — its only runtime imports
+// are react and the i18n provider.
+import {
+  getCustomFieldsExtension,
+  type CustomFieldFormControlProps,
+} from "@core/crud/customFieldsExtension";
 
 /**
  * Field option for select, radio, and other choice-based inputs
@@ -88,9 +97,113 @@ export interface FieldConfig {
     | "password"
     | "email"
     | "number"
+    // Wave 3.3 Batch C (CustomFields' Currency/Duration value types).
+    // "currency" backs a real, dedicated CurrencyCustomFieldControl (a
+    // paired amount + ISO 4217 code control -- see that file's own header
+    // comment for why Currency could not simply reuse "number" the way
+    // Percent does: two independently required pieces need two inputs, not
+    // one). "duration" backs DurationCustomFieldControl (a number input with
+    // an explicit, localized "minutes" unit annotation -- reusing bare
+    // "number" here would make Duration indistinguishable from
+    // Number/Percent inside that shared dispatcher, and re-introduce PD-2's
+    // "a bare number whose unit is implicit" ambiguity at the UI layer).
+    //
+    // THIS COMPONENT DOES DRAW BOTH, through the same extension registry
+    // "entity-reference" below goes through -- see
+    // `EXTENSION_DRAWN_FIELD_TYPES`. The claim that used to stand here ("not
+    // consumed by this component's own render switch ... none of them mounts
+    // a <GenericForm> over these fields") was true of the 8 hand-wired
+    // CustomFields sites and false of everything else: generic-crud-view.tsx
+    // concatenates the extension's own fieldConfigs into the `fields` it
+    // hands <GenericForm>, so on the ~30 CrudConfig sites that declare an
+    // `entityTypeKey` both types genuinely reached the switch, missed it, and
+    // fell through to `<Input type={field.type} value={formData[name] ?? ""}>`
+    // -- a text box that painted a Currency object as `[object Object]` and
+    // replaced it with a string on the first keystroke, exactly the defect
+    // "entity-reference" was fixed for.
+    //
+    // Only "currency" is object-valued, so only it needs a required-emptiness
+    // rule of its own (`OBJECT_VALUED_EMPTINESS_CHECKS`). "duration" is a
+    // plain minutes number, and the pre-existing scalar arm already treats a
+    // stored `0` as filled -- which is the answer the backend wants, since
+    // DurationValueTypeHandler accepts zero and only rejects negatives.
+    | "currency"
+    | "duration"
+    // Wave 4 (CustomFields' EntityReference/UserReference value types). Both
+    // map here: they differ only in which target entity type their picker is
+    // fed, which is data, not a control kind.
+    //
+    // THIS COMPONENT DOES DRAW IT, but never by importing the control. Earlier
+    // waves left this type with no render arm on purpose -- the control needs
+    // the CustomFields module (the entity-lookup search/resolve hooks, which
+    // reach that module's DI container), `core` must not import from
+    // `src/modules/*` (docs/architecture/01-modularity.md's Dependency Rule),
+    // and a direct import would additionally close a runtime cycle
+    // (generic-form -> control -> module DI -> valueTypeRegistry ->
+    // generic-form) and pull the whole CustomFields data layer into every form
+    // in the product. That comment named the honest route itself, and this is
+    // it: `CustomFieldsExtensionApi.FieldControl`, reached through the same
+    // registry every other module capability arrives by. See
+    // `EXTENSION_DRAWN_FIELD_TYPES` and `CustomFieldExtensionControl` below.
+    //
+    // Leaving the arm out was not a neutral "later": custom-field FieldConfigs
+    // genuinely reach this component (generic-crud-view.tsx concatenates
+    // useCustomFieldsFormFields's fieldConfigs into the `fields` it hands
+    // <GenericForm>, and `visibleFields` filters only on isVisible/permissions),
+    // so an unhandled type fell through to the plain `<Input type={field.type}>`
+    // default -- a text box showing `[object Object]` that replaced the stored
+    // object with a string the moment anyone typed in it.
+    //
+    // It is also in the required-validation `customTypes` set below: a required
+    // reference submitted blank has to be caught in this path too, and a
+    // reference value is an object, which the old emptiness check waved through
+    // -- see `isRequiredFieldEmpty` below.
+    | "entity-reference"
+    // Wave 3.4 (CustomFields' File/Image/RichText value types). All three are
+    // EXTENSION-DRAWN, like "entity-reference" above and for the same
+    // Dependency-Rule reason: their controls live in the CustomFields module and
+    // `core` must not import from `src/modules/*`.
+    //
+    // WHY THREE NEW MEMBERS RATHER THAN REUSING "file", "image" AND "richtext",
+    // which already exist a few lines below and already render. Because all
+    // three of those render arms produce a DIFFERENT VALUE SHAPE than these
+    // types accept, and this component's own history is the argument: the
+    // `[object Object]` defect "entity-reference" was added to fix was exactly a
+    // custom-field type routed to an arm whose value shape did not match.
+    //   - "file" renders `<Input type="file">`, whose value is a browser `File`.
+    //   - "image" renders `<ImageUploader>`, whose value is a base64 string.
+    //   - "richtext" renders `<RichTextEditor value={formData[name] ?? ""}
+    //     onChange={(value) => handleChange(name, value)}>`, i.e. a bare string.
+    // A File/Image value is `{ entityTypeKey, entityId }` -- a reference to a
+    // media row -- and a RichText value is `{ html }`. The server refuses each of
+    // the three wrong shapes outright (RichText's refusal is deliberate: the
+    // input-sanitization middleware's carve-out for the values route is the PATH
+    // `values.*.html`, so a bare string arrives with every tag already stripped
+    // and storing it would silently destroy the operator's markup). So pointing
+    // at the existing member would not be a shortcut, it would ship a field that
+    // 422s on every save on the ~30 CrudConfig screens where this component
+    // draws custom fields itself.
+    //
+    // Adding the new types TO the existing members' render arms was the other
+    // option and is worse: it would make those three arms permanently dead and
+    // permanently seize the three most generically-named members of this union
+    // for "a reference to a media row" and "prose in an object envelope", so a
+    // real upload field could never use them again.
+    //
+    // "media-file" and "media-image" are TWO members, not one shared media key,
+    // because both value types pin the same target entity type and nothing else
+    // carries the image-only restriction -- see the catalog entries in the
+    // CustomFields module for the full reasoning. Both are object-valued, so
+    // both need an `OBJECT_VALUED_EMPTINESS_CHECKS` rule; "rich-text" is object-
+    // valued too and needs its own, since a blank `{ html: "" }` envelope is an
+    // unfilled field.
+    | "media-file"
+    | "media-image"
+    | "rich-text"
     | "tel"
     | "url"
     | "textarea"
+    | "bilingual-options"
     | "richtext"
     | "select"
     | "searchable-select"
@@ -122,8 +235,40 @@ export interface FieldConfig {
   min?: number | string; // For number, date, range inputs
   max?: number | string; // For number, date, range inputs
   step?: number | string; // For number, range inputs
+  /**
+   * For "bilingual-options": the form key holding the SECOND (Arabic) newline-separated list. The
+   * control edits both halves together and writes both keys, because the two are positionally
+   * aligned and editing one without the other would misalign every option after the edit.
+   */
+  pairedName?: string;
   rows?: number; // For textarea
   cols?: number; // For textarea
+  /** For "bilingual-options": the "add another option" button's label. */
+  addLabel?: string;
+  /** For "bilingual-options": the per-row remove button's accessible label. */
+  removeLabel?: string;
+  /** For "bilingual-options": the hint shown when no options exist yet. */
+  emptyHint?: string;
+  /**
+   * For "entity-reference": the entity type the field's DEFINITION is pinned to, i.e. what the
+   * picker should offer. Absent/null means the definition does not say, which is a real state (an
+   * unpinned EntityReference accepts any registered entity type, so there is no single answer) and
+   * not merely an unwired one.
+   *
+   * A CARRIER ONLY — this component never reads it, and still does not: the whole `field` is handed
+   * to `CustomFieldsExtensionApi.FieldControl` (or to renderCustomFieldControl.tsx at the 8
+   * hand-wired sites), and the pin is read there, because the control needs the CustomFields module
+   * and `core` must not import from `src/modules/*` — see the `"entity-reference"` member's own
+   * comment above. Passing `field` whole rather than unpacked scalars is exactly what keeps this
+   * carrier working without a new prop on the extension contract.
+   * The field travels here rather than in a module-side side-channel because `FieldConfig[]` IS the
+   * boundary type the extension hands across that line; a parallel map keyed by field name would
+   * have to be threaded through every one of the nine consumer sites separately.
+   *
+   * NOT consulted by `isRequiredFieldEmpty`, on purpose: whether a reference is filled is a question
+   * about the VALUE's two pieces, and a pin says nothing about whether the user picked anything.
+   */
+  referenceTargetEntityTypeKey?: string | null;
   accept?: string; // For file inputs and image uploader
   multiple?: boolean; // For file inputs and multi-select
   // Image uploader specific options
@@ -213,6 +358,409 @@ interface GenericFormProps {
  */
 const NO_INITIAL_VALUES: Record<string, any> = {};
 
+/**
+ * Field types whose form value is a multi-piece OBJECT envelope rather than a
+ * scalar or an array, each paired with the rule that decides whether ITS
+ * envelope counts as unfilled — because "is this required field empty" cannot
+ * be answered from the envelope alone, and the answer is not the same question
+ * for two different envelopes.
+ *
+ * A MAP, not a set with a switch beside it. The predecessor here was a
+ * `Set<FieldConfig["type"]>` whose single member's shape was then hardcoded
+ * inline in `isRequiredFieldEmpty` as `{ entityTypeKey, entityId }` — fine for
+ * one member, and a drift trap the moment a second type with a DIFFERENT shape
+ * joined it, because membership and shape lived in two places. Currency is that
+ * second type (`{ amount, currencyCode }` — nothing to do with a reference's two
+ * fields), so the type and its own rule are bound together here and cannot
+ * disagree.
+ *
+ * Each predicate is only ever called with a non-null `object` (the scalar and
+ * array arms run first, and a non-object on an object-valued field fails closed
+ * before dispatch), so no predicate re-checks that.
+ *
+ * `"datetime"` is deliberately absent, and that is a finding rather than an
+ * omission: its value IS a two-piece `{ value, timeZoneId }` object on the wire,
+ * but this component converts every date-family value through
+ * `toDateInputValue`/`fromDateInputValue`, so what reaches the check is always a
+ * STRING. Admitting it would change a shipped type's behaviour on a guess about
+ * a shape that never arrives here. Pinned by a test in
+ * generic-form.requiredObjectValue.test.tsx.
+ *
+ * `"duration"` is absent because it is not object-valued at all — see its own
+ * `FieldConfig["type"]` member comment above.
+ */
+const OBJECT_VALUED_EMPTINESS_CHECKS: Partial<
+  Record<FieldConfig["type"], (value: object) => boolean>
+> = {
+  /**
+   * Mirrors the backend's own write gate rather than inventing a rule:
+   * `EntityReferenceValueTypeHandler.Validate` refuses a reference unless BOTH
+   * the target type key and the encrypted id are present and non-blank, so a
+   * half-blank reference is not a storable value and "required" must not accept
+   * one.
+   *
+   * PRESENCE, not shape: this does not try to judge whether `entityId` is a
+   * well-formed encrypted id. A malformed-but-present value is a FORMAT problem
+   * with its own message, not a missing one.
+   *
+   * The body moved into `referenceEnvelopeIsEmpty` below when Wave 3.4's two
+   * media types joined it: they hold the same envelope, and three inline copies
+   * of one rule is how one of them ends up corrected and the other two do not.
+   */
+  "entity-reference": referenceEnvelopeIsEmpty,
+  /**
+   * Currency's rule is read off `CurrencyValueTypeHandler` (backend
+   * CustomFields.Application/ValueTypes), whose two methods answer two
+   * different questions and have to be composed rather than picked between:
+   *
+   *   - `IsEmpty` returns true only when the amount AND the code are both
+   *     missing. That is "nothing to save", and it is already caught before this
+   *     predicate runs: the control emits `null` when the user blanks the last
+   *     populated piece, and the scalar arm rejects `null`.
+   *   - `Validate` (which runs for everything `IsEmpty` let through) requires
+   *     BOTH pieces. So a half-blank Currency is not "empty" server-side — it is
+   *     a 422. The handler's own comment is explicit that this is deliberate:
+   *     treating a half-blank as empty "would silently skip Validate and let a
+   *     genuinely-entered (but incomplete ...) amount or code through with no
+   *     error".
+   *
+   * A required field is satisfied only by a value the server will actually
+   * store, so this refuses a half-blank — the same composition, and the same
+   * presence-not-shape scope, as the reference rule above. The code's alpha-3
+   * GRAMMAR is not checked here; that is `pattern` on the control's own input
+   * (mirroring `IsValidCurrencyCode`) and the server's `currencyCodeInvalid`,
+   * not a missing-value verdict.
+   *
+   * `amount` is checked for MISSING-ness, never truthiness: `0` is a legitimate
+   * amount and `-1` is too (the handler enforces no minimum — a credit or a
+   * refund is a real currency value), so the blank test mirrors the handler's own
+   * `Amount is null || (Amount is string s && IsNullOrWhiteSpace(s))` exactly.
+   */
+  currency: (value) => {
+    const money = value as { amount?: unknown; currencyCode?: unknown };
+    const amountMissing =
+      money.amount === undefined ||
+      money.amount === null ||
+      (typeof money.amount === "string" && money.amount.trim() === "");
+    const codeMissing =
+      typeof money.currencyCode !== "string" || money.currencyCode.trim() === "";
+    return amountMissing || codeMissing;
+  },
+  /**
+   * Wave 3.4. File and Image (CustomFields' two media reference types) hold the
+   * SAME `{ entityTypeKey, entityId }` envelope a general reference does -- on
+   * the backend `FileValueTypeHandler` literally extends
+   * `EntityReferenceValueTypeHandler` -- so the rule is `"entity-reference"`'s,
+   * reused by reference to it rather than re-derived, which is what keeps a
+   * later correction to one from silently leaving the other two behind.
+   *
+   * SHARED BUT STILL THREE ENTRIES, not one entry under a shared key: the two
+   * media types deliberately carry two different `FieldConfig["type"]` members
+   * (only two keys can express "this one is images-only"), and this map is keyed
+   * by that member, so each needs its own line. Predicate identity is the
+   * mechanism that keeps them honest about being the same rule.
+   *
+   * The presence-not-shape scope carries over too. Whether the referenced media
+   * row is actually OWNED by the record being edited -- the backend's owner-pair
+   * fence, and the whole reason `media.file` is a legal reference target at all
+   * -- is not a question this layer can answer at all: it needs the media row.
+   * A required field being "filled" therefore means "the operator picked
+   * something", never "the server will accept it".
+   */
+  "media-file": referenceEnvelopeIsEmpty,
+  "media-image": referenceEnvelopeIsEmpty,
+  /**
+   * Wave 3.4. RichText's envelope is `{ html }` and blank markup is an unfilled
+   * field, so a required rich-text field is not satisfied by an empty editor.
+   *
+   * WHITESPACE COUNTS AS BLANK, matching `RichTextValueTypeHandler.IsEmpty`
+   * exactly (`string.IsNullOrWhiteSpace(input.Html)`) -- a field the operator
+   * cleared should read as cleared, and an editor that leaves a stray newline
+   * behind has not stored a value.
+   *
+   * MARKUP THAT RENDERS TO NOTHING (`<p></p>`) IS NOT BLANK HERE, and that is
+   * the backend's decision reproduced rather than a gap: deciding whether markup
+   * renders to nothing means parsing it, which that handler's own comment
+   * declines to do on every field of every save. The control avoids producing
+   * this state (it emits `null` when the editor is empty) so it is reachable
+   * only from stored or out-of-band data, and it is refused server-side by
+   * nothing -- an empty paragraph is a value the server stores. Treating it as
+   * filled is therefore the answer that agrees with the server, which is the
+   * whole contract of this map.
+   */
+  "rich-text": (value) => {
+    const rich = value as { html?: unknown };
+    return typeof rich.html !== "string" || rich.html.trim() === "";
+  },
+};
+
+/**
+ * The reference-envelope rule, extracted so the three field types that share it
+ * (`"entity-reference"` and Wave 3.4's two media types) share the FUNCTION and
+ * not merely a copy of its body. Mirrors the backend's own write gate:
+ * `EntityReferenceValueTypeHandler.Validate` refuses a reference unless BOTH the
+ * target type key and the encrypted id are present and non-blank, so a
+ * half-blank reference is not a storable value and "required" must not accept
+ * one.
+ *
+ * PRESENCE, not shape: this does not try to judge whether `entityId` is a
+ * well-formed encrypted id. A malformed-but-present value is a FORMAT problem
+ * with its own message, not a missing one.
+ *
+ * @param value The field's current value, already known to be a non-null object.
+ * @returns True when the envelope is missing either piece, i.e. counts as unfilled.
+ */
+function referenceEnvelopeIsEmpty(value: object): boolean {
+  const ref = value as { entityTypeKey?: unknown; entityId?: unknown };
+  return (
+    typeof ref.entityTypeKey !== "string" ||
+    ref.entityTypeKey.trim() === "" ||
+    typeof ref.entityId !== "string" ||
+    ref.entityId.trim() === ""
+  );
+}
+
+/**
+ * Field types this component declares for `FieldConfig["type"]`'s typing but
+ * cannot draw itself, and therefore routes to
+ * `CustomFieldsExtensionApi.FieldControl`.
+ *
+ * A set rather than a `field.type === "entity-reference"` literal in the three
+ * places that need it (the label suppression, the render arm, and the
+ * required-validation set in `handleSubmit`) so admitting the next such type is
+ * one line here, not three scattered comparisons that can drift apart. Kept
+ * deliberately SEPARATE from `OBJECT_VALUED_EMPTINESS_CHECKS` above: "core
+ * cannot draw this" and "this value is a multi-piece object" are different
+ * questions with different answers, and `"duration"` is the proof — extension-
+ * drawn and a plain scalar.
+ *
+ * `"currency"` and `"duration"` joined `"entity-reference"` once the
+ * verification the previous author deferred was actually done. That note asked
+ * for one thing — check each control's labelling against this component's field
+ * anatomy rather than assuming it — and the answer differs per control, which is
+ * why it could not be assumed:
+ *
+ *   - `DurationCustomFieldControl` renders `<Label htmlFor={fc.name}>` over a
+ *     real `<input type="number" id={fc.name}>` and NO `aria-label`, so its
+ *     accessible name comes from that native `for`/`id` pair. Keeping this
+ *     component's own label would emit a SECOND `<label for>` pointing at the
+ *     same input — and per the accname spec every matching `<label>` is
+ *     concatenated, so the field would have announced its own name twice
+ *     ("Setup BufferSetup Buffer") on top of showing two identical visible
+ *     labels. Suppression required.
+ *   - `CurrencyCustomFieldControl` renders its own `<Label htmlFor={fc.name}>`
+ *     too, but its amount input ALSO carries an `aria-label`
+ *     (`customField.currency.amountLabel`), which wins over any `<label>` in the
+ *     accname cascade — so there the duplicate would have been purely visual
+ *     rather than announced. Suppression required for a different reason, and
+ *     the two really are not the same case.
+ *   - `EntityReferenceCustomFieldControl` is the third distinct case, the one
+ *     already documented below: its trigger is a `role="combobox"` div that no
+ *     `<label for>` can name at all.
+ *
+ * Three controls, three mechanisms, one conclusion. What the check ALSO turned
+ * up is why it mattered beyond labels. This component's `<form>` carries no
+ * `noValidate`, so a control that fails native constraint validation does not
+ * merely get styled — the form never fires `submit` at all. Both controls'
+ * number inputs shipped with no `step`, which defaults to 1, and
+ * `DurationCustomFieldControl`'s `min={0}` pins its step base at 0: a stored
+ * `1.5` minutes (a documented, supported value) was therefore unsubmittable the
+ * moment Duration was drawn here. Fixed at that control (`step="any"`), not here.
+ * Currency's amount turned out NOT to have the same live defect — no `min`, so
+ * its step base tracks its own value — which is exactly the kind of thing
+ * "verify, don't assume" was asking for; it carries the same declaration as a
+ * guard, with its own reasoning recorded in that file.
+ */
+/*
+ * Wave 3.4 admits `"media-file"`, `"media-image"` and `"rich-text"`, and the
+ * per-control labelling check this set's comment demands was done for each
+ * rather than inherited from the three above:
+ *
+ *   - `MediaReferenceCustomFieldControl` renders its own `<Label htmlFor={id}>`
+ *     over a `role="group"` region, and the group carries an `aria-label`.
+ *     Keeping this component's label would show two identical visible labels;
+ *     the announced name comes from the group's own `aria-label`, so the
+ *     duplicate would be visual only -- Currency's case exactly.
+ *   - `RichTextCustomFieldControl` renders its own `<Label htmlFor={id}>` and
+ *     binds it to the editor's contenteditable region by `aria-labelledby`,
+ *     because `<Label htmlFor>` alone names nothing on a `role="textbox"` div.
+ *     A second `<label for>` from here would be concatenated into the announced
+ *     name per the accname spec -- Duration's case, arrived at by a different
+ *     mechanism. Suppression required for all three.
+ *
+ * Membership here also carries two consequences these types genuinely need, and
+ * that is why it is the right set rather than a fourth ad-hoc condition: the
+ * spread into `handleSubmit`'s `customTypes` (none of the three has a native
+ * `required` attribute the browser could enforce -- the media control has no
+ * form element in it at all) and the label suppression above.
+ */
+const EXTENSION_DRAWN_FIELD_TYPES = new Set<FieldConfig["type"]>([
+  "entity-reference",
+  "currency",
+  "duration",
+  "media-file",
+  "media-image",
+  "rich-text",
+]);
+
+/**
+ * One field of a type only the CustomFields module can draw — plus the explicit
+ * state for when that module is not present.
+ *
+ * THE FALLBACK IS THE POINT. `core` is usable with no CustomFields module
+ * registered (every hand-built `CustomFieldsExtensionApi` test double in this
+ * codebase omits `FieldControl`, and `FieldControl` is optional for exactly that
+ * reason), and the one thing that path must never do is what the bug did: fall
+ * through to `<Input type="entity-reference" value={formData[name] ?? ""}>`,
+ * which renders a stored reference object as `[object Object]` in an editable
+ * text box and replaces it with a string on the first keystroke. So this renders
+ * an inert, explanatory field instead.
+ *
+ * WHAT IT DOES NOT SHOW is deliberate: not the held value, for any of the three
+ * types it now covers. The sharpest case is a reference, whose `entityId` is an
+ * ENCRYPTED foreign primary key that only the resolve hook inside the very
+ * module that is missing can turn into a human name — printing it would leak an
+ * opaque id into the page and read as data corruption. Currency and Duration
+ * hold nothing secret, but printing a value with no way to edit it invites the
+ * operator to believe the field is merely read-only rather than broken, and the
+ * uniform inert statement says the true thing for all three. The value itself is
+ * untouched in every case — there is no `onChange` path here, so whatever was
+ * loaded is still in `formData` and is resubmitted verbatim.
+ *
+ * THE COPY REUSES `errors.module.*`, a CORE locale key pair, which matters more
+ * than it looks: a module locale key (`customField.*`) is registered by the very
+ * module whose absence produced this state, so on the path that actually renders
+ * it `t()` would return the bare key. `module-error-boundary.tsx` already
+ * composes these same two keys the same way, for the same fact.
+ *
+ * A11Y: the label/`aria-invalid`/`aria-describedby` contract this component's
+ * other branches provide is kept. The label is rendered here rather than by the
+ * shared header above (see `EXTENSION_DRAWN_FIELD_TYPES` in that condition),
+ * because each registered control renders its own label — the alternative was
+ * two visible labels on the same field. `role="group"` is what makes `aria-label`
+ * and `aria-describedby` actually exposed on a `<div>`; `aria-disabled` rather
+ * than `disabled` because there is no widget here to disable, only a statement.
+ */
+function CustomFieldExtensionControl({
+  field,
+  value,
+  onChange,
+  disabled,
+  invalid,
+  describedBy,
+}: CustomFieldFormControlProps) {
+  const { t } = useI18n();
+  // Read at render, not through a hook: this is a plain module-level variable
+  // lookup (the same way buildCustomFieldColumn reads it), and registration
+  // happens once from the app's composition root before any screen mounts.
+  const FieldControl = getCustomFieldsExtension()?.FieldControl;
+
+  if (FieldControl) {
+    return (
+      <FieldControl
+        field={field}
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        invalid={invalid}
+        describedBy={describedBy}
+      />
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <Label htmlFor={field.name} className="text-start">
+        {field.label}
+      </Label>
+      {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props --
+          `aria-invalid` is a GLOBAL ARIA state (WAI-ARIA 1.1 promoted it to
+          §6.5 Global States and Properties, and 1.2 keeps it there), so it is
+          valid on any role including `group`. The rule's role table is
+          aria-query's older per-role list, which predates that promotion — the
+          warning is the plugin being out of date, not this markup being wrong.
+          It is kept rather than dropped because this component's every other
+          branch sets it, and the required-field pass genuinely does reject this
+          field; `aria-describedby` alone would leave the rejection unannounced
+          as a state. */}
+      <div
+        id={field.name}
+        role="group"
+        aria-label={field.label ?? field.name}
+        aria-disabled="true"
+        aria-invalid={invalid || undefined}
+        aria-describedby={describedBy}
+        // Matches Input's own disabled skin (input.tsx: border-nx-line,
+        // bg-nx-raised, text-nx-ink-3, no shadow) so it reads as a field that
+        // is present but inoperable, not as a paragraph that lost its box.
+        className="flex min-h-10 w-full cursor-not-allowed items-center rounded-nx-control border border-nx-line bg-nx-raised px-3 py-2 text-sm text-nx-ink-3"
+      >
+        {t("errors.module.description", { module: t("errors.module.unnamed") })}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Whether a required field counts as unfilled at submit time.
+ *
+ * THE BUG THIS EXISTS FOR: the check used to be, inline and in one expression,
+ * `val === undefined || val === null || val === "" || (Array.isArray(val) &&
+ * val.length === 0)`. Every arm of that tests a scalar or an array, so ANY
+ * object passed — `{}` included, and `{ entityTypeKey: "hrms.staff-member",
+ * entityId: "" }` in particular. A required entity-reference field with nothing
+ * actually picked therefore validated as filled, submitted, and came back a 422
+ * from the server (or, worse, wrote a half-blank the server then had to refuse)
+ * instead of showing the user "this field is required" next to the field.
+ *
+ * The scalar and array arms are reproduced here byte-for-byte and are reached
+ * first, so behaviour for every field type that existed before is unchanged: a
+ * type with no entry in `OBJECT_VALUED_EMPTINESS_CHECKS` still falls through to
+ * `false` for a non-empty scalar and for any object, exactly as before. Only a
+ * field whose type declares an object rule gets one.
+ *
+ * That scalar arm is also, on inspection, already the RIGHT rule for
+ * `"duration"` — the other type admitted to the extension-drawn set alongside
+ * Currency — rather than merely a harmless one. Duration's stored value is bare
+ * minutes, and `DurationValueTypeHandler.IsEmpty` is `null || whitespace-only
+ * string`, with `Validate` accepting zero outright ("a zero-minute
+ * buffer/duration is a legitimate value") and rejecting only negatives. Blank,
+ * absent and zero are therefore three distinguishable states server-side, and
+ * the arm above already distinguishes them the same way: `undefined`/`null`/`""`
+ * are refused, while `0` and `"0"` fall through as filled. No new arm, and
+ * specifically no `String(val).trim()` generalisation — that would silently
+ * start rejecting whitespace on every scalar type in the product, and a
+ * `<input type="number">` cannot produce a whitespace value anyway (the value
+ * sanitisation algorithm yields `""` for anything it cannot parse).
+ *
+ * A non-object value on an object-valued field fails closed: no scalar can ever
+ * be a reference, and none can be a `{ amount, currencyCode }` pair either.
+ *
+ * Both object shapes are restated in `OBJECT_VALUED_EMPTINESS_CHECKS` rather
+ * than imported from the CustomFields module's own model, and that is required
+ * rather than sloppy: `core` cannot import from `src/modules/*`
+ * (docs/architecture/01-modularity.md's Dependency Rule — the same constraint
+ * that makes core/crud/customFieldsExtension.tsx a registry instead of an
+ * import, and that makes this file's `FieldConfig[]` the boundary type in the
+ * first place). If a wire shape ever changes, both have to change.
+ *
+ * @param field The field being validated; its `type` selects the strategy.
+ * @param val The current form value for that field.
+ * @returns True when the value should be reported as a missing required field.
+ */
+function isRequiredFieldEmpty(field: FieldConfig, val: unknown): boolean {
+  if (val === undefined || val === null || val === "") return true;
+  if (Array.isArray(val)) return val.length === 0;
+
+  const isEnvelopeEmpty = OBJECT_VALUED_EMPTINESS_CHECKS[field.type];
+  if (isEnvelopeEmpty) {
+    if (typeof val !== "object") return true;
+    return isEnvelopeEmpty(val);
+  }
+
+  return false;
+}
+
 export function GenericForm({
   fields,
   initialValues = NO_INITIAL_VALUES,
@@ -288,7 +836,7 @@ export function GenericForm({
     });
   }, [fields, initialValues]);
 
-  const handleChange = (name: string, value: any) => {
+  const handleChange = (name: string, value: any, extraKeys?: Record<string, any>) => {
     // Clear error when user changes the field
     if (errors[name]) {
       setErrors((prev) => {
@@ -299,7 +847,11 @@ export function GenericForm({
     }
 
     setFormData((prev) => {
-      const newData = { ...prev, [name]: value };
+      // `extraKeys` lets ONE control own more than one form key -- used by the bilingual options
+      // editor, whose two newline lists are positionally aligned and must be written together or
+      // every option after an edit shifts onto the wrong translation. Merged before the field's own
+      // onChange runs, so a caller can still override.
+      const newData = { ...prev, [name]: value, ...(extraKeys ?? {}) };
 
       // Find the field that changed and call its onChange callback if it exists
       const field = fields.find((f) => f.name === name);
@@ -343,6 +895,26 @@ export function GenericForm({
       "week",
       "image",
       "richtext",
+      // Every extension-drawn type, BY CONSTRUCTION rather than by a literal
+      // list that has to be remembered. Wave 4 listed "entity-reference" here
+      // by hand because the reference picker is a custom control with no native
+      // `required` attribute for the browser to enforce; spreading the set is
+      // the same membership, plus the guarantee that the next type admitted
+      // there cannot be forgotten here.
+      //
+      // And it must not be, for a stronger reason than "these controls happen
+      // to be custom": for an extension-drawn type this component has NO
+      // knowledge of what the registered module renders — Duration's control
+      // does carry a native `required`, but `CustomFieldExtensionControl`'s
+      // no-module-registered fallback is an inert `role="group"` div with no
+      // form control in it at all. Native constraint validation therefore
+      // cannot be relied on for any member, whatever today's module happens to
+      // draw.
+      //
+      // These reach this submit path via generic-crud-view.tsx, which
+      // concatenates the CustomFields extension's fieldConfigs into
+      // <GenericForm>'s own `fields`.
+      ...EXTENSION_DRAWN_FIELD_TYPES,
     ]);
 
     const newErrors: Record<string, string> = {};
@@ -354,11 +926,12 @@ export function GenericForm({
       // Only validate custom component types (native inputs are validated by browser)
       if (!customTypes.has(field.type)) return;
 
-      const val = formData[field.name];
-      const isEmpty =
-        val === undefined || val === null || val === "" || (Array.isArray(val) && val.length === 0);
-
-      if (isEmpty) {
+      // Object-aware since Wave 4 -- the inline scalar/array-only expression
+      // this replaced treated EVERY object as filled, so a required
+      // entity-reference field with nothing picked submitted empty. See
+      // `isRequiredFieldEmpty` for the full reasoning and for why no existing
+      // field type's behaviour changes.
+      if (isRequiredFieldEmpty(field, formData[field.name])) {
         // No `|| "English literal"` fallback: t() returns the bare key on a
         // miss, never a falsy value, so the fallback was dead code that could
         // only ever ship untranslated English.
@@ -621,11 +1194,24 @@ export function GenericForm({
                 key={field.name}
                 className={cn("relative", getFieldSpacing(), gridded && field.colSpan === 2 && "sm:col-span-2")}
               >
-                {field.type !== "switch" && field.type !== "checkbox" && (
-                  <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
-                    {field.label}
-                  </Label>
-                )}
+                {/* Switch and checkbox label themselves on their own row.
+                    Extension-drawn types are excluded because every one of
+                    their controls renders its own `<Label htmlFor={name}>` over
+                    its own control — verified per control, not assumed, and the
+                    failure keeping this label would cause is NOT the same for
+                    all three: see `EXTENSION_DRAWN_FIELD_TYPES` above for the
+                    reference control's un-nameable `role="combobox"` div, for
+                    Duration's doubled native `for`/`id` accessible name, and for
+                    Currency's purely visual duplicate. The label is not lost: it
+                    moves into whichever branch of
+                    `CustomFieldExtensionControl` actually renders. */}
+                {field.type !== "switch" &&
+                  field.type !== "checkbox" &&
+                  !EXTENSION_DRAWN_FIELD_TYPES.has(field.type) && (
+                    <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
+                      {field.label}
+                    </Label>
+                  )}
                 {field.type === "select" ? (
                   <GenericSelect
                     id={field.name}
@@ -761,6 +1347,51 @@ export function GenericForm({
                     searchPlaceholder={field.searchPlaceholder}
                     disabled={inert}
                     className={getInputClasses(getInputHeight())}
+                  />
+                ) : EXTENSION_DRAWN_FIELD_TYPES.has(field.type) ? (
+                  // The whole field, label included, comes from the CustomFields
+                  // module through the extension registry — or, when no module is
+                  // registered, from the explicit inert state
+                  // `CustomFieldExtensionControl` renders instead. What must never
+                  // happen here is falling through to the text `<Input>` below.
+                  //
+                  // `formData[field.name]` is passed RAW, with no `?? ""`
+                  // normalisation: the fallthrough's `?? ""` is precisely what
+                  // turned an absent object value into an empty string the server
+                  // then refused. Absent stays `undefined`, and the control decides
+                  // what "no value" means for its own type — which for Currency is
+                  // `null` (both pieces blank) and for Duration is `""`, two
+                  // different answers that only the controls can give.
+                  <CustomFieldExtensionControl
+                    field={field}
+                    value={formData[field.name]}
+                    onChange={(next) => handleChange(field.name, next)}
+                    disabled={inert}
+                    invalid={invalid}
+                    describedBy={describedBy}
+                  />
+                ) : field.type === "bilingual-options" ? (
+                  <BilingualOptionsEditor
+                    id={field.name}
+                    value={formData[field.name] ?? ""}
+                    valueAr={field.pairedName ? (formData[field.pairedName] ?? "") : ""}
+                    // Writes BOTH halves in one update. handleChange merges an object returned by
+                    // the field's own onChange, so the paired key travels with the primary one and
+                    // the two lists can never be persisted out of step.
+                    onChange={(next) =>
+                      handleChange(
+                        field.name,
+                        next.en,
+                        field.pairedName ? { [field.pairedName]: next.ar } : undefined
+                      )
+                    }
+                    disabled={field.disabled || inert}
+                    readOnly={readOnly}
+                    labelEn={field.placeholder ?? "English"}
+                    labelAr={field.searchPlaceholder ?? "العربية"}
+                    addLabel={field.addLabel ?? "Add option"}
+                    removeLabel={field.removeLabel ?? "Remove"}
+                    emptyHint={field.emptyHint ?? ""}
                   />
                 ) : field.type === "textarea" ? (
                   <Textarea

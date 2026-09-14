@@ -1,42 +1,50 @@
+/**
+ * ApiKeyActivityLog — Displays tabular log history and metrics for API key requests.
+ */
 "use client";
 
-import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
-import { Input } from "@core/ui/input";
 import { Button } from "@core/ui/button";
 import { Badge, type BadgeProps } from "@core/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { SectionState } from "@core/ui/section-state";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@core/ui/pagination";
-import { Search, ChevronsLeft, ChevronsRight, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
 import { getStatusCodeGroup } from "../../domain/entities/ApiKeyActivity";
 import { useI18n } from "@core/providers/i18n-provider";
 import { formatDateTimeUtc } from "@core/common/utils";
+import { ApiKeyActivityFilterBar } from "./ApiKeyActivityFilterBar";
+import { ApiKeyActivityPagination } from "./ApiKeyActivityPagination";
 
-interface ApiKeyActivityLogProps {
+/**
+ * Properties passed to the ApiKeyActivityLog component.
+ */
+export interface ApiKeyActivityLogProps {
+  /** Paginated activity log entries and total record count */
   activity: { items: ApiKeyActivityEntry[]; totalCount: number } | undefined;
+  /** Whether activity items are currently loading */
   isLoading: boolean;
+  /** Active page index (1-indexed) */
   page: number;
+  /** Maximum records displayed per page */
   pageSize: number;
+  /** Selected column sorting identifier */
   sortBy: string | undefined;
+  /** Whether sort order is descending */
   sortDesc: boolean;
+  /** Callback fired when user selects a different page */
   onPageChange: (page: number) => void;
+  /** Callback fired when filter criteria changes */
   onFilterChange: (filters: { endpoint?: string; method?: string; statusCode?: number }) => void;
+  /** Callback fired when sorting column or direction changes */
   onSortChange: (sortBy: string, sortDesc: boolean) => void;
+  /** Callback fired to reload log data */
   onRefresh: () => void;
 }
 
-// The status-group → Badge-variant map. "pending" carries the fourth ramp
-// step (warning-strong) that 4xx needs alongside plain 2xx/3xx/5xx.
+/**
+ * Map connecting HTTP response status groups to theme Badge variants.
+ */
 const STATUS_BADGE_VARIANT: Record<ReturnType<typeof getStatusCodeGroup>, BadgeProps["variant"]> = {
   "2xx": "success",
   "3xx": "warning",
@@ -45,6 +53,12 @@ const STATUS_BADGE_VARIANT: Record<ReturnType<typeof getStatusCodeGroup>, BadgeP
   other: "destructive",
 };
 
+/**
+ * Renders the full API key activity log interface with filter controls, data table, and pagination.
+ *
+ * @param props Component properties.
+ * @returns JSX card element containing the activity log table.
+ */
 export function ApiKeyActivityLog({
   activity,
   isLoading,
@@ -57,52 +71,10 @@ export function ApiKeyActivityLog({
   onSortChange,
   onRefresh,
 }: ApiKeyActivityLogProps) {
-  const { t, direction } = useI18n();
-
-  const [endpointInput, setEndpointInput] = useState("");
-  const [method, setMethod] = useState("all");
-  const [statusInput, setStatusInput] = useState("");
-  const [jumpPageVal, setJumpPageVal] = useState(page.toString());
-
-  useEffect(() => {
-    setJumpPageVal(page.toString());
-  }, [page]);
-
-  const handleApplyFilters = () => {
-    onFilterChange({
-      endpoint: endpointInput || undefined,
-      method: method === "all" ? undefined : method,
-      statusCode: statusInput ? parseInt(statusInput) : undefined,
-    });
-  };
-
-  const handleClearFilters = () => {
-    setEndpointInput("");
-    setMethod("all");
-    setStatusInput("");
-    onFilterChange({
-      endpoint: undefined,
-      method: undefined,
-      statusCode: undefined,
-    });
-  };
+  const { t } = useI18n();
 
   const totalCount = activity?.totalCount ?? 0;
   const items = activity?.items ?? [];
-  const totalPages = Math.max(Math.ceil(totalCount / pageSize), 1);
-  const atFirstPage = page <= 1;
-  const atLastPage = page >= totalPages;
-
-  const handleJumpPageSubmit = () => {
-    const parsed = parseInt(jumpPageVal);
-    if (!isNaN(parsed) && parsed >= 1 && parsed <= totalPages) {
-      if (parsed !== page) {
-        onPageChange(parsed);
-      }
-    } else {
-      setJumpPageVal(page.toString());
-    }
-  };
 
   const sortableHeadProps = (field: string) => ({
     sortable: true as const,
@@ -135,58 +107,7 @@ export function ApiKeyActivityLog({
       </CardHeader>
       <CardContent className="flex flex-1 flex-col overflow-hidden p-0">
         {/* Filter Bar */}
-        <div className="flex flex-wrap items-center gap-3 border-b border-nx-line bg-nx-raised p-4">
-          <div className="relative min-w-[200px] flex-1">
-            <Search
-              className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
-              aria-hidden="true"
-            />
-            <Input
-              placeholder={t("apikeys.activity.searchPlaceholder")}
-              aria-label={t("apikeys.activity.searchPlaceholder")}
-              className="h-9 ps-9"
-              value={endpointInput}
-              onChange={(e) => setEndpointInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
-            />
-          </div>
-
-          <div className="w-[120px]">
-            <Select value={method} onValueChange={setMethod}>
-              <SelectTrigger className="h-9">
-                <SelectValue placeholder={t("apikeys.activity.methodPlaceholder")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("apikeys.activity.anyMethod")}</SelectItem>
-                <SelectItem value="GET">GET</SelectItem>
-                <SelectItem value="POST">POST</SelectItem>
-                <SelectItem value="PUT">PUT</SelectItem>
-                <SelectItem value="DELETE">DELETE</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="w-[120px]">
-            <Input
-              type="number"
-              placeholder={t("apikeys.activity.statusPlaceholder")}
-              aria-label={t("apikeys.activity.statusPlaceholder")}
-              className="h-9"
-              value={statusInput}
-              onChange={(e) => setStatusInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleApplyFilters()}
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button size="sm" onClick={handleApplyFilters} disabled={isLoading}>
-              {t("common.filter")}
-            </Button>
-            <Button size="sm" variant="ghost" onClick={handleClearFilters} disabled={isLoading}>
-              {t("common.clear")}
-            </Button>
-          </div>
-        </div>
+        <ApiKeyActivityFilterBar isLoading={isLoading} onFilterChange={onFilterChange} />
 
         {/* Table Area */}
         <div className="max-h-[400px] min-h-[120px] flex-1 overflow-auto">
@@ -247,99 +168,15 @@ export function ApiKeyActivityLog({
         </div>
 
         {/* Pagination Bar */}
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-nx-line bg-nx-raised p-4">
-          <p className="text-xs text-nx-ink-2">
-            {t("apikeys.activity.showing")}:{" "}
-            <span className="font-semibold text-nx-ink">{totalCount}</span>
-          </p>
-          <Pagination className="mx-0 w-auto justify-end">
-            <PaginationContent className="gap-1.5">
-              <PaginationItem>
-                <PaginationLink
-                  href="#"
-                  aria-label={t("table.firstPage")}
-                  aria-disabled={atFirstPage || isLoading || undefined}
-                  tabIndex={atFirstPage ? -1 : undefined}
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onPageChange(1);
-                  }}
-                >
-                  {direction === "rtl" ? (
-                    <ChevronsRight className="h-4 w-4" aria-hidden="true" />
-                  ) : (
-                    <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
-                  )}
-                </PaginationLink>
-              </PaginationItem>
-
-              <PaginationItem>
-                <PaginationPrevious
-                  href="#"
-                  aria-disabled={atFirstPage || isLoading || undefined}
-                  tabIndex={atFirstPage ? -1 : undefined}
-                  className="h-8"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onPageChange(page - 1);
-                  }}
-                />
-              </PaginationItem>
-
-              <PaginationItem className="mx-1 flex items-center gap-1.5 border-s border-nx-line ps-3 text-xs font-medium text-nx-ink-2">
-                <span className="whitespace-nowrap">{t("common.page")}</span>
-                <Input
-                  type="number"
-                  min={1}
-                  max={totalPages}
-                  aria-label={t("table.goToPage")}
-                  className="h-8 w-12 p-1 text-center font-mono text-xs [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                  value={jumpPageVal}
-                  onChange={(e) => setJumpPageVal(e.target.value)}
-                  onBlur={handleJumpPageSubmit}
-                  onKeyDown={(e) => e.key === "Enter" && handleJumpPageSubmit()}
-                  disabled={isLoading}
-                />
-                <span className="whitespace-nowrap">/ {totalPages}</span>
-              </PaginationItem>
-
-              <PaginationItem>
-                <PaginationNext
-                  href="#"
-                  aria-disabled={atLastPage || isLoading || undefined}
-                  tabIndex={atLastPage ? -1 : undefined}
-                  className="h-8"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onPageChange(page + 1);
-                  }}
-                />
-              </PaginationItem>
-
-              <PaginationItem>
-                <PaginationLink
-                  href="#"
-                  aria-label={t("table.lastPage")}
-                  aria-disabled={atLastPage || isLoading || undefined}
-                  tabIndex={atLastPage ? -1 : undefined}
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onPageChange(totalPages);
-                  }}
-                >
-                  {direction === "rtl" ? (
-                    <ChevronsLeft className="h-4 w-4" aria-hidden="true" />
-                  ) : (
-                    <ChevronsRight className="h-4 w-4" aria-hidden="true" />
-                  )}
-                </PaginationLink>
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
-        </div>
+        <ApiKeyActivityPagination
+          totalCount={totalCount}
+          page={page}
+          pageSize={pageSize}
+          isLoading={isLoading}
+          onPageChange={onPageChange}
+        />
       </CardContent>
     </Card>
   );
 }
+

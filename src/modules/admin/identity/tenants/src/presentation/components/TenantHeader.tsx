@@ -16,20 +16,7 @@ import React, { useMemo } from "react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { PageHeader, type PageHeaderMeta } from "@core/ui/page-header";
-import { Alert, AlertDescription } from "@core/ui/alert";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@core/ui/dialog";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import { Textarea } from "@core/ui/textarea";
-import { Switch } from "@core/ui/switch";
 import {
   Building2,
   Pencil,
@@ -39,16 +26,13 @@ import {
   Pause,
   Ban,
   XCircle,
-  AlertTriangle,
 } from "lucide-react";
 import type { Tenant } from "../../domain/entities/Tenant";
 import { TenantDeleteDialog } from "./TenantDeleteDialog";
+import { TenantEditDialog } from "./TenantEditDialog";
+import { TenantHeaderStatusBanners } from "./TenantHeaderStatusBanners";
 import { cn, formatDateUtc } from "@core/common/utils";
 import { useTenantHeaderViewModel, TenantStatus } from "../viewmodels/useTenantHeaderViewModel";
-
-// ============================================
-// Component
-// ============================================
 
 interface TenantHeaderProps {
   tenant: Tenant;
@@ -87,10 +71,6 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
     handleSetFormActive,
   } = useTenantHeaderViewModel({ tenant, onUpdate });
 
-  // The domain entity has no typed suspension fields yet (see
-  // domain/entities/Tenant.ts — TenantProps does not declare them even
-  // though the tree-node shape does); preserved as-is, not this package's
-  // file to fix.
   const suspensionReason = (tenant as { suspensionReason?: string }).suspensionReason;
 
   // Status badge
@@ -188,119 +168,28 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
           </>
         }
       >
-        {/* Status-specific banners */}
-        {status === "suspended" && (
-          <Alert variant="warning">
-            <AlertTriangle aria-hidden="true" />
-            <AlertDescription>
-              <p className="font-medium text-nx-ink">{t("tenant.suspendedBanner")}</p>
-              {suspensionReason && <p className="mt-0.5">{suspensionReason}</p>}
-            </AlertDescription>
-          </Alert>
-        )}
-        {status === "canceled" && (
-          <Alert variant="destructive">
-            <Ban aria-hidden="true" />
-            <AlertDescription>
-              <p className="font-medium text-nx-ink">{t("tenant.canceledBanner")}</p>
-              {suspensionReason && <p className="mt-0.5">{suspensionReason}</p>}
-            </AlertDescription>
-          </Alert>
-        )}
-        {status === "expired" && (
-          <Alert variant="warning">
-            <XCircle aria-hidden="true" />
-            <AlertDescription>
-              <p className="font-medium text-nx-ink">{t("tenant.expiredBanner")}</p>
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {/* Inline subscription progress bar */}
-        {status === "active" && tenant.editionName && (
-          <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
-            <div className="mb-1.5 flex items-center justify-between text-xs text-nx-ink-2">
-              <span className="font-medium">
-                {tenant.editionName}
-                {daysLeft !== null
-                  ? ` • ${daysLeft} ${t("tenant.daysLeft")}`
-                  : ` • ${t("tenant.lifetime")}`}
-              </span>
-              {tenant.editionEndDate && (
-                <span>
-                  {t("tenant.endDate")}: {formatDateUtc(tenant.editionEndDate)}
-                </span>
-              )}
-            </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised">
-              <div
-                className={cn(
-                  "h-full rounded-full transition-[width] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
-                  progressColor
-                )}
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Depleted bar for expired */}
-        {status === "expired" && (
-          <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3">
-            <p className="mb-1.5 text-xs font-medium text-destructive">
-              {t("tenant.expired")} • {tenant.editionName}
-            </p>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-nx-raised">
-              <div className="h-full w-0 rounded-full bg-destructive" />
-            </div>
-          </div>
-        )}
+        <TenantHeaderStatusBanners
+          status={status}
+          suspensionReason={suspensionReason}
+          editionName={tenant.editionName}
+          editionEndDate={tenant.editionEndDate}
+          daysLeft={daysLeft}
+          progress={progress}
+          progressColor={progressColor}
+        />
       </PageHeader>
 
       {/* Edit Dialog */}
-      <Dialog open={editOpen} onOpenChange={handleEditOpenChange}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t("tenant.editTenant")}</DialogTitle>
-            <DialogDescription>{t("tenant.editDialogDescription")}</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="tenant-edit-name">{t("tenant.name")}</Label>
-              <Input
-                id="tenant-edit-name"
-                value={editForm.name}
-                onChange={(e) => handleSetFormName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="tenant-edit-description">{t("tenant.descriptionLabel")}</Label>
-              <Textarea
-                id="tenant-edit-description"
-                value={editForm.description}
-                onChange={(e) => handleSetFormDescription(e.target.value)}
-                rows={3}
-              />
-            </div>
-            <div className="flex items-center justify-between">
-              <Label htmlFor="tenant-edit-active">{t("tenant.activeStatus")}</Label>
-              <Switch
-                id="tenant-edit-active"
-                checked={editForm.isActive}
-                onCheckedChange={handleSetFormActive}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleEditOpenChange(false)}>
-              {t("common.cancel")}
-            </Button>
-            <Button onClick={handleEditSubmit} loading={isUpdating}>
-              {t("common.save")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <TenantEditDialog
+        open={editOpen}
+        onOpenChange={handleEditOpenChange}
+        form={editForm}
+        onSetName={handleSetFormName}
+        onSetDescription={handleSetFormDescription}
+        onSetActive={handleSetFormActive}
+        onSubmit={handleEditSubmit}
+        isUpdating={isUpdating}
+      />
 
       {/* Delete Dialog */}
       <TenantDeleteDialog
@@ -333,3 +222,4 @@ export function TenantHeader({ tenant, onUpdate, onEnter }: TenantHeaderProps) {
     </>
   );
 }
+

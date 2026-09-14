@@ -7,27 +7,38 @@
 @tailwind utilities;
 
 /* ============================================================================
-   RADIX SWITCH'S HIDDEN BUBBLE INPUT — SUPPRESS CHROME'S NATIVE ICON
+   RADIX HIDDEN BUBBLE INPUTS — SUPPRESS CHROME'S NATIVE CONTROLS & ICONS
    ----------------------------------------------------------------------------
-   @radix-ui/react-switch renders a real <input type="checkbox"> beside every
-   Switch (for native form submission) and only hides it with
-   opacity:0 + pointer-events:none + transform:translateX(-100%) — sized to
-   match the track (e.g. 44x24). Opacity doesn't remove it from Chrome's
-   autofill/"fillable field" layer, which paints anchored on layout geometry,
-   not on paint output: Chrome draws a small icon over that invisible input's
-   real bounding box, which lands just to the left of every switch (the
-   translateX shift) since the box itself is fully visible-sized.
-   Collapsing the box to the classic 1x1 visually-hidden size removes the
-   geometry Chrome anchors the icon to, without touching Radix's own
-   hide-attributes (still aria-hidden, still non-interactive).
+   @radix-ui/react-radio-group, @radix-ui/react-checkbox, and @radix-ui/react-switch
+   render a real <input> beside every custom control (for native form submission)
+   and only hide it with opacity:0 + pointer-events:none + transform:translateX(-100%)
+   — sized to match the control (e.g. 16x16 or 44x24).
+   In Chrome on Windows, opacity:0 on native form controls does not suppress
+   the native browser control painting and autofill layer, rendering a visible
+   native radio button / checkbox to the left of the custom control (causing
+   "double radio buttons" in options).
+   Collapsing the box to 1x1 visually-hidden size, disabling native appearance,
+   and clipping removes the geometry Chrome anchors to, without breaking form
+   submission or accessibility.
    ============================================================================ */
-button[role="switch"] + input[type="checkbox"][aria-hidden="true"] {
+button[role="radio"] + input[type="radio"][aria-hidden="true"],
+button[role="checkbox"] + input[type="checkbox"][aria-hidden="true"],
+button[role="switch"] + input[type="checkbox"][aria-hidden="true"],
+input[type="radio"][aria-hidden="true"],
+input[type="checkbox"][aria-hidden="true"] {
   width: 1px !important;
   height: 1px !important;
+  padding: 0 !important;
+  margin: 0 !important;
   clip: rect(0 0 0 0) !important;
   clip-path: inset(50%) !important;
   overflow: hidden !important;
   white-space: nowrap !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
 }
 
 /* ============================================================================

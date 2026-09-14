@@ -3,6 +3,8 @@
 import { useId, useState } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { cn } from "@core/common/utils";
+import { Input } from "@core/ui/input";
+import { Button } from "@core/ui/button";
 
 interface CliCommandInputProps {
   commands: string[];
@@ -38,7 +40,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
 
   return (
     <div className="relative w-full">
-      <input
+      <Input
         type="text"
         value={val}
         onChange={(e) => handleInputChange(e.target.value)}
@@ -61,17 +63,18 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
         >
           {suggestions.map((s) => (
             <li key={s}>
-              <button
+              <Button
                 type="button"
+                variant="ghost"
                 onClick={() => handleSelect(s)}
                 className={cn(
-                  "w-full px-3 py-1.5 text-start font-mono text-xs text-nx-ink",
+                  "h-auto w-full px-3 py-1.5 justify-start text-start font-mono text-xs text-nx-ink rounded-none",
                   "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   "hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                 )}
               >
                 {s}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

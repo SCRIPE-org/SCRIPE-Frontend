@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { integrationsContainer } from "@modules/integrations/di";
+import { usePermissionCatalog } from "@core/hooks/use-permission-catalog";
 import type { UpdateApiKeyDetailRequest } from "../../domain/entities/ApiKeyDetail";
 import type { ChartParams, ActivityParams } from "../../domain/interfaces/IApiKeyDetailService";
 import type { CreateApiKeyResult } from "../../domain/entities/ApiKey";
@@ -10,6 +11,9 @@ import type { CreateApiKeyResult } from "../../domain/entities/ApiKey";
 export function useApiKeyDetailViewModel(keyId: string) {
   const qc = useQueryClient();
   const repo = integrationsContainer.apiKeyDetailRepository;
+  const apiKeyRepo = integrationsContainer.apiKeyRepository;
+
+  const { data: permissions = [], isLoading: isPermissionsLoading } = usePermissionCatalog();
 
   // --- Detail Query ---
   const detailQuery = useQuery({
@@ -74,6 +78,21 @@ export function useApiKeyDetailViewModel(keyId: string) {
     },
   });
 
+  const revokeMutation = useMutation({
+    mutationFn: () => apiKeyRepo.revoke(keyId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["apikey-detail", keyId] });
+      qc.invalidateQueries({ queryKey: ["apikeys"] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: () => repo.deletePermanently(keyId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["apikeys"] });
+    },
+  });
+
   const handleChartRangeChange = useCallback((preset: "24h" | "7d" | "30d") => {
     const now = new Date();
     const map = { "24h": 1, "7d": 7, "30d": 30 };
@@ -117,6 +136,14 @@ export function useApiKeyDetailViewModel(keyId: string) {
     isUpdating: updateMutation.isPending,
     rotate: rotateMutation.mutate,
     isRotating: rotateMutation.isPending,
+    revoke: () => revokeMutation.mutate(),
+    revokeKey: revokeMutation.mutateAsync,
+    isRevoking: revokeMutation.isPending,
+    deleteKey: deleteMutation.mutateAsync,
+    isDeleting: deleteMutation.isPending,
+    permissions,
+    isPermissionsLoading,
+    refetchActivity: () => qc.invalidateQueries({ queryKey: ["apikey-activity", keyId] }),
     // Params/Controls
     chartParams,
     setChartParams,

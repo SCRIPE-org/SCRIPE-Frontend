@@ -59,9 +59,11 @@ export function clearAllLocalStorage(): void {
   sessionStorage.removeItem(STORAGE_KEYS.lastAuthRefresh);
   // Clear impersonation flag so a logout+login never shows a stale banner
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
+  // Clear tenant drill-down context so subsequent logins start un-scoped
+  sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
 
   appLogger.auth(
-    "[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state preserved)"
+    "[auth-storage-cleanup] Auth data, settings, and cache cleared (drill-down state cleared)"
   );
 }
 
@@ -81,6 +83,7 @@ export function clearSessionOnLoginMount(): void {
   if (typeof window === "undefined") return;
   sessionStorage.removeItem(STORAGE_KEYS.IMPERSONATING);
   sessionStorage.removeItem(STORAGE_KEYS.admin_backup_token);
+  sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
 
   // Clear in-memory tokens immediately — prevents RouteGuard Case 1 redirect
   // (hasToken && isAuthenticated → redirect to dashboard)

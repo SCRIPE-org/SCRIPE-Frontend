@@ -50,4 +50,14 @@ export class Qualification {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated qualification data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new Qualification instance with updated values.
+   */
+  copyWith(updates: Partial<QualificationData>): Qualification {
+    return new Qualification({ ...this.data, ...updates });
+  }
 }

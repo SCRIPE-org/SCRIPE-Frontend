@@ -56,4 +56,14 @@ export class MergeCandidate {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated merge candidate data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new MergeCandidate instance with updated values.
+   */
+  copyWith(updates: Partial<MergeCandidateData>): MergeCandidate {
+    return new MergeCandidate({ ...this.data, ...updates });
+  }
 }

@@ -1,8 +1,7 @@
 /**
  * Analytics Event Stream Page
  *
- * Read-only operator view over the Analytics Event Foundation
- * (Wave 2A, work package 2A-11).
+ * Read-only operator view over the Analytics Event Foundation.
  *
  * Events are written in-process by IAnalyticsRecorder from other modules —
  * they are never user-authored. This page shows the operator-facing read

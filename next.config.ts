@@ -56,5 +56,21 @@ const nextConfig: NextConfig = {
 
   // Security: Hide X-Powered-By header
   poweredByHeader: false,
+
+  // Server-level redirects for documentation portals
+  async redirects() {
+    return [
+      {
+        source: "/docs",
+        destination: "/docs/get-started/overview",
+        permanent: false,
+      },
+      {
+        source: "/commercial",
+        destination: "/commercial/why-scripe-overview",
+        permanent: false,
+      },
+    ];
+  },
 };
 export default nextConfig;

@@ -1,7 +1,7 @@
 ﻿export const es = {
   modules: {
     auditLogs: {
-      title: "Registros de AuditorÃ­a",
+      title: "Registros de Auditoría",
       description:
         "Seguimiento exhaustivo de operaciones con IP de usuario, tipos de acciones y almacenamiento inviolable.",
       intro:

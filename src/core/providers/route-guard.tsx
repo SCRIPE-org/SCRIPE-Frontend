@@ -238,7 +238,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
           const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
           let currentWorkspaceKey: string | null = null;
           for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
-            if (routes.includes(pathname) || routes.some((r) => pathname.startsWith(r + "/"))) {
+            if (
+              routes.includes(pathname) ||
+              routes.some((r) => pathname.startsWith(r + "/") || r.startsWith(pathname + "/"))
+            ) {
               currentWorkspaceKey = wsKey;
               break;
             }
@@ -286,7 +289,10 @@ export function RouteGuard({ children }: RouteGuardProps) {
           const workspaceRouteMap = useNavigationStore.getState().workspaceRouteMap;
           let currentWorkspaceKey: string | null = null;
           for (const [wsKey, routes] of Object.entries(workspaceRouteMap)) {
-            if (routes.includes(pathname) || routes.some((r) => pathname.startsWith(r + "/"))) {
+            if (
+              routes.includes(pathname) ||
+              routes.some((r) => pathname.startsWith(r + "/") || r.startsWith(pathname + "/"))
+            ) {
               currentWorkspaceKey = wsKey;
               break;
             }

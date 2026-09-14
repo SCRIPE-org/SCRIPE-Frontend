@@ -22,10 +22,13 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { useWorkspace } from "@core/providers/workspace-provider";
+import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
 import { useWorkspaceTransition } from "@core/ui/layout/nexus/use-workspace-transition";
+import { UpgradeDialog } from "@core/ui/layout/nexus/nexus-app-launcher";
 
 import { Star, SearchX, LayoutGrid } from "lucide-react";
 import { EmptyState } from "@core/ui/empty-state";
@@ -41,11 +44,15 @@ import { HubFooter } from "../components/HubFooter";
 import { useHubActivity } from "../hooks/useHubActivity";
 
 export function WorkspaceHubView() {
+  const router = useRouter();
+  const { currentTenant } = useTenantContext();
+  const hasTenantContext = currentTenant !== null;
   const { workspaceGroups, isLoading, togglePin } = useWorkspace();
   const { switchWorkspace } = useWorkspaceTransition();
   const { language, t } = useI18n();
   const [searchQuery, setSearchQuery] = useState("");
   const [pinLoadingKeys, setPinLoadingKeys] = useState<Set<string>>(new Set());
+  const [upgradeTarget, setUpgradeTarget] = useState<string | null>(null);
   const hubActivity = useHubActivity();
 
   // ── Hub identity: no workspace is active on the Hub page ──────────────────
@@ -155,10 +162,18 @@ export function WorkspaceHubView() {
   // ── Tile click handler ────────────────────────────────────────────────────
   const handleTileClick = useCallback(
     (ws: WorkspaceGroup) => {
-      if (ws.isLocked) return; // locked — no action for now
+      if (ws.isLocked) {
+        setUpgradeTarget(ws.workspaceKey);
+        return;
+      }
       switchWorkspace(ws.workspaceKey);
     },
     [switchWorkspace]
+  );
+
+  const upgradeWs = useMemo(
+    () => (upgradeTarget ? workspaceGroups.find((w) => w.workspaceKey === upgradeTarget) : null),
+    [upgradeTarget, workspaceGroups]
   );
 
   // ── Helper: get localized name ─────────────────────────────────────────────
@@ -256,7 +271,8 @@ export function WorkspaceHubView() {
           )}
 
           {/* Modules grid */}
-          {filteredModules.length > 0 && (
+          {(filteredModules.length > 0 ||
+            filteredLocked.some((ws) => ws.workspaceType === "Module")) && (
             <section className="mb-9">
               <HubSectionHeader
                 title={t("workspaceHub.sections.modules")}
@@ -328,7 +344,8 @@ export function WorkspaceHubView() {
           )}
 
           {/* Administration grid */}
-          {filteredAdmin.length > 0 && (
+          {(filteredAdmin.length > 0 ||
+            filteredLocked.some((ws) => ws.workspaceType !== "Module")) && (
             <section className="mb-8">
               <HubSectionHeader
                 title={t("workspaceHub.sections.administration")}
@@ -359,6 +376,26 @@ export function WorkspaceHubView() {
                     onTogglePin={() => handleTogglePin(ws.workspaceKey)}
                   />
                 ))}
+
+                {/* Locked admin workspaces in same grid */}
+                {filteredLocked
+                  .filter((ws) => ws.workspaceType !== "Module")
+                  .map((ws) => (
+                    <HubModuleTile
+                      key={ws.workspaceKey}
+                      name={getName(ws)}
+                      icon={ws.workspaceIcon}
+                      colorHue={ws.colorHue}
+                      colorChroma={ws.colorChroma}
+                      isLocked={true}
+                      isPinned={false}
+                      accessibleItemCount={0}
+                      itemLabel=""
+                      size="lg"
+                      onClick={() => handleTileClick(ws)}
+                      upgradeBadgeText={t("workspaceHub.upgradeBadge")}
+                    />
+                  ))}
               </div>
             </section>
           )}
@@ -387,6 +424,24 @@ export function WorkspaceHubView() {
       </div>
 
       <HubFooter />
+
+      {upgradeTarget && (
+        <UpgradeDialog
+          workspaceName={
+            upgradeWs?.getLocalizedName(language) ?? upgradeWs?.workspaceNameEn ?? upgradeTarget
+          }
+          isNeedsTenant={!hasTenantContext && (upgradeWs?.isModuleWorkspace ?? false)}
+          onClose={() => setUpgradeTarget(null)}
+          onUpgrade={() => {
+            setUpgradeTarget(null);
+            if (!hasTenantContext && upgradeWs?.isModuleWorkspace) {
+              router.push("/tenants");
+            } else {
+              router.push("/entitlements/editions/compare");
+            }
+          }}
+        />
+      )}
     </main>
   );
 }

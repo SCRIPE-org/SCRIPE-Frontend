@@ -50,4 +50,14 @@ export class ContactPoint {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated contact point data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new ContactPoint instance with updated values.
+   */
+  copyWith(updates: Partial<ContactPointData>): ContactPoint {
+    return new ContactPoint({ ...this.data, ...updates });
+  }
 }

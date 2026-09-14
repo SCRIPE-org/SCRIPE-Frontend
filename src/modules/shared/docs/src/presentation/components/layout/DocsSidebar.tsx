@@ -171,6 +171,7 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
                   <Link
                     key={child.id}
                     href={`/docs/${child.slug}`}
+                    prefetch={false}
                     className="docs-sidebar-item docs-sidebar-item--nested"
                     data-active={isActive}
                   >
@@ -192,6 +193,7 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
       <Link
         key={item.id}
         href={`/docs/${item.slug}`}
+        prefetch={false}
         className="docs-sidebar-item"
         data-active={isActive}
       >

@@ -49,4 +49,14 @@ export class VenueProfile {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated venue profile data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new VenueProfile instance with updated values.
+   */
+  copyWith(updates: Partial<VenueProfileData>): VenueProfile {
+    return new VenueProfile({ ...this.data, ...updates });
+  }
 }

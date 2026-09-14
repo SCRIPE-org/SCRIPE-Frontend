@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 // `vitest.setup.ts` (which registers jest-dom's matchers at runtime for every
 // suite) is itself excluded from tsc's project (see tsconfig.json "exclude"),
@@ -11,6 +11,7 @@ import { render, screen, fireEvent, waitFor, within } from "@testing-library/rea
 import "@testing-library/jest-dom/vitest";
 import { GenericCrudView, type CrudConfig } from "./generic-crud-view";
 import { registerCustomFieldsExtension, type CustomFieldsExtensionApi } from "@core/crud/customFieldsExtension";
+import { useAppStore } from "@core/store/useAppStore";
 
 // GenericCrudView (via @core/hooks/use-permissions, a re-export) and
 // GenericForm (which imports it directly) both call usePermissions() from
@@ -476,5 +477,128 @@ describe("GenericCrudView + dynamic custom-field table columns", () => {
       "Id",
       "First Name",
     ]);
+  });
+});
+
+describe("GenericCrudView + field-level security on custom-field columns (Tier 1 slice 5)", () => {
+  // Custom-field columns used to be EXEMPT from the FLS column filter, on the
+  // stated grounds that a custom field's key had "no relationship to" the screen's
+  // static field names. It does: `buildCustomFieldColumn` uses the definition's
+  // real machine key, which is exactly the string an admin types into the
+  // restricted-field list and exactly what the server matches on.
+  //
+  // These cases drive the REAL store (useAppStore.restrictedFields, the shape the
+  // /me response populates) rather than mocking the hook, so they fail if either
+  // the filter or the store wiring regresses.
+
+  function registerColumns(
+    columns: Array<{ key: string; labelEn: string }>,
+    valuesByOwnerId: Record<string, Record<string, unknown>>
+  ): CustomFieldsExtensionApi {
+    const fake: CustomFieldsExtensionApi = {
+      getFormFields: vi.fn().mockResolvedValue([]),
+      saveValues: vi.fn().mockResolvedValue(undefined),
+      getBulkColumnValues: vi.fn().mockResolvedValue({
+        columns: columns.map((c, i) => ({
+          key: c.key,
+          labelEn: c.labelEn,
+          labelAr: null,
+          valueType: "Text",
+          options: null,
+          sortOrder: i,
+        })),
+        valuesByOwnerId,
+      }),
+      InlineAddTrigger: () => null,
+    };
+    registerCustomFieldsExtension(fake);
+    return fake;
+  }
+
+  function baseConfig(): CrudConfig<{ id: string; firstName: string }> {
+    return {
+      titleKey: "t",
+      subtitleKey: "s",
+      resource: "party-people",
+      columns: [
+        { key: "id", label: "Id" },
+        { key: "firstName", label: "First Name" },
+      ],
+      entityTypeKey: "party.person",
+    };
+  }
+
+  function rows() {
+    return makeViewModel({
+      isCreateModalOpen: false,
+      items: [{ id: "row-1", firstName: "Jane" }],
+    });
+  }
+
+  afterEach(() => useAppStore.setState({ restrictedFields: {}, permissions: [] }));
+
+  async function headersFor(restrictedFields: Record<string, string[]>) {
+    // `resource` is what makes the FLS lookup possible, but it also engages
+    // GenericCrudView's canView fallback (`{resource}.view` via usePermission,
+    // which reads the store, NOT the mocked permission-provider). Without the
+    // permission the screen renders the Lock EmptyState and there is no table to
+    // assert on at all.
+    useAppStore.setState({
+      restrictedFields,
+      permissions: ["party-people.view"] as never,
+    });
+    registerColumns(
+      [
+        { key: "salary", labelEn: "Salary" },
+        { key: "shirt_size", labelEn: "Shirt Size" },
+      ],
+      { "row-1": { salary: "99000", shirt_size: "M" } }
+    );
+
+    render(<GenericCrudView viewModel={rows()} config={baseConfig()} />);
+
+    const table = await screen.findByRole("table");
+    // Wait on the one custom-field column that is never restricted in any case
+    // below, NOT on a header count: two of these cases legitimately end with
+    // fewer headers than the screen started with, and a count-based guard would
+    // either race the async fetch or assert against a table that never loaded —
+    // letting "the column is absent" pass vacuously.
+    await waitFor(() =>
+      expect(
+        within(table)
+          .getAllByRole("columnheader")
+          .map((cell) => cell.textContent)
+      ).toContain("Shirt Size")
+    );
+    return within(table).getAllByRole("columnheader").map((cell) => cell.textContent);
+  }
+
+  it("hides a restricted custom-field column while keeping the unrestricted ones", async () => {
+    const headers = await headersFor({ "party-people": ["salary"] });
+
+    expect(headers).toEqual(["Id", "First Name", "Shirt Size"]);
+    expect(headers).not.toContain("Salary");
+  });
+
+  it("hides a restricted custom-field column when the admin typed the key in a different case", async () => {
+    // The server matches OrdinalIgnoreCase, so the client must too — otherwise the
+    // column renders against a server that is already withholding the value, and
+    // the blank cells look like missing data rather than security.
+    const headers = await headersFor({ "party-people": ["Salary"] });
+
+    expect(headers).toEqual(["Id", "First Name", "Shirt Size"]);
+  });
+
+  it("hides a restricted STATIC column and a restricted custom-field column together", async () => {
+    const headers = await headersFor({ "party-people": ["firstName", "salary"] });
+
+    expect(headers).toEqual(["Id", "Shirt Size"]);
+  });
+
+  it("renders every custom-field column when the resource has no restrictions", async () => {
+    const headers = await headersFor({ "some-other-resource": ["salary"] });
+
+    // A restriction on an unrelated resource must not reach this screen.
+    expect(headers).toEqual(["Id", "First Name", "Salary", "Shirt Size"]);
   });
 });

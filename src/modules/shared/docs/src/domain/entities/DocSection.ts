@@ -1,9 +1,32 @@
 /**
- * DocSection — Represents a single content section within a doc page.
- * Each section has a type that determines how it is rendered.
+ * DocSection — Represents content sections within documentation pages.
+ * Each section specifies a type determining its presentation behavior and semantic layout.
  */
 
+export * from "./DocInteractiveSections";
+
+import type {
+  PersonaSelectorSection,
+  LandingHeroBlockSection,
+  StatsStripBlockSection,
+  ValuePropsBlockSection,
+  CtaBannerBlockSection,
+  InteractiveTerminalSection,
+  FileExplorerSection,
+  InteractiveDiagramSection,
+  BilingualGlossarySection,
+  CompatibilityMatrixSection,
+  PipelineSimulatorSection,
+  ConfigBuilderSection,
+  SchemaVisualizerSection,
+  CliSimulatorSection,
+  LifecycleTracerSection,
+} from "./DocInteractiveSections";
+
 // ─── Flowchart Types ───────────────────────────────────────────────
+/**
+ * Visual flowchart node with semantic variant and optional icon.
+ */
 export interface FlowNode {
   id: string;
   label?: string;
@@ -15,8 +38,7 @@ export interface FlowNode {
 }
 
 /**
- * Domain model representing a Flow Connection structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Directed connection between flowchart nodes with customizable edge styling.
  */
 export interface FlowConnection {
   from: string;
@@ -28,8 +50,7 @@ export interface FlowConnection {
 
 // ─── API Table Types ───────────────────────────────────────────────
 /**
- * Domain model representing a Api Endpoint structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * HTTP endpoint metadata definition for API reference documentation tables.
  */
 export interface ApiEndpoint {
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
@@ -41,8 +62,7 @@ export interface ApiEndpoint {
 
 // ─── Tab Types ─────────────────────────────────────────────────────
 /**
- * Domain model representing a Code Tab structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Multi-language code snippet tab definition.
  */
 export interface CodeTab {
   label: string;
@@ -53,8 +73,7 @@ export interface CodeTab {
 
 // ─── Step Guide Types ──────────────────────────────────────────────
 /**
- * Domain model representing a Step Item structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Sequential procedural guide item with optional code sample.
  */
 export interface StepItem {
   titleKey: string;
@@ -66,8 +85,7 @@ export interface StepItem {
 
 // ─── Comparison Types ──────────────────────────────────────────────
 /**
- * Domain model representing a Comparison Column structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Architectural or feature comparison column with sentiment styling.
  */
 export interface ComparisonColumn {
   titleKey: string;
@@ -77,8 +95,7 @@ export interface ComparisonColumn {
 
 // ─── Feature Grid Types ────────────────────────────────────────────
 /**
- * Domain model representing a Feature Grid Item structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Visual feature grid card with icon and localized copy.
  */
 export interface FeatureGridItem {
   icon: string;
@@ -88,8 +105,7 @@ export interface FeatureGridItem {
 
 // ─── Section Types ─────────────────────────────────────────────────
 /**
- * Domain model representing a Doc Section Type structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Discriminated union of all supported documentation section identifier strings.
  */
 export type DocSectionType =
   | "heading"
@@ -122,17 +138,15 @@ export type DocSectionType =
   | "cta-banner-block";
 
 /**
- * Domain model representing a Doc Section Base structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Base contract common to all documentation sections.
  */
 export interface DocSectionBase {
   type: DocSectionType;
-  id?: string; // For TOC anchor linking
+  id?: string;
 }
 
 /**
- * Domain model representing a Heading Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Structural heading section (H2, H3, H4) with table of contents anchor tracking.
  */
 export interface HeadingSection extends DocSectionBase {
   type: "heading";
@@ -141,8 +155,7 @@ export interface HeadingSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Paragraph Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Text paragraph section with markdown or localized string interpolation.
  */
 export interface ParagraphSection extends DocSectionBase {
   type: "paragraph";
@@ -150,8 +163,7 @@ export interface ParagraphSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Code Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Syntax-highlighted code block section with line highlighting and file badge.
  */
 export interface CodeSection extends DocSectionBase {
   type: "code";
@@ -162,8 +174,7 @@ export interface CodeSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Tabs Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Tabbed code block switching across multiple languages or package managers.
  */
 export interface TabsSection extends DocSectionBase {
   type: "tabs";
@@ -171,8 +182,7 @@ export interface TabsSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Flowchart Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Visual architectural flowchart section displaying nodes and directional links.
  */
 export interface FlowchartSection extends DocSectionBase {
   type: "flowchart";
@@ -184,8 +194,7 @@ export interface FlowchartSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Api Table Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * REST API table documenting routes, HTTP verbs, and permissions.
  */
 export interface ApiTableSection extends DocSectionBase {
   type: "api-table";
@@ -193,8 +202,7 @@ export interface ApiTableSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Info Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Callout alert box conveying contextual notes, tips, warnings, or caution advisories.
  */
 export interface InfoSection extends DocSectionBase {
   type: "info";
@@ -204,8 +212,7 @@ export interface InfoSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Step Guide Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Numbered implementation guide breaking down tasks into distinct instructions.
  */
 export interface StepGuideSection extends DocSectionBase {
   type: "step-guide";
@@ -213,8 +220,7 @@ export interface StepGuideSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Table Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Standard relational data table with headers and data rows.
  */
 export interface TableSection extends DocSectionBase {
   type: "table";
@@ -223,8 +229,7 @@ export interface TableSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a List Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Bulleted or numbered list section.
  */
 export interface ListSection extends DocSectionBase {
   type: "list";
@@ -233,8 +238,7 @@ export interface ListSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Image Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Media section displaying illustrations, screenshots, or architectural diagrams.
  */
 export interface ImageSection extends DocSectionBase {
   type: "image";
@@ -244,8 +248,7 @@ export interface ImageSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Comparison Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Pros/cons or capability comparison matrix across different architectural choices.
  */
 export interface ComparisonSection extends DocSectionBase {
   type: "comparison";
@@ -253,8 +256,7 @@ export interface ComparisonSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Feature Grid Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Grid section highlighting capabilities with icon markers.
  */
 export interface FeatureGridSection extends DocSectionBase {
   type: "feature-grid";
@@ -263,8 +265,7 @@ export interface FeatureGridSection extends DocSectionBase {
 }
 
 /**
- * Domain model representing a Doc Section structure.
- * Bundles read-only attributes, computed properties, and copy builders for safe mutation state transfers.
+ * Comprehensive discriminated union representing any renderable documentation section.
  */
 export type DocSection =
   | HeadingSection
@@ -295,170 +296,3 @@ export type DocSection =
   | StatsStripBlockSection
   | ValuePropsBlockSection
   | CtaBannerBlockSection;
-
-export interface PersonaSelectorSection extends DocSectionBase {
-  type: "persona-selector";
-}
-
-export interface LandingHeroBlockSection extends DocSectionBase {
-  type: "landing-hero-block";
-  kickerKey?: string;
-  title1Key: string;
-  title2Key?: string;
-  subtitleKey: string;
-  primaryCtaKey: string;
-  primaryCtaHref: string;
-  secondaryCtaKey?: string;
-  secondaryCtaHref?: string;
-}
-
-export interface StatItem {
-  value: string;
-  labelKey: string;
-}
-
-export interface StatsStripBlockSection extends DocSectionBase {
-  type: "stats-strip-block";
-  stats: StatItem[];
-}
-
-export interface ValuePropItem {
-  icon: string;
-  titleKey: string;
-  descKey: string;
-}
-
-export interface ValuePropsBlockSection extends DocSectionBase {
-  type: "value-props-block";
-  titleKey: string;
-  props: ValuePropItem[];
-}
-
-export interface CtaBannerBlockSection extends DocSectionBase {
-  type: "cta-banner-block";
-  titleKey: string;
-  subtitleKey: string;
-  primaryCtaKey: string;
-  primaryCtaHref: string;
-  secondaryCtaKey?: string;
-  secondaryCtaHref?: string;
-}
-
-export interface TerminalTab {
-  tabId: string;
-  label: string;
-  command: string;
-  outputKey: string;
-}
-
-export interface InteractiveTerminalSection extends DocSectionBase {
-  type: "interactive-terminal";
-  tabs: TerminalTab[];
-  titleKey: string;
-}
-
-export interface ExplorerFile {
-  path: string;
-  name: string;
-  type: "dir" | "file";
-  depth: number;
-  descriptionKey: string;
-}
-
-export interface FileExplorerSection extends DocSectionBase {
-  type: "file-explorer";
-  moduleName: string;
-  files: ExplorerFile[];
-}
-
-export interface DiagramNode {
-  id: string;
-  labelKey: string;
-  type: "default" | "primary" | "success" | "warning";
-  descriptionKey: string;
-}
-
-export interface DiagramConnection {
-  from: string;
-  to: string;
-  labelKey?: string;
-}
-
-export interface InteractiveDiagramSection extends DocSectionBase {
-  type: "interactive-diagram";
-  nodes: DiagramNode[];
-  connections: DiagramConnection[];
-  titleKey?: string;
-}
-
-export interface GlossaryTerm {
-  termEn: string;
-  termAr: string;
-  descriptionKey: string;
-}
-
-export interface BilingualGlossarySection extends DocSectionBase {
-  type: "bilingual-glossary";
-  terms: GlossaryTerm[];
-}
-
-export interface MatrixCell {
-  value: string;
-  status: "supported" | "partial" | "unsupported";
-}
-
-export interface CompatibilityMatrixSection extends DocSectionBase {
-  type: "compatibility-matrix";
-  headers: string[];
-  rows: { nameKey: string; cells: MatrixCell[] }[];
-}
-
-export interface PipelineSimulatorSection extends DocSectionBase {
-  type: "pipeline-simulator";
-  titleKey: string;
-  samplePayloadKey: string;
-}
-
-export interface ConfigBuilderSection extends DocSectionBase {
-  type: "config-builder";
-  titleKey: string;
-}
-
-export interface SchemaColumn {
-  name: string;
-  type: string;
-  isPrimaryKey: boolean;
-  isForeignKey: boolean;
-  nullable: boolean;
-  notesKey: string;
-}
-
-export interface SchemaTable {
-  tableName: string;
-  columns: SchemaColumn[];
-}
-
-export interface SchemaVisualizerSection extends DocSectionBase {
-  type: "schema-visualizer";
-  tables: SchemaTable[];
-  titleKey: string;
-}
-
-export interface CliSimulatorSection extends DocSectionBase {
-  type: "cli-simulator";
-  titleKey: string;
-}
-
-export interface LifecycleStep {
-  id: string;
-  actor: "view" | "viewmodel" | "repository" | "controller" | "handler" | "database";
-  labelKey: string;
-  descriptionKey: string;
-  direction: "inbound" | "outbound";
-}
-
-export interface LifecycleTracerSection extends DocSectionBase {
-  type: "lifecycle-tracer";
-  steps: LifecycleStep[];
-  titleKey: string;
-}

@@ -328,13 +328,13 @@ export const es = {
       intro: "Ofrezca una experiencia SaaS personalizada a sus clientes.",
     },
     slaGuarantees: {
-      title: "SLA y GarantÃ­as",
-      description: "GarantÃ­as de rendimiento y niveles de soporte operacional.",
+      title: "SLA y Garantías",
+      description: "Garantías de rendimiento y niveles de soporte operacional.",
       intro: "Respaldamos nuestra plataforma con acuerdos de nivel de servicio.",
     },
     tenantIsolation: {
       title: "Aislamiento de Inquilinos",
-      description: "SegregaciÃ³n de datos y modelos de despliegue hÃ­bridos.",
+      description: "Segregación de datos y modelos de despliegue híbridos.",
       intro: "Garantice un aislamiento absoluto de los datos a nivel de fila.",
     },
   },

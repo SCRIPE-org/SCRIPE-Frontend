@@ -60,6 +60,10 @@ export const en = {
     permissionsSaved: "Permissions saved successfully",
     fetchError: "Failed to fetch role permissions",
     otherCategory: "Other",
+    resourceCategory: "Resource / Category",
+    additionalCapabilities: "Additional Capabilities",
+    toggleColumnTooltip: "Toggle all {{action}} in {{module}}",
+    restrictedFieldBadge: "Restricted",
   },
   role: {
     deleteConfirm: "Are you sure you want to delete the role “{{name}}”?",

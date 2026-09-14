@@ -36,6 +36,8 @@ export const createRouteSlice: StateCreator<NavigationStoreState, [], [], RouteS
 
     if (allRoutes.has(normalized)) return true;
 
-    return allRoutesSorted.some((route) => normalized.startsWith(route + "/"));
+    return allRoutesSorted.some(
+      (route) => normalized.startsWith(route + "/") || route.startsWith(normalized + "/")
+    );
   },
 });

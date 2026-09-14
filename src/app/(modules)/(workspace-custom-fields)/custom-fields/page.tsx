@@ -5,7 +5,7 @@
  */
 import { Metadata } from "next";
 import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
-import { CustomFieldListView } from "@modules/custom-fields/custom-field/src/presentation/views/CustomFieldListView";
+import { CustomFieldListView } from "@modules/custom-fields/custom-field";
 
 export const metadata: Metadata = {
   title: "Custom Fields",

@@ -3,9 +3,9 @@
     marketplace: {
       title: "Mercado",
       description:
-        "Directorio de extensiones, instalador de mÃ³dulos y motor de verificaciÃ³n de licencias.",
+        "Directorio de extensiones, instalador de módulos y motor de verificación de licencias.",
       intro:
-        "Portal de activaciÃ³n de mÃ³dulos bajo demanda que carga dinÃ¡micamente rutas de interfaz de usuario y matrices de permisos.",
+        "Portal de activación de módulos bajo demanda que carga dinámicamente rutas de interfaz de usuario y matrices de permisos.",
     },
   },
 };

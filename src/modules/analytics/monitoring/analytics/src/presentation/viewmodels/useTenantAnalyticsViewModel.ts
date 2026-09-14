@@ -122,5 +122,6 @@ export function useTenantAnalyticsViewModel() {
     comparison,
     isLoading,
     refetchAll,
+    exportEndpoint: monitoringContainer.analyticsRepository.exportEndpoint,
   };
 }

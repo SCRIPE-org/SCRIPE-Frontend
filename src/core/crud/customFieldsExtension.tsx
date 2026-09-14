@@ -20,6 +20,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 /**
+ * Custom validation error thrown when a custom field value violates validation constraints.
+ * Allows save workflows to distinguish validation errors from API failure states.
+ */
+export class CustomFieldValidationError extends Error {}
+
+/**
  * Mirrors CustomFields.Domain.Enums.CustomFieldValueType's wire names (the
  * API's global JsonStringEnumConverter serializes every enum as its member
  * name, never its numeric ordinal — see the CustomFields module's own
@@ -30,7 +36,23 @@ import { useCallback, useEffect, useMemo, useState } from "react";
  * lockstep — this file's own header comment documents why there are exactly
  * two, not one. Wave 3.2 Batch 3 adds Email/Url/Phone/Percent/Rating the
  * same way (verified against the real backend enum: Email=8, Url=9,
- * Phone=10, Percent=11, Rating=12).
+ * Phone=10, Percent=11, Rating=12). Wave 3.3 Batch C adds
+ * Currency/Duration/Time/Color the same way (Currency=13, Duration=14,
+ * Time=15, Color=16). Wave 4 adds EntityReference=17/UserReference=18 the
+ * same way, read off the real backend enum. Wave 3.4 adds
+ * File=19/Image=20/RichText=21, likewise. That lockstep is not optional
+ * here: `BulkColumnValuesResult.columns` is typed against THIS union while
+ * the module's `getBulkColumnValues` returns columns typed against ITS
+ * union, so a member present there and missing here is an outright build
+ * error, not a silently narrower type.
+ *
+ * The build error is worth naming, because it is the whole safety mechanism and
+ * it reads as unrelated when you hit it: adding a member to the module's union
+ * alone fails at
+ * `customFieldsCrudIntegration.tsx`'s `getBulkColumnValues` return with
+ * "Type 'CustomFieldColumnData[]' is not assignable to
+ * 'CustomFieldColumnDefinition[]'". That is this union being narrower, not a
+ * data-layer fault, and the fix is here.
  */
 export type CustomFieldValueTypeName =
   | "Text"
@@ -45,7 +67,16 @@ export type CustomFieldValueTypeName =
   | "Url"
   | "Phone"
   | "Percent"
-  | "Rating";
+  | "Rating"
+  | "Currency"
+  | "Duration"
+  | "Time"
+  | "Color"
+  | "EntityReference"
+  | "UserReference"
+  | "File"
+  | "Image"
+  | "RichText";
 
 /**
  * One active custom-field definition shaped as a table-column header — thinner
@@ -65,6 +96,61 @@ export interface BulkColumnValuesResult {
   columns: CustomFieldColumnDefinition[];
   /** Keyed by the exact (encrypted) owner id string the caller requested, then by each column's `key`. An id the server couldn't verify is simply absent — render that row's cells empty, not an error. */
   valuesByOwnerId: Record<string, Record<string, unknown>>;
+  /**
+   * Wave 5 row 5.3. Per owner, the field keys a visibility rule hides for THAT record.
+   *
+   * A parallel channel, because visibility varies per ROW while a column exists once per result set —
+   * so this can never be expressed by dropping a column, and expressing it as a missing key inside
+   * `valuesByOwnerId` would overload an absence that already means two other things.
+   *
+   * Optional: a server predating row 5.3 omits it, and the server has already nulled the value
+   * regardless, so a client ignoring this renders an empty cell — correct, just without knowing why.
+   */
+  hiddenKeysByOwnerId?: Record<string, string[]> | null;
+}
+
+/**
+ * Everything a host form hands a custom-field control that `core` itself
+ * cannot draw. Consumed by `CustomFieldsExtensionApi.FieldControl` below.
+ *
+ * WHY THIS SHAPE, AND WHY NOTHING MORE. The five props are exactly the facts
+ * the host owns and the control cannot derive:
+ *   - `field` carries everything definition-shaped (name/label/placeholder/
+ *     required/options/`referenceTargetEntityTypeKey`). It is passed whole
+ *     rather than as unpacked scalars precisely so the NEXT type admitted here
+ *     needs no new prop: a type whose control reads `options` or `min`/`max`
+ *     already has them.
+ *   - `value` + `onChange` are the controlled-input contract, `unknown` in both
+ *     directions because the whole point of this member is types whose form
+ *     value is not a scalar. The host merges the reported value into its own
+ *     form state; it never interprets it.
+ *   - `invalid` / `describedBy` / `disabled` are the three host-owned facts a
+ *     control cannot see for itself: whether the host's own validation pass
+ *     rejected this field, which node the host rendered the hint or error into,
+ *     and whether the whole form is read-only. Without them the control cannot
+ *     honour the same `aria-invalid`/`aria-describedby` contract the host's own
+ *     branches provide, which is the difference between an accessible field and
+ *     one that merely looks right.
+ *
+ * Deliberately ABSENT: `required` (already on `field`), `id`/`label`/
+ * `placeholder` (already on `field`), and anything reference-specific. A member
+ * only one value type can ever use would have to be replaced the first time a
+ * second object-valued type needs drawing; this one just gets a second arm in
+ * the implementation's own dispatch.
+ */
+export interface CustomFieldFormControlProps {
+  /** The already-namespaced FieldConfig this extension itself produced (see getFormFields). */
+  field: FieldConfig;
+  /** Current form value for `field.name`, exactly as the host holds it — never coerced on the way in. */
+  value: unknown;
+  /** Report a new value. The host merges it into its own form state verbatim. */
+  onChange: (next: unknown) => void;
+  /** The host's read-only/disabled state for this field (a view dialog, or `field.disabled`). */
+  disabled?: boolean;
+  /** True when the host's own validation pass rejected this field — drives `aria-invalid`. */
+  invalid?: boolean;
+  /** Id of the hint or error node the host renders below the control, for `aria-describedby`. */
+  describedBy?: string;
 }
 
 export interface CustomFieldsExtensionApi {
@@ -98,6 +184,42 @@ export interface CustomFieldsExtensionApi {
     onCreated: () => void;
   }>;
   /**
+   * Draws the whole field — label, control, and any hint the control owns — for
+   * one FieldConfig whose `type` `core` declares for typing but cannot render
+   * itself. The EDIT-side counterpart of `formatValueForDisplay` below, and the
+   * component-valued sibling of `InlineAddTrigger` above.
+   *
+   * WHY THIS MEMBER EXISTS AT ALL. `getFormFields` hands `core` a
+   * `FieldConfig[]` that GenericCrudView concatenates straight into
+   * `<GenericForm fields={...}>`, so those fields genuinely reach GenericForm's
+   * render switch — and a type with no arm there fell through to the plain
+   * `<Input type={field.type} value={formData[field.name] ?? ""}>` default.
+   * For an object-valued type that renders as `[object Object]` in a text box
+   * the operator can type over, replacing the object with a string the server
+   * refuses. That is 30 CrudConfig sites declaring `entityTypeKey:` against 8
+   * that call the module's own dispatcher directly.
+   *
+   * The fix could NOT be an import: the control needs the CustomFields module
+   * (its entity-lookup hooks reach that module's DI container) and `core` must
+   * not import from `src/modules/*` — docs/architecture/01-modularity.md's
+   * Dependency Rule, the same constraint that makes this whole file a registry.
+   * A direct import would additionally close a runtime cycle (generic-form →
+   * control → module DI → valueTypeRegistry → generic-form) and pull the entire
+   * CustomFields data layer into every form in the product. So the control
+   * arrives the way every other module capability here does: core states the
+   * contract, the module registers the implementation.
+   *
+   * Deliberately OPTIONAL, for exactly the reason `formatValueForDisplay`
+   * below is: making it required would force every hand-built
+   * `CustomFieldsExtensionApi` test double across this codebase's other suites
+   * (leads/webhooks/dsr/templates/generic-crud-view) to add a throwaway
+   * component just to keep compiling. What must NOT happen when it is absent is
+   * the silent text-box fallthrough — GenericForm renders an explicit, inert,
+   * explanatory field instead. See `CustomFieldExtensionControl` in
+   * generic-form.tsx.
+   */
+  FieldControl?: React.ComponentType<CustomFieldFormControlProps>;
+  /**
    * Read-side per-type cell formatter for buildCustomFieldColumn's dynamic
    * table columns below — the read counterpart of getFormFields (which
    * produces the EDIT-side FieldConfig per type). Wave 2 Step 2.2 Task 5:
@@ -125,6 +247,61 @@ export interface CustomFieldsExtensionApi {
     language: string,
     t: (key: string, params?: Record<string, string | number>) => string
   ) => React.ReactNode;
+  /**
+   * Reusable section component for rendering custom fields inside any host form
+   * (e.g. Webhook Form, Lead Form, Template Form, Theme Modal, etc.).
+   */
+  Section?: React.ComponentType<CustomFieldsSectionProps>;
+  /**
+   * Lists the custom-field keys an admin could restrict for one permission resource.
+   */
+  useRestrictableCustomFieldKeys?: UseRestrictableCustomFieldKeysHook;
+}
+
+export interface RestrictableCustomFieldKey {
+  key: string;
+  labelEn: string;
+  isRequired: boolean;
+}
+
+export interface UseRestrictableCustomFieldKeysArgs {
+  enabled?: boolean;
+}
+
+export interface UseRestrictableCustomFieldKeysResult {
+  keys: RestrictableCustomFieldKey[];
+  isLoading: boolean;
+  isError: boolean;
+  isTruncated: boolean;
+  isAvailable: boolean;
+}
+
+export type UseRestrictableCustomFieldKeysHook = (
+  permissionResource: string | undefined,
+  args?: UseRestrictableCustomFieldKeysArgs
+) => UseRestrictableCustomFieldKeysResult;
+
+export interface CustomFieldsSectionProps {
+  /** The field configuration schemas (from useEntityCustomFields or ViewModel). */
+  configs: readonly FieldConfig[];
+  /** Current custom field values dictionary. */
+  values: Record<string, unknown>;
+  /** Callback fired whenever any custom field value changes. */
+  onChange: (key: string, value: unknown) => void;
+  /** Whether custom field definitions are currently loading. */
+  isLoading?: boolean;
+  /** Message displayed when no custom fields are defined for this entity type. */
+  emptyMessage?: string;
+  /** Entity type key (e.g. 'integrations.webhook-subscription') for inline creation. */
+  entityTypeKey?: string;
+  /** Localized entity display name for the inline creation modal title. */
+  entityDisplayName?: string;
+  /** Callback to refetch custom fields when an inline field is created. */
+  onFieldCreated?: () => void;
+  /** Whether the controls are in read-only / view mode. */
+  isViewMode?: boolean;
+  /** Optional container CSS class name. */
+  className?: string;
 }
 
 let registeredApi: CustomFieldsExtensionApi | null = null;
@@ -253,7 +430,9 @@ function buildCustomFieldColumn(
   definition: CustomFieldColumnDefinition,
   valuesByOwnerId: Record<string, Record<string, unknown>>,
   language: string,
-  t: (key: string, params?: Record<string, string | number>) => string
+  t: (key: string, params?: Record<string, string | number>) => string,
+  /** Wave 5 row 5.3 — per owner, the keys a rule hides for that record. */
+  hiddenKeysByOwnerId?: Record<string, string[]> | null
 ): Column<any> {
   return {
     // Synthetic key: no row type in the host screen has a real property
@@ -271,6 +450,21 @@ function buildCustomFieldColumn(
     // table (end-aligned, tabular figures) rather than inventing a new one.
     className: definition.valueType === "Number" ? "text-end tabular-nums" : undefined,
     render: (_value: unknown, row: any) => {
+      // ── Wave 5 row 5.3 ──────────────────────────────────────────────────────────────────────
+      //
+      // PER ROW, not per column: the same field can be hidden for one record and shown for the next,
+      // which is exactly why the column itself is never dropped. Rendered as the ordinary empty cell
+      // rather than a distinct "hidden" marker — a field that does not apply to this record reads as
+      // having no value, and a special marker would draw attention to precisely the thing the rule
+      // exists to keep out of the way.
+      //
+      // Defence in depth only: the server has already nulled the value, so removing this changes
+      // nothing about what is transmitted.
+      const hiddenForRow = hiddenKeysByOwnerId?.[row?.id];
+      if (hiddenForRow?.some((key) => key.toLowerCase() === definition.key.toLowerCase())) {
+        return <EmptyCustomFieldCell />;
+      }
+
       const raw = valuesByOwnerId[row?.id]?.[definition.key];
       if (isEmptyCustomFieldValue(raw)) {
         return <EmptyCustomFieldCell />;
@@ -315,6 +509,7 @@ export function useCustomFieldColumns(
   const [valuesByOwnerId, setValuesByOwnerId] = useState<Record<string, Record<string, unknown>>>(
     {}
   );
+  const [hiddenKeysByOwnerId, setHiddenKeysByOwnerId] = useState<Record<string, string[]>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
@@ -332,6 +527,7 @@ export function useCustomFieldColumns(
     if (!entityTypeKey || !api || ownerIds.length === 0) {
       setDefinitions([]);
       setValuesByOwnerId({});
+      setHiddenKeysByOwnerId({});
       setIsLoading(false);
       setError(null);
       return;
@@ -342,6 +538,9 @@ export function useCustomFieldColumns(
       const result = await api.getBulkColumnValues(entityTypeKey, ownerIds);
       setDefinitions(result.columns.slice().sort((a, b) => a.sortOrder - b.sortOrder));
       setValuesByOwnerId(result.valuesByOwnerId);
+      // Reset to {} rather than left alone when the server sends nothing: a previous page whose rows
+      // had hidden fields must not leave stale keys hiding cells on the next page.
+      setHiddenKeysByOwnerId(result.hiddenKeysByOwnerId ?? {});
     } catch (err) {
       setError(err instanceof Error ? err : new Error(String(err)));
       // Deliberately not clearing definitions/valuesByOwnerId here — a failed
@@ -363,9 +562,9 @@ export function useCustomFieldColumns(
   const columns = useMemo<Column<any>[]>(
     () =>
       definitions.map((definition) =>
-        buildCustomFieldColumn(definition, valuesByOwnerId, language, t)
+        buildCustomFieldColumn(definition, valuesByOwnerId, language, t, hiddenKeysByOwnerId)
       ),
-    [definitions, valuesByOwnerId, language, t]
+    [definitions, valuesByOwnerId, hiddenKeysByOwnerId, language, t]
   );
 
   return { columns, isLoading, error };

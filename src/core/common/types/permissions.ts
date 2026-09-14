@@ -305,7 +305,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Tenant Payment Gateways (Self-Service)
   "/my-payment-methods": [SYSTEM_PERMISSIONS.TENANT_PAYMENT_GATEWAYS_VIEW],
 
-  // Platform Leads / CRM (Phase 5)
+  // Platform Leads / CRM
   "/entitlements/leads": [SYSTEM_PERMISSIONS.LEADS_VIEW],
   "/entitlements/onboarding/questions": [SYSTEM_PERMISSIONS.ONBOARDING_QUESTIONS_VIEW],
   "/entitlements/signup-content": [SYSTEM_PERMISSIONS.SIGNUP_CONTENT_VIEW],
@@ -431,6 +431,38 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // Custom Fields Module
   "/custom-fields": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+  // Value Types catalog (Wave 5 row 5.4) -- read-only reference page nested
+  // under /custom-fields. Gated by the same permission as its parent: the
+  // navigation store's hasRouteAccess() already grants it via prefix match
+  // against the parent route (routeSlice.ts), but PAGE_PERMISSIONS matches
+  // by exact path/segment-count only (no prefix), so it needs its own entry
+  // here too -- without it, canAccessPage() would fall through to "no entry
+  // = open to any authenticated user" instead of requiring CUSTOM_FIELD_VIEW.
+  "/custom-fields/value-types": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+  // Entity Types registry (Wave 5 row 5.5) -- read-only reference page nested
+  // under /custom-fields, needing its own entry for the same exact-path
+  // reason value-types does. Gated on the PARENT's permission, not a new one:
+  // its only data source is GET /custom-fields/entity-types, which the
+  // backend's CustomFieldsController gates on `custom-fields.view` -- so an
+  // admin who can reach /custom-fields can already read exactly this list.
+  "/custom-fields/entity-types": [SYSTEM_PERMISSIONS.CUSTOM_FIELD_VIEW],
+  // Field Groups admin screen (Wave 5 row 5.2). Needs its OWN entry for the
+  // same reason value-types does — PAGE_PERMISSIONS matches by exact path, not
+  // by prefix, so without this the page would fall through to "no entry = open
+  // to any authenticated user". Gated on the field-group view permission
+  // rather than the parent's: the backend's FieldGroupsController requires
+  // `custom-field-groups.view` on every read, so an admin holding only
+  // `custom-fields.view` would reach an empty screen and a 403.
+  "/custom-fields/field-groups": [SYSTEM_PERMISSIONS.FIELD_GROUP_VIEW],
+  // Option Sets admin screen (P-4). Needs its OWN entry for the same exact-path
+  // reason value-types does. Gated on the option-set view permission rather than
+  // the parent's: the backend's OptionSetsController requires
+  // `custom-field-option-sets.view` on every read, so an admin holding only
+  // `custom-fields.view` would reach an empty screen and a 403. Only `.view` is
+  // listed -- the five write permissions gate CONTROLS inside the screen, not
+  // arrival at it, and requiring them here would hide the read-only reference
+  // sets (ISO 3166 / ISO 4217 / BCP 47) from the auditors who need to read them.
+  "/custom-fields/option-sets": [SYSTEM_PERMISSIONS.OPTION_SET_VIEW],
 
   // Analytics & Dashboard Events
   "/analytics/events": [SYSTEM_PERMISSIONS.ANALYTICS_VIEW],

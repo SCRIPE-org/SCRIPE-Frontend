@@ -2,32 +2,11 @@
 
 import { useI18n } from "@core/providers/i18n-provider";
 import { Sliders } from "lucide-react";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import { WEBHOOK_ENTITY_TYPE_KEY, type WebhookFormViewModel } from "../viewmodels/useWebhookFormViewModel";
 
 interface WebhookFormCustomFieldsSectionProps {
   vm: WebhookFormViewModel;
-}
-
-/** Mirrors TemplateFormView.tsx's own private CustomFieldsAddTrigger wrapper. */
-function WebhookCustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={WEBHOOK_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
 }
 
 /**
@@ -51,22 +30,15 @@ export function WebhookFormCustomFieldsSection({ vm }: WebhookFormCustomFieldsSe
         </div>
       </div>
 
-      {vm.customFieldConfigs.map((fc) => {
-        const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-        return renderCustomFieldControl({
-          fc,
-          value,
-          onChange: (v) => vm.updateCustomFieldValue(fc.name, v),
-        });
-      })}
-
-      {vm.customFieldConfigs.length === 0 && !vm.customFieldsLoading && (
-        <p className="text-sm text-nx-ink-2">{t("webhooks.noCustomFields")}</p>
-      )}
-
-      <WebhookCustomFieldsAddTrigger
+      <CustomFieldsSection
+        configs={vm.customFieldConfigs}
+        values={vm.customFieldValues}
+        onChange={vm.updateCustomFieldValue}
+        isLoading={vm.customFieldsLoading}
+        emptyMessage={t("webhooks.noCustomFields")}
+        entityTypeKey={WEBHOOK_ENTITY_TYPE_KEY}
         entityDisplayName={t("webhooks.title")}
-        onCreated={() => void vm.refetchCustomFields()}
+        onFieldCreated={() => void vm.refetchCustomFields()}
       />
     </section>
   );

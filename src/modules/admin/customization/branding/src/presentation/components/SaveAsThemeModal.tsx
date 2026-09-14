@@ -8,87 +8,36 @@
  */
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogPortal,
+  NonModalScrim,
+} from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
-import { Label } from "@core/ui/label";
-import { Textarea } from "@core/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { Palette, Sparkles, Sliders } from "lucide-react";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { Palette, Sliders } from "lucide-react";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import { THEME_ENTITY_TYPE_KEY } from "../viewmodels/useStudioViewModel";
+import { ThemeBasicFields } from "./ThemeBasicFields";
+import {
+  type SaveAsThemeModalProps,
+  type SaveThemeInput,
+  slugifyThemeName,
+} from "./themeModalTypes";
 
-interface SaveAsThemeModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  /** Returns the current draft branding JSON string */
-  getDraftJson: () => string;
-  onSaveTheme: (themeInput: {
-    name: string;
-    slug: string;
-    description?: string;
-    authorName?: string;
-    category: string;
-    accentColor: string;
-    themeDataJson: string;
-  }) => Promise<void>;
-  customFieldConfigs: FieldConfig[];
-  customFieldsLoading: boolean;
-  customFieldValues: Record<string, unknown>;
-  onCustomFieldChange: (name: string, value: unknown) => void;
-  onCustomFieldsCreated: () => void;
-}
-
-/** Mirrors TemplateFormView.tsx's own private CustomFieldsAddTrigger wrapper. */
-function ThemeCustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={THEME_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
-}
-
-const CATEGORIES = [
-  "corporate",
-  "creative",
-  "minimal",
-  "modern",
-  "dark",
-  "healthcare",
-  "education",
-  "finance",
-  "technology",
-  "government",
-  "retail",
-  "other",
-];
-
-function slugify(str: string): string {
-  return str
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 60);
-}
+export type { SaveAsThemeModalProps, SaveThemeInput };
 
 /**
  * Presentation UI component rendering the save as theme modal.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Coordinates theme metadata fields, accent swatch previews, and dynamic custom field sections.
+ *
+ * @param props Modal control flags, persistence callbacks, and custom field configurations.
+ * @returns An accessible dialog for authoring and saving new marketplace themes.
  */
 export function SaveAsThemeModal({
   isOpen,
@@ -100,7 +49,7 @@ export function SaveAsThemeModal({
   customFieldValues,
   onCustomFieldChange,
   onCustomFieldsCreated,
-}: SaveAsThemeModalProps) {
+}: SaveAsThemeModalProps): React.JSX.Element {
   const { t } = useI18n();
 
   const [name, setName] = useState("");
@@ -109,7 +58,7 @@ export function SaveAsThemeModal({
   const [authorName, setAuthorName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
-  const slug = useMemo(() => slugify(name), [name]);
+  const slug = useMemo(() => slugifyThemeName(name), [name]);
   const isValid = name.trim().length >= 3 && slug.length >= 3;
 
   // Extract accent color from draft tokens
@@ -146,10 +95,7 @@ export function SaveAsThemeModal({
       setAuthorName("");
       onClose();
     } catch {
-      // useStudioViewModel's saveTheme already toasted the specific reason
-      // (entity-create failure via the mutation's own onError, or a
-      // custom-field save failure via its own explicit toast) -- stay open
-      // with whatever the user typed rather than pretend it saved.
+      // Error notifications are handled by the calling view model; preserve user input
       return;
     } finally {
       setIsSaving(false);
@@ -169,7 +115,10 @@ export function SaveAsThemeModal({
   ]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()} modal={false}>
+      <DialogPortal>
+        <NonModalScrim open={isOpen} />
+      </DialogPortal>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
@@ -187,89 +136,21 @@ export function SaveAsThemeModal({
         </DialogHeader>
 
         <div className="space-y-4 py-2">
-          {/* Name */}
-          <div className="space-y-1.5">
-            <Label htmlFor="theme-name">
-              {t("studio.saveTheme.name")} <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="theme-name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t("studio.saveTheme.namePlaceholder")}
-              maxLength={100}
-              autoFocus
-            />
-            {name.trim() && (
-              <p className="text-[10px] text-nx-ink-3">
-                {t("studio.saveTheme.slug")}: {slug}
-              </p>
-            )}
-          </div>
+          {/* Theme Core Metadata Input Controls */}
+          <ThemeBasicFields
+            name={name}
+            onNameChange={setName}
+            slug={slug}
+            description={description}
+            onDescriptionChange={setDescription}
+            category={category}
+            onCategoryChange={setCategory}
+            authorName={authorName}
+            onAuthorNameChange={setAuthorName}
+            accentColor={accentColor}
+          />
 
-          {/* Description */}
-          <div className="space-y-1.5">
-            <Label htmlFor="theme-desc">{t("studio.saveTheme.description")}</Label>
-            <Textarea
-              id="theme-desc"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder={t("studio.saveTheme.descPlaceholder")}
-              rows={2}
-              maxLength={500}
-            />
-          </div>
-
-          {/* Category */}
-          <div className="space-y-1.5">
-            <Label>{t("studio.saveTheme.category")}</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    <span className="capitalize">{cat}</span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Author */}
-          <div className="space-y-1.5">
-            <Label htmlFor="theme-author">{t("studio.saveTheme.author")}</Label>
-            <Input
-              id="theme-author"
-              value={authorName}
-              onChange={(e) => setAuthorName(e.target.value)}
-              placeholder={t("studio.saveTheme.authorPlaceholder")}
-              maxLength={100}
-            />
-          </div>
-
-          {/* Preview swatch */}
-          <div className="flex items-center gap-3 rounded-nx-md border border-nx-line bg-nx-raised p-3">
-            <div
-              className="h-10 w-10 shrink-0 rounded-nx-md shadow-nx-sm"
-              style={{
-                background: `linear-gradient(135deg, ${accentColor}, color-mix(in srgb, ${accentColor} 50%, black))`,
-              }}
-              aria-hidden="true"
-            />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium text-nx-ink">
-                {name || t("studio.saveTheme.preview")}
-              </p>
-              <p className="flex items-center gap-1 text-xs text-nx-ink-2">
-                <Sparkles className="h-3 w-3" aria-hidden="true" />
-                {t("studio.saveTheme.previewDesc")}
-              </p>
-            </div>
-          </div>
-
-          {/* Custom Fields */}
+          {/* Dynamic Custom Fields Integration Section */}
           <div className="space-y-3 border-t border-nx-line pt-4">
             <div className="flex items-center gap-2.5">
               <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-nx-accent-wash text-nx-accent">
@@ -285,22 +166,16 @@ export function SaveAsThemeModal({
               </div>
             </div>
 
-            {customFieldConfigs.map((fc) => {
-              const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-              return renderCustomFieldControl({
-                fc,
-                value,
-                onChange: (v) => onCustomFieldChange(fc.name, v),
-              });
-            })}
-
-            {customFieldConfigs.length === 0 && !customFieldsLoading && (
-              <p className="text-sm text-nx-ink-2">{t("studio.saveTheme.noCustomFields")}</p>
-            )}
-
-            <ThemeCustomFieldsAddTrigger
+            <CustomFieldsSection
+              configs={customFieldConfigs}
+              values={customFieldValues}
+              onChange={onCustomFieldChange}
+              isLoading={customFieldsLoading}
+              emptyMessage={t("studio.saveTheme.noCustomFields")}
+              entityTypeKey={THEME_ENTITY_TYPE_KEY}
               entityDisplayName={t("studio.saveTheme.title")}
-              onCreated={onCustomFieldsCreated}
+              onFieldCreated={onCustomFieldsCreated}
+              className="space-y-3"
             />
           </div>
         </div>

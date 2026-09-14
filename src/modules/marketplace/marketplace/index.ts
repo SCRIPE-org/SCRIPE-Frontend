@@ -15,7 +15,7 @@ export { DevelopersView } from "./developers/src/presentation/views/DevelopersVi
 export { ReviewsView } from "./reviews/src/presentation/views/ReviewsView";
 export { FinancialsView } from "./financials/src/presentation/views/FinancialsView";
 
-// ── Reusable Components (Phase 5.4) ──────────────────────────────────────────
+// ── Reusable Components ──────────────────────────────────────────────────────
 export { DeveloperBadge } from "./developers/src/presentation/components/DeveloperBadge";
 export { RevenueChart } from "./financials/src/presentation/components/RevenueChart";
 export type { RevenueDataPoint } from "./financials/src/presentation/components/RevenueChart";

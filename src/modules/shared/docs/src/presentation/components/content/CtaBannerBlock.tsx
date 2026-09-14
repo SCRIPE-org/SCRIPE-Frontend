@@ -135,12 +135,20 @@ export function CtaBannerBlock({ section }: { section: CtaBannerBlockSection }) 
         {/* Actions + trust */}
         <motion.div className="com-cta-actions" variants={fadeUp}>
           <div className="com-cta-btns">
-            <Link href={section.primaryCtaHref} className="com-btn com-btn--primary">
+            <Link
+              href={section.primaryCtaHref}
+              prefetch={false}
+              className="com-btn com-btn--primary"
+            >
               {t(section.primaryCtaKey)}
               <ArrowIcon />
             </Link>
             {section.secondaryCtaKey && section.secondaryCtaHref && (
-              <Link href={section.secondaryCtaHref} className="com-btn com-btn--ghost">
+              <Link
+                href={section.secondaryCtaHref}
+                prefetch={false}
+                className="com-btn com-btn--ghost"
+              >
                 {t(section.secondaryCtaKey)}
               </Link>
             )}

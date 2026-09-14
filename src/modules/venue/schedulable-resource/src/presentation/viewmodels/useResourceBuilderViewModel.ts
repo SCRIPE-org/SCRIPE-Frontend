@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "../../../../di";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
-import { buildResourceTree, type SchedulableResourceTreeNode } from "./resourceTree";
+import { buildResourceTree, type SchedulableResourceTreeNode } from "../utils/resourceTree";
 
 // The backend hard-caps pageSize at 100 regardless of what's requested (see
 // SchedulableResourcesController — P5.3 abuse-prevention clamp), so requesting more here

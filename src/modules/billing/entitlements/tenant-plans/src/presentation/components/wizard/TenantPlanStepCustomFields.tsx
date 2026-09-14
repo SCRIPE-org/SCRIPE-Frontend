@@ -1,8 +1,7 @@
 "use client";
 
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import { TENANT_PLAN_ENTITY_TYPE_KEY } from "../../viewmodels/useTenantPlanCreateViewModel";
 
 interface TenantPlanStepCustomFieldsProps {
@@ -13,26 +12,6 @@ interface TenantPlanStepCustomFieldsProps {
   onFieldCreated: () => void;
   entityDisplayName: string;
   t: (key: string) => string;
-}
-
-/** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
-function CustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={TENANT_PLAN_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
 }
 
 /**
@@ -50,22 +29,17 @@ export function TenantPlanStepCustomFields({
 }: TenantPlanStepCustomFieldsProps) {
   return (
     <div className="space-y-6">
-      <div className="space-y-5">
-        {fieldConfigs.map((fc) => {
-          const value = values[fc.name] ?? fc.defaultValue ?? "";
-          return renderCustomFieldControl({
-            fc,
-            value,
-            onChange: (v) => onChange(fc.name, v),
-          });
-        })}
-
-        {fieldConfigs.length === 0 && !loading && (
-          <p className="text-sm text-nx-ink-2">{t("entitlements.tenantPlans.noCustomFields")}</p>
-        )}
-
-        <CustomFieldsAddTrigger entityDisplayName={entityDisplayName} onCreated={onFieldCreated} />
-      </div>
+      <CustomFieldsSection
+        configs={fieldConfigs}
+        values={values}
+        onChange={onChange}
+        isLoading={loading}
+        emptyMessage={t("entitlements.tenantPlans.noCustomFields")}
+        entityTypeKey={TENANT_PLAN_ENTITY_TYPE_KEY}
+        entityDisplayName={entityDisplayName}
+        onFieldCreated={onFieldCreated}
+        className="space-y-5"
+      />
     </div>
   );
 }

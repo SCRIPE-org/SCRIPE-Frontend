@@ -323,18 +323,18 @@ export const de = {
 
     whiteLabeling: {
       title: "White-Labeling",
-      description: "PrÃ¤sentieren Sie den Arbeitsbereich with Ihrer eigenen Marke.",
-      intro: "Bieten Sie Ihren Kunden ein vollstÃ¤ndig personalisiertes SaaS-Erlebnis.",
+      description: "Präsentieren Sie den Arbeitsbereich with Ihrer eigenen Marke.",
+      intro: "Bieten Sie Ihren Kunden ein vollständig personalisiertes SaaS-Erlebnis.",
     },
     slaGuarantees: {
       title: "SLA & Garantien",
-      description: "Leistungsgarantien und Supportstufen fÃ¼r Unternehmen.",
-      intro: "Wir unterstÃ¼tzen unsere Plattform mit SLAs.",
+      description: "Leistungsgarantien und Supportstufen für Unternehmen.",
+      intro: "Wir unterstützen unsere Plattform mit SLAs.",
     },
     tenantIsolation: {
       title: "Mandantenisolierung",
       description: "Fortgeschrittene Datentrennung und hybride Bereitstellungsmodelle.",
-      intro: "GewÃ¤hrleisten Sie absolute Datensicherheit.",
+      intro: "Gewährleisten Sie absolute Datensicherheit.",
     },
   },
 };

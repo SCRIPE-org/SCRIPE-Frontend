@@ -3,9 +3,7 @@
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
-import { integrationsContainer } from "@modules/integrations/di";
 import { INTEGRATIONS_PERMISSIONS } from "@modules/integrations/permission-constants";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useApiKeyDetailViewModel } from "../viewmodels/useApiKeyDetailViewModel";
 import { ApiKeyHeroBand } from "../components/ApiKeyHeroBand";
@@ -18,13 +16,13 @@ import { ApiKeyDangerZone } from "../components/ApiKeyDangerZone";
 import { RotateKeyDialog } from "../components/RotateKeyDialog";
 import { ApiKeyQuickStart } from "../components/ApiKeyQuickStart";
 import { Skeleton } from "@core/ui/skeleton";
+import { Button } from "@core/ui/button";
 
 export default function ApiKeyDetailView() {
   const params = useParams();
   const router = useRouter();
   const { t } = useI18n();
   const toast = useEnhancedToast();
-  const qc = useQueryClient();
 
   const id = Array.isArray(params?.id) ? params.id[0] : (params?.id ?? "");
 
@@ -40,39 +38,32 @@ export default function ApiKeyDetailView() {
   const canUpdate = usePermission(INTEGRATIONS_PERMISSIONS.API_KEYS_UPDATE);
   const canDelete = usePermission(INTEGRATIONS_PERMISSIONS.API_KEYS_DELETE);
 
-  // --- Revoke Mutation ---
-  const revokeMutation = useMutation({
-    mutationFn: () => integrationsContainer.apiKeyRepository.revoke(id),
-    onSuccess: () => {
+  const handleRevoke = async () => {
+    try {
+      await vm.revokeKey();
       toast.success({
         title: t("apikeys.revokeToast.successMsg"),
       });
-      qc.invalidateQueries({ queryKey: ["apikey-detail", id] });
-      qc.invalidateQueries({ queryKey: ["apikeys"] });
-    },
-    onError: (err: any) => {
+    } catch (err: any) {
       toast.error({
         title: err.message || t("apikeys.revokeToast.errorMsg"),
       });
-    },
-  });
+    }
+  };
 
-  // --- Permanent Delete Mutation ---
-  const deleteMutation = useMutation({
-    mutationFn: () => integrationsContainer.apiKeyDetailRepository.deletePermanently(id),
-    onSuccess: () => {
+  const handleDelete = async () => {
+    try {
+      await vm.deleteKey();
       toast.success({
         title: t("apikeys.deleteToast.successMsg"),
       });
-      qc.invalidateQueries({ queryKey: ["apikeys"] });
       router.push("/integrations/apikeys");
-    },
-    onError: (err: any) => {
+    } catch (err: any) {
       toast.error({
         title: err.message || t("apikeys.deleteToast.errorMsg"),
       });
-    },
-  });
+    }
+  };
 
   if (vm.isDetailLoading) {
     return (
@@ -91,9 +82,9 @@ export default function ApiKeyDetailView() {
     return (
       <div className="flex flex-1 flex-col items-center justify-center space-y-4 p-8 text-center">
         <div className="font-semibold text-destructive">{t("apikeys.error.notFound")}</div>
-        <button onClick={() => router.push("/integrations/apikeys")} className="text-sm underline">
+        <Button variant="link" onClick={() => router.push("/integrations/apikeys")} className="text-sm">
           {t("apikeys.backToList")}
-        </button>
+        </Button>
       </div>
     );
   }
@@ -118,7 +109,7 @@ export default function ApiKeyDetailView() {
         detail={vm.detail}
         isRotating={vm.isRotating}
         onRotate={vm.rotate}
-        onRevoke={revokeMutation.mutate}
+        onRevoke={vm.revoke}
         canRotate={canUpdate}
         canRevoke={canDelete}
       />
@@ -149,7 +140,7 @@ export default function ApiKeyDetailView() {
               onPageChange={vm.handleActivityPageChange}
               onFilterChange={vm.handleActivityFilterChange}
               onSortChange={vm.handleActivitySortChange}
-              onRefresh={() => qc.invalidateQueries({ queryKey: ["apikey-activity", id] })}
+              onRefresh={vm.refetchActivity}
             />
           </div>
 
@@ -167,13 +158,15 @@ export default function ApiKeyDetailView() {
               isUpdating={vm.isUpdating}
               onUpdateScopes={handleUpdateScopes}
               canUpdate={canUpdate}
+              permissions={vm.permissions}
+              isLoading={vm.isPermissionsLoading}
             />
 
             <ApiKeyDangerZone
               detail={vm.detail}
-              onRevoke={revokeMutation.mutate}
-              onDeletePermanently={deleteMutation.mutate}
-              isRevoking={revokeMutation.isPending}
+              onRevoke={handleRevoke}
+              onDeletePermanently={handleDelete}
+              isRevoking={vm.isRevoking}
               canRevoke={canDelete}
               canDeletePermanently={canDelete}
             />

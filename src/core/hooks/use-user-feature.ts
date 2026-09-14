@@ -8,8 +8,8 @@
  *   const hasAccess = useUserFeature("api_access");
  *   const projectLimit = useUserFeatureValue("max_projects");
  *
- * Stripe-ready: When Stripe Connect (Phase 10) is wired, this hook's data
- * will be populated from Stripe subscription metadata via the same /me endpoint.
+ * When external billing is wired, this hook's data
+ * will be populated from subscription metadata via the same /me endpoint.
  *
  * Architecture Note:
  * - Fetches from /me endpoint (UserSubscriptionsController)

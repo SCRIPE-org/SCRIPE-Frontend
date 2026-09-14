@@ -662,13 +662,85 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Custom Fields Module (Wave 2A / 2A-09) ─────────────────
+      // ── Custom Fields Module ────────────────────────────────────
       {
         id: "mod-custom-fields",
         titleKey: "nav.customFields",
         icon: "layout-grid",
         order: 2.5,
         children: [
+          {
+            id: "mod-cf-home",
+            titleKey: "modules.customFields.docs.home.title",
+            slug: "modules/custom-fields",
+            order: 0.1,
+          },
+          {
+            id: "mod-cf-value-types",
+            titleKey: "modules.customFields.docs.valueTypes.title",
+            slug: "modules/custom-fields-value-types",
+            order: 0.2,
+          },
+          {
+            id: "mod-cf-references",
+            titleKey: "modules.customFields.docs.references.title",
+            slug: "modules/custom-fields-references",
+            order: 0.21,
+          },
+          {
+            id: "mod-cf-reference-lookups",
+            titleKey: "modules.customFields.docs.referenceLookups.title",
+            slug: "modules/custom-fields-reference-lookups",
+            order: 0.22,
+          },
+          {
+            id: "mod-cf-defining",
+            titleKey: "modules.customFields.docs.defining.title",
+            slug: "modules/custom-fields-defining",
+            order: 0.3,
+          },
+          {
+            id: "mod-cf-field-groups",
+            titleKey: "modules.customFields.docs.groups.title",
+            slug: "modules/custom-fields-field-groups",
+            order: 0.4,
+          },
+          {
+            id: "mod-cf-options",
+            titleKey: "modules.customFields.docs.options.title",
+            slug: "modules/custom-fields-options",
+            order: 0.5,
+          },
+          {
+            id: "mod-cf-option-sets",
+            titleKey: "modules.customFields.docs.optionSets.title",
+            slug: "modules/custom-fields-option-sets",
+            order: 0.55,
+          },
+          {
+            id: "mod-cf-validators",
+            titleKey: "modules.customFields.docs.validators.title",
+            slug: "modules/custom-fields-validators",
+            order: 0.6,
+          },
+          {
+            id: "mod-cf-security",
+            titleKey: "modules.customFields.docs.security.title",
+            slug: "modules/custom-fields-security",
+            order: 0.7,
+          },
+          {
+            id: "mod-cf-managing",
+            titleKey: "modules.customFields.docs.managing.title",
+            slug: "modules/custom-fields-managing",
+            order: 0.8,
+          },
+          {
+            id: "mod-cf-limits",
+            titleKey: "modules.customFields.docs.limits.title",
+            slug: "modules/custom-fields-limits",
+            order: 0.9,
+          },
           {
             id: "mod-cf-overview",
             titleKey: "modules.customFields.overview.title",
@@ -677,7 +749,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Work Management Module (Wave 2A / 2A-10) ───────────────
+      // ── Work Management Module ──────────────────────────────────
       {
         id: "mod-work-management",
         titleKey: "nav.workManagement",
@@ -692,7 +764,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Analytics Module (Wave 2A / 2A-11) ─────────────────────
+      // ── Analytics Module ────────────────────────────────────────
       {
         id: "mod-analytics",
         titleKey: "nav.analytics",
@@ -707,7 +779,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── HRMS Module (Wave 2A) ─────────────────
+      // ── HRMS Module ─────────────────────────────────────────────
       {
         id: "mod-hrms",
         titleKey: "nav.hrms",
@@ -722,7 +794,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Party Kernel Module (Wave 2A) ───────────
+      // ── Party Kernel Module ─────────────────────────────────────
       {
         id: "mod-party-kernel",
         titleKey: "nav.partyKernel",
@@ -737,7 +809,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Organization Core Module (Wave 2A) ──────
+      // ── Organization Core Module ─────────────────────────────────
       {
         id: "mod-organization-core",
         titleKey: "nav.organizationCore",
@@ -752,7 +824,7 @@ export const navigationData: DocCategoryData[] = [
           },
         ],
       },
-      // ── Plugin System (Phase 15) ───────────────────────────────
+      // ── Plugin System ───────────────────────────────────────────
       {
         id: "mod-plugins",
         titleKey: "nav.plugins",

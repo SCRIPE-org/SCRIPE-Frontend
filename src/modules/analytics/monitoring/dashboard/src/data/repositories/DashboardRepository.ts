@@ -12,12 +12,15 @@ import type {
   EventTypeCount,
 } from "../../domain/entities/DashboardEntities";
 import type { DashboardService } from "../services/DashboardService";
+import { DASHBOARD_ENDPOINTS } from "../services/dashboard.endpoints";
 
 /**
  * Repository layer implementing client request queries for dashboard.
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class DashboardRepository implements IDashboardRepository {
+  readonly exportEndpoint = DASHBOARD_ENDPOINTS.EXPORT_OVERVIEW;
+
   constructor(private readonly service: DashboardService) {}
 
   getSummary(): Promise<DashboardSummary> {

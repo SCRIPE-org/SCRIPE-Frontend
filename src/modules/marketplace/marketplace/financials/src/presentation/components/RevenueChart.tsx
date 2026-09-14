@@ -38,7 +38,7 @@ interface RevenueChartProps {
 }
 
 /**
- * RevenueChart (Phase 5.4)
+ * RevenueChart
  *
  * Area chart for developer/marketplace revenue over time, composed from the
  * shared Recharts foundation (@core/ui/chart) — axes, grid and tooltip chrome

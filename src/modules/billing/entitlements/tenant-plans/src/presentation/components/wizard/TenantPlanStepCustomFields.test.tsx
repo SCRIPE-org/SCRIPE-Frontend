@@ -147,6 +147,51 @@ describe("TenantPlanStepCustomFields", () => {
     expect(onChange).toHaveBeenCalledWith("cf_count", "7");
   });
 
+  // customFieldsCrudIntegration.tsx attaches `isVisible` to a field's FieldConfig whenever the
+  // definition carries a visibility rule -- but this component used to `.map()` every fieldConfig
+  // straight into renderCustomFieldControl with no visibility check at all, so a field the rule
+  // said should be hidden rendered anyway. GenericForm's own `visibleFields` filter
+  // (generic-form.tsx) is the reference behaviour this reproduces.
+  it("hides a field whose isVisible predicate returns false for the current values, and shows it once the predicate flips true", () => {
+    const { rerender } = renderStep({
+      fieldConfigs: [
+        { name: "cf_nickname", type: "text", label: "Nickname" },
+        {
+          name: "cf_referral_code",
+          type: "text",
+          label: "Referral Code",
+          isVisible: (values: Record<string, unknown>) => values.cf_nickname === "friend",
+        },
+      ],
+      values: { cf_nickname: "" },
+    });
+
+    expect(screen.getByLabelText("Nickname")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Referral Code")).not.toBeInTheDocument();
+
+    rerender(
+      <TenantPlanStepCustomFields
+        fieldConfigs={[
+          { name: "cf_nickname", type: "text", label: "Nickname" },
+          {
+            name: "cf_referral_code",
+            type: "text",
+            label: "Referral Code",
+            isVisible: (values: Record<string, unknown>) => values.cf_nickname === "friend",
+          },
+        ]}
+        loading={false}
+        values={{ cf_nickname: "friend" }}
+        onChange={vi.fn()}
+        onFieldCreated={vi.fn()}
+        entityDisplayName="Tenant Plan"
+        t={(key) => key}
+      />
+    );
+
+    expect(screen.getByLabelText("Referral Code")).toBeInTheDocument();
+  });
+
   it("shows the empty-state message when there are no custom fields and not loading", () => {
     renderStep({ fieldConfigs: [], loading: false });
     expect(screen.getByText("entitlements.tenantPlans.noCustomFields")).toBeInTheDocument();

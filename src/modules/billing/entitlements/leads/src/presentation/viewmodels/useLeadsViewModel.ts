@@ -27,7 +27,7 @@ import {
 import {
   assertSelectCustomFieldValuesValid,
   CustomFieldValidationError,
-} from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+} from "@modules/custom-fields/custom-field";
 
 // ── Query key factory (stable, typed) ─────────────────────────────────────────
 

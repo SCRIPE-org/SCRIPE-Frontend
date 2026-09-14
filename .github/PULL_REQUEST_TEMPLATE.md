@@ -1,34 +1,32 @@
-## Description
+## 📋 Frontend Summary
 
-<!-- Describe what this PR does. Link related issues with "Closes #123". -->
+<!-- Briefly describe the UI views, components, viewmodels, or hooks modified. -->
 
-## Type of Change
+Closes #<!-- Issue Number -->
 
-- [ ] 🐛 Bug fix (non-breaking change which fixes an issue)
-- [ ] ✨ New feature (non-breaking change which adds functionality)
-- [ ] 💥 Breaking change (fix or feature that causes existing functionality to change)
-- [ ] 📝 Documentation update
-- [ ] ♻️ Refactoring (no functional changes)
-- [ ] 🧪 Tests (adding or updating tests)
-- [ ] 🔧 Configuration / DevOps
+---
 
-## Checklist
+## 🏷️ Change Type
 
-### Required
+- [ ] 🚀 **Feature** (new view, modal, or interactive workflow)
+- [ ] 🐛 **Bug Fix** (UI glitch, state bug, or rendering issue)
+- [ ] 🎨 **Design System** (updates to `@core/ui/*` or theme tokens)
+- [ ] 🌐 **Localization** (EN / AR translation keys or RTL layout fix)
+- [ ] ⚡ **Performance** (bundle optimization, memoization, dynamic imports)
 
-- [ ] Code follows frontend [architecture rules](https://github.com/seifmoustafa/SCRIPE/blob/development/.agents/rules/frontend-architecture.md)
-- [ ] Code uses `@core/ui/*` UI components (no raw HTML form elements)
-- [ ] I have run `pnpm run build` locally — **0 errors**
-- [ ] I have run `pnpm run lint` and resolved all errors
-- [ ] All tests pass locally
+---
 
-### If Applicable
+## 🛡️ Frontend Architectural Checklist
 
-- [ ] I have updated translation files (EN + AR parity check)
-- [ ] I have registered new sub-module locales in `core/locales/module-registry.ts`
-- [ ] I have updated relevant documentation in the docs portal
+- [ ] **Sub-Module Architecture:** All code lives in a named sub-module (no root-level `src/` or `locales/`).
+- [ ] **Data Flow:** View -> ViewModel (hook) -> Repository -> Service -> HTTP. No DTOs in presentation layer.
+- [ ] **Design System Mandate:** Uses `@core/ui/*` shared components. Zero raw unstyled `<input>` or `<button>`.
+- [ ] **Bilingual Parity:** All new keys added to both `.en.ts` and `.ar.ts`.
+- [ ] **RTL Tested:** UI displays correctly in both LTR (English) and RTL (Arabic).
+- [ ] **React Compiler Safe:** No invalid nested optional-chain dependencies in `useMemo`.
 
-## Testing
+---
 
-- [ ] Unit tests pass (Vitest)
-- [ ] Manual testing completed
+## 📸 Visual Evidence (Screenshots / Recordings)
+
+<!-- Attach LTR and RTL screenshots of the changes -->

@@ -203,10 +203,31 @@ import {
   ar as mktFinancialsAr,
 } from "@modules/marketplace/financials/locales";
 
+// ─── Custom Fields (6 sub-modules) ──────────────────────────
 import {
   en as customFieldsEn,
   ar as customFieldsAr,
 } from "@modules/custom-fields/custom-field/locales";
+import {
+  en as fieldGroupEn,
+  ar as fieldGroupAr,
+} from "@modules/custom-fields/field-group/locales";
+import {
+  en as optionSetEn,
+  ar as optionSetAr,
+} from "@modules/custom-fields/option-set/locales";
+import {
+  en as definitionExportEn,
+  ar as definitionExportAr,
+} from "@modules/custom-fields/definition-export/locales";
+import {
+  en as customFieldsSchemaEn,
+  ar as customFieldsSchemaAr,
+} from "@modules/custom-fields/schema/locales";
+import {
+  en as valueExportEn,
+  ar as valueExportAr,
+} from "@modules/custom-fields/value-export/locales";
 
 import {
   en as workManagementEn,
@@ -226,7 +247,19 @@ import { en as partyRelEn, ar as partyRelAr } from "@modules/party-kernel/party-
 import { en as contactPointEn, ar as contactPointAr } from "@modules/party-kernel/contact-point/locales";
 import { en as mergeCandidateEn, ar as mergeCandidateAr } from "@modules/party-kernel/merge-candidate/locales";
 
-// ─── Venue ─────────────────────────────────────────────
+// ─── Venue (9 sub-modules) ──────────────────────────────────────────────────
+import {
+  en as venueProfileEn,
+  ar as venueProfileAr,
+} from "@modules/venue/venue-profile/locales";
+import {
+  en as facilityEn,
+  ar as facilityAr,
+} from "@modules/venue/facility/locales";
+import {
+  en as schedulableResourceEn,
+  ar as schedulableResourceAr,
+} from "@modules/venue/schedulable-resource/locales";
 import { en as venueResourceProfileEn } from "@modules/venue/facility-resource-profile/locales/resource-profile.en";
 import { ar as venueResourceProfileAr } from "@modules/venue/facility-resource-profile/locales/resource-profile.ar";
 import { en as availabilityEn } from "@modules/venue/availability/locales/availability.en";
@@ -288,7 +321,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   // Ecosystem
   recycleBinEn,
   // Profile
-  venueResourceProfileEn,
+  profileEn,
   // Home
   homeEn,
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
@@ -320,7 +353,13 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktDevelopersEn,
   mktReviewsEn,
   mktFinancialsEn,
+  // Custom Fields (6 sub-modules)
   customFieldsEn,
+  fieldGroupEn,
+  optionSetEn,
+  definitionExportEn,
+  customFieldsSchemaEn,
+  valueExportEn,
   workManagementEn,
   analyticsEventsEn,
   // Party Kernel
@@ -331,8 +370,11 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   partyRelEn,
   contactPointEn,
   mergeCandidateEn,
-  // Venue
-  profileEn,
+  // Venue (9 sub-modules)
+  venueProfileEn,
+  facilityEn,
+  schedulableResourceEn,
+  venueResourceProfileEn,
   availabilityEn,
   bookingEn,
   booking360En,
@@ -388,7 +430,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   // Ecosystem
   recycleBinAr,
   // Profile
-  venueResourceProfileAr,
+  profileAr,
   // Home
   homeAr,
   // Plugins (5 sub-modules, all merge into "plugins" key — deepMerge required)
@@ -420,7 +462,13 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktDevelopersAr,
   mktReviewsAr,
   mktFinancialsAr,
+  // Custom Fields (6 sub-modules)
   customFieldsAr,
+  fieldGroupAr,
+  optionSetAr,
+  definitionExportAr,
+  customFieldsSchemaAr,
+  valueExportAr,
   workManagementAr,
   analyticsEventsAr,
   // Party Kernel
@@ -431,8 +479,11 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   partyRelAr,
   contactPointAr,
   mergeCandidateAr,
-  // Venue
-  profileAr,
+  // Venue (9 sub-modules)
+  venueProfileAr,
+  facilityAr,
+  schedulableResourceAr,
+  venueResourceProfileAr,
   availabilityAr,
   bookingAr,
   booking360Ar,

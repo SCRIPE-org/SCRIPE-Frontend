@@ -21,6 +21,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 import { usePermissions } from "@core/providers/permission-provider";
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { STORAGE_KEYS } from "@core/config/storage-keys";
 import { appLogger } from "../common/logger";
 import { clearNavigationCaches } from "@modules/auth/core/data/utils/auth-storage-cleanup";
 
@@ -83,7 +84,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
   const [currentTenant, setCurrentTenant] = useState<TenantInfo | null>(() => {
     if (typeof window === "undefined") return null;
     try {
-      const saved = sessionStorage.getItem("tenant_context");
+      const saved = sessionStorage.getItem(STORAGE_KEYS.tenant_context);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed?.id && parsed?.name) return parsed;
@@ -119,7 +120,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       }
 
       setCurrentTenant(tenant);
-      sessionStorage.setItem("tenant_context", JSON.stringify(tenant));
+      sessionStorage.setItem(STORAGE_KEYS.tenant_context, JSON.stringify(tenant));
       // Sync with API Service
       apiService.setTenantContext(tenant.id);
 
@@ -150,7 +151,7 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
   const exitTenantWorld = useCallback(() => {
     setCurrentTenant(null);
-    sessionStorage.removeItem("tenant_context");
+    sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
     // Sync with API Service
     apiService.setTenantContext(null);
     setBreadcrumbs([]);

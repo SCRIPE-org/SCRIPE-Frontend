@@ -35,12 +35,29 @@ export function useRoleSelector(options: UseRoleSelectorOptions = {}): UseRoleSe
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["roles-selector", tenantId, useMyTenant],
     queryFn: async () => {
-      // Use getAll with optional tenantId filter
-      // The repository will use the appropriate endpoint based on parameters
+      // If an explicit tenantId is provided, filter by that tenant
+      if (tenantId) {
+        const response = await roleRepository.getAll({
+          page: 1,
+          pageSize: 100,
+          tenantId,
+        });
+        return response.items;
+      }
+
+      // If useMyTenant is true (default), fetch current tenant's roles strictly
+      if (useMyTenant) {
+        const response = await roleRepository.getMyTenantRoles({
+          page: 1,
+          pageSize: 100,
+        });
+        return response.items;
+      }
+
+      // Platform operator fallback: fetch un-scoped / platform roles
       const response = await roleRepository.getAll({
         page: 1,
         pageSize: 100,
-        tenantId: tenantId,
       });
       return response.items;
     },

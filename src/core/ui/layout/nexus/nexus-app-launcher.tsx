@@ -693,7 +693,7 @@ function WorkspaceCard({
 }
 
 // ── Upgrade Dialog ────────────────────────────────────────────────────────────
-function UpgradeDialog({
+export function UpgradeDialog({
   workspaceName,
   isNeedsTenant,
   onClose,

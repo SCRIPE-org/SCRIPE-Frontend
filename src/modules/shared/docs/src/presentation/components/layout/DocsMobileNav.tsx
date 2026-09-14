@@ -100,6 +100,7 @@ export function DocsMobileNav({
                 <Link
                   key={child.id}
                   href={resolveHref(child.slug)}
+                  prefetch={false}
                   className="docs-sidebar-item docs-sidebar-item--nested"
                   data-active={isActive}
                   onClick={onClose}
@@ -120,6 +121,7 @@ export function DocsMobileNav({
       <Link
         key={item.id}
         href={resolveHref(item.slug)}
+        prefetch={false}
         className="docs-sidebar-item"
         data-active={isActive}
         onClick={onClose}

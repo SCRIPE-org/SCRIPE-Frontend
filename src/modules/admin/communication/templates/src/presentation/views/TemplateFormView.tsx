@@ -18,10 +18,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { ArrowLeft, Save, Settings, Palette, Braces, Eye, Tag, RotateCcw } from "lucide-react";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { ErrorMessage } from "@core/ui/error-message";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import dynamic from "next/dynamic";
 
 // Lazy-load heavy components (RichTextEditor ~150KB+ TipTap, sidebar panels)
@@ -48,25 +46,7 @@ const TemplateLivePreview = dynamic(
   { ssr: false }
 );
 
-/** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
-function CustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={MESSAGE_TEMPLATE_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
-}
+
 
 /**
  * Presentation UI component rendering the template form view.
@@ -383,24 +363,15 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
               {/* Custom Fields Tab */}
               <TabsContent value="customFields">
                 <CardContent className="space-y-5 pt-0">
-                  {vm.customFieldConfigs.map((fc: FieldConfig) => {
-                    const value = vm.customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-                    return renderCustomFieldControl({
-                      fc,
-                      value,
-                      onChange: (v) => vm.updateCustomFieldValue(fc.name, v),
-                    });
-                  })}
-
-                  {vm.customFieldConfigs.length === 0 && !vm.customFieldsLoading && (
-                    <p className="text-sm text-nx-ink-2">
-                      {vm.t("messaging.templates.noCustomFields")}
-                    </p>
-                  )}
-
-                  <CustomFieldsAddTrigger
+                  <CustomFieldsSection
+                    configs={vm.customFieldConfigs}
+                    values={vm.customFieldValues}
+                    onChange={vm.updateCustomFieldValue}
+                    isLoading={vm.customFieldsLoading}
+                    emptyMessage={vm.t("messaging.templates.noCustomFields")}
+                    entityTypeKey={MESSAGE_TEMPLATE_ENTITY_TYPE_KEY}
                     entityDisplayName={vm.t("messaging.templates.title")}
-                    onCreated={() => void vm.refetchCustomFields()}
+                    onFieldCreated={() => void vm.refetchCustomFields()}
                   />
                 </CardContent>
               </TabsContent>

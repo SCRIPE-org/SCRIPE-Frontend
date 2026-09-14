@@ -12,12 +12,15 @@ import type {
   ComparisonDataPoint,
 } from "../../domain/entities/AnalyticsEntities";
 import { AnalyticsMapper } from "../mappers/AnalyticsMapper";
+import { ANALYTICS_ENDPOINTS } from "../services/analytics.endpoints";
 
 /**
  * Repository layer implementing client request queries for analytics.
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export class AnalyticsRepository implements IAnalyticsRepository {
+  readonly exportEndpoint = ANALYTICS_ENDPOINTS.EXPORT_ANALYTICS;
+
   constructor(private readonly service: IAnalyticsService) {}
 
   async getSummary(): Promise<AnalyticsSummary> {

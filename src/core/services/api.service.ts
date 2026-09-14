@@ -353,13 +353,24 @@ export class ApiService implements IApiService {
           // Show it inline; do not navigate the user away from what they were doing.
           if (data.errorCode) {
             appLogger.warn(`Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`);
+            // Attach the parsed body as `details`, exactly as every other rejection path in this
+            // file does (the generic authenticated path and the public instance's, both below).
+            //
+            // WHY THIS MATTERS AND WHAT BREAKS WITHOUT IT: `IApiService` deliberately exposes no
+            // HTTP status codes to callers, so `error.details` — the `ErrorResponse` body, carrying
+            // both `statusCode` and `errorCode` — is the ONLY machine-readable classification a
+            // caller ever gets. Rejecting with a bare `new Error(message)` here left the localized
+            // server message as the sole signal, and a caller keying on a message works in English
+            // and silently stops working in Arabic. So every structured business-rule 403 arrived
+            // indistinguishable from an unclassifiable failure, and any caller wanting to branch on
+            // one had nothing to branch on. Concretely, the entity-lookup picker classifies a 403
+            // into a distinct "you do not have permission to view this type of record" state
+            // (EntityLookupError) keyed on `details.errorCode` / `details.statusCode`; with the body
+            // dropped, that state was correct code that could not be reached in production.
             const businessError = new Error(
               data.message || translateCore("errors.auth.forbidden")
-            ) as Error & { details?: typeof data; status?: number };
-            // Preserve the structured Result/Error payload for domain-specific UI states
-            // (for example Feature unavailable vs Permission denied). The previous plain
-            // Error kept the message but discarded the only machine-readable distinction.
-            businessError.details = data;
+            ) as Error & { details?: unknown; status?: number };
+            businessError.details = error.response?.data ?? data;
             businessError.status = 403;
             return Promise.reject(businessError);
           }

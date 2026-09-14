@@ -42,7 +42,7 @@ export function FinancialsView() {
         <p className="text-sm text-nx-ink-2">{t("marketplace.financialsPageSubtitle")}</p>
       </div>
 
-      {/* Revenue chart(s) — one per currency present in the purchase data (Phase 5.4) */}
+      {/* Revenue chart(s) — one per currency present in the purchase data */}
       {!vm.isLoadingPurchases && purchasesByCurrency.size > 0 && (
         <div className="flex flex-col gap-4 lg:flex-row lg:flex-wrap">
           {Array.from(purchasesByCurrency.entries()).map(([currency, currencyPurchases]) => (

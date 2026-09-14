@@ -94,13 +94,25 @@ import "./modules/compliance/compliance-inventory";
 import "./modules/compliance/compliance-reports";
 import "./modules/compliance/compliance-regulation-profiles";
 
-// Modules (Custom Fields — Wave 2A / 2A-09)
+// Modules (Custom Fields)
 import "./modules/custom-fields/custom-fields-overview";
+import "./modules/custom-fields/custom-fields";
+import "./modules/custom-fields/custom-fields-value-types";
+import "./modules/custom-fields/custom-fields-references";
+import "./modules/custom-fields/custom-fields-reference-lookups";
+import "./modules/custom-fields/custom-fields-defining";
+import "./modules/custom-fields/custom-fields-field-groups";
+import "./modules/custom-fields/custom-fields-options";
+import "./modules/custom-fields/custom-fields-option-sets";
+import "./modules/custom-fields/custom-fields-validators";
+import "./modules/custom-fields/custom-fields-security";
+import "./modules/custom-fields/custom-fields-managing";
+import "./modules/custom-fields/custom-fields-limits";
 
-// Modules (WorkManagement — Wave 2A / 2A-10)
+// Modules (WorkManagement)
 import "./modules/work-management/work-management-overview";
 
-// Modules (Analytics — Wave 2A / 2A-11)
+// Modules (Analytics)
 import "./modules/analytics/analytics-overview";
 
 // New Technical Modules
@@ -108,12 +120,12 @@ import "./modules/audit-logs";
 import "./modules/security-monitoring";
 import "./modules/webhooks";
 
-// Modules (HRMS, PartyKernel, OrganizationCore — Wave 2A)
+// Modules (HRMS, PartyKernel, OrganizationCore)
 import "./modules/hrms-overview";
 import "./modules/party-kernel-overview";
 import "./modules/organization-core-overview";
 
-// Modules (Marketplace — legacy slug + Phase 16 entity pages)
+// Modules (Marketplace — legacy slug and entity pages)
 import "./modules/marketplace"; // keeps 'modules/marketplace' slug alive for nav/CLI
 import "./modules/marketplace/marketplace-overview";
 import "./modules/marketplace/app-listings";

@@ -183,7 +183,7 @@ export const en = {
       competitive3:
         "Build customer trust with transparent consent management and data rights handling.",
     },
-    // ── Plugins (Phase 15) ──────────────────────────────────
+    // ── Plugins ──────────────────────────────────────────────
     pluginsOverview: {
       title: "Plugin System",
       description:

@@ -39,7 +39,7 @@ interface AppDetailViewProps {
 }
 
 /**
- * AppDetailView (Phase 5.1)
+ * AppDetailView
  *
  * Full-page detail view for a marketplace app listing.
  * Provides:
@@ -184,7 +184,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         </div>
       </div>
 
-      {/* ── Screenshot carousel (Phase 5.1) ─────────────────────────────────── */}
+      {/* ── Screenshot carousel ─────────────────────────────────────────── */}
       {listing.screenshotUrls.length > 0 && (
         <div className="relative overflow-hidden rounded-nx-lg border border-nx-line bg-nx-raised">
           <Image
@@ -260,7 +260,7 @@ export function AppDetailView({ id }: AppDetailViewProps) {
           </CardContent>
         </Card>
 
-        {/* Pricing card (Phase 5.1) */}
+        {/* Pricing card */}
         <Card>
           <CardHeader className="pb-3">
             <h2 className="flex items-center gap-2 text-base font-semibold text-nx-ink">

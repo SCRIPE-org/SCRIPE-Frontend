@@ -150,6 +150,35 @@ describe("SaveAsThemeModal + custom fields", () => {
     expect(screen.queryByText("studio.saveTheme.noCustomFields")).not.toBeInTheDocument();
   });
 
+  // Wave 5 row 5.6 (design spec §5.4; pre-plan R2's "hand-rolled" shape):
+  // hosts InlineAddCustomFieldDialog (now a modal={false} Sheet) via
+  // ThemeCustomFieldsAddTrigger, so this dialog's own outer Dialog must also
+  // be modal={false} -- see WebhookForm.customfields.test.tsx's identical
+  // test for the full aria-hidden mechanism this proves against.
+  it("renders as a non-modal dialog: a sentinel outside it stays reachable via getByRole while it is open", () => {
+    registerFakeCustomFieldsExtension();
+
+    render(
+      <div>
+        <button type="button">host-page-sentinel</button>
+        <SaveAsThemeModal
+          isOpen
+          onClose={vi.fn()}
+          getDraftJson={() => JSON.stringify({ tokens: { "color.primary": "#123456" } })}
+          onSaveTheme={vi.fn().mockResolvedValue(undefined)}
+          customFieldConfigs={[]}
+          customFieldsLoading={false}
+          customFieldValues={{}}
+          onCustomFieldChange={vi.fn()}
+          onCustomFieldsCreated={vi.fn()}
+        />
+      </div>
+    );
+
+    expect(screen.getByRole("dialog", { name: "studio.saveTheme.title" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "host-page-sentinel" })).toBeInTheDocument();
+  });
+
   it("renders the inline add-custom-field trigger and reports creation via onCustomFieldsCreated", () => {
     const onCustomFieldsCreated = vi.fn();
     registerFakeCustomFieldsExtension({

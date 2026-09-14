@@ -29,9 +29,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
 import { PageHeader } from "@core/ui/page-header";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
-import { renderCustomFieldControl } from "@modules/custom-fields/custom-field/src/presentation/renderCustomFieldControl";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import {
   ArrowLeft,
   Save,
@@ -49,25 +47,6 @@ import {
   Layers,
 } from "lucide-react";
 
-/** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
-function CustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={TENANT_FEATURE_DEFINITION_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
-}
 
 interface FeatureDefinitionFormViewProps {
   /** If provided, we're in edit mode; otherwise create mode. */
@@ -472,28 +451,18 @@ export function FeatureDefinitionFormView({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {customFieldConfigs.map((fc: FieldConfig) => {
-            const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-            return renderCustomFieldControl({
-              fc,
-              value,
-              onChange: (v) => updateCustomFieldValue(fc.name, v),
-              isViewMode,
-            });
-          })}
-
-          {customFieldConfigs.length === 0 && !customFieldsLoading && (
-            <p className="text-sm text-nx-ink-3">
-              {t("entitlements.featureDefinitions.noCustomFields")}
-            </p>
-          )}
-
-          {!isViewMode && (
-            <CustomFieldsAddTrigger
-              entityDisplayName={t("entitlements.featureDefinitions.title")}
-              onCreated={() => void refetchCustomFields()}
-            />
-          )}
+          <CustomFieldsSection
+            configs={customFieldConfigs}
+            values={customFieldValues}
+            onChange={updateCustomFieldValue}
+            isLoading={customFieldsLoading}
+            emptyMessage={t("entitlements.featureDefinitions.noCustomFields")}
+            entityTypeKey={TENANT_FEATURE_DEFINITION_ENTITY_TYPE_KEY}
+            entityDisplayName={t("entitlements.featureDefinitions.title")}
+            onFieldCreated={() => void refetchCustomFields()}
+            isViewMode={isViewMode}
+            className="space-y-5"
+          />
         </CardContent>
       </Card>
 

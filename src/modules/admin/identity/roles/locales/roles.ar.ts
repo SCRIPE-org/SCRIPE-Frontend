@@ -59,6 +59,10 @@ export const ar = {
     permissionsSaved: "تم حفظ الصلاحيات بنجاح",
     fetchError: "فشل في جلب صلاحيات الدور",
     otherCategory: "أخرى",
+    resourceCategory: "المورد / الفئة",
+    additionalCapabilities: "صلاحيات إضافية",
+    toggleColumnTooltip: "تبديل كافة صلاحيات {{action}} في {{module}}",
+    restrictedFieldBadge: "مقيد",
   },
   role: {
     deleteConfirm: "هل أنت متأكد من حذف الدور «{{name}}»؟",

@@ -6,12 +6,13 @@
  */
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
 import { getCustomFieldsContainer } from "../../../../di";
+import { normalizeCustomFieldCreateScope } from "../form/customFieldScopeFieldConfig";
 import type { CustomField } from "../../domain/entities/CustomField";
 
 /**
@@ -73,8 +74,24 @@ export function useCustomFieldViewModel() {
       };
     },
     create: async (data) => {
+      const payload = { ...(data as Record<string, unknown>) };
+      if (
+        payload.optionsSource === "optionSet" &&
+        typeof payload.optionSetVersionId === "string" &&
+        payload.optionSetVersionId.trim() !== ""
+      ) {
+        payload.optionSetVersionId = payload.optionSetVersionId.trim();
+        delete payload.options;
+        delete payload.optionsAr;
+      } else {
+        delete payload.optionSetVersionId;
+      }
+      delete payload.optionsSource;
+
       const id = await customFieldRepository.create(
-        normalizeValidatorFields(data as Record<string, unknown>)
+        normalizeValidatorFields(
+          normalizeCustomFieldCreateScope(payload)
+        )
       );
       return { id } as unknown as CustomField;
     },
@@ -134,7 +151,10 @@ export function useCustomFieldViewModel() {
     [customFieldRepository, baseOpenEditModal, t]
   );
 
-  const vm = { ...baseVm, openEditModal };
+  const vm = useMemo(
+    () => ({ ...baseVm, openEditModal }),
+    [baseVm, openEditModal]
+  );
 
   return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes };
 }

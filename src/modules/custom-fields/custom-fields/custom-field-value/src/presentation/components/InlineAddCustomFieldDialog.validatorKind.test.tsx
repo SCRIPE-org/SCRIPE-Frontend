@@ -21,6 +21,18 @@ import { getCustomFieldsContainer } from "../../../../di";
 vi.mock("../../../../di", () => ({
   getCustomFieldsContainer: vi.fn(),
 }));
+vi.mock("../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions", () => ({
+  useFieldGroupOptions: vi.fn(() => ({ options: [], isLoading: false, isError: false })),
+}));
+vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
+  useEntityLookupAvailableTypes: vi.fn(() => ({ types: [], isLoading: false, isError: false, isEmpty: true })),
+}));
+// Real useOptionSetViewModel calls useQueryClient() unconditionally, which throws outside a
+// QueryClientProvider -- mocked like its two sibling read hooks above rather than wrapping every
+// test in this file with a provider it otherwise has no use for.
+vi.mock("../../../../option-set/src/presentation/viewmodels/useOptionSetViewModel", () => ({
+  useOptionSetViewModel: vi.fn(() => ({ sets: [], isSetsLoading: false, isSetsError: false })),
+}));
 vi.mock("@core/hooks/use-permission", () => ({
   usePermission: vi.fn().mockReturnValue(true),
 }));
