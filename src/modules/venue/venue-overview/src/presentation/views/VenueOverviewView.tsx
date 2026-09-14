@@ -3,8 +3,9 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
+import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, Building2, RefreshCw } from "lucide-react";
 import { useVenueOverviewViewModel } from "../viewmodels/useVenueOverviewViewModel";
 import { VenueOverviewHeader } from "../components/VenueOverviewHeader";
 import { VenueOverviewKpiStrip } from "../components/VenueOverviewKpiStrip";
@@ -60,6 +61,18 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
             </Button>
           </AlertDescription>
         </Alert>
+      </div>
+    );
+  }
+
+  if (state.stage === "empty") {
+    return (
+      <div className="p-6" dir={dir} data-testid="venue-overview-empty">
+        <EmptyState
+          icon={Building2}
+          title={t("venueOverview.empty.noFacilityTitle")}
+          description={t("venueOverview.empty.noFacilityDescription")}
+        />
       </div>
     );
   }

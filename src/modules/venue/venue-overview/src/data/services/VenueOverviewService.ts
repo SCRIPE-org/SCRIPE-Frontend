@@ -48,7 +48,7 @@ export class VenueOverviewService implements IVenueOverviewService {
   ): Promise<VenueOverviewState> {
     // 1. Resolve facility context
     let facilityId = facilityIdInput;
-    let facilityName = "Main Facility";
+    let facilityName = "";
     try {
       const facilityPage = await this.facilityRepo.getAll({ page: 1, pageSize: 50 });
       if (facilityPage.items.length > 0) {
@@ -65,13 +65,37 @@ export class VenueOverviewService implements IVenueOverviewService {
       // Fallback if facility list fails
     }
 
-    if (!facilityId) {
-      facilityId = "default-facility";
-    }
-
     const localDate = targetLocalDateInput || new Date().toISOString().slice(0, 10);
     const nowUtc = new Date();
     const currentUtcIso = nowUtc.toISOString();
+
+    // There is no authoritative facility context to project when this tenant has no
+    // facilities. Do not substitute a fictional facility identifier or display name.
+    if (!facilityId) {
+      return {
+        stage: "empty",
+        facilityId: "",
+        facilityName: "",
+        timeZoneId: "UTC",
+        asOfUtc: currentUtcIso,
+        localDate,
+        kpis: {
+          todayReservationsCount: 0,
+          todayReservationsConfirmedCount: 0,
+          todayReservationsCheckedInCount: 0,
+          activeHoldsCount: 0,
+          nearestHoldExpiryUtc: null,
+          checkedInNowCount: 0,
+          activeResourcesCount: 0,
+        },
+        hourlyLoad: [],
+        atAGlance: [],
+        upNext: [],
+        resourceActivity: [],
+        recentActivityDeferred: true,
+        error: false,
+      };
+    }
 
     // 2. Resolve facility resources and timezone before requesting the authoritative projection.
     // The calendar contract deliberately requires both; a facility-level wildcard would leak

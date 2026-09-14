@@ -156,4 +156,25 @@ describe("VenueOverviewService", () => {
     expect(overview.upNext[0]!.customerDisplayName).toBeNull();
     expect(overview.kpis.todayReservationsCount).toBe(3);
   });
+
+  it("returns an honest empty state without querying booking operations when no facility exists", async () => {
+    mockOperationsCalendarRepo.getDay.mockClear();
+    const noFacilities = {
+      getAll: vi.fn().mockResolvedValue({ items: [], totalCount: 0 }),
+    };
+    const service = new VenueOverviewService(
+      mockOperationsCalendarRepo as never,
+      mockSchedulableResourceRepo as never,
+      mockProfileRepo as never,
+      noFacilities as never,
+      mockCustomerRepo as never
+    );
+
+    const overview = await service.getOverview();
+
+    expect(overview.stage).toBe("empty");
+    expect(overview.facilityId).toBe("");
+    expect(overview.facilityName).toBe("");
+    expect(mockOperationsCalendarRepo.getDay).not.toHaveBeenCalled();
+  });
 });

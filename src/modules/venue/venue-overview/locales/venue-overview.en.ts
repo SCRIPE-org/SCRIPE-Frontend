@@ -72,6 +72,10 @@ export const en = {
     deferred: {
       recentActivity: "Recent operational activity feed deferred: no bounded cross-reservation feed projection exists.",
     },
+    empty: {
+      noFacilityTitle: "No facilities configured",
+      noFacilityDescription: "Create a facility before using the Venue Overview.",
+    },
     errors: {
       loadFailed: "Operational data unavailable for Venue Overview.",
       retry: "Retry loading overview",

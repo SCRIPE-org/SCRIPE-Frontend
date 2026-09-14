@@ -136,4 +136,21 @@ describe("VenueOverviewView", () => {
     expect(screen.getByTestId("recent-activity-deferred")).toBeInTheDocument();
     expect(screen.getByText("venueOverview.deferred.recentActivity")).toBeInTheDocument();
   });
+
+  it("renders an explicit empty state instead of a fictional facility", async () => {
+    mockVenueOverviewService.getOverview.mockResolvedValueOnce({
+      ...mockOverviewState,
+      stage: "empty",
+      facilityId: "",
+      facilityName: "",
+    });
+
+    render(<VenueOverviewView />);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("venue-overview-empty")).toBeInTheDocument();
+    });
+    expect(screen.getByText("venueOverview.empty.noFacilityTitle")).toBeInTheDocument();
+    expect(screen.queryByText("Main Facility")).not.toBeInTheDocument();
+  });
 });

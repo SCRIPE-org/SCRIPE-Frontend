@@ -51,7 +51,7 @@ export interface VenueOverviewResourceActivityItem {
 }
 
 export interface VenueOverviewState {
-  stage: "loading" | "ready" | "failed";
+  stage: "loading" | "ready" | "empty" | "failed";
   facilityId: string;
   facilityName: string;
   timeZoneId: string;
