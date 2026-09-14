@@ -14,7 +14,7 @@ import { Label } from "@core/ui/label";
 import type { Admin } from "../../domain/entities/Admin";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { appLogger } from "@/core/common/logger";
-import { SYSTEM_TENANT_ID } from "@modules/identity/core";
+import { SYSTEM_TENANT_ID } from "../../../../tenants/src/domain/entities/Tenant";
 import { useAdminTransferViewModel } from "../viewmodels/useAdminTransferViewModel";
 
 // Special value to represent "System" tenant (null ID = Super Admin)

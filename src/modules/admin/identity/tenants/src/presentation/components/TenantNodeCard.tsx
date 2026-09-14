@@ -19,7 +19,7 @@ import { cn } from "@core/common/utils";
 import { Card } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Building2, Pause, Ban, XCircle } from "lucide-react";
-import type { TenantTreeNode } from "../../domain/entities/Tenant";
+import { type TenantTreeNode, SYSTEM_TENANT_ID } from "../../domain/entities/Tenant";
 import { useTenantStatsViewModel } from "../viewmodels/useTenantStatsViewModel";
 
 import { TenantNodeCardHeader } from "./TenantNodeCard/TenantNodeCardHeader";
@@ -157,10 +157,12 @@ export function TenantNodeCard({
   const canEdit_ = hasPermission(SYSTEM_PERMISSIONS.TENANTS_UPDATE);
   const canCreate = hasPermission(SYSTEM_PERMISSIONS.TENANTS_CREATE);
 
-  // Fetch stats on demand when expanded
+  const isSystemNode = !node.id || node.id === SYSTEM_TENANT_ID;
+
+  // Fetch stats on demand when expanded (only for actual database tenants)
   const { stats, loading: statsLoading } = useTenantStatsViewModel({
     tenantId: node.id,
-    enabled: isExpanded,
+    enabled: isExpanded && !isSystemNode,
   });
 
   const handleToggle = useCallback(() => {
@@ -168,13 +170,15 @@ export function TenantNodeCard({
   }, []);
 
   const handleViewDetails = useCallback(() => {
+    if (isSystemNode) return;
     router.push(`/tenants/${node.id}`);
-  }, [router, node.id]);
+  }, [router, node.id, isSystemNode]);
 
   const handleEnterWorld = useCallback(() => {
+    if (isSystemNode) return;
     enterTenantWorld({ id: node.id, name: node.name, parentId: node.parentId });
     router.push("/");
-  }, [enterTenantWorld, router, node]);
+  }, [enterTenantWorld, router, node, isSystemNode]);
 
   // Status badge content
   const statusBadge = useMemo(() => {

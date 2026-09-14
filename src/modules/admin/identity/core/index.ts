@@ -30,10 +30,10 @@ export { CascadeDeleteDialog } from "../user-groups/src/presentation/components/
 export { CascadeStatusDialog } from "../user-groups/src/presentation/components/CascadeStatusDialog";
 export { AssignToGroupDialog } from "../user-groups/src/presentation/components/AssignToGroupDialog";
 
-// Admins
-export { AdminsView } from "../admin/src/presentation/views/AdminsView";
-export { useAdminsViewModel } from "../admin/src/presentation/viewmodels/useAdminsViewModel";
-
 // Tenants
 export { SYSTEM_TENANT_ID, Tenant } from "../tenants/src/domain/entities/Tenant";
 export type { TenantProps, TenantTreeNode } from "../tenants/src/domain/entities/Tenant";
+
+// Admins
+export { AdminsView } from "../admin/src/presentation/views/AdminsView";
+export { useAdminsViewModel } from "../admin/src/presentation/viewmodels/useAdminsViewModel";

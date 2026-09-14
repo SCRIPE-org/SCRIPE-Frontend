@@ -3,7 +3,7 @@
 import { Eye, LogIn, Pencil, Building2, ArrowUpCircle, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { TenantTreeNode } from "../../../domain/entities/Tenant";
+import { type TenantTreeNode, SYSTEM_TENANT_ID } from "../../../domain/entities/Tenant";
 import type { TenantStatus } from "./TenantNodeCardHeader";
 
 interface TenantNodeCardActionsProps {
@@ -44,19 +44,20 @@ export function TenantNodeCardActions({
   onEnterWorld,
 }: TenantNodeCardActionsProps) {
   const { t } = useI18n();
+  const isSystem = !node.id || node.id === SYSTEM_TENANT_ID;
 
   return (
     <div className="mt-4 flex flex-wrap items-center gap-2">
-      {/* View Details */}
-      {canViewDetails && !compact && (
+      {/* View Details — only for actual database tenants */}
+      {canViewDetails && !compact && !isSystem && (
         <Button size="sm" onClick={onViewDetails}>
           <Eye className="me-1.5 h-4 w-4" aria-hidden="true" />
           {t("tenant.viewTenantDetails")}
         </Button>
       )}
 
-      {/* Enter Tenant World */}
-      {canEnterTenantWorld && canDrillDown && !compact && status !== "canceled" && (
+      {/* Enter Tenant World — drill down into a real tenant */}
+      {canEnterTenantWorld && canDrillDown && !compact && status !== "canceled" && !isSystem && (
         <Button
           size="sm"
           variant="outline"
@@ -68,24 +69,24 @@ export function TenantNodeCardActions({
         </Button>
       )}
 
-      {/* Edit */}
-      {canEdit_ && onEdit && (
+      {/* Edit — only for real tenants */}
+      {canEdit_ && onEdit && !isSystem && (
         <Button size="sm" variant="ghost" onClick={() => onEdit(node)}>
           <Pencil className="me-1.5 h-4 w-4" aria-hidden="true" />
           {t("tenant.edit")}
         </Button>
       )}
 
-      {/* Add Child */}
+      {/* Add Child / Add Tenant */}
       {canCreate && onCreateChild && (
-        <Button size="sm" variant="ghost" onClick={() => onCreateChild(node)}>
+        <Button size="sm" variant={isSystem ? "default" : "ghost"} onClick={() => onCreateChild(node)}>
           <Building2 className="me-1.5 h-4 w-4" aria-hidden="true" />
-          {t("tenant.addChild")}
+          {isSystem ? t("tenant.addTenant") : t("tenant.addChild")}
         </Button>
       )}
 
       {/* Reassign Plan - for canceled/expired */}
-      {(status === "canceled" || status === "expired") && canViewDetails && !compact && (
+      {(status === "canceled" || status === "expired") && canViewDetails && !compact && !isSystem && (
         <Button
           size="sm"
           variant="outline"
@@ -97,8 +98,8 @@ export function TenantNodeCardActions({
         </Button>
       )}
 
-      {/* Delete */}
-      {canDeleteTenant && onDelete && (
+      {/* Delete — system cannot be deleted */}
+      {canDeleteTenant && onDelete && !isSystem && (
         <Button
           size="sm"
           variant="ghost"

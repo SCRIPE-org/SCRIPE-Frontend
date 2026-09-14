@@ -87,7 +87,9 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
       const saved = sessionStorage.getItem(STORAGE_KEYS.tenant_context);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (parsed?.id && parsed?.name) return parsed;
+        if (parsed?.id && parsed.id !== "__SYSTEM__" && parsed?.name) return parsed;
+        // Purge any stale __SYSTEM__ pseudo-tenant from session storage
+        sessionStorage.removeItem(STORAGE_KEYS.tenant_context);
       }
     } catch {
       /* ignore */
@@ -107,13 +109,18 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
 
   // Sync tenant context with API service on mount
   useEffect(() => {
-    if (currentTenant?.id) {
+    if (currentTenant?.id && currentTenant.id !== "__SYSTEM__") {
       apiService.setTenantContext(currentTenant.id);
     }
   }, []);
 
   const enterTenantWorld = useCallback(
     (tenant: TenantInfo) => {
+      if (!tenant?.id || tenant.id === "__SYSTEM__") {
+        exitTenantWorld();
+        return;
+      }
+
       if (!canEnterTenantWorld) {
         appLogger.warn("User does not have permission to enter tenant world");
         return;

@@ -20,7 +20,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
-import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
+import { type TenantTreeNode, type Tenant, SYSTEM_TENANT_ID } from "../../domain/entities/Tenant";
 import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
 
 // ─────────────────────────────────────────
@@ -105,9 +105,10 @@ export function useTenantsViewModel() {
   /** Navigate to the stepper page instead of opening a dialog */
   const handleOpenCreate = useCallback(
     (parent?: TenantTreeNode) => {
-      const url = parent
-        ? `/tenants/create?parentId=${encodeURIComponent(parent.id)}`
-        : "/tenants/create";
+      const isSystemParent = !parent || !parent.id || parent.id === SYSTEM_TENANT_ID;
+      const url = isSystemParent
+        ? "/tenants/create"
+        : `/tenants/create?parentId=${encodeURIComponent(parent.id)}&parentName=${encodeURIComponent(parent.name)}`;
       router.push(url);
     },
     [router]

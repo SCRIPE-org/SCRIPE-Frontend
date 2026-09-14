@@ -22,6 +22,7 @@ import { appLogger } from "@core/common/logger";
 import type { CreateTenantResult } from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 import type { Permission } from "@modules/identity/core";
+import { SYSTEM_TENANT_ID } from "../../domain/entities/Tenant";
 
 // ─────────────────────────────────────────
 // Types
@@ -91,6 +92,8 @@ export type StepId = (typeof STEPS)[number]["id"];
 interface UseCreateTenantViewModelParams {
   /** Pre-fill parent tenant ID (e.g. from query param) */
   defaultParentId?: string;
+  /** Pre-fill parent tenant name (e.g. from query param) */
+  defaultParentName?: string;
 }
 
 /**
@@ -108,9 +111,14 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   const [currentStep, setCurrentStep] = useState<StepId>(1);
 
   // ── Form state ──
+  const normalizedParentId =
+    params.defaultParentId && params.defaultParentId !== SYSTEM_TENANT_ID
+      ? params.defaultParentId
+      : "";
+
   const [form, setForm] = useState<StepperFormState>(() => ({
     ...INITIAL_STEPPER_FORM,
-    parentId: params.defaultParentId || "",
+    parentId: normalizedParentId,
   }));
 
   // ── Mutation state ──
@@ -155,14 +163,31 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   });
 
   // ── Creation permissions query (for availablePermissionIds picker) ──
+  const effectiveCreationParentId =
+    form.parentId && form.parentId !== SYSTEM_TENANT_ID ? form.parentId : undefined;
+
   const { data: creationPermissions = [], isLoading: isLoadingPermissions } = useQuery<
     Permission[]
   >({
-    queryKey: ["tenants", "creation-permissions", form.parentId || "root"],
-    queryFn: () => tenantRepository.getCreationPermissions(form.parentId || undefined),
+    queryKey: ["tenants", "creation-permissions", effectiveCreationParentId || "root"],
+    queryFn: () => tenantRepository.getCreationPermissions(effectiveCreationParentId),
     enabled: currentStep === 3,
     staleTime: 60_000,
   });
+
+  // ── Parent tenant query (resolves human-readable name for child tenant creation) ──
+  const { data: parentTenant, isLoading: isLoadingParentTenant } = useQuery({
+    queryKey: ["tenants", "detail", form.parentId],
+    queryFn: () => tenantRepository.getById(form.parentId),
+    enabled: !!form.parentId && form.parentId !== SYSTEM_TENANT_ID && !params.defaultParentName,
+    staleTime: 60_000,
+  });
+
+  const parentTenantName = useMemo(() => {
+    if (!form.parentId) return undefined;
+    if (form.parentId === SYSTEM_TENANT_ID) return t("tenant.systemTenant") || "System";
+    return params.defaultParentName || parentTenant?.name || undefined;
+  }, [form.parentId, parentTenant?.name, params.defaultParentName, t]);
 
   const availablePromotions = useMemo(() => {
     return promotionsRaw
@@ -416,6 +441,10 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     // Creation permissions (for availablePermissionIds picker)
     creationPermissions,
     isLoadingPermissions,
+
+    // Parent tenant context (for child tenant creation)
+    parentTenantName,
+    isLoadingParentTenant,
 
     // Submit
     isSubmitting,

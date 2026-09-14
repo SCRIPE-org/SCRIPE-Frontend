@@ -19,7 +19,7 @@ import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { identityContainer } from "@modules/identity/di";
 import { appLogger } from "@core/common/logger";
-import type { TenantTreeNode, Tenant } from "../../domain/entities/Tenant";
+import { type TenantTreeNode, type Tenant, SYSTEM_TENANT_ID } from "../../domain/entities/Tenant";
 import { type EditFormState, initialEditForm } from "../components/TenantDialogs";
 
 interface UseSubTenantsViewModelParams {
@@ -73,10 +73,19 @@ export function useSubTenantsViewModel({
   const handleOpenCreate = useCallback(
     (parent?: TenantTreeNode) => {
       const targetParentId = parent?.id || parentId;
-      const url = `/tenants/create?parentId=${encodeURIComponent(targetParentId)}`;
+      const isSystemParent = !targetParentId || targetParentId === SYSTEM_TENANT_ID;
+      if (isSystemParent) {
+        router.push("/tenants/create");
+        return;
+      }
+      const targetParentName = parent?.name || parentName;
+      const params = new URLSearchParams();
+      params.set("parentId", targetParentId);
+      if (targetParentName) params.set("parentName", targetParentName);
+      const url = `/tenants/create?${params.toString()}`;
       router.push(url);
     },
-    [parentId, router]
+    [parentId, parentName, router]
   );
 
   const handleOpenEdit = useCallback((node: TenantTreeNode) => {

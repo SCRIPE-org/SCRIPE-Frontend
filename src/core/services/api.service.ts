@@ -185,8 +185,8 @@ export class ApiService implements IApiService {
           appLogger.auth("Token added to request");
         }
 
-        // Add tenant context header if set
-        if (this.tenantContextId) {
+        // Add tenant context header if set (never send pseudo-tenant __SYSTEM__)
+        if (this.tenantContextId && this.tenantContextId !== "__SYSTEM__") {
           config.headers["X-Tenant-Context"] = this.tenantContextId;
           appLogger.api(`Tenant context: ${this.tenantContextId}`);
         }
@@ -763,9 +763,10 @@ export class ApiService implements IApiService {
    * @param tenantId - The tenant ID to scope requests to, or null to clear
    */
   setTenantContext(tenantId: string | null): void {
-    this.tenantContextId = tenantId;
-    if (tenantId) {
-      appLogger.api(`Tenant context set: ${tenantId}`);
+    const validTenantId = (!tenantId || tenantId === "__SYSTEM__") ? null : tenantId;
+    this.tenantContextId = validTenantId;
+    if (validTenantId) {
+      appLogger.api(`Tenant context set: ${validTenantId}`);
     } else {
       appLogger.api("Tenant context cleared");
     }

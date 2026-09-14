@@ -41,10 +41,12 @@ export function CreateTenantView() {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const parentId = searchParams.get("parentId") || undefined;
+  const rawParentId = searchParams.get("parentId") || undefined;
+  const parentId = rawParentId === "__SYSTEM__" ? undefined : rawParentId;
+  const parentName = rawParentId === "__SYSTEM__" ? undefined : (searchParams.get("parentName") || undefined);
   const { t, direction } = useI18n();
   const isRtl = direction === "rtl";
-  const vm = useCreateTenantViewModel({ defaultParentId: parentId });
+  const vm = useCreateTenantViewModel({ defaultParentId: parentId, defaultParentName: parentName });
 
   // ── Success state ──
   if (vm.result) {
