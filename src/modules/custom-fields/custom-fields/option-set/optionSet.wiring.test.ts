@@ -295,7 +295,7 @@ describe("CustomFields container — option-set registration", () => {
 // 6. The discovery link on the definitions screen
 // ─────────────────────────────────────────────────────────────────────────────
 describe("CustomFieldListView Option Sets link (real source)", () => {
-  const source = readFileSync(DEFINITIONS_VIEW_PATH, "utf-8");
+  const source = readFileSync(DEFINITIONS_VIEW_PATH, "utf-8").replace(/\r\n/g, "\n");
 
   it("links to /custom-fields/option-sets", () => {
     expect(source).toMatch(/<Link\s+href="\/custom-fields\/option-sets">/);

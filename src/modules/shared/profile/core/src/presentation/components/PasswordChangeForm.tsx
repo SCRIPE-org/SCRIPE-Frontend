@@ -4,7 +4,7 @@
  * PasswordChangeForm — Password change with optional 2FA code
  */
 import { useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Input } from "@core/ui/input";
@@ -100,9 +100,13 @@ export function PasswordChangeForm({
     mode: "onChange",
   });
 
-  // Read once per render so the strength checklist and the schema check the
-  // same rules against the same value.
-  const newPassword = form.watch("newPassword");
+  // useWatch rather than form.watch: watch() returns a function that React
+  // Compiler cannot memoize safely (react-hooks/incompatible-library).
+  const newPassword = useWatch({
+    control: form.control,
+    name: "newPassword",
+    defaultValue: "",
+  });
   const strengthItems = [
     { met: newPassword.length >= 8, label: t("profile.security.strength.minLength") },
     { met: UPPERCASE.test(newPassword), label: t("profile.security.strength.uppercase") },
