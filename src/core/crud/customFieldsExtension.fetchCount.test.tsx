@@ -15,7 +15,6 @@ import {
   useCustomFieldsFormFields,
   type CustomFieldsExtensionApi,
 } from "./customFieldsExtension";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
 
 function HookProbe({ ownerId }: { ownerId?: string }) {
   useCustomFieldsFormFields("party.person", ownerId);
