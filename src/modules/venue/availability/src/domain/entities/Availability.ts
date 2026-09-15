@@ -63,3 +63,27 @@ export interface AvailabilitySearchResult {
   remainingCapacity: number;
   asOfUtc: string;
 }
+
+export type ResourceBlockKind = "blackout" | "maintenance";
+
+export interface ResourceBlock {
+  id: string;
+  resourceId: string;
+  startUtc: string;
+  endUtc: string;
+  timeZoneId: string;
+  hardBlock: boolean;
+  reason: string;
+  version: number;
+  createdAt: string;
+  modifiedAt?: string;
+}
+
+export interface SaveResourceBlock {
+  resourceId: string;
+  timeZoneId: string;
+  startLocal: string;
+  endLocal: string;
+  hardBlock: boolean;
+  reason: string;
+}

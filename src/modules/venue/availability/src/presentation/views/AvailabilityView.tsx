@@ -25,6 +25,7 @@ import type {
 } from "../../domain/entities/Availability";
 import { WEEK_DAYS } from "../../domain/entities/Availability";
 import { useAvailabilityViewModel } from "../viewmodels/useAvailabilityViewModel";
+import { ResourceBlocksPanel } from "../components/ResourceBlocksPanel";
 import {
   validateWeeklyWindows,
   type WeeklyWindowDraft,
@@ -355,6 +356,15 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
               </CardContent>
             </Card>
           </div>
+          <ResourceBlocksPanel
+            resourceId={vm.selectedResourceId}
+            timeZoneId={timeZoneId}
+            blackouts={vm.blackouts}
+            maintenanceBlocks={vm.maintenanceBlocks}
+            saving={vm.saving}
+            onSave={vm.saveBlock}
+            onDelete={vm.deleteBlock}
+          />
         </>
       )}
     </div>

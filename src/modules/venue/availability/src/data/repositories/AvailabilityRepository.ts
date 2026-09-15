@@ -1,7 +1,10 @@
 import type {
   AvailabilityCalendar,
   AvailabilitySearchInput,
+  ResourceBlock,
+  ResourceBlockKind,
   SaveAvailabilityCalendar,
+  SaveResourceBlock,
 } from "../../domain/entities/Availability";
 import type { IAvailabilityRepository } from "../../domain/interfaces/IAvailabilityRepository";
 import type { IAvailabilityService } from "../../domain/interfaces/IAvailabilityService";
@@ -31,5 +34,21 @@ export class AvailabilityRepository implements IAvailabilityRepository {
 
   search(data: AvailabilitySearchInput) {
     return this.service.search(data);
+  }
+
+  getBlocks(kind: ResourceBlockKind, resourceId: string) {
+    return this.service.getBlocks(kind, resourceId);
+  }
+
+  async createBlock(kind: ResourceBlockKind, data: SaveResourceBlock): Promise<string> {
+    return (await this.service.createBlock(kind, data)).id;
+  }
+
+  updateBlock(kind: ResourceBlockKind, existing: ResourceBlock, data: Omit<SaveResourceBlock, "resourceId">) {
+    return this.service.updateBlock(kind, existing.id, { ...data, expectedVersion: existing.version });
+  }
+
+  deleteBlock(kind: ResourceBlockKind, existing: ResourceBlock) {
+    return this.service.deleteBlock(kind, existing.id, existing.version);
   }
 }

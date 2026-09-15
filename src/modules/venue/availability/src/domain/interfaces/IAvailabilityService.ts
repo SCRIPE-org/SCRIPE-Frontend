@@ -2,7 +2,10 @@ import type {
   AvailabilityCalendar,
   AvailabilitySearchInput,
   AvailabilitySearchResult,
+  ResourceBlock,
+  ResourceBlockKind,
   SaveAvailabilityCalendar,
+  SaveResourceBlock,
 } from "../entities/Availability";
 
 export interface ReplaceAvailabilityCalendarPayload
@@ -15,4 +18,8 @@ export interface IAvailabilityService {
   defineCalendar(data: SaveAvailabilityCalendar): Promise<{ id: string }>;
   replaceCalendar(id: string, data: ReplaceAvailabilityCalendarPayload): Promise<void>;
   search(data: AvailabilitySearchInput): Promise<AvailabilitySearchResult>;
+  getBlocks(kind: ResourceBlockKind, resourceId: string): Promise<ResourceBlock[]>;
+  createBlock(kind: ResourceBlockKind, data: SaveResourceBlock): Promise<{ id: string }>;
+  updateBlock(kind: ResourceBlockKind, id: string, data: Omit<SaveResourceBlock, "resourceId"> & { expectedVersion: number }): Promise<void>;
+  deleteBlock(kind: ResourceBlockKind, id: string, expectedVersion: number): Promise<void>;
 }

@@ -44,6 +44,14 @@ export const VENUE_PERMISSIONS = {
   AVAILABILITY_CALENDAR_CREATE: "availability-calendars.create",
   AVAILABILITY_CALENDAR_UPDATE: "availability-calendars.update",
   AVAILABILITY_SEARCH_VIEW: "availability-search.view",
+  BLACKOUT_VIEW: "blackouts.view",
+  BLACKOUT_CREATE: "blackouts.create",
+  BLACKOUT_UPDATE: "blackouts.update",
+  BLACKOUT_DELETE: "blackouts.delete",
+  MAINTENANCE_BLOCK_VIEW: "maintenance-blocks.view",
+  MAINTENANCE_BLOCK_CREATE: "maintenance-blocks.create",
+  MAINTENANCE_BLOCK_UPDATE: "maintenance-blocks.update",
+  MAINTENANCE_BLOCK_DELETE: "maintenance-blocks.delete",
 
   // ── Booking Operator Workspace ────────────────────────────
   RESERVATION_VIEW: "reservations.view",

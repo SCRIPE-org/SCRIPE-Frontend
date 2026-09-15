@@ -4,7 +4,10 @@ import type {
   AvailabilityCalendar,
   AvailabilitySearchInput,
   AvailabilitySearchResult,
+  ResourceBlock,
+  ResourceBlockKind,
   SaveAvailabilityCalendar,
+  SaveResourceBlock,
 } from "../../domain/entities/Availability";
 import type {
   IAvailabilityService,
@@ -15,6 +18,8 @@ import { AVAILABILITY_ENDPOINTS } from "./availability.endpoints";
 interface CalendarPage {
   items: Array<Pick<AvailabilityCalendar, "id" | "resourceId" | "status">>;
 }
+
+interface ResourceBlockPage { items: ResourceBlock[]; }
 
 export class AvailabilityService implements IAvailabilityService {
   constructor(private readonly api: IApiService) {}
@@ -45,5 +50,26 @@ export class AvailabilityService implements IAvailabilityService {
       endLocal: data.endLocal,
       quantity: data.quantity,
     }));
+  }
+
+  async getBlocks(kind: ResourceBlockKind, resourceId: string): Promise<ResourceBlock[]> {
+    const endpoint = kind === "blackout" ? AVAILABILITY_ENDPOINTS.BLACKOUTS : AVAILABILITY_ENDPOINTS.MAINTENANCE_BLOCKS;
+    const page = await this.api.get<ResourceBlockPage>(buildUrl(endpoint, { resourceId, page: 1, pageSize: 100 }));
+    return page.items;
+  }
+
+  createBlock(kind: ResourceBlockKind, data: SaveResourceBlock): Promise<{ id: string }> {
+    const endpoint = kind === "blackout" ? AVAILABILITY_ENDPOINTS.BLACKOUTS : AVAILABILITY_ENDPOINTS.MAINTENANCE_BLOCKS;
+    return this.api.post(endpoint, data);
+  }
+
+  async updateBlock(kind: ResourceBlockKind, id: string, data: Omit<SaveResourceBlock, "resourceId"> & { expectedVersion: number }): Promise<void> {
+    const endpoint = kind === "blackout" ? AVAILABILITY_ENDPOINTS.BLACKOUT_BY_ID(id) : AVAILABILITY_ENDPOINTS.MAINTENANCE_BLOCK_BY_ID(id);
+    await this.api.put(endpoint, data);
+  }
+
+  async deleteBlock(kind: ResourceBlockKind, id: string, expectedVersion: number): Promise<void> {
+    const endpoint = kind === "blackout" ? AVAILABILITY_ENDPOINTS.BLACKOUT_BY_ID(id) : AVAILABILITY_ENDPOINTS.MAINTENANCE_BLOCK_BY_ID(id);
+    await this.api.delete(buildUrl(endpoint, { expectedVersion }));
   }
 }

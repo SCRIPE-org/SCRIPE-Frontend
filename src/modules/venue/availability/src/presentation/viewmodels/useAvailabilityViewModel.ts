@@ -6,7 +6,10 @@ import type {
   AvailabilityCalendar,
   AvailabilitySearchInput,
   AvailabilitySearchResult,
+  ResourceBlock,
+  ResourceBlockKind,
   SaveAvailabilityCalendar,
+  SaveResourceBlock,
 } from "../../domain/entities/Availability";
 
 const PAGE_SIZE = 100;
@@ -19,6 +22,8 @@ export function useAvailabilityViewModel() {
   const [selectedResourceId, setSelectedResourceId] = useState("");
   const [calendar, setCalendar] = useState<AvailabilityCalendar | null>(null);
   const [searchResult, setSearchResult] = useState<AvailabilitySearchResult | null>(null);
+  const [blackouts, setBlackouts] = useState<ResourceBlock[]>([]);
+  const [maintenanceBlocks, setMaintenanceBlocks] = useState<ResourceBlock[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -45,18 +50,32 @@ export function useAvailabilityViewModel() {
     setCalendar(await availabilityRepository.getCurrentCalendar(selectedResourceId));
   }, [availabilityRepository, selectedResourceId]);
 
+  const loadBlocks = useCallback(async () => {
+    if (!selectedResourceId) {
+      setBlackouts([]);
+      setMaintenanceBlocks([]);
+      return;
+    }
+    const [loadedBlackouts, loadedMaintenance] = await Promise.all([
+      availabilityRepository.getBlocks("blackout", selectedResourceId),
+      availabilityRepository.getBlocks("maintenance", selectedResourceId),
+    ]);
+    setBlackouts(loadedBlackouts);
+    setMaintenanceBlocks(loadedMaintenance);
+  }, [availabilityRepository, selectedResourceId]);
+
   const refresh = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       await loadResources();
-      await loadCalendar();
+      await Promise.all([loadCalendar(), loadBlocks()]);
     } catch (caught) {
       setError(caught instanceof Error ? caught : new Error("availability-load-failed"));
     } finally {
       setLoading(false);
     }
-  }, [loadCalendar, loadResources]);
+  }, [loadBlocks, loadCalendar, loadResources]);
 
   useEffect(() => {
     void loadResources()
@@ -68,10 +87,10 @@ export function useAvailabilityViewModel() {
 
   useEffect(() => {
     setSearchResult(null);
-    void loadCalendar().catch((caught) =>
+    void Promise.all([loadCalendar(), loadBlocks()]).catch((caught) =>
       setError(caught instanceof Error ? caught : new Error("availability-load-failed"))
     );
-  }, [loadCalendar]);
+  }, [loadBlocks, loadCalendar]);
 
   const saveCalendar = useCallback(
     async (data: SaveAvailabilityCalendar) => {
@@ -100,12 +119,39 @@ export function useAvailabilityViewModel() {
     [availabilityRepository]
   );
 
+  const saveBlock = useCallback(async (kind: ResourceBlockKind, existing: ResourceBlock | null, data: SaveResourceBlock) => {
+    setSaving(true);
+    try {
+      if (existing) {
+        const { resourceId: _resourceId, ...update } = data;
+        await availabilityRepository.updateBlock(kind, existing, update);
+      } else {
+        await availabilityRepository.createBlock(kind, data);
+      }
+      await loadBlocks();
+    } finally {
+      setSaving(false);
+    }
+  }, [availabilityRepository, loadBlocks]);
+
+  const deleteBlock = useCallback(async (kind: ResourceBlockKind, block: ResourceBlock) => {
+    setSaving(true);
+    try {
+      await availabilityRepository.deleteBlock(kind, block);
+      await loadBlocks();
+    } finally {
+      setSaving(false);
+    }
+  }, [availabilityRepository, loadBlocks]);
+
   return {
     resources: searchableResources,
     selectedResource,
     selectedResourceId,
     setSelectedResourceId,
     calendar,
+    blackouts,
+    maintenanceBlocks,
     searchResult,
     loading,
     saving,
@@ -114,5 +160,7 @@ export function useAvailabilityViewModel() {
     refresh,
     saveCalendar,
     search,
+    saveBlock,
+    deleteBlock,
   };
 }
