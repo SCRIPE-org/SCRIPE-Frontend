@@ -132,7 +132,7 @@ function CommercialFooter() {
               <ul className="com-footer-links" role="list">
                 {col.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={link.href} className="com-footer-link">
+                    <Link href={link.href} prefetch={false} className="com-footer-link">
                       {t(link.labelKey)}
                     </Link>
                   </li>
@@ -151,9 +151,15 @@ function CommercialFooter() {
             })}
           </p>
           <div className="com-footer-bottom-links">
-            <Link href="/privacy">{t("commercialFooter.privacy")}</Link>
-            <Link href="/terms">{t("commercialFooter.terms")}</Link>
-            <Link href="/docs">{t("commercialFooter.developerDocs")}</Link>
+            <Link href="/privacy" prefetch={false}>
+              {t("commercialFooter.privacy")}
+            </Link>
+            <Link href="/terms" prefetch={false}>
+              {t("commercialFooter.terms")}
+            </Link>
+            <Link href="/docs" prefetch={false}>
+              {t("commercialFooter.developerDocs")}
+            </Link>
           </div>
         </div>
       </div>
@@ -192,6 +198,7 @@ export function CommercialDocsView({ slug }: CommercialDocsViewProps) {
             <p>{t("commercialNotFound.message", { slug: slug.replace("commercial/", "") })}</p>
             <Link
               href="/commercial"
+              prefetch={false}
               className="com-btn com-btn--ghost"
               style={{ marginTop: "1rem" }}
             >

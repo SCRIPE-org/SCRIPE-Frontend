@@ -1,11 +1,11 @@
 ﻿export const fr = {
   modules: {
     securityMonitoring: {
-      title: "Surveillance de SÃ©curitÃ©",
+      title: "Surveillance de Sécurité",
       description:
-        "DÃ©tection des menaces en temps rÃ©el, validation des jetons, et rapports de conformitÃ©.",
+        "Détection des menaces en temps réel, validation des jetons, et rapports de conformité.",
       intro:
-        "Analyse active des boucles d'Ã©vÃ©nements, durÃ©es de vie des jetons, et volumes de mutations suspects.",
+        "Analyse active des boucles d'événements, durées de vie des jetons, et volumes de mutations suspects.",
     },
   },
 };

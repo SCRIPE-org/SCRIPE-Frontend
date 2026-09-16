@@ -1,0 +1,14 @@
+# SCRIPE Frontend Code Ownership
+
+* @SCRIPE-org/frontend-leads
+
+# Core Foundation & Design System
+/src/core/ui/ @SCRIPE-org/design-system-leads
+/src/core/locales/ @SCRIPE-org/localization-leads
+/src/core/ @SCRIPE-org/frontend-leads
+
+# Modules & Shell
+/src/app/ @SCRIPE-org/frontend-leads
+/src/modules/ @SCRIPE-org/frontend-leads
+/package.json @SCRIPE-org/frontend-leads
+/.github/ @SCRIPE-org/devops-team

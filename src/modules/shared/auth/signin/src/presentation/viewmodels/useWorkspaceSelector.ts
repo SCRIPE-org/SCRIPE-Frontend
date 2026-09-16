@@ -8,7 +8,7 @@ import {
 } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { WorkspaceChoice } from "@modules/auth/core/domain/errors/AuthErrors";
 import type { LoginStep } from "./use2FAHandler";
-import { getSafeRedirectPath } from "./redirect-safety";
+import { getSafeRedirectPath } from "../utils/redirect-safety";
 
 interface UseWorkspaceSelectorOptions {
   redirectPath: string;

@@ -6,58 +6,58 @@
 export const fr = {
   modules: {
     entitlementsOverview: {
-      title: "AperÃ§u des Droits (Entitlements)",
+      title: "Aperçu des Droits (Entitlements)",
       description:
-        "ContrÃ´le d'accÃ¨s aux fonctionnalitÃ©s basÃ© sur les Ã©ditions avec FonctionnalitÃ©s, Ã‰ditions, Abonnements et Surcharges par locataire.",
+        "Contrôle d'accès aux fonctionnalités basé sur les éditions avec Fonctionnalités, Éditions, Abonnements et Surcharges par locataire.",
       intro:
-        "Le module des Droits (Entitlements) est le moteur de gestion des plans et des fonctionnalitÃ©s de SCRIPE. Il dÃ©finit les capacitÃ©s que chaque locataire (tenant) obtient, comment les plans (Ã©ditions) regroupent ces capacitÃ©s, et comment les abonnements lient les locataires aux plans.",
+        "Le module des Droits (Entitlements) est le moteur de gestion des plans et des fonctionnalités de SCRIPE. Il définit les capacités que chaque locataire (tenant) obtient, comment les plans (éditions) regroupent ces capacités, et comment les abonnements lient les locataires aux plans.",
       whatIsTitle: "Que sont les Droits ?",
       whatIsIntro:
-        "Les Droits sont le module responsable de contrÃ´ler Ã  quelles fonctionnalitÃ©s un locataire peut accÃ©der en fonction de son Ã©dition (plan) souscrite. Il fournit une chaÃ®ne de rÃ©solution Ã  trois niveaux : Valeurs par dÃ©faut de la fonctionnalitÃ© → Valeurs de l'Ã©dition → Surcharges par locataire, garantissant une flexibilitÃ© maximale pour les opÃ©rateurs de la plateforme et les locataires revendeurs.",
+        "Les Droits sont le module responsable de contrôler à quelles fonctionnalités un locataire peut accéder en fonction de son édition (plan) souscrite. Il fournit une chaîne de résolution à trois niveaux : Valeurs par défaut de la fonctionnalité → Valeurs de l'édition → Surcharges par locataire, garantissant une flexibilité maximale pour les opérateurs de la plateforme et les locataires revendeurs.",
       architectureTitle: "Architecture",
       architectureIntro:
-        "Le systÃ¨me de Droits est composÃ© de quatre domaines interconnectÃ©s qui travaillent ensemble pour fournir une solution complÃ¨te de contrÃ´le des fonctionnalitÃ©s.",
+        "Le système de Droits est composé de quatre domaines interconnectés qui travaillent ensemble pour fournir une solution complète de contrôle des fonctionnalités.",
       domainsTitle: "Quatre Domaines",
-      domainsIntro: "Chaque domaine gÃ¨re un aspect spÃ©cifique du cycle de vie des droits :",
-      resolutionTitle: "ChaÃ®ne de RÃ©solution des Valeurs de FonctionnalitÃ©",
+      domainsIntro: "Chaque domaine gère un aspect spécifique du cycle de vie des droits :",
+      resolutionTitle: "Chaîne de Résolution des Valeurs de Fonctionnalité",
       resolutionIntro:
-        "Lorsque le systÃ¨me a besoin de dÃ©terminer la valeur d'une fonctionnalitÃ© pour un locataire, il suit une chaÃ®ne de prioritÃ© stricte. La source de prioritÃ© la plus Ã©levÃ©e qui fournit une valeur l'emporte.",
-      pipelineTitle: "IntÃ©gration au Pipeline",
+        "Lorsque le système a besoin de déterminer la valeur d'une fonctionnalité pour un locataire, il suit une chaîne de priorité stricte. La source de priorité la plus élevée qui fournit une valeur l'emporte.",
+      pipelineTitle: "Intégration au Pipeline",
       pipelineIntro:
-        "SCRIPE intÃ¨gre les droits directement dans le pipeline CQRS de SCRIPE mediator via FeatureCheckBehavior. Les commandes et requÃªtes (queries) qui implÃ©mentent IRequireFeature sont automatiquement contrÃ´lÃ©es — si la valeur rÃ©solue de la fonctionnalitÃ© pour le locataire est dÃ©sactivÃ©e, la requÃªte est rejetÃ©e avant d'atteindre le gestionnaire (handler).",
+        "SCRIPE intègre les droits directement dans le pipeline CQRS de SCRIPE mediator via FeatureCheckBehavior. Les commandes et requêtes (queries) qui implémentent IRequireFeature sont automatiquement contrôlées — si la valeur résolue de la fonctionnalité pour le locataire est désactivée, la requête est rejetée avant d'atteindre le gestionnaire (handler).",
       pipelineTip:
-        "Pour conditionner une commande Ã  une fonctionnalitÃ©, implÃ©mentez simplement IRequireFeature et dÃ©finissez RequiredFeatureName sur la clÃ© systÃ¨me stable de la fonctionnalitÃ© (ex. 'Chat.Enabled'). Aucun code supplÃ©mentaire n'est nÃ©cessaire.",
+        "Pour conditionner une commande à une fonctionnalité, implémentez simplement IRequireFeature et définissez RequiredFeatureName sur la clé système stable de la fonctionnalité (ex. 'Chat.Enabled'). Aucun code supplémentaire n'est nécessaire.",
       backendTitle: "Structure du Backend",
       backendIntro:
         "Le backend des Droits suit l'architecture standard des modules Clean Architecture de SCRIPE avec les couches Domain, Application et Infrastructure.",
       frontendTitle: "Structure du Frontend",
       frontendIntro:
-        "Le frontend reflÃ¨te le backend avec quatre sous-modules (Ã©ditions, fonctionnalitÃ©s, abonnements, surcharges), chacun suivant le modÃ¨le SOLID View/ViewModel.",
-      controllersTitle: "ContrÃ´leurs API",
+        "Le frontend reflète le backend avec quatre sous-modules (éditions, fonctionnalités, abonnements, surcharges), chacun suivant le modèle SOLID View/ViewModel.",
+      controllersTitle: "Contrôleurs API",
       controllersIntro:
-        "Le module des Droits expose 31 points de terminaison (endpoints) API rÃ©partis sur 4 contrÃ´leurs, tous authentifiÃ©s par JWT et protÃ©gÃ©s par une autorisation basÃ©e sur les permissions.",
+        "Le module des Droits expose 31 points de terminaison (endpoints) API répartis sur 4 contrôleurs, tous authentifiés par JWT et protégés par une autorisation basée sur les permissions.",
       noOpTitle: "Solution de repli NoOp (Fallback)",
       noOpIntro:
-        "Lorsque le module des Droits n'est pas chargÃ© (ex. dans un microservice qui n'inclut pas les Droits), SCRIPE enregistre un NoOpFeatureCache. Cela permet aux commandes IRequireFeature de passer sans erreur — toutes les fonctionnalitÃ©s sont traitÃ©es comme activÃ©es par dÃ©faut.",
+        "Lorsque le module des Droits n'est pas chargé (ex. dans un microservice qui n'inclut pas les Droits), SCRIPE enregistre un NoOpFeatureCache. Cela permet aux commandes IRequireFeature de passer sans erreur — toutes les fonctionnalités sont traitées comme activées par défaut.",
       noOpNote:
-        "La solution de repli NoOp garantit que les modules peuvent utiliser IRequireFeature sans dÃ©pendance stricte au module des Droits. En mode monolithe de production, le vÃ©ritable FeatureCache est toujours disponible.",
-      contextAwareTitle: "Filtrage contextuel des pÃ©rimÃ¨tres",
+        "La solution de repli NoOp garantit que les modules peuvent utiliser IRequireFeature sans dépendance stricte au module des Droits. En mode monolithe de production, le véritable FeatureCache est toujours disponible.",
+      contextAwareTitle: "Filtrage contextuel des périmètres",
       contextAwareIntro:
-        "Toutes les pages de droits (FonctionnalitÃ©s, Ã‰ditions, Permissions) sont contextuelles. Le frontend dÃ©tecte si l'utilisateur est un administrateur systÃ¨me (tenantId est null), un administrateur de locataire ou en mode drill-down, et appelle des endpoints backend diffÃ©rents en consÃ©quence. Les administrateurs systÃ¨me voient le catalogue complet avec CRUD ; les administrateurs de locataires voient uniquement leurs donnÃ©es effectives en mode lecture seule.",
+        "Toutes les pages de droits (Fonctionnalités, Éditions, Permissions) sont contextuelles. Le frontend détecte si l'utilisateur est un administrateur système (tenantId est null), un administrateur de locataire ou en mode drill-down, et appelle des endpoints backend différents en conséquence. Les administrateurs système voient le catalogue complet avec CRUD ; les administrateurs de locataires voient uniquement leurs données effectives en mode lecture seule.",
       resolutionTip:
-        "La chaÃ®ne de rÃ©solution est Ã©valuÃ©e de maniÃ¨re paresseuse (lazy) — les valeurs sont mises en cache aprÃ¨s la premiÃ¨re rÃ©solution et invalidÃ©es lorsque les abonnements, les Ã©ditions ou les surcharges changent.",
-      cqrsMapTitle: "Carte des Commandes et RequÃªtes CQRS",
+        "La chaîne de résolution est évaluée de manière paresseuse (lazy) — les valeurs sont mises en cache après la première résolution et invalidées lorsque les abonnements, les éditions ou les surcharges changent.",
+      cqrsMapTitle: "Carte des Commandes et Requêtes CQRS",
       cqrsMapIntro:
-        "Le module des Droits enregistre 31 gestionnaires (handlers) SCRIPE mediator couvrant les quatre domaines. Chaque commande possÃ¨de un validateur FluentValidation correspondant pour la validation des entrÃ©es.",
-      diTitle: "Enregistrement de l'Injection de DÃ©pendances",
+        "Le module des Droits enregistre 31 gestionnaires (handlers) SCRIPE mediator couvrant les quatre domaines. Chaque commande possède un validateur FluentValidation correspondant pour la validation des entrées.",
+      diTitle: "Enregistrement de l'Injection de Dépendances",
       diIntro:
-        "Tous les services de Droits sont enregistrÃ©s via la mÃ©thode d'extension AddEntitlementsModule dans DependencyInjection.cs. Le module suit le modÃ¨le d'enregistrement standard de SCRIPE.",
+        "Tous les services de Droits sont enregistrés via la méthode d'extension AddEntitlementsModule dans DependencyInjection.cs. Le module suit le modèle d'enregistrement standard de SCRIPE.",
       comparisonTitle: "Avec vs Sans Droits",
       comparisonIntro:
-        "Le tableau suivant montre la diffÃ©rence de capacitÃ©s lorsque le module des Droits est activÃ© par rapport Ã  une exÃ©cution sans celui-ci :",
+        "Le tableau suivant montre la différence de capacités lorsque le module des Droits est activé par rapport à une exécution sans celui-ci :",
       gettingStartedTitle: "Premiers Pas",
       gettingStartedIntro:
-        "Suivez ces 5 Ã©tapes pour configurer le systÃ¨me de Droits pour votre plateforme. Chaque Ã©tape s'appuie sur la prÃ©cÃ©dente :",
+        "Suivez ces 5 étapes pour configurer le système de Droits pour votre plateforme. Chaque étape s'appuie sur la précédente :",
       quotaGatingTitle: "Contrôle des quotas et réservations de créneaux",
       quotaGatingIntro:
         "Les fonctionnalités numériques représentent des quotas appliqués lors de la création des ressources du locataire. SCRIPE utilise un modèle de réservation atomique sécurisé pour gérer ces limites.",
@@ -65,58 +65,58 @@ export const fr = {
         "La méthode TryReserveSlotAsync de QuotaCounterRepository incrémente le compteur réservé. Le gestionnaire confirme cette réservation en cas de succès ou la libère en cas d'échec.",
     },
     editions: {
-      title: "Ã‰ditions",
+      title: "Éditions",
       description:
-        "Plans d'abonnement nommÃ©s avec regroupements de fonctionnalitÃ©s, politiques de dÃ©passement (overflow), versionnage et stratÃ©gies de dÃ©ploiement.",
+        "Plans d'abonnement nommés avec regroupements de fonctionnalités, politiques de dépassement (overflow), versionnage et stratégies de déploiement.",
       intro:
-        "Les Ã‰ditions sont des plans nommÃ©s (ex. Basic, Pro, Enterprise) qui regroupent des valeurs de fonctionnalitÃ©s. Chaque locataire souscrit Ã  une Ã©dition, ce qui dÃ©termine son accÃ¨s aux fonctionnalitÃ©s. Les Ã©ditions prennent en charge le versionnage avec des stratÃ©gies de dÃ©ploiement contrÃ´lÃ©es pour une mise en production sÃ©curisÃ©e des changements.",
-      entityTitle: "EntitÃ© Ã‰dition",
+        "Les Éditions sont des plans nommés (ex. Basic, Pro, Enterprise) qui regroupent des valeurs de fonctionnalités. Chaque locataire souscrit à une édition, ce qui détermine son accès aux fonctionnalités. Les éditions prennent en charge le versionnage avec des stratégies de déploiement contrôlées pour une mise en production sécurisée des changements.",
+      entityTitle: "Entité Édition",
       entityIntro:
-        "Une Ã‰dition est un plan nommÃ© qui regroupe des valeurs de fonctionnalitÃ©s. Les Ã©ditions systÃ¨me sont crÃ©Ã©es par les administrateurs de la plateforme ; les Ã©ditions de dÃ©tail (retail) sont crÃ©Ã©es par les locataires revendeurs pour leurs sous-locataires.",
-      overflowTitle: "Politique de DÃ©passement (Overflow Policy)",
+        "Une Édition est un plan nommé qui regroupe des valeurs de fonctionnalités. Les éditions système sont créées par les administrateurs de la plateforme ; les éditions de détail (retail) sont créées par les locataires revendeurs pour leurs sous-locataires.",
+      overflowTitle: "Politique de Dépassement (Overflow Policy)",
       overflowIntro:
-        "Lorsqu'un locataire passe Ã  une Ã©dition avec des limites infÃ©rieures (rÃ©trogradation), ses ressources existantes peuvent dÃ©passer les nouvelles limites. La politique de dÃ©passement dÃ©termine ce qui se passe :",
-      featuresTitle: "FonctionnalitÃ©s de l'Ã‰dition",
+        "Lorsqu'un locataire passe à une édition avec des limites inférieures (rétrogradation), ses ressources existantes peuvent dépasser les nouvelles limites. La politique de dépassement détermine ce qui se passe :",
+      featuresTitle: "Fonctionnalités de l'Édition",
       featuresIntro:
-        "Chaque Ã©dition contient un ensemble d'enregistrements EditionFeature qui associent les fonctionnalitÃ©s Ã  leurs valeurs au sein de ce plan. Les fonctionnalitÃ©s qui ne sont pas explicitement dÃ©finies dans une Ã©dition reviennent Ã  Feature.DefaultValue.",
-      versionsTitle: "Versions de l'Ã‰dition",
+        "Chaque édition contient un ensemble d'enregistrements EditionFeature qui associent les fonctionnalités à leurs valeurs au sein de ce plan. Les fonctionnalités qui ne sont pas explicitement définies dans une édition reviennent à Feature.DefaultValue.",
+      versionsTitle: "Versions de l'Édition",
       versionsIntro:
-        "Les Versions d'Ã‰dition fournissent un systÃ¨me de versionnage et de dÃ©ploiement pour les changements de fonctionnalitÃ©s. Au lieu de modifier les fonctionnalitÃ©s directement, les administrateurs peuvent crÃ©er une nouvelle version (instantanÃ©), choisir une stratÃ©gie de dÃ©ploiement et la publier.",
-      rolloutTitle: "StratÃ©gies de DÃ©ploiement",
+        "Les Versions d'Édition fournissent un système de versionnage et de déploiement pour les changements de fonctionnalités. Au lieu de modifier les fonctionnalités directement, les administrateurs peuvent créer une nouvelle version (instantané), choisir une stratégie de déploiement et la publier.",
+      rolloutTitle: "Stratégies de Déploiement",
       rolloutIntro:
-        "Lors de la publication d'une version d'Ã©dition, les administrateurs choisissent comment les changements sont dÃ©ployÃ©s pour les locataires abonnÃ©s :",
+        "Lors de la publication d'une version d'édition, les administrateurs choisissent comment les changements sont déployés pour les locataires abonnés :",
       workflowTitle: "Appliquer Maintenant vs Enregistrer comme Version",
       workflowIntro:
-        "SCRIPE offre deux faÃ§ons de mettre Ã  jour les fonctionnalitÃ©s d'une Ã©dition, chacune adaptÃ©e Ã  des scÃ©narios diffÃ©rents :",
+        "SCRIPE offre deux façons de mettre à jour les fonctionnalités d'une édition, chacune adaptée à des scénarios différents :",
       workflowTip:
-        "Utilisez 'Appliquer Maintenant' pour les correctifs urgents et les petits changements. Utilisez 'Enregistrer comme Version' pour les mises Ã  jour majeures du plan qui nÃ©cessitent un dÃ©ploiement progressif et une piste d'audit.",
+        "Utilisez 'Appliquer Maintenant' pour les correctifs urgents et les petits changements. Utilisez 'Enregistrer comme Version' pour les mises à jour majeures du plan qui nécessitent un déploiement progressif et une piste d'audit.",
       endpointsTitle: "Points de terminaison API (Endpoints)",
       endpointsIntro:
-        "Le contrÃ´leur des Ã‰ditions expose 11 endpoints pour gÃ©rer les Ã©ditions, leurs fonctionnalitÃ©s et le cycle de vie des versions :",
+        "Le contrôleur des Éditions expose 11 endpoints pour gérer les éditions, leurs fonctionnalités et le cycle de vie des versions :",
       drillDownTitle: "Comportement du Drill-Down",
       drillDownIntro:
-        "Lorsqu'un administrateur systÃ¨me descend dans un locataire (drill-down), la liste des Ã©ditions est automatiquement limitÃ©e aux Ã©ditions visibles par ce locataire. Le backend utilise l'en-tÃªte X-Tenant-Context pour le filtrage : Ã©ditions systÃ¨me + Ã©ditions de dÃ©tail crÃ©Ã©es par le locataire sÃ©lectionnÃ©. Le frontend masque les actions CRUD en mode drill-down.",
-      scopingTitle: "Ã‰ditions SystÃ¨me vs DÃ©tail (Retail)",
+        "Lorsqu'un administrateur système descend dans un locataire (drill-down), la liste des éditions est automatiquement limitée aux éditions visibles par ce locataire. Le backend utilise l'en-tête X-Tenant-Context pour le filtrage : éditions système + éditions de détail créées par le locataire sélectionné. Le frontend masque les actions CRUD en mode drill-down.",
+      scopingTitle: "Éditions Système vs Détail (Retail)",
       scopingIntro:
-        "SCRIPE prend en charge deux types d'Ã©ditions : Les Ã©ditions SystÃ¨me, crÃ©Ã©es par les administrateurs de la plateforme et visibles par tous les locataires, et les Ã©ditions de DÃ©tail (Retail), crÃ©Ã©es par les locataires revendeurs uniquement pour leurs sous-locataires.",
+        "SCRIPE prend en charge deux types d'éditions : Les éditions Système, créées par les administrateurs de la plateforme et visibles par tous les locataires, et les éditions de Détail (Retail), créées par les locataires revendeurs uniquement pour leurs sous-locataires.",
       scopingNote:
-        "Les administrateurs de locataires ne voient que les Ã©ditions systÃ¨me plus leurs propres Ã©ditions de dÃ©tail. Cela garantit l'isolation des Ã©ditions entre les locataires revendeurs.",
+        "Les administrateurs de locataires ne voient que les éditions système plus leurs propres éditions de détail. Cela garantit l'isolation des éditions entre les locataires revendeurs.",
       featuresTip:
-        "Les fonctionnalitÃ©s non dÃ©finies explicitement dans une Ã©dition reviennent Ã  Feature.DefaultValue. Vous n'avez besoin de configurer que les fonctionnalitÃ©s qui diffÃ¨rent de la valeur par dÃ©faut globale.",
-      endpointsList: "Lister toutes les Ã©ditions (paginÃ©, filtrable)",
-      endpointsGet: "Obtenir les dÃ©tails de l'Ã©dition par ID",
-      endpointsCreate: "CrÃ©er une nouvelle Ã©dition",
-      endpointsUpdate: "Mettre Ã  jour les mÃ©tadonnÃ©es de l'Ã©dition",
-      endpointsDelete: "Suppression logique (soft-delete) d'une Ã©dition",
-      endpointsGetFeatures: "Lister les fonctionnalitÃ©s configurÃ©es pour cette Ã©dition",
-      endpointsSetFeatures: "DÃ©finir/mettre Ã  jour les fonctionnalitÃ©s pour cette Ã©dition",
+        "Les fonctionnalités non définies explicitement dans une édition reviennent à Feature.DefaultValue. Vous n'avez besoin de configurer que les fonctionnalités qui diffèrent de la valeur par défaut globale.",
+      endpointsList: "Lister toutes les éditions (paginé, filtrable)",
+      endpointsGet: "Obtenir les détails de l'édition par ID",
+      endpointsCreate: "Créer une nouvelle édition",
+      endpointsUpdate: "Mettre à jour les métadonnées de l'édition",
+      endpointsDelete: "Suppression logique (soft-delete) d'une édition",
+      endpointsGetFeatures: "Lister les fonctionnalités configurées pour cette édition",
+      endpointsSetFeatures: "Définir/mettre à jour les fonctionnalités pour cette édition",
       endpointsDirectApply:
-        "Appliquer les changements de fonctionnalitÃ©s immÃ©diatement (sans versionnage)",
-      endpointsGetVersions: "Lister toutes les versions pour cette Ã©dition",
+        "Appliquer les changements de fonctionnalités immédiatement (sans versionnage)",
+      endpointsGetVersions: "Lister toutes les versions pour cette édition",
       endpointsCreateVersion:
-        "CrÃ©er un nouveau brouillon de version avec un instantanÃ© des fonctionnalitÃ©s",
+        "Créer un nouveau brouillon de version avec un instantané des fonctionnalités",
       endpointsPublishVersion:
-        "Publier une version brouillon avec la stratÃ©gie de dÃ©ploiement choisie",
+        "Publier une version brouillon avec la stratégie de déploiement choisie",
       seededTitle: "Éditions système prédéfinies",
       seededIntro:
         "La plateforme initialise deux éditions système standard au démarrage via EditionSeeder, établissant les limites par défaut des fonctionnalités.",
@@ -124,240 +124,240 @@ export const fr = {
     subscriptions: {
       title: "Abonnements",
       description:
-        "Liaison locataire-Ã©dition avec gestion complÃ¨te du cycle de vie, tarification multi-devises, promotions, essais, rÃ©trogradations (downgrades), comportement d'expiration et export analytique avancÃ©.",
+        "Liaison locataire-édition avec gestion complète du cycle de vie, tarification multi-devises, promotions, essais, rétrogradations (downgrades), comportement d'expiration et export analytique avancé.",
       intro:
-        "Les abonnements lient les locataires aux Ã©ditions (plans). Chaque locataire a un abonnement de base qui dÃ©termine son Ã©dition, et Ã©ventuellement des abonnements complÃ©mentaires pour des capacitÃ©s supplÃ©mentaires. Le systÃ¨me d'abonnement gÃ¨re l'ensemble du cycle de vie, de l'attribution au renouvellement, en passant par la rÃ©trogradation, la suspension et l'annulation — avec une tarification multi-devises intÃ©grÃ©e et un suivi des remises promotionnelles.",
-      entityTitle: "EntitÃ© Abonnement",
+        "Les abonnements lient les locataires aux éditions (plans). Chaque locataire a un abonnement de base qui détermine son édition, et éventuellement des abonnements complémentaires pour des capacités supplémentaires. Le système d'abonnement gère l'ensemble du cycle de vie, de l'attribution au renouvellement, en passant par la rétrogradation, la suspension et l'annulation — avec une tarification multi-devises intégrée et un suivi des remises promotionnelles.",
+      entityTitle: "Entité Abonnement",
       entityIntro:
-        "Une TenantSubscription (Abonnement Locataire) lie un locataire Ã  une Ã©dition avec un suivi du cycle de vie. Elle prend en charge plusieurs types et statuts d'abonnement pour une gestion complÃ¨te du cycle de vie.",
+        "Une TenantSubscription (Abonnement Locataire) lie un locataire à une édition avec un suivi du cycle de vie. Elle prend en charge plusieurs types et statuts d'abonnement pour une gestion complète du cycle de vie.",
       typesTitle: "Types d'Abonnements",
       typesIntro:
-        "Chaque abonnement a un type qui dÃ©termine son cycle de facturation et son comportement :",
+        "Chaque abonnement a un type qui détermine son cycle de facturation et son comportement :",
       lifecycleTitle: "Cycle de vie des Statuts",
       lifecycleIntro:
-        "Les abonnements passent par une sÃ©rie de statuts au cours de leur cycle de vie :",
-      downgradeTitle: "Suivi des RÃ©trogradations (Downgrades)",
+        "Les abonnements passent par une série de statuts au cours de leur cycle de vie :",
+      downgradeTitle: "Suivi des Rétrogradations (Downgrades)",
       downgradeIntro:
-        "Lorsqu'un locataire est rÃ©trogradÃ© (manuellement ou en raison d'une expiration), le systÃ¨me conserve les dÃ©tails de l'abonnement d'origine pour l'audit et une Ã©ventuelle restauration. Les champs DowngradedFromEditionId, DowngradedFromType, DowngradedFromEndDate et DowngradedAt prÃ©servent l'historique complet de la rÃ©trogradation.",
+        "Lorsqu'un locataire est rétrogradé (manuellement ou en raison d'une expiration), le système conserve les détails de l'abonnement d'origine pour l'audit et une éventuelle restauration. Les champs DowngradedFromEditionId, DowngradedFromType, DowngradedFromEndDate et DowngradedAt préservent l'historique complet de la rétrogradation.",
       downgradeWarning:
-        "Lors d'une rÃ©trogradation, la Politique de DÃ©passement (OverflowPolicy) de l'Ã©dition cible dÃ©termine ce qu'il advient des ressources qui dÃ©passent les nouvelles limites. Utilisez toujours l'endpoint d'Impact de RÃ©trogradation pour prÃ©visualiser les effets avant d'effectuer des changements.",
+        "Lors d'une rétrogradation, la Politique de Dépassement (OverflowPolicy) de l'édition cible détermine ce qu'il advient des ressources qui dépassent les nouvelles limites. Utilisez toujours l'endpoint d'Impact de Rétrogradation pour prévisualiser les effets avant d'effectuer des changements.",
       expiryTitle: "Comportement d'Expiration",
       expiryIntro:
-        "Lorsqu'un abonnement expire, le paramÃ¨tre ExpiryBehavior dÃ©termine ce qui se passe ensuite :",
+        "Lorsqu'un abonnement expire, le paramètre ExpiryBehavior détermine ce qui se passe ensuite :",
       pricingTitle: "Tarification Multi-Devises",
       pricingIntro:
-        "Chaque abonnement porte des mÃ©tadonnÃ©es de tarification complÃ¨tes : Devise (code ISO), MontantDeBase, MontantAjustement, MontantTotal, TauxDeChangeEnUsd et MontantTotalUsd. Cela permet un suivi prÃ©cis des revenus Ã  travers 9+ devises prises en charge (USD, EUR, GBP, SAR, AED, EGP, TRY, INR, et plus).",
+        "Chaque abonnement porte des métadonnées de tarification complètes : Devise (code ISO), MontantDeBase, MontantAjustement, MontantTotal, TauxDeChangeEnUsd et MontantTotalUsd. Cela permet un suivi précis des revenus à travers 9+ devises prises en charge (USD, EUR, GBP, SAR, AED, EGP, TRY, INR, et plus).",
       exchangeRateTitle: "Normalisation en USD",
       exchangeRateIntro:
-        "Tous les montants sont normalisÃ©s en USD via ExchangeRateToUsd pour des rapports MRR/ARR cohÃ©rents. Le champ TotalAmountUsd est calculÃ© au moment de l'abonnement et stockÃ© pour une prÃ©cision historique — les fluctuations de taux de change ne modifient pas rÃ©troactivement les enregistrements passÃ©s.",
+        "Tous les montants sont normalisés en USD via ExchangeRateToUsd pour des rapports MRR/ARR cohérents. Le champ TotalAmountUsd est calculé au moment de l'abonnement et stocké pour une précision historique — les fluctuations de taux de change ne modifient pas rétroactivement les enregistrements passés.",
       promotionsTitle: "Remises Promotionnelles",
       promotionsIntro:
-        "Les abonnements prennent en charge les codes promo via le champ AppliedPromoCode. Lorsqu'une promotion valide est appliquÃ©e, un pourcentage PromotionDiscount est enregistrÃ© et le MontantAjustement reflÃ¨te la remise appliquÃ©e au MontantDeBase. Les promotions sont suivies par abonnement pour l'audit et l'analyse.",
-      exportTitle: "Export et Reporting AvancÃ©s",
+        "Les abonnements prennent en charge les codes promo via le champ AppliedPromoCode. Lorsqu'une promotion valide est appliquée, un pourcentage PromotionDiscount est enregistré et le MontantAjustement reflète la remise appliquée au MontantDeBase. Les promotions sont suivies par abonnement pour l'audit et l'analyse.",
+      exportTitle: "Export et Reporting Avancés",
       exportIntro:
-        "Le systÃ¨me d'export des abonnements gÃ©nÃ¨re des rapports complets aux formats CSV, Excel (XLSX) et PDF. Chaque rapport comprend une page de couverture avec les mÃ©tadonnÃ©es de filtrage, des tableaux de donnÃ©es colorÃ©s et des rÃ©sumÃ©s statistiques.",
+        "Le système d'export des abonnements génère des rapports complets aux formats CSV, Excel (XLSX) et PDF. Chaque rapport comprend une page de couverture avec les métadonnées de filtrage, des tableaux de données colorés et des résumés statistiques.",
       exportFiltersTitle: "Filtres d'Export",
       exportFiltersIntro:
-        "Les rapports prennent en charge des filtres avancÃ©s pour des analyses ciblÃ©es :",
+        "Les rapports prennent en charge des filtres avancés pour des analyses ciblées :",
       exportFilterDate:
-        "Plage de dates — filtrer par date de crÃ©ation de l'abonnement (7/30/90 derniers jours, derniÃ¨re annÃ©e ou plage personnalisÃ©e)",
+        "Plage de dates — filtrer par date de création de l'abonnement (7/30/90 derniers jours, dernière année ou plage personnalisée)",
       exportFilterExpiring:
-        "Expire bientÃ´t — trouver les abonnements expirant dans 5/7/14/30/60/90 jours",
-      exportFilterStatus: "Statut — Actif, Suspendu, AnnulÃ©, ExpirÃ©",
-      exportFilterEdition: "Ã‰dition — filtrer par plan/Ã©dition spÃ©cifique",
-      exportFilterCurrency: "Devise — afficher les montants dans la devise sÃ©lectionnÃ©e",
+        "Expire bientôt — trouver les abonnements expirant dans 5/7/14/30/60/90 jours",
+      exportFilterStatus: "Statut — Actif, Suspendu, Annulé, Expiré",
+      exportFilterEdition: "Édition — filtrer par plan/édition spécifique",
+      exportFilterCurrency: "Devise — afficher les montants dans la devise sélectionnée",
       exportDaysLeftTitle: "Jours Restants Avant Expiration",
       exportDaysLeftIntro:
-        "Les rapports incluent une colonne 'Jours Restants' calculÃ©e avec un codage couleur conditionnel : rouge (â‰¤7 jours), jaune (â‰¤30 jours), vert (>30 jours). Cela permet d'identifier en un coup d'Å“il les abonnements nÃ©cessitant une attention de renouvellement.",
-      exportFormatsTitle: "DÃ©tails des Formats d'Export",
-      exportFormatCsv: "CSV — lÃ©ger, importable dans tout tableur ou outil BI",
+        "Les rapports incluent une colonne 'Jours Restants' calculée avec un codage couleur conditionnel : rouge (≤7 jours), jaune (≤30 jours), vert (>30 jours). Cela permet d'identifier en un coup d'œil les abonnements nécessitant une attention de renouvellement.",
+      exportFormatsTitle: "Détails des Formats d'Export",
+      exportFormatCsv: "CSV — léger, importable dans tout tableur ou outil BI",
       exportFormatExcel:
-        "XLSX — classeur Excel professionnel avec en-tÃªtes stylisÃ©s, feuille de mÃ©tadonnÃ©es de filtre, mise en forme conditionnelle et colonnes Ã  taille automatique (ClosedXML)",
+        "XLSX — classeur Excel professionnel avec en-têtes stylisés, feuille de métadonnées de filtre, mise en forme conditionnelle et colonnes à taille automatique (ClosedXML)",
       exportFormatPdf:
-        "PDF — document prÃªt Ã  imprimer avec page de couverture associÃ©e Ã  la marque, rÃ©sumÃ© statistique et tableaux de donnÃ©es paginÃ©s (QuestPDF)",
-      renewalTitle: "Renouvellement — ModÃ¨le Nouvelle Ligne (B2)",
+        "PDF — document prêt à imprimer avec page de couverture associée à la marque, résumé statistique et tableaux de données paginés (QuestPDF)",
+      renewalTitle: "Renouvellement — Modèle Nouvelle Ligne (B2)",
       renewalIntro:
-        "Les renouvellements crÃ©ent une NOUVELLE ligne TenantSubscription au lieu d'Ã©craser l'enregistrement existant (modÃ¨le Stripe). L'ancien abonnement est marquÃ© ExpirÃ© (IsActive=false), tandis qu'une nouvelle ligne est crÃ©Ã©e avec un nouvel Id, StartDate=UtcNow, une tarification recalculÃ©e et les dÃ©tails promotionnels reportÃ©s.",
+        "Les renouvellements créent une NOUVELLE ligne TenantSubscription au lieu d'écraser l'enregistrement existant (modèle Stripe). L'ancien abonnement est marqué Expiré (IsActive=false), tandis qu'une nouvelle ligne est créée avec un nouvel Id, StartDate=UtcNow, une tarification recalculée et les détails promotionnels reportés.",
       renewalAuditTitle: "Piste d'Audit des Revenus",
       renewalAuditIntro:
-        "Chaque cycle de facturation produit sa propre ligne immuable en base de donnÃ©es avec une tarification figÃ©e au moment du renouvellement. Cela permet des rapports financiers prÃ©cis : tendances MRR, analyse du taux d'attrition par pÃ©riode et suivi des remboursements par cycle.",
+        "Chaque cycle de facturation produit sa propre ligne immuable en base de données avec une tarification figée au moment du renouvellement. Cela permet des rapports financiers précis : tendances MRR, analyse du taux d'attrition par période et suivi des remboursements par cycle.",
       promoExpiryTitle: "Suivi d'Expiration des Promotions (A1)",
       promoExpiryIntro:
-        "Lorsqu'une promotion avec DurationDays > 0 est appliquÃ©e, le systÃ¨me calcule un horodatage PromotionExpiresAt. Ã€ chaque renouvellement, le gestionnaire vÃ©rifie si UtcNow > PromotionExpiresAt — si la promotion a expirÃ©, la remise est supprimÃ©e et NON reportÃ©e sur la nouvelle ligne d'abonnement.",
+        "Lorsqu'une promotion avec DurationDays > 0 est appliquée, le système calcule un horodatage PromotionExpiresAt. À chaque renouvellement, le gestionnaire vérifie si UtcNow > PromotionExpiresAt — si la promotion a expiré, la remise est supprimée et NON reportée sur la nouvelle ligne d'abonnement.",
       concurrencyTitle: "Concurrence Optimiste (E1)",
       concurrencyIntro:
-        "Chaque TenantSubscription possÃ¨de un ConcurrencyStamp (Guid) avec [ConcurrencyCheck]. Le tampon est renouvelÃ© Ã  chaque opÃ©ration d'Ã©criture. Cela prÃ©vient les conditions de course — par exemple, une annulation concurrente + un travail de rapprochement — en levant une DbUpdateConcurrencyException en cas de collision.",
-      validationTitle: "Validation des EntrÃ©es (G1)",
+        "Chaque TenantSubscription possède un ConcurrencyStamp (Guid) avec [ConcurrencyCheck]. Le tampon est renouvelé à chaque opération d'écriture. Cela prévient les conditions de course — par exemple, une annulation concurrente + un travail de rapprochement — en levant une DbUpdateConcurrencyException en cas de collision.",
+      validationTitle: "Validation des Entrées (G1)",
       validationIntro:
-        "Les 8 commandes d'abonnement disposent de validateurs FluentValidation dÃ©diÃ©s. Les validateurs utilisent ILocalizer pour des messages d'erreur localisÃ©s (EN + AR). RÃ¨gles mÃ©tier : pas de renouvellement en essai, montants de remboursement positifs, limites de longueur de texte.",
-      crossModuleTitle: "IntÃ©gration Inter-Modules (H1)",
+        "Les 8 commandes d'abonnement disposent de validateurs FluentValidation dédiés. Les validateurs utilisent ILocalizer pour des messages d'erreur localisés (EN + AR). Règles métier : pas de renouvellement en essai, montants de remboursement positifs, limites de longueur de texte.",
+      crossModuleTitle: "Intégration Inter-Modules (H1)",
       crossModuleIntro:
-        "Les Ã©vÃ©nements du cycle de vie d'abonnement publient des Ã©vÃ©nements de domaine consommÃ©s par le module IdentitÃ©. Lors de la suspension d'un abonnement, tous les administrateurs du locataire sont dÃ©sactivÃ©s avec DeactivationReason='SubscriptionSuspended'. Ã€ la reprise, seuls les administrateurs dÃ©sactivÃ©s par suspension sont rÃ©activÃ©s.",
+        "Les événements du cycle de vie d'abonnement publient des événements de domaine consommés par le module Identité. Lors de la suspension d'un abonnement, tous les administrateurs du locataire sont désactivés avec DeactivationReason='SubscriptionSuspended'. À la reprise, seuls les administrateurs désactivés par suspension sont réactivés.",
       crossModuleReasons:
-        "Trois raisons de dÃ©sactivation : 'Manuel' (jamais rÃ©activÃ© automatiquement), 'SubscriptionSuspended' (rÃ©activÃ© Ã  la reprise), 'SubscriptionExpired' (dÃ©sactivÃ© Ã  l'expiration).",
-      impactTitle: "Analyse d'Impact de la RÃ©trogradation",
+        "Trois raisons de désactivation : 'Manuel' (jamais réactivé automatiquement), 'SubscriptionSuspended' (réactivé à la reprise), 'SubscriptionExpired' (désactivé à l'expiration).",
+      impactTitle: "Analyse d'Impact de la Rétrogradation",
       impactIntro:
-        "Avant de modifier l'Ã©dition d'un locataire, utilisez l'endpoint d'Impact de RÃ©trogradation pour prÃ©visualiser quelles ressources seraient en dÃ©passement. La rÃ©ponse liste chaque fonctionnalitÃ© qui dÃ©passerait les limites de la nouvelle Ã©dition, ainsi que l'utilisation actuelle par rapport Ã  la nouvelle limite.",
+        "Avant de modifier l'édition d'un locataire, utilisez l'endpoint d'Impact de Rétrogradation pour prévisualiser quelles ressources seraient en dépassement. La réponse liste chaque fonctionnalité qui dépasserait les limites de la nouvelle édition, ainsi que l'utilisation actuelle par rapport à la nouvelle limite.",
       endpointsTitle: "Points de terminaison API (Endpoints)",
       endpointsIntro:
-        "Le contrÃ´leur des Abonnements fournit 13 endpoints couvrant l'ensemble du cycle de vie de l'abonnement :",
-      operationsTitle: "OpÃ©rations sur les Abonnements",
+        "Le contrôleur des Abonnements fournit 13 endpoints couvrant l'ensemble du cycle de vie de l'abonnement :",
+      operationsTitle: "Opérations sur les Abonnements",
       operationsIntro:
-        "Le module d'abonnement prend en charge un ensemble complet d'opÃ©rations de cycle de vie. Chaque opÃ©ration fait passer l'abonnement Ã  un nouvel Ã©tat avec un suivi d'audit complet.",
+        "Le module d'abonnement prend en charge un ensemble complet d'opérations de cycle de vie. Chaque opération fait passer l'abonnement à un nouvel état avec un suivi d'audit complet.",
       assignTitle: "Attribuer un Abonnement",
       assignIntro:
-        "CrÃ©er un nouvel abonnement liant un locataire Ã  une Ã©dition. Si le locataire a dÃ©jÃ  un abonnement actif, le prÃ©cÃ©dent est automatiquement annulÃ©. Prend en charge les paramÃ¨tres optionnels de devise, code promo et comportement d'expiration.",
-      upgradeTitle: "Mise Ã  niveau (Upgrade) & RÃ©trogradation (Downgrade)",
+        "Créer un nouvel abonnement liant un locataire à une édition. Si le locataire a déjà un abonnement actif, le précédent est automatiquement annulé. Prend en charge les paramètres optionnels de devise, code promo et comportement d'expiration.",
+      upgradeTitle: "Mise à niveau (Upgrade) & Rétrogradation (Downgrade)",
       upgradeIntro:
-        "Les locataires peuvent passer d'une Ã©dition Ã  l'autre. Les mises Ã  niveau s'appliquent immÃ©diatement et les fonctionnalitÃ©s de la nouvelle Ã©dition prennent effet sur-le-champ. Les rÃ©trogradations vÃ©rifient d'abord la OverflowPolicy pour gÃ©rer les ressources qui dÃ©passent les nouvelles limites.",
+        "Les locataires peuvent passer d'une édition à l'autre. Les mises à niveau s'appliquent immédiatement et les fonctionnalités de la nouvelle édition prennent effet sur-le-champ. Les rétrogradations vérifient d'abord la OverflowPolicy pour gérer les ressources qui dépassent les nouvelles limites.",
       trialTitle: "Conversion d'Essai",
       trialIntro:
-        "Les abonnements d'essai ont une TrialEndDate (Date de fin d'essai). Lorsqu'un essai est mis Ã  niveau vers un plan payant, IsTrialConverted est dÃ©fini sur true et l'abonnement passe au nouveau type. Si l'essai expire sans conversion, ExpiryBehavior dÃ©termine ce qui se passe ensuite.",
+        "Les abonnements d'essai ont une TrialEndDate (Date de fin d'essai). Lorsqu'un essai est mis à niveau vers un plan payant, IsTrialConverted est défini sur true et l'abonnement passe au nouveau type. Si l'essai expire sans conversion, ExpiryBehavior détermine ce qui se passe ensuite.",
       ep: {
-        list: "Lister tous les abonnements (paginÃ©, filtrable par statut/type/locataire)",
-        get: "Obtenir les dÃ©tails de l'abonnement par ID",
+        list: "Lister tous les abonnements (paginé, filtrable par statut/type/locataire)",
+        get: "Obtenir les détails de l'abonnement par ID",
         assign:
-          "CrÃ©er un nouvel abonnement (attribuer un locataire Ã  une Ã©dition avec devise/promo)",
-        upgrade: "Mettre Ã  niveau vers une Ã©dition supÃ©rieure",
-        downgrade: "RÃ©trograder vers une Ã©dition infÃ©rieure (vÃ©rifie la OverflowPolicy)",
-        impact: "PrÃ©visualiser l'impact de la rÃ©trogradation avant exÃ©cution",
-        suspend: "Suspendre l'abonnement (bloquer l'accÃ¨s du locataire)",
+          "Créer un nouvel abonnement (attribuer un locataire à une édition avec devise/promo)",
+        upgrade: "Mettre à niveau vers une édition supérieure",
+        downgrade: "Rétrograder vers une édition inférieure (vérifie la OverflowPolicy)",
+        impact: "Prévisualiser l'impact de la rétrogradation avant exécution",
+        suspend: "Suspendre l'abonnement (bloquer l'accès du locataire)",
         resume: "Reprendre un abonnement suspendu",
-        cancel: "Annuler dÃ©finitivement l'abonnement",
-        renew: "Renouveler un abonnement arrivant Ã  expiration",
-        tenantActive: "Obtenir l'abonnement actif pour un locataire spÃ©cifique",
-        export: "Exporter les abonnements en CSV, Excel ou PDF avec des filtres avancÃ©s",
+        cancel: "Annuler définitivement l'abonnement",
+        renew: "Renouveler un abonnement arrivant à expiration",
+        tenantActive: "Obtenir l'abonnement actif pour un locataire spécifique",
+        export: "Exporter les abonnements en CSV, Excel ou PDF avec des filtres avancés",
       },
     },
     features: {
-      title: "FonctionnalitÃ©s (Features)",
+      title: "Fonctionnalités (Features)",
       description:
-        "CapacitÃ©s contrÃ´lables de la plateforme avec des types de valeurs BoolÃ©en, NumÃ©rique et ChaÃ®ne de caractÃ¨res.",
+        "Capacités contrôlables de la plateforme avec des types de valeurs Booléen, Numérique et Chaîne de caractères.",
       intro:
-        "Les fonctionnalitÃ©s sont les Ã©lÃ©ments de base atomiques du systÃ¨me de Droits. Chaque fonctionnalitÃ© reprÃ©sente une capacitÃ© contrÃ´lable — un commutateur boolÃ©en, un quota numÃ©rique ou une configuration textuelle. Les fonctionnalitÃ©s ont une clÃ© systÃ¨me stable (Name) qui ne change jamais, ce qui permet de les rÃ©fÃ©rencer en toute sÃ©curitÃ© dans le code.",
-      entityTitle: "EntitÃ© FonctionnalitÃ©",
+        "Les fonctionnalités sont les éléments de base atomiques du système de Droits. Chaque fonctionnalité représente une capacité contrôlable — un commutateur booléen, un quota numérique ou une configuration textuelle. Les fonctionnalités ont une clé système stable (Name) qui ne change jamais, ce qui permet de les référencer en toute sécurité dans le code.",
+      entityTitle: "Entité Fonctionnalité",
       entityIntro:
-        "Une FonctionnalitÃ© (Feature) dÃ©finit une capacitÃ© contrÃ´lable de la plateforme. Le champ Name est une clÃ© systÃ¨me stable utilisÃ©e dans le code ; DisplayNameEn/DisplayNameAr sont des libellÃ©s destinÃ©s aux utilisateurs.",
+        "Une Fonctionnalité (Feature) définit une capacité contrôlable de la plateforme. Le champ Name est une clé système stable utilisée dans le code ; DisplayNameEn/DisplayNameAr sont des libellés destinés aux utilisateurs.",
       valueTypesTitle: "Types de Valeurs",
       valueTypesIntro:
-        "Les valeurs des fonctionnalitÃ©s sont stockÃ©es sous forme de chaÃ®nes (strings) mais interprÃ©tÃ©es selon leur ValueType. Le systÃ¨me valide les valeurs par rapport au type attendu lors de la crÃ©ation et de la mise Ã  jour.",
+        "Les valeurs des fonctionnalités sont stockées sous forme de chaînes (strings) mais interprétées selon leur ValueType. Le système valide les valeurs par rapport au type attendu lors de la création et de la mise à jour.",
       valueTypesTip:
-        "Pour les fonctionnalitÃ©s NumÃ©riques, utilisez -1 pour reprÃ©senter 'illimitÃ©'. Le FeatureCheckBehavior reconnaÃ®t -1 comme une valeur spÃ©ciale et ne bloque jamais les requÃªtes pour les fonctionnalitÃ©s ayant un quota illimitÃ©.",
-      systemVsCustomTitle: "FonctionnalitÃ©s SystÃ¨me vs PersonnalisÃ©es",
+        "Pour les fonctionnalités Numériques, utilisez -1 pour représenter 'illimité'. Le FeatureCheckBehavior reconnaît -1 comme une valeur spéciale et ne bloque jamais les requêtes pour les fonctionnalités ayant un quota illimité.",
+      systemVsCustomTitle: "Fonctionnalités Système vs Personnalisées",
       systemVsCustomIntro:
-        "SCRIPE fait la distinction entre les fonctionnalitÃ©s systÃ¨me (insÃ©rÃ©es au dÃ©marrage, en lecture seule) et les fonctionnalitÃ©s personnalisÃ©es (crÃ©Ã©es par les administrateurs via l'API) :",
-      cacheTitle: "Cache des FonctionnalitÃ©s",
+        "SCRIPE fait la distinction entre les fonctionnalités système (insérées au démarrage, en lecture seule) et les fonctionnalités personnalisées (créées par les administrateurs via l'API) :",
+      cacheTitle: "Cache des Fonctionnalités",
       cacheIntro:
-        "Les valeurs de fonctionnalitÃ©s rÃ©solues sont mises en cache dans le IFeatureCache pour Ã©viter des requÃªtes Ã  la base de donnÃ©es Ã  chaque demande. Le cache est invalidÃ© chaque fois que les fonctionnalitÃ©s d'une Ã©dition changent, qu'un abonnement est modifiÃ© ou qu'une surcharge est dÃ©finie/supprimÃ©e. Dans les dÃ©ploiements de microservices sans le module des Droits, un NoOpFeatureCache traite toutes les fonctionnalitÃ©s comme activÃ©es.",
+        "Les valeurs de fonctionnalités résolues sont mises en cache dans le IFeatureCache pour éviter des requêtes à la base de données à chaque demande. Le cache est invalidé chaque fois que les fonctionnalités d'une édition changent, qu'un abonnement est modifié ou qu'une surcharge est définie/supprimée. Dans les déploiements de microservices sans le module des Droits, un NoOpFeatureCache traite toutes les fonctionnalités comme activées.",
       requireFeatureTitle: "Interface IRequireFeature",
       requireFeatureIntro:
-        "Pour conditionner une commande ou une requÃªte CQRS Ã  une fonctionnalitÃ©, implÃ©mentez l'interface de marquage IRequireFeature. Le comportement du pipeline FeatureCheckBehavior rÃ©sout automatiquement la valeur actuelle pour le locataire et rejette la requÃªte si la fonctionnalitÃ© est dÃ©sactivÃ©e.",
+        "Pour conditionner une commande ou une requête CQRS à une fonctionnalité, implémentez l'interface de marquage IRequireFeature. Le comportement du pipeline FeatureCheckBehavior résout automatiquement la valeur actuelle pour le locataire et rejette la requête si la fonctionnalité est désactivée.",
       requireFeatureNote:
-        "IRequireFeature fonctionne Ã  la fois pour les fonctionnalitÃ©s BoolÃ©ennes (vÃ©rifiÃ©es comme activÃ©es/dÃ©sactivÃ©es) et les fonctionnalitÃ©s NumÃ©riques (vÃ©rifiÃ©es selon le quota restant). Le comportement dÃ©termine automatiquement le type de vÃ©rification Ã  partir du Feature.ValueType.",
-      contextAwareTitle: "Affichage contextuel des fonctionnalitÃ©s",
+        "IRequireFeature fonctionne à la fois pour les fonctionnalités Booléennes (vérifiées comme activées/désactivées) et les fonctionnalités Numériques (vérifiées selon le quota restant). Le comportement détermine automatiquement le type de vérification à partir du Feature.ValueType.",
+      contextAwareTitle: "Affichage contextuel des fonctionnalités",
       contextAwareIntro:
-        "La liste des fonctionnalitÃ©s est contextuelle. Les administrateurs systÃ¨me voient le catalogue complet des fonctionnalitÃ©s avec les opÃ©rations CRUD. Les administrateurs de locataires et les sessions en drill-down ne voient que les fonctionnalitÃ©s effectives du locataire (rÃ©solues Ã  partir de l'Ã©dition + surcharges) en mode lecture seule. Tout le filtrage de pÃ©rimÃ¨tre se fait cÃ´tÃ© backend via GET /features (catalogue) vs GET /features/effective (scoped au locataire).",
+        "La liste des fonctionnalités est contextuelle. Les administrateurs système voient le catalogue complet des fonctionnalités avec les opérations CRUD. Les administrateurs de locataires et les sessions en drill-down ne voient que les fonctionnalités effectives du locataire (résolues à partir de l'édition + surcharges) en mode lecture seule. Tout le filtrage de périmètre se fait côté backend via GET /features (catalogue) vs GET /features/effective (scoped au locataire).",
       endpointsTitle: "Points de terminaison API (Endpoints)",
       endpointsIntro:
-        "Le contrÃ´leur des FonctionnalitÃ©s expose 5 endpoints CRUD. Les fonctionnalitÃ©s systÃ¨me ne peuvent pas Ãªtre supprimÃ©es :",
-      seedingTitle: "Initialisation des FonctionnalitÃ©s (Seeding)",
+        "Le contrôleur des Fonctionnalités expose 5 endpoints CRUD. Les fonctionnalités système ne peuvent pas être supprimées :",
+      seedingTitle: "Initialisation des Fonctionnalités (Seeding)",
       seedingIntro:
-        "Les fonctionnalitÃ©s systÃ¨me sont automatiquement initialisÃ©es (seeded) au dÃ©marrage de l'application par EntitlementsStartupSeeder. L'initialiseur vÃ©rifie si chaque fonctionnalitÃ© systÃ¨me existe dÃ©jÃ  (par son Nom) et ne crÃ©e que celles qui manquent — les fonctionnalitÃ©s existantes ne sont jamais Ã©crasÃ©es.",
+        "Les fonctionnalités système sont automatiquement initialisées (seeded) au démarrage de l'application par EntitlementsStartupSeeder. L'initialiseur vérifie si chaque fonctionnalité système existe déjà (par son Nom) et ne crée que celles qui manquent — les fonctionnalités existantes ne sont jamais écrasées.",
       quotaTitle: "Suivi des Quotas (QuotaCounter)",
       quotaIntro:
-        "Les fonctionnalitÃ©s numÃ©riques prennent en charge l'application automatique des quotas via l'entitÃ© QuotaCounter. Le FeatureCheckBehavior vÃ©rifie l'utilisation actuelle par rapport Ã  la limite rÃ©solue pour chaque commande IRequireFeature ciblant une fonctionnalitÃ© numÃ©rique.",
+        "Les fonctionnalités numériques prennent en charge l'application automatique des quotas via l'entité QuotaCounter. Le FeatureCheckBehavior vérifie l'utilisation actuelle par rapport à la limite résolue pour chaque commande IRequireFeature ciblant une fonctionnalité numérique.",
       cacheNote:
-        "Le cache est automatiquement invalidÃ© lorsque : (1) les fonctionnalitÃ©s d'une Ã©dition sont modifiÃ©es, (2) un abonnement est attribuÃ©/modifiÃ©, (3) une surcharge est dÃ©finie/supprimÃ©e. Aucune purge manuelle du cache n'est nÃ©cessaire.",
-      patternTitle: "ModÃ¨le IRequireFeature",
+        "Le cache est automatiquement invalidé lorsque : (1) les fonctionnalités d'une édition sont modifiées, (2) un abonnement est attribué/modifié, (3) une surcharge est définie/supprimée. Aucune purge manuelle du cache n'est nécessaire.",
+      patternTitle: "Modèle IRequireFeature",
       patternIntro:
-        "Pour conditionner n'importe quelle commande CQRS derriÃ¨re une vÃ©rification de fonctionnalitÃ©, implÃ©mentez simplement l'interface de marquage IRequireFeature. Le FeatureCheckBehavior intercepte automatiquement la requÃªte, rÃ©sout la valeur de la fonctionnalitÃ© pour le locataire, et la rejette si elle est dÃ©sactivÃ©e ou si le quota est dÃ©passÃ©.",
+        "Pour conditionner n'importe quelle commande CQRS derrière une vérification de fonctionnalité, implémentez simplement l'interface de marquage IRequireFeature. Le FeatureCheckBehavior intercepte automatiquement la requête, résout la valeur de la fonctionnalité pour le locataire, et la rejette si elle est désactivée ou si le quota est dépassé.",
       ep: {
-        list: "Lister toutes les fonctionnalitÃ©s (paginÃ©, filtrable par catÃ©gorie/type)",
-        get: "Obtenir les dÃ©tails de la fonctionnalitÃ© par ID",
-        create: "CrÃ©er une nouvelle fonctionnalitÃ© personnalisÃ©e",
+        list: "Lister toutes les fonctionnalités (paginé, filtrable par catégorie/type)",
+        get: "Obtenir les détails de la fonctionnalité par ID",
+        create: "Créer une nouvelle fonctionnalité personnalisée",
         update:
-          "Mettre Ã  jour les mÃ©tadonnÃ©es de la fonctionnalitÃ© (fonctionnalitÃ©s systÃ¨me : DefaultValue/Description uniquement)",
+          "Mettre à jour les métadonnées de la fonctionnalité (fonctionnalités système : DefaultValue/Description uniquement)",
         delete:
-          "Suppression logique d'une fonctionnalitÃ© personnalisÃ©e (les fonctionnalitÃ©s systÃ¨me ne peuvent pas Ãªtre supprimÃ©es)",
+          "Suppression logique d'une fonctionnalité personnalisée (les fonctionnalités système ne peuvent pas être supprimées)",
       },
     },
     overrides: {
-      title: "Surcharges de FonctionnalitÃ©s (Overrides)",
+      title: "Surcharges de Fonctionnalités (Overrides)",
       description:
-        "Personnalisation des valeurs de fonctionnalitÃ©s par locataire qui contourne les valeurs par dÃ©faut de l'Ã©dition.",
+        "Personnalisation des valeurs de fonctionnalités par locataire qui contourne les valeurs par défaut de l'édition.",
       intro:
-        "Les Surcharges (Overrides) de fonctionnalitÃ©s permettent aux administrateurs de la plateforme de personnaliser les valeurs des fonctionnalitÃ©s pour des locataires individuels, indÃ©pendamment de leur Ã©dition souscrite. Les surcharges ont la plus haute prioritÃ© dans la chaÃ®ne de rÃ©solution, ce qui les rend parfaites pour des accords commerciaux sur mesure, des promotions spÃ©ciales ou des exceptions ponctuelles.",
-      entityTitle: "EntitÃ© Surcharge",
+        "Les Surcharges (Overrides) de fonctionnalités permettent aux administrateurs de la plateforme de personnaliser les valeurs des fonctionnalités pour des locataires individuels, indépendamment de leur édition souscrite. Les surcharges ont la plus haute priorité dans la chaîne de résolution, ce qui les rend parfaites pour des accords commerciaux sur mesure, des promotions spéciales ou des exceptions ponctuelles.",
+      entityTitle: "Entité Surcharge",
       entityIntro:
-        "Un TenantFeatureOverride dÃ©finit une valeur personnalisÃ©e pour une fonctionnalitÃ© spÃ©cifique sur un locataire spÃ©cifique. Il inclut un champ optionnel Reason (Raison) Ã  des fins d'audit.",
-      priorityTitle: "PrioritÃ© de RÃ©solution",
+        "Un TenantFeatureOverride définit une valeur personnalisée pour une fonctionnalité spécifique sur un locataire spécifique. Il inclut un champ optionnel Reason (Raison) à des fins d'audit.",
+      priorityTitle: "Priorité de Résolution",
       priorityIntro:
-        "Les surcharges se trouvent en haut de la chaÃ®ne de rÃ©solution. Lorsque le systÃ¨me rÃ©sout une valeur de fonctionnalitÃ© pour un locataire, il vÃ©rifie d'abord l'existence d'une surcharge :",
+        "Les surcharges se trouvent en haut de la chaîne de résolution. Lorsque le système résout une valeur de fonctionnalité pour un locataire, il vérifie d'abord l'existence d'une surcharge :",
       whenTitle: "Quand utiliser les Surcharges",
       whenIntro:
-        "Les surcharges sont conÃ§ues pour des cas exceptionnels oÃ¹ un locataire a besoin d'une valeur diffÃ©rente de celle fournie par son Ã©dition :",
+        "Les surcharges sont conçues pour des cas exceptionnels où un locataire a besoin d'une valeur différente de celle fournie par son édition :",
       useCase1:
-        "Accords d'entreprise personnalisÃ©s — 'Donner Ã  Acme Corp 500 administrateurs au lieu des 50 standards'",
+        "Accords d'entreprise personnalisés — 'Donner à Acme Corp 500 administrateurs au lieu des 50 standards'",
       useCase2:
         "Offres promotionnelles — 'Activer le Chat Premium pour ce locataire pendant 30 jours'",
       useCase3:
-        "Tests BÃªta — 'Activer le nouveau module de Facturation pour les premiers adoptants (early adopters)'",
+        "Tests Bêta — 'Activer le nouveau module de Facturation pour les premiers adoptants (early adopters)'",
       useCase4:
-        "Augmentation temporaire — 'Augmenter la limite de tÃ©lÃ©chargement de fichiers pendant leur migration'",
+        "Augmentation temporaire — 'Augmenter la limite de téléchargement de fichiers pendant leur migration'",
       overuseWarning:
-        "Les surcharges doivent Ãªtre utilisÃ©es avec parcimonie. Si de nombreux locataires ont besoin de la mÃªme surcharge, envisagez plutÃ´t de crÃ©er une nouvelle Ã©dition. Des surcharges excessives rendent le systÃ¨me plus difficile Ã  gÃ©rer et Ã  auditer.",
-      resolvedTitle: "Endpoint des FonctionnalitÃ©s RÃ©solues",
+        "Les surcharges doivent être utilisées avec parcimonie. Si de nombreux locataires ont besoin de la même surcharge, envisagez plutôt de créer une nouvelle édition. Des surcharges excessives rendent le système plus difficile à gérer et à auditer.",
+      resolvedTitle: "Endpoint des Fonctionnalités Résolues",
       resolvedIntro:
-        "L'endpoint GET /api/v1/tenants/{tenantId}/features/resolved renvoie la valeur finale et effective de chaque fonctionnalitÃ© pour un locataire donnÃ©. Il affiche la source de rÃ©solution (Surcharge, Ã‰dition ou DÃ©faut) pour chaque entrÃ©e, facilitant ainsi le dÃ©bogage et l'audit.",
+        "L'endpoint GET /api/v1/tenants/{tenantId}/features/resolved renvoie la valeur finale et effective de chaque fonctionnalité pour un locataire donné. Il affiche la source de résolution (Surcharge, Édition ou Défaut) pour chaque entrée, facilitant ainsi le débogage et l'audit.",
       endpointsTitle: "Points de terminaison API (Endpoints)",
       endpointsIntro:
-        "Le contrÃ´leur TenantFeatures expose 4 endpoints pour gÃ©rer les surcharges par locataire et les valeurs rÃ©solues :",
-      scenariosTitle: "ScÃ©narios d'Utilisation",
+        "Le contrôleur TenantFeatures expose 4 endpoints pour gérer les surcharges par locataire et les valeurs résolues :",
+      scenariosTitle: "Scénarios d'Utilisation",
       scenariosIntro:
-        "Les scÃ©narios rÃ©els suivants montrent quand les surcharges apportent le plus de valeur :",
-      settingTitle: "DÃ©finir une Surcharge",
+        "Les scénarios réels suivants montrent quand les surcharges apportent le plus de valeur :",
+      settingTitle: "Définir une Surcharge",
       settingIntro:
-        "Pour dÃ©finir une surcharge, envoyez une requÃªte POST Ã  l'endpoint des fonctionnalitÃ©s du locataire avec l'ID de la fonctionnalitÃ©, la valeur personnalisÃ©e et une raison optionnelle Ã  des fins d'audit.",
+        "Pour définir une surcharge, envoyez une requête POST à l'endpoint des fonctionnalités du locataire avec l'ID de la fonctionnalité, la valeur personnalisée et une raison optionnelle à des fins d'audit.",
       settingTip:
-        "Incluez toujours une raison lors de la dÃ©finition des surcharges — cela donne du sens aux pistes d'audit et aide les futurs administrateurs Ã  comprendre pourquoi la surcharge a Ã©tÃ© appliquÃ©e.",
+        "Incluez toujours une raison lors de la définition des surcharges — cela donne du sens aux pistes d'audit et aide les futurs administrateurs à comprendre pourquoi la surcharge a été appliquée.",
       expiryTitle: "Surcharges Expirables",
       expiryIntro:
-        "Les surcharges peuvent avoir une date d'expiration (ExpiresAt) optionnelle. Lorsque la date d'expiration est passÃ©e, la surcharge est automatiquement dÃ©sactivÃ©e et la fonctionnalitÃ© revient Ã  la valeur de l'Ã©dition (ou Ã  la valeur par dÃ©faut globale).",
+        "Les surcharges peuvent avoir une date d'expiration (ExpiresAt) optionnelle. Lorsque la date d'expiration est passée, la surcharge est automatiquement désactivée et la fonctionnalité revient à la valeur de l'édition (ou à la valeur par défaut globale).",
       expiryNote:
-        "Les surcharges expirÃ©es sont dÃ©sactivÃ©es de maniÃ¨re logique (IsActive = false), et non supprimÃ©es. Cela prÃ©serve la piste d'audit et permet une rÃ©activation si nÃ©cessaire.",
+        "Les surcharges expirées sont désactivées de manière logique (IsActive = false), et non supprimées. Cela préserve la piste d'audit et permet une réactivation si nécessaire.",
       auditTitle: "Piste d'Audit",
       auditIntro:
-        "Chaque opÃ©ration de surcharge est suivie avec des informations d'audit complÃ¨tes. Le champ Raison (Reason) de chaque surcharge fournit le contexte expliquant pourquoi la valeur personnalisÃ©e a Ã©tÃ© appliquÃ©e.",
+        "Chaque opération de surcharge est suivie avec des informations d'audit complètes. Le champ Raison (Reason) de chaque surcharge fournit le contexte expliquant pourquoi la valeur personnalisée a été appliquée.",
       bestPracticesTitle: "Bonnes Pratiques",
       bestPracticesIntro:
-        "Suivez ces directives pour garder votre systÃ¨me de surcharges maintenable et auditable.",
+        "Suivez ces directives pour garder votre système de surcharges maintenable et auditable.",
       bestPracticesWarning:
-        "Les surcharges doivent Ãªtre utilisÃ©es avec parcimonie. Si de nombreux locataires ont besoin de la mÃªme surcharge, envisagez plutÃ´t de crÃ©er une nouvelle Ã©dition. L'abus de surcharges rend le systÃ¨me plus difficile Ã  gÃ©rer et crÃ©e une dette technique de maintenance.",
+        "Les surcharges doivent être utilisées avec parcimonie. Si de nombreux locataires ont besoin de la même surcharge, envisagez plutôt de créer une nouvelle édition. L'abus de surcharges rend le système plus difficile à gérer et crée une dette technique de maintenance.",
       historyTitle: "Historique des Surcharges",
       historyIntro:
-        "Le systÃ¨me conserve un historique complet des modifications de surcharges, permettant d'identifier qui a effectuÃ© une modification et pourquoi.",
+        "Le système conserve un historique complet des modifications de surcharges, permettant d'identifier qui a effectué une modification et pourquoi.",
       bulkTitle: "Gestion en Masse",
       bulkIntro:
-        "Les administrateurs peuvent appliquer des surcharges Ã  plusieurs locataires simultanÃ©ment pour des mises Ã  jour rapides Ã  l'Ã©chelle de la plateforme.",
+        "Les administrateurs peuvent appliquer des surcharges à plusieurs locataires simultanément pour des mises à jour rapides à l'échelle de la plateforme.",
       importTitle: "Import/Export de Surcharges",
       importIntro:
-        "Prise en charge de l'importation de surcharges via des fichiers CSV pour les configurations complexes nÃ©cessitant une prÃ©paration hors ligne.",
+        "Prise en charge de l'importation de surcharges via des fichiers CSV pour les configurations complexes nécessitant une préparation hors ligne.",
       validationTitle: "Validation des Surcharges",
       validationIntro:
-        "Les nouvelles surcharges sont validÃ©es par rapport aux limites de l'Ã©dition actuelle pour prÃ©venir toute configuration invalide.",
+        "Les nouvelles surcharges sont validées par rapport aux limites de l'édition actuelle pour prévenir toute configuration invalide.",
       errorTitle: "Gestion des Erreurs",
       errorIntro:
-        "Les erreurs de rÃ©solution des surcharges sont journalisÃ©es avec des dÃ©tails sur la fonctionnalitÃ© en conflit et le contexte du locataire pour un dÃ©pannage rapide.",
+        "Les erreurs de résolution des surcharges sont journalisées avec des détails sur la fonctionnalité en conflit et le contexte du locataire pour un dépannage rapide.",
       ep: {
-        list: "Lister toutes les dÃ©rogations pour un locataire spÃ©cifique",
-        set: "DÃ©finir ou mettre Ã  jour une dÃ©rogation de fonctionnalitÃ© pour un locataire",
-        remove: "Supprimer (dÃ©sactiver) une dÃ©rogation de fonctionnalitÃ©",
+        list: "Lister toutes les dérogations pour un locataire spécifique",
+        set: "Définir ou mettre à jour une dérogation de fonctionnalité pour un locataire",
+        remove: "Supprimer (désactiver) une dérogation de fonctionnalité",
         resolved:
-          "Obtenir toutes les valeurs de fonctionnalitÃ©s rÃ©solues pour un locataire (affiche la source : DÃ©rogation/Ã‰dition/DÃ©faut)",
+          "Obtenir toutes les valeurs de fonctionnalités résolues pour un locataire (affiche la source : Dérogation/Édition/Défaut)",
       },
     },
 
-    // ── Plugins Module (Phase 15) ────────────────────────────
+    // ── Plugins Module ───────────────────────────────────────
     plugins: {
       overview: {
         title: "Module de Conformité",
@@ -807,99 +807,99 @@ export const fr = {
       },
 
       retention: {
-        title: "Politiques de conservation des donnÃ©es",
+        title: "Politiques de conservation des données",
         description:
-          "DÃ©finir les pÃ©riodes de conservation et les actions d'expiration (Suppression ou Anonymisation) pour l'Article 5(1)(e) du RGPD.",
+          "Définir les périodes de conservation et les actions d'expiration (Suppression ou Anonymisation) pour l'Article 5(1)(e) du RGPD.",
         intro:
-          "DÃ©finissez la durÃ©e de conservation de catÃ©gories de donnÃ©es et ce qui se passe Ã  l'expiration. SCRIPE applique cela automatiquement via des tÃ¢ches en arriÃ¨re-plan.",
+          "Définissez la durée de conservation de catégories de données et ce qui se passe à l'expiration. SCRIPE applique cela automatiquement via des tâches en arrière-plan.",
         policiesTitle: "Configuration de la politique",
-        policiesIntro: "Chaque politique de conservation spÃ©cifie :",
-        field1: "DataCategory — Le type de donnÃ©es (ex: 'Profils Utilisateurs').",
-        field2: "RetentionDays — Combien de jours les donnÃ©es doivent Ãªtre conservÃ©es.",
+        policiesIntro: "Chaque politique de conservation spécifie :",
+        field1: "DataCategory — Le type de données (ex: 'Profils Utilisateurs').",
+        field2: "RetentionDays — Combien de jours les données doivent être conservées.",
         field3:
-          "ExpiryAction — Ce qui se passe Ã  l'expiration : Delete (Supprimer) ou Anonymize (Anonymiser).",
-        field4: "RegulationCode — Quelle rÃ©glementation l'exige (RGPD, CCPA, etc.).",
+          "ExpiryAction — Ce qui se passe à l'expiration : Delete (Supprimer) ou Anonymize (Anonymiser).",
+        field4: "RegulationCode — Quelle réglementation l'exige (RGPD, CCPA, etc.).",
         actionsTitle: "Actions d'expiration",
-        actionsIntro: "Ã€ l'expiration, SCRIPE applique l'une des deux actions :",
-        action1: "Delete — Supprime dÃ©finitivement tous les enregistrements correspondants.",
+        actionsIntro: "À l'expiration, SCRIPE applique l'une des deux actions :",
+        action1: "Delete — Supprime définitivement tous les enregistrements correspondants.",
         action2: "Anonymize — Remplace les PII par des jetons pseudonymes.",
-        automationTitle: "Application automatisÃ©e",
+        automationTitle: "Application automatisée",
         automationIntro:
-          "La tÃ¢che RetentionEnforcementJob s'exÃ©cute quotidiennement Ã  3h00 UTC, scannant toutes les politiques actives et appliquant l'action configurÃ©e.",
+          "La tâche RetentionEnforcementJob s'exécute quotidiennement à 3h00 UTC, scannant toutes les politiques actives et appliquant l'action configurée.",
         nodePolicy: "Politique de conservation",
-        descPolicy: "DÃ©finit le type d'entitÃ©, la durÃ©e de vie et la stratÃ©gie",
-        nodeEnforcement: "TÃ¢che d'application de la conservation",
-        descEnforcement: "TÃ¢che hebdomadaire Ã©valuant les politiques",
-        nodeExecution: "ExÃ©cution de la conservation",
+        descPolicy: "Définit le type d'entité, la durée de vie et la stratégie",
+        nodeEnforcement: "Tâche d'application de la conservation",
+        descEnforcement: "Tâche hebdomadaire évaluant les politiques",
+        nodeExecution: "Exécution de la conservation",
         descExecution: "Piste d'audit de l'action de destruction",
-        nodeAction: "Destruction des donnÃ©es",
-        descAction: "Suppression dÃ©finitive ou Anonymisation",
-        conn1: "scannÃ© par",
-        conn2: "dÃ©clenche",
+        nodeAction: "Destruction des données",
+        descAction: "Suppression définitive ou Anonymisation",
+        conn1: "scanné par",
+        conn2: "déclenche",
         conn3: "enregistre",
         endpointsTitle: "Endpoints API",
         ep: {
           list: "Lister toutes les politiques de conservation",
-          executions: "Lister l'historique d'exÃ©cution",
-          update: "Mettre Ã  jour une politique (jours, action, Ã©tat)",
+          executions: "Lister l'historique d'exécution",
+          update: "Mettre à jour une politique (jours, action, état)",
         },
       },
       inventory: {
-        title: "Inventaire des donnÃ©es",
+        title: "Inventaire des données",
         description:
-          "Un registre de toutes les catÃ©gories de donnÃ©es personnelles traitÃ©es — requis pour les Registres d'activitÃ©s de traitement (RoPA) Article 30 du RGPD.",
+          "Un registre de toutes les catégories de données personnelles traitées — requis pour les Registres d'activités de traitement (RoPA) Article 30 du RGPD.",
         intro:
-          "L'inventaire des donnÃ©es est un registre structurÃ© de toutes les catÃ©gories de donnÃ©es personnelles que la plateforme traite.",
+          "L'inventaire des données est un registre structuré de toutes les catégories de données personnelles que la plateforme traite.",
         fieldsTitle: "Champs de l'inventaire",
-        fieldsIntro: "Chaque Ã©lÃ©ment documente :",
+        fieldsIntro: "Chaque élément documente :",
         field1: "DataCategory — Nom lisible (ex: 'Adresses e-mail').",
-        field2: "LegalBasis — Base lÃ©gale du RGPD (Consentement, Contrat, etc.).",
-        field3: "DataSubjects — Ã€ qui appartiennent les donnÃ©es.",
-        field4: "ProcessingPurpose — Pourquoi les donnÃ©es sont traitÃ©es.",
-        field5: "StorageLocation — OÃ¹ les donnÃ©es sont stockÃ©es.",
-        field6: "RetentionPeriod — DurÃ©e de conservation (liÃ© Ã  la politique).",
-        field7: "ThirdPartySharing — Si partagÃ© avec des tiers.",
-        ropaTitle: "ConformitÃ© Ã  l'Article 30",
+        field2: "LegalBasis — Base légale du RGPD (Consentement, Contrat, etc.).",
+        field3: "DataSubjects — À qui appartiennent les données.",
+        field4: "ProcessingPurpose — Pourquoi les données sont traitées.",
+        field5: "StorageLocation — Où les données sont stockées.",
+        field6: "RetentionPeriod — Durée de conservation (lié à la politique).",
+        field7: "ThirdPartySharing — Si partagé avec des tiers.",
+        ropaTitle: "Conformité à l'Article 30",
         ropaIntro:
-          "Les organisations de plus de 250 employÃ©s doivent maintenir un RoPA. L'inventaire sert de RoPA en direct et interrogeable.",
+          "Les organisations de plus de 250 employés doivent maintenir un RoPA. L'inventaire sert de RoPA en direct et interrogeable.",
         endpointsTitle: "Endpoints API",
         ep: {
-          list: "Lister tous les Ã©lÃ©ments de l'inventaire (paginÃ©, cherchable)",
-          get: "Obtenir l'Ã©lÃ©ment par ID",
-          create: "Ajouter une nouvelle catÃ©gorie de donnÃ©es",
-          update: "Mettre Ã  jour un Ã©lÃ©ment existant",
-          delete: "Supprimer un Ã©lÃ©ment de l'inventaire",
+          list: "Lister tous les éléments de l'inventaire (paginé, cherchable)",
+          get: "Obtenir l'élément par ID",
+          create: "Ajouter une nouvelle catégorie de données",
+          update: "Mettre à jour un élément existant",
+          delete: "Supprimer un élément de l'inventaire",
         },
       },
       reports: {
-        title: "Rapports de conformitÃ©",
+        title: "Rapports de conformité",
         description:
-          "GÃ©nÃ©rer des rapports asynchrones prÃªts pour l'audit (AperÃ§u RGPD, RÃ©sumÃ© DSR, Audit Consentement, Analyse Conservation, Export Inventaire).",
+          "Générer des rapports asynchrones prêts pour l'audit (Aperçu RGPD, Résumé DSR, Audit Consentement, Analyse Conservation, Export Inventaire).",
         intro:
-          "Les rapports de conformitÃ© sont gÃ©nÃ©rÃ©s de maniÃ¨re asynchrone et fournissent des rÃ©sumÃ©s prÃªts pour l'audit. Ils sont gÃ©nÃ©rÃ©s en arriÃ¨re-plan et stockÃ©s pour le tÃ©lÃ©chargement.",
+          "Les rapports de conformité sont générés de manière asynchrone et fournissent des résumés prêts pour l'audit. Ils sont générés en arrière-plan et stockés pour le téléchargement.",
         reportTypesTitle: "Types de rapports",
         reportTypesIntro: "Cinq types sont disponibles :",
-        type1: "AperÃ§u RGPD — RÃ©sumÃ© de haut niveau du statut RGPD.",
+        type1: "Aperçu RGPD — Résumé de haut niveau du statut RGPD.",
         type2:
-          "RÃ©sumÃ© de l'activitÃ© DSR — Statistiques sur les volumes DSR, types, taux d'achÃ¨vement.",
-        type3: "Audit du consentement — Journal complet des accords et rÃ©vocations.",
-        type4: "Analyse de la conservation — Ã‰tat d'application actuel des politiques actives.",
+          "Résumé de l'activité DSR — Statistiques sur les volumes DSR, types, taux d'achèvement.",
+        type3: "Audit du consentement — Journal complet des accords et révocations.",
+        type4: "Analyse de la conservation — État d'application actuel des politiques actives.",
         type5:
-          "Export de l'inventaire des donnÃ©es — Export complet de l'inventaire (Article 30 RoPA).",
-        asyncTitle: "GÃ©nÃ©ration asynchrone",
+          "Export de l'inventaire des données — Export complet de l'inventaire (Article 30 RoPA).",
+        asyncTitle: "Génération asynchrone",
         asyncIntro:
-          "Les rapports sont asynchrones pour Ã©viter de bloquer les requÃªtes HTTP. Le systÃ¨me crÃ©e immÃ©diatement un ComplianceReport (IsReady=false) et met la tÃ¢che en file d'attente.",
+          "Les rapports sont asynchrones pour éviter de bloquer les requêtes HTTP. Le système crée immédiatement un ComplianceReport (IsReady=false) et met la tâche en file d'attente.",
         asyncTip:
-          "Utilisez le bouton RafraÃ®chir pour vÃ©rifier si le rapport est prÃªt (gÃ©nÃ©ralement 30-60 secondes).",
-        downloadTitle: "TÃ©lÃ©chargement des rapports",
+          "Utilisez le bouton Rafraîchir pour vérifier si le rapport est prêt (généralement 30-60 secondes).",
+        downloadTitle: "Téléchargement des rapports",
         downloadIntro:
-          "Une fois prÃªt (IsReady=true), DownloadUrl est disponible. Les fichiers sont conservÃ©s 90 jours.",
+          "Une fois prêt (IsReady=true), DownloadUrl est disponible. Les fichiers sont conservés 90 jours.",
         endpointsTitle: "Endpoints API",
         ep: {
-          list: "Lister tous les rapports de conformitÃ©",
-          get: "Obtenir les dÃ©tails du rapport et l'URL de tÃ©lÃ©chargement",
-          generate: "Mettre en file d'attente une nouvelle gÃ©nÃ©ration de rapport",
-          download: "TÃ©lÃ©charger le fichier gÃ©nÃ©rÃ©",
+          list: "Lister tous les rapports de conformité",
+          get: "Obtenir les détails du rapport et l'URL de téléchargement",
+          generate: "Mettre en file d'attente une nouvelle génération de rapport",
+          download: "Télécharger le fichier généré",
         },
       },
     },
@@ -975,6 +975,48 @@ export const fr = {
         permsTitle: "Autorisations",
         permsIntro:
           "Administré via organization.view, organization.create, organization.update et organization.delete.",
+      },
+    },
+    customFields: {
+      overview: {
+        title: "Module des Champs Personnalisés",
+        description:
+          "Définitions de champs personnalisés configurables par locataire, rattachées à tout type d'entité enregistré via une clé stable — sans changement de schéma, sans couplage entre modules.",
+        intro:
+          "Le module des Champs Personnalisés permet à chaque locataire d'étendre les enregistrements de la plateforme avec ses propres champs typés — par exemple une « taille de maillot » sur une personne ou un « pied préféré » sur un joueur — sans aucune migration de base de données ni modification de code. Les définitions de champ sont propres à chaque locataire et se rattachent à une entité hôte via le Registre des Types d'Entité, partagé entre modules, plutôt que via une clé étrangère, de sorte que le module ne se couple jamais au schéma d'un autre module.",
+        infoTitle: "Principe de Conception",
+        infoContent:
+          'Les champs personnalisés sont rattachés via une clé de type d\'entité stable (par ex. "party.person"), validée par rapport au Registre des Types d\'Entité, et non via une clé étrangère de base de données. Cela maintient le module entièrement découplé et sûr à faire évoluer de manière indépendante.',
+        whatIsTitle: "Que sont les Champs Personnalisés ?",
+        whatIsIntro:
+          "Un champ personnalisé est une extension définie par le locataire sur une entité existante. Chaque définition porte une clé machine (unique par locataire et par type d'entité), des libellés bilingues, un type de valeur, un indicateur facultatif d'obligation, une liste facultative d'options autorisées pour les champs de sélection, ainsi qu'un ordre de tri. Les valeurs sont stockées de façon typée plutôt que dans un bloc JSON non typé.",
+        featureTenant: "Propre au Locataire",
+        featureTenantDesc:
+          "Chaque définition appartient à un locataire et est isolée par le filtre de requête global du locataire. Des définitions au niveau système (partagées) sont prises en charge pour les opérateurs de la plateforme.",
+        featureRegistry: "Rattachement Validé par le Registre",
+        featureRegistryDesc:
+          "Les champs se rattachent à une entité hôte via sa clé de type d'entité canonique, validée par rapport au Registre des Types d'Entité partagé entre modules — jamais via une clé étrangère.",
+        featureTyped: "Valeurs Typées",
+        featureTypedDesc:
+          "Chaque champ déclare l'un des vingt-deux types de valeur — du texte brut et des nombres jusqu'aux références, un fichier ou une image téléchargés, et du texte enrichi mis en forme — évitant ainsi un bloc de métadonnées non typé et permettant une validation appropriée.",
+        featureIsolation: "Clés Immuables",
+        featureIsolationDesc:
+          "La clé de type d'entité et la clé machine sont immuables après création, de sorte que les valeurs déjà stockées restent adressables ; seules les métadonnées d'affichage et de comportement peuvent être modifiées.",
+        valueTypesTitle: "Types de Valeur",
+        valueTypesIntro:
+          "Vingt-deux types de valeur sont pris en charge de bout en bout — consultez la page « Types de Valeur » de la documentation de l'opérateur pour la liste complète. Les champs Sélection et Sélection Multiple portent une liste d'options autorisées séparées par des sauts de ligne ; les autres types ne doivent porter aucune option. L'API impose cela à la fois à la création et à la mise à jour.",
+        modelTitle: "Modèle de Données",
+        modelIntro:
+          "Un CustomField porte : EntityTypeKey (enregistré), Key (clé machine, unique par locataire + type d'entité), LabelEn / LabelAr, ValueType, IsRequired, Options (Sélection uniquement), SortOrder et IsActive. L'unicité est imposée par (TenantId, EntityTypeKey, Key).",
+        isolationTitle: "Isolation des Locataires",
+        isolationIntro:
+          "Les lectures s'exécutent sous le filtre global de locataire du module, de sorte qu'un locataire ne voit que ses propres définitions ainsi que celles partagées au niveau système. La création horodate automatiquement le locataire actuel. La mise à jour et la suppression imposent une vérification de propriété, de sorte qu'un administrateur de locataire ne puisse jamais modifier ou supprimer une définition partagée ou celle d'un autre locataire.",
+        isolationWarnTitle: "Champs au Niveau Système",
+        isolationWarnContent:
+          "Les définitions sans locataire sont traitées comme partagées/globales et sont visibles par tous les locataires. Seuls les principaux système (sans contexte de locataire) peuvent les modifier ou les supprimer ; les administrateurs propres à un locataire sont bloqués par la vérification de propriété.",
+        permsTitle: "Autorisations",
+        permsIntro:
+          "Le module possède la ressource custom-fields avec les actions CRUD standard : custom-fields.view, custom-fields.create, custom-fields.update et custom-fields.delete.",
       },
     },
   },

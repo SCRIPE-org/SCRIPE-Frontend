@@ -107,7 +107,7 @@ export function AppListingCard({
 
         {/* Actions */}
         <div className="flex items-center gap-2 border-t border-nx-line pt-1">
-          {/* View details link (Phase 5.1) */}
+          {/* View details link */}
           <Button size="sm" variant="ghost" className="gap-1" asChild>
             <Link href={`/marketplace/${listing.id}`}>
               <ExternalLink className="size-3.5" aria-hidden="true" />{" "}

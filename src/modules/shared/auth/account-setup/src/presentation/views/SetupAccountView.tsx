@@ -11,14 +11,10 @@
 
 import { useSearchParams } from "next/navigation";
 import { Button } from "@core/ui/button";
-import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Shield, XCircle, Eye, EyeOff, KeyRound, Building2 } from "lucide-react";
-import { BRAND } from "@core/config/branding";
+import { Shield, XCircle, KeyRound, Building2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
-import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
-import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
 import { formatDateTimeUtc } from "@core/common/utils";
 import {
@@ -28,7 +24,11 @@ import {
   SetupErrorView,
   PasswordCheck,
 } from "../components/SetupAccountStateViews";
-import Image from "next/image";
+import {
+  PageWrapper,
+  PasswordField,
+  InfoRow,
+} from "../components/SetupAccountControls";
 
 /**
  * SetupAccountView is the main public page component for the workspace administrator setup flow.
@@ -217,89 +217,3 @@ export function SetupAccountView() {
   );
 }
 
-// ── Micro-components (below 15 lines each — too small to extract separately) ─
-
-function InfoRow({ icon, label, value }: { icon: React.ReactNode; label: string; value?: string }) {
-  return (
-    <div className="flex items-center gap-2 text-sm">
-      {icon}
-      <span className="text-muted-foreground">{label}:</span>
-      <span className="font-medium text-foreground">{value}</span>
-    </div>
-  );
-}
-
-function PasswordField({
-  id,
-  value,
-  show,
-  placeholder,
-  onChange,
-  onToggle,
-  autoFocus,
-}: {
-  id: string;
-  value: string;
-  show: boolean;
-  placeholder: string;
-  onChange: (v: string) => void;
-  onToggle: () => void;
-  autoFocus?: boolean;
-}) {
-  return (
-    <div className="relative">
-      <Input
-        id={id}
-        type={show ? "text" : "password"}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="pe-10"
-        autoFocus={autoFocus}
-      />
-      <Button
-        variant="ghost"
-        type="button"
-        onClick={onToggle}
-        className="absolute end-3 top-1/2 h-auto -translate-y-1/2 p-0 text-muted-foreground transition-colors hover:text-foreground"
-        tabIndex={-1}
-      >
-        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      </Button>
-    </div>
-  );
-}
-
-function PageWrapper({ children }: { children: React.ReactNode }) {
-  // Logical `end-6` auto-flips with dir (RTL -> left, LTR -> right) via
-  // Tailwind's inset-inline-end utility — no direction branch needed, same
-  // established convention this file's own PasswordField already uses
-  // (`end-3`/`pe-10` below) and the codebase's ESLint no-restricted-syntax
-  // rule requires in place of physical right-/pr- utilities.
-  return (
-    <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-background px-4 py-12">
-      <div className="absolute end-6 top-6 z-20 flex items-center gap-1">
-        <LanguageSwitcher />
-        <ThemeSwitcher />
-      </div>
-      <div className="mb-8 flex flex-col items-center gap-3">
-        <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-xl border border-border bg-background shadow-sm">
-          <Image
-            src="/brand/app-logo-1024.png"
-            alt={`${BRAND.name} Logo`}
-            width={56}
-            height={56}
-            className="h-full w-full object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
-          />
-        </div>
-      </div>
-      {children}
-      <p className="mt-8 text-[11px] font-medium text-muted-foreground/50">
-        © {new Date().getFullYear()} {BRAND.name}
-      </p>
-    </div>
-  );
-}

@@ -20,6 +20,10 @@ export interface SelectTriggerProps {
   invalid?: boolean;
   required?: boolean;
   describedBy?: string;
+  /** Accessible name for this element — see `GenericSelectProps["aria-label"]`'s doc comment. */
+  ariaLabel?: string;
+  /** Accessible name via reference — see `GenericSelectProps["aria-labelledby"]`'s doc comment. */
+  ariaLabelledBy?: string;
   placeholder: string;
   selectedOptions: GenericSelectOption[];
   /** Full label for the single-selected option, including any tree path. */
@@ -56,10 +60,40 @@ export interface SelectTriggerProps {
  *      nothing, because only the inner button opened the panel.
  *   3. The accessible name of a `<button>` is its text content — and a
  *      multi-select's content lived in the sibling chips, so a populated
- *      multi-select announced itself with no name at all.
+ *      multi-select announced itself with no name at all. Moving to a
+ *      `<div role="combobox">` did NOT fix this by itself: per ARIA,
+ *      role="combobox" is Name From: author, not Name From: contents, so a
+ *      nameless `<button>` just became a nameless `<div>`. What actually
+ *      closes it is the `ariaLabel`/`ariaLabelledBy` props below, applied
+ *      to this same element as real `aria-label`/`aria-labelledby`
+ *      attributes (Wave 2 Step 2.2's Task 7b a11y fix) -- see those props'
+ *      own doc comments and `GenericSelectProps["aria-label"]`'s for the
+ *      full mechanism.
  *
  * It is a `div`, not a `button`, because the chips carry their own remove
  * controls and a button may not contain a button.
+ *
+ * WHICH IS WHY THE `onKeyDown` BELOW IS LOAD-BEARING, not a nicety. Radix's
+ * `PopoverTrigger` wires exactly one interaction — `onClick:
+ * composeEventHandlers(props.onClick, context.onOpenToggle)` (verified against
+ * @radix-ui/react-popover's dist: there is no `onKeyDown` anywhere in that
+ * component). Radix gets Enter/Space for free ONLY because it renders
+ * `Primitive.button` by default: the browser synthesises a click from those two
+ * keys for a real `<button>`. `asChild` over a `<div>` throws that away, and
+ * nothing else in this file supplied it — so before this handler existed a
+ * keyboard-only user could not open a Select, MultiSelect, tree select or
+ * timezone picker ANYWHERE in the product. Every value in the select family was
+ * pointer-only.
+ *
+ * The durable fix would be to render a real `<button type="button">` and let
+ * the platform do it. That form is NOT available here: the three nested
+ * controls below — each chip's remove button, the "+N" overflow button (itself
+ * a `PopoverTrigger` for a second Popover) and the clear button — are
+ * interactive content, which a `<button>` may not contain. Nesting them would
+ * be invalid HTML with real consequences (browsers do not reliably hit-test a
+ * button inside a button, and the inner controls would inherit the outer
+ * button's implicit submit/activation behaviour), and it is the reason this
+ * element is a `div` in the first place. So the keys are re-implemented instead.
  */
 export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps>(
   (
@@ -73,6 +107,8 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
       invalid,
       required,
       describedBy,
+      ariaLabel,
+      ariaLabelledBy,
       placeholder,
       selectedOptions,
       displayLabel,
@@ -115,8 +151,16 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
           aria-describedby={describedBy}
           aria-disabled={disabled || undefined}
           aria-readonly={readOnly || undefined}
-          // The chips are inside, so the accessible name resolves to the
-          // selection. With nothing chosen it resolves to the placeholder.
+          // role="combobox" is Name From: author, not Name From: contents --
+          // the visible chips/placeholder text below are NOT enough on their
+          // own to give this element an accessible name (a prior version of
+          // this comment claimed otherwise; verified wrong against real
+          // testing-library/AT behavior during Wave 2 Step 2.2's Task 4/7b
+          // a11y fix). `aria-labelledby` wins over `aria-label` per the
+          // standard accessible-name computation order when a caller
+          // supplies both.
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
           tabIndex={interactive ? 0 : -1}
           className={cn(
             fieldVariants({ inputStyle: resolveFieldStyle(settings.inputStyle) }),
@@ -132,6 +176,82 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
             className
           )}
           {...wrapperProps}
+          // Blocks the POINTER path when the field is disabled or read-only.
+          //
+          // `<PopoverTrigger asChild disabled={!interactive}>` above looks like
+          // it already does this, and does not. `disabled` on PopoverTrigger is
+          // the NATIVE attribute, meaningful only while Radix renders its
+          // default `Primitive.button`; over this `div` it lands as a
+          // non-standard DOM attribute the browser ignores, and Radix wires no
+          // disabled check of its own into `onOpenToggle`. This is the exact
+          // root cause the doc comment above describes for Enter/Space -- and
+          // the keyboard half was guarded (`if (!interactive) return`) while the
+          // pointer half was not, so a disabled or read-only select opened on
+          // click.
+          //
+          // Nothing shipped was visibly broken, because GenericSelect masks it
+          // in its own `handleOpenChange` (`if (disabled || readOnly) return`).
+          // That mask is the problem: it makes correctness a thing each
+          // consumer must remember, and SelectTrigger is imported directly
+          // outside GenericSelect now. Fixed here so the primitive is right and
+          // a consumer's own guard is redundant belt-and-braces rather than the
+          // only thing standing between a read-only field and an open picker.
+          //
+          // preventDefault is what suppresses the open, not a return: Radix's
+          // trigger is `onClick: composeEventHandlers(props.onClick,
+          // context.onOpenToggle)`, and composeEventHandlers skips its second
+          // handler once the event is defaultPrevented. Slot runs this child
+          // handler before the trigger's own, so the veto lands in time.
+          //
+          // Placed AFTER {...wrapperProps} and calling the consumer's handler
+          // explicitly -- identical discipline to the onKeyDown below, for the
+          // same reason: a caller passing onClick for its own purposes must not
+          // be able to silently delete this guard. The consumer handler still
+          // runs first even when inert, exactly as the keyboard path already
+          // does, so the two paths stay symmetric.
+          onClick={(event) => {
+            wrapperProps?.onClick?.(event);
+            if (!interactive) event.preventDefault();
+          }}
+          // Enter / Space / ArrowDown open the panel — see the "load-bearing"
+          // paragraph in this component's doc comment for why the platform does
+          // not supply them here.
+          //
+          // It dispatches a real click rather than calling an open callback so
+          // that the ONE toggle path stays Radix's own composed `onClick`: the
+          // Popover context's `onOpenToggle`, plus any consumer `onClick`
+          // arriving through `wrapperProps`. A parallel "open" channel would
+          // drift from the pointer path the first time either side changed.
+          //
+          // Deliberately placed AFTER {...wrapperProps} — same discipline as
+          // dialog.tsx's `onFocusOutside`. A consumer handler still runs (it is
+          // composed first, and can veto by calling preventDefault), but a
+          // caller who happens to pass `onKeyDown` for its own reasons cannot
+          // silently delete the only way to open this control by keyboard.
+          //
+          // The `event.target !== event.currentTarget` guard keeps the handler
+          // off the nested chip-remove / "+N" / clear buttons. Those already
+          // stop keydown propagation individually, but this makes the trigger
+          // itself the only source, so a future nested control cannot start
+          // toggling the panel when someone activates it.
+          onKeyDown={(event) => {
+            wrapperProps?.onKeyDown?.(event);
+            if (!interactive) return;
+            if (event.target !== event.currentTarget) return;
+            if (event.defaultPrevented) return;
+            if (event.altKey || event.ctrlKey || event.metaKey) return;
+
+            const key = event.key;
+            if (key !== "Enter" && key !== " " && key !== "ArrowDown") return;
+            // ArrowDown is "open", not "toggle" — once the panel is up, cmdk
+            // owns the arrows for moving through the options.
+            if (key === "ArrowDown" && open) return;
+
+            // Space would scroll the page and Enter would submit a surrounding
+            // form; both belong to the combobox while it has focus.
+            event.preventDefault();
+            event.currentTarget.click();
+          }}
         >
           {visibleChips.map((option) => (
             <Badge

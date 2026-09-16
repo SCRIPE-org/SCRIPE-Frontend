@@ -17,6 +17,7 @@ import { usePermissions } from "@core/providers/permission-provider";
 import { useAppStore } from "@core/store/useAppStore";
 
 import { SYSTEM_PERMISSIONS } from "@core/common/types/permissions";
+import { cn } from "@core/common/utils";
 import { Badge } from "@core/ui/badge";
 import {
   UserCheck,
@@ -53,11 +54,11 @@ interface AdminsViewProps {
 export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   useModuleLocales(() => import("../../../locales"), "admin");
   const { t, language } = useI18n();
-  const { isSuperAdmin } = usePermissions();
+  const { isPlatformSuperAdmin } = usePermissions();
   const currentUser = useAppStore((state) => state.user);
 
-  // Use myTenantAdmins if not super admin (Tenant Admin mode)
-  // Super Admins use the standard endpoint, which is now Context-Aware on the backend
+  // Use myTenantAdmins if not platform super admin (Tenant Admin mode)
+  // Platform Super Admins outside drill-down use the standard endpoint
   const {
     vm,
     getConfigBase,
@@ -82,7 +83,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
     isResendingSetupEmail,
     handleManualSetup,
     isManualSettingUp,
-  } = useAdminsViewModel({ useMyTenant: !isSuperAdmin, tenantId });
+  } = useAdminsViewModel({ useMyTenant: !isPlatformSuperAdmin, tenantId });
 
   const configBase = getConfigBase();
 
@@ -173,7 +174,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           sortable: true,
           render: (_val: unknown, admin: Admin) => (
             <div className="flex items-center gap-2">
-              <span>{admin.username}</span>
+              <span className={cn(!admin.username && "text-nx-ink-3")}>{admin.username || "—"}</span>
               {admin.hasGuardianProtection && (
                 <TooltipProvider>
                   <Tooltip>
@@ -196,7 +197,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         {
           key: "name",
           label: t("admin.name"),
-          render: (_val: unknown, admin: Admin) => <span>{admin.displayName}</span>,
+          render: (_val: unknown, admin: Admin) => (
+            <span className={cn(!admin.displayName && "text-nx-ink-3")}>{admin.displayName || "—"}</span>
+          ),
         },
         {
           key: "email",

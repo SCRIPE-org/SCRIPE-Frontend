@@ -74,18 +74,20 @@ export function ApiKeyHeroBand({
           <div className="flex items-center gap-1.5 rounded-nx-sm border border-nx-line bg-nx-raised px-2 py-1 font-mono text-xs">
             <code className="text-nx-ink-2">sc_live_</code>
             <code className="font-semibold text-nx-ink">{detail.prefix}</code>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={handleCopy}
               aria-label={t("apikeys.copyPrefix")}
-              className="ms-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
+              className="h-4 w-4 ms-1 p-0 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none"
             >
               {copied ? (
                 <Check className="h-3 w-3 text-success" aria-hidden="true" />
               ) : (
                 <Copy className="h-3 w-3" aria-hidden="true" />
               )}
-            </button>
+            </Button>
           </div>
 
           <Badge variant={STATUS_BADGE_VARIANT[status]} className="gap-1.5">

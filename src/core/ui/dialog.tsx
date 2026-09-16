@@ -79,6 +79,56 @@ export const overlayHeaderClasses = "flex flex-col gap-1.5 pe-8 text-start";
 export const overlayFooterClasses =
   "flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end";
 
+/**
+ * Wheel/touch scroll-chain guard for a hand-rolled non-modal scrim.
+ *
+ * Radix's own scroll lock (react-remove-scroll) only mounts inside
+ * DialogOverlayImpl, and DialogOverlay itself renders nothing at all when
+ * the Root is `modal={false}` (`context.modal ? <DialogOverlayImpl/> : null`
+ * in @radix-ui/react-dialog) — see GenericModal's own comment
+ * (generic-modal.tsx) for the first place this was worked out. Every
+ * non-modal dialog that re-adds its own scrim in place of Radix's therefore
+ * has to re-supply this too: without it, a wheel/touch gesture over the
+ * scrim scroll-chains straight into the page behind it. React's
+ * root-delegated wheel/touch handlers are passive and cannot cancel, so this
+ * attaches a real, non-passive pair directly to the scrim node; it dies with
+ * the node when the portal unmounts.
+ */
+export function useScrimScrollLock() {
+  return React.useCallback((node: HTMLDivElement | null) => {
+    if (!node) return;
+    const cancelScroll = (event: Event) => event.preventDefault();
+    node.addEventListener("wheel", cancelScroll, { passive: false });
+    node.addEventListener("touchmove", cancelScroll, { passive: false });
+  }, []);
+}
+
+/**
+ * The hand-rolled scrim itself, factored out so every `modal={false}` dialog
+ * in the family (GenericModal today; InlineAddCustomFieldDialog and its
+ * handful of hand-rolled hosts as of Wave 5 row 5.6) renders the exact same
+ * recipe instead of a fifth near-identical copy. Not wired into GenericModal
+ * itself — that component's scrim predates this extraction and stays as-is
+ * (its own deliberate `modal={false}` choice is not to be disturbed) — but
+ * every *new* non-modal dialog should reach for this rather than re-deriving
+ * it.
+ *
+ * Render this as a sibling of Content inside the same Portal, exactly where
+ * Radix's own Overlay would go — it fully replaces that overlay, it is not
+ * layered alongside it.
+ */
+export function NonModalScrim({ open }: { open: boolean }) {
+  const lockScrimScroll = useScrimScrollLock();
+  return (
+    <div
+      ref={lockScrimScroll}
+      aria-hidden="true"
+      data-state={open ? "open" : "closed"}
+      className={overlayScrimClasses}
+    />
+  );
+}
+
 const DialogOverlay = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Overlay>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -155,14 +205,69 @@ const DialogContent = React.forwardRef<
         dir={dir ?? direction}
         aria-describedby={props["aria-describedby"] ?? undefined}
         className={cn(positionClasses, className)}
-        onOpenAutoFocus={(e) => {
-          // Prevent auto focus to allow dropdown inputs to work
-          e.preventDefault();
-        }}
-        onCloseAutoFocus={(e) => {
-          // Prevent auto focus restoration
-          e.preventDefault();
-        }}
+        /* ── Focus is NOT suppressed here, and that is deliberate ────────────
+         *
+         * This file used to prevent BOTH `onOpenAutoFocus` and
+         * `onCloseAutoFocus` ("prevent auto focus to allow dropdown inputs to
+         * work"). The stated goal was real — a body-portalled select or
+         * date-picker search input must be able to take focus out of the panel —
+         * but the two preventDefaults were not what delivered it, and each one
+         * broke something load-bearing. Traced through the installed Radix
+         * sources rather than assumed:
+         *
+         *   onCloseAutoFocus. DialogContentModal composes the consumer handler
+         *   with its own `(event) => { event.preventDefault();
+         *   context.triggerRef.current?.focus(); }`, and composeEventHandlers
+         *   skips the second handler once the first has called preventDefault.
+         *   So preventing it here did not merely skip FocusScope's restore — it
+         *   deleted Radix's trigger refocus too. Close a dialog and focus was
+         *   simply gone: nothing selected, keyboard position lost, next Tab
+         *   starting from the top of the document. DialogContentNonModal has the
+         *   same shape, so `modal={false}` hosts (GenericModal and friends) lost
+         *   it as well.
+         *
+         *   onOpenAutoFocus. FocusScope focuses its first tabbable candidate on
+         *   mount only if that event was not default-prevented, and its trap
+         *   re-focuses `lastFocusedElementRef`, which is only ever assigned from
+         *   a focusin landing INSIDE the content. Prevented, the panel started
+         *   out owning no focus and the ref stayed null, so the trap had nothing
+         *   to pull focus back to. Meanwhile DialogContentModal still calls
+         *   `hideOthers(content)` — the rest of the page IS aria-hidden. The net
+         *   state was the worst of both: a screen-reader user left outside the
+         *   dialog, on a page hidden from them, Tab walking a hidden document.
+         *
+         * What actually keeps body-portalled inputs alive is three things, none
+         * of which is autofocus suppression:
+         *
+         *   1. `modal={false}` on the Root. Every dialog in this product that
+         *      hosts form fields sets it (GenericModal, plus the hand-rolled
+         *      hosts that re-add their own scrim — see NonModalScrim above).
+         *      Non-modal mode passes `trapFocus: false` and skips hideOthers
+         *      outright, so there is no trap to escape from in the first place.
+         *      GenericModal's own comment has said exactly this all along.
+         *   2. The `onInteractOutside` / `onPointerDownOutside` allow-lists just
+         *      below, and the unconditional `onFocusOutside` veto further down.
+         *      Those are what stop a live portal from DISMISSING the dialog,
+         *      which is what the original bug report actually described.
+         *   3. For a genuinely modal dialog, Radix's own layering: every
+         *      Popover/Select/DropdownMenu content mounts its own FocusScope,
+         *      and focusScopesStack.add() PAUSES the dialog's scope while it is
+         *      open. So a GenericSelect panel inside a modal dialog keeps its
+         *      search input focused without any help from this file.
+         *
+         * Known limit, recorded rather than papered over: a HAND-ROLLED body
+         * portal (DatePicker's calendar) inside a genuinely modal DialogContent
+         * mounts no FocusScope, so it never pauses the dialog's trap and focus
+         * is pulled back to the dialog. That is not a regression from this
+         * change — the trap already engaged as soon as the user focused anything
+         * inside the dialog — and the answer for form-hosting dialogs is
+         * `modal={false}`, which is what they all use. Fixing it for the modal
+         * case would mean changing where DatePicker portals to, which would
+         * break its fixed-position maths under the dialog's own transform.
+         *
+         * A consumer that genuinely needs different behaviour still overrides
+         * both handlers through {...props} below (DocsSearch does).
+         */
         onInteractOutside={(e) => {
           // Allow interaction with dropdown portals (Select, DatePicker, etc.)
           const target = e.target as Element;
@@ -202,11 +307,11 @@ const DialogContent = React.forwardRef<
         // on the scrim, Escape, or an explicit Close.
         //
         // This is exactly what Radix's own DialogContentModal does. GenericModal
-        // opts out of it with modal={false} (deliberately: the focus trap breaks
-        // the body-portalled select and date-picker search inputs), and because
-        // onOpenAutoFocus is prevented above, the panel never owns focus — so
-        // react-dismissable-layer's undeferred `focusin` listener fired on the
-        // FIRST focus event anywhere outside and dismissed the dialog instantly.
+        // opts out of MODAL MODE with modal={false} (deliberately: the focus trap
+        // breaks the body-portalled select and date-picker search inputs), which
+        // means react-dismissable-layer's undeferred `focusin` listener is live
+        // there and fired on the FIRST focus event anywhere outside, dismissing
+        // the dialog instantly.
         //
         // The concrete symptom: opening Edit / Assign-to-groups from a table row
         // menu closed the form the moment the menu's exit animation finished and
@@ -214,11 +319,17 @@ const DialogContent = React.forwardRef<
         // replaces only covered six dropdown-portal selectors, and a <Button>
         // inside a <td> matched none of them.
         //
+        // THIS handler — not the autofocus suppression that used to sit above —
+        // is what keeps a live body-portalled panel from closing the dialog it
+        // was opened from. That distinction is the whole point of the block
+        // above; do not re-conflate them.
+        //
         // Deliberately placed AFTER {...props}: a consumer's own handler still
         // runs (composed below) but cannot re-open this dismissal channel. The
-        // other four handlers stay before {...props} so consumers keep overriding
+        // other handlers stay before {...props} so consumers keep overriding
         // them — PaymentWallDialog relies on that to stay non-dismissible, and
-        // DocsSearch relies on it to restore auto-focus.
+        // DocsSearch passes its own (now redundant) open/close autofocus
+        // handlers through the same channel.
         onFocusOutside={(e) => {
           onFocusOutside?.(e);
           e.preventDefault();

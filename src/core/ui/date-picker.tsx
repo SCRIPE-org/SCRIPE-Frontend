@@ -543,6 +543,15 @@ export function DatePicker({
             onFocusCapture={(e) => e.stopPropagation()}
           >
             <CustomCalendar
+              // The panel lives in a document.body portal, so Tab from the
+              // trigger walks into the page behind it rather than into the
+              // grid. Focus has to be moved in explicitly on open, or the whole
+              // calendar is unreachable by keyboard — and this wrapper claims
+              // role="dialog" aria-modal="true", which promises a screen-reader
+              // user that focus is inside it. CustomCalendar defaults this off
+              // because its other consumer renders a calendar permanently
+              // inline as page content.
+              autoFocus
               value={value}
               onChange={disabled ? undefined : handleCalendarChange}
               onClose={() => {

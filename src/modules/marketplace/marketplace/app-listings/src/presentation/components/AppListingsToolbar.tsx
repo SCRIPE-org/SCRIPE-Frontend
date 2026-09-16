@@ -28,9 +28,9 @@ interface AppListingsToolbarProps {
   onCategoryFilter: (id: string | undefined) => void;
   /** Fired when user selects a publish status filter. */
   onPublishedFilter: (published: boolean | undefined) => void;
-  /** Fired when user selects a sort option (Phase 5.3). */
+  /** Fired when user selects a sort option. */
   onSortChange: (sort: SortByOption | undefined) => void;
-  /** Fired when user selects a pricing model filter (Phase 5.3). */
+  /** Fired when user selects a pricing model filter. */
   onPricingFilter: (pricing: PricingModelFilter) => void;
   /** Currently active sort. */
   sortBy?: SortByOption;
@@ -39,7 +39,7 @@ interface AppListingsToolbarProps {
 }
 
 /**
- * AppListingsToolbar (Phase 5.3 — extended)
+ * AppListingsToolbar
  *
  * Search input and filter/sort controls for the app listings grid.
  * Extended with sort-by and pricing model selectors.
@@ -77,7 +77,7 @@ export function AppListingsToolbar({
           />
         </div>
 
-        {/* Sort by (Phase 5.3) */}
+        {/* Sort by */}
         <Select
           value={sortBy ?? "newest"}
           onValueChange={(v) => onSortChange(v === "newest" ? undefined : (v as SortByOption))}
@@ -126,7 +126,7 @@ export function AppListingsToolbar({
           </Button>
         </div>
 
-        {/* Pricing model filter (Phase 5.3) */}
+        {/* Pricing model filter */}
         <Select
           value={pricingModel ?? "all"}
           onValueChange={(v) =>

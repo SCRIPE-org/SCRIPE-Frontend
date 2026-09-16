@@ -341,12 +341,12 @@ export function WebhookDetailView({ webhookId }: WebhookDetailViewProps) {
         />
       </TabsContent>
 
-      {/* ─── Analytics Tab (Phase 7) ────────────────────────── */}
+      {/* ─── Analytics Tab ─────────────────────────────────── */}
       <TabsContent value="analytics">
         <WebhookAnalyticsChart analytics={vm.analytics} isLoading={vm.isLoadingAnalytics} />
       </TabsContent>
 
-      {/* ─── Dead Letters Tab (Phase 7) ─────────────────────── */}
+      {/* ─── Dead Letters Tab ────────────────────────────────── */}
       <TabsContent value="dead-letters">
         <DeadLetterQueue
           logs={vm.deadLetters}

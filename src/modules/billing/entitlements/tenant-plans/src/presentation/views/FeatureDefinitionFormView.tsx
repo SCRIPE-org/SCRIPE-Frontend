@@ -29,10 +29,7 @@ import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Switch } from "@core/ui/switch";
 import { Badge } from "@core/ui/badge";
 import { PageHeader } from "@core/ui/page-header";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@core/ui/select";
-import { DatePicker } from "@core/ui/date-picker";
-import { getCustomFieldsExtension } from "@core/crud/customFieldsExtension";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { CustomFieldsSection } from "@core/components/custom-fields";
 import {
   ArrowLeft,
   Save,
@@ -50,29 +47,6 @@ import {
   Layers,
 } from "lucide-react";
 
-function toFieldInputValue(value: unknown): string {
-  return value === undefined || value === null ? "" : String(value);
-}
-
-/** Mirrors generic-crud-view.tsx's own private CustomFieldsExtensionTrigger wrapper. */
-function CustomFieldsAddTrigger({
-  entityDisplayName,
-  onCreated,
-}: {
-  entityDisplayName: string;
-  onCreated: () => void;
-}) {
-  const api = getCustomFieldsExtension();
-  if (!api) return null;
-  const Trigger = api.InlineAddTrigger;
-  return (
-    <Trigger
-      entityTypeKey={TENANT_FEATURE_DEFINITION_ENTITY_TYPE_KEY}
-      entityDisplayName={entityDisplayName}
-      onCreated={onCreated}
-    />
-  );
-}
 
 interface FeatureDefinitionFormViewProps {
   /** If provided, we're in edit mode; otherwise create mode. */
@@ -477,91 +451,18 @@ export function FeatureDefinitionFormView({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
-          {customFieldConfigs.map((fc: FieldConfig) => {
-            const value = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
-
-            if (fc.type === "switch") {
-              return (
-                <div key={fc.name} className="flex items-center justify-between">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <Switch
-                    id={fc.name}
-                    checked={Boolean(value)}
-                    onCheckedChange={(v) => updateCustomFieldValue(fc.name, v)}
-                    readOnly={isViewMode}
-                  />
-                </div>
-              );
-            }
-
-            if (fc.type === "select") {
-              return (
-                <div key={fc.name} className="space-y-2">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <Select
-                    value={toFieldInputValue(value)}
-                    onValueChange={(v) => updateCustomFieldValue(fc.name, v)}
-                    disabled={isViewMode}
-                  >
-                    <SelectTrigger id={fc.name}>
-                      <SelectValue placeholder={fc.placeholder || fc.label} />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {fc.options?.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              );
-            }
-
-            if (fc.type === "date") {
-              return (
-                <div key={fc.name} className="space-y-2">
-                  <Label htmlFor={fc.name}>{fc.label}</Label>
-                  <DatePicker
-                    id={fc.name}
-                    type="date"
-                    value={toFieldInputValue(value)}
-                    onChange={(v) => updateCustomFieldValue(fc.name, v)}
-                    required={fc.required}
-                    disabled={isViewMode}
-                  />
-                </div>
-              );
-            }
-
-            return (
-              <div key={fc.name} className="space-y-2">
-                <Label htmlFor={fc.name}>{fc.label}</Label>
-                <Input
-                  id={fc.name}
-                  type={fc.type === "number" ? "number" : "text"}
-                  value={toFieldInputValue(value)}
-                  onChange={(e) => updateCustomFieldValue(fc.name, e.target.value)}
-                  placeholder={fc.placeholder}
-                  required={fc.required}
-                  disabled={isViewMode}
-                />
-              </div>
-            );
-          })}
-
-          {customFieldConfigs.length === 0 && !customFieldsLoading && (
-            <p className="text-sm text-nx-ink-3">
-              {t("entitlements.featureDefinitions.noCustomFields")}
-            </p>
-          )}
-
-          {!isViewMode && (
-            <CustomFieldsAddTrigger
-              entityDisplayName={t("entitlements.featureDefinitions.title")}
-              onCreated={() => void refetchCustomFields()}
-            />
-          )}
+          <CustomFieldsSection
+            configs={customFieldConfigs}
+            values={customFieldValues}
+            onChange={updateCustomFieldValue}
+            isLoading={customFieldsLoading}
+            emptyMessage={t("entitlements.featureDefinitions.noCustomFields")}
+            entityTypeKey={TENANT_FEATURE_DEFINITION_ENTITY_TYPE_KEY}
+            entityDisplayName={t("entitlements.featureDefinitions.title")}
+            onFieldCreated={() => void refetchCustomFields()}
+            isViewMode={isViewMode}
+            className="space-y-5"
+          />
         </CardContent>
       </Card>
 

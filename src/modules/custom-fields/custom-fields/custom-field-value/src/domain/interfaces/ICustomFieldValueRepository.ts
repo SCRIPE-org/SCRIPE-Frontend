@@ -1,7 +1,7 @@
 import type {
   BulkEntityCustomFieldValuesData,
   EntityCustomFieldValueData,
-} from "../../data/models/CustomFieldValueModel";
+} from "../entities/CustomFieldValue";
 
 export interface ICustomFieldValueRepository {
   getDefinitions(entityTypeKey: string): Promise<EntityCustomFieldValueData[]>;

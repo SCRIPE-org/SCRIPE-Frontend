@@ -12,7 +12,6 @@ import { usePathname } from "next/navigation";
 import { useSecurityDashboardViewModel } from "../viewmodels/useSecurityDashboardViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { ThreatSummaryCards } from "../components/ThreatSummaryCards";
-import { SECURITY_ENDPOINTS } from "../../data/services/security.endpoints";
 import { Button } from "@core/ui/button";
 import { PageHeader } from "@core/ui/page-header";
 import { Shield, FileDown, Settings2 } from "lucide-react";
@@ -129,7 +128,7 @@ export function SecurityDashboardView() {
       <ReportExportDialog
         open={exportOpen}
         onClose={() => setExportOpen(false)}
-        endpoint={SECURITY_ENDPOINTS.EXPORT_SECURITY}
+        endpoint={vm.exportEndpoint}
         titleKey="export.security.title"
         descriptionKey="export.security.description"
       />

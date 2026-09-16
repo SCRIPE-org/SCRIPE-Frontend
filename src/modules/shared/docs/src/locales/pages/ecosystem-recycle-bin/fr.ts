@@ -3,9 +3,9 @@
     ecosystemRecycleBin: {
       title: "Corbeille",
       description:
-        "Gestionnaire de suppression logique Ã  l'Ã©chelle du systÃ¨me avec nettoyage permanent automatique.",
+        "Gestionnaire de suppression logique à l'échelle du système avec nettoyage permanent automatique.",
       intro:
-        "Moteur de rÃ©solution de suppression logique gÃ©rant l'isolation des ressources, la rÃ©cupÃ©ration et la purge planifiÃ©e.",
+        "Moteur de résolution de suppression logique gérant l'isolation des ressources, la récupération et la purge planifiée.",
     },
   },
 };

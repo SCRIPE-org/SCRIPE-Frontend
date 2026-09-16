@@ -13,6 +13,8 @@
 
 import { useRef, useState } from "react";
 import {  cn , resolveIntlLocale } from "@core/common/utils";
+// Aliased because this file keeps a locale-aware wrapper of the same name below.
+import { formatPrice as formatCurrency } from "@core/constants/currencies";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { Table, TableBody, TableHead, TableHeader, TableRow, TableCell } from "@core/ui/table";
@@ -60,18 +62,20 @@ const STICKY_LABEL_COLUMN =
 /** Marketing sub-labels sit under the figure they qualify, never beside it. */
 const CELL_SUBLABEL = "max-w-[120px] text-center text-[10px] leading-tight";
 
+/**
+ * Renders a price in the reader's locale.
+ *
+ * Delegates the precision to `@core/constants/currencies`, which holds the ISO 4217 minor-unit
+ * table. This function used to hardcode two decimals, which was invisible only because its one
+ * call site never passes a currency and so always formats US dollars — the moment a comparison
+ * table showed a Kuwaiti dinar or a Japanese yen it would have rendered the wrong amount.
+ *
+ * @param amount - The amount, in major units.
+ * @param language - The UI language, resolved to a BCP 47 locale for grouping and symbol placement.
+ * @param currency - Three-letter ISO 4217 code.
+ */
 function formatPrice(amount: number, language: string, currency = "USD"): string {
-  const locale = resolveIntlLocale(language);
-  try {
-    return new Intl.NumberFormat(locale, {
-      style: "currency",
-      currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
-  } catch {
-    return amount.toLocaleString(locale);
-  }
+  return formatCurrency(amount, currency, resolveIntlLocale(language));
 }
 
 // ─── Billing Cycle Toggle ───────────────────────────────────────────────────

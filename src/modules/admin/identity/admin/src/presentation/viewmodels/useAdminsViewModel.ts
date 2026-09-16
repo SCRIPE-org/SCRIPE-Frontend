@@ -63,68 +63,77 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   }, [tenantId, useMyTenant]);
 
   // ============ Core CRUD ViewModel (React Query Engine) ============
-  const vm = useCrudViewModel<Admin, CreateAdminRequest, UpdateAdminRequest>(queryKey, {
-    getAll: async (params) => {
-      let res;
-      if (tenantId) {
-        res = await adminRepository.getByTenantId(tenantId, {
-          page: params.page,
-          pageSize: params.pageSize,
-          search: params.search,
+  // deferSuccessEffects: true -- this screen sets entityTypeKey (see
+  // getConfigBase below), so GenericCrudView also saves custom-field values
+  // after the admin itself is created/updated. Without this option,
+  // useCrudViewModel's onCreateSuccess/onUpdateSuccess fired the toast and
+  // closed the modal the instant createItem's own promise resolved -- before
+  // the custom-field save even started -- and a subsequent save failure had
+  // nowhere left to surface (design doc W0-1). Same pattern as
+  // useUsersViewModel/useWorkItemViewModel/useUserSubscriptionsViewModel.
+  const vm = useCrudViewModel<Admin, CreateAdminRequest, UpdateAdminRequest>(
+    queryKey,
+    {
+      getAll: async (params) => {
+        let res;
+        if (tenantId) {
+          res = await adminRepository.getByTenantId(tenantId, {
+            page: params.page,
+            pageSize: params.pageSize,
+            search: params.search,
+          });
+        } else if (useMyTenant) {
+          res = await adminRepository.getMyTenantAdmins({
+            page: params.page,
+            pageSize: params.pageSize,
+            search: params.search,
+          });
+        } else {
+          res = await adminRepository.getAll({
+            page: params.page,
+            pageSize: params.pageSize,
+            search: params.search,
+          });
+        }
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: res.totalPages,
+          },
+        };
+      },
+      create: async (data) => {
+        let id: string;
+        if (tenantId) {
+          id = await adminRepository.create({ ...data, tenantId });
+        } else if (useMyTenant) {
+          id = await adminRepository.createForMyTenant(data);
+        } else {
+          id = await adminRepository.create(data);
+        }
+        // No manual success() here on purpose -- deferSuccessEffects (above)
+        // holds the toast until GenericCrudView confirms the custom-field
+        // save (if any) also succeeded; firing it here unconditionally would
+        // defeat that (same reasoning as useUsersViewModel's update).
+        return { id } as unknown as Admin;
+      },
+      update: async (id, data) => {
+        await adminRepository.update(id, data);
+        return { id } as unknown as Admin;
+      },
+      delete: async (id) => {
+        await adminRepository.delete(id);
+        success({
+          title: t("admin.deleted"),
+          description: t("admin.deletedDesc"),
         });
-      } else if (useMyTenant) {
-        res = await adminRepository.getMyTenantAdmins({
-          page: params.page,
-          pageSize: params.pageSize,
-          search: params.search,
-        });
-      } else {
-        res = await adminRepository.getAll({
-          page: params.page,
-          pageSize: params.pageSize,
-          search: params.search,
-        });
-      }
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
-          page: params.page,
-          pagesCount: res.totalPages,
-        },
-      };
+      },
     },
-    create: async (data) => {
-      if (tenantId) {
-        await adminRepository.create({ ...data, tenantId });
-      } else if (useMyTenant) {
-        await adminRepository.createForMyTenant(data);
-      } else {
-        await adminRepository.create(data);
-      }
-      success({
-        title: t("admin.created"),
-        description: t("admin.createdDesc"),
-      });
-      return {} as Admin;
-    },
-    update: async (id, data) => {
-      await adminRepository.update(id, data);
-      success({
-        title: t("admin.updated"),
-        description: t("admin.updatedDesc"),
-      });
-      return {} as Admin;
-    },
-    delete: async (id) => {
-      await adminRepository.delete(id);
-      success({
-        title: t("admin.deleted"),
-        description: t("admin.deletedDesc"),
-      });
-    },
-  });
+    { deferSuccessEffects: true }
+  );
 
   // ============ Admin Operations & Custom Mutations ============
   const operations = useAdminOperations({

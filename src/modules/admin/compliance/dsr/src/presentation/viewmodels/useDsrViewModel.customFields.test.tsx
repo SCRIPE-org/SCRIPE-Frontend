@@ -90,6 +90,17 @@ const SUBMIT_DATA = {
   requesterNotes: "",
 };
 
+const REGULATION_FIELD = {
+  name: "__cf__severity",
+  label: "Severity",
+  type: "select" as const,
+  section: "Custom Fields",
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "High", label: "High" },
+  ],
+};
+
 describe("useDsrViewModel + custom fields", () => {
   beforeEach(() => {
     mockSubmit.mockReset();
@@ -197,6 +208,50 @@ describe("useDsrViewModel + custom fields", () => {
     expect(mockSuccessToast).not.toHaveBeenCalled();
     expect(mockErrorToast).toHaveBeenCalledWith(
       expect.objectContaining({ title: "compliance.customFieldsSaveError" })
+    );
+  });
+
+  // Final whole-branch review, I3 follow-up: D5's client-side Select
+  // validation (validateSelectCustomFieldValue, wired in via
+  // assertSelectCustomFieldValuesValid) must actually block this site's
+  // real save flow too, not just WebhookForm's -- a differently-cased value
+  // against a real configured option ("low" vs "Low") is the backend's own
+  // ordinal/case-sensitive rejection case, reproduced client-side, before
+  // any round trip.
+  it("rejects a differently-cased Select value and blocks the save before ever calling saveValues (D5)", async () => {
+    mockSubmit.mockResolvedValue("new-dsr-id");
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue([REGULATION_FIELD]),
+    });
+
+    const { result } = renderHook(() => useDsrViewModel(), { wrapper });
+    await waitFor(() => expect(result.current.customFieldConfigs).toEqual([REGULATION_FIELD]));
+
+    act(() => {
+      // Lower-cased against the real configured "Low" -- same
+      // ordinal-mismatch case D5's own test file pins.
+      result.current.updateCustomFieldValue("__cf__severity", "low");
+    });
+
+    // handleSubmit re-throws after toasting (same as any other custom-field
+    // save failure here -- see the "rejects" test above) so SubmitDsrModal
+    // knows to stay open with what the user typed.
+    await expect(
+      act(async () => {
+        await result.current.handleSubmit(SUBMIT_DATA);
+      })
+    ).rejects.toThrow();
+
+    // The DSR itself still gets created (a separate mutation) -- but the
+    // custom-field value never reaches the API at all.
+    expect(mockSubmit).toHaveBeenCalled();
+    expect(extension.saveValues).not.toHaveBeenCalled();
+    expect(mockSuccessToast).not.toHaveBeenCalled();
+    // The identity-mocked `t` above returns the raw key -- proves the
+    // SPECIFIC D5 message reached the toast, not the generic
+    // "customFieldsSaveError" fallback every other save failure gets.
+    expect(mockErrorToast).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "customField.values.selectInvalidOption" })
     );
   });
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Button } from "@core/ui/button";
 import { FileQuestion } from "lucide-react";
 import { useDocsViewModel } from "../viewmodels/useDocsViewModel";
 import { useSidebarViewModel } from "../viewmodels/useSidebarViewModel";
@@ -24,7 +25,6 @@ import { DocContent } from "../components/content/DocContent";
 import { ReadingProgress } from "../components/ui/ReadingProgress";
 import { DocsSearch } from "../components/ui/DocsSearch";
 import { EmptyState } from "@core/ui/empty-state";
-import { Button } from "@core/ui/button";
 
 // ─── Props ────────────────────────────────────────────────────────
 interface TechnicalDocsViewProps {
@@ -68,7 +68,9 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                 description={t("common.notFoundDescription", { slug })}
                 action={
                   <Button asChild>
-                    <Link href="/docs">{t("common.home")}</Link>
+                    <Link href="/docs" prefetch={false}>
+                      {t("common.home")}
+                    </Link>
                   </Button>
                 }
               />
@@ -106,9 +108,12 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
 
               {/* Reader Toolbar */}
               <div className="reader-toolbar flex select-none items-center gap-2 rounded-nx-md border border-[color:color-mix(in_srgb,var(--nx-line)_40%,transparent)] bg-[color:color-mix(in_srgb,var(--nx-raised)_40%,transparent)] px-3 py-1.5 text-sm">
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                  className={`reader-toolbar-btn rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none ${sidebarCollapsed ? "bg-nx-accent-wash text-nx-accent" : "hover:bg-nx-hover"}`}
+                  className={`reader-toolbar-btn h-auto rounded-nx-sm p-1 text-nx-ink-3 transition-colors duration-nx-micro ease-nx-enter hover:text-nx-ink motion-reduce:transition-none ${sidebarCollapsed ? "bg-nx-accent-wash text-nx-accent" : "hover:bg-nx-hover"}`}
                   title={sidebarCollapsed ? t("common.expandSidebar") : t("common.collapseSidebar")}
                   aria-label={
                     sidebarCollapsed ? t("common.expandSidebar") : t("common.collapseSidebar")
@@ -129,40 +134,48 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                     <rect x="3" y="3" width="18" height="18" rx="2" />
                     <path d="M9 3v18" />
                   </svg>
-                </button>
+                </Button>
 
                 <div className="reader-toolbar-divider mx-1 h-4 w-px bg-[color:color-mix(in_srgb,var(--nx-line)_60%,transparent)]" />
 
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
                   onClick={() => setFontSize(14)}
-                  className={`reader-toolbar-btn rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${fontSize === 14 ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
+                  className={`reader-toolbar-btn h-auto rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${fontSize === 14 ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
                   title={t("common.fontSizeSmall")}
                   aria-label={t("common.fontSizeSmall")}
                 >
                   A-
-                </button>
-                <button
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
                   onClick={() => setFontSize(16)}
-                  className={`reader-toolbar-btn rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${fontSize === 16 ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
+                  className={`reader-toolbar-btn h-auto rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${fontSize === 16 ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
                   title={t("common.fontSizeMedium")}
                   aria-label={t("common.fontSizeMedium")}
                 >
                   A
-                </button>
-                <button
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
                   onClick={() => setFontSize(18)}
-                  className={`reader-toolbar-btn rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${fontSize === 18 ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
+                  className={`reader-toolbar-btn h-auto rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${fontSize === 18 ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
                   title={t("common.fontSizeLarge")}
                   aria-label={t("common.fontSizeLarge")}
                 >
                   A+
-                </button>
+                </Button>
 
                 <div className="reader-toolbar-divider mx-1 h-4 w-px bg-[color:color-mix(in_srgb,var(--nx-line)_60%,transparent)]" />
 
-                <button
+                <Button
+                  type="button"
+                  variant="ghost"
                   onClick={() => setWideLayout(!wideLayout)}
-                  className={`reader-toolbar-btn rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${wideLayout ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
+                  className={`reader-toolbar-btn h-auto rounded-nx-sm px-2 py-0.5 transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none ${wideLayout ? "bg-nx-accent-fill font-bold text-nx-on-fill" : "text-nx-ink-3 hover:bg-nx-hover hover:text-nx-ink"}`}
                   title={
                     wideLayout ? t("common.switchToCompactLayout") : t("common.switchToWideLayout")
                   }
@@ -171,7 +184,7 @@ export function TechnicalDocsView({ slug }: TechnicalDocsViewProps) {
                   }
                 >
                   {wideLayout ? t("common.layoutCompact") : t("common.layoutWide")}
-                </button>
+                </Button>
               </div>
             </div>
 

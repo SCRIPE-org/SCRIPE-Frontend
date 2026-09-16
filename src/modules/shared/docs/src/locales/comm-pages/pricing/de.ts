@@ -402,8 +402,8 @@ export const de = {
 
     pricingShowcase: {
       title: "Preise",
-      description: "Einfache, transparente Preise fÃ¼r jedes Unternehmen.",
-      intro: "WÃ¤hlen Sie die passende Stufe fÃ¼r Ihr Wachstum.",
+      description: "Einfache, transparente Preise für jedes Unternehmen.",
+      intro: "Wählen Sie die passende Stufe für Ihr Wachstum.",
     },
     investorOverview: {
       personaSelectorQuestion: "Was ist Ihr Hauptinteresse?",
@@ -433,13 +433,13 @@ export const de = {
         "Technische Zertifizierung und offizieller Marktplatzeintrag.",
       personaSelectorLearnMore: "Mehr erfahren",
       title: "Investoren-Portal",
-      description: "SaaS-Wachstums-ROI und PartnerschaftsmÃ¶glichkeiten.",
+      description: "SaaS-Wachstums-ROI und Partnerschaftsmöglichkeiten.",
       intro: "Entdecken Sie unser SaaS-Wachstumsmodell.",
     },
     coFounderJourney: {
-      title: "MitgrÃ¼nder-Reise",
-      description: "Erfahren Sie mehr Ã¼ber die Rolle als MitgrÃ¼nder.",
-      intro: "Werden Sie Teil unseres GrÃ¼ndungsteams.",
+      title: "Mitgründer-Reise",
+      description: "Erfahren Sie mehr über die Rolle als Mitgründer.",
+      intro: "Werden Sie Teil unseres Gründungsteams.",
     },
     partnerJourney: {
       title: "Partnerprogramm",

@@ -123,21 +123,22 @@ export function AssignLeadDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
           {isCurrentlyAssigned && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setUnassign((value) => !value)}
               className={cn(
-                "flex w-full items-center gap-3 rounded-nx-md border px-4 py-3 text-start",
+                "flex h-auto w-full items-center justify-start gap-3 rounded-nx-md border px-4 py-3 text-start",
                 "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                 "focus-visible:shadow-nx-focus focus-visible:outline-none",
                 unassign
-                  ? "border-warning/60 bg-warning/10 text-warning"
+                  ? "border-warning/60 bg-warning/10 text-warning hover:bg-warning/15 hover:text-warning"
                   : "border-nx-line bg-nx-raised text-nx-ink-2 hover:bg-nx-hover"
               )}
             >
               <UserMinus className="h-4 w-4 shrink-0" aria-hidden="true" />
               <span className="text-sm font-medium">{t("leads.assignDialog.unassign")}</span>
-            </button>
+            </Button>
           )}
 
           {!unassign && (
@@ -145,6 +146,12 @@ export function AssignLeadDialog({
               <Label htmlFor="assign-admin-id">{t("leads.assignDialog.adminId")}</Label>
               <GenericSelect
                 id="assign-admin-id"
+                // The trigger is a role="combobox" div, not a labelable
+                // HTML element, so the matching id above does not make
+                // <Label htmlFor> compute an accessible name for it (see
+                // generic-select.tsx's own `id`/`aria-label` prop doc
+                // comments). aria-label supplies the real accessible name.
+                aria-label={t("leads.assignDialog.adminId")}
                 type="searchable"
                 searchType="server"
                 options={[]}

@@ -105,8 +105,8 @@ export function HubModuleTile({
     : deriveGradient(adminTone.hue, adminTone.chroma);
 
   const handleClick = useCallback(() => {
-    if (!isLocked || onClick) onClick();
-  }, [isLocked, onClick]);
+    onClick?.();
+  }, [onClick]);
 
   return (
     <button
@@ -118,7 +118,7 @@ export function HubModuleTile({
         "border shadow-nx-sm transition-[border-color] duration-nx-standard ease-nx-enter",
         "outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none",
         isLocked
-          ? "cursor-not-allowed border-[color:color-mix(in_srgb,var(--nx-on-fill)_10%,transparent)]"
+          ? "cursor-pointer border-[color:color-mix(in_srgb,var(--nx-on-fill)_10%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_22%,transparent)]"
           : "cursor-pointer border-[color:color-mix(in_srgb,var(--nx-on-fill)_14%,transparent)] hover:border-[color:color-mix(in_srgb,var(--nx-on-fill)_28%,transparent)]"
       )}
       style={{

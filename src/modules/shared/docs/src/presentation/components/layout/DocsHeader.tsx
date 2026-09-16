@@ -26,7 +26,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
       </button>
 
       {/* Logo */}
-      <Link href="/docs" className="docs-header-logo">
+      <Link href="/docs" prefetch={false} className="docs-header-logo">
         <Image src="/brand/app-logo-1024.png" alt={BRAND.namePascal} width={32} height={32} className="docs-header-logo-img" />
         <span>{BRAND.nameUpper}</span>
       </Link>
@@ -51,7 +51,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
       {/* Actions */}
       <div className="docs-header-actions">
         {/* Commercial Docs link */}
-        <Link href="/commercial" className="docs-commercial-link">
+        <Link href="/commercial" prefetch={false} className="docs-commercial-link">
           <Building size={14} aria-hidden="true" />
           <span className="docs-hide-mobile">{t("common.commercialDocs")}</span>
         </Link>

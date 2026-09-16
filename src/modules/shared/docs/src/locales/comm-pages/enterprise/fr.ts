@@ -325,17 +325,17 @@ export const fr = {
     whiteLabeling: {
       title: "Marque Blanche",
       description: "Personnalisez l'espace SCRIPE avec votre propre marque.",
-      intro: "Offrez une expÃ©rience SaaS personnalisÃ©e Ã  vos clients.",
+      intro: "Offrez une expérience SaaS personnalisée à vos clients.",
     },
     slaGuarantees: {
       title: "SLA & Garanties",
-      description: "Garanties de performance et niveaux d'assistance opÃ©rationnelle.",
+      description: "Garanties de performance et niveaux d'assistance opérationnelle.",
       intro: "Nous soutenons notre plateforme avec des accords de niveau de service.",
     },
     tenantIsolation: {
       title: "Isolation des Locataires",
-      description: "SÃ©grÃ©gation des donnÃ©es et modÃ¨les de dÃ©ploiement hybrides.",
-      intro: "Assurez une isolation absolue des donnÃ©es au niveau des lignes.",
+      description: "Ségrégation des données et modèles de déploiement hybrides.",
+      intro: "Assurez une isolation absolue des données au niveau des lignes.",
     },
   },
 };

@@ -11,6 +11,8 @@ import {
   DialogTitle,
   DialogFooter,
   DialogDescription,
+  DialogPortal,
+  NonModalScrim,
 } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -145,7 +147,14 @@ export function DefinitionFormDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    // Wave 5 row 5.6 (design spec §5.4; pre-plan R2's "hand-rolled" shape):
+    // hosts InlineAddCustomFieldDialog (a modal={false} Sheet) via
+    // DefinitionFormCustomFieldsSection -- see WebhookForm.tsx's identical
+    // comment for the full defect/remedy.
+    <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+      <DialogPortal>
+        <NonModalScrim open={open} />
+      </DialogPortal>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{isEditMode ? t("plugins.defEdit") : t("plugins.defCreate")}</DialogTitle>

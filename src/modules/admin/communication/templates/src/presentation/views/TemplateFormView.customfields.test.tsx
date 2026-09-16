@@ -69,6 +69,14 @@ if (typeof (globalThis as any).ResizeObserver === "undefined") {
   };
 }
 
+// jsdom also has no scrollIntoView -- cmdk calls it on the highlighted row's
+// layout effect as soon as a GenericSelect panel's option list mounts (needed
+// below for the Select-type custom field coverage; same stub as
+// renderCustomFieldControl.test.tsx / SubmitDsrModal.customfields.test.tsx).
+if (typeof Element.prototype.scrollIntoView !== "function") {
+  Element.prototype.scrollIntoView = () => {};
+}
+
 import { TemplateFormView } from "./TemplateFormView";
 
 function renderWithQueryClient(ui: ReactNode) {
@@ -97,6 +105,22 @@ const NATIONALITY_FIELD = {
   label: "Nationality",
   type: "text" as const,
   section: "Custom Fields",
+};
+
+// Wave 2 Step 2.2, Task 7b review finding M4: TemplateFormView.tsx's own
+// Select-branch conversion (raw Radix `Select` -> renderCustomFieldControl's
+// GenericSelect-based branch, D9) had ZERO test coverage here -- both of this
+// file's pre-existing tests only ever exercised `type: "text"`. This fixture
+// and the test below close that gap.
+const PRIORITY_FIELD = {
+  name: "__cf__priority",
+  label: "Priority",
+  type: "select" as const,
+  section: "Custom Fields",
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+  ],
 };
 
 describe("TemplateFormView + custom fields", () => {
@@ -179,6 +203,51 @@ describe("TemplateFormView + custom fields", () => {
         "communication.message-template",
         "new-template-id",
         { nationality: "Egyptian" }
+      )
+    );
+  });
+
+  // Task 7b review finding M4 (see PRIORITY_FIELD's own comment above): this
+  // site's Select branch was rewired onto renderCustomFieldControl's shared
+  // GenericSelect-based control in Task 7b but never actually exercised by a
+  // test. Confirms both halves of that fix: (1) the control renders with a
+  // real, working accessible name (T1's aria-label fix -- getByRole's `name`
+  // option performs actual accessible-name computation, matching the pattern
+  // already established in TenantPlanStepCustomFields.test.tsx /
+  // FeatureDefinitionFormView.customfields.test.tsx), and (2) picking an
+  // option is captured correctly end-to-end through this site's own
+  // `vm.updateCustomFieldValue` -> `saveValues` plumbing, not just an
+  // isolated onChange spy.
+  it("renders a Select custom field with a working accessible name and round-trips the picked value on save", async () => {
+    mockCreate.mockResolvedValue("new-template-id");
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue([PRIORITY_FIELD]),
+    });
+
+    renderWithQueryClient(<TemplateFormView />);
+
+    fireEvent.change(await screen.findByLabelText("messaging.templates.body"), {
+      target: { value: "Hello" },
+    });
+
+    fireEvent.mouseDown(screen.getByRole("tab", { name: "messaging.templates.customFieldsTitle" }));
+
+    const trigger = await screen.findByRole("combobox", { name: "Priority" });
+    fireEvent.click(trigger);
+    fireEvent.click(screen.getByRole("option", { name: "Medium" }));
+
+    // The picked option's label is echoed straight back as the trigger's own
+    // displayed value -- proof the change round-tripped through
+    // vm.updateCustomFieldValue and back into this controlled control.
+    expect(screen.getByRole("combobox", { name: "Priority" })).toHaveTextContent("Medium");
+
+    fireEvent.click(screen.getByText("common.save"));
+
+    await waitFor(() =>
+      expect(extension.saveValues).toHaveBeenCalledWith(
+        "communication.message-template",
+        "new-template-id",
+        { priority: "Medium" }
       )
     );
   });

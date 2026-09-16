@@ -17,7 +17,9 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogPortal,
   DialogTitle,
+  NonModalScrim,
 } from "@core/ui/dialog";
 import { ScrollArea } from "@core/ui/scroll-area";
 import type { WebhookSubscription } from "../../domain/entities/Webhook";
@@ -47,7 +49,18 @@ export function WebhookForm({ mode, webhook, open, onOpenChange, onSuccess }: We
   const description = mode === "create" ? t("webhooks.createDesc") : t("webhooks.editDesc");
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    // Wave 5 row 5.6 (design spec §5.4; pre-plan R2's "hand-rolled" shape):
+    // this hosts InlineAddCustomFieldDialog (now itself a modal={false}
+    // Sheet, see that file) via WebhookFormCustomFieldsSection. A default
+    // `modal={true}` Dialog here `hideOthers()`-hid and fought focus with
+    // whatever the inline-add trigger opened, the same defect GenericModal's
+    // own modal={false} already solves for the other ~30 CRUD screens --
+    // this dialog just never adopted that pattern. NonModalScrim replaces
+    // the overlay Radix skips in non-modal mode with the SAME scrim recipe.
+    <Dialog open={open} onOpenChange={onOpenChange} modal={false}>
+      <DialogPortal>
+        <NonModalScrim open={open} />
+      </DialogPortal>
       <DialogContent className="flex max-h-[85vh] max-w-2xl flex-col p-0">
         <DialogHeader className="shrink-0 border-b border-nx-line px-6 pb-4 pt-6">
           <DialogTitle>{title}</DialogTitle>

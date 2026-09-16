@@ -6,6 +6,18 @@ import { getCustomFieldsContainer } from "../../../../di";
 vi.mock("../../../../di", () => ({
   getCustomFieldsContainer: vi.fn(),
 }));
+vi.mock("../../../../field-group/src/presentation/viewmodels/useFieldGroupOptions", () => ({
+  useFieldGroupOptions: vi.fn(() => ({ options: [], isLoading: false, isError: false })),
+}));
+vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
+  useEntityLookupAvailableTypes: vi.fn(() => ({ types: [], isLoading: false, isError: false, isEmpty: true })),
+}));
+// Real useOptionSetViewModel calls useQueryClient() unconditionally, which throws outside a
+// QueryClientProvider -- mocked like its two sibling read hooks above rather than wrapping every
+// test in this file with a provider it otherwise has no use for.
+vi.mock("../../../../option-set/src/presentation/viewmodels/useOptionSetViewModel", () => ({
+  useOptionSetViewModel: vi.fn(() => ({ sets: [], isSetsLoading: false, isSetsError: false })),
+}));
 vi.mock("@core/hooks/use-permission", () => ({
   usePermission: vi.fn().mockReturnValue(true),
 }));
@@ -51,6 +63,10 @@ if (typeof (globalThis as any).ResizeObserver === "undefined") {
     unobserve() {}
     disconnect() {}
   };
+}
+
+if (typeof Element.prototype.scrollIntoView !== "function") {
+  Element.prototype.scrollIntoView = () => {};
 }
 
 describe("InlineAddCustomFieldDialog", () => {
@@ -114,15 +130,7 @@ describe("InlineAddCustomFieldDialog", () => {
     );
   });
 
-  describe("the Global switch", () => {
-    // The component re-renders (and re-calls usePermissions()/useTenantContext())
-    // on every state change — at least once more after the trigger click opens
-    // the dialog, on top of GenericForm's own internal usePermissions() call in
-    // the same pass. mockReturnValueOnce only patches a single call, so it gets
-    // consumed before the assertion's render settles; mockReturnValue persists
-    // across all of them instead, restored in afterEach so it can't leak into
-    // sibling tests (including the two above, which rely on the module's
-    // isSuperAdmin:true/isInTenantWorld:false defaults).
+  describe("scope choices", () => {
     const defaultPermissions = {
       permissions: [],
       hasPermission: () => true,
@@ -149,27 +157,29 @@ describe("InlineAddCustomFieldDialog", () => {
       vi.mocked(useTenantContext).mockReturnValue(defaultTenantContext as any);
     });
 
-    it("is not rendered for a non-Super-Admin", async () => {
-      const { usePermissions } = await import("@core/providers/permission-provider");
-      vi.mocked(usePermissions).mockReturnValue({ ...defaultPermissions, isSuperAdmin: false } as any);
-
+    it("offers isGlobal switch in pure platform context, defaulting safely to false", () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      expect(screen.queryByLabelText("customField.fields.isGlobal")).not.toBeInTheDocument();
+      const isGlobalSwitch = screen.getByRole("switch", { name: "customField.fields.isGlobal" });
+      expect(isGlobalSwitch).toHaveAttribute("data-state", "unchecked");
     });
 
-    it("is disabled and on by default in pure platform context (Super Admin, no tenant selected)", async () => {
-      // Default module-level mocks: isSuperAdmin true, isInTenantWorld false.
+    it("submits isGlobal:true only after toggling the isGlobal switch", async () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      const globalSwitch = screen.getByLabelText("customField.fields.isGlobal");
-      expect(globalSwitch).toBeDisabled();
-      expect(globalSwitch).toHaveAttribute("data-state", "checked");
+      fireEvent.click(screen.getByRole("switch", { name: "customField.fields.isGlobal" }));
+      fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
+      fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });
+      fireEvent.click(screen.getByText("common.save"));
+
+      await waitFor(() =>
+        expect(createMock).toHaveBeenCalledWith(expect.objectContaining({ isGlobal: true }))
+      );
     });
 
-    it("is enabled and off by default for a Super Admin drilled into a tenant, and submits isGlobal:true when turned on", async () => {
+    it("locks tenant-context authors to tenant scope (no isGlobal switch) and submits isGlobal:false", async () => {
       const { useTenantContext } = await import("@core/providers/tenant-context-provider");
       vi.mocked(useTenantContext).mockReturnValue({
         ...defaultTenantContext,
@@ -180,17 +190,14 @@ describe("InlineAddCustomFieldDialog", () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      const globalSwitch = screen.getByLabelText("customField.fields.isGlobal");
-      expect(globalSwitch).toBeEnabled();
-      expect(globalSwitch).toHaveAttribute("data-state", "unchecked");
+      expect(screen.queryByRole("switch", { name: "customField.fields.isGlobal" })).not.toBeInTheDocument();
 
-      fireEvent.click(globalSwitch);
       fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
       fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });
       fireEvent.click(screen.getByText("common.save"));
 
       await waitFor(() =>
-        expect(createMock).toHaveBeenCalledWith(expect.objectContaining({ isGlobal: true }))
+        expect(createMock).toHaveBeenCalledWith(expect.objectContaining({ isGlobal: false }))
       );
     });
   });

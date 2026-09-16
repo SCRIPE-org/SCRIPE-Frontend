@@ -38,6 +38,17 @@ interface CustomCalendarProps {
   maxDate?: string;
   /** Per-day veto for booking-style rules the min/max window cannot express. */
   isDateDisabled?: (date: Date) => boolean;
+  /**
+   * Move focus into the day grid when this calendar mounts.
+   *
+   * Opt-in, and `false` by default, because the two consumers are not the same
+   * shape. `DatePicker` mounts this component only while its panel is open and
+   * portals it to `document.body` — there, taking focus is the whole fix (see
+   * the `rovingDay` and focus-management comments below). The Settings preview
+   * stage renders a calendar permanently inline as page content; grabbing focus
+   * on mount there would hijack the page on every visit.
+   */
+  autoFocus?: boolean;
 }
 
 // Helper: Parse date safely
@@ -84,6 +95,7 @@ export function CustomCalendar({
   minDate,
   maxDate,
   isDateDisabled,
+  autoFocus = false,
 }: CustomCalendarProps) {
   const { calendarStyle, borderRadius } = useSettings();
   const { t, language, direction } = useI18n();
@@ -307,6 +319,70 @@ export function CustomCalendar({
     [currentDate]
   );
 
+  // ── The day grid's single tab stop ──────────────────────────────
+  //
+  // A roving tabindex is only reachable if EXACTLY ONE cell carries
+  // tabIndex={0} in every state. This grid used to manage none and sometimes
+  // two.
+  //
+  // NONE was the blocker: `isFocused` was `focusedDate === day || (!focusedDate
+  // && isSelected)`, `focusedDate` starts null, and an EMPTY date field has no
+  // selected day — so every cell in the month rendered tabIndex={-1}. Nothing
+  // focused the panel on open either, and `DatePicker` portals it to
+  // document.body, so Tab from the field walked straight past the whole
+  // calendar into the page behind it. The window keydown listener below only
+  // reacts to events whose target is already inside the calendar, which nothing
+  // could ever become. Net effect: an empty Date / DateTime field could not be
+  // set by keyboard at all.
+  //
+  // TWO was the quieter bug: `focusedDate === day` compared day NUMBERS with no
+  // regard for which month the cell belongs to, so a `focusedDate` of 3 lit
+  // both the current month's 3rd and the trailing "3" borrowed from the next
+  // month. Other-month cells are now pinned to -1 unconditionally: they are
+  // never the roving target, because the arrow keys step the month first and
+  // only then focus the day, by which point it belongs to the current month.
+  //
+  // This is derived rather than an effect that seeds `focusedDate`, so there is
+  // no render in which the grid has no tab stop, and no ordering question
+  // between the seed and the keyboard handler that reads it.
+  const rovingDay = useMemo(() => {
+    const daysInMonth = getDaysInMonth(currentDate);
+    const isInView = (date: Date) =>
+      date.getMonth() === currentDate.getMonth() &&
+      date.getFullYear() === currentDate.getFullYear();
+
+    let preferred: number;
+    if (focusedDate !== null) {
+      preferred = focusedDate;
+    } else if (selectedDate && isInView(selectedDate)) {
+      preferred = selectedDate.getDate();
+    } else {
+      const today = new Date();
+      preferred = isInView(today) ? today.getDate() : 1;
+    }
+    // A month step can leave `focusedDate` past the end of a shorter month
+    // (the 31st, then PageDown into February).
+    preferred = Math.min(Math.max(preferred, 1), daysInMonth);
+
+    // `disabled` outranks tabIndex: a disabled <button> is not focusable, so a
+    // roving target parked on a blocked day (a future minDate, a booking veto)
+    // would leave the grid unreachable all over again. Walk out to the nearest
+    // selectable day — forward first, because a min-bounded window opens that
+    // way.
+    if (!isDisabledDate(resolveCellDate(preferred))) return preferred;
+    for (let step = 1; step < daysInMonth; step++) {
+      const after = preferred + step;
+      if (after <= daysInMonth && !isDisabledDate(resolveCellDate(after))) return after;
+      const before = preferred - step;
+      if (before >= 1 && !isDisabledDate(resolveCellDate(before))) return before;
+    }
+    // Nothing in this month is selectable. Keep the preferred cell as the tab
+    // stop so the state stays deterministic; the header's month/year controls
+    // and the footer buttons are still reachable, which is how the user gets
+    // to a month that has something in it.
+    return preferred;
+  }, [currentDate, focusedDate, selectedDate, getDaysInMonth, isDisabledDate, resolveCellDate]);
+
   // Submit the selected date and time
   const submitDateAndTime = useCallback(
     (dateToSubmit: Date) => {
@@ -432,7 +508,12 @@ export function CustomCalendar({
     (offset: number): { day: number; isOtherMonth: boolean } | null => {
       const daysInMonth = getDaysInMonth(currentDate);
       const firstDay = getFirstDayAdjusted(currentDate);
-      const today = focusedDate || selectedDate?.getDate() || 1;
+      // The arrows step from the cell that actually holds the tab stop. This
+      // read used to be `focusedDate || selectedDate?.getDate() || 1`, which
+      // disagreed with the rendered grid whenever `focusedDate` was null: on an
+      // empty field the visible tab stop is today, but the first arrow press
+      // jumped as if from the 1st.
+      const today = rovingDay;
 
       const totalDays = Math.ceil((firstDay + daysInMonth) / 7) * 7;
       const currentIndex = firstDay + (today - 1);
@@ -464,7 +545,7 @@ export function CustomCalendar({
         return { day, isOtherMonth: false };
       }
     },
-    [currentDate, focusedDate, selectedDate, getDaysInMonth, getFirstDayAdjusted]
+    [currentDate, rovingDay, getDaysInMonth, getFirstDayAdjusted]
   );
 
   const handleKeyDown = useCallback(
@@ -619,7 +700,6 @@ export function CustomCalendar({
     for (let i = firstDay - 1; i >= 0; i--) {
       const day = daysInPrevMonth - i;
       const dateKey = `prev-${day}`;
-      const isFocused = focusedDate === day && viewMode === "calendar";
       const cellDisabled = isDisabledDate(resolveCellDate(day, true));
       days.push(
         <button
@@ -632,7 +712,8 @@ export function CustomCalendar({
           aria-disabled={cellDisabled || undefined}
           disabled={cellDisabled}
           role="gridcell"
-          tabIndex={isFocused ? 0 : -1}
+          // Never the roving target — see the `rovingDay` comment.
+          tabIndex={-1}
           data-day={day}
           data-other-month="true"
         >
@@ -654,8 +735,8 @@ export function CustomCalendar({
         today.getMonth() === currentDate.getMonth() &&
         today.getFullYear() === currentDate.getFullYear();
 
-      const isFocused =
-        (focusedDate === day || (!focusedDate && isSelected)) && viewMode === "calendar";
+      // Exactly one current-month cell is the tab stop, in every state.
+      const isFocused = day === rovingDay && viewMode === "calendar";
 
       const cellDisabled = isDisabledDate(resolveCellDate(day));
 
@@ -685,7 +766,6 @@ export function CustomCalendar({
 
     for (let day = 1; day <= remainingCells; day++) {
       const dateKey = `next-${day}`;
-      const isFocused = focusedDate === day && viewMode === "calendar";
       const cellDisabled = isDisabledDate(resolveCellDate(day, true));
       days.push(
         <button
@@ -698,7 +778,8 @@ export function CustomCalendar({
           aria-disabled={cellDisabled || undefined}
           disabled={cellDisabled}
           role="gridcell"
-          tabIndex={isFocused ? 0 : -1}
+          // Never the roving target — see the `rovingDay` comment.
+          tabIndex={-1}
           data-day={day}
           data-other-month="true"
         >
@@ -711,7 +792,7 @@ export function CustomCalendar({
   }, [
     currentDate,
     selectedDate,
-    focusedDate,
+    rovingDay,
     viewMode,
     getDaysInMonth,
     getFirstDayAdjusted,
@@ -724,6 +805,58 @@ export function CustomCalendar({
     resolveCellDate,
     t,
   ]);
+
+  // ── Focus follows the tab stop ──────────────────────────────────
+  //
+  // A roving tabindex only works if DOM focus and the tab stop move together.
+  // Three cases, and each is a real one:
+  //
+  //   1. On open (`autoFocus`) nothing in the panel had focus. This is the half
+  //      of the blocker that tabIndex alone cannot fix: `DatePicker` portals the
+  //      panel to document.body, so without moving focus here Tab from the field
+  //      goes to the page behind the calendar and the window keydown listener
+  //      above — which only reacts to targets already inside the calendar —
+  //      never fires for anything.
+  //   2. While the grid already holds focus, an arrow key changes `rovingDay`;
+  //      the previously focused cell has just dropped to tabIndex={-1} and focus
+  //      has to follow, or the ring and the tab stop drift apart.
+  //   3. A month step (PageUp/PageDown, or an arrow crossing the edge) unmounts
+  //      the focused cell, which parks activeElement on <body>. Nobody owns
+  //      focus then, so reclaiming it is safe — and it is the only way keyboard
+  //      navigation survives a month boundary.
+  //
+  // Case 3 is gated on having focused the grid at least once, so the inline
+  // Settings-stage calendar (autoFocus={false}, never focused) cannot grab focus
+  // off a quiet page. And because the reclaim requires activeElement to be body
+  // or inside the grid, a focus trap that pulls focus elsewhere — a Radix modal
+  // Dialog hosting this picker — is left alone rather than fought over.
+  const gridOwnsFocusRef = useRef(false);
+
+  useEffect(() => {
+    if (viewMode !== "calendar") return;
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const cell = grid.querySelector<HTMLElement>(
+      `[data-day="${rovingDay}"]:not([data-other-month])`
+    );
+    if (!cell) return;
+
+    const active = document.activeElement;
+    const focusIsInGrid = !!active && grid.contains(active);
+    if (focusIsInGrid) gridOwnsFocusRef.current = true;
+
+    const shouldTakeFocusOnOpen = autoFocus && !gridOwnsFocusRef.current;
+    const mayReclaimFocus =
+      gridOwnsFocusRef.current && (focusIsInGrid || !active || active === document.body);
+    if (!shouldTakeFocusOnOpen && !mayReclaimFocus) return;
+
+    gridOwnsFocusRef.current = true;
+    if (active !== cell) cell.focus();
+    // `currentDate` is a dependency even though it is not read directly: a month
+    // step can land on the SAME rovingDay number in a different month, and case
+    // 3 above still has to run for the newly mounted cell.
+  }, [autoFocus, viewMode, rovingDay, currentDate]);
 
   // RTL-aware navigation icons
   // In RTL: left button = next (→), right button = previous (←)

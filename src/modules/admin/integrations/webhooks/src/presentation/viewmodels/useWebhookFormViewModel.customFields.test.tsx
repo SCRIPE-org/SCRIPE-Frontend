@@ -72,6 +72,18 @@ const PRIORITY_FIELD = {
   section: "Custom Fields",
 };
 
+const SEVERITY_FIELD = {
+  name: "__cf__severity",
+  label: "Severity",
+  type: "select" as const,
+  section: "Custom Fields",
+  options: [
+    { value: "Low", label: "Low" },
+    { value: "Medium", label: "Medium" },
+    { value: "High", label: "High" },
+  ],
+};
+
 function makeWebhook(overrides: Record<string, unknown> = {}) {
   return new WebhookSubscription({
     id: "existing-webhook-id",
@@ -223,6 +235,57 @@ describe("useWebhookFormViewModel + custom fields", () => {
     expect(mockSuccessToast).not.toHaveBeenCalled();
     expect(mockErrorToast).toHaveBeenCalledWith(
       expect.objectContaining({ title: "webhooks.customFieldsSaveError" })
+    );
+  });
+
+  // Final whole-branch review, I3 fix: D5's client-side Select validation
+  // (validateSelectCustomFieldValue, wired in via
+  // assertSelectCustomFieldValuesValid) must actually run from a real save
+  // flow and block the API call -- not just exist as an unwired, fully
+  // tested pure function. A differently-cased value against a real
+  // configured option ("medium" vs "Medium") is exactly the backend's own
+  // ordinal/case-sensitive rejection case (SelectValueTypeHandler.Validate),
+  // reproduced here client-side, before any round trip.
+  it("rejects a differently-cased Select value and blocks the save before ever calling saveValues (D5)", async () => {
+    mockCreate.mockResolvedValue(makeWebhook({ id: "new-webhook-id" }));
+    const extension = registerFakeCustomFieldsExtension({
+      getFormFields: vi.fn().mockResolvedValue([SEVERITY_FIELD]),
+    });
+    const onSuccess = vi.fn();
+
+    const { result } = renderHook(
+      () => useWebhookFormViewModel({ mode: "create", onSuccess }),
+      { wrapper }
+    );
+    await waitFor(() => expect(result.current.customFieldConfigs).toEqual([SEVERITY_FIELD]));
+
+    act(() => {
+      result.current.setUrl("https://example.com/hook");
+      result.current.setSelectedEvents(["user.created"]);
+      // Lower-cased against the real configured "Medium" -- same
+      // ordinal-mismatch case D5's own test file pins
+      // (renderCustomFieldControl.test.tsx's "rejects a differently-cased
+      // value" case), reached here through a save flow instead of calling
+      // the validator directly.
+      result.current.updateCustomFieldValue("__cf__severity", "medium");
+    });
+
+    await act(async () => {
+      await result.current.handleSubmit();
+    });
+
+    // The webhook entity itself still gets created (a separate mutation,
+    // same shape as any other custom-field save failure) -- but the
+    // custom-field value never reaches the API at all.
+    expect(mockCreate).toHaveBeenCalled();
+    expect(extension.saveValues).not.toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled();
+    expect(mockSuccessToast).not.toHaveBeenCalled();
+    // The identity-mocked `t` above returns the raw key -- proves the
+    // SPECIFIC D5 message reached the toast, not the generic
+    // "customFieldsSaveError" fallback every other save failure gets.
+    expect(mockErrorToast).toHaveBeenCalledWith(
+      expect.objectContaining({ title: "customField.values.selectInvalidOption" })
     );
   });
 

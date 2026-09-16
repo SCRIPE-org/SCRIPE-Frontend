@@ -24,6 +24,7 @@ export function scopeLabel(t: (key: string) => string, scope?: string | null): s
     case "all_tenants":
       return t("role.scopeAllTenants");
     case "Tenant":
+    case "tenant":
       return t("role.scopeTenant");
     default:
       return t("role.scopeDefault");

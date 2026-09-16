@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: localization dictionary
 /**
  * Docs page locale — EN
  * Auto-generated from monolithic doc locale. Do not edit the generation source.

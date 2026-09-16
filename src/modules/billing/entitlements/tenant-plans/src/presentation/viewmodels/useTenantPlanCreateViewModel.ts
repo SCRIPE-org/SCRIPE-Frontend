@@ -11,6 +11,10 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
+import {
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "@modules/custom-fields/custom-field";
 import type { CreateTenantPlanRequest } from "../../domain/entities/TenantPlanRequests";
 
 /**
@@ -54,6 +58,16 @@ export function useTenantPlanCreateViewModel() {
   // default) is sent, not just the ones the user touched -- saveValues is a
   // full-replace of the owner's value set.
   const saveCustomFieldValues = async (ownerId: string) => {
+    // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
+    // Select value client-side, with the real localized reason, BEFORE it
+    // ever reaches saveValues and comes back as a 422 -- see
+    // assertSelectCustomFieldValuesValid's own doc comment
+    // (renderCustomFieldControl.tsx) for why this is the right integration
+    // point. Throws CustomFieldValidationError, which submit's own catch
+    // block below distinguishes from a genuine API failure so it can show
+    // the specific reason, not the generic fallback.
+    assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+
     const decoded: Record<string, unknown> = {};
     for (const fc of customFieldsQuery.fieldConfigs) {
       const key = decodeCustomFieldName(fc.name);
@@ -142,10 +156,13 @@ export function useTenantPlanCreateViewModel() {
       }
       try {
         await saveCustomFieldValues(newPlanId);
-      } catch {
+      } catch (err) {
         showError({
           title: t("common.error"),
-          description: t("entitlements.tenantPlans.customFieldsSaveError"),
+          description:
+            err instanceof CustomFieldValidationError
+              ? err.message
+              : t("entitlements.tenantPlans.customFieldsSaveError"),
         });
         return; // the plan itself was created -- don't pretend the whole save succeeded
       }

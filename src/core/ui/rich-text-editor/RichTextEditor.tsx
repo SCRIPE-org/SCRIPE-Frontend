@@ -39,6 +39,50 @@ export interface RichTextEditorProps {
   error?: boolean;
   /** Read-only mode */
   readOnly?: boolean;
+  /**
+   * A11Y FORWARDING — the four props below land on the CONTENTEDITABLE itself,
+   * not on the bordered wrapper, and they exist because nothing else can put
+   * them there. The thing that takes focus and receives typing is the
+   * ProseMirror element TipTap creates inside `<EditorContent>`; a caller can
+   * wrap this component in as many labelled divs as it likes and the element the
+   * screen reader actually lands on stays a nameless generic `<div>`. TipTap's
+   * only channel for attributes on that element is `editorProps.attributes`,
+   * which is why these are props here rather than spread props on a wrapper.
+   *
+   * ADDITIVE AND INERT WHEN OMITTED. Every attribute below is emitted only if
+   * its prop was supplied, so a caller that passes none — which is every
+   * pre-existing caller — gets byte-identical DOM. Same shape as the
+   * `i18nKeyPrefix` prop ColorPickerField grew for the same reason: a core
+   * primitive gaining an opt-in seam rather than a second copy of the primitive.
+   *
+   * Id of the contenteditable, so a sibling `<Label htmlFor>` is real DOM wiring
+   * and a host's `aria-describedby` can point at this field.
+   */
+  id?: string;
+  /**
+   * Accessible NAME for the editing region. Supplying it also turns on
+   * `role="textbox"` and `aria-multiline="true"` on the contenteditable, and the
+   * coupling is deliberate rather than convenient: `contenteditable` confers no
+   * implicit ARIA role in HTML-AAM, so without a role the region is announced as
+   * generic content — but a `role="textbox"` with NO name is worse than a
+   * generic div, because it promises a form field and then cannot say which one.
+   * So the role arrives with the name or not at all.
+   */
+  ariaLabel?: string;
+  /**
+   * Space-separated id list for `aria-describedby` on the contenteditable.
+   * COMPOSE rather than overwrite when a host has supplied one of its own —
+   * `aria-describedby` is a list, and dropping the host's id silences its error
+   * text.
+   */
+  ariaDescribedBy?: string;
+  /**
+   * Sets `aria-invalid` on the contenteditable. Separate from `error`, which is
+   * purely the visual border state: a caller may want the red edge without
+   * announcing invalidity (mid-typing over a length cap, say), and the two were
+   * conflated exactly once before being split here.
+   */
+  ariaInvalid?: boolean;
 }
 
 // ─── Email HTML Serializer ──────────────────────────────────
@@ -84,10 +128,31 @@ export function RichTextEditor({
   showSourceToggle = true,
   error,
   readOnly = false,
+  id,
+  ariaLabel,
+  ariaDescribedBy,
+  ariaInvalid,
 }: RichTextEditorProps) {
   const { t } = useI18n();
   const [sourceMode, setSourceMode] = useState(false);
   const [sourceHtml, setSourceHtml] = useState("");
+
+  /**
+   * Built by omission, not by emitting empty strings: an `aria-label=""` is a
+   * name of zero length, which the accname algorithm treats as "author supplied
+   * no name" in some engines and as an empty name in others. Absent is the only
+   * unambiguous way to say nothing. See `ariaLabel`'s own doc comment for why
+   * `role`/`aria-multiline` are gated on the NAME rather than emitted always.
+   */
+  const editorAttributes: Record<string, string> = {};
+  if (id) editorAttributes.id = id;
+  if (ariaLabel) {
+    editorAttributes.role = "textbox";
+    editorAttributes["aria-multiline"] = "true";
+    editorAttributes["aria-label"] = ariaLabel;
+  }
+  if (ariaDescribedBy) editorAttributes["aria-describedby"] = ariaDescribedBy;
+  if (ariaInvalid) editorAttributes["aria-invalid"] = "true";
 
   // The default used to be a hardcoded "Start typing..." baked into the
   // signature, which the Arabic build rendered in English. TipTap reads the
@@ -129,6 +194,10 @@ export function RichTextEditor({
     ],
     content: value,
     editable: !readOnly,
+    // The ONLY channel TipTap offers for attributes on the contenteditable it
+    // creates -- see the a11y-forwarding props' doc comment above for why a
+    // wrapper cannot substitute.
+    editorProps: { attributes: editorAttributes },
     onUpdate: ({ editor: e }) => {
       const html = getEmailSafeHTML(e);
       onChange(html);

@@ -52,11 +52,11 @@ export interface IWebhookRepository {
   // ─── Stats ─────────────────────────────────────────────────
   getDeliveryStats(subscriptionId: string): Promise<WebhookDeliveryStats>;
 
-  // ─── Analytics & Health (Phase 7) ──────────────────────────
+  // ─── Analytics & Health ────────────────────────────────────
   getAnalytics(subscriptionId: string, days?: number): Promise<WebhookAnalytics>;
   getHealthSummary(): Promise<WebhookHealthSummary>;
 
-  // ─── Dead Letter Queue (Phase 7) ───────────────────────────
+  // ─── Dead Letter Queue ─────────────────────────────────────
   getDeadLetters(params: {
     subscriptionId: string;
     page: number;
@@ -65,6 +65,6 @@ export interface IWebhookRepository {
   replayDeadLetter(logId: string): Promise<void>;
   replayAllDeadLetters(subscriptionId: string): Promise<void>;
 
-  // ─── Bulk Operations (Phase 7) ─────────────────────────────
+  // ─── Bulk Operations ───────────────────────────────────────
   bulkToggle(isActive: boolean): Promise<void>;
 }

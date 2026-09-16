@@ -17,7 +17,7 @@ interface DeveloperBadgeProps {
 }
 
 /**
- * DeveloperBadge (Phase 5.4)
+ * DeveloperBadge
  *
  * Compact visual badge for a developer profile.
  * Shows:

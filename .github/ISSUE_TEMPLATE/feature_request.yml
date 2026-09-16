@@ -1,0 +1,35 @@
+name: "💡 Frontend View / Feature Request"
+description: Propose a new UI view, component, or UX workflow.
+title: "[Frontend Feat]: "
+labels: ["frontend", "enhancement"]
+body:
+  - type: dropdown
+    id: submodule
+    attributes:
+      label: Target Feature Area
+      options:
+        - Venue Portal (Facility & Resource Scheduling)
+        - Academy Web Portal
+        - Football Intelligence Pitch Builder
+        - Shared Design System (@core/ui/*)
+        - Analytics Dashboard
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed View / Component
+      description: Describe the UI layout, state flow, and user interaction.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Frontend Architecture Compliance
+      options:
+        - label: Submodule architecture followed (no root-level src/ or locales/).
+          required: true
+        - label: Uses @core/ui/* shared design system components (no native unstyled elements).
+          required: true
+        - label: Translations included for both EN and AR.
+          required: true

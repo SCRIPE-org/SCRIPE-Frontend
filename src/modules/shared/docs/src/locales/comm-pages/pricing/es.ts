@@ -440,18 +440,18 @@ export const es = {
       personaSelectorPartnerBenefit3: "Certificación técnica y listado oficial en el mercado.",
       personaSelectorLearnMore: "Saber más",
       title: "Portal de Inversores",
-      description: "Retorno de inversiÃ³n SaaS y oportunidades de asociaciÃ³n.",
+      description: "Retorno de inversión SaaS y oportunidades de asociación.",
       intro: "Explore nuestro modelo de crecimiento SaaS.",
     },
     coFounderJourney: {
       title: "Camino del Co-fundador",
-      description: "Explore el papel estratÃ©gico para convertirse en cofundador.",
-      intro: "AsÃ³ciese con nosotros a nivel de fundador.",
+      description: "Explore el papel estratégico para convertirse en cofundador.",
+      intro: "Asóciese con nosotros a nivel de fundador.",
     },
     partnerJourney: {
       title: "Programa de Socios",
       description: "Haga crecer su negocio como socio oficial.",
-      intro: "Ãšnase a nuestra red global de socios.",
+      intro: "Únase a nuestra red global de socios.",
     },
   },
 };

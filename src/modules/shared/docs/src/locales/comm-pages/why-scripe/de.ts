@@ -589,18 +589,18 @@ export const de = {
     },
 
     businessClientJourneys: {
-      title: "GeschÃ¤ftskunden-Reisen",
+      title: "Geschäftskunden-Reisen",
       description: "Erfahren Sie, wie Unternehmen ihre Arbeitsbereiche mit SCRIPE skalieren.",
-      intro: "SCRIPE bietet maÃŸgeschneiderte Reisen fÃ¼r Unternehmen jeder GrÃ¶ÃŸe.",
+      intro: "SCRIPE bietet maßgeschneiderte Reisen für Unternehmen jeder Größe.",
     },
     workspaceTours: {
       title: "Arbeitsbereich-Touren",
-      description: "Machen Sie eine gefÃ¼hrte visuelle Tour durch den SCRIPE-Arbeitsbereich.",
-      intro: "Entdecken Sie die intuitive BenutzeroberflÃ¤che zur Effizienzsteigerung.",
+      description: "Machen Sie eine geführte visuelle Tour durch den SCRIPE-Arbeitsbereich.",
+      intro: "Entdecken Sie die intuitive Benutzeroberfläche zur Effizienzsteigerung.",
     },
     marketplaceShowcase: {
-      title: "Marktplatz-PrÃ¤sentation",
-      description: "Entdecken Sie den Marktplatz fÃ¼r Erweiterungen und Module.",
+      title: "Marktplatz-Präsentation",
+      description: "Entdecken Sie den Marktplatz für Erweiterungen und Module.",
       intro: "Erweitern Sie Ihren SaaS-Arbeitsbereich sofort mit unseren Integrationen.",
     },
   },

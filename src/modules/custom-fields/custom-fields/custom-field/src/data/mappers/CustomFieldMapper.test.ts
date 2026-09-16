@@ -15,7 +15,7 @@ function listRow(isGlobal: boolean): CustomFieldListItemJson {
     entityTypeKey: "party.person",
     key: "shirt_size",
     labelEn: "Shirt Size",
-    valueType: 0,
+    valueType: "Text",
     isRequired: false,
     sortOrder: 0,
     isActive: true,
