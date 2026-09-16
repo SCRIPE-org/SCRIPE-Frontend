@@ -15,6 +15,10 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
+import {
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "@modules/custom-fields/custom-field";
 
 const QUERY_KEY = ["plugins", "definitions"];
 
@@ -75,6 +79,16 @@ export function useDefinitionsViewModel() {
   // known custom field's effective value (edited-this-session or the fetched
   // default) is sent, not just the ones the user touched.
   const saveCustomFieldValues = async (ownerId: string) => {
+    // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
+    // Select value client-side, with the real localized reason, BEFORE it
+    // ever reaches saveValues and comes back as a 422 -- see
+    // assertSelectCustomFieldValuesValid's own doc comment
+    // (renderCustomFieldControl.tsx) for why this is the right integration
+    // point. Throws CustomFieldValidationError, which handleFormSubmit's own
+    // catch blocks below distinguish from a genuine API failure so they can
+    // show the specific reason, not the generic fallback.
+    assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+
     const decoded: Record<string, unknown> = {};
     for (const fc of customFieldsQuery.fieldConfigs) {
       const key = decodeCustomFieldName(fc.name);
@@ -180,8 +194,13 @@ export function useDefinitionsViewModel() {
         }
         try {
           await saveCustomFieldValues(editingDefinition.id);
-        } catch {
-          error({ title: t("plugins.defCustomFieldsSaveError") });
+        } catch (err) {
+          error({
+            title:
+              err instanceof CustomFieldValidationError
+                ? err.message
+                : t("plugins.defCustomFieldsSaveError"),
+          });
           return; // the definition WAS updated -- don't pretend the whole save succeeded
         }
         queryClient.invalidateQueries({ queryKey: QUERY_KEY });
@@ -196,8 +215,13 @@ export function useDefinitionsViewModel() {
         }
         try {
           await saveCustomFieldValues(createdId);
-        } catch {
-          error({ title: t("plugins.defCustomFieldsSaveError") });
+        } catch (err) {
+          error({
+            title:
+              err instanceof CustomFieldValidationError
+                ? err.message
+                : t("plugins.defCustomFieldsSaveError"),
+          });
           return; // the definition WAS created -- don't pretend the whole save succeeded
         }
         queryClient.invalidateQueries({ queryKey: QUERY_KEY });

@@ -3,6 +3,9 @@
 import { useCallback, useState } from "react";
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
 import { cn } from "@core/common/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/core/ui/select";
+import { Label } from "@/core/ui/label";
+import { Button } from "@/core/ui/button";
 
 interface ConfigBuilderProps {
   titleKey: string;
@@ -59,50 +62,50 @@ export function ConfigBuilder({ titleKey }: ConfigBuilderProps) {
         </h3>
 
         <div>
-          <label htmlFor="config-builder-provider" className={labelClass}>
+          <Label htmlFor="config-builder-provider" className={labelClass}>
             {t("widgets.configBuilder.providerLabel")}
-          </label>
-          <select
-            id="config-builder-provider"
-            value={provider}
-            onChange={(e) => setProvider(e.target.value)}
-            className={selectClass}
-          >
-            <option value="SqlServer">{t("widgets.configBuilder.providerSqlServer")}</option>
-            <option value="PostgreSql">{t("widgets.configBuilder.providerPostgres")}</option>
-            <option value="Oracle">{t("widgets.configBuilder.providerOracle")}</option>
-          </select>
+          </Label>
+          <Select value={provider} onValueChange={setProvider}>
+            <SelectTrigger id="config-builder-provider" className={selectClass}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="SqlServer">{t("widgets.configBuilder.providerSqlServer")}</SelectItem>
+              <SelectItem value="PostgreSql">{t("widgets.configBuilder.providerPostgres")}</SelectItem>
+              <SelectItem value="Oracle">{t("widgets.configBuilder.providerOracle")}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
-          <label htmlFor="config-builder-mode" className={labelClass}>
+          <Label htmlFor="config-builder-mode" className={labelClass}>
             {t("widgets.configBuilder.modeLabel")}
-          </label>
-          <select
-            id="config-builder-mode"
-            value={mode}
-            onChange={(e) => setMode(e.target.value)}
-            className={selectClass}
-          >
-            <option value="Single">{t("widgets.configBuilder.modeSingle")}</option>
-            <option value="Multi">{t("widgets.configBuilder.modeMulti")}</option>
-          </select>
+          </Label>
+          <Select value={mode} onValueChange={setMode}>
+            <SelectTrigger id="config-builder-mode" className={selectClass}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Single">{t("widgets.configBuilder.modeSingle")}</SelectItem>
+              <SelectItem value="Multi">{t("widgets.configBuilder.modeMulti")}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div>
-          <label htmlFor="config-builder-jobs" className={labelClass}>
+          <Label htmlFor="config-builder-jobs" className={labelClass}>
             {t("widgets.configBuilder.jobsLabel")}
-          </label>
-          <select
-            id="config-builder-jobs"
-            value={jobs}
-            onChange={(e) => setJobs(e.target.value)}
-            className={selectClass}
-          >
-            <option value="Native">{t("widgets.configBuilder.jobsNative")}</option>
-            <option value="Hangfire">{t("widgets.configBuilder.jobsHangfire")}</option>
-            <option value="Quartz">{t("widgets.configBuilder.jobsQuartz")}</option>
-          </select>
+          </Label>
+          <Select value={jobs} onValueChange={setJobs}>
+            <SelectTrigger id="config-builder-jobs" className={selectClass}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Native">{t("widgets.configBuilder.jobsNative")}</SelectItem>
+              <SelectItem value="Hangfire">{t("widgets.configBuilder.jobsHangfire")}</SelectItem>
+              <SelectItem value="Quartz">{t("widgets.configBuilder.jobsQuartz")}</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -112,9 +115,10 @@ export function ConfigBuilder({ titleKey }: ConfigBuilderProps) {
             <span className="docs-code-filename">{outputFilename}</span>
             <span className="docs-code-lang">JSON</span>
           </div>
-          <button
+          <Button
             type="button"
-            className="docs-code-copy"
+            variant="ghost"
+            className="docs-code-copy h-auto p-0 hover:bg-transparent"
             data-copied={copied}
             onClick={handleCopy}
             aria-label={t("common.copyCodeSample", { sample: outputFilename })}
@@ -151,7 +155,7 @@ export function ConfigBuilder({ titleKey }: ConfigBuilderProps) {
                 {t("common.copyCode")}
               </>
             )}
-          </button>
+          </Button>
         </div>
         <pre className="docs-code-pre" tabIndex={0} role="region" aria-label={outputFilename}>
           <code>{appsettingsJson}</code>

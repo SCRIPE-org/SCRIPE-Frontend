@@ -1,4 +1,7 @@
-import type { Meta, StoryObj } from "@storybook/nextjs";
+// @storybook/nextjs-vite, matching .storybook/main.ts's framework and preview.ts's import.
+// This said "@storybook/nextjs" — a package that is not a dependency here — so the file could not
+// compile. It went unnoticed because tsconfig.json excluded **/*.stories.tsx.
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 import { Button } from "../../../core/ui/button";
 import { LoadingSpinner } from "../../../core/ui/loading-spinner";
 import { Mail, ArrowRight, Trash } from "lucide-react";

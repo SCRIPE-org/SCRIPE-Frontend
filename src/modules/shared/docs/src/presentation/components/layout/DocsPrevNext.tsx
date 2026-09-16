@@ -45,7 +45,12 @@ export function DocsPrevNext({
   return (
     <div className="docs-prev-next">
       {prevSlug && prevTitleKey && (
-        <Link href={resolveHref(prevSlug)} className="docs-prev-next-link" data-type="prev">
+        <Link
+          href={resolveHref(prevSlug)}
+          prefetch={false}
+          className="docs-prev-next-link"
+          data-type="prev"
+        >
           <span className="docs-prev-next-label inline-flex items-center gap-1">
             <PrevArrow size={12} aria-hidden="true" />
             {t("common.previous")}
@@ -54,7 +59,12 @@ export function DocsPrevNext({
         </Link>
       )}
       {nextSlug && nextTitleKey && (
-        <Link href={resolveHref(nextSlug)} className="docs-prev-next-link" data-type="next">
+        <Link
+          href={resolveHref(nextSlug)}
+          prefetch={false}
+          className="docs-prev-next-link"
+          data-type="next"
+        >
           <span className="docs-prev-next-label inline-flex items-center justify-end gap-1">
             {t("common.next")}
             <NextArrow size={12} aria-hidden="true" />

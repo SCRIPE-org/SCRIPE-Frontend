@@ -7,7 +7,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
-import { getSafeRedirectPath } from "./redirect-safety";
+import { getSafeRedirectPath } from "../utils/redirect-safety";
 
 /**
  * Exported type defining parameters and fields for login step configurations.

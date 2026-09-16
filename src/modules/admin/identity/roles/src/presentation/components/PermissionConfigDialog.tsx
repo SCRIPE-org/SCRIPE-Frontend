@@ -31,6 +31,9 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { Input } from "@core/ui/input";
 import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
+import { CUSTOM_FIELDS_PERMISSIONS } from "@core/common/types/permissions";
+import { useRestrictableCustomFieldKeys } from "@core/hooks/use-restrictable-custom-field-keys";
 import {
   PermissionScopes,
   type PermissionAssignmentJson,
@@ -64,6 +67,24 @@ export function PermissionConfigDialog({
 }: PermissionConfigDialogProps) {
   const { t } = useI18n();
 
+  /**
+   * Permission codes are `{resource}.{action}`, and a resource never contains a dot
+   * (`compliance_dsr.view` uses an underscore), so the resource is the part before the
+   * first dot. Derived from the code the dialog already receives rather than taken as a
+   * new prop: `PermissionConfigDialogProps` is publicly exported and mounted from two
+   * places inside the matrix, so a required prop would be a breaking signature change
+   * for no gain.
+   */
+  const permissionResource = permission.code.split(".")[0];
+
+  // Both candidate endpoints require `custom-fields.view`. A role administrator
+  // holding `roles.*` without it is an ordinary configuration, and must degrade to
+  // plain free text rather than get a 403 on every dialog open.
+  const canReadCustomFields = usePermission(CUSTOM_FIELDS_PERMISSIONS.CUSTOM_FIELD_VIEW);
+  const suggestions = useRestrictableCustomFieldKeys(open ? permissionResource : undefined, {
+    enabled: canReadCustomFields,
+  });
+
   const [scope, setScope] = useState<string>(PermissionScopes.Default);
   const [restrictedFields, setRestrictedFields] = useState<string[]>([]);
   const [newField, setNewField] = useState("");
@@ -82,7 +103,32 @@ export function PermissionConfigDialog({
   }
 
   const trimmedField = newField.trim();
-  const canAddField = trimmedField.length > 0 && !restrictedFields.includes(trimmedField);
+  /**
+   * Duplicate detection is case-INSENSITIVE, matching the server: it compares these
+   * hand-typed names with `OrdinalIgnoreCase` on every enforcement surface. The old
+   * exact-case check let an admin add both `Salary` and `salary`, which are one
+   * restriction wearing two tags — and now that the picker offers canonical keys, a
+   * mixed-case pair is easy to produce by typing one and clicking the other.
+   */
+  const isAlreadyRestricted = (field: string) =>
+    restrictedFields.some((existing) => existing.toLowerCase() === field.toLowerCase());
+  const canAddField = trimmedField.length > 0 && !isAlreadyRestricted(trimmedField);
+
+  /** Suggestions not already chosen — the list the datalist actually offers. */
+  const availableSuggestions = suggestions.keys.filter((entry) => !isAlreadyRestricted(entry.key));
+
+  /**
+   * Required custom fields among the chosen tags. Restricting one is refused
+   * server-side and takes the WHOLE save down, not just that tag, so this is warned
+   * about before the admin presses save rather than discovered after every other edit
+   * in the dialog is discarded. Advisory only: the flag is a snapshot, and a field
+   * flipped to required afterwards still fails.
+   */
+  const chosenRequiredFields = restrictedFields.filter((field) =>
+    suggestions.keys.some(
+      (entry) => entry.isRequired && entry.key.toLowerCase() === field.toLowerCase()
+    )
+  );
 
   const handleAddField = () => {
     if (!canAddField) return;
@@ -160,7 +206,33 @@ export function PermissionConfigDialog({
                 }}
                 placeholder={t("role.enterField")}
                 className="flex-1"
+                /* Suggestions are LAYERED ON, never replacing free text. Restricted
+                   fields also name built-in record properties, which are not
+                   enumerable from here at all, so an options-only control would remove
+                   the ability to restrict them. A native datalist keeps the input free
+                   text, needs no new component (none in @core/ui accepts both), and
+                   stays keyboard- and screen-reader-navigable by construction. */
+                list={
+                  availableSuggestions.length > 0 ? "permission-restricted-field-options" : undefined
+                }
               />
+              {availableSuggestions.length > 0 && (
+                <datalist id="permission-restricted-field-options">
+                  {availableSuggestions.map((entry) => (
+                    <option
+                      key={entry.key}
+                      value={entry.key}
+                      /* The label carries the warning, because a datalist option has
+                         nowhere else to put one. */
+                      label={
+                        entry.isRequired
+                          ? `${entry.labelEn} — ${t("role.restrictedFieldRequiredWarning")}`
+                          : entry.labelEn
+                      }
+                    />
+                  ))}
+                </datalist>
+              )}
               <Button
                 type="button"
                 size="icon"
@@ -195,6 +267,16 @@ export function PermissionConfigDialog({
               )}
             </ul>
             <p className="text-xs text-nx-ink-3">{t("role.restrictionHint")}</p>
+            {chosenRequiredFields.length > 0 && (
+              <p role="alert" className="text-xs text-nx-danger">
+                {t("role.restrictedFieldsRequiredConflict", {
+                  fields: chosenRequiredFields.join(", "),
+                })}
+              </p>
+            )}
+            {suggestions.isTruncated && (
+              <p className="text-xs text-nx-ink-3">{t("role.restrictedFieldsTruncated")}</p>
+            )}
           </div>
         </div>
 

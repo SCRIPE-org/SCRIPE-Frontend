@@ -9,6 +9,7 @@
 
 import React from "react";
 import { cn } from "@core/common/utils";
+import { Button } from "@core/ui/button";
 import { Building2, UserPlus, CreditCard, Check, AlertCircle } from "lucide-react";
 import { STEPS, type StepId } from "../../viewmodels/useCreateTenantViewModel";
 
@@ -99,18 +100,19 @@ export function CreateTenantStepIndicator({
           return (
             <React.Fragment key={step.id}>
               <li className="flex min-w-0 items-center">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => isClickable && goToStep(step.id)}
                   disabled={!isClickable}
                   aria-current={state === "current" ? "step" : undefined}
                   className={cn(
-                    "group flex items-center gap-3 rounded-nx-control px-4 py-3 text-start",
+                    "group flex h-auto items-center gap-3 rounded-nx-control px-4 py-3 text-start",
                     "transition-[background-color,border-color,color] duration-nx-standard ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:z-raised focus-visible:shadow-nx-focus focus-visible:outline-none",
                     // A disabled button must not advertise a pointer.
                     "disabled:pointer-events-none",
-                    state === "current" && "border border-nx-accent bg-nx-accent-wash",
+                    state === "current" && "border border-nx-accent bg-nx-accent-wash hover:bg-nx-accent-wash",
                     state === "done" && "cursor-pointer border border-transparent hover:bg-nx-hover",
                     state === "error" &&
                       "cursor-pointer border border-nx-danger bg-[color:color-mix(in_srgb,var(--nx-danger)_10%,transparent)]",
@@ -164,7 +166,7 @@ export function CreateTenantStepIndicator({
                       {stepLabels[step.id]}
                     </span>
                   </span>
-                </button>
+                </Button>
               </li>
 
               {idx < STEPS.length - 1 && (

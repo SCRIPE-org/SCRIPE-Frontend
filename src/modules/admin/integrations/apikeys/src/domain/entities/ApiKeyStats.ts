@@ -72,4 +72,14 @@ export class ApiKeyStats {
     if (this.data.monthlyQuotaUsedPercent >= 75) return "yellow";
     return "green";
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated API key statistics data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new ApiKeyStats instance with updated values.
+   */
+  copyWith(updates: Partial<ApiKeyStatsData>): ApiKeyStats {
+    return new ApiKeyStats({ ...this.data, ...updates });
+  }
 }

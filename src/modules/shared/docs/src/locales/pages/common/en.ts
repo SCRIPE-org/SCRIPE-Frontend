@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: localization dictionary
 /**
  * Docs common chrome — EN
  * Shared UI strings: navigation, search, info blocks, API table headers.

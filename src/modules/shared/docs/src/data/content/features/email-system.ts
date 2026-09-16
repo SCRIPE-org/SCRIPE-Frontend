@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: static documentation content
 import { registerPage } from "../../repositories/DocsRepository";
 import type { DocSection } from "../../../domain/entities/DocSection";
 

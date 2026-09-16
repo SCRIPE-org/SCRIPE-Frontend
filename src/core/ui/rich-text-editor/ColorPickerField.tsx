@@ -25,7 +25,29 @@ export interface ColorPickerFieldProps {
   /** Already-translated hint, rendered below the control. */
   description?: string;
   className?: string;
+  /** Blocks the trigger from opening the popover; matches every other
+   *  CustomFields control's isViewMode/disabled contract (Input/GenericSelect/
+   *  Slider all real-disable, not just visually dim). Additive -- every
+   *  existing caller omits this and keeps today's always-interactive
+   *  behavior unchanged. */
+  disabled?: boolean;
+  /**
+   * i18n key PREFIX for this control's own three strings (`.swatch`,
+   * `.custom`, `.hexPlaceholder` suffixes) -- defaults to `"editorBlocks.color"`,
+   * this component's ORIGINAL namespace, so every existing caller
+   * (ButtonDesigner.tsx, DesignVariablesPanel.tsx) keeps resolving the exact
+   * same keys with no change. Wave 3.3 Batch C (CustomFields' Color value
+   * type) reuses this mature, accessible picker (20-swatch grid, real hex
+   * entry, the label trap already solved via `aria-labelledby` below rather
+   * than `<Label htmlFor>`) rather than duplicating it, but must not leak
+   * this file's editor-specific `editorBlocks.color.*` locale keys into a
+   * different module's namespace -- CustomFields passes `"customField.color"`
+   * here so its own translations live under its own namespace instead.
+   */
+  i18nKeyPrefix?: string;
 }
+
+const DEFAULT_I18N_KEY_PREFIX = "editorBlocks.color";
 
 // ─── Default Content-Color Presets ──────────────────────────
 // COLOUR EXCEPTION — this palette is deliberately literal hex. It is not the
@@ -67,6 +89,8 @@ export function ColorPickerField({
   presets = DEFAULT_PRESETS,
   description,
   className,
+  disabled,
+  i18nKeyPrefix = DEFAULT_I18N_KEY_PREFIX,
 }: ColorPickerFieldProps) {
   const { t } = useI18n();
   const [customHex, setCustomHex] = useState("");
@@ -104,8 +128,9 @@ export function ColorPickerField({
                   name is assembled from the field label plus the hex text. */}
               <button
                 type="button"
+                disabled={disabled}
                 aria-labelledby={`${labelId} ${valueId}`}
-                className="flex min-h-9 w-full items-center gap-2 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-start transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
+                className="flex min-h-9 w-full items-center gap-2 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-start transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-nx-line"
               >
                 <span
                   className="h-5 w-5 shrink-0 rounded-nx-sm border border-nx-line"
@@ -126,7 +151,8 @@ export function ColorPickerField({
                 <button
                   key={c}
                   type="button"
-                  aria-label={t("editorBlocks.color.swatch", { color: c })}
+                  disabled={disabled}
+                  aria-label={t(`${i18nKeyPrefix}.swatch`, { color: c })}
                   aria-pressed={value === c}
                   className={cn(
                     "h-7 w-full rounded-nx-sm border transition-[border-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
@@ -150,10 +176,10 @@ export function ColorPickerField({
                 #
               </span>
               <Input
-                aria-label={t("editorBlocks.color.custom")}
+                aria-label={t(`${i18nKeyPrefix}.custom`)}
                 value={customHex.replace("#", "")}
                 onChange={(e) => setCustomHex(e.target.value)}
-                placeholder={t("editorBlocks.color.hexPlaceholder")}
+                placeholder={t(`${i18nKeyPrefix}.hexPlaceholder`)}
                 className="h-7 flex-1 font-mono text-xs"
                 maxLength={7}
                 onKeyDown={(e) => {

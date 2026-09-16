@@ -1,6 +1,7 @@
 "use client";
 
 import { useDocsI18n } from "../../providers/DocsI18nProvider";
+import { Button } from "@core/ui/button";
 import { chartColor } from "@core/ui/chart";
 import { cn } from "@core/common/utils";
 import type { LifecycleStep } from "../../../domain/entities/DocSection";
@@ -37,11 +38,12 @@ export function LifecycleStepItem({ step, isActive, onClick }: LifecycleStepItem
   const isInbound = step.direction === "inbound";
 
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       onClick={onClick}
       aria-current={isActive ? "step" : undefined}
-      className={cn("docs-lifecycle-step-card w-full text-start", isActive && "active")}
+      className={cn("docs-lifecycle-step-card w-full h-auto text-start justify-start font-normal block", isActive && "active")}
       style={{ borderInlineStartWidth: "3px", borderInlineStartColor: color }}
     >
       <div className="mb-1 flex items-center justify-between gap-2">
@@ -56,6 +58,6 @@ export function LifecycleStepItem({ step, isActive, onClick }: LifecycleStepItem
         </span>
       </div>
       <div className="text-sm font-semibold text-nx-ink">{t(step.labelKey)}</div>
-    </button>
+    </Button>
   );
 }

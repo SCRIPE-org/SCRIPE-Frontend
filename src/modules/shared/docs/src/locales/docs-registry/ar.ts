@@ -40,6 +40,7 @@ import { ar as pageSecurityMonitoring } from "../pages/security-monitoring/ar";
 import { ar as pageWebhooks } from "../pages/webhooks/ar";
 import { ar as pageMarketplace } from "../pages/marketplace/ar";
 import { ar as pageEcosystemRecycleBin } from "../pages/ecosystem-recycle-bin/ar";
+import { ar as pageCustomFields } from "../pages/custom-fields/ar";
 
 import { mergeAll } from "./utils";
 
@@ -82,5 +83,6 @@ export const allDocsAr: Record<string, any> = mergeAll(
   pageSecurityMonitoring,
   pageWebhooks,
   pageMarketplace,
-  pageEcosystemRecycleBin
+  pageEcosystemRecycleBin,
+  pageCustomFields
 );

@@ -55,4 +55,14 @@ export class StaffAvailability {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated staff availability data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new StaffAvailability instance with updated values.
+   */
+  copyWith(updates: Partial<StaffAvailabilityData>): StaffAvailability {
+    return new StaffAvailability({ ...this.data, ...updates });
+  }
 }

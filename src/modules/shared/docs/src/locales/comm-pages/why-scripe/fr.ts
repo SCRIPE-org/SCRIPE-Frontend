@@ -598,18 +598,18 @@ export const fr = {
     businessClientJourneys: {
       title: "Parcours des Clients Professionnels",
       description:
-        "DÃ©couvrez comment les entreprises font Ã©voluer leurs espaces de travail avec SCRIPE.",
-      intro: "SCRIPE propose des parcours adaptÃ©s aux entreprises de toutes tailles.",
+        "Découvrez comment les entreprises font évoluer leurs espaces de travail avec SCRIPE.",
+      intro: "SCRIPE propose des parcours adaptés aux entreprises de toutes tailles.",
     },
     workspaceTours: {
       title: "Visites des Espaces de Travail",
-      description: "Faites une visite guidÃ©e visuelle de l'espace de travail SCRIPE.",
-      intro: "Explorez l'interface utilisateur intuitive conÃ§ue pour maximiser l'efficacitÃ©.",
+      description: "Faites une visite guidée visuelle de l'espace de travail SCRIPE.",
+      intro: "Explorez l'interface utilisateur intuitive conçue pour maximiser l'efficacité.",
     },
     marketplaceShowcase: {
       title: "Vitrine de la Boutique",
       description: "Explorez la vitrine visuelle des extensions et modules.",
-      intro: "Ã‰tendez instantanÃ©ment votre espace SaaS avec notre boutique d'intÃ©grations.",
+      intro: "Étendez instantanément votre espace SaaS avec notre boutique d'intégrations.",
     },
   },
 };

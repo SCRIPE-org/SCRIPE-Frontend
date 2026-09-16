@@ -24,60 +24,21 @@ import type {
   DowngradeImpactReport,
 } from "../types/SubscriptionTypes";
 
-/** Tenant domain record from the API */
-export interface TenantDomainJson {
-  id: string;
-  domain: string;
-  type: "auto" | "custom";
-  isPrimary: boolean;
-  isVerified: boolean;
-  verificationToken: string | null;
-  verifiedAt: string | null;
-  createdAt: string;
-}
+export type {
+  TenantDomainJson,
+  TenantDomainsResponse,
+  ServiceTenantListParams,
+  TenantListResult,
+  TenantTreeListResult,
+} from "./tenantServiceTypes";
 
-/** Response shape for the domains endpoint */
-export interface TenantDomainsResponse {
-  domains: TenantDomainJson[];
-  cnameTarget: string;
-  verificationPrefix: string;
-}
+import type {
+  ServiceTenantListParams,
+  TenantListResult,
+  TenantTreeListResult,
+  TenantDomainsResponse,
+} from "./tenantServiceTypes";
 
-/**
- * Interface defining property specifications, keys types, and structural contract rules for service tenant list params.
- */
-export interface ServiceTenantListParams {
-  page?: number;
-  pageSize?: number;
-  search?: string;
-  parentId?: string;
-}
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for tenant list result.
- */
-export interface TenantListResult {
-  items: TenantModel[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-/**
- * Interface defining property specifications, keys types, and structural contract rules for tenant tree list result.
- */
-export interface TenantTreeListResult {
-  items: TenantTreeNodeModel[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
 
 /**
  * Http API network service for i tenant.

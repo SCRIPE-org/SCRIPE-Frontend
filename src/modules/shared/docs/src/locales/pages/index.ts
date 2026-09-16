@@ -170,6 +170,14 @@ export { zh as ecosystemRecycleBinZh } from "./ecosystem-recycle-bin/zh";
 export { es as ecosystemRecycleBinEs } from "./ecosystem-recycle-bin/es";
 export { de as ecosystemRecycleBinDe } from "./ecosystem-recycle-bin/de";
 
+export { en as customFieldsEn } from "./custom-fields/en";
+export { ar as customFieldsAr } from "./custom-fields/ar";
+export { fr as customFieldsFr } from "./custom-fields/fr";
+export { ru as customFieldsRu } from "./custom-fields/ru";
+export { zh as customFieldsZh } from "./custom-fields/zh";
+export { es as customFieldsEs } from "./custom-fields/es";
+export { de as customFieldsDe } from "./custom-fields/de";
+
 // Lazy loader map for dynamic imports
 /**
  * Exported constant defining parameters and fields for page loaders configurations.
@@ -196,4 +204,5 @@ export const pageLoaders: Record<string, () => Promise<any>> = {
   webhooks: () => import("./webhooks/en"),
   marketplace: () => import("./marketplace/en"),
   "ecosystem-recycle-bin": () => import("./ecosystem-recycle-bin/en"),
+  "custom-fields": () => import("./custom-fields/en"),
 };

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Button } from "@core/ui/button";
 import { useDocsI18n } from "../providers/DocsI18nProvider";
 
 type Persona = "investor" | "cofounder" | "partner";
@@ -100,9 +101,11 @@ export function InvestorLandingView() {
       {/* Persona Selector Tabs */}
       <div className="inv-picker">
         {(["investor", "cofounder", "partner"] as Persona[]).map((p) => (
-          <button
+          <Button
             key={p}
-            className={`inv-picker-btn ${persona === p ? "inv-picker-btn--active" : ""}`}
+            type="button"
+            variant="ghost"
+            className={`inv-picker-btn h-auto ${persona === p ? "inv-picker-btn--active" : ""}`}
             onClick={() => setPersona(p)}
             style={
               persona === p
@@ -112,7 +115,7 @@ export function InvestorLandingView() {
           >
             <span className="me-1">{PERSONA_DATA[p].emoji}</span>
             <span>{t(PERSONA_DATA[p].tabKey)}</span>
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -146,7 +149,7 @@ export function InvestorLandingView() {
             ))}
           </ul>
 
-          <Link href={data.ctaHref} className="inv-cta-btn">
+          <Link href={data.ctaHref} prefetch={false} className="inv-cta-btn">
             <span>{t(data.ctaLabel)}</span>
             <span className="ms-1" aria-hidden="true">
               →

@@ -38,4 +38,14 @@ export class Facility {
   get modifiedAt(): string | undefined {
     return this.data.modifiedAt;
   }
+
+  /**
+   * Creates an immutable copy of the entity with updated facility data.
+   *
+   * @param updates - Partial properties to merge into the entity.
+   * @returns A new Facility instance with updated values.
+   */
+  copyWith(updates: Partial<FacilityData>): Facility {
+    return new Facility({ ...this.data, ...updates });
+  }
 }

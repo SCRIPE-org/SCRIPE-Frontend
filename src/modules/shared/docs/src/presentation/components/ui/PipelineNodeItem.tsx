@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@core/common/utils";
+import { Button } from "@core/ui/button";
 
 interface PipelineNodeItemProps {
   name: string;
@@ -42,9 +43,14 @@ export function PipelineNodeItem({
 
   if (onClick) {
     return (
-      <button type="button" onClick={onClick} className={cn("docs-pipeline-node", stateClass)}>
+      <Button
+        type="button"
+        variant="ghost"
+        onClick={onClick}
+        className={cn("docs-pipeline-node h-auto p-0 hover:bg-transparent justify-start text-start", stateClass)}
+      >
         {body}
-      </button>
+      </Button>
     );
   }
 

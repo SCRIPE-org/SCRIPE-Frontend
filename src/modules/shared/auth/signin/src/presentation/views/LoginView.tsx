@@ -1,7 +1,7 @@
 /**
  * LoginView — 5-Layout Customizable Login Page
  *
- * Renders tenant-branded login using the Login Rendering Engine (Phase 5).
+ * Renders tenant-branded login using the Login Rendering Engine.
  * Supports 22 layouts via LAYOUT_REGISTRY. CSS tokens injected from LoginBrandingJson.
  * Safe mode bypasses all customization.
  *

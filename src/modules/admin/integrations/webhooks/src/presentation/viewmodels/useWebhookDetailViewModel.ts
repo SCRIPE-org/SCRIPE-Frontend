@@ -283,11 +283,11 @@ export function useWebhookDetailViewModel(webhookId: string) {
     setDeliveryFilter,
     isLoadingDeliveries,
 
-    // Analytics (Phase 7)
+    // Analytics
     analytics: analytics ?? null,
     isLoadingAnalytics,
 
-    // Dead Letter Queue (Phase 7)
+    // Dead Letter Queue
     deadLetters: deadLettersData?.items ?? [],
     deadLetterTotalCount: deadLettersData?.totalCount ?? 0,
     dlqPage,

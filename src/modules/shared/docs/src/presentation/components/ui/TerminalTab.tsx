@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@core/ui/button";
+
 interface TerminalTabProps {
   label: string;
   isActive: boolean;
@@ -14,14 +16,15 @@ interface TerminalTabProps {
  */
 export function TerminalTab({ label, isActive, onClick }: TerminalTabProps) {
   return (
-    <button
+    <Button
       type="button"
+      variant="ghost"
       role="tab"
       aria-selected={isActive}
-      className={`docs-terminal-tab ${isActive ? "active" : ""}`}
+      className={`docs-terminal-tab h-auto p-0 hover:bg-transparent ${isActive ? "active" : ""}`}
       onClick={onClick}
     >
       {label}
-    </button>
+    </Button>
   );
 }

@@ -8,122 +8,25 @@
  */
 
 // ===== JSON Shapes (API contracts) =====
+export type {
+  TenantJson,
+  TenantTreeNodeJson,
+  TenantListResponseJson,
+  TenantTreeListResponseJson,
+  CreateTenantJson,
+  CreateTenantResultJson,
+  UpdateTenantJson,
+} from "./TenantJsonContracts";
 
-/**
- * Interface defining property specifications, keys types, and structural contract rules for tenant json.
- */
-export interface TenantJson {
-  id: string;
-  name: string;
-  code: string;
-  level?: number;
-  hierarchyLevel?: number;
-  path?: string;
-  isActive: boolean;
-  createdAt: string;
-  // Backend uses parentTenantId, we map to parentId
-  parentId?: string;
-  parentTenantId?: string;
-  parentName?: string;
-  parentTenantName?: string;
-  description?: string;
-  settings?: Record<string, unknown>;
-  modifiedAt?: string;
-  children?: TenantJson[];
-  // Stats from backend
-  childCount?: number;
-  adminCount?: number;
-  address?: string;
-  editionName?: string;
-  editionEndDate?: string;
-  primaryDomain?: string;
-  domainCount?: number;
-  adminEmail?: string;
-}
-/**
- * Interface defining property specifications, keys types, and structural contract rules for tenant tree node json.
- */
-export interface TenantTreeNodeJson {
-  id: string | null; // null for "System" pseudo-tenant (Super Admin)
-  name: string;
-  code: string;
-  level: number;
-  isActive: boolean;
-  isSuspended?: boolean;
-  suspensionType?: string;
-  suspensionReason?: string;
-  description?: string;
-  parentId?: string;
-  editionName?: string;
-  editionEndDate?: string;
-  subscriptionStatus?: string;
-  children: TenantTreeNodeJson[];
-}
-/**
- * Interface defining property specifications, keys types, and structural contract rules for tenant list response json.
- */
-export interface TenantListResponseJson {
-  items: TenantJson[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
+import type {
+  TenantJson,
+  TenantTreeNodeJson,
+  CreateTenantJson,
+  UpdateTenantJson,
+} from "./TenantJsonContracts";
 
-/**
- * Paginated tenant-tree-node list response json (getMyChildren) — distinct item
- * shape (TenantTreeNodeJson, not TenantJson) from TenantListResponseJson above.
- */
-export interface TenantTreeListResponseJson {
-  items: TenantTreeNodeJson[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-/**
- * Interface defining property specifications, keys types, and structural contract rules for create tenant json.
- */
-export interface CreateTenantJson {
-  name: string;
-  code: string;
-  parentTenantId?: string;
-  description?: string;
-  address?: string;
-  // Step 2: Admin
-  adminEmail: string;
-  adminUsername?: string;
-  // Step 3: Edition & Billing
-  editionId?: string;
-  subscriptionType?: string;
-  currency?: string;
-  promotionId?: string;
-  promoCode?: string;
-  skipPayment?: boolean;
-}
-/** Backend returns this enriched result after tenant creation */
-export interface CreateTenantResultJson {
-  tenantId: string;
-  adminId: string;
-  adminUsername: string;
-  adminEmail: string;
-  accountSetupUrl: string;
-  subscriptionId?: string;
-}
-/**
- * Interface defining property specifications, keys types, and structural contract rules for update tenant json.
- */
-export interface UpdateTenantJson {
-  name?: string;
-  description?: string;
-  isActive?: boolean;
-  address?: string;
-}
 // ===== Model Classes =====
+
 /**
  * Exported class defining parameters and fields for tenant model configurations.
  */

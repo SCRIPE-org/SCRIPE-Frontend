@@ -78,6 +78,26 @@ export interface GenericSelectProps {
   onRetry?: () => void;
   /** "nothing exists yet" — distinct from "your search matched nothing". */
   emptyText?: string;
+  /**
+   * Accessible name for the trigger's role="combobox" element. Required
+   * because that element is a `<div>`, not a labelable HTML element (button/
+   * input/select/textarea/...) — a sibling `<label htmlFor>` pointing at its
+   * `id` computes NO accessible name for it (HTML restricts `for`
+   * association to the labelable-element set; per ARIA, role="combobox" is
+   * Name From: author, not Name From: contents). Wave 2 Step 2.2's Task 4
+   * review (finding T1) traced this precisely: 5 of the module's 8
+   * custom-field consumer sites already relied on `<Label htmlFor>` +
+   * `<GenericSelect id>` and got NO accessible name from it even before that
+   * task; the other 3 sites' pre-conversion raw Radix `Select` rendered a
+   * native, labelable `<button>` and DID get one, so converting them onto
+   * this component (Task 7b) would have silently regressed their working
+   * accessible name without this prop. Prefer `aria-labelledby` when a real
+   * on-screen label element with its own `id` already exists; use
+   * `aria-label` otherwise.
+   */
+  "aria-label"?: string;
+  /** See `aria-label`'s doc comment above; points at an existing label element's `id` instead of duplicating its text. */
+  "aria-labelledby"?: string;
 
   // Additional props
   [key: string]: any;
@@ -143,6 +163,8 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
       error = null,
       onRetry,
       emptyText,
+      "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
       ...rest
     },
     ref
@@ -274,6 +296,8 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
           invalid={invalid}
           required={required}
           describedBy={describedBy}
+          ariaLabel={ariaLabel}
+          ariaLabelledBy={ariaLabelledBy}
           placeholder={resolvedPlaceholder}
           selectedOptions={selectedOptions}
           // Tree values show their full path — two sibling nodes under

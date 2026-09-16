@@ -1,15 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@core/ui/card";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import { Label } from "@core/ui/label";
-import { useQuery } from "@tanstack/react-query";
-import { identityContainer } from "@modules/identity/di";
-import { useI18n } from "@core/providers/i18n-provider";
-import { useAppStore } from "@core/store/useAppStore";
-import { useTenantContext } from "@core/providers/tenant-context-provider";
 import type { ApiKeyDetail } from "../../domain/entities/ApiKeyDetail";
 import { Search } from "lucide-react";
 import { Input } from "@core/ui/input";
@@ -22,6 +18,8 @@ interface ApiKeyScopesPanelProps {
   onUpdateScopes: (scopes: string) => void;
   /** Gates editing/saving — mirrors the backend's apikeys.update requirement. */
   canUpdate: boolean;
+  permissions?: any[];
+  isLoading?: boolean;
 }
 
 export function ApiKeyScopesPanel({
@@ -29,26 +27,10 @@ export function ApiKeyScopesPanel({
   isUpdating,
   onUpdateScopes,
   canUpdate,
+  permissions = [],
+  isLoading = false,
 }: ApiKeyScopesPanelProps) {
   const { t, language } = useI18n();
-  const { permissionRepository } = identityContainer;
-
-  const userTenantId = useAppStore((s) => s.user?.tenantId);
-  const { currentTenant, isInTenantWorld } = useTenantContext();
-  const isSystemCatalogMode = !userTenantId && !isInTenantWorld;
-  const effectiveTenantId = isInTenantWorld ? currentTenant?.id : userTenantId;
-
-  // Query permissions based on active tenant scope
-  const { data: permissions = [], isLoading } = useQuery({
-    queryKey: ["permissions", "scopes-picker", effectiveTenantId],
-    queryFn: () => {
-      if (isSystemCatalogMode || !effectiveTenantId) {
-        return permissionRepository.getAll();
-      }
-      return permissionRepository.getForTenant(effectiveTenantId);
-    },
-    staleTime: 10 * 60 * 1000,
-  });
 
   const [selectedScopes, setSelectedScopes] = useState<string[]>(detail.scopesList);
   const [searchQuery, setSearchQuery] = useState("");

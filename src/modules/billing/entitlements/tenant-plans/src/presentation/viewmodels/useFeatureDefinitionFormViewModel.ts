@@ -17,6 +17,10 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
+import {
+  assertSelectCustomFieldValuesValid,
+  CustomFieldValidationError,
+} from "@modules/custom-fields/custom-field";
 import type {
   CreateFeatureDefinitionRequest,
   UpdateFeatureDefinitionRequest,
@@ -69,6 +73,16 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
   // here would silently clear it.
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
+      // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
+      // Select value client-side, with the real localized reason, BEFORE it
+      // ever reaches saveValues and comes back as a 422 -- see
+      // assertSelectCustomFieldValuesValid's own doc comment
+      // (renderCustomFieldControl.tsx) for why this is the right integration
+      // point. Throws CustomFieldValidationError, which handleSubmit's own
+      // catch block below distinguishes from a genuine API failure so it can
+      // show the specific reason, not the generic fallback.
+      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+
       const decoded: Record<string, unknown> = {};
       for (const fc of customFieldsQuery.fieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
@@ -83,7 +97,7 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
         decoded
       );
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues]
+    [customFieldsQuery.fieldConfigs, customFieldValues, t]
   );
 
   // ── Load existing feature via GET by ID ──
@@ -224,10 +238,13 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
 
       try {
         await saveCustomFieldValues(ownerId);
-      } catch {
+      } catch (err) {
         showError({
           title: t("common.error"),
-          description: t("entitlements.featureDefinitions.customFieldsSaveError"),
+          description:
+            err instanceof CustomFieldValidationError
+              ? err.message
+              : t("entitlements.featureDefinitions.customFieldsSaveError"),
         });
         return; // the definition itself was saved -- don't pretend the whole save succeeded
       }

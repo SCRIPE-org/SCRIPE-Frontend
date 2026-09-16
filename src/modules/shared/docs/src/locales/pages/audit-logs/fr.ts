@@ -3,9 +3,9 @@
     auditLogs: {
       title: "Journaux d'Audit",
       description:
-        "Suivi complet des opÃ©rations avec IP utilisateur, types d'actions, et stockage inviolable.",
+        "Suivi complet des opérations avec IP utilisateur, types d'actions, et stockage inviolable.",
       intro:
-        "Persistance inviolable des journaux transactionnels capturant l'Ã©tat du client et le contexte de requÃªte-rÃ©ponse.",
+        "Persistance inviolable des journaux transactionnels capturant l'état du client et le contexte de requête-réponse.",
     },
   },
 };

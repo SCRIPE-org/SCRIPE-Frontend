@@ -1,16 +1,33 @@
 /**
- * CustomFieldValueType wire names -- mirrors backend enum member names verbatim
- * (CustomFields.Domain.Enums.CustomFieldValueType). The API's global
- * JsonStringEnumConverter serializes enums as strings, so this is never a
- * number on the wire.
+ * Custom Field Value Data Models
+ *
+ * Defines API payload structures for entity custom field values, table column
+ * metadata, and bulk value response envelopes.
  */
-export type CustomFieldValueTypeName = "Text" | "Number" | "Boolean" | "Date" | "Select";
+
+import type { FieldVisibilityRuleData } from "../../domain/fieldVisibility";
+import type { CustomFieldValueTypeName } from "../../domain/entities/CustomFieldValue";
+import type {
+  CustomFieldDateTimeValue,
+  CustomFieldCurrencyValue,
+  CustomFieldEntityReferenceValue,
+  CustomFieldRichTextValue,
+} from "./CustomFieldCompositeValues";
+
+export type { CustomFieldValueTypeName };
+
+export type {
+  CustomFieldDateTimeValue,
+  CustomFieldCurrencyValue,
+  CustomFieldEntityReferenceValue,
+  CustomFieldRichTextValue,
+};
+
+export { isEntityReferenceValue, isRichTextValue } from "./CustomFieldCompositeValues";
 
 /**
- * CustomFieldValue wire shape — one entity type's active definition merged with
- * its stored value (if any) for a specific owner record. Value's runtime type
- * follows valueType: string (Text/Select), number (Number), boolean (Boolean),
- * ISO-8601 UTC string (Date), or null.
+ * CustomFieldValue wire shape — an entity type's active definition merged with
+ * its stored value (if any) for a specific owner record.
  */
 export interface EntityCustomFieldValueData {
   customFieldId: string;
@@ -23,14 +40,32 @@ export interface EntityCustomFieldValueData {
   isRequired: boolean;
   options?: string[] | null;
   sortOrder: number;
-  value: string | number | boolean | null;
+  value:
+    | string
+    | number
+    | boolean
+    | string[]
+    | CustomFieldDateTimeValue
+    | CustomFieldCurrencyValue
+    | CustomFieldEntityReferenceValue
+    | CustomFieldRichTextValue
+    | null;
+  /**
+   * True when a visibility rule hides this field for this record's current state.
+   */
+  isHidden?: boolean;
+  /**
+   * Active visibility rules governing this field, enabling live client-side re-evaluation.
+   */
+  visibilityRules?: FieldVisibilityRuleData[] | null;
+  /**
+   * Target entity type key for EntityReference and UserReference fields.
+   */
+  referenceTargetEntityTypeKey?: string | null;
 }
 
 /**
- * One active custom-field definition shaped as a table-column header --
- * deliberately thinner than EntityCustomFieldValueData (no isRequired, no
- * per-row value): those don't vary per column, only per cell. Mirrors
- * CustomFields.Application.DTOs.CustomFieldColumnResponse.
+ * Column definition for custom field values displayed in data tables.
  */
 export interface CustomFieldColumnData {
   customFieldId: string;
@@ -43,15 +78,13 @@ export interface CustomFieldColumnData {
 }
 
 /**
- * Wire shape of POST /custom-fields/values/{entityTypeKey}/bulk -- active
- * definitions for entityTypeKey (as column headers) plus every requested
- * owner's stored values, keyed first by the exact (encrypted) owner id
- * string the caller sent, then by each definition's machine `key`. An owner
- * id the server couldn't verify (wrong tenant, deleted, malformed) is simply
- * absent from valuesByOwnerId -- render that row's custom-field cells empty,
- * not an error. Mirrors CustomFields.Application.DTOs.BulkEntityCustomFieldValuesResponse.
+ * Envelope for bulk entity custom field values retrieved by owner records.
  */
 export interface BulkEntityCustomFieldValuesData {
   columns: CustomFieldColumnData[];
   valuesByOwnerId: Record<string, Record<string, string | number | boolean | null>>;
+  /**
+   * Field keys hidden by visibility rules per owner ID.
+   */
+  hiddenKeysByOwnerId?: Record<string, string[]> | null;
 }

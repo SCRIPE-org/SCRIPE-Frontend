@@ -568,7 +568,7 @@ export const en = {
       description:
         "Raw binary file storage — chunked upload, download sessions, temporary access grants, storage quota enforcement, and provider abstraction.",
       intro:
-        "The Media module owns raw binary file storage. It provides chunked upload for large files, temporary download links (MediaAccessGrant), folder organization, and storage quota checks against Entitlements. Media is NOT Documents — it owns the binary. Documents (Phase 4) will consume Media for storage while owning business semantics (versioning, approval, expiry).",
+        "The Media module owns raw binary file storage. It provides chunked upload for large files, temporary download links (MediaAccessGrant), folder organization, and storage quota checks against Entitlements. Media is NOT Documents — it owns the binary. Document management consumes Media for storage while owning business semantics (versioning, approval, expiry).",
       chunkedUploadTitle: "Chunked Upload",
       chunkedUploadIntro:
         "Large files are uploaded in chunks via StartUploadSessionCommand (creates a MediaUploadSession) followed by repeated UploadChunkCommand calls. The session tracks total chunks, received chunks, and completion state. On final chunk, the file is assembled, hash-verified, and a MediaFile record is created. Upload sessions expire after 24 hours of inactivity.",

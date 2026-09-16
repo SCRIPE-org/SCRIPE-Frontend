@@ -28,41 +28,54 @@ export function useMessageTemplatesViewModel() {
   const { messageTemplateRepository: repo } = communicationContainer;
 
   // ─── CRUD ViewModel ────────────────────────────────────────
+  // deferSuccessEffects: true -- this screen sets entityTypeKey (see
+  // configBase below), so GenericCrudView also saves custom-field values
+  // after the template itself is created/updated. Without this option,
+  // useCrudViewModel's onCreateSuccess/onUpdateSuccess fired the toast and
+  // closed the modal the instant createItem's own promise resolved -- before
+  // the custom-field save even started. Same pattern as
+  // useAdminsViewModel/useUsersViewModel/useWorkItemViewModel (W0-1).
   const vm = useCrudViewModel<
     MessageTemplate,
     CreateMessageTemplateRequest,
     UpdateMessageTemplateRequest
-  >(QUERY_KEY, {
-    getAll: async (params) => {
-      const result = await repo.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: result.items || [],
-        pagination: {
-          itemsCount: result.totalCount,
-          pageSize: params.pageSize,
+  >(
+    QUERY_KEY,
+    {
+      getAll: async (params) => {
+        const result = await repo.getAll({
           page: params.page,
-          pagesCount: Math.ceil(result.totalCount / params.pageSize),
-        },
-      };
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: result.items || [],
+          pagination: {
+            itemsCount: result.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: Math.ceil(result.totalCount / params.pageSize),
+          },
+        };
+      },
+      create: async (data) => {
+        const id = await repo.create(data);
+        // No manual success() here on purpose -- deferSuccessEffects (above)
+        // holds the toast until GenericCrudView confirms the custom-field
+        // save (if any) also succeeded; firing it here unconditionally would
+        // defeat that (same reasoning as useUsersViewModel's update).
+        return { id } as unknown as MessageTemplate;
+      },
+      update: async (id, data) => {
+        await repo.update(id, data);
+        return { id } as unknown as MessageTemplate;
+      },
+      delete: async (id) => {
+        await repo.delete(id);
+      },
     },
-    create: async (data) => {
-      await repo.create(data);
-      // Return empty entity to satisfy type — will refresh from server
-      return {} as MessageTemplate;
-    },
-    update: async (id, data) => {
-      await repo.update(id, data);
-      // Return empty entity to satisfy type — will refresh from server
-      return {} as MessageTemplate;
-    },
-    delete: async (id) => {
-      await repo.delete(id);
-    },
-  });
+    { deferSuccessEffects: true }
+  );
 
   // ─── Clone ─────────────────────────────────────────────────
   const cloneMutation = useMutation({
