@@ -72,6 +72,11 @@ import { Booking360Repository } from "./booking-360/src/data/repositories/Bookin
 import type { IBooking360Service } from "./booking-360/src/domain/interfaces/IBooking360Service";
 import type { IBooking360Repository } from "./booking-360/src/domain/interfaces/IBooking360Repository";
 
+import { VenueAttentionService } from "./attention-center/src/data/services/VenueAttentionService";
+import { VenueAttentionRepository } from "./attention-center/src/data/repositories/VenueAttentionRepository";
+import type { IVenueAttentionService } from "./attention-center/src/domain/interfaces/IVenueAttentionService";
+import type { IVenueAttentionRepository } from "./attention-center/src/domain/interfaces/IVenueAttentionRepository";
+
 import { VenueOverviewService } from "./venue-overview/src/data/services/VenueOverviewService";
 import type { IVenueOverviewService } from "./venue-overview/src/domain/interfaces/IVenueOverviewService";
 
@@ -85,6 +90,7 @@ interface VenueContainer {
   customerRepository: ICustomerRepository;
   operationsCalendarRepository: IOperationsCalendarRepository;
   booking360Repository: IBooking360Repository;
+  venueAttentionRepository: IVenueAttentionRepository;
   venueOverviewService: IVenueOverviewService;
   /** Site picker for the Venue Profile "Site" field — OrganizationCore is a different backend module. */
   sitePickerService: ISitePickerService;
@@ -157,6 +163,7 @@ export function getVenueContainer(): VenueContainer {
     resourceSchedulingBookingApi
   );
   const booking360Service: IBooking360Service = new Booking360Service(resourceSchedulingBookingApi);
+  const venueAttentionService: IVenueAttentionService = new VenueAttentionService(resourceSchedulingBookingApi);
 
   container = {
     venueProfileRepository: new VenueProfileRepository(venueProfileService),
@@ -170,6 +177,7 @@ export function getVenueContainer(): VenueContainer {
     customerRepository: new CustomerRepository(customerPickerService),
     operationsCalendarRepository: new OperationsCalendarRepository(operationsCalendarService),
     booking360Repository: new Booking360Repository(booking360Service),
+    venueAttentionRepository: new VenueAttentionRepository(venueAttentionService),
     venueOverviewService: new VenueOverviewService(
       new OperationsCalendarRepository(operationsCalendarService),
       new SchedulableResourceRepository(schedulableResourceService),

@@ -416,6 +416,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Availability Feature
   "/venue/availability": [SYSTEM_PERMISSIONS.AVAILABILITY_CALENDAR_VIEW],
 
+  // Attention Center — individual signals are additionally filtered by their source permissions.
+  "/venue/attention": [SYSTEM_PERMISSIONS.VENUE_ATTENTION_VIEW],
+
   // Booking Operator Workspace — confirmation is deliberately not a page
   // prerequisite so a delegated operator can search and create a hold.
   "/venue/bookings/new": [SYSTEM_PERMISSIONS.RESERVATION_CREATE],

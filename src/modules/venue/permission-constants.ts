@@ -52,6 +52,7 @@ export const VENUE_PERMISSIONS = {
   MAINTENANCE_BLOCK_CREATE: "maintenance-blocks.create",
   MAINTENANCE_BLOCK_UPDATE: "maintenance-blocks.update",
   MAINTENANCE_BLOCK_DELETE: "maintenance-blocks.delete",
+  VENUE_ATTENTION_VIEW: "venue-attention.view",
 
   // ── Booking Operator Workspace ────────────────────────────
   RESERVATION_VIEW: "reservations.view",
