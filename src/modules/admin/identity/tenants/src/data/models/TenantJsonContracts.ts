@@ -32,6 +32,8 @@ export interface TenantJson {
   primaryDomain?: string;
   domainCount?: number;
   adminEmail?: string;
+  countryCode?: string;
+  timeZone?: string;
 }
 
 /**
@@ -98,6 +100,8 @@ export interface CreateTenantJson {
   promotionId?: string;
   promoCode?: string;
   skipPayment?: boolean;
+  countryCode?: string;
+  timeZone?: string;
 }
 
 /**
@@ -120,4 +124,6 @@ export interface UpdateTenantJson {
   description?: string;
   isActive?: boolean;
   address?: string;
+  countryCode?: string;
+  timeZone?: string;
 }

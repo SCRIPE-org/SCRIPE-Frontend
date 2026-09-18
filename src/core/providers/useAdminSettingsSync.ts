@@ -245,8 +245,24 @@ export function useAdminSettingsSync() {
               // Local fields that changed since last sync WIN over server
               for (const field of changedFieldsSinceLastSync.current) {
                 if (field in localData) {
-                  merged[field] = localData[field];
-                  if (JSON.stringify(serverData[field]) !== JSON.stringify(localData[field])) {
+                  // If the field is dashboardLayouts, do a deep key-level merge
+                  // so layouts for different pages do not clobber one another across tabs
+                  if (
+                    field === "dashboardLayouts" &&
+                    typeof localData[field] === "object" &&
+                    localData[field] !== null &&
+                    typeof serverData[field] === "object" &&
+                    serverData[field] !== null
+                  ) {
+                    merged[field] = {
+                      ...serverData[field],
+                      ...localData[field],
+                    };
+                  } else {
+                    merged[field] = localData[field];
+                  }
+
+                  if (JSON.stringify(serverData[field]) !== JSON.stringify(merged[field])) {
                     overriddenFields.push(field);
                   }
                 }

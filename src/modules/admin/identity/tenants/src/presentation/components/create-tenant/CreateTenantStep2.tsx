@@ -1,8 +1,8 @@
 /**
  * CreateTenantStep2 — Administrator Setup
  *
- * Collects: admin email, username.
- * Includes the secure onboarding info callout.
+ * Collects: admin full name, email, username, and contact phone.
+ * Automatically aligns phone dial code with the country selected in Step 1.
  *
  * @module tenants/presentation/components
  */
@@ -11,7 +11,9 @@
 import React from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { UserPlus, Mail, Shield } from "lucide-react";
+import { PhoneInput } from "@core/ui/phone-input";
+import type { Country } from "@core/ui/phone-input";
+import { UserPlus, Mail, Shield, User } from "lucide-react";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 
 interface CreateTenantStep2Props {
@@ -19,10 +21,6 @@ interface CreateTenantStep2Props {
   t: (key: string) => string;
 }
 
-/**
- * Presentation UI component rendering the create tenant step2.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
- */
 export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
   const touched = vm.stepTouched[2];
   const errors = vm.stepErrors[2];
@@ -32,32 +30,47 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="mb-2 flex items-center gap-3">
         <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-info/10">
           <UserPlus className="h-5 w-5 text-info" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold">
-            {t("tenant.stepAdministrator")}
-          </h2>
-          <p className="text-sm text-nx-ink-2">
-            {t("tenant.stepAdministratorDesc")}
-          </p>
+          <h2 className="text-lg font-semibold">{t("tenant.stepAdministrator")}</h2>
+          <p className="text-sm text-nx-ink-2">{t("tenant.stepAdministratorDesc")}</p>
         </div>
       </div>
 
-      {/* Info callout */}
+      {/* Security Callout */}
       <div className="flex items-start gap-3 rounded-nx-md border border-info/20 bg-info/5 p-4">
         <Shield className="mt-0.5 h-5 w-5 shrink-0 text-info" />
         <div className="text-sm text-nx-ink-2">
-          <p className="mb-1 font-medium text-nx-ink">
-            {t("tenant.secureOnboarding")}
-          </p>
+          <p className="mb-1 font-medium text-nx-ink">{t("tenant.secureOnboarding")}</p>
           {t("tenant.secureOnboardingDesc")}
         </div>
       </div>
 
+      {/* Admin Name & Email */}
       <div className="grid gap-5 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="admin-name">{t("tenant.adminFullName")}</Label>
+          <div className="relative">
+            <User
+              className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-2"
+              aria-hidden="true"
+            />
+            <Input
+              id="admin-name"
+              value={vm.form.adminFullName}
+              onChange={(e) => vm.updateField("adminFullName", e.target.value)}
+              placeholder={t("tenant.adminFullNamePlaceholder")}
+              className="ps-10"
+              maxLength={100}
+              autoFocus
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
           <Label htmlFor="admin-email">
             {t("tenant.adminEmail")} <span className="text-destructive">*</span>
@@ -77,7 +90,6 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
               aria-invalid={emailError || undefined}
               aria-describedby={emailError ? "tenant-admin-email-error" : undefined}
               dir="ltr"
-              autoFocus
             />
           </div>
           {emailEmpty && (
@@ -86,16 +98,15 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
             </p>
           )}
           {emailFormatError && (
-            <p className="text-xs text-destructive">
-              {t("validation.invalidEmail")}
-            </p>
+            <p className="text-xs text-destructive">{t("validation.invalidEmail")}</p>
           )}
         </div>
+      </div>
 
+      {/* Username & Phone Number */}
+      <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="admin-username">
-            {t("tenant.adminUsername")}
-          </Label>
+          <Label htmlFor="admin-username">{t("tenant.adminUsername")}</Label>
           <Input
             id="admin-username"
             value={vm.form.adminUsername}
@@ -104,9 +115,16 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
             className="font-mono"
             dir="ltr"
           />
-          <p className="text-xs text-nx-ink-2">
-            {t("tenant.usernameHint")}
-          </p>
+          <p className="text-xs text-nx-ink-2">{t("tenant.usernameHint")}</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="admin-phone">{t("tenant.adminPhone")}</Label>
+          <PhoneInput
+            value={vm.form.adminPhone}
+            onChange={(val) => vm.updateField("adminPhone", val)}
+            defaultCountry={(vm.form.countryCode as Country) || "SA"}
+          />
         </div>
       </div>
     </div>

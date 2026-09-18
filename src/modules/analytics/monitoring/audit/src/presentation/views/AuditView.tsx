@@ -21,6 +21,7 @@ import { PageHeader } from "@core/ui/page-header";
 import { FileText, Radio, Download, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
+import { useAdminContext } from "@core/hooks/useAdminContext";
 
 // Lazy-load table and dialog components
 const AuditLogTable = dynamic(
@@ -48,7 +49,8 @@ const connectionColors = {
 
 /**
  * Presentation UI component rendering the audit view.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Dynamically adjusts context between Platform Audit Explorer
+ * and Tenant Audit & Governance Log.
  */
 export function AuditView() {
   useModuleLocales(() => import("../../../locales"), "audit");
@@ -56,6 +58,7 @@ export function AuditView() {
   const vm = useAuditViewModel();
   const realtime = useAuditRealtime();
   const { t } = useI18n();
+  const { isPlatform, activeTenantName } = useAdminContext();
   const [exportOpen, setExportOpen] = useState(false);
   const pathname = usePathname();
   const isStandalone = pathname === "/audit";
@@ -63,19 +66,26 @@ export function AuditView() {
   const theme = useDashboardTheme();
   const { cardClasses } = theme;
 
+  const title = isPlatform
+    ? "Platform Audit Explorer"
+    : "Organization Audit & Governance Log";
+
+  const subtitle = isPlatform
+    ? "Comprehensive platform event stream, access verification, and cross-tenant compliance records"
+    : `Recorded administrative events, role assignments, and governance history for ${activeTenantName || "this organization"}`;
+
   return (
     <div className="space-y-6">
-      {/* AuditView is embedded as a tab inside DashboardView, which already
-          carries its own PageHeader — rendering this one too would stack two
-          icon-tile headers on the same screen. Only the standalone /audit
-          route gets the full header. */}
       {isStandalone && (
         <PageHeader
           icon={FileText}
-          title={t("audit.title")}
-          description={t("audit.subtitle")}
+          title={title}
+          description={subtitle}
           actions={
             <>
+              <Badge variant="outline" className="px-2.5 py-1 text-xs">
+                {isPlatform ? "Platform Audit" : "Tenant Audit"}
+              </Badge>
               <Button
                 variant="outline"
                 size="sm"

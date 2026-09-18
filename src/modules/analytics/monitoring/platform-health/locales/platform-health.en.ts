@@ -1,0 +1,46 @@
+export const en = {
+  platformHealth: {
+    title: "Platform Health & Observability",
+    subtitle: "Real-time CLR runtime telemetry, infrastructure dependency latencies, and registered module matrix",
+    statusHealthy: "Healthy",
+    statusDegraded: "Degraded",
+    statusUnhealthy: "Unhealthy",
+    refresh: "Refresh Vitals",
+    autoRefresh: "Auto Refresh (10s)",
+    lastChecked: "Last sampled",
+    sections: {
+      runtime: "CLR Runtime Vitals",
+      infrastructure: "Infrastructure Latencies",
+      modules: "Registered Module Matrix",
+    },
+    runtime: {
+      uptime: "Uptime",
+      heapMemory: "Managed Heap Memory",
+      workingSet: "Process Working Set",
+      threadPool: "Active ThreadPool Workers",
+      gcCollections: "GC Collections (Gen 0/1/2)",
+      clrVersion: ".NET Framework",
+      startedAt: "Started at",
+    },
+    infrastructure: {
+      database: "Primary Relational Database",
+      redis: "Redis Cache Cluster",
+      latency: "Ping Latency",
+      mode: "Operating Mode",
+      status: "Connection Status",
+      connected: "Connected",
+      disconnected: "Disconnected",
+    },
+    modules: {
+      name: "Module Name",
+      route: "Route Prefix",
+      version: "Version",
+      status: "In-Process Status",
+      totalActive: "Active Modules",
+    },
+    forbidden: {
+      title: "Access Restricted",
+      description: "Platform Observability is strictly restricted to global Platform SuperAdmins with observability.view permission.",
+    },
+  },
+};

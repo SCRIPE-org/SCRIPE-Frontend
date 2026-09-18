@@ -17,6 +17,8 @@ import { PageHeader } from "@core/ui/page-header";
 import { Shield, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { Badge } from "@core/ui/badge";
 
 // Lazy-load heavy sections (below-the-fold)
 const FailedLoginsHeatmap = dynamic(
@@ -39,13 +41,15 @@ const ReportExportDialog = dynamic(
 
 /**
  * Presentation UI component rendering the security dashboard view.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Dynamically adjusts context between Platform SOC (global cross-tenant)
+ * and Tenant Security & Access Posture.
  */
 export function SecurityDashboardView() {
   useModuleLocales(() => import("../../../locales"), "security");
 
   const vm = useSecurityDashboardViewModel();
   const { t } = useI18n();
+  const { isPlatform, activeTenantName } = useAdminContext();
   const [exportOpen, setExportOpen] = useState(false);
   const pathname = usePathname();
   const isStandalone = pathname === "/security";
@@ -53,19 +57,26 @@ export function SecurityDashboardView() {
   const theme = useDashboardTheme();
   const { cardClasses } = theme;
 
+  const title = isPlatform
+    ? "Security Operations Center"
+    : "Organization Security & Access Posture";
+
+  const subtitle = isPlatform
+    ? "Global threat detection, cross-tenant authentication failures, and brute-force mitigation"
+    : `Access policy enforcement, login security, and credential safety for ${activeTenantName || "this organization"}`;
+
   return (
     <div className="space-y-6">
-      {/* SecurityDashboardView is embedded as a tab inside DashboardView, which
-          already carries its own PageHeader — rendering this one too would
-          stack two icon-tile headers on the same screen. Only the standalone
-          /security route gets the full header. */}
       {isStandalone && (
         <PageHeader
           icon={Shield}
-          title={t("security.title")}
-          description={t("security.subtitle")}
+          title={title}
+          description={subtitle}
           actions={
             <>
+              <Badge variant="outline" className="px-2.5 py-1 text-xs">
+                {isPlatform ? "Platform SOC" : "Tenant Security"}
+              </Badge>
               <Button
                 variant="outline"
                 size="sm"

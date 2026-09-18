@@ -22,6 +22,10 @@ import { appLogger } from "@core/common/logger";
 import type { CreateTenantResult } from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 import type { Permission } from "@modules/identity/core";
+import {
+  getDefaultTimeZoneForCountry,
+  getDefaultCurrencyForCountry,
+} from "@core/constants/countries";
 
 // ─────────────────────────────────────────
 // Types
@@ -34,12 +38,21 @@ export interface StepperFormState {
   // Step 1: Organization
   name: string;
   code: string;
+  organizationType: string;
   description: string;
+  // Step 1: Structured Location & Geography
+  countryCode: string;
+  timeZone: string;
+  city: string;
+  street: string;
+  postalCode: string;
   address: string;
   parentId: string;
   // Step 2: Administrator
   adminEmail: string;
   adminUsername: string;
+  adminFullName: string;
+  adminPhone: string;
   // Step 3: Plan & Billing
   editionId: string;
   subscriptionType: string;
@@ -51,19 +64,27 @@ export interface StepperFormState {
 }
 
 /**
- * Exported constant defining parameters and fields for i n i t i a l_ s t e p p e r_ f o r m configurations.
+ * Exported constant defining parameters and fields for initial stepper form configurations.
  */
 export const INITIAL_STEPPER_FORM: StepperFormState = {
   name: "",
   code: "",
+  organizationType: "academy",
   description: "",
+  countryCode: "SA",
+  timeZone: "Asia/Riyadh",
+  city: "",
+  street: "",
+  postalCode: "",
   address: "",
   parentId: "",
   adminEmail: "",
   adminUsername: "",
+  adminFullName: "",
+  adminPhone: "",
   editionId: "",
   subscriptionType: "",
-  currency: "USD",
+  currency: "SAR",
   skipPayment: false,
   promotionId: "",
   promoCode: "",
@@ -202,6 +223,19 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         ) {
           next.adminUsername = `${(value as string).toLowerCase()}_admin`;
         }
+        // When countryCode changes, cascade default timezone and currency
+        if (field === "countryCode" && value) {
+          const cCode = value as string;
+          next.timeZone = getDefaultTimeZoneForCountry(cCode);
+          next.currency = getDefaultCurrencyForCountry(cCode);
+        }
+        // Auto-compose address from street, city, and postalCode
+        if (field === "street" || field === "city" || field === "postalCode") {
+          const s = field === "street" ? (value as string) : prev.street;
+          const c = field === "city" ? (value as string) : prev.city;
+          const p = field === "postalCode" ? (value as string) : prev.postalCode;
+          next.address = [s, c, p].filter(Boolean).join(", ");
+        }
         // When edition changes, reset subscriptionType to the first enabled type
         if (field === "editionId" && value !== prevEditionIdRef.current) {
           prevEditionIdRef.current = value as string;
@@ -280,6 +314,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     // Step 1
     if (!form.name.trim()) errors[1].push("name");
     if (!form.code.trim()) errors[1].push("code");
+    if (!form.countryCode.trim()) errors[1].push("countryCode");
+    if (!form.timeZone.trim()) errors[1].push("timeZone");
     // Step 2
     if (!form.adminEmail.trim()) errors[2].push("adminEmail");
     if (form.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.adminEmail)) {
@@ -351,6 +387,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         code: form.code.trim(),
         description: form.description.trim() || undefined,
         address: form.address.trim() || undefined,
+        countryCode: form.countryCode.trim() || undefined,
+        timeZone: form.timeZone.trim() || undefined,
         parentId: form.parentId || undefined,
         adminEmail: form.adminEmail.trim(),
         adminUsername: form.adminUsername.trim() || undefined,

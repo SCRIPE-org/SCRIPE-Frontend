@@ -17,6 +17,8 @@ export interface CreateTenantRequest {
   parentId?: string;
   description?: string;
   address?: string;
+  countryCode?: string;
+  timeZone?: string;
   // Step 2: Admin
   adminEmail: string;
   adminUsername?: string;

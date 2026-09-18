@@ -19,6 +19,8 @@ const overviewKeys = {
   summary: (tenantId: string | null) => ["overview", "summary", tenantId ?? "system"] as const,
   recentActivity: (tenantId: string | null) =>
     ["overview", "recent-activity", tenantId ?? "system"] as const,
+  loginActivity: (tenantId: string | null, days: number) =>
+    ["overview", "login-activity", tenantId ?? "system", days] as const,
 };
 
 // ─── Sub-Hooks ───────────────────────────────────────────────────────
@@ -42,6 +44,18 @@ function useOverviewRecentActivity(limit = 5, enabled = true, tenantId: string |
     queryFn: () => repo.getRecentChanges(limit),
     enabled,
     staleTime: 30 * 1000,
+    refetchOnWindowFocus: false,
+    retry: 2,
+  });
+}
+
+function useOverviewLoginActivity(days = 14, enabled = true, tenantId: string | null) {
+  const repo = monitoringContainer.dashboardRepository;
+  return useQuery({
+    queryKey: overviewKeys.loginActivity(tenantId, days),
+    queryFn: () => repo.getLoginActivity(days),
+    enabled,
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
     retry: 2,
   });
@@ -78,18 +92,21 @@ export function useOverviewViewModel(hasDashboardPermission = true) {
   const tenantId = useCurrentTenantId();
   const summary = useOverviewSummary(hasDashboardPermission, tenantId);
   const recentActivity = useOverviewRecentActivity(5, hasDashboardPermission, tenantId);
+  const loginActivity = useOverviewLoginActivity(14, hasDashboardPermission, tenantId);
   const { greeting, displayName } = useGreeting();
 
   const refetchAll = useCallback(() => {
     summary.refetch();
     recentActivity.refetch();
-  }, [summary, recentActivity]);
+    loginActivity.refetch();
+  }, [summary, recentActivity, loginActivity]);
 
   return {
     greeting,
     displayName,
     summary,
     recentActivity,
+    loginActivity,
     refetchAll,
     hasDashboardPermission,
   };

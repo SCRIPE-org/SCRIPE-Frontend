@@ -25,6 +25,7 @@ import { en as analyticsEn, ar as analyticsAr } from "@modules/monitoring/analyt
 import { en as auditEn, ar as auditAr } from "@modules/monitoring/audit/locales";
 import { en as dashboardEn, ar as dashboardAr } from "@modules/monitoring/dashboard/locales";
 import { en as securityEn, ar as securityAr } from "@modules/monitoring/security/locales";
+import { en as platformHealthEn, ar as platformHealthAr } from "@modules/monitoring/platform-health/locales";
 
 // ─── Identity ──────────────────────────────────────────
 import { en as adminEn, ar as adminAr } from "@modules/identity/admin/locales";
@@ -272,6 +273,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   auditEn,
   dashboardEn,
   securityEn,
+  platformHealthEn,
   // Identity
   adminEn,
   idpEn,
@@ -375,6 +377,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   auditAr,
   dashboardAr,
   securityAr,
+  platformHealthAr,
   // Identity
   adminAr,
   idpAr,

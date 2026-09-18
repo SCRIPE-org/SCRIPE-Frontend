@@ -1,0 +1,46 @@
+export const ar = {
+  platformHealth: {
+    title: "صحة المنصة والمراقبة التشغيلية",
+    subtitle: "قياسات حية لبيئة تشغيل دوت نت، زمن استجابة البنية التحتية، ومصفوفة الوحدات البرمجية المسجلة",
+    statusHealthy: "سليم",
+    statusDegraded: "متدهور",
+    statusUnhealthy: "غير سليم",
+    refresh: "تحديث القياسات",
+    autoRefresh: "تحديث تلقائي (10 ثوانٍ)",
+    lastChecked: "آخر فحص",
+    sections: {
+      runtime: "قياسات بيئة التشغيل CLR",
+      infrastructure: "زمن استجابة البنية التحتية",
+      modules: "مصفوفة الوحدات البرمجية المسجلة",
+    },
+    runtime: {
+      uptime: "مدة التشغيل المستمر",
+      heapMemory: "ذاكرة الـ Heap المدارة",
+      workingSet: "ذاكرة العملية العاملة",
+      threadPool: "خيوط المعالجة النشطة",
+      gcCollections: "عمليات جمع القمامة (Gen 0/1/2)",
+      clrVersion: "إصدار بيئة دوت نت",
+      startedAt: "بدأ في",
+    },
+    infrastructure: {
+      database: "قاعدة البيانات العلائقية الأساسية",
+      redis: "عنقود التخزين المؤقت Redis",
+      latency: "زمن استجابة Ping",
+      mode: "نمط التشغيل",
+      status: "حالة الاتصال",
+      connected: "متصل",
+      disconnected: "منفصل",
+    },
+    modules: {
+      name: "اسم الوحدة",
+      route: "بادئة المسار",
+      version: "الإصدار",
+      status: "حالة المعالجة الداخلية",
+      totalActive: "الوحدات النشطة",
+    },
+    forbidden: {
+      title: "الوصول مقيد",
+      description: "لوحة مراقبة المنصة مقصورة حصرياً على مدراء المنصة العامين الحاصلين على صلاحية observability.view.",
+    },
+  },
+};
