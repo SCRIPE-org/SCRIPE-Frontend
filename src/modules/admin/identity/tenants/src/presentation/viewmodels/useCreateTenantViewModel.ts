@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -23,9 +23,15 @@ import type { CreateTenantResult } from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 import type { Permission } from "@modules/identity/core";
 import {
+  COUNTRIES,
   getDefaultTimeZoneForCountry,
   getDefaultCurrencyForCountry,
 } from "@core/constants/countries";
+import {
+  getGeoTerritory,
+  validatePostalCode,
+  formatInternationalAddress,
+} from "@core/constants/geo-territories";
 
 // ─────────────────────────────────────────
 // Types
@@ -43,7 +49,9 @@ export interface StepperFormState {
   // Step 1: Structured Location & Geography
   countryCode: string;
   timeZone: string;
+  state: string; // Governorate / Province / Emirate / State / Region
   city: string;
+  district: string; // Neighborhood / Sub-District / الحي
   street: string;
   postalCode: string;
   address: string;
@@ -73,7 +81,9 @@ export const INITIAL_STEPPER_FORM: StepperFormState = {
   description: "",
   countryCode: "SA",
   timeZone: "Asia/Riyadh",
+  state: "",
   city: "",
+  district: "",
   street: "",
   postalCode: "",
   address: "",
@@ -223,18 +233,50 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         ) {
           next.adminUsername = `${(value as string).toLowerCase()}_admin`;
         }
-        // When countryCode changes, cascade default timezone and currency
+        // When countryCode changes, cascade default timezone, currency, and reset geographic subdivisions
         if (field === "countryCode" && value) {
           const cCode = value as string;
           next.timeZone = getDefaultTimeZoneForCountry(cCode);
           next.currency = getDefaultCurrencyForCountry(cCode);
+          next.state = "";
+          next.city = "";
+          next.district = "";
+          next.postalCode = "";
         }
-        // Auto-compose address from street, city, and postalCode
-        if (field === "street" || field === "city" || field === "postalCode") {
-          const s = field === "street" ? (value as string) : prev.street;
-          const c = field === "city" ? (value as string) : prev.city;
-          const p = field === "postalCode" ? (value as string) : prev.postalCode;
-          next.address = [s, c, p].filter(Boolean).join(", ");
+        // When state changes, reset dependent city and district
+        if (field === "state") {
+          next.city = "";
+          next.district = "";
+        }
+        // Auto-compose address from street, district, city, state, postalCode, and country
+        if (
+          field === "street" ||
+          field === "district" ||
+          field === "city" ||
+          field === "state" ||
+          field === "postalCode" ||
+          field === "countryCode"
+        ) {
+          const str = field === "street" ? (value as string) : next.street;
+          const dst = field === "district" ? (value as string) : next.district;
+          const ct = field === "city" ? (value as string) : next.city;
+          const st = field === "state" ? (value as string) : next.state;
+          const pc = field === "postalCode" ? (value as string) : next.postalCode;
+          const cc = field === "countryCode" ? (value as string) : next.countryCode;
+
+          const countryObj = COUNTRIES.find((c) => c.code === cc);
+          const territory = getGeoTerritory(cc);
+          const stateObj = territory.states.find((s) => s.code === st || s.name === st);
+          const stateDisplay = stateObj ? stateObj.name : st;
+
+          next.address = formatInternationalAddress({
+            street: str,
+            district: dst,
+            city: ct,
+            state: stateDisplay,
+            postalCode: pc,
+            countryName: countryObj?.name,
+          });
         }
         // When edition changes, reset subscriptionType to the first enabled type
         if (field === "editionId" && value !== prevEditionIdRef.current) {
@@ -265,7 +307,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
 
   // ── Auto-select first enabled subscription type when edition changes and type is empty ──
   // This runs when cachedEditions update after edition search completes
-  useMemo(() => {
+  useEffect(() => {
     if (form.editionId && !form.subscriptionType && enabledSubscriptionTypes.length > 0) {
       const firstEnabled = enabledSubscriptionTypes[0]?.value;
       if (firstEnabled) {
@@ -302,6 +344,11 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     [tenantRepository]
   );
 
+  // Eagerly fetch initial editions on mount so options are available immediately
+  useEffect(() => {
+    handleSearchEditions("");
+  }, [handleSearchEditions]);
+
   // ── Step validation ──
   const [stepTouched, setStepTouched] = useState<Record<StepId, boolean>>({
     1: false,
@@ -316,12 +363,28 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     if (!form.code.trim()) errors[1].push("code");
     if (!form.countryCode.trim()) errors[1].push("countryCode");
     if (!form.timeZone.trim()) errors[1].push("timeZone");
+
+    const territory = getGeoTerritory(form.countryCode);
+    if (territory.states.length > 0 && !form.state.trim()) {
+      errors[1].push("state");
+    }
+    if (!form.city.trim()) {
+      errors[1].push("city");
+    }
+    if (form.postalCode.trim()) {
+      if (!validatePostalCode(form.countryCode, form.postalCode)) {
+        errors[1].push("postalCode");
+      }
+    } else if (territory.postalCodeRequired) {
+      errors[1].push("postalCodeRequired");
+    }
     // Step 2
     if (!form.adminEmail.trim()) errors[2].push("adminEmail");
     if (form.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.adminEmail)) {
       errors[2].push("adminEmailFormat");
     }
-    // Step 3 — no required fields (edition is optional)
+    // Step 3 — Edition is required by CreateTenantCommandValidator
+    if (!form.editionId?.trim()) errors[3].push("editionId");
     return errors;
   }, [form]);
 

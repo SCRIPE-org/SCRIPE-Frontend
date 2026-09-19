@@ -1,8 +1,9 @@
 /**
- * CreateTenantLocationFields — Structured Geographic & Operating Territory
+ * CreateTenantLocationFields — Country-Adaptive Geographic Territory & Address Engine
  *
- * Collects country, operating timezone, city, street, and postal code.
- * Replaces unstructured address textarea with structured geospatial fields.
+ * Implements Google i18n & Universal Postal Union (UPU S42) compliant administrative division
+ * hierarchy: Country -> State/Governorate/Emirate -> City/District (Creatable) -> Neighborhood -> Postal Code.
+ * Overcomes OS emoji limitations by rendering vector SVG flags via CountryFlag.
  *
  * @module tenants/presentation/components
  */
@@ -15,33 +16,89 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { COUNTRIES } from "@core/constants/countries";
 import { TimezonePicker } from "@/modules/custom-fields/custom-fields/custom-field/src/presentation/controls/DateTime/TimezonePicker";
-import { MapPin, Globe, Clock } from "lucide-react";
+import { CountryFlag } from "@core/ui/country-flag";
+import { CreatableCombobox } from "@core/ui/creatable-combobox";
+import { getGeoTerritory } from "@core/constants/geo-territories";
+import { useI18n } from "@core/providers/i18n-provider";
+import { MapPin, Globe, Clock, Building2, Navigation } from "lucide-react";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 
 interface CreateTenantLocationFieldsProps {
   vm: CreateTenantVM;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, any>) => string;
 }
 
 export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFieldsProps) {
+  const { language } = useI18n();
+  const isAr = language === "ar";
+
   const touched = vm.stepTouched[1];
   const errors = vm.stepErrors[1];
+
   const countryError = touched && errors.includes("countryCode");
   const timeZoneError = touched && errors.includes("timeZone");
+  const stateError = touched && errors.includes("state");
+  const cityError = touched && errors.includes("city");
+  const postalError = touched && errors.includes("postalCode");
+  const postalRequiredError = touched && errors.includes("postalCodeRequired");
 
+  // Dynamic territorial administrative configuration based on selected country
+  const territory = useMemo(() => getGeoTerritory(vm.form.countryCode), [vm.form.countryCode]);
+
+  const divisionLabel = isAr ? territory.divisionLabelAr : territory.divisionLabel;
+  const cityLabel = isAr ? territory.cityLabelAr : territory.cityLabel;
+  const districtLabel = isAr
+    ? territory.districtLabelAr ?? "الحي / المنطقة الفرعية"
+    : territory.districtLabel ?? "Neighborhood / District";
+
+  // Country options with crisp vector SVG flags (never raw emoji characters)
   const countryOptions: GenericSelectOption[] = useMemo(
     () =>
       COUNTRIES.map((c) => ({
         value: c.code,
-        label: `${c.flag}  ${c.name} (${c.code})`,
+        label: `${c.name} (${c.code})`,
+        icon: <CountryFlag countryCode={c.code} countryName={c.name} size="sm" />,
       })),
     []
   );
 
+  // Administrative subdivisions (Governorates, Provinces, Emirates, States)
+  const stateOptions: GenericSelectOption[] = useMemo(
+    () =>
+      territory.states.map((s) => ({
+        value: s.code,
+        label: isAr ? `${s.nameAr} (${s.name})` : `${s.name} (${s.nameAr})`,
+      })),
+    [territory.states, isAr]
+  );
+
+  // Available cities / districts for the selected administrative division
+  const citySuggestions = useMemo(() => {
+    if (territory.states.length === 0) return [];
+    const selectedState = territory.states.find(
+      (s) => s.code === vm.form.state || s.name === vm.form.state
+    );
+    return selectedState ? selectedState.cities : [];
+  }, [territory.states, vm.form.state]);
+
+  const cityPlaceholder = useMemo(() => {
+    if (territory.states.length > 0 && !vm.form.state) {
+      return isAr
+        ? `يرجى اختيار ${divisionLabel} أولاً...`
+        : `Select ${divisionLabel} first...`;
+    }
+    return isAr
+      ? `اختر أو اكتب اسم ${cityLabel}...`
+      : `Select or type ${cityLabel}...`;
+  }, [territory.states.length, vm.form.state, isAr, divisionLabel, cityLabel]);
+
   return (
     <div className="space-y-4 rounded-nx-md border border-nx-line bg-nx-raised/40 p-4 sm:p-5">
+      {/* Header */}
       <div className="flex items-center gap-2.5 border-b border-nx-line/60 pb-3">
-        <MapPin className="h-4 w-4 text-nx-accent" />
+        <div className="flex h-7 w-7 items-center justify-center rounded-nx-sm bg-nx-accent/15 text-nx-accent">
+          <MapPin className="h-4 w-4" />
+        </div>
         <div>
           <h3 className="text-sm font-semibold text-nx-ink">
             {t("tenant.operatingTerritory")}
@@ -52,6 +109,7 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
         </div>
       </div>
 
+      {/* Row 1: Country & Timezone */}
       <div className="grid gap-4 sm:grid-cols-2">
         {/* Country */}
         <div className="space-y-1.5">
@@ -97,36 +155,159 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
         </div>
       </div>
 
-      {/* Structured Address: City + Postal Code */}
+      {/* Row 2: Territorial Administrative Division & City / District */}
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="space-y-1.5">
-          <Label htmlFor="tenant-city" className="text-xs font-medium">
-            {t("tenant.city")}
-          </Label>
-          <Input
-            id="tenant-city"
-            value={vm.form.city}
-            onChange={(e) => vm.updateField("city", e.target.value)}
-            placeholder={t("tenant.cityPlaceholder")}
-            maxLength={100}
-          />
-        </div>
+        {/* State / Province / Governorate / Emirate */}
+        {territory.states.length > 0 ? (
+          <div className="space-y-1.5">
+            <Label htmlFor="tenant-state" className="flex items-center gap-1.5 text-xs font-medium">
+              <Building2 className="h-3.5 w-3.5 text-nx-ink-2" />
+              {divisionLabel} <span className="text-destructive">*</span>
+            </Label>
+            <GenericSelect
+              id="tenant-state"
+              type="searchable"
+              searchType="client"
+              allowClear={false}
+              options={stateOptions}
+              value={vm.form.state}
+              onValueChange={(v: string | string[]) =>
+                vm.updateField("state", (Array.isArray(v) ? v[0] : v) || "")
+              }
+              placeholder={
+                isAr
+                  ? `اختر ${divisionLabel}...`
+                  : `Select ${divisionLabel}...`
+              }
+              searchPlaceholder={
+                isAr
+                  ? `البحث في ${divisionLabel}...`
+                  : `Search ${divisionLabel}...`
+              }
+              aria-invalid={stateError || undefined}
+            />
+            {stateError && (
+              <p className="text-xs text-destructive">{t("validation.required")}</p>
+            )}
+          </div>
+        ) : (
+          <div className="space-y-1.5">
+            <Label htmlFor="tenant-state" className="flex items-center gap-1.5 text-xs font-medium">
+              <Building2 className="h-3.5 w-3.5 text-nx-ink-2" />
+              {divisionLabel} <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
+            </Label>
+            <Input
+              id="tenant-state"
+              value={vm.form.state}
+              onChange={(e) => vm.updateField("state", e.target.value)}
+              placeholder={isAr ? `أدخل ${divisionLabel}...` : `Enter ${divisionLabel}...`}
+              maxLength={100}
+            />
+          </div>
+        )}
 
+        {/* City / District (Creatable Combobox with Hadayek El Maadi support) */}
         <div className="space-y-1.5">
-          <Label htmlFor="tenant-postal" className="text-xs font-medium">
-            {t("tenant.postalCode")}
+          <Label htmlFor="tenant-city" className="flex items-center gap-1.5 text-xs font-medium">
+            <Navigation className="h-3.5 w-3.5 text-nx-ink-2" />
+            {cityLabel} <span className="text-destructive">*</span>
           </Label>
+          <CreatableCombobox
+            id="tenant-city"
+            options={citySuggestions}
+            value={vm.form.city}
+            onChange={(val) => vm.updateField("city", val)}
+            placeholder={cityPlaceholder}
+            searchPlaceholder={
+              isAr
+                ? `ابحث أو اكتب اسم ${cityLabel}...`
+                : `Search or type ${cityLabel}...`
+            }
+            emptyText={
+              isAr
+                ? `لا توجد نتائج مطابقة، يمكنك استخدام ما كتبته أعلاه`
+                : `No preset match. You can use typed entry above.`
+            }
+            createLabel={(q) =>
+              isAr ? `+ استخدام "${q}"` : `+ Use "${q}"`
+            }
+            allowCreate={true}
+            allowClear={true}
+            disabled={territory.states.length > 0 && !vm.form.state}
+            aria-invalid={cityError || undefined}
+          />
+          {cityError && (
+            <p className="text-xs text-destructive">{t("validation.required")}</p>
+          )}
+        </div>
+      </div>
+
+      {/* Row 3: District / Sub-neighborhood (if applicable) & Postal Code */}
+      <div className={`grid gap-4 ${territory.hasDistrict ? "sm:grid-cols-2" : "sm:grid-cols-1"}`}>
+        {/* District / Neighborhood */}
+        {territory.hasDistrict && (
+          <div className="space-y-1.5">
+            <Label htmlFor="tenant-district" className="flex items-center gap-1.5 text-xs font-medium">
+              <span>{districtLabel}</span>
+              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
+            </Label>
+            <Input
+              id="tenant-district"
+              value={vm.form.district}
+              onChange={(e) => vm.updateField("district", e.target.value)}
+              placeholder={
+                isAr
+                  ? "مثال: المعادي الجديدة، حي النرجس، العليا"
+                  : "e.g. New Maadi, Al Olaya, etc."
+              }
+              maxLength={100}
+            />
+          </div>
+        )}
+
+        {/* Postal Code / ZIP */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="tenant-postal" className="text-xs font-medium">
+              {t("tenant.postalCode")}
+              {territory.postalCodeRequired ? (
+                <span className="text-destructive ms-0.5">*</span>
+              ) : (
+                <span className="text-[10px] text-nx-ink-3 ms-1.5">
+                  ({isAr ? "اختياري / غير معتمد" : "Optional / Not in use"})
+                </span>
+              )}
+            </Label>
+            {(isAr ? territory.postalCodeHelpTextAr : territory.postalCodeHelpText) && (
+              <span className="text-[10px] text-nx-ink-3">
+                {isAr ? territory.postalCodeHelpTextAr : territory.postalCodeHelpText}
+              </span>
+            )}
+          </div>
           <Input
             id="tenant-postal"
             value={vm.form.postalCode}
             onChange={(e) => vm.updateField("postalCode", e.target.value)}
-            placeholder={t("tenant.postalCodePlaceholder")}
+            placeholder={
+              isAr ? territory.postalCodePlaceholderAr : territory.postalCodePlaceholder
+            }
             maxLength={30}
+            aria-invalid={postalError || postalRequiredError || undefined}
           />
+          {postalRequiredError && (
+            <p className="text-xs text-destructive">{t("validation.required")}</p>
+          )}
+          {postalError && (
+            <p className="text-xs text-destructive">
+              {isAr
+                ? `صيغة الرمز البريدي غير متوافقة مع معايير ${territory.nameAr}`
+                : `Invalid postal code format for ${territory.name}`}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Street / Facility Campus */}
+      {/* Row 4: Street / Facility Campus */}
       <div className="space-y-1.5">
         <Label htmlFor="tenant-street" className="text-xs font-medium">
           {t("tenant.streetAddress")}
@@ -140,11 +321,18 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
         />
       </div>
 
-      {/* Formatted Address Preview */}
+      {/* Row 5: Real-time Formatted Address Preview (UPU S42) */}
       {vm.form.address && (
-        <div className="flex items-center gap-2 rounded-nx-sm bg-nx-ground px-3 py-2 text-xs text-nx-ink-2">
-          <span className="font-medium text-nx-ink">{t("tenant.addressPreview")}:</span>
-          <span className="truncate">{vm.form.address}</span>
+        <div className="flex items-center gap-2.5 rounded-nx-sm border border-nx-line/50 bg-nx-ground/70 px-3.5 py-2.5 text-xs text-nx-ink-2 shadow-nx-xs">
+          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent/20 text-nx-accent">
+            <MapPin className="h-3 w-3" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="font-semibold text-nx-ink">{t("tenant.addressPreview")}</div>
+            <div className="truncate font-mono text-[11px] text-nx-ink-2" title={vm.form.address}>
+              {vm.form.address}
+            </div>
+          </div>
         </div>
       )}
     </div>

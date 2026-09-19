@@ -125,7 +125,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
               <span>{t("tenant.slugPreview")}:</span>
               <code className="rounded bg-nx-raised px-1.5 py-0.5 font-mono text-[11px] text-nx-accent">
-                {vm.form.code ? `${vm.form.code.toLowerCase()}.scripe.io` : "slug.scripe.io"}
+                {vm.form.code ? `${vm.form.code.toLowerCase()}.scripe.org` : "slug.scripe.org"}
               </code>
             </div>
           )}

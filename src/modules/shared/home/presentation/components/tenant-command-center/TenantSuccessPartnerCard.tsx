@@ -28,7 +28,7 @@ export function TenantSuccessPartnerCard() {
         size="sm"
         className="w-full h-8 text-[11px] font-semibold border-white/20 bg-white/10 hover:bg-white/20 text-white"
       >
-        <a href="mailto:support@scripe.io">
+        <a href="mailto:support@scripe.org">
           {t("tenantCommandCenter.partner.contactSupport") || "Contact Support"}
         </a>
       </Button>

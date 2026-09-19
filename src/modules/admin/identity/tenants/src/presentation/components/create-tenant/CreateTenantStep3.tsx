@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CreateTenantStep3 — Plan & Billing
  *
  * Collects: edition (server-searchable), subscription type, currency,
@@ -21,7 +21,6 @@ import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { CreditCard, AlertTriangle, ShieldCheck } from "lucide-react";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 import { CreateTenantPromoField } from "./CreateTenantPromoField";
-import { CreateTenantPermissionsCard } from "./CreateTenantPermissionsCard";
 import { CreateTenantSummary } from "./CreateTenantSummary";
 
 // ── Static options ──────────────────────────────────────────
@@ -88,7 +87,9 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Edition — searchable GenericSelect with server search */}
       <div className="space-y-2">
-        <Label>{t("tenant.edition")}</Label>
+        <Label>
+          {t("tenant.edition")} <span className="text-destructive">*</span>
+        </Label>
         <GenericSelect
           type="searchable"
           searchType="server"
@@ -100,6 +101,11 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
           searchPlaceholder={t("tenant.searchEditions")}
           noResultsText={t("common.noResults")}
         />
+        {vm.stepTouched[3] && vm.stepErrors[3]?.includes("editionId") && (
+          <p className="text-xs text-destructive">
+            {t("tenant.editionRequired")}
+          </p>
+        )}
       </div>
 
       {/* Free Edition Banner */}
@@ -179,8 +185,20 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
         </div>
       )}
 
-      {/* Advanced: Restrict Permissions */}
-      <CreateTenantPermissionsCard vm={vm} t={t} />
+      {/* Plan-Governed Permissions Banner */}
+      <div className="flex items-start gap-3 rounded-nx-md border border-primary/20 bg-primary/5 p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-primary/10">
+          <ShieldCheck className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <p className="text-sm font-medium text-nx-ink-1">
+            {t("tenant.editionGovernanceTitle")}
+          </p>
+          <p className="mt-1 text-xs text-nx-ink-2 leading-relaxed">
+            {t("tenant.editionGovernanceDesc")}
+          </p>
+        </div>
+      </div>
 
       {/* Summary */}
       {vm.form.editionId && <CreateTenantSummary vm={vm} t={t} />}
