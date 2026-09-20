@@ -38,4 +38,15 @@ export class CustomFieldValueService implements ICustomFieldValueService {
       { ownerIds }
     );
   }
+
+  async revealValue(
+    entityTypeKey: string,
+    ownerId: string,
+    fieldKey: string
+  ): Promise<{ value: unknown }> {
+    return this.api.post<{ value: unknown }>(
+      CUSTOM_FIELD_VALUE_ENDPOINTS.REVEAL(entityTypeKey, ownerId, fieldKey),
+      {}
+    );
+  }
 }

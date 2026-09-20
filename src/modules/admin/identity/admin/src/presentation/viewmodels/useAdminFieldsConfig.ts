@@ -61,13 +61,6 @@ export function useAdminFieldsConfig(
       description: t("admin.sendSetupEmailDescription"),
     },
     {
-      name: "deferCustomFieldsToSetup",
-      label: t("admin.deferCustomFieldsToSetup"),
-      type: "switch" as const,
-      description: t("admin.deferCustomFieldsToSetupDescription"),
-      isVisible: (values: Record<string, unknown>) => values.sendSetupEmail !== false,
-    },
-    {
       name: "password",
       label: t("admin.password"),
       type: "password" as const,
@@ -168,7 +161,7 @@ export function useAdminFieldsConfig(
     notes: "",
     sendSetupEmail: true,
     mustChangePassword: false,
-    deferCustomFieldsToSetup: true,
+    deferCustomFieldsToSetup: false,
   };
 
   const editInitialValues = (admin: Admin) => ({

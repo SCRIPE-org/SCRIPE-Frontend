@@ -65,8 +65,12 @@ export const CUSTOM_FIELDS_PERMISSIONS = {
   // ── Import / Export (Wave 6 rows 6.4 and 6.5) ─────────────
   EXPORT: "custom-fields.export",
   IMPORT: "custom-fields.import",
+
+  // ── Sensitive Fields (Wave 6 / Security) ───────────────────
+  VIEW_SENSITIVE: "custom-fields.view-sensitive",
 } as const;
 
 export const CUSTOM_FIELDS_EXPORT_PERMISSION = "custom-fields.export";
 export const CUSTOM_FIELDS_IMPORT_PERMISSION = "custom-fields.import";
+export const CUSTOM_FIELDS_VIEW_SENSITIVE_PERMISSION = "custom-fields.view-sensitive";
 

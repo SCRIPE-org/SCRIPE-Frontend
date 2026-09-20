@@ -62,6 +62,7 @@ import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { PermissionCode } from "@core/common/types/permissions";
 import { AlertCircle } from "lucide-react";
+import { parseApiValidationError } from "@core/common/api-validation-error";
 // Type-only for the props contract, plus the registry READ. Not a cycle: this
 // module is `core`, and customFieldsExtension.tsx's own import of `FieldConfig`
 // from this file is `import type`, erased at build — its only runtime imports
@@ -296,6 +297,7 @@ export interface FieldConfig {
   disabled?: boolean; // Disable field
   // Validation
   pattern?: string; // For text inputs
+  patternError?: string; // Custom error message when pattern fails
   minLength?: number; // For text inputs
   maxLength?: number; // For text inputs
   // Permissions
@@ -980,6 +982,17 @@ export function GenericForm({
         return;
       }
 
+      // Pattern validation for inputs with pattern attribute
+      if (
+        (field as any).pattern &&
+        typeof val === "string" &&
+        val.trim() !== "" &&
+        !new RegExp((field as any).pattern).test(val)
+      ) {
+        newErrors[field.name] = (field as any).patternError || t("validation.patternMismatch") || "Invalid format";
+        return;
+      }
+
       // Check required
       const required = isFieldRequired(field, formData);
       if (!required) return;
@@ -1067,10 +1080,41 @@ export function GenericForm({
       });
       await onSubmit(submitData);
     } catch (error) {
-      // There was no catch at all. The CRUD viewmodels re-throw, so a failed
-      // save escaped as an unhandled rejection and the form rendered nothing —
-      // the user pressed Save, the spinner stopped, and no reason appeared.
-      setServerError(error instanceof Error ? error.message : String(error));
+      // Parse ASP.NET RFC 7807/9110 and standard API validation errors into field-level errors
+      const parsed = parseApiValidationError(
+        error,
+        fields.map((f) => f.name)
+      );
+      if (parsed.hasFieldErrors) {
+        setErrors((prev) => ({ ...prev, ...parsed.fieldErrors }));
+        const firstErrorField = visibleFields.find((f) => parsed.fieldErrors[f.name]);
+        if (firstErrorField) {
+          setTimeout(() => {
+            const el =
+              document.getElementById(firstErrorField.name) ||
+              document.querySelector(`[name="${firstErrorField.name}"]`) ||
+              document.querySelector(`[data-field-name="${firstErrorField.name}"]`);
+            if (el) {
+              el.scrollIntoView?.({ behavior: "smooth", block: "center" });
+              const focusTarget =
+                el instanceof HTMLInputElement ||
+                el instanceof HTMLTextAreaElement ||
+                el instanceof HTMLSelectElement ||
+                el instanceof HTMLButtonElement
+                  ? el
+                  : el.querySelector<HTMLElement>(
+                      "input, textarea, button, select, [tabindex]:not([tabindex='-1'])"
+                    ) || el;
+              if (focusTarget && typeof focusTarget.focus === "function") {
+                focusTarget.focus({ preventScroll: true });
+              }
+            }
+          }, 50);
+        }
+      }
+      setServerError(
+        parsed.summaryMessage || (error instanceof Error ? error.message : String(error))
+      );
     } finally {
       setLoading(false);
     }

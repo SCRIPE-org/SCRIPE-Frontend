@@ -608,25 +608,63 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     viewModel.viewItem?.id
   );
 
-  const hasDeferCustomFieldsSwitch = useMemo(
-    () => createFields?.some((f) => f.name === "deferCustomFieldsToSetup"),
-    [createFields]
-  );
-
   const createFieldsWithCustom = useMemo(() => {
     const rawCustomConfigs = customFieldsForCreate.fieldConfigs;
-    const mappedCustomConfigs = hasDeferCustomFieldsSwitch
+    const hasCustomFields = rawCustomConfigs.length > 0;
+    const hasSendSetupEmail = Boolean(createFields?.some((f) => f.name === "sendSetupEmail"));
+    const alreadyHasDeferSwitch = Boolean(
+      createFields?.some((f) => f.name === "deferCustomFieldsToSetup")
+    );
+
+    // If there are no custom fields for the entity, do not include deferCustomFieldsToSetup
+    let baseFields = createFields ?? [];
+    if (!hasCustomFields && alreadyHasDeferSwitch) {
+      baseFields = baseFields.filter((f) => f.name !== "deferCustomFieldsToSetup");
+    }
+
+    if (!hasCustomFields) {
+      return baseFields.filter((field) => !isFieldRestricted(field.name));
+    }
+
+    const shouldInjectDeferSwitch = hasSendSetupEmail && !alreadyHasDeferSwitch;
+    const hasDeferSwitch = alreadyHasDeferSwitch || shouldInjectDeferSwitch;
+
+    const mappedCustomConfigs = hasDeferSwitch
       ? rawCustomConfigs.map((fc) => ({
           ...fc,
           isVisible: (values: Record<string, any>) =>
-            values.sendSetupEmail === false || values.deferCustomFieldsToSetup === false,
+            (values.sendSetupEmail === false || values.deferCustomFieldsToSetup === false) &&
+            (!fc.isVisible || fc.isVisible(values)),
         }))
       : rawCustomConfigs;
 
-    return [...(createFields ?? []), ...mappedCustomConfigs].filter(
+    const injectedFields: FieldConfig[] = [];
+    if (shouldInjectDeferSwitch) {
+      const deferSwitch: FieldConfig = {
+        name: "deferCustomFieldsToSetup",
+        label:
+          t("admin.deferCustomFieldsToSetup") ||
+          "Complete custom fields during account setup",
+        type: "switch",
+        description:
+          t("admin.deferCustomFieldsToSetupDescription") ||
+          "Allow completing custom fields during the account setup invitation flow",
+        section: "Custom Fields",
+        defaultValue: false,
+        isVisible: (values: Record<string, any>) => values.sendSetupEmail !== false,
+      };
+      injectedFields.push(deferSwitch);
+    }
+
+    return [...baseFields, ...injectedFields, ...mappedCustomConfigs].filter(
       (field) => !isFieldRestricted(field.name)
     );
-  }, [createFields, customFieldsForCreate.fieldConfigs, hasDeferCustomFieldsSwitch, isFieldRestricted]);
+  }, [
+    createFields,
+    customFieldsForCreate.fieldConfigs,
+    isFieldRestricted,
+    t,
+  ]);
 
   /**
    * Splits a submitted form's data into the entity's own fields and the

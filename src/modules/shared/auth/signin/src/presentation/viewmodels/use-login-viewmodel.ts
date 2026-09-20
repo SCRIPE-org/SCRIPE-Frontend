@@ -43,6 +43,19 @@ export function useLoginViewModel() {
   const [loginStep, setLoginStep] = useState<LoginStep>("credentials");
   const [tenantId, setTenantIdState] = useState<string | undefined>(undefined);
 
+  // Unactivated account auto-resend state and 60s cooldown timer
+  const [isAccountNotActivated, setIsAccountNotActivated] = useState(false);
+  const [accountNotActivatedMessage, setAccountNotActivatedMessage] = useState("");
+  const [cooldownSeconds, setCooldownSeconds] = useState(0);
+
+  useEffect(() => {
+    if (cooldownSeconds <= 0) return;
+    const timer = setInterval(() => {
+      setCooldownSeconds((prev) => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldownSeconds]);
+
   // Ref holds LATEST resolved tenantId without triggering re-renders — eliminates
   // the race condition where handleLogin captures a stale tenantId before LoginView's
   // useEffect can update it.
@@ -199,7 +212,26 @@ export function useLoginViewModel() {
           workspaceSelector.showWorkspaces(workspaces);
           return;
         }
-        setErrorWithShake(err instanceof Error ? err.message : "Login failed");
+        const details = (err as any)?.details;
+        const code = details?.code || details?.error;
+        const errMsg = err instanceof Error ? err.message : "Login failed";
+        const isUnactivated =
+          code === "AUTH_ACCOUNT_NOT_ACTIVATED" ||
+          code === "AccountNotActivated" ||
+          errMsg.toLowerCase().includes("account setup link") ||
+          errMsg.toLowerCase().includes("not yet activated") ||
+          errMsg.toLowerCase().includes("activate your account");
+
+        if (isUnactivated) {
+          setIsAccountNotActivated(true);
+          setAccountNotActivatedMessage(errMsg);
+          setCooldownSeconds(60);
+          setError("");
+          return;
+        }
+
+        setIsAccountNotActivated(false);
+        setErrorWithShake(errMsg);
       }
     },
     [
@@ -220,8 +252,11 @@ export function useLoginViewModel() {
     (field: keyof LoginFormData, value: string | boolean) => {
       setFormData((prev) => ({ ...prev, [field]: value }));
       if (error) setError("");
+      if (field === "identifier" && isAccountNotActivated) {
+        setIsAccountNotActivated(false);
+      }
     },
-    [error]
+    [error, isAccountNotActivated]
   );
 
   const togglePasswordVisibility = useCallback(() => {
@@ -233,6 +268,7 @@ export function useLoginViewModel() {
     twoFA.reset2FA();
     workspaceSelector.clearWorkspaces();
     setError("");
+    setIsAccountNotActivated(false);
     hasTriggeredRedirect.current = false;
   }, [twoFA, workspaceSelector]);
 
@@ -242,6 +278,7 @@ export function useLoginViewModel() {
     setError("");
     setIsRedirecting(false);
     setLoginStep("credentials");
+    setIsAccountNotActivated(false);
     twoFA.reset2FA();
     workspaceSelector.clearWorkspaces();
     hasTriggeredRedirect.current = false;
@@ -256,6 +293,10 @@ export function useLoginViewModel() {
     isLoading,
     error,
     shakeKey,
+    isAccountNotActivated,
+    accountNotActivatedMessage,
+    cooldownSeconds,
+    resendSetupEmail: () => handleLogin(tenantId ?? undefined),
     isAuthenticated: isTrulyAuthenticated,
     hasHydrated,
     isRedirecting,

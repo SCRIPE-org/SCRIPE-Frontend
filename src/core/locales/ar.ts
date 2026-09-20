@@ -2009,6 +2009,16 @@ export const ar = {
     invalidEmail: "عنوان بريد إلكتروني غير صالح",
     correctErrorsTitle: "يرجى تصحيح الأخطاء التالية للمتابعة:",
     requiredFieldNamed: "الحقل \"{name}\" مطلوب",
+    patternMismatch: "صيغة غير صالحة",
+  },
+  customField: {
+    validation: {
+      keyPattern:
+        "يجب أن يبدأ المفتاح بحرف صغير وأن يحتوي فقط على أحرف صغيرة وأرقام وشرطات سفلية (مثل: 'national_id')",
+    },
+    hints: {
+      keyFormat: "أحرف صغيرة وأرقام وشرطات سفلية فقط (مثل: 'national_id')",
+    },
   },
   footer: {
     allRightsReserved: "جميع الحقوق محفوظة",

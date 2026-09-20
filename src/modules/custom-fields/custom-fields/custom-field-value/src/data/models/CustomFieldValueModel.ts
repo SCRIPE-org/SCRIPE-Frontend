@@ -62,6 +62,8 @@ export interface EntityCustomFieldValueData {
    * Target entity type key for EntityReference and UserReference fields.
    */
   referenceTargetEntityTypeKey?: string | null;
+  sensitivity?: number;
+  isMasked?: boolean;
 }
 
 /**
@@ -75,6 +77,7 @@ export interface CustomFieldColumnData {
   valueType: CustomFieldValueTypeName;
   options: string[] | null;
   sortOrder: number;
+  sensitivity?: number;
 }
 
 /**

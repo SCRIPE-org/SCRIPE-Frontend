@@ -2,9 +2,6 @@ import { useMemo } from "react";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import {
-  VALUE_TYPE_CATALOG,
-  ALL_VALUE_TYPES,
-  type CustomFieldValueTypeName,
   VALIDATOR_KIND_CATALOG,
   ALL_VALIDATOR_KINDS,
 } from "../../../../custom-field";
@@ -16,6 +13,12 @@ import { buildReferenceTargetField } from "../../../../custom-field/src/presenta
 import { buildCustomFieldScopeField } from "../../../../custom-field/src/presentation/form/customFieldScopeFieldConfig";
 import type { EntityLookupType } from "../../../../entity-lookup/src/domain/entities/EntityLookup";
 import type { OptionSet } from "../../../../option-set/src/domain/entities/OptionSet";
+import {
+  buildInlineIdentityFields,
+  buildInlineValidatorParamFields,
+  buildInlineClassificationFields,
+  buildInlineTypeAndValidationFields,
+} from "./inlineAddCustomFieldSections";
 
 export interface UseInlineAddCustomFieldFormFieldsParams {
   t: (key: string, params?: Record<string, string | number>) => string;
@@ -62,22 +65,7 @@ export function useInlineAddCustomFieldFormFields({
   );
 
   const validatorParamFields = useMemo<FieldConfig[]>(
-    () =>
-      ALL_VALIDATOR_KINDS.filter((kind) => VALIDATOR_KIND_CATALOG[kind].hasParam).map((kind) => {
-        const entry = VALIDATOR_KIND_CATALOG[kind];
-        const isClosedSet = entry.supportedParamValues !== undefined;
-        return {
-          name: "validatorParam",
-          label: t("customField.fields.validatorParam"),
-          type: isClosedSet ? "select" : "text",
-          placeholder: isClosedSet ? undefined : t(entry.paramHintKey as string),
-          description: t(entry.paramHintKey as string),
-          options: isClosedSet
-            ? entry.supportedParamValues!.map((code) => ({ value: code, label: code }))
-            : undefined,
-          isVisible: (form) => form.valueType === "Text" && form.validatorKind === kind,
-        };
-      }),
+    () => buildInlineValidatorParamFields(t),
     [t]
   );
 
@@ -127,28 +115,7 @@ export function useInlineAddCustomFieldFormFields({
   );
 
   const classificationFields = useMemo<FieldConfig[]>(
-    () => [
-      {
-        name: "sensitivity",
-        label: t("customField.fields.sensitivity"),
-        type: "select",
-        section: t("customField.formSections.governance"),
-        options: [
-          { value: "None", label: t("customField.sensitivity.none") },
-          { value: "Internal", label: t("customField.sensitivity.internal") },
-          { value: "Confidential", label: t("customField.sensitivity.confidential") },
-          { value: "Restricted", label: t("customField.sensitivity.restricted") },
-        ],
-        description: t("customField.hints.sensitivity"),
-      },
-      {
-        name: "isExportable",
-        label: t("customField.fields.isExportable"),
-        type: "switch",
-        section: t("customField.formSections.governance"),
-        description: t("customField.hints.isExportable"),
-      },
-    ],
+    () => buildInlineClassificationFields(t),
     [t]
   );
 
@@ -160,106 +127,37 @@ export function useInlineAddCustomFieldFormFields({
     [t, isPlatformContext]
   );
 
+  const identityFields = useMemo<FieldConfig[]>(
+    () => buildInlineIdentityFields(t),
+    [t]
+  );
+
+  const typeAndValidationFields = useMemo<FieldConfig[]>(
+    () =>
+      buildInlineTypeAndValidationFields({
+        t,
+        validatorKindOptions,
+        validatorParamFields,
+        referenceTargetField,
+        optionSetOptions,
+        canViewOptionSets,
+        canBindOptionSets,
+      }),
+    [
+      t,
+      validatorKindOptions,
+      validatorParamFields,
+      referenceTargetField,
+      optionSetOptions,
+      canViewOptionSets,
+      canBindOptionSets,
+    ]
+  );
+
   return useMemo<FieldConfig[]>(
     () => [
-      // 1. Basic Information
-      {
-        name: "key",
-        label: t("customField.fields.key"),
-        type: "text",
-        section: t("customField.formSections.identity"),
-        placeholder: t("customField.placeholders.key"),
-        required: true,
-      },
-      {
-        name: "labelEn",
-        label: t("customField.fields.labelEn"),
-        type: "text",
-        section: t("customField.formSections.identity"),
-        placeholder: t("customField.placeholders.labelEn"),
-        required: true,
-      },
-      {
-        name: "labelAr",
-        label: t("customField.fields.labelAr"),
-        type: "text",
-        section: t("customField.formSections.identity"),
-        placeholder: t("customField.placeholders.labelAr"),
-      },
-      // 2. Data Type & Validation
-      {
-        name: "valueType",
-        label: t("customField.fields.valueType"),
-        type: "select",
-        section: t("customField.formSections.typeAndValidation"),
-        required: true,
-        options: ALL_VALUE_TYPES.map((type) => ({
-          value: type,
-          label: t(VALUE_TYPE_CATALOG[type].labelKey),
-        })),
-      },
-      {
-        name: "placeholderEn",
-        label: t("customField.fields.placeholderEn"),
-        type: "text",
-        section: t("customField.formSections.typeAndValidation"),
-        placeholder: t("customField.placeholders.placeholderEn"),
-        isVisible: (form) =>
-          VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
-      },
-      {
-        name: "placeholderAr",
-        label: t("customField.fields.placeholderAr"),
-        type: "text",
-        section: t("customField.formSections.typeAndValidation"),
-        placeholder: t("customField.placeholders.placeholderAr"),
-        isVisible: (form) =>
-          VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasPlaceholder ?? true,
-      },
-      {
-        name: "validatorKind",
-        label: t("customField.fields.validatorKind"),
-        type: "select",
-        section: t("customField.formSections.typeAndValidation"),
-        options: validatorKindOptions,
-        description: t("customField.validatorKindDescription"),
-        isVisible: (form) => form.valueType === "Text",
-      },
-      ...validatorParamFields.map((f) => ({
-        ...f,
-        section: t("customField.formSections.typeAndValidation"),
-      })),
-      {
-        ...referenceTargetField,
-        section: t("customField.formSections.typeAndValidation"),
-      },
-      {
-        name: "options",
-        label: t("customField.fields.options"),
-        type: "bilingual-options",
-        section: t("customField.formSections.typeAndValidation"),
-        pairedName: "optionsAr",
-        placeholder: t("customField.placeholders.optionEn"),
-        searchPlaceholder: t("customField.placeholders.optionAr"),
-        addLabel: t("customField.actions.addOption"),
-        removeLabel: t("customField.actions.removeOption"),
-        emptyHint: t("customField.placeholders.optionsEmpty"),
-        isVisible: (form) =>
-          VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false,
-      },
-      {
-        name: "optionSetId",
-        label: t("customField.optionSetBinding.pickerLabel"),
-        type: "select",
-        section: t("customField.formSections.typeAndValidation"),
-        options: optionSetOptions,
-        description: t("customField.optionSetBinding.attachAtCreateHint"),
-        isVisible: (form) =>
-          canViewOptionSets &&
-          canBindOptionSets &&
-          (VALUE_TYPE_CATALOG[form.valueType as CustomFieldValueTypeName]?.hasOptions ?? false),
-      },
-      // 3. Organization & Grouping
+      ...identityFields,
+      ...typeAndValidationFields,
       {
         ...fieldGroupField,
         section: t("customField.formSections.layout"),
@@ -271,7 +169,6 @@ export function useInlineAddCustomFieldFormFields({
         section: t("customField.formSections.layout"),
         min: 0,
       },
-      // 4. Behavior & Governance
       {
         name: "isRequired",
         label: t("customField.fields.isRequired"),
@@ -283,12 +180,8 @@ export function useInlineAddCustomFieldFormFields({
     ],
     [
       t,
-      validatorKindOptions,
-      validatorParamFields,
-      referenceTargetField,
-      optionSetOptions,
-      canViewOptionSets,
-      canBindOptionSets,
+      identityFields,
+      typeAndValidationFields,
       fieldGroupField,
       classificationFields,
       scopeField,

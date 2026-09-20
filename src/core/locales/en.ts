@@ -2023,6 +2023,16 @@ export const en = {
     invalidEmail: "Invalid email address",
     correctErrorsTitle: "Please correct the following errors to continue:",
     requiredFieldNamed: "Field \"{name}\" is required",
+    patternMismatch: "Invalid format",
+  },
+  customField: {
+    validation: {
+      keyPattern:
+        "Key must start with a lowercase letter and contain only lowercase letters, numbers, and underscores (e.g. 'national_id')",
+    },
+    hints: {
+      keyFormat: "Lowercase letters, numbers, and underscores only (e.g. 'national_id')",
+    },
   },
   footer: {
     allRightsReserved: "All Rights Reserved",

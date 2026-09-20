@@ -81,6 +81,8 @@ export interface EntityCustomFieldValueData {
     | CustomFieldRichTextValue
     | null;
   hiddenByRule?: boolean;
+  sensitivity?: number;
+  isMasked?: boolean;
 }
 
 export interface CustomFieldColumnData {
@@ -91,6 +93,7 @@ export interface CustomFieldColumnData {
   valueType: CustomFieldValueTypeName;
   options: string[] | null;
   sortOrder: number;
+  sensitivity?: number;
 }
 
 export interface BulkEntityCustomFieldValuesData {

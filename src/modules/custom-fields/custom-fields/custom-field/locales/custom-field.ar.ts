@@ -119,6 +119,11 @@ export const ar = {
       isExportable:
         "إيقافه يخرج هذا الحقل من ملفات التصدير. هذا ترتيب وليس إذنًا — " +
         "من يمكنه قراءة الحقل يمكنه قراءة قيمه في أماكن أخرى.",
+      keyFormat: "أحرف صغيرة وأرقام وشرطات سفلية فقط (مثل: 'national_id')",
+    },
+    validation: {
+      keyPattern:
+        "يجب أن يبدأ المفتاح بحرف صغير وأن يحتوي فقط على أحرف صغيرة وأرقام وشرطات سفلية (مثل: 'national_id')",
     },
 
     placeholders: {
@@ -928,6 +933,9 @@ export const ar = {
       typeAndValidation: "نوع البيانات والتحقق",
       layout: "التنظيم والتجميع",
       governance: "السلوك وإدارة البيانات",
+    },
+    sensitive: {
+      permissionRequired: "يتطلب إذن 'custom-fields.view-sensitive' لعرض القيمة",
     },
   },
 };

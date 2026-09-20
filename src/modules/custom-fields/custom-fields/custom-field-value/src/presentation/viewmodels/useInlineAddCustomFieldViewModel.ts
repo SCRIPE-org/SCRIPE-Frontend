@@ -72,6 +72,7 @@ export function useInlineAddCustomFieldViewModel() {
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : t("common.error");
         toast.error({ title: message });
+        throw err;
       } finally {
         setIsSubmitting(false);
       }

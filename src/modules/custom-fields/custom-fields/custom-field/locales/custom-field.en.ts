@@ -125,6 +125,11 @@ export const en = {
       isExportable:
         "Off keeps this field out of spreadsheet exports. This is tidying, not a permission \u2014 " +
         "anyone who can already read the field can still read its values elsewhere.",
+      keyFormat: "Lowercase letters, numbers, and underscores only (e.g. 'national_id')",
+    },
+    validation: {
+      keyPattern:
+        "Key must start with a lowercase letter and contain only lowercase letters, numbers, and underscores (e.g. 'national_id')",
     },
 
     // Form placeholders
@@ -1032,6 +1037,9 @@ export const en = {
       typeAndValidation: "Data Type & Validation",
       layout: "Organization & Grouping",
       governance: "Behavior & Governance",
+    },
+    sensitive: {
+      permissionRequired: "Requires 'custom-fields.view-sensitive' permission",
     },
   },
 };

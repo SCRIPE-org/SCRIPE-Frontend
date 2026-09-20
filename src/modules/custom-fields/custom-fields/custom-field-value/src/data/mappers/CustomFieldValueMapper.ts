@@ -29,6 +29,8 @@ export class CustomFieldValueMapper {
       sortOrder: dto.sortOrder ?? 0,
       value: dto.value ?? null,
       hiddenByRule: Boolean(dto.hiddenByRule),
+      sensitivity: dto.sensitivity,
+      isMasked: Boolean(dto.isMasked),
     };
   }
 
@@ -44,6 +46,7 @@ export class CustomFieldValueMapper {
       valueType: dto.valueType,
       options: dto.options ?? null,
       sortOrder: dto.sortOrder ?? 0,
+      sensitivity: dto.sensitivity,
     };
   }
 

@@ -445,8 +445,33 @@ export class ApiService implements IApiService {
    */
   private extractErrorMessage(error: AxiosError): string {
     if (error.response?.data) {
-      const data = error.response.data as { message?: string; error?: string };
-      return data.message || data.error || `HTTP ${error.response.status}`;
+      const data = error.response.data as unknown;
+      if (typeof data === "string" && data.trim() !== "") {
+        return data;
+      }
+      if (typeof data === "object" && data !== null) {
+        const obj = data as Record<string, unknown>;
+        if (typeof obj.message === "string" && obj.message.trim() !== "") {
+          return obj.message;
+        }
+        if (typeof obj.error === "string" && obj.error.trim() !== "") {
+          return obj.error;
+        }
+        if (obj.errors && typeof obj.errors === "object" && !Array.isArray(obj.errors)) {
+          for (const val of Object.values(obj.errors as Record<string, unknown>)) {
+            if (Array.isArray(val)) {
+              const first = val.find((m) => typeof m === "string" && m.trim() !== "");
+              if (first) return first;
+            } else if (typeof val === "string" && val.trim() !== "") {
+              return val;
+            }
+          }
+        }
+        if (typeof obj.title === "string" && obj.title.trim() !== "") {
+          return obj.title;
+        }
+      }
+      return `HTTP ${error.response.status}`;
     }
     if (error.code === "ECONNABORTED") {
       return translateCore("errors.network.timeout");

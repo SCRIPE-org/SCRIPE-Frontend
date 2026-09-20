@@ -145,6 +145,17 @@ export function useAccountSetupViewModel(params: {
     passwordRequireUppercase,
   ]);
 
+  const passwordEntropy = useMemo(() => {
+    if (!password) return 0;
+    let pool = 0;
+    if (/[a-z]/.test(password)) pool += 26;
+    if (/[A-Z]/.test(password)) pool += 26;
+    if (/\d/.test(password)) pool += 10;
+    if (/[^A-Za-z0-9]/.test(password)) pool += 32;
+    if (pool === 0) return 0;
+    return password.length * Math.log2(pool);
+  }, [password]);
+
   // ── Profile Validation ──
   const isProfileValid = useMemo(() => firstName.trim().length > 0, [firstName]);
 
@@ -423,6 +434,7 @@ export function useAccountSetupViewModel(params: {
     setShowConfirm,
     passwordChecks,
     passwordScore,
+    passwordEntropy,
     isPasswordValid,
 
     // Step 2: Profile
