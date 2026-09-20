@@ -608,13 +608,25 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     viewModel.viewItem?.id
   );
 
-  const createFieldsWithCustom = useMemo(
-    () =>
-      [...(createFields ?? []), ...customFieldsForCreate.fieldConfigs].filter(
-        (field) => !isFieldRestricted(field.name)
-      ),
-    [createFields, customFieldsForCreate.fieldConfigs, isFieldRestricted]
+  const hasDeferCustomFieldsSwitch = useMemo(
+    () => createFields?.some((f) => f.name === "deferCustomFieldsToSetup"),
+    [createFields]
   );
+
+  const createFieldsWithCustom = useMemo(() => {
+    const rawCustomConfigs = customFieldsForCreate.fieldConfigs;
+    const mappedCustomConfigs = hasDeferCustomFieldsSwitch
+      ? rawCustomConfigs.map((fc) => ({
+          ...fc,
+          isVisible: (values: Record<string, any>) =>
+            values.sendSetupEmail === false || values.deferCustomFieldsToSetup === false,
+        }))
+      : rawCustomConfigs;
+
+    return [...(createFields ?? []), ...mappedCustomConfigs].filter(
+      (field) => !isFieldRestricted(field.name)
+    );
+  }, [createFields, customFieldsForCreate.fieldConfigs, hasDeferCustomFieldsSwitch, isFieldRestricted]);
 
   /**
    * Splits a submitted form's data into the entity's own fields and the
@@ -1130,9 +1142,11 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 delete entityData[key];
               }
             }
+            const shouldSaveCustomFields = !entityData.deferCustomFieldsToSetup;
+            delete entityData.deferCustomFieldsToSetup;
             const created = await viewModel.createItem(entityData);
             const newId = (created as { id?: string } | undefined)?.id;
-            if (config?.entityTypeKey) {
+            if (config?.entityTypeKey && shouldSaveCustomFields) {
               if (Object.keys(customFieldValues).length > 0) {
                 if (!newId) {
                   // The values were typed, the record was created, and there is

@@ -10,6 +10,7 @@ import {
   type CustomFieldEntityReferenceValue,
   type CustomFieldRichTextValue,
 } from "../../../../custom-field-value/src/domain/entities/CustomFieldValue";
+import { isFieldRequired } from "@core/ui/forms/generic-form";
 import type { CustomFieldControlProps } from "./renderCustomFieldControlProps";
 
 /**
@@ -23,7 +24,10 @@ export function renderComplexControls({
   isViewMode,
   invalid,
   describedBy,
+  error,
 }: CustomFieldControlProps): React.ReactNode | null {
+  const isRequired = isFieldRequired(fc);
+
   if (fc.type === "entity-reference") {
     const reference: CustomFieldEntityReferenceValue | null = isEntityReferenceValue(value)
       ? value
@@ -37,11 +41,12 @@ export function renderComplexControls({
         targetEntityTypeKey={pinnedTarget ?? reference?.entityTypeKey ?? null}
         value={reference}
         onChange={(next) => onChange(next)}
-        required={fc.required}
+        required={isRequired}
         disabled={isViewMode}
         placeholder={fc.placeholder}
         invalid={invalid}
         describedBy={describedBy}
+        error={error}
       />
     );
   }
@@ -60,10 +65,11 @@ export function renderComplexControls({
         imagesOnly={fc.type === "media-image"}
         value={reference}
         onChange={(next) => onChange(next)}
-        required={fc.required}
+        required={isRequired}
         disabled={isViewMode}
         invalid={invalid}
         describedBy={describedBy}
+        error={error}
       />
     );
   }
@@ -77,11 +83,12 @@ export function renderComplexControls({
         label={fc.label ?? fc.name}
         value={rich}
         onChange={(next) => onChange(next)}
-        required={fc.required}
+        required={isRequired}
         disabled={isViewMode}
         placeholder={fc.placeholder}
         invalid={invalid}
         describedBy={describedBy}
+        error={error}
       />
     );
   }

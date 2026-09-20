@@ -4,7 +4,6 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@core/store/useAppStore";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
@@ -53,7 +52,6 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
   const { t } = useI18n();
   const { authRepository } = useServices();
   const setAuth = useAppStore((state) => state.setAuth);
-  const { operationSuccess, operationError: _operationError } = useEnhancedToast();
   const queryClient = useQueryClient();
 
   const handleVerify2FA = useCallback(async () => {
@@ -79,8 +77,6 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
         .getState()
         .setSubscriptionInfo(result.subscriptionStatus, result.gracePhase, result.editionName);
       useAppStore.getState().setMustChangePassword(result.mustChangePassword ?? false);
-
-      operationSuccess(t("auth.welcomeBack"));
 
       const mustChange = result.mustChangePassword ?? false;
       if (!mustChange) {
@@ -109,7 +105,6 @@ export function use2FAHandler(opts: Use2FAHandlerOptions) {
     tenantId,
     authRepository,
     setAuth,
-    operationSuccess,
     queryClient,
     router,
     t,

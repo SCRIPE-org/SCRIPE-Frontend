@@ -19,9 +19,15 @@ export interface CreateTenantRequest {
   address?: string;
   countryCode?: string;
   timeZone?: string;
+  organizationType?: string;
   // Step 2: Admin
   adminEmail: string;
   adminUsername?: string;
+  adminFirstName?: string;
+  adminLastName?: string;
+  adminPhoneNumber?: string;
+  adminPhone?: string;
+  adminCustomFieldValues?: Record<string, unknown>;
   // Step 3: Edition & Billing
   editionId?: string;
   subscriptionType?: string;

@@ -5,7 +5,8 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { Popover } from "@core/ui/popover";
+import { AlertCircle } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
 import { SelectTrigger } from "@core/crud/components/select/select-trigger";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { useEntityLookupSearch } from "../../../../../entity-lookup/src/presentation/hooks/useEntityLookupSearch";
@@ -37,6 +38,7 @@ export interface EntityReferenceCustomFieldControlProps {
   invalid?: boolean;
   describedBy?: string;
   placeholder?: string;
+  error?: string;
 }
 
 /**
@@ -57,6 +59,7 @@ export function EntityReferenceCustomFieldControl({
   invalid,
   describedBy,
   placeholder,
+  error,
 }: EntityReferenceCustomFieldControlProps): React.ReactElement {
   const { t } = useI18n();
   const hintId = React.useId();
@@ -157,6 +160,11 @@ export function EntityReferenceCustomFieldControl({
       {label && (
         <Label htmlFor={id} className="text-sm font-medium">
           {label}
+          {required && (
+            <span className="text-destructive ms-1" aria-hidden="true">
+              *
+            </span>
+          )}
         </Label>
       )}
 
@@ -197,6 +205,13 @@ export function EntityReferenceCustomFieldControl({
           />
         )}
       </Popover>
+
+      {invalid && error && (
+        <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
 
       {hint && <div id={hintId}>{hint}</div>}
 

@@ -2005,6 +2005,10 @@ export const ar = {
   },
   validation: {
     required: "مطلوب",
+    invalidPhone: "رقم الهاتف غير صالح",
+    invalidEmail: "عنوان بريد إلكتروني غير صالح",
+    correctErrorsTitle: "يرجى تصحيح الأخطاء التالية للمتابعة:",
+    requiredFieldNamed: "الحقل \"{name}\" مطلوب",
   },
   footer: {
     allRightsReserved: "جميع الحقوق محفوظة",

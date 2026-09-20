@@ -289,6 +289,7 @@ export function PrimaryRailLogo({
           alt={resolveBilingualLabel("Logo", "شعار", language)}
           width={48}
           height={48}
+          priority
           unoptimized
           style={{
             width: 48,
@@ -306,6 +307,7 @@ export function PrimaryRailLogo({
           alt=""
           width={28}
           height={28}
+          priority
           style={{ width: 28, height: 28, objectFit: "contain" }}
           aria-hidden="true"
         />

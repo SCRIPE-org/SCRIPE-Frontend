@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CreateTenantSummary — Summary of planned tenant configuration before provisioning
  *
  * Extracted from CreateTenantStep3 to respect Clean Architecture < 200 lines per file.
@@ -49,8 +49,11 @@ export function CreateTenantSummary({ vm, t }: CreateTenantSummaryProps) {
       <DetailRow label={t("tenant.operatingTerritory")} value={territoryLabel} />
       <DetailRow
         label={t("tenant.stepAdministrator")}
-        value={`${vm.form.adminFullName || vm.form.adminUsername} (${vm.form.adminEmail})`}
+        value={`${[vm.form.adminFirstName, vm.form.adminLastName].filter(Boolean).join(" ") || vm.form.adminFullName || vm.form.adminUsername} (${vm.form.adminEmail})`}
       />
+      {vm.form.adminPhone && (
+        <DetailRow label={t("tenant.adminPhone")} value={vm.form.adminPhone} />
+      )}
       <DetailRow label={t("tenant.edition")} value={vm.selectedEdition?.name || "-"} />
       <DetailRow label={t("tenant.subscriptionType")} value={subscriptionLabel} />
       {!isFree && <DetailRow label={t("tenant.currency")} value={currencyLabel} />}

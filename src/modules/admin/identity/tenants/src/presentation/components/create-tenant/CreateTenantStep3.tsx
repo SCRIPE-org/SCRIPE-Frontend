@@ -15,10 +15,12 @@
 import React, { useMemo, useCallback } from "react";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
+import { Badge } from "@core/ui/badge";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
-import { CreditCard, AlertTriangle, ShieldCheck } from "lucide-react";
+import { CreditCard, AlertTriangle, ShieldCheck, Sparkles, AlertCircle } from "lucide-react";
+import { cn } from "@core/common/utils";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 import { CreateTenantPromoField } from "./CreateTenantPromoField";
 import { CreateTenantSummary } from "./CreateTenantSummary";
@@ -40,6 +42,9 @@ interface CreateTenantStep3Props {
 
 export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
   const isFreeEdition = vm.selectedEdition?.isFree === true;
+  const selectedArchetype = vm.form.organizationType || "academy";
+  const archetypeName = t(`tenant.types.${selectedArchetype}`);
+  const isSportsOrg = ["academy", "venue", "club", "federation"].includes(selectedArchetype);
 
   // Server-side search handler for edition GenericSelect
   const handleEditionSearch = useCallback(
@@ -50,11 +55,34 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
     [vm]
   );
 
-  // Edition options from cached editions
-  const editionOptions: GenericSelectOption[] = useMemo(
-    () => vm.cachedEditions.map((ed) => ({ value: ed.id, label: ed.name })),
-    [vm.cachedEditions]
-  );
+  // Derive recommended editions based on the chosen organization archetype
+  const recommendedEditions = useMemo(() => {
+    return vm.cachedEditions.filter((ed) => {
+      const cat = ed.category?.toLowerCase();
+      const name = ed.name.toLowerCase();
+      if (isSportsOrg) {
+        return (
+          cat === "sports" ||
+          name.includes("sport") ||
+          name.includes("academy") ||
+          name.includes("venue") ||
+          name.includes("club")
+        );
+      }
+      return false;
+    });
+  }, [vm.cachedEditions, isSportsOrg]);
+
+  // Edition options from cached editions — recommended editions flagged with ⭐
+  const editionOptions: GenericSelectOption[] = useMemo(() => {
+    return vm.cachedEditions.map((ed) => {
+      const isRec = recommendedEditions.some((r) => r.id === ed.id);
+      return {
+        value: ed.id,
+        label: isRec ? `⭐ ${ed.name}` : ed.name,
+      };
+    });
+  }, [vm.cachedEditions, recommendedEditions]);
 
   // Subscription type options — dynamically filtered by edition's Allow* flags
   const subscriptionTypeOptions: GenericSelectOption[] = useMemo(() => {
@@ -85,11 +113,85 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
         </div>
       </div>
 
+      {/* Validation Error Banner */}
+      {vm.stepTouched[3] && vm.stepErrors[3]?.length > 0 && (
+        <div
+          role="alert"
+          className="rounded-nx-md border border-destructive/30 bg-destructive/10 p-3.5 text-destructive"
+        >
+          <div className="flex items-start gap-2.5">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <div className="space-y-1 text-xs">
+              <p className="font-semibold">{t("validation.correctErrorsTitle")}</p>
+              <ul className="list-disc ps-4 space-y-0.5 text-[11px] text-destructive/90">
+                {vm.stepErrors[3].includes("editionId") && <li>{t("tenant.editionRequired")}</li>}
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Smart Edition Recommendation Banner */}
+      {isSportsOrg && (
+        <div className="rounded-nx-lg border border-nx-accent/30 bg-nx-accent-wash/50 p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+          <div className="flex items-start gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent/15 text-nx-accent">
+              <Sparkles className="h-4 w-4" />
+            </div>
+            <div className="flex-1 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-xs font-semibold text-nx-ink-1">
+                  {t("tenant.recommendedForArchetype").replace("{archetype}", archetypeName)}
+                </p>
+                <Badge variant="outline" className="border-nx-accent/40 bg-nx-accent/10 text-[10px] font-semibold text-nx-accent">
+                  {t("tenant.recommendedEditions")}
+                </Badge>
+              </div>
+              <p className="text-[11px] leading-relaxed text-nx-ink-2">
+                {t("tenant.sportsArchetypeNotice")}
+              </p>
+
+              {/* Quick-select chips */}
+              {recommendedEditions.length > 0 && (
+                <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pt-1">
+                  {recommendedEditions.slice(0, 4).map((ed) => {
+                    const isSelected = vm.form.editionId === ed.id;
+                    return (
+                      <button
+                        key={ed.id}
+                        type="button"
+                        onClick={() => vm.updateField("editionId", ed.id)}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all",
+                          isSelected
+                            ? "border-nx-accent bg-nx-accent font-semibold text-nx-ground shadow-nx-xs"
+                            : "border-nx-line bg-nx-ground text-nx-ink hover:border-nx-accent/40 hover:bg-nx-raised"
+                        )}
+                      >
+                        <span className="text-[11px]">⭐</span>
+                        <span>{ed.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Edition — searchable GenericSelect with server search */}
       <div className="space-y-2">
-        <Label>
-          {t("tenant.edition")} <span className="text-destructive">*</span>
-        </Label>
+        <div className="flex items-center justify-between">
+          <Label>
+            {t("tenant.edition")} <span className="text-destructive">*</span>
+          </Label>
+          {vm.form.editionId && (
+            <span className="text-xs text-nx-accent">
+              {editionOptions.find((o) => o.value === vm.form.editionId)?.label}
+            </span>
+          )}
+        </div>
         <GenericSelect
           type="searchable"
           searchType="server"
@@ -102,8 +204,9 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
           noResultsText={t("common.noResults")}
         />
         {vm.stepTouched[3] && vm.stepErrors[3]?.includes("editionId") && (
-          <p className="text-xs text-destructive">
-            {t("tenant.editionRequired")}
+          <p className="flex items-center gap-1 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+            <span>{t("tenant.editionRequired")}</span>
           </p>
         )}
       </div>

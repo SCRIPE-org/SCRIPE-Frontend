@@ -4,6 +4,7 @@
  * Zod validation schema for admin forms.
  */
 import { z } from "zod";
+import { isValidPhoneNumber } from "@core/ui/phone-input";
 
 /**
  * Create admin form schema
@@ -29,7 +30,9 @@ export const createAdminSchema = z
     phoneNumber: z
       .string()
       .max(20, "Phone number must be at most 20 characters")
-      .regex(/^[\d\s+\-()]*$/, "Invalid phone number format")
+      .refine((val) => !val || !val.trim() || isValidPhoneNumber(val), {
+        message: "Invalid phone number format",
+      })
       .optional()
       .or(z.literal("")),
     email: z
@@ -76,7 +79,9 @@ export const updateAdminSchema = z.object({
   phoneNumber: z
     .string()
     .max(20, "Phone number must be at most 20 characters")
-    .regex(/^[\d\s+\-()]*$/, "Invalid phone number format")
+    .refine((val) => !val || !val.trim() || isValidPhoneNumber(val), {
+      message: "Invalid phone number format",
+    })
     .optional()
     .or(z.literal("")),
   email: z

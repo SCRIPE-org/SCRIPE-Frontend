@@ -49,10 +49,15 @@ export interface EditionThinModel {
   allowYearly?: boolean;
   allowLifetime?: boolean;
   allowTrial?: boolean;
-  /** True when no billing cycles are enabled \u2014 edition is permanently free. */
+  /** True when no billing cycles are enabled — edition is permanently free. */
   isFree?: boolean;
-  /** True when this edition requires the Contact Sales flow \u2014 not assignable from the tenant-create wizard. */
+  /** True when this edition requires the Contact Sales flow — not assignable from the tenant-create wizard. */
   isContactSalesOnly?: boolean;
+  /** Category archetype classification (e.g. "sports", "general", "erp") */
+  category?: string;
+  tagline?: string;
+  recommendationLabels?: string;
+  baseMonthlyPriceUsd?: number;
 }
 
 // ── Subscription ─────────────────────────────────────────

@@ -9,13 +9,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServices } from "@core/providers/service-provider";
 import { useAppStore } from "@core/store/useAppStore";
-import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { useI18n } from "@core/providers/i18n-provider";
 import { LoginRequest } from "../../../domain/entities/Auth";
-import {
-  TwoFactorRequiredError,
-  WorkspaceSelectionRequiredError,
-} from "../../../domain/errors/AuthErrors";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for auth login.
@@ -26,8 +20,6 @@ export function useAuthLogin() {
   const setAuth = useAppStore((state) => state.setAuth);
   const setSubscriptionInfo = useAppStore((state) => state.setSubscriptionInfo);
   const setDefaultRedirectPath = useAppStore((state) => state.setDefaultRedirectPath);
-  const { operationError, operationSuccess } = useEnhancedToast();
-  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -83,10 +75,7 @@ export function useAuthLogin() {
         useAppStore.getState().setTenantCode(variables.tenantCode);
       }
 
-      // 4. Show success toast (localized)
-      operationSuccess(t("auth.loginSuccess"));
-
-      // 5. Skip navigation & data fetch if user must change password first
+      // 4. Skip navigation & data fetch if user must change password first
       // They'll be redirected to /change-password immediately — no need to load menus
       if (!mustChangePassword) {
         // v2: NavigationProvider's TanStack queries fire automatically when
@@ -94,18 +83,6 @@ export function useAuthLogin() {
         // Just invalidate cached queries to ensure fresh data on protected pages.
         queryClient.invalidateQueries();
       }
-    },
-    onError: (error: Error) => {
-      // Don't show toast for 2FA required — it's not an error, it's a flow step
-      if (error instanceof TwoFactorRequiredError || error.name === "TwoFactorRequiredError")
-        return;
-      // Don't show toast for workspace selection — it's a UX step, not an error
-      if (
-        error instanceof WorkspaceSelectionRequiredError ||
-        error.name === "WorkspaceSelectionRequiredError"
-      )
-        return;
-      operationError("Login", undefined, error.message || t("auth.loginFailed"));
     },
   });
 }

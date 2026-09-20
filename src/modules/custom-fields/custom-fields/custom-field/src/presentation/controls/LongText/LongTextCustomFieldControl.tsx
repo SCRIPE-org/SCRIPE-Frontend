@@ -81,11 +81,12 @@
  * Flagged as a deliberate, documented choice, not a gap.
  */
 import * as React from "react";
+import { AlertCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 
 /**
  * The server's own hard cap (R8, `LongTextValueTypeHandler`) -- a storage
@@ -114,6 +115,9 @@ export interface LongTextCustomFieldControlProps {
   onChange: (value: string) => void;
   /** Mirrors every other renderCustomFieldControl branch's isViewMode contract. */
   isViewMode?: boolean;
+  invalid?: boolean;
+  describedBy?: string;
+  error?: string;
 }
 
 export function LongTextCustomFieldControl({
@@ -121,7 +125,11 @@ export function LongTextCustomFieldControl({
   value,
   onChange,
   isViewMode,
+  invalid,
+  describedBy,
+  error,
 }: LongTextCustomFieldControlProps): React.ReactElement {
+  const isRequired = isFieldRequired(fc);
   const { t, direction } = useI18n();
   const counterId = React.useId();
   const announceId = React.useId();
@@ -169,20 +177,32 @@ export function LongTextCustomFieldControl({
     <div className="space-y-2">
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
+        {isRequired && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <Textarea
         id={fc.name}
         value={text}
         onChange={(e) => onChange(e.target.value)}
         placeholder={fc.placeholder}
-        required={fc.required}
+        required={isRequired}
         disabled={isViewMode}
         rows={fc.rows || 4}
         dir={direction}
-        aria-describedby={`${counterId} ${announceId}`}
-        aria-invalid={zone === "over" || undefined}
+        aria-describedby={[describedBy, counterId, announceId].filter(Boolean).join(" ")}
+        aria-invalid={invalid || zone === "over" || undefined}
+        className={cn(invalid && "border-destructive focus-visible:ring-destructive")}
         // Deliberately NO maxLength -- see file header comment.
       />
+      {invalid && error && (
+        <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
       <div className="flex items-center justify-end">
         <span
           id={counterId}

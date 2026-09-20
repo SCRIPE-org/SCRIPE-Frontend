@@ -20,7 +20,8 @@ import { CountryFlag } from "@core/ui/country-flag";
 import { CreatableCombobox } from "@core/ui/creatable-combobox";
 import { getGeoTerritory } from "@core/constants/geo-territories";
 import { useI18n } from "@core/providers/i18n-provider";
-import { MapPin, Globe, Clock, Building2, Navigation } from "lucide-react";
+import { MapPin, Globe, Clock, Building2, Navigation, AlertCircle } from "lucide-react";
+import { cn } from "@core/common/utils";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 
 interface CreateTenantLocationFieldsProps {
@@ -132,7 +133,10 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             aria-invalid={countryError || undefined}
           />
           {countryError && (
-            <p className="text-xs text-destructive">{t("validation.required")}</p>
+            <p className="flex items-center gap-1 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              <span>{t("validation.required")}</span>
+            </p>
           )}
         </div>
 
@@ -150,7 +154,10 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             placeholder={t("tenant.selectTimeZone")}
           />
           {timeZoneError && (
-            <p className="text-xs text-destructive">{t("validation.required")}</p>
+            <p className="flex items-center gap-1 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              <span>{t("validation.required")}</span>
+            </p>
           )}
         </div>
       </div>
@@ -187,7 +194,10 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
               aria-invalid={stateError || undefined}
             />
             {stateError && (
-              <p className="text-xs text-destructive">{t("validation.required")}</p>
+              <p className="flex items-center gap-1 text-xs text-destructive">
+                <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+                <span>{t("validation.required")}</span>
+              </p>
             )}
           </div>
         ) : (
@@ -237,7 +247,10 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             aria-invalid={cityError || undefined}
           />
           {cityError && (
-            <p className="text-xs text-destructive">{t("validation.required")}</p>
+            <p className="flex items-center gap-1 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              <span>{t("validation.required")}</span>
+            </p>
           )}
         </div>
       </div>
@@ -292,16 +305,23 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
               isAr ? territory.postalCodePlaceholderAr : territory.postalCodePlaceholder
             }
             maxLength={30}
+            className={cn((postalError || postalRequiredError) && "border-destructive focus-visible:ring-destructive")}
             aria-invalid={postalError || postalRequiredError || undefined}
           />
           {postalRequiredError && (
-            <p className="text-xs text-destructive">{t("validation.required")}</p>
+            <p className="flex items-center gap-1 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              <span>{t("tenant.postalCodeRequired")}</span>
+            </p>
           )}
           {postalError && (
-            <p className="text-xs text-destructive">
-              {isAr
-                ? `صيغة الرمز البريدي غير متوافقة مع معايير ${territory.nameAr}`
-                : `Invalid postal code format for ${territory.name}`}
+            <p className="flex items-center gap-1 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              <span>
+                {isAr
+                  ? `صيغة الرمز البريدي غير متوافقة مع معايير ${territory.nameAr}`
+                  : `Invalid postal code format for ${territory.name}`}
+              </span>
             </p>
           )}
         </div>

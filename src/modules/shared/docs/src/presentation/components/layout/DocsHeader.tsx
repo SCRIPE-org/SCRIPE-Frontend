@@ -27,7 +27,7 @@ export function DocsHeader({ onSearchOpen, onMobileMenuOpen }: DocsHeaderProps) 
 
       {/* Logo */}
       <Link href="/docs" prefetch={false} className="docs-header-logo">
-        <Image src="/brand/app-logo-1024.png" alt={BRAND.namePascal} width={32} height={32} className="docs-header-logo-img" />
+        <Image src="/brand/app-logo-1024.png" alt={BRAND.namePascal} width={32} height={32} priority className="docs-header-logo-img" />
         <span>{BRAND.nameUpper}</span>
       </Link>
 

@@ -32,6 +32,12 @@ import {
   validatePostalCode,
   formatInternationalAddress,
 } from "@core/constants/geo-territories";
+import {
+  useCustomFieldsFormFields,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
+import { assertSelectCustomFieldValuesValid } from "@modules/custom-fields/custom-field";
+import { isFieldRequired } from "@core/ui/forms/generic-form";
 
 // ─────────────────────────────────────────
 // Types
@@ -60,6 +66,8 @@ export interface StepperFormState {
   adminEmail: string;
   adminUsername: string;
   adminFullName: string;
+  adminFirstName: string;
+  adminLastName: string;
   adminPhone: string;
   // Step 3: Plan & Billing
   editionId: string;
@@ -91,6 +99,8 @@ export const INITIAL_STEPPER_FORM: StepperFormState = {
   adminEmail: "",
   adminUsername: "",
   adminFullName: "",
+  adminFirstName: "",
+  adminLastName: "",
   adminPhone: "",
   editionId: "",
   subscriptionType: "",
@@ -147,6 +157,15 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   // ── Mutation state ──
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<CreateTenantResult | null>(null);
+
+  // ── Administrator Custom Fields ──
+  const adminCustomFieldsQuery = useCustomFieldsFormFields("identity.admin", undefined);
+  const [adminCustomFieldValues, setAdminCustomFieldValues] = useState<Record<string, unknown>>({});
+  const [deferAdminCustomFieldsToSetup, setDeferAdminCustomFieldsToSetup] = useState(true);
+
+  const updateAdminCustomFieldValue = useCallback((name: string, value: unknown) => {
+    setAdminCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  }, []);
 
   // ── Edition & promotion state ──
   const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
@@ -232,6 +251,17 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
           (!prev.adminUsername || prev.adminUsername === `${prev.code}_admin`)
         ) {
           next.adminUsername = `${(value as string).toLowerCase()}_admin`;
+        }
+        // Auto-sync adminFullName when adminFirstName or adminLastName changes
+        if (field === "adminFirstName" || field === "adminLastName") {
+          const fn = field === "adminFirstName" ? (value as string) : next.adminFirstName;
+          const ln = field === "adminLastName" ? (value as string) : next.adminLastName;
+          next.adminFullName = [fn, ln].filter(Boolean).join(" ");
+        }
+        if (field === "adminFullName" && !next.adminFirstName) {
+          const parts = (value as string).trim().split(/\s+/);
+          next.adminFirstName = parts[0] || "";
+          next.adminLastName = parts.slice(1).join(" ");
         }
         // When countryCode changes, cascade default timezone, currency, and reset geographic subdivisions
         if (field === "countryCode" && value) {
@@ -379,18 +409,87 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
       errors[1].push("postalCodeRequired");
     }
     // Step 2
+    if (!form.adminFirstName?.trim() && !form.adminFullName?.trim()) {
+      errors[2].push("adminFirstName");
+    }
     if (!form.adminEmail.trim()) errors[2].push("adminEmail");
     if (form.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.adminEmail)) {
       errors[2].push("adminEmailFormat");
     }
+    // Step 2 — Required Administrator Custom Fields (enforced only when not deferred to account setup)
+    if (!deferAdminCustomFieldsToSetup) {
+      for (const fc of adminCustomFieldsQuery.fieldConfigs) {
+        const isVisible = !fc.isVisible || fc.isVisible(adminCustomFieldValues);
+        const isRequired = isFieldRequired(fc, adminCustomFieldValues);
+        if (isRequired && isVisible) {
+          const val = adminCustomFieldValues[fc.name] ?? fc.defaultValue ?? "";
+          if (
+            val === null ||
+            val === undefined ||
+            (typeof val === "string" && val.trim() === "") ||
+            (Array.isArray(val) && val.length === 0)
+          ) {
+            errors[2].push(`customField_${fc.name}`);
+          }
+        }
+      }
+    }
     // Step 3 — Edition is required by CreateTenantCommandValidator
     if (!form.editionId?.trim()) errors[3].push("editionId");
     return errors;
-  }, [form]);
+  }, [form, adminCustomFieldsQuery.fieldConfigs, adminCustomFieldValues, deferAdminCustomFieldsToSetup]);
 
   const isStepValid = useCallback((step: StepId) => stepErrors[step].length === 0, [stepErrors]);
 
   const canProceed = useMemo(() => isStepValid(currentStep), [isStepValid, currentStep]);
+
+  const focusFirstInvalidField = useCallback((errorKeys: string[]) => {
+    if (!errorKeys || errorKeys.length === 0) return;
+    const firstKey = errorKeys[0];
+    const elementIdMap: Record<string, string> = {
+      name: "tenant-name",
+      code: "tenant-code",
+      countryCode: "country-select",
+      timeZone: "timezone-select",
+      state: "state-select",
+      city: "tenant-city",
+      postalCode: "tenant-postal-code",
+      postalCodeRequired: "tenant-postal-code",
+      adminFirstName: "admin-first-name",
+      adminEmail: "admin-email",
+      adminEmailFormat: "admin-email",
+      editionId: "edition-select",
+    };
+
+    let targetId = elementIdMap[firstKey];
+    if (!targetId && firstKey.startsWith("customField_")) {
+      targetId = firstKey.replace("customField_", "");
+    }
+
+    if (targetId) {
+      setTimeout(() => {
+        const el =
+          document.getElementById(targetId) ||
+          document.querySelector(`[name="${targetId}"]`) ||
+          document.querySelector(`[data-field-name="${targetId}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          const focusTarget =
+            el instanceof HTMLInputElement ||
+            el instanceof HTMLTextAreaElement ||
+            el instanceof HTMLSelectElement ||
+            el instanceof HTMLButtonElement
+              ? el
+              : el.querySelector<HTMLElement>(
+                  "input, textarea, button, select, [tabindex]:not([tabindex='-1'])"
+                ) || el;
+          if (focusTarget && typeof focusTarget.focus === "function") {
+            focusTarget.focus({ preventScroll: true });
+          }
+        }
+      }, 50);
+    }
+  }, []);
 
   // ── Navigation ──
   const goNext = useCallback(() => {
@@ -398,8 +497,10 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     setStepTouched((prev) => ({ ...prev, [currentStep]: true }));
     if (currentStep < 3 && canProceed) {
       setCurrentStep((s) => (s + 1) as StepId);
+    } else if (!canProceed) {
+      focusFirstInvalidField(stepErrors[currentStep]);
     }
-  }, [currentStep, canProceed]);
+  }, [currentStep, canProceed, focusFirstInvalidField, stepErrors]);
 
   const goBack = useCallback(() => {
     if (currentStep > 1) {
@@ -424,6 +525,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     for (let i = 1; i <= 3; i++) {
       if (!isStepValid(i as StepId)) {
         setCurrentStep(i as StepId);
+        setStepTouched((prev) => ({ ...prev, [i as StepId]: true }));
+        focusFirstInvalidField(stepErrors[i as StepId]);
         return;
       }
     }
@@ -445,6 +548,27 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         }
       }
 
+      // Pre-validate administrator custom fields only when not deferred
+      if (!deferAdminCustomFieldsToSetup && adminCustomFieldsQuery.fieldConfigs.length > 0) {
+        assertSelectCustomFieldValuesValid(
+          adminCustomFieldsQuery.fieldConfigs,
+          adminCustomFieldValues,
+          t
+        );
+      }
+
+      const decodedAdminCustomFields: Record<string, unknown> = {};
+      if (!deferAdminCustomFieldsToSetup) {
+        for (const fc of adminCustomFieldsQuery.fieldConfigs) {
+          const key = decodeCustomFieldName(fc.name);
+          if (key === null) continue;
+          const raw = adminCustomFieldValues[fc.name] ?? fc.defaultValue ?? "";
+          if (raw !== "" && raw !== null && raw !== undefined) {
+            decodedAdminCustomFields[key] = raw;
+          }
+        }
+      }
+
       const createResult = await tenantRepository.create({
         name: form.name.trim(),
         code: form.code.trim(),
@@ -452,9 +576,18 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         address: form.address.trim() || undefined,
         countryCode: form.countryCode.trim() || undefined,
         timeZone: form.timeZone.trim() || undefined,
+        organizationType: form.organizationType || undefined,
         parentId: form.parentId || undefined,
         adminEmail: form.adminEmail.trim(),
         adminUsername: form.adminUsername.trim() || undefined,
+        adminFirstName: form.adminFirstName?.trim() || form.adminFullName?.trim() || undefined,
+        adminLastName: form.adminLastName?.trim() || undefined,
+        adminPhoneNumber: form.adminPhone?.trim() || undefined,
+        adminPhone: form.adminPhone?.trim() || undefined,
+        adminCustomFieldValues:
+          !deferAdminCustomFieldsToSetup && Object.keys(decodedAdminCustomFields).length > 0
+            ? decodedAdminCustomFields
+            : undefined,
         editionId: form.editionId || undefined,
         subscriptionType: form.subscriptionType || undefined,
         currency: form.currency || "USD",
@@ -481,7 +614,18 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     } finally {
       setIsSubmitting(false);
     }
-  }, [form, tenantRepository, queryClient, router, t, toastSuccess, toastError, isStepValid]);
+  }, [
+    form,
+    tenantRepository,
+    queryClient,
+    router,
+    t,
+    toastSuccess,
+    toastError,
+    isStepValid,
+    adminCustomFieldsQuery.fieldConfigs,
+    adminCustomFieldValues,
+  ]);
 
   // ── Navigate to detail immediately ──
   const navigateToDetail = useCallback(() => {
@@ -517,6 +661,13 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     // Creation permissions (for availablePermissionIds picker)
     creationPermissions,
     isLoadingPermissions,
+
+    // Admin Custom Fields
+    adminCustomFieldsQuery,
+    adminCustomFieldValues,
+    updateAdminCustomFieldValue,
+    deferAdminCustomFieldsToSetup,
+    setDeferAdminCustomFieldsToSetup,
 
     // Submit
     isSubmitting,

@@ -38,6 +38,10 @@ export interface CustomFieldsSectionProps {
   isViewMode?: boolean;
   /** Optional container CSS class name. */
   className?: string;
+  /** Optional error messages dictionary keyed by field name. */
+  errors?: Record<string, string>;
+  /** Whether the parent step/form has been touched for showing validation feedback. */
+  touched?: boolean;
 }
 
 export const CustomFieldsSection = React.memo(function CustomFieldsSection({
@@ -51,6 +55,8 @@ export const CustomFieldsSection = React.memo(function CustomFieldsSection({
   onFieldCreated,
   isViewMode = false,
   className = "space-y-5",
+  errors,
+  touched,
 }: CustomFieldsSectionProps) {
   // Evaluate dynamic visibility rules for each field config against current form state
   const visibleConfigs = configs.filter((fc) => !fc.isVisible || fc.isVisible(values));
@@ -62,11 +68,16 @@ export const CustomFieldsSection = React.memo(function CustomFieldsSection({
     <div className={className}>
       {visibleConfigs.map((fc) => {
         const value = values[fc.name] ?? fc.defaultValue ?? "";
+        const fieldError = errors?.[fc.name];
+        const isInvalid = Boolean((touched ?? true) && fieldError);
         return renderCustomFieldControl({
           fc,
           value,
           onChange: (v) => onChange(fc.name, v),
           isViewMode,
+          error: fieldError,
+          invalid: isInvalid,
+          describedBy: isInvalid ? `${fc.name}-error` : undefined,
         });
       })}
 

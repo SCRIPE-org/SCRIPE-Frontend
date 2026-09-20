@@ -107,6 +107,7 @@ export function Logo({
               alt={settings.logoText || "Logo"}
               width={40}
               height={40}
+              priority
               unoptimized
               className="h-full w-full object-contain"
               onError={() => setImageFailed(true)}

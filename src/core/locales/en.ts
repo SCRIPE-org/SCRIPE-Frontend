@@ -2019,6 +2019,10 @@ export const en = {
   },
   validation: {
     required: "Required",
+    invalidPhone: "Invalid phone number",
+    invalidEmail: "Invalid email address",
+    correctErrorsTitle: "Please correct the following errors to continue:",
+    requiredFieldNamed: "Field \"{name}\" is required",
   },
   footer: {
     allRightsReserved: "All Rights Reserved",

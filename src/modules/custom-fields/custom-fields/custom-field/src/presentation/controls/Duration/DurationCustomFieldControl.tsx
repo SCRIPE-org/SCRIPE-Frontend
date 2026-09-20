@@ -96,10 +96,12 @@
  * stored value read differently in the table and in the form.
  */
 import * as React from "react";
+import { AlertCircle } from "lucide-react";
+import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 
 export interface DurationCustomFieldControlProps {
   fc: FieldConfig;
@@ -117,6 +119,8 @@ export interface DurationCustomFieldControlProps {
   invalid?: boolean;
   /** Id of the host's hint/error node, composed into this input's own description. */
   describedBy?: string;
+  /** Inline error message from host form */
+  error?: string;
 }
 
 function toFieldInputValue(value: unknown): string {
@@ -130,7 +134,9 @@ export function DurationCustomFieldControl({
   isViewMode,
   invalid,
   describedBy,
+  error,
 }: DurationCustomFieldControlProps): React.ReactElement {
+  const isRequired = isFieldRequired(fc);
   const { t } = useI18n();
   const unitLabel = t("customField.duration.unitLabel");
   const unitId = `${fc.name}-unit`;
@@ -139,6 +145,11 @@ export function DurationCustomFieldControl({
     <div className="space-y-2">
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label ?? fc.name}
+        {isRequired && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <div className="flex items-center gap-2">
         <Input
@@ -170,7 +181,7 @@ export function DurationCustomFieldControl({
           value={toFieldInputValue(value)}
           onChange={(e) => onChange(e.target.value)}
           placeholder={fc.placeholder}
-          required={fc.required}
+          required={isRequired}
           disabled={isViewMode}
           aria-invalid={invalid || undefined}
           // The unit is part of what this field MEANS, so it rides in the
@@ -178,7 +189,7 @@ export function DurationCustomFieldControl({
           // file's header comment. Composed, never overwritten: a host's own
           // hint/error id keeps its place in the list.
           aria-describedby={[describedBy, unitId].filter(Boolean).join(" ")}
-          className="max-w-[10rem] text-sm"
+          className={cn("max-w-[10rem] text-sm", invalid && "border-destructive focus-visible:ring-destructive")}
         />
         {/* Visible, never aria-hidden. Storage is bare minutes (backend ruling
             R4); this is the one place that unit becomes explicit instead of
@@ -189,6 +200,13 @@ export function DurationCustomFieldControl({
           {unitLabel}
         </span>
       </div>
+      {invalid && error && (
+        <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
     </div>
   );
 }
+

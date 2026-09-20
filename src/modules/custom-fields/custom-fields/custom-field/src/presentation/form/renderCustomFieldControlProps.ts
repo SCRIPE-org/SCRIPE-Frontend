@@ -7,4 +7,6 @@ export interface CustomFieldControlProps {
   isViewMode?: boolean;
   invalid?: boolean;
   describedBy?: string;
+  error?: string;
 }
+

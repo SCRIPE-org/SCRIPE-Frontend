@@ -102,6 +102,9 @@ export const en = {
     sendSetupEmail: "Send setup email",
     sendSetupEmailDescription:
       "When enabled, an email invitation will be sent to set up the account. When disabled, you can set the password manually.",
+    deferCustomFieldsToSetup: "Complete custom fields during account setup",
+    deferCustomFieldsToSetupDescription:
+      "When enabled, required custom fields are optional for you now. The administrator will be prompted to fill them during their initial account setup.",
     mustChangePassword: "Require password change on first login",
     mustChangePasswordDescription:
       "The admin will be forced to change their password after their first login.",

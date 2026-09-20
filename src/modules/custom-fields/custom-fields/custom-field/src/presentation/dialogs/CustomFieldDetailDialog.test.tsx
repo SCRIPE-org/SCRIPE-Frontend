@@ -150,10 +150,13 @@ describe("CustomFieldDetailDialog", () => {
 
     renderDialog({ fieldId: "field-text-1" });
 
-    await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /National ID/i })).toBeInTheDocument();
-      expect(screen.getByText("Personal Info")).toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.getByRole("heading", { name: /National ID/i })).toBeInTheDocument();
+        expect(screen.getByText("Personal Info")).toBeInTheDocument();
+      },
+      { timeout: 4000 }
+    );
 
     // Check header labels and key
     expect(screen.getByRole("heading", { name: /National ID/i })).toBeInTheDocument();

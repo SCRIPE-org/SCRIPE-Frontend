@@ -60,11 +60,12 @@
  * follow `direction` like any other bidi-aware control.
  */
 import * as React from "react";
+import { AlertCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 
 /**
  * Hard client-side selection ceiling, mirroring
@@ -89,6 +90,9 @@ export interface MultiSelectCustomFieldControlProps {
   onChange: (value: string[]) => void;
   /** Mirrors every other renderCustomFieldControl branch's isViewMode contract. */
   isViewMode?: boolean;
+  invalid?: boolean;
+  describedBy?: string;
+  error?: string;
 }
 
 /**
@@ -104,7 +108,11 @@ export function MultiSelectCustomFieldControl({
   value,
   onChange,
   isViewMode,
+  invalid,
+  describedBy,
+  error,
 }: MultiSelectCustomFieldControlProps): React.ReactElement {
+  const isRequired = isFieldRequired(fc);
   const { t } = useI18n();
   const counterId = React.useId();
 
@@ -138,6 +146,11 @@ export function MultiSelectCustomFieldControl({
     <div className="space-y-2">
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
+        {isRequired && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <GenericSelect
         id={fc.name}
@@ -145,15 +158,24 @@ export function MultiSelectCustomFieldControl({
         // real DOM wiring sighted users benefit from, but it is NOT what
         // computes this control's accessible name.
         aria-label={fc.label ?? fc.name}
-        describedBy={counterId}
+        describedBy={[describedBy, counterId].filter(Boolean).join(" ")}
         options={options}
         value={selected}
         onValueChange={(v: string | string[]) => onChange(Array.isArray(v) ? v : [])}
         placeholder={fc.placeholder || fc.label}
         type="multi"
-        required={fc.required}
+        searchable={true}
+        required={isRequired}
         disabled={isViewMode}
+        aria-invalid={invalid || undefined}
+        className={cn(invalid && "border-destructive focus-visible:ring-destructive")}
       />
+      {invalid && error && (
+        <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
       {/*
         aria-live="polite", not throttled: unlike LongText's per-keystroke
         character counter (which the governing pre-plan analysis's §5.1

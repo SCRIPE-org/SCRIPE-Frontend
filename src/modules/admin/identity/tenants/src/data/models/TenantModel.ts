@@ -183,7 +183,13 @@ export class CreateTenantModel {
     public readonly promoCode?: string,
     public readonly skipPayment?: boolean,
     public readonly countryCode?: string,
-    public readonly timeZone?: string
+    public readonly timeZone?: string,
+    public readonly organizationType?: string,
+    public readonly adminFirstName?: string,
+    public readonly adminLastName?: string,
+    public readonly adminPhoneNumber?: string,
+    public readonly adminPhone?: string,
+    public readonly adminCustomFieldValues?: Record<string, unknown>
   ) {}
   toJson(): CreateTenantJson {
     return {
@@ -194,6 +200,11 @@ export class CreateTenantModel {
       address: this.address,
       adminEmail: this.adminEmail,
       adminUsername: this.adminUsername,
+      adminFirstName: this.adminFirstName,
+      adminLastName: this.adminLastName,
+      adminPhoneNumber: this.adminPhoneNumber,
+      adminPhone: this.adminPhone,
+      adminCustomFieldValues: this.adminCustomFieldValues,
       editionId: this.editionId,
       subscriptionType: this.subscriptionType,
       currency: this.currency,
@@ -202,6 +213,7 @@ export class CreateTenantModel {
       skipPayment: this.skipPayment,
       countryCode: this.countryCode,
       timeZone: this.timeZone,
+      organizationType: this.organizationType,
     };
   }
 }

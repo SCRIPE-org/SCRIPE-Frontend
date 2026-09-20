@@ -28,7 +28,7 @@ export function SetupLoadingView() {
   return (
     <Card className="w-full max-w-md border-border/50 shadow-xl">
       <CardContent className="flex flex-col items-center justify-center gap-4 py-16">
-        <Loader2 className="h-10 w-10 animate-spin text-nx-accent" />
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
         <p className="text-sm text-muted-foreground">{t("auth.accountSetup.validating")}</p>
       </CardContent>
     </Card>

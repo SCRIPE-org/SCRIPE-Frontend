@@ -31,6 +31,7 @@ export interface ColorPickerFieldProps {
    *  existing caller omits this and keeps today's always-interactive
    *  behavior unchanged. */
   disabled?: boolean;
+  required?: boolean;
   /**
    * i18n key PREFIX for this control's own three strings (`.swatch`,
    * `.custom`, `.hexPlaceholder` suffixes) -- defaults to `"editorBlocks.color"`,
@@ -90,6 +91,7 @@ export function ColorPickerField({
   description,
   className,
   disabled,
+  required,
   i18nKeyPrefix = DEFAULT_I18N_KEY_PREFIX,
 }: ColorPickerFieldProps) {
   const { t } = useI18n();
@@ -120,6 +122,11 @@ export function ColorPickerField({
       <FormItem className={className}>
         <FormLabel id={labelId} className="text-xs font-medium">
           {label}
+          {required && (
+            <span className="text-destructive ms-1" aria-hidden="true">
+              *
+            </span>
+          )}
         </FormLabel>
         <Popover>
           <PopoverTrigger asChild>

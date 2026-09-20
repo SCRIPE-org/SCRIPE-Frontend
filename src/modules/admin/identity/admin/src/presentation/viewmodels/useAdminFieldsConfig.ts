@@ -61,11 +61,18 @@ export function useAdminFieldsConfig(
       description: t("admin.sendSetupEmailDescription"),
     },
     {
+      name: "deferCustomFieldsToSetup",
+      label: t("admin.deferCustomFieldsToSetup"),
+      type: "switch" as const,
+      description: t("admin.deferCustomFieldsToSetupDescription"),
+      isVisible: (values: Record<string, unknown>) => values.sendSetupEmail !== false,
+    },
+    {
       name: "password",
       label: t("admin.password"),
       type: "password" as const,
       placeholder: t("admin.passwordPlaceholder"),
-      required: true,
+      required: (values: Record<string, unknown>) => values.sendSetupEmail === false,
       autoComplete: "new-password",
       isVisible: (values: Record<string, unknown>) => values.sendSetupEmail === false,
     },
@@ -91,7 +98,7 @@ export function useAdminFieldsConfig(
     {
       name: "phoneNumber",
       label: t("admin.phoneNumber"),
-      type: "text" as const,
+      type: "phone" as const,
       placeholder: t("admin.phoneNumberPlaceholder"),
     },
     {
@@ -99,6 +106,7 @@ export function useAdminFieldsConfig(
       label: t("admin.email"),
       type: "text" as const,
       placeholder: t("admin.emailPlaceholder"),
+      required: (values: Record<string, unknown>) => values.sendSetupEmail !== false,
     },
     {
       name: "notes",
@@ -124,7 +132,7 @@ export function useAdminFieldsConfig(
     {
       name: "phoneNumber",
       label: t("admin.phoneNumber"),
-      type: "text" as const,
+      type: "phone" as const,
       placeholder: t("admin.phoneNumberPlaceholder"),
     },
     {
@@ -160,6 +168,7 @@ export function useAdminFieldsConfig(
     notes: "",
     sendSetupEmail: true,
     mustChangePassword: false,
+    deferCustomFieldsToSetup: true,
   };
 
   const editInitialValues = (admin: Admin) => ({

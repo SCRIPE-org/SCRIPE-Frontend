@@ -154,6 +154,7 @@ export function useAdminsViewModel(options: AdminsViewModelOptions = {}) {
   // ============ Config Base ============
   const getConfigBase = useCallback(
     (): Partial<CrudConfig<Admin>> => ({
+      entityTypeKey: "identity.admin",
       createFields: fieldsConfig.createFields,
       editFields: fieldsConfig.editFields,
       createInitialValues: fieldsConfig.createInitialValues,

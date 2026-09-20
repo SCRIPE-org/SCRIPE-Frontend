@@ -171,7 +171,13 @@ export class TenantMapper {
       request.promoCode,
       request.skipPayment,
       request.countryCode,
-      request.timeZone
+      request.timeZone,
+      request.organizationType,
+      request.adminFirstName,
+      request.adminLastName,
+      request.adminPhoneNumber,
+      request.adminPhone,
+      request.adminCustomFieldValues
     );
   }
 

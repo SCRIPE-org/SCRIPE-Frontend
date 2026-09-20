@@ -60,12 +60,8 @@ export function GenericFormCustomFieldControl({
   disabled,
   invalid,
   describedBy,
+  error,
 }: CustomFieldFormControlProps): React.ReactElement {
-  // Wrapped in a fragment because `renderCustomFieldControl` is typed
-  // `React.ReactNode` (it is a plain function every consumer site calls inline,
-  // not a component), which is wider than the `ReactElement` a component may
-  // return. The fragment is the narrowing, not a layout element — it adds no DOM,
-  // so the control's own spacing and the host's field anatomy are untouched.
   return (
     <>
       {renderCustomFieldControl({
@@ -75,6 +71,7 @@ export function GenericFormCustomFieldControl({
         isViewMode: disabled,
         invalid,
         describedBy,
+        error,
       })}
     </>
   );

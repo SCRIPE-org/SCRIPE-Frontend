@@ -1,10 +1,12 @@
 "use client";
 
 import * as React from "react";
+import { AlertCircle } from "lucide-react";
+import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { CustomFieldCurrencyValue } from "../../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import { isBlankAmount, getCurrencySuggestions } from "./currencyControlUtils";
 
@@ -21,6 +23,8 @@ export interface CurrencyCustomFieldControlProps {
   invalid?: boolean;
   /** Identifier of the host form's hint/error node. */
   describedBy?: string;
+  /** Inline error message to display */
+  error?: string;
 }
 
 /**
@@ -35,7 +39,9 @@ export function CurrencyCustomFieldControl({
   isViewMode,
   invalid,
   describedBy,
+  error,
 }: CurrencyCustomFieldControlProps): React.ReactElement {
+  const isRequired = isFieldRequired(fc);
   const { t, language } = useI18n();
 
   const current =
@@ -52,8 +58,8 @@ export function CurrencyCustomFieldControl({
   // If one component is populated, the counterpart is required to ensure complete currency records.
   const codePopulated = currencyCode.trim() !== "";
   const amountPopulated = !isBlankAmount(amount);
-  const amountRequired = Boolean(fc.required) || codePopulated;
-  const codeRequired = Boolean(fc.required) || amountPopulated;
+  const amountRequired = isRequired || codePopulated;
+  const codeRequired = isRequired || amountPopulated;
 
   const emit = (nextAmount: unknown, nextCode: string) => {
     if (isBlankAmount(nextAmount) && nextCode.trim() === "") {
@@ -73,6 +79,11 @@ export function CurrencyCustomFieldControl({
     <div role="group" aria-label={fieldName} className="space-y-2">
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
+        {isRequired && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <div className="flex gap-2">
         <Input
@@ -87,7 +98,7 @@ export function CurrencyCustomFieldControl({
           disabled={isViewMode}
           aria-invalid={invalid || undefined}
           aria-describedby={describedByValue}
-          className="flex-1 text-sm"
+          className={cn("flex-1 text-sm", invalid && "border-destructive focus-visible:ring-destructive")}
         />
         <Input
           id={`${fc.name}-currency-code`}
@@ -106,7 +117,7 @@ export function CurrencyCustomFieldControl({
           disabled={isViewMode}
           aria-invalid={invalid || undefined}
           aria-describedby={describedByValue}
-          className="w-24 shrink-0 font-mono text-sm uppercase"
+          className={cn("w-24 shrink-0 font-mono text-sm uppercase", invalid && "border-destructive focus-visible:ring-destructive")}
         />
         <datalist id={suggestionsId}>
           {suggestions.map((suggestion) => (
@@ -114,9 +125,16 @@ export function CurrencyCustomFieldControl({
           ))}
         </datalist>
       </div>
+      {invalid && error && (
+        <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
       <p id={pairHintId} className="text-xs text-nx-ink-3">
         {t("customField.currency.pairHint")}
       </p>
     </div>
   );
 }
+

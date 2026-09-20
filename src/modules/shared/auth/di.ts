@@ -31,7 +31,7 @@ import type { IAuthService } from "./core/domain/interfaces/IAuthService";
 import type { ITenantResolutionRepository } from "./core/domain/interfaces/ITenantResolutionRepository";
 import type { ISsoRepository } from "./core/domain/interfaces/ISsoRepository";
 import type { IPasswordResetRepository } from "./core/domain/interfaces/IPasswordResetRepository";
-import type { IAccountSetupRepository } from "./core/domain/interfaces/IAccountSetupRepository";
+import type { IAccountSetupRepository } from "./account-setup/src/domain/interfaces/IAccountSetupRepository";
 import type { ISignupRepository } from "./signup/src/domain/interfaces/ISignupRepository";
 import type { IPasskeyRepository } from "./core/src/domain/interfaces/IPasskeyRepository";
 

@@ -94,6 +94,11 @@ export interface CreateTenantJson {
   address?: string;
   adminEmail: string;
   adminUsername?: string;
+  adminFirstName?: string;
+  adminLastName?: string;
+  adminPhoneNumber?: string;
+  adminPhone?: string;
+  adminCustomFieldValues?: Record<string, unknown>;
   editionId?: string;
   subscriptionType?: string;
   currency?: string;
@@ -102,6 +107,7 @@ export interface CreateTenantJson {
   skipPayment?: boolean;
   countryCode?: string;
   timeZone?: string;
+  organizationType?: string;
 }
 
 /**

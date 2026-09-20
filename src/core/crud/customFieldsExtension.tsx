@@ -151,6 +151,8 @@ export interface CustomFieldFormControlProps {
   invalid?: boolean;
   /** Id of the hint or error node the host renders below the control, for `aria-describedby`. */
   describedBy?: string;
+  /** Validation error message for the field when invalid. */
+  error?: string;
 }
 
 export interface CustomFieldsExtensionApi {
@@ -300,6 +302,10 @@ export interface CustomFieldsSectionProps {
   onFieldCreated?: () => void;
   /** Whether the controls are in read-only / view mode. */
   isViewMode?: boolean;
+  /** Optional validation errors dictionary keyed by field name. */
+  errors?: Record<string, string>;
+  /** Whether the parent form or step has been touched. */
+  touched?: boolean;
   /** Optional container CSS class name. */
   className?: string;
 }

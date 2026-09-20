@@ -85,6 +85,7 @@
  * grew for this.
  */
 import * as React from "react";
+import { AlertCircle } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
@@ -146,6 +147,8 @@ export interface RichTextCustomFieldControlProps {
   placeholder?: string;
   /** The HOST form's validation verdict, when it has one (GenericForm does; the 8 hand-wired sites do not). */
   invalid?: boolean;
+  /** Validation error message to render inline when invalid. */
+  error?: string;
   /** Id of the host's own hint/error node, COMPOSED with this control's counter ids rather than replaced. */
   describedBy?: string;
 }
@@ -169,6 +172,7 @@ export function RichTextCustomFieldControl({
   disabled,
   placeholder,
   invalid,
+  error,
   describedBy,
 }: RichTextCustomFieldControlProps): React.ReactElement {
   const { t } = useI18n();
@@ -228,6 +232,11 @@ export function RichTextCustomFieldControl({
     <div className="space-y-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label ?? id}
+        {required && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <RichTextEditor
         id={id}
@@ -268,6 +277,12 @@ export function RichTextCustomFieldControl({
       <span id={announceId} aria-live="polite" className="sr-only">
         {announcement}
       </span>
+      {invalid && error && (
+        <p id={describedBy} className="text-xs font-medium text-destructive flex items-center gap-1.5 mt-1.5">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+          <span>{error}</span>
+        </p>
+      )}
     </div>
   );
 }
