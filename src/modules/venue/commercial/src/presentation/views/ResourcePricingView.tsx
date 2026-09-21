@@ -22,9 +22,10 @@ export function ResourcePricingView() {
   useModuleLocales(() => import("../../../locales"), "venue.pricing");
   const { t, direction } = useI18n();
   const canView = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_VIEW_COMMERCIALS);
-  const canConfigure = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CREATE_CATALOG_ITEM)
-    && usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_PUBLISH_OFFERING)
-    && usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CREATE_PRICE_BOOK_VERSION);
+  const canCreateItem = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CREATE_CATALOG_ITEM);
+  const canPublishOffering = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_PUBLISH_OFFERING);
+  const canCreatePriceBook = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CREATE_PRICE_BOOK_VERSION);
+  const canConfigure = canCreateItem && canPublishOffering && canCreatePriceBook;
   const canManageTax = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_APPLY_DISCOUNT_TAX);
   const model = useResourcePricingViewModel({
     messages: { fallbackError: t("pricing.error.description"), validation: t("pricing.validation.invalid") },

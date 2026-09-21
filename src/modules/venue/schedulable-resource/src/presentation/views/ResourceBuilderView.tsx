@@ -19,6 +19,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
 import { useResourceBuilderViewModel } from "../viewmodels/useResourceBuilderViewModel";
 import type { SchedulableResourceTreeNode } from "../utils/resourceTree";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
@@ -205,6 +206,7 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
 
   return (
     <div className="flex flex-col gap-6">
+      <VenueResourceNav />
       <PageHeader
         icon={Boxes}
         title={t("schedulableResource.title")}

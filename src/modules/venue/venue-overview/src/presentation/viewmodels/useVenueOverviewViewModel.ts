@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { VenueOverviewState } from "../../domain/entities/VenueOverview";
 
@@ -48,6 +48,8 @@ export function useVenueOverviewViewModel(
 ) {
   const [state, setState] = useState<VenueOverviewState>(INITIAL_STATE);
   const [selectedFacilityId, setSelectedFacilityId] = useState(initialFacilityId || "");
+  const selectedFacilityIdRef = useRef(initialFacilityId || "");
+  selectedFacilityIdRef.current = selectedFacilityId;
   const [facilities, setFacilities] = useState<FacilityOption[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -56,8 +58,8 @@ export function useVenueOverviewViewModel(
     try {
       const container = getVenueContainer();
       const overview = await container.venueOverviewService.getOverview(
-        facId || selectedFacilityId,
-        dateStr || INITIAL_STATE.localDate
+        facId ?? selectedFacilityIdRef.current,
+        dateStr ?? INITIAL_STATE.localDate
       );
       setState(overview);
 
@@ -65,8 +67,9 @@ export function useVenueOverviewViewModel(
       try {
         const page = await container.facilityRepository.getAll({ page: 1, pageSize: 50 });
         setFacilities(page.items.map((f) => ({ id: f.id, name: f.name })));
-        if (!selectedFacilityId && overview.facilityId) {
+        if (!selectedFacilityIdRef.current && overview.facilityId) {
           setSelectedFacilityId(overview.facilityId);
+          selectedFacilityIdRef.current = overview.facilityId;
         }
       } catch {
         // Dropdown facilities read error fallback
@@ -78,7 +81,7 @@ export function useVenueOverviewViewModel(
         error: true,
       }));
     }
-  }, [selectedFacilityId]);
+  }, []);
 
   useEffect(() => {
     void load(initialFacilityId, initialLocalDate);

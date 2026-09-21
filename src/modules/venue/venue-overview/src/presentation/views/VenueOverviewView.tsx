@@ -1,11 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
+import { usePermission } from "@core/hooks/use-permission";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
+import { Card, CardContent } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { AlertCircle, Building2, RefreshCw } from "lucide-react";
+import { AlertCircle, Building2, RefreshCw, ShieldAlert } from "lucide-react";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { useVenueAttentionViewModel } from "@modules/venue/attention-center/src/presentation/viewmodels/useVenueAttentionViewModel";
 import { useVenueOverviewViewModel } from "../viewmodels/useVenueOverviewViewModel";
 import { VenueOverviewHeader } from "../components/VenueOverviewHeader";
 import { VenueOverviewKpiStrip } from "../components/VenueOverviewKpiStrip";
@@ -24,6 +29,8 @@ interface Props {
 export function VenueOverviewView({ facilityId, localDate }: Props) {
   const { t, language } = useI18n();
   const dir = language === "ar" ? "rtl" : "ltr";
+  const canViewAttention = usePermission(VENUE_PERMISSIONS.VENUE_ATTENTION_VIEW);
+  const attentionVm = useVenueAttentionViewModel(canViewAttention);
   const {
     state,
     facilities,
@@ -115,6 +122,30 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
         <div className="flex justify-end">
           <VenueOverviewQuickActions t={t} />
         </div>
+
+        {canViewAttention && attentionVm.data && attentionVm.data.items.length > 0 && (
+          <Card className="border-amber-500/30 bg-amber-500/5">
+            <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+              <div className="flex items-center gap-3">
+                <ShieldAlert className="size-5 text-amber-600 dark:text-amber-400" aria-hidden="true" />
+                <div>
+                  <p className="text-sm font-semibold text-nx-ink">
+                    {t("venueOverview.attention.activeTitle", { count: attentionVm.data.items.length })}
+                  </p>
+                  <p className="text-xs text-nx-ink-2">
+                    {t("venueOverview.attention.activeDescription")}
+                  </p>
+                </div>
+              </div>
+              <Link href="/venue/attention">
+                <Button size="sm" variant="outline" className="text-xs border-amber-500/40 hover:bg-amber-500/10">
+                  {t("venueOverview.attention.viewAll")}
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        )}
+
         <VenueOverviewKpiStrip kpis={state.kpis} t={t} />
       </div>
 

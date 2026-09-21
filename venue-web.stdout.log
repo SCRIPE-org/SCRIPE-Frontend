@@ -1,0 +1,15 @@
+
+> scripe@0.1.0 dev E:\Scripe_pro\SCRIPE\SCRIPE-Frontend
+> next dev "--port" "3000"
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.7:3000
+- Environments: .env
+✓ Ready in 13.3s
+Creating turbopack project { dir: 'E:\\Scripe_pro\\SCRIPE\\SCRIPE-Frontend', testMode: true }
+- Experiments (use with caution):
+  · optimizePackageImports
+
+○ Compiling /login ...
+ GET /login?redirect=%2F 200 in 78s (next.js: 73s, proxy.ts: 16ms, application-code: 5.3s)

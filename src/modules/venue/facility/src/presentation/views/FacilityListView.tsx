@@ -10,6 +10,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2 } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
 
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
@@ -124,5 +125,10 @@ export const FacilityListView = React.memo(function FacilityListView() {
     ],
   };
 
-  return <GenericCrudView viewModel={vm} config={config} />;
+  return (
+    <div className="space-y-4">
+      <VenueResourceNav />
+      <GenericCrudView viewModel={vm} config={config} />
+    </div>
+  );
 });

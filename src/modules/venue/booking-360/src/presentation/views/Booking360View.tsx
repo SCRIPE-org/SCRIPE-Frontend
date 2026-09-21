@@ -42,6 +42,7 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
   const canViewCommercials = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_VIEW_COMMERCIALS);
   const canCalculateQuote = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CALCULATE_QUOTE);
   const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
+  const canRecordPayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
   const vm = useBooking360ViewModel(
     reservationId, canViewReservation, canViewCustomer, canViewResource, canViewProfile, canViewFacility);
   const finance = useBookingFinanceSummary(reservationId, canViewReservation && canViewReceivables);
@@ -111,11 +112,29 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
               ) : finance.loading ? <LoadingSpinner showText={false} /> : finance.error ? (
                 <Alert variant="warning"><AlertDescription>{t("booking360.commercial.unavailable")}</AlertDescription></Alert>
               ) : finance.summary ? (
-                <dl className="grid gap-4 sm:grid-cols-3">
-                  <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.invoice")}</dt><dd className="font-medium" dir="ltr">{finance.summary.invoiceNumber}</dd></div>
-                  <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.total")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.effectiveTotalAmount)}</dd></div>
-                  <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.outstanding")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.outstandingAmount)}</dd></div>
-                </dl>
+                <>
+                  <dl className="grid gap-4 sm:grid-cols-3">
+                    <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.invoice")}</dt><dd className="font-medium" dir="ltr">{finance.summary.invoiceNumber}</dd></div>
+                    <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.total")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.effectiveTotalAmount)}</dd></div>
+                    <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.outstanding")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.outstandingAmount)}</dd></div>
+                  </dl>
+                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                    <Link
+                      href="/venue/money/receivables"
+                      className="text-xs font-medium text-nx-accent hover:underline inline-flex items-center gap-1"
+                    >
+                      {t("booking360.commercial.viewReceivables")}
+                    </Link>
+                    {canRecordPayment && finance.summary.outstandingAmount > 0 && finance.summary.invoiceId ? (
+                      <Link
+                        href={`/venue/money/payments?invoiceId=${encodeURIComponent(finance.summary.invoiceId)}`}
+                        className="inline-flex items-center justify-center rounded border border-nx-accent bg-nx-accent px-2.5 py-1 text-xs font-medium text-white shadow-sm hover:opacity-90 transition-opacity"
+                      >
+                        {t("booking360.commercial.recordPayment")}
+                      </Link>
+                    ) : null}
+                  </div>
+                </>
               ) : <p className="text-sm text-nx-ink-2">{t("booking360.commercial.invoicePending")}</p>}
             </CardContent>
           </Card>

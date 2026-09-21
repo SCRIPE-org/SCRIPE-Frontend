@@ -2,12 +2,14 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { usePermission } from "@core/hooks/use-permission";
 import { useBooking360ViewModel } from "../viewmodels/useBooking360ViewModel";
+import { useBookingFinanceSummary } from "../viewmodels/useBookingFinanceSummary";
 import { Booking360View } from "./Booking360View";
 
 vi.mock("@core/hooks/use-module-locales", () => ({ useModuleLocales: vi.fn() }));
 vi.mock("@core/providers/i18n-provider", () => ({ useI18n: () => ({ t: (key: string) => key, language: "en", direction: "ltr" }) }));
 vi.mock("@core/hooks/use-permission", () => ({ usePermission: vi.fn() }));
 vi.mock("../viewmodels/useBooking360ViewModel", () => ({ useBooking360ViewModel: vi.fn() }));
+vi.mock("../viewmodels/useBookingFinanceSummary", () => ({ useBookingFinanceSummary: vi.fn() }));
 
 const reservation = {
   id: "reservation-1", reservationNumber: "RES-1", status: "Held", resourceId: "resource-1",
@@ -39,6 +41,12 @@ describe("Booking360View", () => {
   beforeEach(() => {
     vi.mocked(usePermission).mockReturnValue(true);
     vi.mocked(useBooking360ViewModel).mockReturnValue(vm() as never);
+    vi.mocked(useBookingFinanceSummary).mockReturnValue({
+      summary: null,
+      loading: false,
+      error: false,
+      refresh: vi.fn(),
+    });
   });
 
   it("renders canonical identity, schedule, customer, active hold, and chronological history", () => {
@@ -148,4 +156,25 @@ describe("Booking360View", () => {
     render(<Booking360View reservationId="reservation-1" />);
     expect(screen.getByRole("button", { name: "booking360.error.retry" })).toBeInTheDocument();
   });
+
+  it("renders commercial invoice summary with receivables and payment links when outstanding balance exists", () => {
+    vi.mocked(useBookingFinanceSummary).mockReturnValue({
+      summary: {
+        invoiceId: "inv-101",
+        invoiceNumber: "INV-101",
+        currencyCode: "USD",
+        effectiveTotalAmount: 150,
+        outstandingAmount: 50,
+        status: "Issued",
+      },
+      loading: false,
+      error: false,
+      refresh: vi.fn(),
+    });
+    render(<Booking360View reservationId="reservation-1" />);
+    expect(screen.getByText("INV-101")).toBeInTheDocument();
+    expect(screen.getByText("booking360.commercial.viewReceivables")).toHaveAttribute("href", "/venue/money/receivables");
+    expect(screen.getByText("booking360.commercial.recordPayment")).toHaveAttribute("href", "/venue/money/payments?invoiceId=inv-101");
+  });
 });
+

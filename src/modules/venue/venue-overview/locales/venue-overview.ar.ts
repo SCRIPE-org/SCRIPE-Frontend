@@ -63,10 +63,18 @@ export const ar = {
         noActiveBooking: "لا يوجد حجز نشط",
       },
     },
+    attention: {
+      activeTitle: "{{count}} إشارة تشغيلية تتطلب الاهتمام",
+      activeDescription: "تتطلب تعارضات تقويم الموارد أو فترات الحظر أو الصيانة مراجعة المشغّل.",
+      viewAll: "فتح مركز التنبيهات",
+    },
     quickActions: {
       title: "إجراءات المشغّل السريعة",
       newBooking: "حجز جديد",
       openCalendar: "فتح التقويم",
+      attentionCenter: "مركز التنبيهات",
+      receivables: "المستحقات",
+      payments: "الدفعات اليدوية",
       viewBookings: "عرض جميع الحجوزات",
     },
     deferred: {

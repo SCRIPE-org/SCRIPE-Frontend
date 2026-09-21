@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
+import type { MoneyPayment } from "../../domain/entities/Money";
 import { usePaymentsViewModel } from "./usePaymentsViewModel";
 
 vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn() }));
@@ -11,7 +12,7 @@ const invoice = {
   totalAmount: 100, adjustmentAmount: 0, effectiveTotalAmount: 100, paidAmount: 0,
   outstandingAmount: 100, creditAmount: 0, issuedAtUtc: "2026-09-19T08:00:00Z", dueAtUtc: null,
 };
-const payment = {
+const payment: MoneyPayment = {
   id: "payment-1", paymentNumber: "PAY-1", status: "Recorded", method: "Cash", currencyCode: "EGP",
   amount: 100, allocatedAmount: 100, unallocatedAmount: 0, payerPartyId: "payer-1", reservationId: "reservation-1",
   schedulableResourceId: "resource-1", facilityResourceProfileId: null, recordedAtUtc: "2026-09-19T08:00:00Z",
@@ -117,5 +118,38 @@ describe("usePaymentsViewModel", () => {
 
     expect(value.moneyRepository.getPaymentTimeline).toHaveBeenCalledWith("payment-1");
     expect(result.current.timeline?.payment.id).toBe("payment-1");
+  });
+
+  it("recovers an unallocated payment by allocating to an outstanding invoice without duplicate payment creation", async () => {
+    const unallocatedPayment = { ...payment, id: "payment-unallocated", paymentNumber: "PAY-2", allocatedAmount: 0, unallocatedAmount: 100 };
+    const value = container({
+      moneyRepository: {
+        getInvoices: vi.fn().mockResolvedValue({ items: [invoice], totalCount: 1 }),
+        getPayments: vi.fn().mockResolvedValue({ items: [unallocatedPayment], totalCount: 1 }),
+        recordPayment: vi.fn(),
+        allocatePayment: vi.fn().mockResolvedValue(undefined),
+        issueReceipt: vi.fn().mockResolvedValue(undefined),
+        refundPayment: vi.fn().mockResolvedValue(undefined),
+        getPaymentTimeline: vi.fn().mockResolvedValue({ payment: unallocatedPayment, allocations: [], receipts: [], refunds: [] }),
+      },
+    });
+    vi.mocked(getVenueContainer).mockReturnValue(value as never);
+    const { result } = renderHook(() => usePaymentsViewModel({
+      canView: true, canRecord: true, canIssueReceipt: true, canRefund: true, initialInvoiceId: null,
+      messages: { fallbackError: "unavailable", validation: "invalid", allocationPending: (number) => `allocate ${number}` },
+    }));
+    await waitFor(() => expect(result.current.payments?.length).toBe(1));
+
+    act(() => result.current.beginAllocate(unallocatedPayment));
+    expect(result.current.allocatingPayment?.id).toBe("payment-unallocated");
+    expect(result.current.allocationInvoiceId).toBe("invoice-1");
+    expect(result.current.allocationAmount).toBe("100");
+
+    await act(async () => { await result.current.submitAllocation(); });
+
+    // Verifies NO duplicate payment was created, and allocation was invoked directly
+    expect(value.moneyRepository.recordPayment).not.toHaveBeenCalled();
+    expect(value.moneyRepository.allocatePayment).toHaveBeenCalledWith("payment-unallocated", "invoice-1", 100, expect.any(String));
+    expect(result.current.notice).toBe("allocated");
   });
 });

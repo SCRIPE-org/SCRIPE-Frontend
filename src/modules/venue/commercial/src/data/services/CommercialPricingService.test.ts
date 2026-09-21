@@ -24,7 +24,7 @@ describe("CommercialPricingService", () => {
     const input = {
       schedulableResourceId: "resource-1", displayName: "Court 1 standard rental", currencyCode: "EGP",
       unitPrice: 250, effectiveFromUtc: "2026-09-19T00:00:00Z", minDurationMinutes: 30,
-      maxDurationMinutes: 180, incrementMinutes: 30, idempotencyKey: "price-config-1",
+      maxDurationMinutes: 180, incrementMinutes: 30, taxCategoryId: null, idempotencyKey: "price-config-1",
     };
 
     await new CommercialPricingService(api).configureResourcePrice(input);

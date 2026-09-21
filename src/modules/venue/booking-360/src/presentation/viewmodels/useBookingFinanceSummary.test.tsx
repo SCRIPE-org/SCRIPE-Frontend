@@ -18,7 +18,7 @@ describe("useBookingFinanceSummary", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
     expect(moneyRepository.getInvoices).toHaveBeenCalledWith(1, 50, { reservationId: "reservation-1" });
-    expect(result.current.summary).toEqual({ invoiceNumber: "INV-1", currencyCode: "EGP", effectiveTotalAmount: 250, outstandingAmount: 100, status: "Issued" });
+    expect(result.current.summary).toEqual({ invoiceId: "invoice-1", invoiceNumber: "INV-1", currencyCode: "EGP", effectiveTotalAmount: 250, outstandingAmount: 100, status: "Issued" });
   });
 
   it("does not probe Finance when the operator lacks receivables permission", () => {

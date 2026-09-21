@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Banknote, Lock, RefreshCw } from "lucide-react";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
+import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
@@ -15,6 +16,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { VenueMoneyNav } from "@modules/venue/shared/src/presentation/components/VenueMoneyNav";
 import { MANUAL_PAYMENT_METHODS, usePaymentsViewModel } from "../viewmodels/usePaymentsViewModel";
 
 export function PaymentsView() {
@@ -22,8 +24,9 @@ export function PaymentsView() {
   const { t, direction } = useI18n();
   const searchParams = useSearchParams();
   const canView = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);
-  const canRecord = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE)
-    && usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENT_ALLOCATIONS_UPDATE);
+  const canCreatePayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
+  const canUpdateAllocations = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENT_ALLOCATIONS_UPDATE);
+  const canRecord = canCreatePayment && canUpdateAllocations;
   const canReceipt = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIPTS_CREATE);
   const canRefund = usePermission(VENUE_PERMISSIONS.FINANCE_REFUNDS_APPROVE);
   const model = usePaymentsViewModel({
@@ -46,9 +49,10 @@ export function PaymentsView() {
 
   return (
     <div className="space-y-6" dir={direction} data-testid="venue-payments">
+      <VenueMoneyNav />
       <PageHeader icon={Banknote} title={t("money.payments.title")} description={t("money.payments.description")} />
       {model.error && <Alert variant="destructive"><AlertTitle>{t("money.error.title")}</AlertTitle><AlertDescription>{model.error}</AlertDescription></Alert>}
-      {model.notice && <Alert variant="success"><AlertDescription>{t(model.notice === "refunded" ? "money.payments.refund.saved" : "money.payments.saved")}</AlertDescription></Alert>}
+      {model.notice && <Alert variant="success"><AlertDescription>{t(model.notice === "refunded" ? "money.payments.refund.saved" : model.notice === "allocated" ? "money.payments.allocated" : "money.payments.saved")}</AlertDescription></Alert>}
       <Card>
         <CardHeader><CardTitle>{t("money.payments.recordTitle")}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
@@ -113,6 +117,66 @@ export function PaymentsView() {
           </CardContent>
         </Card>
       )}
+      {model.allocatingPayment && (
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("money.payments.allocate.title")}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Alert variant="info">
+              <AlertDescription>
+                {t("money.payments.allocate.description", {
+                  payment: model.allocatingPayment.paymentNumber,
+                })}
+              </AlertDescription>
+            </Alert>
+            <div className="space-y-2">
+              <Label>{t("money.payments.allocate.selectInvoice")}</Label>
+              <GenericSelect
+                type="searchable"
+                searchType="client"
+                allowClear={false}
+                aria-label={t("money.payments.allocate.selectInvoice")}
+                options={model.allocationInvoiceOptions}
+                value={model.allocationInvoiceId}
+                onValueChange={(value: string | string[]) =>
+                  model.setAllocationInvoiceId(Array.isArray(value) ? value[0] ?? "" : value)
+                }
+                placeholder={t("money.payments.allocate.selectInvoice")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="allocate-amount">{t("money.payments.allocate.amount")}</Label>
+              <Input
+                id="allocate-amount"
+                type="number"
+                min={0.01}
+                step="0.01"
+                value={model.allocationAmount}
+                disabled={model.allocating}
+                onChange={(event) => model.setAllocationAmount(event.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                type="button"
+                disabled={model.allocating || !model.allocationInvoiceId}
+                onClick={() => void model.submitAllocation()}
+              >
+                {model.allocating ? t("money.payments.allocate.saving") : t("money.payments.allocate.record")}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={model.allocating}
+                onClick={model.cancelAllocate}
+              >
+                {t("common.cancel") || "Cancel"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       {model.timeline && (
         <Card>
           <CardHeader className="flex-row items-center justify-between"><CardTitle>{t("money.payments.timeline.title", { payment: model.timeline.payment.paymentNumber })}</CardTitle><Button size="sm" variant="outline" onClick={model.closeTimeline}>{t("money.payments.timeline.close")}</Button></CardHeader>
@@ -132,12 +196,30 @@ export function PaymentsView() {
           {model.payments?.length ? (
             <ul className="space-y-2">
               {model.payments.map((payment) => (
-                <li key={payment.id} className="border-nx-border flex flex-wrap justify-between gap-2 rounded-lg border p-3">
-                  <span className="font-medium" dir="ltr">{payment.paymentNumber}</span>
-                  <span>{payment.currencyCode} {payment.amount}</span>
-                  <span className="text-sm text-nx-ink-2">{payment.method}</span>
-                  <Button size="sm" variant="outline" disabled={model.timelineLoading} onClick={() => void model.openTimeline(payment.id)}>{t("money.payments.timeline.action")}</Button>
-                  {canRefund && <Button size="sm" variant="outline" onClick={() => model.beginRefund(payment)}>{t("money.payments.refund.action")}</Button>}
+                <li key={payment.id} className="border-nx-border flex flex-wrap items-center justify-between gap-2 rounded-lg border p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium" dir="ltr">{payment.paymentNumber}</span>
+                    <span>{payment.currencyCode} {payment.amount}</span>
+                    <span className="text-sm text-nx-ink-2">{payment.method}</span>
+                    {payment.unallocatedAmount > 0 && (
+                      <Badge variant="warning">
+                        {payment.currencyCode} {payment.unallocatedAmount}
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {canRecord && payment.unallocatedAmount > 0 && (
+                      <Button
+                        size="sm"
+                        variant="default"
+                        onClick={() => model.beginAllocate(payment)}
+                      >
+                        {t("money.payments.allocate.action")}
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline" disabled={model.timelineLoading} onClick={() => void model.openTimeline(payment.id)}>{t("money.payments.timeline.action")}</Button>
+                    {canRefund && <Button size="sm" variant="outline" onClick={() => model.beginRefund(payment)}>{t("money.payments.refund.action")}</Button>}
+                  </div>
                 </li>
               ))}
             </ul>

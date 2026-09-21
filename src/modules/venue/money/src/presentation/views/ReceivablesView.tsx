@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { AlertCircle, ReceiptText, RefreshCw, Lock } from "lucide-react";
-import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -13,6 +12,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { VenueMoneyNav } from "@modules/venue/shared/src/presentation/components/VenueMoneyNav";
 import { useReceivablesViewModel } from "../viewmodels/useReceivablesViewModel";
 
 function money(value: number, currency: string, locale: string) {
@@ -23,9 +23,9 @@ export function ReceivablesView() {
   useModuleLocales(() => import("../../../locales"), "venue.money");
   const { t, language, direction } = useI18n();
   const canView = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
-  const canRecordPayment =
-    usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE) &&
-    usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENT_ALLOCATIONS_UPDATE);
+  const canCreatePayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
+  const canUpdateAllocations = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENT_ALLOCATIONS_UPDATE);
+  const canRecordPayment = canCreatePayment && canUpdateAllocations;
   const model = useReceivablesViewModel(canView, t("money.error.description"));
 
   if (!canView)
@@ -61,6 +61,7 @@ export function ReceivablesView() {
     );
   return (
     <div className="space-y-6" dir={direction} data-testid="venue-receivables">
+      <VenueMoneyNav />
       <PageHeader
         icon={ReceiptText}
         title={t("money.receivables.title")}

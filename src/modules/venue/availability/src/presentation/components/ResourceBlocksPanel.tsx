@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Ban, Pencil, ShieldAlert, Trash2, Wrench } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
@@ -66,10 +66,12 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
   const [kind, setKind] = useState<ResourceBlockKind>("blackout");
   const [editing, setEditing] = useState<ResourceBlock | null>(null);
   const [draft, setDraft] = useState<SaveResourceBlock>(() => newDraft(resourceId, timeZoneId));
+  const [prevKey, setPrevKey] = useState(`${resourceId}:${timeZoneId}`);
 
-  useEffect(() => {
+  if (`${resourceId}:${timeZoneId}` !== prevKey) {
+    setPrevKey(`${resourceId}:${timeZoneId}`);
     if (!editing) setDraft(newDraft(resourceId, timeZoneId));
-  }, [editing, resourceId, timeZoneId]);
+  }
 
   const current = kind === "blackout" ? blackouts : maintenanceBlocks;
   const canWrite = kind === "blackout" ? (editing ? canUpdateBlackouts : canCreateBlackouts) : (editing ? canUpdateMaintenance : canCreateMaintenance);
@@ -93,6 +95,7 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
       await onSave(kind, editing, { ...draft, resourceId, timeZoneId, reason: draft.reason.trim() });
       success({ title: t(editing ? "availability.blocks.updated" : "availability.blocks.created") });
       setEditing(null);
+      setDraft(newDraft(resourceId, timeZoneId));
     } catch (caught) {
       error({ title: caught instanceof Error ? caught.message : t("common.error") });
     }
@@ -108,7 +111,10 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
     try {
       await onDelete(nextKind, block);
       success({ title: t("availability.blocks.deleted") });
-      if (editing?.id === block.id) setEditing(null);
+      if (editing?.id === block.id) {
+        setEditing(null);
+        setDraft(newDraft(resourceId, timeZoneId));
+      }
     } catch (caught) {
       error({ title: caught instanceof Error ? caught.message : t("common.error") });
     }
@@ -123,8 +129,8 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
       <CardContent className="space-y-6">
         <Alert variant="warning"><ShieldAlert /><AlertTitle>{t("availability.blocks.precedenceTitle")}</AlertTitle><AlertDescription>{t("availability.blocks.precedenceDescription")}</AlertDescription></Alert>
         <div className="flex flex-wrap gap-2">
-          <Button type="button" variant={kind === "blackout" ? "default" : "outline"} size="sm" onClick={() => { setKind("blackout"); setEditing(null); }}><Ban className="size-4" />{t("availability.blocks.blackout")}</Button>
-          <Button type="button" variant={kind === "maintenance" ? "default" : "outline"} size="sm" onClick={() => { setKind("maintenance"); setEditing(null); }}><Wrench className="size-4" />{t("availability.blocks.maintenance")}</Button>
+          <Button type="button" variant={kind === "blackout" ? "default" : "outline"} size="sm" onClick={() => { setKind("blackout"); setEditing(null); setDraft(newDraft(resourceId, timeZoneId)); }}><Ban className="size-4" />{t("availability.blocks.blackout")}</Button>
+          <Button type="button" variant={kind === "maintenance" ? "default" : "outline"} size="sm" onClick={() => { setKind("maintenance"); setEditing(null); setDraft(newDraft(resourceId, timeZoneId)); }}><Wrench className="size-4" />{t("availability.blocks.maintenance")}</Button>
         </div>
         {canWrite && (
           <form onSubmit={submit} className="grid gap-4 rounded-nx-md border border-nx-line bg-nx-surface p-4 md:grid-cols-2">
@@ -133,7 +139,7 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
             <div className="space-y-2"><Label htmlFor="block-end">{t("availability.blocks.end")}</Label><Input id="block-end" type="datetime-local" value={draft.endLocal} onChange={(event) => setDraft({ ...draft, endLocal: event.target.value })} /></div>
             <div className="space-y-2 md:col-span-2"><Label htmlFor="block-reason">{t("availability.blocks.reason")}</Label><Textarea id="block-reason" maxLength={500} value={draft.reason} onChange={(event) => setDraft({ ...draft, reason: event.target.value })} /></div>
             <label className="flex items-center gap-2 text-sm md:col-span-2"><Checkbox checked={draft.hardBlock} onCheckedChange={(checked) => setDraft({ ...draft, hardBlock: checked === true })} />{t("availability.blocks.hardBlock")}</label>
-            <div className="flex justify-end gap-2 md:col-span-2"><Button type="button" variant="outline" onClick={() => setEditing(null)} disabled={saving}>{t("common.cancel")}</Button><Button type="submit" disabled={saving}>{saving ? t("common.saving") : t(editing ? "common.save" : "availability.blocks.create")}</Button></div>
+            <div className="flex justify-end gap-2 md:col-span-2"><Button type="button" variant="outline" onClick={() => { setEditing(null); setDraft(newDraft(resourceId, timeZoneId)); }} disabled={saving}>{t("common.cancel")}</Button><Button type="submit" disabled={saving}>{saving ? t("common.saving") : t(editing ? "common.save" : "availability.blocks.create")}</Button></div>
           </form>
         )}
         <div className="space-y-2">

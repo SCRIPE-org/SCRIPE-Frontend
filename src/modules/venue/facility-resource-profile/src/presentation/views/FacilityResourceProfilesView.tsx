@@ -27,6 +27,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
 import type {
   FacilityResourceProfile,
   FacilityResourceProfileWrite,
@@ -166,6 +167,7 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
 
   return (
     <div className="space-y-6">
+      <VenueResourceNav />
       <PageHeader
         icon={Building2}
         title={t("resourceProfile.title")}

@@ -19,7 +19,11 @@ export function useReceivablesViewModel(canView: boolean, fallbackError: string)
   }, [fallbackError, moneyRepository]);
 
   useEffect(() => {
-    if (canView) void load();
+    if (!canView) return;
+    const timer = setTimeout(() => {
+      void load();
+    }, 0);
+    return () => clearTimeout(timer);
   }, [canView, load]);
 
   return { items, error, loading: items === null && error === null, load };

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 
 export interface BookingFinanceSummary {
+  invoiceId: string;
   invoiceNumber: string;
   currencyCode: string;
   effectiveTotalAmount: number;
@@ -29,6 +30,7 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
       const page = await moneyRepository.getInvoices(1, 50, { reservationId });
       const invoice = page.items[0];
       setSummary(invoice ? {
+        invoiceId: invoice.id,
         invoiceNumber: invoice.invoiceNumber,
         currencyCode: invoice.currencyCode,
         effectiveTotalAmount: invoice.effectiveTotalAmount,

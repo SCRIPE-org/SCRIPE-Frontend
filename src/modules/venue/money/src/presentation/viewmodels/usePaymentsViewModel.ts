@@ -47,6 +47,10 @@ export function usePaymentsViewModel({
   const [refundReason, setRefundReason] = useState("");
   const [refundReference, setRefundReference] = useState("");
   const [refunding, setRefunding] = useState(false);
+  const [allocatingPayment, setAllocatingPayment] = useState<MoneyPayment | null>(null);
+  const [allocationInvoiceId, setAllocationInvoiceId] = useState("");
+  const [allocationAmount, setAllocationAmount] = useState("");
+  const [allocating, setAllocating] = useState(false);
   const [timeline, setTimeline] = useState<MoneyPaymentTimeline | null>(null);
   const [timelineLoading, setTimelineLoading] = useState(false);
 
@@ -185,6 +189,82 @@ export function usePaymentsViewModel({
     }
   }, [canRefund, load, messages, moneyRepository, refundAmount, refundInvoiceId, refundPayment, refundReason, refundReference]);
 
+  const allocationInvoiceOptions = useMemo(
+    () => (invoices ?? [])
+      .filter((invoice) => invoice.currencyCode === allocatingPayment?.currencyCode && invoice.outstandingAmount > 0)
+      .map((invoice) => ({
+        value: invoice.id,
+        label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.outstandingAmount}`,
+      })),
+    [invoices, allocatingPayment?.currencyCode]
+  );
+
+  const beginAllocate = useCallback((payment: MoneyPayment) => {
+    setAllocatingPayment(payment);
+    const matchingInvoice = invoices?.find((invoice) =>
+      invoice.reservationId === payment.reservationId &&
+      invoice.currencyCode === payment.currencyCode &&
+      invoice.outstandingAmount > 0
+    );
+    const defaultInvoice = matchingInvoice ?? invoices?.find((invoice) =>
+      invoice.currencyCode === payment.currencyCode && invoice.outstandingAmount > 0
+    );
+    setAllocationInvoiceId(defaultInvoice?.id ?? "");
+    const maxAllocatable = Math.min(
+      payment.unallocatedAmount,
+      defaultInvoice?.outstandingAmount ?? payment.unallocatedAmount
+    );
+    setAllocationAmount(maxAllocatable > 0 ? String(maxAllocatable) : "");
+    setError(null);
+    setNotice(null);
+  }, [invoices]);
+
+  const cancelAllocate = useCallback(() => {
+    setAllocatingPayment(null);
+    setAllocationInvoiceId("");
+    setAllocationAmount("");
+  }, []);
+
+  const submitAllocation = useCallback(async () => {
+    const numericAmount = Number(allocationAmount);
+    if (!canRecord || !allocatingPayment || !allocationInvoiceId || !Number.isFinite(numericAmount)
+      || numericAmount <= 0 || numericAmount > allocatingPayment.unallocatedAmount) {
+      setError(messages.validation);
+      return;
+    }
+    const targetInvoice = invoices?.find((inv) => inv.id === allocationInvoiceId);
+    if (!targetInvoice || numericAmount > targetInvoice.outstandingAmount) {
+      setError(messages.validation);
+      return;
+    }
+
+    setAllocating(true);
+    setError(null);
+    setNotice(null);
+    try {
+      await moneyRepository.allocatePayment(
+        allocatingPayment.id,
+        allocationInvoiceId,
+        numericAmount,
+        crypto.randomUUID()
+      );
+      if (canIssueReceipt) {
+        try {
+          await moneyRepository.issueReceipt(allocatingPayment.id, crypto.randomUUID());
+        } catch {
+          // Allocation succeeded even if receipt issue is unavailable
+        }
+      }
+      setNotice("allocated");
+      setAllocatingPayment(null);
+      await load();
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : messages.fallbackError);
+    } finally {
+      setAllocating(false);
+    }
+  }, [allocationAmount, allocationInvoiceId, allocatingPayment, canIssueReceipt, canRecord, invoices, load, messages, moneyRepository]);
+
   const openTimeline = useCallback(async (paymentId: string) => {
     setTimelineLoading(true);
     setError(null);
@@ -216,6 +296,11 @@ export function usePaymentsViewModel({
     refundReason,
     refundReference,
     refunding,
+    allocatingPayment,
+    allocationInvoiceId,
+    allocationAmount,
+    allocating,
+    allocationInvoiceOptions,
     timeline,
     timelineLoading,
     refundInvoiceOptions,
@@ -233,6 +318,11 @@ export function usePaymentsViewModel({
     setRefundReason,
     setRefundReference,
     submitRefund,
+    beginAllocate,
+    cancelAllocate,
+    setAllocationInvoiceId,
+    setAllocationAmount,
+    submitAllocation,
     openTimeline,
     closeTimeline: () => setTimeline(null),
   };

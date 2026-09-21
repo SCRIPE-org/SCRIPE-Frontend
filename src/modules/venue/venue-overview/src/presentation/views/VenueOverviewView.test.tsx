@@ -92,6 +92,9 @@ describe("VenueOverviewView", () => {
     vi.mocked(getVenueContainer).mockReturnValue({
       venueOverviewService: mockVenueOverviewService,
       facilityRepository: mockFacilityRepository,
+      venueAttentionRepository: {
+        get: vi.fn().mockResolvedValue({ items: [], totalCount: 0, generatedAtUtc: "2026-09-12T10:00:00Z" }),
+      },
     } as never);
   });
 

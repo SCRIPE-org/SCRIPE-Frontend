@@ -63,10 +63,18 @@ export const en = {
         noActiveBooking: "No active booking",
       },
     },
+    attention: {
+      activeTitle: "{{count}} operational signal(s) require attention",
+      activeDescription: "Resource calendar, blackout, or maintenance conflicts require operator review.",
+      viewAll: "Open Attention Center",
+    },
     quickActions: {
       title: "Quick Operator Actions",
       newBooking: "New booking",
       openCalendar: "Open calendar",
+      attentionCenter: "Attention Center",
+      receivables: "Receivables",
+      payments: "Manual payments",
       viewBookings: "View all bookings",
     },
     deferred: {
