@@ -1,0 +1,71 @@
+[browser] ⨯ unhandledRejection: ChunkLoadError: Failed to load chunk /_next/static/chunks/13sb_next_0bvxyrr._.js from module [project]/node_modules/.pnpm/next@16.2.9_@babel+core@7.2_507257d80b0a6bfebc11c203815ee1d5/node_modules/next/dist/compiled/react-server-dom-turbopack/cjs/react-server-dom-turbopack-client.browser.development.js [app-client] (ecmascript)
+[browser] [Next-Frontend-Template] [2026-09-21T15:35:47.978Z] ERROR: API Error: You are currently offline. Please check your internet connection. 
+    at Logger.error (src/core/common/logger.ts:66:15)
+    at <unknown> (src/core/services/api.service.ts:431:19)
+    at async ApiService.getPublic (src/core/services/api.service.ts:644:22)
+    at async SsoService.getProviders (src/modules/shared/auth/core/data/services/SsoService.ts:18:23)
+    at async SsoRepository.getProviders (src/modules/shared/auth/core/data/repositories/SsoRepository.ts:19:23)
+    at async fetchProviders (src/modules/shared/auth/signin/src/presentation/viewmodels/useSsoProviders.ts:39:22)
+  64 |   error(message: string, ...args: any[]): void {
+  65 |     if (this.shouldLog(LogLevel.ERROR)) {
+> 66 |       console.error(...this.formatMessage("ERROR", message, ...args));
+     |               ^
+  67 |     }
+  68 |   }
+  69 | (src/core/common/logger.ts:66:15)
+[browser] [Next-Frontend-Template] [2026-09-21T15:35:47.981Z] ERROR: API Error: You are currently offline. Please check your internet connection. 
+    at Logger.error (src/core/common/logger.ts:66:15)
+    at <unknown> (src/core/services/api.service.ts:431:19)
+    at async ApiService.getPublic (src/core/services/api.service.ts:644:22)
+    at async SsoService.getProviders (src/modules/shared/auth/core/data/services/SsoService.ts:18:23)
+    at async SsoRepository.getProviders (src/modules/shared/auth/core/data/repositories/SsoRepository.ts:19:23)
+    at async fetchProviders (src/modules/shared/auth/signin/src/presentation/viewmodels/useSsoProviders.ts:39:22)
+  64 |   error(message: string, ...args: any[]): void {
+  65 |     if (this.shouldLog(LogLevel.ERROR)) {
+> 66 |       console.error(...this.formatMessage("ERROR", message, ...args));
+     |               ^
+  67 |     }
+  68 |   }
+  69 | (src/core/common/logger.ts:66:15)
+[browser] [Next-Frontend-Template] [2026-09-21T15:39:23.576Z] ERROR: API Error: You are currently offline. Please check your internet connection. 
+    at Logger.error (src/core/common/logger.ts:66:15)
+    at <unknown> (src/core/services/api.service.ts:431:19)
+    at async ApiService.getPublic (src/core/services/api.service.ts:644:22)
+    at async SsoService.getProviders (src/modules/shared/auth/core/data/services/SsoService.ts:18:23)
+    at async SsoRepository.getProviders (src/modules/shared/auth/core/data/repositories/SsoRepository.ts:19:23)
+    at async fetchProviders (src/modules/shared/auth/signin/src/presentation/viewmodels/useSsoProviders.ts:39:22)
+  64 |   error(message: string, ...args: any[]): void {
+  65 |     if (this.shouldLog(LogLevel.ERROR)) {
+> 66 |       console.error(...this.formatMessage("ERROR", message, ...args));
+     |               ^
+  67 |     }
+  68 |   }
+  69 | (src/core/common/logger.ts:66:15)
+[browser] [Next-Frontend-Template] [2026-09-21T15:39:23.578Z] ERROR: API Error: You are currently offline. Please check your internet connection. 
+    at Logger.error (src/core/common/logger.ts:66:15)
+    at <unknown> (src/core/services/api.service.ts:431:19)
+    at async ApiService.getPublic (src/core/services/api.service.ts:644:22)
+    at async SsoService.getProviders (src/modules/shared/auth/core/data/services/SsoService.ts:18:23)
+    at async SsoRepository.getProviders (src/modules/shared/auth/core/data/repositories/SsoRepository.ts:19:23)
+    at async fetchProviders (src/modules/shared/auth/signin/src/presentation/viewmodels/useSsoProviders.ts:39:22)
+  64 |   error(message: string, ...args: any[]): void {
+  65 |     if (this.shouldLog(LogLevel.ERROR)) {
+> 66 |       console.error(...this.formatMessage("ERROR", message, ...args));
+     |               ^
+  67 |     }
+  68 |   }
+  69 | (src/core/common/logger.ts:66:15)
+[browser] Image with src "http://localhost:3000/brand/app-logo.svg" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] [Next-Frontend-Template] [2026-09-21T15:42:09.756Z] ERROR: API Error: You are currently offline. Please check your internet connection. 
+    at Logger.error (src/core/common/logger.ts:66:15)
+    at <unknown> (src/core/services/api.service.ts:431:19)
+    at async ApiService.postPublic (src/core/services/api.service.ts:649:22)
+    at async PasswordResetService.requestReset (src/modules/shared/auth/core/data/services/PasswordResetService.ts:17:5)
+    at async useForgotPasswordViewModel.useCallback[chooseMethod] [as chooseMethod] (src/modules/shared/auth/password-reset/src/presentation/viewmodels/useForgotPasswordViewModel.ts:169:9)
+  64 |   error(message: string, ...args: any[]): void {
+  65 |     if (this.shouldLog(LogLevel.ERROR)) {
+> 66 |       console.error(...this.formatMessage("ERROR", message, ...args));
+     |               ^
+  67 |     }
+  68 |   }
+  69 | (src/core/common/logger.ts:66:15)
