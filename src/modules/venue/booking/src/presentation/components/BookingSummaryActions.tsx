@@ -7,6 +7,8 @@ import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Input } from "@core/ui/input";
+import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
 import type {
   AvailabilityCandidate,
   BookingWorkspaceState,
@@ -21,11 +23,17 @@ interface BookingSummaryActionsProps {
   state: BookingWorkspaceState;
   canHold: boolean;
   canConfirm: boolean;
+  priceQuote: PriceQuote | null;
+  priceQuoteLoading: boolean;
+  priceQuoteError: string | null;
+  canOverridePrice: boolean;
+  priceOverrideLoading: boolean;
   onHold: () => Promise<void>;
   onConfirm: () => Promise<void>;
   onExpired: () => void;
   onSearchAgain: () => Promise<AvailabilityCandidate[]>;
   onCreateAnother: () => void;
+  onOverridePrice: (adjustmentAmount: number, reason: string) => Promise<boolean>;
 }
 
 function formatDateTime(value: string, locale: string, timeZone: string): string {
@@ -36,6 +44,10 @@ function formatDateTime(value: string, locale: string, timeZone: string): string
   }).format(new Date(value));
 }
 
+function formatMoney(amount: number, currencyCode: string, locale: string): string {
+  return new Intl.NumberFormat(locale, { style: "currency", currency: currencyCode }).format(amount);
+}
+
 export function BookingSummaryActions({
   t,
   locale,
@@ -43,14 +55,22 @@ export function BookingSummaryActions({
   state,
   canHold,
   canConfirm,
+  priceQuote,
+  priceQuoteLoading,
+  priceQuoteError,
+  canOverridePrice,
+  priceOverrideLoading,
   onHold,
   onConfirm,
   onExpired,
   onSearchAgain,
   onCreateAnother,
+  onOverridePrice,
 }: BookingSummaryActionsProps) {
   const candidate = state.selectedCandidate;
   const [remaining, setRemaining] = useState(() => state.hold ? remainingHoldSeconds(state.hold.expiresAtUtc) : 0);
+  const [overrideAmount, setOverrideAmount] = useState("");
+  const [overrideReason, setOverrideReason] = useState("");
 
   useEffect(() => {
     if (!state.hold || (state.stage !== "held" && state.stage !== "confirming")) return;
@@ -157,6 +177,43 @@ export function BookingSummaryActions({
           {state.reservation && <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.reference")}</dt><dd className="font-mono font-medium text-nx-ink">{state.reservation.reservationNumber}</dd></div>}
         </dl>
 
+        {priceQuoteLoading ? (
+          <Alert variant="info">
+            <AlertTitle>{t("booking.quote.calculating")}</AlertTitle>
+            <AlertDescription>{t("booking.quote.calculatingDescription")}</AlertDescription>
+          </Alert>
+        ) : priceQuote ? (
+          <dl className="grid gap-3 rounded-xl bg-nx-surface-2 p-4 sm:grid-cols-2">
+            <div><dt className="text-xs text-nx-ink-3">{t("booking.quote.total")}</dt><dd className="font-semibold text-nx-ink">{formatMoney(priceQuote.grandTotal, priceQuote.currencyCode, locale)}</dd></div>
+            <div><dt className="text-xs text-nx-ink-3">{t("booking.quote.expires")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(priceQuote.expiresAtUtc, locale, candidate.timeZoneId)}</dd></div>
+          </dl>
+        ) : (
+          <Alert variant="warning">
+            <AlertTitle>{t("booking.quote.unavailable")}</AlertTitle>
+            <AlertDescription>{priceQuoteError || t("booking.quote.unavailableDescription")}</AlertDescription>
+          </Alert>
+        )}
+
+        {canOverridePrice && priceQuote && (
+          <div className="space-y-3 rounded-xl border border-nx-border p-4">
+            <p className="text-sm font-medium text-nx-ink">{t("booking.quote.overrideTitle")}</p>
+            <p className="text-sm text-nx-ink-2">{t("booking.quote.overrideDescription")}</p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm text-nx-ink-2" htmlFor="quote-override-amount">{t("booking.quote.overrideAmount")}</label>
+                <Input id="quote-override-amount" type="number" step="0.01" value={overrideAmount} disabled={priceOverrideLoading} onChange={(event) => setOverrideAmount(event.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm text-nx-ink-2" htmlFor="quote-override-reason">{t("booking.quote.overrideReason")}</label>
+                <Input id="quote-override-reason" maxLength={500} value={overrideReason} disabled={priceOverrideLoading} onChange={(event) => setOverrideReason(event.target.value)} />
+              </div>
+            </div>
+            <Button type="button" variant="outline" disabled={priceOverrideLoading || !Number.isFinite(Number(overrideAmount)) || Number(overrideAmount) === 0 || !overrideReason.trim()} onClick={() => void onOverridePrice(Number(overrideAmount), overrideReason)}>
+              {priceOverrideLoading ? t("booking.quote.overriding") : t("booking.quote.overrideAction")}
+            </Button>
+          </div>
+        )}
+
         {held && state.hold ? (
           <>
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-nx-warning/10 p-4">
@@ -167,7 +224,7 @@ export function BookingSummaryActions({
               <Badge variant="warning">{t("booking.hold.title")}</Badge>
             </div>
             {canConfirm ? (
-              <Button type="button" disabled={state.stage === "confirming" || remaining === 0} onClick={() => void onConfirm()}>
+              <Button type="button" disabled={!priceQuote || priceQuoteLoading || state.stage === "confirming" || remaining === 0} onClick={() => void onConfirm()}>
                 <CheckCircle2 className="size-4" aria-hidden="true" />
                 {state.stage === "confirming" ? t("booking.confirm.confirming") : t("booking.confirm.action")}
               </Button>
@@ -179,7 +236,7 @@ export function BookingSummaryActions({
             )}
           </>
         ) : (
-          <Button type="button" disabled={!canHold || state.stage === "holding"} onClick={() => void onHold()}>
+          <Button type="button" disabled={!canHold || !priceQuote || priceQuoteLoading || state.stage === "holding"} onClick={() => void onHold()}>
             <LockKeyhole className="size-4" aria-hidden="true" />
             {state.stage === "holding" ? t("booking.hold.holding") : t("booking.hold.action")}
           </Button>

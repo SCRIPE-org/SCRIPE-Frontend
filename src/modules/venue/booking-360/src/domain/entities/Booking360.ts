@@ -19,6 +19,8 @@ export interface Booking360Reservation {
   requestedEndUtc: string;
   quantity: number;
   customerPartyId: string;
+  payerPartyId: string;
+  priceSnapshotId: string | null;
   createdAt: string;
   modifiedAt: string | null;
   asOfUtc: string;

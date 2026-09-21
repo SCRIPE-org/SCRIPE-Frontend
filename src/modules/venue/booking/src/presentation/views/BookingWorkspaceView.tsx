@@ -47,6 +47,9 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
   const canCreateReservation = usePermission(VENUE_PERMISSIONS.RESERVATION_CREATE);
   const canCreateHold = usePermission(VENUE_PERMISSIONS.BOOKING_HOLD_CREATE);
   const canConfirm = usePermission(VENUE_PERMISSIONS.RESERVATION_CONFIRM);
+  const canViewCommercials = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_VIEW_COMMERCIALS);
+  const canCalculateQuote = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CALCULATE_QUOTE);
+  const canOverridePrice = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_OVERRIDE_PRICE);
 
   const canUseCoreFlow = canViewCustomers && canViewFacilities && canViewProfiles &&
     canViewResources && canSearch && canViewReservations && canCreateReservation && canCreateHold;
@@ -162,13 +165,19 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
             locale={language}
             customer={vm.customer}
             state={vm.state}
-            canHold={canCreateHold}
-            canConfirm={canConfirm}
+            canHold={canCreateHold && canViewCommercials && canCalculateQuote && Boolean(vm.priceQuote) && !vm.priceQuoteLoading}
+            canConfirm={canConfirm && canViewCommercials && canCalculateQuote}
+            priceQuote={vm.priceQuote}
+            priceQuoteLoading={vm.priceQuoteLoading}
+            priceQuoteError={vm.priceQuoteError}
+            canOverridePrice={canOverridePrice}
+            priceOverrideLoading={vm.priceOverrideLoading}
             onHold={vm.createHold}
             onConfirm={vm.confirm}
             onExpired={vm.markHoldExpired}
             onSearchAgain={vm.searchAvailability}
             onCreateAnother={vm.createAnother}
+            onOverridePrice={vm.applyPriceOverride}
           />
         </div>
       </div>

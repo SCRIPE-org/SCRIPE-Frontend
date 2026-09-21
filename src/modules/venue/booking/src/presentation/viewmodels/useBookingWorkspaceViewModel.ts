@@ -5,6 +5,7 @@ import { getVenueContainer } from "@modules/venue/di";
 import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
 import type { FacilityResourceProfile } from "@modules/venue/facility-resource-profile/src/domain/entities/FacilityResourceProfile";
 import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
+import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
 import type {
   AvailabilityCandidate,
   BookingRequestCriteria,
@@ -75,6 +76,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     facilityRepository,
     facilityResourceProfileRepository,
     schedulableResourceRepository,
+    commercialPricingRepository,
   } = getVenueContainer();
 
   const [state, dispatch] = useReducer(reduceBookingWorkspace, initialBookingWorkspaceState);
@@ -91,6 +93,11 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   const submittingRef = useRef(false);
   const draftRef = useRef<{ fingerprint: string; reservationId: string } | null>(null);
   const confirmKeyRef = useRef<string | null>(null);
+  const quoteGenerationRef = useRef(0);
+  const [priceQuote, setPriceQuote] = useState<PriceQuote | null>(null);
+  const [priceQuoteLoading, setPriceQuoteLoading] = useState(false);
+  const [priceQuoteError, setPriceQuoteError] = useState<string | null>(null);
+  const [priceOverrideLoading, setPriceOverrideLoading] = useState(false);
 
   const loadSetup = useCallback(async () => {
     setSetupLoading(true);
@@ -131,6 +138,9 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     }));
     draftRef.current = null;
     confirmKeyRef.current = null;
+    quoteGenerationRef.current += 1;
+    setPriceQuote(null);
+    setPriceQuoteError(null);
     dispatch({ type: "criteriaChanged" });
   }, []);
 
@@ -151,6 +161,9 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     setCustomerResults([]);
     draftRef.current = null;
     confirmKeyRef.current = null;
+    quoteGenerationRef.current += 1;
+    setPriceQuote(null);
+    setPriceQuoteError(null);
     dispatch({ type: "customerChanged" });
     return hydrated;
   }, [customerRepository]);
@@ -159,6 +172,9 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     setCustomerState(null);
     draftRef.current = null;
     confirmKeyRef.current = null;
+    quoteGenerationRef.current += 1;
+    setPriceQuote(null);
+    setPriceQuoteError(null);
     dispatch({ type: "customerChanged" });
   }, []);
 
@@ -264,12 +280,61 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     return candidates;
   }, [applicableProfiles, availabilityRepository, criteria, customer, facilities, resources]);
 
-  const selectCandidate = useCallback((candidate: AvailabilityCandidate) => {
+  const selectCandidate = useCallback(async (candidate: AvailabilityCandidate) => {
     dispatch({ type: "candidateSelected", candidate });
-  }, []);
+    const generation = ++quoteGenerationRef.current;
+    setPriceQuote(null);
+    setPriceQuoteError(null);
+    if (!customer) return;
+    setPriceQuoteLoading(true);
+    try {
+      const configuration = await commercialPricingRepository.getResourceConfiguration(candidate.resourceId);
+      const quote = await commercialPricingRepository.calculateQuote({
+        offeringId: configuration.offeringId,
+        resourceId: candidate.resourceId,
+        partyId: customer.id,
+        quantity: candidate.requestedQuantity,
+        requestedStartUtc: candidate.startUtc,
+        requestedEndUtc: candidate.endUtc,
+        currencyCode: configuration.currencyCode,
+        expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        idempotencyKey: crypto.randomUUID(),
+      });
+      if (generation === quoteGenerationRef.current) setPriceQuote(quote);
+    } catch (error) {
+      if (generation === quoteGenerationRef.current) {
+        setPriceQuoteError(errorMessage(error, "booking-quote-failed"));
+      }
+    } finally {
+      if (generation === quoteGenerationRef.current) setPriceQuoteLoading(false);
+    }
+  }, [commercialPricingRepository, customer]);
+
+  const applyPriceOverride = useCallback(async (adjustmentAmount: number, reason: string) => {
+    if (!priceQuote || !Number.isFinite(adjustmentAmount) || adjustmentAmount === 0
+      || !reason.trim() || reason.trim().length > 500) return false;
+    setPriceOverrideLoading(true);
+    setPriceQuoteError(null);
+    try {
+      const applied = await commercialPricingRepository.overrideQuote(priceQuote.id, {
+        adjustmentAmount,
+        reason: reason.trim(),
+        idempotencyKey: crypto.randomUUID(),
+      });
+      setPriceQuote((current) => current && current.id === priceQuote.id
+        ? { ...current, grandTotal: applied.overriddenGrandTotal }
+        : current);
+      return true;
+    } catch (error) {
+      setPriceQuoteError(errorMessage(error, "booking-quote-override-failed"));
+      return false;
+    } finally {
+      setPriceOverrideLoading(false);
+    }
+  }, [commercialPricingRepository, priceQuote]);
 
   const createHold = useCallback(async () => {
-    if (submittingRef.current || !customer || !state.selectedCandidate || !state.selectedCandidate.isAvailable) return;
+    if (submittingRef.current || !customer || !priceQuote || !state.selectedCandidate || !state.selectedCandidate.isAvailable) return;
     submittingRef.current = true;
     dispatch({ type: "holding" });
     try {
@@ -305,7 +370,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     } finally {
       submittingRef.current = false;
     }
-  }, [bookingRepository, customer, state.selectedCandidate]);
+  }, [bookingRepository, customer, priceQuote, state.selectedCandidate]);
 
   const markHoldExpired = useCallback(() => {
     draftRef.current = null;
@@ -314,7 +379,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   }, []);
 
   const confirm = useCallback(async () => {
-    if (submittingRef.current || state.stage !== "held" || !state.reservationId || !state.hold) return;
+    if (submittingRef.current || state.stage !== "held" || !state.reservationId || !state.hold || !priceQuote) return;
     if (Date.parse(state.hold.expiresAtUtc) <= Date.now()) {
       dispatch({ type: "holdExpired" });
       return;
@@ -324,7 +389,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     try {
       const key = confirmKeyRef.current ?? crypto.randomUUID();
       confirmKeyRef.current = key;
-      await bookingRepository.confirm(state.reservationId, key);
+      await bookingRepository.confirm(state.reservationId, key, priceQuote.id);
       const reservation = await bookingRepository.getReservation(state.reservationId);
       dispatch({ type: "confirmed", reservation });
     } catch (error) {
@@ -340,7 +405,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     } finally {
       submittingRef.current = false;
     }
-  }, [bookingRepository, state.hold, state.reservationId, state.stage]);
+  }, [bookingRepository, priceQuote, state.hold, state.reservationId, state.stage]);
 
   const createAnother = useCallback(() => {
     setCustomerState(null);
@@ -348,6 +413,9 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     setCriteriaState((current) => ({ ...initialBookingCriteria, facilityId: current.facilityId }));
     draftRef.current = null;
     confirmKeyRef.current = null;
+    quoteGenerationRef.current += 1;
+    setPriceQuote(null);
+    setPriceQuoteError(null);
     dispatch({ type: "reset" });
   }, []);
 
@@ -373,9 +441,14 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     setupLoading,
     setupError,
     setupFeatureUnavailable,
+    priceQuote,
+    priceQuoteLoading,
+    priceQuoteError,
+    priceOverrideLoading,
     refreshSetup: loadSetup,
     searchAvailability,
     selectCandidate,
+    applyPriceOverride,
     createHold,
     markHoldExpired,
     confirm,

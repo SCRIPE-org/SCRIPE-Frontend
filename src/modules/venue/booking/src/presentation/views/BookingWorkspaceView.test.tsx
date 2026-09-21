@@ -20,6 +20,7 @@ vi.mock("../viewmodels/useBookingWorkspaceViewModel", () => ({
     customer: { id: "party-1", displayName: "منى", type: "Person" },
     customerResults: [], customerSearching: false, facilities: [], resourceKindOptions: [], usageTypeOptions: [],
     setupLoading: false, setupError: null, setupFeatureUnavailable: false,
+    priceQuote: null, priceQuoteLoading: false, priceQuoteError: null,
     searchCustomers: vi.fn(), selectCustomer: vi.fn(), clearCustomer: vi.fn(), setCriteria: vi.fn(),
     refreshSetup: vi.fn(), searchAvailability: vi.fn(), selectCandidate: vi.fn(), createHold: vi.fn(),
     confirm: vi.fn(), markHoldExpired: vi.fn(), createAnother: vi.fn(),

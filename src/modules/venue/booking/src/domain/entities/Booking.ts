@@ -83,6 +83,7 @@ export interface RescheduleReservationInput {
   requestedStartUtc: string;
   requestedEndUtc: string;
   idempotencyKey: string;
+  priceQuoteId?: string;
 }
 
 export interface ChangeReservationResourceInput {
@@ -90,6 +91,7 @@ export interface ChangeReservationResourceInput {
   requestedStartUtc: string;
   requestedEndUtc: string;
   idempotencyKey: string;
+  priceQuoteId?: string;
 }
 
 export type BookingWorkspaceStage =

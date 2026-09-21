@@ -16,6 +16,7 @@ import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { BookingHoldState } from "../components/BookingHoldState";
 import { BookingLifecycleTimeline } from "../components/BookingLifecycleTimeline";
 import { BookingOperationalActions } from "../components/BookingOperationalActions";
+import { useBookingFinanceSummary } from "../viewmodels/useBookingFinanceSummary";
 import { useBooking360ViewModel } from "../viewmodels/useBooking360ViewModel";
 
 function formatRange(start: string, end: string, locale: string, timeZone: string): string {
@@ -38,8 +39,12 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
   const canViewResource = usePermission(VENUE_PERMISSIONS.SCHEDULABLE_RESOURCE_VIEW);
   const canViewProfile = usePermission(VENUE_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW);
   const canViewFacility = usePermission(VENUE_PERMISSIONS.FACILITY_VIEW);
+  const canViewCommercials = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_VIEW_COMMERCIALS);
+  const canCalculateQuote = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CALCULATE_QUOTE);
+  const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
   const vm = useBooking360ViewModel(
     reservationId, canViewReservation, canViewCustomer, canViewResource, canViewProfile, canViewFacility);
+  const finance = useBookingFinanceSummary(reservationId, canViewReservation && canViewReceivables);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
   const focusedReservationId = React.useRef<string | null>(null);
 
@@ -63,7 +68,8 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
   const timeZoneId = vm.state.profile?.timeZoneId ?? "UTC";
   const isTerminal = ["Completed", "PartiallyFulfilled", "Cancelled", "Rejected", "Expired"].includes(reservation.status);
   const showConfirm = vm.state.stage === "ready" && reservation.status === "Held" &&
-    reservation.activeHold && canConfirm;
+    reservation.activeHold && canConfirm && canViewCommercials && canCalculateQuote;
+  const canReprice = !reservation.priceSnapshotId || (canViewCommercials && canCalculateQuote);
 
   return (
     <div className="space-y-6" dir={direction} data-testid="booking-360">
@@ -94,6 +100,26 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
             </dl></CardContent>
           </Card>
 
+          <Card>
+            <CardHeader><CardTitle>{t("booking360.commercial.title")}</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <Alert variant={reservation.priceSnapshotId ? "success" : "info"}>
+                <AlertDescription>{t(reservation.priceSnapshotId ? "booking360.commercial.snapshotBound" : "booking360.commercial.snapshotPending")}</AlertDescription>
+              </Alert>
+              {!canViewReceivables ? (
+                <Alert variant="info"><AlertDescription>{t("booking360.commercial.restricted")}</AlertDescription></Alert>
+              ) : finance.loading ? <LoadingSpinner showText={false} /> : finance.error ? (
+                <Alert variant="warning"><AlertDescription>{t("booking360.commercial.unavailable")}</AlertDescription></Alert>
+              ) : finance.summary ? (
+                <dl className="grid gap-4 sm:grid-cols-3">
+                  <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.invoice")}</dt><dd className="font-medium" dir="ltr">{finance.summary.invoiceNumber}</dd></div>
+                  <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.total")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.effectiveTotalAmount)}</dd></div>
+                  <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.outstanding")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.outstandingAmount)}</dd></div>
+                </dl>
+              ) : <p className="text-sm text-nx-ink-2">{t("booking360.commercial.invoicePending")}</p>}
+            </CardContent>
+          </Card>
+
           <BookingOperationalActions
             status={reservation.status as never}
             activeAction={vm.state.activeAction}
@@ -102,8 +128,8 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
             canComplete={canComplete}
             canMarkNoShow={canMarkNoShow}
             canCancel={canCancel}
-            canReschedule={canReschedule}
-            canChangeResource={canChangeResource}
+            canReschedule={canReschedule && canReprice}
+            canChangeResource={canChangeResource && canReprice}
             direction={direction}
             bookingReference={reservation.reservationNumber}
             customerName={vm.state.customer?.displayName}

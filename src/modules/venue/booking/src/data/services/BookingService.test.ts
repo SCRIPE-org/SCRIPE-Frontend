@@ -48,10 +48,11 @@ describe("BookingService", () => {
   it("confirms T06 through the explicit action endpoint", async () => {
     vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", bookingHoldId: "hold-1" });
 
-    await new BookingService(api).confirm("reservation-1", "confirm-key");
+    await new BookingService(api).confirm("reservation-1", "confirm-key", "price-quote-1");
 
     expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/confirm", {
       idempotencyKey: "confirm-key",
+      priceQuoteId: "price-quote-1",
     });
   });
 

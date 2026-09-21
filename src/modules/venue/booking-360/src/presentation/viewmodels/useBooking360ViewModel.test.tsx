@@ -14,6 +14,8 @@ const detail = {
   requestedEndUtc: "2026-09-10T08:00:00Z",
   quantity: 2,
   customerPartyId: "party-1",
+  payerPartyId: "payer-1",
+  priceSnapshotId: null,
   createdAt: "2026-09-10T06:00:00Z",
   modifiedAt: null,
   asOfUtc: "2026-09-10T06:30:00Z",
@@ -40,6 +42,10 @@ function container(overrides: Record<string, unknown> = {}) {
     schedulableResourceRepository: { getById: vi.fn().mockResolvedValue({ id: "resource-1", name: "Court 1", facilityResourceProfileId: "profile-1" }) },
     facilityResourceProfileRepository: { getById: vi.fn().mockResolvedValue({ id: "profile-1", facilityId: "facility-1", name: "Indoor Court", resourceKindCode: "court", operatingPolicy: { timeZoneId: "Africa/Cairo" }, usageTypes: [] }) },
     facilityRepository: { getById: vi.fn().mockResolvedValue({ id: "facility-1", name: "Downtown" }) },
+    commercialPricingRepository: {
+      getResourceConfiguration: vi.fn().mockResolvedValue({ offeringId: "offering-1", currencyCode: "EGP" }),
+      calculateQuote: vi.fn().mockResolvedValue({ id: "quote-1" }),
+    },
     ...overrides,
   };
 }
@@ -116,13 +122,16 @@ describe("useBooking360ViewModel", () => {
     await act(async () => {
       const first = result.current.confirm();
       const second = result.current.confirm();
-      await Promise.resolve();
-      expect(confirm).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1));
       resolveConfirm();
       await Promise.all([first, second]);
     });
     await waitFor(() => expect(result.current.state.reservation?.status).toBe("Confirmed"));
     expect(getById).toHaveBeenCalledTimes(2);
+    expect(value.commercialPricingRepository.calculateQuote).toHaveBeenCalledWith(expect.objectContaining({
+      offeringId: "offering-1", resourceId: "resource-1", partyId: "payer-1",
+    }));
+    expect(confirm).toHaveBeenCalledWith("reservation-1", expect.any(String), "quote-1");
   });
 
   it("does not use the workstation clock as confirmation authority", async () => {
@@ -368,7 +377,7 @@ describe("useBooking360ViewModel", () => {
   });
 
   it("executes reschedule with selected resource and slot, reloading detail", async () => {
-    const confirmed = { ...detail, status: "Confirmed" as const };
+    const confirmed = { ...detail, status: "Confirmed" as const, priceSnapshotId: "snapshot-1" };
     const rescheduled = {
       ...confirmed,
       requestedStartUtc: "2026-09-11T10:00:00Z",
@@ -399,6 +408,7 @@ describe("useBooking360ViewModel", () => {
         requestedStartUtc: "2026-09-11T10:00:00Z",
         requestedEndUtc: "2026-09-11T11:00:00Z",
         idempotencyKey: expect.any(String),
+        priceQuoteId: "quote-1",
       }
     );
     expect(result.current.state.reservation?.requestedStartUtc).toBe("2026-09-11T10:00:00Z");
@@ -410,7 +420,7 @@ describe("useBooking360ViewModel", () => {
   });
 
   it("executes changeResource with target resource, reloading detail", async () => {
-    const confirmed = { ...detail, status: "Confirmed" as const };
+    const confirmed = { ...detail, status: "Confirmed" as const, priceSnapshotId: "snapshot-1" };
     const changed = { ...confirmed, resourceId: "resource-2" };
     const repo = container().bookingRepository;
     const getById = vi.fn().mockResolvedValueOnce(confirmed).mockResolvedValue(changed);
@@ -437,6 +447,7 @@ describe("useBooking360ViewModel", () => {
         requestedStartUtc: "2026-09-10T07:00:00Z",
         requestedEndUtc: "2026-09-10T08:00:00Z",
         idempotencyKey: expect.any(String),
+        priceQuoteId: "quote-1",
       }
     );
     expect(result.current.state.reservation?.resourceId).toBe("resource-2");

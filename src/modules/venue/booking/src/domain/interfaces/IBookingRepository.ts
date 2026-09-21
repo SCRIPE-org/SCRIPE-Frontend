@@ -11,7 +11,7 @@ import type {
 export interface IBookingRepository {
   createDraft(input: CreateBookingDraftInput): Promise<{ id: string }>;
   createHold(reservationId: string, idempotencyKey: string): Promise<BookingHoldResult>;
-  confirm(reservationId: string, idempotencyKey: string): Promise<ConfirmBookingResult>;
+  confirm(reservationId: string, idempotencyKey: string, priceQuoteId: string): Promise<ConfirmBookingResult>;
   checkIn(reservationId: string, idempotencyKey: string): Promise<ReservationLifecycleResult>;
   complete(reservationId: string, idempotencyKey: string): Promise<ReservationLifecycleResult>;
   markNoShow(

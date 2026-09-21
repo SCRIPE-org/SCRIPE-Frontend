@@ -419,6 +419,11 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   // Attention Center — individual signals are additionally filtered by their source permissions.
   "/venue/attention": [SYSTEM_PERMISSIONS.VENUE_ATTENTION_VIEW],
 
+  // Venue commercial and money surfaces remain independently server-enforced.
+  "/venue/pricing": [SYSTEM_PERMISSIONS.CATALOG_PRICING_VIEW_COMMERCIALS],
+  "/venue/money/receivables": [SYSTEM_PERMISSIONS.FINANCE_RECEIVABLES_VIEW],
+  "/venue/money/payments": [SYSTEM_PERMISSIONS.FINANCE_PAYMENTS_VIEW],
+
   // Booking Operator Workspace — confirmation is deliberately not a page
   // prerequisite so a delegated operator can search and create a hold.
   "/venue/bookings/new": [SYSTEM_PERMISSIONS.RESERVATION_CREATE],

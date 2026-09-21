@@ -65,7 +65,7 @@ export function useBooking360ViewModel(
 ) {
   const {
     booking360Repository, bookingRepository, customerRepository, schedulableResourceRepository,
-    facilityResourceProfileRepository, facilityRepository,
+    facilityResourceProfileRepository, facilityRepository, commercialPricingRepository,
   } = getVenueContainer();
   const [state, setState] = useState(initialState);
   const generation = useRef(0);
@@ -142,6 +142,27 @@ export function useBooking360ViewModel(
 
   useEffect(() => { void load(); return () => { generation.current += 1; }; }, [load]);
 
+  const calculateCurrentQuote = useCallback(async (
+    reservation: Booking360Reservation,
+    resourceId: string,
+    requestedStartUtc: string,
+    requestedEndUtc: string
+  ): Promise<string> => {
+    const configuration = await commercialPricingRepository.getResourceConfiguration(resourceId);
+    const quote = await commercialPricingRepository.calculateQuote({
+      offeringId: configuration.offeringId,
+      resourceId,
+      partyId: reservation.payerPartyId,
+      quantity: reservation.quantity,
+      requestedStartUtc,
+      requestedEndUtc,
+      currencyCode: configuration.currencyCode,
+      expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      idempotencyKey: crypto.randomUUID(),
+    });
+    return quote.id;
+  }, [commercialPricingRepository]);
+
   const confirm = useCallback(async () => {
     const reservation = state.reservation;
     if (submitting.current || state.stage !== "ready" || !reservation ||
@@ -154,7 +175,9 @@ export function useBooking360ViewModel(
       const mapKey = `${reservation.id}:confirm`;
       const key = actionKeys.current.get(mapKey) ?? crypto.randomUUID();
       actionKeys.current.set(mapKey, key);
-      await bookingRepository.confirm(reservation.id, key);
+      const priceQuoteId = await calculateCurrentQuote(
+        reservation, reservation.resourceId, reservation.requestedStartUtc, reservation.requestedEndUtc);
+      await bookingRepository.confirm(reservation.id, key, priceQuoteId);
       await load();
     } catch (error) {
       let actionError: Booking360State["actionError"] = "failed";
@@ -169,7 +192,7 @@ export function useBooking360ViewModel(
       submitting.current = false;
       setState((current) => ({ ...current, activeAction: null }));
     }
-  }, [bookingRepository, load, state.reservation, state.stage]);
+  }, [bookingRepository, calculateCurrentQuote, load, state.reservation, state.stage]);
 
 interface TransitionOptions {
   reason?: string;
@@ -222,18 +245,34 @@ interface TransitionOptions {
       } else if (action === "cancel") {
         await bookingRepository.cancel(reservation.id, idempotencyKey, normalizedReason);
       } else if (action === "reschedule" && options?.rescheduleInput) {
+        const priceQuoteId = reservation.priceSnapshotId
+          ? await calculateCurrentQuote(
+            reservation,
+            options.rescheduleInput.resourceId,
+            options.rescheduleInput.requestedStartUtc,
+            options.rescheduleInput.requestedEndUtc)
+          : undefined;
         await bookingRepository.reschedule(reservation.id, {
           resourceId: options.rescheduleInput.resourceId,
           requestedStartUtc: options.rescheduleInput.requestedStartUtc,
           requestedEndUtc: options.rescheduleInput.requestedEndUtc,
           idempotencyKey,
+          ...(priceQuoteId ? { priceQuoteId } : {}),
         });
       } else if (action === "changeResource" && options?.changeResourceInput) {
+        const priceQuoteId = reservation.priceSnapshotId
+          ? await calculateCurrentQuote(
+            reservation,
+            options.changeResourceInput.targetResourceId,
+            options.changeResourceInput.requestedStartUtc,
+            options.changeResourceInput.requestedEndUtc)
+          : undefined;
         await bookingRepository.changeResource(reservation.id, {
           targetResourceId: options.changeResourceInput.targetResourceId,
           requestedStartUtc: options.changeResourceInput.requestedStartUtc,
           requestedEndUtc: options.changeResourceInput.requestedEndUtc,
           idempotencyKey,
+          ...(priceQuoteId ? { priceQuoteId } : {}),
         });
       }
 
@@ -273,7 +312,7 @@ interface TransitionOptions {
       submitting.current = false;
       setState((current) => ({ ...current, activeAction: null }));
     }
-  }, [bookingRepository, load, state]);
+  }, [bookingRepository, calculateCurrentQuote, load, state]);
 
   const checkIn = useCallback(() => transition("checkIn"), [transition]);
   const complete = useCallback(() => transition("complete"), [transition]);

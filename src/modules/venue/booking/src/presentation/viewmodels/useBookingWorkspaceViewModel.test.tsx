@@ -44,6 +44,20 @@ function makeContainer() {
     facilityResourceProfileRepository: { getAll: vi.fn().mockResolvedValue({ items: [profile] }) },
     schedulableResourceRepository: { getAll: vi.fn().mockResolvedValue({ items: [resource] }) },
     availabilityRepository: { search: vi.fn().mockResolvedValue(availability) },
+    commercialPricingRepository: {
+      getResourceConfiguration: vi.fn().mockResolvedValue({
+        offeringId: "offering-1",
+        currencyCode: "EGP",
+      }),
+      calculateQuote: vi.fn().mockResolvedValue({
+        id: "quote-1",
+        quoteNumber: "Q-1",
+        currencyCode: "EGP",
+        grandTotal: 250,
+        expiresAtUtc: "2999-09-10T08:00:00Z",
+      }),
+      overrideQuote: vi.fn().mockResolvedValue({ overriddenGrandTotal: 230 }),
+    },
     customerRepository: {
       search: vi.fn().mockResolvedValue([customer]),
       getById: vi.fn().mockResolvedValue(customer),
@@ -68,7 +82,7 @@ async function prepareSelection(result: { current: ReturnType<typeof useBookingW
   await act(async () => { await result.current.selectCustomer("party-1"); });
   act(() => result.current.setCriteria({ date: "2026-09-10" }));
   await act(async () => { await result.current.searchAvailability(); });
-  act(() => result.current.selectCandidate(result.current.state.candidates[0]));
+  await act(async () => { await result.current.selectCandidate(result.current.state.candidates[0]); });
 }
 
 describe("useBookingWorkspaceViewModel", () => {
@@ -202,9 +216,24 @@ describe("useBookingWorkspaceViewModel", () => {
 
     await act(async () => { await Promise.all([result.current.confirm(), result.current.confirm()]); });
     expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(1);
+    expect(container.bookingRepository.confirm).toHaveBeenCalledWith("reservation-1", expect.any(String), "quote-1");
     expect(result.current.state.stage).toBe("confirmed");
 
     await act(async () => { await result.current.confirm(); });
     expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(1);
+  });
+
+  it("applies a privileged quote override with an explicit reason before confirmation", async () => {
+    const container = makeContainer();
+    vi.mocked(getVenueContainer).mockReturnValue(container as never);
+    const { result } = renderHook(() => useBookingWorkspaceViewModel());
+    await prepareSelection(result);
+
+    await act(async () => { await result.current.applyPriceOverride(-20, "approved concession"); });
+
+    expect(container.commercialPricingRepository.overrideQuote).toHaveBeenCalledWith("quote-1", expect.objectContaining({
+      adjustmentAmount: -20, reason: "approved concession", idempotencyKey: expect.any(String),
+    }));
+    expect(result.current.priceQuote?.grandTotal).toBe(230);
   });
 });

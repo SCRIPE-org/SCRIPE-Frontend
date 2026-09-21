@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { BookingWorkspaceState } from "../../domain/entities/Booking";
 import { BookingSummaryActions } from "./BookingSummaryActions";
@@ -54,6 +54,12 @@ const baseProps = {
   onExpired: vi.fn(),
   onSearchAgain: vi.fn(),
   onCreateAnother: vi.fn(),
+  priceQuote: null,
+  priceQuoteLoading: false,
+  priceQuoteError: null,
+  canOverridePrice: false,
+  priceOverrideLoading: false,
+  onOverridePrice: vi.fn(),
 };
 
 describe("BookingSummaryActions", () => {
@@ -62,6 +68,13 @@ describe("BookingSummaryActions", () => {
 
     expect(screen.getByText("booking.confirm.noPermissionTitle")).toBeInTheDocument();
     expect(screen.queryByText("booking.confirm.action")).not.toBeInTheDocument();
+  });
+
+  it("fails closed while an authoritative server quote is unavailable", () => {
+    render(<BookingSummaryActions {...baseProps} state={state({ stage: "results", hold: null })} canConfirm />);
+
+    expect(screen.getByText("booking.quote.unavailable")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "booking.hold.action" })).toBeDisabled();
   });
 
   it("presents a Search-to-Hold conflict as a recoverable operational state", () => {
@@ -90,5 +103,18 @@ describe("BookingSummaryActions", () => {
     expect(screen.getByText("booking.confirm.createAnother")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "booking.confirm.viewBooking" })).toHaveAttribute(
       "href", "/venue/bookings/reservation-1");
+  });
+
+  it("requires a non-zero adjustment and reason before submitting the privileged override", () => {
+    const onOverridePrice = vi.fn().mockResolvedValue(undefined);
+    render(<BookingSummaryActions {...baseProps} state={state({ stage: "results", hold: null })} canConfirm
+      canOverridePrice priceQuote={{ id: "quote-1", grandTotal: 250, currencyCode: "EGP", expiresAtUtc: "2999-09-10T08:00:00Z" } as never}
+      onOverridePrice={onOverridePrice} />);
+
+    fireEvent.change(screen.getByLabelText("booking.quote.overrideAmount"), { target: { value: "-20" } });
+    fireEvent.change(screen.getByLabelText("booking.quote.overrideReason"), { target: { value: "approved concession" } });
+    fireEvent.click(screen.getByRole("button", { name: "booking.quote.overrideAction" }));
+
+    expect(onOverridePrice).toHaveBeenCalledWith(-20, "approved concession");
   });
 });

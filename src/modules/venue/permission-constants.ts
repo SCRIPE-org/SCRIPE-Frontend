@@ -54,6 +54,23 @@ export const VENUE_PERMISSIONS = {
   MAINTENANCE_BLOCK_DELETE: "maintenance-blocks.delete",
   VENUE_ATTENTION_VIEW: "venue-attention.view",
 
+  // ── Commercial pricing ───────────────────────────────────
+  CATALOG_PRICING_VIEW_COMMERCIALS: "catalog-pricing.view-commercials.view",
+  CATALOG_PRICING_CALCULATE_QUOTE: "catalog-pricing.calculate-quote.view",
+  CATALOG_PRICING_CREATE_CATALOG_ITEM: "catalog-pricing.create-catalog-item.manage",
+  CATALOG_PRICING_PUBLISH_OFFERING: "catalog-pricing.publish-offering.manage",
+  CATALOG_PRICING_CREATE_PRICE_BOOK_VERSION: "catalog-pricing.create-price-book-version.manage",
+  CATALOG_PRICING_APPLY_DISCOUNT_TAX: "catalog-pricing.apply-discount-tax.manage",
+  CATALOG_PRICING_OVERRIDE_PRICE: "catalog-pricing.override-price.manage",
+
+  // ── Finance (Finance owns all money truth) ───────────────
+  FINANCE_RECEIVABLES_VIEW: "finance.receivables.view",
+  FINANCE_PAYMENTS_VIEW: "finance.payments.view",
+  FINANCE_PAYMENTS_CREATE: "finance.payments.create",
+  FINANCE_PAYMENT_ALLOCATIONS_UPDATE: "finance.payment-allocations.update",
+  FINANCE_RECEIPTS_CREATE: "finance.receipts.create",
+  FINANCE_REFUNDS_APPROVE: "finance.refunds.approve",
+
   // ── Booking Operator Workspace ────────────────────────────
   RESERVATION_VIEW: "reservations.view",
   RESERVATION_CREATE: "reservations.create",

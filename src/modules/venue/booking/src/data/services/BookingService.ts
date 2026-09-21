@@ -26,8 +26,8 @@ export class BookingService implements IBookingService {
     return this.api.post(BOOKING_ENDPOINTS.HOLDS, { reservationId, idempotencyKey });
   }
 
-  confirm(reservationId: string, idempotencyKey: string): Promise<ConfirmBookingResult> {
-    return this.api.post(BOOKING_ENDPOINTS.CONFIRM(reservationId), { idempotencyKey });
+  confirm(reservationId: string, idempotencyKey: string, priceQuoteId: string): Promise<ConfirmBookingResult> {
+    return this.api.post(BOOKING_ENDPOINTS.CONFIRM(reservationId), { idempotencyKey, priceQuoteId });
   }
 
   checkIn(reservationId: string, idempotencyKey: string): Promise<ReservationLifecycleResult> {

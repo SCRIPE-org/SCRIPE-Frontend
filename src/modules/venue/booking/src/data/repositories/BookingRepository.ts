@@ -19,8 +19,8 @@ export class BookingRepository implements IBookingRepository {
   createHold(reservationId: string, idempotencyKey: string): Promise<BookingHoldResult> {
     return this.service.createHold(reservationId, idempotencyKey);
   }
-  confirm(reservationId: string, idempotencyKey: string): Promise<ConfirmBookingResult> {
-    return this.service.confirm(reservationId, idempotencyKey);
+  confirm(reservationId: string, idempotencyKey: string, priceQuoteId: string): Promise<ConfirmBookingResult> {
+    return this.service.confirm(reservationId, idempotencyKey, priceQuoteId);
   }
   checkIn(reservationId: string, idempotencyKey: string): Promise<ReservationLifecycleResult> {
     return this.service.checkIn(reservationId, idempotencyKey);

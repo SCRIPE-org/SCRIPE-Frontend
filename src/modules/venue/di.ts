@@ -72,6 +72,15 @@ import { Booking360Repository } from "./booking-360/src/data/repositories/Bookin
 import type { IBooking360Service } from "./booking-360/src/domain/interfaces/IBooking360Service";
 import type { IBooking360Repository } from "./booking-360/src/domain/interfaces/IBooking360Repository";
 
+import { CommercialPricingService } from "./commercial/src/data/services/CommercialPricingService";
+import { CommercialPricingRepository } from "./commercial/src/data/repositories/CommercialPricingRepository";
+import type { ICommercialPricingRepository } from "./commercial/src/domain/interfaces/ICommercialPricingRepository";
+
+import { MoneyService } from "./money/src/data/services/MoneyService";
+import { MoneyRepository } from "./money/src/data/repositories/MoneyRepository";
+import type { IMoneyService } from "./money/src/domain/interfaces/IMoneyService";
+import type { IMoneyRepository } from "./money/src/domain/interfaces/IMoneyRepository";
+
 import { VenueAttentionService } from "./attention-center/src/data/services/VenueAttentionService";
 import { VenueAttentionRepository } from "./attention-center/src/data/repositories/VenueAttentionRepository";
 import type { IVenueAttentionService } from "./attention-center/src/domain/interfaces/IVenueAttentionService";
@@ -90,6 +99,8 @@ interface VenueContainer {
   customerRepository: ICustomerRepository;
   operationsCalendarRepository: IOperationsCalendarRepository;
   booking360Repository: IBooking360Repository;
+  commercialPricingRepository: ICommercialPricingRepository;
+  moneyRepository: IMoneyRepository;
   venueAttentionRepository: IVenueAttentionRepository;
   venueOverviewService: IVenueOverviewService;
   /** Site picker for the Venue Profile "Site" field — OrganizationCore is a different backend module. */
@@ -141,11 +152,15 @@ export function getVenueContainer(): VenueContainer {
   // separate backend module this workspace only ever reads from.
   const organizationCoreApi = getModuleApiService("ORGANIZATIONCORE");
   const partyKernelApi = getModuleApiService("PARTYKERNEL");
+  const catalogPricingApi = getModuleApiService("CATALOGPRICING");
+  const financeApi = getModuleApiService("FINANCE");
 
   wireModuleApiLifecycle(facilityOperationsApi);
   wireModuleApiLifecycle(resourceSchedulingBookingApi);
   wireModuleApiLifecycle(organizationCoreApi);
   wireModuleApiLifecycle(partyKernelApi);
+  wireModuleApiLifecycle(catalogPricingApi);
+  wireModuleApiLifecycle(financeApi);
 
   const venueProfileService: IVenueProfileService = new VenueProfileService(facilityOperationsApi);
   const facilityService: IFacilityService = new FacilityService(facilityOperationsApi);
@@ -164,6 +179,8 @@ export function getVenueContainer(): VenueContainer {
   );
   const booking360Service: IBooking360Service = new Booking360Service(resourceSchedulingBookingApi);
   const venueAttentionService: IVenueAttentionService = new VenueAttentionService(resourceSchedulingBookingApi);
+  const commercialPricingService = new CommercialPricingService(catalogPricingApi);
+  const moneyService: IMoneyService = new MoneyService(financeApi);
 
   container = {
     venueProfileRepository: new VenueProfileRepository(venueProfileService),
@@ -177,6 +194,8 @@ export function getVenueContainer(): VenueContainer {
     customerRepository: new CustomerRepository(customerPickerService),
     operationsCalendarRepository: new OperationsCalendarRepository(operationsCalendarService),
     booking360Repository: new Booking360Repository(booking360Service),
+    commercialPricingRepository: new CommercialPricingRepository(commercialPricingService),
+    moneyRepository: new MoneyRepository(moneyService),
     venueAttentionRepository: new VenueAttentionRepository(venueAttentionService),
     venueOverviewService: new VenueOverviewService(
       new OperationsCalendarRepository(operationsCalendarService),
