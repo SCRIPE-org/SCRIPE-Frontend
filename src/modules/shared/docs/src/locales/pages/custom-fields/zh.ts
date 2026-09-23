@@ -2026,6 +2026,31 @@ export const zh = {
           featCliTitle: "统一 CLI 与 Studio 运维",
           featCliDesc:
             "通过 `scripe crypto` 命令行套件与 SCRIPE Studio 可视化开发者控制台提供全方位的运维工具支持。",
+          dualEnvelopeTitle: "双信封分拆密钥派生 (Dual-Envelope Split-Key)",
+          dualEnvelopeIntro:
+            "SCRIPE 通过分拆密钥层次结构，在平台运营方与租户数据之间实施零知识加密隔离：",
+          thComponent: "密钥组件",
+          thCustodian: "存储与保管",
+          thRole: "加密职责",
+          compPlatformKey: "平台主 KEK",
+          custPlatform: "主机环境 / KMS (`.env`)",
+          rolePlatformKey:
+            "根密钥加密密钥 (KEK)。加密静态存储的租户机密。没有租户机密，平台运营方无法解密租户数据。",
+          compTenantSecret: "租户加密机密",
+          custTenantDb: "租户数据库 (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "每个租户生成的唯一 256 位 CSPRNG 机密。使用当前活动的平台 KEK 加密存储。",
+          compSplitDek: "派生数据加密密钥 (DEK)",
+          custRuntimeMemory: "仅临时内存 (HKDF)",
+          roleSplitDek:
+            "运行时通过 HKDF-SHA256 将平台密钥与租户机密组合派生。绝不持久化到磁盘。",
+          compAadBinding: "上下文 AAD 标记",
+          custCipherEngine: "AES-256-GCM 信封",
+          roleAadBinding:
+            "将密文与 TenantId、EntityId 和 FieldId 进行密码学绑定，防止跨实体和跨租户重放攻击。",
+          autoProvisionTitle: "无摩擦自动密钥预配",
+          autoProvisionContent:
+            "通过身份管道创建新租户时，`ITenantCryptographicProvisioner` 会自动生成并在当前平台主密钥下包裹唯一的 256 位密钥，租户无需手动配置即可立即使用机密自定义字段。",
           frameTitle: "二进制 Magic Frame v2 传输规范",
           frameIntro:
             "加密值被持久化为符合 v2 规范的紧凑 Base64 编码二进制帧：",
@@ -2070,6 +2095,9 @@ export const zh = {
           behResilience: "如果服务进程重启，游标将从最后确认的偏移量自动恢复，已迁移的记录将安全跳过。",
           stratObservability: "实时进度与指标监控",
           behObservability: "实时向 Studio 控制台和管理员门户上报已处理数量、失败数量与完成百分比。",
+          stratCluster: "平台全集群重包迁移",
+          behCluster:
+            "由超级管理员发起的迁移，在新平台密钥下重包所有租户机密，并在零停机时间内更新所有租户的实体字段值。",
           toolingTitle: "管理与运维界面",
           toolingIntro:
             "运维人员和开发者可通过三种互补的界面管理加密体系：",

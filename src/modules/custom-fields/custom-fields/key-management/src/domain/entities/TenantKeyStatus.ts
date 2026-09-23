@@ -1,3 +1,5 @@
+import type { MigrationSession } from "./MigrationSession";
+
 export interface KeyDistributionItem {
   platformKeyId: number;
   tenantKeyVersion: number;
@@ -15,9 +17,15 @@ export interface TenantKeyStatusData {
   lastRotatedAt?: string;
   lastRotatedBy?: string;
   totalEncryptedRecords: number;
+  upToDateValues?: number;
+  outdatedValues?: number;
   distribution: KeyDistributionItem[];
   hasPendingMigration: boolean;
   activeSessionId?: string;
+  activeSession?: MigrationSession;
+  isPlatformKeyring?: boolean;
+  algorithm?: string;
+  minDecryptionVersion?: number;
 }
 
 export class TenantKeyStatus {
@@ -32,11 +40,20 @@ export class TenantKeyStatus {
   get lastRotatedAt(): string | undefined { return this.data.lastRotatedAt; }
   get lastRotatedBy(): string | undefined { return this.data.lastRotatedBy; }
   get totalEncryptedRecords(): number { return this.data.totalEncryptedRecords; }
+  get upToDateValues(): number { return this.data.upToDateValues ?? this.data.totalEncryptedRecords; }
+  get outdatedValues(): number { return this.data.outdatedValues ?? 0; }
   get distribution(): KeyDistributionItem[] { return this.data.distribution; }
   get hasPendingMigration(): boolean { return this.data.hasPendingMigration; }
   get activeSessionId(): string | undefined { return this.data.activeSessionId; }
+  get activeSession(): MigrationSession | undefined { return this.data.activeSession; }
+  get isPlatformKeyring(): boolean { return this.data.isPlatformKeyring ?? false; }
+  get algorithm(): string | undefined { return this.data.algorithm; }
+  get minDecryptionVersion(): number | undefined { return this.data.minDecryptionVersion; }
 
   get isFullyMigrated(): boolean {
+    if (this.data.outdatedValues !== undefined) {
+      return this.data.outdatedValues === 0;
+    }
     if (this.distribution.length === 0) return true;
     const currentMatches = this.distribution.filter(
       d => d.platformKeyId === this.currentPlatformKeyId && d.tenantKeyVersion === this.activeVersion

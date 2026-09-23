@@ -8,9 +8,11 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import { GenericCrudView, type CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useCustomFieldViewModel } from "../../viewmodels/useCustomFieldViewModel";
 import type { CustomField } from "../../../domain/entities/CustomField";
+import { getCustomFieldsContainer } from "../../../../../di";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
@@ -125,7 +127,17 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
       }), [t]
   );
 
-  const classificationFields = useMemo(() => buildClassificationFields(t), [t]);
+  const { data: keyStatus } = useQuery({
+    queryKey: ["customFields", "encryption", "status"],
+    queryFn: () => getCustomFieldsContainer().keyManagementRepository.getStatus(),
+  });
+
+  const isTenantKeyInitialized = isPlatformContext || Boolean(keyStatus?.isInitialized);
+
+  const classificationFields = useMemo(
+    () => buildClassificationFields(t, isTenantKeyInitialized),
+    [t, isTenantKeyInitialized]
+  );
 
   const {
     types: referenceTargetTypes, isLoading: isReferenceTargetTypesLoading,

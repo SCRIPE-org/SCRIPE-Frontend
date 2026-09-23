@@ -2695,6 +2695,31 @@ export const en = {
           featCliTitle: "Unified CLI & Studio ops",
           featCliDesc:
             "Full operational tooling via `scripe crypto` and the SCRIPE Studio visual developer dashboard.",
+          dualEnvelopeTitle: "Dual-Envelope Split-Key Derivation",
+          dualEnvelopeIntro:
+            "SCRIPE enforces a zero-knowledge cryptographic separation between platform operators and tenant data using a split-key envelope hierarchy:",
+          thComponent: "Key Component",
+          thCustodian: "Storage & Custody",
+          thRole: "Cryptographic Responsibility",
+          compPlatformKey: "Platform Master KEK",
+          custPlatform: "Host Environment / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Encrypts tenant secrets at rest. Platform operators cannot read tenant data without tenant secrets.",
+          compTenantSecret: "Tenant Cryptographic Secret",
+          custTenantDb: "Tenant Database (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Unique 256-bit CSPRNG secret generated per tenant. Stored encrypted under active Platform KEK.",
+          compSplitDek: "Derived Data Encryption Key (DEK)",
+          custRuntimeMemory: "Ephemeral Memory Only (HKDF)",
+          roleSplitDek:
+            "Derived at runtime via HKDF-SHA256 from XOR of Platform Key and Tenant Secret. Never persisted to disk.",
+          compAadBinding: "Contextual AAD Tag",
+          custCipherEngine: "AES-256-GCM Envelope",
+          roleAadBinding:
+            "Cryptographically binds ciphertext to TenantId, EntityId, and FieldId, preventing cross-entity and cross-tenant replay attacks.",
+          autoProvisionTitle: "Zero-friction automatic provisioning",
+          autoProvisionContent:
+            "When a new tenant is created via the Identity pipeline, `ITenantCryptographicProvisioner` automatically provisions and initializes a unique 256-bit cryptographic secret wrapped under the active platform master key. Tenants can immediately define and record confidential custom fields without manual key bootstrapping.",
           frameTitle: "Binary Magic Frame v2 wire specification",
           frameIntro:
             "Encrypted values are persisted as compact base64-encoded binary frames that adhere to the v2 specification:",
@@ -2739,6 +2764,9 @@ export const en = {
           behResilience: "If the process restarts, the cursor resumes from the last completed offset. Already-migrated records are skipped safely.",
           stratObservability: "Real-time metrics & progress",
           behObservability: "Reports processed count, failure count, throughput, and completion percentage to the Studio dashboard and admin portal.",
+          stratCluster: "Platform cluster rewrap",
+          behCluster:
+            "SuperAdmin-initiated migration that rewraps all tenant secrets under the rotated platform key and updates entity field values across all tenants with zero downtime.",
           toolingTitle: "Management interfaces",
           toolingIntro:
             "Operators and developers have three complementary interfaces for managing encryption:",

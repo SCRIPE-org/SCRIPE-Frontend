@@ -2720,6 +2720,31 @@ export const de = {
           featCliTitle: "Einheitliche CLI- & Studio-Operationen",
           featCliDesc:
             "Vollständige operative Steuerung über `scripe crypto` und das visuelle Entwickler-Dashboard in SCRIPE Studio.",
+          dualEnvelopeTitle: "Duale geteilte Schlüsselableitung (Dual-Envelope)",
+          dualEnvelopeIntro:
+            "SCRIPE erzwingt eine kryptografische Zero-Knowledge-Trennung zwischen Plattformbetreibern und Mandantendaten über eine geteilte Schlüsselhierarchie:",
+          thComponent: "Schlüsselkomponente",
+          thCustodian: "Speicherung & Verwahrung",
+          thRole: "Kryptografische Verantwortung",
+          compPlatformKey: "Plattform-Haupt-KEK",
+          custPlatform: "Host-Umgebung / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Verschlüsselt Mandantengeheimnisse im Ruhezustand. Plattformbetreiber können Mandantendaten ohne das Mandantengeheimnis nicht entschlüsseln.",
+          compTenantSecret: "Kryptografisches Mandantengeheimnis",
+          custTenantDb: "Mandantendatenbank (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Eindeutiges 256-Bit-CSPRNG-Geheimnis pro Mandant. Gespeichert unter dem aktiven Plattform-KEK.",
+          compSplitDek: "Abgeleiteter Datenverschlüsselungsschlüssel (DEK)",
+          custRuntimeMemory: "Nur flüchtiger Speicher (HKDF)",
+          roleSplitDek:
+            "Zur Laufzeit via HKDF-SHA256 aus XOR von Plattformschlüssel und Mandantengeheimnis abgeleitet. Wird niemals auf Festplatte gespeichert.",
+          compAadBinding: "Kontextueller AAD-Tag",
+          custCipherEngine: "AES-256-GCM-Umschlag",
+          roleAadBinding:
+            "Bindet den Geheimtext mathematisch an TenantId, EntityId und FieldId, um Wiederholungs- und Injektionsangriffe zu verhindern.",
+          autoProvisionTitle: "Reibungslose automatische Bereitstellung",
+          autoProvisionContent:
+            "Bei Erstellung eines neuen Mandanten initialisiert `ITenantCryptographicProvisioner` automatisch ein 256-Bit-Geheimnis, geschützt durch den aktiven Plattform-KEK. Mandanten können sofort vertrauliche benutzerdefinierte Felder nutzen.",
           frameTitle: "Spezifikation des binären Magic Frame v2",
           frameIntro:
             "Verschlüsselte Werte werden als kompakte Base64-codierte Binärframes persistiert, die der v2-Spezifikation entsprechen:",
@@ -2764,6 +2789,9 @@ export const de = {
           behResilience: "Wird der Prozess neu gestartet, setzt der Cursor beim letzten bestätigten Offset fort. Bereits migrierte Datensätze werden sicher übersprungen.",
           stratObservability: "Echtzeit-Metriken & Fortschritt",
           behObservability: "Meldet verarbeitete Datensätze, Fehlerrate, Durchsatz und Fortschrittsprozentsatz an das Studio-Dashboard und Administrationsportal.",
+          stratCluster: "Plattformweites Cluster-Rewrap",
+          behCluster:
+            "SuperAdmin-Migration, die alle Mandantengeheimnisse unter dem neuen Plattformschlüssel neu verpackt und Datensätze ohne Ausfallzeit migriert.",
           toolingTitle: "Verwaltungsschnittstellen",
           toolingIntro:
             "Betreiber und Entwickler verfügen über drei komplementäre Schnittstellen zur Verwaltung der Verschlüsselung:",

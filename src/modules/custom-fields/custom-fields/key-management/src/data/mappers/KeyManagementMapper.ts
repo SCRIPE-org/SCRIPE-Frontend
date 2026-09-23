@@ -9,28 +9,43 @@ import type {
 
 export class KeyManagementMapper {
   static toStatusEntity(dto: TenantEncryptionStatusDto): TenantKeyStatus {
+    const totalRecords = dto.totalEncryptedValues ?? dto.totalEncryptedRecords ?? 0;
+    const activeSession = dto.activeSession ? KeyManagementMapper.toSessionEntity(dto.activeSession) : undefined;
+    const activeSessionId = dto.activeSession?.id ?? dto.activeSessionId;
+
     return new TenantKeyStatus({
       tenantCode: dto.tenantCode ?? "",
-      isInitialized: Boolean(dto.isInitialized),
+      isInitialized: dto.isInitialized ?? (dto.status === "Active" || (dto.activeVersion ?? 0) > 0),
       status: dto.status ?? "Uninitialized",
       activeVersion: dto.activeVersion ?? 0,
       currentPlatformKeyId: dto.currentPlatformKeyId ?? 0,
       providerType: dto.providerType ?? "LocalKeyring",
       lastRotatedAt: dto.lastRotatedAt,
       lastRotatedBy: dto.lastRotatedBy,
-      totalEncryptedRecords: dto.totalEncryptedRecords ?? 0,
-      distribution: (dto.distribution ?? []).map(d => ({
-        platformKeyId: d.platformKeyId ?? 0,
-        tenantKeyVersion: d.tenantKeyVersion ?? 0,
-        recordCount: d.recordCount ?? 0,
-        percentage: d.percentage ?? 0,
-      })),
-      hasPendingMigration: Boolean(dto.hasPendingMigration),
-      activeSessionId: dto.activeSessionId,
+      totalEncryptedRecords: totalRecords,
+      upToDateValues: dto.upToDateValues,
+      outdatedValues: dto.outdatedValues,
+      distribution: (dto.distribution ?? []).map(d => {
+        const count = d.count ?? d.recordCount ?? 0;
+        const percentage = d.percentage ?? (totalRecords > 0 ? Math.round((count / totalRecords) * 1000) / 10 : 0);
+        return {
+          platformKeyId: d.platformKeyId ?? 0,
+          tenantKeyVersion: d.tenantKeyVersion ?? 0,
+          recordCount: count,
+          percentage,
+        };
+      }),
+      hasPendingMigration: Boolean(dto.hasPendingMigration || activeSession?.isRunning),
+      activeSessionId,
+      activeSession,
+      isPlatformKeyring: Boolean(dto.isPlatformKeyring),
+      algorithm: dto.algorithm,
+      minDecryptionVersion: dto.minDecryptionVersion,
     });
   }
 
   static toSessionEntity(dto: MigrationSessionDto): MigrationSession {
+    const migrated = dto.processedRecords ?? dto.migratedRecords ?? 0;
     return new MigrationSession({
       id: dto.id ?? "",
       tenantCode: dto.tenantCode ?? "",
@@ -40,7 +55,7 @@ export class KeyManagementMapper {
       toTenantVersion: dto.toTenantVersion ?? 0,
       status: dto.status ?? "Pending",
       totalRecords: dto.totalRecords ?? 0,
-      migratedRecords: dto.migratedRecords ?? 0,
+      migratedRecords: migrated,
       failedRecords: dto.failedRecords ?? 0,
       startedAt: dto.startedAt,
       completedAt: dto.completedAt,

@@ -24,14 +24,13 @@ export class KeyManagementRepository implements IKeyManagementRepository {
     return KeyManagementMapper.toStatusEntity(dto);
   }
 
-  async rotateKey(request: RotateTenantKeyRequest): Promise<TenantKeyStatus> {
+  async rotateKey(request: RotateTenantKeyRequest): Promise<MigrationSession> {
     const dto = await this.service.rotateKey(request);
-    return KeyManagementMapper.toStatusEntity(dto);
+    return KeyManagementMapper.toSessionEntity(dto);
   }
 
-  async revokeKey(request: RevokeTenantKeyRequest): Promise<TenantKeyStatus> {
-    const dto = await this.service.revokeKey(request);
-    return KeyManagementMapper.toStatusEntity(dto);
+  async revokeKey(request: RevokeTenantKeyRequest): Promise<boolean> {
+    return this.service.revokeKey(request);
   }
 
   async startRewrap(request: StartRewrapRequest): Promise<MigrationSession> {

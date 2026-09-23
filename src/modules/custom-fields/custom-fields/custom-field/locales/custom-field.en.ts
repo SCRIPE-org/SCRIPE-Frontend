@@ -116,6 +116,7 @@ export const en = {
       internal: "Internal",
       confidential: "Confidential",
       restricted: "Restricted",
+      requiresKey: "Requires Tenant Key",
     },
     hints: {
       optionsSource:
@@ -125,6 +126,8 @@ export const en = {
       sensitivity:
         "How this field's values should be treated. This is a label for reporting and export " +
         "handling \u2014 it does not control who can see the field. Use field-level security for that.",
+      sensitivityRequiresKey:
+        "Confidential and Restricted fields require an initialized tenant cryptographic key before creation.",
       isExportable:
         "Off keeps this field out of spreadsheet exports. This is tidying, not a permission \u2014 " +
         "anyone who can already read the field can still read its values elsewhere.",

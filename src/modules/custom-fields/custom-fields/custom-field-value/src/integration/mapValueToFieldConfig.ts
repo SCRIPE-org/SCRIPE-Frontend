@@ -21,13 +21,20 @@ export function mapValueToFieldConfig(
   // Input/GenericSelect/DatePicker all treat "" as "explicitly blank", which
   // would render as a visible empty placeholder instead of none).
   const placeholder =
-    (language === "ar" && data.placeholderAr ? data.placeholderAr : data.placeholderEn) || undefined;
+    (data.isMasked ? "••••••••" : undefined) ||
+    (language === "ar" && data.placeholderAr ? data.placeholderAr : data.placeholderEn) ||
+    undefined;
   const options: FieldOption[] | undefined = data.options?.map((o) => ({ value: o, label: o }));
+  const isSensitive = data.sensitivity !== undefined && data.sensitivity >= 2;
+  const description = isSensitive
+    ? (language === "ar" ? "حقل مشفر بحماية أمنية عالية" : "Encrypted confidential field")
+    : undefined;
 
   return {
     name: encodeCustomFieldName(data.key),
     label,
     placeholder,
+    description,
     // Guarded, not a direct index: `data.valueType` is wire data with no
     // runtime validation anywhere upstream (CustomFieldValueService.ts
     // returns raw JSON untouched -- the wire contract is enforced only by a

@@ -2715,6 +2715,31 @@ export const fr = {
           featCliTitle: "Opérations unifiées CLI et Studio",
           featCliDesc:
             "Gestion opérationnelle complète via `scripe crypto` et le tableau de bord visuel SCRIPE Studio.",
+          dualEnvelopeTitle: "Dérivation de clé fractionnée à double enveloppe",
+          dualEnvelopeIntro:
+            "SCRIPE applique une séparation cryptographique à divulgation nulle de connaissance (Zero-Knowledge) entre les opérateurs et les données des locataires :",
+          thComponent: "Composant de clé",
+          thCustodian: "Stockage et garde",
+          thRole: "Responsabilité cryptographique",
+          compPlatformKey: "KEK maître de plateforme",
+          custPlatform: "Environnement d'hôte / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Chiffre les secrets des locataires au repos. Les opérateurs ne peuvent pas lire les données sans le secret du locataire.",
+          compTenantSecret: "Secret cryptographique du locataire",
+          custTenantDb: "Base de données du locataire (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Secret CSPRNG unique de 256 bits par locataire. Stocké chiffré sous la clé KEK active de la plateforme.",
+          compSplitDek: "Clé de chiffrement des données dérivée (DEK)",
+          custRuntimeMemory: "Mémoire volatile uniquement (HKDF)",
+          roleSplitDek:
+            "Dérivée à l'exécution via HKDF-SHA256 par combinaison de la clé plateforme et du secret locataire. Jamais conservée sur disque.",
+          compAadBinding: "Étiquette AAD contextuelle",
+          custCipherEngine: "Enveloppe AES-256-GCM",
+          roleAadBinding:
+            "Lie cryptographiquement le texte chiffré à TenantId, EntityId et FieldId, empêchant les attaques par rejeu inter-entités.",
+          autoProvisionTitle: "Provisionnement automatique instantané",
+          autoProvisionContent:
+            "Lors de la création d'un locataire, `ITenantCryptographicProvisioner` provisionne automatiquement un secret de 256 bits enveloppé sous la clé active. Les locataires peuvent immédiatement créer des champs confidentiels.",
           frameTitle: "Spécification de transmission Magic Frame v2",
           frameIntro:
             "Les valeurs chiffrées sont persistées sous forme de trames binaires compactes encodées en base64 conformes à la spécification v2 :",
@@ -2759,6 +2784,9 @@ export const fr = {
           behResilience: "En cas de redémarrage du processus, le curseur reprend au dernier décalage validé. Les enregistrements déjà migrés sont ignorés.",
           stratObservability: "Métriques et progression en temps réel",
           behObservability: "Transmet le nombre de réussites, d'échecs et le pourcentage d'avancement au tableau de bord Studio et au portail d'administration.",
+          stratCluster: "Ré-enveloppement de cluster de plateforme",
+          behCluster:
+            "Migration initiée par le SuperAdmin ré-enveloppant tous les secrets des locataires sous la nouvelle clé plateforme et mettant à jour les données sans interruption.",
           toolingTitle: "Interfaces de gestion",
           toolingIntro:
             "Les opérateurs et développeurs disposent de trois interfaces complémentaires pour administrer le chiffrement :",

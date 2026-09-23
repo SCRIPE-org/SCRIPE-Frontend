@@ -81,6 +81,8 @@ export interface FieldOption {
   value: string;
   /** The display label for the option */
   label: string;
+  /** Whether this option is disabled */
+  disabled?: boolean;
   /** Nested options for hierarchical structures (e.g., tree selects) */
   children?: FieldOption[];
   /** Unique key for deduplication when value may change between API calls */
@@ -1382,6 +1384,7 @@ export function GenericForm({
                       field.options?.map((opt) => ({
                         value: opt.value,
                         label: opt.label,
+                        disabled: opt.disabled,
                       })) || []
                     }
                     value={formData[field.name] ?? ""}
@@ -1404,6 +1407,7 @@ export function GenericForm({
                       field.options?.map((opt) => ({
                         value: opt.value,
                         label: opt.label,
+                        disabled: opt.disabled,
                       })) || []
                     }
                     value={formData[field.name] ?? ""}

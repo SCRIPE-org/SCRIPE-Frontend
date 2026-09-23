@@ -1,36 +1,48 @@
 export interface KeyDistributionItemDto {
   platformKeyId: number;
   tenantKeyVersion: number;
-  recordCount: number;
-  percentage: number;
+  count?: number;
+  recordCount?: number;
+  percentage?: number;
+  isActiveVersion?: boolean;
 }
 
 export interface TenantEncryptionStatusDto {
+  id?: string;
   tenantCode: string;
-  isInitialized: boolean;
+  isInitialized?: boolean;
   status: string;
   activeVersion: number;
-  currentPlatformKeyId: number;
+  currentPlatformKeyId?: number;
   providerType: string;
   lastRotatedAt?: string;
   lastRotatedBy?: string;
-  totalEncryptedRecords: number;
+  totalEncryptedRecords?: number;
+  totalEncryptedValues?: number;
+  upToDateValues?: number;
+  outdatedValues?: number;
   distribution: KeyDistributionItemDto[];
-  hasPendingMigration: boolean;
+  hasPendingMigration?: boolean;
   activeSessionId?: string;
+  activeSession?: MigrationSessionDto;
+  isPlatformKeyring?: boolean;
+  algorithm?: string;
+  minDecryptionVersion?: number;
 }
 
 export interface MigrationSessionDto {
   id: string;
-  tenantCode: string;
+  tenantCode?: string;
   fromPlatformKeyId: number;
   toPlatformKeyId: number;
   fromTenantVersion: number;
   toTenantVersion: number;
-  status: "Pending" | "InProgress" | "Completed" | "Failed" | "Cancelled";
+  status: "Pending" | "Running" | "InProgress" | "Completed" | "Failed" | "Cancelled";
   totalRecords: number;
-  migratedRecords: number;
+  processedRecords?: number;
+  migratedRecords?: number;
   failedRecords: number;
+  progressPercentage?: number;
   startedAt?: string;
   completedAt?: string;
   errorMessage?: string;

@@ -22,12 +22,13 @@ export class KeyManagementService implements IKeyManagementService {
     return this.api.post<TenantEncryptionStatusDto>(KEY_MANAGEMENT_ENDPOINTS.INITIALIZE, request);
   }
 
-  async rotateKey(request: RotateTenantKeyRequest): Promise<TenantEncryptionStatusDto> {
-    return this.api.post<TenantEncryptionStatusDto>(KEY_MANAGEMENT_ENDPOINTS.ROTATE, request);
+  async rotateKey(request: RotateTenantKeyRequest): Promise<MigrationSessionDto> {
+    return this.api.post<MigrationSessionDto>(KEY_MANAGEMENT_ENDPOINTS.ROTATE, request);
   }
 
-  async revokeKey(request: RevokeTenantKeyRequest): Promise<TenantEncryptionStatusDto> {
-    return this.api.post<TenantEncryptionStatusDto>(KEY_MANAGEMENT_ENDPOINTS.REVOKE, request);
+  async revokeKey(request: RevokeTenantKeyRequest): Promise<boolean> {
+    await this.api.post<boolean>(KEY_MANAGEMENT_ENDPOINTS.REVOKE, request);
+    return true;
   }
 
   async startRewrap(request: StartRewrapRequest): Promise<MigrationSessionDto> {

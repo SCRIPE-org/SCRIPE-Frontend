@@ -27,6 +27,7 @@ export function useKeyManagementViewModel() {
     queryKey: ["customFields", "encryption", "session", activeSessionId],
     queryFn: () => (activeSessionId ? keyManagementRepository.getSessionProgress(activeSessionId) : null),
     enabled: Boolean(activeSessionId),
+    initialData: statusQuery.data?.activeSession,
     refetchInterval: (query) => {
       const session = query.state.data;
       if (!session || session.isTerminal) return false;
@@ -101,7 +102,7 @@ export function useKeyManagementViewModel() {
   return {
     status: statusQuery.data ?? null,
     isLoadingStatus: statusQuery.isLoading,
-    activeSession: sessionQuery.data ?? null,
+    activeSession: sessionQuery.data ?? statusQuery.data?.activeSession ?? null,
     isLoadingSession: sessionQuery.isLoading,
     auditLogs: auditLogsQuery.data?.items ?? [],
     auditLogsTotal: auditLogsQuery.data?.totalCount ?? 0,

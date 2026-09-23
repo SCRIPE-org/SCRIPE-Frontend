@@ -5,7 +5,7 @@ export interface MigrationSessionData {
   toPlatformKeyId: number;
   fromTenantVersion: number;
   toTenantVersion: number;
-  status: "Pending" | "InProgress" | "Completed" | "Failed" | "Cancelled";
+  status: "Pending" | "Running" | "InProgress" | "Completed" | "Failed" | "Cancelled";
   totalRecords: number;
   migratedRecords: number;
   failedRecords: number;
@@ -23,7 +23,7 @@ export class MigrationSession {
   get toPlatformKeyId(): number { return this.data.toPlatformKeyId; }
   get fromTenantVersion(): number { return this.data.fromTenantVersion; }
   get toTenantVersion(): number { return this.data.toTenantVersion; }
-  get status(): "Pending" | "InProgress" | "Completed" | "Failed" | "Cancelled" { return this.data.status; }
+  get status(): "Pending" | "Running" | "InProgress" | "Completed" | "Failed" | "Cancelled" { return this.data.status; }
   get totalRecords(): number { return this.data.totalRecords; }
   get migratedRecords(): number { return this.data.migratedRecords; }
   get failedRecords(): number { return this.data.failedRecords; }
@@ -34,6 +34,10 @@ export class MigrationSession {
   get progressPercentage(): number {
     if (this.totalRecords <= 0) return this.status === "Completed" ? 100 : 0;
     return Math.min(100, Math.round((this.migratedRecords / this.totalRecords) * 100));
+  }
+
+  get isRunning(): boolean {
+    return this.status === "Pending" || this.status === "Running" || this.status === "InProgress";
   }
 
   get isTerminal(): boolean {

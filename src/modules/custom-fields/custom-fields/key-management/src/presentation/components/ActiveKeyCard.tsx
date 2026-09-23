@@ -4,7 +4,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core/ui/card";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
-import { ShieldCheck, KeyRound, RotateCw, AlertOctagon, Sparkles } from "lucide-react";
+import { ShieldCheck, KeyRound, RotateCw, AlertOctagon, Lock } from "lucide-react";
 import type { TenantKeyStatus } from "../../domain/entities/TenantKeyStatus";
 
 interface ActiveKeyCardProps {
@@ -26,17 +26,17 @@ export function ActiveKeyCard({
 
   if (!status || !status.isInitialized) {
     return (
-      <Card className="border-dashed border-amber-500/40 bg-amber-500/5">
+      <Card className="border border-amber-500/30 bg-amber-500/5 shadow-sm">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-500">
+            <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
               <KeyRound className="h-6 w-6" />
             </div>
             <div>
-              <CardTitle className="text-lg text-amber-600 dark:text-amber-400">
+              <CardTitle className="text-lg text-amber-700 dark:text-amber-300">
                 {t("customFieldsSecurity.uninitializedTitle")}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-amber-700/80 dark:text-amber-300/80">
                 {t("customFieldsSecurity.uninitializedDesc")}
               </CardDescription>
             </div>
@@ -46,10 +46,10 @@ export function ActiveKeyCard({
           <Button
             onClick={onInitialize}
             disabled={isInitializing}
-            className="gap-2 bg-amber-600 hover:bg-amber-700 text-white"
+            className="gap-2 bg-amber-600 hover:bg-amber-700 text-white font-medium shadow-sm"
           >
-            <Sparkles className="h-4 w-4" />
-            {isInitializing ? "Initializing..." : t("customFieldsSecurity.initializeButton")}
+            <Lock className="h-4 w-4" />
+            {isInitializing ? t("common.loading") : t("customFieldsSecurity.initializeButton")}
           </Button>
         </CardContent>
       </Card>

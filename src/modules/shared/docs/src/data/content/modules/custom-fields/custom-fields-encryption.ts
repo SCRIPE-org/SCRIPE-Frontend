@@ -35,6 +35,26 @@ const sections: DocSection[] = [
     ],
   },
 
+  // ─── Dual-Envelope Split-Key Derivation ──────────────────────
+  { type: "heading", level: 2, titleKey: `${K}.dualEnvelopeTitle`, id: "dual-envelope-derivation" },
+  { type: "paragraph", contentKey: `${K}.dualEnvelopeIntro` },
+  {
+    type: "table",
+    headers: [`${K}.thComponent`, `${K}.thCustodian`, `${K}.thRole`],
+    rows: [
+      [`${K}.compPlatformKey`, `${K}.custPlatform`, `${K}.rolePlatformKey`],
+      [`${K}.compTenantSecret`, `${K}.custTenantDb`, `${K}.roleTenantSecret`],
+      [`${K}.compSplitDek`, `${K}.custRuntimeMemory`, `${K}.roleSplitDek`],
+      [`${K}.compAadBinding`, `${K}.custCipherEngine`, `${K}.roleAadBinding`],
+    ],
+  },
+  {
+    type: "info",
+    variant: "note",
+    titleKey: `${K}.autoProvisionTitle`,
+    contentKey: `${K}.autoProvisionContent`,
+  },
+
   // ─── Binary Magic Frame v2 Specification ─────────────────────
   { type: "heading", level: 2, titleKey: `${K}.frameTitle`, id: "binary-magic-frame-v2" },
   { type: "paragraph", contentKey: `${K}.frameIntro` },
@@ -81,6 +101,7 @@ const sections: DocSection[] = [
       [`${K}.stratBatching`, `${K}.behBatching`],
       [`${K}.stratResilience`, `${K}.behResilience`],
       [`${K}.stratObservability`, `${K}.behObservability`],
+      [`${K}.stratCluster`, `${K}.behCluster`],
     ],
   },
 
@@ -110,5 +131,5 @@ registerPage({
     "modules/custom-fields-overview",
     "features/role-permissions",
   ],
-  lastUpdated: "2026-09-21",
+  lastUpdated: "2026-09-24",
 });

@@ -11,8 +11,8 @@ import type {
 export interface IKeyManagementService {
   getStatus(): Promise<TenantEncryptionStatusDto>;
   initializeKey(request: InitializeTenantKeyRequest): Promise<TenantEncryptionStatusDto>;
-  rotateKey(request: RotateTenantKeyRequest): Promise<TenantEncryptionStatusDto>;
-  revokeKey(request: RevokeTenantKeyRequest): Promise<TenantEncryptionStatusDto>;
+  rotateKey(request: RotateTenantKeyRequest): Promise<MigrationSessionDto>;
+  revokeKey(request: RevokeTenantKeyRequest): Promise<boolean>;
   startRewrap(request: StartRewrapRequest): Promise<MigrationSessionDto>;
   cancelRewrap(sessionId: string): Promise<boolean>;
   getSessionProgress(sessionId: string): Promise<MigrationSessionDto>;

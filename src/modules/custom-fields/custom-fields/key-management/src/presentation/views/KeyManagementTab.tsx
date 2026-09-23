@@ -3,6 +3,7 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { useKeyManagementViewModel } from "../viewmodels/useKeyManagementViewModel";
 import { ActiveKeyCard } from "../components/ActiveKeyCard";
+import { PlatformKeyringCard } from "../components/PlatformKeyringCard";
 import { MigrationProgressModal } from "../components/MigrationProgressModal";
 import { KeyDistributionChart } from "../components/KeyDistributionChart";
 import { AuditLogTable } from "../components/AuditLogTable";
@@ -43,58 +44,77 @@ export function KeyManagementTab() {
   if (isLoadingStatus) {
     return (
       <div className="py-12 text-center text-sm text-muted-foreground">
-        Loading cryptographic security status...
+        {t("common.loading")}
       </div>
     );
   }
+
+  const isPlatform = Boolean(status?.isPlatformKeyring);
 
   return (
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold tracking-tight">
-          {t("customFieldsSecurity.title")}
+          {isPlatform
+            ? t("customFieldsSecurity.platformTitle")
+            : t("customFieldsSecurity.title")}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {t("customFieldsSecurity.subtitle")}
+          {isPlatform
+            ? t("customFieldsSecurity.platformSubtitle")
+            : t("customFieldsSecurity.subtitle")}
         </p>
       </div>
 
-      <ActiveKeyCard
-        status={status}
-        onInitialize={() => initializeKey()}
-        onRotate={() => setIsRotateOpen(true)}
-        onRevoke={handleRevoke}
-        isInitializing={isInitializing}
-      />
-
-      <MigrationProgressModal
-        session={activeSession}
-        onCancel={cancelRewrap}
-        isCancelling={isCancellingRewrap}
-      />
-
-      {status?.isInitialized && (
-        <KeyDistributionChart
+      {isPlatform ? (
+        <PlatformKeyringCard
           status={status}
-          onStartRewrap={() => startRewrap()}
+          activeSession={activeSession}
+          onStartClusterRewrap={() => startRewrap()}
           isStartingRewrap={isStartingRewrap}
+          onCancelRewrap={cancelRewrap}
+          isCancellingRewrap={isCancellingRewrap}
         />
-      )}
+      ) : (
+        <>
+          <ActiveKeyCard
+            status={status}
+            onInitialize={() => initializeKey()}
+            onRotate={() => setIsRotateOpen(true)}
+            onRevoke={handleRevoke}
+            isInitializing={isInitializing}
+          />
 
-      {status?.isInitialized && (
-        <AuditLogTable
-          logs={auditLogs}
-          totalCount={auditLogsTotal}
-          isLoading={isAuditLogsLoading}
-        />
-      )}
+          <MigrationProgressModal
+            session={activeSession}
+            onCancel={cancelRewrap}
+            isCancelling={isCancellingRewrap}
+          />
 
-      <RotateKeyWizardDialog
-        open={isRotateOpen}
-        onOpenChange={setIsRotateOpen}
-        onConfirm={rotateKey}
-        isLoading={isRotating}
-      />
+          {status?.isInitialized && (
+            <KeyDistributionChart
+              status={status}
+              onStartRewrap={() => startRewrap()}
+              isStartingRewrap={isStartingRewrap}
+            />
+          )}
+
+          {status?.isInitialized && (
+            <AuditLogTable
+              logs={auditLogs}
+              totalCount={auditLogsTotal}
+              isLoading={isAuditLogsLoading}
+            />
+          )}
+
+          <RotateKeyWizardDialog
+            open={isRotateOpen}
+            onOpenChange={setIsRotateOpen}
+            onConfirm={rotateKey}
+            isLoading={isRotating}
+          />
+        </>
+      )}
     </div>
   );
 }

@@ -2508,6 +2508,31 @@ export const es = {
           featCliTitle: "Operaciones unificadas en CLI y Studio",
           featCliDesc:
             "Herramientas operativas integrales mediante `scripe crypto` y el panel visual para desarrolladores de SCRIPE Studio.",
+          dualEnvelopeTitle: "Derivación de clave dividida de doble sobre",
+          dualEnvelopeIntro:
+            "SCRIPE aplica una separación criptográfica de conocimiento cero entre los operadores de la plataforma y los datos de los inquilinos mediante una jerarquía de claves divididas:",
+          thComponent: "Componente de clave",
+          thCustodian: "Almacenamiento y custodia",
+          thRole: "Responsabilidad criptográfica",
+          compPlatformKey: "KEK maestro de plataforma",
+          custPlatform: "Entorno de host / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Cifra los secretos de inquilinos en reposo. Los operadores no pueden descifrar datos de inquilinos sin su secreto.",
+          compTenantSecret: "Secreto criptográfico de inquilino",
+          custTenantDb: "Base de datos del inquilino (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Secreto CSPRNG único de 256 bits generado por inquilino. Almacenado cifrado bajo el KEK de plataforma activo.",
+          compSplitDek: "Clave de cifrado de datos derivada (DEK)",
+          custRuntimeMemory: "Solo memoria efímera (HKDF)",
+          roleSplitDek:
+            "Derivada en tiempo de ejecución mediante HKDF-SHA256 de la combinación del secreto de inquilino y la clave de plataforma. Nunca se almacena en disco.",
+          compAadBinding: "Etiqueta AAD contextual",
+          custCipherEngine: "Sobre AES-256-GCM",
+          roleAadBinding:
+            "Vincula criptográficamente el texto cifrado a TenantId, EntityId y FieldId, evitando ataques de inyección entre registros.",
+          autoProvisionTitle: "Aprovisionamiento automático sin fricción",
+          autoProvisionContent:
+            "Al crear un nuevo inquilino, `ITenantCryptographicProvisioner` aprovisiona automáticamente un secreto de 256 bits envuelto bajo el KEK de plataforma activo. Los inquilinos pueden registrar campos confidenciales de inmediato.",
           frameTitle: "Especificación de transmisión Magic Frame v2",
           frameIntro:
             "Los valores cifrados se persisten como tramas binarias compactas codificadas en base64 conformes con la especificación v2:",
@@ -2552,6 +2577,9 @@ export const es = {
           behResilience: "Si el proceso se reinicia, el cursor se reanuda desde el último desplazamiento completado. Los registros ya migrados se omiten de forma segura.",
           stratObservability: "Métricas y progreso en tiempo real",
           behObservability: "Informa el recuento de procesados, fallos, rendimiento y porcentaje de finalización al panel de Studio y al portal de administración.",
+          stratCluster: "Reencapsulamiento de clúster de plataforma",
+          behCluster:
+            "Migración iniciada por SuperAdmin que reencapsula los secretos de todos los inquilinos bajo la nueva clave de plataforma y actualiza valores sin tiempo de inactividad.",
           toolingTitle: "Interfaces de gestión",
           toolingIntro:
             "Los operadores y desarrolladores cuentan con tres interfaces complementarias para administrar el cifrado:",

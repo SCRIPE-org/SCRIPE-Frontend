@@ -11,8 +11,10 @@ import type { FieldConfig } from "@core/ui/forms/generic-form";
  * Builds classification and data export governance fields.
  */
 export function buildClassificationFields(
-  t: (key: string, params?: Record<string, string | number>) => string
+  t: (key: string, params?: Record<string, string | number>) => string,
+  isTenantKeyInitialized?: boolean
 ): FieldConfig[] {
+  const isKeyReady = isTenantKeyInitialized !== false;
   return [
     {
       name: "sensitivity",
@@ -22,10 +24,24 @@ export function buildClassificationFields(
       options: [
         { value: "None", label: t("customField.sensitivity.none") },
         { value: "Internal", label: t("customField.sensitivity.internal") },
-        { value: "Confidential", label: t("customField.sensitivity.confidential") },
-        { value: "Restricted", label: t("customField.sensitivity.restricted") },
+        {
+          value: "Confidential",
+          label: isKeyReady
+            ? t("customField.sensitivity.confidential")
+            : `${t("customField.sensitivity.confidential")} (${t("customField.sensitivity.requiresKey")})`,
+          disabled: !isKeyReady,
+        },
+        {
+          value: "Restricted",
+          label: isKeyReady
+            ? t("customField.sensitivity.restricted")
+            : `${t("customField.sensitivity.restricted")} (${t("customField.sensitivity.requiresKey")})`,
+          disabled: !isKeyReady,
+        },
       ],
-      description: t("customField.hints.sensitivity"),
+      description: isKeyReady
+        ? t("customField.hints.sensitivity")
+        : t("customField.hints.sensitivityRequiresKey"),
     },
     {
       name: "isExportable",
