@@ -150,6 +150,7 @@ function PreviewTreeNode({
     resolveBilingualLabel(node.nameEn, node.nameAr, language) !==
     resolveBilingualLabel(node.originalNameEn, node.originalNameAr, language);
   const orderChanged = node.order !== node.originalOrder;
+  const nodeId = node.id;
 
   /* ── DnD Handlers ────────────────────────────────────────────────── */
 
@@ -157,10 +158,10 @@ function PreviewTreeNode({
     (e: React.DragEvent) => {
       e.stopPropagation();
       e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", node.id);
+      e.dataTransfer.setData("text/plain", nodeId);
       // We pass a "stub" MenuTreeNode with the effective data for the DnD handler
       onDragStart({
-        id: node.id,
+        id: nodeId,
         slug: node.slug,
         nameEn: node.nameEn,
         nameAr: node.nameAr,
@@ -169,7 +170,7 @@ function PreviewTreeNode({
         children: [],
       } as MenuTreeNode);
     },
-    [node, onDragStart]
+    [node, onDragStart, nodeId]
   );
 
   const handleDragOverEvent = useCallback(
@@ -192,9 +193,9 @@ function PreviewTreeNode({
         position = "inside";
       }
 
-      onDragOver(node.id, position);
+      onDragOver(nodeId, position);
     },
-    [node.id, isDragging, onDragOver]
+    [nodeId, isDragging, onDragOver]
   );
 
   const handleDragLeaveEvent = useCallback(
@@ -212,35 +213,35 @@ function PreviewTreeNode({
       e.preventDefault();
       e.stopPropagation();
       if (!dropPosition) return;
-      onDrop(node.id, dropPosition);
+      onDrop(nodeId, dropPosition);
     },
-    [node.id, dropPosition, onDrop]
+    [nodeId, dropPosition, onDrop]
   );
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      onSelectItem(node.id);
+      onSelectItem(nodeId);
     },
-    [node.id, onSelectItem]
+    [nodeId, onSelectItem]
   );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        onSelectItem(node.id);
+        onSelectItem(nodeId);
       }
     },
-    [node.id, onSelectItem]
+    [nodeId, onSelectItem]
   );
 
   const handleExpandClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      onToggleExpand(node.id);
+      onToggleExpand(nodeId);
     },
-    [node.id, onToggleExpand]
+    [nodeId, onToggleExpand]
   );
 
   return (

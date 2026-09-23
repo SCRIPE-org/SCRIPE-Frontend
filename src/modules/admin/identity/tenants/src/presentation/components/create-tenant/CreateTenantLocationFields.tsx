@@ -44,7 +44,10 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
   const postalRequiredError = touched && errors.includes("postalCodeRequired");
 
   // Dynamic territorial administrative configuration based on selected country
-  const territory = useMemo(() => getGeoTerritory(vm.form.countryCode), [vm.form.countryCode]);
+  const countryCode = vm.form.countryCode;
+  const selectedStateValue = vm.form.state;
+  const territory = getGeoTerritory(countryCode);
+  const states = territory.states;
 
   const divisionLabel = isAr ? territory.divisionLabelAr : territory.divisionLabel;
   const cityLabel = isAr ? territory.cityLabelAr : territory.cityLabel;
@@ -66,32 +69,30 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
   // Administrative subdivisions (Governorates, Provinces, Emirates, States)
   const stateOptions: GenericSelectOption[] = useMemo(
     () =>
-      territory.states.map((s) => ({
+      states.map((s) => ({
         value: s.code,
         label: isAr ? `${s.nameAr} (${s.name})` : `${s.name} (${s.nameAr})`,
       })),
-    [territory.states, isAr]
+    [states, isAr]
   );
 
   // Available cities / districts for the selected administrative division
   const citySuggestions = useMemo(() => {
-    if (territory.states.length === 0) return [];
-    const selectedState = territory.states.find(
-      (s) => s.code === vm.form.state || s.name === vm.form.state
+    if (states.length === 0) return [];
+    const selectedState = states.find(
+      (s) => s.code === selectedStateValue || s.name === selectedStateValue
     );
     return selectedState ? selectedState.cities : [];
-  }, [territory.states, vm.form.state]);
+  }, [states, selectedStateValue]);
 
-  const cityPlaceholder = useMemo(() => {
-    if (territory.states.length > 0 && !vm.form.state) {
-      return isAr
+  const cityPlaceholder =
+    states.length > 0 && !selectedStateValue
+      ? isAr
         ? `يرجى اختيار ${divisionLabel} أولاً...`
-        : `Select ${divisionLabel} first...`;
-    }
-    return isAr
+        : `Select ${divisionLabel} first...`
+      : isAr
       ? `اختر أو اكتب اسم ${cityLabel}...`
       : `Select or type ${cityLabel}...`;
-  }, [territory.states.length, vm.form.state, isAr, divisionLabel, cityLabel]);
 
   return (
     <div className="space-y-4 rounded-nx-md border border-nx-line bg-nx-raised/40 p-4 sm:p-5">

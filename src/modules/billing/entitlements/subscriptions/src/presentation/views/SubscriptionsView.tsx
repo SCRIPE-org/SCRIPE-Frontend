@@ -10,7 +10,7 @@
  */
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSubscriptionsViewModel } from "../viewmodels/useSubscriptionsViewModel";
@@ -62,15 +62,13 @@ export function SubscriptionsView({ tenantId }: SubscriptionsViewProps) {
   const editionsVm = useEditionsViewModel();
 
   // Derive the "current" subscription (priority: active > pending > suspended > first)
-  const currentSub = useMemo(() => {
-    if (!vm.items?.length) return null;
-    return (
-      vm.items.find((s) => s.status === "Active" || s.status === "Trialing") ??
-      vm.items.find((s) => s.status === "PendingPayment") ??
-      vm.items.find((s) => s.status === "Suspended") ??
-      vm.items[0]
-    );
-  }, [vm.items]);
+  const items = vm.items;
+  const currentSub = items?.length
+    ? (items.find((s) => s.status === "Active" || s.status === "Trialing") ??
+      items.find((s) => s.status === "PendingPayment") ??
+      items.find((s) => s.status === "Suspended") ??
+      items[0])
+    : null;
 
   useBreadcrumbOverride(currentSub ? currentSub.editionName : t("entSubscriptions.title"));
 

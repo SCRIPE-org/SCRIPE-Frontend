@@ -57,3 +57,21 @@ export type {
   IValueExportService,
   ValueExportContainer,
 } from "./value-export";
+
+// Key Management & Encryption Security
+export {
+  KeyManagementTab,
+  useKeyManagementViewModel,
+  keyManagementLocales,
+  keyManagementEn,
+  keyManagementAr,
+} from "./key-management";
+export type {
+  TenantKeyStatus,
+  KeyDistributionItem,
+  MigrationSession,
+  EncryptionAuditLog,
+  IKeyManagementService,
+  IKeyManagementRepository,
+} from "./key-management";
+

@@ -175,8 +175,10 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
   }, [vm, recalcPosition]);
 
   // Close on outside click / Escape; Escape returns focus to the bell.
+  const isOpen = vm.isOpen;
+  const close = vm.close;
   useEffect(() => {
-    if (!vm.isOpen) return;
+    if (!isOpen) return;
     recalcPosition();
     const handler = (e: MouseEvent) => {
       const target = e.target as Node;
@@ -186,12 +188,12 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
         triggerRef.current &&
         !triggerRef.current.contains(target)
       ) {
-        vm.close();
+        close();
       }
     };
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        vm.close();
+        close();
         triggerRef.current?.focus();
       }
     };
@@ -205,15 +207,16 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
       window.removeEventListener("scroll", recalcPosition, true);
       window.removeEventListener("resize", recalcPosition);
     };
-  }, [vm.isOpen, vm.close, recalcPosition]);
+  }, [isOpen, close, recalcPosition]);
 
   // ── Day grouping — insertion order is preserved inside each day, so the
   //    websocket's newest-first prepend still reads newest-first. ────────────
+  const notifications = vm.notifications;
   const dayGroups = useMemo<NotificationDayGroup[]>(() => {
     const groups: NotificationDayGroup[] = [];
     const index = new Map<string, NotificationDayGroup>();
 
-    for (const item of vm.notifications) {
+    for (const item of notifications) {
       const date = new Date(item.createdAt);
       const valid = !Number.isNaN(date.getTime());
       const key = valid ? String(startOfDay(date)) : "undated";
@@ -226,7 +229,7 @@ export function NotificationBell({ iconClassName = "h-5 w-5", className }: Notif
       group.items.push(item);
     }
     return groups;
-  }, [vm.notifications, language]);
+  }, [notifications, language]);
 
   const hasUnread = vm.unreadCount > 0;
   const title = t("notifications.title");

@@ -47,6 +47,12 @@ import { EntityLookupRepository } from "./entity-lookup/src/data/repositories/En
 import type { IEntityLookupService } from "./entity-lookup/src/domain/interfaces/IEntityLookupService";
 import type { IEntityLookupRepository } from "./entity-lookup/src/domain/interfaces/IEntityLookupRepository";
 
+// KeyManagement (Enterprise Cryptography & Rewrap)
+import { KeyManagementService } from "./key-management/src/data/services/KeyManagementService";
+import { KeyManagementRepository } from "./key-management/src/data/repositories/KeyManagementRepository";
+import type { IKeyManagementService } from "./key-management/src/domain/interfaces/IKeyManagementService";
+import type { IKeyManagementRepository } from "./key-management/src/domain/interfaces/IKeyManagementRepository";
+
 export interface CustomFieldsContainer {
   customFieldService: ICustomFieldService;
   customFieldRepository: ICustomFieldRepository;
@@ -54,28 +60,12 @@ export interface CustomFieldsContainer {
   customFieldValueRepository: ICustomFieldValueRepository;
   fieldGroupService: IFieldGroupService;
   fieldGroupRepository: IFieldGroupRepository;
-  /**
-   * Option sets (P-4). Registered here rather than in an option-set-local container for the same
-   * reason `entityLookup*` below is: this container's single cached `ApiService` is what carries the
-   * current `X-Tenant-Context` header, and option sets are the one CustomFields surface where that
-   * header changes the ANSWER rather than just the authorization -- a platform-context read returns
-   * the seeded platform sets as writable, a tenant-context read returns the same rows as read-only
-   * reference data. A second ApiService could disagree with the rest of the module about which
-   * context the admin is in.
-   */
   optionSetService: IOptionSetService;
   optionSetRepository: IOptionSetRepository;
-  /**
-   * Registered here rather than in a submodule-local container like `definition-export/di.ts`.
-   *
-   * That file's own header says a third local container is the signal to merge them upward instead
-   * of adding one — and unlike those, this change owns this file, so there is no reason to deviate.
-   * It also matters more here than for an export button: the lookup endpoints must carry the current
-   * `X-Tenant-Context` header, and sharing this container's single cached `ApiService` is what
-   * guarantees they do.
-   */
   entityLookupService: IEntityLookupService;
   entityLookupRepository: IEntityLookupRepository;
+  keyManagementService: IKeyManagementService;
+  keyManagementRepository: IKeyManagementRepository;
 }
 
 let _container: CustomFieldsContainer | null = null;
@@ -93,6 +83,8 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
     const optionSetService = new OptionSetService(apiService);
     const entityLookupService = new EntityLookupService(apiService);
 
+    const keyManagementService = new KeyManagementService(apiService);
+
     _container = {
       customFieldService,
       customFieldRepository: new CustomFieldRepository(customFieldService),
@@ -104,6 +96,8 @@ export function getCustomFieldsContainer(): CustomFieldsContainer {
       optionSetRepository: new OptionSetRepository(optionSetService),
       entityLookupService,
       entityLookupRepository: new EntityLookupRepository(entityLookupService),
+      keyManagementService,
+      keyManagementRepository: new KeyManagementRepository(keyManagementService),
     };
   }
 
@@ -128,5 +122,8 @@ export const customFieldsContainer = {
   },
   get entityLookupRepository() {
     return getCustomFieldsContainer().entityLookupRepository;
+  },
+  get keyManagementRepository() {
+    return getCustomFieldsContainer().keyManagementRepository;
   },
 };

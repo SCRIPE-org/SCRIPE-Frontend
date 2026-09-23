@@ -424,27 +424,5 @@ export function useAccessibilityChecker(draft: StudioDraft): AccessibilityResult
     };
 
     return { checks, summary, byCategory };
-  }, [
-    draft.textColor,
-    draft.bgColor,
-    draft.surfaceColor,
-    draft.primaryColor,
-    draft.errorColor,
-    draft.themeMode,
-    draft.darkTextColor,
-    draft.darkBgColor,
-    draft.darkSurfaceColor,
-    draft.darkPrimaryColor,
-    draft.inputHeight,
-    draft.bgType,
-    draft.bgImageUrl,
-    draft.bgOverlayEnabled,
-    draft.bgOverlayOpacity,
-    draft.darkBgType,
-    draft.darkBgImageUrl,
-    draft.darkBgOverlayEnabled,
-    draft.darkBgOverlayOpacity,
-    draft.a11yReducedMotion,
-    t,
-  ]);
+  }, [draft, t]);
 }

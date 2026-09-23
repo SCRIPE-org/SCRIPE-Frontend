@@ -132,6 +132,7 @@ export function useDsrViewModel() {
     setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
   }, []);
 
+  const dsrFieldConfigs = customFieldsQuery.fieldConfigs;
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
       // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
@@ -142,10 +143,10 @@ export function useDsrViewModel() {
       // point. Throws CustomFieldValidationError, which handleSubmit's own
       // catch block below distinguishes from a genuine API failure so it can
       // show the specific reason, not the generic fallback.
-      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+      assertSelectCustomFieldValuesValid(dsrFieldConfigs, customFieldValues, t);
 
       const decoded: Record<string, unknown> = {};
-      for (const fc of customFieldsQuery.fieldConfigs) {
+      for (const fc of dsrFieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
         if (key === null) continue;
         const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
@@ -154,7 +155,7 @@ export function useDsrViewModel() {
       if (Object.keys(decoded).length === 0) return;
       await getCustomFieldsExtension()?.saveValues(DSR_ENTITY_TYPE_KEY, ownerId, decoded);
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues, t]
+    [dsrFieldConfigs, customFieldValues, t]
   );
 
   // ── Mutations ─────────────────────────────────────────────────────────────────

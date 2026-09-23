@@ -22,11 +22,13 @@ export function OtpStep({ vm, totalSteps }: OtpStepProps) {
   const { t } = useI18n();
 
   // Auto-submit when 6 digits are entered
+  const otp = vm.otp;
+  const submitOtp = vm.submitOtp;
   React.useEffect(() => {
-    if (vm.otp.length === 6) {
-      vm.submitOtp({ preventDefault: () => {} } as React.FormEvent);
+    if (otp.length === 6) {
+      submitOtp({ preventDefault: () => {} } as React.FormEvent);
     }
-  }, [vm.otp, vm]);
+  }, [otp, submitOtp]);
 
   const resolveError = (err: string) => {
     if (!err) return "";

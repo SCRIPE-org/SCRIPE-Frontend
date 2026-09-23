@@ -84,36 +84,41 @@ export function PlanCard({
   const isFree = edition.priceDisplay === "free";
   const isCustom = edition.priceDisplay === "custom" || edition.checkoutMode === "contact-sales";
 
+  const monthlyPrice = edition.monthlyPrice;
+  const annualPrice = edition.annualPrice;
+  const checkoutMode = edition.checkoutMode;
+  const trialDays = edition.trialDays;
+
   // ── Price (Intl-formatted; "Custom" for contact-sales, "Free" for free). ────
   const priceText = useMemo(() => {
     if (isFree || isCustom) return null;
-    const amount = billingCycle === "monthly" ? edition.monthlyPrice : edition.annualPrice;
+    const amount = billingCycle === "monthly" ? monthlyPrice : annualPrice;
     const monthly = billingCycle === "annual" && amount ? Math.round(amount / 12) : amount;
     return formatCurrency(monthly, currency, locale, isFxConverted);
   }, [
     isFree,
     isCustom,
     billingCycle,
-    edition.monthlyPrice,
-    edition.annualPrice,
+    monthlyPrice,
+    annualPrice,
     currency,
     locale,
     isFxConverted,
   ]);
 
   const annualText = useMemo(() => {
-    if (isFree || isCustom || billingCycle !== "annual" || !edition.annualPrice) return null;
-    return formatCurrency(edition.annualPrice, currency, locale, isFxConverted);
-  }, [isFree, isCustom, billingCycle, edition.annualPrice, currency, locale, isFxConverted]);
+    if (isFree || isCustom || billingCycle !== "annual" || !annualPrice) return null;
+    return formatCurrency(annualPrice, currency, locale, isFxConverted);
+  }, [isFree, isCustom, billingCycle, annualPrice, currency, locale, isFxConverted]);
 
   // ── CTA label by checkoutMode (key mapping is a shared pure helper). ─────────
   const ctaLabel = useMemo(
     () =>
-      t(ctaKeyForCheckoutMode(edition.checkoutMode), {
-        days: edition.trialDays ?? 14,
+      t(ctaKeyForCheckoutMode(checkoutMode), {
+        days: trialDays ?? 14,
         price: priceText ?? "",
       }),
-    [edition.checkoutMode, edition.trialDays, priceText, t]
+    [checkoutMode, trialDays, priceText, t]
   );
 
   const badgeLabel = badge ? t(`signup.plans.badge.${badge}`) : null;

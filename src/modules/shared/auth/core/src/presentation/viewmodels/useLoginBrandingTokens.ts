@@ -117,10 +117,10 @@ export function useLoginBrandingTokens({
   );
 
   // ── Inject ALL CSS in ONE <style> tag (preserves :root / .dark cascade) ─
+  const tokens = config.tokens;
   useEffect(() => {
     if (typeof document === "undefined" || isSafeMode) return;
 
-    const tokens = config.tokens;
     const cssBlocks = [
       buildTokenCss(tokens),
       buildBridgeCss(tokens),
@@ -160,7 +160,7 @@ export function useLoginBrandingTokens({
       styleEl.remove();
       fontLinkIds.forEach((id) => document.getElementById(id)?.remove());
     };
-  }, [config.tokens, isSafeMode]);
+  }, [tokens, isSafeMode]);
 
   // ── Inject custom CSS (LAST — highest cascade priority) ───────────────
   useEffect(() => {
@@ -185,9 +185,10 @@ export function useLoginBrandingTokens({
   }, [loginBrandingJson, isSafeMode]);
 
   // ── Parse a11y config for DOM rendering ───────────────────────────────
+  const configTokens = config.tokens;
   const a11y = useMemo(
-    () => (isSafeMode ? parseA11yConfig({}) : parseA11yConfig(config.tokens)),
-    [config.tokens, isSafeMode]
+    () => (isSafeMode ? parseA11yConfig({}) : parseA11yConfig(configTokens)),
+    [configTokens, isSafeMode]
   );
 
   return { layout: config.layout, config, slotConfig, a11y };

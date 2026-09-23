@@ -19,7 +19,7 @@ import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import { GenericSelect } from "@core/crud/components/generic-select";
+import { GenericSelect, type GenericSelectOption } from "@core/crud/components/generic-select";
 import { ChevronLeft, ChevronRight, FolderTree, Globe2, Plus } from "lucide-react";
 import { CUSTOM_FIELDS_PERMISSIONS } from "../../../../permission-constants";
 import { useFieldGroupViewModel } from "../viewmodels/useFieldGroupViewModel";
@@ -45,19 +45,17 @@ export function FieldGroupListView() {
 
   const vm = useFieldGroupViewModel(entityTypeKey);
 
-  const entityTypeOptions = useMemo(
+  const entityTypes = vm.entityTypes ?? [];
+  const entityTypeOptions: GenericSelectOption[] = useMemo(
     () =>
-      (vm.entityTypes ?? []).map((item) => ({
+      entityTypes.map((item) => ({
         value: item.key,
         label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})`,
       })),
-    [vm.entityTypes, language]
+    [entityTypes, language]
   );
 
-  const editingGroup = useMemo(
-    () => vm.groups.find((group) => group.id === vm.editingId) ?? null,
-    [vm.groups, vm.editingId]
-  );
+  const editingGroup = vm.groups.find((group) => group.id === vm.editingId) ?? null;
 
   const rowLabels = useMemo(
     () => ({
@@ -71,22 +69,24 @@ export function FieldGroupListView() {
     [t]
   );
 
+  const editingId = vm.editingId;
+  const isPlatformContext = vm.isPlatformContext;
   const editorLabels = useMemo(
     () => ({
-      heading: vm.editingId ? t("fieldGroup.editTitle") : t("fieldGroup.addNew"),
+      heading: editingId ? t("fieldGroup.editTitle") : t("fieldGroup.addNew"),
       stableKey: t("fieldGroup.fields.stableKey"),
       stableKeyHint: t("fieldGroup.fields.stableKeyHint"),
       labelEn: t("fieldGroup.fields.labelEn"),
       labelAr: t("fieldGroup.fields.labelAr"),
       sortOrder: t("fieldGroup.fields.sortOrder"),
       isGlobal: t("fieldGroup.fields.isGlobal"),
-      isGlobalDescription: vm.isPlatformContext
+      isGlobalDescription: isPlatformContext
         ? t("fieldGroup.isGlobalDescription.platformContext")
         : t("fieldGroup.isGlobalDescription.tenantContext"),
       save: t("common.save"),
       cancel: t("common.cancel"),
     }),
-    [t, vm.editingId, vm.isPlatformContext]
+    [t, editingId, isPlatformContext]
   );
 
   const handleSubmit = useCallback(

@@ -271,9 +271,10 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
   });
 
   // ─── Auto-generate slug from name ─────────────
+  const formName = form.name;
   const autoGenerateSlug = useCallback(() => {
-    if (isCreateMode && form.name && !isDirty) {
-      const slug = form.name
+    if (isCreateMode && formName && !isDirty) {
+      const slug = formName
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, "")
         .replace(/\s+/g, "-")
@@ -281,7 +282,7 @@ export function useIdentityProviderDetailViewModel(providerId?: string) {
         .trim();
       setForm((prev) => ({ ...prev, slug }));
     }
-  }, [form.name, isCreateMode, isDirty]);
+  }, [formName, isCreateMode, isDirty]);
 
   // ─── Protocol options ─────────────────────────
   const protocolOptions = useMemo(

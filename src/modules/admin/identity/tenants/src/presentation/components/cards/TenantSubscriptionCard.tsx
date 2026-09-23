@@ -221,23 +221,27 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
   };
 
   // ── Find the subscription that was directly canceled as part of the current downgrade ──
+  const subscriptionStartDate = vm.subscription?.startDate;
+  const subscriptionId = vm.subscription?.id;
+  const subscriptionHistory = vm.subscriptionHistory;
+  const isDowngraded = vm.isDowngraded;
   const previousRefundedSub = useMemo(() => {
-    if (!vm.subscriptionHistory || vm.subscriptionHistory.length < 2 || !vm.isDowngraded)
+    if (!subscriptionHistory || subscriptionHistory.length < 2 || !isDowngraded)
       return null;
-    const currentStart = vm.subscription?.startDate
-      ? new Date(vm.subscription.startDate).getTime()
+    const currentStart = subscriptionStartDate
+      ? new Date(subscriptionStartDate).getTime()
       : 0;
     // Find the most recently canceled subscription that was replaced by the current downgrade
     // It must have been canceled AROUND the time the current sub started (within 1 minute)
     return (
-      vm.subscriptionHistory.find((s) => {
-        if (s.status?.toLowerCase() !== "canceled" || s.id === vm.subscription?.id) return false;
+      subscriptionHistory.find((s) => {
+        if (s.status?.toLowerCase() !== "canceled" || s.id === subscriptionId) return false;
         const endTime = s.endDate ? new Date(s.endDate).getTime() : 0;
         // Must have been canceled within 1 minute of the current sub's start (same operation)
         return Math.abs(endTime - currentStart) < 60000;
       }) ?? null
     );
-  }, [vm.subscriptionHistory, vm.isDowngraded, vm.subscription?.startDate, vm.subscription?.id]);
+  }, [subscriptionHistory, isDowngraded, subscriptionStartDate, subscriptionId]);
 
   // ── Promotion picker data for Change Plan dialog ──
   const { changePlanPromotionsRaw, isLoadingChangePlanPromos } = vm;

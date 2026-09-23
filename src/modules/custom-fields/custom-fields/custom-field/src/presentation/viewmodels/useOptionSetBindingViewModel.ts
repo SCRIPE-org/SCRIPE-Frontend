@@ -106,10 +106,12 @@ export function useOptionSetBindingViewModel() {
   const fieldVersionId = activeVersion?.id ?? null;
   const boundOptionSetVersionId = activeVersion?.boundOptionSetVersionId ?? null;
 
+  const sets = optionSets.sets;
+
   /** Readable AND published -- see `OptionSet.isBindable`'s own doc comment for why `isSystemManaged` is not part of this filter. */
   const bindableSets: OptionSet[] = useMemo(
-    () => optionSets.sets.filter((set) => set.isBindable),
-    [optionSets.sets]
+    () => sets.filter((set) => set.isBindable),
+    [sets]
   );
 
   /**
@@ -122,8 +124,8 @@ export function useOptionSetBindingViewModel() {
     () =>
       boundOptionSetVersionId === null
         ? null
-        : (optionSets.sets.find((set) => set.publishedVersionId === boundOptionSetVersionId) ?? null),
-    [optionSets.sets, boundOptionSetVersionId]
+        : (sets.find((set) => set.publishedVersionId === boundOptionSetVersionId) ?? null),
+    [sets, boundOptionSetVersionId]
   );
 
   const invalidateAfterBindingChange = useCallback(() => {
@@ -196,11 +198,12 @@ export function useOptionSetBindingViewModel() {
    * writes re-check their gates -- defence in depth, and a hook-level test surface that does not need
    * a DOM click to exercise.
    */
+  const canBind = optionSets.canBind;
   const refuseAction = useCallback((): string | null => {
-    if (!optionSets.canBind) return "customField.optionSetBinding.toast.permissionDenied";
+    if (!canBind) return "customField.optionSetBinding.toast.permissionDenied";
     if (fieldVersionId === null) return "customField.optionSetBinding.toast.noActiveVersion";
     return null;
-  }, [optionSets.canBind, fieldVersionId]);
+  }, [canBind, fieldVersionId]);
 
   const bind = useCallback(
     async (optionSetVersionId: string): Promise<boolean> => {

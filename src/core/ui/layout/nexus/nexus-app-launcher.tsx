@@ -232,23 +232,25 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
     []
   );
 
+  const activeWorkspaceKey = activeWorkspace?.workspaceKey;
+
   const adminItems = useMemo(
     () =>
       sortByPinThenCatalog(
         filteredWorkspaces.filter(
-          (ws) => ws.isAdminWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
+          (ws) => ws.isAdminWorkspace && ws.workspaceKey !== activeWorkspaceKey
         )
       ),
-    [filteredWorkspaces, sortByPinThenCatalog, activeWorkspace?.workspaceKey]
+    [filteredWorkspaces, sortByPinThenCatalog, activeWorkspaceKey]
   );
   const moduleItems = useMemo(
     () =>
       sortByPinThenCatalog(
         filteredWorkspaces.filter(
-          (ws) => ws.isModuleWorkspace && ws.workspaceKey !== activeWorkspace?.workspaceKey
+          (ws) => ws.isModuleWorkspace && ws.workspaceKey !== activeWorkspaceKey
         )
       ),
-    [filteredWorkspaces, sortByPinThenCatalog, activeWorkspace?.workspaceKey]
+    [filteredWorkspaces, sortByPinThenCatalog, activeWorkspaceKey]
   );
 
   const { currentTenant } = useTenantContext();

@@ -75,9 +75,10 @@ export function OptionSetBindingDialog({
 
   // Local selection state, reset when dialog opens or boundSet changes.
   const [selectedSetId, setSelectedSetId] = React.useState<string | null>(null);
+  const boundSetId = boundSet?.id ?? null;
   React.useEffect(() => {
-    if (open) setSelectedSetId(boundSet?.id ?? null);
-  }, [open, boundSet?.id]);
+    if (open) setSelectedSetId(boundSetId);
+  }, [open, boundSetId]);
 
   const selectedSet = bindableSets.find((set) => set.id === selectedSetId) ?? null;
   const isBusy = isAttaching || isDetaching;

@@ -153,12 +153,14 @@ export function useOptionSetVersionEditor({
 
   const canMoveUp = useCallback((rowId: string) => indexOfRow(rowId) > 0, [indexOfRow]);
 
+  const rowCount = rows.length;
+
   const canMoveDown = useCallback(
     (rowId: string) => {
       const index = indexOfRow(rowId);
-      return index >= 0 && index < rows.length - 1;
+      return index >= 0 && index < rowCount - 1;
     },
-    [indexOfRow, rows.length]
+    [indexOfRow, rowCount]
   );
 
   const swap = useCallback((index: number, targetIndex: number) => {
@@ -183,10 +185,10 @@ export function useOptionSetVersionEditor({
   const moveDown = useCallback(
     (rowId: string) => {
       const index = indexOfRow(rowId);
-      if (index < 0 || index >= rows.length - 1) return;
+      if (index < 0 || index >= rowCount - 1) return;
       swap(index, index + 1);
     },
-    [indexOfRow, rows.length, swap]
+    [indexOfRow, rowCount, swap]
   );
 
   const moveBefore = useCallback((draggedRowId: string, targetRowId: string) => {

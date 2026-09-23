@@ -71,6 +71,7 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
   // default) is sent, not just the ones the user touched -- saveValues is a
   // full-replace of the owner's value set, so omitting an untouched field
   // here would silently clear it.
+  const fieldConfigs = customFieldsQuery.fieldConfigs;
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
       // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
@@ -81,10 +82,10 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
       // point. Throws CustomFieldValidationError, which handleSubmit's own
       // catch block below distinguishes from a genuine API failure so it can
       // show the specific reason, not the generic fallback.
-      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+      assertSelectCustomFieldValuesValid(fieldConfigs, customFieldValues, t);
 
       const decoded: Record<string, unknown> = {};
-      for (const fc of customFieldsQuery.fieldConfigs) {
+      for (const fc of fieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
         if (key === null) continue;
         const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
@@ -97,7 +98,7 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
         decoded
       );
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues, t]
+    [fieldConfigs, customFieldValues, t]
   );
 
   // ── Load existing feature via GET by ID ──
@@ -159,12 +160,14 @@ export function useFeatureDefinitionFormViewModel(featureId?: string) {
   );
 
   // ── Validation ──
+  const formKey = form.key;
+  const formValueType = form.valueType;
   const errors = useMemo(() => {
     const e: Partial<Record<string, string>> = {};
-    if (!form.key.trim()) e.key = t("validation.required");
-    if (!form.valueType) e.valueType = t("validation.required");
+    if (!formKey.trim()) e.key = t("validation.required");
+    if (!formValueType) e.valueType = t("validation.required");
     return e;
-  }, [form.key, form.valueType, t]);
+  }, [formKey, formValueType, t]);
 
   const isValid = Object.keys(errors).length === 0;
 

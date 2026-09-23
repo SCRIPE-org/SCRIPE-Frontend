@@ -131,27 +131,29 @@ export function useDashboardLayout({
     [layoutKey, version]
   );
 
+  const widgets = layoutState.widgets;
+
   const toggleWidgetVisibility = useCallback(
     (id: string) => {
-      const updated = layoutState.widgets.map((w) =>
+      const updated = widgets.map((w) =>
         w.id === id ? { ...w, isVisible: !w.isVisible } : w
       );
       persistLayout(updated);
     },
-    [layoutState.widgets, persistLayout]
+    [widgets, persistLayout]
   );
 
   const setWidgetSize = useCallback(
     (id: string, size: WidgetSize) => {
-      const updated = layoutState.widgets.map((w) => (w.id === id ? { ...w, size } : w));
+      const updated = widgets.map((w) => (w.id === id ? { ...w, size } : w));
       persistLayout(updated);
     },
-    [layoutState.widgets, persistLayout]
+    [widgets, persistLayout]
   );
 
   const reorderWidgets = useCallback(
     (newOrderedIds: string[]) => {
-      const widgetMap = new Map(layoutState.widgets.map((w) => [w.id, w]));
+      const widgetMap = new Map(widgets.map((w) => [w.id, w]));
       const reordered: WidgetLayoutConfig[] = [];
 
       newOrderedIds.forEach((id, index) => {
@@ -169,7 +171,7 @@ export function useDashboardLayout({
 
       persistLayout(reordered);
     },
-    [layoutState.widgets, persistLayout]
+    [widgets, persistLayout]
   );
 
   const resetToDefault = useCallback(() => {
@@ -177,22 +179,22 @@ export function useDashboardLayout({
   }, [defaultWidgets, persistLayout]);
 
   const visibleWidgets = useMemo(() => {
-    return [...layoutState.widgets]
+    return [...widgets]
       .filter((w) => w.isVisible)
       .sort((a, b) => a.order - b.order);
-  }, [layoutState.widgets]);
+  }, [widgets]);
 
   const isWidgetVisible = useCallback(
     (id: string) => {
-      const w = layoutState.widgets.find((x) => x.id === id);
+      const w = widgets.find((x) => x.id === id);
       return w ? w.isVisible : false;
     },
-    [layoutState.widgets]
+    [widgets]
   );
 
   const isCustomized = useMemo(() => {
-    return JSON.stringify(layoutState.widgets) !== JSON.stringify(defaultWidgets);
-  }, [layoutState.widgets, defaultWidgets]);
+    return JSON.stringify(widgets) !== JSON.stringify(defaultWidgets);
+  }, [widgets, defaultWidgets]);
 
   return {
     widgets: layoutState.widgets,

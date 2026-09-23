@@ -158,11 +158,12 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
   }, [suggestedYearly]);
 
   // ── Effective overrides ──
+  const serverOthers = serverData.others;
   const overrides = useMemo((): PriceRow[] => {
     const merged = new Map<string, PriceRow>();
 
     // Server overrides (not removed)
-    for (const row of serverData.others) {
+    for (const row of serverOthers) {
       if (!removedOverrides.has(row.currency)) {
         merged.set(row.currency, { ...row });
       }
@@ -185,7 +186,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
     }
 
     return Array.from(merged.values()).sort((a, b) => a.currency.localeCompare(b.currency));
-  }, [serverData.others, localOverrides, removedOverrides, addedOverrides]);
+  }, [serverOthers, localOverrides, removedOverrides, addedOverrides]);
 
   // ── Available currencies (not USD, not already used) ──
   const usedCurrencyCodes = useMemo(() => new Set(overrides.map((o) => o.currency)), [overrides]);
@@ -239,6 +240,8 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
   }, []);
 
   // ── Update override ──
+  const serverDataOthers = serverData.others;
+
   const updateOverride = useCallback(
     (currency: string, field: "monthly" | "yearly", amount: number) => {
       // Check if it's an added override
@@ -257,7 +260,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
         setLocalOverrides((prev) => {
           const next = new Map(prev || new Map());
           const existing = next.get(currency) ||
-            serverData.others.find((o) => o.currency === currency) || {
+            serverDataOthers.find((o) => o.currency === currency) || {
               currency,
               monthlyAmount: 0,
               yearlyAmount: 0,
@@ -270,7 +273,7 @@ export function useEditionPricingViewModel(editionId: string): EditionPricingVie
         });
       }
     },
-    [addedOverrides, serverData.others]
+    [addedOverrides, serverDataOthers]
   );
 
   // ── Live Preview ──

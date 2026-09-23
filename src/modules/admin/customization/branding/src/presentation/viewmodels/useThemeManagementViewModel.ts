@@ -157,30 +157,32 @@ export function useThemeManagementViewModel() {
   );
 
   // ============ Config ============
+  const items = vm.items;
+  const itemsCount = vm.pagination.itemsCount;
+
   const getConfigBase = useCallback(
     (): Partial<CrudConfig<ThemeCard>> => ({
       getItemDisplayName: (item: ThemeCard) => item.name,
       deleteService: async (id: string) => {
-        const theme = vm.items.find((t) => t.id === id);
+        const theme = items.find((t) => t.id === id);
         if (theme) {
           await themeMarketplaceRepository.delete(theme.slug);
         }
       },
     }),
-    [themeMarketplaceRepository, vm.items]
+    [themeMarketplaceRepository, items]
   );
 
   // ============ Statistics ============
   const statistics = useMemo(() => {
-    const items = vm.items;
     return {
-      total: vm.pagination.itemsCount || items.length,
+      total: itemsCount || items.length,
       free: items.filter((t) => t.isFree).length,
       featured: items.filter((t) => t.isFeatured).length,
       system: items.filter((t) => t.isSystem).length,
       deprecated: items.filter((t) => t.isDeprecated).length,
     };
-  }, [vm.items, vm.pagination.itemsCount]);
+  }, [items, itemsCount]);
 
   return {
     vm,

@@ -102,10 +102,11 @@ export function GenericTreeView<T extends TreeNode, TCreate, TUpdate>({
   const lastOnOpenChangeRef = useRef<number>(0);
   const DEBOUNCE_DELAY = 100; // 100ms debounce
 
+  const listTree = vm.listTree;
   // Fetch on mount and when pagination or search changes
   useEffect(() => {
-    vm.listTree();
-  }, [vm.listTree]);
+    listTree();
+  }, [listTree]);
 
   // ========================================
   // PERMISSION CHECKING LOGIC

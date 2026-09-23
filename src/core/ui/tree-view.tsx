@@ -173,10 +173,7 @@ export function TreeView<T>({
   const { direction, t } = useI18n();
   const settings = useSettings();
 
-  const computedVariant: TreeVariant = useMemo(
-    () => resolveTreeVariant(variant ?? settings.treeStyle),
-    [variant, settings.treeStyle]
-  );
+  const computedVariant: TreeVariant = resolveTreeVariant(variant ?? settings.treeStyle);
 
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [isAllExpanded, setIsAllExpanded] = useState<boolean>(defaultExpanded);
@@ -346,35 +343,29 @@ export function TreeView<T>({
     onSelectionChange(newSelection);
   };
 
-  const density = useMemo(() => {
-    switch (settings.spacingSize) {
-      case "compact":
-        return { pad: "px-2 py-1.5", childPad: "ps-4" };
-      case "spacious":
-        return { pad: "px-4 py-3", childPad: "ps-8" };
-      case "comfortable":
-        return { pad: "px-3 py-2.5", childPad: "ps-6" };
-      default:
-        return { pad: "px-3 py-2", childPad: "ps-6" };
-    }
-  }, [settings.spacingSize]);
+  const spacingSize = settings.spacingSize;
+  const density =
+    spacingSize === "compact"
+      ? { pad: "px-2 py-1.5", childPad: "ps-4" }
+      : spacingSize === "spacious"
+        ? { pad: "px-4 py-3", childPad: "ps-8" }
+        : spacingSize === "comfortable"
+          ? { pad: "px-3 py-2.5", childPad: "ps-6" }
+          : { pad: "px-3 py-2", childPad: "ps-6" };
 
   // The borderRadius setting, mapped onto the nx ladder — the same mapping
   // Button uses, so a tree row and a button never disagree about a corner.
-  const radius = useMemo(() => {
-    switch (settings.borderRadius) {
-      case "none":
-        return "rounded-none";
-      case "small":
-        return "rounded-nx-sm";
-      case "large":
-        return "rounded-nx-lg";
-      case "full":
-        return "rounded-full";
-      default:
-        return "rounded-nx-control";
-    }
-  }, [settings.borderRadius]);
+  const borderRadiusSetting = settings.borderRadius;
+  const radius =
+    borderRadiusSetting === "none"
+      ? "rounded-none"
+      : borderRadiusSetting === "small"
+        ? "rounded-nx-sm"
+        : borderRadiusSetting === "large"
+          ? "rounded-nx-lg"
+          : borderRadiusSetting === "full"
+            ? "rounded-full"
+            : "rounded-nx-control";
 
   const searchInputRef = search?.inputRef;
   const searchValue = search?.value;

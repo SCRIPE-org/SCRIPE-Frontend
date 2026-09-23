@@ -151,13 +151,15 @@ export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = an
   const effectiveQueryKey = config.queryKey ?? ["tree"];
 
   // Build query params
+  const page = pagination.page;
+  const pageSize = pagination.pageSize;
   const queryParams = useMemo(
     () => ({
-      page: pagination.page,
-      pageSize: pagination.pageSize,
+      page,
+      pageSize,
       PageSearch: searchTerm,
     }),
-    [pagination.page, pagination.pageSize, searchTerm]
+    [page, pageSize, searchTerm]
   );
 
   // ==========================================
@@ -177,12 +179,14 @@ export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = an
   });
 
   // Derive tree data from query or static data
+  const queryDataItems = queryData?.data;
+  const staticData = config.staticData;
   const tree = useMemo(() => {
-    if (config.staticData) {
-      return config.staticData;
+    if (staticData) {
+      return staticData;
     }
-    return queryData?.data ?? [];
-  }, [config.staticData, queryData?.data]);
+    return queryDataItems ?? [];
+  }, [staticData, queryDataItems]);
 
   // Update pagination from query response
   const [prevPagination, setPrevPagination] = useState(queryData?.pagination);
@@ -394,24 +398,26 @@ export function useTreeViewModel<T extends TreeNode, TCreate = any, TUpdate = an
   // ==========================================
   // CRUD Operations (using mutations)
   // ==========================================
+  const disableOperations = config.disableOperations;
+
   const createItem = useCallback(
     async (data: TCreate) => {
-      if (config.disableOperations) {
+      if (disableOperations) {
         throw new Error("Create operation not available");
       }
       return createMutation.mutateAsync(data);
     },
-    [config.disableOperations, createMutation]
+    [disableOperations, createMutation]
   );
 
   const updateItem = useCallback(
     async (id: string, data: TUpdate) => {
-      if (config.disableOperations) {
+      if (disableOperations) {
         throw new Error("Update operation not available");
       }
       return updateMutation.mutateAsync({ id, data });
     },
-    [config.disableOperations, updateMutation]
+    [disableOperations, updateMutation]
   );
 
   const deleteItem = useCallback(

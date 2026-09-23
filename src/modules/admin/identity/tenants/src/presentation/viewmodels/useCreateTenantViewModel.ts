@@ -171,8 +171,9 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
 
   // ── Compute enabled subscription types for selected edition ──
+  const editionId = form.editionId;
   const enabledSubscriptionTypes = useMemo(() => {
-    const edition = cachedEditions.find((e) => e.id === form.editionId);
+    const edition = cachedEditions.find((e) => e.id === editionId);
     if (!edition) {
       // No edition selected -> show all types
       return [
@@ -192,7 +193,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     if (edition.allowYearly !== false) types.push({ value: "Yearly", enabled: true });
     if (edition.allowTrial !== false) types.push({ value: "Trial", enabled: true });
     return types;
-  }, [cachedEditions, form.editionId]);
+  }, [cachedEditions, editionId]);
 
   // Track previous editionId to detect changes
   const prevEditionIdRef = useRef(form.editionId);
@@ -214,6 +215,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     staleTime: 60_000,
   });
 
+  const subscriptionType = form.subscriptionType;
   const availablePromotions = useMemo(() => {
     return promotionsRaw
       .filter((p) => {
@@ -221,8 +223,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         if (p.validUntil && new Date(p.validUntil) < new Date()) return false;
         if (p.validFrom && new Date(p.validFrom) > new Date()) return false;
         if (p.maxRedemptions != null && p.currentRedemptions >= p.maxRedemptions) return false;
-        if (p.applicableCycle && form.subscriptionType) {
-          if (p.applicableCycle !== form.subscriptionType) return false;
+        if (p.applicableCycle && subscriptionType) {
+          if (p.applicableCycle !== subscriptionType) return false;
         }
         return true;
       })
@@ -234,7 +236,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         requiresCode: p.requiresCode,
         code: p.promoCode || "",
       }));
-  }, [promotionsRaw, form.subscriptionType]);
+  }, [promotionsRaw, subscriptionType]);
 
   // ── Update Field Logic ──
   const updateField = useCallback(
@@ -330,21 +332,20 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   );
 
   // ── Selected edition info ──
-  const selectedEdition = useMemo(
-    () => cachedEditions.find((e) => e.id === form.editionId),
-    [cachedEditions, form.editionId]
-  );
+  const selectedEdition = cachedEditions.find((e) => e.id === form.editionId);
 
   // ── Auto-select first enabled subscription type when edition changes and type is empty ──
   // This runs when cachedEditions update after edition search completes
+  const currentEditionId = form.editionId;
+  const currentSubscriptionType = form.subscriptionType;
   useEffect(() => {
-    if (form.editionId && !form.subscriptionType && enabledSubscriptionTypes.length > 0) {
+    if (currentEditionId && !currentSubscriptionType && enabledSubscriptionTypes.length > 0) {
       const firstEnabled = enabledSubscriptionTypes[0]?.value;
       if (firstEnabled) {
         setForm((prev) => ({ ...prev, subscriptionType: firstEnabled }));
       }
     }
-  }, [form.editionId, form.subscriptionType, enabledSubscriptionTypes]);
+  }, [currentEditionId, currentSubscriptionType, enabledSubscriptionTypes]);
 
   // ── Edition search ──
   // Contact-Sales-only editions are excluded here: they have no billing type an
@@ -386,6 +387,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     3: false,
   });
 
+  const adminFieldConfigs = adminCustomFieldsQuery.fieldConfigs;
   const stepErrors = useMemo(() => {
     const errors: Record<StepId, string[]> = { 1: [], 2: [], 3: [] };
     // Step 1
@@ -417,8 +419,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
       errors[2].push("adminEmailFormat");
     }
     // Step 2 — Required Administrator Custom Fields (enforced only when not deferred to account setup)
-    if (!deferAdminCustomFieldsToSetup) {
-      for (const fc of adminCustomFieldsQuery.fieldConfigs) {
+    if (!deferAdminCustomFieldsToSetup && adminFieldConfigs) {
+      for (const fc of adminFieldConfigs) {
         const isVisible = !fc.isVisible || fc.isVisible(adminCustomFieldValues);
         const isRequired = isFieldRequired(fc, adminCustomFieldValues);
         if (isRequired && isVisible) {
@@ -437,7 +439,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     // Step 3 — Edition is required by CreateTenantCommandValidator
     if (!form.editionId?.trim()) errors[3].push("editionId");
     return errors;
-  }, [form, adminCustomFieldsQuery.fieldConfigs, adminCustomFieldValues, deferAdminCustomFieldsToSetup]);
+  }, [form, adminFieldConfigs, adminCustomFieldValues, deferAdminCustomFieldsToSetup]);
 
   const isStepValid = useCallback((step: StepId) => stepErrors[step].length === 0, [stepErrors]);
 
@@ -623,7 +625,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     toastSuccess,
     toastError,
     isStepValid,
-    adminCustomFieldsQuery.fieldConfigs,
+    adminFieldConfigs,
     adminCustomFieldValues,
   ]);
 

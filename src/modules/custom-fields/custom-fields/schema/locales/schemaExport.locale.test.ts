@@ -12,8 +12,8 @@
 //  2. **The placeholders the result and version lines depend on.** These interpolate counts and a
 //     version number; a translation that drops `{definitions}` renders a sentence with a hole in it.
 import { describe, it, expect } from "vitest";
-import { en } from "./schema-export.en";
-import { ar } from "./schema-export.ar";
+import { en } from "./schema.en";
+import { ar } from "./schema.ar";
 
 function leafPaths(node: unknown, prefix = ""): string[] {
   if (typeof node !== "object" || node === null) return [prefix];

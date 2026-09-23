@@ -265,7 +265,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
         },
       ],
       // Spread configBase with defaults to satisfy required fields
-      entityTypeKey: configBase.entityTypeKey || "identity.admin",
+      entityTypeKey: "identity.admin",
       createFields: configBase.createFields || [],
       editFields: configBase.editFields || [],
       createInitialValues: configBase.createInitialValues,

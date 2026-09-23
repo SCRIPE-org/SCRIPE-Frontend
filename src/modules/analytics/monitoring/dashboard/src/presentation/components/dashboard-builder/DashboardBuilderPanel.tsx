@@ -575,9 +575,12 @@ export function DashboardBuilderPanel({
   }, []);
 
   // Notify parent on changes
+  const storeWidgets = store.widgets;
+  const storeGridRows = store.gridRows;
+  const storeEnabled = store.enabled;
   useEffect(() => {
     onCanvasChange?.(store.toCanvas());
-  }, [store.widgets, store.gridRows, store.enabled]);
+  }, [storeWidgets, storeGridRows, storeEnabled, onCanvasChange, store]);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
 

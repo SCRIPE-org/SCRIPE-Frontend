@@ -12,6 +12,9 @@ export const ar = {
     editLoadFailed: "تعذّر تحميل هذا الحقل المخصص للتعديل. يُرجى المحاولة مرة أخرى.",
 
     // Field labels — shared between the table columns and the create/edit forms
+    columns: {
+      entityType: "نوع الكيان",
+    },
     // الموجة 6 الصف 6.6 — سجل التغييرات.
     history: {
       actionLabel: "السجل",

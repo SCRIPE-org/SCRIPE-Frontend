@@ -40,14 +40,15 @@ export function DynamicSettingsForm({
   const { t } = useI18n();
 
   // Initialize local form state from provided values or schema defaults
+  const schemaFields = schema.fields;
   const defaultValues = useMemo(() => {
     const defaults: SettingsValues = {};
-    for (const field of schema.fields) {
+    for (const field of schemaFields) {
       defaults[field.key] =
         initialValues[field.key] ?? field.default ?? getEmptyDefault(field.type);
     }
     return defaults;
-  }, [schema.fields, initialValues]);
+  }, [schemaFields, initialValues]);
 
   const [values, setValues] = useState<SettingsValues>(defaultValues);
   const [errors, setErrors] = useState<Record<string, string>>({});

@@ -4,60 +4,19 @@
  *
  * @module auth/account-setup/domain/interfaces
  */
+import type {
+  ValidateTokenResponse,
+  SetupCustomFieldDto,
+  ActivateAccountRequest,
+  ActivateAccountResponse,
+} from "../../data/models/AccountSetupModel";
 
-export interface ValidateTokenResponse {
-  adminUsername: string;
-  tenantName: string;
-  tenantCode?: string;
-  email: string;
-  adminEmail?: string;
-  isValid: boolean;
-  errorMessage?: string;
-  passwordMinLength?: number;
-  passwordRequireUppercase?: boolean;
-  passwordRequireNumber?: boolean;
-  passwordRequireSpecial?: boolean;
-  adminId?: string;
-  firstName?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  profileImageUrl?: string;
-  tenantId?: string;
-  expiresAt?: string;
-}
-
-export interface SetupCustomFieldDto {
-  key: string;
-  labelEn: string;
-  labelAr?: string;
-  placeholderEn?: string;
-  placeholderAr?: string;
-  valueType: string;
-  isRequired: boolean;
-  sensitivity: number;
-  options?: string | null;
-  optionsAr?: string | null;
-  sortOrder: number;
-  currentValue?: unknown;
-}
-
-export interface ActivateAccountRequest {
-  token: string;
-  password: string;
-  confirmPassword: string;
-  firstName?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  profileImageUrl?: string;
-  customFieldValues?: Record<string, unknown>;
-}
-
-export interface ActivateAccountResponse {
-  success: boolean;
-  adminUsername?: string;
-  tenantName?: string;
-  errorMessage?: string;
-}
+export type {
+  ValidateTokenResponse,
+  SetupCustomFieldDto,
+  ActivateAccountRequest,
+  ActivateAccountResponse,
+};
 
 export interface IAccountSetupService {
   validateToken(token: string): Promise<ValidateTokenResponse>;

@@ -1,12 +1,6 @@
 /**
  * LoginView — 5-Layout Customizable Login Page
- *
  * Renders tenant-branded login using the Login Rendering Engine.
- * Supports 22 layouts via LAYOUT_REGISTRY. CSS tokens injected from LoginBrandingJson.
- * Safe mode bypasses all customization.
- *
- * §11 Slot-based composition · §19 Security · §20 Server-authoritative rendering
- * §22 Studio preview mode · §27 Accessibility (WCAG AA, 44px targets, RTL)
  */
 "use client";
 
@@ -29,12 +23,6 @@ import { TenantSuspendedView, TenantNotFoundView } from "./TenantStatusView";
 
 /**
  * LoginView represents the main customizable portal for tenant-scoped and platform authentication.
- *
- * Features:
- * - Domain Resolution: Automatically inspects the hostname to discover tenant branding records, custom domains, or platform scopes.
- * - Dynamic Token Style Ingestion: Injects CSS variables and layout classes based on database configuration (LoginBrandingJson).
- * - Multi-Layout Router: Directs rendering into 1 of 5 high-fidelity layout shells, mapping dynamic top action slots, footers, and logos.
- * - Lifecycle Gates: Prevents rendering until hydration, checks active login status, and handles redirects or suspended tenant warning states.
  */
 export function LoginView() {
   const vm = useLoginViewModel();
@@ -56,16 +44,17 @@ export function LoginView() {
 
   // One-time sync: apply resolved preferences only on initial load
   const hasAppliedInitialPrefs = useRef(false);
+  const dashboardThemeJson = branding?.dashboardThemeJson;
   useEffect(() => {
-    if (hasAppliedInitialPrefs.current || !branding?.dashboardThemeJson) return;
+    if (hasAppliedInitialPrefs.current || !dashboardThemeJson) return;
     try {
-      const prefs = JSON.parse(branding.dashboardThemeJson);
+      const prefs = JSON.parse(dashboardThemeJson);
       if (prefs.language === "ar" || prefs.language === "en") setLanguage(prefs.language);
       hasAppliedInitialPrefs.current = true;
     } catch {
       /* ignore */
     }
-  }, [branding?.dashboardThemeJson, setLanguage]);
+  }, [dashboardThemeJson, setLanguage]);
 
   // Login rendering engine — CSS token injection + layout + accessibility
   const { layout, slotConfig, a11y } = useLoginBrandingTokens({
@@ -81,33 +70,38 @@ export function LoginView() {
   const logoAlt = branding?.companyName ?? branding?.name ?? BRAND.name;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
 
+  const hasHydrated = vm.hasHydrated;
+  const checkAndRedirect = vm.checkAndRedirect;
   useEffect(() => {
-    if (hasCheckedAuth.current || !vm.hasHydrated || isPreviewMode) return;
+    if (hasCheckedAuth.current || !hasHydrated || isPreviewMode) return;
     hasCheckedAuth.current = true;
-    vm.checkAndRedirect();
-  }, [vm.hasHydrated, vm.checkAndRedirect, isPreviewMode, vm]);
+    checkAndRedirect();
+  }, [hasHydrated, checkAndRedirect, isPreviewMode]);
 
+  const setTenantId = vm.setTenantId;
   useEffect(() => {
-    vm.setTenantId(tenantId ?? undefined);
-  }, [tenantId, vm, vm.setTenantId]);
+    setTenantId(tenantId ?? undefined);
+  }, [tenantId, setTenantId]);
 
   // Dynamic title + favicon
+  const pageTitle = a11y.pageTitle;
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.title =
-      a11y.pageTitle || (isResolved ? `Login — ${companyName}` : `Login — ${BRAND.name}`);
-  }, [isResolved, companyName, a11y.pageTitle]);
+      pageTitle || (isResolved ? `Login — ${companyName}` : `Login — ${BRAND.name}`);
+  }, [isResolved, companyName, pageTitle]);
 
+  const faviconUrl = branding?.faviconUrl;
   useEffect(() => {
-    if (typeof document === "undefined" || !branding?.faviconUrl) return;
+    if (typeof document === "undefined" || !faviconUrl) return;
     let link = document.querySelector<HTMLLinkElement>("link[rel~='icon']");
     if (!link) {
       link = document.createElement("link");
       link.rel = "icon";
       document.head.appendChild(link);
     }
-    link.href = branding.faviconUrl;
-  }, [branding?.faviconUrl]);
+    link.href = faviconUrl;
+  }, [faviconUrl]);
 
   // ── Loading gate ──────────────────────────────────────────────────────────
   if (!isPreviewMode && (!vm.hasHydrated || vm.isRedirecting || isTenantLoading)) {

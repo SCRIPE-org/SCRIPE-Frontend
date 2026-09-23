@@ -114,7 +114,8 @@ export function BuilderPanel({
   }, [store]);
 
   // Overlap detection
-  const overlapWarnings = useMemo(() => detectOverlaps(store.components), [store.components]);
+  const storeComponents = store.components;
+  const overlapWarnings = useMemo(() => detectOverlaps(storeComponents), [storeComponents]);
 
   // ── Note: Builder initialization, page switching, and draft syncing are ALL ──
   // ── handled by CustomizerStudioView's SYNC effects. BuilderPanel is DISPLAY-ONLY. ──

@@ -75,12 +75,13 @@ export function useSignupSubdomain({
   //
   // Primary validation is from WorkspaceStep's react-hook-form + workspaceSchema.
   // These checks are a safety net for async conditions (availability + token).
+  const emailVerificationToken = wizardData.emailVerificationToken;
   const submitWorkspace = useCallback(async () => {
     if (subdomainResult && !subdomainResult.available) {
       setError(t("signup.errors.subdomainUnavailable") || "Please choose an available subdomain.");
       return;
     }
-    if (!wizardData.emailVerificationToken) {
+    if (!emailVerificationToken) {
       setError(
         t("signup.errors.emailVerificationExpired") ||
           "Email verification expired. Please go back and verify again."
@@ -88,7 +89,7 @@ export function useSignupSubdomain({
       return;
     }
     setStep("review");
-  }, [wizardData.emailVerificationToken, subdomainResult, setStep, setError, t]);
+  }, [emailVerificationToken, subdomainResult, setStep, setError, t]);
 
   return {
     subdomainResult,

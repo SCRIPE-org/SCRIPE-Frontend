@@ -177,6 +177,8 @@ export function NexusPrimaryRail({
     [rootMenuItems]
   );
 
+  const activeWorkspaceKey = activeWorkspace?.workspaceKey;
+
   // Pinned workspaces — sorted by pinSortOrder, then alphabetically as tiebreaker.
   // Rules:
   //   1. The ACTIVE workspace is always excluded (you're already there — no point showing it).
@@ -184,7 +186,7 @@ export function NexusPrimaryRail({
   //      This ensures the admin always has a quick-jump to their primary workspace.
   //      "First-accessible is always pinned" replaces the old "Admin is always pinned" UX.
   const pinnedWorkspaces = useMemo(() => {
-    const activeKey = activeWorkspace?.workspaceKey;
+    const activeKey = activeWorkspaceKey;
 
     // Sort all workspaces by sortOrder to reliably find the first one
     const sorted = [...workspaceGroups].sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder);
@@ -208,7 +210,7 @@ export function NexusPrimaryRail({
         ? aOrder - bOrder
         : a.workspaceNameEn.localeCompare(b.workspaceNameEn);
     });
-  }, [workspaceGroups, activeWorkspace?.workspaceKey]);
+  }, [workspaceGroups, activeWorkspaceKey]);
 
   // Primary admin workspace: the admin-type workspace with the lowest sort order.
   // The back button shows ONLY when the admin actually has an admin workspace in their
@@ -220,7 +222,7 @@ export function NexusPrimaryRail({
         .sort((a, b) => a.workspaceSortOrder - b.workspaceSortOrder)[0]?.workspaceKey ?? null,
     [workspaceGroups]
   );
-  const isOnPrimaryAdmin = activeWorkspace?.workspaceKey === primaryAdminKey;
+  const isOnPrimaryAdmin = activeWorkspaceKey === primaryAdminKey;
   // Only show back button when:
   //   1. Admin has an admin workspace in their access list
   //   2. A workspace IS selected (not on the Hub page where activeWorkspace is null)

@@ -47,17 +47,19 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
   const isSportsOrg = ["academy", "venue", "club", "federation"].includes(selectedArchetype);
 
   // Server-side search handler for edition GenericSelect
+  const handleSearchEditions = vm.handleSearchEditions;
   const handleEditionSearch = useCallback(
     async (query: string) => {
-      const results = await vm.handleSearchEditions(query);
+      const results = await handleSearchEditions(query);
       return results.map((r) => ({ value: r.value, label: r.label }));
     },
-    [vm]
+    [handleSearchEditions]
   );
 
   // Derive recommended editions based on the chosen organization archetype
+  const cachedEditions = vm.cachedEditions;
   const recommendedEditions = useMemo(() => {
-    return vm.cachedEditions.filter((ed) => {
+    return cachedEditions.filter((ed) => {
       const cat = ed.category?.toLowerCase();
       const name = ed.name.toLowerCase();
       if (isSportsOrg) {
@@ -71,20 +73,21 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       }
       return false;
     });
-  }, [vm.cachedEditions, isSportsOrg]);
+  }, [cachedEditions, isSportsOrg]);
 
   // Edition options from cached editions — recommended editions flagged with ⭐
   const editionOptions: GenericSelectOption[] = useMemo(() => {
-    return vm.cachedEditions.map((ed) => {
+    return cachedEditions.map((ed) => {
       const isRec = recommendedEditions.some((r) => r.id === ed.id);
       return {
         value: ed.id,
         label: isRec ? `⭐ ${ed.name}` : ed.name,
       };
     });
-  }, [vm.cachedEditions, recommendedEditions]);
+  }, [cachedEditions, recommendedEditions]);
 
   // Subscription type options — dynamically filtered by edition's Allow* flags
+  const enabledSubscriptionTypes = vm.enabledSubscriptionTypes;
   const subscriptionTypeOptions: GenericSelectOption[] = useMemo(() => {
     const labelMap: Record<string, string> = {
       Monthly: t("tenant.subscriptionTypes.monthly"),
@@ -92,11 +95,11 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       Lifetime: t("tenant.subscriptionTypes.lifetime"),
       Trial: t("tenant.subscriptionTypes.trial"),
     };
-    return vm.enabledSubscriptionTypes.map((st) => ({
+    return enabledSubscriptionTypes.map((st) => ({
       value: st.value,
       label: labelMap[st.value] || st.value,
     }));
-  }, [vm.enabledSubscriptionTypes, t]);
+  }, [enabledSubscriptionTypes, t]);
 
   return (
     <div className="space-y-6">

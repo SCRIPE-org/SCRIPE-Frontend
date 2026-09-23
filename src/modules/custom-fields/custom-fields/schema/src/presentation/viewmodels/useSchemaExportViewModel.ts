@@ -150,10 +150,8 @@ export function useSchemaExportViewModel() {
     exportMutation.reset();
   }, [exportMutation]);
 
-  const errorMessage = useMemo(
-    () => (exportMutation.error instanceof Error ? exportMutation.error.message : null),
-    [exportMutation.error]
-  );
+  const errorMessage =
+    exportMutation.error instanceof Error ? exportMutation.error.message : null;
 
   return {
     entityTypes,

@@ -8,7 +8,7 @@
  * All query keys include tenantId for tenant-aware caching.
  */
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { monitoringContainer } from "@modules/monitoring/di";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
@@ -44,13 +44,13 @@ export function useThreatSummaryViewModel(tenantId: string | null) {
     retry: 2,
   });
 
-  const threatCards = useMemo(() => {
-    if (!securityEvents.data) return [];
-    return securityEvents.data.map((e) => ({
-      type: e.eventType,
-      count: e.count,
-    }));
-  }, [securityEvents.data]);
+  const events = securityEvents.data;
+  const threatCards = events
+    ? events.map((e) => ({
+        type: e.eventType,
+        count: e.count,
+      }))
+    : [];
 
   return {
     data: threatCards,
@@ -76,14 +76,14 @@ export function useFailedLoginsViewModel(days: number = 30, tenantId: string | n
     retry: 2,
   });
 
-  const heatmapData = useMemo(() => {
-    if (!query.data) return [];
-    return query.data.map((point) => ({
-      date: point.date,
-      failed: point.failedCount,
-      total: point.successCount + point.failedCount,
-    }));
-  }, [query.data]);
+  const queryData = query.data;
+  const heatmapData = queryData
+    ? queryData.map((point) => ({
+        date: point.date,
+        failed: point.failedCount,
+        total: point.successCount + point.failedCount,
+      }))
+    : [];
 
   return {
     data: heatmapData,
@@ -143,10 +143,7 @@ export function useSecurityDashboardViewModel() {
   const blockedIPs = useBlockedIPsViewModel(30, 20, tenantId);
   const timeline = useSecurityTimelineViewModel(20, tenantId);
 
-  const isLoading = useMemo(
-    () => threats.isLoading || failedLogins.isLoading,
-    [threats.isLoading, failedLogins.isLoading]
-  );
+  const isLoading = threats.isLoading || failedLogins.isLoading;
 
   const refetchAll = useCallback(() => {
     threats.refetch();

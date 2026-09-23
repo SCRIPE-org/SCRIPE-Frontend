@@ -154,13 +154,15 @@ function ExpandedEmailRow({
 }) {
   const { t } = useI18n();
   const skin = EMAIL_CANVAS_SKIN[canvasTheme];
+  const emailSubject = email.subject;
+  const emailBody = email.body;
   const { lang: previewLang, dir: previewDir } = useMemo(
-    () => detectDir(`${email.subject} ${email.body}`),
-    [email.subject, email.body]
+    () => detectDir(`${emailSubject} ${emailBody}`),
+    [emailSubject, emailBody]
   );
   const sanitizedBody = useMemo(
-    () => DOMPurify.sanitize(email.body, SANITIZE_OPTIONS),
-    [email.body]
+    () => DOMPurify.sanitize(emailBody, SANITIZE_OPTIONS),
+    [emailBody]
   );
   const previewSrcDoc = useMemo(
     () =>

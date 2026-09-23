@@ -7,7 +7,7 @@
  */
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { DetailRow } from "@core/ui/detail-row";
 import { SUPPORTED_CURRENCIES } from "@core/constants/currencies";
 import { getCountryByCode } from "@core/constants/countries";
@@ -20,17 +20,14 @@ interface CreateTenantSummaryProps {
 
 export function CreateTenantSummary({ vm, t }: CreateTenantSummaryProps) {
   const isFree = vm.selectedEdition?.isFree === true;
-
-  const subscriptionLabel = useMemo(() => {
-    if (isFree) return t("tenant.freeEditionLifetime");
-    const map: Record<string, string> = {
-      Monthly: t("tenant.subscriptionTypes.monthly"),
-      Yearly: t("tenant.subscriptionTypes.yearly"),
-      Lifetime: t("tenant.subscriptionTypes.lifetime"),
-      Trial: t("tenant.subscriptionTypes.trial"),
-    };
-    return map[vm.form.subscriptionType] || vm.form.subscriptionType || "-";
-  }, [vm.form.subscriptionType, isFree, t]);
+  const subType = vm.form.subscriptionType;
+  const subMap: Record<string, string> = {
+    Monthly: t("tenant.subscriptionTypes.monthly"),
+    Yearly: t("tenant.subscriptionTypes.yearly"),
+    Lifetime: t("tenant.subscriptionTypes.lifetime"),
+    Trial: t("tenant.subscriptionTypes.trial"),
+  };
+  const subscriptionLabel = isFree ? t("tenant.freeEditionLifetime") : (subMap[subType] || subType || "-");
 
   const currencyInfo = SUPPORTED_CURRENCIES.find((c) => c.code === vm.form.currency);
   const currencyLabel = currencyInfo

@@ -730,6 +730,12 @@ export const navigationData: DocCategoryData[] = [
             order: 0.7,
           },
           {
+            id: "mod-cf-encryption",
+            titleKey: "modules.customFields.docs.encryption.title",
+            slug: "modules/custom-fields-encryption",
+            order: 0.75,
+          },
+          {
             id: "mod-cf-managing",
             titleKey: "modules.customFields.docs.managing.title",
             slug: "modules/custom-fields-managing",

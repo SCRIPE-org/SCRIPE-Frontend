@@ -178,18 +178,17 @@ export function useThemeBundleViewModel() {
   }, [t]);
 
   // ── Pagination ──
-  const pagination = useMemo(() => {
-    if (!bundlesQuery.data) return null;
-    const { totalCount, page, pageSize } = bundlesQuery.data;
-    return {
-      page,
-      pageSize,
-      totalCount,
-      totalPages: Math.ceil(totalCount / pageSize),
-      hasNext: page * pageSize < totalCount,
-      hasPrev: page > 1,
-    };
-  }, [bundlesQuery.data]);
+  const bundlesData = bundlesQuery.data;
+  const pagination = bundlesData
+    ? {
+        page: bundlesData.page,
+        pageSize: bundlesData.pageSize,
+        totalCount: bundlesData.totalCount,
+        totalPages: Math.ceil(bundlesData.totalCount / bundlesData.pageSize),
+        hasNext: bundlesData.page * bundlesData.pageSize < bundlesData.totalCount,
+        hasPrev: bundlesData.page > 1,
+      }
+    : null;
 
   return {
     // Data

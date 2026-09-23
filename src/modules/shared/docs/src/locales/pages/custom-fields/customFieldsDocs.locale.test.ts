@@ -64,6 +64,7 @@ import "../../../data/content/modules/custom-fields/custom-fields-options";
 import "../../../data/content/modules/custom-fields/custom-fields-option-sets";
 import "../../../data/content/modules/custom-fields/custom-fields-validators";
 import "../../../data/content/modules/custom-fields/custom-fields-security";
+import "../../../data/content/modules/custom-fields/custom-fields-encryption";
 import "../../../data/content/modules/custom-fields/custom-fields-managing";
 import "../../../data/content/modules/custom-fields/custom-fields-limits";
 
@@ -82,6 +83,7 @@ const SLUGS = [
   "modules/custom-fields-option-sets",
   "modules/custom-fields-validators",
   "modules/custom-fields-security",
+  "modules/custom-fields-encryption",
   "modules/custom-fields-managing",
   "modules/custom-fields-limits",
 ] as const;
@@ -220,7 +222,7 @@ describe("custom-fields docs locale parity", () => {
 });
 
 describe("custom-fields docs page completeness", () => {
-  it("registers all eleven pages", () => {
+  it("registers all pages", () => {
     for (const slug of SLUGS) {
       expect(repository.getPage(slug), slug).toBeDefined();
     }

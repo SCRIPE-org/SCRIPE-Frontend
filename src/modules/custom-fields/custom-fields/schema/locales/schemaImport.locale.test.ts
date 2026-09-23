@@ -4,8 +4,8 @@
 // the translation function has NO defaultValue support, so a key present in `en` and missing in
 // `ar` renders as the raw key string to an Arabic-speaking admin.
 import { describe, it, expect } from "vitest";
-import { en } from "./schema-import.en";
-import { ar } from "./schema-import.ar";
+import { en } from "./schema.en";
+import { ar } from "./schema.ar";
 
 function leafPaths(node: unknown, prefix = ""): string[] {
   if (typeof node !== "object" || node === null) return [prefix];

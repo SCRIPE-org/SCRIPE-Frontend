@@ -192,20 +192,16 @@ export function usePlatformCommandCenterViewModel() {
   });
 
   const summary: DashboardSummary | undefined = overviewVm.summary.data;
-  const recentChanges: RecentChange[] = useMemo(
-    () => overviewVm.recentActivity.data ?? [],
-    [overviewVm.recentActivity.data]
-  );
-  const loginActivity: LoginActivityPoint[] = useMemo(
-    () => overviewVm.loginActivity.data ?? [],
-    [overviewVm.loginActivity.data]
-  );
+  const recentChanges: RecentChange[] = overviewVm.recentActivity.data ?? [];
+  const loginActivity: LoginActivityPoint[] = overviewVm.loginActivity.data ?? [];
   const health: PlatformHealth | undefined = healthVm.health;
 
   // Derive active region nodes from tenants & platform host
+  const tenantsItems = tenantsData?.items;
+  const totalTenants = summary?.totalTenants;
   const regionNodes = useMemo<RegionNodeInfo[]>(() => {
     const countryMap = new Map<string, { tenantCount: number; tenantNames: string[] }>();
-    const tenantsList = tenantsData?.items ?? [];
+    const tenantsList = tenantsItems ?? [];
 
     tenantsList.forEach((tenant) => {
       const settings = tenant.settings as Record<string, unknown> | undefined;
@@ -229,9 +225,9 @@ export function usePlatformCommandCenterViewModel() {
     });
 
     // If summary reports tenants > 0 but tenant list is loading or empty, ensure primary operational tenant node
-    if (countryMap.size === 0 && (summary?.totalTenants ?? 0) > 0) {
+    if (countryMap.size === 0 && (totalTenants ?? 0) > 0) {
       countryMap.set("Egypt", {
-        tenantCount: summary?.totalTenants ?? 1,
+        tenantCount: totalTenants ?? 1,
         tenantNames: ["SCRIPE Operations"],
       });
     }
@@ -261,7 +257,7 @@ export function usePlatformCommandCenterViewModel() {
     }
 
     return nodes;
-  }, [tenantsData?.items, summary?.totalTenants]);
+  }, [tenantsItems, totalTenants]);
 
   const isRefreshing =
     overviewVm.summary.isRefetching ||

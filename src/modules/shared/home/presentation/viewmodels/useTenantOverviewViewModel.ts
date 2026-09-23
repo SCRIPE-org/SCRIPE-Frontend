@@ -46,21 +46,25 @@ export function useTenantOverviewViewModel() {
     }
   }, [overviewVm, tenantId, statsQuery, detailsQuery]);
 
+  const summaryData = overviewVm.summary.data;
+  const statsData = statsQuery.data;
+  const detailsData = detailsQuery.data;
+  const recentActivityData = overviewVm.recentActivity.data;
   const liveData = useMemo(() => {
     return buildTenantOverviewLiveData({
-      summary: overviewVm.summary.data,
-      stats: statsQuery.data,
-      details: detailsQuery.data,
-      recentActivity: overviewVm.recentActivity.data,
+      summary: summaryData,
+      stats: statsData,
+      details: detailsData,
+      recentActivity: recentActivityData,
       activeTenantName,
       t,
     });
   }, [
     activeTenantName,
-    detailsQuery.data,
-    overviewVm.recentActivity.data,
-    overviewVm.summary.data,
-    statsQuery.data,
+    detailsData,
+    recentActivityData,
+    summaryData,
+    statsData,
     t,
   ]);
 

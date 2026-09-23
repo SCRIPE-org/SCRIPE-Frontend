@@ -68,11 +68,13 @@ export function useWorkspaceTransition() {
    * than one timer in flight (two separate effects could race each other).
    * Respects MIN_VISIBLE_MS so fast cache-hits don't flash too briefly.
    */
+  const activeWorkspaceKey = activeWorkspace?.workspaceKey;
+  const isLoaderShowing = loaderState.show;
   useEffect(() => {
-    if (!loaderState.show) return;
+    if (!isLoaderShowing) return;
     if (isWorkspaceLoading) return;
     if (!targetKey.current) return;
-    if (activeWorkspace?.workspaceKey !== targetKey.current) return;
+    if (activeWorkspaceKey !== targetKey.current) return;
 
     // Gate loader dismissal on pathname match if transitionTargetRoute is tracked
     const transitionTargetRoute = useNavigationStore.getState().transitionTargetRoute;
@@ -102,7 +104,7 @@ export function useWorkspaceTransition() {
 
     return () => clearSettle();
     // pathname included so navigation completing also triggers the dismiss
-  }, [isWorkspaceLoading, activeWorkspace?.workspaceKey, pathname, loaderState.show]);
+  }, [isWorkspaceLoading, activeWorkspaceKey, pathname, isLoaderShowing]);
 
   // Safety net: if the loader is still visible after 8 seconds, dismiss it.
   // This handles edge-cases where the JIT fetch resolves but the workspace key
@@ -110,13 +112,13 @@ export function useWorkspaceTransition() {
   // errors that were swallowed before reaching this effect).
   const SAFETY_TIMEOUT_MS = 8000;
   useEffect(() => {
-    if (!loaderState.show) return;
+    if (!isLoaderShowing) return;
     const timeout = setTimeout(() => {
       setLoaderState((s) => ({ ...s, show: false }));
       targetKey.current = null;
     }, SAFETY_TIMEOUT_MS);
     return () => clearTimeout(timeout);
-  }, [loaderState.show]);
+  }, [isLoaderShowing]);
 
   const showLoader = useCallback(
     (name: string, abbr: string, accent: string | null, key: string) => {

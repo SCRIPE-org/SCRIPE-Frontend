@@ -230,6 +230,10 @@ import {
   en as valueExportEn,
   ar as valueExportAr,
 } from "@modules/custom-fields/value-export/locales";
+import {
+  en as keyManagementEn,
+  ar as keyManagementAr,
+} from "@modules/custom-fields/key-management/locales";
 
 import {
   en as workManagementEn,
@@ -346,13 +350,14 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktDevelopersEn,
   mktReviewsEn,
   mktFinancialsEn,
-  // Custom Fields (6 sub-modules)
+  // Custom Fields (7 sub-modules)
   customFieldsEn,
   fieldGroupEn,
   optionSetEn,
   definitionExportEn,
   customFieldsSchemaEn,
   valueExportEn,
+  keyManagementEn,
   workManagementEn,
   analyticsEventsEn,
   // Party Kernel
@@ -451,13 +456,14 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktDevelopersAr,
   mktReviewsAr,
   mktFinancialsAr,
-  // Custom Fields (6 sub-modules)
+  // Custom Fields (7 sub-modules)
   customFieldsAr,
   fieldGroupAr,
   optionSetAr,
   definitionExportAr,
   customFieldsSchemaAr,
   valueExportAr,
+  keyManagementAr,
   workManagementAr,
   analyticsEventsAr,
   // Party Kernel

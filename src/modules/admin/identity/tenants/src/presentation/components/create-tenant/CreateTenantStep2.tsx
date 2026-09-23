@@ -31,20 +31,22 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
   const emailFormatError = errors.includes("adminEmailFormat");
   const emailError = emailEmpty || emailFormatError;
 
+  const deferAdminCustomFieldsToSetup = vm.deferAdminCustomFieldsToSetup;
+  const adminFieldConfigs = vm.adminCustomFieldsQuery.fieldConfigs;
   const customFieldErrors = React.useMemo(() => {
     const errMap: Record<string, string> = {};
-    if (!vm.deferAdminCustomFieldsToSetup && touched) {
+    if (!deferAdminCustomFieldsToSetup && touched) {
       for (const err of errors) {
         if (err.startsWith("customField_")) {
           const fieldName = err.replace("customField_", "");
-          const config = vm.adminCustomFieldsQuery.fieldConfigs.find((c) => c.name === fieldName);
+          const config = adminFieldConfigs.find((c) => c.name === fieldName);
           const label = config?.label || fieldName;
           errMap[fieldName] = t("validation.requiredFieldNamed", { name: label });
         }
       }
     }
     return errMap;
-  }, [errors, touched, vm.adminCustomFieldsQuery.fieldConfigs, vm.deferAdminCustomFieldsToSetup, t]);
+  }, [errors, touched, adminFieldConfigs, deferAdminCustomFieldsToSetup, t]);
 
   return (
     <div className="space-y-6">

@@ -74,7 +74,8 @@ export function OptionSetDetailPanel({
   const openVersion = versionQuery.data ?? null;
 
   const editor = useOptionSetVersionEditor({ set, version: openVersion });
-  const tableRows = useMemo(() => toTableRows(editor.rows), [editor.rows]);
+  const editorRows = editor.rows;
+  const tableRows = useMemo(() => toTableRows(editorRows), [editorRows]);
 
   const handleTableChange = useCallback(
     (next: OptionSetDraftItem[]) => {

@@ -20,7 +20,7 @@ import { useTenantContext } from "@core/providers/tenant-context-provider";
 import { Button } from "@core/ui/button";
 import { ErrorMessage } from "@core/ui/error-message";
 import { Alert, AlertTitle, AlertDescription } from "@core/ui/alert";
-import { Boxes, FolderTree, Globe2, Layers, ListTree } from "lucide-react";
+import { Boxes, FolderTree, Globe2, Layers, ListTree, ShieldCheck } from "lucide-react";
 import { VALUE_TYPE_CATALOG, ALL_VALUE_TYPES, type CustomFieldValueTypeName } from "../../registries/valueTypeRegistry";
 import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../../registries/validatorKindRegistry";
 import { buildCustomFieldEditInitialValues } from "../../form/customFieldEditInitialValues";
@@ -65,6 +65,7 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
 
   const subFeatures = useCustomFieldSubFeatures(isSuperAdmin);
   const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW) || isSuperAdmin;
+  const canManageKeys = usePermission(CUSTOM_FIELDS_PERMISSIONS.MANAGE_KEYS) || isSuperAdmin;
   const { canViewFieldGroups, canViewHistory, canViewUsage, canUpdate, canDelete } = subFeatures;
 
   const { options: fieldGroupOptions, isLoading: isFieldGroupsLoading, isError: isFieldGroupsError } =
@@ -147,10 +148,11 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
   const scopeField = useMemo(() => ({ ...buildCustomFieldScopeField({ t, isPlatformContext }), section: t("customField.formSections.governance") }), [t, isPlatformContext]);
   const valueTypeLabelOf = useMemo(() => (value: string) => VALUE_TYPE_CATALOG[value as CustomFieldValueTypeName] ? t(VALUE_TYPE_CATALOG[value as CustomFieldValueTypeName].labelKey) : value, [t]);
 
-  const optionSetOptions = useMemo(() => subFeatures.optionSetBinding.bindableSets.map((set) => ({
+  const bindableSets = subFeatures.optionSetBinding.bindableSets;
+  const optionSetOptions = useMemo(() => bindableSets.map((set) => ({
     value: set.publishedVersionId!,
     label: set.isPlatformOwned ? `${set.displayLabel(language)} (${t("customField.optionSetBinding.platformOwned")})` : set.displayLabel(language),
-  })), [subFeatures.optionSetBinding.bindableSets, language, t]);
+  })), [bindableSets, language, t]);
 
   const columns = useMemo(
     () => buildCustomFieldColumns({ t, language, isPlatformContext, valueTypeLabelOf }),
@@ -171,6 +173,14 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
               <Link href="/custom-fields/option-sets"><Button variant="outline" size="sm"><Layers className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />{t("optionSet.title")}</Button></Link>
             )}
             <Link href="/custom-fields/entity-types"><Button variant="outline" size="sm"><Boxes className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />{t("customField.entityTypeCatalog.browseLink")}</Button></Link>
+            {canManageKeys && (
+              <Link href="/custom-fields/security">
+                <Button variant="outline" size="sm">
+                  <ShieldCheck className="me-2 h-4 w-4 shrink-0" aria-hidden="true" />
+                  {t("customFieldsSecurity.title")}
+                </Button>
+              </Link>
+            )}
             <CustomFieldExportButtons />
           </div>
           {isEntityTypesError ? (
@@ -271,17 +281,18 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
     [
       t, language, vm, columns, entityTypeOptions, noFrontendScreenDescription, valueTypeOptions, validatorKindOptions,
       validatorParamFields, referenceTargetFields, fieldGroupField, scopeField, optionSetOptions, isEntityTypesError,
-      canViewFieldGroups, canViewOptionSets, canViewHistory, canViewUsage, canUpdate, canDelete,
+      canViewFieldGroups, canViewOptionSets, canManageKeys, canViewHistory, canViewUsage, canUpdate, canDelete,
       subFeatures, handleEntityTypeChange, refetchEntityTypes, classificationFields,
       isPlatformContext,
     ]
   );
 
+  const items = vm.items as CustomField[] | undefined;
   const insightFieldLabel = useCallback((fieldId: string | null): string => {
     if (!fieldId) return "";
-    const row = (vm.items as CustomField[] | undefined)?.find((item) => item.id === fieldId);
+    const row = items?.find((item) => item.id === fieldId);
     return row ? row.labelEn || row.key : "";
-  }, [vm.items]);
+  }, [items]);
 
   return (
     <>

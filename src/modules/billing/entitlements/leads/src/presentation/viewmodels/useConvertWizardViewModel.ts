@@ -82,16 +82,13 @@ export function useConvertWizardViewModel(
   });
 
   // Auto-select requested edition from lead
-  const selectedEdition = useMemo(() => {
-    if (selectedEditionOverride) return selectedEditionOverride;
-    if (lead && editionsQuery.data) {
-      return (
-        editionsQuery.data.find((e) => e.name.toLowerCase() === lead.editionKey?.toLowerCase()) ??
-        null
-      );
-    }
-    return null;
-  }, [selectedEditionOverride, lead, editionsQuery.data]);
+  const editions = editionsQuery.data;
+  const leadEditionKey = lead?.editionKey?.toLowerCase();
+  const selectedEdition =
+    selectedEditionOverride ??
+    (lead && editions
+      ? editions.find((e) => e.name.toLowerCase() === leadEditionKey) ?? null
+      : null);
 
   const featuresQuery = useQuery({
     queryKey: ["conversion-edition-features", selectedEdition?.id],
@@ -160,6 +157,7 @@ export function useConvertWizardViewModel(
     onClose();
   }, [isConverting, resetWizard, onClose]);
 
+  const featuresData = featuresQuery.data;
   const handleNext = useCallback(async () => {
     if (step === 1) {
       if (!selectedEdition) return;
@@ -170,11 +168,11 @@ export function useConvertWizardViewModel(
     } else if (step === 2) {
       if (s2.useCustomPrice && !validateAmount(s2.negotiatedAmount)) return;
       setStep(3);
-      if (featuresQuery.data) initOverrides(featuresQuery.data);
+      if (featuresData) initOverrides(featuresData);
     } else if (step === 3) {
       setStep(4);
     }
-  }, [step, selectedEdition, s2, validateAmount, featuresQuery.data, initOverrides]);
+  }, [step, selectedEdition, s2, validateAmount, featuresData, initOverrides]);
 
   const handleBack = useCallback(() => {
     if (step > 1) setStep((prev) => (prev - 1) as WizardStep);

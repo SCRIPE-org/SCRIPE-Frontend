@@ -85,10 +85,12 @@ function CommissionRateForm({ account, onClose, onSave, isSaving, t }: Commissio
     defaultValues: toDefaultValues(account),
   });
 
+  const tenantId = account.tenantId;
+  const commissionRate = account.commissionRate;
   useEffect(() => {
     form.reset(toDefaultValues(account));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account.tenantId, account.commissionRate]);
+  }, [tenantId, commissionRate]);
 
   const onSubmit = (values: RateFormValues) => {
     if (values.rate === "") {

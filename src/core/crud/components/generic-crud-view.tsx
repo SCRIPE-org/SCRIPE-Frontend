@@ -572,12 +572,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   // usually not be built in the first place. Filtering here means the UI cannot
   // render a header for a field it will never receive a value for — including
   // against a stale cache or an older server.
+  const customColumns = customFieldColumns.columns;
   const columns = useMemo(
     () => [
       ...allColumns.filter((col) => !isFieldRestricted(col.key)),
-      ...customFieldColumns.columns.filter((col) => !isFieldRestricted(col.key)),
+      ...customColumns.filter((col) => !isFieldRestricted(col.key)),
     ],
-    [allColumns, isFieldRestricted, customFieldColumns.columns]
+    [allColumns, isFieldRestricted, customColumns]
   );
 
   // Wrap actions to use the generic individual action handler
@@ -608,8 +609,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     viewModel.viewItem?.id
   );
 
+  const rawCustomConfigs = customFieldsForCreate.fieldConfigs;
   const createFieldsWithCustom = useMemo(() => {
-    const rawCustomConfigs = customFieldsForCreate.fieldConfigs;
     const hasCustomFields = rawCustomConfigs.length > 0;
     const hasSendSetupEmail = Boolean(createFields?.some((f) => f.name === "sendSetupEmail"));
     const alreadyHasDeferSwitch = Boolean(
@@ -661,7 +662,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     );
   }, [
     createFields,
-    customFieldsForCreate.fieldConfigs,
+    rawCustomConfigs,
     isFieldRestricted,
     t,
   ]);
@@ -710,26 +711,29 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     },
     [config, propEditFields, propCreateFields, createFields]
   );
+  const editingItem = viewModel.editingItem;
   const editFieldsOwn = useMemo(
-    () => resolveEditFields(viewModel.editingItem),
-    [resolveEditFields, viewModel.editingItem]
+    () => resolveEditFields(editingItem),
+    [resolveEditFields, editingItem]
   );
+  const editCustomFieldConfigs = customFieldsForEdit.fieldConfigs;
   const editFieldsWithCustom = useMemo(
     () =>
-      [...editFieldsOwn, ...customFieldsForEdit.fieldConfigs].filter(
+      [...editFieldsOwn, ...editCustomFieldConfigs].filter(
         (field) => !isFieldRestricted(field.name)
       ),
-    [editFieldsOwn, customFieldsForEdit.fieldConfigs, isFieldRestricted]
+    [editFieldsOwn, editCustomFieldConfigs, isFieldRestricted]
   );
   // Same entity-owned field set as Edit (editFieldsOwn) — View has never had
   // its own field-shape resolution, only the custom-field portion needs the
   // view-item-keyed source.
+  const viewCustomFieldConfigs = customFieldsForView.fieldConfigs;
   const viewFieldsWithCustom = useMemo(
     () =>
-      [...editFieldsOwn, ...customFieldsForView.fieldConfigs].filter(
+      [...editFieldsOwn, ...viewCustomFieldConfigs].filter(
         (field) => !isFieldRestricted(field.name)
       ),
-    [editFieldsOwn, customFieldsForView.fieldConfigs, isFieldRestricted]
+    [editFieldsOwn, viewCustomFieldConfigs, isFieldRestricted]
   );
 
   // NOTE (not fixed here): this key embeds `editingItem?.id`, and
@@ -807,9 +811,8 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   );
 
   // Compute effective permissions
+  const perms = config?.permissions;
   const effectivePermissions = useMemo(() => {
-    const perms = config?.permissions;
-
     // If permissions object is provided, use it with fallbacks
     if (perms) {
       return {
@@ -838,7 +841,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
       canDelete: true,
     };
   }, [
-    config?.permissions,
+    perms,
     resource,
     resolvePermissionValue,
     resourceViewPerm,

@@ -1996,7 +1996,87 @@ export const zh = {
           rule4: "单一已发布版本：任意时刻只有一个版本生效；发布一个草稿会自动弃用上一个版本。",
           rule5: "系统管理的选项集严格只读：预置的标准选项集不能被任何用户或管理员修改。",
         },
-
+        encryption: {
+          title: "密钥管理与信封加密",
+          description:
+            "企业级多租户信封加密、平台根密钥环轮换、AAD 密文上下文绑定与零停机数据库重封装迁移。",
+          intro:
+            "当存储高度敏感或机密级的自定义字段（例如税号、生物识别令牌、银行账户或安全许可凭据）时，SCRIPE 会采用硬件级信封加密。每个字段值都使用 AES-256-GCM 进行保护，其加密密钥是通过 HKDF-SHA256 从平台根密钥环中派生出的租户唯一专用密钥。密文无法被伪造，无法在其他租户或实体下解密，并且在密钥轮换期间可以在零停机时间内安全地进行数据库重封装迁移。",
+          archNoticeTitle: "企业零信任安全模型",
+          archNoticeContent:
+            "加密并非仅是表面上的数据库混淆：密文通过 AES-GCM 的附加认证数据（AAD）与所属租户、实体和字段定义紧密绑定。如果攻击者篡改了任何一个字节，或将密文复制到其他记录中，认证将立即失败并拒绝解密。",
+          archTitle: "核心密码学架构",
+          archIntro:
+            "加密子系统由五个高度容错的安全层构成：",
+          featKeyringTitle: "多版本根密钥环",
+          featKeyringDesc:
+            "拥有用于新写入的当前活跃密钥，同时保留历史密钥目录，实现透明且无中断的即时解密读取。",
+          featDerivationTitle: "租户 HKDF 密钥派生",
+          featDerivationDesc:
+            "使用带有租户代码盐值和应用程序信息标签的 HKDF-SHA256 算法，确定性地派生租户隔离的专用密钥。",
+          featEnvelopeTitle: "二进制 Magic Frame v2",
+          featEnvelopeDesc:
+            "紧凑的二进制头部编码版本号、平台密钥 ID、租户密钥版本号、96 位随机数（Nonce）以及 128 位认证标签。",
+          featAadTitle: "密码学 AAD 上下文绑定",
+          featAadDesc:
+            "密文在数学层面上与 TenantId、EntityId 和 FieldDefinitionId 绑定，彻底杜绝跨实体注入与重放攻击。",
+          featRewrapTitle: "在线数据库重封装迁移",
+          featRewrapDesc:
+            "后台工作线程通过游标分页批处理遍历记录，在不锁表的情况下使用最新活跃密钥重新加密历史数据。",
+          featCliTitle: "统一 CLI 与 Studio 运维",
+          featCliDesc:
+            "通过 `scripe crypto` 命令行套件与 SCRIPE Studio 可视化开发者控制台提供全方位的运维工具支持。",
+          frameTitle: "二进制 Magic Frame v2 传输规范",
+          frameIntro:
+            "加密值被持久化为符合 v2 规范的紧凑 Base64 编码二进制帧：",
+          thByteOffset: "字节偏移",
+          thField: "头部字段",
+          thLength: "长度",
+          thDescription: "密码学用途",
+          descVersion: "Magic Frame 版本字节（0x02 表示 v2 认证帧）。",
+          descPlatformKey: "大端序 32 位整数，标识密钥环中的平台根密钥。",
+          descTenantVersion: "大端序 16 位整数，标识租户密钥轮换版本号。",
+          descNonce: "密码学安全随机生成的 96 位初始化向量，每次加密操作独立生成。",
+          descAuthTag: "128 位 GCM 认证标签，校验密文与 AAD 数据的完整性。",
+          descCiphertext: "AES-256-GCM 算法加密后的字段负载数据。",
+          aadTitle: "附加认证数据（AAD）绑定",
+          aadContent:
+            "在加密和解密期间，引擎会将组合标识 `tenantId:entityId:fieldDefinitionId` 作为 AAD 数据传递给 GCM 密码器。这保证了即使恶意数据库管理员将 A 公司的加密税号复制到 B 公司的记录中，或者复制到同一记录中的其他字段，解密时也会因校验失败而拒绝执行。",
+          lifecycleTitle: "密钥生命周期与严格门禁",
+          lifecycleIntro:
+            "租户密钥操作遵循严格的可审计生命周期，旨在杜绝明文泄漏：",
+          step1Title: "1. 强制密钥初始化门禁",
+          step1Content:
+            "在租户的加密密钥初始化之前，管理员无法创建'机密'或'绝密'级别的自定义字段。API 校验器在服务端强制执行此规则。",
+          step2Title: "2. 零停机密钥轮换",
+          step2Content:
+            "轮换密钥会为新写入创建版本 N+1，同时版本 N 在密钥环中保持可用，使历史记录始终能瞬间读取，业务不受影响。",
+          step3Title: "3. 非阻塞后台重封装",
+          step3Content:
+            "异步后台工作服务（`TenantKeyRewrapJob`）使用游标分页分批扫描记录，使用旧密钥解密并使用活跃版本 N+1 重新加密存储。",
+          step4Title: "4. 不可篡改的密码学审计追踪",
+          step4Content:
+            "每一次密钥创建、轮换、吊销以及敏感字段值的查看操作，都会永久记录操作者身份、IP 地址与时间戳。",
+          rewrapTitle: "在线数据库重封装迁移引擎",
+          rewrapIntro:
+            "大规模企业数据集需要无服务中断和无表锁的密钥平滑迁移：",
+          thStrategy: "运维策略",
+          thBehavior: "引擎实现机制",
+          stratLocking: "零表锁设计（Zero Table Locks）",
+          behLocking: "采用基于游标的分页机制与乐观并发（`RowVersion`），逐行更新而不施加独占表锁。",
+          stratBatching: "可配置游标批处理",
+          behBatching: "每轮循环处理 500 条记录，并具有速率调控，避免在生产数据库中造成 I/O 资源争抢。",
+          stratResilience: "崩溃自愈与幂等性",
+          behResilience: "如果服务进程重启，游标将从最后确认的偏移量自动恢复，已迁移的记录将安全跳过。",
+          stratObservability: "实时进度与指标监控",
+          behObservability: "实时向 Studio 控制台和管理员门户上报已处理数量、失败数量与完成百分比。",
+          toolingTitle: "管理与运维界面",
+          toolingIntro:
+            "运维人员和开发者可通过三种互补的界面管理加密体系：",
+          toolPortal: "租户安全门户：位于 `/custom-fields/security` 的网页界面，供租户自主轮换和监控重封装。",
+          toolCli: "SCRIPE CLI：通过 `scripe crypto status`、`rotate`、`rewrap`、`verify` 和 `revoke` 提供的完整终端运维工具。",
+          toolStudio: "SCRIPE Studio：位于 `/crypto` 的可视化交互控制台，直观展示密钥环目录与迁移进度条。",
+        },
       },
     },
   },

@@ -8,7 +8,7 @@
  * All query keys include tenantId for tenant-aware caching.
  */
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { monitoringContainer } from "@modules/monitoring/di";
 import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
@@ -41,16 +41,15 @@ export function useTenantMetricsViewModel(tenantId: string | null) {
     retry: 2,
   });
 
-  const metrics = useMemo(() => {
-    if (!summaryQuery.data) return null;
-    const d = summaryQuery.data;
-    return {
-      totalTenants: d.totalTenants,
-      activeTenants: d.totalTenants, // All tenants are active until we have a separate count
-      totalUsers: d.totalUsers,
-      avgUsersPerTenant: d.totalTenants > 0 ? Math.round(d.totalUsers / d.totalTenants) : 0,
-    };
-  }, [summaryQuery.data]);
+  const d = summaryQuery.data;
+  const metrics = d
+    ? {
+        totalTenants: d.totalTenants,
+        activeTenants: d.totalTenants, // All tenants are active until we have a separate count
+        totalUsers: d.totalUsers,
+        avgUsersPerTenant: d.totalTenants > 0 ? Math.round(d.totalUsers / d.totalTenants) : 0,
+      }
+    : null;
 
   return {
     data: metrics,
@@ -105,10 +104,7 @@ export function useTenantAnalyticsViewModel() {
   const distribution = useAdminDistributionViewModel(tenantId);
   const comparison = useTenantComparisonViewModel(30, tenantId);
 
-  const isLoading = useMemo(
-    () => metrics.isLoading || distribution.isLoading,
-    [metrics.isLoading, distribution.isLoading]
-  );
+  const isLoading = metrics.isLoading || distribution.isLoading;
 
   const refetchAll = useCallback(() => {
     metrics.refetch();

@@ -2,7 +2,6 @@
 // UI-EXCEPTION: compact studio layout
 "use client";
 
-import { useMemo } from "react";
 import {
   ArrowLeft,
   CalendarClock,
@@ -59,11 +58,10 @@ export function ReviewStep({ wizard }: ReviewStepProps) {
   const priceAmount = cycleIsAnnual ? selectedPlan?.annualPrice : selectedPlan?.monthlyPrice;
   const cycleLabel = cycleIsAnnual ? t("signup.plan.annual") : t("signup.plan.monthly");
   const perCycle = cycleIsAnnual ? t("signup.review.perYear") : t("signup.review.perMonth");
-  const formattedPrice = useMemo(() => {
-    if (priceAmount == null) return "";
-    const num = priceAmount.toLocaleString(language === "ar" ? "ar-EG" : "en-US");
-    return `${num} ${selectedPlan?.currency ?? ""}`.trim();
-  }, [priceAmount, selectedPlan?.currency, language]);
+  const formattedPrice =
+    priceAmount != null
+      ? `${priceAmount.toLocaleString(language === "ar" ? "ar-EG" : "en-US")} ${selectedPlan?.currency ?? ""}`.trim()
+      : "";
 
   // ── Summary rows ──
   const summaryRows = [

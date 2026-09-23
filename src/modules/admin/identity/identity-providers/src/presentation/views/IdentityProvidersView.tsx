@@ -35,9 +35,10 @@ export function IdentityProvidersView() {
   // Category filter state: "all" | "active" | "inactive" | "oidc" | "oauth2" | "saml"
   const [filterType, setFilterType] = useState<string>("all");
 
+  const items = vm.items;
   // Apply filters client-side to keep interface extremely fast and fluid
   const filteredItems = useMemo(() => {
-    return vm.items.filter((item) => {
+    return items.filter((item) => {
       // 1. Text search (handled via vm.searchValue or filter client-side if needed, but VM handles server search)
       // 2. Category filter
       if (filterType === "active") return item.isActive;
@@ -47,7 +48,7 @@ export function IdentityProvidersView() {
       if (filterType === "saml") return item.protocol === "saml";
       return true;
     });
-  }, [vm.items, filterType]);
+  }, [items, filterType]);
 
   const handleCreateClick = () => {
     router.push("/settings/identity-providers/create");

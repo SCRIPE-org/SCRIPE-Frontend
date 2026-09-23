@@ -5,7 +5,6 @@
  */
 "use client";
 
-import { useMemo } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { cn, formatUtc } from "@core/common/utils";
 import { Card, CardContent, CardHeader } from "@core/ui/card";
@@ -30,19 +29,20 @@ interface HeroCardProps {
 export function HeroCard({ sub, vm, t }: HeroCardProps) {
   const style = STATUS_STYLES[sub.status] ?? DEFAULT_STATUS_STYLE;
 
-  const formattedAmount = useMemo(() => {
-    if (!sub.totalAmount || !sub.currency) return null;
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: sub.currency,
-      minimumFractionDigits: 2,
-    }).format(sub.totalAmount);
-  }, [sub.totalAmount, sub.currency]);
+  const totalAmount = sub.totalAmount;
+  const currency = sub.currency;
+  const formattedAmount =
+    totalAmount && currency
+      ? new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: currency,
+          minimumFractionDigits: 2,
+        }).format(totalAmount)
+      : null;
 
-  const billingCycle = useMemo(() => {
-    const typeKey = TYPE_KEY_MAP[sub.type] ?? sub.type;
-    return t(`entSubscriptions.${typeKey}`) || sub.type;
-  }, [sub.type, t]);
+  const subType = sub.type;
+  const typeKey = TYPE_KEY_MAP[subType] ?? subType;
+  const billingCycle = t(`entSubscriptions.${typeKey}`) || subType;
 
   return (
     <Card>

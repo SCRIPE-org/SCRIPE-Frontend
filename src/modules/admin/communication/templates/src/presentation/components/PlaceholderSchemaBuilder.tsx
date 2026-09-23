@@ -138,6 +138,7 @@ export function PlaceholderSchemaBuilder({
   }, [fields, bodyVarKeys, templateBody]);
 
   // Auto-sync: add missing variables to schema when detected
+  const missingKeysSignature = missingKeys.join(",");
   useEffect(() => {
     if (missingKeys.length === 0) return;
     const newFields = missingKeys.map((key) => ({
@@ -149,7 +150,7 @@ export function PlaceholderSchemaBuilder({
       defaultValue: "",
     }));
     onChange([...fields, ...newFields]);
-  }, [missingKeys.join(",")]);
+  }, [missingKeysSignature, missingKeys, fields, onChange]);
 
   const addField = () => {
     const newField: PlaceholderField = {

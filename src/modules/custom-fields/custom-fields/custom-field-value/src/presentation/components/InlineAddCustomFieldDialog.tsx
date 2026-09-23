@@ -61,9 +61,10 @@ export function InlineAddCustomFieldDialog({
   const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW) || isSuperAdmin;
   const canBindOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_BIND) || isSuperAdmin;
   const optionSets = useOptionSetViewModel(null);
+  const sets = optionSets.sets;
   const bindableOptionSets = useMemo(
-    () => optionSets.sets.filter((set) => set.isBindable),
-    [optionSets.sets]
+    () => sets.filter((set) => set.isBindable),
+    [sets]
   );
 
   const fields = useInlineAddCustomFieldFormFields({

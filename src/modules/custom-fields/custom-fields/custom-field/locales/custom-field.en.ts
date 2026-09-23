@@ -16,6 +16,9 @@ export const en = {
     editLoadFailed: "Couldn't load this custom field for editing. Please try again.",
 
     // Field labels — shared between the table columns and the create/edit forms
+    columns: {
+      entityType: "Entity Type",
+    },
     // Wave 6 row 6.6 — definition change history.
     history: {
       actionLabel: "History",

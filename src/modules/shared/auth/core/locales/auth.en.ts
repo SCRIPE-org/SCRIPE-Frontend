@@ -231,6 +231,8 @@ export const en = {
       availableWorkspaces: "Available workspaces",
     },
     accountSetup: {
+      activationRequiredTitle: "Account Setup Required",
+      activationRequiredDesc: "Your account is not active yet. A setup link was automatically sent to your email address.",
       missingToken: "No setup token provided. Please use the link from your email.",
       invalidToken: "This setup link is invalid or has expired.",
       validationFailed: "Failed to validate setup token. The link may have expired.",

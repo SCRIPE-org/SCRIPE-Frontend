@@ -237,9 +237,10 @@ export function LeadDetailDrawer({
     onClose();
   }, [onClose]);
 
+  const leadStatus = lead?.status;
   const handleStatusClick = useCallback(
     async (s: LeadStatus) => {
-      const nextStatus = s === lead?.status && !pendingStatus ? null : s;
+      const nextStatus = s === leadStatus && !pendingStatus ? null : s;
       setPendingStatus(nextStatus);
       setShowStatusNote(true);
 
@@ -247,7 +248,7 @@ export function LeadDetailDrawer({
         await fetchEmailPreview(nextStatus);
       }
     },
-    [lead?.status, pendingStatus, sendEmailToggle, previewStatus, fetchEmailPreview]
+    [leadStatus, pendingStatus, sendEmailToggle, previewStatus, fetchEmailPreview]
   );
 
   return (

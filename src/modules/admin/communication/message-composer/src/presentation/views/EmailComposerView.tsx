@@ -19,17 +19,18 @@ export function EmailComposerView() {
   const vm = useEmailComposerViewModel();
   const { t } = useI18n();
 
+  const handleSend = vm.handleSend;
   // Ctrl+Enter shortcut
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
         e.preventDefault();
-        vm.handleSend();
+        handleSend();
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [vm.handleSend]);
+  }, [handleSend]);
 
   return (
     <>

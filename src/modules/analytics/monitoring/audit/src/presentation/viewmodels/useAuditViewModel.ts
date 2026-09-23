@@ -67,12 +67,13 @@ export function useAuditFilterViewModel() {
   const debounceTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Debounce search input (300ms)
+  const searchFilter = filters.search;
   useEffect(() => {
     debounceTimer.current = setTimeout(() => {
-      setDebouncedSearch(filters.search);
+      setDebouncedSearch(searchFilter);
     }, 300);
     return () => clearTimeout(debounceTimer.current);
-  }, [filters.search]);
+  }, [searchFilter]);
 
   const updateFilter = useCallback(
     <K extends keyof AuditFilterState>(key: K, value: AuditFilterState[K]) => {

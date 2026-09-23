@@ -228,6 +228,8 @@ export const ar = {
       availableWorkspaces: "مساحات العمل المتاحة",
     },
     accountSetup: {
+      activationRequiredTitle: "إعداد الحساب مطلوب",
+      activationRequiredDesc: "حسابك غير نشط بعد. تم إرسال رابط الإعداد تلقائياً إلى بريدك الإلكتروني.",
       missingToken: "لم يتم توفير رمز الإعداد. يرجى استخدام الرابط الموجود في بريدك الإلكتروني.",
       invalidToken: "رابط الإعداد غير صالح أو انتهت صلاحيته.",
       validationFailed: "تعذر التحقق من رابط الإعداد. قد تكون صلاحيته انتهت.",

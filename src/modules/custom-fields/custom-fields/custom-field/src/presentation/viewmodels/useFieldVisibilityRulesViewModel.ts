@@ -139,12 +139,13 @@ export function useFieldVisibilityRulesViewModel() {
     staleTime: 1000 * 60 * 5,
   });
 
+  const siblingFieldsData = siblingFieldsQuery.data;
   const siblingFields = useMemo(() => {
-    const all = siblingFieldsQuery.data ?? [];
+    const all = siblingFieldsData ?? [];
     if (!target) return [];
     // Exclude self (a field cannot reference its own key in a visibility rule)
     return all.filter((f) => f.key !== target.fieldKey && f.id !== target.fieldId);
-  }, [siblingFieldsQuery.data, target]);
+  }, [siblingFieldsData, target]);
 
   const invalidateAfterChange = useCallback(() => {
     if (!target) return;

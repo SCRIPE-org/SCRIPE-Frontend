@@ -1,4 +1,4 @@
-﻿/**
+/**
  * CreateTenantPermissionPicker — Granular permission selection for new tenants
  *
  * Extracted from CreateTenantStep3 to respect Clean Architecture < 200 lines per file.
@@ -17,38 +17,40 @@ interface CreateTenantPermissionPickerProps {
 }
 
 export function CreateTenantPermissionPicker({ vm, t }: CreateTenantPermissionPickerProps) {
+  const creationPermissions = vm.creationPermissions;
+  const updateField = vm.updateField;
   const selected = new Set(vm.form.availablePermissionIds);
 
   const grouped = useMemo(() => {
-    const map = new Map<string, typeof vm.creationPermissions>();
-    for (const p of vm.creationPermissions) {
+    const map = new Map<string, typeof creationPermissions>();
+    for (const p of creationPermissions) {
       const key = p.module || p.category || t("tenant.other");
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(p);
     }
     return Array.from(map.entries());
-  }, [vm.creationPermissions, t]);
+  }, [creationPermissions, t]);
 
   const toggle = useCallback(
     (permId: string) => {
       const next = new Set(selected);
       if (next.has(permId)) next.delete(permId);
       else next.add(permId);
-      vm.updateField("availablePermissionIds", Array.from(next));
+      updateField("availablePermissionIds", Array.from(next));
     },
-    [selected, vm]
+    [selected, updateField]
   );
 
   const toggleAll = useCallback(() => {
-    if (selected.size === vm.creationPermissions.length) {
-      vm.updateField("availablePermissionIds", []);
+    if (selected.size === creationPermissions.length) {
+      updateField("availablePermissionIds", []);
     } else {
-      vm.updateField(
+      updateField(
         "availablePermissionIds",
-        vm.creationPermissions.map((p) => p.id)
+        creationPermissions.map((p) => p.id)
       );
     }
-  }, [selected, vm]);
+  }, [selected, creationPermissions, updateField]);
 
   return (
     <div className="space-y-3">

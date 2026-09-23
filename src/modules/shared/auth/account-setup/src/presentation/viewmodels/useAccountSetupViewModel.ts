@@ -363,6 +363,8 @@ export function useAccountSetupViewModel(params: {
     return true;
   }, [currentStep, isPasswordValid, isProfileValid, isAttributesValid]);
 
+  const hasCustomFields = customFields.length > 0;
+
   const goToNextStep = useCallback(() => {
     setValidationErrors([]);
     if (currentStep === 1) {
@@ -370,7 +372,7 @@ export function useAccountSetupViewModel(params: {
       setCurrentStep(2);
     } else if (currentStep === 2) {
       if (!isProfileValid) return;
-      if (customFields.length > 0) {
+      if (hasCustomFields) {
         setCurrentStep(3);
       } else {
         void activate();
@@ -384,7 +386,7 @@ export function useAccountSetupViewModel(params: {
     currentStep,
     isPasswordValid,
     isProfileValid,
-    customFields.length,
+    hasCustomFields,
     isAttributesValid,
     activate,
   ]);
@@ -402,11 +404,11 @@ export function useAccountSetupViewModel(params: {
         setCurrentStep(1);
       } else if (step === 2 && isPasswordValid) {
         setCurrentStep(2);
-      } else if (step === 3 && isPasswordValid && isProfileValid && customFields.length > 0) {
+      } else if (step === 3 && isPasswordValid && isProfileValid && hasCustomFields) {
         setCurrentStep(3);
       }
     },
-    [isPasswordValid, isProfileValid, customFields.length]
+    [isPasswordValid, isProfileValid, hasCustomFields]
   );
 
   const retry = useCallback(() => {

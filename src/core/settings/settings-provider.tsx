@@ -151,8 +151,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // ── Auto-save to localStorage (Gap #2/#7) ──────────────
 
+  const autoSave = settings.autoSave;
   useEffect(() => {
-    if (isHydrated && isAuthenticated && settings.autoSave && !isMergingRef.current) {
+    if (isHydrated && isAuthenticated && autoSave && !isMergingRef.current) {
       writeAdminOverrides(settings);
       // M11: Include which specific field changed — used by useAdminSettingsSync for 409 merge
       window.dispatchEvent(
@@ -162,7 +163,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       );
       lastChangedFieldRef.current = null;
     }
-  }, [settings, isHydrated, isAuthenticated, settings.autoSave]);
+  }, [settings, isHydrated, isAuthenticated, autoSave]);
 
   // ── Apply to DOM ────────────────────────────────────────
 

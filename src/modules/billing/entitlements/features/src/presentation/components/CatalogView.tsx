@@ -74,18 +74,21 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
   const canUpdate = usePermission(ENTITLEMENTS_PERMISSIONS.FEATURES_UPDATE);
   const canDelete = usePermission(ENTITLEMENTS_PERMISSIONS.FEATURES_DELETE);
 
+  const items = vm.items;
+  const searchValue = vm.searchValue;
+
   const modules = useMemo(
     () =>
-      [...new Set([...CANONICAL_MODULES, ...vm.items.map((feature) => feature.module)])].sort(
+      [...new Set([...CANONICAL_MODULES, ...items.map((feature) => feature.module)])].sort(
         (left, right) => left.localeCompare(right)
       ),
-    [vm.items]
+    [items]
   );
 
   const filteredFeatures = useMemo(() => {
-    const search = vm.searchValue.trim().toLocaleLowerCase(language);
+    const search = searchValue.trim().toLocaleLowerCase(language);
 
-    return vm.items.filter((feature) => {
+    return items.filter((feature) => {
       const matchesSearch =
         !search ||
         feature.name.toLocaleLowerCase(language).includes(search) ||
@@ -100,7 +103,7 @@ export function CatalogView({ vm, t, language }: CatalogViewProps) {
 
       return matchesSearch && matchesModule && matchesType && matchesEnforcement;
     });
-  }, [enforcementFilter, language, moduleFilter, valueTypeFilter, vm.items, vm.searchValue]);
+  }, [enforcementFilter, language, moduleFilter, valueTypeFilter, items, searchValue]);
 
   const drawerOpen = vm.isCreateModalOpen || vm.isEditModalOpen;
   const activeFeature = vm.editingItem;
