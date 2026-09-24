@@ -33,6 +33,13 @@ vi.mock("@core/providers/permission-provider", () => ({
   PermissionGate: ({ children }: { children: unknown }) => children,
 }));
 
+// Radix Switch measures its thumb with ResizeObserver; jsdom does not define it.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+} as unknown as typeof ResizeObserver;
+
 // Minimal viewModel double — only the surface GenericCrudView actually reads.
 function makeViewModel(overrides: Record<string, unknown> = {}) {
   return {
@@ -366,6 +373,148 @@ describe("GenericCrudView + entityTypeKey", () => {
     await waitFor(() => expect(extension.getFormFields).toHaveBeenCalledWith(
       "party.person", "viewed-record-id"
     ));
+  });
+
+  describe("deferCustomFieldsToSetup layout and visibility", () => {
+    it("injects deferCustomFieldsToSetup switch before custom fields when sendSetupEmail and custom fields exist, defaulting to visible", async () => {
+      const extension = registerFakeCustomFieldsExtension();
+      const vm = makeViewModel();
+      const config: CrudConfig<{ id: string }> = {
+        titleKey: "t",
+        subtitleKey: "s",
+        columns: [{ key: "id", label: "Id" }],
+        createFields: [
+          { name: "sendSetupEmail", label: "Send setup email", type: "switch" },
+          { name: "firstName", label: "First Name", type: "text" },
+        ],
+        createInitialValues: { sendSetupEmail: true, firstName: "" },
+        entityTypeKey: "identity.admin",
+      };
+
+      render(<GenericCrudView viewModel={vm} config={config} />);
+
+      await waitFor(() =>
+        expect(
+          screen.getByLabelText(/admin\.deferCustomFieldsToSetup|Complete custom fields/i)
+        ).toBeInTheDocument()
+      );
+      expect(screen.getByLabelText("Nationality")).toBeInTheDocument();
+    });
+
+    it("hides custom fields when deferCustomFieldsToSetup is toggled on, and strips deferCustomFieldsToSetup from createItem payload", async () => {
+      const extension = registerFakeCustomFieldsExtension();
+      const vm = makeViewModel();
+      const config: CrudConfig<{ id: string }> = {
+        titleKey: "t",
+        subtitleKey: "s",
+        columns: [{ key: "id", label: "Id" }],
+        createFields: [
+          { name: "sendSetupEmail", label: "Send setup email", type: "switch" },
+          { name: "firstName", label: "First Name", type: "text" },
+        ],
+        createInitialValues: { sendSetupEmail: true, firstName: "" },
+        entityTypeKey: "identity.admin",
+      };
+
+      render(<GenericCrudView viewModel={vm} config={config} />);
+
+      const deferSwitch = await screen.findByLabelText(
+        /admin\.deferCustomFieldsToSetup|Complete custom fields/i
+      );
+      expect(screen.getByLabelText("Nationality")).toBeInTheDocument();
+
+      // Toggle defer switch on
+      fireEvent.click(deferSwitch);
+
+      // Custom fields should now be hidden
+      await waitFor(() =>
+        expect(screen.queryByLabelText("Nationality")).not.toBeInTheDocument()
+      );
+
+      // Fill in static field and submit
+      fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Bob" } });
+      fireEvent.click(screen.getByText("common.save"));
+
+      await waitFor(() =>
+        expect(vm.createItem).toHaveBeenCalledWith(
+          expect.objectContaining({ firstName: "Bob", sendSetupEmail: true })
+        )
+      );
+      // deferCustomFieldsToSetup must be deleted from entityData
+      expect(vm.createItem).not.toHaveBeenCalledWith(
+        expect.objectContaining({ deferCustomFieldsToSetup: expect.anything() })
+      );
+      // And saveValues must not be called because custom fields were deferred
+      expect(extension.saveValues).not.toHaveBeenCalled();
+    });
+
+    it("hides deferCustomFieldsToSetup switch when sendSetupEmail is false, and keeps custom fields visible", async () => {
+      const extension = registerFakeCustomFieldsExtension();
+      const vm = makeViewModel();
+      const config: CrudConfig<{ id: string }> = {
+        titleKey: "t",
+        subtitleKey: "s",
+        columns: [{ key: "id", label: "Id" }],
+        createFields: [
+          { name: "sendSetupEmail", label: "Send setup email", type: "switch" },
+          { name: "firstName", label: "First Name", type: "text" },
+        ],
+        createInitialValues: { sendSetupEmail: true, firstName: "" },
+        entityTypeKey: "identity.admin",
+      };
+
+      render(<GenericCrudView viewModel={vm} config={config} />);
+
+      const sendEmailSwitch = await screen.findByLabelText("Send setup email");
+      expect(
+        screen.getByLabelText(/admin\.deferCustomFieldsToSetup|Complete custom fields/i)
+      ).toBeInTheDocument();
+
+      // Toggle sendSetupEmail off
+      fireEvent.click(sendEmailSwitch);
+
+      // Defer switch is hidden
+      await waitFor(() =>
+        expect(
+          screen.queryByLabelText(/admin\.deferCustomFieldsToSetup|Complete custom fields/i)
+        ).not.toBeInTheDocument()
+      );
+      // Custom fields remain visible
+      expect(screen.getByLabelText("Nationality")).toBeInTheDocument();
+    });
+
+    it("does not render deferCustomFieldsToSetup when there are no custom fields for the entity", async () => {
+      const fake: CustomFieldsExtensionApi = {
+        getFormFields: vi.fn().mockResolvedValue([]),
+        saveValues: vi.fn().mockResolvedValue(undefined),
+        getBulkColumnValues: vi.fn().mockResolvedValue({ columns: [], valuesByOwnerId: {} }),
+        InlineAddTrigger: () => null,
+      };
+      registerCustomFieldsExtension(fake);
+
+      const vm = makeViewModel();
+      const config: CrudConfig<{ id: string }> = {
+        titleKey: "t",
+        subtitleKey: "s",
+        columns: [{ key: "id", label: "Id" }],
+        createFields: [
+          { name: "sendSetupEmail", label: "Send setup email", type: "switch" },
+          { name: "firstName", label: "First Name", type: "text" },
+          // Even if previously present in createFields, it must be removed if no custom fields exist
+          { name: "deferCustomFieldsToSetup", label: "Complete custom fields during account setup", type: "switch" },
+        ],
+        createInitialValues: { sendSetupEmail: true, firstName: "" },
+        entityTypeKey: "identity.admin",
+      };
+
+      render(<GenericCrudView viewModel={vm} config={config} />);
+
+      await waitFor(() => expect(screen.getByLabelText("First Name")).toBeInTheDocument());
+      // Defer switch must not be in document
+      expect(
+        screen.queryByLabelText(/admin\.deferCustomFieldsToSetup|Complete custom fields/i)
+      ).not.toBeInTheDocument();
+    });
   });
 });
 

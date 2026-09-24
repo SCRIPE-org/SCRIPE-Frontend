@@ -161,10 +161,11 @@ export function useTenantPlanDetailViewModel(planId: string) {
     Math.round(usdMonthly * 12 * (1 - yearlyDiscountPercent / 100) * 100) / 100;
 
   // ── Effective overrides (merged: server + local edits + added - removed) ──
+  const serverOthers = serverPricingData.others;
   const overrides = useMemo((): PriceRow[] => {
     const merged = new Map<string, PriceRow>();
 
-    for (const row of serverPricingData.others) {
+    for (const row of serverOthers) {
       if (!removedOverrides.has(row.currency)) {
         merged.set(row.currency, { ...row });
       }
@@ -185,7 +186,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
     }
 
     return Array.from(merged.values()).sort((a, b) => a.currency.localeCompare(b.currency));
-  }, [serverPricingData.others, localOverrides, removedOverrides, addedOverrides]);
+  }, [serverOthers, localOverrides, removedOverrides, addedOverrides]);
 
   // ── Available currencies ──
   const usedCurrencyCodes = useMemo(() => new Set(overrides.map((o) => o.currency)), [overrides]);
@@ -294,6 +295,8 @@ export function useTenantPlanDetailViewModel(planId: string) {
     });
   }, []);
 
+  const serverPricingOthers = serverPricingData.others;
+
   const updateOverride = useCallback(
     (currency: string, field: "monthly" | "yearly" | "lifetime", amount: number) => {
       const fieldKey =
@@ -314,7 +317,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
         setLocalOverrides((prev) => {
           const next = new Map(prev || new Map());
           const existing = next.get(currency) ||
-            serverPricingData.others.find((o) => o.currency === currency) || {
+            serverPricingOthers.find((o) => o.currency === currency) || {
               currency,
               monthlyAmount: 0,
               yearlyAmount: 0,
@@ -325,7 +328,7 @@ export function useTenantPlanDetailViewModel(planId: string) {
         });
       }
     },
-    [addedOverrides, serverPricingData.others]
+    [addedOverrides, serverPricingOthers]
   );
 
   const applyDiscountToYearly = useCallback(() => {

@@ -77,11 +77,12 @@ export function CheckoutDialog({ vm }: SubscriptionDialogProps) {
   // remaining than the gateway will actually honor.
   const countdown = useCountdown(vm.showCheckoutDialog);
 
+  const checkoutUrl = vm.checkoutUrl;
   const handleCopyLink = useCallback(() => {
-    if (vm.checkoutUrl) {
-      navigator.clipboard.writeText(vm.checkoutUrl);
+    if (checkoutUrl) {
+      navigator.clipboard.writeText(checkoutUrl);
     }
-  }, [vm.checkoutUrl]);
+  }, [checkoutUrl]);
 
   return (
     <Dialog open={vm.showCheckoutDialog} onOpenChange={vm.setShowCheckoutDialog}>

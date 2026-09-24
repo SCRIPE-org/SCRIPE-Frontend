@@ -115,7 +115,7 @@
  * trigger).
  */
 import * as React from "react";
-import { Image as ImageIcon, Paperclip } from "lucide-react";
+import { AlertCircle, Image as ImageIcon, Paperclip } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
@@ -165,6 +165,8 @@ export interface MediaReferenceCustomFieldControlProps {
   invalid?: boolean;
   /** Id of the host's own hint/error node, COMPOSED with this control's note rather than replaced. */
   describedBy?: string;
+  /** The host form's error message when invalid. */
+  error?: string;
 }
 
 /**
@@ -187,6 +189,7 @@ export function MediaReferenceCustomFieldControl({
   disabled,
   invalid,
   describedBy,
+  error,
 }: MediaReferenceCustomFieldControlProps): React.ReactElement {
   const { t } = useI18n();
   const noteId = React.useId();
@@ -216,6 +219,11 @@ export function MediaReferenceCustomFieldControl({
     <div className="space-y-2">
       <Label htmlFor={id} className="text-sm font-medium">
         {label ?? id}
+        {required && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
 
       <div
@@ -249,6 +257,13 @@ export function MediaReferenceCustomFieldControl({
           </Button>
         )}
       </div>
+
+      {invalid && error && (
+        <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
 
       {/* The described-by region: why attaching is unavailable, plus the
           image-only requirement when it applies. Stated as a fact about the

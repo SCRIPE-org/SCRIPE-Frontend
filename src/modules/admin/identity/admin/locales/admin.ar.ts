@@ -64,6 +64,9 @@ export const ar = {
     sendSetupEmail: "إرسال بريد الإعداد",
     sendSetupEmailDescription:
       "عند التفعيل، سيتم إرسال دعوة بالبريد الإلكتروني لإعداد الحساب. عند التعطيل، يمكنك تعيين كلمة المرور يدوياً.",
+    deferCustomFieldsToSetup: "إكمال الحقول المخصصة أثناء إعداد الحساب",
+    deferCustomFieldsToSetupDescription:
+      "عند التفعيل، تكون الحقول المخصصة المطلوبة اختيارية لك الآن. سيُطلب من المسؤول إكمالها أثناء إعداد حسابه الأولي.",
     mustChangePassword: "طلب تغيير كلمة المرور عند أول تسجيل دخول",
     mustChangePasswordDescription: "سيُجبر المشرف على تغيير كلمة المرور بعد أول تسجيل دخول.",
     forceChangePassword: {

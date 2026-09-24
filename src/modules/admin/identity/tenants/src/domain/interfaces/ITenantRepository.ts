@@ -41,6 +41,14 @@ export interface TenantStats {
   rolesCount: number;
   subTenantsCount: number;
   permissionsCount: number;
+  editionName?: string;
+  subscriptionCurrency?: string;
+  subscriptionAmount?: number;
+  subscriptionAmountUsd?: number;
+  subscriptionBillingCycle?: string;
+  subscriptionStatus?: string;
+  subscriptionEndDate?: string;
+  overrideCount?: number;
 }
 
 /**

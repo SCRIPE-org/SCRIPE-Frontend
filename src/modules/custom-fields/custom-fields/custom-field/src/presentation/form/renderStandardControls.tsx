@@ -1,6 +1,8 @@
 "use client";
 
 import React from "react";
+import { AlertCircle } from "lucide-react";
+import { cn } from "@core/common/utils";
 import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import { DatePicker } from "@core/ui/date-picker";
@@ -10,6 +12,7 @@ import { LongTextCustomFieldControl } from "../controls/LongText/LongTextCustomF
 import { DateTimeCustomFieldControl } from "../controls/DateTime/DateTimeCustomFieldControl";
 import { CurrencyCustomFieldControl } from "../controls/Currency/CurrencyCustomFieldControl";
 import { DurationCustomFieldControl } from "../controls/Duration/DurationCustomFieldControl";
+import { isFieldRequired } from "@core/ui/forms/generic-form";
 import type { CustomFieldControlProps } from "./renderCustomFieldControlProps";
 import { toFieldInputValue } from "./customFieldControlUtils";
 
@@ -24,19 +27,37 @@ export function renderStandardControls({
   isViewMode,
   invalid,
   describedBy,
+  error,
 }: CustomFieldControlProps): React.ReactNode | null {
+  const isRequired = isFieldRequired(fc);
+
   if (fc.type === "switch") {
     return (
-      <div key={fc.name} className="flex items-center justify-between">
-        <Label htmlFor={fc.name} className="text-sm font-medium">
-          {fc.label}
-        </Label>
-        <Switch
-          id={fc.name}
-          checked={Boolean(value)}
-          onCheckedChange={(v) => onChange(v)}
-          readOnly={isViewMode}
-        />
+      <div key={fc.name} className="space-y-1">
+        <div className="flex items-center justify-between">
+          <Label htmlFor={fc.name} className="text-sm font-medium">
+            {fc.label}
+            {isRequired && (
+              <span className="text-destructive ms-1" aria-hidden="true">
+                *
+              </span>
+            )}
+          </Label>
+          <Switch
+            id={fc.name}
+            checked={Boolean(value)}
+            onCheckedChange={(v) => onChange(v)}
+            readOnly={isViewMode}
+            aria-invalid={invalid || undefined}
+            aria-describedby={invalid && describedBy ? describedBy : undefined}
+          />
+        </div>
+        {invalid && error && (
+          <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span>{error}</span>
+          </p>
+        )}
       </div>
     );
   }
@@ -46,16 +67,30 @@ export function renderStandardControls({
       <div key={fc.name} className="space-y-2">
         <Label htmlFor={fc.name} className="text-sm font-medium">
           {fc.label}
+          {isRequired && (
+            <span className="text-destructive ms-1" aria-hidden="true">
+              *
+            </span>
+          )}
         </Label>
         <DatePicker
           id={fc.name}
           type="date"
           value={toFieldInputValue(value)}
           onChange={(v) => onChange(v)}
-          required={fc.required}
+          required={isRequired}
           disabled={isViewMode}
           placeholder={fc.placeholder || fc.label || fc.name}
+          aria-invalid={invalid || undefined}
+          aria-describedby={invalid && describedBy ? describedBy : undefined}
+          className={cn(invalid && "border-destructive focus-visible:ring-destructive")}
         />
+        {invalid && error && (
+          <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span>{error}</span>
+          </p>
+        )}
       </div>
     );
   }
@@ -65,6 +100,11 @@ export function renderStandardControls({
       <div key={fc.name} className="space-y-2">
         <Label htmlFor={fc.name} className="text-sm font-medium">
           {fc.label}
+          {isRequired && (
+            <span className="text-destructive ms-1" aria-hidden="true">
+              *
+            </span>
+          )}
         </Label>
         <GenericSelect
           id={fc.name}
@@ -75,10 +115,20 @@ export function renderStandardControls({
             onChange(v);
           }}
           placeholder={fc.placeholder || fc.label}
-          type="single"
-          required={fc.required}
+          type="searchable"
+          searchable={true}
+          required={isRequired}
           disabled={isViewMode}
+          aria-invalid={invalid || undefined}
+          describedBy={invalid && describedBy ? describedBy : undefined}
+          className={cn(invalid && "border-destructive focus-visible:ring-destructive")}
         />
+        {invalid && error && (
+          <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+            <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+            <span>{error}</span>
+          </p>
+        )}
       </div>
     );
   }
@@ -91,6 +141,9 @@ export function renderStandardControls({
         value={value}
         onChange={onChange}
         isViewMode={isViewMode}
+        invalid={invalid}
+        describedBy={describedBy}
+        error={error}
       />
     );
   }
@@ -103,6 +156,9 @@ export function renderStandardControls({
         value={value}
         onChange={onChange}
         isViewMode={isViewMode}
+        invalid={invalid}
+        describedBy={describedBy}
+        error={error}
       />
     );
   }
@@ -115,6 +171,9 @@ export function renderStandardControls({
         value={value}
         onChange={onChange}
         isViewMode={isViewMode}
+        invalid={invalid}
+        describedBy={describedBy}
+        error={error}
       />
     );
   }
@@ -129,6 +188,7 @@ export function renderStandardControls({
         isViewMode={isViewMode}
         invalid={invalid}
         describedBy={describedBy}
+        error={error}
       />
     );
   }
@@ -143,9 +203,11 @@ export function renderStandardControls({
         isViewMode={isViewMode}
         invalid={invalid}
         describedBy={describedBy}
+        error={error}
       />
     );
   }
 
   return null;
 }
+

@@ -216,6 +216,10 @@ export function useSignupProvisioning({
   ]);
 
   // ── Contact Sales ─────────────────────────────────────────────────────────
+  const editionId = wizardData.editionId;
+  const businessType = wizardData.businessType;
+  const teamSize = wizardData.teamSize;
+  const primaryPriority = wizardData.primaryPriority;
   const submitContactSales = useCallback(
     async (
       form: Omit<ContactSalesPayload, "editionId" | "businessType" | "teamSize" | "primaryPriority">
@@ -225,10 +229,10 @@ export function useSignupProvisioning({
       try {
         await repository.submitContactSales({
           ...form,
-          editionId: wizardData.editionId,
-          businessType: wizardData.businessType || null,
-          teamSize: wizardData.teamSize || null,
-          primaryPriority: wizardData.primaryPriority || null,
+          editionId,
+          businessType: businessType || null,
+          teamSize: teamSize || null,
+          primaryPriority: primaryPriority || null,
         });
         return true;
       } catch (err: unknown) {
@@ -239,10 +243,10 @@ export function useSignupProvisioning({
       }
     },
     [
-      wizardData.editionId,
-      wizardData.businessType,
-      wizardData.teamSize,
-      wizardData.primaryPriority,
+      editionId,
+      businessType,
+      teamSize,
+      primaryPriority,
       repository,
       setIsLoading,
       setError,

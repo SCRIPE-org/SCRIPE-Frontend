@@ -134,11 +134,12 @@ export function MenuTreeItem({
   const rowRef = useRef<HTMLDivElement>(null);
   const dragCounterRef = useRef(0);
 
+  const nodeId = node.id;
   const hasChildren = node.children.length > 0;
-  const isExpanded = expandedNodes.has(node.id);
+  const isExpanded = expandedNodes.has(nodeId);
   const displayName = resolveBilingualLabel(node.nameEn, node.nameAr, language);
-  const isDragging = draggedNode?.id === node.id;
-  const isDropTarget = dropTarget?.nodeId === node.id;
+  const isDragging = draggedNode?.id === nodeId;
+  const isDropTarget = dropTarget?.nodeId === nodeId;
   const levelColor = LEVEL_COLORS[depth % LEVEL_COLORS.length];
   const levelBg = LEVEL_BG_COLORS[depth % LEVEL_BG_COLORS.length];
 
@@ -159,10 +160,10 @@ export function MenuTreeItem({
   const handleDragStart = useCallback(
     (e: React.DragEvent) => {
       e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", node.id);
+      e.dataTransfer.setData("text/plain", nodeId);
       setTimeout(() => onDragStart(node), 0);
     },
-    [node, onDragStart]
+    [node, onDragStart, nodeId]
   );
 
   const handleDragEnd = useCallback(
@@ -199,9 +200,9 @@ export function MenuTreeItem({
       e.stopPropagation();
       e.dataTransfer.dropEffect = "move";
       const position = computePosition(e);
-      onDragOver(node.id, position);
+      onDragOver(nodeId, position);
     },
-    [node.id, computePosition, onDragOver]
+    [nodeId, computePosition, onDragOver]
   );
 
   const handleDrop = useCallback(
@@ -210,9 +211,9 @@ export function MenuTreeItem({
       e.stopPropagation();
       dragCounterRef.current = 0;
       const position = computePosition(e);
-      onDrop(node.id, position);
+      onDrop(nodeId, position);
     },
-    [node.id, computePosition, onDrop]
+    [nodeId, computePosition, onDrop]
   );
 
   // ── Drop indicator styles ──────────────────────────────────────────

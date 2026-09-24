@@ -330,12 +330,17 @@ export const SelectTrigger = React.forwardRef<HTMLDivElement, SelectTriggerProps
           {(!multi || !hasSelection) && (
             <span
               className={cn(
-                "min-w-0 flex-1 truncate",
+                "flex min-w-0 flex-1 items-center gap-2 truncate",
                 hasSelection && !multi ? "text-nx-ink" : "text-nx-ink-3"
               )}
               title={!multi && hasSelection ? displayLabel : undefined}
             >
-              {multi ? placeholder : displayLabel || placeholder}
+              {!multi && hasSelection && selectedOptions[0]?.icon && (
+                <span className="shrink-0">{selectedOptions[0].icon}</span>
+              )}
+              <span className="min-w-0 truncate">
+                {multi ? placeholder : displayLabel || placeholder}
+              </span>
             </span>
           )}
 

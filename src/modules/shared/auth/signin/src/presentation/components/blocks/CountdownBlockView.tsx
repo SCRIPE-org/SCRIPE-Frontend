@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import type { CountdownBlock } from "@modules/auth/core/domain/entities/LoginBrandingTypes";
 
 function getParts(targetDate: string) {
@@ -20,21 +20,19 @@ function getParts(targetDate: string) {
  */
 export function CountdownBlockView({ block }: { block: CountdownBlock }) {
   const props = block.props;
-  const [parts, setParts] = useState(() => getParts(props.targetDate));
-  const entries = useMemo(
-    () => [
-      ["days", parts.days],
-      ["hrs", parts.hours],
-      ["min", parts.minutes],
-      ["sec", parts.seconds],
-    ],
-    [parts]
-  );
+  const targetDate = props.targetDate;
+  const [parts, setParts] = useState(() => getParts(targetDate));
+  const entries = [
+    ["days", parts.days],
+    ["hrs", parts.hours],
+    ["min", parts.minutes],
+    ["sec", parts.seconds],
+  ];
 
   useEffect(() => {
-    const id = window.setInterval(() => setParts(getParts(props.targetDate)), 1000);
+    const id = window.setInterval(() => setParts(getParts(targetDate)), 1000);
     return () => window.clearInterval(id);
-  }, [props.targetDate]);
+  }, [targetDate]);
 
   if (parts.expired)
     return <p className="text-center text-sm text-muted-foreground">{props.expiredText || ""}</p>;

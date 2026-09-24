@@ -57,7 +57,7 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
 
   const permissions = useAppStore((s) => s.permissions);
   const userTenantId = useAppStore((s) => s.user?.tenantId);
-  const isSuperAdmin = useMemo(() => permissions.includes("*"), [permissions]);
+  const isSuperAdmin = permissions.includes("*");
 
   // Available Scopes (permission and tenant context gated)
   const availableScopes = useMemo(() => {
@@ -90,9 +90,10 @@ export function useMenuOverrideViewModel(): UseMenuOverrideViewModelResult {
 
   // Keep a ref to the current dialog node to avoid stale closures in callbacks
   const dialogNodeRef = useRef<MenuTreeNode | null>(null);
+  const dialogNode = overrideDialog.node;
   useEffect(() => {
-    dialogNodeRef.current = overrideDialog.node;
-  }, [overrideDialog.node]);
+    dialogNodeRef.current = dialogNode;
+  }, [dialogNode]);
 
   // Flat menu items for parent selector picker
   const [menuTree, setMenuTree] = useState<MenuTreeNode[]>([]);

@@ -65,7 +65,8 @@ export function RolePermissionsDialog(props: RolePermissionsDialogProps) {
 
   // The matrix reads a Set of codes; the ViewModel owns a Map of assignments.
   // Derive, never duplicate.
-  const selectedCodes = useMemo(() => new Set(vm.assignments.keys()), [vm.assignments]);
+  const assignments = vm.assignments;
+  const selectedCodes = useMemo(() => new Set(assignments.keys()), [assignments]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

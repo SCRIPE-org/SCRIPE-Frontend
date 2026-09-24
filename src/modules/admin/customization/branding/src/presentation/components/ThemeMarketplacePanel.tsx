@@ -72,15 +72,16 @@ export function ThemeMarketplacePanel({
   const totalPages = Math.ceil(mp.totalCount / mp.pageSize);
 
   // When selectedTheme loads with data and we're actively previewing, forward to parent
+  const selectedTheme = mp.selectedTheme;
   useEffect(() => {
     if (
       previewingSlug &&
-      mp.selectedTheme?.slug === previewingSlug &&
-      mp.selectedTheme.themeDataJson
+      selectedTheme?.slug === previewingSlug &&
+      selectedTheme.themeDataJson
     ) {
-      onPreviewTheme?.(mp.selectedTheme.themeDataJson);
+      onPreviewTheme?.(selectedTheme.themeDataJson);
     }
-  }, [mp.selectedTheme, previewingSlug, onPreviewTheme]);
+  }, [selectedTheme, previewingSlug, onPreviewTheme]);
 
   const handleApply = async (slug: string, merge: boolean = false) => {
     const success = await mp.applyTheme(slug, merge);

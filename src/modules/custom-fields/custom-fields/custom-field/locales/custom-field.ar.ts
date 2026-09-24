@@ -12,6 +12,9 @@ export const ar = {
     editLoadFailed: "تعذّر تحميل هذا الحقل المخصص للتعديل. يُرجى المحاولة مرة أخرى.",
 
     // Field labels — shared between the table columns and the create/edit forms
+    columns: {
+      entityType: "نوع الكيان",
+    },
     // الموجة 6 الصف 6.6 — سجل التغييرات.
     history: {
       actionLabel: "السجل",
@@ -107,6 +110,7 @@ export const ar = {
       internal: "داخلي",
       confidential: "سري",
       restricted: "مقيد",
+      requiresKey: "يتطلب مفتاح المستأجر",
     },
     hints: {
       optionsSource:
@@ -116,9 +120,16 @@ export const ar = {
       sensitivity:
         "كيف ينبغي التعامل مع قيم هذا الحقل. هذا وسم للتقارير والتصدير " +
         "ولا يتحكم في من يمكنه رؤية الحقل. استخدم أمان الحقول لذلك.",
+      sensitivityRequiresKey:
+        "تتطلب الحقول السرية والمقيدة تهيئة مفتاح تشفيري خاص بالمستأجر قبل الإنشاء.",
       isExportable:
         "إيقافه يخرج هذا الحقل من ملفات التصدير. هذا ترتيب وليس إذنًا — " +
         "من يمكنه قراءة الحقل يمكنه قراءة قيمه في أماكن أخرى.",
+      keyFormat: "أحرف صغيرة وأرقام وشرطات سفلية فقط (مثل: 'national_id')",
+    },
+    validation: {
+      keyPattern:
+        "يجب أن يبدأ المفتاح بحرف صغير وأن يحتوي فقط على أحرف صغيرة وأرقام وشرطات سفلية (مثل: 'national_id')",
     },
 
     placeholders: {
@@ -928,6 +939,9 @@ export const ar = {
       typeAndValidation: "نوع البيانات والتحقق",
       layout: "التنظيم والتجميع",
       governance: "السلوك وإدارة البيانات",
+    },
+    sensitive: {
+      permissionRequired: "يتطلب إذن 'custom-fields.view-sensitive' لعرض القيمة",
     },
   },
 };

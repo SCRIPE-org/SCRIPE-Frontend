@@ -88,22 +88,14 @@ export function useThemeGalleryViewModel() {
   const pageSize = 12;
 
   // ─── Derived sort key ───
-  const apiSortBy = useMemo(() => {
-    switch (filters.sortBy) {
-      case "popular":
-        return "usageCount";
-      case "newest":
-        return "publishedAt";
-      case "trending":
-        return "likeCount";
-      case "nameAsc":
-        return "name";
-      case "nameDesc":
-        return "name_desc";
-      default:
-        return "name";
-    }
-  }, [filters.sortBy]);
+  const SORT_MAP: Record<string, string> = {
+    popular: "usageCount",
+    newest: "publishedAt",
+    trending: "likeCount",
+    nameAsc: "name",
+    nameDesc: "name_desc",
+  };
+  const apiSortBy = SORT_MAP[filters.sortBy] ?? "name";
 
   // ─── Browse Query ───
   const browseQuery = useQuery({
@@ -245,16 +237,13 @@ export function useThemeGalleryViewModel() {
     setPage(1);
   }, []);
 
-  const hasActiveFilters = useMemo(() => {
-    return (
-      filters.search !== "" ||
-      filters.category !== "all" ||
-      filters.isFree === true ||
-      filters.hasDarkMode === true ||
-      filters.hasAccessibility === true ||
-      filters.hasContentBlocks === true
-    );
-  }, [filters]);
+  const hasActiveFilters =
+    filters.search !== "" ||
+    filters.category !== "all" ||
+    filters.isFree === true ||
+    filters.hasDarkMode === true ||
+    filters.hasAccessibility === true ||
+    filters.hasContentBlocks === true;
 
   const toggleCompareTheme = useCallback(
     (slug: string) => {

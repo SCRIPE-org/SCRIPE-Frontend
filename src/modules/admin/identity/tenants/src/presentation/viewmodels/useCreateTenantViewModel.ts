@@ -12,7 +12,7 @@
  */
 "use client";
 
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -22,6 +22,22 @@ import { appLogger } from "@core/common/logger";
 import type { CreateTenantResult } from "../../domain/entities/TenantRequests";
 import type { EditionThinModel } from "../../domain/types/SubscriptionTypes";
 import type { Permission } from "@modules/identity/core";
+import {
+  COUNTRIES,
+  getDefaultTimeZoneForCountry,
+  getDefaultCurrencyForCountry,
+} from "@core/constants/countries";
+import {
+  getGeoTerritory,
+  validatePostalCode,
+  formatInternationalAddress,
+} from "@core/constants/geo-territories";
+import {
+  useCustomFieldsFormFields,
+  decodeCustomFieldName,
+} from "@core/crud/customFieldsExtension";
+import { assertSelectCustomFieldValuesValid } from "@modules/custom-fields/custom-field";
+import { isFieldRequired } from "@core/ui/forms/generic-form";
 
 // ─────────────────────────────────────────
 // Types
@@ -34,12 +50,25 @@ export interface StepperFormState {
   // Step 1: Organization
   name: string;
   code: string;
+  organizationType: string;
   description: string;
+  // Step 1: Structured Location & Geography
+  countryCode: string;
+  timeZone: string;
+  state: string; // Governorate / Province / Emirate / State / Region
+  city: string;
+  district: string; // Neighborhood / Sub-District / الحي
+  street: string;
+  postalCode: string;
   address: string;
   parentId: string;
   // Step 2: Administrator
   adminEmail: string;
   adminUsername: string;
+  adminFullName: string;
+  adminFirstName: string;
+  adminLastName: string;
+  adminPhone: string;
   // Step 3: Plan & Billing
   editionId: string;
   subscriptionType: string;
@@ -51,19 +80,31 @@ export interface StepperFormState {
 }
 
 /**
- * Exported constant defining parameters and fields for i n i t i a l_ s t e p p e r_ f o r m configurations.
+ * Exported constant defining parameters and fields for initial stepper form configurations.
  */
 export const INITIAL_STEPPER_FORM: StepperFormState = {
   name: "",
   code: "",
+  organizationType: "academy",
   description: "",
+  countryCode: "SA",
+  timeZone: "Asia/Riyadh",
+  state: "",
+  city: "",
+  district: "",
+  street: "",
+  postalCode: "",
   address: "",
   parentId: "",
   adminEmail: "",
   adminUsername: "",
+  adminFullName: "",
+  adminFirstName: "",
+  adminLastName: "",
+  adminPhone: "",
   editionId: "",
   subscriptionType: "",
-  currency: "USD",
+  currency: "SAR",
   skipPayment: false,
   promotionId: "",
   promoCode: "",
@@ -117,12 +158,22 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<CreateTenantResult | null>(null);
 
+  // ── Administrator Custom Fields ──
+  const adminCustomFieldsQuery = useCustomFieldsFormFields("identity.admin", undefined);
+  const [adminCustomFieldValues, setAdminCustomFieldValues] = useState<Record<string, unknown>>({});
+  const [deferAdminCustomFieldsToSetup, setDeferAdminCustomFieldsToSetup] = useState(true);
+
+  const updateAdminCustomFieldValue = useCallback((name: string, value: unknown) => {
+    setAdminCustomFieldValues((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
   // ── Edition & promotion state ──
   const [cachedEditions, setCachedEditions] = useState<EditionThinModel[]>([]);
 
   // ── Compute enabled subscription types for selected edition ──
+  const editionId = form.editionId;
   const enabledSubscriptionTypes = useMemo(() => {
-    const edition = cachedEditions.find((e) => e.id === form.editionId);
+    const edition = cachedEditions.find((e) => e.id === editionId);
     if (!edition) {
       // No edition selected -> show all types
       return [
@@ -142,7 +193,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     if (edition.allowYearly !== false) types.push({ value: "Yearly", enabled: true });
     if (edition.allowTrial !== false) types.push({ value: "Trial", enabled: true });
     return types;
-  }, [cachedEditions, form.editionId]);
+  }, [cachedEditions, editionId]);
 
   // Track previous editionId to detect changes
   const prevEditionIdRef = useRef(form.editionId);
@@ -164,6 +215,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     staleTime: 60_000,
   });
 
+  const subscriptionType = form.subscriptionType;
   const availablePromotions = useMemo(() => {
     return promotionsRaw
       .filter((p) => {
@@ -171,8 +223,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         if (p.validUntil && new Date(p.validUntil) < new Date()) return false;
         if (p.validFrom && new Date(p.validFrom) > new Date()) return false;
         if (p.maxRedemptions != null && p.currentRedemptions >= p.maxRedemptions) return false;
-        if (p.applicableCycle && form.subscriptionType) {
-          if (p.applicableCycle !== form.subscriptionType) return false;
+        if (p.applicableCycle && subscriptionType) {
+          if (p.applicableCycle !== subscriptionType) return false;
         }
         return true;
       })
@@ -184,7 +236,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         requiresCode: p.requiresCode,
         code: p.promoCode || "",
       }));
-  }, [promotionsRaw, form.subscriptionType]);
+  }, [promotionsRaw, subscriptionType]);
 
   // ── Update Field Logic ──
   const updateField = useCallback(
@@ -201,6 +253,62 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
           (!prev.adminUsername || prev.adminUsername === `${prev.code}_admin`)
         ) {
           next.adminUsername = `${(value as string).toLowerCase()}_admin`;
+        }
+        // Auto-sync adminFullName when adminFirstName or adminLastName changes
+        if (field === "adminFirstName" || field === "adminLastName") {
+          const fn = field === "adminFirstName" ? (value as string) : next.adminFirstName;
+          const ln = field === "adminLastName" ? (value as string) : next.adminLastName;
+          next.adminFullName = [fn, ln].filter(Boolean).join(" ");
+        }
+        if (field === "adminFullName" && !next.adminFirstName) {
+          const parts = (value as string).trim().split(/\s+/);
+          next.adminFirstName = parts[0] || "";
+          next.adminLastName = parts.slice(1).join(" ");
+        }
+        // When countryCode changes, cascade default timezone, currency, and reset geographic subdivisions
+        if (field === "countryCode" && value) {
+          const cCode = value as string;
+          next.timeZone = getDefaultTimeZoneForCountry(cCode);
+          next.currency = getDefaultCurrencyForCountry(cCode);
+          next.state = "";
+          next.city = "";
+          next.district = "";
+          next.postalCode = "";
+        }
+        // When state changes, reset dependent city and district
+        if (field === "state") {
+          next.city = "";
+          next.district = "";
+        }
+        // Auto-compose address from street, district, city, state, postalCode, and country
+        if (
+          field === "street" ||
+          field === "district" ||
+          field === "city" ||
+          field === "state" ||
+          field === "postalCode" ||
+          field === "countryCode"
+        ) {
+          const str = field === "street" ? (value as string) : next.street;
+          const dst = field === "district" ? (value as string) : next.district;
+          const ct = field === "city" ? (value as string) : next.city;
+          const st = field === "state" ? (value as string) : next.state;
+          const pc = field === "postalCode" ? (value as string) : next.postalCode;
+          const cc = field === "countryCode" ? (value as string) : next.countryCode;
+
+          const countryObj = COUNTRIES.find((c) => c.code === cc);
+          const territory = getGeoTerritory(cc);
+          const stateObj = territory.states.find((s) => s.code === st || s.name === st);
+          const stateDisplay = stateObj ? stateObj.name : st;
+
+          next.address = formatInternationalAddress({
+            street: str,
+            district: dst,
+            city: ct,
+            state: stateDisplay,
+            postalCode: pc,
+            countryName: countryObj?.name,
+          });
         }
         // When edition changes, reset subscriptionType to the first enabled type
         if (field === "editionId" && value !== prevEditionIdRef.current) {
@@ -224,21 +332,20 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
   );
 
   // ── Selected edition info ──
-  const selectedEdition = useMemo(
-    () => cachedEditions.find((e) => e.id === form.editionId),
-    [cachedEditions, form.editionId]
-  );
+  const selectedEdition = cachedEditions.find((e) => e.id === form.editionId);
 
   // ── Auto-select first enabled subscription type when edition changes and type is empty ──
   // This runs when cachedEditions update after edition search completes
-  useMemo(() => {
-    if (form.editionId && !form.subscriptionType && enabledSubscriptionTypes.length > 0) {
+  const currentEditionId = form.editionId;
+  const currentSubscriptionType = form.subscriptionType;
+  useEffect(() => {
+    if (currentEditionId && !currentSubscriptionType && enabledSubscriptionTypes.length > 0) {
       const firstEnabled = enabledSubscriptionTypes[0]?.value;
       if (firstEnabled) {
         setForm((prev) => ({ ...prev, subscriptionType: firstEnabled }));
       }
     }
-  }, [form.editionId, form.subscriptionType, enabledSubscriptionTypes]);
+  }, [currentEditionId, currentSubscriptionType, enabledSubscriptionTypes]);
 
   // ── Edition search ──
   // Contact-Sales-only editions are excluded here: they have no billing type an
@@ -268,6 +375,11 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     [tenantRepository]
   );
 
+  // Eagerly fetch initial editions on mount so options are available immediately
+  useEffect(() => {
+    handleSearchEditions("");
+  }, [handleSearchEditions]);
+
   // ── Step validation ──
   const [stepTouched, setStepTouched] = useState<Record<StepId, boolean>>({
     1: false,
@@ -275,23 +387,111 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     3: false,
   });
 
+  const adminFieldConfigs = adminCustomFieldsQuery.fieldConfigs;
   const stepErrors = useMemo(() => {
     const errors: Record<StepId, string[]> = { 1: [], 2: [], 3: [] };
     // Step 1
     if (!form.name.trim()) errors[1].push("name");
     if (!form.code.trim()) errors[1].push("code");
+    if (!form.countryCode.trim()) errors[1].push("countryCode");
+    if (!form.timeZone.trim()) errors[1].push("timeZone");
+
+    const territory = getGeoTerritory(form.countryCode);
+    if (territory.states.length > 0 && !form.state.trim()) {
+      errors[1].push("state");
+    }
+    if (!form.city.trim()) {
+      errors[1].push("city");
+    }
+    if (form.postalCode.trim()) {
+      if (!validatePostalCode(form.countryCode, form.postalCode)) {
+        errors[1].push("postalCode");
+      }
+    } else if (territory.postalCodeRequired) {
+      errors[1].push("postalCodeRequired");
+    }
     // Step 2
+    if (!form.adminFirstName?.trim() && !form.adminFullName?.trim()) {
+      errors[2].push("adminFirstName");
+    }
     if (!form.adminEmail.trim()) errors[2].push("adminEmail");
     if (form.adminEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.adminEmail)) {
       errors[2].push("adminEmailFormat");
     }
-    // Step 3 — no required fields (edition is optional)
+    // Step 2 — Required Administrator Custom Fields (enforced only when not deferred to account setup)
+    if (!deferAdminCustomFieldsToSetup && adminFieldConfigs) {
+      for (const fc of adminFieldConfigs) {
+        const isVisible = !fc.isVisible || fc.isVisible(adminCustomFieldValues);
+        const isRequired = isFieldRequired(fc, adminCustomFieldValues);
+        if (isRequired && isVisible) {
+          const val = adminCustomFieldValues[fc.name] ?? fc.defaultValue ?? "";
+          if (
+            val === null ||
+            val === undefined ||
+            (typeof val === "string" && val.trim() === "") ||
+            (Array.isArray(val) && val.length === 0)
+          ) {
+            errors[2].push(`customField_${fc.name}`);
+          }
+        }
+      }
+    }
+    // Step 3 — Edition is required by CreateTenantCommandValidator
+    if (!form.editionId?.trim()) errors[3].push("editionId");
     return errors;
-  }, [form]);
+  }, [form, adminFieldConfigs, adminCustomFieldValues, deferAdminCustomFieldsToSetup]);
 
   const isStepValid = useCallback((step: StepId) => stepErrors[step].length === 0, [stepErrors]);
 
   const canProceed = useMemo(() => isStepValid(currentStep), [isStepValid, currentStep]);
+
+  const focusFirstInvalidField = useCallback((errorKeys: string[]) => {
+    if (!errorKeys || errorKeys.length === 0) return;
+    const firstKey = errorKeys[0];
+    const elementIdMap: Record<string, string> = {
+      name: "tenant-name",
+      code: "tenant-code",
+      countryCode: "country-select",
+      timeZone: "timezone-select",
+      state: "state-select",
+      city: "tenant-city",
+      postalCode: "tenant-postal-code",
+      postalCodeRequired: "tenant-postal-code",
+      adminFirstName: "admin-first-name",
+      adminEmail: "admin-email",
+      adminEmailFormat: "admin-email",
+      editionId: "edition-select",
+    };
+
+    let targetId = elementIdMap[firstKey];
+    if (!targetId && firstKey.startsWith("customField_")) {
+      targetId = firstKey.replace("customField_", "");
+    }
+
+    if (targetId) {
+      setTimeout(() => {
+        const el =
+          document.getElementById(targetId) ||
+          document.querySelector(`[name="${targetId}"]`) ||
+          document.querySelector(`[data-field-name="${targetId}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          const focusTarget =
+            el instanceof HTMLInputElement ||
+            el instanceof HTMLTextAreaElement ||
+            el instanceof HTMLSelectElement ||
+            el instanceof HTMLButtonElement
+              ? el
+              : el.querySelector<HTMLElement>(
+                  "input, textarea, button, select, [tabindex]:not([tabindex='-1'])"
+                ) || el;
+          if (focusTarget && typeof focusTarget.focus === "function") {
+            focusTarget.focus({ preventScroll: true });
+          }
+        }
+      }, 50);
+    }
+  }, []);
 
   // ── Navigation ──
   const goNext = useCallback(() => {
@@ -299,8 +499,10 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     setStepTouched((prev) => ({ ...prev, [currentStep]: true }));
     if (currentStep < 3 && canProceed) {
       setCurrentStep((s) => (s + 1) as StepId);
+    } else if (!canProceed) {
+      focusFirstInvalidField(stepErrors[currentStep]);
     }
-  }, [currentStep, canProceed]);
+  }, [currentStep, canProceed, focusFirstInvalidField, stepErrors]);
 
   const goBack = useCallback(() => {
     if (currentStep > 1) {
@@ -325,6 +527,8 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     for (let i = 1; i <= 3; i++) {
       if (!isStepValid(i as StepId)) {
         setCurrentStep(i as StepId);
+        setStepTouched((prev) => ({ ...prev, [i as StepId]: true }));
+        focusFirstInvalidField(stepErrors[i as StepId]);
         return;
       }
     }
@@ -346,14 +550,46 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
         }
       }
 
+      // Pre-validate administrator custom fields only when not deferred
+      if (!deferAdminCustomFieldsToSetup && adminCustomFieldsQuery.fieldConfigs.length > 0) {
+        assertSelectCustomFieldValuesValid(
+          adminCustomFieldsQuery.fieldConfigs,
+          adminCustomFieldValues,
+          t
+        );
+      }
+
+      const decodedAdminCustomFields: Record<string, unknown> = {};
+      if (!deferAdminCustomFieldsToSetup) {
+        for (const fc of adminCustomFieldsQuery.fieldConfigs) {
+          const key = decodeCustomFieldName(fc.name);
+          if (key === null) continue;
+          const raw = adminCustomFieldValues[fc.name] ?? fc.defaultValue ?? "";
+          if (raw !== "" && raw !== null && raw !== undefined) {
+            decodedAdminCustomFields[key] = raw;
+          }
+        }
+      }
+
       const createResult = await tenantRepository.create({
         name: form.name.trim(),
         code: form.code.trim(),
         description: form.description.trim() || undefined,
         address: form.address.trim() || undefined,
+        countryCode: form.countryCode.trim() || undefined,
+        timeZone: form.timeZone.trim() || undefined,
+        organizationType: form.organizationType || undefined,
         parentId: form.parentId || undefined,
         adminEmail: form.adminEmail.trim(),
         adminUsername: form.adminUsername.trim() || undefined,
+        adminFirstName: form.adminFirstName?.trim() || form.adminFullName?.trim() || undefined,
+        adminLastName: form.adminLastName?.trim() || undefined,
+        adminPhoneNumber: form.adminPhone?.trim() || undefined,
+        adminPhone: form.adminPhone?.trim() || undefined,
+        adminCustomFieldValues:
+          !deferAdminCustomFieldsToSetup && Object.keys(decodedAdminCustomFields).length > 0
+            ? decodedAdminCustomFields
+            : undefined,
         editionId: form.editionId || undefined,
         subscriptionType: form.subscriptionType || undefined,
         currency: form.currency || "USD",
@@ -380,7 +616,18 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     } finally {
       setIsSubmitting(false);
     }
-  }, [form, tenantRepository, queryClient, router, t, toastSuccess, toastError, isStepValid]);
+  }, [
+    form,
+    tenantRepository,
+    queryClient,
+    router,
+    t,
+    toastSuccess,
+    toastError,
+    isStepValid,
+    adminFieldConfigs,
+    adminCustomFieldValues,
+  ]);
 
   // ── Navigate to detail immediately ──
   const navigateToDetail = useCallback(() => {
@@ -416,6 +663,13 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     // Creation permissions (for availablePermissionIds picker)
     creationPermissions,
     isLoadingPermissions,
+
+    // Admin Custom Fields
+    adminCustomFieldsQuery,
+    adminCustomFieldValues,
+    updateAdminCustomFieldValue,
+    deferAdminCustomFieldsToSetup,
+    setDeferAdminCustomFieldsToSetup,
 
     // Submit
     isSubmitting,

@@ -714,10 +714,11 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
     });
   }, [draft]);
 
+  const slotConfig = draft.slotConfig;
   // ── Build SlotConfigJson ──
   const buildSlotConfigJson = useCallback((): string => {
-    return JSON.stringify(draft.slotConfig);
-  }, [draft.slotConfig]);
+    return JSON.stringify(slotConfig);
+  }, [slotConfig]);
 
   // ── Auto-save draft every 5s ──
   useEffect(() => {
@@ -839,6 +840,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
   // known custom field's effective value (edited-this-session or the fetched
   // default) is sent, not just the ones the user touched. Mirrors
   // useWebhookFormViewModel's / useDsrViewModel's identical helper.
+  const themeFieldConfigs = themeCustomFieldsQuery.fieldConfigs;
   const saveThemeCustomFieldValues = useCallback(
     async (ownerId: string) => {
       // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
@@ -850,13 +852,13 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       // catch block below distinguishes from a genuine API failure so it can
       // show the specific reason, not the generic fallback.
       assertSelectCustomFieldValuesValid(
-        themeCustomFieldsQuery.fieldConfigs,
+        themeFieldConfigs,
         themeCustomFieldValues,
         t
       );
 
       const decoded: Record<string, unknown> = {};
-      for (const fc of themeCustomFieldsQuery.fieldConfigs) {
+      for (const fc of themeFieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
         if (key === null) continue;
         const raw = themeCustomFieldValues[fc.name] ?? fc.defaultValue ?? "";
@@ -865,7 +867,7 @@ export function useStudioViewModel(options?: StudioViewModelOptions) {
       if (Object.keys(decoded).length === 0) return;
       await getCustomFieldsExtension()?.saveValues(THEME_ENTITY_TYPE_KEY, ownerId, decoded);
     },
-    [themeCustomFieldsQuery.fieldConfigs, themeCustomFieldValues, t]
+    [themeFieldConfigs, themeCustomFieldValues, t]
   );
 
   // ── Save Theme ──

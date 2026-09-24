@@ -82,6 +82,7 @@ export function OptionSetEditorDialog({
   const [description, setDescription] = useState("");
   const [isGlobal, setIsGlobal] = useState(isPlatformContext);
 
+  const optionSetId = optionSet?.id;
   useEffect(() => {
     if (!open) return;
     setStableKey(optionSet?.stableKey ?? "");
@@ -89,7 +90,7 @@ export function OptionSetEditorDialog({
     setLabelAr(optionSet?.labelAr ?? "");
     setDescription(optionSet?.description ?? "");
     setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
-  }, [open, optionSet?.id, isPlatformContext]);
+  }, [open, optionSetId, isPlatformContext]);
 
   const effectiveReadOnlyReason: OptionSetEditorReadOnlyReason | null =
     optionSet?.isPlatformMaintained ? "systemManaged" : (readOnlyReason ?? null);

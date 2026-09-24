@@ -22,4 +22,7 @@ export const MONITORING_PERMISSIONS = {
   ANALYTICS_VIEW: "analytics.view",
   ANALYTICS_VIEW_CHILDREN: "analytics.view_children",
   ANALYTICS_EXPORT: "analytics.export",
+
+  // ── Observability & Platform Health ───────────────────────
+  OBSERVABILITY_VIEW: "observability.view",
 } as const;

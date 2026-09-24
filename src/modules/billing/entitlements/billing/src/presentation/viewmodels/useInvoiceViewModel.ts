@@ -128,8 +128,9 @@ export function useInvoiceViewModel() {
   );
 
   // ── Bulk Download All PDFs ──
+  const vmItems = vm.items;
   const handleBulkDownloadPdf = useCallback(async () => {
-    const items = vm.items as InvoiceListItem[];
+    const items = vmItems as InvoiceListItem[];
     if (!items || items.length === 0) return;
 
     const bulkKey = "bulk-pdf";
@@ -178,7 +179,7 @@ export function useInvoiceViewModel() {
     }
 
     setLoadingAction((prev) => ({ ...prev, [bulkKey]: false }));
-  }, [vm.items, t, toast, success, toastError, billingRepository]);
+  }, [vmItems, t, toast, success, toastError, billingRepository]);
 
   return {
     ...vm,

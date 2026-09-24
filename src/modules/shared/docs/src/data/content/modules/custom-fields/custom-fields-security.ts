@@ -123,6 +123,6 @@ registerPage({
   category: "modules",
   order: 7,
   sections,
-  relatedSlugs: ["features/role-permissions", "modules/custom-fields-managing"],
+  relatedSlugs: ["modules/custom-fields-encryption", "features/role-permissions", "modules/custom-fields-managing"],
   lastUpdated: "2026-08-21",
 });

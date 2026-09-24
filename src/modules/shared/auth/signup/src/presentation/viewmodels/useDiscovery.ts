@@ -219,9 +219,10 @@ export function useDiscovery(): DiscoveryViewModel {
     [currentQuestion, questions]
   );
 
+  const totalVisible = visibleQuestions.length;
   const goNext = useCallback(() => {
-    setCurrentIndex((idx) => Math.min(idx + 1, visibleQuestions.length - 1));
-  }, [visibleQuestions.length]);
+    setCurrentIndex((idx) => Math.min(idx + 1, totalVisible - 1));
+  }, [totalVisible]);
 
   const goBack = useCallback(() => {
     setCurrentIndex((idx) => Math.max(0, idx - 1));

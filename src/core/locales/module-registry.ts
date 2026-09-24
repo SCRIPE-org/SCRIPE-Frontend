@@ -19,12 +19,14 @@
 import { en as authEn, ar as authAr } from "@modules/auth/core/locales";
 import { en as signinEn, ar as signinAr } from "@modules/auth/signin/locales";
 import { en as signupEn, ar as signupAr } from "@modules/auth/signup/locales";
+import { en as accountSetupEn, ar as accountSetupAr } from "@modules/auth/account-setup/locales";
 
 // ─── Monitoring ────────────────────────────────────────
 import { en as analyticsEn, ar as analyticsAr } from "@modules/monitoring/analytics/locales";
 import { en as auditEn, ar as auditAr } from "@modules/monitoring/audit/locales";
 import { en as dashboardEn, ar as dashboardAr } from "@modules/monitoring/dashboard/locales";
 import { en as securityEn, ar as securityAr } from "@modules/monitoring/security/locales";
+import { en as platformHealthEn, ar as platformHealthAr } from "@modules/monitoring/platform-health/locales";
 
 // ─── Identity ──────────────────────────────────────────
 import { en as adminEn, ar as adminAr } from "@modules/identity/admin/locales";
@@ -228,6 +230,10 @@ import {
   en as valueExportEn,
   ar as valueExportAr,
 } from "@modules/custom-fields/value-export/locales";
+import {
+  en as keyManagementEn,
+  ar as keyManagementAr,
+} from "@modules/custom-fields/key-management/locales";
 
 import {
   en as workManagementEn,
@@ -278,11 +284,13 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   authEn,
   signinEn,
   signupEn,
+  accountSetupEn,
   // Monitoring
   analyticsEn,
   auditEn,
   dashboardEn,
   securityEn,
+  platformHealthEn,
   // Identity
   adminEn,
   idpEn,
@@ -353,13 +361,14 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   mktDevelopersEn,
   mktReviewsEn,
   mktFinancialsEn,
-  // Custom Fields (6 sub-modules)
+  // Custom Fields (7 sub-modules)
   customFieldsEn,
   fieldGroupEn,
   optionSetEn,
   definitionExportEn,
   customFieldsSchemaEn,
   valueExportEn,
+  keyManagementEn,
   workManagementEn,
   analyticsEventsEn,
   // Party Kernel
@@ -387,11 +396,13 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   authAr,
   signinAr,
   signupAr,
+  accountSetupAr,
   // Monitoring
   analyticsAr,
   auditAr,
   dashboardAr,
   securityAr,
+  platformHealthAr,
   // Identity
   adminAr,
   idpAr,
@@ -462,13 +473,14 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   mktDevelopersAr,
   mktReviewsAr,
   mktFinancialsAr,
-  // Custom Fields (6 sub-modules)
+  // Custom Fields (7 sub-modules)
   customFieldsAr,
   fieldGroupAr,
   optionSetAr,
   definitionExportAr,
   customFieldsSchemaAr,
   valueExportAr,
+  keyManagementAr,
   workManagementAr,
   analyticsEventsAr,
   // Party Kernel

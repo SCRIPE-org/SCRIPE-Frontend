@@ -31,6 +31,8 @@ export interface TenantProps {
   primaryDomain?: string;
   domainCount?: number;
   adminEmail?: string;
+  countryCode?: string;
+  timeZone?: string;
   children?: TenantProps[];
 }
 
@@ -133,6 +135,14 @@ export class Tenant {
 
   get adminEmail(): string | undefined {
     return this.props.adminEmail;
+  }
+
+  get countryCode(): string | undefined {
+    return this.props.countryCode;
+  }
+
+  get timeZone(): string | undefined {
+    return this.props.timeZone;
   }
 
   // ===== Business Logic =====

@@ -148,6 +148,11 @@ describe("customFieldsCrudIntegration registration", () => {
     expect(customFieldsCrudIntegration.FieldControl).toBe(GenericFormCustomFieldControl);
   });
 
+  it("wires revealValue to the custom-field-value repository function", () => {
+    expect(customFieldsCrudIntegration.revealValue).toBeDefined();
+    expect(typeof customFieldsCrudIntegration.revealValue).toBe("function");
+  });
+
   it("the REAL registered formatValueForDisplay renders live, locale-formatted output end-to-end", () => {
     const t = (key: string) => key;
     const formatValueForDisplay = customFieldsCrudIntegration.formatValueForDisplay;

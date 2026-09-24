@@ -51,6 +51,8 @@ const TenantModelSchema = z.object({
   primaryDomain: optionalString(),
   domainCount: z.number().int().optional().default(0),
   adminEmail: optionalString(),
+  countryCode: optionalString(),
+  timeZone: optionalString(),
   children: z.array(z.unknown()).optional(),
 });
 
@@ -100,6 +102,8 @@ export class TenantMapper {
       primaryDomain: validated.primaryDomain ?? undefined,
       domainCount: validated.domainCount,
       adminEmail: validated.adminEmail ?? undefined,
+      countryCode: validated.countryCode ?? model.countryCode ?? undefined,
+      timeZone: validated.timeZone ?? model.timeZone ?? undefined,
       children: model.children?.map((c) => TenantMapper.toEntity(c as TenantModel).toProps()),
     };
     return new Tenant(props);
@@ -165,7 +169,15 @@ export class TenantMapper {
       request.currency,
       request.promotionId,
       request.promoCode,
-      request.skipPayment
+      request.skipPayment,
+      request.countryCode,
+      request.timeZone,
+      request.organizationType,
+      request.adminFirstName,
+      request.adminLastName,
+      request.adminPhoneNumber,
+      request.adminPhone,
+      request.adminCustomFieldValues
     );
   }
 

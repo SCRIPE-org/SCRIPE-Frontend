@@ -147,6 +147,9 @@ export function useEntityLookupSearch({
     return () => clearTimeout(timer);
   }, [request]);
 
+  const requestPage = request.page;
+  const requestQuery = request.requestQuery;
+
   useEffect(() => {
     // Nothing to search. No state to clear either: every flag above already derives to its empty
     // value from `canFetch`, so this branch does no work rather than undoing work.
@@ -154,7 +157,7 @@ export function useEntityLookupSearch({
 
     const seq = ++requestSeqRef.current;
     const controller = new AbortController();
-    const isFirstPage = request.page === 1;
+    const isFirstPage = requestPage === 1;
     let cancelled = false;
 
     /** True once this effect has been cleaned up or a newer request owns the ticket. */
@@ -164,8 +167,8 @@ export function useEntityLookupSearch({
       .search(
         entityTypeKey,
         {
-          search: request.requestQuery.trim() === "" ? null : request.requestQuery,
-          page: request.page,
+          search: requestQuery.trim() === "" ? null : requestQuery,
+          page: requestPage,
           pageSize,
         },
         controller.signal
@@ -211,8 +214,8 @@ export function useEntityLookupSearch({
     canFetch,
     entityTypeKey,
     pageSize,
-    request.page,
-    request.requestQuery,
+    requestPage,
+    requestQuery,
     requestKey,
     scopeKey,
   ]);

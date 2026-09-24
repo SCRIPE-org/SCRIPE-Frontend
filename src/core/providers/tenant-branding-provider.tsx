@@ -104,6 +104,8 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
     return unsubscribe;
   }, []);
 
+  const username = user?.username;
+
   useEffect(() => {
     if (!isAuthenticated || !user || !hasToken) {
       if (!isAuthenticated || !user) {
@@ -149,7 +151,7 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
     // refresh instead of settling (same bug as navigation-provider.tsx's
     // contextKey). Drill-down tenant switches are unaffected: enterTenantWorld
     // already forces a full page reload, which remounts this provider anyway.
-  }, [isAuthenticated, user?.username, hasToken]);
+  }, [isAuthenticated, username, hasToken]);
 
   // Build the context value with fallbacks.
   // Hooks run unconditionally regardless of `branding` — each already
@@ -210,11 +212,12 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
   //   Layer 3: Tenant defaults (DashboardThemeJson → scr_pref_dashboard_settings)
   //   Layer 4: Admin overrides (localStorage dashboard-settings)
   // ══════════════════════════════════════════════════════════
+  const dashboardThemeJson = branding?.dashboardThemeJson;
   useEffect(() => {
-    if (typeof window === "undefined" || !branding?.dashboardThemeJson) return;
+    if (typeof window === "undefined" || !dashboardThemeJson) return;
 
     try {
-      const prefs = JSON.parse(branding.dashboardThemeJson);
+      const prefs = JSON.parse(dashboardThemeJson);
 
       // 1. Write basic pref keys (backward compat for theme/i18n/sidebar providers)
       if (prefs.theme) localStorage.setItem(STORAGE_KEYS.PREF_THEME, prefs.theme);
@@ -263,7 +266,7 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
     } catch {
       /* invalid JSON — skip */
     }
-  }, [branding?.dashboardThemeJson, setTheme, setLanguage, setSidebarOpen]);
+  }, [dashboardThemeJson, setTheme, setLanguage, setSidebarOpen]);
 
   const value: TenantBrandingContextValue = {
     appName,

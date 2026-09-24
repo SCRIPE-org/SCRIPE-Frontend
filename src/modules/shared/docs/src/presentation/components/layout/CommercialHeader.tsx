@@ -149,6 +149,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
                 alt=""
                 width={32}
                 height={32}
+                priority
                 className="com-header-logo-img"
                 aria-hidden="true"
               />

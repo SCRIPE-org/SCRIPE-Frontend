@@ -1,24 +1,37 @@
-import type { IAccountSetupRepository } from "@modules/auth/core/domain/interfaces/IAccountSetupRepository";
+/**
+ * AccountSetupRepository — Data repository implementation for account setup.
+ * Invokes AccountSetupService and transforms DTOs to rich Domain Entities via AccountSetupMapper.
+ *
+ * @module auth/account-setup/data/repositories
+ */
+
+import type { IAccountSetupRepository } from "../../domain/interfaces/IAccountSetupRepository";
 import type {
   ActivateAccountRequest,
-  ActivateAccountResponse,
   IAccountSetupService,
-  ValidateTokenResponse,
-} from "../../../../core/domain/interfaces/IAccountSetupService";
+} from "../../domain/interfaces/IAccountSetupService";
+import type {
+  SetupTokenInfo,
+  SetupCustomField,
+  AccountActivationResult,
+} from "../../domain/entities";
+import { AccountSetupMapper } from "../mappers/AccountSetupMapper";
 
-/**
- * AccountSetupRepository is the concrete implementation of the IAccountSetupRepository.
- * Acts as the clean boundary data layer coordinating between presentation ViewModels
- * and backend public services to process workspace administrator setup.
- */
 export class AccountSetupRepository implements IAccountSetupRepository {
   constructor(private readonly service: IAccountSetupService) {}
 
-  validateToken(token: string): Promise<ValidateTokenResponse> {
-    return this.service.validateToken(token);
+  async validateToken(token: string): Promise<SetupTokenInfo> {
+    const dto = await this.service.validateToken(token);
+    return AccountSetupMapper.toTokenInfoEntity(dto);
   }
 
-  activateAccount(request: ActivateAccountRequest): Promise<ActivateAccountResponse> {
-    return this.service.activateAccount(request);
+  async getCustomFields(token: string): Promise<SetupCustomField[]> {
+    const dtos = await this.service.getCustomFields(token);
+    return dtos.map(AccountSetupMapper.toCustomFieldEntity);
+  }
+
+  async activateAccount(request: ActivateAccountRequest): Promise<AccountActivationResult> {
+    const dto = await this.service.activateAccount(request);
+    return AccountSetupMapper.toActivationResultEntity(dto);
   }
 }

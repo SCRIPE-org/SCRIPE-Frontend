@@ -93,6 +93,12 @@ export function DraggableCanvasItem({
   const Icon = ICON_MAP[catalog?.icon || "Image"] || Image;
   const isAbsolute = positionMode === "absolute";
   const store = useBuilderStore();
+  const componentId = component.id;
+  const isLocked = component.locked;
+  const compX = component.x;
+  const compY = component.y;
+  const compWidth = component.width;
+  const compHeight = component.height;
 
   // Drag state for absolute mode
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(
@@ -118,7 +124,7 @@ export function DraggableCanvasItem({
     transition,
     isDragging: isSortableDragging,
   } = useSortable({
-    id: component.id,
+    id: componentId,
     data: {
       type: component.type,
       source: "canvas",
@@ -130,7 +136,7 @@ export function DraggableCanvasItem({
   // ── Absolute mode: mouse-based drag ──
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
-      if (!isAbsolute || component.locked) return;
+      if (!isAbsolute || isLocked) return;
       e.preventDefault();
       e.stopPropagation();
       onSelect();
@@ -138,8 +144,8 @@ export function DraggableCanvasItem({
       dragRef.current = {
         startX: e.clientX,
         startY: e.clientY,
-        origX: component.x,
-        origY: component.y,
+        origX: compX,
+        origY: compY,
       };
       setIsDraggingLocal(true);
 
@@ -150,7 +156,7 @@ export function DraggableCanvasItem({
         // RTL: invert horizontal direction so visual drag matches movement
         const directedDx = isRTL ? -dx : dx;
         store.moveComponentAbsolute(
-          component.id,
+          componentId,
           dragRef.current.origX + directedDx,
           dragRef.current.origY + dy
         );
@@ -167,13 +173,13 @@ export function DraggableCanvasItem({
       document.addEventListener("mousemove", handleMove);
       document.addEventListener("mouseup", handleUp);
     },
-    [isAbsolute, component.locked, component.id, component.x, component.y, store, onSelect, isRTL]
+    [isAbsolute, isLocked, componentId, compX, compY, store, onSelect, isRTL]
   );
 
   // ── Absolute mode: resize handles ──
   const handleResizeStart = useCallback(
     (e: React.MouseEvent, handle: string) => {
-      if (!isAbsolute || component.locked) return;
+      if (!isAbsolute || isLocked) return;
       e.preventDefault();
       e.stopPropagation();
       store.beginInteraction();
@@ -181,10 +187,10 @@ export function DraggableCanvasItem({
       resizeRef.current = {
         startX: e.clientX,
         startY: e.clientY,
-        origW: component.width || 200,
-        origH: component.height || 100,
-        origX: component.x,
-        origY: component.y,
+        origW: compWidth || 200,
+        origH: compHeight || 100,
+        origX: compX,
+        origY: compY,
         handle,
       };
 
@@ -222,9 +228,9 @@ export function DraggableCanvasItem({
           newY += dy;
         }
 
-        store.resizeComponent(component.id, Math.max(40, newW), Math.max(20, newH));
+        store.resizeComponent(componentId, Math.max(40, newW), Math.max(20, newH));
         if (h.includes("left") || h.includes("top")) {
-          store.moveComponentAbsolute(component.id, newX, newY);
+          store.moveComponentAbsolute(componentId, newX, newY);
         }
       };
 
@@ -238,17 +244,7 @@ export function DraggableCanvasItem({
       document.addEventListener("mousemove", handleMove);
       document.addEventListener("mouseup", handleUp);
     },
-    [
-      isAbsolute,
-      component.locked,
-      component.id,
-      component.width,
-      component.height,
-      component.x,
-      component.y,
-      store,
-      isRTL,
-    ]
+    [isAbsolute, isLocked, componentId, compWidth, compHeight, compX, compY, store, isRTL]
   );
 
   // ── Style computation ──

@@ -1,3 +1,5 @@
+"use client";
+
 import { useCallback, useEffect, useState } from "react";
 import { customFieldsContainer } from "../../../../di";
 import type { EntityCustomFieldValueData } from "../../data/models/CustomFieldValueModel";

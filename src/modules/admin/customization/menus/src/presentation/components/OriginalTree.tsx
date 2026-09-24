@@ -90,9 +90,10 @@ function OriginalTreeNode({
   onSelectItem,
 }: OriginalTreeNodeProps) {
   const { t } = useI18n();
+  const nodeId = node.id;
   const hasChildren = node.children.length > 0;
-  const isExpanded = expandedNodes.has(node.id);
-  const isSelected = selectedItemId === node.id;
+  const isExpanded = expandedNodes.has(nodeId);
+  const isSelected = selectedItemId === nodeId;
 
   // Get override for current scope
   const override = scope === MenuOverrideScope.User ? node.userOverride : node.tenantOverride;
@@ -105,27 +106,27 @@ function OriginalTreeNode({
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      onSelectItem(node.id);
+      onSelectItem(nodeId);
     },
-    [node.id, onSelectItem]
+    [nodeId, onSelectItem]
   );
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
-        onSelectItem(node.id);
+        onSelectItem(nodeId);
       }
     },
-    [node.id, onSelectItem]
+    [nodeId, onSelectItem]
   );
 
   const handleExpandClick = useCallback(
     (e: React.MouseEvent) => {
       e.stopPropagation();
-      onToggleExpand(node.id);
+      onToggleExpand(nodeId);
     },
-    [node.id, onToggleExpand]
+    [nodeId, onToggleExpand]
   );
 
   return (

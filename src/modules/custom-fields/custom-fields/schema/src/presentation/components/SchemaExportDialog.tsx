@@ -58,15 +58,16 @@ export function SchemaExportDialog({ open, onOpenChange }: SchemaExportDialogPro
    * what someone cloning a schema between environments almost always wants. Scoping is the
    * narrowing choice, not the starting point.
    */
+  const entityTypes = vm.entityTypes ?? [];
   const entityTypeOptions = React.useMemo(
     () => [
       { value: ALL_ENTITY_TYPES_VALUE, label: t("schemaExport.allEntityTypes") },
-      ...(vm.entityTypes ?? []).map((item) => ({
+      ...entityTypes.map((item) => ({
         value: item.key,
         label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})`,
       })),
     ],
-    [vm.entityTypes, language, t]
+    [entityTypes, language, t]
   );
 
   const handleOpenChange = React.useCallback(

@@ -2478,6 +2478,115 @@ export const es = {
           rule4: "Una única versión publicada: solo una versión está activa a la vez; publicar un borrador desactualiza automáticamente la versión anterior.",
           rule5: "Los conjuntos gestionados por el sistema son estrictamente de solo lectura: los conjuntos estándar predefinidos no los puede modificar ningún usuario ni administrador.",
         },
+        encryption: {
+          title: "Gestión de claves criptográficas y cifrado de sobre",
+          description:
+            "Cifrado de sobre multiinquilino de nivel empresarial, rotación del llavero raíz de plataforma, vinculación AAD de texto cifrado y reempaquetado de base de datos sin tiempo de inactividad.",
+          intro:
+            "Al almacenar campos personalizados confidenciales o secretos (como identificadores fiscales, tokens biométricos, datos bancarios o autorizaciones de seguridad), SCRIPE aplica cifrado de sobre de grado de hardware. Cada valor está protegido mediante AES-256-GCM con claves criptográficas exclusivas del inquilino derivadas mediante HKDF-SHA256 desde el llavero raíz activo de la plataforma. El texto cifrado no se puede falsificar, no se puede descifrar bajo otro inquilino o entidad y se puede reempaquetar de forma segura entre rotaciones de claves sin tiempo de inactividad.",
+          archNoticeTitle: "Modelo de confianza cero empresarial",
+          archNoticeContent:
+            "El cifrado no es una ofuscación cosmética de la base de datos: el texto cifrado está vinculado criptográficamente a su inquilino, entidad y definición de campo mediante datos autenticados adicionales (AAD) de AES-GCM. Si un atacante altera un solo byte o copia el texto cifrado a otro registro, la autenticación falla inmediatamente.",
+          archTitle: "Arquitectura criptográfica principal",
+          archIntro:
+            "El subsistema de cifrado está estructurado en cinco capas de seguridad resilientes:",
+          featKeyringTitle: "Llavero raíz multiversión",
+          featKeyringDesc:
+            "Clave activa de plataforma para nuevas escrituras junto con un catálogo de claves históricas conservadas para lecturas fluidas sin tiempo de inactividad.",
+          featDerivationTitle: "Derivación HKDF por inquilino",
+          featDerivationDesc:
+            "Claves secretas aisladas por inquilino derivadas deterministamente mediante HKDF-SHA256 con sal de código de inquilino y etiquetas de aplicación.",
+          featEnvelopeTitle: "Trama binaria Magic Frame v2",
+          featEnvelopeDesc:
+            "Encabezado binario compacto que codifica la versión, el ID de clave de plataforma, la versión de clave del inquilino, un nonce de 96 bits y una etiqueta de autenticación de 128 bits.",
+          featAadTitle: "Vinculación criptográfica AAD",
+          featAadDesc:
+            "El texto cifrado está vinculado matemáticamente a TenantId, EntityId y FieldDefinitionId, lo que impide ataques de inyección entre entidades.",
+          featRewrapTitle: "Migración de reempaquetado en vivo en BD",
+          featRewrapDesc:
+            "Un worker en segundo plano itera por los registros de la base de datos utilizando lotes basados en cursor para volver a cifrar los datos bajo nuevas claves sin bloquear tablas.",
+          featCliTitle: "Operaciones unificadas en CLI y Studio",
+          featCliDesc:
+            "Herramientas operativas integrales mediante `scripe crypto` y el panel visual para desarrolladores de SCRIPE Studio.",
+          dualEnvelopeTitle: "Derivación de clave dividida de doble sobre",
+          dualEnvelopeIntro:
+            "SCRIPE aplica una separación criptográfica de conocimiento cero entre los operadores de la plataforma y los datos de los inquilinos mediante una jerarquía de claves divididas:",
+          thComponent: "Componente de clave",
+          thCustodian: "Almacenamiento y custodia",
+          thRole: "Responsabilidad criptográfica",
+          compPlatformKey: "KEK maestro de plataforma",
+          custPlatform: "Entorno de host / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Cifra los secretos de inquilinos en reposo. Los operadores no pueden descifrar datos de inquilinos sin su secreto.",
+          compTenantSecret: "Secreto criptográfico de inquilino",
+          custTenantDb: "Base de datos del inquilino (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Secreto CSPRNG único de 256 bits generado por inquilino. Almacenado cifrado bajo el KEK de plataforma activo.",
+          compSplitDek: "Clave de cifrado de datos derivada (DEK)",
+          custRuntimeMemory: "Solo memoria efímera (HKDF)",
+          roleSplitDek:
+            "Derivada en tiempo de ejecución mediante HKDF-SHA256 de la combinación del secreto de inquilino y la clave de plataforma. Nunca se almacena en disco.",
+          compAadBinding: "Etiqueta AAD contextual",
+          custCipherEngine: "Sobre AES-256-GCM",
+          roleAadBinding:
+            "Vincula criptográficamente el texto cifrado a TenantId, EntityId y FieldId, evitando ataques de inyección entre registros.",
+          autoProvisionTitle: "Aprovisionamiento automático sin fricción",
+          autoProvisionContent:
+            "Al crear un nuevo inquilino, `ITenantCryptographicProvisioner` aprovisiona automáticamente un secreto de 256 bits envuelto bajo el KEK de plataforma activo. Los inquilinos pueden registrar campos confidenciales de inmediato.",
+          frameTitle: "Especificación de transmisión Magic Frame v2",
+          frameIntro:
+            "Los valores cifrados se persisten como tramas binarias compactas codificadas en base64 conformes con la especificación v2:",
+          thByteOffset: "Desplazamiento en bytes",
+          thField: "Campo de encabezado",
+          thLength: "Longitud",
+          thDescription: "Propósito criptográfico",
+          descVersion: "Byte de versión Magic Frame (0x02 para tramas autenticadas v2).",
+          descPlatformKey: "Entero de 32 bits en formato big-endian que identifica la clave raíz de plataforma en el llavero.",
+          descTenantVersion: "Entero de 16 bits en formato big-endian que identifica la versión de rotación de clave del inquilino.",
+          descNonce: "Vector de inicialización aleatorio criptográficamente seguro de 96 bits generado por operación de cifrado.",
+          descAuthTag: "Etiqueta de autenticación GCM de 128 bits que verifica la integridad del texto cifrado y los datos AAD.",
+          descCiphertext: "Carga útil del valor de campo cifrada con AES-256-GCM.",
+          aadTitle: "Vinculación de datos autenticados adicionales (AAD)",
+          aadContent:
+            "Durante el cifrado y descifrado, el motor suministra `tenantId:entityId:fieldDefinitionId` como datos autenticados adicionales (AAD) al cifrador GCM. Esto garantiza que un número de identificación fiscal cifrado de la Empresa A no pueda ser copiado por un administrador malicioso en los registros de la Empresa B, ni transferido a otro campo dentro del mismo registro.",
+          lifecycleTitle: "Ciclo de vida de claves y bloqueo estricto",
+          lifecycleIntro:
+            "Las operaciones de claves del inquilino siguen un ciclo de vida estricto y auditable diseñado para evitar fugas sin cifrar:",
+          step1Title: "1. Bloqueo obligatorio de inicialización",
+          step1Content:
+            "Los administradores no pueden declarar campos personalizados 'Confidencial' o 'Secreto' hasta que se haya inicializado la clave criptográfica del inquilino. El validador de la API aplica esta regla en el servidor.",
+          step2Title: "2. Rotación de claves sin tiempo de inactividad",
+          step2Content:
+            "La rotación de una clave genera la versión N+1 para nuevas escrituras mientras que la versión N permanece habilitada en el llavero. Los registros históricos se leen de forma instantánea.",
+          step3Title: "3. Reempaquetado no bloqueante en base de datos",
+          step3Content:
+            "Un worker en segundo plano (`TenantKeyRewrapJob`) analiza los registros en lotes paginados por cursor, descifra utilizando claves históricas y vuelve a cifrar con la versión activa N+1.",
+          step4Title: "4. Registro de auditoría criptográfica",
+          step4Content:
+            "Cada evento de creación, rotación, revocación de clave y revelación individual de valor de campo se registra de forma inmutable con la identidad del actor, la dirección IP y la marca de tiempo.",
+          rewrapTitle: "Motor de migración y reempaquetado en vivo",
+          rewrapIntro:
+            "Los conjuntos de datos empresariales a gran escala requieren la migración de claves sin interrupciones del servicio ni bloqueos de tablas:",
+          thStrategy: "Estrategia operativa",
+          thBehavior: "Implementación del motor",
+          stratLocking: "Cero bloqueos de tabla",
+          behLocking: "Utiliza paginación por cursor y concurrencia optimista (`RowVersion`) para actualizar filas individuales sin bloqueos de tabla exclusivos.",
+          stratBatching: "Lotes por cursor configurables",
+          behBatching: "Procesa 500 registros por iteración de bucle, regulando la ejecución para evitar la saturación de E/S en instancias de base de datos de producción.",
+          stratResilience: "Resistente a fallos e idempotente",
+          behResilience: "Si el proceso se reinicia, el cursor se reanuda desde el último desplazamiento completado. Los registros ya migrados se omiten de forma segura.",
+          stratObservability: "Métricas y progreso en tiempo real",
+          behObservability: "Informa el recuento de procesados, fallos, rendimiento y porcentaje de finalización al panel de Studio y al portal de administración.",
+          stratCluster: "Reencapsulamiento de clúster de plataforma",
+          behCluster:
+            "Migración iniciada por SuperAdmin que reencapsula los secretos de todos los inquilinos bajo la nueva clave de plataforma y actualiza valores sin tiempo de inactividad.",
+          toolingTitle: "Interfaces de gestión",
+          toolingIntro:
+            "Los operadores y desarrolladores cuentan con tres interfaces complementarias para administrar el cifrado:",
+          toolPortal: "Portal de seguridad del inquilino: interfaz web en `/custom-fields/security` para rotación en autoservicio y supervisión del reempaquetado.",
+          toolCli: "SCRIPE CLI: conjunto completo de herramientas de terminal mediante `scripe crypto status`, `rotate`, `rewrap`, `verify` y `revoke`.",
+          toolStudio: "SCRIPE Studio: panel interactivo visual en `/crypto` con tablas de llaveros y barras de progreso de migración en vivo.",
+        },
       },
     },
   },

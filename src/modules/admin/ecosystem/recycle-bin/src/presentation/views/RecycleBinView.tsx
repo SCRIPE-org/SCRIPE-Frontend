@@ -44,6 +44,11 @@ export function RecycleBinView() {
   ];
 
   // ============ Columns ============
+  const canRestore = vm.canRestore;
+  const isRestoring = vm.isRestoring;
+  const handleRestore = vm.handleRestore;
+  const handleBulkRestore = vm.handleBulkRestore;
+
   const config: CrudConfig<DeletedItem> = useMemo(
     () => ({
       enableBulkActions: true,
@@ -107,17 +112,17 @@ export function RecycleBinView() {
       createFields: [],
       editFields: [],
       hideAddButton: true,
-      hideActionsColumn: !vm.canRestore,
+      hideActionsColumn: !canRestore,
       getActions: (): CrudAction<DeletedItem>[] => {
-        if (!vm.canRestore) return [];
+        if (!canRestore) return [];
         return [
           {
             label: t("recycleBin.restore"),
             onClick: (item: DeletedItem) =>
-              vm.handleRestore(item.entityType.toLowerCase(), item.id),
+              handleRestore(item.entityType.toLowerCase(), item.id),
             variant: "ghost" as const,
             icon: <RotateCcw className="h-4 w-4" aria-hidden="true" />,
-            loading: vm.isRestoring,
+            loading: isRestoring,
             confirmTitle: t("recycleBin.confirmRestore"),
             confirmDescription: t("recycleBin.confirmRestoreDesc"),
             confirmVariant: "default" as const,
@@ -125,11 +130,11 @@ export function RecycleBinView() {
           },
         ];
       },
-      bulkActions: vm.canRestore
+      bulkActions: canRestore
         ? [
             {
               label: t("recycleBin.bulkRestore"),
-              onClick: async (selectedIds: string[]) => vm.handleBulkRestore(selectedIds),
+              onClick: async (selectedIds: string[]) => handleBulkRestore(selectedIds),
               variant: "default" as const,
               icon: <RotateCcw className="h-4 w-4" aria-hidden="true" />,
               requiresConfirmation: true,
@@ -146,7 +151,7 @@ export function RecycleBinView() {
         canDelete: false,
       },
     }),
-    [t, vm.canRestore, vm.isRestoring, vm.handleRestore, vm.handleBulkRestore]
+    [t, canRestore, isRestoring, handleRestore, handleBulkRestore]
   );
 
   // Selection state
@@ -193,21 +198,7 @@ export function RecycleBinView() {
       isUpdating: false,
       isDeleting: false,
     }),
-    [
-      vm.currentItems,
-      vm.isLoading,
-      vm.error,
-      vm.filteredCount,
-      vm.pageSize,
-      vm.page,
-      vm.pagesCount,
-      vm.searchValue,
-      vm.handleSearchChange,
-      vm.changePage,
-      vm.changePageSize,
-      vm.refreshItems,
-      selectedItems,
-    ]
+    [vm, selectedItems]
   );
 
   return (

@@ -44,12 +44,13 @@ export function useTemplateCustomFields(
     setCustomFieldValues((prev) => ({ ...prev, [name]: value }));
   }, []);
 
+  const templateFieldConfigs = customFieldsQuery.fieldConfigs;
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
-      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+      assertSelectCustomFieldValuesValid(templateFieldConfigs, customFieldValues, t);
 
       const decoded: Record<string, unknown> = {};
-      for (const fc of customFieldsQuery.fieldConfigs) {
+      for (const fc of templateFieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
         if (key === null) continue;
         const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
@@ -62,7 +63,7 @@ export function useTemplateCustomFields(
         decoded
       );
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues, t]
+    [templateFieldConfigs, customFieldValues, t]
   );
 
   return {

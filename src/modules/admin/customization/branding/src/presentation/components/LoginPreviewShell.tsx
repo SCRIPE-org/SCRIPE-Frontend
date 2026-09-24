@@ -125,12 +125,14 @@ export function LoginPreviewShell() {
     }
   }, []);
 
+  const readingGuide = a11y.readingGuide;
+  const readingMask = a11y.readingMask;
   useEffect(() => {
-    if (a11y.readingGuide || a11y.readingMask) {
+    if (readingGuide || readingMask) {
       document.addEventListener("mousemove", onMouseMove);
       return () => document.removeEventListener("mousemove", onMouseMove);
     }
-  }, [a11y.readingGuide, a11y.readingMask, onMouseMove]);
+  }, [readingGuide, readingMask, onMouseMove]);
 
   // Count active accessibility features for badge
   const activeA11yCount = [

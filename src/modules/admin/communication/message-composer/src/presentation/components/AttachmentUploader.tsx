@@ -89,10 +89,12 @@ export function AttachmentUploader({
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const currentAttachmentsCount = attachments.length;
+
   const handleFiles = useCallback(
     (fileList: FileList) => {
       const files = Array.from(fileList);
-      const remaining = maxFiles - attachments.length;
+      const remaining = maxFiles - currentAttachmentsCount;
 
       const withinSize = files.filter((f) => f.size <= maxSizeMb * 1024 * 1024);
       const hasOversized = withinSize.length < files.length;
@@ -111,7 +113,7 @@ export function AttachmentUploader({
 
       if (valid.length > 0) onAdd(valid);
     },
-    [attachments.length, maxFiles, maxSizeMb, onAdd, t]
+    [currentAttachmentsCount, maxFiles, maxSizeMb, onAdd, t]
   );
 
   const handleDrop = useCallback(

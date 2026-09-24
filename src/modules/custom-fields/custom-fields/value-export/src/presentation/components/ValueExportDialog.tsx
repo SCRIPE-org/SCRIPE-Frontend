@@ -42,13 +42,14 @@ export function ValueExportDialog({ open, onOpenChange }: ValueExportDialogProps
   const { t, language } = useI18n();
   const vm = useValueExportViewModel();
 
+  const entityTypes = vm.entityTypes;
   const entityTypeOptions = React.useMemo(
     () =>
-      vm.entityTypes.map((item) => ({
+      entityTypes.map((item) => ({
         value: item.key,
         label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})`,
       })),
-    [vm.entityTypes, language]
+    [entityTypes, language]
   );
 
   const handleOpenChange = React.useCallback(

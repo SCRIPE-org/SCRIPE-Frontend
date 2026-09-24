@@ -185,45 +185,32 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
     // The Settings inputStyle values, mapped onto the same token-backed
     // treatments as the Wave-A Input recipe (legacy stored values fall back
     // to default through resolveFieldStyle).
-    const getContainerRoundedClass = React.useCallback(() => {
-      const style = resolveFieldStyle(settings.inputStyle);
-      if (style === "underlined") {
-        return "rounded-none border-0 border-b border-nx-line px-0";
-      }
-      if (style === "rounded") {
-        return "rounded-full px-1";
-      }
-      if (style === "filled") {
-        return "rounded-nx-control border-transparent bg-nx-raised";
-      }
-      return "rounded-nx-control";
-    }, [settings.inputStyle]);
+    const inputStyle = settings.inputStyle;
+    const resolvedStyle = resolveFieldStyle(inputStyle);
+    const containerRoundedClass =
+      resolvedStyle === "underlined"
+        ? "rounded-none border-0 border-b border-nx-line px-0"
+        : resolvedStyle === "rounded"
+          ? "rounded-full px-1"
+          : resolvedStyle === "filled"
+            ? "rounded-nx-control border-transparent bg-nx-raised"
+            : "rounded-nx-control";
 
     // Focus lights the edge — the composite field carries the Input recipe on
     // focus-within: border to accent plus the --nx-focus inset line/wash ring.
-    const getFocusClasses = React.useCallback(() => {
-      const style = resolveFieldStyle(settings.inputStyle);
-      if (style === "underlined") {
-        return "focus-within:border-nx-accent";
-      }
-      return "focus-within:border-nx-accent focus-within:shadow-nx-focus";
-    }, [settings.inputStyle]);
+    const focusClasses =
+      resolvedStyle === "underlined"
+        ? "focus-within:border-nx-accent"
+        : "focus-within:border-nx-accent focus-within:shadow-nx-focus";
 
     // The select's outer corners are always the field's start side; logical
     // classes resolve them per direction, so no isRTL fork is needed here.
-    const getSelectRoundedClass = React.useCallback(() => {
-      const style = resolveFieldStyle(settings.inputStyle);
-      if (style === "underlined") {
-        return "rounded-none";
-      }
-      if (style === "rounded") {
-        return "rounded-s-full";
-      }
-      if (style === "filled") {
-        return "rounded-s-nx-control";
-      }
-      return "rounded-s-nx-control";
-    }, [settings.inputStyle]);
+    const selectRoundedClass =
+      resolvedStyle === "underlined"
+        ? "rounded-none"
+        : resolvedStyle === "rounded"
+          ? "rounded-s-full"
+          : "rounded-s-nx-control";
 
     // The number input is remount-sensitive (a new component identity drops
     // focus mid-typing), so it is memoised with EMPTY deps. aria-invalid
@@ -249,6 +236,7 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       );
     }, []);
 
+    const isDisabled = props.disabled;
     const CountrySelectComponent = React.useMemo(() => {
       return function CountrySelectComponent({
         value: countryVal,
@@ -263,29 +251,22 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
               setActiveCountry(newCountry);
             }}
             options={options}
-            disabled={props.disabled}
+            disabled={isDisabled}
             labels={labels}
-            roundedClass={getSelectRoundedClass()}
+            roundedClass={selectRoundedClass}
             isRTL={isRTL}
           />
         );
       };
-    }, [props.disabled, labels, getSelectRoundedClass, isRTL]);
+    }, [isDisabled, labels, selectRoundedClass, isRTL]);
 
-    const placeholder = React.useMemo(() => {
-      return (
-        props.placeholder ||
-        getPlaceholderForCountry(activeCountry, t("components.phoneInput.placeholder"))
-      );
-    }, [props.placeholder, activeCountry, t]);
+    const placeholder =
+      props.placeholder ||
+      getPlaceholderForCountry(activeCountry, t("components.phoneInput.placeholder"));
 
-    const expectedLength = React.useMemo(() => {
-      return getExpectedLengthForCountry(activeCountry);
-    }, [activeCountry]);
+    const expectedLength = getExpectedLengthForCountry(activeCountry);
 
-    const enteredLength = React.useMemo(() => {
-      return getEnteredLength(value, activeCountry);
-    }, [value, activeCountry]);
+    const enteredLength = getEnteredLength(value, activeCountry);
 
     return (
       <div className="w-full">
@@ -298,8 +279,8 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
             "flex items-center border border-nx-line bg-nx-ground text-sm text-nx-ink transition-[border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter motion-reduce:transition-none",
             "hover:border-nx-line-hi",
             "has-[input:disabled]:cursor-not-allowed has-[input:disabled]:border-nx-line has-[input:disabled]:bg-nx-raised has-[input:disabled]:shadow-none",
-            getContainerRoundedClass(),
-            getFocusClasses(),
+            containerRoundedClass,
+            focusClasses,
             // Error re-hues the lit edge to the measured danger token — same
             // geometry as --nx-focus, different hue, so the field reads wrong
             // without shouting.

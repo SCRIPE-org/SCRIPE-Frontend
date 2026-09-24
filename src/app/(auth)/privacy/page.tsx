@@ -37,6 +37,7 @@ export default function PrivacyPage() {
           alt={BRAND.name}
           width={40}
           height={40}
+          priority
           className="mb-2 h-10 w-auto"
         />
         <span

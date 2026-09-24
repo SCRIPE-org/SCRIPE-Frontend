@@ -244,12 +244,13 @@ export function BillingDashboardView() {
     [t]
   );
 
+  const dashboardCurrency = dashboard?.currency;
   const formatCurrency = useCallback(
     (val: number) => {
       try {
         return new Intl.NumberFormat("en-US", {
           style: "currency",
-          currency: dashboard?.currency?.toUpperCase() ?? "USD",
+          currency: dashboardCurrency?.toUpperCase() ?? "USD",
           minimumFractionDigits: 0,
           maximumFractionDigits: 0,
         }).format(val);
@@ -257,7 +258,7 @@ export function BillingDashboardView() {
         return `$${val.toLocaleString()}`;
       }
     },
-    [dashboard?.currency]
+    [dashboardCurrency]
   );
 
   // ── Loading state ──

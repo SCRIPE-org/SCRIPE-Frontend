@@ -17,6 +17,8 @@ import { PageHeader } from "@core/ui/page-header";
 import { BarChart3, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
+import { useAdminContext } from "@core/hooks/useAdminContext";
+import { Badge } from "@core/ui/badge";
 
 // Lazy-load chart components (below-the-fold)
 const AdminDistributionPie = dynamic(
@@ -35,14 +37,16 @@ const ReportExportDialog = dynamic(
 );
 
 /**
- * Presentation UI component rendering the tenant analytics view.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*).
+ * Presentation UI component rendering the analytics view.
+ * Dynamically adjusts context between Platform Intelligence (cross-tenant)
+ * and Workspace Insights (organization-scoped).
  */
 export function TenantAnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");
 
   const vm = useTenantAnalyticsViewModel();
   const { t } = useI18n();
+  const { isPlatform, activeTenantName } = useAdminContext();
   const [exportOpen, setExportOpen] = useState(false);
   const pathname = usePathname();
   const isStandalone = pathname === "/analytics";
@@ -50,19 +54,26 @@ export function TenantAnalyticsView() {
   const theme = useDashboardTheme();
   const { cardClasses } = theme;
 
+  const title = isPlatform
+    ? "Platform Intelligence"
+    : "Workspace Insights & Adoption";
+
+  const subtitle = isPlatform
+    ? "Cross-tenant adoption, administrator activity distribution, and platform authentication trends"
+    : `Usage analytics, team adoption, and authentication activity for ${activeTenantName || "this organization"}`;
+
   return (
     <div className="space-y-6">
-      {/* TenantAnalyticsView is embedded as a tab inside DashboardView, which
-          already carries its own PageHeader — rendering this one too would
-          stack two icon-tile headers on the same screen. Only the standalone
-          /analytics route gets the full header. */}
       {isStandalone && (
         <PageHeader
           icon={BarChart3}
-          title={t("tenantAnalytics.title")}
-          description={t("tenantAnalytics.subtitle")}
+          title={title}
+          description={subtitle}
           actions={
             <>
+              <Badge variant="outline" className="px-2.5 py-1 text-xs">
+                {isPlatform ? "Platform Context" : "Tenant Context"}
+              </Badge>
               <Button
                 variant="outline"
                 size="sm"

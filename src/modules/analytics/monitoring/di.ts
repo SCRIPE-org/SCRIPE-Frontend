@@ -20,18 +20,22 @@ import { DashboardRepository } from "./dashboard/src/data/repositories/Dashboard
 import { AuditRepository } from "./audit/src/data/repositories/AuditRepository";
 import { SecurityRepository } from "./security/src/data/repositories/SecurityRepository";
 import { AnalyticsRepository } from "./analytics/src/data/repositories/AnalyticsRepository";
+import { PlatformHealthService } from "./platform-health/src/data/services/PlatformHealthService";
+import { PlatformHealthRepository } from "./platform-health/src/data/repositories/PlatformHealthRepository";
 
 // Interfaces
 import type { IDashboardRepository } from "./dashboard/src/domain/interfaces/IDashboardRepository";
 import type { IAuditRepository } from "./audit/src/domain/interfaces/IAuditRepository";
 import type { ISecurityRepository } from "./security/src/domain/interfaces/ISecurityRepository";
 import type { IAnalyticsRepository } from "./analytics/src/domain/interfaces/IAnalyticsRepository";
+import type { IPlatformHealthRepository } from "./platform-health/src/domain/interfaces/IPlatformHealthRepository";
 
 export interface MonitoringContainer {
   dashboardRepository: IDashboardRepository;
   auditRepository: IAuditRepository;
   securityRepository: ISecurityRepository;
   analyticsRepository: IAnalyticsRepository;
+  platformHealthRepository: IPlatformHealthRepository;
 }
 
 let _container: MonitoringContainer | null = null;
@@ -52,6 +56,7 @@ export function getMonitoringContainer(): MonitoringContainer {
       auditRepository: dummyProxy,
       securityRepository: dummyProxy,
       analyticsRepository: dummyProxy,
+      platformHealthRepository: dummyProxy,
     };
   }
 
@@ -63,6 +68,7 @@ export function getMonitoringContainer(): MonitoringContainer {
       auditRepository: new AuditRepository(new AuditService(apiService)),
       securityRepository: new SecurityRepository(new SecurityService(apiService)),
       analyticsRepository: new AnalyticsRepository(new AnalyticsService(apiService)),
+      platformHealthRepository: new PlatformHealthRepository(new PlatformHealthService(apiService)),
     };
   }
 
@@ -84,5 +90,8 @@ export const monitoringContainer = {
   },
   get analyticsRepository() {
     return getMonitoringContainer().analyticsRepository;
+  },
+  get platformHealthRepository() {
+    return getMonitoringContainer().platformHealthRepository;
   },
 };

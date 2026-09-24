@@ -2690,6 +2690,115 @@ export const de = {
           rule5:
             "Systemverwaltete Sets sind strikt schreibgeschützt: Vorbefüllte Standardsets können von keinem Benutzer oder Administrator geändert werden.",
         },
+        encryption: {
+          title: "Kryptografische Schlüsselverwaltung & Umschlagverschlüsselung",
+          description:
+            "Mandantenfähige Umschlagverschlüsselung auf Unternehmensniveau, Plattform-Root-Keyring-Rotation, kryptografische AAD-Bindung und unterbrechungsfreie Datenbank-Migration.",
+          intro:
+            "Beim Speichern vertraulicher oder geheimer benutzerdefinierter Felder — wie Steuernummern, biometrischen Tokens, Bankverbindungen oder Sicherheitsfreigaben — wendet SCRIPE hardwarenahe Umschlagverschlüsselung an. Jeder Wert wird mit AES-256-GCM und mandanteneigenen kryptografischen Schlüsseln geschützt, die über HKDF-SHA256 aus dem aktiven Plattform-Root-Schlüsselbund abgeleitet werden. Geheimtext kann weder gefälscht noch unter einem anderen Mandanten oder einer anderen Entität entschlüsselt werden und lässt sich über Schlüsselrotationen hinweg ohne Ausfallzeiten sicher neu verschlüsseln.",
+          archNoticeTitle: "Zero-Trust-Sicherheitsmodell für Unternehmen",
+          archNoticeContent:
+            "Die Verschlüsselung ist keine oberflächliche Datenbank-Verschleierung: Der Geheimtext ist über Additional Authenticated Data (AAD) von AES-GCM mathematisch an seinen Mandanten, seine Entität und seine Felddefinition gebunden. Manipuliert ein Angreifer ein einziges Byte oder kopiert den Geheimtext in einen anderen Datensatz, schlägt die Authentifizierung sofort fehl.",
+          archTitle: "Zentrale kryptografische Architektur",
+          archIntro:
+            "Das Verschlüsselungssubsystem ist über fünf ausfallsichere Sicherheitsschichten aufgebaut:",
+          featKeyringTitle: "Multi-Versions-Root-Schlüsselbund",
+          featKeyringDesc:
+            "Aktiver Plattformschlüssel für neue Schreibvorgänge neben einem Katalog beibehaltener historischer Schlüssel für nahtlose Lesezugriffe ohne Ausfallzeit.",
+          featDerivationTitle: "Mandanten-HKDF-Ableitung",
+          featDerivationDesc:
+            "Mandantenisolierte Geheimschlüssel, deterministisch abgeleitet über HKDF-SHA256 mit Mandantencode-Salt und Anwendungskontext-Tags.",
+          featEnvelopeTitle: "Binärer Magic Frame v2",
+          featEnvelopeDesc:
+            "Kompakter Binär-Header zur Codierung von Version, Plattform-Schlüssel-ID, Mandanten-Schlüsselversion, 96-Bit-Nonce und 128-Bit-Authentifizierungs-Tag.",
+          featAadTitle: "Kryptografische AAD-Bindung",
+          featAadDesc:
+            "Geheimtext ist mathematisch an TenantId, EntityId und FieldDefinitionId gebunden, was entitätsübergreifende Injection-Angriffe verhindert.",
+          featRewrapTitle: "Live-DB-Migration ohne Tabellensperren",
+          featRewrapDesc:
+            "Hintergrund-Worker durchläuft Datensätze in cursorbasierten Batches zur Neuverschlüsselung unter aktuellen Schlüsseln ohne Tabellensperren.",
+          featCliTitle: "Einheitliche CLI- & Studio-Operationen",
+          featCliDesc:
+            "Vollständige operative Steuerung über `scripe crypto` und das visuelle Entwickler-Dashboard in SCRIPE Studio.",
+          dualEnvelopeTitle: "Duale geteilte Schlüsselableitung (Dual-Envelope)",
+          dualEnvelopeIntro:
+            "SCRIPE erzwingt eine kryptografische Zero-Knowledge-Trennung zwischen Plattformbetreibern und Mandantendaten über eine geteilte Schlüsselhierarchie:",
+          thComponent: "Schlüsselkomponente",
+          thCustodian: "Speicherung & Verwahrung",
+          thRole: "Kryptografische Verantwortung",
+          compPlatformKey: "Plattform-Haupt-KEK",
+          custPlatform: "Host-Umgebung / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Verschlüsselt Mandantengeheimnisse im Ruhezustand. Plattformbetreiber können Mandantendaten ohne das Mandantengeheimnis nicht entschlüsseln.",
+          compTenantSecret: "Kryptografisches Mandantengeheimnis",
+          custTenantDb: "Mandantendatenbank (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Eindeutiges 256-Bit-CSPRNG-Geheimnis pro Mandant. Gespeichert unter dem aktiven Plattform-KEK.",
+          compSplitDek: "Abgeleiteter Datenverschlüsselungsschlüssel (DEK)",
+          custRuntimeMemory: "Nur flüchtiger Speicher (HKDF)",
+          roleSplitDek:
+            "Zur Laufzeit via HKDF-SHA256 aus XOR von Plattformschlüssel und Mandantengeheimnis abgeleitet. Wird niemals auf Festplatte gespeichert.",
+          compAadBinding: "Kontextueller AAD-Tag",
+          custCipherEngine: "AES-256-GCM-Umschlag",
+          roleAadBinding:
+            "Bindet den Geheimtext mathematisch an TenantId, EntityId und FieldId, um Wiederholungs- und Injektionsangriffe zu verhindern.",
+          autoProvisionTitle: "Reibungslose automatische Bereitstellung",
+          autoProvisionContent:
+            "Bei Erstellung eines neuen Mandanten initialisiert `ITenantCryptographicProvisioner` automatisch ein 256-Bit-Geheimnis, geschützt durch den aktiven Plattform-KEK. Mandanten können sofort vertrauliche benutzerdefinierte Felder nutzen.",
+          frameTitle: "Spezifikation des binären Magic Frame v2",
+          frameIntro:
+            "Verschlüsselte Werte werden als kompakte Base64-codierte Binärframes persistiert, die der v2-Spezifikation entsprechen:",
+          thByteOffset: "Byte-Offset",
+          thField: "Header-Feld",
+          thLength: "Länge",
+          thDescription: "Kryptografischer Zweck",
+          descVersion: "Magic-Frame-Versionsbyte (0x02 für authentifizierte v2-Frames).",
+          descPlatformKey: "Big-Endian-32-Bit-Ganzzahl zur Identifikation des Plattform-Root-Schlüssels im Schlüsselbund.",
+          descTenantVersion: "Big-Endian-16-Bit-Ganzzahl zur Identifikation der Schlüsselrotationsversion des Mandanten.",
+          descNonce: "Kryptografisch sicherer, zufälliger 96-Bit-Initialisierungsvektor, der pro Verschlüsselungsvorgang generiert wird.",
+          descAuthTag: "128-Bit-GCM-Authentifizierungs-Tag zur Verifikation der Integrität von Geheimtext und AAD.",
+          descCiphertext: "Mit AES-256-GCM verschlüsselte Nutzlast des Feldwerts.",
+          aadTitle: "Zusätzliche authentifizierte Daten (AAD)",
+          aadContent:
+            "Während der Ver- und Entschlüsselung übergibt die Engine `tenantId:entityId:fieldDefinitionId` als Additional Authenticated Data (AAD) an die GCM-Chiffre. Dies garantiert, dass eine verschlüsselte Steuernummer von Unternehmen A weder von einem Administrator in die Datensätze von Unternehmen B kopiert noch in ein anderes Feld desselben Datensatzes verschoben werden kann.",
+          lifecycleTitle: "Schlüssellebenszyklus & Hard-Gating",
+          lifecycleIntro:
+            "Schlüsseloperationen für Mandanten folgen einem strengen, auditierbaren Lebenszyklus zum Schutz vor unverschlüsselten Datenlecks:",
+          step1Title: "1. Obligatorisches Initialisierungs-Gate",
+          step1Content:
+            "Administratoren können benutzerdefinierte Felder erst dann als 'Confidential' oder 'Secret' deklarieren, wenn der kryptografische Schlüssel des Mandanten initialisiert wurde. Der API-Validator erzwingt dies serverseitig.",
+          step2Title: "2. Unterbrechungsfreie Schlüsselrotation",
+          step2Content:
+            "Die Rotation eines Schlüssels erstellt Version N+1 für neue Schreibvorgänge, während Version N im Schlüsselbund aktiv bleibt. Historische Datensätze bleiben sofort lesbar.",
+          step3Title: "3. Nicht-blockierende Datenbank-Neuverschlüsselung",
+          step3Content:
+            "Ein asynchroner Hintergrund-Worker (`TenantKeyRewrapJob`) scannt Datensätze in cursorbasierten Batches, entschlüsselt mit historischen Schlüsseln und verschlüsselt mit der aktiven Version N+1 neu.",
+          step4Title: "4. Kryptografisches Audit-Protokoll",
+          step4Content:
+            "Jede Schlüsselerstellung, Rotation, Sperrung und jede einzelne Feldwert-Offenlegung wird unveränderlich mit Akteur-Identität, IP-Adresse und Zeitstempel protokolliert.",
+          rewrapTitle: "Live-Datenbank-Migrationsengine",
+          rewrapIntro:
+            "Große Unternehmensdatenbestände erfordern eine Schlüsselmigration ohne Systemausfallzeiten oder Tabellensperren:",
+          thStrategy: "Betriebsstrategie",
+          thBehavior: "Engine-Implementierung",
+          stratLocking: "Keine Tabellensperren",
+          behLocking: "Verwendet cursorbasierte Paginierung und optimistische Nebenläufigkeit (`RowVersion`), um Zeilen ohne exklusive Tabellensperren zu aktualisieren.",
+          stratBatching: "Konfigurierbare Cursor-Batches",
+          behBatching: "Verarbeitet 500 Datensätze pro Schleifendurchlauf und drosselt die Ausführung, um I/O-Engpässe auf Produktionsdatenbanken zu vermeiden.",
+          stratResilience: "Absturzsicher & idempotent",
+          behResilience: "Wird der Prozess neu gestartet, setzt der Cursor beim letzten bestätigten Offset fort. Bereits migrierte Datensätze werden sicher übersprungen.",
+          stratObservability: "Echtzeit-Metriken & Fortschritt",
+          behObservability: "Meldet verarbeitete Datensätze, Fehlerrate, Durchsatz und Fortschrittsprozentsatz an das Studio-Dashboard und Administrationsportal.",
+          stratCluster: "Plattformweites Cluster-Rewrap",
+          behCluster:
+            "SuperAdmin-Migration, die alle Mandantengeheimnisse unter dem neuen Plattformschlüssel neu verpackt und Datensätze ohne Ausfallzeit migriert.",
+          toolingTitle: "Verwaltungsschnittstellen",
+          toolingIntro:
+            "Betreiber und Entwickler verfügen über drei komplementäre Schnittstellen zur Verwaltung der Verschlüsselung:",
+          toolPortal: "Mandanten-Sicherheitsportal: Web-UI unter `/custom-fields/security` für Self-Service-Rotation und Migrationsüberwachung.",
+          toolCli: "SCRIPE CLI: Vollständige Terminal-Tools über `scripe crypto status`, `rotate`, `rewrap`, `verify` und `revoke`.",
+          toolStudio: "SCRIPE Studio: Visuelles interaktives Dashboard unter `/crypto` mit Schlüsselbund-Tabellen und Live-Fortschrittsanzeige.",
+        },
       },
     },
   },

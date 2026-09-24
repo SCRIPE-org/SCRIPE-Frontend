@@ -276,9 +276,10 @@ export function useSignupContentViewModel() {
     [deleteTrustMarkMutation]
   );
 
+  const trustMarks = contentQuery.data?.trustMarks;
   const handleMoveTrustMark = useCallback(
     (id: string, direction: "up" | "down") => {
-      const marks = contentQuery.data?.trustMarks ?? [];
+      const marks = trustMarks ?? [];
       const idx = marks.findIndex((m) => m.id === id);
       if (idx < 0) return;
       const newIdx = direction === "up" ? idx - 1 : idx + 1;
@@ -287,7 +288,7 @@ export function useSignupContentViewModel() {
       [reordered[idx], reordered[newIdx]] = [reordered[newIdx], reordered[idx]];
       reorderTrustMarksMutation.mutate({ orderedIds: reordered.map((m) => m.id), id });
     },
-    [contentQuery.data?.trustMarks, reorderTrustMarksMutation]
+    [trustMarks, reorderTrustMarksMutation]
   );
 
   const handleOpenAddLogo = useCallback(() => {
@@ -321,9 +322,10 @@ export function useSignupContentViewModel() {
     [deleteCustomerLogoMutation]
   );
 
+  const customerLogos = contentQuery.data?.customerLogos;
   const handleMoveLogo = useCallback(
     (id: string, direction: "up" | "down") => {
-      const logos = contentQuery.data?.customerLogos ?? [];
+      const logos = customerLogos ?? [];
       const idx = logos.findIndex((l) => l.id === id);
       if (idx < 0) return;
       const newIdx = direction === "up" ? idx - 1 : idx + 1;
@@ -332,7 +334,7 @@ export function useSignupContentViewModel() {
       [reordered[idx], reordered[newIdx]] = [reordered[newIdx], reordered[idx]];
       reorderCustomerLogosMutation.mutate({ orderedIds: reordered.map((l) => l.id), id });
     },
-    [contentQuery.data?.customerLogos, reorderCustomerLogosMutation]
+    [customerLogos, reorderCustomerLogosMutation]
   );
 
   return {

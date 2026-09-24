@@ -27,25 +27,25 @@ export function TabGroup({ tabs }: TabGroupProps) {
   const tabId = (idx: number) => `${baseId}-tab-${idx}`;
   const panelId = (idx: number) => `${baseId}-panel-${idx}`;
 
+  const tabsCount = tabs.length;
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
-      if (tabs.length === 0) return;
-
+      if (tabsCount === 0) return;
       const forward = direction === "rtl" ? "ArrowLeft" : "ArrowRight";
       const backward = direction === "rtl" ? "ArrowRight" : "ArrowLeft";
 
       let next: number | null = null;
-      if (event.key === forward) next = (activeTab + 1) % tabs.length;
-      else if (event.key === backward) next = (activeTab - 1 + tabs.length) % tabs.length;
+      if (event.key === forward) next = (activeTab + 1) % tabsCount;
+      else if (event.key === backward) next = (activeTab - 1 + tabsCount) % tabsCount;
       else if (event.key === "Home") next = 0;
-      else if (event.key === "End") next = tabs.length - 1;
+      else if (event.key === "End") next = tabsCount - 1;
 
       if (next === null) return;
       event.preventDefault();
       setActiveTab(next);
       document.getElementById(`${baseId}-tab-${next}`)?.focus();
     },
-    [activeTab, direction, tabs.length, baseId]
+    [activeTab, direction, tabsCount, baseId]
   );
 
   return (

@@ -9,7 +9,7 @@
  */
 "use client";
 
-import { useEffect, useMemo, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -97,22 +97,21 @@ export function useDashboardTheme() {
   const config = isStudioOpen ? draft : persistedConfig;
 
   // ── CSS class builders ──
-  const cardClasses = useMemo(() => {
-    const radius = radiusClassMap[config.kpiCards.borderRadius] || "rounded-lg";
-    const shadow = shadowClassMap[config.kpiCards.shadowLevel] || "shadow-none";
-    const border = config.kpiCards.showBorder ? "border" : "border-0";
-    return `${radius} ${shadow} ${border}`;
-  }, [config.kpiCards]);
+  const kpiCards = config.kpiCards;
+  const layout = config.layout;
 
-  const layoutClasses = useMemo(() => {
-    const gap = densityGapMap[config.layout.density] || "gap-4";
-    const cols = columnsClassMap[config.layout.columnsPerRow] || "xl:grid-cols-5";
-    return {
-      kpiGrid: `grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ${cols} ${gap}`,
-      pageSpacing: densityPaddingMap[config.layout.density] || "space-y-6",
-      sectionGap: gap,
-    };
-  }, [config.layout]);
+  const radius = radiusClassMap[kpiCards.borderRadius] || "rounded-lg";
+  const shadow = shadowClassMap[kpiCards.shadowLevel] || "shadow-none";
+  const border = kpiCards.showBorder ? "border" : "border-0";
+  const cardClasses = `${radius} ${shadow} ${border}`;
+
+  const gap = densityGapMap[layout.density] || "gap-4";
+  const cols = columnsClassMap[layout.columnsPerRow] || "xl:grid-cols-5";
+  const layoutClasses = {
+    kpiGrid: `grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ${cols} ${gap}`,
+    pageSpacing: densityPaddingMap[layout.density] || "space-y-6",
+    sectionGap: gap,
+  };
 
   // ── Save mutation ──
   const saveMutation = useMutation({

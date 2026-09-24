@@ -5,4 +5,6 @@ export const CUSTOM_FIELD_VALUE_ENDPOINTS = {
   VALUES: (entityTypeKey: string, ownerId: string) =>
     `${V1}/custom-fields/values/${entityTypeKey}/${ownerId}`,
   BULK_VALUES: (entityTypeKey: string) => `${V1}/custom-fields/values/${entityTypeKey}/bulk`,
+  REVEAL: (entityTypeKey: string, ownerId: string, fieldKey: string) =>
+    `${V1}/custom-fields/values/${entityTypeKey}/${ownerId}/reveal/${fieldKey}`,
 } as const;

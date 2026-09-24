@@ -64,6 +64,7 @@ export function NavItem({
   const hasChildren = item.children.length > 0;
   const isExpanded = expandedIds.includes(item.id);
 
+  const itemChildren = item.children;
   const hasActiveChild = React.useMemo(() => {
     if (!activeHref) return false;
     const cleanedActive = cleanPath(activeHref);
@@ -72,8 +73,8 @@ export function NavItem({
       if (node.children) return node.children.some(check);
       return false;
     };
-    return item.children.some(check);
-  }, [item.children, activeHref]);
+    return itemChildren.some(check);
+  }, [itemChildren, activeHref]);
 
   // Auto-expand if a child is active
   useEffect(() => {

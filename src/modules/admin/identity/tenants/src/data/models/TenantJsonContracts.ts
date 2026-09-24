@@ -32,6 +32,8 @@ export interface TenantJson {
   primaryDomain?: string;
   domainCount?: number;
   adminEmail?: string;
+  countryCode?: string;
+  timeZone?: string;
 }
 
 /**
@@ -92,12 +94,20 @@ export interface CreateTenantJson {
   address?: string;
   adminEmail: string;
   adminUsername?: string;
+  adminFirstName?: string;
+  adminLastName?: string;
+  adminPhoneNumber?: string;
+  adminPhone?: string;
+  adminCustomFieldValues?: Record<string, unknown>;
   editionId?: string;
   subscriptionType?: string;
   currency?: string;
   promotionId?: string;
   promoCode?: string;
   skipPayment?: boolean;
+  countryCode?: string;
+  timeZone?: string;
+  organizationType?: string;
 }
 
 /**
@@ -120,4 +130,6 @@ export interface UpdateTenantJson {
   description?: string;
   isActive?: boolean;
   address?: string;
+  countryCode?: string;
+  timeZone?: string;
 }

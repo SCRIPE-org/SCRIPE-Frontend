@@ -123,8 +123,9 @@ export function useRolePermissionsDialog({
     }
   }, [open]);
 
+  const roleId = role?.id;
   useEffect(() => {
-    if (open && role?.id) {
+    if (open && roleId) {
       // Role changed while dialog is open — reset so we re-initialize below
       setSearch("");
       setAssignments(new Map());
@@ -134,7 +135,7 @@ export function useRolePermissionsDialog({
       setInitializedRoleId(null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [role?.id]);
+  }, [roleId]);
 
   // ── Fetch tenant's available permissions GROUPED from backend ──
   // Returns PermissionModuleGroup[] (Module → Category → Permissions)
@@ -225,7 +226,7 @@ export function useRolePermissionsDialog({
     setExpandedModules(new Set(modulesWithSelection)); // auto-open modules that have selections
     setExpandedGroups(perModuleExpanded);
     setInitializedRoleId(role.id);
-  }, [open, role?.id, allPermissions, rolePermissions, loadingRole, initializedRoleId]);
+  }, [open, roleId, allPermissions, rolePermissions, loadingRole, initializedRoleId]);
 
   // Save mutation
   const saveMutation = useMutation({

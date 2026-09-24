@@ -10,6 +10,8 @@ import { MethodChipsSection } from "./MethodChipsSection";
 import { IdentifierInput } from "./IdentifierInput";
 import { CredentialsPasswordInput } from "./CredentialsPasswordInput";
 import { FormOptions } from "./FormOptions";
+import { UnactivatedAccountAlert } from "./UnactivatedAccountAlert";
+import { CredentialsErrorAlert } from "./CredentialsErrorAlert";
 
 interface CredentialsFormProps {
   formData: LoginFormData;
@@ -17,26 +19,25 @@ interface CredentialsFormProps {
   isLoading: boolean;
   isFormValid: boolean;
   error: string;
-  /** Animation key — incremented by parent ViewModel on each new error. */
   shakeKey: number;
   isRTL: boolean;
-  /** True when rendered on the platform login surface (shows "Create a workspace"). */
   isPlatformMode?: boolean;
   updateField: (field: keyof LoginFormData, value: any) => void;
   togglePasswordVisibility: () => void;
   handleLogin: () => void;
-  /** Called when user clicks "Email me a sign-in link". Receives current identifier. */
   onMagicLinkRequest?: (identifier: string) => void;
-  /** Auth method switch callbacks */
   onSwitchToPasskey?: () => void;
   onSwitchToPhoneOtp?: () => void;
   onSwitchToQrLogin?: () => void;
   errorAnnounce?: boolean;
+  isAccountNotActivated?: boolean;
+  accountNotActivatedMessage?: string;
+  cooldownSeconds?: number;
+  onResendSetupEmail?: () => void;
 }
 
 /**
- * Presentation UI component rendering the credentials form.
- * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
+ * Presentation UI component rendering the credentials form using @core/ui/* design system.
  */
 export function CredentialsForm({
   formData,
@@ -55,9 +56,12 @@ export function CredentialsForm({
   onSwitchToPhoneOtp,
   onSwitchToQrLogin,
   errorAnnounce = true,
+  isAccountNotActivated = false,
+  accountNotActivatedMessage = "",
+  cooldownSeconds = 0,
+  onResendSetupEmail,
 }: CredentialsFormProps) {
   const { t } = useI18n();
-
   const arrow = isRTL ? "←" : "→";
 
   /* ── Method chip data ─────────────────────────────── */
@@ -86,12 +90,7 @@ export function CredentialsForm({
       label: t("auth.qr.chip") || "QR code",
       onClick: onSwitchToQrLogin,
     },
-  ].filter(Boolean) as Array<{
-    key: string;
-    icon: React.ReactNode;
-    label: string;
-    onClick: () => void;
-  }>;
+  ].filter(Boolean) as Array<{ key: string; icon: React.ReactNode; label: string; onClick: () => void }>;
 
   return (
     <form
@@ -107,26 +106,23 @@ export function CredentialsForm({
       {/* ── Heading: eyebrow + title + subtitle ────────── */}
       <CredentialsFormHeader t={t} />
 
-      {/* ── Error alert (shakes on each new error) ─────── */}
-      {error && (
-        <div
-          key={shakeKey}
-          id="login-error"
-          className="sx-shake flex items-start gap-2.5 rounded-xl p-3.5"
-          role="alert"
-          style={{
-            background: "var(--sx-error-bg, rgba(248,113,113,.10))",
-            border: "1px solid var(--sx-error-border, rgba(248,113,113,.30))",
-            color: "var(--sx-error-text, #FCA5A5)",
-          }}
-          {...(errorAnnounce ? { "aria-live": "assertive" as const, "aria-atomic": "true" } : {})}
-        >
-          <span className="mt-0.5 shrink-0">⚠</span>
-          <p className="text-[13px] font-medium leading-snug">
-            {error.startsWith("auth.") ? t(error as any) : error}
-          </p>
-        </div>
-      )}
+      {/* ── Alerts ───────── */}
+      {isAccountNotActivated ? (
+        <UnactivatedAccountAlert
+          t={t}
+          accountNotActivatedMessage={accountNotActivatedMessage}
+          cooldownSeconds={cooldownSeconds}
+          isLoading={isLoading}
+          onResendSetupEmail={onResendSetupEmail}
+        />
+      ) : error ? (
+        <CredentialsErrorAlert
+          error={error}
+          shakeKey={shakeKey}
+          errorAnnounce={errorAnnounce}
+          t={t}
+        />
+      ) : null}
 
       {/* ── Identifier ─────────────────────────────────── */}
       <IdentifierInput

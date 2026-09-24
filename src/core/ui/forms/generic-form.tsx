@@ -58,14 +58,18 @@ import { DatePicker } from "@core/ui/date-picker";
 import { RichTextEditor } from "@core/ui/rich-text-editor";
 import { ImageUploader } from "@core/ui/image-uploader";
 import { PasswordInput } from "@core/ui/password-input";
+import { PhoneInput, isValidPhoneNumber } from "@core/ui/phone-input";
 import { usePermissions } from "@core/providers/permission-provider";
 import type { PermissionCode } from "@core/common/types/permissions";
+import { AlertCircle } from "lucide-react";
+import { parseApiValidationError } from "@core/common/api-validation-error";
 // Type-only for the props contract, plus the registry READ. Not a cycle: this
 // module is `core`, and customFieldsExtension.tsx's own import of `FieldConfig`
 // from this file is `import type`, erased at build — its only runtime imports
 // are react and the i18n provider.
 import {
   getCustomFieldsExtension,
+  decodeCustomFieldName,
   type CustomFieldFormControlProps,
 } from "@core/crud/customFieldsExtension";
 
@@ -77,6 +81,8 @@ export interface FieldOption {
   value: string;
   /** The display label for the option */
   label: string;
+  /** Whether this option is disabled */
+  disabled?: boolean;
   /** Nested options for hierarchical structures (e.g., tree selects) */
   children?: FieldOption[];
   /** Unique key for deduplication when value may change between API calls */
@@ -200,6 +206,7 @@ export interface FieldConfig {
     | "media-file"
     | "media-image"
     | "rich-text"
+    | "phone"
     | "tel"
     | "url"
     | "textarea"
@@ -227,7 +234,8 @@ export interface FieldConfig {
     | "image";
   placeholder?: string;
   searchPlaceholder?: string; // For searchable selects
-  required?: boolean;
+  defaultCountry?: string; // For phone/tel inputs (ISO country code e.g. "EG", "SA", "US")
+  required?: boolean | ((formData: Record<string, any>) => boolean);
   options?: FieldOption[];
   treeData?: FieldOption[]; // For tree select type
   defaultValue?: any;
@@ -291,6 +299,7 @@ export interface FieldConfig {
   disabled?: boolean; // Disable field
   // Validation
   pattern?: string; // For text inputs
+  patternError?: string; // Custom error message when pattern fails
   minLength?: number; // For text inputs
   maxLength?: number; // For text inputs
   // Permissions
@@ -330,6 +339,7 @@ interface GenericFormProps {
   onSubmit: (data: Record<string, any>) => Promise<void>;
   onCancel: () => void;
   readOnly?: boolean; // New prop for read-only mode
+  showErrorSummary?: boolean; // Optional prop to render top error summary banner (default: false)
 }
 
 /**
@@ -672,6 +682,11 @@ function CustomFieldExtensionControl({
     <div className="space-y-2">
       <Label htmlFor={field.name} className="text-start">
         {field.label}
+        {isFieldRequired(field) && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       {/* eslint-disable-next-line jsx-a11y/role-supports-aria-props --
           `aria-invalid` is a GLOBAL ARIA state (WAI-ARIA 1.1 promoted it to
@@ -748,8 +763,22 @@ function CustomFieldExtensionControl({
  * @param val The current form value for that field.
  * @returns True when the value should be reported as a missing required field.
  */
+/**
+ * Determines whether a field is required, evaluating dynamic predicates against formData if provided.
+ */
+export function isFieldRequired(
+  field: FieldConfig,
+  formData?: Record<string, any>
+): boolean {
+  if (typeof field.required === "function") {
+    return Boolean(field.required(formData ?? {}));
+  }
+  return Boolean(field.required);
+}
+
 function isRequiredFieldEmpty(field: FieldConfig, val: unknown): boolean {
   if (val === undefined || val === null || val === "") return true;
+  if (typeof val === "string" && val.trim() === "") return true;
   if (Array.isArray(val)) return val.length === 0;
 
   const isEnvelopeEmpty = OBJECT_VALUED_EMPTINESS_CHECKS[field.type];
@@ -767,6 +796,7 @@ export function GenericForm({
   onSubmit,
   onCancel,
   readOnly = false,
+  showErrorSummary = false,
 }: GenericFormProps) {
   const settings = useSettings();
   const { t, direction } = useI18n();
@@ -887,6 +917,8 @@ export function GenericForm({
       "radio",
       "slider",
       "range",
+      "phone",
+      "tel",
       "date",
       "datetime",
       "datetime-local",
@@ -917,30 +949,86 @@ export function GenericForm({
       ...EXTENSION_DRAWN_FIELD_TYPES,
     ]);
 
+    const shouldDeferCustomFields = Boolean(formData.deferCustomFieldsToSetup);
+
     const newErrors: Record<string, string> = {};
     fields.forEach((field) => {
       // Skip fields that aren't visible
       if (field.isVisible && !field.isVisible(formData)) return;
-      // Skip fields that don't require validation
-      if (!field.required) return;
-      // Only validate custom component types (native inputs are validated by browser)
-      if (!customTypes.has(field.type)) return;
 
-      // Object-aware since Wave 4 -- the inline scalar/array-only expression
-      // this replaced treated EVERY object as filled, so a required
-      // entity-reference field with nothing picked submitted empty. See
-      // `isRequiredFieldEmpty` for the full reasoning and for why no existing
-      // field type's behaviour changes.
-      if (isRequiredFieldEmpty(field, formData[field.name])) {
-        // No `|| "English literal"` fallback: t() returns the bare key on a
-        // miss, never a falsy value, so the fallback was dead code that could
-        // only ever ship untranslated English.
+      // Skip custom fields if deferred to the account setup phase
+      if (shouldDeferCustomFields && decodeCustomFieldName(field.name) !== null) {
+        return;
+      }
+
+      const val = formData[field.name];
+
+      // Format validation for phone/tel inputs when a value is provided
+      if (
+        (field.type === "phone" || field.type === "tel") &&
+        typeof val === "string" &&
+        val.trim() !== "" &&
+        !isValidPhoneNumber(val)
+      ) {
+        newErrors[field.name] = t("validation.invalidPhone");
+        return;
+      }
+      // Format validation for email inputs when a value is provided
+      if (
+        (field.type === "email" || field.name.toLowerCase().includes("email")) &&
+        typeof val === "string" &&
+        val.trim() !== "" &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())
+      ) {
+        newErrors[field.name] = t("validation.invalidEmail");
+        return;
+      }
+
+      // Pattern validation for inputs with pattern attribute
+      if (
+        (field as any).pattern &&
+        typeof val === "string" &&
+        val.trim() !== "" &&
+        !new RegExp((field as any).pattern).test(val)
+      ) {
+        newErrors[field.name] = (field as any).patternError || t("validation.patternMismatch") || "Invalid format";
+        return;
+      }
+
+      // Check required
+      const required = isFieldRequired(field, formData);
+      if (!required) return;
+
+      if (isRequiredFieldEmpty(field, val)) {
         newErrors[field.name] = t("validation.required");
       }
     });
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
+      // Auto-scroll and focus first invalid field in DOM order
+      const firstErrorField = visibleFields.find((f) => newErrors[f.name]);
+      if (firstErrorField) {
+        setTimeout(() => {
+          const el =
+            document.getElementById(firstErrorField.name) ||
+            document.querySelector(`[name="${firstErrorField.name}"]`) ||
+            document.querySelector(`[data-field-name="${firstErrorField.name}"]`);
+          if (el) {
+            el.scrollIntoView?.({ behavior: "smooth", block: "center" });
+            const focusTarget =
+              el instanceof HTMLInputElement ||
+              el instanceof HTMLTextAreaElement ||
+              el instanceof HTMLSelectElement ||
+              el instanceof HTMLButtonElement
+                ? el
+                : el.querySelector<HTMLElement>("input, textarea, button, select, [tabindex]:not([tabindex='-1'])") || el;
+            if (focusTarget && typeof focusTarget.focus === "function") {
+              focusTarget.focus({ preventScroll: true });
+            }
+          }
+        }, 50);
+      }
       return;
     }
 
@@ -994,10 +1082,41 @@ export function GenericForm({
       });
       await onSubmit(submitData);
     } catch (error) {
-      // There was no catch at all. The CRUD viewmodels re-throw, so a failed
-      // save escaped as an unhandled rejection and the form rendered nothing —
-      // the user pressed Save, the spinner stopped, and no reason appeared.
-      setServerError(error instanceof Error ? error.message : String(error));
+      // Parse ASP.NET RFC 7807/9110 and standard API validation errors into field-level errors
+      const parsed = parseApiValidationError(
+        error,
+        fields.map((f) => f.name)
+      );
+      if (parsed.hasFieldErrors) {
+        setErrors((prev) => ({ ...prev, ...parsed.fieldErrors }));
+        const firstErrorField = visibleFields.find((f) => parsed.fieldErrors[f.name]);
+        if (firstErrorField) {
+          setTimeout(() => {
+            const el =
+              document.getElementById(firstErrorField.name) ||
+              document.querySelector(`[name="${firstErrorField.name}"]`) ||
+              document.querySelector(`[data-field-name="${firstErrorField.name}"]`);
+            if (el) {
+              el.scrollIntoView?.({ behavior: "smooth", block: "center" });
+              const focusTarget =
+                el instanceof HTMLInputElement ||
+                el instanceof HTMLTextAreaElement ||
+                el instanceof HTMLSelectElement ||
+                el instanceof HTMLButtonElement
+                  ? el
+                  : el.querySelector<HTMLElement>(
+                      "input, textarea, button, select, [tabindex]:not([tabindex='-1'])"
+                    ) || el;
+              if (focusTarget && typeof focusTarget.focus === "function") {
+                focusTarget.focus({ preventScroll: true });
+              }
+            }
+          }, 50);
+        }
+      }
+      setServerError(
+        parsed.summaryMessage || (error instanceof Error ? error.message : String(error))
+      );
     } finally {
       setLoading(false);
     }
@@ -1157,6 +1276,31 @@ export function GenericForm({
         data-protonpass-ignore="true"
         data-dashlane-ignore="true"
       >
+        {showErrorSummary && Object.keys(errors).length > 0 && (
+          <div
+            role="alert"
+            className="rounded-nx-md border border-destructive/30 bg-destructive/10 p-3.5 text-destructive"
+          >
+            <div className="flex items-start gap-2.5">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <div className="space-y-1 text-xs">
+                <p className="font-semibold">{t("validation.correctErrorsTitle")}</p>
+                <ul className="list-disc ps-4 space-y-0.5 text-[11px] text-destructive/90">
+                  {Object.entries(errors).map(([fieldName, errMsg]) => {
+                    const f = fields.find((item) => item.name === fieldName);
+                    const label = f?.label ? t(f.label) : fieldName;
+                    return (
+                      <li key={fieldName}>
+                        <span className="font-medium">{label}:</span> {errMsg}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
         {fieldGroups.map((group, groupIndex) => {
           // The two-column grid engages only when a grouped field opts in via colSpan
           const gridded = group.fields.some((f) => f.colSpan !== undefined && f.type !== "hidden");
@@ -1208,9 +1352,16 @@ export function GenericForm({
                 {field.type !== "switch" &&
                   field.type !== "checkbox" &&
                   !EXTENSION_DRAWN_FIELD_TYPES.has(field.type) && (
-                    <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
-                      {field.label}
-                    </Label>
+                    <div className="flex items-center gap-1">
+                      <Label htmlFor={field.name} className={cn(getLabelClasses(), "text-start")}>
+                        {field.label}
+                      </Label>
+                      {isFieldRequired(field, formData) && (
+                        <span className="text-destructive text-sm font-medium" aria-hidden="true">
+                          *
+                        </span>
+                      )}
+                    </div>
                   )}
                 {field.type === "select" ? (
                   <GenericSelect
@@ -1222,7 +1373,7 @@ export function GenericForm({
                     // renderCustomFieldControl.tsx's Select branch.
                     aria-label={field.label ?? field.name}
                     invalid={invalid}
-                    required={field.required}
+                    required={isFieldRequired(field, formData)}
                     describedBy={describedBy}
                     // `loading` reached only the searchable branch, so a plain
                     // select waiting on its options rendered as an empty list
@@ -1233,6 +1384,7 @@ export function GenericForm({
                       field.options?.map((opt) => ({
                         value: opt.value,
                         label: opt.label,
+                        disabled: opt.disabled,
                       })) || []
                     }
                     value={formData[field.name] ?? ""}
@@ -1248,13 +1400,14 @@ export function GenericForm({
                     id={field.name}
                     aria-label={field.label ?? field.name}
                     invalid={invalid}
-                    required={field.required}
+                    required={isFieldRequired(field, formData)}
                     describedBy={describedBy}
                     type="searchable"
                     options={
                       field.options?.map((opt) => ({
                         value: opt.value,
                         label: opt.label,
+                        disabled: opt.disabled,
                       })) || []
                     }
                     value={formData[field.name] ?? ""}
@@ -1334,7 +1487,7 @@ export function GenericForm({
                     id={field.name}
                     aria-label={field.label ?? field.name}
                     invalid={invalid}
-                    required={field.required}
+                    required={isFieldRequired(field, formData)}
                     describedBy={describedBy}
                     loading={field.loading}
                     type="tree"
@@ -1393,13 +1546,28 @@ export function GenericForm({
                     removeLabel={field.removeLabel ?? "Remove"}
                     emptyHint={field.emptyHint ?? ""}
                   />
+                ) : field.type === "phone" || field.type === "tel" ? (
+                  <PhoneInput
+                    id={field.name}
+                    value={formData[field.name] ?? ""}
+                    onChange={(value) => handleChange(field.name, value)}
+                    placeholder={field.placeholder}
+                    disabled={inert}
+                    defaultCountry={field.defaultCountry as any}
+                    error={errors[field.name]}
+                    className={cn(getInputHeight(), "text-start")}
+                  />
                 ) : field.type === "textarea" ? (
                   <Textarea
                     id={field.name}
                     value={formData[field.name] ?? ""}
                     onChange={(e) => handleChange(field.name, e.target.value)}
-                    required={field.required}
-                    className={cn(getInputClasses("min-h-20"), "text-start")}
+                    required={isFieldRequired(field, formData)}
+                    className={cn(
+                      getInputClasses("min-h-20"),
+                      "text-start",
+                      invalid && "border-destructive focus-visible:ring-destructive"
+                    )}
                     placeholder={field.placeholder}
                     rows={field.rows || 4}
                     disabled={field.disabled}
@@ -1428,6 +1596,11 @@ export function GenericForm({
                   <div className="flex items-center justify-between gap-3">
                     <Label htmlFor={field.name} className="text-start">
                       {field.label}
+                      {isFieldRequired(field, formData) && (
+                        <span className="text-destructive ms-1" aria-hidden="true">
+                          *
+                        </span>
+                      )}
                     </Label>
                     <Switch
                       id={field.name}
@@ -1450,6 +1623,11 @@ export function GenericForm({
                     />
                     <Label htmlFor={field.name} className="cursor-pointer text-start">
                       {field.label}
+                      {isFieldRequired(field, formData) && (
+                        <span className="text-destructive ms-1" aria-hidden="true">
+                          *
+                        </span>
+                      )}
                     </Label>
                   </div>
                 ) : field.type === "radio" ? (
@@ -1509,8 +1687,8 @@ export function GenericForm({
                     type={field.type === "datetime" ? "datetime-local" : (field.type as any)}
                     value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
-                    required={field.required}
-                    className={getInputClasses(getInputHeight())}
+                    required={isFieldRequired(field, formData)}
+                    className={cn(getInputClasses(getInputHeight()), invalid && "border-destructive focus-visible:ring-destructive")}
                     placeholder={field.placeholder}
                     disabled={inert}
                   />
@@ -1521,7 +1699,7 @@ export function GenericForm({
                     onChange={(base64) => handleChange(field.name, base64)}
                     onRemove={() => handleChange(field.name, "")}
                     placeholder={field.placeholder}
-                    required={field.required}
+                    required={isFieldRequired(field, formData)}
                     disabled={inert}
                     className={getInputClasses(getInputHeight())}
                     accept={field.accept || "image/*"}
@@ -1541,8 +1719,8 @@ export function GenericForm({
                         handleChange(field.name, files?.[0] || null);
                       }
                     }}
-                    required={field.required}
-                    className={cn(getInputClasses(getInputHeight()), "text-start")}
+                    required={isFieldRequired(field, formData)}
+                    className={cn(getInputClasses(getInputHeight()), "text-start", invalid && "border-destructive focus-visible:ring-destructive")}
                     accept={field.accept}
                     multiple={field.multiple}
                     disabled={inert}
@@ -1556,8 +1734,8 @@ export function GenericForm({
                       id={field.name}
                       value={formData[field.name] ?? ""}
                       onChange={(e) => handleChange(field.name, e.target.value)}
-                      required={field.required}
-                      className={cn(getInputClasses(getInputHeight()), "text-start")}
+                      required={isFieldRequired(field, formData)}
+                      className={cn(getInputClasses(getInputHeight()), "text-start", invalid && "border-destructive focus-visible:ring-destructive")}
                       placeholder={field.placeholder}
                       disabled={field.disabled}
                       readOnly={readOnly}
@@ -1579,8 +1757,8 @@ export function GenericForm({
                       type={field.type}
                       value={formData[field.name] ?? ""}
                       onChange={(e) => handleChange(field.name, e.target.value)}
-                      required={field.required}
-                      className={cn(getInputClasses(getInputHeight()), "text-start")}
+                      required={isFieldRequired(field, formData)}
+                      className={cn(getInputClasses(getInputHeight()), "text-start", invalid && "border-destructive focus-visible:ring-destructive")}
                       placeholder={field.placeholder}
                       min={field.min}
                       max={field.max}
@@ -1611,8 +1789,9 @@ export function GenericForm({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       {errors[field.name] ? (
-                        <p id={errorId} className="text-xs font-medium text-nx-danger">
-                          {errors[field.name]}
+                        <p id={errorId} className="text-xs font-medium text-destructive flex items-center gap-1.5">
+                          <AlertCircle className="h-3.5 w-3.5 shrink-0 text-destructive" />
+                          <span>{errors[field.name]}</span>
                         </p>
                       ) : field.description ? (
                         <p id={hintId} className="text-xs leading-relaxed text-nx-ink-3">

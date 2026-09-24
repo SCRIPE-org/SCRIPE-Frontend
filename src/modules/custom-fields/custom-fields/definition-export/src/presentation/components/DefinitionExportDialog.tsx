@@ -64,15 +64,16 @@ export function DefinitionExportDialog({ open, onOpenChange }: DefinitionExportD
    * wants the whole list, and narrowing is the second thought — which is also the remedy the row-cap
    * refusal points at.
    */
+  const entityTypes = vm.entityTypes ?? [];
   const entityTypeOptions = React.useMemo(
     () => [
       { value: ALL_ENTITY_TYPES_VALUE, label: t("definitionExport.allEntityTypes") },
-      ...(vm.entityTypes ?? []).map((item) => ({
+      ...entityTypes.map((item) => ({
         value: item.key,
         label: `${language === "ar" ? item.displayNameAr : item.displayNameEn} (${item.key})`,
       })),
     ],
-    [vm.entityTypes, language, t]
+    [entityTypes, language, t]
   );
 
   const handleOpenChange = React.useCallback(

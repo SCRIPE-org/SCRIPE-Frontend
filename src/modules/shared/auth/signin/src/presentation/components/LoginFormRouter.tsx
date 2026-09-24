@@ -124,6 +124,10 @@ export function LoginFormRouter({
             onSwitchToPasskey={() => vm.setLoginStep("passkey")}
             onSwitchToPhoneOtp={() => vm.setLoginStep("phone-otp")}
             onSwitchToQrLogin={() => vm.setLoginStep("qr-login")}
+            isAccountNotActivated={vm.isAccountNotActivated}
+            accountNotActivatedMessage={vm.accountNotActivatedMessage}
+            cooldownSeconds={vm.cooldownSeconds}
+            onResendSetupEmail={vm.resendSetupEmail}
           />
           <SsoProviderButtons
             providers={sso.providers}

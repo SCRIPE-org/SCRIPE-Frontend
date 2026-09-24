@@ -2665,6 +2665,115 @@ export const en = {
           rule5:
             "System-managed sets are strictly read-only: seeded standard sets cannot be modified by any user or administrator.",
         },
+        encryption: {
+          title: "Cryptographic Key Management & Envelope Encryption",
+          description:
+            "Enterprise-grade multi-tenant envelope encryption, platform root keyring rotation, AAD ciphertext binding, and zero-downtime database rewrap.",
+          intro:
+            "When storing confidential or secret custom fields — such as tax identifiers, biometric tokens, banking details, or security clearances — SCRIPE applies hardware-grade envelope encryption. Every value is protected using AES-256-GCM with tenant-unique cryptographic keys derived via HKDF-SHA256 from the active platform root keyring. Ciphertext cannot be forged, cannot be decrypted under another tenant or entity, and can be safely rewrapped across key rotations with zero downtime.",
+          archNoticeTitle: "Enterprise zero-trust model",
+          archNoticeContent:
+            "Encryption is not a cosmetic database obfuscation: ciphertext is bound cryptographically to its tenant, entity, and field definition using AES-GCM Additional Authenticated Data (AAD). If an attacker tampers with a single byte or copies ciphertext to another record, authentication fails immediately.",
+          archTitle: "Core cryptographic architecture",
+          archIntro:
+            "The encryption subsystem is structured across five resilient security layers:",
+          featKeyringTitle: "Multi-version root keyring",
+          featKeyringDesc:
+            "Active platform key for new writes alongside a catalog of retained historical keys for seamless zero-downtime reads.",
+          featDerivationTitle: "Tenant HKDF derivation",
+          featDerivationDesc:
+            "Tenant-isolated secret keys derived deterministically using HKDF-SHA256 with tenant code salt and application info tags.",
+          featEnvelopeTitle: "Binary Magic Frame v2",
+          featEnvelopeDesc:
+            "Compact binary header encoding version, platform key ID, tenant version, 96-bit nonce, and 128-bit authentication tag.",
+          featAadTitle: "Cryptographic AAD binding",
+          featAadDesc:
+            "Ciphertext is mathematically bound to TenantId, EntityId, and FieldDefinitionId preventing cross-entity injection attacks.",
+          featRewrapTitle: "Live DB rewrap migration",
+          featRewrapDesc:
+            "Background worker iterates through database records using cursor batching to re-encrypt data under new keys without locking tables.",
+          featCliTitle: "Unified CLI & Studio ops",
+          featCliDesc:
+            "Full operational tooling via `scripe crypto` and the SCRIPE Studio visual developer dashboard.",
+          dualEnvelopeTitle: "Dual-Envelope Split-Key Derivation",
+          dualEnvelopeIntro:
+            "SCRIPE enforces a zero-knowledge cryptographic separation between platform operators and tenant data using a split-key envelope hierarchy:",
+          thComponent: "Key Component",
+          thCustodian: "Storage & Custody",
+          thRole: "Cryptographic Responsibility",
+          compPlatformKey: "Platform Master KEK",
+          custPlatform: "Host Environment / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Encrypts tenant secrets at rest. Platform operators cannot read tenant data without tenant secrets.",
+          compTenantSecret: "Tenant Cryptographic Secret",
+          custTenantDb: "Tenant Database (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Unique 256-bit CSPRNG secret generated per tenant. Stored encrypted under active Platform KEK.",
+          compSplitDek: "Derived Data Encryption Key (DEK)",
+          custRuntimeMemory: "Ephemeral Memory Only (HKDF)",
+          roleSplitDek:
+            "Derived at runtime via HKDF-SHA256 from XOR of Platform Key and Tenant Secret. Never persisted to disk.",
+          compAadBinding: "Contextual AAD Tag",
+          custCipherEngine: "AES-256-GCM Envelope",
+          roleAadBinding:
+            "Cryptographically binds ciphertext to TenantId, EntityId, and FieldId, preventing cross-entity and cross-tenant replay attacks.",
+          autoProvisionTitle: "Zero-friction automatic provisioning",
+          autoProvisionContent:
+            "When a new tenant is created via the Identity pipeline, `ITenantCryptographicProvisioner` automatically provisions and initializes a unique 256-bit cryptographic secret wrapped under the active platform master key. Tenants can immediately define and record confidential custom fields without manual key bootstrapping.",
+          frameTitle: "Binary Magic Frame v2 wire specification",
+          frameIntro:
+            "Encrypted values are persisted as compact base64-encoded binary frames that adhere to the v2 specification:",
+          thByteOffset: "Byte Offset",
+          thField: "Header Field",
+          thLength: "Length",
+          thDescription: "Cryptographic Purpose",
+          descVersion: "Magic Frame version byte (0x02 for v2 authenticated frames).",
+          descPlatformKey: "Big-endian 32-bit integer identifying the platform root key in the keyring.",
+          descTenantVersion: "Big-endian 16-bit integer identifying the tenant key rotation version.",
+          descNonce: "Cryptographically secure random 96-bit initialization vector generated per encryption operation.",
+          descAuthTag: "128-bit GCM authentication tag verifying ciphertext and AAD integrity.",
+          descCiphertext: "AES-256-GCM encrypted field value payload.",
+          aadTitle: "Additional Authenticated Data (AAD) binding",
+          aadContent:
+            "During encryption and decryption, the engine feeds `tenantId:entityId:fieldDefinitionId` as Additional Authenticated Data (AAD) to the GCM cipher. This guarantees that an encrypted tax number from Company A cannot be copied by a rogue database admin into Company B's records, nor can it be swapped into another field within the same record.",
+          lifecycleTitle: "Key lifecycle & hard gating",
+          lifecycleIntro:
+            "Tenant key operations follow a strict, auditable lifecycle designed to prevent unencrypted leaks:",
+          step1Title: "1. Mandatory key initialization gate",
+          step1Content:
+            "Administrators cannot declare `Confidential` or `Secret` custom fields until the tenant's cryptographic key has been initialized. The API validator enforces this rule server-side.",
+          step2Title: "2. Zero-downtime key rotation",
+          step2Content:
+            "Rotating a key creates version N+1 for new writes while version N remains enabled in the keyring. Historical records remain instantly readable.",
+          step3Title: "3. Non-blocking database rewrap",
+          step3Content:
+            "An asynchronous background worker (`TenantKeyRewrapJob`) scans records in cursor-paginated batches, decrypts using historical keys, and re-encrypts using active key version N+1.",
+          step4Title: "4. Cryptographic audit trail",
+          step4Content:
+            "Every key creation, rotation, revocation, and individual field value reveal event is immutably logged with actor identity, IP address, and timestamp.",
+          rewrapTitle: "Live database rewrap migration engine",
+          rewrapIntro:
+            "Large-scale enterprise datasets require key migration without database outages or table locks:",
+          thStrategy: "Operational Strategy",
+          thBehavior: "Engine Implementation",
+          stratLocking: "Zero table locks",
+          behLocking: "Uses cursor-based pagination and optimistic concurrency (`RowVersion`) to update individual rows without exclusive table locks.",
+          stratBatching: "Configurable cursor batching",
+          behBatching: "Processes 500 records per loop iteration, throttling execution to avoid I/O starvation on production database instances.",
+          stratResilience: "Crash-safe & idempotent",
+          behResilience: "If the process restarts, the cursor resumes from the last completed offset. Already-migrated records are skipped safely.",
+          stratObservability: "Real-time metrics & progress",
+          behObservability: "Reports processed count, failure count, throughput, and completion percentage to the Studio dashboard and admin portal.",
+          stratCluster: "Platform cluster rewrap",
+          behCluster:
+            "SuperAdmin-initiated migration that rewraps all tenant secrets under the rotated platform key and updates entity field values across all tenants with zero downtime.",
+          toolingTitle: "Management interfaces",
+          toolingIntro:
+            "Operators and developers have three complementary interfaces for managing encryption:",
+          toolPortal: "Tenant Security Portal: Web UI at `/custom-fields/security` for self-service rotation and rewrap monitoring.",
+          toolCli: "SCRIPE CLI: Comprehensive terminal tooling via `scripe crypto status`, `rotate`, `rewrap`, `verify`, and `revoke`.",
+          toolStudio: "SCRIPE Studio: Visual interactive dashboard at `/crypto` with keyring tables and live migration progress bars.",
+        },
       },
     },
   },

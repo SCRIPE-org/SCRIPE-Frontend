@@ -73,13 +73,15 @@
  * task's file ownership -- see this task's own report for that decision.
  */
 import * as React from "react";
+import { AlertCircle } from "lucide-react";
+import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Label } from "@core/ui/label";
 import { Button } from "@core/ui/button";
 import { DatePicker } from "@core/ui/date-picker";
 import { getBrowserLocalTimeZoneId } from "@core/utils/timezone";
 import { TimezonePicker } from "./TimezonePicker";
-import type { FieldConfig } from "@core/ui/forms/generic-form";
+import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { CustomFieldDateTimeValue } from "../../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
 export interface DateTimeCustomFieldControlProps {
@@ -88,6 +90,9 @@ export interface DateTimeCustomFieldControlProps {
   onChange: (value: CustomFieldDateTimeValue | null) => void;
   /** Mirrors every other renderCustomFieldControl branch's isViewMode contract. */
   isViewMode?: boolean;
+  invalid?: boolean;
+  describedBy?: string;
+  error?: string;
 }
 
 export function DateTimeCustomFieldControl({
@@ -95,39 +100,33 @@ export function DateTimeCustomFieldControl({
   value,
   onChange,
   isViewMode,
+  invalid,
+  describedBy,
+  error,
 }: DateTimeCustomFieldControlProps): React.ReactElement {
+  const isRequired = isFieldRequired(fc);
   const { t } = useI18n();
   const [isChangingZone, setIsChangingZone] = React.useState(false);
 
   const current =
-    value && typeof value === "object" ? (value as Partial<CustomFieldDateTimeValue>) : undefined;
-  const instant = current?.value ?? "";
-  const zone = current?.timeZoneId;
-  // Display-only fallback for the rare/anomalous case of an existing value
-  // that already has an instant but no zone (should not occur for a row this
-  // control itself ever wrote -- see header comment point 1). Shown, never
-  // silently hidden, and never persisted on mount: only an actual user
-  // interaction (typing a new instant, or explicitly changing the zone)
-  // writes a healed value back out.
-  const resolvedZone = zone || getBrowserLocalTimeZoneId();
+    value && typeof value === "object" ? (value as Partial<CustomFieldDateTimeValue>) : null;
+  const instant = typeof current?.value === "string" ? current.value : "";
+  const timeZoneId = typeof current?.timeZoneId === "string" ? current.timeZoneId : null;
+  const resolvedZone = timeZoneId ?? getBrowserLocalTimeZoneId();
 
   const handleInstantChange = (nextInstant: string) => {
-    if (!nextInstant) {
-      // Clears the WHOLE value -- never a zone-only half-blank object. See
-      // header comment point 2.
+    if (!nextInstant || nextInstant.trim() === "") {
       onChange(null);
       setIsChangingZone(false);
       return;
     }
-    onChange({
-      value: nextInstant,
-      timeZoneId: zone || getBrowserLocalTimeZoneId(),
-    });
+    const resolvedZone = timeZoneId ?? getBrowserLocalTimeZoneId();
+    onChange({ value: nextInstant, timeZoneId: resolvedZone });
   };
 
-  const handleZoneChange = (newZone: string) => {
-    if (!instant) return; // Defensive only -- the picker isn't rendered before an instant exists.
-    onChange({ value: instant, timeZoneId: newZone });
+  const handleZoneChange = (nextZone: string | null) => {
+    if (!instant || !nextZone) return;
+    onChange({ value: instant, timeZoneId: nextZone });
     setIsChangingZone(false);
   };
 
@@ -137,20 +136,34 @@ export function DateTimeCustomFieldControl({
     <div role="group" aria-label={fieldName} className="space-y-2">
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
+        {isRequired && (
+          <span className="text-destructive ms-1" aria-hidden="true">
+            *
+          </span>
+        )}
       </Label>
       <DatePicker
         id={fc.name}
         type="datetime-local"
         value={instant}
         onChange={handleInstantChange}
-        required={fc.required}
+        required={isRequired}
         disabled={isViewMode}
         // Same accessible-name fix as the Date branch in
         // renderCustomFieldControl.tsx: without a `placeholder`, DatePicker
         // computes its own internal aria-label as the generic
         // `t("common.selectDate")`, never the field's own name.
         placeholder={fc.placeholder || fieldName}
+        aria-invalid={invalid || undefined}
+        aria-describedby={invalid && describedBy ? describedBy : undefined}
+        className={cn(invalid && "border-destructive focus-visible:ring-destructive")}
       />
+      {invalid && error && (
+        <p id={describedBy} className="flex items-center gap-1 text-xs text-destructive">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          <span>{error}</span>
+        </p>
+      )}
       {instant && (
         <div className="flex flex-wrap items-center gap-2 text-xs text-nx-ink-3">
           {isChangingZone ? (

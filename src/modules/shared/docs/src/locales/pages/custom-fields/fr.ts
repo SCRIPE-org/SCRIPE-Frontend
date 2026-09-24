@@ -2685,6 +2685,115 @@ export const fr = {
           rule5:
             "Les jeux gérés par le système sont strictement en lecture seule : les jeux standard prédéfinis ne peuvent être modifiés par aucun utilisateur ni administrateur.",
         },
+        encryption: {
+          title: "Gestion des clés et chiffrement d'enveloppe",
+          description:
+            "Chiffrement d'enveloppe multi-tenant d'entreprise, rotation du trousseau racine de la plateforme, liaison AAD du texte chiffré et ré-emballage sans indisponibilité.",
+          intro:
+            "Lors du stockage de champs personnalisés confidentiels ou secrets — tels que les identifiants fiscaux, jetons biométriques, données bancaires ou habilitations de sécurité — SCRIPE applique un chiffrement d'enveloppe de niveau matériel. Chaque valeur est protégée par AES-256-GCM avec des clés cryptographiques uniques par tenant dérivées via HKDF-SHA256 à partir du trousseau racine actif de la plateforme. Le texte chiffré ne peut être falsifié ni déchiffré sous un autre tenant, et peut être ré-emballé en toute sécurité lors des rotations de clés sans aucune indisponibilité.",
+          archNoticeTitle: "Modèle Zero-Trust pour entreprise",
+          archNoticeContent:
+            "Le chiffrement n'est pas un simple masquage cosmétique en base de données : le texte chiffré est lié cryptographiquement à son tenant, son entité et sa définition de champ via les données authentifiées supplémentaires (AAD) de l'AES-GCM. Si un attaquant modifie un seul octet ou copie le texte chiffré vers un autre enregistrement, l'authentification échoue immédiatement.",
+          archTitle: "Architecture cryptographique centrale",
+          archIntro:
+            "Le sous-système de chiffrement s'articule autour de cinq couches de sécurité résilientes :",
+          featKeyringTitle: "Trousseau racine multi-versions",
+          featKeyringDesc:
+            "Clé active de plateforme pour les nouvelles écritures et catalogue de clés historiques conservées pour des lectures fluides sans interruption.",
+          featDerivationTitle: "Dérivation HKDF par tenant",
+          featDerivationDesc:
+            "Clés secrètes isolées par tenant dérivées de façon déterministe par HKDF-SHA256 avec sel de code tenant et balises applicatives.",
+          featEnvelopeTitle: "Cadre binaire Magic Frame v2",
+          featEnvelopeDesc:
+            "En-tête binaire compact codant la version, l'ID de clé de plateforme, la version de clé tenant, un vecteur de 96 bits et une balise d'authentification de 128 bits.",
+          featAadTitle: "Liaison cryptographique AAD",
+          featAadDesc:
+            "Le texte chiffré est lié mathématiquement à TenantId, EntityId et FieldDefinitionId, empêchant les attaques par injection inter-entités.",
+          featRewrapTitle: "Migration par ré-emballage direct",
+          featRewrapDesc:
+            "Un travailleur en arrière-plan parcourt la base de données par lots de curseurs pour ré-emballer les données sous les nouvelles clés sans verrouillage de tables.",
+          featCliTitle: "Opérations unifiées CLI et Studio",
+          featCliDesc:
+            "Gestion opérationnelle complète via `scripe crypto` et le tableau de bord visuel SCRIPE Studio.",
+          dualEnvelopeTitle: "Dérivation de clé fractionnée à double enveloppe",
+          dualEnvelopeIntro:
+            "SCRIPE applique une séparation cryptographique à divulgation nulle de connaissance (Zero-Knowledge) entre les opérateurs et les données des locataires :",
+          thComponent: "Composant de clé",
+          thCustodian: "Stockage et garde",
+          thRole: "Responsabilité cryptographique",
+          compPlatformKey: "KEK maître de plateforme",
+          custPlatform: "Environnement d'hôte / KMS (`.env`)",
+          rolePlatformKey:
+            "Root Key Encryption Key (KEK). Chiffre les secrets des locataires au repos. Les opérateurs ne peuvent pas lire les données sans le secret du locataire.",
+          compTenantSecret: "Secret cryptographique du locataire",
+          custTenantDb: "Base de données du locataire (`EncryptedTenantSecret`)",
+          roleTenantSecret:
+            "Secret CSPRNG unique de 256 bits par locataire. Stocké chiffré sous la clé KEK active de la plateforme.",
+          compSplitDek: "Clé de chiffrement des données dérivée (DEK)",
+          custRuntimeMemory: "Mémoire volatile uniquement (HKDF)",
+          roleSplitDek:
+            "Dérivée à l'exécution via HKDF-SHA256 par combinaison de la clé plateforme et du secret locataire. Jamais conservée sur disque.",
+          compAadBinding: "Étiquette AAD contextuelle",
+          custCipherEngine: "Enveloppe AES-256-GCM",
+          roleAadBinding:
+            "Lie cryptographiquement le texte chiffré à TenantId, EntityId et FieldId, empêchant les attaques par rejeu inter-entités.",
+          autoProvisionTitle: "Provisionnement automatique instantané",
+          autoProvisionContent:
+            "Lors de la création d'un locataire, `ITenantCryptographicProvisioner` provisionne automatiquement un secret de 256 bits enveloppé sous la clé active. Les locataires peuvent immédiatement créer des champs confidentiels.",
+          frameTitle: "Spécification de transmission Magic Frame v2",
+          frameIntro:
+            "Les valeurs chiffrées sont persistées sous forme de trames binaires compactes encodées en base64 conformes à la spécification v2 :",
+          thByteOffset: "Décalage d'octets",
+          thField: "Champ d'en-tête",
+          thLength: "Longueur",
+          thDescription: "Rôle cryptographique",
+          descVersion: "Octet de version Magic Frame (0x02 pour les trames authentifiées v2).",
+          descPlatformKey: "Entier 32 bits (Big-endian) identifiant la clé racine de plateforme dans le trousseau.",
+          descTenantVersion: "Entier 16 bits (Big-endian) identifiant la version de rotation de clé du tenant.",
+          descNonce: "Vecteur d'initialisation aléatoire cryptographiquement sûr de 96 bits généré par opération.",
+          descAuthTag: "Balise d'authentification GCM de 128 bits vérifiant l'intégrité du texte chiffré et de l'AAD.",
+          descCiphertext: "Données utiles du champ chiffrées en AES-256-GCM.",
+          aadTitle: "Données authentifiées supplémentaires (AAD)",
+          aadContent:
+            "Pendant le chiffrement et le déchiffrement, le moteur transmet `tenantId:entityId:fieldDefinitionId` comme données authentifiées supplémentaires (AAD) au chiffreur GCM. Cela garantit qu'un numéro fiscal chiffré de l'entreprise A ne peut être copié par un administrateur indélicat dans les dossiers de l'entreprise B, ni déplacé vers un autre champ du même enregistrement.",
+          lifecycleTitle: "Cycle de vie des clés et verrous stricts",
+          lifecycleIntro:
+            "Les opérations sur les clés de tenant suivent un cycle de vie strict et auditable conçu pour empêcher toute fuite de données non chiffrées :",
+          step1Title: "1. Verrou obligatoire d'initialisation",
+          step1Content:
+            "Les administrateurs ne peuvent pas créer de champs personnalisés 'Confidentiel' ou 'Secret' tant que la clé cryptographique du tenant n'est pas initialisée. Le validateur d'API applique cette règle côté serveur.",
+          step2Title: "2. Rotation de clé sans indisponibilité",
+          step2Content:
+            "La rotation d'une clé génère la version N+1 pour les nouvelles écritures tandis que la version N reste active dans le trousseau. Les enregistrements historiques restent instantanément lisibles.",
+          step3Title: "3. Ré-emballage en tâche de fond non bloquante",
+          step3Content:
+            "Un service d'arrière-plan (`TenantKeyRewrapJob`) analyse les enregistrements par lots de curseurs, déchiffre avec les clés historiques et ré-encrypte avec la version active N+1.",
+          step4Title: "4. Piste d'audit cryptographique",
+          step4Content:
+            "Chaque création, rotation, révocation de clé et chaque révélation de valeur de champ est enregistrée de façon immuable avec identité, adresse IP et horodatage.",
+          rewrapTitle: "Moteur de migration par ré-emballage en direct",
+          rewrapIntro:
+            "Les jeux de données d'entreprise à grande échelle nécessitent une migration des clés sans coupure ni verrouillage de tables :",
+          thStrategy: "Stratégie opérationnelle",
+          thBehavior: "Implémentation du moteur",
+          stratLocking: "Zéro verrouillage de table",
+          behLocking: "Utilise une pagination par curseur et une concurrence optimiste (`RowVersion`) pour mettre à jour les lignes sans verrou exclusif.",
+          stratBatching: "Traitement par lots configurable",
+          behBatching: "Traite 500 enregistrements par itération, régulant l'exécution pour préserver les performances I/O en production.",
+          stratResilience: "Résistant aux pannes et idempotent",
+          behResilience: "En cas de redémarrage du processus, le curseur reprend au dernier décalage validé. Les enregistrements déjà migrés sont ignorés.",
+          stratObservability: "Métriques et progression en temps réel",
+          behObservability: "Transmet le nombre de réussites, d'échecs et le pourcentage d'avancement au tableau de bord Studio et au portail d'administration.",
+          stratCluster: "Ré-enveloppement de cluster de plateforme",
+          behCluster:
+            "Migration initiée par le SuperAdmin ré-enveloppant tous les secrets des locataires sous la nouvelle clé plateforme et mettant à jour les données sans interruption.",
+          toolingTitle: "Interfaces de gestion",
+          toolingIntro:
+            "Les opérateurs et développeurs disposent de trois interfaces complémentaires pour administrer le chiffrement :",
+          toolPortal: "Portail de sécurité du tenant : interface web à `/custom-fields/security` pour la rotation autonome et le suivi du ré-emballage.",
+          toolCli: "SCRIPE CLI : outillage en ligne de commande complet via `scripe crypto status`, `rotate`, `rewrap`, `verify` et `revoke`.",
+          toolStudio: "SCRIPE Studio : tableau de bord interactif à `/crypto` avec tables de trousseaux et barres de progression en direct.",
+        },
       },
     },
   },

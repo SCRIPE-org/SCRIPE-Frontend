@@ -88,6 +88,7 @@ export function MenusView() {
   const filteredTree = filterByWorkspace(vm.menuTree, filterWorkspaceId);
 
   // Count per workspace for badge
+  const menuTree = vm.menuTree;
   const workspaceCounts = useCallback(
     (workspaceId: string) => {
       const countRecursive = (nodes: MenuTreeNode[]): number =>
@@ -95,14 +96,15 @@ export function MenusView() {
           (sum, n) => sum + (n.workspaceId === workspaceId ? 1 : 0) + countRecursive(n.children),
           0
         );
-      return countRecursive(vm.menuTree);
+      return countRecursive(menuTree);
     },
-    [vm.menuTree]
+    [menuTree]
   );
 
   // ── Auto-scroll when dragging near edges ───────────────────────────
+  const draggedNode = vm.draggedNode;
   useEffect(() => {
-    if (!vm.draggedNode) return;
+    if (!draggedNode) return;
 
     const handleGlobalDragOver = (e: DragEvent) => {
       const scrollThreshold = 80;
@@ -143,7 +145,7 @@ export function MenusView() {
       document.removeEventListener("drop", clearScroll);
       clearScroll();
     };
-  }, [vm.draggedNode]);
+  }, [draggedNode]);
 
   // ── Root drop zone handlers ────────────────────────────────────────
   const handleRootDragOver = useCallback((e: React.DragEvent) => {
@@ -151,12 +153,13 @@ export function MenusView() {
     e.dataTransfer.dropEffect = "move";
   }, []);
 
+  const handleDropAtRoot = vm.handleDropAtRoot;
   const handleRootDrop = useCallback(
     (e: React.DragEvent) => {
       e.preventDefault();
-      vm.handleDropAtRoot();
+      handleDropAtRoot();
     },
-    [vm.handleDropAtRoot]
+    [handleDropAtRoot]
   );
 
   const showRootDropZone = vm.draggedNode != null;

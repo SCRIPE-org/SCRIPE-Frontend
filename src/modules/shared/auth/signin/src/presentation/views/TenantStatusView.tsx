@@ -46,6 +46,7 @@ export function TenantSuspendedView({ branding }: TenantSuspendedViewProps) {
             alt={companyName}
             width={80}
             height={80}
+            priority
             unoptimized
             className="h-full w-full object-cover"
             onError={(e) => {
@@ -122,6 +123,7 @@ export function TenantNotFoundView() {
             alt={BRAND.name}
             width={80}
             height={80}
+            priority
             className="h-full w-full object-cover"
             onError={(e) => {
               e.currentTarget.style.display = "none";

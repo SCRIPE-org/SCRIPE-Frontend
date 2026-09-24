@@ -50,7 +50,9 @@ export class TenantModel {
     public readonly editionEndDate?: string,
     public readonly primaryDomain?: string,
     public readonly domainCount?: number,
-    public readonly adminEmail?: string
+    public readonly adminEmail?: string,
+    public readonly countryCode?: string,
+    public readonly timeZone?: string
   ) {}
   static fromJson(json: TenantJson): TenantModel {
     return new TenantModel(
@@ -74,7 +76,9 @@ export class TenantModel {
       json.editionEndDate,
       json.primaryDomain,
       json.domainCount,
-      json.adminEmail
+      json.adminEmail,
+      json.countryCode,
+      json.timeZone
     );
   }
   toJson(): TenantJson {
@@ -98,6 +102,8 @@ export class TenantModel {
       primaryDomain: this.primaryDomain,
       domainCount: this.domainCount,
       adminEmail: this.adminEmail,
+      countryCode: this.countryCode,
+      timeZone: this.timeZone,
     };
   }
 }
@@ -175,7 +181,15 @@ export class CreateTenantModel {
     public readonly currency?: string,
     public readonly promotionId?: string,
     public readonly promoCode?: string,
-    public readonly skipPayment?: boolean
+    public readonly skipPayment?: boolean,
+    public readonly countryCode?: string,
+    public readonly timeZone?: string,
+    public readonly organizationType?: string,
+    public readonly adminFirstName?: string,
+    public readonly adminLastName?: string,
+    public readonly adminPhoneNumber?: string,
+    public readonly adminPhone?: string,
+    public readonly adminCustomFieldValues?: Record<string, unknown>
   ) {}
   toJson(): CreateTenantJson {
     return {
@@ -186,12 +200,20 @@ export class CreateTenantModel {
       address: this.address,
       adminEmail: this.adminEmail,
       adminUsername: this.adminUsername,
+      adminFirstName: this.adminFirstName,
+      adminLastName: this.adminLastName,
+      adminPhoneNumber: this.adminPhoneNumber,
+      adminPhone: this.adminPhone,
+      adminCustomFieldValues: this.adminCustomFieldValues,
       editionId: this.editionId,
       subscriptionType: this.subscriptionType,
       currency: this.currency,
       promotionId: this.promotionId,
       promoCode: this.promoCode,
       skipPayment: this.skipPayment,
+      countryCode: this.countryCode,
+      timeZone: this.timeZone,
+      organizationType: this.organizationType,
     };
   }
 }

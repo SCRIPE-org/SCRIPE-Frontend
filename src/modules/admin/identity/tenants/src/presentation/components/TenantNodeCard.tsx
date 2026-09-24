@@ -167,9 +167,10 @@ export function TenantNodeCard({
     setIsExpanded((prev) => !prev);
   }, []);
 
+  const nodeId = node.id;
   const handleViewDetails = useCallback(() => {
-    router.push(`/tenants/${node.id}`);
-  }, [router, node.id]);
+    router.push(`/tenants/${nodeId}`);
+  }, [router, nodeId]);
 
   const handleEnterWorld = useCallback(() => {
     enterTenantWorld({ id: node.id, name: node.name, parentId: node.parentId });

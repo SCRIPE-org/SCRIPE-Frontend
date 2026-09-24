@@ -1,20 +1,12 @@
-import { Metadata } from "next";
-import dynamic from "next/dynamic";
-import { ModuleErrorBoundary } from "@core/ui/module-error-boundary";
+import { redirect } from "next/navigation";
 
-const DashboardView = dynamic(() =>
-  import("@modules/monitoring/dashboard").then((m) => ({ default: m.DashboardView }))
-);
-
-export const metadata: Metadata = {
-  title: "System Dashboard",
-  description: "System dashboard with KPIs, activity charts, and security monitoring",
-};
-
+/**
+ * Route Compatibility Redirect
+ *
+ * In SCRIPE Platform Administration IA, the legacy /dashboard route is retired
+ * and replaced by the unified /overview route (Platform Command Center / Tenant Organization Control Center).
+ * Any direct navigation to /dashboard is permanently redirected to /overview.
+ */
 export default function DashboardPage() {
-  return (
-    <ModuleErrorBoundary moduleName="dashboard.title">
-      <DashboardView />
-    </ModuleErrorBoundary>
-  );
+  redirect("/overview");
 }

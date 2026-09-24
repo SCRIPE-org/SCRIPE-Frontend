@@ -106,6 +106,7 @@ import "./modules/custom-fields/custom-fields-options";
 import "./modules/custom-fields/custom-fields-option-sets";
 import "./modules/custom-fields/custom-fields-validators";
 import "./modules/custom-fields/custom-fields-security";
+import "./modules/custom-fields/custom-fields-encryption";
 import "./modules/custom-fields/custom-fields-managing";
 import "./modules/custom-fields/custom-fields-limits";
 

@@ -22,4 +22,9 @@ export class CustomFieldValueRepository implements ICustomFieldValueRepository {
     const bulk = await this.service.getBulkValues(entityTypeKey, ownerIds);
     return CustomFieldValueMapper.toBulkEntity(bulk);
   }
+
+  async revealValue(entityTypeKey: string, ownerId: string, fieldKey: string) {
+    const res = await this.service.revealValue(entityTypeKey, ownerId, fieldKey);
+    return res.value;
+  }
 }

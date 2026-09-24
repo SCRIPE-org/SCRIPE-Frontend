@@ -18,6 +18,10 @@ import type { Column } from "@core/crud/components/generic-table";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  MaskedCustomFieldCell,
+  type MaskedCustomFieldCellProps,
+} from "./components/MaskedCustomFieldCell";
 
 /**
  * Custom validation error thrown when a custom field value violates validation constraints.
@@ -90,6 +94,7 @@ export interface CustomFieldColumnDefinition {
   valueType: CustomFieldValueTypeName;
   options: string[] | null;
   sortOrder: number;
+  sensitivity?: number;
 }
 
 export interface BulkColumnValuesResult {
@@ -151,6 +156,8 @@ export interface CustomFieldFormControlProps {
   invalid?: boolean;
   /** Id of the hint or error node the host renders below the control, for `aria-describedby`. */
   describedBy?: string;
+  /** Validation error message for the field when invalid. */
+  error?: string;
 }
 
 export interface CustomFieldsExtensionApi {
@@ -171,6 +178,12 @@ export interface CustomFieldsExtensionApi {
    * legitimately exceed it).
    */
   getBulkColumnValues: (entityTypeKey: string, ownerIds: string[]) => Promise<BulkColumnValuesResult>;
+  /** Decrypts and reveals a sensitive custom field value for an authorized user. */
+  revealValue?: (
+    entityTypeKey: string,
+    ownerId: string,
+    fieldKey: string
+  ) => Promise<unknown>;
   /**
    * Self-contained trigger + dialog; internally gates on the custom-fields.create
    * permission via its own usePermission call. `entityDisplayName` is the host
@@ -300,6 +313,10 @@ export interface CustomFieldsSectionProps {
   onFieldCreated?: () => void;
   /** Whether the controls are in read-only / view mode. */
   isViewMode?: boolean;
+  /** Optional validation errors dictionary keyed by field name. */
+  errors?: Record<string, string>;
+  /** Whether the parent form or step has been touched. */
+  touched?: boolean;
   /** Optional container CSS class name. */
   className?: string;
 }
@@ -411,12 +428,14 @@ export function useCustomFieldsFormFields(
  * avoid.
  */
 export function EmptyCustomFieldCell() {
-  return <span className="text-nx-ink-3">—</span>;
+  return <span className="text-muted-foreground/60">—</span>;
 }
 
 function isEmptyCustomFieldValue(value: unknown): value is null | undefined | "" {
   return value === null || value === undefined || value === "";
 }
+
+export { MaskedCustomFieldCell, type MaskedCustomFieldCellProps };
 
 /**
  * One synthesized Column<T> for a custom field, ready to spread onto a
@@ -432,7 +451,8 @@ function buildCustomFieldColumn(
   language: string,
   t: (key: string, params?: Record<string, string | number>) => string,
   /** Wave 5 row 5.3 — per owner, the keys a rule hides for that record. */
-  hiddenKeysByOwnerId?: Record<string, string[]> | null
+  hiddenKeysByOwnerId?: Record<string, string[]> | null,
+  entityTypeKey?: string
 ): Column<any> {
   return {
     // Synthetic key: no row type in the host screen has a real property
@@ -469,6 +489,21 @@ function buildCustomFieldColumn(
       if (isEmptyCustomFieldValue(raw)) {
         return <EmptyCustomFieldCell />;
       }
+
+      if (raw === "••••••••" || (definition.sensitivity !== undefined && definition.sensitivity >= 2)) {
+        return (
+          <MaskedCustomFieldCell
+            entityTypeKey={entityTypeKey}
+            ownerId={row?.id}
+            fieldKey={definition.key}
+            initialMaskedValue={typeof raw === "string" && raw.includes("•") ? raw : "••••••••"}
+            valueType={definition.valueType}
+            language={language}
+            t={t}
+          />
+        );
+      }
+
       // Wave 2 Step 2.2 Task 5: the former inline Number/Boolean/Date/
       // Text-and-Select-fallthrough switch now lives in the CustomFields
       // module (formatCustomFieldValue.tsx) behind this extension point —
@@ -562,9 +597,16 @@ export function useCustomFieldColumns(
   const columns = useMemo<Column<any>[]>(
     () =>
       definitions.map((definition) =>
-        buildCustomFieldColumn(definition, valuesByOwnerId, language, t, hiddenKeysByOwnerId)
+        buildCustomFieldColumn(
+          definition,
+          valuesByOwnerId,
+          language,
+          t,
+          hiddenKeysByOwnerId,
+          entityTypeKey
+        )
       ),
-    [definitions, valuesByOwnerId, hiddenKeysByOwnerId, language, t]
+    [definitions, valuesByOwnerId, hiddenKeysByOwnerId, language, t, entityTypeKey]
   );
 
   return { columns, isLoading, error };

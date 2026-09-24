@@ -88,6 +88,7 @@ export function useLeadsViewModel() {
   // Full-resubmit, matching GenericCrudView's own contract: every currently
   // known custom field's effective value (edited-this-session or the fetched
   // default) is sent, not just the ones the user touched.
+  const leadFieldConfigs = customFieldsQuery.fieldConfigs;
   const saveCustomFieldValues = useCallback(
     async (ownerId: string) => {
       // D5 (final whole-branch review, I3 follow-up): reject a stale/invalid
@@ -98,10 +99,10 @@ export function useLeadsViewModel() {
       // point. Throws CustomFieldValidationError, which handleCreateLead's
       // own catch block below distinguishes from a genuine API failure so it
       // can show the specific reason, not the generic fallback.
-      assertSelectCustomFieldValuesValid(customFieldsQuery.fieldConfigs, customFieldValues, t);
+      assertSelectCustomFieldValuesValid(leadFieldConfigs, customFieldValues, t);
 
       const decoded: Record<string, unknown> = {};
-      for (const fc of customFieldsQuery.fieldConfigs) {
+      for (const fc of leadFieldConfigs) {
         const key = decodeCustomFieldName(fc.name);
         if (key === null) continue;
         const raw = customFieldValues[fc.name] ?? fc.defaultValue ?? "";
@@ -110,7 +111,7 @@ export function useLeadsViewModel() {
       if (Object.keys(decoded).length === 0) return;
       await getCustomFieldsExtension()?.saveValues(LEAD_ENTITY_TYPE_KEY, ownerId, decoded);
     },
-    [customFieldsQuery.fieldConfigs, customFieldValues, t]
+    [leadFieldConfigs, customFieldValues, t]
   );
 
   // ── Convert dialog state ──────────────────────────────────────────────────

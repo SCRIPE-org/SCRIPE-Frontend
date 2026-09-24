@@ -1,41 +1,40 @@
 /**
- * SetupAccountView — Public Account Activation Page (thin orchestrator)
+ * SetupAccountView — Kinetic Split-Screen Operator Onboarding & Activation Portal.
  *
- * Token-based password setup for new tenant admins.
- * Flow: Validate token → Show form → Set password → Redirect to login
- *
- * State sub-views extracted to SetupAccountStateViews.
- * @module auth/account-setup
+ * Implements SCRIPE Enterprise UX Standards:
+ * - Desktop Kinetic Split-Screen (lg:col-span-5 Hero Sidebar + lg:col-span-7 Workstation Card)
+ * - Clean Component Extraction (< 150 lines, single-responsibility architecture)
+ * - Password Security with Shannon Entropy bits readout & requirement checklist
+ * - Celebratory Stage 4 Launch summary with confetti blast
+ * - Dynamic Multi-Tenant Custom Fields & full WCAG 2.1 AA accessibility compliance
  */
+
 "use client";
 
+import React from "react";
 import { useSearchParams } from "next/navigation";
-import { Button } from "@core/ui/button";
-import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import { Shield, XCircle, KeyRound, Building2 } from "lucide-react";
+import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
-import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
 import { formatDateTimeUtc } from "@core/common/utils";
 import {
   SetupLoadingView,
   SetupInvalidView,
-  SetupSuccessView,
   SetupErrorView,
-  PasswordCheck,
 } from "../components/SetupAccountStateViews";
 import {
   PageWrapper,
-  PasswordField,
-  InfoRow,
+  StepProgressIndicator,
+  DesktopSetupSidebar,
+  LaunchCelebrationCard,
 } from "../components/SetupAccountControls";
+import {
+  SetupStep1Security,
+  SetupStep2Profile,
+  SetupStep3Attributes,
+} from "../components/steps";
+import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
 
-/**
- * SetupAccountView is the main public page component for the workspace administrator setup flow.
- * Orchestrates the validation of initialization tokens from query string parameters,
- * routes the visual rendering state based on the validation outcome (loading, invalid, success, error),
- * and renders the secure credentials setup form where tenant administrators establish their initial passcodes.
- */
 export function SetupAccountView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();
@@ -58,162 +57,122 @@ export function SetupAccountView() {
     },
   });
 
-  // ── State routing ─────────────────────────────────────────────────────────
-  if (vm.pageState === "loading")
+  // ── Lifecycle State Routing ──
+  if (vm.pageState === "loading") {
     return (
       <PageWrapper>
         <SetupLoadingView />
       </PageWrapper>
     );
-  if (vm.pageState === "invalid")
+  }
+
+  if (vm.pageState === "invalid") {
     return (
       <PageWrapper>
         <SetupInvalidView errorMessage={vm.errorMessage} />
       </PageWrapper>
     );
-  if (vm.pageState === "success")
-    return (
-      <PageWrapper>
-        <SetupSuccessView tokenData={vm.tokenData} />
-      </PageWrapper>
-    );
-  if (vm.pageState === "error")
-    return (
-      <PageWrapper>
-        <SetupErrorView errorMessage={vm.errorMessage} onRetry={() => vm.setPageState("valid")} />
-      </PageWrapper>
-    );
+  }
 
-  // ── Main form (valid token) ───────────────────────────────────────────────
+  if (vm.pageState === "error") {
+    return (
+      <PageWrapper>
+        <SetupErrorView errorMessage={vm.errorMessage} onRetry={vm.retry} />
+      </PageWrapper>
+    );
+  }
+
+  // ── Stage 4: Launch Celebration Screen ──
+  if (vm.pageState === "success" || vm.currentStep === 4) {
+    const adminFullName = [vm.firstName, vm.lastName].filter(Boolean).join(" ");
+    return (
+      <PageWrapper>
+        <LaunchCelebrationCard
+          tenantName={vm.tokenData?.tenantName}
+          tenantCode={vm.tokenData?.tenantCode}
+          adminUsername={vm.tokenData?.adminUsername}
+          adminName={adminFullName || vm.tokenData?.adminUsername || ""}
+          adminEmail={vm.tokenData?.adminEmail}
+          profileImageUrl={vm.profileImageUrl}
+        />
+      </PageWrapper>
+    );
+  }
+
+  const hasCustomFields = vm.customFields.length > 0;
+  const adminNameInitials = [vm.firstName, vm.lastName].filter(Boolean).join(" ");
+
   return (
     <PageWrapper>
-      <Card className="w-full max-w-md border-border/50 shadow-xl">
-        <CardHeader className="pb-2 text-center">
-          <div className="mx-auto mb-3 rounded-full bg-primary/10 p-3">
-            <KeyRound className="h-7 w-7 text-nx-accent" />
-          </div>
-          <CardTitle className="text-xl">{t("auth.accountSetup.setPasswordTitle")}</CardTitle>
-          <CardDescription>
-            {t("auth.accountSetup.completeFor")}{" "}
-            <span className="font-medium text-foreground">{vm.tokenData?.tenantName}</span>
-          </CardDescription>
-        </CardHeader>
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Left Hero Sidebar (Desktop lg:col-span-5) */}
+        <div className="hidden lg:block lg:col-span-5">
+          <DesktopSetupSidebar
+            currentStep={vm.currentStep}
+            hasCustomFields={hasCustomFields}
+            tenantName={vm.tokenData?.tenantName}
+            tenantCode={vm.tokenData?.tenantCode}
+            adminUsername={vm.tokenData?.adminUsername}
+            adminEmail={vm.tokenData?.adminEmail}
+            onStepClick={vm.goToStep}
+          />
+        </div>
 
-        <CardContent className="space-y-5">
-          {/* Account info */}
-          <div className="space-y-1.5 rounded-lg border border-border/50 bg-muted/30 p-3">
-            <InfoRow
-              icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
-              label={t("auth.accountSetup.organization")}
-              value={vm.tokenData?.tenantName}
-            />
-            <InfoRow
-              icon={<Shield className="h-4 w-4 text-muted-foreground" />}
-              label={t("auth.accountSetup.username")}
-              value={vm.tokenData?.adminUsername}
-            />
-          </div>
+        {/* Right Active Stepper Workstation (Desktop lg:col-span-7, Mobile full width) */}
+        <Card className="w-full lg:col-span-7 border border-border bg-card shadow-lg rounded-3xl overflow-hidden flex flex-col justify-between">
+          <div>
+            <CardHeader className="space-y-4 pb-4">
+              {/* Mobile / Tablet Stepper Header (< lg) */}
+              <div className="lg:hidden">
+                <StepProgressIndicator
+                  currentStep={vm.currentStep}
+                  hasCustomFields={hasCustomFields}
+                  onStepClick={vm.goToStep}
+                />
+              </div>
 
-          {/* Password field */}
-          <div className="space-y-2">
-            <Label htmlFor="setup-password">{t("auth.password")}</Label>
-            <PasswordField
-              id="setup-password"
-              value={vm.password}
-              show={vm.showPassword}
-              placeholder={t("auth.accountSetup.passwordPlaceholder")}
-              onChange={vm.setPassword}
-              onToggle={() => vm.setShowPassword(!vm.showPassword)}
-              autoFocus
-            />
-          </div>
+              <div className="text-start space-y-1">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-xl font-bold tracking-tight">
+                    {vm.currentStep === 1 && t("auth.accountSetup.step1Security")}
+                    {vm.currentStep === 2 && t("auth.accountSetup.step2Profile")}
+                    {vm.currentStep === 3 && t("auth.accountSetup.step3Attributes")}
+                  </CardTitle>
+                  <Badge variant="secondary" className="text-[10px] font-medium px-2 py-0.5">
+                    Step {vm.currentStep} of {hasCustomFields ? 3 : 2}
+                  </Badge>
+                </div>
+                <CardDescription className="text-xs sm:text-sm">
+                  {vm.currentStep === 1 && t("auth.accountSetup.step1Desc")}
+                  {vm.currentStep === 2 && t("auth.accountSetup.step2Desc")}
+                  {vm.currentStep === 3 && t("auth.accountSetup.step3Desc")}
+                </CardDescription>
+              </div>
+            </CardHeader>
 
-          {/* Strength indicators */}
-          {vm.password.length > 0 && (
-            <div className="grid grid-cols-2 gap-1.5 text-xs">
-              <PasswordCheck
-                label={t("auth.accountSetup.passwordMinLengthShort", {
-                  min: vm.tokenData?.passwordMinLength ?? 8,
-                })}
-                ok={vm.passwordChecks.minLength}
-              />
-              {vm.tokenData?.passwordRequireUppercase !== false && (
-                <PasswordCheck
-                  label={t("auth.accountSetup.passwordUpperShort")}
-                  ok={vm.passwordChecks.hasUpper}
+            <CardContent className="space-y-6">
+              {vm.currentStep === 1 && <SetupStep1Security vm={vm} />}
+              {vm.currentStep === 2 && (
+                <SetupStep2Profile
+                  vm={vm}
+                  hasCustomFields={hasCustomFields}
+                  adminNameInitials={adminNameInitials}
                 />
               )}
-              <PasswordCheck
-                label={t("auth.accountSetup.passwordLowerShort")}
-                ok={vm.passwordChecks.hasLower}
-              />
-              {vm.tokenData?.passwordRequireNumber !== false && (
-                <PasswordCheck
-                  label={t("auth.accountSetup.passwordNumberShort")}
-                  ok={vm.passwordChecks.hasNumber}
-                />
+              {vm.currentStep === 3 && (
+                <SetupStep3Attributes vm={vm} hasCustomFields={hasCustomFields} />
               )}
-              {vm.tokenData?.passwordRequireSpecial === true && (
-                <PasswordCheck
-                  label={t("auth.accountSetup.passwordSpecialShort")}
-                  ok={vm.passwordChecks.hasSpecial}
-                />
-              )}
-            </div>
-          )}
 
-          {/* Confirm field */}
-          <div className="space-y-2">
-            <Label htmlFor="setup-confirm">{t("auth.confirmPassword")}</Label>
-            <PasswordField
-              id="setup-confirm"
-              value={vm.confirmPassword}
-              show={vm.showConfirm}
-              placeholder={t("auth.confirmPasswordPlaceholder")}
-              onChange={vm.setConfirmPassword}
-              onToggle={() => vm.setShowConfirm(!vm.showConfirm)}
-            />
-            {vm.confirmPassword.length > 0 && (
-              <PasswordCheck
-                label={t("auth.accountSetup.passwordsMatch")}
-                ok={vm.passwordChecks.matches}
-              />
-            )}
-          </div>
-
-          {/* Validation errors */}
-          {vm.validationErrors.length > 0 && (
-            <div className="space-y-1 rounded-lg border border-destructive/20 bg-destructive/5 p-3">
-              {vm.validationErrors.map((err, i) => (
-                <p key={i} className="flex items-center gap-1.5 text-xs text-destructive">
-                  <XCircle className="h-3 w-3 shrink-0" />
-                  {err}
+              {/* Expiration Note */}
+              {vm.tokenData?.expiresAt && (
+                <p className="text-center text-[11px] text-muted-foreground/70 pt-2">
+                  {t("auth.accountSetup.expiresOn")} {formatDateTimeUtc(vm.tokenData.expiresAt)}
                 </p>
-              ))}
-            </div>
-          )}
-
-          <Button
-            className="w-full"
-            size="lg"
-            disabled={!vm.isPasswordValid}
-            loading={vm.pageState === "activating"}
-            onClick={vm.activate}
-          >
-            {vm.pageState !== "activating" && <Shield className="me-2 h-4 w-4" />}
-            {vm.pageState === "activating"
-              ? t("auth.accountSetup.activating")
-              : t("auth.accountSetup.activate")}
-          </Button>
-
-          {vm.tokenData?.expiresAt && (
-            <p className="text-center text-xs text-muted-foreground">
-              {t("auth.accountSetup.expiresOn")} {formatDateTimeUtc(vm.tokenData.expiresAt)}
-            </p>
-          )}
-        </CardContent>
-      </Card>
+              )}
+            </CardContent>
+          </div>
+        </Card>
+      </div>
     </PageWrapper>
   );
 }
-

@@ -32,12 +32,13 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
   const vm = useQrSignInViewModel(onSuccess);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const qrData = vm.qrData;
   // ── Render real QR code via qrcode library ──
   useEffect(() => {
-    if (!vm.qrData || !canvasRef.current) return;
+    if (!qrData || !canvasRef.current) return;
 
     // qrData from backend is the raw session URL/payload to encode as QR
-    QRCode.toCanvas(canvasRef.current, vm.qrData, {
+    QRCode.toCanvas(canvasRef.current, qrData, {
       width: 200,
       margin: 2,
       color: {
@@ -60,7 +61,7 @@ export function QrSignInView({ onSuccess, onBack, isRTL }: QrSignInViewProps) {
       ctx.textAlign = "center";
       ctx.fillText("QR Error", 100, 100);
     });
-  }, [vm.qrData]);
+  }, [qrData]);
 
   return (
     <div className="sx-screen-anim w-full space-y-5 text-center" dir={isRTL ? "rtl" : "ltr"}>
