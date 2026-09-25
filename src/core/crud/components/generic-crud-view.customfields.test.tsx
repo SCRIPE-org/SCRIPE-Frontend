@@ -446,6 +446,84 @@ describe("GenericCrudView + entityTypeKey", () => {
       );
       // And saveValues must not be called because custom fields were deferred
       expect(extension.saveValues).not.toHaveBeenCalled();
+      // The wrapper must confirm success (firing toast and closing create modal) even when custom fields are deferred
+      expect(vm.confirmCreateSuccess).toHaveBeenCalled();
+    });
+
+    it("confirms create success even when createInitialValues has deferCustomFieldsToSetup: true", async () => {
+      const extension = registerFakeCustomFieldsExtension();
+      const vm = makeViewModel();
+      const config: CrudConfig<{ id: string }> = {
+        titleKey: "t",
+        subtitleKey: "s",
+        columns: [{ key: "id", label: "Id" }],
+        createFields: [
+          { name: "sendSetupEmail", label: "Send setup email", type: "switch" },
+          { name: "firstName", label: "First Name", type: "text" },
+        ],
+        createInitialValues: { sendSetupEmail: true, firstName: "", deferCustomFieldsToSetup: true },
+        entityTypeKey: "identity.admin",
+      };
+
+      render(<GenericCrudView viewModel={vm} config={config} />);
+
+      await waitFor(() =>
+        expect(
+          screen.getByLabelText(/admin\.deferCustomFieldsToSetup|Complete custom fields/i)
+        ).toBeInTheDocument()
+      );
+
+      fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "AdminUser" } });
+      fireEvent.click(screen.getByText("common.save"));
+
+      await waitFor(() =>
+        expect(vm.createItem).toHaveBeenCalledWith(
+          expect.objectContaining({ firstName: "AdminUser", sendSetupEmail: true })
+        )
+      );
+      expect(extension.saveValues).not.toHaveBeenCalled();
+      await waitFor(() => expect(vm.confirmCreateSuccess).toHaveBeenCalled());
+    });
+
+    it("falls back to setIsCreateModalOpen(false) when confirmCreateSuccess is undefined on viewModel", async () => {
+      const extension = registerFakeCustomFieldsExtension();
+      const vm = makeViewModel({ confirmCreateSuccess: undefined });
+      const config: CrudConfig<{ id: string }> = {
+        titleKey: "t",
+        subtitleKey: "s",
+        columns: [{ key: "id", label: "Id" }],
+        createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      };
+
+      render(<GenericCrudView viewModel={vm} config={config} />);
+
+      fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "PlainUser" } });
+      fireEvent.click(screen.getByText("common.save"));
+
+      await waitFor(() => expect(vm.createItem).toHaveBeenCalled());
+      await waitFor(() => expect(vm.setIsCreateModalOpen).toHaveBeenCalledWith(false));
+    });
+
+    it("confirms update success even when config has no entityTypeKey", async () => {
+      const vm = makeViewModel({
+        isCreateModalOpen: false,
+        isEditModalOpen: true,
+        editingItem: { id: "edit-1", firstName: "Alice" },
+      });
+      const config: CrudConfig<{ id: string }> = {
+        titleKey: "t",
+        subtitleKey: "s",
+        columns: [{ key: "id", label: "Id" }],
+        createFields: [{ name: "firstName", label: "First Name", type: "text" }],
+      };
+
+      render(<GenericCrudView viewModel={vm} config={config} />);
+
+      fireEvent.change(screen.getByLabelText("First Name"), { target: { value: "Alice Updated" } });
+      fireEvent.click(screen.getByText("common.save"));
+
+      await waitFor(() => expect(vm.updateItem).toHaveBeenCalledWith("edit-1", expect.objectContaining({ firstName: "Alice Updated" })));
+      await waitFor(() => expect(vm.confirmUpdateSuccess).toHaveBeenCalled());
     });
 
     it("hides deferCustomFieldsToSetup switch when sendSetupEmail is false, and keeps custom fields visible", async () => {

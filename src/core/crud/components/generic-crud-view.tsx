@@ -1211,24 +1211,17 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 );
                 void customFieldsForCreate.refetch();
               }
-              // Reaching this line means the custom-field save (if there was
-              // one to do) has actually settled successfully — fire the
-              // success toast and close the modal ourselves, here, sequenced
-              // AFTER that save rather than before it.
-              //
-              // Requires the screen's own useXViewModel to have opted into
-              // useCrudViewModel's { deferSuccessEffects: true } (every
-              // entityTypeKey screen with a create/edit path should) — that
-              // option is what stops useGenericMutations' onCreateSuccess
-              // from firing the toast and closing the modal itself the
-              // instant createItem's own promise resolves, before this
-              // function has even reached the saveValues call above.
-              // Without that option, confirmCreateSuccess
-              // here is a harmless no-op on top of the auto-close: still
-              // present, since it's called unconditionally whenever
-              // entityTypeKey is set, but the auto behavior already won by
-              // the time this runs.
-              viewModel.confirmCreateSuccess?.();
+            }
+            // Reaching this line means the entity creation and any custom-field
+            // save (if there was one to do and not deferred) have settled
+            // successfully — fire the success toast and close the modal.
+            // If the viewmodel opted into deferSuccessEffects (e.g. for custom fields),
+            // confirmCreateSuccess triggers the deferred toast and closes the modal.
+            // Otherwise, fall back to closing the modal directly if confirmCreateSuccess is not defined.
+            if (viewModel.confirmCreateSuccess) {
+              viewModel.confirmCreateSuccess();
+            } else {
+              viewModel.setIsCreateModalOpen(false);
             }
           }}
           onCancel={() => viewModel.setIsCreateModalOpen(false)}
@@ -1291,9 +1284,13 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
                 );
                 void customFieldsForEdit.refetch();
               }
-              // Same sequencing as the create path: fire the toast and close
-              // only after the custom-field save (if any) actually settled.
-              viewModel.confirmUpdateSuccess?.();
+            }
+            // Same sequencing as the create path: fire the toast and close
+            // only after the entity update and custom-field save (if any) have settled.
+            if (viewModel.confirmUpdateSuccess) {
+              viewModel.confirmUpdateSuccess();
+            } else {
+              viewModel.closeEditModal();
             }
           }}
           initialValues={

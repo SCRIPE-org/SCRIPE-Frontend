@@ -159,21 +159,23 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
     await query.refetch();
   }, [query]);
 
-  // Only meaningful when deferSuccessEffects is on — the caller invokes
-  // these once ITS OWN follow-up work (beyond the entity's own save) has
-  // actually succeeded. When deferSuccessEffects is off, onCreateSuccess/
-  // onUpdateSuccess above already did this automatically, so calling these
-  // too would double-toast and no-op the already-closed modal; callers gate
-  // on the same option, not on these functions being merely present.
+  // Safe to call unconditionally: when deferSuccessEffects is on, fires the
+  // deferred success toast and closes the modal; when deferSuccessEffects is off,
+  // the toast was already fired by useGenericMutations so calling this safely
+  // ensures modal closure without double-toasting.
   const confirmCreateSuccess = useCallback(() => {
-    mutations.showCreateSuccessToast();
+    if (deferSuccessEffects) {
+      mutations.showCreateSuccessToast();
+    }
     setIsCreateModalOpen(false);
-  }, [mutations]);
+  }, [deferSuccessEffects, mutations]);
 
   const confirmUpdateSuccess = useCallback(() => {
-    mutations.showUpdateSuccessToast();
+    if (deferSuccessEffects) {
+      mutations.showUpdateSuccessToast();
+    }
     closeEditModal();
-  }, [mutations, closeEditModal]);
+  }, [deferSuccessEffects, mutations, closeEditModal]);
 
   return {
     // Data
