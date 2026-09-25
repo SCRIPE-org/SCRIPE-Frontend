@@ -142,11 +142,12 @@ export function usePaymentsViewModel({
     }
   }, [amount, canIssueReceipt, canRecord, load, messages, method, moneyRepository, reason, reference, selectedInvoice]);
 
+  const refundCurrencyCode = refundPayment?.currencyCode;
   const refundInvoiceOptions = useMemo(
     () => (invoices ?? [])
-      .filter((invoice) => invoice.currencyCode === refundPayment?.currencyCode)
+      .filter((invoice) => invoice.currencyCode === refundCurrencyCode)
       .map((invoice) => ({ value: invoice.id, label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.effectiveTotalAmount}` })),
-    [invoices, refundPayment?.currencyCode]
+    [invoices, refundCurrencyCode]
   );
 
   const beginRefund = useCallback((payment: MoneyPayment) => {
@@ -189,14 +190,15 @@ export function usePaymentsViewModel({
     }
   }, [canRefund, load, messages, moneyRepository, refundAmount, refundInvoiceId, refundPayment, refundReason, refundReference]);
 
+  const allocatingCurrencyCode = allocatingPayment?.currencyCode;
   const allocationInvoiceOptions = useMemo(
     () => (invoices ?? [])
-      .filter((invoice) => invoice.currencyCode === allocatingPayment?.currencyCode && invoice.outstandingAmount > 0)
+      .filter((invoice) => invoice.currencyCode === allocatingCurrencyCode && invoice.outstandingAmount > 0)
       .map((invoice) => ({
         value: invoice.id,
         label: `${invoice.invoiceNumber} — ${invoice.currencyCode} ${invoice.outstandingAmount}`,
       })),
-    [invoices, allocatingPayment?.currencyCode]
+    [invoices, allocatingCurrencyCode]
   );
 
   const beginAllocate = useCallback((payment: MoneyPayment) => {

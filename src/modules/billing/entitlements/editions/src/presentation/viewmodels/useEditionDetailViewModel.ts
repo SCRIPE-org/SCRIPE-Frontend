@@ -488,36 +488,14 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
         Object.keys(changes).length > 0 || Object.keys(changedLabels).length > 0;
       const hasHighlightChanges = Object.keys(changedHighlights).length > 0;
       if (!hasFeatureChanges && !hasHighlightChanges) return;
-      // Apply feature value + label changes via batch endpoint
-      if (hasFeatureChanges) {
-        await editionRepository.directApplyFeatures(editionId, changes, changedLabels);
-      }
-      // Apply highlight changes individually (no batch endpoint for highlights)
-      if (hasHighlightChanges && edition) {
-        const featureIdMap: Record<string, string> = {};
-        edition.features.forEach((ef) => {
-          featureIdMap[ef.featureName] = ef.featureId;
-        });
-        await Promise.all(
-          Object.entries(changedHighlights).map(
-            ([featureName, { isHighlight, highlightOrder }]) => {
-              const featureId = featureIdMap[featureName];
-              if (!featureId) return Promise.resolve();
-              const currentValue = pendingValues[featureName] ?? serverValueMap[featureName] ?? "";
-              const currentLabel = getEffectiveLabel(featureName);
-              return editionRepository.setFeatureValue(
-                editionId,
-                featureId,
-                currentValue,
-                currentLabel.en || undefined,
-                currentLabel.ar || undefined,
-                isHighlight,
-                highlightOrder
-              );
-            }
-          )
-        );
-      }
+
+      // Apply feature values, marketing labels, and highlights in a single atomic batch call
+      await editionRepository.directApplyFeatures(
+        editionId,
+        changes,
+        changedLabels,
+        changedHighlights
+      );
     },
     onSuccess: () => {
       success({

@@ -143,42 +143,33 @@ export function getVenueContainer(): VenueContainer {
     return container;
   }
 
-  // FacilityOperations and ResourceSchedulingBooking are separate backend modules but
-  // share one frontend workspace. Each resolves its own module API base URL — falls
-  // back to the shared base URL in monolith deployment (no dedicated env var set).
-  const facilityOperationsApi = getModuleApiService("FACILITYOPERATIONS");
-  const resourceSchedulingBookingApi = getModuleApiService("RESOURCESCHEDULINGBOOKING");
-  // Sites (for the Venue Profile picker) live in OrganizationCore — a third,
-  // separate backend module this workspace only ever reads from.
+  // Sovereign Venue module backend API client. Resolves NEXT_PUBLIC_VENUE_API_URL or falls
+  // back to the shared base URL in monolith deployment.
+  const venueApi = getModuleApiService("VENUE");
+  // Sites (for the Venue Profile picker) live in OrganizationCore — a separate
+  // backend module this workspace only ever reads from.
   const organizationCoreApi = getModuleApiService("ORGANIZATIONCORE");
   const partyKernelApi = getModuleApiService("PARTYKERNEL");
   const catalogPricingApi = getModuleApiService("CATALOGPRICING");
   const financeApi = getModuleApiService("FINANCE");
 
-  wireModuleApiLifecycle(facilityOperationsApi);
-  wireModuleApiLifecycle(resourceSchedulingBookingApi);
+  wireModuleApiLifecycle(venueApi);
   wireModuleApiLifecycle(organizationCoreApi);
   wireModuleApiLifecycle(partyKernelApi);
   wireModuleApiLifecycle(catalogPricingApi);
   wireModuleApiLifecycle(financeApi);
 
-  const venueProfileService: IVenueProfileService = new VenueProfileService(facilityOperationsApi);
-  const facilityService: IFacilityService = new FacilityService(facilityOperationsApi);
+  const venueProfileService: IVenueProfileService = new VenueProfileService(venueApi);
+  const facilityService: IFacilityService = new FacilityService(venueApi);
   const facilityResourceProfileService: IFacilityResourceProfileService =
-    new FacilityResourceProfileService(facilityOperationsApi);
-  const schedulableResourceService: ISchedulableResourceService = new SchedulableResourceService(
-    resourceSchedulingBookingApi
-  );
-  const availabilityService: IAvailabilityService = new AvailabilityService(
-    resourceSchedulingBookingApi
-  );
-  const bookingService: IBookingService = new BookingService(resourceSchedulingBookingApi);
+    new FacilityResourceProfileService(venueApi);
+  const schedulableResourceService: ISchedulableResourceService = new SchedulableResourceService(venueApi);
+  const availabilityService: IAvailabilityService = new AvailabilityService(venueApi);
+  const bookingService: IBookingService = new BookingService(venueApi);
   const customerPickerService: ICustomerPickerService = new CustomerPickerService(partyKernelApi);
-  const operationsCalendarService: IOperationsCalendarService = new OperationsCalendarService(
-    resourceSchedulingBookingApi
-  );
-  const booking360Service: IBooking360Service = new Booking360Service(resourceSchedulingBookingApi);
-  const venueAttentionService: IVenueAttentionService = new VenueAttentionService(resourceSchedulingBookingApi);
+  const operationsCalendarService: IOperationsCalendarService = new OperationsCalendarService(venueApi);
+  const booking360Service: IBooking360Service = new Booking360Service(venueApi);
+  const venueAttentionService: IVenueAttentionService = new VenueAttentionService(venueApi);
   const commercialPricingService = new CommercialPricingService(catalogPricingApi);
   const moneyService: IMoneyService = new MoneyService(financeApi);
 
@@ -205,7 +196,7 @@ export function getVenueContainer(): VenueContainer {
       new CustomerRepository(customerPickerService)
     ),
     sitePickerService: new SitePickerService(organizationCoreApi),
-    facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(facilityOperationsApi),
+    facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(venueApi),
   };
 
   return container;

@@ -8,6 +8,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
+import { Label } from "@core/ui/label";
 import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
 import type {
   AvailabilityCandidate,
@@ -200,11 +201,11 @@ export function BookingSummaryActions({
             <p className="text-sm text-nx-ink-2">{t("booking.quote.overrideDescription")}</p>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm text-nx-ink-2" htmlFor="quote-override-amount">{t("booking.quote.overrideAmount")}</label>
+                <Label htmlFor="quote-override-amount">{t("booking.quote.overrideAmount")}</Label>
                 <Input id="quote-override-amount" type="number" step="0.01" value={overrideAmount} disabled={priceOverrideLoading} onChange={(event) => setOverrideAmount(event.target.value)} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm text-nx-ink-2" htmlFor="quote-override-reason">{t("booking.quote.overrideReason")}</label>
+                <Label htmlFor="quote-override-reason">{t("booking.quote.overrideReason")}</Label>
                 <Input id="quote-override-reason" maxLength={500} value={overrideReason} disabled={priceOverrideLoading} onChange={(event) => setOverrideReason(event.target.value)} />
               </div>
             </div>

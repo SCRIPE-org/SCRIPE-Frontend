@@ -186,18 +186,19 @@ export function BookingChangeResourceDialog(props: Props) {
                   <p className="text-xs font-semibold text-nx-ink-2">{props.t("booking360.changeResource.search")}</p>
                   <div className="max-h-56 overflow-y-auto space-y-2">
                     {candidates.map((c) => (
-                      <button
+                      <Button
                         type="button"
+                        variant="outline"
                         key={c.resourceId}
-                        className="w-full text-left rounded-nx-sm border border-nx-line p-3 hover:bg-nx-hover flex items-center justify-between text-xs transition-colors"
+                        className="w-full text-left h-auto rounded-nx-sm border border-nx-line p-3 hover:bg-nx-hover flex items-center justify-between text-xs transition-colors font-normal"
                         onClick={() => handleSelectCandidate(c)}
                       >
-                        <div>
+                        <div className="text-start">
                           <p className="font-semibold text-nx-ink">{c.resourceName}</p>
                           <p className="text-nx-ink-2 tabular-nums">{formatUtc(c.startUtc)} – {formatUtc(c.endUtc)}</p>
                         </div>
                         <Badge variant="outline">{props.t("booking360.actions.changeResource")}</Badge>
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>

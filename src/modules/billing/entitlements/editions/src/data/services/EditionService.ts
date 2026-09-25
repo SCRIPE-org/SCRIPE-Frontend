@@ -110,11 +110,13 @@ export class EditionService implements IEditionService {
   async directApplyFeatures(
     editionId: string,
     featureValues: Record<string, string>,
-    changedLabels?: Record<string, { en?: string; ar?: string }>
+    changedLabels?: Record<string, { en?: string; ar?: string }>,
+    highlightOverrides?: Record<string, { isHighlight: boolean; highlightOrder: number }>
   ): Promise<void> {
     await this.api.post(EDITIONS_ENDPOINTS.DIRECT_APPLY_FEATURES(editionId), {
       featureValues,
       displayLabelOverrides: changedLabels ?? {},
+      highlightOverrides: highlightOverrides ?? {},
     });
   }
 

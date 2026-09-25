@@ -234,7 +234,7 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
             <fieldset className="space-y-3 rounded-nx-md border border-nx-line p-4">
               <legend className="px-2 text-sm font-semibold">{t("resourceProfile.fields.operatingDays")}</legend>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {DAYS.map((day) => <label key={day.key} className="flex items-center gap-2 text-sm"><Checkbox checked={(form.days & day.value) !== 0} onCheckedChange={(checked) => setForm({ ...form, days: checked ? form.days | day.value : form.days & ~day.value })} />{t(`resourceProfile.days.${day.key}`)}</label>)}
+                {DAYS.map((day) => <Label key={day.key} className="flex items-center gap-2 text-sm cursor-pointer"><Checkbox checked={(form.days & day.value) !== 0} onCheckedChange={(checked) => setForm({ ...form, days: checked ? form.days | day.value : form.days & ~day.value })} />{t(`resourceProfile.days.${day.key}`)}</Label>)}
               </div>
               <div className="grid gap-4 sm:grid-cols-4">
                 <div className="space-y-2"><Label htmlFor="profile-opens">{t("resourceProfile.fields.opensAt")}</Label><Input id="profile-opens" type="time" value={form.opensAt} onChange={(e) => setForm({ ...form, opensAt: e.target.value })} /></div>

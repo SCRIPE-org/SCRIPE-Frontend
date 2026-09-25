@@ -67,6 +67,7 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                   const slotStart = Date.parse(slot.instantUtc);
                   const slotEnd = slotStart + 60 * 60 * 1000;
                   const occupied = placed.some(({ block }) => Date.parse(block.startUtc) < slotEnd && slotStart < Date.parse(block.endUtc));
+                  // UI-EXCEPTION: interactive transparent calendar slot in custom SVG/canvas-like timeline grid
                   return <button
                     type="button"
                     key={slot.instantUtc}
@@ -84,6 +85,7 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                   const end = localTime(block.endUtc, props.locale, props.day.timeZoneId);
                   const status = props.t(`operationsCalendar.status.${block.status}`);
                   return (
+                    // UI-EXCEPTION: absolute-positioned custom calendar booking block chip in timeline grid
                     <button
                       type="button"
                       key={block.reservationId}

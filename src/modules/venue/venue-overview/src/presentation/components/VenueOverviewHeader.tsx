@@ -3,6 +3,13 @@
 import { Calendar, Clock, RefreshCw, Building2 } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@core/ui/select";
 
 interface FacilityOption {
   id: string;
@@ -62,18 +69,24 @@ export function VenueOverviewHeader({
         </div>
 
         {facilities.length > 1 && (
-          <select
+          <Select
             value={selectedFacilityId}
-            onChange={(e) => onFacilityChange(e.target.value)}
-            className="h-8 rounded-nx-sm border border-nx-line bg-nx-surface px-2.5 text-xs text-nx-ink focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-nx-accent"
-            aria-label={t("venueOverview.header.facility")}
+            onValueChange={onFacilityChange}
           >
-            {facilities.map((f) => (
-              <option key={f.id} value={f.id}>
-                {f.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger
+              className="h-8 w-auto min-w-[140px] text-xs"
+              aria-label={t("venueOverview.header.facility")}
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {facilities.map((f) => (
+                <SelectItem key={f.id} value={f.id} className="text-xs">
+                  {f.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         )}
 
         <Button

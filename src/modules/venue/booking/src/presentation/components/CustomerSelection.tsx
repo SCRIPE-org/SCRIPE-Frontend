@@ -90,11 +90,12 @@ export function CustomerSelection({
             {results.length > 0 && (
               <div className="divide-y divide-nx-border rounded-xl border border-nx-border" role="list">
                 {results.map((party) => (
-                  <button
+                  <Button
                     key={party.id}
                     type="button"
+                    variant="ghost"
                     role="listitem"
-                    className="flex w-full items-center justify-between gap-3 p-3 text-start hover:bg-nx-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent"
+                    className="flex w-full h-auto items-center justify-between gap-3 p-3 text-start font-normal rounded-none first:rounded-t-xl last:rounded-b-xl hover:bg-nx-surface-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-nx-accent"
                     onClick={() => void onSelect(party.id)}
                   >
                     <span className="min-w-0">
@@ -102,7 +103,7 @@ export function CustomerSelection({
                       <span className="block text-xs text-nx-ink-3">{party.type}</span>
                     </span>
                     <Check className="size-4 shrink-0 text-nx-accent" aria-hidden="true" />
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}

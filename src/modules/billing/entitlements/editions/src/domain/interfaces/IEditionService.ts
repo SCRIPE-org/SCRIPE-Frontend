@@ -57,7 +57,8 @@ export interface IEditionService {
   directApplyFeatures(
     editionId: string,
     featureValues: Record<string, string>,
-    changedLabels?: Record<string, { en?: string; ar?: string }>
+    changedLabels?: Record<string, { en?: string; ar?: string }>,
+    highlightOverrides?: Record<string, { isHighlight: boolean; highlightOrder: number }>
   ): Promise<void>;
 
   // ── Pricing ──

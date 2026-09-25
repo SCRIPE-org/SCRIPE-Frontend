@@ -277,6 +277,18 @@ import { ar as booking360Ar } from "@modules/venue/booking-360/locales/booking-3
 import { en as calendarEn } from "@modules/venue/operations-calendar/locales/operations-calendar.en";
 import { ar as calendarAr } from "@modules/venue/operations-calendar/locales/operations-calendar.ar";
 import { en as venueOverviewEn, ar as venueOverviewAr } from "@modules/venue/venue-overview/locales";
+import {
+  en as attentionCenterEn,
+  ar as attentionCenterAr,
+} from "@modules/venue/attention-center/locales";
+import {
+  en as venueCommercialEn,
+  ar as venueCommercialAr,
+} from "@modules/venue/commercial/locales";
+import {
+  en as venueMoneyEn,
+  ar as venueMoneyAr,
+} from "@modules/venue/money/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -379,7 +391,7 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   partyRelEn,
   contactPointEn,
   mergeCandidateEn,
-  // Venue (9 sub-modules)
+  // Venue (12 sub-modules)
   venueProfileEn,
   facilityEn,
   schedulableResourceEn,
@@ -388,7 +400,10 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   bookingEn,
   booking360En,
   calendarEn,
-  venueOverviewEn
+  venueOverviewEn,
+  attentionCenterEn,
+  venueCommercialEn,
+  venueMoneyEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -491,7 +506,7 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   partyRelAr,
   contactPointAr,
   mergeCandidateAr,
-  // Venue (9 sub-modules)
+  // Venue (12 sub-modules)
   venueProfileAr,
   facilityAr,
   schedulableResourceAr,
@@ -500,5 +515,8 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   bookingAr,
   booking360Ar,
   calendarAr,
-  venueOverviewAr
+  venueOverviewAr,
+  attentionCenterAr,
+  venueCommercialAr,
+  venueMoneyAr
 );
