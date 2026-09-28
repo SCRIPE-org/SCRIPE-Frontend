@@ -57,8 +57,14 @@ export function NexusSecondaryRail({
 
   // ── Menu items to display: children of the selected root item ─────────────
   const menuItems: MenuItem[] = activeRootItem?.children ?? [];
+  const hasSubmenu = menuItems.length > 0;
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
+
+  // If active root item has no submenu children, do not render secondary rail at all
+  if (!hasSubmenu) {
+    return null;
+  }
 
   // Auto-collapse when panel is explicitly collapsed by user action.
   // Do NOT collapse when activeWorkspace is null — that is a transient state

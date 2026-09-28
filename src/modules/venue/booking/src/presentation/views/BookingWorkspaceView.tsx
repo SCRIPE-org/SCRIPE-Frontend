@@ -133,6 +133,7 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
             searching={vm.customerSearching}
             onSearch={vm.searchCustomers}
             onSelect={vm.selectCustomer}
+            onCreateCustomer={vm.createCustomer}
             onClear={vm.clearCustomer}
           />
           <RequestCriteriaSection

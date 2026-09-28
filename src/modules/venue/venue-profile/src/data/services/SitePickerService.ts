@@ -42,4 +42,13 @@ export class SitePickerService implements ISitePickerService {
     const response = await this.api.get<SiteListResponseJson>(url);
     return response.items.map((item) => ({ id: item.id, name: item.name }));
   }
+
+  async create(name: string, address?: string, timeZone?: string): Promise<SitePickerOption> {
+    const response = await this.api.post<{ id: string }>(SITE_PICKER_ENDPOINTS.CREATE, {
+      name,
+      address: address || undefined,
+      timeZone: timeZone || undefined,
+    });
+    return { id: response.id, name };
+  }
 }

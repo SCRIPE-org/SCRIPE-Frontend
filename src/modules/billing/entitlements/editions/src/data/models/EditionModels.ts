@@ -40,6 +40,8 @@ export interface EditionModel {
     displayLabelEn?: string;
     displayLabelAr?: string;
     isMarketingOnly?: boolean;
+    isHighlight?: boolean;
+    highlightOrder?: number;
   }[];
   /** Full prices array (multi-currency × billing cycle). Available in detail response. */
   prices?: EditionPriceModel[];

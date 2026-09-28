@@ -33,6 +33,12 @@ export const VENUE_PERMISSIONS = {
   VENUE_PROFILE_UPDATE: "venue-profiles.update",
   VENUE_PROFILE_DELETE: "venue-profiles.delete",
 
+  // ── Sites & Campuses (OrganizationCore cross-module) ─────
+  SITE_VIEW: "sites.view",
+  SITE_CREATE: "sites.create",
+  SITE_UPDATE: "sites.update",
+  SITE_DELETE: "sites.delete",
+
   // ── Schedulable Resources ────────────────────────────────
   SCHEDULABLE_RESOURCE_VIEW: "schedulable-resources.view",
   SCHEDULABLE_RESOURCE_CREATE: "schedulable-resources.create",

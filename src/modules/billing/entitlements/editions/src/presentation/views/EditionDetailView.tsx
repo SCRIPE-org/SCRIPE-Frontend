@@ -1,17 +1,8 @@
 // UI-EXCEPTION: compact studio layout
-/**
- * Edition Detail View — Thin Orchestrator
- *
- * Delegates tab content to dedicated component files:
- * - FeaturesTab (overflow policy + feature module cards + FeatureControl)
- * - PricingTab (multi-currency pricing matrix)
- * - PromotionsTab (promo code management)
- * - VersionsTab (immutable version history)
- * - ChangeActionBar (sticky bottom bar + dialogs)
- */
+/** Edition Detail View — Thin orchestrator delegating to modular tab components. */
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useEditionDetailViewModel } from "../viewmodels/useEditionDetailViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
@@ -22,7 +13,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 
 // ── Extracted Tab Components ──
-import { FeaturesTab, getFeatureDisabledDefault } from "../components/FeaturesTab";
+import { FeaturesTab } from "../components/FeaturesTab";
 import { VersionsTab } from "../components/VersionsTab";
 import { PricingTab } from "../components/PricingTab";
 import { PromotionsTab } from "../components/PromotionsTab";
@@ -45,23 +36,6 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
   const [activeTab, setActiveTab] = useState<"features" | "pricing" | "versions" | "promotions">(
     "features"
   );
-
-  // ── Count modified features (needed by ChangeActionBar) ──
-  const modifiedCount = useMemo(() => {
-    if (!vm.edition || !vm.moduleGroups.length) return 0;
-    const allFeatures = vm.moduleGroups.flatMap((mg) =>
-      mg.categories.flatMap((cat) => cat.features)
-    );
-    let count = 0;
-    for (const feature of allFeatures) {
-      const effectiveVal = vm.getEffectiveValue(feature);
-      const serverFeature = vm.edition.features.find((ef) => ef.featureName === feature.name);
-      const serverVal = serverFeature?.value ?? getFeatureDisabledDefault(feature.valueType);
-      if (effectiveVal !== serverVal) count++;
-    }
-    if (vm.overflowPolicyChanged) count++;
-    return count;
-  }, [vm]);
 
   // ── Loading ──
   if (vm.isLoading) {
@@ -204,7 +178,7 @@ export function EditionDetailView({ editionId }: EditionDetailViewProps) {
       {/* ─────── STICKY ACTION BAR (only when changes pending) ─────── */}
       {vm.hasUnsavedChanges && (
         <ChangeActionBar
-          modifiedCount={modifiedCount}
+          modifiedCount={vm.modifiedCount}
           isCreatingVersion={vm.isCreatingVersion}
           isDirectApplying={vm.isDirectApplying}
           createVersionWithChanges={vm.createVersionWithChanges}

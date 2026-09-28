@@ -24,5 +24,18 @@ export const ar = {
     descriptions: {
       siteId: "الموقع في نظام OrganizationCore الذي تعمل عليه هذه المنشأة.",
     },
+    manageSites: "إدارة المواقع والمجمعات",
+    quickCreateSite: "إنشاء سريع لموقع",
+    quickCreateSiteDescription: "أضف موقعًا أو حرمًا جديدًا لمنشآتك.",
+    siteName: "اسم الموقع",
+    siteNamePlaceholder: "مثل: الحرم الغربي أو المجمع الرئيسي",
+    siteAddress: "العنوان",
+    siteAddressPlaceholder: "مثل: شارع الرياضة، المبنى أ",
+    siteTimeZone: "المنطقة الزمنية",
+    siteTimeZonePlaceholder: "مثل: Asia/Riyadh أو UTC",
+    createSiteAction: "إنشاء الموقع",
+    creatingSite: "جارٍ إنشاء الموقع...",
+    cancel: "إلغاء",
+    siteCreatedSuccess: "تم إنشاء الموقع بنجاح",
   },
 };

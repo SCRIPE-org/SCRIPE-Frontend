@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Building2, Layers, GitFork } from "lucide-react";
+import { Building2, Layers, GitFork, MapPin, Clock, Sliders } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -12,10 +12,28 @@ export function VenueResourceNav() {
 
   const links = [
     {
+      href: "/venue/venue-setup",
+      label: t("venueProfile.title") || "Venue Setup",
+      icon: Sliders,
+      active: pathname === "/venue/venue-setup",
+    },
+    {
+      href: "/venue/sites",
+      label: t("site.title") || "Sites & Campuses",
+      icon: MapPin,
+      active: pathname === "/venue/sites",
+    },
+    {
       href: "/venue/facilities",
       label: t("facility.title") || "Facilities",
       icon: Building2,
       active: pathname === "/venue/facilities",
+    },
+    {
+      href: "/venue/resource-builder",
+      label: t("schedulableResource.title") || "Resource Builder",
+      icon: GitFork,
+      active: pathname === "/venue/resource-builder",
     },
     {
       href: "/venue/resource-profiles",
@@ -24,10 +42,10 @@ export function VenueResourceNav() {
       active: pathname === "/venue/resource-profiles",
     },
     {
-      href: "/venue/resource-builder",
-      label: t("schedulableResource.title") || "Resource Builder",
-      icon: GitFork,
-      active: pathname === "/venue/resource-builder",
+      href: "/venue/availability",
+      label: t("availability.title") || "Operating Hours",
+      icon: Clock,
+      active: pathname === "/venue/availability",
     },
   ];
 

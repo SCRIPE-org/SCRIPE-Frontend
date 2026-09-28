@@ -41,7 +41,8 @@ export interface IEditionRepository {
     changeNotes?: string,
     featureValues?: Record<string, string>,
     pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>,
-    pendingLabels?: Record<string, { en?: string; ar?: string }>
+    pendingLabels?: Record<string, { en?: string; ar?: string }>,
+    pendingHighlights?: Record<string, { isHighlight?: boolean; highlightOrder?: number }>
   ): Promise<string>;
   publishVersion(
     editionId: string,

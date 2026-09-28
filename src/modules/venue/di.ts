@@ -23,6 +23,11 @@ import { SitePickerService } from "./venue-profile/src/data/services/SitePickerS
 import type { IVenueProfileService } from "./venue-profile/src/domain/interfaces/IVenueProfileService";
 import type { IVenueProfileRepository } from "./venue-profile/src/domain/interfaces/IVenueProfileRepository";
 import type { ISitePickerService } from "./venue-profile/src/domain/interfaces/ISitePickerService";
+// Site
+import { SiteService } from "./site/src/data/services/SiteService";
+import { SiteRepository } from "./site/src/data/repositories/SiteRepository";
+import type { ISiteService } from "./site/src/domain/interfaces/ISiteService";
+import type { ISiteRepository } from "./site/src/domain/interfaces/ISiteRepository";
 
 // Facility
 import { FacilityService } from "./facility/src/data/services/FacilityService";
@@ -103,6 +108,7 @@ interface VenueContainer {
   moneyRepository: IMoneyRepository;
   venueAttentionRepository: IVenueAttentionRepository;
   venueOverviewService: IVenueOverviewService;
+  siteRepository: ISiteRepository;
   /** Site picker for the Venue Profile "Site" field — OrganizationCore is a different backend module. */
   sitePickerService: ISitePickerService;
   /** Lightweight picker retained for the Resource Builder form. */
@@ -172,6 +178,7 @@ export function getVenueContainer(): VenueContainer {
   const venueAttentionService: IVenueAttentionService = new VenueAttentionService(venueApi);
   const commercialPricingService = new CommercialPricingService(catalogPricingApi);
   const moneyService: IMoneyService = new MoneyService(financeApi);
+  const siteService: ISiteService = new SiteService(organizationCoreApi);
 
   container = {
     venueProfileRepository: new VenueProfileRepository(venueProfileService),
@@ -195,9 +202,29 @@ export function getVenueContainer(): VenueContainer {
       new FacilityRepository(facilityService),
       new CustomerRepository(customerPickerService)
     ),
+    siteRepository: new SiteRepository(siteService),
     sitePickerService: new SitePickerService(organizationCoreApi),
     facilityResourceProfilePickerService: new FacilityResourceProfilePickerService(venueApi),
   };
 
   return container;
 }
+
+export const venueContainer = {
+  get venueProfileRepository() { return getVenueContainer().venueProfileRepository; },
+  get facilityRepository() { return getVenueContainer().facilityRepository; },
+  get facilityResourceProfileRepository() { return getVenueContainer().facilityResourceProfileRepository; },
+  get schedulableResourceRepository() { return getVenueContainer().schedulableResourceRepository; },
+  get availabilityRepository() { return getVenueContainer().availabilityRepository; },
+  get bookingRepository() { return getVenueContainer().bookingRepository; },
+  get customerRepository() { return getVenueContainer().customerRepository; },
+  get operationsCalendarRepository() { return getVenueContainer().operationsCalendarRepository; },
+  get booking360Repository() { return getVenueContainer().booking360Repository; },
+  get commercialPricingRepository() { return getVenueContainer().commercialPricingRepository; },
+  get moneyRepository() { return getVenueContainer().moneyRepository; },
+  get venueAttentionRepository() { return getVenueContainer().venueAttentionRepository; },
+  get venueOverviewService() { return getVenueContainer().venueOverviewService; },
+  get siteRepository() { return getVenueContainer().siteRepository; },
+  get sitePickerService() { return getVenueContainer().sitePickerService; },
+  get facilityResourceProfilePickerService() { return getVenueContainer().facilityResourceProfilePickerService; },
+};

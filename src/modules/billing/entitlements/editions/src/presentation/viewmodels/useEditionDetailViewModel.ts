@@ -53,6 +53,7 @@ export interface EditionDetailViewModelResult {
     value: boolean | number
   ) => void;
   hasUnsavedChanges: boolean;
+  modifiedCount: number;
 
   // ── Version-based apply ──
   createVersionWithChanges: (changeNotes?: string) => void;
@@ -219,15 +220,16 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   // ── Overflow Policy (local state — not auto-saved) ──
   const [localOverflowPolicy, setLocalOverflowPolicy] = useState("Block");
 
-  // Sync pending values, labels, and highlights when edition data changes
-  const [lastEditionId, setLastEditionId] = useState<string | undefined>();
-  if (edition && edition.id !== lastEditionId) {
+  // Helper to sync pending state from an edition instance
+  const syncFromEdition = useCallback((ed: Edition) => {
+    const values: Record<string, string> = {};
     const serverLabels: Record<string, { en?: string; ar?: string }> = {};
     const serverHighlightSnapshot: Record<
       string,
       { isHighlight?: boolean; highlightOrder?: number }
     > = {};
-    edition.features.forEach((ef) => {
+    ed.features.forEach((ef) => {
+      values[ef.featureName] = ef.value;
       if (ef.displayLabelEn || ef.displayLabelAr) {
         serverLabels[ef.featureName] = { en: ef.displayLabelEn ?? "", ar: ef.displayLabelAr ?? "" };
       }
@@ -238,10 +240,17 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
         };
       }
     });
-    setPendingValues(serverValueMap);
+    setPendingValues(values);
     setPendingLabels(serverLabels);
     setPendingHighlights(serverHighlightSnapshot);
+    setLocalOverflowPolicy(ed.overflowPolicy ?? "Block");
+  }, []);
+
+  // Sync pending values, labels, and highlights when edition data loads or ID changes
+  const [lastEditionId, setLastEditionId] = useState<string | undefined>();
+  if (edition && edition.id !== lastEditionId) {
     setLastEditionId(edition.id);
+    syncFromEdition(edition);
   }
 
   // Get effective value: pending → server → disabled default
@@ -362,29 +371,10 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   ]);
 
   const discardChanges = useCallback(() => {
-    setPendingValues(serverValueMap);
-    const serverLabels: Record<string, { en?: string; ar?: string }> = {};
-    const serverHighlightSnapshot: Record<
-      string,
-      { isHighlight?: boolean; highlightOrder?: number }
-    > = {};
-    edition?.features.forEach((ef) => {
-      if (ef.displayLabelEn || ef.displayLabelAr) {
-        serverLabels[ef.featureName] = { en: ef.displayLabelEn ?? "", ar: ef.displayLabelAr ?? "" };
-      }
-      if (ef.isHighlight !== undefined || ef.highlightOrder !== undefined) {
-        serverHighlightSnapshot[ef.featureName] = {
-          isHighlight: ef.isHighlight ?? false,
-          highlightOrder: ef.highlightOrder ?? 0,
-        };
-      }
-    });
-    setPendingLabels(serverLabels);
-    setPendingHighlights(serverHighlightSnapshot);
     if (edition) {
-      setLocalOverflowPolicy(edition.overflowPolicy ?? "Block");
+      syncFromEdition(edition);
     }
-  }, [serverValueMap, edition]);
+  }, [edition, syncFromEdition]);
 
   // ── Build the changed feature map (featureName → newValue) ──
   const getChangedFeatures = useCallback((): Record<string, string> => {
@@ -422,7 +412,8 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
         changeNotes,
         pendingValues,
         pricingSnapshot,
-        pendingLabels
+        pendingLabels,
+        pendingHighlights
       );
     },
     onSuccess: () => {
@@ -497,12 +488,18 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
         changedHighlights
       );
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       success({
         title: t("entitlements.editions.changesApplied"),
         description: t("entitlements.editions.changesAppliedDesc"),
       });
-      queryClient.invalidateQueries({ queryKey: ["entitlements", "editions", editionId] });
+      const updatedEdition = await queryClient.fetchQuery({
+        queryKey: ["entitlements", "editions", editionId],
+        queryFn: () => editionRepository.getById(editionId),
+      });
+      if (updatedEdition) {
+        syncFromEdition(updatedEdition);
+      }
       queryClient.invalidateQueries({
         queryKey: ["entitlements", "editions", editionId, "versions"],
       });
@@ -617,6 +614,40 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   // Combined unsaved — features or overflow policy
   const combinedHasUnsavedChanges = hasUnsavedChanges || overflowPolicyChanged;
 
+  const modifiedCount = useMemo(() => {
+    if (!edition) return 0;
+    let count = 0;
+    for (const [name, val] of Object.entries(pendingValues ?? {})) {
+      if (serverValueMap[name] !== val) count++;
+    }
+    for (const [name, labels] of Object.entries(pendingLabels)) {
+      const server = serverLabelMap[name];
+      if ((labels.en ?? "") !== (server?.en ?? "") || (labels.ar ?? "") !== (server?.ar ?? "")) {
+        count++;
+      }
+    }
+    for (const [name, h] of Object.entries(pendingHighlights)) {
+      const server = serverHighlightMap[name];
+      if (
+        (h.isHighlight ?? false) !== (server?.isHighlight ?? false) ||
+        (h.highlightOrder ?? 0) !== (server?.highlightOrder ?? 0)
+      ) {
+        count++;
+      }
+    }
+    if (overflowPolicyChanged) count++;
+    return count;
+  }, [
+    edition,
+    pendingValues,
+    serverValueMap,
+    pendingLabels,
+    serverLabelMap,
+    pendingHighlights,
+    serverHighlightMap,
+    overflowPolicyChanged,
+  ]);
+
   return {
     edition,
     moduleGroups,
@@ -633,6 +664,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
     setLocalLabel,
     setLocalHighlight,
     hasUnsavedChanges: combinedHasUnsavedChanges,
+    modifiedCount,
 
     createVersionWithChanges,
     isCreatingVersion: createVersionMutation.isPending,

@@ -226,26 +226,46 @@ export function useEditionComparisonViewModel() {
 
   /**
    * Progressive feature highlights per edition WITH human-readable values.
-   * - Tier 0: Show top enabled features (with their values)
-   * - Higher tiers: Show features that are BETTER than the previous tier, with delta values
+   * - Features explicitly marked with isHighlight: true appear first (ordered by highlightOrder).
+   * - Lowest tier: show top enabled features (with their values).
+   * - Higher tiers: show features that are BETTER than the previous tier, with delta values.
    */
   const progressiveHighlights = useMemo(() => {
     return editions.map((ed: Edition, idx: number) => {
       const prev = idx > 0 ? editions[idx - 1] : null;
       const highlights: PricingHighlight[] = [];
+      const addedFeatures = new Set<string>();
 
+      // 1. Explicitly marked highlights take first priority (ordered by highlightOrder)
+      const explicitHighlights = ed.features
+        .filter((f) => f.isHighlight === true)
+        .sort((a, b) => (a.highlightOrder ?? 0) - (b.highlightOrder ?? 0));
+
+      for (const f of explicitHighlights) {
+        highlights.push(buildHighlightLabel(f, language));
+        addedFeatures.add(f.featureName);
+      }
+
+      // 2. Fill remaining slots with progressive or top enabled features
       if (!prev) {
         // Lowest tier: show top enabled features with values
         ed.features
           .filter((f) => {
+            if (addedFeatures.has(f.featureName)) return false;
             if (f.value === "false" || f.value === "0" || f.value.trim() === "") return false;
             return true;
           })
-          .slice(0, 8)
-          .forEach((f) => highlights.push(buildHighlightLabel(f, language)));
+          .slice(0, Math.max(0, 8 - highlights.length))
+          .forEach((f) => {
+            highlights.push(buildHighlightLabel(f, language));
+            addedFeatures.add(f.featureName);
+          });
       } else {
         // Higher tiers: show features with BETTER values than previous tier
         ed.features.forEach((f) => {
+          if (highlights.length >= 8) return;
+          if (addedFeatures.has(f.featureName)) return;
+
           const prevFeature = prev.features.find((pf) => pf.featureName === f.featureName);
           const prevVal = prevFeature?.value ?? "false";
 
@@ -261,14 +281,24 @@ export function useEditionComparisonViewModel() {
           }
 
           highlights.push(buildHighlightLabel(f, language));
+          addedFeatures.add(f.featureName);
         });
 
-        // Fallback: if no diffs, show top features of this tier
-        if (highlights.length === 0) {
+        // Fallback: if fewer than 5 highlights, supplement with top features of this tier
+        if (highlights.length < 5) {
           ed.features
-            .filter((f) => f.value !== "false" && f.value !== "0" && f.value.trim() !== "")
-            .slice(0, 5)
-            .forEach((f) => highlights.push(buildHighlightLabel(f, language)));
+            .filter(
+              (f) =>
+                !addedFeatures.has(f.featureName) &&
+                f.value !== "false" &&
+                f.value !== "0" &&
+                f.value.trim() !== ""
+            )
+            .slice(0, 5 - highlights.length)
+            .forEach((f) => {
+              highlights.push(buildHighlightLabel(f, language));
+              addedFeatures.add(f.featureName);
+            });
         }
       }
 

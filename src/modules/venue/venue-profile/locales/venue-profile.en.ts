@@ -24,5 +24,18 @@ export const en = {
     descriptions: {
       siteId: "The OrganizationCore site this venue operates at.",
     },
+    manageSites: "Manage Sites & Campuses",
+    quickCreateSite: "Quick Create Site",
+    quickCreateSiteDescription: "Add a new site or campus location for your venues.",
+    siteName: "Site Name",
+    siteNamePlaceholder: "e.g. West Campus or Main Complex",
+    siteAddress: "Address",
+    siteAddressPlaceholder: "e.g. 123 Sports Way, Building A",
+    siteTimeZone: "Time Zone",
+    siteTimeZonePlaceholder: "e.g. UTC, America/New_York",
+    createSiteAction: "Create Site",
+    creatingSite: "Creating Site...",
+    cancel: "Cancel",
+    siteCreatedSuccess: "Site created successfully",
   },
 };

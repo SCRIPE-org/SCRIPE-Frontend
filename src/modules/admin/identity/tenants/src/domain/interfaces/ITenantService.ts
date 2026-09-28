@@ -250,8 +250,20 @@ export interface ITenantService {
   // ── Domain Management ─────────────────────────────────────
   /** Get all domains for a tenant */
   getDomains(tenantId: string): Promise<TenantDomainsResponse>;
-  /** Add a custom domain to a tenant */
-  addDomain(tenantId: string, domain: string): Promise<void>;
+  /** Add a custom domain to a tenant with optional redirect settings */
+  addDomain(
+    tenantId: string,
+    domain: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void>;
+  /** Update custom domain redirect settings */
+  updateDomain(
+    tenantId: string,
+    domainId: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void>;
   /** Verify DNS for a custom domain */
   verifyDomain(tenantId: string, domainId: string): Promise<void>;
   /** Set a domain as primary */

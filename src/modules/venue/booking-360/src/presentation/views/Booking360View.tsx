@@ -49,8 +49,7 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
   const headingRef = React.useRef<HTMLHeadingElement>(null);
   const focusedReservationId = React.useRef<string | null>(null);
 
-  // Focus the canonical identity once per opened booking. Operational mutations focus their own
-  // live region after the authoritative reload, so a status change must not race focus back here.
+  // Focus the canonical identity once per opened booking without racing operational focus.
   React.useEffect(() => {
     const id = vm.state.reservation?.id;
     if (vm.state.stage === "ready" && id && focusedReservationId.current !== id) {

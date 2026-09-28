@@ -26,6 +26,27 @@ export interface TenantDomainJson {
   verifiedAt: string | null;
   /** Creation timestamp */
   createdAt: string;
+  /** Target hostname to redirect to */
+  redirectTo?: string | null;
+  /** HTTP redirect status code (301, 302, 307, 308) */
+  redirectStatusCode?: number | null;
+}
+
+/**
+ * Payload for adding a custom domain.
+ */
+export interface AddTenantDomainPayload {
+  domain: string;
+  redirectTo?: string | null;
+  redirectStatusCode?: number | null;
+}
+
+/**
+ * Payload for updating custom domain redirect settings.
+ */
+export interface UpdateTenantDomainPayload {
+  redirectTo?: string | null;
+  redirectStatusCode?: number | null;
 }
 
 /**

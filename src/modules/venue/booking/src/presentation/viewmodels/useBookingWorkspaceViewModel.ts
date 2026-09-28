@@ -168,6 +168,24 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     return hydrated;
   }, [customerRepository]);
 
+  const createCustomer = useCallback(async (displayName: string, type?: "Person" | "Organization") => {
+    setCustomerSearching(true);
+    try {
+      const created = await customerRepository.create(displayName, type);
+      setCustomerState(created);
+      setCustomerResults([]);
+      draftRef.current = null;
+      confirmKeyRef.current = null;
+      quoteGenerationRef.current += 1;
+      setPriceQuote(null);
+      setPriceQuoteError(null);
+      dispatch({ type: "customerChanged" });
+      return created;
+    } finally {
+      setCustomerSearching(false);
+    }
+  }, [customerRepository]);
+
   const clearCustomer = useCallback(() => {
     setCustomerState(null);
     draftRef.current = null;
@@ -433,6 +451,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     customerSearching,
     searchCustomers,
     selectCustomer,
+    createCustomer,
     clearCustomer,
     facilities,
     resourceKindOptions,

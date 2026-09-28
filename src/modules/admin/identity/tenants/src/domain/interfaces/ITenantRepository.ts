@@ -5,6 +5,7 @@
  * Defines the contract for tenant data operations.
  */
 import type { Tenant, TenantTreeNode } from "../entities/Tenant";
+import type { TenantDomainsConfig } from "../entities/TenantDomain";
 import type {
   CreateTenantRequest,
   CreateTenantResult,
@@ -18,10 +19,6 @@ import type {
   PagedEditionResult,
   DowngradeImpactReport,
 } from "../types/SubscriptionTypes";
-import type { TenantDomainJson } from "./ITenantService";
-
-/** Domain-level alias for tenant domain data */
-export type TenantDomainData = TenantDomainJson;
 
 /**
  * Tenant list query parameters
@@ -293,13 +290,27 @@ export interface ITenantRepository {
 
   // ── Domain Management ─────────────────────────────────────
 
-  /** Get all domains for a tenant */
-  getDomains(
-    tenantId: string
-  ): Promise<{ domains: TenantDomainData[]; cnameTarget: string; verificationPrefix: string }>;
+  /**
+   * Get all domain configurations and platform DNS target records for a tenant.
+   * Resolves both platform-provisioned auto domains and custom vanity domains.
+   */
+  getDomains(tenantId: string): Promise<TenantDomainsConfig>;
 
-  /** Add a custom domain to a tenant */
-  addDomain(tenantId: string, domain: string): Promise<void>;
+  /** Add a custom domain to a tenant with optional redirect settings */
+  addDomain(
+    tenantId: string,
+    domain: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void>;
+
+  /** Update custom domain redirect settings */
+  updateDomain(
+    tenantId: string,
+    domainId: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void>;
 
   /** Verify DNS for a custom domain */
   verifyDomain(tenantId: string, domainId: string): Promise<void>;

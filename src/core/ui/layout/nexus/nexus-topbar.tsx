@@ -186,19 +186,24 @@ export function NexusTopbar({
       }}
     >
       {/* Mobile hamburger / Desktop Panel Toggle */}
-      <TopbarPanelToggle
-        isRTL={isRTL}
-        isPanelCollapsed={isPanelCollapsed}
-        collapsible={collapsibleSidebar}
-        ariaLabel={t("navigation.togglePanel")}
-        onToggle={() => {
-          if (typeof window !== "undefined" && window.innerWidth < 1024) {
-            onMobileMenuOpen();
-          } else if (onTogglePanel) {
-            onTogglePanel();
-          }
-        }}
-      />
+      {(() => {
+        const hasSubmenu = Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
+        return (
+          <TopbarPanelToggle
+            isRTL={isRTL}
+            isPanelCollapsed={isPanelCollapsed}
+            collapsible={collapsibleSidebar && hasSubmenu}
+            ariaLabel={t("navigation.togglePanel")}
+            onToggle={() => {
+              if (typeof window !== "undefined" && window.innerWidth < 1024) {
+                onMobileMenuOpen();
+              } else if (onTogglePanel) {
+                onTogglePanel();
+              }
+            }}
+          />
+        );
+      })()}
 
       {/* Breadcrumbs — the spacer keeps the right-side controls parked at the
           inline end when the trail is switched off */}

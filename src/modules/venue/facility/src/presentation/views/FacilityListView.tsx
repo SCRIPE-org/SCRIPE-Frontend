@@ -8,14 +8,16 @@ import type { Facility } from "../../domain/entities/Facility";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { SiteQuickCreateDialog } from "@modules/venue/site/src/presentation/components/SiteQuickCreateDialog";
 
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
   const { vm, searchVenueProfiles, venueProfileNameById } = useFacilityViewModel();
   const { t, language } = useI18n();
+  const [quickCreateSiteOpen, setQuickCreateSiteOpen] = React.useState(false);
 
   const config: CrudConfig<Facility> = {
     titleKey: "facility.title",
@@ -123,12 +125,24 @@ export const FacilityListView = React.memo(function FacilityListView() {
         requiredPermission: VENUE_PERMISSIONS.FACILITY_DELETE,
       },
     ],
+    customActions: [
+      {
+        label: t("venueProfile.quickCreateSite") || "New Site",
+        onClick: async () => setQuickCreateSiteOpen(true),
+        icon: <Plus className="h-4 w-4" />,
+        variant: "outline" as const,
+      },
+    ],
   };
 
   return (
     <div className="space-y-4">
       <VenueResourceNav />
       <GenericCrudView viewModel={vm} config={config} />
+      <SiteQuickCreateDialog
+        open={quickCreateSiteOpen}
+        onOpenChange={setQuickCreateSiteOpen}
+      />
     </div>
   );
 });

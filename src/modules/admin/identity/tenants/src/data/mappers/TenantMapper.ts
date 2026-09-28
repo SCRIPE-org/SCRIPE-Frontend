@@ -14,6 +14,14 @@ import {
   type TenantTreeNodeProps,
 } from "../../domain/entities/Tenant";
 import {
+  TenantDomain,
+  TenantDomainsConfig,
+} from "../../domain/entities/TenantDomain";
+import type {
+  TenantDomainJson,
+  TenantDomainsResponse,
+} from "../../domain/interfaces/tenantServiceTypes";
+import {
   TenantModel,
   TenantTreeNodeModel,
   CreateTenantModel,
@@ -191,5 +199,35 @@ export class TenantMapper {
       request.isActive,
       request.address
     );
+  }
+
+  /**
+   * Map TenantDomainJson API DTO to TenantDomain Domain Entity
+   */
+  static toTenantDomain(dto: TenantDomainJson): TenantDomain {
+    return new TenantDomain({
+      id: dto.id,
+      domain: dto.domain,
+      type: dto.type,
+      isPrimary: Boolean(dto.isPrimary),
+      isVerified: Boolean(dto.isVerified),
+      verificationToken: dto.verificationToken ?? null,
+      verifiedAt: dto.verifiedAt ?? null,
+      createdAt: dto.createdAt ?? "",
+      redirectTo: dto.redirectTo ?? null,
+      redirectStatusCode: dto.redirectStatusCode ?? null,
+    });
+  }
+
+  /**
+   * Map TenantDomainsResponse API DTO to TenantDomainsConfig Domain Entity
+   */
+  static toDomainsConfig(dto: TenantDomainsResponse): TenantDomainsConfig {
+    const domainEntities = (dto?.domains || []).map(TenantMapper.toTenantDomain);
+    return new TenantDomainsConfig({
+      domains: domainEntities,
+      cnameTarget: dto?.cnameTarget ?? "",
+      verificationPrefix: dto?.verificationPrefix ?? "_scr-verify",
+    });
   }
 }

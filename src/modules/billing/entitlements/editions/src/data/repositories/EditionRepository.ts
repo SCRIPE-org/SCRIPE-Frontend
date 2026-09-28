@@ -93,14 +93,16 @@ export class EditionRepository implements IEditionRepository {
     changeNotes?: string,
     featureValues?: Record<string, string>,
     pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>,
-    pendingLabels?: Record<string, { en?: string; ar?: string }>
+    pendingLabels?: Record<string, { en?: string; ar?: string }>,
+    pendingHighlights?: Record<string, { isHighlight?: boolean; highlightOrder?: number }>
   ): Promise<string> {
     const response = await this.service.createVersion(
       editionId,
       changeNotes,
       featureValues,
       pricingSnapshot,
-      pendingLabels
+      pendingLabels,
+      pendingHighlights
     );
     return response.id;
   }
