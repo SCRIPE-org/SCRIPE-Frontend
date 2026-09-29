@@ -58,7 +58,7 @@ export function VenueOverviewOperationalLoad({ buckets, t }: Props) {
             <div
               className="grid grid-cols-24 gap-1 items-end h-44 border-b border-nx-line pb-2 pt-4 px-1"
               aria-label={t("venueOverview.operationalLoad.title")}
-              role="img"
+              role="region"
             >
               {buckets.map((b) => {
                 const heightPercent = b.total > 0 ? Math.max(12, Math.round((b.total / maxTotal) * 100)) : 0;
@@ -66,15 +66,19 @@ export function VenueOverviewOperationalLoad({ buckets, t }: Props) {
                 const confirmedPct = b.total > 0 ? (b.confirmed / b.total) * 100 : 0;
                 const heldPct = b.total > 0 ? (b.held / b.total) * 100 : 0;
                 const completedPct = b.total > 0 ? (b.completed / b.total) * 100 : 0;
+                const summaryLabel = `${b.label}: ${b.total} ${t("venueOverview.operationalLoad.legend.total") || "total"} (${b.checkedIn} ${t("venueOverview.operationalLoad.legend.checkedIn")}, ${b.confirmed} ${t("venueOverview.operationalLoad.legend.confirmed")}, ${b.held} ${t("venueOverview.operationalLoad.legend.held")}, ${b.completed} ${t("venueOverview.operationalLoad.legend.completed")})`;
 
                 return (
                   <div
                     key={b.hour}
-                    className="group relative flex flex-col justify-end w-full h-full"
+                    tabIndex={0}
+                    role="graphics-symbol"
+                    aria-label={summaryLabel}
+                    className="group relative flex flex-col justify-end w-full h-full rounded-nx-xs outline-none focus-visible:ring-1 focus-visible:ring-nx-accent"
                     title={`${b.label}: ${b.total} booking(s)`}
                   >
-                    {/* Tooltip on Hover */}
-                    <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:flex flex-col z-popover pointer-events-none rounded-nx-xs border border-nx-line bg-nx-surface p-1.5 text-[10px] text-nx-ink shadow-nx-md whitespace-nowrap font-mono tabular-nums">
+                    {/* Tooltip on Hover / Focus */}
+                    <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:flex group-focus-visible:flex flex-col z-popover pointer-events-none rounded-nx-xs border border-nx-line bg-nx-surface p-1.5 text-[10px] text-nx-ink shadow-nx-md whitespace-nowrap font-mono tabular-nums">
                       <span className="font-bold border-b border-nx-line pb-0.5">{b.label}</span>
                       <span>CheckedIn: {b.checkedIn}</span>
                       <span>Confirmed: {b.confirmed}</span>

@@ -25,6 +25,7 @@ import type {
   ServiceTenantListParams,
   TenantListResult,
   TenantTreeListResult,
+  TenantDomainJson,
 } from "../../domain/interfaces/ITenantService";
 import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
 import { PermissionModel } from "@modules/identity/core";
@@ -438,8 +439,8 @@ export class TenantService implements ITenantService {
     });
   }
 
-  async verifyDomain(tenantId: string, domainId: string): Promise<void> {
-    await this.api.post(TENANTS_ENDPOINTS.DOMAIN_VERIFY(tenantId, domainId), {});
+  async verifyDomain(tenantId: string, domainId: string): Promise<TenantDomainJson> {
+    return this.api.post<TenantDomainJson>(TENANTS_ENDPOINTS.DOMAIN_VERIFY(tenantId, domainId), {});
   }
 
   async setDomainPrimary(tenantId: string, domainId: string): Promise<void> {

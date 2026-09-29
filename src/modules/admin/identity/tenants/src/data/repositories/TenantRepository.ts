@@ -13,7 +13,7 @@ import type {
   TenantStats,
 } from "../../domain/interfaces/ITenantRepository";
 import { Tenant, type TenantTreeNode } from "../../domain/entities/Tenant";
-import type { TenantDomainsConfig } from "../../domain/entities/TenantDomain";
+import type { TenantDomain, TenantDomainsConfig } from "../../domain/entities/TenantDomain";
 import type {
   CreateTenantRequest,
   CreateTenantResult,
@@ -330,8 +330,9 @@ export class TenantRepository implements ITenantRepository {
     await this.service.updateDomain(tenantId, domainId, redirectTo, redirectStatusCode);
   }
 
-  async verifyDomain(tenantId: string, domainId: string): Promise<void> {
-    await this.service.verifyDomain(tenantId, domainId);
+  async verifyDomain(tenantId: string, domainId: string): Promise<TenantDomain> {
+    const raw = await this.service.verifyDomain(tenantId, domainId);
+    return TenantMapper.toTenantDomain(raw);
   }
 
   async setDomainPrimary(tenantId: string, domainId: string): Promise<void> {

@@ -14,7 +14,7 @@
  */
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   Dialog,
@@ -35,9 +35,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import { Badge } from "@core/ui/badge";
 import { Input } from "@core/ui/input";
-import { GitBranch } from "lucide-react";
+import { Globe } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
 
@@ -54,88 +53,79 @@ export interface EditDomainRedirectDialogProps {
   isSubmitting?: boolean;
 }
 
-export function EditDomainRedirectDialog({
-  open,
-  onOpenChange,
+function EditDomainRedirectForm({
   domain,
   existingDomains,
   onSave,
+  onClose,
   isSubmitting = false,
-}: EditDomainRedirectDialogProps) {
-  const { t, direction } = useI18n();
+}: {
+  domain: TenantDomain;
+  existingDomains: TenantDomain[];
+  onSave: EditDomainRedirectDialogProps["onSave"];
+  onClose: () => void;
+  isSubmitting?: boolean;
+}) {
+  const { t } = useI18n();
 
-  const [connectMode, setConnectMode] = useState<"environment" | "redirect">("environment");
-  const [redirectStatusCode, setRedirectStatusCode] = useState<string>("308");
-  const [targetDomain, setTargetDomain] = useState<string>("");
-
-  useEffect(() => {
-    if (domain) {
-      if (domain.isRedirect && domain.redirectTo) {
-        setConnectMode("redirect");
-        setTargetDomain(domain.redirectTo);
-        setRedirectStatusCode(String(domain.redirectStatusCode || 308));
-      } else {
-        setConnectMode("environment");
-        setTargetDomain("");
-        setRedirectStatusCode("308");
-      }
-    }
-  }, [domain]);
+  const [connectMode, setConnectMode] = useState<"workspace" | "redirect">(
+    domain.isRedirect && domain.redirectTo ? "redirect" : "workspace"
+  );
+  const [redirectStatusCode, setRedirectStatusCode] = useState<string>(
+    String(domain.redirectStatusCode || 308)
+  );
+  const [targetDomain, setTargetDomain] = useState<string>(
+    domain.redirectTo || ""
+  );
 
   const availableTargets = useMemo(() => {
-    if (!domain) return [];
     return existingDomains.filter((d) => d.id !== domain.id);
-  }, [existingDomains, domain]);
+  }, [existingDomains, domain.id]);
 
   const handleSave = async () => {
-    if (!domain) return;
-
     if (connectMode === "redirect") {
       const code = parseInt(redirectStatusCode, 10) || 308;
       await onSave(domain.id, targetDomain || null, code);
     } else {
       await onSave(domain.id, null, null);
     }
-    onOpenChange(false);
+    onClose();
   };
 
-  if (!domain) return null;
-
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md p-6 gap-5 bg-nx-surface border-nx-line" dir={direction}>
-        <DialogHeader className="space-y-1">
-          <DialogTitle className="text-xl font-bold tracking-tight text-nx-ink font-mono">
-            {domain.domain}
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <DialogHeader className="space-y-1">
+        <DialogTitle className="text-xl font-bold tracking-tight text-nx-ink font-mono">
+          {domain.domain}
+        </DialogTitle>
+      </DialogHeader>
 
         <div className="space-y-4">
           <RadioGroup
             value={connectMode}
-            onValueChange={(val) => setConnectMode(val as "environment" | "redirect")}
+            onValueChange={(val) => setConnectMode(val as "workspace" | "redirect")}
             className="gap-3"
           >
-            {/* Option 1: Connect to an environment */}
+            {/* Option 1: Route to Tenant Workspace & Public Site */}
             <div
               className={cn(
                 "flex items-start gap-3 rounded-nx-md border p-3.5 transition-colors cursor-pointer",
-                connectMode === "environment"
+                connectMode === "workspace"
                   ? "border-nx-accent bg-nx-accent/5"
                   : "border-nx-line bg-nx-surface hover:border-nx-line-hi"
               )}
-              onClick={() => setConnectMode("environment")}
+              onClick={() => setConnectMode("workspace")}
             >
-              <RadioGroupItem value="environment" id="edit-mode-env" className="mt-0.5" />
+              <RadioGroupItem value="workspace" id="edit-mode-workspace" className="mt-0.5" />
               <div className="space-y-1">
-                <label htmlFor="edit-mode-env" className="text-xs font-semibold text-nx-ink cursor-pointer">
-                  {t("tenant.domainsModeConnectEnv")}
+                <label htmlFor="edit-mode-workspace" className="text-xs font-semibold text-nx-ink cursor-pointer">
+                  {t("tenant.domainsModeConnectWorkspace")}
                 </label>
                 <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
-                  <GitBranch className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
-                  <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-raised font-medium">
-                    Production
-                  </Badge>
+                  <Globe className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
+                  <span className="text-[11px] text-nx-ink-2">
+                    {t("tenant.domainsModeConnectWorkspaceDesc")}
+                  </span>
                 </div>
               </div>
             </div>
@@ -247,7 +237,7 @@ export function EditDomainRedirectDialog({
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => onOpenChange(false)}
+            onClick={onClose}
             disabled={isSubmitting}
             className="text-xs"
           >
@@ -264,6 +254,33 @@ export function EditDomainRedirectDialog({
             {t("common.save")}
           </Button>
         </DialogFooter>
+    </>
+  );
+}
+
+export function EditDomainRedirectDialog({
+  open,
+  onOpenChange,
+  domain,
+  existingDomains,
+  onSave,
+  isSubmitting = false,
+}: EditDomainRedirectDialogProps) {
+  const { direction } = useI18n();
+
+  if (!domain) return null;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md p-6 gap-5 bg-nx-surface border-nx-line" dir={direction}>
+        <EditDomainRedirectForm
+          key={domain.id}
+          domain={domain}
+          existingDomains={existingDomains}
+          onSave={onSave}
+          onClose={() => onOpenChange(false)}
+          isSubmitting={isSubmitting}
+        />
       </DialogContent>
     </Dialog>
   );

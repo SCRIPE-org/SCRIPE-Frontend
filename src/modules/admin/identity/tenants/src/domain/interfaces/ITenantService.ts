@@ -37,6 +37,7 @@ import type {
   TenantListResult,
   TenantTreeListResult,
   TenantDomainsResponse,
+  TenantDomainJson,
 } from "./tenantServiceTypes";
 
 
@@ -265,7 +266,7 @@ export interface ITenantService {
     redirectStatusCode?: number | null
   ): Promise<void>;
   /** Verify DNS for a custom domain */
-  verifyDomain(tenantId: string, domainId: string): Promise<void>;
+  verifyDomain(tenantId: string, domainId: string): Promise<TenantDomainJson>;
   /** Set a domain as primary */
   setDomainPrimary(tenantId: string, domainId: string): Promise<void>;
   /** Remove a custom domain */

@@ -204,8 +204,12 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   const verifyDomain = async (domainId: string) => {
     setVerifyingId(domainId);
     try {
-      await tenantRepository.verifyDomain(tenantId, domainId);
-      toast.success(t("tenant.domainsVerifiedSuccess"));
+      const updated = await tenantRepository.verifyDomain(tenantId, domainId);
+      if (updated?.isVerified) {
+        toast.success(t("tenant.domainsVerifiedSuccess"));
+      } else {
+        toast.info(t("tenant.domainsDnsNotConfiguredYet"));
+      }
       await fetchDomains();
     } catch {
       toast.error(t("tenant.domainsVerifyFailed"));

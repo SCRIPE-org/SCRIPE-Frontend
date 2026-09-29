@@ -29,6 +29,14 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
 
   const [timeZoneId, setTimeZoneId] = useState("UTC");
 
+  const [prevCalendar, setPrevCalendar] = useState(vm.calendar);
+  if (prevCalendar !== vm.calendar) {
+    setPrevCalendar(vm.calendar);
+    if (vm.calendar?.timeZoneId && vm.calendar.timeZoneId !== timeZoneId) {
+      setTimeZoneId(vm.calendar.timeZoneId);
+    }
+  }
+
   const resourceOptions = vm.resources.map((resource) => ({
     value: resource.id,
     label: resource.name,
@@ -104,6 +112,7 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
             <WeeklyWindowsEditorCard
+              key={vm.calendar?.id ?? vm.selectedResourceId}
               vm={vm}
               canSave={canSave}
               timeZoneId={timeZoneId}

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { TimezonePicker } from "@modules/custom-fields";
+import { TimezonePicker } from "@core/ui/timezone-picker";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
@@ -51,13 +51,23 @@ export function WeeklyWindowsEditorCard({
   const { success, error: toastError } = useEnhancedToast();
   const maximumCapacity = vm.selectedResource?.capacity?.maxConcurrentUsage ?? 1;
 
-  const [effectiveFrom, setEffectiveFrom] = useState(todayIn(timeZoneId));
-  const [effectiveTo, setEffectiveTo] = useState("");
-  const [windows, setWindows] = useState<WeeklyWindowDraft[]>([]);
+  const zone = vm.calendar?.timeZoneId ?? timeZoneId;
+  const [prevCalendar, setPrevCalendar] = useState(vm.calendar);
+  const [effectiveFrom, setEffectiveFrom] = useState(() =>
+    vm.calendar ? localDate(vm.calendar.effectiveFrom, zone) : todayIn(zone)
+  );
+  const [effectiveTo, setEffectiveTo] = useState(() =>
+    vm.calendar ? localDate(vm.calendar.effectiveTo, zone) : ""
+  );
+  const [windows, setWindows] = useState<WeeklyWindowDraft[]>(() =>
+    vm.calendar?.windows.map((w) => ({
+      ...w,
+      id: w.id ?? crypto.randomUUID(),
+    })) ?? []
+  );
 
-  useEffect(() => {
-    const zone = vm.calendar?.timeZoneId ?? "UTC";
-    onTimeZoneChange(zone);
+  if (prevCalendar !== vm.calendar) {
+    setPrevCalendar(vm.calendar);
     setEffectiveFrom(
       vm.calendar ? localDate(vm.calendar.effectiveFrom, zone) : todayIn(zone)
     );
@@ -68,7 +78,7 @@ export function WeeklyWindowsEditorCard({
         id: w.id ?? crypto.randomUUID(),
       })) ?? []
     );
-  }, [vm.calendar, onTimeZoneChange]);
+  }
 
   const addWindow = (dayOfWeek: WeekDay) => {
     setWindows((current) => [

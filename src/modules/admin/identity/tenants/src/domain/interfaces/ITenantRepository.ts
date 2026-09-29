@@ -5,7 +5,7 @@
  * Defines the contract for tenant data operations.
  */
 import type { Tenant, TenantTreeNode } from "../entities/Tenant";
-import type { TenantDomainsConfig } from "../entities/TenantDomain";
+import type { TenantDomain, TenantDomainsConfig } from "../entities/TenantDomain";
 import type {
   CreateTenantRequest,
   CreateTenantResult,
@@ -313,7 +313,7 @@ export interface ITenantRepository {
   ): Promise<void>;
 
   /** Verify DNS for a custom domain */
-  verifyDomain(tenantId: string, domainId: string): Promise<void>;
+  verifyDomain(tenantId: string, domainId: string): Promise<TenantDomain>;
 
   /** Set a domain as primary */
   setDomainPrimary(tenantId: string, domainId: string): Promise<void>;

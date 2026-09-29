@@ -60,9 +60,10 @@ export interface AddDomainsDialogProps {
 }
 
 /**
- * Parses raw input into a list of cleaned domain hostnames.
+ * Parses raw input into a list of cleaned, valid domain hostnames.
  */
 function parseRawDomains(input: string): string[] {
+  const domainRegex = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/i;
   return input
     .split(/[\n,\s]+/)
     .map((d) =>
@@ -71,23 +72,31 @@ function parseRawDomains(input: string): string[] {
         .toLowerCase()
         .replace(/^https?:\/\//i, "")
         .replace(/\/.*$/, "")
-        .replace(/\.+$/, "")
     )
-    .filter((d) => d.length > 0 && d.includes("."));
+    .filter((d) => domainRegex.test(d));
 }
 
 /**
- * Evaluates whether a domain is an apex domain (e.g. "seif.com") vs subdomain ("www.seif.com").
+ * Evaluates whether a domain is an apex domain (e.g. "seif.com") vs www subdomain ("www.seif.com").
+ * Incomplete inputs (e.g. lacking a valid TLD or ending with a dot) will not trigger pairing.
  */
 function inspectDomain(domain: string) {
-  const parts = domain.split(".").filter(Boolean);
-  const isApex = parts.length === 2;
+  const cleaned = domain.trim().toLowerCase().replace(/\/.*$/, "");
+  const domainRegex = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z]{2,}$/i;
+  if (!domainRegex.test(cleaned)) {
+    return { isApex: false, isWww: false, partnerDomain: null };
+  }
+
+  const parts = cleaned.split(".");
   const isWww = parts.length === 3 && parts[0] === "www";
-  const partnerDomain = isApex
-    ? `www.${domain}`
-    : isWww
-    ? parts.slice(1).join(".")
-    : null;
+  const isApex = parts.length === 2 || (parts.length === 3 && (parts[1] === "co" || parts[1] === "com" || parts[1] === "org") && parts[2].length === 2 && parts[0] !== "www");
+
+  let partnerDomain: string | null = null;
+  if (isApex) {
+    partnerDomain = `www.${cleaned}`;
+  } else if (isWww) {
+    partnerDomain = parts.slice(1).join(".");
+  }
 
   return { isApex, isWww, partnerDomain };
 }
@@ -102,7 +111,7 @@ export function AddDomainsDialog({
   const { t, direction } = useI18n();
 
   const [rawInput, setRawInput] = useState("");
-  const [connectMode, setConnectMode] = useState<"environment" | "redirect">("environment");
+  const [connectMode, setConnectMode] = useState<"workspace" | "redirect">("workspace");
   const [redirectStatusCode, setRedirectStatusCode] = useState<string>("308");
   const [targetDomain, setTargetDomain] = useState<string>("");
   const [autoPairChecked, setAutoPairChecked] = useState(true);
@@ -116,7 +125,7 @@ export function AddDomainsDialog({
   );
 
   // Auto-pair candidate
-  const canAutoPair = Boolean(partnerDomain && parsedDomains.length === 1 && connectMode === "environment");
+  const canAutoPair = Boolean(partnerDomain && parsedDomains.length === 1 && connectMode === "workspace");
 
   // Calculate total domains count being added
   const totalCount = parsedDomains.length + (canAutoPair && autoPairChecked ? 1 : 0);
@@ -250,29 +259,29 @@ export function AddDomainsDialog({
           <div className="space-y-3 pt-1">
             <RadioGroup
               value={connectMode}
-              onValueChange={(val) => setConnectMode(val as "environment" | "redirect")}
+              onValueChange={(val) => setConnectMode(val as "workspace" | "redirect")}
               className="gap-3"
             >
-              {/* Option 1: Connect to an environment */}
+              {/* Option 1: Route to Tenant Workspace & Public Site */}
               <div
                 className={cn(
                   "flex items-start gap-3 rounded-nx-md border p-3.5 transition-colors cursor-pointer",
-                  connectMode === "environment"
+                  connectMode === "workspace"
                     ? "border-nx-accent bg-nx-accent/5"
                     : "border-nx-line bg-nx-surface hover:border-nx-line-hi"
                 )}
-                onClick={() => setConnectMode("environment")}
+                onClick={() => setConnectMode("workspace")}
               >
-                <RadioGroupItem value="environment" id="mode-env" className="mt-0.5" />
+                <RadioGroupItem value="workspace" id="mode-workspace" className="mt-0.5" />
                 <div className="space-y-1">
-                  <label htmlFor="mode-env" className="text-xs font-semibold text-nx-ink cursor-pointer">
-                    {t("tenant.domainsModeConnectEnv")}
+                  <label htmlFor="mode-workspace" className="text-xs font-semibold text-nx-ink cursor-pointer">
+                    {t("tenant.domainsModeConnectWorkspace")}
                   </label>
                   <div className="flex items-center gap-1.5 text-xs text-nx-ink-2">
-                    <GitBranch className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
-                    <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-raised font-medium">
-                      Production
-                    </Badge>
+                    <Globe className="h-3.5 w-3.5 text-nx-accent" aria-hidden="true" />
+                    <span className="text-[11px] text-nx-ink-2">
+                      {t("tenant.domainsModeConnectWorkspaceDesc")}
+                    </span>
                   </div>
                 </div>
               </div>

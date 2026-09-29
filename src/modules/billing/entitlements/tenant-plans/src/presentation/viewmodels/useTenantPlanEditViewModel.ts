@@ -1,8 +1,6 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { entitlementsContainer } from "@modules/entitlements/di";
@@ -72,7 +70,9 @@ export function useTenantPlanEditViewModel(planId: string) {
     queryFn: () => tenantPlanRepository.getById(planId),
   });
 
-  useEffect(() => {
+  const [prevPlan, setPrevPlan] = useState(plan);
+  if (prevPlan !== plan) {
+    setPrevPlan(plan);
     if (plan) {
       setForm({
         name: plan.name,
@@ -99,7 +99,7 @@ export function useTenantPlanEditViewModel(planId: string) {
         sortOrder: plan.sortOrder,
       });
     }
-  }, [plan]);
+  }
 
   const updateForm = (updates: Partial<UpdateTenantPlanRequest>) => {
     setForm((prev) => ({ ...prev, ...updates }));

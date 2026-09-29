@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { TimezonePicker } from "@modules/custom-fields";
+import { TimezonePicker } from "@core/ui/timezone-picker";
 import { Button } from "@core/ui/button";
 import { Checkbox } from "@core/ui/checkbox";
 import {

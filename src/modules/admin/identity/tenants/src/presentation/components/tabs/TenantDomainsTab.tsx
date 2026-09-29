@@ -65,15 +65,12 @@ import {
   ChevronDown,
   ChevronUp,
   Loader2,
-  Shield,
   ExternalLink,
   Search,
   RefreshCw,
   MoreVertical,
   CornerDownRight,
-  GitBranch,
   Pencil,
-  AlertTriangle,
 } from "lucide-react";
 import { useTenantDomainsViewModel } from "../../viewmodels/useTenantDomainsViewModel";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
@@ -572,7 +569,7 @@ function VercelDomainCard({
                 <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
 
-              {/* Status Pill with Pulsing/Solid Dot */}
+              {/* Status Pill with Solid Dot */}
               {domain.isVerified ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 text-[11px] font-medium text-success">
                   <span className="h-1.5 w-1.5 rounded-full bg-success" />
@@ -580,7 +577,7 @@ function VercelDomainCard({
                 </span>
               ) : (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 text-[11px] font-medium text-warning">
-                  <span className="h-1.5 w-1.5 rounded-full bg-warning animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-warning" />
                   {t("tenant.domainsStatusInvalid")}
                 </span>
               )}
@@ -594,7 +591,7 @@ function VercelDomainCard({
               )}
             </div>
 
-            {/* Destination Subtitle (Redirect vs Production) */}
+            {/* Destination Subtitle (Redirect vs Workspace) */}
             <div className="flex flex-wrap items-center gap-2 text-xs text-nx-ink-2">
               {domain.isRedirect && domain.redirectTo ? (
                 <div className="flex items-center gap-1.5 font-medium text-nx-ink">
@@ -608,9 +605,9 @@ function VercelDomainCard({
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <GitBranch className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
+                  <Globe className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
                   <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-raised font-medium">
-                    {t("tenant.domainsProductionEnv")}
+                    {t("tenant.domainsWorkspaceTarget")}
                   </Badge>
                 </div>
               )}
@@ -627,19 +624,28 @@ function VercelDomainCard({
 
           {/* Action Toolbar */}
           <div className="flex items-center gap-2 self-start sm:self-center">
-            {/* Refresh / Verify Button */}
+            {/* Refresh / Verify Button (Vercel-Grade UX) */}
             <Button
-              variant="outline"
+              variant={domain.isVerified ? "outline" : "default"}
               size="sm"
               onClick={() => onVerify(domain.id)}
               disabled={isVerifying}
-              className="h-8 gap-1.5 text-xs font-medium"
+              className={cn(
+                "h-8 gap-1.5 text-xs",
+                domain.isVerified ? "font-medium" : "font-semibold shadow-sm"
+              )}
             >
               <RefreshCw
-                className={cn("h-3.5 w-3.5", isVerifying && "animate-spin text-nx-accent")}
+                className={cn("h-3.5 w-3.5", isVerifying && "animate-spin text-inherit")}
                 aria-hidden="true"
               />
-              <span>{isVerifying ? t("tenant.domainsCheckingDns") : t("common.refresh")}</span>
+              <span>
+                {isVerifying
+                  ? t("tenant.domainsCheckingDns")
+                  : !domain.isVerified
+                  ? t("tenant.domainsVerify")
+                  : t("common.refresh")}
+              </span>
             </Button>
 
             {/* Edit Button */}
@@ -859,6 +865,18 @@ function VercelDomainCard({
                 </TableRow>
               </TableBody>
             </Table>
+          </div>
+
+          {/* Provider Configuration Guidance (Vercel-Grade Support) */}
+          <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3 space-y-1.5 text-xs">
+            <div className="flex items-center gap-1.5 text-nx-ink font-semibold">
+              <HelpCircle className="h-3.5 w-3.5 text-info" aria-hidden="true" />
+              <span>{t("tenant.domainsDnsProviderTipsTitle")}</span>
+            </div>
+            <ul className="list-disc ps-4 space-y-1 text-[11px] text-nx-ink-2 leading-relaxed">
+              <li>{t("tenant.domainsDnsCloudflareTip")}</li>
+              <li>{t("tenant.domainsDnsRegistrarTip")}</li>
+            </ul>
           </div>
 
           <p className="text-[11px] text-nx-ink-2 leading-relaxed">

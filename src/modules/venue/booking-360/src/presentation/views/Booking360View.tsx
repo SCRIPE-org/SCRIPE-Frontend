@@ -43,20 +43,20 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
   const canCalculateQuote = usePermission(VENUE_PERMISSIONS.CATALOG_PRICING_CALCULATE_QUOTE);
   const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
   const canRecordPayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
-  const vm = useBooking360ViewModel(
-    reservationId, canViewReservation, canViewCustomer, canViewResource, canViewProfile, canViewFacility);
+  const vm = useBooking360ViewModel(reservationId, canViewReservation, canViewCustomer, canViewResource, canViewProfile, canViewFacility);
   const finance = useBookingFinanceSummary(reservationId, canViewReservation && canViewReceivables);
   const headingRef = React.useRef<HTMLHeadingElement>(null);
   const focusedReservationId = React.useRef<string | null>(null);
 
   // Focus the canonical identity once per opened booking without racing operational focus.
+  const activeReservationId = vm.state.reservation?.id;
+  const stage = vm.state.stage;
   React.useEffect(() => {
-    const id = vm.state.reservation?.id;
-    if (vm.state.stage === "ready" && id && focusedReservationId.current !== id) {
-      focusedReservationId.current = id;
+    if (stage === "ready" && activeReservationId && focusedReservationId.current !== activeReservationId) {
+      focusedReservationId.current = activeReservationId;
       headingRef.current?.focus();
     }
-  }, [vm.state.reservation?.id, vm.state.stage]);
+  }, [activeReservationId, stage]);
 
   if (!canViewReservation) return <EmptyState icon={Lock} title={t("booking360.permission.title")} description={t("booking360.permission.description")} />;
   if (vm.state.stage === "loading" && !vm.state.reservation) return <LoadingSpinner showText={false} />;

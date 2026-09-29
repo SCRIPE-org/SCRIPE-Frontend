@@ -137,11 +137,11 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
                   </p>
                 </div>
               </div>
-              <Link href="/venue/attention">
-                <Button size="sm" variant="outline" className="text-xs border-amber-500/40 hover:bg-amber-500/10">
+              <Button asChild size="sm" variant="outline" className="text-xs border-amber-500/40 hover:bg-amber-500/10">
+                <Link href="/venue/attention">
                   {t("venueOverview.attention.viewAll")}
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             </CardContent>
           </Card>
         )}

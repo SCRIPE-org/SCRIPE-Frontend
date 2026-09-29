@@ -66,11 +66,13 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
   const [kind, setKind] = useState<ResourceBlockKind>("blackout");
   const [editing, setEditing] = useState<ResourceBlock | null>(null);
   const [draft, setDraft] = useState<SaveResourceBlock>(() => newDraft(resourceId, timeZoneId));
-  const [prevKey, setPrevKey] = useState(`${resourceId}:${timeZoneId}`);
 
-  if (`${resourceId}:${timeZoneId}` !== prevKey) {
-    setPrevKey(`${resourceId}:${timeZoneId}`);
-    if (!editing) setDraft(newDraft(resourceId, timeZoneId));
+  const [prevParams, setPrevParams] = useState({ resourceId, timeZoneId });
+  if (prevParams.resourceId !== resourceId || prevParams.timeZoneId !== timeZoneId) {
+    setPrevParams({ resourceId, timeZoneId });
+    if (!editing) {
+      setDraft(newDraft(resourceId, timeZoneId));
+    }
   }
 
   const current = kind === "blackout" ? blackouts : maintenanceBlocks;

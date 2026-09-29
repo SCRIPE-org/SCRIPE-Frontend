@@ -18,55 +18,55 @@ export function VenueOverviewQuickActions({ t }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2.5">
-      <Link href="/venue/bookings/new">
-        <Button
-          type="button"
-          size="sm"
-          className="gap-2 bg-violet-600 text-white hover:bg-violet-700 focus-visible:ring-violet-500 shadow-nx-sm font-semibold"
-        >
+      <Button
+        asChild
+        size="sm"
+        className="gap-2 shadow-nx-sm font-semibold"
+      >
+        <Link href="/venue/bookings/new">
           <Plus className="size-4" aria-hidden="true" />
           <span>{t("venueOverview.quickActions.newBooking")}</span>
-        </Button>
-      </Link>
+        </Link>
+      </Button>
 
-      <Link href="/venue/calendar">
+      <Button
+        asChild
+        variant="outline"
+        size="sm"
+        className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
+      >
+        <Link href="/venue/calendar">
+          <Calendar className="size-4 text-nx-accent" aria-hidden="true" />
+          <span>{t("venueOverview.quickActions.openCalendar")}</span>
+        </Link>
+      </Button>
+
+      {canViewAttention && (
         <Button
-          type="button"
+          asChild
           variant="outline"
           size="sm"
           className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
         >
-          <Calendar className="size-4 text-nx-accent" aria-hidden="true" />
-          <span>{t("venueOverview.quickActions.openCalendar")}</span>
-        </Button>
-      </Link>
-
-      {canViewAttention && (
-        <Link href="/venue/attention">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
-          >
+          <Link href="/venue/attention">
             <ShieldAlert className="size-4 text-amber-500" aria-hidden="true" />
             <span>{t("venueOverview.quickActions.attentionCenter")}</span>
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       )}
 
       {canViewMoney && (
-        <Link href="/venue/money/receivables">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
-          >
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="gap-2 border-nx-line text-nx-ink hover:bg-nx-hover"
+        >
+          <Link href="/venue/money/receivables">
             <ReceiptText className="size-4 text-emerald-500" aria-hidden="true" />
             <span>{t("venueOverview.quickActions.receivables")}</span>
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       )}
     </div>
   );
