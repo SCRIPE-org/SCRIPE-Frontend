@@ -40,8 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import { Badge } from "@core/ui/badge";
-import { Globe, GitBranch, ArrowRight, CornerDownRight, Sparkles } from "lucide-react";
+import { Globe, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
 
@@ -119,8 +118,8 @@ export function AddDomainsDialog({
   // Parse input
   const parsedDomains = useMemo(() => parseRawDomains(rawInput), [rawInput]);
   const primaryDomain = parsedDomains[0] || "";
-  const { isApex, isWww, partnerDomain } = useMemo(
-    () => (primaryDomain ? inspectDomain(primaryDomain) : { isApex: false, isWww: false, partnerDomain: null }),
+  const { isApex, partnerDomain } = useMemo(
+    () => (primaryDomain ? inspectDomain(primaryDomain) : { isApex: false, partnerDomain: null }),
     [primaryDomain]
   );
 
@@ -135,13 +134,13 @@ export function AddDomainsDialog({
     return existingDomains.filter((d) => !parsedDomains.includes(d.domain));
   }, [existingDomains, parsedDomains]);
 
-  // Set default target domain if none selected
-  React.useEffect(() => {
-    if (!targetDomain && availableTargets.length > 0) {
-      const primary = availableTargets.find((d) => d.isPrimary) || availableTargets[0];
-      setTargetDomain(primary.domain);
-    }
-  }, [availableTargets, targetDomain]);
+  // Effective target domain: explicit user selection or first available target
+  const defaultTarget = useMemo(() => {
+    if (availableTargets.length === 0) return "";
+    return (availableTargets.find((d) => d.isPrimary) || availableTargets[0])?.domain || "";
+  }, [availableTargets]);
+
+  const effectiveTargetDomain = targetDomain || defaultTarget;
 
   const handleSubmit = async () => {
     if (!parsedDomains.length) return;
@@ -157,7 +156,7 @@ export function AddDomainsDialog({
       for (const dom of parsedDomains) {
         entries.push({
           domain: dom,
-          redirectTo: targetDomain || null,
+          redirectTo: effectiveTargetDomain || null,
           redirectStatusCode: code,
         });
       }
@@ -359,7 +358,7 @@ export function AddDomainsDialog({
                         </Label>
                         {availableTargets.length > 0 ? (
                           <Select
-                            value={targetDomain}
+                            value={effectiveTargetDomain}
                             onValueChange={setTargetDomain}
                           >
                             <SelectTrigger id="target-domain-select" className="h-9 text-xs font-mono">
@@ -376,7 +375,7 @@ export function AddDomainsDialog({
                         ) : (
                           <Input
                             id="target-domain-select"
-                            value={targetDomain}
+                            value={effectiveTargetDomain}
                             onChange={(e) => setTargetDomain(e.target.value)}
                             placeholder="example.com"
                             className="font-mono text-xs h-9"

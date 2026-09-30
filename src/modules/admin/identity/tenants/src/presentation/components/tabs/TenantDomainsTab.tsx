@@ -164,6 +164,9 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
                 {t("tenant.domainsStatsTotal")}
               </p>
               <p className="mt-1 text-2xl font-bold tracking-tight text-nx-ink">{totalCount}</p>
+              <p className="mt-0.5 text-[11px] text-nx-ink-3">
+                {vm.autoDomains.length} {t("tenant.domainsAutoShort")} • {vm.customDomains.length} {t("tenant.domainsCustomShort")}
+              </p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-accent/10 text-nx-accent">
               <Globe className="h-5 w-5" aria-hidden="true" />
@@ -178,7 +181,10 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
                 {t("tenant.domainsStatsVerified")}
               </p>
               <p className="mt-1 text-2xl font-bold tracking-tight text-success">
-                {vm.autoDomains.length + verifiedCount}
+                {verifiedCount}
+              </p>
+              <p className="mt-0.5 text-[11px] text-nx-ink-3">
+                {verifiedCount} / {vm.customDomains.length} {t("tenant.domainsCustomShort")}
               </p>
             </div>
             <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-success/10 text-success">
@@ -354,7 +360,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
                 domain={d}
                 cnameTarget={vm.cnameTarget || "admin.scripe.org"}
                 verifyPrefix={vm.verifyPrefix || "_scr-verify"}
-                isVerifying={vm.verifyingId === d.id}
+                isVerifying={vm.verifyingId === d.id || (vm.isAutoVerifying && !d.isVerified)}
                 isRemoving={vm.removingId === d.id}
                 onVerify={vm.verifyDomain}
                 onSetPrimary={vm.setDomainPrimary}
@@ -569,8 +575,13 @@ function VercelDomainCard({
                 <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
 
-              {/* Status Pill with Solid Dot */}
-              {domain.isVerified ? (
+              {/* Status Pill with Solid Dot or Spinner */}
+              {isVerifying ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-info/30 bg-info/10 px-2.5 py-0.5 text-[11px] font-medium text-info">
+                  <Loader2 className="h-3 w-3 animate-spin text-info" aria-hidden="true" />
+                  {t("tenant.domainsCheckingDns")}
+                </span>
+              ) : domain.isVerified ? (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 text-[11px] font-medium text-success">
                   <span className="h-1.5 w-1.5 rounded-full bg-success" />
                   {t("tenant.domainsStatusConfigured")}
@@ -790,7 +801,12 @@ function VercelDomainCard({
                   <TableCell className="py-2.5 px-3 text-nx-ink-2">60s / Auto</TableCell>
                   <TableCell className="py-2.5 px-3 font-sans text-nx-ink-2">{t("tenant.domainsPurposeRouting")}</TableCell>
                   <TableCell className="py-2.5 px-3 font-sans">
-                    {domain.isVerified ? (
+                    {isVerifying ? (
+                      <span className="inline-flex items-center gap-1 text-info font-medium">
+                        <Loader2 className="h-3 w-3 animate-spin text-info" />
+                        {t("tenant.domainsCheckingDns")}
+                      </span>
+                    ) : domain.isVerified ? (
                       <span className="inline-flex items-center gap-1 text-success font-medium">
                         <CheckCircle2 className="h-3 w-3" />
                         {t("tenant.domainsStatusConfigured")}
@@ -850,7 +866,12 @@ function VercelDomainCard({
                   <TableCell className="py-2.5 px-3 text-nx-ink-2">60s / Auto</TableCell>
                   <TableCell className="py-2.5 px-3 font-sans text-nx-ink-2">{t("tenant.domainsPurposeVerification")}</TableCell>
                   <TableCell className="py-2.5 px-3 font-sans">
-                    {domain.isVerified ? (
+                    {isVerifying ? (
+                      <span className="inline-flex items-center gap-1 text-info font-medium">
+                        <Loader2 className="h-3 w-3 animate-spin text-info" />
+                        {t("tenant.domainsCheckingDns")}
+                      </span>
+                    ) : domain.isVerified ? (
                       <span className="inline-flex items-center gap-1 text-success font-medium">
                         <CheckCircle2 className="h-3 w-3" />
                         {t("tenant.domainsStatusConfigured")}
@@ -879,9 +900,10 @@ function VercelDomainCard({
             </ul>
           </div>
 
-          <p className="text-[11px] text-nx-ink-2 leading-relaxed">
-            {t("tenant.domainsDnsPropagationNote")}
-          </p>
+          <div className="flex items-start gap-2.5 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-[11px] text-nx-ink-2 leading-relaxed">
+            <Info className="h-4 w-4 text-info shrink-0 mt-0.5" aria-hidden="true" />
+            <span>{t("tenant.domainsDnsPropagationNotice")}</span>
+          </div>
         </div>
       )}
     </Card>
