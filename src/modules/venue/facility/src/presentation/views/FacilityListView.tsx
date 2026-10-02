@@ -11,13 +11,13 @@ import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
-import { SiteQuickCreateDialog } from "@modules/venue/site/src/presentation/components/SiteQuickCreateDialog";
+import { VenueProfileQuickCreateDialog } from "@modules/venue/venue-profile/src/presentation/components/VenueProfileQuickCreateDialog";
 
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
   const { vm, searchVenueProfiles, venueProfileNameById } = useFacilityViewModel();
   const { t, language } = useI18n();
-  const [quickCreateSiteOpen, setQuickCreateSiteOpen] = React.useState(false);
+  const [quickCreateVenueProfileOpen, setQuickCreateVenueProfileOpen] = React.useState(false);
 
   const config: CrudConfig<Facility> = {
     titleKey: "facility.title",
@@ -30,7 +30,8 @@ export const FacilityListView = React.memo(function FacilityListView() {
       {
         key: "venueProfileId",
         label: t("facility.fields.venueProfileId"),
-        render: (value: string) => venueProfileNameById[value] ?? value,
+        render: (_value: string, row: Facility) =>
+          row.venueProfileName || venueProfileNameById[row.venueProfileId] || row.venueProfileId,
       },
       {
         key: "createdAt",
@@ -127,8 +128,8 @@ export const FacilityListView = React.memo(function FacilityListView() {
     ],
     customActions: [
       {
-        label: t("venueProfile.quickCreateSite") || "New Site",
-        onClick: async () => setQuickCreateSiteOpen(true),
+        label: t("facility.quickCreateVenueProfile") || "New Venue Profile",
+        onClick: async () => setQuickCreateVenueProfileOpen(true),
         icon: <Plus className="h-4 w-4" />,
         variant: "outline" as const,
       },
@@ -139,9 +140,12 @@ export const FacilityListView = React.memo(function FacilityListView() {
     <div className="space-y-4">
       <VenueResourceNav />
       <GenericCrudView viewModel={vm} config={config} />
-      <SiteQuickCreateDialog
-        open={quickCreateSiteOpen}
-        onOpenChange={setQuickCreateSiteOpen}
+      <VenueProfileQuickCreateDialog
+        open={quickCreateVenueProfileOpen}
+        onOpenChange={setQuickCreateVenueProfileOpen}
+        onSuccess={() => {
+          void vm.refresh();
+        }}
       />
     </div>
   );

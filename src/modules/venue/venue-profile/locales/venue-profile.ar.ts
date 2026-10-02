@@ -3,6 +3,7 @@ export const ar = {
     title: "إعداد المنشأة والموقع",
     description: "قم بتكوين ملفات تعريف المنشآت لمواقع مؤسستك.",
     addNew: "إضافة منشأة",
+    createdSuccess: "تم إنشاء ملف تعريف المنشأة بنجاح",
     editTitle: "تعديل المنشأة",
     deleteTitle: "حذف المنشأة",
     deleteConfirm: "هل أنت متأكد من حذف هذه المنشأة؟",

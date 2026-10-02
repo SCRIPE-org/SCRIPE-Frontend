@@ -3,6 +3,7 @@ export const en = {
     title: "Venue & Site Setup",
     description: "Configure venue profiles for your organization's sites.",
     addNew: "Add Venue",
+    createdSuccess: "Venue Profile created successfully",
     editTitle: "Edit Venue",
     deleteTitle: "Delete Venue",
     deleteConfirm: "Are you sure you want to delete this venue?",

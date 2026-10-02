@@ -19,6 +19,7 @@ import { VenueResourceNav } from "@modules/venue/shared/src/presentation/compone
 import type { FacilityResourceProfile } from "../../domain/entities/FacilityResourceProfile";
 import { useFacilityResourceProfilesViewModel } from "../viewmodels/useFacilityResourceProfilesViewModel";
 import { FacilityResourceProfileDialog } from "../dialogs/FacilityResourceProfileDialog";
+import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
 
 export const FacilityResourceProfilesView = React.memo(function FacilityResourceProfilesView() {
   useModuleLocales(() => import("../../../locales"), "venue.resourceProfile");
@@ -30,28 +31,20 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
   const { error: toastError } = useEnhancedToast();
   const [open, setOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState<FacilityResourceProfile | undefined>();
+  const [quickCreateFacilityOpen, setQuickCreateFacilityOpen] = useState(false);
 
   const facilityOptions = vm.facilities.map((facility) => ({
     value: facility.id,
-    label: facility.name,
+    label: facility.name ? `${facility.name} (${facility.code})` : facility.code || facility.id,
   }));
 
   if (!canView) {
-    return (
-      <EmptyState
-        icon={Lock}
-        title={t("notAuthorized.title")}
-        description={t("notAuthorized.description")}
-      />
-    );
+    return <EmptyState icon={Lock} title={t("notAuthorized.title")} description={t("notAuthorized.description")} />;
   }
 
   if (vm.loading && vm.facilities.length === 0) return <LoadingSpinner showText={false} />;
 
-  const beginCreate = () => {
-    setEditingProfile(undefined);
-    setOpen(true);
-  };
+  const beginCreate = () => { setEditingProfile(undefined); setOpen(true); };
 
   const beginEdit = async (profile: FacilityResourceProfile) => {
     try {
@@ -80,20 +73,31 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
         }
       />
 
-      <div className="max-w-md space-y-2">
-        <Label>{t("resourceProfile.facility")}</Label>
-        <GenericSelect
-          type="searchable"
-          searchType="client"
-          allowClear={false}
-          aria-label={t("resourceProfile.facility")}
-          options={facilityOptions}
-          value={vm.selectedFacilityId}
-          onValueChange={(value: string | string[]) =>
-            vm.setSelectedFacilityId(Array.isArray(value) ? value[0] ?? "" : value)
-          }
-          placeholder={t("resourceProfile.selectFacility")}
-        />
+      <div className="flex max-w-xl items-end gap-3">
+        <div className="flex-1 space-y-2">
+          <Label>{t("resourceProfile.facility")}</Label>
+          <GenericSelect
+            type="searchable"
+            searchType="client"
+            allowClear={false}
+            aria-label={t("resourceProfile.facility")}
+            options={facilityOptions}
+            value={vm.selectedFacilityId}
+            onValueChange={(value: string | string[]) =>
+              vm.setSelectedFacilityId(Array.isArray(value) ? value[0] ?? "" : value)
+            }
+            placeholder={t("resourceProfile.selectFacility")}
+          />
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() => setQuickCreateFacilityOpen(true)}
+          className="shrink-0 gap-1.5"
+        >
+          <Plus className="size-4" />
+          {t("facility.addNew") || "New Facility"}
+        </Button>
       </div>
 
       {vm.error && (
@@ -101,11 +105,7 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
           icon={Building2}
           title={t("common.error")}
           description={vm.error.message}
-          action={
-            <Button variant="outline" onClick={() => void vm.refresh()}>
-              {t("common.retry")}
-            </Button>
-          }
+          action={<Button variant="outline" onClick={() => void vm.refresh()}>{t("common.retry")}</Button>}
         />
       )}
       {!vm.error && !vm.loading && vm.facilities.length === 0 && (
@@ -113,14 +113,11 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
           icon={Building2}
           title={t("resourceProfile.noFacilities")}
           description={t("resourceProfile.noFacilitiesDescription")}
+          action={<Button onClick={() => setQuickCreateFacilityOpen(true)}><Plus className="mr-1 size-4" />{t("facility.addNew") || "New Facility"}</Button>}
         />
       )}
       {!vm.error && vm.selectedFacilityId && vm.profiles.length === 0 && (
-        <EmptyState
-          icon={Building2}
-          title={t("resourceProfile.empty")}
-          description={t("resourceProfile.emptyDescription")}
-        />
+        <EmptyState icon={Building2} title={t("resourceProfile.empty")} description={t("resourceProfile.emptyDescription")} />
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">
@@ -164,8 +161,21 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
         open={open}
         onOpenChange={setOpen}
         facilityId={vm.selectedFacilityId}
+        facilities={vm.facilities}
         editingProfile={editingProfile}
         onSave={vm.save}
+        onFacilityCreated={(createdId) => {
+          void vm.refresh();
+          vm.setSelectedFacilityId(createdId);
+        }}
+      />
+      <FacilityQuickCreateDialog
+        open={quickCreateFacilityOpen}
+        onOpenChange={setQuickCreateFacilityOpen}
+        onSuccess={(createdId) => {
+          void vm.refresh();
+          vm.setSelectedFacilityId(createdId);
+        }}
       />
     </div>
   );

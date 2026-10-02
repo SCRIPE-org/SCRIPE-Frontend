@@ -145,6 +145,10 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
             usageTypes={vm.usageTypeOptions}
             disabled={workflowLocked}
             onChange={vm.setCriteria}
+            onFacilityCreated={async (facilityId) => {
+              await vm.refreshSetup();
+              vm.setCriteria({ facilityId });
+            }}
           />
         </div>
 

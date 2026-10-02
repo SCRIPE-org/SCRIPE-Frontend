@@ -3,6 +3,8 @@ export const ar = {
     title: "سجل المرافق",
     description: "سجّل المرافق الفعلية داخل منشآتك وأدرها.",
     addNew: "إضافة مرفق",
+    quickCreateVenueProfile: "منشأة جديدة",
+    createdSuccess: "تم إنشاء المرفق بنجاح",
     editTitle: "تعديل المرفق",
     deleteTitle: "حذف المرفق",
     deleteConfirm: "هل أنت متأكد من حذف هذا المرفق؟",

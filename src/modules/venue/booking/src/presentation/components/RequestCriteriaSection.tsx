@@ -1,11 +1,14 @@
 "use client";
 
-import { CalendarRange } from "lucide-react";
+import { useState } from "react";
+import { CalendarRange, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
 import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
 import type { BookingRequestCriteria } from "../../domain/entities/Booking";
 
@@ -18,6 +21,7 @@ interface RequestCriteriaSectionProps {
   usageTypes: Array<{ code: string; label: string }>;
   disabled: boolean;
   onChange: (patch: Partial<BookingRequestCriteria>) => void;
+  onFacilityCreated?: (facilityId: string) => Promise<void> | void;
 }
 
 function selectedValue(value: string | string[]): string {
@@ -33,27 +37,49 @@ export function RequestCriteriaSection({
   usageTypes,
   disabled,
   onChange,
+  onFacilityCreated,
 }: RequestCriteriaSectionProps) {
+  const [quickCreateFacilityOpen, setQuickCreateFacilityOpen] = useState(false);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <CalendarRange className="size-5 text-nx-accent" aria-hidden="true" />
-          {t("booking.request.title")}
-        </CardTitle>
-        <p className="text-sm text-nx-ink-2">{t("booking.request.description")}</p>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <div className="space-y-2 md:col-span-2">
-            <Label>{t("booking.request.facility")}</Label>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarRange className="size-5 text-nx-accent" aria-hidden="true" />
+            {t("booking.request.title")}
+          </CardTitle>
+          <p className="text-sm text-nx-ink-2">{t("booking.request.description")}</p>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="space-y-2 md:col-span-2">
+              <div className="flex items-center justify-between">
+                <Label>{t("booking.request.facility")}</Label>
+                {onFacilityCreated && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                    onClick={() => setQuickCreateFacilityOpen(true)}
+                    disabled={disabled}
+                  >
+                    <Plus className="mr-1 size-3" />
+                    {t("facility.addNew") || "New Facility"}
+                  </Button>
+                )}
+              </div>
             <GenericSelect
               type="searchable"
               searchType="client"
               allowClear={false}
               disabled={disabled}
               aria-label={t("booking.request.facility")}
-              options={facilities.map((facility) => ({ value: facility.id, label: facility.name }))}
+              options={facilities.map((facility) => ({
+                value: facility.id,
+                label: facility.name ? `${facility.name} (${facility.code})` : facility.code || facility.id,
+              }))}
               value={criteria.facilityId}
               onValueChange={(value: string | string[]) => onChange({ facilityId: selectedValue(value), resourceId: "", resourceKindCode: "", usageTypeCode: "" })}
               placeholder={t("booking.request.selectFacility")}
@@ -67,7 +93,10 @@ export function RequestCriteriaSection({
               allowClear
               disabled={disabled}
               aria-label={t("booking.request.resource")}
-              options={resources.map((resource) => ({ value: resource.id, label: resource.name }))}
+              options={resources.map((resource) => ({
+                value: resource.id,
+                label: resource.name || resource.namedUnitLabel || resource.id,
+              }))}
               value={criteria.resourceId}
               onValueChange={(value: string | string[]) => onChange({ resourceId: selectedValue(value) })}
               placeholder={t("booking.request.anyResource")}
@@ -121,5 +150,14 @@ export function RequestCriteriaSection({
         <p className="text-xs text-nx-ink-3">{t("booking.request.timezoneNote")}</p>
       </CardContent>
     </Card>
+
+    <FacilityQuickCreateDialog
+      open={quickCreateFacilityOpen}
+      onOpenChange={setQuickCreateFacilityOpen}
+      onSuccess={async (createdFacilityId) => {
+        await onFacilityCreated?.(createdFacilityId);
+      }}
+    />
+  </>
   );
 }

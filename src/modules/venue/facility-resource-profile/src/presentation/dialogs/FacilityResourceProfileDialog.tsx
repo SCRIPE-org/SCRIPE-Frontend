@@ -18,6 +18,9 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { GenericSelect } from "@core/crud/components/generic-select";
+import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
+import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
 import type {
   FacilityResourceProfile,
   FacilityResourceProfileWrite,
@@ -72,29 +75,43 @@ interface FacilityResourceProfileDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   facilityId: string;
+  facilities?: Facility[];
   editingProfile?: FacilityResourceProfile;
   onSave: (payload: FacilityResourceProfileWrite, id?: string) => Promise<void>;
+  onFacilityCreated?: (facilityId: string) => void;
 }
 
 export function FacilityResourceProfileDialog({
   open,
   onOpenChange,
   facilityId,
+  facilities,
   editingProfile,
   onSave,
+  onFacilityCreated,
 }: FacilityResourceProfileDialogProps) {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
+  const [quickCreateFacilityOpen, setQuickCreateFacilityOpen] = useState(false);
   const [form, setForm] = useState<FacilityResourceProfileWrite>(() =>
     editingProfile ? toForm(editingProfile) : emptyForm(facilityId)
   );
   const [saving, setSaving] = useState(false);
 
+  const facilityOptions = (facilities ?? []).map((f) => ({
+    value: f.id,
+    label: f.name ? `${f.name} (${f.code})` : f.code || f.id,
+  }));
+
   useEffect(() => {
     if (open) {
-      setForm(editingProfile ? toForm(editingProfile) : emptyForm(facilityId));
+      const initial = editingProfile ? toForm(editingProfile) : emptyForm(facilityId);
+      if (!initial.facilityId && facilities && facilities.length > 0) {
+        initial.facilityId = facilities[0].id;
+      }
+      setForm(initial);
     }
-  }, [open, editingProfile, facilityId]);
+  }, [open, editingProfile, facilityId, facilities]);
 
   const updateUsageType = (index: number, patch: Partial<UsageType>) => {
     setForm((current) => ({
@@ -156,7 +173,8 @@ export function FacilityResourceProfileDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <form onSubmit={submit} className="space-y-6">
           <DialogHeader>
@@ -167,6 +185,38 @@ export function FacilityResourceProfileDialog({
           </DialogHeader>
 
           <div className="grid gap-4 sm:grid-cols-2">
+            {facilityOptions.length > 0 && (
+              <div className="space-y-2 sm:col-span-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="profile-facility">
+                    {t("resourceProfile.facility")} <span className="text-destructive">*</span>
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                    onClick={() => setQuickCreateFacilityOpen(true)}
+                  >
+                    <Plus className="mr-1 size-3" />
+                    {t("facility.addNew") || "New Facility"}
+                  </Button>
+                </div>
+                <GenericSelect
+                  type="searchable"
+                  searchType="client"
+                  allowClear={false}
+                  aria-label={t("resourceProfile.facility")}
+                  options={facilityOptions}
+                  value={form.facilityId}
+                  onValueChange={(val: string | string[]) => {
+                    const selected = Array.isArray(val) ? val[0] ?? "" : val;
+                    setForm((cur) => ({ ...cur, facilityId: selected }));
+                  }}
+                  placeholder={t("resourceProfile.selectFacility")}
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="profile-code">{t("resourceProfile.fields.code")}</Label>
               <Input
@@ -346,5 +396,15 @@ export function FacilityResourceProfileDialog({
         </form>
       </DialogContent>
     </Dialog>
+
+    <FacilityQuickCreateDialog
+      open={quickCreateFacilityOpen}
+      onOpenChange={setQuickCreateFacilityOpen}
+      onSuccess={(newFacilityId) => {
+        setForm((cur) => ({ ...cur, facilityId: newFacilityId }));
+        onFacilityCreated?.(newFacilityId);
+      }}
+    />
+  </>
   );
 }
