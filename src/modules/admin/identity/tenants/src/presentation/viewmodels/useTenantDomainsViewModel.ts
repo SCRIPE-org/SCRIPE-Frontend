@@ -48,52 +48,143 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   const [domains, setDomains] = useState<TenantDomain[]>([]);
   const [cnameTarget, setCnameTarget] = useState("");
   const [verifyPrefix, setVerifyPrefix] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
   const [isUpdatingRedirect, setIsUpdatingRedirect] = useState(false);
-  const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [isAutoVerifying, setIsAutoVerifying] = useState(false);
+  const [verifyingIds, setVerifyingIds] = useState<Record<string, boolean>>({});
 
   const domainsRef = useRef<TenantDomain[]>(domains);
   domainsRef.current = domains;
 
-  // ── Fetch Domains ──────────────────────────────────────
+  // ── In-place Single Domain Verification ──────────────────
+  const verifySingleDomain = useCallback(
+    async (domainId: string, options?: { silent?: boolean }) => {
+      const silent = options?.silent ?? false;
+      setVerifyingIds((prev) => ({ ...prev, [domainId]: true }));
 
-  const fetchDomains = useCallback(async (isSilent = false) => {
-    try {
-      if (!isSilent) setIsLoading(true);
-      const response = await tenantRepository.getDomains(tenantId);
-      setDomains(response?.domains || []);
-      if (response?.cnameTarget) setCnameTarget(response.cnameTarget);
-      if (response?.verificationPrefix) setVerifyPrefix(response.verificationPrefix);
-      setError(null);
-    } catch {
-      setError(t("tenant.domainsLoadFailed"));
-    } finally {
-      if (!isSilent) setIsLoading(false);
-    }
-  }, [tenantId, tenantRepository, t]);
+      try {
+        const updated = await tenantRepository.verifyDomain(tenantId, domainId);
+        const existing = domainsRef.current.find((d) => d.id === domainId);
+        const wasVerified = existing?.isVerified ?? false;
 
+        if (updated) {
+          // In-place atomic update
+          setDomains((prev) => prev.map((d) => (d.id === domainId ? updated : d)));
+        }
+
+        if (!silent) {
+          if (updated?.isVerified) {
+            toast.success(t("tenant.domainsVerifiedSuccess"));
+          } else if (wasVerified && !updated?.isVerified) {
+            toast.warning(
+              t("tenant.domainsDnsRevertedInvalid") ||
+                "DNS records are no longer detected. Domain status set to invalid configuration."
+            );
+          } else {
+            toast.info(t("tenant.domainsDnsNotConfiguredYet"));
+          }
+        } else {
+          // Background mode: only notify on state transition
+          if (wasVerified && !updated?.isVerified) {
+            toast.warning(
+              t("tenant.domainsDnsRevertedInvalid") ||
+                "DNS records are no longer detected. Domain status set to invalid configuration."
+            );
+          } else if (!wasVerified && updated?.isVerified) {
+            toast.success(t("tenant.domainsVerifiedSuccess"));
+          }
+        }
+
+        return updated;
+      } catch {
+        if (!silent) {
+          toast.error(t("tenant.domainsVerifyFailed"));
+        }
+        return null;
+      } finally {
+        setVerifyingIds((prev) => {
+          const next = { ...prev };
+          delete next[domainId];
+          return next;
+        });
+      }
+    },
+    [tenantId, tenantRepository, t]
+  );
+
+  // ── Fetch Domains (silent by default to prevent skeletons after initial mount) ──
+  const fetchDomains = useCallback(
+    async (isSilent = true) => {
+      try {
+        const response = await tenantRepository.getDomains(tenantId);
+        setDomains(response?.domains || []);
+        if (response?.cnameTarget) setCnameTarget(response.cnameTarget);
+        if (response?.verificationPrefix) setVerifyPrefix(response.verificationPrefix);
+        setError(null);
+      } catch {
+        setError(t("tenant.domainsLoadFailed"));
+      } finally {
+        setIsInitialLoading(false);
+      }
+    },
+    [tenantId, tenantRepository, t]
+  );
+
+  // Initial load
   useEffect(() => {
-    fetchDomains();
+    fetchDomains(false);
   }, [fetchDomains]);
 
-  // ── Auto-Verification Polling (Vercel-Grade UX) ───────────
-  // When unverified custom domains exist, silently trigger DNS verification in the background
-  const hasUnverifiedCustom = domains.some((d) => d.isCustom && !d.isVerified);
-
+  // Initial mount: verify live DNS for all custom domains automatically
+  const hasInitialVerifiedRef = useRef(false);
   useEffect(() => {
-    if (!hasUnverifiedCustom || isLoading) {
+    if (isInitialLoading) return;
+    if (hasInitialVerifiedRef.current) return;
+    hasInitialVerifiedRef.current = true;
+
+    const customDomainsList = domainsRef.current.filter((d) => d.isCustom);
+    if (customDomainsList.length === 0) return;
+
+    for (const d of customDomainsList) {
+      verifySingleDomain(d.id, { silent: true });
+    }
+  }, [isInitialLoading, verifySingleDomain]);
+
+  // Window Focus Live Revalidation (Vercel standard)
+  const lastFocusTimeRef = useRef<number>(0);
+  useEffect(() => {
+    const handleFocus = () => {
+      const now = Date.now();
+      if (now - lastFocusTimeRef.current < 8000) return;
+      lastFocusTimeRef.current = now;
+
+      const customDomainsList = domainsRef.current.filter((d) => d.isCustom);
+      if (customDomainsList.length === 0) return;
+
+      for (const d of customDomainsList) {
+        verifySingleDomain(d.id, { silent: true });
+      }
+    };
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [verifySingleDomain]);
+
+  // ── Auto-Verification Polling for Pending Domains ────────
+  useEffect(() => {
+    const pendingCustom = domains.filter((d) => d.isCustom && !d.isVerified);
+    if (pendingCustom.length === 0 || isInitialLoading) {
+      setIsAutoVerifying(false);
       return;
     }
 
     let isMounted = true;
     let attempts = 0;
-    const maxAttempts = 6; // poll up to ~48 seconds
+    const maxAttempts = 12;
 
-    // Set state asynchronously to prevent React cascading renders
     const startTimer = setTimeout(() => {
       if (isMounted) setIsAutoVerifying(true);
     }, 0);
@@ -106,43 +197,26 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
         return;
       }
 
-      const pending = domainsRef.current.filter((d) => d.isCustom && !d.isVerified);
-      if (pending.length === 0) {
+      const currentPending = domainsRef.current.filter((d) => d.isCustom && !d.isVerified);
+      if (currentPending.length === 0) {
         clearInterval(pollInterval);
         if (isMounted) setIsAutoVerifying(false);
         return;
       }
 
-      try {
-        let anyVerified = false;
-        for (const d of pending) {
-          try {
-            const result = await tenantRepository.verifyDomain(tenantId, d.id);
-            if (result?.isVerified) {
-              anyVerified = true;
-            }
-          } catch {
-            // Non-blocking in background poll
-          }
-        }
-
-        // Only update & notify if at least one domain was actually verified
-        if (anyVerified) {
-          const updated = await tenantRepository.getDomains(tenantId);
-          if (isMounted) {
-            setDomains(updated?.domains || []);
-            const stillPending = (updated?.domains || []).filter((d) => d.isCustom && !d.isVerified);
-            if (stillPending.length === 0) {
-              clearInterval(pollInterval);
-              setIsAutoVerifying(false);
-              toast.success(t("tenant.domainsAutoVerified"));
-            }
-          }
-        }
-      } catch {
-        // Silent failure in background polling
+      for (const d of currentPending) {
+        await verifySingleDomain(d.id, { silent: true });
       }
-    }, 8000);
+
+      const stillPending = domainsRef.current.filter((d) => d.isCustom && !d.isVerified);
+      if (stillPending.length === 0) {
+        clearInterval(pollInterval);
+        if (isMounted) {
+          setIsAutoVerifying(false);
+          toast.success(t("tenant.domainsAutoVerified"));
+        }
+      }
+    }, 7000);
 
     return () => {
       isMounted = false;
@@ -150,7 +224,23 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
       clearInterval(pollInterval);
       setIsAutoVerifying(false);
     };
-  }, [hasUnverifiedCustom, isLoading, tenantId, tenantRepository, t]);
+  }, [domains, isInitialLoading, verifySingleDomain, t]);
+
+  // ── Periodic Health Check for Verified Domains (every 45s) ──
+  useEffect(() => {
+    if (isInitialLoading) return;
+
+    const healthInterval = setInterval(() => {
+      const verifiedCustom = domainsRef.current.filter((d) => d.isCustom && d.isVerified);
+      if (verifiedCustom.length === 0) return;
+
+      for (const d of verifiedCustom) {
+        verifySingleDomain(d.id, { silent: true });
+      }
+    }, 45000);
+
+    return () => clearInterval(healthInterval);
+  }, [isInitialLoading, verifySingleDomain]);
 
   // ── Actions ────────────────────────────────────────────
 
@@ -165,6 +255,12 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
       await tenantRepository.addDomain(tenantId, domain.trim(), redirectTo, redirectStatusCode);
       toast.success(t("tenant.domainsAddedSuccess"));
       await fetchDomains(true);
+      const added = domainsRef.current.find(
+        (d) => d.domain.toLowerCase() === domain.trim().toLowerCase()
+      );
+      if (added) {
+        verifySingleDomain(added.id, { silent: true });
+      }
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t("tenant.domainsAddFailed")));
       throw err;
@@ -202,6 +298,12 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
           : t("tenant.domainsAddedSuccess")
       );
       await fetchDomains(true);
+      const customList = domainsRef.current.filter((d) =>
+        entries.some((e) => e.domain.toLowerCase() === d.domain.toLowerCase())
+      );
+      for (const d of customList) {
+        verifySingleDomain(d.id, { silent: true });
+      }
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t("tenant.domainsAddFailed")));
       throw err;
@@ -229,32 +331,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   };
 
   const verifyDomain = async (domainId: string) => {
-    setVerifyingId(domainId);
-    try {
-      const updated = await tenantRepository.verifyDomain(tenantId, domainId);
-      const existing = domainsRef.current.find((d) => d.id === domainId);
-      const wasVerified = existing?.isVerified ?? false;
-
-      if (updated?.isVerified) {
-        toast.success(t("tenant.domainsVerifiedSuccess"));
-      } else if (wasVerified && !updated?.isVerified) {
-        toast.warning(
-          t("tenant.domainsDnsRevertedInvalid") ||
-            "DNS records are no longer detected. Domain status set to invalid configuration."
-        );
-      } else {
-        toast.info(t("tenant.domainsDnsNotConfiguredYet"));
-      }
-
-      if (updated) {
-        setDomains((prev) => prev.map((d) => (d.id === domainId ? updated : d)));
-      }
-      await fetchDomains(true);
-    } catch {
-      toast.error(t("tenant.domainsVerifyFailed"));
-    } finally {
-      setVerifyingId(null);
-    }
+    return verifySingleDomain(domainId, { silent: false });
   };
 
   const setDomainPrimary = async (domainId: string) => {
@@ -270,11 +347,13 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   const removeDomain = async (domainId: string) => {
     setRemovingId(domainId);
     try {
+      setDomains((prev) => prev.filter((d) => d.id !== domainId));
       await tenantRepository.removeDomain(tenantId, domainId);
       toast.success(t("tenant.domainsRemoved"));
       await fetchDomains(true);
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t("tenant.domainsRemoveFailed")));
+      await fetchDomains(true);
     } finally {
       setRemovingId(null);
     }
@@ -284,6 +363,12 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
 
   const autoDomains = domains.filter((d) => d.isAuto);
   const customDomains = domains.filter((d) => d.isCustom);
+  const isLoading = isInitialLoading && domains.length === 0;
+  const isDomainVerifying = useCallback(
+    (domainId: string) => Boolean(verifyingIds[domainId]),
+    [verifyingIds]
+  );
+  const verifyingId = Object.keys(verifyingIds).find((k) => verifyingIds[k]) || null;
 
   return {
     // State
@@ -293,20 +378,23 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     cnameTarget,
     verifyPrefix,
     isLoading,
+    isInitialLoading,
     error,
     isAdding,
     isUpdatingRedirect,
     isAutoVerifying,
     verifyingId,
+    verifyingIds,
     removingId,
 
-    // Actions
+    // Actions & Helpers
+    isDomainVerifying,
     addDomain,
     addDomainBatch,
     updateDomainRedirect,
     verifyDomain,
     setDomainPrimary,
     removeDomain,
-    refresh: fetchDomains,
+    refresh: () => fetchDomains(true),
   };
 }

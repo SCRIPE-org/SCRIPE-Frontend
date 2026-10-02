@@ -243,6 +243,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
         {/* Action Buttons */}
         <div className="flex items-center gap-2">
           <Button
+            type="button"
             variant="ghost"
             size="sm"
             onClick={() => setShowGuide(!showGuide)}
@@ -258,6 +259,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
           </Button>
 
           <Button
+            type="button"
             variant="default"
             size="sm"
             onClick={() => setShowAddModal(true)}
@@ -341,6 +343,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
               description={t("tenant.domainsNoCustomHint")}
               action={
                 <Button
+                  type="button"
                   variant="outline"
                   size="sm"
                   onClick={() => setShowAddModal(true)}
@@ -360,7 +363,7 @@ export function TenantDomainsTab({ tenantId, tenantName }: TenantDomainsTabProps
                 domain={d}
                 cnameTarget={vm.cnameTarget || "admin.scripe.org"}
                 verifyPrefix={vm.verifyPrefix || "_scr-verify"}
-                isVerifying={vm.verifyingId === d.id || (vm.isAutoVerifying && !d.isVerified)}
+                isVerifying={vm.isDomainVerifying(d.id)}
                 isRemoving={vm.removingId === d.id}
                 onVerify={vm.verifyDomain}
                 onSetPrimary={vm.setDomainPrimary}
@@ -455,6 +458,7 @@ function AutoDomainCard({ domain, onCopy }: AutoDomainCardProps) {
 
         <div className="flex items-center gap-2 self-end sm:self-center">
           <Button
+            type="button"
             variant="ghost"
             size="sm"
             onClick={() => onCopy(`https://${domain.domain}`, domain.domain)}
@@ -464,6 +468,7 @@ function AutoDomainCard({ domain, onCopy }: AutoDomainCardProps) {
             {t("common.copy")}
           </Button>
           <Button
+            type="button"
             variant="ghost"
             size="icon"
             className="h-8 w-8 text-nx-ink-2 hover:text-nx-ink"
@@ -514,7 +519,8 @@ function VercelDomainCard({
 }: VercelDomainCardProps) {
   const { t } = useI18n();
   // By default, expand DNS table if domain is not yet verified so user immediately sees how to configure it
-  const [showDns, setShowDns] = useState(!domain.isVerified);
+  const [dnsToggled, setDnsToggled] = useState<boolean | null>(null);
+  const showDns = dnsToggled !== null ? dnsToggled : !domain.isVerified;
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const isApex = domain.isApex;
@@ -637,9 +643,14 @@ function VercelDomainCard({
           <div className="flex items-center gap-2 self-start sm:self-center">
             {/* Refresh / Verify Button (Vercel-Grade UX) */}
             <Button
+              type="button"
               variant={domain.isVerified ? "outline" : "default"}
               size="sm"
-              onClick={() => onVerify(domain.id)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onVerify(domain.id);
+              }}
               disabled={isVerifying}
               className={cn(
                 "h-8 gap-1.5 text-xs",
@@ -661,9 +672,14 @@ function VercelDomainCard({
 
             {/* Edit Button */}
             <Button
+              type="button"
               variant="outline"
               size="sm"
-              onClick={() => onEdit(domain)}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onEdit(domain);
+              }}
               className="h-8 gap-1.5 text-xs font-medium"
             >
               <Pencil className="h-3.5 w-3.5 text-nx-ink-2" aria-hidden="true" />
@@ -674,6 +690,7 @@ function VercelDomainCard({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
+                  type="button"
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 text-nx-ink-2 hover:text-nx-ink"
@@ -697,7 +714,7 @@ function VercelDomainCard({
                   <span>{t("common.copy")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onClick={() => setShowDns(!showDns)}
+                  onClick={() => setDnsToggled(!showDns)}
                   className="gap-2 text-xs"
                 >
                   <Info className="h-3.5 w-3.5 text-nx-ink-2" aria-hidden="true" />
@@ -731,6 +748,7 @@ function VercelDomainCard({
               </Badge>
             </div>
             <Button
+              type="button"
               variant="ghost"
               size="sm"
               onClick={handleCopyAllRecords}
@@ -764,6 +782,7 @@ function VercelDomainCard({
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-nx-ink">{routingName}</span>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         onClick={() => handleCopyField(`routingName-${domain.id}`, routingName)}
@@ -783,6 +802,7 @@ function VercelDomainCard({
                     <div className="flex items-center gap-1.5">
                       <span className="text-nx-ink max-w-[260px] truncate">{routingValue}</span>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         onClick={() => handleCopyField(`routingVal-${domain.id}`, routingValue)}
@@ -829,6 +849,7 @@ function VercelDomainCard({
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-nx-ink">{verifyName}</span>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         onClick={() => handleCopyField(`verifyName-${domain.id}`, verifyName)}
@@ -848,6 +869,7 @@ function VercelDomainCard({
                     <div className="flex items-center gap-1.5">
                       <span className="text-nx-ink max-w-[260px] truncate">{verifyValue}</span>
                       <Button
+                        type="button"
                         variant="ghost"
                         size="icon"
                         onClick={() => handleCopyField(`verifyVal-${domain.id}`, verifyValue)}
