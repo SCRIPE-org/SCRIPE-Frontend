@@ -8,7 +8,7 @@
  */
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { identityContainer } from "@modules/identity/di";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
@@ -22,6 +22,14 @@ export interface UseTenantDomainsViewModelParams {
   tenantId: string;
   /** Human-readable display name of the tenant workspace */
   tenantName: string;
+}
+
+function getErrorMessage(err: unknown, fallback: string): string {
+  if (err && typeof err === "object" && "response" in err) {
+    const res = (err as { response?: { data?: { message?: string; error?: string } } }).response;
+    return res?.data?.message || res?.data?.error || fallback;
+  }
+  return fallback;
 }
 
 /**
@@ -48,6 +56,9 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   const [removingId, setRemovingId] = useState<string | null>(null);
   const [isAutoVerifying, setIsAutoVerifying] = useState(false);
 
+  const domainsRef = useRef<TenantDomain[]>(domains);
+  domainsRef.current = domains;
+
   // ── Fetch Domains ──────────────────────────────────────
 
   const fetchDomains = useCallback(async () => {
@@ -71,53 +82,75 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
 
   // ── Auto-Verification Polling (Vercel-Grade UX) ───────────
   // When unverified custom domains exist, silently trigger DNS verification in the background
+  const hasUnverifiedCustom = domains.some((d) => d.isCustom && !d.isVerified);
+
   useEffect(() => {
-    const unverifiedDomains = domains.filter((d) => d.isCustom && !d.isVerified);
-    if (unverifiedDomains.length === 0 || isLoading) {
-      setIsAutoVerifying(false);
+    if (!hasUnverifiedCustom || isLoading) {
       return;
     }
 
-    setIsAutoVerifying(true);
+    let isMounted = true;
     let attempts = 0;
-    const maxAttempts = 8; // poll for up to ~64 seconds
+    const maxAttempts = 6; // poll up to ~48 seconds
+
+    // Set state asynchronously to prevent React cascading renders
+    const startTimer = setTimeout(() => {
+      if (isMounted) setIsAutoVerifying(true);
+    }, 0);
 
     const pollInterval = setInterval(async () => {
       attempts++;
       if (attempts > maxAttempts) {
         clearInterval(pollInterval);
-        setIsAutoVerifying(false);
+        if (isMounted) setIsAutoVerifying(false);
+        return;
+      }
+
+      const pending = domainsRef.current.filter((d) => d.isCustom && !d.isVerified);
+      if (pending.length === 0) {
+        clearInterval(pollInterval);
+        if (isMounted) setIsAutoVerifying(false);
         return;
       }
 
       try {
-        // Attempt verification on pending domains
-        for (const d of unverifiedDomains) {
+        let anyVerified = false;
+        for (const d of pending) {
           try {
-            await tenantRepository.verifyDomain(tenantId, d.id);
+            const result = await tenantRepository.verifyDomain(tenantId, d.id);
+            if (result?.isVerified) {
+              anyVerified = true;
+            }
           } catch {
             // Non-blocking in background poll
           }
         }
-        const updated = await tenantRepository.getDomains(tenantId);
-        setDomains(updated?.domains || []);
 
-        // Stop polling if all are now verified
-        if ((updated?.domains || []).every((d) => !d.isCustom || d.isVerified)) {
-          clearInterval(pollInterval);
-          setIsAutoVerifying(false);
-          toast.success(t("tenant.domainsAutoVerified"));
+        // Only update & notify if at least one domain was actually verified
+        if (anyVerified) {
+          const updated = await tenantRepository.getDomains(tenantId);
+          if (isMounted) {
+            setDomains(updated?.domains || []);
+            const stillPending = (updated?.domains || []).filter((d) => d.isCustom && !d.isVerified);
+            if (stillPending.length === 0) {
+              clearInterval(pollInterval);
+              setIsAutoVerifying(false);
+              toast.success(t("tenant.domainsAutoVerified"));
+            }
+          }
         }
       } catch {
-        // Silent failure in polling
+        // Silent failure in background polling
       }
     }, 8000);
 
     return () => {
+      isMounted = false;
+      clearTimeout(startTimer);
       clearInterval(pollInterval);
       setIsAutoVerifying(false);
     };
-  }, [domains, tenantId, tenantRepository, isLoading, t]);
+  }, [hasUnverifiedCustom, isLoading, tenantId, tenantRepository, t]);
 
   // ── Actions ────────────────────────────────────────────
 
@@ -132,10 +165,8 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
       await tenantRepository.addDomain(tenantId, domain.trim(), redirectTo, redirectStatusCode);
       toast.success(t("tenant.domainsAddedSuccess"));
       await fetchDomains();
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsAddFailed")
-      );
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t("tenant.domainsAddFailed")));
       throw err;
     } finally {
       setIsAdding(false);
@@ -171,10 +202,8 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
           : t("tenant.domainsAddedSuccess")
       );
       await fetchDomains();
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsAddFailed")
-      );
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t("tenant.domainsAddFailed")));
       throw err;
     } finally {
       setIsAdding(false);
@@ -191,10 +220,8 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
       await tenantRepository.updateDomain(tenantId, domainId, redirectTo, redirectStatusCode);
       toast.success(t("tenant.domainsUpdateSuccess"));
       await fetchDomains();
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message || err?.response?.data?.error || t("tenant.domainsUpdateFailed")
-      );
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t("tenant.domainsUpdateFailed")));
       throw err;
     } finally {
       setIsUpdatingRedirect(false);
@@ -234,12 +261,8 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
       await tenantRepository.removeDomain(tenantId, domainId);
       toast.success(t("tenant.domainsRemoved"));
       await fetchDomains();
-    } catch (err: any) {
-      toast.error(
-        err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          t("tenant.domainsRemoveFailed")
-      );
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t("tenant.domainsRemoveFailed")));
     } finally {
       setRemovingId(null);
     }
