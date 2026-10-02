@@ -1,4 +1,8 @@
 import type { Booking360Status } from "@modules/venue/booking-360/src/domain/entities/Booking360";
+import type {
+  CalendarResource,
+  OperationsCalendarDay,
+} from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
 
 export interface VenueOverviewKpiData {
   todayReservationsCount: number;
@@ -62,6 +66,8 @@ export interface VenueOverviewState {
   atAGlance: VenueOverviewAtAGlanceItem[];
   upNext: VenueOverviewUpNextItem[];
   resourceActivity: VenueOverviewResourceActivityItem[];
-  recentActivityDeferred: true;
+  recentActivityDeferred: boolean;
+  timelineDay?: OperationsCalendarDay | null;
+  timelineResources?: CalendarResource[];
   error: boolean;
 }

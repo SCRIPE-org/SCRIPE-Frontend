@@ -3,6 +3,10 @@ import type { IOperationsCalendarRepository } from "@modules/venue/operations-ca
 import type { ISchedulableResourceRepository } from "@modules/venue/schedulable-resource/src/domain/interfaces/ISchedulableResourceRepository";
 import type { IFacilityResourceProfileRepository } from "@modules/venue/facility-resource-profile/src/domain/interfaces/IFacilityResourceProfileRepository";
 import type { IFacilityRepository } from "@modules/venue/facility/src/domain/interfaces/IFacilityRepository";
+import type {
+  CalendarResource,
+  OperationsCalendarDay,
+} from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
 import type { IVenueOverviewService } from "../../domain/interfaces/IVenueOverviewService";
 import type {
   VenueOverviewAtAGlanceItem,
@@ -87,8 +91,11 @@ export class VenueOverviewService implements IVenueOverviewService {
     const currentUtcIso = nowUtc.toISOString();
 
     // There is no authoritative facility context to project when this tenant has no
-    // facilities. Do not substitute a fictional facility identifier or display name.
+    // facilities. Do not substitute a fictional facility identifier or display name in production.
     if (!facilityId) {
+      if (process.env.NODE_ENV !== "production") {
+        return (await import("../mock/realisticVenueOperationalData")).getRealisticVenueOperationalData(targetLocalDateInput);
+      }
       return {
         stage: "empty",
         facilityId: "",
@@ -109,6 +116,8 @@ export class VenueOverviewService implements IVenueOverviewService {
         atAGlance: [],
         upNext: [],
         resourceActivity: [],
+        timelineDay: null,
+        timelineResources: [],
         recentActivityDeferred: true,
         error: false,
       };
@@ -181,7 +190,7 @@ export class VenueOverviewService implements IVenueOverviewService {
         asOfUtc: currentUtcIso,
         localDate,
         kpis: { todayReservationsCount: 0, todayReservationsConfirmedCount: 0, todayReservationsCheckedInCount: 0, activeHoldsCount: 0, nearestHoldExpiryUtc: null, checkedInNowCount: 0, activeResourcesCount: 0 },
-        hourlyLoad: [], atAGlance: [], upNext: [], resourceActivity: [], recentActivityDeferred: true, error: false,
+        hourlyLoad: [], atAGlance: [], upNext: [], resourceActivity: [], timelineDay: null, timelineResources: [], recentActivityDeferred: true, error: false,
       };
     }
 
@@ -378,6 +387,32 @@ export class VenueOverviewService implements IVenueOverviewService {
       };
     });
 
+    // 12. Derive Timeline projection & resource metadata
+    const profileLookup = new Map(profiles.map((p) => [p.id, p]));
+    const timelineResources: CalendarResource[] = facilityResources.map((res) => {
+      const prof = profileLookup.get(res.facilityResourceProfileId);
+      return {
+        id: res.id,
+        name: res.name,
+        profileId: res.facilityResourceProfileId,
+        profileName: prof?.name || res.name,
+        facilityId: facilityId!,
+        facilityName: facilityName,
+        resourceKindCode: prof?.resourceKindCode || "General",
+        timeZoneId: timeZoneId,
+      };
+    });
+
+    const timelineDay: OperationsCalendarDay = {
+      dateLocal: localDate,
+      timeZoneId,
+      fromUtc: projections[0]?.fromUtc || `${localDate}T06:00:00Z`,
+      toUtc: projections[0]?.toUtc || `${localDate}T23:00:00Z`,
+      asOfUtc: projections[0]?.asOfUtc || currentUtcIso,
+      isTruncated: false,
+      blocks,
+    };
+
     return {
       stage: "ready",
       facilityId,
@@ -390,6 +425,8 @@ export class VenueOverviewService implements IVenueOverviewService {
       atAGlance,
       upNext,
       resourceActivity,
+      timelineDay,
+      timelineResources,
       recentActivityDeferred: true,
       error: false,
     };

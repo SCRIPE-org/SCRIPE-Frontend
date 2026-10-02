@@ -136,6 +136,12 @@ describe("VenueOverviewService", () => {
     const court3Activity = overview.resourceActivity.find((r) => r.resourceId === "court-3");
     expect(court3Activity?.statusLabel).toBe("noActiveBooking");
     expect(court3Activity?.statusLabel).not.toBe("Available" as never);
+
+    // Timeline Verification
+    expect(overview.timelineDay).not.toBeNull();
+    expect(overview.timelineDay?.blocks).toHaveLength(3);
+    expect(overview.timelineResources).toHaveLength(3);
+    expect(overview.timelineResources?.[0]?.name).toBe("Padel Court 1");
   });
 
   it("isolates customer party enrichment failures so overview core remains fully functional", async () => {
