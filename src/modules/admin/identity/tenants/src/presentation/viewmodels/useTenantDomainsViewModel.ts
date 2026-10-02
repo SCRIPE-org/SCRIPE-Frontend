@@ -61,9 +61,9 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
 
   // ── Fetch Domains ──────────────────────────────────────
 
-  const fetchDomains = useCallback(async () => {
+  const fetchDomains = useCallback(async (isSilent = false) => {
     try {
-      setIsLoading(true);
+      if (!isSilent) setIsLoading(true);
       const response = await tenantRepository.getDomains(tenantId);
       setDomains(response?.domains || []);
       if (response?.cnameTarget) setCnameTarget(response.cnameTarget);
@@ -72,7 +72,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     } catch {
       setError(t("tenant.domainsLoadFailed"));
     } finally {
-      setIsLoading(false);
+      if (!isSilent) setIsLoading(false);
     }
   }, [tenantId, tenantRepository, t]);
 
@@ -164,7 +164,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     try {
       await tenantRepository.addDomain(tenantId, domain.trim(), redirectTo, redirectStatusCode);
       toast.success(t("tenant.domainsAddedSuccess"));
-      await fetchDomains();
+      await fetchDomains(true);
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t("tenant.domainsAddFailed")));
       throw err;
@@ -201,7 +201,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
           ? t("tenant.domainsBatchAddedSuccess", { count: successCount })
           : t("tenant.domainsAddedSuccess")
       );
-      await fetchDomains();
+      await fetchDomains(true);
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t("tenant.domainsAddFailed")));
       throw err;
@@ -219,7 +219,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     try {
       await tenantRepository.updateDomain(tenantId, domainId, redirectTo, redirectStatusCode);
       toast.success(t("tenant.domainsUpdateSuccess"));
-      await fetchDomains();
+      await fetchDomains(true);
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t("tenant.domainsUpdateFailed")));
       throw err;
@@ -232,12 +232,24 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     setVerifyingId(domainId);
     try {
       const updated = await tenantRepository.verifyDomain(tenantId, domainId);
+      const existing = domainsRef.current.find((d) => d.id === domainId);
+      const wasVerified = existing?.isVerified ?? false;
+
       if (updated?.isVerified) {
         toast.success(t("tenant.domainsVerifiedSuccess"));
+      } else if (wasVerified && !updated?.isVerified) {
+        toast.warning(
+          t("tenant.domainsDnsRevertedInvalid") ||
+            "DNS records are no longer detected. Domain status set to invalid configuration."
+        );
       } else {
         toast.info(t("tenant.domainsDnsNotConfiguredYet"));
       }
-      await fetchDomains();
+
+      if (updated) {
+        setDomains((prev) => prev.map((d) => (d.id === domainId ? updated : d)));
+      }
+      await fetchDomains(true);
     } catch {
       toast.error(t("tenant.domainsVerifyFailed"));
     } finally {
@@ -249,7 +261,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     try {
       await tenantRepository.setDomainPrimary(tenantId, domainId);
       toast.success(t("tenant.domainsPrimaryUpdated"));
-      await fetchDomains();
+      await fetchDomains(true);
     } catch {
       toast.error(t("tenant.domainsPrimaryFailed"));
     }
@@ -260,7 +272,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     try {
       await tenantRepository.removeDomain(tenantId, domainId);
       toast.success(t("tenant.domainsRemoved"));
-      await fetchDomains();
+      await fetchDomains(true);
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t("tenant.domainsRemoveFailed")));
     } finally {

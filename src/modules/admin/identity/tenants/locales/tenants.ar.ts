@@ -155,6 +155,7 @@ export const ar = {
     domainsAddedSuccess: "تم إضافة النطاق بنجاح",
     domainsAddFailed: "فشل في إضافة النطاق",
     domainsVerifiedSuccess: "تم التحقق من النطاق بنجاح",
+    domainsDnsRevertedInvalid: "لم يعد بالإمكان العثور على سجلات DNS. تم تحديث حالة النطاق إلى تهيئة غير صالحة.",
     domainsVerifyFailed: "فشل التحقق",
     domainsPrimaryUpdated: "تم تحديث النطاق الرئيسي",
     domainsPrimaryFailed: "فشل في تعيين النطاق الرئيسي",
