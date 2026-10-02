@@ -17,6 +17,8 @@ import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { venueContainer } from "@modules/venue/di";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueProfileQuickCreateDialog } from "@modules/venue/venue-profile/src/presentation/components/VenueProfileQuickCreateDialog";
 import { Plus } from "lucide-react";
 import type { VenueProfile } from "@modules/venue/venue-profile/src/domain/entities/VenueProfile";
@@ -36,6 +38,7 @@ export function FacilityQuickCreateDialog({
 }: FacilityQuickCreateDialogProps) {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
+  const canCreateVenueProfile = usePermission(VENUE_PERMISSIONS.VENUE_PROFILE_CREATE);
 
   const [venueProfiles, setVenueProfiles] = useState<VenueProfile[]>([]);
   const [loadingVenueProfiles, setLoadingVenueProfiles] = useState(false);
@@ -53,15 +56,13 @@ export function FacilityQuickCreateDialog({
       setLoadingVenueProfiles(true);
       const res = await venueContainer.venueProfileRepository.getAll({ page: 1, pageSize: 100 });
       setVenueProfiles(res.items);
-      if (!venueProfileId && res.items.length > 0) {
-        setVenueProfileId(res.items[0].id);
-      }
+      setVenueProfileId((current) => current || res.items[0]?.id || "");
     } catch {
       // Fail safely
     } finally {
       setLoadingVenueProfiles(false);
     }
-  }, [venueProfileId]);
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -141,16 +142,18 @@ export function FacilityQuickCreateDialog({
                   <Label htmlFor="facility-venue-select" className="text-xs font-medium">
                     {t("facility.fields.venueProfileId")} <span className="text-destructive">*</span>
                   </Label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
-                    onClick={() => setVenueProfileQuickCreateOpen(true)}
-                  >
-                    <Plus className="mr-1 size-3" />
-                    {t("facility.quickCreateVenueProfile") || "New Venue Profile"}
-                  </Button>
+                  {canCreateVenueProfile && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                      onClick={() => setVenueProfileQuickCreateOpen(true)}
+                    >
+                      <Plus className="mr-1 size-3" />
+                      {t("facility.quickCreateVenueProfile") || "New Venue Profile"}
+                    </Button>
+                  )}
                 </div>
                 <GenericSelect
                   type="searchable"

@@ -8,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function OperationsCalendarPage() {
-  return <ModuleErrorBoundary moduleName="operationsCalendar.title"><OperationsCalendarView /></ModuleErrorBoundary>;
+  return (
+    <ModuleErrorBoundary moduleName="operationsCalendar.title">
+      <OperationsCalendarView />
+    </ModuleErrorBoundary>
+  );
 }

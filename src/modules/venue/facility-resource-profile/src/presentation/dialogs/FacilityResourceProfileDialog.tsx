@@ -18,6 +18,8 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
 import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
@@ -92,6 +94,7 @@ export function FacilityResourceProfileDialog({
 }: FacilityResourceProfileDialogProps) {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
+  const canCreateFacility = usePermission(VENUE_PERMISSIONS.FACILITY_CREATE);
   const [quickCreateFacilityOpen, setQuickCreateFacilityOpen] = useState(false);
   const [form, setForm] = useState<FacilityResourceProfileWrite>(() =>
     editingProfile ? toForm(editingProfile) : emptyForm(facilityId)
@@ -191,16 +194,18 @@ export function FacilityResourceProfileDialog({
                   <Label htmlFor="profile-facility">
                     {t("resourceProfile.facility")} <span className="text-destructive">*</span>
                   </Label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
-                    onClick={() => setQuickCreateFacilityOpen(true)}
-                  >
-                    <Plus className="mr-1 size-3" />
-                    {t("facility.addNew") || "New Facility"}
-                  </Button>
+                  {canCreateFacility && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                      onClick={() => setQuickCreateFacilityOpen(true)}
+                    >
+                      <Plus className="mr-1 size-3" />
+                      {t("facility.addNew") || "New Facility"}
+                    </Button>
+                  )}
                 </div>
                 <GenericSelect
                   type="searchable"

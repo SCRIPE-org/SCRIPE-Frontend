@@ -16,6 +16,8 @@ import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { venueContainer } from "@modules/venue/di";
 import { SiteQuickCreateDialog } from "@modules/venue/site/src/presentation/components/SiteQuickCreateDialog";
 import { Plus } from "lucide-react";
@@ -36,6 +38,7 @@ export function VenueProfileQuickCreateDialog({
 }: VenueProfileQuickCreateDialogProps) {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
+  const canCreateSite = usePermission(VENUE_PERMISSIONS.SITE_CREATE);
 
   const [sites, setSites] = useState<Site[]>([]);
   const [loadingSites, setLoadingSites] = useState(false);
@@ -53,15 +56,13 @@ export function VenueProfileQuickCreateDialog({
       setLoadingSites(true);
       const res = await venueContainer.siteRepository.getAll({ page: 1, pageSize: 100 });
       setSites(res.items);
-      if (!siteId && res.items.length > 0) {
-        setSiteId(res.items[0].id);
-      }
+      setSiteId((current) => current || res.items[0]?.id || "");
     } catch {
       // Fail safely
     } finally {
       setLoadingSites(false);
     }
-  }, [siteId]);
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -141,16 +142,18 @@ export function VenueProfileQuickCreateDialog({
                   <Label htmlFor="venue-site-select" className="text-xs font-medium">
                     {t("venueProfile.fields.siteId")} <span className="text-destructive">*</span>
                   </Label>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
-                    onClick={() => setSiteQuickCreateOpen(true)}
-                  >
-                    <Plus className="mr-1 size-3" />
-                    {t("venueProfile.quickCreateSite") || "New Site"}
-                  </Button>
+                  {canCreateSite && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                      onClick={() => setSiteQuickCreateOpen(true)}
+                    >
+                      <Plus className="mr-1 size-3" />
+                      {t("venueProfile.quickCreateSite") || "New Site"}
+                    </Button>
+                  )}
                 </div>
                 <GenericSelect
                   type="searchable"

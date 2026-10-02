@@ -7,6 +7,8 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
 import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
 import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
@@ -40,6 +42,7 @@ export function RequestCriteriaSection({
   onFacilityCreated,
 }: RequestCriteriaSectionProps) {
   const [quickCreateFacilityOpen, setQuickCreateFacilityOpen] = useState(false);
+  const canCreateFacility = usePermission(VENUE_PERMISSIONS.FACILITY_CREATE);
 
   return (
     <>
@@ -56,7 +59,7 @@ export function RequestCriteriaSection({
             <div className="space-y-2 md:col-span-2">
               <div className="flex items-center justify-between">
                 <Label>{t("booking.request.facility")}</Label>
-                {onFacilityCreated && (
+                {onFacilityCreated && canCreateFacility && (
                   <Button
                     type="button"
                     variant="ghost"

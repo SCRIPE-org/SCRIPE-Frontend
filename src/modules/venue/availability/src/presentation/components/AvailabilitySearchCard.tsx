@@ -90,7 +90,6 @@ export function AvailabilitySearchCard({
               id="search-quantity"
               type="number"
               min={1}
-              max={maximumCapacity}
               value={quantity}
               disabled={searchDisabled}
               onChange={(event) => setQuantity(Number(event.target.value))}
@@ -126,7 +125,9 @@ export function AvailabilitySearchCard({
               </p>
               <p>
                 {t("availability.decision")}:{" "}
-                {t(`availability.reasons.${vm.searchResult.reasonCode}`)}
+                {t(`availability.reasons.${vm.searchResult.reasonCode?.replace(/^availability\./, "")}`) ||
+                  t(`availability.reasons.${vm.searchResult.reasonCode}`) ||
+                  vm.searchResult.reasonCode}
               </p>
             </AlertDescription>
           </Alert>

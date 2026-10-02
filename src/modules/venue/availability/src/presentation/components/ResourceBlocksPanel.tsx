@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Ban, Pencil, ShieldAlert, Trash2, Wrench } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
@@ -67,13 +67,11 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
   const [editing, setEditing] = useState<ResourceBlock | null>(null);
   const [draft, setDraft] = useState<SaveResourceBlock>(() => newDraft(resourceId, timeZoneId));
 
-  const [prevParams, setPrevParams] = useState({ resourceId, timeZoneId });
-  if (prevParams.resourceId !== resourceId || prevParams.timeZoneId !== timeZoneId) {
-    setPrevParams({ resourceId, timeZoneId });
+  useEffect(() => {
     if (!editing) {
       setDraft(newDraft(resourceId, timeZoneId));
     }
-  }
+  }, [resourceId, timeZoneId, editing]);
 
   const current = kind === "blackout" ? blackouts : maintenanceBlocks;
   const canWrite = kind === "blackout" ? (editing ? canUpdateBlackouts : canCreateBlackouts) : (editing ? canUpdateMaintenance : canCreateMaintenance);

@@ -28,6 +28,7 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
   const canView = usePermission(VENUE_PERMISSIONS.FACILITY_RESOURCE_PROFILE_VIEW);
   const canCreate = usePermission(VENUE_PERMISSIONS.FACILITY_RESOURCE_PROFILE_CREATE);
   const canUpdate = usePermission(VENUE_PERMISSIONS.FACILITY_RESOURCE_PROFILE_UPDATE);
+  const canCreateFacility = usePermission(VENUE_PERMISSIONS.FACILITY_CREATE);
   const { error: toastError } = useEnhancedToast();
   const [open, setOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState<FacilityResourceProfile | undefined>();
@@ -89,15 +90,17 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
             placeholder={t("resourceProfile.selectFacility")}
           />
         </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => setQuickCreateFacilityOpen(true)}
-          className="shrink-0 gap-1.5"
-        >
-          <Plus className="size-4" />
-          {t("facility.addNew") || "New Facility"}
-        </Button>
+        {canCreateFacility && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setQuickCreateFacilityOpen(true)}
+            className="shrink-0 gap-1.5"
+          >
+            <Plus className="size-4" />
+            {t("facility.addNew") || "New Facility"}
+          </Button>
+        )}
       </div>
 
       {vm.error && (

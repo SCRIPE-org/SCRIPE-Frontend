@@ -37,6 +37,7 @@ export const en = {
       searchEnd: "Local end",
       quantity: "Quantity",
     },
+    singleCapacityNotice: "Capacity is fixed to 1 for this single-unit resource.",
     validation: {
       required: "Add at least one weekly availability window.",
       range: "Every window must end after it starts.",
@@ -55,6 +56,12 @@ export const en = {
       saturday: "Saturday",
     },
     reasons: {
+      available: "The interval is open and has enough capacity.",
+      baseClosed: "The recurring calendar is closed for part of this interval.",
+      exceptionClosed: "A dated exception closes this interval.",
+      blackout: "A blackout blocks this interval.",
+      maintenance: "Maintenance blocks this interval.",
+      capacityInsufficient: "The remaining capacity is below the requested quantity.",
       "availability.available": "The interval is open and has enough capacity.",
       "availability.baseClosed": "The recurring calendar is closed for part of this interval.",
       "availability.exceptionClosed": "A dated exception closes this interval.",

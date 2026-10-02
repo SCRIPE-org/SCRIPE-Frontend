@@ -24,6 +24,12 @@ export const FacilityListView = React.memo(function FacilityListView() {
     subtitleKey: "facility.description",
     resource: "facilities",
     entityTypeKey: "facilityoperations.facility",
+    permissions: {
+      canView: VENUE_PERMISSIONS.FACILITY_VIEW,
+      canCreate: VENUE_PERMISSIONS.FACILITY_CREATE,
+      canUpdate: VENUE_PERMISSIONS.FACILITY_UPDATE,
+      canDelete: VENUE_PERMISSIONS.FACILITY_DELETE,
+    },
     columns: [
       { key: "code", label: t("facility.fields.code"), sortable: true },
       { key: "name", label: t("facility.fields.name"), sortable: true },
@@ -31,7 +37,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
         key: "venueProfileId",
         label: t("facility.fields.venueProfileId"),
         render: (_value: string, row: Facility) =>
-          row.venueProfileName || venueProfileNameById[row.venueProfileId] || row.venueProfileId,
+          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "—",
       },
       {
         key: "createdAt",
@@ -132,6 +138,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
         onClick: async () => setQuickCreateVenueProfileOpen(true),
         icon: <Plus className="h-4 w-4" />,
         variant: "outline" as const,
+        requiredPermission: VENUE_PERMISSIONS.VENUE_PROFILE_CREATE,
       },
     ],
   };

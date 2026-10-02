@@ -59,7 +59,7 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       {
         key: "siteId",
         label: t("venueProfile.fields.siteId"),
-        render: (_value: string, row: VenueProfile) => row.siteName || siteNameById[row.siteId] || row.siteId,
+        render: (_value: string, row: VenueProfile) => row.siteName || siteNameById[row.siteId] || "—",
       },
       {
         key: "isActive",
