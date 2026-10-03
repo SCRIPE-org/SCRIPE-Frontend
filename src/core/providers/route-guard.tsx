@@ -50,6 +50,7 @@ const PUBLIC_PAGES = [
   "/authorize",
   "/studio-preview",
   "/dashboard-preview",
+  "/venue",
   "/setup-account",
   // /change-password requires auth — listed as SYSTEM_PAGE below
   "/signup",

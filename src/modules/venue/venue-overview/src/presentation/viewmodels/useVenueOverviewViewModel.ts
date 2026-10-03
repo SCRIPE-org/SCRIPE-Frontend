@@ -33,6 +33,8 @@ const INITIAL_STATE: VenueOverviewState = {
   atAGlance: [],
   upNext: [],
   resourceActivity: [],
+  timelineDay: null,
+  timelineResources: [],
   recentActivityDeferred: true,
   error: false,
 };
@@ -72,9 +74,33 @@ export function useVenueOverviewViewModel(
           selectedFacilityIdRef.current = overview.facilityId;
         }
       } catch {
-        // Dropdown facilities read error fallback
+        if (process.env.NODE_ENV !== "production") {
+          setFacilities([
+            { id: "fac-cairo-downtown", name: "Al-Ahly Sports Hub & Padel Club" },
+            { id: "fac-west", name: "West Padel Club" },
+            { id: "fac-olympic", name: "Olympic Football Center" },
+          ]);
+        }
       }
     } catch {
+      if (process.env.NODE_ENV !== "production") {
+        try {
+          const { getRealisticVenueOperationalData } = await import(
+            "../../data/mock/realisticVenueOperationalData"
+          );
+          const mock = getRealisticVenueOperationalData(dateStr);
+          setState(mock);
+          setFacilities([
+            { id: "fac-cairo-downtown", name: "Al-Ahly Sports Hub & Padel Club" },
+            { id: "fac-west", name: "West Padel Club" },
+            { id: "fac-olympic", name: "Olympic Football Center" },
+          ]);
+          setSelectedFacilityId(mock.facilityId);
+          return;
+        } catch {
+          // fallback
+        }
+      }
       setState((curr) => ({
         ...curr,
         stage: "failed",
