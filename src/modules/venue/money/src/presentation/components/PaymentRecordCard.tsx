@@ -34,12 +34,13 @@ export function PaymentRecordCard({ canRecord, model }: PaymentRecordCardProps) 
         ) : (
           <>
             <div className="space-y-2">
-              <Label>{t("money.payments.invoice")}</Label>
+              <Label id="payment-invoice-label" htmlFor="payment-invoice-select">{t("money.payments.invoice")}</Label>
               <GenericSelect
+                id="payment-invoice-select"
+                aria-labelledby="payment-invoice-label"
                 type="searchable"
                 searchType="client"
                 allowClear
-                aria-label={t("money.payments.invoice")}
                 options={model.invoiceOptions}
                 value={model.selectedInvoiceId}
                 onValueChange={(value: string | string[]) =>
@@ -62,11 +63,12 @@ export function PaymentRecordCard({ canRecord, model }: PaymentRecordCardProps) 
                 />
               </div>
               <div className="space-y-2">
-                <Label>{t("money.payments.method")}</Label>
+                <Label id="payment-method-label" htmlFor="payment-method-select">{t("money.payments.method")}</Label>
                 <GenericSelect
+                  id="payment-method-select"
+                  aria-labelledby="payment-method-label"
                   type="single"
                   allowClear={false}
-                  aria-label={t("money.payments.method")}
                   options={MANUAL_PAYMENT_METHODS.map((value) => ({
                     value,
                     label: t(`money.payments.methods.${value}`),

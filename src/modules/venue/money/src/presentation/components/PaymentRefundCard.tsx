@@ -27,12 +27,13 @@ export function PaymentRefundCard({ model }: PaymentRefundCardProps) {
           <AlertDescription>{t("money.payments.refund.description")}</AlertDescription>
         </Alert>
         <div className="space-y-2">
-          <Label>{t("money.payments.invoice")}</Label>
+          <Label id="refund-invoice-label" htmlFor="refund-invoice-select">{t("money.payments.invoice")}</Label>
           <GenericSelect
+            id="refund-invoice-select"
+            aria-labelledby="refund-invoice-label"
             type="searchable"
             searchType="client"
             allowClear={false}
-            aria-label={t("money.payments.refund.selectInvoice")}
             options={model.refundInvoiceOptions}
             value={model.refundInvoiceId}
             onValueChange={(value: string | string[]) =>

@@ -64,12 +64,15 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
       />
 
       <div className="max-w-xl space-y-2">
-        <Label>{t("availability.resource")}</Label>
+        <Label id="availability-resource-label" htmlFor="availability-resource-select">
+          {t("availability.resource")}
+        </Label>
         <GenericSelect
+          id="availability-resource-select"
+          aria-labelledby="availability-resource-label"
           type="searchable"
           searchType="client"
           allowClear={false}
-          aria-label={t("availability.resource")}
           options={resourceOptions}
           value={vm.selectedResourceId}
           onValueChange={(value: string | string[]) =>

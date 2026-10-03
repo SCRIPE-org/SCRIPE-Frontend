@@ -33,12 +33,13 @@ export function PaymentAllocateCard({ model }: PaymentAllocateCardProps) {
           </AlertDescription>
         </Alert>
         <div className="space-y-2">
-          <Label>{t("money.payments.allocate.selectInvoice")}</Label>
+          <Label id="allocate-invoice-label" htmlFor="allocate-invoice-select">{t("money.payments.allocate.selectInvoice")}</Label>
           <GenericSelect
+            id="allocate-invoice-select"
+            aria-labelledby="allocate-invoice-label"
             type="searchable"
             searchType="client"
             allowClear={false}
-            aria-label={t("money.payments.allocate.selectInvoice")}
             options={model.allocationInvoiceOptions}
             value={model.allocationInvoiceId}
             onValueChange={(value: string | string[]) =>

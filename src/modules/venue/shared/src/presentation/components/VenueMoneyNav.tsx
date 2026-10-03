@@ -27,7 +27,7 @@ export function VenueMoneyNav() {
 
   return (
     <nav
-      aria-label="Money operations"
+      aria-label={t("money.nav.ariaLabel") || "Money operations"}
       className="flex items-center gap-1 border-b border-nx-line pb-3 mb-6"
     >
       {links.map((link) => {

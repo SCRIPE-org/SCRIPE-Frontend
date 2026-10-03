@@ -1,4 +1,5 @@
 export const ar = { money: {
+  nav: { ariaLabel: "عمليات الشؤون المالية" },
   permission: { title: "يلزم الوصول إلى المالية", description: "لا تملك إذن عرض السجلات المالية للمنشأة." },
   error: { title: "تعذر تحميل المالية", description: "خدمة المالية المعتمدة غير متاحة مؤقتًا." },
   retry: "إعادة المحاولة",

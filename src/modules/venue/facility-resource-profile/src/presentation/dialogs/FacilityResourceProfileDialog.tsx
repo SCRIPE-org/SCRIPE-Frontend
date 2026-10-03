@@ -191,7 +191,7 @@ export function FacilityResourceProfileDialog({
             {facilityOptions.length > 0 && (
               <div className="space-y-2 sm:col-span-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="profile-facility">
+                  <Label id="profile-dialog-facility-label" htmlFor="profile-dialog-facility-select">
                     {t("resourceProfile.facility")} <span className="text-destructive">*</span>
                   </Label>
                   {canCreateFacility && (
@@ -208,10 +208,11 @@ export function FacilityResourceProfileDialog({
                   )}
                 </div>
                 <GenericSelect
+                  id="profile-dialog-facility-select"
+                  aria-labelledby="profile-dialog-facility-label"
                   type="searchable"
                   searchType="client"
                   allowClear={false}
-                  aria-label={t("resourceProfile.facility")}
                   options={facilityOptions}
                   value={form.facilityId}
                   onValueChange={(val: string | string[]) => {
@@ -278,8 +279,9 @@ export function FacilityResourceProfileDialog({
             </legend>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {DAYS.map((day) => (
-                <Label key={day.key} className="flex items-center gap-2 text-sm cursor-pointer">
+                <div key={day.key} className="flex items-center gap-2">
                   <Checkbox
+                    id={`day-${day.key}`}
                     checked={(form.days & day.value) !== 0}
                     onCheckedChange={(checked) =>
                       setForm({
@@ -288,8 +290,10 @@ export function FacilityResourceProfileDialog({
                       })
                     }
                   />
-                  {t(`resourceProfile.days.${day.key}`)}
-                </Label>
+                  <Label htmlFor={`day-${day.key}`} className="text-sm cursor-pointer">
+                    {t(`resourceProfile.days.${day.key}`)}
+                  </Label>
+                </div>
               ))}
             </div>
             <div className="grid gap-4 sm:grid-cols-4">

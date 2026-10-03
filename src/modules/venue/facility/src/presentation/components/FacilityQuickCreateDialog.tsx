@@ -139,7 +139,7 @@ export function FacilityQuickCreateDialog({
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="facility-venue-select" className="text-xs font-medium">
+                  <Label id="facility-venue-label" htmlFor="facility-venue-select" className="text-xs font-medium">
                     {t("facility.fields.venueProfileId")} <span className="text-destructive">*</span>
                   </Label>
                   {canCreateVenueProfile && (
@@ -156,10 +156,11 @@ export function FacilityQuickCreateDialog({
                   )}
                 </div>
                 <GenericSelect
+                  id="facility-venue-select"
+                  aria-labelledby="facility-venue-label"
                   type="searchable"
                   searchType="client"
                   allowClear={false}
-                  aria-label={t("facility.fields.venueProfileId")}
                   options={venueProfiles.map((v) => ({
                     value: v.id,
                     label: v.name,

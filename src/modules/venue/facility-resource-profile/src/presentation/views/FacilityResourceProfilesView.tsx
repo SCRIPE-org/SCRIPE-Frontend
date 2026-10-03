@@ -76,12 +76,13 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
 
       <div className="flex max-w-xl items-end gap-3">
         <div className="flex-1 space-y-2">
-          <Label>{t("resourceProfile.facility")}</Label>
+          <Label id="profile-facility-label" htmlFor="profile-facility-select">{t("resourceProfile.facility")}</Label>
           <GenericSelect
+            id="profile-facility-select"
+            aria-labelledby="profile-facility-label"
             type="searchable"
             searchType="client"
             allowClear={false}
-            aria-label={t("resourceProfile.facility")}
             options={facilityOptions}
             value={vm.selectedFacilityId}
             onValueChange={(value: string | string[]) =>
