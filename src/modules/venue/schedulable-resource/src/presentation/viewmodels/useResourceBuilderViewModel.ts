@@ -11,6 +11,14 @@ import { buildResourceTree, type SchedulableResourceTreeNode } from "../utils/re
 // resourceTree.ts) — a server-side tree endpoint is the real fix once tenants exceed it.
 const LARGE_PAGE_SIZE = 100;
 
+/**
+ * Presentation ViewModel hook for building and organizing hierarchical Schedulable Resources.
+ * 
+ * Coordinates resource tree reconstruction, CRUD mutations, resource profile selection,
+ * publication checklist generation, and lifecycle publishing states.
+ * 
+ * @returns State object exposing hierarchical resource `tree`, loading indicators, and mutation actions.
+ */
 export function useResourceBuilderViewModel() {
   const { schedulableResourceRepository, facilityResourceProfilePickerService } = getVenueContainer();
   const [tree, setTree] = useState<SchedulableResourceTreeNode[]>([]);

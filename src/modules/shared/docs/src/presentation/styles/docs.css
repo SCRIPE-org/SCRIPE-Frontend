@@ -271,9 +271,11 @@
 }
 
 .docs-sidebar-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding-block: 0.375rem;
-  padding-inline: 2.5rem 1rem;
+  padding-inline: 2rem 1rem;
   font-size: 0.8125rem;
   color: var(--nx-ink-2);
   text-decoration: none;
@@ -283,6 +285,25 @@
     background-color var(--nx-t-micro) var(--nx-ease-enter),
     border-color var(--nx-t-micro) var(--nx-ease-enter);
   line-height: 1.5;
+}
+
+.docs-sidebar-item--nested {
+  padding-inline: 2.75rem 1rem;
+}
+
+.docs-sidebar-item-icon {
+  flex-shrink: 0;
+  opacity: 0.75;
+  transition: opacity var(--nx-t-micro) var(--nx-ease-enter), color var(--nx-t-micro) var(--nx-ease-enter);
+}
+
+.docs-sidebar-item:hover .docs-sidebar-item-icon {
+  opacity: 1;
+}
+
+.docs-sidebar-item[data-active="true"] .docs-sidebar-item-icon {
+  opacity: 1;
+  color: var(--nx-accent);
 }
 
 .docs-sidebar-item:hover {

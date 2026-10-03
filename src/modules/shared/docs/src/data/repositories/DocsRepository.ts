@@ -56,9 +56,41 @@ function getAllOrderedSlugs(): string[] {
  */
 export class DocsRepository implements IDocsRepository {
   getPage(slug: string): DocPage | undefined {
-    const data = pageRegistry.get(slug);
-    if (!data) return undefined;
-    return new DocPage(data);
+    if (!slug) return undefined;
+
+    // 1. Direct match
+    let data = pageRegistry.get(slug);
+    if (data) return new DocPage(data);
+
+    // 2. Clean leading/trailing slashes
+    const cleanSlug = slug.replace(/^\/+|\/+$/g, "");
+    data = pageRegistry.get(cleanSlug);
+    if (data) return new DocPage(data);
+
+    // 3. Fallback: normalize nested submodule paths (e.g. modules/custom-fields/custom-fields-value-types -> modules/custom-fields-value-types)
+    const parts = cleanSlug.split("/");
+    if (parts.length > 2 && parts[0] === "modules") {
+      const flatSlug = `modules/${parts.slice(2).join("/")}`;
+      data = pageRegistry.get(flatSlug);
+      if (data) return new DocPage(data);
+
+      const leafSlug = `modules/${parts[parts.length - 1]}`;
+      data = pageRegistry.get(leafSlug);
+      if (data) return new DocPage(data);
+    }
+
+    // 4. Suffix match within same top-level section (modules, commercial, tutorials)
+    const cleanSection = cleanSlug.split("/")[0];
+    const cleanBase = parts[parts.length - 1];
+    for (const [regSlug, page] of pageRegistry.entries()) {
+      const regSection = regSlug.split("/")[0];
+      const regBase = regSlug.split("/").pop();
+      if (regSection === cleanSection && regBase === cleanBase) {
+        return new DocPage(page);
+      }
+    }
+
+    return undefined;
   }
 
   getNavigation(): DocCategory[] {
@@ -176,6 +208,10 @@ export class DocsRepository implements IDocsRepository {
 
   getAllSlugs(): string[] {
     return getAllOrderedSlugs();
+  }
+
+  getAllPages(): DocPage[] {
+    return Array.from(pageRegistry.values()).map((p) => new DocPage(p));
   }
 
   getNextSlug(currentSlug: string): string | undefined {

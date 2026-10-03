@@ -4,6 +4,14 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getVenueContainer } from "../../../../di";
 import type { Site } from "../../domain/entities/Site";
 
+/**
+ * Custom React hook providing the MVVM presentation layer for Venue Sites management.
+ * 
+ * Leverages {@link useCrudViewModel} to bridge UI components with {@link ISiteRepository},
+ * managing pagination, search queries, asynchronous state transitions, and mutation side-effects.
+ * 
+ * @returns Object containing the standardized CRUD view model instance (`vm`).
+ */
 export function useSiteViewModel() {
   const { siteRepository } = getVenueContainer();
 

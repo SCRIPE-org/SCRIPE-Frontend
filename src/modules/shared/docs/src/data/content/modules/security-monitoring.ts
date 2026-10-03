@@ -9,13 +9,12 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Threat Detection & Rate Limiting",
+    titleKey: "modules.securityMonitoring.threatDetectionTitle",
     id: "monitoring",
   },
   {
     type: "paragraph",
-    contentKey:
-      "The Security Monitoring module scans real-time event streams for suspicious access patterns, failed login bursts, and cross-tenant probe attempts. Combined with ASP.NET Core rate limiting middleware, it protects key routes and generates security logs for compliance auditing.",
+    contentKey: "modules.securityMonitoring.threatDetectionContent",
   },
 ];
 

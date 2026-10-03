@@ -15,17 +15,48 @@ export const en = {
       solutionTitle: "The Solution: RequiresTenantContext",
       solutionIntro:
         "We introduced the RequiresTenantContext boolean flag in the DocNavigationItem schema. When this flag is set to true, the frontend actively checks if the current user has a valid tenantId. If they do not, the item is completely stripped from the navigation menu and the route redirects to the overview page.",
-      layersTitle: "Defense In Depth",
-      layersIntro: "The gate operates at three levels:",
+      layersTitle: "Multi-Layer Defense in Depth",
+      layersIntro: "The gate operates across three independent architectural defense layers:",
+      layer1Title: "Layer 1: Frontend Menu Visibility Filter",
+      layer1Intro:
+        "The menu generation pipeline inspects the RequiresTenantContext flag on each menu item. If the current user does not have an active EffectiveTenantId, the node is completely stripped from the menu tree before reaching the client.",
+      layer2Title: "Layer 2: Client-Side Route Guards",
+      layer2Intro:
+        "Next.js middleware and client page wrappers inspect useAppStore to verify an active tenant context before mounting. Unauthorized attempts redirect automatically to the workspace overview.",
+      layer3Title: "Layer 3: Backend Controller & Middleware Firewall",
+      layer3Intro:
+        "Controllers and CQRS handlers independently validate the tenant context, returning 401 Unauthorized or 403 Forbidden if the request does not provide a valid tenant context.",
+      drillDownTitle: "Drill-Down and Impersonation",
+      drillDownIntro:
+        "System admins can still access these pages, but only through explicit context-switching mechanisms:",
+      drillDownNote:
+        "Drill-down access is restricted to system administrators with the 'tenants.drill_down' permission. All drill-down operations are audited with original administrator and target tenant identifiers.",
+      impersonationTitle: "User Impersonation Scoping",
+      impersonationIntro:
+        "During user impersonation, the security pipeline swaps the claims principal with a tenant-scoped session token, inheriting exact tenant boundaries and permissions.",
+      flaggedPagesTitle: "Protected Tenant-Only Pages",
+      flaggedPagesIntro:
+        "The following administrative views strictly enforce tenant context gates:",
+      flaggedPage1: "Tenant Subscription Plans & Billing Configuration",
+      flaggedPage2: "User Subscriptions & Entitlements Allocation",
+      flaggedPage3: "Tenant-Scoped Customizer Studio & Theme Customization",
+      flaggedPage4: "Tenant Organizational Units & Department Topologies",
+      flaggedPage5: "Tenant Integration Credentials & Webhook Endpoints",
+      flaggedPage6: "Tenant-Scoped Audit Logs & Security Event Streams",
+      addingTitle: "Adding the RequiresTenantContext Flag",
+      addingIntro:
+        "To protect a new menu item, set RequiresTenantContext = true in the MenuItem entity or seeder definition.",
+      addingTip:
+        "Always enforce tenant validation at the controller or command handler layer in addition to the frontend navigation filter to guarantee defense in depth.",
+      seederTitle: "MenuItemSeeder Configuration Pattern",
+      seederIntro:
+        "MenuItem seeders declare RequiresTenantContext as part of the initial platform bootstrapping, ensuring tenant boundaries are locked from the first deployment.",
       layer1:
         "1. Menu Visibility: The navigation builder strips the item from the sidebar if no tenant context is present.",
       layer2:
         "2. Route Protection: The page component uses useAppStore to verify the tenant context before attempting to fetch data.",
       layer3:
         "3. Backend Gate: The API endpoints themselves throw 403 Forbidden if a system admin attempts to fetch tenant-scoped data without an explicit drill-down tenant ID header.",
-      drillDownTitle: "Drill-Down and Impersonation",
-      drillDownIntro:
-        "System admins can still access these pages, but only through explicit context-switching mechanisms:",
       drill1:
         'Enter Tenant World (Drill-Down): The admin clicks "Enter Tenant World" on a tenant record. This sets the tenantId in the global state and adds it to the X-Tenant-Id header for all subsequent API requests. The gate now opens, and the admin sees exactly what the tenant sees.',
       drill2:

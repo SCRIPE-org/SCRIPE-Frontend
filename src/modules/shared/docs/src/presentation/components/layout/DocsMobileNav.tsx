@@ -105,7 +105,8 @@ export function DocsMobileNav({
                   data-active={isActive}
                   onClick={onClose}
                 >
-                  {t(child.titleKey)}
+                  {child.icon ? (docsIcons[child.icon]?.({ size: 14, className: "docs-sidebar-item-icon" }) ?? null) : null}
+                  <span>{t(child.titleKey)}</span>
                 </Link>
               );
             })}
@@ -126,7 +127,8 @@ export function DocsMobileNav({
         data-active={isActive}
         onClick={onClose}
       >
-        {t(item.titleKey)}
+        {item.icon ? (docsIcons[item.icon]?.({ size: 15, className: "docs-sidebar-item-icon" }) ?? null) : null}
+        <span>{t(item.titleKey)}</span>
       </Link>
     );
   };

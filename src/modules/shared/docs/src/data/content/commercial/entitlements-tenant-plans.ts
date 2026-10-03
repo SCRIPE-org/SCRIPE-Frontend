@@ -8,45 +8,40 @@ const sections: DocSection[] = [
     items: [
       {
         icon: "🏗️",
-        titleKey: "Visual Plan Builder",
-        descriptionKey:
-          "Tenant admins build subscription plans through a clean UI — no code required.",
+        titleKey: "commercial.entitlementsTenantPlans.visualPlanBuilderTitle",
+        descriptionKey: "commercial.entitlementsTenantPlans.visualPlanBuilderDesc",
       },
       {
         icon: "🔑",
-        titleKey: "Feature Bundling",
-        descriptionKey:
-          "Attach unlimited key/value feature flags to each plan to control user capabilities.",
+        titleKey: "commercial.entitlementsTenantPlans.featureBundlingTitle",
+        descriptionKey: "commercial.entitlementsTenantPlans.featureBundlingDesc",
       },
       {
         icon: "💰",
-        titleKey: "Flexible Pricing",
-        descriptionKey:
-          "Monthly, Yearly, Lifetime, and Free billing cycles with per-plan currency control.",
+        titleKey: "commercial.entitlementsTenantPlans.flexiblePricingTitle",
+        descriptionKey: "commercial.entitlementsTenantPlans.flexiblePricingDesc",
       },
       {
         icon: "👥",
-        titleKey: "User Limits",
-        descriptionKey:
-          "Set maximum subscribers per plan or allow unlimited growth with -1 configuration.",
+        titleKey: "commercial.entitlementsTenantPlans.userLimitsTitle",
+        descriptionKey: "commercial.entitlementsTenantPlans.userLimitsDesc",
       },
       {
         icon: "⏳",
-        titleKey: "Free Trials",
-        descriptionKey:
-          "Configure trial periods per plan — users get a trial before committing to a paid plan.",
+        titleKey: "commercial.entitlementsTenantPlans.freeTrialsTitle",
+        descriptionKey: "commercial.entitlementsTenantPlans.freeTrialsDesc",
       },
       {
         icon: "🔒",
-        titleKey: "Tenant-Scoped",
-        descriptionKey: "Plans are fully isolated per tenant — no visibility across tenants.",
+        titleKey: "commercial.entitlementsTenantPlans.tenantScopedTitle",
+        descriptionKey: "commercial.entitlementsTenantPlans.tenantScopedDesc",
       },
     ],
   },
   {
     type: "heading",
     level: 2,
-    titleKey: "What are Tenant Plans?",
+    titleKey: "commercial.entitlementsTenantPlans.whatArePlansTitle",
     id: "what-are-tenant-plans",
   },
   {
@@ -65,7 +60,7 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Plan Configuration",
+    titleKey: "commercial.entitlementsTenantPlans.planConfigTitle",
     id: "plan-config",
   },
   {
@@ -83,9 +78,8 @@ const sections: DocSection[] = [
 
 registerPage({
   slug: "commercial/entitlements-tenant-plans",
-  titleKey: "Tenant Plans",
-  descriptionKey:
-    "B2B2C plan builder enabling tenants to create subscription plans for their end-users with feature bundling, pricing, and lifecycle management.",
+  titleKey: "commercial.entitlementsTenantPlans.title",
+  descriptionKey: "commercial.entitlementsTenantPlans.description",
   category: "commercial-modules",
   order: 21,
   sections,

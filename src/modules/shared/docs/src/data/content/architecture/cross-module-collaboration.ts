@@ -4,34 +4,34 @@ import type { DocSection } from "../../../domain/entities/DocSection";
 
 const sections: DocSection[] = [
   // ─── Intro ────────────────────────────────────────────────
-  { type: "paragraph", contentKey: "arch.crossModule.intro" },
+  { type: "paragraph", contentKey: "architecture.crossModule.intro" },
 
   // ─── The Three-Layer Bridge ────────────────────────────────
   {
     type: "heading",
     level: 2,
-    titleKey: "arch.crossModule.bridgeTitle",
+    titleKey: "architecture.crossModule.bridgeTitle",
     id: "three-layer-bridge",
   },
-  { type: "paragraph", contentKey: "arch.crossModule.bridgeContent" },
+  { type: "paragraph", contentKey: "architecture.crossModule.bridgeContent" },
   {
     type: "feature-grid",
     columns: 3,
     items: [
       {
         icon: "layers",
-        titleKey: "arch.crossModule.gridCoreTitle",
-        descriptionKey: "arch.crossModule.gridCoreDesc",
+        titleKey: "architecture.crossModule.gridCoreTitle",
+        descriptionKey: "architecture.crossModule.gridCoreDesc",
       },
       {
         icon: "zap",
-        titleKey: "arch.crossModule.gridEventsTitle",
-        descriptionKey: "arch.crossModule.gridEventsDesc",
+        titleKey: "architecture.crossModule.gridEventsTitle",
+        descriptionKey: "architecture.crossModule.gridEventsDesc",
       },
       {
         icon: "git-merge",
-        titleKey: "arch.crossModule.gridPipelineTitle",
-        descriptionKey: "arch.crossModule.gridPipelineDesc",
+        titleKey: "architecture.crossModule.gridPipelineTitle",
+        descriptionKey: "architecture.crossModule.gridPipelineDesc",
       },
     ],
   },
@@ -40,10 +40,10 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "arch.crossModule.coreAbstractionsTitle",
+    titleKey: "architecture.crossModule.coreAbstractionsTitle",
     id: "core-abstractions",
   },
-  { type: "paragraph", contentKey: "arch.crossModule.coreAbstractionsContent" },
+  { type: "paragraph", contentKey: "architecture.crossModule.coreAbstractionsContent" },
   {
     type: "code",
     language: "csharp",
@@ -78,10 +78,10 @@ public record FeatureCheckResult(
   {
     type: "heading",
     level: 2,
-    titleKey: "arch.crossModule.requireFeatureTitle",
+    titleKey: "architecture.crossModule.requireFeatureTitle",
     id: "irequire-feature",
   },
-  { type: "paragraph", contentKey: "arch.crossModule.requireFeatureContent" },
+  { type: "paragraph", contentKey: "architecture.crossModule.requireFeatureContent" },
   {
     type: "code",
     language: "csharp",
@@ -120,10 +120,10 @@ public sealed class CreateAdminCommandHandler
   {
     type: "heading",
     level: 2,
-    titleKey: "arch.crossModule.pipelineTitle",
+    titleKey: "architecture.crossModule.pipelineTitle",
     id: "pipeline-order",
   },
-  { type: "paragraph", contentKey: "arch.crossModule.pipelineContent" },
+  { type: "paragraph", contentKey: "architecture.crossModule.pipelineContent" },
   {
     type: "table",
     headers: ["Order", "Behavior", "Responsibility", "When It Runs"],
@@ -142,10 +142,10 @@ public sealed class CreateAdminCommandHandler
   {
     type: "heading",
     level: 2,
-    titleKey: "arch.crossModule.eventFlowTitle",
+    titleKey: "architecture.crossModule.eventFlowTitle",
     id: "domain-event-flow",
   },
-  { type: "paragraph", contentKey: "arch.crossModule.eventFlowContent" },
+  { type: "paragraph", contentKey: "architecture.crossModule.eventFlowContent" },
   {
     type: "flowchart",
     title: "CreateAdmin Command — Cross-Module Event Flow",
@@ -175,10 +175,10 @@ public sealed class CreateAdminCommandHandler
   {
     type: "heading",
     level: 2,
-    titleKey: "arch.crossModule.realWorldTitle",
+    titleKey: "architecture.crossModule.realWorldTitle",
     id: "identity-entitlements",
   },
-  { type: "paragraph", contentKey: "arch.crossModule.realWorldContent" },
+  { type: "paragraph", contentKey: "architecture.crossModule.realWorldContent" },
   {
     type: "table",
     headers: ["Concern", "Owned By", "How Others Access It"],
@@ -193,14 +193,14 @@ public sealed class CreateAdminCommandHandler
   {
     type: "info",
     variant: "tip",
-    contentKey: "arch.crossModule.keyInsightTip",
+    contentKey: "architecture.crossModule.keyInsightTip",
   },
 ];
 
 registerPage({
   slug: "architecture/cross-module-collaboration",
-  titleKey: "arch.crossModule.title",
-  descriptionKey: "arch.crossModule.description",
+  titleKey: "architecture.crossModule.title",
+  descriptionKey: "architecture.crossModule.description",
   category: "architecture",
   order: 5,
   sections,
