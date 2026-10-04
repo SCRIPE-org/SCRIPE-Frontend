@@ -57,15 +57,16 @@ export function NexusSecondaryRail({
 
   // ── Menu items to display: children of the selected root item ─────────────
   const menuItems: MenuItem[] = activeRootItem?.children ?? [];
+  const hasSubmenu = menuItems.length > 0;
 
   const handleNavigate = useCallback(() => onMobileClose?.(), [onMobileClose]);
 
-  // Auto-collapse when panel is explicitly collapsed by user action.
+  // Auto-collapse when panel is explicitly collapsed by user action OR when active root item has no children.
   // Do NOT collapse when activeWorkspace is null — that is a transient state
   // during JIT workspace activation (one React tick before useActiveRootSync fires).
   // Collapsing on null would cause the secondary rail to flash empty on every
   // page navigation where the workspace key momentarily resets.
-  const effectiveCollapsed = !!isCollapsed;
+  const effectiveCollapsed = !hasSubmenu || !!isCollapsed;
 
   const railStyle: React.CSSProperties = {
     width: effectiveCollapsed ? 0 : NEXUS_PANEL_W,
@@ -81,6 +82,7 @@ export function NexusSecondaryRail({
     flexDirection: "column",
     flexShrink: 0,
     overflow: "hidden",
+    pointerEvents: effectiveCollapsed ? "none" : "auto",
     // Collapse still animates width because the content column must reflow with
     // it (a transform cannot do that). Reduced motion keeps only the crossfade.
     transition: reducedMotion
@@ -112,12 +114,16 @@ export function NexusSecondaryRail({
   return (
     <>
       {/* Desktop */}
-      <aside style={railStyle} className="relative z-raised hidden lg:flex lg:flex-col">
+      <aside
+        style={railStyle}
+        aria-hidden={effectiveCollapsed}
+        className="relative z-raised hidden lg:flex lg:flex-col"
+      >
         {railContent}
       </aside>
 
       {/* Mobile overlay */}
-      {mobileOpen && !effectiveCollapsed && (
+      {mobileOpen && hasSubmenu && !effectiveCollapsed && (
         <>
           {/* The scrim pushes the page back by taking light away — that is the
               whole mechanism, so it carries no blur. */}

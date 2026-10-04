@@ -128,9 +128,12 @@ export function NexusPrimaryRail({
   const handleRootItemClick = useCallback(
     (item: MenuItem) => {
       setActiveRootItemId(item.id);
-      // Auto-open panel if it was collapsed when clicking an item
-      if (isPanelCollapsed && onTogglePanel) {
-        onTogglePanel();
+      const hasChildren = Boolean(item.children && item.children.length > 0);
+      if (hasChildren) {
+        // Auto-open panel if it was collapsed when clicking an item with children
+        if (isPanelCollapsed && onTogglePanel) {
+          onTogglePanel();
+        }
       }
       // Auto nav to first page of that menu item
       const firstRoute = findFirstLeafRoute(item, canAccessPage);

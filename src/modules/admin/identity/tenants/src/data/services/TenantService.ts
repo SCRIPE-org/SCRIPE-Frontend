@@ -25,6 +25,7 @@ import type {
   ServiceTenantListParams,
   TenantListResult,
   TenantTreeListResult,
+  TenantDomainJson,
 } from "../../domain/interfaces/ITenantService";
 import type { TenantStats } from "../../domain/interfaces/ITenantRepository";
 import { PermissionModel } from "@modules/identity/core";
@@ -413,12 +414,33 @@ export class TenantService implements ITenantService {
     return this.api.get(TENANTS_ENDPOINTS.DOMAINS(tenantId));
   }
 
-  async addDomain(tenantId: string, domain: string): Promise<void> {
-    await this.api.post(TENANTS_ENDPOINTS.DOMAINS(tenantId), { domain });
+  async addDomain(
+    tenantId: string,
+    domain: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void> {
+    await this.api.post(TENANTS_ENDPOINTS.DOMAINS(tenantId), {
+      domain,
+      redirectTo: redirectTo || null,
+      redirectStatusCode: redirectStatusCode || null,
+    });
   }
 
-  async verifyDomain(tenantId: string, domainId: string): Promise<void> {
-    await this.api.post(TENANTS_ENDPOINTS.DOMAIN_VERIFY(tenantId, domainId), {});
+  async updateDomain(
+    tenantId: string,
+    domainId: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void> {
+    await this.api.put(TENANTS_ENDPOINTS.DOMAIN_BY_ID(tenantId, domainId), {
+      redirectTo: redirectTo || null,
+      redirectStatusCode: redirectStatusCode || null,
+    });
+  }
+
+  async verifyDomain(tenantId: string, domainId: string): Promise<TenantDomainJson> {
+    return this.api.post<TenantDomainJson>(TENANTS_ENDPOINTS.DOMAIN_VERIFY(tenantId, domainId), {});
   }
 
   async setDomainPrimary(tenantId: string, domainId: string): Promise<void> {

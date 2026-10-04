@@ -13,6 +13,7 @@ import type {
   TenantStats,
 } from "../../domain/interfaces/ITenantRepository";
 import { Tenant, type TenantTreeNode } from "../../domain/entities/Tenant";
+import type { TenantDomain, TenantDomainsConfig } from "../../domain/entities/TenantDomain";
 import type {
   CreateTenantRequest,
   CreateTenantResult,
@@ -306,16 +307,32 @@ export class TenantRepository implements ITenantRepository {
 
   // ── Domain Management ─────────────────────────────────────
 
-  async getDomains(tenantId: string) {
-    return this.service.getDomains(tenantId);
+  async getDomains(tenantId: string): Promise<TenantDomainsConfig> {
+    const raw = await this.service.getDomains(tenantId);
+    return TenantMapper.toDomainsConfig(raw);
   }
 
-  async addDomain(tenantId: string, domain: string): Promise<void> {
-    await this.service.addDomain(tenantId, domain);
+  async addDomain(
+    tenantId: string,
+    domain: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void> {
+    await this.service.addDomain(tenantId, domain, redirectTo, redirectStatusCode);
   }
 
-  async verifyDomain(tenantId: string, domainId: string): Promise<void> {
-    await this.service.verifyDomain(tenantId, domainId);
+  async updateDomain(
+    tenantId: string,
+    domainId: string,
+    redirectTo?: string | null,
+    redirectStatusCode?: number | null
+  ): Promise<void> {
+    await this.service.updateDomain(tenantId, domainId, redirectTo, redirectStatusCode);
+  }
+
+  async verifyDomain(tenantId: string, domainId: string): Promise<TenantDomain> {
+    const raw = await this.service.verifyDomain(tenantId, domainId);
+    return TenantMapper.toTenantDomain(raw);
   }
 
   async setDomainPrimary(tenantId: string, domainId: string): Promise<void> {

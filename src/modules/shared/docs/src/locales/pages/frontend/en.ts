@@ -44,6 +44,8 @@ export const en = {
         "When a deletion is triggered, the UI optimistically removes the item from the list cache and cancels active queries. If the backend API call fails, the mutation automatically rolls back the cache to its previous state and displays an error toast.",
     },
     stateManagement: {
+      antiPatternsDont: "Don't place UI business logic or async mutations directly inside React View components.",
+      antiPatternsDo: "Do encapsulate all state, computed properties, and mutations inside dedicated ViewModels.",
       title: "State Management",
       description:
         "TanStack Query for server state, Zustand for global UI state, and local useState  when to use each.",
@@ -107,6 +109,12 @@ export const en = {
         "Zod forms leverage shared builders like emailField, strongPassword, requiredStr, and cronField. During API mapping, safeParseApiResponse parses responses safely to prevent crashes due to backend schema drift, falling back to safe defaults.",
     },
     componentLibrary: {
+      formsDesc: "Accessible, validated form primitives with built-in error states and internationalization.",
+      chartsDesc: "Performant, theme-aware data visualization components for operational dashboards and analytics rollups.",
+      layoutDesc: "Responsive layout containers, grid systems, and flexible panels adhering to modern ergonomics.",
+      feedbackDesc: "Non-intrusive toast notifications, confirmation dialogs, progress bars, and loading skeletons.",
+      responsiveDesc: "Mobile-first, touch-friendly responsive adaptors ensuring seamless usability across all device form factors.",
+      a11yDesc: "Strict WCAG 2.1 AA accessibility compliance including keyboard navigation, ARIA attributes, and high contrast support.",
       title: "Component Library",
       description:
         "shadcn/ui foundation, cn() utility, GenericSelect, theme system, and component placement rules.",

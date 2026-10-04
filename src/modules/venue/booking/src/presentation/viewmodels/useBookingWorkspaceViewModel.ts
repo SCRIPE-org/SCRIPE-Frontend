@@ -168,6 +168,24 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     return hydrated;
   }, [customerRepository]);
 
+  const createCustomer = useCallback(async (displayName: string, type?: "Person" | "Organization") => {
+    setCustomerSearching(true);
+    try {
+      const created = await customerRepository.create(displayName, type);
+      setCustomerState(created);
+      setCustomerResults([]);
+      draftRef.current = null;
+      confirmKeyRef.current = null;
+      quoteGenerationRef.current += 1;
+      setPriceQuote(null);
+      setPriceQuoteError(null);
+      dispatch({ type: "customerChanged" });
+      return created;
+    } finally {
+      setCustomerSearching(false);
+    }
+  }, [customerRepository]);
+
   const clearCustomer = useCallback(() => {
     setCustomerState(null);
     draftRef.current = null;
@@ -178,33 +196,35 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     dispatch({ type: "customerChanged" });
   }, []);
 
+  const { facilityId, resourceKindCode, usageTypeCode } = criteria;
+
   const applicableProfiles = useMemo(
     () => profiles.filter((profile) =>
-      (!criteria.facilityId || profile.facilityId === criteria.facilityId) &&
-      (!criteria.resourceKindCode || profile.resourceKindCode === criteria.resourceKindCode) &&
-      (!criteria.usageTypeCode || profile.usageTypes.some((usage) => usage.code === criteria.usageTypeCode))
+      (!facilityId || profile.facilityId === facilityId) &&
+      (!resourceKindCode || profile.resourceKindCode === resourceKindCode) &&
+      (!usageTypeCode || profile.usageTypes.some((usage) => usage.code === usageTypeCode))
     ),
-    [criteria.facilityId, criteria.resourceKindCode, criteria.usageTypeCode, profiles]
+    [facilityId, resourceKindCode, usageTypeCode, profiles]
   );
 
   const resourceKindOptions = useMemo(
     () => Array.from(new Set(
       profiles
-        .filter((profile) => !criteria.facilityId || profile.facilityId === criteria.facilityId)
+        .filter((profile) => !facilityId || profile.facilityId === facilityId)
         .map((profile) => profile.resourceKindCode)
     )).sort(),
-    [criteria.facilityId, profiles]
+    [facilityId, profiles]
   );
 
   const usageTypeOptions = useMemo(() => {
     const relevant = profiles.filter((profile) =>
-      (!criteria.facilityId || profile.facilityId === criteria.facilityId) &&
-      (!criteria.resourceKindCode || profile.resourceKindCode === criteria.resourceKindCode)
+      (!facilityId || profile.facilityId === facilityId) &&
+      (!resourceKindCode || profile.resourceKindCode === resourceKindCode)
     );
     return Array.from(
       new Map(relevant.flatMap((profile) => profile.usageTypes).map((usage) => [usage.code, usage])).values()
     );
-  }, [criteria.facilityId, criteria.resourceKindCode, profiles]);
+  }, [facilityId, resourceKindCode, profiles]);
 
   const searchAvailability = useCallback(async () => {
     const endLocal = endLocalFor(criteria);
@@ -433,6 +453,7 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     customerSearching,
     searchCustomers,
     selectCustomer,
+    createCustomer,
     clearCustomer,
     facilities,
     resourceKindOptions,

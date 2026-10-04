@@ -289,6 +289,10 @@ import {
   en as venueMoneyEn,
   ar as venueMoneyAr,
 } from "@modules/venue/money/locales";
+import {
+  en as siteEn,
+  ar as siteAr,
+} from "@modules/venue/site/locales";
 
 // ─── Merged Dictionaries ───────────────────────────────
 export const allModulesEn: Record<string, unknown> = deepMerge(
@@ -403,7 +407,8 @@ export const allModulesEn: Record<string, unknown> = deepMerge(
   venueOverviewEn,
   attentionCenterEn,
   venueCommercialEn,
-  venueMoneyEn
+  venueMoneyEn,
+  siteEn
 );
 
 export const allModulesAr: Record<string, unknown> = deepMerge(
@@ -518,5 +523,6 @@ export const allModulesAr: Record<string, unknown> = deepMerge(
   venueOverviewAr,
   attentionCenterAr,
   venueCommercialAr,
-  venueMoneyAr
+  venueMoneyAr,
+  siteAr
 );

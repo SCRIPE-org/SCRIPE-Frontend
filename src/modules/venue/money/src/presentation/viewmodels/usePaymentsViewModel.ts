@@ -79,10 +79,7 @@ export function usePaymentsViewModel({
     setAmount(invoice ? String(invoice.outstandingAmount) : "");
   }, [initialInvoiceId, invoices]);
 
-  const selectedInvoice = useMemo(
-    () => invoices?.find((invoice) => invoice.id === selectedInvoiceId) ?? null,
-    [invoices, selectedInvoiceId]
-  );
+  const selectedInvoice = invoices?.find((invoice) => invoice.id === selectedInvoiceId) ?? null;
   const invoiceOptions = useMemo(
     () => (invoices ?? [])
       .filter((invoice) => invoice.outstandingAmount > 0)

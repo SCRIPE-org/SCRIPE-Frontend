@@ -42,6 +42,9 @@ export interface IDocsRepository {
   /** Get all page slugs (for static generation) */
   getAllSlugs(): string[];
 
+  /** Get all registered documentation pages */
+  getAllPages(): DocPage[];
+
   /** Get the next page slug in navigation order */
   getNextSlug(currentSlug: string): string | undefined;
 

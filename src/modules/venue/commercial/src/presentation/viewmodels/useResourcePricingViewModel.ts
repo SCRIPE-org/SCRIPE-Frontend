@@ -98,10 +98,7 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
   useEffect(() => { void loadResources(); }, [loadResources]);
   useEffect(() => { void loadConfiguration(selectedResourceId); }, [loadConfiguration, selectedResourceId]);
 
-  const selectedResource = useMemo(
-    () => resources.find((resource) => resource.id === selectedResourceId),
-    [resources, selectedResourceId]
-  );
+  const selectedResource = resources.find((resource) => resource.id === selectedResourceId);
   const resourceOptions = useMemo(
     () => resources.map((resource) => ({ value: resource.id, label: resource.name })),
     [resources]

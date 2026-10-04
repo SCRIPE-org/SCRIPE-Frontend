@@ -50,19 +50,20 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
         <Input id="operations-calendar-date" type="date" value={props.date} onChange={(event) => props.onDateChange(event.target.value)} />
       </div>
       <div className="space-y-1.5">
-        <Label>{t("operationsCalendar.toolbar.facility")}</Label>
-        <GenericSelect type="searchable" searchType="client" allowClear={false} aria-label={t("operationsCalendar.toolbar.facility")} options={props.facilities.map((item) => ({ value: item.id, label: item.name }))} value={props.facilityId} onValueChange={(value: string | string[]) => props.onFacilityChange(valueOf(value))} />
+        <Label id="calendar-facility-label" htmlFor="calendar-facility-select">{t("operationsCalendar.toolbar.facility")}</Label>
+        <GenericSelect id="calendar-facility-select" aria-labelledby="calendar-facility-label" type="searchable" searchType="client" allowClear={false} options={props.facilities.map((item) => ({ value: item.id, label: item.name }))} value={props.facilityId} onValueChange={(value: string | string[]) => props.onFacilityChange(valueOf(value))} />
       </div>
       <div className="space-y-1.5">
-        <Label>{t("operationsCalendar.toolbar.timezone")}</Label>
-        <GenericSelect allowClear={false} aria-label={t("operationsCalendar.toolbar.timezone")} options={props.timeZones.map((value) => ({ value, label: value }))} value={props.timeZoneId} onValueChange={(value: string | string[]) => props.onTimeZoneChange(valueOf(value))} />
+        <Label id="calendar-timezone-label" htmlFor="calendar-timezone-select">{t("operationsCalendar.toolbar.timezone")}</Label>
+        <GenericSelect id="calendar-timezone-select" aria-labelledby="calendar-timezone-label" allowClear={false} options={props.timeZones.map((value) => ({ value, label: value }))} value={props.timeZoneId} onValueChange={(value: string | string[]) => props.onTimeZoneChange(valueOf(value))} />
       </div>
       <div className="space-y-1.5">
-        <Label>{t("operationsCalendar.toolbar.resource")}</Label>
+        <Label id="calendar-resource-label" htmlFor="calendar-resource-select">{t("operationsCalendar.toolbar.resource")}</Label>
         <GenericSelect
+          id="calendar-resource-select"
+          aria-labelledby="calendar-resource-label"
           type="searchable"
           searchType="client"
-          aria-label={t("operationsCalendar.toolbar.resource")}
           placeholder={t("operationsCalendar.toolbar.allResources")}
           options={props.resources.map((item) => ({ value: item.id, label: item.name }))}
           value={props.resourceId}

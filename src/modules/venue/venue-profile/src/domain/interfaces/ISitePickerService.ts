@@ -25,4 +25,5 @@ export interface ISitePickerService {
    * column) pass a larger value with an empty query to fetch the tenant-scoped set in one call.
    */
   search(query: string, pageSize?: number): Promise<SitePickerOption[]>;
+  create(name: string, address?: string, timeZone?: string): Promise<SitePickerOption>;
 }

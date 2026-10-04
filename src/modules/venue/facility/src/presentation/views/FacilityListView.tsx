@@ -8,27 +8,36 @@ import type { Facility } from "../../domain/entities/Facility";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueProfileQuickCreateDialog } from "@modules/venue/venue-profile/src/presentation/components/VenueProfileQuickCreateDialog";
 
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
   const { vm, searchVenueProfiles, venueProfileNameById } = useFacilityViewModel();
   const { t, language } = useI18n();
+  const [quickCreateVenueProfileOpen, setQuickCreateVenueProfileOpen] = React.useState(false);
 
   const config: CrudConfig<Facility> = {
     titleKey: "facility.title",
     subtitleKey: "facility.description",
     resource: "facilities",
     entityTypeKey: "facilityoperations.facility",
+    permissions: {
+      canView: VENUE_PERMISSIONS.FACILITY_VIEW,
+      canCreate: VENUE_PERMISSIONS.FACILITY_CREATE,
+      canUpdate: VENUE_PERMISSIONS.FACILITY_UPDATE,
+      canDelete: VENUE_PERMISSIONS.FACILITY_DELETE,
+    },
     columns: [
       { key: "code", label: t("facility.fields.code"), sortable: true },
       { key: "name", label: t("facility.fields.name"), sortable: true },
       {
         key: "venueProfileId",
         label: t("facility.fields.venueProfileId"),
-        render: (value: string) => venueProfileNameById[value] ?? value,
+        render: (_value: string, row: Facility) =>
+          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "—",
       },
       {
         key: "createdAt",
@@ -123,12 +132,28 @@ export const FacilityListView = React.memo(function FacilityListView() {
         requiredPermission: VENUE_PERMISSIONS.FACILITY_DELETE,
       },
     ],
+    customActions: [
+      {
+        label: t("facility.quickCreateVenueProfile") || "New Venue Profile",
+        onClick: async () => setQuickCreateVenueProfileOpen(true),
+        icon: <Plus className="h-4 w-4" />,
+        variant: "outline" as const,
+        requiredPermission: VENUE_PERMISSIONS.VENUE_PROFILE_CREATE,
+      },
+    ],
   };
 
   return (
     <div className="space-y-4">
       <VenueResourceNav />
       <GenericCrudView viewModel={vm} config={config} />
+      <VenueProfileQuickCreateDialog
+        open={quickCreateVenueProfileOpen}
+        onOpenChange={setQuickCreateVenueProfileOpen}
+        onSuccess={() => {
+          void vm.refresh();
+        }}
+      />
     </div>
   );
 });

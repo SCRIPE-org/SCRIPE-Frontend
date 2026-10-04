@@ -4,6 +4,7 @@
 
 // Views
 export { TenantsView } from "./src/presentation/views/TenantsView";
+export { TenantDomainsView } from "./src/presentation/views/TenantDomainsView";
 
 // ViewModels
 export { useTenantsViewModel } from "./src/presentation/viewmodels/useTenantsViewModel";

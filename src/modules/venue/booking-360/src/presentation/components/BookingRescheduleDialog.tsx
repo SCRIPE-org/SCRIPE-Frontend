@@ -201,7 +201,7 @@ export function BookingRescheduleDialog(props: Props) {
                         type="button"
                         variant="outline"
                         key={`${c.startUtc}-${c.endUtc}`}
-                        className="w-full text-left h-auto rounded-nx-sm border border-nx-line p-3 hover:bg-nx-hover flex items-center justify-between text-xs transition-colors font-normal"
+                        className="w-full text-start h-auto rounded-nx-sm border border-nx-line p-3 hover:bg-nx-hover flex items-center justify-between text-xs transition-colors font-normal"
                         onClick={() => handleSelectCandidate(c)}
                       >
                         <div className="text-start">

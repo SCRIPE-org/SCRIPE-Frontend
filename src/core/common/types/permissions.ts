@@ -218,6 +218,7 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
   "/tenants": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/tenants/create": [SYSTEM_PERMISSIONS.TENANTS_CREATE],
   "/tenants/[id]": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
+  "/domains": [SYSTEM_PERMISSIONS.TENANTS_VIEW],
   "/users": [SYSTEM_PERMISSIONS.USERS_VIEW],
   "/user-groups": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
   "/user-groups/[id]": [SYSTEM_PERMISSIONS.USER_GROUPS_VIEW],
@@ -405,6 +406,9 @@ export const PAGE_PERMISSIONS: Record<string, PermissionCode[]> = {
 
   // VenueProfile Feature
   "/venue/venue-setup": [SYSTEM_PERMISSIONS.VENUE_PROFILE_VIEW],
+
+  // Site Feature (OrganizationCore cross-module under Venue workspace)
+  "/venue/sites": [SYSTEM_PERMISSIONS.SITE_VIEW],
 
   // Facility Feature
   "/venue/facilities": [SYSTEM_PERMISSIONS.FACILITY_VIEW],

@@ -153,7 +153,7 @@ export function DesktopSetupSidebar({
                         <span className={cn("text-xs font-semibold transition-colors", isCurrent ? "text-foreground" : isDone ? "text-foreground/80" : "text-muted-foreground/60")}>
                           {step.title}
                         </span>
-                        {isCurrent && <span className="flex h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />}
+                        {isCurrent && <span className="flex h-1.5 w-1.5 rounded-full bg-primary" />}
                       </div>
                       <p className="text-[11px] text-muted-foreground/70 leading-snug mt-0.5">{step.desc}</p>
                     </div>

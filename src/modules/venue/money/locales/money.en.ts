@@ -1,4 +1,5 @@
 export const en = { money: {
+  nav: { ariaLabel: "Money operations" },
   permission: { title: "Finance access required", description: "You do not have permission to view Venue financial records." },
   error: { title: "Finance could not be loaded", description: "The authoritative Finance service is temporarily unavailable." },
   retry: "Retry",

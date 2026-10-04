@@ -325,6 +325,7 @@ export const ar = {
       connCacheMiss: "فقد في الذاكرة المؤقتة",
       connAcquireLock: "يحصل على القفل",
       connDoubleCheck: "إصابة الذاكرة المؤقتة",
+      connCacheHit: "يعيد القيمة",
       connDbQuery: "ينفذ الاستعلام",
       connCacheWrite: "يحدث الذاكرة المؤقتة",
       connLockRelease: "يحرر القفل",

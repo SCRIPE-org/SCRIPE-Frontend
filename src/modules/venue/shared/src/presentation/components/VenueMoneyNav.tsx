@@ -27,7 +27,7 @@ export function VenueMoneyNav() {
 
   return (
     <nav
-      aria-label="Money operations"
+      aria-label={t("money.nav.ariaLabel") || "Money operations"}
       className="flex items-center gap-1 border-b border-nx-line pb-3 mb-6"
     >
       {links.map((link) => {
@@ -36,6 +36,7 @@ export function VenueMoneyNav() {
           <Link
             key={link.href}
             href={link.href}
+            aria-current={link.active ? "page" : undefined}
             className={cn(
               "inline-flex items-center gap-2 px-3 py-1.5 rounded-nx-sm text-xs font-medium transition-colors",
               link.active

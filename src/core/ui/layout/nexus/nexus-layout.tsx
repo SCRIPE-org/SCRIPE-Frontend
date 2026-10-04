@@ -38,6 +38,7 @@ import {
 } from "./_parts/nexus-layout-constants";
 import { NexusFooter } from "./_parts/nexus-footer";
 import { useNavigationStore } from "@core/navigation/store/useNavigationStore";
+import { useWorkspace } from "@core/providers/workspace-provider";
 import { HubTopBar } from "@modules/home";
 
 // ── Workspace transition context ─────────────────────────────────────────────
@@ -93,7 +94,9 @@ export function NexusLayout({ children }: NexusLayoutProps) {
     if (!collapsibleSidebar) return;
     setIsPanelCollapsed((prev) => !prev);
   }, [collapsibleSidebar]);
-  const effectivePanelCollapsed = collapsibleSidebar && isPanelCollapsed;
+  const { activeRootItem } = useWorkspace();
+  const hasSubmenu = Boolean(activeRootItem?.children && activeRootItem.children.length > 0);
+  const effectivePanelCollapsed = (collapsibleSidebar && isPanelCollapsed) || !hasSubmenu;
 
   // Workspace transition (loader + navigation)
   const { loaderState, switchWorkspace, goBackWorkspace } = useWorkspaceTransition();

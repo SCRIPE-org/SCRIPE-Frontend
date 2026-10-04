@@ -10,7 +10,9 @@ import { Button } from "@core/ui/button";
 import { Skeleton } from "@core/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { PageHeader } from "@core/ui/page-header";
-import { AlertCircle, Save, Building2 } from "lucide-react";
+import { Card } from "@core/ui/card";
+import { AlertCircle, Save, Building2, Globe, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 
 /**
@@ -78,6 +80,27 @@ export function TenantSettingsView() {
         <>
           <QuotasSection settings={vm.settings} updateField={vm.updateField} />
           <SecuritySection settings={vm.settings} updateField={vm.updateField} />
+          <Card className="border-nx-line bg-nx-surface p-5">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent/10 text-nx-accent">
+                  <Globe className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-nx-ink">{vm.t("tenant.domainsTitle")}</h4>
+                  <p className="text-sm text-nx-ink-2">
+                    {vm.t("tenant.domainsNoCustomHint")}
+                  </p>
+                </div>
+              </div>
+              <Button asChild variant="outline" size="sm" className="gap-2">
+                <Link href="/domains">
+                  <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                  {vm.t("tenant.domainsTitle")}
+                </Link>
+              </Button>
+            </div>
+          </Card>
         </>
       )}
       <BrandingSection settings={vm.settings} updateField={vm.updateField} />

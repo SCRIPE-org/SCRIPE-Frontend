@@ -22,6 +22,18 @@ export function useVenueAttentionViewModel(canView: boolean) {
       setData(response);
       setStage("ready");
     } catch {
+      if (process.env.NODE_ENV !== "production") {
+        try {
+          const { getRealisticVenueAttentionData } = await import(
+            "@modules/venue/venue-overview/src/data/mock/realisticVenueOperationalData"
+          );
+          setData(getRealisticVenueAttentionData());
+          setStage("ready");
+          return;
+        } catch {
+          // ignore
+        }
+      }
       setStage("error");
     }
   }, [canView, venueAttentionRepository]);

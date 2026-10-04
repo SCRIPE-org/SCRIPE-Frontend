@@ -8,45 +8,40 @@ const sections: DocSection[] = [
     items: [
       {
         icon: "🔄",
-        titleKey: "Full Lifecycle",
-        descriptionKey:
-          "Free → Trial → Active → PastDue → Cancelled → Expired with automatic transitions.",
+        titleKey: "commercial.entitlementsUserSubscriptions.fullLifecycleTitle",
+        descriptionKey: "commercial.entitlementsUserSubscriptions.fullLifecycleDesc",
       },
       {
         icon: "🤖",
-        titleKey: "Auto-Reconciliation",
-        descriptionKey:
-          "Daily background job handles trial expiry, auto-renewal, and expiration automatically.",
+        titleKey: "commercial.entitlementsUserSubscriptions.autoReconciliationTitle",
+        descriptionKey: "commercial.entitlementsUserSubscriptions.autoReconciliationDesc",
       },
       {
         icon: "🎛️",
-        titleKey: "Feature Gating",
-        descriptionKey:
-          "UserFeatureCheckerService resolves which features each user can access based on their plan.",
+        titleKey: "commercial.entitlementsUserSubscriptions.featureGatingTitle",
+        descriptionKey: "commercial.entitlementsUserSubscriptions.featureGatingDesc",
       },
       {
         icon: "👤",
-        titleKey: "Self-Service",
-        descriptionKey: "Users can view their own subscription status via the /me endpoint.",
+        titleKey: "commercial.entitlementsUserSubscriptions.selfServiceTitle",
+        descriptionKey: "commercial.entitlementsUserSubscriptions.selfServiceDesc",
       },
       {
         icon: "📋",
-        titleKey: "Audit Trail",
-        descriptionKey:
-          "Immutable Cancel+Replace pattern keeps a complete history per billing cycle.",
+        titleKey: "commercial.entitlementsUserSubscriptions.auditTrailTitle",
+        descriptionKey: "commercial.entitlementsUserSubscriptions.auditTrailDesc",
       },
       {
         icon: "🔔",
-        titleKey: "Domain Events",
-        descriptionKey:
-          "Created, Cancelled, and Renewed events feed into webhook and notification systems.",
+        titleKey: "commercial.entitlementsUserSubscriptions.domainEventsTitle",
+        descriptionKey: "commercial.entitlementsUserSubscriptions.domainEventsDesc",
       },
     ],
   },
   {
     type: "heading",
     level: 2,
-    titleKey: "Subscription Lifecycle",
+    titleKey: "commercial.entitlementsUserSubscriptions.lifecycleTitle",
     id: "lifecycle",
   },
   {
@@ -64,7 +59,7 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Automatic Reconciliation",
+    titleKey: "commercial.entitlementsUserSubscriptions.reconciliationTitle",
     id: "reconciliation",
   },
   {
@@ -82,9 +77,8 @@ const sections: DocSection[] = [
 
 registerPage({
   slug: "commercial/entitlements-user-subscriptions",
-  titleKey: "User Subscriptions",
-  descriptionKey:
-    "Tier 2 user-to-plan subscription management with full lifecycle, auto-reconciliation, feature gating, and self-service capabilities.",
+  titleKey: "commercial.entitlementsUserSubscriptions.title",
+  descriptionKey: "commercial.entitlementsUserSubscriptions.description",
   category: "commercial-modules",
   order: 22,
   sections,

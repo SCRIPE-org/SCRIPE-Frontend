@@ -42,6 +42,9 @@ export class FacilityResourceProfilePickerService implements IFacilityResourcePr
       search: query || undefined,
     });
     const response = await this.api.get<FacilityResourceProfileListResponseJson>(url);
-    return response.items.map((item) => ({ id: item.id, name: item.name }));
+    return response.items.map((item) => ({
+      id: item.id,
+      name: item.code ? `${item.name} (${item.code})` : item.name,
+    }));
   }
 }

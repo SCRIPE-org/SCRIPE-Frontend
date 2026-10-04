@@ -85,13 +85,15 @@ export class EditionService implements IEditionService {
     changeNotes?: string,
     featureValues?: Record<string, string>,
     pricingSnapshot?: Array<{ currency: string; billingCycle: string; amount: number }>,
-    pendingLabels?: Record<string, { en?: string; ar?: string }>
+    pendingLabels?: Record<string, { en?: string; ar?: string }>,
+    pendingHighlights?: Record<string, { isHighlight?: boolean; highlightOrder?: number }>
   ): Promise<{ id: string }> {
     return this.api.post<{ id: string }>(EDITIONS_ENDPOINTS.CREATE_VERSION(editionId), {
       changeNotes,
       featureValues,
       pricingSnapshot,
       displayLabelOverrides: pendingLabels ?? {},
+      highlightOverrides: pendingHighlights ?? {},
     });
   }
 

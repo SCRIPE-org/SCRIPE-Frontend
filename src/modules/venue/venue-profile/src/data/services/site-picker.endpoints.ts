@@ -7,4 +7,5 @@ import { V1 } from "@/core/config/api-endpoints/_shared";
  */
 export const SITE_PICKER_ENDPOINTS = {
   LIST: `${V1}/sites`,
+  CREATE: `${V1}/sites`,
 } as const;

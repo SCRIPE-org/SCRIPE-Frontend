@@ -11,6 +11,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     t: (key: string) => {
       const map: Record<string, string> = {
+        "resourceProfile.nav.ariaLabel": "Resource configuration",
         "facility.title": "Facilities",
         "resourceProfile.title": "Resource Profiles",
         "schedulableResource.title": "Resource Builder",

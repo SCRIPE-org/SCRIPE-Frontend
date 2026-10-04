@@ -2,78 +2,94 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
-import { getVenueContainer } from "../../../../di";
+import { venueContainer } from "../../../../di";
 import type { VenueProfile } from "../../domain/entities/VenueProfile";
 
 const SITE_LOOKUP_PAGE_SIZE = 500;
 
+/**
+ * Presentation ViewModel hook managing Venue Profiles and related operational site lookups.
+ * 
+ * Provides unified CRUD operations via {@link useCrudViewModel}, asynchronously populates
+ * site lookup maps for friendly name resolution, and exposes auto-complete search for sites.
+ * 
+ * @returns An object with the CRUD `vm`, `searchSites` callback, and `siteNameById` cache dictionary.
+ */
 export function useVenueProfileViewModel() {
-  const { venueProfileRepository, sitePickerService } = getVenueContainer();
+  const { venueProfileRepository, siteRepository } = venueContainer;
 
-  const vm = useCrudViewModel(["venueProfile"], {
-    getAll: async (params) => {
-      const res = await venueProfileRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  const vm = useCrudViewModel(
+    ["venueProfile"],
+    {
+      getAll: async (params) => {
+        const res = await venueProfileRepository.getAll({
           page: params.page,
-          pagesCount: res.totalPages,
-        },
-      };
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: res.totalPages,
+          },
+        };
+      },
+      create: async (data) => {
+        const id = await venueProfileRepository.create(data as Record<string, unknown>);
+        return { id } as unknown as VenueProfile;
+      },
+      update: async (id, data) => {
+        await venueProfileRepository.update(id, data as Record<string, unknown>);
+        return { id } as unknown as VenueProfile;
+      },
+      delete: async (id) => {
+        await venueProfileRepository.delete(id);
+      },
     },
-    create: async (data) => {
-      const id = await venueProfileRepository.create(data as Record<string, unknown>);
-      return { id } as unknown as VenueProfile;
-    },
-    update: async (id, data) => {
-      await venueProfileRepository.update(id, data as Record<string, unknown>);
-      return { id } as unknown as VenueProfile;
-    },
-    delete: async (id) => {
-      await venueProfileRepository.delete(id);
-    },
-  }, { deferSuccessEffects: true });
-
-  // Powers the Site `server-select` field — Sites live in OrganizationCore,
-  // a different backend module, so this goes through the dedicated picker
-  // service rather than the venueProfileRepository.
-  const searchSites = useCallback(
-    async (query: string) => {
-      const results = await sitePickerService.search(query);
-      return results.map((site) => ({ value: site.id, label: site.name }));
-    },
-    [sitePickerService]
+    { deferSuccessEffects: true }
   );
 
-  // siteId -> site name, so the table can show a name instead of a raw id.
-  // VenueProfileListResponse has no denormalized site name to fall back on, so this is a
-  // client-side lookup built from a bulk sites fetch (small, tenant-scoped set), mirroring
-  // FacilityListView's venueProfileId -> venue name lookup for the same class of column.
+  const searchSites = useCallback(
+    async (query: string) => {
+      const results = await siteRepository.getAll({ page: 1, pageSize: 20, search: query });
+      return results.items.map((site) => ({ value: site.id, label: site.name }));
+    },
+    [siteRepository]
+  );
+
   const [siteNameById, setSiteNameById] = useState<Record<string, string>>({});
+
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const results = await sitePickerService.search("", SITE_LOOKUP_PAGE_SIZE);
+        const results = await siteRepository.getAll({ page: 1, pageSize: SITE_LOOKUP_PAGE_SIZE });
         if (cancelled) return;
         const map: Record<string, string> = {};
-        for (const site of results) map[site.id] = site.name;
+        for (const site of results.items) map[site.id] = site.name;
         setSiteNameById(map);
       } catch {
-        // Name resolution is a display nicety — the raw id stays a usable
-        // fallback in the table if this lookup fails.
+        // Name resolution is a display nicety — the raw id stays a usable fallback
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [sitePickerService]);
+  }, [siteRepository]);
 
-  return { vm, searchSites, siteNameById };
+  const refreshSites = useCallback(async () => {
+    try {
+      const results = await siteRepository.getAll({ page: 1, pageSize: SITE_LOOKUP_PAGE_SIZE });
+      const map: Record<string, string> = {};
+      for (const site of results.items) map[site.id] = site.name;
+      setSiteNameById(map);
+    } catch {
+      // Name resolution is a display nicety
+    }
+  }, [siteRepository]);
+
+  return { vm, searchSites, siteNameById, refreshSites };
 }

@@ -10,4 +10,7 @@ export class CustomerRepository implements ICustomerRepository {
   getById(id: string): Promise<CustomerSummary> {
     return this.service.getById(id);
   }
+  create(displayName: string, type?: "Person" | "Organization"): Promise<CustomerSummary> {
+    return this.service.create(displayName, type);
+  }
 }

@@ -10,6 +10,22 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/** Human-readable labels for booking statuses — avoids cross-module i18n dependency */
+const STATUS_LABELS: Record<Booking360Status, string> = {
+  Confirmed: "Confirmed",
+  CheckedIn: "Checked In",
+  Held: "Held",
+  Completed: "Completed",
+  Cancelled: "Cancelled",
+  NoShow: "No Show",
+  Draft: "Draft",
+  Requested: "Requested",
+  PendingApproval: "Pending Approval",
+  PartiallyFulfilled: "Partially Fulfilled",
+  Rejected: "Rejected",
+  Expired: "Expired",
+};
+
 function statusBadgeProps(status: Booking360Status) {
   switch (status) {
     case "Held":
@@ -57,7 +73,7 @@ export function VenueOverviewAtAGlance({ items, t }: Props) {
               >
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className={statusBadgeProps(item.status).className}>
-                    {t(`operationsCalendar.status.${item.status}`, { defaultValue: item.status })}
+                    {STATUS_LABELS[item.status] || item.status}
                   </Badge>
                 </div>
                 <span className="font-bold tabular-nums text-nx-ink">

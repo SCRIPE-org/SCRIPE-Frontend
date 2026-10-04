@@ -133,6 +133,7 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
             searching={vm.customerSearching}
             onSearch={vm.searchCustomers}
             onSelect={vm.selectCustomer}
+            onCreateCustomer={vm.createCustomer}
             onClear={vm.clearCustomer}
           />
           <RequestCriteriaSection
@@ -144,6 +145,10 @@ export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ p
             usageTypes={vm.usageTypeOptions}
             disabled={workflowLocked}
             onChange={vm.setCriteria}
+            onFacilityCreated={async (facilityId) => {
+              await vm.refreshSetup();
+              vm.setCriteria({ facilityId });
+            }}
           />
         </div>
 

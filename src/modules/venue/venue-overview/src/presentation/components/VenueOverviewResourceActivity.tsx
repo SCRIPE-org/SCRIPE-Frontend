@@ -11,6 +11,16 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+function formatTimeString(isoString: string): string {
+  try {
+    const d = new Date(isoString);
+    if (isNaN(d.getTime())) return isoString.slice(11, 16) || "—";
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  } catch {
+    return isoString.slice(11, 16) || "—";
+  }
+}
+
 export function VenueOverviewResourceActivity({ items, t }: Props) {
   return (
     <Card className="border-nx-line bg-nx-surface">
@@ -29,7 +39,7 @@ export function VenueOverviewResourceActivity({ items, t }: Props) {
             className="text-xs font-semibold text-nx-accent hover:underline flex items-center gap-1"
           >
             {t("venueOverview.quickActions.title")}
-            <ArrowUpRight className="size-3.5" aria-hidden="true" />
+            <ArrowUpRight className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
           </Link>
         </div>
       </CardHeader>
@@ -46,11 +56,11 @@ export function VenueOverviewResourceActivity({ items, t }: Props) {
               let badgeStyle = "border-nx-line bg-nx-surfaceSubtle text-nx-ink-3";
 
               if (item.statusLabel === "checkedIn" && item.currentOrNextEndUtc) {
-                const endLocalTime = item.currentOrNextEndUtc.slice(11, 16);
+                const endLocalTime = formatTimeString(item.currentOrNextEndUtc);
                 labelText = t("venueOverview.resourceActivity.status.checkedIn", { time: endLocalTime });
                 badgeStyle = "border-success/50 bg-success/15 text-success font-semibold";
               } else if (item.statusLabel === "nextBooking" && item.currentOrNextStartUtc) {
-                const startLocalTime = item.currentOrNextStartUtc.slice(11, 16);
+                const startLocalTime = formatTimeString(item.currentOrNextStartUtc);
                 labelText = t("venueOverview.resourceActivity.status.nextBooking", { time: startLocalTime });
                 badgeStyle = "border-info/50 bg-info/15 text-info font-medium";
               }

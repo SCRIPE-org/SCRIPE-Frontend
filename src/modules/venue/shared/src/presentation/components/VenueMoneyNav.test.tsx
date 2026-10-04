@@ -11,6 +11,7 @@ vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: () => ({
     t: (key: string) => {
       const map: Record<string, string> = {
+        "money.nav.ariaLabel": "Money operations",
         "money.receivables.title": "Receivables",
         "money.payments.title": "Manual Payments",
       };
