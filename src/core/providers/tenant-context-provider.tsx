@@ -109,8 +109,27 @@ export function TenantContextProvider({ children }: TenantContextProviderProps) 
   useEffect(() => {
     if (currentTenant?.id) {
       apiService.setTenantContext(currentTenant.id);
+      return;
     }
-  }, []);
+
+    // Auto-discover default tenant context if none is active
+    if (canEnterTenantWorld) {
+      apiService
+        .get<{ items: Array<{ id: string; name: string; code: string }> }>("/api/v1/tenants?page=1&pageSize=1")
+        .then((res) => {
+          const first = res?.items?.[0];
+          if (first?.id) {
+            const tenantInfo = { id: first.id, name: first.name, code: first.code };
+            setCurrentTenant(tenantInfo);
+            sessionStorage.setItem(STORAGE_KEYS.tenant_context, JSON.stringify(tenantInfo));
+            apiService.setTenantContext(first.id);
+          }
+        })
+        .catch(() => {
+          // Ignore discovery error in dev
+        });
+    }
+  }, [canEnterTenantWorld, currentTenant?.id, apiService]);
 
   const enterTenantWorld = useCallback(
     (tenant: TenantInfo) => {

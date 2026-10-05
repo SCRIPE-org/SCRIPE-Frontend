@@ -85,6 +85,7 @@ const SYSTEM_PAGES = [
   "/entitlements/signup-content", // Signup content management (no menu)
   "/plugins", // Dynamic plugin pages (no menu)
   "/marketplace", // Marketplace hub page (no menu)
+  "/venue", // Venue operations workspace
 ];
 
 function isSystemPage(pathname: string): boolean {

@@ -40,43 +40,44 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
   const canViewMoney = canViewReceivables || canViewPayments;
 
   // Determine active primary category
-  const isOverview = pathname === "/venue";
-  const isOperations =
+  const isDashboard = pathname === "/venue";
+  const isCalendar =
     pathname.startsWith("/venue/calendar") ||
-    pathname.startsWith("/venue/bookings") ||
-    pathname.startsWith("/venue/attention") ||
-    (pathname.startsWith("/venue/availability") && !pathname.includes("resource-builder"));
-  const isSetup =
+    pathname.startsWith("/venue/bookings");
+  const isResources =
+    pathname.startsWith("/venue/resources") ||
     pathname.startsWith("/venue/facilities") ||
     pathname.startsWith("/venue/resource-builder") ||
     pathname.startsWith("/venue/resource-profiles") ||
     pathname.startsWith("/venue/sites") ||
     pathname.startsWith("/venue/venue-setup") ||
+    pathname.startsWith("/venue/availability") ||
     pathname.startsWith("/venue/pricing");
   const isMoney = pathname.startsWith("/venue/money");
+  const isAttention = pathname.startsWith("/venue/attention");
 
   const primaryItems = [
     {
       id: "overview",
-      label: t("venueNav.overview", { defaultValue: "Overview" }),
+      label: t("venueNav.dashboard", { defaultValue: t("venueNav.overview", { defaultValue: "Dashboard" }) }),
       href: "/venue",
       icon: LayoutDashboard,
-      active: isOverview,
+      active: isDashboard,
     },
     {
       id: "operations",
-      label: t("venueNav.operations", { defaultValue: "Operations" }),
+      label: t("venueNav.calendar", { defaultValue: t("venueNav.operations", { defaultValue: "Calendar" }) }),
       href: "/venue/calendar",
       icon: CalendarDays,
-      active: isOperations,
+      active: isCalendar,
       badge: canViewAttention && attentionCount > 0 ? attentionCount : undefined,
     },
     {
       id: "setup",
-      label: t("venueNav.setup", { defaultValue: "Venue Setup" }),
-      href: "/venue/facilities",
-      icon: Sliders,
-      active: isSetup,
+      label: t("venueNav.resources", { defaultValue: t("venueNav.setup", { defaultValue: "Resources" }) }),
+      href: "/venue/resources",
+      icon: GitFork,
+      active: isResources,
     },
     ...(canViewMoney
       ? [
@@ -100,13 +101,13 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
     badge?: number;
   }> = [];
 
-  if (isOperations) {
+  if (isCalendar) {
     secondaryLinks = [
       {
         href: "/venue/calendar",
         label: t("venueNav.calendar", { defaultValue: "Calendar" }),
         icon: CalendarDays,
-        active: pathname.startsWith("/venue/calendar"),
+        active: pathname === "/venue/calendar",
       },
       {
         href: "/venue/bookings/new",
@@ -114,60 +115,44 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
         icon: Plus,
         active: pathname.startsWith("/venue/bookings/new"),
       },
-      ...(canViewAttention
+      ...(canViewAttention && attentionCount > 0
         ? [
             {
               href: "/venue/attention",
               label: t("venueNav.attention", { defaultValue: "Attention" }),
               icon: ShieldAlert,
               active: pathname.startsWith("/venue/attention"),
-              badge: attentionCount > 0 ? attentionCount : undefined,
+              badge: attentionCount,
             },
           ]
         : []),
-      {
-        href: "/venue/availability",
-        label: t("venueNav.availability", { defaultValue: "Availability & Operating Hours" }),
-        icon: Clock,
-        active: pathname.startsWith("/venue/availability"),
-      },
     ];
-  } else if (isSetup) {
+  } else if (isResources) {
     secondaryLinks = [
       {
-        href: "/venue/facilities",
-        label: t("facility.title", { defaultValue: "Facilities" }),
-        icon: Building2,
-        active: pathname.startsWith("/venue/facilities"),
-      },
-      {
-        href: "/venue/resource-builder",
-        label: t("schedulableResource.title", { defaultValue: "Resources" }),
+        href: "/venue/resources",
+        label: t("venueNav.allResources", { defaultValue: "Courts & Fields" }),
         icon: GitFork,
-        active: pathname.startsWith("/venue/resource-builder"),
+        active: pathname === "/venue/resources" || pathname.startsWith("/venue/resources/"),
       },
       {
-        href: "/venue/resource-profiles",
-        label: t("resourceProfile.title", { defaultValue: "Resource Profiles" }),
-        icon: Layers,
-        active: pathname.startsWith("/venue/resource-profiles"),
+        href: "/venue/resources?setup=new",
+        label: t("venueNav.addCourt", { defaultValue: "+ Add Court / Field" }),
+        icon: Plus,
+        active: false,
       },
       {
-        href: "/venue/sites",
-        label: t("site.title", { defaultValue: "Sites & Campuses" }),
-        icon: MapPin,
-        active: pathname.startsWith("/venue/sites"),
+        href: "/venue/facilities",
+        label: t("venueNav.advancedSetup", { defaultValue: "Advanced Setup" }),
+        icon: Sliders,
+        active:
+          pathname.startsWith("/venue/facilities") ||
+          pathname.startsWith("/venue/resource-builder") ||
+          pathname.startsWith("/venue/resource-profiles") ||
+          pathname.startsWith("/venue/sites") ||
+          pathname.startsWith("/venue/availability") ||
+          pathname.startsWith("/venue/pricing"),
       },
-      ...(canViewPricing
-        ? [
-            {
-              href: "/venue/pricing",
-              label: t("venueNav.pricing", { defaultValue: "Pricing" }),
-              icon: Tag,
-              active: pathname.startsWith("/venue/pricing"),
-            },
-          ]
-        : []),
     ];
   } else if (isMoney) {
     secondaryLinks = [
@@ -191,6 +176,16 @@ export function VenueNav({ attentionCount = 0, className = "" }: Props) {
             },
           ]
         : []),
+    ];
+  } else if (isAttention) {
+    secondaryLinks = [
+      {
+        href: "/venue/attention",
+        label: t("venueNav.attention", { defaultValue: "Attention" }),
+        icon: ShieldAlert,
+        active: true,
+        badge: attentionCount > 0 ? attentionCount : undefined,
+      },
     ];
   }
 
