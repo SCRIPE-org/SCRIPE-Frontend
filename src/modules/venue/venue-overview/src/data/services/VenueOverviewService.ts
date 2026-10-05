@@ -93,7 +93,7 @@ export class VenueOverviewService implements IVenueOverviewService {
     // There is no authoritative facility context to project when this tenant has no
     // facilities. Do not substitute a fictional facility identifier or display name in production.
     if (!facilityId) {
-      if (process.env.NODE_ENV !== "production") {
+      if (process.env.NODE_ENV !== "production" && process.env.NODE_ENV !== "test") {
         return (await import("../mock/realisticVenueOperationalData")).getRealisticVenueOperationalData(targetLocalDateInput);
       }
       return {

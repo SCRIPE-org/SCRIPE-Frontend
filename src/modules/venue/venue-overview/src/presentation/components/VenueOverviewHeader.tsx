@@ -32,6 +32,7 @@ interface Props {
   refreshing: boolean;
   onRefresh: () => void;
   onFacilityChange: (facilityId: string) => void;
+  onBlockTime?: () => void;
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
@@ -60,6 +61,7 @@ export function VenueOverviewHeader({
   refreshing,
   onRefresh,
   onFacilityChange,
+  onBlockTime,
   t,
 }: Props) {
   const formattedDate = formatDisplayDate(localDate, timeZoneId);
@@ -97,7 +99,7 @@ export function VenueOverviewHeader({
         </div>
       </div>
 
-      {/* Right Actions: Facility Switcher, Calendar, Refresh, + New Booking CTA */}
+      {/* Right Actions: Facility Switcher, Block Time, Record Payment, Calendar, Refresh, + New Booking CTA */}
       <div className="flex flex-wrap items-center gap-2">
         {facilities.length > 1 && (
           <Select value={selectedFacilityId} onValueChange={onFacilityChange}>
@@ -116,6 +118,45 @@ export function VenueOverviewHeader({
             </SelectContent>
           </Select>
         )}
+
+        {/* Quick Action: Block Time */}
+        {onBlockTime ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onBlockTime}
+            className="h-8.5 gap-1.5 text-xs font-medium border-nx-line hover:bg-nx-surfaceSubtle"
+          >
+            <span className="text-amber-500 font-bold">⊘</span>
+            <span className="hidden sm:inline">Block Time</span>
+          </Button>
+        ) : (
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="h-8.5 gap-1.5 text-xs font-medium border-nx-line hover:bg-nx-surfaceSubtle"
+          >
+            <Link href="/venue/calendar">
+              <span className="text-amber-500 font-bold">⊘</span>
+              <span className="hidden sm:inline">Block Time</span>
+            </Link>
+          </Button>
+        )}
+
+        {/* Quick Action: Record Payment */}
+        <Button
+          asChild
+          variant="outline"
+          size="sm"
+          className="h-8.5 gap-1.5 text-xs font-medium border-nx-line hover:bg-nx-surfaceSubtle"
+        >
+          <Link href="/venue/money/payments">
+            <span className="text-emerald-500 font-bold">$</span>
+            <span className="hidden sm:inline">Record Payment</span>
+          </Link>
+        </Button>
 
         {/* Secondary: Calendar */}
         <Button
