@@ -68,6 +68,7 @@ export const en = {
         held: "Held",
         completed: "Completed",
         other: "Other",
+        total: "Total",
       },
       hourLabel: "{{hour}}:00",
     },

@@ -37,6 +37,7 @@ export const ar = {
       searchEnd: "النهاية المحلية",
       quantity: "الكمية",
     },
+    singleCapacityNotice: "السعة محددة بـ 1 لهذا المورد الفردي.",
     validation: {
       required: "أضف نافذة إتاحة أسبوعية واحدة على الأقل.",
       range: "يجب أن تنتهي كل نافذة بعد وقت بدايتها.",
@@ -55,6 +56,12 @@ export const ar = {
       saturday: "السبت",
     },
     reasons: {
+      available: "الفترة مفتوحة وبها سعة كافية.",
+      baseClosed: "التقويم المتكرر مغلق خلال جزء من هذه الفترة.",
+      exceptionClosed: "استثناء مؤرخ يغلق هذه الفترة.",
+      blackout: "فترة حجب تمنع هذه الفترة.",
+      maintenance: "الصيانة تمنع هذه الفترة.",
+      capacityInsufficient: "السعة المتبقية أقل من الكمية المطلوبة.",
       "availability.available": "الفترة مفتوحة وبها سعة كافية.",
       "availability.baseClosed": "التقويم المتكرر مغلق خلال جزء من هذه الفترة.",
       "availability.exceptionClosed": "استثناء مؤرخ يغلق هذه الفترة.",

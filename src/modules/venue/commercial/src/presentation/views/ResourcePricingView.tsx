@@ -45,8 +45,8 @@ export function ResourcePricingView() {
     <div className="space-y-6" dir={direction} data-testid="resource-pricing">
       <PageHeader icon={BadgeDollarSign} title={t("pricing.title")} description={t("pricing.description")} />
       <div className="max-w-xl space-y-2">
-        <Label>{t("pricing.resource")}</Label>
-        <GenericSelect type="searchable" searchType="client" allowClear={false} aria-label={t("pricing.resource")}
+        <Label id="pricing-resource-label" htmlFor="pricing-resource-select">{t("pricing.resource")}</Label>
+        <GenericSelect id="pricing-resource-select" aria-labelledby="pricing-resource-label" type="searchable" searchType="client" allowClear={false}
           options={model.resourceOptions} value={model.selectedResourceId}
           onValueChange={(value: string | string[]) => model.setSelectedResourceId(Array.isArray(value) ? value[0] ?? "" : value)}
           placeholder={t("pricing.selectResource")} />
@@ -69,7 +69,7 @@ export function ResourcePricingView() {
               <div className="space-y-2"><Label htmlFor="price-min">{t("pricing.fields.minDuration")}</Label><Input id="price-min" type="number" min={1} value={model.minDuration} disabled={!canConfigure || model.saving} onChange={(event) => model.setMinDuration(event.target.value)} /></div>
               <div className="space-y-2"><Label htmlFor="price-max">{t("pricing.fields.maxDuration")}</Label><Input id="price-max" type="number" min={1} value={model.maxDuration} disabled={!canConfigure || model.saving} onChange={(event) => model.setMaxDuration(event.target.value)} /></div>
               <div className="space-y-2"><Label htmlFor="price-step">{t("pricing.fields.increment")}</Label><Input id="price-step" type="number" min={1} value={model.increment} disabled={!canConfigure || model.saving} onChange={(event) => model.setIncrement(event.target.value)} /></div>
-              <div className="space-y-2 sm:col-span-2"><Label>{t("pricing.fields.taxCategory")}</Label><GenericSelect type="searchable" searchType="client" allowClear={false} aria-label={t("pricing.fields.taxCategory")}
+              <div className="space-y-2 sm:col-span-2"><Label id="pricing-tax-cat-label" htmlFor="pricing-tax-cat-select">{t("pricing.fields.taxCategory")}</Label><GenericSelect id="pricing-tax-cat-select" aria-labelledby="pricing-tax-cat-label" type="searchable" searchType="client" allowClear={false}
                 options={model.taxCategoryOptions} value={model.taxCategoryId} disabled={!canConfigure || !canManageTax || model.saving}
                 onValueChange={(value: string | string[]) => model.setTaxCategoryId(Array.isArray(value) ? value[0] ?? "" : value)} placeholder={t("pricing.fields.noTax")} /></div>
             </div>
@@ -77,7 +77,7 @@ export function ResourcePricingView() {
             {canManageTax && <div className="space-y-3 rounded-xl border border-nx-border p-4">
               <div><p className="font-medium text-nx-ink">{t("pricing.taxSetup.title")}</p><p className="text-sm text-nx-ink-2">{t("pricing.taxSetup.description")}</p></div>
               <div className="grid gap-3 sm:grid-cols-3"><div className="space-y-2"><Label htmlFor="tax-name">{t("pricing.taxSetup.name")}</Label><Input id="tax-name" value={model.newTaxName} disabled={model.creatingTax} onChange={(event) => model.setNewTaxName(event.target.value)} /></div><div className="space-y-2"><Label htmlFor="tax-code">{t("pricing.taxSetup.code")}</Label><Input id="tax-code" maxLength={50} dir="ltr" value={model.newTaxCode} disabled={model.creatingTax} onChange={(event) => model.setNewTaxCode(event.target.value.toUpperCase())} /></div><div className="space-y-2"><Label htmlFor="tax-rate">{t("pricing.taxSetup.rate")}</Label><Input id="tax-rate" type="number" min={0} max={100} step="0.001" dir="ltr" value={model.newTaxRate} disabled={model.creatingTax} onChange={(event) => model.setNewTaxRate(event.target.value)} /></div></div>
-              <Label className="flex items-center gap-2 text-sm text-nx-ink cursor-pointer"><Checkbox checked={model.newTaxInclusive} disabled={model.creatingTax} onCheckedChange={(checked) => model.setNewTaxInclusive(checked === true)} />{t("pricing.taxSetup.inclusive")}</Label>
+              <div className="flex items-center gap-2"><Checkbox id="tax-inclusive" checked={model.newTaxInclusive} disabled={model.creatingTax} onCheckedChange={(checked) => model.setNewTaxInclusive(checked === true)} /><Label htmlFor="tax-inclusive" className="text-sm text-nx-ink cursor-pointer">{t("pricing.taxSetup.inclusive")}</Label></div>
               <Button type="button" variant="outline" disabled={model.creatingTax} onClick={() => void model.createTax()}>{model.creatingTax ? t("pricing.taxSetup.creating") : t("pricing.taxSetup.create")}</Button>
             </div>}
             <Button type="button" disabled={!canConfigure || model.saving} onClick={() => void model.save()}>{model.saving ? t("pricing.saving") : t(model.configuration ? "pricing.replace" : "pricing.configure")}</Button>

@@ -1,11 +1,16 @@
 "use client";
 
-import { CalendarRange } from "lucide-react";
+import { useState } from "react";
+import { CalendarRange, Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
+import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
 import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
 import type { BookingRequestCriteria } from "../../domain/entities/Booking";
 
@@ -18,6 +23,7 @@ interface RequestCriteriaSectionProps {
   usageTypes: Array<{ code: string; label: string }>;
   disabled: boolean;
   onChange: (patch: Partial<BookingRequestCriteria>) => void;
+  onFacilityCreated?: (facilityId: string) => Promise<void> | void;
 }
 
 function selectedValue(value: string | string[]): string {
@@ -33,41 +39,69 @@ export function RequestCriteriaSection({
   usageTypes,
   disabled,
   onChange,
+  onFacilityCreated,
 }: RequestCriteriaSectionProps) {
+  const [quickCreateFacilityOpen, setQuickCreateFacilityOpen] = useState(false);
+  const canCreateFacility = usePermission(VENUE_PERMISSIONS.FACILITY_CREATE);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <CalendarRange className="size-5 text-nx-accent" aria-hidden="true" />
-          {t("booking.request.title")}
-        </CardTitle>
-        <p className="text-sm text-nx-ink-2">{t("booking.request.description")}</p>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <div className="space-y-2 md:col-span-2">
-            <Label>{t("booking.request.facility")}</Label>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CalendarRange className="size-5 text-nx-accent" aria-hidden="true" />
+            {t("booking.request.title")}
+          </CardTitle>
+          <p className="text-sm text-nx-ink-2">{t("booking.request.description")}</p>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="space-y-2 md:col-span-2">
+              <div className="flex items-center justify-between">
+                <Label id="booking-facility-label" htmlFor="booking-facility-select">{t("booking.request.facility")}</Label>
+                {onFacilityCreated && canCreateFacility && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                    onClick={() => setQuickCreateFacilityOpen(true)}
+                    disabled={disabled}
+                  >
+                    <Plus className="mr-1 size-3" />
+                    {t("facility.addNew") || "New Facility"}
+                  </Button>
+                )}
+              </div>
             <GenericSelect
+              id="booking-facility-select"
+              aria-labelledby="booking-facility-label"
               type="searchable"
               searchType="client"
               allowClear={false}
               disabled={disabled}
-              aria-label={t("booking.request.facility")}
-              options={facilities.map((facility) => ({ value: facility.id, label: facility.name }))}
+              options={facilities.map((facility) => ({
+                value: facility.id,
+                label: facility.name ? `${facility.name} (${facility.code})` : facility.code || facility.id,
+              }))}
               value={criteria.facilityId}
               onValueChange={(value: string | string[]) => onChange({ facilityId: selectedValue(value), resourceId: "", resourceKindCode: "", usageTypeCode: "" })}
               placeholder={t("booking.request.selectFacility")}
             />
           </div>
           <div className="space-y-2 md:col-span-2">
-            <Label>{t("booking.request.resource")}</Label>
+            <Label id="booking-resource-label" htmlFor="booking-resource-select">{t("booking.request.resource")}</Label>
             <GenericSelect
+              id="booking-resource-select"
+              aria-labelledby="booking-resource-label"
               type="searchable"
               searchType="client"
               allowClear
               disabled={disabled}
-              aria-label={t("booking.request.resource")}
-              options={resources.map((resource) => ({ value: resource.id, label: resource.name }))}
+              options={resources.map((resource) => ({
+                value: resource.id,
+                label: resource.name || resource.namedUnitLabel || resource.id,
+              }))}
               value={criteria.resourceId}
               onValueChange={(value: string | string[]) => onChange({ resourceId: selectedValue(value) })}
               placeholder={t("booking.request.anyResource")}
@@ -90,13 +124,14 @@ export function RequestCriteriaSection({
             <Input id="booking-quantity" type="number" min={1} max={1000} disabled={disabled} value={criteria.quantity} onChange={(event) => onChange({ quantity: Number(event.target.value) })} />
           </div>
           <div className="space-y-2">
-            <Label>{t("booking.request.resourceKind")}</Label>
+            <Label id="booking-resource-kind-label" htmlFor="booking-resource-kind-select">{t("booking.request.resourceKind")}</Label>
             <GenericSelect
+              id="booking-resource-kind-select"
+              aria-labelledby="booking-resource-kind-label"
               type="searchable"
               searchType="client"
               allowClear
               disabled={disabled}
-              aria-label={t("booking.request.resourceKind")}
               options={resourceKinds.map((kind) => ({ value: kind, label: kind }))}
               value={criteria.resourceKindCode}
               onValueChange={(value: string | string[]) => onChange({ resourceKindCode: selectedValue(value), usageTypeCode: "" })}
@@ -104,13 +139,14 @@ export function RequestCriteriaSection({
             />
           </div>
           <div className="space-y-2">
-            <Label>{t("booking.request.usageType")}</Label>
+            <Label id="booking-usage-type-label" htmlFor="booking-usage-type-select">{t("booking.request.usageType")}</Label>
             <GenericSelect
+              id="booking-usage-type-select"
+              aria-labelledby="booking-usage-type-label"
               type="searchable"
               searchType="client"
               allowClear
               disabled={disabled}
-              aria-label={t("booking.request.usageType")}
               options={usageTypes.map((usage) => ({ value: usage.code, label: usage.label }))}
               value={criteria.usageTypeCode}
               onValueChange={(value: string | string[]) => onChange({ usageTypeCode: selectedValue(value) })}
@@ -121,5 +157,14 @@ export function RequestCriteriaSection({
         <p className="text-xs text-nx-ink-3">{t("booking.request.timezoneNote")}</p>
       </CardContent>
     </Card>
+
+    <FacilityQuickCreateDialog
+      open={quickCreateFacilityOpen}
+      onOpenChange={setQuickCreateFacilityOpen}
+      onSuccess={async (createdFacilityId) => {
+        await onFacilityCreated?.(createdFacilityId);
+      }}
+    />
+  </>
   );
 }

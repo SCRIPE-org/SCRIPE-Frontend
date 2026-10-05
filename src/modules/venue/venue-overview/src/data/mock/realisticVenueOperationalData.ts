@@ -1,4 +1,4 @@
-import type { OperationsCalendarDay, CalendarResource, CalendarBlock } from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
+import type { OperationsCalendarDay, CalendarResource, OperationsCalendarBlock } from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
 import type { VenueOverviewState } from "../../domain/entities/VenueOverview";
 import type { VenueAttentionPage } from "@modules/venue/attention-center/src/domain/entities/VenueAttention";
 
@@ -95,8 +95,22 @@ export function getRealisticVenueOperationalData(targetDate?: string): VenueOver
   const pad = (n: number) => n.toString().padStart(2, "0");
   const isoTime = (h: number, m: number = 0) => `${today}T${pad(h)}:${pad(m)}:00Z`;
 
+  interface MockCalendarBlock {
+    id?: string;
+    resourceId: string;
+    reservationId?: string | null;
+    reservationNumber?: string | null;
+    holdId?: string | null;
+    customerPartyId?: string | null;
+    customerDisplayName?: string;
+    status: string;
+    startUtc: string;
+    endUtc: string;
+    label?: string;
+  }
+
   // Realistic Operational Blocks
-  const blocks: CalendarBlock[] = [
+  const blocks: MockCalendarBlock[] = [
     // Padel 1: Morning Completed, Currently Checked In, Afternoon Confirmed, Evening Hold
     {
       id: "blk-101",
@@ -368,7 +382,7 @@ export function getRealisticVenueOperationalData(targetDate?: string): VenueOver
     toUtc: `${today}T23:00:00Z`,
     asOfUtc: now.toISOString(),
     isTruncated: false,
-    blocks,
+    blocks: blocks as unknown as OperationsCalendarBlock[],
   };
 
   // Up Next Items

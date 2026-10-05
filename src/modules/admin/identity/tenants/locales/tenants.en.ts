@@ -131,6 +131,7 @@ export const en = {
     domainsAddedSuccess: "Domain added successfully",
     domainsAddFailed: "Failed to add domain",
     domainsVerifiedSuccess: "Domain verified successfully",
+    domainsDnsRevertedInvalid: "DNS records are no longer detected. Domain status set to invalid configuration.",
     domainsVerifyFailed: "Verification failed",
     domainsPrimaryUpdated: "Primary domain updated",
     domainsPrimaryFailed: "Failed to set primary domain",

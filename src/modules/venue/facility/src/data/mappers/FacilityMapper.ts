@@ -11,6 +11,7 @@ export class FacilityMapper {
       description: model.description,
       createdAt: model.createdAt,
       modifiedAt: model.modifiedAt,
+      venueProfileName: model.venueProfileName,
     };
     return new Facility(data);
   }

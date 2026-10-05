@@ -13,6 +13,7 @@ export interface VenueProfileData {
   isActive: boolean;
   createdAt: string;
   modifiedAt?: string;
+  siteName?: string;
 }
 
 export class VenueProfile {
@@ -24,6 +25,10 @@ export class VenueProfile {
 
   get siteId(): string {
     return this.data.siteId;
+  }
+
+  get siteName(): string | undefined {
+    return this.data.siteName;
   }
 
   get code(): string {

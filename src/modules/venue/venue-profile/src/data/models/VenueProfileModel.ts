@@ -10,6 +10,7 @@ export interface VenueProfileJson {
   isActive: boolean;
   createdAt: string;
   modifiedAt?: string;
+  siteName?: string;
 }
 
 export interface VenueProfileListResponseJson {
@@ -31,7 +32,8 @@ export class VenueProfileModel {
     public readonly isActive: boolean,
     public readonly createdAt: string,
     public readonly description?: string,
-    public readonly modifiedAt?: string
+    public readonly modifiedAt?: string,
+    public readonly siteName?: string
   ) {}
 
   static fromJson(json: VenueProfileJson): VenueProfileModel {
@@ -43,7 +45,8 @@ export class VenueProfileModel {
       json.isActive,
       json.createdAt,
       json.description,
-      json.modifiedAt
+      json.modifiedAt,
+      json.siteName
     );
   }
 
@@ -57,6 +60,7 @@ export class VenueProfileModel {
       isActive: this.isActive,
       createdAt: this.createdAt,
       modifiedAt: this.modifiedAt,
+      siteName: this.siteName,
     };
   }
 }

@@ -3,6 +3,8 @@ export const en = {
     title: "Facility Registry",
     description: "Register and manage the physical facilities inside your venues.",
     addNew: "Add Facility",
+    quickCreateVenueProfile: "New Venue Profile",
+    createdSuccess: "Facility created successfully",
     editTitle: "Edit Facility",
     deleteTitle: "Delete Facility",
     deleteConfirm: "Are you sure you want to delete this facility?",

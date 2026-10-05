@@ -215,21 +215,30 @@ export function WeeklyWindowsEditorCard({
                             />
                           </div>
                           <div className="space-y-1">
-                            <Label htmlFor={`${window.id}-capacity`}>{t("availability.fields.capacity")}</Label>
+                            <Label htmlFor={`${window.id}-capacity`}>
+                              {t("availability.fields.capacity")}
+                              {maximumCapacity > 1 && (
+                                <span className="text-xs font-normal text-nx-ink-3"> (max {maximumCapacity})</span>
+                              )}
+                            </Label>
                             <Input
                               id={`${window.id}-capacity`}
                               type="number"
                               min={1}
-                              max={maximumCapacity}
                               placeholder={String(maximumCapacity)}
                               value={window.capacityOverride ?? ""}
-                              disabled={!canSave}
+                              disabled={!canSave || maximumCapacity <= 1}
                               onChange={(event) =>
                                 updateWindow(window.id, {
                                   capacityOverride: event.target.value ? Number(event.target.value) : null,
                                 })
                               }
                             />
+                            {maximumCapacity <= 1 && (
+                              <p className="text-[11px] text-nx-ink-3">
+                                {t("availability.singleCapacityNotice")}
+                              </p>
+                            )}
                           </div>
                           {canSave && (
                             <Button

@@ -12,6 +12,7 @@ export class VenueProfileMapper {
       isActive: model.isActive,
       createdAt: model.createdAt,
       modifiedAt: model.modifiedAt,
+      siteName: model.siteName,
     };
     return new VenueProfile(data);
   }

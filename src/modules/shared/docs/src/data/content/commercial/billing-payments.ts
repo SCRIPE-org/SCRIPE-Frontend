@@ -8,46 +8,40 @@ const sections: DocSection[] = [
     items: [
       {
         icon: "💳",
-        titleKey: "Self-Service Checkout",
-        descriptionKey:
-          "Tenants subscribe and pay instantly via Stripe-hosted checkout — no manual invoice steps.",
+        titleKey: "commercial.billingPayments.selfServiceTitle",
+        descriptionKey: "commercial.billingPayments.selfServiceDesc",
       },
       {
         icon: "📄",
-        titleKey: "Automated Invoicing",
-        descriptionKey:
-          "Every payment generates a numbered, downloadable invoice with line items and tax detail.",
+        titleKey: "commercial.billingPayments.automatedInvoicingTitle",
+        descriptionKey: "commercial.billingPayments.automatedInvoicingDesc",
       },
       {
         icon: "🔁",
-        titleKey: "Smart Dunning",
-        descriptionKey:
-          "4-stage failed payment recovery with graduated emails, grace periods, and auto-fallback.",
+        titleKey: "commercial.billingPayments.smartDunningTitle",
+        descriptionKey: "commercial.billingPayments.smartDunningDesc",
       },
       {
         icon: "📊",
-        titleKey: "Revenue Dashboard",
-        descriptionKey:
-          "Real-time MRR, ARR, churn rate, and platform health score from your billing data.",
+        titleKey: "commercial.billingPayments.revenueDashboardTitle",
+        descriptionKey: "commercial.billingPayments.revenueDashboardDesc",
       },
       {
         icon: "🌍",
-        titleKey: "Multi-Currency",
-        descriptionKey:
-          "28 Stripe-supported currencies with zero-decimal and 3-decimal handling built in.",
+        titleKey: "commercial.billingPayments.multiCurrencyTitle",
+        descriptionKey: "commercial.billingPayments.multiCurrencyDesc",
       },
       {
         icon: "🔗",
-        titleKey: "Payment Links",
-        descriptionKey:
-          "Enterprise sales? Generate Stripe Payment Links for custom deals without a checkout session.",
+        titleKey: "commercial.billingPayments.paymentLinksTitle",
+        descriptionKey: "commercial.billingPayments.paymentLinksDesc",
       },
     ],
   },
   {
     type: "heading",
     level: 2,
-    titleKey: "Three Checkout Modes",
+    titleKey: "commercial.billingPayments.checkoutModesTitle",
     id: "checkout-modes",
   },
   {
@@ -74,7 +68,7 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Automated Invoice Management",
+    titleKey: "commercial.billingPayments.invoicingTitle",
     id: "invoicing",
   },
   {
@@ -91,7 +85,7 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "4-Stage Dunning Recovery",
+    titleKey: "commercial.billingPayments.dunningTitle",
     id: "dunning",
   },
   {
@@ -115,7 +109,7 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Revenue Analytics",
+    titleKey: "commercial.billingPayments.revenueAnalyticsTitle",
     id: "analytics",
   },
   {
@@ -132,7 +126,7 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Export Options",
+    titleKey: "commercial.billingPayments.exportOptionsTitle",
     id: "export",
   },
   {
@@ -148,9 +142,8 @@ const sections: DocSection[] = [
 
 registerPage({
   slug: "commercial/billing-payments",
-  titleKey: "Billing & Payments",
-  descriptionKey:
-    "Stripe-powered billing with self-service checkout, automated invoicing, 4-stage dunning, multi-currency support, and revenue analytics.",
+  titleKey: "commercial.billingPayments.title",
+  descriptionKey: "commercial.billingPayments.description",
   category: "commercial-modules",
   order: 20,
   sections,

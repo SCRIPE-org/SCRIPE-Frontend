@@ -44,6 +44,16 @@ export interface FacilityOption {
   name: string;
 }
 
+/**
+ * Presentation ViewModel hook orchestrating real-time Venue Operational Overview telemetry.
+ * 
+ * Aggregates live operational KPIs, hourly load distributions, up-next arrivals, and timeline
+ * allocations across facility resources with automatic polling and deferred activity updates.
+ * 
+ * @param initialFacilityId Optional initial facility identifier filter.
+ * @param initialLocalDate Optional initial date string (YYYY-MM-DD) for operational window.
+ * @returns State package including reactive `state`, facility list, selection callbacks, and reload triggers.
+ */
 export function useVenueOverviewViewModel(
   initialFacilityId?: string,
   initialLocalDate?: string

@@ -68,6 +68,7 @@ export const ar = {
         held: "مؤقت",
         completed: "مكتمل",
         other: "أخرى",
+        total: "الإجمالي",
       },
       hourLabel: "{{hour}}:00",
     },

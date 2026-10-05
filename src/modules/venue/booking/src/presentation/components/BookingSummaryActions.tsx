@@ -85,7 +85,7 @@ export function BookingSummaryActions({
     return () => window.clearInterval(timer);
   }, [onExpired, state.hold, state.stage]);
 
-  const countdown = useMemo(() => ({ minutes: Math.floor(remaining / 60), seconds: remaining % 60 }), [remaining]);
+  const countdown = { minutes: Math.floor(remaining / 60), seconds: remaining % 60 };
 
   if (state.stage === "holdConflict") {
     return (

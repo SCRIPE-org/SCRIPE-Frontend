@@ -80,11 +80,11 @@ export function VenueOverviewOperationalLoad({ buckets, t }: Props) {
                     {/* Tooltip on Hover / Focus */}
                     <div className="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 hidden group-hover:flex group-focus-visible:flex flex-col z-popover pointer-events-none rounded-nx-xs border border-nx-line bg-nx-surface p-1.5 text-[10px] text-nx-ink shadow-nx-md whitespace-nowrap font-mono tabular-nums">
                       <span className="font-bold border-b border-nx-line pb-0.5">{b.label}</span>
-                      <span>CheckedIn: {b.checkedIn}</span>
-                      <span>Confirmed: {b.confirmed}</span>
-                      <span>Held: {b.held}</span>
-                      <span>Completed: {b.completed}</span>
-                      <span className="font-bold pt-0.5 border-t border-nx-line">Total: {b.total}</span>
+                      <span>{t("venueOverview.operationalLoad.legend.checkedIn")}: {b.checkedIn}</span>
+                      <span>{t("venueOverview.operationalLoad.legend.confirmed")}: {b.confirmed}</span>
+                      <span>{t("venueOverview.operationalLoad.legend.held")}: {b.held}</span>
+                      <span>{t("venueOverview.operationalLoad.legend.completed")}: {b.completed}</span>
+                      <span className="font-bold pt-0.5 border-t border-nx-line">{t("venueOverview.operationalLoad.legend.total")}: {b.total}</span>
                     </div>
 
                     {/* Bar Container */}

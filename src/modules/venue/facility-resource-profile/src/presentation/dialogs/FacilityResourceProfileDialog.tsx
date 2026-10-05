@@ -18,6 +18,11 @@ import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
+import { usePermission } from "@core/hooks/use-permission";
+import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
+import { GenericSelect } from "@core/crud/components/generic-select";
+import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
+import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
 import type {
   FacilityResourceProfile,
   FacilityResourceProfileWrite,
@@ -72,29 +77,44 @@ interface FacilityResourceProfileDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   facilityId: string;
+  facilities?: Facility[];
   editingProfile?: FacilityResourceProfile;
   onSave: (payload: FacilityResourceProfileWrite, id?: string) => Promise<void>;
+  onFacilityCreated?: (facilityId: string) => void;
 }
 
 export function FacilityResourceProfileDialog({
   open,
   onOpenChange,
   facilityId,
+  facilities,
   editingProfile,
   onSave,
+  onFacilityCreated,
 }: FacilityResourceProfileDialogProps) {
   const { t } = useI18n();
   const { success, error: toastError } = useEnhancedToast();
+  const canCreateFacility = usePermission(VENUE_PERMISSIONS.FACILITY_CREATE);
+  const [quickCreateFacilityOpen, setQuickCreateFacilityOpen] = useState(false);
   const [form, setForm] = useState<FacilityResourceProfileWrite>(() =>
     editingProfile ? toForm(editingProfile) : emptyForm(facilityId)
   );
   const [saving, setSaving] = useState(false);
 
+  const facilityOptions = (facilities ?? []).map((f) => ({
+    value: f.id,
+    label: f.name ? `${f.name} (${f.code})` : f.code || f.id,
+  }));
+
   useEffect(() => {
     if (open) {
-      setForm(editingProfile ? toForm(editingProfile) : emptyForm(facilityId));
+      const initial = editingProfile ? toForm(editingProfile) : emptyForm(facilityId);
+      if (!initial.facilityId && facilities && facilities.length > 0) {
+        initial.facilityId = facilities[0].id;
+      }
+      setForm(initial);
     }
-  }, [open, editingProfile, facilityId]);
+  }, [open, editingProfile, facilityId, facilities]);
 
   const updateUsageType = (index: number, patch: Partial<UsageType>) => {
     setForm((current) => ({
@@ -156,7 +176,8 @@ export function FacilityResourceProfileDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <>
+      <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <form onSubmit={submit} className="space-y-6">
           <DialogHeader>
@@ -167,6 +188,41 @@ export function FacilityResourceProfileDialog({
           </DialogHeader>
 
           <div className="grid gap-4 sm:grid-cols-2">
+            {facilityOptions.length > 0 && (
+              <div className="space-y-2 sm:col-span-2">
+                <div className="flex items-center justify-between">
+                  <Label id="profile-dialog-facility-label" htmlFor="profile-dialog-facility-select">
+                    {t("resourceProfile.facility")} <span className="text-destructive">*</span>
+                  </Label>
+                  {canCreateFacility && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                      onClick={() => setQuickCreateFacilityOpen(true)}
+                    >
+                      <Plus className="mr-1 size-3" />
+                      {t("facility.addNew") || "New Facility"}
+                    </Button>
+                  )}
+                </div>
+                <GenericSelect
+                  id="profile-dialog-facility-select"
+                  aria-labelledby="profile-dialog-facility-label"
+                  type="searchable"
+                  searchType="client"
+                  allowClear={false}
+                  options={facilityOptions}
+                  value={form.facilityId}
+                  onValueChange={(val: string | string[]) => {
+                    const selected = Array.isArray(val) ? val[0] ?? "" : val;
+                    setForm((cur) => ({ ...cur, facilityId: selected }));
+                  }}
+                  placeholder={t("resourceProfile.selectFacility")}
+                />
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="profile-code">{t("resourceProfile.fields.code")}</Label>
               <Input
@@ -223,8 +279,9 @@ export function FacilityResourceProfileDialog({
             </legend>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {DAYS.map((day) => (
-                <Label key={day.key} className="flex items-center gap-2 text-sm cursor-pointer">
+                <div key={day.key} className="flex items-center gap-2">
                   <Checkbox
+                    id={`day-${day.key}`}
                     checked={(form.days & day.value) !== 0}
                     onCheckedChange={(checked) =>
                       setForm({
@@ -233,8 +290,10 @@ export function FacilityResourceProfileDialog({
                       })
                     }
                   />
-                  {t(`resourceProfile.days.${day.key}`)}
-                </Label>
+                  <Label htmlFor={`day-${day.key}`} className="text-sm cursor-pointer">
+                    {t(`resourceProfile.days.${day.key}`)}
+                  </Label>
+                </div>
               ))}
             </div>
             <div className="grid gap-4 sm:grid-cols-4">
@@ -346,5 +405,15 @@ export function FacilityResourceProfileDialog({
         </form>
       </DialogContent>
     </Dialog>
+
+    <FacilityQuickCreateDialog
+      open={quickCreateFacilityOpen}
+      onOpenChange={setQuickCreateFacilityOpen}
+      onSuccess={(newFacilityId) => {
+        setForm((cur) => ({ ...cur, facilityId: newFacilityId }));
+        onFacilityCreated?.(newFacilityId);
+      }}
+    />
+  </>
   );
 }

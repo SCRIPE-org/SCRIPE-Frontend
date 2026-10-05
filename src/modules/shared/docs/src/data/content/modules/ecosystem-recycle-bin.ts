@@ -9,13 +9,12 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Soft Delete & Restore Engine",
+    titleKey: "modules.ecosystemRecycleBin.softDeleteTitle",
     id: "soft-delete",
   },
   {
     type: "paragraph",
-    contentKey:
-      "The Ecosystem Recycle Bin manages soft-deleted entities across all active modules. By leveraging the AuditableEntity base class's IsDeleted and DeletedAt attributes, it enforces global query filters and schedules permanent cleanup jobs after 30 days.",
+    contentKey: "modules.ecosystemRecycleBin.softDeleteContent",
   },
 ];
 

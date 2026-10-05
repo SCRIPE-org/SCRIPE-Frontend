@@ -9,13 +9,12 @@ const sections: DocSection[] = [
   {
     type: "heading",
     level: 2,
-    titleKey: "Marketplace Integration Architecture",
+    titleKey: "modules.marketplace.architectureTitle",
     id: "marketplace-architecture",
   },
   {
     type: "paragraph",
-    contentKey:
-      "The Marketplace module allows tenants to browse, purchase, and install extensions. Built-in hooks auto-register new routes, add permissions dynamically, and load custom widgets into workspace sidebars without code deployments.",
+    contentKey: "modules.marketplace.architectureContent",
   },
 ];
 

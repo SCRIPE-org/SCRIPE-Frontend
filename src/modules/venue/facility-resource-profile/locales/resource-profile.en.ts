@@ -1,5 +1,6 @@
 export const en = {
   resourceProfile: {
+    nav: { ariaLabel: "Resource configuration" },
     title: "Resource Profiles",
     description: "Define the operational identity, hours, and permitted uses of each facility resource.",
     add: "Add resource profile",

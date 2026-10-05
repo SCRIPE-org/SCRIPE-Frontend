@@ -18,32 +18,74 @@ import {
   Briefcase,
   Layers,
   Building,
+  Building2,
   Cpu,
   Link as LinkIcon,
   Globe,
   Zap,
   Users,
+  Users2,
+  UserCheck,
   BarChart,
+  PieChart,
+  TrendingUp,
   Book,
   Database,
   Boxes,
   HardDrive,
   GitBranch,
+  GitMerge,
   Terminal,
   Package,
   KeyRound,
   Scale,
+  Calendar,
+  DollarSign,
+  CreditCard,
+  Award,
+  FileText,
+  PhoneCall,
+  Folder,
+  FolderTree,
+  Mail,
+  Radio,
+  FileCode,
+  UploadCloud,
+  CheckSquare,
+  ShieldCheck,
+  ShieldAlert,
+  Activity,
+  Clock,
+  Lock,
+  Settings,
+  Sliders,
+  RotateCcw,
+  HelpCircle,
+  Compass,
+  FileCheck,
+  Percent,
+  Tag,
+  MapPin,
+  Bell,
+  LayoutGrid,
+  Puzzle,
+  Rss,
+  ShoppingBag,
+  Trash2,
+  Image as ImageIcon,
+  Info,
+  CheckCircle2,
+  Sparkles,
+  Palette,
+  Workflow,
+  FileQuestion,
+  Share2,
   ChevronRight,
   type LucideProps,
 } from "lucide-react";
 
 // ─── Icons ──────────────────────────────────────────────────────
-// One lucide-backed map for every docs sidebar surface. This used to be a
-// 690-line hand-cut SVG file (DocsIcons.tsx) duplicated key-for-key in this
-// component — two copies of the same 26 icons, both re-drawing paths that
-// lucide-react (an already-declared dependency) already ships. Exported
-// (not module-local) because DocsMobileNav renders the identical nav-icon
-// set and imports this map by name.
+// One lucide-backed map for every docs sidebar surface.
 export const docsIcons: Record<string, (props: LucideProps) => React.ReactNode> = {
   rocket: (props) => <Rocket aria-hidden="true" {...props} />,
   "book-open": (props) => <BookOpen aria-hidden="true" {...props} />,
@@ -56,21 +98,68 @@ export const docsIcons: Record<string, (props: LucideProps) => React.ReactNode> 
   briefcase: (props) => <Briefcase aria-hidden="true" {...props} />,
   layers: (props) => <Layers aria-hidden="true" {...props} />,
   building: (props) => <Building aria-hidden="true" {...props} />,
+  "building-2": (props) => <Building2 aria-hidden="true" {...props} />,
   cpu: (props) => <Cpu aria-hidden="true" {...props} />,
   link: (props) => <LinkIcon aria-hidden="true" {...props} />,
   globe: (props) => <Globe aria-hidden="true" {...props} />,
   zap: (props) => <Zap aria-hidden="true" {...props} />,
   users: (props) => <Users aria-hidden="true" {...props} />,
+  "users-2": (props) => <Users2 aria-hidden="true" {...props} />,
+  "user-check": (props) => <UserCheck aria-hidden="true" {...props} />,
   "bar-chart": (props) => <BarChart aria-hidden="true" {...props} />,
+  "pie-chart": (props) => <PieChart aria-hidden="true" {...props} />,
+  "trending-up": (props) => <TrendingUp aria-hidden="true" {...props} />,
   book: (props) => <Book aria-hidden="true" {...props} />,
   database: (props) => <Database aria-hidden="true" {...props} />,
   boxes: (props) => <Boxes aria-hidden="true" {...props} />,
   "hard-drive": (props) => <HardDrive aria-hidden="true" {...props} />,
   "git-branch": (props) => <GitBranch aria-hidden="true" {...props} />,
+  "git-merge": (props) => <GitMerge aria-hidden="true" {...props} />,
   terminal: (props) => <Terminal aria-hidden="true" {...props} />,
   package: (props) => <Package aria-hidden="true" {...props} />,
   key: (props) => <KeyRound aria-hidden="true" {...props} />,
   scale: (props) => <Scale aria-hidden="true" {...props} />,
+  calendar: (props) => <Calendar aria-hidden="true" {...props} />,
+  "dollar-sign": (props) => <DollarSign aria-hidden="true" {...props} />,
+  "credit-card": (props) => <CreditCard aria-hidden="true" {...props} />,
+  award: (props) => <Award aria-hidden="true" {...props} />,
+  "file-text": (props) => <FileText aria-hidden="true" {...props} />,
+  "phone-call": (props) => <PhoneCall aria-hidden="true" {...props} />,
+  folder: (props) => <Folder aria-hidden="true" {...props} />,
+  "folder-tree": (props) => <FolderTree aria-hidden="true" {...props} />,
+  mail: (props) => <Mail aria-hidden="true" {...props} />,
+  radio: (props) => <Radio aria-hidden="true" {...props} />,
+  "file-code": (props) => <FileCode aria-hidden="true" {...props} />,
+  "upload-cloud": (props) => <UploadCloud aria-hidden="true" {...props} />,
+  "check-square": (props) => <CheckSquare aria-hidden="true" {...props} />,
+  "shield-check": (props) => <ShieldCheck aria-hidden="true" {...props} />,
+  "shield-alert": (props) => <ShieldAlert aria-hidden="true" {...props} />,
+  activity: (props) => <Activity aria-hidden="true" {...props} />,
+  clock: (props) => <Clock aria-hidden="true" {...props} />,
+  lock: (props) => <Lock aria-hidden="true" {...props} />,
+  settings: (props) => <Settings aria-hidden="true" {...props} />,
+  sliders: (props) => <Sliders aria-hidden="true" {...props} />,
+  "rotate-ccw": (props) => <RotateCcw aria-hidden="true" {...props} />,
+  "help-circle": (props) => <HelpCircle aria-hidden="true" {...props} />,
+  compass: (props) => <Compass aria-hidden="true" {...props} />,
+  "file-check": (props) => <FileCheck aria-hidden="true" {...props} />,
+  percent: (props) => <Percent aria-hidden="true" {...props} />,
+  tag: (props) => <Tag aria-hidden="true" {...props} />,
+  "map-pin": (props) => <MapPin aria-hidden="true" {...props} />,
+  bell: (props) => <Bell aria-hidden="true" {...props} />,
+  "layout-grid": (props) => <LayoutGrid aria-hidden="true" {...props} />,
+  puzzle: (props) => <Puzzle aria-hidden="true" {...props} />,
+  rss: (props) => <Rss aria-hidden="true" {...props} />,
+  "shopping-bag": (props) => <ShoppingBag aria-hidden="true" {...props} />,
+  "trash-2": (props) => <Trash2 aria-hidden="true" {...props} />,
+  image: (props) => <ImageIcon aria-hidden="true" {...props} />,
+  info: (props) => <Info aria-hidden="true" {...props} />,
+  "check-circle": (props) => <CheckCircle2 aria-hidden="true" {...props} />,
+  sparkles: (props) => <Sparkles aria-hidden="true" {...props} />,
+  palette: (props) => <Palette aria-hidden="true" {...props} />,
+  workflow: (props) => <Workflow aria-hidden="true" {...props} />,
+  "file-question": (props) => <FileQuestion aria-hidden="true" {...props} />,
+  "share-2": (props) => <Share2 aria-hidden="true" {...props} />,
 };
 
 interface DocsSidebarProps {
@@ -175,7 +264,8 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
                     className="docs-sidebar-item docs-sidebar-item--nested"
                     data-active={isActive}
                   >
-                    {t(child.titleKey)}
+                    {child.icon ? (docsIcons[child.icon]?.({ size: 14, className: "docs-sidebar-item-icon" }) ?? null) : null}
+                    <span>{t(child.titleKey)}</span>
                   </Link>
                 );
               })}
@@ -197,7 +287,8 @@ export function DocsSidebar({ categories, activeSlug }: DocsSidebarProps) {
         className="docs-sidebar-item"
         data-active={isActive}
       >
-        {t(item.titleKey)}
+        {item.icon ? (docsIcons[item.icon]?.({ size: 15, className: "docs-sidebar-item-icon" }) ?? null) : null}
+        <span>{t(item.titleKey)}</span>
       </Link>
     );
   };

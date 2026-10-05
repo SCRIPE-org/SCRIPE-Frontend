@@ -93,10 +93,10 @@ export function VenueOverviewLiveFeed({
   // 3. Active Holds
   const heldBlocks = blocks.filter((b) => b.status === "Held");
   heldBlocks.forEach((b) => {
-    const holdIdentifier = b.holdId || b.reservationNumber || "Hold";
-    const label = b.customerDisplayName ? `${b.customerDisplayName} · Slot reserved` : "Slot reserved";
+    const holdIdentifier = b.reservationNumber || "Hold";
+    const label = "Slot reserved";
     events.push({
-      id: `held-${b.holdId || b.reservationId || b.id}`,
+      id: `held-${b.reservationId}`,
       type: "held",
       title: t("venueOverview.liveFeed.holdActive", { defaultValue: "Hold pending confirmation" }),
       subtitle: `${holdIdentifier} · ${label}`,

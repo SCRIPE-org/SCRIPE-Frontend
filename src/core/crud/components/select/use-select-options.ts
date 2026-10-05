@@ -164,16 +164,26 @@ export function useSelectOptions({
     return map;
   }, [options, serverOptions, isTreeSelect, flattenedTreeOptions, treeSource]);
 
+  // Sync options matching currentValues into cache to persist labels across server searches
+  React.useEffect(() => {
+    if (options && options.length > 0) {
+      options.forEach((opt) => {
+        if (currentValues.includes(opt.value)) {
+          selectedLabelCache.current.set(opt.value, opt);
+        }
+      });
+    }
+  }, [options, currentValues]);
+
   const selectedOptions = React.useMemo(
     () =>
       currentValues.map(
         (val) =>
           allOptionsMap.get(val) ??
-          // Fall back to the raw value, never to a translated "Unknown". A
-          // legitimately selected id whose label has not loaded yet is still
-          // that id — telling the user their selection is "Unknown" is worse
-          // than showing them the key they can actually act on.
-          ({ value: val, label: val } as GenericSelectOption)
+          // Fall back to empty label, never to a raw ciphertext ID string.
+          // When options has not loaded yet, placeholder will be shown until
+          // the resolved entity name arrives from the server.
+          ({ value: val, label: "" } as GenericSelectOption)
       ),
     [currentValues, allOptionsMap]
   );

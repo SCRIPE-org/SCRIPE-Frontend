@@ -7,6 +7,14 @@ import type { VenueProfile } from "../../domain/entities/VenueProfile";
 
 const SITE_LOOKUP_PAGE_SIZE = 500;
 
+/**
+ * Presentation ViewModel hook managing Venue Profiles and related operational site lookups.
+ * 
+ * Provides unified CRUD operations via {@link useCrudViewModel}, asynchronously populates
+ * site lookup maps for friendly name resolution, and exposes auto-complete search for sites.
+ * 
+ * @returns An object with the CRUD `vm`, `searchSites` callback, and `siteNameById` cache dictionary.
+ */
 export function useVenueProfileViewModel() {
   const { venueProfileRepository, siteRepository } = venueContainer;
 

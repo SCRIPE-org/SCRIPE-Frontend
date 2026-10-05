@@ -112,6 +112,9 @@ import "./modules/custom-fields/custom-fields-limits";
 
 // Modules (WorkManagement)
 import "./modules/work-management/work-management-overview";
+import "./modules/work-management/work-items";
+import "./modules/work-management/boards-workflows";
+import "./modules/work-management/sla-automation";
 
 // Modules (Analytics)
 import "./modules/analytics/analytics-overview";
@@ -121,10 +124,49 @@ import "./modules/audit-logs";
 import "./modules/security-monitoring";
 import "./modules/webhooks";
 
-// Modules (HRMS, PartyKernel, OrganizationCore)
+// Modules (HRMS)
 import "./modules/hrms-overview";
+import "./modules/hrms/staff-directory";
+import "./modules/hrms/shift-scheduling";
+import "./modules/hrms/certifications-compliance";
+
+// Modules (Party Kernel)
 import "./modules/party-kernel-overview";
+import "./modules/party-kernel/polymorphic-model";
+import "./modules/party-kernel/relationship-graph";
+import "./modules/party-kernel/deduplication-merge";
+
+// Modules (Organization Core)
 import "./modules/organization-core-overview";
+import "./modules/organization-core/hierarchy-tree";
+import "./modules/organization-core/cross-branch-governance";
+
+// Modules (Venue)
+import "./modules/venue-overview";
+import "./modules/venue/schedulable-resources";
+import "./modules/venue/availability-engine";
+import "./modules/venue/booking-workspace";
+import "./modules/venue/operations-calendar";
+import "./modules/venue/reservation-360";
+import "./modules/venue/attention-center";
+import "./modules/venue/facility-management";
+
+// Modules (Catalog & Pricing)
+import "./modules/catalog-pricing-overview";
+import "./modules/catalog-pricing/rate-cards";
+import "./modules/catalog-pricing/dynamic-rules";
+import "./modules/catalog-pricing/price-quotes";
+
+// Modules (Finance)
+import "./modules/finance-overview";
+import "./modules/finance/double-entry-ledger";
+import "./modules/finance/invoices-payments";
+import "./modules/finance/multi-party-settlements";
+
+// Modules (Media, Communication, Integrations)
+import "./modules/media-overview";
+import "./modules/communication-overview";
+import "./modules/integrations-overview";
 
 // Modules (Marketplace — legacy slug and entity pages)
 import "./modules/marketplace"; // keeps 'modules/marketplace' slug alive for nav/CLI
@@ -172,6 +214,7 @@ import "./frontend/component-library";
 import "./frontend/realtime";
 
 // Infrastructure
+import "./infrastructure/enterprise-configuration";
 import "./infrastructure/background-jobs";
 import "./infrastructure/file-storage";
 import "./infrastructure/resilience";
@@ -191,6 +234,12 @@ import "./infrastructure/media";
 // Tutorials
 import "./tutorials/add-module";
 import "./tutorials/add-backend-module";
+import "./tutorials/user-journey-getting-started";
+import "./tutorials/user-journey-venue-booking";
+import "./tutorials/user-journey-pricing-finance";
+import "./tutorials/user-journey-workforce-crm";
+import "./tutorials/user-journey-custom-fields-plugins";
+import "./tutorials/user-journey-compliance-governance";
 
 // ═══════════════════════════════════════════════════════════
 //  COMMERCIAL DOCUMENTATION
@@ -293,3 +342,17 @@ import "./commercial/partner-journey";
 import "./commercial/white-labeling";
 import "./commercial/sla-guarantees";
 import "./commercial/tenant-isolation";
+
+// Commercial Business Modules (Complete Enterprise Catalog)
+import "./commercial/venue-operations";
+import "./commercial/catalog-smart-pricing";
+import "./commercial/finance-settlement";
+import "./commercial/workforce-hrms";
+import "./commercial/customer-360-party-kernel";
+import "./commercial/multi-branch-organization";
+import "./commercial/digital-asset-management";
+import "./commercial/omnichannel-communication";
+import "./commercial/developer-integrations-ecosystem";
+import "./commercial/custom-fields";
+import "./commercial/work-management";
+import "./commercial/analytics";

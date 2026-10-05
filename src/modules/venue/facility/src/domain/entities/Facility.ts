@@ -6,6 +6,7 @@ export interface FacilityData {
   description?: string;
   createdAt: string;
   modifiedAt?: string;
+  venueProfileName?: string;
 }
 
 export class Facility {
@@ -17,6 +18,10 @@ export class Facility {
 
   get venueProfileId(): string {
     return this.data.venueProfileId;
+  }
+
+  get venueProfileName(): string | undefined {
+    return this.data.venueProfileName;
   }
 
   get code(): string {
