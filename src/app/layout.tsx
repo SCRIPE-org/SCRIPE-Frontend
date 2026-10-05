@@ -78,11 +78,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* P1.11: Preconnect to shared API server */}
         <link
           rel="dns-prefetch"
-          href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}
+          href={process.env.NEXT_PUBLIC_API_URL}
         />
         <link
           rel="preconnect"
-          href={process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001/api"}
+          href={process.env.NEXT_PUBLIC_API_URL}
           crossOrigin="anonymous"
         />
       </head>
