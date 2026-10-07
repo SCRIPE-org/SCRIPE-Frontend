@@ -52,29 +52,33 @@ export function BlockTimeModal({
 
   useEffect(() => {
     if (open) {
-      setError(null);
-      if (resource) {
-        setSelectedResourceId(resource.id);
-      } else if (resources.length > 0 && !selectedResourceId) {
-        setSelectedResourceId(resources[0]?.id ?? "");
-      }
+      void Promise.resolve().then(() => {
+        setError(null);
+        if (resource) {
+          setSelectedResourceId(resource.id);
+        } else if (resources.length > 0 && !selectedResourceId) {
+          setSelectedResourceId(resources[0]?.id ?? "");
+        }
+      });
 
       if (instantUtc) {
         try {
           const d = new Date(instantUtc);
           const endD = new Date(d.getTime() + 60 * 60 * 1000);
           const dateStr = d.toISOString().slice(0, 10);
-          setStartDate(dateStr);
-          setEndDate(dateStr);
+          void Promise.resolve().then(() => {
+            setStartDate(dateStr);
+            setEndDate(dateStr);
 
-          const formatter = new Intl.DateTimeFormat("en-GB", {
-            hour: "2-digit",
-            minute: "2-digit",
-            hourCycle: "h23",
-            timeZone: timeZoneId || "UTC",
+            const formatter = new Intl.DateTimeFormat("en-GB", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hourCycle: "h23",
+              timeZone: timeZoneId || "UTC",
+            });
+            setStartTime(formatter.format(d));
+            setEndTime(formatter.format(endD));
           });
-          setStartTime(formatter.format(d));
-          setEndTime(formatter.format(endD));
         } catch {
           // Fallback to default
         }

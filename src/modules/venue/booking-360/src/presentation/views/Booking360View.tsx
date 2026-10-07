@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, CalendarClock, CreditCard, Lock, RefreshCw, UserRound } from "lucide-react";
+import { AlertCircle, ArrowLeft, CalendarClock, Lock, RefreshCw, UserRound } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";

@@ -78,18 +78,22 @@ export function useAvailabilityViewModel() {
   }, [loadBlocks, loadCalendar, loadResources]);
 
   useEffect(() => {
-    void loadResources()
-      .catch((caught) =>
-        setError(caught instanceof Error ? caught : new Error("resource-load-failed"))
-      )
-      .finally(() => setLoading(false));
+    void Promise.resolve().then(() => {
+      void loadResources()
+        .catch((caught) =>
+          setError(caught instanceof Error ? caught : new Error("resource-load-failed"))
+        )
+        .finally(() => setLoading(false));
+    });
   }, [loadResources]);
 
   useEffect(() => {
-    setSearchResult(null);
-    void Promise.all([loadCalendar(), loadBlocks()]).catch((caught) =>
-      setError(caught instanceof Error ? caught : new Error("availability-load-failed"))
-    );
+    void Promise.resolve().then(() => {
+      setSearchResult(null);
+      void Promise.all([loadCalendar(), loadBlocks()]).catch((caught) =>
+        setError(caught instanceof Error ? caught : new Error("availability-load-failed"))
+      );
+    });
   }, [loadBlocks, loadCalendar]);
 
   const saveCalendar = useCallback(

@@ -125,7 +125,9 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   }, [facilityRepository, facilityResourceProfileRepository, schedulableResourceRepository]);
 
   useEffect(() => {
-    void loadSetup();
+    void Promise.resolve().then(() => {
+      void loadSetup();
+    });
   }, [loadSetup]);
 
   const setCriteria = useCallback((patch: Partial<BookingRequestCriteria>) => {

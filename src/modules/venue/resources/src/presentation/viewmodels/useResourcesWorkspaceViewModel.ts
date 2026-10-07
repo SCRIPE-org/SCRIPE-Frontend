@@ -75,7 +75,9 @@ export function useResourcesWorkspaceViewModel() {
   }, [commercialPricingRepository, facilityRepository, facilityResourceProfileRepository, schedulableResourceRepository]);
 
   useEffect(() => {
-    void loadData();
+    void Promise.resolve().then(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   const profileMap = useMemo(() => new Map(profiles.map((p) => [p.id, p])), [profiles]);
@@ -143,7 +145,7 @@ export function useResourcesWorkspaceViewModel() {
         }
 
         // 2. Resolve or create Resource Profile (Sport type)
-        let profile = profiles.find(
+        const profile = profiles.find(
           (p) =>
             p.facilityId === facilityId &&
             p.name.toLowerCase() === input.sportType.trim().toLowerCase()

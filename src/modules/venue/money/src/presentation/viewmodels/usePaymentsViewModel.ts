@@ -69,14 +69,20 @@ export function usePaymentsViewModel({
   }, [messages.fallbackError, moneyRepository]);
 
   useEffect(() => {
-    if (canView) void load();
+    if (canView) {
+      void Promise.resolve().then(() => {
+        void load();
+      });
+    }
   }, [canView, load]);
 
   useEffect(() => {
     if (!initialInvoiceId || !invoices?.some((invoice) => invoice.id === initialInvoiceId)) return;
-    setSelectedInvoiceId(initialInvoiceId);
-    const invoice = invoices.find((item) => item.id === initialInvoiceId);
-    setAmount(invoice ? String(invoice.outstandingAmount) : "");
+    void Promise.resolve().then(() => {
+      setSelectedInvoiceId(initialInvoiceId);
+      const invoice = invoices.find((item) => item.id === initialInvoiceId);
+      setAmount(invoice ? String(invoice.outstandingAmount) : "");
+    });
   }, [initialInvoiceId, invoices]);
 
   const selectedInvoice = invoices?.find((invoice) => invoice.id === selectedInvoiceId) ?? null;

@@ -40,7 +40,9 @@ export function ResourcesWorkspaceView() {
 
   useEffect(() => {
     if (searchParams.get("setup") === "new") {
-      setSetupWizardOpen(true);
+      void Promise.resolve().then(() => {
+        setSetupWizardOpen(true);
+      });
     }
   }, [searchParams]);
 

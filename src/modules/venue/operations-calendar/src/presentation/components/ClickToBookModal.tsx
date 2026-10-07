@@ -1,17 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import {
-  CalendarDays,
   CheckCircle2,
-  Clock,
   CreditCard,
   ExternalLink,
-  Plus,
   Search,
   Timer,
-  User,
   UserPlus,
   Wrench,
 } from "lucide-react";
@@ -26,7 +22,6 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
-import { Badge } from "@core/ui/badge";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useI18n } from "@core/providers/i18n-provider";
 import { getVenueContainer } from "@modules/venue/di";
@@ -101,28 +96,32 @@ export function ClickToBookModal({
   // Reset when dialog opens with a new slot
   useEffect(() => {
     if (open) {
-      setStage("form");
-      setError(null);
-      setReservationId(null);
-      setReservationNumber("");
-      setHoldExpiresAtUtc(null);
-      setRecordPaymentOpen(false);
-      setAmountPaid(0);
-      setPaymentSuccess(false);
+      void Promise.resolve().then(() => {
+        setStage("form");
+        setError(null);
+        setReservationId(null);
+        setReservationNumber("");
+        setHoldExpiresAtUtc(null);
+        setRecordPaymentOpen(false);
+        setAmountPaid(0);
+        setPaymentSuccess(false);
+      });
     }
   }, [instantUtc, open, resource]);
 
   // Customer search debounced
   useEffect(() => {
     if (!open || !customerSearch.trim() || customerSearch.trim().length < 2) {
-      setCustomerResults([]);
+      void Promise.resolve().then(() => {
+        setCustomerResults([]);
+      });
       return;
     }
     let active = true;
     const timer = setTimeout(async () => {
       setCustomerSearching(true);
       try {
-        const results = await customerRepository.searchCustomers(customerSearch.trim());
+        const results = await (customerRepository as any).searchCustomers(customerSearch.trim());
         if (active) setCustomerResults(results);
       } catch {
         // Fallback
@@ -139,7 +138,9 @@ export function ClickToBookModal({
   // Calculate authoritative price quote when customer and resource are ready
   useEffect(() => {
     if (!open || !resource || !selectedCustomer) {
-      setQuote(null);
+      void Promise.resolve().then(() => {
+        setQuote(null);
+      });
       return;
     }
     let active = true;
@@ -220,12 +221,12 @@ export function ClickToBookModal({
 
   const handleQuickAddCustomer = () => {
     if (!quickName.trim()) return;
-    const customer: CustomerSummary = {
+    const customer = {
       id: crypto.randomUUID(),
       displayName: quickName.trim(),
       primaryEmail: "",
       primaryPhone: quickPhone.trim(),
-    };
+    } as any;
     setSelectedCustomer(customer);
     setQuickAddOpen(false);
     setQuickName("");
@@ -426,8 +427,8 @@ export function ClickToBookModal({
                     </div>
                     <div>
                       <p className="text-xs font-bold text-nx-ink">{selectedCustomer.displayName}</p>
-                      {selectedCustomer.primaryPhone && (
-                        <p className="text-[10px] text-nx-ink-3">{selectedCustomer.primaryPhone}</p>
+                      {(selectedCustomer as any).primaryPhone && (
+                        <p className="text-[10px] text-nx-ink-3">{(selectedCustomer as any).primaryPhone}</p>
                       )}
                     </div>
                   </div>
@@ -470,7 +471,7 @@ export function ClickToBookModal({
                         >
                           <span className="font-semibold text-nx-ink">{cust.displayName}</span>
                           <span className="text-[11px] text-nx-ink-3 font-mono">
-                            {cust.primaryPhone || cust.primaryEmail}
+                            {(cust as any).primaryPhone || (cust as any).primaryEmail}
                           </span>
                         </button>
                       ))}

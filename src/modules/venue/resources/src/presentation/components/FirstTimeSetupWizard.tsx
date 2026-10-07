@@ -15,7 +15,6 @@ import {
   CalendarDays,
   CheckCircle2,
   Clock,
-  CircleDollarSign,
   Plus,
   Trash2,
   Sparkles,

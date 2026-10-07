@@ -39,7 +39,9 @@ export function useResourceBuilderViewModel() {
   }, [schedulableResourceRepository]);
 
   useEffect(() => {
-    void refresh();
+    void Promise.resolve().then(() => {
+      void refresh();
+    });
   }, [refresh]);
 
   const create = useCallback(

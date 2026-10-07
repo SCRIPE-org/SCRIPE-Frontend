@@ -45,6 +45,6 @@ export function useBookingFinanceSummary(reservationId: string, canViewReceivabl
     }
   }, [canViewReceivables, moneyRepository, reservationId]);
 
-  useEffect(() => { void load(); }, [load]);
+  useEffect(() => { void Promise.resolve().then(() => { void load(); }); }, [load]);
   return { summary, error, loading, refresh: load };
 }

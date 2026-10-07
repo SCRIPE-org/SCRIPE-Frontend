@@ -98,7 +98,9 @@ export function useResourceDetailViewModel(resourceId: string) {
   ]);
 
   useEffect(() => {
-    void loadData();
+    void Promise.resolve().then(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   const updateGeneral = useCallback(

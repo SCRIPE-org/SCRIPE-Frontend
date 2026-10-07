@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
@@ -52,14 +53,14 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
           {props.onBlockTime && (
             <Button variant="outline" size="sm" onClick={props.onBlockTime} className="text-xs gap-1.5 font-medium">
               <span className="text-amber-500 font-bold">⊘</span>
-              <span>{t("operationsCalendar.toolbar.blockTime", { defaultValue: "+ Block Time" })}</span>
+              <span>{t("operationsCalendar.toolbar.blockTime") || "+ Block Time"}</span>
             </Button>
           )}
 
           <Button asChild size="sm" className="text-xs gap-1.5 font-bold">
-            <a href="/venue/bookings/new">
+            <Link href="/venue/bookings/new">
               <span>+ New Booking</span>
-            </a>
+            </Link>
           </Button>
 
           <Button variant="outline" size="icon" disabled={props.loading} onClick={props.onRefresh} aria-label={t("operationsCalendar.toolbar.refresh")}>

@@ -8,15 +8,10 @@ import {
   Sliders,
   CircleDollarSign,
   ShieldAlert,
-  Building2,
   GitFork,
-  Layers,
-  MapPin,
-  Clock,
   Plus,
   Receipt,
   CreditCard,
-  Tag,
 } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";

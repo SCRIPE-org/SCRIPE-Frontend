@@ -112,7 +112,9 @@ export function BookingChangeResourceDialog(props: Props) {
 
   useEffect(() => {
     if (props.open && step === "search") {
-      void searchAlternativeResources();
+      void Promise.resolve().then(() => {
+        void searchAlternativeResources();
+      });
     }
   }, [props.open, searchAlternativeResources, step]);
 

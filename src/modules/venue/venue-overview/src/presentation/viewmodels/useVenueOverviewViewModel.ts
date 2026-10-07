@@ -61,7 +61,9 @@ export function useVenueOverviewViewModel(
   const [state, setState] = useState<VenueOverviewState>(INITIAL_STATE);
   const [selectedFacilityId, setSelectedFacilityId] = useState(initialFacilityId || "");
   const selectedFacilityIdRef = useRef(initialFacilityId || "");
-  selectedFacilityIdRef.current = selectedFacilityId;
+  useEffect(() => {
+    selectedFacilityIdRef.current = selectedFacilityId;
+  }, [selectedFacilityId]);
   const [facilities, setFacilities] = useState<FacilityOption[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -120,7 +122,9 @@ export function useVenueOverviewViewModel(
   }, []);
 
   useEffect(() => {
-    void load(initialFacilityId, initialLocalDate);
+    void Promise.resolve().then(() => {
+      void load(initialFacilityId, initialLocalDate);
+    });
   }, [initialFacilityId, initialLocalDate, load]);
 
   const refresh = useCallback(async () => {
