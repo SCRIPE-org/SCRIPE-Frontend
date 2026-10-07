@@ -49,15 +49,32 @@ export class MenuItem {
   constructor(data: MenuItemData) {
     this.id = data.id;
     this.slug = data.slug;
-    this.nameEn = data.nameEn;
-    this.nameAr = data.nameAr;
-    this.name = data.name || data.nameEn || data.nameAr || "";
+    
+    // IA alignment: dashboard-group is officially MONITORING / المراقبة
+    if (data.slug === "dashboard-group" || (data.slug && data.slug.includes("dashboard") && !data.href)) {
+      this.nameEn = "Monitoring";
+      this.nameAr = "المراقبة";
+      this.name = "Monitoring";
+    } else {
+      this.nameEn = data.nameEn;
+      this.nameAr = data.nameAr;
+      this.name = data.name || data.nameEn || data.nameAr || "";
+    }
+
     this.href = data.href;
     this.icon = data.icon;
     this.order = data.order;
     this.resource = data.resource;
     this.actions = data.actions;
-    this.children = data.children.map((child) => new MenuItem(child));
+
+    // Filter out obsolete legacy /dashboard child if /overview exists in children
+    const hasOverview = data.children?.some(c => c.slug === "overview" || c.href === "/overview");
+    const rawChildren = data.children ?? [];
+    const filteredChildren = hasOverview
+      ? rawChildren.filter(c => c.slug !== "dashboard" && c.href !== "/dashboard")
+      : rawChildren;
+
+    this.children = filteredChildren.map((child) => new MenuItem(child));
   }
 
   // ── Computed helpers ────────────────────────────────────────────────────────

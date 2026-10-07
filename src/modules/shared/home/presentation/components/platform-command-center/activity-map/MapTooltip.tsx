@@ -10,10 +10,10 @@ interface MapTooltipProps {
     x: number;
     y: number;
   } | null;
-  mapStageRef: React.RefObject<HTMLDivElement | null>;
+  mapStageRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
+export function MapTooltip({ hoveredCountry }: MapTooltipProps) {
   const { t } = useI18n();
   const [dimensions, setDimensions] = React.useState({ width: 600, height: 400 });
 

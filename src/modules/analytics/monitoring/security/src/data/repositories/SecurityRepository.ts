@@ -11,7 +11,9 @@ import type {
   BlockedIP,
   LoginActivityPoint,
   SecurityChange,
+  ActiveSession,
 } from "../../domain/entities/SecurityEntities";
+import type { DashboardSummaryDto } from "../models/SecurityModels";
 import { SecurityMapper } from "../mappers/SecurityMapper";
 import { SECURITY_ENDPOINTS } from "../services/security.endpoints";
 
@@ -42,5 +44,22 @@ export class SecurityRepository implements ISecurityRepository {
   async getRecentChanges(limit?: number): Promise<SecurityChange[]> {
     const dtos = await this.service.getRecentChanges(limit);
     return (dtos as unknown[]).map((dto) => SecurityMapper.toSecurityChange(dto as never));
+  }
+
+  async getDashboardSummary(): Promise<DashboardSummaryDto> {
+    return this.service.getDashboardSummary();
+  }
+
+  async getSessions(): Promise<ActiveSession[]> {
+    const dtos = await this.service.getSessions();
+    return (dtos as unknown[]).map((dto, idx) => SecurityMapper.toActiveSession(dto as never, idx));
+  }
+
+  async revokeSession(tokenId: string): Promise<void> {
+    return this.service.revokeSession(tokenId);
+  }
+
+  async getAdmins(pageSize?: number): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }> {
+    return this.service.getAdmins(pageSize);
   }
 }

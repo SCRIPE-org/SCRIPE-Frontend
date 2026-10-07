@@ -5,4 +5,7 @@ export const ANALYTICS_ENDPOINTS = {
   EVENT_DISTRIBUTION: `${V1}/Dashboard/event-distribution`,
   LOGIN_ACTIVITY: `${V1}/Dashboard/login-activity`,
   EXPORT_ANALYTICS: `${V1}/Dashboard/export/analytics`,
+  SUBSCRIPTIONS: `${V1}/Dashboard/subscriptions`,
+  TENANTS: `${V1}/Tenants`,
+  FEATURES_GROUPED: `${V1}/features/grouped`,
 } as const;

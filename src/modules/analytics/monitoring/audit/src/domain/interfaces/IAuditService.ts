@@ -11,6 +11,7 @@ import type {
   AuditAnalyticsSummary,
   TopAuditUser,
   ComplianceReport,
+  HubActivitySummary,
 } from "../entities/AuditEntities";
 
 /**
@@ -20,6 +21,7 @@ import type {
 export interface IAuditService {
   getLogs(params?: AuditFilterParams): Promise<AuditLogPage>;
   getLogDetail(id: string): Promise<AuditLogDetail>;
+  getHubSummary(): Promise<HubActivitySummary>;
   getAnalytics(): Promise<AuditAnalyticsSummary>;
   getTopUsers(): Promise<TopAuditUser[]>;
   getComplianceReport(framework: string): Promise<ComplianceReport>;

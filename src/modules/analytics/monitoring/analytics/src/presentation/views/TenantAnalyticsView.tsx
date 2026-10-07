@@ -3,127 +3,118 @@
 /**
  * Tenant Analytics View
  *
- * Pure UI composition — tenant KPIs, distribution pie, login comparison chart.
- * Includes export functionality with interval-based date selection.
+ * Professional platform-level analytics and tenant intelligence surface.
+ * Conforms strictly to SCRIPE Monitoring Information Architecture:
+ * Monitoring → Tenant Analytics
  */
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
 import { useTenantAnalyticsViewModel } from "../viewmodels/useTenantAnalyticsViewModel";
-import { useI18n } from "@core/providers/i18n-provider";
-import { TenantMetricsCards } from "../components/TenantMetricsCards";
-import { Button } from "@core/ui/button";
-import { PageHeader } from "@core/ui/page-header";
-import { BarChart3, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
-import { useAdminContext } from "@core/hooks/useAdminContext";
-import { Badge } from "@core/ui/badge";
+import { TenantAnalyticsHeader } from "../components/TenantAnalyticsHeader";
+import { TenantAnalyticsKpis } from "../components/TenantAnalyticsKpis";
+import { TenantGrowthChart } from "../components/TenantGrowthChart";
+import { TenantRegionDistribution } from "../components/TenantRegionDistribution";
+import { TenantActivityDistribution } from "../components/TenantActivityDistribution";
+import { TenantEditionDistribution } from "../components/TenantEditionDistribution";
+import { TenantFeatureAdoption } from "../components/TenantFeatureAdoption";
+import { TenantStatusDistribution } from "../components/TenantStatusDistribution";
+import { TenantTableSection } from "../components/TenantTableSection";
 
-// Lazy-load chart components (below-the-fold)
-const AdminDistributionPie = dynamic(
-  () =>
-    import("../components/AdminDistributionPie").then((m) => ({ default: m.AdminDistributionPie })),
-  { ssr: false }
-);
-const LoginComparisonChart = dynamic(
-  () =>
-    import("../components/LoginComparisonChart").then((m) => ({ default: m.LoginComparisonChart })),
-  { ssr: false }
-);
 const ReportExportDialog = dynamic(
   () => import("@core/ui/report-export-dialog").then((m) => ({ default: m.ReportExportDialog })),
   { ssr: false }
 );
 
-/**
- * Presentation UI component rendering the analytics view.
- * Dynamically adjusts context between Platform Intelligence (cross-tenant)
- * and Workspace Insights (organization-scoped).
- */
 export function TenantAnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");
 
   const vm = useTenantAnalyticsViewModel();
-  const { t } = useI18n();
-  const { isPlatform, activeTenantName } = useAdminContext();
   const [exportOpen, setExportOpen] = useState(false);
-  const pathname = usePathname();
-  const isStandalone = pathname === "/analytics";
 
-  const theme = useDashboardTheme();
-  const { cardClasses } = theme;
-
-  const title = isPlatform
-    ? "Platform Intelligence"
-    : "Workspace Insights & Adoption";
-
-  const subtitle = isPlatform
-    ? "Cross-tenant adoption, administrator activity distribution, and platform authentication trends"
-    : `Usage analytics, team adoption, and authentication activity for ${activeTenantName || "this organization"}`;
+  const timeRangeLabelMap: Record<string, string> = {
+    "7d": "Last 7 days",
+    "30d": "Last 30 days",
+    "90d": "Last 90 days",
+    "12m": "Last 12 months",
+  };
+  const currentTimeRangeLabel = timeRangeLabelMap[vm.timeRange] ?? "Last 30 days";
 
   return (
-    <div className="space-y-6">
-      {isStandalone && (
-        <PageHeader
-          icon={BarChart3}
-          title={title}
-          description={subtitle}
-          actions={
-            <>
-              <Badge variant="outline" className="px-2.5 py-1 text-xs">
-                {isPlatform ? "Platform Context" : "Tenant Context"}
-              </Badge>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setExportOpen(true)}
-                className="gap-1.5"
-              >
-                <FileDown className="h-4 w-4" aria-hidden="true" />
-                {t("export.button")}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => theme.setIsStudioOpen(true)}
-                className="gap-1.5"
-              >
-                <Settings2 className="h-4 w-4" aria-hidden="true" />
-                {t("dashboard.studio.openButton")}
-              </Button>
-            </>
-          }
-        />
-      )}
-
-      {/* KPI Cards */}
-      <TenantMetricsCards
-        data={vm.metrics.data}
-        isLoading={vm.metrics.isLoading}
-        error={vm.metrics.error}
-        onRetry={() => vm.metrics.refetch()}
-        cardClasses={cardClasses}
+    <div className="space-y-6 pb-8">
+      {/* 1. Header with Controls */}
+      <TenantAnalyticsHeader
+        timeRange={vm.timeRange}
+        setTimeRange={vm.setTimeRange}
+        regionFilter={vm.regionFilter}
+        setRegionFilter={vm.setRegionFilter}
+        availableRegions={vm.availableRegions}
+        statusFilter={vm.statusFilter}
+        setStatusFilter={vm.setStatusFilter}
+        availableStatuses={vm.availableStatuses}
+        editionFilter={vm.editionFilter}
+        setEditionFilter={vm.setEditionFilter}
+        availableEditions={vm.availableEditions}
+        isRefetching={vm.isRefetching}
+        onRefresh={vm.refetchAll}
+        onExport={() => setExportOpen(true)}
       />
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <AdminDistributionPie
-          data={vm.distribution.data ?? []}
-          isLoading={vm.distribution.isLoading}
-          error={vm.distribution.error}
-          onRetry={() => vm.distribution.refetch()}
-          cardClasses={cardClasses}
+      {/* 2. Top KPI Summary */}
+      <TenantAnalyticsKpis
+        kpis={vm.kpis}
+        isLoading={vm.isLoading}
+        timeRangeLabel={currentTimeRangeLabel}
+      />
+
+      {/* 3. Middle Section: Growth, Region, Activity */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 items-stretch">
+        <TenantGrowthChart
+          data={vm.tenantGrowthData}
+          isLoading={vm.isLoading}
+          timeRangeLabel={currentTimeRangeLabel}
         />
-        <LoginComparisonChart
-          data={vm.comparison.data ?? []}
-          isLoading={vm.comparison.isLoading}
-          error={vm.comparison.error}
-          onRetry={() => vm.comparison.refetch()}
-          cardClasses={cardClasses}
+        <TenantRegionDistribution
+          data={vm.regionDistribution}
+          isLoading={vm.isLoading}
+        />
+        <TenantActivityDistribution
+          data={vm.activityDistribution}
+          isLoading={vm.isLoading}
+          totalTenants={vm.kpis.totalTenants}
         />
       </div>
 
+      {/* 4. Lower Analytics Row: Editions, Features, Status */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 items-stretch">
+        <TenantEditionDistribution
+          data={vm.editionDistribution}
+          isLoading={vm.isLoading}
+        />
+        <TenantFeatureAdoption
+          data={vm.featureAdoption}
+          isLoading={vm.isLoading}
+        />
+        <TenantStatusDistribution
+          data={vm.statusDistribution}
+          isLoading={vm.isLoading}
+          totalTenants={vm.kpis.totalTenants}
+        />
+      </div>
+
+      {/* 5. Actionable Tenants Table */}
+      <TenantTableSection
+        tenants={vm.tenants}
+        totalCount={vm.totalTenantsCount}
+        searchQuery={vm.searchQuery}
+        onSearchChange={vm.setSearchQuery}
+        page={vm.page}
+        setPage={vm.setPage}
+        totalPages={vm.totalPages}
+        isLoading={vm.isLoading}
+      />
+
+      {/* Export Dialog */}
       <ReportExportDialog
         open={exportOpen}
         onClose={() => setExportOpen(false)}
@@ -131,21 +122,6 @@ export function TenantAnalyticsView() {
         titleKey="export.analytics.title"
         descriptionKey="export.analytics.description"
       />
-
-      {/* Dashboard Studio Panel (Standalone only) */}
-      {isStandalone && (
-        <DashboardStudioPanel
-          open={theme.isStudioOpen}
-          onClose={() => theme.setIsStudioOpen(false)}
-          draft={theme.draft}
-          onUpdateNested={theme.updateNested}
-          onSave={theme.saveDraft}
-          onDiscard={theme.discardDraft}
-          onReset={theme.resetToDefault}
-          isSaving={theme.isSaving}
-          onBuilderCanvasChange={(canvas) => theme.updateDraft("builderCanvas", canvas)}
-        />
-      )}
     </div>
   );
 }
