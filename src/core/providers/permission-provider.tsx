@@ -126,45 +126,6 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
   const roles = useAppStore((state) => state.roles);
   const user = useAppStore((state) => state.user);
 
-  const hasPermission = useCallback(
-    (permission: PermissionCode): boolean => {
-      return checkPermission(permissions, permission);
-    },
-    [permissions]
-  );
-
-  const hasAnyPermission = useCallback(
-    (requiredPermissions: PermissionCode[]): boolean => {
-      return checkAnyPermission(permissions, requiredPermissions);
-    },
-    [permissions]
-  );
-
-  const hasAllPermissions = useCallback(
-    (requiredPermissions: PermissionCode[]): boolean => {
-      return checkAllPermissions(permissions, requiredPermissions);
-    },
-    [permissions]
-  );
-
-  const canAccessPage = useCallback(
-    (path: string): boolean => {
-      const requiredPermissions = getRequiredPermissionsForPath(path);
-
-      // If no permissions defined for page, allow access (authenticated only)
-      if (!requiredPermissions || requiredPermissions.length === 0) {
-        return true;
-      }
-
-      return checkAllPermissions(permissions, requiredPermissions);
-    },
-    [permissions]
-  );
-
-  const roleNames = useMemo(() => {
-    return roles.map((r) => r.roleName);
-  }, [roles]);
-
   const isPlatformSuperAdmin = useMemo(() => {
     // A user is a PLATFORM Super Admin ONLY if they belong to NO tenant (system-level)
     // and hold platform-wide superadmin privileges.
@@ -179,6 +140,49 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
       user?.adminTypeName?.toLowerCase() === "system super admin"
     );
   }, [permissions, roles, user]);
+
+  const hasPermission = useCallback(
+    (permission: PermissionCode): boolean => {
+      if (isPlatformSuperAdmin) return true;
+      return checkPermission(permissions, permission);
+    },
+    [permissions, isPlatformSuperAdmin]
+  );
+
+  const hasAnyPermission = useCallback(
+    (requiredPermissions: PermissionCode[]): boolean => {
+      if (isPlatformSuperAdmin) return true;
+      return checkAnyPermission(permissions, requiredPermissions);
+    },
+    [permissions, isPlatformSuperAdmin]
+  );
+
+  const hasAllPermissions = useCallback(
+    (requiredPermissions: PermissionCode[]): boolean => {
+      if (isPlatformSuperAdmin) return true;
+      return checkAllPermissions(permissions, requiredPermissions);
+    },
+    [permissions, isPlatformSuperAdmin]
+  );
+
+  const canAccessPage = useCallback(
+    (path: string): boolean => {
+      if (isPlatformSuperAdmin) return true;
+      const requiredPermissions = getRequiredPermissionsForPath(path);
+
+      // If no permissions defined for page, allow access (authenticated only)
+      if (!requiredPermissions || requiredPermissions.length === 0) {
+        return true;
+      }
+
+      return checkAllPermissions(permissions, requiredPermissions);
+    },
+    [permissions, isPlatformSuperAdmin]
+  );
+
+  const roleNames = useMemo(() => {
+    return roles.map((r) => r.roleName);
+  }, [roles]);
 
   const isTenantSuperAdmin = useMemo(() => {
     if (!user?.tenantId) return false;

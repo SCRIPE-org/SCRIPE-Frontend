@@ -8,12 +8,14 @@ import type {
   BlockedIPDto,
   LoginActivityPointDto,
   SecurityChangeDto,
+  ActiveSessionDto,
 } from "../models/SecurityModels";
 import type {
   SecurityEvent,
   BlockedIP,
   LoginActivityPoint,
   SecurityChange,
+  ActiveSession,
 } from "../../domain/entities/SecurityEntities";
 
 /**
@@ -47,7 +49,7 @@ export class SecurityMapper {
 
   static toSecurityChange(dto: SecurityChangeDto): SecurityChange {
     return {
-      id: dto.id,
+      id: dto.id ?? "",
       eventType: dto.eventType ?? "",
       httpMethod: dto.httpMethod,
       endpoint: dto.endpoint,
@@ -60,6 +62,21 @@ export class SecurityMapper {
       errorMessage: dto.errorMessage,
       timestamp: dto.timestamp ?? "",
       tenantId: dto.tenantId,
+    };
+  }
+
+  static toActiveSession(dto: ActiveSessionDto, index: number = 0): ActiveSession {
+    const rawId = (dto as any).id || (dto as any).Id || dto.tokenId || "";
+    const resolvedTokenId =
+      rawId.trim() !== "" ? rawId : `session-${index}-${Date.now()}`;
+
+    return {
+      tokenId: resolvedTokenId,
+      deviceInfo: dto.deviceInfo || "Unknown Browser / OS",
+      ipAddress: dto.ipAddress || "—",
+      createdAt: dto.createdAt || "",
+      expiresAt: dto.expiresAt || "",
+      isCurrent: Boolean(dto.isCurrent),
     };
   }
 }

@@ -5,29 +5,47 @@ import { useState } from "react";
 import { monitoringContainer } from "../../../../di";
 import { useAdminContext } from "@core/hooks/useAdminContext";
 import { usePermission } from "@core/hooks/use-permission";
+import { usePermissions } from "@core/providers/permission-provider";
 import { MONITORING_PERMISSIONS } from "../../../../permission-constants";
 
 export function usePlatformHealthViewModel() {
   const { isPlatform } = useAdminContext();
-  const canViewObservability = usePermission(MONITORING_PERMISSIONS.OBSERVABILITY_VIEW);
-  const [autoRefresh, setAutoRefresh] = useState(false);
+  const { isSuperAdmin, isPlatformSuperAdmin } = usePermissions();
+  const hasPerm = usePermission(MONITORING_PERMISSIONS.OBSERVABILITY_VIEW);
+  const canViewObservability = hasPerm || isSuperAdmin || isPlatformSuperAdmin;
+  const isAuthorized = (isPlatform || isSuperAdmin || isPlatformSuperAdmin) && canViewObservability;
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [timeRange, setTimeRange] = useState<"1h" | "24h" | "7d">("24h");
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(null);
 
   const query = useQuery({
     queryKey: ["platform-health"],
     queryFn: ({ signal }) => monitoringContainer.platformHealthRepository.getHealth(signal),
-    enabled: isPlatform && canViewObservability,
-    refetchInterval: autoRefresh ? 10000 : false,
-    staleTime: 5000,
+    enabled: isAuthorized,
+    refetchInterval: autoRefresh ? 8000 : false,
+    staleTime: 4000,
   });
 
+  const health = query.data;
+
+  // Selected incident resolution
+  const selectedIncident = health?.incidents?.find(i => i.id === selectedIncidentId) 
+    ?? health?.incidents?.[0] 
+    ?? null;
+
   return {
-    health: query.data,
+    health,
     isLoading: query.isLoading,
     isRefetching: query.isRefetching,
     error: query.error,
     refetch: query.refetch,
     autoRefresh,
     setAutoRefresh,
-    isAuthorized: isPlatform && canViewObservability,
+    timeRange,
+    setTimeRange,
+    selectedIncidentId: selectedIncidentId ?? selectedIncident?.id ?? null,
+    selectedIncident,
+    setSelectedIncidentId,
+    isAuthorized,
   };
 }

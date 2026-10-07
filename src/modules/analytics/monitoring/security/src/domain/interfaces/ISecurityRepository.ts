@@ -9,10 +9,12 @@ import type {
   BlockedIP,
   LoginActivityPoint,
   SecurityChange,
+  ActiveSession,
 } from "../entities/SecurityEntities";
+import type { DashboardSummaryDto } from "../../data/models/SecurityModels";
 
 /**
- * Repository layer implementing client request queries for i security.
+ * Repository layer implementing client request queries for security.
  * Calls base API service routines and resolves DTO objects mapping to domain entities.
  */
 export interface ISecurityRepository {
@@ -21,4 +23,8 @@ export interface ISecurityRepository {
   getTopBlockedIPs(days?: number, limit?: number): Promise<BlockedIP[]>;
   getLoginActivity(days?: number): Promise<LoginActivityPoint[]>;
   getRecentChanges(limit?: number): Promise<SecurityChange[]>;
+  getDashboardSummary(): Promise<DashboardSummaryDto>;
+  getSessions(): Promise<ActiveSession[]>;
+  revokeSession(tokenId: string): Promise<void>;
+  getAdmins(pageSize?: number): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }>;
 }

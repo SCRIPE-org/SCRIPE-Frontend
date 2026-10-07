@@ -10,6 +10,6 @@ export class PlatformHealthService implements IPlatformHealthService {
   constructor(private readonly api: IApiService) {}
 
   async getHealth(signal?: AbortSignal): Promise<PlatformHealthResponseDto> {
-    return this.api.get<PlatformHealthResponseDto>(PLATFORM_HEALTH_ENDPOINTS.HEALTH, { signal });
+    return this.api.get<PlatformHealthResponseDto>(PLATFORM_HEALTH_ENDPOINTS.HEALTH, undefined, signal);
   }
 }

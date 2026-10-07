@@ -9,9 +9,10 @@ import type {
   LoginActivityPoint,
   SecurityChange,
 } from "../entities/SecurityEntities";
+import type { ActiveSessionDto, DashboardSummaryDto } from "../../data/models/SecurityModels";
 
 /**
- * Http API network service for i security.
+ * Http API network service for security.
  * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.
  */
 export interface ISecurityService {
@@ -19,4 +20,8 @@ export interface ISecurityService {
   getTopBlockedIPs(days?: number, limit?: number): Promise<BlockedIP[]>;
   getLoginActivity(days?: number): Promise<LoginActivityPoint[]>;
   getRecentChanges(limit?: number): Promise<SecurityChange[]>;
+  getDashboardSummary(): Promise<DashboardSummaryDto>;
+  getSessions(): Promise<ActiveSessionDto[]>;
+  revokeSession(tokenId: string): Promise<void>;
+  getAdmins(pageSize?: number): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }>;
 }

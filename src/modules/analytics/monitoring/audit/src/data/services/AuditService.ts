@@ -15,6 +15,7 @@ import type {
   AuditAnalyticsSummary,
   TopAuditUser,
   ComplianceReport,
+  HubActivitySummary,
 } from "../../domain/entities/AuditEntities";
 
 /**
@@ -42,6 +43,10 @@ export class AuditService implements IAuditService {
 
   async getLogDetail(id: string): Promise<AuditLogDetail> {
     return this.api.get<AuditLogDetail>(AUDIT_ENDPOINTS.LOG_DETAIL(id));
+  }
+
+  async getHubSummary(): Promise<HubActivitySummary> {
+    return this.api.get<HubActivitySummary>(AUDIT_ENDPOINTS.HUB_SUMMARY);
   }
 
   async getAnalytics(): Promise<AuditAnalyticsSummary> {

@@ -10,16 +10,16 @@ interface MapTooltipProps {
     x: number;
     y: number;
   } | null;
-  mapStageRef: React.RefObject<HTMLDivElement | null>;
+  mapStageRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
+export function MapTooltip({ hoveredCountry }: MapTooltipProps) {
   const { t } = useI18n();
 
   if (!hoveredCountry) return null;
 
-  const left = Math.min(hoveredCountry.x + 12, (mapStageRef.current?.clientWidth ?? 600) - 200);
-  const top = Math.max(12, Math.min(hoveredCountry.y - 30, (mapStageRef.current?.clientHeight ?? 400) - 100));
+  const left = Math.max(12, hoveredCountry.x + 12);
+  const top = Math.max(12, hoveredCountry.y - 30);
 
   return (
     <div

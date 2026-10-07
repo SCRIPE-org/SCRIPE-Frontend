@@ -13,7 +13,7 @@ import {
   MapSvgCanvas,
   MapControls,
   MapTooltip,
-  MapLiveFeed,
+  MapRegionalSidebar,
 } from "./activity-map";
 
 export type { RegionNodeInfo, EnrichedCountryData, PlatformActivityMapProps };
@@ -51,37 +51,43 @@ export function PlatformActivityMap({
 
   return (
     <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden flex flex-col h-[520px]">
-      {/* 1. Panel Header */}
-      <div className="h-[60px] px-4 py-3 flex items-center justify-between border-b border-border bg-muted/40">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shadow-xs">
+      {/* 1. Panel Header with Title & Legend matching Command Center */}
+      <div className="h-[60px] px-4 py-3 flex items-center justify-between border-b border-border bg-muted/40 gap-4">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-[#84cc16]/10 border border-[#84cc16]/20 text-[#84cc16] flex items-center justify-center shadow-xs shrink-0">
             <Globe className="h-4 w-4" />
           </div>
-          <div>
-            <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
-              {t("platformCommandCenter.activity.title") || "Geographic footprint & telemetry"}
+          <div className="min-w-0">
+            <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight truncate">
+              {t("platformCommandCenter.activity.globalTenantActivity") || "Global Tenant Activity"}
             </h2>
-            <p className="text-[11px] text-muted-foreground">
-              {t("platformCommandCenter.activity.subtitle") ||
-                "Deployment topology, tenant regions, and audit events"}
+            <p className="text-[11px] text-muted-foreground truncate">
+              {t("platformCommandCenter.activity.globalTenantActivitySub") ||
+                "Deployment distribution and real-time activity across all regions."}
             </p>
           </div>
         </div>
 
-        <Link
-          href="/overview"
-          className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors group"
-        >
-          <span>
-            {t("platformCommandCenter.activity.viewDashboard") || "Telemetry dashboard"}
+        {/* Legend */}
+        <div className="flex items-center gap-3.5 text-[11px] text-muted-foreground shrink-0 select-none">
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)]" />
+            <span className="hidden sm:inline">{t("platformCommandCenter.activity.legendActive") || "Active Tenants"}</span>
           </span>
-          <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
-        </Link>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.7)]" />
+            <span className="hidden sm:inline">{t("platformCommandCenter.activity.legendIncident") || "Incident"}</span>
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-slate-500 opacity-60" />
+            <span className="hidden sm:inline">{t("platformCommandCenter.activity.legendLowActivity") || "Low Activity"}</span>
+          </span>
+        </div>
       </div>
 
-      {/* 2. Map Stage & Activity Feed Grid */}
+      {/* 2. Map Stage & Regional Sidebar Grid */}
       <div className="flex-1 p-3 min-h-0">
-        <div className="h-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_220px] rounded-lg border border-border bg-background overflow-hidden shadow-inner">
+        <div className="h-full grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_260px] rounded-lg border border-border bg-background overflow-hidden shadow-inner">
           {/* LEFT: Interactive Vector Map Stage */}
           <div
             ref={mapStageRef}
@@ -121,8 +127,8 @@ export function PlatformActivityMap({
             <MapTooltip hoveredCountry={hoveredCountry} mapStageRef={mapStageRef} />
           </div>
 
-          {/* RIGHT: Live Activity Stream Feed Grounded to RecentChanges */}
-          <MapLiveFeed recentActivity={recentActivity} />
+          {/* RIGHT: Regional Distribution & Live Activity Metrics */}
+          <MapRegionalSidebar summary={summary} regionNodes={regionNodes} />
         </div>
       </div>
     </div>
