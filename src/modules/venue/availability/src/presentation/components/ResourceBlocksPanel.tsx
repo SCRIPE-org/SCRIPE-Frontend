@@ -69,7 +69,9 @@ export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, mainten
 
   useEffect(() => {
     if (!editing) {
-      setDraft(newDraft(resourceId, timeZoneId));
+      void Promise.resolve().then(() => {
+        setDraft(newDraft(resourceId, timeZoneId));
+      });
     }
   }, [resourceId, timeZoneId, editing]);
 

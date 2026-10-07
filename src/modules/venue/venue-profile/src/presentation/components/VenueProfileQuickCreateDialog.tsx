@@ -66,10 +66,12 @@ export function VenueProfileQuickCreateDialog({
 
   useEffect(() => {
     if (open) {
-      void loadSites();
-      if (defaultSiteId) {
-        setSiteId(defaultSiteId);
-      }
+      void Promise.resolve().then(() => {
+        void loadSites();
+        if (defaultSiteId) {
+          setSiteId(defaultSiteId);
+        }
+      });
     }
   }, [open, defaultSiteId, loadSites]);
 

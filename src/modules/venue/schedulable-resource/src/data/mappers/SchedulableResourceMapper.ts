@@ -16,6 +16,7 @@ export class SchedulableResourceMapper {
       namedUnitLabel: model.namedUnitLabel,
       unitCount: model.unitCount,
       capacity: model.capacity,
+      slotPolicy: model.slotPolicy,
       publicationStatus: model.publicationStatus,
       publishedAtUtc: model.publishedAtUtc,
       archivedAtUtc: model.archivedAtUtc,

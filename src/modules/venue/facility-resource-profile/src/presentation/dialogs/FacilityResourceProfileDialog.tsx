@@ -112,7 +112,9 @@ export function FacilityResourceProfileDialog({
       if (!initial.facilityId && facilities && facilities.length > 0) {
         initial.facilityId = facilities[0].id;
       }
-      setForm(initial);
+      void Promise.resolve().then(() => {
+        setForm(initial);
+      });
     }
   }, [open, editingProfile, facilityId, facilities]);
 

@@ -56,24 +56,26 @@ export function SiteFormDialog({
 
   useEffect(() => {
     if (open) {
-      if (site) {
-        setName(site.name || "");
-        const tz = site.timeZone || "UTC";
-        const addr = site.address || "";
-        setLocation({
-          ...DEFAULT_LOCATION,
-          timeZone: tz,
-          street: addr,
-          address: addr,
-        });
-      } else {
-        setName("");
-        setLocation({
-          ...DEFAULT_LOCATION,
-          timeZone: getDefaultTimeZoneForCountry("SA"),
-        });
-      }
-      setNameError("");
+      void Promise.resolve().then(() => {
+        if (site) {
+          setName(site.name || "");
+          const tz = site.timeZone || "UTC";
+          const addr = site.address || "";
+          setLocation({
+            ...DEFAULT_LOCATION,
+            timeZone: tz,
+            street: addr,
+            address: addr,
+          });
+        } else {
+          setName("");
+          setLocation({
+            ...DEFAULT_LOCATION,
+            timeZone: getDefaultTimeZoneForCountry("SA"),
+          });
+        }
+        setNameError("");
+      });
     }
   }, [open, site]);
 

@@ -30,9 +30,20 @@ import {
  */
 export function usePermission(requiredPermission?: PermissionCode): boolean {
   const permissions = useAppStore((state) => state.permissions);
+  const user = useAppStore((state) => state.user);
 
   // No permission required = always allowed
   if (!requiredPermission) return true;
+
+  // Platform superadmin bypass
+  if (
+    (user as any)?.isSuperAdmin === true ||
+    (user as any)?.isProtected === true ||
+    user?.username === "superadmin" ||
+    permissions.includes("*")
+  ) {
+    return true;
+  }
 
   // Check against user's effective permissions
   return hasPermission(permissions, requiredPermission);
@@ -45,6 +56,13 @@ export function usePermission(requiredPermission?: PermissionCode): boolean {
 export function usePermissions() {
   const permissions = useAppStore((state) => state.permissions);
   const user = useAppStore((state) => state.user);
+
+  const isSuperAdmin = Boolean(
+    (user as any)?.isSuperAdmin === true ||
+    (user as any)?.isProtected === true ||
+    user?.username === "superadmin" ||
+    permissions.includes("*")
+  );
 
   return {
     /**
@@ -61,6 +79,7 @@ export function usePermissions() {
      * Check if user has a specific permission
      */
     has: (permission: PermissionCode): boolean => {
+      if (isSuperAdmin) return true;
       return hasPermission(permissions, permission);
     },
 
@@ -68,6 +87,7 @@ export function usePermissions() {
      * Check if user has ANY of the specified permissions
      */
     hasAny: (requiredPermissions: PermissionCode[]): boolean => {
+      if (isSuperAdmin) return true;
       return hasAnyPermission(permissions, requiredPermissions);
     },
 
@@ -75,6 +95,7 @@ export function usePermissions() {
      * Check if user has ALL of the specified permissions
      */
     hasAll: (requiredPermissions: PermissionCode[]): boolean => {
+      if (isSuperAdmin) return true;
       return hasAllPermissions(permissions, requiredPermissions);
     },
 

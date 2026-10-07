@@ -1,0 +1,13 @@
+export * from "./src/presentation/views/ResourceDetailView";
+export * from "./src/presentation/views/ResourcesWorkspaceView";
+export * from "./src/presentation/viewmodels/useResourceDetailViewModel";
+export * from "./src/presentation/viewmodels/useResourcesWorkspaceViewModel";
+export * from "./src/presentation/components/FirstTimeSetupWizard";
+export * from "./src/presentation/components/ResourceBookingRulesTab";
+export * from "./src/presentation/components/ResourceCard";
+export * from "./src/presentation/components/ResourceClosuresTab";
+export * from "./src/presentation/components/ResourceGeneralTab";
+export * from "./src/presentation/components/ResourcePricingTab";
+export * from "./src/presentation/components/ResourceWorkingHoursTab";
+export * from "./src/domain/entities/ResourceWorkspaceItem";
+

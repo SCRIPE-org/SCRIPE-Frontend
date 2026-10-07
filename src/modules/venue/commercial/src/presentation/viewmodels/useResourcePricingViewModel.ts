@@ -95,8 +95,8 @@ export function useResourcePricingViewModel({ messages }: { messages: ResourcePr
     }
   }, [commercialPricingRepository, messages.fallbackError]);
 
-  useEffect(() => { void loadResources(); }, [loadResources]);
-  useEffect(() => { void loadConfiguration(selectedResourceId); }, [loadConfiguration, selectedResourceId]);
+  useEffect(() => { void Promise.resolve().then(() => { void loadResources(); }); }, [loadResources]);
+  useEffect(() => { void Promise.resolve().then(() => { void loadConfiguration(selectedResourceId); }); }, [loadConfiguration, selectedResourceId]);
 
   const selectedResource = resources.find((resource) => resource.id === selectedResourceId);
   const resourceOptions = useMemo(

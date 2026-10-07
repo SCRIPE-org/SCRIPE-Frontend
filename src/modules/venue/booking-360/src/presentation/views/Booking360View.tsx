@@ -87,6 +87,38 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
         </div>
       </header>
 
+      {/* Top Prominent Operational Action Banner (Check In, Complete, No Show, Reschedule, Change Court) */}
+      <BookingOperationalActions
+        status={reservation.status as never}
+        activeAction={vm.state.activeAction}
+        feedback={vm.state.operationalFeedback}
+        canCheckIn={canCheckIn}
+        canComplete={canComplete}
+        canMarkNoShow={canMarkNoShow}
+        canCancel={canCancel}
+        canReschedule={canReschedule && canReprice}
+        canChangeResource={canChangeResource && canReprice}
+        direction={direction}
+        bookingReference={reservation.reservationNumber}
+        customerName={vm.state.customer?.displayName}
+        resourceId={reservation.resourceId}
+        resourceName={vm.state.resource?.name}
+        facilityId={vm.state.facility?.id}
+        facilityName={vm.state.facility?.name}
+        timeZoneId={timeZoneId}
+        quantity={reservation.quantity}
+        scheduledTime={formatRange(reservation.requestedStartUtc, reservation.requestedEndUtc, language, timeZoneId)}
+        currentStartUtc={reservation.requestedStartUtc}
+        currentEndUtc={reservation.requestedEndUtc}
+        t={t}
+        onCheckIn={() => void vm.checkIn()}
+        onComplete={() => void vm.complete()}
+        onMarkNoShow={(reason) => void vm.markNoShow(reason)}
+        onCancel={(reason) => void vm.cancel(reason)}
+        onReschedule={(input) => void vm.reschedule(input)}
+        onChangeResource={(input) => void vm.changeResource(input)}
+      />
+
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,0.65fr)]">
         <div className="space-y-6">
           <Card>
@@ -100,24 +132,43 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
             </dl></CardContent>
           </Card>
 
+          {/* Simplified Money Card: Total, Paid, Remaining */}
           <Card>
-            <CardHeader><CardTitle>{t("booking360.commercial.title")}</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{t("booking360.commercial.title", { defaultValue: "Money & Payment" })}</CardTitle></CardHeader>
             <CardContent className="space-y-3">
-              <Alert variant={reservation.priceSnapshotId ? "success" : "info"}>
-                <AlertDescription>{t(reservation.priceSnapshotId ? "booking360.commercial.snapshotBound" : "booking360.commercial.snapshotPending")}</AlertDescription>
-              </Alert>
               {!canViewReceivables ? (
                 <Alert variant="info"><AlertDescription>{t("booking360.commercial.restricted")}</AlertDescription></Alert>
               ) : finance.loading ? <LoadingSpinner showText={false} /> : finance.error ? (
                 <Alert variant="warning"><AlertDescription>{t("booking360.commercial.unavailable")}</AlertDescription></Alert>
               ) : finance.summary ? (
                 <>
-                  <dl className="grid gap-4 sm:grid-cols-3">
-                    <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.invoice")}</dt><dd className="font-medium" dir="ltr">{finance.summary.invoiceNumber}</dd></div>
-                    <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.total")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.effectiveTotalAmount)}</dd></div>
-                    <div><dt className="text-sm text-nx-ink-2">{t("booking360.commercial.outstanding")}</dt><dd className="font-medium">{new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.outstandingAmount)}</dd></div>
-                  </dl>
-                  <div className="flex flex-wrap items-center gap-3 pt-2">
+                  <div className="flex items-center justify-between text-xs text-nx-ink-2 pb-1 border-b border-nx-line/50">
+                    <span>{t("booking360.commercial.invoice")}: <strong className="font-mono text-nx-ink" dir="ltr">{finance.summary.invoiceNumber}</strong></span>
+                    <span className="text-[11px] text-nx-ink-3">{finance.summary.status}</span>
+                  </div>
+                  <div className="grid gap-4 sm:grid-cols-3 p-3 rounded-nx-md bg-nx-surfaceSubtle border border-nx-line/60 text-center">
+                    <div>
+                      <p className="text-xs text-nx-ink-3 font-semibold uppercase">{t("booking360.commercial.total")}</p>
+                      <p className="text-base font-bold text-nx-ink mt-0.5">
+                        {new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.effectiveTotalAmount)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-nx-ink-3 font-semibold uppercase">Paid</p>
+                      <p className="text-base font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                        {new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(
+                          Math.max(0, finance.summary.effectiveTotalAmount - finance.summary.outstandingAmount)
+                        )}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-nx-ink-3 font-semibold uppercase">{t("booking360.commercial.outstanding")}</p>
+                      <p className={`text-base font-bold mt-0.5 ${finance.summary.outstandingAmount > 0 ? "text-amber-600" : "text-nx-ink-3"}`}>
+                        {new Intl.NumberFormat(language, { style: "currency", currency: finance.summary.currencyCode }).format(finance.summary.outstandingAmount)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                     <Link
                       href="/venue/money/receivables"
                       className="text-xs font-medium text-nx-accent hover:underline inline-flex items-center gap-1"
@@ -127,7 +178,7 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
                     {canRecordPayment && finance.summary.outstandingAmount > 0 && finance.summary.invoiceId ? (
                       <Link
                         href={`/venue/money/payments?invoiceId=${encodeURIComponent(finance.summary.invoiceId)}`}
-                        className="inline-flex items-center justify-center rounded border border-nx-accent bg-nx-accent px-2.5 py-1 text-xs font-medium text-white shadow-sm hover:opacity-90 transition-opacity"
+                        className="inline-flex items-center justify-center rounded-nx-md border border-nx-accent bg-nx-accent px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:opacity-90 transition-opacity gap-1.5"
                       >
                         {t("booking360.commercial.recordPayment")}
                       </Link>
@@ -137,37 +188,6 @@ export const Booking360View = React.memo(function Booking360View({ reservationId
               ) : <p className="text-sm text-nx-ink-2">{t("booking360.commercial.invoicePending")}</p>}
             </CardContent>
           </Card>
-
-          <BookingOperationalActions
-            status={reservation.status as never}
-            activeAction={vm.state.activeAction}
-            feedback={vm.state.operationalFeedback}
-            canCheckIn={canCheckIn}
-            canComplete={canComplete}
-            canMarkNoShow={canMarkNoShow}
-            canCancel={canCancel}
-            canReschedule={canReschedule && canReprice}
-            canChangeResource={canChangeResource && canReprice}
-            direction={direction}
-            bookingReference={reservation.reservationNumber}
-            customerName={vm.state.customer?.displayName}
-            resourceId={reservation.resourceId}
-            resourceName={vm.state.resource?.name}
-            facilityId={vm.state.facility?.id}
-            facilityName={vm.state.facility?.name}
-            timeZoneId={timeZoneId}
-            quantity={reservation.quantity}
-            scheduledTime={formatRange(reservation.requestedStartUtc, reservation.requestedEndUtc, language, timeZoneId)}
-            currentStartUtc={reservation.requestedStartUtc}
-            currentEndUtc={reservation.requestedEndUtc}
-            t={t}
-            onCheckIn={() => void vm.checkIn()}
-            onComplete={() => void vm.complete()}
-            onMarkNoShow={(reason) => void vm.markNoShow(reason)}
-            onCancel={(reason) => void vm.cancel(reason)}
-            onReschedule={(input) => void vm.reschedule(input)}
-            onChangeResource={(input) => void vm.changeResource(input)}
-          />
 
           <Card>
             <CardHeader><CardTitle className="flex items-center gap-2"><UserRound className="size-5 text-nx-accent" aria-hidden="true" />{t("booking360.customer.title")}</CardTitle></CardHeader>

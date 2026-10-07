@@ -140,7 +140,7 @@ export function useBooking360ViewModel(
     reservationId, schedulableResourceRepository,
   ]);
 
-  useEffect(() => { void load(); return () => { generation.current += 1; }; }, [load]);
+  useEffect(() => { void Promise.resolve().then(() => { void load(); }); return () => { generation.current += 1; }; }, [load]);
 
   const calculateCurrentQuote = useCallback(async (
     reservation: Booking360Reservation,

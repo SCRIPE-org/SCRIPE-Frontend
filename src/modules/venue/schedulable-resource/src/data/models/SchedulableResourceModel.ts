@@ -18,6 +18,12 @@ export interface SchedulableResourceJson {
     maxConcurrentUsage: number;
     overbookingAllowed: boolean;
   };
+  slotPolicy?: {
+    slotDurationMinutes: number;
+    startIncrementMinutes: number;
+    timeZoneId?: string | null;
+    allowMultiSlot?: boolean;
+  } | null;
   publicationStatus: PublicationStatus;
   publishedAtUtc?: string;
   archivedAtUtc?: string;
@@ -52,7 +58,13 @@ export class SchedulableResourceModel {
     public readonly capacity?: CapacityPolicyData,
     public readonly publishedAtUtc?: string,
     public readonly archivedAtUtc?: string,
-    public readonly modifiedAt?: string
+    public readonly modifiedAt?: string,
+    public readonly slotPolicy?: {
+      slotDurationMinutes: number;
+      startIncrementMinutes: number;
+      timeZoneId?: string | null;
+      allowMultiSlot?: boolean;
+    } | null
   ) {}
 
   static fromJson(json: SchedulableResourceJson): SchedulableResourceModel {
@@ -71,7 +83,8 @@ export class SchedulableResourceModel {
       json.capacity,
       json.publishedAtUtc,
       json.archivedAtUtc,
-      json.modifiedAt
+      json.modifiedAt,
+      json.slotPolicy
     );
   }
 }

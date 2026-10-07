@@ -13,7 +13,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { CalendarToolbar } from "../components/CalendarToolbar";
 import { ResourceTimeline } from "../components/ResourceTimeline";
+import { ClickToBookModal } from "../components/ClickToBookModal";
+import { BlockTimeModal } from "../components/BlockTimeModal";
 import { useOperationsCalendarViewModel } from "../viewmodels/useOperationsCalendarViewModel";
+import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
 export const OperationsCalendarView = React.memo(function OperationsCalendarView() {
   useModuleLocales(() => import("../../../locales"), "venue.operationsCalendar");
@@ -29,6 +32,27 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
   const canSearchAvailability = usePermission(VENUE_PERMISSIONS.AVAILABILITY_SEARCH_VIEW);
   const canCreate = canCreateReservation && canCreateHold && canSearchAvailability && canViewCustomer;
   const canView = canViewReservations && canViewFacilities && canViewProfiles && canViewResources;
+
+  // Click-to-book & Block-time modal states
+  const [clickToBookOpen, setClickToBookOpen] = React.useState(false);
+  const [selectedResource, setSelectedResource] = React.useState<CalendarResource | null>(null);
+  const [selectedInstant, setSelectedInstant] = React.useState<string | null>(null);
+
+  const [blockTimeOpen, setBlockTimeOpen] = React.useState(false);
+  const [blockTimeResource, setBlockTimeResource] = React.useState<CalendarResource | null>(null);
+  const [blockTimeInstant, setBlockTimeInstant] = React.useState<string | null>(null);
+
+  const handleEmptySlot = React.useCallback((resource: CalendarResource, instantUtc: string) => {
+    setSelectedResource(resource);
+    setSelectedInstant(instantUtc);
+    setClickToBookOpen(true);
+  }, []);
+
+  const handleOpenBlockTime = React.useCallback((resource?: CalendarResource | null, instantUtc?: string | null) => {
+    setBlockTimeResource(resource ?? null);
+    setBlockTimeInstant(instantUtc ?? null);
+    setBlockTimeOpen(true);
+  }, []);
 
   if (!canView) return <EmptyState icon={Lock} title={t("operationsCalendar.permission.title")} description={t("operationsCalendar.permission.description")} />;
   if (vm.setupLoading) return <LoadingSpinner showText={false} />;
@@ -56,6 +80,7 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         onNext={vm.nextDay}
         onToday={vm.goToday}
         onRefresh={() => void vm.refresh()}
+        onBlockTime={() => handleOpenBlockTime(null, null)}
       />
 
       {vm.resourcesTruncated && <Alert variant="warning"><AlertDescription>{t("operationsCalendar.timeline.truncatedResources")}</AlertDescription></Alert>}
@@ -74,10 +99,32 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
             canCreate={canCreate}
             t={t}
             onOpen={vm.openBlock}
-            onEmptySlot={vm.createFromSlot}
+            onEmptySlot={handleEmptySlot}
           />
         </>
       )}
+
+      {/* Click-To-Book Modal */}
+      <ClickToBookModal
+        open={clickToBookOpen}
+        onOpenChange={setClickToBookOpen}
+        resource={selectedResource}
+        instantUtc={selectedInstant}
+        timeZoneId={vm.timeZoneId}
+        onSuccess={() => void vm.refresh()}
+        onBlockTime={(res, instant) => handleOpenBlockTime(res, instant)}
+      />
+
+      {/* Block Time Modal */}
+      <BlockTimeModal
+        open={blockTimeOpen}
+        onOpenChange={setBlockTimeOpen}
+        resource={blockTimeResource}
+        instantUtc={blockTimeInstant}
+        resources={facilityResources}
+        timeZoneId={vm.timeZoneId}
+        onSuccess={() => void vm.refresh()}
+      />
     </div>
   );
 });

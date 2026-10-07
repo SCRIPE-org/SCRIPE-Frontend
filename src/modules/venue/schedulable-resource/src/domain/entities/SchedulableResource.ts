@@ -7,6 +7,13 @@ export interface CapacityPolicyData {
   overbookingAllowed: boolean;
 }
 
+export interface BookingSlotPolicyData {
+  slotDurationMinutes: number;
+  startIncrementMinutes: number;
+  timeZoneId?: string | null;
+  allowMultiSlot?: boolean;
+}
+
 export interface SchedulableResourceData {
   id: string;
   facilityResourceProfileId: string;
@@ -17,6 +24,7 @@ export interface SchedulableResourceData {
   namedUnitLabel?: string;
   unitCount: number;
   capacity?: CapacityPolicyData;
+  slotPolicy?: BookingSlotPolicyData | null;
   publicationStatus: PublicationStatus;
   publishedAtUtc?: string;
   archivedAtUtc?: string;
@@ -54,6 +62,9 @@ export class SchedulableResource {
   }
   get capacity(): CapacityPolicyData | undefined {
     return this.data.capacity;
+  }
+  get slotPolicy(): BookingSlotPolicyData | undefined | null {
+    return this.data.slotPolicy;
   }
   get publicationStatus(): PublicationStatus {
     return this.data.publicationStatus;
