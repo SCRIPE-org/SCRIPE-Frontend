@@ -79,18 +79,22 @@ export function useOptionSetVersionEditor({
     if (version && version.id === hydratedVersionId) return;
 
     if (version?.hasLoadedItems) {
-      const hydrated = [...version.items]
-        .sort((a, b) => a.sortOrder - b.sortOrder)
-        .map(toOptionSetItemDraft);
-      setRows(hydrated);
-      setBaseline(hydrated);
-      setHydratedVersionId(version.id);
+      queueMicrotask(() => {
+        const hydrated = [...version.items]
+          .sort((a, b) => a.sortOrder - b.sortOrder)
+          .map(toOptionSetItemDraft);
+        setRows(hydrated);
+        setBaseline(hydrated);
+        setHydratedVersionId(version.id);
+      });
       return;
     }
 
-    setHydratedVersionId(null);
-    setRows((current) => (current.length === 0 ? current : []));
-    setBaseline((current) => (current.length === 0 ? current : []));
+    queueMicrotask(() => {
+      setHydratedVersionId(null);
+      setRows((current) => (current.length === 0 ? current : []));
+      setBaseline((current) => (current.length === 0 ? current : []));
+    });
   }, [version, hydratedVersionId]);
 
   const isReady = version !== null && version.hasLoadedItems && hydratedVersionId === version.id;

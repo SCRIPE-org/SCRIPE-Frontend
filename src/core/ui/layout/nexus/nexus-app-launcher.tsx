@@ -160,28 +160,40 @@ export function NexusAppLauncher({ open, onOpenChange }: NexusAppLauncherProps) 
 
   // Drive the phase machine from the `open` prop
   useEffect(() => {
-    if (open) {
-      setPhase("pre");
-      // Double rAF: guarantee the hidden pose paints before the transition runs
-      let raf2 = 0;
-      const raf1 = requestAnimationFrame(() => {
-        raf2 = requestAnimationFrame(() => setPhase("open"));
-      });
-      return () => {
-        cancelAnimationFrame(raf1);
-        cancelAnimationFrame(raf2);
-      };
-    }
-    setPhase((p) => (p === "closed" ? "closed" : "closing"));
-    const timer = window.setTimeout(() => setPhase("closed"), EXIT_UNMOUNT_MS);
-    return () => window.clearTimeout(timer);
+    let cancel = false;
+    let raf1 = 0;
+    let raf2 = 0;
+    let timer = 0;
+
+    queueMicrotask(() => {
+      if (cancel) return;
+      if (open) {
+        setPhase("pre");
+        // Double rAF: guarantee the hidden pose paints before the transition runs
+        raf1 = requestAnimationFrame(() => {
+          raf2 = requestAnimationFrame(() => setPhase("open"));
+        });
+      } else {
+        setPhase((p) => (p === "closed" ? "closed" : "closing"));
+        timer = window.setTimeout(() => setPhase("closed"), EXIT_UNMOUNT_MS);
+      }
+    });
+
+    return () => {
+      cancel = true;
+      if (raf1) cancelAnimationFrame(raf1);
+      if (raf2) cancelAnimationFrame(raf2);
+      if (timer) window.clearTimeout(timer);
+    };
   }, [open]);
 
   // Focus search on open, clear state
   useEffect(() => {
     if (open) {
-      setSearch("");
-      setUpgradeTarget(null);
+      queueMicrotask(() => {
+        setSearch("");
+        setUpgradeTarget(null);
+      });
       setTimeout(() => searchRef.current?.focus(), 120);
     }
   }, [open]);

@@ -6,7 +6,7 @@ import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { AlertCircle } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
+import { Popover } from "@core/ui/popover";
 import { SelectTrigger } from "@core/crud/components/select/select-trigger";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { useEntityLookupSearch } from "../../../../../entity-lookup/src/presentation/hooks/useEntityLookupSearch";

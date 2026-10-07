@@ -165,7 +165,9 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
     // Sync state when defaultCountry changes
     React.useEffect(() => {
       if (defaultCountry) {
-        setActiveCountry(defaultCountry);
+        queueMicrotask(() => {
+          setActiveCountry(defaultCountry);
+        });
       }
     }, [defaultCountry]);
 
@@ -175,7 +177,9 @@ const PhoneInput = React.forwardRef<HTMLInputElement, PhoneInputProps>(
       try {
         const parsed = RPNInput.parsePhoneNumber(value);
         if (parsed?.country) {
-          setActiveCountry(parsed.country);
+          queueMicrotask(() => {
+            setActiveCountry(parsed.country);
+          });
         }
       } catch {
         /* ignore */

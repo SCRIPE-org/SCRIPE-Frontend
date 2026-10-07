@@ -82,16 +82,18 @@ export function ImageUploader({
 
   // Update preview when value changes externally
   React.useEffect(() => {
-    if (value && (value.startsWith("data:image") || value.startsWith("http"))) {
-      setPreview(value);
-      // Get dimensions for display
-      getImageDimensions(value).then((dims: { width: number; height: number } | null) =>
-        setImageDimensions(dims)
-      );
-    } else if (!value) {
-      setPreview(null);
-      setImageDimensions(null);
-    }
+    queueMicrotask(() => {
+      if (value && (value.startsWith("data:image") || value.startsWith("http"))) {
+        setPreview(value);
+        // Get dimensions for display
+        getImageDimensions(value).then((dims: { width: number; height: number } | null) =>
+          setImageDimensions(dims)
+        );
+      } else if (!value) {
+        setPreview(null);
+        setImageDimensions(null);
+      }
+    });
   }, [value]);
 
   const handleFileConversion = useCallback(

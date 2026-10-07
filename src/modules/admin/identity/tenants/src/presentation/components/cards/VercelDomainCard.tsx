@@ -101,7 +101,9 @@ function VercelDomainCardComponent({
 
   // Synchronize when parent passes a new entity reference
   useEffect(() => {
-    setCurrentDomain(domain);
+    queueMicrotask(() => {
+      setCurrentDomain(domain);
+    });
   }, [domain]);
 
   const isChecking = isLocalChecking || Boolean(isVerifying);

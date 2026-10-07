@@ -15,11 +15,21 @@ interface MapTooltipProps {
 
 export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
   const { t } = useI18n();
+  const [dimensions, setDimensions] = React.useState({ width: 600, height: 400 });
+
+  React.useEffect(() => {
+    if (mapStageRef.current) {
+      setDimensions({
+        width: mapStageRef.current.clientWidth,
+        height: mapStageRef.current.clientHeight,
+      });
+    }
+  }, [mapStageRef, hoveredCountry]);
 
   if (!hoveredCountry) return null;
 
-  const left = Math.min(hoveredCountry.x + 12, (mapStageRef.current?.clientWidth ?? 600) - 200);
-  const top = Math.max(12, Math.min(hoveredCountry.y - 30, (mapStageRef.current?.clientHeight ?? 400) - 100));
+  const left = Math.min(hoveredCountry.x + 12, dimensions.width - 200);
+  const top = Math.max(12, Math.min(hoveredCountry.y - 30, dimensions.height - 100));
 
   return (
     <div

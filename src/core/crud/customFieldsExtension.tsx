@@ -410,7 +410,9 @@ export function useCustomFieldsFormFields(
   }, [entityTypeKey, ownerId]);
 
   useEffect(() => {
-    void fetchFields();
+    queueMicrotask(() => {
+      void fetchFields();
+    });
   }, [fetchFields]);
 
   return { fieldConfigs, isLoading, error, refetch: fetchFields };
@@ -559,7 +561,8 @@ export function useCustomFieldColumns(
 
   const fetchColumns = useCallback(async () => {
     const api = getCustomFieldsExtension();
-    if (!entityTypeKey || !api || ownerIds.length === 0) {
+    const targetOwnerIds = ownerIdsKey ? ownerIdsKey.split(",") : [];
+    if (!entityTypeKey || !api || targetOwnerIds.length === 0) {
       setDefinitions([]);
       setValuesByOwnerId({});
       setHiddenKeysByOwnerId({});
@@ -570,7 +573,7 @@ export function useCustomFieldColumns(
     setIsLoading(true);
     setError(null);
     try {
-      const result = await api.getBulkColumnValues(entityTypeKey, ownerIds);
+      const result = await api.getBulkColumnValues(entityTypeKey, targetOwnerIds);
       setDefinitions(result.columns.slice().sort((a, b) => a.sortOrder - b.sortOrder));
       setValuesByOwnerId(result.valuesByOwnerId);
       // Reset to {} rather than left alone when the server sends nothing: a previous page whose rows
@@ -585,13 +588,12 @@ export function useCustomFieldColumns(
     } finally {
       setIsLoading(false);
     }
-    // ownerIdsKey stands in for ownerIds' contents (see above); the array
-    // reference itself is intentionally excluded from these deps.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entityTypeKey, ownerIdsKey]);
 
   useEffect(() => {
-    void fetchColumns();
+    queueMicrotask(() => {
+      void fetchColumns();
+    });
   }, [fetchColumns]);
 
   const columns = useMemo<Column<any>[]>(

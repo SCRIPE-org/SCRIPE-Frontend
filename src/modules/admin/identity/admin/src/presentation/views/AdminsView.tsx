@@ -93,6 +93,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
   const [manualSetupDialogOpen, setManualSetupDialogOpen] = useState(false);
   const [assignToGroupDialogOpen, setAssignToGroupDialogOpen] = useState(false);
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
   // Bulk state
   const [selectedBulkAdminIds, setSelectedBulkAdminIds] = useState<string[]>([]);
@@ -459,8 +460,6 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleBulkDelete,
     ]
   );
-
-  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
   return (
     <>

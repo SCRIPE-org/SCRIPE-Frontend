@@ -101,6 +101,11 @@ export function useLoginViewModel() {
     setTenantIdState(id);
   }, []);
 
+  const isRedirectTriggered = useCallback(() => hasTriggeredRedirect.current, []);
+  const onRedirectTriggered = useCallback(() => {
+    hasTriggeredRedirect.current = true;
+  }, []);
+
   // ── 2FA handler ─────────────────────────────────────────────────────────
   const twoFA = use2FAHandler({
     redirectPath,
@@ -109,7 +114,7 @@ export function useLoginViewModel() {
     tenantId: tenantId,
     setLoginStep,
     setError,
-    hasTriggeredRedirect,
+    onRedirectTriggered,
   });
 
   // ── Workspace selector ────────────────────────────────────────────────────
@@ -122,7 +127,8 @@ export function useLoginViewModel() {
     setLoginStep,
     setError,
     setTenantId,
-    hasTriggeredRedirect,
+    isRedirectTriggered,
+    onRedirectTriggered,
     handleRedirect,
     enterTwoFactor: twoFA.enterTwoFactor,
     onTenantResolved: (id) => {

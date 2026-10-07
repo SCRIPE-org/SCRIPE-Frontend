@@ -124,25 +124,27 @@ export function useSubscriptionsViewModel(tenantId: string) {
 
   // ─── Auto-calculate endDate on type change ────────
   useEffect(() => {
-    const now = new Date();
-    switch (subscriptionType) {
-      case "Monthly":
-        now.setDate(now.getDate() + 30);
-        setEndDate(now.toISOString().split("T")[0]);
-        break;
-      case "Yearly":
-        now.setDate(now.getDate() + 365);
-        setEndDate(now.toISOString().split("T")[0]);
-        break;
-      case "Trial":
-        now.setDate(now.getDate() + 14);
-        setEndDate(now.toISOString().split("T")[0]);
-        break;
-      case "Lifetime":
-      default:
-        setEndDate("");
-        break;
-    }
+    queueMicrotask(() => {
+      const now = new Date();
+      switch (subscriptionType) {
+        case "Monthly":
+          now.setDate(now.getDate() + 30);
+          setEndDate(now.toISOString().split("T")[0]);
+          break;
+        case "Yearly":
+          now.setDate(now.getDate() + 365);
+          setEndDate(now.toISOString().split("T")[0]);
+          break;
+        case "Trial":
+          now.setDate(now.getDate() + 14);
+          setEndDate(now.toISOString().split("T")[0]);
+          break;
+        case "Lifetime":
+        default:
+          setEndDate("");
+          break;
+      }
+    });
   }, [subscriptionType]);
 
   // ─── Mutation helper ─────────────────────────────────
@@ -209,8 +211,10 @@ export function useSubscriptionsViewModel(tenantId: string) {
 
   // Reset promotion when edition or subscription type changes
   useEffect(() => {
-    setSelectedPromotionId(null);
-    setPromoCode("");
+    queueMicrotask(() => {
+      setSelectedPromotionId(null);
+      setPromoCode("");
+    });
   }, [selectedEditionId, subscriptionType]);
 
   // ─── Mutations ──────────────────────────────────────

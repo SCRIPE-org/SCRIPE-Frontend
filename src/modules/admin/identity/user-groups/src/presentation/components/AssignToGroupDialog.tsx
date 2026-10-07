@@ -81,12 +81,14 @@ export function AssignToGroupDialog({
 
   // Initial load when dialog opens + reset on close
   useEffect(() => {
-    if (open) {
-      handleSearchGroups("");
-    } else {
-      setSearchOptions([]);
-      setSelectedGroupIds([]);
-    }
+    queueMicrotask(() => {
+      if (open) {
+        handleSearchGroups("");
+      } else {
+        setSearchOptions([]);
+        setSelectedGroupIds([]);
+      }
+    });
   }, [open, tenantId, useMyTenant, currentUserTenantId]);
 
   const handleSave = () => {

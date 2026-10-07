@@ -88,8 +88,7 @@ export function CommercialHeader({ onSearchOpen, onMobileMenuOpen }: CommercialH
 
   // Close on route change
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    closePanel();
+    queueMicrotask(closePanel);
   }, [pathname, closePanel]);
 
   // Close on Escape, returning focus to the trigger that opened the panel

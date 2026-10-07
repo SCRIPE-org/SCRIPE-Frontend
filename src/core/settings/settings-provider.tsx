@@ -86,7 +86,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const isMergingRef = useRef(false);
 
   // M11: Track which field was last changed (for sync hook's 409 field-level merge)
-  const lastChangedFieldRef = useRef<string | null>(null);
+  const [lastChangedField, setLastChangedField] = useState<string | null>(null);
 
   // ── Merge function ──────────────────────────────────────
 
@@ -122,7 +122,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // ── Initial merge on mount ──────────────────────────────
 
   useEffect(() => {
-    mergeAndApplySettings();
+    queueMicrotask(() => {
+      mergeAndApplySettings();
+    });
   }, [mergeAndApplySettings]);
 
   // ── Re-merge on external events ─────────────────────────
@@ -141,10 +143,12 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isAuthenticated && isHydrated) {
-      isMergingRef.current = true;
-      setSettings(defaultSettings);
       queueMicrotask(() => {
-        isMergingRef.current = false;
+        isMergingRef.current = true;
+        setSettings(defaultSettings);
+        queueMicrotask(() => {
+          isMergingRef.current = false;
+        });
       });
     }
   }, [isAuthenticated, isHydrated]);
@@ -158,12 +162,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       // M11: Include which specific field changed — used by useAdminSettingsSync for 409 merge
       window.dispatchEvent(
         new CustomEvent("settings-changed", {
-          detail: { changedField: lastChangedFieldRef.current },
+          detail: { changedField: lastChangedField },
         })
       );
-      lastChangedFieldRef.current = null;
     }
-  }, [settings, isHydrated, isAuthenticated, autoSave]);
+  }, [settings, isHydrated, isAuthenticated, autoSave, lastChangedField]);
 
   // ── Apply to DOM ────────────────────────────────────────
 
@@ -174,7 +177,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   // ── Generic update function (Gap #14: stable via useCallback) ──
 
   const updateSetting = useCallback(<K extends keyof Settings>(key: K, value: Settings[K]) => {
-    lastChangedFieldRef.current = key;
+    setLastChangedField(key);
     setSettings((prev) => ({ ...prev, [key]: value }));
   }, []);
 
@@ -225,17 +228,22 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   // ── Context value (memoized) ────────────────────────────
 
+  const compatSetters = useMemo(
+    () => createCompatSetters((k, v) => updateSetting(k, v)),
+    [updateSetting]
+  );
+
   const contextValue = useMemo<SettingsContextType>(
     () => ({
       ...settings,
       updateSetting,
-      ...createCompatSetters(updateSetting),
+      ...compatSetters,
       resetSettings,
       exportSettings,
       importSettings,
       overrideControl,
     }),
-    [settings, overrideControl, resetSettings, exportSettings, importSettings, updateSetting]
+    [settings, overrideControl, resetSettings, exportSettings, importSettings, updateSetting, compatSetters]
   );
 
   // isHydrated is always true (synchronous init above) — block kept as safety guard

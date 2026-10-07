@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Progress } from "@core/ui/progress";
-import { RefreshCw, Play, XCircle, AlertCircle, Layers } from "lucide-react";
+import { RefreshCw, Play, XCircle, Layers } from "lucide-react";
 import type { MigrationSession } from "../../domain/entities/MigrationSession";
 
 interface ClusterRewrapCardProps {

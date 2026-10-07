@@ -76,11 +76,15 @@ export function useDropdownManager<TItem>({
           value: getId(item),
           label: getLabel(item),
         }));
-        setPreloadedOptions(options);
+        queueMicrotask(() => {
+          setPreloadedOptions(options);
+        });
       } catch (error) {
         // Silently fail - user will see error when trying to use dropdown
       } finally {
-        setLoading(false);
+        queueMicrotask(() => {
+          setLoading(false);
+        });
       }
     };
 
@@ -90,14 +94,18 @@ export function useDropdownManager<TItem>({
   // Update current option when selectedId changes (for edit mode)
   useEffect(() => {
     if (!selectedId) {
-      setCurrentOption(null);
+      queueMicrotask(() => {
+        setCurrentOption(null);
+      });
       return;
     }
 
     // First check if it's in preloaded options
     const existingOption = preloadedOptions.find((opt) => opt.value === selectedId);
     if (existingOption) {
-      setCurrentOption(existingOption);
+      queueMicrotask(() => {
+        setCurrentOption(existingOption);
+      });
       return;
     }
 
@@ -109,20 +117,26 @@ export function useDropdownManager<TItem>({
             value: getId(item),
             label: getLabel(item),
           };
-          setCurrentOption(option);
-          // Add to preloaded options if not already there
-          setPreloadedOptions((prev) => {
-            if (!prev.find((opt) => opt.value === option.value)) {
-              return [...prev, option];
-            }
-            return prev;
+          queueMicrotask(() => {
+            setCurrentOption(option);
+            // Add to preloaded options if not already there
+            setPreloadedOptions((prev) => {
+              if (!prev.find((opt) => opt.value === option.value)) {
+                return [...prev, option];
+              }
+              return prev;
+            });
           });
         })
         .catch(() => {
-          setCurrentOption(null);
+          queueMicrotask(() => {
+            setCurrentOption(null);
+          });
         });
     } else {
-      setCurrentOption(null);
+      queueMicrotask(() => {
+        setCurrentOption(null);
+      });
     }
   }, [selectedId, preloadedOptions, fetchItemById, getId, getLabel]);
 

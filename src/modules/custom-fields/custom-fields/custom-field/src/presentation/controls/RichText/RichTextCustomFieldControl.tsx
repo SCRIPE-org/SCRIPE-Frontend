@@ -204,18 +204,20 @@ export function RichTextCustomFieldControl({
     // because every keystroke should announce.
     if (zone === lastAnnouncedZoneRef.current) return;
     lastAnnouncedZoneRef.current = zone;
-    if (zone === "over") {
-      setAnnouncement(
-        t("customField.richText.charactersOverLimit", { overBy, max: RICH_TEXT_MAX_CHARACTERS })
-      );
-    } else if (zone === "nearLimit") {
-      setAnnouncement(
-        t("customField.richText.characterCount", { count: length, max: RICH_TEXT_MAX_CHARACTERS })
-      );
-    } else {
-      // Back to safe -- clear the region rather than leave a stale warning in it.
-      setAnnouncement("");
-    }
+    queueMicrotask(() => {
+      if (zone === "over") {
+        setAnnouncement(
+          t("customField.richText.charactersOverLimit", { overBy, max: RICH_TEXT_MAX_CHARACTERS })
+        );
+      } else if (zone === "nearLimit") {
+        setAnnouncement(
+          t("customField.richText.characterCount", { count: length, max: RICH_TEXT_MAX_CHARACTERS })
+        );
+      } else {
+        // Back to safe -- clear the region rather than leave a stale warning in it.
+        setAnnouncement("");
+      }
+    });
   }, [zone, length, overBy, t]);
 
   const counterText =

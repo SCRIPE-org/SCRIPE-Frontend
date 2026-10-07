@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useCallback, useEffect, useId, useState } from "react";
 import { Button } from "@core/ui/button";
@@ -85,11 +84,13 @@ export function OptionSetEditorDialog({
   const optionSetId = optionSet?.id;
   useEffect(() => {
     if (!open) return;
-    setStableKey(optionSet?.stableKey ?? "");
-    setLabelEn(optionSet?.labelEn ?? "");
-    setLabelAr(optionSet?.labelAr ?? "");
-    setDescription(optionSet?.description ?? "");
-    setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
+    queueMicrotask(() => {
+      setStableKey(optionSet?.stableKey ?? "");
+      setLabelEn(optionSet?.labelEn ?? "");
+      setLabelAr(optionSet?.labelAr ?? "");
+      setDescription(optionSet?.description ?? "");
+      setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
+    });
   }, [open, optionSetId, isPlatformContext]);
 
   const effectiveReadOnlyReason: OptionSetEditorReadOnlyReason | null =

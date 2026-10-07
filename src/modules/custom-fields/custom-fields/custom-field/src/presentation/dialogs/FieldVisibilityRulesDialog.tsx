@@ -86,8 +86,10 @@ export function FieldVisibilityRulesDialog({
 
   React.useEffect(() => {
     if (!open) {
-      setIsEditorOpen(false);
-      setEditingRule(null);
+      queueMicrotask(() => {
+        setIsEditorOpen(false);
+        setEditingRule(null);
+      });
     }
   }, [open]);
 

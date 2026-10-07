@@ -342,7 +342,9 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
     if (currentEditionId && !currentSubscriptionType && enabledSubscriptionTypes.length > 0) {
       const firstEnabled = enabledSubscriptionTypes[0]?.value;
       if (firstEnabled) {
-        setForm((prev) => ({ ...prev, subscriptionType: firstEnabled }));
+        queueMicrotask(() => {
+          setForm((prev) => ({ ...prev, subscriptionType: firstEnabled }));
+        });
       }
     }
   }, [currentEditionId, currentSubscriptionType, enabledSubscriptionTypes]);
@@ -377,7 +379,9 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
 
   // Eagerly fetch initial editions on mount so options are available immediately
   useEffect(() => {
-    handleSearchEditions("");
+    queueMicrotask(() => {
+      void handleSearchEditions("");
+    });
   }, [handleSearchEditions]);
 
   // ── Step validation ──

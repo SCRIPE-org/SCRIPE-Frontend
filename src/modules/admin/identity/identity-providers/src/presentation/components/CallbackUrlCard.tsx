@@ -33,14 +33,15 @@ export function CallbackUrlCard({ protocol, providerId }: Props) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOrigin(window.location.origin);
+      queueMicrotask(() => {
+        setOrigin(window.location.origin);
 
-      let apiVal = process.env.NEXT_PUBLIC_API_URL || "/api";
-      if (apiVal.startsWith("/")) {
-        apiVal = `${window.location.origin}${apiVal}`;
-      }
-      setApiOrigin(apiVal);
+        let apiVal = process.env.NEXT_PUBLIC_API_URL || "/api";
+        if (apiVal.startsWith("/")) {
+          apiVal = `${window.location.origin}${apiVal}`;
+        }
+        setApiOrigin(apiVal);
+      });
     }
   }, []);
 

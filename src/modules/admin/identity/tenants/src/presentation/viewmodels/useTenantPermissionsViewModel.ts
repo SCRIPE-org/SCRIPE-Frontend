@@ -102,25 +102,28 @@ export function useTenantPermissionsDialog({
   // useEffect prevents the React render-body setState anti-pattern.
   useEffect(() => {
     if (!open) {
-      setSearch("");
-      setSelectedCodes(new Set());
-      setExpandedModules(new Set());
-      setExpandedGroups({});
-      setInitializedTenantId(null);
+      queueMicrotask(() => {
+        setSearch("");
+        setSelectedCodes(new Set());
+        setExpandedModules(new Set());
+        setExpandedGroups({});
+        setInitializedTenantId(null);
+      });
     }
   }, [open]);
 
   // ── Reset when the target tenant changes while dialog is open ──
   useEffect(() => {
     if (open && tenantId) {
-      setSearch("");
-      setSelectedCodes(new Set());
-      setExpandedModules(new Set());
-      setExpandedGroups({});
-      setInitializedTenantId(null);
+      queueMicrotask(() => {
+        setSearch("");
+        setSelectedCodes(new Set());
+        setExpandedModules(new Set());
+        setExpandedGroups({});
+        setInitializedTenantId(null);
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tenantId]);
+  }, [open, tenantId]);
 
   // ── Fetch PARENT's available permissions GROUPED from backend ──
   // Uses Repository (Clean Architecture), NOT direct service calls.
@@ -191,8 +194,6 @@ export function useTenantPermissionsDialog({
     const tenantCodes = tenantPermissions.map((p) => p.code);
     const selectedFromTenant = tenantCodes.filter((code: string) => validCodes.has(code));
 
-    setSelectedCodes(new Set(selectedFromTenant));
-
     // Auto-expand accordion categories that have selected permissions.
     // Key format matches AccordionItem value: `${module}-${category}`.
     const groupsWithSelection = new Set<string>();
@@ -212,9 +213,13 @@ export function useTenantPermissionsDialog({
       perModuleExpanded[mod] = [...(perModuleExpanded[mod] ?? []), key];
       modulesWithSelection.add(mod);
     });
-    setExpandedModules(new Set(modulesWithSelection));
-    setExpandedGroups(perModuleExpanded);
-    setInitializedTenantId(tenantId);
+
+    queueMicrotask(() => {
+      setSelectedCodes(new Set(selectedFromTenant));
+      setExpandedModules(new Set(modulesWithSelection));
+      setExpandedGroups(perModuleExpanded);
+      setInitializedTenantId(tenantId);
+    });
   }, [open, tenantId, allPermissions, tenantPermissions, loadingTenant, initializedTenantId]);
 
   // Save mutation — uses repository for write operations

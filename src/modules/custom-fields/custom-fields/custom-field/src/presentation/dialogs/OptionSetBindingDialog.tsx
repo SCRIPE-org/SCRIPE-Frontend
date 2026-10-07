@@ -77,7 +77,11 @@ export function OptionSetBindingDialog({
   const [selectedSetId, setSelectedSetId] = React.useState<string | null>(null);
   const boundSetId = boundSet?.id ?? null;
   React.useEffect(() => {
-    if (open) setSelectedSetId(boundSetId);
+    if (open) {
+      queueMicrotask(() => {
+        setSelectedSetId(boundSetId);
+      });
+    }
   }, [open, boundSetId]);
 
   const selectedSet = bindableSets.find((set) => set.id === selectedSetId) ?? null;

@@ -344,7 +344,9 @@ export function useAdminSettingsSync() {
   // ── Initial load on authentication & token availability ──
   useEffect(() => {
     if (isAuthenticated && hasToken) {
-      loadAdminSettings();
+      queueMicrotask(() => {
+        loadAdminSettings();
+      });
     }
   }, [isAuthenticated, hasToken, loadAdminSettings]);
 

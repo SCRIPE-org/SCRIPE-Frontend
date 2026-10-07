@@ -109,7 +109,9 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
   useEffect(() => {
     if (!isAuthenticated || !user || !hasToken) {
       if (!isAuthenticated || !user) {
-        setIsLoading(false);
+        queueMicrotask(() => {
+          setIsLoading(false);
+        });
       }
       return;
     }

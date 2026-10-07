@@ -11,8 +11,6 @@
  */
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { useState, useCallback, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -148,7 +146,9 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
       moduleGroups.forEach((mg) => {
         keys.add(`module:${mg.module}`);
       });
-      setExpandedKeys(keys);
+      queueMicrotask(() => {
+        setExpandedKeys(keys);
+      });
     }
   }, [moduleGroups]);
 
@@ -182,9 +182,11 @@ export function useRoleDetailViewModel(roleIdOverride?: string) {
     });
 
     appLogger.debug("Initialized assignments map size:", newAssignments.size);
-    setAssignments(newAssignments);
-    setIsDirty(false);
-    setInitializedRoleId(roleId);
+    queueMicrotask(() => {
+      setAssignments(newAssignments);
+      setIsDirty(false);
+      setInitializedRoleId(roleId);
+    });
   }, [roleId, rolePermissions, rolePermissionsLoading, initializedRoleId]);
 
   // Helper: flatten all permissions from module groups (for save payload)

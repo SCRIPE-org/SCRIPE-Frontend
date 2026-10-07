@@ -847,22 +847,24 @@ export function GenericForm({
   // Bailing out on the no-op keeps that loop closed even if a caller rebuilds
   // `fields` or `initialValues` on every render.
   React.useEffect(() => {
-    setFormData((prevData) => {
-      let added = false;
-      const preservedData = { ...prevData };
-      fields.forEach((field) => {
-        // Only set default/initial value if this field has NO value yet
-        if (preservedData[field.name] === undefined) {
-          if (field.defaultValue !== undefined) {
-            preservedData[field.name] = field.defaultValue;
-            added = true;
-          } else if (initialValues[field.name] !== undefined) {
-            preservedData[field.name] = initialValues[field.name];
-            added = true;
+    queueMicrotask(() => {
+      setFormData((prevData) => {
+        let added = false;
+        const preservedData = { ...prevData };
+        fields.forEach((field) => {
+          // Only set default/initial value if this field has NO value yet
+          if (preservedData[field.name] === undefined) {
+            if (field.defaultValue !== undefined) {
+              preservedData[field.name] = field.defaultValue;
+              added = true;
+            } else if (initialValues[field.name] !== undefined) {
+              preservedData[field.name] = initialValues[field.name];
+              added = true;
+            }
           }
-        }
+        });
+        return added ? preservedData : prevData;
       });
-      return added ? preservedData : prevData;
     });
   }, [fields, initialValues]);
 

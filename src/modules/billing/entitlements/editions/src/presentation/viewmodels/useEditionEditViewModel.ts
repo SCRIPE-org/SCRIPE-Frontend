@@ -28,26 +28,28 @@ export function useEditionEditViewModel(editionId: string) {
   // Pre-populate form when edition loads
   useEffect(() => {
     if (!edition) return;
-    setForm({
-      name: edition.name,
-      displayNameEn: edition.displayNameEn,
-      displayNameAr: edition.displayNameAr,
-      description: edition.description ?? "",
-      tagline: edition.tagline ?? "",
-      recommendationLabels: edition.recommendationLabels.join(", "),
-      overflowPolicy: edition.overflowPolicy,
-      tierLevel: edition.tierLevel,
-      allowMonthly: edition.allowMonthly,
-      allowYearly: edition.allowYearly,
-      allowLifetime: edition.allowLifetime,
-      allowTrial: edition.allowTrial,
-      trialDurationDays: edition.trialDurationDays,
-      trialIsFree: edition.trialIsFree,
-      trialDiscountPercent: edition.trialDiscountPercent,
-      gracePeriodDays: edition.gracePeriodDays,
-      maxActiveSubscriptions: edition.maxActiveSubscriptions,
-      isSelfServiceEnabled: edition.isSelfServiceEnabled,
-      isContactSalesOnly: edition.isContactSalesOnly,
+    queueMicrotask(() => {
+      setForm({
+        name: edition.name,
+        displayNameEn: edition.displayNameEn,
+        displayNameAr: edition.displayNameAr,
+        description: edition.description ?? "",
+        tagline: edition.tagline ?? "",
+        recommendationLabels: edition.recommendationLabels.join(", "),
+        overflowPolicy: edition.overflowPolicy,
+        tierLevel: edition.tierLevel,
+        allowMonthly: edition.allowMonthly,
+        allowYearly: edition.allowYearly,
+        allowLifetime: edition.allowLifetime,
+        allowTrial: edition.allowTrial,
+        trialDurationDays: edition.trialDurationDays,
+        trialIsFree: edition.trialIsFree,
+        trialDiscountPercent: edition.trialDiscountPercent,
+        gracePeriodDays: edition.gracePeriodDays,
+        maxActiveSubscriptions: edition.maxActiveSubscriptions,
+        isSelfServiceEnabled: edition.isSelfServiceEnabled,
+        isContactSalesOnly: edition.isContactSalesOnly,
+      });
     });
   }, [edition]);
 

@@ -78,7 +78,9 @@ function RecipientSearchInput({
   // A highlighted index from a previous keystroke must never survive into a
   // result set it no longer indexes into.
   React.useEffect(() => {
-    setActiveIndex(-1);
+    queueMicrotask(() => {
+      setActiveIndex(-1);
+    });
   }, [search, results]);
 
   const noResults = search.length >= 2 && !isSearching && results.length === 0;

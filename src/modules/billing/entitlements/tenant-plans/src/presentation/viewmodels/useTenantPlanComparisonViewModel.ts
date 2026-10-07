@@ -14,7 +14,6 @@
  */
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-render */
 
 import { useMemo, useState } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
@@ -240,18 +239,14 @@ export function useTenantPlanComparisonViewModel() {
       if (plan.allowLifetime) cycles.add("Lifetime");
     });
 
-    // Ensure "Monthly" is default if available and nothing is explicitly selected
-    const sortedCycles = Array.from(cycles);
-    if (!cycles.has(selectedCycle) && sortedCycles.length > 0) {
-      if (cycles.has("Monthly")) {
-        setSelectedCycle("Monthly");
-      } else {
-        setSelectedCycle(sortedCycles[0]);
-      }
-    }
+    return Array.from(cycles);
+  }, [plans]);
 
-    return sortedCycles;
-  }, [plans, selectedCycle]);
+  const effectiveCycle = useMemo(() => {
+    if (availableCycles.includes(selectedCycle)) return selectedCycle;
+    if (availableCycles.includes("Monthly")) return "Monthly";
+    return availableCycles[0] ?? selectedCycle;
+  }, [availableCycles, selectedCycle]);
 
   return {
     plans,
@@ -260,7 +255,7 @@ export function useTenantPlanComparisonViewModel() {
     totalFeatureCount,
     isLoading,
     isEmpty: !isLoading && plans.length === 0,
-    selectedCycle,
+    selectedCycle: effectiveCycle,
     setSelectedCycle,
     availableCycles,
     error,

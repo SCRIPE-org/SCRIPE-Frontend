@@ -111,7 +111,9 @@ export function useOAuthConsentViewModel(): OAuthConsentViewModelResult {
     hasAttemptedRefresh.current = true;
 
     if (secureTokenService.hasToken()) {
-      setIsRestoringSession(false);
+      queueMicrotask(() => {
+        setIsRestoringSession(false);
+      });
       return;
     }
 

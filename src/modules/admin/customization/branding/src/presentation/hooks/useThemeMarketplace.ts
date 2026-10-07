@@ -247,12 +247,16 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
 
   // ── Auto-load on filter/page/tab change ──
   useEffect(() => {
-    loadThemes();
+    queueMicrotask(() => {
+      void loadThemes();
+    });
   }, [loadThemes]);
 
   // ── Load featured on mount ──
   useEffect(() => {
-    loadFeatured();
+    queueMicrotask(() => {
+      void loadFeatured();
+    });
   }, [loadFeatured]);
 
   return {
