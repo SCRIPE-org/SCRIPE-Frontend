@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ResourcesWorkspaceView } from "./ResourcesWorkspaceView";
 import { useResourcesWorkspaceViewModel } from "../viewmodels/useResourcesWorkspaceViewModel";
+import { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
 
 vi.mock("next/navigation", () => ({
   useSearchParams: vi.fn().mockReturnValue(new URLSearchParams()),
@@ -51,7 +52,7 @@ describe("ResourcesWorkspaceView", () => {
       error: null,
       items: mockItems,
       allItems: mockItems,
-      facilities: [{ id: "fac-1", name: "Nasr City", code: "NASR", venueProfileId: "" }],
+      facilities: [new Facility({ id: "fac-1", name: "Nasr City", code: "NASR", venueProfileId: "", createdAt: "2026-01-01" })],
       selectedFacilityId: "",
       setSelectedFacilityId: vi.fn(),
       searchQuery: "",

@@ -13,15 +13,19 @@ interface MapTooltipProps {
   mapStageRef?: React.RefObject<HTMLDivElement | null>;
 }
 
-export function MapTooltip({ hoveredCountry }: MapTooltipProps) {
+export function MapTooltip({ hoveredCountry, mapStageRef }: MapTooltipProps) {
   const { t } = useI18n();
   const [dimensions, setDimensions] = React.useState({ width: 600, height: 400 });
 
   React.useEffect(() => {
-    if (mapStageRef.current) {
-      setDimensions({
-        width: mapStageRef.current.clientWidth,
-        height: mapStageRef.current.clientHeight,
+    if (mapStageRef?.current) {
+      queueMicrotask(() => {
+        if (mapStageRef.current) {
+          setDimensions({
+            width: mapStageRef.current.clientWidth,
+            height: mapStageRef.current.clientHeight,
+          });
+        }
       });
     }
   }, [mapStageRef, hoveredCountry]);

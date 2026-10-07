@@ -244,11 +244,15 @@ describe("useResourceDetailViewModel", () => {
     );
 
     const blockToDelete = {
+      id: "block-1",
       resourceId: "res-1",
-      startLocal: "2026-10-10T10:00:00",
-      endLocal: "2026-10-10T12:00:00",
+      startUtc: "2026-10-10T10:00:00Z",
+      endUtc: "2026-10-10T12:00:00Z",
+      timeZoneId: "UTC",
       reason: "Glass polishing",
       hardBlock: true,
+      version: 1,
+      createdAt: "2026-10-01T00:00:00Z",
     };
 
     let delSuccess = false;
