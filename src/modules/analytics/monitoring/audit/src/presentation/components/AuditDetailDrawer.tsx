@@ -3,23 +3,16 @@
 import React, { useState, useMemo } from "react";
 import {
   AlertOctagon,
-  ArrowRight,
   Check,
   CheckCircle2,
   Clock,
   Code2,
   Copy,
-  ExternalLink,
   Eye,
   FileDiff,
   Globe,
   Hash,
   Layers,
-  Monitor,
-  Shield,
-  ShieldAlert,
-  Terminal,
-  Timer,
   User,
   XCircle,
 } from "lucide-react";

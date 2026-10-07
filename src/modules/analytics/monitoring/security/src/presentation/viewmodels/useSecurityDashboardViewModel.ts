@@ -16,7 +16,6 @@ import type {
   SecurityAttentionSignal,
   SecurityPolicyPosture,
   AuthMethodPosture,
-  ActiveSession,
 } from "../../domain/entities/SecurityEntities";
 
 export type SecurityTimeRange = "24h" | "7d" | "30d";

@@ -1,7 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useSecurityDashboardViewModel } from "./useSecurityDashboardViewModel";
-import { monitoringContainer } from "@modules/monitoring/di";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 vi.mock("@modules/monitoring/di", () => ({

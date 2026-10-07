@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { Globe, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { Globe } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import {
   PlatformActivityMapProps,

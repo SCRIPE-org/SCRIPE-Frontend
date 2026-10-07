@@ -67,15 +67,13 @@ export function PlatformKpiCards({
             </span>
             <div className="flex items-baseline gap-2 mt-0.5">
               <span className="text-2xl font-bold tracking-tight text-foreground font-mono">
-                {isLoading ? "..." : (totalTenants > 0 ? totalTenants.toLocaleString() : "347")}
+                {isLoading ? "..." : totalTenants.toLocaleString()}
               </span>
               <span className="text-[10.5px] font-bold truncate text-emerald-500">
-                {totalTenants > 0
-                  ? t("platformCommandCenter.kpis.activeTenantsRatio", {
-                      active: activeTenants,
-                      total: totalTenants,
-                    }) || `${activeTenants} active · ${totalTenants} total`
-                  : "↑ +12% vs. last 24h"}
+                {t("platformCommandCenter.kpis.activeTenantsRatio", {
+                  active: activeTenants,
+                  total: totalTenants,
+                }) || `${activeTenants} active · ${totalTenants} total`}
               </span>
             </div>
           </div>
@@ -113,14 +111,14 @@ export function PlatformKpiCards({
             </span>
             <div className="flex items-baseline gap-2 mt-0.5">
               <span className="text-2xl font-bold tracking-tight text-foreground font-mono">
-                {isLoading ? "..." : (overallHealth !== "100%" ? overallHealth : "99.98%")}
+                {isLoading ? "..." : overallHealth}
               </span>
               <span
                 className={`text-[10.5px] font-bold truncate ${
                   degradedCount === 0 ? "text-emerald-500" : "text-amber-500"
                 }`}
               >
-                {degradedCount === 0 ? "↑ +0.01% uptime (30d)" : `${degradedCount} degraded`}
+                {degradedCount === 0 ? "" : `${degradedCount} degraded`}
               </span>
             </div>
           </div>
@@ -157,15 +155,13 @@ export function PlatformKpiCards({
             </span>
             <div className="flex items-baseline gap-2 mt-0.5">
               <span className="text-2xl font-bold tracking-tight text-foreground font-mono">
-                {isLoading ? "..." : (totalAdmins > 0 ? (activeAdmins > 0 ? activeAdmins.toLocaleString() : totalAdmins.toLocaleString()) : "128")}
+                {isLoading ? "..." : (activeAdmins > 0 ? activeAdmins.toLocaleString() : totalAdmins.toLocaleString())}
               </span>
               <span className="text-[10.5px] font-bold truncate text-emerald-500">
-                {totalAdmins > 0
-                  ? t("platformCommandCenter.kpis.activeAdminsRatio", {
-                      active: activeAdmins,
-                      total: totalAdmins,
-                    }) || `${activeAdmins} active · ${totalAdmins} total`
-                  : "↑ +8% vs. yesterday"}
+                {t("platformCommandCenter.kpis.activeAdminsRatio", {
+                  active: activeAdmins,
+                  total: totalAdmins,
+                }) || `${activeAdmins} active · ${totalAdmins} total`}
               </span>
             </div>
           </div>
@@ -203,7 +199,7 @@ export function PlatformKpiCards({
             </span>
             <div className="flex items-baseline gap-2 mt-0.5">
               <span className="text-2xl font-bold tracking-tight text-foreground font-mono">
-                {isLoading ? "..." : (securityIncidents > 0 ? securityIncidents : (degradedCount > 0 ? degradedCount : 2))}
+                {isLoading ? "..." : (securityIncidents > 0 ? securityIncidents : degradedCount)}
               </span>
               <span
                 className={`text-[10.5px] font-bold truncate ${
@@ -212,7 +208,7 @@ export function PlatformKpiCards({
               >
                 {securityIncidents > 0
                   ? t("platformCommandCenter.kpis.securityWarning", { count: securityIncidents }) || `${securityIncidents} failed login attempts`
-                  : "↑ +1 requires attention"}
+                  : ""}
               </span>
             </div>
           </div>

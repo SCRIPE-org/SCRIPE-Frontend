@@ -4,7 +4,6 @@ import React from "react";
 import {
   Calendar,
   Download,
-  Filter,
   Globe,
   Layers,
   RotateCw,

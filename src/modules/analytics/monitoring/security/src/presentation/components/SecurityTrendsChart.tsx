@@ -10,7 +10,7 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@core/ui/chart";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from "recharts";
 import { Activity } from "lucide-react";
 import { formatDateUtc } from "@core/common/utils";
 import type { LoginActivityPoint } from "../../domain/entities/SecurityEntities";

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { AlertTriangle, ChevronRight, Info } from "lucide-react";
+import { AlertTriangle, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { AttentionAlertItem, AlertCategory } from "../../viewmodels/usePlatformCommandCenterViewModel";
@@ -15,71 +15,14 @@ interface PlatformNeedsAttentionProps {
   alerts?: AttentionAlertItem[];
 }
 
-const DEFAULT_COMMAND_CENTER_ALERTS: AttentionAlertItem[] = [
-  {
-    id: "att-1",
-    category: "critical",
-    icon: AlertTriangle,
-    iconTheme: "destructive",
-    title: "EU Region - Elevated Error Rate",
-    subtitle: "API error rate at 2.8% (threshold 1%)",
-    timeAgo: "12 min ago",
-    href: "/platform-health",
-  },
-  {
-    id: "att-2",
-    category: "critical",
-    icon: AlertTriangle,
-    iconTheme: "destructive",
-    title: "Payment Service Degradation",
-    subtitle: "Invoice processing delayed",
-    timeAgo: "28 min ago",
-    href: "/platform-health",
-  },
-  {
-    id: "att-3",
-    category: "warning",
-    icon: AlertTriangle,
-    iconTheme: "warning",
-    title: "Tenant Storage Usage High",
-    subtitle: "3 tenants above 90% storage limit",
-    timeAgo: "1 hour ago",
-    href: "/analytics",
-  },
-  {
-    id: "att-4",
-    category: "warning",
-    icon: AlertTriangle,
-    iconTheme: "warning",
-    title: "Failed Webhook Deliveries",
-    subtitle: "12 webhooks retrying",
-    timeAgo: "2 hours ago",
-    href: "/audit",
-  },
-  {
-    id: "att-5",
-    category: "info",
-    icon: Info,
-    iconTheme: "info",
-    title: "New Tenant Registration Spike",
-    subtitle: "24 new tenants in the last hour",
-    timeAgo: "3 hours ago",
-    href: "/tenants",
-  },
-];
-
 export function PlatformNeedsAttention({
-  summary,
-  healthVm,
-  isLoading = false,
   alerts: propAlerts,
 }: PlatformNeedsAttentionProps) {
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<AlertCategory>("all");
 
-  // If alerts are passed from ViewModel and not empty use them, otherwise use command center alerts
   const alerts: AttentionAlertItem[] = useMemo(() => {
-    return propAlerts && propAlerts.length > 0 ? propAlerts : DEFAULT_COMMAND_CENTER_ALERTS;
+    return propAlerts && propAlerts.length > 0 ? propAlerts : [];
   }, [propAlerts]);
 
   const counts = useMemo(() => {

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { AlertCircle, ChevronRight, CheckCircle2, AlertTriangle, ShieldCheck } from "lucide-react";
+import { AlertCircle, ChevronRight } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { HealthIncident } from "../../domain/entities/PlatformHealth";
 

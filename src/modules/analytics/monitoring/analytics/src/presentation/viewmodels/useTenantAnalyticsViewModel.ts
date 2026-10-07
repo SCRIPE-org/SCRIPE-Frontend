@@ -17,7 +17,6 @@ import type {
   ActivityDistributionItem,
   EditionDistributionItem,
   FeatureAdoptionItem,
-  TenantAnalyticsListItem,
 } from "../../domain/entities/AnalyticsEntities";
 
 export type TimeRangeOption = "7d" | "30d" | "90d" | "12m";

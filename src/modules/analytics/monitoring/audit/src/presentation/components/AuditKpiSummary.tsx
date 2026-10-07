@@ -6,7 +6,6 @@ import {
   ArrowDownRight,
   ArrowUpRight,
   Database,
-  Layers,
   Server,
   ShieldAlert,
   ShieldCheck,

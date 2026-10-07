@@ -24,13 +24,8 @@ import { ErrorMessage } from "@core/ui/error-message";
 import { EmptyState } from "@core/ui/empty-state";
 import {
   CheckCircle2,
-  Clock,
   Eye,
   FileText,
-  Globe,
-  Layers,
-  Shield,
-  User,
   XCircle,
 } from "lucide-react";
 import { cn, formatDateTimeUtc } from "@core/common/utils";

@@ -2,7 +2,6 @@
 
 import React from "react";
 import {
-  Activity,
   Calendar,
   ExternalLink,
   RotateCw,

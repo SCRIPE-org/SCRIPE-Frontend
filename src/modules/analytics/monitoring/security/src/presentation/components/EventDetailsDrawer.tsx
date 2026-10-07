@@ -14,7 +14,6 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Separator } from "@core/ui/separator";
 import {
-  ShieldAlert,
   Check,
   Copy,
   ExternalLink,

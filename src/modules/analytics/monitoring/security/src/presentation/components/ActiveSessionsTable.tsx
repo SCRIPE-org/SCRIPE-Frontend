@@ -8,7 +8,7 @@ import { Button } from "@core/ui/button";
 import { SectionState } from "@core/ui/section-state";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { ConfirmationDialog } from "@core/ui/confirmation-dialog";
-import { Laptop, Monitor, Smartphone, Globe, Shield, LogOut } from "lucide-react";
+import { Laptop, Monitor, Smartphone, Globe, LogOut } from "lucide-react";
 import { formatDateTimeUtc } from "@core/common/utils";
 import type { ActiveSession } from "../../domain/entities/SecurityEntities";
 
