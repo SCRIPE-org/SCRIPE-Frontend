@@ -12,15 +12,10 @@ import type { PlatformHealth, ModuleHealth } from "@modules/monitoring/platform-
 import type { RegionNodeInfo } from "../components/platform-command-center/PlatformActivityMap";
 import {
   AlertTriangle,
-  TrendingUp,
   Database,
-  Lock,
-  Award,
-  ShieldCheck,
   Shield,
   UserPlus,
   RefreshCw,
-  Activity,
   HardDrive,
   Cpu,
 } from "lucide-react";

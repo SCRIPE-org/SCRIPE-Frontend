@@ -1,15 +1,11 @@
 "use client";
 
-/**
- * Audit Filter Panel
- *
- * Filter bar for audit log table — grouped event types, date range, user, entity type, status.
- */
 import { memo } from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Input } from "@core/ui/input";
 import { DatePicker } from "@core/ui/date-picker";
 import { Button } from "@core/ui/button";
+import { Badge } from "@core/ui/badge";
 import {
   Select,
   SelectContent,
@@ -19,23 +15,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@core/ui/select";
-import { Search, X, Filter } from "lucide-react";
-import type { AuditFilterState } from "../viewmodels/useAuditViewModel";
+import { Search, X, Filter, Calendar, Hash, User } from "lucide-react";
+import type { AuditFilterState, DatePreset } from "../viewmodels/useAuditViewModel";
 
 interface Props {
   filters: AuditFilterState;
   updateFilter: <K extends keyof AuditFilterState>(key: K, value: AuditFilterState[K]) => void;
+  setDatePreset: (preset: DatePreset) => void;
   resetFilters: () => void;
   hasActiveFilters: boolean;
+  activeFilterCount: number;
 }
 
-// ─── Event & entity types — the single source of truth ───────────────
-// These mirror the backend's own AuditEventType / EntityType enums (the
-// `eventType` / `entityType` filter values are the literal API payload keys,
-// never re-labelled). Every SelectItem the panel renders is derived from
-// these enum values — nothing is hand-listed a second time — so a new member
-// added here always reaches the dropdown and goes through t(), instead of a
-// hand-maintained array silently drifting from the real value set.
 enum AuditEventType {
   Create = "Create",
   Update = "Update",
@@ -80,9 +71,6 @@ enum EntityType {
   AuditLog = "AuditLog",
 }
 
-// Grouping is presentation metadata only — it re-uses the enum members above
-// rather than re-typing the string values, so it can never fall out of sync
-// with the type. A member with no group still renders, under "Other" (below).
 const EVENT_TYPE_GROUPS: { key: string; members: AuditEventType[] }[] = [
   {
     key: "crud",
@@ -145,8 +133,6 @@ const EVENT_TYPE_GROUPS: { key: string; members: AuditEventType[] }[] = [
   },
 ];
 
-// Anything in the enum that no group above claims yet — derived at runtime,
-// so a future enum addition lands here automatically instead of vanishing.
 const GROUPED_EVENT_TYPES = new Set<AuditEventType>(EVENT_TYPE_GROUPS.flatMap((g) => g.members));
 const UNGROUPED_EVENT_TYPES = Object.values(AuditEventType).filter(
   (type) => !GROUPED_EVENT_TYPES.has(type)
@@ -154,84 +140,141 @@ const UNGROUPED_EVENT_TYPES = Object.values(AuditEventType).filter(
 
 const ENTITY_TYPES = Object.values(EntityType);
 
-/**
- * Exported constant defining parameters and fields for audit filter panel configurations.
- */
+const DATE_PRESETS: Array<{ key: DatePreset; label: string }> = [
+  { key: "all", label: "All Time" },
+  { key: "today", label: "Today" },
+  { key: "24h", label: "24h" },
+  { key: "7d", label: "7d" },
+  { key: "30d", label: "30d" },
+  { key: "custom", label: "Custom" },
+];
+
 export const AuditFilterPanel = memo(function AuditFilterPanel({
   filters,
   updateFilter,
+  setDatePreset,
   resetFilters,
   hasActiveFilters,
+  activeFilterCount,
 }: Props) {
   const { t } = useI18n();
 
   return (
-    <div className="space-y-4">
-      {/* Search Row */}
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <div className="relative flex-1">
+    <div className="space-y-3.5">
+      {/* Row 1: Search & Date Presets */}
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        {/* Free-text Search */}
+        <div className="relative flex-1 min-w-[260px]">
           <Search
-            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-nx-ink-3"
+            className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
             aria-hidden="true"
           />
           <Input
-            placeholder={t("audit.filters.searchPlaceholder")}
+            placeholder={
+              t("audit.filters.searchPlaceholder") ||
+              "Search by username, entity, endpoint, or IP..."
+            }
             value={filters.search}
             onChange={(e) => updateFilter("search", e.target.value)}
-            className="ps-9"
+            className="ps-9 pe-8 h-9 text-xs"
           />
+          {filters.search && (
+            <button
+              type="button"
+              onClick={() => updateFilter("search", "")}
+              className="absolute end-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
         </div>
-        <div className="flex gap-2">
-          <DatePicker
-            id="audit-date-from"
-            placeholder={t("audit.filters.dateFrom")}
-            value={filters.dateFrom}
-            onChange={(v) => updateFilter("dateFrom", v)}
-            className="w-44"
-          />
-          <DatePicker
-            id="audit-date-to"
-            placeholder={t("audit.filters.dateTo")}
-            value={filters.dateTo}
-            onChange={(v) => updateFilter("dateTo", v)}
-            className="w-44"
-          />
+
+        {/* Date Presets Pill Group */}
+        <div className="flex flex-wrap items-center gap-1.5 bg-muted/40 p-1 rounded-lg border border-border/60">
+          <Calendar className="h-3.5 w-3.5 text-muted-foreground ms-1.5 me-0.5 shrink-0" />
+          {DATE_PRESETS.map((p) => {
+            const isActive = filters.datePreset === p.key;
+            return (
+              <Button
+                key={p.key}
+                type="button"
+                variant={isActive ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setDatePreset(p.key)}
+                className={`h-7 px-2.5 text-xs font-semibold cursor-pointer ${
+                  isActive
+                    ? "bg-card text-foreground shadow-2xs font-bold border border-border/80"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t(`audit.filters.presets.${p.key}`) || p.label}
+              </Button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Filter Row */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1 text-sm text-nx-ink-2">
-          <Filter className="h-4 w-4" aria-hidden="true" />
-          <span>{t("common.filter")}</span>
+      {/* Optional Custom Date Range Row */}
+      {filters.datePreset === "custom" && (
+        <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-md bg-accent/20 border border-border/60">
+          <span className="text-xs font-semibold text-muted-foreground">
+            {t("audit.filters.customRange") || "Custom Range"}:
+          </span>
+          <DatePicker
+            id="audit-date-from"
+            placeholder={t("audit.filters.dateFrom") || "From (UTC)"}
+            value={filters.dateFrom}
+            onChange={(v) => updateFilter("dateFrom", v)}
+            className="w-44 h-8 text-xs"
+          />
+          <span className="text-xs text-muted-foreground">→</span>
+          <DatePicker
+            id="audit-date-to"
+            placeholder={t("audit.filters.dateTo") || "To (UTC)"}
+            value={filters.dateTo}
+            onChange={(v) => updateFilter("dateTo", v)}
+            className="w-44 h-8 text-xs"
+          />
+        </div>
+      )}
+
+      {/* Row 2: Faceted Select Filters & Clear Button */}
+      <div className="flex flex-wrap items-center gap-2.5 pt-1 border-t border-border/40">
+        <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground me-1">
+          <Filter className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
+          <span>{t("common.filter") || "Filters"}</span>
         </div>
 
-        {/* Event Type — Grouped */}
+        {/* 1. Event Type Dropdown */}
         <Select
           value={filters.eventType || "all"}
           onValueChange={(v) => updateFilter("eventType", v === "all" ? "" : v)}
         >
-          <SelectTrigger className="w-52">
-            <SelectValue placeholder={t("audit.filters.eventType")} />
+          <SelectTrigger className="w-44 h-8 text-xs">
+            <SelectValue placeholder={t("audit.filters.eventType") || "Event Type"} />
           </SelectTrigger>
           <SelectContent className="max-h-72">
-            <SelectItem value="all">{t("audit.filters.allEvents")}</SelectItem>
+            <SelectItem value="all">{t("audit.filters.allEvents") || "All Events"}</SelectItem>
             {EVENT_TYPE_GROUPS.map((group) => (
               <SelectGroup key={group.key}>
-                <SelectLabel>{t(`audit.filters.groups.${group.key}`)}</SelectLabel>
+                <SelectLabel className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {t(`audit.filters.groups.${group.key}`) || group.key}
+                </SelectLabel>
                 {group.members.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {t(`audit.eventTypes.${type}`)}
+                  <SelectItem key={type} value={type} className="text-xs">
+                    {t(`audit.eventTypes.${type}`) || type}
                   </SelectItem>
                 ))}
               </SelectGroup>
             ))}
             {UNGROUPED_EVENT_TYPES.length > 0 && (
               <SelectGroup>
-                <SelectLabel>{t("audit.filters.groups.other")}</SelectLabel>
+                <SelectLabel className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                  {t("audit.filters.groups.other") || "Other"}
+                </SelectLabel>
                 {UNGROUPED_EVENT_TYPES.map((type) => (
-                  <SelectItem key={type} value={type}>
-                    {t(`audit.eventTypes.${type}`)}
+                  <SelectItem key={type} value={type} className="text-xs">
+                    {t(`audit.eventTypes.${type}`) || type}
                   </SelectItem>
                 ))}
               </SelectGroup>
@@ -239,54 +282,99 @@ export const AuditFilterPanel = memo(function AuditFilterPanel({
           </SelectContent>
         </Select>
 
-        {/* Username */}
-        <Input
-          placeholder={t("audit.filters.username")}
-          value={filters.username}
-          onChange={(e) => updateFilter("username", e.target.value)}
-          className="w-40"
-        />
-
-        {/* Entity Type — Dropdown */}
+        {/* 2. Entity Type Dropdown */}
         <Select
           value={filters.entityType || "all"}
           onValueChange={(v) => updateFilter("entityType", v === "all" ? "" : v)}
         >
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder={t("audit.filters.entityType")} />
+          <SelectTrigger className="w-36 h-8 text-xs">
+            <SelectValue placeholder={t("audit.filters.entityType") || "Entity Type"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("audit.filters.allEntities")}</SelectItem>
+            <SelectItem value="all">{t("audit.filters.allEntities") || "All Entities"}</SelectItem>
             {ENTITY_TYPES.map((type) => (
-              <SelectItem key={type} value={type}>
-                {t(`audit.entityTypes.${type}`)}
+              <SelectItem key={type} value={type} className="text-xs">
+                {t(`audit.entityTypes.${type}`) || type}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
 
-        {/* Status Filter */}
+        {/* 3. Execution Status */}
         <Select
           value={filters.isSuccess === undefined ? "all" : filters.isSuccess ? "success" : "failed"}
           onValueChange={(v) =>
             updateFilter("isSuccess", v === "all" ? undefined : v === "success")
           }
         >
-          <SelectTrigger className="w-32">
-            <SelectValue placeholder={t("audit.filters.status")} />
+          <SelectTrigger className="w-32 h-8 text-xs">
+            <SelectValue placeholder={t("audit.filters.status") || "Status"} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">{t("audit.filters.allStatus")}</SelectItem>
-            <SelectItem value="success">{t("audit.filters.success")}</SelectItem>
-            <SelectItem value="failed">{t("audit.filters.failed")}</SelectItem>
+            <SelectItem value="all">{t("audit.filters.allStatus") || "All Status"}</SelectItem>
+            <SelectItem value="success" className="text-xs text-emerald-500 font-medium">
+              ✓ {t("audit.filters.success") || "Success"}
+            </SelectItem>
+            <SelectItem value="failed" className="text-xs text-rose-500 font-medium">
+              ✕ {t("audit.filters.failed") || "Failed"}
+            </SelectItem>
           </SelectContent>
         </Select>
 
-        {/* Reset */}
+        {/* 4. Username Filter */}
+        <div className="relative w-36">
+          <User className="pointer-events-none absolute start-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder={t("audit.filters.username") || "Username"}
+            value={filters.username}
+            onChange={(e) => updateFilter("username", e.target.value)}
+            className="ps-7 h-8 text-xs"
+          />
+          {filters.username && (
+            <button
+              type="button"
+              onClick={() => updateFilter("username", "")}
+              className="absolute end-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+
+        {/* 5. Correlation ID Filter */}
+        <div className="relative w-36">
+          <Hash className="pointer-events-none absolute start-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder={t("audit.filters.correlationId") || "Trace ID"}
+            value={filters.correlationId}
+            onChange={(e) => updateFilter("correlationId", e.target.value)}
+            className="ps-7 h-8 text-xs font-mono"
+          />
+          {filters.correlationId && (
+            <button
+              type="button"
+              onClick={() => updateFilter("correlationId", "")}
+              className="absolute end-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <X className="h-3 w-3" />
+            </button>
+          )}
+        </div>
+
+        {/* Reset Active Filters Button */}
         {hasActiveFilters && (
-          <Button variant="ghost" size="sm" onClick={resetFilters} className="gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={resetFilters}
+            className="h-8 px-2.5 text-xs text-muted-foreground hover:text-foreground gap-1 cursor-pointer ms-auto"
+          >
             <X className="h-3.5 w-3.5" aria-hidden="true" />
-            {t("audit.filters.reset")}
+            <span>{t("audit.filters.reset") || "Reset"}</span>
+            <Badge variant="secondary" className="ms-1 h-4 px-1 text-[10px] tabular-nums">
+              {activeFilterCount}
+            </Badge>
           </Button>
         )}
       </div>

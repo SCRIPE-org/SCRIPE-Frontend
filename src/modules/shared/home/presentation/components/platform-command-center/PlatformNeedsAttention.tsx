@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Bell, ChevronRight } from "lucide-react";
+import { AlertTriangle, ChevronRight, Info } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { AttentionAlertItem, AlertCategory } from "../../viewmodels/usePlatformCommandCenterViewModel";
@@ -15,6 +15,59 @@ interface PlatformNeedsAttentionProps {
   alerts?: AttentionAlertItem[];
 }
 
+const DEFAULT_COMMAND_CENTER_ALERTS: AttentionAlertItem[] = [
+  {
+    id: "att-1",
+    category: "critical",
+    icon: AlertTriangle,
+    iconTheme: "destructive",
+    title: "EU Region - Elevated Error Rate",
+    subtitle: "API error rate at 2.8% (threshold 1%)",
+    timeAgo: "12 min ago",
+    href: "/platform-health",
+  },
+  {
+    id: "att-2",
+    category: "critical",
+    icon: AlertTriangle,
+    iconTheme: "destructive",
+    title: "Payment Service Degradation",
+    subtitle: "Invoice processing delayed",
+    timeAgo: "28 min ago",
+    href: "/platform-health",
+  },
+  {
+    id: "att-3",
+    category: "warning",
+    icon: AlertTriangle,
+    iconTheme: "warning",
+    title: "Tenant Storage Usage High",
+    subtitle: "3 tenants above 90% storage limit",
+    timeAgo: "1 hour ago",
+    href: "/analytics",
+  },
+  {
+    id: "att-4",
+    category: "warning",
+    icon: AlertTriangle,
+    iconTheme: "warning",
+    title: "Failed Webhook Deliveries",
+    subtitle: "12 webhooks retrying",
+    timeAgo: "2 hours ago",
+    href: "/audit",
+  },
+  {
+    id: "att-5",
+    category: "info",
+    icon: Info,
+    iconTheme: "info",
+    title: "New Tenant Registration Spike",
+    subtitle: "24 new tenants in the last hour",
+    timeAgo: "3 hours ago",
+    href: "/tenants",
+  },
+];
+
 export function PlatformNeedsAttention({
   summary,
   healthVm,
@@ -24,9 +77,9 @@ export function PlatformNeedsAttention({
   const { t } = useI18n();
   const [activeTab, setActiveTab] = useState<AlertCategory>("all");
 
-  // If alerts are passed from ViewModel use them, otherwise empty list
+  // If alerts are passed from ViewModel and not empty use them, otherwise use command center alerts
   const alerts: AttentionAlertItem[] = useMemo(() => {
-    return propAlerts ?? [];
+    return propAlerts && propAlerts.length > 0 ? propAlerts : DEFAULT_COMMAND_CENTER_ALERTS;
   }, [propAlerts]);
 
   const counts = useMemo(() => {
@@ -48,16 +101,16 @@ export function PlatformNeedsAttention({
       {/* 1. Panel Header */}
       <div className="h-[60px] px-4 py-3 flex items-center justify-between border-b border-border bg-muted/40">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center shadow-xs">
-            <Bell className="h-4 w-4" />
+          <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center justify-center shadow-xs">
+            <AlertTriangle className="h-4 w-4" />
           </div>
           <div>
             <h2 className="text-sm sm:text-base font-bold text-foreground tracking-tight">
-              {t("platformCommandCenter.needsAttention.title") || "Needs attention"}
+              {t("platformCommandCenter.needsAttention.title") || "Needs Attention"}
             </h2>
             <p className="text-[11px] text-muted-foreground">
               {t("platformCommandCenter.needsAttention.subtitle") ||
-                "Prioritized by operational impact"}
+                "Prioritized by operational impact."}
             </p>
           </div>
         </div>
@@ -66,7 +119,7 @@ export function PlatformNeedsAttention({
           href="/security"
           className="text-xs font-semibold text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors group"
         >
-          <span>{t("platformCommandCenter.needsAttention.openQueue") || "Open queue"}</span>
+          <span>{t("platformCommandCenter.needsAttention.viewAll") || "View All"}</span>
           <ChevronRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>

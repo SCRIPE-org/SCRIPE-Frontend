@@ -7,8 +7,9 @@ const SecurityDashboardView = dynamic(() =>
 );
 
 export const metadata: Metadata = {
-  title: "Security Monitor",
-  description: "Real-time security monitoring and threat detection",
+  title: "Security",
+  description:
+    "Monitor authentication posture, active access, and security activity across the SCRIPE platform.",
 };
 
 export default function SecurityPage() {

@@ -10,6 +10,9 @@ import type {
   AnalyticsSummary,
   DistributionData,
   ComparisonDataPoint,
+  SubscriptionAnalytics,
+  TenantAnalyticsListItem,
+  FeatureModuleGroup,
 } from "../../domain/entities/AnalyticsEntities";
 import { AnalyticsMapper } from "../mappers/AnalyticsMapper";
 import { ANALYTICS_ENDPOINTS } from "../services/analytics.endpoints";
@@ -36,5 +39,27 @@ export class AnalyticsRepository implements IAnalyticsRepository {
   async getLoginActivity(days?: number): Promise<ComparisonDataPoint[]> {
     const dtos = await this.service.getLoginActivity(days);
     return dtos.map(AnalyticsMapper.toComparisonDataPoint);
+  }
+
+  async getSubscriptions(): Promise<SubscriptionAnalytics> {
+    const dto = await this.service.getSubscriptions();
+    return AnalyticsMapper.toSubscriptionAnalytics(dto);
+  }
+
+  async getTenants(
+    search?: string,
+    page: number = 1,
+    pageSize: number = 100
+  ): Promise<{ items: TenantAnalyticsListItem[]; totalCount: number }> {
+    const dto = await this.service.getTenants(search, page, pageSize);
+    return {
+      items: (dto.items ?? []).map(AnalyticsMapper.toTenantListItem),
+      totalCount: dto.totalCount ?? 0,
+    };
+  }
+
+  async getGroupedFeatures(): Promise<FeatureModuleGroup[]> {
+    const dtos = await this.service.getGroupedFeatures();
+    return (dtos ?? []).map(AnalyticsMapper.toFeatureModuleGroup);
   }
 }

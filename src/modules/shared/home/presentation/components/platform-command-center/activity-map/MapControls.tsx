@@ -5,7 +5,6 @@ import { RotateCcw, Plus, Minus } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { EnrichedCountryData } from "./types";
-import { MapTelemetryCard } from "./MapTelemetryCard";
 import type { DashboardSummary, RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 import type { usePlatformHealthViewModel } from "@modules/monitoring/platform-health/src/presentation/viewmodels/usePlatformHealthViewModel";
 
@@ -73,7 +72,7 @@ export function MapControls({
               }
             }
           }}
-          className="h-7 px-2 rounded-lg border border-border bg-card/85 text-[11px] text-foreground backdrop-blur-md outline-none hover:border-primary/40 transition-colors max-w-[170px]"
+          className="h-7 px-2 rounded-lg border border-border bg-card/85 text-[11px] text-foreground backdrop-blur-md outline-none hover:border-primary/40 transition-colors max-w-[150px]"
         >
           <option value="">
             {t("platformCommandCenter.activity.globalView") || "Global view"}
@@ -108,10 +107,7 @@ export function MapControls({
         </Button>
       </div>
 
-      {/* 3. Floating Live Telemetry Card (Top Right below controls) */}
-      <MapTelemetryCard summary={summary} recentActivity={recentActivity} healthVm={healthVm} />
-
-      {/* 4. Bottom Legend (Bottom Left) */}
+      {/* 3. Bottom Legend (Bottom Left) */}
       <div className="absolute left-3 bottom-3 z-10 flex items-center gap-3 px-2.5 py-1.5 rounded-lg border border-border bg-card/85 backdrop-blur-md text-[9.5px] text-muted-foreground font-medium">
         <span className="flex items-center gap-1.5">
           <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_6px_rgba(198,255,0,0.6)]"></span>
@@ -127,8 +123,8 @@ export function MapControls({
         </span>
       </div>
 
-      {/* 5. Zoom In/Out Buttons (Bottom Right) */}
-      <div className="absolute right-3 sm:right-[185px] bottom-3 z-10 flex items-center gap-1">
+      {/* 4. Zoom In/Out Buttons (Bottom Right) */}
+      <div className="absolute right-3 bottom-3 z-10 flex items-center gap-1">
         <Button
           variant="outline"
           size="icon"

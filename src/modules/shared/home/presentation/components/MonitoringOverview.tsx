@@ -1,54 +1,38 @@
 "use client";
 
-import type { ReactNode } from "react";
+import React from "react";
 import Link from "next/link";
 import {
   Activity,
   Building2,
-  RefreshCw,
+  Calendar,
+  ChevronRight,
+  RotateCw,
   ScrollText,
-  ShieldAlert,
   ShieldCheck,
-  Users,
+  Sparkles,
 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@core/ui/dropdown-menu";
 import type { usePlatformCommandCenterViewModel } from "../viewmodels/usePlatformCommandCenterViewModel";
+import { PlatformKpiCards } from "./platform-command-center/PlatformKpiCards";
+import { PlatformActivityMap } from "./platform-command-center/PlatformActivityMap";
+import { PlatformNeedsAttention } from "./platform-command-center/PlatformNeedsAttention";
+import { PlatformRecentActivity } from "./platform-command-center/PlatformRecentActivity";
+import { PlatformServiceHealth } from "./platform-command-center/PlatformServiceHealth";
 
 type CommandCenter = ReturnType<typeof usePlatformCommandCenterViewModel>;
-
-function formatWhen(
-  timestamp: string,
-  t: ReturnType<typeof useI18n>["t"]
-) {
-  const diffMs = Date.now() - new Date(timestamp).getTime();
-  if (Number.isNaN(diffMs) || diffMs < 60_000) return t("platformCommandCenter.monitoringOverview.justNow");
-  const mins = Math.floor(diffMs / 60_000);
-  if (mins < 60) return t("platformCommandCenter.monitoringOverview.minutesAgo", { count: mins });
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return t("platformCommandCenter.monitoringOverview.hoursAgo", { count: hours });
-  return t("platformCommandCenter.monitoringOverview.daysAgo", { count: Math.floor(hours / 24) });
-}
-
-function SectionError({ onRetry }: { onRetry: () => void }) {
-  const { t } = useI18n();
-  return (
-    <div className="flex items-center justify-between gap-3 text-sm text-muted-foreground">
-      <span>{t("platformCommandCenter.monitoringOverview.sectionError")}</span>
-      <Button type="button" variant="outline" size="sm" onClick={onRetry}>
-        {t("platformCommandCenter.monitoringOverview.retry")}
-      </Button>
-    </div>
-  );
-}
 
 export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
   const { t } = useI18n();
   const summary = vm.summary;
   const health = vm.health;
-  const summaryError = vm.overviewVm.summary.isError;
-  const activityError = vm.overviewVm.recentActivity.isError;
-  const healthError = Boolean(vm.healthVm.error);
 
   const degraded =
     (health?.isDegraded ?? false) ||
@@ -56,325 +40,236 @@ export function MonitoringOverview({ vm }: { vm: CommandCenter }) {
     health?.infrastructure?.database?.isConnected === false;
 
   const statusLabel = !health
-    ? t("platformCommandCenter.monitoringOverview.unknown")
+    ? t("platformCommandCenter.monitoringOverview.unknown") || "Status unavailable"
     : degraded
-      ? t("platformCommandCenter.monitoringOverview.degraded")
-      : t("platformCommandCenter.monitoringOverview.operational");
+      ? t("platformCommandCenter.monitoringOverview.degraded") || "Platform needs attention"
+      : t("platformCommandCenter.monitoringOverview.operational") || "All Systems Operational";
 
-  const inactiveTenants =
-    summary != null ? Math.max(0, summary.totalTenants - summary.activeTenants) : null;
+  const ranges = [
+    {
+      key: "last24Hours",
+      label: t("platformCommandCenter.timeRanges.last24Hours") || "Last 24 hours",
+    },
+    {
+      key: "last7Days",
+      label: t("platformCommandCenter.timeRanges.last7Days") || "Last 7 days",
+    },
+    {
+      key: "last30Days",
+      label: t("platformCommandCenter.timeRanges.last30Days") || "Last 30 days",
+    },
+  ];
+
+  const currentRangeLabel =
+    ranges.find((r) => r.key === vm.timeRangeKey)?.label ?? ranges[0].label;
 
   return (
-    <div className="mx-auto max-w-[1280px] space-y-4 pb-8">
-      <header className="flex flex-col gap-4 border-b border-border pb-4 lg:flex-row lg:items-end lg:justify-between">
+    <div className="w-full space-y-4 pb-8 select-none">
+      {/* ── 1. Page Header matching Command Center ────────────────────────── */}
+      <header className="flex flex-col gap-4 border-b border-border/80 pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-primary">
-            {t("platformCommandCenter.monitoringOverview.eyebrow")}
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
+            {t("platformCommandCenter.monitoringOverview.eyebrow") || "MONITORING"}
           </p>
-          <h1 className="mt-1 text-2xl font-semibold tracking-tight text-foreground">
-            {t("platformCommandCenter.monitoringOverview.title")}
+          <h1 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
+            {t("platformCommandCenter.monitoringOverview.title") || "Platform Overview"}
           </h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-            {t("platformCommandCenter.monitoringOverview.subtitle")}
+          <p className="mt-1 max-w-2xl text-xs sm:text-sm text-muted-foreground">
+            {t("platformCommandCenter.monitoringOverview.subtitle") ||
+              "Real-time visibility into platform operations, tenant activity, and system signals across SCRIPE."}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm">
+
+        {/* Header Right Actions */}
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Operational State Pill */}
+          <span className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium shadow-xs">
             <span
-              className={`h-2 w-2 rounded-full ${degraded ? "bg-amber-500" : health ? "bg-primary" : "bg-muted-foreground"}`}
+              className={`h-2 w-2 rounded-full ${
+                degraded
+                  ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"
+                  : health
+                  ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"
+                  : "bg-muted-foreground"
+              }`}
               aria-hidden="true"
             />
-            {statusLabel}
+            <span className="text-foreground">{statusLabel}</span>
           </span>
-          {vm.isLive ? (
-            <span className="text-xs text-muted-foreground">
-              {t("platformCommandCenter.monitoringOverview.live")}
+
+          {/* Live Data Indicator */}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={vm.toggleLive}
+            title={vm.isLive ? "Telemetry live stream active" : "Telemetry stream paused"}
+            className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card text-muted-foreground hover:text-foreground shadow-xs cursor-pointer"
+          >
+            <Sparkles className="h-3.5 w-3.5 text-primary" />
+            <span>{t("platformCommandCenter.liveData") || "Live Data"}</span>
+          </Button>
+
+          {/* Time Range Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8.5 px-3 text-xs font-semibold gap-2 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+              >
+                <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
+                <span>{currentRangeLabel}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44 bg-popover border-border shadow-xl">
+              {ranges.map((r) => (
+                <DropdownMenuItem
+                  key={r.key}
+                  onClick={() => vm.setTimeRangeKey(r.key)}
+                  className={`text-xs cursor-pointer ${
+                    vm.timeRangeKey === r.key
+                      ? "font-semibold text-primary bg-primary/10"
+                      : "text-popover-foreground"
+                  }`}
+                >
+                  {r.label}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Live Status Pill */}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={vm.toggleLive}
+            className={`h-8.5 px-3 text-xs font-semibold gap-2 border shadow-xs cursor-pointer transition-colors ${
+              vm.isLive
+                ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-500 hover:bg-emerald-500/20"
+                : "bg-muted/50 border-border text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            {vm.isLive ? (
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.75)]" />
+              </span>
+            ) : (
+              <span className="h-2 w-2 rounded-full bg-muted-foreground" />
+            )}
+            <span>
+              {vm.isLive
+                ? t("platformCommandCenter.monitoringOverview.live") || "Live"
+                : t("platformCommandCenter.monitoringOverview.paused") || "Paused"}
             </span>
-          ) : null}
-          <Button type="button" variant="outline" size="sm" onClick={() => vm.refetchAll()} disabled={vm.isRefreshing}>
-            <RefreshCw className={`me-1.5 h-3.5 w-3.5 ${vm.isRefreshing ? "animate-spin" : ""}`} />
-            {t("platformCommandCenter.monitoringOverview.refresh")}
+          </Button>
+
+          {/* Refresh Button */}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => vm.refetchAll()}
+            disabled={vm.isRefreshing}
+            className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+          >
+            <RotateCw className={`h-3.5 w-3.5 text-muted-foreground ${vm.isRefreshing ? "animate-spin text-primary" : ""}`} />
+            <span>{t("platformCommandCenter.monitoringOverview.refresh") || "Refresh"}</span>
           </Button>
         </div>
       </header>
 
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Kpi
-          label={t("platformCommandCenter.monitoringOverview.tenants")}
-          value={summaryError ? "—" : String(vm.kpis.totalTenants)}
-          hint={
-            summary
-              ? t("platformCommandCenter.kpis.activeTenantsRatio", {
-                  active: summary.activeTenants,
-                  total: summary.totalTenants,
-                })
-              : undefined
-          }
-          icon={Building2}
-          loading={vm.isLoading && !summary}
-          emphasize
-        />
-        <Kpi
-          label={t("platformCommandCenter.monitoringOverview.admins")}
-          value={summaryError ? "—" : String(vm.kpis.totalAdmins)}
-          hint={
-            summary
-              ? t("platformCommandCenter.kpis.activeAdminsRatio", {
-                  active: summary.activeAdmins,
-                  total: summary.totalAdmins,
-                })
-              : undefined
-          }
-          icon={Users}
-          loading={vm.isLoading && !summary}
-        />
-        <Kpi
-          label={t("platformCommandCenter.monitoringOverview.failedLogins")}
-          value={summaryError ? "—" : String(vm.kpis.failedLogins24h)}
-          hint={t("platformCommandCenter.monitoringOverview.failedLoginsHint")}
-          icon={ShieldAlert}
-          href="/security"
-          loading={vm.isLoading && !summary}
-        />
-        <Kpi
-          label={t("platformCommandCenter.kpis.serviceHealth")}
-          value={healthError ? "—" : vm.kpis.overallHealthStatus}
-          hint={health ? vm.kpis.overallHealthScore : undefined}
-          icon={Activity}
-          href="/platform-health"
-          loading={vm.healthVm.isLoading && !health}
+      {/* ── 2. Top KPI Strip (4 cards matching image.png) ───────────────────── */}
+      <section>
+        <PlatformKpiCards
+          summary={summary}
+          healthVm={vm.healthVm}
+          isLoading={vm.isLoading}
+          kpis={vm.kpis}
         />
       </section>
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <Panel title={t("platformCommandCenter.monitoringOverview.statusTitle")}>
-          {healthError ? (
-            <SectionError onRetry={() => vm.healthVm.refetch()} />
-          ) : (
-            <>
-              <p className="text-sm text-muted-foreground">
-                {health
-                  ? degraded
-                    ? t("platformCommandCenter.monitoringOverview.statusDegradedBody")
-                    : t("platformCommandCenter.monitoringOverview.statusHealthyBody")
-                  : t("platformCommandCenter.monitoringOverview.statusUnknownBody")}
-              </p>
-              {health?.infrastructure ? (
-                <dl className="mt-4 space-y-2 text-sm">
-                  <Signal
-                    label={t("platformCommandCenter.monitoringOverview.database")}
-                    ok={health.infrastructure.database?.isConnected === true}
-                    detail={
-                      health.infrastructure.database?.latencyMs != null
-                        ? `${health.infrastructure.database.latencyMs} ms`
-                        : undefined
-                    }
-                  />
-                  <Signal
-                    label={t("platformCommandCenter.monitoringOverview.cache")}
-                    ok={health.infrastructure.redis?.isConnected === true}
-                    detail={health.infrastructure.redis?.mode}
-                  />
-                  {health.modules ? (
-                    <Signal
-                      label={t("platformCommandCenter.monitoringOverview.modules")}
-                      ok={vm.kpis.degradedCount === 0}
-                      detail={`${health.modules.length - vm.kpis.degradedCount}/${health.modules.length}`}
-                    />
-                  ) : null}
-                </dl>
-              ) : null}
-              <Link href="/platform-health" className="mt-4 inline-block text-sm text-primary">
-                {t("platformCommandCenter.monitoringOverview.viewHealth")}
-              </Link>
-            </>
-          )}
-        </Panel>
+      {/* ── 3. Middle Section: Global Tenant Activity + Needs Attention ─────── */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+        {/* Global Tenant Activity (World Map + Regional Metrics) */}
+        <div className="lg:col-span-7 xl:col-span-8">
+          <PlatformActivityMap
+            summary={summary}
+            recentActivity={vm.recentChanges}
+            loginActivity={vm.loginActivity}
+            healthVm={vm.healthVm}
+            regionNodes={vm.regionNodes}
+            isLoading={vm.isLoading}
+          />
+        </div>
 
-        <Panel title={t("platformCommandCenter.monitoringOverview.attentionTitle")}>
-          {summaryError && healthError ? (
-            <SectionError onRetry={() => vm.refetchAll()} />
-          ) : vm.attentionAlerts.length === 0 ? (
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                {t("platformCommandCenter.monitoringOverview.noIssues")}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("platformCommandCenter.monitoringOverview.noIssuesBody")}
-              </p>
-            </div>
-          ) : (
-            <ul className="space-y-3">
-              {vm.attentionAlerts.map((alert) => (
-                <li key={alert.id}>
-                  <Link href={alert.href} className="block">
-                    <p className="text-sm font-medium text-foreground">{alert.title}</p>
-                    <p className="text-xs text-muted-foreground">{alert.subtitle}</p>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Panel>
-      </div>
+        {/* Needs Attention Alert Queue */}
+        <div className="lg:col-span-5 xl:col-span-4">
+          <PlatformNeedsAttention
+            summary={summary}
+            healthVm={vm.healthVm}
+            isLoading={vm.isLoading}
+            alerts={vm.attentionAlerts}
+          />
+        </div>
+      </section>
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
-        <Panel
-          title={t("platformCommandCenter.monitoringOverview.activityTitle")}
-          action={
-            <Link href="/audit" className="text-xs text-primary">
-              {t("platformCommandCenter.monitoringOverview.viewAudit")}
-            </Link>
-          }
-        >
-          {activityError ? (
-            <SectionError onRetry={() => vm.overviewVm.recentActivity.refetch()} />
-          ) : vm.recentChanges.length === 0 ? (
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                {t("platformCommandCenter.monitoringOverview.noActivity")}
-              </p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("platformCommandCenter.monitoringOverview.noActivityBody")}
-              </p>
-            </div>
-          ) : (
-            <ul className="space-y-3">
-              {vm.recentChanges.slice(0, 6).map((event) => (
-                <li key={event.id} className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm text-foreground">
-                      {event.entityType ? `${event.eventType} · ${event.entityType}` : event.eventType}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {event.username || event.endpoint || "—"}
-                    </p>
-                  </div>
-                  <time className="shrink-0 text-xs text-muted-foreground">
-                    {formatWhen(event.timestamp, t)}
-                  </time>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Panel>
+      {/* ── 4. Lower Section: Recent Platform Activity + Platform Services Health ─ */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-3.5 items-start">
+        {/* Recent Platform Activity Table */}
+        <PlatformRecentActivity
+          activityData={vm.recentChanges}
+          isLoading={vm.isLoading}
+        />
 
-        <Panel title={t("platformCommandCenter.monitoringOverview.footprintTitle")}>
-          {summaryError ? (
-            <SectionError onRetry={() => vm.overviewVm.summary.refetch()} />
-          ) : (
-            <dl className="grid grid-cols-2 gap-3">
-              <Foot label={t("platformCommandCenter.monitoringOverview.tenants")} value={vm.kpis.totalTenants} />
-              <Foot label={t("platformCommandCenter.monitoringOverview.active")} value={vm.kpis.activeTenants} />
-              <Foot
-                label={t("platformCommandCenter.monitoringOverview.inactive")}
-                value={inactiveTenants ?? 0}
-              />
-              {vm.regionNodes.length > 0 ? (
-                <Foot
-                  label={t("platformCommandCenter.monitoringOverview.regions")}
-                  value={vm.regionNodes.length}
-                />
-              ) : null}
-            </dl>
-          )}
-        </Panel>
-      </div>
+        {/* Platform Services Health List */}
+        <PlatformServiceHealth healthVm={vm.healthVm} />
+      </section>
 
-      <section>
-        <h2 className="mb-3 text-sm font-medium text-foreground">
-          {t("platformCommandCenter.monitoringOverview.exploreTitle")}
-        </h2>
+      {/* ── 5. Bottom Section: Explore Monitoring Specialized Surfaces ────── */}
+      <section className="pt-2">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-sm font-bold text-foreground tracking-tight">
+            {t("platformCommandCenter.monitoringOverview.exploreTitle") || "Explore Monitoring"}
+          </h2>
+          <span className="text-[11px] text-muted-foreground">
+            Specialized platforms & investigation surfaces
+          </span>
+        </div>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <Dest href="/platform-health" title={t("platformCommandCenter.monitoringOverview.healthTitle")} body={t("platformCommandCenter.monitoringOverview.healthBody")} icon={Activity} />
-          <Dest href="/analytics" title={t("platformCommandCenter.monitoringOverview.analyticsTitle")} body={t("platformCommandCenter.monitoringOverview.analyticsBody")} icon={Building2} />
-          <Dest href="/audit" title={t("platformCommandCenter.monitoringOverview.auditTitle")} body={t("platformCommandCenter.monitoringOverview.auditBody")} icon={ScrollText} />
-          <Dest href="/security" title={t("platformCommandCenter.monitoringOverview.securityTitle")} body={t("platformCommandCenter.monitoringOverview.securityBody")} icon={ShieldCheck} />
+          <ExploreDestination
+            href="/platform-health"
+            title={t("platformCommandCenter.monitoringOverview.healthTitle") || "Health"}
+            body={t("platformCommandCenter.monitoringOverview.healthBody") || "System health, dependencies and operational checks"}
+            icon={Activity}
+          />
+          <ExploreDestination
+            href="/analytics"
+            title={t("platformCommandCenter.monitoringOverview.analyticsTitle") || "Tenant Analytics"}
+            body={t("platformCommandCenter.monitoringOverview.analyticsBody") || "Tenant-level usage and activity analysis"}
+            icon={Building2}
+          />
+          <ExploreDestination
+            href="/audit"
+            title={t("platformCommandCenter.monitoringOverview.auditTitle") || "Audit Log"}
+            body={t("platformCommandCenter.monitoringOverview.auditBody") || "Searchable operational and administrative activity history"}
+            icon={ScrollText}
+          />
+          <ExploreDestination
+            href="/security"
+            title={t("platformCommandCenter.monitoringOverview.securityTitle") || "Security"}
+            body={t("platformCommandCenter.monitoringOverview.securityBody") || "Security events, access activity and security signals"}
+            icon={ShieldCheck}
+          />
         </div>
       </section>
     </div>
   );
 }
 
-function Kpi({
-  label,
-  value,
-  hint,
-  icon: Icon,
-  href,
-  loading,
-  emphasize,
-}: {
-  label: string;
-  value: string;
-  hint?: string;
-  icon: typeof Activity;
-  href?: string;
-  loading?: boolean;
-  emphasize?: boolean;
-}) {
-  const body = (
-    <div className={`rounded-lg border bg-card p-4 ${emphasize ? "border-primary/40" : "border-border"}`}>
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <Icon className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-      </div>
-      {loading ? (
-        <div className="mt-3 h-7 w-16 animate-pulse rounded bg-muted" />
-      ) : (
-        <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{value}</p>
-      )}
-      {hint ? <p className="mt-1 truncate text-xs text-muted-foreground">{hint}</p> : null}
-    </div>
-  );
-  return href ? <Link href={href}>{body}</Link> : body;
-}
-
-function Panel({
-  title,
-  children,
-  action,
-}: {
-  title: string;
-  children: ReactNode;
-  action?: ReactNode;
-}) {
-  return (
-    <section className="rounded-lg border border-border bg-card p-4">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-sm font-medium text-foreground">{title}</h2>
-        {action}
-      </div>
-      {children}
-    </section>
-  );
-}
-
-function Signal({ label, ok, detail }: { label: string; ok: boolean; detail?: string }) {
-  const { t } = useI18n();
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <dt className="text-muted-foreground">{label}</dt>
-      <dd className="text-end text-foreground">
-        {ok
-          ? t("platformCommandCenter.monitoringOverview.operationalSignal")
-          : t("platformCommandCenter.monitoringOverview.unavailable")}
-        {detail ? <span className="ms-2 text-muted-foreground">{detail}</span> : null}
-      </dd>
-    </div>
-  );
-}
-
-function Foot({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-md border border-border px-3 py-2">
-      <dt className="text-xs text-muted-foreground">{label}</dt>
-      <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{value}</dd>
-    </div>
-  );
-}
-
-function Dest({
+function ExploreDestination({
   href,
   title,
   body,
@@ -383,13 +278,30 @@ function Dest({
   href: string;
   title: string;
   body: string;
-  icon: typeof Activity;
+  icon: React.ComponentType<{ className?: string }>;
 }) {
   return (
-    <Link href={href} className="rounded-lg border border-border bg-card p-4 hover:border-primary/40">
-      <Icon className="h-4 w-4 text-primary" aria-hidden="true" />
-      <p className="mt-3 text-sm font-medium text-foreground">{title}</p>
-      <p className="mt-1 text-xs text-muted-foreground">{body}</p>
+    <Link
+      href={href}
+      className="group rounded-xl border border-border bg-card p-4 hover:border-primary/40 hover:bg-muted/30 transition-all flex flex-col justify-between shadow-xs"
+    >
+      <div className="flex items-center justify-between">
+        <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center group-hover:scale-105 transition-transform">
+          <Icon className="h-4 w-4" />
+        </div>
+        <span className="text-[10px] text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-0.5">
+          <span>Open</span>
+          <ChevronRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+        </span>
+      </div>
+      <div className="mt-3">
+        <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+          {title}
+        </p>
+        <p className="mt-1 text-xs text-muted-foreground line-clamp-2">
+          {body}
+        </p>
+      </div>
     </Link>
   );
 }
