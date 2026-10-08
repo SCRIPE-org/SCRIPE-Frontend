@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports, unused-imports/no-unused-vars */
 const { chromium } = require('@playwright/test');
 
 (async () => {

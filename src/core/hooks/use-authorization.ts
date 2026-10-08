@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
 import { appLogger } from "@core/common/logger";

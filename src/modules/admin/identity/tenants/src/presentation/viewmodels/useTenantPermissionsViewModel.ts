@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions, unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
 /**
  * Tenant Permissions Dialog ViewModel

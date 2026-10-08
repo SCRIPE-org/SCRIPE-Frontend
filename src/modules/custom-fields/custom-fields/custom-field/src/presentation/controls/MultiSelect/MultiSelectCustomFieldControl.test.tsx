@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // MultiSelectCustomFieldControl -- Wave 3.1 Task 11
 //
 // Mirrors renderCustomFieldControl.test.tsx's own mocking/polyfill

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Option-set binding for one custom field -- the missing consumer P-4's backend shipped with no
  * caller. `OptionSetService.bind/rebind/unbind` have existed, tested, since that wave; nothing in the

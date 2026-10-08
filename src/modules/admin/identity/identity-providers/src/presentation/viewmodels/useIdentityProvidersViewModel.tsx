@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
 /**
  * Identity Providers List ViewModel

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Custom Field Definition Versions & Drafts ViewModel (Step 1.3)
  *

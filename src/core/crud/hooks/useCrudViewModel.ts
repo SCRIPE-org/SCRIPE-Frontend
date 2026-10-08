@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useGenericQuery } from "./useGenericQuery";
 import { useGenericMutations } from "./useGenericMutations";

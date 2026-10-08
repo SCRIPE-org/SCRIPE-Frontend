@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // InlineAddCustomFieldDialog -- non-modal container (Wave 5 row 5.6)
 //
 // Design spec §5.4 / pre-plan analysis R2, R3: this dialog used to be a bare

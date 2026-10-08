@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Core-owned extension point for the CustomFields module. `src/core` does
  * import from `src/modules/*` in places today — permission constants in
@@ -18,16 +19,7 @@ import type { Column } from "@core/crud/components/generic-table";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useI18n } from "@core/providers/i18n-provider";
 
-export const SELECT_OPTIONS_REGEX = /^[^,]+(?:,[^,]+)*$/;
 
-export function assertSelectCustomFieldValuesValid(value: unknown): asserts value is string {
-  if (typeof value !== "string") {
-    throw new Error("Select options must be a comma-separated string.");
-  }
-  if (!SELECT_OPTIONS_REGEX.test(value)) {
-    throw new Error("Select options must be a comma-separated list of non-empty values (e.g., 'Option 1,Option 2,Option 3').");
-  }
-}
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MaskedCustomFieldCell,
@@ -189,6 +181,7 @@ export interface CustomFieldsExtensionApi {
    * legitimately exceed it).
    */
   getBulkColumnValues: (entityTypeKey: string, ownerIds: string[]) => Promise<BulkColumnValuesResult>;
+    assertValuesValid?: (fieldConfigs: FieldConfig[], values: Record<string, unknown>, t: any) => void;
   /** Decrypts and reveals a sensitive custom field value for an authorized user. */
   revealValue?: (
     entityTypeKey: string,

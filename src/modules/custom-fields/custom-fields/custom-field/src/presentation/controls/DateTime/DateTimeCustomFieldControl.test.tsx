@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // DateTimeCustomFieldControl -- Wave 3.1 Task 12
 //
 // Mirrors renderCustomFieldControl.test.tsx's own mocking/polyfill

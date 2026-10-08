@@ -18,7 +18,6 @@ export default function AuthError({
   const { t, direction } = useI18n();
 
   useEffect(() => {
-    // eslint-disable-next-line no-console
     console.error(error);
   }, [error]);
 

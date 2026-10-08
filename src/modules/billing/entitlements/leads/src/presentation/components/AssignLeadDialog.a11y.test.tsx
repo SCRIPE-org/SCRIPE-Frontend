@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // AssignLeadDialog -- accessible-name coverage for the Assign to Admin
 // GenericSelect (Wave 1 closure, Task 6).
 //

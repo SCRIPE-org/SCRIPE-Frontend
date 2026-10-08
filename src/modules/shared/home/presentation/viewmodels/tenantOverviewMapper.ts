@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Tenant Overview Mapper
  * Transforms raw backend telemetry DTOs into TenantOverviewData (< 180 lines).

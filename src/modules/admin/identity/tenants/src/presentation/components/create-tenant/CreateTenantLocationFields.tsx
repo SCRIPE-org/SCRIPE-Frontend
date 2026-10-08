@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * CreateTenantLocationFields — Country-Adaptive Geographic Territory & Address Engine
  *

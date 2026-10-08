@@ -66,7 +66,7 @@ export function PlatformHealthView() {
       />
 
       {/* 2. Top Summary KPI Cards (Overall Health, Uptime, Health Score, Active Incidents) */}
-      <HealthTopKpiCards health={health} isLoading={isLoading} />
+      <HealthTopKpiCards health={health}  />
 
       {/* 3. Core Services Health & API Performance Telemetry */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
@@ -74,14 +74,14 @@ export function PlatformHealthView() {
           <CoreServicesGrid
             modules={health?.modules}
             checks={health?.checks}
-            isLoading={isLoading}
+            
           />
         </div>
         <div className="xl:col-span-1">
           <ApiPerformanceTelemetry
             health={health}
             timeRange={timeRange}
-            isLoading={isLoading}
+            
           />
         </div>
       </div>
@@ -91,11 +91,11 @@ export function PlatformHealthView() {
         <InfrastructureHealthSection
           infrastructure={health?.infrastructure}
           checks={health?.checks}
-          isLoading={isLoading}
+          
         />
         <ExternalDependenciesSection
           dependencies={health?.externalDependencies}
-          isLoading={isLoading}
+          
         />
       </div>
 
@@ -106,13 +106,13 @@ export function PlatformHealthView() {
             incidents={health?.incidents}
             selectedIncidentId={selectedIncidentId}
             onSelectIncident={setSelectedIncidentId}
-            isLoading={isLoading}
+            
           />
         </div>
         <div className="lg:col-span-5">
           <IncidentDetailPanel
-            incident={selectedIncident}
-            isLoading={isLoading}
+            incident={selectedIncident} isLoading={isLoading}
+            
           />
         </div>
       </div>

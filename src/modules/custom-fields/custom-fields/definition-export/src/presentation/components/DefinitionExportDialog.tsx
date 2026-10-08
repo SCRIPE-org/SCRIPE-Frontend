@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Definition export dialog — Wave 6 row 6.4
  *

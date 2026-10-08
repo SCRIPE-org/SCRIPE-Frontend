@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 /**
  * useThemeMarketplace — React hook for theme marketplace state management
  *

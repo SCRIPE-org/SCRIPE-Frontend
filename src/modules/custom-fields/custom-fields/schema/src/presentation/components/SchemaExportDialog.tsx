@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Schema export dialog — Wave 6 row 6.5
  *

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // InlineAddCustomFieldDialog nested inside GenericModal -- the real,
 // production nesting shape (Wave 5 row 5.6, "systemic" defect, pre-plan
 // analysis R2).

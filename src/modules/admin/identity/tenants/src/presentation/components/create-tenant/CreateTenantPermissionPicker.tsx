@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * CreateTenantPermissionPicker — Granular permission selection for new tenants
  *

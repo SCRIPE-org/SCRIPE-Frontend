@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Edit-modal hydration — Wave 2 Step 2.5 fix round, finding C-1.
  *

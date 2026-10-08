@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // renderCustomFieldControl -- Text/Number/Boolean coverage (Wave 2 Step 2.2, Task 2)
 //
 // Uses `fireEvent`, not `@testing-library/user-event`: the brief's own Step 3

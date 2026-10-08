@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // TimezonePicker -- Wave 3.1 Task 12
 //
 // Mirrors renderCustomFieldControl.test.tsx's own GenericSelect jsdom

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/role-supports-aria-props */
 // GenericForm draws Wave 3.4's three field types through the CustomFields
 // extension registry.
 //

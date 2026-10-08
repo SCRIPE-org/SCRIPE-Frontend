@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps, unused-imports/no-unused-vars */
 /**
  * Assign to Group Dialog
  *

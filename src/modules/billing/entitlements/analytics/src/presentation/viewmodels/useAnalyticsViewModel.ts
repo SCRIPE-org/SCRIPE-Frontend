@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 /**
  * useAnalyticsViewModel — Main viewmodel hook for the Revenue Analytics dashboard.

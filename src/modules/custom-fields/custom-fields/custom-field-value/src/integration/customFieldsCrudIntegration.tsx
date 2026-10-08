@@ -10,7 +10,7 @@ import {
   CustomFieldsSection,
   formatCustomFieldValue,
   GenericFormCustomFieldControl,
-  useRestrictableCustomFieldKeys,
+  useRestrictableCustomFieldKeys, assertSelectCustomFieldValuesValid,
 } from "../../../custom-field";
 import { mapValueToFieldConfig } from "./mapValueToFieldConfig";
 
@@ -124,6 +124,7 @@ const customFieldsCrudIntegration: CustomFieldsExtensionApi = {
   formatValueForDisplay: formatCustomFieldValue,
   Section: CustomFieldsSection,
   useRestrictableCustomFieldKeys,
+  assertValuesValid: assertSelectCustomFieldValuesValid,
 };
 
 registerCustomFieldsExtension(customFieldsCrudIntegration);

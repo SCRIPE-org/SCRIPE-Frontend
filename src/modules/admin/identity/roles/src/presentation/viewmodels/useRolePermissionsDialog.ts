@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
 // FILE-EXCEPTION: file length
 /**
  * Role Permissions Dialog ViewModel

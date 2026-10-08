@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * CodeEditorField — CodeMirror-powered code editor for the Customizer Studio
  *

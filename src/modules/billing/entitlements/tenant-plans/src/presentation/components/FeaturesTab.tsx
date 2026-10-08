@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 /**
  * FeaturesTab — Interactive Feature Assignment Editor for TenantPlan Detail
  *

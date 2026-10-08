@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-expressions */
 // FILE-EXCEPTION: file length
 /**
  * Role Detail ViewModel

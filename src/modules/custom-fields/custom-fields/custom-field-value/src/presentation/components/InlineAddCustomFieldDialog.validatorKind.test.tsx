@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // InlineAddCustomFieldDialog — validator picker + TRAP 1 write-seam
 // normalization (Wave 2 Step 2.5 Task 10)
 //

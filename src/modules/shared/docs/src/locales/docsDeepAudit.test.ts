@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from "vitest";
 import { DocsRepository } from "../data/repositories/DocsRepository";
 import "../data/content/registry";

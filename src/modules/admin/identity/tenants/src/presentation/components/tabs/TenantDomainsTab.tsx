@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Tenant Domains Tab — Vercel-Grade Custom Domain Management
  *

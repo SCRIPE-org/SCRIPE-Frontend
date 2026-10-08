@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 // `vitest.setup.ts` (which registers jest-dom's matchers at runtime for every

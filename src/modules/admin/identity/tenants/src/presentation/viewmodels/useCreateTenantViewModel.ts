@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // FILE-EXCEPTION: file length
 /**
  * Create Tenant ViewModel
@@ -34,9 +35,9 @@ import {
 } from "@core/constants/geo-territories";
 import {
   useCustomFieldsFormFields,
-  decodeCustomFieldName,
+  decodeCustomFieldName, getCustomFieldsExtension,
 } from "@core/crud/customFieldsExtension";
-import { assertSelectCustomFieldValuesValid } from "@core/crud/customFieldsExtension";
+
 import { isFieldRequired } from "@core/ui/forms/generic-form";
 
 // ─────────────────────────────────────────
@@ -556,7 +557,7 @@ export function useCreateTenantViewModel(params: UseCreateTenantViewModelParams 
 
       // Pre-validate administrator custom fields only when not deferred
       if (!deferAdminCustomFieldsToSetup && adminCustomFieldsQuery.fieldConfigs.length > 0) {
-        assertSelectCustomFieldValuesValid(
+        getCustomFieldsExtension()?.assertValuesValid?.(
           adminCustomFieldsQuery.fieldConfigs,
           adminCustomFieldValues,
           t

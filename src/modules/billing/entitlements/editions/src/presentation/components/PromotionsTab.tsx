@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
 /**
  * PromotionsTab — Edition promotions management

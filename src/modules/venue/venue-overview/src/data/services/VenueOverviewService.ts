@@ -1,12 +1,12 @@
-import type { Booking360Status } from "@modules/venue/booking-360/src/domain/entities/Booking360";
-import type { IOperationsCalendarRepository } from "@modules/venue/operations-calendar/src/domain/interfaces/IOperationsCalendarRepository";
-import type { ISchedulableResourceRepository } from "@modules/venue/schedulable-resource/src/domain/interfaces/ISchedulableResourceRepository";
-import type { IFacilityResourceProfileRepository } from "@modules/venue/facility-resource-profile/src/domain/interfaces/IFacilityResourceProfileRepository";
-import type { IFacilityRepository } from "@modules/venue/facility/src/domain/interfaces/IFacilityRepository";
+import type { Booking360Status } from "@modules/venue";
+import type { IOperationsCalendarRepository } from "@modules/venue";
+import type { ISchedulableResourceRepository } from "@modules/venue";
+import type { IFacilityResourceProfileRepository } from "@modules/venue";
+import type { IFacilityRepository } from "@modules/venue";
 import type {
   CalendarResource,
   OperationsCalendarDay,
-} from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
+} from "@modules/venue";
 import type { IVenueOverviewService } from "../../domain/interfaces/IVenueOverviewService";
 import type {
   VenueOverviewAtAGlanceItem,

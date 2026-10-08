@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // EntityReferenceCustomFieldControl -- Wave 4 item 4.
 //
 // Mirrors MultiSelectCustomFieldControl.test.tsx's mocking conventions (same

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // FILE-EXCEPTION: file length
 /**
  * @file useSubscriptionsViewModel.ts

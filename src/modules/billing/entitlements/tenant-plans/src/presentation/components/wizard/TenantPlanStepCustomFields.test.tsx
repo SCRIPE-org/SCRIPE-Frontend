@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // TenantPlanStepCustomFields -- Wave 2 Step 2.2, Task 7b
 //
 // This site had no pre-existing test coverage (confirmed by search across

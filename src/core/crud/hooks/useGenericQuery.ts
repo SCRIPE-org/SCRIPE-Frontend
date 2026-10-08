@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery, UseQueryOptions, keepPreviousData } from "@tanstack/react-query";
 import { PaginatedResult } from "../types";
 

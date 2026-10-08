@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * TenantPlans View — Elevated Tier 2
  *

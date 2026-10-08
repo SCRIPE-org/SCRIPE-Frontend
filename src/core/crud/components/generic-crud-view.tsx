@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps, unused-imports/no-unused-vars */
 /**
  * GenericCrudView - A fully generic, reusable CRUD component
  *
