@@ -15,30 +15,30 @@ export function TenantQuickActions({ actions }: TenantQuickActionsProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-xs border-border bg-card p-4">
+    <Card className="shadow-xs border-border bg-card p-3.5 sm:p-4 min-w-0 overflow-hidden">
       {/* Header */}
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-500">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-500">
             <Zap className="h-4 w-4" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-foreground">
+          <div className="min-w-0">
+            <h3 className="text-sm font-bold text-foreground truncate">
               {t("tenantCommandCenter.quickActions.title") || "Quick Actions"}
             </h3>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground truncate">
               {t("tenantCommandCenter.quickActions.subtitle") || "Common workspace tasks."}
             </p>
           </div>
         </div>
 
-        <Link href="/settings" className="text-xs font-semibold text-primary hover:underline">
+        <Link href="/settings" className="text-xs font-semibold text-primary hover:underline shrink-0">
           {t("tenantCommandCenter.quickActions.customize") || "Customize"}
         </Link>
       </div>
 
-      {/* 2x2 Grid */}
-      <div className="grid grid-cols-2 gap-2.5">
+      {/* Container Grid */}
+      <div className="quickactions-container-grid">
         {actions.map((action) => {
           return (
             <Link

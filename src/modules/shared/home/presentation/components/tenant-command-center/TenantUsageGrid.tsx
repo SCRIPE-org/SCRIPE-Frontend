@@ -15,18 +15,18 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-xs border-border bg-card p-4">
+    <Card className="shadow-xs border-border bg-card p-3.5 sm:p-4 min-w-0 overflow-hidden">
       {/* Section Header */}
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Gauge className="h-4 w-4" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-foreground">
+          <div className="min-w-0">
+            <h3 className="text-sm font-bold text-foreground truncate">
               {t("tenantCommandCenter.usage.title") || "Organization Usage"}
             </h3>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground truncate">
               {t("tenantCommandCenter.usage.subtitle") || "Current usage across your subscription."}
             </p>
           </div>
@@ -34,22 +34,22 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
 
         <Link
           href="/settings"
-          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline shrink-0"
         >
           <span>{t("tenantCommandCenter.usage.viewQuotas") || "View quotas"}</span>
-          <ChevronRight className="h-3 w-3" />
+          <ChevronRight className="h-3 w-3 rtl:rotate-180" />
         </Link>
       </div>
 
-      {/* 4 Usage Items Grid */}
-      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
+      {/* 4 Usage Items Container Grid */}
+      <div className="usage-container-grid">
         {quotas.map((quota) => {
           return (
             <div
               key={quota.id}
-              className="shadow-xs flex flex-col justify-between rounded-xl border border-border bg-card/60 p-3"
+              className="shadow-xs flex flex-col justify-between rounded-xl border border-border bg-card/60 p-3 min-w-0"
             >
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-start gap-2.5 min-w-0">
                 <div
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                     quota.color === "green"
@@ -66,11 +66,15 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
                   {quota.id === "storage" && <Cloud className="h-4 w-4" />}
                   {quota.id === "api" && <Zap className="h-4 w-4" />}
                 </div>
-                <div>
-                  <span className="block text-[10px] text-muted-foreground">{quota.label}</span>
-                  <b className="font-mono text-sm font-extrabold text-foreground">
-                    {quota.current} / {quota.total}
-                  </b>
+                <div className="min-w-0 flex-1">
+                  <span className="block text-[10px] text-muted-foreground truncate" title={quota.label}>
+                    {quota.label}
+                  </span>
+                  <div className="flex flex-wrap items-baseline gap-x-1 font-mono text-xs sm:text-sm font-extrabold text-foreground">
+                    <span className="whitespace-nowrap">{quota.current}</span>
+                    <span className="text-muted-foreground font-normal">/</span>
+                    <span className="whitespace-nowrap text-muted-foreground">{quota.total}</span>
+                  </div>
                 </div>
               </div>
 
@@ -86,12 +90,12 @@ export function TenantUsageGrid({ quotas }: TenantUsageGridProps) {
                             ? "bg-purple-500"
                             : "bg-amber-500"
                     }`}
-                    style={{ width: `${quota.percent}%` }}
+                    style={{ width: `${Math.min(100, Math.max(0, quota.percent))}%` }}
                   />
                 </div>
-                <div className="mt-1.5 flex items-center justify-between text-[9px] text-muted-foreground">
-                  <span>{quota.subLeft}</span>
-                  <span>{quota.subRight}</span>
+                <div className="mt-1.5 flex items-center justify-between text-[9px] text-muted-foreground min-w-0">
+                  <span className="truncate">{quota.subLeft}</span>
+                  <span className="shrink-0">{quota.subRight}</span>
                 </div>
               </div>
             </div>

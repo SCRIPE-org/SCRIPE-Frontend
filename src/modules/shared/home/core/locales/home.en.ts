@@ -333,7 +333,9 @@ export const en = {
     liveData: "Live Data",
     hero: {
       title: "Your organization is ready to operate.",
+      titleInProgress: "Complete your organization setup.",
       subtitle: "Everything you need to manage your workspace, products and people — in one place.",
+      subtitleInProgress: "Finish the essential setup steps below to unlock your full operational capabilities.",
       readiness: "Organization readiness",
       stepsComplete: "{{completed}} of {{total}} essential setup steps are complete.",
       checks: {

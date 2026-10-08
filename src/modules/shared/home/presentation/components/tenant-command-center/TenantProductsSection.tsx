@@ -17,18 +17,18 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-xs border-border bg-card p-4">
+    <Card className="shadow-xs border-border bg-card p-3.5 sm:p-4 min-w-0 overflow-hidden">
       {/* Section Header */}
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 min-w-0">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Layers className="h-4 w-4" />
           </div>
-          <div>
-            <h3 className="text-sm font-bold text-foreground">
+          <div className="min-w-0">
+            <h3 className="text-sm font-bold text-foreground truncate">
               {t("tenantCommandCenter.products.title") || "Your SCRIPE Products"}
             </h3>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[11px] text-muted-foreground truncate">
               {t("tenantCommandCenter.products.subtitle") ||
                 "Manage and access the products enabled for your organization."}
             </p>
@@ -37,15 +37,15 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
 
         <Link
           href="/settings"
-          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline shrink-0"
         >
           <span>{t("tenantCommandCenter.products.manageProducts") || "Manage Products"}</span>
-          <ChevronRight className="h-3 w-3" />
+          <ChevronRight className="h-3 w-3 rtl:rotate-180" />
         </Link>
       </div>
 
-      {/* 3 Product Cards Grid */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+      {/* 3 Product Cards Container Grid */}
+      <div className="products-container-grid">
         {products.map((product) => {
           const isActive = product.status === "active";
 

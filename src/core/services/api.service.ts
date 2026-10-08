@@ -400,7 +400,9 @@ export class ApiService implements IApiService {
 
         // Log other errors
         const message = this.extractErrorMessage(error);
-        appLogger.error(`API Error: ${message}`);
+        const method = error.config?.method?.toUpperCase() ?? "GET";
+        const url = error.config?.url ?? "unknown";
+        appLogger.error(`API Error: ${message} (${method} ${url})`);
         const errObj = new Error(message) as any;
         errObj.details = error.response?.data;
         errObj.status = error.response?.status;

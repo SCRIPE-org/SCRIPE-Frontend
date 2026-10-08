@@ -23,19 +23,19 @@ export function TenantNeedsAttention({ alerts }: TenantNeedsAttentionProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-xs border-border bg-card p-4">
+    <Card className="shadow-xs border-border bg-card p-3.5 sm:p-4 min-w-0 overflow-hidden">
       {/* Header */}
-      <div className="mb-2.5 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-500">
+      <div className="mb-2.5 flex flex-wrap items-center justify-between gap-2 min-w-0">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-amber-500/20 bg-amber-500/10 text-amber-500">
             <AlertTriangle className="h-3.5 w-3.5" />
           </div>
-          <h3 className="text-sm font-bold text-foreground">
+          <h3 className="text-sm font-bold text-foreground truncate">
             {t("tenantCommandCenter.attention.title") || "Needs Attention"}
           </h3>
           <Badge
             variant={alerts.length > 0 ? "destructive" : "secondary"}
-            className="h-5 px-1.5 text-[10px] font-extrabold"
+            className="h-5 px-1.5 text-[10px] font-extrabold shrink-0"
           >
             {alerts.length}
           </Badge>
@@ -43,7 +43,7 @@ export function TenantNeedsAttention({ alerts }: TenantNeedsAttentionProps) {
 
         <Link
           href="/settings"
-          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
+          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline shrink-0"
         >
           <span>{t("tenantCommandCenter.attention.viewAll") || "View all"}</span>
           <ChevronRight className="h-3 w-3 rtl:rotate-180" />

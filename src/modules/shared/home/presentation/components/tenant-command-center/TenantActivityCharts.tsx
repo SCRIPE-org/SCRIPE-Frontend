@@ -5,14 +5,10 @@ import { TrendingUp, BarChart3, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Card } from "@core/ui/card";
+import type { TenantLoginActivityItem } from "./tenantTypes";
 
 interface TenantActivityChartsProps {
-  loginActivity?: Array<{
-    date: string;
-    successCount?: number;
-    count?: number;
-    failedCount?: number;
-  }>;
+  loginActivity?: TenantLoginActivityItem[];
   isPresentationMode?: boolean;
 }
 
@@ -32,26 +28,26 @@ export function TenantActivityCharts({
     : 1;
 
   return (
-    <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.2fr_0.8fr]">
+    <div className="charts-container-grid">
       {/* 1. Organization Growth (Multi-line SVG Chart) */}
-      <Card className="shadow-xs border-border bg-card p-4">
-        <div className="mb-2 flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-500">
+      <Card className="shadow-xs border-border bg-card p-3.5 sm:p-4 min-w-0 overflow-hidden">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2 min-w-0">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-500">
               <TrendingUp className="h-4 w-4" />
             </div>
-            <div>
-              <h3 className="text-sm font-bold text-foreground">
+            <div className="min-w-0">
+              <h3 className="text-sm font-bold text-foreground truncate">
                 {t("tenantCommandCenter.charts.growthTitle") || "Organization Growth"}
               </h3>
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground truncate">
                 {t("tenantCommandCenter.charts.growthSubtitle") ||
                   "Members, bookings and active staff over the last 30 days."}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-3 text-[10px] font-medium text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-2.5 text-[10px] font-medium text-muted-foreground shrink-0">
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-[#2b83ff]" />
               {t("tenantCommandCenter.charts.members") || "Members"}

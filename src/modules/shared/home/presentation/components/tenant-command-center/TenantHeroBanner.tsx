@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Building2, Users, ShieldCheck, CheckCircle2 } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
 import type { TenantMetaPill, TenantReadinessCheck } from "./tenantTypes";
@@ -14,6 +15,21 @@ interface TenantHeroBannerProps {
   readinessChecks: TenantReadinessCheck[];
 }
 
+function renderPillIcon(icon: string) {
+  switch (icon) {
+    case "branches":
+      return <Building2 className="h-3.5 w-3.5 text-primary shrink-0" />;
+    case "admins":
+      return <Users className="h-3.5 w-3.5 text-sky-400 shrink-0" />;
+    case "plan":
+      return <ShieldCheck className="h-3.5 w-3.5 text-purple-400 shrink-0" />;
+    case "healthy":
+      return <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />;
+    default:
+      return <span className="shrink-0">{icon}</span>;
+  }
+}
+
 export function TenantHeroBanner({
   tenantName,
   readinessPercent,
@@ -24,11 +40,21 @@ export function TenantHeroBanner({
 }: TenantHeroBannerProps) {
   const { t } = useI18n();
 
+  const isReady = readinessPercent >= 100;
+  const heroTitle = isReady
+    ? t("tenantCommandCenter.hero.title") || "Your organization is ready to operate."
+    : t("tenantCommandCenter.hero.titleInProgress") || "Complete your organization setup.";
+  const heroSubtitle = isReady
+    ? t("tenantCommandCenter.hero.subtitle") ||
+      "Everything you need to manage your workspace, products and people — in one place."
+    : t("tenantCommandCenter.hero.subtitleInProgress") ||
+      "Finish the essential setup steps below to unlock your full operational capabilities.";
+
   return (
-    <section className="relative min-h-[194px] overflow-hidden rounded-2xl border border-border/70 bg-[#0b171e] text-white shadow-lg">
+    <section className="relative min-h-[180px] overflow-hidden rounded-2xl border border-border/70 bg-[#0b171e] text-white shadow-lg">
       {/* Background SVG Stadium Pitch Artwork */}
       <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
+        className="pointer-events-none absolute inset-0 h-full w-full opacity-80"
         viewBox="0 0 1400 300"
         preserveAspectRatio="xMidYMid slice"
         aria-hidden="true"
@@ -82,39 +108,38 @@ export function TenantHeroBanner({
         </g>
       </svg>
 
-      {/* Dark Vignette Overlay */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#040c12]/95 via-[#040c12]/70 to-[#040c12]/55" />
+      {/* Dark Vignette Overlay for Crisp Readability */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#040c12]/95 via-[#040c12]/80 to-[#040c12]/65" />
 
-      {/* Hero Content Grid */}
-      <div className="relative z-10 grid grid-cols-1 items-center gap-6 p-5 sm:p-6 md:grid-cols-[minmax(0,1fr)_270px] lg:p-7">
+      {/* Hero Content Grid (Container-Aware) */}
+      <div className="hero-container-layout relative z-10 p-4 sm:p-6 lg:p-7 min-w-0">
         {/* Left: Organization Title & Badges */}
-        <div>
-          <div className="text-[11px] font-extrabold uppercase tracking-wider text-[#c9ff43]">
+        <div className="min-w-0">
+          <div className="text-[11px] font-extrabold uppercase tracking-wider text-[#c9ff43] truncate">
             {tenantName}
           </div>
-          <h1 className="mb-1.5 mt-1 text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl lg:text-[31px]">
-            {t("tenantCommandCenter.hero.title") || "Your organization is ready to operate."}
+          <h1 className="mb-1.5 mt-1 text-xl sm:text-2xl lg:text-[28px] font-extrabold leading-tight tracking-tight text-white">
+            {heroTitle}
           </h1>
-          <p className="max-w-2xl text-xs text-[#c8d5dc] sm:text-[13px]">
-            {t("tenantCommandCenter.hero.subtitle") ||
-              "Everything you need to manage your workspace, products and people — in one place."}
+          <p className="max-w-2xl text-xs sm:text-[13px] text-[#c8d5dc] leading-relaxed">
+            {heroSubtitle}
           </p>
 
-          <div className="mt-5 flex flex-wrap gap-2">
+          <div className="mt-4 sm:mt-5 flex flex-wrap gap-2">
             {metaPills.map((pill, idx) => (
               <div
                 key={idx}
-                className="border-white/12 flex h-8 items-center gap-1.5 rounded-lg border bg-[#061016]/60 px-2.5 text-[11px] text-[#e3edf2] backdrop-blur-md"
+                className="border-white/12 flex h-8 items-center gap-1.5 rounded-lg border bg-[#061016]/70 px-2.5 text-[11px] text-[#e3edf2] backdrop-blur-md min-w-0"
               >
-                <span>{pill.icon}</span>
-                <span>{pill.label}</span>
+                {renderPillIcon(pill.icon)}
+                <span className="truncate">{pill.label}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Right: Readiness Ring Card */}
-        <aside className="border-white/12 rounded-xl border bg-[#071118]/75 p-3.5 shadow-inner backdrop-blur-md">
+        <aside className="border-white/12 rounded-xl border bg-[#071118]/85 p-3.5 shadow-inner backdrop-blur-md min-w-0 w-full">
           <div className="flex items-center gap-2.5">
             {/* SVG Conic Readiness Ring */}
             <div
@@ -127,11 +152,11 @@ export function TenantHeroBanner({
                 <span className="text-[10px] font-extrabold text-white">{readinessPercent}%</span>
               </div>
             </div>
-            <div>
-              <b className="block text-xs font-bold text-white">
+            <div className="min-w-0 flex-1">
+              <b className="block text-xs font-bold text-white truncate">
                 {t("tenantCommandCenter.hero.readiness") || "Organization readiness"}
               </b>
-              <span className="block text-[10px] text-[#b7c8d0]">
+              <span className="block text-[10px] text-[#b7c8d0] truncate">
                 {t("tenantCommandCenter.hero.stepsComplete", {
                   completed: setupStepsCompleted,
                   total: setupStepsTotal,
@@ -141,9 +166,9 @@ export function TenantHeroBanner({
             </div>
           </div>
 
-          <div className="mt-3 space-y-1 border-t border-white/10 pt-2.5">
+          <div className="mt-3 space-y-1.5 border-t border-white/10 pt-2.5">
             {readinessChecks.map((chk, idx) => (
-              <div key={idx} className="flex items-center gap-2 text-[10px] text-[#d6e3e8]">
+              <div key={idx} className="flex items-center gap-2 text-[10px] text-[#d6e3e8] min-w-0">
                 <span
                   className={`shadow-xs h-1.5 w-1.5 shrink-0 rounded-full ${
                     chk.status === "success"
@@ -151,7 +176,7 @@ export function TenantHeroBanner({
                       : "bg-[#f7aa1c] shadow-[0_0_8px_rgba(247,170,28,0.5)]"
                   }`}
                 />
-                <span>{chk.label}</span>
+                <span className="truncate">{chk.label}</span>
               </div>
             ))}
           </div>
