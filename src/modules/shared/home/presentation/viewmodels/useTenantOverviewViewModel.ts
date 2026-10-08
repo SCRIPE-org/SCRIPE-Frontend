@@ -8,7 +8,6 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { identityContainer } from "@modules/admin/identity/di";
 import { useOverviewViewModel } from "./useOverviewViewModel";
 import { usePresentationMode } from "./usePresentationMode";
-import { TENANT_MOCK_DATA } from "../components/tenant-command-center/tenantMockData";
 import { buildTenantOverviewLiveData } from "./tenantOverviewMapper";
 
 export function useTenantOverviewViewModel() {
