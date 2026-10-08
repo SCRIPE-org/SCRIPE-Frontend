@@ -18,6 +18,9 @@ const DURATIONS = [
   { value: 120, labelKey: "duration120", fallback: "120 minutes (2 Hours)" },
 ];
 
+/**
+ * Documentation for module export
+ */
 export function ResourceBookingRulesTab({ vm }: Props) {
   const { t } = useI18n();
 

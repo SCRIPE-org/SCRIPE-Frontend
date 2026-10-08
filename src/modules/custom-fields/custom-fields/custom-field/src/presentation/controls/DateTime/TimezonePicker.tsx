@@ -101,6 +101,9 @@ function optionsFor(currentValue: string): { value: string; label: string }[] {
   return withCurrent.map((zone) => ({ value: zone, label: zone }));
 }
 
+/**
+ * Documentation for module export
+ */
 export interface TimezonePickerProps {
   id?: string;
   value: string;
@@ -111,6 +114,9 @@ export interface TimezonePickerProps {
   placeholder?: string;
 }
 
+/**
+ * Documentation for TimezonePicker
+ */
 export function TimezonePicker({
   id,
   value,

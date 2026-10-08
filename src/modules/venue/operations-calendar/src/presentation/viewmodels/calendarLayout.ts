@@ -12,15 +12,24 @@ export interface CalendarTimeSlot {
   label: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface TrackedCalendarBlock {
   block: OperationsCalendarBlock;
   track: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export function occupyingBlocks(blocks: OperationsCalendarBlock[]): OperationsCalendarBlock[] {
   return blocks.filter((block) => OCCUPYING.has(block.status as OccupyingReservationStatus));
 }
 
+/**
+ * Documentation for module export
+ */
 export function placeBlocksOnTracks(blocks: OperationsCalendarBlock[]): TrackedCalendarBlock[] {
   const trackEnds: number[] = [];
   return [...occupyingBlocks(blocks)]
@@ -36,6 +45,9 @@ export function placeBlocksOnTracks(blocks: OperationsCalendarBlock[]): TrackedC
     });
 }
 
+/**
+ * Documentation for module export
+ */
 export function buildTimeSlots(day: OperationsCalendarDay, locale: string): CalendarTimeSlot[] {
   const from = Date.parse(day.fromUtc);
   const to = Date.parse(day.toUtc);
@@ -52,6 +64,9 @@ export function buildTimeSlots(day: OperationsCalendarDay, locale: string): Cale
   });
 }
 
+/**
+ * Documentation for module export
+ */
 export function blockPosition(block: OperationsCalendarBlock, day: OperationsCalendarDay) {
   const from = Date.parse(day.fromUtc);
   const to = Date.parse(day.toUtc);
@@ -64,6 +79,9 @@ export function blockPosition(block: OperationsCalendarBlock, day: OperationsCal
   };
 }
 
+/**
+ * Documentation for module export
+ */
 export function localPrefillForInstant(instantUtc: string, timeZoneId: string) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     year: "numeric",

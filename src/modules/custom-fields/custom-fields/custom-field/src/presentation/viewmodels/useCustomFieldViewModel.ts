@@ -41,8 +41,17 @@ export function normalizeValidatorFields(data: Record<string, unknown>): Record<
   };
 }
 
+/**
+ * Documentation for module export
+ */
 export function useCustomFieldViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
+
+  const { data: keyStatus } = useQuery({
+    queryKey: ["customFields", "encryption", "status"],
+    queryFn: () => getCustomFieldsContainer().keyManagementRepository.getStatus(),
+  });
+
   const { t } = useI18n();
 
   const {
@@ -156,5 +165,5 @@ export function useCustomFieldViewModel() {
     [baseVm, openEditModal]
   );
 
-  return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes };
+  return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes, keyStatus };
 }

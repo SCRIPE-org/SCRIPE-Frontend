@@ -23,6 +23,9 @@ import {
 } from "./designVariablesTypes";
 import { DesignVariablesPreviewSwatch } from "./DesignVariablesPreviewSwatch";
 
+/**
+ * Documentation for module export
+ */
 export type { DesignVariables, DesignVariablesPanelProps };
 export { DEFAULT_DESIGN, FONT_OPTIONS };
 

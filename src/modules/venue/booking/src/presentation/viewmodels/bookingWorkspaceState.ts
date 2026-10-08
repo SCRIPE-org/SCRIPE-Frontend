@@ -5,6 +5,9 @@ import type {
   ReservationDetails,
 } from "../../domain/entities/Booking";
 
+/**
+ * Documentation for module export
+ */
 export const initialBookingWorkspaceState: BookingWorkspaceState = {
   stage: "initial",
   candidates: [],
@@ -16,6 +19,9 @@ export const initialBookingWorkspaceState: BookingWorkspaceState = {
   partialSearchFailure: false,
 };
 
+/**
+ * Documentation for =
+ */
 export type BookingWorkspaceAction =
   | { type: "criteriaChanged" | "customerChanged" | "searching" | "holdConflict" | "holdExpired" | "confirming" }
   | { type: "searchSucceeded"; candidates: AvailabilityCandidate[]; partialFailure: boolean }
@@ -28,6 +34,9 @@ export type BookingWorkspaceAction =
   | { type: "operationFailed"; message: string }
   | { type: "reset" };
 
+/**
+ * Documentation for reduceBookingWorkspace
+ */
 export function reduceBookingWorkspace(
   state: BookingWorkspaceState,
   action: BookingWorkspaceAction

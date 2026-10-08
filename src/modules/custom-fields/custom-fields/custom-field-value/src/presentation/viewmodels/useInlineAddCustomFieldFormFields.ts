@@ -20,6 +20,9 @@ import {
   buildInlineTypeAndValidationFields,
 } from "./inlineAddCustomFieldSections";
 
+/**
+ * Documentation for module export
+ */
 export interface UseInlineAddCustomFieldFormFieldsParams {
   t: (key: string, params?: Record<string, string | number>) => string;
   language: string;
@@ -37,6 +40,9 @@ export interface UseInlineAddCustomFieldFormFieldsParams {
   bindableOptionSets: readonly OptionSet[];
 }
 
+/**
+ * Documentation for useInlineAddCustomFieldFormFields
+ */
 export function useInlineAddCustomFieldFormFields({
   t,
   language,

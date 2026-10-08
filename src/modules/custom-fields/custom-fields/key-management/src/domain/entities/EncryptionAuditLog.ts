@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface EncryptionAuditLogData {
   id: string;
   action: string;
@@ -12,6 +15,9 @@ export interface EncryptionAuditLogData {
   timestamp: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class EncryptionAuditLog {
   constructor(private readonly data: EncryptionAuditLogData) {}
 

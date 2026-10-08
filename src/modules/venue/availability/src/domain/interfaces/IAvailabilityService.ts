@@ -8,11 +8,17 @@ import type {
   SaveResourceBlock,
 } from "../entities/Availability";
 
+/**
+ * Documentation for ReplaceAvailabilityCalendarPayload
+ */
 export interface ReplaceAvailabilityCalendarPayload
   extends Omit<SaveAvailabilityCalendar, "resourceId"> {
   expectedVersion: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IAvailabilityService {
   getCurrentCalendar(resourceId: string): Promise<AvailabilityCalendar | null>;
   defineCalendar(data: SaveAvailabilityCalendar): Promise<{ id: string }>;

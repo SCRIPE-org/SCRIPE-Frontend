@@ -4,6 +4,9 @@ import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import type { SchedulableResourceTreeNode } from "../utils/resourceTree";
 
+/**
+ * Documentation for module export
+ */
 export interface ResourceNodeProps {
   node: SchedulableResourceTreeNode;
   depth: number;
@@ -15,6 +18,9 @@ export interface ResourceNodeProps {
   canDelete: boolean;
 }
 
+/**
+ * Documentation for ResourceNode
+ */
 export function ResourceNode({
   node,
   depth,

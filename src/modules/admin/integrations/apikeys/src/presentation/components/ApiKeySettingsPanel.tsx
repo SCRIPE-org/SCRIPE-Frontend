@@ -17,6 +17,9 @@ interface ApiKeySettingsPanelProps {
   canUpdate: boolean;
 }
 
+/**
+ * Documentation for ApiKeySettingsPanel
+ */
 export function ApiKeySettingsPanel({
   detail,
   isUpdating,

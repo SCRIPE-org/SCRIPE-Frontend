@@ -17,6 +17,9 @@ import type {
 } from "../../domain/entities";
 import { AccountSetupMapper } from "../mappers/AccountSetupMapper";
 
+/**
+ * Documentation for module export
+ */
 export class AccountSetupRepository implements IAccountSetupRepository {
   constructor(private readonly service: IAccountSetupService) {}
 

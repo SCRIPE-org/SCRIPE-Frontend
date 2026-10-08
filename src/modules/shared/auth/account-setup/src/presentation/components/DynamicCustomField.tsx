@@ -14,6 +14,9 @@ import { Lock, AlertCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { SetupCustomField } from "../../domain/entities";
 
+/**
+ * Documentation for module export
+ */
 export interface DynamicCustomFieldProps {
   field: SetupCustomField;
   value: unknown;

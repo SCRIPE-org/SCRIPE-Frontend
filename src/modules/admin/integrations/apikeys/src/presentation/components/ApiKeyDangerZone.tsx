@@ -31,6 +31,9 @@ interface ApiKeyDangerZoneProps {
   canDeletePermanently: boolean;
 }
 
+/**
+ * Documentation for ApiKeyDangerZone
+ */
 export function ApiKeyDangerZone({
   detail,
   onRevoke,

@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@core/ui/tabs";
 import { useI18n } from "@core/providers/i18n-provider";
-import { VenueNav } from "@modules/venue/shared/src/presentation/components/VenueNav";
+import { VenueNav } from "@modules/venue";
 import { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
 import { ResourceGeneralTab } from "../components/ResourceGeneralTab";
 import { ResourceWorkingHoursTab } from "../components/ResourceWorkingHoursTab";
@@ -30,6 +30,9 @@ interface Props {
   resourceId: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourceDetailView({ resourceId }: Props) {
   const { t, direction } = useI18n();
   const vm = useResourceDetailViewModel(resourceId);

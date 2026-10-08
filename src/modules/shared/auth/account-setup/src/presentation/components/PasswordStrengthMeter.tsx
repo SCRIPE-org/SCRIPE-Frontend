@@ -6,6 +6,9 @@ import { Badge } from "@core/ui/badge";
 import { ShieldCheck } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export interface PasswordStrengthMeterProps {
   score: number;
   entropyBits?: number;

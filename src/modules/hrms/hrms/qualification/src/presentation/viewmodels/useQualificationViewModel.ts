@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getHrmsContainer } from "../../../../di";
 import type { Qualification } from "../../domain/entities/Qualification";
 
+/**
+ * Documentation for module export
+ */
 export function useQualificationViewModel() {
   const { qualificationRepository } = getHrmsContainer();
 

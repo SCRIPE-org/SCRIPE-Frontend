@@ -16,6 +16,9 @@ import {
 import type { IFieldGroupService } from "../../domain/interfaces/IFieldGroupService";
 import { FIELD_GROUP_ENDPOINTS } from "./field-group.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class FieldGroupService implements IFieldGroupService {
   constructor(private readonly api: IApiService) {}
 

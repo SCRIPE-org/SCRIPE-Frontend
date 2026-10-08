@@ -38,6 +38,9 @@ import {
   type UsePlanPickerArgs,
 } from "../types/planPickerTypes";
 
+/**
+ * Documentation for module export
+ */
 export type { PlanPickerEdition, PlanPickerViewModel, UsePlanPickerArgs };
 
 /**

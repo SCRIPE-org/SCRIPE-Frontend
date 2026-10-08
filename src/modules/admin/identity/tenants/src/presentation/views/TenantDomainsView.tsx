@@ -23,6 +23,9 @@ import Link from "next/link";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { TenantDomainsTab } from "../components/tabs/TenantDomainsTab";
 
+/**
+ * Documentation for module export
+ */
 export function TenantDomainsView() {
   useModuleLocales(() => import("../../../locales"), "tenants");
 

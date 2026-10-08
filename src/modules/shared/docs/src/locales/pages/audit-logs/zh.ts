@@ -1,4 +1,7 @@
-﻿export const zh = {
+﻿/**
+ * Documentation for module export
+ */
+export const zh = {
   modules: {
     auditLogs: {
       title: "审计日志",

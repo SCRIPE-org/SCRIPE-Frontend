@@ -16,6 +16,9 @@ import {
 } from "./dynamicSettingsTypes";
 
 // Re-export public schema types for external module consumers
+/**
+ * Documentation for module export
+ */
 export type {
   JsonSchemaField,
   PluginSettingsSchema,

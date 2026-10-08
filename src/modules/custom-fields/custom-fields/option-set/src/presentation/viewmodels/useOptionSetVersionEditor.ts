@@ -51,12 +51,18 @@ export {
   type OptionSetItemDraftChanges,
 } from "../form/optionSetItemDraftTypes";
 
+/**
+ * Documentation for module export
+ */
 export interface UseOptionSetVersionEditorArgs {
   set: OptionSet | null;
   version: OptionSetVersion | null;
   onSaved?: (versionId: string) => void;
 }
 
+/**
+ * Documentation for useOptionSetVersionEditor
+ */
 export function useOptionSetVersionEditor({
   set,
   version,

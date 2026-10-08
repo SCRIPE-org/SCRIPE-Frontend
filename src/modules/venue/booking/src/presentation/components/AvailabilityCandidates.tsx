@@ -84,6 +84,9 @@ function CandidateCard({
   );
 }
 
+/**
+ * Documentation for AvailabilityCandidates
+ */
 export function AvailabilityCandidates({
   t,
   locale,

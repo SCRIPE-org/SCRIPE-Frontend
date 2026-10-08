@@ -18,6 +18,9 @@ interface CreateTenantSummaryProps {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantSummary({ vm, t }: CreateTenantSummaryProps) {
   const isFree = vm.selectedEdition?.isFree === true;
   const subType = vm.form.subscriptionType;

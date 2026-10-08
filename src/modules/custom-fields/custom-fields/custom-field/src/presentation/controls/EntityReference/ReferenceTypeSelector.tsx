@@ -146,6 +146,9 @@ function ReferenceTypeOptions({
   );
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ReferenceTypeSelectorProps {
   /**
    * The RECORD field's id. This selector derives its own from it rather than taking a second
@@ -175,6 +178,9 @@ export interface ReferenceTypeSelectorProps {
   onChosenTypeChange: (type: EntityLookupType) => void;
 }
 
+/**
+ * Documentation for ReferenceTypeSelector
+ */
 export function ReferenceTypeSelector({
   recordFieldId,
   recordFieldLabel,

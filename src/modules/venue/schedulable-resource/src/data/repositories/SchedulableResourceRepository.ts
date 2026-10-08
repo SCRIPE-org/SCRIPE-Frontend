@@ -6,6 +6,9 @@ import type { ISchedulableResourceService } from "../../domain/interfaces/ISched
 import type { SchedulableResource, PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
 import { SchedulableResourceMapper } from "../mappers/SchedulableResourceMapper";
 
+/**
+ * Documentation for module export
+ */
 export class SchedulableResourceRepository implements ISchedulableResourceRepository {
   constructor(private readonly service: ISchedulableResourceService) {}
 

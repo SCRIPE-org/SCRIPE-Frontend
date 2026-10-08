@@ -10,8 +10,14 @@ import {
   type SetupFieldOption,
 } from "./setupCustomFieldOptions";
 
+/**
+ * Documentation for module export
+ */
 export type { SetupFieldOption };
 
+/**
+ * Documentation for module export
+ */
 export interface SetupCustomFieldData {
   key: string;
   labelEn: string;
@@ -27,6 +33,9 @@ export interface SetupCustomFieldData {
   currentValue?: unknown;
 }
 
+/**
+ * Documentation for module export
+ */
 export class SetupCustomField {
   constructor(private readonly data: SetupCustomFieldData) {}
 

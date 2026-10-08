@@ -13,6 +13,9 @@ interface KeyDistributionChartProps {
   isStartingRewrap?: boolean;
 }
 
+/**
+ * Documentation for KeyDistributionChart
+ */
 export function KeyDistributionChart({
   status,
   onStartRewrap,

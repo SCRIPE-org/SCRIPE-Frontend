@@ -60,6 +60,9 @@ function labelFor(
   return known.has(value) ? t(`${prefix}.${value}`) : value;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldHistoryDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -73,6 +76,9 @@ export interface FieldHistoryDialogProps {
   onPageChange: (page: number) => void;
 }
 
+/**
+ * Documentation for FieldHistoryDialog
+ */
 export function FieldHistoryDialog({
   open,
   onOpenChange,

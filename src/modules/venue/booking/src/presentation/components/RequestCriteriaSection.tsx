@@ -9,9 +9,9 @@ import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
+import type { Facility } from "@modules/venue";
+import { FacilityQuickCreateDialog } from "@modules/venue";
+import type { SchedulableResource } from "@modules/venue";
 import type { BookingRequestCriteria } from "../../domain/entities/Booking";
 
 interface RequestCriteriaSectionProps {
@@ -30,6 +30,9 @@ function selectedValue(value: string | string[]): string {
   return Array.isArray(value) ? value[0] ?? "" : value;
 }
 
+/**
+ * Documentation for RequestCriteriaSection
+ */
 export function RequestCriteriaSection({
   t,
   criteria,

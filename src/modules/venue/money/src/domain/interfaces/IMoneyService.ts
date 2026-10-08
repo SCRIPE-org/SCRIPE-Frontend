@@ -1,5 +1,8 @@
 import type { MoneyInvoice, MoneyListFilter, MoneyPage, MoneyPayment, MoneyPaymentTimeline, RecordManualPaymentInput, RefundPaymentInput } from "../entities/Money";
 
+/**
+ * Documentation for module export
+ */
 export interface IMoneyService {
   getInvoices(page?: number, pageSize?: number, filter?: MoneyListFilter): Promise<MoneyPage<MoneyInvoice>>;
   getPayments(page?: number, pageSize?: number, filter?: MoneyListFilter): Promise<MoneyPage<MoneyPayment>>;

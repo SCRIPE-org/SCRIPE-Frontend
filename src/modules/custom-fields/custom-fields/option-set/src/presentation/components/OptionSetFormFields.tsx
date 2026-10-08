@@ -9,9 +9,21 @@ import { Badge } from "@core/ui/badge";
 import { Globe2 } from "lucide-react";
 import type { OptionSet } from "../../domain/entities/OptionSet";
 
+/**
+ * Documentation for 100
+ */
 export const OPTION_SET_STABLE_KEY_MAX_LENGTH = 100;
+/**
+ * Documentation for 200
+ */
 export const OPTION_SET_LABEL_MAX_LENGTH = 200;
+/**
+ * Documentation for 1000
+ */
 export const OPTION_SET_DESCRIPTION_MAX_LENGTH = 1000;
+/**
+ * Documentation for "[a-z][a-z0-9_\\-]*"
+ */
 export const STABLE_KEY_PATTERN = "[a-z][a-z0-9_\\-]*";
 
 export interface OptionSetFormFieldsProps {
@@ -32,6 +44,9 @@ export interface OptionSetFormFieldsProps {
   isSaving: boolean;
 }
 
+/**
+ * Documentation for OptionSetFormFields
+ */
 export function OptionSetFormFields({
   fieldId,
   optionSet,

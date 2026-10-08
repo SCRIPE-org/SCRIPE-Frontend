@@ -11,6 +11,9 @@ import {
 } from "./OptionSetItemsEditor";
 import type { OptionSetItemInput } from "../../domain/interfaces/IOptionSetRepository";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetNewDraftSectionProps {
   newDraftRows: OptionSetDraftItem[];
   setNewDraftRows: (rows: OptionSetDraftItem[] | null) => void;
@@ -20,6 +23,9 @@ export interface OptionSetNewDraftSectionProps {
   headingId: string;
 }
 
+/**
+ * Documentation for OptionSetNewDraftSection
+ */
 export function OptionSetNewDraftSection({
   newDraftRows,
   setNewDraftRows,

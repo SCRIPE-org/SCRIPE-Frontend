@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import type { Facility } from "@modules/venue";
 import type {
   CalendarResource,
   OperationsCalendarBlock,
@@ -44,6 +44,9 @@ function todayIn(timeZoneId: string): string {
   return localPrefillForInstant(new Date().toISOString(), timeZoneId).date;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useOperationsCalendarViewModel() {
   const router = useRouter();
   const {

@@ -24,6 +24,9 @@ function formatRange(start: string, end: string, locale: string, timeZone: strin
   return `${formatter.format(new Date(start))} – ${formatter.format(new Date(end))}`;
 }
 
+/**
+ * Documentation for module export
+ */
 export const Booking360View = React.memo(function Booking360View({ reservationId }: { reservationId: string }) {
   useModuleLocales(() => import("../../../locales"), "venue.booking360");
   const { t, language, direction } = useI18n();

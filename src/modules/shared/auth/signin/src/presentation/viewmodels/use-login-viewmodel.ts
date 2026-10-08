@@ -19,6 +19,9 @@ import { getAuthContainer } from "@modules/auth/di";
 import { getSafeRedirectPath } from "../utils/redirect-safety";
 
 import type { LoginFormData, LoginStep } from "../types/loginTypes";
+/**
+ * Documentation for module export
+ */
 export type { LoginFormData, LoginStep };
 
 /**

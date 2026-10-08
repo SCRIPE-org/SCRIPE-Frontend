@@ -12,6 +12,9 @@ import type { ISchemaExportService } from "../../domain/interfaces/ISchemaExport
 import type { SchemaBundle } from "../../domain/entities/SchemaBundle";
 import { SchemaBundleMapper } from "../mappers/SchemaBundleMapper";
 
+/**
+ * Documentation for module export
+ */
 export class SchemaExportRepository implements ISchemaExportRepository {
   constructor(private readonly service: ISchemaExportService) {}
 

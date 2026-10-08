@@ -3,7 +3,7 @@
 import React from "react";
 import { PieChart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
-import type { Booking360Status } from "@modules/venue/booking-360/src/domain/entities/Booking360";
+import type { Booking360Status } from "@modules/venue";
 import type { VenueOverviewAtAGlanceItem } from "../../domain/entities/VenueOverview";
 
 interface Props {
@@ -42,6 +42,9 @@ const STATUS_LABELS: Record<Booking360Status, string> = {
   Expired: "Expired",
 };
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewStatusDonut({ items, t }: Props) {
   const totalCount = items.reduce((acc, item) => acc + item.count, 0);
 

@@ -7,6 +7,9 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@core/ui/dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CustomField } from "../../../domain/entities/CustomField";
 
+/**
+ * Documentation for module export
+ */
 export interface DetailHeaderProps {
   field?: CustomField;
   fieldLabel?: string;

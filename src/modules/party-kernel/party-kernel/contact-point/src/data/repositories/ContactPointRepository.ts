@@ -17,6 +17,9 @@ import type { IContactPointService } from "../../domain/interfaces/IContactPoint
 import type { ContactPoint } from "../../domain/entities/ContactPoint";
 import { ContactPointMapper } from "../mappers/ContactPointMapper";
 
+/**
+ * Documentation for module export
+ */
 export class ContactPointRepository implements IContactPointRepository {
   constructor(private readonly service: IContactPointService) {}
 

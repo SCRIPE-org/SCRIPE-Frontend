@@ -11,6 +11,9 @@ export interface AccountActivationResultData {
   errorMessage?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class AccountActivationResult {
   constructor(private readonly data: AccountActivationResultData) {}
 

@@ -24,6 +24,9 @@ import { Label } from "@core/ui/label";
 import { Switch } from "@core/ui/switch";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupFormValues {
   /**
    * Immutable machine key (Wave 6 row 6.5). Meaningful on CREATE only — the update path does not
@@ -37,6 +40,9 @@ export interface FieldGroupFormValues {
   isGlobal: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupEditorLabels {
   heading: string;
   stableKey: string;
@@ -50,6 +56,9 @@ export interface FieldGroupEditorLabels {
   cancel: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupEditorProps {
   /** The group being edited, or null for a create. */
   group: FieldGroup | null;
@@ -63,6 +72,9 @@ export interface FieldGroupEditorProps {
   onCancel: () => void;
 }
 
+/**
+ * Documentation for FieldGroupEditor
+ */
 export function FieldGroupEditor({
   group,
   labels,

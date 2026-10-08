@@ -16,6 +16,9 @@ import { BRAND } from "@core/config/branding";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { SetupStep } from "../viewmodels/useAccountSetupViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface DesktopSetupSidebarProps {
   currentStep: SetupStep;
   hasCustomFields: boolean;

@@ -18,6 +18,9 @@ import type { CustomField } from "../../domain/entities/CustomField";
 import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsight";
 import type { FieldVisibilityOperator } from "../../../../custom-field-value/src/domain/fieldVisibility";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRuleTarget {
   fieldId: string;
   fieldLabel: string;
@@ -26,10 +29,16 @@ export interface FieldVisibilityRuleTarget {
   isRequired: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export function fieldVisibilityRulesQueryKey(fieldId: string) {
   return ["customField", "visibilityRules", fieldId] as const;
 }
 
+/**
+ * Documentation for module export
+ */
 export function siblingFieldsQueryKey(entityTypeKey: string) {
   return ["customField", "siblingFields", entityTypeKey] as const;
 }
@@ -88,6 +97,9 @@ export function parseFieldVisibilityExpressionJson(expressionJson: string): {
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export function useFieldVisibilityRulesViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
   const { t } = useI18n();

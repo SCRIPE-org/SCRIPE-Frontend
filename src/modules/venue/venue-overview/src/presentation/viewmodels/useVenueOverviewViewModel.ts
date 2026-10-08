@@ -39,6 +39,9 @@ const INITIAL_STATE: VenueOverviewState = {
   error: false,
 };
 
+/**
+ * Documentation for module export
+ */
 export interface FacilityOption {
   id: string;
   name: string;

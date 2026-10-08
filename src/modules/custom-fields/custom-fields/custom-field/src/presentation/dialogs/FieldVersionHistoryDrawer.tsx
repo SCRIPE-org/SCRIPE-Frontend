@@ -25,6 +25,9 @@ import type { FieldVersionsResponse } from "../../domain/entities/FieldInsight";
 import { FieldVersionDraftCard } from "./FieldVersionDraftCard";
 import { FieldVersionTimeline } from "./FieldVersionTimeline";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVersionHistoryDrawerProps {
   isOpen: boolean;
   onClose: () => void;
@@ -41,6 +44,9 @@ export interface FieldVersionHistoryDrawerProps {
   onDiscard: () => Promise<void>;
 }
 
+/**
+ * Documentation for FieldVersionHistoryDrawer
+ */
 export function FieldVersionHistoryDrawer({
   isOpen,
   onClose,

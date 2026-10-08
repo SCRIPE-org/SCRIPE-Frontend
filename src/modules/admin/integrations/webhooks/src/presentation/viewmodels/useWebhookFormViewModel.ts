@@ -27,6 +27,9 @@ import {
 import { useWebhookCustomFields } from "./useWebhookCustomFields";
 import { useWebhookEvents } from "./useWebhookEvents";
 
+/**
+ * Documentation for module export
+ */
 export { WEBHOOK_ENTITY_TYPE_KEY, type UseWebhookFormViewModelOptions, isValidWebhookUrl };
 
 /**

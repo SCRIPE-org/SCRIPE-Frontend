@@ -1,5 +1,8 @@
 import type { VenueProfileModel } from "../../data/models/VenueProfileModel";
 
+/**
+ * Documentation for module export
+ */
 export interface VenueProfileListResult {
   items: VenueProfileModel[];
   totalCount: number;
@@ -10,6 +13,9 @@ export interface VenueProfileListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IVenueProfileService {
   getAll(params: { page: number; pageSize: number; search?: string }): Promise<VenueProfileListResult>;
   getById(id: string): Promise<VenueProfileModel>;

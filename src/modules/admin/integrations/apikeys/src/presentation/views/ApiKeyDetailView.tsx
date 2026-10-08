@@ -18,6 +18,9 @@ import { ApiKeyQuickStart } from "../components/ApiKeyQuickStart";
 import { Skeleton } from "@core/ui/skeleton";
 import { Button } from "@core/ui/button";
 
+/**
+ * Documentation for module export
+ */
 export default function ApiKeyDetailView() {
   const params = useParams();
   const router = useRouter();

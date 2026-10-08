@@ -35,6 +35,9 @@ import {
 } from "../components/steps";
 import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
 
+/**
+ * Documentation for module export
+ */
 export function SetupAccountView() {
   const { t } = useI18n();
   const searchParams = useSearchParams();

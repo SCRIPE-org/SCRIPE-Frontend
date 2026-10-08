@@ -17,6 +17,9 @@ import type {
   RollbackFieldTypeChangeResult,
 } from "../../domain/entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface ConvertValueTypeResultViewProps {
   lastResult: ChangeFieldTypeResult | null;
   lastRollbackResult: RollbackFieldTypeChangeResult | null;
@@ -26,6 +29,9 @@ export interface ConvertValueTypeResultViewProps {
   onCopyJobId: (jobRunId: string) => void;
 }
 
+/**
+ * Documentation for ConvertValueTypeResultView
+ */
 export function ConvertValueTypeResultView({
   lastResult,
   lastRollbackResult,

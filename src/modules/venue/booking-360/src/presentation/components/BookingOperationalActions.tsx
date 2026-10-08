@@ -28,6 +28,9 @@ import { BookingCancelDialog } from "./BookingCancelDialog";
 import { BookingChangeResourceDialog } from "./BookingChangeResourceDialog";
 import { BookingRescheduleDialog } from "./BookingRescheduleDialog";
 
+/**
+ * Documentation for 1000
+ */
 export const NO_SHOW_REASON_MAX_LENGTH = 1000;
 
 interface Props {
@@ -85,6 +88,9 @@ function feedbackMessage(
   });
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingOperationalActions(props: Props) {
   const [noShowOpen, setNoShowOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);

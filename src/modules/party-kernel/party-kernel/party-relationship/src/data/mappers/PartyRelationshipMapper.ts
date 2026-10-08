@@ -13,6 +13,9 @@ import {
   type PartyRelationshipJson,
 } from "../models/PartyRelationshipModel";
 
+/**
+ * Documentation for module export
+ */
 export class PartyRelationshipMapper {
   /**
    * Convert PartyRelationshipModel to PartyRelationship Entity

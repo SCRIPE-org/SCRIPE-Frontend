@@ -6,6 +6,9 @@ import { renderStandardControls } from "./renderStandardControls";
 import { renderComplexControls } from "./renderComplexControls";
 import { renderInputControls } from "./renderInputControls";
 
+/**
+ * Documentation for module export
+ */
 export type { CustomFieldControlProps };
 
 /**

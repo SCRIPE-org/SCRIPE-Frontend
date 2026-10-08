@@ -12,6 +12,9 @@ import type {
 } from "../entities";
 import type { ActivateAccountRequest } from "./IAccountSetupService";
 
+/**
+ * Documentation for module export
+ */
 export interface IAccountSetupRepository {
   validateToken(token: string): Promise<SetupTokenInfo>;
   getCustomFields(token: string): Promise<SetupCustomField[]>;

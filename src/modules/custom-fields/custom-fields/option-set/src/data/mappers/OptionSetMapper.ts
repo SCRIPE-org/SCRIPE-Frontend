@@ -38,6 +38,9 @@ import {
   type OptionSetBindingResultModel,
 } from "../models/OptionSetModel";
 
+/**
+ * Documentation for module export
+ */
 export class OptionSetMapper {
   /** Convert an OptionSetModel to an OptionSet entity. */
   static toEntity(model: OptionSetModel): OptionSet {

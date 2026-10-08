@@ -14,6 +14,9 @@ interface PaymentRecentListCardProps {
   canRefund: boolean;
 }
 
+/**
+ * Documentation for PaymentRecentListCard
+ */
 export function PaymentRecentListCard({
   model,
   canRecord,

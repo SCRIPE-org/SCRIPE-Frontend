@@ -7,6 +7,9 @@ import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { FieldVersionSummary } from "../../domain/entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVersionDraftCardProps {
   hasDraft: boolean;
   activeDraft: FieldVersionSummary | null;
@@ -22,6 +25,9 @@ export interface FieldVersionDraftCardProps {
   formatDate: (dateStr?: string | null) => string;
 }
 
+/**
+ * Documentation for FieldVersionDraftCard
+ */
 export function FieldVersionDraftCard({
   hasDraft,
   activeDraft,

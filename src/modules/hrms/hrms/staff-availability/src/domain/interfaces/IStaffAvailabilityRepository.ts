@@ -14,6 +14,9 @@ export interface StaffAvailabilityListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffAvailabilityRepository {
   getAll(
     params: StaffAvailabilityListParams

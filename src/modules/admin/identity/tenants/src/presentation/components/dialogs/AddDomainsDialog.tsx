@@ -44,6 +44,9 @@ import { Globe, Sparkles } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
 
+/**
+ * Documentation for module export
+ */
 export interface AddDomainsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -100,6 +103,9 @@ function inspectDomain(domain: string) {
   return { isApex, isWww, partnerDomain };
 }
 
+/**
+ * Documentation for AddDomainsDialog
+ */
 export function AddDomainsDialog({
   open,
   onOpenChange,

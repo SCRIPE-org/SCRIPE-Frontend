@@ -16,6 +16,9 @@ export interface PartyOrganizationListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyOrganizationService {
   getAll(params: {
     page: number;

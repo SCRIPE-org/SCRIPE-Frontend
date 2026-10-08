@@ -261,6 +261,9 @@ function createContainer(): InventoryContainer {
   };
 }
 
+/**
+ * Documentation for module export
+ */
 export const container: InventoryContainer = new Proxy({} as InventoryContainer, {
   get(_target, prop: keyof InventoryContainer) {
     if (!_instance) {

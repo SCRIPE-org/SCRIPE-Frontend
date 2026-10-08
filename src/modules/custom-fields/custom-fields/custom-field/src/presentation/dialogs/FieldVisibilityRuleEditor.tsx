@@ -9,6 +9,9 @@ import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsigh
 import { useFieldVisibilityRuleEditorState } from "./useFieldVisibilityRuleEditorState";
 import { FieldVisibilityRuleFormFields } from "./FieldVisibilityRuleFormFields";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRuleEditorProps {
   editingRule: FieldVisibilityRuleAdmin | null;
   siblingFields: readonly CustomField[];

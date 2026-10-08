@@ -42,6 +42,9 @@ function StatCard({
   );
 }
 
+/**
+ * Documentation for module export
+ */
 export function ApiKeyStatsCards({ stats, isLoading }: ApiKeyStatsCardsProps) {
   const { t } = useI18n();
 

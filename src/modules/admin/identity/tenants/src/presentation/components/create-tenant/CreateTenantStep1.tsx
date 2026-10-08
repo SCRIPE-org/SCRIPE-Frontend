@@ -21,6 +21,9 @@ interface CreateTenantStep1Props {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
   const touched = vm.stepTouched[1];
   const errors = vm.stepErrors[1];

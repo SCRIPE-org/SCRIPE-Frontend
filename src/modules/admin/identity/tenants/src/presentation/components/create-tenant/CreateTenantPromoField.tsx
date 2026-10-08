@@ -18,6 +18,9 @@ interface CreateTenantPromoFieldProps {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantPromoField({ vm, t }: CreateTenantPromoFieldProps) {
   return (
     <div className="space-y-2 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">

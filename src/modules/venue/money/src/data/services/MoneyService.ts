@@ -3,6 +3,9 @@ import type { MoneyInvoice, MoneyListFilter, MoneyPage, MoneyPayment, MoneyPayme
 import type { IMoneyService } from "../../domain/interfaces/IMoneyService";
 import { MONEY_ENDPOINTS } from "./money.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class MoneyService implements IMoneyService {
   constructor(private readonly api: IApiService) {}
 

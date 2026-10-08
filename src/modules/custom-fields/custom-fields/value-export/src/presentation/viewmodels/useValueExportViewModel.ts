@@ -78,6 +78,9 @@ export function isEntityTypeViewableForValueExport(
   return !!entityType.permissionResource && hasPermission(`${entityType.permissionResource}.view`);
 }
 
+/**
+ * Documentation for module export
+ */
 export function useValueExportViewModel() {
   const { valueExportRepository } = getValueExportContainer();
   const { customFieldRepository } = getCustomFieldsContainer();

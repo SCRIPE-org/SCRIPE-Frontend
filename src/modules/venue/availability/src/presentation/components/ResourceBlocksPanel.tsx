@@ -52,6 +52,9 @@ function newDraft(resourceId: string, timeZoneId: string): SaveResourceBlock {
   };
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourceBlocksPanel({ resourceId, timeZoneId, blackouts, maintenanceBlocks, saving, onSave, onDelete }: Props) {
   const { t } = useI18n();
   const { success, error } = useEnhancedToast();

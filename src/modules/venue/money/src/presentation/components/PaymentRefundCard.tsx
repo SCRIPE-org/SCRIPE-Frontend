@@ -14,6 +14,9 @@ interface PaymentRefundCardProps {
   model: ReturnType<typeof usePaymentsViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function PaymentRefundCard({ model }: PaymentRefundCardProps) {
   const { t } = useI18n();
 

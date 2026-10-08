@@ -4,6 +4,9 @@ import {
 } from "../../domain/entities/SchedulableResource";
 import { SchedulableResourceModel } from "../models/SchedulableResourceModel";
 
+/**
+ * Documentation for module export
+ */
 export class SchedulableResourceMapper {
   static toEntity(model: SchedulableResourceModel): SchedulableResource {
     const data: SchedulableResourceData = {

@@ -9,8 +9,8 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { getVenueContainer } from "@modules/venue/di";
-import type { AvailabilitySearchResult } from "@modules/venue/availability/src/domain/entities/Availability";
+import { getVenueLocator } from "@modules/venue";
+import type { AvailabilitySearchResult } from "@modules/venue";
 
 interface Props {
   open: boolean;
@@ -28,6 +28,9 @@ interface Props {
   onConfirmReschedule: (input: { resourceId: string; requestedStartUtc: string; requestedEndUtc: string }) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingRescheduleDialog(props: Props) {
   const [date, setDate] = useState(() => new Date(props.currentStartUtc).toISOString().slice(0, 10));
   const [startTime, setStartTime] = useState("09:00");
@@ -68,7 +71,7 @@ export function BookingRescheduleDialog(props: Props) {
     setSearchAttempted(true);
     setSelectedCandidate(null);
     try {
-      const { availabilityRepository } = getVenueContainer();
+      const { availabilityRepository } = getVenueLocator();
       const result = await availabilityRepository.search({
         resourceId: props.resourceId,
         timeZoneId: props.timeZoneId,

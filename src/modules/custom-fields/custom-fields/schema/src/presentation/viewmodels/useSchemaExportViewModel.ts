@@ -65,6 +65,9 @@ export function downloadSchemaBundle(bundle: SchemaBundle): void {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Documentation for module export
+ */
 export function useSchemaExportViewModel() {
   const { schemaExportRepository } = getSchemaExportContainer();
   const { customFieldRepository } = getCustomFieldsContainer();

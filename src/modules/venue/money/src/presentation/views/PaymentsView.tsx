@@ -10,7 +10,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueMoneyNav } from "@modules/venue/shared/src/presentation/components/VenueMoneyNav";
+import { VenueMoneyNav } from "@modules/venue";
 import { usePaymentsViewModel } from "../viewmodels/usePaymentsViewModel";
 import { PaymentRecordCard } from "../components/PaymentRecordCard";
 import { PaymentRefundCard } from "../components/PaymentRefundCard";
@@ -18,6 +18,9 @@ import { PaymentAllocateCard } from "../components/PaymentAllocateCard";
 import { PaymentTimelineCard } from "../components/PaymentTimelineCard";
 import { PaymentRecentListCard } from "../components/PaymentRecentListCard";
 
+/**
+ * Documentation for module export
+ */
 export function PaymentsView() {
   useModuleLocales(() => import("../../../locales"), "venue.money");
   const { t, direction } = useI18n();

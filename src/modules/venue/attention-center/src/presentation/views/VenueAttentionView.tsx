@@ -21,6 +21,9 @@ function formatInterval(signal: VenueAttentionSignal, locale: string): string | 
   return `${formatter.format(new Date(signal.startUtc))} – ${formatter.format(new Date(signal.endUtc))}`;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueAttentionView() {
   useModuleLocales(() => import("../../../locales"), "venue.attention");
   const { t, language, direction } = useI18n();

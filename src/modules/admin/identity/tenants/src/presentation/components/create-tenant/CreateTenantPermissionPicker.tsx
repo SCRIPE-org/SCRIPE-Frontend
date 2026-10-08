@@ -16,6 +16,9 @@ interface CreateTenantPermissionPickerProps {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantPermissionPicker({ vm, t }: CreateTenantPermissionPickerProps) {
   const creationPermissions = vm.creationPermissions;
   const updateField = vm.updateField;

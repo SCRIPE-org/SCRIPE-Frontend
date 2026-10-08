@@ -8,6 +8,9 @@ import type {
   SaveResourceBlock,
 } from "../entities/Availability";
 
+/**
+ * Documentation for module export
+ */
 export interface IAvailabilityRepository {
   getCurrentCalendar(resourceId: string): Promise<AvailabilityCalendar | null>;
   saveCalendar(existing: AvailabilityCalendar | null, data: SaveAvailabilityCalendar): Promise<string>;

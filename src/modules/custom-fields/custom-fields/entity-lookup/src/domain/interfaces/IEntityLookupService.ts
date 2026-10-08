@@ -14,6 +14,9 @@ import type {
   EntityLookupType,
 } from "../../data/models/EntityLookupModel";
 
+/**
+ * Documentation for module export
+ */
 export interface IEntityLookupService {
   /**
    * The entity types this caller may point a reference at, already filtered server-side.

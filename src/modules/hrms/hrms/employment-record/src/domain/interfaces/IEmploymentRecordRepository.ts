@@ -14,6 +14,9 @@ export interface EmploymentRecordListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IEmploymentRecordRepository {
   getAll(
     params: EmploymentRecordListParams

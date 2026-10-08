@@ -12,6 +12,9 @@ interface MigrationProgressModalProps {
   isCancelling?: boolean;
 }
 
+/**
+ * Documentation for MigrationProgressModal
+ */
 export function MigrationProgressModal({
   session,
   onCancel,

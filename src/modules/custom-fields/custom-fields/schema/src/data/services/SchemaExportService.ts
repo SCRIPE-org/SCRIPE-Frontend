@@ -10,6 +10,9 @@ import { SchemaBundleModel, type SchemaBundleJson } from "../models/SchemaBundle
 import type { ISchemaExportService } from "../../domain/interfaces/ISchemaExportService";
 import { SCHEMA_EXPORT_ENDPOINTS } from "./schema-export.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class SchemaExportService implements ISchemaExportService {
   constructor(private readonly api: IApiService) {}
 

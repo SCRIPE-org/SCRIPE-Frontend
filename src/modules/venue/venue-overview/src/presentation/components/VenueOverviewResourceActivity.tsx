@@ -21,6 +21,9 @@ function formatTimeString(isoString: string): string {
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewResourceActivity({ items, t }: Props) {
   return (
     <Card className="border-nx-line bg-nx-surface">

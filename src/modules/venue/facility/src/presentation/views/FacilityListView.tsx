@@ -10,9 +10,12 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
-import { VenueProfileQuickCreateDialog } from "@modules/venue/venue-profile/src/presentation/components/VenueProfileQuickCreateDialog";
+import { VenueResourceNav } from "@modules/venue";
+import { VenueProfileQuickCreateDialog } from "@modules/venue";
 
+/**
+ * Documentation for module export
+ */
 export const FacilityListView = React.memo(function FacilityListView() {
   useModuleLocales(() => import("../../../locales"), "venue.facility");
   const { vm, searchVenueProfiles, venueProfileNameById } = useFacilityViewModel();

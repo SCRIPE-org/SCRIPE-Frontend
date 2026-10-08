@@ -23,6 +23,9 @@ interface CreateTenantStep2Props {
   t: (key: string, params?: Record<string, string | number>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
   const touched = vm.stepTouched[2];
   const errors = vm.stepErrors[2];

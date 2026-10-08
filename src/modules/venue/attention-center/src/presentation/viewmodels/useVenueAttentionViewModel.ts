@@ -4,8 +4,14 @@ import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { VenueAttentionPage } from "../../domain/entities/VenueAttention";
 
+/**
+ * Documentation for "forbidden"
+ */
 export type VenueAttentionStage = "loading" | "ready" | "error" | "forbidden";
 
+/**
+ * Documentation for module export
+ */
 export function useVenueAttentionViewModel(canView: boolean) {
   const { venueAttentionRepository } = getVenueContainer();
   const [stage, setStage] = useState<VenueAttentionStage>(canView ? "loading" : "forbidden");

@@ -23,6 +23,9 @@ import { useOptionSetViewModel } from "../../../../option-set/src/presentation/v
 import { useInlineAddCustomFieldViewModel } from "../viewmodels/useInlineAddCustomFieldViewModel";
 import { useInlineAddCustomFieldFormFields } from "../viewmodels/useInlineAddCustomFieldFormFields";
 
+/**
+ * Documentation for InlineAddCustomFieldDialog
+ */
 export function InlineAddCustomFieldDialog({
   entityTypeKey,
   entityDisplayName,

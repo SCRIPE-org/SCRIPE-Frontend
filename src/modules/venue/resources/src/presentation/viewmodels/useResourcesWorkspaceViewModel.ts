@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import type { FacilityResourceProfile } from "@modules/venue/facility-resource-profile/src/domain/entities/FacilityResourceProfile";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
+import type { Facility } from "@modules/venue";
+import type { FacilityResourceProfile } from "@modules/venue";
+import type { SchedulableResource } from "@modules/venue";
 import type {
   FirstTimeSetupInput,
   ResourceWorkspaceItem,
@@ -12,6 +12,9 @@ import type {
 
 const PAGE_SIZE = 100;
 
+/**
+ * Documentation for module export
+ */
 export function useResourcesWorkspaceViewModel() {
   const {
     facilityRepository,

@@ -41,6 +41,9 @@ interface WeeklyWindowsEditorCardProps {
   onTimeZoneChange: (tz: string) => void;
 }
 
+/**
+ * Documentation for WeeklyWindowsEditorCard
+ */
 export function WeeklyWindowsEditorCard({
   vm,
   canSave,

@@ -18,6 +18,9 @@ interface AvailabilitySearchCardProps {
   canSearch: boolean;
 }
 
+/**
+ * Documentation for AvailabilitySearchCard
+ */
 export function AvailabilitySearchCard({
   vm,
   timeZoneId,

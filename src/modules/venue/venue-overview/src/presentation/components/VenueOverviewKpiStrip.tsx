@@ -19,6 +19,9 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
   // Format expiry subtext for active holds
   let holdsSubtext = t("venueOverview.kpis.noActiveHolds", { defaultValue: "No active holds" });

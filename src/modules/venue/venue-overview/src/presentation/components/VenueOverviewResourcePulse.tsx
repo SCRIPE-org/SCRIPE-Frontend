@@ -6,13 +6,16 @@ import { ArrowUpRight } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import type { VenueOverviewResourceActivityItem } from "../../domain/entities/VenueOverview";
-import { resolveSportIcon } from "@modules/venue/shared/src/presentation/utils/sportIcons";
+import { resolveSportIcon } from "@modules/venue";
 
 interface Props {
   items: VenueOverviewResourceActivityItem[];
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewResourcePulse({ items, t }: Props) {
   const totalResources = items.length;
   const inUseCount = items.filter((i) => i.statusLabel === "checkedIn").length;

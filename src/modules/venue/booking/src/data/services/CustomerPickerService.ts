@@ -8,6 +8,9 @@ interface PartyPage {
   items: CustomerSummary[];
 }
 
+/**
+ * Documentation for module export
+ */
 export class CustomerPickerService implements ICustomerPickerService {
   constructor(private readonly api: IApiService) {}
 

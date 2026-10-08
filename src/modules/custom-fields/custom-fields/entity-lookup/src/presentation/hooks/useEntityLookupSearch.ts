@@ -50,6 +50,9 @@ import type {
   SearchRequest,
 } from "./useEntityLookupSearch.types";
 
+/**
+ * Documentation for module export
+ */
 export type {
   UseEntityLookupSearchArgs,
   UseEntityLookupSearchResult,

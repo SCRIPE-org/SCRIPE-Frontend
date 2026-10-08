@@ -6,6 +6,9 @@ import { BRAND } from "@core/config/branding";
 import { LanguageSwitcher } from "@core/ui/layout/common/language-switcher";
 import { ThemeSwitcher } from "@core/ui/layout/common/theme-switcher";
 
+/**
+ * Documentation for module export
+ */
 export interface PageWrapperProps {
   children: React.ReactNode;
 }

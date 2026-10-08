@@ -7,6 +7,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { DynamicCustomField } from "../DynamicCustomField";
 import type { useAccountSetupViewModel } from "../../viewmodels/useAccountSetupViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface SetupStep3AttributesProps {
   vm: ReturnType<typeof useAccountSetupViewModel>;
   hasCustomFields: boolean;

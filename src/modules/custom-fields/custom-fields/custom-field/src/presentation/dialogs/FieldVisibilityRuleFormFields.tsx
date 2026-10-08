@@ -17,6 +17,9 @@ import {
   type FieldVisibilityOperator,
 } from "../../../../custom-field-value/src/domain/fieldVisibility";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRuleFormFieldsProps {
   isAdvancedJson: boolean;
   rawJsonInput: string;

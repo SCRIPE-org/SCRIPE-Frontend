@@ -15,6 +15,9 @@ interface ActiveKeyCardProps {
   isInitializing?: boolean;
 }
 
+/**
+ * Documentation for ActiveKeyCard
+ */
 export function ActiveKeyCard({
   status,
   onInitialize,

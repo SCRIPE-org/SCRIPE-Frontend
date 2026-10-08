@@ -19,6 +19,9 @@ interface RotateKeyDialogProps {
   onClose: () => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function RotateKeyDialog({ rotatedKey, onClose }: RotateKeyDialogProps) {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);

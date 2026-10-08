@@ -32,6 +32,9 @@ import { SelectTrigger } from "@core/crud/components/select/select-trigger";
 import { SelectOptionRow } from "@core/crud/components/select/select-option-row";
 import type { OptionSet } from "../../../../../option-set/src/domain/entities/OptionSet";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetPickerProps {
   id: string;
   label: string;
@@ -47,6 +50,9 @@ export interface OptionSetPickerProps {
   describedBy?: string;
 }
 
+/**
+ * Documentation for OptionSetPicker
+ */
 export function OptionSetPicker({
   id,
   label,

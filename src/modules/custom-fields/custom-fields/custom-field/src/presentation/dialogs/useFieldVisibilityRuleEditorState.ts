@@ -12,6 +12,9 @@ import {
   parseFieldVisibilityExpressionJson,
 } from "../viewmodels/useFieldVisibilityRulesViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface UseFieldVisibilityRuleEditorStateProps {
   editingRule: FieldVisibilityRuleAdmin | null;
   siblingFields: readonly CustomField[];

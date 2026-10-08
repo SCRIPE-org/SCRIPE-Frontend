@@ -46,6 +46,9 @@ import type { SchemaImportGroupOutcome } from "../../domain/entities/SchemaImpor
 import { useSchemaImportViewModel } from "../viewmodels/useSchemaImportViewModel";
 import { SchemaImportDropZone } from "./SchemaImportDropZone";
 
+/**
+ * Documentation for module export
+ */
 export interface SchemaImportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -57,6 +60,9 @@ function outcomeBadgeVariant(outcome: SchemaImportGroupOutcome): "success" | "wa
   return "destructive";
 }
 
+/**
+ * Documentation for module export
+ */
 export function SchemaImportDialog({ open, onOpenChange }: SchemaImportDialogProps) {
   const { t } = useI18n();
   const vm = useSchemaImportViewModel();

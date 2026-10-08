@@ -16,6 +16,9 @@ interface ClusterRewrapCardProps {
   isCancellingRewrap: boolean;
 }
 
+/**
+ * Documentation for ClusterRewrapCard
+ */
 export function ClusterRewrapCard({
   activeSession,
   onStartClusterRewrap,

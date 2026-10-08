@@ -8,6 +8,9 @@ import {
 import type { IFacilityService, FacilityListResult } from "../../domain/interfaces/IFacilityService";
 import { FACILITY_ENDPOINTS } from "./facility.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class FacilityService implements IFacilityService {
   constructor(private readonly api: IApiService) {}
 

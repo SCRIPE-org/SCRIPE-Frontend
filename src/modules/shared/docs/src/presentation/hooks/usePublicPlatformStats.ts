@@ -22,6 +22,9 @@ export interface PublicPlatformStatsResponse {
   uptimeSla: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function usePublicPlatformStats() {
   const { data, isLoading } = useQuery({
     queryKey: ["public", "platform-stats"],

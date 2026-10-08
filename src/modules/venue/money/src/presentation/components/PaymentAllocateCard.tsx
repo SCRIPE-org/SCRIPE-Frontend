@@ -14,6 +14,9 @@ interface PaymentAllocateCardProps {
   model: ReturnType<typeof usePaymentsViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function PaymentAllocateCard({ model }: PaymentAllocateCardProps) {
   const { t } = useI18n();
 

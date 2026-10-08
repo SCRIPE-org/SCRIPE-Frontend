@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getPartyKernelContainer } from "../../../../di";
 import type { ContactPoint } from "../../domain/entities/ContactPoint";
 
+/**
+ * Documentation for module export
+ */
 export function useContactPointViewModel() {
   const { contactPointRepository } = getPartyKernelContainer();
 

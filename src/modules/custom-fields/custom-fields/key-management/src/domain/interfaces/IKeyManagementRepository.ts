@@ -8,6 +8,9 @@ import type {
   StartRewrapRequest
 } from "../../data/models/key-management.dto";
 
+/**
+ * Documentation for module export
+ */
 export interface IKeyManagementRepository {
   getStatus(): Promise<TenantKeyStatus>;
   initializeKey(request: InitializeTenantKeyRequest): Promise<TenantKeyStatus>;

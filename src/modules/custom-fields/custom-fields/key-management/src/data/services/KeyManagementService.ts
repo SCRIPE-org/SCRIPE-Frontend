@@ -11,6 +11,9 @@ import type {
 } from "../models/key-management.dto";
 import { KEY_MANAGEMENT_ENDPOINTS } from "./key-management.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class KeyManagementService implements IKeyManagementService {
   constructor(private readonly api: IApiService) {}
 

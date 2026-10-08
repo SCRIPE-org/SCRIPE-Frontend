@@ -1,5 +1,8 @@
 import type { MigrationSession } from "./MigrationSession";
 
+/**
+ * Documentation for module export
+ */
 export interface KeyDistributionItem {
   platformKeyId: number;
   tenantKeyVersion: number;
@@ -7,6 +10,9 @@ export interface KeyDistributionItem {
   percentage: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface TenantKeyStatusData {
   tenantCode: string;
   isInitialized: boolean;
@@ -28,6 +34,9 @@ export interface TenantKeyStatusData {
   minDecryptionVersion?: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export class TenantKeyStatus {
   constructor(private readonly data: TenantKeyStatusData) {}
 

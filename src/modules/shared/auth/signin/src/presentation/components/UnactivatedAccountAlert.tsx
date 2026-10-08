@@ -5,6 +5,9 @@ import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { Mail } from "lucide-react";
 
+/**
+ * Documentation for module export
+ */
 export interface UnactivatedAccountAlertProps {
   t: (key: string) => string;
   accountNotActivatedMessage?: string;

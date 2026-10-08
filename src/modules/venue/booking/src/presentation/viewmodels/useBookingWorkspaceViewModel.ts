@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import type { FacilityResourceProfile } from "@modules/venue/facility-resource-profile/src/domain/entities/FacilityResourceProfile";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
-import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
+import type { Facility } from "@modules/venue";
+import type { FacilityResourceProfile } from "@modules/venue";
+import type { SchedulableResource } from "@modules/venue";
+import type { PriceQuote } from "@modules/venue";
 import type {
   AvailabilityCandidate,
   BookingRequestCriteria,
@@ -20,6 +20,9 @@ import {
 
 const PAGE_SIZE = 100;
 
+/**
+ * Documentation for module export
+ */
 export const initialBookingCriteria: BookingRequestCriteria = {
   facilityId: "",
   resourceId: "",
@@ -48,6 +51,9 @@ function errorMessage(error: unknown, fallback: string): string {
   return error instanceof Error && error.message ? error.message : fallback;
 }
 
+/**
+ * Documentation for module export
+ */
 export function endLocalFor(criteria: BookingRequestCriteria): string | null {
   const [hours, minutes] = criteria.startTime.split(":").map(Number);
   if (!criteria.date || !Number.isInteger(hours) || !Number.isInteger(minutes)) return null;
@@ -68,6 +74,9 @@ function candidateFingerprint(candidate: AvailabilityCandidate, customerId: stri
   ].join("|");
 }
 
+/**
+ * Documentation for module export
+ */
 export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = {}) {
   const {
     bookingRepository,

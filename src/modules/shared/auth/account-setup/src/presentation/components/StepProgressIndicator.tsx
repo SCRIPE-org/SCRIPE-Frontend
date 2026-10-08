@@ -7,6 +7,9 @@ import { KeyRound, User, ShieldCheck, Sparkles, Check } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { SetupStep } from "../viewmodels/useAccountSetupViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface StepProgressProps {
   currentStep: SetupStep;
   hasCustomFields: boolean;

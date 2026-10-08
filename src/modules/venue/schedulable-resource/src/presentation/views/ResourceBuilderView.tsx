@@ -11,7 +11,7 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueResourceNav } from "@modules/venue";
 import { useResourceBuilderViewModel } from "../viewmodels/useResourceBuilderViewModel";
 import type { SchedulableResourceTreeNode } from "../utils/resourceTree";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
@@ -20,6 +20,9 @@ import { ResourceChecklistDialog } from "../dialogs/ResourceChecklistDialog";
 import { ResourceDeleteDialog } from "../dialogs/ResourceDeleteDialog";
 import { ResourceFormDialog } from "../dialogs/ResourceFormDialog";
 
+/**
+ * Documentation for module export
+ */
 export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
   useModuleLocales(() => import("../../../locales"), "venue.schedulableResource");
   const { t } = useI18n();

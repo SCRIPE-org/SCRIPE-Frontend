@@ -37,6 +37,9 @@ import {
 import type { IOptionSetService } from "../../domain/interfaces/IOptionSetService";
 import { OPTION_SET_ENDPOINTS } from "./option-set.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class OptionSetService implements IOptionSetService {
   constructor(private readonly api: IApiService) {}
 

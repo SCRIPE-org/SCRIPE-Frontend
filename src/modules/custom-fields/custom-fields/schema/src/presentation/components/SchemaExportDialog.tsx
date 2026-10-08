@@ -42,11 +42,17 @@ import {
   useSchemaExportViewModel,
 } from "../viewmodels/useSchemaExportViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface SchemaExportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function SchemaExportDialog({ open, onOpenChange }: SchemaExportDialogProps) {
   const { t, language } = useI18n();
   const vm = useSchemaExportViewModel();

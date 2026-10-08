@@ -17,6 +17,9 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 
+/**
+ * Documentation for 1000
+ */
 export const CANCEL_REASON_MAX_LENGTH = 1000;
 
 interface Props {
@@ -32,6 +35,9 @@ interface Props {
   onConfirmCancel: (reason: string) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingCancelDialog(props: Props) {
   const [reason, setReason] = useState("");
   const [reasonTouched, setReasonTouched] = useState(false);

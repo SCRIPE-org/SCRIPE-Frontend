@@ -21,6 +21,9 @@ import { ApiKey } from "../../domain/entities/ApiKey";
 import { Key, Trash2, Eye } from "lucide-react";
 import { formatUtc } from "@core/common/utils";
 
+/**
+ * Documentation for module export
+ */
 export function ApiKeysView() {
   useModuleLocales(() => import("../../../locales"), "apikeys");
 

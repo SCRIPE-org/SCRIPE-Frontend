@@ -32,6 +32,9 @@ const ACTOR_LABEL_KEY: Record<LifecycleStep["actor"], string> = {
   database: "widgets.lifecycleTracer.actor.database",
 };
 
+/**
+ * Documentation for module export
+ */
 export function LifecycleStepItem({ step, isActive, onClick }: LifecycleStepItemProps) {
   const { t } = useDocsI18n();
   const color = chartColor(ACTOR_SLOT[step.actor]);

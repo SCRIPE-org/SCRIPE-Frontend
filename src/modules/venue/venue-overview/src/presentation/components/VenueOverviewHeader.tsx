@@ -52,6 +52,9 @@ function formatDisplayDate(dateStr: string, timeZoneId: string): string {
   }
 }
 
+/**
+ * Documentation for VenueOverviewHeader
+ */
 export function VenueOverviewHeader({
   facilityName,
   selectedFacilityId,

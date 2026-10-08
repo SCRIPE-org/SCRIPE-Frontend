@@ -11,6 +11,9 @@ import { PasswordStrengthMeter } from "../PasswordStrengthMeter";
 import { PasswordCheck } from "../PasswordCheck";
 import type { useAccountSetupViewModel } from "../../viewmodels/useAccountSetupViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface SetupStep1SecurityProps {
   vm: ReturnType<typeof useAccountSetupViewModel>;
 }

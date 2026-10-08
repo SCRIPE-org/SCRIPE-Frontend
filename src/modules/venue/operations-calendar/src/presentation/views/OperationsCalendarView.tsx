@@ -18,6 +18,9 @@ import { BlockTimeModal } from "../components/BlockTimeModal";
 import { useOperationsCalendarViewModel } from "../viewmodels/useOperationsCalendarViewModel";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
+/**
+ * Documentation for module export
+ */
 export const OperationsCalendarView = React.memo(function OperationsCalendarView() {
   useModuleLocales(() => import("../../../locales"), "venue.operationsCalendar");
   const { t, language, direction } = useI18n();

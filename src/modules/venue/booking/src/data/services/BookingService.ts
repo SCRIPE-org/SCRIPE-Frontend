@@ -11,6 +11,9 @@ import type {
 import type { IBookingService } from "../../domain/interfaces/IBookingService";
 import { BOOKING_ENDPOINTS } from "./booking.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class BookingService implements IBookingService {
   constructor(private readonly api: IApiService) {}
 

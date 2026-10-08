@@ -23,6 +23,9 @@ interface Props {
   className?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueNav({ attentionCount = 0, className = "" }: Props) {
   const pathname = usePathname();
   const { t, language } = useI18n();

@@ -10,6 +10,9 @@ import type {
 
 const PAGE_SIZE = 100;
 
+/**
+ * Documentation for module export
+ */
 export function useFacilityResourceProfilesViewModel() {
   const { facilityRepository, facilityResourceProfileRepository } = getVenueContainer();
   const [facilities, setFacilities] = useState<Facility[]>([]);

@@ -14,6 +14,9 @@ export interface CertificationListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ICertificationRepository {
   getAll(
     params: CertificationListParams

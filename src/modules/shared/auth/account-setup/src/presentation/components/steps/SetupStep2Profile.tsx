@@ -11,6 +11,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { AvatarUploader } from "../AvatarUploader";
 import type { useAccountSetupViewModel } from "../../viewmodels/useAccountSetupViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface SetupStep2ProfileProps {
   vm: ReturnType<typeof useAccountSetupViewModel>;
   hasCustomFields: boolean;

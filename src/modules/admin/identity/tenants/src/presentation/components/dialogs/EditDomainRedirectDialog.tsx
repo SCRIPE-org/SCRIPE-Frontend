@@ -40,6 +40,9 @@ import { Globe } from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
 
+/**
+ * Documentation for module export
+ */
 export interface EditDomainRedirectDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -258,6 +261,9 @@ function EditDomainRedirectForm({
   );
 }
 
+/**
+ * Documentation for EditDomainRedirectDialog
+ */
 export function EditDomainRedirectDialog({
   open,
   onOpenChange,

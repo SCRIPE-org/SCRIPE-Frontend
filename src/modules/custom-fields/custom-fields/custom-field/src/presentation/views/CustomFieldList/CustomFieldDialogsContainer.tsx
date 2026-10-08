@@ -28,6 +28,9 @@ import type { useConvertValueTypeViewModel } from "../../viewmodels/useConvertVa
 import type { useFieldVersionsViewModel } from "../../viewmodels/useFieldVersionsViewModel";
 import type { useCustomFieldViewModel } from "../../viewmodels/useCustomFieldViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface CustomFieldDialogsContainerProps {
   detailFieldId: string | null;
   closeDetail: () => void;
@@ -42,6 +45,9 @@ export interface CustomFieldDialogsContainerProps {
   fieldVersions: ReturnType<typeof useFieldVersionsViewModel>;
 }
 
+/**
+ * Documentation for CustomFieldDialogsContainer
+ */
 export const CustomFieldDialogsContainer = React.memo(function CustomFieldDialogsContainer({
   detailFieldId,
   closeDetail,

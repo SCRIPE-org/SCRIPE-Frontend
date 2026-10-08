@@ -17,6 +17,17 @@
 import type { Column } from "@core/crud/components/generic-table";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useI18n } from "@core/providers/i18n-provider";
+
+export const SELECT_OPTIONS_REGEX = /^[^,]+(?:,[^,]+)*$/;
+
+export function assertSelectCustomFieldValuesValid(value: unknown): asserts value is string {
+  if (typeof value !== "string") {
+    throw new Error("Select options must be a comma-separated string.");
+  }
+  if (!SELECT_OPTIONS_REGEX.test(value)) {
+    throw new Error("Select options must be a comma-separated list of non-empty values (e.g., 'Option 1,Option 2,Option 3').");
+  }
+}
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MaskedCustomFieldCell,

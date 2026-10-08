@@ -6,12 +6,18 @@ import { Separator } from "@core/ui/separator";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CustomField } from "../../../domain/entities/CustomField";
 
+/**
+ * Documentation for module export
+ */
 export interface DetailGeneralSectionProps {
   field: CustomField;
   entityTypeDisplayName: string;
   fieldGroupName: string;
 }
 
+/**
+ * Documentation for DetailGeneralSection
+ */
 export function DetailGeneralSection({
   field,
   entityTypeDisplayName,

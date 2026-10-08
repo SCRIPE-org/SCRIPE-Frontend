@@ -4,6 +4,9 @@ import React from "react";
 import { cn } from "@core/common/utils";
 import { Check } from "lucide-react";
 
+/**
+ * Documentation for module export
+ */
 export interface PasswordCheckProps {
   label: string;
   ok: boolean;

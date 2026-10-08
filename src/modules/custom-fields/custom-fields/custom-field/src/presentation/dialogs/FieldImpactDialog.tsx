@@ -51,6 +51,9 @@ export interface FieldImpactDialogProps {
   isDeleting?: boolean;
 }
 
+/**
+ * Documentation for FieldImpactDialog
+ */
 export function FieldImpactDialog({
   open,
   onOpenChange,

@@ -55,6 +55,9 @@ function holdIsAuthoritativelyExpired(reservation: Booking360Reservation): boole
     ((reservation.status === "Held" || reservation.status === "PendingApproval") && !reservation.activeHold);
 }
 
+/**
+ * Documentation for useBooking360ViewModel
+ */
 export function useBooking360ViewModel(
   reservationId: string,
   canViewReservation: boolean,

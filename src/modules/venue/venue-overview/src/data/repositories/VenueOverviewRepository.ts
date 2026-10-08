@@ -2,6 +2,9 @@ import type { IVenueOverviewRepository } from "../../domain/interfaces/IVenueOve
 import type { IVenueOverviewService } from "../../domain/interfaces/IVenueOverviewService";
 import type { VenueOverviewState } from "../../domain/entities/VenueOverview";
 
+/**
+ * Documentation for module export
+ */
 export class VenueOverviewRepository implements IVenueOverviewRepository {
   constructor(private readonly service: IVenueOverviewService) {}
 

@@ -20,6 +20,9 @@ import type { OptionSet } from "../../../../option-set/src/domain/entities/Optio
 import { OptionSetBindingCurrentStatus } from "./OptionSetBindingCurrentStatus";
 import { OptionSetBindingActions } from "./OptionSetBindingActions";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetBindingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

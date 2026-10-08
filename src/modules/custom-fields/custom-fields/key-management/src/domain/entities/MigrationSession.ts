@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface MigrationSessionData {
   id: string;
   tenantCode: string;
@@ -14,6 +17,9 @@ export interface MigrationSessionData {
   errorMessage?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class MigrationSession {
   constructor(private readonly data: MigrationSessionData) {}
 

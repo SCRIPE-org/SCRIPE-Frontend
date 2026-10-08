@@ -12,8 +12,8 @@ import {
 import { cn } from "@core/common/utils";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import type { VenueOverviewUpNextItem } from "../../domain/entities/VenueOverview";
-import type { VenueAttentionSignal } from "@modules/venue/attention-center/src/domain/entities/VenueAttention";
-import type { OperationsCalendarBlock } from "@modules/venue/operations-calendar/src/domain/entities/OperationsCalendar";
+import type { VenueAttentionSignal } from "@modules/venue";
+import type { OperationsCalendarBlock } from "@modules/venue";
 
 interface FeedEvent {
   id: string;
@@ -53,6 +53,9 @@ function formatRelativeOrLocalTime(isoString: string, timeZoneId: string) {
   }
 }
 
+/**
+ * Documentation for VenueOverviewLiveFeed
+ */
 export function VenueOverviewLiveFeed({
   blocks = [],
   upNext,

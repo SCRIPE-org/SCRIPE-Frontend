@@ -19,6 +19,9 @@ interface Props {
   item: ResourceWorkspaceItem;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourceCard({ item }: Props) {
   const { t } = useI18n();
 

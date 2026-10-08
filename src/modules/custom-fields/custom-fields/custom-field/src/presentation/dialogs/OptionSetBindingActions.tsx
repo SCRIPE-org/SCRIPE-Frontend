@@ -6,6 +6,9 @@ import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { OptionSet } from "../../../../option-set/src/domain/entities/OptionSet";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetBindingActionsProps {
   boundSet: OptionSet | null;
   selectedSet: OptionSet | null;

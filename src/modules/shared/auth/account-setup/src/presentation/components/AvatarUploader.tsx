@@ -6,6 +6,9 @@ import { Button } from "@core/ui/button";
 import { Camera, Upload, Trash2, AlertCircle } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export interface AvatarUploaderProps {
   profileImageUrl: string;
   name: string;

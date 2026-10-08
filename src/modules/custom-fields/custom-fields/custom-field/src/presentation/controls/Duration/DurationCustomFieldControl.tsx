@@ -103,6 +103,9 @@ import { Label } from "@core/ui/label";
 import { Input } from "@core/ui/input";
 import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 
+/**
+ * Documentation for module export
+ */
 export interface DurationCustomFieldControlProps {
   fc: FieldConfig;
   value: unknown;
@@ -127,6 +130,9 @@ function toFieldInputValue(value: unknown): string {
   return value === undefined || value === null ? "" : String(value);
 }
 
+/**
+ * Documentation for DurationCustomFieldControl
+ */
 export function DurationCustomFieldControl({
   fc,
   value,

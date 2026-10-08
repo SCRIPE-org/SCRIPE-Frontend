@@ -21,6 +21,9 @@ import {
 } from "./optionSetItemEditorTypes";
 import type { OptionSetItemWritableStatus } from "../../domain/entities/OptionSetItem";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetItemRowProps {
   row: OptionSetDraftItem;
   index: number;
@@ -38,6 +41,9 @@ export interface OptionSetItemRowProps {
   hintId: (field: HintedTextField) => string;
 }
 
+/**
+ * Documentation for OptionSetItemRow
+ */
 export function OptionSetItemRow({
   row,
   index,

@@ -22,6 +22,9 @@ interface ResourceFormDialogProps {
   onSubmit: (data: Record<string, unknown>) => Promise<void>;
 }
 
+/**
+ * Documentation for ResourceFormDialog
+ */
 export function ResourceFormDialog({
   open,
   onOpenChange,

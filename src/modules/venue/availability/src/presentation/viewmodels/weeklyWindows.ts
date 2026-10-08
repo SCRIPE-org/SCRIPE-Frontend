@@ -1,12 +1,21 @@
 import type { AvailabilityWindow, WeekDay } from "../../domain/entities/Availability";
 
+/**
+ * Documentation for module export
+ */
 export interface WeeklyWindowDraft extends AvailabilityWindow {
   id: string;
   dayOfWeek: WeekDay;
 }
 
+/**
+ * Documentation for "capacity"
+ */
 export type WeeklyWindowError = "required" | "range" | "overlap" | "capacity";
 
+/**
+ * Documentation for validateWeeklyWindows
+ */
 export function validateWeeklyWindows(
   windows: WeeklyWindowDraft[],
   maximumCapacity: number

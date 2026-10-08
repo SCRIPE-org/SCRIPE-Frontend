@@ -6,6 +6,9 @@ import { ReceiptText, Banknote } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export function VenueMoneyNav() {
   const pathname = usePathname();
   const { t } = useI18n();

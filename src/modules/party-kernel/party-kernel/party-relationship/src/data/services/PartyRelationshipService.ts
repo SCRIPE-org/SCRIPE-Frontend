@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTY_RELATIONSHIPS.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class PartyRelationshipService implements IPartyRelationshipService {
   constructor(private readonly api: IApiService) {}
 

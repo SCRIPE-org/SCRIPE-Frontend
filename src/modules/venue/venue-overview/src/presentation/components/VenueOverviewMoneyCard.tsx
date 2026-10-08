@@ -12,6 +12,9 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewMoneyCard({ t }: Props) {
   const canViewReceivables = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIVABLES_VIEW);
   const canViewPayments = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);

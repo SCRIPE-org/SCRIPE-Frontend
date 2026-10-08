@@ -5,9 +5,9 @@ import { ArrowUpRight, Clock, User, ExternalLink } from "lucide-react";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
-import type { Booking360Status } from "@modules/venue/booking-360/src/domain/entities/Booking360";
+import type { Booking360Status } from "@modules/venue";
 import type { VenueOverviewUpNextItem } from "../../domain/entities/VenueOverview";
-import { resolveSportIcon } from "@modules/venue/shared/src/presentation/utils/sportIcons";
+import { resolveSportIcon } from "@modules/venue";
 
 interface Props {
   items: VenueOverviewUpNextItem[];
@@ -43,6 +43,9 @@ function statusBadgeClass(status: Booking360Status) {
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewUpNext({ items, t }: Props) {
   return (
     <Card className="border-nx-line bg-nx-surface overflow-hidden" data-testid="venue-overview-up-next">

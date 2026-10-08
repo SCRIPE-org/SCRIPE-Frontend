@@ -109,6 +109,9 @@ function resolveZone(length: number, max: number): CounterZone {
   return "safe";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface LongTextCustomFieldControlProps {
   fc: FieldConfig;
   value: unknown;
@@ -120,6 +123,9 @@ export interface LongTextCustomFieldControlProps {
   error?: string;
 }
 
+/**
+ * Documentation for LongTextCustomFieldControl
+ */
 export function LongTextCustomFieldControl({
   fc,
   value,

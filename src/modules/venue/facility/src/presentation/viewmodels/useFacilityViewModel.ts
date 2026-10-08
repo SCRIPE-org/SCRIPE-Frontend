@@ -7,6 +7,9 @@ import type { Facility } from "../../domain/entities/Facility";
 
 const VENUE_PROFILE_LOOKUP_PAGE_SIZE = 500;
 
+/**
+ * Documentation for module export
+ */
 export function useFacilityViewModel() {
   const { facilityRepository, venueProfileRepository } = getVenueContainer();
 

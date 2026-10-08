@@ -121,6 +121,9 @@ function resolveZone(length: number, max: number): CounterZone {
   return "safe";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface RichTextCustomFieldControlProps {
   /**
    * Lands on the contenteditable, so the sibling `<Label htmlFor>` is real DOM

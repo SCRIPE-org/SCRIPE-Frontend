@@ -11,6 +11,9 @@ import type {
 } from "../../domain/interfaces/IVenueProfileService";
 import { VENUE_PROFILE_ENDPOINTS } from "./venue-profile.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class VenueProfileService implements IVenueProfileService {
   constructor(private readonly api: IApiService) {}
 

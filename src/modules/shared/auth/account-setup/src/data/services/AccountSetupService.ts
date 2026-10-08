@@ -15,8 +15,14 @@ import type {
 import type { IPublicApiService } from "@core/interfaces/public-api.interface";
 import { ACCOUNT_SETUP_ENDPOINTS } from "./account-setup.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export type { ActivateAccountRequest, ActivateAccountResponse, ValidateTokenResponse, SetupCustomFieldDto };
 
+/**
+ * Documentation for module export
+ */
 export class AccountSetupService implements IAccountSetupService {
   constructor(private readonly api: IPublicApiService) {}
 

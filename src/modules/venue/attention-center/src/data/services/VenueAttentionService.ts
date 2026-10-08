@@ -3,6 +3,9 @@ import type { VenueAttentionPage } from "../../domain/entities/VenueAttention";
 import type { IVenueAttentionService } from "../../domain/interfaces/IVenueAttentionService";
 import { VENUE_ATTENTION_ENDPOINTS } from "./venue-attention.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class VenueAttentionService implements IVenueAttentionService {
   constructor(private readonly api: IApiService) {}
 

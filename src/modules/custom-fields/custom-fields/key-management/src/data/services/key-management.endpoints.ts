@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const KEY_MANAGEMENT_ENDPOINTS = {
   STATUS: `${V1}/custom-fields/encryption/status`,
   INITIALIZE: `${V1}/custom-fields/encryption/initialize`,

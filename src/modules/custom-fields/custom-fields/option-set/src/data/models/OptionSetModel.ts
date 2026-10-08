@@ -22,6 +22,9 @@ import type {
   BindOptionSetRequestJson,
 } from "./OptionSetDto";
 
+/**
+ * Documentation for module export
+ */
 export type {
   FieldVersionStatus,
   FieldOptionStatus,

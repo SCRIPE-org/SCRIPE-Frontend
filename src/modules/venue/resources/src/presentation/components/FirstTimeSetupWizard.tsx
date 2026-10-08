@@ -48,6 +48,9 @@ const SPORT_TYPES = [
   "Volleyball",
 ];
 
+/**
+ * Documentation for FirstTimeSetupWizard
+ */
 export function FirstTimeSetupWizard({
   open,
   onOpenChange,

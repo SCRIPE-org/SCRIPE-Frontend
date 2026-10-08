@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = PARTYKERNEL_ENDPOINTS.MERGE_CANDIDATES.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class MergeCandidateService implements IMergeCandidateService {
   constructor(private readonly api: IApiService) {}
 

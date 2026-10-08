@@ -37,6 +37,9 @@ import { classifyValueTypeConversion } from "../../domain/valueTypeConversion";
 import { ConvertValueTypePreview } from "./ConvertValueTypePreview";
 import { ConvertValueTypeResultView } from "./ConvertValueTypeResultView";
 
+/**
+ * Documentation for module export
+ */
 export interface ConvertValueTypeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -61,6 +64,9 @@ export interface ConvertValueTypeDialogProps {
   lastRollbackResult: RollbackFieldTypeChangeResult | null;
 }
 
+/**
+ * Documentation for ConvertValueTypeDialog
+ */
 export const ConvertValueTypeDialog = React.memo(function ConvertValueTypeDialog({
   open,
   onOpenChange,

@@ -13,6 +13,9 @@ import { getGeoTerritory, formatInternationalAddress } from "@core/constants/geo
 import { useI18n } from "@core/providers/i18n-provider";
 import { MapPin, Globe, Clock, Building2, Navigation, AlertCircle } from "lucide-react";
 
+/**
+ * Documentation for module export
+ */
 export interface SiteLocationState {
   countryCode: string;
   timeZone: string;
@@ -30,6 +33,9 @@ interface SiteLocationFieldsProps {
   errors?: Partial<Record<keyof SiteLocationState, string>>;
 }
 
+/**
+ * Documentation for SiteLocationFields
+ */
 export function SiteLocationFields({
   location,
   onChange,

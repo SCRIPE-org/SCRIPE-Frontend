@@ -6,6 +6,9 @@ import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { OptionSet } from "../../../../option-set/src/domain/entities/OptionSet";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetBindingCurrentStatusProps {
   boundSet: OptionSet | null;
 }

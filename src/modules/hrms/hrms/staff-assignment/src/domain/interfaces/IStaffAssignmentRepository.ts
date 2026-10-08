@@ -14,6 +14,9 @@ export interface StaffAssignmentListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffAssignmentRepository {
   getAll(
     params: StaffAssignmentListParams

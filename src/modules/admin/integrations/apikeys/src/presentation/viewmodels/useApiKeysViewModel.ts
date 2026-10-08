@@ -17,11 +17,17 @@ import { resolveBilingualLabel } from "@core/common/utils";
 import { ApiKey, CreateApiKeyRequest } from "../../domain/entities/ApiKey";
 
 // Query keys for caching
+/**
+ * Documentation for module export
+ */
 export const apiKeyKeys = {
   all: ["apikeys"] as const,
   list: (filters: Record<string, unknown>) => ["apikeys", "list", filters] as const,
 };
 
+/**
+ * Documentation for module export
+ */
 export function useApiKeysViewModel() {
   const { apiKeyRepository } = integrationsContainer;
   const { t, language } = useI18n();

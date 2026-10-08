@@ -24,9 +24,9 @@ import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getVenueContainer } from "@modules/venue/di";
-import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
-import type { CustomerSummary } from "@modules/venue/booking/src/domain/entities/Booking";
+import { getVenueLocator } from "@modules/venue";
+import type { PriceQuote } from "@modules/venue";
+import type { CustomerSummary } from "@modules/venue";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
 interface Props {
@@ -40,6 +40,9 @@ interface Props {
   onBlockTime?: (resource: CalendarResource, instantUtc: string) => void;
 }
 
+/**
+ * Documentation for ClickToBookModal
+ */
 export function ClickToBookModal({
   open,
   onOpenChange,
@@ -56,7 +59,7 @@ export function ClickToBookModal({
     customerRepository,
     commercialPricingRepository,
     moneyRepository,
-  } = getVenueContainer();
+  } = getVenueLocator();
 
   // Dialog stages: "form" | "held" | "confirmed"
   const [stage, setStage] = useState<"form" | "held" | "confirmed">("form");

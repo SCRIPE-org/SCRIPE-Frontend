@@ -22,6 +22,9 @@ function secondsBetween(expiresAtUtc: string, now: number): number {
   return Math.max(0, Math.ceil((Date.parse(expiresAtUtc) - now) / 1000));
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingHoldState(props: Props) {
   const { asOfUtc, expiresAtUtc, onExpired } = props;
   const [remaining, setRemaining] = useState(() => secondsBetween(props.expiresAtUtc, Date.parse(props.asOfUtc)));

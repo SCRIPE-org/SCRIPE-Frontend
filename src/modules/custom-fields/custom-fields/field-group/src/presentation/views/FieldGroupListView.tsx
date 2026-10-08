@@ -27,6 +27,9 @@ import { FieldGroupList } from "../components/FieldGroupList";
 import { FieldGroupEditor, type FieldGroupFormValues } from "../components/FieldGroupEditor";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
+/**
+ * Documentation for module export
+ */
 export function FieldGroupListView() {
   useModuleLocales(() => import("../../../locales"), "customFieldGroups");
   useModuleLocales(

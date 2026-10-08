@@ -12,6 +12,9 @@ interface Props {
   vm: ReturnType<typeof useResourceDetailViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourceGeneralTab({ vm }: Props) {
   const { t } = useI18n();
   const [name, setName] = useState(vm.resource?.name ?? "");

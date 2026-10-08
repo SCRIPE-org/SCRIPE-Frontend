@@ -14,7 +14,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { venueContainer } from "@modules/venue/di";
+import { venueLocator } from "@modules/venue";
 import type { Site } from "../../domain/entities/Site";
 import {
   SiteLocationFields,
@@ -40,6 +40,9 @@ const DEFAULT_LOCATION: SiteLocationState = {
   address: "",
 };
 
+/**
+ * Documentation for SiteFormDialog
+ */
 export function SiteFormDialog({
   open,
   onOpenChange,
@@ -93,14 +96,14 @@ export function SiteFormDialog({
 
       let resultId = site?.id || "";
       if (site?.id) {
-        await venueContainer.siteRepository.update(site.id, {
+        await venueLocator.siteRepository.update(site.id, {
           name: name.trim(),
           address: finalAddress,
           timeZone: finalTz,
         });
         success(t("site.updatedSuccess") || "Site updated successfully");
       } else {
-        resultId = await venueContainer.siteRepository.create({
+        resultId = await venueLocator.siteRepository.create({
           name: name.trim(),
           address: finalAddress,
           timeZone: finalTz,

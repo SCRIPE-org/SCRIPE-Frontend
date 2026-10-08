@@ -14,6 +14,9 @@ export interface QualificationListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IQualificationRepository {
   getAll(
     params: QualificationListParams

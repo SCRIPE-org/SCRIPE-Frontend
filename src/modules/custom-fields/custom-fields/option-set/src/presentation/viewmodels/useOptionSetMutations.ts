@@ -17,6 +17,9 @@ import {
   type OptionSetRefusal,
 } from "../form/optionSetRefusalTypes";
 
+/**
+ * Documentation for module export
+ */
 export interface UseOptionSetMutationsProps {
   canCreate: boolean;
   refuseUpdate: (set: OptionSet) => OptionSetRefusal | null;

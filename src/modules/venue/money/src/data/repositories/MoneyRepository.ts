@@ -2,6 +2,9 @@ import type { MoneyInvoice, MoneyListFilter, MoneyPage, MoneyPayment, MoneyPayme
 import type { IMoneyRepository } from "../../domain/interfaces/IMoneyRepository";
 import type { IMoneyService } from "../../domain/interfaces/IMoneyService";
 
+/**
+ * Documentation for module export
+ */
 export class MoneyRepository implements IMoneyRepository {
   constructor(private readonly service: IMoneyService) {}
   getInvoices(page?: number, pageSize?: number, filter?: MoneyListFilter): Promise<MoneyPage<MoneyInvoice>> { return this.service.getInvoices(page, pageSize, filter); }

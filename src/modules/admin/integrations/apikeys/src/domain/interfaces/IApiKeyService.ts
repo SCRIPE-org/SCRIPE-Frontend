@@ -1,6 +1,9 @@
 import type { ApiKeyDto } from "../../data/models/ApiKeyDto";
 import type { CreateApiKeyRequest, CreateApiKeyResult } from "../entities/ApiKey";
 
+/**
+ * Documentation for module export
+ */
 export interface IApiKeyService {
   getAll(params: {
     page: number;

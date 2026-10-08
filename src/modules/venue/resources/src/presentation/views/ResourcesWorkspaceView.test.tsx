@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ResourcesWorkspaceView } from "./ResourcesWorkspaceView";
 import { useResourcesWorkspaceViewModel } from "../viewmodels/useResourcesWorkspaceViewModel";
-import { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import { Facility } from "@modules/venue";
 
 vi.mock("next/navigation", () => ({
   useSearchParams: vi.fn().mockReturnValue(new URLSearchParams()),

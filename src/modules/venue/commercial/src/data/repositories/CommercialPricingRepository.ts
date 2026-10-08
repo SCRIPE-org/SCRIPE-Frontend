@@ -2,6 +2,9 @@ import type { CalculatePriceQuoteInput, ConfigureResourceRentalPriceInput, Creat
 import type { ICommercialPricingRepository } from "../../domain/interfaces/ICommercialPricingRepository";
 import type { ICommercialPricingService } from "../../domain/interfaces/ICommercialPricingService";
 
+/**
+ * Documentation for module export
+ */
 export class CommercialPricingRepository implements ICommercialPricingRepository {
   constructor(private readonly service: ICommercialPricingService) {}
 

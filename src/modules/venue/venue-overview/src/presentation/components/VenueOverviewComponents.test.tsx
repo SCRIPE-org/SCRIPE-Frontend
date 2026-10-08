@@ -5,7 +5,7 @@ import { VenueOverviewLiveFeed } from "./VenueOverviewLiveFeed";
 import { VenueOverviewDemandChart } from "./VenueOverviewDemandChart";
 import { VenueOverviewStatusDonut } from "./VenueOverviewStatusDonut";
 import { VenueOverviewResourcePulse } from "./VenueOverviewResourcePulse";
-import { VenueNav } from "@modules/venue/shared/src/presentation/components/VenueNav";
+import { VenueNav } from "@modules/venue";
 
 vi.mock("next/navigation", () => ({
   usePathname: vi.fn().mockReturnValue("/venue"),

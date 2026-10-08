@@ -8,6 +8,9 @@ import type {
   RescheduleReservationInput,
 } from "../entities/Booking";
 
+/**
+ * Documentation for module export
+ */
 export interface IBookingRepository {
   createDraft(input: CreateBookingDraftInput): Promise<{ id: string }>;
   createHold(reservationId: string, idempotencyKey: string): Promise<BookingHoldResult>;

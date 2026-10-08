@@ -29,6 +29,9 @@ function localTime(value: string, locale: string, timeZoneId: string) {
   return new Intl.DateTimeFormat(locale, { timeZone: timeZoneId, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date(value));
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourceTimeline(props: ResourceTimelineProps) {
   const slots = buildTimeSlots(props.day, props.locale);
   const timelineWidth = Math.max(SLOT_WIDTH, slots.length * SLOT_WIDTH);

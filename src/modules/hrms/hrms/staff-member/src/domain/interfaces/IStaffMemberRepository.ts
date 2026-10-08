@@ -6,6 +6,9 @@
 import type { StaffMember } from "../entities/StaffMember";
 import type { IdentityUserSearchResult } from "./IStaffMemberService";
 
+/**
+ * Documentation for module export
+ */
 export interface StaffMemberListParams {
   page: number;
   pageSize: number;
@@ -15,6 +18,9 @@ export interface StaffMemberListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffMemberRepository {
   getAll(
     params: StaffMemberListParams

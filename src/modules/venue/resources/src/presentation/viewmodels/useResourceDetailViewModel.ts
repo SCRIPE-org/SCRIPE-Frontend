@@ -2,9 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import type { FacilityResourceProfile } from "@modules/venue/facility-resource-profile/src/domain/entities/FacilityResourceProfile";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
+import type { Facility } from "@modules/venue";
+import type { FacilityResourceProfile } from "@modules/venue";
+import type { SchedulableResource } from "@modules/venue";
 import type {
   AvailabilityCalendar,
   AvailabilityWindow,
@@ -27,6 +27,9 @@ const WEEK_DAYS: WeekDay[] = [
   "Saturday",
 ];
 
+/**
+ * Documentation for module export
+ */
 export function useResourceDetailViewModel(resourceId: string) {
   const {
     facilityRepository,

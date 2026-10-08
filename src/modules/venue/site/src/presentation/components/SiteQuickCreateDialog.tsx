@@ -14,7 +14,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { venueContainer } from "@modules/venue/di";
+import { venueLocator } from "@modules/venue";
 import {
   SiteLocationFields,
   type SiteLocationState,
@@ -38,6 +38,9 @@ const DEFAULT_LOCATION: SiteLocationState = {
   address: "",
 };
 
+/**
+ * Documentation for SiteQuickCreateDialog
+ */
 export function SiteQuickCreateDialog({
   open,
   onOpenChange,
@@ -65,7 +68,7 @@ export function SiteQuickCreateDialog({
       const finalAddress = location.address.trim() || location.street.trim() || undefined;
       const finalTz = location.timeZone.trim() || undefined;
 
-      const siteId = await venueContainer.siteRepository.create({
+      const siteId = await venueLocator.siteRepository.create({
         name: name.trim(),
         address: finalAddress,
         timeZone: finalTz,

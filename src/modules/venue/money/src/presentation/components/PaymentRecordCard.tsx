@@ -18,6 +18,9 @@ interface PaymentRecordCardProps {
   model: ReturnType<typeof usePaymentsViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function PaymentRecordCard({ canRecord, model }: PaymentRecordCardProps) {
   const { t } = useI18n();
 

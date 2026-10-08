@@ -32,15 +32,24 @@ export function classifyValueTypeConversion(fromType: string, toType: string): C
   return "Impossible";
 }
 
+/**
+ * Documentation for module export
+ */
 export function isConversionLossy(fromType: string, toType: string): boolean {
   return classifyValueTypeConversion(fromType, toType) === "Lossy";
 }
 
+/**
+ * Documentation for module export
+ */
 export function isConversionAllowed(fromType: string, toType: string): boolean {
   const kind = classifyValueTypeConversion(fromType, toType);
   return kind === "Lossless" || kind === "Lossy";
 }
 
+/**
+ * Documentation for [
+ */
 export const LOSSLESS_CONVERSIONS: ReadonlyArray<[string, string]> = [
   ["Text", "LongText"],
   ["Number", "Text"],
@@ -51,6 +60,9 @@ export const LOSSLESS_CONVERSIONS: ReadonlyArray<[string, string]> = [
   ["Rating", "Number"],
 ];
 
+/**
+ * Documentation for [
+ */
 export const LOSSY_CONVERSIONS: ReadonlyArray<[string, string]> = [
   ["LongText", "Text"],
   ["Text", "Number"],

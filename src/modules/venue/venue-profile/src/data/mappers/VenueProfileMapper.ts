@@ -1,6 +1,9 @@
 import { VenueProfile, type VenueProfileData } from "../../domain/entities/VenueProfile";
 import { VenueProfileModel, type VenueProfileJson } from "../models/VenueProfileModel";
 
+/**
+ * Documentation for module export
+ */
 export class VenueProfileMapper {
   static toEntity(model: VenueProfileModel): VenueProfile {
     const data: VenueProfileData = {

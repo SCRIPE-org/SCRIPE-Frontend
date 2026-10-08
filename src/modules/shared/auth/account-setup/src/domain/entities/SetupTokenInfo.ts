@@ -26,6 +26,9 @@ export interface SetupTokenInfoData {
   expiresAt?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export class SetupTokenInfo {
   constructor(private readonly data: SetupTokenInfoData) {}
 

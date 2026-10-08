@@ -7,6 +7,9 @@ import type {
   EncryptionAuditLogDto
 } from "../models/key-management.dto";
 
+/**
+ * Documentation for module export
+ */
 export class KeyManagementMapper {
   static toStatusEntity(dto: TenantEncryptionStatusDto): TenantKeyStatus {
     const totalRecords = dto.totalEncryptedValues ?? dto.totalEncryptedRecords ?? 0;

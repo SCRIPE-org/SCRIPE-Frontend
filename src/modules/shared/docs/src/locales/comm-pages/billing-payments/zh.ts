@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export const zh = {
   commercial: {
     billingPayments: {

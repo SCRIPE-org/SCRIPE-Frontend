@@ -7,6 +7,9 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewRecentActivityDeferred({ t }: Props) {
   return (
     <div className="mt-6" data-testid="recent-activity-deferred">

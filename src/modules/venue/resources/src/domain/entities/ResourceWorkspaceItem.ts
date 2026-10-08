@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface ResourceWorkspaceItem {
   id: string;
   name: string;
@@ -16,6 +19,9 @@ export interface ResourceWorkspaceItem {
   timeZoneId: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FirstTimeSetupInput {
   branchName: string;
   timeZoneId: string;

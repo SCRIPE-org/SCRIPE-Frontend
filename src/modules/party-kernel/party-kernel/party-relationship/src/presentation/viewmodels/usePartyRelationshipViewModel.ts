@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getPartyKernelContainer } from "../../../../di";
 import type { PartyRelationship } from "../../domain/entities/PartyRelationship";
 
+/**
+ * Documentation for module export
+ */
 export function usePartyRelationshipViewModel() {
   const { partyRelationshipRepository } = getPartyKernelContainer();
 

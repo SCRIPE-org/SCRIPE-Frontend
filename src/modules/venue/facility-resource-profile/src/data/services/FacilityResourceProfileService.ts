@@ -15,6 +15,9 @@ interface PageJson {
   totalCount: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export class FacilityResourceProfileService implements IFacilityResourceProfileService {
   constructor(private readonly api: IApiService) {}
 

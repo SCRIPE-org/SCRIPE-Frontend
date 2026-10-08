@@ -36,7 +36,7 @@ import {
   useCustomFieldsFormFields,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
-import { assertSelectCustomFieldValuesValid } from "@modules/custom-fields/custom-field";
+import { assertSelectCustomFieldValuesValid } from "@core/crud/customFieldsExtension";
 import { isFieldRequired } from "@core/ui/forms/generic-form";
 
 // ─────────────────────────────────────────

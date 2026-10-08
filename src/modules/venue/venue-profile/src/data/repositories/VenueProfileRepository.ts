@@ -6,6 +6,9 @@ import type { IVenueProfileService } from "../../domain/interfaces/IVenueProfile
 import type { VenueProfile } from "../../domain/entities/VenueProfile";
 import { VenueProfileMapper } from "../mappers/VenueProfileMapper";
 
+/**
+ * Documentation for module export
+ */
 export class VenueProfileRepository implements IVenueProfileRepository {
   constructor(private readonly service: IVenueProfileService) {}
 

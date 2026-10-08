@@ -10,6 +10,9 @@ import type { IWorkItemService } from "../../domain/interfaces/IWorkItemService"
 import type { WorkItem } from "../../domain/entities/WorkItem";
 import { WorkItemMapper } from "../mappers/WorkItemMapper";
 
+/**
+ * Documentation for module export
+ */
 export class WorkItemRepository implements IWorkItemRepository {
   constructor(private readonly service: IWorkItemService) {}
 

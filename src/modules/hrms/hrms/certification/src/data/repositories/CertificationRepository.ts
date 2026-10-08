@@ -17,6 +17,9 @@ import type { ICertificationService } from "../../domain/interfaces/ICertificati
 import type { Certification } from "../../domain/entities/Certification";
 import { CertificationMapper } from "../mappers/CertificationMapper";
 
+/**
+ * Documentation for module export
+ */
 export class CertificationRepository implements ICertificationRepository {
   constructor(private readonly service: ICertificationService) {}
 

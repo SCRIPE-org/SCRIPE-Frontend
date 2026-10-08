@@ -14,6 +14,9 @@ function formatted(value: string, locale: string, timeZoneId: string): string {
   }).format(new Date(value));
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingLifecycleTimeline({ items, locale, timeZoneId, t }: Props) {
   // The backend supplies the authoritative CreatedAt/Id ordering. Preserve that ordering for
   // equal timestamps instead of inventing a transition-code tie-breaker in presentation.

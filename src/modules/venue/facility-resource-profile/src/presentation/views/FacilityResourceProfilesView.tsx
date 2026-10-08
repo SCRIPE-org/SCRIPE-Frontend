@@ -15,12 +15,15 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueResourceNav } from "@modules/venue";
 import type { FacilityResourceProfile } from "../../domain/entities/FacilityResourceProfile";
 import { useFacilityResourceProfilesViewModel } from "../viewmodels/useFacilityResourceProfilesViewModel";
 import { FacilityResourceProfileDialog } from "../dialogs/FacilityResourceProfileDialog";
-import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
+import { FacilityQuickCreateDialog } from "@modules/venue";
 
+/**
+ * Documentation for module export
+ */
 export const FacilityResourceProfilesView = React.memo(function FacilityResourceProfilesView() {
   useModuleLocales(() => import("../../../locales"), "venue.resourceProfile");
   const { t } = useI18n();

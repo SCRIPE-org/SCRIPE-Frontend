@@ -33,6 +33,9 @@ function displayError(
   return value || t("booking.errors.generic");
 }
 
+/**
+ * Documentation for module export
+ */
 export const BookingWorkspaceView = React.memo(function BookingWorkspaceView({ prefill = {} }: { prefill?: BookingWorkspacePrefill }) {
   useModuleLocales(() => import("../../../locales"), "venue.booking");
   const { t, language, direction } = useI18n();

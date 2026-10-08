@@ -71,6 +71,9 @@ export type OptionSetItemIssueCode =
   | "labelTooLong"
   | "atLeastOne";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetItemIssue {
   /** The row it belongs to, or null for a whole-list problem (`atLeastOne`). */
   rowId: string | null;

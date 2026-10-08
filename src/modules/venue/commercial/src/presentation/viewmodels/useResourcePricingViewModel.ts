@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
+import type { SchedulableResource } from "@modules/venue";
 import type { ResourceRentalPriceConfiguration, TaxCategory } from "../../domain/entities/CommercialPricing";
 
 function asUtc(value: string): string | null {
@@ -22,11 +22,17 @@ function isNotFound(error: unknown): boolean {
   return (error as Error & { details?: { statusCode?: number } }).details?.statusCode === 404;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ResourcePricingViewModelMessages {
   fallbackError: string;
   validation: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useResourcePricingViewModel({ messages }: { messages: ResourcePricingViewModelMessages }) {
   const { schedulableResourceRepository, commercialPricingRepository } = getVenueContainer();
   const [resources, setResources] = useState<SchedulableResource[]>([]);

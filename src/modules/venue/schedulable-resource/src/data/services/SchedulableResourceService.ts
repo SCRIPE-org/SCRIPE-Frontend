@@ -12,6 +12,9 @@ import type {
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
 import { SCHEDULABLE_RESOURCE_ENDPOINTS } from "./schedulable-resource.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class SchedulableResourceService implements ISchedulableResourceService {
   constructor(private readonly api: IApiService) {}
 

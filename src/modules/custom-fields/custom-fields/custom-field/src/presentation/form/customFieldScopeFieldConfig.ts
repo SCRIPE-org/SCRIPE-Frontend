@@ -1,7 +1,13 @@
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 
+/**
+ * Documentation for boolean
+ */
 export type CustomFieldCreationScope = "global" | "platformOnly" | "tenant" | boolean;
 
+/**
+ * Documentation for "scope"
+ */
 export const CUSTOM_FIELD_SCOPE_FIELD_NAME = "scope";
 
 /**

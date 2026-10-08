@@ -32,6 +32,9 @@ import {
 } from "../../domain/entities/DefinitionExport";
 import { DefinitionExportError } from "../../domain/entities/DefinitionExportError";
 
+/**
+ * Documentation for module export
+ */
 export class DefinitionExportMapper {
   /** Convert a `DefinitionExportFileModel` to a `DefinitionExport` entity. */
   static toEntity(model: DefinitionExportFileModel): DefinitionExport {

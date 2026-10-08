@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 
+/**
+ * Documentation for module export
+ */
 export interface BookingFinanceSummary {
   invoiceId: string;
   invoiceNumber: string;
@@ -12,6 +15,9 @@ export interface BookingFinanceSummary {
   status: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useBookingFinanceSummary(reservationId: string, canViewReceivables: boolean) {
   const { moneyRepository } = getVenueContainer();
   const [summary, setSummary] = useState<BookingFinanceSummary | null>(null);

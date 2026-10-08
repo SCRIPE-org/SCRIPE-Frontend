@@ -20,6 +20,9 @@ import type {
   DiscardFieldVersionDraftResult,
 } from "../entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface CustomFieldListResult {
   items: CustomFieldModel[];
   totalCount: number;
@@ -30,6 +33,9 @@ export interface CustomFieldListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ICustomFieldService {
   getAll(params: {
     page: number;

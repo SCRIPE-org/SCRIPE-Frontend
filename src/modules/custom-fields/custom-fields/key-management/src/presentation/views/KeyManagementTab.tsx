@@ -9,6 +9,9 @@ import { KeyDistributionChart } from "../components/KeyDistributionChart";
 import { AuditLogTable } from "../components/AuditLogTable";
 import { RotateKeyWizardDialog } from "../components/RotateKeyWizardDialog";
 
+/**
+ * Documentation for module export
+ */
 export function KeyManagementTab() {
   const { t } = useI18n();
   const {

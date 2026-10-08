@@ -30,6 +30,9 @@ export function resolveEntityReferenceFieldText(
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export interface RenderHintParams {
   hasTarget: boolean;
   status: EntityReferenceResolveStatus;

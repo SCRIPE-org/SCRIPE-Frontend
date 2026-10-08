@@ -86,6 +86,9 @@ import {
 
 // ─── Icons ──────────────────────────────────────────────────────
 // One lucide-backed map for every docs sidebar surface.
+/**
+ * Documentation for module export
+ */
 export const docsIcons: Record<string, (props: LucideProps) => React.ReactNode> = {
   rocket: (props) => <Rocket aria-hidden="true" {...props} />,
   "book-open": (props) => <BookOpen aria-hidden="true" {...props} />,

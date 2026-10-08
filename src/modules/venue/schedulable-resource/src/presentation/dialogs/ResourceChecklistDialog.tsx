@@ -12,6 +12,9 @@ import {
 import type { SchedulableResourceTreeNode } from "../utils/resourceTree";
 import type { PublicationChecklistReport } from "../../domain/entities/SchedulableResource";
 
+/**
+ * Documentation for module export
+ */
 export interface ResourceChecklistDialogProps {
   target: SchedulableResourceTreeNode | null;
   checklist: PublicationChecklistReport | null;
@@ -23,6 +26,9 @@ export interface ResourceChecklistDialogProps {
   onPublish: () => void;
 }
 
+/**
+ * Documentation for ResourceChecklistDialog
+ */
 export function ResourceChecklistDialog({
   target,
   checklist,

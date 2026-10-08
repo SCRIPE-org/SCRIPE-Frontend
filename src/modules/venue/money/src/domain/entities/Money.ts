@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface MoneyInvoice {
   id: string;
   invoiceNumber: string;
@@ -16,6 +19,9 @@ export interface MoneyInvoice {
   dueAtUtc: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface MoneyPayment {
   id: string;
   paymentNumber: string;
@@ -34,13 +40,22 @@ export interface MoneyPayment {
   reason: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface MoneyPage<T> { items: T[]; totalCount: number; page?: number; pageSize?: number; }
 
+/**
+ * Documentation for module export
+ */
 export interface MoneyListFilter {
   reservationId?: string;
   payerPartyId?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface RecordManualPaymentInput {
   payerPartyId: string;
   reservationId: string | null;
@@ -54,6 +69,9 @@ export interface RecordManualPaymentInput {
   reason: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface RefundPaymentInput {
   invoiceId: string;
   amount: number;
@@ -62,9 +80,21 @@ export interface RefundPaymentInput {
   externalReference: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface MoneyPaymentAllocation { id: string; paymentId: string; invoiceId: string; amount: number; allocatedAtUtc: string; }
+/**
+ * Documentation for module export
+ */
 export interface MoneyPaymentReceipt { id: string; paymentId: string; receiptNumber: string; issuedAtUtc: string; }
+/**
+ * Documentation for module export
+ */
 export interface MoneyPaymentRefund { id: string; paymentId: string; invoiceId: string; currencyCode: string; amount: number; reason: string; refundedAtUtc: string; }
+/**
+ * Documentation for module export
+ */
 export interface MoneyPaymentTimeline {
   payment: MoneyPayment;
   allocations: MoneyPaymentAllocation[];

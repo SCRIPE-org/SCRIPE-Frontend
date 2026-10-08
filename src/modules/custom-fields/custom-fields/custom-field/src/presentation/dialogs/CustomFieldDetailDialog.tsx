@@ -29,6 +29,9 @@ import { DetailGovernanceSection } from "./detail/DetailGovernanceSection";
 import { DetailAuditSection } from "./detail/DetailAuditSection";
 import { SENSITIVITY_BADGE_VARIANTS, formatDetailDate } from "./detail/detailHelpers";
 
+/**
+ * Documentation for module export
+ */
 export interface CustomFieldDetailDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

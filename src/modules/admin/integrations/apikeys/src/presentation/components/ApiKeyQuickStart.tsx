@@ -12,6 +12,9 @@ interface ApiKeyQuickStartProps {
   detail: ApiKeyDetail;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ApiKeyQuickStart({ detail }: ApiKeyQuickStartProps) {
   const { t } = useI18n();
   const [copiedTab, setCopiedTab] = useState<string | null>(null);

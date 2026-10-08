@@ -27,6 +27,9 @@ import type { OptionSet } from "../../domain/entities/OptionSet";
 import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 import type { OptionSetItemInput } from "../../domain/interfaces/IOptionSetRepository";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetDetailPanelProps {
   set: OptionSet | null;
   versions: readonly OptionSetVersion[];

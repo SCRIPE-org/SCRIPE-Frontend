@@ -14,6 +14,9 @@ import {
   VALUE_TYPE_CATALOG,
 } from "../../../../custom-field";
 
+/**
+ * Documentation for buildInlineIdentityFields
+ */
 export function buildInlineIdentityFields(
   t: (key: string, params?: Record<string, string | number>) => string
 ): FieldConfig[] {
@@ -51,6 +54,9 @@ export function buildInlineIdentityFields(
   ];
 }
 
+/**
+ * Documentation for buildInlineValidatorParamFields
+ */
 export function buildInlineValidatorParamFields(
   t: (key: string, params?: Record<string, string | number>) => string
 ): FieldConfig[] {
@@ -75,6 +81,9 @@ export function buildInlineValidatorParamFields(
   );
 }
 
+/**
+ * Documentation for buildInlineClassificationFields
+ */
 export function buildInlineClassificationFields(
   t: (key: string, params?: Record<string, string | number>) => string
 ): FieldConfig[] {
@@ -102,6 +111,9 @@ export function buildInlineClassificationFields(
   ];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface BuildTypeAndValidationFieldsArgs {
   t: (key: string, params?: Record<string, string | number>) => string;
   validatorKindOptions: { value: string; label: string }[];
@@ -112,6 +124,9 @@ export interface BuildTypeAndValidationFieldsArgs {
   canBindOptionSets: boolean;
 }
 
+/**
+ * Documentation for buildInlineTypeAndValidationFields
+ */
 export function buildInlineTypeAndValidationFields({
   t,
   validatorKindOptions,

@@ -11,6 +11,9 @@ import type { ApiKeyActivityEntry } from "../../domain/entities/ApiKeyActivity";
 import type { CreateApiKeyResult } from "../../domain/entities/ApiKey";
 import { ApiKeyDetailMapper } from "../mappers/ApiKeyDetailMapper";
 
+/**
+ * Documentation for module export
+ */
 export class ApiKeyDetailRepository {
   constructor(private readonly service: IApiKeyDetailService) {}
 

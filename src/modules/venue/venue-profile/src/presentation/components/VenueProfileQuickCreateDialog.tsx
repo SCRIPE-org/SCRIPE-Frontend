@@ -18,10 +18,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { venueContainer } from "@modules/venue/di";
-import { SiteQuickCreateDialog } from "@modules/venue/site/src/presentation/components/SiteQuickCreateDialog";
+import { venueLocator } from "@modules/venue";
+import { SiteQuickCreateDialog } from "@modules/venue";
 import { Plus } from "lucide-react";
-import type { Site } from "@modules/venue/site/src/domain/entities/Site";
+import type { Site } from "@modules/venue";
 
 interface VenueProfileQuickCreateDialogProps {
   open: boolean;
@@ -30,6 +30,9 @@ interface VenueProfileQuickCreateDialogProps {
   defaultSiteId?: string;
 }
 
+/**
+ * Documentation for VenueProfileQuickCreateDialog
+ */
 export function VenueProfileQuickCreateDialog({
   open,
   onOpenChange,
@@ -54,7 +57,7 @@ export function VenueProfileQuickCreateDialog({
   const loadSites = useCallback(async () => {
     try {
       setLoadingSites(true);
-      const res = await venueContainer.siteRepository.getAll({ page: 1, pageSize: 100 });
+      const res = await venueLocator.siteRepository.getAll({ page: 1, pageSize: 100 });
       setSites(res.items);
       setSiteId((current) => current || res.items[0]?.id || "");
     } catch {
@@ -96,7 +99,7 @@ export function VenueProfileQuickCreateDialog({
 
     setSaving(true);
     try {
-      const createdId = await venueContainer.venueProfileRepository.create({
+      const createdId = await venueLocator.venueProfileRepository.create({
         siteId: siteId.trim(),
         code: code.trim(),
         name: name.trim(),

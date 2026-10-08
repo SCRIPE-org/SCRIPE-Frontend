@@ -7,8 +7,8 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@core/ui/dialog";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { getVenueContainer } from "@modules/venue/di";
-import type { AvailabilitySearchResult } from "@modules/venue/availability/src/domain/entities/Availability";
+import { getVenueLocator } from "@modules/venue";
+import type { AvailabilitySearchResult } from "@modules/venue";
 
 interface Props {
   open: boolean;
@@ -27,6 +27,9 @@ interface Props {
   onConfirmChangeResource: (input: { targetResourceId: string; requestedStartUtc: string; requestedEndUtc: string }) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingChangeResourceDialog(props: Props) {
   const {
     currentEndUtc,
@@ -62,7 +65,7 @@ export function BookingChangeResourceDialog(props: Props) {
     setError(null);
     setSelectedCandidate(null);
     try {
-      const { schedulableResourceRepository, availabilityRepository, facilityResourceProfileRepository } = getVenueContainer();
+      const { schedulableResourceRepository, availabilityRepository, facilityResourceProfileRepository } = getVenueLocator();
       const [resourcePage, profilePage] = await Promise.all([
         schedulableResourceRepository.getAll({ page: 1, pageSize: 100 }),
         facilityResourceProfileRepository.getAll({ page: 1, pageSize: 100 }),

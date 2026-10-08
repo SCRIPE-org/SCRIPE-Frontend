@@ -150,6 +150,9 @@ const KIND_BY_STATUS_CODE: Record<number, EntityLookupFailureKind> = {
   422: "invalid",
 };
 
+/**
+ * Documentation for module export
+ */
 export class EntityLookupError extends Error {
   /** `kind` is what callers branch on; everything else is here for logs and future specificity. */
   readonly kind: EntityLookupFailureKind;

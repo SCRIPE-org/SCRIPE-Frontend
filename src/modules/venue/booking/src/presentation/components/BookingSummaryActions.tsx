@@ -9,7 +9,7 @@ import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import type { PriceQuote } from "@modules/venue/commercial/src/domain/entities/CommercialPricing";
+import type { PriceQuote } from "@modules/venue";
 import type {
   AvailabilityCandidate,
   BookingWorkspaceState,
@@ -49,6 +49,9 @@ function formatMoney(amount: number, currencyCode: string, locale: string): stri
   return new Intl.NumberFormat(locale, { style: "currency", currency: currencyCode }).format(amount);
 }
 
+/**
+ * Documentation for BookingSummaryActions
+ */
 export function BookingSummaryActions({
   t,
   locale,

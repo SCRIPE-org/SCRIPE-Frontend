@@ -34,6 +34,9 @@ export const FIELD_VISIBILITY_OPERATORS = [
   "lessThan",
 ] as const;
 
+/**
+ * Documentation for FIELD_VISIBILITY_OPERATORS)[number]
+ */
 export type FieldVisibilityOperator = (typeof FIELD_VISIBILITY_OPERATORS)[number];
 
 /** One rule as the API ships it — mirrors `FieldVisibilityRuleDescriptor`. */

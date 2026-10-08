@@ -6,7 +6,7 @@ import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import type { Facility } from "@modules/venue";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
 interface CalendarToolbarProps {
@@ -34,6 +34,9 @@ function valueOf(value: string | string[]) {
   return Array.isArray(value) ? value[0] ?? "" : value;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CalendarToolbar(props: CalendarToolbarProps) {
   const { t } = props;
   return (

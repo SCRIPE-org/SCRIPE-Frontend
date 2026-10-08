@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getHrmsContainer } from "../../../../di";
 import type { StaffCompetency } from "../../domain/entities/StaffCompetency";
 
+/**
+ * Documentation for module export
+ */
 export function useStaffCompetencyViewModel() {
   const { staffCompetencyRepository } = getHrmsContainer();
 

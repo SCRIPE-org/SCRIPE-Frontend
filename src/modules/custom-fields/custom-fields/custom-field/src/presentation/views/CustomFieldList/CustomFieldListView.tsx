@@ -8,11 +8,10 @@
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
+
 import { GenericCrudView, type CrudConfig } from "@core/crud/components/generic-crud-view";
 import { useCustomFieldViewModel } from "../../viewmodels/useCustomFieldViewModel";
 import type { CustomField } from "../../../domain/entities/CustomField";
-import { getCustomFieldsContainer } from "../../../../../di";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
@@ -44,20 +43,29 @@ import {
   buildClassificationFields, buildCreateLayoutFields, buildEditLayoutFields,
 } from "../../form/customFieldFormSections";
 
+/**
+ * Documentation for module export
+ */
 export type { RegistryNamedType, BuildReferenceTargetFieldArgs };
 export { readWireString, formatRegistryTypeOptionLabel, REFERENCE_TARGET_FIELD_NAME, UNPINNED_REFERENCE_TARGET, isReferenceTargetPickerVisible, buildReferenceTargetField };
 
+/**
+ * Documentation for module export
+ */
 export function resolveRegistryTypeName(type: RegistryNamedType, language: string): string | undefined {
   const active = language === "ar" ? type?.displayNameAr : type?.displayNameEn;
   const other = language === "ar" ? type?.displayNameEn : type?.displayNameAr;
   return readWireString(active) ?? readWireString(other);
 }
 
+/**
+ * Documentation for module export
+ */
 export const CustomFieldListView = React.memo(function CustomFieldListView() {
   useModuleLocales(() => import("../../../../locales"), "customFields");
   useModuleLocales(() => import("../../../../../option-set/locales"), "customFieldOptionSets");
   const { t, language } = useI18n();
-  const { vm, entityTypes, isEntityTypesError, refetchEntityTypes } = useCustomFieldViewModel();
+  const { vm, entityTypes, isEntityTypesError, refetchEntityTypes, keyStatus } = useCustomFieldViewModel();
   const { isSuperAdmin } = usePermissions();
   const { isInTenantWorld } = useTenantContext();
   const isPlatformContext = isSuperAdmin && !isInTenantWorld;
@@ -126,11 +134,6 @@ export const CustomFieldListView = React.memo(function CustomFieldListView() {
         };
       }), [t]
   );
-
-  const { data: keyStatus } = useQuery({
-    queryKey: ["customFields", "encryption", "status"],
-    queryFn: () => getCustomFieldsContainer().keyManagementRepository.getStatus(),
-  });
 
   const isTenantKeyInitialized = isPlatformContext || Boolean(keyStatus?.isInitialized);
 

@@ -12,9 +12,12 @@ import { Badge } from "@core/ui/badge";
 import { resolveIntlLocale } from "@core/common/utils";
 import { Building2, Pencil, Plus, Trash2 } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
-import { SiteQuickCreateDialog } from "@modules/venue/site/src/presentation/components/SiteQuickCreateDialog";
+import { VenueResourceNav } from "@modules/venue";
+import { SiteQuickCreateDialog } from "@modules/venue";
 
+/**
+ * Documentation for module export
+ */
 export const VenueProfileListView = React.memo(function VenueProfileListView() {
   useModuleLocales(() => import("../../../locales"), "venue.venueProfile");
   const { vm, searchSites, siteNameById, refreshSites } = useVenueProfileViewModel();

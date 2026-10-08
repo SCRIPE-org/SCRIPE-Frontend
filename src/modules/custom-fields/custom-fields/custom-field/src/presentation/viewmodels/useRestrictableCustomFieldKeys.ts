@@ -48,6 +48,9 @@ export interface RestrictableCustomFieldKey {
   isRequired: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface UseRestrictableCustomFieldKeysArgs {
   /**
    * Whether the caller may read custom-field definitions at all. Both candidate
@@ -64,6 +67,9 @@ const MAX_PAGE_SIZE = 100;
 
 const EMPTY: RestrictableCustomFieldKey[] = [];
 
+/**
+ * Documentation for useRestrictableCustomFieldKeys
+ */
 export function useRestrictableCustomFieldKeys(
   permissionResource: string | undefined,
   { enabled = true }: UseRestrictableCustomFieldKeysArgs = {}

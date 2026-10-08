@@ -11,6 +11,9 @@ export interface InfoRowProps {
   value?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function InfoRow({ icon, label, value }: InfoRowProps) {
   return (
     <div className="flex items-center justify-between gap-3 text-xs sm:text-sm min-w-0 py-1">

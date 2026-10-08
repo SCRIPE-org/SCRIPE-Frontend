@@ -4,12 +4,18 @@ import { DetailRow } from "@core/ui/detail-row";
 import { Separator } from "@core/ui/separator";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export interface DetailAuditSectionProps {
   createdAt?: string | null;
   modifiedAt?: string | null;
   formatDate: (iso?: string | null) => string;
 }
 
+/**
+ * Documentation for DetailAuditSection
+ */
 export function DetailAuditSection({
   createdAt,
   modifiedAt,

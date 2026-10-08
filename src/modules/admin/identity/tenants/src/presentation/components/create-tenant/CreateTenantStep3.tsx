@@ -40,6 +40,9 @@ interface CreateTenantStep3Props {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
   const isFreeEdition = vm.selectedEdition?.isFree === true;
   const selectedArchetype = vm.form.organizationType || "academy";

@@ -26,6 +26,9 @@ import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsigh
 import { FieldVisibilityRuleEditor } from "./FieldVisibilityRuleEditor";
 import { FieldVisibilityRuleList } from "./FieldVisibilityRuleList";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRulesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -56,6 +59,9 @@ export interface FieldVisibilityRulesDialogProps {
   isDeleting: boolean;
 }
 
+/**
+ * Documentation for FieldVisibilityRulesDialog
+ */
 export function FieldVisibilityRulesDialog({
   open,
   onOpenChange,

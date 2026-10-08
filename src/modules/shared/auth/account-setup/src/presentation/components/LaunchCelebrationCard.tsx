@@ -11,6 +11,9 @@ import { CheckCircle2, ArrowRight, Shield } from "lucide-react";
 import { BRAND } from "@core/config/branding";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export interface LaunchCelebrationCardProps {
   tenantName?: string;
   tenantCode?: string;

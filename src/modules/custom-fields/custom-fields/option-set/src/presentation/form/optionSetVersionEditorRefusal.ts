@@ -6,6 +6,9 @@ import {
 } from "./optionSetItemRules";
 import type { OptionSetRefusal } from "./optionSetRefusalTypes";
 
+/**
+ * Documentation for module export
+ */
 export interface SaveRefusalCheckParams {
   canUpdate: boolean;
   set: OptionSet | null;

@@ -4,15 +4,24 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
 import type { MoneyInvoice, MoneyPayment, MoneyPaymentTimeline } from "../../domain/entities/Money";
 
+/**
+ * Documentation for const
+ */
 export const MANUAL_PAYMENT_METHODS = ["Cash", "Card", "POS", "BankTransfer", "Other"] as const;
 type ManualPaymentMethod = (typeof MANUAL_PAYMENT_METHODS)[number];
 
+/**
+ * Documentation for module export
+ */
 export interface PaymentsViewModelMessages {
   fallbackError: string;
   validation: string;
   allocationPending: (paymentNumber: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface PaymentsViewModelOptions {
   canView: boolean;
   canRecord: boolean;
@@ -22,6 +31,9 @@ export interface PaymentsViewModelOptions {
   messages: PaymentsViewModelMessages;
 }
 
+/**
+ * Documentation for usePaymentsViewModel
+ */
 export function usePaymentsViewModel({
   canView,
   canRecord,

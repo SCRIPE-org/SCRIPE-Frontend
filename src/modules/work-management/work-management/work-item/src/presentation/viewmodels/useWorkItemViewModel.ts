@@ -26,6 +26,9 @@ function nullifyBlankIds(data: Record<string, unknown>): Record<string, unknown>
   return sanitized;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useWorkItemViewModel() {
   const { workItemRepository } = getWorkManagementContainer();
 

@@ -32,6 +32,9 @@ const STATUS_DOT: Record<ApiKeyDetail["status"], string> = {
   expired: "bg-warning",
 };
 
+/**
+ * Documentation for ApiKeyHeroBand
+ */
 export function ApiKeyHeroBand({
   detail,
   isRotating,

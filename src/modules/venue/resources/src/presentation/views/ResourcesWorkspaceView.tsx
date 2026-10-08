@@ -26,11 +26,14 @@ import {
   DropdownMenuTrigger,
 } from "@core/ui/dropdown-menu";
 import { useI18n } from "@core/providers/i18n-provider";
-import { VenueNav } from "@modules/venue/shared/src/presentation/components/VenueNav";
+import { VenueNav } from "@modules/venue";
 import { useResourcesWorkspaceViewModel } from "../viewmodels/useResourcesWorkspaceViewModel";
 import { ResourceCard } from "../components/ResourceCard";
 import { FirstTimeSetupWizard } from "../components/FirstTimeSetupWizard";
 
+/**
+ * Documentation for module export
+ */
 export function ResourcesWorkspaceView() {
   const { t, direction } = useI18n();
   const searchParams = useSearchParams();

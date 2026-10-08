@@ -28,6 +28,9 @@ import type {
 } from "../../domain/entities/FieldInsight";
 import { CustomFieldMapper } from "../mappers/CustomFieldMapper";
 
+/**
+ * Documentation for module export
+ */
 export class CustomFieldRepository implements ICustomFieldRepository {
   constructor(private readonly service: ICustomFieldService) {}
 

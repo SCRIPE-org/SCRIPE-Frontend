@@ -370,6 +370,9 @@ const LANG_LABELS: Record<string, string> = {
   plaintext: "Text",
 };
 
+/**
+ * Documentation for module export
+ */
 export function CodeBlock({ code, language, filename, highlightLines }: CodeBlockProps) {
   const { t } = useDocsI18n();
   const [copied, setCopied] = useState(false);

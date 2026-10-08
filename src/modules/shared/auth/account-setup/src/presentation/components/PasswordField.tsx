@@ -18,6 +18,9 @@ export interface PasswordFieldProps {
   autoFocus?: boolean;
 }
 
+/**
+ * Documentation for PasswordField
+ */
 export function PasswordField({
   id,
   value,

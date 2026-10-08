@@ -14,6 +14,9 @@ import { useFieldVisibilityRulesViewModel } from "./useFieldVisibilityRulesViewM
 import { useConvertValueTypeViewModel } from "./useConvertValueTypeViewModel";
 import { useFieldVersionsViewModel } from "./useFieldVersionsViewModel";
 
+/**
+ * Documentation for module export
+ */
 export function useCustomFieldSubFeatures(isSuperAdmin: boolean) {
   const canViewFieldGroups = usePermission(CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_VIEW);
   const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW) || isSuperAdmin;

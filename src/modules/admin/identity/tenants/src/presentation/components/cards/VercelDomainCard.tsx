@@ -52,6 +52,9 @@ import {
 } from "lucide-react";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
 
+/**
+ * Documentation for module export
+ */
 export interface VercelDomainCardProps {
   /** The tenant domain entity to display */
   domain: TenantDomain;
@@ -530,4 +533,7 @@ function VercelDomainCardComponent({
   );
 }
 
+/**
+ * Documentation for React.memo
+ */
 export const VercelDomainCard = React.memo(VercelDomainCardComponent);

@@ -21,6 +21,9 @@ interface CalendarPage {
 
 interface ResourceBlockPage { items: ResourceBlock[]; }
 
+/**
+ * Documentation for module export
+ */
 export class AvailabilityService implements IAvailabilityService {
   constructor(private readonly api: IApiService) {}
 

@@ -22,6 +22,9 @@ interface ApiKeyScopesPanelProps {
   isLoading?: boolean;
 }
 
+/**
+ * Documentation for ApiKeyScopesPanel
+ */
 export function ApiKeyScopesPanel({
   detail,
   isUpdating,

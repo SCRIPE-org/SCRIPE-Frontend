@@ -6,6 +6,9 @@ import { toast } from "@core/hooks/use-enhanced-toast";
 import { useI18n } from "@core/providers/i18n-provider";
 import { getCustomFieldsContainer } from "../../../../di";
 
+/**
+ * Documentation for module export
+ */
 export function useKeyManagementViewModel() {
   const { keyManagementRepository } = getCustomFieldsContainer();
   const { t } = useI18n();

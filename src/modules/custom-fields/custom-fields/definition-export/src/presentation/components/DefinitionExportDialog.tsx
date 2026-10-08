@@ -48,11 +48,17 @@ import {
   useDefinitionExportViewModel,
 } from "../viewmodels/useDefinitionExportViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface DefinitionExportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function DefinitionExportDialog({ open, onOpenChange }: DefinitionExportDialogProps) {
   const { t, language } = useI18n();
   const vm = useDefinitionExportViewModel();

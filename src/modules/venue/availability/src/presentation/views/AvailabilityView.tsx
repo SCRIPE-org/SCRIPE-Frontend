@@ -16,8 +16,11 @@ import { useAvailabilityViewModel } from "../viewmodels/useAvailabilityViewModel
 import { ResourceBlocksPanel } from "../components/ResourceBlocksPanel";
 import { WeeklyWindowsEditorCard } from "../components/WeeklyWindowsEditorCard";
 import { AvailabilitySearchCard } from "../components/AvailabilitySearchCard";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueResourceNav } from "@modules/venue";
 
+/**
+ * Documentation for module export
+ */
 export const AvailabilityView = React.memo(function AvailabilityView() {
   useModuleLocales(() => import("../../../locales"), "venue.availability");
   const { t } = useI18n();

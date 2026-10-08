@@ -29,6 +29,9 @@ import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import type { TFn } from "./shared-helpers";
 import { VersionCard } from "./VersionCard";
 
+/**
+ * Documentation for module export
+ */
 export interface VersionsTabProps {
   /** The tenant plan aggregate whose version history is being managed. */
   plan: TenantPlan;

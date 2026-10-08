@@ -10,8 +10,8 @@ import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { AlertCircle, Building2, RefreshCw, ShieldAlert } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { useVenueAttentionViewModel } from "@modules/venue/attention-center/src/presentation/viewmodels/useVenueAttentionViewModel";
-import { VenueNav } from "@modules/venue/shared/src/presentation/components/VenueNav";
+import { useVenueAttentionViewModel } from "@modules/venue";
+import { VenueNav } from "@modules/venue";
 import { useVenueOverviewViewModel } from "../viewmodels/useVenueOverviewViewModel";
 import { VenueOverviewHeader } from "../components/VenueOverviewHeader";
 import { VenueOverviewKpiStrip } from "../components/VenueOverviewKpiStrip";
@@ -29,6 +29,9 @@ interface Props {
   localDate?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewView({ facilityId, localDate }: Props) {
   const { t, language } = useI18n();
   const dir = language === "ar" ? "rtl" : "ltr";

@@ -18,6 +18,9 @@ interface PlatformKeyringCardProps {
   isCancellingRewrap?: boolean;
 }
 
+/**
+ * Documentation for PlatformKeyringCard
+ */
 export function PlatformKeyringCard({
   status,
   activeSession,

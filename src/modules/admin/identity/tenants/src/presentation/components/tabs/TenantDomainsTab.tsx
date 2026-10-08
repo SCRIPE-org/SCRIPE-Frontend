@@ -55,6 +55,9 @@ import { AutoDomainCard } from "../cards/AutoDomainCard";
 
 // ─── Component Props ──────────────────────────────────────
 
+/**
+ * Documentation for module export
+ */
 export interface TenantDomainsTabProps {
   /** Encrypted or unique identifier of the tenant workspace */
   tenantId: string;

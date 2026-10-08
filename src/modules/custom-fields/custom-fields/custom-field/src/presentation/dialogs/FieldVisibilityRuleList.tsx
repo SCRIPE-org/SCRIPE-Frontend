@@ -10,6 +10,9 @@ import type { CustomField } from "../../domain/entities/CustomField";
 import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsight";
 import { parseFieldVisibilityExpressionJson } from "../viewmodels/useFieldVisibilityRulesViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRuleListProps {
   rules: readonly FieldVisibilityRuleAdmin[];
   siblingFields: readonly CustomField[];
@@ -23,6 +26,9 @@ export interface FieldVisibilityRuleListProps {
   onDelete: (id: string) => void;
 }
 
+/**
+ * Documentation for FieldVisibilityRuleList
+ */
 export function FieldVisibilityRuleList({
   rules,
   siblingFields,

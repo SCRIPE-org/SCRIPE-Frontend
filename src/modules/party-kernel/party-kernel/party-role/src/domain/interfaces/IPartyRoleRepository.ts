@@ -11,6 +11,9 @@ export interface PartyRoleListParams {
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyRoleRepository {
   getAll(
     params: PartyRoleListParams

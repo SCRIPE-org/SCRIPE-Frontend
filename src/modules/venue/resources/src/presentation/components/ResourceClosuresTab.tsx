@@ -15,13 +15,16 @@ import {
   DialogFooter,
 } from "@core/ui/dialog";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { ResourceBlockKind } from "@modules/venue/availability/src/domain/entities/Availability";
+import type { ResourceBlockKind } from "@modules/venue";
 import type { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
 
 interface Props {
   vm: ReturnType<typeof useResourceDetailViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourceClosuresTab({ vm }: Props) {
   const { t, language } = useI18n();
 

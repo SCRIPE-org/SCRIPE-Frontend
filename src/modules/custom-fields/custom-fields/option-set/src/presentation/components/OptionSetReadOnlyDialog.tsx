@@ -12,8 +12,14 @@ import {
 } from "@core/ui/dialog";
 import type { OptionSet } from "../../domain/entities/OptionSet";
 
+/**
+ * Documentation for "permission"
+ */
 export type OptionSetEditorReadOnlyReason = "systemManaged" | "platformOwned" | "permission";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetReadOnlyDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -22,6 +28,9 @@ export interface OptionSetReadOnlyDialogProps {
   isEdit: boolean;
 }
 
+/**
+ * Documentation for OptionSetReadOnlyDialog
+ */
 export function OptionSetReadOnlyDialog({
   open,
   onOpenChange,

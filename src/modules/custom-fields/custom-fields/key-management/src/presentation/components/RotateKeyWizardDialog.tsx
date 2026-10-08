@@ -23,6 +23,9 @@ interface RotateKeyWizardDialogProps {
   isLoading?: boolean;
 }
 
+/**
+ * Documentation for RotateKeyWizardDialog
+ */
 export function RotateKeyWizardDialog({
   open,
   onOpenChange,

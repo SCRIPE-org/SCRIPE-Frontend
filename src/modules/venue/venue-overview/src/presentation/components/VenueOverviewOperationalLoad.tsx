@@ -8,6 +8,9 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewOperationalLoad({ buckets, t }: Props) {
   const maxTotal = Math.max(1, ...buckets.map((b) => b.total));
   const hasData = buckets.some((b) => b.total > 0);

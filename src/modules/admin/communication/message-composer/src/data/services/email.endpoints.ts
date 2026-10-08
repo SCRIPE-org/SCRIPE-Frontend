@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const EMAIL_ENDPOINTS = {
   SEARCH_RECIPIENTS: `${V1}/emails/search-recipients`,
   SEND: `${V1}/emails/send`,

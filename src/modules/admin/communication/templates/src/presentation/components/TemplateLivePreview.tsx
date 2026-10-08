@@ -24,6 +24,9 @@ import {
   composePreviewDocument,
 } from "./templatePreviewHelpers";
 
+/**
+ * Documentation for module export
+ */
 export interface TemplateLivePreviewProps {
   /** The raw HTML body of the template. */
   body: string;

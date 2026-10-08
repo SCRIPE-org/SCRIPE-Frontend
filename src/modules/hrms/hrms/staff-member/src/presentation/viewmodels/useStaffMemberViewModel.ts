@@ -11,6 +11,9 @@ import { getHrmsContainer } from "../../../../di";
 import type { StaffMember } from "../../domain/entities/StaffMember";
 import type { FieldOption } from "@core/ui/forms/generic-form";
 
+/**
+ * Documentation for module export
+ */
 export function useStaffMemberViewModel() {
   const { staffMemberRepository } = getHrmsContainer();
 

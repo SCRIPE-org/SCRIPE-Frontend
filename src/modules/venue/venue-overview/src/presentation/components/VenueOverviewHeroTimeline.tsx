@@ -17,8 +17,8 @@ import {
   localPrefillForInstant,
   placeBlocksOnTracks,
 } from "@modules/venue/operations-calendar/src/presentation/viewmodels/calendarLayout";
-import { resolveSportIcon } from "@modules/venue/shared/src/presentation/utils/sportIcons";
-import { VenueCourtMotif } from "@modules/venue/shared/src/presentation/components/VenueCourtMotif";
+import { resolveSportIcon } from "@modules/venue";
+import { VenueCourtMotif } from "@modules/venue";
 
 const SLOT_WIDTH = 72;
 const BLOCK_HEIGHT = 42;
@@ -59,6 +59,9 @@ function formatLocalTime(value: string, locale: string, timeZoneId: string) {
   }
 }
 
+/**
+ * Documentation for VenueOverviewHeroTimeline
+ */
 export function VenueOverviewHeroTimeline({
   day,
   resources,

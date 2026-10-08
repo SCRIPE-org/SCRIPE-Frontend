@@ -17,6 +17,9 @@ import { Card } from "@core/ui/card";
 import { CheckCircle2, Star, ShieldCheck, Copy, ExternalLink } from "lucide-react";
 import type { TenantDomain } from "../../../domain/entities/TenantDomain";
 
+/**
+ * Documentation for module export
+ */
 export interface AutoDomainCardProps {
   domain: TenantDomain;
   onCopy: (text: string, label?: string) => void;
@@ -91,4 +94,7 @@ function AutoDomainCardComponent({ domain, onCopy }: AutoDomainCardProps) {
   );
 }
 
+/**
+ * Documentation for React.memo
+ */
 export const AutoDomainCard = React.memo(AutoDomainCardComponent);

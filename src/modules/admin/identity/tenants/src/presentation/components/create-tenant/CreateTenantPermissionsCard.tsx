@@ -19,6 +19,9 @@ interface CreateTenantPermissionsCardProps {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantPermissionsCard({ vm, t }: CreateTenantPermissionsCardProps) {
   const [isPermissionsOpen, setIsPermissionsOpen] = useState(false);
 

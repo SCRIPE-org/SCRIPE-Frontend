@@ -27,6 +27,9 @@ import {
   renderEntityReferenceHint,
 } from "./entityReferenceStatusHelpers";
 
+/**
+ * Documentation for module export
+ */
 export interface EntityReferenceCustomFieldControlProps {
   id: string;
   label?: string;

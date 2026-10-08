@@ -1,5 +1,8 @@
 import type { CalculatePriceQuoteInput, ConfigureResourceRentalPriceInput, CreateTaxCategoryInput, OverridePriceQuoteInput, PriceQuote, PriceQuoteOverride, ResourceRentalPriceConfiguration, TaxCategory } from "../entities/CommercialPricing";
 
+/**
+ * Documentation for module export
+ */
 export interface ICommercialPricingRepository {
   getResourceConfiguration(resourceId: string): Promise<ResourceRentalPriceConfiguration>;
   configureResourcePrice(input: ConfigureResourceRentalPriceInput): Promise<ResourceRentalPriceConfiguration>;

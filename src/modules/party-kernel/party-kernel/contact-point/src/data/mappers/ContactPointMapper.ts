@@ -7,6 +7,9 @@
 import { ContactPoint, type ContactPointData } from "../../domain/entities/ContactPoint";
 import { ContactPointModel, type ContactPointJson } from "../models/ContactPointModel";
 
+/**
+ * Documentation for module export
+ */
 export class ContactPointMapper {
   /**
    * Convert ContactPointModel to ContactPoint Entity

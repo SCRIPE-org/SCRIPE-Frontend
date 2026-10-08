@@ -1,6 +1,9 @@
 import { Facility, type FacilityData } from "../../domain/entities/Facility";
 import { FacilityModel, type FacilityJson } from "../models/FacilityModel";
 
+/**
+ * Documentation for module export
+ */
 export class FacilityMapper {
   static toEntity(model: FacilityModel): Facility {
     const data: FacilityData = {

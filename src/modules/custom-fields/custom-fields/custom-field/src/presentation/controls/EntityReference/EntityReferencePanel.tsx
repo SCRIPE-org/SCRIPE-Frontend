@@ -11,6 +11,9 @@ import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import type { EntityLookupError } from "../../../../../entity-lookup/src/domain/entities/EntityLookupError";
 import { I18N, LoadingRows } from "./referenceControlPanelParts";
 
+/**
+ * Documentation for module export
+ */
 export interface EntityReferencePanelProps {
   draft: string;
   onDraftChange: (next: string) => void;

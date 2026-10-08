@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTY_ROLES.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class PartyRoleService implements IPartyRoleService {
   constructor(private readonly api: IApiService) {}
 

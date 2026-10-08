@@ -4,6 +4,9 @@ import * as React from "react";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 import { FieldGroupRow } from "./FieldGroupRow";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupListProps {
   groups: readonly FieldGroup[];
   language: string;

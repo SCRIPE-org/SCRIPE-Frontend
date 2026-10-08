@@ -3,6 +3,9 @@ import type {
   EntityCustomFieldValueData,
 } from "../../data/models/CustomFieldValueModel";
 
+/**
+ * Documentation for module export
+ */
 export interface ICustomFieldValueService {
   getDefinitions(entityTypeKey: string): Promise<EntityCustomFieldValueData[]>;
   getValues(entityTypeKey: string, ownerId: string): Promise<EntityCustomFieldValueData[]>;

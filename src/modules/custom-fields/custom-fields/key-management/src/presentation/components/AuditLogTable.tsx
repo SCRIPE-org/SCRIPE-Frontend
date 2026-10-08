@@ -13,6 +13,9 @@ interface AuditLogTableProps {
   isLoading?: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export function AuditLogTable({ logs, totalCount, isLoading }: AuditLogTableProps) {
   const { t } = useI18n();
 

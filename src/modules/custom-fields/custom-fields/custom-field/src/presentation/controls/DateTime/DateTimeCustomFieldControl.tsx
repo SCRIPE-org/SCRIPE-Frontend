@@ -84,6 +84,9 @@ import { TimezonePicker } from "./TimezonePicker";
 import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { CustomFieldDateTimeValue } from "../../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
+/**
+ * Documentation for module export
+ */
 export interface DateTimeCustomFieldControlProps {
   fc: FieldConfig;
   value: unknown;
@@ -95,6 +98,9 @@ export interface DateTimeCustomFieldControlProps {
   error?: string;
 }
 
+/**
+ * Documentation for DateTimeCustomFieldControl
+ */
 export function DateTimeCustomFieldControl({
   fc,
   value,

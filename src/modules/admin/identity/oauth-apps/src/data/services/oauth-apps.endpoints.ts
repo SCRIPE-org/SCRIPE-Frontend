@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const OAUTH_APPS_ENDPOINTS = {
   LIST: `${V1}/oauth-applications`,
   BY_ID: (id: string) => `${V1}/oauth-applications/${id}`,

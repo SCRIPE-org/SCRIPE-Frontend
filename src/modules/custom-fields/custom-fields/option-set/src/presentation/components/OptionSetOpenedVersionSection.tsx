@@ -15,6 +15,9 @@ import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 import type { OptionSetRefusal } from "../viewmodels/useOptionSetViewModel";
 import type { useOptionSetVersionEditor } from "../viewmodels/useOptionSetVersionEditor";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetOpenedVersionSectionProps {
   openVersion: OptionSetVersion | null;
   isLoading: boolean;
@@ -32,6 +35,9 @@ export interface OptionSetOpenedVersionSectionProps {
   openHeadingId: string;
 }
 
+/**
+ * Documentation for OptionSetOpenedVersionSection
+ */
 export function OptionSetOpenedVersionSection({
   openVersion,
   isLoading,

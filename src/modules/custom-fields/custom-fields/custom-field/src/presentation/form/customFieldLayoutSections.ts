@@ -53,6 +53,9 @@ export function buildClassificationFields(
   ];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface LayoutAndGovernanceArgs {
   fieldGroupField: FieldConfig;
   classificationFields: FieldConfig[];

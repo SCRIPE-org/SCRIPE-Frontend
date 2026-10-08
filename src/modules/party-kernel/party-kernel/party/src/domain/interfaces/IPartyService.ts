@@ -16,6 +16,9 @@ export interface PartyListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyService {
   getAll(params: { page: number; pageSize: number; search?: string }): Promise<PartyListResult>;
   getById(id: string): Promise<PartyModel>;

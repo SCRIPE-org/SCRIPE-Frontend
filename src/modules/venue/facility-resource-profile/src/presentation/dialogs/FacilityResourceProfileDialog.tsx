@@ -21,8 +21,8 @@ import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { GenericSelect } from "@core/crud/components/generic-select";
-import { FacilityQuickCreateDialog } from "@modules/venue/facility/src/presentation/components/FacilityQuickCreateDialog";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import { FacilityQuickCreateDialog } from "@modules/venue";
+import type { Facility } from "@modules/venue";
 import type {
   FacilityResourceProfile,
   FacilityResourceProfileWrite,
@@ -83,6 +83,9 @@ interface FacilityResourceProfileDialogProps {
   onFacilityCreated?: (facilityId: string) => void;
 }
 
+/**
+ * Documentation for FacilityResourceProfileDialog
+ */
 export function FacilityResourceProfileDialog({
   open,
   onOpenChange,

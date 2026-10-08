@@ -2,7 +2,7 @@
 
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
-import type { Booking360Status } from "@modules/venue/booking-360/src/domain/entities/Booking360";
+import type { Booking360Status } from "@modules/venue";
 import type { VenueOverviewAtAGlanceItem } from "../../domain/entities/VenueOverview";
 
 interface Props {
@@ -45,6 +45,9 @@ function statusBadgeProps(status: Booking360Status) {
   }
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewAtAGlance({ items, t }: Props) {
   const totalCount = items.reduce((acc, item) => acc + item.count, 0);
 

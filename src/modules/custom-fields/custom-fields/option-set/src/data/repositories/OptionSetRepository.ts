@@ -35,6 +35,9 @@ import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 import type { OptionSetItemRequestJson } from "../models/OptionSetModel";
 import { OptionSetMapper } from "../mappers/OptionSetMapper";
 
+/**
+ * Documentation for module export
+ */
 export class OptionSetRepository implements IOptionSetRepository {
   constructor(private readonly service: IOptionSetService) {}
 

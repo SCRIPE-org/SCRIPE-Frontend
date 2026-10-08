@@ -14,6 +14,9 @@ import type {
 
 const PAGE_SIZE = 100;
 
+/**
+ * Documentation for module export
+ */
 export function useAvailabilityViewModel() {
   const { schedulableResourceRepository, availabilityRepository } = getVenueContainer();
   const [resources, setResources] = useState<

@@ -14,6 +14,9 @@ export interface StaffCompetencyListParams {
   sortDirection?: "asc" | "desc";
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffCompetencyRepository {
   getAll(
     params: StaffCompetencyListParams

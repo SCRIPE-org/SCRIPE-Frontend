@@ -17,6 +17,9 @@ export interface EntityLookupType {
   displayNameAr: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface EntityLookupItem {
   /** The ENCRYPTED record id. */
   id: string;
@@ -28,6 +31,9 @@ export interface EntityLookupItem {
   isActive: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface EntityLookupSearchQuery {
   /** Free-text filter. Null means unfiltered. */
   search: string | null;
@@ -37,9 +43,18 @@ export interface EntityLookupSearchQuery {
   pageSize: number;
 }
 
+/**
+ * Documentation for 20
+ */
 export const ENTITY_LOOKUP_DEFAULT_PAGE_SIZE = 20;
+/**
+ * Documentation for 300
+ */
 export const ENTITY_LOOKUP_SEARCH_DEBOUNCE_MS = 300;
 
+/**
+ * Documentation for module export
+ */
 export interface EntityLookupReference {
   /** Registry key of the referenced type. */
   entityTypeKey: string;

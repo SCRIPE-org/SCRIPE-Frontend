@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getHrmsContainer } from "../../../../di";
 import type { StaffAvailability } from "../../domain/entities/StaffAvailability";
 
+/**
+ * Documentation for module export
+ */
 export function useStaffAvailabilityViewModel() {
   const { staffAvailabilityRepository } = getHrmsContainer();
 

@@ -30,8 +30,14 @@ export {
   OPTION_SET_LABEL_MAX_LENGTH,
   OPTION_SET_DESCRIPTION_MAX_LENGTH,
 };
+/**
+ * Documentation for module export
+ */
 export type { OptionSetEditorReadOnlyReason };
 
+/**
+ * Documentation for =
+ */
 export type OptionSetEditorSubmission =
   | {
       mode: "create";
@@ -48,6 +54,9 @@ export type OptionSetEditorSubmission =
       description: string;
     };
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetEditorDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -60,6 +69,9 @@ export interface OptionSetEditorDialogProps {
   onSubmit: (submission: OptionSetEditorSubmission) => void;
 }
 
+/**
+ * Documentation for OptionSetEditorDialog
+ */
 export function OptionSetEditorDialog({
   open,
   onOpenChange,

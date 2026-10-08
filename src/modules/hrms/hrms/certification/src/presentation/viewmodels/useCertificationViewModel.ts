@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getHrmsContainer } from "../../../../di";
 import type { Certification } from "../../domain/entities/Certification";
 
+/**
+ * Documentation for module export
+ */
 export function useCertificationViewModel() {
   const { certificationRepository } = getHrmsContainer();
 

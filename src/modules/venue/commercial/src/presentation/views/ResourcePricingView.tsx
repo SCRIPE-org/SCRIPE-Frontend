@@ -18,6 +18,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { useResourcePricingViewModel } from "../viewmodels/useResourcePricingViewModel";
 
+/**
+ * Documentation for module export
+ */
 export function ResourcePricingView() {
   useModuleLocales(() => import("../../../locales"), "venue.pricing");
   const { t, direction } = useI18n();

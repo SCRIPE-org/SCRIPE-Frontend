@@ -9,6 +9,9 @@ import type {
 import type { IAvailabilityRepository } from "../../domain/interfaces/IAvailabilityRepository";
 import type { IAvailabilityService } from "../../domain/interfaces/IAvailabilityService";
 
+/**
+ * Documentation for module export
+ */
 export class AvailabilityRepository implements IAvailabilityRepository {
   constructor(private readonly service: IAvailabilityService) {}
 

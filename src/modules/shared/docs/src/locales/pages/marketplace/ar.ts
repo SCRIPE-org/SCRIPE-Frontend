@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export const ar = {
   modules: {
     marketplace: {

@@ -13,6 +13,9 @@ import { Checkbox } from "@core/ui/checkbox";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ConversionKind } from "../../domain/entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface ConvertValueTypePreviewProps {
   currentType: string;
   selectedTargetType: string;
@@ -23,6 +26,9 @@ export interface ConvertValueTypePreviewProps {
   isApplied: boolean;
 }
 
+/**
+ * Documentation for ConvertValueTypePreview
+ */
 export function ConvertValueTypePreview({
   currentType,
   selectedTargetType,

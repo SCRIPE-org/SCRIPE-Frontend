@@ -57,6 +57,9 @@ export function useFeatureCatalogViewModel(enabled: boolean) {
   );
 }
 
+/**
+ * Documentation for Omit<
+ */
 export type FeatureCatalogViewModel = Omit<
   ReturnType<typeof useFeatureCatalogViewModel>,
   "searchInputRef"

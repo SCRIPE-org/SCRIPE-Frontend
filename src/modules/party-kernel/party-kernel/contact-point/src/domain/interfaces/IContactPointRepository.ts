@@ -11,6 +11,9 @@ export interface ContactPointListParams {
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IContactPointRepository {
   getAll(
     params: ContactPointListParams

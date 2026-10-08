@@ -11,6 +11,9 @@ export interface PartyPersonListParams {
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyPersonRepository {
   getAll(
     params: PartyPersonListParams

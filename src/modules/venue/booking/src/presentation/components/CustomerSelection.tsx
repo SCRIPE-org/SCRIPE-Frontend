@@ -38,6 +38,9 @@ interface CustomerSelectionProps {
   onClear: () => void;
 }
 
+/**
+ * Documentation for CustomerSelection
+ */
 export function CustomerSelection({
   t,
   canViewCustomers,

@@ -29,6 +29,9 @@ interface CreateTenantLocationFieldsProps {
   t: (key: string, params?: Record<string, any>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFieldsProps) {
   const { language } = useI18n();
   const isAr = language === "ar";

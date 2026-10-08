@@ -32,6 +32,9 @@ import type {
   DiscardFieldVersionDraftResult,
 } from "../../domain/entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export class CustomFieldService implements ICustomFieldService {
   constructor(private readonly api: IApiService) {}
 

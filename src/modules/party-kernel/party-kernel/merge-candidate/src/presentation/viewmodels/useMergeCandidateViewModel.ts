@@ -10,6 +10,9 @@ import { useCrudViewModel } from "@core/crud/hooks/useCrudViewModel";
 import { getPartyKernelContainer } from "../../../../di";
 import type { MergeCandidate } from "../../domain/entities/MergeCandidate";
 
+/**
+ * Documentation for module export
+ */
 export function useMergeCandidateViewModel() {
   const { mergeCandidateRepository } = getPartyKernelContainer();
 

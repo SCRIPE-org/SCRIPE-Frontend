@@ -20,6 +20,9 @@ import type {
   DiscardFieldVersionDraftResult,
 } from "../entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface CustomFieldListParams {
   page: number;
   pageSize: number;
@@ -27,6 +30,9 @@ export interface CustomFieldListParams {
   entityTypeKey?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ICustomFieldRepository {
   getAll(
     params: CustomFieldListParams

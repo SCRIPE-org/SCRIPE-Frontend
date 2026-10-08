@@ -41,6 +41,9 @@ const PRIORITY_VARIANTS: Record<number, "secondary" | "info" | "warning" | "dest
 // need to already know and type the GUID by hand.
 const GUID_PATTERN = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 
+/**
+ * Documentation for module export
+ */
 export const WorkItemListView = React.memo(function WorkItemListView() {
   useModuleLocales(() => import("../../../locales"), "workManagement");
   const { t, language } = useI18n();

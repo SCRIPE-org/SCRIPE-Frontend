@@ -11,6 +11,9 @@ import type { SchemaImportResult } from "../../domain/entities/SchemaImportResul
 import { ImportSchemaBundleFailure, type SchemaImportBundlePayload } from "../models/SchemaImportModel";
 import { SchemaImportMapper } from "../mappers/SchemaImportMapper";
 
+/**
+ * Documentation for module export
+ */
 export class SchemaImportRepository implements ISchemaImportRepository {
   constructor(private readonly service: ISchemaImportService) {}
 

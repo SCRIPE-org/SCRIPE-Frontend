@@ -81,6 +81,9 @@ export function downloadDefinitionExport(exported: DefinitionExport): void {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Documentation for module export
+ */
 export function useDefinitionExportViewModel() {
   const { definitionExportRepository } = getDefinitionExportContainer();
   const { customFieldRepository } = getCustomFieldsContainer();

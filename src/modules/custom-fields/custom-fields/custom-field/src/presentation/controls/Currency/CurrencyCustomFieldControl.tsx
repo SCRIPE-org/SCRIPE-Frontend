@@ -10,6 +10,9 @@ import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { CustomFieldCurrencyValue } from "../../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 import { isBlankAmount, getCurrencySuggestions } from "./currencyControlUtils";
 
+/**
+ * Documentation for module export
+ */
 export interface CurrencyCustomFieldControlProps {
   fc: FieldConfig;
   value: unknown;

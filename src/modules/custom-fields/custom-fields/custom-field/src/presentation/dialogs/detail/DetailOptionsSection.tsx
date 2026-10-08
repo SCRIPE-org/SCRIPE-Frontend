@@ -3,10 +3,16 @@ import { ListFilter } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export interface DetailOptionsSectionProps {
   optionsList: Array<{ en: string; ar: string }>;
 }
 
+/**
+ * Documentation for DetailOptionsSection
+ */
 export function DetailOptionsSection({
   optionsList,
 }: DetailOptionsSectionProps): React.ReactElement {

@@ -19,6 +19,9 @@ import type {
   BindOptionSetRequestJson,
 } from "../../data/models/OptionSetModel";
 
+/**
+ * Documentation for module export
+ */
 export interface IOptionSetService {
   /**
    * `GET /v1/custom-fields/option-sets`

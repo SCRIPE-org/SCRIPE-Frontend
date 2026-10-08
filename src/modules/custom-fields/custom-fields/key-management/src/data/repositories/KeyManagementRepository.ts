@@ -11,6 +11,9 @@ import type {
 } from "../models/key-management.dto";
 import { KeyManagementMapper } from "../mappers/KeyManagementMapper";
 
+/**
+ * Documentation for module export
+ */
 export class KeyManagementRepository implements IKeyManagementRepository {
   constructor(private readonly service: IKeyManagementService) {}
 

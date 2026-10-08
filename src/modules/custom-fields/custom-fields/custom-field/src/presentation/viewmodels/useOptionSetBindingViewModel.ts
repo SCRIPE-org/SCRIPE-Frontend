@@ -49,6 +49,9 @@ export interface OptionSetBindingTarget {
   fieldLabel: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function fieldVersionsQueryKey(fieldId: string) {
   return ["customField", "versions", fieldId] as const;
 }
@@ -65,6 +68,9 @@ export function resolveActiveFieldVersion(
   return versions.find((version) => version.status === "Published") ?? null;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useOptionSetBindingViewModel() {
   const { customFieldRepository, optionSetRepository } = getCustomFieldsContainer();
   const { t } = useI18n();

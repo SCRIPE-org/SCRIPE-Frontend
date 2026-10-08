@@ -11,6 +11,9 @@ export interface MergeCandidateListParams {
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IMergeCandidateRepository {
   getAll(
     params: MergeCandidateListParams

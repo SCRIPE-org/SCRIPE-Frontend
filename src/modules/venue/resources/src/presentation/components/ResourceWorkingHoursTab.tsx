@@ -8,7 +8,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { WeekDay, AvailabilityWindow } from "@modules/venue/availability/src/domain/entities/Availability";
+import type { WeekDay, AvailabilityWindow } from "@modules/venue";
 import type { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
 
 interface Props {
@@ -25,6 +25,9 @@ const DAYS: WeekDay[] = [
   "Saturday",
 ];
 
+/**
+ * Documentation for module export
+ */
 export function ResourceWorkingHoursTab({ vm }: Props) {
   const { t } = useI18n();
 

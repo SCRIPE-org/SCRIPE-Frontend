@@ -10,6 +10,9 @@ interface PaymentTimelineCardProps {
   model: ReturnType<typeof usePaymentsViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function PaymentTimelineCard({ model }: PaymentTimelineCardProps) {
   const { t } = useI18n();
 

@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTY_PEOPLE.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class PartyPersonService implements IPartyPersonService {
   constructor(private readonly api: IApiService) {}
 

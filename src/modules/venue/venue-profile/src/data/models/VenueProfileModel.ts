@@ -13,6 +13,9 @@ export interface VenueProfileJson {
   siteName?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface VenueProfileListResponseJson {
   items: VenueProfileJson[];
   totalCount: number;
@@ -23,6 +26,9 @@ export interface VenueProfileListResponseJson {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export class VenueProfileModel {
   constructor(
     public readonly id: string,

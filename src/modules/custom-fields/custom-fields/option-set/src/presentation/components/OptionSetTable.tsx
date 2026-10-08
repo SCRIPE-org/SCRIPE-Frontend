@@ -6,6 +6,9 @@ import { Badge } from "@core/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import type { OptionSet } from "../../domain/entities/OptionSet";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetTableProps {
   sets: readonly OptionSet[];
   selectedSetId: string | null;
@@ -17,6 +20,9 @@ export interface OptionSetTableProps {
   language: string;
 }
 
+/**
+ * Documentation for OptionSetTable
+ */
 export function OptionSetTable({
   sets,
   selectedSetId,

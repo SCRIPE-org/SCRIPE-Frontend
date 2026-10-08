@@ -12,12 +12,18 @@ import { Badge } from "@core/ui/badge";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { FieldVersionSummary } from "../../domain/entities/FieldInsight";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVersionTimelineProps {
   sortedVersions: readonly FieldVersionSummary[];
   isLoading: boolean;
   formatDate: (dateStr?: string | null) => string;
 }
 
+/**
+ * Documentation for FieldVersionTimeline
+ */
 export function FieldVersionTimeline({
   sortedVersions,
   isLoading,

@@ -280,10 +280,9 @@ export function useAuditViewModel() {
   }, [todayActionCount, yesterdayActionCount]);
 
   // Count failed events in the current result set
-  const failedEventsCount = useMemo(() => {
-    if (!logsQuery.data?.items) return 0;
-    return logsQuery.data.items.filter((item) => !item.isSuccess).length;
-  }, [logsQuery.data?.items]);
+  const failedEventsCount = !logsQuery.data?.items
+    ? 0
+    : logsQuery.data.items.filter((item) => !item.isSuccess).length;
 
   return {
     // Filter & Pagination
