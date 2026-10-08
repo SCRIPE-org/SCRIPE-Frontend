@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { Button } from "@core/ui/button";
 import {
   Dialog,
@@ -95,14 +94,18 @@ export function OptionSetEditorDialog({
   const [isGlobal, setIsGlobal] = useState(isPlatformContext);
 
   const optionSetId = optionSet?.id;
-  useEffect(() => {
-    if (!open) return;
-    setStableKey(optionSet?.stableKey ?? "");
-    setLabelEn(optionSet?.labelEn ?? "");
-    setLabelAr(optionSet?.labelAr ?? "");
-    setDescription(optionSet?.description ?? "");
-    setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
-  }, [open, optionSetId]);
+  const [prevReq, setPrevReq] = useState({ open, optionSetId });
+
+  if (open !== prevReq.open || optionSetId !== prevReq.optionSetId) {
+    setPrevReq({ open, optionSetId });
+    if (open) {
+      setStableKey(optionSet?.stableKey ?? "");
+      setLabelEn(optionSet?.labelEn ?? "");
+      setLabelAr(optionSet?.labelAr ?? "");
+      setDescription(optionSet?.description ?? "");
+      setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
+    }
+  }
 
   const effectiveReadOnlyReason: OptionSetEditorReadOnlyReason | null =
     optionSet?.isPlatformMaintained ? "systemManaged" : (readOnlyReason ?? null);

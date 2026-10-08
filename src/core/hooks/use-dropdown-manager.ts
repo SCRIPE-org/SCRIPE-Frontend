@@ -63,7 +63,23 @@ export function useDropdownManager<TItem>({
 }: UseDropdownManagerOptions<TItem>) {
   const [preloadedOptions, setPreloadedOptions] = useState<DropdownOption[]>([]);
   const [loading, setLoading] = useState(true);
-  const [currentOption, setCurrentOption] = useState<DropdownOption | null>(null);
+  const [currentOptionState, setCurrentOptionState] = useState({
+    option: null as DropdownOption | null,
+    selectedId: selectedId
+  });
+
+  if (selectedId !== currentOptionState.selectedId) {
+    let nextOption = null;
+    if (selectedId) {
+      const existingOption = preloadedOptions.find((opt) => opt.value === selectedId);
+      if (existingOption) {
+        nextOption = existingOption;
+      }
+    }
+    setCurrentOptionState({ option: nextOption, selectedId });
+  }
+
+  const currentOption = currentOptionState.option;
 
   // Load initial options
   useEffect(() => {
@@ -90,27 +106,23 @@ export function useDropdownManager<TItem>({
 
   // Update current option when selectedId changes (for edit mode)
   useEffect(() => {
-    if (!selectedId) {
-      setCurrentOption(null);
-      return;
-    }
+    if (!selectedId) return;
 
     // First check if it's in preloaded options
     const existingOption = preloadedOptions.find((opt) => opt.value === selectedId);
-    if (existingOption) {
-      setCurrentOption(existingOption);
-      return;
-    }
+    if (existingOption) return;
 
     // If not in preloaded and we have fetchItemById, fetch it
     if (fetchItemById) {
+      let active = true;
       fetchItemById(selectedId)
         .then((item) => {
+          if (!active) return;
           const option = {
             value: getId(item),
             label: getLabel(item),
           };
-          setCurrentOption(option);
+          setCurrentOptionState((s) => ({ ...s, option }));
           // Add to preloaded options if not already there
           setPreloadedOptions((prev) => {
             if (!prev.find((opt) => opt.value === option.value)) {
@@ -120,10 +132,10 @@ export function useDropdownManager<TItem>({
           });
         })
         .catch(() => {
-          setCurrentOption(null);
+          if (active) setCurrentOptionState((s) => ({ ...s, option: null }));
         });
-    } else {
-      setCurrentOption(null);
+        
+      return () => { active = false; };
     }
   }, [selectedId, preloadedOptions, fetchItemById, getId, getLabel]);
 

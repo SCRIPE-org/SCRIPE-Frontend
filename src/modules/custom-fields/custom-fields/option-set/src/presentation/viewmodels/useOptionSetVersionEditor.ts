@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { usePermissions } from "@core/providers/permission-provider";
@@ -81,9 +81,8 @@ export function useOptionSetVersionEditor({
   const [baseline, setBaseline] = useState<OptionSetItemDraft[]>([]);
   const [hydratedVersionId, setHydratedVersionId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (version && version.id === hydratedVersionId) return;
-
+  const nextVersionId = version?.id ?? null;
+  if (nextVersionId !== hydratedVersionId) {
     if (version?.hasLoadedItems) {
       const hydrated = [...version.items]
         .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -91,13 +90,12 @@ export function useOptionSetVersionEditor({
       setRows(hydrated);
       setBaseline(hydrated);
       setHydratedVersionId(version.id);
-      return;
+    } else if (hydratedVersionId !== null) {
+      setHydratedVersionId(null);
+      if (rows.length > 0) setRows([]);
+      if (baseline.length > 0) setBaseline([]);
     }
-
-    setHydratedVersionId(null);
-    setRows((current) => (current.length === 0 ? current : []));
-    setBaseline((current) => (current.length === 0 ? current : []));
-  }, [version, hydratedVersionId]);
+  }
 
   const isReady = version !== null && version.hasLoadedItems && hydratedVersionId === version.id;
   const payload = useMemo(() => toOptionSetItemInputs(rows), [rows]);

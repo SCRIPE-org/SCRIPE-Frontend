@@ -166,24 +166,19 @@ export function useSelectOptions({
   }, [options, serverOptions, isTreeSelect, flattenedTreeOptions, treeSource, selectedLabelMap]);
 
   // Sync options matching currentValues into cache to persist labels across server searches
-  React.useEffect(() => {
-    if (options && options.length > 0) {
-      const matches = options.filter((opt) => currentValues.includes(opt.value));
-      if (matches.length > 0) {
-        setSelectedLabelMap((prev) => {
-          let hasNew = false;
-          const next = new Map(prev);
-          for (const opt of matches) {
-            if (!next.has(opt.value)) {
-              next.set(opt.value, opt);
-              hasNew = true;
-            }
-          }
-          return hasNew ? next : prev;
-        });
+  if (options && options.length > 0) {
+    const matches = options.filter((opt) => currentValues.includes(opt.value));
+    if (matches.length > 0) {
+      const hasNew = matches.some((opt) => !selectedLabelMap.has(opt.value));
+      if (hasNew) {
+        const next = new Map(selectedLabelMap);
+        for (const opt of matches) {
+          next.set(opt.value, opt);
+        }
+        setSelectedLabelMap(next);
       }
     }
-  }, [options, currentValues]);
+  }
 
   const selectedOptions = React.useMemo(
     () =>

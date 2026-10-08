@@ -197,29 +197,22 @@ export function RichTextCustomFieldControl({
   const overBy = Math.max(0, length - RICH_TEXT_MAX_CHARACTERS);
   const zone = resolveZone(length, RICH_TEXT_MAX_CHARACTERS);
 
-  const [announcement, setAnnouncement] = React.useState("");
-  const lastAnnouncedZoneRef = React.useRef<CounterZone>("safe");
+  const [announcementState, setAnnouncementState] = React.useState({
+    zone: "safe" as CounterZone,
+    text: "",
+  });
 
-  React.useEffect(() => {
-    // The ref is read and written inside the effect, never during render, and
-    // the early return is what makes this fire only when the BAND changes --
-    // `length`/`overBy` are deps because the message interpolates them, not
-    // because every keystroke should announce.
-    if (zone === lastAnnouncedZoneRef.current) return;
-    lastAnnouncedZoneRef.current = zone;
+  if (zone !== announcementState.zone) {
+    let newText = "";
     if (zone === "over") {
-      setAnnouncement(
-        t("customField.richText.charactersOverLimit", { overBy, max: RICH_TEXT_MAX_CHARACTERS })
-      );
+      newText = t("customField.richText.charactersOverLimit", { overBy, max: RICH_TEXT_MAX_CHARACTERS });
     } else if (zone === "nearLimit") {
-      setAnnouncement(
-        t("customField.richText.characterCount", { count: length, max: RICH_TEXT_MAX_CHARACTERS })
-      );
-    } else {
-      // Back to safe -- clear the region rather than leave a stale warning in it.
-      setAnnouncement("");
+      newText = t("customField.richText.characterCount", { count: length, max: RICH_TEXT_MAX_CHARACTERS });
     }
-  }, [zone, length, overBy, t]);
+    setAnnouncementState({ zone, text: newText });
+  }
+
+  const announcement = zone === announcementState.zone ? announcementState.text : "";
 
   const counterText =
     zone === "over"

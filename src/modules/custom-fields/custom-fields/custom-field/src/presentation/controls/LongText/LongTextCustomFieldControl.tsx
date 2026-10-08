@@ -148,31 +148,22 @@ export function LongTextCustomFieldControl({
   const overBy = Math.max(0, length - LONG_TEXT_MAX_CHARACTERS);
   const zone = resolveZone(length, LONG_TEXT_MAX_CHARACTERS);
 
-  const [announcement, setAnnouncement] = React.useState("");
-  const lastAnnouncedZoneRef = React.useRef<CounterZone>("safe");
+  const [announcementState, setAnnouncementState] = React.useState({
+    zone: "safe" as CounterZone,
+    text: "",
+  });
 
-  React.useEffect(() => {
-    // The ref read/write below happens inside the effect, never during
-    // render -- the early return is what makes this fire an announcement
-    // only when `zone` itself changes, not on every keystroke that leaves
-    // the zone unchanged, even though `length`/`overBy` are effect deps.
-    if (zone === lastAnnouncedZoneRef.current) return;
-    lastAnnouncedZoneRef.current = zone;
+  if (zone !== announcementState.zone) {
+    let newText = "";
     if (zone === "over") {
-      setAnnouncement(
-        t("customField.longText.charactersOverLimit", { overBy, max: LONG_TEXT_MAX_CHARACTERS })
-      );
+      newText = t("customField.longText.charactersOverLimit", { overBy, max: LONG_TEXT_MAX_CHARACTERS });
     } else if (zone === "nearLimit") {
-      setAnnouncement(
-        t("customField.longText.characterCount", { count: length, max: LONG_TEXT_MAX_CHARACTERS })
-      );
-    } else {
-      // Back to safe (e.g. the user deleted text after being near/over the
-      // cap) -- clear the live region rather than leave a stale warning
-      // sitting there un-announced-again.
-      setAnnouncement("");
+      newText = t("customField.longText.characterCount", { count: length, max: LONG_TEXT_MAX_CHARACTERS });
     }
-  }, [zone, length, overBy, t]);
+    setAnnouncementState({ zone, text: newText });
+  }
+
+  const announcement = zone === announcementState.zone ? announcementState.text : "";
 
   const counterText =
     zone === "over"
