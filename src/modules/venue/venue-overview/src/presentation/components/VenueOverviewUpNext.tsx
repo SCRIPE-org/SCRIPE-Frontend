@@ -48,8 +48,11 @@ function statusBadgeClass(status: Booking360Status) {
  */
 export function VenueOverviewUpNext({ items, t }: Props) {
   return (
-    <Card className="border-nx-line bg-nx-surface overflow-hidden" data-testid="venue-overview-up-next">
-      <CardHeader className="pb-3 border-b border-nx-line">
+    <Card
+      className="overflow-hidden border-nx-line bg-nx-surface"
+      data-testid="venue-overview-up-next"
+    >
+      <CardHeader className="border-b border-nx-line pb-3">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-sm font-bold text-nx-ink">
@@ -63,9 +66,11 @@ export function VenueOverviewUpNext({ items, t }: Props) {
           </div>
           <Link
             href="/venue/calendar"
-            className="text-xs font-semibold text-nx-accent hover:underline flex items-center gap-1 shrink-0"
+            className="flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-accent hover:underline"
           >
-            <span>{t("venueOverview.quickActions.openCalendar", { defaultValue: "View Calendar" })}</span>
+            <span>
+              {t("venueOverview.quickActions.openCalendar", { defaultValue: "View Calendar" })}
+            </span>
             <ArrowUpRight className="size-3.5" aria-hidden="true" />
           </Link>
         </div>
@@ -74,13 +79,15 @@ export function VenueOverviewUpNext({ items, t }: Props) {
       <CardContent className="p-0">
         {items.length === 0 ? (
           <div className="flex h-44 items-center justify-center p-6 text-center text-xs text-nx-ink-3">
-            {t("venueOverview.upNext.noUpcoming", { defaultValue: "No upcoming reservations scheduled for today." })}
+            {t("venueOverview.upNext.noUpcoming", {
+              defaultValue: "No upcoming reservations scheduled for today.",
+            })}
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full border-collapse text-left text-xs">
               <thead>
-                <tr className="border-b border-nx-line bg-nx-surfaceSubtle/60 text-[11px] font-semibold text-nx-ink-3 uppercase tracking-wider">
+                <tr className="bg-nx-surfaceSubtle/60 border-b border-nx-line text-[11px] font-semibold uppercase tracking-wider text-nx-ink-3">
                   <th scope="col" className="px-4 py-2.5">
                     {t("venueOverview.upNext.columns.time", { defaultValue: "Time" })}
                   </th>
@@ -100,67 +107,81 @@ export function VenueOverviewUpNext({ items, t }: Props) {
               </thead>
               <tbody className="divide-y divide-nx-line">
                 {items.map((item) => {
-                  const timePart = item.startLocal.split("T")[1]?.slice(0, 5) ?? item.startLocal.slice(11, 16);
-                  const endTimePart = item.endLocal.split("T")[1]?.slice(0, 5) ?? item.endLocal.slice(11, 16);
+                  const timePart =
+                    item.startLocal.split("T")[1]?.slice(0, 5) ?? item.startLocal.slice(11, 16);
+                  const endTimePart =
+                    item.endLocal.split("T")[1]?.slice(0, 5) ?? item.endLocal.slice(11, 16);
                   const SportIcon = resolveSportIcon(item.resourceName);
 
                   return (
                     <tr
                       key={item.reservationId}
-                      className="hover:bg-nx-surfaceSubtle/50 transition-colors group"
+                      className="hover:bg-nx-surfaceSubtle/50 group transition-colors"
                     >
                       {/* Time */}
-                      <td className="px-4 py-3 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5 font-mono font-bold text-nx-ink tabular-nums" dir="ltr">
+                      <td className="whitespace-nowrap px-4 py-3">
+                        <div
+                          className="flex items-center gap-1.5 font-mono font-bold tabular-nums text-nx-ink"
+                          dir="ltr"
+                        >
                           <Clock className="size-3.5 text-nx-ink-3" aria-hidden="true" />
-                          <span>{timePart} â€“ {endTimePart}</span>
+                          <span>
+                            {timePart} â€“ {endTimePart}
+                          </span>
                         </div>
                       </td>
 
                       {/* Customer */}
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className="whitespace-nowrap px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="flex size-6 items-center justify-center rounded-full bg-nx-surfaceSubtle border border-nx-line text-nx-ink-2 font-bold text-[10px]">
+                          <div className="bg-nx-surfaceSubtle flex size-6 items-center justify-center rounded-full border border-nx-line text-[10px] font-bold text-nx-ink-2">
                             <User className="size-3 text-nx-ink-3" aria-hidden="true" />
                           </div>
-                          <span className="font-semibold text-nx-ink truncate max-w-[130px]">
+                          <span className="max-w-[130px] truncate font-semibold text-nx-ink">
                             {item.customerDisplayName ||
                               (item.customerPartyId
-                                ? t("venueOverview.upNext.customerUnavailable", { defaultValue: "Customer unavailable" })
-                                : t("venueOverview.upNext.customerRestricted", { defaultValue: "Restricted" }))}
+                                ? t("venueOverview.upNext.customerUnavailable", {
+                                    defaultValue: "Customer unavailable",
+                                  })
+                                : t("venueOverview.upNext.customerRestricted", {
+                                    defaultValue: "Restricted",
+                                  }))}
                           </span>
                         </div>
                       </td>
 
                       {/* Resource */}
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className="whitespace-nowrap px-4 py-3">
                         <div className="flex items-center gap-1.5">
                           <span className="text-nx-accent">{SportIcon}</span>
-                          <span className="font-semibold text-nx-ink truncate max-w-[140px]">
+                          <span className="max-w-[140px] truncate font-semibold text-nx-ink">
                             {item.resourceName}
                           </span>
                         </div>
                       </td>
 
                       {/* Status & Reference */}
-                      <td className="px-4 py-3 whitespace-nowrap">
+                      <td className="whitespace-nowrap px-4 py-3">
                         <div className="flex items-center gap-2">
                           <Badge variant="outline" className={statusBadgeClass(item.status)}>
                             {STATUS_LABELS[item.status] || item.status}
                           </Badge>
-                          <span className="font-mono text-[11px] text-nx-ink-3 hidden sm:inline" dir="ltr">
+                          <span
+                            className="hidden font-mono text-[11px] text-nx-ink-3 sm:inline"
+                            dir="ltr"
+                          >
                             {item.reservationNumber}
                           </span>
                         </div>
                       </td>
 
                       {/* Action */}
-                      <td className="px-4 py-3 whitespace-nowrap text-right">
+                      <td className="whitespace-nowrap px-4 py-3 text-right">
                         <Button
                           asChild
                           variant="outline"
                           size="sm"
-                          className="h-7 px-2.5 text-xs gap-1 border-nx-line hover:border-nx-accent hover:text-nx-accent"
+                          className="h-7 gap-1 border-nx-line px-2.5 text-xs hover:border-nx-accent hover:text-nx-accent"
                         >
                           <Link href={`/venue/bookings/${encodeURIComponent(item.reservationId)}`}>
                             <span>{item.status === "Held" ? "Review" : "Open"}</span>

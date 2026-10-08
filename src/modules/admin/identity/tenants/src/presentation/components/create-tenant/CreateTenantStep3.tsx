@@ -113,9 +113,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
         </div>
         <div>
           <h2 className="text-lg font-semibold">{t("tenant.stepPlan")}</h2>
-          <p className="text-sm text-nx-ink-2">
-            {t("tenant.stepPlanDesc")}
-          </p>
+          <p className="text-sm text-nx-ink-2">{t("tenant.stepPlanDesc")}</p>
         </div>
       </div>
 
@@ -129,7 +127,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <div className="space-y-1 text-xs">
               <p className="font-semibold">{t("validation.correctErrorsTitle")}</p>
-              <ul className="list-disc ps-4 space-y-0.5 text-[11px] text-destructive/90">
+              <ul className="list-disc space-y-0.5 ps-4 text-[11px] text-destructive/90">
                 {vm.stepErrors[3].includes("editionId") && <li>{t("tenant.editionRequired")}</li>}
               </ul>
             </div>
@@ -139,17 +137,20 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Smart Edition Recommendation Banner */}
       {isSportsOrg && (
-        <div className="rounded-nx-lg border border-nx-accent/30 bg-nx-accent-wash/50 p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+        <div className="border-nx-accent/30 bg-nx-accent-wash/50 rounded-nx-lg border p-4 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
           <div className="flex items-start gap-3">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent/15 text-nx-accent">
+            <div className="bg-nx-accent/15 flex h-8 w-8 shrink-0 items-center justify-center rounded-nx-md text-nx-accent">
               <Sparkles className="h-4 w-4" />
             </div>
             <div className="flex-1 space-y-1">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="text-xs font-semibold text-nx-ink-1">
+                <p className="text-nx-ink-1 text-xs font-semibold">
                   {t("tenant.recommendedForArchetype").replace("{archetype}", archetypeName)}
                 </p>
-                <Badge variant="outline" className="border-nx-accent/40 bg-nx-accent/10 text-[10px] font-semibold text-nx-accent">
+                <Badge
+                  variant="outline"
+                  className="border-nx-accent/40 bg-nx-accent/10 text-[10px] font-semibold text-nx-accent"
+                >
                   {t("tenant.recommendedEditions")}
                 </Badge>
               </div>
@@ -170,8 +171,8 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
                         className={cn(
                           "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-all",
                           isSelected
-                            ? "border-nx-accent bg-nx-accent font-semibold text-nx-ground shadow-nx-xs"
-                            : "border-nx-line bg-nx-ground text-nx-ink hover:border-nx-accent/40 hover:bg-nx-raised"
+                            ? "shadow-nx-xs border-nx-accent bg-nx-accent font-semibold text-nx-ground"
+                            : "hover:border-nx-accent/40 border-nx-line bg-nx-ground text-nx-ink hover:bg-nx-raised"
                         )}
                       >
                         <span className="text-[11px]">⭐</span>
@@ -219,24 +220,20 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Free Edition Banner */}
       {vm.form.editionId && isFreeEdition && (
-        <div className="flex items-start gap-3 rounded-nx-md border border-success/30 bg-success/5 p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+        <div className="flex items-start gap-3 rounded-nx-md border border-success/30 bg-success/5 p-4 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-success/10">
             <ShieldCheck className="h-5 w-5 text-success" />
           </div>
           <div>
-            <p className="text-sm font-medium text-success">
-              {t("tenant.freeEditionSelected")}
-            </p>
-            <p className="mt-0.5 text-xs text-nx-ink-2">
-              {t("tenant.freeEditionDesc")}
-            </p>
+            <p className="text-sm font-medium text-success">{t("tenant.freeEditionSelected")}</p>
+            <p className="mt-0.5 text-xs text-nx-ink-2">{t("tenant.freeEditionDesc")}</p>
           </div>
         </div>
       )}
 
       {/* Subscription Type & Currency */}
       {vm.form.editionId && subscriptionTypeOptions.length > 0 && (
-        <div className="grid gap-5 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2 sm:grid-cols-2">
+        <div className="grid gap-5 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2 sm:grid-cols-2">
           <div className="space-y-2">
             <Label>{t("tenant.subscriptionType")}</Label>
             <GenericSelect
@@ -248,9 +245,7 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
               placeholder={t("tenant.selectSubscriptionType")}
             />
             {subscriptionTypeOptions.length === 0 && (
-              <p className="text-xs text-destructive">
-                {t("tenant.noSubscriptionTypesAvailable")}
-              </p>
+              <p className="text-xs text-destructive">{t("tenant.noSubscriptionTypesAvailable")}</p>
             )}
           </div>
 
@@ -275,15 +270,13 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
 
       {/* Skip Payment Toggle */}
       {vm.form.editionId && !isFreeEdition && subscriptionTypeOptions.length > 0 && (
-        <div className="duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+        <div className="duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
           <div className="flex items-center justify-between rounded-nx-md border border-warning/30 bg-warning/5 p-4">
             <div className="flex items-start gap-3">
               <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-warning" />
               <div>
                 <p>{t("tenant.skipPayment")}</p>
-                <p className="mt-0.5 text-xs text-nx-ink-2">
-                  {t("tenant.skipPaymentDesc")}
-                </p>
+                <p className="mt-0.5 text-xs text-nx-ink-2">{t("tenant.skipPaymentDesc")}</p>
               </div>
             </div>
             <Switch
@@ -295,15 +288,13 @@ export function CreateTenantStep3({ vm, t }: CreateTenantStep3Props) {
       )}
 
       {/* Plan-Governed Permissions Banner */}
-      <div className="flex items-start gap-3 rounded-nx-md border border-primary/20 bg-primary/5 p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+      <div className="flex items-start gap-3 rounded-nx-md border border-primary/20 bg-primary/5 p-4 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-primary/10">
           <ShieldCheck className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <p className="text-sm font-medium text-nx-ink-1">
-            {t("tenant.editionGovernanceTitle")}
-          </p>
-          <p className="mt-1 text-xs text-nx-ink-2 leading-relaxed">
+          <p className="text-nx-ink-1 text-sm font-medium">{t("tenant.editionGovernanceTitle")}</p>
+          <p className="mt-1 text-xs leading-relaxed text-nx-ink-2">
             {t("tenant.editionGovernanceDesc")}
           </p>
         </div>

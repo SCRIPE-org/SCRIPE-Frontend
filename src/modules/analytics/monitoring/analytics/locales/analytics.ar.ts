@@ -65,8 +65,8 @@ export const ar = {
       comprehensive: "شامل",
     },
     comprehensive: {
-        title: "نظرة شاملة",
-        description: "رسم بياني شامل يجمع عدة مقاييس في عرض واحد",
+      title: "نظرة شاملة",
+      description: "رسم بياني شامل يجمع عدة مقاييس في عرض واحد",
     },
     line: {
       basic: {

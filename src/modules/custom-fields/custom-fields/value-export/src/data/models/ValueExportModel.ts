@@ -30,10 +30,7 @@
  * response headers, so this mirrors the handler's own naming rule instead of reading it.
  */
 
-export {
-  XLSX_CONTENT_TYPE,
-  MAX_EXPORT_ROWS,
-} from "../../domain/entities/ValueExport";
+export { XLSX_CONTENT_TYPE, MAX_EXPORT_ROWS } from "../../domain/entities/ValueExport";
 
 /** `ErrorCodes.Range` — returned when the export is REFUSED for exceeding `MaxExportRows`. */
 export const ROW_CAP_ERROR_CODE = "VALIDATION_RANGE";
@@ -160,11 +157,7 @@ export class ValueExportFileModel {
    * @param entityTypeKey - The requested (and only) scope.
    * @param requestedAt - When the request was issued; stamps the filename.
    */
-  static fromResponse(
-    blob: Blob,
-    entityTypeKey: string,
-    requestedAt: Date
-  ): ValueExportFileModel {
+  static fromResponse(blob: Blob, entityTypeKey: string, requestedAt: Date): ValueExportFileModel {
     return new ValueExportFileModel({
       entityTypeKey,
       fileName: buildValueExportFileName(entityTypeKey, requestedAt),

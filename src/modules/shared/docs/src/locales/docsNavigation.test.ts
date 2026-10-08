@@ -86,9 +86,7 @@ describe("Docs Navigation and Page Completeness", () => {
       for (const [lang, reg] of Object.entries(registries)) {
         const val = resolveKey(reg, item.titleKey);
         if (!val || val.trim() === "" || val === item.titleKey) {
-          missingTranslations.push(
-            `Item ${item.id} [${lang}]: missing ${item.titleKey}`
-          );
+          missingTranslations.push(`Item ${item.id} [${lang}]: missing ${item.titleKey}`);
         }
       }
     }

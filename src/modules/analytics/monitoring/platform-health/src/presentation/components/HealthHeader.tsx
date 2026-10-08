@@ -1,12 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  Calendar,
-  ExternalLink,
-  RotateCw,
-  Sparkles,
-} from "lucide-react";
+import { Calendar, ExternalLink, RotateCw, Sparkles } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import {
@@ -46,8 +41,8 @@ export function HealthHeader({
   const statusLabel = isHealthy
     ? t("platformHealth.allSystemsOperational") || "All Systems Operational"
     : isDegraded
-    ? t("platformHealth.systemsDegradedNotice") || "Degraded Performance"
-    : t("platformHealth.statusCritical") || "Critical Outage";
+      ? t("platformHealth.systemsDegradedNotice") || "Degraded Performance"
+      : t("platformHealth.statusCritical") || "Critical Outage";
 
   const ranges: Array<{ key: "1h" | "24h" | "7d"; label: string }> = [
     {
@@ -64,8 +59,7 @@ export function HealthHeader({
     },
   ];
 
-  const currentRangeLabel =
-    ranges.find((r) => r.key === timeRange)?.label ?? ranges[1].label;
+  const currentRangeLabel = ranges.find((r) => r.key === timeRange)?.label ?? ranges[1].label;
 
   return (
     <header className="flex flex-col gap-4 border-b border-border/80 pb-4 lg:flex-row lg:items-end lg:justify-between">
@@ -75,10 +69,10 @@ export function HealthHeader({
             {t("platformHealth.eyebrow") || "MONITORING"}
           </p>
         </div>
-        <h1 className="mt-1 text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground leading-tight">
+        <h1 className="mt-1 text-2xl font-extrabold leading-tight tracking-tight text-foreground sm:text-3xl">
           {t("platformHealth.title") || "Platform Health"}
         </h1>
-        <p className="mt-1 max-w-2xl text-xs sm:text-sm text-muted-foreground">
+        <p className="mt-1 max-w-2xl text-xs text-muted-foreground sm:text-sm">
           {t("platformHealth.subtitle") ||
             "Real-time health and performance of the SCRIPE platform, its infrastructure, services and external dependencies."}
         </p>
@@ -87,14 +81,14 @@ export function HealthHeader({
       {/* Header Right Actions */}
       <div className="flex flex-wrap items-center gap-2">
         {/* Operational State Pill */}
-        <span className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium shadow-xs">
+        <span className="shadow-xs inline-flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-medium">
           <span
             className={`h-2 w-2 rounded-full ${
               isHealthy
                 ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.7)]"
                 : isDegraded
-                ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"
-                : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]"
+                  ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]"
+                  : "bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]"
             }`}
             aria-hidden="true"
           />
@@ -108,16 +102,16 @@ export function HealthHeader({
           size="sm"
           onClick={() => setAutoRefresh(!autoRefresh)}
           title={autoRefresh ? "Telemetry live stream active (8s)" : "Telemetry stream paused"}
-          className={`h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card shadow-xs cursor-pointer transition-colors ${
+          className={`h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold transition-colors ${
             autoRefresh
-              ? "text-foreground border-primary/40 bg-primary/5"
+              ? "border-primary/40 bg-primary/5 text-foreground"
               : "text-muted-foreground hover:text-foreground"
           }`}
         >
           <span
             className={`h-2 w-2 rounded-full ${
               autoRefresh
-                ? "bg-primary animate-pulse shadow-[0_0_6px_rgba(132,204,22,0.8)]"
+                ? "animate-pulse bg-primary shadow-[0_0_6px_rgba(132,204,22,0.8)]"
                 : "bg-muted-foreground/60"
             }`}
           />
@@ -131,7 +125,7 @@ export function HealthHeader({
             <Button
               variant="outline"
               size="sm"
-              className="h-8.5 px-3 text-xs font-semibold gap-2 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+              className="h-8.5 shadow-xs cursor-pointer gap-2 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
             >
               <Calendar className="h-3.5 w-3.5 text-muted-foreground" />
               <span>{currentRangeLabel}</span>
@@ -142,7 +136,7 @@ export function HealthHeader({
               <DropdownMenuItem
                 key={range.key}
                 onClick={() => setTimeRange(range.key)}
-                className={`text-xs cursor-pointer ${
+                className={`cursor-pointer text-xs ${
                   timeRange === range.key ? "font-semibold text-primary" : ""
                 }`}
               >
@@ -159,7 +153,7 @@ export function HealthHeader({
           size="sm"
           onClick={() => refetch()}
           disabled={isRefetching}
-          className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card hover:bg-accent text-foreground shadow-xs cursor-pointer"
+          className="h-8.5 shadow-xs cursor-pointer gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
         >
           <RotateCw className={`h-3.5 w-3.5 ${isRefetching ? "animate-spin text-primary" : ""}`} />
           <span className="hidden sm:inline">
@@ -175,7 +169,7 @@ export function HealthHeader({
           variant="outline"
           size="sm"
           asChild
-          className="h-8.5 px-3 text-xs font-semibold gap-1.5 border-border bg-card hover:bg-accent text-foreground shadow-xs"
+          className="h-8.5 shadow-xs gap-1.5 border-border bg-card px-3 text-xs font-semibold text-foreground hover:bg-accent"
         >
           <a
             href="/health"

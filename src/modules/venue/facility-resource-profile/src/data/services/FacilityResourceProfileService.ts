@@ -41,10 +41,7 @@ export class FacilityResourceProfileService implements IFacilityResourceProfileS
     return this.api.post(FACILITY_RESOURCE_PROFILE_ENDPOINTS.CREATE, data);
   }
 
-  async update(
-    id: string,
-    data: Omit<FacilityResourceProfileWrite, "facilityId">
-  ): Promise<void> {
+  async update(id: string, data: Omit<FacilityResourceProfileWrite, "facilityId">): Promise<void> {
     await this.api.put(FACILITY_RESOURCE_PROFILE_ENDPOINTS.UPDATE(id), data);
   }
 }

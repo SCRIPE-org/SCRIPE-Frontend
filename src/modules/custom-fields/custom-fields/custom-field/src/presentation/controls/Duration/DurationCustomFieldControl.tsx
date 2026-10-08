@@ -152,7 +152,7 @@ export function DurationCustomFieldControl({
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label ?? fc.name}
         {isRequired && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}
@@ -195,7 +195,10 @@ export function DurationCustomFieldControl({
           // file's header comment. Composed, never overwritten: a host's own
           // hint/error id keeps its place in the list.
           aria-describedby={[describedBy, unitId].filter(Boolean).join(" ")}
-          className={cn("max-w-[10rem] text-sm", invalid && "border-destructive focus-visible:ring-destructive")}
+          className={cn(
+            "max-w-[10rem] text-sm",
+            invalid && "border-destructive focus-visible:ring-destructive"
+          )}
         />
         {/* Visible, never aria-hidden. Storage is bare minutes (backend ruling
             R4); this is the one place that unit becomes explicit instead of
@@ -215,4 +218,3 @@ export function DurationCustomFieldControl({
     </div>
   );
 }
-

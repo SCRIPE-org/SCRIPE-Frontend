@@ -52,7 +52,9 @@ const PRIORITY_FIELD = {
   ],
 };
 
-function renderStep(overrides: Partial<React.ComponentProps<typeof TenantPlanStepCustomFields>> = {}) {
+function renderStep(
+  overrides: Partial<React.ComponentProps<typeof TenantPlanStepCustomFields>> = {}
+) {
   return render(
     <TenantPlanStepCustomFields
       fieldConfigs={[]}

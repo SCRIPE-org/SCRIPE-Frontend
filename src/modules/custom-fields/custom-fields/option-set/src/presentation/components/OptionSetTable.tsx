@@ -89,9 +89,7 @@ export function OptionSetTable({
                 </TableCell>
 
                 <TableCell className="align-top text-sm text-nx-ink-2">
-                  {set.description ?? (
-                    <span className="text-nx-ink-3">{t("common.none")}</span>
-                  )}
+                  {set.description ?? <span className="text-nx-ink-3">{t("common.none")}</span>}
                 </TableCell>
 
                 <TableCell className="align-top">

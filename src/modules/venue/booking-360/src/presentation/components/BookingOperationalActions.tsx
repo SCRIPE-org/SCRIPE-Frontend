@@ -61,8 +61,16 @@ interface Props {
   onComplete: () => void;
   onMarkNoShow: (reason: string) => void;
   onCancel?: (reason: string) => void;
-  onReschedule?: (input: { resourceId: string; requestedStartUtc: string; requestedEndUtc: string }) => void;
-  onChangeResource?: (input: { targetResourceId: string; requestedStartUtc: string; requestedEndUtc: string }) => void;
+  onReschedule?: (input: {
+    resourceId: string;
+    requestedStartUtc: string;
+    requestedEndUtc: string;
+  }) => void;
+  onChangeResource?: (input: {
+    targetResourceId: string;
+    requestedStartUtc: string;
+    requestedEndUtc: string;
+  }) => void;
 }
 
 function feedbackVariant(kind: Booking360OperationalFeedback["kind"]) {
@@ -72,10 +80,7 @@ function feedbackVariant(kind: Booking360OperationalFeedback["kind"]) {
   return "warning" as const;
 }
 
-function feedbackMessage(
-  feedback: Booking360OperationalFeedback,
-  t: Props["t"]
-): string {
+function feedbackMessage(feedback: Booking360OperationalFeedback, t: Props["t"]): string {
   if (feedback.kind === "success") {
     return t(`booking360.operations.feedback.success.${feedback.action}`);
   }
@@ -106,9 +111,18 @@ export function BookingOperationalActions(props: Props) {
   const reasonInvalid = reasonMissing || reasonTooLong;
   const confirmed = props.status === "Confirmed";
   const checkedIn = props.status === "CheckedIn";
-  const cancellable = ["Draft", "Requested", "Held", "PendingApproval", "Confirmed"].includes(props.status);
-  const hasAction = (confirmed && (props.canCheckIn || props.canMarkNoShow || props.canCancel || props.canReschedule || props.canChangeResource)) ||
-    (checkedIn && props.canComplete) || (cancellable && props.canCancel);
+  const cancellable = ["Draft", "Requested", "Held", "PendingApproval", "Confirmed"].includes(
+    props.status
+  );
+  const hasAction =
+    (confirmed &&
+      (props.canCheckIn ||
+        props.canMarkNoShow ||
+        props.canCancel ||
+        props.canReschedule ||
+        props.canChangeResource)) ||
+    (checkedIn && props.canComplete) ||
+    (cancellable && props.canCancel);
 
   useEffect(() => {
     if (props.feedback) regionRef.current?.focus();
@@ -146,7 +160,7 @@ export function BookingOperationalActions(props: Props) {
           )}
 
           {hasAction && (
-            <div className="flex flex-wrap gap-3 items-center">
+            <div className="flex flex-wrap items-center gap-3">
               {confirmed && props.canCheckIn && (
                 <Button
                   type="button"
@@ -175,53 +189,69 @@ export function BookingOperationalActions(props: Props) {
                 </Button>
               )}
 
-              {confirmed && props.canReschedule && props.onReschedule && props.resourceId && props.currentStartUtc && props.currentEndUtc && (
-                <BookingRescheduleDialog
-                  open={rescheduleOpen}
-                  onOpenChange={setRescheduleOpen}
-                  resourceId={props.resourceId}
-                  resourceName={props.resourceName ?? ""}
-                  facilityName={props.facilityName ?? ""}
-                  currentStartUtc={props.currentStartUtc}
-                  currentEndUtc={props.currentEndUtc}
-                  timeZoneId={props.timeZoneId ?? "UTC"}
-                  quantity={props.quantity ?? 1}
-                  direction={props.direction}
-                  disabled={props.activeAction !== null}
-                  t={props.t}
-                  onConfirmReschedule={(input) => {
-                    setRescheduleOpen(false);
-                    props.onReschedule?.(input);
-                  }}
-                />
-              )}
+              {confirmed &&
+                props.canReschedule &&
+                props.onReschedule &&
+                props.resourceId &&
+                props.currentStartUtc &&
+                props.currentEndUtc && (
+                  <BookingRescheduleDialog
+                    open={rescheduleOpen}
+                    onOpenChange={setRescheduleOpen}
+                    resourceId={props.resourceId}
+                    resourceName={props.resourceName ?? ""}
+                    facilityName={props.facilityName ?? ""}
+                    currentStartUtc={props.currentStartUtc}
+                    currentEndUtc={props.currentEndUtc}
+                    timeZoneId={props.timeZoneId ?? "UTC"}
+                    quantity={props.quantity ?? 1}
+                    direction={props.direction}
+                    disabled={props.activeAction !== null}
+                    t={props.t}
+                    onConfirmReschedule={(input) => {
+                      setRescheduleOpen(false);
+                      props.onReschedule?.(input);
+                    }}
+                  />
+                )}
 
-              {confirmed && props.canChangeResource && props.onChangeResource && props.facilityId && props.resourceId && props.currentStartUtc && props.currentEndUtc && (
-                <BookingChangeResourceDialog
-                  open={changeResourceOpen}
-                  onOpenChange={setChangeResourceOpen}
-                  facilityId={props.facilityId}
-                  currentResourceId={props.resourceId}
-                  currentResourceName={props.resourceName ?? ""}
-                  currentFacilityName={props.facilityName ?? ""}
-                  currentStartUtc={props.currentStartUtc}
-                  currentEndUtc={props.currentEndUtc}
-                  timeZoneId={props.timeZoneId ?? "UTC"}
-                  quantity={props.quantity ?? 1}
-                  direction={props.direction}
-                  disabled={props.activeAction !== null}
-                  t={props.t}
-                  onConfirmChangeResource={(input) => {
-                    setChangeResourceOpen(false);
-                    props.onChangeResource?.(input);
-                  }}
-                />
-              )}
+              {confirmed &&
+                props.canChangeResource &&
+                props.onChangeResource &&
+                props.facilityId &&
+                props.resourceId &&
+                props.currentStartUtc &&
+                props.currentEndUtc && (
+                  <BookingChangeResourceDialog
+                    open={changeResourceOpen}
+                    onOpenChange={setChangeResourceOpen}
+                    facilityId={props.facilityId}
+                    currentResourceId={props.resourceId}
+                    currentResourceName={props.resourceName ?? ""}
+                    currentFacilityName={props.facilityName ?? ""}
+                    currentStartUtc={props.currentStartUtc}
+                    currentEndUtc={props.currentEndUtc}
+                    timeZoneId={props.timeZoneId ?? "UTC"}
+                    quantity={props.quantity ?? 1}
+                    direction={props.direction}
+                    disabled={props.activeAction !== null}
+                    t={props.t}
+                    onConfirmChangeResource={(input) => {
+                      setChangeResourceOpen(false);
+                      props.onChangeResource?.(input);
+                    }}
+                  />
+                )}
 
               {confirmed && props.canMarkNoShow && (
                 <AlertDialog open={noShowOpen} onOpenChange={changeDialog}>
                   <AlertDialogTrigger asChild>
-                    <Button type="button" variant="outline" size="sm" disabled={props.activeAction !== null}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={props.activeAction !== null}
+                    >
                       <UserX className="size-4" aria-hidden="true" />
                       {props.t("booking360.actions.markNoShow")}
                     </Button>
@@ -233,30 +263,48 @@ export function BookingOperationalActions(props: Props) {
                         {props.t("booking360.noShow.description")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
-                    {(props.bookingReference || props.customerName || props.resourceName || props.scheduledTime) && (
-                      <div className="mx-6 rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs space-y-1.5" data-testid="no-show-booking-context">
+                    {(props.bookingReference ||
+                      props.customerName ||
+                      props.resourceName ||
+                      props.scheduledTime) && (
+                      <div
+                        className="mx-6 space-y-1.5 rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs"
+                        data-testid="no-show-booking-context"
+                      >
                         {props.bookingReference && (
                           <div className="flex justify-between">
-                            <span className="text-nx-ink-2">{props.t("booking360.schedule.reference")}:</span>
-                            <span className="font-semibold text-nx-ink tabular-nums" dir="ltr">{props.bookingReference}</span>
+                            <span className="text-nx-ink-2">
+                              {props.t("booking360.schedule.reference")}:
+                            </span>
+                            <span className="font-semibold tabular-nums text-nx-ink" dir="ltr">
+                              {props.bookingReference}
+                            </span>
                           </div>
                         )}
                         {props.customerName && (
                           <div className="flex justify-between">
-                            <span className="text-nx-ink-2">{props.t("booking360.customer.title")}:</span>
+                            <span className="text-nx-ink-2">
+                              {props.t("booking360.customer.title")}:
+                            </span>
                             <span className="font-medium text-nx-ink">{props.customerName}</span>
                           </div>
                         )}
                         {props.resourceName && (
                           <div className="flex justify-between">
-                            <span className="text-nx-ink-2">{props.t("booking360.schedule.resource")}:</span>
+                            <span className="text-nx-ink-2">
+                              {props.t("booking360.schedule.resource")}:
+                            </span>
                             <span className="font-medium text-nx-ink">{props.resourceName}</span>
                           </div>
                         )}
                         {props.scheduledTime && (
                           <div className="flex justify-between">
-                            <span className="text-nx-ink-2">{props.t("booking360.schedule.time")}:</span>
-                            <span className="font-medium text-nx-ink tabular-nums">{props.scheduledTime}</span>
+                            <span className="text-nx-ink-2">
+                              {props.t("booking360.schedule.time")}:
+                            </span>
+                            <span className="font-medium tabular-nums text-nx-ink">
+                              {props.scheduledTime}
+                            </span>
                           </div>
                         )}
                       </div>
@@ -271,21 +319,32 @@ export function BookingOperationalActions(props: Props) {
                         maxLength={NO_SHOW_REASON_MAX_LENGTH}
                         required
                         aria-invalid={reasonTouched && reasonInvalid}
-                        aria-describedby={reasonTouched && reasonInvalid
-                          ? "booking-no-show-reason-error"
-                          : "booking-no-show-reason-hint"}
+                        aria-describedby={
+                          reasonTouched && reasonInvalid
+                            ? "booking-no-show-reason-error"
+                            : "booking-no-show-reason-hint"
+                        }
                         onBlur={() => setReasonTouched(true)}
                         onChange={(event) => setNoShowReason(event.target.value)}
                       />
                       {reasonTouched && reasonInvalid ? (
-                        <p id="booking-no-show-reason-error" className="text-sm text-destructive" role="alert">
-                          {props.t(reasonTooLong
-                            ? "booking360.noShow.reasonTooLong"
-                            : "booking360.noShow.reasonRequired", { max: NO_SHOW_REASON_MAX_LENGTH })}
+                        <p
+                          id="booking-no-show-reason-error"
+                          className="text-sm text-destructive"
+                          role="alert"
+                        >
+                          {props.t(
+                            reasonTooLong
+                              ? "booking360.noShow.reasonTooLong"
+                              : "booking360.noShow.reasonRequired",
+                            { max: NO_SHOW_REASON_MAX_LENGTH }
+                          )}
                         </p>
                       ) : (
                         <p id="booking-no-show-reason-hint" className="text-xs text-nx-ink-3">
-                          {props.t("booking360.noShow.reasonHint", { max: NO_SHOW_REASON_MAX_LENGTH })}
+                          {props.t("booking360.noShow.reasonHint", {
+                            max: NO_SHOW_REASON_MAX_LENGTH,
+                          })}
                         </p>
                       )}
                     </div>

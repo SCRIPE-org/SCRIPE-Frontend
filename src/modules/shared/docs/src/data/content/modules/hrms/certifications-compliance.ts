@@ -63,9 +63,6 @@ registerPage({
   category: "module-hrms",
   order: 4,
   sections,
-  relatedSlugs: [
-    "modules/hrms-overview",
-    "modules/hrms/staff-directory",
-  ],
+  relatedSlugs: ["modules/hrms-overview", "modules/hrms/staff-directory"],
   lastUpdated: "2026-10-03",
 });

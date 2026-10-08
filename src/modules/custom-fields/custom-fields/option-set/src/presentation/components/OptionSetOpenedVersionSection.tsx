@@ -6,10 +6,7 @@ import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
 import { SectionState } from "@core/ui/section-state";
 import { ListOrdered, Rocket } from "lucide-react";
-import {
-  OptionSetItemsEditor,
-  type OptionSetDraftItem,
-} from "./OptionSetItemsEditor";
+import { OptionSetItemsEditor, type OptionSetDraftItem } from "./OptionSetItemsEditor";
 import { OptionSetStatusBadge, OptionSetStatusHint } from "./OptionSetStatusBadge";
 import type { OptionSetVersion } from "../../domain/entities/OptionSetVersion";
 import type { OptionSetRefusal } from "../viewmodels/useOptionSetViewModel";
@@ -59,11 +56,7 @@ export function OptionSetOpenedVersionSection({
   if (isError) {
     return (
       <div className="flex flex-col gap-3 rounded-nx-md border border-nx-line p-3">
-        <ErrorMessage
-          size="sm"
-          message={t("optionSet.versionLoadFailed")}
-          onRetry={onRetry}
-        />
+        <ErrorMessage size="sm" message={t("optionSet.versionLoadFailed")} onRetry={onRetry} />
       </div>
     );
   }
@@ -130,18 +123,11 @@ export function OptionSetOpenedVersionSection({
             {isOpenVersionEditable &&
             editor.saveRefusal !== null &&
             editor.saveRefusal.reason === "invalid" ? (
-              <p className="text-xs text-destructive">
-                {describeRefusal(editor.saveRefusal)}
-              </p>
+              <p className="text-xs text-destructive">{describeRefusal(editor.saveRefusal)}</p>
             ) : null}
           </div>
         ) : (
-          <EmptyState
-            icon={ListOrdered}
-            size="sm"
-            bare
-            title={t("optionSet.versionLoadFailed")}
-          />
+          <EmptyState icon={ListOrdered} size="sm" bare title={t("optionSet.versionLoadFailed")} />
         )}
       </SectionState>
     </div>

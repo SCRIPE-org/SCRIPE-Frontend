@@ -289,7 +289,14 @@ export function useIdentityProvidersViewModel() {
         render: (_val: unknown, item: IdentityProviderListItem) => (
           <div className="flex items-center gap-2">
             {item.iconUrl ? (
-              <Image src={item.iconUrl} alt={item.name} width={20} height={20} unoptimized className="h-5 w-5 rounded object-contain" />
+              <Image
+                src={item.iconUrl}
+                alt={item.name}
+                width={20}
+                height={20}
+                unoptimized
+                className="h-5 w-5 rounded object-contain"
+              />
             ) : (
               <Fingerprint className="h-4 w-4 text-nx-ink-3" aria-hidden="true" />
             )}

@@ -92,7 +92,7 @@ export function NotificationTargetSelector({
                 variant="ghost"
                 size="icon"
                 onClick={() => onRemoveTarget(target.id)}
-                className="h-4 w-4 p-0 rounded-full hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
+                className="h-4 w-4 rounded-full p-0 hover:text-destructive focus-visible:shadow-nx-focus focus-visible:outline-none"
                 aria-label={t("messaging.notifications.removeTargetNamed", {
                   name: target.name,
                 })}
@@ -120,10 +120,7 @@ export function NotificationTargetSelector({
               setShowDropdown(true);
             }}
             onFocus={() => setShowDropdown(true)}
-            className={cn(
-              "ps-9",
-              hasError && "border-destructive focus-visible:ring-destructive"
-            )}
+            className={cn("ps-9", hasError && "border-destructive focus-visible:ring-destructive")}
           />
           {isSearching && (
             <LoadingSpinner

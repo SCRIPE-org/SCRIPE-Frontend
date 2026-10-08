@@ -133,7 +133,7 @@ export function FieldGroupEditor({
             disabled={isEdit}
             dir="ltr"
           />
-          <p className="text-xs text-nx-ink-subtle">{labels.stableKeyHint}</p>
+          <p className="text-nx-ink-subtle text-xs">{labels.stableKeyHint}</p>
         </div>
 
         <div className="flex flex-col gap-1.5">
@@ -184,7 +184,11 @@ export function FieldGroupEditor({
       </div>
 
       <div className="flex items-center gap-2">
-        <Button type="submit" size="sm" disabled={isSaving || labelEn.trim().length === 0 || stableKey.trim().length === 0}>
+        <Button
+          type="submit"
+          size="sm"
+          disabled={isSaving || labelEn.trim().length === 0 || stableKey.trim().length === 0}
+        >
           {labels.save}
         </Button>
         <Button type="button" size="sm" variant="ghost" onClick={onCancel}>

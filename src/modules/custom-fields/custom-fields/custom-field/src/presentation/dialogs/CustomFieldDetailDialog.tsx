@@ -3,11 +3,7 @@
 import React, { useMemo } from "react";
 import { Pencil } from "lucide-react";
 import { Button } from "@core/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogFooter } from "@core/ui/dialog";
 import { Skeleton } from "@core/ui/skeleton";
 import { ScrollArea } from "@core/ui/scroll-area";
 import { ErrorMessage } from "@core/ui/error-message";
@@ -89,17 +85,17 @@ export function CustomFieldDetailDialog({
   });
 
   const entityTypeInfo = field?.entityTypeKey
-    ? entityTypes.find((e) => e.key === field.entityTypeKey) ?? null
+    ? (entityTypes.find((e) => e.key === field.entityTypeKey) ?? null)
     : null;
 
   const entityTypeDisplayName = entityTypeInfo
     ? language === "ar"
       ? entityTypeInfo.displayNameAr || entityTypeInfo.displayNameEn
       : entityTypeInfo.displayNameEn
-    : field?.entityTypeKey ?? "—";
+    : (field?.entityTypeKey ?? "—");
 
   const referenceTargetInfo = field?.referenceTargetEntityTypeKey
-    ? entityTypes.find((e) => e.key === field.referenceTargetEntityTypeKey) ?? null
+    ? (entityTypes.find((e) => e.key === field.referenceTargetEntityTypeKey) ?? null)
     : null;
 
   const referenceTargetDisplayName = (() => {

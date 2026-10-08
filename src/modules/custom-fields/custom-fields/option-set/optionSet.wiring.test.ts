@@ -315,7 +315,7 @@ describe("CustomFieldListView Option Sets link (real source)", () => {
 
   it("gates the link on the option-set view permission", () => {
     expect(source).toMatch(
-      /const canViewOptionSets = usePermission\(CUSTOM_FIELDS_PERMISSIONS\.OPTION_SET_VIEW\)/
+      /const canViewOptionSets =\s*usePermission\(CUSTOM_FIELDS_PERMISSIONS\.OPTION_SET_VIEW\)/
     );
     expect(source).toMatch(/\{canViewOptionSets && \(/);
   });

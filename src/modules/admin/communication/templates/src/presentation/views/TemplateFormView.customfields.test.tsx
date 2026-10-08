@@ -44,13 +44,7 @@ vi.mock("@modules/communication/di", () => ({
 // stub it down to a plain textarea so mounting TemplateFormView doesn't pull
 // the whole rich-text stack into jsdom.
 vi.mock("@core/ui/rich-text-editor/RichTextEditor", () => ({
-  RichTextEditor: ({
-    value,
-    onChange,
-  }: {
-    value: string;
-    onChange: (html: string) => void;
-  }) => (
+  RichTextEditor: ({ value, onChange }: { value: string; onChange: (html: string) => void }) => (
     <textarea
       aria-label="messaging.templates.body"
       value={value}
@@ -154,10 +148,7 @@ describe("TemplateFormView + custom fields", () => {
   });
 
   it("renders the inline add-custom-field trigger and refetches definitions when it reports a new field was created", async () => {
-    const getFormFields = vi
-      .fn()
-      .mockResolvedValueOnce([])
-      .mockResolvedValue([NATIONALITY_FIELD]);
+    const getFormFields = vi.fn().mockResolvedValueOnce([]).mockResolvedValue([NATIONALITY_FIELD]);
     registerFakeCustomFieldsExtension({
       getFormFields,
       InlineAddTrigger: ({ onCreated }) => (

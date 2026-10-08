@@ -1,9 +1,4 @@
-﻿import {
-  Dumbbell,
-  Layers,
-  Waves,
-  CircleDot,
-} from "lucide-react";
+﻿import { Dumbbell, Layers, Waves, CircleDot } from "lucide-react";
 
 /**
  * Clean SVG and Lucide icons for sports venue resources.

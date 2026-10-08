@@ -168,61 +168,63 @@ describe("FLS resource pin — availability", () => {
   });
 });
 
-describe.skipIf(!backendAvailable)("every screen's FLS resource matches its registered PermissionResource", () => {
-  it("finds screens to check at all (guards against a scan that silently matched nothing)", () => {
-    const { pairs } = scanFrontendScreens();
-    // 31 at the commit that introduced this pin. A floor rather than an equality
-    // so adding a screen does not fail the build, while a regex that stopped
-    // matching does.
-    expect(pairs.length).toBeGreaterThanOrEqual(30);
-  });
+describe.skipIf(!backendAvailable)(
+  "every screen's FLS resource matches its registered PermissionResource",
+  () => {
+    it("finds screens to check at all (guards against a scan that silently matched nothing)", () => {
+      const { pairs } = scanFrontendScreens();
+      // 31 at the commit that introduced this pin. A floor rather than an equality
+      // so adding a screen does not fail the build, while a regex that stopped
+      // matching does.
+      expect(pairs.length).toBeGreaterThanOrEqual(30);
+    });
 
-  it("parses the backend registry at all (same guard, other side)", () => {
-    // 55 registrations at the commit that introduced this pin.
-    expect(parseBackendResources().size).toBeGreaterThanOrEqual(50);
-  });
+    it("parses the backend registry at all (same guard, other side)", () => {
+      // 55 registrations at the commit that introduced this pin.
+      expect(parseBackendResources().size).toBeGreaterThanOrEqual(50);
+    });
 
-  it("matches every screen's resource against the backend, or the screen is a known-drift exception", () => {
-    const backend = parseBackendResources();
-    const { pairs } = scanFrontendScreens();
-    const mismatches: string[] = [];
+    it("matches every screen's resource against the backend, or the screen is a known-drift exception", () => {
+      const backend = parseBackendResources();
+      const { pairs } = scanFrontendScreens();
+      const mismatches: string[] = [];
 
-    for (const pair of pairs) {
-      const registered = backend.get(pair.entityTypeKey);
-      // A screen wired to an unregistered entity type is a different defect, and
-      // the entity-screen pin already covers it.
-      if (registered === undefined) continue;
-      if (KNOWN_DRIFT.has(pair.entityTypeKey)) continue;
-      // Case-insensitive: the server lowercases the map's keys when it builds
-      // token data, so that is the comparison that decides whether the lookup hits.
-      if (registered.toLowerCase() !== pair.resource.toLowerCase()) {
-        mismatches.push(
-          `${pair.where}: entityTypeKey "${pair.entityTypeKey}" declares resource ` +
-            `"${pair.resource}" but the backend registers "${registered}"`
-        );
-      }
-    }
-
-    expect(mismatches).toEqual([]);
-  });
-
-  it("still has exactly the two known-drift screens, so the exception list cannot quietly grow", () => {
-    const backend = parseBackendResources();
-    const { pairs } = scanFrontendScreens();
-
-    const actuallyDrifting = pairs
-      .filter((pair) => {
+      for (const pair of pairs) {
         const registered = backend.get(pair.entityTypeKey);
-        return (
-          registered !== undefined &&
-          registered.toLowerCase() !== pair.resource.toLowerCase()
-        );
-      })
-      .map((pair) => pair.entityTypeKey)
-      .sort();
+        // A screen wired to an unregistered entity type is a different defect, and
+        // the entity-screen pin already covers it.
+        if (registered === undefined) continue;
+        if (KNOWN_DRIFT.has(pair.entityTypeKey)) continue;
+        // Case-insensitive: the server lowercases the map's keys when it builds
+        // token data, so that is the comparison that decides whether the lookup hits.
+        if (registered.toLowerCase() !== pair.resource.toLowerCase()) {
+          mismatches.push(
+            `${pair.where}: entityTypeKey "${pair.entityTypeKey}" declares resource ` +
+              `"${pair.resource}" but the backend registers "${registered}"`
+          );
+        }
+      }
 
-    // If one is fixed, this fails and the allow-list above must shrink with it —
-    // which is the point: a stale exception is indistinguishable from a real one.
-    expect(actuallyDrifting).toEqual([...KNOWN_DRIFT].sort());
-  });
-});
+      expect(mismatches).toEqual([]);
+    });
+
+    it("still has exactly the two known-drift screens, so the exception list cannot quietly grow", () => {
+      const backend = parseBackendResources();
+      const { pairs } = scanFrontendScreens();
+
+      const actuallyDrifting = pairs
+        .filter((pair) => {
+          const registered = backend.get(pair.entityTypeKey);
+          return (
+            registered !== undefined && registered.toLowerCase() !== pair.resource.toLowerCase()
+          );
+        })
+        .map((pair) => pair.entityTypeKey)
+        .sort();
+
+      // If one is fixed, this fails and the allow-list above must shrink with it —
+      // which is the point: a stale exception is indistinguishable from a real one.
+      expect(actuallyDrifting).toEqual([...KNOWN_DRIFT].sort());
+    });
+  }
+);

@@ -145,13 +145,17 @@ describe("SubmitDsrModal + custom fields", () => {
   });
 
   it("shows the empty-state message when there are no custom fields and loading has settled", () => {
-    render(<SubmitDsrModal {...baseProps({ customFieldConfigs: [], customFieldsLoading: false })} />);
+    render(
+      <SubmitDsrModal {...baseProps({ customFieldConfigs: [], customFieldsLoading: false })} />
+    );
 
     expect(screen.getByText("compliance.noCustomFields")).toBeInTheDocument();
   });
 
   it("does not show the empty-state message while still loading", () => {
-    render(<SubmitDsrModal {...baseProps({ customFieldConfigs: [], customFieldsLoading: true })} />);
+    render(
+      <SubmitDsrModal {...baseProps({ customFieldConfigs: [], customFieldsLoading: true })} />
+    );
 
     expect(screen.queryByText("compliance.noCustomFields")).not.toBeInTheDocument();
   });

@@ -28,11 +28,7 @@ import {
   DesktopSetupSidebar,
   LaunchCelebrationCard,
 } from "../components/SetupAccountControls";
-import {
-  SetupStep1Security,
-  SetupStep2Profile,
-  SetupStep3Attributes,
-} from "../components/steps";
+import { SetupStep1Security, SetupStep2Profile, SetupStep3Attributes } from "../components/steps";
 import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
 
 /**
@@ -107,9 +103,9 @@ export function SetupAccountView() {
 
   return (
     <PageWrapper>
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      <div className="grid w-full max-w-5xl grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
         {/* Left Hero Sidebar (Desktop lg:col-span-5) */}
-        <div className="hidden lg:block lg:col-span-5">
+        <div className="hidden lg:col-span-5 lg:block">
           <DesktopSetupSidebar
             currentStep={vm.currentStep}
             hasCustomFields={hasCustomFields}
@@ -122,7 +118,7 @@ export function SetupAccountView() {
         </div>
 
         {/* Right Active Stepper Workstation (Desktop lg:col-span-7, Mobile full width) */}
-        <Card className="w-full lg:col-span-7 border border-border bg-card shadow-lg rounded-3xl overflow-hidden flex flex-col justify-between">
+        <Card className="flex w-full flex-col justify-between overflow-hidden rounded-3xl border border-border bg-card shadow-lg lg:col-span-7">
           <div>
             <CardHeader className="space-y-4 pb-4">
               {/* Mobile / Tablet Stepper Header (< lg) */}
@@ -134,14 +130,14 @@ export function SetupAccountView() {
                 />
               </div>
 
-              <div className="text-start space-y-1">
+              <div className="space-y-1 text-start">
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl font-bold tracking-tight">
                     {vm.currentStep === 1 && t("auth.accountSetup.step1Security")}
                     {vm.currentStep === 2 && t("auth.accountSetup.step2Profile")}
                     {vm.currentStep === 3 && t("auth.accountSetup.step3Attributes")}
                   </CardTitle>
-                  <Badge variant="secondary" className="text-[10px] font-medium px-2 py-0.5">
+                  <Badge variant="secondary" className="px-2 py-0.5 text-[10px] font-medium">
                     Step {vm.currentStep} of {hasCustomFields ? 3 : 2}
                   </Badge>
                 </div>
@@ -168,7 +164,7 @@ export function SetupAccountView() {
 
               {/* Expiration Note */}
               {vm.tokenData?.expiresAt && (
-                <p className="text-center text-[11px] text-muted-foreground/70 pt-2">
+                <p className="pt-2 text-center text-[11px] text-muted-foreground/70">
                   {t("auth.accountSetup.expiresOn")} {formatDateTimeUtc(vm.tokenData.expiresAt)}
                 </p>
               )}

@@ -106,11 +106,27 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "A", label: "Coach/Staff Member added or schedules updated", type: "default" },
-      { id: "B", label: "Submit Professional License / Coaching Certification credentials", type: "primary" },
-      { id: "C", label: "HR Admin verifies accrediting body, license number & expiry", type: "warning" },
-      { id: "D", label: "Certification marked Verified with automated 30-day expiry tracker", type: "info" },
+      {
+        id: "B",
+        label: "Submit Professional License / Coaching Certification credentials",
+        type: "primary",
+      },
+      {
+        id: "C",
+        label: "HR Admin verifies accrediting body, license number & expiry",
+        type: "warning",
+      },
+      {
+        id: "D",
+        label: "Certification marked Verified with automated 30-day expiry tracker",
+        type: "info",
+      },
       { id: "E", label: "Scheduler attempts Venue Session / Roster Assignment", type: "default" },
-      { id: "F", label: "Automated Compliance Gate verifies shift availability & non-expired license", type: "primary" },
+      {
+        id: "F",
+        label: "Automated Compliance Gate verifies shift availability & non-expired license",
+        type: "primary",
+      },
       { id: "G", label: "Assignment confirmed & dispatched to Coach Mobile App", type: "success" },
     ],
     connections: [

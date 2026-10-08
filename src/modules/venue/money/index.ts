@@ -8,4 +8,3 @@ export * from "./src/presentation/components/PaymentRecordCard";
 export * from "./src/presentation/components/PaymentRefundCard";
 export * from "./src/presentation/components/PaymentTimelineCard";
 export * from "./src/domain/entities/Money";
-

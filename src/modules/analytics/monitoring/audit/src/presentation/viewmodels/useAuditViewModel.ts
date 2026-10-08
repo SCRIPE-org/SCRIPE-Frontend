@@ -23,8 +23,7 @@ export const auditKeys = {
   all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
   logs: (params: AuditFilterParams, tenantId: string | null) =>
     [...auditKeys.all(tenantId), "logs", params] as const,
-  hubSummary: (tenantId: string | null) =>
-    [...auditKeys.all(tenantId), "hub-summary"] as const,
+  hubSummary: (tenantId: string | null) => [...auditKeys.all(tenantId), "hub-summary"] as const,
   detail: (id: string, tenantId: string | null) =>
     [...auditKeys.all(tenantId), "detail", id] as const,
   analytics: (tenantId: string | null) => [...auditKeys.all(tenantId), "analytics"] as const,

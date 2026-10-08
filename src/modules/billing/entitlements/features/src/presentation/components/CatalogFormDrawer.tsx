@@ -173,9 +173,7 @@ export function CatalogFormDrawer({
       }}
       title={activeFeature ? t("entitlements.features.edit") : t("entitlements.features.create")}
       description={
-        activeFeature
-          ? t("entitlements.features.editDesc")
-          : t("entitlements.features.createDesc")
+        activeFeature ? t("entitlements.features.editDesc") : t("entitlements.features.createDesc")
       }
       width="md"
     >

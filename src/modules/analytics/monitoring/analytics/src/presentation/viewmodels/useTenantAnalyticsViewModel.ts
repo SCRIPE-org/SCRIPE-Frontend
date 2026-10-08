@@ -155,7 +155,8 @@ export function useTenantAnalyticsViewModel() {
   // ─── KPI Calculations ──────────────────────────────────────────────
   const kpis = useMemo(() => {
     const total = summary?.totalTenants ?? rawTenants.length ?? 0;
-    const active = summary?.activeTenants ?? rawTenants.filter((t) => t.isActive && !t.isSuspended).length ?? 0;
+    const active =
+      summary?.activeTenants ?? rawTenants.filter((t) => t.isActive && !t.isSuspended).length ?? 0;
 
     const now = new Date();
     const cutoffDate = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
@@ -258,13 +259,16 @@ export function useTenantAnalyticsViewModel() {
       if (statusFilter !== "all") {
         const status = tenant.isSuspended
           ? "Suspended"
-          : tenant.subscriptionStatus ?? (tenant.isActive ? "Active" : "Inactive");
+          : (tenant.subscriptionStatus ?? (tenant.isActive ? "Active" : "Inactive"));
         if (status.toLowerCase() !== statusFilter.toLowerCase()) return false;
       }
 
       // Edition Filter
       if (editionFilter !== "all") {
-        if (!tenant.editionName || tenant.editionName.toLowerCase() !== editionFilter.toLowerCase()) {
+        if (
+          !tenant.editionName ||
+          tenant.editionName.toLowerCase() !== editionFilter.toLowerCase()
+        ) {
           return false;
         }
       }
@@ -328,7 +332,7 @@ export function useTenantAnalyticsViewModel() {
       // Fallback: build from tenants' createdAt dates
       let cumulative = 0;
       sortedTenants.forEach((t) => {
-        const d = (t.createdAt ? t.createdAt.split("T")[0] : new Date().toISOString().split("T")[0]);
+        const d = t.createdAt ? t.createdAt.split("T")[0] : new Date().toISOString().split("T")[0];
         cumulative++;
         const existing = dateMap.get(d) ?? { total: 0, newCount: 0 };
         dateMap.set(d, { total: cumulative, newCount: existing.newCount + 1 });
@@ -362,12 +366,12 @@ export function useTenantAnalyticsViewModel() {
         region === "North America"
           ? "NA"
           : region === "Europe"
-          ? "EU"
-          : region === "Middle East"
-          ? "ME"
-          : region === "Asia Pacific"
-          ? "APAC"
-          : "GL";
+            ? "EU"
+            : region === "Middle East"
+              ? "ME"
+              : region === "Asia Pacific"
+                ? "APAC"
+                : "GL";
       return {
         region,
         code,
@@ -392,7 +396,10 @@ export function useTenantAnalyticsViewModel() {
     rawTenants.forEach((t) => {
       if (t.isSuspended || !t.isActive) {
         inactive++;
-      } else if (t.subscriptionStatus === "Active" && (t.editionName?.includes("ultra") || t.editionName?.includes("pro"))) {
+      } else if (
+        t.subscriptionStatus === "Active" &&
+        (t.editionName?.includes("ultra") || t.editionName?.includes("pro"))
+      ) {
         highlyActive++;
       } else if (t.subscriptionStatus === "Active") {
         moderatelyActive++;
@@ -497,10 +504,7 @@ export function useTenantAnalyticsViewModel() {
         : 0;
 
       // Realistic adoption count based on active tenants and module presence
-      const adoptedCount = Math.min(
-        Math.max(Math.round(total * cap.defaultRatio), 1),
-        total
-      );
+      const adoptedCount = Math.min(Math.max(Math.round(total * cap.defaultRatio), 1), total);
       const percentage = Math.round((adoptedCount / total) * 100);
 
       return {

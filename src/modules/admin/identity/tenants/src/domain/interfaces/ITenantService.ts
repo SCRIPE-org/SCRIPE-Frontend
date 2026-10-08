@@ -43,7 +43,6 @@ import type {
   TenantDomainJson,
 } from "./tenantServiceTypes";
 
-
 /**
  * Http API network service for i tenant.
  * Maps request properties to core endpoint paths and delegates HTTP client fetching calls.

@@ -11,7 +11,16 @@
 import React from "react";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import { Building2, GitBranch, GraduationCap, Landmark, Trophy, ShieldCheck, Check, AlertCircle } from "lucide-react";
+import {
+  Building2,
+  GitBranch,
+  GraduationCap,
+  Landmark,
+  Trophy,
+  ShieldCheck,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 import { cn } from "@core/common/utils";
 import type { CreateTenantVM } from "../../viewmodels/useCreateTenantViewModel";
 import { CreateTenantLocationFields } from "./CreateTenantLocationFields";
@@ -80,7 +89,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <div className="space-y-1 text-xs">
               <p className="font-semibold">{t("validation.correctErrorsTitle")}</p>
-              <ul className="list-disc ps-4 space-y-0.5 text-[11px] text-destructive/90">
+              <ul className="list-disc space-y-0.5 ps-4 text-[11px] text-destructive/90">
                 {errors.includes("name") && <li>{t("validation.invalidName")}</li>}
                 {errors.includes("code") && <li>{t("validation.invalidCode")}</li>}
                 {errors.includes("countryCode") && <li>{t("tenant.countryRequired")}</li>}
@@ -98,7 +107,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
       {/* Organization Classification / Operational Archetype */}
       <div className="space-y-2.5">
         <div className="flex items-center justify-between">
-          <Label className="text-xs font-semibold text-nx-ink-1">
+          <Label className="text-nx-ink-1 text-xs font-semibold">
             {t("tenant.organizationType")}
           </Label>
           <span className="text-[11px] text-nx-ink-3">
@@ -121,10 +130,10 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
                 aria-checked={isSelected}
                 onClick={() => vm.updateField("organizationType", type.id)}
                 className={cn(
-                  "group relative flex flex-col justify-between rounded-nx-lg border p-3.5 text-start transition-all duration-nx-fast ease-nx-ease",
+                  "duration-nx-fast ease-nx-ease group relative flex flex-col justify-between rounded-nx-lg border p-3.5 text-start transition-all",
                   isSelected
-                    ? "border-nx-accent bg-nx-accent-wash/60 ring-1 ring-nx-accent/30 shadow-nx-sm"
-                    : "border-nx-line bg-nx-ground text-nx-ink hover:border-nx-line-strong hover:bg-nx-raised/40"
+                    ? "bg-nx-accent-wash/60 ring-nx-accent/30 border-nx-accent shadow-nx-sm ring-1"
+                    : "hover:border-nx-line-strong hover:bg-nx-raised/40 border-nx-line bg-nx-ground text-nx-ink"
                 )}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -133,7 +142,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
                       "flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md border transition-colors",
                       isSelected
                         ? "border-nx-accent/30 bg-nx-accent-wash text-nx-accent"
-                        : "border-nx-line bg-nx-raised text-nx-ink-2 group-hover:border-nx-line-strong group-hover:text-nx-ink-1"
+                        : "group-hover:border-nx-line-strong group-hover:text-nx-ink-1 border-nx-line bg-nx-raised text-nx-ink-2"
                     )}
                   >
                     <Icon className="h-4.5 w-4.5" />
@@ -143,7 +152,7 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
                       "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border transition-all",
                       isSelected
                         ? "border-nx-accent bg-nx-accent text-nx-ground"
-                        : "border-nx-line bg-nx-ground group-hover:border-nx-line-strong"
+                        : "group-hover:border-nx-line-strong border-nx-line bg-nx-ground"
                     )}
                   >
                     {isSelected && <Check className="h-2.5 w-2.5 stroke-[3]" />}
@@ -151,10 +160,15 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
                 </div>
 
                 <div className="mt-2.5 space-y-1">
-                  <p className={cn("text-xs font-semibold leading-snug", isSelected ? "text-nx-accent" : "text-nx-ink-1")}>
+                  <p
+                    className={cn(
+                      "text-xs font-semibold leading-snug",
+                      isSelected ? "text-nx-accent" : "text-nx-ink-1"
+                    )}
+                  >
                     {type.label}
                   </p>
-                  <p className="text-[11px] leading-tight text-nx-ink-3 line-clamp-2">
+                  <p className="line-clamp-2 text-[11px] leading-tight text-nx-ink-3">
                     {type.desc}
                   </p>
                 </div>
@@ -183,7 +197,10 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
           />
           <div className="mt-1 flex min-h-5 items-center justify-between">
             {nameError ? (
-              <p id="tenant-name-error" className="flex items-center gap-1 text-xs text-destructive">
+              <p
+                id="tenant-name-error"
+                className="flex items-center gap-1 text-xs text-destructive"
+              >
                 <AlertCircle className="h-3.5 w-3.5 shrink-0" />
                 <span>{t("validation.invalidName")}</span>
               </p>
@@ -203,7 +220,10 @@ export function CreateTenantStep1({ vm, t }: CreateTenantStep1Props) {
             value={vm.form.code}
             onChange={(e) => vm.updateField("code", e.target.value.toUpperCase())}
             placeholder={t("tenant.codePlaceholder")}
-            className={cn("font-mono uppercase", codeError && "border-destructive focus-visible:ring-destructive")}
+            className={cn(
+              "font-mono uppercase",
+              codeError && "border-destructive focus-visible:ring-destructive"
+            )}
             aria-invalid={codeError || undefined}
             aria-describedby={codeError ? "tenant-code-error" : undefined}
             maxLength={50}

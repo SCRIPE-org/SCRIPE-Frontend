@@ -43,12 +43,21 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
   }));
 
   if (!canView) {
-    return <EmptyState icon={Lock} title={t("notAuthorized.title")} description={t("notAuthorized.description")} />;
+    return (
+      <EmptyState
+        icon={Lock}
+        title={t("notAuthorized.title")}
+        description={t("notAuthorized.description")}
+      />
+    );
   }
 
   if (vm.loading && vm.facilities.length === 0) return <LoadingSpinner showText={false} />;
 
-  const beginCreate = () => { setEditingProfile(undefined); setOpen(true); };
+  const beginCreate = () => {
+    setEditingProfile(undefined);
+    setOpen(true);
+  };
 
   const beginEdit = async (profile: FacilityResourceProfile) => {
     try {
@@ -79,7 +88,9 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
 
       <div className="flex max-w-xl items-end gap-3">
         <div className="flex-1 space-y-2">
-          <Label id="profile-facility-label" htmlFor="profile-facility-select">{t("resourceProfile.facility")}</Label>
+          <Label id="profile-facility-label" htmlFor="profile-facility-select">
+            {t("resourceProfile.facility")}
+          </Label>
           <GenericSelect
             id="profile-facility-select"
             aria-labelledby="profile-facility-label"
@@ -89,7 +100,7 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
             options={facilityOptions}
             value={vm.selectedFacilityId}
             onValueChange={(value: string | string[]) =>
-              vm.setSelectedFacilityId(Array.isArray(value) ? value[0] ?? "" : value)
+              vm.setSelectedFacilityId(Array.isArray(value) ? (value[0] ?? "") : value)
             }
             placeholder={t("resourceProfile.selectFacility")}
           />
@@ -112,7 +123,11 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
           icon={Building2}
           title={t("common.error")}
           description={vm.error.message}
-          action={<Button variant="outline" onClick={() => void vm.refresh()}>{t("common.retry")}</Button>}
+          action={
+            <Button variant="outline" onClick={() => void vm.refresh()}>
+              {t("common.retry")}
+            </Button>
+          }
         />
       )}
       {!vm.error && !vm.loading && vm.facilities.length === 0 && (
@@ -120,11 +135,20 @@ export const FacilityResourceProfilesView = React.memo(function FacilityResource
           icon={Building2}
           title={t("resourceProfile.noFacilities")}
           description={t("resourceProfile.noFacilitiesDescription")}
-          action={<Button onClick={() => setQuickCreateFacilityOpen(true)}><Plus className="mr-1 size-4" />{t("facility.addNew") || "New Facility"}</Button>}
+          action={
+            <Button onClick={() => setQuickCreateFacilityOpen(true)}>
+              <Plus className="mr-1 size-4" />
+              {t("facility.addNew") || "New Facility"}
+            </Button>
+          }
         />
       )}
       {!vm.error && vm.selectedFacilityId && vm.profiles.length === 0 && (
-        <EmptyState icon={Building2} title={t("resourceProfile.empty")} description={t("resourceProfile.emptyDescription")} />
+        <EmptyState
+          icon={Building2}
+          title={t("resourceProfile.empty")}
+          description={t("resourceProfile.emptyDescription")}
+        />
       )}
 
       <div className="grid gap-4 lg:grid-cols-2">

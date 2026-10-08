@@ -216,7 +216,9 @@ export const GenericSelect = React.forwardRef<HTMLDivElement, GenericSelectProps
 
     const resolvedPlaceholder =
       placeholder ??
-      (isMultiSelect ? t("components.multiSelect.placeholder") : t("components.select.placeholder"));
+      (isMultiSelect
+        ? t("components.multiSelect.placeholder")
+        : t("components.select.placeholder"));
     const resolvedSearchPlaceholder =
       searchPlaceholder ??
       (isMultiSelect

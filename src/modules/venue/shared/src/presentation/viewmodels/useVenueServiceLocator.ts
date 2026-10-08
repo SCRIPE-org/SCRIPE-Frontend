@@ -1,4 +1,3 @@
-
 import { getVenueContainer, venueContainer } from "@modules/venue/di";
 
 /**
@@ -12,4 +11,3 @@ export function useVenueServiceLocator() {
  * useVenueServiceLocatorStatic
  */
 export const useVenueServiceLocatorStatic = venueContainer;
-

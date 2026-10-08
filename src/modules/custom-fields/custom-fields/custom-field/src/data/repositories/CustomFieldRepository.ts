@@ -119,5 +119,3 @@ export class CustomFieldRepository implements ICustomFieldRepository {
     return this.service.rollbackFieldTypeChange(jobRunId);
   }
 }
-
-

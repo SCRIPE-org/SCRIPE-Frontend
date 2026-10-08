@@ -7,4 +7,3 @@ export * from "./src/presentation/components/BookingSummaryActions";
 export * from "./src/presentation/components/CustomerSelection";
 export * from "./src/presentation/components/RequestCriteriaSection";
 export * from "./src/domain/entities/Booking";
-

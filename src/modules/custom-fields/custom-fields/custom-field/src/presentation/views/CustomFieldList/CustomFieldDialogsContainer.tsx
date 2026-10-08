@@ -75,9 +75,7 @@ export const CustomFieldDialogsContainer = React.memo(function CustomFieldDialog
         canEdit={
           canUpdate &&
           (isPlatformContext ||
-            (detailFieldId
-              ? !items?.find((item) => item.id === detailFieldId)?.isGlobal
-              : false))
+            (detailFieldId ? !items?.find((item) => item.id === detailFieldId)?.isGlobal : false))
         }
         onEdit={(field) => vm.openEditModal(field)}
       />

@@ -32,35 +32,41 @@ function nullifyBlankIds(data: Record<string, unknown>): Record<string, unknown>
 export function useWorkItemViewModel() {
   const { workItemRepository } = getWorkManagementContainer();
 
-  const vm = useCrudViewModel(["workItem"], {
-    getAll: async (params) => {
-      const res = await workItemRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  const vm = useCrudViewModel(
+    ["workItem"],
+    {
+      getAll: async (params) => {
+        const res = await workItemRepository.getAll({
           page: params.page,
-          pagesCount: res.totalPages,
-        },
-      };
+          pageSize: params.pageSize,
+          search: params.search,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: res.totalPages,
+          },
+        };
+      },
+      create: async (data) => {
+        const id = await workItemRepository.create(
+          nullifyBlankIds(data as Record<string, unknown>)
+        );
+        return { id } as unknown as WorkItem;
+      },
+      update: async (id, data) => {
+        await workItemRepository.update(id, nullifyBlankIds(data as Record<string, unknown>));
+        return { id } as unknown as WorkItem;
+      },
+      delete: async (id) => {
+        await workItemRepository.delete(id);
+      },
     },
-    create: async (data) => {
-      const id = await workItemRepository.create(nullifyBlankIds(data as Record<string, unknown>));
-      return { id } as unknown as WorkItem;
-    },
-    update: async (id, data) => {
-      await workItemRepository.update(id, nullifyBlankIds(data as Record<string, unknown>));
-      return { id } as unknown as WorkItem;
-    },
-    delete: async (id) => {
-      await workItemRepository.delete(id);
-    },
-  }, { deferSuccessEffects: true });
+    { deferSuccessEffects: true }
+  );
 
   // Server search backing the "Assigned To" picker (createFields/editFields
   // server-select). Reuses the same GET /api/v1/Admins search the Leads

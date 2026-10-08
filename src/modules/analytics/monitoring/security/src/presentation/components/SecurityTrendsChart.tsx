@@ -57,7 +57,7 @@ export const SecurityTrendsChart = memo(function SecurityTrendsChart({
   }, [data]);
 
   return (
-    <Card className={`h-full flex flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -94,7 +94,9 @@ export const SecurityTrendsChart = memo(function SecurityTrendsChart({
           isLoading={isLoading}
           onRetry={onRetry}
           isEmpty={chartData.length === 0}
-          emptyMessage={t("security.trends.noData") || "No authentication activity recorded for this period."}
+          emptyMessage={
+            t("security.trends.noData") || "No authentication activity recorded for this period."
+          }
           height={260}
         >
           <ChartContainer config={chartConfig} className="h-[260px] w-full">
@@ -114,13 +116,13 @@ export const SecurityTrendsChart = memo(function SecurityTrendsChart({
                 dataKey="date"
                 tickLine={false}
                 axisLine={false}
-                className="text-[11px] fill-muted-foreground"
+                className="fill-muted-foreground text-[11px]"
               />
               <YAxis
                 allowDecimals={false}
                 tickLine={false}
                 axisLine={false}
-                className="text-[11px] fill-muted-foreground"
+                className="fill-muted-foreground text-[11px]"
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Area

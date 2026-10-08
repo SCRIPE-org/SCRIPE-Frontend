@@ -11,8 +11,10 @@ import type {
 /**
  * Documentation for ReplaceAvailabilityCalendarPayload
  */
-export interface ReplaceAvailabilityCalendarPayload
-  extends Omit<SaveAvailabilityCalendar, "resourceId"> {
+export interface ReplaceAvailabilityCalendarPayload extends Omit<
+  SaveAvailabilityCalendar,
+  "resourceId"
+> {
   expectedVersion: number;
 }
 
@@ -26,6 +28,10 @@ export interface IAvailabilityService {
   search(data: AvailabilitySearchInput): Promise<AvailabilitySearchResult>;
   getBlocks(kind: ResourceBlockKind, resourceId: string): Promise<ResourceBlock[]>;
   createBlock(kind: ResourceBlockKind, data: SaveResourceBlock): Promise<{ id: string }>;
-  updateBlock(kind: ResourceBlockKind, id: string, data: Omit<SaveResourceBlock, "resourceId"> & { expectedVersion: number }): Promise<void>;
+  updateBlock(
+    kind: ResourceBlockKind,
+    id: string,
+    data: Omit<SaveResourceBlock, "resourceId"> & { expectedVersion: number }
+  ): Promise<void>;
   deleteBlock(kind: ResourceBlockKind, id: string, expectedVersion: number): Promise<void>;
 }

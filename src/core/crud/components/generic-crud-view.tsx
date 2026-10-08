@@ -540,7 +540,10 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
   const customFieldColumnOwnerIds = (viewModel.items || [])
     .map((item: any) => item?.id)
     .filter((id: unknown): id is string => typeof id === "string" && id.length > 0);
-  const customFieldColumns = useCustomFieldColumns(config?.entityTypeKey, customFieldColumnOwnerIds);
+  const customFieldColumns = useCustomFieldColumns(
+    config?.entityTypeKey,
+    customFieldColumnOwnerIds
+  );
 
   // Field-level security, keyed on the screen's OWN resource — the same resource
   // that guards the record itself, never Custom Fields' admin resource. Getting
@@ -644,9 +647,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     if (shouldInjectDeferSwitch) {
       const deferSwitch: FieldConfig = {
         name: "deferCustomFieldsToSetup",
-        label:
-          t("admin.deferCustomFieldsToSetup") ||
-          "Complete custom fields during account setup",
+        label: t("admin.deferCustomFieldsToSetup") || "Complete custom fields during account setup",
         type: "switch",
         description:
           t("admin.deferCustomFieldsToSetupDescription") ||
@@ -661,12 +662,7 @@ function GenericCrudViewInner<T>(props: GenericCrudViewProps<T>) {
     return [...baseFields, ...injectedFields, ...mappedCustomConfigs].filter(
       (field) => !isFieldRestricted(field.name)
     );
-  }, [
-    createFields,
-    rawCustomConfigs,
-    isFieldRestricted,
-    t,
-  ]);
+  }, [createFields, rawCustomConfigs, isFieldRestricted, t]);
 
   /**
    * Splits a submitted form's data into the entity's own fields and the

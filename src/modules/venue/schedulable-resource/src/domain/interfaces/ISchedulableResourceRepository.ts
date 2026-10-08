@@ -1,4 +1,7 @@
-import type { SchedulableResource, PublicationChecklistReport } from "../entities/SchedulableResource";
+import type {
+  SchedulableResource,
+  PublicationChecklistReport,
+} from "../entities/SchedulableResource";
 
 /**
  * Documentation for module export

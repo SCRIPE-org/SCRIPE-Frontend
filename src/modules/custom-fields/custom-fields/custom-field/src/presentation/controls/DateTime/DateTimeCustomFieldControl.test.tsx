@@ -111,9 +111,12 @@ describe("DateTimeCustomFieldControl", () => {
   it("reports the instant paired with the browser's zone when first entered", () => {
     const onChangeSpy = vi.fn();
     render(<StatefulHarness onChangeSpy={onChangeSpy} />);
-    fireEvent.change(screen.getByRole("combobox", { name: /^Meeting/ }).parentElement!.querySelector("input")!, {
-      target: { value: "2026-08-18T10:30" },
-    });
+    fireEvent.change(
+      screen.getByRole("combobox", { name: /^Meeting/ }).parentElement!.querySelector("input")!,
+      {
+        target: { value: "2026-08-18T10:30" },
+      }
+    );
     expect(onChangeSpy).toHaveBeenCalledTimes(1);
     const emitted = onChangeSpy.mock.calls[0][0] as CustomFieldDateTimeValue;
     expect(emitted.value).toBe("2026-08-18T10:30");
@@ -125,13 +128,13 @@ describe("DateTimeCustomFieldControl", () => {
   it("shows nothing about a zone before any instant has been entered", () => {
     render(<StatefulHarness />);
     expect(screen.queryByText(/zoneDisclosure/)).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "customField.dateTime.changeTimezone" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "customField.dateTime.changeTimezone" })
+    ).not.toBeInTheDocument();
   });
 
   it("always renders the resolved zone once an instant exists", () => {
-    render(
-      <StatefulHarness initial={{ value: "2026-08-18T10:30", timeZoneId: "Africa/Cairo" }} />
-    );
+    render(<StatefulHarness initial={{ value: "2026-08-18T10:30", timeZoneId: "Africa/Cairo" }} />);
     expect(
       screen.getByText(
         `customField.dateTime.zoneDisclosure:${JSON.stringify({ zone: "Africa/Cairo" })}`
@@ -177,7 +180,9 @@ describe("DateTimeCustomFieldControl", () => {
       })
     ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "customField.dateTime.cancelTimezoneChange" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "customField.dateTime.cancelTimezoneChange" })
+    );
     expect(
       screen.getByText(
         `customField.dateTime.zoneDisclosure:${JSON.stringify({ zone: "Africa/Cairo" })}`
@@ -195,9 +200,9 @@ describe("DateTimeCustomFieldControl", () => {
           onChangeSpy={onChangeSpy}
         />
       );
-      const instantInput = screen.getByRole("combobox", { name: /^Meeting/ }).parentElement!.querySelector(
-        "input"
-      )!;
+      const instantInput = screen
+        .getByRole("combobox", { name: /^Meeting/ })
+        .parentElement!.querySelector("input")!;
       fireEvent.change(instantInput, { target: { value: "" } });
       expect(onChangeSpy).toHaveBeenCalledWith(null);
       // And the zone disclosure disappears along with it -- there is no
@@ -213,9 +218,9 @@ describe("DateTimeCustomFieldControl", () => {
           onChangeSpy={onChangeSpy}
         />
       );
-      const instantInput = screen.getByRole("combobox", { name: /^Meeting/ }).parentElement!.querySelector(
-        "input"
-      )!;
+      const instantInput = screen
+        .getByRole("combobox", { name: /^Meeting/ })
+        .parentElement!.querySelector("input")!;
       fireEvent.change(instantInput, { target: { value: "2026-08-19T09:00" } });
       expect(onChangeSpy).toHaveBeenCalledWith({
         value: "2026-08-19T09:00",
@@ -224,7 +229,9 @@ describe("DateTimeCustomFieldControl", () => {
     });
 
     it("renders no 'clear' affordance on the timezone picker itself while an instant exists", () => {
-      render(<StatefulHarness initial={{ value: "2026-08-18T10:30", timeZoneId: "Africa/Cairo" }} />);
+      render(
+        <StatefulHarness initial={{ value: "2026-08-18T10:30", timeZoneId: "Africa/Cairo" }} />
+      );
       fireEvent.click(screen.getByRole("button", { name: "customField.dateTime.changeTimezone" }));
       const zonePicker = screen.getByRole("combobox", {
         name: `customField.dateTime.timezonePickerLabel:${JSON.stringify({ field: "Meeting" })}`,
@@ -247,7 +254,10 @@ describe("DateTimeCustomFieldControl", () => {
         isViewMode
       />
     );
-    expect(screen.getByRole("combobox", { name: /^Meeting/ })).toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole("combobox", { name: /^Meeting/ })).toHaveAttribute(
+      "aria-disabled",
+      "true"
+    );
     // No "Change" affordance while read-only.
     expect(
       screen.queryByRole("button", { name: "customField.dateTime.changeTimezone" })

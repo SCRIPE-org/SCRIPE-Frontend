@@ -19,7 +19,6 @@ import type { Column } from "@core/crud/components/generic-table";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import { useI18n } from "@core/providers/i18n-provider";
 
-
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   MaskedCustomFieldCell,
@@ -180,14 +179,17 @@ export interface CustomFieldsExtensionApi {
    * GenericTable's own pagination already offers, so a single page can never
    * legitimately exceed it).
    */
-  getBulkColumnValues: (entityTypeKey: string, ownerIds: string[]) => Promise<BulkColumnValuesResult>;
-    assertValuesValid?: (fieldConfigs: FieldConfig[], values: Record<string, unknown>, t: any) => void;
-  /** Decrypts and reveals a sensitive custom field value for an authorized user. */
-  revealValue?: (
+  getBulkColumnValues: (
     entityTypeKey: string,
-    ownerId: string,
-    fieldKey: string
-  ) => Promise<unknown>;
+    ownerIds: string[]
+  ) => Promise<BulkColumnValuesResult>;
+  assertValuesValid?: (
+    fieldConfigs: FieldConfig[],
+    values: Record<string, unknown>,
+    t: any
+  ) => void;
+  /** Decrypts and reveals a sensitive custom field value for an authorized user. */
+  revealValue?: (entityTypeKey: string, ownerId: string, fieldKey: string) => Promise<unknown>;
   /**
    * Self-contained trigger + dialog; internally gates on the custom-fields.create
    * permission via its own usePermission call. `entityDisplayName` is the host
@@ -349,7 +351,9 @@ export function encodeCustomFieldName(key: string): string {
 }
 
 export function decodeCustomFieldName(name: string): string | null {
-  return name.startsWith(CUSTOM_FIELD_NAME_PREFIX) ? name.slice(CUSTOM_FIELD_NAME_PREFIX.length) : null;
+  return name.startsWith(CUSTOM_FIELD_NAME_PREFIX)
+    ? name.slice(CUSTOM_FIELD_NAME_PREFIX.length)
+    : null;
 }
 
 /**
@@ -414,9 +418,7 @@ export function useCustomFieldsFormFields(
   }, [entityTypeKey, ownerId]);
 
   useEffect(() => {
-    queueMicrotask(() => {
-      void fetchFields();
-    });
+    void fetchFields();
   }, [fetchFields]);
 
   return { fieldConfigs, isLoading, error, refetch: fetchFields };
@@ -496,7 +498,10 @@ function buildCustomFieldColumn(
         return <EmptyCustomFieldCell />;
       }
 
-      if (raw === "••••••••" || (definition.sensitivity !== undefined && definition.sensitivity >= 2)) {
+      if (
+        raw === "••••••••" ||
+        (definition.sensitivity !== undefined && definition.sensitivity >= 2)
+      ) {
         return (
           <MaskedCustomFieldCell
             entityTypeKey={entityTypeKey}
@@ -595,9 +600,7 @@ export function useCustomFieldColumns(
   }, [entityTypeKey, ownerIdsKey]);
 
   useEffect(() => {
-    queueMicrotask(() => {
-      void fetchColumns();
-    });
+    void fetchColumns();
   }, [fetchColumns]);
 
   const columns = useMemo<Column<any>[]>(

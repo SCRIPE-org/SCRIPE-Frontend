@@ -4,7 +4,8 @@ import { V1 } from "@/core/config/api-endpoints/_shared";
  * Documentation for module export
  */
 export const COMMERCIAL_PRICING_ENDPOINTS = {
-  RESOURCE_CONFIGURATION: (resourceId: string) => `${V1}/catalog-pricing/resource-rental-prices/${resourceId}`,
+  RESOURCE_CONFIGURATION: (resourceId: string) =>
+    `${V1}/catalog-pricing/resource-rental-prices/${resourceId}`,
   RESOURCE_PRICING: `${V1}/catalog-pricing/resource-rental-prices`,
   CALCULATE_QUOTE: `${V1}/catalog-pricing/price-quotes/calculate`,
   OVERRIDE_QUOTE: (quoteId: string) => `${V1}/catalog-pricing/price-quotes/${quoteId}/override`,

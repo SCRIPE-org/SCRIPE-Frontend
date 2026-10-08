@@ -98,14 +98,15 @@ export function useCustomFieldViewModel() {
       delete payload.optionsSource;
 
       const id = await customFieldRepository.create(
-        normalizeValidatorFields(
-          normalizeCustomFieldCreateScope(payload)
-        )
+        normalizeValidatorFields(normalizeCustomFieldCreateScope(payload))
       );
       return { id } as unknown as CustomField;
     },
     update: async (id, data) => {
-      await customFieldRepository.update(id, normalizeValidatorFields(data as Record<string, unknown>));
+      await customFieldRepository.update(
+        id,
+        normalizeValidatorFields(data as Record<string, unknown>)
+      );
       return { id } as unknown as CustomField;
     },
     delete: async (id) => {
@@ -160,10 +161,14 @@ export function useCustomFieldViewModel() {
     [customFieldRepository, baseOpenEditModal, t]
   );
 
-  const vm = useMemo(
-    () => ({ ...baseVm, openEditModal }),
-    [baseVm, openEditModal]
-  );
+  const vm = useMemo(() => ({ ...baseVm, openEditModal }), [baseVm, openEditModal]);
 
-  return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes, keyStatus };
+  return {
+    vm,
+    entityTypes,
+    isEntityTypesLoading,
+    isEntityTypesError,
+    refetchEntityTypes,
+    keyStatus,
+  };
 }

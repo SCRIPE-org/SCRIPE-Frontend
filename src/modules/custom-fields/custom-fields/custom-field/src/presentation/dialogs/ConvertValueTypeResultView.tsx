@@ -1,14 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  AlertTriangle,
-  CheckCircle2,
-  Copy,
-  Info,
-  RotateCcw,
-  ShieldAlert,
-} from "lucide-react";
+import { AlertTriangle, CheckCircle2, Copy, Info, RotateCcw, ShieldAlert } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@core/ui/alert";
 import { Button } from "@core/ui/button";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -80,7 +73,7 @@ export function ConvertValueTypeResultView({
                     type="button"
                     size="sm"
                     variant="outline"
-                    className="h-7 text-xs border-destructive/40 text-destructive hover:bg-destructive/10"
+                    className="h-7 border-destructive/40 text-xs text-destructive hover:bg-destructive/10"
                     onClick={() => onExecuteRollback(String(lastResult.jobRunId))}
                     disabled={isRollingBack}
                   >
@@ -110,9 +103,7 @@ export function ConvertValueTypeResultView({
                 <ul className="space-y-1.5 divide-y divide-destructive/10">
                   {lastResult.refusals.map((ref, idx) => (
                     <li key={ref.entityFieldValueId || idx} className="pt-1 first:pt-0">
-                      <span className="font-mono font-medium">
-                        Record: {ref.ownerEntityId}
-                      </span>
+                      <span className="font-mono font-medium">Record: {ref.ownerEntityId}</span>
                       <p className="text-nx-ink-3">{ref.reason}</p>
                     </li>
                   ))}
@@ -143,9 +134,7 @@ export function ConvertValueTypeResultView({
         ) : (
           <Alert variant="info">
             <Info className="h-4 w-4" />
-            <AlertTitle>
-              {t("customField.convertValueType.result.rolledBackTitle")}
-            </AlertTitle>
+            <AlertTitle>{t("customField.convertValueType.result.rolledBackTitle")}</AlertTitle>
             <AlertDescription>
               {t("customField.convertValueType.result.rolledBackDescription", {
                 restored: lastRollbackResult.restored,

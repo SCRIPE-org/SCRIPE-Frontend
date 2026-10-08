@@ -109,8 +109,7 @@ export function useRestrictableCustomFieldKeys(
   const matchingEntityTypeKeys = canQuery
     ? entityTypes
         .filter(
-          (item) =>
-            item.permissionResource?.toLowerCase() === permissionResource!.toLowerCase()
+          (item) => item.permissionResource?.toLowerCase() === permissionResource!.toLowerCase()
         )
         .map((item) => item.key)
     : [];

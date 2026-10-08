@@ -4,7 +4,7 @@ import { EncryptionAuditLog } from "../../domain/entities/EncryptionAuditLog";
 import type {
   TenantEncryptionStatusDto,
   MigrationSessionDto,
-  EncryptionAuditLogDto
+  EncryptionAuditLogDto,
 } from "../models/key-management.dto";
 
 /**
@@ -13,7 +13,9 @@ import type {
 export class KeyManagementMapper {
   static toStatusEntity(dto: TenantEncryptionStatusDto): TenantKeyStatus {
     const totalRecords = dto.totalEncryptedValues ?? dto.totalEncryptedRecords ?? 0;
-    const activeSession = dto.activeSession ? KeyManagementMapper.toSessionEntity(dto.activeSession) : undefined;
+    const activeSession = dto.activeSession
+      ? KeyManagementMapper.toSessionEntity(dto.activeSession)
+      : undefined;
     const activeSessionId = dto.activeSession?.id ?? dto.activeSessionId;
 
     return new TenantKeyStatus({
@@ -28,9 +30,10 @@ export class KeyManagementMapper {
       totalEncryptedRecords: totalRecords,
       upToDateValues: dto.upToDateValues,
       outdatedValues: dto.outdatedValues,
-      distribution: (dto.distribution ?? []).map(d => {
+      distribution: (dto.distribution ?? []).map((d) => {
         const count = d.count ?? d.recordCount ?? 0;
-        const percentage = d.percentage ?? (totalRecords > 0 ? Math.round((count / totalRecords) * 1000) / 10 : 0);
+        const percentage =
+          d.percentage ?? (totalRecords > 0 ? Math.round((count / totalRecords) * 1000) / 10 : 0);
         return {
           platformKeyId: d.platformKeyId ?? 0,
           tenantKeyVersion: d.tenantKeyVersion ?? 0,

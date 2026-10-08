@@ -5,11 +5,7 @@
  * @module auth/account-setup/data/mappers
  */
 
-import {
-  SetupTokenInfo,
-  SetupCustomField,
-  AccountActivationResult,
-} from "../../domain/entities";
+import { SetupTokenInfo, SetupCustomField, AccountActivationResult } from "../../domain/entities";
 import type {
   ValidateTokenResponse,
   SetupCustomFieldDto,

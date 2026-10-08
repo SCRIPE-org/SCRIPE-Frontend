@@ -29,7 +29,9 @@ export function usePermissionCatalog() {
       if (isSystemCatalogMode || !effectiveTenantId) {
         return (await permissionRepository.getAll()) as unknown as PermissionCatalogItem[];
       }
-      return (await permissionRepository.getForTenant(effectiveTenantId)) as unknown as PermissionCatalogItem[];
+      return (await permissionRepository.getForTenant(
+        effectiveTenantId
+      )) as unknown as PermissionCatalogItem[];
     },
     staleTime: 10 * 60 * 1000,
   });

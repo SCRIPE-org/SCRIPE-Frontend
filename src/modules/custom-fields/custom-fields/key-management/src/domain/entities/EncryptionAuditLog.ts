@@ -21,17 +21,39 @@ export interface EncryptionAuditLogData {
 export class EncryptionAuditLog {
   constructor(private readonly data: EncryptionAuditLogData) {}
 
-  get id(): string { return this.data.id; }
-  get action(): string { return this.data.action; }
-  get fieldDefinitionId(): string { return this.data.fieldDefinitionId; }
-  get fieldKey(): string | undefined { return this.data.fieldKey; }
-  get entityId(): string { return this.data.entityId; }
-  get platformKeyId(): number { return this.data.platformKeyId; }
-  get tenantKeyVersion(): number { return this.data.tenantKeyVersion; }
-  get actorId(): string { return this.data.actorId; }
-  get ipAddress(): string { return this.data.ipAddress; }
-  get userAgent(): string { return this.data.userAgent; }
-  get timestamp(): string { return this.data.timestamp; }
+  get id(): string {
+    return this.data.id;
+  }
+  get action(): string {
+    return this.data.action;
+  }
+  get fieldDefinitionId(): string {
+    return this.data.fieldDefinitionId;
+  }
+  get fieldKey(): string | undefined {
+    return this.data.fieldKey;
+  }
+  get entityId(): string {
+    return this.data.entityId;
+  }
+  get platformKeyId(): number {
+    return this.data.platformKeyId;
+  }
+  get tenantKeyVersion(): number {
+    return this.data.tenantKeyVersion;
+  }
+  get actorId(): string {
+    return this.data.actorId;
+  }
+  get ipAddress(): string {
+    return this.data.ipAddress;
+  }
+  get userAgent(): string {
+    return this.data.userAgent;
+  }
+  get timestamp(): string {
+    return this.data.timestamp;
+  }
 
   get formattedTimestamp(): string {
     try {

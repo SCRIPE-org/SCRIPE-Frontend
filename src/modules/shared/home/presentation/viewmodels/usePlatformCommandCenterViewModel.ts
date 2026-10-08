@@ -8,18 +8,17 @@ import { useOverviewViewModel } from "./useOverviewViewModel";
 import { useOverviewRealtime } from "./useOverviewRealtime";
 import { usePlatformHealthViewModel } from "@modules/monitoring/platform-health/src/presentation/viewmodels/usePlatformHealthViewModel";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { DashboardSummary, LoginActivityPoint, RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
-import type { PlatformHealth, ModuleHealth } from "@modules/monitoring/platform-health/src/domain/entities/PlatformHealth";
+import type {
+  DashboardSummary,
+  LoginActivityPoint,
+  RecentChange,
+} from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
+import type {
+  PlatformHealth,
+  ModuleHealth,
+} from "@modules/monitoring/platform-health/src/domain/entities/PlatformHealth";
 import type { RegionNodeInfo } from "../components/platform-command-center/PlatformActivityMap";
-import {
-  AlertTriangle,
-  Database,
-  Shield,
-  UserPlus,
-  RefreshCw,
-  HardDrive,
-  Cpu,
-} from "lucide-react";
+import { AlertTriangle, Database, Shield, UserPlus, RefreshCw, HardDrive, Cpu } from "lucide-react";
 
 export type AlertCategory = "all" | "critical" | "warning" | "info";
 
@@ -295,16 +294,14 @@ export function usePlatformCommandCenterViewModel() {
     const degradedCount = totalMods - activeMods;
 
     const overallHealthScore =
-      totalMods > 0
-        ? `${Math.round((activeMods / totalMods) * 100)}%`
-        : health?.status ?? "100%";
+      totalMods > 0 ? `${Math.round((activeMods / totalMods) * 100)}%` : (health?.status ?? "100%");
 
     const overallHealthStatus =
       health?.isHealthy && degradedCount === 0
         ? t("platformCommandCenter.kpis.operational") || "Operational"
         : health?.isDegraded || degradedCount > 0
-        ? t("platformCommandCenter.kpis.degraded") || "Degraded"
-        : t("platformCommandCenter.kpis.operational") || "Operational";
+          ? t("platformCommandCenter.kpis.degraded") || "Degraded"
+          : t("platformCommandCenter.kpis.operational") || "Operational";
 
     return {
       totalTenants,
@@ -346,8 +343,7 @@ export function usePlatformCommandCenterViewModel() {
         icon: AlertTriangle,
         iconTheme: "destructive",
         title:
-          t("platformCommandCenter.needsAttention.privilegedAccess") ||
-          "Unusual privileged access",
+          t("platformCommandCenter.needsAttention.privilegedAccess") || "Unusual privileged access",
         subtitle:
           t("platformCommandCenter.needsAttention.privilegedAccessSub", {
             incidents: summary.failedLogins24h,
@@ -365,8 +361,7 @@ export function usePlatformCommandCenterViewModel() {
         icon: Database,
         iconTheme: "destructive",
         title:
-          t("platformCommandCenter.needsAttention.dbIncident") ||
-          "Database connectivity issue",
+          t("platformCommandCenter.needsAttention.dbIncident") || "Database connectivity issue",
         subtitle:
           t("platformCommandCenter.needsAttention.dbIncidentSub") ||
           "Primary relational database connection dropped",
@@ -383,8 +378,7 @@ export function usePlatformCommandCenterViewModel() {
         icon: HardDrive,
         iconTheme: "warning",
         title:
-          t("platformCommandCenter.needsAttention.redisDisconnected") ||
-          "Redis cache disconnected",
+          t("platformCommandCenter.needsAttention.redisDisconnected") || "Redis cache disconnected",
         subtitle:
           t("platformCommandCenter.needsAttention.redisDisconnectedSub") ||
           "Running on in-memory cache fallback · Check Redis connection",
@@ -409,9 +403,15 @@ export function usePlatformCommandCenterViewModel() {
           subtitle:
             t("platformCommandCenter.needsAttention.modulesDegradedSub", {
               modules:
-                degraded.slice(0, 4).map((m) => m.name).join(", ") +
-                (degraded.length > 4 ? ` +${degraded.length - 4}` : ""),
-            }) || `Affected: ${degraded.slice(0, 4).map((m) => m.name).join(", ")}`,
+                degraded
+                  .slice(0, 4)
+                  .map((m) => m.name)
+                  .join(", ") + (degraded.length > 4 ? ` +${degraded.length - 4}` : ""),
+            }) ||
+            `Affected: ${degraded
+              .slice(0, 4)
+              .map((m) => m.name)
+              .join(", ")}`,
           timeAgo: "8m",
           href: "/platform-health",
         });
@@ -444,7 +444,7 @@ export function usePlatformCommandCenterViewModel() {
         name: "Database Engine",
         metric: health?.infrastructure?.database?.latencyMs
           ? `${health.infrastructure.database.latencyMs} ms latency`
-          : health?.infrastructure?.database?.provider ?? "Relational",
+          : (health?.infrastructure?.database?.provider ?? "Relational"),
         status: health?.infrastructure?.database?.isConnected ? "Healthy" : "Outage",
       },
       {
@@ -462,7 +462,10 @@ export function usePlatformCommandCenterViewModel() {
       {
         id: "s4",
         name: "Identity & Access",
-        metric: summary?.failedLogins24h && summary.failedLogins24h > 10 ? "Elevated failures" : "Optimal",
+        metric:
+          summary?.failedLogins24h && summary.failedLogins24h > 10
+            ? "Elevated failures"
+            : "Optimal",
         status: summary?.failedLogins24h && summary.failedLogins24h > 10 ? "Degraded" : "Healthy",
       },
     ];
@@ -484,8 +487,7 @@ export function usePlatformCommandCenterViewModel() {
         subtitle:
           t("platformCommandCenter.recommendedActions.provisionTenantSub") ||
           "Onboard your first sports organization",
-        buttonLabel:
-          t("platformCommandCenter.recommendedActions.buttons.create") || "Create",
+        buttonLabel: t("platformCommandCenter.recommendedActions.buttons.create") || "Create",
         href: "/tenants/create",
       });
     }
@@ -497,13 +499,11 @@ export function usePlatformCommandCenterViewModel() {
         rank: items.length + 1,
         severity: "warning",
         title:
-          t("platformCommandCenter.recommendedActions.configureRedis") ||
-          "Inspect Redis cache",
+          t("platformCommandCenter.recommendedActions.configureRedis") || "Inspect Redis cache",
         subtitle:
           t("platformCommandCenter.recommendedActions.configureRedisSub") ||
           "Redis service offline; running on in-memory cache",
-        buttonLabel:
-          t("platformCommandCenter.recommendedActions.buttons.inspect") || "Inspect",
+        buttonLabel: t("platformCommandCenter.recommendedActions.buttons.inspect") || "Inspect",
         href: "/platform-health",
       });
     }
@@ -524,8 +524,7 @@ export function usePlatformCommandCenterViewModel() {
           t("platformCommandCenter.recommendedActions.reviewDegradedSub", {
             count: degradedCount,
           }) || `${degradedCount} modules reporting non-healthy status`,
-        buttonLabel:
-          t("platformCommandCenter.recommendedActions.buttons.review") || "Review",
+        buttonLabel: t("platformCommandCenter.recommendedActions.buttons.review") || "Review",
         href: "/platform-health",
       });
     }
@@ -544,8 +543,7 @@ export function usePlatformCommandCenterViewModel() {
             count: summary.failedLogins24h,
           }) || `${summary.failedLogins24h} failed authentication attempts in last 24h`,
         buttonLabel:
-          t("platformCommandCenter.recommendedActions.buttons.investigate") ||
-          "Investigate",
+          t("platformCommandCenter.recommendedActions.buttons.investigate") || "Investigate",
         href: "/security",
       });
     }
@@ -557,14 +555,12 @@ export function usePlatformCommandCenterViewModel() {
         rank: 1,
         severity: "standard",
         title:
-          t("platformCommandCenter.recommendedActions.allNominal") ||
-          "System standing nominal",
+          t("platformCommandCenter.recommendedActions.allNominal") || "System standing nominal",
         subtitle:
           t("platformCommandCenter.recommendedActions.allNominalSub") ||
           "All core telemetry parameters within expected thresholds",
         buttonLabel:
-          t("platformCommandCenter.recommendedActions.buttons.viewHealth") ||
-          "View Health",
+          t("platformCommandCenter.recommendedActions.buttons.viewHealth") || "View Health",
         href: "/platform-health",
       });
     }
@@ -579,7 +575,11 @@ export function usePlatformCommandCenterViewModel() {
         const isSec = !rc.isSuccess || rc.isAdmin;
         return {
           id: rc.id,
-          icon: isSec ? Shield : rc.entityType?.toLowerCase().includes("user") ? UserPlus : RefreshCw,
+          icon: isSec
+            ? Shield
+            : rc.entityType?.toLowerCase().includes("user")
+              ? UserPlus
+              : RefreshCw,
           iconTheme: !rc.isSuccess ? "destructive" : rc.isAdmin ? "info" : "primary",
           title: rc.entityType ? `${rc.eventType}: ${rc.entityType}` : rc.eventType,
           subtitle: rc.username

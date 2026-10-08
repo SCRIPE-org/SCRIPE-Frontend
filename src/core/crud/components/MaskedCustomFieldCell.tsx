@@ -4,21 +4,10 @@
 import React, { useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Button } from "@core/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@core/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@core/ui/tooltip";
 import { useAppStore } from "@core/store/useAppStore";
-import {
-  hasPermission,
-  CUSTOM_FIELDS_PERMISSIONS,
-} from "@core/common/types/permissions";
-import {
-  getCustomFieldsExtension,
-  type CustomFieldValueTypeName,
-} from "../customFieldsExtension";
+import { hasPermission, CUSTOM_FIELDS_PERMISSIONS } from "@core/common/types/permissions";
+import { getCustomFieldsExtension, type CustomFieldValueTypeName } from "../customFieldsExtension";
 
 export interface MaskedCustomFieldCellProps {
   entityTypeKey?: string;
@@ -54,17 +43,14 @@ export function MaskedCustomFieldCell({
   const user = useAppStore((state) => state.user);
 
   const isSuperAdmin = Boolean(
-    !user?.tenantId && (
-      permissions.includes("*") ||
+    !user?.tenantId &&
+    (permissions.includes("*") ||
       roles.some(
-        (r) =>
-          r.roleCode === "SYSTEM_SUPER_ADMIN" ||
-          r.roleName === "System Super Admin"
+        (r) => r.roleCode === "SYSTEM_SUPER_ADMIN" || r.roleName === "System Super Admin"
       ) ||
       user?.isProtected === true ||
       (user as any)?.isSuperAdmin === true ||
-      user?.adminTypeName?.toLowerCase() === "system super admin"
-    )
+      user?.adminTypeName?.toLowerCase() === "system super admin")
   );
 
   const isAuthorized = Boolean(
@@ -105,12 +91,12 @@ export function MaskedCustomFieldCell({
 
   const formatted =
     isRevealed && revealedValue !== null
-      ? getCustomFieldsExtension()?.formatValueForDisplay?.(
+      ? (getCustomFieldsExtension()?.formatValueForDisplay?.(
           valueType,
           revealedValue,
           language,
           t
-        ) ?? String(revealedValue)
+        ) ?? String(revealedValue))
       : initialMaskedValue;
 
   const tooltipLabel = !isAuthorized
@@ -125,9 +111,7 @@ export function MaskedCustomFieldCell({
   return (
     <div className="inline-flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
       <span
-        className={
-          isRevealed ? "font-sans text-sm text-foreground" : "tracking-widest select-none"
-        }
+        className={isRevealed ? "font-sans text-sm text-foreground" : "select-none tracking-widest"}
       >
         {formatted}
       </span>
@@ -161,7 +145,7 @@ export function MaskedCustomFieldCell({
           </Tooltip>
         </TooltipProvider>
       )}
-      {error && <span className="text-destructive text-[10px] ml-1">{error}</span>}
+      {error && <span className="ml-1 text-[10px] text-destructive">{error}</span>}
     </div>
   );
 }

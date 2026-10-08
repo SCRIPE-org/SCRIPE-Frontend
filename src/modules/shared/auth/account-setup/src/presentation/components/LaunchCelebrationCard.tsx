@@ -77,24 +77,24 @@ export function LaunchCelebrationCard({
       .join("") || "SA";
 
   return (
-    <Card className="w-full max-w-lg border border-border bg-card shadow-lg rounded-2xl overflow-hidden">
-      <CardHeader className="text-center pb-2 pt-8">
-        <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary border border-primary/20 shadow-xs">
+    <Card className="w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-card shadow-lg">
+      <CardHeader className="pb-2 pt-8 text-center">
+        <div className="shadow-xs mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
           <CheckCircle2 className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-bold tracking-tight text-foreground">
           {t("auth.accountSetup.welcomeTitle", { tenant: tenantName || BRAND.name })}
         </CardTitle>
-        <CardDescription className="text-sm text-muted-foreground mt-1">
+        <CardDescription className="mt-1 text-sm text-muted-foreground">
           {t("auth.accountSetup.welcomeSubtitle")}
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-6 pt-2 pb-8 px-6 sm:px-8">
+      <CardContent className="space-y-6 px-6 pb-8 pt-2 sm:px-8">
         {/* Administrator Credentials Summary Box */}
-        <div className="rounded-xl border border-border bg-muted/20 p-4 space-y-3 min-w-0">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <Avatar className="h-12 w-12 border border-border shadow-xs shrink-0">
+        <div className="min-w-0 space-y-3 rounded-xl border border-border bg-muted/20 p-4">
+          <div className="flex min-w-0 items-center gap-3.5">
+            <Avatar className="shadow-xs h-12 w-12 shrink-0 border border-border">
               {profileImageUrl ? (
                 <AvatarImage src={profileImageUrl} alt={adminName} className="object-cover" />
               ) : null}
@@ -102,33 +102,33 @@ export function LaunchCelebrationCard({
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <div className="space-y-1 min-w-0 flex-1">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="font-semibold text-foreground text-sm truncate">
+            <div className="min-w-0 flex-1 space-y-1">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-sm font-semibold text-foreground">
                   {adminName || "Administrator"}
                 </span>
                 {adminUsername && (
                   <Badge
                     variant="secondary"
-                    className="text-[10px] font-mono px-1.5 py-0 shrink-0 max-w-[140px] truncate"
+                    className="max-w-[140px] shrink-0 truncate px-1.5 py-0 font-mono text-[10px]"
                   >
                     @{adminUsername}
                   </Badge>
                 )}
               </div>
-              <p className="text-xs text-muted-foreground truncate">{adminEmail}</p>
+              <p className="truncate text-xs text-muted-foreground">{adminEmail}</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-border/40 text-xs min-w-0">
-            <div className="space-y-0.5 min-w-0">
+          <div className="grid min-w-0 grid-cols-2 gap-2 border-t border-border/40 pt-2 text-xs">
+            <div className="min-w-0 space-y-0.5">
               <span className="text-muted-foreground">{t("auth.accountSetup.organization")}</span>
-              <p className="font-medium text-foreground truncate">{tenantName || "—"}</p>
+              <p className="truncate font-medium text-foreground">{tenantName || "—"}</p>
             </div>
-            <div className="space-y-0.5 min-w-0">
+            <div className="min-w-0 space-y-0.5">
               <span className="text-muted-foreground">Assigned Role</span>
-              <p className="font-medium text-foreground flex items-center gap-1 truncate">
-                <Shield className="h-3 w-3 text-primary shrink-0" />
+              <p className="flex items-center gap-1 truncate font-medium text-foreground">
+                <Shield className="h-3 w-3 shrink-0 text-primary" />
                 <span className="truncate">{t("auth.accountSetup.superAdminRole")}</span>
               </p>
             </div>
@@ -143,7 +143,7 @@ export function LaunchCelebrationCard({
         {/* Launch Workspace CTA */}
         <Button
           size="lg"
-          className="w-full gap-2 font-semibold shadow-xs"
+          className="shadow-xs w-full gap-2 font-semibold"
           onClick={() => {
             const redirectUrl = adminEmail
               ? `/login?email=${encodeURIComponent(adminEmail)}`

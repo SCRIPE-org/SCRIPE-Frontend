@@ -75,7 +75,9 @@ const COLORS = new OptionSet({
   publishedVersionNumber: 1,
 });
 
-function renderDialog(overrides: Partial<React.ComponentProps<typeof OptionSetBindingDialog>> = {}) {
+function renderDialog(
+  overrides: Partial<React.ComponentProps<typeof OptionSetBindingDialog>> = {}
+) {
   const onAttach = vi.fn(async () => true);
   const onDetach = vi.fn(async () => true);
   const onOpenChange = vi.fn();
@@ -120,18 +122,14 @@ describe("current binding state", () => {
   it("says the field is unbound when boundSet is null", () => {
     renderDialog({ boundSet: null });
 
-    expect(
-      screen.getByText("customField.optionSetBinding.currentlyUnbound")
-    ).toBeInTheDocument();
+    expect(screen.getByText("customField.optionSetBinding.currentlyUnbound")).toBeInTheDocument();
   });
 
   it("names the bound set when boundSet is provided", () => {
     renderDialog({ boundSet: SIZES });
 
     expect(
-      screen.getByText(
-        'customField.optionSetBinding.currentlyBound:{"set":"Sizes"}'
-      )
+      screen.getByText('customField.optionSetBinding.currentlyBound:{"set":"Sizes"}')
     ).toBeInTheDocument();
   });
 });
@@ -171,8 +169,12 @@ describe("the permission gate", () => {
     pickColors();
 
     expect(screen.getByText("customField.optionSetBinding.permissionNote")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeDisabled();
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" })
+    ).toBeDisabled();
   });
 
   it("keeps the picker itself open to browsing even when canBind is false", () => {
@@ -188,14 +190,18 @@ describe("attach requires a chosen DIFFERENT set", () => {
   it("keeps attach disabled until a set is picked", () => {
     renderDialog({ boundSet: null });
 
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" })
+    ).toBeDisabled();
   });
 
   it("attach sends the chosen set's PUBLISHED version id, not the field's own id", async () => {
     const { onAttach } = renderDialog({ boundSet: null });
     pickSizes();
 
-    fireEvent.click(screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "customField.optionSetBinding.attach.action" })
+    );
 
     expect(onAttach).toHaveBeenCalledWith("osv-1");
   });
@@ -204,20 +210,26 @@ describe("attach requires a chosen DIFFERENT set", () => {
     renderDialog({ boundSet: SIZES });
     // The dialog pre-selects the current binding on open, so no extra pick is needed here.
 
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })
+    ).toBeDisabled();
   });
 
   it("enables the action once a genuinely different set is picked", () => {
     renderDialog({ boundSet: SIZES });
     pickColors();
 
-    expect(screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })).toBeEnabled();
+    expect(
+      screen.getByRole("button", { name: "customField.optionSetBinding.switch.action" })
+    ).toBeEnabled();
   });
 
   it("detach calls its own handler with no set argument", async () => {
     const { onDetach } = renderDialog({ boundSet: SIZES });
 
-    fireEvent.click(screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: "customField.optionSetBinding.detach.action" })
+    );
 
     expect(onDetach).toHaveBeenCalledWith();
   });

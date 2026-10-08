@@ -45,9 +45,7 @@ export function RotateKeyDialog({ rotatedKey, onClose }: RotateKeyDialogProps) {
           <div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-warning/15 text-warning">
             <ShieldAlert className="h-5 w-5" />
           </div>
-          <DialogTitle className="text-center">
-            {t("apikeys.rotate.successTitle")}
-          </DialogTitle>
+          <DialogTitle className="text-center">{t("apikeys.rotate.successTitle")}</DialogTitle>
           <DialogDescription className="text-center">
             {t("apikeys.rotate.successDesc")}
           </DialogDescription>

@@ -29,14 +29,16 @@ export function useVenueAttentionViewModel(canView: boolean) {
       setStage("ready");
     } catch {
       if (process.env.NODE_ENV !== "production") {
-      setStage("error");
+        setStage("error");
       }
       setStage("error");
     }
   }, [canView, venueAttentionRepository]);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => { void load(); }, 0);
+    const timer = window.setTimeout(() => {
+      void load();
+    }, 0);
     return () => window.clearTimeout(timer);
   }, [load]);
   return { stage, data, refresh: load };

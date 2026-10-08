@@ -64,9 +64,7 @@ function buildSessionUrl(sessionId: string): string {
  * back to a placeholder — never to the old raw `/api/files` URL, since that
  * is the exact 401 this exists to fix).
  */
-export function getSessionDownloadUrl(
-  filePath: string | null | undefined
-): Promise<string | null> {
+export function getSessionDownloadUrl(filePath: string | null | undefined): Promise<string | null> {
   if (!filePath) return Promise.resolve(null);
   if (isAbsoluteUrl(filePath)) return Promise.resolve(filePath);
 

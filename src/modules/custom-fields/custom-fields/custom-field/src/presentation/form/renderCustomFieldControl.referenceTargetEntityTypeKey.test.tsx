@@ -137,7 +137,9 @@ describe("renderCustomFieldControl -- referenceTargetEntityTypeKey (definition p
   it("falls back to the stored value's own entityTypeKey when referenceTargetEntityTypeKey is ABSENT", () => {
     // An unpinned EntityReference is a legitimate, permanent configuration (any registered entity
     // type is a legal target), so this fallback is not a transition state to be removed later.
-    render(<>{renderCustomFieldControl({ fc: { ...FC }, value: STAFF_VALUE, onChange: vi.fn() })}</>);
+    render(
+      <>{renderCustomFieldControl({ fc: { ...FC }, value: STAFF_VALUE, onChange: vi.fn() })}</>
+    );
 
     expect(lastSearchTarget()).toBe("hrms.staff-member");
     expect(screen.getByRole("combobox", { name: "Assignee" })).not.toHaveAttribute(
@@ -231,7 +233,12 @@ describe("renderCustomFieldControl -- UserReference does not depend on the defin
     render(
       <>
         {renderCustomFieldControl({
-          fc: { ...FC, name: "cf_owner", label: "Owner", referenceTargetEntityTypeKey: "identity.user" },
+          fc: {
+            ...FC,
+            name: "cf_owner",
+            label: "Owner",
+            referenceTargetEntityTypeKey: "identity.user",
+          },
           value: null,
           onChange: vi.fn(),
         })}

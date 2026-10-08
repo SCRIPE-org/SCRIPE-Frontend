@@ -19,10 +19,7 @@ import type {
   ChangeFieldTypeResult,
   RollbackFieldTypeChangeResult,
 } from "../../domain/entities/FieldInsight";
-import {
-  classifyValueTypeConversion,
-  isConversionLossy,
-} from "../../domain/valueTypeConversion";
+import { classifyValueTypeConversion, isConversionLossy } from "../../domain/valueTypeConversion";
 
 /**
  * Documentation for module export
@@ -104,9 +101,7 @@ export function useConvertValueTypeViewModel() {
       : null;
 
   const isLossy =
-    currentType && selectedTargetType
-      ? isConversionLossy(currentType, selectedTargetType)
-      : false;
+    currentType && selectedTargetType ? isConversionLossy(currentType, selectedTargetType) : false;
 
   const canExecute = useMemo(() => {
     if (!canUpdate || !target || !selectedTargetType) return false;

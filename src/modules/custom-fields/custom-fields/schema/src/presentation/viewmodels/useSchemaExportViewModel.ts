@@ -97,9 +97,7 @@ export function useSchemaExportViewModel() {
 
   const exportMutation = useMutation({
     mutationFn: async (scope: string) => {
-      const bundle = await schemaExportRepository.exportSchema(
-        scope.length > 0 ? scope : null
-      );
+      const bundle = await schemaExportRepository.exportSchema(scope.length > 0 ? scope : null);
 
       // NO FILE FOR AN EMPTY BUNDLE. An empty result has two causes the client cannot tell apart --
       // the scope really has no fields, or every field in it is restricted from this caller and the
@@ -153,8 +151,7 @@ export function useSchemaExportViewModel() {
     exportMutation.reset();
   }, [exportMutation]);
 
-  const errorMessage =
-    exportMutation.error instanceof Error ? exportMutation.error.message : null;
+  const errorMessage = exportMutation.error instanceof Error ? exportMutation.error.message : null;
 
   return {
     entityTypes,

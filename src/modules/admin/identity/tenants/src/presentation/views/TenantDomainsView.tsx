@@ -80,10 +80,7 @@ export function TenantDomainsView() {
         })}
       />
 
-      <TenantDomainsTab
-        tenantId={activeTenantId}
-        tenantName={activeTenantName || "Workspace"}
-      />
+      <TenantDomainsTab tenantId={activeTenantId} tenantName={activeTenantName || "Workspace"} />
     </div>
   );
 }

@@ -200,10 +200,7 @@ describe("WebhookForm + custom fields", () => {
   });
 
   it("renders the inline add-custom-field trigger and refetches definitions when it reports a new field was created", async () => {
-    const getFormFields = vi
-      .fn()
-      .mockResolvedValueOnce([])
-      .mockResolvedValue([PRIORITY_FIELD]);
+    const getFormFields = vi.fn().mockResolvedValueOnce([]).mockResolvedValue([PRIORITY_FIELD]);
     registerFakeCustomFieldsExtension({
       getFormFields,
       InlineAddTrigger: ({ onCreated }) => (

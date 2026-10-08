@@ -533,7 +533,7 @@ export function LoginPreviewShell() {
 
   // ”--€ Top Actions (visual only) ”--€
   const topActions = (
-    <div className="absolute start-8 end-8 top-8 z-20 flex items-center justify-end gap-5">
+    <div className="absolute end-8 start-8 top-8 z-20 flex items-center justify-end gap-5">
       <div className="flex gap-1">
         <LanguageSwitcher />
         <ThemeSwitcher />
@@ -1597,7 +1597,7 @@ export function LoginPreviewShell() {
                   {subtitle}
                 </p>
               </div>
-              <div className="absolute -bottom-px start-0 end-0 h-1 bg-gradient-to-r from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
+              <div className="absolute -bottom-px end-0 start-0 h-1 bg-gradient-to-r from-transparent via-[var(--login-primary,hsl(var(--primary)))] to-transparent" />
             </div>
             <div
               className="flex flex-1 flex-col items-center justify-center px-6 py-12"
@@ -1719,7 +1719,14 @@ export function LoginPreviewShell() {
               {/* Masthead */}
               <div className="flex items-center gap-2.5">
                 <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg">
-                  <Image src={logoUrl} alt={companyName} width={32} height={32} unoptimized className="h-full w-full object-contain" />
+                  <Image
+                    src={logoUrl}
+                    alt={companyName}
+                    width={32}
+                    height={32}
+                    unoptimized
+                    className="h-full w-full object-contain"
+                  />
                 </div>
                 <span className="text-base font-semibold" style={{ color: "var(--sx-text)" }}>
                   {companyName}

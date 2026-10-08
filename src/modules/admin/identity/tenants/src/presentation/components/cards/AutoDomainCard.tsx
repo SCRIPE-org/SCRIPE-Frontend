@@ -31,32 +31,36 @@ function AutoDomainCardComponent({ domain, onCopy }: AutoDomainCardProps) {
   return (
     <Card className="border-nx-line bg-nx-surface p-4 transition-colors hover:border-nx-line-hi">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3 min-w-0">
+        <div className="flex min-w-0 items-center gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-nx-md bg-success/10 text-success">
             <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-sm font-semibold text-nx-ink truncate">
+              <span className="truncate font-mono text-sm font-semibold text-nx-ink">
                 {domain.domain}
               </span>
               {domain.isPrimary && (
-                <Badge variant="outline" className="border-info/40 bg-info/10 text-info px-1.5 text-[10px]">
+                <Badge
+                  variant="outline"
+                  className="border-info/40 bg-info/10 px-1.5 text-[10px] text-info"
+                >
                   <Star className="me-1 h-3 w-3 fill-info" aria-hidden="true" />
                   {t("tenant.domainsPrimary")}
                 </Badge>
               )}
-              <Badge variant="outline" className="border-nx-line text-nx-ink-2 px-1.5 text-[10px]">
+              <Badge variant="outline" className="border-nx-line px-1.5 text-[10px] text-nx-ink-2">
                 {t("tenant.domainsAuto")}
               </Badge>
-              <Badge variant="outline" className="border-success/40 bg-success/10 text-success px-1.5 text-[10px]">
+              <Badge
+                variant="outline"
+                className="border-success/40 bg-success/10 px-1.5 text-[10px] text-success"
+              >
                 <ShieldCheck className="me-1 h-3 w-3" aria-hidden="true" />
                 {t("tenant.domainsSslActive")}
               </Badge>
             </div>
-            <p className="mt-0.5 text-xs text-nx-ink-2">
-              {t("tenant.domainsSystemManagedHint")}
-            </p>
+            <p className="mt-0.5 text-xs text-nx-ink-2">{t("tenant.domainsSystemManagedHint")}</p>
           </div>
         </div>
 

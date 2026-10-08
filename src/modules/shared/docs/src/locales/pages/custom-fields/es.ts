@@ -80,16 +80,20 @@ export const es = {
             "El tipo de registro al que pertenece el campo: personas, miembros del personal, reservas, etcétera.",
           partKey:
             "El nombre técnico, usado en los mensajes de error y en las exportaciones. En minúsculas, empieza por una letra, y solo admite letras, dígitos y guiones bajos.",
-          partValueType: "Uno de los veintidós tipos, que decide qué se puede introducir y cómo se comprueba.",
+          partValueType:
+            "Uno de los veintidós tipos, que decide qué se puede introducir y cómo se comprueba.",
           partLabelEn: "La etiqueta en inglés que la gente ve encima del campo de entrada.",
-          partLabelAr: "La etiqueta en árabe, opcional. Si se deja en blanco, recurre a la etiqueta en inglés.",
+          partLabelAr:
+            "La etiqueta en árabe, opcional. Si se deja en blanco, recurre a la etiqueta en inglés.",
           partPlaceholder:
             "Texto de sugerencia opcional, en gris, mostrado dentro del campo vacío, en cada idioma.",
           partRequired: "Si un registro se puede guardar dejando este campo en blanco.",
-          partSortOrder: "Dónde se sitúa el campo respecto a los demás campos personalizados del formulario.",
+          partSortOrder:
+            "Dónde se sitúa el campo respecto a los demás campos personalizados del formulario.",
           partFieldGroup: "El encabezado opcional bajo el que se agrupa el campo.",
           partOptions: "La lista de respuestas permitidas. Solo para Select y MultiSelect.",
-          partValidator: "Una comprobación de formato adicional opcional, más su parámetro. Solo para campos Text.",
+          partValidator:
+            "Una comprobación de formato adicional opcional, más su parámetro. Solo para campos Text.",
           partReferenceTarget:
             "El único tipo de registro al que pueden apuntar los valores de este campo, o ninguno, para dejar que cada valor elija el suyo. Solo para campos Entity Reference.",
           partSensitivity:
@@ -134,17 +138,13 @@ export const es = {
             "No hay forma de convertir un campo de espacio de trabajo en uno global, ni al revés. Si el alcance es incorrecto, el campo tiene que volver a crearse con el alcance adecuado, y las respuestas ya registradas contra el antiguo se quedan con el antiguo.",
 
           notTitle: "Qué no son los campos personalizados",
-          notIntro: "Algunas cosas que razonablemente se esperarían de ellos y que deliberadamente no hacen.",
-          not1:
-            "No son un sustituto de una funcionalidad real. Un campo personalizado almacena y muestra una respuesta; no calcula nada, no dispara nada y no aparece en un informe que no hayas construido.",
-          not2:
-            "No son un mecanismo de control de acceso. El ajuste Sensitivity es una etiqueta. La seguridad a nivel de campo, configurada en roles y grupos de usuarios, es lo que realmente oculta un campo.",
-          not3:
-            "No son una biblioteca documental completa. File e Image guardan cada uno una única referencia gestionada, no un historial de versiones ni una galería; los flujos de adjuntos más amplios pertenecen a las propias funciones de adjuntos del registro. Adjuntar un nuevo valor File o Image todavía no está disponible desde esta pantalla; ambos tipos se pueden definir y un valor ya existente se puede consultar o borrar.",
-          not4:
-            "No son de formato libre. Cada campo tiene exactamente un tipo de valor, elegido de antemano y permanente, y cada valor se comprueba contra él al introducirlo.",
-          not5:
-            "No son retroactivos. Endurecer un campo —hacerlo obligatorio, o añadirle una comprobación de formato— nunca vuelve atrás para revisar las respuestas que ya estaban guardadas.",
+          notIntro:
+            "Algunas cosas que razonablemente se esperarían de ellos y que deliberadamente no hacen.",
+          not1: "No son un sustituto de una funcionalidad real. Un campo personalizado almacena y muestra una respuesta; no calcula nada, no dispara nada y no aparece en un informe que no hayas construido.",
+          not2: "No son un mecanismo de control de acceso. El ajuste Sensitivity es una etiqueta. La seguridad a nivel de campo, configurada en roles y grupos de usuarios, es lo que realmente oculta un campo.",
+          not3: "No son una biblioteca documental completa. File e Image guardan cada uno una única referencia gestionada, no un historial de versiones ni una galería; los flujos de adjuntos más amplios pertenecen a las propias funciones de adjuntos del registro. Adjuntar un nuevo valor File o Image todavía no está disponible desde esta pantalla; ambos tipos se pueden definir y un valor ya existente se puede consultar o borrar.",
+          not4: "No son de formato libre. Cada campo tiene exactamente un tipo de valor, elegido de antemano y permanente, y cada valor se comprueba contra él al introducirlo.",
+          not5: "No son retroactivos. Endurecer un campo —hacerlo obligatorio, o añadirle una comprobación de formato— nunca vuelve atrás para revisar las respuestas que ya estaban guardadas.",
 
           nextTitle: "Dónde seguir",
           nextIntro: "El resto de esta sección cubre cada parte en detalle.",
@@ -191,7 +191,8 @@ export const es = {
           permCreate:
             "Crear una definición, incluso a través del enlace Add custom field dentro de un formulario de registro.",
           permUpdate: "Editar una definición existente.",
-          permDelete: "Eliminar una definición, incluida la confirmación de una eliminación destructiva.",
+          permDelete:
+            "Eliminar una definición, incluida la confirmación de una eliminación destructiva.",
           permGroups:
             "La funcionalidad de grupos de campos, controlada por separado. Un rol que ya tiene cada uno de los permisos de campos personalizados anteriores no obtiene estos automáticamente.",
           planInfoTitle: "Los campos personalizados forman parte de tu plan",
@@ -208,7 +209,8 @@ export const es = {
             "Los veintidós tipos de valor de los campos personalizados: qué almacena cada uno, qué acepta y qué rechaza exactamente, ejemplos de entradas resueltos, y los códigos de error que devuelve el producto.",
           intro:
             "Cada campo personalizado tiene exactamente un tipo de valor, elegido al definir el campo. El tipo de valor decide qué control aparece en el formulario, qué acepta el producto, cómo se almacena el valor y cómo se muestra después. Esta página cubre los veintidós, uno por uno, con ejemplos de entradas que se aceptan y ejemplos de entradas que se rechazan. Dieciocho de ellos almacenan algo que tú escribiste; los otros cuatro almacenan en su lugar un puntero: dos a un registro de otra parte del producto, con una página propia además, y dos a un único archivo o imagen subidos.",
-          permanentTitle: "Cambiar el tipo de valor más adelante es una operación aparte y restringida",
+          permanentTitle:
+            "Cambiar el tipo de valor más adelante es una operación aparte y restringida",
           permanentContent:
             "Nueve pares de tipos concretos se pueden convertir después, desde la propia acción del menú de fila del campo — ver Gestión de Campos —, pero cualquier otro par se rechaza de plano, y convertir no es algo con lo que contar de antemano: elige el tipo correcto desde el principio siempre que puedas, porque el resultado, con diferencia más frecuente al elegir mal, es eliminar y volver a crear el campo, perdiendo las respuestas ya almacenadas contra él.",
 
@@ -240,7 +242,8 @@ export const es = {
             "Rechazado: VALIDATION_MAX_LENGTH. Text se detiene en 4.000 caracteres; usa LongText para cualquier cosa más larga.",
           textBlankOptional:
             "Aceptado, y almacenado como borrado. Un valor hecho solo de espacios cuenta como vacío, así que cualquier validador asignado nunca llega a ejecutarse sobre él.",
-          textBlankRequired: "Rechazado: VALIDATION_REQUIRED. Aquí también un valor hecho solo de espacios cuenta como vacío.",
+          textBlankRequired:
+            "Rechazado: VALIDATION_REQUIRED. Aquí también un valor hecho solo de espacios cuenta como vacío.",
           exText4500: "Un valor de 4.500 caracteres de longitud",
           exSpacesOptional: "Tres espacios, en un campo que no es Required",
           exSpacesRequired: "Tres espacios, en un campo Required",
@@ -252,7 +255,8 @@ export const es = {
             "Solo el límite de 10.000 caracteres. LongText no puede llevar un validador. El contador en pantalla se pone rojo en cuanto superas el límite, pero no te impide seguir escribiendo; el rechazo llega al guardar.",
           longTextOk:
             "Aceptado. Esto supera con holgura el límite propio de Text de 4.000 caracteres, que es la razón de ser de LongText.",
-          longTextTooLong: "Rechazado: VALIDATION_MAX_LENGTH, indicando el límite de 10.000 caracteres.",
+          longTextTooLong:
+            "Rechazado: VALIDATION_MAX_LENGTH, indicando el límite de 10.000 caracteres.",
           exLong6000: "Una descripción de 6.000 caracteres",
           exLong12000: "Una descripción de 12.000 caracteres",
 
@@ -262,12 +266,13 @@ export const es = {
           selectChecks:
             "El valor enviado debe coincidir exactamente con una de las opciones configuradas del campo. Ambos lados se recortan antes de compararse, y la comparación distingue mayúsculas de minúsculas. Para una lista de opciones Small, Medium, Large:",
           selectOk: "Aceptado, y almacenado como el propio texto de la opción.",
-          selectTrimmed: "Aceptado. Los espacios que lo rodean se recortan antes de la comparación.",
+          selectTrimmed:
+            "Aceptado. Los espacios que lo rodean se recortan antes de la comparación.",
           selectCase:
             "Rechazado: VALIDATION_INVALID_FORMAT. La coincidencia distingue mayúsculas de minúsculas, así que Medium y medium son respuestas distintas, lo que también significa que las dos pueden existir legítimamente como opciones independientes.",
           selectUnknown:
             "Rechazado: VALIDATION_INVALID_FORMAT. El mensaje cita el valor rechazado y la clave del campo.",
-          exSelectPadded: "\" Medium\" con un espacio inicial",
+          exSelectPadded: '" Medium" con un espacio inicial',
 
           multiSelectTitle: "MultiSelect",
           multiSelectStores:
@@ -278,8 +283,10 @@ export const es = {
             "Aceptado, y devuelto en el orden en que se eligió —primero Blue, luego Red—, sin reordenar según el orden en que aparecían las opciones en la lista.",
           multiTooMany:
             "Rechazado: VALIDATION_MAX_LENGTH, indicando el tope de 19. El propio selector hace que la opción número veinte no se pueda marcar, así que llegar a esto exige una solicitud que se salte el formulario.",
-          multiDuplicate: "Rechazado: VALIDATION_UNIQUE. Una respuesta repetida se rechaza en lugar de reducirse silenciosamente a una sola.",
-          multiUnknown: "Rechazado: VALIDATION_INVALID_FORMAT — Purple no es una de las opciones del campo.",
+          multiDuplicate:
+            "Rechazado: VALIDATION_UNIQUE. Una respuesta repetida se rechaza en lugar de reducirse silenciosamente a una sola.",
+          multiUnknown:
+            "Rechazado: VALIDATION_INVALID_FORMAT — Purple no es una de las opciones del campo.",
           multiEmpty:
             "Tratado como vacío: se borra si el campo es opcional, se rechaza con VALIDATION_REQUIRED si es obligatorio.",
           exMultiTwo: "Blue, y luego Red",
@@ -289,15 +296,18 @@ export const es = {
 
           groupNumberTitle: "Números y medidas",
           numberTitle: "Number",
-          numberStores: "Cualquier número, entero o con decimales, positivo o negativo, con hasta seis decimales.",
+          numberStores:
+            "Cualquier número, entero o con decimales, positivo o negativo, con hasta seis decimales.",
           numberChecks:
             "Solo que el valor se interprete como un número. No se aplica ninguna regla de mínimo, máximo, precisión o redondeo, así que elige Number cuando de verdad cualquier número sea una respuesta válida, y elige Percent, Rating, Currency o Duration cuando no lo sea.",
           numberOk: "Aceptado.",
-          numberNegative: "Aceptado. Los valores negativos son perfectamente válidos para este tipo.",
-          numberPrecision: "Aceptado, y almacenado con seis decimales. Cualquier precisión mayor no se conserva.",
+          numberNegative:
+            "Aceptado. Los valores negativos son perfectamente válidos para este tipo.",
+          numberPrecision:
+            "Aceptado, y almacenado con seis decimales. Cualquier precisión mayor no se conserva.",
           numberInvalid:
             "Rechazado: VALIDATION_INVALID_FORMAT — el mensaje dice «expects a number». Un número escrito con palabras no se interpreta.",
-          exAboutForty: "\"about 40\"",
+          exAboutForty: '"about 40"',
 
           percentTitle: "Percent",
           percentStores:
@@ -305,14 +315,16 @@ export const es = {
           percentChecks:
             "El valor debe interpretarse como un número y caer entre 0 y 100. Se almacena exactamente tal como se escribió; este es el detalle que hay que tener claro si alguna vez lees los datos en bruto o construyes una exportación.",
           percentOk: "Aceptado, y mostrado después como 25%.",
-          percentDecimal: "Aceptado, y mostrado como 33,5%. Las fracciones de un punto porcentual se conservan con exactitud.",
+          percentDecimal:
+            "Aceptado, y mostrado como 33,5%. Las fracciones de un punto porcentual se conservan con exactitud.",
           percentQuarter:
             "Aceptado, pero significa una cuarta parte de un uno por ciento, mostrado como 0,25%. Percent almacena el número que dirías en voz alta, nunca una fracción de 0 a 1.",
           percentTooHigh: "Rechazado: VALIDATION_RANGE, indicando los límites 0 y 100.",
           percentNegative: "Rechazado: VALIDATION_RANGE. El límite inferior es 0, y es inclusive.",
 
           ratingTitle: "Rating",
-          ratingStores: "Un número entero del 1 al 5, capturado en un control deslizante. Se muestra después como «4 / 5».",
+          ratingStores:
+            "Un número entero del 1 al 5, capturado en un control deslizante. Se muestra después como «4 / 5».",
           ratingChecks:
             "El valor debe interpretarse como un número, ser un número entero, y caer entre 1 y 5 ambos inclusive. No hay control de estrellas ni entrada de texto libre.",
           ratingOk: "Aceptado, y mostrado como 4 / 5.",
@@ -330,7 +342,8 @@ export const es = {
             "Un importe junto con su código de moneda de tres letras, contenidos en dos campos independientes dentro de un mismo grupo etiquetado. Se muestra después mediante el propio formato numérico del lector, mostrando el código en lugar de un símbolo para que EUR y USD nunca resulten ambiguos.",
           currencyChecks:
             "Las dos partes son obligatorias juntas. El importe debe interpretarse como un número; el código debe ser exactamente tres letras ASCII en mayúsculas. El campo del código pasa a mayúsculas y filtra letras mientras escribes, porque la comprobación en sí no admite minúsculas: las rechaza.",
-          currencyOk: "Aceptado. Se muestra como el importe junto al código, por ejemplo USD 100.50.",
+          currencyOk:
+            "Aceptado. Se muestra como el importe junto al código, por ejemplo USD 100.50.",
           currencyLower:
             "Rechazado si llega a alcanzar el servidor: VALIDATION_INVALID_FORMAT, indicando el requisito de tres letras según ISO 4217. En el propio formulario, el campo fuerza las mayúsculas mientras escribes, así que normalmente no verás esto.",
           currencyNoCode:
@@ -359,7 +372,8 @@ export const es = {
           durationZero: "Aceptado. El cero es una respuesta real, no una vacía.",
           durationLarge:
             "Aceptado: 5.400 minutos, que son tres días y medio. Nada te avisa, porque no hay máximo.",
-          durationNegative: "Rechazado: VALIDATION_RANGE, con un mensaje que indica que el valor no debe ser negativo.",
+          durationNegative:
+            "Rechazado: VALIDATION_RANGE, con un mensaje que indica que el valor no debe ser negativo.",
 
           groupDateTitle: "Fechas y horas",
           dateTitle: "Date",
@@ -367,19 +381,21 @@ export const es = {
             "Una fecha de calendario sin ningún componente de hora: un cumpleaños, la fecha de un contrato, una caducidad. Se representa como un selector de fecha.",
           dateChecks:
             "Solo que el valor se interprete como una fecha. Como el valor almacenado es una fecha de calendario simple y no un instante concreto, se lee igual para cualquier persona que la consulte, sin importar su zona horaria.",
-          dateOk: "Aceptado, y devuelto como la misma fecha de calendario para cualquiera que lo consulte, desde cualquier lugar.",
+          dateOk:
+            "Aceptado, y devuelto como la misma fecha de calendario para cualquiera que lo consulte, desde cualquier lugar.",
           dateNoTime:
             "Ignorada. Date no lleva componente de hora, así que una hora enviada junto con la fecha simplemente no se almacena. Usa DateTime cuando la hora importe.",
           dateInvalid: "Rechazado: VALIDATION_INVALID_FORMAT — el mensaje dice «expects a date».",
           exDateWithTime: "Una fecha con un componente de hora adjunto",
-          exNotADate: "\"next Tuesday\"",
+          exNotADate: '"next Tuesday"',
 
           dateTimeTitle: "DateTime",
           dateTimeStores:
             "Un instante preciso junto con la zona horaria a la que pertenece. Se almacenan las dos mitades, así que un inicio a las 18:00 en El Cairo se sigue leyendo como las 18:00 en El Cairo para alguien que lo consulte desde Londres.",
           dateTimeChecks:
             "El instante debe interpretarse, y la zona horaria debe ser un identificador de zona que el servidor reconozca: en la práctica, un identificador IANA como Africa/Cairo, aunque la comprobación subyacente depende de la plataforma y un despliegue alojado en Windows también acepta un identificador nativo de Windows como Egypt Standard Time. La zona es obligatoria en cuanto está presente cualquiera de las dos mitades: un instante sin zona se rechaza, no se interpreta silenciosamente. El formulario muestra la zona como un pequeño detalle junto a la hora introducida, con un enlace Change que abre un selector con búsqueda.",
-          dateTimeOk: "Aceptado. Tanto el instante como su zona se devuelven exactamente como se introdujeron.",
+          dateTimeOk:
+            "Aceptado. Tanto el instante como su zona se devuelven exactamente como se introdujeron.",
           dateTimeNoZone:
             "Rechazado: VALIDATION_INVALID_TIMEZONE. Un instante sin zona es exactamente lo que DateTime existe para impedir.",
           dateTimeBadZone:
@@ -396,10 +412,12 @@ export const es = {
             "Una hora del día en formato de 24 horas, con segundos incluidos y sin fecha asociada: un horario de apertura, un toque de queda, una franja de inicio. Se representa como un selector de hora nativo con segundos activados, y se muestra después en el formato horario local propio de cada lector.",
           timeChecks:
             "El valor debe ser horas, minutos y segundos separados por dos puntos, con horas de 0 a 23, minutos de 0 a 59 y segundos de 0 a 59. Una entrada sin ceros a la izquierda se acepta y se normaliza en lugar de rechazarse.",
-          timeOk: "Aceptado, y mostrado en el formato propio del lector; por ejemplo, 2:30:00 PM para un lector en inglés (EE. UU.).",
+          timeOk:
+            "Aceptado, y mostrado en el formato propio del lector; por ejemplo, 2:30:00 PM para un lector en inglés (EE. UU.).",
           timeNormalised:
             "Aceptado, y normalizado a 09:05:00 antes de almacenarse. Dos envíos de la misma hora escritos con distinto número de dígitos siempre acaban siendo idénticos.",
-          timeHourRange: "Rechazado: VALIDATION_INVALID_FORMAT. Las horas van de 0 a 23, así que 24 está fuera de rango.",
+          timeHourRange:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Las horas van de 0 a 23, así que 24 está fuera de rango.",
           timeMinuteRange: "Rechazado: VALIDATION_INVALID_FORMAT. Los minutos van de 0 a 59.",
           timeAmPm:
             "Rechazado: VALIDATION_INVALID_FORMAT. El texto en formato de 12 horas no se interpreta; la forma almacenada siempre es de 24 horas, aunque la visualización no lo sea.",
@@ -410,11 +428,12 @@ export const es = {
             "Una dirección de correo electrónico. Se representa como un campo nativo de correo electrónico, y se muestra después como un enlace de correo en el que se puede hacer clic.",
           emailChecks:
             "La dirección se interpreta como una dirección real en lugar de compararse con un patrón, y no debe contener nada más que la dirección. Las mayúsculas y minúsculas se conservan exactamente tal como se escribieron, sin convertir a minúsculas.",
-          emailOk: "Aceptado, almacenado con su capitalización exacta, y mostrado como un enlace de correo en el que se puede hacer clic.",
+          emailOk:
+            "Aceptado, almacenado con su capitalización exacta, y mostrado como un enlace de correo en el que se puede hacer clic.",
           emailDisplayName:
             "Rechazado: VALIDATION_INVALID_EMAIL. Un envoltorio con nombre para mostrar se interpreta como una dirección, pero se rechaza en lugar de eliminarse en silencio, porque un campo Email no tiene ningún nombre para mostrar que conservar.",
           emailInvalid: "Rechazado: VALIDATION_INVALID_EMAIL.",
-          exEmailDisplayName: "\"Test User <test@example.com>\"",
+          exEmailDisplayName: '"Test User <test@example.com>"',
 
           urlTitle: "Url",
           urlStores:
@@ -435,16 +454,21 @@ export const es = {
             "Un número de teléfono en formato internacional. Se representa mediante un selector de país con banderas y búsqueda, y se muestra después reformateado para facilitar la lectura; por ejemplo, +20 123 456 7890.",
           phoneChecks:
             "El valor almacenado debe empezar por +, su primer dígito no puede ser cero, y debe contener entre 8 y 15 dígitos en total. Eso es una comprobación de forma únicamente.",
-          phoneOk: "Aceptado, y mostrado reformateado en lugar de como la cadena almacenada desnuda.",
-          phoneNoPlus: "Rechazado: VALIDATION_INVALID_FORMAT. El + inicial forma parte del formato.",
-          phoneLeadingZero: "Rechazado: VALIDATION_INVALID_FORMAT. Un código de país nunca empieza por cero.",
-          phoneTooShort: "Rechazado: VALIDATION_INVALID_FORMAT. Siete dígitos está por debajo del mínimo de ocho.",
+          phoneOk:
+            "Aceptado, y mostrado reformateado en lugar de como la cadena almacenada desnuda.",
+          phoneNoPlus:
+            "Rechazado: VALIDATION_INVALID_FORMAT. El + inicial forma parte del formato.",
+          phoneLeadingZero:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Un código de país nunca empieza por cero.",
+          phoneTooShort:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Siete dígitos está por debajo del mínimo de ocho.",
           phoneUnassignable:
             "Aceptado por el servidor, que solo comprueba la forma y no si el número podría existir de verdad. El propio selector del formulario además comprueba el número contra el plan de numeración real del país seleccionado, así que no puedes construir este valor a través de la interfaz, solo con una solicitud que se salte el formulario.",
 
           groupOtherTitle: "Sí/no y color",
           booleanTitle: "Boolean",
-          booleanStores: "Un simple sí o no. Se representa como un interruptor de encendido/apagado. No tiene ni texto de sugerencia ni opciones.",
+          booleanStores:
+            "Un simple sí o no. Se representa como un interruptor de encendido/apagado. No tiene ni texto de sugerencia ni opciones.",
           booleanChecks:
             "Solo se interpretan las palabras true y false, en cualquier combinación de mayúsculas y minúsculas. Nada más se trata como sinónimo.",
           boolTrue: "Aceptado.",
@@ -458,12 +482,15 @@ export const es = {
             "Un color, almacenado como valor hexadecimal. Se representa como una cuadrícula de veinte muestras más una entrada hexadecimal personalizada, y se muestra después como el texto hexadecimal con una pequeña muestra de color a juego al lado.",
           colorChecks:
             "El valor debe ser un # seguido de exactamente tres o exactamente seis dígitos hexadecimales. Las mayúsculas se normalizan a minúsculas al guardar; la longitud no.",
-          colorOk: "Aceptado, y almacenado como #aabbcc. Las mayúsculas se convierten a minúsculas.",
+          colorOk:
+            "Aceptado, y almacenado como #aabbcc. Las mayúsculas se convierten a minúsculas.",
           colorShort:
             "Aceptado, y conservado como #abc. La forma abreviada nunca se expande a #aabbcc, aunque un motor de representación trate ambas como el mismo color, así que el mismo color puede almacenarse legítimamente de dos formas distintas en registros diferentes.",
           colorNoHash: "Rechazado: VALIDATION_INVALID_FORMAT. El # inicial es obligatorio.",
-          colorBadLength: "Rechazado: VALIDATION_INVALID_FORMAT. Tres o seis dígitos, nada intermedio.",
-          colorNamed: "Rechazado: VALIDATION_INVALID_FORMAT. Los nombres de color no se aceptan, solo valores hexadecimales.",
+          colorBadLength:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Tres o seis dígitos, nada intermedio.",
+          colorNamed:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Los nombres de color no se aceptan, solo valores hexadecimales.",
 
           groupReferenceTitle: "Referencias a otro registro",
           referenceGroupIntro:
@@ -503,7 +530,8 @@ export const es = {
             "Un puntero a una cuenta de usuario —assigned to, reviewed by, account manager—. Se representa como un selector con búsqueda sobre cuentas de usuario, y nunca muestra un control para elegir un tipo de registro, porque solo hay uno.",
           userReferenceChecks:
             "Todas las comprobaciones que hace EntityReference, más una regla más estrecha: el único tipo de registro aceptado es una cuenta de usuario. Esa lista la fija la plataforma y no la configuración, y un intento de apuntar este tipo a cualquier otra cosa se rechaza tanto al configurar una definición como al guardar un valor.",
-          usrOk: "Aceptado, exactamente igual que un EntityReference. La respuesta se describe a sí misma de la misma manera.",
+          usrOk:
+            "Aceptado, exactamente igual que un EntityReference. La respuesta se describe a sí misma de la misma manera.",
           usrDormant:
             "Aceptado. Una cuenta bloqueada está inactiva, no eliminada: sigue existiendo, el selector la sigue ofreciendo con una marca de inactiva, y es una respuesta legítima para algo que ya sucedió.",
           usrAdminRefused:
@@ -529,7 +557,8 @@ export const es = {
           fileChecks:
             "Un valor almacenado solo se acepta cuando el archivo referenciado está realmente adjunto al registro que estás editando: una comprobación de seguridad que impide que un archivo pensado para un registro se apunte desde otro. Adjuntar un archivo nuevo desde esta pantalla todavía no está disponible: el campo se puede definir hoy, y un valor ya existente se puede consultar o borrar, pero rellenar uno por primera vez llegará en una versión futura.",
           fileAttachedExample: "Un registro cuyo campo File ya contiene un valor",
-          fileAttachedOutcome: "Se muestra como adjunto, con un control Clear. Por ahora no hay ningún control para adjuntar junto a él.",
+          fileAttachedOutcome:
+            "Se muestra como adjunto, con un control Clear. Por ahora no hay ningún control para adjuntar junto a él.",
           fileClearExample: "Borrar un archivo adjunto y luego guardar",
           fileClearOutcome: "Aceptado: el valor se elimina.",
 
@@ -549,11 +578,14 @@ export const es = {
           richTextOkExample: "Un párrafo con una palabra en negrita y una lista con viñetas",
           richTextOkOutcome: "Aceptado, y se conserva cada elemento.",
           richTextStyleExample: "Contenido pegado con un estilo en línea aplicado",
-          richTextStyleOutcome: "Aceptado, con el estilo eliminado. El texto visible y la estructura se conservan.",
+          richTextStyleOutcome:
+            "Aceptado, con el estilo eliminado. El texto visible y la estructura se conservan.",
           richTextImgExample: "Contenido con una imagen incrustada",
-          richTextImgOutcome: "Aceptado, con la imagen eliminada. Una imagen pertenece en su lugar a un campo File o Image.",
+          richTextImgOutcome:
+            "Aceptado, con la imagen eliminada. Una imagen pertenece en su lugar a un campo File o Image.",
           richTextTooLongExample: "Más de 50.000 caracteres de marcado",
-          richTextTooLongOutcome: "Rechazado: VALIDATION_MAX_LENGTH — acórtalo e inténtalo de nuevo.",
+          richTextTooLongOutcome:
+            "Rechazado: VALIDATION_MAX_LENGTH — acórtalo e inténtalo de nuevo.",
 
           emptyTitle: "Valores vacíos y el interruptor Required",
           emptyIntro:
@@ -561,8 +593,10 @@ export const es = {
           empty1: "falta por completo en el guardado;",
           empty2: "está en blanco, o hecho solo de espacios;",
           empty3: "para MultiSelect, la lista de selecciones está explícitamente vacía;",
-          empty4: "para DateTime, faltan tanto el instante como la zona horaria, no solo uno de los dos;",
-          empty5: "para Currency, faltan tanto el importe como el código de moneda, no solo uno de los dos;",
+          empty4:
+            "para DateTime, faltan tanto el instante como la zona horaria, no solo uno de los dos;",
+          empty5:
+            "para Currency, faltan tanto el importe como el código de moneda, no solo uno de los dos;",
           empty6:
             "para EntityReference, UserReference, File e Image, faltan las dos mitades del puntero, no solo una de ellas.",
           emptyOutcome:
@@ -576,10 +610,12 @@ export const es = {
             "La inmensa mayoría de los rechazos son un HTTP 422 con uno de estos códigos legibles por máquina; dos de ellos son un 403 en su lugar, porque tratan sobre tu acceso y no sobre la forma de lo que enviaste. Un tercero merece señalarse aparte: su nombre de código suena a un 404, pero la respuesta sigue siendo un 422 — ver la nota junto a él más abajo. Si alguna vez ves un 500 al guardar el valor de un campo personalizado, es un defecto que merece reportarse: la ruta de validación está escrita para rechazar con limpieza, nunca para fallar.",
           thCode: "Código",
           thWhenItFires: "Cuándo se produce",
-          codeRequired: "El campo es Required y el valor enviado está vacío o hecho solo de espacios.",
+          codeRequired:
+            "El campo es Required y el valor enviado está vacío o hecho solo de espacios.",
           codeInvalidFormat:
             "El valor no coincide con la forma que el tipo espera: un número, fecha u hora que no se puede interpretar, una opción que no está en la lista, un esquema de URL no permitido, una forma de teléfono incorrecta, un color hexadecimal incorrecto, un código de moneda incorrecto, o la mayoría de los fallos de validador.",
-          codeInvalidEmail: "El valor de un campo Email no es una dirección real, o lleva un nombre para mostrar.",
+          codeInvalidEmail:
+            "El valor de un campo Email no es una dirección real, o lleva un nombre para mostrar.",
           codeInvalidTimezone:
             "A un valor DateTime le falta la zona horaria una vez presente el instante, o indica una zona que el servidor no reconoce.",
           codeRange:
@@ -587,8 +623,10 @@ export const es = {
           codeMaxLength:
             "Text por encima de 4.000 caracteres, LongText por encima de 10.000, RichText por encima de 50.000, un Email o Url por encima de 4.000, más de 19 selecciones en MultiSelect, o el límite superior de un validador Length Range.",
           codeMinLength: "El límite inferior de un validador Length Range.",
-          codeUnique: "La misma opción de MultiSelect se envió más de una vez en un mismo guardado.",
-          codeUnknownEntityType: "Una referencia nombra un tipo de registro que no está registrado en esta instalación.",
+          codeUnique:
+            "La misma opción de MultiSelect se envió más de una vez en un mismo guardado.",
+          codeUnknownEntityType:
+            "Una referencia nombra un tipo de registro que no está registrado en esta instalación.",
           codeInvalidId:
             "No se pudo leer la identidad almacenada de una referencia: se alteró en algún punto del trayecto, o es un valor anterior a un cambio.",
           codeForbidden:
@@ -597,8 +635,10 @@ export const es = {
             "Un valor File o Image apunta a un archivo que no está adjunto al registro que estás editando. Este también es un 403, por el mismo motivo que el caso Forbidden de la referencia anterior: trata sobre la propiedad, no sobre la forma.",
           codeMediaNotFound:
             "El id de un valor File o Image no se puede descifrar, o se descifra en un archivo que ya no existe. El nombre del código suena a un 404, pero la respuesta es un 422: la misma forma que usa cualquier otro rechazo por valor mal formado de esta página, no la forma de «no encontrado» que un cliente podría esperar por el nombre.",
-          codeMediaNotAnImage: "El valor de un campo Image apunta a un archivo que no es una imagen.",
-          codeRichTextShape: "El valor de un campo RichText no se envió como un objeto con una propiedad 'html'.",
+          codeMediaNotAnImage:
+            "El valor de un campo Image apunta a un archivo que no es una imagen.",
+          codeRichTextShape:
+            "El valor de un campo RichText no se envió como un objeto con una propiedad 'html'.",
           codesInfoTitle: "Los mensajes nombran la clave, no la etiqueta",
           codesInfoContent:
             "Los mensajes de error citan la clave técnica del campo —'shirt_size'— y no su etiqueta visible. Si estás relacionando un mensaje con un campo, hazlo por la clave.",
@@ -654,13 +694,15 @@ export const es = {
           thEntityRef: "Entity Reference",
           thUserRef: "User Reference",
           aspTargets: "A qué puede apuntar",
-          entTargets: "A cualquier tipo de registro que la plataforma pueda resolver actualmente y que tengas permiso para ver.",
+          entTargets:
+            "A cualquier tipo de registro que la plataforma pueda resolver actualmente y que tengas permiso para ver.",
           usrTargets:
             "A exactamente un tipo de registro: una cuenta de usuario. No se acepta nada más, nunca, y esa lista la fija la plataforma y no la configuración.",
           aspConfig: "Qué configuras",
           entConfig:
             "Opcionalmente, un Target Entity Type en la definición. Dejarlo sin anclar es una opción real y permanentemente admitida, no una que quede a medias.",
-          usrConfig: "Nada en absoluto. No hay ningún selector de destino en el formulario de definición para este tipo, porque no hay ninguna decisión que tomar.",
+          usrConfig:
+            "Nada en absoluto. No hay ningún selector de destino en el formulario de definición para este tipo, porque no hay ninguna decisión que tomar.",
           aspPicker: "Qué ve la persona que lo rellena",
           entPicker:
             "En un campo anclado, una lista con búsqueda de ese tipo de registro. En un campo sin anclar, dos controles: primero el tipo de registro, luego el registro.",
@@ -668,9 +710,11 @@ export const es = {
           aspUse: "Recurre a él cuando",
           entUse:
             "La respuesta es un registro de negocio —un miembro del personal, una persona, una instalación— o cuando distintos registros bajo el mismo campo apuntan legítimamente a tipos de cosas diferentes.",
-          usrUse: "La respuesta es una cuenta: assigned to, reviewed by, account manager, approved by.",
+          usrUse:
+            "La respuesta es una cuenta: assigned to, reviewed by, account manager, approved by.",
           aspStorage: "Cómo se almacena la respuesta",
-          entStorage: "El tipo de registro, más la identidad propia de ese registro. Los dos, siempre juntos.",
+          entStorage:
+            "El tipo de registro, más la identidad propia de ese registro. Los dos, siempre juntos.",
           usrStorage:
             "De forma idéntica. El valor almacenado se describe a sí mismo exactamente de la misma manera, que es lo que mantiene legible una respuesta antigua después de que cambie la definición.",
           whichInfoTitle: "Por qué son dos tipos y no un ajuste",
@@ -805,7 +849,8 @@ export const es = {
           tenantWarnContent:
             "Una referencia es tan estricta como la propia pantalla de listado del destino, y no más. Si un tipo de registro es visible para un rol a través de su propia pantalla, se puede seleccionar a través de un selector para ese mismo rol; no se aplican por encima reglas más estrechas que «este espacio de trabajo entero». Así que no trates un selector de referencia como una forma de ocultar registros que el propio módulo destino ya muestra.",
 
-          exampleTitle: "Un ejemplo completo: un registro de administrador que apunta a un miembro del personal",
+          exampleTitle:
+            "Un ejemplo completo: un registro de administrador que apunta a un miembro del personal",
           exampleIntro:
             "El caso para el que se construyeron estos tipos. Tus administradores también son empleados, y quieres que cada registro de administrador indique qué registro de personal es la misma persona: registrado una vez, correctamente, y nunca vuelto a escribir.",
           ex1Title: "Decide qué tipo necesitas",
@@ -828,7 +873,8 @@ export const es = {
             "Inicia sesión como alguien que puede editar administradores pero no puede ver personal: el campo está presente, indica que el valor almacenado es correcto y que no puede ver el nombre, y no puede sobrescribirlo. Después elimina al miembro del personal: la referencia se borra sola, el registro de administrador conserva su fila de valor y su historial, y el campo se lee como vacío en lugar de como un puntero roto.",
 
           userExampleTitle: "Un ejemplo completo: un campo Reviewed by",
-          userExampleIntro: "El caso de User Reference, que es más breve precisamente porque no hay nada que configurar.",
+          userExampleIntro:
+            "El caso de User Reference, que es más breve precisamente porque no hay nada que configurar.",
           ux1Title: "Define el campo",
           ux1Content:
             "Añade un campo en el tipo de registro que quieras, pon la clave reviewed_by, la etiqueta Reviewed by, y el tipo de valor User Reference. No aparece ningún control de destino, y eso es correcto: la respuesta solo puede ser una cuenta de usuario.",
@@ -843,19 +889,14 @@ export const es = {
             "No hay forma, ni desde este formulario ni desde una solicitud que lo evite, de hacer que este campo apunte a un administrador, un grupo de usuarios o una fila de catálogo de la plataforma. El rechazo llega con un mensaje que indica qué está permitido, y se produce tanto al definir el campo como al guardar un valor.",
 
           notTitle: "Qué no son los campos de referencia",
-          notIntro: "Expectativas razonables que estos tipos deliberadamente no cumplen. Ninguna de ellas es un fallo que reportar.",
-          not1:
-            "No son una relación que el producto entienda. No se calcula nada a partir de una referencia, nada se dispara por ella, y ninguna pantalla gana una lista de «registros que apuntan a este» por el hecho de que exista una referencia.",
-          not2:
-            "No son una forma de ocultar registros. Un selector muestra exactamente lo que las propias pantallas del módulo destino muestran a esa misma persona. Si alguien no debería ver un tipo de registro, eso es un permiso sobre ese tipo de registro.",
-          not3:
-            "No almacenan un nombre, nunca, y no hay ningún ajuste para hacer que lo hagan. Un campo que deba sobrevivir a que se elimine el destino con el nombre antiguo todavía legible es un campo Text, y aceptar que se desactualizará es el precio de esa elección.",
-          not4:
-            "No son de muchos a muchos. Un campo de referencia contiene un puntero. No existe un tipo de referencia multivalor, y Multi-Select no puede apuntar a registros: sus respuestas son texto que tú redactaste.",
-          not5:
-            "No pueden apuntar a cualquier tipo de registro. Solo se pueden referenciar los tipos cuyo módulo propietario ofrece una lista con búsqueda y comprobación de permisos, y el resto se rechazan en lugar de ofrecerse en silencio.",
-          not6:
-            "No se incluyen en la exportación a hoja de cálculo de las definiciones. Ese archivo tiene dieciocho columnas y un tipo de destino anclado no es una de ellas, así que una definición exportada no registra a qué apunta su campo.",
+          notIntro:
+            "Expectativas razonables que estos tipos deliberadamente no cumplen. Ninguna de ellas es un fallo que reportar.",
+          not1: "No son una relación que el producto entienda. No se calcula nada a partir de una referencia, nada se dispara por ella, y ninguna pantalla gana una lista de «registros que apuntan a este» por el hecho de que exista una referencia.",
+          not2: "No son una forma de ocultar registros. Un selector muestra exactamente lo que las propias pantallas del módulo destino muestran a esa misma persona. Si alguien no debería ver un tipo de registro, eso es un permiso sobre ese tipo de registro.",
+          not3: "No almacenan un nombre, nunca, y no hay ningún ajuste para hacer que lo hagan. Un campo que deba sobrevivir a que se elimine el destino con el nombre antiguo todavía legible es un campo Text, y aceptar que se desactualizará es el precio de esa elección.",
+          not4: "No son de muchos a muchos. Un campo de referencia contiene un puntero. No existe un tipo de referencia multivalor, y Multi-Select no puede apuntar a registros: sus respuestas son texto que tú redactaste.",
+          not5: "No pueden apuntar a cualquier tipo de registro. Solo se pueden referenciar los tipos cuyo módulo propietario ofrece una lista con búsqueda y comprobación de permisos, y el resto se rechazan en lugar de ofrecerse en silencio.",
+          not6: "No se incluyen en la exportación a hoja de cálculo de las definiciones. Ese archivo tiene dieciocho columnas y un tipo de destino anclado no es una de ellas, así que una definición exportada no registra a qué apunta su campo.",
 
           nextTitle: "Dónde seguir",
           nextIntro:
@@ -889,9 +930,12 @@ export const es = {
           endpointsTitle: "Las tres búsquedas",
           endpointsIntro:
             "Las tres viven bajo una dirección propia en lugar de junto a las demás llamadas de campos personalizados, y eso es deliberado: leen datos de otros módulos, así que están protegidas por el permiso de visualización propio del tipo de registro destino y no por el permiso para administrar definiciones de campos. A alguien que administra campos personalizados pero no puede leer personal se le rechaza aquí, correctamente.",
-          endpointsTypes: "Lista los tipos de registro a los que quien llama puede apuntar en este momento.",
-          endpointsSearch: "Devuelve una página de registros seleccionables de un tipo, con filtro opcional.",
-          endpointsResolve: "Resuelve un puntero que quien llama ya tiene, de vuelta a su registro.",
+          endpointsTypes:
+            "Lista los tipos de registro a los que quien llama puede apuntar en este momento.",
+          endpointsSearch:
+            "Devuelve una página de registros seleccionables de un tipo, con filtro opcional.",
+          endpointsResolve:
+            "Resuelve un puntero que quien llama ya tiene, de vuelta a su registro.",
           endpointsPermission:
             "Así que no hay un único permiso que abra esta funcionalidad. Las tres exigen haber iniciado sesión como administrador, y cada una exige además el permiso de visualización del tipo de registro que aparece en la dirección: listar miembros del personal necesita el permiso de visualización de personal, listar cuentas de usuario necesita el de cuentas de usuario. La consecuencia esperable es que la misma persona puede ser admitida por una de estas búsquedas y rechazada por la siguiente, en la misma pantalla, y las dos respuestas son correctas.",
 
@@ -928,7 +972,8 @@ export const es = {
           thWhatItMeans: "Qué significa",
           thWhoFixes: "De quién es el problema",
           ansOk: "Éxito",
-          ansOkMeans: "El registro se resolvió. Obtienes su nombre actual, su segunda línea opcional, y si está inactivo.",
+          ansOkMeans:
+            "El registro se resolvió. Obtienes su nombre actual, su segunda línea opcional, y si está inactivo.",
           ansOkFixes: "De nadie: es el caso normal.",
           ansForbidden: "No permitido",
           ansForbiddenMeans:
@@ -938,7 +983,8 @@ export const es = {
           ansNotFound: "No encontrado",
           ansNotFoundMeans:
             "El registro no se resuelve. Se eliminó, o pertenece a un espacio de trabajo que no puedes ver; fusionado en una sola respuesta a propósito para que esta búsqueda no se pueda usar para averiguar qué existe en otro sitio.",
-          ansNotFoundFixes: "De quien sea propietario de los datos. Elige otro registro, o borra el campo.",
+          ansNotFoundFixes:
+            "De quien sea propietario de los datos. Elige otro registro, o borra el campo.",
           ansUnknownType: "Tipo de registro desconocido",
           ansUnknownTypeMeans:
             "El tipo de registro indicado no está registrado en absoluto. Esto describe la instalación, no ningún registro; suele significar que un campo se ancló a un tipo de registro que desde entonces se ha retirado.",
@@ -950,7 +996,8 @@ export const es = {
           ansInvalidId: "Identidad no válida",
           ansInvalidIdMeans:
             "La identidad enviada no se pudo leer en absoluto. O se alteró en algún punto del trayecto, o es un valor almacenado anterior a un cambio y ya no se puede interpretar.",
-          ansInvalidIdFixes: "De quien esté rellenando el registro: vuelve a elegir el registro. Este caso se reemplaza, nunca se vuelve a anclar.",
+          ansInvalidIdFixes:
+            "De quien esté rellenando el registro: vuelve a elegir el registro. Este caso se reemplaza, nunca se vuelve a anclar.",
           statusesInfoTitle: "Lo que las respuestas deliberadamente no te dicen",
           statusesInfoContent:
             "«Eliminado» y «en un espacio de trabajo que no puedes ver» son una única respuesta y siempre lo serán. Separarlas permitiría a alguien probar identidades una a una para averiguar qué existe en otro espacio de trabajo. Lo demás es distinguible, porque describe tu propio acceso o esta instalación, ninguno de los cuales es un secreto para ti.",
@@ -964,7 +1011,8 @@ export const es = {
           stNoPermission: "No tienes permiso para ver ese tipo de registro",
           scrNoPermission:
             "El campo indica que el valor almacenado es correcto pero que su nombre no se te puede mostrar, y se vuelve de solo lectura: legible, sin selector. Deliberadamente no se deja en blanco, porque dejarlo en blanco invitaría a alguien sin visibilidad sobre el destino a sobrescribir una referencia perfectamente válida.",
-          doNoPermission: "Nada respecto a los datos. Pide a quien administre los roles acceso de visualización a ese tipo de registro.",
+          doNoPermission:
+            "Nada respecto a los datos. Pide a quien administre los roles acceso de visualización a ese tipo de registro.",
           stGone: "El registro referenciado ya no existe",
           scrGone:
             "El campo indica que el registro no se encuentra, ofrece los dos motivos posibles —eliminado, o en una organización que no puedes ver— y no afirma ninguno de los dos. Sigue siendo editable.",
@@ -1041,13 +1089,15 @@ export const es = {
             "La mayoría de las eliminaciones del producto ocultan el registro en lugar de eliminarlo físicamente. Un registro oculto ya es inalcanzable a través de las propias pantallas del módulo propietario, así que una referencia lo trata correctamente como desaparecido: un registro que un administrador no puede ver no es un registro al que una referencia pueda resolver.",
 
           pickerTitle: "Cómo se comporta el selector",
-          pickerIntro: "Detalles del propio control que resulta más fácil leer una vez que deducir a partir de su comportamiento.",
+          pickerIntro:
+            "Detalles del propio control que resulta más fácil leer una vez que deducir a partir de su comportamiento.",
           thBehaviour: "Comportamiento",
           thWhy: "Por qué es así",
           pkLazy: "No se obtiene nada hasta que abres el control.",
           pkLazyWhy:
             "Un formulario de registro puede llevar varios campos de referencia. Uno que nadie toca no debería consultar en absoluto a otro módulo, y las respuestas se guardan en caché después, así que volver a abrir el control no cuesta nada.",
-          pkTwoControls: "Un campo sin anclar muestra dos controles, y ninguno le roba el foco al otro.",
+          pkTwoControls:
+            "Un campo sin anclar muestra dos controles, y ninguno le roba el foco al otro.",
           pkTwoControlsWhy:
             "Elegir un tipo de registro te deja en ese control, con el control del registro ya disponible un paso más allá. Abrir automáticamente el selector de registro le quitaría el foco a alguien que todavía está leyendo lo que acaba de elegir.",
           pkAccumulate: "Las páginas siguientes se añaden a la lista en lugar de reemplazarla.",
@@ -1062,7 +1112,8 @@ export const es = {
           pkNoRetry: "Dos de los estados de fallo no ofrecen ningún control Try again.",
           pkNoRetryWhy:
             "Un rechazo por permisos y un módulo no disponible se rechazan de forma idéntica siempre. Un botón que invitara a insistir sería peor que ningún botón. Solo un fallo de transporte genuino recibe un reintento, porque es el único que un reintento soluciona.",
-          pkViewMode: "En modo de solo consulta el control está deshabilitado y no simplemente inactivo al clic.",
+          pkViewMode:
+            "En modo de solo consulta el control está deshabilitado y no simplemente inactivo al clic.",
           pkViewModeWhy:
             "Un selector de referencia es un selector, así que sigue la misma convención que sigue cualquier otro selector de estos formularios. Su propio estado de solo lectura, usado cuando no puedes ver el nombre del destino, es otra cosa distinta y se ve diferente.",
           pkNoLabelTrick: "El control se nombra a sí mismo para las tecnologías de asistencia.",
@@ -1089,33 +1140,39 @@ export const es = {
             "Vuelve a elegir cuando el registro realmente ha desaparecido o el valor almacenado es incorrecto. Borra solo cuando el campo deba quedar vacío. Nunca borres un campo que informó de un fallo pasajero: esa es la única acción que convierte una interrupción ajena en una pérdida de datos propia.",
 
           limitsTitle: "Límites y carencias deliberadas",
-          limitsIntro: "Indicados para que nadie se pase una tarde buscando un ajuste que no existe.",
+          limitsIntro:
+            "Indicados para que nadie se pase una tarde buscando un ajuste que no existe.",
           thLimit: "Límite",
           thDetail: "Detalle",
           limPageSize: "Registros por página en el selector",
           limPageSizeDetail:
             "Veinte por defecto. Una solicitud de más de cien se limita en lugar de rechazarse, y el límite se aplica dos veces al entrar.",
           limDebounce: "Retraso entre escribir y buscar",
-          limDebounceDetail: "Una pausa breve y fija, la misma que usa cualquier selector del producto respaldado por el servidor. No configurable.",
+          limDebounceDetail:
+            "Una pausa breve y fija, la misma que usa cualquier selector del producto respaldado por el servidor. No configurable.",
           limNoName: "Sin nombre para mostrar almacenado",
           limNoNameDetail:
             "No hay ningún ajuste en ningún sitio para guardar una instantánea de un nombre junto a un puntero, y no lo habrá: le entregaría un nombre protegido por un permiso a cualquiera que tenga otro.",
           limNoBacklinks: "Sin vista de «qué apunta a este registro»",
-          limNoBacklinksDetail: "Nada lista las referencias que apuntan a un registro dado. Eliminar un registro no avisa de cuántos punteros está a punto de borrar.",
+          limNoBacklinksDetail:
+            "Nada lista las referencias que apuntan a un registro dado. Eliminar un registro no avisa de cuántos punteros está a punto de borrar.",
           limNoExport: "No aparece en la exportación de definiciones",
           limNoExportDetail:
             "La hoja de cálculo de definiciones de dieciocho columnas no tiene ninguna columna para un tipo de destino anclado, así que una definición exportada no registra a qué apunta su campo.",
           limNoMulti: "Un puntero por campo",
-          limNoMultiDetail: "No existe un tipo de referencia multivalor. Dos respuestas significan dos campos.",
+          limNoMultiDetail:
+            "No existe un tipo de referencia multivalor. Dos respuestas significan dos campos.",
           limNoTypeFilter: "El selector no se puede acotar con nada más que texto",
           limNoTypeFilterDetail:
             "Qué columnas coinciden con el filtro de texto libre es decisión del módulo propietario, y no hay filtros adicionales: ni «solo activos», ni filtro por grupo.",
-          limNoAdminTarget: "User Reference sigue rechazando a un administrador, aunque Entity Reference ya no lo hace",
+          limNoAdminTarget:
+            "User Reference sigue rechazando a un administrador, aunque Entity Reference ya no lo hace",
           limNoAdminTargetDetail:
             "Ni desde el formulario de definición ni desde una solicitud que lo evite. El destino permitido de User Reference es exactamente una cosa, identity.user, por diseño original: el propio registro de un administrador es un tipo de fila distinto, y apuntar un campo User Reference a uno se rechaza sin importar por qué módulo haya llegado la solicitud. Entity Reference ofrece administradores como destino desde que una versión posterior le añadió un proveedor de búsqueda para ellos; este límite es solo de User Reference.",
 
           nextTitle: "Dónde seguir",
-          nextIntro: "Los conceptos detrás de estas búsquedas están en la página Campos de Referencia.",
+          nextIntro:
+            "Los conceptos detrás de estas búsquedas están en la página Campos de Referencia.",
           thPage: "Página",
           thCovers: "Qué cubre",
           pageReferences: "Campos de Referencia",
@@ -1125,7 +1182,8 @@ export const es = {
           coversSecurity:
             "El mecanismo independiente para ocultar un campo entero a un rol o grupo de usuarios, que es algo distinto de no tener permiso para leer el destino de una referencia.",
           pageLimits: "Límites y Comportamientos",
-          coversLimits: "Cada límite fijo y cada limitación deliberada de toda la funcionalidad, referencias incluidas.",
+          coversLimits:
+            "Cada límite fijo y cada limitación deliberada de toda la funcionalidad, referencias incluidas.",
         },
 
         // ═══════════════════════════════════════════════════
@@ -1142,12 +1200,16 @@ export const es = {
             "El tipo de registro y el tipo de valor son ambos permanentes una vez guardados, y también lo es la clave. Lo demás se puede editar después. Si no estás seguro de qué tipo de valor encaja, lee antes la página Tipos de Valor: volver a crear un campo significa perder la totalidad de las respuestas ya almacenadas contra él.",
 
           whereTitle: "Dónde está la pantalla",
-          whereIntro: "Los campos personalizados se administran desde cuatro pantallas relacionadas.",
+          whereIntro:
+            "Los campos personalizados se administran desde cuatro pantallas relacionadas.",
           where1:
             "La propia pantalla Custom Fields, en el espacio de trabajo de Administration, es donde se crean, editan, desactivan y eliminan las definiciones, y donde se asigna un validador.",
-          where2: "La pantalla Field Groups, a la que se llega desde un enlace en el encabezado de esa página, agrupa los campos de un tipo de registro bajo encabezados.",
-          where3: "Las pantallas Value Types y Entity Types, a las que también se llega desde ese encabezado, son referencias de solo lectura. Por diseño no tienen entrada propia en el menú lateral.",
-          where4: "El enlace Add custom field al final de la sección Custom Fields de un formulario de registro abre el mismo formulario de definición en un panel lateral, sin salir del registro.",
+          where2:
+            "La pantalla Field Groups, a la que se llega desde un enlace en el encabezado de esa página, agrupa los campos de un tipo de registro bajo encabezados.",
+          where3:
+            "Las pantallas Value Types y Entity Types, a las que también se llega desde ese encabezado, son referencias de solo lectura. Por diseño no tienen entrada propia en el menú lateral.",
+          where4:
+            "El enlace Add custom field al final de la sección Custom Fields de un formulario de registro abre el mismo formulario de definición en un panel lateral, sin salir del registro.",
 
           controlsTitle: "El formulario, control por control",
           controlsIntro:
@@ -1157,12 +1219,15 @@ export const es = {
           thWhenShown: "Cuándo aparece",
           ctlEntityTypeDoes:
             "Elige el tipo de registro al que pertenece el campo. Los tipos de registro sin pantalla propia en esta aplicación se listan después de los demás y se marcan como API only: un campo en uno de esos tipos se puede alcanzar a través de la API pero no tiene dónde representarse.",
-          ctlEntityTypeWhen: "Al crear. Fijo y no editable cuando el formulario se abre desde dentro de un registro, y permanente una vez guardado.",
+          ctlEntityTypeWhen:
+            "Al crear. Fijo y no editable cuando el formulario se abre desde dentro de un registro, y permanente una vez guardado.",
           ctlKeyDoes:
             "Fija el nombre técnico usado en los mensajes de error, en las exportaciones y en la API. En minúsculas, debe empezar por una letra, y solo puede contener letras, dígitos y guiones bajos.",
           ctlKeyWhen: "Solo al crear. Permanente una vez guardado.",
-          ctlLabelEnDoes: "La etiqueta en inglés mostrada encima del campo en cada formulario. Obligatoria.",
-          ctlLabelArDoes: "La etiqueta en árabe. Opcional: un lector árabe ve la etiqueta en inglés cuando esta está en blanco.",
+          ctlLabelEnDoes:
+            "La etiqueta en inglés mostrada encima del campo en cada formulario. Obligatoria.",
+          ctlLabelArDoes:
+            "La etiqueta en árabe. Opcional: un lector árabe ve la etiqueta en inglés cuando esta está en blanco.",
           ctlAlways: "Siempre.",
           ctlValueTypeDoes:
             "Elige uno de los veintidós tipos, decidiendo el control, la validación y el almacenamiento. Elegirlo es lo que revela el cuadro Options, el desplegable Validator o el desplegable Target Entity Type.",
@@ -1170,50 +1235,69 @@ export const es = {
           ctlPlaceholderEnDoes:
             "Sugerencia opcional, en gris, mostrada dentro del campo vacío, en inglés; por ejemplo, «e.g. Enter your shirt size».",
           ctlPlaceholderArDoes: "La misma sugerencia en árabe.",
-          ctlPlaceholderWhen: "Solo para los tipos de valor cuyo control admite algún texto de sugerencia. Boolean, Rating, Color, Date y los demás tipos basados en selector no tienen ninguno.",
-          ctlOptionsDoes: "Contiene la lista de respuestas permitidas, una fila por opción, con una etiqueta en inglés y otra en árabe para cada una. Ver la página Opciones.",
+          ctlPlaceholderWhen:
+            "Solo para los tipos de valor cuyo control admite algún texto de sugerencia. Boolean, Rating, Color, Date y los demás tipos basados en selector no tienen ninguno.",
+          ctlOptionsDoes:
+            "Contiene la lista de respuestas permitidas, una fila por opción, con una etiqueta en inglés y otra en árabe para cada una. Ver la página Opciones.",
           ctlOptionsWhen: "Solo cuando el tipo de valor es Select o MultiSelect.",
-          ctlValidatorDoes: "Asigna una de las 13 comprobaciones de formato integradas. Por defecto no hay validador. Ver la página Validadores.",
-          ctlValidatorWhen: "Solo cuando el tipo de valor es Text. Nunca se muestra para los otros veintiún tipos.",
-          ctlValidatorParamDoes: "Aporta el parámetro que necesita una comprobación parametrizada: un desplegable de país para Postal Code, texto libre para las otras cinco.",
+          ctlValidatorDoes:
+            "Asigna una de las 13 comprobaciones de formato integradas. Por defecto no hay validador. Ver la página Validadores.",
+          ctlValidatorWhen:
+            "Solo cuando el tipo de valor es Text. Nunca se muestra para los otros veintiún tipos.",
+          ctlValidatorParamDoes:
+            "Aporta el parámetro que necesita una comprobación parametrizada: un desplegable de país para Postal Code, texto libre para las otras cinco.",
           ctlValidatorParamWhen: "Solo una vez elegido uno de los seis validadores parametrizados.",
           ctlReferenceTargetDoes:
             "Ancla el campo a un tipo de registro, de modo que cada valor debe apuntar a un registro de ese tipo. Su primera opción, Not pinned — any allowed type, es una elección real y permanente y no un simple relleno: déjala así y cada valor indicará en su lugar su propio tipo de registro. Es la única forma de quitar un anclaje, así que sigue disponible incluso cuando la lista de tipos está vacía o falla al cargar, y el control nunca se deshabilita.",
           ctlReferenceTargetWhen:
             "Solo cuando el tipo de valor es Entity Reference. Un campo User Reference nunca lo muestra, porque su único destino legal lo fija la plataforma y no hay nada que elegir. A diferencia de los tres ajustes permanentes, este se puede cambiar más adelante; lee la advertencia del formulario de edición antes de hacerlo.",
-          ctlFieldGroupDoes: "Coloca el campo bajo uno de los grupos de campos del tipo de registro, o bajo ningún grupo. Cambiar el tipo de registro borra la elección.",
+          ctlFieldGroupDoes:
+            "Coloca el campo bajo uno de los grupos de campos del tipo de registro, o bajo ningún grupo. Cambiar el tipo de registro borra la elección.",
           ctlFieldGroupWhen:
             "Solo cuando tienes el permiso de visualización de grupos de campos y —en la pantalla completa— una vez elegido un tipo de registro; el panel abierto desde dentro de un registro lo muestra en cuanto tienes el permiso, porque ya conoce el tipo de registro. Se muestra en ambos casos incluso cuando el tipo de registro elegido todavía no tiene grupos, ofreciendo solo la entrada de ningún grupo hasta que exista alguno.",
-          ctlRequiredDoes: "Rechaza un guardado que deje el campo en blanco. Un valor hecho solo de espacios cuenta como en blanco para cualquier tipo de valor.",
-          ctlSortOrderDoes: "Sitúa el campo respecto a los demás campos personalizados del formulario. Los números más bajos van primero.",
+          ctlRequiredDoes:
+            "Rechaza un guardado que deje el campo en blanco. Un valor hecho solo de espacios cuenta como en blanco para cualquier tipo de valor.",
+          ctlSortOrderDoes:
+            "Sitúa el campo respecto a los demás campos personalizados del formulario. Los números más bajos van primero.",
           ctlSensitivityDoes:
             "Etiqueta cómo debe tratarse el contenido del campo: Unclassified, Internal, Confidential o Restricted. Por defecto es Unclassified. Es una etiqueta para la elaboración de informes y el tratamiento en las exportaciones; no controla quién puede ver el campo.",
           ctlExportableDoes:
             "Marca si los valores de este campo deben incluirse en las exportaciones. Activado por defecto. Es una cuestión de orden y no un permiso —cualquiera que ya pueda leer el campo puede seguir leyendo sus valores en otro sitio— y no elimina el campo de la exportación de definiciones, que lo lista en cualquier caso.",
-          ctlActiveDoes: "Si el campo se sigue ofreciendo en los formularios. Desactivarlo retira el campo sin tocar las respuestas ya almacenadas contra él.",
+          ctlActiveDoes:
+            "Si el campo se sigue ofreciendo en los formularios. Desactivarlo retira el campo sin tocar las respuestas ya almacenadas contra él.",
           ctlActiveWhen: "Al editar. Un campo recién creado está activo.",
           ctlGlobalDoes:
             "Crea el campo para cada espacio de trabajo de la plataforma en lugar de para uno solo. Los campos globales se saltan la cuota por espacio de trabajo, y después solo un administrador de la plataforma puede editarlos o eliminarlos.",
-          ctlGlobalWhen: "Solo para un Super Admin de la plataforma que trabaje sin ningún espacio de trabajo seleccionado. Solo al crear: el alcance de un campo es permanente.",
+          ctlGlobalWhen:
+            "Solo para un Super Admin de la plataforma que trabaje sin ningún espacio de trabajo seleccionado. Solo al crear: el alcance de un campo es permanente.",
 
           stepsTitle: "Paso a paso",
-          stepsIntro: "El flujo completo, para el caso habitual de un campo con alcance de espacio de trabajo.",
+          stepsIntro:
+            "El flujo completo, para el caso habitual de un campo con alcance de espacio de trabajo.",
           s1Title: "Abre la pantalla Custom Fields y elige Add",
-          s1Content: "La pantalla lista cada campo que tu espacio de trabajo puede ver, incluidos los campos globales heredados de la plataforma. Las filas globales llevan una insignia y no ofrecen controles de edición ni eliminación.",
+          s1Content:
+            "La pantalla lista cada campo que tu espacio de trabajo puede ver, incluidos los campos globales heredados de la plataforma. Las filas globales llevan una insignia y no ofrecen controles de edición ni eliminación.",
           s2Title: "Elige el tipo de registro",
-          s2Content: "Elige el tipo de registro al que pertenece el campo. Si tu tipo de registro está marcado como API only, detente y reconsidéralo: el campo se guardará, pero nada en la interfaz lo mostrará.",
+          s2Content:
+            "Elige el tipo de registro al que pertenece el campo. Si tu tipo de registro está marcado como API only, detente y reconsidéralo: el campo se guardará, pero nada en la interfaz lo mostrará.",
           s3Title: "Elige el tipo de valor",
-          s3Content: "Elige entre los veintidós. Esta es la decisión que no se puede deshacer después, y también es lo que hace que aparezcan más abajo en el formulario el cuadro Options, el desplegable Validator o el desplegable Target Entity Type.",
+          s3Content:
+            "Elige entre los veintidós. Esta es la decisión que no se puede deshacer después, y también es lo que hace que aparezcan más abajo en el formulario el cuadro Options, el desplegable Validator o el desplegable Target Entity Type.",
           s4Title: "Ponle nombre al campo",
-          s4Content: "Introduce la etiqueta en inglés, una etiqueta en árabe si tienes una, y la clave. La clave es permanente, así que elige algo que sigas reconociendo en un mensaje de error dentro de un año.",
+          s4Content:
+            "Introduce la etiqueta en inglés, una etiqueta en árabe si tienes una, y la clave. La clave es permanente, así que elige algo que sigas reconociendo en un mensaje de error dentro de un año.",
           s5Title: "Rellena los ajustes propios del tipo",
-          s5Content: "Para Select y MultiSelect, añade las opciones. Para Text, elige un validador si quieres uno y aporta su parámetro. Para Entity Reference, decide si anclar un Target Entity Type. Añade textos de sugerencia si el control los admite.",
+          s5Content:
+            "Para Select y MultiSelect, añade las opciones. Para Text, elige un validador si quieres uno y aporta su parámetro. Para Entity Reference, decide si anclar un Target Entity Type. Añade textos de sugerencia si el control los admite.",
           s6Title: "Ajusta el comportamiento y la posición",
-          s6Content: "Activa o desactiva Required, ajusta el Sort Order, y elige un Field Group si los usas. Un grupo solo se ofrece si pertenece al tipo de registro que elegiste.",
+          s6Content:
+            "Activa o desactiva Required, ajusta el Sort Order, y elige un Field Group si los usas. Un grupo solo se ofrece si pertenece al tipo de registro que elegiste.",
           s7Title: "Ajusta la clasificación",
-          s7Content: "Sensitivity es por defecto Unclassified e Include in exports está activado por defecto. Deja ambos como están salvo que tengas un motivo; el valor por defecto de la exportación existe en particular para que ningún campo falte en silencio de una hoja de cálculo.",
+          s7Content:
+            "Sensitivity es por defecto Unclassified e Include in exports está activado por defecto. Deja ambos como están salvo que tengas un motivo; el valor por defecto de la exportación existe en particular para que ningún campo falte en silencio de una hoja de cálculo.",
           s8Title: "Guarda, y lee el mensaje si se rechaza",
-          s8Content: "Un rechazo siempre es específico sobre qué está mal. La tabla más abajo de esta página lista cada rechazo con el que te puedes encontrar y qué significa.",
+          s8Content:
+            "Un rechazo siempre es específico sobre qué está mal. La tabla más abajo de esta página lista cada rechazo con el que te puedes encontrar y qué significa.",
 
           keyTitle: "Elegir una clave",
           keyIntro:
@@ -1221,7 +1305,8 @@ export const es = {
           thKeyExample: "Clave",
           thOutcome: "Qué ocurre",
           keyOk: "Aceptada. Esta es la forma a la que hay que aspirar.",
-          keyOkDigits: "Aceptada. Los dígitos y los guiones bajos están bien después del primer carácter.",
+          keyOkDigits:
+            "Aceptada. Los dígitos y los guiones bajos están bien después del primer carácter.",
           keyUpper: "Rechazada. Las claves van en minúsculas.",
           keyLeadingDigit: "Rechazada. Una clave debe empezar por una letra.",
           keyHyphen: "Rechazada. Los guiones no forman parte de la gramática; usa un guion bajo.",
@@ -1243,21 +1328,26 @@ export const es = {
           i2bContent:
             "Para Select o MultiSelect, este panel —y solo este panel, no el propio formulario de la pantalla completa— ofrece un selector de Option Set junto al editor manual de Options. Elegir uno lo vincula al campo en el mismo momento en que se crea, en el mismo paso: las opciones manuales ya escritas arriba se conservan, combinadas con las del conjunto en lugar de sustituidas por él. Solo se muestra cuando tienes tanto el permiso de visualización de conjuntos de opciones como el de vinculación.",
           i3Title: "Rellena y guarda",
-          i3Content: "El panel se cierra y el campo nuevo aparece de inmediato en el formulario del registro, que sigue abierto, vacío y listo para rellenar.",
+          i3Content:
+            "El panel se cierra y el campo nuevo aparece de inmediato en el formulario del registro, que sigue abierto, vacío y listo para rellenar.",
           i4Title: "Continúa con el registro",
-          i4Content: "Rellena el nuevo campo junto con lo demás y guarda el registro una sola vez. La definición y la respuesta son dos guardados distintos, en ese orden.",
+          i4Content:
+            "Rellena el nuevo campo junto con lo demás y guarda el registro una sola vez. La definición y la respuesta son dos guardados distintos, en ese orden.",
           inlineInfoTitle: "Si el enlace no está",
           inlineInfoContent:
             "El enlace Add custom field solo aparece para quien tiene el permiso de creación. Sin él, la sección Custom Fields sigue funcionando con normalidad para rellenar los campos ya existentes; solo falta el atajo para definir uno nuevo. Y en un tipo de registro sin ningún campo personalizado definido todavía, la sección Custom Fields no aparece en absoluto.",
 
           rejectTitle: "Qué se rechaza, y por qué",
-          rejectIntro: "Cada rechazo al definir un campo lleva un mensaje concreto. Estos son los que realmente puedes encontrarte desde el formulario o desde una solicitud que lo evite.",
+          rejectIntro:
+            "Cada rechazo al definir un campo lleva un mensaje concreto. Estos son los que realmente puedes encontrarte desde el formulario o desde una solicitud que lo evite.",
           thSituation: "Situación",
           thWhatYouSee: "Qué ves",
           rejDuplicateKey: "Una clave que ya existe para ese tipo de registro",
-          rejDuplicateKeyMsg: "Rechazada por ya existir. Las claves son únicas por tipo de registro dentro de un espacio de trabajo; la misma clave en otro tipo de registro es válida.",
+          rejDuplicateKeyMsg:
+            "Rechazada por ya existir. Las claves son únicas por tipo de registro dentro de un espacio de trabajo; la misma clave en otro tipo de registro es válida.",
           rejUnknownEntityType: "Un tipo de registro que no está registrado",
-          rejUnknownEntityTypeMsg: "Rechazada, indicando la clave: no es un tipo de entidad registrado. Solo se alcanza saltándose el desplegable.",
+          rejUnknownEntityTypeMsg:
+            "Rechazada, indicando la clave: no es un tipo de entidad registrado. Solo se alcanza saltándose el desplegable.",
           rejNoOptions: "Un campo Select o MultiSelect sin opciones",
           rejNoOptionsMsg: "Rechazada: las opciones son obligatorias para los campos Select.",
           rejOptionsOnOther: "Opciones aportadas para un tipo que no las admite",
@@ -1268,32 +1358,42 @@ export const es = {
           rejValidatorNoParam: "Un validador parametrizado con su parámetro en blanco",
           rejValidatorNoParamMsg: "Rechazada, indicando el validador: necesita un parámetro.",
           rejValidatorExtraParam: "Un parámetro aportado para un validador que no admite ninguno",
-          rejValidatorExtraParamMsg: "Rechazada, indicando el validador: no admite ningún parámetro.",
-          rejRequiredRestricted: "Marcar un campo como obligatorio mientras un rol o grupo lo restringe",
+          rejValidatorExtraParamMsg:
+            "Rechazada, indicando el validador: no admite ningún parámetro.",
+          rejRequiredRestricted:
+            "Marcar un campo como obligatorio mientras un rol o grupo lo restringe",
           rejRequiredRestrictedMsg:
             "Rechazada, indicando el campo: no se puede hacer obligatorio mientras está restringido. Elimina antes la restricción, o deja el campo opcional.",
           rejGroupWrongType: "Un grupo de campos que pertenece a otro tipo de registro",
-          rejGroupWrongTypeMsg: "Rechazada: el grupo de campos elegido pertenece a un tipo de entidad distinto. Cambiar el tipo de registro en el formulario borra la elección de grupo exactamente por este motivo.",
+          rejGroupWrongTypeMsg:
+            "Rechazada: el grupo de campos elegido pertenece a un tipo de entidad distinto. Cambiar el tipo de registro en el formulario borra la elección de grupo exactamente por este motivo.",
           rejReferenceTargetUnknown: "Anclar a un destino que no es un tipo de registro registrado",
-          rejReferenceTargetUnknownMsg: "Rechazada, indicando el identificador: no es un tipo de entidad registrado. Solo se alcanza saltándose el desplegable, que no ofrece nada sin registrar.",
-          rejReferenceTargetNotAllowed: "Anclar un campo User Reference a cualquier cosa que no sea una cuenta de usuario",
+          rejReferenceTargetUnknownMsg:
+            "Rechazada, indicando el identificador: no es un tipo de entidad registrado. Solo se alcanza saltándose el desplegable, que no ofrece nada sin registrar.",
+          rejReferenceTargetNotAllowed:
+            "Anclar un campo User Reference a cualquier cosa que no sea una cuenta de usuario",
           rejReferenceTargetNotAllowedMsg:
             "Rechazada, indicando el tipo de valor y listando qué sí permite. El desplegable no se muestra en absoluto para ese tipo, así que esto es el servidor rechazando lo que el formulario ya se negó a ofrecer.",
           rejGlobalNotSuperAdmin: "Crear un campo global sin ser un Super Admin de la plataforma",
-          rejGlobalNotSuperAdminMsg: "Rechazada: solo un Super Admin de la plataforma puede crear un campo personalizado global.",
+          rejGlobalNotSuperAdminMsg:
+            "Rechazada: solo un Super Admin de la plataforma puede crear un campo personalizado global.",
           rejQuota: "Superar el límite de campos de tu plan",
-          rejQuotaMsg: "Rechazada por cuota. La edición Free no permite ningún campo; el resto de planes tienen su propio máximo por espacio de trabajo. Los campos globales de la plataforma no cuentan para él.",
+          rejQuotaMsg:
+            "Rechazada por cuota. La edición Free no permite ningún campo; el resto de planes tienen su propio máximo por espacio de trabajo. Los campos globales de la plataforma no cuentan para él.",
 
           afterTitle: "Después de guardar: qué se puede seguir cambiando",
-          afterIntro: "Tres cosas son permanentes; lo demás no. Merece la pena saber cuáles son antes de guardar y no después.",
+          afterIntro:
+            "Tres cosas son permanentes; lo demás no. Merece la pena saber cuáles son antes de guardar y no después.",
           editableTitle: "Editable en cualquier momento",
           editable1: "Las dos etiquetas, y los dos textos de sugerencia",
           editable2: "Required, salvo que un rol o grupo de usuarios restrinja el campo",
           editable3: "El Sort Order, y el Field Group",
           editable4: "Sensitivity, e Include in exports",
           editable5: "Active, que retira el campo sin tocar sus respuestas almacenadas",
-          editable6: "La lista de opciones, aunque renombrar una opción cambia lo que muestran los registros existentes",
-          editable7: "El validador y su parámetro, aunque esto nunca vuelve a comprobar las respuestas ya guardadas",
+          editable6:
+            "La lista de opciones, aunque renombrar una opción cambia lo que muestran los registros existentes",
+          editable7:
+            "El validador y su parámetro, aunque esto nunca vuelve a comprobar las respuestas ya guardadas",
           editable8:
             "El Target Entity Type de un campo Entity Reference: las respuestas ya almacenadas siguen funcionando, y el siguiente guardado de una del tipo antiguo se rechaza hasta que se vuelva a elegir",
           permanentTitle: "Permanente una vez guardado",
@@ -1301,14 +1401,19 @@ export const es = {
           permanent2: "La clave",
           permanent3: "El tipo de valor",
           permanent4: "El alcance: de espacio de trabajo o global",
-          afterOutro: "No existe ninguna vía de migración para ninguno de los cuatro ajustes permanentes. Equivocarse en uno significa eliminar el campo y empezar de nuevo, lo que destruye las respuestas ya registradas contra él.",
+          afterOutro:
+            "No existe ninguna vía de migración para ninguno de los cuatro ajustes permanentes. Equivocarse en uno significa eliminar el campo y empezar de nuevo, lo que destruye las respuestas ya registradas contra él.",
 
           verifyTitle: "Comprobar que ha funcionado",
           verifyIntro: "Cuatro comprobaciones rápidas que detectan casi cualquier error.",
-          verify1: "Abre un registro de ese tipo. La sección Custom Fields debería mostrar tu campo nuevo, vacío, con la etiqueta y el texto de sugerencia que fijaste.",
-          verify2: "Escribe un valor y guarda. Que no haya ningún error significa que el valor se aceptó; vuelve a abrir el registro y confirma que sigue ahí.",
-          verify3: "Borra el valor y guarda de nuevo. En un campo opcional esto debería funcionar y dejar el campo genuinamente vacío, no mostrando el valor anterior.",
-          verify4: "Comprueba la lista de registros. Tu campo también debería ser ahí una columna adicional, mostrando la respuesta de cada registro a la vez.",
+          verify1:
+            "Abre un registro de ese tipo. La sección Custom Fields debería mostrar tu campo nuevo, vacío, con la etiqueta y el texto de sugerencia que fijaste.",
+          verify2:
+            "Escribe un valor y guarda. Que no haya ningún error significa que el valor se aceptó; vuelve a abrir el registro y confirma que sigue ahí.",
+          verify3:
+            "Borra el valor y guarda de nuevo. En un campo opcional esto debería funcionar y dejar el campo genuinamente vacío, no mostrando el valor anterior.",
+          verify4:
+            "Comprueba la lista de registros. Tu campo también debería ser ahí una columna adicional, mostrando la respuesta de cada registro a la vez.",
           verifyWarnTitle: "Si el campo no aparece",
           verifyWarnContent:
             "Comprueba primero el tipo de registro: un campo definido contra un tipo de registro marcado como API only no tiene dónde representarse. Después comprueba Active. Después comprueba si un rol o grupo de usuarios restringe la clave del campo, porque un campo restringido se omite por completo en lugar de mostrarse en blanco, y se ve exactamente igual que un campo que nunca se definió.",
@@ -1328,15 +1433,18 @@ export const es = {
             "Toda la funcionalidad está controlada por un conjunto de permisos independiente de las definiciones de campo, incluido uno propio para reordenar. Un rol que ya tiene cada uno de los permisos de campos personalizados no obtiene estos automáticamente. Sin ellos no hay ningún enlace Manage field groups ni ningún selector Field Group en el formulario de definición; no hay nada roto, simplemente la funcionalidad no está concedida. Editar un campo que ya tiene un grupo y guardarlo conserva ese grupo en lugar de borrarlo.",
 
           whatTitle: "De qué se compone un grupo",
-          whatIntro: "Los grupos pertenecen a exactamente un tipo de registro, así que la pantalla no muestra nada hasta que eliges uno, y el estado vacío lo indica en lugar de parecer roto.",
+          whatIntro:
+            "Los grupos pertenecen a exactamente un tipo de registro, así que la pantalla no muestra nada hasta que eliges uno, y el estado vacío lo indica en lugar de parecer roto.",
           thPart: "Ajuste",
           thWhat: "Qué es",
           thChange: "¿Se puede cambiar después?",
           partEntityType: "El tipo de registro cuyos campos puede agrupar este grupo.",
-          partStableKey: "Un nombre técnico para el grupo, único dentro del tipo de registro. En minúsculas, empieza por una letra, y solo admite letras, dígitos y guiones bajos.",
+          partStableKey:
+            "Un nombre técnico para el grupo, único dentro del tipo de registro. En minúsculas, empieza por una letra, y solo admite letras, dígitos y guiones bajos.",
           partLabelEn: "El encabezado en inglés mostrado encima de los campos del grupo.",
           partLabelAr: "El encabezado en árabe.",
-          partSortOrder: "Dónde se sitúa el grupo respecto a los demás grupos del tipo de registro.",
+          partSortOrder:
+            "Dónde se sitúa el grupo respecto a los demás grupos del tipo de registro.",
           partScope: "Si el grupo pertenece a tu espacio de trabajo o a toda la plataforma.",
           changeNever: "No: permanente una vez guardado",
           changeAnytime: "Sí, en cualquier momento",
@@ -1344,13 +1452,17 @@ export const es = {
           createTitle: "Crear un grupo",
           createIntro: "Cuatro pasos, en la pantalla Field Groups.",
           c1Title: "Elige el tipo de registro",
-          c1Content: "No se lista nada antes de hacerlo. Un grupo solo es válido para un tipo de registro, así que no hay una vista conjunta de los tipos desde la que partir.",
+          c1Content:
+            "No se lista nada antes de hacerlo. Un grupo solo es válido para un tipo de registro, así que no hay una vista conjunta de los tipos desde la que partir.",
           c2Title: "Dale una clave estable",
-          c2Content: "El formulario exige una. Se convierte a minúsculas mientras escribes y rechaza los caracteres que no forman parte de la gramática. Elígela con cuidado: esta es permanente.",
+          c2Content:
+            "El formulario exige una. Se convierte a minúsculas mientras escribes y rechaza los caracteres que no forman parte de la gramática. Elígela con cuidado: esta es permanente.",
           c3Title: "Dale etiquetas y un orden",
-          c3Content: "Un encabezado en inglés, un encabezado en árabe, y un número que decide dónde se sitúa el grupo entre los demás grupos del tipo de registro.",
+          c3Content:
+            "Un encabezado en inglés, un encabezado en árabe, y un número que decide dónde se sitúa el grupo entre los demás grupos del tipo de registro.",
           c4Title: "Guarda, y después asígnale campos",
-          c4Content: "El grupo aparece en la lista. Abre cualquier definición de campo personalizado del mismo tipo de registro y un selector Field Group lo ofrece ya, junto con una entrada de ningún grupo.",
+          c4Content:
+            "El grupo aparece en la lista. Abre cualquier definición de campo personalizado del mismo tipo de registro y un selector Field Group lo ofrece ya, junto con una entrada de ningún grupo.",
 
           stableKeyTitle: "La clave estable",
           stableKeyIntro:
@@ -1358,10 +1470,13 @@ export const es = {
           thKeyExample: "Clave estable",
           thOutcome: "Qué ocurre",
           skOk: "Aceptada.",
-          skLowercased: "Aceptada, y convertida a minúsculas mientras escribes. Verás que se convierte en contact_details.",
-          skHyphen: "Rechazada mientras escribes. El campo rechaza los caracteres que no forman parte de la gramática.",
+          skLowercased:
+            "Aceptada, y convertida a minúsculas mientras escribes. Verás que se convierte en contact_details.",
+          skHyphen:
+            "Rechazada mientras escribes. El campo rechaza los caracteres que no forman parte de la gramática.",
           skLeadingDigit: "Rechazada. Una clave estable debe empezar por una letra.",
-          skDuplicate: "Rechazada, indicando la clave: ya existe un grupo de campos con esa clave para este tipo de registro.",
+          skDuplicate:
+            "Rechazada, indicando la clave: ya existe un grupo de campos con esa clave para este tipo de registro.",
           exSkDuplicate: "Una clave ya usada por otro grupo del mismo tipo de registro",
           stableKeyWhy:
             "Una vez guardado el grupo, la clave estable es visible pero aparece atenuada y nadie puede cambiarla. Eso es deliberado y no un descuido: el esquema exportado nombra un grupo por esta clave, así que renombrarla convertiría en silencio una futura reimportación de una actualización en una creación, contra un paquete que ya se ha distribuido. Poder ver la clave sigue importando —la necesitas para relacionar un paquete exportado con el grupo al que se refiere—, que es por lo que se muestra en lugar de ocultarse.",
@@ -1370,14 +1485,20 @@ export const es = {
             "Si una clave estable está mal, el grupo tiene que eliminarse y volver a crearse, y cada campo asignado a él tiene que reasignarse. No esperes que aparezca ningún botón de edición: su ausencia es el diseño.",
 
           assignTitle: "Asignar un campo a un grupo",
-          assignIntro: "La asignación ocurre en el campo, no en el grupo. No existe ninguna pantalla para arrastrar campos a un grupo.",
-          assign1: "Abre una definición de campo personalizado del mismo tipo de registro. Un selector Field Group ofrece cada grupo de ese tipo de registro, más una entrada de ningún grupo.",
-          assign2: "Elegir ningún grupo es la única forma de desagrupar un campo. No existe ningún otro control independiente para quitarlo en ningún otro sitio.",
-          assign3: "Cambiar el tipo de registro en un formulario de creación borra cualquier grupo ya elegido, porque un grupo de un tipo de registro nunca es válido para otro.",
-          assign4: "Un campo puede pertenecer como máximo a un grupo. No hay forma de mostrar un campo bajo dos encabezados.",
+          assignIntro:
+            "La asignación ocurre en el campo, no en el grupo. No existe ninguna pantalla para arrastrar campos a un grupo.",
+          assign1:
+            "Abre una definición de campo personalizado del mismo tipo de registro. Un selector Field Group ofrece cada grupo de ese tipo de registro, más una entrada de ningún grupo.",
+          assign2:
+            "Elegir ningún grupo es la única forma de desagrupar un campo. No existe ningún otro control independiente para quitarlo en ningún otro sitio.",
+          assign3:
+            "Cambiar el tipo de registro en un formulario de creación borra cualquier grupo ya elegido, porque un grupo de un tipo de registro nunca es válido para otro.",
+          assign4:
+            "Un campo puede pertenecer como máximo a un grupo. No hay forma de mostrar un campo bajo dos encabezados.",
 
           orderTitle: "Ordenar grupos",
-          orderIntro: "Los grupos se ordenan en la pantalla Field Groups, arrastrando una fila o usando sus botones Move up y Move down. Ambos hacen lo mismo y los dos se conservan.",
+          orderIntro:
+            "Los grupos se ordenan en la pantalla Field Groups, arrastrando una fila o usando sus botones Move up y Move down. Ambos hacen lo mismo y los dos se conservan.",
           orderKeyboard:
             "Los botones no son una comodidad adicional. Alguien que use solo el teclado no tiene ningún gesto de arrastre, así que los botones son la vía accesible y se espera que funcionen de forma idéntica; si una fila se mueve arrastrando pero no con el botón, eso es un defecto.",
           orderLimitTitle: "Reordenar deja de funcionar más allá de 100 grupos",
@@ -1404,29 +1525,39 @@ export const es = {
           does1: "Junta campos relacionados bajo un encabezado en el formulario del registro",
           does2: "Te permite ordenar los grupos a mano, arrastrando o con Move up y Move down",
           does3: "Lleva su propio encabezado en inglés y en árabe, traducido igual que lo demás",
-          does4: "Sobrevive a la eliminación de un campo, y deja que un campo lo abandone mediante la entrada de ningún grupo",
+          does4:
+            "Sobrevive a la eliminación de un campo, y deja que un campo lo abandone mediante la entrada de ningún grupo",
           doesNotTitle: "Un grupo no",
-          doesNot1: "Controla quién puede ver un campo: eso es la seguridad a nivel de campo, que no tiene relación",
+          doesNot1:
+            "Controla quién puede ver un campo: eso es la seguridad a nivel de campo, que no tiene relación",
           doesNot2: "Elimina sus campos cuando se elimina el propio grupo",
-          doesNot3: "Se traslada entre tipos de registro, ni se aplica a más de un tipo de registro a la vez",
+          doesNot3:
+            "Se traslada entre tipos de registro, ni se aplica a más de un tipo de registro a la vez",
           doesNot4: "Cambia cómo se valida, almacena, exporta o muestra un valor",
 
           errorsTitle: "Errores de grupo que puedes ver",
           thSituation: "Situación",
           thWhatYouSee: "Qué ves",
           errDuplicateKey: "Una clave estable ya usada en ese tipo de registro",
-          errDuplicateKeyMsg: "Rechazada, indicando la clave: ya existe un grupo de campos con esa clave para este tipo de entidad.",
+          errDuplicateKeyMsg:
+            "Rechazada, indicando la clave: ya existe un grupo de campos con esa clave para este tipo de entidad.",
           errWrongEntityType: "Asignar un campo a un grupo de otro tipo de registro",
-          errWrongEntityTypeMsg: "Rechazada: el grupo de campos elegido pertenece a un tipo de entidad distinto.",
+          errWrongEntityTypeMsg:
+            "Rechazada: el grupo de campos elegido pertenece a un tipo de entidad distinto.",
           errTooManyReorder: "Reordenar más de 100 grupos a la vez",
-          errTooManyReorderMsg: "Rechazada, indicando el máximo: no se puede reordenar en una sola solicitud más grupos que ese número.",
+          errTooManyReorderMsg:
+            "Rechazada, indicando el máximo: no se puede reordenar en una sola solicitud más grupos que ese número.",
           errDuplicateReorder: "El mismo grupo listado dos veces en una reordenación",
-          errDuplicateReorderMsg: "Rechazada: el mismo grupo de campos aparece más de una vez en la lista de reordenación.",
+          errDuplicateReorderMsg:
+            "Rechazada: el mismo grupo de campos aparece más de una vez en la lista de reordenación.",
           errMixedReorder: "Grupos de dos tipos de registro en una misma reordenación",
-          errMixedReorderMsg: "Rechazada: cada grupo de campos de una solicitud de reordenación debe pertenecer al mismo tipo de entidad.",
+          errMixedReorderMsg:
+            "Rechazada: cada grupo de campos de una solicitud de reordenación debe pertenecer al mismo tipo de entidad.",
           errGlobalNotSuperAdmin: "Crear un grupo global sin ser un Super Admin de la plataforma",
-          errGlobalNotSuperAdminMsg: "Rechazada: solo un Super Admin de la plataforma puede crear un grupo de campos global.",
-          errNoDefinition: "Asignar un grupo a un campo que todavía no tiene registro de definición",
+          errGlobalNotSuperAdminMsg:
+            "Rechazada: solo un Super Admin de la plataforma puede crear un grupo de campos global.",
+          errNoDefinition:
+            "Asignar un grupo a un campo que todavía no tiene registro de definición",
           errNoDefinitionMsg:
             "Rechazada, explicando que el campo no tiene registro de definición y que primero hay que ejecutar el relleno retroactivo de definiciones. Esto solo ocurre en un entorno actualizado desde una versión anterior.",
         },
@@ -1445,17 +1576,21 @@ export const es = {
             "No hay ningún código oculto independiente detrás de una opción. La etiqueta en inglés que escribes es literalmente lo que se graba en cada registro que la elige, y es contra lo que el producto compara un valor enviado. La etiqueta en árabe es solo para mostrarse. Este único hecho explica por completo el comportamiento de esta página.",
 
           editorTitle: "El editor de opciones",
-          editorIntro: "Las opciones se editan como una lista de filas y no como texto libre. Cada fila es una opción.",
+          editorIntro:
+            "Las opciones se editan como una lista de filas y no como texto libre. Cada fila es una opción.",
           editor1: "Add option añade una fila al final de la lista.",
           editor2: "Cada fila lleva una etiqueta en inglés y una etiqueta en árabe.",
           editor3: "Remove option elimina una fila.",
-          editor4: "El orden de las filas es el orden en que se ofrecen las opciones en el formulario del registro, de arriba abajo.",
-          editor5: "Una lista vacía muestra un aviso para añadir la primera opción: un campo Select sin opciones no se puede guardar.",
+          editor4:
+            "El orden de las filas es el orden en que se ofrecen las opciones en el formulario del registro, de arriba abajo.",
+          editor5:
+            "Una lista vacía muestra un aviso para añadir la primera opción: un campo Select sin opciones no se puede guardar.",
           editorBilingual:
             "Las dos etiquetas se almacenan como dos listas paralelas, emparejadas fila por fila. Un lector árabe ve la etiqueta en árabe; la respuesta grabada en el registro es la de inglés en cualquier caso. Dejar en blanco una etiqueta en árabe está permitido, y esa opción entonces muestra su etiqueta en inglés a cualquier persona.",
 
           exampleTitle: "Un ejemplo completo",
-          exampleIntro: "Un campo de talla de camiseta en un tipo Select, con tres opciones. La columna de la derecha es lo que realmente termina en un registro.",
+          exampleIntro:
+            "Un campo de talla de camiseta en un tipo Select, con tres opciones. La columna de la derecha es lo que realmente termina en un registro.",
           thEnglish: "Etiqueta en inglés",
           thArabic: "Etiqueta en árabe",
           thStored: "Almacenado en el registro",
@@ -1468,26 +1603,34 @@ export const es = {
           thSubmitted: "Valor enviado",
           thOutcome: "Qué ocurre",
           matchOk: "Aceptado, y almacenado como Medium.",
-          matchTrimmed: "Aceptado. Los dos lados se recortan antes de la comparación, así que los espacios que lo rodean nunca provocan un rechazo espurio.",
+          matchTrimmed:
+            "Aceptado. Los dos lados se recortan antes de la comparación, así que los espacios que lo rodean nunca provocan un rechazo espurio.",
           matchCase:
             "Rechazado: VALIDATION_INVALID_FORMAT. Las mayúsculas y minúsculas importan, lo que también significa que Medium y medium pueden coexistir legítimamente como dos opciones independientes si de verdad lo quieres así.",
           matchArabic:
             "Rechazado si se envía directamente a la API: solo se comparan las etiquetas en inglés. Elegir متوسط en la interfaz funciona con normalidad, porque la interfaz envía por debajo la etiqueta en inglés.",
-          matchUnknown: "Rechazado: VALIDATION_INVALID_FORMAT, con un mensaje que cita tanto el valor rechazado como la clave del campo.",
-          matchBlank: "Tratado como vacío: se almacena como borrado en un campo opcional, se rechaza con VALIDATION_REQUIRED en uno obligatorio.",
-          exPadded: "\" Medium\" con un espacio inicial",
+          matchUnknown:
+            "Rechazado: VALIDATION_INVALID_FORMAT, con un mensaje que cita tanto el valor rechazado como la clave del campo.",
+          matchBlank:
+            "Tratado como vacío: se almacena como borrado en un campo opcional, se rechaza con VALIDATION_REQUIRED en uno obligatorio.",
+          exPadded: '" Medium" con un espacio inicial',
           exBlank: "Un valor en blanco",
 
           multiTitle: "Particularidades de MultiSelect",
           multiIntro:
             "MultiSelect reutiliza esta misma lista y este mismo editor. Lo que cambia es el valor: varias respuestas a la vez, en el orden en que se eligieron, hasta un tope fijo de 19.",
-          multiOrder: "Aceptado, y devuelto como Blue y luego Red: el orden en que se eligió, no el orden en que se listaron las opciones.",
-          multiRemove: "Aceptado. Quitar una selección deja las demás en su orden relativo existente.",
+          multiOrder:
+            "Aceptado, y devuelto como Blue y luego Red: el orden en que se eligió, no el orden en que se listaron las opciones.",
+          multiRemove:
+            "Aceptado. Quitar una selección deja las demás en su orden relativo existente.",
           multiTooMany:
             "Rechazado: VALIDATION_MAX_LENGTH, indicando el tope de 19. El selector hace que toda opción no seleccionada deje de poder elegirse en cuanto se llega a 19, y muestra un contador en vivo «N de 19 seleccionadas», así que esto normalmente no se puede alcanzar desde la interfaz.",
-          multiDuplicate: "Rechazado: VALIDATION_UNIQUE. Una selección repetida se rechaza, no se reduce.",
-          multiEmpty: "Tratado como vacío, exactamente igual que un valor escalar en blanco para cualquier otro tipo: se borra en un campo opcional, se rechaza en uno obligatorio.",
-          exMultiOrder: "Blue, y luego Red, en un campo cuya lista de opciones tiene Red antes que Blue",
+          multiDuplicate:
+            "Rechazado: VALIDATION_UNIQUE. Una selección repetida se rechaza, no se reduce.",
+          multiEmpty:
+            "Tratado como vacío, exactamente igual que un valor escalar en blanco para cualquier otro tipo: se borra en un campo opcional, se rechaza en uno obligatorio.",
+          exMultiOrder:
+            "Blue, y luego Red, en un campo cuya lista de opciones tiene Red antes que Blue",
           exMultiRemove: "Quitar una selección de tres",
           exMultiTwenty: "Una vigésima selección",
           exMultiRepeat: "La misma opción seleccionada dos veces",
@@ -1502,7 +1645,8 @@ export const es = {
           thChange: "Edición",
           thEffect: "Efecto sobre los registros ya existentes",
           chgAdd: "Añadir una opción nueva",
-          chgAddEffect: "Ninguno. Las respuestas existentes no se tocan; la opción nueva simplemente pasa a estar disponible.",
+          chgAddEffect:
+            "Ninguno. Las respuestas existentes no se tocan; la opción nueva simplemente pasa a estar disponible.",
           chgRename: "Renombrar una etiqueta en inglés",
           chgRenameEffect:
             "Cada registro que ya tenía el texto antiguo muestra ahora el texto nuevo. No se migra nada y no se pierde nada, porque la fila de la opción es a lo que apunta el registro, pero la respuesta que ve la gente ha cambiado bajo sus pies.",
@@ -1513,7 +1657,8 @@ export const es = {
           chgReorderEffect:
             "Cambia el orden en que se ofrecen las opciones. No cambia ninguna respuesta almacenada, y no reordena una respuesta MultiSelect ya existente, que conserva el orden en que se eligió.",
           chgArabicOnly: "Cambiar solo una etiqueta en árabe",
-          chgArabicOnlyEffect: "Solo afecta a la visualización. La respuesta almacenada es la etiqueta en inglés, así que no cambia nada en los datos.",
+          chgArabicOnlyEffect:
+            "Solo afecta a la visualización. La respuesta almacenada es la etiqueta en inglés, así que no cambia nada en los datos.",
           renameWarnTitle: "Renombra con cuidado, y prefiere añadir",
           renameWarnContent:
             "Renombrar una opción es la única edición que reescribe en silencio el aspecto del historial: un registro que respondió «Medium» el año pasado se leerá como aquello en lo que hayas renombrado Medium. Si la distinción te importa, añade una opción nueva y deja de ofrecer la antigua en lugar de renombrarla.",
@@ -1526,7 +1671,8 @@ export const es = {
           errOptionsOnOther: "Opciones aportadas en un tipo que no las admite",
           errOptionsOnOtherMsg: "Rechazada: las opciones solo se permiten para campos Select.",
           errNotAllowed: "Un valor que no es una de las opciones",
-          errNotAllowedMsg: "Rechazada: VALIDATION_INVALID_FORMAT, citando el valor y la clave del campo.",
+          errNotAllowedMsg:
+            "Rechazada: VALIDATION_INVALID_FORMAT, citando el valor y la clave del campo.",
           errTooMany: "Más de 19 selecciones en MultiSelect",
           errTooManyMsg: "Rechazada: VALIDATION_MAX_LENGTH, indicando el tope de 19.",
           errDuplicate: "La misma opción de MultiSelect dos veces en un mismo guardado",
@@ -1536,8 +1682,10 @@ export const es = {
           notYetIntro: "Tres cosas que razonablemente se piden, y cuál es la respuesta hoy.",
           notYet1:
             "La lista integrada propia de este campo no se puede reutilizar en otro campo: las Options de cada campo son suyas, escritas aquí. Sin embargo, una lista de países que necesiten tres campos ya no hay que escribirla tres veces: vincula los tres a un Option Set compartido y versionado en su lugar (ver Conjuntos de Opciones) y edítalo una sola vez.",
-          notYet2: "No hay ningún color, icono o código por opción que puedas fijar. La etiqueta es toda la opción en lo que respecta al formulario de definición.",
-          notYet3: "No hay ningún tope sobre cuántas opciones puede tener una lista, pero una respuesta MultiSelect sigue sin poder seleccionar más de 19 de ellas.",
+          notYet2:
+            "No hay ningún color, icono o código por opción que puedas fijar. La etiqueta es toda la opción en lo que respecta al formulario de definición.",
+          notYet3:
+            "No hay ningún tope sobre cuántas opciones puede tener una lista, pero una respuesta MultiSelect sigue sin poder seleccionar más de 19 de ellas.",
         },
 
         // ═══════════════════════════════════════════════════
@@ -1558,11 +1706,11 @@ export const es = {
             "Deliberadamente no hay ninguna entrada de texto libre ni de expresión regular en ningún sitio del producto. Un patrón escrito a mano se puede construir para que consuma una cantidad enorme de tiempo de procesamiento con una entrada corta, lo que convierte un formulario de entrada de datos en una forma de tumbar el sistema. Por eso el conjunto de comprobaciones es fijo y seleccionado de antemano, y cada una lleva su propio límite de longitud corto y su propio límite de tiempo.",
 
           howTitle: "Cómo se ejecuta un validador",
-          howIntro: "Ocurren cuatro cosas en este orden cada vez que se guarda un valor en el campo.",
+          howIntro:
+            "Ocurren cuatro cosas en este orden cada vez que se guarda un valor en el campo.",
           how1: "Si el valor está vacío o hecho solo de espacios, se trata como vacío y no se ejecuta ningún validador en absoluto.",
           how2: "Se ejecuta el límite global de 4.000 caracteres de Text, y rechaza con VALIDATION_MAX_LENGTH si el valor es más largo.",
-          how3:
-            "Se ejecuta el límite de longitud propio del validador, mucho más corto —11 caracteres para un código SWIFT, 15 para un IMEI, y así sucesivamente— y también rechaza con VALIDATION_MAX_LENGTH.",
+          how3: "Se ejecuta el límite de longitud propio del validador, mucho más corto —11 caracteres para un código SWIFT, 15 para un IMEI, y así sucesivamente— y también rechaza con VALIDATION_MAX_LENGTH.",
           how4: "Solo entonces se ejecuta la comprobación propia del validador, rechazando con su propio código y mensaje.",
           howTwoPoints:
             "La comprobación se exige en dos momentos distintos, y conviene saber que existen los dos. Al definir el campo, una combinación no válida de validador y parámetro se rechaza al guardar la definición. Al guardar un valor, el validador se ejecuta de nuevo contra cada valor que alguien guarda en el campo.",
@@ -1577,8 +1725,10 @@ export const es = {
           shapeIban: "Dos letras, dos dígitos, y después de 11 a 30 letras o dígitos",
           shapeImei: "Exactamente 15 dígitos",
           shapeSwift: "Seis letras, dos letras o dígitos, opcionalmente tres más",
-          shapePlate: "De 2 a 15 letras, dígitos, espacios o guiones, en cualquier combinación de mayúsculas y minúsculas",
-          shapeEgypt: "14 dígitos: marcador de siglo, después una fecha AAMMDD verosímil, y siete dígitos más",
+          shapePlate:
+            "De 2 a 15 letras, dígitos, espacios o guiones, en cualquier combinación de mayúsculas y minúsculas",
+          shapeEgypt:
+            "14 dígitos: marcador de siglo, después una fecha AAMMDD verosímil, y siete dígitos más",
           shapeSaudi: "10 dígitos que empiezan por 1 o 2",
           shapeEmirati: "784, cuatro dígitos, siete dígitos, un dígito; los guiones son opcionales",
           checksumReal: "Sí, se verifica",
@@ -1588,41 +1738,52 @@ export const es = {
           thOutcome: "Qué ocurre",
 
           ibanTitle: "IBAN",
-          ibanFor: "Para un número de cuenta bancaria internacional. Úsalo siempre que un dígito equivocado pudiera enviar dinero al lugar equivocado.",
+          ibanFor:
+            "Para un número de cuenta bancaria internacional. Úsalo siempre que un dígito equivocado pudiera enviar dinero al lugar equivocado.",
           ibanChecks:
             "Primero se comprueba la forma, y después se verifican los dígitos de control reales según ISO. Limitado a 34 caracteres; ningún IBAN real es más largo. El valor se compara exactamente tal como se envía: no se convierte a mayúsculas ni se le quitan los espacios automáticamente.",
           ibanOk: "Aceptado. La forma y los dígitos de control son correctos.",
           ibanBadCheck:
             "Rechazado: VALIDATION_INVALID_FORMAT. La forma es perfectamente válida y solo el dígito de control está mal, que es precisamente la clase de error que una comprobación que solo mirase la forma pasaría por alto.",
           ibanLower: "Rechazado. Las letras deben ir en mayúsculas.",
-          ibanSpaces: "Rechazado. Los IBAN a menudo se imprimen en grupos de cuatro para facilitar la lectura, pero la forma almacenada no lleva espacios.",
+          ibanSpaces:
+            "Rechazado. Los IBAN a menudo se imprimen en grupos de cuatro para facilitar la lectura, pero la forma almacenada no lleva espacios.",
 
           imeiTitle: "IMEI",
-          imeiFor: "Para el número de identidad de un dispositivo móvil, tal como aparece impreso en el dispositivo o en su caja.",
+          imeiFor:
+            "Para el número de identidad de un dispositivo móvil, tal como aparece impreso en el dispositivo o en su caja.",
           imeiChecks:
             "Exactamente 15 dígitos, y después se verifica el dígito de control real. Limitado a 15 caracteres. Las variantes de 16 y 17 caracteres que muestran algunos dispositivos no se aceptan.",
           imeiOk: "Aceptado.",
-          imeiBadCheck: "Rechazado: VALIDATION_INVALID_FORMAT. Quince dígitos, forma correcta, último dígito equivocado.",
-          imeiShort: "Rechazado: VALIDATION_INVALID_FORMAT. Catorce dígitos no supera la comprobación de forma; el límite de longitud solo detecta un valor más largo de 15.",
+          imeiBadCheck:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Quince dígitos, forma correcta, último dígito equivocado.",
+          imeiShort:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Catorce dígitos no supera la comprobación de forma; el límite de longitud solo detecta un valor más largo de 15.",
 
           swiftBicTitle: "SWIFT / BIC Code",
-          swiftBicFor: "Para un código identificador de banco, usado junto con un número de cuenta en una transferencia internacional.",
+          swiftBicFor:
+            "Para un código identificador de banco, usado junto con un número de cuenta en una transferencia internacional.",
           swiftBicChecks:
             "Ocho u once caracteres: seis letras, después dos letras o dígitos, y opcionalmente tres letras o dígitos más. Solo mayúsculas, sin separadores, limitado a 11 caracteres. El estándar no tiene dígito de control, así que un código con buena forma que no pertenece a ningún banco real se acepta.",
           swiftOk8: "Aceptado: la forma de ocho caracteres.",
           swiftOk11: "Aceptado: la forma de once caracteres con código de sucursal.",
-          swiftDigit: "Rechazado: VALIDATION_INVALID_FORMAT. Los primeros seis caracteres deben ser letras, sin excepción.",
-          swiftLower: "Rechazado. Este es un formato externo fijo, y las minúsculas no forman parte de él.",
+          swiftDigit:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Los primeros seis caracteres deben ser letras, sin excepción.",
+          swiftLower:
+            "Rechazado. Este es un formato externo fijo, y las minúsculas no forman parte de él.",
           swiftLength: "Rechazado. Ocho u once caracteres exactos; nueve no es ninguno de los dos.",
 
           plateTitle: "Vehicle Plate Number",
-          plateFor: "Para una matrícula de vehículo, cuando quieres detectar disparates obvios sin comprometerte con el formato de un país concreto.",
+          plateFor:
+            "Para una matrícula de vehículo, cuando quieres detectar disparates obvios sin comprometerte con el formato de un país concreto.",
           plateChecks:
             "De 2 a 15 caracteres, formados por letras, dígitos, espacios y guiones en cualquier combinación. No distingue mayúsculas de minúsculas. Deliberadamente permisivo: no hay ningún formato de matrícula específico de país en esta comprobación, porque los formatos de matrícula varían por país y por tipo de vehículo dentro de un mismo país.",
           plateOk: "Aceptado.",
-          plateLowerOk: "Aceptado. A diferencia de SWIFT, esta comprobación no distingue mayúsculas de minúsculas.",
+          plateLowerOk:
+            "Aceptado. A diferencia de SWIFT, esta comprobación no distingue mayúsculas de minúsculas.",
           plateTooShort: "Rechazado: VALIDATION_INVALID_FORMAT. El mínimo son dos caracteres.",
-          plateBadChar: "Rechazado. Una barra no es una de las cuatro clases de caracteres permitidas.",
+          plateBadChar:
+            "Rechazado. Una barra no es una de las cuatro clases de caracteres permitidas.",
 
           egyptIdTitle: "Egyptian National ID",
           egyptIdFor: "Para un número de identidad nacional egipcio.",
@@ -1635,10 +1796,13 @@ export const es = {
           egyptLength: "Rechazado. Trece dígitos no son catorce.",
 
           saudiIdTitle: "Saudi National ID",
-          saudiIdFor: "Para un número de identidad nacional saudí o un número de Iqama (residencia).",
-          saudiIdChecks: "Diez dígitos, el primero 1 para un ciudadano o 2 para un residente, y se verifica el dígito de control real. Limitado a 10 caracteres.",
+          saudiIdFor:
+            "Para un número de identidad nacional saudí o un número de Iqama (residencia).",
+          saudiIdChecks:
+            "Diez dígitos, el primero 1 para un ciudadano o 2 para un residente, y se verifica el dígito de control real. Limitado a 10 caracteres.",
           saudiOk: "Aceptado. La forma y el dígito de control son correctos.",
-          saudiBadCheck: "Rechazado: VALIDATION_INVALID_FORMAT. Forma correcta, dígito de control equivocado.",
+          saudiBadCheck:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Forma correcta, dígito de control equivocado.",
           saudiBadPrefix: "Rechazado. El primer dígito debe ser 1 o 2.",
           saudiLength: "Rechazado. Nueve dígitos no son diez.",
 
@@ -1647,8 +1811,10 @@ export const es = {
           emiratiIdChecks:
             "La forma 784-AAAA-XXXXXXX-C, con los guiones opcionales. Limitado a 18 caracteres. Solo estructura: los Emiratos nunca han publicado un algoritmo de dígito de control, así que el último dígito no se verifica, por el mismo motivo que la comprobación egipcia.",
           emiratiOk: "Aceptado, guiones incluidos.",
-          emiratiNoHyphens: "Aceptado. Los guiones son opcionales, así que las dos formas de escribirlo funcionan.",
-          emiratiBadPrefix: "Rechazado: VALIDATION_INVALID_FORMAT. Cualquier número de identidad de los Emiratos empieza por 784.",
+          emiratiNoHyphens:
+            "Aceptado. Los guiones son opcionales, así que las dos formas de escribirlo funcionan.",
+          emiratiBadPrefix:
+            "Rechazado: VALIDATION_INVALID_FORMAT. Cualquier número de identidad de los Emiratos empieza por 784.",
           emiratiLength: "Rechazado. El bloque central tiene siete dígitos, no seis.",
 
           paramTitle: "Las seis comprobaciones que necesitan un parámetro",
@@ -1657,22 +1823,27 @@ export const es = {
           thParamFormat: "Formato del parámetro",
           thParamExample: "Ejemplo de parámetro",
           paramFmtPostal: "Un país, elegido de un desplegable con los siete admitidos",
-          paramFmtNumeric: "Dos límites separados por coma; cualquiera de los dos lados puede quedar en blanco para un extremo abierto",
-          paramFmtLength: "Dos cantidades de caracteres separadas por coma; cualquiera de los dos lados puede quedar en blanco",
+          paramFmtNumeric:
+            "Dos límites separados por coma; cualquiera de los dos lados puede quedar en blanco para un extremo abierto",
+          paramFmtLength:
+            "Dos cantidades de caracteres separadas por coma; cualquiera de los dos lados puede quedar en blanco",
           paramFmtOneOf: "Un valor permitido por línea",
           paramFmtContains: "Cualquier texto literal",
           paramFmtStartsWith: "Cualquier texto literal",
           paramExOneOf: "Goalkeeper / Defender / Midfielder / Forward, uno por línea",
 
           postalTitle: "Postal Code",
-          postalFor: "Para un código postal de un país concreto. El país forma parte de la definición, no algo que elija quien rellena el registro.",
+          postalFor:
+            "Para un código postal de un país concreto. El país forma parte de la definición, no algo que elija quien rellena el registro.",
           postalChecks:
             "El valor se compara con el formato real de código postal del país que configuraste. Limitado a 16 caracteres. Se admiten siete países y el desplegable nunca ofrece ningún otro.",
           postalEgOk: "Aceptado. Egipto son cinco dígitos.",
           postalEgBad: "Rechazado: VALIDATION_INVALID_FORMAT. Cuatro dígitos no son cinco.",
           postalUsOk: "Aceptado. Tanto la forma de cinco dígitos como la ZIP+4 son válidas.",
-          postalGbOk: "Aceptado. El formato del Reino Unido se compara en cualquier combinación de mayúsculas y minúsculas, con o sin su espacio.",
-          postalCaOk: "Aceptado, incluidas las exclusiones de letras reales que aplica Canada Post.",
+          postalGbOk:
+            "Aceptado. El formato del Reino Unido se compara en cualquier combinación de mayúsculas y minúsculas, con o sin su espacio.",
+          postalCaOk:
+            "Aceptado, incluidas las exclusiones de letras reales que aplica Canada Post.",
           exPostalEg: "11511, con el parámetro EG",
           exPostalEgBad: "1151, con el parámetro EG",
           exPostalUsPlus4: "90210-1234, con el parámetro US",
@@ -1680,52 +1851,66 @@ export const es = {
           exPostalCa: "K1A 0B1, con el parámetro CA",
 
           numericRangeTitle: "Numeric Range",
-          numericRangeFor: "Para un número dentro de unos límites que tú fijas, en un campo que es Text y no Number: un número de camiseta, el tamaño de una plantilla, un recuento de dorsales.",
+          numericRangeFor:
+            "Para un número dentro de unos límites que tú fijas, en un campo que es Text y no Number: un número de camiseta, el tamaño de una plantilla, un recuento de dorsales.",
           numericRangeChecks:
             "El valor debe interpretarse como un número y caer dentro del rango. El parámetro son dos límites separados por coma; dejar un lado en blanco deja ese extremo abierto, pero dejar los dos en blanco se rechaza, porque un rango sin ninguna restricción equivale a no asignar ningún validador.",
           numericOk: "Aceptado.",
           numericOut: "Rechazado: VALIDATION_RANGE.",
-          numericNotANumber: "Rechazado: VALIDATION_RANGE. Un valor que no es un número no puede estar dentro de un rango.",
-          numericOpenOk: "Aceptado. Un límite superior abierto significa cualquier número igual o mayor que el inferior.",
-          numericBothBlank: "Rechazado al definir el campo, explicando que el validador necesita al menos un límite.",
+          numericNotANumber:
+            "Rechazado: VALIDATION_RANGE. Un valor que no es un número no puede estar dentro de un rango.",
+          numericOpenOk:
+            "Aceptado. Un límite superior abierto significa cualquier número igual o mayor que el inferior.",
+          numericBothBlank:
+            "Rechazado al definir el campo, explicando que el validador necesita al menos un límite.",
           exNumeric50: "50, con el parámetro 1,100",
           exNumeric150: "150, con el parámetro 1,100",
-          exNumericText: "\"fifty\", con el parámetro 1,100",
+          exNumericText: '"fifty", con el parámetro 1,100',
           exNumericOpen: "5000, con el parámetro 1,",
           exNumericBothBlank: "El parámetro , con los dos lados en blanco",
 
           lengthRangeTitle: "Length Range",
-          lengthRangeFor: "Para un texto que debe tener una longitud determinada: un código de dos letras, una referencia de al menos ocho caracteres.",
+          lengthRangeFor:
+            "Para un texto que debe tener una longitud determinada: un código de dos letras, una referencia de al menos ocho caracteres.",
           lengthRangeChecks:
             "El número de caracteres debe caer dentro del rango. El parámetro son dos cantidades de caracteres separadas por coma, y cualquiera de los dos lados se puede dejar en blanco para un extremo abierto. Esta comprobación produce dos códigos distintos en lugar de uno, para distinguir demasiado corto de demasiado largo.",
           lengthOk: "Aceptado.",
           lengthTooShort: "Rechazado: VALIDATION_MIN_LENGTH, indicando el mínimo.",
           lengthTooLong: "Rechazado: VALIDATION_MAX_LENGTH, indicando el máximo.",
-          exLength10: "\"Alexandria\" — 10 caracteres, con el parámetro 2,50",
-          exLength1: "\"A\" — 1 carácter, con el parámetro 2,50",
+          exLength10: '"Alexandria" — 10 caracteres, con el parámetro 2,50',
+          exLength1: '"A" — 1 carácter, con el parámetro 2,50',
           exLength80: "Un valor de 80 caracteres, con el parámetro 2,50",
 
           oneOfListTitle: "One of a List",
           oneOfListFor:
             "Para un conjunto cerrado de respuestas en un campo Text. Si el conjunto cerrado es la razón de ser del campo, normalmente un campo Select es la mejor opción, pero este validador existe para cuando quieres el comportamiento de un validador sobre un campo Text.",
-          oneOfListChecks: "El valor debe coincidir exactamente con una línea de la lista que configuraste, un valor por línea. La comparación distingue mayúsculas de minúsculas.",
+          oneOfListChecks:
+            "El valor debe coincidir exactamente con una línea de la lista que configuraste, un valor por línea. La comparación distingue mayúsculas de minúsculas.",
           oneOfOk: "Aceptado.",
-          oneOfCase: "Rechazado: VALIDATION_INVALID_FORMAT. La coincidencia distingue mayúsculas de minúsculas.",
+          oneOfCase:
+            "Rechazado: VALIDATION_INVALID_FORMAT. La coincidencia distingue mayúsculas de minúsculas.",
           oneOfUnknown: "Rechazado: VALIDATION_INVALID_FORMAT. El valor no está en la lista.",
 
           containsTitle: "Contains Text",
-          containsFor: "Para un valor que debe incluir en algún punto una marca: un prefijo de club, una etiqueta de temporada, un código de departamento.",
-          containsChecks: "El valor debe contener el texto literal que configuraste, comparado distinguiendo mayúsculas de minúsculas.",
+          containsFor:
+            "Para un valor que debe incluir en algún punto una marca: un prefijo de club, una etiqueta de temporada, un código de departamento.",
+          containsChecks:
+            "El valor debe contener el texto literal que configuraste, comparado distinguiendo mayúsculas de minúsculas.",
           containsOk: "Aceptado, con el parámetro FC-.",
-          containsCase: "Rechazado: VALIDATION_INVALID_FORMAT. La coincidencia respeta las mayúsculas y minúsculas.",
+          containsCase:
+            "Rechazado: VALIDATION_INVALID_FORMAT. La coincidencia respeta las mayúsculas y minúsculas.",
           containsMissing: "Rechazado: VALIDATION_INVALID_FORMAT. La marca no está presente.",
 
           startsWithTitle: "Starts With Text",
-          startsWithFor: "Para un valor que debe empezar con un prefijo: un código de país, un código de sucursal, una raíz de referencia fija.",
-          startsWithChecks: "El valor debe empezar con el texto literal que configuraste, comparado distinguiendo mayúsculas de minúsculas.",
+          startsWithFor:
+            "Para un valor que debe empezar con un prefijo: un código de país, un código de sucursal, una raíz de referencia fija.",
+          startsWithChecks:
+            "El valor debe empezar con el texto literal que configuraste, comparado distinguiendo mayúsculas de minúsculas.",
           startsOk: "Aceptado, con el parámetro EG-.",
-          startsWrongPlace: "Rechazado: VALIDATION_INVALID_FORMAT. El texto está presente pero no al principio; usa Contains Text si la posición no importa.",
-          startsCase: "Rechazado: VALIDATION_INVALID_FORMAT. La coincidencia respeta las mayúsculas y minúsculas.",
+          startsWrongPlace:
+            "Rechazado: VALIDATION_INVALID_FORMAT. El texto está presente pero no al principio; usa Contains Text si la posición no importa.",
+          startsCase:
+            "Rechazado: VALIDATION_INVALID_FORMAT. La coincidencia respeta las mayúsculas y minúsculas.",
 
           postalCountriesTitle: "Los siete países de Postal Code",
           postalCountriesIntro:
@@ -1735,8 +1920,10 @@ export const es = {
           thValidExample: "Ejemplo válido",
           fmtEg: "Exactamente cinco dígitos",
           fmtSa: "Cinco dígitos, opcionalmente un guion y una extensión de cuatro dígitos",
-          fmtUs: "Un ZIP de cinco dígitos, opcionalmente un guion y una extensión de cuatro dígitos",
-          fmtGb: "La forma estándar del código postal del Reino Unido, en cualquier combinación de mayúsculas y minúsculas, espacio opcional",
+          fmtUs:
+            "Un ZIP de cinco dígitos, opcionalmente un guion y una extensión de cuatro dígitos",
+          fmtGb:
+            "La forma estándar del código postal del Reino Unido, en cualquier combinación de mayúsculas y minúsculas, espacio opcional",
           fmtDe: "Exactamente cinco dígitos, se permite un cero inicial",
           fmtFr: "Exactamente cinco dígitos",
           fmtCa: "La forma A1A 1A1, con las exclusiones de letras reales que aplica Canada Post",
@@ -1750,7 +1937,8 @@ export const es = {
           thSituation: "Situación",
           thWhatYouSee: "Qué ves",
           attNonText: "Un validador en un campo que no es Text",
-          attNonTextMsg: "Rechazada, indicando el tipo de valor: un validador solo se puede asignar a un campo Text.",
+          attNonTextMsg:
+            "Rechazada, indicando el tipo de valor: un validador solo se puede asignar a un campo Text.",
           attNoParam: "Un validador parametrizado con el parámetro en blanco",
           attNoParamMsg: "Rechazada, indicando el validador: necesita un parámetro.",
           attExtraParam: "Un parámetro en uno de los siete que no admiten ninguno",
@@ -1759,11 +1947,14 @@ export const es = {
           attBadRangeMsg:
             "Rechazada, explicando que se necesitan dos límites separados por coma, que cualquiera de los dos lados puede quedar en blanco, y que el límite inferior no debe superar al superior.",
           attNoBound: "Un parámetro de rango con los dos lados en blanco",
-          attNoBoundMsg: "Rechazada, explicando que un parámetro con los dos lados en blanco aceptaría cualquier valor, lo que equivale a no asignar ningún validador.",
+          attNoBoundMsg:
+            "Rechazada, explicando que un parámetro con los dos lados en blanco aceptaría cualquier valor, lo que equivale a no asignar ningún validador.",
           attUnsupportedCountry: "Un país de Postal Code que no es uno de los siete",
-          attUnsupportedCountryMsg: "Rechazada, indicando el país y listando los siete admitidos: EG, SA, US, GB, DE, FR, CA.",
+          attUnsupportedCountryMsg:
+            "Rechazada, indicando el país y listando los siete admitidos: EG, SA, US, GB, DE, FR, CA.",
           attUae: "Postal Code con AE",
-          attUaeMsg: "Rechazada con su propio mensaje dedicado, explicando que los Emiratos no tienen un sistema nacional de códigos postales y que en su lugar el campo debería dejarse sin validador.",
+          attUaeMsg:
+            "Rechazada con su propio mensaje dedicado, explicando que los Emiratos no tienen un sistema nacional de códigos postales y que en su lugar el campo debería dejarse sin validador.",
 
           codesTitle: "Códigos de error de los validadores",
           codesIntro:
@@ -1772,8 +1963,10 @@ export const es = {
           thWhenItFires: "Cuándo se produce",
           codeInvalidFormat:
             "La mayoría de los fallos de validador: una forma que no coincide, un dígito de control que no se verifica, un valor que no está en una lista de One of a List, una marca de Contains o Starts With que falta, o un código postal que no coincide con su país.",
-          codeRange: "Numeric Range: el valor está fuera de los límites, o directamente no es un número.",
-          codeMaxLength: "El límite global de 4.000 caracteres de Text, el límite propio, más corto, de un validador, o el límite superior de Length Range.",
+          codeRange:
+            "Numeric Range: el valor está fuera de los límites, o directamente no es un número.",
+          codeMaxLength:
+            "El límite global de 4.000 caracteres de Text, el límite propio, más corto, de un validador, o el límite superior de Length Range.",
           codeMinLength: "El límite inferior de Length Range.",
           codeRequired:
             "El campo es Required y el valor está vacío. Esto se produce antes de que se ejecute cualquier validador, así que un valor hecho solo de espacios en un campo obligatorio recibe el mensaje genérico de obligatorio y no uno específico del validador.",
@@ -1782,14 +1975,18 @@ export const es = {
             "Un mensaje de validador cita la clave técnica del campo —«'shirt_size' is not a valid IBAN.»— y no su etiqueta visible. Relaciónalo por la clave cuando estés rastreando un fallo.",
 
           limitsTitle: "Qué no hacen los validadores",
-          limit1: "Solo se asignan a un campo Text. No hay forma de poner una comprobación de formato en ninguno de los otros veintiún tipos.",
+          limit1:
+            "Solo se asignan a un campo Text. No hay forma de poner una comprobación de formato en ninguno de los otros veintiún tipos.",
           limit2:
             "Nunca vuelven a comprobar valores ya guardados. Asignar un validador a un campo que ya tiene respuestas deja esas respuestas exactamente como están, incluidas las que ahora fallarían, hasta que alguien las vuelva a introducir y guardar.",
           limit3:
             "Nunca se ejecutan sobre un valor vacío. En un campo que no es Required, un valor hecho solo de espacios se almacena como borrado sin ningún error de validador en absoluto; marca el campo como Required si una respuesta en blanco debe rechazarse.",
-          limit4: "No se pueden buscar ni filtrar. No hay ninguna vista conjunta de los campos que usan IBAN; la única forma de ver qué validador tiene un campo es abrir ese campo.",
-          limit5: "No tienen ninguna referencia navegable dentro del producto. Para ver la lista de validadores abres el formulario de definición de un campo Text y lees el desplegable.",
-          limit6: "No se pueden escribir a mano. No hay ninguna entrada de expresión regular o de patrón en ningún sitio, por diseño, y las 13 comprobaciones integradas son el conjunto completo.",
+          limit4:
+            "No se pueden buscar ni filtrar. No hay ninguna vista conjunta de los campos que usan IBAN; la única forma de ver qué validador tiene un campo es abrir ese campo.",
+          limit5:
+            "No tienen ninguna referencia navegable dentro del producto. Para ver la lista de validadores abres el formulario de definición de un campo Text y lees el desplegable.",
+          limit6:
+            "No se pueden escribir a mano. No hay ninguna entrada de expresión regular o de patrón en ningún sitio, por diseño, y las 13 comprobaciones integradas son el conjunto completo.",
         },
 
         // ═══════════════════════════════════════════════════
@@ -1806,8 +2003,10 @@ export const es = {
             "El ajuste Sensitivity de la definición de un campo —Unclassified, Internal, Confidential, Restricted— es una etiqueta para la elaboración de informes y el tratamiento en las exportaciones. No restringe el acceso a nada, y los dos mecanismos no tienen ninguna relación. Si quieres que un campo quede oculto, configúralo aquí, en el rol o el grupo de usuarios, no en la definición del campo.",
 
           whereTitle: "Dónde se configuran las restricciones",
-          whereIntro: "Las restricciones se fijan en lo que concede el acceso, no en el campo. Hay dos sitios, y se suman entre sí.",
-          where1: "Por rol: la lista de campos restringidos de un permiso, en el cuadro de permisos de ese rol.",
+          whereIntro:
+            "Las restricciones se fijan en lo que concede el acceso, no en el campo. Hay dos sitios, y se suman entre sí.",
+          where1:
+            "Por rol: la lista de campos restringidos de un permiso, en el cuadro de permisos de ese rol.",
           where2: "Por grupo de usuarios: las restricciones propias del grupo.",
           whereKeyed:
             "Los nombres de campo se escriben a mano, y se identifican por el recurso de permiso que ya protege el registro —employees, party-people—, no por el tipo de registro. Merece la pena leer los detalles de abajo una vez antes de configurar nada.",
@@ -1817,17 +2016,21 @@ export const es = {
           behSources:
             "Una restricción de rol y una restricción de grupo se combinan por unión. Un grupo nunca puede ampliar lo que un rol ha restringido, y no hay ninguna anulación en ninguna de las dos direcciones.",
           aspCase: "Mayúsculas y minúsculas",
-          behCase: "La comparación ignora las mayúsculas y minúsculas, así que Salary, salary y SALARY son el mismo campo.",
+          behCase:
+            "La comparación ignora las mayúsculas y minúsculas, así que Salary, salary y SALARY son el mismo campo.",
           aspResource: "Identificación",
           behResource:
             "Las restricciones se identifican por el recurso de permiso, el mismo recurso que ya protege el propio registro, no por el tipo de entidad ni por el grupo de campos.",
           aspBuiltIn: "Alcance del mecanismo",
-          behBuiltIn: "El mismo mecanismo cubre tanto los campos propios de una pantalla como sus campos personalizados. Una única lista de campos restringidos, un único comportamiento.",
+          behBuiltIn:
+            "El mismo mecanismo cubre tanto los campos propios de una pantalla como sus campos personalizados. Una única lista de campos restringidos, un único comportamiento.",
           aspExempt: "Excepción",
-          behExempt: "El administrador de sistema de la plataforma siempre está exento y siempre ve cada campo. Es la misma excepción que ya hace el mecanismo de los campos propios.",
+          behExempt:
+            "El administrador de sistema de la plataforma siempre está exento y siempre ve cada campo. Es la misma excepción que ya hace el mecanismo de los campos propios.",
 
           seesTitle: "Qué ve una persona restringida",
-          seesIntro: "Nada en absoluto. El campo no aparece atenuado, ni en blanco, ni marcado como oculto: la entrada se omite por completo tanto del formulario del registro como de la lista de registros.",
+          seesIntro:
+            "Nada en absoluto. El campo no aparece atenuado, ni en blanco, ni marcado como oculto: la entrada se omite por completo tanto del formulario del registro como de la lista de registros.",
           seesIndistinguishable:
             "Un campo omitido es indistinguible de un campo que nunca se definió. Eso es deliberado: mostrar un texto de sugerencia le diría a alguien que hay un valor que no tiene permiso para ver, lo que ya es información en sí misma. También significa que un compañero que reporte que falta un campo puede estar describiendo una restricción y no un fallo; comprueba las restricciones de rol y de grupo antes de ponerte a buscar un defecto.",
 
@@ -1848,11 +2051,14 @@ export const es = {
           thAttempt: "Intento",
           thResult: "Resultado",
           attSaveOthers: "Guardar el registro, cambiando solo campos que puedes ver",
-          resSaveOthers: "Funciona. El valor almacenado del campo restringido se deja exactamente como estaba, no se borra.",
+          resSaveOthers:
+            "Funciona. El valor almacenado del campo restringido se deja exactamente como estaba, no se borra.",
           attWriteRestricted: "Enviar un valor para el campo restringido",
-          resWriteRestricted: "Rechazado con un mensaje que indica el campo, y el registro no se guarda en absoluto, ni siquiera los campos que sí tenías permiso de cambiar.",
+          resWriteRestricted:
+            "Rechazado con un mensaje que indica el campo, y el registro no se guarda en absoluto, ni siquiera los campos que sí tenías permiso de cambiar.",
           attWriteSameValue: "Enviar el valor actual del campo restringido",
-          resWriteSameValue: "Rechazado de la misma forma. El resultado no depende de si acertaste, así que no se puede usar para sondear el valor.",
+          resWriteSameValue:
+            "Rechazado de la misma forma. El resultado no depende de si acertaste, así que no se puede usar para sondear el valor.",
           attReadApi: "Leer directamente los valores de campos personalizados del registro",
           resReadApi:
             "El campo restringido está ausente de la respuesta. Este era el hueco que la seguridad a nivel de campo dejaba abierto específicamente para los campos personalizados, y ya está cerrado.",
@@ -1864,25 +2070,33 @@ export const es = {
           thWhatYouSee: "Qué ves",
           reqRestrictRequired: "Restringir un campo que actualmente es obligatorio",
           reqRestrictRequiredMsg: "Rechazado, indicando el campo.",
-          reqRequireRestricted: "Marcar un campo como obligatorio mientras un rol o grupo lo restringe",
-          reqRequireRestrictedMsg: "Rechazado, indicando el campo y diciéndote que elimines antes la restricción o dejes el campo opcional.",
+          reqRequireRestricted:
+            "Marcar un campo como obligatorio mientras un rol o grupo lo restringe",
+          reqRequireRestrictedMsg:
+            "Rechazado, indicando el campo y diciéndote que elimines antes la restricción o dejes el campo opcional.",
           requiredInfoTitle: "El orden no ayuda",
           requiredInfoContent:
             "Hacer las dos operaciones en el otro orden no permite saltarse la regla. Se comprueban las dos direcciones, así que no hay ninguna secuencia que deje un campo a la vez obligatorio y restringido.",
 
           reachTitle: "Dónde más llega una restricción",
-          reachIntro: "Una restricción no es solo cosa del formulario. Se aplica de forma consistente en cualquier sitio donde los valores del campo podrían aflorar.",
+          reachIntro:
+            "Una restricción no es solo cosa del formulario. Se aplica de forma consistente en cualquier sitio donde los valores del campo podrían aflorar.",
           reach1: "El formulario del registro: el campo se omite.",
           reach2: "La lista de registros: la columna se omite.",
-          reach3: "La API de valores de campos personalizados: el campo está ausente de la respuesta, y se rechaza al escribir.",
-          reach4: "La exportación a hoja de cálculo de las definiciones: las columnas restringidas están ausentes del archivo en lugar de presentes y en blanco.",
+          reach3:
+            "La API de valores de campos personalizados: el campo está ausente de la respuesta, y se rechaza al escribir.",
+          reach4:
+            "La exportación a hoja de cálculo de las definiciones: las columnas restringidas están ausentes del archivo en lugar de presentes y en blanco.",
 
           exampleTitle: "Un ejemplo completo",
-          exampleIntro: "Restringir un campo de salario en un registro de personal, y confirmar que se comporta correctamente.",
+          exampleIntro:
+            "Restringir un campo de salario en un registro de personal, y confirmar que se comporta correctamente.",
           e1Title: "Define el campo y dale un valor",
-          e1Content: "Como administrador con visibilidad completa, define un campo personalizado con la clave salary en el tipo de registro de personal, y fija un valor en un registro.",
+          e1Content:
+            "Como administrador con visibilidad completa, define un campo personalizado con la clave salary en el tipo de registro de personal, y fija un valor en un registro.",
           e2Title: "Restríngelo en un rol",
-          e2Content: "Añade salary a la lista de campos restringidos del permiso correspondiente en un rol, y después inicia sesión como alguien que solo tenga ese rol.",
+          e2Content:
+            "Añade salary a la lista de campos restringidos del permiso correspondiente en un rol, y después inicia sesión como alguien que solo tenga ese rol.",
           e3Title: "Confirma que está ausente, no en blanco",
           e3Content:
             "Abre el mismo registro de personal. El campo Salary no debería aparecer en absoluto en el formulario, y no debería haber ninguna columna Salary en la lista de personal. Si lo ves vacío en lugar de ausente, la restricción no está aplicándose.",
@@ -1908,20 +2122,27 @@ export const es = {
             "Una vez que los campos existen, la pantalla Custom Fields es donde se cuidan: se editan, se retiran, se auditan, se miden y se exportan. Esta página cubre cada una de esas acciones, y las dos pantallas de referencia de solo lectura que responden a «qué tipos existen» y «a qué tipos de registro puedo asociarlo».",
 
           rowMenuTitle: "El menú de fila",
-          rowMenuIntro: "Cada campo de la lista tiene un menú de fila con ocho acciones. Cada una necesita su propio permiso, así que un rol puede ver unas y no otras.",
+          rowMenuIntro:
+            "Cada campo de la lista tiene un menú de fila con ocho acciones. Cada una necesita su propio permiso, así que un rol puede ver unas y no otras.",
           thAction: "Acción",
           thDoes: "Qué hace",
           thNeeds: "Permiso",
-          actEdit: "Abre el formulario de definición, completado con el detalle completo del campo.",
-          actOptionSets: "Asigna, configura o desvincula un Option Set compartido y versionado para campos Select o MultiSelect.",
-          actVisibilityRules: "Abre el cuadro de reglas de visibilidad condicional para configurar reglas de mostrar u ocultar evaluadas contra campos hermanos.",
+          actEdit:
+            "Abre el formulario de definición, completado con el detalle completo del campo.",
+          actOptionSets:
+            "Asigna, configura o desvincula un Option Set compartido y versionado para campos Select o MultiSelect.",
+          actVisibilityRules:
+            "Abre el cuadro de reglas de visibilidad condicional para configurar reglas de mostrar u ocultar evaluadas contra campos hermanos.",
           actConvertType:
             "Abre un cuadro de diálogo para convertir el tipo de valor del campo: elige un destino entre los tipos a los que puede convertirse de forma segura, confirma si la conversión implica pérdida de datos, y revierte el cambio después si hace falta.",
           actVersions:
             "Abre el panel de historial de versiones: consulta la cadena de versiones, genera un nuevo borrador, o publica o descarta uno ya generado.",
-          actHistory: "Lista cada cambio registrado en la definición del campo, del más reciente al más antiguo, con quién lo hizo y cuándo.",
-          actUsage: "Informa de cuántas respuestas tiene el campo, desglosadas por tipo de registro, y si eliminarlo destruiría datos.",
-          actDelete: "Elimina la definición; se rechaza primero si tiene respuestas, hasta que lo confirmes explícitamente.",
+          actHistory:
+            "Lista cada cambio registrado en la definición del campo, del más reciente al más antiguo, con quién lo hizo y cuándo.",
+          actUsage:
+            "Informa de cuántas respuestas tiene el campo, desglosadas por tipo de registro, y si eliminarlo destruiría datos.",
+          actDelete:
+            "Elimina la definición; se rechaza primero si tiene respuestas, hasta que lo confirmes explícitamente.",
 
           editTitle: "Editar una definición",
           editIntro:
@@ -1940,28 +2161,35 @@ export const es = {
           thOperatorMeaning: "Condición evaluada",
           thOperatorExample: "Ejemplo de disparo",
           opEquals: "Equals",
-          opEqualsMeaning: "El valor del campo controlador coincide exactamente con el valor de destino.",
+          opEqualsMeaning:
+            "El valor del campo controlador coincide exactamente con el valor de destino.",
           opEqualsExample: "Mostrar Kit Size cuando Staff Role sea igual a Coach.",
           opNotEquals: "Does not equal",
-          opNotEqualsMeaning: "El campo controlador tiene cualquier valor distinto del valor de destino.",
+          opNotEqualsMeaning:
+            "El campo controlador tiene cualquier valor distinto del valor de destino.",
           opNotEqualsExample: "Mostrar Dietary Requirements cuando Meal Plan no sea igual a None.",
           opIsEmpty: "Is empty",
-          opIsEmptyMeaning: "El campo controlador no tiene ninguna respuesta almacenada, o es nulo.",
+          opIsEmptyMeaning:
+            "El campo controlador no tiene ninguna respuesta almacenada, o es nulo.",
           opIsEmptyExample: "Mostrar Explanation cuando ID Number esté vacío.",
           opIsNotEmpty: "Is not empty",
           opIsNotEmptyMeaning: "El campo controlador tiene cualquier valor no nulo y no vacío.",
           opIsNotEmptyExample: "Mostrar Expiry Date cuando Passport Number no esté vacío.",
           opIn: "In set",
-          opInMeaning: "La respuesta del campo controlador es uno de varios valores separados por coma.",
-          opInExample: "Mostrar Specialization cuando Department esté en Medical, Coaching, Analytics.",
+          opInMeaning:
+            "La respuesta del campo controlador es uno de varios valores separados por coma.",
+          opInExample:
+            "Mostrar Specialization cuando Department esté en Medical, Coaching, Analytics.",
           opNotIn: "Not in set",
-          opNotInMeaning: "La respuesta del campo controlador no es ninguno de los valores listados.",
+          opNotInMeaning:
+            "La respuesta del campo controlador no es ninguno de los valores listados.",
           opNotInExample: "Mostrar General Notes cuando Category no esté en VIP, Board.",
           opGreaterThan: "Greater than",
           opGreaterThanMeaning: "La respuesta numérica o de fecha supera estrictamente el umbral.",
           opGreaterThanExample: "Mostrar Clearance Details cuando Security Level sea mayor que 3.",
           opLessThan: "Less than",
-          opLessThanMeaning: "La respuesta numérica o de fecha está estrictamente por debajo del umbral.",
+          opLessThanMeaning:
+            "La respuesta numérica o de fecha está estrictamente por debajo del umbral.",
           opLessThanExample: "Mostrar Parental Consent cuando Age sea menor que 18.",
           visibilityRulesEvaluation:
             "Un campo con varias reglas solo es visible cuando se cumplen todas ellas: un simple Y entre todas, no una competición entre las acciones Show y Hide, porque cada regla solo expresa una condición bajo la que ser visible. Priority ordena las reglas únicamente a efectos de diagnóstico y visualización; nunca cambia qué reglas se aplican. Un campo que una regla está ocultando en ese momento también se omite de la validación Required, así que una condición que nadie puede ver nunca bloquea un guardado.",
@@ -1990,7 +2218,8 @@ export const es = {
             "El resto de los pares posibles —453 de los 462—, incluido cualquier par que implique EntityReference, UserReference, File, Image o RichText.",
           classIncompatibleRisk:
             "Se rechaza antes de ejecutar nada. Un valor con forma de referencia o de contenido multimedia no tiene una forma de texto o de número con sentido a la que convertirse, y la dirección inversa no tiene nada real a lo que apuntar.",
-          conversionLossyWarnTitle: "Una conversión con pérdidas se aplica a cada valor almacenado, de forma permanente",
+          conversionLossyWarnTitle:
+            "Una conversión con pérdidas se aplica a cada valor almacenado, de forma permanente",
           conversionLossyWarnContent:
             "Una ejecución correcta cambia todas las filas a la vez: no hay una confirmación aparte por registro, y nada se trunca ni se borra en silencio más allá de lo que haga la propia conversión del tipo de destino. Ejecuta siempre antes Usage & impact para ver cuántos registros se verán afectados antes de confirmar.",
           conversionDryRunIntro:
@@ -2000,7 +2229,8 @@ export const es = {
             "Cada conversión escribe una instantánea del valor anterior para cada fila antes de modificarla. Un Super Admin puede revertir una ejecución de conversión concreta mediante su job-run id, restaurando los valores anteriores exactos. Las instantáneas caducan y se purgan automáticamente pasados siete días, así que la reversión tiene una ventana real de tiempo, en lugar de estar disponible de forma indefinida.",
 
           // Versions & Drafts
-          versionsTitle: "Ciclo de vida de las versiones y los borradores de la definición de un campo",
+          versionsTitle:
+            "Ciclo de vida de las versiones y los borradores de la definición de un campo",
           versionsIntro:
             "Los valores escalares, las opciones y las reglas de visibilidad vigentes de una definición se pueden clonar en un borrador aislado que después se publica —sustituyendo la versión vigente en un solo paso— o se descarta, dejando la versión vigente intacta en cualquiera de los dos casos.",
           thVersionStatus: "Estado",
@@ -2012,36 +2242,45 @@ export const es = {
           vActionsDraft:
             "Publish, Discard. Actualmente nada permite modificar un borrador una vez generado: un clon incorrecto debe descartarse y generarse de nuevo.",
           vStatusPublished: "Published",
-          vMeaningPublished: "La única versión activa que se sirve actualmente en cada formulario de registro para este campo.",
+          vMeaningPublished:
+            "La única versión activa que se sirve actualmente en cada formulario de registro para este campo.",
           vActionsPublished: "Create Draft (genera un nuevo clon de trabajo), View History.",
           vStatusDeprecated: "Deprecated",
           vMeaningDeprecated:
             "Una versión Published anterior, sustituida cuando se promovió un borrador. Sus opciones y reglas clonadas siguen asociadas a ella, pero quedan inertes: la aplicación de las reglas solo lee la versión Published vigente.",
-          vActionsDeprecated: "Registro de auditoría de solo lectura. Se conserva para preservar la integridad histórica.",
+          vActionsDeprecated:
+            "Registro de auditoría de solo lectura. Se conserva para preservar la integridad histórica.",
           vStatusArchived: "Archived",
-          vMeaningArchived: "Un borrador descartado que se conserva en lugar de eliminarse, para que su número de versión nunca pueda reutilizarse.",
+          vMeaningArchived:
+            "Un borrador descartado que se conserva en lugar de eliminarse, para que su número de versión nunca pueda reutilizarse.",
           vActionsArchived: "Solo referencia histórica.",
           versionsSnapshotWarnTitle: "Un borrador es una instantánea, no un espejo en vivo",
           versionsSnapshotWarnContent:
             "Un borrador no sigue los cambios realizados en la versión activa mientras permanece abierto: solo conserva el aspecto que tenía la versión activa en el momento en que se creó. Publicar no combina ambas cosas: reemplaza por completo la versión activa con la instantánea del borrador, descartando silenciosamente cualquier cambio activo realizado mientras tanto. Publique un borrador cuanto antes, o vuelva a crearlo si la versión activa ha avanzado desde entonces.",
           versionsPromotionIntro:
             "Publicar un borrador pasa la versión Published vigente a estado Deprecated en el mismo guardado. El número de versión siempre aumenta, y cada carga de formulario a partir de ese momento sirve la nueva versión Published.",
-          versionsRuleGuardTitle: "Una publicación que perdería en silencio todas las reglas de visibilidad se rechaza",
+          versionsRuleGuardTitle:
+            "Una publicación que perdería en silencio todas las reglas de visibilidad se rechaza",
           versionsRuleGuardContent:
             "Las reglas de visibilidad se clonan en el borrador en el momento en que se genera, y no se vuelven a obtener al publicar, así que para cuando ocurre una publicación normalmente ya no queda nada que perder. El único caso para el que existe esta salvaguarda es aquel en el que la versión saliente sí tiene reglas y el borrador no tiene ninguna: la publicación se rechaza de plano, en lugar de volver visible sin condiciones —y en silencio— cada campo condicionalmente oculto de ese tipo de registro.",
 
           retireTitle: "Retirar un campo: desactivar o eliminar",
-          retireIntro: "No son la misma operación y la diferencia importa. Si tienes dudas, desactiva: es la reversible.",
+          retireIntro:
+            "No son la misma operación y la diferencia importa. Si tienes dudas, desactiva: es la reversible.",
           deactivateTitle: "Desactivar Active",
           deactivate1: "El campo deja de ofrecerse en los formularios de creación y edición",
           deactivate2: "Toda respuesta ya almacenada se conserva, intacta",
           deactivate3: "Es reversible: volver a activar Active restaura el campo tal como estaba",
-          deactivate4: "Se registra en el historial como Deactivated, y se puede Reactivate más adelante",
+          deactivate4:
+            "Se registra en el historial como Deactivated, y se puede Reactivate más adelante",
           deleteColTitle: "Eliminar la definición",
           deleteCol1: "Se rechaza en el primer intento si el campo tiene alguna respuesta",
-          deleteCol2: "Destruye esas respuestas una vez transcurrido el periodo de retención, si lo confirmas",
-          deleteCol3: "Libera la clave, de modo que un campo nuevo podría reutilizarla más adelante, sin ninguna de las respuestas antiguas",
-          deleteCol4: "Se registra en el historial como Deleted, y se puede Restore mientras sea recuperable",
+          deleteCol2:
+            "Destruye esas respuestas una vez transcurrido el periodo de retención, si lo confirmas",
+          deleteCol3:
+            "Libera la clave, de modo que un campo nuevo podría reutilizarla más adelante, sin ninguna de las respuestas antiguas",
+          deleteCol4:
+            "Se registra en el historial como Deleted, y se puede Restore mientras sea recuperable",
 
           historyTitle: "Historial de la definición",
           historyIntro:
@@ -2049,19 +2288,23 @@ export const es = {
           thEvent: "Evento",
           thMeans: "Qué significa",
           evCreated: "El campo se definió.",
-          evUpdated: "Algo cambió en la definición: una etiqueta, un indicador, el validador, las opciones.",
+          evUpdated:
+            "Algo cambió en la definición: una etiqueta, un indicador, el validador, las opciones.",
           evDeactivated: "Se desactivó Active, retirando el campo sin tocar sus respuestas.",
           evReactivated: "Se volvió a activar Active.",
           evDeleted: "La definición se eliminó y todavía es recuperable.",
           evRestored: "Una definición eliminada se recuperó.",
-          evPurged: "La definición se eliminó de forma permanente y ya no es recuperable. El cuadro marca este caso explícitamente para que no se lea como una eliminación ordinaria.",
-          historyParts: "Cada entrada también indica a qué parte del campo se refiere, porque un campo es más que una sola fila.",
+          evPurged:
+            "La definición se eliminó de forma permanente y ya no es recuperable. El cuadro marca este caso explícitamente para que no se lea como una eliminación ordinaria.",
+          historyParts:
+            "Cada entrada también indica a qué parte del campo se refiere, porque un campo es más que una sola fila.",
           thPart: "Parte",
           partField: "El propio campo.",
           partDefinition: "El registro de definición que hay detrás.",
           partVersion: "Una versión de la definición.",
           partOption: "Una entrada de la lista de opciones del campo.",
-          partVisibilityRule: "Una regla condicional de mostrar u ocultar asignada al campo, gestionada mediante el cuadro Reglas de Visibilidad.",
+          partVisibilityRule:
+            "Una regla condicional de mostrar u ocultar asignada al campo, gestionada mediante el cuadro Reglas de Visibilidad.",
           historyScopeTitle: "El historial cubre la definición, nunca las respuestas",
           historyScopeContent:
             "Este cuadro no te va a decir quién cambió la nacionalidad de una persona concreta, y no está pensado para eso. Listar aquí los cambios de valores lo convertiría en una copia legible de los datos de cualquiera, saltándose de una vez la seguridad a nivel de campo y cualquier otra regla de visibilidad. Solo son elegibles los cambios del lado de la definición, y los registros que llevan valores se excluyen por nombre y no por omisión.",
@@ -2076,29 +2319,39 @@ export const es = {
           readStoredValues: "Valores almacenados",
           readStoredValuesMeans: "Cuántas respuestas existen para este campo.",
           readLegacyValues: "Valores en el almacén heredado",
-          readLegacyValuesMeans: "Respuestas que todavía están en el almacenamiento anterior, previo al almacén de valores actual. Se cuentan por separado para que una migración en curso sea visible y no quede oculta.",
+          readLegacyValuesMeans:
+            "Respuestas que todavía están en el almacenamiento anterior, previo al almacén de valores actual. Se cuentan por separado para que una migración en curso sea visible y no quede oculta.",
           readOptions: "Opciones",
-          readOptionsMeans: "Cuántas opciones tiene la lista del campo, para un campo Select o MultiSelect.",
+          readOptionsMeans:
+            "Cuántas opciones tiene la lista del campo, para un campo Select o MultiSelect.",
           readByRecordType: "Por tipo de registro",
-          readByRecordTypeMeans: "El mismo recuento de respuestas repartido por el tipo de registro que las contiene, para que veas dónde están realmente los datos.",
+          readByRecordTypeMeans:
+            "El mismo recuento de respuestas repartido por el tipo de registro que las contiene, para que veas dónde están realmente los datos.",
           readAffectedOrgs: "Organizaciones con valores",
-          readAffectedOrgsMeans: "Para un campo global de la plataforma, cuántos espacios de trabajo tienen respuestas para él. Este es el número que hace que una eliminación tenga consecuencias reales.",
+          readAffectedOrgsMeans:
+            "Para un campo global de la plataforma, cuántos espacios de trabajo tienen respuestas para él. Este es el número que hace que una eliminación tenga consecuencias reales.",
           readScopeNotice: "El aviso de alcance de arriba",
-          readScopeNoticeMeans: "Indica si los recuentos de abajo cubren solo tu espacio de trabajo o el conjunto entero de la plataforma. Los dos difieren en órdenes de magnitud para un campo heredado, y un número desnudo no te dice cuál de los dos estás viendo.",
+          readScopeNoticeMeans:
+            "Indica si los recuentos de abajo cubren solo tu espacio de trabajo o el conjunto entero de la plataforma. Los dos difieren en órdenes de magnitud para un campo heredado, y un número desnudo no te dice cuál de los dos estás viendo.",
           usageWarnTitle: "Confía en la advertencia, no en el número",
           usageWarnContent:
             "La frase «esto destruirá datos» procede del propio veredicto del servidor, nunca del recuento en pantalla. Un campo global de la plataforma se mide en cada espacio de trabajo que lo heredó, así que puede mostrar cero en tu propio espacio de trabajo y aun así advertirte, correctamente. La advertencia es lo que hay que creer.",
 
           deleteTitle: "Eliminar sin destruir datos",
-          deleteIntro: "Eliminar un campo que tiene respuestas exige dos pasos deliberados. Un campo sin respuestas exige uno.",
+          deleteIntro:
+            "Eliminar un campo que tiene respuestas exige dos pasos deliberados. Un campo sin respuestas exige uno.",
           d1Title: "Abre primero Usage & impact",
-          d1Content: "Comprueba cuántas respuestas existen y dónde están. Si el número te sorprende, detente aquí: casi siempre es mejor desactivar el campo.",
+          d1Content:
+            "Comprueba cuántas respuestas existen y dónde están. Si el número te sorprende, detente aquí: casi siempre es mejor desactivar el campo.",
           d2Title: "Elige Delete",
-          d2Content: "Si el campo tiene respuestas, la eliminación se rechaza con un conflicto y el cuadro explica exactamente qué se perdería, indicando el número de valores almacenados y el número de tipos de registro.",
+          d2Content:
+            "Si el campo tiene respuestas, la eliminación se rechaza con un conflicto y el cuadro explica exactamente qué se perdería, indicando el número de valores almacenados y el número de tipos de registro.",
           d3Title: "Confirma la eliminación destructiva",
-          d3Content: "Confirmar desde dentro de ese cuadro es lo que realmente la lleva a cabo. Es un acto separado y explícito, y no un segundo clic sobre el mismo botón, para que un campo con datos no se pueda eliminar por inercia.",
+          d3Content:
+            "Confirmar desde dentro de ese cuadro es lo que realmente la lleva a cabo. Es un acto separado y explícito, y no un segundo clic sobre el mismo botón, para que un campo con datos no se pueda eliminar por inercia.",
           d4Title: "O elimina un campo vacío en un solo paso",
-          d4Content: "Un campo sin respuestas se elimina sin ningún aviso y sin ningún paso adicional, porque no hay nada que perder.",
+          d4Content:
+            "Un campo sin respuestas se elimina sin ningún aviso y sin ningún paso adicional, porque no hay nada que perder.",
           deleteRetention:
             "Una eliminación confirmada destruye las respuestas almacenadas una vez transcurrido el periodo de retención, no al instante. Hasta entonces la definición todavía se puede Restore, y el historial registra tanto la eliminación como la restauración. Pasado el periodo, las respuestas desaparecen y la entrada del historial se lee como Purged.",
 
@@ -2114,7 +2367,8 @@ export const es = {
           colValueType: "Uno de los veintidós tipos de valor.",
           colRequired: "Si el campo es obligatorio.",
           colActive: "Si el campo se sigue ofreciendo en los formularios.",
-          colSortOrder: "La posición del campo entre los campos personalizados del tipo de registro.",
+          colSortOrder:
+            "La posición del campo entre los campos personalizados del tipo de registro.",
           colOptionsEn: "Las opciones en inglés, para un campo Select o MultiSelect.",
           colOptionsAr: "Las opciones en árabe, alineadas con las de inglés.",
           colSensitivity: "La etiqueta de clasificación fijada en la definición.",
@@ -2142,7 +2396,8 @@ export const es = {
           valueTypesScreenIntro:
             "Una tabla con los veintidós tipos de valor y, para cada uno, una descripción de para qué sirve, si admite un texto de sugerencia, si tiene una lista de opciones propia, y si admite un validador. Úsala para responder «qué tipos existen» sin abrir un formulario de definición. Text es la única fila que muestra compatibilidad con validador, y los cuatro tipos con forma de referencia no muestran ninguna lista de opciones propia: lo que ofrecen procede de otro módulo, o de un archivo subido, y no de una lista que tú redactes.",
           entityTypesScreenTitle: "Entity Types",
-          entityTypesScreenIntro: "Una lista de cada tipo de registro al que se puede asociar un campo personalizado: su nombre para mostrar, su clave, y el módulo que lo posee.",
+          entityTypesScreenIntro:
+            "Una lista de cada tipo de registro al que se puede asociar un campo personalizado: su nombre para mostrar, su clave, y el módulo que lo posee.",
           entityTypesScreenDrift:
             "También muestra dos columnas de pantalla independientes más un estado, lo cual no es una duplicación. Una es lo que la plataforma afirma sobre esta aplicación; la otra es lo que esta aplicación realmente tiene. La columna de estado indica si las dos coinciden, y una fila que dice Out of Sync es un defecto real que merece reportarse: significa que, o bien un campo apuntaba a un tipo de registro que nadie puede representar, o bien hay una pantalla que la plataforma no sabe que existe.",
           apiOnlyTitle: "Tipos de registro exclusivos de la API",
@@ -2161,7 +2416,8 @@ export const es = {
             "Esta página reúne cada límite con el que un administrador de campos personalizados puede razonablemente encontrarse, y explica por qué cada uno es como es. Lo que hay aquí describe el comportamiento actual y no es una promesa sobre el futuro. Un límite indicado con claridad sale más barato que un límite descubierto a las cuatro de la tarde.",
 
           numbersTitle: "Los números fijos",
-          numbersIntro: "Estas son constantes del producto. Ninguna se puede subir ni bajar para un campo concreto, y solo la última varía en algo.",
+          numbersIntro:
+            "Estas son constantes del producto. Ninguna se puede subir ni bajar para un campo concreto, y solo la última varía en algo.",
           thLimit: "Límite",
           thValue: "Valor",
           thConfigurable: "¿Configurable?",
@@ -2192,61 +2448,77 @@ export const es = {
           vNoRetro: "Asignar un validador nunca vuelve a comprobar las respuestas ya guardadas.",
           vNoRetroWhy:
             "La validación se ejecuta en un único lugar: la ruta de guardado. Nada recorre los datos históricos cuando se asigna un validador nuevo, así que un campo puede contener legítimamente valores que su propio validador actual rechazaría, hasta que alguien los vuelva a introducir.",
-          vWhitespace: "Un valor hecho solo de espacios se salta por completo la validación salvo que el campo sea Required.",
+          vWhitespace:
+            "Un valor hecho solo de espacios se salta por completo la validación salvo que el campo sea Required.",
           vWhitespaceWhy:
             "La comprobación de vacío se ejecuta antes que cualquier comprobación de tipo o de validador. En un campo opcional, un valor hecho solo de espacios se almacena por tanto como borrado sin ningún error de validador en absoluto. Marca el campo como Required si una respuesta en blanco debe rechazarse.",
           vNoRegex: "No hay ningún cuadro de patrón o expresión regular en ningún sitio.",
           vNoRegexWhy:
             "Un patrón escrito a mano se puede construir para que consuma una cantidad enorme de tiempo de procesamiento con una entrada corta, convirtiendo un formulario de entrada de datos en una forma de tumbar el sistema. Las 13 comprobaciones seleccionadas existen precisamente para que nadie tenga que redactar una.",
           vNoFilter: "La lista de definiciones no se puede filtrar ni buscar por validador.",
-          vNoFilterWhy: "No se construyó ninguna vista así. Para ver qué validador usa un campo, abre el formulario de definición de ese campo.",
+          vNoFilterWhy:
+            "No se construyó ninguna vista así. Para ver qué validador usa un campo, abre el formulario de definición de ese campo.",
           vNoReference: "No hay ninguna referencia navegable de validadores dentro del producto.",
           vNoReferenceWhy:
             "Los tipos de valor y los tipos de registro tienen cada uno su propia pantalla de referencia de solo lectura; los validadores no. El desplegable del formulario de definición de un campo Text es la única lista dentro del producto.",
-          vNoChecksumEgUae: "Las comprobaciones de identidad egipcia y emiratí verifican la estructura pero no un dígito de control.",
+          vNoChecksumEgUae:
+            "Las comprobaciones de identidad egipcia y emiratí verifican la estructura pero no un dígito de control.",
           vNoChecksumEgUaeWhy:
             "Ninguno de los dos países publica un algoritmo de dígito de control, y las conjeturas de la comunidad encontradas durante la investigación no coincidían entre sí. Un algoritmo equivocado rechazaría identidades reales y válidas, que es peor que no comprobar el último dígito en absoluto.",
           vNoAe: "Postal Code no admite los Emiratos Árabes Unidos.",
-          vNoAeWhy: "Los Emiratos no tienen un sistema nacional de códigos postales, así que no hay nada contra lo que validar. Intentarlo se rechaza con su propio mensaje explicativo y no con uno genérico.",
+          vNoAeWhy:
+            "Los Emiratos no tienen un sistema nacional de códigos postales, así que no hay nada contra lo que validar. Intentarlo se rechaza con su propio mensaje explicativo y no con uno genérico.",
 
           typesTitle: "Comportamientos de los tipos de valor",
-          tValueTypeFixed: "La clave, el tipo de registro y el alcance nunca se pueden cambiar una vez guardado un campo.",
+          tValueTypeFixed:
+            "La clave, el tipo de registro y el alcance nunca se pueden cambiar una vez guardado un campo.",
           tValueTypeFixedWhy:
             "Cambiar la clave, el tipo de registro o el alcance después de guardado haría que cada respuesta ya almacenada resultara ambigua sobre lo que significa. El tipo de valor es la única excepción, con una vía de escape estrecha: nueve pares de tipos concretos se pueden convertir después — ver Gestión de Campos —; cualquier otro caso sigue significando eliminar y volver a crear.",
-          tMultiOrder: "Una respuesta MultiSelect se lee de vuelta en el orden de selección, no en el orden de las opciones.",
+          tMultiOrder:
+            "Una respuesta MultiSelect se lee de vuelta en el orden de selección, no en el orden de las opciones.",
           tMultiOrderWhy:
             "Conservar el orden en que alguien eligió es lo que hace que el valor se conserve con fidelidad. El coste es que una columna de lista que muestre esa respuesta no tiene garantizado seguir el orden en que redactaste las opciones.",
-          tLongTextNoBlock: "LongText te deja seguir escribiendo más allá de su límite de 10.000 caracteres.",
-          tLongTextNoBlockWhy: "El contador en pantalla se pone rojo, pero no hay ningún bloqueo antes de enviar como el que MultiSelect aplica en la vigésima selección. El rechazo llega al guardar.",
+          tLongTextNoBlock:
+            "LongText te deja seguir escribiendo más allá de su límite de 10.000 caracteres.",
+          tLongTextNoBlockWhy:
+            "El contador en pantalla se pone rojo, pero no hay ningún bloqueo antes de enviar como el que MultiSelect aplica en la vigésima selección. El rechazo llega al guardar.",
           tCurrencyShape: "Un código de Currency solo se comprueba en su forma.",
           tCurrencyShapeWhy:
             "No hay en el producto ninguna lista autorizada de códigos de moneda reales contra la que comprobar, y un espacio de trabajo puede necesitar legítimamente cualquiera de los aproximadamente 180 reales. Tres letras mayúsculas son por tanto toda la comprobación, y un código con buena forma pero inexistente, como ZZZ, se acepta.",
           tCurrencyPlain: "Currency almacena un importe simple, nunca unidades menores.",
-          tCurrencyPlainWhy: "Sigue la misma convención que cualquier otro importe monetario del producto. 100.50 se almacena como 100.50, nunca como 10050, lo cual importa si alguna vez lees los datos en bruto o construyes un informe con ellos.",
+          tCurrencyPlainWhy:
+            "Sigue la misma convención que cualquier otro importe monetario del producto. 100.50 se almacena como 100.50, nunca como 10050, lo cual importa si alguna vez lees los datos en bruto o construyes un informe con ellos.",
           tDurationMinutes: "La unidad de Duration siempre son minutos, y no tiene máximo.",
           tDurationMinutesWhy:
             "Los minutos son la convención que ya usan las partes de programación y reservas del producto para los datos con forma de duración, y el formulario etiqueta la unidad de forma visible en lugar de dejar un número desnudo. Solo se rechazan los valores negativos; no hay límite superior ni ninguna forma de fijar uno por campo.",
-          tRatingSlider: "Un campo Rating sin tocar muestra su control deslizante en 1 aun estando vacío.",
-          tRatingSliderWhy: "Un control deslizante siempre necesita un número real para posicionar su indicador. No se envía nada hasta que alguien lo mueve de verdad, así que el campo se guarda genuinamente como vacío, pero parece un 1 hasta que lo sabes.",
+          tRatingSlider:
+            "Un campo Rating sin tocar muestra su control deslizante en 1 aun estando vacío.",
+          tRatingSliderWhy:
+            "Un control deslizante siempre necesita un número real para posicionar su indicador. No se envía nada hasta que alguien lo mueve de verdad, así que el campo se guarda genuinamente como vacío, pero parece un 1 hasta que lo sabes.",
           tRatingZero: "Un Rating de 0 se rechaza en lugar de tratarse como sin valorar.",
-          tRatingZeroWhy: "Sin valorar significa que el campo se dejó genuinamente vacío. Un 0 enviado explícitamente es un valor real que no supera la comprobación de 1 a 5 exactamente igual que lo haría un 6, y recibe el mismo mensaje.",
+          tRatingZeroWhy:
+            "Sin valorar significa que el campo se dejó genuinamente vacío. Un 0 enviado explícitamente es un valor real que no supera la comprobación de 1 a 5 exactamente igual que lo haría un 6, y recibe el mismo mensaje.",
           tPhoneShape: "Phone valida la forma, no si el número podría existir de verdad.",
           tPhoneShapeWhy:
             "El servidor solo comprueba la gramática internacional. El propio selector del formulario además comprueba los dígitos contra el plan de numeración real del país seleccionado, así que el hueco solo se alcanza con una solicitud que se salte el formulario: una limitación de calidad de los datos aceptada y no una de seguridad.",
-          tPhoneFlag: "La bandera de país que muestra Phone puede ser incorrecta en un código de llamada compartido.",
+          tPhoneFlag:
+            "La bandera de país que muestra Phone puede ser incorrecta en un código de llamada compartido.",
           tPhoneFlagWhy:
             "Algunos códigos de llamada los comparten varios países, y no hay ninguna columna de país independiente: la bandera se deriva del propio número. El número almacenado no se ve afectado; solo la bandera de al lado puede elegir el país equivocado dentro de un código compartido.",
           tColorShorthand: "Color nunca unifica las formas de tres y de seis dígitos.",
-          tColorShorthandWhy: "Las dos son válidas y las dos se conservan exactamente tal como se enviaron, así que el mismo color se puede almacenar de dos formas distintas en registros diferentes. Solo las mayúsculas se normalizan, siempre a minúsculas.",
+          tColorShorthandWhy:
+            "Las dos son válidas y las dos se conservan exactamente tal como se enviaron, así que el mismo color se puede almacenar de dos formas distintas en registros diferentes. Solo las mayúsculas se normalizan, siempre a minúsculas.",
           tTimeText: "Time se almacena como texto canónico y no como una hora de base de datos.",
           tTimeTextWhy:
             "Una elección de almacenamiento deliberada, hecha para no repetir un problema de ordenación conocido que tiene en una base de datos una columna de hora ya existente en otra parte del producto. Una entrada sin ceros a la izquierda se acepta y se normaliza, así que dos formas de escribir la misma hora siempre acaban coincidiendo.",
           tPercentStorage: "Percent almacena el número que dirías en voz alta, no una fracción.",
-          tPercentStorageWhy: "25 se almacena como 25 y se muestra como 25%. Nunca es 0,25, y la visualización añade el signo en lugar de aplicar un formateador basado en fracciones, precisamente para que un 25 nunca pueda mostrarse como 2500%.",
+          tPercentStorageWhy:
+            "25 se almacena como 25 y se muestra como 25%. Nunca es 0,25, y la visualización añade el signo en lugar de aplicar un formateador basado en fracciones, precisamente para que un 25 nunca pueda mostrarse como 2500%.",
           tTextNotTrimmed: "Text no recorta los espacios que lo rodean; Select sí.",
           tTextNotTrimmedWhy:
             "Un valor Text se almacena exactamente tal como se envió, porque un espacio inicial o final puede tener significado en un texto libre. Un valor Select se recorta por los dos lados antes de compararse con las opciones, así que un espacio suelto nunca provoca un rechazo espurio.",
-          tOracleBytes: "Un texto largo en árabe se puede rechazar por debajo del límite de caracteres indicado en una de las bases de datos.",
+          tOracleBytes:
+            "Un texto largo en árabe se puede rechazar por debajo del límite de caracteres indicado en una de las bases de datos.",
           tOracleBytesWhy:
             "El límite de 4.000 caracteres de Text es un recuento exacto de caracteres en dos de las tres bases de datos admitidas. En la tercera se cuenta en bytes, así que un texto multibyte —el árabe incluido— puede alcanzar el límite antes. Usa LongText si estás cerca del límite.",
 
@@ -2254,7 +2526,8 @@ export const es = {
           fNoStoredName: "Una referencia nunca almacena el nombre del registro al que apunta.",
           fNoStoredNameWhy:
             "Un nombre almacenado quedaría dentro del registro que contiene el campo, y por tanto sería legible por cualquiera que pueda leer ese registro, mientras que el propio nombre lo protege el permiso del destino. No hay ningún ajuste para activar esto, y no lo habrá. El beneficio compensatorio es que un nombre corregido en su propio registro queda corregido de inmediato en cada sitio donde se referencia.",
-          fIdOpaque: "La identidad del registro referenciado es opaca y debe devolverse sin cambios.",
+          fIdOpaque:
+            "La identidad del registro referenciado es opaca y debe devolverse sin cambios.",
           fIdOpaqueWhy:
             "Es la clave de otro módulo, cifrada para el transporte, y nada en ella está pensado para leerse o remodelarse. Un carácter alterado y el producto informa correctamente de que la referencia almacenada es incorrecta. Devuelve exactamente la cadena que recibiste.",
           fSameNames: "Una referencia se escribe bajo los mismos dos nombres con los que se lee.",
@@ -2263,112 +2536,152 @@ export const es = {
           fFiveFailures: "Una referencia que no se muestra indica cuál de cinco cosas ha ocurrido.",
           fFiveFailuresWhy:
             "Sin permiso, registro desaparecido, valor incorrecto, una búsqueda que acaba de fallar, y un tipo de registro para el que esta instalación no puede responder son cinco problemas distintos con cinco soluciones distintas. Mostrarlos como un único campo en blanco, sin distinción, es lo que deja un puntero a un registro eliminado pasando desapercibido durante un año.",
-          fMergedAnswers: "«Eliminado» y «en un espacio de trabajo que no puedes ver» son una única respuesta.",
+          fMergedAnswers:
+            "«Eliminado» y «en un espacio de trabajo que no puedes ver» son una única respuesta.",
           fMergedAnswersWhy:
             "Distinguirlos permitiría a alguien probar identidades una a una para descubrir qué existe en otro espacio de trabajo. «No tienes permiso para ver este tipo de registro» se distingue de las dos, porque describe el propio acceso del lector y no revela nada.",
-          fDeleteClears: "Eliminar un registro referenciado borra cualquier puntero que apunte a él y conserva toda fila de valor.",
+          fDeleteClears:
+            "Eliminar un registro referenciado borra cualquier puntero que apunte a él y conserva toda fila de valor.",
           fDeleteClearsWhy:
             "Las dos partes de cada respuesta afectada se borran juntas, nunca una sin la otra. No se elimina nada: la respuesta conserva su fila, su versión y su historial de auditoría, así que el campo después se lee como genuinamente vacío y no como roto.",
           fNoBacklinks: "Nada lista las referencias que apuntan a un registro dado.",
-          fNoBacklinksWhy: "No existe en ningún sitio una vista de «qué apunta a esto», y eliminar un registro no avisa de cuántos punteros está a punto de borrar. El borrado es silencioso porque es seguro, no porque esté oculto.",
+          fNoBacklinksWhy:
+            "No existe en ningún sitio una vista de «qué apunta a esto», y eliminar un registro no avisa de cuántos punteros está a punto de borrar. El borrado es silencioso porque es seguro, no porque esté oculto.",
           fLimitedTargets: "Actualmente solo se pueden referenciar tres tipos de registro.",
           fLimitedTargetsWhy:
             "Miembros del personal, cuentas de usuario y personas del módulo de terceros: los tipos cuyo módulo propietario ofrece una lista con búsqueda y comprobación de permisos. Cualquier otro se rechaza en lugar de responderse con una lista vacía, porque una lista vacía parece un resultado correcto y diría «no hay ninguno de estos» cuando la verdad es «esto no se puede preguntar».",
           fNoAdminTarget: "Los registros de administrador no se pueden referenciar en absoluto.",
           fNoAdminTargetWhy:
             "Un administrador puede no pertenecer a ningún espacio de trabajo —un administrador de la plataforma no tiene ninguno—, así que un puntero a uno de ellos podría llegar más allá de cualquier límite de espacio de trabajo del producto. Un campo User Reference rechaza uno de plano, y el formulario de definición nunca ofrece ninguno.",
-          fUnpinnedIsLegal: "Dejar un campo de referencia sin anclar es un estado permanente y admitido.",
+          fUnpinnedIsLegal:
+            "Dejar un campo de referencia sin anclar es un estado permanente y admitido.",
           fUnpinnedIsLegalWhy:
             "Significa «cualquier tipo que esta persona pueda referenciar», y cada respuesta registra qué tipo eligió. Nunca debe leerse como «nada configurado, por tanto nada válido»; el formulario del registro lo gestiona pidiendo primero el tipo de registro y después el registro.",
-          fPopulatedUnpinned: "Un campo sin anclar ya rellenado no ofrece ninguna forma de cambiar el tipo de registro.",
+          fPopulatedUnpinned:
+            "Un campo sin anclar ya rellenado no ofrece ninguna forma de cambiar el tipo de registro.",
           fPopulatedUnpinnedWhy:
             "El propio tipo de la respuesta almacenada se usa para el selector, así que volver a elegir queda limitado a ese tipo. Borrar el campo hace que vuelva el control de tipo. Es un límite real y no un defecto, y es la forma de esta funcionalidad con más probabilidades de reportarse como uno.",
           fNotExported: "Un tipo de destino anclado no está en la exportación de definiciones.",
-          fNotExportedWhy: "La hoja de cálculo tiene 18 columnas y ninguna de ellas es el tipo de destino, así que una definición exportada no registra a qué apunta su campo.",
+          fNotExportedWhy:
+            "La hoja de cálculo tiene 18 columnas y ninguna de ellas es el tipo de destino, así que una definición exportada no registra a qué apunta su campo.",
           fSingleValue: "Un campo de referencia contiene exactamente un puntero.",
-          fSingleValueWhy: "No existe un tipo de referencia multivalor. Dos respuestas significan dos campos, y Multi-Select no puede apuntar a registros: sus respuestas son texto que tú redactaste.",
+          fSingleValueWhy:
+            "No existe un tipo de referencia multivalor. Dos respuestas significan dos campos, y Multi-Select no puede apuntar a registros: sus respuestas son texto que tú redactaste.",
 
           optionsTitle: "Comportamientos de las opciones",
           oTextIsValue: "El texto de la opción en inglés es la respuesta almacenada.",
-          oTextIsValueWhy: "No hay ningún código independiente detrás de una opción, así que renombrarla cambia lo que muestra cada registro existente. Prefiere añadir una opción nueva y retirar la antigua cuando la distinción importe.",
-          oCaseSensitive: "La comparación de opciones es exacta y distingue mayúsculas de minúsculas.",
-          oCaseSensitiveWhy: "Dos opciones que solo difieran en mayúsculas y minúsculas son un par legítimamente distinto, y unificar las mayúsculas las haría coincidir. Los dos lados se recortan primero, así que solo importan las mayúsculas y minúsculas y el contenido.",
+          oTextIsValueWhy:
+            "No hay ningún código independiente detrás de una opción, así que renombrarla cambia lo que muestra cada registro existente. Prefiere añadir una opción nueva y retirar la antigua cuando la distinción importe.",
+          oCaseSensitive:
+            "La comparación de opciones es exacta y distingue mayúsculas de minúsculas.",
+          oCaseSensitiveWhy:
+            "Dos opciones que solo difieran en mayúsculas y minúsculas son un par legítimamente distinto, y unificar las mayúsculas las haría coincidir. Los dos lados se recortan primero, así que solo importan las mayúsculas y minúsculas y el contenido.",
           oEnglishStored: "La etiqueta en árabe de una opción es solo para mostrarse.",
           oEnglishStoredWhy:
             "Las dos listas de etiquetas se emparejan fila por fila, y la de inglés es la que se graba en el registro y contra la que se valida. Un lector árabe ve árabe tanto al elegir como al consultarlo después; el dato subyacente se mantiene como un único valor consistente.",
-          oNoSharedSets: "La lista de opciones integrada de un campo es suya propia: compartirla es un paso aparte y deliberado.",
+          oNoSharedSets:
+            "La lista de opciones integrada de un campo es suya propia: compartirla es un paso aparte y deliberado.",
           oNoSharedSetsWhy:
             "Escribir una lista Options en un campo la mantiene privada para ese campo; no se reutiliza automáticamente en ningún otro sitio. Sin embargo, una lista de países que necesiten tres campos ya no hay que escribirla y mantenerla tres veces: vincula los tres al mismo Option Set compartido y versionado, y una edición posterior del conjunto actualiza a la vez cada campo vinculado.",
 
           groupsTitle: "Comportamientos de los grupos de campos",
           gStableKeyFixed: "La clave estable de un grupo nunca la puede cambiar nadie.",
-          gStableKeyFixedWhy: "El esquema exportado nombra un grupo por esta clave, así que renombrarla convertiría en silencio una futura reimportación de una actualización en una creación, contra un paquete ya distribuido. Una clave equivocada significa volver a crear el grupo.",
+          gStableKeyFixedWhy:
+            "El esquema exportado nombra un grupo por esta clave, así que renombrarla convertiría en silencio una futura reimportación de una actualización en una creación, contra un paquete ya distribuido. Una clave equivocada significa volver a crear el grupo.",
           gReorderCeiling: "Reordenar rechaza más de 100 grupos en un mismo tipo de registro.",
-          gReorderCeilingWhy: "Una solicitud de reordenación lleva de una vez el conjunto entero. Más allá de 100, no se puede mover ningún grupo de ese tipo de registro: la pantalla lo indica en lugar de fallar de forma genérica.",
+          gReorderCeilingWhy:
+            "Una solicitud de reordenación lleva de una vez el conjunto entero. Más allá de 100, no se puede mover ningún grupo de ese tipo de registro: la pantalla lo indica en lugar de fallar de forma genérica.",
           gGlobalOrdering: "Un espacio de trabajo no puede situar su grupo respecto a uno global.",
           gGlobalOrderingWhy:
             "Reordenar funciona en bloque, sin términos medios, y rechaza cualquier grupo que quien llama no posea, así que los propios grupos de un espacio de trabajo se renumeran desde cero. Esos números pueden coincidir con los de un grupo global, el empate se resuelve por la etiqueta en inglés, y el efecto visible es que mover tu grupo al principio puede dejarlo por debajo de uno global.",
           gSeparatePerms: "Los grupos de campos necesitan sus propios permisos.",
-          gSeparatePermsWhy: "Están controlados por separado de las definiciones de campo, incluido un permiso propio para reordenar. Un rol que tiene cada uno de los permisos de campos personalizados no los obtiene automáticamente, y sin ellos el enlace y el selector simplemente están ausentes.",
+          gSeparatePermsWhy:
+            "Están controlados por separado de las definiciones de campo, incluido un permiso propio para reordenar. Un rol que tiene cada uno de los permisos de campos personalizados no los obtiene automáticamente, y sin ellos el enlace y el selector simplemente están ausentes.",
           gOneEntityType: "Un grupo pertenece a exactamente un tipo de registro.",
-          gOneEntityTypeWhy: "No se lista nada hasta que eliges un tipo de registro, y cambiar el tipo de registro de un campo borra su grupo, porque un grupo de un tipo nunca es válido para otro.",
-          gUniquenessIndex: "En una base de datos actualizada, la unicidad de la clave estable descansa en la comprobación de la aplicación.",
+          gOneEntityTypeWhy:
+            "No se lista nada hasta que eliges un tipo de registro, y cambiar el tipo de registro de un campo borra su grupo, porque un grupo de un tipo nunca es válido para otro.",
+          gUniquenessIndex:
+            "En una base de datos actualizada, la unicidad de la clave estable descansa en la comprobación de la aplicación.",
           gUniquenessIndexWhy:
             "Los grupos que existían antes de las claves estables llevan una clave vacía hasta que se ejecuta un relleno retroactivo, y la restricción de unicidad a nivel de base de datos permanece desactivada hasta que eso haya ocurrido en todas partes; de lo contrario rechazaría la segunda de esas claves vacías.",
 
           securityTitle: "Comportamientos de seguridad y clasificación",
           sSensitivityLabel: "Sensitivity es una etiqueta, no un control de acceso.",
-          sSensitivityLabelWhy: "Se almacena, se conserva al leer y escribir, y se puede incluir en informes, y no cambia nada sobre quién puede leer un valor. La seguridad a nivel de campo es el mecanismo que restringe el acceso, y los dos no tienen relación.",
-          sRestrictedByResource: "Las restricciones se identifican por recurso de permiso, no por tipo de registro.",
-          sRestrictedByResourceWhy: "Es el mismo recurso que ya protege el propio registro, así que una única lista de campos restringidos cubre tanto los campos propios de una pantalla como sus campos personalizados. Los nombres se comparan sin distinguir mayúsculas de minúsculas.",
+          sSensitivityLabelWhy:
+            "Se almacena, se conserva al leer y escribir, y se puede incluir en informes, y no cambia nada sobre quién puede leer un valor. La seguridad a nivel de campo es el mecanismo que restringe el acceso, y los dos no tienen relación.",
+          sRestrictedByResource:
+            "Las restricciones se identifican por recurso de permiso, no por tipo de registro.",
+          sRestrictedByResourceWhy:
+            "Es el mismo recurso que ya protege el propio registro, así que una única lista de campos restringidos cubre tanto los campos propios de una pantalla como sus campos personalizados. Los nombres se comparan sin distinguir mayúsculas de minúsculas.",
           sRestrictedInvisible: "Un campo restringido está ausente, no en blanco.",
-          sRestrictedInvisibleWhy: "Mostrar un texto de sugerencia revelaría que existe un valor, lo que ya es información en sí misma. La consecuencia es que un campo restringido es indistinguible de uno que nunca se definió; conviene recordarlo cuando alguien reporte que falta un campo.",
+          sRestrictedInvisibleWhy:
+            "Mostrar un texto de sugerencia revelaría que existe un valor, lo que ya es información en sí misma. La consecuencia es que un campo restringido es indistinguible de uno que nunca se definió; conviene recordarlo cuando alguien reporte que falta un campo.",
           sRejectWholeSave: "Escribir un campo restringido rechaza el guardado entero.",
-          sRejectWholeSaveWhy: "Descartar en silencio ese único campo e informar de éxito es el fallo más difícil de notar. El rechazo también se produce cuando el valor enviado es igual al almacenado, así que nadie puede sondear un valor oculto probando qué se acepta.",
+          sRejectWholeSaveWhy:
+            "Descartar en silencio ese único campo e informar de éxito es el fallo más difícil de notar. El rechazo también se produce cuando el valor enviado es igual al almacenado, así que nadie puede sondear un valor oculto probando qué se acepta.",
           sRequiredExclusive: "Obligatorio y restringido no se pueden combinar.",
-          sRequiredExclusiveWhy: "Alguien que no puede ver un campo nunca podría satisfacerlo, así que el registro sería imposible de guardar para esa persona. Se rechazan las dos direcciones, se intente cual se intente primero, y el mensaje indica el campo.",
+          sRequiredExclusiveWhy:
+            "Alguien que no puede ver un campo nunca podría satisfacerlo, así que el registro sería imposible de guardar para esa persona. Se rechazan las dos direcciones, se intente cual se intente primero, y el mensaje indica el campo.",
           sHistoryNoValues: "El historial de la definición nunca muestra cambios de valores.",
-          sHistoryNoValuesWhy: "Incluirlos convertiría el cuadro en una copia legible de los datos de cualquiera, saltándose de una vez la seguridad a nivel de campo y cualquier otra regla de visibilidad. Los registros que llevan valores se excluyen por nombre y no por omisión.",
+          sHistoryNoValuesWhy:
+            "Incluirlos convertiría el cuadro en una copia legible de los datos de cualquiera, saltándose de una vez la seguridad a nivel de campo y cualquier otra regla de visibilidad. Los registros que llevan valores se excluyen por nombre y no por omisión.",
 
           exportTitle: "Comportamientos de exportación y portabilidad",
-          eDefinitionsOnly: "La exportación a hoja de cálculo contiene definiciones, nunca respuestas.",
+          eDefinitionsOnly:
+            "La exportación a hoja de cálculo contiene definiciones, nunca respuestas.",
           eDefinitionsOnlyWhy:
             "Es una exportación de definiciones por diseño: existe una exportación de valores aparte, con su propio endpoint y su propio botón en el encabezado para las respuestas propiamente dichas, limitada a 10.000 celdas, que se rechaza en lugar de truncarse al superar ese límite.",
-          eRefusesPastLimit: "Pasadas las 10.000 definiciones la exportación se rechaza en lugar de truncarse.",
-          eRefusesPastLimitWhy: "Un archivo truncado en silencio es peor que ningún archivo, porque parece completo. El rechazo te indica que acotes la exportación a un único tipo de registro.",
-          eRestrictedAbsent: "Los campos que tienes restringidos están ausentes del archivo, no en blanco.",
-          eRestrictedAbsentWhy: "La seguridad a nivel de campo se aplica a la exportación exactamente igual que en pantalla, y una columna en blanco seguiría revelando que el campo existe.",
-          eNoImport: "La exportación a hoja de cálculo es de un solo sentido, y la única vía de creación masiva que este producto ha ofrecido jamás está desactivada.",
+          eRefusesPastLimit:
+            "Pasadas las 10.000 definiciones la exportación se rechaza en lugar de truncarse.",
+          eRefusesPastLimitWhy:
+            "Un archivo truncado en silencio es peor que ningún archivo, porque parece completo. El rechazo te indica que acotes la exportación a un único tipo de registro.",
+          eRestrictedAbsent:
+            "Los campos que tienes restringidos están ausentes del archivo, no en blanco.",
+          eRestrictedAbsentWhy:
+            "La seguridad a nivel de campo se aplica a la exportación exactamente igual que en pantalla, y una columna en blanco seguiría revelando que el campo existe.",
+          eNoImport:
+            "La exportación a hoja de cálculo es de un solo sentido, y la única vía de creación masiva que este producto ha ofrecido jamás está desactivada.",
           eNoImportWhy:
             "La hoja de cálculo exportada es un informe para leer, no una plantilla que se pueda volver a importar. Existe una importación de paquete de esquema en JSON —con su propio cuadro de diálogo, su propio endpoint y su propia tabla de resultados por grupo—, pero cada llamada a ella se rechaza con un 409 mediante un interruptor de contención deliberado y permanente, que bloquea igualmente la exportación de esquema correspondiente. La creación masiva de campos no está disponible hoy en el producto: es el diseño de ese interruptor, no una omisión.",
           eTextCells: "Toda celda de la exportación se escribe como texto.",
-          eTextCellsWhy: "Una etiqueta que empiece por =, +, - o @ llega como caracteres literales y no como una fórmula de hoja de cálculo. Esto es categórico y no un filtro de casos conocidos, así que nada que parezca un cálculo puede convertirse en uno.",
+          eTextCellsWhy:
+            "Una etiqueta que empiece por =, +, - o @ llega como caracteres literales y no como una fórmula de hoja de cálculo. Esto es categórico y no un filtro de casos conocidos, así que nada que parezca un cálculo puede convertirse en uno.",
 
           reachTitle: "Dónde aparecen y dónde no aparecen los campos",
           rApiOnlyTypes: "Algunos tipos de registro no tienen ninguna pantalla en absoluto.",
-          rApiOnlyTypesWhy: "Son destinos legítimos y se listan en último lugar en el formulario de definición con el sufijo API only. Un campo definido contra uno de ellos se puede alcanzar a través de la API y no tiene dónde representarse en la interfaz.",
+          rApiOnlyTypesWhy:
+            "Son destinos legítimos y se listan en último lugar en el formulario de definición con el sufijo API only. Un campo definido contra uno de ellos se puede alcanzar a través de la API y no tiene dónde representarse en la interfaz.",
           rHandRolledForms: "Un puñado de pantallas conecta sus campos personalizados a mano.",
           rHandRolledFormsWhy:
             "La mayoría de las pantallas recogen los campos personalizados automáticamente. Unas pocas cuyas interfaces de creación y edición son anteriores a ese mecanismo —entre ellas webhooks, plantillas de mensajes, planes de espacio de trabajo, definiciones de plugins, leads y temas— implementan ellas mismas la misma sección Custom Fields. El comportamiento debería ser idéntico; si no lo es, merece la pena reportarlo.",
-          rDsrCreateOnly: "Las solicitudes de interesados solo admiten campos personalizados al crear.",
-          rDsrCreateOnlyWhy: "Una solicitud enviada avanza por un flujo de revisión en lugar de ser editable en general, así que no hay ningún formulario de edición al que llevar los campos personalizados. Eso es por diseño, no una omisión.",
-          rDialogForms: "La mayoría de los formularios de creación y edición de registros siguen siendo cuadros de diálogo.",
+          rDsrCreateOnly:
+            "Las solicitudes de interesados solo admiten campos personalizados al crear.",
+          rDsrCreateOnlyWhy:
+            "Una solicitud enviada avanza por un flujo de revisión en lugar de ser editable en general, así que no hay ningún formulario de edición al que llevar los campos personalizados. Eso es por diseño, no una omisión.",
+          rDialogForms:
+            "La mayoría de los formularios de creación y edición de registros siguen siendo cuadros de diálogo.",
           rDialogFormsWhy:
             "La propia redacción de campos personalizados salió de un cuadro de diálogo anidado y pasó a un panel lateral, que es por lo que añadir un campo desde dentro de un registro ya no apila dos cuadros de diálogo. Los formularios de registro que lo rodean se dejaron deliberadamente como estaban: moverlos es un cambio mucho más amplio, en módulos que no tienen nada que ver con los campos personalizados.",
-          rNoSidebarEntry: "Las pantallas Value Types y Entity Types no tienen entrada en el menú lateral.",
-          rNoSidebarEntryWhy: "La navegación del menú lateral se genera de forma centralizada, y estas dos se dejaron fuera de esa generación a propósito. En su lugar se alcanzan desde enlaces en el encabezado de la página Custom Fields.",
+          rNoSidebarEntry:
+            "Las pantallas Value Types y Entity Types no tienen entrada en el menú lateral.",
+          rNoSidebarEntryWhy:
+            "La navegación del menú lateral se genera de forma centralizada, y estas dos se dejaron fuera de esa generación a propósito. En su lugar se alcanzan desde enlaces en el encabezado de la página Custom Fields.",
 
           absentTitle: "Cosas que el producto no hace",
-          absentIntro: "Preguntadas con suficiente frecuencia como para merecer decirlas con claridad. Ninguna de ellas es un fallo que reportar.",
+          absentIntro:
+            "Preguntadas con suficiente frecuencia como para merecer decirlas con claridad. Ninguna de ellas es un fallo que reportar.",
           absent1:
             "Los veintidós tipos de valor son el conjunto completo. Dos elementos que antes no estaban en esta lista ahora sí: File e Image almacenan un archivo o una imagen subidos, y RichText almacena prosa con formato; ver la página Tipos de Valor. Sin embargo, adjuntar un nuevo valor File o Image todavía no está disponible en el producto; ambos se pueden definir hoy, y un valor ya existente solo se puede consultar o borrar.",
-          absent2: "La exportación de valores se rechaza en lugar de truncarse en cuanto una solicitud superaría las 10.000 celdas; exporta un conjunto más reducido de registros en lugar de esperar un archivo parcial.",
+          absent2:
+            "La exportación de valores se rechaza en lugar de truncarse en cuanto una solicitud superaría las 10.000 celdas; exporta un conjunto más reducido de registros en lugar de esperar un archivo parcial.",
           absent3:
             "Existe una vía de creación masiva, una importación de paquete de esquema en JSON con su propio cuadro de diálogo, pero un interruptor de contención la mantiene desactivada: rechaza de plano cualquier llamada en lugar de crear nada, igual que ocurre con la exportación de esquema correspondiente. Hoy, en la práctica, los campos se siguen creando de uno en uno en el formulario.",
           absent4:
             "Una versión publicada de un option set no traslada automáticamente los campos ya vinculados a una anterior: un administrador tiene que revincular cada campo explícitamente. Esto es deliberado: seguir el cambio automáticamente cambiaría en silencio el significado de los valores ya guardados contra la lista antigua.",
-          absent5: "No hay ningún mostrar-u-ocultar condicional que un administrador pueda configurar. Un campo está en el formulario o no lo está, sujeto a Active y a la seguridad a nivel de campo.",
-          absent6: "No hay cálculo, ni valor por defecto, ni regla entre campos. Un campo personalizado registra una respuesta; no deriva ninguna.",
+          absent5:
+            "No hay ningún mostrar-u-ocultar condicional que un administrador pueda configurar. Un campo está en el formulario o no lo está, sujeto a Active y a la seguridad a nivel de campo.",
+          absent6:
+            "No hay cálculo, ni valor por defecto, ni regla entre campos. Un campo personalizado registra una respuesta; no deriva ninguna.",
           absentInfoTitle: "Si necesitas alguna de estas cosas",
           absentInfoContent:
             "Coméntaselo a quien lleve tu hoja de ruta de producto en lugar de esquivarlo de una forma que te cueste datos. Volver a crear un campo para cambiar algo permanente destruye las respuestas ya registradas contra él, y ese es el error costoso que esta página existe para evitar.",
@@ -2379,7 +2692,8 @@ export const es = {
         // ═══════════════════════════════════════════════════
         optionSets: {
           title: "Conjuntos de Opciones",
-          description: "Listas de opciones reutilizables y versionadas. Vincula muchos campos a un mismo conjunto, y cada campo que lo usa cambia a la vez.",
+          description:
+            "Listas de opciones reutilizables y versionadas. Vincula muchos campos a un mismo conjunto, y cada campo que lo usa cambia a la vez.",
           intro:
             "Un conjunto de opciones (Option Set) es una colección de opciones con nombre y versionada que comparten varios campos personalizados Select y MultiSelect. En lugar de que cada campo mantenga su propia lista de opciones integrada y privada, los campos se vinculan a una versión del conjunto de opciones. Cuando los requisitos del negocio evolucionan, un administrador crea una versión nueva, actualiza las opciones, y la publica, actualizando de inmediato cada campo vinculado en el producto entero sin tener que actualizarlos uno por uno a mano.",
           whenToUseTitle: "Cuándo usar un Option Set frente a opciones integradas",
@@ -2387,7 +2701,8 @@ export const es = {
             "Usa un Option Set siempre que la misma lista de opciones se necesite en más de un campo (por ejemplo, códigos de país, niveles de prioridad, o listas de departamentos), o cuando necesites un historial de versiones auditable y una publicación por etapas. Usa opciones integradas cuando una lista de opciones sea exclusiva de un solo campo y nunca se vaya a reutilizar.",
 
           kindsTitle: "Tres tipos de Conjuntos de Opciones",
-          kindsIntro: "SCRIPE distingue tres tipos de conjuntos de opciones según su origen, su propiedad y sus reglas de editabilidad:",
+          kindsIntro:
+            "SCRIPE distingue tres tipos de conjuntos de opciones según su origen, su propiedad y sus reglas de editabilidad:",
           thKind: "Tipo",
           thOwner: "Propietario",
           thWhoCanEdit: "Quién puede editarlo",
@@ -2408,21 +2723,26 @@ export const es = {
             "Los conjuntos predefinidos (como los códigos de país ISO 3166-1 y las monedas ISO 4217) están marcados como gestionados por el sistema. El servidor rechaza terminantemente cualquier acción que los modifique —crear versiones de borrador, editar opciones, publicar o eliminar— para cualquier persona, Super Admins incluidos. Si necesitas una variante personalizada de una lista predefinida, crea en su lugar tu propio conjunto de espacio de trabajo o de plataforma.",
 
           lifecycleTitle: "Ciclo de vida y estados de las versiones",
-          lifecycleIntro: "Cada conjunto de opciones gestiona sus opciones mediante versiones inmutables. Una versión atraviesa cuatro estados discretos de su ciclo de vida:",
+          lifecycleIntro:
+            "Cada conjunto de opciones gestiona sus opciones mediante versiones inmutables. Una versión atraviesa cuatro estados discretos de su ciclo de vida:",
           thStatus: "Estado",
           thMeaning: "Significado",
           thNextState: "Siguiente estado",
           statusDraft: "Draft",
-          meaningDraft: "Una versión de borrador editable. Se pueden añadir, actualizar, reordenar o desactivar opciones. No es visible en los formularios de registro activos hasta que se publica.",
+          meaningDraft:
+            "Una versión de borrador editable. Se pueden añadir, actualizar, reordenar o desactivar opciones. No es visible en los formularios de registro activos hasta que se publica.",
           nextDraft: "Published (mediante la acción Publish)",
           statusPublished: "Published",
-          meaningPublished: "La versión activa y en vivo. Los campos vinculados muestran exactamente estas opciones en los formularios de creación y edición. Inmutable.",
+          meaningPublished:
+            "La versión activa y en vivo. Los campos vinculados muestran exactamente estas opciones en los formularios de creación y edición. Inmutable.",
           nextPublished: "Deprecated (cuando se publica un borrador más reciente)",
           statusDeprecated: "Deprecated",
-          meaningDeprecated: "Sustituida por una versión publicada más reciente. Los registros históricos que referencian opciones de esta versión se siguen mostrando correctamente. No se puede vincular a campos nuevos.",
+          meaningDeprecated:
+            "Sustituida por una versión publicada más reciente. Los registros históricos que referencian opciones de esta versión se siguen mostrando correctamente. No se puede vincular a campos nuevos.",
           nextDeprecated: "Archived (al retirarse)",
           statusArchived: "Archived",
-          meaningArchived: "Retirada de forma permanente del uso activo. Se conserva estrictamente para fines de auditoría histórica. Inmutable.",
+          meaningArchived:
+            "Retirada de forma permanente del uso activo. Se conserva estrictamente para fines de auditoría histórica. Inmutable.",
           nextArchived: "Ninguno (estado terminal)",
           lifecycleOnlyOnePublished:
             "Solo puede haber una versión Published en cada momento. Publicar un borrador desactualiza automáticamente la versión vigente hasta entonces, en una única operación atómica.",
@@ -2431,12 +2751,16 @@ export const es = {
             "Cuando publicas un borrador nuevo, la versión publicada actual se sustituye y se marca como Deprecated de inmediato. No se pierde ningún dato: los registros que ya habían guardado valores de la versión anterior se conservan intactos y muestran sus etiquetas almacenadas.",
 
           draftTitle: "Crear y editar una versión de borrador",
-          draftIntro: "Para añadir o modificar opciones en un conjunto de opciones, sigue el flujo de versionado por etapas:",
-          draft1: "Haz clic en Create draft version en el panel de detalle del conjunto de opciones. Se inicializa un borrador nuevo.",
+          draftIntro:
+            "Para añadir o modificar opciones en un conjunto de opciones, sigue el flujo de versionado por etapas:",
+          draft1:
+            "Haz clic en Create draft version en el panel de detalle del conjunto de opciones. Se inicializa un borrador nuevo.",
           draft2:
             "Introduce una Key única y una etiqueta en inglés para cada opción. Las dos son obligatorias antes de que se habilite el guardado. Opcionalmente puedes aportar etiquetas en árabe, tonos de color, claves de icono, y órdenes de clasificación.",
-          draft3: "Haz clic en Save draft para guardar la lista de opciones. El borrador se guarda en el servidor pero permanece sin exponerse a los formularios de registro activos.",
-          draft4: "Cuando esté listo, haz clic en Publish version. La versión pasa a estar en vivo y cada campo vinculado ofrece de inmediato las opciones actualizadas.",
+          draft3:
+            "Haz clic en Save draft para guardar la lista de opciones. El borrador se guarda en el servidor pero permanece sin exponerse a los formularios de registro activos.",
+          draft4:
+            "Cuando esté listo, haz clic en Publish version. La versión pasa a estar en vivo y cada campo vinculado ofrece de inmediato las opciones actualizadas.",
           draftSaveHintTitle: "Requisitos de validación de un borrador",
           draftSaveHintContent:
             "Un borrador exige al menos una opción válida con una Key y una etiqueta en inglés no vacías. Cada Key debe ser única dentro de la versión. El botón Save draft se habilita automáticamente en cuanto todas las filas cumplen estas reglas de validación.",
@@ -2448,35 +2772,52 @@ export const es = {
           thWhatItDoes: "Qué hace",
           thEffect: "Efecto sobre los datos existentes",
           actionBind: "Bind",
-          doingBind: "Asigna la definición de un campo personalizado a la versión publicada de un conjunto de opciones.",
-          effectBind: "El campo pasa de las opciones integradas a las opciones del conjunto de opciones. Los valores ya guardados se conservan.",
+          doingBind:
+            "Asigna la definición de un campo personalizado a la versión publicada de un conjunto de opciones.",
+          effectBind:
+            "El campo pasa de las opciones integradas a las opciones del conjunto de opciones. Los valores ya guardados se conservan.",
           actionSwitch: "Switch version",
-          doingSwitch: "Hace que un campo vinculado apunte a una versión publicada más reciente del mismo conjunto de opciones, o de otro.",
-          effectSwitch: "El campo empieza a ofrecer las opciones de la nueva versión. Los registros históricos siguen mostrando las opciones elegidas anteriormente.",
+          doingSwitch:
+            "Hace que un campo vinculado apunte a una versión publicada más reciente del mismo conjunto de opciones, o de otro.",
+          effectSwitch:
+            "El campo empieza a ofrecer las opciones de la nueva versión. Los registros históricos siguen mostrando las opciones elegidas anteriormente.",
           actionDetach: "Detach (Unbind)",
-          doingDetach: "Elimina la vinculación al conjunto de opciones, devolviendo el campo a opciones integradas independientes.",
-          effectDetach: "El campo deja de consultar el conjunto de opciones. Los valores almacenados del registro permanecen intactos.",
+          doingDetach:
+            "Elimina la vinculación al conjunto de opciones, devolviendo el campo a opciones integradas independientes.",
+          effectDetach:
+            "El campo deja de consultar el conjunto de opciones. Los valores almacenados del registro permanecen intactos.",
           switchCautionTitle: "Estabilidad de la vinculación",
           switchCautionContent:
             "Al desvincular o cambiar de conjunto de opciones, asegúrate de que los valores existentes de los registros sigan siendo compatibles con las nuevas claves de opción. Desactivar una opción en lugar de eliminar su clave garantiza que los registros históricos se sigan mostrando sin interrupción.",
 
           platformAdminTitle: "Capacidades del administrador de la plataforma",
-          platformAdminIntro: "Los Super Administradores de la plataforma operan con derechos de gobernanza elevados a escala del sistema entero:",
-          platformAdmin1: "Crear conjuntos de opciones globales, compartidos por el conjunto de espacios de trabajo.",
-          platformAdmin2: "Crear y publicar versiones nuevas de conjuntos de opciones propiedad de la plataforma (no predefinidos).",
-          platformAdmin3: "Gestionar la disponibilidad de un conjunto de opciones a través de los límites entre distintos espacios de trabajo.",
-          platformAdmin4: "Inspeccionar las cadenas de versiones y los registros de auditoría de cada conjunto de opciones de toda la plataforma.",
-          platformAdmin5: "Respetar los límites gestionados por el sistema: los conjuntos predefinidos mantenidos por la plataforma siguen siendo inmutables también para los administradores de la plataforma.",
+          platformAdminIntro:
+            "Los Super Administradores de la plataforma operan con derechos de gobernanza elevados a escala del sistema entero:",
+          platformAdmin1:
+            "Crear conjuntos de opciones globales, compartidos por el conjunto de espacios de trabajo.",
+          platformAdmin2:
+            "Crear y publicar versiones nuevas de conjuntos de opciones propiedad de la plataforma (no predefinidos).",
+          platformAdmin3:
+            "Gestionar la disponibilidad de un conjunto de opciones a través de los límites entre distintos espacios de trabajo.",
+          platformAdmin4:
+            "Inspeccionar las cadenas de versiones y los registros de auditoría de cada conjunto de opciones de toda la plataforma.",
+          platformAdmin5:
+            "Respetar los límites gestionados por el sistema: los conjuntos predefinidos mantenidos por la plataforma siguen siendo inmutables también para los administradores de la plataforma.",
           platformContextTitle: "Detección del contexto de plataforma",
           platformContextContent:
             "Cuando se opera en la consola de gestión de la plataforma (sin entrar en un espacio de trabajo concreto), los conjuntos de opciones recién creados adoptan por defecto el alcance Global, quedando accesibles para cada entorno de espacio de trabajo.",
 
           rulesTitle: "Reglas operativas clave para recordar",
-          rule1: "Los conjuntos de opciones se versionan, no se editan directamente: las opciones se modifican creando un borrador y publicándolo.",
-          rule2: "Las claves son identificadores permanentes: una vez publicada una opción con una clave, no cambies esa clave en versiones posteriores si quieres que los valores existentes sigan correspondiéndose con ella.",
-          rule3: "Desactiva en lugar de eliminar: desactivar una opción hace que deje de ofrecerse en los formularios nuevos, a la vez que se conserva en los registros históricos.",
-          rule4: "Una única versión publicada: solo una versión está activa a la vez; publicar un borrador desactualiza automáticamente la versión anterior.",
-          rule5: "Los conjuntos gestionados por el sistema son estrictamente de solo lectura: los conjuntos estándar predefinidos no los puede modificar ningún usuario ni administrador.",
+          rule1:
+            "Los conjuntos de opciones se versionan, no se editan directamente: las opciones se modifican creando un borrador y publicándolo.",
+          rule2:
+            "Las claves son identificadores permanentes: una vez publicada una opción con una clave, no cambies esa clave en versiones posteriores si quieres que los valores existentes sigan correspondiéndose con ella.",
+          rule3:
+            "Desactiva en lugar de eliminar: desactivar una opción hace que deje de ofrecerse en los formularios nuevos, a la vez que se conserva en los registros históricos.",
+          rule4:
+            "Una única versión publicada: solo una versión está activa a la vez; publicar un borrador desactualiza automáticamente la versión anterior.",
+          rule5:
+            "Los conjuntos gestionados por el sistema son estrictamente de solo lectura: los conjuntos estándar predefinidos no los puede modificar ningún usuario ni administrador.",
         },
         encryption: {
           title: "Gestión de claves criptográficas y cifrado de sobre",
@@ -2541,10 +2882,14 @@ export const es = {
           thLength: "Longitud",
           thDescription: "Propósito criptográfico",
           descVersion: "Byte de versión Magic Frame (0x02 para tramas autenticadas v2).",
-          descPlatformKey: "Entero de 32 bits en formato big-endian que identifica la clave raíz de plataforma en el llavero.",
-          descTenantVersion: "Entero de 16 bits en formato big-endian que identifica la versión de rotación de clave del inquilino.",
-          descNonce: "Vector de inicialización aleatorio criptográficamente seguro de 96 bits generado por operación de cifrado.",
-          descAuthTag: "Etiqueta de autenticación GCM de 128 bits que verifica la integridad del texto cifrado y los datos AAD.",
+          descPlatformKey:
+            "Entero de 32 bits en formato big-endian que identifica la clave raíz de plataforma en el llavero.",
+          descTenantVersion:
+            "Entero de 16 bits en formato big-endian que identifica la versión de rotación de clave del inquilino.",
+          descNonce:
+            "Vector de inicialización aleatorio criptográficamente seguro de 96 bits generado por operación de cifrado.",
+          descAuthTag:
+            "Etiqueta de autenticación GCM de 128 bits que verifica la integridad del texto cifrado y los datos AAD.",
           descCiphertext: "Carga útil del valor de campo cifrada con AES-256-GCM.",
           aadTitle: "Vinculación de datos autenticados adicionales (AAD)",
           aadContent:
@@ -2570,22 +2915,29 @@ export const es = {
           thStrategy: "Estrategia operativa",
           thBehavior: "Implementación del motor",
           stratLocking: "Cero bloqueos de tabla",
-          behLocking: "Utiliza paginación por cursor y concurrencia optimista (`RowVersion`) para actualizar filas individuales sin bloqueos de tabla exclusivos.",
+          behLocking:
+            "Utiliza paginación por cursor y concurrencia optimista (`RowVersion`) para actualizar filas individuales sin bloqueos de tabla exclusivos.",
           stratBatching: "Lotes por cursor configurables",
-          behBatching: "Procesa 500 registros por iteración de bucle, regulando la ejecución para evitar la saturación de E/S en instancias de base de datos de producción.",
+          behBatching:
+            "Procesa 500 registros por iteración de bucle, regulando la ejecución para evitar la saturación de E/S en instancias de base de datos de producción.",
           stratResilience: "Resistente a fallos e idempotente",
-          behResilience: "Si el proceso se reinicia, el cursor se reanuda desde el último desplazamiento completado. Los registros ya migrados se omiten de forma segura.",
+          behResilience:
+            "Si el proceso se reinicia, el cursor se reanuda desde el último desplazamiento completado. Los registros ya migrados se omiten de forma segura.",
           stratObservability: "Métricas y progreso en tiempo real",
-          behObservability: "Informa el recuento de procesados, fallos, rendimiento y porcentaje de finalización al panel de Studio y al portal de administración.",
+          behObservability:
+            "Informa el recuento de procesados, fallos, rendimiento y porcentaje de finalización al panel de Studio y al portal de administración.",
           stratCluster: "Reencapsulamiento de clúster de plataforma",
           behCluster:
             "Migración iniciada por SuperAdmin que reencapsula los secretos de todos los inquilinos bajo la nueva clave de plataforma y actualiza valores sin tiempo de inactividad.",
           toolingTitle: "Interfaces de gestión",
           toolingIntro:
             "Los operadores y desarrolladores cuentan con tres interfaces complementarias para administrar el cifrado:",
-          toolPortal: "Portal de seguridad del inquilino: interfaz web en `/custom-fields/security` para rotación en autoservicio y supervisión del reempaquetado.",
-          toolCli: "SCRIPE CLI: conjunto completo de herramientas de terminal mediante `scripe crypto status`, `rotate`, `rewrap`, `verify` y `revoke`.",
-          toolStudio: "SCRIPE Studio: panel interactivo visual en `/crypto` con tablas de llaveros y barras de progreso de migración en vivo.",
+          toolPortal:
+            "Portal de seguridad del inquilino: interfaz web en `/custom-fields/security` para rotación en autoservicio y supervisión del reempaquetado.",
+          toolCli:
+            "SCRIPE CLI: conjunto completo de herramientas de terminal mediante `scripe crypto status`, `rotate`, `rewrap`, `verify` y `revoke`.",
+          toolStudio:
+            "SCRIPE Studio: panel interactivo visual en `/crypto` con tablas de llaveros y barras de progreso de migración en vivo.",
         },
       },
     },

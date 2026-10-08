@@ -20,9 +20,5 @@ export interface ICustomFieldValueRepository {
     ownerIds: string[]
   ): Promise<BulkEntityCustomFieldValuesData>;
   /** Decrypts and reveals a sensitive custom field value for an authorized user. */
-  revealValue(
-    entityTypeKey: string,
-    ownerId: string,
-    fieldKey: string
-  ): Promise<unknown>;
+  revealValue(entityTypeKey: string, ownerId: string, fieldKey: string): Promise<unknown>;
 }

@@ -21,7 +21,7 @@ export function AuditLogTable({ logs, totalCount, isLoading }: AuditLogTableProp
   const { t } = useI18n();
 
   return (
-    <Card className="shadow-sm border border-border">
+    <Card className="border border-border shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex items-center gap-2.5">
           <ShieldAlert className="h-5 w-5 text-muted-foreground" />
@@ -29,21 +29,21 @@ export function AuditLogTable({ logs, totalCount, isLoading }: AuditLogTableProp
             <CardTitle className="text-base font-semibold">
               {t("customFieldsSecurity.auditLogsTitle")}
             </CardTitle>
-            <CardDescription>
-              {t("customFieldsSecurity.auditLogsDesc")}
-            </CardDescription>
+            <CardDescription>{t("customFieldsSecurity.auditLogsDesc")}</CardDescription>
           </div>
         </div>
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <div className="py-8 text-center text-sm text-muted-foreground">Loading audit trail...</div>
+          <div className="py-8 text-center text-sm text-muted-foreground">
+            Loading audit trail...
+          </div>
         ) : logs.length === 0 ? (
           <div className="py-8 text-center text-sm text-muted-foreground">
             No cryptographic events recorded yet.
           </div>
         ) : (
-          <div className="rounded-lg border border-border/60 overflow-hidden bg-card">
+          <div className="overflow-hidden rounded-lg border border-border/60 bg-card">
             <Table>
               <TableHeader>
                 <TableRow className="border-b border-border/60 bg-muted/40">
@@ -57,24 +57,28 @@ export function AuditLogTable({ logs, totalCount, isLoading }: AuditLogTableProp
               </TableHeader>
               <TableBody>
                 {logs.map((log) => (
-                  <TableRow key={log.id} className="hover:bg-muted/15 transition-colors font-mono">
-                    <TableCell className="py-2.5 px-3">
-                      <Badge variant="outline" className="text-[10px] font-mono">
+                  <TableRow key={log.id} className="font-mono transition-colors hover:bg-muted/15">
+                    <TableCell className="px-3 py-2.5">
+                      <Badge variant="outline" className="font-mono text-[10px]">
                         {log.action}
                       </Badge>
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 font-sans">
+                    <TableCell className="px-3 py-2.5 font-sans">
                       <div className="flex items-center gap-1.5">
                         <FileKey className="h-3.5 w-3.5 text-muted-foreground" />
-                        <span className="font-medium">{log.fieldKey || log.fieldDefinitionId.substring(0, 8)}</span>
+                        <span className="font-medium">
+                          {log.fieldKey || log.fieldDefinitionId.substring(0, 8)}
+                        </span>
                       </div>
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 text-muted-foreground">
+                    <TableCell className="px-3 py-2.5 text-muted-foreground">
                       P#{log.platformKeyId} / T-v{log.tenantKeyVersion}
                     </TableCell>
-                    <TableCell className="py-2.5 px-3 font-sans">{log.actorId}</TableCell>
-                    <TableCell className="py-2.5 px-3 text-muted-foreground">{log.ipAddress || "—"}</TableCell>
-                    <TableCell className="py-2.5 px-3 text-muted-foreground font-sans">
+                    <TableCell className="px-3 py-2.5 font-sans">{log.actorId}</TableCell>
+                    <TableCell className="px-3 py-2.5 text-muted-foreground">
+                      {log.ipAddress || "—"}
+                    </TableCell>
+                    <TableCell className="px-3 py-2.5 font-sans text-muted-foreground">
                       {log.formattedTimestamp}
                     </TableCell>
                   </TableRow>

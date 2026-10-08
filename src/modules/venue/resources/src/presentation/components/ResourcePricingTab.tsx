@@ -19,12 +19,8 @@ export function ResourcePricingTab({ vm }: Props) {
   const { t } = useI18n();
 
   const [unitPrice, setUnitPrice] = useState<number>(vm.priceConfig?.unitPrice ?? 800);
-  const [currencyCode, setCurrencyCode] = useState<string>(
-    vm.priceConfig?.currencyCode ?? "EGP"
-  );
-  const [taxCategoryId, setTaxCategoryId] = useState<string>(
-    vm.priceConfig?.taxCategoryId ?? ""
-  );
+  const [currencyCode, setCurrencyCode] = useState<string>(vm.priceConfig?.currencyCode ?? "EGP");
+  const [taxCategoryId, setTaxCategoryId] = useState<string>(vm.priceConfig?.taxCategoryId ?? "");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +34,9 @@ export function ResourcePricingTab({ vm }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("resources.pricing.title", { defaultValue: "Court Rental Pricing" })}</CardTitle>
+        <CardTitle>
+          {t("resources.pricing.title", { defaultValue: "Court Rental Pricing" })}
+        </CardTitle>
         <CardDescription>
           {t("resources.pricing.description", {
             defaultValue: "Standard authoritative price per booking slot from Catalog Pricing.",
@@ -46,7 +44,7 @@ export function ResourcePricingTab({ vm }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+        <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="res-price">
@@ -76,7 +74,7 @@ export function ResourcePricingTab({ vm }: Props) {
               {/* UI-EXCEPTION: native element required for compact layout */}
               <select
                 id="res-curr"
-                className="w-full h-9 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
+                className="h-9 w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
                 value={currencyCode}
                 onChange={(e) => setCurrencyCode(e.target.value)}
               >

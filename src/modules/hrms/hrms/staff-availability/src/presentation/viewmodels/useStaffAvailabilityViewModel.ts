@@ -16,37 +16,41 @@ import type { StaffAvailability } from "../../domain/entities/StaffAvailability"
 export function useStaffAvailabilityViewModel() {
   const { staffAvailabilityRepository } = getHrmsContainer();
 
-  const vm = useCrudViewModel(["staffAvailability"], {
-    getAll: async (params) => {
-      const res = await staffAvailabilityRepository.getAll({
-        page: params.page,
-        pageSize: params.pageSize,
-        search: params.search,
-        sortBy: params.sortBy,
-        sortDirection: params.sortDirection,
-      });
-      return {
-        items: res.items || [],
-        pagination: {
-          itemsCount: res.totalCount,
-          pageSize: params.pageSize,
+  const vm = useCrudViewModel(
+    ["staffAvailability"],
+    {
+      getAll: async (params) => {
+        const res = await staffAvailabilityRepository.getAll({
           page: params.page,
-          pagesCount: res.totalPages,
-        },
-      };
+          pageSize: params.pageSize,
+          search: params.search,
+          sortBy: params.sortBy,
+          sortDirection: params.sortDirection,
+        });
+        return {
+          items: res.items || [],
+          pagination: {
+            itemsCount: res.totalCount,
+            pageSize: params.pageSize,
+            page: params.page,
+            pagesCount: res.totalPages,
+          },
+        };
+      },
+      create: async (data) => {
+        const id = await staffAvailabilityRepository.create(data as Record<string, unknown>);
+        return { id } as unknown as StaffAvailability;
+      },
+      update: async (id, data) => {
+        await staffAvailabilityRepository.update(id, data as Record<string, unknown>);
+        return { id } as unknown as StaffAvailability;
+      },
+      delete: async (id) => {
+        await staffAvailabilityRepository.delete(id);
+      },
     },
-    create: async (data) => {
-      const id = await staffAvailabilityRepository.create(data as Record<string, unknown>);
-      return { id } as unknown as StaffAvailability;
-    },
-    update: async (id, data) => {
-      await staffAvailabilityRepository.update(id, data as Record<string, unknown>);
-      return { id } as unknown as StaffAvailability;
-    },
-    delete: async (id) => {
-      await staffAvailabilityRepository.delete(id);
-    },
-  }, { deferSuccessEffects: true });
+    { deferSuccessEffects: true }
+  );
 
   return { vm };
 }

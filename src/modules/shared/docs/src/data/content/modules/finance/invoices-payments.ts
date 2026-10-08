@@ -63,9 +63,6 @@ registerPage({
   category: "module-finance",
   order: 3,
   sections,
-  relatedSlugs: [
-    "modules/finance-overview",
-    "modules/finance/double-entry-ledger",
-  ],
+  relatedSlugs: ["modules/finance-overview", "modules/finance/double-entry-ledger"],
   lastUpdated: "2026-10-03",
 });

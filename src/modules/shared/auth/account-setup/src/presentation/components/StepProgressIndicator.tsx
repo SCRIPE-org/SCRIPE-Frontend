@@ -27,12 +27,26 @@ export function StepProgressIndicator({
   const { t } = useI18n();
 
   const steps = [
-    { id: 1 as SetupStep, title: t("auth.accountSetup.step1Security") || "Security", icon: KeyRound },
+    {
+      id: 1 as SetupStep,
+      title: t("auth.accountSetup.step1Security") || "Security",
+      icon: KeyRound,
+    },
     { id: 2 as SetupStep, title: t("auth.accountSetup.step2Profile") || "Profile", icon: User },
     ...(hasCustomFields
-      ? [{ id: 3 as SetupStep, title: t("auth.accountSetup.step3Attributes") || "Attributes", icon: ShieldCheck }]
+      ? [
+          {
+            id: 3 as SetupStep,
+            title: t("auth.accountSetup.step3Attributes") || "Attributes",
+            icon: ShieldCheck,
+          },
+        ]
       : []),
-    { id: 4 as SetupStep, title: t("auth.accountSetup.step4Celebration") || "Ready", icon: Sparkles },
+    {
+      id: 4 as SetupStep,
+      title: t("auth.accountSetup.step4Celebration") || "Ready",
+      icon: Sparkles,
+    },
   ];
 
   const currentStepObj = steps.find((s) => s.id === currentStep) ?? steps[0];
@@ -40,10 +54,11 @@ export function StepProgressIndicator({
   return (
     <nav aria-label="Setup progress" className="w-full">
       {/* Mobile view (< sm): Step counter and clean progress bar */}
-      <div className="sm:hidden space-y-2">
+      <div className="space-y-2 sm:hidden">
         <div className="flex items-center justify-between text-xs">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            {t("common.stepOfTotal", { current: currentStep, total: steps.length }) || `Step ${currentStep} of ${steps.length}`}
+            {t("common.stepOfTotal", { current: currentStep, total: steps.length }) ||
+              `Step ${currentStep} of ${steps.length}`}
           </span>
           <span className="font-semibold text-foreground">{currentStepObj.title}</span>
         </div>
@@ -53,7 +68,7 @@ export function StepProgressIndicator({
           aria-valuemin={0}
           aria-valuemax={100}
           aria-label="Account setup progress"
-          className="h-1.5 w-full rounded-full bg-muted overflow-hidden"
+          className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
         >
           <div
             className="h-full rounded-full bg-primary transition-all duration-300"
@@ -63,7 +78,7 @@ export function StepProgressIndicator({
       </div>
 
       {/* Desktop / Tablet view (>= sm): Full stepper with icons and titles */}
-      <ol className="hidden sm:flex items-center justify-between gap-2">
+      <ol className="hidden items-center justify-between gap-2 sm:flex">
         {steps.map((step, idx) => {
           const isDone = currentStep > step.id || currentStep === 4;
           const isCurrent = currentStep === step.id;
@@ -80,18 +95,18 @@ export function StepProgressIndicator({
                   aria-current={isCurrent ? "step" : undefined}
                   aria-label={`Step ${step.id}: ${step.title}`}
                   className={cn(
-                    "group h-auto p-1.5 flex w-full flex-col items-center gap-1.5 text-center transition-colors hover:bg-transparent rounded-lg focus-visible:ring-2 focus-visible:ring-primary",
+                    "group flex h-auto w-full flex-col items-center gap-1.5 rounded-lg p-1.5 text-center transition-colors hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary",
                     step.id > currentStep ? "cursor-not-allowed opacity-40" : "cursor-pointer"
                   )}
                 >
                   <div
                     className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold transition-all shadow-xs",
+                      "shadow-xs flex h-8 w-8 items-center justify-center rounded-full border text-xs font-semibold transition-all",
                       isDone && !isCurrent
                         ? "border-primary bg-primary text-primary-foreground"
                         : isCurrent
-                        ? "border-primary bg-primary/10 text-primary ring-2 ring-primary/20"
-                        : "border-border bg-muted/30 text-muted-foreground"
+                          ? "border-primary bg-primary/10 text-primary ring-2 ring-primary/20"
+                          : "border-border bg-muted/30 text-muted-foreground"
                     )}
                   >
                     {isDone && !isCurrent ? (
@@ -106,8 +121,8 @@ export function StepProgressIndicator({
                       isCurrent
                         ? "font-semibold text-foreground"
                         : isDone
-                        ? "font-medium text-muted-foreground"
-                        : "text-muted-foreground/60"
+                          ? "font-medium text-muted-foreground"
+                          : "text-muted-foreground/60"
                     )}
                   >
                     {step.title}
@@ -117,7 +132,7 @@ export function StepProgressIndicator({
               {idx < steps.length - 1 && (
                 <div
                   className={cn(
-                    "h-0.5 flex-1 transition-colors rounded-full mb-5",
+                    "mb-5 h-0.5 flex-1 rounded-full transition-colors",
                     currentStep > steps[idx + 1].id || (currentStep > step.id && currentStep !== 1)
                       ? "bg-primary"
                       : "bg-border/60"

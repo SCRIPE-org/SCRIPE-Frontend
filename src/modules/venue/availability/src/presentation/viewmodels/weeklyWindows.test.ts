@@ -4,8 +4,20 @@ import { validateWeeklyWindows, type WeeklyWindowDraft } from "./useWeeklyWindow
 describe("validateWeeklyWindows", () => {
   it("accepts touching windows because intervals are half-open", () => {
     const windows: WeeklyWindowDraft[] = [
-      { id: "1", dayOfWeek: "Monday", startLocal: "09:00", endLocal: "12:00", capacityOverride: null },
-      { id: "2", dayOfWeek: "Monday", startLocal: "12:00", endLocal: "17:00", capacityOverride: null },
+      {
+        id: "1",
+        dayOfWeek: "Monday",
+        startLocal: "09:00",
+        endLocal: "12:00",
+        capacityOverride: null,
+      },
+      {
+        id: "2",
+        dayOfWeek: "Monday",
+        startLocal: "12:00",
+        endLocal: "17:00",
+        capacityOverride: null,
+      },
     ];
 
     expect(validateWeeklyWindows(windows, 4)).toEqual([]);
@@ -13,8 +25,20 @@ describe("validateWeeklyWindows", () => {
 
   it("rejects same-day overlaps", () => {
     const windows: WeeklyWindowDraft[] = [
-      { id: "1", dayOfWeek: "Monday", startLocal: "09:00", endLocal: "13:00", capacityOverride: null },
-      { id: "2", dayOfWeek: "Monday", startLocal: "12:00", endLocal: "17:00", capacityOverride: null },
+      {
+        id: "1",
+        dayOfWeek: "Monday",
+        startLocal: "09:00",
+        endLocal: "13:00",
+        capacityOverride: null,
+      },
+      {
+        id: "2",
+        dayOfWeek: "Monday",
+        startLocal: "12:00",
+        endLocal: "17:00",
+        capacityOverride: null,
+      },
     ];
 
     expect(validateWeeklyWindows(windows, 4)).toContain("overlap");
@@ -22,7 +46,13 @@ describe("validateWeeklyWindows", () => {
 
   it("rejects capacity above the selected resource maximum", () => {
     const windows: WeeklyWindowDraft[] = [
-      { id: "1", dayOfWeek: "Tuesday", startLocal: "09:00", endLocal: "17:00", capacityOverride: 5 },
+      {
+        id: "1",
+        dayOfWeek: "Tuesday",
+        startLocal: "09:00",
+        endLocal: "17:00",
+        capacityOverride: 5,
+      },
     ];
 
     expect(validateWeeklyWindows(windows, 4)).toContain("capacity");

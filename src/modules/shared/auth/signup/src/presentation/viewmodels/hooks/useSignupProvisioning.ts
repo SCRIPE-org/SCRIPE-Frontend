@@ -242,15 +242,7 @@ export function useSignupProvisioning({
         setIsLoading(false);
       }
     },
-    [
-      editionId,
-      businessType,
-      teamSize,
-      primaryPriority,
-      repository,
-      setIsLoading,
-      setError,
-    ]
+    [editionId, businessType, teamSize, primaryPriority, repository, setIsLoading, setError]
   );
 
   return {

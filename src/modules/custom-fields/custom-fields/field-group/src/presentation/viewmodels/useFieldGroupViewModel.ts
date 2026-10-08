@@ -124,18 +124,12 @@ export function useFieldGroupViewModel(entityTypeKey: string) {
     },
   });
 
-  const {
-    canMoveUp,
-    canMoveDown,
-    moveUp,
-    moveDown,
-    moveBefore,
-    isReordering,
-  } = useFieldGroupReorder({
-    groups,
-    canMutate,
-    onInvalidate: invalidateGroups,
-  });
+  const { canMoveUp, canMoveDown, moveUp, moveDown, moveBefore, isReordering } =
+    useFieldGroupReorder({
+      groups,
+      canMutate,
+      onInvalidate: invalidateGroups,
+    });
 
   // Inline editor state for creating and editing field groups
   const [editingId, setEditingId] = useState<string | null>(null);

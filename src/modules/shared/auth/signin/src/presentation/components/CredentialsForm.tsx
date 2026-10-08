@@ -91,7 +91,12 @@ export function CredentialsForm({
       label: t("auth.qr.chip") || "QR code",
       onClick: onSwitchToQrLogin,
     },
-  ].filter(Boolean) as Array<{ key: string; icon: React.ReactNode; label: string; onClick: () => void }>;
+  ].filter(Boolean) as Array<{
+    key: string;
+    icon: React.ReactNode;
+    label: string;
+    onClick: () => void;
+  }>;
 
   return (
     <form

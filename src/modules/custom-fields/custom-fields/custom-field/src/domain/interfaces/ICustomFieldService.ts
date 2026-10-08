@@ -72,4 +72,3 @@ export interface ICustomFieldService {
   /** `POST /custom-fields/change-type/{jobRunId}/rollback` -- restores converted values. */
   rollbackFieldTypeChange(jobRunId: string): Promise<RollbackFieldTypeChangeResult>;
 }
-

@@ -1,1 +1,1 @@
-﻿export { DashboardView } from './src/presentation/views/DashboardView';
+﻿export { DashboardView } from "./src/presentation/views/DashboardView";

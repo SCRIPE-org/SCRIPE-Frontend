@@ -30,7 +30,9 @@ export function useResourcesWorkspaceViewModel() {
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [profiles, setProfiles] = useState<FacilityResourceProfile[]>([]);
   const [resources, setResources] = useState<SchedulableResource[]>([]);
-  const [prices, setPrices] = useState<Map<string, { unitPrice: number; currencyCode: string }>>(new Map());
+  const [prices, setPrices] = useState<Map<string, { unitPrice: number; currencyCode: string }>>(
+    new Map()
+  );
   const [selectedFacilityId, setSelectedFacilityId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -76,7 +78,12 @@ export function useResourcesWorkspaceViewModel() {
     } finally {
       setLoading(false);
     }
-  }, [commercialPricingRepository, facilityRepository, facilityResourceProfileRepository, schedulableResourceRepository]);
+  }, [
+    commercialPricingRepository,
+    facilityRepository,
+    facilityResourceProfileRepository,
+    schedulableResourceRepository,
+  ]);
 
   useEffect(() => {
     void Promise.resolve().then(() => {

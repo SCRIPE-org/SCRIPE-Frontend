@@ -24,7 +24,7 @@ export function OptionSetBindingCurrentStatus({
 
   return (
     <div
-      className="rounded-lg border border-nx-line bg-nx-raised p-4 space-y-2.5"
+      className="space-y-2.5 rounded-lg border border-nx-line bg-nx-raised p-4"
       data-testid="option-set-binding-current-state"
     >
       <div className="flex items-center justify-between gap-2">
@@ -48,13 +48,13 @@ export function OptionSetBindingCurrentStatus({
         {boundSet ? (
           <>
             <CheckCircle2 className="h-4 w-4 shrink-0 text-success" aria-hidden="true" />
-            <span className="text-nx-ink font-semibold">
+            <span className="font-semibold text-nx-ink">
               {t("customField.optionSetBinding.currentlyBound", {
                 set: boundSet.displayLabel(language),
               })}
             </span>
             {boundSet.isPlatformOwned && (
-              <Badge variant="outline" className="text-[10px] py-0 px-1.5">
+              <Badge variant="outline" className="px-1.5 py-0 text-[10px]">
                 {t("customField.optionSetBinding.platformOwned")}
               </Badge>
             )}

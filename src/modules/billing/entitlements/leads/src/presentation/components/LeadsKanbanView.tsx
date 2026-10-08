@@ -100,9 +100,7 @@ export function LeadsKanbanView({
                 ))
               ) : col.length === 0 ? (
                 <div className="flex flex-1 items-center justify-center rounded-nx-md border border-dashed border-nx-line px-3 py-6">
-                  <p className="text-center text-[11px] text-nx-ink-3">
-                    {t("leads.empty")}
-                  </p>
+                  <p className="text-center text-[11px] text-nx-ink-3">{t("leads.empty")}</p>
                 </div>
               ) : (
                 col.map((lead) => (

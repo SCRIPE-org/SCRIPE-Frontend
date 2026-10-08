@@ -69,7 +69,7 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
       <div className="rounded-nx-md border border-info/20 bg-info/5 p-4">
         <div className="flex items-start gap-3">
           <Shield className="mt-0.5 h-5 w-5 shrink-0 text-info" />
-          <div className="text-sm text-nx-ink-2 space-y-1">
+          <div className="space-y-1 text-sm text-nx-ink-2">
             <p className="font-semibold text-nx-ink">{t("tenant.secureOnboarding")}</p>
             <p>{t("tenant.secureOnboardingDesc")}</p>
           </div>
@@ -86,7 +86,7 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
             <div className="space-y-1 text-xs">
               <p className="font-semibold">{t("validation.correctErrorsTitle")}</p>
-              <ul className="list-disc ps-4 space-y-0.5 text-[11px] text-destructive/90">
+              <ul className="list-disc space-y-0.5 ps-4 text-[11px] text-destructive/90">
                 {firstNameEmpty && <li>{t("tenant.adminFirstNameRequired")}</li>}
                 {emailEmpty && <li>{t("validation.invalidAdminEmail")}</li>}
                 {emailFormatError && <li>{t("validation.invalidEmail")}</li>}
@@ -103,8 +103,7 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="space-y-2">
           <Label htmlFor="admin-first-name">
-            {t("tenant.adminFirstName")}{" "}
-            <span className="text-destructive">*</span>
+            {t("tenant.adminFirstName")} <span className="text-destructive">*</span>
           </Label>
           <div className="relative">
             <User
@@ -116,7 +115,10 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
               value={vm.form.adminFirstName}
               onChange={(e) => vm.updateField("adminFirstName", e.target.value)}
               placeholder={t("tenant.adminFirstNamePlaceholder")}
-              className={cn("ps-10", firstNameEmpty && "border-destructive focus-visible:ring-destructive")}
+              className={cn(
+                "ps-10",
+                firstNameEmpty && "border-destructive focus-visible:ring-destructive"
+              )}
               maxLength={100}
               aria-invalid={firstNameEmpty || undefined}
               aria-describedby={firstNameEmpty ? "tenant-admin-firstname-error" : undefined}
@@ -124,7 +126,10 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
             />
           </div>
           {firstNameEmpty && (
-            <p id="tenant-admin-firstname-error" className="flex items-center gap-1 text-xs text-destructive">
+            <p
+              id="tenant-admin-firstname-error"
+              className="flex items-center gap-1 text-xs text-destructive"
+            >
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               <span>{t("tenant.adminFirstNameRequired")}</span>
             </p>
@@ -167,14 +172,20 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
               value={vm.form.adminEmail}
               onChange={(e) => vm.updateField("adminEmail", e.target.value)}
               placeholder={t("tenant.adminEmailPlaceholder")}
-              className={cn("ps-10", emailError && "border-destructive focus-visible:ring-destructive")}
+              className={cn(
+                "ps-10",
+                emailError && "border-destructive focus-visible:ring-destructive"
+              )}
               aria-invalid={emailError || undefined}
               aria-describedby={emailError ? "tenant-admin-email-error" : undefined}
               dir="ltr"
             />
           </div>
           {emailEmpty && (
-            <p id="tenant-admin-email-error" className="flex items-center gap-1 text-xs text-destructive">
+            <p
+              id="tenant-admin-email-error"
+              className="flex items-center gap-1 text-xs text-destructive"
+            >
               <AlertCircle className="h-3.5 w-3.5 shrink-0" />
               <span>{t("validation.invalidAdminEmail")}</span>
             </p>
@@ -214,19 +225,16 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
       </div>
 
       {/* Administrator Custom Fields */}
-      {(vm.adminCustomFieldsQuery.isLoading || vm.adminCustomFieldsQuery.fieldConfigs.length > 0) && (
+      {(vm.adminCustomFieldsQuery.isLoading ||
+        vm.adminCustomFieldsQuery.fieldConfigs.length > 0) && (
         <div className="space-y-4 border-t border-nx-line pt-5">
           <div className="flex items-center gap-2.5">
             <div className="flex h-8 w-8 items-center justify-center rounded-nx-md bg-info/10 text-info">
               <Sliders className="h-4 w-4" aria-hidden="true" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-nx-ink">
-                {t("tenant.adminCustomFields")}
-              </h3>
-              <p className="text-xs text-nx-ink-2">
-                {t("tenant.adminCustomFieldsDesc")}
-              </p>
+              <h3 className="text-sm font-semibold text-nx-ink">{t("tenant.adminCustomFields")}</h3>
+              <p className="text-xs text-nx-ink-2">{t("tenant.adminCustomFieldsDesc")}</p>
             </div>
           </div>
 
@@ -235,7 +243,7 @@ export function CreateTenantStep2({ vm, t }: CreateTenantStep2Props) {
             <div className="space-y-0.5">
               <Label
                 htmlFor="defer-admin-custom-fields"
-                className="text-xs font-semibold text-nx-ink cursor-pointer"
+                className="cursor-pointer text-xs font-semibold text-nx-ink"
               >
                 {t("tenant.deferAdminCustomFieldsToSetup")}
               </Label>

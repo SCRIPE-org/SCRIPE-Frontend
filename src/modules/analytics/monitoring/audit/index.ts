@@ -1,1 +1,1 @@
-﻿export * from './src/presentation/views/AuditView';
+﻿export * from "./src/presentation/views/AuditView";

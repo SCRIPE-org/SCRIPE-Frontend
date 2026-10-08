@@ -104,21 +104,10 @@ export function FieldVisibilityRuleEditor({
       />
 
       <div className="flex justify-end gap-2 pt-2">
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={onCancel}
-          disabled={isBusy}
-        >
+        <Button type="button" variant="ghost" size="sm" onClick={onCancel} disabled={isBusy}>
           {t("common.cancel")}
         </Button>
-        <Button
-          type="button"
-          size="sm"
-          onClick={handleSave}
-          disabled={isBusy}
-        >
+        <Button type="button" size="sm" onClick={handleSave} disabled={isBusy}>
           {editingRule ? t("common.save") : t("customField.visibilityRules.saveRule")}
         </Button>
       </div>

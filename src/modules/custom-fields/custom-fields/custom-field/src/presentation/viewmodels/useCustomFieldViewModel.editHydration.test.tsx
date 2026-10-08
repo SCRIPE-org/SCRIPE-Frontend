@@ -214,7 +214,9 @@ describe("useCustomFieldViewModel.openEditModal — detail hydration (C-1)", () 
     // The real edit-form seed the view uses, then the real write-seam
     // normalization, then the real update mutation. The admin's edit here is
     // the most ordinary one there is: a rename, touching nothing else.
-    const formState = buildCustomFieldEditInitialValues(result.current.vm.editingItem as CustomField);
+    const formState = buildCustomFieldEditInitialValues(
+      result.current.vm.editingItem as CustomField
+    );
     const submitted = { ...formState, labelEn: "Bank Account (IBAN)" };
 
     await act(async () => {
@@ -245,7 +247,9 @@ describe("useCustomFieldViewModel.openEditModal — detail hydration (C-1)", () 
     });
     await waitFor(() => expect(result.current.vm.editingItem).not.toBeNull());
 
-    const formState = buildCustomFieldEditInitialValues(result.current.vm.editingItem as CustomField);
+    const formState = buildCustomFieldEditInitialValues(
+      result.current.vm.editingItem as CustomField
+    );
     await act(async () => {
       await result.current.vm.updateItem(selectRow.id, { ...formState, isActive: false } as never);
     });

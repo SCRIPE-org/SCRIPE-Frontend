@@ -193,7 +193,7 @@ export function RichTextEditor({
       EmailHtmlBlock,
       ...(maxLength ? [CharacterCount.configure({ limit: maxLength })] : [CharacterCount]),
     ],
-    content: value,
+    content: typeof value === "string" ? value : "",
     editable: !readOnly,
     // The ONLY channel TipTap offers for attributes on the contenteditable it
     // creates -- see the a11y-forwarding props' doc comment above for why a
@@ -208,7 +208,7 @@ export function RichTextEditor({
 
   // Sync external value changes
   React.useEffect(() => {
-    if (editor && value !== getEmailSafeHTML(editor)) {
+    if (editor && typeof value === "string" && value !== getEmailSafeHTML(editor)) {
       editor.commands.setContent(value, { emitUpdate: false });
     }
   }, [value]);

@@ -35,11 +35,7 @@ import {
 } from "../types/templateFormTypes";
 import { useTemplateCustomFields } from "./useTemplateCustomFields";
 
-export {
-  MESSAGE_TEMPLATE_ENTITY_TYPE_KEY,
-  type TemplateFormMode,
-  type TemplateFormValues,
-};
+export { MESSAGE_TEMPLATE_ENTITY_TYPE_KEY, type TemplateFormMode, type TemplateFormValues };
 
 const QUERY_KEY = ["message-templates"];
 
@@ -256,8 +252,17 @@ export function useTemplateFormViewModel() {
       setIsSubmitting(false);
     }
   }, [
-    mode, form, createMutation, updateMutation, templateId,
-    saveCustomFieldValues, queryClient, success, t, toastError, router,
+    mode,
+    form,
+    createMutation,
+    updateMutation,
+    templateId,
+    saveCustomFieldValues,
+    queryClient,
+    success,
+    t,
+    toastError,
+    router,
   ]);
 
   const handleCancel = useCallback(() => {

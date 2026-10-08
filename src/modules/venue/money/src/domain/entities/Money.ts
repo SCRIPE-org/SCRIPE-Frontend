@@ -43,7 +43,12 @@ export interface MoneyPayment {
 /**
  * Documentation for module export
  */
-export interface MoneyPage<T> { items: T[]; totalCount: number; page?: number; pageSize?: number; }
+export interface MoneyPage<T> {
+  items: T[];
+  totalCount: number;
+  page?: number;
+  pageSize?: number;
+}
 
 /**
  * Documentation for module export
@@ -83,15 +88,34 @@ export interface RefundPaymentInput {
 /**
  * Documentation for module export
  */
-export interface MoneyPaymentAllocation { id: string; paymentId: string; invoiceId: string; amount: number; allocatedAtUtc: string; }
+export interface MoneyPaymentAllocation {
+  id: string;
+  paymentId: string;
+  invoiceId: string;
+  amount: number;
+  allocatedAtUtc: string;
+}
 /**
  * Documentation for module export
  */
-export interface MoneyPaymentReceipt { id: string; paymentId: string; receiptNumber: string; issuedAtUtc: string; }
+export interface MoneyPaymentReceipt {
+  id: string;
+  paymentId: string;
+  receiptNumber: string;
+  issuedAtUtc: string;
+}
 /**
  * Documentation for module export
  */
-export interface MoneyPaymentRefund { id: string; paymentId: string; invoiceId: string; currencyCode: string; amount: number; reason: string; refundedAtUtc: string; }
+export interface MoneyPaymentRefund {
+  id: string;
+  paymentId: string;
+  invoiceId: string;
+  currencyCode: string;
+  amount: number;
+  reason: string;
+  refundedAtUtc: string;
+}
 /**
  * Documentation for module export
  */

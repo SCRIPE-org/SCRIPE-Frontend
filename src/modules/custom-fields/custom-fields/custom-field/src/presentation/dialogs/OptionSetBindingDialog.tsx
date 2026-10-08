@@ -175,7 +175,9 @@ export function OptionSetBindingDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{t("customField.optionSetBinding.title", { field: fieldLabel })}</DialogTitle>
+          <DialogTitle>
+            {t("customField.optionSetBinding.title", { field: fieldLabel })}
+          </DialogTitle>
           <DialogDescription>{t("customField.optionSetBinding.description")}</DialogDescription>
         </DialogHeader>
 

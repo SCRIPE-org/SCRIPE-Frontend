@@ -138,7 +138,10 @@ export class PlatformHealth {
     return this.data.totalChecks ?? this.checks.length;
   }
   get healthyChecks(): number {
-    return this.data.healthyChecks ?? this.checks.filter(c => c.status.toLowerCase() === "healthy").length;
+    return (
+      this.data.healthyChecks ??
+      this.checks.filter((c) => c.status.toLowerCase() === "healthy").length
+    );
   }
   get runtime() {
     return this.data.runtime;
@@ -159,7 +162,9 @@ export class PlatformHealth {
     return this.data.incidents ?? [];
   }
   get activeIncidents(): HealthIncident[] {
-    return this.incidents.filter(inc => inc.status.toLowerCase() !== "resolved" && inc.status.toLowerCase() !== "completed");
+    return this.incidents.filter(
+      (inc) => inc.status.toLowerCase() !== "resolved" && inc.status.toLowerCase() !== "completed"
+    );
   }
   get isHealthy() {
     return this.data.status === "Healthy";

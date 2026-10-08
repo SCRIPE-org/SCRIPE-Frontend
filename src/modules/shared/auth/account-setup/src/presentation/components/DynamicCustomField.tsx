@@ -44,9 +44,19 @@ export function DynamicCustomField({
   const renderControl = () => {
     if (field.isBoolean) {
       return (
-        <div className={cn("flex items-center justify-between rounded-lg border border-border bg-card/40 p-3", invalid && "border-destructive/60")}>
+        <div
+          className={cn(
+            "flex items-center justify-between rounded-lg border border-border bg-card/40 p-3",
+            invalid && "border-destructive/60"
+          )}
+        >
           <span className="text-sm font-medium text-foreground">{label}</span>
-          <Switch id={field.key} checked={Boolean(value)} onCheckedChange={onChange} aria-invalid={invalid || undefined} />
+          <Switch
+            id={field.key}
+            checked={Boolean(value)}
+            onCheckedChange={onChange}
+            aria-invalid={invalid || undefined}
+          />
         </div>
       );
     }
@@ -127,7 +137,13 @@ export function DynamicCustomField({
       );
     }
     if (field.isPhone) {
-      return <PhoneInput value={typeof value === "string" ? value : ""} onChange={(v) => onChange(v)} defaultCountry="SA" />;
+      return (
+        <PhoneInput
+          value={typeof value === "string" ? value : ""}
+          onChange={(v) => onChange(v)}
+          defaultCountry="SA"
+        />
+      );
     }
     if (field.isNumber) {
       return (
@@ -177,7 +193,10 @@ export function DynamicCustomField({
             {field.isRequired && <span className="text-destructive">*</span>}
           </Label>
           {field.isSensitive && (
-            <Badge variant="secondary" className="gap-1 border border-border bg-muted/40 px-1.5 py-0 text-[10px] text-muted-foreground font-normal">
+            <Badge
+              variant="secondary"
+              className="gap-1 border border-border bg-muted/40 px-1.5 py-0 text-[10px] font-normal text-muted-foreground"
+            >
               <Lock className="h-2.5 w-2.5" />
               <span>Encrypted</span>
             </Badge>
@@ -186,7 +205,7 @@ export function DynamicCustomField({
       )}
       {renderControl()}
       {invalid && error && (
-        <p className="flex items-center gap-1 text-xs text-destructive mt-1">
+        <p className="mt-1 flex items-center gap-1 text-xs text-destructive">
           <AlertCircle className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
           <span>{error}</span>
         </p>

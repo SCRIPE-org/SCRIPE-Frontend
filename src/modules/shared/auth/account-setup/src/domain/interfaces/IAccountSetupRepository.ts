@@ -5,11 +5,7 @@
  * @module auth/account-setup/domain/interfaces
  */
 
-import type {
-  SetupTokenInfo,
-  SetupCustomField,
-  AccountActivationResult,
-} from "../entities";
+import type { SetupTokenInfo, SetupCustomField, AccountActivationResult } from "../entities";
 import type { ActivateAccountRequest } from "./IAccountSetupService";
 
 /**

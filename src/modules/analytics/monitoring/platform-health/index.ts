@@ -1,1 +1,1 @@
-﻿export * from './src/presentation/views/PlatformHealthView';
+﻿export * from "./src/presentation/views/PlatformHealthView";

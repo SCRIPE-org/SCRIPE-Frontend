@@ -67,4 +67,3 @@ export const LOSSY_CONVERSIONS: ReadonlyArray<[string, string]> = [
   ["LongText", "Text"],
   ["Text", "Number"],
 ];
-

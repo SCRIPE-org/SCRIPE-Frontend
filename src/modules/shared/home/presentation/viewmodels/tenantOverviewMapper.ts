@@ -3,7 +3,10 @@
  * Tenant Overview Mapper
  * Transforms raw backend telemetry DTOs into TenantOverviewData (< 180 lines).
  */
-import type { DashboardSummary, RecentChange } from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
+import type {
+  DashboardSummary,
+  RecentChange,
+} from "@modules/monitoring/dashboard/src/domain/entities/DashboardEntities";
 import type { TenantStats } from "@modules/admin/identity/tenants/src/domain/interfaces/ITenantRepository";
 import type { Tenant } from "@modules/admin/identity/tenants/src/domain/entities/Tenant";
 import type {
@@ -43,22 +46,25 @@ export function buildTenantOverviewLiveData({
   const completedCount = [true, subTenants > 0, totalAdmins > 1].filter(Boolean).length;
   const readinessPercent = Math.min(100, Math.round((completedCount / 3) * 100));
 
-  const liveActivity: TenantActivityItem[] = recentActivity && recentActivity.length > 0
-    ? recentActivity.slice(0, 5).map((log) => ({
-        id: log.id,
-        author: log.username || "Admin",
-        avatarText: (log.username || "AD").slice(0, 2).toUpperCase(),
-        action: log.entityType ? `${log.eventType}: ${log.entityType}` : log.eventType,
-        timeAgo: t("tenantCommandCenter.activity.recent"),
-      }))
-    : [];
+  const liveActivity: TenantActivityItem[] =
+    recentActivity && recentActivity.length > 0
+      ? recentActivity.slice(0, 5).map((log) => ({
+          id: log.id,
+          author: log.username || "Admin",
+          avatarText: (log.username || "AD").slice(0, 2).toUpperCase(),
+          action: log.entityType ? `${log.eventType}: ${log.entityType}` : log.eventType,
+          timeAgo: t("tenantCommandCenter.activity.recent"),
+        }))
+      : [];
 
   const alerts: TenantAlertItem[] = [];
   if (summary && summary.failedLogins24h > 0) {
     alerts.push({
       id: "alt-failed-logins",
       title: t("tenantCommandCenter.attention.failedLoginsTitle"),
-      description: t("tenantCommandCenter.attention.failedLoginsDesc", { count: summary.failedLogins24h }),
+      description: t("tenantCommandCenter.attention.failedLoginsDesc", {
+        count: summary.failedLogins24h,
+      }),
       severity: "critical",
       href: "/audit",
     });
@@ -83,17 +89,74 @@ export function buildTenantOverviewLiveData({
   }
 
   const steps: TenantStepItem[] = [
-    { id: 1, title: t("tenantCommandCenter.getStarted.steps.profile.title"), description: t("tenantCommandCenter.getStarted.steps.profile.desc"), status: "done" },
-    { id: 2, title: t("tenantCommandCenter.getStarted.steps.branches.title"), description: t("tenantCommandCenter.getStarted.steps.branches.desc"), status: subTenants > 0 ? "done" : "current", actionLabel: t("tenantCommandCenter.getStarted.setUp"), href: "/branches" },
-    { id: 3, title: t("tenantCommandCenter.getStarted.steps.team.title"), description: t("tenantCommandCenter.getStarted.steps.team.desc"), status: totalAdmins > 1 ? "done" : subTenants > 0 ? "current" : "upcoming", actionLabel: t("tenantCommandCenter.getStarted.start"), href: "/admins" },
+    {
+      id: 1,
+      title: t("tenantCommandCenter.getStarted.steps.profile.title"),
+      description: t("tenantCommandCenter.getStarted.steps.profile.desc"),
+      status: "done",
+    },
+    {
+      id: 2,
+      title: t("tenantCommandCenter.getStarted.steps.branches.title"),
+      description: t("tenantCommandCenter.getStarted.steps.branches.desc"),
+      status: subTenants > 0 ? "done" : "current",
+      actionLabel: t("tenantCommandCenter.getStarted.setUp"),
+      href: "/branches",
+    },
+    {
+      id: 3,
+      title: t("tenantCommandCenter.getStarted.steps.team.title"),
+      description: t("tenantCommandCenter.getStarted.steps.team.desc"),
+      status: totalAdmins > 1 ? "done" : subTenants > 0 ? "current" : "upcoming",
+      actionLabel: t("tenantCommandCenter.getStarted.start"),
+      href: "/admins",
+    },
   ];
 
   const staffPct = Math.min(100, Math.round((totalAdmins / 50) * 100));
   const quotas: TenantQuotaItem[] = [
-    { id: "staff", label: t("tenantCommandCenter.usage.staff"), current: String(totalAdmins), total: "50", percent: staffPct, subLeft: t("tenantCommandCenter.usage.used", { percent: staffPct }), subRight: t("tenantCommandCenter.usage.left", { count: Math.max(0, 50 - totalAdmins) }), color: "green" },
-    { id: "sites", label: t("tenantCommandCenter.usage.sites"), current: String(subTenants), total: String(branchesTotal), percent: branchPercent, subLeft: t("tenantCommandCenter.usage.used", { percent: branchPercent }), subRight: t("tenantCommandCenter.usage.left", { count: Math.max(0, branchesTotal - subTenants) }), color: "blue" },
-    { id: "storage", label: t("tenantCommandCenter.usage.storage"), current: "12 GB", total: "100 GB", percent: 12, subLeft: t("tenantCommandCenter.usage.used", { percent: 12 }), subRight: t("tenantCommandCenter.usage.left", { count: 88 }), color: "violet" },
-    { id: "api", label: t("tenantCommandCenter.usage.api"), current: "2.4K", total: "50K", percent: 5, subLeft: t("tenantCommandCenter.usage.used", { percent: 5 }), subRight: t("tenantCommandCenter.usage.thisMonth"), color: "amber" },
+    {
+      id: "staff",
+      label: t("tenantCommandCenter.usage.staff"),
+      current: String(totalAdmins),
+      total: "50",
+      percent: staffPct,
+      subLeft: t("tenantCommandCenter.usage.used", { percent: staffPct }),
+      subRight: t("tenantCommandCenter.usage.left", { count: Math.max(0, 50 - totalAdmins) }),
+      color: "green",
+    },
+    {
+      id: "sites",
+      label: t("tenantCommandCenter.usage.sites"),
+      current: String(subTenants),
+      total: String(branchesTotal),
+      percent: branchPercent,
+      subLeft: t("tenantCommandCenter.usage.used", { percent: branchPercent }),
+      subRight: t("tenantCommandCenter.usage.left", {
+        count: Math.max(0, branchesTotal - subTenants),
+      }),
+      color: "blue",
+    },
+    {
+      id: "storage",
+      label: t("tenantCommandCenter.usage.storage"),
+      current: "12 GB",
+      total: "100 GB",
+      percent: 12,
+      subLeft: t("tenantCommandCenter.usage.used", { percent: 12 }),
+      subRight: t("tenantCommandCenter.usage.left", { count: 88 }),
+      color: "violet",
+    },
+    {
+      id: "api",
+      label: t("tenantCommandCenter.usage.api"),
+      current: "2.4K",
+      total: "50K",
+      percent: 5,
+      subLeft: t("tenantCommandCenter.usage.used", { percent: 5 }),
+      subRight: t("tenantCommandCenter.usage.thisMonth"),
+      color: "amber",
+    },
   ];
 
   return {
@@ -111,11 +174,15 @@ export function buildTenantOverviewLiveData({
     ],
     readinessChecks: [
       { label: t("tenantCommandCenter.hero.checks.coreHealthy"), status: "success" },
-      { label: t("tenantCommandCenter.hero.checks.productsActive", { count: 2 }), status: "success" },
       {
-        label: totalAdmins <= 1
-          ? t("tenantCommandCenter.hero.checks.invitationsPending", { count: 1 })
-          : t("tenantCommandCenter.hero.checks.coreHealthy"),
+        label: t("tenantCommandCenter.hero.checks.productsActive", { count: 2 }),
+        status: "success",
+      },
+      {
+        label:
+          totalAdmins <= 1
+            ? t("tenantCommandCenter.hero.checks.invitationsPending", { count: 1 })
+            : t("tenantCommandCenter.hero.checks.coreHealthy"),
         status: totalAdmins <= 1 ? "warning" : "success",
       },
     ],

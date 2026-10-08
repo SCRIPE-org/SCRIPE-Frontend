@@ -243,7 +243,15 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       importSettings,
       overrideControl,
     }),
-    [settings, overrideControl, resetSettings, exportSettings, importSettings, updateSetting, compatSetters]
+    [
+      settings,
+      overrideControl,
+      resetSettings,
+      exportSettings,
+      importSettings,
+      updateSetting,
+      compatSetters,
+    ]
   );
 
   // isHydrated is always true (synchronous init above) — block kept as safety guard

@@ -35,7 +35,8 @@ import {
 } from "@core/constants/geo-territories";
 import {
   useCustomFieldsFormFields,
-  decodeCustomFieldName, getCustomFieldsExtension,
+  decodeCustomFieldName,
+  getCustomFieldsExtension,
 } from "@core/crud/customFieldsExtension";
 
 import { isFieldRequired } from "@core/ui/forms/generic-form";

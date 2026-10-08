@@ -185,7 +185,13 @@ export function useFieldVisibilityRulesViewModel() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { expressionJson: string; priority?: number } }) =>
+    mutationFn: ({
+      id,
+      data,
+    }: {
+      id: string;
+      data: { expressionJson: string; priority?: number };
+    }) =>
       customFieldRepository.updateVisibilityRule(id, {
         expressionJson: data.expressionJson,
         priority: data.priority ?? 0,

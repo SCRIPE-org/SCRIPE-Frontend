@@ -1,4 +1,7 @@
-import type { IFacilityResourceProfilePickerRepository, FacilityResourceProfilePickerOption } from "../../domain/interfaces/IFacilityResourceProfilePickerRepository";
+import type {
+  IFacilityResourceProfilePickerRepository,
+  FacilityResourceProfilePickerOption,
+} from "../../domain/interfaces/IFacilityResourceProfilePickerRepository";
 import type { IFacilityResourceProfilePickerService } from "../../domain/interfaces/IFacilityResourceProfilePickerService";
 
 /**

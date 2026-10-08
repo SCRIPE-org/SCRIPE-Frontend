@@ -41,16 +41,19 @@ describe("BookingOperationalActions", () => {
   it("shows only independently authorized actions for the canonical current state", () => {
     const confirmed = renderActions({ canMarkNoShow: false });
     expect(screen.getByRole("button", { name: "booking360.actions.checkIn" })).toBeEnabled();
-    expect(screen.queryByRole("button", { name: "booking360.actions.markNoShow" }))
-      .not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "booking360.actions.complete" }))
-      .not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "booking360.actions.markNoShow" })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "booking360.actions.complete" })
+    ).not.toBeInTheDocument();
     confirmed.unmount();
 
     const checkedIn = renderActions({ status: "CheckedIn", canComplete: true });
     expect(screen.getByRole("button", { name: "booking360.actions.complete" })).toBeEnabled();
-    expect(screen.queryByRole("button", { name: "booking360.actions.checkIn" }))
-      .not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "booking360.actions.checkIn" })
+    ).not.toBeInTheDocument();
     checkedIn.unmount();
 
     renderActions({ status: "Completed" });
@@ -122,7 +125,11 @@ describe("BookingOperationalActions", () => {
   });
 
   it("opens cancel dialog, validates reason, and invokes onCancel callback", async () => {
-    const { props } = renderActions({ canCancel: true, canReschedule: true, canChangeResource: true });
+    const { props } = renderActions({
+      canCancel: true,
+      canReschedule: true,
+      canChangeResource: true,
+    });
     const trigger = screen.getByRole("button", { name: "booking360.actions.cancel" });
     fireEvent.click(trigger);
 

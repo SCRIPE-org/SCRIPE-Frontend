@@ -5,7 +5,10 @@
  */
 
 import type { FieldVersionStatus } from "../../domain/entities/OptionSetVersion";
-import type { FieldOptionStatus, OptionSetItemWritableStatus } from "../../domain/entities/OptionSetItem";
+import type {
+  FieldOptionStatus,
+  OptionSetItemWritableStatus,
+} from "../../domain/entities/OptionSetItem";
 
 /**
  * Documentation for module export

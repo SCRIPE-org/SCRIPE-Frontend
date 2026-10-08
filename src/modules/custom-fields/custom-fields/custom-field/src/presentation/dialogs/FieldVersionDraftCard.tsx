@@ -46,16 +46,19 @@ export function FieldVersionDraftCard({
 
   if (hasDraft && activeDraft) {
     return (
-      <div className="rounded-xl border-2 border-amber-400/60 bg-amber-50/50 dark:bg-amber-950/20 p-4 space-y-3">
+      <div className="space-y-3 rounded-xl border-2 border-amber-400/60 bg-amber-50/50 p-4 dark:bg-amber-950/20">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="font-semibold text-sm text-amber-950 dark:text-amber-200">
+            <span className="text-sm font-semibold text-amber-950 dark:text-amber-200">
               {t("customField.versions.activeDraftTitle", {
                 version: activeDraft.versionNumber,
                 defaultValue: `Active Draft (v${activeDraft.versionNumber})`,
               })}
             </span>
-            <Badge variant="secondary" className="bg-amber-200 text-amber-900 dark:bg-amber-900 dark:text-amber-100 text-xs">
+            <Badge
+              variant="secondary"
+              className="bg-amber-200 text-xs text-amber-900 dark:bg-amber-900 dark:text-amber-100"
+            >
               {t("customField.versions.pendingPublish", { defaultValue: "Pending Publish" })}
             </Badge>
           </div>
@@ -64,7 +67,7 @@ export function FieldVersionDraftCard({
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground pt-1">
+        <div className="grid grid-cols-2 gap-2 pt-1 text-xs text-muted-foreground">
           <div>
             <span className="font-medium text-foreground">{activeDraft.optionCount}</span>{" "}
             {t("customField.versions.optionsCount", { defaultValue: "options configured" })}
@@ -83,12 +86,12 @@ export function FieldVersionDraftCard({
         </p>
 
         {canMutateVersion && (
-          <div className="flex items-center gap-2 pt-2 border-t border-amber-200 dark:border-amber-900/60">
+          <div className="flex items-center gap-2 border-t border-amber-200 pt-2 dark:border-amber-900/60">
             <Button
               size="sm"
               onClick={onPublish}
               disabled={isMutating}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
+              className="gap-1.5 bg-emerald-600 text-white hover:bg-emerald-700"
             >
               <ArrowUpRight className="h-4 w-4" />
               {isPublishing
@@ -102,7 +105,7 @@ export function FieldVersionDraftCard({
               variant="outline"
               onClick={onDiscard}
               disabled={isMutating}
-              className="text-destructive hover:bg-destructive/10 border-destructive/30 gap-1.5"
+              className="gap-1.5 border-destructive/30 text-destructive hover:bg-destructive/10"
             >
               <Trash2 className="h-3.5 w-3.5" />
               {isDiscarding
@@ -119,7 +122,7 @@ export function FieldVersionDraftCard({
 
   if (canMutateVersion) {
     return (
-      <div className="p-4 rounded-xl border border-dashed bg-card flex items-center justify-between gap-4">
+      <div className="flex items-center justify-between gap-4 rounded-xl border border-dashed bg-card p-4">
         <div className="space-y-0.5">
           <h4 className="text-sm font-medium text-foreground">
             {t("customField.versions.noActiveDraft", {

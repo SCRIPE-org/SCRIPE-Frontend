@@ -176,7 +176,11 @@ export function SchemaExportDialog({ open, onOpenChange }: SchemaExportDialogPro
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={vm.isExporting}>
+          <Button
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            disabled={vm.isExporting}
+          >
             {t("common.close")}
           </Button>
           <Button onClick={vm.exportSchema} disabled={vm.isExporting}>

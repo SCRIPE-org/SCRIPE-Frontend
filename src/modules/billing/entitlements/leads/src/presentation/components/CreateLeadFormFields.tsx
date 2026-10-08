@@ -130,9 +130,7 @@ export function CreateLeadFormFields({
           name="editionKey"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="cl-edition">
-                {t("leads.createDialog.editionInterest")}
-              </FormLabel>
+              <FormLabel htmlFor="cl-edition">{t("leads.createDialog.editionInterest")}</FormLabel>
               <Select
                 value={field.value || "none"}
                 onValueChange={(value) => field.onChange(value === "none" ? "" : value)}

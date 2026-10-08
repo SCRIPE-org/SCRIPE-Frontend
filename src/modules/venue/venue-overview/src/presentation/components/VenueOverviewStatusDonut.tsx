@@ -72,10 +72,10 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
 
   return (
     <Card className="border-nx-line bg-nx-surface" data-testid="today-booking-status-card">
-      <CardHeader className="pb-3 border-b border-nx-line">
+      <CardHeader className="border-b border-nx-line pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-nx-xs border border-nx-line bg-nx-surfaceSubtle text-nx-accent">
+            <div className="rounded-nx-xs bg-nx-surfaceSubtle flex size-7 items-center justify-center border border-nx-line text-nx-accent">
               <PieChart className="size-4" aria-hidden="true" />
             </div>
             <div>
@@ -89,7 +89,7 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
               </CardDescription>
             </div>
           </div>
-          <span className="text-xs font-mono font-bold text-nx-ink tabular-nums">
+          <span className="font-mono text-xs font-bold tabular-nums text-nx-ink">
             {totalCount} {t("venueOverview.demandChart.totalBookings", { defaultValue: "total" })}
           </span>
         </div>
@@ -97,13 +97,15 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
 
       <CardContent className="p-4">
         {totalCount === 0 ? (
-          <div className="flex h-52 items-center justify-center rounded-nx-sm border border-dashed border-nx-line bg-nx-surfaceSubtle/50 p-6 text-center text-xs text-nx-ink-3">
-            {t("venueOverview.atAGlance.noBookings", { defaultValue: "No booking activity recorded for today." })}
+          <div className="bg-nx-surfaceSubtle/50 flex h-52 items-center justify-center rounded-nx-sm border border-dashed border-nx-line p-6 text-center text-xs text-nx-ink-3">
+            {t("venueOverview.atAGlance.noBookings", {
+              defaultValue: "No booking activity recorded for today.",
+            })}
           </div>
         ) : (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 py-2">
+          <div className="flex flex-col items-center justify-between gap-6 py-2 sm:flex-row">
             {/* SVG Donut Chart */}
-            <div className="relative size-36 shrink-0 flex items-center justify-center">
+            <div className="relative flex size-36 shrink-0 items-center justify-center">
               <svg className="size-full -rotate-90" viewBox="0 0 100 100">
                 {/* Background Ring */}
                 <circle
@@ -135,19 +137,25 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
 
               {/* Center Metrics */}
               <div className="absolute flex flex-col items-center justify-center text-center">
-                <span className="text-xl font-bold text-nx-ink tabular-nums leading-none">
+                <span className="text-xl font-bold tabular-nums leading-none text-nx-ink">
                   {totalCount}
                 </span>
-                <span className="text-[10px] text-nx-ink-3 uppercase tracking-wider font-semibold mt-0.5">
+                <span className="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-nx-ink-3">
                   {t("venueOverview.statusDonut.bookings", { defaultValue: "Bookings" })}
                 </span>
               </div>
             </div>
 
             {/* Breakdown Legend List */}
-            <div className="flex-1 w-full space-y-2">
+            <div className="w-full flex-1 space-y-2">
               {items
-                .filter((item) => item.count > 0 || item.status === "Confirmed" || item.status === "CheckedIn" || item.status === "Held")
+                .filter(
+                  (item) =>
+                    item.count > 0 ||
+                    item.status === "Confirmed" ||
+                    item.status === "CheckedIn" ||
+                    item.status === "Held"
+                )
                 .map((item) => {
                   const colors = STATUS_COLORS[item.status] || STATUS_COLORS.Confirmed;
                   const pct = totalCount > 0 ? Math.round((item.count / totalCount) * 100) : 0;
@@ -156,15 +164,18 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
                   return (
                     <div
                       key={item.status}
-                      className="flex items-center justify-between text-xs p-1.5 rounded-nx-xs hover:bg-nx-surfaceSubtle transition-colors"
+                      className="rounded-nx-xs hover:bg-nx-surfaceSubtle flex items-center justify-between p-1.5 text-xs transition-colors"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
+                      <div className="flex min-w-0 items-center gap-2">
                         <span className={`size-2.5 rounded-full ${colors.bg} shrink-0`} />
-                        <span className="font-medium text-nx-ink truncate">{label}</span>
+                        <span className="truncate font-medium text-nx-ink">{label}</span>
                       </div>
-                      <div className="flex items-center gap-3 shrink-0 tabular-nums">
+                      <div className="flex shrink-0 items-center gap-3 tabular-nums">
                         <span className="font-bold text-nx-ink">{item.count}</span>
-                        <span className="text-nx-ink-3 font-mono text-[11px] w-9 text-right" dir="ltr">
+                        <span
+                          className="w-9 text-right font-mono text-[11px] text-nx-ink-3"
+                          dir="ltr"
+                        >
                           {pct}%
                         </span>
                       </div>

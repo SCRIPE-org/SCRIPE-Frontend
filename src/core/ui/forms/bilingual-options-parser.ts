@@ -11,7 +11,10 @@ export interface BilingualOptionRow {
  * be rejected for submitting precisely what it was shown.
  */
 export function parseBilingualOptions(value: string, valueAr: string): BilingualOptionRow[] {
-  const en = (value ?? "").split("\n").map((s) => s.trim()).filter((s) => s.length > 0);
+  const en = (value ?? "")
+    .split("\n")
+    .map((s) => s.trim())
+    .filter((s) => s.length > 0);
   const rawAr = (valueAr ?? "").split("\n").map((s) => s.trim());
   const filteredAr = rawAr.filter((s) => s.length > 0);
 

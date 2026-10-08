@@ -121,7 +121,12 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
         description={t("schedulableResource.builderDescription")}
         actions={
           canCreate ? (
-            <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+            <Button
+              onClick={() => {
+                setEditing(null);
+                setFormOpen(true);
+              }}
+            >
               <Plus className="size-4" />
               {t("schedulableResource.addNew")}
             </Button>
@@ -136,7 +141,12 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
           description={t("schedulableResource.emptyDescription")}
           action={
             canCreate ? (
-              <Button onClick={() => { setEditing(null); setFormOpen(true); }}>
+              <Button
+                onClick={() => {
+                  setEditing(null);
+                  setFormOpen(true);
+                }}
+              >
                 <Plus className="size-4" />
                 {t("schedulableResource.addNew")}
               </Button>
@@ -152,7 +162,10 @@ export const ResourceBuilderView = React.memo(function ResourceBuilderView() {
             node={node}
             depth={0}
             t={t}
-            onEdit={(n) => { setEditing(n); setFormOpen(true); }}
+            onEdit={(n) => {
+              setEditing(n);
+              setFormOpen(true);
+            }}
             onDelete={(n) => setDeleteTarget(n)}
             onChecklist={openChecklist}
             canEdit={canUpdate}

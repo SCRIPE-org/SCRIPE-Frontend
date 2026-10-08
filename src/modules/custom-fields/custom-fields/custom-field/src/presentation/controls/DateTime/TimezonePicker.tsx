@@ -97,7 +97,8 @@ function allSupportedTimeZones(): readonly string[] {
  */
 function optionsFor(currentValue: string): { value: string; label: string }[] {
   const zones = allSupportedTimeZones();
-  const withCurrent = currentValue && !zones.includes(currentValue) ? [currentValue, ...zones] : zones;
+  const withCurrent =
+    currentValue && !zones.includes(currentValue) ? [currentValue, ...zones] : zones;
   return withCurrent.map((zone) => ({ value: zone, label: zone }));
 }
 

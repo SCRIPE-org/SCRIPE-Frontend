@@ -58,14 +58,7 @@ export function useTenantOverviewViewModel() {
       activeTenantName,
       t,
     });
-  }, [
-    activeTenantName,
-    detailsData,
-    recentActivityData,
-    summaryData,
-    statsData,
-    t,
-  ]);
+  }, [activeTenantName, detailsData, recentActivityData, summaryData, statsData, t]);
 
   return {
     data: liveData,

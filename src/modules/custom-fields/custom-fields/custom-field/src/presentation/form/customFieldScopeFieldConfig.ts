@@ -42,7 +42,9 @@ export function buildCustomFieldScopeField({
     name: CUSTOM_FIELD_SCOPE_FIELD_NAME,
     label: t("customField.fields.isGlobal"),
     type: "switch",
-    description: t("customField.isGlobalDescription.platformContext") || t("customField.scopeDescription.platform"),
+    description:
+      t("customField.isGlobalDescription.platformContext") ||
+      t("customField.scopeDescription.platform"),
     isVisible: () => true,
   };
 }
@@ -75,4 +77,3 @@ export function normalizeCustomFieldCreateScope(
     isGlobal,
   };
 }
-

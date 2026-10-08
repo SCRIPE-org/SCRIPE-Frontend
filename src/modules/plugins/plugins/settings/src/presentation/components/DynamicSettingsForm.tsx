@@ -19,12 +19,7 @@ import {
 /**
  * Documentation for module export
  */
-export type {
-  JsonSchemaField,
-  PluginSettingsSchema,
-  SettingsValues,
-  DynamicSettingsFormProps,
-};
+export type { JsonSchemaField, PluginSettingsSchema, SettingsValues, DynamicSettingsFormProps };
 
 /**
  * DynamicSettingsForm renders a fully interactive plugin configuration form

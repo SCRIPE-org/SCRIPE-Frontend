@@ -88,9 +88,7 @@ export class CustomFieldService implements ICustomFieldService {
   async getHistory(id: string, page: number, pageSize: number): Promise<FieldHistoryPage> {
     // Returned as-is: display-only projections with no round trip to lose anything on. See
     // FieldInsight.ts for why these skip the entity/model/mapper ceremony CustomField needs.
-    return this.api.get<FieldHistoryPage>(
-      CUSTOM_FIELD_ENDPOINTS.HISTORY(id, page, pageSize)
-    );
+    return this.api.get<FieldHistoryPage>(CUSTOM_FIELD_ENDPOINTS.HISTORY(id, page, pageSize));
   }
 
   async getUsage(id: string): Promise<FieldUsage> {
@@ -153,5 +151,3 @@ export class CustomFieldService implements ICustomFieldService {
     );
   }
 }
-
-

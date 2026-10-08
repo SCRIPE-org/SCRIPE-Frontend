@@ -20,7 +20,10 @@ import { ActiveSessionsTable } from "../components/ActiveSessionsTable";
 import { SecurityPoliciesCard } from "../components/SecurityPoliciesCard";
 import { RecentSecurityEventsTable } from "../components/RecentSecurityEventsTable";
 import { EventDetailsDrawer } from "../components/EventDetailsDrawer";
-import type { SecurityChange, SecurityAttentionSignal } from "../../domain/entities/SecurityEntities";
+import type {
+  SecurityChange,
+  SecurityAttentionSignal,
+} from "../../domain/entities/SecurityEntities";
 
 // Lazy-load report export dialog
 const ReportExportDialog = dynamic(
@@ -61,7 +64,7 @@ export function SecurityDashboardView() {
   };
 
   return (
-    <div className="w-full space-y-5 pb-10 select-none">
+    <div className="w-full select-none space-y-5 pb-10">
       {/* 1. Header with Time Horizon, Posture Status, Refresh & Actions */}
       <SecurityHeader
         timeRange={vm.timeRange}
@@ -75,14 +78,10 @@ export function SecurityDashboardView() {
       />
 
       {/* 2. Security Posture KPI Strip */}
-      <SecurityPostureKpiCards
-        kpis={vm.kpis}
-        isLoading={vm.isLoading}
-        cardClasses={cardClasses}
-      />
+      <SecurityPostureKpiCards kpis={vm.kpis} isLoading={vm.isLoading} cardClasses={cardClasses} />
 
       {/* 3. Trends & Attention Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+      <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <SecurityTrendsChart
             data={vm.loginActivity}
@@ -103,12 +102,9 @@ export function SecurityDashboardView() {
       </div>
 
       {/* 4. Authentication Methods & Active Sessions Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+      <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <AuthMethodsPosture
-            methods={vm.authMethods}
-            cardClasses={cardClasses}
-          />
+          <AuthMethodsPosture methods={vm.authMethods} cardClasses={cardClasses} />
         </div>
         <div className="lg:col-span-7">
           <ActiveSessionsTable
@@ -123,12 +119,9 @@ export function SecurityDashboardView() {
       </div>
 
       {/* 5. Security Policies Posture & Recent Events Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+      <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
         <div className="lg:col-span-5">
-          <SecurityPoliciesCard
-            policies={vm.securityPolicies}
-            cardClasses={cardClasses}
-          />
+          <SecurityPoliciesCard policies={vm.securityPolicies} cardClasses={cardClasses} />
         </div>
         <div className="lg:col-span-7">
           <RecentSecurityEventsTable

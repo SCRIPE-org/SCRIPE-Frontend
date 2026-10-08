@@ -40,4 +40,10 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // Suppress console errors during tests (optional)
-// vi.spyOn(console, 'error').mockImplementation(() => {});
+const originalError = console.error;
+vi.spyOn(console, 'error').mockImplementation((...args: any[]) => {
+  if (typeof args[0] === "string" && args[0].includes("was not wrapped in act")) {
+    return;
+  }
+  originalError(...args);
+});

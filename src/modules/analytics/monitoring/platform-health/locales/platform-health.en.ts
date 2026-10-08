@@ -2,7 +2,8 @@ export const en = {
   platformHealth: {
     eyebrow: "MONITORING",
     title: "Platform Health",
-    subtitle: "Real-time health and performance of the SCRIPE platform, its infrastructure, services and external dependencies.",
+    subtitle:
+      "Real-time health and performance of the SCRIPE platform, its infrastructure, services and external dependencies.",
     statusHealthy: "Healthy",
     statusDegraded: "Degraded",
     statusCritical: "Critical",
@@ -58,7 +59,8 @@ export const en = {
       gcCollections: "GC Collections",
       gcGenBreakdown: "Gen 0: {g0} · Gen 1: {g1} · Gen 2: {g2}",
       clrVersion: "CLR Runtime",
-      telemetryNote: "Real-time sampling active. Historical 24h p95 time-series ingestion is wired via OpenTelemetry.",
+      telemetryNote:
+        "Real-time sampling active. Historical 24h p95 time-series ingestion is wired via OpenTelemetry.",
     },
     infrastructure: {
       title: "Infrastructure Health",
@@ -91,7 +93,8 @@ export const en = {
       subtitle: "Latest platform incidents, maintenance, and performance issues",
       viewAll: "View All",
       noActiveIncidentsTitle: "No active incidents",
-      noActiveIncidentsDesc: "All monitored services and external dependencies are operating within normal parameters.",
+      noActiveIncidentsDesc:
+        "All monitored services and external dependencies are operating within normal parameters.",
       statusInvestigating: "Investigating",
       statusDegraded: "Degraded",
       statusResolved: "Resolved",
@@ -108,7 +111,8 @@ export const en = {
     },
     forbidden: {
       title: "Access Restricted",
-      description: "Platform Observability is strictly restricted to global Platform SuperAdmins with observability.view permission.",
+      description:
+        "Platform Observability is strictly restricted to global Platform SuperAdmins with observability.view permission.",
     },
   },
 };

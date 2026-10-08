@@ -38,9 +38,7 @@ export function DetailAuditSection({
         <DetailRow
           label={t("customField.details.fields.modifiedAt")}
           value={
-            modifiedAt
-              ? formatDate(modifiedAt)
-              : t("customField.details.fields.neverModified")
+            modifiedAt ? formatDate(modifiedAt) : t("customField.details.fields.neverModified")
           }
         />
       </div>

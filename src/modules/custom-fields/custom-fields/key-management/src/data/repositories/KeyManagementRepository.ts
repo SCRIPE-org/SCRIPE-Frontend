@@ -7,7 +7,7 @@ import type {
   InitializeTenantKeyRequest,
   RotateTenantKeyRequest,
   RevokeTenantKeyRequest,
-  StartRewrapRequest
+  StartRewrapRequest,
 } from "../models/key-management.dto";
 import { KeyManagementMapper } from "../mappers/KeyManagementMapper";
 
@@ -50,7 +50,10 @@ export class KeyManagementRepository implements IKeyManagementRepository {
     return KeyManagementMapper.toSessionEntity(dto);
   }
 
-  async getAuditLogs(page = 1, pageSize = 20): Promise<{ items: EncryptionAuditLog[]; totalCount: number }> {
+  async getAuditLogs(
+    page = 1,
+    pageSize = 20
+  ): Promise<{ items: EncryptionAuditLog[]; totalCount: number }> {
     const result = await this.service.getAuditLogs(page, pageSize);
     return {
       items: (result.items ?? []).map(KeyManagementMapper.toAuditLogEntity),

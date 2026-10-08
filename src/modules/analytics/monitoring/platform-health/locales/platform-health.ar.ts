@@ -2,7 +2,8 @@ export const ar = {
   platformHealth: {
     eyebrow: "المراقبة",
     title: "صحة المنصة",
-    subtitle: "مراقبة حية لأداء وصحة منصة SCRIPE وبنيتها التحتية وخدماتها والتبعيات الخارجية في الوقت الفعلي.",
+    subtitle:
+      "مراقبة حية لأداء وصحة منصة SCRIPE وبنيتها التحتية وخدماتها والتبعيات الخارجية في الوقت الفعلي.",
     statusHealthy: "سليم",
     statusDegraded: "متدهور",
     statusCritical: "حرج",
@@ -91,7 +92,8 @@ export const ar = {
       subtitle: "أحدث الحوادث التشغيلية وأعمال الصيانة وملاحظات الأداء",
       viewAll: "عرض الكل",
       noActiveIncidentsTitle: "لا توجد حوادث نشطة",
-      noActiveIncidentsDesc: "تعمل كافة الخدمات المراقبة والتبعيات الخارجية ضمن الحدود التشغيلية الطبيعية.",
+      noActiveIncidentsDesc:
+        "تعمل كافة الخدمات المراقبة والتبعيات الخارجية ضمن الحدود التشغيلية الطبيعية.",
       statusInvestigating: "قيد التحقيق",
       statusDegraded: "أداء متدهور",
       statusResolved: "تم الحل",
@@ -108,7 +110,8 @@ export const ar = {
     },
     forbidden: {
       title: "الوصول مقيد",
-      description: "لوحة مراقبة المنصة مقصورة حصرياً على مدراء المنصة العامين الحاصلين على صلاحية observability.view.",
+      description:
+        "لوحة مراقبة المنصة مقصورة حصرياً على مدراء المنصة العامين الحاصلين على صلاحية observability.view.",
     },
   },
 };

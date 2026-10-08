@@ -1,1 +1,1 @@
-﻿export * from './src/presentation/views/SecurityDashboardView';
+﻿export * from "./src/presentation/views/SecurityDashboardView";

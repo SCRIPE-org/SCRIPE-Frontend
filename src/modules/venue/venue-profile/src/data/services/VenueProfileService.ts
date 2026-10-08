@@ -17,7 +17,11 @@ import { VENUE_PROFILE_ENDPOINTS } from "./venue-profile.endpoints";
 export class VenueProfileService implements IVenueProfileService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<VenueProfileListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<VenueProfileListResult> {
     const url = buildUrl(VENUE_PROFILE_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,

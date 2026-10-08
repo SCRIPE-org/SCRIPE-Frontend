@@ -38,12 +38,9 @@ export const securityKeys = {
     [...securityKeys.all(tenantId), "blocked-ips", days, limit] as const,
   recentChanges: (limit: number, tenantId: string | null) =>
     [...securityKeys.all(tenantId), "recent-changes", limit] as const,
-  sessions: (tenantId: string | null) =>
-    [...securityKeys.all(tenantId), "sessions"] as const,
-  summary: (tenantId: string | null) =>
-    [...securityKeys.all(tenantId), "summary"] as const,
-  admins: (tenantId: string | null) =>
-    [...securityKeys.all(tenantId), "admins"] as const,
+  sessions: (tenantId: string | null) => [...securityKeys.all(tenantId), "sessions"] as const,
+  summary: (tenantId: string | null) => [...securityKeys.all(tenantId), "summary"] as const,
+  admins: (tenantId: string | null) => [...securityKeys.all(tenantId), "admins"] as const,
 };
 
 /**
@@ -159,8 +156,7 @@ export function useSecurityDashboardViewModel() {
     }
 
     const totalAuth = totalSuccess + totalFailed;
-    const authHealthRate =
-      totalAuth > 0 ? Math.round((totalSuccess / totalAuth) * 1000) / 10 : 100;
+    const authHealthRate = totalAuth > 0 ? Math.round((totalSuccess / totalAuth) * 1000) / 10 : 100;
 
     // Security event breakdown
     const events = securityEventsQuery.data ?? [];
@@ -180,10 +176,10 @@ export function useSecurityDashboardViewModel() {
 
     // Admins and MFA
     const adminItems = adminsQuery.data?.items ?? [];
-    const totalAdmins = adminsQuery.data?.totalCount || summaryQuery.data?.totalAdmins || adminItems.length || 1;
+    const totalAdmins =
+      adminsQuery.data?.totalCount || summaryQuery.data?.totalAdmins || adminItems.length || 1;
     const mfaEnabledCount = adminItems.filter((a) => Boolean(a.isTwoFactorEnabled)).length;
-    const mfaAdoptionRate =
-      totalAdmins > 0 ? Math.round((mfaEnabledCount / totalAdmins) * 100) : 0;
+    const mfaAdoptionRate = totalAdmins > 0 ? Math.round((mfaEnabledCount / totalAdmins) * 100) : 0;
 
     const activeSessionsCount = sessionsQuery.data?.length ?? 0;
 
@@ -287,7 +283,8 @@ export function useSecurityDashboardViewModel() {
         signals.push({
           id: `change-fail-${ch.id}`,
           title: `Failed ${ch.eventType} operation`,
-          description: ch.errorMessage || `Attempt by ${ch.username || "unknown actor"} was rejected.`,
+          description:
+            ch.errorMessage || `Attempt by ${ch.username || "unknown actor"} was rejected.`,
           type: ch.eventType,
           severity: "medium",
           timestamp: ch.timestamp,
@@ -399,9 +396,7 @@ export function useSecurityDashboardViewModel() {
     sessionsQuery.isRefetching;
 
   const isLoading =
-    securityEventsQuery.isLoading ||
-    loginActivityQuery.isLoading ||
-    sessionsQuery.isLoading;
+    securityEventsQuery.isLoading || loginActivityQuery.isLoading || sessionsQuery.isLoading;
 
   return {
     timeRange,

@@ -28,7 +28,8 @@ export interface PublicPlatformStatsResponse {
 export function usePublicPlatformStats() {
   const { data, isLoading } = useQuery({
     queryKey: ["public", "platform-stats"],
-    queryFn: () => getBaseApiService().get<PublicPlatformStatsResponse>(`${V1}/public/platform-stats`),
+    queryFn: () =>
+      getBaseApiService().get<PublicPlatformStatsResponse>(`${V1}/public/platform-stats`),
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });

@@ -34,15 +34,15 @@ export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessPro
         <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-nx-lg bg-success/10 duration-nx-standard ease-nx-enter motion-safe:animate-in motion-safe:zoom-in-95">
           <CheckCircle2 className="h-8 w-8 text-success" aria-hidden="true" />
         </div>
-        <h1 className="text-xl font-bold duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+        <h1 className="text-xl font-bold duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
           {t("tenant.created")}
         </h1>
-        <p className="mt-2 text-sm text-nx-ink-2 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+        <p className="mt-2 text-sm text-nx-ink-2 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
           {t("tenant.setupEmailSent")}
         </p>
       </div>
 
-      <div className="space-y-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+      <div className="space-y-4 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
         {/* Admin details card */}
         <div className="space-y-3 rounded-nx-md border border-nx-line bg-nx-surface p-5">
           <DetailRow icon={Mail} label={t("tenant.adminEmail")} value={result.adminEmail} />
@@ -56,9 +56,7 @@ export function CreateTenantSuccess({ vm, t, direction }: CreateTenantSuccessPro
 
         {/* Setup URL card */}
         <div className="rounded-nx-md border border-nx-accent bg-nx-accent-wash p-5">
-          <p className="mb-2.5 text-xs text-nx-ink-2">
-            {t("tenant.setupUrlLabel")}
-          </p>
+          <p className="mb-2.5 text-xs text-nx-ink-2">{t("tenant.setupUrlLabel")}</p>
           <div className="flex items-center gap-2">
             <code className="flex-1 truncate rounded-nx-md border border-nx-line bg-nx-raised px-3 py-2 font-mono text-xs">
               {result.accountSetupUrl}

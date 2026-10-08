@@ -453,8 +453,7 @@ const OBJECT_VALUED_EMPTINESS_CHECKS: Partial<
       money.amount === undefined ||
       money.amount === null ||
       (typeof money.amount === "string" && money.amount.trim() === "");
-    const codeMissing =
-      typeof money.currencyCode !== "string" || money.currencyCode.trim() === "";
+    const codeMissing = typeof money.currencyCode !== "string" || money.currencyCode.trim() === "";
     return amountMissing || codeMissing;
   },
   /**
@@ -684,7 +683,7 @@ function CustomFieldExtensionControl({
       <Label htmlFor={field.name} className="text-start">
         {field.label}
         {isFieldRequired(field) && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}
@@ -767,10 +766,7 @@ function CustomFieldExtensionControl({
 /**
  * Determines whether a field is required, evaluating dynamic predicates against formData if provided.
  */
-export function isFieldRequired(
-  field: FieldConfig,
-  formData?: Record<string, any>
-): boolean {
+export function isFieldRequired(field: FieldConfig, formData?: Record<string, any>): boolean {
   if (typeof field.required === "function") {
     return Boolean(field.required(formData ?? {}));
   }
@@ -848,24 +844,22 @@ export function GenericForm({
   // Bailing out on the no-op keeps that loop closed even if a caller rebuilds
   // `fields` or `initialValues` on every render.
   React.useEffect(() => {
-    queueMicrotask(() => {
-      setFormData((prevData) => {
-        let added = false;
-        const preservedData = { ...prevData };
-        fields.forEach((field) => {
-          // Only set default/initial value if this field has NO value yet
-          if (preservedData[field.name] === undefined) {
-            if (field.defaultValue !== undefined) {
-              preservedData[field.name] = field.defaultValue;
-              added = true;
-            } else if (initialValues[field.name] !== undefined) {
-              preservedData[field.name] = initialValues[field.name];
-              added = true;
-            }
+    setFormData((prevData) => {
+      let added = false;
+      const preservedData = { ...prevData };
+      fields.forEach((field) => {
+        // Only set default/initial value if this field has NO value yet
+        if (preservedData[field.name] === undefined) {
+          if (field.defaultValue !== undefined) {
+            preservedData[field.name] = field.defaultValue;
+            added = true;
+          } else if (initialValues[field.name] !== undefined) {
+            preservedData[field.name] = initialValues[field.name];
+            added = true;
           }
-        });
-        return added ? preservedData : prevData;
+        }
       });
+      return added ? preservedData : prevData;
     });
   }, [fields, initialValues]);
 
@@ -994,7 +988,8 @@ export function GenericForm({
         val.trim() !== "" &&
         !new RegExp((field as any).pattern).test(val)
       ) {
-        newErrors[field.name] = (field as any).patternError || t("validation.patternMismatch") || "Invalid format";
+        newErrors[field.name] =
+          (field as any).patternError || t("validation.patternMismatch") || "Invalid format";
         return;
       }
 
@@ -1025,7 +1020,9 @@ export function GenericForm({
               el instanceof HTMLSelectElement ||
               el instanceof HTMLButtonElement
                 ? el
-                : el.querySelector<HTMLElement>("input, textarea, button, select, [tabindex]:not([tabindex='-1'])") || el;
+                : el.querySelector<HTMLElement>(
+                    "input, textarea, button, select, [tabindex]:not([tabindex='-1'])"
+                  ) || el;
             if (focusTarget && typeof focusTarget.focus === "function") {
               focusTarget.focus({ preventScroll: true });
             }
@@ -1288,7 +1285,7 @@ export function GenericForm({
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
               <div className="space-y-1 text-xs">
                 <p className="font-semibold">{t("validation.correctErrorsTitle")}</p>
-                <ul className="list-disc ps-4 space-y-0.5 text-[11px] text-destructive/90">
+                <ul className="list-disc space-y-0.5 ps-4 text-[11px] text-destructive/90">
                   {Object.entries(errors).map(([fieldName, errMsg]) => {
                     const f = fields.find((item) => item.name === fieldName);
                     const label = f?.label ? t(f.label) : fieldName;
@@ -1339,7 +1336,11 @@ export function GenericForm({
             ) : (
               <div
                 key={field.name}
-                className={cn("relative", getFieldSpacing(), gridded && field.colSpan === 2 && "sm:col-span-2")}
+                className={cn(
+                  "relative",
+                  getFieldSpacing(),
+                  gridded && field.colSpan === 2 && "sm:col-span-2"
+                )}
               >
                 {/* Switch and checkbox label themselves on their own row.
                     Extension-drawn types are excluded because every one of
@@ -1360,7 +1361,7 @@ export function GenericForm({
                         {field.label}
                       </Label>
                       {isFieldRequired(field, formData) && (
-                        <span className="text-destructive text-sm font-medium" aria-hidden="true">
+                        <span className="text-sm font-medium text-destructive" aria-hidden="true">
                           *
                         </span>
                       )}
@@ -1600,7 +1601,7 @@ export function GenericForm({
                     <Label htmlFor={field.name} className="text-start">
                       {field.label}
                       {isFieldRequired(field, formData) && (
-                        <span className="text-destructive ms-1" aria-hidden="true">
+                        <span className="ms-1 text-destructive" aria-hidden="true">
                           *
                         </span>
                       )}
@@ -1627,7 +1628,7 @@ export function GenericForm({
                     <Label htmlFor={field.name} className="cursor-pointer text-start">
                       {field.label}
                       {isFieldRequired(field, formData) && (
-                        <span className="text-destructive ms-1" aria-hidden="true">
+                        <span className="ms-1 text-destructive" aria-hidden="true">
                           *
                         </span>
                       )}
@@ -1691,7 +1692,10 @@ export function GenericForm({
                     value={formData[field.name] ?? ""}
                     onChange={(value) => handleChange(field.name, value)}
                     required={isFieldRequired(field, formData)}
-                    className={cn(getInputClasses(getInputHeight()), invalid && "border-destructive focus-visible:ring-destructive")}
+                    className={cn(
+                      getInputClasses(getInputHeight()),
+                      invalid && "border-destructive focus-visible:ring-destructive"
+                    )}
                     placeholder={field.placeholder}
                     disabled={inert}
                   />
@@ -1723,7 +1727,11 @@ export function GenericForm({
                       }
                     }}
                     required={isFieldRequired(field, formData)}
-                    className={cn(getInputClasses(getInputHeight()), "text-start", invalid && "border-destructive focus-visible:ring-destructive")}
+                    className={cn(
+                      getInputClasses(getInputHeight()),
+                      "text-start",
+                      invalid && "border-destructive focus-visible:ring-destructive"
+                    )}
                     accept={field.accept}
                     multiple={field.multiple}
                     disabled={inert}
@@ -1738,7 +1746,11 @@ export function GenericForm({
                       value={formData[field.name] ?? ""}
                       onChange={(e) => handleChange(field.name, e.target.value)}
                       required={isFieldRequired(field, formData)}
-                      className={cn(getInputClasses(getInputHeight()), "text-start", invalid && "border-destructive focus-visible:ring-destructive")}
+                      className={cn(
+                        getInputClasses(getInputHeight()),
+                        "text-start",
+                        invalid && "border-destructive focus-visible:ring-destructive"
+                      )}
                       placeholder={field.placeholder}
                       disabled={field.disabled}
                       readOnly={readOnly}
@@ -1761,7 +1773,11 @@ export function GenericForm({
                       value={formData[field.name] ?? ""}
                       onChange={(e) => handleChange(field.name, e.target.value)}
                       required={isFieldRequired(field, formData)}
-                      className={cn(getInputClasses(getInputHeight()), "text-start", invalid && "border-destructive focus-visible:ring-destructive")}
+                      className={cn(
+                        getInputClasses(getInputHeight()),
+                        "text-start",
+                        invalid && "border-destructive focus-visible:ring-destructive"
+                      )}
                       placeholder={field.placeholder}
                       min={field.min}
                       max={field.max}
@@ -1792,7 +1808,10 @@ export function GenericForm({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       {errors[field.name] ? (
-                        <p id={errorId} className="text-xs font-medium text-destructive flex items-center gap-1.5">
+                        <p
+                          id={errorId}
+                          className="flex items-center gap-1.5 text-xs font-medium text-destructive"
+                        >
                           <AlertCircle className="h-3.5 w-3.5 shrink-0 text-destructive" />
                           <span>{errors[field.name]}</span>
                         </p>

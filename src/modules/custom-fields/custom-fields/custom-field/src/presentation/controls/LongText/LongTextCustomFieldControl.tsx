@@ -158,22 +158,20 @@ export function LongTextCustomFieldControl({
     // the zone unchanged, even though `length`/`overBy` are effect deps.
     if (zone === lastAnnouncedZoneRef.current) return;
     lastAnnouncedZoneRef.current = zone;
-    queueMicrotask(() => {
-      if (zone === "over") {
-        setAnnouncement(
-          t("customField.longText.charactersOverLimit", { overBy, max: LONG_TEXT_MAX_CHARACTERS })
-        );
-      } else if (zone === "nearLimit") {
-        setAnnouncement(
-          t("customField.longText.characterCount", { count: length, max: LONG_TEXT_MAX_CHARACTERS })
-        );
-      } else {
-        // Back to safe (e.g. the user deleted text after being near/over the
-        // cap) -- clear the live region rather than leave a stale warning
-        // sitting there un-announced-again.
-        setAnnouncement("");
-      }
-    });
+    if (zone === "over") {
+      setAnnouncement(
+        t("customField.longText.charactersOverLimit", { overBy, max: LONG_TEXT_MAX_CHARACTERS })
+      );
+    } else if (zone === "nearLimit") {
+      setAnnouncement(
+        t("customField.longText.characterCount", { count: length, max: LONG_TEXT_MAX_CHARACTERS })
+      );
+    } else {
+      // Back to safe (e.g. the user deleted text after being near/over the
+      // cap) -- clear the live region rather than leave a stale warning
+      // sitting there un-announced-again.
+      setAnnouncement("");
+    }
   }, [zone, length, overBy, t]);
 
   const counterText =
@@ -186,7 +184,7 @@ export function LongTextCustomFieldControl({
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
         {isRequired && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}

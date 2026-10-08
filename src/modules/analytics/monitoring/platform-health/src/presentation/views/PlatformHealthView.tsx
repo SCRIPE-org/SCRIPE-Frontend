@@ -37,7 +37,7 @@ export function PlatformHealthView() {
   if (!isAuthorized) {
     return (
       <div className="flex items-center justify-center p-12">
-        <Card className="max-w-md w-full text-center p-6 space-y-4">
+        <Card className="w-full max-w-md space-y-4 p-6 text-center">
           <div className="flex justify-center">
             <div className="rounded-full bg-destructive/10 p-3 text-destructive">
               <ShieldAlert className="h-8 w-8" />
@@ -56,7 +56,7 @@ export function PlatformHealthView() {
   }
 
   return (
-    <div className="w-full space-y-5 pb-10 select-none">
+    <div className="w-full select-none space-y-5 pb-10">
       {/* 1. Header with Time Range, Live Toggle & Refresh */}
       <HealthHeader
         timeRange={timeRange}
@@ -69,23 +69,15 @@ export function PlatformHealthView() {
       />
 
       {/* 2. Top Summary KPI Cards (Overall Health, Uptime, Health Score, Active Incidents) */}
-      <HealthTopKpiCards health={health}  />
+      <HealthTopKpiCards health={health} />
 
       {/* 3. Core Services Health & API Performance Telemetry */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-3">
         <div className="xl:col-span-2">
-          <CoreServicesGrid
-            modules={health?.modules}
-            checks={health?.checks}
-            
-          />
+          <CoreServicesGrid modules={health?.modules} checks={health?.checks} />
         </div>
         <div className="xl:col-span-1">
-          <ApiPerformanceTelemetry
-            health={health}
-            timeRange={timeRange}
-            
-          />
+          <ApiPerformanceTelemetry health={health} timeRange={timeRange} />
         </div>
       </div>
 
@@ -94,29 +86,21 @@ export function PlatformHealthView() {
         <InfrastructureHealthSection
           infrastructure={health?.infrastructure}
           checks={health?.checks}
-          
         />
-        <ExternalDependenciesSection
-          dependencies={health?.externalDependencies}
-          
-        />
+        <ExternalDependenciesSection dependencies={health?.externalDependencies} />
       </div>
 
       {/* 5. Recent Incidents & Degradations + Incident Details */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <RecentIncidentsSection
             incidents={health?.incidents}
             selectedIncidentId={selectedIncidentId}
             onSelectIncident={setSelectedIncidentId}
-            
           />
         </div>
         <div className="lg:col-span-5">
-          <IncidentDetailPanel
-            incident={selectedIncident} isLoading={isLoading}
-            
-          />
+          <IncidentDetailPanel incident={selectedIncident} isLoading={isLoading} />
         </div>
       </div>
     </div>

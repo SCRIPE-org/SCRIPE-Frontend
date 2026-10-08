@@ -104,7 +104,14 @@ export function AppDetailView({ id }: AppDetailViewProps) {
         {/* App icon */}
         <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-nx-lg border border-nx-line bg-nx-raised">
           {listing.iconUrl ? (
-            <Image src={listing.iconUrl} alt="" width={64} height={64} unoptimized className="size-full object-cover" />
+            <Image
+              src={listing.iconUrl}
+              alt=""
+              width={64}
+              height={64}
+              unoptimized
+              className="size-full object-cover"
+            />
           ) : (
             <span className="text-2xl font-bold text-nx-ink-2" aria-hidden="true">
               {listing.name.charAt(0)}

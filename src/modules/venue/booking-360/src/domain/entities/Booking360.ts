@@ -2,8 +2,18 @@
  * Documentation for =
  */
 export type Booking360Status =
-  | "Draft" | "Requested" | "Held" | "PendingApproval" | "Confirmed" | "CheckedIn"
-  | "Completed" | "PartiallyFulfilled" | "Cancelled" | "Rejected" | "Expired" | "NoShow";
+  | "Draft"
+  | "Requested"
+  | "Held"
+  | "PendingApproval"
+  | "Confirmed"
+  | "CheckedIn"
+  | "Completed"
+  | "PartiallyFulfilled"
+  | "Cancelled"
+  | "Rejected"
+  | "Expired"
+  | "NoShow";
 
 /**
  * Documentation for module export
@@ -74,25 +84,13 @@ export interface Booking360FacilityContext {
  * Documentation for =
  */
 export type Booking360OperationalAction =
-  | "confirm"
-  | "checkIn"
-  | "complete"
-  | "noShow"
-  | "cancel"
-  | "reschedule"
-  | "changeResource";
+  "confirm" | "checkIn" | "complete" | "noShow" | "cancel" | "reschedule" | "changeResource";
 
 /**
  * Documentation for =
  */
 export type Booking360OperationalFeedbackKind =
-  | "success"
-  | "invalidState"
-  | "concurrency"
-  | "permission"
-  | "feature"
-  | "validation"
-  | "network";
+  "success" | "invalidState" | "concurrency" | "permission" | "feature" | "validation" | "network";
 
 /**
  * Documentation for module export
@@ -107,7 +105,8 @@ export interface Booking360OperationalFeedback {
 /**
  * Documentation for "error"
  */
-export type Booking360Stage = "loading" | "notFound" | "failed" | "ready" | "featureUnavailable" | "error";
+export type Booking360Stage =
+  "loading" | "notFound" | "failed" | "ready" | "featureUnavailable" | "error";
 
 /**
  * Documentation for module export

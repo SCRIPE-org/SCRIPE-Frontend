@@ -52,12 +52,17 @@ export function FacilityQuickCreateDialog({
   const [saving, setSaving] = useState(false);
   const [venueProfileQuickCreateOpen, setVenueProfileQuickCreateOpen] = useState(false);
 
-  const [errors, setErrors] = useState<{ venueProfileId?: string; code?: string; name?: string }>({});
+  const [errors, setErrors] = useState<{ venueProfileId?: string; code?: string; name?: string }>(
+    {}
+  );
 
   const loadVenueProfiles = useCallback(async () => {
     try {
       setLoadingVenueProfiles(true);
-      const res = await useVenueServiceLocatorStatic.venueProfileRepository.getAll({ page: 1, pageSize: 100 });
+      const res = await useVenueServiceLocatorStatic.venueProfileRepository.getAll({
+        page: 1,
+        pageSize: 100,
+      });
       setVenueProfiles(res.items);
       setVenueProfileId((current) => current || res.items[0]?.id || "");
     } catch {
@@ -137,22 +142,28 @@ export function FacilityQuickCreateDialog({
             <DialogHeader>
               <DialogTitle>{t("facility.addNew") || "New Facility"}</DialogTitle>
               <DialogDescription>
-                {t("facility.description") || "Add a facility (building, court, or field block) to a venue profile."}
+                {t("facility.description") ||
+                  "Add a facility (building, court, or field block) to a venue profile."}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label id="facility-venue-label" htmlFor="facility-venue-select" className="text-xs font-medium">
-                    {t("facility.fields.venueProfileId")} <span className="text-destructive">*</span>
+                  <Label
+                    id="facility-venue-label"
+                    htmlFor="facility-venue-select"
+                    className="text-xs font-medium"
+                  >
+                    {t("facility.fields.venueProfileId")}{" "}
+                    <span className="text-destructive">*</span>
                   </Label>
                   {canCreateVenueProfile && (
                     <Button
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                      className="hover:text-nx-accent/80 h-6 px-1.5 text-xs text-nx-accent"
                       onClick={() => setVenueProfileQuickCreateOpen(true)}
                     >
                       <Plus className="mr-1 size-3" />
@@ -172,13 +183,20 @@ export function FacilityQuickCreateDialog({
                   }))}
                   value={venueProfileId}
                   onValueChange={(val: string | string[]) => {
-                    const selected = Array.isArray(val) ? val[0] ?? "" : val;
+                    const selected = Array.isArray(val) ? (val[0] ?? "") : val;
                     setVenueProfileId(selected);
-                    if (errors.venueProfileId) setErrors((prev) => ({ ...prev, venueProfileId: undefined }));
+                    if (errors.venueProfileId)
+                      setErrors((prev) => ({ ...prev, venueProfileId: undefined }));
                   }}
-                  placeholder={loadingVenueProfiles ? t("common.loading") : t("facility.placeholders.venueProfileId")}
+                  placeholder={
+                    loadingVenueProfiles
+                      ? t("common.loading")
+                      : t("facility.placeholders.venueProfileId")
+                  }
                 />
-                {errors.venueProfileId && <p className="text-xs text-destructive">{errors.venueProfileId}</p>}
+                {errors.venueProfileId && (
+                  <p className="text-xs text-destructive">{errors.venueProfileId}</p>
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -242,7 +260,10 @@ export function FacilityQuickCreateDialog({
               >
                 {t("common.cancel")}
               </Button>
-              <Button type="submit" disabled={!name.trim() || !code.trim() || !venueProfileId.trim() || saving}>
+              <Button
+                type="submit"
+                disabled={!name.trim() || !code.trim() || !venueProfileId.trim() || saving}
+              >
                 {saving ? t("common.saving") : t("common.save")}
               </Button>
             </DialogFooter>

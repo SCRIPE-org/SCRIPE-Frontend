@@ -16,14 +16,12 @@ export interface InfoRowProps {
  */
 export function InfoRow({ icon, label, value }: InfoRowProps) {
   return (
-    <div className="flex items-center justify-between gap-3 text-xs sm:text-sm min-w-0 py-1">
-      <div className="flex items-center gap-2 text-muted-foreground shrink-0">
+    <div className="flex min-w-0 items-center justify-between gap-3 py-1 text-xs sm:text-sm">
+      <div className="flex shrink-0 items-center gap-2 text-muted-foreground">
         {icon}
         <span className="font-medium">{label}:</span>
       </div>
-      <span className="font-medium text-foreground truncate min-w-0 text-end">
-        {value || "—"}
-      </span>
+      <span className="min-w-0 truncate text-end font-medium text-foreground">{value || "—"}</span>
     </div>
   );
 }

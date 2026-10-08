@@ -139,26 +139,24 @@ export function usePlanPicker({
 
   const editions: PlanPickerEdition[] = useMemo(() => {
     const mapped = (rawEditions ?? [])
-      .map(
-        (entity: PublicEdition): PlanEdition => ({
-          id: entity.id,
-          name: entity.name,
-          tagline: entity.tagline ?? "",
-          tierLevel: entity.tier,
-          category: entity.categoryKey,
-          categoryDisplayName: entity.categoryDisplayName,
-          monthlyPrice: entity.monthlyPrice ?? 0,
-          annualPrice: entity.annualPrice ?? 0,
-          currency: entity.currency,
-          priceDisplay: entity.priceDisplay,
-          trialDays: (entity.trialDays ?? 0) > 0 ? entity.trialDays : null,
-          badge: entity.badge ?? (entity.isRecommended ? "Recommended" : null),
-          topFeatures: entity.topFeatures,
-          allFeatures: entity.allFeatures,
-          checkoutMode: entity.checkoutMode,
-          raw: entity,
-        })
-      )
+      .map((entity: PublicEdition): PlanEdition => ({
+        id: entity.id,
+        name: entity.name,
+        tagline: entity.tagline ?? "",
+        tierLevel: entity.tier,
+        category: entity.categoryKey,
+        categoryDisplayName: entity.categoryDisplayName,
+        monthlyPrice: entity.monthlyPrice ?? 0,
+        annualPrice: entity.annualPrice ?? 0,
+        currency: entity.currency,
+        priceDisplay: entity.priceDisplay,
+        trialDays: (entity.trialDays ?? 0) > 0 ? entity.trialDays : null,
+        badge: entity.badge ?? (entity.isRecommended ? "Recommended" : null),
+        topFeatures: entity.topFeatures,
+        allFeatures: entity.allFeatures,
+        checkoutMode: entity.checkoutMode,
+        raw: entity,
+      }))
       .sort((a, b) => a.tierLevel - b.tierLevel);
     return mapped.map((e) => ({
       // Direct compare: recommendedEditionId is the SAME encrypted id as the catalog id.

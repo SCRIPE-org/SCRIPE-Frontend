@@ -55,8 +55,13 @@ export class SecurityService implements ISecurityService {
     return this.api.delete<void>(SECURITY_ENDPOINTS.REVOKE_SESSION(tokenId));
   }
 
-  async getAdmins(pageSize: number = 100): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }> {
+  async getAdmins(
+    pageSize: number = 100
+  ): Promise<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }> {
     const url = buildUrl(SECURITY_ENDPOINTS.ADMINS, { page: 1, pageSize });
-    return this.api.get<{ items: Array<{ id: string; isTwoFactorEnabled?: boolean }>; totalCount: number }>(url);
+    return this.api.get<{
+      items: Array<{ id: string; isTwoFactorEnabled?: boolean }>;
+      totalCount: number;
+    }>(url);
   }
 }

@@ -213,7 +213,9 @@ export function PermissionConfigDialog({
                    text, needs no new component (none in @core/ui accepts both), and
                    stays keyboard- and screen-reader-navigable by construction. */
                 list={
-                  availableSuggestions.length > 0 ? "permission-restricted-field-options" : undefined
+                  availableSuggestions.length > 0
+                    ? "permission-restricted-field-options"
+                    : undefined
                 }
               />
               {availableSuggestions.length > 0 && (

@@ -3,14 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import {
-  GitFork,
-  Plus,
-  Sliders,
-  Search,
-  Building2,
-  Sparkles,
-} from "lucide-react";
+import { GitFork, Plus, Sliders, Search, Building2, Sparkles } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
@@ -54,7 +47,7 @@ export function ResourcesWorkspaceView() {
       <VenueNav />
 
       {/* Header with Title and Primary Actions */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-nx-line pb-4">
+      <div className="flex flex-col gap-4 border-b border-nx-line pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <PageHeader
             icon={GitFork}
@@ -119,13 +112,13 @@ export function ResourcesWorkspaceView() {
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative max-w-sm flex-1">
           <Search className="absolute left-3 top-2.5 size-4 text-nx-ink-3" aria-hidden="true" />
           <Input
             value={vm.searchQuery}
             onChange={(e) => vm.setSearchQuery(e.target.value)}
             placeholder={t("resources.search", { defaultValue: "Search courts & fields..." })}
-            className="pl-9 h-9 text-xs"
+            className="h-9 pl-9 text-xs"
           />
         </div>
 
@@ -177,7 +170,7 @@ export function ResourcesWorkspaceView() {
         </div>
       ) : (
         /* Resources Grid */
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {vm.items.map((item) => (
             <ResourceCard key={item.id} item={item} />
           ))}

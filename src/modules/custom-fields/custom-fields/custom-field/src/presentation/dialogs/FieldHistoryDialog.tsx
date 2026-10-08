@@ -144,12 +144,7 @@ export function FieldHistoryDialog({
                       <div className="flex flex-wrap items-center gap-2">
                         <Badge variant={CHANGE_KIND_VARIANT[entry.changeKind] ?? "outline"}>
                           {/* Unrecognised kinds render as themselves -- see labelFor. */}
-                          {labelFor(
-                            KNOWN_KINDS,
-                            "customField.history.kind",
-                            entry.changeKind,
-                            t
-                          )}
+                          {labelFor(KNOWN_KINDS, "customField.history.kind", entry.changeKind, t)}
                         </Badge>
                         <Badge variant="outline">
                           {labelFor(KNOWN_PARTS, "customField.history.part", entry.part, t)}

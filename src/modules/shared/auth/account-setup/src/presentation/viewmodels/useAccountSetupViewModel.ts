@@ -3,10 +3,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAuthContainer } from "@modules/auth/di";
-import type {
-  SetupTokenInfo,
-  SetupCustomField,
-} from "../../domain/entities";
+import type { SetupTokenInfo, SetupCustomField } from "../../domain/entities";
 
 /**
  * PageState defines the active lifecycle state of the account setup view:
@@ -139,12 +136,7 @@ export function useAccountSetupViewModel(params: {
     total++;
     if (passwordChecks.matches) passed++;
     return Math.round((passed / total) * 100);
-  }, [
-    passwordChecks,
-    passwordRequireNumber,
-    passwordRequireSpecial,
-    passwordRequireUppercase,
-  ]);
+  }, [passwordChecks, passwordRequireNumber, passwordRequireSpecial, passwordRequireUppercase]);
 
   const passwordEntropy = useMemo(() => {
     if (!password) return 0;
@@ -383,14 +375,7 @@ export function useAccountSetupViewModel(params: {
       if (!isAttributesValid) return;
       void activate();
     }
-  }, [
-    currentStep,
-    isPasswordValid,
-    isProfileValid,
-    hasCustomFields,
-    isAttributesValid,
-    activate,
-  ]);
+  }, [currentStep, isPasswordValid, isProfileValid, hasCustomFields, isAttributesValid, activate]);
 
   const goToPrevStep = useCallback(() => {
     setValidationErrors([]);

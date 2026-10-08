@@ -18,7 +18,12 @@ import { ACCOUNT_SETUP_ENDPOINTS } from "./account-setup.endpoints";
 /**
  * Documentation for module export
  */
-export type { ActivateAccountRequest, ActivateAccountResponse, ValidateTokenResponse, SetupCustomFieldDto };
+export type {
+  ActivateAccountRequest,
+  ActivateAccountResponse,
+  ValidateTokenResponse,
+  SetupCustomFieldDto,
+};
 
 /**
  * Documentation for module export

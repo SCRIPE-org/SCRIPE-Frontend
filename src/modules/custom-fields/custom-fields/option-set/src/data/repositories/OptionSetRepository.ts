@@ -106,7 +106,10 @@ export class OptionSetRepository implements IOptionSetRepository {
     return OptionSetMapper.bindingResultToOutcome(model);
   }
 
-  async rebind(fieldVersionId: string, optionSetVersionId: string): Promise<OptionSetBindingOutcome> {
+  async rebind(
+    fieldVersionId: string,
+    optionSetVersionId: string
+  ): Promise<OptionSetBindingOutcome> {
     const model = await this.service.rebind(fieldVersionId, { optionSetVersionId });
     return OptionSetMapper.bindingResultToOutcome(model);
   }

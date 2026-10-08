@@ -49,18 +49,15 @@ export interface FacilityOption {
 
 /**
  * Presentation ViewModel hook orchestrating real-time Venue Operational Overview telemetry.
- * 
+ *
  * Aggregates live operational KPIs, hourly load distributions, up-next arrivals, and timeline
  * allocations across facility resources with automatic polling and deferred activity updates.
- * 
+ *
  * @param initialFacilityId Optional initial facility identifier filter.
  * @param initialLocalDate Optional initial date string (YYYY-MM-DD) for operational window.
  * @returns State package including reactive `state`, facility list, selection callbacks, and reload triggers.
  */
-export function useVenueOverviewViewModel(
-  initialFacilityId?: string,
-  initialLocalDate?: string
-) {
+export function useVenueOverviewViewModel(initialFacilityId?: string, initialLocalDate?: string) {
   const [state, setState] = useState<VenueOverviewState>(INITIAL_STATE);
   const [selectedFacilityId, setSelectedFacilityId] = useState(initialFacilityId || "");
   const selectedFacilityIdRef = useRef(initialFacilityId || "");
@@ -121,10 +118,13 @@ export function useVenueOverviewViewModel(
     }
   }, [load, selectedFacilityId]);
 
-  const changeFacility = useCallback(async (facId: string) => {
-    setSelectedFacilityId(facId);
-    await load(facId);
-  }, [load]);
+  const changeFacility = useCallback(
+    async (facId: string) => {
+      setSelectedFacilityId(facId);
+      await load(facId);
+    },
+    [load]
+  );
 
   return {
     state,

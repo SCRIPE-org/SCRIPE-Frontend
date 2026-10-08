@@ -15,6 +15,6 @@ export function useSiteFormViewModel(enabled: boolean) {
   });
 
   return {
-    sites
+    sites,
   };
 }

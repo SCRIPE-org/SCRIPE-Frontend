@@ -253,9 +253,7 @@ export function TenantPlansView() {
               {confirmAction?.type === "publish"
                 ? t("entitlements.tenantPlans.publishDesc")
                 : t("entitlements.tenantPlans.archiveDesc")}
-              <span className="mt-1 block font-medium text-nx-ink">
-                {confirmAction?.plan.name}
-              </span>
+              <span className="mt-1 block font-medium text-nx-ink">{confirmAction?.plan.name}</span>
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -28,9 +28,7 @@ function StatCard({
     <Card className="relative overflow-hidden">
       <CardContent className="px-5 pb-4 pt-5">
         <div className="mb-3 flex items-start justify-between">
-          <p className="text-xs font-medium uppercase tracking-wide text-nx-ink-3">
-            {label}
-          </p>
+          <p className="text-xs font-medium uppercase tracking-wide text-nx-ink-3">{label}</p>
           <div className={`rounded-nx-sm p-1.5 ${colorClass ?? "bg-nx-raised"}`}>
             <Icon className="h-3.5 w-3.5" />
           </div>

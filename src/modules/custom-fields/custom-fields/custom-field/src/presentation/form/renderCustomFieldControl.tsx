@@ -17,8 +17,6 @@ export type { CustomFieldControlProps };
  */
 export function renderCustomFieldControl(props: CustomFieldControlProps): React.ReactNode {
   return (
-    renderStandardControls(props) ??
-    renderComplexControls(props) ??
-    renderInputControls(props)
+    renderStandardControls(props) ?? renderComplexControls(props) ?? renderInputControls(props)
   );
 }

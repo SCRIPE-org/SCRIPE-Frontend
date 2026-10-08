@@ -25,14 +25,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@core/ui/dropdown-menu";
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow,
-  TableCell,
-} from "@core/ui/table";
+import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@core/ui/table";
 import {
   Globe,
   Trash2,
@@ -160,7 +153,7 @@ function VercelDomainCardComponent({
   return (
     <Card
       className={cn(
-        "border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-nx-line-hi overflow-hidden",
+        "overflow-hidden border-nx-line bg-nx-surface transition-all duration-nx-micro hover:border-nx-line-hi",
         currentDomain.isPrimary && "border-info/40 bg-info/[0.02]"
       )}
     >
@@ -170,7 +163,7 @@ function VercelDomainCardComponent({
           {/* Domain Info & Destination */}
           <div className="min-w-0 space-y-1.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-base font-bold text-nx-ink tracking-tight truncate">
+              <span className="truncate font-mono text-base font-bold tracking-tight text-nx-ink">
                 {currentDomain.domain}
               </span>
 
@@ -179,7 +172,7 @@ function VercelDomainCardComponent({
                 href={`https://${currentDomain.domain}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-nx-ink-3 hover:text-nx-ink transition-colors"
+                className="text-nx-ink-3 transition-colors hover:text-nx-ink"
                 title={currentDomain.domain}
                 aria-label={currentDomain.domain}
               >
@@ -188,17 +181,17 @@ function VercelDomainCardComponent({
 
               {/* Status Pill with Solid Dot or Spinner (In-Place Update) */}
               {isChecking ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-info/30 bg-info/10 px-2.5 py-0.5 text-[11px] font-medium text-info animate-in fade-in duration-150">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-info/30 bg-info/10 px-2.5 py-0.5 text-[11px] font-medium text-info duration-150 animate-in fade-in">
                   <Loader2 className="h-3 w-3 animate-spin text-info" aria-hidden="true" />
                   {t("tenant.domainsCheckingDns")}
                 </span>
               ) : currentDomain.isVerified ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 text-[11px] font-medium text-success animate-in fade-in duration-150">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-success/30 bg-success/10 px-2.5 py-0.5 text-[11px] font-medium text-success duration-150 animate-in fade-in">
                   <span className="h-1.5 w-1.5 rounded-full bg-success" />
                   {t("tenant.domainsStatusConfigured")}
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 text-[11px] font-medium text-warning animate-in fade-in duration-150">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-warning/40 bg-warning/10 px-2.5 py-0.5 text-[11px] font-medium text-warning duration-150 animate-in fade-in">
                   <span className="h-1.5 w-1.5 rounded-full bg-warning" />
                   {t("tenant.domainsStatusInvalid")}
                 </span>
@@ -206,7 +199,10 @@ function VercelDomainCardComponent({
 
               {/* Primary Badge */}
               {currentDomain.isPrimary && (
-                <Badge variant="outline" className="border-info/40 bg-info/10 text-info text-[10px] px-2">
+                <Badge
+                  variant="outline"
+                  className="border-info/40 bg-info/10 px-2 text-[10px] text-info"
+                >
                   <Star className="me-1 h-3 w-3 fill-info" aria-hidden="true" />
                   {t("tenant.domainsPrimary")}
                 </Badge>
@@ -218,17 +214,21 @@ function VercelDomainCardComponent({
               {currentDomain.isRedirect && currentDomain.redirectTo ? (
                 <div className="flex items-center gap-1.5 font-medium text-nx-ink">
                   <CornerDownRight className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
-                  <Badge variant="outline" className="font-mono text-[10px] border-nx-line px-1 py-0">
+                  <Badge
+                    variant="outline"
+                    className="border-nx-line px-1 py-0 font-mono text-[10px]"
+                  >
                     {currentDomain.redirectStatusCode || 308}
                   </Badge>
-                  <span className="font-mono text-nx-accent">
-                    {currentDomain.redirectTo}
-                  </span>
+                  <span className="font-mono text-nx-accent">{currentDomain.redirectTo}</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
                   <Globe className="h-3.5 w-3.5 text-nx-ink-3" aria-hidden="true" />
-                  <Badge variant="outline" className="text-[10px] border-nx-line bg-nx-raised font-medium">
+                  <Badge
+                    variant="outline"
+                    className="border-nx-line bg-nx-raised text-[10px] font-medium"
+                  >
                     {t("tenant.domainsWorkspaceTarget")}
                   </Badge>
                 </div>
@@ -266,8 +266,8 @@ function VercelDomainCardComponent({
                 {isChecking
                   ? t("tenant.domainsCheckingDns")
                   : !currentDomain.isVerified
-                  ? t("tenant.domainsVerify")
-                  : t("common.refresh")}
+                    ? t("tenant.domainsVerify")
+                    : t("common.refresh")}
               </span>
             </Button>
 
@@ -302,7 +302,10 @@ function VercelDomainCardComponent({
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
                 {currentDomain.isVerified && !currentDomain.isPrimary && (
-                  <DropdownMenuItem onClick={() => onSetPrimary(currentDomain.id)} className="gap-2 text-xs">
+                  <DropdownMenuItem
+                    onClick={() => onSetPrimary(currentDomain.id)}
+                    className="gap-2 text-xs"
+                  >
                     <Star className="h-3.5 w-3.5 text-warning" aria-hidden="true" />
                     <span>{t("tenant.domainsSetPrimary")}</span>
                   </DropdownMenuItem>
@@ -338,13 +341,13 @@ function VercelDomainCardComponent({
 
       {/* ── Collapsible DNS Records Table (BIND standard) ───── */}
       {showDns && (
-        <div className="border-t border-nx-line p-4 sm:p-5 space-y-3 bg-nx-raised/40">
+        <div className="bg-nx-raised/40 space-y-3 border-t border-nx-line p-4 sm:p-5">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2">
               <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink">
                 {t("tenant.domainsDnsRecordsTitle")}
               </span>
-              <Badge variant="outline" className="text-[10px] text-nx-ink-2 font-mono">
+              <Badge variant="outline" className="font-mono text-[10px] text-nx-ink-2">
                 {isApex ? "Apex Domain" : "Subdomain"}
               </Badge>
             </div>
@@ -353,7 +356,7 @@ function VercelDomainCardComponent({
               variant="ghost"
               size="sm"
               onClick={handleCopyAllRecords}
-              className="h-7 gap-1.5 text-xs text-nx-ink-2 self-start sm:self-auto"
+              className="h-7 gap-1.5 self-start text-xs text-nx-ink-2 sm:self-auto"
             >
               <Copy className="h-3 w-3" aria-hidden="true" />
               {t("tenant.domainsCopyAll")}
@@ -364,29 +367,43 @@ function VercelDomainCardComponent({
           <div className="overflow-x-auto rounded-nx-md border border-nx-line bg-nx-surface">
             <Table className="w-full text-start text-xs">
               <TableHeader>
-                <TableRow className="border-b border-nx-line bg-nx-raised/80 text-nx-ink-2">
-                  <TableHead className="py-2.5 px-3 font-semibold text-start">{t("tenant.domainsRecordType")}</TableHead>
-                  <TableHead className="py-2.5 px-3 font-semibold text-start">{t("tenant.domainsRecordName")}</TableHead>
-                  <TableHead className="py-2.5 px-3 font-semibold text-start">{t("tenant.domainsRecordValue")}</TableHead>
-                  <TableHead className="py-2.5 px-3 font-semibold text-start">{t("tenant.domainsRecordTtl")}</TableHead>
-                  <TableHead className="py-2.5 px-3 font-semibold text-start">{t("tenant.domainsRecordPurpose")}</TableHead>
-                  <TableHead className="py-2.5 px-3 font-semibold text-start">{t("tenant.domainsRecordStatus")}</TableHead>
+                <TableRow className="bg-nx-raised/80 border-b border-nx-line text-nx-ink-2">
+                  <TableHead className="px-3 py-2.5 text-start font-semibold">
+                    {t("tenant.domainsRecordType")}
+                  </TableHead>
+                  <TableHead className="px-3 py-2.5 text-start font-semibold">
+                    {t("tenant.domainsRecordName")}
+                  </TableHead>
+                  <TableHead className="px-3 py-2.5 text-start font-semibold">
+                    {t("tenant.domainsRecordValue")}
+                  </TableHead>
+                  <TableHead className="px-3 py-2.5 text-start font-semibold">
+                    {t("tenant.domainsRecordTtl")}
+                  </TableHead>
+                  <TableHead className="px-3 py-2.5 text-start font-semibold">
+                    {t("tenant.domainsRecordPurpose")}
+                  </TableHead>
+                  <TableHead className="px-3 py-2.5 text-start font-semibold">
+                    {t("tenant.domainsRecordStatus")}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody className="divide-y divide-nx-line font-mono text-[11px]">
                 {/* Row 1: Routing Record */}
                 <TableRow className="hover:bg-nx-raised/30 transition-colors">
-                  <TableCell className="py-2.5 px-3 font-bold text-info">
+                  <TableCell className="px-3 py-2.5 font-bold text-info">
                     <span className="rounded bg-info/10 px-1.5 py-0.5">{routingType}</span>
                   </TableCell>
-                  <TableCell className="py-2.5 px-3">
+                  <TableCell className="px-3 py-2.5">
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-nx-ink">{routingName}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleCopyField(`routingName-${currentDomain.id}`, routingName)}
+                        onClick={() =>
+                          handleCopyField(`routingName-${currentDomain.id}`, routingName)
+                        }
                         className="h-6 w-6 p-0 text-nx-ink-2 hover:text-nx-ink"
                         title={t("common.copy")}
                         aria-label={t("common.copy")}
@@ -399,14 +416,16 @@ function VercelDomainCardComponent({
                       </Button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2.5 px-3">
+                  <TableCell className="px-3 py-2.5">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-nx-ink max-w-[260px] truncate">{routingValue}</span>
+                      <span className="max-w-[260px] truncate text-nx-ink">{routingValue}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleCopyField(`routingVal-${currentDomain.id}`, routingValue)}
+                        onClick={() =>
+                          handleCopyField(`routingVal-${currentDomain.id}`, routingValue)
+                        }
                         className="h-6 w-6 p-0 text-nx-ink-2 hover:text-nx-ink"
                         title={t("common.copy")}
                         aria-label={t("common.copy")}
@@ -419,21 +438,23 @@ function VercelDomainCardComponent({
                       </Button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2.5 px-3 text-nx-ink-2">60s / Auto</TableCell>
-                  <TableCell className="py-2.5 px-3 font-sans text-nx-ink-2">{t("tenant.domainsPurposeRouting")}</TableCell>
-                  <TableCell className="py-2.5 px-3 font-sans">
+                  <TableCell className="px-3 py-2.5 text-nx-ink-2">60s / Auto</TableCell>
+                  <TableCell className="px-3 py-2.5 font-sans text-nx-ink-2">
+                    {t("tenant.domainsPurposeRouting")}
+                  </TableCell>
+                  <TableCell className="px-3 py-2.5 font-sans">
                     {isChecking ? (
-                      <span className="inline-flex items-center gap-1 text-info font-medium">
+                      <span className="inline-flex items-center gap-1 font-medium text-info">
                         <Loader2 className="h-3 w-3 animate-spin text-info" />
                         {t("tenant.domainsCheckingDns")}
                       </span>
                     ) : currentDomain.isVerified ? (
-                      <span className="inline-flex items-center gap-1 text-success font-medium">
+                      <span className="inline-flex items-center gap-1 font-medium text-success">
                         <CheckCircle2 className="h-3 w-3 text-success" />
                         {t("tenant.domainsStatusConfigured")}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-warning font-medium">
+                      <span className="inline-flex items-center gap-1 font-medium text-warning">
                         <Clock className="h-3 w-3 text-warning" />
                         {t("tenant.domainsStatusPending")}
                       </span>
@@ -443,17 +464,19 @@ function VercelDomainCardComponent({
 
                 {/* Row 2: Verification TXT Record */}
                 <TableRow className="hover:bg-nx-raised/30 transition-colors">
-                  <TableCell className="py-2.5 px-3 font-bold text-nx-accent">
-                    <span className="rounded bg-nx-accent/10 px-1.5 py-0.5">{verifyType}</span>
+                  <TableCell className="px-3 py-2.5 font-bold text-nx-accent">
+                    <span className="bg-nx-accent/10 rounded px-1.5 py-0.5">{verifyType}</span>
                   </TableCell>
-                  <TableCell className="py-2.5 px-3">
+                  <TableCell className="px-3 py-2.5">
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-nx-ink">{verifyName}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleCopyField(`verifyName-${currentDomain.id}`, verifyName)}
+                        onClick={() =>
+                          handleCopyField(`verifyName-${currentDomain.id}`, verifyName)
+                        }
                         className="h-6 w-6 p-0 text-nx-ink-2 hover:text-nx-ink"
                         title={t("common.copy")}
                         aria-label={t("common.copy")}
@@ -466,14 +489,16 @@ function VercelDomainCardComponent({
                       </Button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2.5 px-3">
+                  <TableCell className="px-3 py-2.5">
                     <div className="flex items-center gap-1.5">
-                      <span className="text-nx-ink max-w-[260px] truncate">{verifyValue}</span>
+                      <span className="max-w-[260px] truncate text-nx-ink">{verifyValue}</span>
                       <Button
                         type="button"
                         variant="ghost"
                         size="icon"
-                        onClick={() => handleCopyField(`verifyVal-${currentDomain.id}`, verifyValue)}
+                        onClick={() =>
+                          handleCopyField(`verifyVal-${currentDomain.id}`, verifyValue)
+                        }
                         className="h-6 w-6 p-0 text-nx-ink-2 hover:text-nx-ink"
                         title={t("common.copy")}
                         aria-label={t("common.copy")}
@@ -486,21 +511,23 @@ function VercelDomainCardComponent({
                       </Button>
                     </div>
                   </TableCell>
-                  <TableCell className="py-2.5 px-3 text-nx-ink-2">60s / Auto</TableCell>
-                  <TableCell className="py-2.5 px-3 font-sans text-nx-ink-2">{t("tenant.domainsPurposeVerification")}</TableCell>
-                  <TableCell className="py-2.5 px-3 font-sans">
+                  <TableCell className="px-3 py-2.5 text-nx-ink-2">60s / Auto</TableCell>
+                  <TableCell className="px-3 py-2.5 font-sans text-nx-ink-2">
+                    {t("tenant.domainsPurposeVerification")}
+                  </TableCell>
+                  <TableCell className="px-3 py-2.5 font-sans">
                     {isChecking ? (
-                      <span className="inline-flex items-center gap-1 text-info font-medium">
+                      <span className="inline-flex items-center gap-1 font-medium text-info">
                         <Loader2 className="h-3 w-3 animate-spin text-info" />
                         {t("tenant.domainsCheckingDns")}
                       </span>
                     ) : currentDomain.isVerified ? (
-                      <span className="inline-flex items-center gap-1 text-success font-medium">
+                      <span className="inline-flex items-center gap-1 font-medium text-success">
                         <CheckCircle2 className="h-3 w-3 text-success" />
                         {t("tenant.domainsStatusConfigured")}
                       </span>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-warning font-medium">
+                      <span className="inline-flex items-center gap-1 font-medium text-warning">
                         <Clock className="h-3 w-3 text-warning" />
                         {t("tenant.domainsStatusPending")}
                       </span>
@@ -512,19 +539,19 @@ function VercelDomainCardComponent({
           </div>
 
           {/* Provider Configuration Guidance (Vercel-Grade Support) */}
-          <div className="rounded-nx-md border border-nx-line bg-nx-surface p-3 space-y-1.5 text-xs">
-            <div className="flex items-center gap-1.5 text-nx-ink font-semibold">
+          <div className="space-y-1.5 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-xs">
+            <div className="flex items-center gap-1.5 font-semibold text-nx-ink">
               <HelpCircle className="h-3.5 w-3.5 text-info" aria-hidden="true" />
               <span>{t("tenant.domainsDnsProviderTipsTitle")}</span>
             </div>
-            <ul className="list-disc ps-4 space-y-1 text-[11px] text-nx-ink-2 leading-relaxed">
+            <ul className="list-disc space-y-1 ps-4 text-[11px] leading-relaxed text-nx-ink-2">
               <li>{t("tenant.domainsDnsCloudflareTip")}</li>
               <li>{t("tenant.domainsDnsRegistrarTip")}</li>
             </ul>
           </div>
 
-          <div className="flex items-start gap-2.5 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-[11px] text-nx-ink-2 leading-relaxed">
-            <Info className="h-4 w-4 text-info shrink-0 mt-0.5" aria-hidden="true" />
+          <div className="flex items-start gap-2.5 rounded-nx-md border border-nx-line bg-nx-surface p-3 text-[11px] leading-relaxed text-nx-ink-2">
+            <Info className="mt-0.5 h-4 w-4 shrink-0 text-info" aria-hidden="true" />
             <span>{t("tenant.domainsDnsPropagationNotice")}</span>
           </div>
         </div>

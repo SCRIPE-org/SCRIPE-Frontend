@@ -8,18 +8,12 @@ import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
 import { SectionState } from "@core/ui/section-state";
 import { FilePlus2, History, Lock } from "lucide-react";
-import {
-  newOptionSetDraftItem,
-  type OptionSetDraftItem,
-} from "../components/OptionSetItemsEditor";
+import { newOptionSetDraftItem, type OptionSetDraftItem } from "../components/OptionSetItemsEditor";
 import { OptionSetVersionChainTable } from "../components/OptionSetVersionChainTable";
 import { OptionSetPublishDialog } from "../components/OptionSetPublishDialog";
 import { OptionSetNewDraftSection } from "../components/OptionSetNewDraftSection";
 import { OptionSetOpenedVersionSection } from "../components/OptionSetOpenedVersionSection";
-import {
-  diffTableCommit,
-  toTableRows,
-} from "../form/optionSetItemsEditorBridge";
+import { diffTableCommit, toTableRows } from "../form/optionSetItemsEditorBridge";
 import { type OptionSetRefusal } from "../viewmodels/useOptionSetViewModel";
 import { useOptionSetVersionQuery } from "../viewmodels/useOptionSetVersionQuery";
 import { useOptionSetVersionEditor } from "../viewmodels/useOptionSetVersionEditor";

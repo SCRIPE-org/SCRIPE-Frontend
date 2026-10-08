@@ -36,10 +36,7 @@ export function OptionSetNewDraftSection({
 }: OptionSetNewDraftSectionProps) {
   const { t } = useI18n();
 
-  const newDraftIssues = useMemo(
-    () => collectOptionSetItemIssues(newDraftRows),
-    [newDraftRows]
-  );
+  const newDraftIssues = useMemo(() => collectOptionSetItemIssues(newDraftRows), [newDraftRows]);
 
   const handleCreateVersion = useCallback(async () => {
     if (collectOptionSetItemIssues(newDraftRows).length > 0) return;
@@ -60,9 +57,7 @@ export function OptionSetNewDraftSection({
       <h3 id={headingId} className="text-sm font-semibold text-nx-ink">
         {t("optionSet.versions.createDraft")}
       </h3>
-      <p className="text-xs text-nx-ink-subtle">
-        {t("optionSet.versions.newDraftHint")}
-      </p>
+      <p className="text-nx-ink-subtle text-xs">{t("optionSet.versions.newDraftHint")}</p>
 
       <OptionSetItemsEditor
         items={newDraftRows}

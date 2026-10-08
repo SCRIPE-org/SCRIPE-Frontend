@@ -52,8 +52,8 @@ export function TenantActivityDistribution({
   }, [data, t]);
 
   return (
-    <Card className="h-full flex flex-col border-border/80 bg-card/80 backdrop-blur-xs shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-2">
+    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+      <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex items-center gap-2">
           <Zap className="h-4 w-4 text-primary" />
           <CardTitle className="text-sm font-bold text-foreground">
@@ -66,7 +66,7 @@ export function TenantActivityDistribution({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-4 sm:p-5 pt-2 flex-1 flex flex-col justify-center min-h-[220px]">
+      <CardContent className="flex min-h-[220px] flex-1 flex-col justify-center p-4 pt-2 sm:p-5">
         {isLoading ? (
           <div className="h-[200px] w-full animate-pulse rounded-lg bg-muted/20" />
         ) : chartData.length === 0 ? (
@@ -84,7 +84,7 @@ export function TenantActivityDistribution({
                       if (active && payload && payload.length) {
                         const item = payload[0];
                         return (
-                          <div className="rounded-lg border border-border bg-popover/95 p-2 shadow-md backdrop-blur-xs text-xs">
+                          <div className="backdrop-blur-xs rounded-lg border border-border bg-popover/95 p-2 text-xs shadow-md">
                             <span className="font-semibold text-foreground">{item.name}: </span>
                             <span className="font-bold text-primary">{item.value}</span>
                           </div>
@@ -109,28 +109,28 @@ export function TenantActivityDistribution({
                 </PieChart>
               </ResponsiveContainer>
               {/* Center count display */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-lg font-black text-foreground">{totalTenants}</span>
-                <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground">
                   {t("tenantAnalytics.activity.tenants") || "Tenants"}
                 </span>
               </div>
             </div>
 
             {/* Legend list */}
-            <div className="flex-1 min-w-0 space-y-2">
+            <div className="min-w-0 flex-1 space-y-2">
               {data.map((item) => (
                 <div key={item.level} className="flex items-center justify-between gap-2 text-xs">
-                  <div className="flex items-center gap-1.5 min-w-0">
+                  <div className="flex min-w-0 items-center gap-1.5">
                     <span
-                      className="h-2 w-2 rounded-full shrink-0"
+                      className="h-2 w-2 shrink-0 rounded-full"
                       style={{ backgroundColor: item.fill }}
                     />
-                    <span className="font-medium text-foreground whitespace-nowrap text-[11px] sm:text-xs">
+                    <span className="whitespace-nowrap text-[11px] font-medium text-foreground sm:text-xs">
                       {getActivityLabel(item.level, item.label)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1 text-muted-foreground shrink-0 font-mono text-[11px]">
+                  <div className="flex shrink-0 items-center gap-1 font-mono text-[11px] text-muted-foreground">
                     <span className="font-bold text-foreground">{item.count}</span>
                     <span className="text-[10px] text-muted-foreground">({item.percentage}%)</span>
                   </div>

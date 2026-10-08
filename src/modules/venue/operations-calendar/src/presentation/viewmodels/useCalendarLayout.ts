@@ -33,9 +33,12 @@ export function occupyingBlocks(blocks: OperationsCalendarBlock[]): OperationsCa
 export function placeBlocksOnTracks(blocks: OperationsCalendarBlock[]): TrackedCalendarBlock[] {
   const trackEnds: number[] = [];
   return [...occupyingBlocks(blocks)]
-    .sort((left, right) => Date.parse(left.startUtc) - Date.parse(right.startUtc) ||
-      Date.parse(left.endUtc) - Date.parse(right.endUtc) ||
-      left.reservationId.localeCompare(right.reservationId))
+    .sort(
+      (left, right) =>
+        Date.parse(left.startUtc) - Date.parse(right.startUtc) ||
+        Date.parse(left.endUtc) - Date.parse(right.endUtc) ||
+        left.reservationId.localeCompare(right.reservationId)
+    )
     .map((block) => {
       const start = Date.parse(block.startUtc);
       let track = trackEnds.findIndex((end) => end <= start);

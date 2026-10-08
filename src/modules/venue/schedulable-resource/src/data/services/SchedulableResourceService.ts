@@ -18,7 +18,12 @@ import { SCHEDULABLE_RESOURCE_ENDPOINTS } from "./schedulable-resource.endpoints
 export class SchedulableResourceService implements ISchedulableResourceService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string; facilityResourceProfileIds?: string[] }): Promise<SchedulableResourceListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    facilityResourceProfileIds?: string[];
+  }): Promise<SchedulableResourceListResult> {
     const url = buildUrl(SCHEDULABLE_RESOURCE_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,
@@ -38,7 +43,9 @@ export class SchedulableResourceService implements ISchedulableResourceService {
   }
 
   async getById(id: string): Promise<SchedulableResourceModel> {
-    const json = await this.api.get<SchedulableResourceJson>(SCHEDULABLE_RESOURCE_ENDPOINTS.BY_ID(id));
+    const json = await this.api.get<SchedulableResourceJson>(
+      SCHEDULABLE_RESOURCE_ENDPOINTS.BY_ID(id)
+    );
     return SchedulableResourceModel.fromJson(json);
   }
 
@@ -55,9 +62,10 @@ export class SchedulableResourceService implements ISchedulableResourceService {
   }
 
   async getPublicationChecklist(id: string): Promise<PublicationChecklistReport> {
-    const json = await this.api.get<{ canPublish: boolean; blockers: { code: string; message: string }[] }>(
-      SCHEDULABLE_RESOURCE_ENDPOINTS.PUBLICATION_CHECKLIST(id)
-    );
+    const json = await this.api.get<{
+      canPublish: boolean;
+      blockers: { code: string; message: string }[];
+    }>(SCHEDULABLE_RESOURCE_ENDPOINTS.PUBLICATION_CHECKLIST(id));
     return { canPublish: json.canPublish, blockers: json.blockers };
   }
 

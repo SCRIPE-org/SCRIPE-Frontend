@@ -18,7 +18,6 @@ export const ONBOARDING_QUESTIONS_ENDPOINTS = {
       `${V1}/onboarding/questions/${questionId}/options/${optionId}`,
     DELETE: (questionId: string, optionId: string) =>
       `${V1}/onboarding/questions/${questionId}/options/${optionId}`,
-    REORDER: (questionId: string) =>
-      `${V1}/onboarding/questions/${questionId}/options/reorder`,
+    REORDER: (questionId: string) => `${V1}/onboarding/questions/${questionId}/options/reorder`,
   },
 } as const;

@@ -229,9 +229,7 @@ export function ReferenceTypeSelector({
           // announce as "Record type". The short label is a substring of
           // it, which is what WCAG's Label-in-Name asks for.
           ariaLabel={t(`${I18N}.typeLabelFor`, { field: recordFieldLabel ?? recordFieldId })}
-          selectedOptions={
-            chosenType ? [{ value: chosenType.key, label: chosenTypeLabel }] : []
-          }
+          selectedOptions={chosenType ? [{ value: chosenType.key, label: chosenTypeLabel }] : []}
           displayLabel={chosenTypeLabel}
           maxSelectedDisplay={1}
           // Nothing to clear TO. The field is already unpinned; emptying

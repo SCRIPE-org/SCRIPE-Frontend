@@ -151,8 +151,7 @@ export function useAdminOperations(params: AdminOperationsParams) {
       newPassword: string;
       confirmPassword: string;
       mustChangePassword: boolean;
-    }) =>
-      adminRepository.manualSetup(adminId, newPassword, confirmPassword, mustChangePassword),
+    }) => adminRepository.manualSetup(adminId, newPassword, confirmPassword, mustChangePassword),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.admins.all });
       success({

@@ -22,11 +22,7 @@ interface AvailabilitySearchCardProps {
 /**
  * Documentation for AvailabilitySearchCard
  */
-export function AvailabilitySearchCard({
-  vm,
-  timeZoneId,
-  canSearch,
-}: AvailabilitySearchCardProps) {
+export function AvailabilitySearchCard({ vm, timeZoneId, canSearch }: AvailabilitySearchCardProps) {
   const { t } = useI18n();
   const { error: toastError } = useEnhancedToast();
   const maximumCapacity = vm.selectedResource?.capacity?.maxConcurrentUsage ?? 1;
@@ -103,11 +99,7 @@ export function AvailabilitySearchCard({
             <Clock3 className="size-3.5" />
             {timeZoneId}
           </p>
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={searchDisabled || vm.searching}
-          >
+          <Button type="submit" className="w-full" disabled={searchDisabled || vm.searching}>
             {vm.searching ? t("availability.searching") : t("availability.search")}
           </Button>
         </form>
@@ -129,7 +121,9 @@ export function AvailabilitySearchCard({
               </p>
               <p>
                 {t("availability.decision")}:{" "}
-                {t(`availability.reasons.${vm.searchResult.reasonCode?.replace(/^availability\./, "")}`) ||
+                {t(
+                  `availability.reasons.${vm.searchResult.reasonCode?.replace(/^availability\./, "")}`
+                ) ||
                   t(`availability.reasons.${vm.searchResult.reasonCode}`) ||
                   vm.searchResult.reasonCode}
               </p>

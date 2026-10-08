@@ -19,7 +19,8 @@ import { useFieldVersionsViewModel } from "./useFieldVersionsViewModel";
  */
 export function useCustomFieldSubFeatures(isSuperAdmin: boolean) {
   const canViewFieldGroups = usePermission(CUSTOM_FIELDS_PERMISSIONS.FIELD_GROUP_VIEW);
-  const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW) || isSuperAdmin;
+  const canViewOptionSets =
+    usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW) || isSuperAdmin;
   const canViewHistory = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_HISTORY);
   const canViewUsage = usePermission(CUSTOM_FIELDS_PERMISSIONS.VIEW_USAGE);
   const canUpdate = usePermission(CUSTOM_FIELDS_PERMISSIONS.CUSTOM_FIELD_UPDATE);

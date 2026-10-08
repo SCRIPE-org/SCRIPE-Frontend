@@ -74,7 +74,8 @@ export interface CalendarResource {
 /**
  * Documentation for "error"
  */
-export type OperationsCalendarStage = "loading" | "ready" | "empty" | "featureUnavailable" | "error";
+export type OperationsCalendarStage =
+  "loading" | "ready" | "empty" | "featureUnavailable" | "error";
 
 /**
  * Documentation for module export

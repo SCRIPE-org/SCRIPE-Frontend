@@ -52,8 +52,8 @@ export function TenantTableSection({
   const { t } = useI18n();
 
   return (
-    <Card className="border-border/80 bg-card/80 backdrop-blur-xs shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-3">
+    <Card className="backdrop-blur-xs shadow-xs border-border/80 bg-card/80">
+      <CardHeader className="p-4 pb-3 sm:p-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
@@ -61,7 +61,7 @@ export function TenantTableSection({
               <CardTitle className="text-base font-bold text-foreground">
                 {t("tenantAnalytics.table.title") || "Tenants"}
               </CardTitle>
-              <Badge variant="outline" className="text-xs px-2 py-0.5 font-semibold">
+              <Badge variant="outline" className="px-2 py-0.5 text-xs font-semibold">
                 {totalCount} {t("tenantAnalytics.table.total") || "Total"}
               </Badge>
             </div>
@@ -73,16 +73,18 @@ export function TenantTableSection({
 
           {/* Search bar */}
           <div className="relative w-full sm:w-72">
-            <Search className="absolute left-2.5 rtl:left-auto rtl:right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground rtl:left-auto rtl:right-2.5" />
             <Input
               type="text"
-              placeholder={t("tenantAnalytics.table.searchPlaceholder") || "Search by name, domain, ID..."}
+              placeholder={
+                t("tenantAnalytics.table.searchPlaceholder") || "Search by name, domain, ID..."
+              }
               value={searchQuery}
               onChange={(e) => {
                 onSearchChange(e.target.value);
                 setPage(1);
               }}
-              className="h-8.5 pl-8 rtl:pl-3 rtl:pr-8 text-xs bg-background/80 border-border"
+              className="h-8.5 border-border bg-background/80 pl-8 text-xs rtl:pl-3 rtl:pr-8"
             />
           </div>
         </div>
@@ -90,35 +92,51 @@ export function TenantTableSection({
 
       <CardContent className="p-0">
         {isLoading ? (
-          <div className="p-6 space-y-3">
+          <div className="space-y-3 p-6">
             {[...Array(5)].map((_, i) => (
-              <div key={i} className="h-10 rounded-lg bg-muted/20 animate-pulse" />
+              <div key={i} className="h-10 animate-pulse rounded-lg bg-muted/20" />
             ))}
           </div>
         ) : tenants.length === 0 ? (
           <div className="py-12 text-center">
-            <Building className="mx-auto h-8 w-8 text-muted-foreground/50 mb-2" />
+            <Building className="mx-auto mb-2 h-8 w-8 text-muted-foreground/50" />
             <p className="text-sm font-semibold text-foreground">
               {t("tenantAnalytics.table.noTenantsFound") || "No tenants found"}
             </p>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {t("tenantAnalytics.table.noTenantsMatchFilters") ||
                 "There are no tenants matching your search or active filters."}
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left rtl:text-right border-collapse text-xs">
+            <table className="w-full border-collapse text-left text-xs rtl:text-right">
               <thead>
-                <tr className="border-y border-border/80 bg-muted/20 text-muted-foreground font-semibold">
-                  <th className="py-3 px-4">{t("tenantAnalytics.table.columns.tenant") || "Tenant"}</th>
-                  <th className="py-3 px-4">{t("tenantAnalytics.table.columns.domain") || "Domain / Identifier"}</th>
-                  <th className="py-3 px-4">{t("tenantAnalytics.table.columns.edition") || "Edition"}</th>
-                  <th className="py-3 px-4">{t("tenantAnalytics.table.columns.region") || "Region"}</th>
-                  <th className="py-3 px-4">{t("tenantAnalytics.table.columns.status") || "Status"}</th>
-                  <th className="py-3 px-4">{t("tenantAnalytics.table.columns.hierarchy") || "Hierarchy"}</th>
-                  <th className="py-3 px-4">{t("tenantAnalytics.table.columns.created") || "Created"}</th>
-                  <th className="py-3 px-4 text-right rtl:text-left">{t("tenantAnalytics.table.columns.actions") || "Actions"}</th>
+                <tr className="border-y border-border/80 bg-muted/20 font-semibold text-muted-foreground">
+                  <th className="px-4 py-3">
+                    {t("tenantAnalytics.table.columns.tenant") || "Tenant"}
+                  </th>
+                  <th className="px-4 py-3">
+                    {t("tenantAnalytics.table.columns.domain") || "Domain / Identifier"}
+                  </th>
+                  <th className="px-4 py-3">
+                    {t("tenantAnalytics.table.columns.edition") || "Edition"}
+                  </th>
+                  <th className="px-4 py-3">
+                    {t("tenantAnalytics.table.columns.region") || "Region"}
+                  </th>
+                  <th className="px-4 py-3">
+                    {t("tenantAnalytics.table.columns.status") || "Status"}
+                  </th>
+                  <th className="px-4 py-3">
+                    {t("tenantAnalytics.table.columns.hierarchy") || "Hierarchy"}
+                  </th>
+                  <th className="px-4 py-3">
+                    {t("tenantAnalytics.table.columns.created") || "Created"}
+                  </th>
+                  <th className="px-4 py-3 text-right rtl:text-left">
+                    {t("tenantAnalytics.table.columns.actions") || "Actions"}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/60">
@@ -127,7 +145,7 @@ export function TenantTableSection({
                   const isSuspended = tenant.isSuspended;
                   const status = isSuspended
                     ? "Suspended"
-                    : tenant.subscriptionStatus ?? (tenant.isActive ? "Active" : "Inactive");
+                    : (tenant.subscriptionStatus ?? (tenant.isActive ? "Active" : "Inactive"));
 
                   const formattedDate = tenant.createdAt
                     ? new Date(tenant.createdAt).toLocaleDateString(undefined, {
@@ -138,21 +156,18 @@ export function TenantTableSection({
                     : "—";
 
                   return (
-                    <tr
-                      key={tenant.id}
-                      className="hover:bg-muted/15 transition-colors group"
-                    >
+                    <tr key={tenant.id} className="group transition-colors hover:bg-muted/15">
                       {/* Tenant Name + Initials */}
-                      <td className="py-3 px-4">
+                      <td className="px-4 py-3">
                         <div className="flex items-center gap-2.5">
-                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-primary/30 bg-primary/10 font-bold text-[11px] text-primary">
+                          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-primary/30 bg-primary/10 text-[11px] font-bold text-primary">
                             {initial}
                           </div>
                           <div className="min-w-0">
-                            <p className="font-semibold text-foreground truncate max-w-[160px] sm:max-w-[200px]">
+                            <p className="max-w-[160px] truncate font-semibold text-foreground sm:max-w-[200px]">
                               {tenant.name}
                             </p>
-                            <span className="text-[10px] font-mono text-muted-foreground">
+                            <span className="font-mono text-[10px] text-muted-foreground">
                               {tenant.code}
                             </span>
                           </div>
@@ -160,28 +175,28 @@ export function TenantTableSection({
                       </td>
 
                       {/* Domain / Code */}
-                      <td className="py-3 px-4 font-mono text-muted-foreground">
+                      <td className="px-4 py-3 font-mono text-muted-foreground">
                         {tenant.primaryDomain || `${tenant.code.toLowerCase()}.scripe.io`}
                       </td>
 
                       {/* Edition Badge */}
-                      <td className="py-3 px-4">
+                      <td className="px-4 py-3">
                         {tenant.editionName ? (
                           <Badge
                             variant="secondary"
-                            className="text-[11px] capitalize font-medium border-border/80 bg-background/80"
+                            className="border-border/80 bg-background/80 text-[11px] font-medium capitalize"
                           >
                             {tenant.editionName.replace("-", " ")}
                           </Badge>
                         ) : (
-                          <span className="text-muted-foreground text-xs">—</span>
+                          <span className="text-xs text-muted-foreground">—</span>
                         )}
                       </td>
 
                       {/* Region */}
-                      <td className="py-3 px-4">
-                        <span className="inline-flex items-center gap-1.5 text-foreground font-medium">
-                          <span className="flex h-4.5 w-6 items-center justify-center rounded-xs bg-muted/40 font-mono text-[9px] font-bold text-muted-foreground">
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
+                          <span className="h-4.5 rounded-xs flex w-6 items-center justify-center bg-muted/40 font-mono text-[9px] font-bold text-muted-foreground">
                             {tenant.countryCode || "GL"}
                           </span>
                           <span className="text-[11px] text-muted-foreground">
@@ -191,14 +206,14 @@ export function TenantTableSection({
                       </td>
 
                       {/* Status with Semantic Dot */}
-                      <td className="py-3 px-4">
+                      <td className="px-4 py-3">
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium ${
                             status === "Active"
                               ? "bg-emerald-500/10 text-emerald-500"
                               : status === "Trial"
-                              ? "bg-info/10 text-info"
-                              : "bg-amber-500/10 text-amber-500"
+                                ? "bg-info/10 text-info"
+                                : "bg-amber-500/10 text-amber-500"
                           }`}
                         >
                           <span
@@ -206,8 +221,8 @@ export function TenantTableSection({
                               status === "Active"
                                 ? "bg-emerald-500"
                                 : status === "Trial"
-                                ? "bg-info"
-                                : "bg-amber-500"
+                                  ? "bg-info"
+                                  : "bg-amber-500"
                             }`}
                           />
                           {status}
@@ -215,28 +230,28 @@ export function TenantTableSection({
                       </td>
 
                       {/* Hierarchy Level */}
-                      <td className="py-3 px-4">
+                      <td className="px-4 py-3">
                         <Badge
                           variant="outline"
-                          className="text-[10px] font-medium border-border/70"
+                          className="border-border/70 text-[10px] font-medium"
                         >
                           {tenant.hierarchyLevel === 0 ? "Root Org" : "Child Unit"}
                         </Badge>
                       </td>
 
                       {/* Created */}
-                      <td className="py-3 px-4 text-muted-foreground font-mono text-[11px]">
+                      <td className="px-4 py-3 font-mono text-[11px] text-muted-foreground">
                         {formattedDate}
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3 px-4 text-right rtl:text-left">
+                      <td className="px-4 py-3 text-right rtl:text-left">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-7 w-7 text-muted-foreground hover:text-foreground cursor-pointer"
+                              className="h-7 w-7 cursor-pointer text-muted-foreground hover:text-foreground"
                             >
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
@@ -245,18 +260,23 @@ export function TenantTableSection({
                             <DropdownMenuItem asChild>
                               <Link
                                 href={`/tenants`}
-                                className="flex items-center justify-between cursor-pointer"
+                                className="flex cursor-pointer items-center justify-between"
                               >
-                                <span>{t("tenantAnalytics.table.actions.viewTenant") || "View Tenant"}</span>
+                                <span>
+                                  {t("tenantAnalytics.table.actions.viewTenant") || "View Tenant"}
+                                </span>
                                 <ExternalLink className="h-3 w-3 text-muted-foreground" />
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                               <Link
                                 href={`/audit`}
-                                className="flex items-center justify-between cursor-pointer"
+                                className="flex cursor-pointer items-center justify-between"
                               >
-                                <span>{t("tenantAnalytics.table.actions.viewAudit") || "View Audit Logs"}</span>
+                                <span>
+                                  {t("tenantAnalytics.table.actions.viewAudit") ||
+                                    "View Audit Logs"}
+                                </span>
                                 <ShieldAlert className="h-3 w-3 text-muted-foreground" />
                               </Link>
                             </DropdownMenuItem>

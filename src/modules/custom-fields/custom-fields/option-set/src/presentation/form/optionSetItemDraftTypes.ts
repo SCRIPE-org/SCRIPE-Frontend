@@ -1,4 +1,7 @@
-import type { OptionSetItem, OptionSetItemWritableStatus } from "../../domain/entities/OptionSetItem";
+import type {
+  OptionSetItem,
+  OptionSetItemWritableStatus,
+} from "../../domain/entities/OptionSetItem";
 
 /**
  * One row of the working copy.

@@ -28,7 +28,8 @@ export function useKeyManagementViewModel() {
 
   const sessionQuery = useQuery({
     queryKey: ["customFields", "encryption", "session", activeSessionId],
-    queryFn: () => (activeSessionId ? keyManagementRepository.getSessionProgress(activeSessionId) : null),
+    queryFn: () =>
+      activeSessionId ? keyManagementRepository.getSessionProgress(activeSessionId) : null,
     enabled: Boolean(activeSessionId),
     initialData: statusQuery.data?.activeSession,
     refetchInterval: (query) => {

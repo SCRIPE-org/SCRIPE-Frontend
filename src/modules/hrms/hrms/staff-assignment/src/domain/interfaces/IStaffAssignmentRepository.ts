@@ -18,9 +18,7 @@ export interface StaffAssignmentListParams {
  * Documentation for module export
  */
 export interface IStaffAssignmentRepository {
-  getAll(
-    params: StaffAssignmentListParams
-  ): Promise<{
+  getAll(params: StaffAssignmentListParams): Promise<{
     items: StaffAssignment[];
     totalCount: number;
     page: number;

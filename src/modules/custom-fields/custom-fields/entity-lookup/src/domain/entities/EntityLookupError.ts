@@ -80,12 +80,7 @@ const UNKNOWN_ERROR_CODE = "UNKNOWN";
  * the exact defect this file exists to prevent.
  */
 export type EntityLookupFailureKind =
-  | "forbidden"
-  | "missing"
-  | "invalid"
-  | "unavailable"
-  | "cancelled"
-  | "unknown";
+  "forbidden" | "missing" | "invalid" | "unavailable" | "cancelled" | "unknown";
 
 /** The `ErrorResponse` body shape `ApiService` attaches as `error.details`. */
 interface ErrorResponseBody {
@@ -205,8 +200,7 @@ export class EntityLookupError extends Error {
     if (isErrorResponseBody(details)) {
       const errorCode = details.errorCode ?? UNKNOWN_ERROR_CODE;
       const statusCode = details.statusCode ?? 0;
-      const kind =
-        KIND_BY_ERROR_CODE[errorCode] ?? KIND_BY_STATUS_CODE[statusCode] ?? "unknown";
+      const kind = KIND_BY_ERROR_CODE[errorCode] ?? KIND_BY_STATUS_CODE[statusCode] ?? "unknown";
       return new EntityLookupError({
         kind,
         statusCode,

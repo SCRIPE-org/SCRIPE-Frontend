@@ -36,7 +36,8 @@ if (typeof (globalThis as any).ResizeObserver === "undefined") {
 const mockRules: FieldVisibilityRuleAdmin[] = [
   {
     id: "rule-1",
-    expressionJson: '{"version":1,"visibleWhen":{"fieldKey":"department","operator":"equals","value":"Sales"}}',
+    expressionJson:
+      '{"version":1,"visibleWhen":{"fieldKey":"department","operator":"equals","value":"Sales"}}',
     operandFieldKey: "department",
     operator: "equals",
     priority: 1,
@@ -80,7 +81,9 @@ describe("FieldVisibilityRulesDialog", () => {
       />
     );
 
-    expect(screen.getByText('customField.visibilityRules.title:{"field":"Commission Rate"}')).toBeInTheDocument();
+    expect(
+      screen.getByText('customField.visibilityRules.title:{"field":"Commission Rate"}')
+    ).toBeInTheDocument();
     expect(screen.getByText("Department (department)")).toBeInTheDocument();
     expect(screen.getByText("equals")).toBeInTheDocument();
   });

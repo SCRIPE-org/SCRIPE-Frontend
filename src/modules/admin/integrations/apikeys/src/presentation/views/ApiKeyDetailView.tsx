@@ -86,7 +86,11 @@ export default function ApiKeyDetailView() {
     return (
       <div className="flex flex-1 flex-col items-center justify-center space-y-4 p-8 text-center">
         <div className="font-semibold text-destructive">{t("apikeys.error.notFound")}</div>
-        <Button variant="link" onClick={() => router.push("/integrations/apikeys")} className="text-sm">
+        <Button
+          variant="link"
+          onClick={() => router.push("/integrations/apikeys")}
+          className="text-sm"
+        >
           {t("apikeys.backToList")}
         </Button>
       </div>

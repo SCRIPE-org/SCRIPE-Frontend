@@ -4,26 +4,11 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@core/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@core/ui/sheet";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Separator } from "@core/ui/separator";
-import {
-  Check,
-  Copy,
-  ExternalLink,
-  Clock,
-  User,
-  Globe,
-  Terminal,
-  FileCode,
-} from "lucide-react";
+import { Check, Copy, ExternalLink, Clock, User, Globe, Terminal, FileCode } from "lucide-react";
 import { formatDateTimeUtc } from "@core/common/utils";
 import type { SecurityChange } from "../../domain/entities/SecurityEntities";
 
@@ -36,11 +21,7 @@ interface EventDetailsDrawerProps {
 /**
  * EventDetailsDrawer
  */
-export function EventDetailsDrawer({
-  event,
-  open,
-  onOpenChange,
-}: EventDetailsDrawerProps) {
+export function EventDetailsDrawer({ event, open, onOpenChange }: EventDetailsDrawerProps) {
   const { t } = useI18n();
   const [copied, setCopied] = useState(false);
 
@@ -60,23 +41,21 @@ export function EventDetailsDrawer({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-md p-6 space-y-6 overflow-y-auto">
+      <SheetContent side="right" className="w-full space-y-6 overflow-y-auto p-6 sm:max-w-md">
         <SheetHeader className="space-y-2">
           <div className="flex items-center gap-2">
             <Badge
               variant={event.isSuccess ? "success" : "destructive"}
-              className="text-[10px] uppercase font-bold"
+              className="text-[10px] font-bold uppercase"
             >
               {event.isSuccess ? "Success" : "Failed / Blocked"}
             </Badge>
-            <span className="text-xs text-muted-foreground font-mono" dir="ltr">
+            <span className="font-mono text-xs text-muted-foreground" dir="ltr">
               {event.eventType}
             </span>
           </div>
 
-          <SheetTitle className="text-lg font-bold">
-            {event.eventType} Event Details
-          </SheetTitle>
+          <SheetTitle className="text-lg font-bold">{event.eventType} Event Details</SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground">
             Authoritative security audit record captured by Identity telemetry.
           </SheetDescription>
@@ -88,10 +67,10 @@ export function EventDetailsDrawer({
         <div className="space-y-4 text-xs">
           {/* Timestamp */}
           <div className="flex items-start gap-3">
-            <Clock className="h-4 w-4 text-muted-foreground mt-0.5" />
+            <Clock className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div className="flex-1">
               <span className="font-semibold text-foreground">Timestamp (UTC)</span>
-              <p className="text-muted-foreground mt-0.5 tabular-nums">
+              <p className="mt-0.5 tabular-nums text-muted-foreground">
                 {formatDateTimeUtc(event.timestamp)}
               </p>
             </div>
@@ -99,17 +78,17 @@ export function EventDetailsDrawer({
 
           {/* Actor */}
           <div className="flex items-start gap-3">
-            <User className="h-4 w-4 text-muted-foreground mt-0.5" />
+            <User className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div className="flex-1">
               <div className="flex items-center gap-2">
                 <span className="font-semibold text-foreground">Actor</span>
                 {event.isAdmin && (
-                  <Badge variant="outline" className="text-[9px] px-1 py-0">
+                  <Badge variant="outline" className="px-1 py-0 text-[9px]">
                     Admin
                   </Badge>
                 )}
               </div>
-              <p className="text-muted-foreground mt-0.5">
+              <p className="mt-0.5 text-muted-foreground">
                 {event.username || "System / Unauthenticated"}
               </p>
             </div>
@@ -117,10 +96,10 @@ export function EventDetailsDrawer({
 
           {/* IP Address */}
           <div className="flex items-start gap-3">
-            <Globe className="h-4 w-4 text-muted-foreground mt-0.5" />
+            <Globe className="mt-0.5 h-4 w-4 text-muted-foreground" />
             <div className="flex-1">
               <span className="font-semibold text-foreground">Source IP Address</span>
-              <p className="text-muted-foreground mt-0.5 font-mono" dir="ltr">
+              <p className="mt-0.5 font-mono text-muted-foreground" dir="ltr">
                 {event.ipAddress || "—"}
               </p>
             </div>
@@ -129,10 +108,10 @@ export function EventDetailsDrawer({
           {/* Endpoint / Method */}
           {(event.endpoint || event.httpMethod) && (
             <div className="flex items-start gap-3">
-              <Terminal className="h-4 w-4 text-muted-foreground mt-0.5" />
+              <Terminal className="mt-0.5 h-4 w-4 text-muted-foreground" />
               <div className="flex-1">
                 <span className="font-semibold text-foreground">Endpoint</span>
-                <p className="text-muted-foreground mt-0.5 font-mono text-[11px]" dir="ltr">
+                <p className="mt-0.5 font-mono text-[11px] text-muted-foreground" dir="ltr">
                   {event.httpMethod ? `[${event.httpMethod}] ` : ""}
                   {event.endpoint || "—"}
                 </p>
@@ -143,10 +122,10 @@ export function EventDetailsDrawer({
           {/* Entity Context */}
           {event.entityType && (
             <div className="flex items-start gap-3">
-              <FileCode className="h-4 w-4 text-muted-foreground mt-0.5" />
+              <FileCode className="mt-0.5 h-4 w-4 text-muted-foreground" />
               <div className="flex-1">
                 <span className="font-semibold text-foreground">Target Resource</span>
-                <p className="text-muted-foreground mt-0.5">
+                <p className="mt-0.5 text-muted-foreground">
                   {event.entityType} {event.entityId ? `(${event.entityId})` : ""}
                 </p>
               </div>
@@ -155,16 +134,16 @@ export function EventDetailsDrawer({
 
           {/* Error Message */}
           {event.errorMessage && (
-            <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 space-y-1">
+            <div className="space-y-1 rounded-md border border-destructive/30 bg-destructive/10 p-3">
               <span className="font-semibold text-destructive">Failure Detail</span>
-              <p className="text-muted-foreground text-[11px] leading-relaxed">
+              <p className="text-[11px] leading-relaxed text-muted-foreground">
                 {event.errorMessage}
               </p>
             </div>
           )}
 
           {/* Event / Correlation ID */}
-          <div className="rounded-lg border border-border/80 bg-muted/30 p-3 space-y-2">
+          <div className="space-y-2 rounded-lg border border-border/80 bg-muted/30 p-3">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-semibold text-muted-foreground">
                 Audit Record ID
@@ -173,13 +152,13 @@ export function EventDetailsDrawer({
                 variant="ghost"
                 size="sm"
                 onClick={handleCopyId}
-                className="h-6 px-1.5 text-[11px] gap-1 text-primary hover:text-primary"
+                className="h-6 gap-1 px-1.5 text-[11px] text-primary hover:text-primary"
               >
                 {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
                 <span>{copied ? "Copied" : "Copy"}</span>
               </Button>
             </div>
-            <p className="font-mono text-[11px] text-foreground break-all select-all" dir="ltr">
+            <p className="select-all break-all font-mono text-[11px] text-foreground" dir="ltr">
               {event.id}
             </p>
           </div>
@@ -196,11 +175,7 @@ export function EventDetailsDrawer({
             </Link>
           </Button>
 
-          <Button
-            variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="w-full text-xs"
-          >
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="w-full text-xs">
             Close
           </Button>
         </div>

@@ -375,8 +375,7 @@ function CodeEditorModal({
                   </>
                 ) : (
                   <>
-                    <Eye className="h-3.5 w-3.5" aria-hidden="true" />{" "}
-                    {t("studio.builder.preview")}
+                    <Eye className="h-3.5 w-3.5" aria-hidden="true" /> {t("studio.builder.preview")}
                   </>
                 )}
               </button>
@@ -398,8 +397,7 @@ function CodeEditorModal({
             <div className="w-64 flex-shrink-0 overflow-y-auto border-e border-nx-line bg-nx-raised">
               <div className="border-b border-nx-line p-3">
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-nx-ink-3">
-                  {activeTab?.language === "css" ? "CSS" : "HTML"}{" "}
-                  {t("studio.builder.templates")}
+                  {activeTab?.language === "css" ? "CSS" : "HTML"} {t("studio.builder.templates")}
                 </h3>
               </div>
               <div className="space-y-1.5 p-2">
@@ -455,8 +453,7 @@ function CodeEditorModal({
             {t("studio.builder.lines")}
           </span>
           <span className="truncate">
-            {t("studio.builder.escToClose")} •{" "}
-            {t("studio.builder.autoSave")}
+            {t("studio.builder.escToClose")} • {t("studio.builder.autoSave")}
           </span>
         </div>
       </div>

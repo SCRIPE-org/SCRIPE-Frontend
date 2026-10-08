@@ -182,7 +182,9 @@ export function useThemeMarketplace(): UseThemeMarketplaceReturn {
         return true;
       } catch (err: any) {
         const message =
-          err?.message || err?.response?.data?.error || t("studio.gallery.toasts.applyFailedFallback");
+          err?.message ||
+          err?.response?.data?.error ||
+          t("studio.gallery.toasts.applyFailedFallback");
         // Detect system admin without tenant context
         if (
           message.includes("System admins") ||

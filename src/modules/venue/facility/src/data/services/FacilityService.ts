@@ -5,7 +5,10 @@ import {
   type FacilityJson,
   type FacilityListResponseJson,
 } from "../models/FacilityModel";
-import type { IFacilityService, FacilityListResult } from "../../domain/interfaces/IFacilityService";
+import type {
+  IFacilityService,
+  FacilityListResult,
+} from "../../domain/interfaces/IFacilityService";
 import { FACILITY_ENDPOINTS } from "./facility.endpoints";
 
 /**
@@ -14,7 +17,11 @@ import { FACILITY_ENDPOINTS } from "./facility.endpoints";
 export class FacilityService implements IFacilityService {
   constructor(private readonly api: IApiService) {}
 
-  async getAll(params: { page: number; pageSize: number; search?: string }): Promise<FacilityListResult> {
+  async getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+  }): Promise<FacilityListResult> {
     const url = buildUrl(FACILITY_ENDPOINTS.LIST, {
       page: params.page,
       pageSize: params.pageSize,

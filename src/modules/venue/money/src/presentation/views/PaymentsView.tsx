@@ -27,9 +27,7 @@ export function PaymentsView() {
   const searchParams = useSearchParams();
   const canView = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_VIEW);
   const canCreatePayment = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENTS_CREATE);
-  const canUpdateAllocations = usePermission(
-    VENUE_PERMISSIONS.FINANCE_PAYMENT_ALLOCATIONS_UPDATE
-  );
+  const canUpdateAllocations = usePermission(VENUE_PERMISSIONS.FINANCE_PAYMENT_ALLOCATIONS_UPDATE);
   const canRecord = canCreatePayment && canUpdateAllocations;
   const canReceipt = usePermission(VENUE_PERMISSIONS.FINANCE_RECEIPTS_CREATE);
   const canRefund = usePermission(VENUE_PERMISSIONS.FINANCE_REFUNDS_APPROVE);
@@ -79,8 +77,8 @@ export function PaymentsView() {
               model.notice === "refunded"
                 ? "money.payments.refund.saved"
                 : model.notice === "allocated"
-                ? "money.payments.allocated"
-                : "money.payments.saved"
+                  ? "money.payments.allocated"
+                  : "money.payments.saved"
             )}
           </AlertDescription>
         </Alert>
@@ -90,11 +88,7 @@ export function PaymentsView() {
       {model.refundPayment && <PaymentRefundCard model={model} />}
       {model.allocatingPayment && <PaymentAllocateCard model={model} />}
       {model.timeline && <PaymentTimelineCard model={model} />}
-      <PaymentRecentListCard
-        model={model}
-        canRecord={canRecord}
-        canRefund={canRefund}
-      />
+      <PaymentRecentListCard model={model} canRecord={canRecord} canRefund={canRefund} />
     </div>
   );
 }

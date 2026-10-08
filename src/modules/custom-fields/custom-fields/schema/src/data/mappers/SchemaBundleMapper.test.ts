@@ -198,7 +198,10 @@ describe("SchemaBundleMapper null and absence handling", () => {
     expect(emitted.definitions[0].referenceTargetEntityTypeKey).toBeNull();
     // Still serialisable with the nulls present, not dropped as undefined -- `JSON.stringify` omits
     // undefined properties entirely, which would silently shorten the file.
-    expect(JSON.parse(JSON.stringify(emitted)).definitions[0]).toHaveProperty("validatorKind", null);
+    expect(JSON.parse(JSON.stringify(emitted)).definitions[0]).toHaveProperty(
+      "validatorKind",
+      null
+    );
   });
 
   it("survives a body with no groups and no definitions at all", () => {

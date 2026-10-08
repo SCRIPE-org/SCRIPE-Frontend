@@ -47,7 +47,7 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
   const { t } = useI18n();
 
   return (
-    <Card className={`h-full flex flex-col ${cardClasses || ""}`}>
+    <Card className={`flex h-full flex-col ${cardClasses || ""}`}>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
 
           <Link
             href="/audit"
-            className="text-xs font-medium text-primary hover:underline inline-flex items-center gap-1"
+            className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
           >
             <span>{t("security.events.viewAllAudit") || "View in Audit Log"}</span>
             <ExternalLink className="h-3 w-3" />
@@ -80,31 +80,33 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
           isLoading={isLoading}
           onRetry={onRetry}
           isEmpty={events.length === 0}
-          emptyMessage={t("security.events.noEvents") || "No security events recorded in this period."}
+          emptyMessage={
+            t("security.events.noEvents") || "No security events recorded in this period."
+          }
           skeletonType="rows"
           skeletonRows={5}
           height={240}
         >
-          <div className="overflow-x-auto max-h-[340px] overflow-y-auto pe-1">
+          <div className="max-h-[340px] overflow-x-auto overflow-y-auto pe-1">
             <Table>
-              <TableHeader className="sticky top-0 bg-card z-10 shadow-xs">
+              <TableHeader className="shadow-xs sticky top-0 z-10 bg-card">
                 <TableRow className="border-b border-border">
-                  <TableHead className="text-xs font-semibold bg-card">
+                  <TableHead className="bg-card text-xs font-semibold">
                     {t("security.events.time") || "Timestamp"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold bg-card">
+                  <TableHead className="bg-card text-xs font-semibold">
                     {t("security.events.eventType") || "Event Type"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold bg-card">
+                  <TableHead className="bg-card text-xs font-semibold">
                     {t("security.events.actor") || "Actor / User"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold bg-card">
+                  <TableHead className="bg-card text-xs font-semibold">
                     {t("security.events.sourceIp") || "IP Address"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold text-center bg-card">
+                  <TableHead className="bg-card text-center text-xs font-semibold">
                     {t("common.status") || "Status"}
                   </TableHead>
-                  <TableHead className="text-xs font-semibold text-end bg-card">
+                  <TableHead className="bg-card text-end text-xs font-semibold">
                     {t("common.details") || "Details"}
                   </TableHead>
                 </TableRow>
@@ -123,17 +125,14 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
                     <TableRow
                       key={eventKey}
                       onClick={() => onSelectEvent(event)}
-                      className="cursor-pointer hover:bg-accent/40 transition-colors"
+                      className="cursor-pointer transition-colors hover:bg-accent/40"
                     >
-                      <TableCell className="py-2.5 text-xs text-muted-foreground tabular-nums whitespace-nowrap">
+                      <TableCell className="whitespace-nowrap py-2.5 text-xs tabular-nums text-muted-foreground">
                         {formatDateTimeUtc(event.timestamp)}
                       </TableCell>
 
                       <TableCell className="py-2.5">
-                        <Badge
-                          variant={badgeVariant}
-                          className="text-[10px] font-mono px-1.5 py-0"
-                        >
+                        <Badge variant={badgeVariant} className="px-1.5 py-0 font-mono text-[10px]">
                           {event.eventType}
                         </Badge>
                       </TableCell>
@@ -142,14 +141,17 @@ export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable
                         {event.username || "System / Anonymous"}
                       </TableCell>
 
-                      <TableCell className="py-2.5 font-mono text-xs text-muted-foreground" dir="ltr">
+                      <TableCell
+                        className="py-2.5 font-mono text-xs text-muted-foreground"
+                        dir="ltr"
+                      >
                         {event.ipAddress || "—"}
                       </TableCell>
 
                       <TableCell className="py-2.5 text-center">
                         <Badge
                           variant={event.isSuccess ? "success" : "destructive"}
-                          className="text-[10px] uppercase font-bold"
+                          className="text-[10px] font-bold uppercase"
                         >
                           {event.isSuccess ? "Success" : "Blocked"}
                         </Badge>

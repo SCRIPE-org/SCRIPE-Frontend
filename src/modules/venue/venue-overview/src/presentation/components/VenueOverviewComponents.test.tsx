@@ -92,9 +92,18 @@ describe("VenueOverview Metis-Inspired Components", () => {
   it("VenueNav renders all 4 product mental model tabs (Dashboard, Calendar, Resources, Money)", () => {
     render(<VenueNav attentionCount={3} />);
 
-    expect(screen.getByRole("link", { name: /dashboard|overview/i })).toHaveAttribute("href", "/venue");
-    expect(screen.getByRole("link", { name: /calendar|operations/i })).toHaveAttribute("href", "/venue/calendar");
-    expect(screen.getByRole("link", { name: /resources|setup/i })).toHaveAttribute("href", "/venue/resources");
+    expect(screen.getByRole("link", { name: /dashboard|overview/i })).toHaveAttribute(
+      "href",
+      "/venue"
+    );
+    expect(screen.getByRole("link", { name: /calendar|operations/i })).toHaveAttribute(
+      "href",
+      "/venue/calendar"
+    );
+    expect(screen.getByRole("link", { name: /resources|setup/i })).toHaveAttribute(
+      "href",
+      "/venue/resources"
+    );
     expect(screen.getByRole("link", { name: /money/i })).toBeInTheDocument();
   });
 
@@ -228,6 +237,8 @@ describe("VenueOverview Metis-Inspired Components", () => {
     expect(screen.getByText("Padel Court 1")).toBeInTheDocument();
     expect(screen.getByText("Football Pitch A")).toBeInTheDocument();
     expect(screen.queryByText("Available")).not.toBeInTheDocument();
-    expect(screen.getByText("venueOverview.resourceActivity.status.noActiveBooking")).toBeInTheDocument();
+    expect(
+      screen.getByText("venueOverview.resourceActivity.status.noActiveBooking")
+    ).toBeInTheDocument();
   });
 });

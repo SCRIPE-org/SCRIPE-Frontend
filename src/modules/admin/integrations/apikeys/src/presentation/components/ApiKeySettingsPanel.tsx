@@ -73,9 +73,7 @@ export function ApiKeySettingsPanel({
     <form onSubmit={handleSubmit}>
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-semibold">
-            {t("apikeys.settings.title")}
-          </CardTitle>
+          <CardTitle className="text-sm font-semibold">{t("apikeys.settings.title")}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid gap-4 md:grid-cols-2">
@@ -90,9 +88,7 @@ export function ApiKeySettingsPanel({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="rate-limit">
-                {t("apikeys.settings.rateLimit")}
-              </Label>
+              <Label htmlFor="rate-limit">{t("apikeys.settings.rateLimit")}</Label>
               <Input
                 id="rate-limit"
                 type="number"
@@ -118,9 +114,7 @@ export function ApiKeySettingsPanel({
 
           <div className="grid gap-4 md:grid-cols-3">
             <div className="space-y-1.5">
-              <Label htmlFor="monthly-quota">
-                {t("apikeys.settings.quota")}
-              </Label>
+              <Label htmlFor="monthly-quota">{t("apikeys.settings.quota")}</Label>
               <Input
                 id="monthly-quota"
                 type="number"
@@ -131,9 +125,7 @@ export function ApiKeySettingsPanel({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="reset-day">
-                {t("apikeys.settings.resetDay")}
-              </Label>
+              <Label htmlFor="reset-day">{t("apikeys.settings.resetDay")}</Label>
               <Input
                 id="reset-day"
                 type="number"
@@ -146,9 +138,7 @@ export function ApiKeySettingsPanel({
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="alert-threshold">
-                {t("apikeys.settings.alert")}
-              </Label>
+              <Label htmlFor="alert-threshold">{t("apikeys.settings.alert")}</Label>
               <Input
                 id="alert-threshold"
                 type="number"
@@ -163,9 +153,7 @@ export function ApiKeySettingsPanel({
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="ip-whitelist">
-              {t("apikeys.settings.whitelist")}
-            </Label>
+            <Label htmlFor="ip-whitelist">{t("apikeys.settings.whitelist")}</Label>
             <Input
               id="ip-whitelist"
               value={ipWhitelist}

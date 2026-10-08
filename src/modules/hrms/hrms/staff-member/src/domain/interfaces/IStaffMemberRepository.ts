@@ -22,9 +22,7 @@ export interface StaffMemberListParams {
  * Documentation for module export
  */
 export interface IStaffMemberRepository {
-  getAll(
-    params: StaffMemberListParams
-  ): Promise<{
+  getAll(params: StaffMemberListParams): Promise<{
     items: StaffMember[];
     totalCount: number;
     page: number;

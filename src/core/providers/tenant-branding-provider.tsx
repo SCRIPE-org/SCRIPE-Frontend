@@ -162,7 +162,9 @@ export function TenantBrandingProvider({ children }: TenantBrandingProviderProps
   const resolvedLogoUrl = useResolvedFileUrl(branding?.logoUrl);
   const resolvedFaviconUrl = useResolvedFileUrl(branding?.faviconUrl);
   const appName = branding?.companyName ?? branding?.name ?? BRAND.name;
-  const logoUrl = branding?.logoUrl ? resolvedLogoUrl || "/brand/app-logo-1024.png" : "/brand/app-logo-1024.png";
+  const logoUrl = branding?.logoUrl
+    ? resolvedLogoUrl || "/brand/app-logo-1024.png"
+    : "/brand/app-logo-1024.png";
   const faviconUrl = branding?.faviconUrl ? resolvedFaviconUrl || null : null;
   const companyName = branding?.companyName ?? branding?.name ?? BRAND.name;
   const primaryColor = branding?.primaryColor ?? null;

@@ -36,7 +36,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 
 /**
  * React ViewModel hook orchestrating state, network effects, and mutations for tenant domain management.
- * 
+ *
  * Interacts exclusively with ITenantRepository via Clean Architecture Dependency Injection container.
  * Encapsulates domain CRUD, live DNS verification, and primary host designation.
  *
@@ -264,11 +264,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   // ── Actions ────────────────────────────────────────────
 
   const addDomain = useCallback(
-    async (
-      domain: string,
-      redirectTo?: string | null,
-      redirectStatusCode?: number | null
-    ) => {
+    async (domain: string, redirectTo?: string | null, redirectStatusCode?: number | null) => {
       if (!domain.trim()) return;
       setIsAdding(true);
       try {
@@ -338,11 +334,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   );
 
   const updateDomainRedirect = useCallback(
-    async (
-      domainId: string,
-      redirectTo?: string | null,
-      redirectStatusCode?: number | null
-    ) => {
+    async (domainId: string, redirectTo?: string | null, redirectStatusCode?: number | null) => {
       setIsUpdatingRedirect(true);
       try {
         await tenantRepository.updateDomain(tenantId, domainId, redirectTo, redirectStatusCode);

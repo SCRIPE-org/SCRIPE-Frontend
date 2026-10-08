@@ -4,9 +4,7 @@ import * as React from "react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CustomField } from "../../domain/entities/CustomField";
 import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsight";
-import {
-  type FieldVisibilityOperator,
-} from "../../../../custom-field-value/src/domain/fieldVisibility";
+import { type FieldVisibilityOperator } from "../../../../custom-field-value/src/domain/fieldVisibility";
 import {
   buildFieldVisibilityExpressionJson,
   parseFieldVisibilityExpressionJson,

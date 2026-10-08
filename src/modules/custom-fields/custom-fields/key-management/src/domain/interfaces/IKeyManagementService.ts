@@ -5,7 +5,7 @@ import type {
   InitializeTenantKeyRequest,
   RotateTenantKeyRequest,
   RevokeTenantKeyRequest,
-  StartRewrapRequest
+  StartRewrapRequest,
 } from "../../data/models/key-management.dto";
 
 /**
@@ -19,5 +19,8 @@ export interface IKeyManagementService {
   startRewrap(request: StartRewrapRequest): Promise<MigrationSessionDto>;
   cancelRewrap(sessionId: string): Promise<boolean>;
   getSessionProgress(sessionId: string): Promise<MigrationSessionDto>;
-  getAuditLogs(page?: number, pageSize?: number): Promise<{ items: EncryptionAuditLogDto[]; totalCount: number }>;
+  getAuditLogs(
+    page?: number,
+    pageSize?: number
+  ): Promise<{ items: EncryptionAuditLogDto[]; totalCount: number }>;
 }

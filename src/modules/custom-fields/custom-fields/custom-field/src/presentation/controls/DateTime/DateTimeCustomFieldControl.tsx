@@ -143,7 +143,7 @@ export function DateTimeCustomFieldControl({
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
         {isRequired && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}

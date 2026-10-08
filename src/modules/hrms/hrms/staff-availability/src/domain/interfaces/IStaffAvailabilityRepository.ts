@@ -18,9 +18,7 @@ export interface StaffAvailabilityListParams {
  * Documentation for module export
  */
 export interface IStaffAvailabilityRepository {
-  getAll(
-    params: StaffAvailabilityListParams
-  ): Promise<{
+  getAll(params: StaffAvailabilityListParams): Promise<{
     items: StaffAvailability[];
     totalCount: number;
     page: number;

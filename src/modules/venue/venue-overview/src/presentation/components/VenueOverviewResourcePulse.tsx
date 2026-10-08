@@ -23,8 +23,11 @@ export function VenueOverviewResourcePulse({ items, t }: Props) {
   const noActiveCount = items.filter((i) => i.statusLabel === "noActiveBooking").length;
 
   return (
-    <Card className="border-nx-line bg-nx-surface overflow-hidden" data-testid="resource-pulse-card">
-      <CardHeader className="pb-3 border-b border-nx-line">
+    <Card
+      className="overflow-hidden border-nx-line bg-nx-surface"
+      data-testid="resource-pulse-card"
+    >
+      <CardHeader className="border-b border-nx-line pb-3">
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-sm font-bold text-nx-ink">
@@ -38,7 +41,7 @@ export function VenueOverviewResourcePulse({ items, t }: Props) {
           </div>
           <Link
             href="/venue/facilities"
-            className="text-xs font-semibold text-nx-accent hover:underline flex items-center gap-1 shrink-0"
+            className="flex shrink-0 items-center gap-1 text-xs font-semibold text-nx-accent hover:underline"
           >
             <span>{t("venueOverview.resourcePulse.viewAll", { defaultValue: "Facilities" })}</span>
             <ArrowUpRight className="size-3.5" aria-hidden="true" />
@@ -47,37 +50,41 @@ export function VenueOverviewResourcePulse({ items, t }: Props) {
 
         {/* Compact Summary Metric Pills */}
         <div className="grid grid-cols-4 gap-2 pt-2 text-center">
-          <div className="p-2 rounded-nx-xs bg-nx-surfaceSubtle border border-nx-line">
-            <span className="block text-xs font-bold text-nx-ink tabular-nums">{totalResources}</span>
-            <span className="block text-[10px] text-nx-ink-3 truncate">
+          <div className="rounded-nx-xs bg-nx-surfaceSubtle border border-nx-line p-2">
+            <span className="block text-xs font-bold tabular-nums text-nx-ink">
+              {totalResources}
+            </span>
+            <span className="block truncate text-[10px] text-nx-ink-3">
               {t("venueOverview.resourcePulse.total", { defaultValue: "Total" })}
             </span>
           </div>
-          <div className="p-2 rounded-nx-xs bg-success/10 border border-success/30 text-success">
+          <div className="rounded-nx-xs border border-success/30 bg-success/10 p-2 text-success">
             <span className="block text-xs font-bold tabular-nums">{inUseCount}</span>
-            <span className="block text-[10px] truncate">
+            <span className="block truncate text-[10px]">
               {t("venueOverview.resourcePulse.inUse", { defaultValue: "In Use" })}
             </span>
           </div>
-          <div className="p-2 rounded-nx-xs bg-nx-accent/10 border border-nx-accent/30 text-nx-accent">
+          <div className="rounded-nx-xs bg-nx-accent/10 border-nx-accent/30 border p-2 text-nx-accent">
             <span className="block text-xs font-bold tabular-nums">{upcomingCount}</span>
-            <span className="block text-[10px] truncate">
+            <span className="block truncate text-[10px]">
               {t("venueOverview.resourcePulse.upcoming", { defaultValue: "Upcoming" })}
             </span>
           </div>
-          <div className="p-2 rounded-nx-xs bg-nx-surfaceSubtle border border-nx-line text-nx-ink-3">
+          <div className="rounded-nx-xs bg-nx-surfaceSubtle border border-nx-line p-2 text-nx-ink-3">
             <span className="block text-xs font-bold tabular-nums">{noActiveCount}</span>
-            <span className="block text-[10px] truncate">
+            <span className="block truncate text-[10px]">
               {t("venueOverview.resourcePulse.idle", { defaultValue: "No Booking" })}
             </span>
           </div>
         </div>
       </CardHeader>
 
-      <CardContent className="p-0 max-h-[300px] overflow-y-auto">
+      <CardContent className="max-h-[300px] overflow-y-auto p-0">
         {items.length === 0 ? (
           <div className="flex h-36 items-center justify-center p-6 text-center text-xs text-nx-ink-3">
-            {t("venueOverview.resourceActivity.noResources", { defaultValue: "No schedulable resources configured." })}
+            {t("venueOverview.resourceActivity.noResources", {
+              defaultValue: "No schedulable resources configured.",
+            })}
           </div>
         ) : (
           <div className="divide-y divide-nx-line">
@@ -107,33 +114,36 @@ export function VenueOverviewResourcePulse({ items, t }: Props) {
               return (
                 <div
                   key={item.resourceId}
-                  className="flex items-center justify-between p-3 gap-3 text-xs hover:bg-nx-surfaceSubtle/50 transition-colors group"
+                  className="hover:bg-nx-surfaceSubtle/50 group flex items-center justify-between gap-3 p-3 text-xs transition-colors"
                 >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="flex size-7 items-center justify-center rounded-nx-xs border border-nx-line bg-nx-surfaceSubtle text-nx-accent shrink-0">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <div className="rounded-nx-xs bg-nx-surfaceSubtle flex size-7 shrink-0 items-center justify-center border border-nx-line text-nx-accent">
                       {SportIcon}
                     </div>
                     <Link
                       href={`/venue/availability?resourceId=${encodeURIComponent(item.resourceId)}`}
-                      className="font-semibold text-nx-ink truncate hover:text-nx-accent hover:underline"
+                      className="truncate font-semibold text-nx-ink hover:text-nx-accent hover:underline"
                     >
                       {item.resourceName}
                     </Link>
                   </div>
 
                   {/* Status Indicator (Strictly NEVER labels Available from booking absence) */}
-                  <div className="shrink-0 flex items-center gap-2">
+                  <div className="flex shrink-0 items-center gap-2">
                     {item.activeReservationId ? (
                       <Link
                         href={`/venue/bookings/${encodeURIComponent(item.activeReservationId)}`}
                         className="shrink-0"
                       >
-                        <Badge variant="outline" className={`${badgeStyle} tabular-nums hover:underline cursor-pointer`}>
+                        <Badge
+                          variant="outline"
+                          className={`${badgeStyle} cursor-pointer tabular-nums hover:underline`}
+                        >
                           {labelText}
                         </Badge>
                       </Link>
                     ) : (
-                      <Badge variant="outline" className={`${badgeStyle} tabular-nums shrink-0`}>
+                      <Badge variant="outline" className={`${badgeStyle} shrink-0 tabular-nums`}>
                         {labelText}
                       </Badge>
                     )}

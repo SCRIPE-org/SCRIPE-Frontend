@@ -21,11 +21,7 @@ export function VenueOverviewQuickActions({ t }: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-2.5">
-      <Button
-        asChild
-        size="sm"
-        className="gap-2 shadow-nx-sm font-semibold"
-      >
+      <Button asChild size="sm" className="gap-2 font-semibold shadow-nx-sm">
         <Link href="/venue/bookings/new">
           <Plus className="size-4" aria-hidden="true" />
           <span>{t("venueOverview.quickActions.newBooking")}</span>

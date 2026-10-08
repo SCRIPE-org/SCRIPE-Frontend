@@ -62,7 +62,8 @@ export const en = {
             "The kind of record the field belongs to — people, staff members, bookings, and so on.",
           partKey:
             "The machine name, used in error messages and exports. Lower case, starts with a letter, letters, digits and underscores only.",
-          partValueType: "One of the twenty-two types, deciding what can be entered and how it is checked.",
+          partValueType:
+            "One of the twenty-two types, deciding what can be entered and how it is checked.",
           partLabelEn: "The English label people see above the input.",
           partLabelAr: "The Arabic label, optional. Falls back to the English one when blank.",
           partPlaceholder:
@@ -92,7 +93,7 @@ export const en = {
             "Suppose the academy needs to record each player's nationality, and the product has no such field. Nothing here needs a developer.",
           ex1Title: "Decide what you are asking",
           ex1Content:
-            "The question is \"what nationality is this player?\". The answer is a short piece of text with no fixed list of choices, so the value type is Text. If you did want a fixed list, Select would be the right choice instead — and that decision is permanent, so it is worth a moment's thought.",
+            'The question is "what nationality is this player?". The answer is a short piece of text with no fixed list of choices, so the value type is Text. If you did want a fixed list, Select would be the right choice instead — and that decision is permanent, so it is worth a moment\'s thought.',
           ex2Title: "Define the field",
           ex2Content:
             "On the Custom Fields screen, choose Add. Pick the record type for people, set the key to nationality, the English label to Nationality, the value type to Text, and leave Required off for now. Save.",
@@ -218,7 +219,8 @@ export const en = {
             "Refused: VALIDATION_MAX_LENGTH. Text stops at 4,000 characters — use LongText for anything longer.",
           textBlankOptional:
             "Accepted, and stored as cleared. Whitespace-only counts as empty, so any attached validator never runs on it.",
-          textBlankRequired: "Refused: VALIDATION_REQUIRED. Whitespace-only counts as empty here too.",
+          textBlankRequired:
+            "Refused: VALIDATION_REQUIRED. Whitespace-only counts as empty here too.",
           exText4500: "A value 4,500 characters long",
           exSpacesOptional: "Three spaces, on a field that is not Required",
           exSpacesRequired: "Three spaces, on a Required field",
@@ -245,11 +247,11 @@ export const en = {
             "Refused: VALIDATION_INVALID_FORMAT. Matching is case-sensitive, so Medium and medium are different answers — which also means the two can legitimately both exist as separate options.",
           selectUnknown:
             "Refused: VALIDATION_INVALID_FORMAT. The message quotes the rejected value and the field's key.",
-          exSelectPadded: "\" Medium\" with a leading space",
+          exSelectPadded: '" Medium" with a leading space',
 
           multiSelectTitle: "MultiSelect",
           multiSelectStores:
-            "Several answers from the same kind of list, up to 19 of them. Renders as a multi-select combobox with a live \"N of 19 selected\" counter.",
+            'Several answers from the same kind of list, up to 19 of them. Renders as a multi-select combobox with a live "N of 19 selected" counter.',
           multiSelectChecks:
             "Every submitted answer must be one of the field's configured options, no answer may repeat, and there may be at most 19. The order you pick in is preserved end to end. For an options list of Red, Green, Blue, Yellow:",
           multiOk:
@@ -258,7 +260,8 @@ export const en = {
             "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19. The picker itself makes the twentieth option unselectable, so reaching this needs a request that bypasses the form.",
           multiDuplicate:
             "Refused: VALIDATION_UNIQUE. A repeated answer is rejected rather than quietly collapsed to one.",
-          multiUnknown: "Refused: VALIDATION_INVALID_FORMAT — Purple is not one of the field's options.",
+          multiUnknown:
+            "Refused: VALIDATION_INVALID_FORMAT — Purple is not one of the field's options.",
           multiEmpty:
             "Treated as empty: cleared if the field is optional, refused with VALIDATION_REQUIRED if it is required.",
           exMultiTwo: "Blue, then Red",
@@ -277,8 +280,8 @@ export const en = {
           numberPrecision:
             "Accepted, and stored to six decimal places. Anything finer than that is not preserved.",
           numberInvalid:
-            "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a number\". A number written as words is not parsed.",
-          exAboutForty: "\"about 40\"",
+            'Refused: VALIDATION_INVALID_FORMAT — the message reads "expects a number". A number written as words is not parsed.',
+          exAboutForty: '"about 40"',
 
           percentTitle: "Percent",
           percentStores:
@@ -286,7 +289,8 @@ export const en = {
           percentChecks:
             "The value must parse as a number and fall inside 0 to 100. It is stored exactly as typed — this is the detail to get right if you ever read the raw data or build an export.",
           percentOk: "Accepted, and shown afterwards as 25%.",
-          percentDecimal: "Accepted, and shown as 33.5%. Fractions of a percentage point are kept exactly.",
+          percentDecimal:
+            "Accepted, and shown as 33.5%. Fractions of a percentage point are kept exactly.",
           percentQuarter:
             "Accepted — but it means a quarter of one percent, shown as 0.25%. Percent stores the number you would say out loud, never a 0-to-1 fraction.",
           percentTooHigh: "Refused: VALIDATION_RANGE, naming the bounds 0 and 100.",
@@ -294,12 +298,12 @@ export const en = {
 
           ratingTitle: "Rating",
           ratingStores:
-            "A whole number from 1 to 5, captured on a slider. Displays afterwards as \"4 / 5\".",
+            'A whole number from 1 to 5, captured on a slider. Displays afterwards as "4 / 5".',
           ratingChecks:
             "The value must parse as a number, be a whole number, and fall between 1 and 5 inclusive. There is no star control and no free-text entry.",
           ratingOk: "Accepted, and shown as 4 / 5.",
           ratingZero:
-            "Refused: VALIDATION_RANGE. A zero is a real submitted value that fails the 1-to-5 check; it is not read as \"unrated\".",
+            'Refused: VALIDATION_RANGE. A zero is a real submitted value that fails the 1-to-5 check; it is not read as "unrated".',
           ratingFraction:
             "Refused: VALIDATION_RANGE. Half ratings are not supported — this is a genuine difference from Number, which allows any decimal.",
           ratingTooHigh: "Refused: VALIDATION_RANGE, with the same message a 0 gets.",
@@ -312,7 +316,8 @@ export const en = {
             "An amount together with its three-letter currency code, held as two independent inputs inside one labelled group. Displays afterwards through the reader's own number formatting, showing the code rather than a symbol so EUR and USD are never ambiguous.",
           currencyChecks:
             "Both parts are required together. The amount must parse as a number; the code must be exactly three uppercase ASCII letters. The code input uppercases and letter-filters as you type, because the check itself does not coerce lower case — it rejects it.",
-          currencyOk: "Accepted. Displays as the amount alongside the code, for example USD 100.50.",
+          currencyOk:
+            "Accepted. Displays as the amount alongside the code, for example USD 100.50.",
           currencyLower:
             "Refused if it ever reaches the server: VALIDATION_INVALID_FORMAT, naming the 3-letter ISO 4217 requirement. In the form itself the input forces upper case as you type, so you will not normally see this.",
           currencyNoCode:
@@ -320,7 +325,7 @@ export const en = {
           currencyNoAmount:
             "Refused the same way. A code with no amount is a broken value, not a cleared one — only both parts missing counts as empty.",
           currencyZzz:
-            "Accepted. Only the shape of the code is checked, never its membership of the real ISO 4217 list, so a well-formed code that does not exist gets through. The display falls back to \"ZZZ 100.50\" for a code the reader's browser does not recognise.",
+            'Accepted. Only the shape of the code is checked, never its membership of the real ISO 4217 list, so a well-formed code that does not exist gets through. The display falls back to "ZZZ 100.50" for a code the reader\'s browser does not recognise.',
           currencyMinor:
             "Accepted, and it means ten thousand and fifty. There are no minor units anywhere in custom-field storage — 100.50 is stored as 100.50, never as 10050.",
           exCurrencyOk: "100.50 with the code USD",
@@ -332,16 +337,17 @@ export const en = {
 
           durationTitle: "Duration",
           durationStores:
-            "A length of time counted in minutes. Renders as a number input with a visible \"minutes\" label beside it, never as a bare unlabelled number.",
+            'A length of time counted in minutes. Renders as a number input with a visible "minutes" label beside it, never as a bare unlabelled number.',
           durationChecks:
-            "The value must parse as a number and must not be negative. Zero is accepted — a legitimate \"no buffer\". There is no upper bound at all.",
+            'The value must parse as a number and must not be negative. Zero is accepted — a legitimate "no buffer". There is no upper bound at all.',
           durationOk: "Accepted, and displayed as 90 minutes.",
           durationFraction:
             "Accepted, and kept exactly as 1.5 — ninety seconds. Decimals are not rounded to whole minutes.",
           durationZero: "Accepted. Zero is a real answer, not an empty one.",
           durationLarge:
             "Accepted — 5,400 minutes, which is three and a half days. Nothing warns you, because there is no maximum.",
-          durationNegative: "Refused: VALIDATION_RANGE, with a message saying the value must not be negative.",
+          durationNegative:
+            "Refused: VALIDATION_RANGE, with a message saying the value must not be negative.",
 
           groupDateTitle: "Dates and times",
           dateTitle: "Date",
@@ -352,15 +358,15 @@ export const en = {
           dateOk: "Accepted, and read back as the same calendar date for every viewer, anywhere.",
           dateNoTime:
             "Ignored. Date holds no time component, so a time submitted alongside the date is simply not stored. Use DateTime when the time matters.",
-          dateInvalid: "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a date\".",
+          dateInvalid: 'Refused: VALIDATION_INVALID_FORMAT — the message reads "expects a date".',
           exDateWithTime: "A date with a time component attached",
-          exNotADate: "\"next Tuesday\"",
+          exNotADate: '"next Tuesday"',
 
           dateTimeTitle: "DateTime",
           dateTimeStores:
             "A precise moment together with the time zone it belongs to. Both halves are stored, so a kick-off at 18:00 in Cairo still reads as 18:00 in Cairo for somebody looking at it from London.",
           dateTimeChecks:
-            "The instant must parse, and the time zone must be a zone id the server recognises — in practice an IANA identifier such as \"Africa/Cairo\", though the underlying check is platform-dependent and a Windows-hosted deployment also accepts a native Windows id such as \"Egypt Standard Time\". The zone is required as soon as either half is present — an instant with no zone is refused, not silently interpreted. The form shows the zone as a small disclosure beside the entered time, with a Change link that opens a searchable picker.",
+            'The instant must parse, and the time zone must be a zone id the server recognises — in practice an IANA identifier such as "Africa/Cairo", though the underlying check is platform-dependent and a Windows-hosted deployment also accepts a native Windows id such as "Egypt Standard Time". The zone is required as soon as either half is present — an instant with no zone is refused, not silently interpreted. The form shows the zone as a small disclosure beside the entered time, with a Change link that opens a searchable picker.',
           dateTimeOk: "Accepted. Both the instant and its zone are read back exactly as entered.",
           dateTimeNoZone:
             "Refused: VALIDATION_INVALID_TIMEZONE. A moment with no zone is exactly what DateTime exists to prevent.",
@@ -378,10 +384,12 @@ export const en = {
             "A time of day on a 24-hour clock, seconds included, with no date attached — an opening time, a curfew, a kick-off slot. Renders as a native time picker with seconds enabled, and displays afterwards in each reader's own local time format.",
           timeChecks:
             "The value must be hours, minutes and seconds separated by colons, with hours 0 to 23, minutes 0 to 59 and seconds 0 to 59. Unpadded input is accepted and normalised rather than refused.",
-          timeOk: "Accepted, and shown in the reader's own format — for example 2:30:00 PM for an English (US) reader.",
+          timeOk:
+            "Accepted, and shown in the reader's own format — for example 2:30:00 PM for an English (US) reader.",
           timeNormalised:
             "Accepted, and normalised to 09:05:00 before storage. Two submissions of the same time written with different digit widths always end up identical.",
-          timeHourRange: "Refused: VALIDATION_INVALID_FORMAT. Hours run 0 to 23, so 24 is out of range.",
+          timeHourRange:
+            "Refused: VALIDATION_INVALID_FORMAT. Hours run 0 to 23, so 24 is out of range.",
           timeMinuteRange: "Refused: VALIDATION_INVALID_FORMAT. Minutes run 0 to 59.",
           timeAmPm:
             "Refused: VALIDATION_INVALID_FORMAT. Twelve-hour text is not parsed — the stored form is always 24-hour, even though the display is not.",
@@ -397,7 +405,7 @@ export const en = {
           emailDisplayName:
             "Refused: VALIDATION_INVALID_EMAIL. A display-name wrapper parses as an address but is rejected rather than silently stripped, because an Email field has no display name to keep.",
           emailInvalid: "Refused: VALIDATION_INVALID_EMAIL.",
-          exEmailDisplayName: "\"Test User <test@example.com>\"",
+          exEmailDisplayName: '"Test User <test@example.com>"',
 
           urlTitle: "Url",
           urlStores:
@@ -420,20 +428,23 @@ export const en = {
             "The stored value must start with a +, its first digit must not be zero, and it must hold between 8 and 15 digits in total. That is a check on shape only.",
           phoneOk: "Accepted, and displayed reformatted rather than as the bare stored string.",
           phoneNoPlus: "Refused: VALIDATION_INVALID_FORMAT. The leading + is part of the format.",
-          phoneLeadingZero: "Refused: VALIDATION_INVALID_FORMAT. A country code never starts with zero.",
-          phoneTooShort: "Refused: VALIDATION_INVALID_FORMAT. Seven digits is below the minimum of eight.",
+          phoneLeadingZero:
+            "Refused: VALIDATION_INVALID_FORMAT. A country code never starts with zero.",
+          phoneTooShort:
+            "Refused: VALIDATION_INVALID_FORMAT. Seven digits is below the minimum of eight.",
           phoneUnassignable:
             "Accepted by the server, which checks shape only and not whether the number could really exist. The form's own picker additionally checks the number against the selected country's real numbering plan, so you cannot build this value through the interface — only a request that bypasses the form.",
 
           groupOtherTitle: "Yes/no and colour",
           booleanTitle: "Boolean",
-          booleanStores: "A plain yes or no. Renders as an on/off toggle. Has no placeholder and no options.",
+          booleanStores:
+            "A plain yes or no. Renders as an on/off toggle. Has no placeholder and no options.",
           booleanChecks:
             "Only the words true and false are parsed, in either case. Nothing else is treated as a synonym.",
           boolTrue: "Accepted.",
           boolFalse: "Accepted.",
           boolOne:
-            "Refused: VALIDATION_INVALID_FORMAT — the message reads \"expects a boolean\". A numeric 1 is not read as true.",
+            'Refused: VALIDATION_INVALID_FORMAT — the message reads "expects a boolean". A numeric 1 is not read as true.',
           boolYes: "Refused: VALIDATION_INVALID_FORMAT. Neither yes/no nor on/off is accepted.",
 
           colorTitle: "Color",
@@ -445,8 +456,10 @@ export const en = {
           colorShort:
             "Accepted, and kept as #abc. The shorthand is never expanded to #aabbcc, even though a renderer treats the two as the same colour — so the same colour can legitimately be stored two ways across different records.",
           colorNoHash: "Refused: VALIDATION_INVALID_FORMAT. The leading # is required.",
-          colorBadLength: "Refused: VALIDATION_INVALID_FORMAT. Three or six digits, nothing in between.",
-          colorNamed: "Refused: VALIDATION_INVALID_FORMAT. Colour names are not accepted, only hex values.",
+          colorBadLength:
+            "Refused: VALIDATION_INVALID_FORMAT. Three or six digits, nothing in between.",
+          colorNamed:
+            "Refused: VALIDATION_INVALID_FORMAT. Colour names are not accepted, only hex values.",
 
           groupReferenceTitle: "References to another record",
           referenceGroupIntro:
@@ -486,7 +499,8 @@ export const en = {
             "A pointer at a user account — assigned to, reviewed by, account manager. Renders as a searchable picker over user accounts, and never shows a control for choosing a kind of record, because there is only one.",
           userReferenceChecks:
             "Every check EntityReference makes, plus one narrower rule: the only kind of record accepted is a user account. That list is fixed by the platform rather than by configuration, and an attempt to point this type at anything else is refused both when a definition is configured and when a value is saved.",
-          usrOk: "Accepted, exactly as an EntityReference is. The answer is self-describing in the same way.",
+          usrOk:
+            "Accepted, exactly as an EntityReference is. The answer is self-describing in the same way.",
           usrDormant:
             "Accepted. A locked-out account is dormant rather than deleted: it still exists, it is still offered by the picker with an inactive marker, and it is a legitimate answer for something that already happened.",
           usrAdminRefused:
@@ -512,7 +526,8 @@ export const en = {
           fileChecks:
             "A stored value is only accepted when the referenced file is genuinely attached to the record you are editing — a security check that stops a file meant for one record being pointed at from another. Attaching a new file from this screen is not available yet: the field can be defined today, and an existing value can be viewed or cleared, but filling one in for the first time is on its way in a future release.",
           fileAttachedExample: "A record whose File field already holds a value",
-          fileAttachedOutcome: "Shown as attached, with a Clear control. There is currently no attach control alongside it.",
+          fileAttachedOutcome:
+            "Shown as attached, with a Clear control. There is currently no attach control alongside it.",
           fileClearExample: "Clear an attached file, then save",
           fileClearOutcome: "Accepted — the value is removed.",
 
@@ -532,9 +547,11 @@ export const en = {
           richTextOkExample: "A paragraph with a bold word and a bulleted list",
           richTextOkOutcome: "Accepted, and every element is kept.",
           richTextStyleExample: "Content pasted with an inline style applied",
-          richTextStyleOutcome: "Accepted, with the style removed. The visible text and structure are kept.",
+          richTextStyleOutcome:
+            "Accepted, with the style removed. The visible text and structure are kept.",
           richTextImgExample: "Content with an embedded image",
-          richTextImgOutcome: "Accepted, with the image removed. A picture belongs on a File or Image field instead.",
+          richTextImgOutcome:
+            "Accepted, with the image removed. A picture belongs on a File or Image field instead.",
           richTextTooLongExample: "More than 50,000 characters of markup",
           richTextTooLongOutcome: "Refused: VALIDATION_MAX_LENGTH — shorten it and try again.",
 
@@ -544,8 +561,10 @@ export const en = {
           empty1: "it is missing from the save entirely;",
           empty2: "it is blank, or made up of nothing but spaces;",
           empty3: "for MultiSelect, the list of selections is explicitly empty;",
-          empty4: "for DateTime, both the instant and the time zone are missing — not just one of them;",
-          empty5: "for Currency, both the amount and the currency code are missing — not just one of them;",
+          empty4:
+            "for DateTime, both the instant and the time zone are missing — not just one of them;",
+          empty5:
+            "for Currency, both the amount and the currency code are missing — not just one of them;",
           empty6:
             "for EntityReference, UserReference, File and Image, both halves of the pointer are missing — not just one of them.",
           emptyOutcome:
@@ -559,10 +578,12 @@ export const en = {
             "Almost every refusal is an HTTP 422 with one of these machine-readable codes; two of them are a 403 instead, because they are about your access rather than about the shape of what you sent. A third one is worth flagging separately: its code name reads like a 404, but the response is still a 422 — see the note beside it below. If you ever see a 500 from saving a custom-field value, that is a defect worth reporting — the validation path is written to refuse cleanly, never to fail.",
           thCode: "Code",
           thWhenItFires: "When it fires",
-          codeRequired: "The field is Required and the submitted value is empty or whitespace-only.",
+          codeRequired:
+            "The field is Required and the submitted value is empty or whitespace-only.",
           codeInvalidFormat:
             "The value does not match the shape the type expects — an unparsable number, date or time, an option that is not on the list, a disallowed URL scheme, a bad phone shape, a bad hex colour, a bad currency code, or most validator failures.",
-          codeInvalidEmail: "An Email field's value is not a real address, or carries a display name.",
+          codeInvalidEmail:
+            "An Email field's value is not a real address, or carries a display name.",
           codeInvalidTimezone:
             "A DateTime value is missing its time zone once an instant is present, or names a zone the server does not recognise.",
           codeRange:
@@ -584,7 +605,7 @@ export const en = {
           codeMediaNotAnImage:
             "An Image field was pointed at a real, owned upload that is not actually an image.",
           codeRichTextShape:
-            "A RichText value did not arrive as the expected {\"html\": \"...\"} shape.",
+            'A RichText value did not arrive as the expected {"html": "..."} shape.',
           codesInfoTitle: "Messages name the key, not the label",
           codesInfoContent:
             "Error messages quote the field's machine key — 'shirt_size' — rather than its display label. If you are matching a message to a field, match on the key.",
@@ -625,7 +646,7 @@ export const en = {
             "Reading the name needs permission to view that kind of record, not permission to view the record holding the field. Somebody who may edit the owner record but may not read staff sees that a reference is set and does not see who it points at.",
           featSearch: "Searchable, paged, and it tells you what it cannot do",
           featSearchDesc:
-            "The picker searches the target module's own records a page at a time, marks a dormant record as inactive rather than hiding it, and says in words when there is nothing you are allowed to point at — never an empty dropdown that reads as \"there are no records\".",
+            'The picker searches the target module\'s own records a page at a time, marks a dormant record as inactive rather than hiding it, and says in words when there is nothing you are allowed to point at — never an empty dropdown that reads as "there are no records".',
           featPinned: "Can be pinned to one kind of record",
           featPinnedDesc:
             "An Entity Reference field can be pinned so that every value must point at, say, a staff member — or left unpinned, in which case each value chooses its own kind of record and records that choice alongside the pointer.",
@@ -635,7 +656,7 @@ export const en = {
 
           whichTitle: "Entity Reference or User Reference",
           whichIntro:
-            "There are two reference value types and they are mechanically almost identical. The difference is entirely about what each one is allowed to point at, and therefore about how much you have to configure. Pick User Reference whenever the answer is \"a person who logs in\"; pick Entity Reference for everything else.",
+            'There are two reference value types and they are mechanically almost identical. The difference is entirely about what each one is allowed to point at, and therefore about how much you have to configure. Pick User Reference whenever the answer is "a person who logs in"; pick Entity Reference for everything else.',
           thAspect: "Aspect",
           thEntityRef: "Entity Reference",
           thUserRef: "User Reference",
@@ -664,7 +685,7 @@ export const en = {
             "Identically. The stored value is self-describing in exactly the same way, which is what keeps an old answer readable after the definition changes.",
           whichInfoTitle: "Why these are two types and not one setting",
           whichInfoContent:
-            "The list of things a User Reference may point at is a security decision, so it is fixed in the platform rather than typed into a definition by an administrator. And because the type is recorded on every stored answer, the question \"which of our fields hold references to people?\" has an answer even for values whose definition has since been changed. A single type with a setting would have lost both properties.",
+            'The list of things a User Reference may point at is a security decision, so it is fixed in the platform rather than typed into a definition by an administrator. And because the type is recorded on every stored answer, the question "which of our fields hold references to people?" has an answer even for values whose definition has since been changed. A single type with a setting would have lost both properties.',
 
           storedTitle: "What is actually stored",
           storedIntro:
@@ -677,8 +698,7 @@ export const en = {
           pieceTypeKey:
             "The kind of record being pointed at, as a stable identifier — for example hrms.staff-member. It is stored on the answer itself, not looked up from the definition.",
           pieceTypeKeyRequired: "Yes — always, on every answer",
-          pieceId:
-            "The identity of the specific record being pointed at, as an opaque string.",
+          pieceId: "The identity of the specific record being pointed at, as an opaque string.",
           pieceIdRequired: "Yes — always, on every answer",
           storedNeither:
             "An identity with no kind of record names a row but no table; a kind of record with no identity names a table but no row. So a value is treated as empty only when both pieces are missing — which is exactly how Currency and Date & Time behave — and half of a reference is refused rather than quietly stored or quietly cleared. If you ever see a save refused for an incomplete reference, one of the two controls was left alone.",
@@ -702,7 +722,7 @@ export const en = {
 
           pinTitle: "Pinning a target type on the definition",
           pinIntro:
-            "An Entity Reference definition carries one optional setting of its own: Target Entity Type. It answers \"what kind of record may this field point at?\", and it is offered only for Entity Reference — a User Reference field never shows it, because its answer is already fixed.",
+            'An Entity Reference definition carries one optional setting of its own: Target Entity Type. It answers "what kind of record may this field point at?", and it is offered only for Entity Reference — a User Reference field never shows it, because its answer is already fixed.',
           thState: "State of the setting",
           thMeans: "What it means",
           thPickerShows: "What the record form then shows",
@@ -729,7 +749,7 @@ export const en = {
 
           targetsTitle: "What can currently be referenced",
           targetsIntro:
-            "The list is not \"every record type in the product\". A kind of record can only be referenced when the module that owns it supplies a way to search and resolve its records — reading its own data through its own screens' rules, so a picker can never be broader than the screen it mirrors. Six kinds of record supply that today; the last three joined the first three in a later release.",
+            'The list is not "every record type in the product". A kind of record can only be referenced when the module that owns it supplies a way to search and resolve its records — reading its own data through its own screens\' rules, so a picker can never be broader than the screen it mirrors. Six kinds of record supply that today; the last three joined the first three in a later release.',
           thType: "Record type",
           thKey: "Identifier",
           thOwner: "Owned by",
@@ -763,11 +783,11 @@ export const en = {
           keyBranch: "organization.branch",
           ownerBranch: "The organization module",
           showsBranch:
-            "The branch's name, with its time zone beneath it as the disambiguator — the same reason two branches both called \"Main\" are told apart on the branches screen itself.",
+            'The branch\'s name, with its time zone beneath it as the disambiguator — the same reason two branches both called "Main" are told apart on the branches screen itself.',
           targetsRefused:
-            "Anything else is refused rather than answered with an empty list, and the difference is the whole point: an empty list looks like a normal result and would tell an administrator \"there are no staff members\", which is a false statement wearing the appearance of a correct one. A kind of record the platform cannot answer for produces a clear refusal instead, which the record form renders as a sentence saying this kind of record is not available in this installation.",
+            'Anything else is refused rather than answered with an empty list, and the difference is the whole point: an empty list looks like a normal result and would tell an administrator "there are no staff members", which is a false statement wearing the appearance of a correct one. A kind of record the platform cannot answer for produces a clear refusal instead, which the record form renders as a sentence saying this kind of record is not available in this installation.',
           targetsEmpty:
-            "And a genuinely empty list of available types is itself a legitimate answer, not a failure. It means \"there is nothing you may point a reference at\", which happens for two quite different reasons: the modules owning those records may not be part of this installation, or you may not hold view access to any of them. The product names both possibilities without claiming either, because only one of them is fixed by asking for permissions.",
+            'And a genuinely empty list of available types is itself a legitimate answer, not a failure. It means "there is nothing you may point a reference at", which happens for two quite different reasons: the modules owning those records may not be part of this installation, or you may not hold view access to any of them. The product names both possibilities without claiming either, because only one of them is fixed by asking for permissions.',
           targetsWhyNot:
             "Two kinds of record that look as though they belong on that list and are excluded on purpose (administrator records used to be a third, until a later release gave them a lookup provider of their own — they are on the table above now, not here):",
           targetsWhyNotGroup:
@@ -786,27 +806,27 @@ export const en = {
           tenant2:
             "Holding an identity is not a permission. A reference is re-authorised on every single read: the target's own view permission is required again, every time, and the fact that the pointer is already stored counts for nothing.",
           tenant3:
-            "Another workspace's record and a deleted record are one indistinguishable answer, deliberately. If they were told apart, somebody could test identities one at a time to learn what exists in a workspace they cannot see. \"You may not see this kind of record\" is told apart from \"this record is gone\", because those two have opposite fixes and neither reveals anything.",
+            'Another workspace\'s record and a deleted record are one indistinguishable answer, deliberately. If they were told apart, somebody could test identities one at a time to learn what exists in a workspace they cannot see. "You may not see this kind of record" is told apart from "this record is gone", because those two have opposite fixes and neither reveals anything.',
           tenant4:
             "Platform-level records belong to platform administrators. A custom field created at platform level is inherited by every workspace and can only be created, edited or deleted by a platform administrator — including the pinned target type on a platform-level reference field, which no workspace can change.",
           tenant5:
             "Nobody may assign an administrator outside their own workspace. In practice the product goes further than the rule requires: an administrator record cannot be pointed at by a reference field at all, in your own workspace or any other, precisely because an administrator may sit outside every workspace.",
           tenantWarnTitle: "One thing this does not do",
           tenantWarnContent:
-            "A reference is as strict as the target's own list screen, and no stricter. If a kind of record is visible to a role through its own screen, it is selectable through a picker for that same role — narrower rules than \"this whole workspace\" are not applied on top. So do not treat a reference picker as a way to hide records that the target module itself already shows.",
+            'A reference is as strict as the target\'s own list screen, and no stricter. If a kind of record is visible to a role through its own screen, it is selectable through a picker for that same role — narrower rules than "this whole workspace" are not applied on top. So do not treat a reference picker as a way to hide records that the target module itself already shows.',
 
           exampleTitle: "A worked example: an administrator record pointing at a staff member",
           exampleIntro:
             "The case these types were built for. Your administrators are also employees, and you want each administrator record to say which staff record is the same person — recorded once, correctly, and never retyped.",
           ex1Title: "Decide which type you need",
           ex1Content:
-            "The answer is a staff member, not a login account, so this is an Entity Reference. If the question had been \"who reviewed this?\", the answer would be an account and User Reference would be the right choice — and the value type is permanent, so it is worth the moment's thought.",
+            'The answer is a staff member, not a login account, so this is an Entity Reference. If the question had been "who reviewed this?", the answer would be an account and User Reference would be the right choice — and the value type is permanent, so it is worth the moment\'s thought.',
           ex2Title: "Define the field",
           ex2Content:
             "On the Custom Fields screen choose Add, pick the administrator record type, set the key to staff_record, the English label to Staff record, and the value type to Entity Reference. A Target Entity Type control appears as soon as you choose that value type.",
           ex3Title: "Pin the target to Staff Member",
           ex3Content:
-            "Set Target Entity Type to Staff Member. That is what turns the field from \"a pointer at something\" into \"a pointer at a staff member\", and it is what lets the record form show one control instead of two. Leave it as Not pinned only if you genuinely want different administrators pointing at different kinds of record.",
+            'Set Target Entity Type to Staff Member. That is what turns the field from "a pointer at something" into "a pointer at a staff member", and it is what lets the record form show one control instead of two. Leave it as Not pinned only if you genuinely want different administrators pointing at different kinds of record.',
           ex4Title: "Fill it in on a record",
           ex4Content:
             "Open any administrator record. The Custom Fields section now shows a Staff record control with a placeholder inviting you to select a record. Open it, type part of a name, and the list narrows to matching staff members with their job titles beneath. Pick one and save the record.",
@@ -836,18 +856,12 @@ export const en = {
           notTitle: "What reference fields are not",
           notIntro:
             "Reasonable expectations that these types deliberately do not meet. None of these is a fault to report.",
-          not1:
-            "They are not a relationship the product understands. Nothing is calculated from a reference, nothing is triggered by it, and no screen gains a \"records pointing at this one\" list because a reference exists.",
-          not2:
-            "They are not a way to hide records. A picker shows exactly what the target module's own screens show to that same person. If somebody should not see a kind of record, that is a permission on that kind of record.",
-          not3:
-            "They do not store a name, ever, and there is no setting to make them. A field that must survive the target being deleted with the old name still readable is a Text field, and accepting that it will drift is the price of that choice.",
-          not4:
-            "They are not many-to-many. One reference field holds one pointer. There is no multi-value reference type, and Multi-Select cannot be pointed at records — its answers are text you authored.",
-          not5:
-            "They cannot point at every kind of record. Only the kinds whose owning module supplies a searchable, permission-checked list can be referenced, and the rest are refused rather than silently offered.",
-          not6:
-            "They are not carried in the definitions spreadsheet export. That file has eighteen columns and a pinned target type is not one of them, so an exported definition does not record what its field points at.",
+          not1: 'They are not a relationship the product understands. Nothing is calculated from a reference, nothing is triggered by it, and no screen gains a "records pointing at this one" list because a reference exists.',
+          not2: "They are not a way to hide records. A picker shows exactly what the target module's own screens show to that same person. If somebody should not see a kind of record, that is a permission on that kind of record.",
+          not3: "They do not store a name, ever, and there is no setting to make them. A field that must survive the target being deleted with the old name still readable is a Text field, and accepting that it will drift is the price of that choice.",
+          not4: "They are not many-to-many. One reference field holds one pointer. There is no multi-value reference type, and Multi-Select cannot be pointed at records — its answers are text you authored.",
+          not5: "They cannot point at every kind of record. Only the kinds whose owning module supplies a searchable, permission-checked list can be referenced, and the rest are refused rather than silently offered.",
+          not6: "They are not carried in the definitions spreadsheet export. That file has eighteen columns and a pinned target type is not one of them, so an exported definition does not record what its field points at.",
 
           nextTitle: "Where to go next",
           nextIntro:
@@ -882,7 +896,8 @@ export const en = {
           endpointsIntro:
             "All three live under one address of their own rather than alongside the other custom-fields calls, and that is deliberate: these read other modules' data, so they are guarded by the target kind of record's own view permission and not by the permission to administer field definitions. Somebody who administers custom fields but may not read staff is refused here, correctly.",
           endpointsTypes: "Lists the kinds of record this caller may point at right now.",
-          endpointsSearch: "Returns one page of selectable records of one kind, optionally filtered.",
+          endpointsSearch:
+            "Returns one page of selectable records of one kind, optionally filtered.",
           endpointsResolve: "Resolves one pointer the caller already holds back to its record.",
           endpointsPermission:
             "So there is no single permission that opens this feature. All three require you to be signed in as an administrator, and each then requires the view permission for the kind of record in the address: listing staff members needs the staff view permission, listing user accounts needs the one for user accounts. The consequence to expect is that the same person can be admitted by one of these lookups and refused by the next, on the same screen, and both answers are correct.",
@@ -891,7 +906,7 @@ export const en = {
           typesWhat:
             "This answers with the filtered set, not the full catalogue: registered, answerable by this installation, and permitted for you. Every entry it returns is usable immediately, which is the whole reason it exists — a control that offered every registered kind of record would be offering choices that refuse you on the next click, and the alternative of trying each one in turn is a fistful of denials per page load.",
           typesEmpty:
-            "An empty list is a success, not a failure. It means \"you may not point a reference at anything\", and it is rendered as an explanatory sentence inside the control rather than as an error or as a silently empty dropdown. It has two possible causes and the product names both without asserting either: the owning modules may not be part of this installation, or you may not hold view access to them. Only the second is fixed by asking for permissions, which is why copy naming one cause would send somebody to do something that cannot work.",
+            'An empty list is a success, not a failure. It means "you may not point a reference at anything", and it is rendered as an explanatory sentence inside the control rather than as an error or as a silently empty dropdown. It has two possible causes and the product names both without asserting either: the owning modules may not be part of this installation, or you may not hold view access to them. Only the second is fixed by asking for permissions, which is why copy naming one cause would send somebody to do something that cannot work.',
           typesShape:
             "Each entry carries its stable identifier, the module that owns it, and a display name in English and Arabic. Those names come from the platform's own registry rather than from this application's translations, so they are shown as supplied and never looked up as translation keys.",
 
@@ -931,8 +946,7 @@ export const en = {
           ansNotFound: "Not found",
           ansNotFoundMeans:
             "The record does not resolve. It was deleted, or it belongs to a workspace you cannot see — merged into one answer on purpose so this lookup cannot be used to test what exists elsewhere.",
-          ansNotFoundFixes:
-            "Whoever owns the data. Pick a different record, or clear the field.",
+          ansNotFoundFixes: "Whoever owns the data. Pick a different record, or clear the field.",
           ansUnknownType: "Unknown record type",
           ansUnknownTypeMeans:
             "The kind of record named is not registered at all. This describes the installation, not any record — it usually means a field was pinned to a kind of record that has since been retired.",
@@ -948,7 +962,7 @@ export const en = {
             "Whoever is filling the record in — pick the record again. This one is replaced, never re-pointed.",
           statusesInfoTitle: "What the answers deliberately do not tell you",
           statusesInfoContent:
-            "\"Deleted\" and \"in a workspace you cannot see\" are one answer and always will be. Splitting them would let somebody probe identities one at a time to learn what exists in another workspace. Everything else is distinguishable, because everything else describes either your own access or this installation — neither of which is a secret from you.",
+            '"Deleted" and "in a workspace you cannot see" are one answer and always will be. Splitting them would let somebody probe identities one at a time to learn what exists in another workspace. Everything else is distinguishable, because everything else describes either your own access or this installation — neither of which is a secret from you.',
 
           failuresTitle: "The five failure states, and why they read differently",
           failuresIntro:
@@ -985,11 +999,11 @@ export const en = {
             "Every one of the five could be rendered as an empty field, and the result would be a pointer at a deleted record sitting unnoticed for a year — indistinguishable from a field nobody ever filled in, and indistinguishable from a colleague simply not having permission. Merging them is not a cosmetic simplification; it deletes the only information that says whose problem it is. If you are ever tempted to make these read the same, this is the paragraph that says why not.",
           emptyVsFailedTitle: "An empty field is a sixth thing entirely",
           emptyVsFailedContent:
-            "A reference that was never filled in reads as empty, and that is a different fact from all five above. This is why a populated reference whose target is gone is never reported as empty: an operator looking at a blank cell must be able to tell \"nobody answered this\" from \"the answer points at something that is no longer there\".",
+            'A reference that was never filled in reads as empty, and that is a different fact from all five above. This is why a populated reference whose target is gone is never reported as empty: an operator looking at a blank cell must be able to tell "nobody answered this" from "the answer points at something that is no longer there".',
 
           saveTitle: "What is checked when a reference is saved",
           saveIntro:
-            "Every reference save runs the same checks in the same order, and each one fails with its own message rather than a generic \"invalid reference\". Knowing the order explains every refusal you can hit.",
+            'Every reference save runs the same checks in the same order, and each one fails with its own message rather than a generic "invalid reference". Knowing the order explains every refusal you can hit.',
           save1:
             "Both pieces present. A submission missing either the kind of record or the identity is refused as an incomplete reference — never treated as an empty field, because half a reference means somebody started answering and stopped.",
           save2:
@@ -997,7 +1011,7 @@ export const en = {
           save3:
             "The kind of record is allowed for this value type. Always true for Entity Reference; for User Reference this is the fixed platform allowlist, and the refusal names what is allowed rather than only that your choice was not.",
           save4:
-            "The kind of record agrees with the definition's pin, if there is one. Refused naming both what was expected and what arrived. An unpinned definition skips this check entirely — unpinned means \"any allowed kind\", and must never be read as \"nothing configured, therefore nothing valid\".",
+            'The kind of record agrees with the definition\'s pin, if there is one. Refused naming both what was expected and what arrived. An unpinned definition skips this check entirely — unpinned means "any allowed kind", and must never be read as "nothing configured, therefore nothing valid".',
           save5:
             "The identity can be read. A stale or altered identity is refused cleanly as an invalid identity, on that one field, rather than failing the whole save with an unexplained error.",
           save6:
@@ -1044,7 +1058,8 @@ export const en = {
           pkLazy: "Nothing is fetched until you open the control.",
           pkLazyWhy:
             "A record form can carry several reference fields. One nobody touches should not query another module at all, and the answers are cached afterwards, so re-opening the control costs nothing.",
-          pkTwoControls: "An unpinned field shows two controls, and neither steals focus from the other.",
+          pkTwoControls:
+            "An unpinned field shows two controls, and neither steals focus from the other.",
           pkTwoControlsWhy:
             "Choosing a kind of record leaves you on that control with the record control now available one step away. Automatically opening the record picker would pull focus out from under somebody still reading what they just chose.",
           pkAccumulate: "Further pages add to the list rather than replacing it.",
@@ -1055,7 +1070,7 @@ export const en = {
             "It still exists and is still a valid answer — a departed staff member kept for historical assignments is exactly the case. Treating it as invalid would make historical references unsavable.",
           pkNoResults: "An unmatched filter and an empty list read differently.",
           pkNoResultsWhy:
-            "\"Your filter matched nothing\" is about what you typed. \"There is nothing you may point at\" is about your access. One sentence for both would tell somebody who mistyped that they have no permissions.",
+            '"Your filter matched nothing" is about what you typed. "There is nothing you may point at" is about your access. One sentence for both would tell somebody who mistyped that they have no permissions.',
           pkNoRetry: "Two of the failure states offer no Try again control.",
           pkNoRetryWhy:
             "A permission refusal and an unavailable module refuse identically every time. A button inviting you to hammer them would be worse than no button. Only a genuine transport failure gets a retry, because that is the one a retry fixes.",
@@ -1064,7 +1079,7 @@ export const en = {
             "A reference picker is a picker, so it follows the same convention every other picker on these forms follows. Its own read-only state, used when you may not view the target's name, is a different thing and looks different.",
           pkNoLabelTrick: "The control names itself for assistive technology.",
           pkNoLabelTrickWhy:
-            "Its visible label is real, clickable wiring, but the accessible name is set on the control directly — a label alone cannot name a control of this shape. Two reference fields on one form therefore announce distinctly rather than both announcing as \"Record type\".",
+            'Its visible label is real, clickable wiring, but the accessible name is set on the control directly — a label alone cannot name a control of this shape. Two reference fields on one form therefore announce distinctly rather than both announcing as "Record type".',
 
           diagnoseTitle: "Diagnosing a reference that will not display",
           diagnoseIntro:
@@ -1099,19 +1114,19 @@ export const en = {
           limNoName: "No stored display name",
           limNoNameDetail:
             "There is no setting anywhere to snapshot a name alongside a pointer, and there will not be one — it would hand a name guarded by one permission to anybody holding another.",
-          limNoBacklinks: "No \"what points at this record\" view",
+          limNoBacklinks: 'No "what points at this record" view',
           limNoBacklinksDetail:
             "Nothing lists the references pointing at a given record. Deleting a record does not warn you how many pointers it is about to clear.",
           limNoExport: "Not in the definitions export",
           limNoExportDetail:
             "The eighteen-column definitions spreadsheet has no column for a pinned target type, so an exported definition does not record what its field points at.",
           limNoMulti: "One pointer per field",
-          limNoMultiDetail:
-            "There is no multi-value reference type. Two answers means two fields.",
+          limNoMultiDetail: "There is no multi-value reference type. Two answers means two fields.",
           limNoTypeFilter: "The picker cannot be narrowed by anything but text",
           limNoTypeFilterDetail:
-            "Which columns the free-text filter matches is the owning module's choice, and there are no additional filters — no \"active only\", no filter by group.",
-          limNoAdminTarget: "User Reference still refuses an administrator, even though Entity Reference no longer does",
+            'Which columns the free-text filter matches is the owning module\'s choice, and there are no additional filters — no "active only", no filter by group.',
+          limNoAdminTarget:
+            "User Reference still refuses an administrator, even though Entity Reference no longer does",
           limNoAdminTargetDetail:
             "Not from the definition form and not from a request that bypasses it. User Reference's allowed target is exactly one thing, identity.user, by original design — an administrator's own record is a different kind of row, and pointing a User Reference field at one is refused regardless of which module the request came through. Entity Reference has offered administrators as a target since a later release added a lookup provider for them; this limit is User Reference's alone.",
 
@@ -1175,7 +1190,7 @@ export const en = {
             "Chooses one of the twenty-two types, deciding the control, the validation and the storage. Selecting it is what reveals the Options box, the Validator dropdown or the Target Entity Type dropdown.",
           ctlValueTypeWhen: "On create only. Permanent after saving.",
           ctlPlaceholderEnDoes:
-            "Optional greyed-out hint shown inside the empty input, in English — for example \"e.g. Enter your shirt size\".",
+            'Optional greyed-out hint shown inside the empty input, in English — for example "e.g. Enter your shirt size".',
           ctlPlaceholderArDoes: "The same hint in Arabic.",
           ctlPlaceholderWhen:
             "Only for the value types whose control has a placeholder at all. Boolean, Rating, Color, Date and the other picker-based types have none.",
@@ -1188,8 +1203,7 @@ export const en = {
             "Only when the value type is Text. It is never shown for the other twenty-one types.",
           ctlValidatorParamDoes:
             "Supplies the setting a parameterised check needs — a country dropdown for Postal Code, free text for the other five.",
-          ctlValidatorParamWhen:
-            "Only once one of the six parameterised validators is chosen.",
+          ctlValidatorParamWhen: "Only once one of the six parameterised validators is chosen.",
           ctlReferenceTargetDoes:
             "Pins the field to one kind of record, so every value must point at a record of that kind. Its first option, Not pinned — any allowed type, is a real and permanent choice rather than a placeholder: leave it there and each value names its own kind of record instead. It is the only way to clear a pin, so it stays available even when the list of kinds is empty or fails to load, and the control is never disabled.",
           ctlReferenceTargetWhen:
@@ -1197,7 +1211,7 @@ export const en = {
           ctlFieldGroupDoes:
             "Puts the field under one of the record type's field groups, or under no group. Changing the record type clears the choice.",
           ctlFieldGroupWhen:
-            "Only when you hold the field-groups view permission, and — on the main definitions screen — once a record type has been chosen; the inline panel shows it as soon as you have the permission, since it already knows the record type. Shown either way even when the chosen record type has no groups yet, offering only \"no group\" until one exists.",
+            'Only when you hold the field-groups view permission, and — on the main definitions screen — once a record type has been chosen; the inline panel shows it as soon as you have the permission, since it already knows the record type. Shown either way even when the chosen record type has no groups yet, offering only "no group" until one exists.',
           ctlRequiredDoes:
             "Refuses a save that leaves the field blank. Whitespace-only counts as blank for every value type.",
           ctlSortOrderDoes:
@@ -1299,7 +1313,8 @@ export const en = {
           rejValidatorNoParam: "A parameterised validator with its setting left blank",
           rejValidatorNoParamMsg: "Refused, naming the validator: it requires a parameter.",
           rejValidatorExtraParam: "A setting supplied for a validator that takes none",
-          rejValidatorExtraParamMsg: "Refused, naming the validator: it does not accept a parameter.",
+          rejValidatorExtraParamMsg:
+            "Refused, naming the validator: it does not accept a parameter.",
           rejRequiredRestricted: "Marking a field required while a role or group restricts it",
           rejRequiredRestrictedMsg:
             "Refused, naming the field: it cannot be made required while it is restricted. Remove the restriction first, or leave the field optional.",
@@ -1309,11 +1324,13 @@ export const en = {
           rejReferenceTargetUnknown: "Pinning a target that is not a registered record type",
           rejReferenceTargetUnknownMsg:
             "Refused, naming the identifier: it is not a registered entity type. Only reachable by bypassing the dropdown, which offers nothing unregistered.",
-          rejReferenceTargetNotAllowed: "Pinning a User Reference field to anything but a user account",
+          rejReferenceTargetNotAllowed:
+            "Pinning a User Reference field to anything but a user account",
           rejReferenceTargetNotAllowedMsg:
             "Refused, naming the value type and listing what it does allow. The dropdown is not shown for that type at all, so this is the server refusing what the form already declined to offer.",
           rejGlobalNotSuperAdmin: "Creating a global field without being a platform Super Admin",
-          rejGlobalNotSuperAdminMsg: "Refused: only a platform Super Admin can create a global custom field.",
+          rejGlobalNotSuperAdminMsg:
+            "Refused: only a platform Super Admin can create a global custom field.",
           rejQuota: "Passing your plan's field limit",
           rejQuotaMsg:
             "Refused on quota. The Free edition allows zero fields; every other plan has its own maximum per workspace. Global platform fields do not count against it.",
@@ -1327,8 +1344,10 @@ export const en = {
           editable3: "Sort Order, and the Field Group",
           editable4: "Sensitivity, and Include in exports",
           editable5: "Active, which retires the field without touching its stored answers",
-          editable6: "The options list — though renaming an option changes what existing records display",
-          editable7: "The validator and its setting — though this never re-checks answers already saved",
+          editable6:
+            "The options list — though renaming an option changes what existing records display",
+          editable7:
+            "The validator and its setting — though this never re-checks answers already saved",
           editable8:
             "The Target Entity Type on an Entity Reference field — answers already stored keep working, and the next save of one of the old kind is refused until it is picked again",
           permanentTitle: "Permanent once saved",
@@ -1404,7 +1423,8 @@ export const en = {
           thKeyExample: "Stable key",
           thOutcome: "What happens",
           skOk: "Accepted.",
-          skLowercased: "Accepted, and lowercased as you type. You will see it become contact_details.",
+          skLowercased:
+            "Accepted, and lowercased as you type. You will see it become contact_details.",
           skHyphen: "Refused as you type. The input rejects characters outside the grammar.",
           skLeadingDigit: "Refused. A stable key must start with a letter.",
           skDuplicate:
@@ -1459,7 +1479,8 @@ export const en = {
           does3: "Carry its own English and Arabic heading, translated like everything else",
           does4: "Survive a field being deleted, and let a field leave it via the no group entry",
           doesNotTitle: "A group does not",
-          doesNot1: "Control who can see a field — that is field-level security, which is unrelated",
+          doesNot1:
+            "Control who can see a field — that is field-level security, which is unrelated",
           doesNot2: "Delete its fields when the group itself is deleted",
           doesNot3: "Carry across record types, or apply to more than one record type at once",
           doesNot4: "Change how a value is validated, stored, exported or displayed",
@@ -1468,17 +1489,23 @@ export const en = {
           thSituation: "Situation",
           thWhatYouSee: "What you see",
           errDuplicateKey: "A stable key already used on that record type",
-          errDuplicateKeyMsg: "Refused, naming the key: a field group with that key already exists for this entity type.",
+          errDuplicateKeyMsg:
+            "Refused, naming the key: a field group with that key already exists for this entity type.",
           errWrongEntityType: "Assigning a field to a group from another record type",
-          errWrongEntityTypeMsg: "Refused: the selected field group belongs to a different entity type.",
+          errWrongEntityTypeMsg:
+            "Refused: the selected field group belongs to a different entity type.",
           errTooManyReorder: "Reordering more than 100 groups at once",
-          errTooManyReorderMsg: "Refused, naming the maximum: more than that many groups cannot be reordered in one request.",
+          errTooManyReorderMsg:
+            "Refused, naming the maximum: more than that many groups cannot be reordered in one request.",
           errDuplicateReorder: "The same group listed twice in one reorder",
-          errDuplicateReorderMsg: "Refused: the same field group appears more than once in the reorder list.",
+          errDuplicateReorderMsg:
+            "Refused: the same field group appears more than once in the reorder list.",
           errMixedReorder: "Groups from two record types in one reorder",
-          errMixedReorderMsg: "Refused: all field groups in one reorder request must belong to the same entity type.",
+          errMixedReorderMsg:
+            "Refused: all field groups in one reorder request must belong to the same entity type.",
           errGlobalNotSuperAdmin: "Creating a global group without being a platform Super Admin",
-          errGlobalNotSuperAdminMsg: "Refused: only a platform Super Admin can create a global field group.",
+          errGlobalNotSuperAdminMsg:
+            "Refused: only a platform Super Admin can create a global field group.",
           errNoDefinition: "Assigning a group to a field with no definition record yet",
           errNoDefinitionMsg:
             "Refused, explaining that the field has no definition record and that the definitions backfill has to be run first. This only happens in an environment upgraded from an older version.",
@@ -1535,7 +1562,7 @@ export const en = {
             "Refused: VALIDATION_INVALID_FORMAT, with a message quoting both the rejected value and the field's key.",
           matchBlank:
             "Treated as empty: stored as cleared on an optional field, refused with VALIDATION_REQUIRED on a required one.",
-          exPadded: "\" Medium\" with a leading space",
+          exPadded: '" Medium" with a leading space',
           exBlank: "A blank value",
 
           multiTitle: "MultiSelect specifics",
@@ -1546,8 +1573,9 @@ export const en = {
           multiRemove:
             "Accepted. Removing one selection leaves the others in their existing relative order.",
           multiTooMany:
-            "Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19. The picker makes every unselected option unpickable once you reach 19, and shows a live \"N of 19 selected\" counter, so this is normally unreachable from the interface.",
-          multiDuplicate: "Refused: VALIDATION_UNIQUE. A repeated selection is rejected, not collapsed.",
+            'Refused: VALIDATION_MAX_LENGTH, naming the ceiling of 19. The picker makes every unselected option unpickable once you reach 19, and shows a live "N of 19 selected" counter, so this is normally unreachable from the interface.',
+          multiDuplicate:
+            "Refused: VALIDATION_UNIQUE. A repeated selection is rejected, not collapsed.",
           multiEmpty:
             "Treated as empty, exactly as a blank scalar is for every other type: cleared on an optional field, refused on a required one.",
           exMultiOrder: "Blue, then Red — on a field whose options list Red before Blue",
@@ -1565,7 +1593,8 @@ export const en = {
           thChange: "Edit",
           thEffect: "Effect on records that already exist",
           chgAdd: "Adding a new option",
-          chgAddEffect: "None. Existing answers are untouched; the new option simply becomes available.",
+          chgAddEffect:
+            "None. Existing answers are untouched; the new option simply becomes available.",
           chgRename: "Renaming an English label",
           chgRenameEffect:
             "Every record already holding the old text now displays the new text. Nothing is migrated and nothing is lost, because the option row is what the record points at — but the answer people see has changed under them.",
@@ -1580,7 +1609,7 @@ export const en = {
             "Display only. The stored answer is the English label, so nothing about the data changes.",
           renameWarnTitle: "Rename with care, and prefer adding",
           renameWarnContent:
-            "Renaming an option is the one edit that silently rewrites what history looks like: a record answered \"Medium\" last year will read as whatever you renamed Medium to. If the distinction matters to you, add a new option and stop offering the old one rather than renaming it.",
+            'Renaming an option is the one edit that silently rewrites what history looks like: a record answered "Medium" last year will read as whatever you renamed Medium to. If the distinction matters to you, add a new option and stop offering the old one rather than renaming it.',
 
           errorsTitle: "Option errors you may see",
           thSituation: "Situation",
@@ -1628,8 +1657,7 @@ export const en = {
           howIntro: "Four things happen in this order every time a value is saved into the field.",
           how1: "If the value is empty or nothing but spaces, it is treated as empty and no validator runs at all.",
           how2: "The global 4,000-character Text cap runs, and refuses with VALIDATION_MAX_LENGTH if the value is longer.",
-          how3:
-            "The validator's own, much shorter length cap runs — 11 characters for a SWIFT code, 15 for an IMEI, and so on — and also refuses with VALIDATION_MAX_LENGTH.",
+          how3: "The validator's own, much shorter length cap runs — 11 characters for a SWIFT code, 15 for an IMEI, and so on — and also refuses with VALIDATION_MAX_LENGTH.",
           how4: "Only then does the validator's actual check run, refusing with its own code and message.",
           howTwoPoints:
             "The check is enforced at two separate points, and it is worth knowing both exist. At definition time, an invalid validator or setting combination is refused when you save the definition. At value time, the validator runs again against every value somebody saves into the field.",
@@ -1677,12 +1705,14 @@ export const en = {
             "Refused: VALIDATION_INVALID_FORMAT. Fourteen digits fails the shape check — the length cap only ever catches a value longer than 15.",
 
           swiftBicTitle: "SWIFT / BIC Code",
-          swiftBicFor: "For a bank identifier code, used alongside an account number for an international transfer.",
+          swiftBicFor:
+            "For a bank identifier code, used alongside an account number for an international transfer.",
           swiftBicChecks:
             "Eight or eleven characters: six letters, then two letters or digits, then optionally three more letters or digits. Upper case only, no separators, capped at 11 characters. There is no check digit in the standard, so a well-formed code that belongs to no real bank is accepted.",
           swiftOk8: "Accepted — the eight-character form.",
           swiftOk11: "Accepted — the eleven-character form with a branch code.",
-          swiftDigit: "Refused: VALIDATION_INVALID_FORMAT. The first six characters must all be letters.",
+          swiftDigit:
+            "Refused: VALIDATION_INVALID_FORMAT. The first six characters must all be letters.",
           swiftLower: "Refused. This is a fixed external format, and lower case is not part of it.",
           swiftLength: "Refused. Eight or eleven characters exactly — nine is neither.",
 
@@ -1721,7 +1751,8 @@ export const en = {
             "The 784-YYYY-XXXXXXX-C form, with the hyphens optional. Capped at 18 characters. Structure only — the UAE has never published a check-digit algorithm, so the final digit is not verified, for the same reason as the Egyptian check.",
           emiratiOk: "Accepted, hyphens and all.",
           emiratiNoHyphens: "Accepted. The hyphens are optional, so both written forms work.",
-          emiratiBadPrefix: "Refused: VALIDATION_INVALID_FORMAT. Every Emirates ID starts with 784.",
+          emiratiBadPrefix:
+            "Refused: VALIDATION_INVALID_FORMAT. Every Emirates ID starts with 784.",
           emiratiLength: "Refused. The middle block is seven digits, not six.",
 
           paramTitle: "The six checks that need a setting",
@@ -1745,7 +1776,8 @@ export const en = {
           postalEgOk: "Accepted. Egypt is five digits.",
           postalEgBad: "Refused: VALIDATION_INVALID_FORMAT. Four digits is not five.",
           postalUsOk: "Accepted. The five-digit and the ZIP+4 forms are both valid.",
-          postalGbOk: "Accepted. The UK format is matched in either case, with or without its space.",
+          postalGbOk:
+            "Accepted. The UK format is matched in either case, with or without its space.",
           postalCaOk: "Accepted, including the real letter exclusions Canada Post applies.",
           exPostalEg: "11511, with the setting EG",
           exPostalEgBad: "1151, with the setting EG",
@@ -1760,13 +1792,15 @@ export const en = {
             "The value must parse as a number and fall inside the range. The setting is two comma-separated bounds; leaving one side blank makes that end open, but leaving both blank is refused, because a range that accepts everything is the same as attaching no validator at all.",
           numericOk: "Accepted.",
           numericOut: "Refused: VALIDATION_RANGE.",
-          numericNotANumber: "Refused: VALIDATION_RANGE. A value that is not a number cannot be inside a range.",
-          numericOpenOk: "Accepted. An open upper bound means any number at or above the lower one.",
+          numericNotANumber:
+            "Refused: VALIDATION_RANGE. A value that is not a number cannot be inside a range.",
+          numericOpenOk:
+            "Accepted. An open upper bound means any number at or above the lower one.",
           numericBothBlank:
             "Refused at definition time, explaining that the validator needs at least one bound.",
           exNumeric50: "50, with the setting 1,100",
           exNumeric150: "150, with the setting 1,100",
-          exNumericText: "\"fifty\", with the setting 1,100",
+          exNumericText: '"fifty", with the setting 1,100',
           exNumericOpen: "5000, with the setting 1,",
           exNumericBothBlank: "The setting , with both sides blank",
 
@@ -1778,8 +1812,8 @@ export const en = {
           lengthOk: "Accepted.",
           lengthTooShort: "Refused: VALIDATION_MIN_LENGTH, naming the minimum.",
           lengthTooLong: "Refused: VALIDATION_MAX_LENGTH, naming the maximum.",
-          exLength10: "\"Alexandria\" — 10 characters, with the setting 2,50",
-          exLength1: "\"A\" — 1 character, with the setting 2,50",
+          exLength10: '"Alexandria" — 10 characters, with the setting 2,50',
+          exLength1: '"A" — 1 character, with the setting 2,50',
           exLength80: "An 80-character value, with the setting 2,50",
 
           oneOfListTitle: "One of a List",
@@ -1794,7 +1828,8 @@ export const en = {
           containsTitle: "Contains Text",
           containsFor:
             "For a value that must include a marker somewhere in it — a club prefix, a season tag, a department code.",
-          containsChecks: "The value must contain the literal text you configured, matched case-sensitively.",
+          containsChecks:
+            "The value must contain the literal text you configured, matched case-sensitively.",
           containsOk: "Accepted, with the setting FC-.",
           containsCase: "Refused: VALIDATION_INVALID_FORMAT. The match respects case.",
           containsMissing: "Refused: VALIDATION_INVALID_FORMAT. The marker is not present.",
@@ -1802,7 +1837,8 @@ export const en = {
           startsWithTitle: "Starts With Text",
           startsWithFor:
             "For a value that must begin with a prefix — a country code, a branch code, a fixed reference stem.",
-          startsWithChecks: "The value must begin with the literal text you configured, matched case-sensitively.",
+          startsWithChecks:
+            "The value must begin with the literal text you configured, matched case-sensitively.",
           startsOk: "Accepted, with the setting EG-.",
           startsWrongPlace:
             "Refused: VALIDATION_INVALID_FORMAT. The text is present but not at the start — use Contains Text if position does not matter.",
@@ -1928,7 +1964,7 @@ export const en = {
 
           savingTitle: "Saving around a hidden field",
           savingIntro:
-            "This is the part worth understanding properly, because the obvious implementation would destroy data. When somebody saves a record, the save replaces the whole set of custom-field values at once — so a field absent from the request would normally mean \"clear it\".",
+            'This is the part worth understanding properly, because the obvious implementation would destroy data. When somebody saves a record, the save replaces the whole set of custom-field values at once — so a field absent from the request would normally mean "clear it".',
           savingWhy:
             "A restricted field is absent for a completely different reason: the person was never sent it. The product tells those two cases apart, and leaves a restricted field's stored value exactly as it was. Somebody who cannot see a value can no longer erase it by editing the record around it.",
           savingInfoTitle: "The practical consequence",
@@ -1980,8 +2016,7 @@ export const en = {
             "The definitions spreadsheet export: restricted columns are absent from the file rather than present and blank.",
 
           exampleTitle: "A worked example",
-          exampleIntro:
-            "Restricting a salary field on a staff record, and confirming it behaves.",
+          exampleIntro: "Restricting a salary field on a staff record, and confirming it behaves.",
           e1Title: "Define the field and give it a value",
           e1Content:
             "As an administrator who can see everything, define a custom field with the key salary on the staff record type, and set a value on one record.",
@@ -2010,7 +2045,7 @@ export const en = {
           description:
             "Editing and retiring definitions, the change-history dialog, the usage and impact report, deleting without destroying data, the 18-column spreadsheet export, and the two read-only reference screens.",
           intro:
-            "Once fields exist, the Custom Fields screen is where they are looked after: edited, retired, audited, measured and exported. This page covers each of those, and the two read-only reference screens that answer \"what types exist\" and \"what record types can I attach to\".",
+            'Once fields exist, the Custom Fields screen is where they are looked after: edited, retired, audited, measured and exported. This page covers each of those, and the two read-only reference screens that answer "what types exist" and "what record types can I attach to".',
 
           rowMenuTitle: "The row menu",
           rowMenuIntro:
@@ -2101,7 +2136,8 @@ export const en = {
             "Every other pair — 453 of the 462 possible, including any pair touching EntityReference, UserReference, File, Image or RichText.",
           classIncompatibleRisk:
             "Refused before anything runs. A reference-shaped or media-shaped value has no meaningful text or number form to convert into, and the reverse direction has nothing real to point at.",
-          conversionLossyWarnTitle: "A lossy conversion is applied to every stored value, permanently",
+          conversionLossyWarnTitle:
+            "A lossy conversion is applied to every stored value, permanently",
           conversionLossyWarnContent:
             "A successful run changes every row at once — there is no separate confirmation per record, and nothing is truncated or cleared silently outside of what the target type's own conversion does. Always run Usage & impact first to see how many records will be affected before confirming.",
           conversionDryRunIntro:
@@ -2123,21 +2159,24 @@ export const en = {
           vActionsDraft:
             "Publish, Discard. Nothing currently edits a draft after it is minted — a wrong clone has to be discarded and re-minted.",
           vStatusPublished: "Published",
-          vMeaningPublished: "The one active version currently served on every record form for this field.",
+          vMeaningPublished:
+            "The one active version currently served on every record form for this field.",
           vActionsPublished: "Create Draft (mints a new working clone), View History.",
           vStatusDeprecated: "Deprecated",
           vMeaningDeprecated:
             "A former Published version, replaced when a draft was promoted. Its cloned options and rules stay attached to it but are inert — enforcement only ever reads the current Published version.",
           vActionsDeprecated: "Read-only audit record. Retained for historical integrity.",
           vStatusArchived: "Archived",
-          vMeaningArchived: "A discarded draft, kept rather than deleted so its version number can never be reissued.",
+          vMeaningArchived:
+            "A discarded draft, kept rather than deleted so its version number can never be reissued.",
           vActionsArchived: "Historical reference only.",
           versionsSnapshotWarnTitle: "A draft is a snapshot, not a live mirror",
           versionsSnapshotWarnContent:
             "A draft does not track edits made to the live version while it stays open — it holds only what the live version looked like at the moment it was minted. Publishing does not merge the two: it replaces the live version outright with the draft's snapshot, silently discarding any live edits made in the meantime. Publish a draft promptly, or re-mint it if the live version has moved on since.",
           versionsPromotionIntro:
             "Publishing a draft deprecates the incumbent Published version in the same save. The version number always increments, and every form load from that point serves the new Published version.",
-          versionsRuleGuardTitle: "A publish that would silently lose every visibility rule is refused",
+          versionsRuleGuardTitle:
+            "A publish that would silently lose every visibility rule is refused",
           versionsRuleGuardContent:
             "Visibility rules are cloned onto a draft at the moment it is minted, not fetched fresh at publish time — so by the time a publish happens there is ordinarily nothing left to lose. The one case this backstop exists for is the outgoing version genuinely carrying rules while the draft carries none: publish is refused outright rather than silently making every conditionally-hidden field on that record type unconditionally visible.",
 
@@ -2152,8 +2191,10 @@ export const en = {
           deleteColTitle: "Deleting the definition",
           deleteCol1: "Refused on the first attempt if the field holds any answers",
           deleteCol2: "Destroys those answers once the retention window passes, if you confirm",
-          deleteCol3: "Frees the key, so a new field could later reuse it — with none of the old answers",
-          deleteCol4: "Is recorded in history as Deleted, and may be Restored while it is recoverable",
+          deleteCol3:
+            "Frees the key, so a new field could later reuse it — with none of the old answers",
+          deleteCol4:
+            "Is recorded in history as Deleted, and may be Restored while it is recoverable",
 
           historyTitle: "Definition history",
           historyIntro:
@@ -2161,7 +2202,8 @@ export const en = {
           thEvent: "Event",
           thMeans: "What it means",
           evCreated: "The field was defined.",
-          evUpdated: "Something on the definition changed — a label, a flag, the validator, the options.",
+          evUpdated:
+            "Something on the definition changed — a label, a flag, the validator, the options.",
           evDeactivated: "Active was turned off, retiring the field without touching its answers.",
           evReactivated: "Active was turned back on.",
           evDeleted: "The definition was deleted and is still recoverable.",
@@ -2194,7 +2236,8 @@ export const en = {
           readLegacyValuesMeans:
             "Answers still held in the older storage from before the current value store. Counted separately so a migration in progress is visible rather than hidden.",
           readOptions: "Options",
-          readOptionsMeans: "How many options the field's list holds, for a Select or MultiSelect field.",
+          readOptionsMeans:
+            "How many options the field's list holds, for a Select or MultiSelect field.",
           readByRecordType: "By record type",
           readByRecordTypeMeans:
             "The same answer count split by the kind of record holding it, so you can see where the data actually is.",
@@ -2206,7 +2249,7 @@ export const en = {
             "Says whether the counts below cover your workspace only or every workspace on the platform. The two differ by orders of magnitude for an inherited field, and nothing about a bare number tells you which one you are looking at.",
           usageWarnTitle: "Read the warning, not the number",
           usageWarnContent:
-            "The \"this will destroy data\" line comes from the server's own verdict, never from the count on screen. A global platform field is measured across every workspace that inherited it, so it can show zero in your own workspace and still warn you — correctly. The warning is the thing to trust.",
+            'The "this will destroy data" line comes from the server\'s own verdict, never from the count on screen. A global platform field is measured across every workspace that inherited it, so it can show zero in your own workspace and still warn you — correctly. The warning is the thing to trust.',
 
           deleteTitle: "Deleting without destroying data",
           deleteIntro:
@@ -2264,7 +2307,7 @@ export const en = {
             "Both are reached from links in the Custom Fields page header, both are read-only, and both are gated behind the same view permission as the Custom Fields screen itself. Neither has a sidebar entry of its own, which is deliberate.",
           valueTypesScreenTitle: "Value Types",
           valueTypesScreenIntro:
-            "A table of all twenty-two value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer \"what types exist\" without opening a definition form. Text is the only row showing validator support, and the four reference-shaped types (EntityReference, UserReference, File, Image) show no options list of their own — what they point at comes from another module or an upload rather than from a list you author.",
+            'A table of all twenty-two value types with, for each, a description of what it is for, whether it takes a placeholder, whether it owns an options list, and whether it supports a validator. Use it to answer "what types exist" without opening a definition form. Text is the only row showing validator support, and the four reference-shaped types (EntityReference, UserReference, File, Image) show no options list of their own — what they point at comes from another module or an upload rather than from a list you author.',
           entityTypesScreenTitle: "Entity Types",
           entityTypesScreenIntro:
             "A list of every record type a custom field can be attached to: its display name, its key, and the module that owns it.",
@@ -2318,7 +2361,8 @@ export const en = {
           vNoRetro: "Attaching a validator never re-checks answers already saved.",
           vNoRetroWhy:
             "Validation runs in exactly one place: the save path. Nothing walks historical data when a validator is newly attached, so a field can legitimately hold values its own current validator would refuse, until somebody re-enters them.",
-          vWhitespace: "A whitespace-only value skips validation entirely unless the field is Required.",
+          vWhitespace:
+            "A whitespace-only value skips validation entirely unless the field is Required.",
           vWhitespaceWhy:
             "The emptiness check runs before any type or validator check. On an optional field a value of nothing but spaces is therefore stored as cleared with no validator error at all. Mark the field Required if a blank answer should be refused.",
           vNoRegex: "There is no pattern or regular-expression box anywhere.",
@@ -2330,7 +2374,8 @@ export const en = {
           vNoReference: "There is no browsable validator reference inside the product.",
           vNoReferenceWhy:
             "Value types and record types each got a read-only reference screen; validators did not. The dropdown on a Text field's definition form is the only in-product list.",
-          vNoChecksumEgUae: "The Egyptian and Emirati ID checks verify structure but not a check digit.",
+          vNoChecksumEgUae:
+            "The Egyptian and Emirati ID checks verify structure but not a check digit.",
           vNoChecksumEgUaeWhy:
             "Neither country publishes a check-digit algorithm, and the community guesses found during research disagreed with each other. A wrong algorithm would reject real, valid IDs, which is worse than not checking the final digit at all.",
           vNoAe: "Postal Code does not support the United Arab Emirates.",
@@ -2338,7 +2383,8 @@ export const en = {
             "The UAE has no national postal-code system, so there is nothing to validate against. Attempting it is refused with its own explanatory message rather than a generic one.",
 
           typesTitle: "Value-type behaviours",
-          tValueTypeFixed: "The key, the record type and the scope can never be changed once a field is saved.",
+          tValueTypeFixed:
+            "The key, the record type and the scope can never be changed once a field is saved.",
           tValueTypeFixedWhy:
             "Renaming, retargeting or rescoping after the fact would make every already-stored answer ambiguous about what it means. The value type is the one exception with a narrow escape hatch: nine specific type pairs can be converted after the fact — see Managing — everything else still means delete and recreate.",
           tMultiOrder: "A MultiSelect answer reads back in selection order, not option order.",
@@ -2380,7 +2426,8 @@ export const en = {
           tTextNotTrimmed: "Text does not trim surrounding spaces; Select does.",
           tTextNotTrimmedWhy:
             "A Text value is stored exactly as submitted, because leading or trailing space can be meaningful in free text. A Select value is trimmed on both sides before being matched against the options, so a stray space never causes a spurious rejection.",
-          tOracleBytes: "Long Arabic text can be refused below the stated character cap on one database.",
+          tOracleBytes:
+            "Long Arabic text can be refused below the stated character cap on one database.",
           tOracleBytesWhy:
             "The 4,000-character Text cap is an exact character count on two of the three supported databases. On the third it is counted in bytes, so multi-byte text — Arabic included — can reach the limit sooner. Use LongText if you are close to the boundary.",
 
@@ -2388,7 +2435,8 @@ export const en = {
           fNoStoredName: "A reference never stores the name of the record it points at.",
           fNoStoredNameWhy:
             "A stored name would sit inside the record holding the field, and would therefore be readable by anybody who can read that record — while the name itself is guarded by the target's own permission. There is no setting to turn this on, and there will not be one. The compensating benefit is that a name corrected on its own record is corrected everywhere it is referenced, immediately.",
-          fIdOpaque: "The identity of the referenced record is opaque and must be round-tripped unchanged.",
+          fIdOpaque:
+            "The identity of the referenced record is opaque and must be round-tripped unchanged.",
           fIdOpaqueWhy:
             "It is another module's key, encrypted for the wire, and nothing about it is meant to be read or reshaped. One altered character and the product correctly reports the stored reference as malformed. Send back exactly the string you received.",
           fSameNames: "A reference is written under the same two names it is read under.",
@@ -2397,25 +2445,27 @@ export const en = {
           fFiveFailures: "A reference that will not display says which of five things happened.",
           fFiveFailuresWhy:
             "No permission, record gone, malformed value, a lookup that failed just now, and a kind of record this installation cannot answer for are five different problems with five different remedies. Rendering them all as one blank field is what leaves a pointer at a deleted record unnoticed for a year.",
-          fMergedAnswers: "\"Deleted\" and \"in a workspace you cannot see\" are one answer.",
+          fMergedAnswers: '"Deleted" and "in a workspace you cannot see" are one answer.',
           fMergedAnswersWhy:
-            "Telling them apart would let somebody test identities one at a time to discover what exists in another workspace. \"You may not view this kind of record\" is told apart from both, because it describes the reader's own access and reveals nothing.",
-          fDeleteClears: "Deleting a referenced record clears every pointer at it and keeps every value row.",
+            'Telling them apart would let somebody test identities one at a time to discover what exists in another workspace. "You may not view this kind of record" is told apart from both, because it describes the reader\'s own access and reveals nothing.',
+          fDeleteClears:
+            "Deleting a referenced record clears every pointer at it and keeps every value row.",
           fDeleteClearsWhy:
             "Both pieces of each affected answer are cleared together, never one without the other. Nothing is deleted: the answer keeps its row, its version and its audit trail, so the field afterwards reads as genuinely empty rather than as broken.",
           fNoBacklinks: "Nothing lists the references pointing at a given record.",
           fNoBacklinksWhy:
-            "There is no \"what points at this?\" view anywhere, and deleting a record does not warn you how many pointers it is about to clear. The clearing is silent because it is safe, not because it is hidden.",
+            'There is no "what points at this?" view anywhere, and deleting a record does not warn you how many pointers it is about to clear. The clearing is silent because it is safe, not because it is hidden.',
           fLimitedTargets: "Only three kinds of record can currently be referenced.",
           fLimitedTargetsWhy:
-            "Staff members, user accounts and party people — the kinds whose owning module supplies a searchable, permission-checked list. Anything else is refused rather than answered with an empty list, because an empty list looks like a correct result and would say \"there are none of these\" when the truth is \"this cannot be asked\".",
+            'Staff members, user accounts and party people — the kinds whose owning module supplies a searchable, permission-checked list. Anything else is refused rather than answered with an empty list, because an empty list looks like a correct result and would say "there are none of these" when the truth is "this cannot be asked".',
           fNoAdminTarget: "Administrator records cannot be referenced at all.",
           fNoAdminTargetWhy:
             "An administrator may belong to no workspace — a platform administrator has none — so a pointer at one could reach past every workspace boundary in the product. A User Reference field refuses one outright, and the definition form never offers one.",
           fUnpinnedIsLegal: "Leaving a reference field unpinned is a permanent, supported state.",
           fUnpinnedIsLegalWhy:
-            "It means \"any kind this person may reference\", and each answer records which kind it chose. It must never be read as \"nothing configured, therefore nothing valid\" — the record form handles it by asking for the kind of record first and the record second.",
-          fPopulatedUnpinned: "A populated unpinned field offers no way to change the kind of record.",
+            'It means "any kind this person may reference", and each answer records which kind it chose. It must never be read as "nothing configured, therefore nothing valid" — the record form handles it by asking for the kind of record first and the record second.',
+          fPopulatedUnpinned:
+            "A populated unpinned field offers no way to change the kind of record.",
           fPopulatedUnpinnedWhy:
             "The stored answer's own kind is used for the picker, so re-picking is confined to that kind. Clearing the field brings the type control back. A real limit rather than a defect, and the shape of this feature most likely to be reported as one.",
           fNotExported: "A pinned target type is not in the definitions export.",
@@ -2435,7 +2485,8 @@ export const en = {
           oEnglishStored: "The Arabic option label is display only.",
           oEnglishStoredWhy:
             "The two label lists are matched row by row, and the English one is what is written to the record and validated against. An Arabic reader sees Arabic on the way in and on the way out; the data underneath stays one consistent value.",
-          oNoSharedSets: "An attached Option Set does not automatically follow its own later edits.",
+          oNoSharedSets:
+            "An attached Option Set does not automatically follow its own later edits.",
           oNoSharedSetsWhy:
             "A Countries Option Set can be defined once and attached to several fields, which is the way to avoid writing the same list three times. What it does not do is propagate a later edit to that Option Set onto fields that already attached it — each attachment has to be refreshed on purpose.",
 
@@ -2455,7 +2506,8 @@ export const en = {
           gOneEntityType: "A group belongs to exactly one record type.",
           gOneEntityTypeWhy:
             "Nothing is listed until you pick a record type, and changing a field's record type clears its group, because a group from one type is never valid for another.",
-          gUniquenessIndex: "In an upgraded database, stable-key uniqueness rests on the application check.",
+          gUniquenessIndex:
+            "In an upgraded database, stable-key uniqueness rests on the application check.",
           gUniquenessIndexWhy:
             "Groups that existed before stable keys carry an empty key until a backfill is run, and the database-level uniqueness constraint stays switched off until that has happened everywhere — it would otherwise reject the second of those empty keys.",
 
@@ -2463,7 +2515,8 @@ export const en = {
           sSensitivityLabel: "Sensitivity is a label, not an access control.",
           sSensitivityLabelWhy:
             "It is stored, round-tripped and reportable, and it changes nothing about who can read a value. Field-level security is the mechanism that restricts access, and the two are unconnected.",
-          sRestrictedByResource: "Restrictions are keyed by permission resource, not by record type.",
+          sRestrictedByResource:
+            "Restrictions are keyed by permission resource, not by record type.",
           sRestrictedByResourceWhy:
             "It is the same resource that already guards the record itself, so one restricted-fields list covers a screen's built-in fields and its custom fields alike. Names are matched without regard to case.",
           sRestrictedInvisible: "A restricted field is absent, not blank.",
@@ -2489,7 +2542,8 @@ export const en = {
           eRestrictedAbsent: "Fields restricted from you are absent from the file, not blank.",
           eRestrictedAbsentWhy:
             "Field-level security applies to the export exactly as it does on screen, and a blank column would still reveal that the field exists.",
-          eNoImport: "The spreadsheet export is one-way, and the one bulk-creation path this product has ever offered is switched off.",
+          eNoImport:
+            "The spreadsheet export is one-way, and the one bulk-creation path this product has ever offered is switched off.",
           eNoImportWhy:
             "The exported spreadsheet is a report for reading, not a template that can be re-imported. A JSON schema-bundle import exists — its own dialog, its own endpoint, its own per-group outcome table — but every call to it is refused with a 409 by a deliberate, permanent containment switch, alongside the matching schema export. Bulk field creation is not available through the product today, by that switch's design rather than by omission.",
           eTextCells: "Every export cell is written as text.",
@@ -2618,8 +2672,7 @@ export const en = {
           thWhatItDoes: "What it does",
           thEffect: "Effect on existing data",
           actionBind: "Bind",
-          doingBind:
-            "Attaches a custom field definition to an option set's published version.",
+          doingBind: "Attaches a custom field definition to an option set's published version.",
           effectBind:
             "Field switches from inline options to the option set's choices. Previously saved values are preserved.",
           actionSwitch: "Switch version",
@@ -2630,8 +2683,7 @@ export const en = {
           actionDetach: "Detach (Unbind)",
           doingDetach:
             "Removes the option set binding, reverting the field back to standalone inline options.",
-          effectDetach:
-            "Field stops querying the option set. Stored record values remain intact.",
+          effectDetach: "Field stops querying the option set. Stored record values remain intact.",
           switchCautionTitle: "Binding stability",
           switchCautionContent:
             "When detaching or switching option sets, ensure that existing record values remain compatible with the new choice keys. Deactivating an option rather than removing its key guarantees that historical records display without interruption.",
@@ -2639,12 +2691,10 @@ export const en = {
           platformAdminTitle: "Platform administrator capabilities",
           platformAdminIntro:
             "Platform Super Administrators operate with elevated system-wide governance rights:",
-          platformAdmin1:
-            "Create global option sets shared across all tenant workspaces.",
+          platformAdmin1: "Create global option sets shared across all tenant workspaces.",
           platformAdmin2:
             "Create and publish new versions for platform-owned (non-seeded) option sets.",
-          platformAdmin3:
-            "Manage option set availability across multi-tenant boundaries.",
+          platformAdmin3: "Manage option set availability across multi-tenant boundaries.",
           platformAdmin4:
             "Inspect version chains and audit logs for all option sets platform-wide.",
           platformAdmin5:
@@ -2728,9 +2778,12 @@ export const en = {
           thLength: "Length",
           thDescription: "Cryptographic Purpose",
           descVersion: "Magic Frame version byte (0x02 for v2 authenticated frames).",
-          descPlatformKey: "Big-endian 32-bit integer identifying the platform root key in the keyring.",
-          descTenantVersion: "Big-endian 16-bit integer identifying the tenant key rotation version.",
-          descNonce: "Cryptographically secure random 96-bit initialization vector generated per encryption operation.",
+          descPlatformKey:
+            "Big-endian 32-bit integer identifying the platform root key in the keyring.",
+          descTenantVersion:
+            "Big-endian 16-bit integer identifying the tenant key rotation version.",
+          descNonce:
+            "Cryptographically secure random 96-bit initialization vector generated per encryption operation.",
           descAuthTag: "128-bit GCM authentication tag verifying ciphertext and AAD integrity.",
           descCiphertext: "AES-256-GCM encrypted field value payload.",
           aadTitle: "Additional Authenticated Data (AAD) binding",
@@ -2757,22 +2810,29 @@ export const en = {
           thStrategy: "Operational Strategy",
           thBehavior: "Engine Implementation",
           stratLocking: "Zero table locks",
-          behLocking: "Uses cursor-based pagination and optimistic concurrency (`RowVersion`) to update individual rows without exclusive table locks.",
+          behLocking:
+            "Uses cursor-based pagination and optimistic concurrency (`RowVersion`) to update individual rows without exclusive table locks.",
           stratBatching: "Configurable cursor batching",
-          behBatching: "Processes 500 records per loop iteration, throttling execution to avoid I/O starvation on production database instances.",
+          behBatching:
+            "Processes 500 records per loop iteration, throttling execution to avoid I/O starvation on production database instances.",
           stratResilience: "Crash-safe & idempotent",
-          behResilience: "If the process restarts, the cursor resumes from the last completed offset. Already-migrated records are skipped safely.",
+          behResilience:
+            "If the process restarts, the cursor resumes from the last completed offset. Already-migrated records are skipped safely.",
           stratObservability: "Real-time metrics & progress",
-          behObservability: "Reports processed count, failure count, throughput, and completion percentage to the Studio dashboard and admin portal.",
+          behObservability:
+            "Reports processed count, failure count, throughput, and completion percentage to the Studio dashboard and admin portal.",
           stratCluster: "Platform cluster rewrap",
           behCluster:
             "SuperAdmin-initiated migration that rewraps all tenant secrets under the rotated platform key and updates entity field values across all tenants with zero downtime.",
           toolingTitle: "Management interfaces",
           toolingIntro:
             "Operators and developers have three complementary interfaces for managing encryption:",
-          toolPortal: "Tenant Security Portal: Web UI at `/custom-fields/security` for self-service rotation and rewrap monitoring.",
-          toolCli: "SCRIPE CLI: Comprehensive terminal tooling via `scripe crypto status`, `rotate`, `rewrap`, `verify`, and `revoke`.",
-          toolStudio: "SCRIPE Studio: Visual interactive dashboard at `/crypto` with keyring tables and live migration progress bars.",
+          toolPortal:
+            "Tenant Security Portal: Web UI at `/custom-fields/security` for self-service rotation and rewrap monitoring.",
+          toolCli:
+            "SCRIPE CLI: Comprehensive terminal tooling via `scripe crypto status`, `rotate`, `rewrap`, `verify`, and `revoke`.",
+          toolStudio:
+            "SCRIPE Studio: Visual interactive dashboard at `/crypto` with keyring tables and live migration progress bars.",
         },
       },
     },

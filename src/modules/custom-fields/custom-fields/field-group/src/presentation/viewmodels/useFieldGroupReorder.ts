@@ -34,8 +34,7 @@ export function useFieldGroupReorder({
   const { t } = useI18n();
 
   const reorderMutation = useMutation({
-    mutationFn: (items: { id: string; sortOrder: number }[]) =>
-      fieldGroupRepository.reorder(items),
+    mutationFn: (items: { id: string; sortOrder: number }[]) => fieldGroupRepository.reorder(items),
     onSuccess: () => {
       onInvalidate();
       toast.success(t("fieldGroup.toast.reordered"));

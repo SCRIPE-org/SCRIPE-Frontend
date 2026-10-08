@@ -164,7 +164,7 @@ export function EntityReferenceCustomFieldControl({
         <Label htmlFor={id} className="text-sm font-medium">
           {label}
           {required && (
-            <span className="text-destructive ms-1" aria-hidden="true">
+            <span className="ms-1 text-destructive" aria-hidden="true">
               *
             </span>
           )}

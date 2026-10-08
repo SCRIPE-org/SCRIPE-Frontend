@@ -170,18 +170,16 @@ export function useSelectOptions({
     if (options && options.length > 0) {
       const matches = options.filter((opt) => currentValues.includes(opt.value));
       if (matches.length > 0) {
-        queueMicrotask(() => {
-          setSelectedLabelMap((prev) => {
-            let hasNew = false;
-            const next = new Map(prev);
-            for (const opt of matches) {
-              if (!next.has(opt.value)) {
-                next.set(opt.value, opt);
-                hasNew = true;
-              }
+        setSelectedLabelMap((prev) => {
+          let hasNew = false;
+          const next = new Map(prev);
+          for (const opt of matches) {
+            if (!next.has(opt.value)) {
+              next.set(opt.value, opt);
+              hasNew = true;
             }
-            return hasNew ? next : prev;
-          });
+          }
+          return hasNew ? next : prev;
         });
       }
     }
@@ -290,9 +288,7 @@ export function useSelectOptions({
   const findSelectedMatch = React.useCallback(
     (option: GenericSelectOption): string | undefined => {
       if (option.uniqueKey) {
-        return currentValues.find(
-          (val) => allOptionsMap.get(val)?.uniqueKey === option.uniqueKey
-        );
+        return currentValues.find((val) => allOptionsMap.get(val)?.uniqueKey === option.uniqueKey);
       }
       return currentValues.includes(option.value) ? option.value : undefined;
     },

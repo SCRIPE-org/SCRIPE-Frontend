@@ -17,10 +17,7 @@ export interface PasswordStrengthMeterProps {
 /**
  * Live Password Strength Bar and Label with Shannon Entropy Bits.
  */
-export function PasswordStrengthMeter({
-  score,
-  entropyBits,
-}: PasswordStrengthMeterProps) {
+export function PasswordStrengthMeter({ score, entropyBits }: PasswordStrengthMeterProps) {
   const { t } = useI18n();
 
   const getTier = () => {
@@ -67,19 +64,19 @@ export function PasswordStrengthMeter({
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5">
           <ShieldCheck className={cn("h-3.5 w-3.5", tier.text)} aria-hidden="true" />
-          <span className="text-muted-foreground font-medium">
+          <span className="font-medium text-muted-foreground">
             {t("auth.accountSetup.passwordStrength") || "Password Security"}
           </span>
         </div>
         <div className="flex items-center gap-2">
           {entropyBits !== undefined && entropyBits > 0 && (
-            <span className="text-[10px] font-mono text-muted-foreground/80">
+            <span className="font-mono text-[10px] text-muted-foreground/80">
               ~{Math.round(entropyBits)} bits
             </span>
           )}
           <Badge
             variant="outline"
-            className={cn("text-[10px] px-1.5 py-0 font-semibold border-current", tier.text)}
+            className={cn("border-current px-1.5 py-0 text-[10px] font-semibold", tier.text)}
           >
             {tier.label}
           </Badge>
@@ -88,7 +85,7 @@ export function PasswordStrengthMeter({
 
       {/* 4-Segment Strength Bar */}
       <div
-        className="grid grid-cols-4 gap-1.5 h-1.5 w-full"
+        className="grid h-1.5 w-full grid-cols-4 gap-1.5"
         role="progressbar"
         aria-valuenow={score}
         aria-valuemin={0}

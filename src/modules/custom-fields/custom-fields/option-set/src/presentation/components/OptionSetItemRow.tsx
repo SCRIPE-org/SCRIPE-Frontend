@@ -118,9 +118,7 @@ export function OptionSetItemRow({
 
   return (
     <TableRow key={row.rowId}>
-      <TableCell className="align-top tabular-nums text-nx-ink-2">
-        {position}
-      </TableCell>
+      <TableCell className="align-top tabular-nums text-nx-ink-2">{position}</TableCell>
 
       {isEditable ? (
         <>

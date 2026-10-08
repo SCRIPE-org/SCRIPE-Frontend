@@ -6,10 +6,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@core/ui/card";
 import { EmptyState } from "@core/ui/empty-state";
-import type {
-  AvailabilityCandidate,
-  BookingWorkspaceStage,
-} from "../../domain/entities/Booking";
+import type { AvailabilityCandidate, BookingWorkspaceStage } from "../../domain/entities/Booking";
 
 interface AvailabilityCandidatesProps {
   t: (key: string, values?: Record<string, string | number>) => string;
@@ -51,16 +48,24 @@ function CandidateCard({
   onSelect?: () => void;
 }) {
   return (
-    <div className={`rounded-xl border p-4 ${selected ? "border-nx-accent bg-nx-accent/5" : "border-nx-border bg-nx-surface"}`}>
+    <div
+      className={`rounded-xl border p-4 ${selected ? "bg-nx-accent/5 border-nx-accent" : "border-nx-border bg-nx-surface"}`}
+    >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <p className="font-semibold text-nx-ink">{candidate.resourceName}</p>
             <Badge variant={candidate.isAvailable ? "active" : "inactive"}>
-              {t(candidate.isAvailable ? "booking.availability.available" : "booking.availability.unavailable")}
+              {t(
+                candidate.isAvailable
+                  ? "booking.availability.available"
+                  : "booking.availability.unavailable"
+              )}
             </Badge>
           </div>
-          <p className="mt-1 text-sm text-nx-ink-2">{candidate.facilityName} Â· {candidate.profileName}</p>
+          <p className="mt-1 text-sm text-nx-ink-2">
+            {candidate.facilityName} Â· {candidate.profileName}
+          </p>
           <p className="mt-2 text-sm text-nx-ink">{formatInterval(candidate, locale)}</p>
           <p className="mt-1 text-xs text-nx-ink-3">{candidate.timeZoneId}</p>
           <p className="mt-2 text-sm text-nx-ink-2">
@@ -112,9 +117,15 @@ export function AvailabilityCandidates({
           </CardTitle>
           <p className="mt-1 text-sm text-nx-ink-2">{t("booking.availability.description")}</p>
         </div>
-        <Button type="button" disabled={!canSearch || searchDisabled || stage === "searching"} onClick={() => void onSearch()}>
+        <Button
+          type="button"
+          disabled={!canSearch || searchDisabled || stage === "searching"}
+          onClick={() => void onSearch()}
+        >
           <Search className="size-4" aria-hidden="true" />
-          {stage === "searching" ? t("booking.availability.searching") : t("booking.availability.action")}
+          {stage === "searching"
+            ? t("booking.availability.searching")
+            : t("booking.availability.action")}
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -145,14 +156,20 @@ export function AvailabilityCandidates({
         ))}
 
         {unavailable.length > 0 && (
-          <details className="rounded-xl border border-nx-border p-4">
+          <details className="border-nx-border rounded-xl border p-4">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-medium text-nx-ink">
               {t("booking.availability.unavailableGroup")}
               <ChevronDown className="size-4" aria-hidden="true" />
             </summary>
             <div className="mt-4 space-y-3">
               {unavailable.map((candidate) => (
-                <CandidateCard key={candidate.resourceId} candidate={candidate} selected={false} locale={locale} t={t} />
+                <CandidateCard
+                  key={candidate.resourceId}
+                  candidate={candidate}
+                  selected={false}
+                  locale={locale}
+                  t={t}
+                />
               ))}
             </div>
           </details>

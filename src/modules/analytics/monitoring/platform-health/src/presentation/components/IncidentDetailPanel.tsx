@@ -14,22 +14,19 @@ interface IncidentDetailPanelProps {
 /**
  * IncidentDetailPanel
  */
-export function IncidentDetailPanel({
-  incident,
-  isLoading = false,
-}: IncidentDetailPanelProps) {
+export function IncidentDetailPanel({ incident, isLoading = false }: IncidentDetailPanelProps) {
   const { t } = useI18n();
 
   if (!incident) {
     return (
-      <div className="rounded-xl border border-border bg-card p-6 shadow-xs flex flex-col items-center justify-center text-center min-h-[280px]">
-        <div className="w-12 h-12 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center mb-3">
+      <div className="shadow-xs flex min-h-[280px] flex-col items-center justify-center rounded-xl border border-border bg-card p-6 text-center">
+        <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/10 text-emerald-400">
           <ShieldCheck className="h-6 w-6" />
         </div>
         <h3 className="text-base font-bold text-foreground">
           {t("platformHealth.incidents.noActiveIncidentsTitle") || "No Active Incidents"}
         </h3>
-        <p className="text-xs text-muted-foreground max-w-sm mt-1">
+        <p className="mt-1 max-w-sm text-xs text-muted-foreground">
           {t("platformHealth.incidents.noActiveIncidentsDesc") ||
             "All monitored services and external dependencies are operating within normal parameters."}
         </p>
@@ -43,15 +40,15 @@ export function IncidentDetailPanel({
   const isResolved = incident.status.toLowerCase() === "resolved";
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 sm:p-5 shadow-xs flex flex-col gap-4">
+    <div className="shadow-xs flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border/60 pb-3">
         <div className="flex items-center gap-2.5">
           <div
-            className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 ${
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border ${
               isInvestigating
-                ? "bg-rose-500/10 border-rose-500/20 text-rose-400"
-                : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                ? "border-rose-500/20 bg-rose-500/10 text-rose-400"
+                : "border-emerald-500/20 bg-emerald-500/10 text-emerald-400"
             }`}
           >
             {isInvestigating ? (
@@ -64,7 +61,7 @@ export function IncidentDetailPanel({
             <h2 className="text-base font-bold tracking-tight text-foreground">
               {t("platformHealth.incidents.detailsTitle") || "Incident Details"}
             </h2>
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
+            <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
               <Clock className="h-3 w-3" />
               <span>
                 {new Date(incident.detectedAt).toLocaleString([], {
@@ -80,12 +77,12 @@ export function IncidentDetailPanel({
 
         {/* Status Pill */}
         <span
-          className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${
+          className={`inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold ${
             isInvestigating
-              ? "bg-rose-500/15 text-rose-400 border-rose-500/30"
+              ? "border-rose-500/30 bg-rose-500/15 text-rose-400"
               : isResolved
-              ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/30"
-              : "bg-sky-500/15 text-sky-400 border-sky-500/30"
+                ? "border-emerald-500/30 bg-emerald-500/15 text-emerald-400"
+                : "border-sky-500/30 bg-sky-500/15 text-sky-400"
           }`}
         >
           {incident.status}
@@ -94,51 +91,47 @@ export function IncidentDetailPanel({
 
       {/* Incident Title & Meta */}
       <div>
-        <h3 className="text-base font-bold text-foreground leading-snug">
-          {incident.title}
-        </h3>
+        <h3 className="text-base font-bold leading-snug text-foreground">{incident.title}</h3>
       </div>
 
       {/* Summary */}
       <div className="rounded-lg border border-border/60 bg-muted/20 p-3">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+        <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
           {t("platformHealth.incidents.summary") || "Summary"}
         </div>
-        <p className="text-xs text-foreground/90 leading-relaxed">
-          {incident.description}
-        </p>
+        <p className="text-xs leading-relaxed text-foreground/90">{incident.description}</p>
       </div>
 
       {/* Affected Service & Impact */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div className="rounded-lg border border-border/60 bg-card/60 p-3">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+          <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
             {t("platformHealth.incidents.affectedService") || "Affected Service"}
           </div>
-          <div className="text-sm font-semibold text-foreground flex items-center gap-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Layers className="h-4 w-4 text-primary" />
             <span>{incident.affectedService}</span>
           </div>
         </div>
 
         <div className="rounded-lg border border-border/60 bg-card/60 p-3">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-1">
+          <div className="mb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
             {t("platformHealth.incidents.impact") || "Operational Impact"}
           </div>
-          <p className="text-xs text-muted-foreground leading-snug">
+          <p className="text-xs leading-snug text-muted-foreground">
             {incident.impact || "Standard operational latency threshold exceeded."}
           </p>
         </div>
       </div>
 
       {/* Investigation Timeline */}
-      <div className="pt-2 border-t border-border/60">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground mb-2">
+      <div className="border-t border-border/60 pt-2">
+        <div className="mb-2 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
           {t("platformHealth.incidents.timeline") || "Investigation Timeline"}
         </div>
         <div className="space-y-2 text-xs">
           <div className="flex items-start gap-2">
-            <span className="h-2 w-2 rounded-full bg-primary mt-1 shrink-0" />
+            <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-primary" />
             <div>
               <span className="font-semibold text-foreground">Detected:</span>{" "}
               <span className="text-muted-foreground">
@@ -149,7 +142,7 @@ export function IncidentDetailPanel({
           </div>
           {incident.resolvedAt && (
             <div className="flex items-start gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 mt-1 shrink-0" />
+              <span className="mt-1 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
               <div>
                 <span className="font-semibold text-emerald-400">Resolved:</span>{" "}
                 <span className="text-muted-foreground">

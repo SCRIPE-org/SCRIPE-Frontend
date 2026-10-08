@@ -81,7 +81,13 @@ export function EntityReferencePanel({
     }
     if (options.length === 0) {
       return draft.trim() ? (
-        <EmptyState bare size="sm" icon={SearchX} title={t(`${I18N}.noResults`)} description={draft} />
+        <EmptyState
+          bare
+          size="sm"
+          icon={SearchX}
+          title={t(`${I18N}.noResults`)}
+          description={draft}
+        />
       ) : (
         <EmptyState bare size="sm" icon={Inbox} title={t(`${I18N}.noResults`)} />
       );
@@ -98,10 +104,7 @@ export function EntityReferencePanel({
   };
 
   return (
-    <PopoverContent
-      align="start"
-      className="w-[var(--radix-popover-trigger-width)] min-w-56 p-0"
-    >
+    <PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] min-w-56 p-0">
       <Command label={t("select.optionsLabel")} shouldFilter={false}>
         <CommandInput
           aria-label={t("select.searchLabel")}

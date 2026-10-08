@@ -79,7 +79,7 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
           options={resourceOptions}
           value={vm.selectedResourceId}
           onValueChange={(value: string | string[]) =>
-            vm.setSelectedResourceId(Array.isArray(value) ? value[0] ?? "" : value)
+            vm.setSelectedResourceId(Array.isArray(value) ? (value[0] ?? "") : value)
           }
           placeholder={t("availability.selectResource")}
         />
@@ -125,11 +125,7 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
               onTimeZoneChange={setTimeZoneId}
             />
 
-            <AvailabilitySearchCard
-              vm={vm}
-              timeZoneId={timeZoneId}
-              canSearch={canSearch}
-            />
+            <AvailabilitySearchCard vm={vm} timeZoneId={timeZoneId} canSearch={canSearch} />
           </div>
 
           <ResourceBlocksPanel

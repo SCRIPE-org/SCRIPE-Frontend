@@ -64,10 +64,10 @@ export function AuditKpiSummary({
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {/* 1. Total Audit Events */}
-      <Card className="border-border/80 bg-card/90 hover:border-border transition-colors shadow-2xs">
+      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("audit.kpis.totalEvents") || "Total Events"}
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-primary">
@@ -75,13 +75,13 @@ export function AuditKpiSummary({
             </div>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold tracking-tight text-foreground tabular-nums">
+            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
               {kpis.totalEvents.toLocaleString()}
             </span>
             {hasActiveFilters && (
               <Badge
                 variant="outline"
-                className="text-[10px] font-medium border-primary/40 text-primary bg-primary/5 px-1.5 py-0"
+                className="border-primary/40 bg-primary/5 px-1.5 py-0 text-[10px] font-medium text-primary"
               >
                 {activeFilterCount}{" "}
                 {t("audit.kpis.activeFilters") || (activeFilterCount === 1 ? "filter" : "filters")}
@@ -97,10 +97,10 @@ export function AuditKpiSummary({
       </Card>
 
       {/* 2. Today's Activity & Velocity */}
-      <Card className="border-border/80 bg-card/90 hover:border-border transition-colors shadow-2xs">
+      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("audit.kpis.todayActivity") || "Today's Activity"}
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-blue-500/10 text-blue-500">
@@ -108,7 +108,7 @@ export function AuditKpiSummary({
             </div>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold tracking-tight text-foreground tabular-nums">
+            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
               {kpis.todayActionCount.toLocaleString()}
             </span>
             {kpis.yesterdayActionCount > 0 && (
@@ -118,9 +118,9 @@ export function AuditKpiSummary({
                 }`}
               >
                 {isTrendPositive ? (
-                  <ArrowUpRight className="h-3 w-3 me-0.5" />
+                  <ArrowUpRight className="me-0.5 h-3 w-3" />
                 ) : (
-                  <ArrowDownRight className="h-3 w-3 me-0.5" />
+                  <ArrowDownRight className="me-0.5 h-3 w-3" />
                 )}
                 {Math.abs(kpis.todayTrendPercentage)}%
               </span>
@@ -135,10 +135,10 @@ export function AuditKpiSummary({
       </Card>
 
       {/* 3. Intercepted / Failed Actions */}
-      <Card className="border-border/80 bg-card/90 hover:border-border transition-colors shadow-2xs">
+      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("audit.kpis.failedActions") || "Failed / Intercepted"}
             </span>
             <div
@@ -157,7 +157,7 @@ export function AuditKpiSummary({
           </div>
           <div className="mt-2 flex items-baseline gap-2">
             <span
-              className={`text-2xl font-extrabold tracking-tight tabular-nums ${
+              className={`text-2xl font-extrabold tabular-nums tracking-tight ${
                 kpis.failedEventsCount > 0 ? "text-rose-500" : "text-foreground"
               }`}
             >
@@ -165,7 +165,7 @@ export function AuditKpiSummary({
             </span>
             <Badge
               variant={kpis.failedEventsCount > 0 ? "destructive" : "secondary"}
-              className="text-[10px] font-medium px-1.5 py-0"
+              className="px-1.5 py-0 text-[10px] font-medium"
             >
               {kpis.failedEventsCount > 0
                 ? t("audit.kpis.attentionNeeded") || "Failed"
@@ -179,10 +179,10 @@ export function AuditKpiSummary({
       </Card>
 
       {/* 4. Active Subsystems / Modules */}
-      <Card className="border-border/80 bg-card/90 hover:border-border transition-colors shadow-2xs">
+      <Card className="shadow-2xs border-border/80 bg-card/90 transition-colors hover:border-border">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               {t("audit.kpis.activeServices") || "Active Services"}
             </span>
             <div className="flex h-8 w-8 items-center justify-center rounded-md bg-purple-500/10 text-purple-500">
@@ -190,7 +190,7 @@ export function AuditKpiSummary({
             </div>
           </div>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold tracking-tight text-foreground tabular-nums">
+            <span className="text-2xl font-extrabold tabular-nums tracking-tight text-foreground">
               {kpis.todayModuleCount}
             </span>
             <span className="text-xs font-semibold text-emerald-500">

@@ -88,7 +88,9 @@ describe("TimezonePicker", () => {
 
   // ── The half-filled-state guard: no way to clear the zone to "" ─────────
   it("renders no clear ('x') affordance -- a zone can only be replaced, never blanked", () => {
-    render(<TimezonePicker id="tz" value="Africa/Cairo" onChange={vi.fn()} aria-label="Timezone" />);
+    render(
+      <TimezonePicker id="tz" value="Africa/Cairo" onChange={vi.fn()} aria-label="Timezone" />
+    );
     const trigger = screen.getByRole("combobox", { name: "Timezone" });
     // GenericSelect defaults `allowClear` to true, which would otherwise
     // render an "x" button once a value is selected -- TimezonePicker must

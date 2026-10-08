@@ -14,15 +14,12 @@ interface TenantFeatureAdoptionProps {
 /**
  * TenantFeatureAdoption
  */
-export function TenantFeatureAdoption({
-  data,
-  isLoading,
-}: TenantFeatureAdoptionProps) {
+export function TenantFeatureAdoption({ data, isLoading }: TenantFeatureAdoptionProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="h-full flex flex-col border-border/80 bg-card/80 backdrop-blur-xs shadow-xs">
-      <CardHeader className="p-4 sm:p-5 pb-2">
+    <Card className="backdrop-blur-xs shadow-xs flex h-full flex-col border-border/80 bg-card/80">
+      <CardHeader className="p-4 pb-2 sm:p-5">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 text-primary" />
           <CardTitle className="text-sm font-bold text-foreground">
@@ -35,11 +32,11 @@ export function TenantFeatureAdoption({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="p-4 sm:p-5 pt-3 flex-1 flex flex-col justify-between min-h-[240px]">
+      <CardContent className="flex min-h-[240px] flex-1 flex-col justify-between p-4 pt-3 sm:p-5">
         {isLoading ? (
           <div className="space-y-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-8 rounded-lg bg-muted/20 animate-pulse" />
+              <div key={i} className="h-8 animate-pulse rounded-lg bg-muted/20" />
             ))}
           </div>
         ) : data.length === 0 ? (
@@ -47,7 +44,7 @@ export function TenantFeatureAdoption({
             {t("tenantAnalytics.features.noData") || "No capability adoption data available"}
           </div>
         ) : (
-          <div className="flex-1 flex flex-col justify-between gap-3">
+          <div className="flex flex-1 flex-col justify-between gap-3">
             <div className="space-y-3">
               {data.map((item, idx) => {
                 const barColors = [
@@ -63,7 +60,7 @@ export function TenantFeatureAdoption({
                 return (
                   <div key={item.key} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-semibold text-foreground truncate">{item.name}</span>
+                      <span className="truncate font-semibold text-foreground">{item.name}</span>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <span className="font-bold text-foreground">{item.count}</span>
                         <span className="text-[11px]">({item.percentage}%)</span>
@@ -83,11 +80,12 @@ export function TenantFeatureAdoption({
             </div>
 
             {/* Bottom summary info banner */}
-            <div className="mt-auto pt-3 border-t border-border/50 flex items-center justify-between text-[11px] text-muted-foreground">
+            <div className="mt-auto flex items-center justify-between border-t border-border/50 pt-3 text-[11px] text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="h-3 w-3 text-primary" />
                 <span>
-                  {data.length} {t("tenantAnalytics.features.modulesActive") || "capabilities tracked"}
+                  {data.length}{" "}
+                  {t("tenantAnalytics.features.modulesActive") || "capabilities tracked"}
                 </span>
               </span>
               <span className="font-semibold text-foreground">

@@ -39,7 +39,8 @@ const PRIORITY_VARIANTS: Record<number, "secondary" | "info" | "warning" | "dest
 // a server-searched admin picker (below) -- AssignedToId is still
 // existence/tenant-validated server-side (F-29), the picker just removes the
 // need to already know and type the GUID by hand.
-const GUID_PATTERN = "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
+const GUID_PATTERN =
+  "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$";
 
 /**
  * Documentation for module export
@@ -272,7 +273,16 @@ export const WorkItemListView = React.memo(function WorkItemListView() {
         },
       ],
     }),
-    [t, language, statusOptions, statusLabels, priorityOptions, priorityLabels, vm, searchAssignableAdmins]
+    [
+      t,
+      language,
+      statusOptions,
+      statusLabels,
+      priorityOptions,
+      priorityLabels,
+      vm,
+      searchAssignableAdmins,
+    ]
   );
 
   return <GenericCrudView viewModel={vm} config={config} />;

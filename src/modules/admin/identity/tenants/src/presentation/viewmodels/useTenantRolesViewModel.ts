@@ -115,7 +115,11 @@ export function useTenantRolesViewModel({
           if (query) {
             const lowerQuery = query.toLowerCase();
             filtered = permissions.filter((p) => {
-              const name = resolveBilingualLabel(p.nameEn ?? "", p.nameAr || p.nameEn || "", language);
+              const name = resolveBilingualLabel(
+                p.nameEn ?? "",
+                p.nameAr || p.nameEn || "",
+                language
+              );
               return (
                 name?.toLowerCase().includes(lowerQuery) ||
                 p.permissionCode?.toLowerCase().includes(lowerQuery)
@@ -124,7 +128,11 @@ export function useTenantRolesViewModel({
           }
 
           return filtered.map((p) => {
-            const name = resolveBilingualLabel(p.nameEn ?? "", p.nameAr || p.nameEn || "", language);
+            const name = resolveBilingualLabel(
+              p.nameEn ?? "",
+              p.nameAr || p.nameEn || "",
+              language
+            );
             const code = p.permissionCode || `${p.resource}.${p.action}`;
             return {
               value: p.id,
@@ -299,7 +307,11 @@ export function useTenantRolesViewModel({
   const getEditInitialValues = useCallback(
     (item: Role) => ({
       name: resolveBilingualLabel(item.nameEn, item.nameAr, language),
-      description: resolveBilingualLabel(item.descriptionEn ?? "", item.descriptionAr ?? "", language),
+      description: resolveBilingualLabel(
+        item.descriptionEn ?? "",
+        item.descriptionAr ?? "",
+        language
+      ),
       priority: item.priority,
     }),
     [language]

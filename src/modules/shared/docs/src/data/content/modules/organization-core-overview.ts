@@ -103,7 +103,11 @@ const sections: DocSection[] = [
     direction: "vertical",
     nodes: [
       { id: "A", label: "Tenant Corporate Root (Top Level)", type: "default" },
-      { id: "B", label: "LegalEntity (Registered Corporate Incorporation & Tax Number)", type: "primary" },
+      {
+        id: "B",
+        label: "LegalEntity (Registered Corporate Incorporation & Tax Number)",
+        type: "primary",
+      },
       { id: "C", label: "BusinessUnit (Strategic P&L Division)", type: "info" },
       { id: "D", label: "Branch (Regional Operational Center)", type: "info" },
       { id: "E", label: "Site (Physical Real Estate Campus or Complex)", type: "warning" },

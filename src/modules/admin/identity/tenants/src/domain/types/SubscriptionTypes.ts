@@ -18,12 +18,7 @@ export type SubscriptionType = "Lifetime" | "Monthly" | "Yearly" | "Trial" | "Ad
  * Exported type defining parameters and fields for subscription status configurations.
  */
 export type SubscriptionStatus =
-  | "Active"
-  | "Trialing"
-  | "PastDue"
-  | "Suspended"
-  | "Canceled"
-  | "Expired";
+  "Active" | "Trialing" | "PastDue" | "Suspended" | "Canceled" | "Expired";
 /**
  * Exported type defining parameters and fields for expiry behavior configurations.
  */

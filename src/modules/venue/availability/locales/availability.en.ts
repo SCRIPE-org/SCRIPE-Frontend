@@ -1,15 +1,19 @@
 export const en = {
   availability: {
     title: "Resource Availability",
-    description: "Author recurring local-time opening windows and verify what an operator can offer.",
+    description:
+      "Author recurring local-time opening windows and verify what an operator can offer.",
     resource: "Schedulable resource",
     selectResource: "Select a resource",
     noResources: "No schedulable resources",
-    noResourcesDescription: "Create a non-composite resource in Resource Builder before defining availability.",
+    noResourcesDescription:
+      "Create a non-composite resource in Resource Builder before defining availability.",
     draftTitle: "This resource is still a draft",
-    draftDescription: "You can configure its calendar now. Publish the resource before using availability search.",
+    draftDescription:
+      "You can configure its calendar now. Publish the resource before using availability search.",
     calendarTitle: "Recurring availability",
-    calendarDescription: "Windows use the resource's local wall clock. Adjacent windows are allowed; overlapping windows are rejected.",
+    calendarDescription:
+      "Windows use the resource's local wall clock. Adjacent windows are allowed; overlapping windows are rejected.",
     active: "Active calendar",
     notConfigured: "Not configured",
     addWindow: "Add window",
@@ -18,7 +22,8 @@ export const en = {
     created: "Availability calendar created",
     updated: "Availability calendar updated",
     searchTitle: "Availability preview",
-    searchDescription: "This advisory preview applies the active calendar and booking-time capacity truth.",
+    searchDescription:
+      "This advisory preview applies the active calendar and booking-time capacity truth.",
     search: "Check availability",
     searching: "Checking...",
     resultAvailable: "Available",
@@ -67,13 +72,16 @@ export const en = {
       "availability.exceptionClosed": "A dated exception closes this interval.",
       "availability.blackout": "A blackout blocks this interval.",
       "availability.maintenance": "Maintenance blocks this interval.",
-      "availability.capacityInsufficient": "The remaining capacity is below the requested quantity.",
+      "availability.capacityInsufficient":
+        "The remaining capacity is below the requested quantity.",
     },
     blocks: {
       title: "Operational closures",
-      description: "Author dated blackouts and maintenance closures for this resource. They are authoritative during availability and booking checks.",
+      description:
+        "Author dated blackouts and maintenance closures for this resource. They are authoritative during availability and booking checks.",
       precedenceTitle: "Safety closure precedence",
-      precedenceDescription: "A hard closure cannot be reopened by a dated opening exception. Maintenance is evaluated after blackouts.",
+      precedenceDescription:
+        "A hard closure cannot be reopened by a dated opening exception. Maintenance is evaluated after blackouts.",
       blackout: "Blackout",
       maintenance: "Maintenance",
       createTitle: "Add operational closure",

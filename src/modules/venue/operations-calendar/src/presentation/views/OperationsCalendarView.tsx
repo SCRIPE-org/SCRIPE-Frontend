@@ -33,7 +33,8 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
   const canCreateReservation = usePermission(VENUE_PERMISSIONS.RESERVATION_CREATE);
   const canCreateHold = usePermission(VENUE_PERMISSIONS.BOOKING_HOLD_CREATE);
   const canSearchAvailability = usePermission(VENUE_PERMISSIONS.AVAILABILITY_SEARCH_VIEW);
-  const canCreate = canCreateReservation && canCreateHold && canSearchAvailability && canViewCustomer;
+  const canCreate =
+    canCreateReservation && canCreateHold && canSearchAvailability && canViewCustomer;
   const canView = canViewReservations && canViewFacilities && canViewProfiles && canViewResources;
 
   // Click-to-book & Block-time modal states
@@ -51,27 +52,52 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
     setClickToBookOpen(true);
   }, []);
 
-  const handleOpenBlockTime = React.useCallback((resource?: CalendarResource | null, instantUtc?: string | null) => {
-    setBlockTimeResource(resource ?? null);
-    setBlockTimeInstant(instantUtc ?? null);
-    setBlockTimeOpen(true);
-  }, []);
+  const handleOpenBlockTime = React.useCallback(
+    (resource?: CalendarResource | null, instantUtc?: string | null) => {
+      setBlockTimeResource(resource ?? null);
+      setBlockTimeInstant(instantUtc ?? null);
+      setBlockTimeOpen(true);
+    },
+    []
+  );
 
-  if (!canView) return <EmptyState icon={Lock} title={t("operationsCalendar.permission.title")} description={t("operationsCalendar.permission.description")} />;
+  if (!canView)
+    return (
+      <EmptyState
+        icon={Lock}
+        title={t("operationsCalendar.permission.title")}
+        description={t("operationsCalendar.permission.description")}
+      />
+    );
   if (vm.setupLoading) return <LoadingSpinner showText={false} />;
-  if (vm.state.stage === "featureUnavailable") return <EmptyState icon={Lock} title={t("operationsCalendar.feature.title")} description={t("operationsCalendar.feature.description")} />;
+  if (vm.state.stage === "featureUnavailable")
+    return (
+      <EmptyState
+        icon={Lock}
+        title={t("operationsCalendar.feature.title")}
+        description={t("operationsCalendar.feature.description")}
+      />
+    );
 
-  const facilityResources = vm.allResources.filter((resource) => resource.facilityId === vm.facilityId && resource.timeZoneId === vm.timeZoneId);
+  const facilityResources = vm.allResources.filter(
+    (resource) => resource.facilityId === vm.facilityId && resource.timeZoneId === vm.timeZoneId
+  );
   return (
     <div className="space-y-5" dir={direction} data-testid="operations-calendar-view">
-      <PageHeader icon={CalendarDays} title={t("operationsCalendar.title")} description={t("operationsCalendar.description")} />
+      <PageHeader
+        icon={CalendarDays}
+        title={t("operationsCalendar.title")}
+        description={t("operationsCalendar.description")}
+      />
       <CalendarToolbar
         t={t}
         date={vm.date}
         facilityId={vm.facilityId}
         timeZoneId={vm.timeZoneId}
         resourceId={vm.resourceId}
-        facilities={vm.facilities.filter((facility) => vm.allResources.some((resource) => resource.facilityId === facility.id))}
+        facilities={vm.facilities.filter((facility) =>
+          vm.allResources.some((resource) => resource.facilityId === facility.id)
+        )}
         resources={facilityResources}
         timeZones={vm.timeZoneOptions}
         loading={vm.state.stage === "loading"}
@@ -86,14 +112,35 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
         onBlockTime={() => handleOpenBlockTime(null, null)}
       />
 
-      {vm.resourcesTruncated && <Alert variant="warning"><AlertDescription>{t("operationsCalendar.timeline.truncatedResources")}</AlertDescription></Alert>}
-      {vm.state.day?.isTruncated && <Alert variant="warning"><AlertDescription>{t("operationsCalendar.timeline.truncatedBlocks")}</AlertDescription></Alert>}
-      {vm.state.stage === "error" && <EmptyState icon={AlertCircle} title={t("operationsCalendar.error.title")} description={vm.state.errorMessage ?? t("operationsCalendar.error.description")} action={<Button variant="outline" onClick={() => void vm.refresh()}>{t("operationsCalendar.error.retry")}</Button>} />}
+      {vm.resourcesTruncated && (
+        <Alert variant="warning">
+          <AlertDescription>{t("operationsCalendar.timeline.truncatedResources")}</AlertDescription>
+        </Alert>
+      )}
+      {vm.state.day?.isTruncated && (
+        <Alert variant="warning">
+          <AlertDescription>{t("operationsCalendar.timeline.truncatedBlocks")}</AlertDescription>
+        </Alert>
+      )}
+      {vm.state.stage === "error" && (
+        <EmptyState
+          icon={AlertCircle}
+          title={t("operationsCalendar.error.title")}
+          description={vm.state.errorMessage ?? t("operationsCalendar.error.description")}
+          action={
+            <Button variant="outline" onClick={() => void vm.refresh()}>
+              {t("operationsCalendar.error.retry")}
+            </Button>
+          }
+        />
+      )}
       {vm.state.stage === "loading" && !vm.state.day && <LoadingSpinner showText={false} />}
       {!vm.state.day && vm.state.stage === "empty" && <EmptyResourcesState t={t} />}
       {vm.state.day && (
         <>
-          {vm.state.day.blocks.length === 0 && <p className="text-sm text-nx-ink-2">{t("operationsCalendar.timeline.noOccupancy")}</p>}
+          {vm.state.day.blocks.length === 0 && (
+            <p className="text-sm text-nx-ink-2">{t("operationsCalendar.timeline.noOccupancy")}</p>
+          )}
           <ResourceTimeline
             day={vm.state.day}
             resources={vm.visibleResources}
@@ -133,5 +180,11 @@ export const OperationsCalendarView = React.memo(function OperationsCalendarView
 });
 
 function EmptyResourcesState({ t }: { t: (key: string) => string }) {
-  return <EmptyState icon={CalendarDays} title={t("operationsCalendar.empty.title")} description={t("operationsCalendar.empty.description")} />;
+  return (
+    <EmptyState
+      icon={CalendarDays}
+      title={t("operationsCalendar.empty.title")}
+      description={t("operationsCalendar.empty.description")}
+    />
+  );
 }

@@ -42,15 +42,11 @@ export function PaymentTimelineCard({ model }: PaymentTimelineCardProps) {
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-nx-ink-2">
-              {t("money.payments.timeline.none")}
-            </p>
+            <p className="mt-2 text-sm text-nx-ink-2">{t("money.payments.timeline.none")}</p>
           )}
         </div>
         <div>
-          <p className="text-sm font-medium text-nx-ink">
-            {t("money.payments.timeline.receipts")}
-          </p>
+          <p className="text-sm font-medium text-nx-ink">{t("money.payments.timeline.receipts")}</p>
           {model.timeline.receipts.length ? (
             <ul className="mt-2 space-y-1 text-sm text-nx-ink-2">
               {model.timeline.receipts.map((item) => (
@@ -60,15 +56,11 @@ export function PaymentTimelineCard({ model }: PaymentTimelineCardProps) {
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-nx-ink-2">
-              {t("money.payments.timeline.none")}
-            </p>
+            <p className="mt-2 text-sm text-nx-ink-2">{t("money.payments.timeline.none")}</p>
           )}
         </div>
         <div>
-          <p className="text-sm font-medium text-nx-ink">
-            {t("money.payments.timeline.refunds")}
-          </p>
+          <p className="text-sm font-medium text-nx-ink">{t("money.payments.timeline.refunds")}</p>
           {model.timeline.refunds.length ? (
             <ul className="mt-2 space-y-1 text-sm text-nx-ink-2">
               {model.timeline.refunds.map((item) => (
@@ -78,9 +70,7 @@ export function PaymentTimelineCard({ model }: PaymentTimelineCardProps) {
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-nx-ink-2">
-              {t("money.payments.timeline.none")}
-            </p>
+            <p className="mt-2 text-sm text-nx-ink-2">{t("money.payments.timeline.none")}</p>
           )}
         </div>
       </CardContent>

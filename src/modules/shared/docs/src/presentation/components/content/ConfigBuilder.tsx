@@ -73,8 +73,12 @@ export function ConfigBuilder({ titleKey }: ConfigBuilderProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="SqlServer">{t("widgets.configBuilder.providerSqlServer")}</SelectItem>
-              <SelectItem value="PostgreSql">{t("widgets.configBuilder.providerPostgres")}</SelectItem>
+              <SelectItem value="SqlServer">
+                {t("widgets.configBuilder.providerSqlServer")}
+              </SelectItem>
+              <SelectItem value="PostgreSql">
+                {t("widgets.configBuilder.providerPostgres")}
+              </SelectItem>
               <SelectItem value="Oracle">{t("widgets.configBuilder.providerOracle")}</SelectItem>
             </SelectContent>
           </Select>

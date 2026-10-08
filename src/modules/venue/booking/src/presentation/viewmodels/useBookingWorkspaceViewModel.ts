@@ -14,10 +14,7 @@ import type {
   BookingWorkspacePrefill,
 } from "../../domain/entities/Booking";
 import { isFeatureUnavailable, isOperationalConflict } from "../../domain/entities/Booking";
-import {
-  initialBookingWorkspaceState,
-  reduceBookingWorkspace,
-} from "./useBookingWorkspaceState";
+import { initialBookingWorkspaceState, reduceBookingWorkspace } from "./useBookingWorkspaceState";
 
 const PAGE_SIZE = 100;
 
@@ -41,8 +38,12 @@ function criteriaFromPrefill(prefill: BookingWorkspacePrefill): BookingRequestCr
     ...(prefill.facilityId ? { facilityId: prefill.facilityId } : {}),
     ...(prefill.resourceId ? { resourceId: prefill.resourceId } : {}),
     ...(prefill.date && /^\d{4}-\d{2}-\d{2}$/.test(prefill.date) ? { date: prefill.date } : {}),
-    ...(prefill.startTime && /^([01]\d|2[0-3]):[0-5]\d$/.test(prefill.startTime) ? { startTime: prefill.startTime } : {}),
-    ...(Number.isInteger(prefill.durationMinutes) && prefill.durationMinutes! >= 15 && prefill.durationMinutes! <= 1440
+    ...(prefill.startTime && /^([01]\d|2[0-3]):[0-5]\d$/.test(prefill.startTime)
+      ? { startTime: prefill.startTime }
+      : {}),
+    ...(Number.isInteger(prefill.durationMinutes) &&
+    prefill.durationMinutes! >= 15 &&
+    prefill.durationMinutes! <= 1440
       ? { durationMinutes: prefill.durationMinutes! }
       : {}),
   };
@@ -60,7 +61,9 @@ export function endLocalFor(criteria: BookingRequestCriteria): string | null {
   if (!criteria.date || !Number.isInteger(hours) || !Number.isInteger(minutes)) return null;
   const endMinutes = hours * 60 + minutes + criteria.durationMinutes;
   if (endMinutes <= hours * 60 + minutes || endMinutes >= 24 * 60) return null;
-  const endHours = Math.floor(endMinutes / 60).toString().padStart(2, "0");
+  const endHours = Math.floor(endMinutes / 60)
+    .toString()
+    .padStart(2, "0");
   const endMinutePart = (endMinutes % 60).toString().padStart(2, "0");
   return `${criteria.date}T${endHours}:${endMinutePart}`;
 }
@@ -90,7 +93,9 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   } = getVenueContainer();
 
   const [state, dispatch] = useReducer(reduceBookingWorkspace, initialBookingWorkspaceState);
-  const [criteria, setCriteriaState] = useState<BookingRequestCriteria>(() => criteriaFromPrefill(prefill));
+  const [criteria, setCriteriaState] = useState<BookingRequestCriteria>(() =>
+    criteriaFromPrefill(prefill)
+  );
   const [customer, setCustomerState] = useState<CustomerSummary | null>(null);
   const [customerResults, setCustomerResults] = useState<CustomerSummary[]>([]);
   const [customerSearching, setCustomerSearching] = useState(false);
@@ -144,7 +149,8 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     setCriteriaState((current) => ({
       ...current,
       ...patch,
-      ...(("facilityId" in patch || "resourceKindCode" in patch || "usageTypeCode" in patch) && !("resourceId" in patch)
+      ...(("facilityId" in patch || "resourceKindCode" in patch || "usageTypeCode" in patch) &&
+      !("resourceId" in patch)
         ? { resourceId: "" }
         : {}),
     }));
@@ -156,35 +162,24 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     dispatch({ type: "criteriaChanged" });
   }, []);
 
-  const searchCustomers = useCallback(async (query: string) => {
-    setCustomerSearching(true);
-    try {
-      const result = await customerRepository.search(query);
-      setCustomerResults(result);
-      return result;
-    } finally {
-      setCustomerSearching(false);
-    }
-  }, [customerRepository]);
+  const searchCustomers = useCallback(
+    async (query: string) => {
+      setCustomerSearching(true);
+      try {
+        const result = await customerRepository.search(query);
+        setCustomerResults(result);
+        return result;
+      } finally {
+        setCustomerSearching(false);
+      }
+    },
+    [customerRepository]
+  );
 
-  const selectCustomer = useCallback(async (id: string) => {
-    const hydrated = await customerRepository.getById(id);
-    setCustomerState(hydrated);
-    setCustomerResults([]);
-    draftRef.current = null;
-    confirmKeyRef.current = null;
-    quoteGenerationRef.current += 1;
-    setPriceQuote(null);
-    setPriceQuoteError(null);
-    dispatch({ type: "customerChanged" });
-    return hydrated;
-  }, [customerRepository]);
-
-  const createCustomer = useCallback(async (displayName: string, type?: "Person" | "Organization") => {
-    setCustomerSearching(true);
-    try {
-      const created = await customerRepository.create(displayName, type);
-      setCustomerState(created);
+  const selectCustomer = useCallback(
+    async (id: string) => {
+      const hydrated = await customerRepository.getById(id);
+      setCustomerState(hydrated);
       setCustomerResults([]);
       draftRef.current = null;
       confirmKeyRef.current = null;
@@ -192,11 +187,31 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
       setPriceQuote(null);
       setPriceQuoteError(null);
       dispatch({ type: "customerChanged" });
-      return created;
-    } finally {
-      setCustomerSearching(false);
-    }
-  }, [customerRepository]);
+      return hydrated;
+    },
+    [customerRepository]
+  );
+
+  const createCustomer = useCallback(
+    async (displayName: string, type?: "Person" | "Organization") => {
+      setCustomerSearching(true);
+      try {
+        const created = await customerRepository.create(displayName, type);
+        setCustomerState(created);
+        setCustomerResults([]);
+        draftRef.current = null;
+        confirmKeyRef.current = null;
+        quoteGenerationRef.current += 1;
+        setPriceQuote(null);
+        setPriceQuoteError(null);
+        dispatch({ type: "customerChanged" });
+        return created;
+      } finally {
+        setCustomerSearching(false);
+      }
+    },
+    [customerRepository]
+  );
 
   const clearCustomer = useCallback(() => {
     setCustomerState(null);
@@ -211,30 +226,38 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   const { facilityId, resourceKindCode, usageTypeCode } = criteria;
 
   const applicableProfiles = useMemo(
-    () => profiles.filter((profile) =>
-      (!facilityId || profile.facilityId === facilityId) &&
-      (!resourceKindCode || profile.resourceKindCode === resourceKindCode) &&
-      (!usageTypeCode || profile.usageTypes.some((usage) => usage.code === usageTypeCode))
-    ),
+    () =>
+      profiles.filter(
+        (profile) =>
+          (!facilityId || profile.facilityId === facilityId) &&
+          (!resourceKindCode || profile.resourceKindCode === resourceKindCode) &&
+          (!usageTypeCode || profile.usageTypes.some((usage) => usage.code === usageTypeCode))
+      ),
     [facilityId, resourceKindCode, usageTypeCode, profiles]
   );
 
   const resourceKindOptions = useMemo(
-    () => Array.from(new Set(
-      profiles
-        .filter((profile) => !facilityId || profile.facilityId === facilityId)
-        .map((profile) => profile.resourceKindCode)
-    )).sort(),
+    () =>
+      Array.from(
+        new Set(
+          profiles
+            .filter((profile) => !facilityId || profile.facilityId === facilityId)
+            .map((profile) => profile.resourceKindCode)
+        )
+      ).sort(),
     [facilityId, profiles]
   );
 
   const usageTypeOptions = useMemo(() => {
-    const relevant = profiles.filter((profile) =>
-      (!facilityId || profile.facilityId === facilityId) &&
-      (!resourceKindCode || profile.resourceKindCode === resourceKindCode)
+    const relevant = profiles.filter(
+      (profile) =>
+        (!facilityId || profile.facilityId === facilityId) &&
+        (!resourceKindCode || profile.resourceKindCode === resourceKindCode)
     );
     return Array.from(
-      new Map(relevant.flatMap((profile) => profile.usageTypes).map((usage) => [usage.code, usage])).values()
+      new Map(
+        relevant.flatMap((profile) => profile.usageTypes).map((usage) => [usage.code, usage])
+      ).values()
     );
   }, [facilityId, resourceKindCode, profiles]);
 
@@ -248,58 +271,76 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     dispatch({ type: "searching" });
     const profileById = new Map(applicableProfiles.map((profile) => [profile.id, profile]));
     const facilityById = new Map(facilities.map((facility) => [facility.id, facility]));
-    const matchingResources = resources.filter((resource) =>
-      resource.isPublished && !resource.isComposite &&
-      (!criteria.resourceId || resource.id === criteria.resourceId) &&
-      profileById.has(resource.facilityResourceProfileId)
+    const matchingResources = resources.filter(
+      (resource) =>
+        resource.isPublished &&
+        !resource.isComposite &&
+        (!criteria.resourceId || resource.id === criteria.resourceId) &&
+        profileById.has(resource.facilityResourceProfileId)
     );
     const startLocal = `${criteria.date}T${criteria.startTime}`;
 
-    const settled = await Promise.allSettled(matchingResources.map(async (resource) => {
-      const profile = profileById.get(resource.facilityResourceProfileId)!;
-      const timeZoneId = profile.operatingPolicy?.timeZoneId;
-      if (!timeZoneId) throw new Error("booking-timezone-missing");
-      const result = await availabilityRepository.search({
-        resourceId: resource.id,
-        timeZoneId,
-        startLocal,
-        endLocal,
-        quantity: criteria.quantity,
-      });
-      const candidate: AvailabilityCandidate = {
-        resourceId: result.resourceId,
-        resourceName: result.resourceName || resource.name,
-        facilityId: profile.facilityId,
-        facilityName: facilityById.get(profile.facilityId)?.name ?? profile.name,
-        profileName: profile.name,
-        timeZoneId: result.timeZoneId,
-        startUtc: result.startUtc,
-        endUtc: result.endUtc,
-        requestedQuantity: result.requestedQuantity,
-        isAvailable: result.isAvailable,
-        maximumCapacity: result.maximumCapacity,
-        consumedCapacity: result.consumedCapacity,
-        remainingCapacity: result.remainingCapacity,
-        reasonCode: result.reasonCode,
-        reason: result.reason,
-      };
-      return candidate;
-    }));
+    const settled = await Promise.allSettled(
+      matchingResources.map(async (resource) => {
+        const profile = profileById.get(resource.facilityResourceProfileId)!;
+        const timeZoneId = profile.operatingPolicy?.timeZoneId;
+        if (!timeZoneId) throw new Error("booking-timezone-missing");
+        const result = await availabilityRepository.search({
+          resourceId: resource.id,
+          timeZoneId,
+          startLocal,
+          endLocal,
+          quantity: criteria.quantity,
+        });
+        const candidate: AvailabilityCandidate = {
+          resourceId: result.resourceId,
+          resourceName: result.resourceName || resource.name,
+          facilityId: profile.facilityId,
+          facilityName: facilityById.get(profile.facilityId)?.name ?? profile.name,
+          profileName: profile.name,
+          timeZoneId: result.timeZoneId,
+          startUtc: result.startUtc,
+          endUtc: result.endUtc,
+          requestedQuantity: result.requestedQuantity,
+          isAvailable: result.isAvailable,
+          maximumCapacity: result.maximumCapacity,
+          consumedCapacity: result.consumedCapacity,
+          remainingCapacity: result.remainingCapacity,
+          reasonCode: result.reasonCode,
+          reason: result.reason,
+        };
+        return candidate;
+      })
+    );
 
     const candidates = settled
-      .filter((entry): entry is PromiseFulfilledResult<AvailabilityCandidate> => entry.status === "fulfilled")
+      .filter(
+        (entry): entry is PromiseFulfilledResult<AvailabilityCandidate> =>
+          entry.status === "fulfilled"
+      )
       .map((entry) => entry.value)
-      .sort((left, right) => Number(right.isAvailable) - Number(left.isAvailable) || left.resourceName.localeCompare(right.resourceName));
+      .sort(
+        (left, right) =>
+          Number(right.isAvailable) - Number(left.isAvailable) ||
+          left.resourceName.localeCompare(right.resourceName)
+      );
     const failures = settled.filter((entry) => entry.status === "rejected");
 
     if (matchingResources.length > 0 && candidates.length === 0 && failures.length > 0) {
-      if (failures.some((failure) => failure.status === "rejected" && isFeatureUnavailable(failure.reason))) {
+      if (
+        failures.some(
+          (failure) => failure.status === "rejected" && isFeatureUnavailable(failure.reason)
+        )
+      ) {
         dispatch({ type: "featureUnavailable" });
         return [];
       }
       dispatch({
         type: "searchFailed",
-        message: errorMessage((failures[0] as PromiseRejectedResult).reason, "booking-search-failed"),
+        message: errorMessage(
+          (failures[0] as PromiseRejectedResult).reason,
+          "booking-search-failed"
+        ),
       });
       return [];
     }
@@ -312,68 +353,90 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
     return candidates;
   }, [applicableProfiles, availabilityRepository, criteria, customer, facilities, resources]);
 
-  const selectCandidate = useCallback(async (candidate: AvailabilityCandidate) => {
-    dispatch({ type: "candidateSelected", candidate });
-    const generation = ++quoteGenerationRef.current;
-    setPriceQuote(null);
-    setPriceQuoteError(null);
-    if (!customer) return;
-    setPriceQuoteLoading(true);
-    try {
-      const configuration = await commercialPricingRepository.getResourceConfiguration(candidate.resourceId);
-      const quote = await commercialPricingRepository.calculateQuote({
-        offeringId: configuration.offeringId,
-        resourceId: candidate.resourceId,
-        partyId: customer.id,
-        quantity: candidate.requestedQuantity,
-        requestedStartUtc: candidate.startUtc,
-        requestedEndUtc: candidate.endUtc,
-        currencyCode: configuration.currencyCode,
-        expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-        idempotencyKey: crypto.randomUUID(),
-      });
-      if (generation === quoteGenerationRef.current) setPriceQuote(quote);
-    } catch (error) {
-      if (generation === quoteGenerationRef.current) {
-        setPriceQuoteError(errorMessage(error, "booking-quote-failed"));
+  const selectCandidate = useCallback(
+    async (candidate: AvailabilityCandidate) => {
+      dispatch({ type: "candidateSelected", candidate });
+      const generation = ++quoteGenerationRef.current;
+      setPriceQuote(null);
+      setPriceQuoteError(null);
+      if (!customer) return;
+      setPriceQuoteLoading(true);
+      try {
+        const configuration = await commercialPricingRepository.getResourceConfiguration(
+          candidate.resourceId
+        );
+        const quote = await commercialPricingRepository.calculateQuote({
+          offeringId: configuration.offeringId,
+          resourceId: candidate.resourceId,
+          partyId: customer.id,
+          quantity: candidate.requestedQuantity,
+          requestedStartUtc: candidate.startUtc,
+          requestedEndUtc: candidate.endUtc,
+          currencyCode: configuration.currencyCode,
+          expiresAtUtc: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+          idempotencyKey: crypto.randomUUID(),
+        });
+        if (generation === quoteGenerationRef.current) setPriceQuote(quote);
+      } catch (error) {
+        if (generation === quoteGenerationRef.current) {
+          setPriceQuoteError(errorMessage(error, "booking-quote-failed"));
+        }
+      } finally {
+        if (generation === quoteGenerationRef.current) setPriceQuoteLoading(false);
       }
-    } finally {
-      if (generation === quoteGenerationRef.current) setPriceQuoteLoading(false);
-    }
-  }, [commercialPricingRepository, customer]);
+    },
+    [commercialPricingRepository, customer]
+  );
 
-  const applyPriceOverride = useCallback(async (adjustmentAmount: number, reason: string) => {
-    if (!priceQuote || !Number.isFinite(adjustmentAmount) || adjustmentAmount === 0
-      || !reason.trim() || reason.trim().length > 500) return false;
-    setPriceOverrideLoading(true);
-    setPriceQuoteError(null);
-    try {
-      const applied = await commercialPricingRepository.overrideQuote(priceQuote.id, {
-        adjustmentAmount,
-        reason: reason.trim(),
-        idempotencyKey: crypto.randomUUID(),
-      });
-      setPriceQuote((current) => current && current.id === priceQuote.id
-        ? { ...current, grandTotal: applied.overriddenGrandTotal }
-        : current);
-      return true;
-    } catch (error) {
-      setPriceQuoteError(errorMessage(error, "booking-quote-override-failed"));
-      return false;
-    } finally {
-      setPriceOverrideLoading(false);
-    }
-  }, [commercialPricingRepository, priceQuote]);
+  const applyPriceOverride = useCallback(
+    async (adjustmentAmount: number, reason: string) => {
+      if (
+        !priceQuote ||
+        !Number.isFinite(adjustmentAmount) ||
+        adjustmentAmount === 0 ||
+        !reason.trim() ||
+        reason.trim().length > 500
+      )
+        return false;
+      setPriceOverrideLoading(true);
+      setPriceQuoteError(null);
+      try {
+        const applied = await commercialPricingRepository.overrideQuote(priceQuote.id, {
+          adjustmentAmount,
+          reason: reason.trim(),
+          idempotencyKey: crypto.randomUUID(),
+        });
+        setPriceQuote((current) =>
+          current && current.id === priceQuote.id
+            ? { ...current, grandTotal: applied.overriddenGrandTotal }
+            : current
+        );
+        return true;
+      } catch (error) {
+        setPriceQuoteError(errorMessage(error, "booking-quote-override-failed"));
+        return false;
+      } finally {
+        setPriceOverrideLoading(false);
+      }
+    },
+    [commercialPricingRepository, priceQuote]
+  );
 
   const createHold = useCallback(async () => {
-    if (submittingRef.current || !customer || !priceQuote || !state.selectedCandidate || !state.selectedCandidate.isAvailable) return;
+    if (
+      submittingRef.current ||
+      !customer ||
+      !priceQuote ||
+      !state.selectedCandidate ||
+      !state.selectedCandidate.isAvailable
+    )
+      return;
     submittingRef.current = true;
     dispatch({ type: "holding" });
     try {
       const fingerprint = candidateFingerprint(state.selectedCandidate, customer.id);
-      let reservationId = draftRef.current?.fingerprint === fingerprint
-        ? draftRef.current.reservationId
-        : null;
+      let reservationId =
+        draftRef.current?.fingerprint === fingerprint ? draftRef.current.reservationId : null;
       if (!reservationId) {
         const draft = await bookingRepository.createDraft({
           resourceId: state.selectedCandidate.resourceId,
@@ -411,7 +474,14 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
   }, []);
 
   const confirm = useCallback(async () => {
-    if (submittingRef.current || state.stage !== "held" || !state.reservationId || !state.hold || !priceQuote) return;
+    if (
+      submittingRef.current ||
+      state.stage !== "held" ||
+      !state.reservationId ||
+      !state.hold ||
+      !priceQuote
+    )
+      return;
     if (Date.parse(state.hold.expiresAtUtc) <= Date.now()) {
       dispatch({ type: "holdExpired" });
       return;
@@ -432,7 +502,10 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
       } else if (isFeatureUnavailable(error)) {
         dispatch({ type: "featureUnavailable" });
       } else {
-        dispatch({ type: "operationFailed", message: errorMessage(error, "booking-confirm-failed") });
+        dispatch({
+          type: "operationFailed",
+          message: errorMessage(error, "booking-confirm-failed"),
+        });
       }
     } finally {
       submittingRef.current = false;
@@ -453,7 +526,12 @@ export function useBookingWorkspaceViewModel(prefill: BookingWorkspacePrefill = 
 
   const resourceOptions = useMemo(() => {
     const profileIds = new Set(applicableProfiles.map((profile) => profile.id));
-    return resources.filter((resource) => resource.isPublished && !resource.isComposite && profileIds.has(resource.facilityResourceProfileId));
+    return resources.filter(
+      (resource) =>
+        resource.isPublished &&
+        !resource.isComposite &&
+        profileIds.has(resource.facilityResourceProfileId)
+    );
   }, [applicableProfiles, resources]);
 
   return {

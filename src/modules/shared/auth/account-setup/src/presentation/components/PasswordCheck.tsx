@@ -17,16 +17,19 @@ export interface PasswordCheckProps {
  */
 export function PasswordCheck({ label, ok }: PasswordCheckProps) {
   return (
-    <div className="flex items-center gap-1.5 min-w-0">
+    <div className="flex min-w-0 items-center gap-1.5">
       {ok ? (
-        <Check className="h-3.5 w-3.5 text-emerald-500 shrink-0 stroke-[2.5]" aria-hidden="true" />
+        <Check className="h-3.5 w-3.5 shrink-0 stroke-[2.5] text-emerald-500" aria-hidden="true" />
       ) : (
-        <div className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 shrink-0 mx-1" aria-hidden="true" />
+        <div
+          className="mx-1 h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/40"
+          aria-hidden="true"
+        />
       )}
       <span
         className={cn(
           "truncate text-xs transition-colors",
-          ok ? "text-foreground font-medium" : "text-muted-foreground"
+          ok ? "font-medium text-foreground" : "text-muted-foreground"
         )}
       >
         {label}

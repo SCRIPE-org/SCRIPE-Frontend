@@ -15,10 +15,7 @@ import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { useVenueServiceLocatorStatic } from "@modules/venue";
-import {
-  SiteLocationFields,
-  type SiteLocationState,
-} from "./SiteLocationFields";
+import { SiteLocationFields, type SiteLocationState } from "./SiteLocationFields";
 import { getDefaultTimeZoneForCountry } from "@core/constants/countries";
 
 interface SiteQuickCreateDialogProps {
@@ -97,9 +94,7 @@ export function SiteQuickCreateDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
             <DialogTitle>{t("site.addNew")}</DialogTitle>
-            <DialogDescription>
-              {t("site.operatingTerritoryDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("site.operatingTerritoryDesc")}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -120,15 +115,10 @@ export function SiteQuickCreateDialog({
                 maxLength={200}
                 aria-invalid={!!nameError || undefined}
               />
-              {nameError && (
-                <p className="text-xs text-destructive">{nameError}</p>
-              )}
+              {nameError && <p className="text-xs text-destructive">{nameError}</p>}
             </div>
 
-            <SiteLocationFields
-              location={location}
-              onChange={setLocation}
-            />
+            <SiteLocationFields location={location} onChange={setLocation} />
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">

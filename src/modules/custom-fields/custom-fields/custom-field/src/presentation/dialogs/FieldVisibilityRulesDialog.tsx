@@ -208,9 +208,7 @@ export function FieldVisibilityRulesDialog({
             <Sliders className="h-5 w-5 text-primary" aria-hidden="true" />
             {t("customField.visibilityRules.title", { field: fieldLabel || fieldKey })}
           </DialogTitle>
-          <DialogDescription>
-            {t("customField.visibilityRules.description")}
-          </DialogDescription>
+          <DialogDescription>{t("customField.visibilityRules.description")}</DialogDescription>
         </DialogHeader>
 
         {body}

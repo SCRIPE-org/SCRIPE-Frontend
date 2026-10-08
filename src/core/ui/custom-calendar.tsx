@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
-import {  cn , resolveIntlLocale } from "@core/common/utils";
+import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -926,9 +926,7 @@ export function CustomCalendar({
               }
             }}
             className={cn(controlButtonStyles, "p-1 text-nx-ink-2 hover:text-nx-ink")}
-            aria-label={
-              viewMode === "year" ? t("common.nextYearRange") : t("common.nextMonth")
-            }
+            aria-label={viewMode === "year" ? t("common.nextYearRange") : t("common.nextMonth")}
           >
             <NextIcon className="h-4 w-4" aria-hidden="true" />
           </button>

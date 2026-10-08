@@ -153,7 +153,7 @@ export function useFieldVersionsViewModel() {
     const isCustomField = "id" in field;
     setTarget({
       fieldId: isCustomField ? field.id : field.fieldId,
-      fieldLabel: isCustomField ? (field.labelEn || field.key) : field.fieldLabel,
+      fieldLabel: isCustomField ? field.labelEn || field.key : field.fieldLabel,
       fieldKey: isCustomField ? field.key : field.fieldKey,
       entityTypeKey: field.entityTypeKey,
       isGlobal: isCustomField ? field.isGlobal : (field as FieldVersionsTarget).isGlobal,

@@ -4,7 +4,9 @@ import { VenueAttentionService } from "./VenueAttentionService";
 
 describe("VenueAttentionService", () => {
   it("uses the scoped, read-only attention endpoint with bounded paging", async () => {
-    const api = { get: vi.fn().mockResolvedValue({ items: [], totalCount: 0 }) } as unknown as IApiService;
+    const api = {
+      get: vi.fn().mockResolvedValue({ items: [], totalCount: 0 }),
+    } as unknown as IApiService;
     const service = new VenueAttentionService(api);
 
     await service.get(2, 20);

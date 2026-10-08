@@ -64,12 +64,7 @@ export interface OptionSetItemRuleRow {
  * `optionSet.items.validation` (see `optionSetItemIssueMessageKey`).
  */
 export type OptionSetItemIssueCode =
-  | "keyRequired"
-  | "labelEnRequired"
-  | "duplicateKey"
-  | "keyTooLong"
-  | "labelTooLong"
-  | "atLeastOne";
+  "keyRequired" | "labelEnRequired" | "duplicateKey" | "keyTooLong" | "labelTooLong" | "atLeastOne";
 
 /**
  * Documentation for module export

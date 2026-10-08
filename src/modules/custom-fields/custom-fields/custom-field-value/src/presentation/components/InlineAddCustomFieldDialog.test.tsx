@@ -11,7 +11,12 @@ vi.mock("../../../../field-group/src/presentation/viewmodels/useFieldGroupOption
   useFieldGroupOptions: vi.fn(() => ({ options: [], isLoading: false, isError: false })),
 }));
 vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
-  useEntityLookupAvailableTypes: vi.fn(() => ({ types: [], isLoading: false, isError: false, isEmpty: true })),
+  useEntityLookupAvailableTypes: vi.fn(() => ({
+    types: [],
+    isLoading: false,
+    isError: false,
+    isEmpty: true,
+  })),
 }));
 // Real useOptionSetViewModel calls useQueryClient() unconditionally, which throws outside a
 // QueryClientProvider -- mocked like its two sibling read hooks above rather than wrapping every
@@ -109,7 +114,11 @@ describe("InlineAddCustomFieldDialog", () => {
 
     await waitFor(() =>
       expect(createMock).toHaveBeenCalledWith(
-        expect.objectContaining({ entityTypeKey: "party.person", key: "nationality", labelEn: "Nationality" })
+        expect.objectContaining({
+          entityTypeKey: "party.person",
+          key: "nationality",
+          labelEn: "Nationality",
+        })
       )
     );
     await waitFor(() => expect(onCreated).toHaveBeenCalled());
@@ -119,15 +128,21 @@ describe("InlineAddCustomFieldDialog", () => {
     render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
     fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-    fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "nickname" } });
-    fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "Nickname" } });
+    fireEvent.change(screen.getByLabelText("customField.fields.key"), {
+      target: { value: "nickname" },
+    });
+    fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), {
+      target: { value: "Nickname" },
+    });
     fireEvent.change(screen.getByLabelText("customField.fields.placeholderEn"), {
       target: { value: "e.g. Junior" },
     });
     fireEvent.click(screen.getByText("common.save"));
 
     await waitFor(() =>
-      expect(createMock).toHaveBeenCalledWith(expect.objectContaining({ placeholderEn: "e.g. Junior" }))
+      expect(createMock).toHaveBeenCalledWith(
+        expect.objectContaining({ placeholderEn: "e.g. Junior" })
+      )
     );
   });
 
@@ -171,8 +186,12 @@ describe("InlineAddCustomFieldDialog", () => {
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
       fireEvent.click(screen.getByRole("switch", { name: "customField.fields.isGlobal" }));
-      fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
-      fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });
+      fireEvent.change(screen.getByLabelText("customField.fields.key"), {
+        target: { value: "vip" },
+      });
+      fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), {
+        target: { value: "VIP" },
+      });
       fireEvent.click(screen.getByText("common.save"));
 
       await waitFor(() =>
@@ -191,10 +210,16 @@ describe("InlineAddCustomFieldDialog", () => {
       render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
       fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-      expect(screen.queryByRole("switch", { name: "customField.fields.isGlobal" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("switch", { name: "customField.fields.isGlobal" })
+      ).not.toBeInTheDocument();
 
-      fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: "vip" } });
-      fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: "VIP" } });
+      fireEvent.change(screen.getByLabelText("customField.fields.key"), {
+        target: { value: "vip" },
+      });
+      fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), {
+        target: { value: "VIP" },
+      });
       fireEvent.click(screen.getByText("common.save"));
 
       await waitFor(() =>
@@ -232,9 +257,8 @@ describe("InlineAddCustomFieldDialog", () => {
         }),
       }));
       vi.resetModules();
-      const { InlineAddCustomFieldDialog: FreshDialog } = await import(
-        "./InlineAddCustomFieldDialog"
-      );
+      const { InlineAddCustomFieldDialog: FreshDialog } =
+        await import("./InlineAddCustomFieldDialog");
 
       const { unmount } = render(
         <FreshDialog

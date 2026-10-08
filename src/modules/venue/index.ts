@@ -1,4 +1,3 @@
-
 export * from "./di";
 export * from "./permission-constants";
 export * from "./attention-center";
@@ -17,8 +16,10 @@ export * from "./site";
 export * from "./venue-overview";
 export * from "./venue-profile";
 
-
-export { useVenueServiceLocator, useVenueServiceLocatorStatic } from "./shared/src/presentation/viewmodels/useVenueServiceLocator";
+export {
+  useVenueServiceLocator,
+  useVenueServiceLocatorStatic,
+} from "./shared/src/presentation/viewmodels/useVenueServiceLocator";
 export type { IOperationsCalendarRepository } from "./operations-calendar/src/domain/interfaces/IOperationsCalendarRepository";
 export type { ISchedulableResourceRepository } from "./schedulable-resource/src/domain/interfaces/ISchedulableResourceRepository";
 export type { IFacilityResourceProfileRepository } from "./facility-resource-profile/src/domain/interfaces/IFacilityResourceProfileRepository";

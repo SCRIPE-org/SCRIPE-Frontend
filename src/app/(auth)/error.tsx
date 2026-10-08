@@ -44,7 +44,10 @@ export default function AuthError({
           type="button"
           onClick={reset}
           className="w-full"
-          style={{ background: "var(--scripe-signal, #C6FF00)", color: "var(--scripe-ink, #0D0D0E)" }}
+          style={{
+            background: "var(--scripe-signal, #C6FF00)",
+            color: "var(--scripe-ink, #0D0D0E)",
+          }}
         >
           {t("errors.boundary.retry") || "Try again"}
         </Button>

@@ -49,9 +49,7 @@ export function useEntityCustomFields(
   }, [entityTypeKey, ownerId]);
 
   useEffect(() => {
-    queueMicrotask(() => {
-      void fetchFields();
-    });
+    void fetchFields();
   }, [fetchFields]);
 
   const saveValues = useCallback(

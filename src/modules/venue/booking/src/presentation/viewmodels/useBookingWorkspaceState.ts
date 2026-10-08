@@ -23,7 +23,15 @@ export const initialBookingWorkspaceState: BookingWorkspaceState = {
  * Documentation for =
  */
 export type BookingWorkspaceAction =
-  | { type: "criteriaChanged" | "customerChanged" | "searching" | "holdConflict" | "holdExpired" | "confirming" }
+  | {
+      type:
+        | "criteriaChanged"
+        | "customerChanged"
+        | "searching"
+        | "holdConflict"
+        | "holdExpired"
+        | "confirming";
+    }
   | { type: "searchSucceeded"; candidates: AvailabilityCandidate[]; partialFailure: boolean }
   | { type: "searchFailed"; message: string }
   | { type: "featureUnavailable" }

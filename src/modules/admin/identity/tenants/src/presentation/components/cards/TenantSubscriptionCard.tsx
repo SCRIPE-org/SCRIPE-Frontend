@@ -227,11 +227,8 @@ export function TenantSubscriptionCard({ tenantId }: TenantSubscriptionCardProps
   const subscriptionHistory = vm.subscriptionHistory;
   const isDowngraded = vm.isDowngraded;
   const previousRefundedSub = useMemo(() => {
-    if (!subscriptionHistory || subscriptionHistory.length < 2 || !isDowngraded)
-      return null;
-    const currentStart = subscriptionStartDate
-      ? new Date(subscriptionStartDate).getTime()
-      : 0;
+    if (!subscriptionHistory || subscriptionHistory.length < 2 || !isDowngraded) return null;
+    const currentStart = subscriptionStartDate ? new Date(subscriptionStartDate).getTime() : 0;
     // Find the most recently canceled subscription that was replaced by the current downgrade
     // It must have been canceled AROUND the time the current sub started (within 1 minute)
     return (

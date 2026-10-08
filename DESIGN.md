@@ -73,17 +73,17 @@ The vector source is the source of truth. 3D is a treatment of that geometry, ne
 
 ## 2.1 Canonical brand colors
 
-| Token | Value | Duty |
-|---|---:|---|
-| Signal Lime | `#C6FF00` | primary brand signal, live/active/CTA fill |
-| Ink | `#0D0D0E` | primary dark identity and accent foreground |
-| Void | `#050506` | deepest background |
-| Carbon | `#151719` | raised dark surface |
-| Graphite | `#3F4347` | structural neutral |
-| Mineral Silver | `#D7D8D6` | premium neutral / metallic reference |
-| White | `#FFFFFF` | light surface and high-contrast ink |
-| Light Canvas | `#F7F8F5` | default light background |
-| Light Subtle | `#EEF0EB` | light nested surface |
+| Token             |     Value | Duty                                         |
+| ----------------- | --------: | -------------------------------------------- |
+| Signal Lime       | `#C6FF00` | primary brand signal, live/active/CTA fill   |
+| Ink               | `#0D0D0E` | primary dark identity and accent foreground  |
+| Void              | `#050506` | deepest background                           |
+| Carbon            | `#151719` | raised dark surface                          |
+| Graphite          | `#3F4347` | structural neutral                           |
+| Mineral Silver    | `#D7D8D6` | premium neutral / metallic reference         |
+| White             | `#FFFFFF` | light surface and high-contrast ink          |
+| Light Canvas      | `#F7F8F5` | default light background                     |
+| Light Subtle      | `#EEF0EB` | light nested surface                         |
 | Accent Text Light | `#4C6200` | accessible brand-text duty on light surfaces |
 
 ### The Signal Lime rule
@@ -417,31 +417,37 @@ The shell receives the new skin, not a new IA.
 ## Buttons
 
 Primary:
+
 - Signal Lime fill
 - Ink label/icon
 - no colored glow
 - neutral depth only when needed
 
 Secondary:
+
 - transparent/neutral surface
 - structural border
 - text follows theme
 
 Destructive:
+
 - semantic destructive token
 - never brand Lime
 
 ## Inputs
 
 Rest:
+
 - neutral surface
 - neutral hairline edge
 
 Focus:
+
 - `--scripe-focus`
 - no huge outer glow
 
 Error:
+
 - semantic destructive
 - include text message when needed
 
@@ -726,14 +732,17 @@ Then migrate systematically. Do not delete a legacy variable until its consumers
 # 23. QA gate
 
 ## Themes
+
 - dark
 - light
 
 ## Direction
+
 - English LTR
 - Arabic RTL
 
 ## Viewports
+
 - 360px
 - 390px
 - 640px
@@ -743,6 +752,7 @@ Then migrate systematically. Do not delete a legacy variable until its consumers
 - 1440px+
 
 ## Screens
+
 - login
 - signup
 - verification
@@ -757,6 +767,7 @@ Then migrate systematically. Do not delete a legacy variable until its consumers
 - error state
 
 ## Accessibility
+
 - keyboard
 - focus visibility
 - contrast
@@ -764,6 +775,7 @@ Then migrate systematically. Do not delete a legacy variable until its consumers
 - screen-reader labels for icon-only controls
 
 ## Brand integrity
+
 - only canonical Relay Grid
 - favicon updated
 - app/PWA icons updated

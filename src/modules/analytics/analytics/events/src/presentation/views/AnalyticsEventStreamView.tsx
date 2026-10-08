@@ -74,9 +74,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
 
       {/* Loading */}
       {loading && (
-        <div
-          style={{ textAlign: "center", padding: "2rem", color: "var(--nx-ink-3)" }}
-        >
+        <div style={{ textAlign: "center", padding: "2rem", color: "var(--nx-ink-3)" }}>
           {t("analyticsEvents.loading")}
         </div>
       )}
@@ -109,9 +107,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                 <TableHead>{t("analyticsEvents.columns.occurredAt")}</TableHead>
                 <TableHead>{t("analyticsEvents.columns.subjectType")}</TableHead>
                 <TableHead>{t("analyticsEvents.columns.subjectId")}</TableHead>
-                <TableHead variant="numeric">
-                  {t("analyticsEvents.columns.numericValue")}
-                </TableHead>
+                <TableHead variant="numeric">{t("analyticsEvents.columns.numericValue")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -122,9 +118,7 @@ export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStream
                   <TableCell className="text-nx-ink-3">
                     {new Date(ev.occurredAt).toLocaleString()}
                   </TableCell>
-                  <TableCell className="text-nx-ink-3">
-                    {ev.subjectEntityTypeKey ?? "—"}
-                  </TableCell>
+                  <TableCell className="text-nx-ink-3">{ev.subjectEntityTypeKey ?? "—"}</TableCell>
                   <TableCell className="font-mono text-xs text-nx-ink-3">
                     {ev.subjectEntityId ? ev.subjectEntityId.slice(0, 8) + "…" : "—"}
                   </TableCell>

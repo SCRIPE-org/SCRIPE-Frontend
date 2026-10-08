@@ -334,9 +334,7 @@ describe("MediaReferenceCustomFieldControl -- a11y wiring", () => {
   });
 
   it("falls back to the id when the field has no label, rather than leaving the region unnamed", () => {
-    render(
-      <MediaReferenceCustomFieldControl id="cf_waiver" value={null} onChange={vi.fn()} />
-    );
+    render(<MediaReferenceCustomFieldControl id="cf_waiver" value={null} onChange={vi.fn()} />);
     expect(screen.getByRole("group", { name: "cf_waiver" })).toBeInTheDocument();
   });
 

@@ -32,9 +32,8 @@ export function usePlatformHealthViewModel() {
   const health = query.data;
 
   // Selected incident resolution
-  const selectedIncident = health?.incidents?.find(i => i.id === selectedIncidentId) 
-    ?? health?.incidents?.[0] 
-    ?? null;
+  const selectedIncident =
+    health?.incidents?.find((i) => i.id === selectedIncidentId) ?? health?.incidents?.[0] ?? null;
 
   return {
     health,

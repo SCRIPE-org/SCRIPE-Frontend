@@ -17,11 +17,11 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 border-border bg-card shadow-xs">
+    <Card className="shadow-xs border-border bg-card p-4">
       {/* Section Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Layers className="h-4 w-4" />
           </div>
           <div>
@@ -37,7 +37,7 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
 
         <Link
           href="/settings"
-          className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
         >
           <span>{t("tenantCommandCenter.products.manageProducts") || "Manage Products"}</span>
           <ChevronRight className="h-3 w-3" />
@@ -45,19 +45,23 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
       </div>
 
       {/* 3 Product Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
         {products.map((product) => {
           const isActive = product.status === "active";
 
           return (
             <div
               key={product.id}
-              className="rounded-xl border border-border bg-card/60 overflow-hidden flex flex-col justify-between hover:border-border/90 transition-colors shadow-xs"
+              className="shadow-xs flex flex-col justify-between overflow-hidden rounded-xl border border-border bg-card/60 transition-colors hover:border-border/90"
             >
               {/* Card Visual Header with SVG Stadium illustration */}
-              <div className="h-28 relative bg-[#0b1822] overflow-hidden">
+              <div className="relative h-28 overflow-hidden bg-[#0b1822]">
                 {product.id === "venue" && (
-                  <svg className="w-full h-full" viewBox="0 0 420 140" preserveAspectRatio="xMidYMid slice">
+                  <svg
+                    className="h-full w-full"
+                    viewBox="0 0 420 140"
+                    preserveAspectRatio="xMidYMid slice"
+                  >
                     <defs>
                       <linearGradient id="pVenue" x1="0" y1="0" x2="1" y2="1">
                         <stop stopColor="#0a3341" />
@@ -80,7 +84,11 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
                 )}
 
                 {product.id === "academy" && (
-                  <svg className="w-full h-full" viewBox="0 0 420 140" preserveAspectRatio="xMidYMid slice">
+                  <svg
+                    className="h-full w-full"
+                    viewBox="0 0 420 140"
+                    preserveAspectRatio="xMidYMid slice"
+                  >
                     <defs>
                       <linearGradient id="pAcad" x1="0" y1="0" x2="1" y2="1">
                         <stop stopColor="#0b2e37" />
@@ -105,7 +113,11 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
                 )}
 
                 {product.id === "football-intelligence" && (
-                  <svg className="w-full h-full" viewBox="0 0 420 140" preserveAspectRatio="xMidYMid slice">
+                  <svg
+                    className="h-full w-full"
+                    viewBox="0 0 420 140"
+                    preserveAspectRatio="xMidYMid slice"
+                  >
                     <rect width="420" height="140" fill="#111820" />
                     <rect y="82" width="420" height="58" fill="#1c2a24" />
                     <g stroke="#70808a" opacity=".22">
@@ -116,12 +128,12 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
                 )}
 
                 {/* Status Badge */}
-                <div className="absolute top-2.5 right-2.5">
+                <div className="absolute right-2.5 top-2.5">
                   <Badge
                     variant={isActive ? "default" : "secondary"}
-                    className={`text-[9px] font-bold px-2 py-0.5 ${
+                    className={`px-2 py-0.5 text-[9px] font-bold ${
                       isActive
-                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                        ? "border border-emerald-500/40 bg-emerald-500/20 text-emerald-400"
                         : "bg-muted/70 text-muted-foreground"
                     }`}
                   >
@@ -133,27 +145,29 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
               </div>
 
               {/* Card Body */}
-              <div className="p-3.5 flex flex-col justify-between flex-1">
+              <div className="flex flex-1 flex-col justify-between p-3.5">
                 <div>
-                  <div className="flex items-center gap-1.5 font-bold text-xs text-foreground">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
                     {product.id === "venue" && <Shield className="h-3.5 w-3.5 text-primary" />}
-                    {product.id === "academy" && <GraduationCap className="h-3.5 w-3.5 text-sky-400" />}
-                    {product.id === "football-intelligence" && <Trophy className="h-3.5 w-3.5 text-amber-400" />}
+                    {product.id === "academy" && (
+                      <GraduationCap className="h-3.5 w-3.5 text-sky-400" />
+                    )}
+                    {product.id === "football-intelligence" && (
+                      <Trophy className="h-3.5 w-3.5 text-amber-400" />
+                    )}
                     <span>{product.name}</span>
                   </div>
-                  <p className="text-[10px] text-muted-foreground mt-1 leading-normal min-h-[30px]">
+                  <p className="mt-1 min-h-[30px] text-[10px] leading-normal text-muted-foreground">
                     {product.description}
                   </p>
 
-                  <div className="flex items-center gap-4 mt-3 pt-2.5 border-t border-border/60">
+                  <div className="mt-3 flex items-center gap-4 border-t border-border/60 pt-2.5">
                     {product.stats.map((stat, sIdx) => (
                       <div key={sIdx}>
-                        <b className="text-xs font-bold text-foreground block font-mono">
+                        <b className="block font-mono text-xs font-bold text-foreground">
                           {stat.value}
                         </b>
-                        <span className="text-[9px] text-muted-foreground block">
-                          {stat.label}
-                        </span>
+                        <span className="block text-[9px] text-muted-foreground">{stat.label}</span>
                       </div>
                     ))}
                   </div>
@@ -163,9 +177,9 @@ export function TenantProductsSection({ products }: TenantProductsSectionProps) 
                   asChild
                   variant={isActive ? "outline" : "secondary"}
                   size="sm"
-                  className={`w-full h-8 mt-3 text-[11px] font-semibold ${
+                  className={`mt-3 h-8 w-full text-[11px] font-semibold ${
                     isActive
-                      ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
+                      ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/20"
                       : ""
                   }`}
                 >

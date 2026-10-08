@@ -15,9 +15,7 @@ export interface ContactPointListParams {
  * Documentation for module export
  */
 export interface IContactPointRepository {
-  getAll(
-    params: ContactPointListParams
-  ): Promise<{
+  getAll(params: ContactPointListParams): Promise<{
     items: ContactPoint[];
     totalCount: number;
     page: number;

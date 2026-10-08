@@ -118,25 +118,21 @@ export class DsrMapper {
       erasureConfirmed: validated.erasureConfirmed ?? false,
       erasureExecuteAfter: validated.erasureExecuteAfter ?? undefined,
       requesterNotes: validated.requesterNotes ?? undefined,
-      statusHistory: (validated.statusHistory ?? []).map(
-        (h): DsrStatusHistoryModel => ({
-          fromStatus: h.fromStatus ?? "",
-          toStatus: h.toStatus ?? "",
-          changedByAdminId: h.changedByAdminId ?? undefined,
-          notes: h.notes ?? undefined,
-          occurredAt: h.occurredAt ?? "",
-        })
-      ),
-      moduleExecutions: (validated.moduleExecutions ?? []).map(
-        (m): DsrModuleExecutionModel => ({
-          moduleName: m.moduleName ?? "",
-          isCompleted: m.isCompleted ?? false,
-          processedCount: m.processedCount ?? 0,
-          errorMessage: m.errorMessage ?? undefined,
-          retryCount: m.retryCount ?? 0,
-          completedAt: m.completedAt ?? undefined,
-        })
-      ),
+      statusHistory: (validated.statusHistory ?? []).map((h): DsrStatusHistoryModel => ({
+        fromStatus: h.fromStatus ?? "",
+        toStatus: h.toStatus ?? "",
+        changedByAdminId: h.changedByAdminId ?? undefined,
+        notes: h.notes ?? undefined,
+        occurredAt: h.occurredAt ?? "",
+      })),
+      moduleExecutions: (validated.moduleExecutions ?? []).map((m): DsrModuleExecutionModel => ({
+        moduleName: m.moduleName ?? "",
+        isCompleted: m.isCompleted ?? false,
+        processedCount: m.processedCount ?? 0,
+        errorMessage: m.errorMessage ?? undefined,
+        retryCount: m.retryCount ?? 0,
+        completedAt: m.completedAt ?? undefined,
+      })),
     };
     return new DataSubjectRequest(data);
   }

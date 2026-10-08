@@ -10,7 +10,8 @@ export const KEY_MANAGEMENT_ENDPOINTS = {
   REVOKE: `${V1}/custom-fields/encryption/revoke`,
   START_REWRAP: `${V1}/custom-fields/encryption/rewrap/start`,
   CANCEL_REWRAP: (sessionId: string) => `${V1}/custom-fields/encryption/rewrap/${sessionId}/cancel`,
-  SESSION_PROGRESS: (sessionId: string) => `${V1}/custom-fields/encryption/rewrap/${sessionId}/progress`,
+  SESSION_PROGRESS: (sessionId: string) =>
+    `${V1}/custom-fields/encryption/rewrap/${sessionId}/progress`,
   AUDIT_LOGS: (page = 1, pageSize = 20) =>
     `${V1}/custom-fields/encryption/audit-logs?page=${page}&pageSize=${pageSize}`,
 } as const;

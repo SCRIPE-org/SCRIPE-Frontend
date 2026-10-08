@@ -51,7 +51,12 @@ export interface VersionsTabProps {
  * @param props The plan entity, translation helper, and publish callback.
  * @returns An accessible interface for version auditing and deployment.
  */
-export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabProps): React.JSX.Element {
+export function VersionsTab({
+  plan,
+  t,
+  onPublish,
+  isPublishing,
+}: VersionsTabProps): React.JSX.Element {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [changeNotes, setChangeNotes] = useState("");
 

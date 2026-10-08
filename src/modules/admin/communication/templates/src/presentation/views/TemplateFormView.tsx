@@ -47,8 +47,6 @@ const TemplateLivePreview = dynamic(
   { ssr: false }
 );
 
-
-
 /**
  * Presentation UI component rendering the template form view.
  * Arranges layout boundaries and accessibility targets (WCAG, tab index) using the core design library (@core/ui/*). Coordinates text fields, submit indicators, and validation warning messages.
@@ -213,7 +211,9 @@ export function TemplateFormView({ templateId: _templateId }: { templateId?: str
                   {/* Template Key (create only) */}
                   {vm.mode === "create" && (
                     <div className="space-y-2">
-                      <Label htmlFor={`${fieldIdBase}-key`}>{vm.t("messaging.templates.key")}</Label>
+                      <Label htmlFor={`${fieldIdBase}-key`}>
+                        {vm.t("messaging.templates.key")}
+                      </Label>
                       <Input
                         id={`${fieldIdBase}-key`}
                         value={vm.form.key}

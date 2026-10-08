@@ -125,4 +125,3 @@ describe("useDashboardLayout", () => {
     expect(result.current.isWidgetVisible("widget-1")).toBe(true);
   });
 });
-

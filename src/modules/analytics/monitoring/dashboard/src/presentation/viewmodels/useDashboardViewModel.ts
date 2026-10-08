@@ -102,10 +102,7 @@ export function useDashboardViewModel() {
 
   const isLoading = summary.isLoading || loginActivity.isLoading || recentChanges.isLoading;
   const hasError =
-    summary.isError ||
-    loginActivity.isError ||
-    recentChanges.isError ||
-    eventDistribution.isError;
+    summary.isError || loginActivity.isError || recentChanges.isError || eventDistribution.isError;
 
   const refetchAll = useCallback(() => {
     summary.refetch();

@@ -24,11 +24,7 @@ export type SsoCallbackKind = "oidc" | "saml";
  * Exported type defining parameters and fields for sso callback state configurations.
  */
 export type SsoCallbackState =
-  | "processing"
-  | "success"
-  | "error"
-  | "no_linked_account"
-  | "workspace_selection";
+  "processing" | "success" | "error" | "no_linked_account" | "workspace_selection";
 
 /**
  * Interface defining property specifications, keys types, and structural contract rules for sso callback error.

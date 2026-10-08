@@ -75,9 +75,7 @@ export const SiteListView = React.memo(function SiteListView() {
       <GenericCrudView viewModel={vm} config={config} />
       <SiteFormDialog
         open={formDialog.open}
-        onOpenChange={(open) =>
-          setFormDialog((prev) => ({ ...prev, open }))
-        }
+        onOpenChange={(open) => setFormDialog((prev) => ({ ...prev, open }))}
         site={formDialog.site}
         onSuccess={() => {
           startTransition(() => {

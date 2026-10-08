@@ -29,7 +29,10 @@ export class CustomerPickerService implements ICustomerPickerService {
     return this.api.get(BOOKING_ENDPOINTS.PARTY_BY_ID(id));
   }
 
-  async create(displayName: string, type: "Person" | "Organization" = "Person"): Promise<CustomerSummary> {
+  async create(
+    displayName: string,
+    type: "Person" | "Organization" = "Person"
+  ): Promise<CustomerSummary> {
     const typeEnum = type === "Organization" ? 1 : 0;
     const res = await this.api.post<{ id: string }>(BOOKING_ENDPOINTS.PARTIES, {
       displayName: displayName.trim(),

@@ -21,7 +21,11 @@
  * distinguish it from a genuinely empty version and would save an empty replace. See
  * `OptionSetVersion`'s header.
  */
-import { OptionSet, type OptionSetData, type OptionSetDetail } from "../../domain/entities/OptionSet";
+import {
+  OptionSet,
+  type OptionSetData,
+  type OptionSetDetail,
+} from "../../domain/entities/OptionSet";
 import {
   OptionSetVersion,
   type OptionSetVersionData,

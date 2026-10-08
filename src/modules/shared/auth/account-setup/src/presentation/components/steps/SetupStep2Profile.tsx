@@ -74,34 +74,30 @@ export function SetupStep2Profile({
         <Label htmlFor="admin-phone" className="text-xs font-medium">
           {t("auth.accountSetup.phoneNumber")}
         </Label>
-        <PhoneInput
-          value={vm.phoneNumber}
-          onChange={vm.setPhoneNumber}
-          defaultCountry="SA"
-        />
+        <PhoneInput value={vm.phoneNumber} onChange={vm.setPhoneNumber} defaultCountry="SA" />
       </div>
 
       {/* Account Identity Credentials (Verified / Locked) */}
-      <div className="grid gap-3 sm:grid-cols-2 rounded-xl border border-border/50 bg-muted/20 p-3 text-xs min-w-0">
-        <div className="space-y-1 min-w-0">
+      <div className="grid min-w-0 gap-3 rounded-xl border border-border/50 bg-muted/20 p-3 text-xs sm:grid-cols-2">
+        <div className="min-w-0 space-y-1">
           <span className="text-muted-foreground">{t("auth.accountSetup.emailAddress")}</span>
-          <div className="flex items-center gap-1.5 font-medium text-foreground min-w-0">
-            <Mail className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            <span className="truncate min-w-0">{vm.tokenData?.adminEmail}</span>
+          <div className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
+            <Mail className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <span className="min-w-0 truncate">{vm.tokenData?.adminEmail}</span>
             <Badge
               variant="outline"
-              className="text-[10px] px-1 py-0 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 shrink-0"
+              className="shrink-0 border-emerald-500/40 px-1 py-0 text-[10px] text-emerald-600 dark:text-emerald-400"
             >
               {t("auth.accountSetup.verified")}
             </Badge>
           </div>
         </div>
 
-        <div className="space-y-1 min-w-0">
+        <div className="min-w-0 space-y-1">
           <span className="text-muted-foreground">{t("auth.accountSetup.username")}</span>
-          <div className="flex items-center gap-1.5 font-medium text-foreground min-w-0">
-            <User className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            <span className="font-mono truncate min-w-0">@{vm.tokenData?.adminUsername}</span>
+          <div className="flex min-w-0 items-center gap-1.5 font-medium text-foreground">
+            <User className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <span className="min-w-0 truncate font-mono">@{vm.tokenData?.adminUsername}</span>
           </div>
         </div>
       </div>
@@ -128,15 +124,9 @@ export function SetupStep2Profile({
           onClick={vm.goToNextStep}
         >
           <span>
-            {hasCustomFields
-              ? t("auth.accountSetup.next")
-              : t("auth.accountSetup.completeSetup")}
+            {hasCustomFields ? t("auth.accountSetup.next") : t("auth.accountSetup.completeSetup")}
           </span>
-          {hasCustomFields ? (
-            <ArrowRight className="h-4 w-4" />
-          ) : (
-            <Sparkles className="h-4 w-4" />
-          )}
+          {hasCustomFields ? <ArrowRight className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
         </Button>
       </div>
     </div>

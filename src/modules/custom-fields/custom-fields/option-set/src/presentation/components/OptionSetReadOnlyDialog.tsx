@@ -77,9 +77,7 @@ export function OptionSetReadOnlyDialog({
               </dd>
             </div>
             <div className="flex flex-col gap-0.5">
-              <dt className="text-xs font-medium text-nx-ink-2">
-                {t("optionSet.fields.labelEn")}
-              </dt>
+              <dt className="text-xs font-medium text-nx-ink-2">{t("optionSet.fields.labelEn")}</dt>
               <dd className="text-nx-ink">{optionSet.labelEn}</dd>
             </div>
           </dl>

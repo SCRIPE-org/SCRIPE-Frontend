@@ -52,7 +52,15 @@ describe("ResourcesWorkspaceView", () => {
       error: null,
       items: mockItems,
       allItems: mockItems,
-      facilities: [new Facility({ id: "fac-1", name: "Nasr City", code: "NASR", venueProfileId: "", createdAt: "2026-01-01" })],
+      facilities: [
+        new Facility({
+          id: "fac-1",
+          name: "Nasr City",
+          code: "NASR",
+          venueProfileId: "",
+          createdAt: "2026-01-01",
+        }),
+      ],
       selectedFacilityId: "",
       setSelectedFacilityId: vi.fn(),
       searchQuery: "",

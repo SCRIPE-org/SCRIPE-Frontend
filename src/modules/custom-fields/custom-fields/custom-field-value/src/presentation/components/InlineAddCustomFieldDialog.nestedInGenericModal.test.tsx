@@ -32,7 +32,12 @@ vi.mock("../../../../field-group/src/presentation/viewmodels/useFieldGroupOption
   useFieldGroupOptions: vi.fn(() => ({ options: [], isLoading: false, isError: false })),
 }));
 vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
-  useEntityLookupAvailableTypes: vi.fn(() => ({ types: [], isLoading: false, isError: false, isEmpty: true })),
+  useEntityLookupAvailableTypes: vi.fn(() => ({
+    types: [],
+    isLoading: false,
+    isError: false,
+    isEmpty: true,
+  })),
 }));
 // Real useOptionSetViewModel calls useQueryClient() unconditionally, which throws outside a
 // QueryClientProvider -- mocked like its two sibling read hooks above rather than wrapping every

@@ -169,11 +169,15 @@ export function getVenueContainer(): VenueContainer {
   const facilityService: IFacilityService = new FacilityService(venueApi);
   const facilityResourceProfileService: IFacilityResourceProfileService =
     new FacilityResourceProfileService(venueApi);
-  const schedulableResourceService: ISchedulableResourceService = new SchedulableResourceService(venueApi);
+  const schedulableResourceService: ISchedulableResourceService = new SchedulableResourceService(
+    venueApi
+  );
   const availabilityService: IAvailabilityService = new AvailabilityService(venueApi);
   const bookingService: IBookingService = new BookingService(venueApi);
   const customerPickerService: ICustomerPickerService = new CustomerPickerService(partyKernelApi);
-  const operationsCalendarService: IOperationsCalendarService = new OperationsCalendarService(venueApi);
+  const operationsCalendarService: IOperationsCalendarService = new OperationsCalendarService(
+    venueApi
+  );
   const booking360Service: IBooking360Service = new Booking360Service(venueApi);
   const venueAttentionService: IVenueAttentionService = new VenueAttentionService(venueApi);
   const commercialPricingService = new CommercialPricingService(catalogPricingApi);
@@ -212,20 +216,52 @@ export function getVenueContainer(): VenueContainer {
 }
 
 export const venueContainer = {
-  get venueProfileRepository() { return getVenueContainer().venueProfileRepository; },
-  get facilityRepository() { return getVenueContainer().facilityRepository; },
-  get facilityResourceProfileRepository() { return getVenueContainer().facilityResourceProfileRepository; },
-  get schedulableResourceRepository() { return getVenueContainer().schedulableResourceRepository; },
-  get availabilityRepository() { return getVenueContainer().availabilityRepository; },
-  get bookingRepository() { return getVenueContainer().bookingRepository; },
-  get customerRepository() { return getVenueContainer().customerRepository; },
-  get operationsCalendarRepository() { return getVenueContainer().operationsCalendarRepository; },
-  get booking360Repository() { return getVenueContainer().booking360Repository; },
-  get commercialPricingRepository() { return getVenueContainer().commercialPricingRepository; },
-  get moneyRepository() { return getVenueContainer().moneyRepository; },
-  get venueAttentionRepository() { return getVenueContainer().venueAttentionRepository; },
-  get venueOverviewService() { return getVenueContainer().venueOverviewService; },
-  get siteRepository() { return getVenueContainer().siteRepository; },
-  get sitePickerService() { return getVenueContainer().sitePickerService; },
-  get facilityResourceProfilePickerService() { return getVenueContainer().facilityResourceProfilePickerService; },
+  get venueProfileRepository() {
+    return getVenueContainer().venueProfileRepository;
+  },
+  get facilityRepository() {
+    return getVenueContainer().facilityRepository;
+  },
+  get facilityResourceProfileRepository() {
+    return getVenueContainer().facilityResourceProfileRepository;
+  },
+  get schedulableResourceRepository() {
+    return getVenueContainer().schedulableResourceRepository;
+  },
+  get availabilityRepository() {
+    return getVenueContainer().availabilityRepository;
+  },
+  get bookingRepository() {
+    return getVenueContainer().bookingRepository;
+  },
+  get customerRepository() {
+    return getVenueContainer().customerRepository;
+  },
+  get operationsCalendarRepository() {
+    return getVenueContainer().operationsCalendarRepository;
+  },
+  get booking360Repository() {
+    return getVenueContainer().booking360Repository;
+  },
+  get commercialPricingRepository() {
+    return getVenueContainer().commercialPricingRepository;
+  },
+  get moneyRepository() {
+    return getVenueContainer().moneyRepository;
+  },
+  get venueAttentionRepository() {
+    return getVenueContainer().venueAttentionRepository;
+  },
+  get venueOverviewService() {
+    return getVenueContainer().venueOverviewService;
+  },
+  get siteRepository() {
+    return getVenueContainer().siteRepository;
+  },
+  get sitePickerService() {
+    return getVenueContainer().sitePickerService;
+  },
+  get facilityResourceProfilePickerService() {
+    return getVenueContainer().facilityResourceProfilePickerService;
+  },
 };

@@ -67,11 +67,11 @@ export function ExternalDependenciesSection({
         ];
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 sm:p-5 shadow-xs flex flex-col gap-4">
+    <div className="shadow-xs flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:p-5">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border/60 pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-400">
             <Link2 className="h-4.5 w-4.5" />
           </div>
           <div>
@@ -87,7 +87,7 @@ export function ExternalDependenciesSection({
       </div>
 
       {/* Grid of Dependencies */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {items.map((dep) => {
           const Icon = getDependencyIcon(dep.name);
           const isHealthy = dep.status.toLowerCase() === "healthy";
@@ -96,19 +96,15 @@ export function ExternalDependenciesSection({
           return (
             <div
               key={dep.name}
-              className="rounded-lg border border-border/70 bg-card/60 p-3.5 flex flex-col justify-between gap-3 shadow-2xs hover:border-border transition-colors"
+              className="shadow-2xs flex flex-col justify-between gap-3 rounded-lg border border-border/70 bg-card/60 p-3.5 transition-colors hover:border-border"
             >
               <div className="flex items-center justify-between">
-                <div className="w-8 h-8 rounded-md bg-muted/60 border border-border/80 text-muted-foreground flex items-center justify-center">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md border border-border/80 bg-muted/60 text-muted-foreground">
                   <Icon className="h-4 w-4" />
                 </div>
                 <span
                   className={`inline-flex items-center gap-1.5 text-xs font-semibold ${
-                    isHealthy
-                      ? "text-emerald-400"
-                      : isDegraded
-                      ? "text-amber-400"
-                      : "text-rose-400"
+                    isHealthy ? "text-emerald-400" : isDegraded ? "text-amber-400" : "text-rose-400"
                   }`}
                 >
                   <span
@@ -116,31 +112,34 @@ export function ExternalDependenciesSection({
                       isHealthy
                         ? "bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.8)]"
                         : isDegraded
-                        ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.8)]"
-                        : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"
+                          ? "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.8)]"
+                          : "bg-rose-500 shadow-[0_0_6px_rgba(244,63,94,0.8)]"
                     }`}
                   />
                   {isHealthy
                     ? t("platformHealth.statusHealthy") || "Healthy"
                     : isDegraded
-                    ? t("platformHealth.statusDegraded") || "Degraded"
-                    : t("platformHealth.statusUnhealthy") || "Unhealthy"}
+                      ? t("platformHealth.statusDegraded") || "Degraded"
+                      : t("platformHealth.statusUnhealthy") || "Unhealthy"}
                 </span>
               </div>
 
               <div>
-                <div className="text-sm font-semibold text-foreground truncate" title={dep.name}>
+                <div className="truncate text-sm font-semibold text-foreground" title={dep.name}>
                   {dep.name}
                 </div>
-                <div className="text-xs text-muted-foreground font-mono mt-0.5 truncate">
+                <div className="mt-0.5 truncate font-mono text-xs text-muted-foreground">
                   {dep.category}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t border-border/50 text-[11px] text-muted-foreground">
+              <div className="flex items-center justify-between border-t border-border/50 pt-2 text-[11px] text-muted-foreground">
                 <span>Latency: {isLoading ? "..." : `${Math.round(dep.latencyMs)} ms`}</span>
-                <span className="text-[10.5px] font-mono text-muted-foreground">
-                  {new Date(dep.lastCheckedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                <span className="font-mono text-[10.5px] text-muted-foreground">
+                  {new Date(dep.lastCheckedAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </span>
               </div>
             </div>

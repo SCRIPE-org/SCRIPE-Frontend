@@ -98,7 +98,9 @@ describe("useResourcesWorkspaceViewModel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockContainer = createMockContainer();
-    vi.mocked(getVenueContainer).mockReturnValue(mockContainer as unknown as ReturnType<typeof getVenueContainer>);
+    vi.mocked(getVenueContainer).mockReturnValue(
+      mockContainer as unknown as ReturnType<typeof getVenueContainer>
+    );
   });
 
   it("loads facilities, profiles, resources, and pricing, filtering out composite resources", async () => {
@@ -193,7 +195,9 @@ describe("useResourcesWorkspaceViewModel", () => {
     expect(mockContainer.availabilityRepository.saveCalendar).toHaveBeenCalledTimes(2);
 
     // Pricing configured for both courts
-    expect(mockContainer.commercialPricingRepository.configureResourcePrice).toHaveBeenCalledTimes(2);
+    expect(mockContainer.commercialPricingRepository.configureResourcePrice).toHaveBeenCalledTimes(
+      2
+    );
   });
 
   it("reuses existing branch and profile if names match", async () => {

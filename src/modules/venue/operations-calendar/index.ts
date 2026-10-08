@@ -6,4 +6,3 @@ export * from "./src/presentation/components/CalendarToolbar";
 export * from "./src/presentation/components/ClickToBookModal";
 export * from "./src/presentation/components/ResourceTimeline";
 export * from "./src/domain/entities/OperationsCalendar";
-

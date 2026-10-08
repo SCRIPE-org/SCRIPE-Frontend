@@ -15,9 +15,7 @@ export interface PartyOrganizationListParams {
  * Documentation for module export
  */
 export interface IPartyOrganizationRepository {
-  getAll(
-    params: PartyOrganizationListParams
-  ): Promise<{
+  getAll(params: PartyOrganizationListParams): Promise<{
     items: PartyOrganization[];
     totalCount: number;
     page: number;

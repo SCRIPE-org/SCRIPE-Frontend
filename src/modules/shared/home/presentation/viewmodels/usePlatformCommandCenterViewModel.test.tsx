@@ -15,9 +15,12 @@ vi.mock("./useOverviewRealtime", () => ({
   useOverviewRealtime: vi.fn(),
 }));
 
-vi.mock("@modules/monitoring/platform-health/src/presentation/viewmodels/usePlatformHealthViewModel", () => ({
-  usePlatformHealthViewModel: vi.fn(),
-}));
+vi.mock(
+  "@modules/monitoring/platform-health/src/presentation/viewmodels/usePlatformHealthViewModel",
+  () => ({
+    usePlatformHealthViewModel: vi.fn(),
+  })
+);
 
 vi.mock("@core/providers/i18n-provider", () => ({
   useI18n: vi.fn(),
@@ -118,9 +121,7 @@ describe("usePlatformCommandCenterViewModel", () => {
     expect(result.current.kpis.totalTenants).toBe(120);
     expect(result.current.kpis.activeAdmins).toBe(42);
     expect(result.current.kpis.overallHealthScore).toBe("100%");
-    expect(result.current.kpis.overallHealthStatus).toBe(
-      "platformCommandCenter.kpis.operational"
-    );
+    expect(result.current.kpis.overallHealthStatus).toBe("platformCommandCenter.kpis.operational");
     expect(result.current.kpis.failedLogins24h).toBe(3);
   });
 

@@ -46,7 +46,10 @@ export function LifecycleStepItem({ step, isActive, onClick }: LifecycleStepItem
       variant="ghost"
       onClick={onClick}
       aria-current={isActive ? "step" : undefined}
-      className={cn("docs-lifecycle-step-card w-full h-auto text-start justify-start font-normal block", isActive && "active")}
+      className={cn(
+        "docs-lifecycle-step-card block h-auto w-full justify-start text-start font-normal",
+        isActive && "active"
+      )}
       style={{ borderInlineStartWidth: "3px", borderInlineStartColor: color }}
     >
       <div className="mb-1 flex items-center justify-between gap-2">

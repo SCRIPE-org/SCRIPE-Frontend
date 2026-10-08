@@ -271,9 +271,9 @@ describe("entity reference type-selector copy", () => {
     // sentence that reads as though it belonged there.
     for (const dictionary of [en, ar]) {
       const block = dictionary.customField.entityReference;
-      expect(new Set([block.searchForbidden, block.searchUnavailable, block.searchFailed]).size).toBe(
-        3
-      );
+      expect(
+        new Set([block.searchForbidden, block.searchUnavailable, block.searchFailed]).size
+      ).toBe(3);
     }
   });
 

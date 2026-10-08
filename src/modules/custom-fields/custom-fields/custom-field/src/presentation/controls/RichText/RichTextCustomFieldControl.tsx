@@ -207,20 +207,18 @@ export function RichTextCustomFieldControl({
     // because every keystroke should announce.
     if (zone === lastAnnouncedZoneRef.current) return;
     lastAnnouncedZoneRef.current = zone;
-    queueMicrotask(() => {
-      if (zone === "over") {
-        setAnnouncement(
-          t("customField.richText.charactersOverLimit", { overBy, max: RICH_TEXT_MAX_CHARACTERS })
-        );
-      } else if (zone === "nearLimit") {
-        setAnnouncement(
-          t("customField.richText.characterCount", { count: length, max: RICH_TEXT_MAX_CHARACTERS })
-        );
-      } else {
-        // Back to safe -- clear the region rather than leave a stale warning in it.
-        setAnnouncement("");
-      }
-    });
+    if (zone === "over") {
+      setAnnouncement(
+        t("customField.richText.charactersOverLimit", { overBy, max: RICH_TEXT_MAX_CHARACTERS })
+      );
+    } else if (zone === "nearLimit") {
+      setAnnouncement(
+        t("customField.richText.characterCount", { count: length, max: RICH_TEXT_MAX_CHARACTERS })
+      );
+    } else {
+      // Back to safe -- clear the region rather than leave a stale warning in it.
+      setAnnouncement("");
+    }
   }, [zone, length, overBy, t]);
 
   const counterText =
@@ -238,7 +236,7 @@ export function RichTextCustomFieldControl({
       <Label htmlFor={id} className="text-sm font-medium">
         {label ?? id}
         {required && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}
@@ -283,7 +281,10 @@ export function RichTextCustomFieldControl({
         {announcement}
       </span>
       {invalid && error && (
-        <p id={describedBy} className="text-xs font-medium text-destructive flex items-center gap-1.5 mt-1.5">
+        <p
+          id={describedBy}
+          className="mt-1.5 flex items-center gap-1.5 text-xs font-medium text-destructive"
+        >
           <AlertCircle className="h-3.5 w-3.5 shrink-0" />
           <span>{error}</span>
         </p>

@@ -244,9 +244,7 @@ export function VideoUploadField({
                   className={cn("h-5 w-5", isDragOver ? "text-nx-accent" : "text-nx-ink-3")}
                   aria-hidden="true"
                 />
-                <span className="text-xs font-medium text-nx-ink">
-                  {t("videoUpload.dragDrop")}
-                </span>
+                <span className="text-xs font-medium text-nx-ink">{t("videoUpload.dragDrop")}</span>
                 <span className="text-xs text-nx-ink-3">
                   <span className="tabular-nums">
                     {t("imageUpload.maxSize")} {maxMB} MB

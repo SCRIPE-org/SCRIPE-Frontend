@@ -97,14 +97,12 @@ export function OptionSetEditorDialog({
   const optionSetId = optionSet?.id;
   useEffect(() => {
     if (!open) return;
-    queueMicrotask(() => {
-      setStableKey(optionSet?.stableKey ?? "");
-      setLabelEn(optionSet?.labelEn ?? "");
-      setLabelAr(optionSet?.labelAr ?? "");
-      setDescription(optionSet?.description ?? "");
-      setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
-    });
-  }, [open, optionSetId, isPlatformContext]);
+    setStableKey(optionSet?.stableKey ?? "");
+    setLabelEn(optionSet?.labelEn ?? "");
+    setLabelAr(optionSet?.labelAr ?? "");
+    setDescription(optionSet?.description ?? "");
+    setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
+  }, [open, optionSetId]);
 
   const effectiveReadOnlyReason: OptionSetEditorReadOnlyReason | null =
     optionSet?.isPlatformMaintained ? "systemManaged" : (readOnlyReason ?? null);

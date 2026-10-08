@@ -105,10 +105,7 @@ export function DetailGeneralSection({
           }
         />
         <Separator />
-        <DetailRow
-          label={t("customField.details.fields.fieldGroup")}
-          value={fieldGroupName}
-        />
+        <DetailRow label={t("customField.details.fields.fieldGroup")} value={fieldGroupName} />
         <Separator />
         <DetailRow
           label={t("customField.details.fields.sortOrder")}

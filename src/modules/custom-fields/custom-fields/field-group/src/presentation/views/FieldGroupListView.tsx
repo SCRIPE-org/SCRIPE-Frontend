@@ -33,10 +33,7 @@ import type { FieldGroup } from "../../domain/entities/FieldGroup";
  */
 export function FieldGroupListView() {
   useModuleLocales(() => import("../../../locales"), "customFieldGroups");
-  useModuleLocales(
-    () => import("../../../../custom-field/locales"),
-    "customFields"
-  );
+  useModuleLocales(() => import("../../../../custom-field/locales"), "customFields");
   const { t, language, direction } = useI18n();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
@@ -209,10 +206,7 @@ export function FieldGroupListView() {
           description={t("fieldGroup.selectEntityType.description")}
         />
       ) : vm.isGroupsError ? (
-        <ErrorMessage
-          message={t("fieldGroup.loadFailed")}
-          onRetry={() => vm.refetchGroups()}
-        />
+        <ErrorMessage message={t("fieldGroup.loadFailed")} onRetry={() => vm.refetchGroups()} />
       ) : (
         <div className="flex flex-col gap-4">
           {isEditorOpen && (

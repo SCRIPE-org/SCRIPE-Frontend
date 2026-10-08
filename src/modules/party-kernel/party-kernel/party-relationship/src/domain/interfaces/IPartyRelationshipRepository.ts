@@ -15,9 +15,7 @@ export interface PartyRelationshipListParams {
  * Documentation for module export
  */
 export interface IPartyRelationshipRepository {
-  getAll(
-    params: PartyRelationshipListParams
-  ): Promise<{
+  getAll(params: PartyRelationshipListParams): Promise<{
     items: PartyRelationship[];
     totalCount: number;
     page: number;

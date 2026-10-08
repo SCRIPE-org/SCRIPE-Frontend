@@ -247,9 +247,12 @@ export class ApiService implements IApiService {
           // If a fresh token was already stored while this request was in-flight (e.g. via RouteGuard or broadcast),
           // retry immediately with the fresh token without triggering another refresh cycle.
           const activeToken = secureTokenService.getAccessToken();
-          const sentToken = originalRequest.headers?.Authorization?.toString().replace(/^Bearer\s+/i, "") ?? "";
+          const sentToken =
+            originalRequest.headers?.Authorization?.toString().replace(/^Bearer\s+/i, "") ?? "";
           if (activeToken && activeToken !== sentToken) {
-            appLogger.auth("Newer token already present in secureTokenService — retrying request immediately");
+            appLogger.auth(
+              "Newer token already present in secureTokenService — retrying request immediately"
+            );
             if (originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${activeToken}`;
             }
@@ -353,7 +356,9 @@ export class ApiService implements IApiService {
           // particular record because X" — not "you may not be on this page at all".
           // Show it inline; do not navigate the user away from what they were doing.
           if (data.errorCode) {
-            appLogger.warn(`Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`);
+            appLogger.warn(
+              `Business-rule 403 (${data.errorCode}) — surfacing inline, not redirecting`
+            );
             // Attach the parsed body as `details`, exactly as every other rejection path in this
             // file does (the generic authenticated path and the public instance's, both below).
             //

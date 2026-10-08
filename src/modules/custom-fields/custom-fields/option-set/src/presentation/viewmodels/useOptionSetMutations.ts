@@ -12,10 +12,7 @@ import type {
   UpdateOptionSetInput,
   OptionSetItemInput,
 } from "../../domain/interfaces/IOptionSetRepository";
-import {
-  reportOptionSetRefusal,
-  type OptionSetRefusal,
-} from "../form/optionSetRefusalTypes";
+import { reportOptionSetRefusal, type OptionSetRefusal } from "../form/optionSetRefusalTypes";
 
 /**
  * Documentation for module export

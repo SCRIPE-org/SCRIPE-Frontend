@@ -130,7 +130,9 @@ export function EditionWizardView() {
             className="gap-2"
           >
             {!vm.isSubmitting && <Check className="h-4 w-4" />}
-            {vm.isSubmitting ? t("common.creating") : t("entitlements.editions.wizard.createEdition")}
+            {vm.isSubmitting
+              ? t("common.creating")
+              : t("entitlements.editions.wizard.createEdition")}
           </Button>
         )}
       </div>

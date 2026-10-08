@@ -159,7 +159,10 @@ export function FieldImpactDialog({
               {/* Only meaningful when the counts are platform-wide; the server sends it only then. */}
               {usage.isPlatformWideScope && typeof usage.affectedTenantCount === "number" && (
                 <li className="flex items-center gap-2">
-                  <Building2 className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+                  <Building2
+                    className="h-4 w-4 shrink-0 text-muted-foreground"
+                    aria-hidden="true"
+                  />
                   <span>
                     {t("customField.impact.affectedTenants", {
                       count: usage.affectedTenantCount,

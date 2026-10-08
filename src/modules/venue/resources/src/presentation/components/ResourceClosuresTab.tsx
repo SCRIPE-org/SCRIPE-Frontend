@@ -7,13 +7,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@core/ui/dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { ResourceBlockKind } from "@modules/venue";
 import type { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
@@ -37,8 +31,16 @@ export function ResourceClosuresTab({ vm }: Props) {
   const [reason, setReason] = useState("");
 
   const allClosures = [
-    ...vm.maintenanceBlocks.map((b) => ({ ...b, kind: "maintenance" as ResourceBlockKind, label: "Maintenance" })),
-    ...vm.blackoutBlocks.map((b) => ({ ...b, kind: "blackout" as ResourceBlockKind, label: "Unavailable" })),
+    ...vm.maintenanceBlocks.map((b) => ({
+      ...b,
+      kind: "maintenance" as ResourceBlockKind,
+      label: "Maintenance",
+    })),
+    ...vm.blackoutBlocks.map((b) => ({
+      ...b,
+      kind: "blackout" as ResourceBlockKind,
+      label: "Unavailable",
+    })),
   ].sort((a, b) => Date.parse(b.startUtc) - Date.parse(a.startUtc));
 
   const handleCreateClosure = async (e: React.FormEvent) => {
@@ -75,7 +77,9 @@ export function ResourceClosuresTab({ vm }: Props) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div>
-          <CardTitle>{t("resources.closures.title", { defaultValue: "Closures & Blocked Time" })}</CardTitle>
+          <CardTitle>
+            {t("resources.closures.title", { defaultValue: "Closures & Blocked Time" })}
+          </CardTitle>
           <CardDescription className="mt-1">
             {t("resources.closures.description", {
               defaultValue: "Maintenance windows and unavailable periods for this court.",
@@ -89,38 +93,65 @@ export function ResourceClosuresTab({ vm }: Props) {
       </CardHeader>
       <CardContent>
         {allClosures.length === 0 ? (
-          <div className="py-8 text-center text-xs text-nx-ink-2 border border-dashed border-nx-line rounded-nx-md">
-            <Clock className="size-6 text-nx-ink-3 mx-auto mb-2" aria-hidden="true" />
-            <p>{t("resources.closures.empty", { defaultValue: "No closures scheduled. Court is operating according to working hours." })}</p>
+          <div className="rounded-nx-md border border-dashed border-nx-line py-8 text-center text-xs text-nx-ink-2">
+            <Clock className="mx-auto mb-2 size-6 text-nx-ink-3" aria-hidden="true" />
+            <p>
+              {t("resources.closures.empty", {
+                defaultValue:
+                  "No closures scheduled. Court is operating according to working hours.",
+              })}
+            </p>
           </div>
         ) : (
-          <div className="border border-nx-line rounded-nx-md overflow-hidden bg-nx-surface">
+          <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
             <table className="w-full text-left text-xs">
-              <thead className="bg-nx-raised border-b border-nx-line text-nx-ink font-semibold">
+              <thead className="border-b border-nx-line bg-nx-raised font-semibold text-nx-ink">
                 <tr>
-                  <th className="p-3">{t("resources.closures.table.type", { defaultValue: "Type" })}</th>
-                  <th className="p-3">{t("resources.closures.table.period", { defaultValue: "Period" })}</th>
-                  <th className="p-3">{t("resources.closures.table.reason", { defaultValue: "Reason" })}</th>
-                  <th className="p-3 text-right">{t("resources.closures.table.actions", { defaultValue: "Actions" })}</th>
+                  <th className="p-3">
+                    {t("resources.closures.table.type", { defaultValue: "Type" })}
+                  </th>
+                  <th className="p-3">
+                    {t("resources.closures.table.period", { defaultValue: "Period" })}
+                  </th>
+                  <th className="p-3">
+                    {t("resources.closures.table.reason", { defaultValue: "Reason" })}
+                  </th>
+                  <th className="p-3 text-right">
+                    {t("resources.closures.table.actions", { defaultValue: "Actions" })}
+                  </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-nx-line/60">
+              <tbody className="divide-nx-line/60 divide-y">
                 {allClosures.map((closure) => (
                   <tr key={closure.id} className="hover:bg-nx-surfaceSubtle transition-colors">
                     <td className="p-3 font-medium">
                       {closure.kind === "maintenance" ? (
-                        <Badge variant="outline" className="border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-300 gap-1 font-semibold">
+                        <Badge
+                          variant="outline"
+                          className="gap-1 border-amber-500/50 bg-amber-500/10 font-semibold text-amber-700 dark:text-amber-300"
+                        >
                           <Wrench className="size-3" aria-hidden="true" />
-                          <span>{t("resources.closures.types.Maintenance", { defaultValue: "Maintenance" })}</span>
+                          <span>
+                            {t("resources.closures.types.Maintenance", {
+                              defaultValue: "Maintenance",
+                            })}
+                          </span>
                         </Badge>
                       ) : (
-                        <Badge variant="outline" className="border-slate-500/50 bg-slate-500/10 text-slate-700 dark:text-slate-300 gap-1 font-semibold">
+                        <Badge
+                          variant="outline"
+                          className="gap-1 border-slate-500/50 bg-slate-500/10 font-semibold text-slate-700 dark:text-slate-300"
+                        >
                           <Ban className="size-3" aria-hidden="true" />
-                          <span>{t("resources.closures.types.Unavailable", { defaultValue: "Unavailable" })}</span>
+                          <span>
+                            {t("resources.closures.types.Unavailable", {
+                              defaultValue: "Unavailable",
+                            })}
+                          </span>
                         </Badge>
                       )}
                     </td>
-                    <td className="p-3 text-nx-ink-2 tabular-nums">
+                    <td className="p-3 tabular-nums text-nx-ink-2">
                       {formatDate(closure.startUtc)} â€“ {formatDate(closure.endUtc)}
                     </td>
                     <td className="p-3 text-nx-ink">{closure.reason}</td>
@@ -130,10 +161,12 @@ export function ResourceClosuresTab({ vm }: Props) {
                         size="sm"
                         onClick={() => void vm.deleteClosure(closure.kind, closure)}
                         disabled={vm.saving}
-                        className="h-7 px-2 text-nx-ink-3 hover:text-destructive text-xs gap-1"
+                        className="h-7 gap-1 px-2 text-xs text-nx-ink-3 hover:text-destructive"
                       >
                         <Trash2 className="size-3.5" aria-hidden="true" />
-                        <span>{t("resources.closures.table.delete", { defaultValue: "Remove" })}</span>
+                        <span>
+                          {t("resources.closures.table.delete", { defaultValue: "Remove" })}
+                        </span>
                       </Button>
                     </td>
                   </tr>
@@ -162,15 +195,17 @@ export function ResourceClosuresTab({ vm }: Props) {
                   <button
                     type="button"
                     onClick={() => setReasonType("Maintenance")}
-                    className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${
+                    className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                       reasonType === "Maintenance"
-                        ? "border-amber-500 bg-amber-500/10 text-amber-900 dark:text-amber-200 ring-1 ring-amber-500"
-                        : "border-nx-line hover:bg-nx-surfaceSubtle text-nx-ink-2"
+                        ? "border-amber-500 bg-amber-500/10 text-amber-900 ring-1 ring-amber-500 dark:text-amber-200"
+                        : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
                       <Wrench className="size-3.5" aria-hidden="true" />
-                      <span>{t("resources.closures.types.Maintenance", { defaultValue: "Maintenance" })}</span>
+                      <span>
+                        {t("resources.closures.types.Maintenance", { defaultValue: "Maintenance" })}
+                      </span>
                     </div>
                   </button>
 
@@ -178,15 +213,17 @@ export function ResourceClosuresTab({ vm }: Props) {
                   <button
                     type="button"
                     onClick={() => setReasonType("Unavailable")}
-                    className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${
+                    className={`rounded-nx-md border p-2.5 text-left text-xs font-semibold transition-all ${
                       reasonType === "Unavailable"
-                        ? "border-slate-500 bg-slate-500/10 text-slate-900 dark:text-slate-200 ring-1 ring-slate-500"
-                        : "border-nx-line hover:bg-nx-surfaceSubtle text-nx-ink-2"
+                        ? "border-slate-500 bg-slate-500/10 text-slate-900 ring-1 ring-slate-500 dark:text-slate-200"
+                        : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
                       <Ban className="size-3.5" aria-hidden="true" />
-                      <span>{t("resources.closures.types.Unavailable", { defaultValue: "Unavailable" })}</span>
+                      <span>
+                        {t("resources.closures.types.Unavailable", { defaultValue: "Unavailable" })}
+                      </span>
                     </div>
                   </button>
                 </div>
@@ -255,7 +292,12 @@ export function ResourceClosuresTab({ vm }: Props) {
               </div>
 
               <DialogFooter className="pt-2">
-                <Button type="button" variant="outline" size="sm" onClick={() => setModalOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setModalOpen(false)}
+                >
                   Cancel
                 </Button>
                 <Button type="submit" size="sm" disabled={vm.saving} loading={vm.saving}>

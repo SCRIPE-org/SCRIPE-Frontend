@@ -52,7 +52,7 @@ export function OptionSetBindingActions({
                 ? t("customField.optionSetBinding.switch.title")
                 : t("customField.optionSetBinding.attach.title")}
             </p>
-            <p className="mt-0.5 text-xs text-nx-ink-3 leading-relaxed">
+            <p className="mt-0.5 text-xs leading-relaxed text-nx-ink-3">
               {boundSet
                 ? t("customField.optionSetBinding.switch.description")
                 : t("customField.optionSetBinding.attach.description")}
@@ -68,13 +68,12 @@ export function OptionSetBindingActions({
             loading={isAttaching}
             className="gap-1.5"
           >
-            {!isAttaching && (
-              boundSet ? (
+            {!isAttaching &&
+              (boundSet ? (
                 <ArrowRightLeft className="h-3.5 w-3.5" aria-hidden="true" />
               ) : (
                 <Link2 className="h-3.5 w-3.5" aria-hidden="true" />
-              )
-            )}
+              ))}
             {boundSet
               ? t("customField.optionSetBinding.switch.action")
               : t("customField.optionSetBinding.attach.action")}
@@ -93,7 +92,7 @@ export function OptionSetBindingActions({
               <p className="text-sm font-semibold text-destructive">
                 {t("customField.optionSetBinding.detach.title")}
               </p>
-              <p className="mt-0.5 text-xs text-nx-ink-3 leading-relaxed">
+              <p className="mt-0.5 text-xs leading-relaxed text-nx-ink-3">
                 {t("customField.optionSetBinding.detach.description")}
               </p>
             </div>

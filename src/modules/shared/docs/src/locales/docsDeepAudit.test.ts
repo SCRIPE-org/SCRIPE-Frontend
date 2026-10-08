@@ -57,7 +57,9 @@ describe("Deep Audit of All Page Content Keys Across All 7 Languages", () => {
         if (page.descriptionKey) {
           const val = resolveKey(reg, page.descriptionKey);
           if (!val || val.trim() === "" || val === page.descriptionKey) {
-            missing.push(`Page [${page.slug}] [${lang}] descriptionKey missing: ${page.descriptionKey}`);
+            missing.push(
+              `Page [${page.slug}] [${lang}] descriptionKey missing: ${page.descriptionKey}`
+            );
           }
         }
       }
