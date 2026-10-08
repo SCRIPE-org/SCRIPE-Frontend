@@ -578,7 +578,7 @@ export function useCustomFieldColumns(
   const ownerIdsKey = ownerIds.join(",");
 
   const [state, setState] = useState({
-    definitions: [] as FieldConfig[],
+    definitions: [] as CustomFieldColumnDefinition[],
     valuesByOwnerId: {} as Record<string, Record<string, unknown>>,
     hiddenKeysByOwnerId: {} as Record<string, string[]>,
     isLoading: !!entityTypeKey && ownerIdsKey !== "",
