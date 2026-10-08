@@ -67,10 +67,8 @@ export function useTenantOverviewViewModel() {
     t,
   ]);
 
-  const effectiveData = isPresentationMode ? TENANT_MOCK_DATA : liveData;
-
   return {
-    data: effectiveData,
+    data: liveData,
     isPresentationMode,
     togglePresentationMode,
     isImpersonating,
