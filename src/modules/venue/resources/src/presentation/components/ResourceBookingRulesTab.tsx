@@ -100,7 +100,7 @@ export function ResourceBookingRulesTab({ vm }: Props) {
             </p>
 
             <div className="flex items-center gap-3">
-              <select
+              // UI-EXCEPTION: native element required for compact layout\n              <select
                 className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"
                 value={startIncrement}
                 onChange={(e) => setStartIncrement(Number(e.target.value))}

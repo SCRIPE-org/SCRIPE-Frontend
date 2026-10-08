@@ -196,6 +196,7 @@ export function getVenueContainer(): VenueContainer {
     moneyRepository: new MoneyRepository(moneyService),
     venueAttentionRepository: new VenueAttentionRepository(venueAttentionService),
     venueOverviewService: new VenueOverviewService(
+      venueApi,
       new OperationsCalendarRepository(operationsCalendarService),
       new SchedulableResourceRepository(schedulableResourceService),
       new FacilityResourceProfileRepository(facilityResourceProfileService),
