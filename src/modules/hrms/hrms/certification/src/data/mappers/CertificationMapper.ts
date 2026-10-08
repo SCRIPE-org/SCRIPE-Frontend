@@ -7,6 +7,9 @@
 import { Certification, type CertificationData } from "../../domain/entities/Certification";
 import { CertificationModel, type CertificationJson } from "../models/CertificationModel";
 
+/**
+ * Documentation for module export
+ */
 export class CertificationMapper {
   /**
    * Convert CertificationModel to Certification Entity

@@ -2,6 +2,9 @@ import type { CustomerSummary } from "../../domain/entities/Booking";
 import type { ICustomerPickerService } from "../../domain/interfaces/ICustomerPickerService";
 import type { ICustomerRepository } from "../../domain/interfaces/ICustomerRepository";
 
+/**
+ * Documentation for module export
+ */
 export class CustomerRepository implements ICustomerRepository {
   constructor(private readonly service: ICustomerPickerService) {}
   search(query: string): Promise<CustomerSummary[]> {

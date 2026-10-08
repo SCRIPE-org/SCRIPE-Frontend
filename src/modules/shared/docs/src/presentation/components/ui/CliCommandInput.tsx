@@ -68,7 +68,7 @@ export function CliCommandInput({ commands, onSelectCommand }: CliCommandInputPr
                 variant="ghost"
                 onClick={() => handleSelect(s)}
                 className={cn(
-                  "h-auto w-full px-3 py-1.5 justify-start text-start font-mono text-xs text-nx-ink rounded-none",
+                  "h-auto w-full justify-start rounded-none px-3 py-1.5 text-start font-mono text-xs text-nx-ink",
                   "transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                   "hover:bg-nx-hover focus-visible:bg-nx-hover focus-visible:outline-none"
                 )}

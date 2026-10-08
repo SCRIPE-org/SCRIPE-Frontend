@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
 import { VenueOverviewView } from "./VenueOverviewView";
 
-vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn() }));
+vi.mock("@modules/venue/di", () => ({ getVenueContainer: vi.fn(), venueContainer: {} }));
 
 describe("VenueOverviewView", () => {
   const mockOverviewState = {
@@ -93,7 +93,9 @@ describe("VenueOverviewView", () => {
       venueOverviewService: mockVenueOverviewService,
       facilityRepository: mockFacilityRepository,
       venueAttentionRepository: {
-        get: vi.fn().mockResolvedValue({ items: [], totalCount: 0, generatedAtUtc: "2026-09-12T10:00:00Z" }),
+        get: vi
+          .fn()
+          .mockResolvedValue({ items: [], totalCount: 0, generatedAtUtc: "2026-09-12T10:00:00Z" }),
       },
     } as never);
   });
@@ -133,7 +135,9 @@ describe("VenueOverviewView", () => {
 
     // Resource Activity List
     expect(screen.getByText("venueOverview.resourceActivity.title")).toBeInTheDocument();
-    expect(screen.getByText("venueOverview.resourceActivity.status.noActiveBooking")).toBeInTheDocument();
+    expect(
+      screen.getByText("venueOverview.resourceActivity.status.noActiveBooking")
+    ).toBeInTheDocument();
 
     // Deferred Recent Activity Banner
     expect(screen.getByTestId("recent-activity-deferred")).toBeInTheDocument();

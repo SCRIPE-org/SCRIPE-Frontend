@@ -7,6 +7,9 @@
 import { Qualification, type QualificationData } from "../../domain/entities/Qualification";
 import { QualificationModel, type QualificationJson } from "../models/QualificationModel";
 
+/**
+ * Documentation for module export
+ */
 export class QualificationMapper {
   /**
    * Convert QualificationModel to Qualification Entity

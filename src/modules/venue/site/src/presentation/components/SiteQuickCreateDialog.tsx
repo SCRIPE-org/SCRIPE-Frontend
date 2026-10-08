@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import {
@@ -14,11 +14,8 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { venueContainer } from "@modules/venue/di";
-import {
-  SiteLocationFields,
-  type SiteLocationState,
-} from "./SiteLocationFields";
+import { useVenueServiceLocatorStatic } from "@modules/venue";
+import { SiteLocationFields, type SiteLocationState } from "./SiteLocationFields";
 import { getDefaultTimeZoneForCountry } from "@core/constants/countries";
 
 interface SiteQuickCreateDialogProps {
@@ -38,6 +35,9 @@ const DEFAULT_LOCATION: SiteLocationState = {
   address: "",
 };
 
+/**
+ * Documentation for SiteQuickCreateDialog
+ */
 export function SiteQuickCreateDialog({
   open,
   onOpenChange,
@@ -65,7 +65,7 @@ export function SiteQuickCreateDialog({
       const finalAddress = location.address.trim() || location.street.trim() || undefined;
       const finalTz = location.timeZone.trim() || undefined;
 
-      const siteId = await venueContainer.siteRepository.create({
+      const siteId = await useVenueServiceLocatorStatic.siteRepository.create({
         name: name.trim(),
         address: finalAddress,
         timeZone: finalTz,
@@ -94,9 +94,7 @@ export function SiteQuickCreateDialog({
         <form onSubmit={handleSubmit} className="space-y-4">
           <DialogHeader>
             <DialogTitle>{t("site.addNew")}</DialogTitle>
-            <DialogDescription>
-              {t("site.operatingTerritoryDesc")}
-            </DialogDescription>
+            <DialogDescription>{t("site.operatingTerritoryDesc")}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
@@ -117,15 +115,10 @@ export function SiteQuickCreateDialog({
                 maxLength={200}
                 aria-invalid={!!nameError || undefined}
               />
-              {nameError && (
-                <p className="text-xs text-destructive">{nameError}</p>
-              )}
+              {nameError && <p className="text-xs text-destructive">{nameError}</p>}
             </div>
 
-            <SiteLocationFields
-              location={location}
-              onChange={setLocation}
-            />
+            <SiteLocationFields location={location} onChange={setLocation} />
           </div>
 
           <DialogFooter className="gap-2 sm:gap-0">

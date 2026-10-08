@@ -36,10 +36,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import "@testing-library/jest-dom";
 import { OptionSetStatusBadge, OptionSetStatusHint } from "./OptionSetStatusBadge";
-import type {
-  FieldOptionStatus,
-  FieldVersionStatus,
-} from "../../data/models/OptionSetModel";
+import type { FieldOptionStatus, FieldVersionStatus } from "../../data/models/OptionSetModel";
 import { en } from "../../../locales/option-set.en";
 
 // Badge resolves its shape/radius ladder from the Settings store. Same mock shape the sibling
@@ -72,9 +69,7 @@ function translate(key: string, params?: Record<string, string | number>): strin
     .split(".")
     .reduce<unknown>(
       (node, segment) =>
-        node && typeof node === "object"
-          ? (node as Record<string, unknown>)[segment]
-          : undefined,
+        node && typeof node === "object" ? (node as Record<string, unknown>)[segment] : undefined,
       en
     );
 
@@ -194,9 +189,7 @@ describe("OptionSetStatusHint", () => {
     it(`explains what ${status} means for the choices people see`, () => {
       render(<OptionSetStatusHint kind="version" status={status} />);
 
-      expect(
-        screen.getByText(en.optionSet.versions.statusHint[status])
-      ).toBeInTheDocument();
+      expect(screen.getByText(en.optionSet.versions.statusHint[status])).toBeInTheDocument();
     });
   }
 

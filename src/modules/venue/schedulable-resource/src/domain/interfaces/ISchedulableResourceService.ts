@@ -1,6 +1,9 @@
 import type { SchedulableResourceModel } from "../../data/models/SchedulableResourceModel";
 import type { PublicationChecklistReport } from "../entities/SchedulableResource";
 
+/**
+ * Documentation for module export
+ */
 export interface SchedulableResourceListResult {
   items: SchedulableResourceModel[];
   totalCount: number;
@@ -11,8 +14,16 @@ export interface SchedulableResourceListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ISchedulableResourceService {
-  getAll(params: { page: number; pageSize: number; search?: string; facilityResourceProfileIds?: string[] }): Promise<SchedulableResourceListResult>;
+  getAll(params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    facilityResourceProfileIds?: string[];
+  }): Promise<SchedulableResourceListResult>;
   getById(id: string): Promise<SchedulableResourceModel>;
   create(data: Record<string, unknown>): Promise<{ id: string }>;
   update(id: string, data: Record<string, unknown>): Promise<void>;

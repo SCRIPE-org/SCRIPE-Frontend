@@ -248,11 +248,7 @@ export function ReportsTab({
           </div>
 
           {/* Save Button */}
-          <Button
-            onClick={handleSave}
-            loading={isSaving}
-            className="mt-4 w-full gap-2"
-          >
+          <Button onClick={handleSave} loading={isSaving} className="mt-4 w-full gap-2">
             <Save className="h-4 w-4" />
             {t("entitlements.analytics.reports.savePreferences")}
           </Button>

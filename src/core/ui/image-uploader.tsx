@@ -82,16 +82,18 @@ export function ImageUploader({
 
   // Update preview when value changes externally
   React.useEffect(() => {
-    if (value && (value.startsWith("data:image") || value.startsWith("http"))) {
-      setPreview(value);
-      // Get dimensions for display
-      getImageDimensions(value).then((dims: { width: number; height: number } | null) =>
-        setImageDimensions(dims)
-      );
-    } else if (!value) {
-      setPreview(null);
-      setImageDimensions(null);
-    }
+    queueMicrotask(() => {
+      if (value && (value.startsWith("data:image") || value.startsWith("http"))) {
+        setPreview(value);
+        // Get dimensions for display
+        getImageDimensions(value).then((dims: { width: number; height: number } | null) =>
+          setImageDimensions(dims)
+        );
+      } else if (!value) {
+        setPreview(null);
+        setImageDimensions(null);
+      }
+    });
   }, [value]);
 
   const handleFileConversion = useCallback(
@@ -274,9 +276,7 @@ export function ImageUploader({
           // Honest progress: a determinate bar and a tabular percentage, not a
           // clip-path ring pretending to be a loader.
           <div className="flex w-full max-w-xs flex-col items-center gap-3 p-8">
-            <p className="text-sm font-medium text-nx-ink">
-              {t("imageUploader.uploading")}
-            </p>
+            <p className="text-sm font-medium text-nx-ink">{t("imageUploader.uploading")}</p>
             <Progress value={uploadProgress} className="h-1 w-full bg-nx-raised" />
             <p className="text-xs tabular-nums text-nx-ink-3">{uploadProgress}%</p>
           </div>

@@ -9,7 +9,8 @@ export const en = {
     noItems: "No sites found",
     searchPlaceholder: "Search sites...",
     operatingTerritory: "Geographic Territory & Time Zone",
-    operatingTerritoryDesc: "Configure address, administrative territory, and authoritative time zone.",
+    operatingTerritoryDesc:
+      "Configure address, administrative territory, and authoritative time zone.",
     country: "Country / Jurisdiction",
     selectCountry: "Select country...",
     searchCountries: "Search countries...",

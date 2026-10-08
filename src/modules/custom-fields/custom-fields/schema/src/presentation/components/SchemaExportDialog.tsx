@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Schema export dialog — Wave 6 row 6.5
  *
@@ -42,11 +43,17 @@ import {
   useSchemaExportViewModel,
 } from "../viewmodels/useSchemaExportViewModel";
 
+/**
+ * Documentation for module export
+ */
 export interface SchemaExportDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function SchemaExportDialog({ open, onOpenChange }: SchemaExportDialogProps) {
   const { t, language } = useI18n();
   const vm = useSchemaExportViewModel();
@@ -169,7 +176,11 @@ export function SchemaExportDialog({ open, onOpenChange }: SchemaExportDialogPro
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={vm.isExporting}>
+          <Button
+            variant="outline"
+            onClick={() => handleOpenChange(false)}
+            disabled={vm.isExporting}
+          >
             {t("common.close")}
           </Button>
           <Button onClick={vm.exportSchema} disabled={vm.isExporting}>

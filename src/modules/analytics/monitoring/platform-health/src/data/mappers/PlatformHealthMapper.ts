@@ -1,6 +1,9 @@
 import { PlatformHealth } from "../../domain/entities/PlatformHealth";
 import type { PlatformHealthResponseDto } from "../models/platform-health.dto";
 
+/**
+ * PlatformHealthMapper
+ */
 export class PlatformHealthMapper {
   static toEntity(dto: Partial<PlatformHealthResponseDto>): PlatformHealth {
     return new PlatformHealth({
@@ -39,12 +42,42 @@ export class PlatformHealthMapper {
           mode: dto.infrastructure?.redis?.mode ?? "InMemory",
         },
       },
+      healthScore: dto.healthScore,
+      totalChecks: dto.totalChecks,
+      healthyChecks: dto.healthyChecks,
       modules: (dto.modules ?? []).map((m) => ({
         name: m.name ?? "",
         routePrefix: m.routePrefix ?? "",
         version: m.version ?? "",
         status: m.status ?? "Active",
         isActive: m.isActive ?? true,
+      })),
+      checks: (dto.checks ?? []).map((c) => ({
+        name: c.name ?? "",
+        status: c.status ?? "Healthy",
+        description: c.description ?? "",
+        durationMs: c.durationMs ?? 0,
+        tags: c.tags ?? [],
+        data: c.data,
+      })),
+      externalDependencies: (dto.externalDependencies ?? []).map((d) => ({
+        name: d.name ?? "",
+        category: d.category ?? "",
+        status: d.status ?? "Healthy",
+        latencyMs: d.latencyMs ?? 0,
+        description: d.description ?? "",
+        lastCheckedAt: d.lastCheckedAt ?? new Date().toISOString(),
+      })),
+      incidents: (dto.incidents ?? []).map((inc) => ({
+        id: inc.id ?? "",
+        title: inc.title ?? "",
+        affectedService: inc.affectedService ?? "",
+        severity: inc.severity ?? "Warning",
+        status: inc.status ?? "Investigating",
+        description: inc.description ?? "",
+        impact: inc.impact ?? "",
+        detectedAt: inc.detectedAt ?? new Date().toISOString(),
+        resolvedAt: inc.resolvedAt,
       })),
     });
   }

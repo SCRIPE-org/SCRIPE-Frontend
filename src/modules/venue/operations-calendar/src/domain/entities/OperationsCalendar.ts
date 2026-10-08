@@ -1,3 +1,6 @@
+/**
+ * Documentation for =
+ */
 export type ReservationStatus =
   | "Draft"
   | "Requested"
@@ -12,8 +15,14 @@ export type ReservationStatus =
   | "Expired"
   | "NoShow";
 
+/**
+ * Documentation for "CheckedIn"
+ */
 export type OccupyingReservationStatus = "Held" | "Confirmed" | "CheckedIn";
 
+/**
+ * Documentation for module export
+ */
 export interface OperationsCalendarBlock {
   reservationId: string;
   reservationNumber: string;
@@ -26,6 +35,9 @@ export interface OperationsCalendarBlock {
   holdExpiresAtUtc: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface OperationsCalendarDay {
   dateLocal: string;
   timeZoneId: string;
@@ -36,12 +48,18 @@ export interface OperationsCalendarDay {
   blocks: OperationsCalendarBlock[];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface OperationsCalendarQuery {
   dateLocal: string;
   timeZoneId: string;
   resourceIds: string[];
 }
 
+/**
+ * Documentation for module export
+ */
 export interface CalendarResource {
   id: string;
   name: string;
@@ -53,8 +71,15 @@ export interface CalendarResource {
   timeZoneId: string;
 }
 
-export type OperationsCalendarStage = "loading" | "ready" | "empty" | "featureUnavailable" | "error";
+/**
+ * Documentation for "error"
+ */
+export type OperationsCalendarStage =
+  "loading" | "ready" | "empty" | "featureUnavailable" | "error";
 
+/**
+ * Documentation for module export
+ */
 export interface OperationsCalendarState {
   stage: OperationsCalendarStage;
   day: OperationsCalendarDay | null;

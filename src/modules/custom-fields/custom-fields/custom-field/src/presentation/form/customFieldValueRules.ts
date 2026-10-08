@@ -125,7 +125,8 @@ export function validateEntityReferenceCustomFieldValue(
     value !== null && typeof value === "object" && !Array.isArray(value)
       ? (value as { entityTypeKey?: unknown; entityId?: unknown })
       : null;
-  const typeKey = typeof candidate?.entityTypeKey === "string" ? candidate.entityTypeKey.trim() : "";
+  const typeKey =
+    typeof candidate?.entityTypeKey === "string" ? candidate.entityTypeKey.trim() : "";
   const entityId = typeof candidate?.entityId === "string" ? candidate.entityId.trim() : "";
 
   if (typeKey === "" && entityId === "") {
@@ -153,7 +154,8 @@ export function validateMediaReferenceCustomFieldValue(
     value !== null && typeof value === "object" && !Array.isArray(value)
       ? (value as { entityTypeKey?: unknown; entityId?: unknown })
       : null;
-  const typeKey = typeof candidate?.entityTypeKey === "string" ? candidate.entityTypeKey.trim() : "";
+  const typeKey =
+    typeof candidate?.entityTypeKey === "string" ? candidate.entityTypeKey.trim() : "";
   const entityId = typeof candidate?.entityId === "string" ? candidate.entityId.trim() : "";
 
   if (typeKey === "" && entityId === "") {

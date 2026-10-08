@@ -111,15 +111,13 @@ export class AuditMapper {
       framework: dto.framework ?? "",
       generatedAt: dto.generatedAt ?? "",
       overallScore: dto.overallScore ?? 0,
-      sections: (dto.sections ?? []).map(
-        (s): ComplianceSection => ({
-          name: s.name ?? "",
-          score: s.score ?? 0,
-          status: (s.status as ComplianceSection["status"]) ?? "fail",
-          findings: s.findings ?? [],
-          recommendations: s.recommendations ?? [],
-        })
-      ),
+      sections: (dto.sections ?? []).map((s): ComplianceSection => ({
+        name: s.name ?? "",
+        score: s.score ?? 0,
+        status: (s.status as ComplianceSection["status"]) ?? "fail",
+        findings: s.findings ?? [],
+        recommendations: s.recommendations ?? [],
+      })),
     };
   }
 }

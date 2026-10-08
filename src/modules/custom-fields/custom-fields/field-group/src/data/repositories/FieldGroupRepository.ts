@@ -17,6 +17,9 @@ import type { IFieldGroupService } from "../../domain/interfaces/IFieldGroupServ
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 import { FieldGroupMapper } from "../mappers/FieldGroupMapper";
 
+/**
+ * Documentation for module export
+ */
 export class FieldGroupRepository implements IFieldGroupRepository {
   constructor(private readonly service: IFieldGroupService) {}
 

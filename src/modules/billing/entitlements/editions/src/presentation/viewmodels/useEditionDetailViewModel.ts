@@ -391,8 +391,7 @@ export function useEditionDetailViewModel(editionId: string): EditionDetailViewM
   const createVersionMutation = useMutation({
     mutationFn: async ({ changeNotes }: { changeNotes?: string }) => {
       let pricingSnapshot:
-        | Array<{ currency: string; billingCycle: string; amount: number }>
-        | undefined;
+        Array<{ currency: string; billingCycle: string; amount: number }> | undefined;
       try {
         const priceData = await editionRepository.getEditionPrices(editionId);
         if (priceData?.prices && priceData.prices.length > 0) {

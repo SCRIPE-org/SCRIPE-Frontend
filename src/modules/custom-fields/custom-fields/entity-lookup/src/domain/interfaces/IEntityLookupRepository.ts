@@ -15,6 +15,9 @@ import type {
   EntityLookupType,
 } from "../entities/EntityLookup";
 
+/**
+ * Documentation for module export
+ */
 export interface IEntityLookupRepository {
   /** Types this caller may reference. `[]` means "you may not reference anything" and is not an error. */
   getAvailableTypes(signal?: AbortSignal): Promise<EntityLookupType[]>;

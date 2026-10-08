@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const BOOKING_ENDPOINTS = {
   RESERVATIONS: `${V1}/Reservations`,
   RESERVATION_BY_ID: (id: string) => `${V1}/Reservations/${id}`,

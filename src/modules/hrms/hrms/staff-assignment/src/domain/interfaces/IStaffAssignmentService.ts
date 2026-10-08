@@ -16,6 +16,9 @@ export interface StaffAssignmentListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffAssignmentService {
   getAll(params: {
     page: number;

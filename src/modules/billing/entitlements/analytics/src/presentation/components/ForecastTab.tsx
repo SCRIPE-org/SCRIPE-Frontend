@@ -92,7 +92,7 @@ export function ForecastTab({ forecastData, months, onMonthsChange }: ForecastTa
                         {/* Confidence interval background */}
                         {isProjected && (
                           <div
-                            className="absolute h-full rounded-nx-md border-s border-e border-info/20 bg-info/10"
+                            className="absolute h-full rounded-nx-md border-e border-s border-info/20 bg-info/10"
                             style={{
                               left: `${lowerWidth}%`,
                               width: `${Math.max(upperWidth - lowerWidth, 1)}%`,

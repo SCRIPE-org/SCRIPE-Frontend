@@ -12,6 +12,9 @@ import type { IPartyService, PartyListResult } from "../../domain/interfaces/IPa
 
 const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTIES.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class PartyService implements IPartyService {
   constructor(private readonly api: IApiService) {}
 

@@ -7,6 +7,9 @@
 import { PartyRole, type PartyRoleData } from "../../domain/entities/PartyRole";
 import { PartyRoleModel, type PartyRoleJson } from "../models/PartyRoleModel";
 
+/**
+ * Documentation for module export
+ */
 export class PartyRoleMapper {
   /**
    * Convert PartyRoleModel to PartyRole Entity

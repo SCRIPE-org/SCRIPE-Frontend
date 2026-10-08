@@ -9,6 +9,9 @@ import type {
 import type { IAvailabilityRepository } from "../../domain/interfaces/IAvailabilityRepository";
 import type { IAvailabilityService } from "../../domain/interfaces/IAvailabilityService";
 
+/**
+ * Documentation for module export
+ */
 export class AvailabilityRepository implements IAvailabilityRepository {
   constructor(private readonly service: IAvailabilityService) {}
 
@@ -44,8 +47,15 @@ export class AvailabilityRepository implements IAvailabilityRepository {
     return (await this.service.createBlock(kind, data)).id;
   }
 
-  updateBlock(kind: ResourceBlockKind, existing: ResourceBlock, data: Omit<SaveResourceBlock, "resourceId">) {
-    return this.service.updateBlock(kind, existing.id, { ...data, expectedVersion: existing.version });
+  updateBlock(
+    kind: ResourceBlockKind,
+    existing: ResourceBlock,
+    data: Omit<SaveResourceBlock, "resourceId">
+  ) {
+    return this.service.updateBlock(kind, existing.id, {
+      ...data,
+      expectedVersion: existing.version,
+    });
   }
 
   deleteBlock(kind: ResourceBlockKind, existing: ResourceBlock) {

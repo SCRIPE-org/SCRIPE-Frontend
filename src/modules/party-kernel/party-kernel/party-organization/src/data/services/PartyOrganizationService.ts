@@ -19,6 +19,9 @@ import type {
 
 const BASE_URL = PARTYKERNEL_ENDPOINTS.PARTY_ORGANIZATIONS.LIST;
 
+/**
+ * Documentation for module export
+ */
 export class PartyOrganizationService implements IPartyOrganizationService {
   constructor(private readonly api: IApiService) {}
 

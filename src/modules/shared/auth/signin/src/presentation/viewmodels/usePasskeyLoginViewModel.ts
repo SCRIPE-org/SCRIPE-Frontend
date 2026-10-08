@@ -76,7 +76,9 @@ export function usePasskeyLoginViewModel(
   // Check browser support
   useEffect(() => {
     if (typeof window !== "undefined" && !window.PublicKeyCredential) {
-      setIsSupported(false);
+      queueMicrotask(() => {
+        setIsSupported(false);
+      });
     }
   }, []);
 

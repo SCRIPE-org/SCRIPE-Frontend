@@ -2,6 +2,9 @@ import type { ICustomFieldValueRepository } from "../../domain/interfaces/ICusto
 import type { ICustomFieldValueService } from "../../domain/interfaces/ICustomFieldValueService";
 import { CustomFieldValueMapper } from "../mappers/CustomFieldValueMapper";
 
+/**
+ * Documentation for module export
+ */
 export class CustomFieldValueRepository implements ICustomFieldValueRepository {
   constructor(private readonly service: ICustomFieldValueService) {}
 

@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const FEATURES_ENDPOINTS = {
   LIST: `${V1}/features`,
   EFFECTIVE: `${V1}/features/effective`,

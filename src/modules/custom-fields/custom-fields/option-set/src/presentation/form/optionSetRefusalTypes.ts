@@ -1,7 +1,13 @@
 import { toast } from "@core/hooks/use-enhanced-toast";
 
+/**
+ * Documentation for string
+ */
 export type OptionSetTranslate = (key: string, params?: Record<string, string | number>) => string;
 
+/**
+ * Documentation for =
+ */
 export type OptionSetRefusalReason =
   | "permission"
   | "systemManaged"
@@ -12,12 +18,18 @@ export type OptionSetRefusalReason =
   | "notLoaded"
   | "invalid";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetRefusal {
   reason: OptionSetRefusalReason;
   messageKey: string;
   params?: Record<string, string | number>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function reportOptionSetRefusal(refusal: OptionSetRefusal, t: OptionSetTranslate): void {
   const message = t(refusal.messageKey, refusal.params);
 

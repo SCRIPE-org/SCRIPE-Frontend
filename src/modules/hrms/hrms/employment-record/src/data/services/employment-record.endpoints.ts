@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const EMPLOYMENT_RECORD_ENDPOINTS = {
   LIST: `${V1}/employment-records`,
   BY_ID: (id: string) => `${V1}/employment-records/${id}`,

@@ -37,6 +37,9 @@ function shortId(id: string | undefined): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const MergeCandidateListView = React.memo(function MergeCandidateListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.mergeCandidate");
   const { vm } = useMergeCandidateViewModel();

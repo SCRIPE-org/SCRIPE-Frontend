@@ -11,6 +11,9 @@ interface InteractiveDiagramProps {
   titleKey?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function InteractiveDiagram({ nodes, connections, titleKey }: InteractiveDiagramProps) {
   const { t } = useDocsI18n();
   const [activeNode, setActiveNode] = useState<DiagramNode | null>(nodes[0] || null);

@@ -7,10 +7,13 @@ import type {
   InitializeTenantKeyRequest,
   RotateTenantKeyRequest,
   RevokeTenantKeyRequest,
-  StartRewrapRequest
+  StartRewrapRequest,
 } from "../models/key-management.dto";
 import { KEY_MANAGEMENT_ENDPOINTS } from "./key-management.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class KeyManagementService implements IKeyManagementService {
   constructor(private readonly api: IApiService) {}
 
@@ -44,7 +47,10 @@ export class KeyManagementService implements IKeyManagementService {
     return this.api.get<MigrationSessionDto>(KEY_MANAGEMENT_ENDPOINTS.SESSION_PROGRESS(sessionId));
   }
 
-  async getAuditLogs(page = 1, pageSize = 20): Promise<{ items: EncryptionAuditLogDto[]; totalCount: number }> {
+  async getAuditLogs(
+    page = 1,
+    pageSize = 20
+  ): Promise<{ items: EncryptionAuditLogDto[]; totalCount: number }> {
     return this.api.get<{ items: EncryptionAuditLogDto[]; totalCount: number }>(
       KEY_MANAGEMENT_ENDPOINTS.AUDIT_LOGS(page, pageSize)
     );

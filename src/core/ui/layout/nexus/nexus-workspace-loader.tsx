@@ -85,7 +85,9 @@ export function NexusWorkspaceLoader({
 
   useEffect(() => {
     if (show && phase === "idle") {
-      setPhase("entering");
+      queueMicrotask(() => {
+        setPhase("entering");
+      });
       schedule(() => setPhase("visible"), ENTER_MS);
     }
 
@@ -101,8 +103,7 @@ export function NexusWorkspaceLoader({
     }
 
     return clearAll;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show]);
+  }, [show, phase, onExited]);
 
   if (phase === "idle") return null;
 

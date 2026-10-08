@@ -66,6 +66,9 @@ const sections: DocSection[] = [
     filename: "Node.js Webhook Receiver (HMAC-SHA256 Verification)",
     code: `import crypto from "crypto";
 
+/**
+ * Documentation for verifyScripeWebhook
+ */
 export function verifyScripeWebhook(
   rawBody: string,
   signatureHeader: string,

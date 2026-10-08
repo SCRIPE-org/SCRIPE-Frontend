@@ -20,6 +20,9 @@ export interface WorkItemJson {
   modifiedAt?: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface WorkItemListItemJson {
   id: string;
   title: string;
@@ -32,6 +35,9 @@ export interface WorkItemListItemJson {
   createdAt: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface WorkItemListResponseJson {
   items: WorkItemListItemJson[];
   totalCount: number;
@@ -60,6 +66,9 @@ export interface AssignableAdminResponseModel {
   isSuperAdmin?: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface PagedAssignableAdminsModel {
   items: AssignableAdminResponseModel[];
   totalCount: number;
@@ -70,6 +79,9 @@ export interface PagedAssignableAdminsModel {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export class WorkItemModel {
   constructor(
     public readonly id: string,

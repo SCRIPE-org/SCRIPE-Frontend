@@ -6,6 +6,9 @@ import { formatStandardValues, type FormatTranslateFn } from "./formatStandardVa
 import { formatSpecializedValues } from "./formatSpecializedValues";
 import { formatReferenceValues } from "./formatReferenceValues";
 
+/**
+ * Documentation for module export
+ */
 export type { FormatTranslateFn };
 
 /**

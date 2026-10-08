@@ -46,7 +46,10 @@ describe("BookingService", () => {
   });
 
   it("confirms T06 through the explicit action endpoint", async () => {
-    vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", bookingHoldId: "hold-1" });
+    vi.mocked(api.post).mockResolvedValue({
+      reservationId: "reservation-1",
+      bookingHoldId: "hold-1",
+    });
 
     await new BookingService(api).confirm("reservation-1", "confirm-key", "price-quote-1");
 
@@ -90,7 +93,11 @@ describe("BookingService", () => {
   it("cancels through T13 with the supplied operator reason", async () => {
     vi.mocked(api.post).mockResolvedValue({ reservationId: "reservation-1", status: "Cancelled" });
 
-    await new BookingService(api).cancel("reservation-1", "cancel-key", "Customer requested cancellation");
+    await new BookingService(api).cancel(
+      "reservation-1",
+      "cancel-key",
+      "Customer requested cancellation"
+    );
 
     expect(api.post).toHaveBeenCalledWith("/v1/Reservations/reservation-1/cancel", {
       idempotencyKey: "cancel-key",
@@ -127,7 +134,10 @@ describe("BookingService", () => {
   });
 
   it("hydrates the reservation reference from the read contract", async () => {
-    vi.mocked(api.get).mockResolvedValue({ id: "reservation-1", reservationNumber: "RES-20260910-A1B2C3" });
+    vi.mocked(api.get).mockResolvedValue({
+      id: "reservation-1",
+      reservationNumber: "RES-20260910-A1B2C3",
+    });
 
     const result = await new BookingService(api).getReservation("reservation-1");
 

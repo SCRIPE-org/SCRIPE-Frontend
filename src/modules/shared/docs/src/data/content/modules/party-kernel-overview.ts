@@ -99,13 +99,37 @@ const sections: DocSection[] = [
     type: "flowchart",
     direction: "vertical",
     nodes: [
-      { id: "A", label: "Party record ingested from registration, booking, or CSV import", type: "default" },
-      { id: "B", label: "Normalize email, mobile MSISDN, and tax registration identifiers", type: "info" },
+      {
+        id: "A",
+        label: "Party record ingested from registration, booking, or CSV import",
+        type: "default",
+      },
+      {
+        id: "B",
+        label: "Normalize email, mobile MSISDN, and tax registration identifiers",
+        type: "info",
+      },
       { id: "C", label: "Execute Jaro-Winkler phonetic & exact match scoring", type: "primary" },
-      { id: "D", label: "If confidence score >= 0.85: create MergeCandidate entry", type: "warning" },
-      { id: "E", label: "Operator reviews candidate with side-by-side attribute diff", type: "info" },
-      { id: "F", label: "Execute atomic MergePartiesCommand: re-point relationships & roles", type: "success" },
-      { id: "G", label: "Mark secondary party Merged & record immutable MergeAuditLedger", type: "success" },
+      {
+        id: "D",
+        label: "If confidence score >= 0.85: create MergeCandidate entry",
+        type: "warning",
+      },
+      {
+        id: "E",
+        label: "Operator reviews candidate with side-by-side attribute diff",
+        type: "info",
+      },
+      {
+        id: "F",
+        label: "Execute atomic MergePartiesCommand: re-point relationships & roles",
+        type: "success",
+      },
+      {
+        id: "G",
+        label: "Mark secondary party Merged & record immutable MergeAuditLedger",
+        type: "success",
+      },
     ],
     connections: [
       { from: "A", to: "B" },

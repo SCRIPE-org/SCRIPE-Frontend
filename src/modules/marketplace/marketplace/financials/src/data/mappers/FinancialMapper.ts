@@ -5,6 +5,9 @@ import type { PurchaseDto, PayoutDto } from "../../domain/interfaces/IFinancials
 // Re-export so existing consumers importing the DTOs from this module keep working.
 // Canonical definitions live in IFinancialsService.ts (single source of truth —
 // avoids two divergent PurchaseDto/PayoutDto shapes across the data layer).
+/**
+ * Documentation for module export
+ */
 export type { PurchaseDto, PayoutDto };
 
 /**

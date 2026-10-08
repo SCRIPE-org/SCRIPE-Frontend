@@ -1,7 +1,5 @@
 "use client";
 
-/* eslint-disable react-hooks/set-state-in-effect */
-
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -80,19 +78,21 @@ export function CategoryFormDialog({
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (editingCategory) {
-      setForm({
-        nameEn: editingCategory.name,
-        nameAr: editingCategory.nameAr,
-        slug: editingCategory.slug,
-        icon: editingCategory.iconUrl ?? "",
-        description: editingCategory.description,
-        sortOrder: editingCategory.sortOrder,
-      });
-    } else {
-      setForm(EMPTY_FORM);
-    }
-    setErrors({});
+    queueMicrotask(() => {
+      if (editingCategory) {
+        setForm({
+          nameEn: editingCategory.name,
+          nameAr: editingCategory.nameAr,
+          slug: editingCategory.slug,
+          icon: editingCategory.iconUrl ?? "",
+          description: editingCategory.description,
+          sortOrder: editingCategory.sortOrder,
+        });
+      } else {
+        setForm(EMPTY_FORM);
+      }
+      setErrors({});
+    });
   }, [editingCategory, open]);
 
   const updateField = <K extends keyof CategoryFormData>(field: K, value: CategoryFormData[K]) => {

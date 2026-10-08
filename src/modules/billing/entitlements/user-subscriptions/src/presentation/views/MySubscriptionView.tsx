@@ -22,7 +22,7 @@ import { DetailRow } from "@core/ui/detail-row";
 import { EmptyState } from "@core/ui/empty-state";
 import { ErrorMessage } from "@core/ui/error-message";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import {  cn , resolveIntlLocale } from "@core/common/utils";
+import { cn, resolveIntlLocale } from "@core/common/utils";
 import {
   Crown,
   Calendar,

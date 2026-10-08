@@ -37,6 +37,9 @@ import {
 import type { IOptionSetService } from "../../domain/interfaces/IOptionSetService";
 import { OPTION_SET_ENDPOINTS } from "./option-set.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class OptionSetService implements IOptionSetService {
   constructor(private readonly api: IApiService) {}
 
@@ -78,10 +81,7 @@ export class OptionSetService implements IOptionSetService {
     // Nested under the SET, because creating a version needs its parent. The other three version
     // routes are keyed by the version's own id and are flat siblings of `{id}` -- the asymmetry is
     // the controller's, not a mistake here.
-    return this.api.post<{ id: string }>(
-      OPTION_SET_ENDPOINTS.CREATE_VERSION(optionSetId),
-      data
-    );
+    return this.api.post<{ id: string }>(OPTION_SET_ENDPOINTS.CREATE_VERSION(optionSetId), data);
   }
 
   async updateVersion(versionId: string, data: OptionSetVersionItemsRequestJson): Promise<void> {

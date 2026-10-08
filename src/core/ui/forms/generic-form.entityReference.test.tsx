@@ -212,9 +212,7 @@ describe("GenericForm entity-reference field — routing to the extension contro
 
 describe("GenericForm entity-reference field — host-owned a11y facts reach the control", () => {
   it("passes the form's read-only state through as disabled", () => {
-    render(
-      <GenericForm fields={[FIELD]} onSubmit={async () => {}} onCancel={() => {}} readOnly />
-    );
+    render(<GenericForm fields={[FIELD]} onSubmit={async () => {}} onCancel={() => {}} readOnly />);
 
     expect(receivedProps.at(-1)?.disabled).toBe(true);
     expect(screen.getByRole("combobox", { name: "Assignee" })).toHaveAttribute(
@@ -231,7 +229,11 @@ describe("GenericForm entity-reference field — host-owned a11y facts reach the
     // reader ever associates with the control.
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     render(
-      <GenericForm fields={[{ ...FIELD, required: true }]} onSubmit={onSubmit} onCancel={() => {}} />
+      <GenericForm
+        fields={[{ ...FIELD, required: true }]}
+        onSubmit={onSubmit}
+        onCancel={() => {}}
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "common.save" }));

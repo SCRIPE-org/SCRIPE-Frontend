@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const CUSTOM_FIELD_ENDPOINTS = {
   LIST: `${V1}/custom-fields`,
   BY_ID: (id: string) => `${V1}/custom-fields/${id}`,
@@ -36,11 +39,15 @@ export const CUSTOM_FIELD_ENDPOINTS = {
    * Value-Type Conversion endpoints (Wave 6 row 6.2).
    */
   CHANGE_TYPE: (id: string) => `${V1}/custom-fields/${id}/change-type`,
-  ROLLBACK_CHANGE_TYPE: (jobRunId: string) => `${V1}/custom-fields/change-type/${jobRunId}/rollback`,
+  ROLLBACK_CHANGE_TYPE: (jobRunId: string) =>
+    `${V1}/custom-fields/change-type/${jobRunId}/rollback`,
   /**
    * Version Lifecycle endpoints (Step 1.3 / P-10).
    */
-  CREATE_VERSION_DRAFT: (customFieldId: string) => `${V1}/custom-fields/versions/${customFieldId}/draft`,
-  PUBLISH_VERSION: (customFieldId: string) => `${V1}/custom-fields/versions/${customFieldId}/publish`,
-  DISCARD_VERSION_DRAFT: (customFieldId: string) => `${V1}/custom-fields/versions/${customFieldId}/discard-draft`,
+  CREATE_VERSION_DRAFT: (customFieldId: string) =>
+    `${V1}/custom-fields/versions/${customFieldId}/draft`,
+  PUBLISH_VERSION: (customFieldId: string) =>
+    `${V1}/custom-fields/versions/${customFieldId}/publish`,
+  DISCARD_VERSION_DRAFT: (customFieldId: string) =>
+    `${V1}/custom-fields/versions/${customFieldId}/discard-draft`,
 } as const;

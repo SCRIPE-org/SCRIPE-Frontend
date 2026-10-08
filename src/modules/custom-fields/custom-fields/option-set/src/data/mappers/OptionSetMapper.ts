@@ -21,7 +21,11 @@
  * distinguish it from a genuinely empty version and would save an empty replace. See
  * `OptionSetVersion`'s header.
  */
-import { OptionSet, type OptionSetData, type OptionSetDetail } from "../../domain/entities/OptionSet";
+import {
+  OptionSet,
+  type OptionSetData,
+  type OptionSetDetail,
+} from "../../domain/entities/OptionSet";
 import {
   OptionSetVersion,
   type OptionSetVersionData,
@@ -38,6 +42,9 @@ import {
   type OptionSetBindingResultModel,
 } from "../models/OptionSetModel";
 
+/**
+ * Documentation for module export
+ */
 export class OptionSetMapper {
   /** Convert an OptionSetModel to an OptionSet entity. */
   static toEntity(model: OptionSetModel): OptionSet {

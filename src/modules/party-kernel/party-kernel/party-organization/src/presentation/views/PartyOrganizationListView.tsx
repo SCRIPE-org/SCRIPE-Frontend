@@ -24,6 +24,9 @@ function shortId(id: string | undefined): string {
 }
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const PartyOrganizationListView = React.memo(function PartyOrganizationListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.partyOrganization");
   const { vm } = usePartyOrganizationViewModel();

@@ -87,6 +87,61 @@ describe("PlatformHealthMapper", () => {
     expect(entity.infrastructure.database.status).toBe("Healthy");
     expect(entity.infrastructure.redis.mode).toBe("InMemory");
     expect(entity.modules).toEqual([]);
+    expect(entity.checks).toEqual([]);
+    expect(entity.externalDependencies).toEqual([]);
+    expect(entity.incidents).toEqual([]);
+    expect(entity.healthScore).toBe(100);
+  });
+
+  it("maps checks, external dependencies, and incidents correctly", () => {
+    const dto: Partial<PlatformHealthResponseDto> = {
+      healthScore: 95,
+      totalChecks: 20,
+      healthyChecks: 19,
+      checks: [
+        {
+          name: "database",
+          status: "Healthy",
+          description: "Database ping",
+          durationMs: 3.5,
+          tags: ["db"],
+        },
+      ],
+      externalDependencies: [
+        {
+          name: "Email Delivery (SMTP)",
+          category: "Messaging",
+          status: "Healthy",
+          latencyMs: 45,
+          description: "SMTP provider",
+          lastCheckedAt: "2026-09-17T20:00:00.000Z",
+        },
+      ],
+      incidents: [
+        {
+          id: "inc-1",
+          title: "Test incident",
+          affectedService: "TestService",
+          severity: "Warning",
+          status: "Investigating",
+          description: "Test description",
+          impact: "None",
+          detectedAt: "2026-09-17T19:50:00.000Z",
+        },
+      ],
+    };
+
+    const entity = PlatformHealthMapper.toEntity(dto);
+
+    expect(entity.healthScore).toBe(95);
+    expect(entity.totalChecks).toBe(20);
+    expect(entity.healthyChecks).toBe(19);
+    expect(entity.checks).toHaveLength(1);
+    expect(entity.checks[0].name).toBe("database");
+    expect(entity.externalDependencies).toHaveLength(1);
+    expect(entity.externalDependencies[0].name).toBe("Email Delivery (SMTP)");
+    expect(entity.incidents).toHaveLength(1);
+    expect(entity.activeIncidents).toHaveLength(1);
+    expect(entity.incidents[0].id).toBe("inc-1");
   });
 });
-

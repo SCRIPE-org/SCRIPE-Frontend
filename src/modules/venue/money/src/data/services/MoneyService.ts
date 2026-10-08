@@ -1,8 +1,19 @@
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { MoneyInvoice, MoneyListFilter, MoneyPage, MoneyPayment, MoneyPaymentTimeline, RecordManualPaymentInput, RefundPaymentInput } from "../../domain/entities/Money";
+import type {
+  MoneyInvoice,
+  MoneyListFilter,
+  MoneyPage,
+  MoneyPayment,
+  MoneyPaymentTimeline,
+  RecordManualPaymentInput,
+  RefundPaymentInput,
+} from "../../domain/entities/Money";
 import type { IMoneyService } from "../../domain/interfaces/IMoneyService";
 import { MONEY_ENDPOINTS } from "./money.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class MoneyService implements IMoneyService {
   constructor(private readonly api: IApiService) {}
 
@@ -24,8 +35,17 @@ export class MoneyService implements IMoneyService {
     return this.api.post(MONEY_ENDPOINTS.PAYMENTS, input);
   }
 
-  async allocatePayment(paymentId: string, invoiceId: string, amount: number, idempotencyKey: string): Promise<void> {
-    await this.api.post(MONEY_ENDPOINTS.ALLOCATIONS(paymentId), { invoiceId, amount, idempotencyKey });
+  async allocatePayment(
+    paymentId: string,
+    invoiceId: string,
+    amount: number,
+    idempotencyKey: string
+  ): Promise<void> {
+    await this.api.post(MONEY_ENDPOINTS.ALLOCATIONS(paymentId), {
+      invoiceId,
+      amount,
+      idempotencyKey,
+    });
   }
 
   async issueReceipt(paymentId: string, idempotencyKey: string): Promise<void> {

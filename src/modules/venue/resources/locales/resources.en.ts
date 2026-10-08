@@ -9,7 +9,8 @@ export const en = {
     allBranches: "All Branches",
     empty: {
       title: "No courts or fields yet",
-      description: "Set up your branch and courts in under two minutes with the simplified operator journey.",
+      description:
+        "Set up your branch and courts in under two minutes with the simplified operator journey.",
       action: "Start Setup Journey",
     },
     card: {
@@ -130,7 +131,8 @@ export const en = {
       finish: "Complete Setup & Publish",
       finishing: "Setting up venue...",
       readyTitle: "Your Venue is Ready!",
-      readySubtitle: "Courts, working hours, booking slots, and pricing have been configured and published.",
+      readySubtitle:
+        "Courts, working hours, booking slots, and pricing have been configured and published.",
       goToCalendar: "Open Calendar",
       goToResources: "View Courts & Fields",
     },

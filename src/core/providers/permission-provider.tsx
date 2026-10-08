@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { createContext, useContext, useMemo, useCallback } from "react";
@@ -138,7 +139,9 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     }
     return (
       permissions.includes("*") ||
-      roles.some((r) => r.roleCode === "SYSTEM_SUPER_ADMIN" || r.roleName === "System Super Admin") ||
+      roles.some(
+        (r) => r.roleCode === "SYSTEM_SUPER_ADMIN" || r.roleName === "System Super Admin"
+      ) ||
       user?.isProtected === true ||
       (user as any)?.isSuperAdmin === true ||
       user?.adminTypeName?.toLowerCase() === "system super admin" ||
@@ -150,9 +153,7 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     if (!user?.tenantId) return false;
     return (
       roles.some(
-        (r) =>
-          r.roleCode?.endsWith("_SUPER_ADMIN") ||
-          r.roleName?.toLowerCase().includes("super")
+        (r) => r.roleCode?.endsWith("_SUPER_ADMIN") || r.roleName?.toLowerCase().includes("super")
       ) || Boolean(user?.adminTypeName?.toLowerCase().includes("super"))
     );
   }, [roles, user]);

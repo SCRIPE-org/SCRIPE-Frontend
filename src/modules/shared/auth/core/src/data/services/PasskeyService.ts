@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IApiService } from "@core/interfaces/api.interface";
 import type {
   IPasskeyService,

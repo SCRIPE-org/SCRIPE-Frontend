@@ -47,7 +47,10 @@ export function PipelineNodeItem({
         type="button"
         variant="ghost"
         onClick={onClick}
-        className={cn("docs-pipeline-node h-auto p-0 hover:bg-transparent justify-start text-start", stateClass)}
+        className={cn(
+          "docs-pipeline-node h-auto justify-start p-0 text-start hover:bg-transparent",
+          stateClass
+        )}
       >
         {body}
       </Button>

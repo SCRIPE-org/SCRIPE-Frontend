@@ -79,6 +79,9 @@ const DEFAULT_SIGNAL = {
 
 const FLOW_STEPS = ["Evaluate", "Model", "Launch"];
 
+/**
+ * Documentation for CommercialContent
+ */
 export function CommercialContent({
   sections,
   titleKey,

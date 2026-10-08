@@ -6,7 +6,7 @@ import { Label } from "@core/ui/label";
 import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { AlertCircle } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@core/ui/popover";
+import { Popover } from "@core/ui/popover";
 import { SelectTrigger } from "@core/crud/components/select/select-trigger";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
 import { useEntityLookupSearch } from "../../../../../entity-lookup/src/presentation/hooks/useEntityLookupSearch";
@@ -27,6 +27,9 @@ import {
   renderEntityReferenceHint,
 } from "./entityReferenceStatusHelpers";
 
+/**
+ * Documentation for module export
+ */
 export interface EntityReferenceCustomFieldControlProps {
   id: string;
   label?: string;
@@ -161,7 +164,7 @@ export function EntityReferenceCustomFieldControl({
         <Label htmlFor={id} className="text-sm font-medium">
           {label}
           {required && (
-            <span className="text-destructive ms-1" aria-hidden="true">
+            <span className="ms-1 text-destructive" aria-hidden="true">
               *
             </span>
           )}

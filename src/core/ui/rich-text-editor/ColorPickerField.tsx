@@ -123,7 +123,7 @@ export function ColorPickerField({
         <FormLabel id={labelId} className="text-xs font-medium">
           {label}
           {required && (
-            <span className="text-destructive ms-1" aria-hidden="true">
+            <span className="ms-1 text-destructive" aria-hidden="true">
               *
             </span>
           )}
@@ -137,7 +137,7 @@ export function ColorPickerField({
                 type="button"
                 disabled={disabled}
                 aria-labelledby={`${labelId} ${valueId}`}
-                className="flex min-h-9 w-full items-center gap-2 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-start transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-nx-line"
+                className="flex min-h-9 w-full items-center gap-2 rounded-nx-control border border-nx-line bg-nx-ground px-3 py-2 text-start transition-[color,border-color,background-color,box-shadow] duration-nx-micro ease-nx-enter hover:border-nx-line-hi focus-visible:border-nx-accent focus-visible:shadow-nx-focus focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:border-nx-line motion-reduce:transition-none"
               >
                 <span
                   className="h-5 w-5 shrink-0 rounded-nx-sm border border-nx-line"

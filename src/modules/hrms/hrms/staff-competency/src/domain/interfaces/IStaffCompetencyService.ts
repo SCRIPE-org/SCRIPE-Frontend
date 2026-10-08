@@ -16,6 +16,9 @@ export interface StaffCompetencyListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffCompetencyService {
   getAll(params: {
     page: number;

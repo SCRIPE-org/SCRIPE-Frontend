@@ -33,10 +33,18 @@ const sections: DocSection[] = [
         descriptionKey: `${K}.featDefineOnceDesc`,
       },
       { icon: "check", titleKey: `${K}.featTyped`, descriptionKey: `${K}.featTypedDesc` },
-      { icon: "layers", titleKey: `${K}.featValueTypes`, descriptionKey: `${K}.featValueTypesDesc` },
+      {
+        icon: "layers",
+        titleKey: `${K}.featValueTypes`,
+        descriptionKey: `${K}.featValueTypesDesc`,
+      },
       { icon: "building", titleKey: `${K}.featScoped`, descriptionKey: `${K}.featScopedDesc` },
       { icon: "shield", titleKey: `${K}.featSecured`, descriptionKey: `${K}.featSecuredDesc` },
-      { icon: "chart", titleKey: `${K}.featAccountable`, descriptionKey: `${K}.featAccountableDesc` },
+      {
+        icon: "chart",
+        titleKey: `${K}.featAccountable`,
+        descriptionKey: `${K}.featAccountableDesc`,
+      },
     ],
   },
 

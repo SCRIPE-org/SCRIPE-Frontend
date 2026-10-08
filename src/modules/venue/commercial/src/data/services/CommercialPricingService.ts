@@ -1,5 +1,14 @@
 import type { IApiService } from "@core/interfaces/api.interface";
-import type { CalculatePriceQuoteInput, ConfigureResourceRentalPriceInput, CreateTaxCategoryInput, OverridePriceQuoteInput, PriceQuote, PriceQuoteOverride, ResourceRentalPriceConfiguration, TaxCategory } from "../../domain/entities/CommercialPricing";
+import type {
+  CalculatePriceQuoteInput,
+  ConfigureResourceRentalPriceInput,
+  CreateTaxCategoryInput,
+  OverridePriceQuoteInput,
+  PriceQuote,
+  PriceQuoteOverride,
+  ResourceRentalPriceConfiguration,
+  TaxCategory,
+} from "../../domain/entities/CommercialPricing";
 import type { ICommercialPricingService } from "../../domain/interfaces/ICommercialPricingService";
 import { COMMERCIAL_PRICING_ENDPOINTS } from "./commercial-pricing.endpoints";
 
@@ -11,7 +20,9 @@ export class CommercialPricingService implements ICommercialPricingService {
     return this.api.get(COMMERCIAL_PRICING_ENDPOINTS.RESOURCE_CONFIGURATION(resourceId));
   }
 
-  configureResourcePrice(input: ConfigureResourceRentalPriceInput): Promise<ResourceRentalPriceConfiguration> {
+  configureResourcePrice(
+    input: ConfigureResourceRentalPriceInput
+  ): Promise<ResourceRentalPriceConfiguration> {
     return this.api.post(COMMERCIAL_PRICING_ENDPOINTS.RESOURCE_PRICING, input);
   }
 

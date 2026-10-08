@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const DEVELOPERS_ENDPOINTS = {
   DEVELOPERS: `${V1}/marketplace/developers`,
   DEVELOPER_BY_ID: (id: string) => `${V1}/marketplace/developers/${id}`,

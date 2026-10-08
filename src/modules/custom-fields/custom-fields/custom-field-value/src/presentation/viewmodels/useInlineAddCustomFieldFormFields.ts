@@ -1,10 +1,7 @@
 import { useMemo } from "react";
 import type { FieldConfig } from "@core/ui/forms/generic-form";
 import type { GenericSelectOption } from "@core/crud/components/generic-select";
-import {
-  VALIDATOR_KIND_CATALOG,
-  ALL_VALIDATOR_KINDS,
-} from "../../../../custom-field";
+import { VALIDATOR_KIND_CATALOG, ALL_VALIDATOR_KINDS } from "../../../../custom-field";
 import {
   buildFieldGroupField,
   makeFieldGroupPickerVisibility,
@@ -20,6 +17,9 @@ import {
   buildInlineTypeAndValidationFields,
 } from "./inlineAddCustomFieldSections";
 
+/**
+ * Documentation for module export
+ */
 export interface UseInlineAddCustomFieldFormFieldsParams {
   t: (key: string, params?: Record<string, string | number>) => string;
   language: string;
@@ -37,6 +37,9 @@ export interface UseInlineAddCustomFieldFormFieldsParams {
   bindableOptionSets: readonly OptionSet[];
 }
 
+/**
+ * Documentation for useInlineAddCustomFieldFormFields
+ */
 export function useInlineAddCustomFieldFormFields({
   t,
   language,
@@ -127,10 +130,7 @@ export function useInlineAddCustomFieldFormFields({
     [t, isPlatformContext]
   );
 
-  const identityFields = useMemo<FieldConfig[]>(
-    () => buildInlineIdentityFields(t),
-    [t]
-  );
+  const identityFields = useMemo<FieldConfig[]>(() => buildInlineIdentityFields(t), [t]);
 
   const typeAndValidationFields = useMemo<FieldConfig[]>(
     () =>
@@ -178,13 +178,6 @@ export function useInlineAddCustomFieldFormFields({
       ...classificationFields,
       scopeField,
     ],
-    [
-      t,
-      identityFields,
-      typeAndValidationFields,
-      fieldGroupField,
-      classificationFields,
-      scopeField,
-    ]
+    [t, identityFields, typeAndValidationFields, fieldGroupField, classificationFields, scopeField]
   );
 }

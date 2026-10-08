@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import type { AvailabilityCalendar, ResourceBlock, SaveAvailabilityCalendar } from "../../domain/entities/Availability";
+import type {
+  AvailabilityCalendar,
+  ResourceBlock,
+  SaveAvailabilityCalendar,
+} from "../../domain/entities/Availability";
 import type { IAvailabilityService } from "../../domain/interfaces/IAvailabilityService";
 import { AvailabilityRepository } from "./AvailabilityRepository";
 
@@ -47,16 +51,31 @@ describe("AvailabilityRepository", () => {
     } as unknown as IAvailabilityService;
     const repository = new AvailabilityRepository(service);
     const block: ResourceBlock = {
-      id: "block-1", resourceId: "resource-1", startUtc: "2026-09-15T07:00:00Z", endUtc: "2026-09-15T08:00:00Z",
-      timeZoneId: "Africa/Cairo", hardBlock: true, reason: "Safety", version: 4, createdAt: "2026-09-01T10:00:00Z",
+      id: "block-1",
+      resourceId: "resource-1",
+      startUtc: "2026-09-15T07:00:00Z",
+      endUtc: "2026-09-15T08:00:00Z",
+      timeZoneId: "Africa/Cairo",
+      hardBlock: true,
+      reason: "Safety",
+      version: 4,
+      createdAt: "2026-09-01T10:00:00Z",
     };
 
     await repository.updateBlock("maintenance", block, {
-      timeZoneId: "Africa/Cairo", startLocal: "2026-09-15T09:00", endLocal: "2026-09-15T10:00", hardBlock: false, reason: "Routine",
+      timeZoneId: "Africa/Cairo",
+      startLocal: "2026-09-15T09:00",
+      endLocal: "2026-09-15T10:00",
+      hardBlock: false,
+      reason: "Routine",
     });
     await repository.deleteBlock("maintenance", block);
 
-    expect(service.updateBlock).toHaveBeenCalledWith("maintenance", "block-1", expect.objectContaining({ expectedVersion: 4 }));
+    expect(service.updateBlock).toHaveBeenCalledWith(
+      "maintenance",
+      "block-1",
+      expect.objectContaining({ expectedVersion: 4 })
+    );
     expect(service.deleteBlock).toHaveBeenCalledWith("maintenance", "block-1", 4);
   });
 });

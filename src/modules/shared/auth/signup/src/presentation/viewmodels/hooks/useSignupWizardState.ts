@@ -61,25 +61,29 @@ export function useSignupWizardState({ language }: UseSignupWizardStateOptions) 
     const changePlan = searchParams?.get("change-plan") === "1";
 
     if (changePlan) {
-      // User clicked "Change plan" from the finalize page — restore state and jump to plan step
-      const persisted = readPersistedWizardState();
-      if (persisted?.wizardData) {
-        setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
-      }
-      setNavigationDirection(-1);
-      setStep("plan");
+      queueMicrotask(() => {
+        // User clicked "Change plan" from the finalize page — restore state and jump to plan step
+        const persisted = readPersistedWizardState();
+        if (persisted?.wizardData) {
+          setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+        }
+        setNavigationDirection(-1);
+        setStep("plan");
+      });
       return;
     }
 
     if (!canceled) return;
 
-    const persisted = readPersistedWizardState();
-    if (persisted?.wizardData.emailVerificationToken) {
-      setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
-      setSelectedPlan(persisted.selectedPlan);
-      setStep("review");
-    }
-    setCheckoutCanceled(true);
+    queueMicrotask(() => {
+      const persisted = readPersistedWizardState();
+      if (persisted?.wizardData.emailVerificationToken) {
+        setWizardData((prev) => ({ ...prev, ...persisted.wizardData }));
+        setSelectedPlan(persisted.selectedPlan);
+        setStep("review");
+      }
+      setCheckoutCanceled(true);
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

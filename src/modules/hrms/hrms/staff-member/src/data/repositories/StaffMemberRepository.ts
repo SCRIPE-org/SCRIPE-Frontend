@@ -20,6 +20,9 @@ import type {
 import type { StaffMember } from "../../domain/entities/StaffMember";
 import { StaffMemberMapper } from "../mappers/StaffMemberMapper";
 
+/**
+ * Documentation for module export
+ */
 export class StaffMemberRepository implements IStaffMemberRepository {
   constructor(private readonly service: IStaffMemberService) {}
 

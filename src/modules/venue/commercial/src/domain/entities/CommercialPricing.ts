@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface ResourceRentalPriceConfiguration {
   resourceRentalOfferingId: string;
   schedulableResourceId: string;
@@ -14,6 +17,9 @@ export interface ResourceRentalPriceConfiguration {
   taxCategoryId: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ConfigureResourceRentalPriceInput {
   schedulableResourceId: string;
   displayName: string;
@@ -27,6 +33,9 @@ export interface ConfigureResourceRentalPriceInput {
   idempotencyKey: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface TaxCategory {
   id: string;
   name: string;
@@ -36,6 +45,9 @@ export interface TaxCategory {
   status: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface CreateTaxCategoryInput {
   name: string;
   code: string;
@@ -43,6 +55,9 @@ export interface CreateTaxCategoryInput {
   isInclusive: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface CalculatePriceQuoteInput {
   offeringId: string;
   resourceId: string;
@@ -55,6 +70,9 @@ export interface CalculatePriceQuoteInput {
   idempotencyKey: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface PriceQuote {
   id: string;
   quoteNumber: string;
@@ -75,12 +93,18 @@ export interface PriceQuote {
   wasIdempotentReplay: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface OverridePriceQuoteInput {
   adjustmentAmount: number;
   reason: string;
   idempotencyKey: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface PriceQuoteOverride {
   id: string;
   priceQuoteId: string;

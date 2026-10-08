@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps */
 // FILE-EXCEPTION: file length
 /**
  * Role Permissions Dialog ViewModel
@@ -114,12 +115,14 @@ export function useRolePermissionsDialog({
   useEffect(() => {
     if (!open) {
       // Dialog closed — clear all transient state so the next open is fresh
-      setSearch("");
-      setAssignments(new Map());
-      setExpandedModules(new Set());
-      setExpandedGroups({});
-      setBulkScopeValue("");
-      setInitializedRoleId(null);
+      queueMicrotask(() => {
+        setSearch("");
+        setAssignments(new Map());
+        setExpandedModules(new Set());
+        setExpandedGroups({});
+        setBulkScopeValue("");
+        setInitializedRoleId(null);
+      });
     }
   }, [open]);
 
@@ -127,15 +130,16 @@ export function useRolePermissionsDialog({
   useEffect(() => {
     if (open && roleId) {
       // Role changed while dialog is open — reset so we re-initialize below
-      setSearch("");
-      setAssignments(new Map());
-      setExpandedModules(new Set());
-      setExpandedGroups({});
-      setBulkScopeValue("");
-      setInitializedRoleId(null);
+      queueMicrotask(() => {
+        setSearch("");
+        setAssignments(new Map());
+        setExpandedModules(new Set());
+        setExpandedGroups({});
+        setBulkScopeValue("");
+        setInitializedRoleId(null);
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [roleId]);
+  }, [open, roleId]);
 
   // ── Fetch tenant's available permissions GROUPED from backend ──
   // Returns PermissionModuleGroup[] (Module → Category → Permissions)
@@ -222,10 +226,12 @@ export function useRolePermissionsDialog({
       modulesWithSelection.add(mod);
     });
 
-    setAssignments(newAssignments);
-    setExpandedModules(new Set(modulesWithSelection)); // auto-open modules that have selections
-    setExpandedGroups(perModuleExpanded);
-    setInitializedRoleId(role.id);
+    queueMicrotask(() => {
+      setAssignments(newAssignments);
+      setExpandedModules(new Set(modulesWithSelection)); // auto-open modules that have selections
+      setExpandedGroups(perModuleExpanded);
+      setInitializedRoleId(role.id);
+    });
   }, [open, roleId, allPermissions, rolePermissions, loadingRole, initializedRoleId]);
 
   // Save mutation

@@ -43,10 +43,7 @@
  * so it differs from the server's by the request latency and by nothing else.
  */
 
-export {
-  XLSX_CONTENT_TYPE,
-  MAX_EXPORT_ROWS,
-} from "../../domain/entities/DefinitionExport";
+export { XLSX_CONTENT_TYPE, MAX_EXPORT_ROWS } from "../../domain/entities/DefinitionExport";
 
 /**
  * `ErrorCodes.Range` — the code the handler returns when the export is REFUSED for exceeding

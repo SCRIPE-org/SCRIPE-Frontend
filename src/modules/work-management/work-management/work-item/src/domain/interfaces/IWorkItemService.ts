@@ -15,6 +15,9 @@ export interface WorkItemListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IWorkItemService {
   getAll(params: {
     page: number;

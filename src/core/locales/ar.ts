@@ -2012,7 +2012,7 @@ export const ar = {
     invalidPhone: "رقم الهاتف غير صالح",
     invalidEmail: "عنوان بريد إلكتروني غير صالح",
     correctErrorsTitle: "يرجى تصحيح الأخطاء التالية للمتابعة:",
-    requiredFieldNamed: "الحقل \"{name}\" مطلوب",
+    requiredFieldNamed: 'الحقل "{name}" مطلوب',
     patternMismatch: "صيغة غير صالحة",
   },
   customField: {

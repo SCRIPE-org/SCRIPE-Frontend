@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * CreateTenantLocationFields — Country-Adaptive Geographic Territory & Address Engine
  *
@@ -29,6 +30,9 @@ interface CreateTenantLocationFieldsProps {
   t: (key: string, params?: Record<string, any>) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFieldsProps) {
   const { language } = useI18n();
   const isAr = language === "ar";
@@ -52,8 +56,8 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
   const divisionLabel = isAr ? territory.divisionLabelAr : territory.divisionLabel;
   const cityLabel = isAr ? territory.cityLabelAr : territory.cityLabel;
   const districtLabel = isAr
-    ? territory.districtLabelAr ?? "الحي / المنطقة الفرعية"
-    : territory.districtLabel ?? "Neighborhood / District";
+    ? (territory.districtLabelAr ?? "الحي / المنطقة الفرعية")
+    : (territory.districtLabel ?? "Neighborhood / District");
 
   // Country options with crisp vector SVG flags (never raw emoji characters)
   const countryOptions: GenericSelectOption[] = useMemo(
@@ -91,23 +95,19 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
         ? `يرجى اختيار ${divisionLabel} أولاً...`
         : `Select ${divisionLabel} first...`
       : isAr
-      ? `اختر أو اكتب اسم ${cityLabel}...`
-      : `Select or type ${cityLabel}...`;
+        ? `اختر أو اكتب اسم ${cityLabel}...`
+        : `Select or type ${cityLabel}...`;
 
   return (
-    <div className="space-y-4 rounded-nx-md border border-nx-line bg-nx-raised/40 p-4 sm:p-5">
+    <div className="bg-nx-raised/40 space-y-4 rounded-nx-md border border-nx-line p-4 sm:p-5">
       {/* Header */}
-      <div className="flex items-center gap-2.5 border-b border-nx-line/60 pb-3">
-        <div className="flex h-7 w-7 items-center justify-center rounded-nx-sm bg-nx-accent/15 text-nx-accent">
+      <div className="border-nx-line/60 flex items-center gap-2.5 border-b pb-3">
+        <div className="bg-nx-accent/15 flex h-7 w-7 items-center justify-center rounded-nx-sm text-nx-accent">
           <MapPin className="h-4 w-4" />
         </div>
         <div>
-          <h3 className="text-sm font-semibold text-nx-ink">
-            {t("tenant.operatingTerritory")}
-          </h3>
-          <p className="text-xs text-nx-ink-2">
-            {t("tenant.operatingTerritoryDesc")}
-          </p>
+          <h3 className="text-sm font-semibold text-nx-ink">{t("tenant.operatingTerritory")}</h3>
+          <p className="text-xs text-nx-ink-2">{t("tenant.operatingTerritoryDesc")}</p>
         </div>
       </div>
 
@@ -143,7 +143,10 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
 
         {/* Timezone */}
         <div className="space-y-1.5">
-          <Label htmlFor="tenant-timezone" className="flex items-center gap-1.5 text-xs font-medium">
+          <Label
+            htmlFor="tenant-timezone"
+            className="flex items-center gap-1.5 text-xs font-medium"
+          >
             <Clock className="h-3.5 w-3.5 text-nx-ink-2" />
             {t("tenant.timeZone")} <span className="text-destructive">*</span>
           </Label>
@@ -182,15 +185,9 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
               onValueChange={(v: string | string[]) =>
                 vm.updateField("state", (Array.isArray(v) ? v[0] : v) || "")
               }
-              placeholder={
-                isAr
-                  ? `اختر ${divisionLabel}...`
-                  : `Select ${divisionLabel}...`
-              }
+              placeholder={isAr ? `اختر ${divisionLabel}...` : `Select ${divisionLabel}...`}
               searchPlaceholder={
-                isAr
-                  ? `البحث في ${divisionLabel}...`
-                  : `Search ${divisionLabel}...`
+                isAr ? `البحث في ${divisionLabel}...` : `Search ${divisionLabel}...`
               }
               aria-invalid={stateError || undefined}
             />
@@ -205,7 +202,8 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
           <div className="space-y-1.5">
             <Label htmlFor="tenant-state" className="flex items-center gap-1.5 text-xs font-medium">
               <Building2 className="h-3.5 w-3.5 text-nx-ink-2" />
-              {divisionLabel} <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
+              {divisionLabel}{" "}
+              <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
             </Label>
             <Input
               id="tenant-state"
@@ -230,18 +228,14 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             onChange={(val) => vm.updateField("city", val)}
             placeholder={cityPlaceholder}
             searchPlaceholder={
-              isAr
-                ? `ابحث أو اكتب اسم ${cityLabel}...`
-                : `Search or type ${cityLabel}...`
+              isAr ? `ابحث أو اكتب اسم ${cityLabel}...` : `Search or type ${cityLabel}...`
             }
             emptyText={
               isAr
                 ? `لا توجد نتائج مطابقة، يمكنك استخدام ما كتبته أعلاه`
                 : `No preset match. You can use typed entry above.`
             }
-            createLabel={(q) =>
-              isAr ? `+ استخدام "${q}"` : `+ Use "${q}"`
-            }
+            createLabel={(q) => (isAr ? `+ استخدام "${q}"` : `+ Use "${q}"`)}
             allowCreate={true}
             allowClear={true}
             disabled={territory.states.length > 0 && !vm.form.state}
@@ -261,7 +255,10 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
         {/* District / Neighborhood */}
         {territory.hasDistrict && (
           <div className="space-y-1.5">
-            <Label htmlFor="tenant-district" className="flex items-center gap-1.5 text-xs font-medium">
+            <Label
+              htmlFor="tenant-district"
+              className="flex items-center gap-1.5 text-xs font-medium"
+            >
               <span>{districtLabel}</span>
               <span className="text-[10px] text-nx-ink-3">({isAr ? "اختياري" : "Optional"})</span>
             </Label>
@@ -270,9 +267,7 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
               value={vm.form.district}
               onChange={(e) => vm.updateField("district", e.target.value)}
               placeholder={
-                isAr
-                  ? "مثال: المعادي الجديدة، حي النرجس، العليا"
-                  : "e.g. New Maadi, Al Olaya, etc."
+                isAr ? "مثال: المعادي الجديدة، حي النرجس، العليا" : "e.g. New Maadi, Al Olaya, etc."
               }
               maxLength={100}
             />
@@ -285,9 +280,9 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             <Label htmlFor="tenant-postal" className="text-xs font-medium">
               {t("tenant.postalCode")}
               {territory.postalCodeRequired ? (
-                <span className="text-destructive ms-0.5">*</span>
+                <span className="ms-0.5 text-destructive">*</span>
               ) : (
-                <span className="text-[10px] text-nx-ink-3 ms-1.5">
+                <span className="ms-1.5 text-[10px] text-nx-ink-3">
                   ({isAr ? "اختياري / غير معتمد" : "Optional / Not in use"})
                 </span>
               )}
@@ -302,11 +297,12 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
             id="tenant-postal"
             value={vm.form.postalCode}
             onChange={(e) => vm.updateField("postalCode", e.target.value)}
-            placeholder={
-              isAr ? territory.postalCodePlaceholderAr : territory.postalCodePlaceholder
-            }
+            placeholder={isAr ? territory.postalCodePlaceholderAr : territory.postalCodePlaceholder}
             maxLength={30}
-            className={cn((postalError || postalRequiredError) && "border-destructive focus-visible:ring-destructive")}
+            className={cn(
+              (postalError || postalRequiredError) &&
+                "border-destructive focus-visible:ring-destructive"
+            )}
             aria-invalid={postalError || postalRequiredError || undefined}
           />
           {postalRequiredError && (
@@ -344,8 +340,8 @@ export function CreateTenantLocationFields({ vm, t }: CreateTenantLocationFields
 
       {/* Row 5: Real-time Formatted Address Preview (UPU S42) */}
       {vm.form.address && (
-        <div className="flex items-center gap-2.5 rounded-nx-sm border border-nx-line/50 bg-nx-ground/70 px-3.5 py-2.5 text-xs text-nx-ink-2 shadow-nx-xs">
-          <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-nx-accent/20 text-nx-accent">
+        <div className="border-nx-line/50 bg-nx-ground/70 shadow-nx-xs flex items-center gap-2.5 rounded-nx-sm border px-3.5 py-2.5 text-xs text-nx-ink-2">
+          <div className="bg-nx-accent/20 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-nx-accent">
             <MapPin className="h-3 w-3" />
           </div>
           <div className="min-w-0 flex-1">

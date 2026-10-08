@@ -26,6 +26,9 @@ import type { FieldVisibilityRuleAdmin } from "../../domain/entities/FieldInsigh
 import { FieldVisibilityRuleEditor } from "./FieldVisibilityRuleEditor";
 import { FieldVisibilityRuleList } from "./FieldVisibilityRuleList";
 
+/**
+ * Documentation for module export
+ */
 export interface FieldVisibilityRulesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -56,6 +59,9 @@ export interface FieldVisibilityRulesDialogProps {
   isDeleting: boolean;
 }
 
+/**
+ * Documentation for FieldVisibilityRulesDialog
+ */
 export function FieldVisibilityRulesDialog({
   open,
   onOpenChange,
@@ -86,8 +92,10 @@ export function FieldVisibilityRulesDialog({
 
   React.useEffect(() => {
     if (!open) {
-      setIsEditorOpen(false);
-      setEditingRule(null);
+      queueMicrotask(() => {
+        setIsEditorOpen(false);
+        setEditingRule(null);
+      });
     }
   }, [open]);
 
@@ -200,9 +208,7 @@ export function FieldVisibilityRulesDialog({
             <Sliders className="h-5 w-5 text-primary" aria-hidden="true" />
             {t("customField.visibilityRules.title", { field: fieldLabel || fieldKey })}
           </DialogTitle>
-          <DialogDescription>
-            {t("customField.visibilityRules.description")}
-          </DialogDescription>
+          <DialogDescription>{t("customField.visibilityRules.description")}</DialogDescription>
         </DialogHeader>
 
         {body}

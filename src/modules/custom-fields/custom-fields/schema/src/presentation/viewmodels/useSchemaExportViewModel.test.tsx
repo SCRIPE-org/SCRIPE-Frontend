@@ -23,10 +23,7 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import {
-  useSchemaExportViewModel,
-  ALL_ENTITY_TYPES_VALUE,
-} from "./useSchemaExportViewModel";
+import { useSchemaExportViewModel, ALL_ENTITY_TYPES_VALUE } from "./useSchemaExportViewModel";
 import { SchemaExportService } from "../../data/services/SchemaExportService";
 import { SchemaExportRepository } from "../../data/repositories/SchemaExportRepository";
 import type { SchemaBundleJson } from "../../data/models/SchemaBundleModel";

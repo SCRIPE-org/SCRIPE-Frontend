@@ -33,13 +33,19 @@ describe("useAdminsViewModel create/update contract", () => {
   });
 
   it("create returns the created id instead of an empty object", () => {
-    const createBlock = source.slice(source.indexOf("create: async (data)"), source.indexOf("update: async (id, data)"));
+    const createBlock = source.slice(
+      source.indexOf("create: async (data)"),
+      source.indexOf("update: async (id, data)")
+    );
     expect(createBlock).toMatch(/return\s*\{\s*id\s*\}/);
     expect(createBlock).not.toMatch(/return\s*\{\}\s*as\s*Admin/);
   });
 
   it("update returns the id instead of an empty object", () => {
-    const updateBlock = source.slice(source.indexOf("update: async (id, data)"), source.indexOf("delete: async (id)"));
+    const updateBlock = source.slice(
+      source.indexOf("update: async (id, data)"),
+      source.indexOf("delete: async (id)")
+    );
     expect(updateBlock).toMatch(/return\s*\{\s*id\s*\}/);
     expect(updateBlock).not.toMatch(/return\s*\{\}\s*as\s*Admin/);
   });

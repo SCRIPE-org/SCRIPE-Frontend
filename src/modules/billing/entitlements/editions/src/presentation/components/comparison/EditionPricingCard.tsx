@@ -1,6 +1,6 @@
 "use client";
 
-import {  cn , resolveIntlLocale } from "@core/common/utils";
+import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";

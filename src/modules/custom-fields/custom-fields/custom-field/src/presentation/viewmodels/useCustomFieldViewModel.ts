@@ -41,8 +41,17 @@ export function normalizeValidatorFields(data: Record<string, unknown>): Record<
   };
 }
 
+/**
+ * Documentation for module export
+ */
 export function useCustomFieldViewModel() {
   const { customFieldRepository } = getCustomFieldsContainer();
+
+  const { data: keyStatus } = useQuery({
+    queryKey: ["customFields", "encryption", "status"],
+    queryFn: () => getCustomFieldsContainer().keyManagementRepository.getStatus(),
+  });
+
   const { t } = useI18n();
 
   const {
@@ -89,14 +98,15 @@ export function useCustomFieldViewModel() {
       delete payload.optionsSource;
 
       const id = await customFieldRepository.create(
-        normalizeValidatorFields(
-          normalizeCustomFieldCreateScope(payload)
-        )
+        normalizeValidatorFields(normalizeCustomFieldCreateScope(payload))
       );
       return { id } as unknown as CustomField;
     },
     update: async (id, data) => {
-      await customFieldRepository.update(id, normalizeValidatorFields(data as Record<string, unknown>));
+      await customFieldRepository.update(
+        id,
+        normalizeValidatorFields(data as Record<string, unknown>)
+      );
       return { id } as unknown as CustomField;
     },
     delete: async (id) => {
@@ -151,10 +161,14 @@ export function useCustomFieldViewModel() {
     [customFieldRepository, baseOpenEditModal, t]
   );
 
-  const vm = useMemo(
-    () => ({ ...baseVm, openEditModal }),
-    [baseVm, openEditModal]
-  );
+  const vm = useMemo(() => ({ ...baseVm, openEditModal }), [baseVm, openEditModal]);
 
-  return { vm, entityTypes, isEntityTypesLoading, isEntityTypesError, refetchEntityTypes };
+  return {
+    vm,
+    entityTypes,
+    isEntityTypesLoading,
+    isEntityTypesError,
+    refetchEntityTypes,
+    keyStatus,
+  };
 }

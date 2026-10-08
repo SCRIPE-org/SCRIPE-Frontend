@@ -8,11 +8,19 @@ import type {
   SaveResourceBlock,
 } from "../entities/Availability";
 
-export interface ReplaceAvailabilityCalendarPayload
-  extends Omit<SaveAvailabilityCalendar, "resourceId"> {
+/**
+ * Documentation for ReplaceAvailabilityCalendarPayload
+ */
+export interface ReplaceAvailabilityCalendarPayload extends Omit<
+  SaveAvailabilityCalendar,
+  "resourceId"
+> {
   expectedVersion: number;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IAvailabilityService {
   getCurrentCalendar(resourceId: string): Promise<AvailabilityCalendar | null>;
   defineCalendar(data: SaveAvailabilityCalendar): Promise<{ id: string }>;
@@ -20,6 +28,10 @@ export interface IAvailabilityService {
   search(data: AvailabilitySearchInput): Promise<AvailabilitySearchResult>;
   getBlocks(kind: ResourceBlockKind, resourceId: string): Promise<ResourceBlock[]>;
   createBlock(kind: ResourceBlockKind, data: SaveResourceBlock): Promise<{ id: string }>;
-  updateBlock(kind: ResourceBlockKind, id: string, data: Omit<SaveResourceBlock, "resourceId"> & { expectedVersion: number }): Promise<void>;
+  updateBlock(
+    kind: ResourceBlockKind,
+    id: string,
+    data: Omit<SaveResourceBlock, "resourceId"> & { expectedVersion: number }
+  ): Promise<void>;
   deleteBlock(kind: ResourceBlockKind, id: string, expectedVersion: number): Promise<void>;
 }

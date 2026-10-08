@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * AUDIT_ENDPOINTS
+ */
 export const AUDIT_ENDPOINTS = {
   LOGS: `${V1}/Audit/logs`,
   LOG_DETAIL: (id: string) => `${V1}/Audit/logs/${id}`,

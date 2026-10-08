@@ -2,10 +2,10 @@
  * Security Domain Entities
  *
  * TypeScript types for security-specific data structures.
- * Extracted from the God DashboardEntities to follow ISP.
+ * Strictly adheres to architectural boundaries — reads authoritative signals from Identity & Audit.
  */
 
-/** Security event aggregation */
+/** Security event aggregation from AuditLog */
 export interface SecurityEvent {
   eventType: string;
   count: number;
@@ -42,4 +42,60 @@ export interface SecurityChange {
   errorMessage: string | null;
   timestamp: string;
   tenantId: string | null;
+}
+
+/** Active authenticated session entity */
+export interface ActiveSession {
+  tokenId: string;
+  deviceInfo: string;
+  ipAddress: string;
+  createdAt: string;
+  expiresAt: string;
+  isCurrent: boolean;
+}
+
+/** Authoritative Security Posture KPIs (no fake scores) */
+export interface SecurityPostureKpis {
+  authHealthRate: number;
+  totalAuthentications: number;
+  mfaAdoptionRate: number;
+  mfaEnabledCount: number;
+  totalAdmins: number;
+  activeSessionsCount: number;
+  failedLoginsCount: number;
+  securityEventsCount: number;
+  securityStatus: "healthy" | "warning" | "critical";
+  statusLabel: string;
+}
+
+/** Signal requiring administrator attention (from security events / recent failures) */
+export interface SecurityAttentionSignal {
+  id: string;
+  title: string;
+  description: string;
+  type: string;
+  severity: "critical" | "high" | "medium" | "low" | "info";
+  timestamp: string;
+  actor?: string | null;
+  ipAddress?: string | null;
+  status?: "blocked" | "flagged" | "success" | "warning";
+}
+
+/** Operational policy posture item */
+export interface SecurityPolicyPosture {
+  id: string;
+  name: string;
+  status: "enforced" | "enabled" | "warning" | "disabled";
+  details: string;
+  category: "credentials" | "session" | "access" | "traffic";
+}
+
+/** Authentication method adoption posture */
+export interface AuthMethodPosture {
+  id: string;
+  name: string;
+  coverage: string;
+  adoptionPercentage?: number;
+  details: string;
+  status: "enforced" | "active" | "supported" | "optional";
 }

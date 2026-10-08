@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
 import React from "react";
@@ -17,15 +18,46 @@ export function PlatformTenantDistribution({
 }: PlatformTenantDistributionProps) {
   const { t } = useI18n();
 
-  const totalTenants = summary?.totalTenants && summary.totalTenants > 0 ? summary.totalTenants : 248;
+  const totalTenants =
+    summary?.totalTenants && summary.totalTenants > 0 ? summary.totalTenants : 248;
 
   // Editions distribution matching overview_A.png
   const editions = [
-    { name: t("platformCommandCenter.distribution.enterprise") || "Enterprise", count: 48, percentage: "19.4%", color: "#84cc16", dotClass: "bg-[#84cc16]" },
-    { name: t("platformCommandCenter.distribution.professional") || "Professional", count: 96, percentage: "38.7%", color: "#a855f7", dotClass: "bg-[#a855f7]" },
-    { name: t("platformCommandCenter.distribution.academy") || "Academy", count: 62, percentage: "25.0%", color: "#06b6d4", dotClass: "bg-[#06b6d4]" },
-    { name: t("platformCommandCenter.distribution.club") || "Club", count: 28, percentage: "11.3%", color: "#38bdf8", dotClass: "bg-[#38bdf8]" },
-    { name: t("platformCommandCenter.distribution.others") || "Others", count: 14, percentage: "5.6%", color: "#64748b", dotClass: "bg-[#64748b]" },
+    {
+      name: t("platformCommandCenter.distribution.enterprise") || "Enterprise",
+      count: 48,
+      percentage: "19.4%",
+      color: "#84cc16",
+      dotClass: "bg-[#84cc16]",
+    },
+    {
+      name: t("platformCommandCenter.distribution.professional") || "Professional",
+      count: 96,
+      percentage: "38.7%",
+      color: "#a855f7",
+      dotClass: "bg-[#a855f7]",
+    },
+    {
+      name: t("platformCommandCenter.distribution.academy") || "Academy",
+      count: 62,
+      percentage: "25.0%",
+      color: "#06b6d4",
+      dotClass: "bg-[#06b6d4]",
+    },
+    {
+      name: t("platformCommandCenter.distribution.club") || "Club",
+      count: 28,
+      percentage: "11.3%",
+      color: "#38bdf8",
+      dotClass: "bg-[#38bdf8]",
+    },
+    {
+      name: t("platformCommandCenter.distribution.others") || "Others",
+      count: 14,
+      percentage: "5.6%",
+      color: "#64748b",
+      dotClass: "bg-[#64748b]",
+    },
   ];
 
   // Circumference for r=46: 2 * PI * 46 = 289.026
@@ -47,11 +79,11 @@ export function PlatformTenantDistribution({
   });
 
   return (
-    <Card className="h-full flex flex-col justify-between bg-[#0c101a] border-border/60 shadow-xl overflow-hidden">
+    <Card className="flex h-full flex-col justify-between overflow-hidden border-border/60 bg-[#0c101a] shadow-xl">
       {/* Header */}
-      <CardHeader className="pb-3 border-b border-border/50">
+      <CardHeader className="border-b border-border/50 pb-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#84cc16]/10 text-[#84cc16] flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#84cc16]/10 text-[#84cc16]">
             <BarChart3 className="h-4 w-4" />
           </div>
           <div>
@@ -66,11 +98,11 @@ export function PlatformTenantDistribution({
       </CardHeader>
 
       {/* Body: Donut Chart on Left, Legend Table on Right */}
-      <CardContent className="pt-4 pb-4 flex-1 flex flex-col justify-center">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+      <CardContent className="flex flex-1 flex-col justify-center pb-4 pt-4">
+        <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
           {/* Donut Chart with Center Cutout */}
-          <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
-            <svg viewBox="0 0 120 120" className="w-full h-full -rotate-90">
+          <div className="relative flex h-36 w-36 shrink-0 items-center justify-center">
+            <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
               {/* Background Track */}
               <circle
                 cx="60"
@@ -99,30 +131,30 @@ export function PlatformTenantDistribution({
             </svg>
 
             {/* Center Cutout Text */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
-              <span className="text-2xl font-bold text-white font-mono leading-none">
+            <div className="pointer-events-none absolute inset-0 flex select-none flex-col items-center justify-center text-center">
+              <span className="font-mono text-2xl font-bold leading-none text-white">
                 {totalTenants}
               </span>
-              <span className="text-[11px] text-slate-400 font-medium mt-1">
+              <span className="mt-1 text-[11px] font-medium text-slate-400">
                 {t("platformCommandCenter.distribution.tenantsCount") || "Tenants"}
               </span>
             </div>
           </div>
 
           {/* Legend Rows */}
-          <div className="flex-1 w-full space-y-2 text-xs">
+          <div className="w-full flex-1 space-y-2 text-xs">
             {editions.map((item) => (
               <div
                 key={item.name}
-                className="flex items-center justify-between text-slate-300 py-0.5"
+                className="flex items-center justify-between py-0.5 text-slate-300"
               >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span className={`h-2 w-2 rounded-full shrink-0 ${item.dotClass}`} />
-                  <span className="font-medium truncate text-white">{item.name}</span>
+                <div className="flex min-w-0 items-center gap-2">
+                  <span className={`h-2 w-2 shrink-0 rounded-full ${item.dotClass}`} />
+                  <span className="truncate font-medium text-white">{item.name}</span>
                 </div>
-                <div className="flex items-center gap-4 text-right shrink-0 font-mono">
+                <div className="flex shrink-0 items-center gap-4 text-right font-mono">
                   <span className="text-slate-300">{item.count}</span>
-                  <span className="text-slate-500 w-12 text-right">{item.percentage}</span>
+                  <span className="w-12 text-right text-slate-500">{item.percentage}</span>
                 </div>
               </div>
             ))}
@@ -132,4 +164,3 @@ export function PlatformTenantDistribution({
     </Card>
   );
 }
-

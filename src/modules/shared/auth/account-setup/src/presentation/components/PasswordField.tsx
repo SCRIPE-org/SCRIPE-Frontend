@@ -18,6 +18,9 @@ export interface PasswordFieldProps {
   autoFocus?: boolean;
 }
 
+/**
+ * Documentation for PasswordField
+ */
 export function PasswordField({
   id,
   value,
@@ -35,7 +38,7 @@ export function PasswordField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="pe-10 font-mono tracking-tight text-sm focus-visible:ring-2 focus-visible:ring-primary"
+        className="pe-10 font-mono text-sm tracking-tight focus-visible:ring-2 focus-visible:ring-primary"
         autoFocus={autoFocus}
       />
       <Button

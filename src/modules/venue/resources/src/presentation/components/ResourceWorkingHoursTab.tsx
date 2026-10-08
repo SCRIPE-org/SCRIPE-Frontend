@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -8,7 +8,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@core/ui/card";
 import { useI18n } from "@core/providers/i18n-provider";
-import type { WeekDay, AvailabilityWindow } from "@modules/venue/availability/src/domain/entities/Availability";
+import type { WeekDay, AvailabilityWindow } from "@modules/venue";
 import type { useResourceDetailViewModel } from "../viewmodels/useResourceDetailViewModel";
 
 interface Props {
@@ -25,11 +25,16 @@ const DAYS: WeekDay[] = [
   "Saturday",
 ];
 
+/**
+ * Documentation for module export
+ */
 export function ResourceWorkingHoursTab({ vm }: Props) {
   const { t } = useI18n();
 
   const [isOpen247, setIsOpen247] = useState<boolean>(() => vm.isCalendar247);
-  const [dailyWindows, setDailyWindows] = useState<Record<WeekDay, { start: string; end: string; closed: boolean }>>(() => {
+  const [dailyWindows, setDailyWindows] = useState<
+    Record<WeekDay, { start: string; end: string; closed: boolean }>
+  >(() => {
     const map: Record<WeekDay, { start: string; end: string; closed: boolean }> = {
       Sunday: { start: "08:00", end: "00:00", closed: false },
       Monday: { start: "08:00", end: "00:00", closed: false },
@@ -85,7 +90,9 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>{t("resources.workingHours.title", { defaultValue: "Working Hours" })}</CardTitle>
+          <CardTitle>
+            {t("resources.workingHours.title", { defaultValue: "Working Hours" })}
+          </CardTitle>
           <CardDescription>
             {t("resources.workingHours.description", {
               defaultValue: "Configure when this court is open for customer bookings.",
@@ -93,16 +100,17 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSave} className="space-y-6 max-w-2xl">
+          <form onSubmit={handleSave} className="max-w-2xl space-y-6">
             {/* Mode selection: Open 24/7 vs Custom Hours */}
             <div className="space-y-3">
               <label
-                className={`flex items-start gap-3 p-3.5 rounded-nx-md border cursor-pointer transition-all ${
+                className={`flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-all ${
                   isOpen247
-                    ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
-                    : "border-nx-line hover:bg-nx-surfaceSubtle"
+                    ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
+                    : "hover:bg-nx-surfaceSubtle border-nx-line"
                 }`}
               >
+                {/* UI-EXCEPTION: native element required for compact layout */}
                 <input
                   type="radio"
                   name="court-working-hours"
@@ -111,11 +119,15 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                   className="mt-1"
                 />
                 <div>
-                  <p className="text-sm font-bold text-nx-ink flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-sm font-bold text-nx-ink">
                     <Clock className="size-4 text-nx-accent" aria-hidden="true" />
-                    <span>{t("resources.workingHours.open247", { defaultValue: "Open 24 Hours (24/7)" })}</span>
+                    <span>
+                      {t("resources.workingHours.open247", {
+                        defaultValue: "Open 24 Hours (24/7)",
+                      })}
+                    </span>
                   </p>
-                  <p className="text-xs text-nx-ink-2 mt-0.5">
+                  <p className="mt-0.5 text-xs text-nx-ink-2">
                     {t("resources.workingHours.open247Description", {
                       defaultValue: "Court is bookable all day and night every day of the week.",
                     })}
@@ -124,12 +136,13 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
               </label>
 
               <label
-                className={`flex items-start gap-3 p-3.5 rounded-nx-md border cursor-pointer transition-all ${
+                className={`flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-all ${
                   !isOpen247
-                    ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
-                    : "border-nx-line hover:bg-nx-surfaceSubtle"
+                    ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
+                    : "hover:bg-nx-surfaceSubtle border-nx-line"
                 }`}
               >
+                {/* UI-EXCEPTION: native element required for compact layout */}
                 <input
                   type="radio"
                   name="court-working-hours"
@@ -138,11 +151,13 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                   className="mt-1"
                 />
                 <div>
-                  <p className="text-sm font-bold text-nx-ink flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-sm font-bold text-nx-ink">
                     <Sliders className="size-4 text-nx-ink-2" aria-hidden="true" />
-                    <span>{t("resources.workingHours.custom", { defaultValue: "Custom Working Hours" })}</span>
+                    <span>
+                      {t("resources.workingHours.custom", { defaultValue: "Custom Working Hours" })}
+                    </span>
                   </p>
-                  <p className="text-xs text-nx-ink-2 mt-0.5">
+                  <p className="mt-0.5 text-xs text-nx-ink-2">
                     {t("resources.workingHours.customDescription", {
                       defaultValue: "Specify exact daily opening and closing hours.",
                     })}
@@ -153,16 +168,16 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
 
             {/* Daily Schedule Table (When Custom is selected) */}
             {!isOpen247 && (
-              <div className="border border-nx-line rounded-nx-md overflow-hidden bg-nx-surface">
-                <div className="p-3 border-b border-nx-line bg-nx-raised text-xs font-semibold text-nx-ink flex items-center justify-between">
+              <div className="overflow-hidden rounded-nx-md border border-nx-line bg-nx-surface">
+                <div className="flex items-center justify-between border-b border-nx-line bg-nx-raised p-3 text-xs font-semibold text-nx-ink">
                   <span>Day</span>
-                  <div className="flex items-center gap-8 mr-4">
+                  <div className="mr-4 flex items-center gap-8">
                     <span>Opening Time</span>
                     <span>Closing Time</span>
                   </div>
                 </div>
 
-                <div className="divide-y divide-nx-line/60">
+                <div className="divide-nx-line/60 divide-y">
                   {DAYS.map((day) => {
                     const { start, end, closed } = dailyWindows[day];
                     return (
@@ -173,6 +188,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                         }`}
                       >
                         <div className="flex items-center gap-3">
+                          {/* UI-EXCEPTION: native element required for compact layout */}
                           <input
                             type="checkbox"
                             checked={!closed}
@@ -182,7 +198,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                           />
                           <Label
                             htmlFor={`check-${day}`}
-                            className="font-medium cursor-pointer min-w-[100px]"
+                            className="min-w-[100px] cursor-pointer font-medium"
                           >
                             {t(`resources.workingHours.days.${day}`, { defaultValue: day })}
                           </Label>
@@ -194,18 +210,18 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                               type="time"
                               value={start}
                               onChange={(e) => updateDay(day, "start", e.target.value)}
-                              className="h-8 w-28 text-xs font-mono"
+                              className="h-8 w-28 font-mono text-xs"
                             />
-                            <span className="text-nx-ink-3">→</span>
+                            <span className="text-nx-ink-3">â†’</span>
                             <Input
                               type="time"
                               value={end}
                               onChange={(e) => updateDay(day, "end", e.target.value)}
-                              className="h-8 w-28 text-xs font-mono"
+                              className="h-8 w-28 font-mono text-xs"
                             />
                           </div>
                         ) : (
-                          <span className="text-nx-ink-3 italic text-xs mr-16">
+                          <span className="mr-16 text-xs italic text-nx-ink-3">
                             {t("resources.workingHours.closed", { defaultValue: "Closed" })}
                           </span>
                         )}
@@ -238,8 +254,10 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
               Date-specific exceptions, special holiday calendars, and multiple windows per day.
             </p>
           </div>
-          <Button asChild variant="outline" size="sm" className="h-8 text-xs gap-1.5 shrink-0">
-            <Link href={`/venue/availability?resourceId=${encodeURIComponent(vm.resource?.id ?? "")}`}>
+          <Button asChild variant="outline" size="sm" className="h-8 shrink-0 gap-1.5 text-xs">
+            <Link
+              href={`/venue/availability?resourceId=${encodeURIComponent(vm.resource?.id ?? "")}`}
+            >
               <span>Open Advanced Availability</span>
               <ExternalLink className="size-3.5 text-nx-ink-3" aria-hidden="true" />
             </Link>

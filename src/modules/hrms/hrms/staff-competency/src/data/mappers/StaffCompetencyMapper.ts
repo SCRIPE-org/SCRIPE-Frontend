@@ -7,6 +7,9 @@
 import { StaffCompetency, type StaffCompetencyData } from "../../domain/entities/StaffCompetency";
 import { StaffCompetencyModel, type StaffCompetencyJson } from "../models/StaffCompetencyModel";
 
+/**
+ * Documentation for module export
+ */
 export class StaffCompetencyMapper {
   /**
    * Convert StaffCompetencyModel to StaffCompetency Entity

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // MultiSelectCustomFieldControl -- Wave 3.1 Task 11
 //
 // Mirrors renderCustomFieldControl.test.tsx's own mocking/polyfill
@@ -130,7 +131,13 @@ describe("MultiSelectCustomFieldControl", () => {
 
   it("keeps the remaining selections in order after removing one from the middle", () => {
     const onChangeSpy = vi.fn();
-    render(<StatefulHarness fc={COLOR_FIELD} initial={["Blue", "Red", "Green"]} onChangeSpy={onChangeSpy} />);
+    render(
+      <StatefulHarness
+        fc={COLOR_FIELD}
+        initial={["Blue", "Red", "Green"]}
+        onChangeSpy={onChangeSpy}
+      />
+    );
 
     // Remove "Red" (the middle one) via its chip's own remove button -- a
     // real, keyboard-reachable <button> with its own accessible name

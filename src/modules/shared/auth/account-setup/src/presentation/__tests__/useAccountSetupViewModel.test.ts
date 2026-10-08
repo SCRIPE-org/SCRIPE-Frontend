@@ -1,11 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { useAccountSetupViewModel } from "../viewmodels/useAccountSetupViewModel";
-import {
-  SetupTokenInfo,
-  SetupCustomField,
-  AccountActivationResult,
-} from "../../domain/entities";
+import { SetupTokenInfo, SetupCustomField, AccountActivationResult } from "../../domain/entities";
 
 const mockValidateToken = vi.fn<(token: string) => Promise<SetupTokenInfo>>();
 const mockGetCustomFields = vi.fn<(token: string) => Promise<SetupCustomField[]>>();

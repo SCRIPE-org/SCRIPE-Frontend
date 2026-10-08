@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -6,6 +6,9 @@ import { ReceiptText, Banknote } from "lucide-react";
 import { cn } from "@core/common/utils";
 import { useI18n } from "@core/providers/i18n-provider";
 
+/**
+ * Documentation for module export
+ */
 export function VenueMoneyNav() {
   const pathname = usePathname();
   const { t } = useI18n();
@@ -28,7 +31,7 @@ export function VenueMoneyNav() {
   return (
     <nav
       aria-label={t("money.nav.ariaLabel") || "Money operations"}
-      className="flex items-center gap-1 border-b border-nx-line pb-3 mb-6"
+      className="mb-6 flex items-center gap-1 border-b border-nx-line pb-3"
     >
       {links.map((link) => {
         const Icon = link.icon;
@@ -38,10 +41,10 @@ export function VenueMoneyNav() {
             href={link.href}
             aria-current={link.active ? "page" : undefined}
             className={cn(
-              "inline-flex items-center gap-2 px-3 py-1.5 rounded-nx-sm text-xs font-medium transition-colors",
+              "inline-flex items-center gap-2 rounded-nx-sm px-3 py-1.5 text-xs font-medium transition-colors",
               link.active
                 ? "bg-nx-surface text-nx-ink shadow-[inset_0_0_0_1px_var(--nx-line-hi)]"
-                : "text-nx-ink-2 hover:text-nx-ink hover:bg-nx-surface/50"
+                : "hover:bg-nx-surface/50 text-nx-ink-2 hover:text-nx-ink"
             )}
           >
             <Icon className="size-3.5" aria-hidden="true" />

@@ -20,6 +20,9 @@ import type { ValueExport } from "../../domain/entities/ValueExport";
 import { ValueExportFailure } from "../models/ValueExportModel";
 import { ValueExportMapper } from "../mappers/ValueExportMapper";
 
+/**
+ * Documentation for module export
+ */
 export class ValueExportRepository implements IValueExportRepository {
   constructor(private readonly service: IValueExportService) {}
 

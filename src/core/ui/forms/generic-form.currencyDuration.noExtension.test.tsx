@@ -117,20 +117,23 @@ describe("GenericForm currency/duration — no extension registered at all", () 
   it.each([
     ["currency", CURRENCY_FIELD],
     ["duration", DURATION_FIELD],
-  ])("says why the field is inoperable, in an inert region wired to its label (%s)", (_l, field) => {
-    const { container } = render(
-      <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />
-    );
+  ])(
+    "says why the field is inoperable, in an inert region wired to its label (%s)",
+    (_l, field) => {
+      const { container } = render(
+        <GenericForm fields={[field]} onSubmit={async () => {}} onCancel={() => {}} />
+      );
 
-    const region = screen.getByRole("group", { name: field.label });
-    expect(region).toHaveTextContent(UNAVAILABLE_KEY);
-    expect(region).toHaveAttribute("aria-disabled", "true");
-    // The label still exists and still points at the field, exactly once -- the
-    // host suppresses its own label for extension-drawn types, so the fallback
-    // owes one.
-    expect(container.querySelectorAll(`label[for="${field.name}"]`)).toHaveLength(1);
-    expect(region).toHaveAttribute("id", field.name);
-  });
+      const region = screen.getByRole("group", { name: field.label });
+      expect(region).toHaveTextContent(UNAVAILABLE_KEY);
+      expect(region).toHaveAttribute("aria-disabled", "true");
+      // The label still exists and still points at the field, exactly once -- the
+      // host suppresses its own label for extension-drawn types, so the fallback
+      // owes one.
+      expect(container.querySelectorAll(`label[for="${field.name}"]`)).toHaveLength(1);
+      expect(region).toHaveAttribute("id", field.name);
+    }
+  );
 
   it.each([
     ["currency", CURRENCY_FIELD],

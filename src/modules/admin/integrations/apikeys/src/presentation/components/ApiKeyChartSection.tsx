@@ -30,6 +30,9 @@ const VIEWS: ChartView[] = ["volume", "errors", "response"];
 const RANGES: RangePreset[] = ["24h", "7d", "30d"];
 const CHART_HEIGHT = 200;
 
+/**
+ * Documentation for module export
+ */
 export function ApiKeyChartSection({ data, isLoading, onRangeChange }: ApiKeyChartSectionProps) {
   const { t } = useI18n();
   const [view, setView] = useState<ChartView>("volume");

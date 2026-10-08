@@ -8,9 +8,7 @@ import {
   getCustomFieldsExtension,
   decodeCustomFieldName,
 } from "@core/crud/customFieldsExtension";
-import {
-  assertSelectCustomFieldValuesValid,
-} from "@modules/custom-fields/custom-field";
+import { assertSelectCustomFieldValuesValid } from "@modules/custom-fields/custom-field";
 import { WEBHOOK_ENTITY_TYPE_KEY } from "../types/webhookFormTypes";
 
 /**

@@ -44,7 +44,11 @@ export class BookingRepository implements IBookingRepository {
    * @param priceQuoteId Sealed price quote reference.
    * @returns Final confirmed booking state and reference numbers.
    */
-  confirm(reservationId: string, idempotencyKey: string, priceQuoteId: string): Promise<ConfirmBookingResult> {
+  confirm(
+    reservationId: string,
+    idempotencyKey: string,
+    priceQuoteId: string
+  ): Promise<ConfirmBookingResult> {
     return this.service.confirm(reservationId, idempotencyKey, priceQuoteId);
   }
 
@@ -90,7 +94,11 @@ export class BookingRepository implements IBookingRepository {
    * @param reason Cancellation reasoning or customer-initiated code.
    * @returns Cancellation lifecycle summary.
    */
-  cancel(reservationId: string, idempotencyKey: string, reason: string): Promise<ReservationLifecycleResult> {
+  cancel(
+    reservationId: string,
+    idempotencyKey: string,
+    reason: string
+  ): Promise<ReservationLifecycleResult> {
     return this.service.cancel(reservationId, idempotencyKey, reason);
   }
 
@@ -100,7 +108,10 @@ export class BookingRepository implements IBookingRepository {
    * @param input Target date, time, and optional adjustment reasons.
    * @returns Updated lifecycle status and modified schedule timeframes.
    */
-  reschedule(reservationId: string, input: RescheduleReservationInput): Promise<ReservationLifecycleResult> {
+  reschedule(
+    reservationId: string,
+    input: RescheduleReservationInput
+  ): Promise<ReservationLifecycleResult> {
     return this.service.reschedule(reservationId, input);
   }
 
@@ -110,7 +121,10 @@ export class BookingRepository implements IBookingRepository {
    * @param input Target resource ID and operational swap rationale.
    * @returns Updated lifecycle result reflecting the new resource mapping.
    */
-  changeResource(reservationId: string, input: ChangeReservationResourceInput): Promise<ReservationLifecycleResult> {
+  changeResource(
+    reservationId: string,
+    input: ChangeReservationResourceInput
+  ): Promise<ReservationLifecycleResult> {
     return this.service.changeResource(reservationId, input);
   }
 

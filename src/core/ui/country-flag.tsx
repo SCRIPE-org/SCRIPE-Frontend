@@ -38,7 +38,7 @@ export const CountryFlag = React.forwardRef<HTMLSpanElement, CountryFlagProps>(
         <span
           ref={ref}
           className={cn(
-            "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-nx-xs border border-nx-line bg-nx-raised text-[9px] font-mono font-bold tracking-wider text-nx-ink-2",
+            "rounded-nx-xs inline-flex shrink-0 items-center justify-center overflow-hidden border border-nx-line bg-nx-raised font-mono text-[9px] font-bold tracking-wider text-nx-ink-2",
             sizeClasses[size],
             className
           )}
@@ -54,7 +54,7 @@ export const CountryFlag = React.forwardRef<HTMLSpanElement, CountryFlagProps>(
       <span
         ref={ref}
         className={cn(
-          "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-nx-xs border border-nx-line/70 bg-nx-raised shadow-nx-xs",
+          "rounded-nx-xs border-nx-line/70 shadow-nx-xs inline-flex shrink-0 items-center justify-center overflow-hidden border bg-nx-raised",
           sizeClasses[size],
           className
         )}

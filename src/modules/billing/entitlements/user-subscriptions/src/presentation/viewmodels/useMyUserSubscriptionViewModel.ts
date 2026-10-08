@@ -12,6 +12,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 
 const QUERY_KEY = ["user-subscriptions", "me"];
 
+/**
+ * Documentation for module export
+ */
 export function useMyUserSubscriptionViewModel() {
   const { userSubscriptionRepository } = entitlementsContainer;
   const { t } = useI18n();

@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@core
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
 import { Progress } from "@core/ui/progress";
-import { RefreshCw, Play, XCircle, AlertCircle, Layers } from "lucide-react";
+import { RefreshCw, Play, XCircle, Layers } from "lucide-react";
 import type { MigrationSession } from "../../domain/entities/MigrationSession";
 
 interface ClusterRewrapCardProps {
@@ -16,6 +16,9 @@ interface ClusterRewrapCardProps {
   isCancellingRewrap: boolean;
 }
 
+/**
+ * Documentation for ClusterRewrapCard
+ */
 export function ClusterRewrapCard({
   activeSession,
   onStartClusterRewrap,
@@ -28,10 +31,10 @@ export function ClusterRewrapCard({
   const isRunning = Boolean(activeSession?.isRunning);
 
   return (
-    <Card className="shadow-sm border border-border">
+    <Card className="border border-border shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
+          <div className="rounded-xl bg-primary/10 p-2.5 text-primary">
             <RefreshCw className={`h-5 w-5 ${isRunning ? "animate-spin text-primary" : ""}`} />
           </div>
           <div>
@@ -40,7 +43,7 @@ export function ClusterRewrapCard({
                 {t("customFieldsSecurity.clusterRewrapTitle")}
               </CardTitle>
               {isRunning && (
-                <Badge variant="outline" className="text-primary border-primary/30 text-xs">
+                <Badge variant="outline" className="border-primary/30 text-xs text-primary">
                   {t("customFieldsSecurity.clusterMigrationRunning")}
                 </Badge>
               )}
@@ -56,7 +59,7 @@ export function ClusterRewrapCard({
 
       <CardContent className="space-y-4 pt-2">
         {activeSession && isRunning ? (
-          <div className="space-y-3 p-4 rounded-xl border border-primary/20 bg-primary/5">
+          <div className="space-y-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
             <div className="flex items-center justify-between text-xs">
               <span className="font-medium text-foreground">
                 {t("customFieldsSecurity.progress")} ({activeSession.progressPercentage}%)
@@ -73,7 +76,7 @@ export function ClusterRewrapCard({
               <Button
                 variant="outline"
                 size="sm"
-                className="text-destructive hover:bg-destructive/10 text-xs gap-1.5"
+                className="gap-1.5 text-xs text-destructive hover:bg-destructive/10"
                 onClick={() => onCancelRewrap(activeSession.id)}
                 disabled={isCancellingRewrap}
               >
@@ -83,17 +86,15 @@ export function ClusterRewrapCard({
             </div>
           </div>
         ) : (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
+          <div className="flex flex-col items-start justify-between gap-4 pt-1 sm:flex-row sm:items-center">
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Layers className="h-4 w-4 text-primary shrink-0" />
-              <span>
-                {t("customFieldsSecurity.distributionDesc")}
-              </span>
+              <Layers className="h-4 w-4 shrink-0 text-primary" />
+              <span>{t("customFieldsSecurity.distributionDesc")}</span>
             </div>
 
             <Button
               size="sm"
-              className="gap-2 shrink-0 text-xs"
+              className="shrink-0 gap-2 text-xs"
               onClick={onStartClusterRewrap}
               disabled={isStartingRewrap}
             >

@@ -118,8 +118,7 @@ export function RecycleBinView() {
         return [
           {
             label: t("recycleBin.restore"),
-            onClick: (item: DeletedItem) =>
-              handleRestore(item.entityType.toLowerCase(), item.id),
+            onClick: (item: DeletedItem) => handleRestore(item.entityType.toLowerCase(), item.id),
             variant: "ghost" as const,
             icon: <RotateCcw className="h-4 w-4" aria-hidden="true" />,
             loading: isRestoring,

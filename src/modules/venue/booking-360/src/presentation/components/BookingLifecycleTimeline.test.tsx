@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+﻿import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { Booking360HistoryItem } from "../../domain/entities/Booking360";
 import { BookingLifecycleTimeline } from "./BookingLifecycleTimeline";

@@ -85,7 +85,9 @@ describe("useRestrictableCustomFieldKeys", () => {
       "party.person": { items: [definition("salary"), definition("nickname")] },
     });
 
-    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), { wrapper });
+    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), {
+      wrapper,
+    });
 
     await waitFor(() => expect(result.current.keys).toHaveLength(2));
     expect(result.current.keys.map((entry) => entry.key)).toEqual(["nickname", "salary"]);
@@ -95,13 +97,10 @@ describe("useRestrictableCustomFieldKeys", () => {
   it("unions across EVERY entity type sharing the resource, not just the first", async () => {
     // `media.medias` and `media.file` really do share one resource. Resolving only the
     // first match would silently offer half the fields — and look completely normal.
-    setup(
-      [entityType("media.medias", "medias"), entityType("media.file", "medias")],
-      {
-        "media.medias": { items: [definition("caption")] },
-        "media.file": { items: [definition("checksum")] },
-      }
-    );
+    setup([entityType("media.medias", "medias"), entityType("media.file", "medias")], {
+      "media.medias": { items: [definition("caption")] },
+      "media.file": { items: [definition("checksum")] },
+    });
 
     const { result } = renderHook(() => useRestrictableCustomFieldKeys("medias"), { wrapper });
 
@@ -118,7 +117,9 @@ describe("useRestrictableCustomFieldKeys", () => {
       "party.person": { items: [definition("salary", true), definition("nickname", false)] },
     });
 
-    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), { wrapper });
+    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), {
+      wrapper,
+    });
 
     await waitFor(() => expect(result.current.keys).toHaveLength(2));
     expect(result.current.keys.find((entry) => entry.key === "salary")?.isRequired).toBe(true);
@@ -129,13 +130,10 @@ describe("useRestrictableCustomFieldKeys", () => {
     // The server matches case-insensitively, so two tags differing only in case are
     // one restriction. And if the key is required on EITHER entity type, restricting
     // it fails — so the warning has to survive the merge.
-    setup(
-      [entityType("media.medias", "medias"), entityType("media.file", "medias")],
-      {
-        "media.medias": { items: [definition("caption", false)] },
-        "media.file": { items: [definition("Caption", true)] },
-      }
-    );
+    setup([entityType("media.medias", "medias"), entityType("media.file", "medias")], {
+      "media.medias": { items: [definition("caption", false)] },
+      "media.file": { items: [definition("Caption", true)] },
+    });
 
     const { result } = renderHook(() => useRestrictableCustomFieldKeys("medias"), { wrapper });
 
@@ -148,7 +146,9 @@ describe("useRestrictableCustomFieldKeys", () => {
       "party.person": { items: [definition("salary")] },
     });
 
-    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), { wrapper });
+    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), {
+      wrapper,
+    });
 
     await waitFor(() => expect(result.current.keys).toHaveLength(1));
   });
@@ -180,7 +180,9 @@ describe("useRestrictableCustomFieldKeys", () => {
       "party.person": { items: [definition("salary")] },
     });
 
-    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), { wrapper });
+    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), {
+      wrapper,
+    });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.keys).toEqual([]);
@@ -205,7 +207,9 @@ describe("useRestrictableCustomFieldKeys", () => {
       "party.person": { items: [definition("salary")], totalCount: 250 },
     });
 
-    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), { wrapper });
+    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), {
+      wrapper,
+    });
 
     await waitFor(() => expect(result.current.isTruncated).toBe(true));
   });
@@ -218,7 +222,9 @@ describe("useRestrictableCustomFieldKeys", () => {
       "party.person": { items: [definition("salary")] },
     });
 
-    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), { wrapper });
+    const { result } = renderHook(() => useRestrictableCustomFieldKeys("party-people"), {
+      wrapper,
+    });
 
     await waitFor(() => expect(result.current.keys).toHaveLength(1));
     expect(getAll).toHaveBeenCalledWith(

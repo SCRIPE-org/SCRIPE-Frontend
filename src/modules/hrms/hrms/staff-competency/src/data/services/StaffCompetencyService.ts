@@ -17,6 +17,9 @@ import type {
 } from "../../domain/interfaces/IStaffCompetencyService";
 import { STAFF_COMPETENCY_ENDPOINTS } from "./staff-competency.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class StaffCompetencyService implements IStaffCompetencyService {
   constructor(private readonly api: IApiService) {}
 

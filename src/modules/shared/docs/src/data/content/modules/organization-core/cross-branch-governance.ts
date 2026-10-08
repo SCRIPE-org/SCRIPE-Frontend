@@ -36,9 +36,6 @@ registerPage({
   category: "module-organization-core",
   order: 3,
   sections,
-  relatedSlugs: [
-    "modules/organization-core-overview",
-    "modules/organization-core/hierarchy-tree",
-  ],
+  relatedSlugs: ["modules/organization-core-overview", "modules/organization-core/hierarchy-tree"],
   lastUpdated: "2026-10-03",
 });

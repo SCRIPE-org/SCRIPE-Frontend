@@ -75,20 +75,18 @@ export class OnboardingQuestionMapper {
       isActive: v.isActive,
       createdAt: v.createdAt ?? new Date().toISOString(),
       modifiedAt: v.modifiedAt ?? undefined,
-      options: v.options.map(
-        (o): AnswerOptionData => ({
-          id: o.id,
-          value: o.value,
-          labelEn: o.labelEn,
-          labelAr: o.labelAr ?? "",
-          sublabelEn: o.sublabelEn ?? undefined,
-          sublabelAr: o.sublabelAr ?? undefined,
-          iconKey: o.iconKey ?? undefined,
-          sortOrder: o.sortOrder,
-          signalWeight: o.signalWeight,
-          isActive: o.isActive,
-        })
-      ),
+      options: v.options.map((o): AnswerOptionData => ({
+        id: o.id,
+        value: o.value,
+        labelEn: o.labelEn,
+        labelAr: o.labelAr ?? "",
+        sublabelEn: o.sublabelEn ?? undefined,
+        sublabelAr: o.sublabelAr ?? undefined,
+        iconKey: o.iconKey ?? undefined,
+        sortOrder: o.sortOrder,
+        signalWeight: o.signalWeight,
+        isActive: o.isActive,
+      })),
     };
 
     return new OnboardingQuestion(data);

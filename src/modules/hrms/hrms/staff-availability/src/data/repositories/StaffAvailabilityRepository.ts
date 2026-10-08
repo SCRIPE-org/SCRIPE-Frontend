@@ -17,6 +17,9 @@ import type { IStaffAvailabilityService } from "../../domain/interfaces/IStaffAv
 import type { StaffAvailability } from "../../domain/entities/StaffAvailability";
 import { StaffAvailabilityMapper } from "../mappers/StaffAvailabilityMapper";
 
+/**
+ * Documentation for module export
+ */
 export class StaffAvailabilityRepository implements IStaffAvailabilityRepository {
   constructor(private readonly service: IStaffAvailabilityService) {}
 

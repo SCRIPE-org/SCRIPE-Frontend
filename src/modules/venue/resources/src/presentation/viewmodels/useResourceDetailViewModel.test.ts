@@ -42,13 +42,48 @@ const mockCalendar247 = {
   effectiveFrom: "2026-01-01",
   effectiveTo: null,
   windows: [
-    { dayOfWeek: "Sunday" as const, startLocal: "00:00", endLocal: "23:59", capacityOverride: null },
-    { dayOfWeek: "Monday" as const, startLocal: "00:00", endLocal: "23:59", capacityOverride: null },
-    { dayOfWeek: "Tuesday" as const, startLocal: "00:00", endLocal: "23:59", capacityOverride: null },
-    { dayOfWeek: "Wednesday" as const, startLocal: "00:00", endLocal: "23:59", capacityOverride: null },
-    { dayOfWeek: "Thursday" as const, startLocal: "00:00", endLocal: "23:59", capacityOverride: null },
-    { dayOfWeek: "Friday" as const, startLocal: "00:00", endLocal: "23:59", capacityOverride: null },
-    { dayOfWeek: "Saturday" as const, startLocal: "00:00", endLocal: "23:59", capacityOverride: null },
+    {
+      dayOfWeek: "Sunday" as const,
+      startLocal: "00:00",
+      endLocal: "23:59",
+      capacityOverride: null,
+    },
+    {
+      dayOfWeek: "Monday" as const,
+      startLocal: "00:00",
+      endLocal: "23:59",
+      capacityOverride: null,
+    },
+    {
+      dayOfWeek: "Tuesday" as const,
+      startLocal: "00:00",
+      endLocal: "23:59",
+      capacityOverride: null,
+    },
+    {
+      dayOfWeek: "Wednesday" as const,
+      startLocal: "00:00",
+      endLocal: "23:59",
+      capacityOverride: null,
+    },
+    {
+      dayOfWeek: "Thursday" as const,
+      startLocal: "00:00",
+      endLocal: "23:59",
+      capacityOverride: null,
+    },
+    {
+      dayOfWeek: "Friday" as const,
+      startLocal: "00:00",
+      endLocal: "23:59",
+      capacityOverride: null,
+    },
+    {
+      dayOfWeek: "Saturday" as const,
+      startLocal: "00:00",
+      endLocal: "23:59",
+      capacityOverride: null,
+    },
   ],
 };
 
@@ -82,7 +117,9 @@ function createMockContainer() {
     },
     commercialPricingRepository: {
       getResourceConfiguration: vi.fn().mockResolvedValue(mockPriceConfig),
-      getTaxCategories: vi.fn().mockResolvedValue([{ id: "tax-1", code: "VAT_14", displayName: "VAT 14%" }]),
+      getTaxCategories: vi
+        .fn()
+        .mockResolvedValue([{ id: "tax-1", code: "VAT_14", displayName: "VAT 14%" }]),
       configureResourcePrice: vi.fn().mockResolvedValue(undefined),
     },
   };
@@ -94,7 +131,9 @@ describe("useResourceDetailViewModel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockContainer = createMockContainer();
-    vi.mocked(getVenueContainer).mockReturnValue(mockContainer as unknown as ReturnType<typeof getVenueContainer>);
+    vi.mocked(getVenueContainer).mockReturnValue(
+      mockContainer as unknown as ReturnType<typeof getVenueContainer>
+    );
   });
 
   it("loads resource, profile, facility, calendar, priceConfig and detects 24/7 status", async () => {
@@ -244,11 +283,15 @@ describe("useResourceDetailViewModel", () => {
     );
 
     const blockToDelete = {
+      id: "block-1",
       resourceId: "res-1",
-      startLocal: "2026-10-10T10:00:00",
-      endLocal: "2026-10-10T12:00:00",
+      startUtc: "2026-10-10T10:00:00Z",
+      endUtc: "2026-10-10T12:00:00Z",
+      timeZoneId: "UTC",
       reason: "Glass polishing",
       hardBlock: true,
+      version: 1,
+      createdAt: "2026-10-01T00:00:00Z",
     };
 
     let delSuccess = false;

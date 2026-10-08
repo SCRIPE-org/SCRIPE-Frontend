@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // InlineAddCustomFieldDialog — validator picker + TRAP 1 write-seam
 // normalization (Wave 2 Step 2.5 Task 10)
 //
@@ -25,7 +26,12 @@ vi.mock("../../../../field-group/src/presentation/viewmodels/useFieldGroupOption
   useFieldGroupOptions: vi.fn(() => ({ options: [], isLoading: false, isError: false })),
 }));
 vi.mock("../../../../entity-lookup/src/presentation/hooks/useEntityLookupAvailableTypes", () => ({
-  useEntityLookupAvailableTypes: vi.fn(() => ({ types: [], isLoading: false, isError: false, isEmpty: true })),
+  useEntityLookupAvailableTypes: vi.fn(() => ({
+    types: [],
+    isLoading: false,
+    isError: false,
+    isEmpty: true,
+  })),
 }));
 // Real useOptionSetViewModel calls useQueryClient() unconditionally, which throws outside a
 // QueryClientProvider -- mocked like its two sibling read hooks above rather than wrapping every
@@ -81,7 +87,9 @@ if (typeof Element.prototype.scrollIntoView !== "function") {
 function openDialogWithRequiredFields(key: string, labelEn: string) {
   fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
   fireEvent.change(screen.getByLabelText("customField.fields.key"), { target: { value: key } });
-  fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), { target: { value: labelEn } });
+  fireEvent.change(screen.getByLabelText("customField.fields.labelEn"), {
+    target: { value: labelEn },
+  });
 }
 
 describe("InlineAddCustomFieldDialog — validator picker", () => {
@@ -98,7 +106,9 @@ describe("InlineAddCustomFieldDialog — validator picker", () => {
     render(<InlineAddCustomFieldDialog entityTypeKey="party.person" onCreated={vi.fn()} />);
     fireEvent.click(screen.getByText("customField.inlineAdd.trigger"));
 
-    expect(screen.getByRole("combobox", { name: "customField.fields.validatorKind" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("combobox", { name: "customField.fields.validatorKind" })
+    ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("combobox", { name: "customField.fields.valueType" }));
     fireEvent.click(screen.getByRole("option", { name: "customField.valueTypes.number" }));
@@ -130,14 +140,14 @@ describe("InlineAddCustomFieldDialog — validator picker", () => {
     fireEvent.click(screen.getByRole("combobox", { name: "customField.fields.validatorKind" }));
     fireEvent.click(screen.getByRole("option", { name: "customField.validatorKinds.swiftBic" }));
 
-    expect(
-      screen.queryByLabelText("customField.fields.validatorParam")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("customField.fields.validatorParam")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByText("common.save"));
 
     await waitFor(() =>
-      expect(createMock).toHaveBeenCalledWith(expect.objectContaining({ validatorKind: "SwiftBic" }))
+      expect(createMock).toHaveBeenCalledWith(
+        expect.objectContaining({ validatorKind: "SwiftBic" })
+      )
     );
   });
 
@@ -146,9 +156,13 @@ describe("InlineAddCustomFieldDialog — validator picker", () => {
     openDialogWithRequiredFields("age", "Age Range");
 
     fireEvent.click(screen.getByRole("combobox", { name: "customField.fields.validatorKind" }));
-    fireEvent.click(screen.getByRole("option", { name: "customField.validatorKinds.numericRange" }));
+    fireEvent.click(
+      screen.getByRole("option", { name: "customField.validatorKinds.numericRange" })
+    );
 
-    expect(screen.getByText("customField.validatorKindParamHints.numericRange")).toBeInTheDocument();
+    expect(
+      screen.getByText("customField.validatorKindParamHints.numericRange")
+    ).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("customField.fields.validatorParam"), {
       target: { value: "1,100" },

@@ -8,12 +8,7 @@ export type PluginTierValue = "Tier1" | "Tier2";
 
 /** String union matching backend PluginStatus enum. */
 export type PluginStatusValue =
-  | "Draft"
-  | "InReview"
-  | "Approved"
-  | "Published"
-  | "Suspended"
-  | "Deprecated";
+  "Draft" | "InReview" | "Approved" | "Published" | "Suspended" | "Deprecated";
 
 /** String union matching backend PluginScope enum. */
 export type PluginScopeValue = "Tenant" | "Global";

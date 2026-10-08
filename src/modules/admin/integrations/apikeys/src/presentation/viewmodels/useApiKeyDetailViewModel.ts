@@ -8,6 +8,9 @@ import type { UpdateApiKeyDetailRequest } from "../../domain/entities/ApiKeyDeta
 import type { ChartParams, ActivityParams } from "../../domain/interfaces/IApiKeyDetailService";
 import type { CreateApiKeyResult } from "../../domain/entities/ApiKey";
 
+/**
+ * Documentation for module export
+ */
 export function useApiKeyDetailViewModel(keyId: string) {
   const qc = useQueryClient();
   const repo = integrationsContainer.apiKeyDetailRepository;

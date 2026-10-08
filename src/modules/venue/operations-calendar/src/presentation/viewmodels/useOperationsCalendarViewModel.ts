@@ -3,13 +3,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
+import type { Facility } from "@modules/venue";
 import type {
   CalendarResource,
   OperationsCalendarBlock,
   OperationsCalendarState,
 } from "../../domain/entities/OperationsCalendar";
-import { localPrefillForInstant } from "./calendarLayout";
+import { localPrefillForInstant } from "./useCalendarLayout";
 
 const PAGE_SIZE = 100;
 const LANE_LIMIT = 50;
@@ -44,6 +44,9 @@ function todayIn(timeZoneId: string): string {
   return localPrefillForInstant(new Date().toISOString(), timeZoneId).date;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useOperationsCalendarViewModel() {
   const router = useRouter();
   const {
@@ -74,27 +77,33 @@ export function useOperationsCalendarViewModel() {
         ]);
         if (!active) return;
         const profiles = new Map(profilePage.items.map((profile) => [profile.id, profile]));
-        const facilityNames = new Map(facilityPage.items.map((facility) => [facility.id, facility.name]));
+        const facilityNames = new Map(
+          facilityPage.items.map((facility) => [facility.id, facility.name])
+        );
         const composed = resourcePage.items
           .filter((resource) => resource.isPublished && !resource.isComposite)
           .flatMap((resource) => {
             const profile = profiles.get(resource.facilityResourceProfileId);
             const zone = profile?.operatingPolicy?.timeZoneId;
             if (!profile || !zone) return [];
-            return [{
-              id: resource.id,
-              name: resource.name,
-              profileId: profile.id,
-              profileName: profile.name,
-              facilityId: profile.facilityId,
-              facilityName: facilityNames.get(profile.facilityId) ?? profile.name,
-              resourceKindCode: profile.resourceKindCode,
-              timeZoneId: zone,
-            } satisfies CalendarResource];
+            return [
+              {
+                id: resource.id,
+                name: resource.name,
+                profileId: profile.id,
+                profileName: profile.name,
+                facilityId: profile.facilityId,
+                facilityName: facilityNames.get(profile.facilityId) ?? profile.name,
+                resourceKindCode: profile.resourceKindCode,
+                timeZoneId: zone,
+              } satisfies CalendarResource,
+            ];
           });
         const firstFacility = facilityPage.items.find((facility) =>
-          composed.some((resource) => resource.facilityId === facility.id));
-        const firstZone = composed.find((resource) => resource.facilityId === firstFacility?.id)?.timeZoneId ?? "";
+          composed.some((resource) => resource.facilityId === facility.id)
+        );
+        const firstZone =
+          composed.find((resource) => resource.facilityId === firstFacility?.id)?.timeZoneId ?? "";
         setFacilities(facilityPage.items);
         setAllResources(composed);
         setSetupReady(true);
@@ -106,31 +115,43 @@ export function useOperationsCalendarViewModel() {
         setState((current) => ({
           ...current,
           stage: isFeatureUnavailable(error) ? "featureUnavailable" : "error",
-          errorMessage: isFeatureUnavailable(error) ? null : message(error, "calendar-setup-failed"),
+          errorMessage: isFeatureUnavailable(error)
+            ? null
+            : message(error, "calendar-setup-failed"),
         }));
       } finally {
         if (active) setSetupLoading(false);
       }
     };
     void load();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [facilityRepository, facilityResourceProfileRepository, schedulableResourceRepository]);
 
   const timeZoneOptions = useMemo(
-    () => Array.from(new Set(allResources
-      .filter((resource) => resource.facilityId === facilityId)
-      .map((resource) => resource.timeZoneId))).sort(),
+    () =>
+      Array.from(
+        new Set(
+          allResources
+            .filter((resource) => resource.facilityId === facilityId)
+            .map((resource) => resource.timeZoneId)
+        )
+      ).sort(),
     [allResources, facilityId]
   );
   const facilityResources = useMemo(
-    () => allResources.filter((resource) =>
-      resource.facilityId === facilityId && resource.timeZoneId === timeZoneId),
+    () =>
+      allResources.filter(
+        (resource) => resource.facilityId === facilityId && resource.timeZoneId === timeZoneId
+      ),
     [allResources, facilityId, timeZoneId]
   );
   const visibleResources = useMemo(
-    () => facilityResources
-      .filter((resource) => !resourceId || resource.id === resourceId)
-      .slice(0, LANE_LIMIT),
+    () =>
+      facilityResources
+        .filter((resource) => !resourceId || resource.id === resourceId)
+        .slice(0, LANE_LIMIT),
     [facilityResources, resourceId]
   );
   const resourcesTruncated = !resourceId && facilityResources.length > LANE_LIMIT;
@@ -178,46 +199,64 @@ export function useOperationsCalendarViewModel() {
     setState((current) => ({ ...current, stage: "loading", day: null }));
   }, []);
 
-  const setDate = useCallback((value: string) => {
-    invalidate();
-    setDateState(value);
-  }, [invalidate]);
+  const setDate = useCallback(
+    (value: string) => {
+      invalidate();
+      setDateState(value);
+    },
+    [invalidate]
+  );
   const previousDay = useCallback(() => setDate(shiftDate(date, -1)), [date, setDate]);
   const nextDay = useCallback(() => setDate(shiftDate(date, 1)), [date, setDate]);
   const goToday = useCallback(() => setDate(todayIn(timeZoneId || "UTC")), [setDate, timeZoneId]);
 
-  const setFacilityId = useCallback((value: string) => {
-    const zone = allResources.find((resource) => resource.facilityId === value)?.timeZoneId ?? "";
-    invalidate();
-    setFacilityIdState(value);
-    setTimeZoneIdState(zone);
-    setResourceIdState("");
-  }, [allResources, invalidate]);
-  const setTimeZoneId = useCallback((value: string) => {
-    invalidate();
-    setTimeZoneIdState(value);
-    setResourceIdState("");
-  }, [invalidate]);
-  const setResourceId = useCallback((value: string) => {
-    invalidate();
-    setResourceIdState(value);
-  }, [invalidate]);
+  const setFacilityId = useCallback(
+    (value: string) => {
+      const zone = allResources.find((resource) => resource.facilityId === value)?.timeZoneId ?? "";
+      invalidate();
+      setFacilityIdState(value);
+      setTimeZoneIdState(zone);
+      setResourceIdState("");
+    },
+    [allResources, invalidate]
+  );
+  const setTimeZoneId = useCallback(
+    (value: string) => {
+      invalidate();
+      setTimeZoneIdState(value);
+      setResourceIdState("");
+    },
+    [invalidate]
+  );
+  const setResourceId = useCallback(
+    (value: string) => {
+      invalidate();
+      setResourceIdState(value);
+    },
+    [invalidate]
+  );
 
-  const openBlock = useCallback((block: OperationsCalendarBlock) => {
-    router.push(`/venue/bookings/${encodeURIComponent(block.reservationId)}`);
-  }, [router]);
+  const openBlock = useCallback(
+    (block: OperationsCalendarBlock) => {
+      router.push(`/venue/bookings/${encodeURIComponent(block.reservationId)}`);
+    },
+    [router]
+  );
 
-  const createFromSlot = useCallback((resource: CalendarResource, instantUtc: string) => {
-    const prefill = localPrefillForInstant(instantUtc, resource.timeZoneId);
-    const params = new URLSearchParams({
-      facilityId: resource.facilityId,
-      resourceId: resource.id,
-      date: prefill.date,
-      startTime: prefill.startTime,
-      durationMinutes: "60",
-    });
-    router.push(`/venue/bookings/new?${params.toString()}`);
-  }, [router]);
+  const createFromSlot = useCallback(
+    (resource: CalendarResource, instantUtc: string) => {
+      const prefill = localPrefillForInstant(instantUtc, resource.timeZoneId);
+      const params = new URLSearchParams({
+        facilityId: resource.facilityId,
+        resourceId: resource.id,
+        date: prefill.date,
+        startTime: prefill.startTime,
+        durationMinutes: "60",
+      });
+      router.push(`/venue/bookings/new?${params.toString()}`);
+    },
+    [router]
+  );
 
   return {
     state,

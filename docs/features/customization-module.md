@@ -77,7 +77,7 @@ All layouts support light/dark themes, RTL/LTR, background images/gradients/over
 | Profile              | Activates                                                               |
 | -------------------- | ----------------------------------------------------------------------- |
 | ♿ Motor Impaired    | Large targets, big cursor, thick focus ring, skip link                  |
-| 👁 Vision Impaired   | High contrast, big font, 150% scaling, highlight links                  |
+| 👁 Vision Impaired    | High contrast, big font, 150% scaling, highlight links                  |
 | 🧠 Cognitive/ADHD    | Reading guide, no animations, large text, line height                   |
 | 📖 Dyslexia Friendly | OpenDyslexic font, line height 2×, letter spacing 2px, word spacing 4px |
 | ⚡ Seizure Safe      | No animations, desaturate, no autoplay, pause all                       |

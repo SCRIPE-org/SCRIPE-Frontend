@@ -7,6 +7,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import type { CustomField } from "../../../domain/entities/CustomField";
 import type { VALUE_TYPE_CATALOG } from "../../registries/valueTypeRegistry";
 
+/**
+ * Documentation for module export
+ */
 export interface DetailValidationSectionProps {
   field: CustomField;
   valueTypeDisplayName: string;
@@ -17,6 +20,9 @@ export interface DetailValidationSectionProps {
   validatorDisplayName: string;
 }
 
+/**
+ * Documentation for DetailValidationSection
+ */
 export function DetailValidationSection({
   field,
   valueTypeDisplayName,

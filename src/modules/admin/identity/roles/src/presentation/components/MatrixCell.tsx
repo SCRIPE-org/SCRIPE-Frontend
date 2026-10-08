@@ -10,12 +10,7 @@
 import { useState } from "react";
 import { Checkbox } from "@core/ui/checkbox";
 import { Button } from "@core/ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@core/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { Permission } from "@modules/identity/permissions";

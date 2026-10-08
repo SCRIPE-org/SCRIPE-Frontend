@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // CreateLeadDialog -- non-modal container (Wave 5 row 5.6)
 //
 // Design spec §5.4 / pre-plan analysis R2: one of the four hand-rolled
@@ -70,9 +71,7 @@ describe("CreateLeadDialog — non-modal container", () => {
     // aria-hidden="true" and getByRole would fail to find it even though
     // it's live DOM (same mechanism core/ui/__tests__/dialog.test.tsx's own
     // comment documents).
-    expect(
-      screen.getByRole("dialog", { name: "leads.createDialog.title" })
-    ).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "leads.createDialog.title" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "host-page-sentinel" })).toBeInTheDocument();
   });
 });

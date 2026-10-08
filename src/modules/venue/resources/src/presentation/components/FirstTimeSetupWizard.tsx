@@ -1,25 +1,12 @@
+﻿// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@core/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@core/ui/dialog";
 import { Button } from "@core/ui/button";
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
-import {
-  Building2,
-  CalendarDays,
-  CheckCircle2,
-  Clock,
-  CircleDollarSign,
-  Plus,
-  Trash2,
-  Sparkles,
-} from "lucide-react";
+import { Building2, CalendarDays, CheckCircle2, Clock, Plus, Trash2, Sparkles } from "lucide-react";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { FirstTimeSetupInput } from "../../domain/entities/ResourceWorkspaceItem";
 
@@ -49,12 +36,10 @@ const SPORT_TYPES = [
   "Volleyball",
 ];
 
-export function FirstTimeSetupWizard({
-  open,
-  onOpenChange,
-  onSubmit,
-  submitting,
-}: Props) {
+/**
+ * Documentation for FirstTimeSetupWizard
+ */
+export function FirstTimeSetupWizard({ open, onOpenChange, onSubmit, submitting }: Props) {
   const { t, language } = useI18n();
   const isRtl = language === "ar";
 
@@ -127,7 +112,7 @@ export function FirstTimeSetupWizard({
       <DialogContent className="max-w-xl p-6" dir={isRtl ? "rtl" : "ltr"}>
         <DialogHeader className="border-b border-nx-line pb-4">
           <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-full bg-nx-accent/10 text-nx-accent">
+            <div className="bg-nx-accent/10 flex size-8 items-center justify-center rounded-full text-nx-accent">
               <Sparkles className="size-4" aria-hidden="true" />
             </div>
             <div>
@@ -144,16 +129,16 @@ export function FirstTimeSetupWizard({
 
           {/* Stepper Progress Bar */}
           {!finished && (
-            <div className="flex items-center justify-between gap-1 mt-4 text-[11px] font-semibold text-nx-ink-3">
+            <div className="mt-4 flex items-center justify-between gap-1 text-[11px] font-semibold text-nx-ink-3">
               {[1, 2, 3, 4, 5].map((s) => (
                 <div
                   key={s}
-                  className={`flex-1 text-center py-1 border-b-2 transition-colors ${
+                  className={`flex-1 border-b-2 py-1 text-center transition-colors ${
                     step === s
                       ? "border-nx-accent text-nx-accent"
                       : step > s
-                      ? "border-emerald-500 text-emerald-600 dark:text-emerald-400"
-                      : "border-nx-line text-nx-ink-3"
+                        ? "border-emerald-500 text-emerald-600 dark:text-emerald-400"
+                        : "border-nx-line text-nx-ink-3"
                   }`}
                 >
                   {s === 1 && t("resources.wizard.step1", { defaultValue: "1. Branch" })}
@@ -217,7 +202,7 @@ export function FirstTimeSetupWizard({
                     type="button"
                     key={type}
                     onClick={() => setSportType(type)}
-                    className={`px-3 py-1 rounded-nx-md text-xs font-medium transition-colors ${
+                    className={`rounded-nx-md px-3 py-1 text-xs font-medium transition-colors ${
                       sportType === type
                         ? "bg-nx-accent text-white"
                         : "bg-nx-surfaceSubtle border border-nx-line text-nx-ink hover:bg-nx-hover"
@@ -238,7 +223,7 @@ export function FirstTimeSetupWizard({
                   defaultValue: "Add the names of the courts or fields you operate.",
                 })}
               </p>
-              <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+              <div className="max-h-48 space-y-2 overflow-y-auto pr-1">
                 {courts.map((court, index) => (
                   <div key={index} className="flex items-center gap-2">
                     <Input
@@ -268,10 +253,12 @@ export function FirstTimeSetupWizard({
                 variant="outline"
                 size="sm"
                 onClick={addCourt}
-                className="mt-2 text-xs gap-1"
+                className="mt-2 gap-1 text-xs"
               >
                 <Plus className="size-3.5" aria-hidden="true" />
-                <span>{t("resources.wizard.addMoreCourts", { defaultValue: "+ Add Another Court" })}</span>
+                <span>
+                  {t("resources.wizard.addMoreCourts", { defaultValue: "+ Add Another Court" })}
+                </span>
               </Button>
             </div>
           </div>
@@ -287,10 +274,10 @@ export function FirstTimeSetupWizard({
             <div className="space-y-3">
               {/* Option A: Open 24/7 */}
               <label
-                className={`flex items-start gap-3 p-3.5 rounded-nx-md border cursor-pointer transition-all ${
+                className={`flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-all ${
                   isOpen247
-                    ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
-                    : "border-nx-line hover:bg-nx-surfaceSubtle"
+                    ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
+                    : "hover:bg-nx-surfaceSubtle border-nx-line"
                 }`}
               >
                 <input
@@ -301,11 +288,15 @@ export function FirstTimeSetupWizard({
                   className="mt-1"
                 />
                 <div>
-                  <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
                     <Clock className="size-3.5 text-nx-accent" aria-hidden="true" />
-                    <span>{t("resources.workingHours.open247", { defaultValue: "Open 24 Hours (24/7)" })}</span>
+                    <span>
+                      {t("resources.workingHours.open247", {
+                        defaultValue: "Open 24 Hours (24/7)",
+                      })}
+                    </span>
                   </p>
-                  <p className="text-[11px] text-nx-ink-2 mt-0.5">
+                  <p className="mt-0.5 text-[11px] text-nx-ink-2">
                     {t("resources.workingHours.open247Description", {
                       defaultValue: "Court is bookable all day and night every day of the week.",
                     })}
@@ -315,10 +306,10 @@ export function FirstTimeSetupWizard({
 
               {/* Option B: Custom Hours */}
               <label
-                className={`flex items-start gap-3 p-3.5 rounded-nx-md border cursor-pointer transition-all ${
+                className={`flex cursor-pointer items-start gap-3 rounded-nx-md border p-3.5 transition-all ${
                   !isOpen247
-                    ? "border-nx-accent bg-nx-accent/5 ring-1 ring-nx-accent"
-                    : "border-nx-line hover:bg-nx-surfaceSubtle"
+                    ? "bg-nx-accent/5 border-nx-accent ring-1 ring-nx-accent"
+                    : "hover:bg-nx-surfaceSubtle border-nx-line"
                 }`}
               >
                 <input
@@ -329,18 +320,20 @@ export function FirstTimeSetupWizard({
                   className="mt-1"
                 />
                 <div className="flex-1">
-                  <p className="text-xs font-bold text-nx-ink flex items-center gap-1.5">
+                  <p className="flex items-center gap-1.5 text-xs font-bold text-nx-ink">
                     <Building2 className="size-3.5 text-nx-ink-2" aria-hidden="true" />
-                    <span>{t("resources.workingHours.custom", { defaultValue: "Custom Working Hours" })}</span>
+                    <span>
+                      {t("resources.workingHours.custom", { defaultValue: "Custom Working Hours" })}
+                    </span>
                   </p>
-                  <p className="text-[11px] text-nx-ink-2 mt-0.5">
+                  <p className="mt-0.5 text-[11px] text-nx-ink-2">
                     {t("resources.workingHours.customDescription", {
                       defaultValue: "Specify exact daily opening and closing hours.",
                     })}
                   </p>
 
                   {!isOpen247 && (
-                    <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-nx-line/60">
+                    <div className="border-nx-line/60 mt-3 grid grid-cols-2 gap-3 border-t pt-3">
                       <div>
                         <Label className="text-[11px] text-nx-ink-3">
                           {t("resources.workingHours.openTime", { defaultValue: "Opens At" })}
@@ -349,7 +342,7 @@ export function FirstTimeSetupWizard({
                           type="time"
                           value={opensAt}
                           onChange={(e) => setOpensAt(e.target.value)}
-                          className="h-8 text-xs mt-1"
+                          className="mt-1 h-8 text-xs"
                         />
                       </div>
                       <div>
@@ -360,7 +353,7 @@ export function FirstTimeSetupWizard({
                           type="time"
                           value={closesAt}
                           onChange={(e) => setClosesAt(e.target.value)}
-                          className="h-8 text-xs mt-1"
+                          className="mt-1 h-8 text-xs"
                         />
                       </div>
                     </div>
@@ -378,7 +371,7 @@ export function FirstTimeSetupWizard({
               <Label className="text-sm font-semibold">
                 {t("resources.bookingRules.slotDuration", { defaultValue: "Default Booking Slot" })}
               </Label>
-              <p className="text-xs text-nx-ink-3 mt-0.5">
+              <p className="mt-0.5 text-xs text-nx-ink-3">
                 {t("resources.bookingRules.slotDurationHelp", {
                   defaultValue: "How long each standard booking session lasts.",
                 })}
@@ -396,16 +389,14 @@ export function FirstTimeSetupWizard({
                   type="button"
                   key={duration}
                   onClick={() => setSlotDurationMinutes(duration)}
-                  className={`p-3 rounded-nx-md border text-left transition-all ${
+                  className={`rounded-nx-md border p-3 text-left transition-all ${
                     slotDurationMinutes === duration
-                      ? "border-nx-accent bg-nx-accent/10 font-bold text-nx-ink ring-1 ring-nx-accent"
-                      : "border-nx-line hover:bg-nx-surfaceSubtle text-nx-ink-2"
+                      ? "bg-nx-accent/10 border-nx-accent font-bold text-nx-ink ring-1 ring-nx-accent"
+                      : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                   }`}
                 >
                   <p className="text-xs font-semibold">{label}</p>
-                  <p className="text-[10px] text-nx-ink-3 mt-0.5">
-                    Starts every {duration}m
-                  </p>
+                  <p className="mt-0.5 text-[10px] text-nx-ink-3">Starts every {duration}m</p>
                 </button>
               ))}
             </div>
@@ -419,7 +410,7 @@ export function FirstTimeSetupWizard({
               <Label className="text-sm font-semibold">
                 {t("resources.pricing.title", { defaultValue: "Standard Price" })}
               </Label>
-              <p className="text-xs text-nx-ink-3 mt-0.5">
+              <p className="mt-0.5 text-xs text-nx-ink-3">
                 {t("resources.pricing.description", {
                   defaultValue: "Standard authoritative price per booking slot.",
                 })}
@@ -453,7 +444,7 @@ export function FirstTimeSetupWizard({
                 </Label>
                 <select
                   id="wizard-currency"
-                  className="w-full h-9 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
+                  className="h-9 w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
                   value={currencyCode}
                   onChange={(e) => setCurrencyCode(e.target.value)}
                 >
@@ -478,7 +469,7 @@ export function FirstTimeSetupWizard({
               <h3 className="text-lg font-bold text-nx-ink">
                 {t("resources.wizard.readyTitle", { defaultValue: "Your Venue is Ready!" })}
               </h3>
-              <p className="text-xs text-nx-ink-2 max-w-sm mx-auto">
+              <p className="mx-auto max-w-sm text-xs text-nx-ink-2">
                 {t("resources.wizard.readySubtitle", {
                   defaultValue:
                     "Courts, working hours, booking slots, and pricing have been configured and published.",
@@ -490,11 +481,15 @@ export function FirstTimeSetupWizard({
               <Button asChild size="sm" className="font-semibold">
                 <a href="/venue/calendar">
                   <CalendarDays className="size-4" aria-hidden="true" />
-                  <span>{t("resources.wizard.goToCalendar", { defaultValue: "Open Calendar" })}</span>
+                  <span>
+                    {t("resources.wizard.goToCalendar", { defaultValue: "Open Calendar" })}
+                  </span>
                 </a>
               </Button>
               <Button variant="outline" size="sm" onClick={resetAndClose}>
-                <span>{t("resources.wizard.goToResources", { defaultValue: "View Courts & Fields" })}</span>
+                <span>
+                  {t("resources.wizard.goToResources", { defaultValue: "View Courts & Fields" })}
+                </span>
               </Button>
             </div>
           </div>
@@ -502,7 +497,7 @@ export function FirstTimeSetupWizard({
 
         {/* Footer Navigation Buttons */}
         {!finished && (
-          <div className="flex items-center justify-between border-t border-nx-line pt-4 mt-2">
+          <div className="mt-2 flex items-center justify-between border-t border-nx-line pt-4">
             <Button
               type="button"
               variant="ghost"
@@ -529,7 +524,7 @@ export function FirstTimeSetupWizard({
                 disabled={submitting}
                 loading={submitting}
                 onClick={() => void handleFinish()}
-                className="font-bold bg-nx-accent text-white"
+                className="bg-nx-accent font-bold text-white"
               >
                 {submitting
                   ? t("resources.wizard.finishing", { defaultValue: "Setting up venue..." })

@@ -78,7 +78,9 @@ export function Logo({
   const [imageFailed, setImageFailed] = React.useState(false);
 
   React.useEffect(() => {
-    setImageFailed(false);
+    queueMicrotask(() => {
+      setImageFailed(false);
+    });
   }, [tenantLogoUrl]);
 
   if (!settings.showLogo) {

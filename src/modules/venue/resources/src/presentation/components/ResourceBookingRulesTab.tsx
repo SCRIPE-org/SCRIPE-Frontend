@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
@@ -18,6 +18,9 @@ const DURATIONS = [
   { value: 120, labelKey: "duration120", fallback: "120 minutes (2 Hours)" },
 ];
 
+/**
+ * Documentation for module export
+ */
 export function ResourceBookingRulesTab({ vm }: Props) {
   const { t } = useI18n();
 
@@ -44,7 +47,9 @@ export function ResourceBookingRulesTab({ vm }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("resources.bookingRules.title", { defaultValue: "Booking Slot Rules" })}</CardTitle>
+        <CardTitle>
+          {t("resources.bookingRules.title", { defaultValue: "Booking Slot Rules" })}
+        </CardTitle>
         <CardDescription>
           {t("resources.bookingRules.description", {
             defaultValue: "Define the booking duration and grid intervals for this court.",
@@ -52,7 +57,7 @@ export function ResourceBookingRulesTab({ vm }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6 max-w-lg">
+        <form onSubmit={handleSubmit} className="max-w-lg space-y-6">
           <div className="space-y-3">
             <Label className="text-sm font-semibold">
               {t("resources.bookingRules.slotDuration", { defaultValue: "Slot Duration" })}
@@ -69,26 +74,26 @@ export function ResourceBookingRulesTab({ vm }: Props) {
                   type="button"
                   key={value}
                   onClick={() => handleDurationChange(value)}
-                  className={`p-3 rounded-nx-md border text-left transition-all ${
+                  className={`rounded-nx-md border p-3 text-left transition-all ${
                     slotDuration === value
-                      ? "border-nx-accent bg-nx-accent/10 font-bold text-nx-ink ring-1 ring-nx-accent"
-                      : "border-nx-line hover:bg-nx-surfaceSubtle text-nx-ink-2"
+                      ? "bg-nx-accent/10 border-nx-accent font-bold text-nx-ink ring-1 ring-nx-accent"
+                      : "hover:bg-nx-surfaceSubtle border-nx-line text-nx-ink-2"
                   }`}
                 >
                   <p className="text-xs font-semibold">
                     {t(`resources.bookingRules.${labelKey}`, { defaultValue: fallback })}
                   </p>
-                  <p className="text-[10px] text-nx-ink-3 mt-0.5">
-                    Grid: every {value} min
-                  </p>
+                  <p className="mt-0.5 text-[10px] text-nx-ink-3">Grid: every {value} min</p>
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="space-y-2 pt-2 border-t border-nx-line/60">
+          <div className="border-nx-line/60 space-y-2 border-t pt-2">
             <Label className="text-xs font-semibold text-nx-ink">
-              {t("resources.bookingRules.bookingStartsEvery", { defaultValue: "Booking Starts Every" })}
+              {t("resources.bookingRules.bookingStartsEvery", {
+                defaultValue: "Booking Starts Every",
+              })}
             </Label>
             <p className="text-[11px] text-nx-ink-3">
               {t("resources.bookingRules.startsEveryDefault", {
@@ -97,13 +102,14 @@ export function ResourceBookingRulesTab({ vm }: Props) {
             </p>
 
             <div className="flex items-center gap-3">
+              {/* UI-EXCEPTION: native element required for compact layout */}
               <select
                 className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"
                 value={startIncrement}
                 onChange={(e) => setStartIncrement(Number(e.target.value))}
               >
                 <option value={slotDuration}>
-                  Every {slotDuration} minutes (Recommended · Clean slots)
+                  Every {slotDuration} minutes (Recommended Â· Clean slots)
                 </option>
                 {slotDuration > 30 && (
                   <option value={30}>Every 30 minutes (Half-hour starts)</option>
