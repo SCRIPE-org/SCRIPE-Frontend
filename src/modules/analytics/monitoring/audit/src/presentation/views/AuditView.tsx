@@ -28,6 +28,9 @@ const AuditExportDialog = dynamic(
   { ssr: false }
 );
 
+/**
+ * AuditView
+ */
 export function AuditView() {
   useModuleLocales(() => import("../../../locales"), "audit");
 

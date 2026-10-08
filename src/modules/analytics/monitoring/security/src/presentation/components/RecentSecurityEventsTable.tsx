@@ -34,6 +34,9 @@ const EVENT_TYPE_BADGE_VARIANTS: Record<
   PasswordReset: "outline",
 };
 
+/**
+ * RecentSecurityEventsTable
+ */
 export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable({
   events,
   isLoading,

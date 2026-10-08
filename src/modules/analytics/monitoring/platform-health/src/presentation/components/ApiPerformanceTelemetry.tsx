@@ -11,6 +11,9 @@ interface ApiPerformanceTelemetryProps {
   isLoading?: boolean;
 }
 
+/**
+ * ApiPerformanceTelemetry
+ */
 export function ApiPerformanceTelemetry({
   health,
   timeRange = "24h",

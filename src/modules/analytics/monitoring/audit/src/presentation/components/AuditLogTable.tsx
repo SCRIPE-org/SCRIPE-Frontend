@@ -106,6 +106,9 @@ function getSeverityBadge(log: AuditLogEntry) {
   );
 }
 
+/**
+ * AuditLogTable
+ */
 export const AuditLogTable = memo(function AuditLogTable({
   data,
   isLoading,

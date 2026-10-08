@@ -42,6 +42,9 @@ interface AuditDetailDrawerProps {
   onQuickFilterByCorrelationId?: (correlationId: string) => void;
 }
 
+/**
+ * AuditDetailDrawer
+ */
 export function AuditDetailDrawer({
   open,
   onClose,

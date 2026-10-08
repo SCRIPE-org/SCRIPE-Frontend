@@ -7,7 +7,7 @@ import { Badge } from "@core/ui/badge";
 import { Button } from "@core/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@core/ui/dialog";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { getVenueLocator } from "@modules/venue";
+import { useVenueServiceLocator } from "@modules/venue";
 import type { AvailabilitySearchResult } from "@modules/venue";
 
 interface Props {
@@ -65,7 +65,7 @@ export function BookingChangeResourceDialog(props: Props) {
     setError(null);
     setSelectedCandidate(null);
     try {
-      const { schedulableResourceRepository, availabilityRepository, facilityResourceProfileRepository } = getVenueLocator();
+      const { schedulableResourceRepository, availabilityRepository, facilityResourceProfileRepository } = useVenueServiceLocator();
       const [resourcePage, profilePage] = await Promise.all([
         schedulableResourceRepository.getAll({ page: 1, pageSize: 100 }),
         facilityResourceProfileRepository.getAll({ page: 1, pageSize: 100 }),

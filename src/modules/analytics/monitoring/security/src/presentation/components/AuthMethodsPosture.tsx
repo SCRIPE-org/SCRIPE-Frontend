@@ -22,6 +22,9 @@ const METHOD_ICONS: Record<string, typeof Lock> = {
   passkey: Sparkles,
 };
 
+/**
+ * AuthMethodsPosture
+ */
 export const AuthMethodsPosture = memo(function AuthMethodsPosture({
   methods,
   cardClasses,

@@ -20,6 +20,9 @@ import type {
   FeatureAdoptionItem,
 } from "../../domain/entities/AnalyticsEntities";
 
+/**
+ * TimeRangeOption
+ */
 export type TimeRangeOption = "7d" | "30d" | "90d" | "12m";
 
 const TIME_RANGE_DAYS: Record<TimeRangeOption, number> = {
@@ -30,6 +33,9 @@ const TIME_RANGE_DAYS: Record<TimeRangeOption, number> = {
 };
 
 // ─── Query keys ──────────────────────────────────────────────────────
+/**
+ * tenantAnalyticsKeys
+ */
 export const tenantAnalyticsKeys = {
   all: (tenantId: string | null) => ["tenant-analytics", tenantId ?? "platform"] as const,
   summary: (tenantId: string | null) => [...tenantAnalyticsKeys.all(tenantId), "summary"] as const,

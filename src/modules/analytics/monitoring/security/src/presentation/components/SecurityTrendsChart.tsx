@@ -22,6 +22,9 @@ interface SecurityTrendsChartProps {
   cardClasses?: string;
 }
 
+/**
+ * SecurityTrendsChart
+ */
 export const SecurityTrendsChart = memo(function SecurityTrendsChart({
   data,
   isLoading,

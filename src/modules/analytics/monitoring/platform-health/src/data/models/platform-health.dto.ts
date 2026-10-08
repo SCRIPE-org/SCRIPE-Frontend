@@ -1,3 +1,6 @@
+/**
+ * HealthCheckItemDto
+ */
 export interface HealthCheckItemDto {
   name: string;
   status: string;
@@ -7,6 +10,9 @@ export interface HealthCheckItemDto {
   data?: Record<string, string>;
 }
 
+/**
+ * ExternalDependencyDto
+ */
 export interface ExternalDependencyDto {
   name: string;
   category: string;
@@ -16,6 +22,9 @@ export interface ExternalDependencyDto {
   lastCheckedAt: string;
 }
 
+/**
+ * HealthIncidentDto
+ */
 export interface HealthIncidentDto {
   id: string;
   title: string;
@@ -28,6 +37,9 @@ export interface HealthIncidentDto {
   resolvedAt?: string | null;
 }
 
+/**
+ * PlatformHealthResponseDto
+ */
 export interface PlatformHealthResponseDto {
   status: string;
   timestamp: string;

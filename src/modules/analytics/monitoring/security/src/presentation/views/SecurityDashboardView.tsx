@@ -28,6 +28,9 @@ const ReportExportDialog = dynamic(
   { ssr: false }
 );
 
+/**
+ * SecurityDashboardView
+ */
 export function SecurityDashboardView() {
   useModuleLocales(() => import("../../../locales"), "security");
 

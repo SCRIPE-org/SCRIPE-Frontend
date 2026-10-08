@@ -14,6 +14,9 @@ interface TenantActivityDistributionProps {
   totalTenants: number;
 }
 
+/**
+ * TenantActivityDistribution
+ */
 export function TenantActivityDistribution({
   data,
   isLoading,

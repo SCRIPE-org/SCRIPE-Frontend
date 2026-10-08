@@ -1,6 +1,9 @@
 import { PlatformHealth } from "../../domain/entities/PlatformHealth";
 import type { PlatformHealthResponseDto } from "../models/platform-health.dto";
 
+/**
+ * PlatformHealthMapper
+ */
 export class PlatformHealthMapper {
   static toEntity(dto: Partial<PlatformHealthResponseDto>): PlatformHealth {
     return new PlatformHealth({

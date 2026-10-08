@@ -43,6 +43,9 @@ const connectionStyles: Record<
   },
 };
 
+/**
+ * AuditHeader
+ */
 export function AuditHeader({
   isPlatform,
   activeTenantName,

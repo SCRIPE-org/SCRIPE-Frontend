@@ -26,6 +26,9 @@ interface HealthHeaderProps {
   status: string;
 }
 
+/**
+ * HealthHeader
+ */
 export function HealthHeader({
   timeRange,
   setTimeRange,

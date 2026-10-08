@@ -11,6 +11,9 @@ interface RecentIncidentsSectionProps {
   onSelectIncident: (id: string) => void;
 }
 
+/**
+ * RecentIncidentsSection
+ */
 export function RecentIncidentsSection({
   incidents = [],
   selectedIncidentId,

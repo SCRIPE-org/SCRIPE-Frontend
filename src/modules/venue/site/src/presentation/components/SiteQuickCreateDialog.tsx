@@ -14,7 +14,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { venueLocator } from "@modules/venue";
+import { useVenueServiceLocatorStatic } from "@modules/venue";
 import {
   SiteLocationFields,
   type SiteLocationState,
@@ -68,7 +68,7 @@ export function SiteQuickCreateDialog({
       const finalAddress = location.address.trim() || location.street.trim() || undefined;
       const finalTz = location.timeZone.trim() || undefined;
 
-      const siteId = await venueLocator.siteRepository.create({
+      const siteId = await useVenueServiceLocatorStatic.siteRepository.create({
         name: name.trim(),
         address: finalAddress,
         timeZone: finalTz,

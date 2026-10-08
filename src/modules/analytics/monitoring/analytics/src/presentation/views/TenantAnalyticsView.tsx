@@ -26,6 +26,9 @@ const ReportExportDialog = dynamic(
   { ssr: false }
 );
 
+/**
+ * TenantAnalyticsView
+ */
 export function TenantAnalyticsView() {
   useModuleLocales(() => import("../../../locales"), "analytics");
 

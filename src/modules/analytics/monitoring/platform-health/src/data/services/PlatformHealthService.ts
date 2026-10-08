@@ -4,8 +4,14 @@ import type { PlatformHealthResponseDto } from "../models/platform-health.dto";
 
 import type { IPlatformHealthService } from "../../domain/interfaces/IPlatformHealthService";
 
+/**
+ * Member
+ */
 export type { IPlatformHealthService };
 
+/**
+ * PlatformHealthService
+ */
 export class PlatformHealthService implements IPlatformHealthService {
   constructor(private readonly api: IApiService) {}
 

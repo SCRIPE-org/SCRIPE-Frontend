@@ -67,6 +67,9 @@ const SEVERITY_CONFIG: Record<
   },
 };
 
+/**
+ * SecurityAttentionPanel
+ */
 export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({
   signals,
   isLoading,

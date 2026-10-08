@@ -18,6 +18,9 @@ function getDependencyIcon(name: string) {
   return Cloud;
 }
 
+/**
+ * ExternalDependenciesSection
+ */
 export function ExternalDependenciesSection({
   dependencies = [],
   isLoading = false,

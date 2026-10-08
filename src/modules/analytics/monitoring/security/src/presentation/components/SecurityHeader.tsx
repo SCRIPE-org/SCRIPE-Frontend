@@ -30,6 +30,9 @@ interface SecurityHeaderProps {
   onOpenStudio?: () => void;
 }
 
+/**
+ * SecurityHeader
+ */
 export function SecurityHeader({
   timeRange,
   setTimeRange,

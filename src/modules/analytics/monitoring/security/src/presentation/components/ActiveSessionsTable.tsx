@@ -59,6 +59,9 @@ function parseDeviceInfo(ua: string): { name: string; icon: typeof Laptop } {
   return { name: `${browser} · ${os}`, icon: Icon };
 }
 
+/**
+ * ActiveSessionsTable
+ */
 export const ActiveSessionsTable = memo(function ActiveSessionsTable({
   sessions,
   isLoading,

@@ -11,6 +11,9 @@ interface TenantEditionDistributionProps {
   isLoading: boolean;
 }
 
+/**
+ * TenantEditionDistribution
+ */
 export function TenantEditionDistribution({
   data,
   isLoading,

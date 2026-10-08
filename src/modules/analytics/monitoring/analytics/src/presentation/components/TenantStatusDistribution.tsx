@@ -20,6 +20,9 @@ interface TenantStatusDistributionProps {
   totalTenants: number;
 }
 
+/**
+ * TenantStatusDistribution
+ */
 export function TenantStatusDistribution({
   data,
   isLoading,

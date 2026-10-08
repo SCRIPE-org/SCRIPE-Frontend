@@ -45,6 +45,9 @@ function getModuleIcon(name: string) {
   return Layers;
 }
 
+/**
+ * CoreServicesGrid
+ */
 export function CoreServicesGrid({
   modules = [],
   checks = [],

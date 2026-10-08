@@ -14,6 +14,9 @@ import { ExternalDependenciesSection } from "../components/ExternalDependenciesS
 import { RecentIncidentsSection } from "../components/RecentIncidentsSection";
 import { IncidentDetailPanel } from "../components/IncidentDetailPanel";
 
+/**
+ * PlatformHealthView
+ */
 export function PlatformHealthView() {
   const {
     health,

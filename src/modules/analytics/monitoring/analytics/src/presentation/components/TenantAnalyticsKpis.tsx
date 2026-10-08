@@ -24,6 +24,9 @@ interface TenantAnalyticsKpisProps {
   timeRangeLabel: string;
 }
 
+/**
+ * TenantAnalyticsKpis
+ */
 export function TenantAnalyticsKpis({
   kpis,
   isLoading,

@@ -11,6 +11,9 @@ interface TenantRegionDistributionProps {
   isLoading: boolean;
 }
 
+/**
+ * TenantRegionDistribution
+ */
 export function TenantRegionDistribution({
   data,
   isLoading,

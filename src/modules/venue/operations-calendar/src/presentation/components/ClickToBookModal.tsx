@@ -25,7 +25,7 @@ import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getVenueLocator } from "@modules/venue";
+import { useVenueServiceLocator } from "@modules/venue";
 import type { PriceQuote } from "@modules/venue";
 import type { CustomerSummary } from "@modules/venue";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
@@ -60,7 +60,7 @@ export function ClickToBookModal({
     customerRepository,
     commercialPricingRepository,
     moneyRepository,
-  } = getVenueLocator();
+  } = useVenueServiceLocator();
 
   // Dialog stages: "form" | "held" | "confirmed"
   const [stage, setStage] = useState<"form" | "held" | "confirmed">("form");

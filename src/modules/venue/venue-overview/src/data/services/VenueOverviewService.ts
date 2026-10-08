@@ -1,3 +1,4 @@
+import type { IApiService } from '@core/interfaces/api.interface';
 import type { Booking360Status } from "@modules/venue";
 import type { IOperationsCalendarRepository } from "@modules/venue";
 import type { ISchedulableResourceRepository } from "@modules/venue";
@@ -17,6 +18,9 @@ import type {
   VenueOverviewUpNextItem,
 } from "../../domain/entities/VenueOverview";
 
+/**
+ * ICustomerPartyRepository
+ */
 export interface ICustomerPartyRepository {
   getById(id: string): Promise<{ id: string; displayName: string } | null>;
 }
@@ -49,8 +53,12 @@ function chunks<T>(items: readonly T[], size: number): T[][] {
   return result;
 }
 
+/**
+ * VenueOverviewService
+ */
 export class VenueOverviewService implements IVenueOverviewService {
   constructor(
+    private readonly apiService: IApiService,
     private readonly operationsCalendarRepo: IOperationsCalendarRepository,
     private readonly schedulableResourceRepo: ISchedulableResourceRepository,
     private readonly profileRepo: IFacilityResourceProfileRepository,

@@ -11,6 +11,9 @@ interface TenantFeatureAdoptionProps {
   isLoading: boolean;
 }
 
+/**
+ * TenantFeatureAdoption
+ */
 export function TenantFeatureAdoption({
   data,
   isLoading,

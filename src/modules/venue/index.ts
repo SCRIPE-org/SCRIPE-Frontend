@@ -18,7 +18,7 @@ export * from "./venue-overview";
 export * from "./venue-profile";
 
 
-export { getVenueLocator, venueLocator } from "./shared/src/presentation/viewmodels/venueServiceLocator";
+export { useVenueServiceLocator, useVenueServiceLocatorStatic } from "./shared/src/presentation/viewmodels/useVenueServiceLocator";
 export type { IOperationsCalendarRepository } from "./operations-calendar/src/domain/interfaces/IOperationsCalendarRepository";
 export type { ISchedulableResourceRepository } from "./schedulable-resource/src/domain/interfaces/ISchedulableResourceRepository";
 export type { IFacilityResourceProfileRepository } from "./facility-resource-profile/src/domain/interfaces/IFacilityResourceProfileRepository";

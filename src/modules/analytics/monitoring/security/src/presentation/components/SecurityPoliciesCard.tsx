@@ -21,6 +21,9 @@ const POLICY_ICONS: Record<string, typeof Lock> = {
   "rate-limiting": Zap,
 };
 
+/**
+ * SecurityPoliciesCard
+ */
 export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({
   policies,
   cardClasses,

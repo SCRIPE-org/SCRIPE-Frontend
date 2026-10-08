@@ -1,3 +1,6 @@
+/**
+ * RuntimeVitals
+ */
 export interface RuntimeVitals {
   processStartTime: string;
   uptime: string;
@@ -17,6 +20,9 @@ export interface RuntimeVitals {
   clrVersion: string;
 }
 
+/**
+ * DatabaseHealth
+ */
 export interface DatabaseHealth {
   status: string;
   latencyMs: number;
@@ -24,6 +30,9 @@ export interface DatabaseHealth {
   isConnected: boolean;
 }
 
+/**
+ * RedisHealth
+ */
 export interface RedisHealth {
   status: string;
   latencyMs: number;
@@ -32,11 +41,17 @@ export interface RedisHealth {
   mode: string;
 }
 
+/**
+ * InfrastructureHealth
+ */
 export interface InfrastructureHealth {
   database: DatabaseHealth;
   redis: RedisHealth;
 }
 
+/**
+ * ModuleHealth
+ */
 export interface ModuleHealth {
   name: string;
   routePrefix: string;
@@ -45,6 +60,9 @@ export interface ModuleHealth {
   isActive: boolean;
 }
 
+/**
+ * HealthCheckItem
+ */
 export interface HealthCheckItem {
   name: string;
   status: string;
@@ -54,6 +72,9 @@ export interface HealthCheckItem {
   data?: Record<string, string>;
 }
 
+/**
+ * ExternalDependency
+ */
 export interface ExternalDependency {
   name: string;
   category: string;
@@ -63,6 +84,9 @@ export interface ExternalDependency {
   lastCheckedAt: string;
 }
 
+/**
+ * HealthIncident
+ */
 export interface HealthIncident {
   id: string;
   title: string;
@@ -75,6 +99,9 @@ export interface HealthIncident {
   resolvedAt?: string | null;
 }
 
+/**
+ * PlatformHealthData
+ */
 export interface PlatformHealthData {
   status: string;
   timestamp: string;
@@ -89,6 +116,9 @@ export interface PlatformHealthData {
   incidents?: HealthIncident[];
 }
 
+/**
+ * PlatformHealth
+ */
 export class PlatformHealth {
   constructor(private readonly data: PlatformHealthData) {}
 

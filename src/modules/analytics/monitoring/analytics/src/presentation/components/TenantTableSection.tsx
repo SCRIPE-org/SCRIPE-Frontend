@@ -35,6 +35,9 @@ interface TenantTableSectionProps {
   isLoading: boolean;
 }
 
+/**
+ * TenantTableSection
+ */
 export function TenantTableSection({
   tenants,
   totalCount,

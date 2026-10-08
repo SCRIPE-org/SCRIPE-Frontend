@@ -38,6 +38,9 @@ interface TenantAnalyticsHeaderProps {
   onExport: () => void;
 }
 
+/**
+ * TenantAnalyticsHeader
+ */
 export function TenantAnalyticsHeader({
   timeRange,
   setTimeRange,

@@ -257,6 +257,7 @@ export function VenueOverviewHeroTimeline({
                       );
 
                       return (
+                        // UI-EXCEPTION: highly specialized timeline grid block
                         <button
                           type="button"
                           key={slot.instantUtc}
@@ -302,6 +303,7 @@ export function VenueOverviewHeroTimeline({
                       });
 
                       return (
+                        // UI-EXCEPTION: highly specialized timeline grid block
                         <button
                           type="button"
                           key={block.reservationId}

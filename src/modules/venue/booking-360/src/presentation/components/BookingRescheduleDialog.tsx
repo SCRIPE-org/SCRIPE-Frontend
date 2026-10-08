@@ -9,7 +9,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
-import { getVenueLocator } from "@modules/venue";
+import { useVenueServiceLocator } from "@modules/venue";
 import type { AvailabilitySearchResult } from "@modules/venue";
 
 interface Props {
@@ -71,7 +71,7 @@ export function BookingRescheduleDialog(props: Props) {
     setSearchAttempted(true);
     setSelectedCandidate(null);
     try {
-      const { availabilityRepository } = getVenueLocator();
+      const { availabilityRepository } = useVenueServiceLocator();
       const result = await availabilityRepository.search({
         resourceId: props.resourceId,
         timeZoneId: props.timeZoneId,

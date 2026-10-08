@@ -14,7 +14,7 @@ import { Input } from "@core/ui/input";
 import { Label } from "@core/ui/label";
 import { Alert, AlertDescription } from "@core/ui/alert";
 import { useI18n } from "@core/providers/i18n-provider";
-import { getVenueLocator } from "@modules/venue";
+import { useVenueServiceLocator } from "@modules/venue";
 import type { ResourceBlockKind } from "@modules/venue";
 import type { CalendarResource } from "../../domain/entities/OperationsCalendar";
 
@@ -41,7 +41,7 @@ export function BlockTimeModal({
   onSuccess,
 }: Props) {
   const { t } = useI18n();
-  const { availabilityRepository } = getVenueLocator();
+  const { availabilityRepository } = useVenueServiceLocator();
 
   const [selectedResourceId, setSelectedResourceId] = useState<string>("");
   const [reasonType, setReasonType] = useState<"Maintenance" | "Unavailable">("Maintenance");

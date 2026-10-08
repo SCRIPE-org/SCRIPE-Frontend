@@ -16,7 +16,7 @@ import { Label } from "@core/ui/label";
 import { GenericSelect } from "@core/crud/components/generic-select";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
-import { venueLocator } from "@modules/venue";
+import { useVenueServiceLocatorStatic } from "@modules/venue";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
 import { VenueProfileQuickCreateDialog } from "@modules/venue";
@@ -57,7 +57,7 @@ export function FacilityQuickCreateDialog({
   const loadVenueProfiles = useCallback(async () => {
     try {
       setLoadingVenueProfiles(true);
-      const res = await venueLocator.venueProfileRepository.getAll({ page: 1, pageSize: 100 });
+      const res = await useVenueServiceLocatorStatic.venueProfileRepository.getAll({ page: 1, pageSize: 100 });
       setVenueProfiles(res.items);
       setVenueProfileId((current) => current || res.items[0]?.id || "");
     } catch {
@@ -99,7 +99,7 @@ export function FacilityQuickCreateDialog({
 
     setSaving(true);
     try {
-      const createdId = await venueLocator.facilityRepository.create({
+      const createdId = await useVenueServiceLocatorStatic.facilityRepository.create({
         venueProfileId: venueProfileId.trim(),
         code: code.trim(),
         name: name.trim(),

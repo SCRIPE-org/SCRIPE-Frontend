@@ -1,0 +1,3356 @@
+{
+  "timestamp": "2026-10-08T11:16:58.925Z",
+  "duration_ms": 2968,
+  "options": {
+    "target": "frontend",
+    "depth": "deep"
+  },
+  "overallScore": 93,
+  "frontendScore": 93,
+  "backendScore": null,
+  "totalViolations": 202,
+  "bySeverity": {
+    "critical": 0,
+    "warning": 93,
+    "info": 109
+  },
+  "modules": [
+    {
+      "module": "venue",
+      "target": "frontend",
+      "score": 25,
+      "criticalCount": 0,
+      "warningCount": 55,
+      "infoCount": 4,
+      "featureScores": [
+        {
+          "feature": "attention-center",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 0
+        },
+        {
+          "feature": "availability",
+          "score": 98,
+          "criticalCount": 0,
+          "warningCount": 2,
+          "infoCount": 0
+        },
+        {
+          "feature": "booking",
+          "score": 95,
+          "criticalCount": 0,
+          "warningCount": 4,
+          "infoCount": 0
+        },
+        {
+          "feature": "booking-360",
+          "score": 98,
+          "criticalCount": 0,
+          "warningCount": 3,
+          "infoCount": 0
+        },
+        {
+          "feature": "commercial",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 0
+        },
+        {
+          "feature": "facility",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "facility-resource-profile",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 2,
+          "infoCount": 0
+        },
+        {
+          "feature": "money",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 2,
+          "infoCount": 0
+        },
+        {
+          "feature": "operations-calendar",
+          "score": 74,
+          "criticalCount": 0,
+          "warningCount": 12,
+          "infoCount": 0
+        },
+        {
+          "feature": "resources",
+          "score": 57,
+          "criticalCount": 0,
+          "warningCount": 20,
+          "infoCount": 0
+        },
+        {
+          "feature": "schedulable-resource",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "shared",
+          "score": 98,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 2
+        },
+        {
+          "feature": "site",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 0
+        },
+        {
+          "feature": "venue-overview",
+          "score": 91,
+          "criticalCount": 0,
+          "warningCount": 6,
+          "infoCount": 2
+        },
+        {
+          "feature": "venue-profile",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "analytics/monitoring",
+      "target": "frontend",
+      "score": 73,
+      "criticalCount": 0,
+      "warningCount": 12,
+      "infoCount": 90,
+      "featureScores": [
+        {
+          "feature": "analytics",
+          "score": 95,
+          "criticalCount": 0,
+          "warningCount": 2,
+          "infoCount": 24
+        },
+        {
+          "feature": "audit",
+          "score": 85,
+          "criticalCount": 0,
+          "warningCount": 8,
+          "infoCount": 13
+        },
+        {
+          "feature": "dashboard",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 2
+        },
+        {
+          "feature": "platform-health",
+          "score": 94,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 31
+        },
+        {
+          "feature": "security",
+          "score": 96,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 20
+        }
+      ]
+    },
+    {
+      "module": "admin/identity",
+      "target": "frontend",
+      "score": 83,
+      "criticalCount": 0,
+      "warningCount": 11,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "admin",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "identity-providers",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "oauth-apps",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "permissions",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "roles",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "tenants",
+          "score": 83,
+          "criticalCount": 0,
+          "warningCount": 11,
+          "infoCount": 0
+        },
+        {
+          "feature": "user-groups",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "users",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "custom-fields/custom-fields",
+      "target": "frontend",
+      "score": 91,
+      "criticalCount": 0,
+      "warningCount": 7,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "custom-field",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 2,
+          "infoCount": 0
+        },
+        {
+          "feature": "custom-field-value",
+          "score": 98,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 0
+        },
+        {
+          "feature": "definition-export",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "entity-lookup",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "field-group",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "key-management",
+          "score": 95,
+          "criticalCount": 0,
+          "warningCount": 3,
+          "infoCount": 0
+        },
+        {
+          "feature": "option-set",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 0
+        },
+        {
+          "feature": "schema",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "value-export",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "shared/auth",
+      "target": "frontend",
+      "score": 92,
+      "criticalCount": 0,
+      "warningCount": 5,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "account-setup",
+          "score": 93,
+          "criticalCount": 0,
+          "warningCount": 4,
+          "infoCount": 0
+        },
+        {
+          "feature": "core",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "password-reset",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "signin",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 0
+        },
+        {
+          "feature": "signup",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "analytics/analytics",
+      "target": "frontend",
+      "score": 98,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 15,
+      "featureScores": [
+        {
+          "feature": "events",
+          "score": 98,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 15
+        }
+      ]
+    },
+    {
+      "module": "billing/entitlements",
+      "target": "frontend",
+      "score": 99,
+      "criticalCount": 0,
+      "warningCount": 1,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "activate-workspace",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "analytics",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "billing",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "billing-hub",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "commission-ledger",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "edition-categories",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "editions",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "features",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "leads",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "onboarding-questions",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "overrides",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "payment-gateways",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "payment-hub",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "platform-stripe",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "recommendation-rules",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "signup-content",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "stripe-connect",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "subscriptions",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "tenant-gateways",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "tenant-plans",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 1,
+          "infoCount": 0
+        },
+        {
+          "feature": "user-subscriptions",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "shared/docs",
+      "target": "frontend",
+      "score": 99,
+      "criticalCount": 0,
+      "warningCount": 2,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "docs",
+          "score": 99,
+          "criticalCount": 0,
+          "warningCount": 2,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "admin/communication",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "message-composer",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "send",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "templates",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "admin/compliance",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "consent",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "dashboard",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "dsr",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "inventory",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "regulations",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "reports",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "retention",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "admin/customization",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "branding",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "menus",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "tenant-settings",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "admin/ecosystem",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "recycle-bin",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "admin/integrations",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "apikeys",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "webhooks",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "hrms/hrms",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "certification",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "employment-record",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "qualification",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "staff-assignment",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "staff-availability",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "staff-competency",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "staff-member",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "marketplace/marketplace",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "app-listings",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "categories",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "developers",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "financials",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "reviews",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "submissions",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "media/media",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "media",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "party-kernel/party-kernel",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "contact-point",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "merge-candidate",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "party",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "party-organization",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "party-person",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "party-relationship",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "party-role",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "plugins/plugins",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "catalog",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "definitions",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "installed",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "logs",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        },
+        {
+          "feature": "settings",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "shared/home",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "hub",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "shared/profile",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "core",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    },
+    {
+      "module": "work-management/work-management",
+      "target": "frontend",
+      "score": 100,
+      "criticalCount": 0,
+      "warningCount": 0,
+      "infoCount": 0,
+      "featureScores": [
+        {
+          "feature": "work-item",
+          "score": 100,
+          "criticalCount": 0,
+          "warningCount": 0,
+          "infoCount": 0
+        }
+      ]
+    }
+  ],
+  "violations": [
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File CreateTenantPermissionPicker.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\create-tenant\\CreateTenantPermissionPicker.tsx",
+      "line": 67,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File CreateTenantPermissionsCard.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\create-tenant\\CreateTenantPermissionsCard.tsx",
+      "line": 30,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File CreateTenantPromoField.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\create-tenant\\CreateTenantPromoField.tsx",
+      "line": 40,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File CreateTenantStep1.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\create-tenant\\CreateTenantStep1.tsx",
+      "line": 117,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File CreateTenantStep3.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\create-tenant\\CreateTenantStep3.tsx",
+      "line": 166,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-020: File Length",
+      "message": "File useTenantDomainsViewModel.ts (presentation\\viewmodels\\useTenantDomainsViewModel.ts) is 445 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\viewmodels\\useTenantDomainsViewModel.ts",
+      "actual": "445 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-020: File Length",
+      "message": "File VercelDomainCard.tsx (presentation\\components\\cards\\VercelDomainCard.tsx) is 540 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\cards\\VercelDomainCard.tsx",
+      "actual": "540 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-020: File Length",
+      "message": "File CreateTenantLocationFields.tsx (presentation\\components\\create-tenant\\CreateTenantLocationFields.tsx) is 366 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\create-tenant\\CreateTenantLocationFields.tsx",
+      "actual": "366 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-020: File Length",
+      "message": "File CreateTenantStep3.tsx (presentation\\components\\create-tenant\\CreateTenantStep3.tsx) is 317 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\create-tenant\\CreateTenantStep3.tsx",
+      "actual": "317 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-020: File Length",
+      "message": "File AddDomainsDialog.tsx (presentation\\components\\dialogs\\AddDomainsDialog.tsx) is 426 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\dialogs\\AddDomainsDialog.tsx",
+      "actual": "426 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "warning",
+      "module": "admin/identity",
+      "feature": "tenants",
+      "rule": "FE-020: File Length",
+      "message": "File TenantDomainsTab.tsx (presentation\\components\\tabs\\TenantDomainsTab.tsx) is 425 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\admin\\identity\\tenants\\src\\presentation\\components\\tabs\\TenantDomainsTab.tsx",
+      "actual": "425 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-020: File Length",
+      "message": "File useTenantAnalyticsViewModel.ts (presentation\\viewmodels\\useTenantAnalyticsViewModel.ts) is 609 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\viewmodels\\useTenantAnalyticsViewModel.ts",
+      "actual": "609 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-020: File Length",
+      "message": "File TenantTableSection.tsx (presentation\\components\\TenantTableSection.tsx) is 305 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantTableSection.tsx",
+      "actual": "305 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File AuditDetailDrawer.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditDetailDrawer.tsx",
+      "line": 418,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File AuditFilterPanel.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditFilterPanel.tsx",
+      "line": 182,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File AuditFilterPanel.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditFilterPanel.tsx",
+      "line": 334,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File AuditFilterPanel.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditFilterPanel.tsx",
+      "line": 354,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-020: File Length",
+      "message": "File useAuditViewModel.ts (presentation\\viewmodels\\useAuditViewModel.ts) is 323 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\viewmodels\\useAuditViewModel.ts",
+      "actual": "323 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-020: File Length",
+      "message": "File AuditDetailDrawer.tsx (presentation\\components\\AuditDetailDrawer.tsx) is 605 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditDetailDrawer.tsx",
+      "actual": "605 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-020: File Length",
+      "message": "File AuditFilterPanel.tsx (presentation\\components\\AuditFilterPanel.tsx) is 384 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditFilterPanel.tsx",
+      "actual": "384 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-020: File Length",
+      "message": "File AuditLogTable.tsx (presentation\\components\\AuditLogTable.tsx) is 423 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditLogTable.tsx",
+      "actual": "423 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-010: Entity Pattern",
+      "message": "Entity PlatformHealth.ts missing constructor() or copyWith()",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "fix": "Add constructor(private readonly data: XData) and copyWith(updates)"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-020: File Length",
+      "message": "File useSecurityDashboardViewModel.ts (presentation\\viewmodels\\useSecurityDashboardViewModel.ts) is 416 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\viewmodels\\useSecurityDashboardViewModel.ts",
+      "actual": "416 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "billing/entitlements",
+      "feature": "tenant-plans",
+      "rule": "FE-020: File Length",
+      "message": "File useFeatureDefinitionFormViewModel.ts (presentation\\viewmodels\\useFeatureDefinitionFormViewModel.ts) is 303 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\billing\\entitlements\\tenant-plans\\src\\presentation\\viewmodels\\useFeatureDefinitionFormViewModel.ts",
+      "actual": "303 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "custom-fields/custom-fields",
+      "feature": "custom-field",
+      "rule": "FE-020: File Length",
+      "message": "File useOptionSetBindingViewModel.ts (presentation\\viewmodels\\useOptionSetBindingViewModel.ts) is 308 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\custom-fields\\custom-fields\\custom-field\\src\\presentation\\viewmodels\\useOptionSetBindingViewModel.ts",
+      "actual": "308 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "custom-fields/custom-fields",
+      "feature": "custom-field",
+      "rule": "FE-020: File Length",
+      "message": "File CustomFieldListView.tsx (presentation\\views\\CustomFieldList\\CustomFieldListView.tsx) is 325 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\custom-fields\\custom-fields\\custom-field\\src\\presentation\\views\\CustomFieldList\\CustomFieldListView.tsx",
+      "actual": "325 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "custom-fields/custom-fields",
+      "feature": "custom-field-value",
+      "rule": "FE-025: Hook File Naming",
+      "message": "ViewModel file 'inlineAddCustomFieldSections.ts' in presentation/viewmodels does not start with the 'use' prefix",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\custom-fields\\custom-fields\\custom-field-value\\src\\presentation\\viewmodels\\inlineAddCustomFieldSections.ts",
+      "fix": "Rename the viewmodel file and function to use the standard 'use' hook prefix (e.g. useXxxViewModel.ts)"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "custom-fields/custom-fields",
+      "feature": "key-management",
+      "rule": "FE-010: Entity Pattern",
+      "message": "Entity EncryptionAuditLog.ts missing constructor() or copyWith()",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\custom-fields\\custom-fields\\key-management\\src\\domain\\entities\\EncryptionAuditLog.ts",
+      "fix": "Add constructor(private readonly data: XData) and copyWith(updates)"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "custom-fields/custom-fields",
+      "feature": "key-management",
+      "rule": "FE-010: Entity Pattern",
+      "message": "Entity MigrationSession.ts missing constructor() or copyWith()",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\custom-fields\\custom-fields\\key-management\\src\\domain\\entities\\MigrationSession.ts",
+      "fix": "Add constructor(private readonly data: XData) and copyWith(updates)"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "custom-fields/custom-fields",
+      "feature": "key-management",
+      "rule": "FE-010: Entity Pattern",
+      "message": "Entity TenantKeyStatus.ts missing constructor() or copyWith()",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\custom-fields\\custom-fields\\key-management\\src\\domain\\entities\\TenantKeyStatus.ts",
+      "fix": "Add constructor(private readonly data: XData) and copyWith(updates)"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "custom-fields/custom-fields",
+      "feature": "option-set",
+      "rule": "FE-020: File Length",
+      "message": "File OptionSetDetailPanel.tsx (presentation\\views\\OptionSetDetailPanel.tsx) is 301 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\custom-fields\\custom-fields\\option-set\\src\\presentation\\views\\OptionSetDetailPanel.tsx",
+      "actual": "301 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "shared/auth",
+      "feature": "account-setup",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File AvatarUploader.tsx uses raw HTML element <input> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\shared\\auth\\account-setup\\src\\presentation\\components\\AvatarUploader.tsx",
+      "line": 84,
+      "actual": "<input",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "shared/auth",
+      "feature": "account-setup",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File DesktopSetupSidebar.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\shared\\auth\\account-setup\\src\\presentation\\components\\DesktopSetupSidebar.tsx",
+      "line": 137,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "shared/auth",
+      "feature": "account-setup",
+      "rule": "FE-013: Service DI",
+      "message": "Service AccountSetupService.ts doesn't inject IApiService",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\shared\\auth\\account-setup\\src\\data\\services\\AccountSetupService.ts",
+      "fix": "Constructor should accept IApiService parameter"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "warning",
+      "module": "shared/auth",
+      "feature": "account-setup",
+      "rule": "FE-020: File Length",
+      "message": "File useAccountSetupViewModel.ts (presentation\\viewmodels\\useAccountSetupViewModel.ts) is 478 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\shared\\auth\\account-setup\\src\\presentation\\viewmodels\\useAccountSetupViewModel.ts",
+      "actual": "478 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "shared/auth",
+      "feature": "signin",
+      "rule": "FE-020: File Length",
+      "message": "File use-login-viewmodel.ts (presentation\\viewmodels\\use-login-viewmodel.ts) is 341 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\shared\\auth\\signin\\src\\presentation\\viewmodels\\use-login-viewmodel.ts",
+      "actual": "341 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "shared/docs",
+      "feature": "docs",
+      "rule": "FE-020: File Length",
+      "message": "File component-library.ts (data\\content\\frontend\\component-library.ts) is 306 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\shared\\docs\\src\\data\\content\\frontend\\component-library.ts",
+      "actual": "306 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "shared/docs",
+      "feature": "docs",
+      "rule": "FE-020: File Length",
+      "message": "File registry.ts (data\\content\\registry.ts) is 359 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\shared\\docs\\src\\data\\content\\registry.ts",
+      "actual": "359 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "attention-center",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "availability",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "availability",
+      "rule": "FE-025: Hook File Naming",
+      "message": "ViewModel file 'weeklyWindows.ts' in presentation/viewmodels does not start with the 'use' prefix",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\availability\\src\\presentation\\viewmodels\\weeklyWindows.ts",
+      "fix": "Rename the viewmodel file and function to use the standard 'use' hook prefix (e.g. useXxxViewModel.ts)"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "booking",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "booking",
+      "rule": "FE-020: File Length",
+      "message": "File useBookingWorkspaceViewModel.ts (presentation\\viewmodels\\useBookingWorkspaceViewModel.ts) is 490 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\booking\\src\\presentation\\viewmodels\\useBookingWorkspaceViewModel.ts",
+      "actual": "490 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "booking",
+      "rule": "FE-025: Hook File Naming",
+      "message": "ViewModel file 'bookingWorkspaceState.ts' in presentation/viewmodels does not start with the 'use' prefix",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\booking\\src\\presentation\\viewmodels\\bookingWorkspaceState.ts",
+      "fix": "Rename the viewmodel file and function to use the standard 'use' hook prefix (e.g. useXxxViewModel.ts)"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "booking",
+      "rule": "FE-025: Hook File Naming",
+      "message": "ViewModel file 'holdExpiry.ts' in presentation/viewmodels does not start with the 'use' prefix",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\booking\\src\\presentation\\viewmodels\\holdExpiry.ts",
+      "fix": "Rename the viewmodel file and function to use the standard 'use' hook prefix (e.g. useXxxViewModel.ts)"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "booking-360",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "booking-360",
+      "rule": "FE-020: File Length",
+      "message": "File useBooking360ViewModel.ts (presentation\\viewmodels\\useBooking360ViewModel.ts) is 344 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\booking-360\\src\\presentation\\viewmodels\\useBooking360ViewModel.ts",
+      "actual": "344 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "booking-360",
+      "rule": "FE-020: File Length",
+      "message": "File BookingOperationalActions.tsx (presentation\\components\\BookingOperationalActions.tsx) is 335 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\booking-360\\src\\presentation\\components\\BookingOperationalActions.tsx",
+      "actual": "335 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "commercial",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "facility-resource-profile",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "facility-resource-profile",
+      "rule": "FE-020: File Length",
+      "message": "File FacilityResourceProfileDialog.tsx (presentation\\dialogs\\FacilityResourceProfileDialog.tsx) is 425 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\facility-resource-profile\\src\\presentation\\dialogs\\FacilityResourceProfileDialog.tsx",
+      "actual": "425 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "money",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "money",
+      "rule": "FE-020: File Length",
+      "message": "File usePaymentsViewModel.ts (presentation\\viewmodels\\usePaymentsViewModel.ts) is 347 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\money\\src\\presentation\\viewmodels\\usePaymentsViewModel.ts",
+      "actual": "347 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File BlockTimeModal.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\BlockTimeModal.tsx",
+      "line": 146,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File BlockTimeModal.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\BlockTimeModal.tsx",
+      "line": 166,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File BlockTimeModal.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\BlockTimeModal.tsx",
+      "line": 181,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ClickToBookModal.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\ClickToBookModal.tsx",
+      "line": 392,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ClickToBookModal.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\ClickToBookModal.tsx",
+      "line": 466,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ClickToBookModal.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\ClickToBookModal.tsx",
+      "line": 514,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ClickToBookModal.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\ClickToBookModal.tsx",
+      "line": 613,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceTimeline.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\ResourceTimeline.tsx",
+      "line": 74,
+      "actual": "return <button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceTimeline.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\ResourceTimeline.tsx",
+      "line": 92,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-020: File Length",
+      "message": "File ClickToBookModal.tsx (presentation\\components\\ClickToBookModal.tsx) is 735 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\components\\ClickToBookModal.tsx",
+      "actual": "735 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V012",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "operations-calendar",
+      "rule": "FE-025: Hook File Naming",
+      "message": "ViewModel file 'calendarLayout.ts' in presentation/viewmodels does not start with the 'use' prefix",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\operations-calendar\\src\\presentation\\viewmodels\\calendarLayout.ts",
+      "fix": "Rename the viewmodel file and function to use the standard 'use' hook prefix (e.g. useXxxViewModel.ts)"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourcesWorkspaceView.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\views\\ResourcesWorkspaceView.tsx",
+      "line": 135,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File FirstTimeSetupWizard.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\FirstTimeSetupWizard.tsx",
+      "line": 193,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File FirstTimeSetupWizard.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\FirstTimeSetupWizard.tsx",
+      "line": 218,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File FirstTimeSetupWizard.tsx uses raw HTML element <input> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\FirstTimeSetupWizard.tsx",
+      "line": 298,
+      "actual": "<input",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File FirstTimeSetupWizard.tsx uses raw HTML element <input> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\FirstTimeSetupWizard.tsx",
+      "line": 326,
+      "actual": "<input",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File FirstTimeSetupWizard.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\FirstTimeSetupWizard.tsx",
+      "line": 397,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File FirstTimeSetupWizard.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\FirstTimeSetupWizard.tsx",
+      "line": 456,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceBookingRulesTab.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourceBookingRulesTab.tsx",
+      "line": 71,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceBookingRulesTab.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourceBookingRulesTab.tsx",
+      "line": 103,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceClosuresTab.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourceClosuresTab.tsx",
+      "line": 161,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V012",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceClosuresTab.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourceClosuresTab.tsx",
+      "line": 176,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V013",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourcePricingTab.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourcePricingTab.tsx",
+      "line": 76,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V014",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourcePricingTab.tsx uses raw HTML element <select> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourcePricingTab.tsx",
+      "line": 95,
+      "actual": "<select",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V015",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceWorkingHoursTab.tsx uses raw HTML element <input> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourceWorkingHoursTab.tsx",
+      "line": 109,
+      "actual": "<input",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V016",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceWorkingHoursTab.tsx uses raw HTML element <input> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourceWorkingHoursTab.tsx",
+      "line": 136,
+      "actual": "<input",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V017",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File ResourceWorkingHoursTab.tsx uses raw HTML element <input> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\ResourceWorkingHoursTab.tsx",
+      "line": 179,
+      "actual": "<input",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V018",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-020: File Length",
+      "message": "File useResourceDetailViewModel.ts (presentation\\viewmodels\\useResourceDetailViewModel.ts) is 334 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\viewmodels\\useResourceDetailViewModel.ts",
+      "actual": "334 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V019",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-020: File Length",
+      "message": "File useResourcesWorkspaceViewModel.ts (presentation\\viewmodels\\useResourcesWorkspaceViewModel.ts) is 302 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\viewmodels\\useResourcesWorkspaceViewModel.ts",
+      "actual": "302 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V020",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "resources",
+      "rule": "FE-020: File Length",
+      "message": "File FirstTimeSetupWizard.tsx (presentation\\components\\FirstTimeSetupWizard.tsx) is 547 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\resources\\src\\presentation\\components\\FirstTimeSetupWizard.tsx",
+      "actual": "547 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "shared",
+      "rule": "FE-025: Hook File Naming",
+      "message": "ViewModel file 'venueServiceLocator.ts' in presentation/viewmodels does not start with the 'use' prefix",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\shared\\src\\presentation\\viewmodels\\venueServiceLocator.ts",
+      "fix": "Rename the viewmodel file and function to use the standard 'use' hook prefix (e.g. useXxxViewModel.ts)"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "site",
+      "rule": "FE-020: File Length",
+      "message": "File SiteLocationFields.tsx (presentation\\components\\SiteLocationFields.tsx) is 396 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\site\\src\\presentation\\components\\SiteLocationFields.tsx",
+      "actual": "396 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-005: Mapper",
+      "message": "No mapper in data/mappers/",
+      "fix": "Create mapper with static toEntity() in src/data/mappers/"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File VenueOverviewHeroTimeline.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\venue-overview\\src\\presentation\\components\\VenueOverviewHeroTimeline.tsx",
+      "line": 260,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-019: Shared UI Component",
+      "message": "File VenueOverviewHeroTimeline.tsx uses raw HTML element <button> (violates Shared UI Component Mandate)",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\venue-overview\\src\\presentation\\components\\VenueOverviewHeroTimeline.tsx",
+      "line": 305,
+      "actual": "<button",
+      "fix": "Use design system component from '@core/ui/*' (e.g. <Input>, <Button>, <Select>, <Textarea>, <Dialog>)"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-013: Service DI",
+      "message": "Service VenueOverviewService.ts doesn't inject IApiService",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\venue-overview\\src\\data\\services\\VenueOverviewService.ts",
+      "fix": "Constructor should accept IApiService parameter"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-020: File Length",
+      "message": "File VenueOverviewService.ts (data\\services\\VenueOverviewService.ts) is 432 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\venue-overview\\src\\data\\services\\VenueOverviewService.ts",
+      "actual": "432 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "warning",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-020: File Length",
+      "message": "File VenueOverviewHeroTimeline.tsx (presentation\\components\\VenueOverviewHeroTimeline.tsx) is 365 lines long, exceeding the 300-line warning threshold",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\venue-overview\\src\\presentation\\components\\VenueOverviewHeroTimeline.tsx",
+      "actual": "365 lines",
+      "expected": "<= 300 lines",
+      "fix": "Refactor file by splitting into smaller components, custom hooks, or utility files"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventMapper.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\data\\mappers\\AnalyticsEventMapper.ts",
+      "line": 7,
+      "actual": "export class AnalyticsEventMapper {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\data\\models\\AnalyticsEventModel.ts",
+      "line": 24,
+      "actual": "export interface AnalyticsDailyMetricJson {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\data\\models\\AnalyticsEventModel.ts",
+      "line": 34,
+      "actual": "export interface AnalyticsEventListResponseJson {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\data\\models\\AnalyticsEventModel.ts",
+      "line": 41,
+      "actual": "export class AnalyticsEventModel {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\data\\models\\AnalyticsEventModel.ts",
+      "line": 67,
+      "actual": "export class AnalyticsDailyMetricModel {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventRepository.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\data\\repositories\\AnalyticsEventRepository.ts",
+      "line": 13,
+      "actual": "export class AnalyticsEventRepository implements IAnalyticsEventRepository {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventService.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\data\\services\\AnalyticsEventService.ts",
+      "line": 19,
+      "actual": "export class AnalyticsEventService implements IAnalyticsEventService {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEvent.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\domain\\entities\\AnalyticsEvent.ts",
+      "line": 18,
+      "actual": "export class AnalyticsEvent {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in IAnalyticsEventRepository.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\domain\\interfaces\\IAnalyticsEventRepository.ts",
+      "line": 14,
+      "actual": "export interface AnalyticsEventListResult {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in IAnalyticsEventRepository.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\domain\\interfaces\\IAnalyticsEventRepository.ts",
+      "line": 23,
+      "actual": "export interface AnalyticsDailyMetricResponse {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in IAnalyticsEventRepository.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\domain\\interfaces\\IAnalyticsEventRepository.ts",
+      "line": 33,
+      "actual": "export interface IAnalyticsEventRepository {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V012",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in IAnalyticsEventService.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\domain\\interfaces\\IAnalyticsEventService.ts",
+      "line": 11,
+      "actual": "export interface AnalyticsEventServiceListResult {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V013",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in IAnalyticsEventService.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\domain\\interfaces\\IAnalyticsEventService.ts",
+      "line": 18,
+      "actual": "export interface IAnalyticsEventService {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V014",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useAnalyticsEventViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\presentation\\viewmodels\\useAnalyticsEventViewModel.ts",
+      "line": 13,
+      "actual": "export function useAnalyticsEventViewModel() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V015",
+      "severity": "info",
+      "module": "analytics/analytics",
+      "feature": "events",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsEventStreamView.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\analytics\\events\\src\\presentation\\views\\AnalyticsEventStreamView.tsx",
+      "line": 35,
+      "actual": "export const AnalyticsEventStreamView = React.memo(function AnalyticsEventStreamView() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-015: Barrel Export",
+      "message": "No index.ts barrel export at module root",
+      "fix": "Create index.ts re-exporting public API"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 24,
+      "actual": "export interface DistributionDataDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 29,
+      "actual": "export interface ComparisonDataPointDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 35,
+      "actual": "export interface TenantListItemDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 54,
+      "actual": "export interface TenantListResponseDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 61,
+      "actual": "export interface RevenueByEditionDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 67,
+      "actual": "export interface SubscriptionStatusCountDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 72,
+      "actual": "export interface SubscriptionDashboardDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 86,
+      "actual": "export interface FeatureItemDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V012",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 102,
+      "actual": "export interface FeatureCategoryDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V013",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AnalyticsModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\models\\AnalyticsModels.ts",
+      "line": 107,
+      "actual": "export interface FeatureModuleDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V014",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in analytics.endpoints.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\data\\services\\analytics.endpoints.ts",
+      "line": 3,
+      "actual": "export const ANALYTICS_ENDPOINTS = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V015",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useTenantAnalyticsViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\viewmodels\\useTenantAnalyticsViewModel.ts",
+      "line": 23,
+      "actual": "export type TimeRangeOption = \"7d\" | \"30d\" | \"90d\" | \"12m\";",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V016",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useTenantAnalyticsViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\viewmodels\\useTenantAnalyticsViewModel.ts",
+      "line": 33,
+      "actual": "export const tenantAnalyticsKeys = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V017",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantActivityDistribution.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantActivityDistribution.tsx",
+      "line": 17,
+      "actual": "export function TenantActivityDistribution({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V018",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantAnalyticsHeader.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantAnalyticsHeader.tsx",
+      "line": 41,
+      "actual": "export function TenantAnalyticsHeader({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V019",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantAnalyticsKpis.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantAnalyticsKpis.tsx",
+      "line": 27,
+      "actual": "export function TenantAnalyticsKpis({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V020",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantEditionDistribution.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantEditionDistribution.tsx",
+      "line": 14,
+      "actual": "export function TenantEditionDistribution({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V021",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantFeatureAdoption.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantFeatureAdoption.tsx",
+      "line": 14,
+      "actual": "export function TenantFeatureAdoption({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V022",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantGrowthChart.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantGrowthChart.tsx",
+      "line": 25,
+      "actual": "export function TenantGrowthChart({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V023",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantRegionDistribution.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantRegionDistribution.tsx",
+      "line": 14,
+      "actual": "export function TenantRegionDistribution({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V024",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantStatusDistribution.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantStatusDistribution.tsx",
+      "line": 23,
+      "actual": "export function TenantStatusDistribution({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V025",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantTableSection.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\components\\TenantTableSection.tsx",
+      "line": 38,
+      "actual": "export function TenantTableSection({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V026",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "analytics",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in TenantAnalyticsView.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\analytics\\src\\presentation\\views\\TenantAnalyticsView.tsx",
+      "line": 29,
+      "actual": "export function TenantAnalyticsView() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-015: Barrel Export",
+      "message": "No index.ts barrel export at module root",
+      "fix": "Create index.ts re-exporting public API"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in audit.endpoints.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\data\\services\\audit.endpoints.ts",
+      "line": 3,
+      "actual": "export const AUDIT_ENDPOINTS = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useAuditViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\viewmodels\\useAuditViewModel.ts",
+      "line": 18,
+      "actual": "export const auditKeys = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V012",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useAuditViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\viewmodels\\useAuditViewModel.ts",
+      "line": 31,
+      "actual": "export type DatePreset = \"all\" | \"today\" | \"24h\" | \"7d\" | \"30d\" | \"custom\";",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V013",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useAuditViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\viewmodels\\useAuditViewModel.ts",
+      "line": 61,
+      "actual": "export interface AuditFilterState {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V014",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useAuditViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\viewmodels\\useAuditViewModel.ts",
+      "line": 207,
+      "actual": "export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V015",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useAuditViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\viewmodels\\useAuditViewModel.ts",
+      "line": 220,
+      "actual": "export function useAuditViewModel() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V016",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AuditDetailDrawer.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditDetailDrawer.tsx",
+      "line": 45,
+      "actual": "export function AuditDetailDrawer({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V017",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AuditFilterPanel.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditFilterPanel.tsx",
+      "line": 152,
+      "actual": "export const AuditFilterPanel = memo(function AuditFilterPanel({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V018",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AuditHeader.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditHeader.tsx",
+      "line": 46,
+      "actual": "export function AuditHeader({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V019",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AuditKpiSummary.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditKpiSummary.tsx",
+      "line": 34,
+      "actual": "export function AuditKpiSummary({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V020",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AuditLogTable.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\components\\AuditLogTable.tsx",
+      "line": 109,
+      "actual": "export const AuditLogTable = memo(function AuditLogTable({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V021",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "audit",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AuditView.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\audit\\src\\presentation\\views\\AuditView.tsx",
+      "line": 31,
+      "actual": "export function AuditView() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "dashboard",
+      "rule": "FE-015: Barrel Export",
+      "message": "No index.ts barrel export at module root",
+      "fix": "Create index.ts re-exporting public API"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "dashboard",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in dashboard.endpoints.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\dashboard\\src\\data\\services\\dashboard.endpoints.ts",
+      "line": 3,
+      "actual": "export const DASHBOARD_ENDPOINTS = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-015: Barrel Export",
+      "message": "No index.ts barrel export at module root",
+      "fix": "Create index.ts re-exporting public API"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealthMapper.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\mappers\\PlatformHealthMapper.ts",
+      "line": 4,
+      "actual": "export class PlatformHealthMapper {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in platform-health.dto.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\models\\platform-health.dto.ts",
+      "line": 1,
+      "actual": "export interface HealthCheckItemDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in platform-health.dto.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\models\\platform-health.dto.ts",
+      "line": 10,
+      "actual": "export interface ExternalDependencyDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in platform-health.dto.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\models\\platform-health.dto.ts",
+      "line": 19,
+      "actual": "export interface HealthIncidentDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in platform-health.dto.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\models\\platform-health.dto.ts",
+      "line": 31,
+      "actual": "export interface PlatformHealthResponseDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealthRepository.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\repositories\\PlatformHealthRepository.ts",
+      "line": 6,
+      "actual": "export class PlatformHealthRepository implements IPlatformHealthRepository {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in platform-health.endpoints.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\services\\platform-health.endpoints.ts",
+      "line": 3,
+      "actual": "export const PLATFORM_HEALTH_ENDPOINTS = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealthService.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\services\\PlatformHealthService.ts",
+      "line": 7,
+      "actual": "export type { IPlatformHealthService };",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealthService.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\data\\services\\PlatformHealthService.ts",
+      "line": 9,
+      "actual": "export class PlatformHealthService implements IPlatformHealthService {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V012",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 1,
+      "actual": "export interface RuntimeVitals {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V013",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 20,
+      "actual": "export interface DatabaseHealth {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V014",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 27,
+      "actual": "export interface RedisHealth {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V015",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 35,
+      "actual": "export interface InfrastructureHealth {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V016",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 40,
+      "actual": "export interface ModuleHealth {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V017",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 48,
+      "actual": "export interface HealthCheckItem {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V018",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 57,
+      "actual": "export interface ExternalDependency {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V019",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 66,
+      "actual": "export interface HealthIncident {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V020",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 78,
+      "actual": "export interface PlatformHealthData {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V021",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealth.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\entities\\PlatformHealth.ts",
+      "line": 92,
+      "actual": "export class PlatformHealth {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V022",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in IPlatformHealthRepository.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\domain\\interfaces\\IPlatformHealthRepository.ts",
+      "line": 3,
+      "actual": "export interface IPlatformHealthRepository {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V023",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in usePlatformHealthViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\viewmodels\\usePlatformHealthViewModel.ts",
+      "line": 11,
+      "actual": "export function usePlatformHealthViewModel() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V024",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in ApiPerformanceTelemetry.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\ApiPerformanceTelemetry.tsx",
+      "line": 14,
+      "actual": "export function ApiPerformanceTelemetry({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V025",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in CoreServicesGrid.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\CoreServicesGrid.tsx",
+      "line": 48,
+      "actual": "export function CoreServicesGrid({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V026",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in ExternalDependenciesSection.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\ExternalDependenciesSection.tsx",
+      "line": 21,
+      "actual": "export function ExternalDependenciesSection({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V027",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in HealthHeader.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\HealthHeader.tsx",
+      "line": 29,
+      "actual": "export function HealthHeader({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V028",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in HealthTopKpiCards.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\HealthTopKpiCards.tsx",
+      "line": 21,
+      "actual": "export function HealthTopKpiCards({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V029",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in IncidentDetailPanel.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\IncidentDetailPanel.tsx",
+      "line": 14,
+      "actual": "export function IncidentDetailPanel({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V030",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in InfrastructureHealthSection.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\InfrastructureHealthSection.tsx",
+      "line": 14,
+      "actual": "export function InfrastructureHealthSection({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V031",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in RecentIncidentsSection.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\components\\RecentIncidentsSection.tsx",
+      "line": 14,
+      "actual": "export function RecentIncidentsSection({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V032",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "platform-health",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in PlatformHealthView.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\platform-health\\src\\presentation\\views\\PlatformHealthView.tsx",
+      "line": 17,
+      "actual": "export function PlatformHealthView() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V001",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-015: Barrel Export",
+      "message": "No index.ts barrel export at module root",
+      "fix": "Create index.ts re-exporting public API"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\data\\models\\SecurityModels.ts",
+      "line": 14,
+      "actual": "export interface BlockedIPDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V004",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\data\\models\\SecurityModels.ts",
+      "line": 21,
+      "actual": "export interface LoginActivityPointDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V005",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\data\\models\\SecurityModels.ts",
+      "line": 27,
+      "actual": "export interface SecurityChangeDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V006",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\data\\models\\SecurityModels.ts",
+      "line": 43,
+      "actual": "export interface ActiveSessionDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityModels.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\data\\models\\SecurityModels.ts",
+      "line": 53,
+      "actual": "export interface DashboardSummaryDto {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in security.endpoints.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\data\\services\\security.endpoints.ts",
+      "line": 3,
+      "actual": "export const SECURITY_ENDPOINTS = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V009",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useSecurityDashboardViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\viewmodels\\useSecurityDashboardViewModel.ts",
+      "line": 22,
+      "actual": "export type SecurityTimeRange = \"24h\" | \"7d\" | \"30d\";",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V010",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useSecurityDashboardViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\viewmodels\\useSecurityDashboardViewModel.ts",
+      "line": 24,
+      "actual": "export const securityKeys = {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V011",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in useSecurityDashboardViewModel.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\viewmodels\\useSecurityDashboardViewModel.ts",
+      "line": 42,
+      "actual": "export function useSecurityDashboardViewModel() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V012",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in ActiveSessionsTable.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\ActiveSessionsTable.tsx",
+      "line": 62,
+      "actual": "export const ActiveSessionsTable = memo(function ActiveSessionsTable({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V013",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in AuthMethodsPosture.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\AuthMethodsPosture.tsx",
+      "line": 25,
+      "actual": "export const AuthMethodsPosture = memo(function AuthMethodsPosture({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V014",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in EventDetailsDrawer.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\EventDetailsDrawer.tsx",
+      "line": 36,
+      "actual": "export function EventDetailsDrawer({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V015",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in RecentSecurityEventsTable.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\RecentSecurityEventsTable.tsx",
+      "line": 37,
+      "actual": "export const RecentSecurityEventsTable = memo(function RecentSecurityEventsTable({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V016",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityAttentionPanel.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\SecurityAttentionPanel.tsx",
+      "line": 70,
+      "actual": "export const SecurityAttentionPanel = memo(function SecurityAttentionPanel({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V017",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityHeader.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\SecurityHeader.tsx",
+      "line": 33,
+      "actual": "export function SecurityHeader({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V018",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityPoliciesCard.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\SecurityPoliciesCard.tsx",
+      "line": 24,
+      "actual": "export const SecurityPoliciesCard = memo(function SecurityPoliciesCard({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V019",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityPostureKpiCards.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\SecurityPostureKpiCards.tsx",
+      "line": 15,
+      "actual": "export const SecurityPostureKpiCards = memo(function SecurityPostureKpiCards({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V020",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityTrendsChart.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\components\\SecurityTrendsChart.tsx",
+      "line": 25,
+      "actual": "export const SecurityTrendsChart = memo(function SecurityTrendsChart({",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V021",
+      "severity": "info",
+      "module": "analytics/monitoring",
+      "feature": "security",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in SecurityDashboardView.tsx lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\analytics\\monitoring\\security\\src\\presentation\\views\\SecurityDashboardView.tsx",
+      "line": 31,
+      "actual": "export function SecurityDashboardView() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V002",
+      "severity": "info",
+      "module": "venue",
+      "feature": "shared",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in venueServiceLocator.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\shared\\src\\presentation\\viewmodels\\venueServiceLocator.ts",
+      "line": 4,
+      "actual": "export function getVenueLocator() {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V003",
+      "severity": "info",
+      "module": "venue",
+      "feature": "shared",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in venueServiceLocator.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\shared\\src\\presentation\\viewmodels\\venueServiceLocator.ts",
+      "line": 8,
+      "actual": "export const venueLocator = venueContainer;",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V007",
+      "severity": "info",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in VenueOverviewService.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\venue-overview\\src\\data\\services\\VenueOverviewService.ts",
+      "line": 20,
+      "actual": "export interface ICustomerPartyRepository {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    },
+    {
+      "id": "FE-V008",
+      "severity": "info",
+      "module": "venue",
+      "feature": "venue-overview",
+      "rule": "FE-026: Exported Member JSDoc",
+      "message": "Exported member in VenueOverviewService.ts lacks JSDoc documentation comments",
+      "file": "D:\\01_PROJECTS\\SCRIPE\\SCRIPE-Frontend\\src\\modules\\venue\\venue-overview\\src\\data\\services\\VenueOverviewService.ts",
+      "line": 52,
+      "actual": "export class VenueOverviewService implements IVenueOverviewService {",
+      "fix": "Add a JSDoc block comment (/** ... */) explaining the purpose and parameters of this exported member"
+    }
+  ]
+}

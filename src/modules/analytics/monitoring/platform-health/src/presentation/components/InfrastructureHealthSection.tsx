@@ -11,6 +11,9 @@ interface InfrastructureHealthSectionProps {
   isLoading?: boolean;
 }
 
+/**
+ * InfrastructureHealthSection
+ */
 export function InfrastructureHealthSection({
   infrastructure,
   checks = [],

@@ -22,6 +22,9 @@ interface TenantGrowthChartProps {
   timeRangeLabel: string;
 }
 
+/**
+ * TenantGrowthChart
+ */
 export function TenantGrowthChart({
   data,
   isLoading,

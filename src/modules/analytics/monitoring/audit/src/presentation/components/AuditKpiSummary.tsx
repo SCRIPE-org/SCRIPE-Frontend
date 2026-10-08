@@ -31,6 +31,9 @@ interface AuditKpiSummaryProps {
   activeFilterCount: number;
 }
 
+/**
+ * AuditKpiSummary
+ */
 export function AuditKpiSummary({
   kpis,
   isLoading,

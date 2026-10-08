@@ -19,8 +19,14 @@ import type {
   AuthMethodPosture,
 } from "../../domain/entities/SecurityEntities";
 
+/**
+ * SecurityTimeRange
+ */
 export type SecurityTimeRange = "24h" | "7d" | "30d";
 
+/**
+ * securityKeys
+ */
 export const securityKeys = {
   all: (tenantId: string | null) => ["security", tenantId ?? "system"] as const,
   securityEvents: (days: number, tenantId: string | null) =>
@@ -39,6 +45,9 @@ export const securityKeys = {
     [...securityKeys.all(tenantId), "admins"] as const,
 };
 
+/**
+ * useSecurityDashboardViewModel
+ */
 export function useSecurityDashboardViewModel() {
   const queryClient = useQueryClient();
   const tenantId = useCurrentTenantId();

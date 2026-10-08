@@ -11,6 +11,9 @@ export interface SecurityEventDto {
   latestOccurrence: string | null;
 }
 
+/**
+ * BlockedIPDto
+ */
 export interface BlockedIPDto {
   ipAddress: string;
   failedCount: number;
@@ -18,12 +21,18 @@ export interface BlockedIPDto {
   lastUsername: string | null;
 }
 
+/**
+ * LoginActivityPointDto
+ */
 export interface LoginActivityPointDto {
   date: string;
   successCount: number;
   failedCount: number;
 }
 
+/**
+ * SecurityChangeDto
+ */
 export interface SecurityChangeDto {
   id: string;
   eventType: string;
@@ -40,6 +49,9 @@ export interface SecurityChangeDto {
   tenantId: string | null;
 }
 
+/**
+ * ActiveSessionDto
+ */
 export interface ActiveSessionDto {
   id?: string;
   tokenId?: string;
@@ -50,6 +62,9 @@ export interface ActiveSessionDto {
   isCurrent?: boolean;
 }
 
+/**
+ * DashboardSummaryDto
+ */
 export interface DashboardSummaryDto {
   totalAdmins: number;
   activeAdmins: number;

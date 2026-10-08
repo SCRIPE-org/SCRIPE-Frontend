@@ -18,6 +18,9 @@ interface HealthTopKpiCardsProps {
   isLoading?: boolean;
 }
 
+/**
+ * HealthTopKpiCards
+ */
 export function HealthTopKpiCards({
   health,
   isLoading = false,

@@ -149,6 +149,9 @@ const DATE_PRESETS: Array<{ key: DatePreset; label: string }> = [
   { key: "custom", label: "Custom" },
 ];
 
+/**
+ * AuditFilterPanel
+ */
 export const AuditFilterPanel = memo(function AuditFilterPanel({
   filters,
   updateFilter,

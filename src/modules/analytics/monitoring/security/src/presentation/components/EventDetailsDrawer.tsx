@@ -33,6 +33,9 @@ interface EventDetailsDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
+/**
+ * EventDetailsDrawer
+ */
 export function EventDetailsDrawer({
   event,
   open,

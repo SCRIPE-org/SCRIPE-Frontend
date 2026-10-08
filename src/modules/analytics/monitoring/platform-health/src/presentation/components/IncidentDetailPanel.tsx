@@ -11,6 +11,9 @@ interface IncidentDetailPanelProps {
   isLoading?: boolean;
 }
 
+/**
+ * IncidentDetailPanel
+ */
 export function IncidentDetailPanel({
   incident,
   isLoading = false,

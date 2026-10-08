@@ -12,6 +12,9 @@ interface SecurityPostureKpiCardsProps {
   cardClasses?: string;
 }
 
+/**
+ * SecurityPostureKpiCards
+ */
 export const SecurityPostureKpiCards = memo(function SecurityPostureKpiCards({
   kpis,
   isLoading,

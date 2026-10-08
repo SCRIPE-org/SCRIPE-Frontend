@@ -15,6 +15,9 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 
 // ─── Query keys ──────────────────────────────────────────────────────
 // Include tenantId so TanStack Query caches per-tenant
+/**
+ * auditKeys
+ */
 export const auditKeys = {
   all: (tenantId: string | null) => ["audit", tenantId ?? "system"] as const,
   logs: (params: AuditFilterParams, tenantId: string | null) =>
@@ -28,6 +31,9 @@ export const auditKeys = {
 };
 
 // ─── Date Presets ────────────────────────────────────────────────────
+/**
+ * DatePreset
+ */
 export type DatePreset = "all" | "today" | "24h" | "7d" | "30d" | "custom";
 
 function getDateRangeFromPreset(preset: DatePreset): { dateFrom: string; dateTo: string } {
@@ -58,6 +64,9 @@ function getDateRangeFromPreset(preset: DatePreset): { dateFrom: string; dateTo:
 }
 
 // ─── Filter State ────────────────────────────────────────────────────
+/**
+ * AuditFilterState
+ */
 export interface AuditFilterState {
   page: number;
   pageSize: number;
@@ -204,6 +213,9 @@ export function useAuditFilterViewModel() {
 }
 
 // ─── Detail ViewModel ────────────────────────────────────────────────
+/**
+ * useAuditDetailViewModel
+ */
 export function useAuditDetailViewModel(id: string | null, tenantId: string | null) {
   const repo = monitoringContainer.auditRepository;
 
@@ -217,6 +229,9 @@ export function useAuditDetailViewModel(id: string | null, tenantId: string | nu
 }
 
 // ─── Orchestrator ────────────────────────────────────────────────────
+/**
+ * useAuditViewModel
+ */
 export function useAuditViewModel() {
   const tenantId = useCurrentTenantId();
   const filterVM = useAuditFilterViewModel();
