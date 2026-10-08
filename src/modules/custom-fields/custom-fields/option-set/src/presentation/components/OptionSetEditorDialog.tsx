@@ -87,11 +87,11 @@ export function OptionSetEditorDialog({
   const fieldId = useId();
   const isEdit = optionSet !== null;
 
-  const [stableKey, setStableKey] = useState("");
-  const [labelEn, setLabelEn] = useState("");
-  const [labelAr, setLabelAr] = useState("");
-  const [description, setDescription] = useState("");
-  const [isGlobal, setIsGlobal] = useState(isPlatformContext);
+  const [stableKey, setStableKey] = useState(() => open ? (optionSet?.stableKey ?? "") : "");
+  const [labelEn, setLabelEn] = useState(() => open ? (optionSet?.labelEn ?? "") : "");
+  const [labelAr, setLabelAr] = useState(() => open ? (optionSet?.labelAr ?? "") : "");
+  const [description, setDescription] = useState(() => open ? (optionSet?.description ?? "") : "");
+  const [isGlobal, setIsGlobal] = useState(() => open ? (optionSet?.isPlatformOwned ?? isPlatformContext) : isPlatformContext);
 
   const optionSetId = optionSet?.id;
   const [prevReq, setPrevReq] = useState({ open, optionSetId });
