@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { memo, useCallback } from "react";

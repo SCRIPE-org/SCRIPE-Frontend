@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   initialBookingWorkspaceState,
   reduceBookingWorkspace,
-} from "./bookingWorkspaceState";
+} from "./useBookingWorkspaceState";
 
 const candidate = {
   resourceId: "resource-1",

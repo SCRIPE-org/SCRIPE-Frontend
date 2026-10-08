@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { remainingHoldSeconds } from "./holdExpiry";
+import { remainingHoldSeconds } from "./useHoldExpiry";
 
 describe("remainingHoldSeconds", () => {
   it("uses the server expiry instant and never reports negative time", () => {

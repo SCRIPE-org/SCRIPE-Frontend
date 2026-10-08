@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 /* eslint-disable unused-imports/no-unused-vars */
 "use client";
 

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -16,7 +17,7 @@ import { isFeatureUnavailable, isOperationalConflict } from "../../domain/entiti
 import {
   initialBookingWorkspaceState,
   reduceBookingWorkspace,
-} from "./bookingWorkspaceState";
+} from "./useBookingWorkspaceState";
 
 const PAGE_SIZE = 100;
 

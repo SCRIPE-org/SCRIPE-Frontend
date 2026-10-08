@@ -9,7 +9,7 @@ import type {
   OperationsCalendarBlock,
   OperationsCalendarState,
 } from "../../domain/entities/OperationsCalendar";
-import { localPrefillForInstant } from "./calendarLayout";
+import { localPrefillForInstant } from "./useCalendarLayout";
 
 const PAGE_SIZE = 100;
 const LANE_LIMIT = 50;

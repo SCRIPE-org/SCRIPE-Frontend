@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { validateWeeklyWindows, type WeeklyWindowDraft } from "./weeklyWindows";
+import { validateWeeklyWindows, type WeeklyWindowDraft } from "./useWeeklyWindows";
 
 describe("validateWeeklyWindows", () => {
   it("accepts touching windows because intervals are half-open", () => {

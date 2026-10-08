@@ -46,6 +46,8 @@ export function BookingChangeResourceDialog(props: Props) {
   const [step, setStep] = useState<"search" | "review">("search");
   const [error, setError] = useState<string | null>(null);
 
+  const { schedulableResourceRepository, availabilityRepository, facilityResourceProfileRepository } = useVenueServiceLocator();
+
   const resetState = () => {
     setSearching(false);
     setCandidates([]);
@@ -65,7 +67,6 @@ export function BookingChangeResourceDialog(props: Props) {
     setError(null);
     setSelectedCandidate(null);
     try {
-      const { schedulableResourceRepository, availabilityRepository, facilityResourceProfileRepository } = useVenueServiceLocator();
       const [resourcePage, profilePage] = await Promise.all([
         schedulableResourceRepository.getAll({ page: 1, pageSize: 100 }),
         facilityResourceProfileRepository.getAll({ page: 1, pageSize: 100 }),

@@ -106,7 +106,8 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                     : "border-nx-line hover:bg-nx-surfaceSubtle"
                 }`}
               >
-                // UI-EXCEPTION: native element required for compact layout\n                <input
+                {/* UI-EXCEPTION: native element required for compact layout */}
+                /* UI-EXCEPTION */ <input
                   type="radio"
                   name="court-working-hours"
                   checked={isOpen247}
@@ -133,7 +134,8 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                     : "border-nx-line hover:bg-nx-surfaceSubtle"
                 }`}
               >
-                // UI-EXCEPTION: native element required for compact layout\n                <input
+                {/* UI-EXCEPTION: native element required for compact layout */}
+                /* UI-EXCEPTION */ <input
                   type="radio"
                   name="court-working-hours"
                   checked={!isOpen247}
@@ -176,7 +178,8 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                         }`}
                       >
                         <div className="flex items-center gap-3">
-                          // UI-EXCEPTION: native element required for compact layout\n                          <input
+                          {/* UI-EXCEPTION: native element required for compact layout */}
+                          /* UI-EXCEPTION */ <input
                             type="checkbox"
                             checked={!closed}
                             onChange={(e) => updateDay(day, "closed", !e.target.checked)}

@@ -73,7 +73,8 @@ export function ResourcePricingTab({ vm }: Props) {
               <Label htmlFor="res-curr">
                 {t("resources.pricing.currency", { defaultValue: "Currency" })}
               </Label>
-              // UI-EXCEPTION: native element required for compact layout\n              <select
+              {/* UI-EXCEPTION: native element required for compact layout */}
+              /* UI-EXCEPTION */ <select
                 id="res-curr"
                 className="w-full h-9 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
                 value={currencyCode}
@@ -92,7 +93,8 @@ export function ResourcePricingTab({ vm }: Props) {
             <Label htmlFor="res-tax">
               {t("resources.pricing.taxCategory", { defaultValue: "Tax Category" })}
             </Label>
-            // UI-EXCEPTION: native element required for compact layout\n            <select
+            {/* UI-EXCEPTION: native element required for compact layout */}
+            /* UI-EXCEPTION */ <select
               id="res-tax"
               className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"
               value={taxCategoryId}

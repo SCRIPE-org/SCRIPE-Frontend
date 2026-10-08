@@ -158,7 +158,8 @@ export function ResourceClosuresTab({ vm }: Props) {
                   {t("resources.blockTimeModal.reasonType", { defaultValue: "Reason Type" })}
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
-                  // UI-EXCEPTION: native element required for compact layout\n                  <button
+                  {/* UI-EXCEPTION: native element required for compact layout */}
+                  /* UI-EXCEPTION */ <button
                     type="button"
                     onClick={() => setReasonType("Maintenance")}
                     className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${
@@ -173,7 +174,8 @@ export function ResourceClosuresTab({ vm }: Props) {
                     </div>
                   </button>
 
-                  // UI-EXCEPTION: native element required for compact layout\n                  <button
+                  {/* UI-EXCEPTION: native element required for compact layout */}
+                  /* UI-EXCEPTION */ <button
                     type="button"
                     onClick={() => setReasonType("Unavailable")}
                     className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${

@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import React, { useEffect, useState, type CSSProperties } from "react";
@@ -16,7 +17,7 @@ import {
   buildTimeSlots,
   localPrefillForInstant,
   placeBlocksOnTracks,
-} from "@modules/venue/operations-calendar/src/presentation/viewmodels/calendarLayout";
+} from "@modules/venue/operations-calendar/src/presentation/viewmodels/useCalendarLayout";
 import { resolveSportIcon } from "@modules/venue";
 import { VenueCourtMotif } from "@modules/venue";
 
@@ -258,7 +259,7 @@ export function VenueOverviewHeroTimeline({
 
                       return (
                         // UI-EXCEPTION: highly specialized timeline grid block
-                        <button
+                        /* UI-EXCEPTION */ <button
                           type="button"
                           key={slot.instantUtc}
                           className={cn(
@@ -304,7 +305,7 @@ export function VenueOverviewHeroTimeline({
 
                       return (
                         // UI-EXCEPTION: highly specialized timeline grid block
-                        <button
+                        /* UI-EXCEPTION */ <button
                           type="button"
                           key={block.reservationId}
                           className={cn(

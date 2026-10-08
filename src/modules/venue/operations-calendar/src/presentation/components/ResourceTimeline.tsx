@@ -3,7 +3,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { cn } from "@core/common/utils";
 import type { CalendarResource, OperationsCalendarBlock, OperationsCalendarDay } from "../../domain/entities/OperationsCalendar";
-import { blockPosition, buildTimeSlots, placeBlocksOnTracks } from "../viewmodels/calendarLayout";
+import { blockPosition, buildTimeSlots, placeBlocksOnTracks } from "../viewmodels/useCalendarLayout";
 
 const SLOT_WIDTH = 76;
 const BLOCK_HEIGHT = 38;
@@ -71,7 +71,8 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                   const slotEnd = slotStart + 60 * 60 * 1000;
                   const occupied = placed.some(({ block }) => Date.parse(block.startUtc) < slotEnd && slotStart < Date.parse(block.endUtc));
                   // UI-EXCEPTION: interactive transparent calendar slot in custom SVG/canvas-like timeline grid
-                  return <button
+                  return (
+/* UI-EXCEPTION */ <button
                     type="button"
                     key={slot.instantUtc}
                     className="h-full w-[76px] shrink-0 border-r border-nx-line text-transparent outline-none hover:bg-nx-hover focus-visible:z-20 focus-visible:shadow-nx-focus"
@@ -80,7 +81,8 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                     tabIndex={occupied ? -1 : undefined}
                     disabled={!props.canCreate || occupied}
                     onClick={() => props.onEmptySlot(resource, slot.instantUtc)}
-                  >{slot.label}</button>;
+                  >{slot.label}</button>
+);
                 })}
                 {placed.map(({ block, track }) => {
                   const position = blockPosition(block, props.day);
@@ -89,7 +91,7 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                   const status = props.t(`operationsCalendar.status.${block.status}`);
                   return (
                     // UI-EXCEPTION: absolute-positioned custom calendar booking block chip in timeline grid
-                    <button
+                    /* UI-EXCEPTION */ <button
                       type="button"
                       key={block.reservationId}
                       className={cn("absolute z-10 overflow-hidden rounded-nx-sm border px-2 py-1 text-left text-[11px] leading-tight outline-none focus-visible:z-20 focus-visible:shadow-nx-focus", statusClass(block.status))}

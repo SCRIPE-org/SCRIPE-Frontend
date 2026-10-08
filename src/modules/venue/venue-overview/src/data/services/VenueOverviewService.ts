@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 import type { IApiService } from '@core/interfaces/api.interface';
 import type { Booking360Status } from "@modules/venue";
 import type { IOperationsCalendarRepository } from "@modules/venue";

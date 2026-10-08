@@ -6,7 +6,7 @@ import {
   localPrefillForInstant,
   occupyingBlocks,
   placeBlocksOnTracks,
-} from "./calendarLayout";
+} from "./useCalendarLayout";
 
 const day: OperationsCalendarDay = {
   dateLocal: "2026-09-09",

@@ -11,7 +11,7 @@ import { Label } from "@core/ui/label";
 import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { WEEK_DAYS, type SaveAvailabilityCalendar, type WeekDay } from "../../domain/entities/Availability";
-import { validateWeeklyWindows, type WeeklyWindowDraft } from "../viewmodels/weeklyWindows";
+import { validateWeeklyWindows, type WeeklyWindowDraft } from "../viewmodels/useWeeklyWindows";
 import type { useAvailabilityViewModel } from "../viewmodels/useAvailabilityViewModel";
 
 function localDate(utcValue: string | null | undefined, timeZoneId: string): string {

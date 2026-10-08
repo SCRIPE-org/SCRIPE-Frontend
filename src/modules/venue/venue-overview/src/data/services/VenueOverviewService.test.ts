@@ -84,7 +84,7 @@ describe("VenueOverviewService", () => {
 
   it("derives all overview metrics, hourly load, at a glance, up next, and resource activity from authoritative projection", async () => {
     const service = new VenueOverviewService(
-      {} as any,
+      {} as never,
       mockOperationsCalendarRepo as never,
       mockSchedulableResourceRepo as never,
       mockProfileRepo as never,
@@ -151,7 +151,7 @@ describe("VenueOverviewService", () => {
     };
 
     const service = new VenueOverviewService(
-      {} as any,
+      {} as never,
       mockOperationsCalendarRepo as never,
       mockSchedulableResourceRepo as never,
       mockProfileRepo as never,
@@ -172,7 +172,7 @@ describe("VenueOverviewService", () => {
       getAll: vi.fn().mockResolvedValue({ items: [], totalCount: 0 }),
     };
     const service = new VenueOverviewService(
-      {} as any,
+      {} as never,
       mockOperationsCalendarRepo as never,
       mockSchedulableResourceRepo as never,
       mockProfileRepo as never,
@@ -207,7 +207,7 @@ describe("VenueOverviewService", () => {
       }),
     };
     const service = new VenueOverviewService(
-      {} as any,
+      {} as never,
       mockOperationsCalendarRepo as never,
       selectedResources as never,
       selectedProfiles as never,
@@ -235,7 +235,7 @@ describe("VenueOverviewService", () => {
       getAll: vi.fn().mockResolvedValue({ items: resources, totalCount: resources.length }),
     };
     const service = new VenueOverviewService(
-      {} as any,
+      {} as never,
       mockOperationsCalendarRepo as never,
       resourceRepo as never,
       mockProfileRepo as never,

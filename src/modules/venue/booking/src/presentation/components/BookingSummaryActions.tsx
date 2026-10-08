@@ -15,7 +15,7 @@ import type {
   BookingWorkspaceState,
   CustomerSummary,
 } from "../../domain/entities/Booking";
-import { remainingHoldSeconds } from "../viewmodels/holdExpiry";
+import { remainingHoldSeconds } from "../viewmodels/useHoldExpiry";
 
 interface BookingSummaryActionsProps {
   t: (key: string, values?: Record<string, string | number>) => string;

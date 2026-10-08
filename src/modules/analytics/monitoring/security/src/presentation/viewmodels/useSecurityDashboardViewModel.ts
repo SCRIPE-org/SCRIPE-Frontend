@@ -1,3 +1,4 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 

@@ -170,4 +170,7 @@ export class PlatformHealth {
   get isUnhealthy() {
     return this.data.status === "Unhealthy";
   }
+  copyWith(updates: Partial<PlatformHealthData>): PlatformHealth {
+    return new PlatformHealth({ ...this.data, ...updates });
+  }
 }

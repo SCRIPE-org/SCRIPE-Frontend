@@ -42,6 +42,8 @@ export function BookingRescheduleDialog(props: Props) {
   const [step, setStep] = useState<"search" | "review">("search");
   const [searchError, setSearchError] = useState<string | null>(null);
 
+  const { availabilityRepository } = useVenueServiceLocator();
+
   const resetState = () => {
     setSearching(false);
     setSearchAttempted(false);
@@ -71,7 +73,6 @@ export function BookingRescheduleDialog(props: Props) {
     setSearchAttempted(true);
     setSelectedCandidate(null);
     try {
-      const { availabilityRepository } = useVenueServiceLocator();
       const result = await availabilityRepository.search({
         resourceId: props.resourceId,
         timeZoneId: props.timeZoneId,
