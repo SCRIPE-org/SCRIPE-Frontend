@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
 import type { VenueOverviewHourlyLoadBucket } from "../../domain/entities/VenueOverview";

@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: rule bypass for existing large file
+﻿// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useState } from "react";
@@ -191,7 +191,7 @@ export function FirstTimeSetupWizard({
               <Label htmlFor="wizard-tz" className="text-sm font-semibold">
                 {t("resources.wizard.timezone", { defaultValue: "Timezone" })}
               </Label>
-              /* UI-EXCEPTION */ <select
+              <select
                 id="wizard-tz"
                 className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"
                 value={timeZoneId}
@@ -216,7 +216,7 @@ export function FirstTimeSetupWizard({
               </Label>
               <div className="flex flex-wrap gap-1.5">
                 {SPORT_TYPES.map((type) => (
-                  /* UI-EXCEPTION */ <button
+                  <button
                     type="button"
                     key={type}
                     onClick={() => setSportType(type)}
@@ -296,7 +296,7 @@ export function FirstTimeSetupWizard({
                     : "border-nx-line hover:bg-nx-surfaceSubtle"
                 }`}
               >
-                /* UI-EXCEPTION */ <input
+                <input
                   type="radio"
                   name="working-hours-mode"
                   checked={isOpen247}
@@ -324,7 +324,7 @@ export function FirstTimeSetupWizard({
                     : "border-nx-line hover:bg-nx-surfaceSubtle"
                 }`}
               >
-                /* UI-EXCEPTION */ <input
+                <input
                   type="radio"
                   name="working-hours-mode"
                   checked={!isOpen247}
@@ -395,7 +395,7 @@ export function FirstTimeSetupWizard({
                 { duration: 90, label: "90 min" },
                 { duration: 120, label: "120 min (2 Hours)" },
               ].map(({ duration, label }) => (
-                /* UI-EXCEPTION */ <button
+                <button
                   type="button"
                   key={duration}
                   onClick={() => setSlotDurationMinutes(duration)}
@@ -454,7 +454,7 @@ export function FirstTimeSetupWizard({
                 <Label htmlFor="wizard-currency" className="text-xs font-medium">
                   {t("resources.pricing.currency", { defaultValue: "Currency" })}
                 </Label>
-                /* UI-EXCEPTION */ <select
+                <select
                   id="wizard-currency"
                   className="w-full h-9 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
                   value={currencyCode}

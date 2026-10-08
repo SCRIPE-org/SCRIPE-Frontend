@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
@@ -68,7 +68,7 @@ export function ResourceBookingRulesTab({ vm }: Props) {
 
             <div className="grid grid-cols-2 gap-3">
               {DURATIONS.map(({ value, labelKey, fallback }) => (
-                /* UI-EXCEPTION */ <button
+                <button
                   type="button"
                   key={value}
                   onClick={() => handleDurationChange(value)}
@@ -101,13 +101,13 @@ export function ResourceBookingRulesTab({ vm }: Props) {
 
             <div className="flex items-center gap-3">
               {/* UI-EXCEPTION: native element required for compact layout */}
-              /* UI-EXCEPTION */ <select
+              <select
                 className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"
                 value={startIncrement}
                 onChange={(e) => setStartIncrement(Number(e.target.value))}
               >
                 <option value={slotDuration}>
-                  Every {slotDuration} minutes (Recommended · Clean slots)
+                  Every {slotDuration} minutes (Recommended Â· Clean slots)
                 </option>
                 {slotDuration > 30 && (
                   <option value={30}>Every 30 minutes (Half-hour starts)</option>

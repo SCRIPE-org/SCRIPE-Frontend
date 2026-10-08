@@ -1,7 +1,7 @@
-/** Mapper for Availability */
+﻿/** Mapper for Availability */
 export class AvailabilityMapper {
   /** Convert to entity */
-  static toEntity(dto: any): any {
+  static toEntity(dto: unknown): unknown {
     return dto;
   }
 }

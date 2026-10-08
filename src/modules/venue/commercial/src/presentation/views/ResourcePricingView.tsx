@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { BadgeDollarSign, AlertCircle, Lock, RefreshCw } from "lucide-react";
 import { GenericSelect } from "@core/crud/components/generic-select";

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";
@@ -40,7 +40,7 @@ export const FacilityListView = React.memo(function FacilityListView() {
         key: "venueProfileId",
         label: t("facility.fields.venueProfileId"),
         render: (_value: string, row: Facility) =>
-          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "—",
+          row.venueProfileName || venueProfileNameById[row.venueProfileId] || "â€”",
       },
       {
         key: "createdAt",

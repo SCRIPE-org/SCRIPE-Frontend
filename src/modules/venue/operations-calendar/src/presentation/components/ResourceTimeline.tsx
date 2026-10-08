@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { cn } from "@core/common/utils";
@@ -72,7 +72,7 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                   const occupied = placed.some(({ block }) => Date.parse(block.startUtc) < slotEnd && slotStart < Date.parse(block.endUtc));
                   // UI-EXCEPTION: interactive transparent calendar slot in custom SVG/canvas-like timeline grid
                   return (
-/* UI-EXCEPTION */ <button
+<button
                     type="button"
                     key={slot.instantUtc}
                     className="h-full w-[76px] shrink-0 border-r border-nx-line text-transparent outline-none hover:bg-nx-hover focus-visible:z-20 focus-visible:shadow-nx-focus"
@@ -91,7 +91,7 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                   const status = props.t(`operationsCalendar.status.${block.status}`);
                   return (
                     // UI-EXCEPTION: absolute-positioned custom calendar booking block chip in timeline grid
-                    /* UI-EXCEPTION */ <button
+                    <button
                       type="button"
                       key={block.reservationId}
                       className={cn("absolute z-10 overflow-hidden rounded-nx-sm border px-2 py-1 text-left text-[11px] leading-tight outline-none focus-visible:z-20 focus-visible:shadow-nx-focus", statusClass(block.status))}
@@ -100,7 +100,7 @@ export function ResourceTimeline(props: ResourceTimelineProps) {
                       onClick={() => props.onOpen(block)}
                     >
                       <span className="block truncate font-semibold">{block.reservationNumber}</span>
-                      <span className="block truncate">{status} · {start}–{end}</span>
+                      <span className="block truncate">{status} Â· {start}â€“{end}</span>
                     </button>
                   );
                 })}

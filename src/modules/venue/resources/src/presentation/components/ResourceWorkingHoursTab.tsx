@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -107,7 +107,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                 }`}
               >
                 {/* UI-EXCEPTION: native element required for compact layout */}
-                /* UI-EXCEPTION */ <input
+                <input
                   type="radio"
                   name="court-working-hours"
                   checked={isOpen247}
@@ -135,7 +135,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                 }`}
               >
                 {/* UI-EXCEPTION: native element required for compact layout */}
-                /* UI-EXCEPTION */ <input
+                <input
                   type="radio"
                   name="court-working-hours"
                   checked={!isOpen247}
@@ -179,7 +179,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                       >
                         <div className="flex items-center gap-3">
                           {/* UI-EXCEPTION: native element required for compact layout */}
-                          /* UI-EXCEPTION */ <input
+                          <input
                             type="checkbox"
                             checked={!closed}
                             onChange={(e) => updateDay(day, "closed", !e.target.checked)}
@@ -202,7 +202,7 @@ export function ResourceWorkingHoursTab({ vm }: Props) {
                               onChange={(e) => updateDay(day, "start", e.target.value)}
                               className="h-8 w-28 text-xs font-mono"
                             />
-                            <span className="text-nx-ink-3">→</span>
+                            <span className="text-nx-ink-3">â†’</span>
                             <Input
                               type="time"
                               value={end}

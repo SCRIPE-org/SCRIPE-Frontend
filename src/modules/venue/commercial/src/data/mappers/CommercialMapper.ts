@@ -1,7 +1,7 @@
-/** Mapper for Commercial */
+﻿/** Mapper for Commercial */
 export class CommercialMapper {
   /** static */
-  static toEntity(dto: any): any {
+  static toEntity(dto: unknown): unknown {
     return dto;
   }
 }

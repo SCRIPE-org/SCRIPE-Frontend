@@ -1,4 +1,4 @@
-import { Badge } from "@core/ui/badge";
+﻿import { Badge } from "@core/ui/badge";
 import type { Booking360HistoryItem } from "../../domain/entities/Booking360";
 
 interface Props {

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useTransition } from "react";
 import { GenericCrudView } from "@core/crud/components/generic-crud-view";

@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: rule bypass for existing large file
+﻿// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import React, { useEffect, useState, type CSSProperties } from "react";
@@ -87,11 +87,11 @@ export function VenueOverviewHeroTimeline({
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("venueOverview.heroTimeline.title", { defaultValue: "Today’s Venue Activity" })}
+                {t("venueOverview.heroTimeline.title", { defaultValue: "Todayâ€™s Venue Activity" })}
               </CardTitle>
               <CardDescription className="text-xs text-nx-ink-2">
                 {t("venueOverview.heroTimeline.subtitle", {
-                  defaultValue: "Resource × Time operational timeline across courts and fields.",
+                  defaultValue: "Resource Ã— Time operational timeline across courts and fields.",
                 })}
               </CardDescription>
             </div>
@@ -152,12 +152,12 @@ export function VenueOverviewHeroTimeline({
             <div className="flex items-center gap-2">
               <span className="flex size-2 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
               <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("venueOverview.heroTimeline.title", { defaultValue: "Today’s Venue Activity" })}
+                {t("venueOverview.heroTimeline.title", { defaultValue: "Todayâ€™s Venue Activity" })}
               </CardTitle>
             </div>
             <CardDescription className="text-xs text-nx-ink-2 mt-0.5">
               {t("venueOverview.heroTimeline.subtitle", {
-                defaultValue: "Resource × Time operational timeline across courts and fields.",
+                defaultValue: "Resource Ã— Time operational timeline across courts and fields.",
               })}
             </CardDescription>
           </div>
@@ -259,7 +259,7 @@ export function VenueOverviewHeroTimeline({
 
                       return (
                         // UI-EXCEPTION: highly specialized timeline grid block
-                        /* UI-EXCEPTION */ <button
+                        <button
                           type="button"
                           key={slot.instantUtc}
                           className={cn(
@@ -305,7 +305,7 @@ export function VenueOverviewHeroTimeline({
 
                       return (
                         // UI-EXCEPTION: highly specialized timeline grid block
-                        /* UI-EXCEPTION */ <button
+                        <button
                           type="button"
                           key={block.reservationId}
                           className={cn(
@@ -322,14 +322,14 @@ export function VenueOverviewHeroTimeline({
                             } as CSSProperties
                           }
                           onClick={() => handleOpenBooking(block)}
-                          title={`${block.reservationNumber} · ${statusLabel} (${start}–${end})`}
+                          title={`${block.reservationNumber} Â· ${statusLabel} (${start}â€“${end})`}
                           aria-label={t("operationsCalendar.timeline.bookingLabel", {
                             reference: block.reservationNumber,
                             status: statusLabel,
                             start,
                             end,
                             resource: resource.name,
-                            defaultValue: `${block.reservationNumber}: ${statusLabel}, ${start}–${end} on ${resource.name}`,
+                            defaultValue: `${block.reservationNumber}: ${statusLabel}, ${start}â€“${end} on ${resource.name}`,
                           })}
                         >
                           <div className="flex items-center gap-1 font-bold truncate">
@@ -339,7 +339,7 @@ export function VenueOverviewHeroTimeline({
                             <span className="truncate">{block.reservationNumber}</span>
                           </div>
                           <div className="truncate text-[10px] opacity-90">
-                            {statusLabel} · {start}–{end}
+                            {statusLabel} Â· {start}â€“{end}
                           </div>
                         </button>
                       );

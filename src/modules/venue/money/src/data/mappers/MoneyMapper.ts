@@ -1,7 +1,7 @@
-/** Mapper for Money */
+﻿/** Mapper for Money */
 export class MoneyMapper {
   /** static */
-  static toEntity(dto: any): any {
+  static toEntity(dto: unknown): unknown {
     return dto;
   }
 }

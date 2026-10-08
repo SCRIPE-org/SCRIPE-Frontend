@@ -1,4 +1,4 @@
-import { VenueProfile, type VenueProfileData } from "../../domain/entities/VenueProfile";
+﻿import { VenueProfile, type VenueProfileData } from "../../domain/entities/VenueProfile";
 import { VenueProfileModel, type VenueProfileJson } from "../models/VenueProfileModel";
 
 /**

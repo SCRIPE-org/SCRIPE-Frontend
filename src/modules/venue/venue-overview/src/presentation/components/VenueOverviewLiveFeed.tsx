@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -72,7 +72,7 @@ export function VenueOverviewLiveFeed({
       id: `attention-${sig.kind}-${sig.resourceId}-${sig.occurredAtUtc}`,
       type: "attention",
       title: t("venueOverview.liveFeed.attentionSignal", { defaultValue: "Attention signal detected" }),
-      subtitle: `${sig.resourceName} · ${t(`attention.signal.${sig.kind}.title`, { defaultValue: sig.kind })}`,
+      subtitle: `${sig.resourceName} Â· ${t(`attention.signal.${sig.kind}.title`, { defaultValue: sig.kind })}`,
       timeLabel: formatRelativeOrLocalTime(sig.occurredAtUtc, timeZoneId),
       timestampUtc: sig.occurredAtUtc,
       href: "/venue/attention",
@@ -86,7 +86,7 @@ export function VenueOverviewLiveFeed({
       id: `checkedin-${b.reservationId}`,
       type: "checkedIn",
       title: t("venueOverview.liveFeed.guestCheckedIn", { defaultValue: "Guest checked in" }),
-      subtitle: `${b.reservationNumber} · In play`,
+      subtitle: `${b.reservationNumber} Â· In play`,
       timeLabel: formatRelativeOrLocalTime(b.startUtc, timeZoneId),
       timestampUtc: b.startUtc,
       href: `/venue/bookings/${encodeURIComponent(b.reservationId)}`,
@@ -102,7 +102,7 @@ export function VenueOverviewLiveFeed({
       id: `held-${b.reservationId}`,
       type: "held",
       title: t("venueOverview.liveFeed.holdActive", { defaultValue: "Hold pending confirmation" }),
-      subtitle: `${holdIdentifier} · ${label}`,
+      subtitle: `${holdIdentifier} Â· ${label}`,
       timeLabel: formatRelativeOrLocalTime(b.startUtc, timeZoneId),
       timestampUtc: b.startUtc,
       href: "/venue/calendar",
@@ -119,7 +119,7 @@ export function VenueOverviewLiveFeed({
         id: `confirmed-${item.reservationId}`,
         type: "confirmed",
         title: t("venueOverview.liveFeed.bookingConfirmed", { defaultValue: "Booking confirmed" }),
-        subtitle: `${item.resourceName} · ${item.customerDisplayName || item.reservationNumber}`,
+        subtitle: `${item.resourceName} Â· ${item.customerDisplayName || item.reservationNumber}`,
         timeLabel: timePart,
         timestampUtc: item.startUtc,
         href: `/venue/bookings/${encodeURIComponent(item.reservationId)}`,
@@ -148,7 +148,7 @@ export function VenueOverviewLiveFeed({
         </div>
         <CardDescription className="text-xs text-nx-ink-2">
           {t("venueOverview.liveFeed.subtitle", {
-            defaultValue: "Authoritative real-time operational events from today’s bookings and attention signals.",
+            defaultValue: "Authoritative real-time operational events from todayâ€™s bookings and attention signals.",
           })}
         </CardDescription>
       </CardHeader>

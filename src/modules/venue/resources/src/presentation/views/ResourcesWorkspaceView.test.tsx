@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+﻿import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ResourcesWorkspaceView } from "./ResourcesWorkspaceView";
 import { useResourcesWorkspaceViewModel } from "../viewmodels/useResourcesWorkspaceViewModel";

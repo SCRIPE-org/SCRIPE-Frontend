@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+﻿import { render, screen, waitFor } from "@testing-library/react";
 import type { ComponentProps } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";

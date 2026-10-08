@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -92,14 +92,14 @@ export function VenueOverviewResourcePulse({ items, t }: Props) {
                 const endLocalTime = item.currentOrNextEndUtc.slice(11, 16);
                 labelText = t("venueOverview.resourceActivity.status.checkedIn", {
                   time: endLocalTime,
-                  defaultValue: `In use · until ${endLocalTime}`,
+                  defaultValue: `In use Â· until ${endLocalTime}`,
                 });
                 badgeStyle = "border-success/50 bg-success/15 text-success font-semibold";
               } else if (item.statusLabel === "nextBooking" && item.currentOrNextStartUtc) {
                 const startLocalTime = item.currentOrNextStartUtc.slice(11, 16);
                 labelText = t("venueOverview.resourceActivity.status.nextBooking", {
                   time: startLocalTime,
-                  defaultValue: `Next · ${startLocalTime}`,
+                  defaultValue: `Next Â· ${startLocalTime}`,
                 });
                 badgeStyle = "border-nx-accent/50 bg-nx-accent/15 text-nx-accent font-medium";
               }

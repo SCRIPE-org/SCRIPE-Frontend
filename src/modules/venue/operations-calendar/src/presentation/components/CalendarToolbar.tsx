@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
@@ -55,7 +55,7 @@ export function CalendarToolbar(props: CalendarToolbarProps) {
         <div className="flex items-center gap-2">
           {props.onBlockTime && (
             <Button variant="outline" size="sm" onClick={props.onBlockTime} className="text-xs gap-1.5 font-medium">
-              <span className="text-amber-500 font-bold">⊘</span>
+              <span className="text-amber-500 font-bold">âŠ˜</span>
               <span>{t("operationsCalendar.toolbar.blockTime") || "+ Block Time"}</span>
             </Button>
           )}

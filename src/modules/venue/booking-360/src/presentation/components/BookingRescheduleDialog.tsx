@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { CalendarClock, CalendarSync, ArrowLeft, AlertCircle, CheckCircle2 } from "lucide-react";
@@ -138,7 +138,7 @@ export function BookingRescheduleDialog(props: Props) {
             </div>
             <div className="flex justify-between">
               <span className="text-nx-ink-2">{props.t("booking360.schedule.time")}:</span>
-              <span className="font-medium text-nx-ink tabular-nums">{formatUtc(props.currentStartUtc)} – {formatUtc(props.currentEndUtc)}</span>
+              <span className="font-medium text-nx-ink tabular-nums">{formatUtc(props.currentStartUtc)} â€“ {formatUtc(props.currentEndUtc)}</span>
             </div>
           </div>
 
@@ -210,7 +210,7 @@ export function BookingRescheduleDialog(props: Props) {
                       >
                         <div className="text-start">
                           <p className="font-semibold text-nx-ink">{c.resourceName}</p>
-                          <p className="text-nx-ink-2 tabular-nums">{formatUtc(c.startUtc)} – {formatUtc(c.endUtc)}</p>
+                          <p className="text-nx-ink-2 tabular-nums">{formatUtc(c.startUtc)} â€“ {formatUtc(c.endUtc)}</p>
                         </div>
                         <Badge variant="outline">{props.t("booking360.actions.reschedule")}</Badge>
                       </Button>
@@ -227,12 +227,12 @@ export function BookingRescheduleDialog(props: Props) {
               <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-nx-sm border border-nx-line p-3 text-xs">
                 <div className="space-y-1">
                   <span className="text-nx-ink-3 block text-[11px]">{props.t("booking360.reschedule.currentLabel")}</span>
-                  <p className="font-medium text-nx-ink tabular-nums">{formatUtc(props.currentStartUtc)} – {formatUtc(props.currentEndUtc)}</p>
+                  <p className="font-medium text-nx-ink tabular-nums">{formatUtc(props.currentStartUtc)} â€“ {formatUtc(props.currentEndUtc)}</p>
                 </div>
                 <ArrowLeft className="size-4 text-nx-ink-3 ltr:rotate-180" aria-hidden="true" />
                 <div className="space-y-1">
                   <span className="text-nx-accent block font-medium text-[11px]">{props.t("booking360.reschedule.targetLabel")}</span>
-                  <p className="font-medium text-nx-ink tabular-nums">{formatUtc(selectedCandidate.startUtc)} – {formatUtc(selectedCandidate.endUtc)}</p>
+                  <p className="font-medium text-nx-ink tabular-nums">{formatUtc(selectedCandidate.startUtc)} â€“ {formatUtc(selectedCandidate.endUtc)}</p>
                 </div>
               </div>
             </div>

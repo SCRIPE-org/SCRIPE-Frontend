@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Plus, Trash2, Wrench, Ban, Clock } from "lucide-react";
@@ -121,7 +121,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                       )}
                     </td>
                     <td className="p-3 text-nx-ink-2 tabular-nums">
-                      {formatDate(closure.startUtc)} – {formatDate(closure.endUtc)}
+                      {formatDate(closure.startUtc)} â€“ {formatDate(closure.endUtc)}
                     </td>
                     <td className="p-3 text-nx-ink">{closure.reason}</td>
                     <td className="p-3 text-right">
@@ -159,7 +159,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                 </Label>
                 <div className="grid grid-cols-2 gap-2">
                   {/* UI-EXCEPTION: native element required for compact layout */}
-                  /* UI-EXCEPTION */ <button
+                  <button
                     type="button"
                     onClick={() => setReasonType("Maintenance")}
                     className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${
@@ -175,7 +175,7 @@ export function ResourceClosuresTab({ vm }: Props) {
                   </button>
 
                   {/* UI-EXCEPTION: native element required for compact layout */}
-                  /* UI-EXCEPTION */ <button
+                  <button
                     type="button"
                     onClick={() => setReasonType("Unavailable")}
                     className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${

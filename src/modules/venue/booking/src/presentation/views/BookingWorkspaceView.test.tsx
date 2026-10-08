@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+﻿import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { usePermission } from "@core/hooks/use-permission";
 import { BookingWorkspaceView } from "./BookingWorkspaceView";
@@ -17,7 +17,7 @@ vi.mock("../viewmodels/useBookingWorkspaceViewModel", () => ({
   useBookingWorkspaceViewModel: () => ({
     state: { stage: "initial", candidates: [], selectedCandidate: null, partialSearchFailure: false },
     criteria: { facilityId: "facility-1", date: "2026-09-10", startTime: "09:00", durationMinutes: 60, quantity: 1 },
-    customer: { id: "party-1", displayName: "منى", type: "Person" },
+    customer: { id: "party-1", displayName: "Ù…Ù†Ù‰", type: "Person" },
     customerResults: [], customerSearching: false, facilities: [], resourceKindOptions: [], usageTypeOptions: [],
     setupLoading: false, setupError: null, setupFeatureUnavailable: false,
     priceQuote: null, priceQuoteLoading: false, priceQuoteError: null,

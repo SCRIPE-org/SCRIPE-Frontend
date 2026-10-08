@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import {
@@ -45,7 +45,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
       className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 mb-6"
       data-testid="venue-overview-kpi-strip"
     >
-      {/* Metric 1 — Bookings Today */}
+      {/* Metric 1 â€” Bookings Today */}
       <Link href="/venue/calendar" className="block group">
         <Card className="border-nx-line bg-nx-surface hover:border-nx-accent/50 hover:shadow-nx-sm transition-all duration-nx-micro">
           <CardContent className="p-4">
@@ -67,7 +67,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
                   {t("venueOverview.kpis.todayReservationsSubtext", {
                     confirmed: kpis.todayReservationsConfirmedCount,
                     checkedIn: kpis.todayReservationsCheckedInCount,
-                    defaultValue: `${kpis.todayReservationsConfirmedCount} confirmed · ${kpis.todayReservationsCheckedInCount} checked in`,
+                    defaultValue: `${kpis.todayReservationsConfirmedCount} confirmed Â· ${kpis.todayReservationsCheckedInCount} checked in`,
                   })}
                 </p>
               </div>
@@ -76,7 +76,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
         </Card>
       </Link>
 
-      {/* Metric 2 — Checked In Now */}
+      {/* Metric 2 â€” Checked In Now */}
       <Link href="/venue/calendar" className="block group">
         <Card className="border-nx-line bg-nx-surface hover:border-success/50 hover:shadow-nx-sm transition-all duration-nx-micro">
           <CardContent className="p-4">
@@ -108,7 +108,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
         </Card>
       </Link>
 
-      {/* Metric 3 — Active Holds */}
+      {/* Metric 3 â€” Active Holds */}
       <Link href="/venue/calendar" className="block group">
         <Card className="border-nx-line bg-nx-surface hover:border-amber-500/50 hover:shadow-nx-sm transition-all duration-nx-micro">
           <CardContent className="p-4">
@@ -135,7 +135,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
         </Card>
       </Link>
 
-      {/* Metric 4 — Needs Attention (or Active Resources Fallback) */}
+      {/* Metric 4 â€” Needs Attention (or Active Resources Fallback) */}
       {showAttentionCard ? (
         <Link href="/venue/attention" className="block group">
           <Card
@@ -207,7 +207,7 @@ export function VenueOverviewKpiStrip({ kpis, attentionCount, t }: Props) {
                     {kpis.activeResourcesCount}
                   </div>
                   <p className="text-[11px] text-nx-ink-3 truncate mt-0.5">
-                    {t("venueOverview.kpis.activeResourcesSubtext", { defaultValue: "Featured in today’s schedule" })}
+                    {t("venueOverview.kpis.activeResourcesSubtext", { defaultValue: "Featured in todayâ€™s schedule" })}
                   </p>
                 </div>
               </div>

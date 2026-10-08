@@ -1,7 +1,7 @@
-/** Mapper for OperationsCalendar */
+﻿/** Mapper for OperationsCalendar */
 export class OperationsCalendarMapper {
   /** static */
-  static toEntity(dto: any): any {
+  static toEntity(dto: unknown): unknown {
     return dto;
   }
 }

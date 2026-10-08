@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -21,7 +21,7 @@ import { useBooking360ViewModel } from "../viewmodels/useBooking360ViewModel";
 
 function formatRange(start: string, end: string, locale: string, timeZone: string): string {
   const formatter = new Intl.DateTimeFormat(locale, { dateStyle: "medium", timeStyle: "short", timeZone });
-  return `${formatter.format(new Date(start))} – ${formatter.format(new Date(end))}`;
+  return `${formatter.format(new Date(start))} â€“ ${formatter.format(new Date(end))}`;
 }
 
 /**

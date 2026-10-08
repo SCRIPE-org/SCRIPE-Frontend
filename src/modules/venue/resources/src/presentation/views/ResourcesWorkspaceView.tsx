@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -132,7 +132,7 @@ export function ResourcesWorkspaceView() {
         {vm.facilities.length > 1 && (
           <div className="flex items-center gap-2">
             <Building2 className="size-4 text-nx-ink-3" aria-hidden="true" />
-            /* UI-EXCEPTION */ <select
+            <select
               value={vm.selectedFacilityId}
               onChange={(e) => vm.setSelectedFacilityId(e.target.value)}
               className="h-9 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"

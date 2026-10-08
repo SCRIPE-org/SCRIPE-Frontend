@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,7 @@ export const VenueProfileListView = React.memo(function VenueProfileListView() {
       {
         key: "siteId",
         label: t("venueProfile.fields.siteId"),
-        render: (_value: string, row: VenueProfile) => row.siteName || siteNameById[row.siteId] || "—",
+        render: (_value: string, row: VenueProfile) => row.siteName || siteNameById[row.siteId] || "â€”",
       },
       {
         key: "isActive",

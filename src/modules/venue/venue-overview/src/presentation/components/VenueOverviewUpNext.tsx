@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { ArrowUpRight, Clock, User, ExternalLink } from "lucide-react";
@@ -14,7 +14,7 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
-/** Human-readable labels for booking statuses — avoids cross-module i18n dependency */
+/** Human-readable labels for booking statuses â€” avoids cross-module i18n dependency */
 const STATUS_LABELS: Record<Booking360Status, string> = {
   Confirmed: "Confirmed",
   CheckedIn: "Checked In",
@@ -113,7 +113,7 @@ export function VenueOverviewUpNext({ items, t }: Props) {
                       <td className="px-4 py-3 whitespace-nowrap">
                         <div className="flex items-center gap-1.5 font-mono font-bold text-nx-ink tabular-nums" dir="ltr">
                           <Clock className="size-3.5 text-nx-ink-3" aria-hidden="true" />
-                          <span>{timePart} – {endTimePart}</span>
+                          <span>{timePart} â€“ {endTimePart}</span>
                         </div>
                       </td>
 

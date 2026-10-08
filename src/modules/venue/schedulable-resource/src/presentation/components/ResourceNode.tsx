@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Boxes, Building2, ListChecks, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
@@ -55,7 +55,7 @@ export function ResourceNode({
           <p className="text-sm text-nx-ink-3">
             {r.isComposite
               ? t("schedulableResource.compositeHint")
-              : `${r.namedUnitLabel ?? t("schedulableResource.fields.unitCount")}: ${r.unitCount} · ${t(
+              : `${r.namedUnitLabel ?? t("schedulableResource.fields.unitCount")}: ${r.unitCount} Â· ${t(
                   "schedulableResource.fields.maxConcurrentUsage"
                 )}: ${r.capacity?.maxConcurrentUsage ?? "-"}`}
           </p>

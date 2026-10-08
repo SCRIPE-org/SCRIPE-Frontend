@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Info } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";

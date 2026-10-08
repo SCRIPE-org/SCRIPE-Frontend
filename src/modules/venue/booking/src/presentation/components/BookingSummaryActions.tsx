@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -136,7 +136,7 @@ export function BookingSummaryActions({
           <dl className="grid gap-4 rounded-xl bg-nx-surface-2 p-4 sm:grid-cols-2">
             {customer && <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.customer")}</dt><dd className="font-medium text-nx-ink">{customer.displayName}</dd></div>}
             {candidate && <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.resource")}</dt><dd className="font-medium text-nx-ink">{candidate.resourceName}</dd></div>}
-            {candidate && <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} – {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}</dd></div>}
+            {candidate && <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} â€“ {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}</dd></div>}
             <div className="sm:col-span-2">
               <dt className="text-xs uppercase tracking-wide text-nx-ink-3">{t("booking.summary.reference")}</dt>
               <dd className="mt-1 text-lg font-semibold text-nx-ink">{state.reservation?.reservationNumber}</dd>
@@ -177,7 +177,7 @@ export function BookingSummaryActions({
           <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.resource")}</dt><dd className="font-medium text-nx-ink">{candidate.resourceName}</dd></div>
           <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.facility")}</dt><dd className="font-medium text-nx-ink">{candidate.facilityName}</dd></div>
           <div><dt className="text-xs text-nx-ink-3">{t("booking.summary.quantity")}</dt><dd className="font-medium text-nx-ink">{candidate.requestedQuantity}</dd></div>
-          <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} – {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}</dd></div>
+          <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.dateTime")}</dt><dd className="font-medium text-nx-ink">{formatDateTime(candidate.startUtc, locale, candidate.timeZoneId)} â€“ {formatDateTime(candidate.endUtc, locale, candidate.timeZoneId)}</dd></div>
           {state.reservation && <div className="sm:col-span-2"><dt className="text-xs text-nx-ink-3">{t("booking.summary.reference")}</dt><dd className="font-mono font-medium text-nx-ink">{state.reservation.reservationNumber}</dd></div>}
         </dl>
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { AlertCircle, CheckCircle2, ChevronDown, Search, XCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@core/ui/alert";
@@ -34,7 +34,7 @@ function formatInterval(candidate: AvailabilityCandidate, locale: string): strin
     minute: "2-digit",
     timeZone: candidate.timeZoneId,
   });
-  return `${date} · ${time.format(new Date(candidate.startUtc))}–${time.format(new Date(candidate.endUtc))}`;
+  return `${date} Â· ${time.format(new Date(candidate.startUtc))}â€“${time.format(new Date(candidate.endUtc))}`;
 }
 
 function CandidateCard({
@@ -60,7 +60,7 @@ function CandidateCard({
               {t(candidate.isAvailable ? "booking.availability.available" : "booking.availability.unavailable")}
             </Badge>
           </div>
-          <p className="mt-1 text-sm text-nx-ink-2">{candidate.facilityName} · {candidate.profileName}</p>
+          <p className="mt-1 text-sm text-nx-ink-2">{candidate.facilityName} Â· {candidate.profileName}</p>
           <p className="mt-2 text-sm text-nx-ink">{formatInterval(candidate, locale)}</p>
           <p className="mt-1 text-xs text-nx-ink-3">{candidate.timeZoneId}</p>
           <p className="mt-2 text-sm text-nx-ink-2">

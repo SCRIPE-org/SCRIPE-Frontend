@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -178,7 +178,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
         </Card>
       )}
 
-      {/* Top KPI Row — 4 Compact Metis Stats Cards */}
+      {/* Top KPI Row â€” 4 Compact Metis Stats Cards */}
       <VenueOverviewKpiStrip
         kpis={state.kpis}
         attentionCount={canViewAttention ? attentionCount : undefined}

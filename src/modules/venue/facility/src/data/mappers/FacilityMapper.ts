@@ -1,4 +1,4 @@
-import { Facility, type FacilityData } from "../../domain/entities/Facility";
+﻿import { Facility, type FacilityData } from "../../domain/entities/Facility";
 import { FacilityModel, type FacilityJson } from "../models/FacilityModel";
 
 /**

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { Button } from "@core/ui/button";
@@ -73,7 +73,7 @@ export function PaymentTimelineCard({ model }: PaymentTimelineCardProps) {
             <ul className="mt-2 space-y-1 text-sm text-nx-ink-2">
               {model.timeline.refunds.map((item) => (
                 <li key={item.id}>
-                  {item.amount} — {item.reason}
+                  {item.amount} â€” {item.reason}
                 </li>
               ))}
             </ul>

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { PieChart } from "lucide-react";
@@ -26,7 +26,7 @@ const STATUS_COLORS: Record<Booking360Status, { stroke: string; bg: string; text
   Expired: { stroke: "#94a3b8", bg: "bg-slate-400", text: "text-slate-400" },
 };
 
-/** Human-readable labels for booking statuses — avoids cross-module i18n dependency */
+/** Human-readable labels for booking statuses â€” avoids cross-module i18n dependency */
 const STATUS_LABELS: Record<Booking360Status, string> = {
   Confirmed: "Confirmed",
   CheckedIn: "Checked In",
@@ -80,11 +80,11 @@ export function VenueOverviewStatusDonut({ items, t }: Props) {
             </div>
             <div>
               <CardTitle className="text-sm font-bold text-nx-ink">
-                {t("venueOverview.statusDonut.title", { defaultValue: "Today’s Booking Status" })}
+                {t("venueOverview.statusDonut.title", { defaultValue: "Todayâ€™s Booking Status" })}
               </CardTitle>
               <CardDescription className="text-xs text-nx-ink-2">
                 {t("venueOverview.statusDonut.subtitle", {
-                  defaultValue: "Lifecycle status distribution of today’s reservations.",
+                  defaultValue: "Lifecycle status distribution of todayâ€™s reservations.",
                 })}
               </CardDescription>
             </div>

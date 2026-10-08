@@ -1,4 +1,4 @@
-import { Site } from "../../domain/entities/Site";
+﻿import { Site } from "../../domain/entities/Site";
 import type { SiteDto } from "../models/SiteDto";
 
 /**

@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from "@testing-library/react";
+﻿import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { OperationsCalendarDay } from "../../domain/entities/OperationsCalendar";
 import { ResourceTimeline } from "./ResourceTimeline";

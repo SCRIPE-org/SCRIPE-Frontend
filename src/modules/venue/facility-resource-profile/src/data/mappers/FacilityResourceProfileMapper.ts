@@ -1,7 +1,7 @@
-/** Mapper for FacilityResourceProfile */
+﻿/** Mapper for FacilityResourceProfile */
 export class FacilityResourceProfileMapper {
   /** static */
-  static toEntity(dto: any): any {
+  static toEntity(dto: unknown): unknown {
     return dto;
   }
 }

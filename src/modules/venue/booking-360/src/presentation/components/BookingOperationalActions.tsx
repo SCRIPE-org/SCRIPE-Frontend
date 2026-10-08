@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: rule bypass for existing large file
+﻿// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useEffect, useRef, useState } from "react";

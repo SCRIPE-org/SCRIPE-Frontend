@@ -1,4 +1,4 @@
-import {
+﻿import {
   SchedulableResource,
   type SchedulableResourceData,
 } from "../../domain/entities/SchedulableResource";

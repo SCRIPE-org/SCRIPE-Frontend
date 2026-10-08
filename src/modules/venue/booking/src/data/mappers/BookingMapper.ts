@@ -1,7 +1,7 @@
-/** Mapper for Booking */
+﻿/** Mapper for Booking */
 export class BookingMapper {
   /** static */
-  static toEntity(dto: any): any {
+  static toEntity(dto: unknown): unknown {
     return dto;
   }
 }

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Ban, Wrench } from "lucide-react";
@@ -143,7 +143,7 @@ export function BlockTimeModal({
             <Label className="text-xs font-semibold">
               {t("resources.blockTimeModal.resource", { defaultValue: "Court / Field" })}
             </Label>
-            /* UI-EXCEPTION */ <select
+            <select
               value={selectedResourceId}
               onChange={(e) => setSelectedResourceId(e.target.value)}
               className="w-full h-8.5 rounded-nx-md border border-nx-line bg-nx-surface px-3 text-xs font-semibold text-nx-ink"
@@ -163,7 +163,7 @@ export function BlockTimeModal({
               {t("resources.blockTimeModal.reasonType", { defaultValue: "Reason Type" })}
             </Label>
             <div className="grid grid-cols-2 gap-2">
-              /* UI-EXCEPTION */ <button
+              <button
                 type="button"
                 onClick={() => setReasonType("Maintenance")}
                 className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${
@@ -178,7 +178,7 @@ export function BlockTimeModal({
                 </div>
               </button>
 
-              /* UI-EXCEPTION */ <button
+              <button
                 type="button"
                 onClick={() => setReasonType("Unavailable")}
                 className={`p-2.5 rounded-nx-md border text-left text-xs font-semibold transition-all ${

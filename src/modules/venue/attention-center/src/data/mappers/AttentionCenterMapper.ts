@@ -1,7 +1,7 @@
-/** Mapper for AttentionCenter */
+﻿/** Mapper for AttentionCenter */
 export class AttentionCenterMapper {
   /** Convert to entity */
-  static toEntity(dto: any): any {
+  static toEntity(dto: unknown): unknown {
     return dto;
   }
 }

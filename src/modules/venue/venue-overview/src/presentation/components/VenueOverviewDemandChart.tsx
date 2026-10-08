@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { BarChart3 } from "lucide-react";
@@ -36,7 +36,7 @@ export function VenueOverviewDemandChart({ buckets, t }: Props) {
               </CardTitle>
               <CardDescription className="text-xs text-nx-ink-2">
                 {t("venueOverview.operationalLoad.subtitle", {
-                  defaultValue: "Today’s booking demand distribution across operating hours.",
+                  defaultValue: "Todayâ€™s booking demand distribution across operating hours.",
                 })}
               </CardDescription>
             </div>
@@ -126,7 +126,7 @@ export function VenueOverviewDemandChart({ buckets, t }: Props) {
                 <span>{t("venueOverview.demandChart.scheduled", { defaultValue: "Scheduled demand" })}</span>
               </div>
               <span className="text-[10px] text-nx-ink-3 font-mono">
-                {t("venueOverview.demandChart.hoursRange", { defaultValue: "06:00 – 23:00" })}
+                {t("venueOverview.demandChart.hoursRange", { defaultValue: "06:00 â€“ 23:00" })}
               </span>
             </div>
           </div>

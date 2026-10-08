@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Badge } from "@core/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@core/ui/card";
@@ -10,7 +10,7 @@ interface Props {
   t: (key: string, values?: Record<string, string | number>) => string;
 }
 
-/** Human-readable labels for booking statuses — avoids cross-module i18n dependency */
+/** Human-readable labels for booking statuses â€” avoids cross-module i18n dependency */
 const STATUS_LABELS: Record<Booking360Status, string> = {
   Confirmed: "Confirmed",
   CheckedIn: "Checked In",

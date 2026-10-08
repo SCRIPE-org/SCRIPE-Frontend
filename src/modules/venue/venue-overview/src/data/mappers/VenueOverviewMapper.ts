@@ -1,4 +1,4 @@
-import type { VenueOverviewState } from "../../domain/entities/VenueOverview";
+﻿import type { VenueOverviewState } from "../../domain/entities/VenueOverview";
 
 /**
  * VenueOverviewMapper
@@ -7,7 +7,7 @@ export class VenueOverviewMapper {
   /**
    * toEntity
    */
-  static toEntity(dto: any): VenueOverviewState {
+  static toEntity(dto: unknown): VenueOverviewState {
     return dto as VenueOverviewState; // stub
   }
 }

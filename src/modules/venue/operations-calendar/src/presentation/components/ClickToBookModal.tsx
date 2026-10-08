@@ -1,4 +1,4 @@
-// FILE-EXCEPTION: rule bypass for existing large file
+﻿// FILE-EXCEPTION: rule bypass for existing large file
 /* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 "use client";
 
@@ -218,7 +218,7 @@ export function ClickToBookModal({
         hourCycle: "h23",
         timeZone: timeZoneId || "UTC",
       }).format(new Date(endUtc));
-      return `${s} – ${e}`;
+      return `${s} â€“ ${e}`;
     } catch {
       return "";
     }
@@ -368,7 +368,7 @@ export function ClickToBookModal({
               </DialogTitle>
               <div className="flex items-center gap-2 mt-1 text-xs text-nx-ink-2">
                 <span className="font-semibold text-nx-ink">{resource?.name}</span>
-                <span className="text-nx-line">·</span>
+                <span className="text-nx-line">Â·</span>
                 <span className="font-mono text-nx-accent">{formatTimeRange()}</span>
               </div>
             </div>
@@ -390,7 +390,7 @@ export function ClickToBookModal({
                 <Label className="text-xs font-semibold text-nx-ink">
                   {t("booking.customer.label", { defaultValue: "Customer" })}
                 </Label>
-                /* UI-EXCEPTION */ <button
+                <button
                   type="button"
                   onClick={() => setQuickAddOpen(!quickAddOpen)}
                   className="text-xs text-nx-accent hover:underline inline-flex items-center gap-1 font-medium"
@@ -464,7 +464,7 @@ export function ClickToBookModal({
                   {customerResults.length > 0 && (
                     <div className="absolute top-9 left-0 right-0 z-20 max-h-36 overflow-y-auto rounded-nx-md border border-nx-line bg-nx-surface shadow-nx-lg divide-y divide-nx-line/60">
                       {customerResults.map((cust) => (
-                        /* UI-EXCEPTION */ <button
+                        <button
                           type="button"
                           key={cust.id}
                           onClick={() => {
@@ -512,7 +512,7 @@ export function ClickToBookModal({
             {/* Block Time Switch Option */}
             {onBlockTime && resource && instantUtc && (
               <div className="text-center pt-1">
-                /* UI-EXCEPTION */ <button
+                <button
                   type="button"
                   onClick={() => {
                     onOpenChange(false);
@@ -550,7 +550,7 @@ export function ClickToBookModal({
                 </p>
               )}
               <p className="text-xs text-nx-ink-3">
-                {selectedCustomer?.displayName} · {resource?.name}
+                {selectedCustomer?.displayName} Â· {resource?.name}
               </p>
             </div>
           </div>
@@ -611,7 +611,7 @@ export function ClickToBookModal({
                   </div>
                   <div className="space-y-1">
                     <Label className="text-[11px]">Method</Label>
-                    /* UI-EXCEPTION */ <select
+                    <select
                       value={paymentMethod}
                       onChange={(e) => setPaymentMethod(e.target.value)}
                       className="w-full h-8 rounded-nx-md border border-nx-line bg-nx-surface px-2 text-xs font-semibold text-nx-ink"

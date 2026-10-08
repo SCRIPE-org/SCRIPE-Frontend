@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@core/ui/button";
 import {
@@ -45,7 +45,7 @@ export function ResourceChecklistDialog({
         <DialogHeader>
           <DialogTitle>{t("schedulableResource.checklistTitle")}</DialogTitle>
           <DialogDescription>
-            {target?.resource.name} — {target?.resource.commercialReadinessNote}
+            {target?.resource.name} â€” {target?.resource.commercialReadinessNote}
           </DialogDescription>
         </DialogHeader>
         {loading && <p className="text-sm text-nx-ink-3">{t("common.loading")}</p>}

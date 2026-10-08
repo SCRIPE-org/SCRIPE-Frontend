@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useSearchParams } from "next/navigation";
 import { Banknote, Lock } from "lucide-react";

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
@@ -74,7 +74,7 @@ export function ResourcePricingTab({ vm }: Props) {
                 {t("resources.pricing.currency", { defaultValue: "Currency" })}
               </Label>
               {/* UI-EXCEPTION: native element required for compact layout */}
-              /* UI-EXCEPTION */ <select
+              <select
                 id="res-curr"
                 className="w-full h-9 rounded-nx-md border border-nx-line bg-nx-surface px-3 py-1.5 text-xs font-semibold text-nx-ink"
                 value={currencyCode}
@@ -94,7 +94,7 @@ export function ResourcePricingTab({ vm }: Props) {
               {t("resources.pricing.taxCategory", { defaultValue: "Tax Category" })}
             </Label>
             {/* UI-EXCEPTION: native element required for compact layout */}
-            /* UI-EXCEPTION */ <select
+            <select
               id="res-tax"
               className="w-full rounded-nx-md border border-nx-line bg-nx-surface px-3 py-2 text-xs font-medium text-nx-ink"
               value={taxCategoryId}
