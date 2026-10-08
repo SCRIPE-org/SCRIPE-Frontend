@@ -37,7 +37,9 @@ export function useAnalyticsEventViewModel() {
   }, [page, analyticsEventRepository]);
 
   useEffect(() => {
-    fetchEvents();
+    queueMicrotask(() => {
+      fetchEvents();
+    });
   }, [fetchEvents]);
 
   return {

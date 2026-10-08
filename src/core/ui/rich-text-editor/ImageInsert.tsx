@@ -15,13 +15,7 @@ import type { Editor } from "@tiptap/react";
 // ─── Constants ────────────────────────────────────────────────
 // Mirrors the accept list on the file input below and the default cap used
 // by ImageUploadField, so rejection rules are consistent across the app.
-const ALLOWED_IMAGE_TYPES = [
-  "image/png",
-  "image/jpeg",
-  "image/gif",
-  "image/svg+xml",
-  "image/webp",
-];
+const ALLOWED_IMAGE_TYPES = ["image/png", "image/jpeg", "image/gif", "image/svg+xml", "image/webp"];
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024; // 2MB
 
 // ─── Component ──────────────────────────────────────────────

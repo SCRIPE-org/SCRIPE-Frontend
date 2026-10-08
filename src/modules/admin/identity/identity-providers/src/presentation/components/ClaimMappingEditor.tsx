@@ -65,26 +65,28 @@ export function ClaimMappingEditor({ value, onChange }: Props) {
 
   // Sync external value updates
   useEffect(() => {
-    setJsonText(value || "{}");
+    queueMicrotask(() => {
+      setJsonText(value || "{}");
 
-    // Validate and parse for visual mapping
-    try {
-      const parsed = JSON.parse(value || "{}");
-      if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
-        const mappings = Object.entries(parsed).map(([k, v]) => ({
-          internalKey: k,
-          externalClaim: String(v),
-        }));
-        setVisualMappings(mappings);
-        setJsonError(null);
-      } else {
-        throw new Error(t("identityProviders.jsonFlatObject"));
+      // Validate and parse for visual mapping
+      try {
+        const parsed = JSON.parse(value || "{}");
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          const mappings = Object.entries(parsed).map(([k, v]) => ({
+            internalKey: k,
+            externalClaim: String(v),
+          }));
+          setVisualMappings(mappings);
+          setJsonError(null);
+        } else {
+          throw new Error(t("identityProviders.jsonFlatObject"));
+        }
+      } catch (err) {
+        setJsonError((err as Error).message);
+        // Force JSON mode if parse fails
+        setMode("json");
       }
-    } catch (err) {
-      setJsonError((err as Error).message);
-      // Force JSON mode if parse fails
-      setMode("json");
-    }
+    });
   }, [value, t]);
 
   // Handle visual mapper updates

@@ -108,15 +108,27 @@ export function getThemeBadge(theme: ThemeCardDto): {
   variant: "free" | "included" | "locked" | "purchased" | "buyable";
 } {
   if (theme.pricingType === "Free") {
-    return { labelKey: "studio.marketplace.free", color: "bg-success/10 text-success", variant: "free" };
+    return {
+      labelKey: "studio.marketplace.free",
+      color: "bg-success/10 text-success",
+      variant: "free",
+    };
   }
 
   if (theme.isPurchased) {
-    return { labelKey: "studio.marketplace.purchased", color: "bg-success/10 text-success", variant: "purchased" };
+    return {
+      labelKey: "studio.marketplace.purchased",
+      color: "bg-success/10 text-success",
+      variant: "purchased",
+    };
   }
 
   if (theme.isIncluded) {
-    return { labelKey: "studio.marketplace.included", color: "bg-info/10 text-info", variant: "included" };
+    return {
+      labelKey: "studio.marketplace.included",
+      color: "bg-info/10 text-info",
+      variant: "included",
+    };
   }
 
   if (theme.pricingType === "StandaloneOnly") {

@@ -1,141 +1,147 @@
 "use client";
 
 /**
- * Security Dashboard View
+ * Security Dashboard View (Platform Security Posture & Activity Console)
  *
- * Pure UI composition — security monitoring with threat cards, heatmap, blocked IPs, timeline.
- * Includes export functionality with interval-based date selection.
+ * Professional platform-grade operational console.
+ * Strictly adheres to SCRIPE architecture and design system.
  */
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
 import { useSecurityDashboardViewModel } from "../viewmodels/useSecurityDashboardViewModel";
-import { useI18n } from "@core/providers/i18n-provider";
-import { ThreatSummaryCards } from "../components/ThreatSummaryCards";
-import { Button } from "@core/ui/button";
-import { PageHeader } from "@core/ui/page-header";
-import { Shield, FileDown, Settings2 } from "lucide-react";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useDashboardTheme, DashboardStudioPanel } from "@modules/monitoring/core";
-import { useAdminContext } from "@core/hooks/useAdminContext";
-import { Badge } from "@core/ui/badge";
+import { SecurityHeader } from "../components/SecurityHeader";
+import { SecurityPostureKpiCards } from "../components/SecurityPostureKpiCards";
+import { SecurityTrendsChart } from "../components/SecurityTrendsChart";
+import { SecurityAttentionPanel } from "../components/SecurityAttentionPanel";
+import { AuthMethodsPosture } from "../components/AuthMethodsPosture";
+import { ActiveSessionsTable } from "../components/ActiveSessionsTable";
+import { SecurityPoliciesCard } from "../components/SecurityPoliciesCard";
+import { RecentSecurityEventsTable } from "../components/RecentSecurityEventsTable";
+import { EventDetailsDrawer } from "../components/EventDetailsDrawer";
+import type {
+  SecurityChange,
+  SecurityAttentionSignal,
+} from "../../domain/entities/SecurityEntities";
 
-// Lazy-load heavy sections (below-the-fold)
-const FailedLoginsHeatmap = dynamic(
-  () =>
-    import("../components/FailedLoginsHeatmap").then((m) => ({ default: m.FailedLoginsHeatmap })),
-  { ssr: false }
-);
-const BlockedIPsTable = dynamic(
-  () => import("../components/BlockedIPsTable").then((m) => ({ default: m.BlockedIPsTable })),
-  { ssr: false }
-);
-const SecurityTimeline = dynamic(
-  () => import("../components/SecurityTimeline").then((m) => ({ default: m.SecurityTimeline })),
-  { ssr: false }
-);
+// Lazy-load report export dialog
 const ReportExportDialog = dynamic(
   () => import("@core/ui/report-export-dialog").then((m) => ({ default: m.ReportExportDialog })),
   { ssr: false }
 );
 
 /**
- * Presentation UI component rendering the security dashboard view.
- * Dynamically adjusts context between Platform SOC (global cross-tenant)
- * and Tenant Security & Access Posture.
+ * SecurityDashboardView
  */
 export function SecurityDashboardView() {
   useModuleLocales(() => import("../../../locales"), "security");
 
   const vm = useSecurityDashboardViewModel();
-  const { t } = useI18n();
-  const { isPlatform, activeTenantName } = useAdminContext();
-  const [exportOpen, setExportOpen] = useState(false);
-  const pathname = usePathname();
-  const isStandalone = pathname === "/security";
-
   const theme = useDashboardTheme();
   const { cardClasses } = theme;
 
-  const title = isPlatform
-    ? "Security Operations Center"
-    : "Organization Security & Access Posture";
+  const [exportOpen, setExportOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<SecurityChange | null>(null);
 
-  const subtitle = isPlatform
-    ? "Global threat detection, cross-tenant authentication failures, and brute-force mitigation"
-    : `Access policy enforcement, login security, and credential safety for ${activeTenantName || "this organization"}`;
+  const handleSelectSignal = (signal: SecurityAttentionSignal) => {
+    // If signal corresponds to an audit event, construct a detail representation
+    setSelectedEvent({
+      id: signal.id,
+      eventType: signal.type,
+      httpMethod: null,
+      endpoint: null,
+      entityType: "SecurityEvent",
+      entityId: null,
+      username: signal.actor || null,
+      isAdmin: false,
+      ipAddress: signal.ipAddress || null,
+      isSuccess: signal.status === "success",
+      errorMessage: signal.description,
+      timestamp: signal.timestamp,
+      tenantId: null,
+    });
+  };
 
   return (
-    <div className="space-y-6">
-      {isStandalone && (
-        <PageHeader
-          icon={Shield}
-          title={title}
-          description={subtitle}
-          actions={
-            <>
-              <Badge variant="outline" className="px-2.5 py-1 text-xs">
-                {isPlatform ? "Platform SOC" : "Tenant Security"}
-              </Badge>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setExportOpen(true)}
-                className="gap-1.5"
-              >
-                <FileDown className="h-4 w-4" aria-hidden="true" />
-                {t("export.button")}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => theme.setIsStudioOpen(true)}
-                className="gap-1.5"
-              >
-                <Settings2 className="h-4 w-4" aria-hidden="true" />
-                {t("dashboard.studio.openButton")}
-              </Button>
-            </>
-          }
-        />
-      )}
-
-      {/* Threat Summary Cards */}
-      <ThreatSummaryCards
-        data={vm.threats.data}
-        isLoading={vm.threats.isLoading}
-        error={vm.threats.error}
-        onRetry={() => vm.threats.refetch()}
-        cardClasses={cardClasses}
+    <div className="w-full select-none space-y-5 pb-10">
+      {/* 1. Header with Time Horizon, Posture Status, Refresh & Actions */}
+      <SecurityHeader
+        timeRange={vm.timeRange}
+        setTimeRange={vm.setTimeRange}
+        isRefetching={vm.isRefetching}
+        onRefresh={vm.refetchAll}
+        status={vm.kpis.securityStatus}
+        statusLabel={vm.kpis.statusLabel}
+        onOpenExport={() => setExportOpen(true)}
+        onOpenStudio={() => theme.setIsStudioOpen(true)}
       />
 
-      {/* Charts + Timeline Row */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <FailedLoginsHeatmap
-          data={vm.failedLogins.data}
-          isLoading={vm.failedLogins.isLoading}
-          error={vm.failedLogins.error}
-          onRetry={() => vm.failedLogins.refetch()}
-          cardClasses={cardClasses}
-        />
-        <SecurityTimeline
-          data={vm.timeline.data ?? []}
-          isLoading={vm.timeline.isLoading}
-          error={vm.timeline.error}
-          onRetry={() => vm.timeline.refetch()}
-          cardClasses={cardClasses}
-        />
+      {/* 2. Security Posture KPI Strip */}
+      <SecurityPostureKpiCards kpis={vm.kpis} isLoading={vm.isLoading} cardClasses={cardClasses} />
+
+      {/* 3. Trends & Attention Row */}
+      <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-7">
+          <SecurityTrendsChart
+            data={vm.loginActivity}
+            isLoading={vm.isLoading}
+            onRetry={vm.refetchAll}
+            cardClasses={cardClasses}
+          />
+        </div>
+        <div className="lg:col-span-5">
+          <SecurityAttentionPanel
+            signals={vm.attentionSignals}
+            isLoading={vm.isLoading}
+            onRetry={vm.refetchAll}
+            cardClasses={cardClasses}
+            onSelectSignal={handleSelectSignal}
+          />
+        </div>
       </div>
 
-      {/* Blocked IPs Table */}
-      <BlockedIPsTable
-        data={vm.blockedIPs.data ?? []}
-        isLoading={vm.blockedIPs.isLoading}
-        error={vm.blockedIPs.error}
-        onRetry={() => vm.blockedIPs.refetch()}
-        cardClasses={cardClasses}
+      {/* 4. Authentication Methods & Active Sessions Row */}
+      <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <AuthMethodsPosture methods={vm.authMethods} cardClasses={cardClasses} />
+        </div>
+        <div className="lg:col-span-7">
+          <ActiveSessionsTable
+            sessions={vm.activeSessions}
+            isLoading={vm.isLoading}
+            onRevokeSession={vm.revokeSession}
+            isRevoking={vm.isRevoking}
+            onRetry={vm.refetchAll}
+            cardClasses={cardClasses}
+          />
+        </div>
+      </div>
+
+      {/* 5. Security Policies Posture & Recent Events Row */}
+      <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <SecurityPoliciesCard policies={vm.securityPolicies} cardClasses={cardClasses} />
+        </div>
+        <div className="lg:col-span-7">
+          <RecentSecurityEventsTable
+            events={vm.recentChanges}
+            isLoading={vm.isLoading}
+            onSelectEvent={setSelectedEvent}
+            onRetry={vm.refetchAll}
+            cardClasses={cardClasses}
+          />
+        </div>
+      </div>
+
+      {/* Event Details Drawer for Investigation */}
+      <EventDetailsDrawer
+        event={selectedEvent}
+        open={Boolean(selectedEvent)}
+        onOpenChange={(open) => !open && setSelectedEvent(null)}
       />
 
+      {/* Report Export Dialog */}
       <ReportExportDialog
         open={exportOpen}
         onClose={() => setExportOpen(false)}
@@ -144,20 +150,18 @@ export function SecurityDashboardView() {
         descriptionKey="export.security.description"
       />
 
-      {/* Dashboard Studio Panel (Standalone only) */}
-      {isStandalone && (
-        <DashboardStudioPanel
-          open={theme.isStudioOpen}
-          onClose={() => theme.setIsStudioOpen(false)}
-          draft={theme.draft}
-          onUpdateNested={theme.updateNested}
-          onSave={theme.saveDraft}
-          onDiscard={theme.discardDraft}
-          onReset={theme.resetToDefault}
-          isSaving={theme.isSaving}
-          onBuilderCanvasChange={(canvas) => theme.updateDraft("builderCanvas", canvas)}
-        />
-      )}
+      {/* Dashboard Studio Panel */}
+      <DashboardStudioPanel
+        open={theme.isStudioOpen}
+        onClose={() => theme.setIsStudioOpen(false)}
+        draft={theme.draft}
+        onUpdateNested={theme.updateNested}
+        onSave={theme.saveDraft}
+        onDiscard={theme.discardDraft}
+        onReset={theme.resetToDefault}
+        isSaving={theme.isSaving}
+        onBuilderCanvasChange={(canvas) => theme.updateDraft("builderCanvas", canvas)}
+      />
     </div>
   );
 }

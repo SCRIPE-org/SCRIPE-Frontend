@@ -74,7 +74,9 @@ function responseRejectedHandler(service: ApiService): RejectedHandler {
 
   const rejected = handlers.find((entry) => typeof entry?.rejected === "function")?.rejected;
   if (!rejected) {
-    throw new Error("ApiService registered no response rejection handler — interceptor wiring moved");
+    throw new Error(
+      "ApiService registered no response rejection handler — interceptor wiring moved"
+    );
   }
   return rejected;
 }

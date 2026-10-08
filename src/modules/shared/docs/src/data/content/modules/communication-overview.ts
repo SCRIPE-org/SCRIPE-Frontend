@@ -102,8 +102,16 @@ const sections: DocSection[] = [
       { id: "C", label: "Interpolate Liquid/Scriban variables with event payload", type: "info" },
       { id: "D", label: "Select Primary Channel (e.g. Twilio SMS)", type: "primary" },
       { id: "E", label: "Dispatch attempt; verify HTTP status & webhook receipt", type: "warning" },
-      { id: "F", label: "If failed: Route to secondary fallback channel (e.g. Unifonic)", type: "danger" },
-      { id: "G", label: "Record immutable SentSmsLog & DeliveryAttempt audit record", type: "success" },
+      {
+        id: "F",
+        label: "If failed: Route to secondary fallback channel (e.g. Unifonic)",
+        type: "danger",
+      },
+      {
+        id: "G",
+        label: "Record immutable SentSmsLog & DeliveryAttempt audit record",
+        type: "success",
+      },
     ],
     connections: [
       { from: "A", to: "B" },

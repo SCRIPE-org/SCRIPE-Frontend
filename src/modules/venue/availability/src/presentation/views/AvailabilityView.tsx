@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from "react";
 import { AlertCircle, CalendarClock } from "lucide-react";
@@ -16,8 +16,11 @@ import { useAvailabilityViewModel } from "../viewmodels/useAvailabilityViewModel
 import { ResourceBlocksPanel } from "../components/ResourceBlocksPanel";
 import { WeeklyWindowsEditorCard } from "../components/WeeklyWindowsEditorCard";
 import { AvailabilitySearchCard } from "../components/AvailabilitySearchCard";
-import { VenueResourceNav } from "@modules/venue/shared/src/presentation/components/VenueResourceNav";
+import { VenueResourceNav } from "@modules/venue";
 
+/**
+ * Documentation for module export
+ */
 export const AvailabilityView = React.memo(function AvailabilityView() {
   useModuleLocales(() => import("../../../locales"), "venue.availability");
   const { t } = useI18n();
@@ -76,7 +79,7 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
           options={resourceOptions}
           value={vm.selectedResourceId}
           onValueChange={(value: string | string[]) =>
-            vm.setSelectedResourceId(Array.isArray(value) ? value[0] ?? "" : value)
+            vm.setSelectedResourceId(Array.isArray(value) ? (value[0] ?? "") : value)
           }
           placeholder={t("availability.selectResource")}
         />
@@ -122,11 +125,7 @@ export const AvailabilityView = React.memo(function AvailabilityView() {
               onTimeZoneChange={setTimeZoneId}
             />
 
-            <AvailabilitySearchCard
-              vm={vm}
-              timeZoneId={timeZoneId}
-              canSearch={canSearch}
-            />
+            <AvailabilitySearchCard vm={vm} timeZoneId={timeZoneId} canSearch={canSearch} />
           </div>
 
           <ResourceBlocksPanel

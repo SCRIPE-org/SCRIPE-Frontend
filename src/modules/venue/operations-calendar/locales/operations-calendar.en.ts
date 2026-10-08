@@ -17,10 +17,13 @@ export const en = {
       resource: "Resource",
       emptySlot: "Create booking for {{resource}} at {{time}}",
       bookingLabel: "Open {{reference}}, {{status}}, {{start}} to {{end}} on {{resource}}",
-      noOccupancy: "No active occupancy for this day. Select an empty time cell to start a booking.",
+      noOccupancy:
+        "No active occupancy for this day. Select an empty time cell to start a booking.",
       currentTime: "Current time",
-      truncatedResources: "Only the first 50 resources are shown. Select one resource to narrow the view.",
-      truncatedBlocks: "The calendar result reached its 500-block limit. Narrow the resource filter.",
+      truncatedResources:
+        "Only the first 50 resources are shown. Select one resource to narrow the view.",
+      truncatedBlocks:
+        "The calendar result reached its 500-block limit. Narrow the resource filter.",
     },
     status: {
       Held: "Held",
@@ -50,11 +53,13 @@ export const en = {
     },
     empty: {
       title: "No schedulable resources",
-      description: "No published leaf resources are available for the selected Facility and timezone.",
+      description:
+        "No published leaf resources are available for the selected Facility and timezone.",
     },
     permission: {
       title: "Operations calendar access required",
-      description: "You need reservation, Facility, profile, and schedulable-resource read permissions.",
+      description:
+        "You need reservation, Facility, profile, and schedulable-resource read permissions.",
     },
     feature: {
       title: "Operations calendar unavailable",

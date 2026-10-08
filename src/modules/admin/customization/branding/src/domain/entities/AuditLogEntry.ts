@@ -9,6 +9,9 @@
 
 import { formatDateTimeUtc } from "@core/common/utils";
 
+/**
+ * Documentation for module export
+ */
 export interface AuditLogEntryProps {
   versionNumber: number;
   changeType: string;

@@ -84,6 +84,9 @@ import { TimezonePicker } from "./TimezonePicker";
 import { isFieldRequired, type FieldConfig } from "@core/ui/forms/generic-form";
 import type { CustomFieldDateTimeValue } from "../../../../../custom-field-value/src/data/models/CustomFieldValueModel";
 
+/**
+ * Documentation for module export
+ */
 export interface DateTimeCustomFieldControlProps {
   fc: FieldConfig;
   value: unknown;
@@ -95,6 +98,9 @@ export interface DateTimeCustomFieldControlProps {
   error?: string;
 }
 
+/**
+ * Documentation for DateTimeCustomFieldControl
+ */
 export function DateTimeCustomFieldControl({
   fc,
   value,
@@ -137,7 +143,7 @@ export function DateTimeCustomFieldControl({
       <Label htmlFor={fc.name} className="text-sm font-medium">
         {fc.label}
         {isRequired && (
-          <span className="text-destructive ms-1" aria-hidden="true">
+          <span className="ms-1 text-destructive" aria-hidden="true">
             *
           </span>
         )}

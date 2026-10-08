@@ -1,11 +1,17 @@
 import type { Facility } from "../entities/Facility";
 
+/**
+ * Documentation for module export
+ */
 export interface FacilityListParams {
   page: number;
   pageSize: number;
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IFacilityRepository {
   getAll(params: FacilityListParams): Promise<{
     items: Facility[];

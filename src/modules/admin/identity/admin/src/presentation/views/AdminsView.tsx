@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/exhaustive-deps, unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
 /**
  * Admins View
@@ -93,6 +94,7 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
   const [resetPasswordDialogOpen, setResetPasswordDialogOpen] = useState(false);
   const [manualSetupDialogOpen, setManualSetupDialogOpen] = useState(false);
   const [assignToGroupDialogOpen, setAssignToGroupDialogOpen] = useState(false);
+  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
   // Bulk state
   const [selectedBulkAdminIds, setSelectedBulkAdminIds] = useState<string[]>([]);
@@ -170,7 +172,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           sortable: true,
           render: (_val: unknown, admin: Admin) => (
             <div className="flex items-center gap-2">
-              <span className={cn(!admin.username && "text-nx-ink-3")}>{admin.username || "—"}</span>
+              <span className={cn(!admin.username && "text-nx-ink-3")}>
+                {admin.username || "—"}
+              </span>
               {admin.hasGuardianProtection && (
                 <TooltipProvider>
                   <Tooltip>
@@ -194,7 +198,9 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
           key: "name",
           label: t("admin.name"),
           render: (_val: unknown, admin: Admin) => (
-            <span className={cn(!admin.displayName && "text-nx-ink-3")}>{admin.displayName || "—"}</span>
+            <span className={cn(!admin.displayName && "text-nx-ink-3")}>
+              {admin.displayName || "—"}
+            </span>
           ),
         },
         {
@@ -459,8 +465,6 @@ export function AdminsView({ tenantId }: AdminsViewProps = {}) {
       handleBulkDelete,
     ]
   );
-
-  const [transferDialogOpen, setTransferDialogOpen] = useState(false);
 
   return (
     <>

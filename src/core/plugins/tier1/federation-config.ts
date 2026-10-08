@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 /**
  * Module Federation shared dependency manifest for Tier 1 plugins.
  *

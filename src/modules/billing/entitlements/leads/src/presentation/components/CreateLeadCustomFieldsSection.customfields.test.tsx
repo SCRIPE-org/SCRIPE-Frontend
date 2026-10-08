@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // CreateLeadCustomFieldsSection -- Wave 2 Step 2.2, Task 11
 //
 // This site had NO component-level test coverage at all before this task --

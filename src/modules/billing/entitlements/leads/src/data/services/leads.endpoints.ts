@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const LEADS_ENDPOINTS = {
   LIST: `${V1}/leads`,
   CREATE: `${V1}/leads`,

@@ -85,7 +85,10 @@ export function ForgotPasswordView() {
       {/* Masthead — the brand stays present on every auth surface */}
       <div className="absolute start-6 top-6 z-20 flex items-center gap-2.5">
         <Image src="/brand/app-logo.svg" alt="" width={28} height={28} aria-hidden="true" />
-        <span className="text-base font-semibold tracking-tight" style={{ color: "var(--sx-text)" }}>
+        <span
+          className="text-base font-semibold tracking-tight"
+          style={{ color: "var(--sx-text)" }}
+        >
           {companyName}
         </span>
       </div>

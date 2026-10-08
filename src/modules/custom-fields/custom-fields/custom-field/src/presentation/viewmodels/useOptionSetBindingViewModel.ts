@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Option-set binding for one custom field -- the missing consumer P-4's backend shipped with no
  * caller. `OptionSetService.bind/rebind/unbind` have existed, tested, since that wave; nothing in the
@@ -49,6 +50,9 @@ export interface OptionSetBindingTarget {
   fieldLabel: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function fieldVersionsQueryKey(fieldId: string) {
   return ["customField", "versions", fieldId] as const;
 }
@@ -65,6 +69,9 @@ export function resolveActiveFieldVersion(
   return versions.find((version) => version.status === "Published") ?? null;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useOptionSetBindingViewModel() {
   const { customFieldRepository, optionSetRepository } = getCustomFieldsContainer();
   const { t } = useI18n();
@@ -109,10 +116,7 @@ export function useOptionSetBindingViewModel() {
   const sets = optionSets.sets;
 
   /** Readable AND published -- see `OptionSet.isBindable`'s own doc comment for why `isSystemManaged` is not part of this filter. */
-  const bindableSets: OptionSet[] = useMemo(
-    () => sets.filter((set) => set.isBindable),
-    [sets]
-  );
+  const bindableSets: OptionSet[] = useMemo(() => sets.filter((set) => set.isBindable), [sets]);
 
   /**
    * The set the active version is bound to right now, resolved by matching its
@@ -148,8 +152,13 @@ export function useOptionSetBindingViewModel() {
   );
 
   const bindMutation = useMutation({
-    mutationFn: ({ fieldVersionId, optionSetVersionId }: { fieldVersionId: string; optionSetVersionId: string }) =>
-      optionSetRepository.bind(fieldVersionId, optionSetVersionId),
+    mutationFn: ({
+      fieldVersionId,
+      optionSetVersionId,
+    }: {
+      fieldVersionId: string;
+      optionSetVersionId: string;
+    }) => optionSetRepository.bind(fieldVersionId, optionSetVersionId),
     onSuccess: (outcome) => {
       invalidateAfterBindingChange();
       toast.success(describeOutcome("customField.optionSetBinding.toast.bound", outcome));
@@ -163,8 +172,13 @@ export function useOptionSetBindingViewModel() {
   });
 
   const rebindMutation = useMutation({
-    mutationFn: ({ fieldVersionId, optionSetVersionId }: { fieldVersionId: string; optionSetVersionId: string }) =>
-      optionSetRepository.rebind(fieldVersionId, optionSetVersionId),
+    mutationFn: ({
+      fieldVersionId,
+      optionSetVersionId,
+    }: {
+      fieldVersionId: string;
+      optionSetVersionId: string;
+    }) => optionSetRepository.rebind(fieldVersionId, optionSetVersionId),
     onSuccess: (outcome) => {
       invalidateAfterBindingChange();
       toast.success(describeOutcome("customField.optionSetBinding.toast.switched", outcome));
@@ -213,7 +227,10 @@ export function useOptionSetBindingViewModel() {
         return false;
       }
       try {
-        await bindMutation.mutateAsync({ fieldVersionId: fieldVersionId as string, optionSetVersionId });
+        await bindMutation.mutateAsync({
+          fieldVersionId: fieldVersionId as string,
+          optionSetVersionId,
+        });
         return true;
       } catch {
         return false;
@@ -230,7 +247,10 @@ export function useOptionSetBindingViewModel() {
         return false;
       }
       try {
-        await rebindMutation.mutateAsync({ fieldVersionId: fieldVersionId as string, optionSetVersionId });
+        await rebindMutation.mutateAsync({
+          fieldVersionId: fieldVersionId as string,
+          optionSetVersionId,
+        });
         return true;
       } catch {
         return false;
@@ -248,7 +268,9 @@ export function useOptionSetBindingViewModel() {
   const attach = useCallback(
     async (optionSetVersionId: string): Promise<boolean> => {
       if (optionSetVersionId === boundOptionSetVersionId) return true;
-      return boundOptionSetVersionId === null ? bind(optionSetVersionId) : rebind(optionSetVersionId);
+      return boundOptionSetVersionId === null
+        ? bind(optionSetVersionId)
+        : rebind(optionSetVersionId);
     },
     [boundOptionSetVersionId, bind, rebind]
   );

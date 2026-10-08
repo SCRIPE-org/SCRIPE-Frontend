@@ -18,9 +18,12 @@ interface CreateTenantPromoFieldProps {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantPromoField({ vm, t }: CreateTenantPromoFieldProps) {
   return (
-    <div className="space-y-2 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0 motion-safe:slide-in-from-bottom-2">
+    <div className="space-y-2 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in motion-safe:slide-in-from-bottom-2">
       <Label>{t("tenant.promoCode")}</Label>
       <Input
         value={vm.form.promoCode}
@@ -37,7 +40,7 @@ export function CreateTenantPromoField({ vm, t }: CreateTenantPromoFieldProps) {
               <button
                 key={promo.id}
                 type="button"
-                className="rounded-full transition-colors duration-nx-micro ease-nx-enter focus-visible:outline-none focus-visible:shadow-nx-focus motion-reduce:transition-none"
+                className="rounded-full transition-colors duration-nx-micro ease-nx-enter focus-visible:shadow-nx-focus focus-visible:outline-none motion-reduce:transition-none"
                 aria-pressed={isSelected}
                 onClick={() => {
                   if (isSelected) {

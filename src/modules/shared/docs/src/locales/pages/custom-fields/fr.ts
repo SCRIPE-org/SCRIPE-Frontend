@@ -86,16 +86,21 @@ export const fr = {
             "Le type d'enregistrement auquel le champ appartient — personnes, membres du personnel, réservations, etc.",
           partKey:
             "Le nom machine, utilisé dans les messages d'erreur et les exports. En minuscules, commence par une lettre, uniquement des lettres, des chiffres et des tirets bas.",
-          partValueType: "L'un des vingt-deux types, qui détermine ce qui peut être saisi et comment c'est vérifié.",
-          partLabelEn: "Le libellé anglais que les utilisateurs voient au-dessus du champ de saisie.",
-          partLabelAr: "Le libellé arabe, facultatif. Si vide, le libellé anglais est utilisé à la place.",
+          partValueType:
+            "L'un des vingt-deux types, qui détermine ce qui peut être saisi et comment c'est vérifié.",
+          partLabelEn:
+            "Le libellé anglais que les utilisateurs voient au-dessus du champ de saisie.",
+          partLabelAr:
+            "Le libellé arabe, facultatif. Si vide, le libellé anglais est utilisé à la place.",
           partPlaceholder:
             "Texte indicatif grisé, facultatif, affiché dans le champ vide, dans chaque langue.",
           partRequired: "Si un enregistrement peut être sauvegardé avec ce champ laissé vide.",
-          partSortOrder: "Où le champ se situe par rapport aux autres champs personnalisés du formulaire.",
+          partSortOrder:
+            "Où le champ se situe par rapport aux autres champs personnalisés du formulaire.",
           partFieldGroup: "L'en-tête facultatif sous lequel le champ est rassemblé.",
           partOptions: "La liste des réponses autorisées. Uniquement pour Select et MultiSelect.",
-          partValidator: "Une vérification de format supplémentaire facultative, plus son paramètre. Uniquement pour les champs Text.",
+          partValidator:
+            "Une vérification de format supplémentaire facultative, plus son paramètre. Uniquement pour les champs Text.",
           partReferenceTarget:
             "Le seul type d'enregistrement vers lequel les valeurs de ce champ peuvent pointer, ou rien pour laisser chaque valeur choisir le sien. Uniquement pour les champs Entity Reference.",
           partSensitivity:
@@ -210,7 +215,8 @@ export const fr = {
             "Les vingt-deux types de valeur des champs personnalisés : ce que chacun stocke, exactement ce qu'il accepte et rejette, des exemples de saisie, et les codes d'erreur que le produit renvoie.",
           intro:
             "Chaque champ personnalisé a exactement un type de valeur, choisi lors de la définition du champ. Le type de valeur détermine le contrôle qui apparaît sur le formulaire, ce que le produit accepte, comment la valeur est stockée et comment elle s'affiche ensuite. Cette page couvre les vingt-deux, un par un, avec des exemples de saisie acceptés et des exemples de saisie refusés. Dix-huit d'entre eux stockent ce que vous avez tapé ; les quatre autres stockent un pointeur à la place — deux vers un enregistrement situé ailleurs dans le produit, avec une page qui leur est propre, et deux vers un unique fichier ou image téléversé.",
-          permanentTitle: "Changer le type de valeur plus tard est une opération distincte et restreinte",
+          permanentTitle:
+            "Changer le type de valeur plus tard est une opération distincte et restreinte",
           permanentContent:
             "Neuf paires de types précises peuvent être converties après coup, depuis la propre action du champ dans le menu de ligne — voir la page Gestion des champs — mais toute autre paire est refusée d'emblée, et il ne faut pas compter sur la conversion pour rattraper un mauvais choix : choisissez le bon type dès le départ chaque fois que possible, car l'issue de loin la plus fréquente d'un mauvais choix reste de supprimer et recréer le champ, perdant du même coup les réponses déjà stockées pour lui.",
 
@@ -242,7 +248,8 @@ export const fr = {
             "Refusée : VALIDATION_MAX_LENGTH. Text s'arrête à 4 000 caractères — utilisez LongText pour tout ce qui est plus long.",
           textBlankOptional:
             "Acceptée, et stockée comme effacée. Une valeur composée uniquement d'espaces compte comme vide, donc un validateur éventuellement attaché ne s'exécute jamais dessus.",
-          textBlankRequired: "Refusée : VALIDATION_REQUIRED. Ici aussi, une valeur composée uniquement d'espaces compte comme vide.",
+          textBlankRequired:
+            "Refusée : VALIDATION_REQUIRED. Ici aussi, une valeur composée uniquement d'espaces compte comme vide.",
           exText4500: "Une valeur longue de 4 500 caractères",
           exSpacesOptional: "Trois espaces, sur un champ non Obligatoire",
           exSpacesRequired: "Trois espaces, sur un champ Obligatoire",
@@ -254,7 +261,8 @@ export const fr = {
             "Seul le plafond de 10 000 caractères s'applique. LongText ne peut pas porter de validateur. Le compteur à l'écran passe au rouge une fois le plafond dépassé, mais il ne vous empêche pas de continuer à taper — le refus survient à l'enregistrement.",
           longTextOk:
             "Acceptée. C'est bien au-delà du plafond de 4 000 caractères propre à Text, qui est la raison d'être de LongText.",
-          longTextTooLong: "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 10 000 caractères.",
+          longTextTooLong:
+            "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 10 000 caractères.",
           exLong6000: "Une description de 6 000 caractères",
           exLong12000: "Une description de 12 000 caractères",
 
@@ -264,7 +272,8 @@ export const fr = {
           selectChecks:
             "La valeur soumise doit correspondre exactement à l'une des options configurées pour le champ. Les deux côtés sont épurés des espaces avant comparaison, et la comparaison est sensible à la casse. Pour une liste d'options Small, Medium, Large :",
           selectOk: "Acceptée, et stockée telle quelle comme le texte de l'option.",
-          selectTrimmed: "Acceptée. Les espaces qui l'entourent sont supprimés avant la comparaison.",
+          selectTrimmed:
+            "Acceptée. Les espaces qui l'entourent sont supprimés avant la comparaison.",
           selectCase:
             "Refusée : VALIDATION_INVALID_FORMAT. La comparaison est sensible à la casse, donc Medium et medium sont des réponses différentes — ce qui signifie aussi que les deux peuvent légitimement exister comme deux options distinctes.",
           selectUnknown:
@@ -282,7 +291,8 @@ export const fr = {
             "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 19. Le sélecteur lui-même rend la vingtième option impossible à choisir, donc atteindre ce cas nécessite une requête qui contourne le formulaire.",
           multiDuplicate:
             "Refusée : VALIDATION_UNIQUE. Une réponse répétée est rejetée plutôt que silencieusement réduite à une seule.",
-          multiUnknown: "Refusée : VALIDATION_INVALID_FORMAT — Purple ne fait pas partie des options du champ.",
+          multiUnknown:
+            "Refusée : VALIDATION_INVALID_FORMAT — Purple ne fait pas partie des options du champ.",
           multiEmpty:
             "Traitée comme vide : effacée si le champ est facultatif, refusée avec VALIDATION_REQUIRED s'il est obligatoire.",
           exMultiTwo: "Blue, puis Red",
@@ -302,7 +312,7 @@ export const fr = {
             "Acceptée, et stockée avec six décimales. Toute précision plus fine n'est pas conservée.",
           numberInvalid:
             "Refusée : VALIDATION_INVALID_FORMAT — le message indique « expects a number ». Un nombre écrit en toutes lettres n'est pas analysé.",
-          exAboutForty: "\"about 40\"",
+          exAboutForty: '"about 40"',
 
           percentTitle: "Pourcentage [Percent]",
           percentStores:
@@ -310,11 +320,13 @@ export const fr = {
           percentChecks:
             "La valeur doit s'analyser comme un nombre et se situer entre 0 et 100. Elle est stockée exactement telle que saisie — c'est le détail à bien maîtriser si vous lisez un jour les données brutes ou construisez un export.",
           percentOk: "Acceptée, et affichée ensuite comme 25%.",
-          percentDecimal: "Acceptée, et affichée comme 33.5%. Les fractions de point de pourcentage sont conservées exactement.",
+          percentDecimal:
+            "Acceptée, et affichée comme 33.5%. Les fractions de point de pourcentage sont conservées exactement.",
           percentQuarter:
             "Acceptée — mais cela signifie un quart d'un pour cent, affiché comme 0.25%. Percent stocke le nombre que vous diriez à voix haute, jamais une fraction entre 0 et 1.",
           percentTooHigh: "Refusée : VALIDATION_RANGE, en nommant les bornes 0 et 100.",
-          percentNegative: "Refusée : VALIDATION_RANGE. La borne inférieure est 0, et elle est incluse.",
+          percentNegative:
+            "Refusée : VALIDATION_RANGE. La borne inférieure est 0, et elle est incluse.",
 
           ratingTitle: "Note [Rating]",
           ratingStores:
@@ -336,7 +348,8 @@ export const fr = {
             "Un montant accompagné de son code de devise à trois lettres, conservé comme deux champs de saisie indépendants à l'intérieur d'un même groupe libellé. S'affiche ensuite selon le formatage numérique propre au lecteur, en montrant le code plutôt qu'un symbole afin que EUR et USD ne soient jamais ambigus.",
           currencyChecks:
             "Les deux parties sont exigées ensemble. Le montant doit s'analyser comme un nombre ; le code doit être exactement trois lettres ASCII majuscules. Le champ du code se met en majuscules et filtre les lettres au fur et à mesure de la saisie, car la vérification elle-même ne convertit pas les minuscules — elle les rejette.",
-          currencyOk: "Acceptée. S'affiche comme le montant accompagné du code, par exemple USD 100.50.",
+          currencyOk:
+            "Acceptée. S'affiche comme le montant accompagné du code, par exemple USD 100.50.",
           currencyLower:
             "Refusée si elle atteint un jour le serveur : VALIDATION_INVALID_FORMAT, en nommant l'exigence des trois lettres de la norme ISO 4217. Dans le formulaire lui-même, le champ force les majuscules au fur et à mesure de la saisie, donc vous ne verrez normalement pas ce cas.",
           currencyNoCode:
@@ -365,7 +378,8 @@ export const fr = {
           durationZero: "Acceptée. Zéro est une réponse réelle, pas une réponse vide.",
           durationLarge:
             "Acceptée — 5 400 minutes, soit trois jours et demi. Rien ne vous avertit, car il n'y a pas de maximum.",
-          durationNegative: "Refusée : VALIDATION_RANGE, avec un message indiquant que la valeur ne doit pas être négative.",
+          durationNegative:
+            "Refusée : VALIDATION_RANGE, avec un message indiquant que la valeur ne doit pas être négative.",
 
           groupDateTitle: "Dates et heures",
           dateTitle: "Date [Date]",
@@ -373,19 +387,22 @@ export const fr = {
             "Une date calendaire sans aucune composante horaire — un anniversaire, une date de contrat, une expiration. S'affiche comme un sélecteur de date.",
           dateChecks:
             "La seule vérification est que la valeur s'analyse comme une date. Comme la valeur stockée est une simple date calendaire plutôt qu'un instant précis, elle se relit identiquement pour chaque lecteur, quel que soit son fuseau horaire.",
-          dateOk: "Acceptée, et relue comme la même date calendaire pour chaque lecteur, où qu'il soit.",
+          dateOk:
+            "Acceptée, et relue comme la même date calendaire pour chaque lecteur, où qu'il soit.",
           dateNoTime:
             "Ignorée. Date ne contient aucune composante horaire, donc une heure soumise en même temps que la date n'est tout simplement pas stockée. Utilisez DateTime lorsque l'heure compte.",
-          dateInvalid: "Refusée : VALIDATION_INVALID_FORMAT — le message indique « expects a date ».",
+          dateInvalid:
+            "Refusée : VALIDATION_INVALID_FORMAT — le message indique « expects a date ».",
           exDateWithTime: "Une date à laquelle est rattachée une composante horaire",
-          exNotADate: "\"next Tuesday\"",
+          exNotADate: '"next Tuesday"',
 
           dateTimeTitle: "Date et heure [DateTime]",
           dateTimeStores:
             "Un instant précis accompagné du fuseau horaire auquel il appartient. Les deux moitiés sont stockées, de sorte qu'un coup d'envoi à 18:00 au Caire se relit toujours comme 18:00 au Caire pour quelqu'un qui le consulte depuis Londres.",
           dateTimeChecks:
             "L'instant doit s'analyser correctement, et le fuseau horaire doit être un identifiant de fuseau que le serveur reconnaît — en pratique un identifiant IANA tel que « Africa/Cairo », bien que la vérification sous-jacente dépende de la plateforme : un déploiement hébergé sous Windows accepte aussi un identifiant Windows natif tel que « Egypt Standard Time ». Le fuseau est exigé dès que l'une des deux moitiés est présente — un instant sans fuseau est refusé, jamais interprété silencieusement. Le formulaire affiche le fuseau comme une petite indication à côté de l'heure saisie, avec un lien Change qui ouvre un sélecteur permettant la recherche.",
-          dateTimeOk: "Acceptée. L'instant et son fuseau sont tous deux relus exactement tels que saisis.",
+          dateTimeOk:
+            "Acceptée. L'instant et son fuseau sont tous deux relus exactement tels que saisis.",
           dateTimeNoZone:
             "Refusée : VALIDATION_INVALID_TIMEZONE. Un instant sans fuseau est exactement ce que DateTime existe pour empêcher.",
           dateTimeBadZone:
@@ -402,10 +419,12 @@ export const fr = {
             "Une heure du jour sur une horloge 24 heures, secondes comprises, sans date associée — une heure d'ouverture, un couvre-feu, un créneau de coup d'envoi. S'affiche comme un sélecteur d'heure natif avec les secondes activées, puis se présente ensuite dans le format horaire local propre à chaque lecteur.",
           timeChecks:
             "La valeur doit être des heures, minutes et secondes séparées par des deux-points, avec des heures de 0 à 23, des minutes de 0 à 59 et des secondes de 0 à 59. Une saisie sans zéros de tête est acceptée et normalisée plutôt que refusée.",
-          timeOk: "Acceptée, et affichée dans le format propre au lecteur — par exemple 2:30:00 PM pour un lecteur en anglais (États-Unis).",
+          timeOk:
+            "Acceptée, et affichée dans le format propre au lecteur — par exemple 2:30:00 PM pour un lecteur en anglais (États-Unis).",
           timeNormalised:
             "Acceptée, et normalisée en 09:05:00 avant stockage. Deux soumissions de la même heure écrites avec des largeurs de chiffres différentes finissent toujours identiques.",
-          timeHourRange: "Refusée : VALIDATION_INVALID_FORMAT. Les heures vont de 0 à 23, donc 24 est hors plage.",
+          timeHourRange:
+            "Refusée : VALIDATION_INVALID_FORMAT. Les heures vont de 0 à 23, donc 24 est hors plage.",
           timeMinuteRange: "Refusée : VALIDATION_INVALID_FORMAT. Les minutes vont de 0 à 59.",
           timeAmPm:
             "Refusée : VALIDATION_INVALID_FORMAT. Le texte sur 12 heures n'est pas analysé — la forme stockée est toujours sur 24 heures, même si l'affichage ne l'est pas.",
@@ -421,7 +440,7 @@ export const fr = {
           emailDisplayName:
             "Refusée : VALIDATION_INVALID_EMAIL. Une enveloppe avec nom d'affichage s'analyse comme une adresse mais est rejetée plutôt que silencieusement dépouillée, car un champ Email n'a aucun nom d'affichage à conserver.",
           emailInvalid: "Refusée : VALIDATION_INVALID_EMAIL.",
-          exEmailDisplayName: "\"Test User <test@example.com>\"",
+          exEmailDisplayName: '"Test User <test@example.com>"',
 
           urlTitle: "Url [Url]",
           urlStores:
@@ -444,14 +463,17 @@ export const fr = {
             "La valeur stockée doit commencer par un +, son premier chiffre ne doit pas être zéro, et elle doit contenir entre 8 et 15 chiffres au total. C'est une vérification de forme uniquement.",
           phoneOk: "Acceptée, et affichée reformatée plutôt que comme la chaîne brute stockée.",
           phoneNoPlus: "Refusée : VALIDATION_INVALID_FORMAT. Le + initial fait partie du format.",
-          phoneLeadingZero: "Refusée : VALIDATION_INVALID_FORMAT. Un indicatif de pays ne commence jamais par zéro.",
-          phoneTooShort: "Refusée : VALIDATION_INVALID_FORMAT. Sept chiffres, c'est en dessous du minimum de huit.",
+          phoneLeadingZero:
+            "Refusée : VALIDATION_INVALID_FORMAT. Un indicatif de pays ne commence jamais par zéro.",
+          phoneTooShort:
+            "Refusée : VALIDATION_INVALID_FORMAT. Sept chiffres, c'est en dessous du minimum de huit.",
           phoneUnassignable:
             "Acceptée par le serveur, qui ne vérifie que la forme et non si le numéro pourrait réellement exister. Le sélecteur du formulaire vérifie en plus les chiffres par rapport au plan de numérotation réel du pays sélectionné, donc vous ne pouvez pas construire cette valeur via l'interface — seulement via une requête qui contourne le formulaire.",
 
           groupOtherTitle: "Oui/non et couleur",
           booleanTitle: "Valeur booléenne [Boolean]",
-          booleanStores: "Un simple oui ou non. S'affiche comme un interrupteur marche/arrêt. N'a ni texte indicatif ni options.",
+          booleanStores:
+            "Un simple oui ou non. S'affiche comme un interrupteur marche/arrêt. N'a ni texte indicatif ni options.",
           booleanChecks:
             "Seuls les mots true et false sont analysés, quelle que soit la casse. Rien d'autre n'est traité comme un synonyme.",
           boolTrue: "Acceptée.",
@@ -465,12 +487,15 @@ export const fr = {
             "Une couleur, stockée sous forme de valeur hexadécimale. S'affiche comme une grille de vingt pastilles plus une saisie hexadécimale personnalisée, puis se présente ensuite comme le texte hexadécimal accompagné d'une petite pastille de couleur correspondante.",
           colorChecks:
             "La valeur doit être un # suivi d'exactement trois ou exactement six chiffres hexadécimaux. La casse est normalisée en minuscules à l'enregistrement ; la longueur ne l'est pas.",
-          colorOk: "Acceptée, et stockée comme #aabbcc. Les majuscules sont ramenées en minuscules.",
+          colorOk:
+            "Acceptée, et stockée comme #aabbcc. Les majuscules sont ramenées en minuscules.",
           colorShort:
             "Acceptée, et conservée telle quelle comme #abc. La forme abrégée n'est jamais développée en #aabbcc, même si un moteur de rendu traite les deux comme la même couleur — de sorte que la même couleur peut légitimement être stockée de deux façons selon les enregistrements.",
           colorNoHash: "Refusée : VALIDATION_INVALID_FORMAT. Le # initial est obligatoire.",
-          colorBadLength: "Refusée : VALIDATION_INVALID_FORMAT. Trois ou six chiffres, rien entre les deux.",
-          colorNamed: "Refusée : VALIDATION_INVALID_FORMAT. Les noms de couleur ne sont pas acceptés, seulement les valeurs hexadécimales.",
+          colorBadLength:
+            "Refusée : VALIDATION_INVALID_FORMAT. Trois ou six chiffres, rien entre les deux.",
+          colorNamed:
+            "Refusée : VALIDATION_INVALID_FORMAT. Les noms de couleur ne sont pas acceptés, seulement les valeurs hexadécimales.",
 
           groupReferenceTitle: "Références vers un autre enregistrement",
           referenceGroupIntro:
@@ -502,7 +527,8 @@ export const fr = {
           exRefWrongType: "Une personne, sur un champ épinglé aux membres du personnel",
           exRefUnknownType: "Un type d'enregistrement qui n'est pas enregistré",
           exRefEdited: "Une identité stockée modifiée d'un caractère",
-          exRefNoAccess: "Un enregistrement d'un type que vous n'êtes peut-être pas autorisé à consulter",
+          exRefNoAccess:
+            "Un enregistrement d'un type que vous n'êtes peut-être pas autorisé à consulter",
           exRefBothBlank: "Les deux parties laissées vides",
 
           userReferenceTitle: "Référence d'utilisateur [UserReference]",
@@ -510,7 +536,8 @@ export const fr = {
             "Un pointeur vers un compte utilisateur — assigné à, révisé par, gestionnaire de compte. S'affiche comme un sélecteur avec recherche sur les comptes utilisateurs, et n'affiche jamais de contrôle pour choisir un type d'enregistrement, puisqu'il n'y en a qu'un.",
           userReferenceChecks:
             "Toutes les vérifications que fait EntityReference, plus une règle plus étroite : le seul type d'enregistrement accepté est un compte utilisateur. Cette liste est fixée par la plateforme plutôt que par la configuration, et une tentative de pointer ce type vers autre chose est refusée aussi bien lorsqu'une définition est configurée que lorsqu'une valeur est enregistrée.",
-          usrOk: "Acceptée, exactement comme l'est une EntityReference. La réponse est autodescriptive de la même façon.",
+          usrOk:
+            "Acceptée, exactement comme l'est une EntityReference. La réponse est autodescriptive de la même façon.",
           usrDormant:
             "Acceptée. Un compte verrouillé est dormant plutôt que supprimé : il existe toujours, il est toujours proposé par le sélecteur avec un marqueur d'inactivité, et c'est une réponse légitime pour quelque chose qui s'est déjà produit.",
           usrAdminRefused:
@@ -536,7 +563,8 @@ export const fr = {
           fileChecks:
             "Une valeur stockée n'est acceptée que lorsque le fichier référencé est véritablement rattaché à l'enregistrement que vous modifiez — une vérification de sécurité qui empêche un fichier destiné à un enregistrement d'être pointé depuis un autre. Rattacher un nouveau fichier depuis cet écran n'est pas encore possible : le champ peut être défini dès aujourd'hui, et une valeur existante peut être consultée ou effacée, mais le remplir pour la première fois arrivera dans une future version.",
           fileAttachedExample: "Un enregistrement dont le champ File contient déjà une valeur",
-          fileAttachedOutcome: "Affiché comme rattaché, avec un contrôle Clear. Il n'existe actuellement aucun contrôle de rattachement à côté.",
+          fileAttachedOutcome:
+            "Affiché comme rattaché, avec un contrôle Clear. Il n'existe actuellement aucun contrôle de rattachement à côté.",
           fileClearExample: "Effacer un fichier rattaché, puis enregistrer",
           fileClearOutcome: "Acceptée — la valeur est supprimée.",
 
@@ -556,11 +584,14 @@ export const fr = {
           richTextOkExample: "Un paragraphe avec un mot en gras et une liste à puces",
           richTextOkOutcome: "Acceptée, et chaque élément est conservé.",
           richTextStyleExample: "Un contenu collé avec un style en ligne appliqué",
-          richTextStyleOutcome: "Acceptée, avec le style supprimé. Le texte visible et la structure sont conservés.",
+          richTextStyleOutcome:
+            "Acceptée, avec le style supprimé. Le texte visible et la structure sont conservés.",
           richTextImgExample: "Un contenu avec une image intégrée",
-          richTextImgOutcome: "Acceptée, avec l'image supprimée. Une image a sa place dans un champ File ou Image plutôt qu'ici.",
+          richTextImgOutcome:
+            "Acceptée, avec l'image supprimée. Une image a sa place dans un champ File ou Image plutôt qu'ici.",
           richTextTooLongExample: "Plus de 50 000 caractères de balisage",
-          richTextTooLongOutcome: "Refusée : VALIDATION_MAX_LENGTH — raccourcissez-le et réessayez.",
+          richTextTooLongOutcome:
+            "Refusée : VALIDATION_MAX_LENGTH — raccourcissez-le et réessayez.",
 
           emptyTitle: "Valeurs vides et l'interrupteur Required",
           emptyIntro:
@@ -568,8 +599,10 @@ export const fr = {
           empty1: "elle est totalement absente de l'enregistrement ;",
           empty2: "elle est vide, ou composée uniquement d'espaces ;",
           empty3: "pour MultiSelect, la liste des sélections est explicitement vide ;",
-          empty4: "pour DateTime, l'instant et le fuseau horaire sont tous deux absents — pas seulement l'un des deux ;",
-          empty5: "pour Currency, le montant et le code de devise sont tous deux absents — pas seulement l'un des deux ;",
+          empty4:
+            "pour DateTime, l'instant et le fuseau horaire sont tous deux absents — pas seulement l'un des deux ;",
+          empty5:
+            "pour Currency, le montant et le code de devise sont tous deux absents — pas seulement l'un des deux ;",
           empty6:
             "pour EntityReference, UserReference, File et Image, les deux moitiés du pointeur sont absentes — pas seulement l'une des deux.",
           emptyOutcome:
@@ -583,10 +616,12 @@ export const fr = {
             "Presque tous les refus sont une réponse HTTP 422 avec l'un de ces codes lisibles par une machine ; deux d'entre eux sont plutôt un 403, car ils concernent votre accès plutôt que la forme de ce que vous avez envoyé. Un troisième mérite d'être signalé à part : son nom de code se lit comme un 404, mais la réponse reste un 422 — voir la remarque à côté de lui ci-dessous. Si vous voyez un jour un 500 lors de l'enregistrement d'une valeur de champ personnalisé, c'est un défaut qui mérite d'être signalé — le chemin de validation est écrit pour refuser proprement, jamais pour échouer.",
           thCode: "Code",
           thWhenItFires: "Quand il se déclenche",
-          codeRequired: "Le champ est Obligatoire et la valeur soumise est vide ou composée uniquement d'espaces.",
+          codeRequired:
+            "Le champ est Obligatoire et la valeur soumise est vide ou composée uniquement d'espaces.",
           codeInvalidFormat:
             "La valeur ne correspond pas à la forme attendue par le type — un nombre, une date ou une heure inanalysable, une option absente de la liste, un protocole d'URL non autorisé, une forme de téléphone incorrecte, une couleur hexadécimale incorrecte, un code de devise incorrect, ou la plupart des échecs de validateur.",
-          codeInvalidEmail: "La valeur d'un champ Email n'est pas une véritable adresse, ou porte un nom d'affichage.",
+          codeInvalidEmail:
+            "La valeur d'un champ Email n'est pas une véritable adresse, ou porte un nom d'affichage.",
           codeInvalidTimezone:
             "Une valeur DateTime est dépourvue de fuseau horaire alors qu'un instant est présent, ou nomme un fuseau que le serveur ne reconnaît pas.",
           codeRange:
@@ -594,7 +629,8 @@ export const fr = {
           codeMaxLength:
             "Text au-delà de 4 000 caractères, LongText au-delà de 10 000, RichText au-delà de 50 000, un Email ou Url au-delà de 4 000, plus de 19 sélections MultiSelect, ou la borne supérieure d'un validateur Length Range.",
           codeMinLength: "La borne inférieure d'un validateur Length Range.",
-          codeUnique: "La même option MultiSelect a été soumise plus d'une fois dans un même enregistrement.",
+          codeUnique:
+            "La même option MultiSelect a été soumise plus d'une fois dans un même enregistrement.",
           codeUnknownEntityType:
             "Une référence nomme un type d'enregistrement qui n'est pas enregistré dans cette installation.",
           codeInvalidId:
@@ -647,7 +683,8 @@ export const fr = {
           featPermission: "Porte les permissions propres à la cible",
           featPermissionDesc:
             "Lire le nom nécessite la permission de consulter ce type d'enregistrement, pas la permission de consulter l'enregistrement qui porte le champ. Quelqu'un qui peut modifier l'enregistrement propriétaire mais ne peut pas lire le personnel voit qu'une référence est définie sans voir vers qui elle pointe.",
-          featSearch: "Consultable par recherche, paginé, et il vous dit ce qu'il ne peut pas faire",
+          featSearch:
+            "Consultable par recherche, paginé, et il vous dit ce qu'il ne peut pas faire",
           featSearchDesc:
             "Le sélecteur recherche dans les propres enregistrements du module cible, une page à la fois, marque un enregistrement dormant comme inactif plutôt que de le masquer, et indique en toutes lettres lorsqu'il n'y a rien que vous soyez autorisé à cibler — jamais une liste déroulante vide qui se lirait comme « il n'existe aucun enregistrement ».",
           featPinned: "Peut être épinglé à un type d'enregistrement",
@@ -676,14 +713,16 @@ export const fr = {
           aspPicker: "Ce que voit la personne qui le remplit",
           entPicker:
             "Sur un champ épinglé, une seule liste consultable de ce type d'enregistrement. Sur un champ non épinglé, deux contrôles : d'abord le type d'enregistrement, puis l'enregistrement.",
-          usrPicker: "Une seule liste consultable de comptes utilisateurs. Il n'y a jamais de contrôle de type.",
+          usrPicker:
+            "Une seule liste consultable de comptes utilisateurs. Il n'y a jamais de contrôle de type.",
           aspUse: "À utiliser quand",
           entUse:
             "La réponse est un enregistrement métier — un membre du personnel, une personne, une installation — ou lorsque différents enregistrements sous le même champ pointent légitimement vers différents types de choses.",
           usrUse:
             "La réponse est un compte : assigné à, révisé par, gestionnaire de compte, approuvé par.",
           aspStorage: "Comment la réponse est stockée",
-          entStorage: "Le type d'enregistrement, plus l'identité propre de cet enregistrement. Les deux, toujours ensemble.",
+          entStorage:
+            "Le type d'enregistrement, plus l'identité propre de cet enregistrement. Les deux, toujours ensemble.",
           usrStorage:
             "De façon identique. La valeur stockée est autodescriptive exactement de la même manière, ce qui est ce qui garde une ancienne réponse lisible après un changement de définition.",
           whichInfoTitle: "Pourquoi ce sont deux types et non un seul paramètre",
@@ -701,8 +740,7 @@ export const fr = {
           pieceTypeKey:
             "Le type d'enregistrement ciblé, sous forme d'identifiant stable — par exemple hrms.staff-member. Il est stocké sur la réponse elle-même, pas recherché depuis la définition.",
           pieceTypeKeyRequired: "Oui — toujours, sur chaque réponse",
-          pieceId:
-            "L'identité de l'enregistrement précis ciblé, sous forme de chaîne opaque.",
+          pieceId: "L'identité de l'enregistrement précis ciblé, sous forme de chaîne opaque.",
           pieceIdRequired: "Oui — toujours, sur chaque réponse",
           storedNeither:
             "Une identité sans type d'enregistrement nomme une ligne mais aucune table ; un type d'enregistrement sans identité nomme une table mais aucune ligne. Une valeur n'est donc traitée comme vide que lorsque les deux éléments sont absents — exactement comme se comportent Currency et Date & Time — et la moitié d'une référence est refusée plutôt que silencieusement stockée ou silencieusement effacée. Si vous voyez un jour un enregistrement refusé pour référence incomplète, l'un des deux contrôles a été laissé de côté.",
@@ -742,7 +780,8 @@ export const fr = {
           stateUserRef: "Un champ User Reference",
           meansUserRef:
             "Équivalent en permanence à un épinglage sur les comptes utilisateurs, décidé par la plateforme. Une tentative de l'épingler sur autre chose est refusée dès la définition, pas seulement à l'enregistrement.",
-          pickerUserRef: "Un seul contrôle : le compte utilisateur. Il n'y a jamais de contrôle de type.",
+          pickerUserRef:
+            "Un seul contrôle : le compte utilisateur. Il n'y a jamais de contrôle de type.",
           pinRepoint:
             "Le paramètre peut être modifié plus tard, y compris sur un champ qui contient déjà des réponses, et c'est délibéré : refuser cela signifierait qu'un champ mal épinglé ne pourrait jamais être corrigé sans d'abord détruire des données réelles. Ce qui se passe alors mérite d'être énoncé précisément, car les deux volets comptent : chaque réponse déjà stockée est laissée totalement intacte et continue de se relire correctement, car chaque réponse porte son propre type d'enregistrement. Le prochain enregistrement d'une fiche dont la réponse est de l'ancien type est refusé, jusqu'à ce que quelqu'un choisisse à nouveau cette réponse.",
           pinRepointDetail:
@@ -819,7 +858,8 @@ export const fr = {
           tenantWarnContent:
             "Une référence est aussi stricte que le propre écran de liste de la cible, et pas plus stricte. Si un type d'enregistrement est visible pour un rôle via son propre écran, il est sélectionnable via un sélecteur pour ce même rôle — aucune règle plus étroite que « tout cet espace de travail » n'est appliquée par-dessus. Ne traitez donc pas un sélecteur de référence comme un moyen de masquer des enregistrements que le module cible montre déjà de lui-même.",
 
-          exampleTitle: "Un exemple concret : un enregistrement d'administrateur pointant vers un membre du personnel",
+          exampleTitle:
+            "Un exemple concret : un enregistrement d'administrateur pointant vers un membre du personnel",
           exampleIntro:
             "Le cas pour lequel ces types ont été conçus. Vos administrateurs sont aussi des employés, et vous voulez que chaque enregistrement d'administrateur indique quel enregistrement de personnel correspond à la même personne — enregistré une fois, correctement, et jamais retapé.",
           ex1Title: "Décidez de quel type vous avez besoin",
@@ -860,18 +900,12 @@ export const fr = {
           notTitle: "Ce que les champs de référence ne sont pas",
           notIntro:
             "Des attentes raisonnables auxquelles ces types ne répondent délibérément pas. Aucune n'est un défaut à signaler.",
-          not1:
-            "Ce n'est pas une relation que le produit comprend. Rien n'est calculé à partir d'une référence, rien n'en est déclenché, et aucun écran ne gagne une liste « enregistrements pointant vers celui-ci » du simple fait qu'une référence existe.",
-          not2:
-            "Ce n'est pas un moyen de masquer des enregistrements. Un sélecteur montre exactement ce que les propres écrans du module cible montrent à cette même personne. Si quelqu'un ne doit pas voir un type d'enregistrement, cela relève d'une permission sur ce type d'enregistrement.",
-          not3:
-            "Ils ne stockent jamais de nom, et il n'existe aucun paramètre pour en changer. Un champ qui doit survivre à la suppression de sa cible avec l'ancien nom encore lisible est un champ Text, et accepter qu'il dérive avec le temps est le prix de ce choix.",
-          not4:
-            "Ce n'est pas du plusieurs-à-plusieurs. Un champ de référence contient un seul pointeur. Il n'existe aucun type de référence à valeurs multiples, et Multi-Select ne peut pas pointer vers des enregistrements — ses réponses sont du texte que vous avez rédigé.",
-          not5:
-            "Ils ne peuvent pas cibler tous les types d'enregistrement. Seuls les types dont le module propriétaire fournit une liste consultable et vérifiée par permission peuvent être référencés, et les autres sont refusés plutôt que silencieusement proposés.",
-          not6:
-            "Ce n'est pas inclus dans l'export des définitions en feuille de calcul. Ce fichier compte dix-huit colonnes et un type cible épinglé n'en fait pas partie, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ.",
+          not1: "Ce n'est pas une relation que le produit comprend. Rien n'est calculé à partir d'une référence, rien n'en est déclenché, et aucun écran ne gagne une liste « enregistrements pointant vers celui-ci » du simple fait qu'une référence existe.",
+          not2: "Ce n'est pas un moyen de masquer des enregistrements. Un sélecteur montre exactement ce que les propres écrans du module cible montrent à cette même personne. Si quelqu'un ne doit pas voir un type d'enregistrement, cela relève d'une permission sur ce type d'enregistrement.",
+          not3: "Ils ne stockent jamais de nom, et il n'existe aucun paramètre pour en changer. Un champ qui doit survivre à la suppression de sa cible avec l'ancien nom encore lisible est un champ Text, et accepter qu'il dérive avec le temps est le prix de ce choix.",
+          not4: "Ce n'est pas du plusieurs-à-plusieurs. Un champ de référence contient un seul pointeur. Il n'existe aucun type de référence à valeurs multiples, et Multi-Select ne peut pas pointer vers des enregistrements — ses réponses sont du texte que vous avez rédigé.",
+          not5: "Ils ne peuvent pas cibler tous les types d'enregistrement. Seuls les types dont le module propriétaire fournit une liste consultable et vérifiée par permission peuvent être référencés, et les autres sont refusés plutôt que silencieusement proposés.",
+          not6: "Ce n'est pas inclus dans l'export des définitions en feuille de calcul. Ce fichier compte dix-huit colonnes et un type cible épinglé n'en fait pas partie, donc une définition exportée n'enregistre pas ce vers quoi pointe son champ.",
 
           nextTitle: "Où aller ensuite",
           nextIntro:
@@ -905,9 +939,12 @@ export const fr = {
           endpointsTitle: "Les trois recherches",
           endpointsIntro:
             "Toutes trois vivent sous une adresse qui leur est propre plutôt qu'aux côtés des autres appels de champs personnalisés, et c'est délibéré : elles lisent les données d'autres modules, elles sont donc protégées par la propre permission de consultation du type d'enregistrement cible, et non par la permission d'administrer les définitions de champs. Quelqu'un qui administre les champs personnalisés mais ne peut pas lire le personnel est refusé ici, à juste titre.",
-          endpointsTypes: "Liste les types d'enregistrement que cet appelant peut cibler dès maintenant.",
-          endpointsSearch: "Renvoie une page d'enregistrements sélectionnables d'un type, éventuellement filtrée.",
-          endpointsResolve: "Résout un pointeur déjà détenu par l'appelant pour retrouver son enregistrement.",
+          endpointsTypes:
+            "Liste les types d'enregistrement que cet appelant peut cibler dès maintenant.",
+          endpointsSearch:
+            "Renvoie une page d'enregistrements sélectionnables d'un type, éventuellement filtrée.",
+          endpointsResolve:
+            "Résout un pointeur déjà détenu par l'appelant pour retrouver son enregistrement.",
           endpointsPermission:
             "Il n'existe donc aucune permission unique qui ouvre cette fonctionnalité. Toutes trois exigent d'être connecté en tant qu'administrateur, et chacune exige ensuite la permission de consultation du type d'enregistrement présent dans l'adresse : lister les membres du personnel nécessite la permission de consultation du personnel, lister les comptes utilisateurs nécessite celle des comptes utilisateurs. La conséquence à prévoir est que la même personne peut être admise par l'une de ces recherches et refusée par la suivante, sur le même écran, et les deux réponses sont correctes.",
 
@@ -988,7 +1025,8 @@ export const fr = {
           stGone: "L'enregistrement référencé n'existe plus",
           scrGone:
             "Le champ indique que l'enregistrement est introuvable, propose les deux raisons possibles — supprimé, ou dans une organisation que vous ne pouvez pas voir — et n'affirme ni l'une ni l'autre. Il reste modifiable.",
-          doGone: "Choisissez un autre enregistrement, ou videz le champ. Reprendre une sélection est la solution.",
+          doGone:
+            "Choisissez un autre enregistrement, ou videz le champ. Reprendre une sélection est la solution.",
           stMalformed: "La référence stockée est mal formée",
           scrMalformed:
             "Le champ indique que ce qui est stocké ne peut pas être lu du tout, reste modifiable, et se marque en plus comme invalide — car contrairement à un pointeur en suspens, ce n'est pas une valeur que le produit a jamais légitimement produite.",
@@ -999,7 +1037,8 @@ export const fr = {
             "Le champ indique qu'il n'a pas pu charger l'enregistrement référencé pour le moment et que la référence elle-même est correcte, et propose un contrôle Try again.",
           doTransient:
             "Réessayez. Ne videz surtout pas le champ — la valeur stockée est correcte, et la vider est la seule action qui transforme une panne passagère en véritable perte de donnée.",
-          stTypeUnavailable: "Cette installation ne peut pas répondre pour ce type d'enregistrement",
+          stTypeUnavailable:
+            "Cette installation ne peut pas répondre pour ce type d'enregistrement",
           scrTypeUnavailable:
             "Le champ indique que ce type d'enregistrement n'est pas disponible dans cette installation, et n'offre aucun contrôle Try again — car réessayer refusera identiquement à chaque fois.",
           doTypeUnavailable:
@@ -1068,7 +1107,8 @@ export const fr = {
           pkLazy: "Rien n'est récupéré tant que vous n'ouvrez pas le contrôle.",
           pkLazyWhy:
             "Un formulaire d'enregistrement peut porter plusieurs champs de référence. Celui auquel personne ne touche ne devrait interroger aucun autre module du tout, et les réponses sont mises en cache ensuite, donc rouvrir le contrôle ne coûte rien.",
-          pkTwoControls: "Un champ non épinglé affiche deux contrôles, et aucun ne vole le focus à l'autre.",
+          pkTwoControls:
+            "Un champ non épinglé affiche deux contrôles, et aucun ne vole le focus à l'autre.",
           pkTwoControlsWhy:
             "Choisir un type d'enregistrement vous laisse sur ce contrôle, le contrôle d'enregistrement devenant disponible à une étape près. Ouvrir automatiquement le sélecteur d'enregistrement retirerait le focus à quelqu'un qui relit encore ce qu'il vient de choisir.",
           pkAccumulate: "Les pages suivantes s'ajoutent à la liste plutôt que de la remplacer.",
@@ -1083,7 +1123,8 @@ export const fr = {
           pkNoRetry: "Deux des états d'échec n'offrent aucun contrôle Try again.",
           pkNoRetryWhy:
             "Un refus de permission et un module indisponible refusent identiquement à chaque fois. Un bouton vous invitant à insister serait pire que pas de bouton. Seule une véritable panne de transport bénéficie d'une nouvelle tentative, car c'est la seule qu'une nouvelle tentative corrige.",
-          pkViewMode: "En mode consultation, le contrôle est désactivé plutôt que simplement non cliquable.",
+          pkViewMode:
+            "En mode consultation, le contrôle est désactivé plutôt que simplement non cliquable.",
           pkViewModeWhy:
             "Un sélecteur de référence est un sélecteur, il suit donc la même convention que tout autre sélecteur de ces formulaires. Son propre état de lecture seule, utilisé quand vous n'êtes pas autorisé à voir le nom de la cible, est une chose différente qui a une apparence différente.",
           pkNoLabelTrick: "Le contrôle se nomme lui-même pour les technologies d'assistance.",
@@ -1105,12 +1146,14 @@ export const fr = {
           dg4Title: "Faites ouvrir le même enregistrement par quelqu'un ayant un accès complet",
           dg4Content:
             "S'il voit un nom et pas vous, c'est une permission sur ce type d'enregistrement. S'il voit le même échec, c'est la donnée ou l'installation.",
-          dg5Title: "Ce n'est qu'alors qu'il faut décider de reprendre une sélection ou de vider le champ",
+          dg5Title:
+            "Ce n'est qu'alors qu'il faut décider de reprendre une sélection ou de vider le champ",
           dg5Content:
             "Reprenez une sélection quand l'enregistrement a véritablement disparu ou que la valeur stockée est mal formée. Videz le champ seulement quand il doit être vide. Ne videz jamais un champ qui a signalé un échec transitoire — c'est la seule action qui transforme une panne chez quelqu'un d'autre en perte de vos propres données.",
 
           limitsTitle: "Limites et écarts délibérés",
-          limitsIntro: "Énoncés pour que personne ne passe un après-midi à chercher un paramètre qui n'existe pas.",
+          limitsIntro:
+            "Énoncés pour que personne ne passe un après-midi à chercher un paramètre qui n'existe pas.",
           thLimit: "Limite",
           thDetail: "Détail",
           limPageSize: "Enregistrements par page dans le sélecteur",
@@ -1134,12 +1177,14 @@ export const fr = {
           limNoTypeFilter: "Le sélecteur ne peut être restreint que par du texte",
           limNoTypeFilterDetail:
             "Les colonnes sur lesquelles porte le filtre en texte libre relèvent du choix du module propriétaire, et il n'existe aucun filtre supplémentaire — ni « actifs seulement », ni filtre par groupe.",
-          limNoAdminTarget: "User Reference refuse toujours un administrateur, même si Entity Reference ne le fait plus",
+          limNoAdminTarget:
+            "User Reference refuse toujours un administrateur, même si Entity Reference ne le fait plus",
           limNoAdminTargetDetail:
             "Ni depuis le formulaire de définition, ni depuis une requête qui le contourne. La cible autorisée de User Reference est exactement une seule chose, identity.user, par conception d'origine — l'enregistrement propre d'un administrateur est un type de ligne différent, et pointer un champ User Reference vers l'un d'eux est refusé quel que soit le module par lequel la requête est passée. Entity Reference propose les administrateurs comme cible depuis qu'une version ultérieure leur a ajouté un fournisseur de recherche ; cette limite est propre à User Reference seul.",
 
           nextTitle: "Où aller ensuite",
-          nextIntro: "Les concepts derrière ces recherches se trouvent sur la page Champs de référence.",
+          nextIntro:
+            "Les concepts derrière ces recherches se trouvent sur la page Champs de référence.",
           thPage: "Page",
           thCovers: "Ce qu'elle couvre",
           pageReferences: "Champs de référence",
@@ -1190,7 +1235,8 @@ export const fr = {
           ctlKeyDoes:
             "Définit le nom machine utilisé dans les messages d'erreur, les exports et l'API. En minuscules, doit commencer par une lettre, et ne peut contenir que des lettres, des chiffres et des tirets bas.",
           ctlKeyWhen: "À la création uniquement. Définitif après l'enregistrement.",
-          ctlLabelEnDoes: "Le libellé anglais affiché au-dessus du champ de saisie sur chaque formulaire. Obligatoire.",
+          ctlLabelEnDoes:
+            "Le libellé anglais affiché au-dessus du champ de saisie sur chaque formulaire. Obligatoire.",
           ctlLabelArDoes:
             "Le libellé arabe. Facultatif — un lecteur arabophone voit le libellé anglais quand celui-ci est vide.",
           ctlAlways: "Toujours.",
@@ -1211,8 +1257,7 @@ export const fr = {
             "Uniquement quand le type de valeur est Text. Il n'est jamais affiché pour les vingt et un autres types.",
           ctlValidatorParamDoes:
             "Fournit le paramètre dont a besoin une vérification paramétrée — une liste déroulante de pays pour Postal Code, du texte libre pour les cinq autres.",
-          ctlValidatorParamWhen:
-            "Uniquement une fois choisi l'un des six validateurs paramétrés.",
+          ctlValidatorParamWhen: "Uniquement une fois choisi l'un des six validateurs paramétrés.",
           ctlReferenceTargetDoes:
             "Épingle le champ à un type d'enregistrement, de sorte que chaque valeur doive pointer vers un enregistrement de ce type. Sa première option, Not pinned — any allowed type, est un choix réel et permanent plutôt qu'un espace réservé : laissez-la telle quelle et chaque valeur nommera son propre type d'enregistrement à la place. C'est le seul moyen de retirer un épinglage, il reste donc disponible même quand la liste des types est vide ou ne se charge pas, et le contrôle n'est jamais désactivé.",
           ctlReferenceTargetWhen:
@@ -1238,7 +1283,8 @@ export const fr = {
             "Uniquement pour un Super Admin de la plateforme travaillant sans espace de travail sélectionné. À la création uniquement — la portée d'un champ est définitive.",
 
           stepsTitle: "Étape par étape",
-          stepsIntro: "Le déroulement complet, pour le cas ordinaire d'un champ à portée d'espace de travail.",
+          stepsIntro:
+            "Le déroulement complet, pour le cas ordinaire d'un champ à portée d'espace de travail.",
           s1Title: "Ouvrez l'écran Champs personnalisés et choisissez Add",
           s1Content:
             "L'écran liste chaque champ que votre espace de travail peut voir, y compris tout champ global hérité de la plateforme. Les lignes globales portent un badge et n'offrent aucun contrôle de modification ou de suppression.",
@@ -1270,10 +1316,12 @@ export const fr = {
           thKeyExample: "Clé",
           thOutcome: "Ce qui se passe",
           keyOk: "Acceptée. C'est la forme à viser.",
-          keyOkDigits: "Acceptée. Les chiffres et les tirets bas sont autorisés après le premier caractère.",
+          keyOkDigits:
+            "Acceptée. Les chiffres et les tirets bas sont autorisés après le premier caractère.",
           keyUpper: "Refusée. Les clés sont en minuscules.",
           keyLeadingDigit: "Refusée. Une clé doit commencer par une lettre.",
-          keyHyphen: "Refusée. Les traits d'union ne font pas partie de la grammaire — utilisez un tiret bas.",
+          keyHyphen:
+            "Refusée. Les traits d'union ne font pas partie de la grammaire — utilisez un tiret bas.",
           keySpace: "Refusée. Les espaces ne sont pas autorisés.",
           keyWarnTitle: "La clé est définitive",
           keyWarnContent:
@@ -1315,28 +1363,34 @@ export const fr = {
           rejNoOptions: "Un champ Select ou MultiSelect sans options",
           rejNoOptionsMsg: "Refusée : des options sont requises pour les champs Select.",
           rejOptionsOnOther: "Des options fournies pour un type qui ne les accepte pas",
-          rejOptionsOnOtherMsg: "Refusée : les options ne sont autorisées que pour les champs Select.",
+          rejOptionsOnOtherMsg:
+            "Refusée : les options ne sont autorisées que pour les champs Select.",
           rejValidatorNonText: "Un validateur attaché à un champ qui n'est pas Text",
           rejValidatorNonTextMsg:
             "Refusée, en nommant le type : un validateur ne peut être attaché qu'à un champ Text. La liste déroulante n'est même pas affichée pour ces types, ce serveur refuse donc une seconde fois la même chose.",
           rejValidatorNoParam: "Un validateur paramétré dont le paramètre est laissé vide",
           rejValidatorNoParamMsg: "Refusée, en nommant le validateur : il exige un paramètre.",
           rejValidatorExtraParam: "Un paramètre fourni pour un validateur qui n'en accepte aucun",
-          rejValidatorExtraParamMsg: "Refusée, en nommant le validateur : il n'accepte aucun paramètre.",
-          rejRequiredRestricted: "Marquer un champ obligatoire alors qu'un rôle ou un groupe le restreint",
+          rejValidatorExtraParamMsg:
+            "Refusée, en nommant le validateur : il n'accepte aucun paramètre.",
+          rejRequiredRestricted:
+            "Marquer un champ obligatoire alors qu'un rôle ou un groupe le restreint",
           rejRequiredRestrictedMsg:
             "Refusée, en nommant le champ : il ne peut pas être rendu obligatoire tant qu'il est restreint. Retirez d'abord la restriction, ou laissez le champ facultatif.",
           rejGroupWrongType: "Un groupe de champs appartenant à un autre type d'enregistrement",
           rejGroupWrongTypeMsg:
             "Refusée : le groupe de champs sélectionné appartient à un autre type d'entité. Changer le type d'enregistrement sur le formulaire efface le choix de groupe précisément pour cette raison.",
-          rejReferenceTargetUnknown: "Épingler une cible qui n'est pas un type d'enregistrement enregistré",
+          rejReferenceTargetUnknown:
+            "Épingler une cible qui n'est pas un type d'enregistrement enregistré",
           rejReferenceTargetUnknownMsg:
             "Refusée, en nommant l'identifiant : ce n'est pas un type d'entité enregistré. Accessible uniquement en contournant la liste déroulante, qui ne propose rien de non enregistré.",
-          rejReferenceTargetNotAllowed: "Épingler un champ User Reference à autre chose qu'un compte utilisateur",
+          rejReferenceTargetNotAllowed:
+            "Épingler un champ User Reference à autre chose qu'un compte utilisateur",
           rejReferenceTargetNotAllowedMsg:
             "Refusée, en nommant le type de valeur et en listant ce qu'il autorise. La liste déroulante n'est pas du tout affichée pour ce type, ce serveur refuse donc ce que le formulaire a déjà refusé de proposer.",
           rejGlobalNotSuperAdmin: "Créer un champ global sans être un Super Admin de la plateforme",
-          rejGlobalNotSuperAdminMsg: "Refusée : seul un Super Admin de la plateforme peut créer un champ personnalisé global.",
+          rejGlobalNotSuperAdminMsg:
+            "Refusée : seul un Super Admin de la plateforme peut créer un champ personnalisé global.",
           rejQuota: "Dépasser la limite de champs de votre forfait",
           rejQuotaMsg:
             "Refusée pour quota. L'édition Free n'autorise aucun champ ; chaque autre forfait a son propre maximum par espace de travail. Les champs globaux de la plateforme ne comptent pas dans ce quota.",
@@ -1350,8 +1404,10 @@ export const fr = {
           editable3: "Sort Order, et le Field Group",
           editable4: "Sensitivity, et Include in exports",
           editable5: "Active, qui retire le champ sans toucher à ses réponses stockées",
-          editable6: "La liste d'options — bien que renommer une option change ce qu'affichent les enregistrements existants",
-          editable7: "Le validateur et son paramètre — bien que cela ne revérifie jamais les réponses déjà enregistrées",
+          editable6:
+            "La liste d'options — bien que renommer une option change ce qu'affichent les enregistrements existants",
+          editable7:
+            "Le validateur et son paramètre — bien que cela ne revérifie jamais les réponses déjà enregistrées",
           editable8:
             "Le Target Entity Type d'un champ Entity Reference — les réponses déjà stockées continuent de fonctionner, et le prochain enregistrement d'une réponse de l'ancien type est refusé jusqu'à ce qu'elle soit choisie à nouveau",
           permanentTitle: "Définitif une fois enregistré",
@@ -1401,7 +1457,8 @@ export const fr = {
             "Un nom machine pour le groupe, unique au sein du type d'enregistrement. En minuscules, commence par une lettre, uniquement des lettres, des chiffres et des tirets bas.",
           partLabelEn: "L'en-tête anglais affiché au-dessus des champs du groupe.",
           partLabelAr: "L'en-tête arabe.",
-          partSortOrder: "Où le groupe se situe par rapport aux autres groupes du type d'enregistrement.",
+          partSortOrder:
+            "Où le groupe se situe par rapport aux autres groupes du type d'enregistrement.",
           partScope: "Si le groupe appartient à votre espace de travail ou à toute la plateforme.",
           changeNever: "Non — définitif une fois enregistré",
           changeAnytime: "Oui, à tout moment",
@@ -1427,12 +1484,15 @@ export const fr = {
           thKeyExample: "Clé stable",
           thOutcome: "Ce qui se passe",
           skOk: "Acceptée.",
-          skLowercased: "Acceptée, et mise en minuscules au fur et à mesure de la saisie. Vous la verrez devenir contact_details.",
-          skHyphen: "Refusée au fur et à mesure de la saisie. Le champ rejette les caractères hors grammaire.",
+          skLowercased:
+            "Acceptée, et mise en minuscules au fur et à mesure de la saisie. Vous la verrez devenir contact_details.",
+          skHyphen:
+            "Refusée au fur et à mesure de la saisie. Le champ rejette les caractères hors grammaire.",
           skLeadingDigit: "Refusée. Une clé stable doit commencer par une lettre.",
           skDuplicate:
             "Refusée, en nommant la clé : un groupe de champs avec cette clé existe déjà pour ce type d'enregistrement.",
-          exSkDuplicate: "Une clé déjà utilisée par un autre groupe sur le même type d'enregistrement",
+          exSkDuplicate:
+            "Une clé déjà utilisée par un autre groupe sur le même type d'enregistrement",
           stableKeyWhy:
             "Une fois le groupe enregistré, la clé stable est visible mais grisée et ne peut être modifiée par personne. C'est délibéré plutôt qu'un oubli : le schéma exporté nomme un groupe par cette clé, donc la renommer transformerait silencieusement une future réimportation d'une mise à jour en une création, contre un ensemble déjà livré. Pouvoir voir la clé compte tout de même — vous en avez besoin pour faire correspondre un ensemble exporté au groupe auquel il se réfère — ce qui explique pourquoi elle est affichée plutôt que masquée.",
           stableKeyWarnTitle: "Il n'existe aucun renommage",
@@ -1459,7 +1519,8 @@ export const fr = {
           orderLimitTitle: "La réorganisation cesse de fonctionner au-delà de 100 groupes",
           orderLimitContent:
             "Une requête de réorganisation transporte tout l'ensemble réorganisable d'un coup, et plus de 100 groupes pour un même type d'enregistrement est purement refusé. Au-delà de ce seuil, aucun groupe de ce type d'enregistrement ne peut plus être déplacé. L'écran le signale plutôt que d'échouer de façon générique, mais le plafond est réel et n'est pas configurable.",
-          orderGlobalTitle: "Vous ne pouvez pas positionner votre groupe par rapport à un groupe global",
+          orderGlobalTitle:
+            "Vous ne pouvez pas positionner votre groupe par rapport à un groupe global",
           orderGlobalContent:
             "La réorganisation est tout ou rien et refuse tout groupe que l'appelant ne possède pas, donc la réorganisation d'un espace de travail ne couvre que ses propres groupes, qui sont ensuite renumérotés à partir de zéro. Ces numéros peuvent entrer en collision avec le propre ordre d'un groupe global, et l'égalité se départage sur le libellé anglais. L'effet visible est que déplacer votre groupe tout en haut peut le faire atterrir en dessous d'un groupe global et donner l'impression que rien ne s'est passé.",
 
@@ -1477,32 +1538,46 @@ export const fr = {
 
           effectTitle: "Ce qu'un groupe affecte, et ce qu'il n'affecte pas",
           doesTitle: "Un groupe fait cela",
-          does1: "Rassembler des champs liés sous un même en-tête sur le formulaire d'enregistrement",
-          does2: "Vous laisser ordonner les groupes à la main, par glisser-déposer ou avec Move up et Move down",
+          does1:
+            "Rassembler des champs liés sous un même en-tête sur le formulaire d'enregistrement",
+          does2:
+            "Vous laisser ordonner les groupes à la main, par glisser-déposer ou avec Move up et Move down",
           does3: "Porter son propre en-tête anglais et arabe, traduit comme tout le reste",
-          does4: "Survivre à la suppression d'un champ, et laisser un champ le quitter via l'entrée no group",
+          does4:
+            "Survivre à la suppression d'un champ, et laisser un champ le quitter via l'entrée no group",
           doesNotTitle: "Un groupe ne fait pas cela",
-          doesNot1: "Contrôler qui peut voir un champ — cela relève de la sécurité au niveau du champ, qui est sans rapport",
+          doesNot1:
+            "Contrôler qui peut voir un champ — cela relève de la sécurité au niveau du champ, qui est sans rapport",
           doesNot2: "Supprimer ses champs quand le groupe lui-même est supprimé",
-          doesNot3: "Se propager entre types d'enregistrement, ni s'appliquer à plus d'un type d'enregistrement à la fois",
+          doesNot3:
+            "Se propager entre types d'enregistrement, ni s'appliquer à plus d'un type d'enregistrement à la fois",
           doesNot4: "Changer la façon dont une valeur est validée, stockée, exportée ou affichée",
 
           errorsTitle: "Erreurs de groupe que vous pourriez voir",
           thSituation: "Situation",
           thWhatYouSee: "Ce que vous voyez",
           errDuplicateKey: "Une clé stable déjà utilisée sur ce type d'enregistrement",
-          errDuplicateKeyMsg: "Refusée, en nommant la clé : un groupe de champs avec cette clé existe déjà pour ce type d'entité.",
+          errDuplicateKeyMsg:
+            "Refusée, en nommant la clé : un groupe de champs avec cette clé existe déjà pour ce type d'entité.",
           errWrongEntityType: "Assigner un champ à un groupe d'un autre type d'enregistrement",
-          errWrongEntityTypeMsg: "Refusée : le groupe de champs sélectionné appartient à un autre type d'entité.",
+          errWrongEntityTypeMsg:
+            "Refusée : le groupe de champs sélectionné appartient à un autre type d'entité.",
           errTooManyReorder: "Réorganiser plus de 100 groupes en une fois",
-          errTooManyReorderMsg: "Refusée, en nommant le maximum : au-delà de ce nombre de groupes, aucune réorganisation n'est possible en une seule requête.",
+          errTooManyReorderMsg:
+            "Refusée, en nommant le maximum : au-delà de ce nombre de groupes, aucune réorganisation n'est possible en une seule requête.",
           errDuplicateReorder: "Le même groupe listé deux fois dans une réorganisation",
-          errDuplicateReorderMsg: "Refusée : le même groupe de champs apparaît plus d'une fois dans la liste de réorganisation.",
-          errMixedReorder: "Des groupes de deux types d'enregistrement dans une même réorganisation",
-          errMixedReorderMsg: "Refusée : tous les groupes de champs d'une même requête de réorganisation doivent appartenir au même type d'entité.",
-          errGlobalNotSuperAdmin: "Créer un groupe global sans être un Super Admin de la plateforme",
-          errGlobalNotSuperAdminMsg: "Refusée : seul un Super Admin de la plateforme peut créer un groupe de champs global.",
-          errNoDefinition: "Assigner un groupe à un champ n'ayant pas encore d'enregistrement de définition",
+          errDuplicateReorderMsg:
+            "Refusée : le même groupe de champs apparaît plus d'une fois dans la liste de réorganisation.",
+          errMixedReorder:
+            "Des groupes de deux types d'enregistrement dans une même réorganisation",
+          errMixedReorderMsg:
+            "Refusée : tous les groupes de champs d'une même requête de réorganisation doivent appartenir au même type d'entité.",
+          errGlobalNotSuperAdmin:
+            "Créer un groupe global sans être un Super Admin de la plateforme",
+          errGlobalNotSuperAdminMsg:
+            "Refusée : seul un Super Admin de la plateforme peut créer un groupe de champs global.",
+          errNoDefinition:
+            "Assigner un groupe à un champ n'ayant pas encore d'enregistrement de définition",
           errNoDefinitionMsg:
             "Refusée, en expliquant que le champ n'a pas d'enregistrement de définition et que le rétro-remplissage des définitions doit d'abord être exécuté. Cela ne se produit que dans un environnement mis à niveau depuis une version plus ancienne.",
         },
@@ -1570,10 +1645,12 @@ export const fr = {
             "Acceptée. Retirer une sélection laisse les autres dans leur ordre relatif existant.",
           multiTooMany:
             "Refusée : VALIDATION_MAX_LENGTH, en nommant le plafond de 19. Le sélecteur rend impossible le choix de toute option non sélectionnée une fois 19 atteintes, et affiche un compteur en direct « N sur 19 sélectionnées », de sorte que ce cas est normalement inatteignable depuis l'interface.",
-          multiDuplicate: "Refusée : VALIDATION_UNIQUE. Une sélection répétée est rejetée, pas fusionnée.",
+          multiDuplicate:
+            "Refusée : VALIDATION_UNIQUE. Une sélection répétée est rejetée, pas fusionnée.",
           multiEmpty:
             "Traitée comme vide, exactement comme l'est une valeur scalaire vide pour tout autre type : effacée sur un champ facultatif, refusée sur un champ obligatoire.",
-          exMultiOrder: "Blue, puis Red — sur un champ dont la liste d'options place Red avant Blue",
+          exMultiOrder:
+            "Blue, puis Red — sur un champ dont la liste d'options place Red avant Blue",
           exMultiRemove: "Retirer une sélection parmi trois",
           exMultiTwenty: "Une vingtième sélection",
           exMultiRepeat: "La même option sélectionnée deux fois",
@@ -1588,7 +1665,8 @@ export const fr = {
           thChange: "Modification",
           thEffect: "Effet sur les enregistrements déjà existants",
           chgAdd: "Ajouter une nouvelle option",
-          chgAddEffect: "Aucun. Les réponses existantes ne sont pas touchées ; la nouvelle option devient simplement disponible.",
+          chgAddEffect:
+            "Aucun. Les réponses existantes ne sont pas touchées ; la nouvelle option devient simplement disponible.",
           chgRename: "Renommer un libellé anglais",
           chgRenameEffect:
             "Chaque enregistrement contenant déjà l'ancien texte affiche désormais le nouveau texte. Rien n'est migré et rien n'est perdu, car c'est la ligne d'option que cible l'enregistrement — mais la réponse que voient les gens a changé sous leurs yeux.",
@@ -1611,7 +1689,8 @@ export const fr = {
           errNoOptions: "Enregistrer un champ Select ou MultiSelect avec une liste vide",
           errNoOptionsMsg: "Refusée : des options sont requises pour les champs Select.",
           errOptionsOnOther: "Des options fournies sur un type qui ne les accepte pas",
-          errOptionsOnOtherMsg: "Refusée : les options ne sont autorisées que pour les champs Select.",
+          errOptionsOnOtherMsg:
+            "Refusée : les options ne sont autorisées que pour les champs Select.",
           errNotAllowed: "Une valeur qui n'est pas l'une des options",
           errNotAllowedMsg:
             "Refusée : VALIDATION_INVALID_FORMAT, citant la valeur et la clé du champ.",
@@ -1621,7 +1700,8 @@ export const fr = {
           errDuplicateMsg: "Refusée : VALIDATION_UNIQUE, citant la valeur répétée.",
 
           notYetTitle: "Ce que la liste d'options ne fait pas",
-          notYetIntro: "Trois choses que l'on demande raisonnablement, et quelle est la réponse aujourd'hui.",
+          notYetIntro:
+            "Trois choses que l'on demande raisonnablement, et quelle est la réponse aujourd'hui.",
           notYet1:
             "La liste intégrée propre à ce champ ne peut pas elle-même être réutilisée par un autre champ — les options de chaque champ lui sont propres, rédigées ici. Une liste de pays dont ont besoin trois champs n'a toutefois plus besoin d'être écrite trois fois : liez plutôt les trois à un Option Set partagé et versionné (voir Jeux d'options) et modifiez-le une seule fois.",
           notYet2:
@@ -1648,11 +1728,11 @@ export const fr = {
             "Il n'existe délibérément aucune saisie de texte libre ni d'expression régulière nulle part dans le produit. Un motif écrit à la main peut être conçu pour consommer un temps de traitement énorme sur une saisie courte, ce qui transforme un formulaire de saisie en moyen de mettre le système à genoux. L'ensemble des vérifications est donc fixé et sélectionné à l'avance, et chacune porte son propre plafond de longueur court et sa propre limite de temps.",
 
           howTitle: "Comment un validateur s'exécute",
-          howIntro: "Quatre choses se produisent dans cet ordre, chaque fois qu'une valeur est enregistrée dans le champ.",
+          howIntro:
+            "Quatre choses se produisent dans cet ordre, chaque fois qu'une valeur est enregistrée dans le champ.",
           how1: "Si la valeur est vide ou composée uniquement d'espaces, elle est traitée comme vide et aucun validateur ne s'exécute du tout.",
           how2: "Le plafond global de 4 000 caractères de Text s'applique, et refuse avec VALIDATION_MAX_LENGTH si la valeur est plus longue.",
-          how3:
-            "Le propre plafond de longueur du validateur, bien plus court, s'applique ensuite — 11 caractères pour un code SWIFT, 15 pour un IMEI, et ainsi de suite — et refuse aussi avec VALIDATION_MAX_LENGTH.",
+          how3: "Le propre plafond de longueur du validateur, bien plus court, s'applique ensuite — 11 caractères pour un code SWIFT, 15 pour un IMEI, et ainsi de suite — et refuse aussi avec VALIDATION_MAX_LENGTH.",
           how4: "C'est seulement alors que s'exécute la véritable vérification du validateur, qui refuse avec son propre code et son propre message.",
           howTwoPoints:
             "La vérification s'applique en deux points distincts, et il vaut la peine de savoir que les deux existent. À la définition, une combinaison invalide de validateur et de paramètre est refusée quand vous enregistrez la définition. À l'enregistrement de la valeur, le validateur s'exécute à nouveau contre chaque valeur que quelqu'un enregistre dans le champ.",
@@ -1667,10 +1747,13 @@ export const fr = {
           shapeIban: "Deux lettres, deux chiffres, puis 11 à 30 lettres ou chiffres",
           shapeImei: "Exactement 15 chiffres",
           shapeSwift: "Six lettres, deux lettres ou chiffres, éventuellement trois de plus",
-          shapePlate: "2 à 15 lettres, chiffres, espaces ou traits d'union, quelle que soit la casse",
-          shapeEgypt: "14 chiffres : marqueur de siècle, puis une date AAMMJJ plausible, puis sept chiffres de plus",
+          shapePlate:
+            "2 à 15 lettres, chiffres, espaces ou traits d'union, quelle que soit la casse",
+          shapeEgypt:
+            "14 chiffres : marqueur de siècle, puis une date AAMMJJ plausible, puis sept chiffres de plus",
           shapeSaudi: "10 chiffres commençant par 1 ou 2",
-          shapeEmirati: "784, quatre chiffres, sept chiffres, un chiffre — traits d'union facultatifs",
+          shapeEmirati:
+            "784, quatre chiffres, sept chiffres, un chiffre — traits d'union facultatifs",
           checksumReal: "Oui — vérifié",
           checksumNone: "Aucun dans la norme",
           checksumUnpublished: "Non vérifié — aucun publié",
@@ -1690,7 +1773,8 @@ export const fr = {
             "Refusée. Les IBAN sont souvent imprimés en groupes de quatre pour la lisibilité, mais la forme stockée ne contient aucune espace.",
 
           imeiTitle: "IMEI",
-          imeiFor: "Pour le numéro d'identité d'un appareil mobile, tel qu'imprimé sur l'appareil ou sa boîte.",
+          imeiFor:
+            "Pour le numéro d'identité d'un appareil mobile, tel qu'imprimé sur l'appareil ou sa boîte.",
           imeiChecks:
             "Exactement 15 chiffres, puis le véritable chiffre de contrôle est vérifié. Plafonné à 15 caractères. Les variantes d'affichage à 16 et 17 caractères que montrent certains appareils ne sont pas acceptées.",
           imeiOk: "Acceptée.",
@@ -1700,14 +1784,18 @@ export const fr = {
             "Refusée : VALIDATION_INVALID_FORMAT. Quatorze chiffres échouent à la vérification de forme — le plafond de longueur ne détecte jamais qu'une valeur plus longue que 15.",
 
           swiftBicTitle: "Code SWIFT / BIC",
-          swiftBicFor: "Pour un code d'identification bancaire, utilisé aux côtés d'un numéro de compte pour un virement international.",
+          swiftBicFor:
+            "Pour un code d'identification bancaire, utilisé aux côtés d'un numéro de compte pour un virement international.",
           swiftBicChecks:
             "Huit ou onze caractères : six lettres, puis deux lettres ou chiffres, puis éventuellement trois lettres ou chiffres de plus. Majuscules uniquement, aucun séparateur, plafonné à 11 caractères. Il n'existe aucun chiffre de contrôle dans la norme, donc un code bien formé n'appartenant à aucune banque réelle est accepté.",
           swiftOk8: "Acceptée — la forme à huit caractères.",
           swiftOk11: "Acceptée — la forme à onze caractères avec un code d'agence.",
-          swiftDigit: "Refusée : VALIDATION_INVALID_FORMAT. Les six premiers caractères doivent tous être des lettres.",
-          swiftLower: "Refusée. C'est un format externe fixe, et les minuscules n'en font pas partie.",
-          swiftLength: "Refusée. Huit ou onze caractères exactement — neuf n'est ni l'un ni l'autre.",
+          swiftDigit:
+            "Refusée : VALIDATION_INVALID_FORMAT. Les six premiers caractères doivent tous être des lettres.",
+          swiftLower:
+            "Refusée. C'est un format externe fixe, et les minuscules n'en font pas partie.",
+          swiftLength:
+            "Refusée. Huit ou onze caractères exactement — neuf n'est ni l'un ni l'autre.",
 
           plateTitle: "Numéro de plaque d'immatriculation",
           plateFor:
@@ -1715,26 +1803,31 @@ export const fr = {
           plateChecks:
             "2 à 15 caractères, composés de lettres, de chiffres, d'espaces et de traits d'union dans n'importe quelle combinaison. Insensible à la casse. Délibérément permissif — cette vérification ne contient aucun format de plaque propre à un pays, car les formats de plaque varient selon le pays et selon la catégorie de véhicule au sein d'un même pays.",
           plateOk: "Acceptée.",
-          plateLowerOk: "Acceptée. Contrairement à SWIFT, cette vérification ne se soucie pas de la casse.",
+          plateLowerOk:
+            "Acceptée. Contrairement à SWIFT, cette vérification ne se soucie pas de la casse.",
           plateTooShort: "Refusée : VALIDATION_INVALID_FORMAT. Le minimum est de deux caractères.",
-          plateBadChar: "Refusée. Une barre oblique ne fait pas partie des quatre classes de caractères autorisées.",
+          plateBadChar:
+            "Refusée. Une barre oblique ne fait pas partie des quatre classes de caractères autorisées.",
 
           egyptIdTitle: "Numéro national égyptien",
           egyptIdFor: "Pour un numéro d'identité nationale égyptien.",
           egyptIdChecks:
             "Quatorze chiffres : un marqueur de siècle valant 2 ou 3, puis une date de naissance au format AAMMJJ qui doit être plausible sur le calendrier, puis sept chiffres de plus. Structure uniquement — l'Égypte n'a jamais publié d'algorithme de chiffre de contrôle, donc le dernier chiffre n'est pas vérifié. Livrer un algorithme deviné rejetterait de véritables identités valides, ce qui est pire que de ne pas vérifier du tout.",
           egyptOk: "Acceptée.",
-          egyptBadMonth: "Refusée : VALIDATION_INVALID_FORMAT. Le mois 13 n'est pas un mois plausible.",
+          egyptBadMonth:
+            "Refusée : VALIDATION_INVALID_FORMAT. Le mois 13 n'est pas un mois plausible.",
           egyptBadDay: "Refusée. Le jour 32 n'est pas un jour plausible.",
           egyptBadCentury: "Refusée. Le marqueur de siècle doit valoir 2 ou 3.",
           egyptLength: "Refusée. Treize chiffres, ce n'est pas quatorze.",
 
           saudiIdTitle: "Numéro d'identité saoudien",
-          saudiIdFor: "Pour un numéro d'identité nationale saoudien ou un numéro d'Iqama (résidence).",
+          saudiIdFor:
+            "Pour un numéro d'identité nationale saoudien ou un numéro d'Iqama (résidence).",
           saudiIdChecks:
             "Dix chiffres, le premier valant 1 pour un citoyen ou 2 pour un résident, et le véritable chiffre de contrôle est vérifié. Plafonné à 10 caractères.",
           saudiOk: "Acceptée. La forme et le chiffre de contrôle sont tous deux corrects.",
-          saudiBadCheck: "Refusée : VALIDATION_INVALID_FORMAT. Bonne forme, chiffre de contrôle erroné.",
+          saudiBadCheck:
+            "Refusée : VALIDATION_INVALID_FORMAT. Bonne forme, chiffre de contrôle erroné.",
           saudiBadPrefix: "Refusée. Le premier chiffre doit valoir 1 ou 2.",
           saudiLength: "Refusée. Neuf chiffres, ce n'est pas dix.",
 
@@ -1743,8 +1836,10 @@ export const fr = {
           emiratiIdChecks:
             "La forme 784-AAAA-XXXXXXX-C, avec les traits d'union facultatifs. Plafonné à 18 caractères. Structure uniquement — les Émirats arabes unis n'ont jamais publié d'algorithme de chiffre de contrôle, donc le dernier chiffre n'est pas vérifié, pour la même raison que la vérification égyptienne.",
           emiratiOk: "Acceptée, traits d'union compris.",
-          emiratiNoHyphens: "Acceptée. Les traits d'union sont facultatifs, donc les deux formes d'écriture fonctionnent.",
-          emiratiBadPrefix: "Refusée : VALIDATION_INVALID_FORMAT. Chaque identité des Émirats commence par 784.",
+          emiratiNoHyphens:
+            "Acceptée. Les traits d'union sont facultatifs, donc les deux formes d'écriture fonctionnent.",
+          emiratiBadPrefix:
+            "Refusée : VALIDATION_INVALID_FORMAT. Chaque identité des Émirats commence par 784.",
           emiratiLength: "Refusée. Le bloc du milieu compte sept chiffres, pas six.",
 
           paramTitle: "Les six vérifications qui nécessitent un paramètre",
@@ -1753,8 +1848,10 @@ export const fr = {
           thParamFormat: "Format du paramètre",
           thParamExample: "Exemple de paramètre",
           paramFmtPostal: "Un pays, choisi dans une liste déroulante des sept pris en charge",
-          paramFmtNumeric: "Deux bornes séparées par une virgule ; chaque côté peut être vide pour une extrémité ouverte",
-          paramFmtLength: "Deux nombres de caractères séparés par une virgule ; chaque côté peut être vide",
+          paramFmtNumeric:
+            "Deux bornes séparées par une virgule ; chaque côté peut être vide pour une extrémité ouverte",
+          paramFmtLength:
+            "Deux nombres de caractères séparés par une virgule ; chaque côté peut être vide",
           paramFmtOneOf: "Une valeur autorisée par ligne",
           paramFmtContains: "N'importe quel texte littéral",
           paramFmtStartsWith: "N'importe quel texte littéral",
@@ -1768,8 +1865,10 @@ export const fr = {
           postalEgOk: "Acceptée. L'Égypte utilise cinq chiffres.",
           postalEgBad: "Refusée : VALIDATION_INVALID_FORMAT. Quatre chiffres, ce n'est pas cinq.",
           postalUsOk: "Acceptée. Les formes à cinq chiffres et ZIP+4 sont toutes deux valides.",
-          postalGbOk: "Acceptée. Le format britannique est comparé quelle que soit la casse, avec ou sans son espace.",
-          postalCaOk: "Acceptée, y compris les véritables exclusions de lettres qu'applique Postes Canada.",
+          postalGbOk:
+            "Acceptée. Le format britannique est comparé quelle que soit la casse, avec ou sans son espace.",
+          postalCaOk:
+            "Acceptée, y compris les véritables exclusions de lettres qu'applique Postes Canada.",
           exPostalEg: "11511, avec le paramètre EG",
           exPostalEgBad: "1151, avec le paramètre EG",
           exPostalUsPlus4: "90210-1234, avec le paramètre US",
@@ -1783,13 +1882,15 @@ export const fr = {
             "La valeur doit s'analyser comme un nombre et se situer à l'intérieur de la plage. Le paramètre est deux bornes séparées par une virgule ; laisser un côté vide rend cette extrémité ouverte, mais laisser les deux vides est refusé, car une plage qui accepte tout revient au même qu'attacher aucun validateur.",
           numericOk: "Acceptée.",
           numericOut: "Refusée : VALIDATION_RANGE.",
-          numericNotANumber: "Refusée : VALIDATION_RANGE. Une valeur qui n'est pas un nombre ne peut pas se situer à l'intérieur d'une plage.",
-          numericOpenOk: "Acceptée. Une borne supérieure ouverte signifie n'importe quel nombre égal ou supérieur à la borne inférieure.",
+          numericNotANumber:
+            "Refusée : VALIDATION_RANGE. Une valeur qui n'est pas un nombre ne peut pas se situer à l'intérieur d'une plage.",
+          numericOpenOk:
+            "Acceptée. Une borne supérieure ouverte signifie n'importe quel nombre égal ou supérieur à la borne inférieure.",
           numericBothBlank:
             "Refusée à la définition, en expliquant que le validateur a besoin d'au moins une borne.",
           exNumeric50: "50, avec le paramètre 1,100",
           exNumeric150: "150, avec le paramètre 1,100",
-          exNumericText: "\"fifty\", avec le paramètre 1,100",
+          exNumericText: '"fifty", avec le paramètre 1,100',
           exNumericOpen: "5000, avec le paramètre 1,",
           exNumericBothBlank: "Le paramètre , avec les deux côtés vides",
 
@@ -1812,12 +1913,14 @@ export const fr = {
             "La valeur doit correspondre exactement à l'une des lignes de la liste que vous avez configurée, une valeur par ligne. La comparaison est sensible à la casse.",
           oneOfOk: "Acceptée.",
           oneOfCase: "Refusée : VALIDATION_INVALID_FORMAT. La comparaison est sensible à la casse.",
-          oneOfUnknown: "Refusée : VALIDATION_INVALID_FORMAT. La valeur ne figure pas dans la liste.",
+          oneOfUnknown:
+            "Refusée : VALIDATION_INVALID_FORMAT. La valeur ne figure pas dans la liste.",
 
           containsTitle: "Contient un texte",
           containsFor:
             "Pour une valeur devant inclure un marqueur quelque part en son sein — un préfixe de club, une étiquette de saison, un code de département.",
-          containsChecks: "La valeur doit contenir le texte littéral que vous avez configuré, comparé de façon sensible à la casse.",
+          containsChecks:
+            "La valeur doit contenir le texte littéral que vous avez configuré, comparé de façon sensible à la casse.",
           containsOk: "Acceptée, avec le paramètre FC-.",
           containsCase: "Refusée : VALIDATION_INVALID_FORMAT. La comparaison respecte la casse.",
           containsMissing: "Refusée : VALIDATION_INVALID_FORMAT. Le marqueur est absent.",
@@ -1825,7 +1928,8 @@ export const fr = {
           startsWithTitle: "Commence par un texte",
           startsWithFor:
             "Pour une valeur devant commencer par un préfixe — un indicatif de pays, un code d'agence, un radical de référence fixe.",
-          startsWithChecks: "La valeur doit commencer par le texte littéral que vous avez configuré, comparé de façon sensible à la casse.",
+          startsWithChecks:
+            "La valeur doit commencer par le texte littéral que vous avez configuré, comparé de façon sensible à la casse.",
           startsOk: "Acceptée, avec le paramètre EG-.",
           startsWrongPlace:
             "Refusée : VALIDATION_INVALID_FORMAT. Le texte est présent mais pas au début — utilisez Contains Text si la position n'a pas d'importance.",
@@ -1838,12 +1942,16 @@ export const fr = {
           thFormat: "Format",
           thValidExample: "Exemple valide",
           fmtEg: "Exactement cinq chiffres",
-          fmtSa: "Cinq chiffres, éventuellement un trait d'union et une extension de quatre chiffres",
-          fmtUs: "Un ZIP à cinq chiffres, éventuellement un trait d'union et une extension de quatre chiffres",
-          fmtGb: "La forme standard du code postal britannique, quelle que soit la casse, espace facultatif",
+          fmtSa:
+            "Cinq chiffres, éventuellement un trait d'union et une extension de quatre chiffres",
+          fmtUs:
+            "Un ZIP à cinq chiffres, éventuellement un trait d'union et une extension de quatre chiffres",
+          fmtGb:
+            "La forme standard du code postal britannique, quelle que soit la casse, espace facultatif",
           fmtDe: "Exactement cinq chiffres, zéro de tête autorisé",
           fmtFr: "Exactement cinq chiffres",
-          fmtCa: "La forme A1A 1A1, avec les véritables exclusions de lettres de Postes Canada appliquées",
+          fmtCa:
+            "La forme A1A 1A1, avec les véritables exclusions de lettres de Postes Canada appliquées",
           uaeTitle: "Les Émirats arabes unis sont délibérément absents",
           uaeContent:
             "Les Émirats arabes unis n'ont aucun système de code postal national, il n'existe donc aucun format réel auquel comparer une valeur — ni strict, ni permissif. Ce n'est pas une entrée manquante en attente d'ajout : tenter de l'utiliser est refusé dès la définition avec son propre message explicatif, distinct du message générique de pays non pris en charge que vous obtiendriez pour une faute de frappe, vous indiquant de laisser plutôt le champ sans validateur. La liste déroulante ne le propose jamais.",
@@ -1880,7 +1988,8 @@ export const fr = {
           thWhenItFires: "Quand il se déclenche",
           codeInvalidFormat:
             "La plupart des échecs de validateur : une forme qui ne correspond pas, un chiffre de contrôle qui ne se vérifie pas, une valeur absente d'une liste One of a List, un marqueur Contains ou Starts With absent, ou un code postal qui ne correspond pas à son pays.",
-          codeRange: "Numeric Range — la valeur est hors des bornes, ou n'est pas un nombre du tout.",
+          codeRange:
+            "Numeric Range — la valeur est hors des bornes, ou n'est pas un nombre du tout.",
           codeMaxLength:
             "Le plafond global de 4 000 caractères de Text, le propre plafond plus court d'un validateur, ou la borne supérieure de Length Range.",
           codeMinLength: "La borne inférieure de Length Range.",
@@ -1932,7 +2041,8 @@ export const fr = {
           behSources:
             "Une restriction de rôle et une restriction de groupe s'additionnent par union. Un groupe ne peut jamais élargir ce qu'un rôle a restreint, et il n'existe de dérogation dans aucun des deux sens.",
           aspCase: "Casse",
-          behCase: "La comparaison ignore la casse, donc Salary, salary et SALARY désignent le même champ.",
+          behCase:
+            "La comparaison ignore la casse, donc Salary, salary et SALARY désignent le même champ.",
           aspResource: "Indexation",
           behResource:
             "Les restrictions sont indexées par ressource de permission, la même ressource qui protège l'enregistrement lui-même — ni par type d'entité, ni par groupe de champs.",
@@ -1985,7 +2095,8 @@ export const fr = {
           thWhatYouSee: "Ce que vous voyez",
           reqRestrictRequired: "Restreindre un champ actuellement obligatoire",
           reqRestrictRequiredMsg: "Refusée, en nommant le champ.",
-          reqRequireRestricted: "Marquer un champ obligatoire alors qu'un rôle ou un groupe le restreint",
+          reqRequireRestricted:
+            "Marquer un champ obligatoire alors qu'un rôle ou un groupe le restreint",
           reqRequireRestrictedMsg:
             "Refusée, en nommant le champ et en vous invitant à retirer d'abord la restriction ou à laisser le champ facultatif.",
           requiredInfoTitle: "L'ordre n'aide pas",
@@ -2041,7 +2152,8 @@ export const fr = {
           thAction: "Action",
           thDoes: "Ce qu'elle fait",
           thNeeds: "Permission",
-          actEdit: "Ouvre le formulaire de définition, préempli à partir du détail complet du champ.",
+          actEdit:
+            "Ouvre le formulaire de définition, préempli à partir du détail complet du champ.",
           actOptionSets:
             "Attache, configure ou détache un jeu d'options partagé et versionné pour les champs Select ou MultiSelect.",
           actVisibilityRules:
@@ -2078,22 +2190,28 @@ export const fr = {
           opEqualsExample: "Afficher Kit Size quand Staff Role est égal à Coach.",
           opNotEquals: "Différent de",
           opNotEqualsMeaning: "Le champ contrôlant a toute valeur autre que la valeur cible.",
-          opNotEqualsExample: "Afficher Dietary Requirements quand Meal Plan est différent de None.",
+          opNotEqualsExample:
+            "Afficher Dietary Requirements quand Meal Plan est différent de None.",
           opIsEmpty: "Est vide",
-          opIsEmptyMeaning: "Le champ contrôlant ne contient aucune réponse stockée, ou une valeur nulle.",
+          opIsEmptyMeaning:
+            "Le champ contrôlant ne contient aucune réponse stockée, ou une valeur nulle.",
           opIsEmptyExample: "Afficher Explanation quand ID Number est vide.",
           opIsNotEmpty: "N'est pas vide",
           opIsNotEmptyMeaning: "Le champ contrôlant a une valeur non nulle et non vide.",
           opIsNotEmptyExample: "Afficher Expiry Date quand Passport Number n'est pas vide.",
           opIn: "Dans l'ensemble",
-          opInMeaning: "La réponse du champ contrôlant est l'une de plusieurs valeurs séparées par des virgules.",
-          opInExample: "Afficher Specialization quand Department est dans Medical, Coaching, Analytics.",
+          opInMeaning:
+            "La réponse du champ contrôlant est l'une de plusieurs valeurs séparées par des virgules.",
+          opInExample:
+            "Afficher Specialization quand Department est dans Medical, Coaching, Analytics.",
           opNotIn: "Absent de l'ensemble",
-          opNotInMeaning: "La réponse du champ contrôlant ne figure dans aucune des valeurs listées.",
+          opNotInMeaning:
+            "La réponse du champ contrôlant ne figure dans aucune des valeurs listées.",
           opNotInExample: "Afficher General Notes quand Category n'est pas dans VIP, Board.",
           opGreaterThan: "Supérieur à",
           opGreaterThanMeaning: "La réponse numérique ou de date dépasse strictement le seuil.",
-          opGreaterThanExample: "Afficher Clearance Details quand Security Level est supérieur à 3.",
+          opGreaterThanExample:
+            "Afficher Clearance Details quand Security Level est supérieur à 3.",
           opLessThan: "Inférieur à",
           opLessThanMeaning: "La réponse numérique ou de date est strictement inférieure au seuil.",
           opLessThanExample: "Afficher Parental Consent quand Age est inférieur à 18.",
@@ -2124,7 +2242,8 @@ export const fr = {
             "Toute autre paire — 453 des 462 possibles, y compris toute paire impliquant EntityReference, UserReference, File, Image ou RichText.",
           classIncompatibleRisk:
             "Refusée avant même que quoi que ce soit ne s'exécute. Une valeur de type référence ou média n'a aucune forme textuelle ou numérique sensée vers laquelle convertir, et le sens inverse n'a rien de réel vers quoi pointer.",
-          conversionLossyWarnTitle: "Une conversion avec perte s'applique à chaque valeur stockée, de façon permanente",
+          conversionLossyWarnTitle:
+            "Une conversion avec perte s'applique à chaque valeur stockée, de façon permanente",
           conversionLossyWarnContent:
             "Une exécution réussie change toutes les lignes à la fois — il n'existe aucune confirmation séparée par enregistrement, et rien n'est tronqué ni effacé silencieusement en dehors de ce que fait la propre conversion du type cible. Exécutez toujours Usage & impact en premier pour voir combien d'enregistrements seront affectés avant de confirmer.",
           conversionDryRunIntro:
@@ -2141,23 +2260,30 @@ export const fr = {
           thVersionMeaning: "Signification dans le cycle de vie",
           thVersionActions: "Actions disponibles",
           vStatusDraft: "Brouillon",
-          vMeaningDraft: "Un clone isolé de la définition telle qu'elle se présentait au moment de sa génération — sa propre copie des scalaires, des options et des règles de visibilité. N'est servi sur aucun formulaire d'enregistrement.",
-          vActionsDraft: "Publish, Discard. Rien ne permet actuellement de modifier un brouillon après sa génération — un clone erroné doit être abandonné puis régénéré.",
+          vMeaningDraft:
+            "Un clone isolé de la définition telle qu'elle se présentait au moment de sa génération — sa propre copie des scalaires, des options et des règles de visibilité. N'est servi sur aucun formulaire d'enregistrement.",
+          vActionsDraft:
+            "Publish, Discard. Rien ne permet actuellement de modifier un brouillon après sa génération — un clone erroné doit être abandonné puis régénéré.",
           vStatusPublished: "Publié",
-          vMeaningPublished: "L'unique version active actuellement servie sur chaque formulaire d'enregistrement pour ce champ.",
+          vMeaningPublished:
+            "L'unique version active actuellement servie sur chaque formulaire d'enregistrement pour ce champ.",
           vActionsPublished: "Create Draft (génère un nouveau clone de travail), View History.",
           vStatusDeprecated: "Déprécié",
-          vMeaningDeprecated: "Une ancienne version publiée, remplacée lors de la promotion d'un brouillon. Ses options et règles clonées lui restent attachées mais sont inertes — l'application des règles ne lit jamais que la version publiée actuelle.",
-          vActionsDeprecated: "Enregistrement d'audit en lecture seule. Conservé pour l'intégrité de l'historique.",
+          vMeaningDeprecated:
+            "Une ancienne version publiée, remplacée lors de la promotion d'un brouillon. Ses options et règles clonées lui restent attachées mais sont inertes — l'application des règles ne lit jamais que la version publiée actuelle.",
+          vActionsDeprecated:
+            "Enregistrement d'audit en lecture seule. Conservé pour l'intégrité de l'historique.",
           vStatusArchived: "Archivé",
-          vMeaningArchived: "Un brouillon abandonné, conservé plutôt que supprimé afin que son numéro de version ne puisse jamais être réattribué.",
+          vMeaningArchived:
+            "Un brouillon abandonné, conservé plutôt que supprimé afin que son numéro de version ne puisse jamais être réattribué.",
           vActionsArchived: "Référence historique uniquement.",
           versionsSnapshotWarnTitle: "Un brouillon est un instantané, pas un miroir en direct",
           versionsSnapshotWarnContent:
             "Un brouillon ne suit pas les modifications apportées à la version en ligne pendant qu'il reste ouvert — il ne conserve que l'état de la version en ligne au moment de sa création. La publication ne fusionne pas les deux : elle remplace entièrement la version en ligne par l'instantané du brouillon, annulant silencieusement toute modification en ligne effectuée entre-temps. Publiez un brouillon rapidement, ou recréez-le si la version en ligne a évolué depuis.",
           versionsPromotionIntro:
             "Publier un brouillon déprécie la version publiée en place dans le même enregistrement. Le numéro de version s'incrémente toujours, et chaque chargement de formulaire à partir de ce moment sert la nouvelle version publiée.",
-          versionsRuleGuardTitle: "Une publication qui ferait silencieusement perdre toutes les règles de visibilité est refusée",
+          versionsRuleGuardTitle:
+            "Une publication qui ferait silencieusement perdre toutes les règles de visibilité est refusée",
           versionsRuleGuardContent:
             "Les règles de visibilité sont clonées sur un brouillon au moment de sa génération, et non récupérées à nouveau au moment de la publication — de sorte qu'au moment où une publication a lieu, il n'y a normalement plus rien à perdre. Le seul cas pour lequel ce garde-fou existe est celui où la version sortante porte réellement des règles alors que le brouillon n'en porte aucune : la publication est alors refusée d'emblée, plutôt que de rendre silencieusement visible sans condition chaque champ conditionnellement masqué de ce type d'enregistrement.",
 
@@ -2165,15 +2291,20 @@ export const fr = {
           retireIntro:
             "Ce ne sont pas la même opération, et la différence compte. En cas de doute, désactivez — c'est l'opération réversible.",
           deactivateTitle: "Désactiver Active",
-          deactivate1: "Le champ cesse d'être proposé sur les formulaires de création et de modification",
+          deactivate1:
+            "Le champ cesse d'être proposé sur les formulaires de création et de modification",
           deactivate2: "Chaque réponse déjà stockée est conservée, intacte",
           deactivate3: "C'est réversible — réactiver Active restaure le champ tel qu'il était",
-          deactivate4: "C'est enregistré dans l'historique comme Deactivated, et peut être Reactivated plus tard",
+          deactivate4:
+            "C'est enregistré dans l'historique comme Deactivated, et peut être Reactivated plus tard",
           deleteColTitle: "Supprimer la définition",
           deleteCol1: "Refusée à la première tentative si le champ contient des réponses",
-          deleteCol2: "Détruit ces réponses une fois le délai de rétention écoulé, si vous confirmez",
-          deleteCol3: "Libère la clé, de sorte qu'un nouveau champ pourrait plus tard la réutiliser — sans aucune des anciennes réponses",
-          deleteCol4: "Est enregistrée dans l'historique comme Deleted, et peut être Restored tant qu'elle est récupérable",
+          deleteCol2:
+            "Détruit ces réponses une fois le délai de rétention écoulé, si vous confirmez",
+          deleteCol3:
+            "Libère la clé, de sorte qu'un nouveau champ pourrait plus tard la réutiliser — sans aucune des anciennes réponses",
+          deleteCol4:
+            "Est enregistrée dans l'historique comme Deleted, et peut être Restored tant qu'elle est récupérable",
 
           historyTitle: "Historique de définition",
           historyIntro:
@@ -2181,7 +2312,8 @@ export const fr = {
           thEvent: "Événement",
           thMeans: "Ce que cela signifie",
           evCreated: "Le champ a été défini.",
-          evUpdated: "Quelque chose sur la définition a changé — un libellé, un indicateur, le validateur, les options.",
+          evUpdated:
+            "Quelque chose sur la définition a changé — un libellé, un indicateur, le validateur, les options.",
           evDeactivated: "Active a été désactivé, retirant le champ sans toucher à ses réponses.",
           evReactivated: "Active a été réactivé.",
           evDeleted: "La définition a été supprimée et reste récupérable.",
@@ -2214,7 +2346,8 @@ export const fr = {
           readLegacyValuesMeans:
             "Réponses encore détenues dans l'ancien stockage antérieur au magasin de valeurs actuel. Comptées séparément afin qu'une migration en cours soit visible plutôt que masquée.",
           readOptions: "Options",
-          readOptionsMeans: "Combien d'options contient la liste du champ, pour un champ Select ou MultiSelect.",
+          readOptionsMeans:
+            "Combien d'options contient la liste du champ, pour un champ Select ou MultiSelect.",
           readByRecordType: "Par type d'enregistrement",
           readByRecordTypeMeans:
             "Le même décompte de réponses ventilé par type d'enregistrement qui les détient, afin que vous puissiez voir où se trouve réellement la donnée.",
@@ -2258,7 +2391,8 @@ export const fr = {
           colValueType: "L'un des vingt-deux types de valeur.",
           colRequired: "Si le champ est obligatoire.",
           colActive: "Si le champ est encore proposé sur les formulaires.",
-          colSortOrder: "La position du champ parmi les champs personnalisés du type d'enregistrement.",
+          colSortOrder:
+            "La position du champ parmi les champs personnalisés du type d'enregistrement.",
           colOptionsEn: "Les options en anglais, pour un champ Select ou MultiSelect.",
           colOptionsAr: "Les options en arabe, alignées avec les anglaises.",
           colSensitivity: "Le libellé de classification défini sur la définition.",
@@ -2268,7 +2402,8 @@ export const fr = {
           colValidatorParam: "Le paramètre du validateur, lorsqu'il en prend un.",
           colPlaceholderEn: "Le texte indicatif anglais.",
           colPlaceholderAr: "Le texte indicatif arabe.",
-          colScope: "Platform pour un champ global, Organisation pour un champ d'espace de travail.",
+          colScope:
+            "Platform pour un champ global, Organisation pour un champ d'espace de travail.",
           colCreated: "Quand la définition a été créée, en UTC.",
           exportBooleans:
             "Les colonnes oui/non sont écrites comme les mots Yes et No plutôt que comme des booléens de tableur, afin qu'elles survivent à une ouverture dans une autre langue et continuent de se lire comme prévu.",
@@ -2338,19 +2473,23 @@ export const fr = {
           vNoRetro: "Attacher un validateur ne revérifie jamais les réponses déjà enregistrées.",
           vNoRetroWhy:
             "La validation ne s'exécute qu'à un seul endroit : le chemin d'enregistrement. Rien ne parcourt les données historiques quand un validateur est nouvellement attaché, donc un champ peut légitimement contenir des valeurs que son validateur actuel refuserait, jusqu'à ce que quelqu'un les ressaisisse.",
-          vWhitespace: "Une valeur composée uniquement d'espaces échappe entièrement à la validation, sauf si le champ est Obligatoire.",
+          vWhitespace:
+            "Une valeur composée uniquement d'espaces échappe entièrement à la validation, sauf si le champ est Obligatoire.",
           vWhitespaceWhy:
             "La vérification de vide s'exécute avant toute vérification de type ou de validateur. Sur un champ facultatif, une valeur composée uniquement d'espaces est donc stockée comme effacée sans aucune erreur de validateur. Marquez le champ Obligatoire si une réponse vide doit être refusée.",
           vNoRegex: "Il n'existe nulle part de zone de motif ou d'expression régulière.",
           vNoRegexWhy:
             "Un motif écrit à la main peut être conçu pour consommer un temps de traitement énorme sur une saisie courte, transformant un formulaire de saisie en moyen de mettre le système à genoux. Les 13 vérifications sélectionnées existent précisément pour que personne n'ait à en rédiger une.",
-          vNoFilter: "La liste des définitions ne peut être ni filtrée ni recherchée par validateur.",
+          vNoFilter:
+            "La liste des définitions ne peut être ni filtrée ni recherchée par validateur.",
           vNoFilterWhy:
             "Aucune vue de ce type n'a été construite. Pour voir quel validateur utilise un champ, ouvrez le formulaire de définition de ce champ.",
-          vNoReference: "Il n'existe aucune référence consultable de validateurs à l'intérieur du produit.",
+          vNoReference:
+            "Il n'existe aucune référence consultable de validateurs à l'intérieur du produit.",
           vNoReferenceWhy:
             "Les types de valeur et les types d'enregistrement ont chacun reçu un écran de référence en lecture seule ; pas les validateurs. La liste déroulante du formulaire de définition d'un champ Text est la seule liste disponible dans le produit.",
-          vNoChecksumEgUae: "Les vérifications d'identité égyptienne et émiratie contrôlent la structure mais pas un chiffre de contrôle.",
+          vNoChecksumEgUae:
+            "Les vérifications d'identité égyptienne et émiratie contrôlent la structure mais pas un chiffre de contrôle.",
           vNoChecksumEgUaeWhy:
             "Aucun des deux pays ne publie d'algorithme de chiffre de contrôle, et les hypothèses communautaires trouvées lors des recherches se contredisaient entre elles. Un algorithme erroné rejetterait de véritables identités valides, ce qui est pire que de ne pas vérifier du tout le dernier chiffre.",
           vNoAe: "Postal Code ne prend pas en charge les Émirats arabes unis.",
@@ -2358,13 +2497,16 @@ export const fr = {
             "Les Émirats arabes unis n'ont aucun système de code postal national, il n'y a donc rien à quoi comparer une valeur. Tenter de l'utiliser est refusé avec son propre message explicatif plutôt qu'un message générique.",
 
           typesTitle: "Comportements des types de valeur",
-          tValueTypeFixed: "La clé, le type d'enregistrement et la portée d'un champ ne peuvent jamais être changés une fois enregistrés.",
+          tValueTypeFixed:
+            "La clé, le type d'enregistrement et la portée d'un champ ne peuvent jamais être changés une fois enregistrés.",
           tValueTypeFixedWhy:
             "Renommer la clé, changer le type d'enregistrement visé ou changer la portée après coup rendrait chaque réponse déjà stockée ambiguë quant à sa signification. Le type de valeur est la seule exception, avec une échappatoire étroite : neuf paires de types précises peuvent être converties après coup — voir Gestion des champs — tout le reste signifie encore supprimer et recréer.",
-          tMultiOrder: "Une réponse MultiSelect se relit dans l'ordre de sélection, pas dans l'ordre des options.",
+          tMultiOrder:
+            "Une réponse MultiSelect se relit dans l'ordre de sélection, pas dans l'ordre des options.",
           tMultiOrderWhy:
             "Conserver l'ordre de sélection est ce qui permet à la valeur de survivre fidèlement à l'aller-retour. Le coût est qu'une colonne de liste affichant cette réponse ne suit pas nécessairement l'ordre dans lequel vous avez rédigé les options.",
-          tLongTextNoBlock: "LongText vous laisse taper au-delà de son plafond de 10 000 caractères.",
+          tLongTextNoBlock:
+            "LongText vous laisse taper au-delà de son plafond de 10 000 caractères.",
           tLongTextNoBlockWhy:
             "Le compteur à l'écran passe au rouge, mais il n'existe aucun blocage avant soumission comme celui que MultiSelect applique à une vingtième sélection. Le refus vient de l'enregistrement.",
           tCurrencyShape: "Un code de devise n'est vérifié que sur sa forme.",
@@ -2373,7 +2515,8 @@ export const fr = {
           tCurrencyPlain: "Currency stocke un montant simple, jamais des unités mineures.",
           tCurrencyPlainWhy:
             "Cela suit la même convention que tout autre montant monétaire du produit. 100.50 est stocké comme 100.50, jamais comme 10050 — ce qui compte si vous lisez un jour les données brutes ou construisez un rapport dessus.",
-          tDurationMinutes: "L'unité de Duration est toujours la minute, et elle n'a aucun maximum.",
+          tDurationMinutes:
+            "L'unité de Duration est toujours la minute, et elle n'a aucun maximum.",
           tDurationMinutesWhy:
             "La minute est la convention déjà utilisée par les parties planification et réservation du produit pour les données de type durée, et le formulaire libelle l'unité visiblement plutôt que de laisser un nombre nu. Seules les valeurs négatives sont refusées ; il n'y a aucune borne supérieure ni aucun moyen par champ d'en définir une.",
           tRatingSlider: "Un champ Rating non touché affiche son curseur sur 1 tout en étant vide.",
@@ -2385,22 +2528,26 @@ export const fr = {
           tPhoneShape: "Phone valide la forme, pas si le numéro pourrait réellement exister.",
           tPhoneShapeWhy:
             "Le serveur ne vérifie que la grammaire internationale. Le sélecteur du formulaire vérifie en plus les chiffres par rapport au plan de numérotation réel du pays sélectionné, donc l'écart n'est accessible que depuis une requête qui contourne le formulaire — une limitation acceptée de qualité de donnée plutôt qu'une limitation de sécurité.",
-          tPhoneFlag: "Le drapeau de pays affiché par Phone peut être erroné sur un indicatif partagé.",
+          tPhoneFlag:
+            "Le drapeau de pays affiché par Phone peut être erroné sur un indicatif partagé.",
           tPhoneFlagWhy:
             "Certains indicatifs sont partagés par plusieurs pays, et il n'existe aucune colonne de pays séparée — le drapeau est déduit du numéro lui-même. Le numéro stocké n'est pas affecté ; seul le drapeau à côté peut désigner le mauvais pays au sein d'un indicatif partagé.",
           tColorShorthand: "Color n'unifie jamais les formes à trois et à six chiffres.",
           tColorShorthandWhy:
             "Les deux sont valides et persistent toutes deux exactement telles que soumises, de sorte que la même couleur peut être stockée de deux façons selon les enregistrements. Seule la casse est normalisée, toujours en minuscules.",
-          tTimeText: "Time est stocké comme du texte canonique plutôt que comme une heure de base de données.",
+          tTimeText:
+            "Time est stocké comme du texte canonique plutôt que comme une heure de base de données.",
           tTimeTextWhy:
             "Un choix de stockage délibéré, fait pour éviter de reproduire un problème de tri connu que subit une colonne d'heure existante ailleurs dans le produit sur une base de données. Une saisie sans zéros de tête est acceptée et normalisée, de sorte que deux écritures de la même heure convergent toujours.",
-          tPercentStorage: "Percent stocke le nombre que vous diriez à voix haute, pas une fraction.",
+          tPercentStorage:
+            "Percent stocke le nombre que vous diriez à voix haute, pas une fraction.",
           tPercentStorageWhy:
             "25 est stocké comme 25 et affiché comme 25%. Ce n'est jamais 0.25, et l'affichage ajoute simplement le signe plutôt que de faire tourner un formateur basé sur les fractions, spécifiquement pour qu'un 25 ne puisse jamais s'afficher comme 2500%.",
           tTextNotTrimmed: "Text ne supprime pas les espaces qui l'entourent ; Select le fait.",
           tTextNotTrimmedWhy:
             "Une valeur Text est stockée exactement telle que soumise, car un espace en début ou en fin peut avoir un sens dans du texte libre. Une valeur Select est épurée des deux côtés avant d'être comparée aux options, de sorte qu'une espace égarée ne provoque jamais un rejet inattendu.",
-          tOracleBytes: "Un long texte arabe peut être refusé en dessous du plafond de caractères annoncé sur une base de données.",
+          tOracleBytes:
+            "Un long texte arabe peut être refusé en dessous du plafond de caractères annoncé sur une base de données.",
           tOracleBytesWhy:
             "Le plafond de 4 000 caractères de Text est un décompte de caractères exact sur deux des trois bases de données prises en charge. Sur la troisième, il est compté en octets, donc un texte multi-octets — l'arabe compris — peut atteindre la limite plus tôt. Utilisez LongText si vous êtes proche de cette limite.",
 
@@ -2408,34 +2555,43 @@ export const fr = {
           fNoStoredName: "Une référence ne stocke jamais le nom de l'enregistrement qu'elle cible.",
           fNoStoredNameWhy:
             "Un nom stocké se trouverait à l'intérieur de l'enregistrement portant le champ, et serait donc lisible par quiconque peut lire cet enregistrement — alors que le nom lui-même est protégé par la propre permission de la cible. Il n'existe aucun paramètre pour activer cela, et il n'y en aura pas. Le bénéfice compensatoire est qu'un nom corrigé sur son propre enregistrement est corrigé partout où il est référencé, immédiatement.",
-          fIdOpaque: "L'identité de l'enregistrement référencé est opaque et doit faire l'aller-retour inchangée.",
+          fIdOpaque:
+            "L'identité de l'enregistrement référencé est opaque et doit faire l'aller-retour inchangée.",
           fIdOpaqueWhy:
             "C'est la clé d'un autre module, chiffrée pour le transport, et rien dedans n'est destiné à être lu ou remanié. Un seul caractère modifié, et le produit signale à juste titre que la référence stockée est mal formée. Renvoyez exactement la chaîne que vous avez reçue.",
-          fSameNames: "Une référence est écrite sous les deux mêmes noms que ceux sous lesquels elle est lue.",
+          fSameNames:
+            "Une référence est écrite sous les deux mêmes noms que ceux sous lesquels elle est lue.",
           fSameNamesWhy:
             "Il n'existe aucune asymétrie entre la forme de lecture et la forme d'écriture. Quiconque intègre avec l'API des valeurs doit reprendre les deux noms de propriété qui lui ont été donnés ; inventer un nom différent pour l'identité à l'entrée produit un enregistrement ne portant aucun pointeur du tout, ensuite refusé comme référence incomplète.",
-          fFiveFailures: "Une référence qui ne s'affiche pas indique lequel de cinq événements s'est produit.",
+          fFiveFailures:
+            "Une référence qui ne s'affiche pas indique lequel de cinq événements s'est produit.",
           fFiveFailuresWhy:
             "Aucune permission, enregistrement disparu, valeur mal formée, une recherche qui vient d'échouer, et un type d'enregistrement pour lequel cette installation ne peut pas répondre : cinq problèmes différents avec cinq remèdes différents. Les rendre tous comme un champ vide est ce qui laisserait un pointeur vers un enregistrement supprimé passer inaperçu pendant un an.",
-          fMergedAnswers: "« Supprimé » et « dans un espace de travail que vous ne pouvez pas voir » sont une seule réponse.",
+          fMergedAnswers:
+            "« Supprimé » et « dans un espace de travail que vous ne pouvez pas voir » sont une seule réponse.",
           fMergedAnswersWhy:
             "Les distinguer permettrait à quelqu'un de tester des identités une par une pour découvrir ce qui existe dans un autre espace de travail. « Vous n'êtes pas autorisé à consulter ce type d'enregistrement » est distingué des deux, car cela décrit le propre accès du lecteur et ne révèle rien.",
-          fDeleteClears: "Supprimer un enregistrement référencé efface chaque pointeur vers lui et conserve chaque ligne de valeur.",
+          fDeleteClears:
+            "Supprimer un enregistrement référencé efface chaque pointeur vers lui et conserve chaque ligne de valeur.",
           fDeleteClearsWhy:
             "Les deux éléments de chaque réponse concernée sont effacés ensemble, jamais l'un sans l'autre. Rien n'est supprimé : la réponse conserve sa ligne, sa version et son historique, de sorte que le champ se lit ensuite comme véritablement vide plutôt que comme cassé.",
           fNoBacklinks: "Rien ne liste les références qui pointent vers un enregistrement donné.",
           fNoBacklinksWhy:
             "Il n'existe nulle part de vue « qu'est-ce qui pointe vers ceci ? », et supprimer un enregistrement ne vous avertit pas du nombre de pointeurs qu'il s'apprête à effacer. L'effacement est silencieux parce qu'il est sûr, pas parce qu'il est caché.",
-          fLimitedTargets: "Seuls trois types d'enregistrement peuvent actuellement être référencés.",
+          fLimitedTargets:
+            "Seuls trois types d'enregistrement peuvent actuellement être référencés.",
           fLimitedTargetsWhy:
             "Membres du personnel, comptes utilisateurs et personnes de tiers — les types dont le module propriétaire fournit une liste consultable et vérifiée par permission. Tout le reste est refusé plutôt que répondu par une liste vide, car une liste vide ressemble à un résultat correct et dirait « il n'en existe aucun » alors que la vérité est « cela ne peut pas être demandé ».",
-          fNoAdminTarget: "Les enregistrements d'administrateur ne peuvent absolument pas être référencés.",
+          fNoAdminTarget:
+            "Les enregistrements d'administrateur ne peuvent absolument pas être référencés.",
           fNoAdminTargetWhy:
             "Un administrateur peut n'appartenir à aucun espace de travail — un administrateur de plateforme n'en a aucun — de sorte qu'un pointeur vers l'un d'eux pourrait franchir toutes les limites d'espace de travail du produit. Un champ User Reference en refuse un purement et simplement, et le formulaire de définition n'en propose jamais.",
-          fUnpinnedIsLegal: "Laisser un champ de référence non épinglé est un état permanent et pris en charge.",
+          fUnpinnedIsLegal:
+            "Laisser un champ de référence non épinglé est un état permanent et pris en charge.",
           fUnpinnedIsLegalWhy:
             "Cela signifie « tout type que cette personne peut référencer », et chaque réponse enregistre le type qu'elle a choisi. Cela ne doit jamais être lu comme « rien de configuré, donc rien de valide » — le formulaire d'enregistrement le gère en demandant d'abord le type d'enregistrement, puis l'enregistrement.",
-          fPopulatedUnpinned: "Un champ non épinglé et rempli n'offre aucun moyen de changer le type d'enregistrement.",
+          fPopulatedUnpinned:
+            "Un champ non épinglé et rempli n'offre aucun moyen de changer le type d'enregistrement.",
           fPopulatedUnpinnedWhy:
             "Le propre type de la réponse stockée est utilisé pour le sélecteur, donc reprendre une sélection se limite à ce type. Vider le champ fait revenir le contrôle de type. Une limite réelle plutôt qu'un défaut, et la manifestation de cette fonctionnalité la plus susceptible d'être signalée comme telle.",
           fNotExported: "Un type cible épinglé ne figure pas dans l'export des définitions.",
@@ -2455,7 +2611,8 @@ export const fr = {
           oEnglishStored: "Le libellé arabe d'une option est réservé à l'affichage.",
           oEnglishStoredWhy:
             "Les deux listes de libellés sont associées ligne par ligne, et c'est la liste anglaise qui est écrite sur l'enregistrement et validée contre elle. Un lecteur arabophone voit de l'arabe à l'entrée comme à la sortie ; la donnée sous-jacente reste une valeur unique et cohérente.",
-          oNoSharedSets: "La liste d'options intégrée d'un champ lui est propre — en partager une est une étape distincte et délibérée.",
+          oNoSharedSets:
+            "La liste d'options intégrée d'un champ lui est propre — en partager une est une étape distincte et délibérée.",
           oNoSharedSetsWhy:
             "Rédiger une liste Options sur un champ la garde privée à ce champ ; elle n'est pas automatiquement réutilisée ailleurs. Une liste de pays dont ont besoin trois champs n'a toutefois plus besoin d'être écrite et maintenue trois fois — liez plutôt les trois au même Option Set partagé et versionné, et une modification ultérieure de ce jeu met à jour tous les champs liés ensemble.",
 
@@ -2463,10 +2620,12 @@ export const fr = {
           gStableKeyFixed: "La clé stable d'un groupe ne peut jamais être changée, par personne.",
           gStableKeyFixedWhy:
             "Le schéma exporté nomme un groupe par cette clé, donc un renommage transformerait silencieusement une future réimportation d'une mise à jour en une création, contre un ensemble déjà livré. Une clé incorrecte signifie recréer le groupe.",
-          gReorderCeiling: "La réorganisation refuse plus de 100 groupes sur un même type d'enregistrement.",
+          gReorderCeiling:
+            "La réorganisation refuse plus de 100 groupes sur un même type d'enregistrement.",
           gReorderCeilingWhy:
             "Une requête de réorganisation transporte tout l'ensemble d'un coup. Au-delà de 100, aucun groupe de ce type d'enregistrement ne peut plus être déplacé du tout — l'écran le signale plutôt que d'échouer de façon générique.",
-          gGlobalOrdering: "Un espace de travail ne peut pas positionner son groupe par rapport à un groupe global.",
+          gGlobalOrdering:
+            "Un espace de travail ne peut pas positionner son groupe par rapport à un groupe global.",
           gGlobalOrderingWhy:
             "La réorganisation est tout ou rien et refuse tout groupe que l'appelant ne possède pas, donc les propres groupes d'un espace de travail sont renumérotés à partir de zéro. Ces numéros peuvent entrer en collision avec ceux d'un groupe global, l'égalité se départage sur le libellé anglais, et l'effet visible est que déplacer votre groupe tout en haut peut le laisser en dessous d'un groupe global.",
           gSeparatePerms: "Les groupes de champs ont besoin de leurs propres permissions.",
@@ -2475,7 +2634,8 @@ export const fr = {
           gOneEntityType: "Un groupe appartient à exactement un type d'enregistrement.",
           gOneEntityTypeWhy:
             "Rien n'est listé tant que vous n'avez pas choisi un type d'enregistrement, et changer le type d'enregistrement d'un champ efface son groupe, car un groupe d'un type n'est jamais valide pour un autre.",
-          gUniquenessIndex: "Dans une base de données mise à niveau, l'unicité de la clé stable repose sur la vérification applicative.",
+          gUniquenessIndex:
+            "Dans une base de données mise à niveau, l'unicité de la clé stable repose sur la vérification applicative.",
           gUniquenessIndexWhy:
             "Les groupes qui existaient avant les clés stables portent une clé vide jusqu'à l'exécution d'un rétro-remplissage, et la contrainte d'unicité au niveau de la base de données reste désactivée tant que cela ne s'est pas produit partout — sinon elle rejetterait la seconde de ces clés vides.",
 
@@ -2483,7 +2643,8 @@ export const fr = {
           sSensitivityLabel: "Sensitivity est un libellé, pas un contrôle d'accès.",
           sSensitivityLabelWhy:
             "Il est stocké, restitué et exploitable en reporting, et il ne change rien à qui peut lire une valeur. La sécurité au niveau du champ est le mécanisme qui restreint l'accès, et les deux sont indépendants.",
-          sRestrictedByResource: "Les restrictions sont indexées par ressource de permission, pas par type d'enregistrement.",
+          sRestrictedByResource:
+            "Les restrictions sont indexées par ressource de permission, pas par type d'enregistrement.",
           sRestrictedByResourceWhy:
             "C'est la même ressource qui protège déjà l'enregistrement lui-même, donc une seule liste de champs restreints couvre à la fois les champs intégrés d'un écran et ses champs personnalisés. Les noms sont comparés sans tenir compte de la casse.",
           sRestrictedInvisible: "Un champ restreint est absent, pas vide.",
@@ -2495,21 +2656,26 @@ export const fr = {
           sRequiredExclusive: "Obligatoire et restreint ne peuvent pas être combinés.",
           sRequiredExclusiveWhy:
             "Quelqu'un qui ne peut pas voir un champ ne pourrait jamais le satisfaire, donc l'enregistrement lui serait impossible à sauvegarder. Les deux sens sont refusés, quel que soit celui tenté en premier, et le message nomme le champ.",
-          sHistoryNoValues: "L'historique de définition n'affiche jamais les changements de valeur.",
+          sHistoryNoValues:
+            "L'historique de définition n'affiche jamais les changements de valeur.",
           sHistoryNoValuesWhy:
             "Les inclure ferait de la boîte de dialogue une copie lisible des données de champs de tout le monde, contournant d'un coup la sécurité au niveau du champ et toute autre règle de visibilité. Les enregistrements porteurs de valeurs sont exclus nommément plutôt que par simple omission.",
 
           exportTitle: "Comportements d'export et de portabilité",
-          eDefinitionsOnly: "L'export en feuille de calcul contient des définitions, jamais des réponses.",
+          eDefinitionsOnly:
+            "L'export en feuille de calcul contient des définitions, jamais des réponses.",
           eDefinitionsOnlyWhy:
             "C'est par conception un export de définitions — un export des valeurs séparé existe, avec sa propre adresse et son propre bouton dans l'en-tête, pour les réponses elles-mêmes, plafonné à 10 000 cellules plutôt que tronqué au-delà.",
-          eRefusesPastLimit: "Au-delà de 10 000 définitions, l'export refuse plutôt que de tronquer.",
+          eRefusesPastLimit:
+            "Au-delà de 10 000 définitions, l'export refuse plutôt que de tronquer.",
           eRefusesPastLimitWhy:
             "Un fichier silencieusement tronqué est pire qu'aucun fichier, car il paraît complet. Le refus vous invite à restreindre l'export à un seul type d'enregistrement.",
-          eRestrictedAbsent: "Les champs qui vous sont restreints sont absents du fichier, pas vides.",
+          eRestrictedAbsent:
+            "Les champs qui vous sont restreints sont absents du fichier, pas vides.",
           eRestrictedAbsentWhy:
             "La sécurité au niveau du champ s'applique à l'export exactement comme à l'écran, et une colonne vide révélerait quand même que le champ existe.",
-          eNoImport: "L'export en feuille de calcul est à sens unique, et l'unique chemin de création en masse que ce produit ait jamais proposé est désactivé.",
+          eNoImport:
+            "L'export en feuille de calcul est à sens unique, et l'unique chemin de création en masse que ce produit ait jamais proposé est désactivé.",
           eNoImportWhy:
             "La feuille de calcul exportée est un rapport destiné à la lecture, pas un modèle réimportable. Un import d'ensemble de schéma portable, au format JSON, existe — avec sa propre boîte de dialogue, sa propre adresse, son propre tableau de résultats par groupe — mais chaque appel qui lui est fait est refusé avec un 409 par un interrupteur de confinement délibéré et permanent, aux côtés de l'export de schéma correspondant. La création de champs en masse n'est pas disponible dans le produit aujourd'hui, du fait de la conception même de cet interrupteur plutôt que par omission.",
           eTextCells: "Chaque cellule exportée est écrite comme du texte.",
@@ -2523,13 +2689,16 @@ export const fr = {
           rHandRolledForms: "Une poignée d'écrans câblent leurs champs personnalisés à la main.",
           rHandRolledFormsWhy:
             "La plupart des écrans récupèrent automatiquement les champs personnalisés. Quelques-uns dont les interfaces de création et de modification précèdent ce mécanisme — parmi eux les webhooks, les modèles de message, les forfaits de tenant, les définitions de plugin, les prospects et les thèmes — implémentent eux-mêmes la même section Champs personnalisés. Le comportement devrait être identique ; si ce n'est pas le cas, cela mérite d'être signalé.",
-          rDsrCreateOnly: "Les demandes de personne concernée ne prennent les champs personnalisés qu'à la création.",
+          rDsrCreateOnly:
+            "Les demandes de personne concernée ne prennent les champs personnalisés qu'à la création.",
           rDsrCreateOnlyWhy:
             "Une demande soumise traverse un flux de révision plutôt que d'être généralement modifiable, il n'existe donc aucun formulaire de modification pour y porter des champs personnalisés. C'est voulu, pas un oubli.",
-          rDialogForms: "La plupart des formulaires de création et de modification d'enregistrement restent des boîtes de dialogue.",
+          rDialogForms:
+            "La plupart des formulaires de création et de modification d'enregistrement restent des boîtes de dialogue.",
           rDialogFormsWhy:
             "La rédaction des champs personnalisés elle-même est sortie d'une boîte de dialogue imbriquée pour rejoindre un panneau latéral, ce qui explique pourquoi ajouter un champ depuis l'intérieur d'un enregistrement n'empile plus deux boîtes de dialogue. Les formulaires d'enregistrement environnants ont été délibérément laissés tels quels — les déplacer est un changement bien plus large, à travers des modules qui n'ont rien à voir avec les champs personnalisés.",
-          rNoSidebarEntry: "Les écrans Types de valeur et Types d'entité n'ont aucune entrée de menu latéral.",
+          rNoSidebarEntry:
+            "Les écrans Types de valeur et Types d'entité n'ont aucune entrée de menu latéral.",
           rNoSidebarEntryWhy:
             "La navigation du menu latéral est initialisée de façon centralisée, et ces deux écrans en ont été délibérément exclus. Ils sont accessibles depuis des liens dans l'en-tête de la page Champs personnalisés à la place.",
 
@@ -2748,10 +2917,14 @@ export const fr = {
           thLength: "Longueur",
           thDescription: "Rôle cryptographique",
           descVersion: "Octet de version Magic Frame (0x02 pour les trames authentifiées v2).",
-          descPlatformKey: "Entier 32 bits (Big-endian) identifiant la clé racine de plateforme dans le trousseau.",
-          descTenantVersion: "Entier 16 bits (Big-endian) identifiant la version de rotation de clé du tenant.",
-          descNonce: "Vecteur d'initialisation aléatoire cryptographiquement sûr de 96 bits généré par opération.",
-          descAuthTag: "Balise d'authentification GCM de 128 bits vérifiant l'intégrité du texte chiffré et de l'AAD.",
+          descPlatformKey:
+            "Entier 32 bits (Big-endian) identifiant la clé racine de plateforme dans le trousseau.",
+          descTenantVersion:
+            "Entier 16 bits (Big-endian) identifiant la version de rotation de clé du tenant.",
+          descNonce:
+            "Vecteur d'initialisation aléatoire cryptographiquement sûr de 96 bits généré par opération.",
+          descAuthTag:
+            "Balise d'authentification GCM de 128 bits vérifiant l'intégrité du texte chiffré et de l'AAD.",
           descCiphertext: "Données utiles du champ chiffrées en AES-256-GCM.",
           aadTitle: "Données authentifiées supplémentaires (AAD)",
           aadContent:
@@ -2777,22 +2950,29 @@ export const fr = {
           thStrategy: "Stratégie opérationnelle",
           thBehavior: "Implémentation du moteur",
           stratLocking: "Zéro verrouillage de table",
-          behLocking: "Utilise une pagination par curseur et une concurrence optimiste (`RowVersion`) pour mettre à jour les lignes sans verrou exclusif.",
+          behLocking:
+            "Utilise une pagination par curseur et une concurrence optimiste (`RowVersion`) pour mettre à jour les lignes sans verrou exclusif.",
           stratBatching: "Traitement par lots configurable",
-          behBatching: "Traite 500 enregistrements par itération, régulant l'exécution pour préserver les performances I/O en production.",
+          behBatching:
+            "Traite 500 enregistrements par itération, régulant l'exécution pour préserver les performances I/O en production.",
           stratResilience: "Résistant aux pannes et idempotent",
-          behResilience: "En cas de redémarrage du processus, le curseur reprend au dernier décalage validé. Les enregistrements déjà migrés sont ignorés.",
+          behResilience:
+            "En cas de redémarrage du processus, le curseur reprend au dernier décalage validé. Les enregistrements déjà migrés sont ignorés.",
           stratObservability: "Métriques et progression en temps réel",
-          behObservability: "Transmet le nombre de réussites, d'échecs et le pourcentage d'avancement au tableau de bord Studio et au portail d'administration.",
+          behObservability:
+            "Transmet le nombre de réussites, d'échecs et le pourcentage d'avancement au tableau de bord Studio et au portail d'administration.",
           stratCluster: "Ré-enveloppement de cluster de plateforme",
           behCluster:
             "Migration initiée par le SuperAdmin ré-enveloppant tous les secrets des locataires sous la nouvelle clé plateforme et mettant à jour les données sans interruption.",
           toolingTitle: "Interfaces de gestion",
           toolingIntro:
             "Les opérateurs et développeurs disposent de trois interfaces complémentaires pour administrer le chiffrement :",
-          toolPortal: "Portail de sécurité du tenant : interface web à `/custom-fields/security` pour la rotation autonome et le suivi du ré-emballage.",
-          toolCli: "SCRIPE CLI : outillage en ligne de commande complet via `scripe crypto status`, `rotate`, `rewrap`, `verify` et `revoke`.",
-          toolStudio: "SCRIPE Studio : tableau de bord interactif à `/crypto` avec tables de trousseaux et barres de progression en direct.",
+          toolPortal:
+            "Portail de sécurité du tenant : interface web à `/custom-fields/security` pour la rotation autonome et le suivi du ré-emballage.",
+          toolCli:
+            "SCRIPE CLI : outillage en ligne de commande complet via `scripe crypto status`, `rotate`, `rewrap`, `verify` et `revoke`.",
+          toolStudio:
+            "SCRIPE Studio : tableau de bord interactif à `/crypto` avec tables de trousseaux et barres de progression en direct.",
         },
       },
     },

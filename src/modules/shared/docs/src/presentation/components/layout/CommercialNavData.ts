@@ -91,7 +91,11 @@ export function sectionLabelKey(sectionId: string): string {
  * @param field - Field type ("title" or "desc").
  * @returns Localization key string.
  */
-export function sectionItemKey(sectionId: string, itemKey: string, field: "title" | "desc"): string {
+export function sectionItemKey(
+  sectionId: string,
+  itemKey: string,
+  field: "title" | "desc"
+): string {
   return `commercialMegaMenu.${sectionId}.items.${itemKey}.${field}`;
 }
 

@@ -61,9 +61,7 @@ export function CommissionLedgerView() {
         <h1 className="text-2xl font-bold tracking-tight">
           {t("entitlements.commissionLedger.title")}
         </h1>
-        <p className="text-sm text-nx-ink-2">
-          {t("entitlements.commissionLedger.subtitle")}
-        </p>
+        <p className="text-sm text-nx-ink-2">{t("entitlements.commissionLedger.subtitle")}</p>
       </div>
 
       <Tabs defaultValue="ledgers" className="w-full">

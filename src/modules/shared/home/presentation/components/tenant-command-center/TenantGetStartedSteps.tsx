@@ -22,11 +22,11 @@ export function TenantGetStartedSteps({
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 border-border bg-card shadow-xs">
+    <Card className="shadow-xs border-border bg-card p-4">
       {/* Section Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
+      <div className="mb-3 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 text-primary flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary">
             <Rocket className="h-4 w-4" />
           </div>
           <div>
@@ -49,7 +49,7 @@ export function TenantGetStartedSteps({
       </div>
 
       {/* 5 Steps Responsive Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
         {steps.map((step) => {
           const isDone = step.status === "done";
           const isCurrent = step.status === "current";
@@ -57,45 +57,45 @@ export function TenantGetStartedSteps({
           return (
             <div
               key={step.id}
-              className={`min-h-[136px] rounded-xl p-3 border flex flex-col justify-between transition-colors ${
+              className={`flex min-h-[136px] flex-col justify-between rounded-xl border p-3 transition-colors ${
                 isCurrent
-                  ? "border-primary/50 bg-primary/5 shadow-xs"
+                  ? "shadow-xs border-primary/50 bg-primary/5"
                   : isDone
-                  ? "border-border bg-muted/20"
-                  : "border-border bg-card"
+                    ? "border-border bg-muted/20"
+                    : "border-border bg-card"
               }`}
             >
               <div>
                 <div className="flex items-center justify-between">
                   <div
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border ${
+                    className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] font-bold ${
                       isDone
-                        ? "bg-emerald-500 text-white border-emerald-500"
+                        ? "border-emerald-500 bg-emerald-500 text-white"
                         : isCurrent
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-muted text-muted-foreground border-border"
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-border bg-muted text-muted-foreground"
                     }`}
                   >
                     {isDone ? <Check className="h-3 w-3" /> : step.id}
                   </div>
                   {isCurrent && (
-                    <span className="text-[9px] font-bold text-primary px-1.5 py-0.5 rounded bg-primary/10">
+                    <span className="rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary">
                       {t("tenantCommandCenter.getStarted.nextUp")}
                     </span>
                   )}
                 </div>
 
-                <h4 className="text-xs font-bold text-foreground mt-2.5 leading-tight">
+                <h4 className="mt-2.5 text-xs font-bold leading-tight text-foreground">
                   {step.title}
                 </h4>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-snug">
+                <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
                   {step.description}
                 </p>
               </div>
 
               <div className="mt-3 pt-2">
                 {isDone ? (
-                  <span className="text-[10px] font-semibold text-emerald-500 flex items-center gap-1">
+                  <span className="flex items-center gap-1 text-[10px] font-semibold text-emerald-500">
                     <Check className="h-3 w-3" />
                     <span>{t("tenantCommandCenter.getStarted.completed")}</span>
                   </span>
@@ -104,7 +104,7 @@ export function TenantGetStartedSteps({
                     asChild
                     variant={isCurrent ? "default" : "outline"}
                     size="sm"
-                    className="w-full h-7 text-[10px] font-semibold"
+                    className="h-7 w-full text-[10px] font-semibold"
                   >
                     <Link href={step.href || "/settings"}>
                       {step.actionLabel || t("tenantCommandCenter.getStarted.start")}

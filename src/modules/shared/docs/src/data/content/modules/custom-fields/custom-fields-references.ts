@@ -40,10 +40,18 @@ const sections: DocSection[] = [
     items: [
       { icon: "link", titleKey: `${K}.featPointsAt`, descriptionKey: `${K}.featPointsAtDesc` },
       { icon: "eye", titleKey: `${K}.featLiveName`, descriptionKey: `${K}.featLiveNameDesc` },
-      { icon: "shield", titleKey: `${K}.featPermission`, descriptionKey: `${K}.featPermissionDesc` },
+      {
+        icon: "shield",
+        titleKey: `${K}.featPermission`,
+        descriptionKey: `${K}.featPermissionDesc`,
+      },
       { icon: "search", titleKey: `${K}.featSearch`, descriptionKey: `${K}.featSearchDesc` },
       { icon: "check", titleKey: `${K}.featPinned`, descriptionKey: `${K}.featPinnedDesc` },
-      { icon: "refresh", titleKey: `${K}.featSelfHealing`, descriptionKey: `${K}.featSelfHealingDesc` },
+      {
+        icon: "refresh",
+        titleKey: `${K}.featSelfHealing`,
+        descriptionKey: `${K}.featSelfHealingDesc`,
+      },
     ],
   },
 
@@ -147,10 +155,7 @@ const sections: DocSection[] = [
   {
     type: "list",
     variant: "unordered",
-    items: [
-      `${K}.targetsWhyNotGroup`,
-      `${K}.targetsWhyNotTheme`,
-    ],
+    items: [`${K}.targetsWhyNotGroup`, `${K}.targetsWhyNotTheme`],
   },
   {
     type: "info",
@@ -165,13 +170,7 @@ const sections: DocSection[] = [
   {
     type: "list",
     variant: "ordered",
-    items: [
-      `${K}.tenant1`,
-      `${K}.tenant2`,
-      `${K}.tenant3`,
-      `${K}.tenant4`,
-      `${K}.tenant5`,
-    ],
+    items: [`${K}.tenant1`, `${K}.tenant2`, `${K}.tenant3`, `${K}.tenant4`, `${K}.tenant5`],
   },
   {
     type: "info",
@@ -214,14 +213,7 @@ const sections: DocSection[] = [
   {
     type: "list",
     variant: "unordered",
-    items: [
-      `${K}.not1`,
-      `${K}.not2`,
-      `${K}.not3`,
-      `${K}.not4`,
-      `${K}.not5`,
-      `${K}.not6`,
-    ],
+    items: [`${K}.not1`, `${K}.not2`, `${K}.not3`, `${K}.not4`, `${K}.not5`, `${K}.not6`],
   },
 
   // ─── Where next ───────────────────────────────────────────

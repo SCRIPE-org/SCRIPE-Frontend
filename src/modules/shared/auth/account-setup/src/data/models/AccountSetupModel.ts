@@ -25,6 +25,9 @@ export interface ValidateTokenResponse {
   expiresAt?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface SetupCustomFieldDto {
   key: string;
   labelEn: string;
@@ -40,6 +43,9 @@ export interface SetupCustomFieldDto {
   currentValue?: unknown;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ActivateAccountRequest {
   token: string;
   password: string;
@@ -51,6 +57,9 @@ export interface ActivateAccountRequest {
   customFieldValues?: Record<string, unknown>;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ActivateAccountResponse {
   success: boolean;
   adminUsername?: string;

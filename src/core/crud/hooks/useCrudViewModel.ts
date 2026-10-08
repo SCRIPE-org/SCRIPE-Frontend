@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback, useRef, useMemo } from "react";
 import { useGenericQuery } from "./useGenericQuery";
 import { useGenericMutations } from "./useGenericMutations";
@@ -35,7 +36,7 @@ export function useCrudViewModel<T extends BaseEntity, TCreate = any, TUpdate = 
 ) {
   // Store Hydration Guard: ensure queries don't fire before auth/permission state is rehydrated
   const hasHydrated = useAppStore((state) => state._hasHydrated);
-  const isQueryEnabled = (options.enabled !== false) && hasHydrated;
+  const isQueryEnabled = options.enabled !== false && hasHydrated;
 
   // UI State
   const [page, setPage] = useState(1);

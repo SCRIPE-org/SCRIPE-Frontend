@@ -37,13 +37,7 @@ interface TenantTabsProps {
 }
 
 type TabValue =
-  | "entitlements"
-  | "admins"
-  | "roles"
-  | "userGroups"
-  | "subtenants"
-  | "settings"
-  | "domains";
+  "entitlements" | "admins" | "roles" | "userGroups" | "subtenants" | "settings" | "domains";
 
 // One literal class per tab — never assembled from a template string, so
 // Tailwind's static scanner can see every combination in source text.

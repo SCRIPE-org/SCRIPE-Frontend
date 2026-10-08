@@ -80,6 +80,9 @@ export function isFieldGroupPickerVisible(form: Record<string, unknown>): boolea
   return typeof form.entityTypeKey === "string" && form.entityTypeKey.length > 0;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface FieldGroupPickerVisibilityArgs {
   /**
    * Whether the caller holds `custom-field-groups.view`.

@@ -5,6 +5,9 @@ import { WorkItem, type WorkItemData } from "../../domain/entities/WorkItem";
 import { WorkItemModel, type AssignableAdminResponseModel } from "../models/WorkItemModel";
 import type { AssignableAdmin } from "../../domain/interfaces/IWorkItemRepository";
 
+/**
+ * Documentation for module export
+ */
 export class WorkItemMapper {
   static toEntity(model: WorkItemModel): WorkItem {
     const data: WorkItemData = {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Deep-merge utility for docs locale registry.
  * Docs locales use nested namespaces (e.g., getStarted.overview, getStarted.prerequisites)

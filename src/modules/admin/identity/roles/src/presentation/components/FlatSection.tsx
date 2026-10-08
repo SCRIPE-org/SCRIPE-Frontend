@@ -11,12 +11,7 @@ import { useMemo, useState } from "react";
 import { Checkbox } from "@core/ui/checkbox";
 import { Button } from "@core/ui/button";
 import { Badge } from "@core/ui/badge";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@core/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@core/ui/tooltip";
 import { useI18n } from "@core/providers/i18n-provider";
 import { cn } from "@core/common/utils";
 import type { Permission } from "@modules/identity/permissions";
@@ -82,7 +77,7 @@ export function FlatSection({
 
   return (
     <div className={cn(hasMatrix && "border-t border-nx-line", className)}>
-      <div className="flex items-center justify-between border-b border-nx-line bg-nx-surface-sunken/40 px-4 py-2">
+      <div className="bg-nx-surface-sunken/40 flex items-center justify-between border-b border-nx-line px-4 py-2">
         <span className="text-xs font-semibold uppercase tracking-wider text-nx-ink-2">
           {t("roleDetail.additionalCapabilities")}
         </span>
@@ -92,14 +87,12 @@ export function FlatSection({
       </div>
 
       {Array.from(permsByCategory.entries()).map(([categoryName, catPerms]) => {
-        const catSelected = catPerms.filter((p) =>
-          selectedPermissionCodes.has(p.code)
-        ).length;
+        const catSelected = catPerms.filter((p) => selectedPermissionCodes.has(p.code)).length;
 
         return (
-          <div key={categoryName} className="border-b border-nx-line/60 last:border-b-0">
+          <div key={categoryName} className="border-nx-line/60 border-b last:border-b-0">
             {permsByCategory.size > 1 && (
-              <div className="flex items-center justify-between bg-nx-surface-sunken/20 px-4 py-1.5 text-xs">
+              <div className="bg-nx-surface-sunken/20 flex items-center justify-between px-4 py-1.5 text-xs">
                 <div className="flex items-center gap-2">
                   <TriStateCheckbox
                     total={catPerms.length}
@@ -217,7 +210,7 @@ export function FlatPermRow({
                     "h-6 shrink-0 gap-1 rounded-nx-sm px-2 py-0.5 text-[11px] font-normal transition-colors duration-nx-micro ease-nx-enter motion-reduce:transition-none",
                     "focus-visible:shadow-nx-focus focus-visible:outline-none",
                     custom
-                      ? "border-nx-accent bg-nx-accent-wash/30 text-nx-accent hover:bg-nx-accent-wash/50"
+                      ? "bg-nx-accent-wash/30 hover:bg-nx-accent-wash/50 border-nx-accent text-nx-accent"
                       : "border-nx-line text-nx-ink-3 hover:border-nx-line-hi hover:text-nx-ink-2"
                   )}
                 >

@@ -20,6 +20,9 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { EmptyState } from "@core/ui/empty-state";
 import { Button } from "@core/ui/button";
 
+/**
+ * Documentation for module export
+ */
 export const MediaLibraryView = React.memo(function MediaLibraryView() {
   useModuleLocales(() => import("../../../locales"), "media");
   const { t } = useI18n();

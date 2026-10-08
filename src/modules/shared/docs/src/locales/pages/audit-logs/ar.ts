@@ -1,4 +1,7 @@
-﻿export const ar = {
+﻿/**
+ * Documentation for module export
+ */
+export const ar = {
   modules: {
     auditLogs: {
       title: "سجلات التدقيق",

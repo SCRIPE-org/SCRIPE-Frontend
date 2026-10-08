@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * usePermission Hook
  *
@@ -37,8 +38,8 @@ export function usePermission(requiredPermission?: PermissionCode): boolean {
 
   // Platform superadmin bypass
   if (
-    user?.isSuperAdmin === true ||
-    user?.isProtected === true ||
+    (user as any)?.isSuperAdmin === true ||
+    (user as any)?.isProtected === true ||
     user?.username === "superadmin" ||
     permissions.includes("*")
   ) {
@@ -58,8 +59,8 @@ export function usePermissions() {
   const user = useAppStore((state) => state.user);
 
   const isSuperAdmin = Boolean(
-    user?.isSuperAdmin === true ||
-    user?.isProtected === true ||
+    (user as any)?.isSuperAdmin === true ||
+    (user as any)?.isProtected === true ||
     user?.username === "superadmin" ||
     permissions.includes("*")
   );

@@ -2,7 +2,10 @@
  * Types and helper functions for OptionSetItemsEditor.
  */
 
-import type { OptionSetItem, OptionSetItemWritableStatus } from "../../domain/entities/OptionSetItem";
+import type {
+  OptionSetItem,
+  OptionSetItemWritableStatus,
+} from "../../domain/entities/OptionSetItem";
 
 /** Client-side row counter for rowId. */
 let rowSequence = 0;

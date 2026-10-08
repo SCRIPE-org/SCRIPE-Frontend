@@ -1,6 +1,51 @@
+/**
+ * HealthCheckItemDto
+ */
+export interface HealthCheckItemDto {
+  name: string;
+  status: string;
+  description: string;
+  durationMs: number;
+  tags: string[];
+  data?: Record<string, string>;
+}
+
+/**
+ * ExternalDependencyDto
+ */
+export interface ExternalDependencyDto {
+  name: string;
+  category: string;
+  status: string;
+  latencyMs: number;
+  description: string;
+  lastCheckedAt: string;
+}
+
+/**
+ * HealthIncidentDto
+ */
+export interface HealthIncidentDto {
+  id: string;
+  title: string;
+  affectedService: string;
+  severity: "Critical" | "Warning" | "Info" | string;
+  status: "Investigating" | "Degraded" | "Resolved" | "Completed" | string;
+  description: string;
+  impact: string;
+  detectedAt: string;
+  resolvedAt?: string | null;
+}
+
+/**
+ * PlatformHealthResponseDto
+ */
 export interface PlatformHealthResponseDto {
   status: string;
   timestamp: string;
+  healthScore?: number;
+  totalChecks?: number;
+  healthyChecks?: number;
   runtime: {
     processStartTime: string;
     uptime: string;
@@ -41,4 +86,7 @@ export interface PlatformHealthResponseDto {
     status: string;
     isActive: boolean;
   }>;
+  checks?: HealthCheckItemDto[];
+  externalDependencies?: ExternalDependencyDto[];
+  incidents?: HealthIncidentDto[];
 }

@@ -16,6 +16,9 @@ export interface StaffAvailabilityListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IStaffAvailabilityService {
   getAll(params: {
     page: number;

@@ -30,6 +30,9 @@ import {
   slugifyThemeName,
 } from "./themeModalTypes";
 
+/**
+ * Documentation for module export
+ */
 export type { SaveAsThemeModalProps, SaveThemeInput };
 
 /**

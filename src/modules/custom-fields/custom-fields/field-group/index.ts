@@ -6,7 +6,10 @@
 export { FieldGroupListView } from "./src/presentation/views/FieldGroupListView";
 
 // ViewModels / hooks reused by the custom-field definition form's group picker
-export { useFieldGroupOptions, NO_FIELD_GROUP_VALUE } from "./src/presentation/viewmodels/useFieldGroupOptions";
+export {
+  useFieldGroupOptions,
+  NO_FIELD_GROUP_VALUE,
+} from "./src/presentation/viewmodels/useFieldGroupOptions";
 export { fieldGroupsQueryKey } from "./src/presentation/viewmodels/useFieldGroupViewModel";
 
 // Entities

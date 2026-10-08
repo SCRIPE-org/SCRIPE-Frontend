@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { UserX } from "lucide-react";
@@ -17,6 +17,9 @@ import { Button } from "@core/ui/button";
 import { Label } from "@core/ui/label";
 import { Textarea } from "@core/ui/textarea";
 
+/**
+ * Documentation for 1000
+ */
 export const CANCEL_REASON_MAX_LENGTH = 1000;
 
 interface Props {
@@ -32,6 +35,9 @@ interface Props {
   onConfirmCancel: (reason: string) => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function BookingCancelDialog(props: Props) {
   const [reason, setReason] = useState("");
   const [reasonTouched, setReasonTouched] = useState(false);
@@ -52,7 +58,13 @@ export function BookingCancelDialog(props: Props) {
   return (
     <AlertDialog open={props.open} onOpenChange={handleOpenChange}>
       <AlertDialogTrigger asChild>
-        <Button type="button" variant="outline" size="sm" disabled={props.disabled} className="text-destructive hover:bg-destructive/10">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          disabled={props.disabled}
+          className="text-destructive hover:bg-destructive/10"
+        >
           <UserX className="size-4" aria-hidden="true" />
           {props.t("booking360.actions.cancel")}
         </Button>
@@ -65,12 +77,20 @@ export function BookingCancelDialog(props: Props) {
           </AlertDialogDescription>
         </AlertDialogHeader>
 
-        {(props.bookingReference || props.customerName || props.resourceName || props.scheduledTime) && (
-          <div className="mx-6 rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs space-y-1.5" data-testid="cancel-booking-context">
+        {(props.bookingReference ||
+          props.customerName ||
+          props.resourceName ||
+          props.scheduledTime) && (
+          <div
+            className="mx-6 space-y-1.5 rounded-nx-sm border border-nx-line bg-nx-raised p-3 text-xs"
+            data-testid="cancel-booking-context"
+          >
             {props.bookingReference && (
               <div className="flex justify-between">
                 <span className="text-nx-ink-2">{props.t("booking360.schedule.reference")}:</span>
-                <span className="font-semibold text-nx-ink tabular-nums" dir="ltr">{props.bookingReference}</span>
+                <span className="font-semibold tabular-nums text-nx-ink" dir="ltr">
+                  {props.bookingReference}
+                </span>
               </div>
             )}
             {props.customerName && (
@@ -88,29 +108,36 @@ export function BookingCancelDialog(props: Props) {
             {props.scheduledTime && (
               <div className="flex justify-between">
                 <span className="text-nx-ink-2">{props.t("booking360.schedule.time")}:</span>
-                <span className="font-medium text-nx-ink tabular-nums">{props.scheduledTime}</span>
+                <span className="font-medium tabular-nums text-nx-ink">{props.scheduledTime}</span>
               </div>
             )}
           </div>
         )}
 
         <div className="space-y-2 px-6 py-4">
-          <Label htmlFor="booking-cancel-reason">
-            {props.t("booking360.cancel.reasonLabel")}
-          </Label>
+          <Label htmlFor="booking-cancel-reason">{props.t("booking360.cancel.reasonLabel")}</Label>
           <Textarea
             id="booking-cancel-reason"
             value={reason}
             maxLength={CANCEL_REASON_MAX_LENGTH}
             required
             aria-invalid={reasonTouched && reasonInvalid}
-            aria-describedby={reasonTouched && reasonInvalid ? "booking-cancel-reason-error" : "booking-cancel-reason-hint"}
+            aria-describedby={
+              reasonTouched && reasonInvalid
+                ? "booking-cancel-reason-error"
+                : "booking-cancel-reason-hint"
+            }
             onBlur={() => setReasonTouched(true)}
             onChange={(e) => setReason(e.target.value)}
           />
           {reasonTouched && reasonInvalid ? (
             <p id="booking-cancel-reason-error" className="text-sm text-destructive" role="alert">
-              {props.t(reasonTooLong ? "booking360.cancel.reasonTooLong" : "booking360.cancel.reasonRequired", { max: CANCEL_REASON_MAX_LENGTH })}
+              {props.t(
+                reasonTooLong
+                  ? "booking360.cancel.reasonTooLong"
+                  : "booking360.cancel.reasonRequired",
+                { max: CANCEL_REASON_MAX_LENGTH }
+              )}
             </p>
           ) : (
             <p id="booking-cancel-reason-hint" className="text-xs text-nx-ink-3">

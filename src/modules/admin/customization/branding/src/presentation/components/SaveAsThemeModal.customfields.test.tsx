@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // SaveAsThemeModal -- Wave 2 Step 2.2, Task 11
 //
 // This site had NO test coverage of any kind before this task -- confirmed by

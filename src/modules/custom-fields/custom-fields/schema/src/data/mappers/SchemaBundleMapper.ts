@@ -30,6 +30,9 @@ import {
   type SchemaBundleJson,
 } from "../models/SchemaBundleModel";
 
+/**
+ * Documentation for module export
+ */
 export class SchemaBundleMapper {
   /** Convert a SchemaBundleModel to a SchemaBundle entity. */
   static toEntity(model: SchemaBundleModel): SchemaBundle {

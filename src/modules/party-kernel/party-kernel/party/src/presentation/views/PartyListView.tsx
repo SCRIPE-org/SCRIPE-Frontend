@@ -24,6 +24,9 @@ const TYPE_BADGE_VARIANT: Record<string, "info" | "success"> = {
 };
 
 // P5.4: React.memo prevents unnecessary re-renders
+/**
+ * Documentation for module export
+ */
 export const PartyListView = React.memo(function PartyListView() {
   useModuleLocales(() => import("../../../locales"), "party-kernel.party");
   const { vm } = usePartyViewModel();

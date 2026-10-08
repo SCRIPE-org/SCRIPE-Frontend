@@ -33,6 +33,9 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { useValueExportButtonViewModel } from "../viewmodels/useValueExportButtonViewModel";
 import { ValueExportDialog } from "./ValueExportDialog";
 
+/**
+ * Documentation for module export
+ */
 export function ValueExportButton() {
   useModuleLocales(() => import("../../../locales"), "customFieldValueExport");
   const { t } = useI18n();

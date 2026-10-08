@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { appLogger } from "@core/common/logger";
 import {
   Notification,

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /**
  * Field Groups Administration Screen
  *
@@ -27,12 +28,12 @@ import { FieldGroupList } from "../components/FieldGroupList";
 import { FieldGroupEditor, type FieldGroupFormValues } from "../components/FieldGroupEditor";
 import type { FieldGroup } from "../../domain/entities/FieldGroup";
 
+/**
+ * Documentation for module export
+ */
 export function FieldGroupListView() {
   useModuleLocales(() => import("../../../locales"), "customFieldGroups");
-  useModuleLocales(
-    () => import("../../../../custom-field/locales"),
-    "customFields"
-  );
+  useModuleLocales(() => import("../../../../custom-field/locales"), "customFields");
   const { t, language, direction } = useI18n();
   const BackIcon = direction === "rtl" ? ChevronRight : ChevronLeft;
 
@@ -205,10 +206,7 @@ export function FieldGroupListView() {
           description={t("fieldGroup.selectEntityType.description")}
         />
       ) : vm.isGroupsError ? (
-        <ErrorMessage
-          message={t("fieldGroup.loadFailed")}
-          onRetry={() => vm.refetchGroups()}
-        />
+        <ErrorMessage message={t("fieldGroup.loadFailed")} onRetry={() => vm.refetchGroups()} />
       ) : (
         <div className="flex flex-col gap-4">
           {isEditorOpen && (

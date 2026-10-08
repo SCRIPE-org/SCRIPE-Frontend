@@ -11,6 +11,9 @@ import { SchemaImportButton } from "../../../../../schema/src/presentation/compo
 import { DefinitionExportButton } from "../../../../../definition-export/src/presentation/components/DefinitionExportButton";
 import { ValueExportButton } from "../../../../../value-export/src/presentation/components/ValueExportButton";
 
+/**
+ * Documentation for module export
+ */
 export const CustomFieldExportButtons = React.memo(function CustomFieldExportButtons() {
   return (
     <>

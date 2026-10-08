@@ -36,7 +36,7 @@ function getErrorMessage(err: unknown, fallback: string): string {
 
 /**
  * React ViewModel hook orchestrating state, network effects, and mutations for tenant domain management.
- * 
+ *
  * Interacts exclusively with ITenantRepository via Clean Architecture Dependency Injection container.
  * Encapsulates domain CRUD, live DNS verification, and primary host designation.
  *
@@ -59,7 +59,9 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   const [verifyingIds, setVerifyingIds] = useState<Record<string, boolean>>({});
 
   const domainsRef = useRef<TenantDomain[]>(domains);
-  domainsRef.current = domains;
+  useEffect(() => {
+    domainsRef.current = domains;
+  }, [domains]);
 
   // ── In-place Single Domain Verification ──────────────────
   const verifySingleDomain = useCallback(
@@ -125,7 +127,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
 
   // ── Fetch Domains (silent by default to prevent skeletons after initial mount) ──
   const fetchDomains = useCallback(
-    async (isSilent = true) => {
+    async (_isSilent = true) => {
       try {
         const response = await tenantRepository.getDomains(tenantId);
         setDomains(response?.domains || []);
@@ -143,7 +145,9 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
 
   // Initial load
   useEffect(() => {
-    fetchDomains(false);
+    queueMicrotask(() => {
+      void fetchDomains(false);
+    });
   }, [fetchDomains]);
 
   // Initial mount: verify live DNS for all custom domains automatically
@@ -191,7 +195,9 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
 
   useEffect(() => {
     if (!hasPendingDomains || isInitialLoading) {
-      setIsAutoVerifying(false);
+      queueMicrotask(() => {
+        setIsAutoVerifying(false);
+      });
       return;
     }
 
@@ -199,7 +205,9 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
     let attempts = 0;
     const maxAttempts = 15;
 
-    setIsAutoVerifying(true);
+    queueMicrotask(() => {
+      setIsAutoVerifying(true);
+    });
 
     const pollInterval = setInterval(async () => {
       attempts++;
@@ -256,11 +264,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   // ── Actions ────────────────────────────────────────────
 
   const addDomain = useCallback(
-    async (
-      domain: string,
-      redirectTo?: string | null,
-      redirectStatusCode?: number | null
-    ) => {
+    async (domain: string, redirectTo?: string | null, redirectStatusCode?: number | null) => {
       if (!domain.trim()) return;
       setIsAdding(true);
       try {
@@ -330,11 +334,7 @@ export function useTenantDomainsViewModel({ tenantId }: UseTenantDomainsViewMode
   );
 
   const updateDomainRedirect = useCallback(
-    async (
-      domainId: string,
-      redirectTo?: string | null,
-      redirectStatusCode?: number | null
-    ) => {
+    async (domainId: string, redirectTo?: string | null, redirectStatusCode?: number | null) => {
       setIsUpdatingRedirect(true);
       try {
         await tenantRepository.updateDomain(tenantId, domainId, redirectTo, redirectStatusCode);

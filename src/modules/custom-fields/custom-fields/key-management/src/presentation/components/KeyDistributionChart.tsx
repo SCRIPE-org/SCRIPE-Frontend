@@ -13,6 +13,9 @@ interface KeyDistributionChartProps {
   isStartingRewrap?: boolean;
 }
 
+/**
+ * Documentation for KeyDistributionChart
+ */
 export function KeyDistributionChart({
   status,
   onStartRewrap,
@@ -22,23 +25,16 @@ export function KeyDistributionChart({
   const isHealthy = status.isFullyMigrated;
 
   return (
-    <Card className="shadow-sm border border-border">
+    <Card className="border border-border shadow-sm">
       <CardHeader className="flex flex-row items-start justify-between pb-3">
         <div>
           <CardTitle className="text-base font-semibold">
             {t("customFieldsSecurity.distributionTitle")}
           </CardTitle>
-          <CardDescription>
-            {t("customFieldsSecurity.distributionDesc")}
-          </CardDescription>
+          <CardDescription>{t("customFieldsSecurity.distributionDesc")}</CardDescription>
         </div>
         {!isHealthy && !status.hasPendingMigration && (
-          <Button
-            size="sm"
-            onClick={onStartRewrap}
-            disabled={isStartingRewrap}
-            className="gap-1.5"
-          >
+          <Button size="sm" onClick={onStartRewrap} disabled={isStartingRewrap} className="gap-1.5">
             <Play className="h-3.5 w-3.5 fill-current" />
             {t("customFieldsSecurity.startRewrapButton")}
           </Button>
@@ -47,7 +43,7 @@ export function KeyDistributionChart({
       <CardContent className="space-y-4">
         <div className="space-y-3">
           {status.distribution.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-2">
+            <p className="py-2 text-sm text-muted-foreground">
               {t("customFieldsSecurity.healthyNotice")}
             </p>
           ) : (
@@ -64,16 +60,16 @@ export function KeyDistributionChart({
                         Platform #{item.platformKeyId} / Tenant v{item.tenantKeyVersion}
                       </span>
                       {isCurrent && (
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+                        <Badge variant="secondary" className="h-4 px-1.5 py-0 text-[10px]">
                           Current
                         </Badge>
                       )}
                     </div>
-                    <span className="text-muted-foreground font-mono">
+                    <span className="font-mono text-muted-foreground">
                       {item.recordCount.toLocaleString()} ({item.percentage.toFixed(1)}%)
                     </span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-secondary overflow-hidden">
+                  <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
                     <div
                       className={`h-full rounded-full transition-all ${
                         isCurrent ? "bg-primary" : "bg-amber-500/70"
@@ -87,7 +83,7 @@ export function KeyDistributionChart({
           )}
         </div>
 
-        <div className="pt-2 border-t border-border/50">
+        <div className="border-t border-border/50 pt-2">
           {isHealthy ? (
             <div className="flex items-center gap-2 text-xs text-emerald-600 dark:text-emerald-400">
               <CheckCircle2 className="h-4 w-4 shrink-0" />

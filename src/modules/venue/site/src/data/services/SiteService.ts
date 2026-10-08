@@ -9,6 +9,9 @@ import type {
 import type { SiteDto, SiteListResponseDto } from "../models/SiteDto";
 import { SITE_ENDPOINTS } from "./site.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class SiteService implements ISiteService {
   constructor(private readonly api: IApiService) {}
 

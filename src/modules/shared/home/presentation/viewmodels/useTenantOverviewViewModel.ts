@@ -8,7 +8,6 @@ import { useCurrentTenantId } from "@core/providers/tenant-context-provider";
 import { identityContainer } from "@modules/admin/identity/di";
 import { useOverviewViewModel } from "./useOverviewViewModel";
 import { usePresentationMode } from "./usePresentationMode";
-import { TENANT_MOCK_DATA } from "../components/tenant-command-center/tenantMockData";
 import { buildTenantOverviewLiveData } from "./tenantOverviewMapper";
 
 export function useTenantOverviewViewModel() {
@@ -59,19 +58,10 @@ export function useTenantOverviewViewModel() {
       activeTenantName,
       t,
     });
-  }, [
-    activeTenantName,
-    detailsData,
-    recentActivityData,
-    summaryData,
-    statsData,
-    t,
-  ]);
-
-  const effectiveData = isPresentationMode ? TENANT_MOCK_DATA : liveData;
+  }, [activeTenantName, detailsData, recentActivityData, summaryData, statsData, t]);
 
   return {
-    data: effectiveData,
+    data: liveData,
     isPresentationMode,
     togglePresentationMode,
     isImpersonating,

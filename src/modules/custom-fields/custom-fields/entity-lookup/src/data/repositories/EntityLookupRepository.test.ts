@@ -47,11 +47,7 @@ describe("EntityLookupRepository", () => {
     const service = mockService();
     const signal = new AbortController().signal;
 
-    await new EntityLookupRepository(service).resolve(
-      "hrms.staff-member",
-      "AbC-dEf_123",
-      signal
-    );
+    await new EntityLookupRepository(service).resolve("hrms.staff-member", "AbC-dEf_123", signal);
 
     expect(service.resolve).toHaveBeenCalledWith("hrms.staff-member", "AbC-dEf_123", signal);
   });

@@ -44,9 +44,7 @@ export function ThemeSwitcher({
   const { t } = useI18n();
   const isDark = theme === "dark";
 
-  const themeLabel = isDark
-    ? t("signup.shell.themeToLight")
-    : t("signup.shell.themeToDark");
+  const themeLabel = isDark ? t("signup.shell.themeToLight") : t("signup.shell.themeToDark");
 
   const isGhost = transparent !== undefined ? transparent : variant === "ghost";
 

@@ -130,13 +130,20 @@ describe("GenericForm entity-reference field — no extension registered at all"
   it("keeps the aria-invalid / aria-describedby contract when the required pass rejects the field", async () => {
     const onSubmit = vi.fn().mockResolvedValue(undefined);
     render(
-      <GenericForm fields={[{ ...FIELD, required: true }]} onSubmit={onSubmit} onCancel={() => {}} />
+      <GenericForm
+        fields={[{ ...FIELD, required: true }]}
+        onSubmit={onSubmit}
+        onCancel={() => {}}
+      />
     );
 
     fireEvent.click(screen.getByRole("button", { name: "common.save" }));
 
     await waitFor(() =>
-      expect(screen.getByRole("group", { name: "Assignee" })).toHaveAttribute("aria-invalid", "true")
+      expect(screen.getByRole("group", { name: "Assignee" })).toHaveAttribute(
+        "aria-invalid",
+        "true"
+      )
     );
     expect(onSubmit).not.toHaveBeenCalled();
     expect(screen.getByRole("group", { name: "Assignee" })).toHaveAttribute(

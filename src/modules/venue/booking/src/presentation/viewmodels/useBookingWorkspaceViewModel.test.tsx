@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from "@testing-library/react";
+﻿import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getVenueContainer } from "@modules/venue/di";
 import { useBookingWorkspaceViewModel } from "./useBookingWorkspaceViewModel";
@@ -69,20 +69,35 @@ function makeContainer() {
         bookingHoldId: "hold-1",
         expiresAtUtc: "2999-09-10T07:15:00Z",
       }),
-      getReservation: vi.fn()
+      getReservation: vi
+        .fn()
         .mockResolvedValueOnce({ id: "reservation-1", reservationNumber: "RES-1", status: "Held" })
-        .mockResolvedValueOnce({ id: "reservation-1", reservationNumber: "RES-1", status: "Confirmed" }),
-      confirm: vi.fn().mockResolvedValue({ reservationId: "reservation-1", bookingHoldId: "hold-1" }),
+        .mockResolvedValueOnce({
+          id: "reservation-1",
+          reservationNumber: "RES-1",
+          status: "Confirmed",
+        }),
+      confirm: vi
+        .fn()
+        .mockResolvedValue({ reservationId: "reservation-1", bookingHoldId: "hold-1" }),
     },
   };
 }
 
-async function prepareSelection(result: { current: ReturnType<typeof useBookingWorkspaceViewModel> }) {
+async function prepareSelection(result: {
+  current: ReturnType<typeof useBookingWorkspaceViewModel>;
+}) {
   await waitFor(() => expect(result.current.setupLoading).toBe(false));
-  await act(async () => { await result.current.selectCustomer("party-1"); });
+  await act(async () => {
+    await result.current.selectCustomer("party-1");
+  });
   act(() => result.current.setCriteria({ date: "2026-09-10" }));
-  await act(async () => { await result.current.searchAvailability(); });
-  await act(async () => { await result.current.selectCandidate(result.current.state.candidates[0]); });
+  await act(async () => {
+    await result.current.searchAvailability();
+  });
+  await act(async () => {
+    await result.current.selectCandidate(result.current.state.candidates[0]);
+  });
 }
 
 describe("useBookingWorkspaceViewModel", () => {
@@ -91,19 +106,30 @@ describe("useBookingWorkspaceViewModel", () => {
   it("honors a calendar resource/date/time prefill while keeping Availability Search authoritative", async () => {
     const container = makeContainer();
     vi.mocked(getVenueContainer).mockReturnValue(container as never);
-    const { result } = renderHook(() => useBookingWorkspaceViewModel({
-      facilityId: "facility-1",
+    const { result } = renderHook(() =>
+      useBookingWorkspaceViewModel({
+        facilityId: "facility-1",
+        resourceId: "resource-1",
+        date: "2026-09-10",
+        startTime: "10:30",
+        durationMinutes: 90,
+      })
+    );
+
+    await waitFor(() => expect(result.current.setupLoading).toBe(false));
+    await act(async () => {
+      await result.current.selectCustomer("party-1");
+    });
+    await act(async () => {
+      await result.current.searchAvailability();
+    });
+
+    expect(result.current.criteria).toMatchObject({
       resourceId: "resource-1",
       date: "2026-09-10",
       startTime: "10:30",
       durationMinutes: 90,
-    }));
-
-    await waitFor(() => expect(result.current.setupLoading).toBe(false));
-    await act(async () => { await result.current.selectCustomer("party-1"); });
-    await act(async () => { await result.current.searchAvailability(); });
-
-    expect(result.current.criteria).toMatchObject({ resourceId: "resource-1", date: "2026-09-10", startTime: "10:30", durationMinutes: 90 });
+    });
     expect(container.availabilityRepository.search).toHaveBeenCalledTimes(1);
     expect(container.bookingRepository.createDraft).not.toHaveBeenCalled();
   });
@@ -111,7 +137,9 @@ describe("useBookingWorkspaceViewModel", () => {
   it("keeps safe defaults when optional route prefill values are absent", async () => {
     const container = makeContainer();
     vi.mocked(getVenueContainer).mockReturnValue(container as never);
-    const { result } = renderHook(() => useBookingWorkspaceViewModel({ durationMinutes: undefined }));
+    const { result } = renderHook(() =>
+      useBookingWorkspaceViewModel({ durationMinutes: undefined })
+    );
 
     await waitFor(() => expect(result.current.setupLoading).toBe(false));
     expect(result.current.criteria.durationMinutes).toBe(60);
@@ -124,9 +152,13 @@ describe("useBookingWorkspaceViewModel", () => {
     const { result } = renderHook(() => useBookingWorkspaceViewModel());
 
     await waitFor(() => expect(result.current.setupLoading).toBe(false));
-    await act(async () => { await result.current.selectCustomer("party-1"); });
+    await act(async () => {
+      await result.current.selectCustomer("party-1");
+    });
     act(() => result.current.setCriteria({ date: "2026-09-10" }));
-    await act(async () => { await result.current.searchAvailability(); });
+    await act(async () => {
+      await result.current.searchAvailability();
+    });
 
     expect(container.customerRepository.getById).toHaveBeenCalledWith("party-1");
     expect(container.availabilityRepository.search).toHaveBeenCalledWith({
@@ -142,14 +174,22 @@ describe("useBookingWorkspaceViewModel", () => {
 
   it("represents a no-availability response without manufacturing an available candidate", async () => {
     const container = makeContainer();
-    container.availabilityRepository.search.mockResolvedValue({ ...availability, isAvailable: false, remainingCapacity: 0 });
+    container.availabilityRepository.search.mockResolvedValue({
+      ...availability,
+      isAvailable: false,
+      remainingCapacity: 0,
+    });
     vi.mocked(getVenueContainer).mockReturnValue(container as never);
     const { result } = renderHook(() => useBookingWorkspaceViewModel());
 
     await waitFor(() => expect(result.current.setupLoading).toBe(false));
-    await act(async () => { await result.current.selectCustomer("party-1"); });
+    await act(async () => {
+      await result.current.selectCustomer("party-1");
+    });
     act(() => result.current.setCriteria({ date: "2026-09-10" }));
-    await act(async () => { await result.current.searchAvailability(); });
+    await act(async () => {
+      await result.current.searchAvailability();
+    });
 
     expect(result.current.state.stage).toBe("noAvailability");
     expect(result.current.state.candidates[0].isAvailable).toBe(false);
@@ -157,14 +197,20 @@ describe("useBookingWorkspaceViewModel", () => {
 
   it("maps a complete availability network failure to a retryable workspace error", async () => {
     const container = makeContainer();
-    container.availabilityRepository.search.mockRejectedValue(new Error("Availability service unavailable"));
+    container.availabilityRepository.search.mockRejectedValue(
+      new Error("Availability service unavailable")
+    );
     vi.mocked(getVenueContainer).mockReturnValue(container as never);
     const { result } = renderHook(() => useBookingWorkspaceViewModel());
 
     await waitFor(() => expect(result.current.setupLoading).toBe(false));
-    await act(async () => { await result.current.selectCustomer("party-1"); });
+    await act(async () => {
+      await result.current.selectCustomer("party-1");
+    });
     act(() => result.current.setCriteria({ date: "2026-09-10" }));
-    await act(async () => { await result.current.searchAvailability(); });
+    await act(async () => {
+      await result.current.searchAvailability();
+    });
 
     expect(result.current.state.stage).toBe("error");
     expect(result.current.state.errorMessage).toBe("Availability service unavailable");
@@ -180,7 +226,9 @@ describe("useBookingWorkspaceViewModel", () => {
     const { result } = renderHook(() => useBookingWorkspaceViewModel());
     await prepareSelection(result);
 
-    await act(async () => { await result.current.createHold(); });
+    await act(async () => {
+      await result.current.createHold();
+    });
 
     expect(container.bookingRepository.createDraft).toHaveBeenCalledTimes(1);
     expect(container.bookingRepository.createHold).toHaveBeenCalledTimes(1);
@@ -190,12 +238,16 @@ describe("useBookingWorkspaceViewModel", () => {
 
   it("preserves a backend validation message when hold creation fails", async () => {
     const container = makeContainer();
-    container.bookingRepository.createHold.mockRejectedValue(new Error("Hold duration is outside policy"));
+    container.bookingRepository.createHold.mockRejectedValue(
+      new Error("Hold duration is outside policy")
+    );
     vi.mocked(getVenueContainer).mockReturnValue(container as never);
     const { result } = renderHook(() => useBookingWorkspaceViewModel());
     await prepareSelection(result);
 
-    await act(async () => { await result.current.createHold(); });
+    await act(async () => {
+      await result.current.createHold();
+    });
 
     expect(result.current.state.stage).toBe("error");
     expect(result.current.state.errorMessage).toBe("Hold duration is outside policy");
@@ -207,19 +259,30 @@ describe("useBookingWorkspaceViewModel", () => {
     const { result } = renderHook(() => useBookingWorkspaceViewModel());
     await prepareSelection(result);
 
-    await act(async () => { await Promise.all([result.current.createHold(), result.current.createHold()]); });
+    await act(async () => {
+      await Promise.all([result.current.createHold(), result.current.createHold()]);
+    });
     expect(container.bookingRepository.createDraft).toHaveBeenCalledTimes(1);
     expect(container.bookingRepository.createHold).toHaveBeenCalledTimes(1);
-    expect(container.bookingRepository.createDraft.mock.invocationCallOrder[0])
-      .toBeLessThan(container.bookingRepository.createHold.mock.invocationCallOrder[0]);
+    expect(container.bookingRepository.createDraft.mock.invocationCallOrder[0]).toBeLessThan(
+      container.bookingRepository.createHold.mock.invocationCallOrder[0]
+    );
     expect(result.current.state.stage).toBe("held");
 
-    await act(async () => { await Promise.all([result.current.confirm(), result.current.confirm()]); });
+    await act(async () => {
+      await Promise.all([result.current.confirm(), result.current.confirm()]);
+    });
     expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(1);
-    expect(container.bookingRepository.confirm).toHaveBeenCalledWith("reservation-1", expect.any(String), "quote-1");
+    expect(container.bookingRepository.confirm).toHaveBeenCalledWith(
+      "reservation-1",
+      expect.any(String),
+      "quote-1"
+    );
     expect(result.current.state.stage).toBe("confirmed");
 
-    await act(async () => { await result.current.confirm(); });
+    await act(async () => {
+      await result.current.confirm();
+    });
     expect(container.bookingRepository.confirm).toHaveBeenCalledTimes(1);
   });
 
@@ -229,11 +292,18 @@ describe("useBookingWorkspaceViewModel", () => {
     const { result } = renderHook(() => useBookingWorkspaceViewModel());
     await prepareSelection(result);
 
-    await act(async () => { await result.current.applyPriceOverride(-20, "approved concession"); });
+    await act(async () => {
+      await result.current.applyPriceOverride(-20, "approved concession");
+    });
 
-    expect(container.commercialPricingRepository.overrideQuote).toHaveBeenCalledWith("quote-1", expect.objectContaining({
-      adjustmentAmount: -20, reason: "approved concession", idempotencyKey: expect.any(String),
-    }));
+    expect(container.commercialPricingRepository.overrideQuote).toHaveBeenCalledWith(
+      "quote-1",
+      expect.objectContaining({
+        adjustmentAmount: -20,
+        reason: "approved concession",
+        idempotencyKey: expect.any(String),
+      })
+    );
     expect(result.current.priceQuote?.grandTotal).toBe(230);
   });
 });

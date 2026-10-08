@@ -40,7 +40,10 @@ function entry(overrides: Partial<FieldHistoryEntry> = {}): FieldHistoryEntry {
   };
 }
 
-function page(items: FieldHistoryEntry[], overrides: Partial<FieldHistoryPage> = {}): FieldHistoryPage {
+function page(
+  items: FieldHistoryEntry[],
+  overrides: Partial<FieldHistoryPage> = {}
+): FieldHistoryPage {
   return { items, totalCount: items.length, page: 1, pageSize: 25, ...overrides };
 }
 
@@ -63,10 +66,7 @@ function renderDialog(history: FieldHistoryPage | null, extra: Record<string, un
 describe("Deleted vs Purged", () => {
   it("renders both kinds, distinguishably", () => {
     renderDialog(
-      page([
-        entry({ id: "a", changeKind: "Deleted" }),
-        entry({ id: "b", changeKind: "Purged" }),
-      ])
+      page([entry({ id: "a", changeKind: "Deleted" }), entry({ id: "b", changeKind: "Purged" })])
     );
 
     expect(screen.getByText("customField.history.kind.Deleted")).toBeInTheDocument();

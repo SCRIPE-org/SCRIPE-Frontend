@@ -85,9 +85,7 @@ export function TenantPaymentGatewaysView() {
             <h1 className="text-2xl font-bold tracking-tight">
               {t("entitlements.tenantGateways.title")}
             </h1>
-            <p className="mt-1 text-nx-ink-2">
-              {t("entitlements.tenantGateways.subtitle")}
-            </p>
+            <p className="mt-1 text-nx-ink-2">{t("entitlements.tenantGateways.subtitle")}</p>
           </div>
         </div>
 
@@ -119,15 +117,15 @@ export function TenantPaymentGatewaysView() {
                 {vm.availableToAdd.map((def) => (
                   <Card
                     key={def.type}
-                    className="group cursor-pointer border-dashed transition-[border-color] duration-nx-standard ease-nx-enter motion-reduce:transition-none hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
+                    className="group cursor-pointer border-dashed transition-[border-color] duration-nx-standard ease-nx-enter hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)] motion-reduce:transition-none"
                     onClick={() => vm.openConfigureForm(def.type)}
                   >
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-raised transition-[background-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:bg-nx-accent-wash">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-nx-md bg-nx-raised transition-[background-color] duration-nx-micro ease-nx-enter group-hover:bg-nx-accent-wash motion-reduce:transition-none">
                           <GatewayIcon
                             name={def.icon}
-                            className="h-5 w-5 text-nx-ink-3 transition-[color] duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:text-nx-accent"
+                            className="h-5 w-5 text-nx-ink-3 transition-[color] duration-nx-micro ease-nx-enter group-hover:text-nx-accent motion-reduce:transition-none"
                           />
                         </div>
                         <div>
@@ -140,7 +138,7 @@ export function TenantPaymentGatewaysView() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="w-full gap-2 transition-[color,border-color] duration-nx-micro ease-nx-enter motion-reduce:transition-none group-hover:text-nx-accent group-hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)]"
+                        className="w-full gap-2 transition-[color,border-color] duration-nx-micro ease-nx-enter group-hover:border-[color:color-mix(in_srgb,var(--nx-accent)_50%,transparent)] group-hover:text-nx-accent motion-reduce:transition-none"
                       >
                         <Plus className="h-4 w-4" />
                         {t("entitlements.tenantGateways.configure")}
@@ -600,7 +598,7 @@ function ConfigureDialog({
             href={`https://docs.${formState.gatewayType.toLowerCase()}.com`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1.5 text-xs text-nx-ink-3 transition-[color] duration-nx-micro ease-nx-enter motion-reduce:transition-none hover:text-nx-accent"
+            className="flex items-center gap-1.5 text-xs text-nx-ink-3 transition-[color] duration-nx-micro ease-nx-enter hover:text-nx-accent motion-reduce:transition-none"
           >
             <ExternalLink className="h-3 w-3" />
             {t("entitlements.tenantGateways.docsLink", { gateway: gatewayDef.label })}

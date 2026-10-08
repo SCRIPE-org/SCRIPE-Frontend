@@ -2,6 +2,9 @@ import type { VenueAttentionPage } from "../../domain/entities/VenueAttention";
 import type { IVenueAttentionRepository } from "../../domain/interfaces/IVenueAttentionRepository";
 import type { IVenueAttentionService } from "../../domain/interfaces/IVenueAttentionService";
 
+/**
+ * Documentation for module export
+ */
 export class VenueAttentionRepository implements IVenueAttentionRepository {
   constructor(private readonly service: IVenueAttentionService) {}
 

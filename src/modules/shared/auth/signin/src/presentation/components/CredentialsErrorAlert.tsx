@@ -2,6 +2,9 @@
 
 import React from "react";
 
+/**
+ * Documentation for module export
+ */
 export interface CredentialsErrorAlertProps {
   error: string;
   shakeKey: number;

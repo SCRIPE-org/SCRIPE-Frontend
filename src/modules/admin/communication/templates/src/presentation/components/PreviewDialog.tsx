@@ -225,7 +225,11 @@ export function PreviewDialog({
                   "overflow-hidden rounded-nx-lg border border-nx-line shadow-nx-sm",
                   device === "mobile" && "border-2"
                 )}
-                style={{ width: `${currentDevice.width}px`, maxWidth: "100%", background: skin.surface }}
+                style={{
+                  width: `${currentDevice.width}px`,
+                  maxWidth: "100%",
+                  background: skin.surface,
+                }}
               >
                 {/* Simulated device bar (chrome) */}
                 <div className="flex items-center gap-1.5 border-b border-nx-line bg-nx-raised px-3 py-2">

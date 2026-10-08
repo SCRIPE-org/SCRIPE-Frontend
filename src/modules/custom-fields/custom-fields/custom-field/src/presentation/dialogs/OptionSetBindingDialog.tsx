@@ -20,6 +20,9 @@ import type { OptionSet } from "../../../../option-set/src/domain/entities/Optio
 import { OptionSetBindingCurrentStatus } from "./OptionSetBindingCurrentStatus";
 import { OptionSetBindingActions } from "./OptionSetBindingActions";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetBindingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -77,7 +80,11 @@ export function OptionSetBindingDialog({
   const [selectedSetId, setSelectedSetId] = React.useState<string | null>(null);
   const boundSetId = boundSet?.id ?? null;
   React.useEffect(() => {
-    if (open) setSelectedSetId(boundSetId);
+    if (open) {
+      queueMicrotask(() => {
+        setSelectedSetId(boundSetId);
+      });
+    }
   }, [open, boundSetId]);
 
   const selectedSet = bindableSets.find((set) => set.id === selectedSetId) ?? null;
@@ -168,7 +175,9 @@ export function OptionSetBindingDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{t("customField.optionSetBinding.title", { field: fieldLabel })}</DialogTitle>
+          <DialogTitle>
+            {t("customField.optionSetBinding.title", { field: fieldLabel })}
+          </DialogTitle>
           <DialogDescription>{t("customField.optionSetBinding.description")}</DialogDescription>
         </DialogHeader>
 

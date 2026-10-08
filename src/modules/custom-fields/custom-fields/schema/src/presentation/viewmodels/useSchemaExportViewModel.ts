@@ -18,7 +18,7 @@
  */
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useI18n } from "@core/providers/i18n-provider";
 import { toast } from "@core/hooks/use-enhanced-toast";
@@ -65,6 +65,9 @@ export function downloadSchemaBundle(bundle: SchemaBundle): void {
   URL.revokeObjectURL(url);
 }
 
+/**
+ * Documentation for module export
+ */
 export function useSchemaExportViewModel() {
   const { schemaExportRepository } = getSchemaExportContainer();
   const { customFieldRepository } = getCustomFieldsContainer();
@@ -94,9 +97,7 @@ export function useSchemaExportViewModel() {
 
   const exportMutation = useMutation({
     mutationFn: async (scope: string) => {
-      const bundle = await schemaExportRepository.exportSchema(
-        scope.length > 0 ? scope : null
-      );
+      const bundle = await schemaExportRepository.exportSchema(scope.length > 0 ? scope : null);
 
       // NO FILE FOR AN EMPTY BUNDLE. An empty result has two causes the client cannot tell apart --
       // the scope really has no fields, or every field in it is restricted from this caller and the
@@ -150,8 +151,7 @@ export function useSchemaExportViewModel() {
     exportMutation.reset();
   }, [exportMutation]);
 
-  const errorMessage =
-    exportMutation.error instanceof Error ? exportMutation.error.message : null;
+  const errorMessage = exportMutation.error instanceof Error ? exportMutation.error.message : null;
 
   return {
     entityTypes,

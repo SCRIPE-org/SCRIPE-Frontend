@@ -11,17 +11,15 @@ interface TenantRecentActivityFeedProps {
   activityFeed: TenantActivityItem[];
 }
 
-export function TenantRecentActivityFeed({
-  activityFeed,
-}: TenantRecentActivityFeedProps) {
+export function TenantRecentActivityFeed({ activityFeed }: TenantRecentActivityFeedProps) {
   const { t } = useI18n();
 
   return (
-    <Card className="p-4 border-border bg-card shadow-xs">
+    <Card className="shadow-xs border-border bg-card p-4">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-2.5">
+      <div className="mb-2.5 flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/20 text-sky-500 flex items-center justify-center">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-sky-500/20 bg-sky-500/10 text-sky-500">
             <History className="h-4 w-4" />
           </div>
           <div>
@@ -29,15 +27,14 @@ export function TenantRecentActivityFeed({
               {t("tenantCommandCenter.activity.title") || "Activity Feed"}
             </h3>
             <p className="text-[11px] text-muted-foreground">
-              {t("tenantCommandCenter.activity.subtitle") ||
-                "Recent administrative changes."}
+              {t("tenantCommandCenter.activity.subtitle") || "Recent administrative changes."}
             </p>
           </div>
         </div>
 
         <Link
           href="/audit"
-          className="text-xs font-semibold text-primary hover:underline flex items-center gap-1"
+          className="flex items-center gap-1 text-xs font-semibold text-primary hover:underline"
         >
           <span>{t("tenantCommandCenter.activity.viewAll") || "View all"}</span>
           <ChevronRight className="h-3 w-3 rtl:rotate-180" />
@@ -47,9 +44,10 @@ export function TenantRecentActivityFeed({
       {/* Activity Feed rows or empty state */}
       {activityFeed.length === 0 ? (
         <div className="py-4 text-center">
-          <History className="h-5 w-5 text-muted-foreground mx-auto mb-1.5 opacity-60" />
+          <History className="mx-auto mb-1.5 h-5 w-5 text-muted-foreground opacity-60" />
           <p className="text-xs text-muted-foreground">
-            {t("tenantCommandCenter.activity.noActivity") || "No recent administrative activity recorded."}
+            {t("tenantCommandCenter.activity.noActivity") ||
+              "No recent administrative activity recorded."}
           </p>
         </div>
       ) : (
@@ -58,29 +56,31 @@ export function TenantRecentActivityFeed({
             return (
               <div
                 key={item.id}
-                className="py-2.5 flex items-center justify-between gap-3 text-left"
+                className="flex items-center justify-between gap-3 py-2.5 text-left"
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex min-w-0 items-center gap-2.5">
                   <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
                     style={{
-                      backgroundColor: item.avatarColor ? `${item.avatarColor}18` : "rgba(14,165,233,0.15)",
+                      backgroundColor: item.avatarColor
+                        ? `${item.avatarColor}18`
+                        : "rgba(14,165,233,0.15)",
                       color: item.avatarColor ?? "rgb(14,165,233)",
                     }}
                   >
                     {item.avatarText}
                   </div>
                   <div className="min-w-0">
-                    <b className="text-xs font-semibold text-foreground block truncate">
+                    <b className="block truncate text-xs font-semibold text-foreground">
                       {item.author}
                     </b>
-                    <span className="text-[10px] text-muted-foreground block truncate">
+                    <span className="block truncate text-[10px] text-muted-foreground">
                       {item.action}
                     </span>
                   </div>
                 </div>
 
-                <time className="text-[10px] text-muted-foreground font-mono shrink-0">
+                <time className="shrink-0 font-mono text-[10px] text-muted-foreground">
                   {item.timeAgo}
                 </time>
               </div>

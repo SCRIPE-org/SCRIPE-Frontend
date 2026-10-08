@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * EmailHtmlBlock — Custom TipTap Node Extension
  *

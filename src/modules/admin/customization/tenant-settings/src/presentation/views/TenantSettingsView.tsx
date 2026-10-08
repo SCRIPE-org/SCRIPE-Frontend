@@ -83,14 +83,12 @@ export function TenantSettingsView() {
           <Card className="border-nx-line bg-nx-surface p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md bg-nx-accent/10 text-nx-accent">
+                <div className="bg-nx-accent/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-nx-md text-nx-accent">
                   <Globe className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div>
                   <h4 className="font-semibold text-nx-ink">{vm.t("tenant.domainsTitle")}</h4>
-                  <p className="text-sm text-nx-ink-2">
-                    {vm.t("tenant.domainsNoCustomHint")}
-                  </p>
+                  <p className="text-sm text-nx-ink-2">{vm.t("tenant.domainsNoCustomHint")}</p>
                 </div>
               </div>
               <Button asChild variant="outline" size="sm" className="gap-2">

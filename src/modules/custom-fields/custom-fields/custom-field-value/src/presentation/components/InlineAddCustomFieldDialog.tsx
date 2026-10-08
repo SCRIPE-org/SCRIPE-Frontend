@@ -23,6 +23,9 @@ import { useOptionSetViewModel } from "../../../../option-set/src/presentation/v
 import { useInlineAddCustomFieldViewModel } from "../viewmodels/useInlineAddCustomFieldViewModel";
 import { useInlineAddCustomFieldFormFields } from "../viewmodels/useInlineAddCustomFieldFormFields";
 
+/**
+ * Documentation for InlineAddCustomFieldDialog
+ */
 export function InlineAddCustomFieldDialog({
   entityTypeKey,
   entityDisplayName,
@@ -58,14 +61,13 @@ export function InlineAddCustomFieldDialog({
     isError: isReferenceTargetTypesError,
     isEmpty: isReferenceTargetTypesEmpty,
   } = useEntityLookupAvailableTypes();
-  const canViewOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW) || isSuperAdmin;
-  const canBindOptionSets = usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_BIND) || isSuperAdmin;
+  const canViewOptionSets =
+    usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_VIEW) || isSuperAdmin;
+  const canBindOptionSets =
+    usePermission(CUSTOM_FIELDS_PERMISSIONS.OPTION_SET_BIND) || isSuperAdmin;
   const optionSets = useOptionSetViewModel(null);
   const sets = optionSets.sets;
-  const bindableOptionSets = useMemo(
-    () => sets.filter((set) => set.isBindable),
-    [sets]
-  );
+  const bindableOptionSets = useMemo(() => sets.filter((set) => set.isBindable), [sets]);
 
   const fields = useInlineAddCustomFieldFormFields({
     t,
@@ -129,7 +131,9 @@ export function InlineAddCustomFieldDialog({
         >
           <SheetHeader className="shrink-0 border-b border-nx-line px-6 py-5">
             <SheetTitle>
-              {t("customField.inlineAdd.dialogTitle", { entity: entityDisplayName || entityTypeKey })}
+              {t("customField.inlineAdd.dialogTitle", {
+                entity: entityDisplayName || entityTypeKey,
+              })}
             </SheetTitle>
           </SheetHeader>
           <ScrollArea className="flex-1">

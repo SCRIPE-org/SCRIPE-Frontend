@@ -65,10 +65,11 @@ export const zh = {
       migrationNote:
         "每次变动表结构，务必确认能够平滑通过 'scripe db add-migration AddYourEntity -m Inventory' 和 'scripe db update -m Inventory'。",
     },
-      ujGettingStarted: {
+    ujGettingStarted: {
       title: "从开发者环境到企业入驻",
       description: "完整引导指南：从运行 SCRIPE CLI 与开发者工具到首个租户配置与企业品牌定制。",
-      intro: "欢迎体验 SCRIPE 从开发到生产的完整旅程。本教程将引导您完成本地环境搭建、OpenAPI 接口检查、平台启动及首个租户的配置。",
+      intro:
+        "欢迎体验 SCRIPE 从开发到生产的完整旅程。本教程将引导您完成本地环境搭建、OpenAPI 接口检查、平台启动及首个租户的配置。",
       infoTitle: "企业级开发者技术栈",
       infoContent: "所有 SCRIPE 服务开箱即用支持严格多租户隔离、零信任鉴权与不可篡改审计日志。",
       step1Title: "步骤 1：开发者 CLI 与本地平台启动",
@@ -85,17 +86,20 @@ export const zh = {
       step3Desc: "使用默认凭据登录并配置强制性多因素身份验证（MFA）。",
       mfaNoticeTitle: "安全硬性要求",
       mfaNoticeContent: "超级管理员账户必须在绑定 TOTP 硬件或验证器应用后，方可访问租户设置。",
-            stepEditionsTitle: "前置必备条件：创建商业订阅版本与功能特性矩阵",
-      stepEditionsDesc: "在创建任何租户之前，Entitlements 权益模块必须预先定义至少一个版本（Edition）。版本定义了租户的功能开关准入、配额上限和订阅价格。租户在数据库中必须关联有效的版本外键，无法脱离版本独立存在。",
-step4Title: "步骤 4：配置首个组织机构与租户",
+      stepEditionsTitle: "前置必备条件：创建商业订阅版本与功能特性矩阵",
+      stepEditionsDesc:
+        "在创建任何租户之前，Entitlements 权益模块必须预先定义至少一个版本（Edition）。版本定义了租户的功能开关准入、配额上限和订阅价格。租户在数据库中必须关联有效的版本外键，无法脱离版本独立存在。",
+      step4Title: "步骤 4：配置首个组织机构与租户",
       step4Desc: "创建根租户，配置路由别名（slug）、自定义域名并确立租户数据隔离边界。",
       step5Title: "步骤 5：主题定制、门户品牌与登录构建器",
       step5Desc: "上传企业标识、设置品牌配色方案、自定义 CSS 变量并通过可视化构建器定制登录页。",
 
       stepOrgCoreTitle: "第 5 步：构建企业级 5 级组织架构拓扑",
-      stepOrgCoreDesc: "使用 Organization Core 核心组织模块，将租户的运营治理层级划分为：全局组织、事业群、部门、成本中心与基层执行团队。",
+      stepOrgCoreDesc:
+        "使用 Organization Core 核心组织模块，将租户的运营治理层级划分为：全局组织、事业群、部门、成本中心与基层执行团队。",
       step6Title: "第 6 步：企业视觉品牌定制与 Studio 登录设计器",
-      step6Desc: "配置企业官方 Logo、自定义调色板设计令牌，并通过内置的 Studio 主题构建器实时发布个性化登录页排版。",
+      step6Desc:
+        "配置企业官方 Logo、自定义调色板设计令牌，并通过内置的 Studio 主题构建器实时发布个性化登录页排版。",
     },
     ujVenueBooking: {
       title: "场馆层级架构与高并发预订",
@@ -117,7 +121,8 @@ step4Title: "步骤 4：配置首个组织机构与租户",
     ujPricingFinance: {
       title: "动态定价算法与复式记账总账",
       description: "用户旅程：配置费率卡、高峰加价规则、密码学签名报价单与复式记账清算体系。",
-      intro: "将资源目录连接至动态定价算法，生成防篡改防欺诈报价单，并在复式记账总账中完成平衡清算。",
+      intro:
+        "将资源目录连接至动态定价算法，生成防篡改防欺诈报价单，并在复式记账总账中完成平衡清算。",
       infoTitle: "财务数据完整性",
       infoContent: "严格恒等的借贷平衡原则确保所有资金往来与财务凭证具备完备的可审计性。",
       step1Title: "步骤 1：创建费率卡与多币种价格簿",
@@ -168,7 +173,8 @@ step4Title: "步骤 4：配置首个组织机构与租户",
       description: "实时安全风险告警、防篡改审计日志、GDPR 数据主体权利履约及 BI 决策大屏。",
       intro: "确保平台严格遵循全球数据隐私法规，严密监控系统访问行为并生成管理决策报表。",
       infoTitle: "持续合规就绪",
-      infoContent: "自动化数据保留规则与密码学审计日志，保障系统持续满足 SOC2、ISO 27001 与 GDPR 标准。",
+      infoContent:
+        "自动化数据保留规则与密码学审计日志，保障系统持续满足 SOC2、ISO 27001 与 GDPR 标准。",
       step1Title: "步骤 1：实时安全监控与风险预警",
       step1Desc: "针对异常 IP 登录、越权提权操作与大宗敏感数据查询建立即时安全预警。",
       step2Title: "步骤 2：防篡改操作审计与数字取证",
@@ -178,5 +184,5 @@ step4Title: "步骤 4：配置首个组织机构与租户",
       step4Title: "步骤 4：高管 BI 仪表板与运营核心指标",
       step4Desc: "实时可视化呈现各场馆场地利用率、资金流水周转速度与员工单位工时效益。",
     },
-},
+  },
 };

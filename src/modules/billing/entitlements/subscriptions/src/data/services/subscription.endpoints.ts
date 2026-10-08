@@ -1,5 +1,8 @@
 import { V1 } from "@/core/config/api-endpoints/_shared";
 
+/**
+ * Documentation for module export
+ */
 export const SUBSCRIPTION_ENDPOINTS = {
   LIST_ALL: `${V1}/subscriptions`,
   ASSIGN: (tenantId: string) => `${V1}/tenants/${tenantId}/subscription`,

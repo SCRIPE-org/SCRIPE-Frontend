@@ -47,7 +47,6 @@ import {
   Layers,
 } from "lucide-react";
 
-
 interface FeatureDefinitionFormViewProps {
   /** If provided, we're in edit mode; otherwise create mode. */
   featureId?: string;

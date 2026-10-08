@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { Button } from "@core/ui/button";
@@ -12,6 +12,9 @@ interface Props {
   vm: ReturnType<typeof useResourceDetailViewModel>;
 }
 
+/**
+ * Documentation for module export
+ */
 export function ResourceGeneralTab({ vm }: Props) {
   const { t } = useI18n();
   const [name, setName] = useState(vm.resource?.name ?? "");
@@ -27,7 +30,9 @@ export function ResourceGeneralTab({ vm }: Props) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t("resources.general.title", { defaultValue: "General Information" })}</CardTitle>
+        <CardTitle>
+          {t("resources.general.title", { defaultValue: "General Information" })}
+        </CardTitle>
         <CardDescription>
           {t("resources.general.description", {
             defaultValue: "Court identity, sport category, capacity, and branch location.",
@@ -35,7 +40,7 @@ export function ResourceGeneralTab({ vm }: Props) {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4 max-w-lg">
+        <form onSubmit={handleSubmit} className="max-w-lg space-y-4">
           <div className="space-y-2">
             <Label htmlFor="res-name">
               {t("resources.general.name", { defaultValue: "Court / Field Name" })}
@@ -53,7 +58,9 @@ export function ResourceGeneralTab({ vm }: Props) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>{t("resources.general.sportType", { defaultValue: "Sport / Resource Type" })}</Label>
+              <Label>
+                {t("resources.general.sportType", { defaultValue: "Sport / Resource Type" })}
+              </Label>
               <Input
                 value={vm.profile?.name ?? vm.profile?.resourceKindCode ?? "Court"}
                 disabled

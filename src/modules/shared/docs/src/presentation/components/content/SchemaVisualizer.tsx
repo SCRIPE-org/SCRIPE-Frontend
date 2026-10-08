@@ -12,6 +12,9 @@ interface SchemaVisualizerProps {
   titleKey: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function SchemaVisualizer({ tables, titleKey }: SchemaVisualizerProps) {
   const { t, direction } = useDocsI18n();
   const [activeTableIdx, setActiveTableIdx] = useState<number>(0);

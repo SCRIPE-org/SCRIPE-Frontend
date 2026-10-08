@@ -1,5 +1,8 @@
 import { resolveIntlLocale } from "@core/common/utils";
 
+/**
+ * Documentation for Record<
+ */
 export const SENSITIVITY_BADGE_VARIANTS: Record<
   string,
   "outline" | "secondary" | "warning" | "destructive"

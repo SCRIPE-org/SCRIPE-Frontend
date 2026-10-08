@@ -49,7 +49,8 @@ export const en = {
     },
     liveFeed: {
       title: "Live Venue Feed",
-      subtitle: "Authoritative real-time operational events from today’s bookings and attention signals.",
+      subtitle:
+        "Authoritative real-time operational events from today’s bookings and attention signals.",
       pulse: "Operational Pulse",
       noEvents: "No operational events recorded yet",
       noEventsDesc: "Check-ins, holds, and confirmed reservations will stream here live.",
@@ -60,7 +61,8 @@ export const en = {
     },
     operationalLoad: {
       title: "Bookings by Time",
-      subtitle: "Hourly distribution of scheduled booking blocks across today’s operating timeline.",
+      subtitle:
+        "Hourly distribution of scheduled booking blocks across today’s operating timeline.",
       noLoad: "No operational load scheduled for today.",
       legend: {
         checkedIn: "Checked In",
@@ -125,12 +127,14 @@ export const en = {
     },
     moneyCard: {
       title: "Money & Commercial Operations",
-      description: "Track customer outstanding balances, manual payments, payment allocations, receipts, and refund reconciliation.",
+      description:
+        "Track customer outstanding balances, manual payments, payment allocations, receipts, and refund reconciliation.",
       openWorkspace: "Open Money Workspace",
     },
     attention: {
       activeTitle: "{{count}} operational signal(s) require attention",
-      activeDescription: "Resource calendar, blackout, or maintenance conflicts require operator review.",
+      activeDescription:
+        "Resource calendar, blackout, or maintenance conflicts require operator review.",
       viewAll: "Open Attention Center",
     },
     quickActions: {
@@ -143,7 +147,8 @@ export const en = {
       viewBookings: "View all bookings",
     },
     deferred: {
-      recentActivity: "Recent operational activity feed deferred: no bounded cross-reservation feed projection exists.",
+      recentActivity:
+        "Recent operational activity feed deferred: no bounded cross-reservation feed projection exists.",
     },
     empty: {
       noFacilityTitle: "No facilities configured",
@@ -153,7 +158,8 @@ export const en = {
       loadFailed: "Operational data unavailable for Venue Overview.",
       retry: "Retry loading overview",
       resourceLimitTitle: "This facility exceeds the overview resource limit",
-      resourceLimitDescription: "The overview is unavailable until a bounded facility projection is configured. No partial booking data is shown.",
+      resourceLimitDescription:
+        "The overview is unavailable until a bounded facility projection is configured. No partial booking data is shown.",
     },
   },
 };

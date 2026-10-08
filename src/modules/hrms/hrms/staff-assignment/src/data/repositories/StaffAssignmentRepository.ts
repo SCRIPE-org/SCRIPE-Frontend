@@ -17,6 +17,9 @@ import type { IStaffAssignmentService } from "../../domain/interfaces/IStaffAssi
 import type { StaffAssignment } from "../../domain/entities/StaffAssignment";
 import { StaffAssignmentMapper } from "../mappers/StaffAssignmentMapper";
 
+/**
+ * Documentation for module export
+ */
 export class StaffAssignmentRepository implements IStaffAssignmentRepository {
   constructor(private readonly service: IStaffAssignmentService) {}
 

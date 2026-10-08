@@ -13,6 +13,9 @@ import { normalizeCustomFieldCreateScope } from "../../../../custom-field/src/pr
 import { resolveActiveFieldVersion } from "../../../../custom-field/src/presentation/viewmodels/useOptionSetBindingViewModel";
 import type { OptionSet } from "../../../../option-set/src/domain/entities/OptionSet";
 
+/**
+ * Documentation for module export
+ */
 export interface CreateInlineFieldParams {
   data: Record<string, unknown>;
   entityTypeKey: string;
@@ -20,6 +23,9 @@ export interface CreateInlineFieldParams {
   onSuccess: () => void;
 }
 
+/**
+ * Documentation for module export
+ */
 export function useInlineAddCustomFieldViewModel() {
   const { t } = useI18n();
   const [isSubmitting, setIsSubmitting] = useState(false);

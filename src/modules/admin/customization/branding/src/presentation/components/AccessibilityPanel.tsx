@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FILE-EXCEPTION: file length
 /**
  * AccessibilityPanel v2 — Full accessibility settings + WCAG audit

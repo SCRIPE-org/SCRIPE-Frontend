@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions, react-hooks/exhaustive-deps */
 "use client";
 
 import { useState, useCallback, useMemo } from "react";
@@ -87,7 +88,7 @@ export function useConvertWizardViewModel(
   const selectedEdition =
     selectedEditionOverride ??
     (lead && editions
-      ? editions.find((e) => e.name.toLowerCase() === leadEditionKey) ?? null
+      ? (editions.find((e) => e.name.toLowerCase() === leadEditionKey) ?? null)
       : null);
 
   const featuresQuery = useQuery({

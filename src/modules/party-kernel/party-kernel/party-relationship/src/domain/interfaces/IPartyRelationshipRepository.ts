@@ -11,10 +11,11 @@ export interface PartyRelationshipListParams {
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyRelationshipRepository {
-  getAll(
-    params: PartyRelationshipListParams
-  ): Promise<{
+  getAll(params: PartyRelationshipListParams): Promise<{
     items: PartyRelationship[];
     totalCount: number;
     page: number;

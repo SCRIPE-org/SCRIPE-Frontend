@@ -32,6 +32,9 @@ import {
 } from "./CreateLeadDialogSchema";
 import { CreateLeadFormFields } from "./CreateLeadFormFields";
 
+/**
+ * Documentation for module export
+ */
 export type { CreateLeadFormData };
 
 /**

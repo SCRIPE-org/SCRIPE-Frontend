@@ -5,6 +5,9 @@ import type { ApiKeyDto } from "../models/ApiKeyDto";
 import type { CreateApiKeyRequest, CreateApiKeyResult } from "../../domain/entities/ApiKey";
 import { API_KEYS_ENDPOINTS } from "./apikeys.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class ApiKeyService implements IApiKeyService {
   constructor(private readonly api: IApiService) {}
 

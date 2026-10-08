@@ -64,18 +64,14 @@ describe("scope labelling", () => {
     renderDialog({ isPlatformWideScope: false });
 
     expect(screen.getByText("customField.impact.scopeYourOrganisation")).toBeInTheDocument();
-    expect(
-      screen.queryByText("customField.impact.scopeAllOrganisations")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("customField.impact.scopeAllOrganisations")).not.toBeInTheDocument();
   });
 
   it("says ALL organisations when the counts are platform-wide", () => {
     renderDialog({ isPlatformWideScope: true, affectedTenantCount: 12 });
 
     expect(screen.getByText("customField.impact.scopeAllOrganisations")).toBeInTheDocument();
-    expect(
-      screen.queryByText("customField.impact.scopeYourOrganisation")
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("customField.impact.scopeYourOrganisation")).not.toBeInTheDocument();
   });
 
   it("does not label a platform-OWNED field as platform-WIDE", () => {

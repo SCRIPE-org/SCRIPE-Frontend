@@ -29,6 +29,9 @@ import type { TenantPlan } from "../../domain/entities/TenantPlan";
 import type { TFn } from "./shared-helpers";
 import { VersionCard } from "./VersionCard";
 
+/**
+ * Documentation for module export
+ */
 export interface VersionsTabProps {
   /** The tenant plan aggregate whose version history is being managed. */
   plan: TenantPlan;
@@ -48,7 +51,12 @@ export interface VersionsTabProps {
  * @param props The plan entity, translation helper, and publish callback.
  * @returns An accessible interface for version auditing and deployment.
  */
-export function VersionsTab({ plan, t, onPublish, isPublishing }: VersionsTabProps): React.JSX.Element {
+export function VersionsTab({
+  plan,
+  t,
+  onPublish,
+  isPublishing,
+}: VersionsTabProps): React.JSX.Element {
   const [isPublishOpen, setIsPublishOpen] = useState(false);
   const [changeNotes, setChangeNotes] = useState("");
 

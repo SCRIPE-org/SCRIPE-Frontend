@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 // FILE-EXCEPTION: file length
 /**
  * Tenant Settings Tab — Redesigned

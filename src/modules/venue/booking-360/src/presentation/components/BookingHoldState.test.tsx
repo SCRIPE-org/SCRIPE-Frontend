@@ -1,4 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
+﻿import { act, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { BookingHoldState } from "./BookingHoldState";
 
@@ -30,12 +30,18 @@ describe("BookingHoldState", () => {
     expect(screen.getByRole("button", { name: /^booking360.actions.confirm:/ })).toBeEnabled();
     expect(screen.getByText(/booking360\.hold\.remaining:.*"seconds":10/)).toBeInTheDocument();
 
-    act(() => { vi.advanceTimersByTime(9_000); });
+    act(() => {
+      vi.advanceTimersByTime(9_000);
+    });
     expect(expired).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: /^booking360.actions.confirm:/ })).toBeEnabled();
 
-    act(() => { vi.advanceTimersByTime(1_000); });
+    act(() => {
+      vi.advanceTimersByTime(1_000);
+    });
     expect(expired).toHaveBeenCalledOnce();
-    expect(screen.queryByRole("button", { name: /^booking360.actions.confirm:/ })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^booking360.actions.confirm:/ })
+    ).not.toBeInTheDocument();
   });
 });

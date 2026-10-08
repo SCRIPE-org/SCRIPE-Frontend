@@ -27,7 +27,9 @@ export function mapValueToFieldConfig(
   const options: FieldOption[] | undefined = data.options?.map((o) => ({ value: o, label: o }));
   const isSensitive = data.sensitivity !== undefined && data.sensitivity >= 2;
   const description = isSensitive
-    ? (language === "ar" ? "حقل مشفر بحماية أمنية عالية" : "Encrypted confidential field")
+    ? language === "ar"
+      ? "حقل مشفر بحماية أمنية عالية"
+      : "Encrypted confidential field"
     : undefined;
 
   return {

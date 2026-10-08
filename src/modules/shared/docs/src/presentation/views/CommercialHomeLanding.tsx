@@ -81,6 +81,9 @@ const ctaSection: CtaBannerBlockSection = {
   secondaryCtaHref: "/commercial/investor-overview",
 };
 
+/**
+ * Documentation for module export
+ */
 export function CommercialHomeLanding() {
   return (
     <div className="com-landing">

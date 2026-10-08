@@ -124,6 +124,9 @@ export type CreateAdminInput = z.infer<typeof CreateAdminSchema>;`,
     language: "typescript",
     filename: "zod-form-utils.ts & zod-utils.ts — Shared Validation Helpers",
     code: `// 1. Shared Zod builders for react-hook-form inputs
+/**
+ * Documentation for z.object
+ */
 export const signupSchema = z.object({
   email: emailField(),
   password: strongPassword(),
@@ -132,6 +135,9 @@ export const signupSchema = z.object({
 });
 
 // 2. Safe API parsing to prevent UI crashes on API contract drift
+/**
+ * Documentation for module export
+ */
 export function toEntity(dto: UserDto): User {
   const result = safeParseApiResponse(UserSchema, dto, "UserDto mapping warning");
   

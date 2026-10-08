@@ -1,11 +1,17 @@
 import type { VenueProfile } from "../entities/VenueProfile";
 
+/**
+ * Documentation for module export
+ */
 export interface VenueProfileListParams {
   page: number;
   pageSize: number;
   search?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IVenueProfileRepository {
   getAll(params: VenueProfileListParams): Promise<{
     items: VenueProfile[];

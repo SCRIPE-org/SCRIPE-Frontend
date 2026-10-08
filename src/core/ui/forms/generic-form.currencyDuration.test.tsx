@@ -368,18 +368,21 @@ describe("GenericForm currency/duration — host-owned a11y facts reach the cont
   it.each([
     ["currency", CURRENCY_FIELD],
     ["duration", DURATION_FIELD],
-  ])("passes the hint node's id when the field has a description and no error (%s)", (_l, field) => {
-    render(
-      <GenericForm
-        fields={[{ ...field, description: "What the operator is entering." }]}
-        onSubmit={async () => {}}
-        onCancel={() => {}}
-      />
-    );
+  ])(
+    "passes the hint node's id when the field has a description and no error (%s)",
+    (_l, field) => {
+      render(
+        <GenericForm
+          fields={[{ ...field, description: "What the operator is entering." }]}
+          onSubmit={async () => {}}
+          onCancel={() => {}}
+        />
+      );
 
-    expect(receivedProps.at(-1)?.describedBy).toBe(`${field.name}-hint`);
-    expect(document.getElementById(`${field.name}-hint`)).toBeInTheDocument();
-  });
+      expect(receivedProps.at(-1)?.describedBy).toBe(`${field.name}-hint`);
+      expect(document.getElementById(`${field.name}-hint`)).toBeInTheDocument();
+    }
+  );
 
   it("hands the control the whole FieldConfig, so a type-specific carrier needs no new prop", () => {
     // The reason CustomFieldFormControlProps passes `field` whole rather than

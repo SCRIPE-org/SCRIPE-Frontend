@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useI18n } from "@core/providers/i18n-provider";
@@ -10,8 +10,8 @@ import { EmptyState } from "@core/ui/empty-state";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { AlertCircle, Building2, RefreshCw, ShieldAlert } from "lucide-react";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { useVenueAttentionViewModel } from "@modules/venue/attention-center/src/presentation/viewmodels/useVenueAttentionViewModel";
-import { VenueNav } from "@modules/venue/shared/src/presentation/components/VenueNav";
+import { useVenueAttentionViewModel } from "@modules/venue";
+import { VenueNav } from "@modules/venue";
 import { useVenueOverviewViewModel } from "../viewmodels/useVenueOverviewViewModel";
 import { VenueOverviewHeader } from "../components/VenueOverviewHeader";
 import { VenueOverviewKpiStrip } from "../components/VenueOverviewKpiStrip";
@@ -29,6 +29,9 @@ interface Props {
   localDate?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function VenueOverviewView({ facilityId, localDate }: Props) {
   const { t, language } = useI18n();
   const dir = language === "ar" ? "rtl" : "ltr";
@@ -36,14 +39,8 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
   const attentionVm = useVenueAttentionViewModel(canViewAttention);
   const attentionCount = canViewAttention && attentionVm.data ? attentionVm.data.items.length : 0;
 
-  const {
-    state,
-    facilities,
-    selectedFacilityId,
-    refreshing,
-    refresh,
-    changeFacility,
-  } = useVenueOverviewViewModel(facilityId, localDate);
+  const { state, facilities, selectedFacilityId, refreshing, refresh, changeFacility } =
+    useVenueOverviewViewModel(facilityId, localDate);
 
   if (state.stage === "loading" && !state.facilityName) {
     return (
@@ -55,7 +52,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
 
   if (state.stage === "failed" && state.error) {
     return (
-      <div className="p-6 max-w-lg mx-auto my-12" dir={dir}>
+      <div className="mx-auto my-12 max-w-lg p-6" dir={dir}>
         <Alert variant="destructive">
           <AlertCircle className="size-4" aria-hidden="true" />
           <AlertTitle className="font-bold">{t("venueOverview.errors.loadFailed")}</AlertTitle>
@@ -79,7 +76,11 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
 
   if (state.stage === "empty") {
     return (
-      <div className="p-6 max-w-[1600px] mx-auto space-y-6" dir={dir} data-testid="venue-overview-empty">
+      <div
+        className="mx-auto max-w-[1600px] space-y-6 p-6"
+        dir={dir}
+        data-testid="venue-overview-empty"
+      >
         <VenueNav attentionCount={attentionCount} />
         <EmptyState
           icon={Building2}
@@ -92,10 +93,12 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
 
   if (state.stage === "limited") {
     return (
-      <div className="p-6 max-w-lg mx-auto my-12" dir={dir} data-testid="venue-overview-limited">
+      <div className="mx-auto my-12 max-w-lg p-6" dir={dir} data-testid="venue-overview-limited">
         <Alert>
           <AlertCircle className="size-4" aria-hidden="true" />
-          <AlertTitle className="font-bold">{t("venueOverview.errors.resourceLimitTitle")}</AlertTitle>
+          <AlertTitle className="font-bold">
+            {t("venueOverview.errors.resourceLimitTitle")}
+          </AlertTitle>
           <AlertDescription className="mt-2">
             {t("venueOverview.errors.resourceLimitDescription")}
           </AlertDescription>
@@ -131,7 +134,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
 
   return (
     <div
-      className="p-4 sm:p-6 max-w-[1600px] mx-auto space-y-6 text-nx-ink"
+      className="mx-auto max-w-[1600px] space-y-6 p-4 text-nx-ink sm:p-6"
       dir={dir}
       data-testid="venue-overview-view"
     >
@@ -156,26 +159,34 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
         <Card className="border-amber-500/40 bg-amber-500/5">
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
             <div className="flex items-center gap-3">
-              <ShieldAlert className="size-5 text-amber-600 dark:text-amber-400 shrink-0" aria-hidden="true" />
+              <ShieldAlert
+                className="size-5 shrink-0 text-amber-600 dark:text-amber-400"
+                aria-hidden="true"
+              />
               <div>
                 <p className="text-sm font-semibold text-nx-ink">
-                  {t("venueOverview.attention.activeTitle", { count: attentionVm.data.items.length })}
+                  {t("venueOverview.attention.activeTitle", {
+                    count: attentionVm.data.items.length,
+                  })}
                 </p>
                 <p className="text-xs text-nx-ink-2">
                   {t("venueOverview.attention.activeDescription")}
                 </p>
               </div>
             </div>
-            <Button asChild size="sm" variant="outline" className="text-xs border-amber-500/40 hover:bg-amber-500/10">
-              <Link href="/venue/attention">
-                {t("venueOverview.attention.viewAll")}
-              </Link>
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="border-amber-500/40 text-xs hover:bg-amber-500/10"
+            >
+              <Link href="/venue/attention">{t("venueOverview.attention.viewAll")}</Link>
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* Top KPI Row — 4 Compact Metis Stats Cards */}
+      {/* Top KPI Row â€” 4 Compact Metis Stats Cards */}
       <VenueOverviewKpiStrip
         kpis={state.kpis}
         attentionCount={canViewAttention ? attentionCount : undefined}
@@ -183,7 +194,7 @@ export function VenueOverviewView({ facilityId, localDate }: Props) {
       />
 
       {/* Main Hero Row: Today's Venue Activity (8 cols) + Live Venue Feed (4 cols) */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 items-stretch">
+      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-12">
         <div className="lg:col-span-8">
           <VenueOverviewHeroTimeline
             day={timelineDay}

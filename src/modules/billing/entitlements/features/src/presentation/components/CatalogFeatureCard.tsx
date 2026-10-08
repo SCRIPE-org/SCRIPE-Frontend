@@ -78,10 +78,7 @@ export function CatalogFeatureCard({
           >
             {feature.getDisplayName(language)}
           </h2>
-          <p
-            className="mt-1 truncate font-mono text-xs text-nx-ink-2"
-            title={feature.name}
-          >
+          <p className="mt-1 truncate font-mono text-xs text-nx-ink-2" title={feature.name}>
             {feature.name}
           </p>
         </div>
@@ -127,9 +124,7 @@ export function CatalogFeatureCard({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-xs text-nx-ink-3">
-            {t("entitlements.features.marketingOnly")}
-          </span>
+          <span className="text-xs text-nx-ink-3">{t("entitlements.features.marketingOnly")}</span>
           <Switch
             checked={feature.isMarketingOnly}
             onCheckedChange={onMarketingToggle}

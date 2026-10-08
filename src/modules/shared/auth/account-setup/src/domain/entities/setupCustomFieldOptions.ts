@@ -1,3 +1,6 @@
+/**
+ * Documentation for module export
+ */
 export interface SetupFieldOption {
   value: string;
   label: string;

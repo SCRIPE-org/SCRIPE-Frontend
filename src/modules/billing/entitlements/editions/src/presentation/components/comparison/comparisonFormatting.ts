@@ -1,7 +1,13 @@
 import type { BillingCycle } from "../../viewmodels/useEditionComparisonViewModel";
 
+/**
+ * Documentation for string
+ */
 export type ComparisonTranslator = (key: string) => string;
 
+/**
+ * Documentation for formatComparisonMessage
+ */
 export function formatComparisonMessage(
   template: string,
   values: Record<string, string | number>
@@ -12,6 +18,9 @@ export function formatComparisonMessage(
   );
 }
 
+/**
+ * Documentation for module export
+ */
 export function getLocalizedCycleName(cycle: BillingCycle, t: ComparisonTranslator): string {
   if (cycle === "Monthly") {
     return t("entitlements.editions.comparison.monthly");
@@ -22,6 +31,9 @@ export function getLocalizedCycleName(cycle: BillingCycle, t: ComparisonTranslat
   return t("entitlements.editions.comparison.lifetime");
 }
 
+/**
+ * Documentation for module export
+ */
 export function getLocalizedCyclePeriod(cycle: BillingCycle, t: ComparisonTranslator): string {
   if (cycle === "Monthly") {
     return t("entitlements.editions.comparison.monthShort");

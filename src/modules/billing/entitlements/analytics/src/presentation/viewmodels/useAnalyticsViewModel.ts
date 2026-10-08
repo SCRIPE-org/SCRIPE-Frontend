@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 /**
  * useAnalyticsViewModel — Main viewmodel hook for the Revenue Analytics dashboard.
@@ -24,13 +25,7 @@ const QUERY_KEYS = {
  * Exported type defining parameters and fields for analytics tab configurations.
  */
 export type AnalyticsTab =
-  | "overview"
-  | "revenue"
-  | "retention"
-  | "ltv"
-  | "forecast"
-  | "health"
-  | "reports";
+  "overview" | "revenue" | "retention" | "ltv" | "forecast" | "health" | "reports";
 
 /**
  * React hook/ViewModel orchestrating state and data flows for analytics view model.

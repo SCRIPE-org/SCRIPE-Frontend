@@ -51,7 +51,7 @@ export function WizardStepIndicator({ steps, currentStep }: WizardStepIndicatorP
               </div>
 
               <div
-                className={`absolute start-1/2 top-14 w-max max-w-[120px] -translate-x-1/2 rtl:translate-x-1/2 text-center text-[11px] font-bold uppercase tracking-wider transition-colors duration-nx-panel ease-nx-enter motion-reduce:transition-none sm:text-xs ${active ? "text-nx-ink" : done ? "text-nx-ink-2" : "text-nx-ink-3"} `}
+                className={`absolute start-1/2 top-14 w-max max-w-[120px] -translate-x-1/2 text-center text-[11px] font-bold uppercase tracking-wider transition-colors duration-nx-panel ease-nx-enter motion-reduce:transition-none sm:text-xs rtl:translate-x-1/2 ${active ? "text-nx-ink" : done ? "text-nx-ink-2" : "text-nx-ink-3"} `}
               >
                 {s.label}
               </div>

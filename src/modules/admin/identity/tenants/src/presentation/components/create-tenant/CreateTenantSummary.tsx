@@ -18,6 +18,9 @@ interface CreateTenantSummaryProps {
   t: (key: string) => string;
 }
 
+/**
+ * Documentation for module export
+ */
 export function CreateTenantSummary({ vm, t }: CreateTenantSummaryProps) {
   const isFree = vm.selectedEdition?.isFree === true;
   const subType = vm.form.subscriptionType;
@@ -27,7 +30,9 @@ export function CreateTenantSummary({ vm, t }: CreateTenantSummaryProps) {
     Lifetime: t("tenant.subscriptionTypes.lifetime"),
     Trial: t("tenant.subscriptionTypes.trial"),
   };
-  const subscriptionLabel = isFree ? t("tenant.freeEditionLifetime") : (subMap[subType] || subType || "-");
+  const subscriptionLabel = isFree
+    ? t("tenant.freeEditionLifetime")
+    : subMap[subType] || subType || "-";
 
   const currencyInfo = SUPPORTED_CURRENCIES.find((c) => c.code === vm.form.currency);
   const currencyLabel = currencyInfo
@@ -40,7 +45,7 @@ export function CreateTenantSummary({ vm, t }: CreateTenantSummaryProps) {
     : vm.form.timeZone || "-";
 
   return (
-    <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-4 duration-nx-standard ease-nx-enter motion-safe:animate-in fade-in-0">
+    <div className="space-y-2 rounded-nx-md border border-nx-line bg-nx-raised p-4 duration-nx-standard ease-nx-enter fade-in-0 motion-safe:animate-in">
       <h4 className="mb-3 text-sm font-semibold">{t("tenant.summary")}</h4>
       <DetailRow label={t("tenant.name")} value={`${vm.form.name} (${vm.form.code})`} />
       <DetailRow label={t("tenant.operatingTerritory")} value={territoryLabel} />
@@ -66,10 +71,18 @@ export function CreateTenantSummary({ vm, t }: CreateTenantSummaryProps) {
         />
       )}
       {!vm.form.promotionId && vm.form.promoCode && (
-        <DetailRow label={t("tenant.promotion")} value={vm.form.promoCode} valueClassName="text-warning" />
+        <DetailRow
+          label={t("tenant.promotion")}
+          value={vm.form.promoCode}
+          valueClassName="text-warning"
+        />
       )}
       {vm.form.skipPayment && (
-        <DetailRow label={t("tenant.payment")} value={t("tenant.skipped")} valueClassName="text-warning" />
+        <DetailRow
+          label={t("tenant.payment")}
+          value={t("tenant.skipped")}
+          valueClassName="text-warning"
+        />
       )}
     </div>
   );

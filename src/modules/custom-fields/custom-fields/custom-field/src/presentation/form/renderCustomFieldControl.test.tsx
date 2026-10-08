@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // renderCustomFieldControl -- Text/Number/Boolean coverage (Wave 2 Step 2.2, Task 2)
 //
 // Uses `fireEvent`, not `@testing-library/user-event`: the brief's own Step 3
@@ -467,7 +468,10 @@ describe("renderCustomFieldControl", () => {
     });
 
     it(`rejects more than ${MULTI_SELECT_MAX_SELECTIONS} selections, checked BEFORE membership`, () => {
-      const tooMany = Array.from({ length: MULTI_SELECT_MAX_SELECTIONS + 1 }, (_, i) => `Bogus-${i}`);
+      const tooMany = Array.from(
+        { length: MULTI_SELECT_MAX_SELECTIONS + 1 },
+        (_, i) => `Bogus-${i}`
+      );
       const message = validateSelectCustomFieldValue(COLOR_FIELD, tooMany, t);
       expect(message).toContain("customField.values.multiSelectTooManySelections");
       expect(message).toContain(`"max":${MULTI_SELECT_MAX_SELECTIONS}`);
@@ -485,9 +489,18 @@ describe("renderCustomFieldControl", () => {
         value: `Opt-${i + 1}`,
         label: `Opt-${i + 1}`,
       }));
-      const fc: FieldConfig = { name: "cf_many", type: "multi-select", label: "Many", options: manyOptions };
+      const fc: FieldConfig = {
+        name: "cf_many",
+        type: "multi-select",
+        label: "Many",
+        options: manyOptions,
+      };
       expect(
-        validateSelectCustomFieldValue(fc, manyOptions.map((o) => o.value), t)
+        validateSelectCustomFieldValue(
+          fc,
+          manyOptions.map((o) => o.value),
+          t
+        )
       ).toBeNull();
     });
 
@@ -697,9 +710,7 @@ describe("renderCustomFieldControl", () => {
 
     it("wraps the control in a labelled group and gives the instant picker a real accessible name", () => {
       render(
-        <>
-          {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange: vi.fn() })}
-        </>
+        <>{renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange: vi.fn() })}</>
       );
       expect(screen.getByRole("group", { name: "Meeting" })).toBeInTheDocument();
       expect(screen.getByRole("combobox", { name: "Meeting" })).toBeInTheDocument();
@@ -707,11 +718,12 @@ describe("renderCustomFieldControl", () => {
 
     it("renders a datetime-local input", () => {
       render(
-        <>
-          {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange: vi.fn() })}
-        </>
+        <>{renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange: vi.fn() })}</>
       );
-      expect(screen.getByLabelText("Meeting", { selector: "input" })).toHaveAttribute("type", "datetime-local");
+      expect(screen.getByLabelText("Meeting", { selector: "input" })).toHaveAttribute(
+        "type",
+        "datetime-local"
+      );
     });
 
     // TRAP (pre-plan analysis §5.3/R7): the wire value is the two-piece
@@ -729,16 +741,14 @@ describe("renderCustomFieldControl", () => {
           })}
         </>
       );
-      expect(screen.getByLabelText("Meeting", { selector: "input" })).toHaveValue("2026-08-18T10:30");
+      expect(screen.getByLabelText("Meeting", { selector: "input" })).toHaveValue(
+        "2026-08-18T10:30"
+      );
     });
 
     it("reports a { value, timeZoneId } object via onChange, pairing a fresh instant with a zone", () => {
       const onChange = vi.fn();
-      render(
-        <>
-          {renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange })}
-        </>
-      );
+      render(<>{renderCustomFieldControl({ fc: MEETING_FIELD, value: null, onChange })}</>);
       fireEvent.change(screen.getByLabelText("Meeting", { selector: "input" }), {
         target: { value: "2026-08-18T10:30" },
       });
@@ -763,7 +773,10 @@ describe("renderCustomFieldControl", () => {
       fireEvent.change(screen.getByLabelText("Meeting", { selector: "input" }), {
         target: { value: "2026-08-19T09:00" },
       });
-      expect(onChange).toHaveBeenCalledWith({ value: "2026-08-19T09:00", timeZoneId: "Africa/Cairo" });
+      expect(onChange).toHaveBeenCalledWith({
+        value: "2026-08-19T09:00",
+        timeZoneId: "Africa/Cairo",
+      });
     });
 
     it("clears to null (not a zone-only half-blank object) when the instant is cleared", () => {
@@ -777,7 +790,9 @@ describe("renderCustomFieldControl", () => {
           })}
         </>
       );
-      fireEvent.change(screen.getByLabelText("Meeting", { selector: "input" }), { target: { value: "" } });
+      fireEvent.change(screen.getByLabelText("Meeting", { selector: "input" }), {
+        target: { value: "" },
+      });
       expect(onChange).toHaveBeenCalledWith(null);
     });
   });
@@ -787,7 +802,7 @@ describe("renderCustomFieldControl", () => {
   // only special-cases "number" -- everything else, including "email", would
   // silently render type="text" without this branch. Asserted directly here.
   describe("fc.type email (Email)", () => {
-    it("renders a real type=\"email\" input and reports changes", () => {
+    it('renders a real type="email" input and reports changes', () => {
       const onChange = vi.fn();
       render(
         <>
@@ -821,7 +836,7 @@ describe("renderCustomFieldControl", () => {
 
   // ── fc.type === "url" (Wave 3.2 Batch 3) ─────────────────────────────────
   describe("fc.type url (Url)", () => {
-    it("renders a real type=\"url\" input and reports changes", () => {
+    it('renders a real type="url" input and reports changes', () => {
       const onChange = vi.fn();
       render(
         <>
@@ -1191,9 +1206,7 @@ describe("renderCustomFieldControl", () => {
 
     it("renders a real, accessibly-named picker trigger (aria-labelledby, not <Label htmlFor> -- verified, not re-solved)", () => {
       render(
-        <>
-          {renderCustomFieldControl({ fc: COLOR_FIELD, value: "#3b82f6", onChange: vi.fn() })}
-        </>
+        <>{renderCustomFieldControl({ fc: COLOR_FIELD, value: "#3b82f6", onChange: vi.fn() })}</>
       );
       // ColorPickerField's own accessible-name mechanism is aria-labelledby,
       // concatenating the field label and the live hex-value text -- R5's
@@ -1209,9 +1222,7 @@ describe("renderCustomFieldControl", () => {
 
     it("uses THIS module's own i18n namespace for the picker's internal copy, never the rich-text-editor's editorBlocks.color.*", () => {
       render(
-        <>
-          {renderCustomFieldControl({ fc: COLOR_FIELD, value: "#3b82f6", onChange: vi.fn() })}
-        </>
+        <>{renderCustomFieldControl({ fc: COLOR_FIELD, value: "#3b82f6", onChange: vi.fn() })}</>
       );
       fireEvent.click(screen.getByRole("button", { name: "Team Color #3b82f6" }));
       // This file's own top-of-file `t` mock returns the bare key
@@ -1294,9 +1305,7 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
       } as Parameters<typeof renderCustomFieldControl>[0]["fc"];
 
       const onChange = vi.fn();
-      const { unmount } = render(
-        <>{renderCustomFieldControl({ fc, value: "", onChange })}</>
-      );
+      const { unmount } = render(<>{renderCustomFieldControl({ fc, value: "", onChange })}</>);
 
       switch (entry.fieldConfigType) {
         case "switch":
@@ -1447,9 +1456,7 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           // ColorPickerField, not the bare native <input type="color"> (no
           // hex entry, no presets) the shared fallthrough would otherwise
           // produce for an unbranched "color" fieldConfigType.
-          expect(
-            screen.getByRole("button", { name: `${valueType} #000000` })
-          ).toBeInTheDocument();
+          expect(screen.getByRole("button", { name: `${valueType} #000000` })).toBeInTheDocument();
           break;
         }
         // ── Wave 4 ──────────────────────────────────────────────────────
@@ -1496,9 +1503,7 @@ describe("renderCustomFieldControl completeness against VALUE_TYPE_CATALOG (Fina
           // owner-pair fence refuses), so it says so instead of implying the
           // server returned nothing.
           expect(screen.getByRole("group", { name: valueType })).toBeInTheDocument();
-          expect(
-            screen.getByText("customField.mediaReference.notConfigured")
-          ).toBeInTheDocument();
+          expect(screen.getByText("customField.mediaReference.notConfigured")).toBeInTheDocument();
           // The ONE thing that differs between the two value types at this tier,
           // asserted as a difference rather than as two separate facts: Image
           // states its image-only requirement up front, File does not have one
@@ -1597,9 +1602,7 @@ describe("renderCustomFieldControl -- entity-reference branch (Wave 4)", () => {
       "aria-disabled",
       "true"
     );
-    expect(
-      screen.getByText("customField.entityReference.noTargetConfigured")
-    ).toBeInTheDocument();
+    expect(screen.getByText("customField.entityReference.noTargetConfigured")).toBeInTheDocument();
   });
 
   it.each([
@@ -1620,9 +1623,7 @@ describe("renderCustomFieldControl -- entity-reference branch (Wave 4)", () => {
     // directions. It is simply an object missing `entityId`, i.e. what a
     // renaming bug upstream would produce, and it must not be mistaken for a
     // readable reference.
-    expect(
-      screen.getByText("customField.entityReference.noTargetConfigured")
-    ).toBeInTheDocument();
+    expect(screen.getByText("customField.entityReference.noTargetConfigured")).toBeInTheDocument();
   });
 
   it("passes isViewMode through as `disabled`, matching every other picker branch in this file", () => {

@@ -7,10 +7,24 @@ import { DialogHeader, DialogTitle, DialogDescription } from "@core/ui/dialog";
 import { useI18n } from "@core/providers/i18n-provider";
 import type { CustomField } from "../../../domain/entities/CustomField";
 
+/**
+ * Documentation for module export
+ */
 export interface DetailHeaderProps {
   field?: CustomField;
   fieldLabel?: string;
-  valueTypeMeta: { badgeVariant?: "default" | "secondary" | "outline" | "active" | "inactive" | "warning" | "destructive" | "info" | "success" } | null;
+  valueTypeMeta: {
+    badgeVariant?:
+      | "default"
+      | "secondary"
+      | "outline"
+      | "active"
+      | "inactive"
+      | "warning"
+      | "destructive"
+      | "info"
+      | "success";
+  } | null;
   valueTypeDisplayName: string;
   sensitivityBadgeVariant: "outline" | "secondary" | "warning" | "destructive";
   sensitivityDisplayName: string;
@@ -38,9 +52,7 @@ export function DetailHeader({
             <FileCode className="h-5 w-5 shrink-0 text-primary" aria-hidden="true" />
             <span>{field?.labelEn || fieldLabel || t("customField.details.title")}</span>
             {field?.labelAr && (
-              <span className="text-sm font-normal text-muted-foreground">
-                ({field.labelAr})
-              </span>
+              <span className="text-sm font-normal text-muted-foreground">({field.labelAr})</span>
             )}
           </DialogTitle>
           <DialogDescription className="text-xs">

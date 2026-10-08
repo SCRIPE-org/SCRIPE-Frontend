@@ -50,6 +50,9 @@ async function readFileText(file: File): Promise<string> {
   });
 }
 
+/**
+ * Documentation for module export
+ */
 export function useSchemaImportViewModel() {
   const { schemaImportRepository } = getSchemaExportContainer();
   const { t } = useI18n();

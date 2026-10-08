@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // FeatureDefinitionFormView + custom fields -- Wave 2 Step 2.2, Task 7b
 //
 // This site had no pre-existing test coverage at all (confirmed by search

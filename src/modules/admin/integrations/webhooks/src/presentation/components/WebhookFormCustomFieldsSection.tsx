@@ -3,7 +3,10 @@
 import { useI18n } from "@core/providers/i18n-provider";
 import { Sliders } from "lucide-react";
 import { CustomFieldsSection } from "@core/components/custom-fields";
-import { WEBHOOK_ENTITY_TYPE_KEY, type WebhookFormViewModel } from "../viewmodels/useWebhookFormViewModel";
+import {
+  WEBHOOK_ENTITY_TYPE_KEY,
+  type WebhookFormViewModel,
+} from "../viewmodels/useWebhookFormViewModel";
 
 interface WebhookFormCustomFieldsSectionProps {
   vm: WebhookFormViewModel;

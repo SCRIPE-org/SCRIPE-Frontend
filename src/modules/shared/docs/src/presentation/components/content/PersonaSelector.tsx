@@ -67,6 +67,9 @@ const personaKeys: Record<
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
+/**
+ * Documentation for module export
+ */
 export function PersonaSelector() {
   const { t } = useDocsI18n();
   const [selected, setSelected] = useState<Persona>("investor");

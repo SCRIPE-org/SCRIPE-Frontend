@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
@@ -139,9 +140,7 @@ describe("OptionSetPicker", () => {
     renderPicker({ sets: [] });
     fireEvent.click(screen.getByRole("combobox"));
 
-    expect(
-      screen.getByText("customField.optionSetBinding.noSetsAvailable")
-    ).toBeInTheDocument();
+    expect(screen.getByText("customField.optionSetBinding.noSetsAvailable")).toBeInTheDocument();
     expect(
       screen.getByText("customField.optionSetBinding.noSetsAvailableHint")
     ).toBeInTheDocument();
@@ -151,9 +150,7 @@ describe("OptionSetPicker", () => {
     const { onRetry } = renderPicker({ isError: true, sets: [] });
     fireEvent.click(screen.getByRole("combobox"));
 
-    expect(
-      screen.getByText("customField.optionSetBinding.loadSetsFailed")
-    ).toBeInTheDocument();
+    expect(screen.getByText("customField.optionSetBinding.loadSetsFailed")).toBeInTheDocument();
     expect(
       screen.queryByText("customField.optionSetBinding.noSetsAvailable")
     ).not.toBeInTheDocument();

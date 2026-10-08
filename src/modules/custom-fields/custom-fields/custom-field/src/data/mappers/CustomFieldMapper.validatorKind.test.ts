@@ -20,10 +20,7 @@ import {
   type CustomFieldListItemJson,
 } from "../models/CustomFieldModel";
 
-function detailJson(
-  validatorKind: string | null,
-  validatorParam: string | null
-): CustomFieldJson {
+function detailJson(validatorKind: string | null, validatorParam: string | null): CustomFieldJson {
   return {
     id: "id1",
     entityTypeKey: "party.person",

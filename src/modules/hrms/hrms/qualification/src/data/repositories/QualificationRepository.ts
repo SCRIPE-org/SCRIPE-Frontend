@@ -17,6 +17,9 @@ import type { IQualificationService } from "../../domain/interfaces/IQualificati
 import type { Qualification } from "../../domain/entities/Qualification";
 import { QualificationMapper } from "../mappers/QualificationMapper";
 
+/**
+ * Documentation for module export
+ */
 export class QualificationRepository implements IQualificationRepository {
   constructor(private readonly service: IQualificationService) {}
 

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
@@ -18,10 +18,10 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { useEnhancedToast } from "@core/hooks/use-enhanced-toast";
 import { usePermission } from "@core/hooks/use-permission";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { venueContainer } from "@modules/venue/di";
-import { SiteQuickCreateDialog } from "@modules/venue/site/src/presentation/components/SiteQuickCreateDialog";
+import { useVenueServiceLocatorStatic } from "@modules/venue";
+import { SiteQuickCreateDialog } from "@modules/venue";
 import { Plus } from "lucide-react";
-import type { Site } from "@modules/venue/site/src/domain/entities/Site";
+import type { Site } from "@modules/venue";
 
 interface VenueProfileQuickCreateDialogProps {
   open: boolean;
@@ -30,6 +30,9 @@ interface VenueProfileQuickCreateDialogProps {
   defaultSiteId?: string;
 }
 
+/**
+ * Documentation for VenueProfileQuickCreateDialog
+ */
 export function VenueProfileQuickCreateDialog({
   open,
   onOpenChange,
@@ -54,7 +57,10 @@ export function VenueProfileQuickCreateDialog({
   const loadSites = useCallback(async () => {
     try {
       setLoadingSites(true);
-      const res = await venueContainer.siteRepository.getAll({ page: 1, pageSize: 100 });
+      const res = await useVenueServiceLocatorStatic.siteRepository.getAll({
+        page: 1,
+        pageSize: 100,
+      });
       setSites(res.items);
       setSiteId((current) => current || res.items[0]?.id || "");
     } catch {
@@ -66,10 +72,12 @@ export function VenueProfileQuickCreateDialog({
 
   useEffect(() => {
     if (open) {
-      void loadSites();
-      if (defaultSiteId) {
-        setSiteId(defaultSiteId);
-      }
+      void Promise.resolve().then(() => {
+        void loadSites();
+        if (defaultSiteId) {
+          setSiteId(defaultSiteId);
+        }
+      });
     }
   }, [open, defaultSiteId, loadSites]);
 
@@ -94,7 +102,7 @@ export function VenueProfileQuickCreateDialog({
 
     setSaving(true);
     try {
-      const createdId = await venueContainer.venueProfileRepository.create({
+      const createdId = await useVenueServiceLocatorStatic.venueProfileRepository.create({
         siteId: siteId.trim(),
         code: code.trim(),
         name: name.trim(),
@@ -147,7 +155,7 @@ export function VenueProfileQuickCreateDialog({
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="h-6 px-1.5 text-xs text-nx-accent hover:text-nx-accent/80"
+                      className="hover:text-nx-accent/80 h-6 px-1.5 text-xs text-nx-accent"
                       onClick={() => setSiteQuickCreateOpen(true)}
                     >
                       <Plus className="mr-1 size-3" />
@@ -166,11 +174,13 @@ export function VenueProfileQuickCreateDialog({
                   }))}
                   value={siteId}
                   onValueChange={(val: string | string[]) => {
-                    const selected = Array.isArray(val) ? val[0] ?? "" : val;
+                    const selected = Array.isArray(val) ? (val[0] ?? "") : val;
                     setSiteId(selected);
                     if (errors.siteId) setErrors((prev) => ({ ...prev, siteId: undefined }));
                   }}
-                  placeholder={loadingSites ? t("common.loading") : t("venueProfile.placeholders.siteId")}
+                  placeholder={
+                    loadingSites ? t("common.loading") : t("venueProfile.placeholders.siteId")
+                  }
                 />
                 {errors.siteId && <p className="text-xs text-destructive">{errors.siteId}</p>}
               </div>
@@ -236,7 +246,10 @@ export function VenueProfileQuickCreateDialog({
               >
                 {t("common.cancel")}
               </Button>
-              <Button type="submit" disabled={!name.trim() || !code.trim() || !siteId.trim() || saving}>
+              <Button
+                type="submit"
+                disabled={!name.trim() || !code.trim() || !siteId.trim() || saving}
+              >
                 {saving ? t("common.saving") : t("common.save")}
               </Button>
             </DialogFooter>

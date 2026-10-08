@@ -6,6 +6,9 @@ import { Badge } from "@core/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@core/ui/table";
 import type { OptionSet } from "../../domain/entities/OptionSet";
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetTableProps {
   sets: readonly OptionSet[];
   selectedSetId: string | null;
@@ -17,6 +20,9 @@ export interface OptionSetTableProps {
   language: string;
 }
 
+/**
+ * Documentation for OptionSetTable
+ */
 export function OptionSetTable({
   sets,
   selectedSetId,
@@ -83,9 +89,7 @@ export function OptionSetTable({
                 </TableCell>
 
                 <TableCell className="align-top text-sm text-nx-ink-2">
-                  {set.description ?? (
-                    <span className="text-nx-ink-3">{t("common.none")}</span>
-                  )}
+                  {set.description ?? <span className="text-nx-ink-3">{t("common.none")}</span>}
                 </TableCell>
 
                 <TableCell className="align-top">

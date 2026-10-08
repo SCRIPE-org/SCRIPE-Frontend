@@ -47,7 +47,12 @@ vi.mock("@core/providers/i18n-provider", () => ({
 
 const ENTITY_TYPE = "party.person";
 
-function group(id: string, labelEn: string, labelAr: string | null, sortOrder: number): FieldGroupJson {
+function group(
+  id: string,
+  labelEn: string,
+  labelAr: string | null,
+  sortOrder: number
+): FieldGroupJson {
   // stableKey derived from the id so every fixture group has a distinct one (Wave 6 row 6.5).
   return {
     id,
@@ -135,10 +140,9 @@ describe("useFieldGroupOptions", () => {
   it("fires no request, and still offers the sentinel, when the caller may not read groups", async () => {
     const { get } = setup([group("enc-1", "Contact details", null, 0)]);
 
-    const { result } = renderHook(
-      () => useFieldGroupOptions(ENTITY_TYPE, { enabled: false }),
-      { wrapper }
-    );
+    const { result } = renderHook(() => useFieldGroupOptions(ENTITY_TYPE, { enabled: false }), {
+      wrapper,
+    });
 
     // GET /field-groups is gated on `custom-field-groups.view`. An admin without
     // it would get a 403 on every modal open; the picker degrades to "no group"

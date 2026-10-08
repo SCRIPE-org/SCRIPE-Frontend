@@ -16,6 +16,9 @@ export interface PartyRelationshipListResult {
   hasPreviousPage: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IPartyRelationshipService {
   getAll(params: {
     page: number;

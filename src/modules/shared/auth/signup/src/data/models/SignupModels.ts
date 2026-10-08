@@ -120,13 +120,7 @@ export interface RegisterDto {
  */
 export interface SignupStatusDto {
   status:
-    | "pending"
-    | "awaiting_payment"
-    | "active"
-    | "consumed"
-    | "failed"
-    | "abandoned"
-    | "unknown";
+    "pending" | "awaiting_payment" | "active" | "consumed" | "failed" | "abandoned" | "unknown";
   statusMessage: string | null;
   expiresAt: string | null;
 }
@@ -175,13 +169,7 @@ export interface PricingContextDto {
  */
 export interface ResumeSessionDto {
   status:
-    | "pending"
-    | "awaiting_payment"
-    | "active"
-    | "failed"
-    | "consumed"
-    | "abandoned"
-    | "unknown";
+    "pending" | "awaiting_payment" | "active" | "failed" | "consumed" | "abandoned" | "unknown";
   editionId: string | null;
   billingCycle: "monthly" | "yearly" | null;
   currency: string | null;

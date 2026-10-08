@@ -1,7 +1,6 @@
 "use client";
-/* eslint-disable react-hooks/set-state-in-effect */
 
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { Button } from "@core/ui/button";
 import {
   Dialog,
@@ -31,8 +30,14 @@ export {
   OPTION_SET_LABEL_MAX_LENGTH,
   OPTION_SET_DESCRIPTION_MAX_LENGTH,
 };
+/**
+ * Documentation for module export
+ */
 export type { OptionSetEditorReadOnlyReason };
 
+/**
+ * Documentation for =
+ */
 export type OptionSetEditorSubmission =
   | {
       mode: "create";
@@ -49,6 +54,9 @@ export type OptionSetEditorSubmission =
       description: string;
     };
 
+/**
+ * Documentation for module export
+ */
 export interface OptionSetEditorDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -61,6 +69,9 @@ export interface OptionSetEditorDialogProps {
   onSubmit: (submission: OptionSetEditorSubmission) => void;
 }
 
+/**
+ * Documentation for OptionSetEditorDialog
+ */
 export function OptionSetEditorDialog({
   open,
   onOpenChange,
@@ -76,21 +87,25 @@ export function OptionSetEditorDialog({
   const fieldId = useId();
   const isEdit = optionSet !== null;
 
-  const [stableKey, setStableKey] = useState("");
-  const [labelEn, setLabelEn] = useState("");
-  const [labelAr, setLabelAr] = useState("");
-  const [description, setDescription] = useState("");
-  const [isGlobal, setIsGlobal] = useState(isPlatformContext);
+  const [stableKey, setStableKey] = useState(() => open ? (optionSet?.stableKey ?? "") : "");
+  const [labelEn, setLabelEn] = useState(() => open ? (optionSet?.labelEn ?? "") : "");
+  const [labelAr, setLabelAr] = useState(() => open ? (optionSet?.labelAr ?? "") : "");
+  const [description, setDescription] = useState(() => open ? (optionSet?.description ?? "") : "");
+  const [isGlobal, setIsGlobal] = useState(() => open ? (optionSet?.isPlatformOwned ?? isPlatformContext) : isPlatformContext);
 
   const optionSetId = optionSet?.id;
-  useEffect(() => {
-    if (!open) return;
-    setStableKey(optionSet?.stableKey ?? "");
-    setLabelEn(optionSet?.labelEn ?? "");
-    setLabelAr(optionSet?.labelAr ?? "");
-    setDescription(optionSet?.description ?? "");
-    setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
-  }, [open, optionSetId, isPlatformContext]);
+  const [prevReq, setPrevReq] = useState({ open, optionSetId });
+
+  if (open !== prevReq.open || optionSetId !== prevReq.optionSetId) {
+    setPrevReq({ open, optionSetId });
+    if (open) {
+      setStableKey(optionSet?.stableKey ?? "");
+      setLabelEn(optionSet?.labelEn ?? "");
+      setLabelAr(optionSet?.labelAr ?? "");
+      setDescription(optionSet?.description ?? "");
+      setIsGlobal(optionSet?.isPlatformOwned ?? isPlatformContext);
+    }
+  }
 
   const effectiveReadOnlyReason: OptionSetEditorReadOnlyReason | null =
     optionSet?.isPlatformMaintained ? "systemManaged" : (readOnlyReason ?? null);

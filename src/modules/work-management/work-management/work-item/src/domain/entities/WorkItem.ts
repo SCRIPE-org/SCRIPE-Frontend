@@ -20,6 +20,9 @@ export interface WorkItemData {
   modifiedAt?: string | null;
 }
 
+/**
+ * Documentation for module export
+ */
 export class WorkItem {
   constructor(public readonly data: WorkItemData) {}
 

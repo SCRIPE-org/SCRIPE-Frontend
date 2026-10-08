@@ -9,6 +9,9 @@ import { KeyDistributionChart } from "../components/KeyDistributionChart";
 import { AuditLogTable } from "../components/AuditLogTable";
 import { RotateKeyWizardDialog } from "../components/RotateKeyWizardDialog";
 
+/**
+ * Documentation for module export
+ */
 export function KeyManagementTab() {
   const { t } = useI18n();
   const {
@@ -43,9 +46,7 @@ export function KeyManagementTab() {
 
   if (isLoadingStatus) {
     return (
-      <div className="py-12 text-center text-sm text-muted-foreground">
-        {t("common.loading")}
-      </div>
+      <div className="py-12 text-center text-sm text-muted-foreground">{t("common.loading")}</div>
     );
   }
 
@@ -55,9 +56,7 @@ export function KeyManagementTab() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold tracking-tight">
-          {isPlatform
-            ? t("customFieldsSecurity.platformTitle")
-            : t("customFieldsSecurity.title")}
+          {isPlatform ? t("customFieldsSecurity.platformTitle") : t("customFieldsSecurity.title")}
         </h2>
         <p className="text-sm text-muted-foreground">
           {isPlatform

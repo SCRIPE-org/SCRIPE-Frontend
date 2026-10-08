@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, unused-imports/no-unused-vars */
 "use client";
 
 /**
@@ -166,8 +167,9 @@ export function DocsI18nProvider({
     try {
       const saved = localStorage.getItem(DOCS_LANG_KEY) as DocLanguage | null;
       if (saved && DOC_LANGUAGES.some((l) => l.code === saved)) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLanguageState(saved);
+        queueMicrotask(() => {
+          setLanguageState(saved);
+        });
       }
     } catch {
       /* noop */

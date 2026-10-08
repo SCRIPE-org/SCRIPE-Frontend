@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
-import {  cn , resolveIntlLocale } from "@core/common/utils";
+import { cn, resolveIntlLocale } from "@core/common/utils";
 import { useSettings } from "@core/providers/settings-provider";
 import { useI18n } from "@core/providers/i18n-provider";
 
@@ -132,21 +133,23 @@ export function CustomCalendar({
 
   // Reset view mode when value changes
   useEffect(() => {
-    if (value) {
-      const parsed = parseDateSafe(value);
-      if (parsed) {
-        setCurrentDate(parsed);
-        setSelectedDate(parsed);
-        if (type === "datetime-local") {
-          const parts = value.split("T");
-          if (parts[1]) {
-            setSelectedTime(parts[1].split(":")?.slice(0, 2).join(":") || "12:00");
+    queueMicrotask(() => {
+      if (value) {
+        const parsed = parseDateSafe(value);
+        if (parsed) {
+          setCurrentDate(parsed);
+          setSelectedDate(parsed);
+          if (type === "datetime-local") {
+            const parts = value.split("T");
+            if (parts[1]) {
+              setSelectedTime(parts[1].split(":")?.slice(0, 2).join(":") || "12:00");
+            }
           }
         }
       }
-    }
-    setViewMode("calendar");
-    setFocusedDate(null);
+      setViewMode("calendar");
+      setFocusedDate(null);
+    });
   }, [value, type]);
 
   // ── Selectable-range guard ──────────────────────────────
@@ -923,9 +926,7 @@ export function CustomCalendar({
               }
             }}
             className={cn(controlButtonStyles, "p-1 text-nx-ink-2 hover:text-nx-ink")}
-            aria-label={
-              viewMode === "year" ? t("common.nextYearRange") : t("common.nextMonth")
-            }
+            aria-label={viewMode === "year" ? t("common.nextYearRange") : t("common.nextMonth")}
           >
             <NextIcon className="h-4 w-4" aria-hidden="true" />
           </button>

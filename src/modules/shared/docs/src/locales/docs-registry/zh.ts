@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Docs Locale Registry — ZH
  * Eagerly merges all ZH docs translations (tech + commercial).

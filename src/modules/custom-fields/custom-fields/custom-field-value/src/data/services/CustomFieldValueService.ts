@@ -6,6 +6,9 @@ import type {
 import type { ICustomFieldValueService } from "../../domain/interfaces/ICustomFieldValueService";
 import { CUSTOM_FIELD_VALUE_ENDPOINTS } from "./custom-field-value.endpoints";
 
+/**
+ * Documentation for module export
+ */
 export class CustomFieldValueService implements ICustomFieldValueService {
   constructor(private readonly api: IApiService) {}
 

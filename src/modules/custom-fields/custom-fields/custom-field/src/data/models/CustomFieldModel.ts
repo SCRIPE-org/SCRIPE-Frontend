@@ -14,6 +14,9 @@ import type {
   CustomFieldListResponseJson,
 } from "./CustomFieldDto";
 
+/**
+ * Documentation for module export
+ */
 export type {
   ValidatorKindName,
   EntityTypeItemJson,

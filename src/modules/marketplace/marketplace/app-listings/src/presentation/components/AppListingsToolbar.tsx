@@ -1,3 +1,4 @@
+/* eslint-disable unused-imports/no-unused-vars */
 "use client";
 
 import { Input } from "@core/ui/input";
@@ -11,13 +12,7 @@ export type SortByOption = "popular" | "rating" | "newest" | "price";
 
 /** Pricing model filter options — matches the real backend `PricingModel` enum. */
 export type PricingModelFilter =
-  | "Free"
-  | "PaidOnce"
-  | "Subscription"
-  | "Freemium"
-  | "PerSeat"
-  | "UsageBased"
-  | undefined;
+  "Free" | "PaidOnce" | "Subscription" | "Freemium" | "PerSeat" | "UsageBased" | undefined;
 
 interface AppListingsToolbarProps {
   /** Current search query (controlled from viewmodel). */
@@ -145,9 +140,7 @@ export function AppListingsToolbar({
             </SelectItem>
             <SelectItem value="Freemium">{t("marketplace.toolbarPricingFreemium")}</SelectItem>
             <SelectItem value="PerSeat">{t("marketplace.toolbarPricingPerSeat")}</SelectItem>
-            <SelectItem value="UsageBased">
-              {t("marketplace.toolbarPricingUsageBased")}
-            </SelectItem>
+            <SelectItem value="UsageBased">{t("marketplace.toolbarPricingUsageBased")}</SelectItem>
           </SelectContent>
         </Select>
       </div>

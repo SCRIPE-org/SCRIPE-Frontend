@@ -13,6 +13,9 @@ import {
   type PartyOrganizationJson,
 } from "../models/PartyOrganizationModel";
 
+/**
+ * Documentation for module export
+ */
 export class PartyOrganizationMapper {
   /**
    * Convert PartyOrganizationModel to PartyOrganization Entity

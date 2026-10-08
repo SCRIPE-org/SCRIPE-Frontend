@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { AlertCircle, ReceiptText, RefreshCw, Lock } from "lucide-react";
@@ -12,13 +12,16 @@ import { useModuleLocales } from "@core/hooks/use-module-locales";
 import { usePermission } from "@core/hooks/use-permission";
 import { useI18n } from "@core/providers/i18n-provider";
 import { VENUE_PERMISSIONS } from "@modules/venue/permission-constants";
-import { VenueMoneyNav } from "@modules/venue/shared/src/presentation/components/VenueMoneyNav";
+import { VenueMoneyNav } from "@modules/venue";
 import { useReceivablesViewModel } from "../viewmodels/useReceivablesViewModel";
 
 function money(value: number, currency: string, locale: string) {
   return new Intl.NumberFormat(locale, { style: "currency", currency }).format(value);
 }
 
+/**
+ * Documentation for module export
+ */
 export function ReceivablesView() {
   useModuleLocales(() => import("../../../locales"), "venue.money");
   const { t, language, direction } = useI18n();

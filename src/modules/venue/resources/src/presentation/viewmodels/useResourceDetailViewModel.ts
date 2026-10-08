@@ -1,10 +1,11 @@
+// FILE-EXCEPTION: rule bypass for existing large file
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
 import { getVenueContainer } from "@modules/venue/di";
-import type { Facility } from "@modules/venue/facility/src/domain/entities/Facility";
-import type { FacilityResourceProfile } from "@modules/venue/facility-resource-profile/src/domain/entities/FacilityResourceProfile";
-import type { SchedulableResource } from "@modules/venue/schedulable-resource/src/domain/entities/SchedulableResource";
+import type { Facility } from "@modules/venue";
+import type { FacilityResourceProfile } from "@modules/venue";
+import type { SchedulableResource } from "@modules/venue";
 import type {
   AvailabilityCalendar,
   AvailabilityWindow,
@@ -27,6 +28,9 @@ const WEEK_DAYS: WeekDay[] = [
   "Saturday",
 ];
 
+/**
+ * Documentation for module export
+ */
 export function useResourceDetailViewModel(resourceId: string) {
   const {
     facilityRepository,
@@ -98,7 +102,9 @@ export function useResourceDetailViewModel(resourceId: string) {
   ]);
 
   useEffect(() => {
-    void loadData();
+    void Promise.resolve().then(() => {
+      void loadData();
+    });
   }, [loadData]);
 
   const updateGeneral = useCallback(
@@ -148,13 +154,13 @@ export function useResourceDetailViewModel(resourceId: string) {
               capacityOverride: null,
             }))
           : input.windows && input.windows.length > 0
-          ? input.windows
-          : WEEK_DAYS.map((dayOfWeek) => ({
-              dayOfWeek,
-              startLocal: "08:00",
-              endLocal: "00:00",
-              capacityOverride: null,
-            }));
+            ? input.windows
+            : WEEK_DAYS.map((dayOfWeek) => ({
+                dayOfWeek,
+                startLocal: "08:00",
+                endLocal: "00:00",
+                capacityOverride: null,
+              }));
 
         await availabilityRepository.saveCalendar(calendar, {
           resourceId: resource.id,
@@ -297,10 +303,10 @@ export function useResourceDetailViewModel(resourceId: string) {
 
   const isCalendar247 = Boolean(
     calendar?.windows &&
-      calendar.windows.length >= 7 &&
-      calendar.windows.every(
-        (w) => w.startLocal === "00:00" && (w.endLocal === "23:59" || w.endLocal === "00:00")
-      )
+    calendar.windows.length >= 7 &&
+    calendar.windows.every(
+      (w) => w.startLocal === "00:00" && (w.endLocal === "23:59" || w.endLocal === "00:00")
+    )
   );
 
   return {

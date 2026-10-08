@@ -50,9 +50,9 @@ function makeSetModel(overrides: Partial<ConstructorParameters<typeof OptionSetM
 function makeService(overrides: Partial<IOptionSetService> = {}) {
   return {
     getAll: vi.fn().mockResolvedValue([]),
-    getById: vi.fn().mockResolvedValue(
-      new OptionSetDetailModel({ set: makeSetModel(), versions: [] })
-    ),
+    getById: vi
+      .fn()
+      .mockResolvedValue(new OptionSetDetailModel({ set: makeSetModel(), versions: [] })),
     getVersion: vi.fn().mockResolvedValue(
       new OptionSetVersionModel({
         id: "enc-ver-1",
@@ -126,7 +126,9 @@ describe("OptionSetRepository", () => {
 
     it("marks a system-managed set uneditable while leaving it bindable", async () => {
       const service = makeService({
-        getAll: vi.fn().mockResolvedValue([makeSetModel({ isSystemManaged: true, isPlatformOwned: true })]),
+        getAll: vi
+          .fn()
+          .mockResolvedValue([makeSetModel({ isSystemManaged: true, isPlatformOwned: true })]),
       });
 
       const [set] = await new OptionSetRepository(service).getAll();
@@ -151,7 +153,11 @@ describe("OptionSetRepository", () => {
     it("reports a set with no published version as unbindable rather than broken", async () => {
       const service = makeService({
         getAll: vi.fn().mockResolvedValue([
-          makeSetModel({ publishedVersionId: null, publishedVersionNumber: null, versionCount: 1 }),
+          makeSetModel({
+            publishedVersionId: null,
+            publishedVersionNumber: null,
+            versionCount: 1,
+          }),
         ]),
       });
 

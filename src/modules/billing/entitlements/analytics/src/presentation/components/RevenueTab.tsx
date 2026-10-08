@@ -137,7 +137,7 @@ export function RevenueTab({ mrrData, months, onMonthsChange }: RevenueTabProps)
                     </div>
 
                     {/* Breakdown on hover */}
-                    <div className="ms-[76px] hidden flex-wrap gap-1.5 pb-2 duration-nx-standard ease-nx-enter animate-in fade-in-0 motion-reduce:transition-none group-hover:flex">
+                    <div className="ms-[76px] hidden flex-wrap gap-1.5 pb-2 duration-nx-standard ease-nx-enter animate-in fade-in-0 group-hover:flex motion-reduce:transition-none">
                       {movement.mrrNew > 0 && (
                         <span className="rounded-full border border-success/20 bg-success/10 px-2 py-0.5 text-[10px] font-medium text-success">
                           +{formatCurrency(movement.mrrNew)}{" "}

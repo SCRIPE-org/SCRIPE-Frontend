@@ -8,15 +8,7 @@ import { useI18n } from "@core/providers/i18n-provider";
 import { Button } from "@core/ui/button";
 import { LoadingSpinner } from "@core/ui/loading-spinner";
 import { useModuleLocales } from "@core/hooks/use-module-locales";
-import {
-  ChevronRight,
-  ChevronLeft,
-  Check,
-  ArrowLeft,
-  Tag,
-  CreditCard,
-  Eye,
-} from "lucide-react";
+import { ChevronRight, ChevronLeft, Check, ArrowLeft, Tag, CreditCard, Eye } from "lucide-react";
 import Link from "next/link";
 
 import { useEditionEditViewModel } from "../viewmodels/useEditionEditViewModel";
@@ -115,11 +107,7 @@ export function EditionEditWizardView({ editionId }: EditionEditWizardViewProps)
             <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </Button>
         ) : (
-          <Button
-            onClick={vm.handleSubmit}
-            loading={vm.isSubmitting}
-            className="gap-2"
-          >
+          <Button onClick={vm.handleSubmit} loading={vm.isSubmitting} className="gap-2">
             {!vm.isSubmitting && <Check className="h-4 w-4" />}
             {vm.isSubmitting ? t("common.saving") : t("common.saveChanges")}
           </Button>

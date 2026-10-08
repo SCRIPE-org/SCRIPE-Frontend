@@ -4,6 +4,9 @@ import type { ApiKeyChartDataPoint } from "../entities/ApiKeyChartData";
 import type { ApiKeyActivityEntry } from "../entities/ApiKeyActivity";
 import type { CreateApiKeyResult } from "../entities/ApiKey";
 
+/**
+ * Documentation for module export
+ */
 export interface ChartParams {
   granularity: "hourly" | "daily";
   startDate?: string;
@@ -12,6 +15,9 @@ export interface ChartParams {
   statusCodeGroup?: string;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface ActivityParams {
   page: number;
   pageSize: number;
@@ -24,6 +30,9 @@ export interface ActivityParams {
   sortDesc?: boolean;
 }
 
+/**
+ * Documentation for module export
+ */
 export interface IApiKeyDetailService {
   getById(id: string): Promise<ApiKeyDetailData>;
   update(id: string, request: UpdateApiKeyDetailRequest): Promise<void>;
